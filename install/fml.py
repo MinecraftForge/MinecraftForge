@@ -264,7 +264,9 @@ def setup_fml(fml_dir, mcp_dir, disable_at=False, disable_merge=False, enable_se
         class_path = os.pathsep.join(['.', os.path.join(mcp_dir, 'lib', '*'), dir_bin])
         dir_common = os.path.join(fml_dir, 'common')
         dir_trans  = os.path.join(dir_common, 'cpw', 'mods', 'fml', 'common', 'asm', 'transformers')
-        cmd_compile = '"%s" -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath}" -sourcepath "{sourcepath}" -d "{outpath}" "{target}"' % self.cmdjavac
+        java = self.cmdjava.translate(None, '"')
+        javac = self.cmdjavac.translate(None, '"')
+        cmd_compile = '"%s" -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath}" -sourcepath "{sourcepath}" -d "{outpath}" "{target}"' % javac
         cmd_compile = cmd_compile.format(classpath=class_path, sourcepath=dir_common, outpath=dir_bin, target="{target}")
         
         if compile_tools:
@@ -281,7 +283,7 @@ def setup_fml(fml_dir, mcp_dir, disable_at=False, disable_merge=False, enable_se
         if side == CLIENT:
             if not disable_merge:
                 self.logger.info('> Running MCPMerger')
-                forkcmd = ('"%s" -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.MCPMerger "{mergecfg}" "{client}" "{server}"' % self.cmdjava).format(
+                forkcmd = ('"%s" -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.MCPMerger "{mergecfg}" "{client}" "{server}"' % java).format(
                     classpath=class_path, mergecfg=os.path.join(fml_dir, 'mcp_merge.cfg'), client=jars[CLIENT], server=jars[SERVER])
                     
                 if not runcmd(self, forkcmd):
@@ -291,7 +293,7 @@ def setup_fml(fml_dir, mcp_dir, disable_at=False, disable_merge=False, enable_se
         
         if not disable_at:
             self.logger.info('> Running AccessTransformer')
-            forkcmd = ('"%s" -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.AccessTransformer "{jar}" "{fmlconfig}"' % self.cmdjava).format(
+            forkcmd = ('"%s" -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.AccessTransformer "{jar}" "{fmlconfig}"' % java).format(
                 classpath=class_path, jar=jars[side], fmlconfig=os.path.join(fml_dir, 'common', 'fml_at.cfg'))
                 
             forge_cfg = os.path.join(fml_dir, '..', 'common', 'forge_at.cfg')
