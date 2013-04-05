@@ -25,7 +25,15 @@
                  ModelBiped modelbiped = par2 == 2 ? this.field_82425_h : this.field_82423_g;
                  modelbiped.bipedHead.showModel = par2 == 0;
                  modelbiped.bipedHeadwear.showModel = par2 == 0;
-@@ -87,9 +93,10 @@
+@@ -68,6 +74,7 @@
+                 modelbiped.bipedLeftArm.showModel = par2 == 1;
+                 modelbiped.bipedRightLeg.showModel = par2 == 2 || par2 == 3;
+                 modelbiped.bipedLeftLeg.showModel = par2 == 2 || par2 == 3;
++                modelbiped = ForgeHooksClient.getArmorModel(par1EntityLiving, itemstack, par2, modelbiped);
+                 this.setRenderPassModel(modelbiped);
+ 
+                 if (modelbiped != null)
+@@ -87,9 +94,10 @@
  
                  float f1 = 1.0F;
  
@@ -39,7 +47,7 @@
                      float f2 = (float)(j >> 16 & 255) / 255.0F;
                      float f3 = (float)(j >> 8 & 255) / 255.0F;
                      float f4 = (float)(j & 255) / 255.0F;
-@@ -128,7 +135,7 @@
+@@ -128,7 +136,7 @@
              if (item instanceof ItemArmor)
              {
                  ItemArmor itemarmor = (ItemArmor)item;
@@ -48,7 +56,7 @@
                  float f1 = 1.0F;
                  GL11.glColor3f(f1, f1, f1);
              }
-@@ -174,9 +181,12 @@
+@@ -174,9 +182,12 @@
              GL11.glPushMatrix();
              this.modelBipedMain.bipedHead.postRender(0.0625F);
  
@@ -64,7 +72,7 @@
                  {
                      f2 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
-@@ -218,7 +228,10 @@
+@@ -218,7 +229,10 @@
              this.modelBipedMain.bipedRightArm.postRender(0.0625F);
              GL11.glTranslatef(-0.0625F, 0.4375F, 0.0625F);
  
@@ -76,7 +84,7 @@
              {
                  f2 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -265,7 +278,10 @@
+@@ -265,7 +279,10 @@
  
              if (itemstack.getItem().requiresMultipleRenderPasses())
              {

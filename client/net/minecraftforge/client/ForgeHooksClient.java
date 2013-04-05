@@ -21,6 +21,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.RenderGlobal;
@@ -258,5 +259,11 @@ public class ForgeHooksClient
     public static void setRenderPass(int pass)
     {
         renderPass = pass;
+    }
+
+    public static ModelBiped getArmorModel(EntityLiving entityLiving, ItemStack itemStack, int slotID, ModelBiped _default)
+    {
+        ModelBiped modelbiped = itemStack.getItem().getArmorModel(entityLiving, itemStack, slotID);
+        return modelbiped == null ? _default : modelbiped;
     }
 }
