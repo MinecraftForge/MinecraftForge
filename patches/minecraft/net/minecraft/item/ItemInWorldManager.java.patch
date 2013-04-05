@@ -110,7 +110,7 @@
 +                Block block = Block.blocksList[l];
 +                if (block != null)
 +                {
-+                    flag1 = block.canHarvestBlock(thisPlayerMP, i1);
++                    flag1 = block.canHarvestBlock(thisPlayerMP, this.theWorld, par1, par2, par3);
 +                }
  
                  if (itemstack != null)

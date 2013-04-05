@@ -155,7 +155,7 @@
      }
  
      /**
-@@ -1435,4 +1455,881 @@
+@@ -1435,4 +1455,884 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -298,12 +298,15 @@
 +     * Determines if the player can harvest this block, obtaining it's drops when the block is destroyed.
 +     *
 +     * @param player The player damaging the block, may be null
-+     * @param meta The block's current metadata
++     * @param world The current world
++     * @param x X Position
++     * @param y Y position
++     * @param z Z position
 +     * @return True to spawn the drops
 +     */
-+    public boolean canHarvestBlock(EntityPlayer player, int meta)
++    public boolean canHarvestBlock(EntityPlayer player, World world, int x, int y, int z)
 +    {
-+        return ForgeHooks.canHarvestBlock(this, player, meta);
++        return ForgeHooks.canHarvestBlock(this, player, world, x, y, z);
 +    }
 +
 +    /**
