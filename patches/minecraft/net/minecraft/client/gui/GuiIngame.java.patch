@@ -18,3 +18,21 @@
                  i3 = -1;
  
                  if (this.mc.thePlayer.isPotionActive(Potion.regeneration))
+@@ -431,7 +433,16 @@
+                     GL11.glPushMatrix();
+                     GL11.glEnable(GL11.GL_BLEND);
+                     GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+-                    fontrenderer.drawStringWithShadow(s1, i1, j1, 16777215 + (j5 << 24));
++                    FontRenderer font = field_92016_l.getItem().getFontRenderer(field_92016_l);
++                    if (font != null)
++                    {
++                        i1 = (k - font.getStringWidth(s1)) / 2;
++                        font.drawStringWithShadow(s1, i1, j1, 16777215 + (j5 << 24));
++                    }
++                    else
++                    {
++                        fontrenderer.drawStringWithShadow(s1, i1, j1, 16777215 + (j5 << 24));
++                    }
+                     GL11.glDisable(GL11.GL_BLEND);
+                     GL11.glPopMatrix();
+                 }
