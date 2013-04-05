@@ -155,7 +155,7 @@
      }
  
      /**
-@@ -1435,4 +1455,881 @@
+@@ -1435,4 +1455,898 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -721,6 +721,23 @@
 +    public float getExplosionResistance(Entity par1Entity, World world, int x, int y, int z, double explosionX, double explosionY, double explosionZ)
 +    {
 +        return getExplosionResistance(par1Entity);
++    }
++
++    /**
++     * Called when the block is destroyed by an explosion.
++     * Useful for allowing the block to take into account tile entities,
++     * metadata, etc. when exploded, before it is removed.
++     *
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @param Explosion The explosion instance affecting the block
++     */
++    public void onBlockExploded(World world, int x, int y, int z, Explosion explosion)
++    {
++        world.setBlockToAir(x, y, z);
++        onBlockDestroyedByExplosion(world, x, y, z, explosion);
 +    }
 +
 +    /**
