@@ -40,15 +40,21 @@
      public WorldServer(MinecraftServer par1MinecraftServer, ISaveHandler par2ISaveHandler, String par3Str, int par4, WorldSettings par5WorldSettings, Profiler par6Profiler, ILogAgent par7ILogAgent)
      {
          super(par2ISaveHandler, par3Str, par5WorldSettings, WorldProvider.getProviderForDimension(par4), par6Profiler, par7ILogAgent);
-@@ -122,6 +136,7 @@
+@@ -120,8 +134,12 @@
+             this.mapStorage.setData("scoreboard", scoreboardsavedata);
+         }
  
-         scoreboardsavedata.func_96499_a(this.worldScoreboard);
+-        scoreboardsavedata.func_96499_a(this.worldScoreboard);
++        if (!(this instanceof WorldServerMulti)) //Forge: We fix the global mapStorage, which causes us to share scoreboards early. So don't associate the save data with the temporary scoreboard 
++        {
++            scoreboardsavedata.func_96499_a(this.worldScoreboard);
++        }
          ((ServerScoreboard)this.worldScoreboard).func_96547_a(scoreboardsavedata);
 +        DimensionManager.setWorld(par4, this);
      }
  
      /**
-@@ -184,6 +199,10 @@
+@@ -184,6 +202,10 @@
          this.villageSiegeObj.tick();
          this.theProfiler.endStartSection("portalForcer");
          this.field_85177_Q.func_85189_a(this.getTotalWorldTime());
@@ -59,7 +65,7 @@
          this.theProfiler.endSection();
          this.sendAndApplyBlockEvents();
      }
-@@ -194,6 +213,7 @@
+@@ -194,6 +216,7 @@
      public SpawnListEntry spawnRandomCreature(EnumCreatureType par1EnumCreatureType, int par2, int par3, int par4)
      {
          List list = this.getChunkProvider().getPossibleCreatures(par1EnumCreatureType, par2, par3, par4);
@@ -67,7 +73,7 @@
          return list != null && !list.isEmpty() ? (SpawnListEntry)WeightedRandom.getRandomItem(this.rand, list) : null;
      }
  
-@@ -237,10 +257,7 @@
+@@ -237,10 +260,7 @@
  
      private void resetRainAndThunder()
      {
@@ -79,7 +85,7 @@
      }
  
      public boolean areAllPlayersAsleep()
-@@ -311,6 +328,14 @@
+@@ -311,6 +331,14 @@
          int i = 0;
          int j = 0;
          Iterator iterator = this.activeChunkSet.iterator();
@@ -94,7 +100,7 @@
  
          while (iterator.hasNext())
          {
-@@ -321,14 +346,18 @@
+@@ -321,14 +349,18 @@
              Chunk chunk = this.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos);
              this.moodSoundAndLightCheck(k, l, chunk);
              this.theProfiler.endStartSection("tickChunk");
@@ -115,7 +121,7 @@
              {
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
                  i1 = this.updateLCG >> 2;
-@@ -345,7 +374,7 @@
+@@ -345,7 +377,7 @@
              this.theProfiler.endStartSection("iceandsnow");
              int i2;
  
@@ -124,7 +130,7 @@
              {
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
                  i1 = this.updateLCG >> 2;
-@@ -433,6 +462,9 @@
+@@ -433,6 +465,9 @@
      public void func_82740_a(int par1, int par2, int par3, int par4, int par5, int par6)
      {
          NextTickListEntry nextticklistentry = new NextTickListEntry(par1, par2, par3, par4);
@@ -134,7 +140,7 @@
          byte b0 = 0;
  
          if (this.scheduledUpdatesAreImmediate && par4 > 0)
-@@ -496,7 +528,7 @@
+@@ -496,7 +531,7 @@
       */
      public void updateEntities()
      {
@@ -143,7 +149,7 @@
          {
              if (this.updateEntityTick++ >= 1200)
              {
-@@ -562,6 +594,9 @@
+@@ -562,6 +597,9 @@
              {
                  nextticklistentry = (NextTickListEntry)iterator.next();
                  iterator.remove();
@@ -153,7 +159,7 @@
                  byte b0 = 0;
  
                  if (this.checkChunksExist(nextticklistentry.xCoord - b0, nextticklistentry.yCoord - b0, nextticklistentry.zCoord - b0, nextticklistentry.xCoord + b0, nextticklistentry.yCoord + b0, nextticklistentry.zCoord + b0))
-@@ -705,16 +740,28 @@
+@@ -705,16 +743,28 @@
      {
          ArrayList arraylist = new ArrayList();
  
@@ -192,7 +198,7 @@
          return arraylist;
      }
  
-@@ -722,6 +769,11 @@
+@@ -722,6 +772,11 @@
       * Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
@@ -204,7 +210,7 @@
      {
          return !this.mcServer.func_96290_a(this, par2, par3, par4, par1EntityPlayer);
      }
-@@ -806,7 +858,7 @@
+@@ -806,7 +861,7 @@
       */
      protected void createBonusChest()
      {
@@ -213,7 +219,7 @@
  
          for (int i = 0; i < 10; ++i)
          {
-@@ -849,6 +901,7 @@
+@@ -849,6 +904,7 @@
              }
  
              this.chunkProvider.saveChunks(par1, par2IProgressUpdate);
@@ -221,7 +227,7 @@
          }
      }
  
-@@ -860,6 +913,7 @@
+@@ -860,6 +916,7 @@
          this.checkSessionLock();
          this.saveHandler.saveWorldInfoWithPlayer(this.worldInfo, this.mcServer.getConfigurationManager().getHostPlayerData());
          this.mapStorage.saveAllData();
@@ -229,7 +235,7 @@
      }
  
      /**
-@@ -1073,4 +1127,9 @@
+@@ -1073,4 +1130,9 @@
      {
          return this.field_85177_Q;
      }
