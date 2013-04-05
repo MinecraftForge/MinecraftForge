@@ -9,7 +9,18 @@
  
      public GuiContainerCreative(EntityPlayer par1EntityPlayer)
      {
-@@ -274,6 +276,13 @@
+@@ -208,6 +210,10 @@
+                             {
+                                 ++itemstack.stackSize;
+                             }
++							else if(!ItemStack.areItemStackTagsEqual(itemstack, itemstack2))
++							{
++								inventoryplayer.setItemStack((ItemStack)null);
++							}
+                         }
+                         else if (itemstack.stackSize <= 1)
+                         {
+@@ -274,6 +280,13 @@
              this.setCurrentCreativeTab(CreativeTabs.creativeTabArray[i]);
              this.field_82324_x = new CreativeCrafting(this.mc);
              this.mc.thePlayer.inventoryContainer.addCraftingToCrafters(this.field_82324_x);
@@ -23,7 +34,7 @@
          }
          else
          {
-@@ -408,7 +417,7 @@
+@@ -408,7 +421,7 @@
      {
          CreativeTabs creativetabs = CreativeTabs.creativeTabArray[selectedTabIndex];
  
@@ -32,7 +43,7 @@
          {
              this.fontRenderer.drawString(creativetabs.getTranslatedTabLabel(), 8, 6, 4210752);
          }
-@@ -457,7 +466,7 @@
+@@ -457,7 +470,7 @@
              {
                  CreativeTabs creativetabs = acreativetabs[k1];
  
@@ -41,7 +52,7 @@
                  {
                      this.setCurrentCreativeTab(creativetabs);
                      return;
-@@ -473,11 +482,17 @@
+@@ -473,11 +486,17 @@
       */
      private boolean needsScrollBars()
      {
@@ -59,7 +70,7 @@
          int i = selectedTabIndex;
          selectedTabIndex = par1CreativeTabs.getTabIndex();
          ContainerCreative containercreative = (ContainerCreative)this.inventorySlots;
-@@ -648,21 +663,42 @@
+@@ -648,21 +667,42 @@
  
          super.drawScreen(par1, par2, par3);
          CreativeTabs[] acreativetabs = CreativeTabs.creativeTabArray;
@@ -107,7 +118,7 @@
          }
  
          GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-@@ -681,14 +717,32 @@
+@@ -681,14 +721,32 @@
          int k = acreativetabs.length;
          int l;
  
@@ -142,7 +153,7 @@
              }
          }
  
-@@ -706,6 +760,14 @@
+@@ -706,6 +764,14 @@
              this.drawTexturedModalRect(i1, k + (int)((float)(l - k - 17) * this.currentScroll), 232 + (this.needsScrollBars() ? 0 : 12), 0, 12, 15);
          }
  
@@ -157,7 +168,7 @@
          this.renderCreativeTab(creativetabs);
  
          if (creativetabs == CreativeTabs.tabInventory)
-@@ -716,6 +778,15 @@
+@@ -716,6 +782,15 @@
  
      protected boolean func_74232_a(CreativeTabs par1CreativeTabs, int par2, int par3)
      {
@@ -173,7 +184,7 @@
          int k = par1CreativeTabs.getTabColumn();
          int l = 28 * k;
          byte b0 = 0;
-@@ -830,7 +901,7 @@
+@@ -830,7 +905,7 @@
          i1 += 8 + (flag1 ? 1 : -1);
          GL11.glEnable(GL11.GL_LIGHTING);
          GL11.glEnable(GL12.GL_RESCALE_NORMAL);
@@ -182,7 +193,7 @@
          itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.renderEngine, itemstack, l, i1);
          itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.renderEngine, itemstack, l, i1);
          GL11.glDisable(GL11.GL_LIGHTING);
-@@ -852,6 +923,15 @@
+@@ -852,6 +927,15 @@
          {
              this.mc.displayGuiScreen(new GuiStats(this, this.mc.statFileWriter));
          }
