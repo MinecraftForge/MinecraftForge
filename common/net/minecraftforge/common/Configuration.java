@@ -771,6 +771,24 @@ public class Configuration
         return ret;
     }
 
+    public void removeCategory(ConfigCategory category)
+    {
+        for (ConfigCategory child : category.getChildren())
+        {
+            removeCategory(child);
+        }
+
+        if (categories.containsKey(category.getQualifiedName()))
+        {
+            categories.remove(category.getQualifiedName());
+            if (category.parent != null)
+            {
+                category.parent.removeChild(category);
+            }
+            changed = true;
+        }
+    }
+
     public void addCustomCategoryComment(String category, String comment)
     {
         if (!caseSensitiveCustomCategories)

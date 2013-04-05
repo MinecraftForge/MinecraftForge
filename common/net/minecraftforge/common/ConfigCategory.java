@@ -256,4 +256,14 @@ public class ConfigCategory implements Map<String, Property>
         return ImmutableSet.copyOf(properties.entrySet());
     }
 
+    public Set<ConfigCategory> getChildren(){ return ImmutableSet.copyOf(children); }
+    
+    public void removeChild(ConfigCategory child)
+    {
+        if (children.contains(child))
+        {
+            children.remove(child);
+            changed = true;
+        }
+    }
 }
