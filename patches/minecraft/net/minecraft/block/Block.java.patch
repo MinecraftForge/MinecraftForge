@@ -155,7 +155,7 @@
      }
  
      /**
-@@ -1435,4 +1455,881 @@
+@@ -1435,4 +1455,895 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -1035,5 +1035,19 @@
 +    public ForgeDirection[] getValidRotations(World worldObj, int x, int y, int z)
 +    {
 +        return RotationHelper.getValidVanillaBlockRotations(this);
++    }
++    
++    /**
++     * Determines if this block can give enchanting power to an enchanting table.
++     * 
++     * @param world The world
++     * @param x X position
++     * @param y Y position
++     * @param z Z potition
++     * @return True, supply enchanting power to the table.
++     */
++    public boolean givesEnchantPower(World world, int x, int y, int z)
++    {
++        return blockID == bookShelf.blockID;
 +    }
  }
