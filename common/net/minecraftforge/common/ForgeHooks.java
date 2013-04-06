@@ -370,4 +370,23 @@ public class ForgeHooks
         player.joinEntityItemWithWorld(event.entityItem);
         return event.entityItem;
     }
+    
+    public static int getEnchantPower(World world, int x, int y, int z)
+    {
+        if (world.isAirBlock(x, y, z))
+        {
+            return 0;
+        }
+        
+        Block block = Block.blocksList[world.getBlockId(x, y, z)];
+        
+        if (block == null)
+        {
+            return 0;
+        }
+        else
+        {
+            return block.getEnchantPower(world, x, y, z);
+        }
+    }
 }
