@@ -10,6 +10,16 @@
  import net.minecraft.world.*;
  import net.minecraft.world.gen.*;
  import net.minecraft.world.biome.*;
+@@ -20,8 +23,8 @@
+     public static final BiomeGenBase[] base11Biomes = new BiomeGenBase[] {BiomeGenBase.desert, BiomeGenBase.forest, BiomeGenBase.extremeHills, BiomeGenBase.swampland, BiomeGenBase.plains, BiomeGenBase.taiga};
+     public static final BiomeGenBase[] base12Biomes = ObjectArrays.concat(base11Biomes, BiomeGenBase.jungle);
+ 
+     /** List of world types. */
+-    public static final WorldType[] worldTypes = new WorldType[16];
++    public static final WorldType[] worldTypes = new WorldType[32];
+ 
+     /** Default world type. */
+     public static final WorldType DEFAULT = (new WorldType(0, "default", 1)).setVersioned();
 @@ -224,4 +227,37 @@
       * Called when 'Create New World' button is pressed before starting game
       */
