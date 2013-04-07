@@ -84,7 +84,7 @@ public class ChestGenHooks
         dungeon.addItem(new WeightedRandomChestContent(item, min, max, weight));
     }
 
-    private static void addInfo(String category, WeightedRandomChestContent[] items, int min, int max)
+    public static void addInfo(String category, WeightedRandomChestContent[] items, int min, int max)
     {
         chestInfo.put(category, new ChestGenHooks(category, items, min, max));
     }
