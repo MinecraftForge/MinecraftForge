@@ -8,6 +8,24 @@
  
  public class ContainerEnchantment extends Container
  {
+@@ -99,7 +100,7 @@
+         if (par1IInventory == this.tableInventory)
+         {
+             ItemStack itemstack = par1IInventory.getStackInSlot(0);
+-            int i;
++            float power;
+ 
+             if (itemstack != null && itemstack.isItemEnchantable())
+             {
+@@ -107,7 +108,7 @@
+ 
+                 if (!this.worldPointer.isRemote)
+                 {
+-                    i = 0;
++                    power = 0;
+                     int j;
+ 
+                     for (j = -1; j <= 1; ++j)
 @@ -116,37 +117,16 @@
                          {
                              if ((j != 0 || k != 0) && this.worldPointer.isAirBlock(this.posX + k, this.posY, this.posZ + j) && this.worldPointer.isAirBlock(this.posX + k, this.posY + 1, this.posZ + j))
@@ -22,8 +40,8 @@
 -                                    ++i;
 -                                }
 +                                
-+                                i += ForgeHooks.getEnchantPower(worldPointer, this.posX + k * 2, this.posY, this.posZ + j * 2);
-+                                i += ForgeHooks.getEnchantPower(worldPointer, this.posX + k * 2, this.posY + 1, this.posZ + j * 2);
++                                power += ForgeHooks.getEnchantPower(worldPointer, this.posX + k * 2, this.posY, this.posZ + j * 2);
++                                power += ForgeHooks.getEnchantPower(worldPointer, this.posX + k * 2, this.posY + 1, this.posZ + j * 2);
  
                                  if (k != 0 && j != 0)
                                  {
@@ -46,10 +64,28 @@
 -                                    {
 -                                        ++i;
 -                                    }
-+                                    i += ForgeHooks.getEnchantPower(worldPointer, this.posX + k * 2, this.posY, this.posZ + j);
-+                                    i += ForgeHooks.getEnchantPower(worldPointer, this.posX + k * 2, this.posY + 1, this.posZ + j);
-+                                    i += ForgeHooks.getEnchantPower(worldPointer, this.posX + k, this.posY, this.posZ + j * 2);
-+                                    i += ForgeHooks.getEnchantPower(worldPointer, this.posX + k, this.posY + 1, this.posZ + j * 2);
++                                    power += ForgeHooks.getEnchantPower(worldPointer, this.posX + k * 2, this.posY, this.posZ + j);
++                                    power += ForgeHooks.getEnchantPower(worldPointer, this.posX + k * 2, this.posY + 1, this.posZ + j);
++                                    power += ForgeHooks.getEnchantPower(worldPointer, this.posX + k, this.posY, this.posZ + j * 2);
++                                    power += ForgeHooks.getEnchantPower(worldPointer, this.posX + k, this.posY + 1, this.posZ + j * 2);
                                  }
                              }
                          }
+@@ -154,7 +134,7 @@
+ 
+                     for (j = 0; j < 3; ++j)
+                     {
+-                        this.enchantLevels[j] = EnchantmentHelper.calcItemStackEnchantability(this.rand, j, i, itemstack);
++                        this.enchantLevels[j] = EnchantmentHelper.calcItemStackEnchantability(this.rand, j, (int) power, itemstack);
+                     }
+ 
+                     this.detectAndSendChanges();
+@@ -162,7 +142,7 @@
+             }
+             else
+             {
+-                for (i = 0; i < 3; ++i)
++                for (int i = 0; i < 3; ++i)
+                 {
+                     this.enchantLevels[i] = 0;
+                 }

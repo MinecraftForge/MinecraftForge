@@ -371,7 +371,7 @@ public class ForgeHooks
         return event.entityItem;
     }
     
-    public static int getEnchantPower(World world, int x, int y, int z)
+    public static float getEnchantPower(World world, int x, int y, int z)
     {
         if (world.isAirBlock(x, y, z))
         {

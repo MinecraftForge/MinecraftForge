@@ -1046,7 +1046,7 @@
 +     * @param z Z position
 +     * @return amount of enchanting power
 +     */
-+    public int getEnchantPower(World world, int x, int y, int z)
++    public float getEnchantPower(World world, int x, int y, int z)
 +    {
 +        return blockID == bookShelf.blockID ? 1 : 0;
 +    }
