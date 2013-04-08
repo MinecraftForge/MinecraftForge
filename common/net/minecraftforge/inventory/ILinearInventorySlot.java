@@ -50,20 +50,27 @@ public interface ILinearInventorySlot {
     int getMaximumStackSize();
 
     /**
-     * Returns true if items can be extracted from this slot. This may change
+     * Returns true if items should be extracted from this slot. This may change
      * depending on the current contents of the slot.
+     * 
+     * This is only a recommendation - mods may alter inventory slots in any way
+     * that setStack permits.
      * 
      * @return True if items can be extracted from this slot.
      */
-    boolean canExtractItems();
+    boolean shouldExtractItems();
 
     /**
-     * Returns true if the given item type can be inserted into this slot. The
-     * result is not affected by the current contents of the slot.
+     * Returns true if the given item type should be inserted into this slot.
+     * The result is not affected by the current contents of the slot.
+     * 
+     * This is only a recommendation - mods may alter inventory slots in any way
+     * that setStack permits. However, generally this method will agree with
+     * setStack.
      * 
      * @param is
      *            The item to test - stack size is ignored.
      * @return True if the slot can hold this item.
      */
-    boolean canInsertItem(ItemStack is);
+    boolean shouldInsertItem(ItemStack is);
 }

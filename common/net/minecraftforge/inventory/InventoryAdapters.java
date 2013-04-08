@@ -1,6 +1,8 @@
 package net.minecraftforge.inventory;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -85,11 +87,19 @@ public class InventoryAdapters {
      * inventory is sided and the side is null or UNKNOWN, the adapter cannot be
      * created. Returns null if the adapter could not be created.
      */
-    public static IForgeCustomInventory asCustomInventory(IInventory inv, ForgeDirection side) throws NullPointerException, IllegalArgumentException
+    public static IForgeCustomInventory asCustomInventory(IInventory inv, ForgeDirection side)
     {
         IForgeLinearInventory li = asLinearInventory(inv, side);
         if (li != null) return new LinearToCustomAdapter(li);
         return null;
+    }
+
+    /**
+     * Creates an IForgeCustomInventory view of an IForgeLinearInventory.
+     */
+    public static IForgeCustomInventory asCustomInventory(IForgeLinearInventory inv)
+    {
+        return new LinearToCustomAdapter(inv);
     }
 
     /**
@@ -122,7 +132,8 @@ public class InventoryAdapters {
      * 
      * Supports both entities and tile entities.
      * 
-     * When calling this from a tile entity, you most likely want to pass integer coordinates.
+     * When calling this from a tile entity, you most likely want to pass
+     * integer coordinates.
      */
     public static IForgeCustomInventory getCustomInventoryAt(World world, double x, double y, double z, ForgeDirection side) throws NullPointerException,
             IllegalArgumentException
@@ -170,7 +181,7 @@ public class InventoryAdapters {
         {
             if (is != null && is.stackSize > inv.getInventoryStackLimit()) return false;
 
-            if (!inv.isStackValidForSlot(index, is)) return false;
+            if (is != null && !inv.isStackValidForSlot(index, is)) return false;
 
             if (!simulate) inv.setInventorySlotContents(index, is);
 
@@ -184,13 +195,13 @@ public class InventoryAdapters {
         }
 
         @Override
-        public boolean canExtractItems()
+        public boolean shouldExtractItems()
         {
             return inv.getStackInSlot(index) != null;
         }
 
         @Override
-        public boolean canInsertItem(ItemStack is)
+        public boolean shouldInsertItem(ItemStack is)
         {
             return true;
         }
@@ -336,6 +347,67 @@ public class InventoryAdapters {
 
             return rv;
         }
+
+        @Override
+        public Iterable<ItemStack> listExtractableContents(final IStackFilter filter) throws NullPointerException
+        {
+            if (filter == null) throw new NullPointerException("filter");
+
+            return new Iterable<ItemStack>() {
+                @Override
+                public Iterator<ItemStack> iterator()
+                {
+                    return new Iterator<ItemStack>() {
+                        int curSlot = 0;
+                        int numSlots = inv.getNumInventorySlots();
+                        ItemStack nextStack;
+
+                        private void advance()
+                        {
+                            nextStack = null;
+
+                            while (curSlot < numSlots)
+                            {
+                                ILinearInventorySlot slot = inv.getInventorySlot(curSlot++);
+                                if (slot.shouldExtractItems())
+                                {
+                                    nextStack = slot.getStack();
+                                    if (!filter.matchesItem(nextStack))
+                                        nextStack = null;
+                                    else if (nextStack != null) break;
+                                }
+                            }
+                        }
+
+                        {
+                            advance();
+                        }
+
+                        @Override
+                        public boolean hasNext()
+                        {
+                            return nextStack != null;
+                        }
+
+                        @Override
+                        public ItemStack next()
+                        {
+                            if (nextStack == null) throw new NoSuchElementException();
+
+                            ItemStack rv = nextStack;
+                            advance();
+                            return rv;
+                        }
+
+                        @Override
+                        public void remove()
+                        {
+                            throw new UnsupportedOperationException();
+                        }
+                    };
+                }
+            };
+        }
     }
 
     private static class VanillaSidedSlotAdapter implements ILinearInventorySlot {
@@ -365,16 +437,18 @@ public class InventoryAdapters {
         @Override
         public boolean setStack(ItemStack is, boolean simulate)
         {
+            if (is != null && is.stackSize > getMaximumStackSize()) return false;
+
             ItemStack old = inv.getStackInSlot(slotIndex);
             int newCount = (is == null ? 0 : is.stackSize);
             int oldCount = (old == null ? 0 : old.stackSize);
 
-            if (old != null && is != null && (old.itemID != is.itemID || old.getItemDamage() != is.getItemDamage() || !ItemStack.areItemStackTagsEqual(old, is)))
+            if (old != null && is != null
+                    && (old.itemID != is.itemID || old.getItemDamage() != is.getItemDamage() || !ItemStack.areItemStackTagsEqual(old, is)))
             {
                 // If changing the item type, check that we can extract all the
                 // old items and insert all the new ones
 
-                if (old != null && !inv.func_102008_b(slotIndex, old, side)) return false;
                 if (is != null && !inv.isStackValidForSlot(slotIndex, is)) return false;
                 if (is != null && !inv.func_102007_a(slotIndex, is, side)) return false;
             }
@@ -387,14 +461,6 @@ public class InventoryAdapters {
                 if (!inv.isStackValidForSlot(slotIndex, newItems)) return false;
                 if (!inv.func_102007_a(slotIndex, newItems, side)) return false;
             }
-            else if (oldCount > newCount && old != null)
-            {
-                // If we're only extracting items, check we can do that.
-                ItemStack removedItems = old.copy();
-                removedItems.stackSize = oldCount - newCount;
-
-                if (!inv.func_102008_b(slotIndex, removedItems, side)) return false;
-            }
 
             if (!simulate) inv.setInventorySlotContents(slotIndex, is);
 
@@ -403,14 +469,14 @@ public class InventoryAdapters {
         }
 
         @Override
-        public boolean canExtractItems()
+        public boolean shouldExtractItems()
         {
             ItemStack stack = inv.getStackInSlot(slotIndex);
             return stack != null && inv.func_102008_b(slotIndex, stack, side);
         }
 
         @Override
-        public boolean canInsertItem(ItemStack is)
+        public boolean shouldInsertItem(ItemStack is)
         {
             return is != null && inv.isStackValidForSlot(slotIndex, is) && inv.func_102007_a(slotIndex, is, side);
         }

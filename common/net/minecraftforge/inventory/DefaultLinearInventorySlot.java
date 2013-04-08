@@ -10,7 +10,7 @@ public class DefaultLinearInventorySlot implements ILinearInventorySlot {
     private int maxStackSize = 64;
 
     @Override
-    public boolean canExtractItems()
+    public boolean shouldExtractItems()
     {
         return contents != null;
     }
@@ -24,6 +24,7 @@ public class DefaultLinearInventorySlot implements ILinearInventorySlot {
     @Override
     public boolean setStack(ItemStack is, boolean simulate)
     {
+        if (is != null && (is.stackSize <= 0 || is.stackSize > maxStackSize)) return false;
         if (!simulate) contents = is;
         return true;
     }
@@ -35,7 +36,7 @@ public class DefaultLinearInventorySlot implements ILinearInventorySlot {
     }
 
     @Override
-    public boolean canInsertItem(ItemStack is)
+    public boolean shouldInsertItem(ItemStack is)
     {
         return true;
     }
