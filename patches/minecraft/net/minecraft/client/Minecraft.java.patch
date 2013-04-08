@@ -167,3 +167,30 @@
  
              if (flag)
              {
+@@ -2539,11 +2466,18 @@
+         par1PlayerUsageSnooper.addData("gl_max_texture_size", Integer.valueOf(getGLMaximumTextureSize()));
+     }
+ 
++    //Forge: Adds a optimization to the getGLMaximumTextureSize, only calculate it once.
++    private static int max_texture_size = -1;
+     /**
+      * Used in the usage snooper.
+      */
+     public static int getGLMaximumTextureSize()
+     {
++        if (max_texture_size != -1)
++        {
++            return max_texture_size;
++        }
++
+         for (int i = 16384; i > 0; i >>= 1)
+         {
+             GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
+@@ -2551,6 +2485,7 @@
+ 
+             if (j != 0)
+             {
++                max_texture_size = i;
+                 return i;
+             }
+         }
