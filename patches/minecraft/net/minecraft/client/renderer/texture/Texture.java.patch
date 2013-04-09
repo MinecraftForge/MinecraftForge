@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/texture/Texture.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/texture/Texture.java
-@@ -214,7 +214,33 @@
+@@ -214,7 +214,42 @@
              this.textureData.position(0);
              bytebuffer.position(0);
  
@@ -14,6 +14,8 @@
 +             * 
 +             * https://mojang.atlassian.net/browse/MC-13206
 +             */
++            //update variable to keep track of whether we should fully regenerate textures
++            boolean update = true;
 +            if (!par4)
 +            {
 +                int scanSize = par3Texture.getWidth() * 4;
@@ -29,13 +31,20 @@
 +                    }
 +                    targetY += w4;
 +                }
++                //If it's a simple 2D texture, update the texture directly and don't trigger a full texture update
++                if (this.textureCreated && this.height != 1 && this.textureDepth == 1)
++                {
++                    update = false;
++                    bytebuffer.position(0);
++                    GL11.glTexSubImage2D(this.textureTarget, 0, par1, par2, par3Texture.getWidth(),par3Texture.getHeight(), this.textureFormat, GL11.GL_UNSIGNED_BYTE, bytebuffer);
++                }
 +            }
 +
 +            for (int k = 0; par4 && k < par3Texture.getHeight(); ++k)
              {
                  int l = par2 + k;
                  int i1 = k * par3Texture.getWidth() * 4;
-@@ -222,7 +248,7 @@
+@@ -222,7 +257,7 @@
  
                  if (par4)
                  {
@@ -44,7 +53,7 @@
                  }
  
                  for (int k1 = 0; k1 < par3Texture.getWidth(); ++k1)
-@@ -232,7 +258,7 @@
+@@ -232,7 +267,7 @@
  
                      if (par4)
                      {
@@ -53,3 +62,12 @@
                      }
  
                      this.textureData.put(l1 + 0, bytebuffer.get(i2 + 0));
+@@ -248,7 +283,7 @@
+             {
+                 this.createTexture();
+             }
+-            else
++            else if (update) //Don't regenerate the texture if we updated in this function
+             {
+                 this.textureCreated = false;
+             }
