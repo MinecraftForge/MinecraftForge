@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderEngine;
+import net.minecraft.client.renderer.texture.Texture;
 import net.minecraft.client.texturepacks.ITexturePack;
 import net.minecraft.world.IBlockAccess;
 
@@ -69,5 +70,10 @@ public class FMLRenderAccessLibrary
     public static boolean renderItemAsFull3DBlock(int modelId)
     {
         return RenderingRegistry.instance().renderItemAsFull3DBlock(modelId);
+    }
+
+    public static void doTextureCopy(Texture atlas, Texture source, int targetX, int targetY)
+    {
+        TextureFXManager.instance().getHelper().doTextureCopy(atlas, source, targetX, targetY);        
     }
 }

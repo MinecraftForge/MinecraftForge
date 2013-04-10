@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureClock.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureClock.java
+@@ -66,7 +66,7 @@
+         if (i != this.field_94222_f)
+         {
+             this.field_94222_f = i;
+-            this.field_94228_a.func_94281_a(this.field_94224_d, this.field_94225_e, (Texture)this.field_94226_b.get(this.field_94222_f), this.field_94227_c);
++            this.field_94228_a.func_94281_a(this.field_94224_d, this.field_94225_e, (Texture)this.field_94226_b.get(this.field_94222_f), false); //FML: We rotate the textures in init.
+         }
+     }
+ }
