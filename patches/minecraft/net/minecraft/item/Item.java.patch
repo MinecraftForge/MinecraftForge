@@ -63,6 +63,17 @@
      }
 +
 +    /* =========================================================== FORGE START ===============================================================*/
++	 @SideOnly(Side.CLIENT)
++   
++    /**
++     * Returns the unlocalized name without the item. prefix. 
++     * Caution: client-only.
++     */
++    public String getUnlocalizedName2()
++    {
++        return this.unlocalizedName;
++    }
++
 +    /**
 +     * Called when a player drops the item into the world,
 +     * returning false from this will prevent the item from
