@@ -60,16 +60,9 @@ public class WavefrontObject implements IModelCustom
         }
     }
     
-    public void load(String fileName)
+    public IModelCustom load(String fileName)
     {
-        try
-        {
-            loadObjModel(this.getClass().getResource(fileName));
-        }
-        catch (DataFormatException e)
-        {
-            e.printStackTrace();
-        }
+        return new WavefrontObject(fileName);
     }
     
     public void load()

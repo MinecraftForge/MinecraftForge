@@ -4,7 +4,7 @@ package net.minecraftforge.client.model;
 
 public interface IModelCustom {
     
-    public abstract void load(String fileName);
+    public abstract IModelCustom load(String fileName);
     
     public abstract void renderAll();
     
