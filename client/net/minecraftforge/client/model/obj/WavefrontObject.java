@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import java.util.zip.DataFormatException;
 
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraftforge.client.model.IModelCustom;
 
 import org.lwjgl.opengl.GL11;
 
@@ -22,7 +23,7 @@ import cpw.mods.fml.relauncher.SideOnly;
  *  Based heavily off of the specifications found at http://en.wikipedia.org/wiki/Wavefront_.obj_file
  */
 @SideOnly(Side.CLIENT)
-public class WavefrontObject
+public class WavefrontObject implements IModelCustom
 {
 
     private static Pattern vertexPattern = Pattern.compile("(v( (\\-){0,1}\\d+\\.\\d+){3,4} *\\n)|(v( (\\-){0,1}\\d+\\.\\d+){3,4} *$)");
@@ -51,21 +52,31 @@ public class WavefrontObject
         
         try
         {
-            parseObjModel(this.getClass().getResource(fileName));
+            loadObjModel(this.getClass().getResource(fileName));
         }
         catch (DataFormatException e)
         {
             e.printStackTrace();
         }
     }
-
-    public WavefrontObject(URL fileURL)
+    
+    public void load(String fileName)
     {
-        this.fileName = fileURL.getFile();
-        
         try
         {
-            parseObjModel(fileURL);
+            loadObjModel(this.getClass().getResource(fileName));
+        }
+        catch (DataFormatException e)
+        {
+            e.printStackTrace();
+        }
+    }
+    
+    public void load()
+    {
+        try
+        {
+            loadObjModel(this.getClass().getResource(fileName));
         }
         catch (DataFormatException e)
         {
@@ -73,7 +84,7 @@ public class WavefrontObject
         }
     }
 
-    private void parseObjModel(URL fileURL) throws DataFormatException
+    private void loadObjModel(URL fileURL) throws DataFormatException
     {
         BufferedReader reader = null;
         InputStream inputStream = null;
@@ -209,6 +220,17 @@ public class WavefrontObject
                 {
                     groupObject.render();
                 }
+            }
+        }
+    }
+    
+    public void renderPart(String partName)
+    {
+        for (GroupObject groupObject : groupObjects)
+        {
+            if (partName.equalsIgnoreCase(groupObject.name))
+            {
+                groupObject.render();
             }
         }
     }
