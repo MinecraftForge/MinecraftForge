@@ -20,7 +20,12 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import org.lwjgl.opengl.ContextCapabilities;
+import org.lwjgl.opengl.GLContext;
+
 import com.google.common.collect.Maps;
+
+import cpw.mods.fml.common.FMLLog;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderEngine;
@@ -33,6 +38,8 @@ public class TextureFXManager
 
     private Map<Integer,TextureHolder> texturesById = Maps.newHashMap();
     private Map<String, TextureHolder> texturesByName = Maps.newHashMap();
+
+    private TextureHelper helper;
 
     void setClient(Minecraft client)
     {
@@ -101,5 +108,36 @@ public class TextureFXManager
     public Dimension getTextureDimensions(String texture)
     {
         return texturesByName.containsKey(texture) ? new Dimension(texturesByName.get(texture).x, texturesByName.get(texture).y) : new Dimension(1,1);
+    }
+
+
+    public TextureHelper getHelper()
+    {
+        if (helper == null)
+        {
+            ContextCapabilities capabilities = GLContext.getCapabilities();
+            boolean has43 = false;
+            try
+            {
+                has43 = capabilities.getClass().getField("GL_ARB_copy_image").getBoolean(capabilities);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                // NOOP - LWJGL needs updating
+                FMLLog.info("Forge Mod Loader has detected an older LWJGL version, new advanced texture animation features are disabled");
+            }
+//            if (has43 && Boolean.parseBoolean(System.getProperty("fml.useGL43","true")))
+//            {
+//                FMLLog.info("Using the new OpenGL 4.3 advanced capability for animations");
+//                helper = new OpenGL43TextureHelper();
+//            }
+//            else
+            {
+                FMLLog.info("Not using advanced OpenGL 4.3 advanced capability for animations : OpenGL 4.3 is %s", has43 ? "available" : "not available");
+                helper = new CopySubimageTextureHelper();
+            }
+        }
+        return helper;
     }
 }
