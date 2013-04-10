@@ -155,7 +155,7 @@
      }
  
      /**
-@@ -1435,4 +1455,898 @@
+@@ -1439,4 +1459,898 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -1023,7 +1023,7 @@
 +     */
 +    public boolean isBeaconBase(World worldObj, int x, int y, int z, int beaconX, int beaconY, int beaconZ)
 +    {
-+        return (blockID == blockEmerald.blockID || blockID == blockGold.blockID || blockID == blockDiamond.blockID || blockID == blockSteel.blockID);
++        return (blockID == blockEmerald.blockID || blockID == blockGold.blockID || blockID == blockDiamond.blockID || blockID == blockIron.blockID);
 +    }
 +
 +    /**

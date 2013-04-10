@@ -86,14 +86,14 @@
 +            this.atlasTexture.writeImage("debug.stitched_" + this.textureName + ".png");
 +        }
 +        ForgeHooksClient.onTextureStitchedPost(this);
-         this.atlasTexture.createTexture();
+         this.atlasTexture.uploadTexture();
      }
  
 @@ -202,6 +227,7 @@
          if (par1Str == null)
          {
              (new RuntimeException("Don\'t register null!")).printStackTrace();
-+            par1Str = "null"; //Don't allow things to actually register null.. 
++            par1Str = "null"; //Don't allow things to actually register null..
          }
  
          TextureStitched texturestitched = (TextureStitched)this.textureStichedMap.get(par1Str);
@@ -106,9 +106,9 @@
 +    //                                           Forge Start
 +    //===================================================================================================
 +    /**
-+     * Grabs the registered entry for the specified name, returning null if there was not a entry. 
++     * Grabs the registered entry for the specified name, returning null if there was not a entry.
 +     * Opposed to func_94245_a, this will not instantiate the entry, useful to test if a maping exists.
-+     * 
++     *
 +     * @param name The name of the entry to find
 +     * @return The registered entry, null if nothing was registered.
 +     */
@@ -119,8 +119,8 @@
 +
 +    /**
 +     * Adds a texture registry entry to this map for the specified name if one does not already exist.
-+     * Returns false if the map already contains a entry for the specified name. 
-+     * 
++     * Returns false if the map already contains a entry for the specified name.
++     *
 +     * @param name Entry name
 +     * @param entry Entry instance
 +     * @return True if the entry was added to the map, false otherwise.

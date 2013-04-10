@@ -30,7 +30,7 @@
  {
 @@ -238,13 +244,16 @@
      /** Icon index in the icons table. */
-     protected Icon iconIndex;
+     protected Icon itemIcon;
  
 +    /** FORGE: To disable repair recipes. */
 +    protected boolean canRepair = true;

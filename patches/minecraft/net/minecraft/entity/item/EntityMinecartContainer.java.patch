@@ -9,7 +9,7 @@
  
  public abstract class EntityMinecartContainer extends EntityMinecart implements IInventory
  {
-@@ -278,6 +280,10 @@
+@@ -283,6 +285,10 @@
       */
      public boolean interact(EntityPlayer par1EntityPlayer)
      {

@@ -38,7 +38,7 @@
  
      @SideOnly(Side.CLIENT)
 @@ -249,4 +259,10 @@
-             this.iconArray[i] = par1IconRegister.registerIcon(field_94470_a[i]);
+             this.iconArray[i] = par1IconRegister.registerIcon(cocoaIcons[i]);
          }
      }
 +

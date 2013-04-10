@@ -14,9 +14,9 @@
  import net.minecraft.nbt.NBTTagCompound;
  
  public class PotionEffect
-@@ -24,6 +29,9 @@
-     @SideOnly(Side.CLIENT)
-     private boolean field_100013_f;
+@@ -26,6 +31,9 @@
+     /** True if potion effect duration is at maximum, false otherwise. */
+     private boolean isPotionDurationMax;
  
 +    /** List of ItemStack that can cure the potion effect **/
 +    private List<ItemStack> curativeItems;
@@ -24,7 +24,7 @@
      public PotionEffect(int par1, int par2)
      {
          this(par1, par2, 0);
-@@ -40,6 +48,8 @@
+@@ -42,6 +50,8 @@
          this.duration = par2;
          this.amplifier = par3;
          this.isAmbient = par4;
@@ -33,7 +33,7 @@
      }
  
      public PotionEffect(PotionEffect par1PotionEffect)
-@@ -47,6 +57,7 @@
+@@ -49,6 +59,7 @@
          this.potionID = par1PotionEffect.potionID;
          this.duration = par1PotionEffect.duration;
          this.amplifier = par1PotionEffect.amplifier;
@@ -41,7 +41,7 @@
      }
  
      /**
-@@ -91,6 +102,63 @@
+@@ -93,6 +104,63 @@
      public int getAmplifier()
      {
          return this.amplifier;

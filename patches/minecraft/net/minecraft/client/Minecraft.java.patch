@@ -121,19 +121,19 @@
 -                {
 -                    EntityMinecart entityminecart = (EntityMinecart)this.objectMouseOver.entityHit;
 -
--                    if (entityminecart.func_94087_l() == 2)
+-                    if (entityminecart.getMinecartType() == 2)
 -                    {
 -                        j = Item.minecartPowered.itemID;
 -                    }
--                    else if (entityminecart.func_94087_l() == 1)
+-                    else if (entityminecart.getMinecartType() == 1)
 -                    {
 -                        j = Item.minecartCrate.itemID;
 -                    }
--                    else if (entityminecart.func_94087_l() == 3)
+-                    else if (entityminecart.getMinecartType() == 3)
 -                    {
 -                        j = Item.tntMinecart.itemID;
 -                    }
--                    else if (entityminecart.func_94087_l() == 5)
+-                    else if (entityminecart.getMinecartType() == 5)
 -                    {
 -                        j = Item.hopperMinecart.itemID;
 -                    }

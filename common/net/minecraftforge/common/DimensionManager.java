@@ -66,12 +66,12 @@ public class DimensionManager
     }
 
     /**
-     * Unregisters a Provider type, and returns a array of all dimensions that are 
+     * Unregisters a Provider type, and returns a array of all dimensions that are
      * registered to this provider type.
-     * If the return size is greater then 0, it is required that the caller either 
-     * change those dimensions's registered type, or replace this type before the 
+     * If the return size is greater then 0, it is required that the caller either
+     * change those dimensions's registered type, or replace this type before the
      * world is attempted to load, else the loader will throw an exception.
-     * 
+     *
      * @param id The provider type ID to unreigster
      * @return An array containing all dimension IDs still registered to this provider type.
      */
@@ -409,13 +409,13 @@ public class DimensionManager
     {
         if (DimensionManager.getWorld(0) != null)
         {
-            return ((SaveHandler)DimensionManager.getWorld(0).getSaveHandler()).getSaveDirectory();
+            return ((SaveHandler)DimensionManager.getWorld(0).getSaveHandler()).getWorldDirectory();
         }
         else if (MinecraftServer.getServer() != null)
         {
             MinecraftServer srv = MinecraftServer.getServer();
             SaveHandler saveHandler = (SaveHandler) srv.getActiveAnvilConverter().getSaveLoader(srv.getFolderName(), false);
-            return saveHandler.getSaveDirectory();
+            return saveHandler.getWorldDirectory();
         }
         else
         {

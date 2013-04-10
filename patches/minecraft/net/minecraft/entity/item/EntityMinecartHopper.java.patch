@@ -9,7 +9,7 @@
  
  public class EntityMinecartHopper extends EntityMinecartContainer implements Hopper
  {
-@@ -53,6 +55,10 @@
+@@ -54,6 +56,10 @@
       */
      public boolean interact(EntityPlayer par1EntityPlayer)
      {

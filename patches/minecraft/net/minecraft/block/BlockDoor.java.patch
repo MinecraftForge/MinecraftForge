@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockDoor.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockDoor.java
-@@ -301,7 +301,7 @@
+@@ -303,7 +303,7 @@
      {
          if (this.blockMaterial == Material.iron)
          {

@@ -10,8 +10,8 @@
      {
          super(par1World, par2, par4, par6, par8, par10, par12);
          this.blockInstance = par14Block;
--        this.func_94052_a(par17RenderEngine, par14Block.getBlockTextureFromSideAndMetadata(0, par16));
-+        this.func_94052_a(par17RenderEngine, par14Block.getBlockTextureFromSideAndMetadata(par15, par16));
+-        this.setParticleIcon(par17RenderEngine, par14Block.getIcon(0, par16));
++        this.setParticleIcon(par17RenderEngine, par14Block.getIcon(par15, par16));
          this.particleGravity = par14Block.blockParticleGravity;
          this.particleRed = this.particleGreen = this.particleBlue = 0.6F;
          this.particleScale /= 2.0F;

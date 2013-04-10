@@ -8,9 +8,9 @@
  import java.util.zip.DataFormatException;
  import java.util.zip.Deflater;
  import java.util.zip.Inflater;
-@@ -26,6 +27,9 @@
-     private int dataLength;
-     private boolean field_92076_h;
+@@ -31,6 +32,9 @@
+      */
+     private boolean skyLightSent;
      private static byte[] chunkDataNotCompressed = new byte[0];
 +    private int maxLen = 0;
 +
@@ -18,7 +18,7 @@
  
      public Packet56MapChunks() {}
  
-@@ -44,15 +48,6 @@
+@@ -49,15 +53,6 @@
          {
              Chunk chunk = (Chunk)par1List.get(k);
              Packet51MapChunkData packet51mapchunkdata = Packet51MapChunk.getMapChunkData(chunk, true, 65535);
@@ -34,7 +34,7 @@
              j += packet51mapchunkdata.compressedData.length;
              this.chunkPostX[k] = chunk.xPosition;
              this.chunkPosZ[k] = chunk.zPosition;
-@@ -60,15 +55,29 @@
+@@ -65,15 +60,29 @@
              this.field_73588_b[k] = packet51mapchunkdata.chunkHasAddSectionFlag;
              this.field_73584_f[k] = packet51mapchunkdata.compressedData;
          }
@@ -67,7 +67,7 @@
          }
          finally
          {
-@@ -150,6 +159,16 @@
+@@ -155,6 +164,16 @@
       */
      public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException
      {
@@ -83,4 +83,4 @@
 +
          par1DataOutputStream.writeShort(this.chunkPostX.length);
          par1DataOutputStream.writeInt(this.dataLength);
-         par1DataOutputStream.writeBoolean(this.field_92076_h);
+         par1DataOutputStream.writeBoolean(this.skyLightSent);

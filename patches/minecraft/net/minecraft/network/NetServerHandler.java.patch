@@ -72,8 +72,8 @@
  
                  AxisAlignedBB axisalignedbb = this.playerEntity.boundingBox.copy().expand((double)f4, (double)f4, (double)f4).addCoord(0.0D, -0.55D, 0.0D);
  
--                if (!this.mcServer.isFlightAllowed() && !this.playerEntity.theItemInWorldManager.isCreative() && !worldserver.isAABBNonEmpty(axisalignedbb))
-+                if (!this.mcServer.isFlightAllowed() && !this.playerEntity.theItemInWorldManager.isCreative() && !worldserver.isAABBNonEmpty(axisalignedbb)  && !this.playerEntity.capabilities.allowFlying)
+-                if (!this.mcServer.isFlightAllowed() && !this.playerEntity.theItemInWorldManager.isCreative() && !worldserver.checkBlockCollision(axisalignedbb))
++                if (!this.mcServer.isFlightAllowed() && !this.playerEntity.theItemInWorldManager.isCreative() && !worldserver.checkBlockCollision(axisalignedbb)  && !this.playerEntity.capabilities.allowFlying)
                  {
                      if (d12 >= -0.03125D)
                      {
@@ -149,3 +149,12 @@
              }
          }
      }
+@@ -1220,7 +1263,7 @@
+             }
+         }
+     }
+-    
++
+ 
+     @Override
+ 
