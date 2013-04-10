@@ -160,7 +160,25 @@
      /**
       * Remove the speified potion effect from this entity.
       */
-@@ -3077,4 +3124,42 @@
+@@ -2982,6 +3029,17 @@
+      */
+     public void swingItem()
+     {
++        ItemStack stack = this.getHeldItem();
++
++        if (stack != null && stack.getItem() != null)
++        {
++            Item item = stack.getItem();
++            if (item.onEntitySwing(this, stack))
++            {
++                return;
++            }
++        }
++
+         if (!this.isSwingInProgress || this.swingProgressInt >= this.getArmSwingAnimationEnd() / 2 || this.swingProgressInt < 0)
+         {
+             this.swingProgressInt = -1;
+@@ -3077,4 +3135,42 @@
      {
          this.canPickUpLoot = par1;
      }

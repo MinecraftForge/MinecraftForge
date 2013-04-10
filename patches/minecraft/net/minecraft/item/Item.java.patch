@@ -58,7 +58,7 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
      }
-@@ -720,4 +734,407 @@
+@@ -720,4 +734,419 @@
      {
          StatList.initStats();
      }
@@ -464,5 +464,17 @@
 +    public ModelBiped getArmorModel(EntityLiving entityLiving, ItemStack itemStack, int armorSlot)
 +    {
 +        return null;
++    }
++
++    /**
++     * Called when a entity tries to play the 'swing' animation.
++     *  
++     * @param entityLiving The entity swinging the item.
++     * @param stack The Item stack
++     * @return True to cancel any further processing by EntityLiving 
++     */
++    public boolean onEntitySwing(EntityLiving entityLiving, ItemStack stack)
++    {
++        return false;
 +    }
  }
