@@ -1,7 +1,7 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/texture/TextureStitched.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/texture/TextureStitched.java
-@@ -2,9 +2,13 @@
- 
+@@ -3,9 +3,13 @@
+ import cpw.mods.fml.client.TextureFXManager;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
 +
@@ -14,8 +14,8 @@
  import net.minecraft.util.Icon;
  import net.minecraft.util.Tuple;
  
-@@ -238,4 +242,28 @@
-             this.listAnimationTuples = arraylist;
+@@ -252,4 +256,28 @@
+             t.createAndUploadTexture();
          }
      }
 +
