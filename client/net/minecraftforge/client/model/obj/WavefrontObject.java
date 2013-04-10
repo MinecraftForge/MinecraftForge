@@ -8,10 +8,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.DataFormatException;
 
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraftforge.client.model.IModelCustom;
+import net.minecraftforge.client.model.ModelFormatException;
 
 import org.lwjgl.opengl.GL11;
 
@@ -34,7 +34,7 @@ public class WavefrontObject implements IModelCustom
     private static Pattern face_V_VN_Pattern = Pattern.compile("(f( \\d+//\\d+){3,4} *\\n)|(f( \\d+//\\d+){3,4} *$)");
     private static Pattern face_V_Pattern = Pattern.compile("(f( \\d+){3,4} *\\n)|(f( \\d+){3,4} *$)");
     private static Pattern groupObjectPattern = Pattern.compile("([go]( [\\w\\d]+) *\\n)|([go]( [\\w\\d]+) *$)");
-    
+
     private static Matcher vertexMatcher, vertexNormalMatcher, textureCoordinateMatcher;
     private static Matcher face_V_VT_VN_Matcher, face_V_VT_Matcher, face_V_VN_Matcher, face_V_Matcher;
     private static Matcher groupObjectMatcher;
@@ -46,42 +46,17 @@ public class WavefrontObject implements IModelCustom
     private GroupObject currentGroupObject;
     private String fileName;
 
-    public WavefrontObject(String fileName)
+    public WavefrontObject(String fileName, URL resource) throws ModelFormatException
     {
         this.fileName = fileName;
-        
-        try
-        {
-            loadObjModel(this.getClass().getResource(fileName));
-        }
-        catch (DataFormatException e)
-        {
-            e.printStackTrace();
-        }
-    }
-    
-    public IModelCustom load(String fileName)
-    {
-        return new WavefrontObject(fileName);
-    }
-    
-    public void load()
-    {
-        try
-        {
-            loadObjModel(this.getClass().getResource(fileName));
-        }
-        catch (DataFormatException e)
-        {
-            e.printStackTrace();
-        }
+        loadObjModel(resource);
     }
 
-    private void loadObjModel(URL fileURL) throws DataFormatException
+    private void loadObjModel(URL fileURL) throws ModelFormatException
     {
         BufferedReader reader = null;
         InputStream inputStream = null;
-        
+
         String currentLine = null;
         int lineCount = 0;
 
@@ -158,7 +133,7 @@ public class WavefrontObject implements IModelCustom
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            throw new ModelFormatException("IO Exception reading model format", e);
         }
         finally
         {
@@ -168,16 +143,16 @@ public class WavefrontObject implements IModelCustom
             }
             catch (IOException e)
             {
-                e.printStackTrace();
+                // hush
             }
-            
+
             try
             {
                 inputStream.close();
             }
             catch (IOException e)
             {
-                e.printStackTrace();
+                // hush
             }
         }
     }
@@ -216,7 +191,7 @@ public class WavefrontObject implements IModelCustom
             }
         }
     }
-    
+
     public void renderPart(String partName)
     {
         for (GroupObject groupObject : groupObjects)
@@ -242,7 +217,7 @@ public class WavefrontObject implements IModelCustom
         }
     }
 
-    private Vertex parseVertex(String line, int lineCount) throws DataFormatException
+    private Vertex parseVertex(String line, int lineCount) throws ModelFormatException
     {
         Vertex vertex = null;
 
@@ -253,29 +228,29 @@ public class WavefrontObject implements IModelCustom
 
             try
             {
-                if (tokens.length == 3)
+                if (tokens.length == 2)
+                {
+                    return new Vertex(Float.parseFloat(tokens[0]), Float.parseFloat(tokens[1]));
+                }
+                else if (tokens.length == 3)
                 {
                     return new Vertex(Float.parseFloat(tokens[0]), Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2]));
-                }
-                else if (tokens.length == 4)
-                {
-                    return new Vertex(Float.parseFloat(tokens[0]), Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2]), Float.parseFloat(tokens[3]));
                 }
             }
             catch (NumberFormatException e)
             {
-                e.printStackTrace();
+                throw new ModelFormatException(String.format("Number formatting error at line %d",lineCount), e);
             }
         }
         else
         {
-            throw new DataFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Incorrect format");
+            throw new ModelFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Incorrect format");
         }
 
         return vertex;
     }
 
-    private Vertex parseVertexNormal(String line, int lineCount) throws DataFormatException
+    private Vertex parseVertexNormal(String line, int lineCount) throws ModelFormatException
     {
         Vertex vertexNormal = null;
 
@@ -291,18 +266,18 @@ public class WavefrontObject implements IModelCustom
             }
             catch (NumberFormatException e)
             {
-                e.printStackTrace();
+                throw new ModelFormatException(String.format("Number formatting error at line %d",lineCount), e);
             }
         }
         else
         {
-            throw new DataFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Incorrect format");
+            throw new ModelFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Incorrect format");
         }
 
         return vertexNormal;
     }
 
-    private TextureCoordinate parseTextureCoordinate(String line, int lineCount) throws DataFormatException
+    private TextureCoordinate parseTextureCoordinate(String line, int lineCount) throws ModelFormatException
     {
         TextureCoordinate textureCoordinate = null;
 
@@ -320,18 +295,18 @@ public class WavefrontObject implements IModelCustom
             }
             catch (NumberFormatException e)
             {
-                e.printStackTrace();
+                throw new ModelFormatException(String.format("Number formatting error at line %d",lineCount), e);
             }
         }
         else
         {
-            throw new DataFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Incorrect format");
+            throw new ModelFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Incorrect format");
         }
 
         return textureCoordinate;
     }
 
-    private Face parseFace(String line, int lineCount) throws DataFormatException
+    private Face parseFace(String line, int lineCount) throws ModelFormatException
     {
         Face face = null;
 
@@ -351,7 +326,7 @@ public class WavefrontObject implements IModelCustom
                 }
                 else if (currentGroupObject.glDrawingMode != GL11.GL_TRIANGLES)
                 {
-                    throw new DataFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Invalid number of points for face (expected 4, found " + tokens.length + ")");
+                    throw new ModelFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Invalid number of points for face (expected 4, found " + tokens.length + ")");
                 }
             }
             else if (tokens.length == 4)
@@ -362,7 +337,7 @@ public class WavefrontObject implements IModelCustom
                 }
                 else if (currentGroupObject.glDrawingMode != GL11.GL_QUADS)
                 {
-                    throw new DataFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Invalid number of points for face (expected 3, found " + tokens.length + ")");
+                    throw new ModelFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Invalid number of points for face (expected 3, found " + tokens.length + ")");
                 }
             }
 
@@ -422,18 +397,18 @@ public class WavefrontObject implements IModelCustom
             }
             else
             {
-                throw new DataFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Incorrect format");
+                throw new ModelFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Incorrect format");
             }
         }
         else
         {
-            throw new DataFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Incorrect format");
+            throw new ModelFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Incorrect format");
         }
 
         return face;
     }
 
-    private GroupObject parseGroupObject(String line, int lineCount) throws DataFormatException
+    private GroupObject parseGroupObject(String line, int lineCount) throws ModelFormatException
     {
         GroupObject group = null;
 
@@ -448,7 +423,7 @@ public class WavefrontObject implements IModelCustom
         }
         else
         {
-            throw new DataFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Incorrect format");
+            throw new ModelFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Incorrect format");
         }
 
         return group;
@@ -465,7 +440,7 @@ public class WavefrontObject implements IModelCustom
         {
             vertexMatcher.reset();
         }
-        
+
         vertexMatcher = vertexPattern.matcher(line);
         return vertexMatcher.matches();
     }
@@ -501,11 +476,11 @@ public class WavefrontObject implements IModelCustom
         textureCoordinateMatcher = textureCoordinatePattern.matcher(line);
         return textureCoordinateMatcher.matches();
     }
-    
+
     /***
      * Verifies that the given line from the model file is a valid face that is described by vertices, texture coordinates, and vertex normals
      * @param line the line being validated
-     * @return true if the line is a valid face that matches the format "f v1/vt1/vn1 ..." (with a minimum of 3 points in the face, and a maximum of 4), false otherwise 
+     * @return true if the line is a valid face that matches the format "f v1/vt1/vn1 ..." (with a minimum of 3 points in the face, and a maximum of 4), false otherwise
      */
     private static boolean isValidFace_V_VT_VN_Line(String line)
     {
@@ -517,11 +492,11 @@ public class WavefrontObject implements IModelCustom
         face_V_VT_VN_Matcher = face_V_VT_VN_Pattern.matcher(line);
         return face_V_VT_VN_Matcher.matches();
     }
-    
+
     /***
      * Verifies that the given line from the model file is a valid face that is described by vertices and texture coordinates
      * @param line the line being validated
-     * @return true if the line is a valid face that matches the format "f v1/vt1 ..." (with a minimum of 3 points in the face, and a maximum of 4), false otherwise 
+     * @return true if the line is a valid face that matches the format "f v1/vt1 ..." (with a minimum of 3 points in the face, and a maximum of 4), false otherwise
      */
     private static boolean isValidFace_V_VT_Line(String line)
     {
@@ -533,11 +508,11 @@ public class WavefrontObject implements IModelCustom
         face_V_VT_Matcher = face_V_VT_Pattern.matcher(line);
         return face_V_VT_Matcher.matches();
     }
-    
+
     /***
      * Verifies that the given line from the model file is a valid face that is described by vertices and vertex normals
      * @param line the line being validated
-     * @return true if the line is a valid face that matches the format "f v1//vn1 ..." (with a minimum of 3 points in the face, and a maximum of 4), false otherwise 
+     * @return true if the line is a valid face that matches the format "f v1//vn1 ..." (with a minimum of 3 points in the face, and a maximum of 4), false otherwise
      */
     private static boolean isValidFace_V_VN_Line(String line)
     {
@@ -549,11 +524,11 @@ public class WavefrontObject implements IModelCustom
         face_V_VN_Matcher = face_V_VN_Pattern.matcher(line);
         return face_V_VN_Matcher.matches();
     }
-    
+
     /***
      * Verifies that the given line from the model file is a valid face that is described by only vertices
      * @param line the line being validated
-     * @return true if the line is a valid face that matches the format "f v1 ..." (with a minimum of 3 points in the face, and a maximum of 4), false otherwise 
+     * @return true if the line is a valid face that matches the format "f v1 ..." (with a minimum of 3 points in the face, and a maximum of 4), false otherwise
      */
     private static boolean isValidFace_V_Line(String line)
     {
@@ -569,17 +544,17 @@ public class WavefrontObject implements IModelCustom
     /***
      * Verifies that the given line from the model file is a valid face of any of the possible face formats
      * @param line the line being validated
-     * @return true if the line is a valid face that matches any of the valid face formats, false otherwise 
+     * @return true if the line is a valid face that matches any of the valid face formats, false otherwise
      */
     private static boolean isValidFaceLine(String line)
-    {        
+    {
         return isValidFace_V_VT_VN_Line(line) || isValidFace_V_VT_Line(line) || isValidFace_V_VN_Line(line) || isValidFace_V_Line(line);
     }
 
     /***
      * Verifies that the given line from the model file is a valid group (or object)
      * @param line the line being validated
-     * @return true if the line is a valid group (or object), false otherwise 
+     * @return true if the line is a valid group (or object), false otherwise
      */
     private static boolean isValidGroupObjectLine(String line)
     {
@@ -590,5 +565,11 @@ public class WavefrontObject implements IModelCustom
 
         groupObjectMatcher = groupObjectPattern.matcher(line);
         return groupObjectMatcher.matches();
+    }
+
+    @Override
+    public String getType()
+    {
+        return "obj";
     }
 }
