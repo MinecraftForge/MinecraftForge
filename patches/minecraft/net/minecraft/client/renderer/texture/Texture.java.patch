@@ -7,72 +7,47 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.awt.image.BufferedImage;
-@@ -206,6 +207,7 @@
+@@ -9,6 +10,8 @@
+ import javax.imageio.ImageIO;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.renderer.OpenGlHelper;
++import net.minecraft.src.FMLRenderAccessLibrary;
++
+ import org.lwjgl.opengl.GL11;
+ import org.lwjgl.opengl.GL12;
+ 
+@@ -206,6 +209,12 @@
      {
          if (this.field_94300_h != 32879)
          {
-+            if (!field_94303_q) {
++            if (field_94303_q && !p_94281_4_)
++            {
++                FMLRenderAccessLibrary.doTextureCopy(this, p_94281_3_, p_94281_1_, p_94281_2_);
++                return;
++            }
++
              ByteBuffer bytebuffer = p_94281_3_.func_94273_h();
              this.field_94302_r.position(0);
              bytebuffer.position(0);
-@@ -216,21 +218,21 @@
-                 int i1 = k * p_94281_3_.func_94275_d() * 4;
-                 int j1 = l * this.field_94289_d * 4;
+@@ -218,7 +227,7 @@
  
--                if (p_94281_4_)
--                {
--                    l = p_94281_2_ + (p_94281_3_.func_94276_e() - k);
--                }
--
-+//                if (p_94281_4_)
-+//                {
-+//                    l = p_94281_2_ + (p_94281_3_.func_94276_e() - k);
-+//                }
-+//
-                 for (int k1 = 0; k1 < p_94281_3_.func_94275_d(); ++k1)
+                 if (p_94281_4_)
                  {
-                     int l1 = j1 + (k1 + p_94281_1_) * 4;
-                     int i2 = i1 + k1 * 4;
+-                    l = p_94281_2_ + (p_94281_3_.func_94276_e() - k);
++                    l = p_94281_1_ + (p_94281_3_.func_94276_e() - k - 1); //BUGFIX: targetY -> targetX and -1
+                 }
  
--                    if (p_94281_4_)
--                    {
+                 for (int k1 = 0; k1 < p_94281_3_.func_94275_d(); ++k1)
+@@ -228,7 +237,7 @@
+ 
+                     if (p_94281_4_)
+                     {
 -                        l1 = p_94281_1_ + k1 * this.field_94289_d * 4 + l * 4;
--                    }
--
-+//                    if (p_94281_4_)
-+//                    {
-+//                        l1 = p_94281_1_ + k1 * this.field_94289_d * 4 + l * 4;
-+//                    }
-+//
++                        l1 = (p_94281_2_ + k1) * this.field_94289_d * 4 + l * 4; //BUGFIX: targetX -> targetY and parens
+                     }
+ 
                      this.field_94302_r.put(l1 + 0, bytebuffer.get(i2 + 0));
-                     this.field_94302_r.put(l1 + 1, bytebuffer.get(i2 + 1));
-                     this.field_94302_r.put(l1 + 2, bytebuffer.get(i2 + 2));
-@@ -239,15 +241,20 @@
-             }
- 
-             this.field_94302_r.position(this.field_94289_d * this.field_94290_e * 4);
-+            }
-+            else
-+            {
-+                TextureFXManager.instance().getHelper().doTextureCopy(this, p_94281_3_, p_94281_1_, p_94281_2_);
-+            }
- 
-             if (this.field_94304_p)
-             {
-                 this.func_94285_g();
-             }
--            else
--            {
--                this.field_94303_q = false;
--            }
-+//            else
-+//            {
-+//                this.field_94303_q = false;
-+//            }
-         }
-     }
- 
-@@ -371,4 +378,13 @@
+@@ -371,4 +380,13 @@
      {
          return this.field_94302_r;
      }
