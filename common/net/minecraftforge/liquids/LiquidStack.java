@@ -27,6 +27,7 @@ public class LiquidStack
     public final int itemID;
     public int amount;
     public final int itemMeta;
+    public NBTTagCompound extra;
 
     public LiquidStack(int itemID,  int amount) { this(itemID,        amount, 0); }
     public LiquidStack(Item item,   int amount) { this(item.itemID,   amount, 0); }
@@ -39,12 +40,25 @@ public class LiquidStack
         this.itemMeta = itemDamage;
     }
 
+    public LiquidStack(int itemID, int amount, int itemDamage, NBTTagCompound nbt)
+    {
+        this(itemID, amount, itemDamage);
+        if (nbt != null)
+        {
+            extra = (NBTTagCompound)nbt.copy();
+        }
+    }
+
     public NBTTagCompound writeToNBT(NBTTagCompound nbt)
     {
         nbt.setInteger("Amount", amount);
         nbt.setShort("Id", (short)itemID);
         nbt.setShort("Meta", (short)itemMeta);
         nbt.setString("LiquidName", LiquidDictionary.findLiquidName(this));
+        if (extra != null)
+        {
+            nbt.setTag("extra", extra);
+        }
         return nbt;
     }
 
@@ -64,7 +78,7 @@ public class LiquidStack
      */
     public LiquidStack copy()
     {
-        return new LiquidStack(itemID, amount, itemMeta);
+        return new LiquidStack(itemID, amount, itemMeta, extra);
     }
 
     /**
@@ -73,7 +87,7 @@ public class LiquidStack
      */
     public boolean isLiquidEqual(LiquidStack other)
     {
-        return other != null && itemID == other.itemID && itemMeta == other.itemMeta;
+        return other != null && itemID == other.itemID && itemMeta == other.itemMeta && (extra == null ? other.extra == null : extra.equals(other.extra));
     }
 
     /**
@@ -109,7 +123,12 @@ public class LiquidStack
      */
     public ItemStack asItemStack()
     {
-        return new ItemStack(itemID, 1, itemMeta);
+        ItemStack stack = new ItemStack(itemID, 1, itemMeta);
+        if (extra != null)
+        {
+            stack.stackTagCompound = (NBTTagCompound)extra.copy();
+        }
+        return stack;
     }
 
     /**
@@ -139,6 +158,10 @@ public class LiquidStack
         }
         int amount = nbt.getInteger("Amount");
         LiquidStack liquidstack = new LiquidStack(itemID, amount, itemMeta);
+        if (nbt.hasKey("extra"))
+        {
+            liquidstack.extra = nbt.getCompoundTag("extra");
+        }
         return liquidstack.itemID == 0 ? null : liquidstack;
     }
 
@@ -223,7 +246,7 @@ public class LiquidStack
         if (ob instanceof LiquidStack)
         {
             LiquidStack ls = (LiquidStack)ob;
-            return ls.itemID == itemID && ls.itemMeta == itemMeta;
+            return ls.itemID == itemID && ls.itemMeta == itemMeta && (extra == null ? ls.extra == null : extra.equals(ls.extra));
         }
         return false;
     }
