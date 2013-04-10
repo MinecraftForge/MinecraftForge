@@ -1,7 +1,6 @@
 package cpw.mods.fml.client;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL43;
 
 import net.minecraft.client.renderer.texture.Texture;
 import net.minecraft.client.renderer.texture.TextureStitched;
