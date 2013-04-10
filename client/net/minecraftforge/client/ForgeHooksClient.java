@@ -44,6 +44,18 @@ public class ForgeHooksClient
         return FMLClientHandler.instance().getClient().renderEngine;
     }
 
+    @Deprecated //Deprecated in 1.5.1, move to the more detailed one below.
+    @SuppressWarnings("deprecation")
+    public static String getArmorTexture(ItemStack armor, String _default)
+    {
+        String result = null;
+        if (armor.getItem() instanceof IArmorTextureProvider)
+        {
+            result = ((IArmorTextureProvider)armor.getItem()).getArmorTextureFile(armor);
+        }
+        return result != null ? result : _default;
+    }
+
     public static String getArmorTexture(Entity entity, ItemStack armor, String _default, int slot, int layer)
     {
         String result = armor.getItem().getArmorTexture(armor, entity, slot, layer);
