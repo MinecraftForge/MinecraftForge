@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/item/Item.java
 +++ ../src_work/minecraft/net/minecraft/item/Item.java
-@@ -7,6 +7,8 @@
+@@ -7,13 +7,17 @@
  import java.util.Random;
  import net.minecraft.block.Block;
  import net.minecraft.block.material.Material;
@@ -9,7 +9,8 @@
  import net.minecraft.client.renderer.texture.IconRegister;
  import net.minecraft.creativetab.CreativeTabs;
  import net.minecraft.entity.Entity;
-@@ -14,6 +16,7 @@
+ import net.minecraft.entity.EntityLiving;
++import net.minecraft.entity.item.EntityItem;
  import net.minecraft.entity.item.EntityItemFrame;
  import net.minecraft.entity.item.EntityPainting;
  import net.minecraft.entity.player.EntityPlayer;
@@ -17,7 +18,7 @@
  import net.minecraft.potion.Potion;
  import net.minecraft.potion.PotionHelper;
  import net.minecraft.stats.StatList;
-@@ -23,7 +26,10 @@
+@@ -23,7 +27,10 @@
  import net.minecraft.util.StatCollector;
  import net.minecraft.util.StringTranslate;
  import net.minecraft.util.Vec3;
@@ -28,7 +29,7 @@
  
  public class Item
  {
-@@ -238,13 +244,16 @@
+@@ -238,13 +245,16 @@
      /** Icon index in the icons table. */
      protected Icon itemIcon;
  
@@ -46,7 +47,7 @@
          }
  
          itemsList[256 + par1] = this;
-@@ -640,6 +649,10 @@
+@@ -640,6 +650,10 @@
          float f7 = f4 * f5;
          float f8 = f3 * f5;
          double d3 = 5.0D;
@@ -57,7 +58,7 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
      }
-@@ -720,4 +733,395 @@
+@@ -720,4 +734,407 @@
      {
          StatList.initStats();
      }
@@ -249,6 +250,18 @@
 +    public Entity createEntity(World world, Entity location, ItemStack itemstack)
 +    {
 +        return null;
++    }
++
++    /**
++     * Called by the default implemetation of EntityItem's onUpdate method, allowing for cleaner 
++     * control over the update of the item without having to write a subclass.
++     * 
++     * @param entityItem The entity Item
++     * @return Return true to skip any further update code.
++     */
++    public boolean onEntityItemUpdate(EntityItem entityItem)
++    {
++        return false;
 +    }
 +
 +    /**
