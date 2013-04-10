@@ -19,12 +19,12 @@ import net.minecraftforge.common.MinecraftForge;
 public class MinecraftForgeClient
 {
     /**
-     * Preload a texture.  Textures must be preloaded before the first
-     * use, or they will cause visual anomalies.
+     * NO-OP now. Not needed with new texturing system in MC 1.5
      */
+    @Deprecated // without replacement
     public static void preloadTexture(String texture)
     {
-        ForgeHooksClient.engine().getTexture(texture);
+//        ForgeHooksClient.engine().getTexture(texture);
     }
 
     private static IItemRenderer[] customItemRenderers = new IItemRenderer[Item.itemsList.length];
