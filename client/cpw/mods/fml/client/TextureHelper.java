@@ -41,20 +41,26 @@ public abstract class TextureHelper {
         ByteBuffer other = ByteBuffer.allocateDirect(buffer.capacity());
         other.position(0);
 
-        for (int k = 0; k < texture.func_94276_e(); ++k)
+        int texHeight = texture.func_94276_e();
+        int texWidth = texture.func_94275_d();
+
+        for (int row = 0; row < texHeight; ++row)
         {
-            int l = texture.func_94276_e() - k - 1;
-            int i1 = k * texture.func_94275_d() * 4;
+            int targCol = texHeight - row - 1;
+            int srcRowOffset = row * texWidth;
 
-            for (int k1 = 0; k1 < texture.func_94275_d(); ++k1)
+            for (int col = 0; col < texWidth; ++col)
             {
-                int l1 = k1 * texture.func_94276_e() * 4 + l * 4;
-                int i2 = i1 + k1 * 4;
+                int targIndex = col * texHeight + targCol;
+                int srcIndex = srcRowOffset + col;
 
-                other.put(l1 + 0, bytebuffer.get(i2 + 0));
-                other.put(l1 + 1, bytebuffer.get(i2 + 1));
-                other.put(l1 + 2, bytebuffer.get(i2 + 2));
-                other.put(l1 + 3, bytebuffer.get(i2 + 3));
+                srcIndex <<=2;
+                targIndex <<=2;
+
+                other.put(targIndex + 0, bytebuffer.get(srcIndex + 0));
+                other.put(targIndex + 1, bytebuffer.get(srcIndex + 1));
+                other.put(targIndex + 2, bytebuffer.get(srcIndex + 2));
+                other.put(targIndex + 3, bytebuffer.get(srcIndex + 3));
             }
         }
         buffer.position(0);
