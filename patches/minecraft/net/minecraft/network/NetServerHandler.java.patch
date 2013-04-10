@@ -94,7 +94,7 @@
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
 -                if (d3 > 36.0D)
-+                double dist = playerEntity.theItemInWorldManager.getBlockReachDistance() + 1;
++                double dist = playerEntity.theItemInWorldManager.getBlockReachDistance() + 2;
 +                dist *= dist;
 +
 +                if (d3 > dist)
