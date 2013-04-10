@@ -1,0 +1,88 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/texture/Texture.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/texture/Texture.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.client.renderer.texture;
+ 
++import cpw.mods.fml.client.TextureFXManager;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.awt.image.BufferedImage;
+@@ -206,6 +207,7 @@
+     {
+         if (this.field_94300_h != 32879)
+         {
++            if (!field_94303_q) {
+             ByteBuffer bytebuffer = p_94281_3_.func_94273_h();
+             this.field_94302_r.position(0);
+             bytebuffer.position(0);
+@@ -216,21 +218,21 @@
+                 int i1 = k * p_94281_3_.func_94275_d() * 4;
+                 int j1 = l * this.field_94289_d * 4;
+ 
+-                if (p_94281_4_)
+-                {
+-                    l = p_94281_2_ + (p_94281_3_.func_94276_e() - k);
+-                }
+-
++//                if (p_94281_4_)
++//                {
++//                    l = p_94281_2_ + (p_94281_3_.func_94276_e() - k);
++//                }
++//
+                 for (int k1 = 0; k1 < p_94281_3_.func_94275_d(); ++k1)
+                 {
+                     int l1 = j1 + (k1 + p_94281_1_) * 4;
+                     int i2 = i1 + k1 * 4;
+ 
+-                    if (p_94281_4_)
+-                    {
+-                        l1 = p_94281_1_ + k1 * this.field_94289_d * 4 + l * 4;
+-                    }
+-
++//                    if (p_94281_4_)
++//                    {
++//                        l1 = p_94281_1_ + k1 * this.field_94289_d * 4 + l * 4;
++//                    }
++//
+                     this.field_94302_r.put(l1 + 0, bytebuffer.get(i2 + 0));
+                     this.field_94302_r.put(l1 + 1, bytebuffer.get(i2 + 1));
+                     this.field_94302_r.put(l1 + 2, bytebuffer.get(i2 + 2));
+@@ -239,15 +241,20 @@
+             }
+ 
+             this.field_94302_r.position(this.field_94289_d * this.field_94290_e * 4);
++            }
++            else
++            {
++                TextureFXManager.instance().getHelper().doTextureCopy(this, p_94281_3_, p_94281_1_, p_94281_2_);
++            }
+ 
+             if (this.field_94304_p)
+             {
+                 this.func_94285_g();
+             }
+-            else
+-            {
+-                this.field_94303_q = false;
+-            }
++//            else
++//            {
++//                this.field_94303_q = false;
++//            }
+         }
+     }
+ 
+@@ -371,4 +378,13 @@
+     {
+         return this.field_94302_r;
+     }
++
++    public void createAndUploadTexture()
++    {
++        this.field_94293_a = GL11.glGenTextures();
++        GL11.glBindTexture(this.field_94300_h, this.field_94293_a);
++        System.out.printf("Buffer %s %x %d is %s\n",field_94297_m, field_94300_h, field_94293_a, field_94302_r);
++        field_94302_r.position(field_94302_r.limit());
++        func_94285_g();
++    }
+ }

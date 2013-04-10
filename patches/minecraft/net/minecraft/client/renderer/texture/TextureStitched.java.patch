@@ -1,0 +1,34 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureStitched.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureStitched.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.client.renderer.texture;
+ 
++import cpw.mods.fml.client.TextureFXManager;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.io.BufferedReader;
+@@ -56,6 +57,11 @@
+         this.field_94230_o = (float)(p_94218_4_ + p_94218_6_) / (float)p_94218_1_.func_94276_e() - f1;
+         this.field_94238_p = (float)p_94218_5_ / 16.0F;
+         this.field_94237_q = (float)p_94218_6_ / 16.0F;
++        TextureFXManager.instance().getHelper().doTextureUpload(this);
++        if (this.field_94227_c)
++        {
++            TextureFXManager.instance().getHelper().rotateTexture(this.field_94228_a, this.field_94228_a.func_94273_h());
++        }
+     }
+ 
+     public void func_94217_a(TextureStitched p_94217_1_)
+@@ -198,4 +204,12 @@
+             this.field_94236_i = arraylist;
+         }
+     }
++
++    public void createAndUploadTextures()
++    {
++        for (Texture t : ((List<Texture>)field_94226_b))
++        {
++            t.createAndUploadTexture();
++        }
++    }
+ }
