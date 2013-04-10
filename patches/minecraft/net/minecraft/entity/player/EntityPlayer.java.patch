@@ -375,3 +375,17 @@
      }
  
      @SideOnly(Side.CLIENT)
+@@ -2260,4 +2387,13 @@
+     {
+         FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
+     }
++	
++    public void swingItem()
++    {
++    	ItemStack stack = getCurrentEquippedItem();
++    	if (stack == null || stack.getItem().swingItem(this, stack))
++    	{
++    		super.swingItem();
++    	}
++    }
+ }
