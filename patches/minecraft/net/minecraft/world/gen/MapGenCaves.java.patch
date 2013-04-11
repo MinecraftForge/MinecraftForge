@@ -1,0 +1,20 @@
+--- ../src_base/minecraft/net/minecraft/world/gen/MapGenCaves.java
++++ ../src_work/minecraft/net/minecraft/world/gen/MapGenCaves.java
+@@ -175,13 +175,14 @@
+                                         if (d14 > -0.7D && d12 * d12 + d14 * d14 + d13 * d13 < 1.0D)
+                                         {
+                                             byte b0 = par5ArrayOfByte[j4];
+-
+-                                            if (b0 == Block.grass.blockID)
++                                            int topBlockID = this.worldObj.getBiomeGenForCoords(j3 + par3 * 16, k3 + par4 * 16).topBlock;
++
++                                            if (b0 == topBlockID)
+                                             {
+                                                 flag3 = true;
+                                             }
+ 
+-                                            if (b0 == Block.stone.blockID || b0 == Block.dirt.blockID || b0 == Block.grass.blockID)
++                                            if (b0 == Block.stone.blockID || b0 == Block.dirt.blockID || b0 == topBlockID)
+                                             {
+                                                 if (k4 < 10)
+                                                 {
