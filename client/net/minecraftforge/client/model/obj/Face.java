@@ -31,7 +31,7 @@ public class Face
         float averageU = 0F;
         float averageV = 0F;
 
-        if (textureCoordinates.length != 0)
+        if ((textureCoordinates != null) && (textureCoordinates.length != 0))
         {
             for (int i = 0; i < textureCoordinates.length; ++i)
             {
@@ -48,7 +48,7 @@ public class Face
         for (int i = 0; i < vertices.length; ++i)
         {
 
-            if (textureCoordinates.length != 0)
+            if ((textureCoordinates != null) && (textureCoordinates.length != 0))
             {
                 offsetU = textureOffset;
                 offsetV = textureOffset;
