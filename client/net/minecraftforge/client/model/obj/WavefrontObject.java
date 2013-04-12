@@ -341,13 +341,13 @@ public class WavefrontObject implements IModelCustom
                 }
             }
 
-            face.vertices = new Vertex[tokens.length];
-            face.textureCoordinates = new TextureCoordinate[tokens.length];
-            face.vertexNormals = new Vertex[tokens.length];
-
             // f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 ...
             if (isValidFace_V_VT_VN_Line(line))
             {
+                face.vertices = new Vertex[tokens.length];
+                face.textureCoordinates = new TextureCoordinate[tokens.length];
+                face.vertexNormals = new Vertex[tokens.length];
+                
                 for (int i = 0; i < tokens.length; ++i)
                 {
                     subTokens = tokens[i].split("/");
@@ -362,6 +362,9 @@ public class WavefrontObject implements IModelCustom
             // f v1/vt1 v2/vt2 v3/vt3 ...
             else if (isValidFace_V_VT_Line(line))
             {
+                face.vertices = new Vertex[tokens.length];
+                face.textureCoordinates = new TextureCoordinate[tokens.length];
+                
                 for (int i = 0; i < tokens.length; ++i)
                 {
                     subTokens = tokens[i].split("/");
@@ -375,6 +378,9 @@ public class WavefrontObject implements IModelCustom
             // f v1//vn1 v2//vn2 v3//vn3 ...
             else if (isValidFace_V_VN_Line(line))
             {
+                face.vertices = new Vertex[tokens.length];
+                face.vertexNormals = new Vertex[tokens.length];
+                
                 for (int i = 0; i < tokens.length; ++i)
                 {
                     subTokens = tokens[i].split("//");
@@ -388,6 +394,8 @@ public class WavefrontObject implements IModelCustom
             // f v1 v2 v3 ...
             else if (isValidFace_V_Line(line))
             {
+                face.vertices = new Vertex[tokens.length];
+                
                 for (int i = 0; i < tokens.length; ++i)
                 {
                     face.vertices[i] = vertices.get(Integer.parseInt(tokens[i]) - 1);
