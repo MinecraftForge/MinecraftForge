@@ -49,6 +49,8 @@ import com.google.common.io.InputSupplier;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
 import cpw.mods.fml.relauncher.RelaunchClassLoader;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
 
 public class FMLDeobfuscatingRemapper extends Remapper {
     public static final FMLDeobfuscatingRemapper INSTANCE = new FMLDeobfuscatingRemapper();
@@ -142,7 +144,34 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         {
             rawFieldMaps.put(cl, Maps.<String,String>newHashMap());
         }
-        rawFieldMaps.get(cl).put(oldName, newName);
+        rawFieldMaps.get(cl).put(oldName + ":" + getFieldType(cl, oldName), newName);
+        rawFieldMaps.get(cl).put(oldName + ":null", newName);
+    }
+
+    @SuppressWarnings("unchecked")
+    private String getFieldType(String owner, String name) 
+    {
+        try
+        {
+            byte[] classBytes = classLoader.getClassBytes(owner);
+            if (classBytes == null)
+            {
+                return null;
+            }
+            ClassReader cr = new ClassReader(classBytes);
+            ClassNode classNode = new ClassNode();
+            cr.accept(classNode, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+            for (FieldNode fieldNode : (List<FieldNode>) classNode.fields) {
+                if (fieldNode.name.equals(name)) {
+                    return fieldNode.desc;
+                }
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private void parseClass(Builder<String, String> builder, String[] parts)
@@ -181,7 +210,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             return name;
         }
         Map<String, String> fieldMap = getFieldMap(owner);
-        return fieldMap!=null && fieldMap.containsKey(name) ? fieldMap.get(name) : name;
+        return fieldMap!=null && fieldMap.containsKey(name+":"+desc) ? fieldMap.get(name+":"+desc) : name;
     }
 
     @Override
