@@ -39,6 +39,7 @@ import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -148,30 +149,42 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         rawFieldMaps.get(cl).put(oldName + ":null", newName);
     }
 
-    @SuppressWarnings("unchecked")
-    private String getFieldType(String owner, String name) 
+    /*
+     * Cache the field descriptions for classes so we don't repeatedly reload the same data again and again
+     */
+    private Map<String,Map<String,String>> fieldDescriptions = Maps.newHashMap();
+
+    private String getFieldType(String owner, String name)
     {
-        try
+        if (fieldDescriptions.containsKey(owner))
         {
-            byte[] classBytes = classLoader.getClassBytes(owner);
-            if (classBytes == null)
+            return fieldDescriptions.get(owner).get(name);
+        }
+        synchronized (fieldDescriptions)
+        {
+            try
             {
-                return null;
-            }
-            ClassReader cr = new ClassReader(classBytes);
-            ClassNode classNode = new ClassNode();
-            cr.accept(classNode, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
-            for (FieldNode fieldNode : (List<FieldNode>) classNode.fields) {
-                if (fieldNode.name.equals(name)) {
-                    return fieldNode.desc;
+                byte[] classBytes = classLoader.getClassBytes(owner);
+                if (classBytes == null)
+                {
+                    return null;
                 }
+                ClassReader cr = new ClassReader(classBytes);
+                ClassNode classNode = new ClassNode();
+                cr.accept(classNode, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+                Map<String,String> resMap = Maps.newHashMap();
+                for (FieldNode fieldNode : classNode.fields) {
+                    resMap.put(fieldNode.name, fieldNode.desc);
+                }
+                fieldDescriptions.put(owner, resMap);
+                return resMap.get(name);
             }
+            catch (IOException e)
+            {
+                FMLLog.log(Level.SEVERE,e, "A critical exception occured reading a class file %s", owner);
+            }
+            return null;
         }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     private void parseClass(Builder<String, String> builder, String[] parts)
