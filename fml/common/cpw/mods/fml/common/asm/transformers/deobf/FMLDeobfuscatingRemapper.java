@@ -39,6 +39,7 @@ import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -49,6 +50,8 @@ import com.google.common.io.InputSupplier;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
 import cpw.mods.fml.relauncher.RelaunchClassLoader;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
 
 public class FMLDeobfuscatingRemapper extends Remapper {
     public static final FMLDeobfuscatingRemapper INSTANCE = new FMLDeobfuscatingRemapper();
@@ -142,7 +145,46 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         {
             rawFieldMaps.put(cl, Maps.<String,String>newHashMap());
         }
-        rawFieldMaps.get(cl).put(oldName, newName);
+        rawFieldMaps.get(cl).put(oldName + ":" + getFieldType(cl, oldName), newName);
+        rawFieldMaps.get(cl).put(oldName + ":null", newName);
+    }
+
+    /*
+     * Cache the field descriptions for classes so we don't repeatedly reload the same data again and again
+     */
+    private Map<String,Map<String,String>> fieldDescriptions = Maps.newHashMap();
+
+    private String getFieldType(String owner, String name)
+    {
+        if (fieldDescriptions.containsKey(owner))
+        {
+            return fieldDescriptions.get(owner).get(name);
+        }
+        synchronized (fieldDescriptions)
+        {
+            try
+            {
+                byte[] classBytes = classLoader.getClassBytes(owner);
+                if (classBytes == null)
+                {
+                    return null;
+                }
+                ClassReader cr = new ClassReader(classBytes);
+                ClassNode classNode = new ClassNode();
+                cr.accept(classNode, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+                Map<String,String> resMap = Maps.newHashMap();
+                for (FieldNode fieldNode : classNode.fields) {
+                    resMap.put(fieldNode.name, fieldNode.desc);
+                }
+                fieldDescriptions.put(owner, resMap);
+                return resMap.get(name);
+            }
+            catch (IOException e)
+            {
+                FMLLog.log(Level.SEVERE,e, "A critical exception occured reading a class file %s", owner);
+            }
+            return null;
+        }
     }
 
     private void parseClass(Builder<String, String> builder, String[] parts)
@@ -181,7 +223,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             return name;
         }
         Map<String, String> fieldMap = getFieldMap(owner);
-        return fieldMap!=null && fieldMap.containsKey(name) ? fieldMap.get(name) : name;
+        return fieldMap!=null && fieldMap.containsKey(name+":"+desc) ? fieldMap.get(name+":"+desc) : name;
     }
 
     @Override
