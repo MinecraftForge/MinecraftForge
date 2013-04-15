@@ -51,4 +51,15 @@ public class GroupObject
             }
         }
     }
+
+    public void render(Tessellator tessellator, Icon icon)
+    {
+        if(faces.size() > 0)
+        {
+            for(Face face : faces)
+            {
+                face.addFaceForRender(tessellator, icon);
+            }
+        }
+    }
 }

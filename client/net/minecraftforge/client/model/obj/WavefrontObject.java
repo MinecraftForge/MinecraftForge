@@ -203,6 +203,17 @@ public class WavefrontObject implements IModelCustom
         }
     }
 
+    public void renderPart(String partName, Icon icon)
+    {
+        for(GroupObject groupObject : groupObjects)
+        {
+            if(partName.equalsIgnoreCase(groupObject.name))
+            {
+                groupObject.render(icon);
+            }
+        }
+    }
+
     public void renderAllExcept(String... excludedGroupNames)
     {
         for (GroupObject groupObject : groupObjects)
