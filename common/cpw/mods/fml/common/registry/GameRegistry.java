@@ -275,7 +275,7 @@ public class GameRegistry
     public static void registerTileEntityWithAlternatives(Class<? extends TileEntity> tileEntityClass, String id, String... alternatives)
     {
         TileEntity.func_70306_a(tileEntityClass, id);
-        Map<String,Class> teMappings = ObfuscationReflectionHelper.getPrivateValue(TileEntity.class, null, "field_70326_a", "a");
+        Map<String,Class> teMappings = ObfuscationReflectionHelper.getPrivateValue(TileEntity.class, null, "field_" + "70326_a", "field_70326_a", "a");
         for (String s: alternatives)
         {
             if (!teMappings.containsKey(s))
