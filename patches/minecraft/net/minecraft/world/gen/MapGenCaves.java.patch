@@ -24,7 +24,7 @@
 -                                            byte b0 = par5ArrayOfByte[j4];
 -
 -                                            if (b0 == Block.grass.blockID)
-+                                            if (isTopBlock(par5ArrayOfByte, j4, j3, k2, k3, par3, par4))
++                                            if (isTopBlock(par5ArrayOfByte, j4, j3, k4, k3, par3, par4))
                                              {
                                                  flag3 = true;
                                              }
@@ -45,7 +45,7 @@
 -                                                    }
 -                                                }
 -                                            }
-+                                            digBlock(par5ArrayOfByte, j4, j3, k2, k3, par3, par4, flag3);
++                                            digBlock(par5ArrayOfByte, j4, j3, k4, k3, par3, par4, flag3);
                                          }
  
                                          --j4;
