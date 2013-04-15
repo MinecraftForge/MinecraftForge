@@ -71,6 +71,31 @@ public class Face
         }
     }
 
+    public void addFaceForRender(Tessellator tessellator, Icon icon)
+    {
+        if (faceNormal == null)
+        {
+            faceNormal = this.calculateFaceNormal();
+        }
+
+        tessellator.setNormal(faceNormal.x, faceNormal.y, faceNormal.z);
+        
+        for (int i = 0; i < vertices.length; ++i)
+        {
+            if (textureCoordinates.length != 0)
+            {
+                double interpolatedU = icon.getInterpolatedU((textureCoordinates[i].u % 1.0d) * 16);
+                double interpolatedV = icon.getInterpolatedV((textureCoordinates[i].v % 1.0d) * 16);
+                
+                tessellator.addVertexWithUV(vertices[i].x, vertices[i].y, vertices[i].z, interpolatedU , interpolatedV);
+            }
+            else
+            {
+                tessellator.addVertex(vertices[i].x, vertices[i].y, vertices[i].z);
+            }
+        }
+    }
+
     public Vertex calculateFaceNormal()
     {
         Vec3 v1 = Vec3.createVectorHelper(vertices[1].x - vertices[0].x, vertices[1].y - vertices[0].y, vertices[1].z - vertices[0].z);
