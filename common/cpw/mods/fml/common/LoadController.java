@@ -216,7 +216,7 @@ public class LoadController
     {
         for (ModContainer mc : loader.getModList())
         {
-            ret.append("\n\t").append(mc.getModId()).append(" [").append(mc.getName()).append("] (").append(mc.getSource().getName()).append(") ");
+            ret.append("\n\t").append(mc.getModId()).append("{").append(mc.getVersion()).append("} [").append(mc.getName()).append("] (").append(mc.getSource().getName()).append(") ");
             Joiner.on("->"). appendTo(ret, modStates.get(mc.getModId()));
         }
     }
