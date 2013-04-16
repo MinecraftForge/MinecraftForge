@@ -349,7 +349,7 @@ public class InventoryAdapters {
         }
 
         @Override
-        public Iterable<ItemStack> listExtractableContents(final IStackFilter filter) throws NullPointerException
+        public Iterable<ItemStack> listContents(final IStackFilter filter, final boolean extractableOnly) throws NullPointerException
         {
             if (filter == null) throw new NullPointerException("filter");
 
@@ -369,7 +369,7 @@ public class InventoryAdapters {
                             while (curSlot < numSlots)
                             {
                                 ILinearInventorySlot slot = inv.getInventorySlot(curSlot++);
-                                if (slot.shouldExtractItems())
+                                if (!extractableOnly || slot.shouldExtractItems())
                                 {
                                     nextStack = slot.getStack();
                                     if (!filter.matchesItem(nextStack))

@@ -17,8 +17,8 @@ public interface IForgeCustomInventory extends IForgeInventory {
      * @param item
      *            The item to insert. The stack size is ignored.
      * @param amount
-     *            The number of items to insert. Must be at least 1.
-     *            May be over 64.
+     *            The number of items to insert. Must be at least 1. May be over
+     *            64.
      * @param simulate
      *            If true, then the inventory will not be updated. The return
      *            value must be the same as if simulate was false.
@@ -46,8 +46,8 @@ public interface IForgeCustomInventory extends IForgeInventory {
      * @throws NullPointerException
      *             If filter == null
      * @return The stack extracted. If no items were extracted, this must be
-     *         null. The stack size must be less than or equal to amount.
-     *         If amount is over 64, this may be an oversized stack.
+     *         null. The stack size must be less than or equal to amount. If
+     *         amount is over 64, this may be an oversized stack.
      */
     public ItemStack extractInventoryItems(IStackFilter filter, int amount, boolean simulate) throws IllegalArgumentException, NullPointerException;
 
@@ -58,6 +58,12 @@ public interface IForgeCustomInventory extends IForgeInventory {
      * 
      * @param filter
      *            A stack filter that defines which items will be enumerated.
+     * 
+     * @param extractableOnly
+     *            If this is true, only the items which can be extracted right
+     *            now will be returned (e.g. for Logistics Pipes or Applied
+     *            Energistics item lists). If false, all items in the inventory
+     *            should be returned (e.g. for RP2 Regulators).
      * 
      * @throw NullPointerException If filter == null
      * 
@@ -76,5 +82,5 @@ public interface IForgeCustomInventory extends IForgeInventory {
      * 
      *         The returned object should not be modified.
      */
-    public Iterable<ItemStack> listExtractableContents(IStackFilter filter) throws NullPointerException;
+    public Iterable<ItemStack> listContents(IStackFilter filter, boolean extractableOnly) throws NullPointerException;
 }
