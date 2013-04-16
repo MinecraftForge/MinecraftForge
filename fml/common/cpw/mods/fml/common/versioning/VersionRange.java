@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -549,4 +549,15 @@ public class VersionRange
         hash = 31 * hash + ( restrictions == null ? 0 : restrictions.hashCode() );
         return hash;
     }
+
+    public boolean isUnboundedAbove()
+    {
+        return restrictions.size() == 1 && restrictions.get(0).getUpperBound() == null && !restrictions.get(0).isUpperBoundInclusive();
+    }
+
+    public String getLowerBoundString()
+    {
+        return restrictions.size() == 1 ? restrictions.get(0).getLowerBound().getVersionString() : "";
+    }
+
 }
