@@ -1,15 +1,17 @@
 --- ../src_base/minecraft/net/minecraft/client/gui/GuiIngame.java
 +++ ../src_work/minecraft/net/minecraft/client/gui/GuiIngame.java
-@@ -34,6 +34,8 @@
+@@ -34,6 +34,10 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
++import net.minecraftforge.client.event.RenderHUDEvent;
 +import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.common.MinecraftForge;
 +
  @SideOnly(Side.CLIENT)
  public class GuiIngame extends Gui
  {
-@@ -170,7 +172,7 @@
+@@ -170,7 +174,7 @@
  
                  k3 = l - 39;
                  l2 = k3 - 10;
@@ -18,7 +20,16 @@
                  i3 = -1;
  
                  if (this.mc.thePlayer.isPotionActive(Potion.regeneration))
-@@ -431,7 +433,16 @@
+@@ -401,6 +405,8 @@
+             fontrenderer.drawString(s, j5, k5, i1);
+             this.mc.mcProfiler.endSection();
+         }
++        
++        MinecraftForge.EVENT_BUS.post(new RenderHUDEvent(this.mc, par1, par2, par3, par4));
+ 
+         String s1;
+ 
+@@ -431,7 +437,16 @@
                      GL11.glPushMatrix();
                      GL11.glEnable(GL11.GL_BLEND);
                      GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
