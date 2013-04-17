@@ -421,8 +421,13 @@ public class GameRegistry
 	 */
 	public static ItemStack findItemStack(String modId, String name, int stackSize)
 	{
-	    ItemStack is = GameData.findItemStack(modId, name).func_77946_l();
-	    is.field_77994_a = Math.min(stackSize, is.func_77976_d());
-	    return is;
+	    ItemStack foundStack = GameData.findItemStack(modId, name);
+	    if (foundStack != null)
+	    {
+            ItemStack is = foundStack.func_77946_l();
+    	    is.field_77994_a = Math.min(stackSize, is.func_77976_d());
+    	    return is;
+	    }
+	    return null;
 	}
 }
