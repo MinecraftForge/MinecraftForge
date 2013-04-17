@@ -1,10 +1,12 @@
 --- ../src_base/minecraft/net/minecraft/item/Item.java
 +++ ../src_work/minecraft/net/minecraft/item/Item.java
-@@ -7,13 +7,17 @@
+@@ -7,13 +7,19 @@
  import java.util.Random;
  import net.minecraft.block.Block;
  import net.minecraft.block.material.Material;
++import net.minecraft.client.entity.EntityClientPlayerMP;
 +import net.minecraft.client.gui.FontRenderer;
++import net.minecraft.client.gui.ScaledResolution;
 +import net.minecraft.client.model.ModelBiped;
  import net.minecraft.client.renderer.texture.IconRegister;
  import net.minecraft.creativetab.CreativeTabs;
@@ -18,7 +20,7 @@
  import net.minecraft.potion.Potion;
  import net.minecraft.potion.PotionHelper;
  import net.minecraft.stats.StatList;
-@@ -23,7 +27,10 @@
+@@ -23,7 +29,10 @@
  import net.minecraft.util.StatCollector;
  import net.minecraft.util.StringTranslate;
  import net.minecraft.util.Vec3;
@@ -29,7 +31,7 @@
  
  public class Item
  {
-@@ -238,13 +245,16 @@
+@@ -238,13 +247,16 @@
      /** Icon index in the icons table. */
      protected Icon itemIcon;
  
@@ -47,7 +49,7 @@
          }
  
          itemsList[256 + par1] = this;
-@@ -640,6 +650,10 @@
+@@ -640,6 +652,10 @@
          float f7 = f4 * f5;
          float f8 = f3 * f5;
          double d3 = 5.0D;
@@ -58,7 +60,7 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
      }
-@@ -720,4 +734,419 @@
+@@ -720,4 +736,434 @@
      {
          StatList.initStats();
      }
@@ -477,4 +479,19 @@
 +    {
 +        return false;
 +    }
++
++    /**
++     * Called when the client starts rendering the HUD, for whatever item the player currently has as a helmet. 
++     * This is where pumpkins would render there overlay.
++     *  
++     * @param stack The ItemStack that is equipped
++     * @param player Reference to the current client entity
++     * @param resolution Resolution information about the current viewport and configured GUI Scale
++     * @param partialTicks Partial ticks for the renderer, useful for interpolation
++     * @param hasScreen If the player has a screen up, which will be rendered after this.
++     * @param mouseX Mouse's X position on screen
++     * @param mouseY Mouse's Y position on screen
++     */
++    @SideOnly(Side.CLIENT)
++    public void renderHelmetOverlay(ItemStack stack, EntityPlayer player, ScaledResolution resolution, float partialTicks, boolean hasScreen, int mouseX, int mouseY){}
  }
