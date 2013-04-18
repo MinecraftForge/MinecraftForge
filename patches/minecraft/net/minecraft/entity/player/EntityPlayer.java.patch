@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/entity/player/EntityPlayer.java
 +++ ../src_work/minecraft/net/minecraft/entity/player/EntityPlayer.java
-@@ -66,8 +66,22 @@
+@@ -66,8 +66,23 @@
  import net.minecraft.world.World;
  import net.minecraft.world.chunk.IChunkProvider;
  
@@ -19,11 +19,21 @@
  public abstract class EntityPlayer extends EntityLiving implements ICommandSender
  {
 +    public static final String PERSISTED_NBT_TAG = "PlayerPersisted";
++    public int maxHealth = 20;
 +
      /** Inventory of the player */
      public InventoryPlayer inventory = new InventoryPlayer(this);
      private InventoryEnderChest theInventoryEnderChest = new InventoryEnderChest();
-@@ -268,6 +282,7 @@
+@@ -181,7 +196,7 @@
+ 
+     public int getMaxHealth()
+     {
+-        return 20;
++        return maxHealth <= 0 ? 20 : maxHealth;
+     }
+ 
+     protected void entityInit()
+@@ -268,6 +283,7 @@
  
              if (itemstack == this.itemInUse)
              {
@@ -31,7 +41,7 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(itemstack, 5);
-@@ -528,11 +543,11 @@
+@@ -528,11 +544,11 @@
          this.cameraYaw = 0.0F;
          this.addMountedMovementStat(this.posX - d0, this.posY - d1, this.posZ - d2);
  
@@ -45,7 +55,7 @@
          }
      }
  
-@@ -661,6 +676,9 @@
+@@ -661,6 +677,9 @@
          this.setPosition(this.posX, this.posY, this.posZ);
          this.motionY = 0.10000000149011612D;
  
@@ -55,7 +65,7 @@
          if (this.username.equals("Notch"))
          {
              this.dropPlayerItemWithRandomChoice(new ItemStack(Item.appleRed, 1), true);
-@@ -669,6 +687,20 @@
+@@ -669,6 +688,20 @@
          if (!this.worldObj.getGameRules().getGameRuleBooleanValue("keepInventory"))
          {
              this.inventory.dropAllItems();
@@ -76,7 +86,7 @@
          }
  
          if (par1DamageSource != null)
-@@ -719,7 +751,20 @@
+@@ -719,7 +752,20 @@
       */
      public EntityItem dropOneItem(boolean par1)
      {
@@ -98,7 +108,7 @@
      }
  
      /**
-@@ -728,7 +773,7 @@
+@@ -728,7 +774,7 @@
       */
      public EntityItem dropPlayerItem(ItemStack par1ItemStack)
      {
@@ -107,7 +117,7 @@
      }
  
      /**
-@@ -780,15 +825,28 @@
+@@ -780,15 +826,28 @@
       */
      public void joinEntityItemWithWorld(EntityItem par1EntityItem)
      {
@@ -138,7 +148,7 @@
  
          if (f > 1.0F)
          {
-@@ -799,7 +857,9 @@
+@@ -799,7 +858,9 @@
              {
                  float f1 = (float)(i * i + 1);
  
@@ -149,7 +159,7 @@
                  {
                      f += f1 * 0.08F;
                  }
-@@ -830,7 +890,8 @@
+@@ -830,7 +891,8 @@
              f /= 5.0F;
          }
  
@@ -159,7 +169,7 @@
      }
  
      /**
-@@ -838,7 +899,7 @@
+@@ -838,7 +900,7 @@
       */
      public boolean canHarvestBlock(Block par1Block)
      {
@@ -168,7 +178,25 @@
      }
  
      /**
-@@ -1096,12 +1157,22 @@
+@@ -857,6 +919,9 @@
+         this.experienceTotal = par1NBTTagCompound.getInteger("XpTotal");
+         this.setScore(par1NBTTagCompound.getInteger("Score"));
+ 
++        int tmp = par1NBTTagCompound.getInteger("MaxHealth");
++        maxHealth = (tmp <= 0 ? 20 : tmp);
++
+         if (this.sleeping)
+         {
+             this.playerLocation = new ChunkCoordinates(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ));
+@@ -893,6 +958,7 @@
+         par1NBTTagCompound.setInteger("XpLevel", this.experienceLevel);
+         par1NBTTagCompound.setInteger("XpTotal", this.experienceTotal);
+         par1NBTTagCompound.setInteger("Score", this.getScore());
++        par1NBTTagCompound.setInteger("MaxHealth", maxHealth);
+ 
+         if (this.spawnChunk != null)
+         {
+@@ -1096,12 +1162,22 @@
      {
          if (!this.isEntityInvulnerable())
          {
@@ -192,7 +220,7 @@
              par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
              this.addExhaustion(par1DamageSource.getHungerDamage());
              int j = this.getHealth();
-@@ -1144,6 +1215,10 @@
+@@ -1144,6 +1220,10 @@
  
      public boolean interactWith(Entity par1Entity)
      {
@@ -203,7 +231,7 @@
          if (par1Entity.interact(this))
          {
              return true;
-@@ -1187,7 +1262,9 @@
+@@ -1187,7 +1267,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -213,7 +241,7 @@
      }
  
      /**
-@@ -1204,6 +1281,15 @@
+@@ -1204,6 +1286,15 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -229,7 +257,7 @@
          if (par1Entity.canAttackWithItem())
          {
              if (!par1Entity.func_85031_j(this))
-@@ -1378,6 +1464,12 @@
+@@ -1378,6 +1469,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -242,7 +270,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1417,6 +1509,11 @@
+@@ -1417,6 +1514,11 @@
          {
              int l = this.worldObj.getBlockMetadata(par1, par2, par3);
              int i1 = BlockBed.getDirection(l);
@@ -254,7 +282,7 @@
              float f = 0.5F;
              float f1 = 0.5F;
  
-@@ -1487,10 +1584,12 @@
+@@ -1487,10 +1589,12 @@
          ChunkCoordinates chunkcoordinates = this.playerLocation;
          ChunkCoordinates chunkcoordinates1 = this.playerLocation;
  
@@ -271,7 +299,7 @@
  
              if (chunkcoordinates1 == null)
              {
-@@ -1527,7 +1626,9 @@
+@@ -1527,7 +1631,9 @@
       */
      private boolean isInBed()
      {
@@ -282,7 +310,7 @@
      }
  
      /**
-@@ -1542,9 +1643,12 @@
+@@ -1542,9 +1648,12 @@
          ichunkprovider.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          ichunkprovider.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -298,7 +326,7 @@
              return chunkcoordinates1;
          }
          else
-@@ -1566,10 +1670,13 @@
+@@ -1566,10 +1675,13 @@
      {
          if (this.playerLocation != null)
          {
@@ -316,7 +344,7 @@
              {
                  case 0:
                      return 90.0F;
-@@ -1835,6 +1942,10 @@
+@@ -1835,6 +1947,10 @@
  
              super.fall(par1);
          }
@@ -327,7 +355,7 @@
      }
  
      /**
-@@ -1876,7 +1987,7 @@
+@@ -1876,7 +1992,7 @@
          {
              if (par1ItemStack.getItem().requiresMultipleRenderPasses())
              {
@@ -336,7 +364,7 @@
              }
  
              if (this.itemInUse != null && par1ItemStack.itemID == Item.bow.itemID)
-@@ -1898,6 +2009,7 @@
+@@ -1898,6 +2014,7 @@
                      return Item.bow.func_94599_c(0);
                  }
              }
@@ -344,7 +372,7 @@
          }
  
          return icon;
-@@ -2137,6 +2249,14 @@
+@@ -2137,6 +2254,14 @@
          }
  
          this.theInventoryEnderChest = par1EntityPlayer.theInventoryEnderChest;
@@ -359,7 +387,7 @@
      }
  
      /**
-@@ -2208,7 +2328,14 @@
+@@ -2208,7 +2333,14 @@
       */
      public void setCurrentItemOrArmor(int par1, ItemStack par2ItemStack)
      {
