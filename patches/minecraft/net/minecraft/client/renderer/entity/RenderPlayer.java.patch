@@ -79,6 +79,15 @@
                  {
                      f2 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
+@@ -194,7 +207,7 @@
+                     GL11.glScalef(f2, -f2, -f2);
+                 }
+ 
+-                this.renderManager.itemRenderer.renderItem(par1EntityPlayer, itemstack, 0);
++                this.renderManager.itemRenderer.renderItem(par1EntityPlayer, itemstack, 0, customRenderer, EQUIPPED);
+             }
+             else if (itemstack.getItem().itemID == Item.skull.itemID)
+             {
 @@ -304,7 +317,10 @@
                  enumaction = itemstack1.getItemUseAction();
              }
@@ -91,7 +100,7 @@
              {
                  f3 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -361,7 +377,7 @@
+@@ -361,14 +377,14 @@
  
              if (itemstack1.getItem().requiresMultipleRenderPasses())
              {
@@ -100,3 +109,20 @@
                  {
                      int k = itemstack1.getItem().getColorFromItemStack(itemstack1, j);
                      f12 = (float)(k >> 16 & 255) / 255.0F;
+                     f11 = (float)(k >> 8 & 255) / 255.0F;
+                     f6 = (float)(k & 255) / 255.0F;
+                     GL11.glColor4f(f12, f11, f6, 1.0F);
+-                    this.renderManager.itemRenderer.renderItem(par1EntityPlayer, itemstack1, j);
++                    this.renderManager.itemRenderer.renderItem(par1EntityPlayer, itemstack1, j, customRenderer, EQUIPPED);
+                 }
+             }
+             else
+@@ -378,7 +394,7 @@
+                 f12 = (float)(j >> 8 & 255) / 255.0F;
+                 f11 = (float)(j & 255) / 255.0F;
+                 GL11.glColor4f(f4, f12, f11, 1.0F);
+-                this.renderManager.itemRenderer.renderItem(par1EntityPlayer, itemstack1, 0);
++                this.renderManager.itemRenderer.renderItem(par1EntityPlayer, itemstack1, 0, customRenderer, EQUIPPED);
+             }
+ 
+             GL11.glPopMatrix();
