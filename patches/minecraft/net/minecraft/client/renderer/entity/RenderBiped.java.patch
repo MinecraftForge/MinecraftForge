@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/entity/RenderBiped.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RenderBiped.java
-@@ -11,9 +11,15 @@
+@@ -11,9 +11,16 @@
  import net.minecraft.entity.EntityLiving;
  import net.minecraft.item.EnumArmorMaterial;
  import net.minecraft.item.Item;
@@ -9,6 +9,7 @@
  import net.minecraft.item.ItemStack;
  import org.lwjgl.opengl.GL11;
 +import static net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED;
++import static net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED_FIRST_PERSON;
 +import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.BLOCK_3D;
 +import net.minecraftforge.client.ForgeHooksClient;
 +import net.minecraftforge.client.IItemRenderer;
@@ -16,7 +17,7 @@
  
  @SideOnly(Side.CLIENT)
  public class RenderBiped extends RenderLiving
-@@ -59,7 +65,7 @@
+@@ -59,7 +66,7 @@
              if (item instanceof ItemArmor)
              {
                  ItemArmor itemarmor = (ItemArmor)item;
@@ -25,7 +26,7 @@
                  ModelBiped modelbiped = par2 == 2 ? this.field_82425_h : this.field_82423_g;
                  modelbiped.bipedHead.showModel = par2 == 0;
                  modelbiped.bipedHeadwear.showModel = par2 == 0;
-@@ -68,6 +74,7 @@
+@@ -68,6 +75,7 @@
                  modelbiped.bipedLeftArm.showModel = par2 == 1;
                  modelbiped.bipedRightLeg.showModel = par2 == 2 || par2 == 3;
                  modelbiped.bipedLeftLeg.showModel = par2 == 2 || par2 == 3;
@@ -33,7 +34,7 @@
                  this.setRenderPassModel(modelbiped);
  
                  if (modelbiped != null)
-@@ -87,9 +94,10 @@
+@@ -87,9 +95,10 @@
  
                  float f1 = 1.0F;
  
@@ -47,7 +48,7 @@
                      float f2 = (float)(j >> 16 & 255) / 255.0F;
                      float f3 = (float)(j >> 8 & 255) / 255.0F;
                      float f4 = (float)(j & 255) / 255.0F;
-@@ -128,7 +136,7 @@
+@@ -128,7 +137,7 @@
              if (item instanceof ItemArmor)
              {
                  ItemArmor itemarmor = (ItemArmor)item;
@@ -56,7 +57,7 @@
                  float f1 = 1.0F;
                  GL11.glColor3f(f1, f1, f1);
              }
-@@ -174,9 +182,12 @@
+@@ -174,9 +183,12 @@
              GL11.glPushMatrix();
              this.modelBipedMain.bipedHead.postRender(0.0625F);
  
@@ -72,7 +73,16 @@
                  {
                      f2 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
-@@ -218,7 +229,10 @@
+@@ -184,7 +196,7 @@
+                     GL11.glScalef(f2, -f2, -f2);
+                 }
+ 
+-                this.renderManager.itemRenderer.renderItem(par1EntityLiving, itemstack1, 0);
++                this.renderManager.itemRenderer.renderItem(par1EntityLiving, itemstack1, 0, customRenderer, EQUIPPED);
+             }
+             else if (itemstack1.getItem().itemID == Item.skull.itemID)
+             {
+@@ -218,7 +230,10 @@
              this.modelBipedMain.bipedRightArm.postRender(0.0625F);
              GL11.glTranslatef(-0.0625F, 0.4375F, 0.0625F);
  
@@ -84,14 +94,19 @@
              {
                  f2 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -265,7 +279,10 @@
+@@ -261,11 +276,14 @@
+                 GL11.glRotatef(20.0F, 0.0F, 0.0F, 1.0F);
+             }
+ 
+-            this.renderManager.itemRenderer.renderItem(par1EntityLiving, itemstack, 0);
++            this.renderManager.itemRenderer.renderItem(par1EntityLiving, itemstack, 0, customRenderer, EQUIPPED);
  
              if (itemstack.getItem().requiresMultipleRenderPasses())
              {
 -                this.renderManager.itemRenderer.renderItem(par1EntityLiving, itemstack, 1);
 +                for (int x = 1; x < itemstack.getItem().getRenderPasses(itemstack.getItemDamage()); x++)
 +                {
-+                    this.renderManager.itemRenderer.renderItem(par1EntityLiving, itemstack, x);
++                    this.renderManager.itemRenderer.renderItem(par1EntityLiving, itemstack, x, customRenderer, EQUIPPED);
 +                }
              }
  

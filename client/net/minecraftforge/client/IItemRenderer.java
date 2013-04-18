@@ -35,6 +35,19 @@ public interface IItemRenderer
         EQUIPPED, 
         
         /** 
+         * Called to render an item currently held in-hand by a living entity in
+         * first person. If rendering as a 3D block, the item will be rotated to a
+         * 45-degree angle. To render a 2D texture with some thickness, see
+         * net.minecraft.src.ItemRenderer. In either case, rendering should be done
+         * in local coordinates from (0,0,0)-(1,1,1).
+         * 
+         * Data parameters:
+         * RenderBlocks render - The RenderBlocks instance
+         * EntityLiving entity - The entity holding this item
+         */
+        EQUIPPED_FIRST_PERSON, 
+        
+        /** 
          * Called to render an item in a GUI inventory slot. If rendering as a 3D
          * block, the appropriate OpenGL translations and scaling have already been
          * applied, and the rendering should be done in local coordinates from
