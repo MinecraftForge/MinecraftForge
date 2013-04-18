@@ -155,7 +155,7 @@
      }
  
      /**
-@@ -1439,4 +1459,911 @@
+@@ -1439,4 +1459,917 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -1062,6 +1062,12 @@
 +     * @param z Z position
 +     * @return The amount of enchanting power this block produces.
 +     */
++    public float getEnchantPowerBonus(World world, int x, int y, int z)
++    {
++        return getEnchantPower(world, x, y, z);
++    }
++
++    @Deprecated //Changed return to float, see above.
 +    public int getEnchantPower(World world, int x, int y, int z)
 +    {
 +        return blockID == bookShelf.blockID ? 1 : 0;

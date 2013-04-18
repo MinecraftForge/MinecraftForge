@@ -379,6 +379,6 @@ public class ForgeHooks
         }
 
         Block block = Block.blocksList[world.getBlockId(x, y, z)];
-        return (block == null ? 0 : block.getEnchantPower(world, x, y, z));
+        return (block == null ? 0 : block.getEnchantPowerBonus(world, x, y, z));
     }
 }
