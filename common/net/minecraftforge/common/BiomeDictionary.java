@@ -98,7 +98,7 @@ public class BiomeDictionary
     {
         if(typeInfoList[type.ordinal()] != null)
         {
-            return (BiomeGenBase[])typeInfoList[type.ordinal()].toArray();
+            return (BiomeGenBase[])typeInfoList[type.ordinal()].toArray(new BiomeGenBase[0]);
         }
 
         return new BiomeGenBase[0];
@@ -116,7 +116,7 @@ public class BiomeDictionary
 
         if(biomeList[biome.biomeID] != null)
         {
-            return (Type[])biomeList[biome.biomeID].typeList.toArray();
+            return (Type[])biomeList[biome.biomeID].typeList.toArray(new Type[0]);
         }
 
         return new Type[0];
