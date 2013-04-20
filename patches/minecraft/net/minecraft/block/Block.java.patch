@@ -131,6 +131,17 @@
                  }
              }
          }
+@@ -925,8 +944,8 @@
+      */
+     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
+     {
+-        int l = par1World.getBlockId(par2, par3, par4);
+-        return l == 0 || blocksList[l].blockMaterial.isReplaceable();
++        Block block = Block.blocksList[par1World.getBlockId(par2, par3, par4)];
++        return block == null || block.isBlockReplaceable(par1World, par2, par3, par4);
+     }
+ 
+     /**
 @@ -1086,7 +1105,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
@@ -155,7 +166,7 @@
      }
  
      /**
-@@ -1439,4 +1459,944 @@
+@@ -1439,4 +1459,911 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -259,7 +270,7 @@
 +     */
 +    public boolean isBlockReplaceable(World world, int x, int y, int z)
 +    {
-+        return false;
++        return blockMaterial.isReplaceable();
 +    }
 +
 +    /**
