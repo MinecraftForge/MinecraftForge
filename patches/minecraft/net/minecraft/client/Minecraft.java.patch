@@ -1,17 +1,19 @@
 --- ../src_base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src_work/minecraft/net/minecraft/client/Minecraft.java
-@@ -123,6 +123,10 @@
+@@ -123,6 +123,12 @@
  
  import com.google.common.collect.MapDifference;
  
 +import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.ForgeEventFactory;
 +import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
++import net.minecraftforge.event.world.WorldEvent;
 +
  @SideOnly(Side.CLIENT)
  public abstract class Minecraft implements Runnable, IPlayerUsage
  {
-@@ -1238,7 +1242,7 @@
+@@ -1238,7 +1244,7 @@
  
                  if (this.thePlayer.canCurrentToolHarvestBlock(j, k, l))
                  {
@@ -20,7 +22,7 @@
                      this.thePlayer.swingItem();
                  }
              }
-@@ -1304,7 +1308,8 @@
+@@ -1304,7 +1310,8 @@
                  {
                      int j1 = itemstack != null ? itemstack.stackSize : 0;
  
@@ -30,7 +32,7 @@
                      {
                          flag = false;
                          this.thePlayer.swingItem();
-@@ -1330,7 +1335,8 @@
+@@ -1330,7 +1337,8 @@
              {
                  ItemStack itemstack1 = this.thePlayer.inventory.getCurrentItem();
  
@@ -40,7 +42,17 @@
                  {
                      this.entityRenderer.itemRenderer.resetEquippedProgress2();
                  }
-@@ -2027,6 +2033,18 @@
+@@ -2010,6 +2018,9 @@
+     {
+         this.statFileWriter.syncStats();
+ 
++        if (theWorld != null)
++            MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(theWorld));
++        
+         if (par1WorldClient == null)
+         {
+             NetClientHandler netclienthandler = this.getNetHandler();
+@@ -2027,6 +2038,18 @@
              if (this.theIntegratedServer != null)
              {
                  this.theIntegratedServer.initiateShutdown();
@@ -59,7 +71,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2354,103 +2372,12 @@
+@@ -2354,103 +2377,12 @@
          if (this.objectMouseOver != null)
          {
              boolean flag = this.thePlayer.capabilities.isCreativeMode;
@@ -167,7 +179,7 @@
  
              if (flag)
              {
-@@ -2539,11 +2466,18 @@
+@@ -2539,11 +2471,18 @@
          par1PlayerUsageSnooper.addData("gl_max_texture_size", Integer.valueOf(getGLMaximumTextureSize()));
      }
  
@@ -186,7 +198,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
-@@ -2551,6 +2485,7 @@
+@@ -2551,6 +2490,7 @@
  
              if (j != 0)
              {
