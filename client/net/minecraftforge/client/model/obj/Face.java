@@ -90,8 +90,8 @@ public class Face
             {
                 double u = textureCoordinates[i].u;
                 double v = textureCoordinates[i].v;
-                double interpolatedU = icon.getInterpolatedU((Math.floor(u) == u ? 0 : (u - Math.ceil(u) - 1)) * 16);
-                double interpolatedV = icon.getInterpolatedV((Math.floor(v) == v ? 0 : (u - Math.ceil(v) - 1)) * 16);
+                double interpolatedU = icon.getInterpolatedU((Math.floor(u) == u ? 0 : (u - (Math.ceil(u) - 1))) * 16);
+                double interpolatedV = icon.getInterpolatedV((Math.floor(v) == v ? 0 : (v - (Math.ceil(v) - 1))) * 16);
                 
                 scaledTextureCoordinates[i] = new TextureCoordinate((float)interpolatedU, (float)interpolatedV);
             }
