@@ -87,7 +87,7 @@
 +            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack1, EQUIPPED);
 +            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, itemstack1, BLOCK_3D));
 +
-+            if (itemstack1.getItem() instanceof ItemBlock && (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[itemstack1.itemID].getRenderType())))
++            if (is3D || (itemstack1.itemID < Block.blocksList.length && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack1.itemID].getRenderType())))
              {
                  f3 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);

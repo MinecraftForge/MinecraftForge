@@ -80,10 +80,10 @@ public class ForgeHooksClient
         }
         boolean is3D = customRenderer.shouldUseRenderHelper(ENTITY, item, BLOCK_3D);
 
-        if (item.getItem() instanceof ItemBlock && (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[item.itemID].getRenderType())))
+        engine.bindTexture(item.getItemSpriteNumber() == 0 ? "/terrain.png" : "/gui/items.png");
+        if (is3D || (item.itemID < Block.blocksList.length && RenderBlocks.renderItemIn3d(Block.blocksList[item.itemID].getRenderType())))
         {
-            engine.bindTexture("/terrain.png");
-            int renderType = Block.blocksList[item.itemID].getRenderType();
+            int renderType = (item.itemID < Block.blocksList.length ? Block.blocksList[item.itemID].getRenderType() : 1);
             float scale = (renderType == 1 || renderType == 19 || renderType == 12 || renderType == 2 ? 0.5F : 0.25F);
 
             if (RenderItem.renderInFrame)
@@ -114,7 +114,6 @@ public class ForgeHooksClient
         }
         else
         {
-            engine.bindTexture(item.getItemSpriteNumber() == 0 ? "/terrain.png" : "/gui/items.png");
             GL11.glScalef(0.5F, 0.5F, 0.5F);
             customRenderer.renderItem(ENTITY, item, renderBlocks, entity);
         }
