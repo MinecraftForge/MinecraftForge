@@ -1,6 +1,6 @@
 package net.minecraftforge.client.model;
 
-
+import net.minecraft.util.Icon;
 
 public interface IModelCustom {
     String getType();
