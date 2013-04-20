@@ -10,7 +10,7 @@
 +        int len = astacktraceelement.length - 3 - par1;
 +        if (len <= 0) len = astacktraceelement.length;
 +        this.stackTrace = new StackTraceElement[len];
-+        System.arraycopy(astacktraceelement, len, this.stackTrace, 0, this.stackTrace.length);
++        System.arraycopy(astacktraceelement, astacktraceelement.length - len, this.stackTrace, 0, this.stackTrace.length);
          return this.stackTrace.length;
      }
  
