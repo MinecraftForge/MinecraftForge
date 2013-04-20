@@ -82,7 +82,7 @@ public class Face
         
         for (int i = 0; i < vertices.length; ++i)
         {
-            if (textureCoordinates.length != 0)
+            if (textureCoordinates != null && textureCoordinates.length != 0)
             {
                 double interpolatedU = icon.getInterpolatedU((textureCoordinates[i].u % 1.0d) * 16);
                 double interpolatedV = icon.getInterpolatedV((textureCoordinates[i].v % 1.0d) * 16);
