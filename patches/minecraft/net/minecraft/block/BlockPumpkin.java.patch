@@ -1,0 +1,12 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockPumpkin.java
++++ ../src_work/minecraft/net/minecraft/block/BlockPumpkin.java
+@@ -123,7 +123,8 @@
+     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
+     {
+         int l = par1World.getBlockId(par2, par3, par4);
+-        return (l == 0 || Block.blocksList[l].blockMaterial.isReplaceable()) && par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4);
++        Block block = Block.blocksList[l];
++        return (block == null || block.isBlockReplaceable(par1World, par2, par3, par4)) && par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4);
+     }
+ 
+     /**
