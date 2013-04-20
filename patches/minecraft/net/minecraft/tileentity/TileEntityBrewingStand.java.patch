@@ -1,51 +1,85 @@
 --- ../src_base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
 +++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
-@@ -11,6 +11,8 @@
+@@ -11,6 +11,12 @@
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.nbt.NBTTagList;
  import net.minecraft.potion.PotionHelper;
 +import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.Event.Result;
++import net.minecraftforge.event.ForgeEventFactory;
 +import net.minecraftforge.event.brewing.PotionBrewedEvent;
++import net.minecraftforge.event.brewing.PotionBrewedEvent.BrewingConsumeEvent;
++import net.minecraftforge.event.brewing.PotionBrewingStackEvent.BrewingCraftEvent;
  
  public class TileEntityBrewingStand extends TileEntity implements ISidedInventory
  {
-@@ -122,7 +124,7 @@
+@@ -122,8 +128,14 @@
  
                  for (int i = 0; i < 3; ++i)
                  {
 -                    if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].itemID == Item.potion.itemID)
 +                    if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() instanceof ItemPotion)
                      {
++                        Result result = ForgeEventFactory.isValidBrewingCombo(brewingItemStacks[i], itemstack);
++                        if (result != Result.DEFAULT)
++                        {
++                            if(result == Result.ALLOW) flag = true;
++                            continue;
++                        }
                          int j = this.brewingItemStacks[i].getItemDamage();
                          int k = this.getPotionResult(j, itemstack);
-@@ -161,7 +163,7 @@
+ 
+@@ -161,8 +173,12 @@
  
              for (int i = 0; i < 3; ++i)
              {
 -                if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].itemID == Item.potion.itemID)
 +                if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() instanceof ItemPotion)
                  {
++                    if (MinecraftForge.EVENT_BUS.post(new BrewingCraftEvent(brewingItemStacks[i], itemstack)))
++                    {
++                        continue;
++                    }
                      int j = this.brewingItemStacks[i].getItemDamage();
                      int k = this.getPotionResult(j, itemstack);
-@@ -184,7 +186,7 @@
- 
-             if (Item.itemsList[itemstack.itemID].hasContainerItem())
-             {
--                this.brewingItemStacks[3] = new ItemStack(Item.itemsList[itemstack.itemID].getContainerItem());
-+                this.brewingItemStacks[3] = Item.itemsList[itemstack.itemID].getContainerItemStack(brewingItemStacks[3]);
-             }
-             else
-             {
-@@ -195,6 +197,8 @@
-                     this.brewingItemStacks[3] = null;
+                     List list = Item.potion.getEffects(j);
+@@ -182,19 +198,24 @@
                  }
              }
+ 
+-            if (Item.itemsList[itemstack.itemID].hasContainerItem())
+-            {
+-                this.brewingItemStacks[3] = new ItemStack(Item.itemsList[itemstack.itemID].getContainerItem());
+-            }
+-            else
+-            {
+-                --this.brewingItemStacks[3].stackSize;
+-
+-                if (this.brewingItemStacks[3].stackSize <= 0)
++            if (!MinecraftForge.EVENT_BUS.post(new BrewingConsumeEvent(brewingItemStacks)))
++            {
++                if (Item.itemsList[itemstack.itemID].hasContainerItem())
+                 {
+-                    this.brewingItemStacks[3] = null;
++                    this.brewingItemStacks[3] = Item.itemsList[itemstack.itemID].getContainerItemStack(brewingItemStacks[3]);
+                 }
+-            }
++                else
++                {
++                    --this.brewingItemStacks[3].stackSize;
++
++                    if (this.brewingItemStacks[3].stackSize <= 0)
++                    {
++                        this.brewingItemStacks[3] = null;
++                    }
++                }
++            }
 +            
 +            MinecraftForge.EVENT_BUS.post(new PotionBrewedEvent(brewingItemStacks));
          }
      }
  
-@@ -343,7 +347,7 @@
+@@ -343,7 +364,7 @@
       */
      public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
      {
