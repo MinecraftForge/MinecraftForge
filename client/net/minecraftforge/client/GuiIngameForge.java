@@ -10,6 +10,8 @@ import java.util.Random;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -49,8 +51,8 @@ public class GuiIngameForge extends GuiIngame
 {
     private static final int WHITE = 0xFFFFFF;
 
-    //Flags to toggle the rendering of certain aspects of the HUD, valid conditions 
-    //must be met for them to render normally. If those conditions are met, but this flag 
+    //Flags to toggle the rendering of certain aspects of the HUD, valid conditions
+    //must be met for them to render normally. If those conditions are met, but this flag
     //is false, they will not be rendered.
     public static boolean renderHelmet = true;
     public static boolean renderPortal = true;
@@ -82,7 +84,7 @@ public class GuiIngameForge extends GuiIngame
         int height = res.getScaledHeight();
 
         if (pre(ALL)) return;
-        
+
         fontrenderer = mc.fontRenderer;
         mc.entityRenderer.setupOverlayRendering();
         GL11.glEnable(GL11.GL_BLEND);
@@ -109,7 +111,7 @@ public class GuiIngameForge extends GuiIngame
             zLevel = -90.0F;
             rand.setSeed((long)(updateCounter * 312871));
             mc.renderEngine.bindTexture("/gui/icons.png");
-            
+
             if (renderCrosshairs) renderCrosshairs(width, height);
             if (renderBossHealth) renderBossHealth();
 
@@ -138,7 +140,7 @@ public class GuiIngameForge extends GuiIngame
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glDisable(GL11.GL_ALPHA_TEST);
-        
+
         renderChat(width, height);
 
         renderPlayerList(width, height);
@@ -157,13 +159,13 @@ public class GuiIngameForge extends GuiIngame
     {
         if (pre(HOTBAR)) return;
         mc.mcProfiler.startSection("actionBar");
-        
+
         mc.renderEngine.bindTexture("/gui/gui.png");
-        
+
         InventoryPlayer inv = mc.thePlayer.inventory;
         drawTexturedModalRect(width / 2 - 91, height - 22, 0, 0, 182, 22);
         drawTexturedModalRect(width / 2 - 91 - 1 + inv.currentItem * 20, height - 22 - 1, 0, 22, 24, 22);
-        
+
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         RenderHelper.enableGUIStandardItemLighting();
@@ -200,7 +202,7 @@ public class GuiIngameForge extends GuiIngame
         mc.mcProfiler.endSection();
         post(BOSSHEALTH);
     }
-    
+
     private void renderHelmet(ScaledResolution res, float partialTicks, boolean hasScreen, int mouseX, int mouseY)
     {
         if (pre(HELMET)) return;
@@ -229,7 +231,7 @@ public class GuiIngameForge extends GuiIngame
 
         int left = width / 2 - 91;
         int top = height - 49;
-        
+
         int level = ForgeHooks.getTotalArmorValue(mc.thePlayer);
         for (int i = 1; level > 0 && i < 20; i += 2)
         {
@@ -251,7 +253,7 @@ public class GuiIngameForge extends GuiIngame
         mc.mcProfiler.endSection();
         post(ARMOR);
     }
-    
+
     protected void renderPortal(int width, int height, float partialTicks)
     {
         if (pre(PORTAL)) return;
@@ -305,7 +307,7 @@ public class GuiIngameForge extends GuiIngame
         int healthLast = mc.thePlayer.prevHealth;
         int left = width / 2 - 91;
         int top = height - 39;
-        
+
         int regen = -1;
         if (mc.thePlayer.isPotionActive(Potion.regeneration))
         {
@@ -380,7 +382,7 @@ public class GuiIngameForge extends GuiIngame
             }
 
             this.drawTexturedModalRect(x, y, 16 + backgound * 9, 27, 9, 9);
-            
+
             if (unused)
             {
                 if (idx < levelLast)
@@ -441,14 +443,14 @@ public class GuiIngameForge extends GuiIngame
             mc.renderEngine.bindTexture("/gui/icons.png");
             int cap = this.mc.thePlayer.xpBarCap();
             int left = width / 2 - 91;
-    
+
             if (cap > 0)
             {
                 short short1 = 182;
                 int l2 = (int)(this.mc.thePlayer.experience * (float)(short1 + 1));
                 int k2 = height - 32 + 3;
                 this.drawTexturedModalRect(left, k2, 0, 64, short1, 5);
-    
+
                 if (l2 > 0)
                 {
                     this.drawTexturedModalRect(left, k2, 0, 69, l2, 5);
@@ -471,9 +473,9 @@ public class GuiIngameForge extends GuiIngame
             fontrenderer.drawString(text, x, y - 1, 0);
             fontrenderer.drawString(text, x, y, color);
             mc.mcProfiler.endSection();
-        } 
+        }
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        
+
         post(EXPERIENCE);
     }
 
@@ -536,7 +538,7 @@ public class GuiIngameForge extends GuiIngame
                 right.add(String.format(StatCollector.translateToLocal("demo.remainingTime"), StringUtils.ticksToElapsedTime((int)(120500L - time))));
             }
         }
-        
+
 
         if (this.mc.gameSettings.showDebugInfo)
         {
@@ -548,24 +550,24 @@ public class GuiIngameForge extends GuiIngame
             left.add(mc.debugInfoEntities());
             left.add(mc.getWorldProviderName());
             left.add(null); //Spacer
-            
+
             long max = Runtime.getRuntime().maxMemory();
             long total = Runtime.getRuntime().totalMemory();
             long free = Runtime.getRuntime().freeMemory();
             long used = total - free;
-            
+
             right.add("Used memory: " + used * 100L / max + "% (" + used / 1024L / 1024L + "MB) of " + max / 1024L / 1024L + "MB");
             right.add("Allocated memory: " + total * 100L / max + "% (" + total / 1024L / 1024L + "MB)");
-            
+
             int x = MathHelper.floor_double(mc.thePlayer.posX);
             int y = MathHelper.floor_double(mc.thePlayer.posY);
             int z = MathHelper.floor_double(mc.thePlayer.posZ);
             float yaw = mc.thePlayer.rotationYaw;
             int heading = MathHelper.floor_double((double)(mc.thePlayer.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-            
+
             left.add(String.format("x: %.5f (%d) // c: %d (%d)", mc.thePlayer.posX, x, x >> 4, x & 15));
             left.add(String.format("y: %.3f (feet pos, %.3f eyes pos)", mc.thePlayer.boundingBox.minY, mc.thePlayer.posY));
-            left.add(String.format("z: %.5f (%d) // c: %d (%d)", mc.thePlayer.posZ, z, z >> 4, z & 15));            
+            left.add(String.format("z: %.5f (%d) // c: %d (%d)", mc.thePlayer.posZ, z, z >> 4, z & 15));
             left.add(String.format("f: %d (%s) / %f", heading, Direction.directions[heading], MathHelper.wrapAngleTo180_float(yaw)));
 
             if (mc.theWorld != null && mc.theWorld.blockExists(x, y, z))
@@ -584,6 +586,11 @@ public class GuiIngameForge extends GuiIngame
             }
 
             left.add(String.format("ws: %.3f, fs: %.3f, g: %b, fl: %d", mc.thePlayer.capabilities.getWalkSpeed(), mc.thePlayer.capabilities.getFlySpeed(), mc.thePlayer.onGround, mc.theWorld.getHeightValue(x, z)));
+            right.add(null);
+            for (String s : FMLCommonHandler.instance().getBrandings().subList(1, FMLCommonHandler.instance().getBrandings().size()))
+            {
+                right.add(s);
+            }
             GL11.glPopMatrix();
             mc.mcProfiler.endSection();
         }
@@ -597,7 +604,7 @@ public class GuiIngameForge extends GuiIngame
                 if (msg == null) continue;
                 fontrenderer.drawStringWithShadow(msg, 2, 2 + x * 10, WHITE);
             }
-    
+
             for (int x = 0; x < right.size(); x++)
             {
                 String msg = right.get(x);
@@ -618,7 +625,7 @@ public class GuiIngameForge extends GuiIngame
             mc.mcProfiler.startSection("overlayMessage");
             float hue = (float)recordPlayingUpFor - partialTicks;
             int opacity = (int)(hue * 256.0F / 20.0F);
-            if (opacity > 255) opacity = 255; 
+            if (opacity > 255) opacity = 255;
 
             if (opacity > 0)
             {
@@ -645,7 +652,7 @@ public class GuiIngameForge extends GuiIngame
         mc.mcProfiler.endSection();
         GL11.glPopMatrix();
     }
-    
+
     protected void renderPlayerList(int width, int height)
     {
         ScoreObjective scoreobjective = this.mc.theWorld.getScoreboard().func_96539_a(0);
@@ -704,7 +711,7 @@ public class GuiIngameForge extends GuiIngame
                     }
 
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    
+
                     mc.renderEngine.bindTexture("/gui/icons.png");
                     int pingIndex = 4;
                     int ping = player.responseTime;
@@ -721,7 +728,7 @@ public class GuiIngameForge extends GuiIngame
             }
         }
     }
-    
+
     //Helper macros
     private boolean pre(ElementType type)
     {
