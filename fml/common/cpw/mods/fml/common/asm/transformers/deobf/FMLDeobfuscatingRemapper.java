@@ -173,7 +173,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
                 ClassNode classNode = new ClassNode();
                 cr.accept(classNode, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
                 Map<String,String> resMap = Maps.newHashMap();
-                for (FieldNode fieldNode : classNode.fields) {
+                for (FieldNode fieldNode : (List<FieldNode>) classNode.fields) {
                     resMap.put(fieldNode.name, fieldNode.desc);
                 }
                 fieldDescriptions.put(owner, resMap);
