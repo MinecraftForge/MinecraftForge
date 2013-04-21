@@ -221,7 +221,7 @@ public class GameRegistry
             }
             catch (NoSuchMethodException e)
             {
-                itemCtor = itemclass.getConstructor(int.class, Block.class);
+                itemCtor = itemclass.getConstructor(int.class, net.minecraft.block.Block.class);
                 i = itemCtor.newInstance(blockItemId, block);
             }
             GameRegistry.registerItem(i,name, modId);
