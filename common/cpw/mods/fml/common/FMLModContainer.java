@@ -539,4 +539,10 @@ public class FMLModContainer implements ModContainer
     {
         return certificate;
     }
+
+    @Override
+    public String toString()
+    {
+        return "FMLMod:"+getModId()+"{"+getVersion()+"}";
+    }
 }
