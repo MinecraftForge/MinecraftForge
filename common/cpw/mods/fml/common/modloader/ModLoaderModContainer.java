@@ -40,6 +40,7 @@ import com.google.common.eventbus.Subscribe;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.ILanguageAdapter;
 import cpw.mods.fml.common.LoadController;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
@@ -496,7 +497,7 @@ public class ModLoaderModContainer implements ModContainer
             {
                 dummyHandler.setBaseMod(mod);
             }
-            ProxyInjector.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide());
+            ProxyInjector.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide(), new ILanguageAdapter.JavaAdapter());
         }
         catch (Exception e)
         {
