@@ -69,3 +69,20 @@
                                      }
                                  }
                              }
+@@ -318,6 +337,16 @@
+                 par0World.spawnParticle("happyVillager", (double)((float)par1 + itemRand.nextFloat()), (double)par2 + (double)itemRand.nextFloat() * block.getBlockBoundsMaxY(), (double)((float)par3 + itemRand.nextFloat()), d0, d1, d2);
+             }
+         }
++        else
++        {
++            for (int j1 = 0; j1 < par4; ++j1)
++            {
++                double d0 = itemRand.nextGaussian() * 0.02D;
++                double d1 = itemRand.nextGaussian() * 0.02D;
++                double d2 = itemRand.nextGaussian() * 0.02D;
++                par0World.spawnParticle("happyVillager", (double)((float)par1 + itemRand.nextFloat()), (double)par2 + (double)itemRand.nextFloat() * 1.0f, (double)((float)par3 + itemRand.nextFloat()), d0, d1, d2);
++            }
++        }
+     }
+ 
+     /**
