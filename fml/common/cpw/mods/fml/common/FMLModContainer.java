@@ -108,34 +108,13 @@ public class FMLModContainer implements ModContainer
     private String modLanguage;
     private ILanguageAdapter languageAdapter;
 
-    public static interface ILanguageAdapter {
-        public Object getNewInstance(FMLModContainer container, Class<?> objectClass, ClassLoader classLoader) throws Exception;
-    }
-
-    public static class ScalaAdapter implements ILanguageAdapter {
-        @Override
-        public Object getNewInstance(FMLModContainer container, Class<?> scalaObjectClass, ClassLoader classLoader) throws Exception
-        {
-            System.out.println("Scala class : "+ scalaObjectClass);
-            Class<?> sObjectClass = Class.forName(scalaObjectClass.getName()+"$",true,classLoader);
-            return sObjectClass.getField("MODULE$").get(null);
-        }
-    }
-
-    public static class JavaAdapter implements ILanguageAdapter {
-        @Override
-        public Object getNewInstance(FMLModContainer container, Class<?> objectClass, ClassLoader classLoader) throws Exception
-        {
-            return objectClass.newInstance();
-        }
-    }
     public FMLModContainer(String className, File modSource, Map<String,Object> modDescriptor)
     {
         this.className = className;
         this.source = modSource;
         this.descriptor = modDescriptor;
         this.modLanguage = (String) modDescriptor.get("modLanguage");
-        this.languageAdapter = "scala".equals(modLanguage) ? new ScalaAdapter() : new JavaAdapter();
+        this.languageAdapter = "scala".equals(modLanguage) ? new ILanguageAdapter.ScalaAdapter() : new ILanguageAdapter.JavaAdapter();
     }
 
     private ILanguageAdapter getLanguageAdapter()
@@ -489,7 +468,7 @@ public class FMLModContainer implements ModContainer
             {
                 eventBus.post(new FMLFingerprintViolationEvent(source.isDirectory(), source, ImmutableSet.copyOf(this.sourceFingerprints), expectedFingerprint));
             }
-            ProxyInjector.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide());
+            ProxyInjector.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide(), getLanguageAdapter());
             processFieldAnnotations(event.getASMHarvestedData());
         }
         catch (Throwable e)
