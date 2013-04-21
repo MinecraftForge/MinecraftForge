@@ -528,4 +528,15 @@ public class FMLClientHandler implements IFMLSidedHandler
         // Show error screen
         warnIDMismatch(s, false);
     }
+
+    /**
+     * Is this GUI type open?
+     *
+     * @param gui The type of GUI to test for
+     * @return if a GUI of this type is open
+     */
+    public boolean isGUIOpen(Class<? extends GuiScreen> gui)
+    {
+        return client.field_71462_r != null && client.field_71462_r.getClass().equals(gui);
+    }
 }

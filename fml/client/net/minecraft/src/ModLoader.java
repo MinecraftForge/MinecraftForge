@@ -541,7 +541,7 @@ public class ModLoader
     @SideOnly(CLIENT)
     public static boolean isGUIOpen(Class<? extends GuiScreen> gui)
     {
-        return FMLClientHandler.instance().getClient().field_71462_r != null && FMLClientHandler.instance().getClient().field_71462_r.equals(gui);
+        return FMLClientHandler.instance().isGUIOpen(gui);
     }
 
     /**
@@ -810,14 +810,12 @@ public class ModLoader
     @Deprecated
     public static void serverChat(String text)
     {
-        //TODO
     }
 
     @Deprecated
     @SideOnly(CLIENT)
     public static void serverLogin(NetClientHandler handler, Packet1Login loginPacket)
     {
-        //TODO
     }
 
     public static void serverSendPacket(NetServerHandler handler, Packet packet)
