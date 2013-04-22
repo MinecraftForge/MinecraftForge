@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import net.minecraftforge.client.model.obj.ObjModelLoader;
+import net.minecraftforge.client.model.techne.TechneModelLoader;
 
 import com.google.common.collect.Maps;
 
@@ -52,7 +53,7 @@ public class AdvancedModelLoader {
             FMLLog.severe("The resource name %s is not valid", resourceName);
             throw new IllegalArgumentException("The resource name is not valid");
         }
-        String suffix = resourceName.substring(i);
+        String suffix = resourceName.substring(i + 1);
         IModelCustomLoader loader = instances.get(suffix);
         if (loader == null)
         {
@@ -78,5 +79,6 @@ public class AdvancedModelLoader {
     static
     {
         registerModelHandler(new ObjModelLoader());
+        registerModelHandler(new TechneModelLoader());
     }
 }
