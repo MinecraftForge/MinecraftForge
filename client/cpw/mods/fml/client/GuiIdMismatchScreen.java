@@ -65,15 +65,23 @@ public class GuiIdMismatchScreen extends GuiYesNo {
         int offset = Math.max(85 - (missingIds.size() + mismatchedIds.size()) * 10, 30);
         this.func_73732_a(this.field_73886_k, "Forge Mod Loader has found ID mismatches", this.field_73880_f / 2, 10, 0xFFFFFF);
         this.func_73732_a(this.field_73886_k, "Complete details are in the log file", this.field_73880_f / 2, 20, 0xFFFFFF);
+        int maxLines = 20;
         for (String s: missingIds) {
             this.func_73732_a(this.field_73886_k, s, this.field_73880_f / 2, offset, 0xEEEEEE);
             offset += 10;
-            if (offset > this.field_73881_g - 30) break;
+            maxLines --;
+            if (maxLines < 0) break;
+            if (offset >= this.field_73881_g - 30) break;
         }
-        for (String s: mismatchedIds) {
-            this.func_73732_a(this.field_73886_k, s, this.field_73880_f / 2, offset, 0xEEEEEE);
-            offset += 10;
-            if (offset > this.field_73881_g - 30) break;
+        if (maxLines > 0 && offset < this.field_73881_g - 30)
+        {
+            for (String s: mismatchedIds) {
+                this.func_73732_a(this.field_73886_k, s, this.field_73880_f / 2, offset, 0xEEEEEE);
+                offset += 10;
+                maxLines --;
+                if (maxLines < 0) break;
+                if (offset >= this.field_73881_g - 30) break;
+            }
         }
         if (allowContinue)
         {
