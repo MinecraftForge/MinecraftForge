@@ -9,7 +9,6 @@ import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.client.model.IModelCustomLoader;
 import net.minecraftforge.client.model.ModelFormatException;
 
-@SideOnly(Side.CLIENT)
 public class TechneModelLoader implements IModelCustomLoader {
     
     @Override

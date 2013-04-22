@@ -39,6 +39,9 @@ import net.minecraft.client.renderer.RenderEngine;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.client.model.ModelFormatException;
 
+/**
+ * Techne model importer, based on iChun's Hats importer
+ */
 @SideOnly(Side.CLIENT)
 public class TechneModel extends ModelBase implements IModelCustom {
     public static final List<String> cubeTypes = Arrays.asList(
@@ -47,7 +50,7 @@ public class TechneModel extends ModelBase implements IModelCustom {
             );
     
     private String fileName;
-    private Map<String, byte[]> zipFile = new HashMap<String, byte[]>();
+    private Map<String, byte[]> zipContents = new HashMap<String, byte[]>();
     
     private Map<String, ModelRenderer> parts = new LinkedHashMap<String, ModelRenderer>();
     private String texture = null;
@@ -70,11 +73,16 @@ public class TechneModel extends ModelBase implements IModelCustom {
             while ((entry = zipInput.getNextEntry()) != null)
             {
                 byte[] data = new byte[(int) entry.getSize()];
-                zipInput.read(data);
-                zipFile.put(entry.getName(), data);
+                // For some reason, using read(byte[]) makes reading stall upon reaching a 0x1E byte
+                int i = 0;
+                while (zipInput.available() > 0 && i < data.length)
+                {
+                    data[i++] = (byte)zipInput.read();
+                }
+                zipContents.put(entry.getName(), data);
             }
             
-            byte[] modelXml = zipFile.get("model.xml");
+            byte[] modelXml = zipContents.get("model.xml");
             if (modelXml == null)
             {
                 throw new ModelFormatException("Model " + fileName + " contains no model.xml file");
@@ -129,17 +137,13 @@ public class TechneModel extends ModelBase implements IModelCustom {
                     shapeName = "Shape #" + (i + 1);
                 }
                 
+                String shapeType = null;
                 Node type = shapeAttributes.getNamedItem("type");
-                if (type == null)
+                if (type != null)
                 {
-                    throw new ModelFormatException("Shape [" + shapeName + "] in " + fileName + " has no type");
+                    shapeType = type.getNodeValue();
                 }
-                String shapeType = type.getNodeValue();
-                if (shapeType == null)
-                {
-                    throw new ModelFormatException("Shape [" + shapeName + "] in " + fileName + " has an invalid type");
-                }
-                if (!cubeTypes.contains(shapeType))
+                if (shapeType != null && !cubeTypes.contains(shapeType))
                 {
                     FMLLog.warning("Model shape [" + shapeName + "] in " + fileName + " is not a cube, ignoring");
                     continue;
@@ -235,15 +239,14 @@ public class TechneModel extends ModelBase implements IModelCustom {
         {
             if (!textureNameSet)
             {
-                
                 try
                 {
-                    byte[] textureEntry = zipFile.get(texture);
+                    byte[] textureEntry = zipContents.get(texture);
                     if (textureEntry == null)
                     {
                         throw new ModelFormatException("Model " + fileName + " has no such texture " + texture);
                     }
-                    System.out.println(textureEntry.length);
+                    
                     BufferedImage image = ImageIO.read(new ByteArrayInputStream(textureEntry));
                     textureName = Minecraft.getMinecraft().renderEngine.allocateAndSetupTexture(image);
                     textureNameSet = true;
@@ -254,17 +257,6 @@ public class TechneModel extends ModelBase implements IModelCustom {
                 }
                 catch (IOException e)
                 {
-                    try
-                    {
-                        FileOutputStream fileOutput = new FileOutputStream("techne_texture_debug.png");
-                        fileOutput.write(zipFile.get(texture));
-                        fileOutput.flush();
-                        fileOutput.close();
-                    }
-                    catch (Throwable e1)
-                    {
-                    }
-                    
                     throw new ModelFormatException("Texture for model " + fileName + " could not be read", e);
                 }
             }
@@ -296,12 +288,12 @@ public class TechneModel extends ModelBase implements IModelCustom {
 
     @Override
     public void renderPart(String partName)
-    {
-        bindTexture();
-        
+    {        
         ModelRenderer part = parts.get(partName);
         if (part != null)
         {
+            bindTexture();
+            
             part.renderWithRotation(1.0F);
         }
     }
