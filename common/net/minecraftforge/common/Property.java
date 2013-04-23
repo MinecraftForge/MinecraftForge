@@ -144,6 +144,16 @@ public class Property
 
     /**
      * Returns the value in this property as a boolean,
+     * if the value is not a valid boolean, it will return false.
+     * 
+     * @return The value
+     */
+    public boolean getBoolean() {
+        return getBoolean(false);
+    }
+
+    /**
+     * Returns the value in this property as a boolean,
      * if the value is not a valid boolean, it will return the
      * provided default.
      * 
@@ -186,6 +196,16 @@ public class Property
         {
             return false;
         }
+    }
+
+    /**
+     * Returns the value in this property as a double,
+     * if the value is not a valid double, it will return Double.NaN.
+     * 
+     * @return The value
+     */
+    public double getDouble() {
+        return getDouble(Double.NaN);
     }
 
     /**
