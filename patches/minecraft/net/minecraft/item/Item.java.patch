@@ -60,7 +60,7 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
      }
-@@ -720,4 +736,434 @@
+@@ -720,4 +736,480 @@
      {
          StatList.initStats();
      }
@@ -494,4 +494,50 @@
 +     */
 +    @SideOnly(Side.CLIENT)
 +    public void renderHelmetOverlay(ItemStack stack, EntityPlayer player, ScaledResolution resolution, float partialTicks, boolean hasScreen, int mouseX, int mouseY){}
++
++    /**
++     * Return the itemDamage represented by this ItemStack. Defaults to the itemDamage field on ItemStack, but can be overridden here for other sources such as NBT.
++     *
++     * @param stack The itemstack that is damaged
++     * @return the damage value
++     */
++    public int getItemDamageFromStack(ItemStack stack)
++    {
++        return stack.itemDamage;
++    }
++
++    /**
++     * Return the itemDamage display value represented by this itemstack.
++     * @param stack the stack
++     * @return the damage value
++     */
++    public int getItemDamageFromStackForDisplay(ItemStack stack)
++    {
++        return stack.itemDamage;
++    }
++
++    /**
++     * Return if this itemstack is damaged. Note only called if {@link #isDamageable()} is true.
++     * @param stack the stack
++     * @return if the stack is damaged
++     */
++    public boolean isItemStackDamaged(ItemStack stack)
++    {
++        return stack.itemDamage > 0;
++    }
++
++    /**
++     * Set the damage for this itemstack. Note, this method is responsible for zero checking.
++     * @param stack the stack
++     * @param damage the new damage value
++     */
++    public void setItemDamageForStack(ItemStack stack, int damage)
++    {
++        stack.itemDamage = damage;
++
++        if (stack.itemDamage < 0)
++        {
++            stack.itemDamage = 0;
++        }
++    }
  }

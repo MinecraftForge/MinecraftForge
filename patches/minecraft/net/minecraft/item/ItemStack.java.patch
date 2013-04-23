@@ -1,6 +1,47 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemStack.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemStack.java
-@@ -382,7 +382,7 @@
+@@ -249,7 +249,7 @@
+      */
+     public boolean isItemDamaged()
+     {
+-        return this.isItemStackDamageable() && this.itemDamage > 0;
++        return this.isItemStackDamageable() && this.getItem().isItemStackDamaged(this);
+     }
+ 
+     /**
+@@ -257,7 +257,7 @@
+      */
+     public int getItemDamageForDisplay()
+     {
+-        return this.itemDamage;
++        return this.getItem().getItemDamageFromStackForDisplay(this);
+     }
+ 
+     /**
+@@ -265,7 +265,7 @@
+      */
+     public int getItemDamage()
+     {
+-        return this.itemDamage;
++        return this.getItem().getItemDamageFromStack(this);
+     }
+ 
+     /**
+@@ -273,12 +273,7 @@
+      */
+     public void setItemDamage(int par1)
+     {
+-        this.itemDamage = par1;
+-
+-        if (this.itemDamage < 0)
+-        {
+-            this.itemDamage = 0;
+-        }
++        this.getItem().setItemDamageForStack(this, par1);
+     }
+ 
+     /**
+@@ -382,7 +377,7 @@
       */
      public int getDamageVsEntity(Entity par1Entity)
      {
