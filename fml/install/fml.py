@@ -12,7 +12,7 @@ mcp_version = '7.42'
 
 def download_deps(mcp_path):
     ret = True
-    for lib in ['argo-3.2-src.jar','guava-14.0-rc3.jar','asm-4.1.tar.gz','asm-debug-all-4.1.jar','bcprov-debug-jdk15on-148.jar','bcprov-jdk15on-148-src.zip','guava-14.0-rc3-sources.jar']:
+    for lib in ['argo-3.2-src.jar','guava-14.0-rc3.jar','asm-4.1.tar.gz','asm-debug-all-4.1.jar','bcprov-debug-jdk15on-148.jar','bcprov-jdk15on-148-src.zip','guava-14.0-rc3-sources.jar', 'scala-library.jar']:
         libF = os.path.join(mcp_path, 'lib')
         if not os.path.isdir(libF):
             os.makedirs(libF)
