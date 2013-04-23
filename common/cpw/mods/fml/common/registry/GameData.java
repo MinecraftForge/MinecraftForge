@@ -285,7 +285,7 @@ public class GameData {
     }
     static Item findItem(String modId, String name)
     {
-        if (modObjectTable == null)
+        if (modObjectTable == null || !modObjectTable.contains(modId, name))
         {
             return null;
         }
@@ -301,7 +301,7 @@ public class GameData {
         }
 
         Integer blockId = modObjectTable.get(modId, name);
-        if (blockId >= Block.field_71973_m.length)
+        if (blockId == null || blockId >= Block.field_71973_m.length)
         {
             return null;
         }
