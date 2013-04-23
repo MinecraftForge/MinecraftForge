@@ -15,11 +15,13 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multiset;
 import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -52,7 +54,7 @@ public class DimensionManager
     private static ArrayList<Integer> unloadQueue = new ArrayList<Integer>();
     private static BitSet dimensionMap = new BitSet(Long.SIZE << 4);
     private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().<World,World>makeMap();
-    private static Set<Integer> leakedWorlds = Sets.newHashSet();
+    private static Multiset<Integer> leakedWorlds = HashMultiset.create();
 
     public static boolean registerProviderType(int id, Class<? extends WorldProvider> provider, boolean keepLoaded)
     {
@@ -163,23 +165,21 @@ public class DimensionManager
         {
             List<World> allWorlds = Lists.newArrayList(weakWorldMap.keySet());
             allWorlds.removeAll(worlds.values());
-            Set<Integer> newLeaks = Sets.newHashSet();
             for (ListIterator<World> li = allWorlds.listIterator(); li.hasNext(); )
             {
                 World w = li.next();
-                if (leakedWorlds.contains(System.identityHashCode(w)))
-                {
-                    li.remove();
-                }
-                newLeaks.add(System.identityHashCode(w));
+                leakedWorlds.add(System.identityHashCode(w));
             }
-            leakedWorlds = newLeaks;
-            if (allWorlds.size() > 0)
+            for (World w : allWorlds)
             {
-                FMLLog.severe("Detected leaking worlds in memory. There are %d worlds that appear to be persisting. A mod is likely caching the world incorrectly\n", allWorlds.size() + leakedWorlds.size());
-                for (World w : allWorlds)
+                int leakCount = leakedWorlds.count(System.identityHashCode(w));
+                if (leakCount == 5)
                 {
-                    FMLLog.severe("The world %x (%s) has leaked.\n", System.identityHashCode(w), w.getWorldInfo().getWorldName());
+                    FMLLog.fine("The world %x (%s) may have leaked: first encounter (5 occurences).\n", System.identityHashCode(w), w.getWorldInfo().getWorldName());
+                }
+                else if (leakCount % 5 == 0)
+                {
+                    FMLLog.fine("The world %x (%s) may have leaked: seen %d times.\n", System.identityHashCode(w), w.getWorldInfo().getWorldName(), leakCount);
                 }
             }
         }
