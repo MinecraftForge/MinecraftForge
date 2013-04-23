@@ -22,5 +22,6 @@
 	<classpathentry kind="lib" path="lib/bcprov-debug-jdk15on-148.jar" sourcepath="lib/bcprov-jdk15on-148-src.zip"/>
 	<classpathentry kind="lib" path="lib/asm-debug-all-4.1.jar" sourcepath="lib/asm-4.1-bin.zip"/>
 	<classpathentry kind="lib" path="lib/guava-14.0-rc3.jar" sourcepath="lib/guava-14.0-rc3-sources.jar"/>
+	<classpathentry kind="lib" path="lib/scala-library.jar" sourcepath="lib/scala-library.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
