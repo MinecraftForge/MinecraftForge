@@ -65,7 +65,7 @@
 +            except (CalledProcessError, OSError):
 +                pass
 +        try:
-+        	self.runcmd('scala -target:jvm-1.6', quiet=True)
++        	self.runcmd('scala -target:jvm-1.6 -version', quiet=True)
 +        	results.append('')
 +        except (CalledProcessError, OSError):
 +        	self.logger.info('"scala" does not support jvm-1.6 target, it is out of date. Ignoring')
