@@ -79,19 +79,20 @@
                  {
                      f2 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
-@@ -304,7 +317,10 @@
+@@ -304,7 +317,11 @@
                  enumaction = itemstack1.getItemUseAction();
              }
  
 -            if (itemstack1.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack1.itemID].getRenderType()))
 +            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack1, EQUIPPED);
 +            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, itemstack1, BLOCK_3D));
++            boolean isBlock = itemstack1.itemID < Block.blocksList.length && itemstack1.getItemSpriteNumber() == 0;
 +
-+            if (is3D || (itemstack1.itemID < Block.blocksList.length && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack1.itemID].getRenderType())))
++            if (is3D || (isBlock && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack1.itemID].getRenderType())))
              {
                  f3 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -361,7 +377,7 @@
+@@ -361,7 +378,7 @@
  
              if (itemstack1.getItem().requiresMultipleRenderPasses())
              {
