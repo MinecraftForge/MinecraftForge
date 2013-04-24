@@ -1,15 +1,19 @@
---- ../src_base/minecraft/net/minecraft/client/renderer/Tessellator.java
-+++ ../src_work/minecraft/net/minecraft/client/renderer/Tessellator.java
-@@ -7,6 +7,8 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/Tessellator.java 
++++ ../src_work/minecraft/net/minecraft/client/renderer/Tessellator.java 
+@@ -7,6 +7,12 @@
  import java.nio.FloatBuffer;
  import java.nio.IntBuffer;
  import java.nio.ShortBuffer;
 +import java.util.Arrays;
++import java.util.PriorityQueue;
++
++import net.minecraftforge.client.renderer.TessellatorState;
++import net.minecraftforge.client.renderer.TriComparator;
 +
  import org.lwjgl.opengl.ARBVertexBufferObject;
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GLContext;
-@@ -14,6 +16,12 @@
+@@ -14,6 +20,12 @@
  @SideOnly(Side.CLIENT)
  public class Tessellator
  {
@@ -22,7 +26,7 @@
      /**
       * Boolean used to check whether quads should be drawn as two triangles. Initialized to false and never changed.
       */
-@@ -25,16 +33,16 @@
+@@ -25,16 +37,16 @@
      private static boolean tryVBO = false;
  
      /** The byte buffer used for GL allocation. */
@@ -43,7 +47,7 @@
  
      /** Raw integer array. */
      private int[] rawBuffer;
-@@ -110,10 +118,10 @@
+@@ -110,10 +122,10 @@
      public boolean isDrawing = false;
  
      /** Whether we are currently using VBO or not. */
@@ -56,7 +60,7 @@
  
      /**
       * The index of the last VBO used. This is used in round-robin fashion, sequentially, through the vboCount vertex
-@@ -122,25 +130,28 @@
+@@ -122,25 +134,28 @@
      private int vboIndex = 0;
  
      /** Number of vertex buffer objects allocated for use. */
@@ -98,7 +102,7 @@
          }
      }
  
-@@ -157,12 +168,23 @@
+@@ -157,12 +172,23 @@
          {
              this.isDrawing = false;
  
@@ -126,7 +130,7 @@
  
                  if (this.useVBO)
                  {
-@@ -248,11 +270,11 @@
+@@ -248,11 +274,11 @@
  
                  if (this.drawMode == 7 && convertQuadsToTriangles)
                  {
@@ -140,7 +144,7 @@
                  }
  
                  GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-@@ -278,6 +300,12 @@
+@@ -278,6 +304,12 @@
                  {
                      GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
                  }
@@ -153,11 +157,90 @@
              }
  
              int i = this.rawBufferIndex * 4;
-@@ -442,6 +470,19 @@
+@@ -437,11 +469,98 @@
+     }
+ 
+     /**
++     *
++     * Sort the quads that have already been added to the tessellator instance before drawing. This is used when drawing
++     * pass 1 in order to sort quads from back to front for accurate semi-transparent block drawing.  This method returns
++     * a TessellatorState object with the current raw buffer, vertex caps, etc.  This can be restored later with
++     * restoreTesselatorState to resort and redraw when the player moves, without using a RenderBlocks to rebuild the
++     * quad list.
++     *
++     * @param playerX Viewpoint entity's current x position.
++     * @param playerY Viewpoint entity's current y position.
++     * @param playerZ Viewpoint entity's current Z position.
++     * @return The current state of the Tessellator instance.
++     */
++    public TessellatorState sortQuads(float playerX, float playerY, float playerZ)
++    {
++        //We need a cloned-off copy of the raw buffer, because the draw() method jacks with the internal rawBuffer
++        //and we want to be able to restore the buffer later.
++        int[] newBuffer = new int[this.rawBuffer.length];
++        //Priority queues are great because they implement the heapsort algorithm, which has a common case of
++        //nlog(n) and extremely reasonable memory requirements.  We use the TriComparator class to actually
++        //sort the quads.
++        PriorityQueue<Integer> queue = new PriorityQueue<Integer>(this.rawBuffer.length, new TriComparator(this.rawBuffer, playerX + (float)this.xOffset, playerY + (float)this.yOffset, playerZ + (float)this.zOffset));
++
++        int span = 32;
++        if (this.convertQuadsToTriangles)
++            span = 48;
++
++        //Add the rawbuffer index for each quad to the priority queue
++        for (int i = 0; i < this.rawBufferIndex; i += span)
++            queue.add(i);
++
++        //Then unload the priority queue and use it to sort the newBuffer[] from the rawBuffer[]
++        int newBufferIndex = 0;
++        while (!queue.isEmpty())
++        {
++            int index = queue.remove();
++
++            for (int i = 0; i < span; i++)
++            {
++                newBuffer[newBufferIndex+i] = this.rawBuffer[index+i];
++            }
++            newBufferIndex += span;
++        }
++
++        //Once we sort, copy back into the rawbuffer- the rawbuffer will go to the draw() command
++        //and the newBuffer will be stored in the TessellatorState to be used later.
++        for (int i = 0; i < this.rawBufferIndex; i++)
++        {
++            this.rawBuffer[i] = newBuffer[i];
++        }
++
++        return new TessellatorState(newBuffer, this.rawBufferIndex, this.rawBufferSize, this.vertexCount, this.hasTexture, this.hasBrightness, this.hasNormals, this.hasColor);
++    }
++
++    /**
++     *
++     * Restore the state of this Tessellator instance to where we were just before drawing the calling WorldRenderer's
++     * transparency pass.  We use this to resort and redraw the transparency pass while skipping a lot of processing,
++     * since we have to resort/redraw nearby chunk transparency passes pretty often.
++     *
++     * @param state The TessellatorState object returned for this renderer the last time we ran sortQuads()
++     */
++    public void restoreTessellatorState(TessellatorState state)
++    {
++        this.rawBuffer = state.getRawBuffer();
++        this.rawBufferIndex = state.getRawBufferIndex();
++        this.rawBufferSize = state.getRawBufferSize();
++        this.vertexCount = state.getVertexCount();
++        this.hasTexture = state.getHasTexture();
++        this.hasColor = state.getHasColor();
++        this.hasBrightness = state.getHasBrightness();
++        this.hasNormals = state.getHasNormal();
++    }
++
++    /**
+      * Adds a vertex with the specified x,y,z to the current draw call. It will trigger a draw() if the buffer gets
+      * full.
       */
      public void addVertex(double par1, double par3, double par5)
      {
-+        if (rawBufferIndex >= rawBufferSize - 32) 
++        if (rawBufferIndex >= rawBufferSize - 32)
 +        {
 +            if (rawBufferSize == 0)
 +            {
@@ -173,7 +256,7 @@
          ++this.addedVertices;
  
          if (this.drawMode == 7 && convertQuadsToTriangles && this.addedVertices % 4 == 0)
-@@ -500,12 +541,6 @@
+@@ -500,12 +619,6 @@
          this.rawBuffer[this.rawBufferIndex + 2] = Float.floatToRawIntBits((float)(par5 + this.zOffset));
          this.rawBufferIndex += 8;
          ++this.vertexCount;

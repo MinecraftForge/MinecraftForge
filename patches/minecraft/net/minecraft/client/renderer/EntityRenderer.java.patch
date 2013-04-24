@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/renderer/EntityRenderer.java
-+++ ../src_work/minecraft/net/minecraft/client/renderer/EntityRenderer.java
+--- ../src_base/minecraft/net/minecraft/client/renderer/EntityRenderer.java 
++++ ../src_work/minecraft/net/minecraft/client/renderer/EntityRenderer.java 
 @@ -37,6 +37,11 @@
  import org.lwjgl.opengl.GLContext;
  import org.lwjgl.util.glu.GLU;
@@ -80,21 +80,70 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1213,6 +1222,13 @@
+@@ -1166,7 +1175,10 @@
+             GL11.glDisable(GL11.GL_BLEND);
+             GL11.glEnable(GL11.GL_CULL_FACE);
+             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+-            GL11.glDepthMask(true);
++            //This turns off depth writing- this was previously set to "on" for various reasons, but now
++            //that we have real transparency rendering in the following code, it needs to be turned off.
++            //we'll reactivate it when we're done with the transparency pass.
++            GL11.glDepthMask(false);
+             this.setupFog(0, par1);
+             GL11.glEnable(GL11.GL_BLEND);
+             GL11.glDisable(GL11.GL_CULL_FACE);
+@@ -1181,9 +1193,11 @@
+                     GL11.glShadeModel(GL11.GL_SMOOTH);
+                 }
+ 
+-                GL11.glColorMask(false, false, false, false);
+-                int l = renderglobal.sortAndRender(entityliving, 1, (double)par1);
+-
++                //Previously there was some code here that would turn off color buffer writing, render
++                //the transparency pass, turn back on color buffer writing, and re-render the pass.  This was done
++                //because previously, the transparency pass drawing was very bad and it was better to use that technique
++                //to prevent semi-transparent objects from being visible through each other.  The pass 1 rendering is
++                //better now, though, so the technique has been removed.
+                 if (this.mc.gameSettings.anaglyph)
+                 {
+                     if (anaglyphField == 0)
+@@ -1194,15 +1208,12 @@
+                     {
+                         GL11.glColorMask(true, false, false, true);
+                     }
++
++                    renderglobal.sortAndRender(entityliving, 1, (double)par1);
+                 }
+                 else
+                 {
+-                    GL11.glColorMask(true, true, true, true);
+-                }
+-
+-                if (l > 0)
+-                {
+-                    renderglobal.renderAllRenderLists(1, (double)par1);
++                    renderglobal.sortAndRender(entityliving, 1, (double)par1);
+                 }
+ 
+                 GL11.glShadeModel(GL11.GL_FLAT);
+@@ -1212,6 +1223,16 @@
+                 this.mc.mcProfiler.endStartSection("water");
                  renderglobal.sortAndRender(entityliving, 1, (double)par1);
              }
- 
++
++            //As promised, depth writing is now reactivated.
++            GL11.glDepthMask(true);
++
 +            RenderHelper.enableStandardItemLighting();
 +            this.mc.mcProfiler.endStartSection("entities");
 +            ForgeHooksClient.setRenderPass(1);
 +            renderglobal.renderEntities(entityliving.getPosition(par1), frustrum, par1);
 +            ForgeHooksClient.setRenderPass(-1);
 +            RenderHelper.disableStandardItemLighting();
-+
+ 
              GL11.glDepthMask(true);
              GL11.glEnable(GL11.GL_CULL_FACE);
-             GL11.glDisable(GL11.GL_BLEND);
-@@ -1222,15 +1238,18 @@
+@@ -1222,15 +1243,18 @@
                  entityplayer = (EntityPlayer)entityliving;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
                  this.mc.mcProfiler.endStartSection("outline");
@@ -116,7 +165,7 @@
              GL11.glDisable(GL11.GL_BLEND);
              this.mc.mcProfiler.endStartSection("weather");
              this.renderRainSnow(par1);
-@@ -1240,6 +1259,9 @@
+@@ -1240,6 +1264,9 @@
              {
                  this.renderCloudsCheck(renderglobal, par1);
              }
