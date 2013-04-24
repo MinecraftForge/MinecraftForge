@@ -269,8 +269,3 @@
  
          # HINT: We need a table for the old md5 and the new ones
          md5table = {}
-@@ -1713,4 +1808,4 @@
-         if reverse:
-             for type,map in srg.items():
-                 srg[type] = dict([[v,k] for k,v in map.items()])
--        return srg+        return srg
