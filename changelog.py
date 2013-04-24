@@ -30,7 +30,7 @@ def getBuildInfo(url):
 	file = urllib2.build_opener(handler).open(url)
 	data = file.read()
 	file.close()
-	data = ast.literal_eval(data)['builds']
+	data = ast.literal_eval(data)['allBuilds']
 	data = sorted(data, key=lambda key: key['number'], reverse=True)
 	for build in data:
 		build['actions'] = filter(lambda act: act is not None, build['actions'])
@@ -48,7 +48,7 @@ def getBuildInfo(url):
 	return data
 	
 def make_changelog(job_path, target_build, change_file, current_version=None):
-	builds = getBuildInfo('%s/api/python?tree=builds[number,actions[text],changeSet[items[author[fullName],comment]]]&pretty=true' % job_path)
+	builds = getBuildInfo('%s/api/python?tree=allBuilds[number,actions[text],changeSet[items[author[fullName],comment]]]&pretty=true' % job_path)
 	
 	log = [ "Changelog:" ]
 	
