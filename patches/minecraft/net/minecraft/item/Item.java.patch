@@ -60,7 +60,7 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
      }
-@@ -720,4 +736,480 @@
+@@ -720,4 +736,491 @@
      {
          StatList.initStats();
      }
@@ -514,6 +514,17 @@
 +    public int getItemDamageFromStackForDisplay(ItemStack stack)
 +    {
 +        return stack.itemDamage;
++    }
++    
++    /**
++     * Return the maxDamage for this ItemStack. Defaults to the maxDamage field in this item, but can be overridden here for other sources such as NBT.
++     *
++     * @param stack The itemstack that is damaged
++     * @return the damage value
++     */
++    public int getItemMaxDamageFromStack(ItemStack stack)
++    {
++        return maxDamage;
 +    }
 +
 +    /**

@@ -49,6 +49,12 @@ public class OreDictionary
             registerOre("stickWood",   Item.stick);
             registerOre("treeSapling", new ItemStack(Block.sapling, 1, WILDCARD_VALUE));
             registerOre("treeLeaves",  new ItemStack(Block.leaves, 1, WILDCARD_VALUE));
+            registerOre("oreGold", Block.oreGold);
+            registerOre("oreIron", Block.oreIron);
+            registerOre("oreLapis", Block.oreLapis);
+            registerOre("oreDiamond", Block.oreDiamond);
+            registerOre("oreRedstone", Block.oreRedstone);
+            registerOre("oreEmerald", Block.oreEmerald);
         }
 
         // Build our list of items to replace with ore tags
