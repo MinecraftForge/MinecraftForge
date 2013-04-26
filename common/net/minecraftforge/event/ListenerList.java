@@ -210,9 +210,9 @@ public class ListenerList
             for(ArrayList<IEventListener> list : priorities)
             {
                 if (list.remove(listener))
-				{
-					rebuild = true;
-				}
+                {
+                    rebuild = true;
+                }
             }
         }
     }
