@@ -209,7 +209,10 @@ public class ListenerList
         {
             for(ArrayList<IEventListener> list : priorities)
             {
-                list.remove(listener);
+                if (list.remove(listener))
+                {
+                    rebuild = true;
+                }
             }
         }
     }
