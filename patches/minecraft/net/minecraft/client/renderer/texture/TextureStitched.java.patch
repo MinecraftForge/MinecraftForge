@@ -19,24 +19,6 @@
      }
  
      public void func_94217_a(TextureStitched p_94217_1_)
-@@ -137,7 +143,7 @@
- 
-                 if (i != j && j >= 0 && j < this.field_94226_b.size())
-                 {
--                    this.field_94228_a.func_94281_a(this.field_94224_d, this.field_94225_e, (Texture)this.field_94226_b.get(j), this.field_94227_c);
-+                    this.field_94228_a.func_94281_a(this.field_94224_d, this.field_94225_e, (Texture)this.field_94226_b.get(j), false); //FML: We rotate the textures in init.
-                 }
-             }
-         }
-@@ -148,7 +154,7 @@
- 
-             if (k != this.field_94222_f)
-             {
--                this.field_94228_a.func_94281_a(this.field_94224_d, this.field_94225_e, (Texture)this.field_94226_b.get(this.field_94222_f), this.field_94227_c);
-+                this.field_94228_a.func_94281_a(this.field_94224_d, this.field_94225_e, (Texture)this.field_94226_b.get(this.field_94222_f), false); //FML: We rotate the textures in init.
-             }
-         }
-     }
 @@ -198,4 +204,12 @@
              this.field_94236_i = arraylist;
          }

@@ -11,7 +11,7 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityList;
  import net.minecraft.nbt.CompressedStreamTools;
-@@ -246,10 +250,19 @@
+@@ -252,10 +256,19 @@
                  Entity entity = (Entity)iterator.next();
                  nbttagcompound1 = new NBTTagCompound();
  
@@ -35,7 +35,7 @@
                  }
              }
          }
-@@ -262,8 +275,17 @@
+@@ -268,8 +281,17 @@
          {
              TileEntity tileentity = (TileEntity)iterator.next();
              nbttagcompound1 = new NBTTagCompound();
