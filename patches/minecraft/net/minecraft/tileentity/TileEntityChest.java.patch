@@ -1,0 +1,30 @@
+--- ../src_base/minecraft/net/minecraft/tileentity/TileEntityChest.java
++++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityChest.java
+@@ -12,8 +12,9 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.util.AxisAlignedBB;
+-
+-public class TileEntityChest extends TileEntity implements IInventory
++import net.minecraftforge.common.IMultiBlockInventory;
++
++public class TileEntityChest extends TileEntity implements IInventory, IMultiBlockInventory
+ {
+     private ItemStack[] chestContents = new ItemStack[36];
+ 
+@@ -507,4 +508,15 @@
+ 
+         return this.field_94046_i;
+     }
++
++    @Override
++    public IInventory getMultiBlockInventory()
++    {
++        checkForAdjacentChests();
++        TileEntityChest chest2 = (this.adjacentChestXNeg != null) ? this.adjacentChestXNeg : (this.adjacentChestXPos != null) ? this.adjacentChestXPos : (this.adjacentChestZNeg != null) ? this.adjacentChestZNeg : (this.adjacentChestZPosition != null) ? this.adjacentChestZPosition : null;
++        if (chest2 != null) {
++            return new InventoryLargeChest("", this, chest2);
++        }
++        return this;
++    }
+ }
