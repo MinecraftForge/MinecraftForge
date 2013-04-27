@@ -263,7 +263,7 @@ field_70546_d,particleAge,2,
 field_70547_e,particleMaxAge,2,
 field_70548_b,particleTextureJitterX,2,
 field_70549_c,particleTextureJitterY,2,
-field_70550_a,particleTextureIndex,2,
+field_70550_a,particleIcon,2,The icon field from which the given particle pulls its texture.
 field_70551_j,particleBlue,2,"The blue amount of color. Used as a percentage, 1.0 = 255 and 0.0 = 0."
 field_70552_h,particleRed,2,"The red amount of color. Used as a percentage, 1.0 = 255 and 0.0 = 0."
 field_70553_i,particleGreen,2,"The green amount of color. Used as a percentage, 1.0 = 255 and 0.0 = 0."
@@ -389,8 +389,12 @@ field_70855_f,attackTimer,2,
 field_70856_g,holdRoseTick,2,
 field_70857_d,villageObj,2,
 field_70858_e,homeCheckTimer,2,"deincrements, and a distance-to-home check is done at 0"
+field_70859_f,squidYaw,2,
+field_70860_g,prevSquidYaw,2,
+field_70861_d,squidPitch,2,
+field_70862_e,prevSquidPitch,2,
 field_70863_bz,randomMotionSpeed,2,
-field_70865_by,lastTentacleAngle,2,the last calculated angle of the tentacles in radians
+field_70865_by,prevTentacleAngle,2,the last calculated angle of the tentacles in radians
 field_70866_j,tentacleAngle,2,angle of the tentacles in radians
 field_70869_bD,randomMotionVecY,2,
 field_70870_bE,randomMotionVecZ,2,
@@ -2885,6 +2889,7 @@ field_76168_c,capacity,2,the maximum amount of elements in the hash (probably 3/
 field_76169_a,hashArray,2,the array of all elements in the hash
 field_76171_a,texturePacks,2,
 field_76172_a,parent,2,
+field_76173_f,maxFileSize,2,
 field_76174_d,destinationFile,2,
 field_76175_e,downloadSuccess,2,
 field_76176_b,sourceURL,2,
@@ -4306,6 +4311,7 @@ field_82135_d,isBeaconActive,2,
 field_82136_e,levels,2,Level of this beacon's pyramid.
 field_82139_a,effectsList,2,List of effects that Beacon can apply
 field_82140_h,payment,2,Item given to this beacon as payment.
+field_82151_R,distanceWalkedOnStepModified,2,
 field_82152_aq,teleportDirection,2,
 field_82153_h,timeInPortal,2,
 field_82155_f,isAnvil,2,
@@ -4320,6 +4326,7 @@ field_82176_d,armorProbability,2,Probability to get armor
 field_82177_b,enchantmentProbability,2,An array of probabilities that determines whether a random enchantment should be added to the held item. Indexed by difficulty.
 field_82178_c,armorEnchantmentProbability,2,Probability to get enchanted armor
 field_82179_bU,persistenceRequired,2,Whether this entity should NOT despawn.
+field_82180_bT,previousEquipment,2,"The equipment this mob was previously wearing, used for syncing."
 field_82181_as,pickUpLootProability,2,Probability to pick up loot
 field_82182_bS,equipment,2,Equipment (armor and held item) for this entity.
 field_82184_d,aiControlledByPlayer,2,AI task for player control.
@@ -4611,6 +4618,8 @@ field_90051_a,theMinecraft,2,
 field_90053_a,theMinecraft,2,
 field_90055_a,theMinecraft,2,
 field_92014_j,explosionStrength,2,The explosion radius of spawned fireballs.
+field_92016_l,highlightingItemStack,2,The ItemStack that is currently being highlighted
+field_92017_k,remainingHighlightTicks,2,Remaining ticks the item highlight should be visible
 field_92039_az,fireworkExplosions,2,
 field_92055_b,lifetime,2,The lifetime of the firework in ticks. When the age reaches the lifetime the firework explodes.
 field_92056_a,fireworkAge,2,The age of the firework in ticks.
@@ -4626,6 +4635,7 @@ field_92106_bV,fireworkCharge,2,
 field_92117_D,heldItemTooltips,2,
 field_92118_B,overrideWidth,2,
 field_92119_C,overrideHeight,2,
+field_94050_c,customName,2,
 field_94054_b,particleTextureIndexX,2,
 field_94055_c,particleTextureIndexY,2,
 field_94084_b,tntPlacedBy,2,
@@ -4751,6 +4761,8 @@ field_94379_b,cactusBottomIcon,2,
 field_94380_a,cactusTopIcon,2,
 field_94381_b,cakeBottomIcon,2,
 field_94383_a,cakeTopIcon,2,
+field_94384_b,workbenchIconFront,2,
+field_94385_a,workbenchIconTop,2,
 field_94386_b,woodTextureTypes,2,
 field_94387_c,iconArray,2,
 field_94388_cO,tree_top,2,
@@ -4776,6 +4788,7 @@ field_94435_b,iconSnowSide,2,
 field_94436_c,iconGrassSideOverlay,2,
 field_94437_a,iconGrassTop,2,
 field_94439_c,iconArray,2,
+field_94443_a,isTrapped,2,Determines whether of not the chest is trapped.
 field_94445_a,iconArray,2,
 field_94447_a,theIcon,2,
 field_94449_b,theIcon,2,
@@ -4783,6 +4796,8 @@ field_94450_a,theIcon,2,
 field_94454_cO,hopperInsideIcon,2,
 field_94455_b,hopperIcon,2,
 field_94456_c,hopperTopIcon,2,
+field_94458_cO,furnaceIconTop,2,
+field_94459_cP,furnaceIconFront,2,
 field_94462_cO,furnaceFrontIcon,2,
 field_94463_c,furnaceTopIcon,2,
 field_94465_b,doorTypeForIcon,2,Used for pointing at icon names.
@@ -4792,6 +4807,9 @@ field_94469_b,iconArray,2,
 field_94470_a,cocoaIcons,2,
 field_94471_cO,bedTopIcons,2,
 field_94473_c,bedSideIcons,2,
+field_94497_cO,topIcon,2,Top icon of piston depends on (either sticky or normal)
+field_94498_b,innerTopIcon,2,Only visible when piston is extended
+field_94499_c,bottomIcon,2,Bottom side texture
 field_94500_e,useProvidedWindowTitle,2,"If false, the client will look up a string like ""window.minecart"". If true, the client uses what the server provides."
 field_94512_f,isStraightRail,2,
 field_94513_g,railChunkPosition,2,The chunk position the rail is at.
@@ -4801,7 +4819,7 @@ field_94516_b,logicWorld,2,
 field_94517_c,railX,2,
 field_94518_a,theRail,2,
 field_94557_a,selectAnything,2,
-field_94582_cb,tntMinecart,2,
+field_94582_cb,minecartTnt,2,
 field_94583_ca,netherQuartz,2,
 field_94584_bZ,netherrackBrick,2,
 field_94585_bY,comparator,2,
@@ -4813,6 +4831,8 @@ field_94601_a,bowPullIconNameArray,2,
 field_94610_a,theTileEntity,2,
 field_94612_a,theTileEntity,2,
 field_96093_i,entityUniqueID,2,
+field_96105_c,commandSenderName,2,"The name of command sender (usually username, but possibly ""Rcon"")"
+field_96106_a,succesCount,2,
 field_96113_a,isBlocked,2,Whether this hopper minecart is being blocked by an activator rail.
 field_96291_i,pointedEntityLiving,2,
 field_96442_D,worldScoreboard,2,
@@ -4842,16 +4862,19 @@ field_96492_e,playerNames,2,Only if mode = 0 or 3 or 4. Players to be added/remo
 field_96493_b,teamDisplayName,2,Only if mode = 0 or 2.
 field_96494_c,teamPrefix,2,Only if mode = 0 or 2. Displayed before the players' name that are part of this team.
 field_96495_a,teamName,2,A unique name for the team.
+field_96540_f,teamMemberships,2,Map of usernames to ScorePlayerTeam objects.
 field_96545_a,scoreObjectives,2,Map of objective names to ScoreObjective objects.
 field_96564_a,theEntity,2,
 field_96566_b,selectInventories,2,
 field_96569_b,theEntityTracker,2,
-field_96600_cc,hopperMinecart,2,
+field_96600_cc,minecartHopper,2,
 field_96601_a,theBlock,2,
 field_96602_b,dispenserMinecartBehavior,2,
 field_96633_b,playerInventory,2,
 field_96634_a,theItemStack,2,
 field_96656_b,theScoreboard,2,
+field_96676_c,membershipSet,2,A set of all team member usernames.
+field_96677_a,theScoreboard,2,
 field_96683_d,displayName,2,
 field_96684_b,name,2,
 field_96685_c,objectiveCriteria,2,The ScoreObjectiveCriteria for this objetive

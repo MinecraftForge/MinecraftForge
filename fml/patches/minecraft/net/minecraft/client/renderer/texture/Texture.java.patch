@@ -47,7 +47,7 @@
                      }
  
                      this.field_94302_r.put(l1 + 0, bytebuffer.get(i2 + 0));
-@@ -371,4 +380,13 @@
+@@ -378,4 +387,13 @@
      {
          return this.field_94302_r;
      }

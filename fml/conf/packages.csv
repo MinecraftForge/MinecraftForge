@@ -1,4 +1,6 @@
 class,package
+GuiScreenOnlineServersSubscreen,net/minecraft/client/gui
+RunnableTitleScreen,net/minecraft/client/gui
 Block,net/minecraft/block
 BlockAnvil,net/minecraft/block
 BlockBasePressurePlate,net/minecraft/block
@@ -245,13 +247,11 @@ ScaledResolution,net/minecraft/client/gui
 ScreenChatOptions,net/minecraft/client/gui
 SelectionListBase,net/minecraft/client/gui
 SelectionListInvited,net/minecraft/client/gui
-SelectionListLocation,net/minecraft/client/gui
 TaskLongRunning,net/minecraft/client/gui
 TaskOnlineConnect,net/minecraft/client/gui
 TaskResetWorld,net/minecraft/client/gui
 TaskWorldCreation,net/minecraft/client/gui
 ThreadConnectToOnlineServer,net/minecraft/client/gui
-ThreadCreateOnlineWorldScreen,net/minecraft/client/gui
 ThreadOnlineConnect,net/minecraft/client/gui
 ThreadOnlineScreen,net/minecraft/client/gui
 ThreadPollServers,net/minecraft/client/gui
@@ -285,8 +285,6 @@ SlotCreativeInventory,net/minecraft/client/gui/inventory
 ExceptionMcoHttp,net/minecraft/client/mco
 ExceptionMcoService,net/minecraft/client/mco
 ExceptionRetryCall,net/minecraft/client/mco
-Location,net/minecraft/client/mco
-Locations,net/minecraft/client/mco
 McoClient,net/minecraft/client/mco
 McoOption,net/minecraft/client/mco
 McoOptionNone,net/minecraft/client/mco

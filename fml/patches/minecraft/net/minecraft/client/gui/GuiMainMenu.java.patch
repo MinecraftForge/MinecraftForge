@@ -8,25 +8,17 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.awt.image.BufferedImage;
-@@ -11,6 +13,7 @@
- import java.util.ArrayList;
- import java.util.Calendar;
- import java.util.Date;
-+import java.util.List;
- import java.util.Random;
- import net.minecraft.client.Minecraft;
- import net.minecraft.client.renderer.Tessellator;
-@@ -22,6 +25,9 @@
- import net.minecraft.world.storage.WorldInfo;
+@@ -24,6 +26,9 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.util.glu.GLU;
-+
+ 
 +import com.google.common.base.Strings;
 +import com.google.common.collect.Lists;
- 
++
  @SideOnly(Side.CLIENT)
  public class GuiMainMenu extends GuiScreen
-@@ -45,6 +51,8 @@
+ {
+@@ -48,6 +53,8 @@
      private int field_92020_v;
      private int field_92019_w;
  
@@ -35,7 +27,7 @@
      public GuiMainMenu()
      {
          BufferedReader bufferedreader = null;
-@@ -143,6 +151,9 @@
+@@ -165,6 +172,9 @@
          {
              this.func_73969_a(i, 24, stringtranslate);
          }
@@ -45,7 +37,7 @@
  
          this.func_96137_a(stringtranslate, i, 24);
  
-@@ -197,7 +208,14 @@
+@@ -211,7 +221,14 @@
  
      private void func_98060_b(StringTranslate p_98060_1_, int p_98060_2_, int p_98060_3_)
      {
@@ -61,7 +53,7 @@
      }
  
      private void func_73969_a(int p_73969_1_, int p_73969_2_, StringTranslate p_73969_3_)
-@@ -249,6 +267,11 @@
+@@ -263,6 +280,11 @@
          if (p_73875_1_.field_73741_f == 4)
          {
              this.field_73882_e.func_71400_g();
@@ -73,7 +65,7 @@
          }
  
          if (p_73875_1_.field_73741_f == 11)
-@@ -487,7 +510,16 @@
+@@ -501,7 +523,16 @@
              s = s + " Demo";
          }
  
