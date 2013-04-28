@@ -1,6 +1,4 @@
 class,package
-GuiScreenOnlineServersSubscreen,net/minecraft/client/gui
-RunnableTitleScreen,net/minecraft/client/gui
 Block,net/minecraft/block
 BlockAnvil,net/minecraft/block
 BlockBasePressurePlate,net/minecraft/block
@@ -220,6 +218,7 @@ GuiScreenEditOnlineWorld,net/minecraft/client/gui
 GuiScreenInvite,net/minecraft/client/gui
 GuiScreenLongRunningTask,net/minecraft/client/gui
 GuiScreenOnlineServers,net/minecraft/client/gui
+GuiScreenOnlineServersSubscreen,net/minecraft/client/gui
 GuiScreenResetWorld,net/minecraft/client/gui
 GuiScreenSelectLocation,net/minecraft/client/gui
 GuiScreenServerList,net/minecraft/client/gui
@@ -243,6 +242,7 @@ GuiYesNo,net/minecraft/client/gui
 LoadingScreenRenderer,net/minecraft/client/gui
 MapItemRenderer,net/minecraft/client/gui
 Particle,net/minecraft/client/gui
+RunnableTitleScreen,net/minecraft/client/gui
 ScaledResolution,net/minecraft/client/gui
 ScreenChatOptions,net/minecraft/client/gui
 SelectionListBase,net/minecraft/client/gui
