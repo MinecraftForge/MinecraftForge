@@ -24,31 +24,42 @@ class PreemptiveBasicAuthHandler(urllib2.BaseHandler):
 	def https_request(self,req):
 		return self.http_request(req)
 
-def getBuildInfo(url):
+def getBuildInfo(url, current_version=None):
 	handler = PreemptiveBasicAuthHandler()
 	handler.add_password(None, 'jenkins.minecraftforge.net', 'console_script', 'd29a4bb55ecdf4f99295c77cc4364fe6')
 	file = urllib2.build_opener(handler).open(url)
 	data = file.read()
 	file.close()
 	data = ast.literal_eval(data)['allBuilds']
-	data = sorted(data, key=lambda key: key['number'], reverse=True)
+	data = sorted(data, key=lambda key: key['number'], reverse=False)
+	
+	items = []
+	output = []
+	
 	for build in data:
 		build['actions'] = filter(lambda act: act is not None, build['actions'])
 		build['actions'] = filter(lambda act: 'text' in act, build['actions'])
 		build['actions'] = filter(lambda act: not ' ' in act['text'], build['actions'])
 		if len(build['actions']) == 0:
-			build['version'] = None
+			build['version'] = current_version
+			current_version = None
 		else:
 			build['version'] = build['actions'][0]['text']
 		build['items'] = build['changeSet']['items']
 		for item in build['items']:
 			item['author'] = item['author']['fullName']
+		if build['result'] != 'SUCCESS':
+			items += build['items']
+		else:
+			build['items'] = items + build['items']
+			items = []
+			output += [build]
 		build.pop('changeSet')
 		build.pop('actions')
-	return data
+	return sorted(output, key=lambda key: key['number'], reverse=True)
 	
 def make_changelog(job_path, target_build, change_file, current_version=None):
-	builds = getBuildInfo('%s/api/python?tree=allBuilds[number,actions[text],changeSet[items[author[fullName],comment]]]&pretty=true' % job_path)
+	builds = getBuildInfo('%s/api/python?tree=allBuilds[result,number,actions[text],changeSet[items[author[fullName],comment]]]&pretty=true' % job_path, current_version)
 	
 	log = [ "Changelog:" ]
 	
@@ -57,10 +68,7 @@ def make_changelog(job_path, target_build, change_file, current_version=None):
 		if len(build['items']) == 0: continue
 		log.append('')
 		if build['version'] is None:
-			if current_version is None:
-				log.append('Build %s' % build['number'])
-			else:
-				log.append('Build %s' % current_version)
+			log.append('Build %s' % build['number'])
 		else:
 			log.append('Build %s' % build['version'])
 		for change in build['items']:
@@ -76,3 +84,6 @@ def make_changelog(job_path, target_build, change_file, current_version=None):
 	for line in log:
 		file.write('%s\n' % line)
 	file.close()
+	
+if __name__ == '__main__':
+	make_changelog("http://jenkins.minecraftforge.net/job/minecraftforge/", 70000, 'changelog.txt', 'pinecone')
