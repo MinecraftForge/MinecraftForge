@@ -365,7 +365,7 @@
  
              if (this.itemInUse != null && par1ItemStack.itemID == Item.bow.itemID)
 @@ -1898,6 +2014,7 @@
-                     return Item.bow.func_94599_c(0);
+                     return Item.bow.getItemIconForUseDuration(0);
                  }
              }
 +            icon = par1ItemStack.getItem().getIcon(par1ItemStack, par2, this, itemInUse, itemInUseCount);

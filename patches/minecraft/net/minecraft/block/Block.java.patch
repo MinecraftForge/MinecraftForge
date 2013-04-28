@@ -165,7 +165,7 @@
      }
  
      /**
-@@ -1439,4 +1460,944 @@
+@@ -1443,4 +1464,944 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }

@@ -9,7 +9,7 @@
  public class BlockChest extends BlockContainer
  {
      private final Random random = new Random();
-@@ -442,7 +444,7 @@
+@@ -444,7 +446,7 @@
          {
              return null;
          }
@@ -18,7 +18,7 @@
          {
              return null;
          }
-@@ -450,19 +452,19 @@
+@@ -452,19 +454,19 @@
          {
              return null;
          }

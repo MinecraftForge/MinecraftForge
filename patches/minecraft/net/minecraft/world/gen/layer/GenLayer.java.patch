@@ -16,7 +16,7 @@
          }
 +        b0 = getModdedBiomeSize(par2WorldType, b0);
  
-         GenLayer genlayer = GenLayerZoom.func_75915_a(1000L, genlayeraddmushroomisland, 0);
+         GenLayer genlayer = GenLayerZoom.magnify(1000L, genlayeraddmushroomisland, 0);
          GenLayerRiverInit genlayerriverinit = new GenLayerRiverInit(100L, genlayer);
 @@ -151,4 +155,11 @@
       * amounts, or biomeList[] indices based on the particular GenLayer subclass.

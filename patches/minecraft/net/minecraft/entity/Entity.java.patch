@@ -164,7 +164,7 @@
      }
  
      public boolean func_96091_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
-@@ -2455,4 +2525,145 @@
+@@ -2458,4 +2528,145 @@
      {
          return this.getEntityName();
      }

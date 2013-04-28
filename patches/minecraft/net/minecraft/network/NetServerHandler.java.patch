@@ -130,7 +130,7 @@
                      }
  
 +                    String old = s;
-                     s = "<" + this.playerEntity.func_96090_ax() + "> " + s;
+                     s = "<" + this.playerEntity.getTranslatedEntityName() + "> " + s;
 +                    ServerChatEvent event = new ServerChatEvent(this.playerEntity, old, s);
 +                    if (MinecraftForge.EVENT_BUS.post(event))
 +                    {

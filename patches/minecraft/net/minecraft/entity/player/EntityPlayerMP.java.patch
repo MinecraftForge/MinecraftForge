@@ -33,7 +33,7 @@
  
          this.mcServer = par1MinecraftServer;
          this.stepHeight = 0.0F;
-@@ -271,7 +269,10 @@
+@@ -278,7 +276,10 @@
                  if (chunkcoordintpair != null && this.worldObj.blockExists(chunkcoordintpair.chunkXPos << 4, 0, chunkcoordintpair.chunkZPos << 4))
                  {
                      arraylist.add(this.worldObj.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos));
@@ -45,7 +45,7 @@
                  }
              }
  
-@@ -292,6 +293,7 @@
+@@ -299,6 +300,7 @@
                  {
                      Chunk chunk = (Chunk)iterator2.next();
                      this.getServerForPlayer().getEntityTracker().func_85172_a(this, chunk);
@@ -53,7 +53,7 @@
                  }
              }
          }
-@@ -359,11 +361,29 @@
+@@ -366,11 +368,29 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {

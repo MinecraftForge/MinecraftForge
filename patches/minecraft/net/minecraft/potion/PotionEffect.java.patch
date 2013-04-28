@@ -104,4 +104,4 @@
 +        }
      }
  
-     public boolean func_102028_d()
+     public boolean isSplashPotionEffect()

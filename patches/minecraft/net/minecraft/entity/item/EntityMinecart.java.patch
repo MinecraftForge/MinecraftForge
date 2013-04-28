@@ -370,7 +370,7 @@
 +        }
 +        else if (this instanceof EntityMinecartTNT)
 +        {
-+            return new ItemStack(Item.tntMinecart);
++            return new ItemStack(Item.minecartTnt);
 +        }
 +        else if (this instanceof EntityMinecartFurnace)
 +        {
@@ -378,7 +378,7 @@
 +        }
 +        else if (this instanceof EntityMinecartHopper)
 +        {
-+            return new ItemStack(Item.hopperMinecart);
++            return new ItemStack(Item.minecartHopper);
 +        }
 +        return new ItemStack(Item.minecartEmpty);
 +    }
