@@ -24,6 +24,7 @@ import net.minecraft.client.multiplayer.NetClientHandler;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.crash.CallableMinecraftVersion;
 import net.minecraft.entity.boss.BossStatus;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -69,6 +70,7 @@ public class GuiIngameForge extends GuiIngame
     private ScaledResolution res = null;
     private FontRenderer fontrenderer = null;
     private RenderGameOverlayEvent eventParent;
+    private static final String MC_VERSION = (new CallableMinecraftVersion(null)).minecraftVersion();
 
     public GuiIngameForge(Minecraft mc)
     {
@@ -544,7 +546,7 @@ public class GuiIngameForge extends GuiIngame
         {
             mc.mcProfiler.startSection("debug");
             GL11.glPushMatrix();
-            left.add("Minecraft 1.5.1 (" + this.mc.debug + ")");
+            left.add("Minecraft " + MC_VERSION + " (" + this.mc.debug + ")");
             left.add(mc.debugInfoRenders());
             left.add(mc.getEntityDebug());
             left.add(mc.debugInfoEntities());
