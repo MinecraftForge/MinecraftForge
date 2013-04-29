@@ -14,6 +14,15 @@
  @SideOnly(Side.CLIENT)
  public abstract class Minecraft implements Runnable, IPlayerUsage
  {
+@@ -372,7 +379,7 @@
+ 
+         try
+         {
+-            Display.create((new PixelFormat()).withDepthBits(24));
++            Display.create((new PixelFormat()).withDepthBits(24).withStencilBits(8));
+         }
+         catch (LWJGLException lwjglexception)
+         {
 @@ -450,7 +457,7 @@
          }
  
