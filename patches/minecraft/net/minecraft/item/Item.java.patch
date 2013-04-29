@@ -60,7 +60,7 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
      }
-@@ -720,4 +736,491 @@
+@@ -720,4 +736,502 @@
      {
          StatList.initStats();
      }
@@ -550,5 +550,16 @@
 +        {
 +            stack.itemDamage = 0;
 +        }
++    }
++    
++    /**
++     * Determines if the ItemStack should be held as a bow in third-person-view.
++     * @param stack The ItemStack which should be rendered as bow
++     * @param player The player which holds the ItemStack
++     * @return if the ItemStack should render as a bow
++     */
++    @SideOnly(Side.CLIENT)
++    public boolean renderAsBow(ItemStack stack, EntityPlayer player) {
++        return stack.itemID == Item.bow.itemID;
 +    }
  }
