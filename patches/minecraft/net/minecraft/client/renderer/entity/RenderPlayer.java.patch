@@ -92,6 +92,15 @@
              {
                  f3 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
+@@ -313,7 +330,7 @@
+                 GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
+                 GL11.glScalef(-f3, -f3, f3);
+             }
+-            else if (itemstack1.itemID == Item.bow.itemID)
++            else if (Item.itemsList[itemstack1.itemID].renderAsBow(itemstack1, par1EntityPlayer))
+             {
+                 f3 = 0.625F;
+                 GL11.glTranslatef(0.0F, 0.125F, 0.3125F);
 @@ -361,7 +378,7 @@
  
              if (itemstack1.getItem().requiresMultipleRenderPasses())
