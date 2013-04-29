@@ -26,7 +26,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class WavefrontObject implements IModelCustom
 {
 
- private static Pattern vertexPattern = Pattern.compile("(v( (\\-){0,1}\\d+(\\.\\d+(e-\\d+){0,1}){0,1}){3,4} *\\n)|(v( (\\-){0,1}\\d+(\\.\\d+(e-\\d+){0,1}){0,1}){3,4} *$)");
+    private static Pattern vertexPattern = Pattern.compile("(v( (\\-){0,1}\\d+(\\.\\d+(e-\\d+){0,1}){0,1}){3,4} *\\n)|(v( (\\-){0,1}\\d+(\\.\\d+(e-\\d+){0,1}){0,1}){3,4} *$)");
     private static Pattern vertexNormalPattern = Pattern.compile("(vn( (\\-){0,1}\\d+(\\.\\d+(e-\\d+){0,1}){0,1}){3,4} *\\n)|(vn( (\\-){0,1}\\d+(\\.\\d+(e-\\d+){0,1}){0,1}){3,4} *$)");
     private static Pattern textureCoordinatePattern = Pattern.compile("(vt( (\\-){0,1}\\d+(\\.\\d+(e-\\d+){0,1}){0,1}){2,3} *\\n)|(vt( (\\-){0,1}\\d+(\\.\\d+(e-\\d+){0,1}){0,1}){2,3} *$)");
     private static Pattern face_V_VT_VN_Pattern = Pattern.compile("(f( \\d+/\\d+/\\d+){3,4} *\\n)|(f( \\d+/\\d+/\\d+){3,4} *$)");
@@ -43,8 +43,10 @@ public class WavefrontObject implements IModelCustom
     public ArrayList<Vertex> vertexNormals = new ArrayList<Vertex>();
     public ArrayList<TextureCoordinate> textureCoordinates = new ArrayList<TextureCoordinate>();
     public ArrayList<GroupObject> groupObjects = new ArrayList<GroupObject>();
-    private GroupObject currentGroupObject;
+    private GroupObject currentTriaglesGroupObject;
+    private GroupObject currentQuadsGroupObject;
     private String fileName;
+    private boolean isQuadsVertex = false;
 
     public WavefrontObject(String fileName, URL resource) throws ModelFormatException
     {
@@ -101,35 +103,46 @@ public class WavefrontObject implements IModelCustom
                 else if (currentLine.startsWith("f "))
                 {
 
-                    if (currentGroupObject == null)
+                    if (currentTriaglesGroupObject == null && currentQuadsGroupObject == null)
                     {
-                        currentGroupObject = new GroupObject("Default");
+                        currentTriaglesGroupObject = new GroupObject("Default");
+                        currentQuadsGroupObject = new GroupObject("Default");
                     }
 
                     Face face = parseFace(currentLine, lineCount);
 
-                    if (face != null)
+                    if (face != null && isQuadsVertex == false)
                     {
-                        currentGroupObject.faces.add(face);
+                        currentTriaglesGroupObject.faces.add(face);
+                    }
+                    
+                    else if (face != null && isQuadsVertex == true)
+                    {
+                     currentQuadsGroupObject.faces.add(face);
                     }
                 }
                 else if (currentLine.startsWith("g ") | currentLine.startsWith("o "))
                 {
                     GroupObject group = parseGroupObject(currentLine, lineCount);
+                    GroupObject secondGroup = parseGroupObject(currentLine, lineCount);
 
-                    if (group != null)
+                    if (group != null && secondGroup != null)
                     {
-                        if (currentGroupObject != null)
+                        if (currentTriaglesGroupObject != null && currentQuadsGroupObject != null)
                         {
-                            groupObjects.add(currentGroupObject);
+                            groupObjects.add(currentTriaglesGroupObject);
+                            groupObjects.add(currentQuadsGroupObject);
                         }
                     }
 
-                    currentGroupObject = group;
+                    currentTriaglesGroupObject = group;
+                    currentQuadsGroupObject = secondGroup;
                 }
             }
 
-            groupObjects.add(currentGroupObject);
+            groupObjects.add(currentTriaglesGroupObject);
+            groupObjects.add(currentQuadsGroupObject);
+            
         }
         catch (IOException e)
         {
@@ -161,13 +174,30 @@ public class WavefrontObject implements IModelCustom
     {
         Tessellator tessellator = Tessellator.instance;
 
-        if (currentGroupObject != null)
+        if (currentTriaglesGroupObject != null)
         {
-            tessellator.startDrawing(currentGroupObject.glDrawingMode);
+            tessellator.startDrawing(currentTriaglesGroupObject.glDrawingMode);
         }
         else
         {
             tessellator.startDrawing(GL11.GL_TRIANGLES);
+        }
+
+        for (GroupObject groupObject : groupObjects)
+        {
+            groupObject.render(tessellator);
+        }
+
+        tessellator.draw();
+        
+        
+        if (currentQuadsGroupObject != null)
+        {
+            tessellator.startDrawing(currentQuadsGroupObject.glDrawingMode);
+        }
+        else
+        {
+            tessellator.startDrawing(GL11.GL_QUADS);
         }
 
         for (GroupObject groupObject : groupObjects)
@@ -320,25 +350,21 @@ public class WavefrontObject implements IModelCustom
 
             if (tokens.length == 3)
             {
-                if (currentGroupObject.glDrawingMode == -1)
+                if (currentTriaglesGroupObject.glDrawingMode == -1)
                 {
-                    currentGroupObject.glDrawingMode = GL11.GL_TRIANGLES;
+                    currentTriaglesGroupObject.glDrawingMode = GL11.GL_TRIANGLES;
                 }
-                else if (currentGroupObject.glDrawingMode != GL11.GL_TRIANGLES)
-                {
-                    throw new ModelFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Invalid number of points for face (expected 4, found " + tokens.length + ")");
-                }
+                isQuadsVertex = false;
+
             }
             else if (tokens.length == 4)
             {
-                if (currentGroupObject.glDrawingMode == -1)
+                if (currentQuadsGroupObject.glDrawingMode == -1)
                 {
-                    currentGroupObject.glDrawingMode = GL11.GL_QUADS;
+                    currentQuadsGroupObject.glDrawingMode = GL11.GL_QUADS;
                 }
-                else if (currentGroupObject.glDrawingMode != GL11.GL_QUADS)
-                {
-                    throw new ModelFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Invalid number of points for face (expected 3, found " + tokens.length + ")");
-                }
+                isQuadsVertex = true;
+
             }
 
             // f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 ...
@@ -412,7 +438,7 @@ public class WavefrontObject implements IModelCustom
         {
             throw new ModelFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Incorrect format");
         }
-
+        
         return face;
     }
 
