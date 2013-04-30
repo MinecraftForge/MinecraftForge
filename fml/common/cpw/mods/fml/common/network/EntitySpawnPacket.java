@@ -184,8 +184,7 @@ public class EntitySpawnPacket extends FMLPacket
         ModContainer mc = nmh.getContainer();
 
         EntityRegistration registration = EntityRegistry.instance().lookupModSpawn(mc, modEntityId);
-        Class<? extends Entity> cls =  registration.getEntityClass();
-        if (cls == null)
+        if (registration == null || registration.getEntityClass() == null)
         {
             FMLLog.log(Level.WARNING, "Missing mod entity information for %s : %d", mc.getModId(), modEntityId);
             return;
