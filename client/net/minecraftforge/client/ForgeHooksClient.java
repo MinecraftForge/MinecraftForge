@@ -39,6 +39,7 @@ import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
 
 public class ForgeHooksClient
 {
+    private static boolean stencilBufferEnabled = false;
     static RenderEngine engine()
     {
         return FMLClientHandler.instance().getClient().renderEngine;
@@ -281,8 +282,12 @@ public class ForgeHooksClient
     public static void createDisplay() throws LWJGLException {
         try {
             Display.create((new PixelFormat()).withDepthBits(24).withStencilBits(8));
+            stencilBufferEnabled = true;
         } catch(LWJGLException e) {
             Display.create((new PixelFormat()).withDepthBits(24));
         }
+    }
+    public boolean isStencilBufferEnabled() {
+        return stencilBufferEnabled;
     }
 }
