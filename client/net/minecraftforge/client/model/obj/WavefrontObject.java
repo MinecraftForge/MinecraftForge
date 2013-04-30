@@ -43,10 +43,10 @@ public class WavefrontObject implements IModelCustom
     public ArrayList<Vertex> vertexNormals = new ArrayList<Vertex>();
     public ArrayList<TextureCoordinate> textureCoordinates = new ArrayList<TextureCoordinate>();
     public ArrayList<GroupObject> groupObjects = new ArrayList<GroupObject>();
-    private GroupObject currentTriaglesGroupObject;
+    private GroupObject currentTrianglesGroupObject;
     private GroupObject currentQuadsGroupObject;
     private String fileName;
-    private boolean isQuadsVertex = false;
+    private boolean isQuadsFace;
 
     public WavefrontObject(String fileName, URL resource) throws ModelFormatException
     {
@@ -103,22 +103,22 @@ public class WavefrontObject implements IModelCustom
                 else if (currentLine.startsWith("f "))
                 {
 
-                    if (currentTriaglesGroupObject == null && currentQuadsGroupObject == null)
+                    if (currentTrianglesGroupObject == null && currentQuadsGroupObject == null)
                     {
-                        currentTriaglesGroupObject = new GroupObject("Default");
+                        currentTrianglesGroupObject = new GroupObject("Default");
                         currentQuadsGroupObject = new GroupObject("Default");
                     }
 
                     Face face = parseFace(currentLine, lineCount);
 
-                    if (face != null && isQuadsVertex == false)
+                    if (face != null && isQuadsFace == false)
                     {
-                        currentTriaglesGroupObject.faces.add(face);
+                        currentTrianglesGroupObject.faces.add(face);
                     }
                     
-                    else if (face != null && isQuadsVertex == true)
+                    else if (face != null && isQuadsFace == true)
                     {
-                     currentQuadsGroupObject.faces.add(face);
+                        currentQuadsGroupObject.faces.add(face);
                     }
                 }
                 else if (currentLine.startsWith("g ") | currentLine.startsWith("o "))
@@ -128,19 +128,19 @@ public class WavefrontObject implements IModelCustom
 
                     if (group != null && secondGroup != null)
                     {
-                        if (currentTriaglesGroupObject != null && currentQuadsGroupObject != null)
+                        if (currentTrianglesGroupObject != null && currentQuadsGroupObject != null)
                         {
-                            groupObjects.add(currentTriaglesGroupObject);
+                            groupObjects.add(currentTrianglesGroupObject);
                             groupObjects.add(currentQuadsGroupObject);
                         }
                     }
 
-                    currentTriaglesGroupObject = group;
+                    currentTrianglesGroupObject = group;
                     currentQuadsGroupObject = secondGroup;
                 }
             }
 
-            groupObjects.add(currentTriaglesGroupObject);
+            groupObjects.add(currentTrianglesGroupObject);
             groupObjects.add(currentQuadsGroupObject);
             
         }
@@ -174,9 +174,9 @@ public class WavefrontObject implements IModelCustom
     {
         Tessellator tessellator = Tessellator.instance;
 
-        if (currentTriaglesGroupObject != null)
+        if (currentTrianglesGroupObject != null)
         {
-            tessellator.startDrawing(currentTriaglesGroupObject.glDrawingMode);
+            tessellator.startDrawing(currentTrianglesGroupObject.glDrawingMode);
         }
         else
         {
@@ -350,11 +350,11 @@ public class WavefrontObject implements IModelCustom
 
             if (tokens.length == 3)
             {
-                if (currentTriaglesGroupObject.glDrawingMode == -1)
+                if (currentTrianglesGroupObject.glDrawingMode == -1)
                 {
-                    currentTriaglesGroupObject.glDrawingMode = GL11.GL_TRIANGLES;
+                    currentTrianglesGroupObject.glDrawingMode = GL11.GL_TRIANGLES;
                 }
-                isQuadsVertex = false;
+                isQuadsFace = false;
 
             }
             else if (tokens.length == 4)
@@ -363,7 +363,7 @@ public class WavefrontObject implements IModelCustom
                 {
                     currentQuadsGroupObject.glDrawingMode = GL11.GL_QUADS;
                 }
-                isQuadsVertex = true;
+                isQuadsFace = true;
 
             }
 
