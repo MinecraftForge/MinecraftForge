@@ -1,19 +1,40 @@
 --- ../src_base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src_work/minecraft/net/minecraft/client/Minecraft.java
-@@ -123,6 +123,13 @@
+@@ -108,6 +108,7 @@
+ import net.minecraft.world.storage.ISaveFormat;
+ import net.minecraft.world.storage.ISaveHandler;
+ import net.minecraft.world.storage.WorldInfo;
++import net.minecraftforge.client.ForgeHooksClient;
+ import org.lwjgl.LWJGLException;
+ import org.lwjgl.Sys;
+ import org.lwjgl.input.Keyboard;
+@@ -118,10 +119,16 @@
+ import org.lwjgl.opengl.GL11;
+ import org.lwjgl.opengl.GL20;
+ import org.lwjgl.opengl.GLContext;
+-import org.lwjgl.opengl.PixelFormat;
+ import org.lwjgl.util.glu.GLU;
  
  import com.google.common.collect.MapDifference;
- 
++
 +import net.minecraftforge.client.GuiIngameForge;
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.ForgeEventFactory;
 +import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 +import net.minecraftforge.event.world.WorldEvent;
-+
+ 
  @SideOnly(Side.CLIENT)
  public abstract class Minecraft implements Runnable, IPlayerUsage
- {
+@@ -372,7 +379,7 @@
+ 
+         try
+         {
+-            Display.create((new PixelFormat()).withDepthBits(24));
++            ForgeHooksClient.createDisplay();
+         }
+         catch (LWJGLException lwjglexception)
+         {
 @@ -450,7 +457,7 @@
          }
  

@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.TreeSet;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.opengl.*;
 
 import cpw.mods.fml.client.FMLClientHandler;
 
@@ -276,5 +276,13 @@ public class ForgeHooksClient
     {
         ModelBiped modelbiped = itemStack.getItem().getArmorModel(entityLiving, itemStack, slotID);
         return modelbiped == null ? _default : modelbiped;
+    }
+
+    public static void createDisplay() throws LWJGLException {
+        try {
+            Display.create((new PixelFormat()).withDepthBits(24).withStencilBits(8));
+        } catch(LWJGLException e) {
+            Display.create((new PixelFormat()).withDepthBits(24));
+        }
     }
 }
