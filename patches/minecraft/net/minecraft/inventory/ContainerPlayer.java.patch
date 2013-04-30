@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/inventory/ContainerPlayer.java
++++ ../src_work/minecraft/net/minecraft/inventory/ContainerPlayer.java
+@@ -14,7 +14,7 @@
+ 
+     /** Determines if inventory manipulation should be handled. */
+     public boolean isLocalWorld = false;
+-    private final EntityPlayer thePlayer;
++    public final EntityPlayer thePlayer;
+ 
+     public ContainerPlayer(InventoryPlayer par1InventoryPlayer, boolean par2, EntityPlayer par3EntityPlayer)
+     {
