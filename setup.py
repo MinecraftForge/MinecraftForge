@@ -95,7 +95,7 @@ def run_command(command, cwd='.', verbose=True):
             line = line.rstrip()
             print(line)
     if process.returncode:
-        self.logger.error("failed: %d", process.returncode)
+        print "failed: {0}".format(process.returncode)
         return False
     return True    
 
