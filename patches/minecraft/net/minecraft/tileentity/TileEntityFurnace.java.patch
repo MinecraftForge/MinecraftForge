@@ -75,7 +75,7 @@
              {
                  Block block = Block.blocksList[i];
  
-@@ -442,4 +448,50 @@
+@@ -451,4 +457,50 @@
      {
          return par3 != 0 || par1 != 1 || par2ItemStack.itemID == Item.bucketEmpty.itemID;
      }

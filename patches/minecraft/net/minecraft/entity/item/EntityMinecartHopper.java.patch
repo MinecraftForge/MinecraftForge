@@ -19,4 +19,4 @@
 +        }
          if (!this.worldObj.isRemote)
          {
-             par1EntityPlayer.func_96125_a(this);
+             par1EntityPlayer.displayGUIHopperMinecart(this);

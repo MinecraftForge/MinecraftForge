@@ -49,8 +49,8 @@
 +        return this.getItem().getItemMaxDamageFromStack(this);
      }
  
-     public boolean func_96631_a(int par1, Random par2Random)
-@@ -382,7 +377,7 @@
+     /**
+@@ -388,7 +383,7 @@
       */
      public int getDamageVsEntity(Entity par1Entity)
      {

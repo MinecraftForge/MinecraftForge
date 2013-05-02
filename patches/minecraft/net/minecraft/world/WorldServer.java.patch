@@ -227,7 +227,7 @@
          }
      }
  
-@@ -860,6 +916,7 @@
+@@ -868,6 +924,7 @@
          this.checkSessionLock();
          this.saveHandler.saveWorldInfoWithPlayer(this.worldInfo, this.mcServer.getConfigurationManager().getHostPlayerData());
          this.mapStorage.saveAllData();
@@ -235,7 +235,7 @@
      }
  
      /**
-@@ -1073,4 +1130,9 @@
+@@ -1081,4 +1138,9 @@
      {
          return this.field_85177_Q;
      }

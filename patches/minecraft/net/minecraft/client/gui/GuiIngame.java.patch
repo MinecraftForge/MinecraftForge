@@ -9,7 +9,7 @@
  @SideOnly(Side.CLIENT)
  public class GuiIngame extends Gui
  {
-@@ -86,9 +88,16 @@
+@@ -90,9 +92,16 @@
  
          ItemStack itemstack = this.mc.thePlayer.inventory.armorItemInSlot(3);
  
@@ -29,7 +29,7 @@
          }
  
          if (!this.mc.thePlayer.isPotionActive(Potion.confusion))
-@@ -170,7 +179,7 @@
+@@ -174,7 +183,7 @@
  
                  k3 = l - 39;
                  l2 = k3 - 10;
@@ -38,12 +38,12 @@
                  i3 = -1;
  
                  if (this.mc.thePlayer.isPotionActive(Potion.regeneration))
-@@ -431,7 +440,16 @@
+@@ -435,7 +444,16 @@
                      GL11.glPushMatrix();
                      GL11.glEnable(GL11.GL_BLEND);
                      GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 -                    fontrenderer.drawStringWithShadow(s1, i1, j1, 16777215 + (j5 << 24));
-+                    FontRenderer font = field_92016_l.getItem().getFontRenderer(field_92016_l);
++                    FontRenderer font = highlightingItemStack.getItem().getFontRenderer(highlightingItemStack);
 +                    if (font != null)
 +                    {
 +                        i1 = (k - font.getStringWidth(s1)) / 2;

@@ -112,7 +112,7 @@
 -                }
 -
 -                flag1 = Item.itemsList[j].getHasSubtypes();
--                int j1 = j < 256 && !Block.blocksList[block.blockID].func_82505_u_() ? j : block.blockID;
+-                int j1 = j < 256 && !Block.blocksList[block.blockID].isFlowerPot() ? j : block.blockID;
 -                i = Block.blocksList[j1].getDamageValue(this.theWorld, k, l, i1);
 -            }
 -            else
@@ -155,11 +155,11 @@
 -                    }
 -                    else if (entityminecart.getMinecartType() == 3)
 -                    {
--                        j = Item.tntMinecart.itemID;
+-                        j = Item.minecartTnt.itemID;
 -                    }
 -                    else if (entityminecart.getMinecartType() == 5)
 -                    {
--                        j = Item.hopperMinecart.itemID;
+-                        j = Item.minecartHopper.itemID;
 -                    }
 -                    else
 -                    {
