@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import static net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE;
+import static net.minecraftforge.oredict.OreDictionary.getOreID;
 import static net.minecraftforge.oredict.OreDictionary.getOreName;
 import static net.minecraftforge.oredict.OreDictionary.getOres;
 
@@ -20,11 +21,10 @@ public final class OreStack
 	public String ore;
 	public ArrayList<ItemStack> ores = new ArrayList<ItemStack>();
 	
-	public OreStack(String ore, int stackSize, int damage)
+	public OreStack(String ore, int stackSize)
 	{
 		this.ore = ore;
 		this.ores = getOres(ore);
-		this.setItemDamage(damage);
 		this.setStackSize(stackSize);
 	}
 	
@@ -32,7 +32,7 @@ public final class OreStack
 	{
 		this.ore = getOreName(OreDictionary.getOreID(stack));
 		if(this.ore != "Unknown")
-			this.ores = getOres(stack);
+			this.ores = getOres(this.ore);
 		else this.ores.add(stack);
 	}
 	
@@ -80,16 +80,5 @@ public final class OreStack
 	public int getStackSize()
 	{
 		return ores.get(0).stackSize;
-	}
-	
-	public void setItemDamage(int damage)
-	{
-		for(ItemStack ore : ores)
-			ore.setItemDamage(damage);
-	}
-	
-	public int getItemDamage()
-	{
-		return ores.get(0).getItemDamage();
 	}
 }
