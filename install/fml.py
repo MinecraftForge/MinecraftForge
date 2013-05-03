@@ -751,7 +751,7 @@ def normaliselines(in_filename):
 
 def get_conf_copy(mcp_dir, fml_dir):
     #Lets grab the files we dont work on
-    for file in ['astyle.cfg', 'version.cfg', 'newids.csv']:
+    for file in ['version.cfg', 'newids.csv']:
         dst_file = os.path.normpath(os.path.join(fml_dir, 'conf', file))
         src_file = os.path.normpath(os.path.join(mcp_dir, 'conf', file))
         if not os.path.isdir(os.path.dirname(dst_file)):
