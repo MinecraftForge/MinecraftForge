@@ -36,7 +36,32 @@
              self.checkcommand('retroguard', '%s --version' % self.retroguard, java=True)
  
          self.exceptor = os.path.normpath(self.config.get('COMMANDS', 'Exceptor'))
-@@ -324,6 +332,8 @@
+@@ -268,6 +276,24 @@
+             self.astyle = os.path.normpath(self.config.get('COMMANDS', 'AStyle_%s' % self.osname))
+             if verify:
+                 self.has_astyle = self.checkcommand('astyle', '%s --version' % self.astyle, error=False)
++
++        if verify:    
++            output = self.runcmd('%s --version' % self.astyle).rstrip().split(' ')
++            try:
++                version = output[len(output) - 1].split('.')
++                if int(version[0]) >= 2 and int(version[1]) >= 0:
++                    self.has_astyle = True
++                else:
++                    self.logger.error('!! Astyle version out of date, 2.0+ required found: \"%s\"' % output[len(output) - 1])
++                    self.as_astyle = False
++            except:
++                self.logger.error('!! Could not extract astyle version information !!')
++                self.logger.error(sys.exc_info()[0])
++                self.has_astyle = False
++
++            if not self.has_astyle:
++                self.logger.error('!! astyle is needed for FML, can not continue !!')
++                sys.exit(1)
+ 
+         # only check jad and jadretro if we can use it
+         if self.jad:
+@@ -324,6 +350,8 @@
                  reqs.append('astyle')
              if self.has_astyle_cfg:
                  reqs.append('astyle config')
@@ -45,7 +70,7 @@
              self.logger.info('# found %s', ', '.join(reqs))
              if not self.has_jad_patch and not no_patch:
                  self.has_jad = False
-@@ -350,6 +360,13 @@
+@@ -350,6 +378,13 @@
          self.cmdfernflower = self.config.get('COMMANDS', 'CmdFernflower', raw=1) % (self.cmdjava, self.fernflower)
          self.cmdexceptor = self.config.get('COMMANDS', 'CmdExceptor', raw=1) % (self.cmdjava, self.exceptor)
          self.cmdrecomp = self.config.get('COMMANDS', 'CmdRecomp', raw=1) % self.cmdjavac
@@ -59,7 +84,7 @@
          self.cmdstartsrv = self.config.get('COMMANDS', 'CmdStartSrv', raw=1) % self.cmdjava
          self.cmdstartclt = self.config.get('COMMANDS', 'CmdStartClt', raw=1) % self.cmdjava
  
-@@ -753,6 +770,34 @@
+@@ -753,6 +788,34 @@
          self.cmdjavac = '"%s"' % os.path.join(results[0], 'javac')
          self.cmdjava = '"%s"' % os.path.join(results[0], 'java')
  
@@ -94,7 +119,7 @@
      def checkjars(self, side):
          jarlk = {CLIENT: self.jarclient, SERVER: self.jarserver}
          md5jarlk = {CLIENT: self.md5jarclt, SERVER: self.md5jarsrv}
-@@ -798,6 +843,8 @@
+@@ -798,6 +861,8 @@
          binlk = {CLIENT: self.binclient, SERVER: self.binserver}
          testlk = {CLIENT: self.testclient, SERVER: self.testserver}
  
@@ -103,7 +128,7 @@
          if not os.path.exists(os.path.join(binlk[side], os.path.normpath(testlk[side] + '.class'))):
              return False
          return True
-@@ -1038,6 +1085,9 @@
+@@ -1038,6 +1103,9 @@
          pathbinlk = {CLIENT: self.binclient, SERVER: self.binserver}
          pathsrclk = {CLIENT: self.srcclient, SERVER: self.srcserver}
          pathlog = {CLIENT: self.clientrecomplog, SERVER: self.serverrecomplog}
@@ -113,7 +138,7 @@
  
          if not os.path.exists(pathbinlk[side]):
              os.makedirs(pathbinlk[side])
-@@ -1051,6 +1101,29 @@
+@@ -1051,6 +1119,29 @@
              all_files = True
              append_pattern = False
          pkglist = filterdirs(pathsrclk[side], '*.java', append_pattern=append_pattern, all_files=all_files)
@@ -143,7 +168,7 @@
          dirs = ' '.join(pkglist)
          classpath = os.pathsep.join(cplk[side])
          forkcmd = self.cmdrecomp.format(classpath=classpath, sourcepath=pathsrclk[side], outpath=pathbinlk[side],
-@@ -1059,7 +1132,7 @@
+@@ -1059,7 +1150,7 @@
              self.runcmd(forkcmd, log_file=pathlog[side])
          except CalledProcessError as ex:
              self.logger.error('')
@@ -152,7 +177,7 @@
              self.logger.error('')
              for line in ex.output.splitlines():
                  if line.strip():
-@@ -1072,7 +1145,7 @@
+@@ -1072,7 +1163,7 @@
              raise
  
      def startserver(self):
@@ -161,7 +186,7 @@
          classpath = [os.path.join('..', p) for p in classpath]
          classpath = os.pathsep.join(classpath)
          os.chdir(self.dirjars)
-@@ -1080,7 +1153,7 @@
+@@ -1080,7 +1171,7 @@
          self.runmc(forkcmd)
  
      def startclient(self):
@@ -170,7 +195,7 @@
          classpath = [os.path.join('..', p) for p in classpath]
          classpath = os.pathsep.join(classpath)
          natives = os.path.join('..', self.dirnatives)
-@@ -1207,20 +1280,20 @@
+@@ -1207,20 +1298,20 @@
          with open(self.csvmethods, 'rb') as fh:
              methodsreader = csv.DictReader(fh)
              for row in methodsreader:
@@ -194,7 +219,7 @@
                          names['params'][row['param']] = row['name']
  
          regexps = {
-@@ -1354,13 +1427,13 @@
+@@ -1354,13 +1445,13 @@
          methods = {}
          for row in methodsreader:
              #HINT: Only include methods that have a non-empty description
@@ -210,7 +235,7 @@
                  fields[row['searge']] = row['desc'].replace('*/', '* /')
  
          regexps = {
-@@ -1437,7 +1510,7 @@
+@@ -1437,7 +1528,7 @@
          self.runcmd(forkcmd)
          return True
  
@@ -219,7 +244,7 @@
          if not reobf:
              md5lk = {CLIENT: self.md5client, SERVER: self.md5server}
          else:
-@@ -1452,6 +1525,9 @@
+@@ -1452,6 +1543,9 @@
                      class_path = ''
                  else:
                      class_path += '/'
@@ -229,7 +254,7 @@
                  for class_file in fnmatch.filter(filelist, '*.class'):
                      class_name = class_path + os.path.splitext(class_file)[0]
                      bin_file = os.path.normpath(os.path.join(path, class_file))
-@@ -1548,6 +1624,8 @@
+@@ -1548,6 +1642,8 @@
          if not os.path.exists(outpathlk[side]):
              os.makedirs(outpathlk[side])
  
@@ -238,7 +263,7 @@
          # HINT: We extract the modified class files
          with closing(zipfile.ZipFile(jarlk[side])) as zipjar:
              for in_class in trgclasses:
-@@ -1561,6 +1639,23 @@
+@@ -1561,6 +1657,23 @@
                      out_class = out_class.replace(self.nullpkg, '')
                      if out_class[0] == '/':
                          out_class = out_class[1:]
@@ -262,7 +287,7 @@
                  try:
                      zipjar.extract(out_class, outpathlk[side])
                      self.logger.info('> Outputted %s to %s as %s', in_class.ljust(35), outpathlk[side], out_class)
-@@ -1607,6 +1702,9 @@
+@@ -1607,6 +1720,9 @@
                  sys.exit(1)
  
          for entry in newfiles:
@@ -272,7 +297,7 @@
              if entry[3] == 'U':
                  self.logger.info('Retrieving file from server : %s', entry[0])
                  cur_file = os.path.normpath(entry[0])
-@@ -1627,6 +1725,9 @@
+@@ -1627,6 +1743,9 @@
          md5reoblk = {CLIENT: self.md5reobfclient, SERVER: self.md5reobfserver}
          outpathlk = {CLIENT: self.srcmodclient, SERVER: self.srcmodserver}
          src = {CLIENT: self.srcclient, SERVER: self.srcserver}
