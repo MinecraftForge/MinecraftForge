@@ -9,12 +9,13 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.Icon;
  import net.minecraft.util.MathHelper;
-@@ -21,6 +23,12 @@
+@@ -21,6 +23,13 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
 +import net.minecraftforge.client.ForgeHooksClient;
 +import net.minecraftforge.client.IItemRenderer;
++import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 +import net.minecraftforge.client.MinecraftForgeClient;
 +import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 +import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
@@ -22,29 +23,71 @@
  @SideOnly(Side.CLIENT)
  public class ItemRenderer
  {
-@@ -54,7 +62,20 @@
+@@ -46,22 +55,41 @@
+         this.mc = par1Minecraft;
+         this.mapItemRenderer = new MapItemRenderer(par1Minecraft.fontRenderer, par1Minecraft.gameSettings, par1Minecraft.renderEngine);
+     }
++    
++    @Deprecated
++    public void renderItem(EntityLiving par1EntityLiving, ItemStack par2ItemStack, int par3)
++    {
++        this.renderItem(ItemRenderType.EQUIPPED, par1EntityLiving, par2ItemStack, par3);
++    }
+ 
+     /**
+      * Renders the item stack for being in an entity's hand Args: itemStack
+      */
+-    public void renderItem(EntityLiving par1EntityLiving, ItemStack par2ItemStack, int par3)
++    public void renderItem(ItemRenderType par1ItemRenderType, EntityLiving par2EntityLiving, ItemStack par3ItemStack, int par4)
      {
          GL11.glPushMatrix();
  
 -        if (par2ItemStack.getItemSpriteNumber() == 0 && Block.blocksList[par2ItemStack.itemID] != null && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
 +        Block block = null;
-+        if (par2ItemStack.getItem() instanceof ItemBlock && par2ItemStack.itemID < Block.blocksList.length)
++        if (par3ItemStack.getItem() instanceof ItemBlock && par3ItemStack.itemID < Block.blocksList.length)
 +        {
-+            block = Block.blocksList[par2ItemStack.itemID];
++            block = Block.blocksList[par3ItemStack.itemID];
 +        }
 +
-+        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(par2ItemStack, EQUIPPED);
++        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(par3ItemStack, par1ItemRenderType);
 +        
 +        if (customRenderer != null)
 +        {
-+            this.mc.renderEngine.bindTexture(par2ItemStack.getItemSpriteNumber() == 0 ? "/terrain.png" : "/gui/items.png");
-+            ForgeHooksClient.renderEquippedItem(customRenderer, renderBlocksInstance, par1EntityLiving, par2ItemStack);
++            this.mc.renderEngine.bindTexture(par3ItemStack.getItemSpriteNumber() == 0 ? "/terrain.png" : "/gui/items.png");
++            ForgeHooksClient.renderEquippedItem(customRenderer, renderBlocksInstance, par2EntityLiving, par3ItemStack);
 +        }
-+        else if (block != null && par2ItemStack.getItemSpriteNumber() == 0 && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
++        else if (block != null && par3ItemStack.getItemSpriteNumber() == 0 && RenderBlocks.renderItemIn3d(Block.blocksList[par3ItemStack.itemID].getRenderType()))
          {
              this.mc.renderEngine.bindTexture("/terrain.png");
-             this.renderBlocksInstance.renderBlockAsItem(Block.blocksList[par2ItemStack.itemID], par2ItemStack.getItemDamage(), 1.0F);
-@@ -272,7 +293,7 @@
+-            this.renderBlocksInstance.renderBlockAsItem(Block.blocksList[par2ItemStack.itemID], par2ItemStack.getItemDamage(), 1.0F);
++            this.renderBlocksInstance.renderBlockAsItem(Block.blocksList[par3ItemStack.itemID], par3ItemStack.getItemDamage(), 1.0F);
+         }
+         else
+         {
+-            Icon icon = par1EntityLiving.getItemIcon(par2ItemStack, par3);
++            Icon icon = par2EntityLiving.getItemIcon(par3ItemStack, par4);
+ 
+             if (icon == null)
+             {
+@@ -69,7 +97,7 @@
+                 return;
+             }
+ 
+-            if (par2ItemStack.getItemSpriteNumber() == 0)
++            if (par3ItemStack.getItemSpriteNumber() == 0)
+             {
+                 this.mc.renderEngine.bindTexture("/terrain.png");
+             }
+@@ -94,7 +122,7 @@
+             GL11.glTranslatef(-0.9375F, -0.0625F, 0.0F);
+             renderItemIn2D(tessellator, f1, f2, f, f3, icon.getSheetWidth(), icon.getSheetHeight(), 0.0625F);
+ 
+-            if (par2ItemStack != null && par2ItemStack.hasEffect() && par3 == 0)
++            if (par3ItemStack != null && par3ItemStack.hasEffect() && par4 == 0)
+             {
+                 GL11.glDepthFunc(GL11.GL_EQUAL);
+                 GL11.glDisable(GL11.GL_LIGHTING);
+@@ -272,7 +300,7 @@
          Render render;
          RenderPlayer renderplayer;
  
@@ -53,7 +96,7 @@
          {
              GL11.glPushMatrix();
              f4 = 0.8F;
-@@ -340,11 +361,20 @@
+@@ -340,11 +368,20 @@
              tessellator.addVertexWithUV((double)(128 + b0), (double)(0 - b0), 0.0D, 1.0D, 0.0D);
              tessellator.addVertexWithUV((double)(0 - b0), (double)(0 - b0), 0.0D, 0.0D, 0.0D);
              tessellator.draw();
@@ -79,16 +122,18 @@
              }
  
              GL11.glPopMatrix();
-@@ -447,12 +477,15 @@
+@@ -446,17 +483,20 @@
+ 
              if (itemstack.getItem().requiresMultipleRenderPasses())
              {
-                 this.renderItem(entityclientplayermp, itemstack, 0);
+-                this.renderItem(entityclientplayermp, itemstack, 0);
 -                int i1 = Item.itemsList[itemstack.itemID].getColorFromItemStack(itemstack, 1);
 -                f10 = (float)(i1 >> 16 & 255) / 255.0F;
 -                f11 = (float)(i1 >> 8 & 255) / 255.0F;
 -                f12 = (float)(i1 & 255) / 255.0F;
 -                GL11.glColor4f(f3 * f10, f3 * f11, f3 * f12, 1.0F);
 -                this.renderItem(entityclientplayermp, itemstack, 1);
++                this.renderItem(ItemRenderType.EQUIPPED_FIRST_PERSON, entityclientplayermp, itemstack, 0);
 +                for (int x = 1; x < itemstack.getItem().getRenderPasses(itemstack.getItemDamage()); x++)
 +                {
 +                    int i1 = Item.itemsList[itemstack.itemID].getColorFromItemStack(itemstack, x);
@@ -96,8 +141,13 @@
 +                    f11 = (float)(i1 >> 8 & 255) / 255.0F;
 +                    f12 = (float)(i1 & 255) / 255.0F;
 +                    GL11.glColor4f(f3 * f10, f3 * f11, f3 * f12, 1.0F);
-+                    this.renderItem(entityclientplayermp, itemstack, x);
++                    this.renderItem(ItemRenderType.EQUIPPED_FIRST_PERSON, entityclientplayermp, itemstack, x);
 +                }
              }
              else
              {
+-                this.renderItem(entityclientplayermp, itemstack, 0);
++                this.renderItem(ItemRenderType.EQUIPPED_FIRST_PERSON, entityclientplayermp, itemstack, 0);
+             }
+ 
+             GL11.glPopMatrix();
