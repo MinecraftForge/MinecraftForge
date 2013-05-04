@@ -28,6 +28,7 @@ import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureLoadEvent;
@@ -175,14 +176,20 @@ public class ForgeHooksClient
         }
         return true;
     }
-
+    
+    @Deprecated
     public static void renderEquippedItem(IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLiving entity, ItemStack item)
     {
-        if (customRenderer.shouldUseRenderHelper(EQUIPPED, item, EQUIPPED_BLOCK))
+        renderEquippedItem(ItemRenderType.EQUIPPED, customRenderer, renderBlocks, entity, item);
+    }
+
+    public static void renderEquippedItem(ItemRenderType type, IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLiving entity, ItemStack item)
+    {
+        if (customRenderer.shouldUseRenderHelper(type, item, EQUIPPED_BLOCK))
         {
             GL11.glPushMatrix();
             GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
-            customRenderer.renderItem(EQUIPPED, item, renderBlocks, entity);
+            customRenderer.renderItem(type, item, renderBlocks, entity);
             GL11.glPopMatrix();
         }
         else
@@ -194,7 +201,7 @@ public class ForgeHooksClient
             GL11.glRotatef(50.0F, 0.0F, 1.0F, 0.0F);
             GL11.glRotatef(335.0F, 0.0F, 0.0F, 1.0F);
             GL11.glTranslatef(-0.9375F, -0.0625F, 0.0F);
-            customRenderer.renderItem(EQUIPPED, item, renderBlocks, entity);
+            customRenderer.renderItem(type, item, renderBlocks, entity);
             GL11.glDisable(GL12.GL_RESCALE_NORMAL);
             GL11.glPopMatrix();
         }
