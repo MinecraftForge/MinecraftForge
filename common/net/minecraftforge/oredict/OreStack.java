@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import static net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE;
 import static net.minecraftforge.oredict.OreDictionary.getOreID;
 import static net.minecraftforge.oredict.OreDictionary.getOreName;
@@ -20,6 +21,7 @@ public final class OreStack
 	/** The oredictionary name */
 	public String ore;
 	public ArrayList<ItemStack> ores = new ArrayList<ItemStack>();
+	private NBTTagCompound stackTagCompound;
 	
 	public OreStack(String ore, int stackSize)
 	{
@@ -71,14 +73,46 @@ public final class OreStack
 		this(item, 1);
 	}
 	
-	public void setStackSize(int stackSize)
+	/**
+	 * Sets the size of this OreStack
+	 */
+	public OreStack setStackSize(int stackSize)
 	{
 		for(ItemStack ore : ores)
 			ore.stackSize = stackSize;
+		
+		return this;
 	}
 	
+	/**
+	 * Returns the size of this OreStack
+	 */
 	public int getStackSize()
 	{
 		return ores.get(0).stackSize;
+	}
+	
+	/**
+	 * Returns the NBTTagCompound of this stack, if none exists a new one is created
+	 */
+	public NBTTagCompound getOrCreateNbtData()
+	{
+		if(this.stackTagCompound == null)
+			this.stackTagCompound = new NBTTagCompound();
+		
+		saveStackCompoud();
+		
+		return this.stackTagCompound;
+	}
+	
+	/**
+	 * Saves the NBTTagCompound to all stacks
+	 */
+	public OreStack saveStackCompoud()
+	{
+		for(ItemStack stack : ores)
+			stack.setTagCompound(this.stackTagCompound);
+		
+		return this;
 	}
 }
