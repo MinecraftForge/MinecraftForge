@@ -7,5 +7,12 @@
 -        return Item.itemsList[this.itemID].getDamageVsEntity(par1Entity);
 +        return Item.itemsList[this.itemID].getDamageVsEntity(par1Entity, this);
      }
+     
++    public ItemStack copyWithSize(int size)
++    {
++        ItemStack stack = this.copy();
++        stack.stackSize = size;
++        return stack;
++    }
  
      /**
