@@ -125,16 +125,16 @@ public final class OreStack
 	
 	public boolean isItemEqual(ItemStack stack)
 	{
-		for(ItemStack stack : ores)
-			if(stack.isItemEqual(stack))
+		for(ItemStack stack2 : ores)
+			if(stack.isItemEqual(stack2))
 				return true;
 		return false;
 	}
 	
 	public boolean isItemEqualRecipe(ItemStack stack)
 	{
-		for(ItemStack stack : ores)
-			if(stack.isItemEqual(stack) && stack.stackSize >= getStackSize())
+		for(ItemStack stack2 : ores)
+			if(stack.isItemEqual(stack2) && stack2.stackSize >= getStackSize())
 				return true;
 		return false;
 	}
