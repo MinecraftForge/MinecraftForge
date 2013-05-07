@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/block/Block.java
 +++ ../src_work/minecraft/net/minecraft/block/Block.java
-@@ -1,15 +1,20 @@
+@@ -1,15 +1,21 @@
  package net.minecraft.block;
  
 -import cpw.mods.fml.relauncher.Side;
@@ -13,6 +13,7 @@
  import java.util.Random;
 +
  import net.minecraft.block.material.Material;
++import net.minecraft.client.Minecraft;
 +import net.minecraft.client.particle.EffectRenderer;
  import net.minecraft.client.renderer.texture.IconRegister;
  import net.minecraft.creativetab.CreativeTabs;
@@ -23,7 +24,7 @@
  import net.minecraft.entity.item.EntityItem;
  import net.minecraft.entity.item.EntityXPOrb;
  import net.minecraft.entity.player.EntityPlayer;
-@@ -26,8 +31,10 @@
+@@ -26,8 +32,10 @@
  import net.minecraft.item.ItemSnow;
  import net.minecraft.item.ItemStack;
  import net.minecraft.stats.StatList;
@@ -34,7 +35,7 @@
  import net.minecraft.util.Icon;
  import net.minecraft.util.MovingObjectPosition;
  import net.minecraft.util.StatCollector;
-@@ -35,9 +42,19 @@
+@@ -35,9 +43,21 @@
  import net.minecraft.world.Explosion;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
@@ -43,7 +44,9 @@
 +import net.minecraftforge.common.ForgeDirection;
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.IPlantable;
++import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.common.RotationHelper;
++import net.minecraftforge.event.world.BlockDropsEvent;
 +import cpw.mods.fml.relauncher.Side;
 +import cpw.mods.fml.relauncher.SideOnly;
  
@@ -54,7 +57,7 @@
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
-@@ -454,9 +471,10 @@
+@@ -454,9 +474,10 @@
          return this.needsRandomTick;
      }
  
@@ -66,7 +69,7 @@
      }
  
      /**
-@@ -479,7 +497,7 @@
+@@ -479,7 +500,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -75,7 +78,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -489,7 +507,7 @@
+@@ -489,7 +510,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -84,7 +87,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -639,7 +657,13 @@
+@@ -639,7 +660,13 @@
      /**
       * ejects contained items into the world, and notifies neighbours of an update, as appropriate
       */
@@ -99,7 +102,7 @@
  
      /**
       * Returns the quantity of items to drop on block destruction.
-@@ -664,7 +688,7 @@
+@@ -664,7 +691,7 @@
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
          float f = this.getBlockHardness(par2World, par3, par4, par5);
@@ -108,7 +111,7 @@
      }
  
      /**
-@@ -682,18 +706,13 @@
+@@ -682,18 +709,17 @@
      {
          if (!par1World.isRemote)
          {
@@ -117,6 +120,10 @@
 -            for (int k1 = 0; k1 < j1; ++k1)
 +            ArrayList<ItemStack> items = getBlockDropped(par1World, par2, par3, par4, par5, par7);
 +
++            if (MinecraftForge.EVENT_BUS.post(new BlockDropsEvent(par1World, items, par2, par3, par4, par5, par7))) {
++                return;
++            }
++            
 +            for (ItemStack item : items)
              {
                  if (par1World.rand.nextFloat() <= par6)
@@ -131,7 +138,7 @@
                  }
              }
          }
-@@ -926,7 +945,8 @@
+@@ -926,7 +952,8 @@
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
          int l = par1World.getBlockId(par2, par3, par4);
@@ -141,7 +148,7 @@
      }
  
      /**
-@@ -1086,7 +1106,7 @@
+@@ -1086,7 +1113,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -150,7 +157,7 @@
          {
              ItemStack itemstack = this.createStackedBlock(par6);
  
-@@ -1102,12 +1122,13 @@
+@@ -1102,12 +1129,13 @@
          }
      }
  
@@ -165,7 +172,7 @@
      }
  
      /**
-@@ -1443,4 +1464,944 @@
+@@ -1443,4 +1471,944 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
