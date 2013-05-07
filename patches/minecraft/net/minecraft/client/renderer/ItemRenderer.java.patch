@@ -9,12 +9,13 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.Icon;
  import net.minecraft.util.MathHelper;
-@@ -21,6 +23,12 @@
+@@ -21,6 +23,13 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
 +import net.minecraftforge.client.ForgeHooksClient;
 +import net.minecraftforge.client.IItemRenderer;
++import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 +import net.minecraftforge.client.MinecraftForgeClient;
 +import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 +import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
@@ -22,7 +23,21 @@
  @SideOnly(Side.CLIENT)
  public class ItemRenderer
  {
-@@ -54,7 +62,20 @@
+@@ -46,15 +55,33 @@
+         this.mc = par1Minecraft;
+         this.mapItemRenderer = new MapItemRenderer(par1Minecraft.fontRenderer, par1Minecraft.gameSettings, par1Minecraft.renderEngine);
+     }
++    
++    public void renderItem(EntityLiving par1EntityLiving, ItemStack par2ItemStack, int par3)
++    {
++        this.renderItem(par1EntityLiving, par2ItemStack, par3, ItemRenderType.EQUIPPED);
++    }
+ 
+     /**
+      * Renders the item stack for being in an entity's hand Args: itemStack
+      */
+-    public void renderItem(EntityLiving par1EntityLiving, ItemStack par2ItemStack, int par3)
++    public void renderItem(EntityLiving par1EntityLiving, ItemStack par2ItemStack, int par3, ItemRenderType type)
      {
          GL11.glPushMatrix();
  
@@ -33,18 +48,18 @@
 +            block = Block.blocksList[par2ItemStack.itemID];
 +        }
 +
-+        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(par2ItemStack, EQUIPPED);
++        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(par2ItemStack, type);
 +        
 +        if (customRenderer != null)
 +        {
 +            this.mc.renderEngine.bindTexture(par2ItemStack.getItemSpriteNumber() == 0 ? "/terrain.png" : "/gui/items.png");
-+            ForgeHooksClient.renderEquippedItem(customRenderer, renderBlocksInstance, par1EntityLiving, par2ItemStack);
++            ForgeHooksClient.renderEquippedItem(type, customRenderer, renderBlocksInstance, par1EntityLiving, par2ItemStack);
 +        }
 +        else if (block != null && par2ItemStack.getItemSpriteNumber() == 0 && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
          {
              this.mc.renderEngine.bindTexture("/terrain.png");
              this.renderBlocksInstance.renderBlockAsItem(Block.blocksList[par2ItemStack.itemID], par2ItemStack.getItemDamage(), 1.0F);
-@@ -272,7 +293,7 @@
+@@ -272,7 +299,7 @@
          Render render;
          RenderPlayer renderplayer;
  
@@ -53,7 +68,7 @@
          {
              GL11.glPushMatrix();
              f4 = 0.8F;
-@@ -340,11 +361,20 @@
+@@ -340,11 +367,20 @@
              tessellator.addVertexWithUV((double)(128 + b0), (double)(0 - b0), 0.0D, 1.0D, 0.0D);
              tessellator.addVertexWithUV((double)(0 - b0), (double)(0 - b0), 0.0D, 0.0D, 0.0D);
              tessellator.draw();
@@ -79,16 +94,18 @@
              }
  
              GL11.glPopMatrix();
-@@ -447,12 +477,15 @@
+@@ -446,17 +482,20 @@
+ 
              if (itemstack.getItem().requiresMultipleRenderPasses())
              {
-                 this.renderItem(entityclientplayermp, itemstack, 0);
+-                this.renderItem(entityclientplayermp, itemstack, 0);
 -                int i1 = Item.itemsList[itemstack.itemID].getColorFromItemStack(itemstack, 1);
 -                f10 = (float)(i1 >> 16 & 255) / 255.0F;
 -                f11 = (float)(i1 >> 8 & 255) / 255.0F;
 -                f12 = (float)(i1 & 255) / 255.0F;
 -                GL11.glColor4f(f3 * f10, f3 * f11, f3 * f12, 1.0F);
 -                this.renderItem(entityclientplayermp, itemstack, 1);
++                this.renderItem(entityclientplayermp, itemstack, 0, ItemRenderType.EQUIPPED_FIRST_PERSON);
 +                for (int x = 1; x < itemstack.getItem().getRenderPasses(itemstack.getItemDamage()); x++)
 +                {
 +                    int i1 = Item.itemsList[itemstack.itemID].getColorFromItemStack(itemstack, x);
@@ -96,8 +113,13 @@
 +                    f11 = (float)(i1 >> 8 & 255) / 255.0F;
 +                    f12 = (float)(i1 & 255) / 255.0F;
 +                    GL11.glColor4f(f3 * f10, f3 * f11, f3 * f12, 1.0F);
-+                    this.renderItem(entityclientplayermp, itemstack, x);
++                    this.renderItem(entityclientplayermp, itemstack, x, ItemRenderType.EQUIPPED_FIRST_PERSON);
 +                }
              }
              else
              {
+-                this.renderItem(entityclientplayermp, itemstack, 0);
++                this.renderItem(entityclientplayermp, itemstack, 0, ItemRenderType.EQUIPPED_FIRST_PERSON);
+             }
+ 
+             GL11.glPopMatrix();
