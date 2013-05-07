@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event.Result;
+import net.minecraftforge.event.brewing.PotionBrewingStackEvent.CanBrewEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
@@ -74,5 +75,12 @@ public class ForgeEventFactory
         LivingPackSizeEvent maxCanSpawnEvent = new LivingPackSizeEvent(entity);
         MinecraftForge.EVENT_BUS.post(maxCanSpawnEvent);
         return maxCanSpawnEvent.getResult() == Result.ALLOW ? maxCanSpawnEvent.maxPackSize : entity.getMaxSpawnedInChunk();
+    }
+    
+    public static Result isValidBrewingCombo(ItemStack brewingStack, ItemStack ingredient)
+    {
+        CanBrewEvent canSpawn = new CanBrewEvent(brewingStack, ingredient);
+        MinecraftForge.EVENT_BUS.post(canSpawn);
+        return canSpawn.getResult();
     }
 }
