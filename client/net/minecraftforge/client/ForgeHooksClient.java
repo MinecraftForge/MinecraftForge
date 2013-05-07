@@ -5,7 +5,10 @@ import java.util.Random;
 import java.util.TreeSet;
 
 import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.*;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.PixelFormat;
+import org.lwjgl.opengl.Display;
 
 import cpw.mods.fml.client.FMLClientHandler;
 
