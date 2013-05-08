@@ -357,10 +357,10 @@
 +     *
 +     * @param stack The ItemStack
 +     * @param armorType Armor slot ID: 0: Helmet, 1: Chest, 2: Legs, 3: Boots
-+     * @param players The player trying to equip the armor
++     * @param entity The entity trying to equip the armor
 +     * @return True if the given ItemStack can be inserted in the slot
 +     */
-+    public boolean isValidArmor(ItemStack stack, int armorType, EntityPlayer player)
++    public boolean isValidArmor(ItemStack stack, int armorType, Entity entity)
 +    {
 +        return isValidArmor(stack, armorType);
 +    }
