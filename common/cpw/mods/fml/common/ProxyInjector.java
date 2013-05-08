@@ -67,5 +67,8 @@ public class ProxyInjector
                 throw new LoaderException(e);
             }
         }
+
+        // Allow language specific proxy injection.
+        languageAdapter.setInternalProxies(mod, side, mcl);
     }
 }
