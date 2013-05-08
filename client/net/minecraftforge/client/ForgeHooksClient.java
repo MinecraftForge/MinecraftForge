@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.TreeSet;
 
-import net.minecraftforge.client.event.*;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -32,6 +31,10 @@ import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.TextureLoadEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.IArmorTextureProvider;
 import net.minecraftforge.common.MinecraftForge;
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
@@ -39,6 +42,7 @@ import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
 
 public class ForgeHooksClient
 {
+    private static boolean stencilBufferEnabled = false;
     static RenderEngine engine()
     {
         return FMLClientHandler.instance().getClient().renderEngine;
@@ -278,28 +282,15 @@ public class ForgeHooksClient
         return modelbiped == null ? _default : modelbiped;
     }
 
-    private static PixelFormat pixelFormat = new PixelFormat().withDepthBits(24);
-
-    public static void createDisplay() throws LWJGLException
-    {
-        try
-        {
-            PixelFormatEvent event = new PixelFormatEvent(pixelFormat);
-            if(MinecraftForge.EVENT_BUS.post(event))
-            {
-                pixelFormat = event.format;
-            }
-            Display.create(pixelFormat);
-        }
-        catch(LWJGLException e)
-        {
-            pixelFormat = new PixelFormat().withDepthBits(24);
-            Display.create(pixelFormat);
+    public static void createDisplay() throws LWJGLException {
+        try {
+            Display.create((new PixelFormat()).withDepthBits(24).withStencilBits(8));
+            stencilBufferEnabled = true;
+        } catch(LWJGLException e) {
+            Display.create((new PixelFormat()).withDepthBits(24));
         }
     }
-
-    public static PixelFormat getPixelFormat()
-    {
-        return pixelFormat;
+    public boolean isStencilBufferEnabled() {
+        return stencilBufferEnabled;
     }
 }
