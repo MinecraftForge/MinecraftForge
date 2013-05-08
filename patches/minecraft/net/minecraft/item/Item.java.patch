@@ -60,7 +60,7 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
      }
-@@ -720,4 +736,491 @@
+@@ -720,4 +736,497 @@
      {
          StatList.initStats();
      }
@@ -357,8 +357,14 @@
 +     *
 +     * @param stack The ItemStack
 +     * @param armorType Armor slot ID: 0: Helmet, 1: Chest, 2: Legs, 3: Boots
++     * @param players The player trying to equip the armor
 +     * @return True if the given ItemStack can be inserted in the slot
 +     */
++    public boolean isValidArmor(ItemStack stack, int armorType, EntityPlayer player)
++    {
++        return isValidArmor(stack, armorType);
++    }
++    @Deprecated //Deprecated in 1.5.2, remove in 1.6, see EntityPlayer sensitive version above.
 +    public boolean isValidArmor(ItemStack stack, int armorType)
 +    {
 +        if (this instanceof ItemArmor)
