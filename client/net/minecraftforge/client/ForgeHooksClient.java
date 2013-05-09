@@ -4,8 +4,11 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.TreeSet;
 
+import org.lwjgl.LWJGLException;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.PixelFormat;
 
 import cpw.mods.fml.client.FMLClientHandler;
 
@@ -283,5 +286,22 @@ public class ForgeHooksClient
     {
         ModelBiped modelbiped = itemStack.getItem().getArmorModel(entityLiving, itemStack, slotID);
         return modelbiped == null ? _default : modelbiped;
+    }
+
+    static int stencilBits = 0;
+    public static void createDisplay() throws LWJGLException
+    {
+        PixelFormat format = new PixelFormat().withDepthBits(24);
+        try
+        {
+            //TODO: Figure out how to determine the max bits.
+            Display.create(format.withStencilBits(8));
+            stencilBits = 8;
+        }
+        catch(LWJGLException e)
+        {
+            Display.create(format);
+            stencilBits = 0;
+        }
     }
 }

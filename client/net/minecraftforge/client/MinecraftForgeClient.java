@@ -56,4 +56,9 @@ public class MinecraftForgeClient
     {
         return ForgeHooksClient.renderPass;
     }
+
+    public int getStencilBits()
+    {
+        return ForgeHooksClient.stencilBits;
+    }
 }
