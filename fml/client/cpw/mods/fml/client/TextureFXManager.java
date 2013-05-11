@@ -123,7 +123,7 @@ public class TextureFXManager
             }
             catch (Exception e)
             {
-                e.printStackTrace();
+                //e.printStackTrace();
                 // NOOP - LWJGL needs updating
                 FMLLog.info("Forge Mod Loader has detected an older LWJGL version, new advanced texture animation features are disabled");
             }
