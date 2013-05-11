@@ -199,7 +199,7 @@
                  this.updateAllPlayersSleepingFlag();
 +            }
 +
-+            if (!flag && MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(par1Entity, this)))
++            if (MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(par1Entity, this)) && !flag)
 +            {
 +                return false;
              }
