@@ -23,7 +23,7 @@
  @SideOnly(Side.CLIENT)
  public class ItemRenderer
  {
-@@ -46,15 +55,33 @@
+@@ -46,15 +55,40 @@
          this.mc = par1Minecraft;
          this.mapItemRenderer = new MapItemRenderer(par1Minecraft.fontRenderer, par1Minecraft.gameSettings, par1Minecraft.renderEngine);
      }
@@ -49,6 +49,13 @@
 +        }
 +
 +        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(par2ItemStack, type);
++        //Backwards compatibility, Remove in 1.6, For 1.5 if they implement EQUIPPED then
++        //they must handle it how it was when 1.5 began.
++        if (customRenderer == null && type == ItemRenderType.EQUIPPED_FIRST_PERSON)
++        {
++            type = ItemRenderType.EQUIPPED;
++            customRenderer = MinecraftForgeClient.getItemRenderer(par2ItemStack, type);
++        }
 +        
 +        if (customRenderer != null)
 +        {
@@ -59,7 +66,7 @@
          {
              this.mc.renderEngine.bindTexture("/terrain.png");
              this.renderBlocksInstance.renderBlockAsItem(Block.blocksList[par2ItemStack.itemID], par2ItemStack.getItemDamage(), 1.0F);
-@@ -272,7 +299,7 @@
+@@ -272,7 +306,7 @@
          Render render;
          RenderPlayer renderplayer;
  
@@ -68,7 +75,7 @@
          {
              GL11.glPushMatrix();
              f4 = 0.8F;
-@@ -340,11 +367,20 @@
+@@ -340,11 +374,20 @@
              tessellator.addVertexWithUV((double)(128 + b0), (double)(0 - b0), 0.0D, 1.0D, 0.0D);
              tessellator.addVertexWithUV((double)(0 - b0), (double)(0 - b0), 0.0D, 0.0D, 0.0D);
              tessellator.draw();
@@ -94,7 +101,7 @@
              }
  
              GL11.glPopMatrix();
-@@ -446,17 +482,20 @@
+@@ -446,17 +489,20 @@
  
              if (itemstack.getItem().requiresMultipleRenderPasses())
              {

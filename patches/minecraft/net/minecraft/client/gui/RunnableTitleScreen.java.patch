@@ -1,0 +1,13 @@
+--- ../src_base/minecraft/net/minecraft/client/gui/RunnableTitleScreen.java
++++ ../src_work/minecraft/net/minecraft/client/gui/RunnableTitleScreen.java
+@@ -40,6 +40,10 @@
+                 }
+             }
+         }
++        catch (java.io.FileNotFoundException e)
++        {
++            //NomNomNom, Don't print the error when the flag isn't found.
++        }
+         catch (Throwable throwable)
+         {
+             throwable.printStackTrace();
