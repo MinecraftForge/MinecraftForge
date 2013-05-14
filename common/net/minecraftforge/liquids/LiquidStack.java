@@ -54,7 +54,11 @@ public class LiquidStack
         nbt.setInteger("Amount", amount);
         nbt.setShort("Id", (short)itemID);
         nbt.setShort("Meta", (short)itemMeta);
-        nbt.setString("LiquidName", LiquidDictionary.findLiquidName(this));
+        String name = LiquidDictionary.findLiquidName(this);
+        if(name != null)
+        {
+            nbt.setString("LiquidName", name);
+        }
         if (extra != null)
         {
             nbt.setTag("extra", extra);
