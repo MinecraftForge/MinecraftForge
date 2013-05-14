@@ -85,7 +85,8 @@ public class ForgeHooksClient
         boolean is3D = customRenderer.shouldUseRenderHelper(ENTITY, item, BLOCK_3D);
 
         engine.bindTexture(item.getItemSpriteNumber() == 0 ? "/terrain.png" : "/gui/items.png");
-        if (is3D || (item.itemID < Block.blocksList.length && RenderBlocks.renderItemIn3d(Block.blocksList[item.itemID].getRenderType())))
+        Block block = (item.itemID < Block.blocksList.length ? Block.blocksList[item.itemID] : null);
+        if (is3D || (block != null && RenderBlocks.renderItemIn3d(block.getRenderType())))
         {
             int renderType = (item.itemID < Block.blocksList.length ? Block.blocksList[item.itemID].getRenderType() : 1);
             float scale = (renderType == 1 || renderType == 19 || renderType == 12 || renderType == 2 ? 0.5F : 0.25F);
