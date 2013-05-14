@@ -60,7 +60,7 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
      }
-@@ -720,4 +736,497 @@
+@@ -720,4 +736,508 @@
      {
          StatList.initStats();
      }
@@ -556,5 +556,16 @@
 +        {
 +            stack.itemDamage = 0;
 +        }
++    }
++    
++    /**
++     * ItemStack sensitive version of {@link #canHarvestBlock(Block)} 
++     * @param par1Block The block trying to harvest
++     * @param itemStack The itemstack used to harvest the block
++     * @return true if can harvest the block
++     */
++    public boolean canHarvestBlock(Block par1Block, ItemStack itemStack)
++    {
++        return canHarvestBlock(par1Block);  
 +    }
  }
