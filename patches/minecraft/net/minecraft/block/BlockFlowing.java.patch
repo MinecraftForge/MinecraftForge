@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockFlowing.java
++++ ../src_work/minecraft/net/minecraft/block/BlockFlowing.java
+@@ -206,7 +206,7 @@
+                 {
+                     this.triggerLavaMixEffects(par1World, par2, par3, par4);
+                 }
+-                else
++                else if (i1 != Block.snow.blockID)//Forge: Damn snow.
+                 {
+                     Block.blocksList[i1].dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
+                 }
