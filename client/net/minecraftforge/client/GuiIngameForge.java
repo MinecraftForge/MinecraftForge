@@ -44,6 +44,7 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
+import net.minecraftforge.client.event.TooltipEvent;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.*;
@@ -506,12 +507,24 @@ public class GuiIngameForge extends GuiIngame
                     if (font != null)
                     {
                         int x = (width - font.getStringWidth(name)) / 2;
-                        font.drawStringWithShadow(name, x, y, WHITE | (opacity << 24));
+                        
+                        TooltipEvent.Scroll event = new TooltipEvent.Scroll(this.highlightingItemStack, name, x, y);
+                        
+                        if(!MinecraftForge.EVENT_BUS.post(event))
+                        {
+                            font.drawStringWithShadow(event.tooltip, event.posX, event.posY, event.color | (opacity << 24));
+                        }
                     }
                     else
                     {
-                        int x = (width - fontrenderer.getStringWidth(name)) / 2;
-                        fontrenderer.drawStringWithShadow(name, x, y, WHITE | (opacity << 24));
+                    	int x = (width - fontrenderer.getStringWidth(name)) / 2;
+                        
+                    	TooltipEvent.Scroll event = new TooltipEvent.Scroll(this.highlightingItemStack, name, x, y);                        
+                    	
+                    	if(!MinecraftForge.EVENT_BUS.post(event))
+                        {
+                    		fontrenderer.drawStringWithShadow(event.tooltip, event.posX, event.posY, event.color | (opacity << 24));
+                        }                    	
                     }
                     GL11.glDisable(GL11.GL_BLEND);
                     GL11.glPopMatrix();
