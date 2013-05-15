@@ -8,6 +8,8 @@
  import net.minecraft.client.gui.GuiScreen;
  import net.minecraft.client.renderer.OpenGlHelper;
  import net.minecraft.client.renderer.RenderHelper;
+ import net.minecraftforge.client.event.TooltipEvent;
+import net.minecraftforge.common.MinecraftForge;
 @@ -203,8 +204,11 @@
          GL11.glTranslatef(0.0F, 0.0F, 32.0F);
          this.zLevel = 200.0F;
@@ -28,7 +30,13 @@
  
 -        this.func_102021_a(list, par2, par3);
 +        FontRenderer font = par1ItemStack.getItem().getFontRenderer(par1ItemStack);
-+        drawHoveringText(list, par2, par3, (font == null ? fontRenderer : font));
++        
+         TooltipEvent.Hover event = new TooltipEvent.Hover(par1ItemStack, list);
+        
+         if(!MinecraftForge.EVENT_BUS.post(event))
+         {
+          drawHoveringText(list, par2, par3, (font == null ? fontRenderer : font));
+         }
      }
  
      /**
