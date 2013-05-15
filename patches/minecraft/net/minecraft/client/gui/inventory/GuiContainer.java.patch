@@ -28,7 +28,13 @@
  
 -        this.func_102021_a(list, par2, par3);
 +        FontRenderer font = par1ItemStack.getItem().getFontRenderer(par1ItemStack);
-+        drawHoveringText(list, par2, par3, (font == null ? fontRenderer : font));
++        
+         TooltipEvent.Hover event = new TooltipEvent.Hover(par1ItemStack, list);
+        
+         if(!MinecraftForge.EVENT_BUS.post(event))
+         {
+          drawHoveringText(list, par2, par3, (font == null ? fontRenderer : font));
+         }
      }
  
      /**
