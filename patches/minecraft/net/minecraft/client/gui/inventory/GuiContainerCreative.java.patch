@@ -53,25 +53,13 @@
 
 
      private void updateCreativeSearch()
-     {       
-
-
+     {
 +         List list = itemstack.getTooltip(this.mc.thePlayer, this.mc.gameSettings.advancedItemTooltips);
-
--         Iterator iterator1 = itemstack.getTooltip(this.mc.thePlayer, this.mc.gameSettings.advancedItemTooltips).iterator();
-            
+-         Iterator iterator1 = itemstack.getTooltip(this.mc.thePlayer, this.mc.gameSettings.advancedItemTooltips).iterator();            
 +         TooltipEvent.Search event = new TooltipEvent.Search(itemstack, list, s);
 +         MinecraftForge.EVENT_BUS.post(event);
-
-+         Iterator iterator1 = list.iterator();            
-       
-     }
-
-
-
-
-
-
++         Iterator iterator1 = list.iterator();
+     }     
 @@ -473,11 +482,17 @@
       */
      private boolean needsScrollBars()
