@@ -9,7 +9,34 @@
  
  @SideOnly(Side.CLIENT)
  public class ChunkProviderClient implements IChunkProvider
-@@ -75,6 +77,7 @@
+@@ -37,6 +39,12 @@
+     /** Reference to the World object. */
+     private World worldObj;
+ 
++    /** List of forced chunk coordinates. */
++    private List<ChunkCoordIntPair> forcedChunkCoords = new ArrayList<ChunkCoordIntPair>();
++
++    /** List of forced chunk coordinates that have been removed in the last tick. */
++    private List<ChunkCoordIntPair> removedChunkCoords = new ArrayList<ChunkCoordIntPair>();
++
+     public ChunkProviderClient(World par1World)
+     {
+         this.blankChunk = new EmptyChunk(par1World, 0, 0);
+@@ -59,6 +67,13 @@
+     {
+         Chunk chunk = this.provideChunk(par1, par2);
+ 
++        ChunkCoordIntPair chunkCoord = new ChunkCoordIntPair(par1, par2);
++        if (this.worldObj.getPersistentChunks().containsKey(chunkCoord))
++        {
++            this.forcedChunkCoords.add(chunkCoord);
++            return;
++        }
++
+         if (!chunk.isEmpty())
+         {
+             chunk.onChunkUnload();
+@@ -75,6 +90,7 @@
      {
          Chunk chunk = new Chunk(this.worldObj, par1, par2);
          this.chunkMapping.add(ChunkCoordIntPair.chunkXZ2Int(par1, par2), chunk);
@@ -17,3 +44,22 @@
          chunk.isChunkLoaded = true;
          return chunk;
      }
+@@ -105,7 +121,17 @@
+      */
+     public boolean unloadQueuedChunks()
+     {
+-        return false;
++        this.removedChunkCoords.clear();
++        for (ChunkCoordIntPair chunkCoord : this.forcedChunkCoords)
++        {
++            if (!this.worldObj.getPersistentChunks().containsKey(chunkCoord))
++            {
++                unloadChunk(chunkCoord.chunkXPos, chunkCoord.chunkZPos);
++                this.removedChunkCoords.add(chunkCoord);
++            }
++        }
++        this.forcedChunkCoords.removeAll(this.removedChunkCoords);
++        return this.removedChunkCoords.size() > 0;
+     }
+ 
+     /**
