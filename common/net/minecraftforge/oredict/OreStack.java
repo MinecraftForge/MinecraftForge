@@ -35,9 +35,9 @@ public class OreStack {
 	}
 	
 	public String toString()
-    {
-        return stackSize + "x" + OreDictionary.getOreName(oreID);
-    }
+    	{
+        	return stackSize + "x" + OreDictionary.getOreName(oreID);
+    	}
 	
 	public boolean isItemEqual(ItemStack stack)
 	{
