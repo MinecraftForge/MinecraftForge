@@ -101,7 +101,7 @@ public class ForgeHooksClient
             GL11.glScalef(scale, scale, scale);
             
             int size = item.stackSize;
-            int count = (size > 20 ? 4 : (size > 5 ? 3 : (size > 1 ? 2 : 1)));
+            int count = (size > 40 ? 5 : (size > 20 ? 4 : (size > 5 ? 3 : (size > 1 ? 2 : 1))));
 
             for(int j = 0; j < count; j++)
             {
@@ -109,9 +109,9 @@ public class ForgeHooksClient
                 if (j > 0)
                 {
                     GL11.glTranslatef(
-                        ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / 0.5F,
-                        ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / 0.5F,
-                        ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / 0.5F);
+                        ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / scale,
+                        ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / scale,
+                        ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / scale);
                 }
                 customRenderer.renderItem(ENTITY, item, renderBlocks, entity);
                 GL11.glPopMatrix();
