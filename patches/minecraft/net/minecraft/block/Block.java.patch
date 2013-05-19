@@ -150,10 +150,28 @@
          {
              ItemStack itemstack = this.createStackedBlock(par6);
  
-@@ -1102,12 +1122,13 @@
-         }
-     }
- 
+@@ -1098,16 +1118,27 @@
+         else
+         {
+             int i1 = EnchantmentHelper.getFortuneModifier(par2EntityPlayer);
+-            this.dropBlockAsItem(par1World, par3, par4, par5, par6, i1);
+-        }
+-    }
+-
++            if (getItemsToDrop(par1World, par3, par4, par5) != null)
++            {
++                ArrayList<ItemStack> items = this.getItemsToDrop(par1World, par3, par4, par5);
++
++                for (ItemStack item : items)
++                {
++                    this.dropBlockAsItem_do(par1World, par3, par4, par5, item);
++                }
++            }else{
++                this.dropBlockAsItem(par1World, par3, par4, par5, par6, i1);
++            }
++        }
++    }
++
 +    private int silk_check_meta = -1; //Dirty hack to stop us from needing to special case the silk check hook.
      /**
       * Return true if a player with Silk Touch can harvest this block directly, and not its normal drops.
@@ -165,7 +183,7 @@
      }
  
      /**
-@@ -1443,4 +1464,944 @@
+@@ -1443,4 +1474,957 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -1108,5 +1126,18 @@
 +            }
 +        }
 +        return false;
++    }
++    /**
++     * Allows multiple blocks to be dropped
++     * @param world The World
++     * @param x X
++     * @param y Y
++     * @param z Z
++     * @return The item that needs to be dropped when broken
++     */
++    public ArrayList<ItemStack> getItemsToDrop(World world, int x, int y, int z)
++    {
++        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
++        return ret;
 +    }
  }
