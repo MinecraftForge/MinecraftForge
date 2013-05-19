@@ -167,7 +167,9 @@
 +                {
 +                    this.dropBlockAsItem_do(par1World, par3, par4, par5, item);
 +                }
-+            }else{
++            }
++ 			 else
++			 {
 +                int i1 = EnchantmentHelper.getFortuneModifier(par2EntityPlayer);
 +                this.dropBlockAsItem(par1World, par3, par4, par5, par6, i1);
 +            }
