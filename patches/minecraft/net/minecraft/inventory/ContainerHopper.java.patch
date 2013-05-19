@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/inventory/ContainerHopper.java
++++ ../src_work/minecraft/net/minecraft/inventory/ContainerHopper.java
+@@ -6,7 +6,7 @@
+ 
+ public class ContainerHopper extends Container
+ {
+-    private final IInventory field_94538_a;
++    public final IInventory field_94538_a;
+ 
+     public ContainerHopper(InventoryPlayer par1InventoryPlayer, IInventory par2IInventory)
+     {

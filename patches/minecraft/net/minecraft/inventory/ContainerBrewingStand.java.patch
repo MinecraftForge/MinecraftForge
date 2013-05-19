@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
++++ ../src_work/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
+@@ -9,7 +9,7 @@
+ 
+ public class ContainerBrewingStand extends Container
+ {
+-    private TileEntityBrewingStand tileBrewingStand;
++    public final TileEntityBrewingStand tileBrewingStand;
+ 
+     /** Instance of Slot. */
+     private final Slot theSlot;
