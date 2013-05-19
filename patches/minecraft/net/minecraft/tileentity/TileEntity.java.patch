@@ -10,9 +10,32 @@
  import net.minecraft.server.MinecraftServer;
 +import net.minecraft.util.AxisAlignedBB;
  import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.tileentity.TileEntityLoadEvent;
  
  public class TileEntity
-@@ -308,4 +311,93 @@
+ {
+@@ -123,6 +128,19 @@
+     {
+         TileEntity tileentity = null;
+ 
++        try
++        {
++            TileEntityLoadEvent event = new TileEntityLoadEvent(par0NBTTagCompound);
++            MinecraftForge.EVENT_BUS.post(event);
++            tileentity = event.getLoadedTile();
++            if(tileentity != null)
++                return tileentity;
++        }
++        catch (Exception exception)
++        {
++            exception.printStackTrace();
++        }
++        
+         Class oclass = null;
+ 
+         try
+@@ -308,4 +326,93 @@
          addMapping(TileEntityHopper.class, "Hopper");
          addMapping(TileEntityComparator.class, "Comparator");
      }
