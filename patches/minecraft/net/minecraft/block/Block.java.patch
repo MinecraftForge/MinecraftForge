@@ -150,10 +150,11 @@
          {
              ItemStack itemstack = this.createStackedBlock(par6);
  
-@@ -1098,16 +1118,27 @@
+@@ -1097,17 +1117,28 @@
+         }
          else
          {
-             int i1 = EnchantmentHelper.getFortuneModifier(par2EntityPlayer);
+-            int i1 = EnchantmentHelper.getFortuneModifier(par2EntityPlayer);
 -            this.dropBlockAsItem(par1World, par3, par4, par5, par6, i1);
 -        }
 -    }
@@ -167,6 +168,7 @@
 +                    this.dropBlockAsItem_do(par1World, par3, par4, par5, item);
 +                }
 +            }else{
++                int i1 = EnchantmentHelper.getFortuneModifier(par2EntityPlayer);
 +                this.dropBlockAsItem(par1World, par3, par4, par5, par6, i1);
 +            }
 +        }
