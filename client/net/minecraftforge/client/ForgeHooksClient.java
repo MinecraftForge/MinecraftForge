@@ -101,11 +101,12 @@ public class ForgeHooksClient
             GL11.glScalef(scale, scale, scale);
             
             int size = item.stackSize;
-            byte count = 1;
-            if (size > 1 ) count = 2;
-            if (size > 5 ) count = 3;
-            if (size > 20) count = 4;
+            byte count;
             if (size > 40) count = 5;
+            else if (size > 20) count = 4;
+            else if (size > 5 ) count = 3;
+            else if (size > 1 ) count = 2;
+            else count = 1;
             
             for(int j = 0; j < count; j++)
             {
