@@ -88,7 +88,7 @@ public class ForgeHooksClient
         Block block = (item.itemID < Block.blocksList.length ? Block.blocksList[item.itemID] : null);
         if (is3D || (block != null && RenderBlocks.renderItemIn3d(block.getRenderType())))
         {
-            int renderType = (item.itemID < Block.blocksList.length ? Block.blocksList[item.itemID].getRenderType() : 1);
+            int renderType = (block != null ? block.getRenderType() : 1);
             float scale = (renderType == 1 || renderType == 19 || renderType == 12 || renderType == 2 ? 0.5F : 0.25F);
 
             if (RenderItem.renderInFrame)
