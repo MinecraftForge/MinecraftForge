@@ -1,9 +1,10 @@
 --- ../src_base/minecraft/net/minecraft/world/chunk/Chunk.java
 +++ ../src_work/minecraft/net/minecraft/world/chunk/Chunk.java
-@@ -25,6 +25,10 @@
+@@ -25,6 +25,11 @@
  import net.minecraft.world.biome.WorldChunkManager;
  import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
  
++import net.minecraftforge.common.ForgeDirection;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.EntityEvent;
 +import net.minecraftforge.event.world.ChunkEvent;
@@ -11,7 +12,7 @@
  public class Chunk
  {
      /**
-@@ -146,7 +150,9 @@
+@@ -146,7 +151,9 @@
              {
                  for (int j1 = 0; j1 < k; ++j1)
                  {
@@ -22,7 +23,7 @@
  
                      if (b0 != 0)
                      {
-@@ -165,6 +171,90 @@
+@@ -165,6 +172,90 @@
      }
  
      /**
@@ -113,17 +114,111 @@
       * Checks whether the chunk is at the X/Z location specified
       */
      public boolean isAtLocation(int par1, int par2)
-@@ -228,7 +318,7 @@
+@@ -226,13 +317,16 @@
+                 {
+                     if (l > 0)
                      {
-                         int i1 = this.getBlockID(j, l - 1, k);
- 
+-                        int i1 = this.getBlockID(j, l - 1, k);
+-
 -                        if (Block.lightOpacity[i1] == 0)
-+                        if (getBlockLightOpacity(j, l - 1, k) == 0)
++                        Block block = Block.blocksList[this.getBlockID(j, l - 1, k)];
++                        int skyBlock;
++
++                        if (block == null || (skyBlock = block.getSkyBlock(worldObj, j, l - 1, k)) == 0)
                          {
                              --l;
                              continue;
-@@ -534,7 +624,10 @@
+                         }
++                        
++                        if (skyBlock == 1) --l;
  
+                         this.heightMap[k << 4 | j] = l;
+                     }
+@@ -269,11 +363,16 @@
+                 {
+                     if (l > 0)
+                     {
+-                        if (this.getBlockLightOpacity(j, l - 1, k) == 0)
++                        Block block = Block.blocksList[this.getBlockID(j, l - 1, k)];
++                        int skyBlock;
++                        
++                        if (block == null || (skyBlock = block.getSkyBlock(worldObj, j, l - 1, k)) == 0)
+                         {
+                             --l;
+                             continue;
+                         }
++                        
++                        if (skyBlock == 1) --l;
+ 
+                         this.heightMap[k << 4 | j] = l;
+ 
+@@ -290,7 +389,10 @@
+ 
+                         do
+                         {
+-                            l -= this.getBlockLightOpacity(j, i1, k);
++                            Block block = Block.blocksList[this.getBlockID(j, i1, k)];
++                            
++                            if (block != null)
++                                l -= block.getOpacityForSide(worldObj, j, i1, k, ForgeDirection.DOWN);
+ 
+                             if (l > 0)
+                             {
+@@ -425,23 +527,27 @@
+     {
+         int l = this.heightMap[par3 << 4 | par1] & 255;
+         int i1 = l;
++        int j1 = this.xPosition * 16 + par1;
++        int k1 = this.zPosition * 16 + par3;
+ 
+         if (par2 > l)
+         {
+             i1 = par2;
+         }
+ 
+-        while (i1 > 0 && this.getBlockLightOpacity(par1, i1 - 1, par3) == 0)
+-        {
++        Block block = null;
++        while (i1 > 0) {
++            block = Block.blocksList[getBlockID(par1, i1 - 1, par3)];
++            if (block != null && block.getSkyBlock(this.worldObj, j1, i1 - 1, k1) > 0) break;
+             --i1;
+         }
++
++        if (block != null && block.getSkyBlock(worldObj, j1, i1 - 1, k1) == 1) --i1;
+ 
+         if (i1 != l)
+         {
+             this.worldObj.markBlocksDirtyVertical(par1 + this.xPosition * 16, par3 + this.zPosition * 16, i1, l);
+             this.heightMap[par3 << 4 | par1] = i1;
+-            int j1 = this.xPosition * 16 + par1;
+-            int k1 = this.zPosition * 16 + par3;
+             int l1;
+             int i2;
+ 
+@@ -480,14 +586,10 @@
+ 
+                 while (i1 > 0 && l1 > 0)
+                 {
++                    block = Block.blocksList[getBlockID(par1, i1, par3)];
++                    i2 = block == null ? 1 : block.getOpacityForSide(worldObj, par1, i1, par3, ForgeDirection.DOWN);
++ 
+                     --i1;
+-                    i2 = this.getBlockLightOpacity(par1, i1, par3);
+-
+-                    if (i2 == 0)
+-                    {
+-                        i2 = 1;
+-                    }
+-
+                     l1 -= i2;
+ 
+                     if (l1 < 0)
+@@ -532,9 +634,13 @@
+         }
+     }
+ 
++    @Deprecated
      public int getBlockLightOpacity(int par1, int par2, int par3)
      {
 -        return Block.lightOpacity[this.getBlockID(par1, par2, par3)];
@@ -134,7 +229,7 @@
      }
  
      /**
-@@ -621,9 +714,13 @@
+@@ -621,9 +727,13 @@
                  {
                      Block.blocksList[l1].breakBlock(this.worldObj, j2, par2, k2, l1, i2);
                  }
@@ -151,16 +246,25 @@
                  }
              }
  
-@@ -641,7 +738,7 @@
+@@ -641,14 +751,15 @@
                  }
                  else
                  {
 -                    if (Block.lightOpacity[par4 & 4095] > 0)
-+                    if (getBlockLightOpacity(par1, par2, par3) > 0)
++                    Block block = Block.blocksList[par4];
++                    if (block != null && block.getSkyBlock(worldObj, j2, par2, k2) > 0)
                      {
                          if (par2 >= k1)
                          {
-@@ -665,29 +762,21 @@
+                             this.relightBlock(par1, par2 + 1, par3);
+                         }
+                     }
+-                    else if (par2 == k1 - 1)
++                    else if (par2 >= k1 - 1)
+                     {
+                         this.relightBlock(par1, par2, par3);
+                     }
+@@ -665,29 +776,21 @@
                          Block.blocksList[par4].onBlockAdded(this.worldObj, j2, par2, k2);
                      }
  
@@ -193,7 +297,7 @@
                      }
                  }
  
-@@ -722,7 +811,7 @@
+@@ -722,7 +825,7 @@
                  extendedblockstorage.setExtBlockMetadata(par1, par2 & 15, par3, par4);
                  int j1 = extendedblockstorage.getExtBlockID(par1, par2 & 15, par3);
  
@@ -202,7 +306,15 @@
                  {
                      TileEntity tileentity = this.getChunkBlockTileEntity(par1, par2, par3);
  
-@@ -835,6 +924,7 @@
+@@ -733,6 +836,7 @@
+                     }
+                 }
+ 
++                relightBlock(par1, par2 + 1, par3);
+                 return true;
+             }
+         }
+@@ -835,6 +939,7 @@
              k = this.entityLists.length - 1;
          }
  
@@ -210,7 +322,7 @@
          par1Entity.addedToChunk = true;
          par1Entity.chunkCoordX = this.xPosition;
          par1Entity.chunkCoordY = k;
-@@ -884,33 +974,32 @@
+@@ -884,33 +989,32 @@
          ChunkPosition chunkposition = new ChunkPosition(par1, par2, par3);
          TileEntity tileentity = (TileEntity)this.chunkTileEntityMap.get(chunkposition);
  
@@ -255,7 +367,7 @@
      }
  
      /**
-@@ -925,7 +1014,7 @@
+@@ -925,7 +1029,7 @@
  
          if (this.isChunkLoaded)
          {
@@ -264,7 +376,7 @@
          }
      }
  
-@@ -940,7 +1029,8 @@
+@@ -940,7 +1044,8 @@
          par4TileEntity.yCoord = par2;
          par4TileEntity.zCoord = this.zPosition * 16 + par3;
  
@@ -274,7 +386,7 @@
          {
              if (this.chunkTileEntityMap.containsKey(chunkposition))
              {
-@@ -982,6 +1072,7 @@
+@@ -982,6 +1087,7 @@
          {
              this.worldObj.addLoadedEntities(this.entityLists[i]);
          }
@@ -282,7 +394,7 @@
      }
  
      /**
-@@ -1002,6 +1093,7 @@
+@@ -1002,6 +1108,7 @@
          {
              this.worldObj.unloadEntities(this.entityLists[i]);
          }
@@ -290,7 +402,7 @@
      }
  
      /**
-@@ -1018,8 +1110,8 @@
+@@ -1018,8 +1125,8 @@
       */
      public void getEntitiesWithinAABBForEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, List par3List, IEntitySelector par4IEntitySelector)
      {
@@ -301,7 +413,7 @@
  
          if (i < 0)
          {
-@@ -1068,8 +1160,8 @@
+@@ -1068,8 +1175,8 @@
       */
      public void getEntitiesOfTypeWithinAAAB(Class par1Class, AxisAlignedBB par2AxisAlignedBB, List par3List, IEntitySelector par4IEntitySelector)
      {
@@ -312,7 +424,7 @@
  
          if (i < 0)
          {
-@@ -1252,6 +1344,15 @@
+@@ -1252,6 +1359,15 @@
       */
      public void fillChunk(byte[] par1ArrayOfByte, int par2, int par3, boolean par4)
      {
@@ -328,7 +440,7 @@
          int k = 0;
          boolean flag1 = !this.worldObj.provider.hasNoSky;
          int l;
-@@ -1352,12 +1453,26 @@
+@@ -1352,12 +1468,26 @@
          }
  
          this.generateHeightMap();
@@ -359,7 +471,7 @@
          }
      }
  
-@@ -1466,4 +1581,18 @@
+@@ -1466,4 +1596,18 @@
              }
          }
      }

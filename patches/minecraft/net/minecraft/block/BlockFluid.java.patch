@@ -1,6 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockFluid.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockFluid.java
-@@ -59,7 +59,7 @@
+@@ -24,6 +24,7 @@
+         float f1 = 0.0F;
+         this.setBlockBounds(0.0F + f1, 0.0F + f, 0.0F + f1, 1.0F + f1, 1.0F + f, 1.0F + f1);
+         this.setTickRandomly(true);
++        this.setSkyBlock(1);
+     }
+ 
+     public boolean getBlocksMovement(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
+@@ -59,7 +60,7 @@
              {
                  for (int l1 = -1; l1 <= 1; ++l1)
                  {

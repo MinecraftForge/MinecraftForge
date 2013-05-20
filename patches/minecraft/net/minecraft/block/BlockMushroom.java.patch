@@ -9,6 +9,15 @@
  
  public class BlockMushroom extends BlockFlower
  {
+@@ -91,7 +93,7 @@
+      */
+     protected boolean canThisPlantGrowOnThisBlockID(int par1)
+     {
+-        return Block.opaqueCubeLookup[par1];
++        return Block.blocksList[par1] != null && Block.blocksList[par1].isOpaqueCube();
+     }
+ 
+     /**
 @@ -102,7 +104,9 @@
          if (par3 >= 0 && par3 < 256)
          {

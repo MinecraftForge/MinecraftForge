@@ -1,0 +1,19 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockIce.java
++++ ../src_work/minecraft/net/minecraft/block/BlockIce.java
+@@ -12,6 +12,7 @@
+ import net.minecraft.world.EnumSkyBlock;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeDirection;
+ 
+ public class BlockIce extends BlockBreakable
+ {
+@@ -94,7 +95,7 @@
+      */
+     public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random)
+     {
+-        if (par1World.getSavedLightValue(EnumSkyBlock.Block, par2, par3, par4) > 11 - Block.lightOpacity[this.blockID])
++        if (par1World.getSavedLightValue(EnumSkyBlock.Block, par2, par3, par4) - this.getOpacityForSide(par1World, par2, par3, par4, ForgeDirection.UP) > 11)
+         {
+             if (par1World.provider.isHellWorld)
+             {

@@ -1,15 +1,19 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/RenderBlocks.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/RenderBlocks.java
-@@ -44,6 +44,8 @@
+@@ -41,8 +41,12 @@
+ import net.minecraft.util.Vec3;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeDirection;
++
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
- 
-+import static net.minecraftforge.common.ForgeDirection.*;
 +
++import static net.minecraftforge.common.ForgeDirection.*;
+ 
  @SideOnly(Side.CLIENT)
  public class RenderBlocks
- {
-@@ -533,9 +535,8 @@
+@@ -533,9 +537,8 @@
      public boolean renderBlockBed(Block par1Block, int par2, int par3, int par4)
      {
          Tessellator tessellator = Tessellator.instance;
@@ -21,7 +25,7 @@
          float f = 0.5F;
          float f1 = 1.0F;
          float f2 = 0.8F;
-@@ -544,6 +545,7 @@
+@@ -544,6 +547,7 @@
          tessellator.setBrightness(j1);
          tessellator.setColorOpaque_F(f, f, f);
          Icon icon = this.getBlockIcon(par1Block, this.blockAccess, par2, par3, par4, 0);
@@ -29,7 +33,7 @@
          double d0 = (double)icon.getMinU();
          double d1 = (double)icon.getMaxU();
          double d2 = (double)icon.getMinV();
-@@ -560,6 +562,7 @@
+@@ -560,6 +564,7 @@
          tessellator.setBrightness(par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4));
          tessellator.setColorOpaque_F(f1, f1, f1);
          icon = this.getBlockIcon(par1Block, this.blockAccess, par2, par3, par4, 1);
@@ -37,7 +41,25 @@
          d0 = (double)icon.getMinU();
          d1 = (double)icon.getMaxU();
          d2 = (double)icon.getMinV();
-@@ -2351,7 +2354,7 @@
+@@ -1632,7 +1637,7 @@
+         tessellator.setBrightness(par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4));
+         float f3 = 1.0F;
+ 
+-        if (Block.lightValue[par1Block.blockID] > 0)
++        if (par1Block.getLightValue(this.blockAccess, par2, par3, par4) > 0)
+         {
+             f3 = 1.0F;
+         }
+@@ -1853,7 +1858,7 @@
+         tessellator.setBrightness(par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4));
+         float f5 = 1.0F;
+ 
+-        if (Block.lightValue[par1Block.blockID] > 0)
++        if (par1Block.getLightValue(this.blockAccess, par2, par3, par4) > 0)
+         {
+             f5 = 1.0F;
+         }
+@@ -2351,7 +2356,7 @@
          double d9;
          double d10;
  
@@ -46,7 +68,7 @@
          {
              float f1 = 0.2F;
              float f2 = 0.0625F;
-@@ -2371,7 +2374,7 @@
+@@ -2371,7 +2376,7 @@
                  d0 = d5;
              }
  
@@ -55,7 +77,7 @@
              {
                  tessellator.addVertexWithUV((double)((float)par2 + f1), (double)((float)par3 + f + f2), (double)(par4 + 1), d2, d1);
                  tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)(par3 + 0) + f2), (double)(par4 + 1), d2, d3);
-@@ -2383,7 +2386,7 @@
+@@ -2383,7 +2388,7 @@
                  tessellator.addVertexWithUV((double)((float)par2 + f1), (double)((float)par3 + f + f2), (double)(par4 + 1), d2, d1);
              }
  
@@ -64,7 +86,7 @@
              {
                  tessellator.addVertexWithUV((double)((float)(par2 + 1) - f1), (double)((float)par3 + f + f2), (double)(par4 + 0), d0, d1);
                  tessellator.addVertexWithUV((double)(par2 + 1 - 0), (double)((float)(par3 + 0) + f2), (double)(par4 + 0), d0, d3);
-@@ -2395,7 +2398,7 @@
+@@ -2395,7 +2400,7 @@
                  tessellator.addVertexWithUV((double)((float)(par2 + 1) - f1), (double)((float)par3 + f + f2), (double)(par4 + 0), d0, d1);
              }
  
@@ -73,7 +95,7 @@
              {
                  tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + f + f2), (double)((float)par4 + f1), d2, d1);
                  tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)(par3 + 0) + f2), (double)(par4 + 0), d2, d3);
-@@ -2407,7 +2410,7 @@
+@@ -2407,7 +2412,7 @@
                  tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + f + f2), (double)((float)par4 + f1), d2, d1);
              }
  
@@ -82,7 +104,7 @@
              {
                  tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + f + f2), (double)((float)(par4 + 1) - f1), d0, d1);
                  tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)(par3 + 0) + f2), (double)(par4 + 1 - 0), d0, d3);
-@@ -2419,7 +2422,7 @@
+@@ -2419,7 +2424,7 @@
                  tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + f + f2), (double)((float)(par4 + 1) - f1), d0, d1);
              }
  
@@ -91,3 +113,188 @@
              {
                  d5 = (double)par2 + 0.5D + 0.5D;
                  d6 = (double)par2 + 0.5D - 0.5D;
+@@ -4157,7 +4162,7 @@
+             f2 = f5;
+         }
+ 
+-        return Minecraft.isAmbientOcclusionEnabled() && Block.lightValue[par1Block.blockID] == 0 ? (this.partialRenderBounds ? this.func_102027_b(par1Block, par2, par3, par4, f, f1, f2) : this.renderStandardBlockWithAmbientOcclusion(par1Block, par2, par3, par4, f, f1, f2)) : this.renderStandardBlockWithColorMultiplier(par1Block, par2, par3, par4, f, f1, f2);
++        return Minecraft.isAmbientOcclusionEnabled() && par1Block.getLightValue(this.blockAccess, par2, par3, par4) == 0 ? (this.partialRenderBounds ? this.func_102027_b(par1Block, par2, par3, par4, f, f1, f2) : this.renderStandardBlockWithAmbientOcclusion(par1Block, par2, par3, par4, f, f1, f2)) : this.renderStandardBlockWithColorMultiplier(par1Block, par2, par3, par4, f, f1, f2);
+     }
+ 
+     /**
+@@ -4377,10 +4382,11 @@
+             this.aoLightValueScratchXYPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3, par4);
+             this.aoLightValueScratchYZPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 - 1);
+             this.aoLightValueScratchYZPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 + 1);
+-            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3 + 1, par4)];
+-            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3 + 1, par4)];
+-            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 + 1, par4 + 1)];
+-            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 + 1, par4 - 1)];
++            Block block;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 + 1, par3 + 1, par4)]; flag3 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 + 1, par3 + 1, par4, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 - 1, par3 + 1, par4)]; flag2 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 - 1, par3 + 1, par4, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2, par3 + 1, par4 + 1)]; flag5 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2, par3 + 1, par4 + 1, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2, par3 + 1, par4 - 1)]; flag4 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2, par3 + 1, par4 - 1, ForgeDirection.UNKNOWN) == 0;
+ 
+             if (!flag4 && !flag2)
+             {
+@@ -4483,10 +4489,11 @@
+             this.aoBrightnessYZNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4);
+             this.aoBrightnessYZPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4);
+             this.aoBrightnessXZPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4);
+-            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3, par4 - 1)];
+-            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3, par4 - 1)];
+-            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 + 1, par4 - 1)];
+-            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 - 1, par4 - 1)];
++            Block block;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 + 1, par3, par4 - 1)]; flag3 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 + 1, par3, par4 - 1, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 - 1, par3, par4 - 1)]; flag2 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 - 1, par3, par4 - 1, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2, par3 + 1, par4 - 1)]; flag5 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2, par3 + 1, par4 - 1, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2, par3 - 1, par4 - 1)]; flag4 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2, par3 - 1, par4 - 1, ForgeDirection.UNKNOWN) == 0;
+ 
+             if (!flag2 && !flag4)
+             {
+@@ -4617,10 +4624,11 @@
+             this.aoBrightnessXZPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4);
+             this.aoBrightnessYZNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4);
+             this.aoBrightnessYZPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4);
+-            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3, par4 + 1)];
+-            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3, par4 + 1)];
+-            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 + 1, par4 + 1)];
+-            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 - 1, par4 + 1)];
++            Block block;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 + 1, par3, par4 + 1)]; flag3 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 + 1, par3, par4 + 1, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 - 1, par3, par4 + 1)]; flag2 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 - 1, par3, par4 + 1, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2, par3 + 1, par4 + 1)]; flag5 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2, par3 + 1, par4 + 1, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2, par3 - 1, par4 + 1)]; flag4 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2, par3 - 1, par4 + 1, ForgeDirection.UNKNOWN) == 0;
+ 
+             if (!flag2 && !flag4)
+             {
+@@ -4751,10 +4759,11 @@
+             this.aoBrightnessXZNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 - 1);
+             this.aoBrightnessXZNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 + 1);
+             this.aoBrightnessXYNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4);
+-            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3 + 1, par4)];
+-            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3 - 1, par4)];
+-            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3, par4 - 1)];
+-            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3, par4 + 1)];
++            Block block;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 - 1, par3 + 1, par4)]; flag3 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 - 1, par3 + 1, par4, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 - 1, par3 - 1, par4)]; flag2 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 - 1, par3 - 1, par4, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 - 1, par3, par4 - 1)]; flag5 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 - 1, par3, par4 - 1, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 - 1, par3, par4 + 1)]; flag4 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 - 1, par3, par4 + 1, ForgeDirection.UNKNOWN) == 0;
+ 
+             if (!flag5 && !flag2)
+             {
+@@ -4885,10 +4894,11 @@
+             this.aoBrightnessXZPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 - 1);
+             this.aoBrightnessXZPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 + 1);
+             this.aoBrightnessXYPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4);
+-            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3 + 1, par4)];
+-            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3 - 1, par4)];
+-            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3, par4 + 1)];
+-            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3, par4 - 1)];
++            Block block;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 + 1, par3 + 1, par4)]; flag3 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 + 1, par3 + 1, par4, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 + 1, par3 - 1, par4)]; flag2 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 + 1, par3 - 1, par4, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 + 1, par3, par4 + 1)]; flag5 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 + 1, par3, par4 + 1, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 + 1, par3, par4 - 1)]; flag4 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 + 1, par3, par4 - 1, ForgeDirection.UNKNOWN) == 0;
+ 
+             if (!flag2 && !flag4)
+             {
+@@ -5052,10 +5062,11 @@
+             this.aoLightValueScratchYZNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 - 1);
+             this.aoLightValueScratchYZNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 + 1);
+             this.aoLightValueScratchXYPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3, par4);
+-            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3 - 1, par4)];
+-            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3 - 1, par4)];
+-            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 - 1, par4 + 1)];
+-            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 - 1, par4 - 1)];
++            Block block;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 + 1, par3 - 1, par4)]; flag3 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 + 1, par3 - 1, par4, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 - 1, par3 - 1, par4)]; flag2 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 - 1, par3 - 1, par4, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2, par3 - 1, par4 + 1)]; flag5 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2, par3 - 1, par4 + 1, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2, par3 - 1, par4 - 1)]; flag4 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2, par3 - 1, par4 - 1, ForgeDirection.UNKNOWN) == 0;
+ 
+             if (!flag4 && !flag2)
+             {
+@@ -5167,10 +5178,11 @@
+             this.aoLightValueScratchXYPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3, par4);
+             this.aoLightValueScratchYZPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 - 1);
+             this.aoLightValueScratchYZPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 + 1);
+-            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3 + 1, par4)];
+-            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3 + 1, par4)];
+-            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 + 1, par4 + 1)];
+-            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 + 1, par4 - 1)];
++            Block block;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 + 1, par3 + 1, par4)]; flag3 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 + 1, par3 + 1, par4, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 - 1, par3 + 1, par4)]; flag2 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 - 1, par3 + 1, par4, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2, par3 + 1, par4 + 1)]; flag5 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2, par3 + 1, par4 + 1, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2, par3 + 1, par4 - 1)]; flag4 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2, par3 + 1, par4 - 1, ForgeDirection.UNKNOWN) == 0;
+ 
+             if (!flag4 && !flag2)
+             {
+@@ -5281,10 +5293,11 @@
+             this.aoBrightnessYZNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4);
+             this.aoBrightnessYZPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4);
+             this.aoBrightnessXZPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4);
+-            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3, par4 - 1)];
+-            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3, par4 - 1)];
+-            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 + 1, par4 - 1)];
+-            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 - 1, par4 - 1)];
++            Block block;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 + 1, par3, par4 - 1)]; flag3 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 + 1, par3, par4 - 1, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 - 1, par3, par4 - 1)]; flag2 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 - 1, par3, par4 - 1, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2, par3 + 1, par4 - 1)]; flag5 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2, par3 + 1, par4 - 1, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2, par3 - 1, par4 - 1)]; flag4 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2, par3 - 1, par4 - 1, ForgeDirection.UNKNOWN) == 0;
+ 
+             if (!flag2 && !flag4)
+             {
+@@ -5423,10 +5436,11 @@
+             this.aoBrightnessXZPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4);
+             this.aoBrightnessYZNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4);
+             this.aoBrightnessYZPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4);
+-            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3, par4 + 1)];
+-            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3, par4 + 1)];
+-            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 + 1, par4 + 1)];
+-            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 - 1, par4 + 1)];
++            Block block;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 + 1, par3, par4 + 1)]; flag3 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 + 1, par3, par4 + 1, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 - 1, par3, par4 + 1)]; flag2 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 - 1, par3, par4 + 1, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2, par3 + 1, par4 + 1)]; flag5 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2, par3 + 1, par4 + 1, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2, par3 - 1, par4 + 1)]; flag4 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2, par3 - 1, par4 + 1, ForgeDirection.UNKNOWN) == 0;
+ 
+             if (!flag2 && !flag4)
+             {
+@@ -5565,10 +5579,11 @@
+             this.aoBrightnessXZNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 - 1);
+             this.aoBrightnessXZNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 + 1);
+             this.aoBrightnessXYNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4);
+-            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3 + 1, par4)];
+-            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3 - 1, par4)];
+-            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3, par4 - 1)];
+-            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3, par4 + 1)];
++            Block block;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 - 1, par3 + 1, par4)]; flag3 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 - 1, par3 + 1, par4, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 - 1, par3 - 1, par4)]; flag2 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 - 1, par3 - 1, par4, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 - 1, par3, par4 - 1)]; flag5 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 - 1, par3, par4 - 1, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 - 1, par3, par4 + 1)]; flag4 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 - 1, par3, par4 + 1, ForgeDirection.UNKNOWN) == 0;
+ 
+             if (!flag5 && !flag2)
+             {
+@@ -5707,10 +5722,11 @@
+             this.aoBrightnessXZPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 - 1);
+             this.aoBrightnessXZPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 + 1);
+             this.aoBrightnessXYPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4);
+-            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3 + 1, par4)];
+-            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3 - 1, par4)];
+-            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3, par4 + 1)];
+-            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3, par4 - 1)];
++            Block block;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 + 1, par3 + 1, par4)]; flag3 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 + 1, par3 + 1, par4, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 + 1, par3 - 1, par4)]; flag2 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 + 1, par3 - 1, par4, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 + 1, par3, par4 + 1)]; flag5 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 + 1, par3, par4 + 1, ForgeDirection.UNKNOWN) == 0;
++            block = Block.blocksList[this.blockAccess.getBlockId(par2 + 1, par3, par4 - 1)]; flag4 = block == null ? true : block.getOpacityForSide(this.blockAccess, par2 + 1, par3, par4 - 1, ForgeDirection.UNKNOWN) == 0;
+ 
+             if (!flag2 && !flag4)
+             {
