@@ -18,7 +18,7 @@
 +
  public class WorldChunkManager
  {
-+    public static ArrayList<BiomeGenBase> allowedBiomes = new ArrayList<BiomeGenBase>(Arrays.asList(forest, plains, taiga, taigaHills, forestHills, jungle. jungleHills));
++    public static ArrayList<BiomeGenBase> allowedBiomes = new ArrayList<BiomeGenBase>(Arrays.asList(forest, plains, taiga, taigaHills, forestHills, jungle, jungleHills));
      private GenLayer genBiomes;
  
      /** A GenLayer containing the indices into BiomeGenBase.biomeList[] */

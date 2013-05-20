@@ -13,7 +13,7 @@ import com.google.common.reflect.TypeToken;
 public class EventBus
 {
     private static int maxID = 0;
-    
+
     private ConcurrentHashMap<Object, ArrayList<IEventListener>> listeners = new ConcurrentHashMap<Object, ArrayList<IEventListener>>();
     private final int busID = maxID++;
 
@@ -21,7 +21,7 @@ public class EventBus
     {
         ListenerList.resize(busID + 1);
     }
-    
+
     public void register(Object target)
     {
         Set<? extends Class<?>> supers = TypeToken.of(target.getClass()).getTypes().rawTypes();
@@ -42,14 +42,14 @@ public class EventBus
                                 " arguments.  Event handler methods must require a single argument."
                             );
                         }
-                        
+
                         Class<?> eventType = parameterTypes[0];
-                        
+
                         if (!Event.class.isAssignableFrom(eventType))
                         {
-                            throw new IllegalArgumentException("Method " + method + " has @ForgeSubscribe annotation, but takes a argument that is not a Event " + eventType); 
+                            throw new IllegalArgumentException("Method " + method + " has @ForgeSubscribe annotation, but takes a argument that is not a Event " + eventType);
                         }
-                                                
+
                         register(eventType, target, method);
                         break;
                     }
@@ -72,7 +72,7 @@ public class EventBus
             ASMEventHandler listener = new ASMEventHandler(target, method);
             event.getListenerList().register(busID, listener.getPriority(), listener);
 
-            ArrayList<IEventListener> others = listeners.get(target); 
+            ArrayList<IEventListener> others = listeners.get(target);
             if (others == null)
             {
                 others = new ArrayList<IEventListener>();
@@ -91,10 +91,10 @@ public class EventBus
         ArrayList<IEventListener> list = listeners.remove(object);
         for (IEventListener listener : list)
         {
-            ListenerList.unregiterAll(busID, listener);
+            ListenerList.unregisterAll(busID, listener);
         }
     }
-    
+
     public boolean post(Event event)
     {
         IEventListener[] listeners = event.getListenerList().getListeners(busID);
