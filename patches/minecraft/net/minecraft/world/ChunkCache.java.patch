@@ -31,6 +31,15 @@
          }
      }
  
+@@ -287,7 +300,7 @@
+     public boolean isBlockOpaqueCube(int par1, int par2, int par3)
+     {
+         Block block = Block.blocksList[this.getBlockId(par1, par2, par3)];
+-        return block == null ? false : block.isOpaqueCube();
++        return block == null ? false : block.isOpaqueCube(this.worldObj, par1, par2, par3);
+     }
+ 
+     /**
 @@ -306,8 +319,7 @@
       */
      public boolean doesBlockHaveSolidTopSurface(int par1, int par2, int par3)
@@ -41,3 +50,92 @@
      }
  
      /**
+@@ -337,88 +349,6 @@
+      */
+     public int getSkyBlockTypeBrightness(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4)
+     {
+-        if (par3 < 0)
+-        {
+-            par3 = 0;
+-        }
+-
+-        if (par3 >= 256)
+-        {
+-            par3 = 255;
+-        }
+-
+-        if (par3 >= 0 && par3 < 256 && par2 >= -30000000 && par4 >= -30000000 && par2 < 30000000 && par4 <= 30000000)
+-        {
+-            if (par1EnumSkyBlock == EnumSkyBlock.Sky && this.worldObj.provider.hasNoSky)
+-            {
+-                return 0;
+-            }
+-            else
+-            {
+-                int l;
+-                int i1;
+-
+-                if (Block.useNeighborBrightness[this.getBlockId(par2, par3, par4)])
+-                {
+-                    l = this.getSpecialBlockBrightness(par1EnumSkyBlock, par2, par3 + 1, par4);
+-                    i1 = this.getSpecialBlockBrightness(par1EnumSkyBlock, par2 + 1, par3, par4);
+-                    int j1 = this.getSpecialBlockBrightness(par1EnumSkyBlock, par2 - 1, par3, par4);
+-                    int k1 = this.getSpecialBlockBrightness(par1EnumSkyBlock, par2, par3, par4 + 1);
+-                    int l1 = this.getSpecialBlockBrightness(par1EnumSkyBlock, par2, par3, par4 - 1);
+-
+-                    if (i1 > l)
+-                    {
+-                        l = i1;
+-                    }
+-
+-                    if (j1 > l)
+-                    {
+-                        l = j1;
+-                    }
+-
+-                    if (k1 > l)
+-                    {
+-                        l = k1;
+-                    }
+-
+-                    if (l1 > l)
+-                    {
+-                        l = l1;
+-                    }
+-
+-                    return l;
+-                }
+-                else
+-                {
+-                    l = (par2 >> 4) - this.chunkX;
+-                    i1 = (par4 >> 4) - this.chunkZ;
+-                    return this.chunkArray[l][i1].getSavedLightValue(par1EnumSkyBlock, par2 & 15, par3, par4 & 15);
+-                }
+-            }
+-        }
+-        else
+-        {
+-            return par1EnumSkyBlock.defaultLightValue;
+-        }
+-    }
+-
+-    @SideOnly(Side.CLIENT)
+-
+-    /**
+-     * is only used on stairs and tilled fields
+-     */
+-    public int getSpecialBlockBrightness(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4)
+-    {
+-        if (par3 < 0)
+-        {
+-            par3 = 0;
+-        }
+-
+-        if (par3 >= 256)
+-        {
+-            par3 = 255;
+-        }
+-
+         if (par3 >= 0 && par3 < 256 && par2 >= -30000000 && par4 >= -30000000 && par2 < 30000000 && par4 <= 30000000)
+         {
+             int l = (par2 >> 4) - this.chunkX;

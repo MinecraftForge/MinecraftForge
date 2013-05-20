@@ -1,15 +1,102 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockChest.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockChest.java
-@@ -23,6 +23,8 @@
+@@ -22,6 +22,9 @@
+ import net.minecraft.util.MathHelper;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
- 
-+import static net.minecraftforge.common.ForgeDirection.*;
++import net.minecraftforge.common.ForgeDirection;
 +
++import static net.minecraftforge.common.ForgeDirection.*;
+ 
  public class BlockChest extends BlockContainer
  {
-     private final Random random = new Random();
-@@ -444,7 +446,7 @@
+@@ -207,6 +210,10 @@
+             int i1 = par1World.getBlockId(par2, par3, par4 + 1);
+             int j1 = par1World.getBlockId(par2 - 1, par3, par4);
+             int k1 = par1World.getBlockId(par2 + 1, par3, par4);
++            boolean north = Block.blocksList[l] == null ? false : Block.blocksList[l].isBlockSolidOnSide(par1World, par2, par3, par4 - 1, ForgeDirection.SOUTH);
++            boolean south = Block.blocksList[i1] == null ? false : Block.blocksList[i1].isBlockSolidOnSide(par1World, par2, par3, par4 + 1, ForgeDirection.NORTH);
++            boolean west = Block.blocksList[j1] == null ? false : Block.blocksList[j1].isBlockSolidOnSide(par1World, par2 - 1, par3, par4, ForgeDirection.EAST);
++            boolean east = Block.blocksList[k1] == null ? false : Block.blocksList[k1].isBlockSolidOnSide(par1World, par2 + 1, par3, par4, ForgeDirection.WEST);
+             boolean flag = true;
+             int l1;
+             int i2;
+@@ -220,22 +227,22 @@
+                 {
+                     b0 = 3;
+ 
+-                    if (Block.opaqueCubeLookup[l] && !Block.opaqueCubeLookup[i1])
++                    if (north && !south)
+                     {
+                         b0 = 3;
+                     }
+ 
+-                    if (Block.opaqueCubeLookup[i1] && !Block.opaqueCubeLookup[l])
++                    if (south && !north)
+                     {
+                         b0 = 2;
+                     }
+ 
+-                    if (Block.opaqueCubeLookup[j1] && !Block.opaqueCubeLookup[k1])
++                    if (west && !east)
+                     {
+                         b0 = 5;
+                     }
+ 
+-                    if (Block.opaqueCubeLookup[k1] && !Block.opaqueCubeLookup[j1])
++                    if (east && !west)
+                     {
+                         b0 = 4;
+                     }
+@@ -244,6 +251,8 @@
+                 {
+                     l1 = par1World.getBlockId(j1 == this.blockID ? par2 - 1 : par2 + 1, par3, par4 - 1);
+                     i2 = par1World.getBlockId(j1 == this.blockID ? par2 - 1 : par2 + 1, par3, par4 + 1);
++                    boolean north2 = Block.blocksList[l1] == null ? false : Block.blocksList[l1].isBlockSolidOnSide(par1World, j1 == this.blockID ? par2 - 1 : par2 + 1, par3, par4 - 1, ForgeDirection.SOUTH);
++                    boolean south2 = Block.blocksList[i2] == null ? false : Block.blocksList[i2].isBlockSolidOnSide(par1World, j1 == this.blockID ? par2 - 1 : par2 + 1, par3, par4 + 1, ForgeDirection.NORTH);
+                     b0 = 3;
+                     flag1 = true;
+ 
+@@ -261,12 +270,12 @@
+                         b0 = 2;
+                     }
+ 
+-                    if ((Block.opaqueCubeLookup[l] || Block.opaqueCubeLookup[l1]) && !Block.opaqueCubeLookup[i1] && !Block.opaqueCubeLookup[i2])
++                    if ((north || north2) && !south && !south2)
+                     {
+                         b0 = 3;
+                     }
+ 
+-                    if ((Block.opaqueCubeLookup[i1] || Block.opaqueCubeLookup[i2]) && !Block.opaqueCubeLookup[l] && !Block.opaqueCubeLookup[l1])
++                    if ((south || south2) && !north && !north2)
+                     {
+                         b0 = 2;
+                     }
+@@ -276,6 +285,8 @@
+             {
+                 l1 = par1World.getBlockId(par2 - 1, par3, l == this.blockID ? par4 - 1 : par4 + 1);
+                 i2 = par1World.getBlockId(par2 + 1, par3, l == this.blockID ? par4 - 1 : par4 + 1);
++                boolean west2 = Block.blocksList[l1] == null ? false : Block.blocksList[l1].isBlockSolidOnSide(par1World, par2 - 1, par3, l == this.blockID ? par4 - 1 : par4 + 1, ForgeDirection.EAST);
++                boolean east2 = Block.blocksList[i2] == null ? false : Block.blocksList[i2].isBlockSolidOnSide(par1World, par2 + 1, par3, l == this.blockID ? par4 - 1 : par4 + 1, ForgeDirection.WEST);
+                 b0 = 5;
+                 flag1 = true;
+ 
+@@ -293,12 +304,12 @@
+                     b0 = 4;
+                 }
+ 
+-                if ((Block.opaqueCubeLookup[j1] || Block.opaqueCubeLookup[l1]) && !Block.opaqueCubeLookup[k1] && !Block.opaqueCubeLookup[i2])
++                if ((west || west2) && !east && !east2)
+                 {
+                     b0 = 5;
+                 }
+ 
+-                if ((Block.opaqueCubeLookup[k1] || Block.opaqueCubeLookup[i2]) && !Block.opaqueCubeLookup[j1] && !Block.opaqueCubeLookup[l1])
++                if ((east || east2) && !west && !west2)
+                 {
+                     b0 = 4;
+                 }
+@@ -444,7 +455,7 @@
          {
              return null;
          }
@@ -18,35 +105,26 @@
          {
              return null;
          }
-@@ -452,19 +454,19 @@
+@@ -452,19 +463,19 @@
          {
              return null;
          }
 -        else if (par1World.getBlockId(par2 - 1, par3, par4) == this.blockID && (par1World.isBlockNormalCube(par2 - 1, par3 + 1, par4) || isOcelotBlockingChest(par1World, par2 - 1, par3, par4)))
--        {
--            return null;
--        }
--        else if (par1World.getBlockId(par2 + 1, par3, par4) == this.blockID && (par1World.isBlockNormalCube(par2 + 1, par3 + 1, par4) || isOcelotBlockingChest(par1World, par2 + 1, par3, par4)))
--        {
--            return null;
--        }
--        else if (par1World.getBlockId(par2, par3, par4 - 1) == this.blockID && (par1World.isBlockNormalCube(par2, par3 + 1, par4 - 1) || isOcelotBlockingChest(par1World, par2, par3, par4 - 1)))
--        {
--            return null;
--        }
--        else if (par1World.getBlockId(par2, par3, par4 + 1) == this.blockID && (par1World.isBlockNormalCube(par2, par3 + 1, par4 + 1) || isOcelotBlockingChest(par1World, par2, par3, par4 + 1)))
 +        else if (par1World.getBlockId(par2 - 1, par3, par4) == this.blockID && (par1World.isBlockSolidOnSide(par2 - 1, par3 + 1, par4, DOWN) || isOcelotBlockingChest(par1World, par2 - 1, par3, par4)))
-+        {
-+            return null;
-+        }
+         {
+             return null;
+         }
+-        else if (par1World.getBlockId(par2 + 1, par3, par4) == this.blockID && (par1World.isBlockNormalCube(par2 + 1, par3 + 1, par4) || isOcelotBlockingChest(par1World, par2 + 1, par3, par4)))
 +        else if (par1World.getBlockId(par2 + 1, par3, par4) == this.blockID && (par1World.isBlockSolidOnSide(par2 + 1, par3 + 1, par4, DOWN) || isOcelotBlockingChest(par1World, par2 + 1, par3, par4)))
-+        {
-+            return null;
-+        }
+         {
+             return null;
+         }
+-        else if (par1World.getBlockId(par2, par3, par4 - 1) == this.blockID && (par1World.isBlockNormalCube(par2, par3 + 1, par4 - 1) || isOcelotBlockingChest(par1World, par2, par3, par4 - 1)))
 +        else if (par1World.getBlockId(par2, par3, par4 - 1) == this.blockID && (par1World.isBlockSolidOnSide(par2, par3 + 1, par4 - 1, DOWN) || isOcelotBlockingChest(par1World, par2, par3, par4 - 1)))
-+        {
-+            return null;
-+        }
+         {
+             return null;
+         }
+-        else if (par1World.getBlockId(par2, par3, par4 + 1) == this.blockID && (par1World.isBlockNormalCube(par2, par3 + 1, par4 + 1) || isOcelotBlockingChest(par1World, par2, par3, par4 + 1)))
 +        else if (par1World.getBlockId(par2, par3, par4 + 1) == this.blockID && (par1World.isBlockSolidOnSide(par2, par3 + 1, par4 + 1, DOWN) || isOcelotBlockingChest(par1World, par2, par3, par4 + 1)))
          {
              return null;

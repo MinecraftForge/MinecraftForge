@@ -1,0 +1,56 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockHalfSlab.java
++++ ../src_work/minecraft/net/minecraft/block/BlockHalfSlab.java
+@@ -10,6 +10,7 @@
+ import net.minecraft.util.Facing;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeDirection;
+ 
+ public abstract class BlockHalfSlab extends Block
+ {
+@@ -20,16 +21,10 @@
+         super(par1, par3Material);
+         this.isDoubleSlab = par2;
+ 
+-        if (par2)
+-        {
+-            opaqueCubeLookup[par1] = true;
+-        }
+-        else
++        if (!par2)
+         {
+             this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.5F, 1.0F);
+         }
+-
+-        this.setLightOpacity(255);
+     }
+ 
+     /**
+@@ -163,6 +158,27 @@
+      */
+     public abstract String getFullSlabName(int i);
+ 
++    @Override
++    public int getSkyBlock(IBlockAccess world, int x, int y, int z)
++    {
++        return (this.isDoubleSlab || world.getBlockMetadata(x, y, z) >= 8) ? 2 : 1;
++    }
++    
++    @Override
++    public long getLightMask(IBlockAccess world, int x, int y, int z, ForgeDirection side)
++    {
++        if (this.isDoubleSlab) return -1;
++        boolean usd = world.getBlockMetadata(x, y, z) >= 8;
++        switch (side) {
++            case UP:
++                return usd ? -1 : 0;
++            case DOWN:
++                return usd ? 0 : -1;
++            default:
++                return usd ? ~0xFFFFFFFFL : 0xFFFFFFFFL;
++        }
++    }
++    
+     /**
+      * Get the block's damage value (for use with pick block).
+      */

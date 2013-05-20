@@ -1,0 +1,43 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockDispenser.java
++++ ../src_work/minecraft/net/minecraft/block/BlockDispenser.java
+@@ -25,6 +25,7 @@
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.Icon;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeDirection;
+ 
+ public class BlockDispenser extends BlockContainer
+ {
+@@ -73,24 +74,28 @@
+             int i1 = par1World.getBlockId(par2, par3, par4 + 1);
+             int j1 = par1World.getBlockId(par2 - 1, par3, par4);
+             int k1 = par1World.getBlockId(par2 + 1, par3, par4);
++            boolean north = Block.blocksList[l] == null ? false : Block.blocksList[l].isBlockSolidOnSide(par1World, par2, par3, par4 - 1, ForgeDirection.SOUTH);
++            boolean south = Block.blocksList[i1] == null ? false : Block.blocksList[i1].isBlockSolidOnSide(par1World, par2, par3, par4 + 1, ForgeDirection.NORTH);
++            boolean west = Block.blocksList[j1] == null ? false : Block.blocksList[j1].isBlockSolidOnSide(par1World, par2 - 1, par3, par4, ForgeDirection.EAST);
++            boolean east = Block.blocksList[k1] == null ? false : Block.blocksList[k1].isBlockSolidOnSide(par1World, par2 + 1, par3, par4, ForgeDirection.WEST);
+             byte b0 = 3;
+ 
+-            if (Block.opaqueCubeLookup[l] && !Block.opaqueCubeLookup[i1])
++            if (north && !south)
+             {
+                 b0 = 3;
+             }
+ 
+-            if (Block.opaqueCubeLookup[i1] && !Block.opaqueCubeLookup[l])
++            if (south && !north)
+             {
+                 b0 = 2;
+             }
+ 
+-            if (Block.opaqueCubeLookup[j1] && !Block.opaqueCubeLookup[k1])
++            if (west && !east)
+             {
+                 b0 = 5;
+             }
+ 
+-            if (Block.opaqueCubeLookup[k1] && !Block.opaqueCubeLookup[j1])
++            if (east && !west)
+             {
+                 b0 = 4;
+             }

@@ -1,0 +1,50 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockStairs.java
++++ ../src_work/minecraft/net/minecraft/block/BlockStairs.java
+@@ -18,6 +18,7 @@
+ import net.minecraft.world.Explosion;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeDirection;
+ 
+ public class BlockStairs extends Block
+ {
+@@ -37,7 +38,6 @@
+         this.setHardness(par2Block.blockHardness);
+         this.setResistance(par2Block.blockResistance / 3.0F);
+         this.setStepSound(par2Block.stepSound);
+-        this.setLightOpacity(255);
+         this.setCreativeTab(CreativeTabs.tabBlock);
+     }
+ 
+@@ -653,4 +653,31 @@
+      * is the only chance you get to register icons.
+      */
+     public void registerIcons(IconRegister par1IconRegister) {}
++    
++    private static long left = 0xF0F0F0F0F0F0F0FL;
++    private static long right = ~left;
++    private static long bottom = 0xFFFFFFFFL;
++    private static long top = ~bottom;
++    private static long all = -1;
++    private static long[][] maskData = {{all, left, left | bottom, left | bottom, bottom, all},
++                                        {all, right, right | bottom, right | bottom, all, bottom},
++                                        {all, top, bottom, all, right | bottom, right | bottom},
++                                        {all, bottom, all, bottom, left | bottom, left | bottom},
++                                        {left, all, left | top, left | top, top, all},
++                                        {right, all, right | top, right | top, all, top},
++                                        {top, all, top, all, right | top, right | top},
++                                        {bottom, all, all, top, left | top, left | top}};
++
++    @Override
++    public int getSkyBlock(IBlockAccess world, int x, int y, int z)
++    {
++        return (world.getBlockMetadata(x, y, z) & 4) != 0 ? 2 : 1;
++    }
++
++    @Override
++    public long getLightMask(IBlockAccess world, int x, int y, int z, ForgeDirection side)
++    {
++        return maskData[world.getBlockMetadata(x, y, z)][side.ordinal()];
++    }
++    
+ }

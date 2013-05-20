@@ -29,3 +29,12 @@
                  }
  
                  if (this.hasSpiders && !this.spawnerPlaced)
+@@ -310,7 +315,7 @@
+                 {
+                     k = this.getBlockIdAtCurrentPosition(par1World, 1, -1, j, par3StructureBoundingBox);
+ 
+-                    if (k > 0 && Block.opaqueCubeLookup[k])
++                    if (k > 0 && Block.blocksList[k].isOpaqueCube())
+                     {
+                         this.randomlyPlaceBlock(par1World, par3StructureBoundingBox, par2Random, 0.7F, 1, 0, j, Block.rail.blockID, this.getMetadataWithOffset(Block.rail.blockID, 0));
+                     }

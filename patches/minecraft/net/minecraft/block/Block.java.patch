@@ -23,7 +23,7 @@
  import net.minecraft.entity.item.EntityItem;
  import net.minecraft.entity.item.EntityXPOrb;
  import net.minecraft.entity.player.EntityPlayer;
-@@ -26,8 +31,10 @@
+@@ -26,18 +31,31 @@
  import net.minecraft.item.ItemSnow;
  import net.minecraft.item.ItemStack;
  import net.minecraft.stats.StatList;
@@ -34,7 +34,8 @@
  import net.minecraft.util.Icon;
  import net.minecraft.util.MovingObjectPosition;
  import net.minecraft.util.StatCollector;
-@@ -35,9 +42,19 @@
+ import net.minecraft.util.Vec3;
++import net.minecraft.world.EnumSkyBlock;
  import net.minecraft.world.Explosion;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
@@ -54,7 +55,71 @@
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
-@@ -454,9 +471,10 @@
+@@ -61,12 +79,14 @@
+     /**
+      * An array of 4096 booleans corresponding to the result of the isOpaqueCube() method for each block ID
+      */
++    @Deprecated
+     public static final boolean[] opaqueCubeLookup = new boolean[4096];
+ 
+     /** How much light is subtracted for going through this block */
+     public static final int[] lightOpacity = new int[4096];
+ 
+     /** Array of booleans that tells if a block can grass */
++    @Deprecated
+     public static final boolean[] canBlockGrass = new boolean[4096];
+ 
+     /** Amount of light emitted */
+@@ -75,6 +95,7 @@
+     /**
+      * Flag if block ID should use the brightest neighbor light value as its own
+      */
++    @Deprecated
+     public static boolean[] useNeighborBrightness = new boolean[4096];
+     public static final Block stone = (new BlockStone(1)).setHardness(1.5F).setResistance(10.0F).setStepSound(soundStoneFootstep).setUnlocalizedName("stone");
+     public static final BlockGrass grass = (BlockGrass)(new BlockGrass(2)).setHardness(0.6F).setStepSound(soundGrassFootstep).setUnlocalizedName("grass");
+@@ -213,7 +234,7 @@
+     public static final Block whiteStone = (new Block(121, Material.rock)).setHardness(3.0F).setResistance(15.0F).setStepSound(soundStoneFootstep).setUnlocalizedName("whiteStone").setCreativeTab(CreativeTabs.tabBlock);
+     public static final Block dragonEgg = (new BlockDragonEgg(122)).setHardness(3.0F).setResistance(15.0F).setStepSound(soundStoneFootstep).setLightValue(0.125F).setUnlocalizedName("dragonEgg");
+     public static final Block redstoneLampIdle = (new BlockRedstoneLight(123, false)).setHardness(0.3F).setStepSound(soundGlassFootstep).setUnlocalizedName("redstoneLight").setCreativeTab(CreativeTabs.tabRedstone);
+-    public static final Block redstoneLampActive = (new BlockRedstoneLight(124, true)).setHardness(0.3F).setStepSound(soundGlassFootstep).setUnlocalizedName("redstoneLight");
++    public static final Block redstoneLampActive = (new BlockRedstoneLight(124, true)).setHardness(0.3F).setStepSound(soundGlassFootstep).setUnlocalizedName("redstoneLight").setLightValue(1.0F);
+     public static final BlockHalfSlab woodDoubleSlab = (BlockHalfSlab)(new BlockWoodSlab(125, true)).setHardness(2.0F).setResistance(5.0F).setStepSound(soundWoodFootstep).setUnlocalizedName("woodSlab");
+     public static final BlockHalfSlab woodSingleSlab = (BlockHalfSlab)(new BlockWoodSlab(126, false)).setHardness(2.0F).setResistance(5.0F).setStepSound(soundWoodFootstep).setUnlocalizedName("woodSlab");
+     public static final Block cocoaPlant = (new BlockCocoa(127)).setHardness(0.2F).setResistance(5.0F).setStepSound(soundWoodFootstep).setUnlocalizedName("cocoa");
+@@ -312,6 +333,9 @@
+     @SideOnly(Side.CLIENT)
+     protected Icon blockIcon;
+ 
++    protected long[] mask = null;
++    protected int skyBlock = 0;
++    
+     public Block(int par1, Material par2Material)
+     {
+         this.stepSound = soundPowderFootstep;
+@@ -328,9 +352,8 @@
+             blocksList[par1] = this;
+             this.blockID = par1;
+             this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+-            opaqueCubeLookup[par1] = this.isOpaqueCube();
+-            lightOpacity[par1] = this.isOpaqueCube() ? 255 : 0;
+-            canBlockGrass[par1] = !par2Material.getCanBlockGrass();
++            skyBlock = this.isOpaqueCube() ? 2 : 0;
++            setLightOpacity(1);
+         }
+     }
+ 
+@@ -365,6 +388,9 @@
+     public Block setLightValue(float par1)
+     {
+         lightValue[this.blockID] = (int)(15.0F * par1);
++        if (lightValue[this.blockID] > 0) {
++            setLightMask(new long[]{0, 0, 0});
++        }
+         return this;
+     }
+ 
+@@ -454,9 +480,10 @@
          return this.needsRandomTick;
      }
  
@@ -66,7 +131,7 @@
      }
  
      /**
-@@ -479,7 +497,7 @@
+@@ -479,7 +506,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -75,7 +140,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -489,7 +507,7 @@
+@@ -489,7 +516,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -84,7 +149,22 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -639,7 +657,13 @@
+@@ -579,9 +606,14 @@
+      * Is this block (a) opaque and (b) a full 1m cube?  This determines whether or not to render the shared face of two
+      * adjacent blocks and also whether the player can attach torches, redstone wire, etc to this block.
+      */
++    @Deprecated
+     public boolean isOpaqueCube()
+     {
+         return true;
++    }
++    
++    public boolean isOpaqueCube(IBlockAccess world, int x, int y, int z) {
++        return isOpaqueCube();
+     }
+ 
+     /**
+@@ -639,7 +671,13 @@
      /**
       * ejects contained items into the world, and notifies neighbours of an update, as appropriate
       */
@@ -99,7 +179,7 @@
  
      /**
       * Returns the quantity of items to drop on block destruction.
-@@ -664,7 +688,7 @@
+@@ -664,7 +702,7 @@
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
          float f = this.getBlockHardness(par2World, par3, par4, par5);
@@ -108,7 +188,7 @@
      }
  
      /**
-@@ -682,18 +706,13 @@
+@@ -682,18 +720,13 @@
      {
          if (!par1World.isRemote)
          {
@@ -131,7 +211,7 @@
                  }
              }
          }
-@@ -926,7 +945,8 @@
+@@ -926,7 +959,8 @@
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
          int l = par1World.getBlockId(par2, par3, par4);
@@ -141,7 +221,7 @@
      }
  
      /**
-@@ -1086,7 +1106,7 @@
+@@ -1086,7 +1120,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -150,7 +230,7 @@
          {
              ItemStack itemstack = this.createStackedBlock(par6);
  
-@@ -1102,12 +1122,13 @@
+@@ -1102,12 +1136,13 @@
          }
      }
  
@@ -165,8 +245,43 @@
      }
  
      /**
-@@ -1443,4 +1464,944 @@
-         canBlockGrass[0] = true;
+@@ -1408,39 +1443,995 @@
+                     Item.itemsList[i] = new ItemBlock(i - 256);
+                     blocksList[i].initializeBlock();
+                 }
+-
+-                boolean flag = false;
+-
+-                if (i > 0 && blocksList[i].getRenderType() == 10)
+-                {
+-                    flag = true;
+-                }
+-
+-                if (i > 0 && blocksList[i] instanceof BlockHalfSlab)
+-                {
+-                    flag = true;
+-                }
+-
+-                if (i == tilledField.blockID)
+-                {
+-                    flag = true;
+-                }
+-
+-                if (canBlockGrass[i])
+-                {
+-                    flag = true;
+-                }
+-
+-                if (lightOpacity[i] == 0)
+-                {
+-                    flag = true;
+-                }
+-
+-                useNeighborBrightness[i] = flag;
+             }
+         }
+ 
+-        canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
 +
@@ -188,6 +303,51 @@
 +            return block.getLightValue(world, x, y, z);
 +        }
 +        return lightValue[blockID];
++    }
++
++    public int getLightValue(World world, int x, int y, int z, ForgeDirection side, EnumSkyBlock layer)
++    {
++        int light = layer == EnumSkyBlock.Block ? lightValue[blockID] : 0;
++        return Math.max(light, world.getSavedLightValue(layer, x, y, z)) - getOpacityForSide(world, x, y, z, side);
++    }
++    
++    public long getLightMask(IBlockAccess world, int x, int y, int z, ForgeDirection side)
++    {
++        if (mask != null) return mask[side.ordinal()];
++        else if (isOpaqueCube(world, x, y, z)) return -1;
++        else return 0;
++    }
++
++    public Block setLightMask(long[] sides)
++    {
++        if (sides.length == 6) mask = sides;
++        else if (sides.length == 3)
++        {
++            mask = new long[6];
++            mask[0] = sides[0];
++            mask[1] = sides[1];
++            mask[2] = sides[2];
++            mask[3] = sides[2];
++            mask[4] = sides[2];
++            mask[5] = sides[2];
++        }
++        return this;
++    }
++
++    public int getSkyBlock(IBlockAccess world, int x, int y, int z) 
++    {
++        return skyBlock;
++    }
++
++    public Block setSkyBlock(int value)
++    {
++        skyBlock = value;
++        return this;
++    }
++
++    public int getOpacityForSide(IBlockAccess world, int x, int y, int z, ForgeDirection side)
++    {
++        return side == side.UNKNOWN ? 0 : lightOpacity[blockID];
 +    }
 +
 +    /**
@@ -235,7 +395,7 @@
 +        int meta = world.getBlockMetadata(x, y, z);
 +        if (this instanceof BlockHalfSlab)
 +        {
-+            return (((meta & 8) == 8 && (side == UP)) || isOpaqueCube());
++            return (((meta & 8) == 8 && (side == UP)) || isOpaqueCube(world, x, y, z));
 +        }
 +        else if (this instanceof BlockFarmland)
 +        {
@@ -548,7 +708,7 @@
 +        int meta = world.getBlockMetadata(x, y, z);
 +        if (this instanceof BlockStep)
 +        {
-+            return (((meta & 8) == 8) || isOpaqueCube());
++            return (((meta & 8) == 8) || isOpaqueCube(world, x, y, z));
 +        }
 +        else if (this instanceof BlockStairs)
 +        {
@@ -683,7 +843,7 @@
 +     */
 +    public boolean canBeReplacedByLeaves(World world, int x, int y, int z)
 +    {
-+        return !Block.opaqueCubeLookup[this.blockID];
++        return !isOpaqueCube(world, x, y, z);
 +    }
 +
 +    /**
@@ -999,6 +1159,7 @@
 +     * @param z Z position
 +     * @return The amount of light to block, 0 for air, 255 for fully opaque.
 +     */
++    @Deprecated
 +    public int getLightOpacity(World world, int x, int y, int z)
 +    {
 +        return lightOpacity[blockID];

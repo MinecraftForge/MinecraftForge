@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockPane.java
++++ ../src_work/minecraft/net/minecraft/block/BlockPane.java
+@@ -209,7 +209,7 @@
+      */
+     public final boolean canThisPaneConnectToThisBlockID(int par1)
+     {
+-        return Block.opaqueCubeLookup[par1] || par1 == this.blockID || par1 == Block.glass.blockID;
++        return (Block.blocksList[par1] != null && Block.blocksList[par1].isOpaqueCube()) || par1 == this.blockID || par1 == Block.glass.blockID;
+     }
+ 
+     /**

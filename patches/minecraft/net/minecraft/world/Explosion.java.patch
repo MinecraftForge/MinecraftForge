@@ -19,3 +19,12 @@
                  }
              }
          }
+@@ -241,7 +240,7 @@
+                 l = this.worldObj.getBlockId(i, j, k);
+                 int i1 = this.worldObj.getBlockId(i, j - 1, k);
+ 
+-                if (l == 0 && Block.opaqueCubeLookup[i1] && this.explosionRNG.nextInt(3) == 0)
++                if (l == 0 && Block.blocksList[i1].isOpaqueCube(this.worldObj, i, j, k) && this.explosionRNG.nextInt(3) == 0)
+                 {
+                     this.worldObj.setBlock(i, j, k, Block.fire.blockID);
+                 }
