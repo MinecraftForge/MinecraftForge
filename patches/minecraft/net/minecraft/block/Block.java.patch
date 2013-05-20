@@ -165,7 +165,7 @@
      }
  
      /**
-@@ -1443,4 +1464,944 @@
+@@ -1443,4 +1464,969 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -772,6 +772,31 @@
 +    {
 +        return Block.blocksList[blockID].canProvidePower() && side != -1;
 +    }
++    
++    /**
++     * Keeps track of modded list of non-solid blocks on which torches can be placed.
++     * Used for when adding new versions of vanilla-style blocks (fences and walls,
++     * for example) to avoid the need of separate class to overwrite function.
++     */
++    private static List<Integer> torchables = new ArrayList<Integer>();
++    
++    /**
++     * Adds a block to the list of "torchables".
++     * @param id The block's id
++     */
++    public void registerTorchable(int id) {
++        if (!torchables.contains(id))
++            torchables.add(id);
++    }
++    
++    /**
++     * Removes a block from the list of "torchables".
++     * @param id The block's id
++     */
++    public void removeTorchable(int id) {
++        if (torchables.contains(id))
++            torchables.remove(new Integer(1));
++    }
 +
 +    /**
 +     * Determines if a torch can be placed on the top surface of this block.
@@ -792,7 +817,7 @@
 +        else
 +        {
 +            int id = world.getBlockId(x, y, z);
-+            return id == Block.fence.blockID || id == Block.netherFence.blockID || id == Block.glass.blockID || id == Block.cobblestoneWall.blockID;
++            return id == Block.fence.blockID || id == Block.netherFence.blockID || id == Block.glass.blockID || id == Block.cobblestoneWall.blockID || torchables.contains(id);
 +        }
 +    }
 +
