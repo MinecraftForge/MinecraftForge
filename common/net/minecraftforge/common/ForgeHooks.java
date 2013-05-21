@@ -13,6 +13,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
@@ -26,6 +27,7 @@ import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.WeightedRandomItem;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.container.ContainerInteractEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.living.LivingEvent.*;
@@ -380,5 +382,11 @@ public class ForgeHooks
 
         Block block = Block.blocksList[world.getBlockId(x, y, z)];
         return (block == null ? 0 : block.getEnchantPowerBonus(world, x, y, z));
+    }
+
+    public static boolean canInteractWith(EntityPlayer entityPlayer, Container openContainer)
+    {
+        ContainerInteractEvent event = new ContainerInteractEvent(openContainer, entityPlayer);
+        return MinecraftForge.EVENT_BUS.post(event) ? false : event.canInteractWith() ? true : openContainer.canInteractWith(entityPlayer); 
     }
 }

@@ -41,6 +41,15 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(itemstack, 5);
+@@ -322,7 +338,7 @@
+ 
+         super.onUpdate();
+ 
+-        if (!this.worldObj.isRemote && this.openContainer != null && !this.openContainer.canInteractWith(this))
++        if (!this.worldObj.isRemote && this.openContainer != null && !ForgeHooks.canInteractWith(this, this.openContainer))
+         {
+             this.closeScreen();
+             this.openContainer = this.inventoryContainer;
 @@ -528,11 +544,11 @@
          this.cameraYaw = 0.0F;
          this.addMountedMovementStat(this.posX - d0, this.posY - d1, this.posZ - d2);
