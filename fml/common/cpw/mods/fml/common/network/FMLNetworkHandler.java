@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -41,6 +41,7 @@ import com.google.common.hash.Hashing;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.InjectedModContainer;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.discovery.ASMDataTable;
@@ -269,6 +270,10 @@ public class FMLNetworkHandler
 
     public NetworkModHandler findNetworkModHandler(Object mc)
     {
+        if (mc instanceof InjectedModContainer)
+        {
+            return networkModHandlers.get(((InjectedModContainer)mc).wrappedContainer);
+        }
         if (mc instanceof ModContainer)
         {
             return networkModHandlers.get(mc);
