@@ -10,7 +10,7 @@
  import net.minecraft.entity.EntityLiving;
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.DamageSource;
-@@ -205,6 +208,27 @@
+@@ -205,6 +208,36 @@
          return this.type.canEnchantItem(par1ItemStack.getItem());
      }
  
@@ -33,6 +33,15 @@
 +    public static void addToBookList(Enchantment enchantment)
 +    {
 +        ObjectArrays.concat(field_92090_c, enchantment);
++    }
++    
++    /**
++     * Is this enchantment allowed to be enchanted on books via Enchantment Table
++     * @return false to disable the vanilla feature
++     */
++    public boolean isAllowedOnBooks()
++    {
++        return true;
 +    }
 +
      static
