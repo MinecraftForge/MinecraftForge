@@ -32,7 +32,12 @@ import cpw.mods.fml.common.network.NetworkMod;
 
 import static net.minecraftforge.common.ForgeVersion.*;
 
-@NetworkMod(channels="FORGE",connectionHandler=ForgeConnectionHandler.class,packetHandler=ForgePacketHandler.class,tinyPacketHandler=ForgeTinyPacketHandler.class)
+@NetworkMod(
+        channels = "FORGE",
+        connectionHandler = ForgeConnectionHandler.class,
+        packetHandler     = ForgePacketHandler.class,
+        tinyPacketHandler = ForgeTinyPacketHandler.class
+    )
 public class ForgeDummyContainer extends DummyModContainer implements WorldAccessContainer
 {
     public static int clumpingThreshold = 64;
