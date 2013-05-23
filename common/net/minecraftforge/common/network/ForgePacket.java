@@ -25,7 +25,10 @@ public abstract class ForgePacket
     public static final String CHANNEL_ID = "FORGE";
     enum Type
     {
-        FAKE_TEMP(ForgePacket.class);
+        /**
+         * Registers a dimension for a provider on client
+         */
+        REGISTERDIMENSION(DimensionRegisterPacket.class);
 
         private Class<? extends ForgePacket> packetType;
         private ConcurrentMap<INetworkManager, ForgePacket> partTracker;
