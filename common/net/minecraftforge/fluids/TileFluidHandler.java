@@ -19,14 +19,14 @@ public class TileFluidHandler extends TileEntity implements IFluidHandler {
     public void readFromNBT(NBTTagCompound tag) {
 
         super.readFromNBT(tag);
-        tank.writeToNBT(tag);
+        tank.readFromNBT(tag);
     }
 
     @Override
     public void writeToNBT(NBTTagCompound tag) {
 
         super.writeToNBT(tag);
-        tank.readFromNBT(tag);
+        tank.writeToNBT(tag);
     }
 
     /* IFluidHandler */

@@ -85,6 +85,15 @@ public class ItemFluidContainer extends Item implements IFluidContainerItem {
         NBTTagCompound fluidTag = container.stackTagCompound.getCompoundTag("Fluid");
         FluidStack stack = FluidStack.loadFluidStackFromNBT(fluidTag);
 
+        if (stack == null) {
+            if (capacity < resource.amount) {
+                fluidTag.setInteger("Amount", capacity);
+                container.stackTagCompound.setTag("Fluid", fluidTag);
+                return capacity;
+            }
+            container.stackTagCompound.setTag("Fluid", fluidTag);
+            return resource.amount;
+        }
         if (!stack.isFluidEqual(resource)) {
             return 0;
         }
