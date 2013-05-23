@@ -20,7 +20,34 @@
  {
      public static final String[] LEAF_TYPES = new String[] {"oak", "spruce", "birch", "jungle"};
      public static final String[][] field_94396_b = new String[][] {{"leaves", "leaves_spruce", "leaves", "leaves_jungle"}, {"leaves_opaque", "leaves_spruce_opaque", "leaves_opaque", "leaves_jungle_opaque"}};
-@@ -107,10 +111,9 @@
+@@ -60,16 +64,7 @@
+     {
+         int l = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
+ 
+-        if ((l & 3) == 1)
+-        {
+-            return ColorizerFoliage.getFoliageColorPine();
+-        }
+-        else if ((l & 3) == 2)
+-        {
+-            return ColorizerFoliage.getFoliageColorBirch();
+-        }
+-        else
+-        {
++        { // Forge leave here for indentation
+             int i1 = 0;
+             int j1 = 0;
+             int k1 = 0;
+@@ -78,7 +73,7 @@
+             {
+                 for (int i2 = -1; i2 <= 1; ++i2)
+                 {
+-                    int j2 = par1IBlockAccess.getBiomeGenForCoords(par2 + i2, par4 + l1).getBiomeFoliageColor();
++                    int j2 = par1IBlockAccess.getBiomeGenForCoords(par2 + i2, par4 + l1).getBiomeFoliageColor(this.blockID, l);
+                     i1 += (j2 & 16711680) >> 16;
+                     j1 += (j2 & 65280) >> 8;
+                     k1 += j2 & 255;
+@@ -107,10 +102,9 @@
                      {
                          int j2 = par1World.getBlockId(par2 + k1, par3 + l1, par4 + i2);
  
@@ -33,7 +60,7 @@
                          }
                      }
                  }
-@@ -156,11 +159,13 @@
+@@ -156,11 +150,13 @@
                              {
                                  k2 = par1World.getBlockId(par2 + l1, par3 + i2, par4 + j2);
  
@@ -49,7 +76,7 @@
                                  {
                                      this.adjacentTreeBlocks[(l1 + k1) * j1 + (i2 + k1) * b1 + j2 + k1] = -2;
                                  }
-@@ -325,15 +330,7 @@
+@@ -325,15 +321,7 @@
       */
      public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {
@@ -66,7 +93,7 @@
      }
  
      /**
-@@ -414,4 +411,30 @@
+@@ -414,4 +402,30 @@
              }
          }
      }

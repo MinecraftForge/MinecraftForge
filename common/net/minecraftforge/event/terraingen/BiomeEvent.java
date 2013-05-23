@@ -2,6 +2,7 @@ package net.minecraftforge.event.terraingen;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.event.*;
@@ -100,14 +101,26 @@ public class BiomeEvent extends Event
     }
     
     /**
-     * This event is fired when a biome is queried for its grass color. 
+     * This event is fired when a biome is queried for its foliage color. 
      */
     @SideOnly(Side.CLIENT)
     public static class GetFoliageColor extends BiomeColor
     {
+        public final int blockId;
+        public final int metadata;
+        
+        public GetFoliageColor(BiomeGenBase biome, int original, int blockId, int metadata)
+        {
+            super(biome, original);
+            this.blockId = blockId;
+            this.metadata = metadata;
+        }
+        
         public GetFoliageColor(BiomeGenBase biome, int original)
         {
             super(biome, original);
+            this.blockId = Block.leaves.blockID;
+            this.metadata = 0;
         }
     }
     
