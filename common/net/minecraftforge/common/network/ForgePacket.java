@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.NetHandler;
 import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraftforge.fluids.FluidIdMapPacket;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.MapMaker;
@@ -25,7 +26,10 @@ public abstract class ForgePacket
     public static final String CHANNEL_ID = "FORGE";
     enum Type
     {
-        FAKE_TEMP(ForgePacket.class);
+        /**
+         * The Fluid ID map to send to the client
+         */
+        FLUID_IDMAP(FluidIdMapPacket.class);
 
         private Class<? extends ForgePacket> packetType;
         private ConcurrentMap<INetworkManager, ForgePacket> partTracker;
