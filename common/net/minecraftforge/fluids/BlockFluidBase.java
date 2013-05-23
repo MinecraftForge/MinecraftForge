@@ -63,7 +63,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock {
 
     public BlockFluidBase setQuantaPerBlock(int quantaPerBlock) {
 
-        if (quantaPerBlock > 16 || quantaPerBlock < 1) {
+        if ((quantaPerBlock > 16) || (quantaPerBlock < 1)) {
             quantaPerBlock = 8;
         }
         this.quantaPerBlock = quantaPerBlock;
@@ -120,7 +120,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock {
         }
         Material material = Block.blocksList[bId].blockMaterial;
 
-        if (material.blocksMovement() || material == Material.portal) {
+        if (material.blocksMovement() || (material == Material.portal)) {
             return false;
         }
         return true;
@@ -148,7 +148,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock {
         }
         Material material = Block.blocksList[bId].blockMaterial;
 
-        if (material.blocksMovement() || material == Material.portal) {
+        if (material.blocksMovement() || (material == Material.portal)) {
             return false;
         }
         Block.blocksList[bId].dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
@@ -231,7 +231,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock {
             return super.getLightValue(world, x, y, z);
         }
         int data = world.getBlockMetadata(x, y, z);
-        return (int) (data / quantaPerBlockFloat * maxScaledLight);
+        return (int) ((data / quantaPerBlockFloat) * maxScaledLight);
     }
 
     @Override
@@ -268,10 +268,10 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock {
         int lightUp = world.getLightBrightnessForSkyBlocks(x, y + 1, z, 0);
         int lightThisBase = lightThis & 255;
         int lightUpBase = lightUp & 255;
-        int lightThisExt = lightThis >> 16 & 255;
-        int lightUpExt = lightUp >> 16 & 255;
+        int lightThisExt = (lightThis >> 16) & 255;
+        int lightUpExt = (lightUp >> 16) & 255;
 
-        return (lightThisBase > lightUpBase ? lightThisBase : lightUpBase) | (lightThisExt > lightUpExt ? lightThisExt : lightUpExt) << 16;
+        return (lightThisBase > lightUpBase ? lightThisBase : lightUpBase) | ((lightThisExt > lightUpExt ? lightThisExt : lightUpExt) << 16);
     }
 
     @Override
@@ -309,7 +309,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock {
             return -1000.0;
         }
         Vec3 vec = ((BlockFluidBase) block).getFlowVector(world, x, y, z);
-        return vec.xCoord == 0.0D && vec.zCoord == 0.0D ? -1000.0D : Math.atan2(vec.zCoord, vec.xCoord) - Math.PI / 2D;
+        return (vec.xCoord == 0.0D) && (vec.zCoord == 0.0D) ? -1000.0D : Math.atan2(vec.zCoord, vec.xCoord) - (Math.PI / 2D);
     }
 
     public final int getQuantaValueBelow(IBlockAccess world, int x, int y, int z, int belowThis) {

@@ -39,7 +39,7 @@ public class BlockFluidFinite extends BlockFluidBase {
     @Override
     public boolean canCollideCheck(int meta, boolean fullHit) {
 
-        return fullHit && meta == quantaPerBlock - 1;
+        return fullHit && (meta == (quantaPerBlock - 1));
     }
 
     @Override
@@ -120,7 +120,7 @@ public class BlockFluidFinite extends BlockFluidBase {
         if (north >= 0) {
             int newnorth = each;
 
-            if (rem == count || rem > 1 && rand.nextInt(count - rem) != 0) {
+            if ((rem == count) || ((rem > 1) && (rand.nextInt(count - rem) != 0))) {
                 ++newnorth;
                 --rem;
             }
@@ -137,7 +137,7 @@ public class BlockFluidFinite extends BlockFluidBase {
         if (south >= 0) {
             int newsouth = each;
 
-            if (rem == count || rem > 1 && rand.nextInt(count - rem) != 0) {
+            if ((rem == count) || ((rem > 1) && (rand.nextInt(count - rem) != 0))) {
                 ++newsouth;
                 --rem;
             }
@@ -154,7 +154,7 @@ public class BlockFluidFinite extends BlockFluidBase {
         if (west >= 0) {
             int newwest = each;
 
-            if (rem == count || rem > 1 && rand.nextInt(count - rem) != 0) {
+            if ((rem == count) || ((rem > 1) && (rand.nextInt(count - rem) != 0))) {
                 ++newwest;
                 --rem;
             }
@@ -171,7 +171,7 @@ public class BlockFluidFinite extends BlockFluidBase {
         if (east >= 0) {
             int neweast = each;
 
-            if (rem == count || rem > 1 && rand.nextInt(count - rem) != 0) {
+            if ((rem == count) || ((rem > 1) && (rand.nextInt(count - rem) != 0))) {
                 ++neweast;
                 --rem;
             }
@@ -195,7 +195,7 @@ public class BlockFluidFinite extends BlockFluidBase {
 
         int otherY = y + densityDir;
 
-        if (otherY < 0 || otherY >= world.getHeight()) {
+        if ((otherY < 0) || (otherY >= world.getHeight())) {
             world.setBlockToAir(x, y, z);
             return 0;
         }

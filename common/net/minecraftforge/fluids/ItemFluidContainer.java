@@ -36,7 +36,7 @@ public class ItemFluidContainer extends Item implements IFluidContainerItem {
     @Override
     public FluidStack getFluid(ItemStack container) {
 
-        if (container.stackTagCompound == null || !container.stackTagCompound.hasKey("Fluid")) {
+        if ((container.stackTagCompound == null) || !container.stackTagCompound.hasKey("Fluid")) {
             return null;
         }
         return FluidStack.loadFluidStackFromNBT(container.stackTagCompound.getCompoundTag("Fluid"));
@@ -55,7 +55,7 @@ public class ItemFluidContainer extends Item implements IFluidContainerItem {
             return 0;
         }
         if (!doFill) {
-            if (container.stackTagCompound == null || !container.stackTagCompound.hasKey("Fluid")) {
+            if ((container.stackTagCompound == null) || !container.stackTagCompound.hasKey("Fluid")) {
                 return Math.min(capacity, resource.amount);
             }
             FluidStack stack = FluidStack.loadFluidStackFromNBT(container.stackTagCompound.getCompoundTag("Fluid"));
@@ -103,7 +103,7 @@ public class ItemFluidContainer extends Item implements IFluidContainerItem {
     @Override
     public FluidStack drain(ItemStack container, int maxDrain, boolean doDrain) {
 
-        if (container.stackTagCompound == null || !container.stackTagCompound.hasKey("Fluid")) {
+        if ((container.stackTagCompound == null) || !container.stackTagCompound.hasKey("Fluid")) {
             return null;
         }
         FluidStack stack = FluidStack.loadFluidStackFromNBT(container.stackTagCompound.getCompoundTag("Fluid"));
