@@ -52,13 +52,14 @@
      {
          if (this.blockExists(par1, 0, par2))
          {
-@@ -194,8 +224,14 @@
+@@ -194,8 +224,15 @@
          this.theProfiler = par5Profiler;
          this.worldInfo = new WorldInfo(par4WorldSettings, par2Str);
          this.provider = par3WorldProvider;
 -        this.mapStorage = new MapStorage(par1ISaveHandler);
 +        perWorldStorage = new MapStorage((ISaveHandler)null);
          this.worldLogAgent = par6ILogAgent;
++        
 +    }
 +
 +    // Broken up so that the WorldClient gets the chance to set the mapstorage object before the dimension initializes
@@ -68,16 +69,20 @@
          VillageCollection villagecollection = (VillageCollection)this.mapStorage.loadData(VillageCollection.class, "villages");
  
          if (villagecollection == null)
-@@ -209,7 +245,7 @@
+@@ -208,8 +245,10 @@
+             this.villageCollectionObj = villagecollection;
              this.villageCollectionObj.func_82566_a(this);
          }
- 
+-
 -        par3WorldProvider.registerWorld(this);
++        // Guarantee the dimension ID was not reset by the provider
++        int providerDim = this.provider.dimensionId;
 +        this.provider.registerWorld(this);
++        this.provider.dimensionId = providerDim;
          this.chunkProvider = this.createChunkProvider();
          this.calculateInitialSkylight();
          this.calculateInitialWeather();
-@@ -222,7 +258,7 @@
+@@ -222,7 +261,7 @@
          this.isRemote = false;
          this.saveHandler = par1ISaveHandler;
          this.theProfiler = par5Profiler;
@@ -86,7 +91,7 @@
          this.worldLogAgent = par6ILogAgent;
          this.worldInfo = par1ISaveHandler.loadWorldInfo();
  
-@@ -276,12 +312,20 @@
+@@ -276,12 +315,20 @@
              this.worldInfo.setServerInitialized(true);
          }
  
@@ -109,7 +114,7 @@
          }
          else
          {
-@@ -291,6 +335,19 @@
+@@ -291,6 +338,19 @@
  
          this.calculateInitialSkylight();
          this.calculateInitialWeather();
@@ -129,7 +134,7 @@
      }
  
      /**
-@@ -374,7 +431,8 @@
+@@ -374,7 +434,8 @@
       */
      public boolean isAirBlock(int par1, int par2, int par3)
      {
@@ -139,7 +144,7 @@
      }
  
      /**
-@@ -383,7 +441,8 @@
+@@ -383,7 +444,8 @@
      public boolean blockHasTileEntity(int par1, int par2, int par3)
      {
          int l = this.getBlockId(par1, par2, par3);
@@ -149,7 +154,7 @@
      }
  
      /**
-@@ -1158,7 +1217,7 @@
+@@ -1158,7 +1220,7 @@
       */
      public boolean isDaytime()
      {
@@ -158,7 +163,7 @@
      }
  
      /**
-@@ -1190,7 +1249,7 @@
+@@ -1190,7 +1252,7 @@
                  int l1 = this.getBlockMetadata(l, i1, j1);
                  Block block = Block.blocksList[k1];
  
@@ -167,7 +172,7 @@
                  {
                      MovingObjectPosition movingobjectposition = block.collisionRayTrace(this, l, i1, j1, par1Vec3, par2Vec3);
  
-@@ -1390,6 +1449,12 @@
+@@ -1390,6 +1452,12 @@
       */
      public void playSoundAtEntity(Entity par1Entity, String par2Str, float par3, float par4)
      {
@@ -180,7 +185,7 @@
          if (par1Entity != null && par2Str != null)
          {
              for (int i = 0; i < this.worldAccesses.size(); ++i)
-@@ -1404,6 +1469,12 @@
+@@ -1404,6 +1472,12 @@
       */
      public void playSoundToNearExcept(EntityPlayer par1EntityPlayer, String par2Str, float par3, float par4)
      {
@@ -193,7 +198,7 @@
          if (par1EntityPlayer != null && par2Str != null)
          {
              for (int i = 0; i < this.worldAccesses.size(); ++i)
-@@ -1490,6 +1561,11 @@
+@@ -1490,6 +1564,11 @@
                  EntityPlayer entityplayer = (EntityPlayer)par1Entity;
                  this.playerEntities.add(entityplayer);
                  this.updateAllPlayersSleepingFlag();
@@ -205,7 +210,7 @@
              }
  
              this.getChunkFromChunkCoords(i, j).addEntity(par1Entity);
-@@ -1736,6 +1812,12 @@
+@@ -1736,6 +1815,12 @@
       * Calculates the color for the skybox
       */
      public Vec3 getSkyColor(Entity par1Entity, float par2)
@@ -218,7 +223,7 @@
      {
          float f1 = this.getCelestialAngle(par2);
          float f2 = MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
-@@ -1828,6 +1910,12 @@
+@@ -1828,6 +1913,12 @@
      @SideOnly(Side.CLIENT)
      public Vec3 getCloudColour(float par1)
      {
@@ -231,7 +236,7 @@
          float f1 = this.getCelestialAngle(par1);
          float f2 = MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
  
-@@ -1899,6 +1987,8 @@
+@@ -1899,6 +1990,8 @@
      public int getTopSolidOrLiquidBlock(int par1, int par2)
      {
          Chunk chunk = this.getChunkFromBlockCoords(par1, par2);
@@ -240,7 +245,7 @@
          int k = chunk.getTopFilledSegment() + 15;
          par1 &= 15;
  
-@@ -1906,7 +1996,7 @@
+@@ -1906,7 +1999,7 @@
          {
              int l = chunk.getBlockID(par1, k, par2);
  
@@ -249,7 +254,7 @@
              {
                  return k + 1;
              }
-@@ -1921,6 +2011,12 @@
+@@ -1921,6 +2014,12 @@
       * How bright are stars in the sky
       */
      public float getStarBrightness(float par1)
@@ -262,7 +267,7 @@
      {
          float f1 = this.getCelestialAngle(par1);
          float f2 = 1.0F - (MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.25F);
-@@ -1985,7 +2081,15 @@
+@@ -1985,7 +2084,15 @@
                      entity.func_85029_a(crashreportcategory);
                  }
  
@@ -279,7 +284,7 @@
              }
  
              if (entity.isDead)
-@@ -2047,7 +2151,16 @@
+@@ -2047,7 +2154,16 @@
                      crashreport = CrashReport.makeCrashReport(throwable1, "Ticking entity");
                      crashreportcategory = crashreport.makeCategory("Entity being ticked");
                      entity.func_85029_a(crashreportcategory);
@@ -297,7 +302,7 @@
                  }
              }
  
-@@ -2090,7 +2203,16 @@
+@@ -2090,7 +2206,16 @@
                      crashreport = CrashReport.makeCrashReport(throwable2, "Ticking tile entity");
                      crashreportcategory = crashreport.makeCategory("Tile entity being ticked");
                      tileentity.func_85027_a(crashreportcategory);
@@ -315,7 +320,7 @@
                  }
              }
  
-@@ -2104,7 +2226,7 @@
+@@ -2104,7 +2229,7 @@
  
                      if (chunk != null)
                      {
@@ -324,7 +329,7 @@
                      }
                  }
              }
-@@ -2113,6 +2235,10 @@
+@@ -2113,6 +2238,10 @@
  
          if (!this.entityRemoval.isEmpty())
          {
@@ -335,7 +340,7 @@
              this.loadedTileEntityList.removeAll(this.entityRemoval);
              this.entityRemoval.clear();
          }
-@@ -2133,18 +2259,18 @@
+@@ -2133,18 +2262,18 @@
                      {
                          this.loadedTileEntityList.add(tileentity1);
                      }
@@ -358,7 +363,7 @@
                  }
              }
  
-@@ -2157,13 +2283,13 @@
+@@ -2157,13 +2286,13 @@
  
      public void addTileEntity(Collection par1Collection)
      {
@@ -379,7 +384,7 @@
          }
      }
  
-@@ -2183,9 +2309,17 @@
+@@ -2183,9 +2312,17 @@
      {
          int i = MathHelper.floor_double(par1Entity.posX);
          int j = MathHelper.floor_double(par1Entity.posZ);
@@ -400,7 +405,7 @@
          {
              par1Entity.lastTickPosX = par1Entity.posX;
              par1Entity.lastTickPosY = par1Entity.posY;
-@@ -2418,6 +2552,14 @@
+@@ -2418,6 +2555,14 @@
                          {
                              return true;
                          }
@@ -415,7 +420,7 @@
                      }
                  }
              }
-@@ -2740,15 +2882,16 @@
+@@ -2740,15 +2885,16 @@
       */
      public void setBlockTileEntity(int par1, int par2, int par3, TileEntity par4TileEntity)
      {
@@ -441,7 +446,7 @@
                  while (iterator.hasNext())
                  {
                      TileEntity tileentity1 = (TileEntity)iterator.next();
-@@ -2759,19 +2902,18 @@
+@@ -2759,19 +2905,18 @@
                          iterator.remove();
                      }
                  }
@@ -470,7 +475,7 @@
          }
      }
  
-@@ -2780,27 +2922,10 @@
+@@ -2780,27 +2925,10 @@
       */
      public void removeBlockTileEntity(int par1, int par2, int par3)
      {
@@ -502,7 +507,7 @@
          }
      }
  
-@@ -2826,7 +2951,8 @@
+@@ -2826,7 +2954,8 @@
       */
      public boolean isBlockNormalCube(int par1, int par2, int par3)
      {
@@ -512,7 +517,7 @@
      }
  
      public boolean func_85174_u(int par1, int par2, int par3)
-@@ -2849,16 +2975,17 @@
+@@ -2849,16 +2978,17 @@
       */
      public boolean doesBlockHaveSolidTopSurface(int par1, int par2, int par3)
      {
@@ -532,7 +537,7 @@
          return par1Block == null ? false : (par1Block.blockMaterial.isOpaque() && par1Block.renderAsNormalBlock() ? true : (par1Block instanceof BlockStairs ? (par2 & 4) == 4 : (par1Block instanceof BlockHalfSlab ? (par2 & 8) == 8 : (par1Block instanceof BlockHopper ? true : (par1Block instanceof BlockSnow ? (par2 & 7) == 7 : false)))));
      }
  
-@@ -2875,7 +3002,7 @@
+@@ -2875,7 +3005,7 @@
              if (chunk != null && !chunk.isEmpty())
              {
                  Block block = Block.blocksList[this.getBlockId(par1, par2, par3)];
@@ -541,7 +546,7 @@
              }
              else
              {
-@@ -2906,8 +3033,7 @@
+@@ -2906,8 +3036,7 @@
       */
      public void setAllowedSpawnTypes(boolean par1, boolean par2)
      {
@@ -551,7 +556,7 @@
      }
  
      /**
-@@ -2923,6 +3049,11 @@
+@@ -2923,6 +3052,11 @@
       */
      private void calculateInitialWeather()
      {
@@ -563,7 +568,7 @@
          if (this.worldInfo.isRaining())
          {
              this.rainingStrength = 1.0F;
-@@ -2938,6 +3069,11 @@
+@@ -2938,6 +3072,11 @@
       * Updates all weather states.
       */
      protected void updateWeather()
@@ -575,7 +580,7 @@
      {
          if (!this.provider.hasNoSky)
          {
-@@ -3035,12 +3171,14 @@
+@@ -3035,12 +3174,14 @@
  
      public void toggleRain()
      {
@@ -591,7 +596,7 @@
          this.theProfiler.startSection("buildList");
          int i;
          EntityPlayer entityplayer;
-@@ -3147,6 +3285,11 @@
+@@ -3147,6 +3288,11 @@
       */
      public boolean canBlockFreeze(int par1, int par2, int par3, boolean par4)
      {
@@ -603,7 +608,7 @@
          BiomeGenBase biomegenbase = this.getBiomeGenForCoords(par1, par3);
          float f = biomegenbase.getFloatTemperature();
  
-@@ -3205,6 +3348,11 @@
+@@ -3205,6 +3351,11 @@
       */
      public boolean canSnowAt(int par1, int par2, int par3)
      {
@@ -615,7 +620,7 @@
          BiomeGenBase biomegenbase = this.getBiomeGenForCoords(par1, par3);
          float f = biomegenbase.getFloatTemperature();
  
-@@ -3248,10 +3396,12 @@
+@@ -3248,10 +3399,12 @@
          else
          {
              int l = this.getBlockId(par1, par2, par3);
@@ -632,7 +637,7 @@
              {
                  j1 = 1;
              }
-@@ -3347,7 +3497,9 @@
+@@ -3347,7 +3500,9 @@
                                      int j4 = i2 + Facing.offsetsXForSide[i4];
                                      int k4 = j2 + Facing.offsetsYForSide[i4];
                                      int l4 = k2 + Facing.offsetsZForSide[i4];
@@ -643,7 +648,7 @@
                                      i3 = this.getSavedLightValue(par1EnumSkyBlock, j4, k4, l4);
  
                                      if (i3 == l2 - i5 && i1 < this.lightUpdateBlockList.length)
-@@ -3450,10 +3602,10 @@
+@@ -3450,10 +3605,10 @@
      public List getEntitiesWithinAABBExcludingEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, IEntitySelector par3IEntitySelector)
      {
          ArrayList arraylist = new ArrayList();
@@ -658,7 +663,7 @@
  
          for (int i1 = i; i1 <= j; ++i1)
          {
-@@ -3479,10 +3631,10 @@
+@@ -3479,10 +3634,10 @@
  
      public List selectEntitiesWithinAABB(Class par1Class, AxisAlignedBB par2AxisAlignedBB, IEntitySelector par3IEntitySelector)
      {
@@ -673,7 +678,7 @@
          ArrayList arraylist = new ArrayList();
  
          for (int i1 = i; i1 <= j; ++i1)
-@@ -3575,11 +3727,14 @@
+@@ -3575,11 +3730,14 @@
       */
      public void addLoadedEntities(List par1List)
      {
@@ -691,7 +696,7 @@
          }
      }
  
-@@ -3613,6 +3768,11 @@
+@@ -3613,6 +3771,11 @@
          else
          {
              if (block != null && (block == Block.waterMoving || block == Block.waterStill || block == Block.lavaMoving || block == Block.lavaStill || block == Block.fire || block.blockMaterial.isReplaceable()))
@@ -703,7 +708,7 @@
              {
                  block = null;
              }
-@@ -3907,7 +4067,7 @@
+@@ -3907,7 +4070,7 @@
       */
      public long getSeed()
      {
@@ -712,7 +717,7 @@
      }
  
      public long getTotalWorldTime()
-@@ -3917,7 +4077,7 @@
+@@ -3917,7 +4080,7 @@
  
      public long getWorldTime()
      {
@@ -721,7 +726,7 @@
      }
  
      /**
-@@ -3925,7 +4085,7 @@
+@@ -3925,7 +4088,7 @@
       */
      public void setWorldTime(long par1)
      {
@@ -730,7 +735,7 @@
      }
  
      /**
-@@ -3933,13 +4093,13 @@
+@@ -3933,13 +4096,13 @@
       */
      public ChunkCoordinates getSpawnPoint()
      {
@@ -746,7 +751,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -3963,7 +4123,10 @@
+@@ -3963,7 +4126,10 @@
  
          if (!this.loadedEntityList.contains(par1Entity))
          {
@@ -758,7 +763,7 @@
          }
      }
  
-@@ -3971,6 +4134,11 @@
+@@ -3971,6 +4137,11 @@
       * Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
@@ -770,7 +775,7 @@
      {
          return true;
      }
-@@ -4091,8 +4259,7 @@
+@@ -4091,8 +4262,7 @@
       */
      public boolean isBlockHighHumidity(int par1, int par2, int par3)
      {
@@ -780,7 +785,7 @@
      }
  
      /**
-@@ -4167,7 +4334,7 @@
+@@ -4167,7 +4337,7 @@
       */
      public int getHeight()
      {
@@ -789,7 +794,7 @@
      }
  
      /**
-@@ -4175,7 +4342,7 @@
+@@ -4175,7 +4345,7 @@
       */
      public int getActualHeight()
      {
@@ -798,7 +803,7 @@
      }
  
      public IUpdatePlayerListBox func_82735_a(EntityMinecart par1EntityMinecart)
-@@ -4218,7 +4385,7 @@
+@@ -4218,7 +4388,7 @@
       */
      public double getHorizon()
      {
@@ -807,7 +812,7 @@
      }
  
      /**
-@@ -4321,4 +4488,114 @@
+@@ -4321,4 +4491,114 @@
      {
          return this.worldLogAgent;
      }

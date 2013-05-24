@@ -3,13 +3,14 @@
  * License v1.0.
  */
 
-package net.minecraftforge.common.network;
+package net.minecraftforge.common.network.packet;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.NetHandler;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.network.ForgePacket;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
@@ -36,7 +37,7 @@ public class DimensionRegisterPacket extends ForgePacket
     }
 
     @Override
-    public byte[] generatePacket(Object... data)
+    public byte[] generatePacket()
     {
         ByteArrayDataOutput dat = ByteStreams.newDataOutput();
         dat.writeInt(this.dimensionId);
@@ -61,10 +62,6 @@ public class DimensionRegisterPacket extends ForgePacket
             if (!DimensionManager.isDimensionRegistered(dimensionId))
             {
                 DimensionManager.registerDimension(dimensionId, providerId);
-            }
-            if (player != null && player.worldObj != null)
-            {
-                player.worldObj.provider.dimensionId = dimensionId;
             }
         }
     }
