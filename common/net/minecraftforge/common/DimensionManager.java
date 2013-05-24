@@ -145,6 +145,11 @@ public class DimensionManager
         dimensions.remove(id);
     }
 
+    public static boolean isDimensionRegistered(int dim)
+    {
+        return dimensions.containsKey(dim);
+    }
+
     public static int getProviderType(int dim)
     {
         if (!dimensions.containsKey(dim))
