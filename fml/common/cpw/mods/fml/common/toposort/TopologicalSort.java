@@ -183,7 +183,7 @@ public class TopologicalSort
             FMLLog.severe("Current sorted list : %s", sortedResult);
             FMLLog.severe("Visited set for this node : %s", visitedNodes);
             FMLLog.severe("Explored node set : %s", expandedNodes);
-            FMLLog.severe("Likely cycle is in : %s", Sets.difference(expandedNodes, visitedNodes));
+            FMLLog.severe("Likely cycle is in : %s", Sets.difference(visitedNodes, expandedNodes));
             throw new ModSortingException("There was a cycle detected in the input graph, sorting is not possible", node, visitedNodes);
         }
 

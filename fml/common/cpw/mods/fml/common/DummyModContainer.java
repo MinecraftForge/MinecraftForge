@@ -28,12 +28,17 @@ public class DummyModContainer implements ModContainer
 {
     private ModMetadata md;
     private ArtifactVersion processedVersion;
+    private String label;
 
     public DummyModContainer(ModMetadata md)
     {
         this.md = md;
     }
 
+    public DummyModContainer(String label)
+    {
+        this.label = label;
+    }
     public DummyModContainer()
     {
     }
@@ -161,6 +166,6 @@ public class DummyModContainer implements ModContainer
     @Override
     public String toString()
     {
-        return md != null ? getModId() :"Unknown Dummy Container @" + System.identityHashCode(this);
+        return md != null ? getModId() : "Dummy Container ("+label+") @" + System.identityHashCode(this);
     }
 }

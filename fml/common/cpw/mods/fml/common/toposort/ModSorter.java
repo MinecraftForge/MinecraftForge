@@ -32,10 +32,10 @@ public class ModSorter
 {
     private DirectedGraph<ModContainer> modGraph;
 
-    private ModContainer beforeAll = new DummyModContainer();
-    private ModContainer afterAll = new DummyModContainer();
-    private ModContainer before = new DummyModContainer();
-    private ModContainer after = new DummyModContainer();
+    private ModContainer beforeAll = new DummyModContainer("BeforeAll");
+    private ModContainer afterAll = new DummyModContainer("AfterAll");
+    private ModContainer before = new DummyModContainer("Before");
+    private ModContainer after = new DummyModContainer("After");
 
     public ModSorter(List<ModContainer> modList, Map<String, ModContainer> nameLookup)
     {
