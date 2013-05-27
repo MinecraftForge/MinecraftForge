@@ -71,6 +71,7 @@ import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.common.registry.IThrowableEntity;
 import cpw.mods.fml.common.registry.ItemData;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.common.toposort.ModSortingException;
 import cpw.mods.fml.relauncher.Side;
 
 
@@ -112,6 +113,8 @@ public class FMLClientHandler implements IFMLSidedHandler
     private boolean serverIsRunning;
 
     private MissingModsException modsMissing;
+
+    private ModSortingException modSorting;
 
     private boolean loading;
 
@@ -171,6 +174,10 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             modsMissing = missing;
         }
+        catch (ModSortingException sorting)
+        {
+            modSorting = sorting;
+        }
         catch (CustomModLoadingErrorDisplayException custom)
         {
             FMLLog.log(Level.SEVERE, custom, "A custom exception was thrown by a mod, the game will now halt");
@@ -197,7 +204,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     @SuppressWarnings("deprecation")
     public void finishMinecraftLoading()
     {
-        if (modsMissing != null || wrongMC != null || customError!=null || dupesFound!=null)
+        if (modsMissing != null || wrongMC != null || customError!=null || dupesFound!=null || modSorting!=null)
         {
             return;
         }
@@ -237,7 +244,11 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
         	client.func_71373_a(new GuiDupesFound(dupesFound));
         }
-        else if (customError != null)
+        else if (modSorting != null)
+        {
+            client.func_71373_a(new GuiSortingProblem(modSorting));
+        }
+		else if (customError != null)
         {
             client.func_71373_a(new GuiCustomModLoadingErrorScreen(customError));
         }
