@@ -66,6 +66,7 @@ import cpw.mods.fml.common.modloader.BaseModProxy;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.toposort.ModSorter;
 import cpw.mods.fml.common.toposort.ModSortingException;
+import cpw.mods.fml.common.toposort.ModSortingException.SortingExceptionData;
 import cpw.mods.fml.common.toposort.TopologicalSort;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 import cpw.mods.fml.common.versioning.VersionParser;
@@ -269,8 +270,13 @@ public class Loader
             catch (ModSortingException sortException)
             {
                 FMLLog.severe("A dependency cycle was detected in the input mod set so an ordering cannot be determined");
-                FMLLog.severe("The suspect mod list is %s", sortException.getExceptionData().getVisitedNodes());
-                FMLLog.severe("The first mod in the cycle is %s", sortException.getExceptionData().getFirstBadNode());
+                SortingExceptionData<ModContainer> exceptionData = sortException.getExceptionData();
+                FMLLog.severe("The first mod in the cycle is %s", exceptionData.getFirstBadNode());
+                FMLLog.severe("The mod cycle involves");
+                for (ModContainer mc : exceptionData.getVisitedNodes())
+                {
+                    FMLLog.severe("%s : before: %s, after: %s", mc.toString(), mc.getDependants(), mc.getDependencies());
+                }
                 FMLLog.log(Level.SEVERE, sortException, "The full error");
                 throw sortException;
             }
