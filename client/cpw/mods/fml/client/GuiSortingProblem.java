@@ -39,7 +39,7 @@ public class GuiSortingProblem extends GuiScreen {
         for (ModContainer mc : failedList.getVisitedNodes())
         {
             offset+=10;
-            this.func_73732_a(this.field_73886_k, String.format("%s", mc.toString()), this.field_73880_f / 2, offset, 0xEEEEEE);
+            this.func_73732_a(this.field_73886_k, String.format("%s : before: %s, after: %s", mc.toString(), mc.getDependants(), mc.getDependencies()), this.field_73880_f / 2, offset, 0xEEEEEE);
         }
         offset+=20;
         this.func_73732_a(this.field_73886_k, "The file 'ForgeModLoader-client-0.log' contains more information", this.field_73880_f / 2, offset, 0xFFFFFF);
