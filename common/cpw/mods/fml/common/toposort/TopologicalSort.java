@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -24,6 +24,10 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import com.google.common.collect.Sets;
+
+import cpw.mods.fml.common.FMLLog;
 
 /**
  * Topological sort for mod loading
@@ -174,7 +178,12 @@ public class TopologicalSort
                 return;
             }
 
-            System.out.printf("%s: %s\n%s\n%s\n", node, sortedResult, visitedNodes, expandedNodes);
+            FMLLog.severe("Mod Sorting failed.");
+            FMLLog.severe("Visting node %s", node);
+            FMLLog.severe("Current sorted list : %s", sortedResult);
+            FMLLog.severe("Visited set for this node : %s", visitedNodes);
+            FMLLog.severe("Explored node set : %s", expandedNodes);
+            FMLLog.severe("Likely cycle is in : %s", Sets.difference(expandedNodes, visitedNodes));
             throw new ModSortingException("There was a cycle detected in the input graph, sorting is not possible", node, visitedNodes);
         }
 

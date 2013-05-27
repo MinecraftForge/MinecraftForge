@@ -148,4 +148,10 @@ public class InjectedModContainer implements ModContainer
     {
         return wrappedContainer.getSigningCertificate();
     }
+
+    @Override
+    public String toString()
+    {
+        return "Wrapped{"+wrappedContainer.toString()+"}";
+    }
 }
