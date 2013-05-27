@@ -269,10 +269,10 @@ public class Loader
             catch (ModSortingException sortException)
             {
                 FMLLog.severe("A dependency cycle was detected in the input mod set so an ordering cannot be determined");
-                FMLLog.severe("The visited mod list is %s", sortException.getExceptionData().getVisitedNodes());
+                FMLLog.severe("The suspect mod list is %s", sortException.getExceptionData().getVisitedNodes());
                 FMLLog.severe("The first mod in the cycle is %s", sortException.getExceptionData().getFirstBadNode());
                 FMLLog.log(Level.SEVERE, sortException, "The full error");
-                throw new LoaderException(sortException);
+                throw sortException;
             }
         }
         finally
