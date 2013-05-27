@@ -8,7 +8,19 @@
  import net.minecraft.client.gui.GuiScreen;
  import net.minecraft.client.renderer.OpenGlHelper;
  import net.minecraft.client.renderer.RenderHelper;
-@@ -203,8 +204,11 @@
+@@ -139,7 +140,11 @@
+             }
+         }
+ 
++        //Forge: Force lighting to be disabled as there are some issue where lighting would 
++        //incorrectly be applied based on items that are in the inventory.
++        GL11.glDisable(GL11.GL_LIGHTING);
+         this.drawGuiContainerForegroundLayer(par1, par2);
++        GL11.glEnable(GL11.GL_LIGHTING);
+         InventoryPlayer inventoryplayer = this.mc.thePlayer.inventory;
+         ItemStack itemstack = this.draggedStack == null ? inventoryplayer.getItemStack() : this.draggedStack;
+ 
+@@ -203,8 +208,11 @@
          GL11.glTranslatef(0.0F, 0.0F, 32.0F);
          this.zLevel = 200.0F;
          itemRenderer.zLevel = 200.0F;
@@ -22,7 +34,7 @@
          this.zLevel = 0.0F;
          itemRenderer.zLevel = 0.0F;
      }
-@@ -225,7 +229,8 @@
+@@ -225,7 +233,8 @@
              }
          }
  
@@ -32,7 +44,7 @@
      }
  
      /**
-@@ -238,6 +243,11 @@
+@@ -238,6 +247,11 @@
      }
  
      protected void func_102021_a(List par1List, int par2, int par3)
@@ -44,7 +56,7 @@
      {
          if (!par1List.isEmpty())
          {
-@@ -251,7 +261,7 @@
+@@ -251,7 +265,7 @@
              while (iterator.hasNext())
              {
                  String s = (String)iterator.next();
@@ -53,7 +65,7 @@
  
                  if (l > k)
                  {
-@@ -296,7 +306,7 @@
+@@ -296,7 +310,7 @@
              for (int k2 = 0; k2 < par1List.size(); ++k2)
              {
                  String s1 = (String)par1List.get(k2);
