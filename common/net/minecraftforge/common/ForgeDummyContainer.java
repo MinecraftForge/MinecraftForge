@@ -45,6 +45,7 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     public static boolean removeErroringEntities = false;
     public static boolean removeErroringTileEntities = false;
     public static boolean disableStitchedFileSaving = false;
+    public static boolean forceDuplicateFluidBlockCrash = true;
 
     public ForgeDummyContainer()
     {
@@ -99,7 +100,7 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
         }
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "legacyFurnaceOutput", false);
-        prop.comment = "Controls the sides of vanilla furnaces for Forge's ISidedInventroy, Vanilla defines the output as the bottom, but mods/Forge define it as the sides. Settings this to true will restore the old side relations.";
+        prop.comment = "Controls the sides of vanilla furnaces for Forge's ISidedInventory, Vanilla defines the output as the bottom, but mods/Forge define it as the sides. Settings this to true will restore the old side relations.";
         legacyFurnaceSides = prop.getBoolean(false);
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "removeErroringEntities", false);
@@ -108,7 +109,7 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
 
         if (removeErroringEntities)
         {
-            FMLLog.warning("Enableing removal of erroring Entities USE AT YOUR OWN RISK");
+            FMLLog.warning("Enabling removal of erroring Entities - USE AT YOUR OWN RISK");
         }
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "removeErroringTileEntities", false);
@@ -117,12 +118,21 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
 
         if (removeErroringTileEntities)
         {
-            FMLLog.warning("Enableing removal of erroring Tile Entities USE AT YOUR OWN RISK");
+            FMLLog.warning("Enabling removal of erroring Tile Entities - USE AT YOUR OWN RISK");
         }
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "disableStitchedFileSaving", true);
         prop.comment = "Set this to just disable the texture stitcher from writing the 'debug.stitched_{name}.png file to disc. Just a small performance tweak. Default: true";
         disableStitchedFileSaving = prop.getBoolean(true);
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "forceDuplicateFluidBlockCrash", true);
+        prop.comment = "Set this to force a crash if more than one block attempts to link back to the same Fluid. Enabled by default.";
+        forceDuplicateFluidBlockCrash = prop.getBoolean(true);
+
+        if (!forceDuplicateFluidBlockCrash)
+        {
+            FMLLog.warning("Disabling forced crashes on duplicate Fluid Blocks - USE AT YOUR OWN RISK");
+        }
 
         if (config.hasChanged())
         {
