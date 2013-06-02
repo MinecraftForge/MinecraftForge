@@ -68,7 +68,7 @@ public class GuiIngameForge extends GuiIngame
     public static boolean renderObjective = true;
     public static boolean renderVignette = true;
     public static boolean renderSleepFade = true;
-    public static boolean renderToolHighlight = true
+    public static boolean renderDebugText = true
     public static boolean renderToolTips = true;
     public static boolean renderMusicOverlay = true;
     public static boolean renderChat = true;
@@ -136,8 +136,8 @@ public class GuiIngameForge extends GuiIngame
 
         if (renderExperiance) renderExperience(width, height);
         if (renderSleepFade) renderSleepFade(width, height);
-        if (renderToolHighlight) renderToolHightlight(width, height);
-        if (renderToolTips) renderHUDText(width, height);
+        if (renderToolTips) renderToolHightlight(width, height);
+        if (renderDebugText) renderHUDText(width, height);
         if (renderMusicOverlay) renderRecordOverlay(width, height, partialTicks);
 
         ScoreObjective objective = mc.theWorld.getScoreboard().func_96539_a(1);
