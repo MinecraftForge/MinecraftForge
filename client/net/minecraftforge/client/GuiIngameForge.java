@@ -66,6 +66,13 @@ public class GuiIngameForge extends GuiIngame
     public static boolean renderAir = true;
     public static boolean renderExperiance = true;
     public static boolean renderObjective = true;
+    public static boolean renderVignette = true;
+    public static boolean renderSleepFade = true;
+    public static boolean renderToolHighlight = true
+    public static boolean renderToolTips = true;
+    public static boolean renderMusicOverlay = true;
+    public static boolean renderChat = true;
+    public static boolean renderPlayerList = true;
 
     private ScaledResolution res = null;
     private FontRenderer fontrenderer = null;
@@ -91,7 +98,7 @@ public class GuiIngameForge extends GuiIngame
         mc.entityRenderer.setupOverlayRendering();
         GL11.glEnable(GL11.GL_BLEND);
 
-        if (Minecraft.isFancyGraphicsEnabled())
+        if (renderVignette && Minecraft.isFancyGraphicsEnabled())
         {
             renderVignette(mc.thePlayer.getBrightness(partialTicks), width, height);
         }
@@ -128,10 +135,10 @@ public class GuiIngameForge extends GuiIngame
         }
 
         if (renderExperiance) renderExperience(width, height);
-        renderSleepFade(width, height);
-        renderToolHightlight(width, height);
-        renderHUDText(width, height);
-        renderRecordOverlay(width, height, partialTicks);
+        if (renderSleepFade) renderSleepFade(width, height);
+        if (renderToolHighlight) renderToolHightlight(width, height);
+        if (renderToolTips) renderHUDText(width, height);
+        if (renderMusicOverlay) renderRecordOverlay(width, height, partialTicks);
 
         ScoreObjective objective = mc.theWorld.getScoreboard().func_96539_a(1);
         if (renderObjective && objective != null)
@@ -143,9 +150,9 @@ public class GuiIngameForge extends GuiIngame
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glDisable(GL11.GL_ALPHA_TEST);
 
-        renderChat(width, height);
+        if (renderChat) renderChat(width, height);
 
-        renderPlayerList(width, height);
+        if (renderPlayerList) renderPlayerList(width, height);
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glDisable(GL11.GL_LIGHTING);
