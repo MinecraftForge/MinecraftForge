@@ -55,8 +55,8 @@ public interface ILanguageAdapter {
             catch (ClassNotFoundException e)
             {
                 // Not a singleton, look for @Instance field as a fallback.
-                FMLLog.log(Level.SEVERE, e, "An error occured trying to load a proxy into %s.%s. Did you declare your mod as 'class' instead of 'object'?", proxyTarget.getSimpleName(), target.getName());
-                throw new LoaderException(e);
+                FMLLog.log(Level.INFO, e, "An error occured trying to load a proxy into %s.%s. Did you declare your mod as 'class' instead of 'object'?", proxyTarget.getSimpleName(), target.getName());
+                return;
             }
 
             // Get the instance via the MODULE$ field which is
