@@ -13,15 +13,18 @@
 package cpw.mods.fml.common;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.google.common.base.Functions;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -36,6 +39,8 @@ import cpw.mods.fml.common.event.FMLEvent;
 import cpw.mods.fml.common.event.FMLLoadEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLStateEvent;
+import cpw.mods.fml.common.functions.ArtifactVersionNameFunction;
+import cpw.mods.fml.common.versioning.ArtifactVersion;
 
 public class LoadController
 {
@@ -158,23 +163,38 @@ public class LoadController
         }
         for (ModContainer mc : activeModList)
         {
-            activeContainer = mc;
-            String modId = mc.getModId();
-            stateEvent.applyModContainer(activeContainer());
-            FMLLog.log(modId, Level.FINEST, "Sending event %s to mod %s", stateEvent.getEventType(), modId);
-            eventChannels.get(modId).post(stateEvent);
-            FMLLog.log(modId, Level.FINEST, "Sent event %s to mod %s", stateEvent.getEventType(), modId);
-            activeContainer = null;
-            if (stateEvent instanceof FMLStateEvent)
+            sendEventToModContainer(stateEvent, mc);
+        }
+    }
+
+    private void sendEventToModContainer(FMLEvent stateEvent, ModContainer mc)
+    {
+        String modId = mc.getModId();
+        Collection<String> requirements =  Collections2.transform(mc.getRequirements(),new ArtifactVersionNameFunction());
+        for (ArtifactVersion av : mc.getDependencies())
+        {
+            if (av.getLabel()!= null && requirements.contains(av.getLabel()) && modStates.containsEntry(av.getLabel(),ModState.ERRORED))
             {
-	            if (!errors.containsKey(modId))
-	            {
-	                modStates.put(modId, ((FMLStateEvent)stateEvent).getModState());
-	            }
-	            else
-	            {
-	                modStates.put(modId, ModState.ERRORED);
-	            }
+                FMLLog.log(modId, Level.SEVERE, "Skipping event %s and marking errored mod %s since required dependency %s has errored", stateEvent.getEventType(), modId, av.getLabel());
+                modStates.put(modId, ModState.ERRORED);
+                return;
+            }
+        }
+        activeContainer = mc;
+        stateEvent.applyModContainer(activeContainer());
+        FMLLog.log(modId, Level.FINEST, "Sending event %s to mod %s", stateEvent.getEventType(), modId);
+        eventChannels.get(modId).post(stateEvent);
+        FMLLog.log(modId, Level.FINEST, "Sent event %s to mod %s", stateEvent.getEventType(), modId);
+        activeContainer = null;
+        if (stateEvent instanceof FMLStateEvent)
+        {
+            if (!errors.containsKey(modId))
+            {
+                modStates.put(modId, ((FMLStateEvent)stateEvent).getModState());
+            }
+            else
+            {
+                modStates.put(modId, ModState.ERRORED);
             }
         }
     }
