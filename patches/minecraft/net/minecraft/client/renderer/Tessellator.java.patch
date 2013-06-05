@@ -1,188 +1,283 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/Tessellator.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/Tessellator.java
-@@ -7,6 +7,8 @@
- import java.nio.FloatBuffer;
- import java.nio.IntBuffer;
- import java.nio.ShortBuffer;
-+import java.util.Arrays;
-+
- import org.lwjgl.opengl.ARBVertexBufferObject;
- import org.lwjgl.opengl.GL11;
- import org.lwjgl.opengl.GLContext;
-@@ -14,6 +16,12 @@
- @SideOnly(Side.CLIENT)
- public class Tessellator
- {
-+    private static int nativeBufferSize = 0x200000;
-+    private static int trivertsInBuffer = (nativeBufferSize / 48) * 6;
-+    public static boolean renderingWorldRenderer = false;
-+    public boolean defaultTexture = false;
-+    private int rawBufferSize = 0;
-+    public int textureID = 0;
-     /**
-      * Boolean used to check whether quads should be drawn as two triangles. Initialized to false and never changed.
-      */
-@@ -25,16 +33,16 @@
-     private static boolean tryVBO = false;
+@@ -57,6 +57,10 @@
  
-     /** The byte buffer used for GL allocation. */
--    private ByteBuffer byteBuffer;
-+    private static ByteBuffer byteBuffer = GLAllocation.createDirectByteBuffer(nativeBufferSize * 4);
- 
-     /** The same memory as byteBuffer, but referenced as an integer buffer. */
--    private IntBuffer intBuffer;
-+    private static IntBuffer intBuffer = byteBuffer.asIntBuffer();
- 
-     /** The same memory as byteBuffer, but referenced as an float buffer. */
--    private FloatBuffer floatBuffer;
-+    private static FloatBuffer floatBuffer = byteBuffer.asFloatBuffer();
- 
-     /** Short buffer */
--    private ShortBuffer shortBuffer;
-+    private static ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
- 
-     /** Raw integer array. */
-     private int[] rawBuffer;
-@@ -110,10 +118,10 @@
-     public boolean isDrawing = false;
- 
-     /** Whether we are currently using VBO or not. */
--    private boolean useVBO = false;
-+    private static boolean useVBO = false;
- 
-     /** An IntBuffer used to store the indices of vertex buffer objects. */
--    private IntBuffer vertexBuffers;
-+    private static IntBuffer vertexBuffers;
- 
-     /**
-      * The index of the last VBO used. This is used in round-robin fashion, sequentially, through the vboCount vertex
-@@ -122,25 +130,28 @@
-     private int vboIndex = 0;
- 
-     /** Number of vertex buffer objects allocated for use. */
--    private int vboCount = 10;
-+    private static int vboCount = 10;
- 
-     /** The size of the buffers used (in integers). */
-     private int bufferSize;
- 
-     private Tessellator(int par1)
-     {
--        this.bufferSize = par1;
--        this.byteBuffer = GLAllocation.createDirectByteBuffer(par1 * 4);
--        this.intBuffer = this.byteBuffer.asIntBuffer();
--        this.floatBuffer = this.byteBuffer.asFloatBuffer();
--        this.shortBuffer = this.byteBuffer.asShortBuffer();
--        this.rawBuffer = new int[par1];
--        this.useVBO = tryVBO && GLContext.getCapabilities().GL_ARB_vertex_buffer_object;
--
--        if (this.useVBO)
--        {
--            this.vertexBuffers = GLAllocation.createDirectIntBuffer(this.vboCount);
--            ARBVertexBufferObject.glGenBuffersARB(this.vertexBuffers);
-+    }
+     /** The second coordinate to be used for the texture. */
+     private double textureV;
 +    
-+    public Tessellator()
-+    {
-+    }
++    /** The fourth coordinate to be used for the texture. */
++    private double textureW;
 +    
-+    static
-+    {
-+        instance.defaultTexture = true;
-+        useVBO = tryVBO && GLContext.getCapabilities().GL_ARB_vertex_buffer_object;
-+
-+        if (useVBO)
-+        {
-+            vertexBuffers = GLAllocation.createDirectIntBuffer(vboCount);
-+            ARBVertexBufferObject.glGenBuffersARB(vertexBuffers);
-         }
-     }
+     private int brightness;
  
-@@ -157,12 +168,23 @@
-         {
-             this.isDrawing = false;
- 
--            if (this.vertexCount > 0)
--            {
-+            int offs = 0;
-+            while (offs < vertexCount)
-+            {
-+                int vtc = 0;
-+                if (drawMode == 7 && convertQuadsToTriangles)
-+                {
-+                    vtc = Math.min(vertexCount - offs, trivertsInBuffer);
-+                }
-+                else
-+                {
-+                    vtc = Math.min(vertexCount - offs, nativeBufferSize >> 5);
-+                }
+     /** The color (RGBA) value to be used for the following draw call. */
+@@ -181,9 +185,9 @@
+                     vtc = Math.min(vertexCount - offs, nativeBufferSize >> 5);
+                 }
                  this.intBuffer.clear();
--                this.intBuffer.put(this.rawBuffer, 0, this.rawBufferIndex);
-+                this.intBuffer.put(this.rawBuffer, offs * 8, vtc * 8);
+-                this.intBuffer.put(this.rawBuffer, offs * 8, vtc * 8);
++                this.intBuffer.put(this.rawBuffer, offs * 10, vtc * 10);
                  this.byteBuffer.position(0);
--                this.byteBuffer.limit(this.rawBufferIndex * 4);
-+                this.byteBuffer.limit(vtc * 32);
-+                offs += vtc;
+-                this.byteBuffer.limit(vtc * 32);
++                this.byteBuffer.limit(vtc * 40);
+                 offs += vtc;
+ 
+                 if (this.useVBO)
+@@ -197,12 +201,12 @@
+                 {
+                     if (this.useVBO)
+                     {
+-                        GL11.glTexCoordPointer(2, GL11.GL_FLOAT, 32, 12L);
++                        GL11.glTexCoordPointer(4, GL11.GL_FLOAT, 40, 12L);
+                     }
+                     else
+                     {
+                         this.floatBuffer.position(3);
+-                        GL11.glTexCoordPointer(2, 32, this.floatBuffer);
++                        GL11.glTexCoordPointer(4, 40, this.floatBuffer);
+                     }
+ 
+                     GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+@@ -214,12 +218,12 @@
+ 
+                     if (this.useVBO)
+                     {
+-                        GL11.glTexCoordPointer(2, GL11.GL_SHORT, 32, 28L);
++                        GL11.glTexCoordPointer(2, GL11.GL_SHORT, 40, 36L);
+                     }
+                     else
+                     {
+-                        this.shortBuffer.position(14);
+-                        GL11.glTexCoordPointer(2, 32, this.shortBuffer);
++                        this.shortBuffer.position(18);
++                        GL11.glTexCoordPointer(2, 40, this.shortBuffer);
+                     }
+ 
+                     GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+@@ -230,12 +234,12 @@
+                 {
+                     if (this.useVBO)
+                     {
+-                        GL11.glColorPointer(4, GL11.GL_UNSIGNED_BYTE, 32, 20L);
++                        GL11.glColorPointer(4, GL11.GL_UNSIGNED_BYTE, 40, 28L);
+                     }
+                     else
+                     {
+-                        this.byteBuffer.position(20);
+-                        GL11.glColorPointer(4, true, 32, this.byteBuffer);
++                        this.byteBuffer.position(28);
++                        GL11.glColorPointer(4, true, 40, this.byteBuffer);
+                     }
+ 
+                     GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
+@@ -245,12 +249,12 @@
+                 {
+                     if (this.useVBO)
+                     {
+-                        GL11.glNormalPointer(GL11.GL_UNSIGNED_BYTE, 32, 24L);
++                        GL11.glNormalPointer(GL11.GL_UNSIGNED_BYTE, 40, 32L);
+                     }
+                     else
+                     {
+-                        this.byteBuffer.position(24);
+-                        GL11.glNormalPointer(32, this.byteBuffer);
++                        this.byteBuffer.position(32);
++                        GL11.glNormalPointer(40, this.byteBuffer);
+                     }
+ 
+                     GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
+@@ -258,12 +262,12 @@
  
                  if (this.useVBO)
                  {
-@@ -248,11 +270,11 @@
- 
-                 if (this.drawMode == 7 && convertQuadsToTriangles)
-                 {
--                    GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, this.vertexCount);
-+                    GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, vtc);
+-                    GL11.glVertexPointer(3, GL11.GL_FLOAT, 32, 0L);
++                    GL11.glVertexPointer(3, GL11.GL_FLOAT, 40, 0L);
                  }
                  else
                  {
--                    GL11.glDrawArrays(this.drawMode, 0, this.vertexCount);
-+                    GL11.glDrawArrays(this.drawMode, 0, vtc);
+                     this.floatBuffer.position(0);
+-                    GL11.glVertexPointer(3, 32, this.floatBuffer);
++                    GL11.glVertexPointer(3, 40, this.floatBuffer);
                  }
  
-                 GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-@@ -278,6 +300,12 @@
-                 {
-                     GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
-                 }
-+            }
-+
-+            if (rawBufferSize > 0x20000 && rawBufferIndex < (rawBufferSize << 3))
-+            {
-+                rawBufferSize = 0;
-+                rawBuffer = null;
+                 GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+@@ -308,9 +312,9 @@
+                 rawBuffer = null;
              }
  
-             int i = this.rawBufferIndex * 4;
-@@ -442,6 +470,19 @@
+-            int i = this.rawBufferIndex * 4;
++            int var1 = this.rawBufferIndex * 4;
+             this.reset();
+-            return i;
++            return var1;
+         }
+     }
+ 
+@@ -363,6 +367,18 @@
+         this.hasTexture = true;
+         this.textureU = par1;
+         this.textureV = par3;
++        this.textureW = 1.0D;
++    }
++    
++    /**
++     * Sets the texture coordinates.
++     */
++    public void setTextureUVW(double par1, double par3, double par4)
++    {
++        this.hasTexture = true;
++        this.textureU = par1;
++        this.textureV = par3;
++        this.textureW = par4;
+     }
+ 
+     public void setBrightness(int par1)
+@@ -463,14 +479,20 @@
+         this.setTextureUV(par7, par9);
+         this.addVertex(par1, par3, par5);
+     }
+-
++    
++    public void addVertexWithUVW(double par1, double par3, double par5, double par7, double par9, double par10)
++    {
++        this.setTextureUVW(par7, par9, par10);
++        this.addVertex(par1, par3, par5);
++    }
++    
+     /**
+      * Adds a vertex with the specified x,y,z to the current draw call. It will trigger a draw() if the buffer gets
+      * full.
       */
      public void addVertex(double par1, double par3, double par5)
      {
-+        if (rawBufferIndex >= rawBufferSize - 32) 
-+        {
-+            if (rawBufferSize == 0)
-+            {
-+                rawBufferSize = 0x10000;
-+                rawBuffer = new int[rawBufferSize];
-+            }
-+            else
-+            {
-+                rawBufferSize *= 2;
-+                rawBuffer = Arrays.copyOf(rawBuffer, rawBufferSize);
-+            }
-+        }
-         ++this.addedVertices;
+-        if (rawBufferIndex >= rawBufferSize - 32) 
++        if (rawBufferIndex >= rawBufferSize - 40) 
+         {
+             if (rawBufferSize == 0)
+             {
+@@ -487,31 +509,33 @@
  
          if (this.drawMode == 7 && convertQuadsToTriangles && this.addedVertices % 4 == 0)
-@@ -500,12 +541,6 @@
-         this.rawBuffer[this.rawBufferIndex + 2] = Float.floatToRawIntBits((float)(par5 + this.zOffset));
-         this.rawBufferIndex += 8;
-         ++this.vertexCount;
+         {
+-            for (int i = 0; i < 2; ++i)
+-            {
+-                int j = 8 * (3 - i);
++            for (int var7 = 0; var7 < 2; ++var7)
++            {
++                int var8 = 10 * (3 - var7);
+ 
+                 if (this.hasTexture)
+                 {
+-                    this.rawBuffer[this.rawBufferIndex + 3] = this.rawBuffer[this.rawBufferIndex - j + 3];
+-                    this.rawBuffer[this.rawBufferIndex + 4] = this.rawBuffer[this.rawBufferIndex - j + 4];
++                    this.rawBuffer[this.rawBufferIndex + 3] = this.rawBuffer[this.rawBufferIndex - var8 + 3];
++                    this.rawBuffer[this.rawBufferIndex + 4] = this.rawBuffer[this.rawBufferIndex - var8 + 4];
++                    this.rawBuffer[this.rawBufferIndex + 5] = this.rawBuffer[this.rawBufferIndex - var8 + 5];
++                    this.rawBuffer[this.rawBufferIndex + 6] = this.rawBuffer[this.rawBufferIndex - var8 + 6];
+                 }
+ 
+                 if (this.hasBrightness)
+                 {
+-                    this.rawBuffer[this.rawBufferIndex + 7] = this.rawBuffer[this.rawBufferIndex - j + 7];
++                    this.rawBuffer[this.rawBufferIndex + 9] = this.rawBuffer[this.rawBufferIndex - var8 + 9];
+                 }
+ 
+                 if (this.hasColor)
+                 {
+-                    this.rawBuffer[this.rawBufferIndex + 5] = this.rawBuffer[this.rawBufferIndex - j + 5];
+-                }
 -
--        if (this.vertexCount % 4 == 0 && this.rawBufferIndex >= this.bufferSize - 32)
--        {
--            this.draw();
--            this.isDrawing = true;
--        }
+-                this.rawBuffer[this.rawBufferIndex + 0] = this.rawBuffer[this.rawBufferIndex - j + 0];
+-                this.rawBuffer[this.rawBufferIndex + 1] = this.rawBuffer[this.rawBufferIndex - j + 1];
+-                this.rawBuffer[this.rawBufferIndex + 2] = this.rawBuffer[this.rawBufferIndex - j + 2];
++                    this.rawBuffer[this.rawBufferIndex + 7] = this.rawBuffer[this.rawBufferIndex - var8 + 7];
++                }
++
++                this.rawBuffer[this.rawBufferIndex + 0] = this.rawBuffer[this.rawBufferIndex - var8 + 0];
++                this.rawBuffer[this.rawBufferIndex + 1] = this.rawBuffer[this.rawBufferIndex - var8 + 1];
++                this.rawBuffer[this.rawBufferIndex + 2] = this.rawBuffer[this.rawBufferIndex - var8 + 2];
+                 ++this.vertexCount;
+-                this.rawBufferIndex += 8;
++                this.rawBufferIndex += 10;
+             }
+         }
+ 
+@@ -519,27 +543,29 @@
+         {
+             this.rawBuffer[this.rawBufferIndex + 3] = Float.floatToRawIntBits((float)this.textureU);
+             this.rawBuffer[this.rawBufferIndex + 4] = Float.floatToRawIntBits((float)this.textureV);
++            this.rawBuffer[this.rawBufferIndex + 5] = Float.floatToRawIntBits((float)0.0F);
++            this.rawBuffer[this.rawBufferIndex + 6] = Float.floatToRawIntBits((float)this.textureW);
+         }
+ 
+         if (this.hasBrightness)
+         {
+-            this.rawBuffer[this.rawBufferIndex + 7] = this.brightness;
++            this.rawBuffer[this.rawBufferIndex + 9] = this.brightness;
+         }
+ 
+         if (this.hasColor)
+         {
+-            this.rawBuffer[this.rawBufferIndex + 5] = this.color;
++            this.rawBuffer[this.rawBufferIndex + 7] = this.color;
+         }
+ 
+         if (this.hasNormals)
+         {
+-            this.rawBuffer[this.rawBufferIndex + 6] = this.normal;
++            this.rawBuffer[this.rawBufferIndex + 8] = this.normal;
+         }
+ 
+         this.rawBuffer[this.rawBufferIndex + 0] = Float.floatToRawIntBits((float)(par1 + this.xOffset));
+         this.rawBuffer[this.rawBufferIndex + 1] = Float.floatToRawIntBits((float)(par3 + this.yOffset));
+         this.rawBuffer[this.rawBufferIndex + 2] = Float.floatToRawIntBits((float)(par5 + this.zOffset));
+-        this.rawBufferIndex += 8;
++        this.rawBufferIndex += 10;
+         ++this.vertexCount;
+     }
+ 
+@@ -548,10 +574,10 @@
+      */
+     public void setColorOpaque_I(int par1)
+     {
+-        int j = par1 >> 16 & 255;
+-        int k = par1 >> 8 & 255;
+-        int l = par1 & 255;
+-        this.setColorOpaque(j, k, l);
++        int var2 = par1 >> 16 & 255;
++        int var3 = par1 >> 8 & 255;
++        int var4 = par1 & 255;
++        this.setColorOpaque(var2, var3, var4);
+     }
+ 
+     /**
+@@ -559,10 +585,10 @@
+      */
+     public void setColorRGBA_I(int par1, int par2)
+     {
+-        int k = par1 >> 16 & 255;
+-        int l = par1 >> 8 & 255;
+-        int i1 = par1 & 255;
+-        this.setColorRGBA(k, l, i1, par2);
++        int var3 = par1 >> 16 & 255;
++        int var4 = par1 >> 8 & 255;
++        int var5 = par1 & 255;
++        this.setColorRGBA(var3, var4, var5, par2);
+     }
+ 
+     /**
+@@ -579,10 +605,10 @@
+     public void setNormal(float par1, float par2, float par3)
+     {
+         this.hasNormals = true;
+-        byte b0 = (byte)((int)(par1 * 127.0F));
+-        byte b1 = (byte)((int)(par2 * 127.0F));
+-        byte b2 = (byte)((int)(par3 * 127.0F));
+-        this.normal = b0 & 255 | (b1 & 255) << 8 | (b2 & 255) << 16;
++        byte var4 = (byte)((int)(par1 * 127.0F));
++        byte var5 = (byte)((int)(par2 * 127.0F));
++        byte var6 = (byte)((int)(par3 * 127.0F));
++        this.normal = var4 & 255 | (var5 & 255) << 8 | (var6 & 255) << 16;
      }
  
      /**
