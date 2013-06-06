@@ -121,7 +121,9 @@ public class FMLRelaunchLog
                 }
                 if (lastIdx >= 0)
                 {
+                    String rem = currentMessage.substring(lastIdx+1);
                     currentMessage.setLength(0);
+                    currentMessage.append(rem);
                 }
             }
         }
