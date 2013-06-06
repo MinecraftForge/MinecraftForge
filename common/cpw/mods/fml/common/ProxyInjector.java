@@ -17,6 +17,8 @@ import java.lang.reflect.Modifier;
 import java.util.Set;
 import java.util.logging.Level;
 
+import com.google.common.base.Strings;
+
 import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
 import cpw.mods.fml.relauncher.Side;
@@ -46,7 +48,13 @@ public class ProxyInjector
                     throw new LoaderException();
                 }
 
-                String targetType = side.isClient() ? target.getAnnotation(SidedProxy.class).clientSide() : target.getAnnotation(SidedProxy.class).serverSide();
+                SidedProxy annotation = target.getAnnotation(SidedProxy.class);
+                if (!Strings.isNullOrEmpty(annotation.modId()) && !annotation.modId().equals(mod.getModId()))
+                {
+                    FMLLog.fine("Skipping proxy injection for %s.%s since it is not for mod %s", targ.getClassName(), targ.getObjectName(), mod.getModId());
+                    continue;
+                }
+                String targetType = side.isClient() ? annotation.clientSide() : annotation.serverSide();
                 Object proxy=Class.forName(targetType, true, mcl).newInstance();
 
                 if (languageAdapter.supportsStatics() && (target.getModifiers() & Modifier.STATIC) == 0 )
