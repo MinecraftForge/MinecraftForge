@@ -2,6 +2,7 @@ import os, os.path, sys, glob
 import shutil, fnmatch
 import logging, zipfile, re
 from optparse import OptionParser
+from urllib2 import HTTPError
 
 forge_dir = os.path.dirname(os.path.abspath(__file__))
 from forge import reset_logger, load_version, zip_folder, zip_create, inject_version, build_forge_dev
@@ -98,8 +99,12 @@ def main():
     
 #    options.skip_changelog = True #Disable till jenkins fixes its shit
     if not options.skip_changelog:
-      changelog_file = 'forge-%s/minecraftforge-changelog-%s.txt' % (version_str, version_str)
-      make_changelog("http://jenkins.minecraftforge.net/job/minecraftforge/", build_num, changelog_file, version_str)
+        changelog_file = 'forge-%s/minecraftforge-changelog-%s.txt' % (version_str, version_str)
+        try:
+            make_changelog("http://jenkins.minecraftforge.net/job/minecraftforge/", build_num, changelog_file, version_str)
+        except HTTPError, e:
+            print 'Changelog failed to generate: %s' % e
+            options.skip_changelog = True
     
     version_file = 'forgeversion.properties'
     if os.path.exists(version_file):

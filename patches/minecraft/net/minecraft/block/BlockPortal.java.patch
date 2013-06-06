@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockPortal.java
++++ ../src_work/minecraft/net/minecraft/block/BlockPortal.java
+@@ -118,7 +118,7 @@
+         }
+         else
+         {
+-            if (par1World.getBlockId(par2 - b0, par3, par4 - b1) == 0)
++            if (par1World.isAirBlock(par2 - b0, par3, par4 - b1))
+             {
+                 par2 -= b0;
+                 par4 -= b1;
