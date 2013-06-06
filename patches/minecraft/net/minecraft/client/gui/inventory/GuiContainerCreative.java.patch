@@ -1,15 +1,15 @@
 --- ../src_base/minecraft/net/minecraft/client/gui/inventory/GuiContainerCreative.java
 +++ ../src_work/minecraft/net/minecraft/client/gui/inventory/GuiContainerCreative.java
-@@ -56,6 +56,8 @@
-     private Slot field_74235_v = null;
-     private boolean field_74234_w = false;
+@@ -61,6 +61,8 @@
+     private Slot field_74235_v;
+     private boolean field_74234_w;
      private CreativeCrafting field_82324_x;
 +    private static int tabPage = 0;
 +    private int maxPages = 0;
  
      public GuiContainerCreative(EntityPlayer par1EntityPlayer)
      {
-@@ -196,7 +198,7 @@
+@@ -201,7 +203,7 @@
                          return;
                      }
  
@@ -18,7 +18,7 @@
                      {
                          if (par3 == 0)
                          {
-@@ -274,6 +276,13 @@
+@@ -279,6 +281,13 @@
              this.setCurrentCreativeTab(CreativeTabs.creativeTabArray[i]);
              this.field_82324_x = new CreativeCrafting(this.mc);
              this.mc.thePlayer.inventoryContainer.addCraftingToCrafters(this.field_82324_x);
@@ -32,16 +32,16 @@
          }
          else
          {
-@@ -408,7 +417,7 @@
+@@ -413,7 +422,7 @@
      {
          CreativeTabs creativetabs = CreativeTabs.creativeTabArray[selectedTabIndex];
  
 -        if (creativetabs.drawInForegroundOfTab())
 +        if (creativetabs != null && creativetabs.drawInForegroundOfTab())
          {
-             this.fontRenderer.drawString(creativetabs.getTranslatedTabLabel(), 8, 6, 4210752);
+             this.fontRenderer.drawString(I18n.func_135053_a(creativetabs.getTranslatedTabLabel()), 8, 6, 4210752);
          }
-@@ -457,7 +466,7 @@
+@@ -462,7 +471,7 @@
              {
                  CreativeTabs creativetabs = acreativetabs[k1];
  
@@ -50,7 +50,7 @@
                  {
                      this.setCurrentCreativeTab(creativetabs);
                      return;
-@@ -473,11 +482,17 @@
+@@ -478,11 +487,17 @@
       */
      private boolean needsScrollBars()
      {
@@ -68,7 +68,7 @@
          int i = selectedTabIndex;
          selectedTabIndex = par1CreativeTabs.getTabIndex();
          ContainerCreative containercreative = (ContainerCreative)this.inventorySlots;
-@@ -648,21 +663,42 @@
+@@ -653,21 +668,42 @@
  
          super.drawScreen(par1, par2, par3);
          CreativeTabs[] acreativetabs = CreativeTabs.creativeTabArray;
@@ -86,7 +86,7 @@
  
 -            if (this.renderCreativeInventoryHoveringText(creativetabs, par1, par2))
 -            {
-+            if (creativetabs != null && renderCreativeInventoryHoveringText(creativetabs, par1, par2))
++            if (creativetabs != null && this.renderCreativeInventoryHoveringText(creativetabs, par1, par2))
 +            {
 +                rendered = true;
                  break;
@@ -100,7 +100,7 @@
 +
          if (this.field_74235_v != null && selectedTabIndex == CreativeTabs.tabInventory.getTabIndex() && this.isPointInRegion(this.field_74235_v.xDisplayPosition, this.field_74235_v.yDisplayPosition, 16, 16, par1, par2))
          {
-             this.drawCreativeTabHoveringText(StringTranslate.getInstance().translateKey("inventory.binSlot"), par1, par2);
+             this.drawCreativeTabHoveringText(I18n.func_135053_a("inventory.binSlot"), par1, par2);
 +        }
 +
 +        if (maxPages != 0)
@@ -116,7 +116,7 @@
          }
  
          GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-@@ -681,14 +717,32 @@
+@@ -741,14 +777,32 @@
          int k = acreativetabs.length;
          int l;
  
@@ -128,7 +128,7 @@
 +        for (l = start; l < k; ++l)
          {
              CreativeTabs creativetabs1 = acreativetabs[l];
-             this.mc.renderEngine.bindTexture("/gui/allitems.png");
+             this.mc.func_110434_K().func_110577_a(field_110424_t);
  
 -            if (creativetabs1.getTabIndex() != selectedTabIndex)
 +            if (creativetabs1 != null && creativetabs1.getTabIndex() != selectedTabIndex)
@@ -141,17 +141,17 @@
 +        {
 +            if (creativetabs != CreativeTabs.tabAllSearch)
 +            {
-+                mc.renderEngine.bindTexture("/gui/allitems.png");
++                this.mc.func_110434_K().func_110577_a(field_110424_t);
 +                renderCreativeTab(CreativeTabs.tabAllSearch);
 +            }
 +            if (creativetabs != CreativeTabs.tabInventory)
 +            {
-+                mc.renderEngine.bindTexture("/gui/allitems.png");
++                this.mc.func_110434_K().func_110577_a(field_110424_t);
 +                renderCreativeTab(CreativeTabs.tabInventory);
              }
          }
  
-@@ -706,6 +760,14 @@
+@@ -766,6 +820,14 @@
              this.drawTexturedModalRect(i1, k + (int)((float)(l - k - 17) * this.currentScroll), 232 + (this.needsScrollBars() ? 0 : 12), 0, 12, 15);
          }
  
@@ -166,7 +166,7 @@
          this.renderCreativeTab(creativetabs);
  
          if (creativetabs == CreativeTabs.tabInventory)
-@@ -716,6 +778,15 @@
+@@ -776,6 +838,15 @@
  
      protected boolean func_74232_a(CreativeTabs par1CreativeTabs, int par2, int par3)
      {
@@ -182,7 +182,7 @@
          int k = par1CreativeTabs.getTabColumn();
          int l = 28 * k;
          byte b0 = 0;
-@@ -823,6 +894,7 @@
+@@ -883,6 +954,7 @@
          }
  
          GL11.glDisable(GL11.GL_LIGHTING);
@@ -190,16 +190,16 @@
          this.drawTexturedModalRect(l, i1, j, k, 28, b0);
          this.zLevel = 100.0F;
          itemRenderer.zLevel = 100.0F;
-@@ -830,7 +902,7 @@
+@@ -890,7 +962,7 @@
          i1 += 8 + (flag1 ? 1 : -1);
          GL11.glEnable(GL11.GL_LIGHTING);
          GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 -        ItemStack itemstack = new ItemStack(par1CreativeTabs.getTabIconItem());
 +        ItemStack itemstack = par1CreativeTabs.getIconItemStack();
-         itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.renderEngine, itemstack, l, i1);
-         itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.renderEngine, itemstack, l, i1);
+         itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.func_110434_K(), itemstack, l, i1);
+         itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.func_110434_K(), itemstack, l, i1);
          GL11.glDisable(GL11.GL_LIGHTING);
-@@ -852,6 +924,15 @@
+@@ -912,6 +984,15 @@
          {
              this.mc.displayGuiScreen(new GuiStats(this, this.mc.statFileWriter));
          }

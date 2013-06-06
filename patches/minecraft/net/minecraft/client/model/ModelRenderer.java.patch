@@ -8,7 +8,7 @@
  public class ModelRenderer
  {
      /** The size of the texture file's width in pixels. */
-@@ -121,7 +120,8 @@
+@@ -117,7 +116,8 @@
          this.rotationPointY = par2;
          this.rotationPointZ = par3;
      }
@@ -18,7 +18,7 @@
      public void render(float par1)
      {
          if (!this.isHidden)
-@@ -204,6 +204,7 @@
+@@ -200,6 +200,7 @@
          }
      }
  
@@ -26,7 +26,7 @@
      public void renderWithRotation(float par1)
      {
          if (!this.isHidden)
-@@ -242,6 +243,7 @@
+@@ -238,6 +239,7 @@
      /**
       * Allows the changing of Angles after a box has been rendered
       */
@@ -34,7 +34,7 @@
      public void postRender(float par1)
      {
          if (!this.isHidden)
-@@ -286,6 +288,7 @@
+@@ -282,6 +284,7 @@
      /**
       * Compiles a GL display list for this model
       */

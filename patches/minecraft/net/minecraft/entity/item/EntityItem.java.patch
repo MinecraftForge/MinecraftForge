@@ -24,7 +24,7 @@
      public EntityItem(World par1World, double par2, double par4, double par6)
      {
          super(par1World);
-@@ -49,6 +59,7 @@
+@@ -48,6 +58,7 @@
      {
          this(par1World, par2, par4, par6);
          this.setEntityItemStack(par8ItemStack);
@@ -32,7 +32,7 @@
      }
  
      /**
-@@ -80,6 +91,15 @@
+@@ -78,6 +89,15 @@
       */
      public void onUpdate()
      {
@@ -48,7 +48,7 @@
          super.onUpdate();
  
          if (this.delayBeforeCanPickup > 0)
-@@ -135,7 +155,29 @@
+@@ -133,7 +153,29 @@
  
          ++this.age;
  
@@ -79,7 +79,7 @@
          {
              this.setDead();
          }
-@@ -270,6 +312,7 @@
+@@ -268,6 +310,7 @@
      {
          par1NBTTagCompound.setShort("Health", (short)((byte)this.health));
          par1NBTTagCompound.setShort("Age", (short)this.age);
@@ -87,7 +87,7 @@
  
          if (this.getEntityItem() != null)
          {
-@@ -287,10 +330,17 @@
+@@ -285,10 +328,17 @@
          NBTTagCompound nbttagcompound1 = par1NBTTagCompound.getCompoundTag("Item");
          this.setEntityItemStack(ItemStack.loadItemStackFromNBT(nbttagcompound1));
  
@@ -106,7 +106,7 @@
      }
  
      /**
-@@ -300,10 +350,22 @@
+@@ -298,10 +348,22 @@
      {
          if (!this.worldObj.isRemote)
          {

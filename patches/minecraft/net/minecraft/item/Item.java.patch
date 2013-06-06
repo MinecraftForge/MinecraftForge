@@ -1,17 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/item/Item.java
 +++ ../src_work/minecraft/net/minecraft/item/Item.java
-@@ -7,13 +7,19 @@
- import java.util.Random;
+@@ -11,13 +11,18 @@
+ import java.util.UUID;
  import net.minecraft.block.Block;
  import net.minecraft.block.material.Material;
-+import net.minecraft.client.entity.EntityClientPlayerMP;
 +import net.minecraft.client.gui.FontRenderer;
 +import net.minecraft.client.gui.ScaledResolution;
 +import net.minecraft.client.model.ModelBiped;
  import net.minecraft.client.renderer.texture.IconRegister;
  import net.minecraft.creativetab.CreativeTabs;
  import net.minecraft.entity.Entity;
- import net.minecraft.entity.EntityLiving;
+ import net.minecraft.entity.EntityLivingBase;
 +import net.minecraft.entity.item.EntityItem;
  import net.minecraft.entity.item.EntityItemFrame;
  import net.minecraft.entity.item.EntityPainting;
@@ -20,20 +19,19 @@
  import net.minecraft.potion.Potion;
  import net.minecraft.potion.PotionHelper;
  import net.minecraft.stats.StatList;
-@@ -23,7 +29,10 @@
+@@ -26,7 +31,9 @@
+ import net.minecraft.util.MovingObjectPosition;
  import net.minecraft.util.StatCollector;
- import net.minecraft.util.StringTranslate;
  import net.minecraft.util.Vec3;
 +import net.minecraft.util.WeightedRandomChestContent;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.ChestGenHooks;
-+import net.minecraftforge.common.IArmorTextureProvider;
  
  public class Item
  {
-@@ -238,13 +247,16 @@
-     /** Icon index in the icons table. */
+@@ -248,13 +255,16 @@
      protected Icon itemIcon;
+     protected String field_111218_cA;
  
 +    /** FORGE: To disable repair recipes. */
 +    protected boolean canRepair = true;
@@ -49,7 +47,15 @@
          }
  
          itemsList[256 + par1] = this;
-@@ -640,6 +652,10 @@
+@@ -600,6 +610,7 @@
+     }
+ 
+     @SideOnly(Side.CLIENT)
++    @Deprecated //Render pass sensitive version below.
+     public boolean hasEffect(ItemStack par1ItemStack)
+     {
+         return par1ItemStack.isItemEnchanted();
+@@ -639,6 +650,10 @@
          float f7 = f4 * f5;
          float f8 = f3 * f5;
          double d3 = 5.0D;
@@ -60,7 +66,7 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
      }
-@@ -720,4 +736,508 @@
+@@ -736,4 +751,514 @@
      {
          StatList.initStats();
      }
@@ -362,11 +368,6 @@
 +     */
 +    public boolean isValidArmor(ItemStack stack, int armorType, Entity entity)
 +    {
-+        return isValidArmor(stack, armorType);
-+    }
-+    @Deprecated //Deprecated in 1.5.2, remove in 1.6, see EntityPlayer sensitive version above.
-+    public boolean isValidArmor(ItemStack stack, int armorType)
-+    {
 +        if (this instanceof ItemArmor)
 +        {
 +            return ((ItemArmor)this).armorType == armorType;
@@ -422,12 +423,11 @@
 +     * @param itemStack The itemstack
 +     * @return the damage
 +     */
-+    public int getDamageVsEntity(Entity par1Entity, ItemStack itemStack)
++    @Deprecated //Need to find a new place to hook this
++    public float getDamageVsEntity(Entity par1Entity, ItemStack itemStack)
 +    {
-+        return getDamageVsEntity(par1Entity);
++        return 0.0F; //getDamageVsEntity(par1Entity);
 +    }
-+
-+    @Deprecated private final boolean isArmorProvider = this instanceof IArmorTextureProvider;
 +    /**
 +     * Called by RenderBiped and RenderPlayer to determine the armor texture that 
 +     * should be use for the currently equiped item.
@@ -443,8 +443,9 @@
 +     */
 +    public String getArmorTexture(ItemStack stack, Entity entity, int slot, int layer)
 +    {
-+        return isArmorProvider ? ((IArmorTextureProvider)this).getArmorTextureFile(stack) : null;
++        return null;
 +    }
++
 +
 +    /**
 +     * Returns the font renderer used to render tooltips and overlays for this item.
@@ -469,7 +470,7 @@
 +     * @return  A ModelBiped to render instead of the default
 +     */
 +    @SideOnly(Side.CLIENT)
-+    public ModelBiped getArmorModel(EntityLiving entityLiving, ItemStack itemStack, int armorSlot)
++    public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int armorSlot)
 +    {
 +        return null;
 +    }
@@ -481,7 +482,7 @@
 +     * @param stack The Item stack
 +     * @return True to cancel any further processing by EntityLiving 
 +     */
-+    public boolean onEntitySwing(EntityLiving entityLiving, ItemStack stack)
++    public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack)
 +    {
 +        return false;
 +    }
@@ -507,7 +508,7 @@
 +     * @param stack The itemstack that is damaged
 +     * @return the damage value
 +     */
-+    public int getItemDamageFromStack(ItemStack stack)
++    public int getDamage(ItemStack stack)
 +    {
 +        return stack.itemDamage;
 +    }
@@ -517,20 +518,21 @@
 +     * @param stack the stack
 +     * @return the damage value
 +     */
-+    public int getItemDamageFromStackForDisplay(ItemStack stack)
++    public int getDisplayDamage(ItemStack stack)
 +    {
 +        return stack.itemDamage;
 +    }
 +    
 +    /**
-+     * Return the maxDamage for this ItemStack. Defaults to the maxDamage field in this item, but can be overridden here for other sources such as NBT.
++     * Return the maxDamage for this ItemStack. Defaults to the maxDamage field in this item, 
++     * but can be overridden here for other sources such as NBT.
 +     *
 +     * @param stack The itemstack that is damaged
 +     * @return the damage value
 +     */
-+    public int getItemMaxDamageFromStack(ItemStack stack)
++    public int getMaxDamage(ItemStack stack)
 +    {
-+        return maxDamage;
++        return getMaxDamage();
 +    }
 +
 +    /**
@@ -538,7 +540,7 @@
 +     * @param stack the stack
 +     * @return if the stack is damaged
 +     */
-+    public boolean isItemStackDamaged(ItemStack stack)
++    public boolean isDamaged(ItemStack stack)
 +    {
 +        return stack.itemDamage > 0;
 +    }
@@ -548,7 +550,7 @@
 +     * @param stack the stack
 +     * @param damage the new damage value
 +     */
-+    public void setItemDamageForStack(ItemStack stack, int damage)
++    public void setDamage(ItemStack stack, int damage)
 +    {
 +        stack.itemDamage = damage;
 +
@@ -567,5 +569,15 @@
 +    public boolean canHarvestBlock(Block par1Block, ItemStack itemStack)
 +    {
 +        return canHarvestBlock(par1Block);  
++    }
++
++
++    /**
++     * Render Pass sensitive version of hasEffect()
++     */
++    @SideOnly(Side.CLIENT)
++    public boolean hasEffect(ItemStack par1ItemStack, int pass)
++    {
++        return hasEffect(par1ItemStack) && (pass == 0 || itemID != Item.potion.itemID);
 +    }
  }

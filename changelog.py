@@ -24,12 +24,16 @@ class PreemptiveBasicAuthHandler(urllib2.BaseHandler):
 	def https_request(self,req):
 		return self.http_request(req)
 
-def getBuildInfo(url, current_version=None):
+def read_url(url):
 	handler = PreemptiveBasicAuthHandler()
-	handler.add_password(None, 'jenkins.minecraftforge.net', 'console_script', 'd29a4bb55ecdf4f99295c77cc4364fe6')
+	handler.add_password(None, 'jenkins.minecraftforge.net:81', 'console_script', 'fd584bffa72fcac12181f37f80001200')
 	file = urllib2.build_opener(handler).open(url)
 	data = file.read()
 	file.close()
+	return data
+
+def getBuildInfo(url, current_version=None):
+	data = read_url(url)
 	data = ast.literal_eval(data)['allBuilds']
 	data = sorted(data, key=lambda key: key['number'], reverse=False)
 	
@@ -57,9 +61,29 @@ def getBuildInfo(url, current_version=None):
 		build.pop('changeSet')
 		build.pop('actions')
 	return sorted(output, key=lambda key: key['number'], reverse=True)
+    
+def add_latest_build(url, builds, current_version=None):
+    data = read_url(url)
+    data = ast.literal_eval(data)
+    number = data['number']
+    
+    if builds[0]['number'] == data['number']:
+        return builds
+    
+    for item in data['changeSet']['items']:
+        item['author'] = item['author']['fullName']
+    
+    build = {
+        'number' : data['number'],
+        'result' : 'SUCCESS', #Currently build should always be success... Else things derp after words
+        'version' : current_version,
+        'items' : data['changeSet']['items']
+    }
+    return [build] + builds    
 	
 def make_changelog(job_path, target_build, change_file, current_version=None):
 	builds = getBuildInfo('%s/api/python?tree=allBuilds[result,number,actions[text],changeSet[items[author[fullName],comment]]]&pretty=true' % job_path, current_version)
+	builds = add_latest_build('%s/lastBuild/api/python?pretty=true&tree=number,changeSet[items[author[fullName],comment]]' % job_path, builds, current_version)
 	
 	log = [ "Changelog:" ]
 	
@@ -86,4 +110,4 @@ def make_changelog(job_path, target_build, change_file, current_version=None):
 	file.close()
 	
 if __name__ == '__main__':
-	make_changelog("http://jenkins.minecraftforge.net/job/minecraftforge/", 70000, 'changelog.txt', 'pinecone')
+	make_changelog("http://jenkins.minecraftforge.net:81/job/minecraftforge/", 70000, 'changelog.txt', 'pinecone')

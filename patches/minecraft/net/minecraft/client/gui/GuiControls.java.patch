@@ -1,9 +1,9 @@
 --- ../src_base/minecraft/net/minecraft/client/gui/GuiControls.java
 +++ ../src_work/minecraft/net/minecraft/client/gui/GuiControls.java
 @@ -6,6 +6,8 @@
+ import net.minecraft.client.settings.GameSettings;
  import net.minecraft.client.settings.KeyBinding;
  import net.minecraft.util.EnumChatFormatting;
- import net.minecraft.util.StringTranslate;
 +
 +import net.minecraftforge.client.GuiControlsScrollPanel;
  
@@ -18,12 +18,10 @@
  
      public GuiControls(GuiScreen par1GuiScreen, GameSettings par2GameSettings)
      {
-@@ -43,15 +47,10 @@
+@@ -43,14 +47,9 @@
       */
      public void initGui()
      {
-+        scrollPane = new GuiControlsScrollPanel(this, options, mc);
-         StringTranslate stringtranslate = StringTranslate.getInstance();
 -        int i = this.getLeftBorder();
 -
 -        for (int j = 0; j < this.options.keyBindings.length; ++j)
@@ -31,13 +29,14 @@
 -            this.buttonList.add(new GuiSmallButton(j, i + j % 2 * 160, this.height / 6 + 24 * (j >> 1), 70, 20, this.options.getOptionDisplayString(j)));
 -        }
 -
--        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, stringtranslate.translateKey("gui.done")));
-+        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height - 28, stringtranslate.translateKey("gui.done")));
-+        scrollPane.registerScrollButtons(buttonList, 7, 8);
-         this.screenTitle = stringtranslate.translateKey("controls.title");
+-        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, I18n.func_135053_a("gui.done")));
++        scrollPane = new GuiControlsScrollPanel(this, options, mc);
++        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height - 28, I18n.func_135053_a("gui.done")));
++        scrollPane.registerScrollButtons(7, 8);
+         this.screenTitle = I18n.func_135053_a("controls.title");
      }
  
-@@ -59,20 +58,10 @@
+@@ -58,20 +57,10 @@
       * Fired when a control is clicked. This is the equivalent of ActionListener.actionPerformed(ActionEvent e).
       */
      protected void actionPerformed(GuiButton par1GuiButton)
@@ -59,7 +58,7 @@
          }
      }
  
-@@ -81,17 +70,7 @@
+@@ -80,17 +69,7 @@
       */
      protected void mouseClicked(int par1, int par2, int par3)
      {
@@ -78,7 +77,7 @@
      }
  
      /**
-@@ -99,14 +78,7 @@
+@@ -98,14 +77,7 @@
       */
      protected void keyTyped(char par1, int par2)
      {
@@ -94,7 +93,7 @@
          {
              super.keyTyped(par1, par2);
          }
-@@ -118,6 +90,7 @@
+@@ -117,6 +89,7 @@
      public void drawScreen(int par1, int par2, float par3)
      {
          this.drawDefaultBackground();
@@ -102,7 +101,7 @@
          this.drawCenteredString(this.fontRenderer, this.screenTitle, this.width / 2, 20, 16777215);
          int k = this.getLeftBorder();
          int l = 0;
-@@ -158,6 +131,10 @@
+@@ -157,6 +130,10 @@
                  break;
              }
          }

@@ -24,7 +24,7 @@
  
  public abstract class WorldProvider
  {
-@@ -197,7 +204,7 @@
+@@ -199,7 +206,7 @@
  
      public static WorldProvider getProviderForDimension(int par0)
      {
@@ -33,7 +33,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -266,4 +273,277 @@
+@@ -268,4 +275,277 @@
       * Returns the dimension's name, e.g. "The End", "Nether", or "Overworld".
       */
      public abstract String getDimensionName();

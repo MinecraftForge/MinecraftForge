@@ -1,0 +1,12 @@
+--- ../src_base/minecraft/net/minecraft/crash/CrashReport.java
++++ ../src_work/minecraft/net/minecraft/crash/CrashReport.java
+@@ -245,7 +245,8 @@
+             StackTraceElement stacktraceelement = null;
+             StackTraceElement stacktraceelement1 = null;
+ 
+-            if (astacktraceelement != null && astacktraceelement.length - j < astacktraceelement.length)
++            int idx = astacktraceelement.length - j; //Forge fix AIOOB exception.
++            if (astacktraceelement != null && idx < astacktraceelement.length && idx >= 0)
+             {
+                 stacktraceelement = astacktraceelement[astacktraceelement.length - j];
+ 

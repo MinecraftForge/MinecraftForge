@@ -23,7 +23,7 @@
       * Boolean used to check whether quads should be drawn as two triangles. Initialized to false and never changed.
       */
 @@ -25,16 +33,16 @@
-     private static boolean tryVBO = false;
+     private static boolean tryVBO;
  
      /** The byte buffer used for GL allocation. */
 -    private ByteBuffer byteBuffer;
@@ -44,10 +44,10 @@
      /** Raw integer array. */
      private int[] rawBuffer;
 @@ -110,10 +118,10 @@
-     public boolean isDrawing = false;
+     public boolean isDrawing;
  
      /** Whether we are currently using VBO or not. */
--    private boolean useVBO = false;
+-    private boolean useVBO;
 +    private static boolean useVBO = false;
  
      /** An IntBuffer used to store the indices of vertex buffer objects. */
@@ -57,7 +57,7 @@
      /**
       * The index of the last VBO used. This is used in round-robin fashion, sequentially, through the vboCount vertex
 @@ -122,25 +130,28 @@
-     private int vboIndex = 0;
+     private int vboIndex;
  
      /** Number of vertex buffer objects allocated for use. */
 -    private int vboCount = 10;

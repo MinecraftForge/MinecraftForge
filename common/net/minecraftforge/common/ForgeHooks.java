@@ -1,16 +1,14 @@
 package net.minecraftforge.common;
 
-import java.util.*;
-import java.util.Map.Entry;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Loader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -19,6 +17,8 @@ import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.NetServerHandler;
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MovingObjectPosition;
@@ -26,9 +26,16 @@ import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.WeightedRandomItem;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.event.entity.living.*;
-import net.minecraftforge.event.entity.living.LivingEvent.*;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 
 public class ForgeHooks
 {
@@ -307,49 +314,49 @@ public class ForgeHooks
     //Optifine Helper Functions u.u, these are here specifically for Optifine
     //Note: When using Optfine, these methods are invoked using reflection, which
     //incurs a major performance penalty.
-    public static void onLivingSetAttackTarget(EntityLiving entity, EntityLiving target)
+    public static void onLivingSetAttackTarget(EntityLivingBase entity, EntityLivingBase target)
     {
         MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target));
     }
 
-    public static boolean onLivingUpdate(EntityLiving entity)
+    public static boolean onLivingUpdate(EntityLivingBase entity)
     {
         return MinecraftForge.EVENT_BUS.post(new LivingUpdateEvent(entity));
     }
 
-    public static boolean onLivingAttack(EntityLiving entity, DamageSource src, int amount)
+    public static boolean onLivingAttack(EntityLivingBase entity, DamageSource src, float amount)
     {
         return MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
     }
 
-    public static int onLivingHurt(EntityLiving entity, DamageSource src, int amount)
+    public static float onLivingHurt(EntityLivingBase entity, DamageSource src, float amount)
     {
         LivingHurtEvent event = new LivingHurtEvent(entity, src, amount);
         return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.ammount);
     }
 
-    public static boolean onLivingDeath(EntityLiving entity, DamageSource src)
+    public static boolean onLivingDeath(EntityLivingBase entity, DamageSource src)
     {
         return MinecraftForge.EVENT_BUS.post(new LivingDeathEvent(entity, src));
     }
 
-    public static boolean onLivingDrops(EntityLiving entity, DamageSource source, ArrayList<EntityItem> drops, int lootingLevel, boolean recentlyHit, int specialDropValue)
+    public static boolean onLivingDrops(EntityLivingBase entity, DamageSource source, ArrayList<EntityItem> drops, int lootingLevel, boolean recentlyHit, int specialDropValue)
     {
         return MinecraftForge.EVENT_BUS.post(new LivingDropsEvent(entity, source, drops, lootingLevel, recentlyHit, specialDropValue));
     }
 
-    public static float onLivingFall(EntityLiving entity, float distance)
+    public static float onLivingFall(EntityLivingBase entity, float distance)
     {
         LivingFallEvent event = new LivingFallEvent(entity, distance);
         return (MinecraftForge.EVENT_BUS.post(event) ? 0.0f : event.distance);
     }
 
-    public static boolean isLivingOnLadder(Block block, World world, int x, int y, int z)
+    public static boolean isLivingOnLadder(Block block, World world, int x, int y, int z, EntityLivingBase entity)
     {
-        return block != null && block.isLadder(world, x, y, z);
+        return block != null && block.isLadder(world, x, y, z, entity);
     }
 
-    public static void onLivingJump(EntityLiving entity)
+    public static void onLivingJump(EntityLivingBase entity)
     {
         MinecraftForge.EVENT_BUS.post(new LivingJumpEvent(entity));
     }
@@ -380,5 +387,15 @@ public class ForgeHooks
 
         Block block = Block.blocksList[world.getBlockId(x, y, z)];
         return (block == null ? 0 : block.getEnchantPowerBonus(world, x, y, z));
+    }
+
+    public static ChatMessageComponent onServerChatEvent(NetServerHandler net, String raw, ChatMessageComponent comp)
+    {
+        ServerChatEvent event = new ServerChatEvent(net.playerEntity, raw, comp);
+        if (MinecraftForge.EVENT_BUS.post(event))
+        {
+            return null;
+        }
+        return event.component;
     }
 }

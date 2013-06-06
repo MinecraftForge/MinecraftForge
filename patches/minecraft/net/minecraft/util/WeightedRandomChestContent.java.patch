@@ -10,13 +10,14 @@
  
  public class WeightedRandomChestContent extends WeightedRandomItem
  {
-@@ -42,20 +45,11 @@
+@@ -40,22 +43,11 @@
+         for (int j = 0; j < par3; ++j)
+         {
              WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
-             int k = weightedrandomchestcontent.theMinimumChanceToGenerateItem + par0Random.nextInt(weightedrandomchestcontent.theMaximumChanceToGenerateItem - weightedrandomchestcontent.theMinimumChanceToGenerateItem + 1);
+-            int k = weightedrandomchestcontent.theMinimumChanceToGenerateItem + par0Random.nextInt(weightedrandomchestcontent.theMaximumChanceToGenerateItem - weightedrandomchestcontent.theMinimumChanceToGenerateItem + 1);
++            ItemStack[] stacks = weightedrandomchestcontent.generateChestContent(par0Random, par2IInventory);
  
 -            if (weightedrandomchestcontent.theItemId.getMaxStackSize() >= k)
-+            ItemStack[] stacks = ChestGenHooks.generateStacks(par0Random, weightedrandomchestcontent.theItemId, weightedrandomchestcontent.theMinimumChanceToGenerateItem, weightedrandomchestcontent.theMaximumChanceToGenerateItem);
-+
 +            for (ItemStack item : stacks)
              {
 -                ItemStack itemstack = weightedrandomchestcontent.theItemId.copy();
@@ -35,12 +36,12 @@
              }
          }
      }
-@@ -68,22 +62,11 @@
+@@ -68,22 +60,11 @@
          for (int j = 0; j < par3; ++j)
          {
              WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
 -            int k = weightedrandomchestcontent.theMinimumChanceToGenerateItem + par0Random.nextInt(weightedrandomchestcontent.theMaximumChanceToGenerateItem - weightedrandomchestcontent.theMinimumChanceToGenerateItem + 1);
-+            ItemStack[] stacks = ChestGenHooks.generateStacks(par0Random, weightedrandomchestcontent.theItemId, weightedrandomchestcontent.theMinimumChanceToGenerateItem, weightedrandomchestcontent.theMaximumChanceToGenerateItem);
++            ItemStack[] stacks = weightedrandomchestcontent.generateChestContent(par0Random, par2TileEntityDispenser);
  
 -            if (weightedrandomchestcontent.theItemId.getMaxStackSize() >= k)
 +            for (ItemStack item : stacks)
@@ -61,7 +62,7 @@
              }
          }
      }
-@@ -109,4 +92,18 @@
+@@ -109,4 +90,18 @@
  
          return aweightedrandomchestcontent1;
      }

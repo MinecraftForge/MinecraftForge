@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockSand.java
++++ ../src_work/minecraft/net/minecraft/block/BlockSand.java
+@@ -105,7 +105,7 @@
+     {
+         int l = par0World.getBlockId(par1, par2, par3);
+ 
+-        if (l == 0)
++        if (par0World.isAirBlock(par1, par2, par3))
+         {
+             return true;
+         }

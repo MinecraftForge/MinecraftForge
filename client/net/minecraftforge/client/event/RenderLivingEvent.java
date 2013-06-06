@@ -1,18 +1,16 @@
 package net.minecraftforge.client.event;
 
-import net.minecraft.client.renderer.entity.RenderLiving;
-import net.minecraft.client.renderer.entity.RenderPlayer;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.renderer.entity.RendererLivingEntity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraftforge.event.Cancelable;
 import net.minecraftforge.event.Event;
 
 public abstract class RenderLivingEvent extends Event
 {
-    public final EntityLiving entity;
-    public final RenderLiving renderer;
+    public final EntityLivingBase entity;
+    public final RendererLivingEntity renderer;
 
-    public RenderLivingEvent(EntityLiving entity, RenderLiving renderer)
+    public RenderLivingEvent(EntityLivingBase entity, RendererLivingEntity renderer)
     {
         this.entity = entity;
         this.renderer = renderer;
@@ -20,16 +18,16 @@ public abstract class RenderLivingEvent extends Event
 
     public abstract static class Specials extends RenderLivingEvent
     {
-        public Specials(EntityLiving entity, RenderLiving renderer){ super(entity, renderer); }
+        public Specials(EntityLivingBase entity, RendererLivingEntity renderer){ super(entity, renderer); }
 
         @Cancelable
         public static class Pre extends Specials
         {
-            public Pre(EntityLiving entity, RenderLiving renderer){ super(entity, renderer); }
+            public Pre(EntityLivingBase entity, RendererLivingEntity renderer){ super(entity, renderer); }
         }
         public static class Post extends Specials
         {
-            public Post(EntityLiving entity, RenderLiving renderer){ super(entity, renderer); }
+            public Post(EntityLivingBase entity, RendererLivingEntity renderer){ super(entity, renderer); }
         }
     }
 }

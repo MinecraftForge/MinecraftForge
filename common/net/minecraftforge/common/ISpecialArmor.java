@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import net.minecraft.util.DamageSource;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
@@ -39,7 +39,7 @@ public interface ISpecialArmor
      * @param slot The armor slot the item is in.
      * @return A ArmorProperties instance holding information about how the armor effects damage.
      */
-    public ArmorProperties getProperties(EntityLiving player, ItemStack armor, DamageSource source, double damage, int slot);
+    public ArmorProperties getProperties(EntityLivingBase player, ItemStack armor, DamageSource source, double damage, int slot);
 
     /**
      * Get the displayed effective armor.
@@ -63,7 +63,7 @@ public interface ISpecialArmor
      * @param damage The amount of damage being applied to the armor
      * @param slot The armor slot the item is in.
      */
-    public abstract void damageArmor(EntityLiving entity, ItemStack stack, DamageSource source, int damage, int slot);
+    public abstract void damageArmor(EntityLivingBase entity, ItemStack stack, DamageSource source, int damage, int slot);
     
     public static class ArmorProperties implements Comparable<ArmorProperties>
     {
@@ -90,7 +90,7 @@ public interface ISpecialArmor
          * @param damage The total damage being done
          * @return The left over damage that has not been absorbed by the armor
          */
-        public static int ApplyArmor(EntityLiving entity, ItemStack[] inventory, DamageSource source, double damage)
+        public static float ApplyArmor(EntityLivingBase entity, ItemStack[] inventory, DamageSource source, double damage)
         {
             if (DEBUG)
             {
@@ -167,13 +167,11 @@ public interface ISpecialArmor
                 }
                 damage -= (damage * ratio);
             }
-            damage += entity.carryoverDamage;
             if (DEBUG)
             {
-                System.out.println("Return: " + (int)(damage / 25D) + " " + damage);
+                System.out.println("Return: " + (int)(damage / 25.0F) + " " + damage);
             }
-            entity.carryoverDamage = (int)damage % 25;
-            return (int)(damage / 25D);
+            return (float)(damage / 25.0F);
         }
 
         /**

@@ -1,16 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemTool.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemTool.java
-@@ -7,6 +7,7 @@
- import net.minecraft.entity.Entity;
- import net.minecraft.entity.EntityLiving;
+@@ -9,6 +9,7 @@
+ import net.minecraft.entity.SharedMonsterAttributes;
+ import net.minecraft.entity.ai.attributes.AttributeModifier;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.ForgeHooks;
  
  public class ItemTool extends Item
  {
-@@ -110,4 +111,15 @@
-     {
-         return this.toolMaterial.getToolCraftingMaterial() == par2ItemStack.itemID ? true : super.getIsRepairable(par1ItemStack, par2ItemStack);
+@@ -111,4 +112,15 @@
+         multimap.put(SharedMonsterAttributes.field_111264_e.func_111108_a(), new AttributeModifier(field_111210_e, "Tool modifier", (double)this.damageVsEntity, 0));
+         return multimap;
      }
 +
 +    /** FORGE: Overridden to allow custom tool effectiveness */
