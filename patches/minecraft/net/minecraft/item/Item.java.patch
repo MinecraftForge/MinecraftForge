@@ -60,7 +60,7 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
      }
-@@ -720,4 +736,508 @@
+@@ -720,4 +736,534 @@
      {
          StatList.initStats();
      }
@@ -507,6 +507,11 @@
 +     * @param stack The itemstack that is damaged
 +     * @return the damage value
 +     */
++    public int getDamage(ItemStack stack)
++    {
++        return getItemDamageFromStack(stack);
++    }
++    @Deprecated
 +    public int getItemDamageFromStack(ItemStack stack)
 +    {
 +        return stack.itemDamage;
@@ -517,20 +522,31 @@
 +     * @param stack the stack
 +     * @return the damage value
 +     */
++    public int getDisplayDamage(ItemStack stack)
++    {
++        return getItemDamageFromStackForDisplay(stack);
++    }
++    @Deprecated
 +    public int getItemDamageFromStackForDisplay(ItemStack stack)
 +    {
 +        return stack.itemDamage;
 +    }
 +    
 +    /**
-+     * Return the maxDamage for this ItemStack. Defaults to the maxDamage field in this item, but can be overridden here for other sources such as NBT.
++     * Return the maxDamage for this ItemStack. Defaults to the maxDamage field in this item, 
++     * but can be overridden here for other sources such as NBT.
 +     *
 +     * @param stack The itemstack that is damaged
 +     * @return the damage value
 +     */
++    public int getMaxDamage(ItemStack stack)
++    {
++        return getItemMaxDamageFromStack(stack);
++    }
++    @Deprecated
 +    public int getItemMaxDamageFromStack(ItemStack stack)
 +    {
-+        return maxDamage;
++        return getMaxDamage();
 +    }
 +
 +    /**
@@ -538,6 +554,11 @@
 +     * @param stack the stack
 +     * @return if the stack is damaged
 +     */
++    public boolean isDamaged(ItemStack stack)
++    {
++        return isItemStackDamaged(stack);
++    }
++    @Deprecated
 +    public boolean isItemStackDamaged(ItemStack stack)
 +    {
 +        return stack.itemDamage > 0;
@@ -548,6 +569,11 @@
 +     * @param stack the stack
 +     * @param damage the new damage value
 +     */
++    public void setDamage(ItemStack stack, int damage)
++    {
++        setItemDamageForStack(stack, damage);
++    }
++    @Deprecated
 +    public void setItemDamageForStack(ItemStack stack, int damage)
 +    {
 +        stack.itemDamage = damage;
