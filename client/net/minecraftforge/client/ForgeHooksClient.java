@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.TreeSet;
 
+import javax.imageio.ImageIO;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -292,6 +294,7 @@ public class ForgeHooksClient
     static int stencilBits = 0;
     public static void createDisplay() throws LWJGLException
     {
+        ImageIO.setUseCache(false); //Disable on-disc stream cache should speed up texture pack reloading.
         PixelFormat format = new PixelFormat().withDepthBits(24);
         try
         {
