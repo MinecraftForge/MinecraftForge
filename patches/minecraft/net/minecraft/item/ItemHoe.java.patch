@@ -10,7 +10,7 @@
  
  public class ItemHoe extends Item
  {
-@@ -32,6 +35,18 @@
+@@ -32,10 +35,23 @@
          }
          else
          {
@@ -27,5 +27,12 @@
 +            }
 +
              int i1 = par3World.getBlockId(par4, par5, par6);
-             int j1 = par3World.getBlockId(par4, par5 + 1, par6);
+-            int j1 = par3World.getBlockId(par4, par5 + 1, par6);
++            boolean air = par3World.isAirBlock(par4, par5 + 1, par6);
  
+-            if ((par7 == 0 || j1 != 0 || i1 != Block.grass.blockID) && i1 != Block.dirt.blockID)
++            //Forge: Change 0 to air, also BugFix: parens mismatch causing you to be able to hoe dirt under dirt/grass
++            if (par7 == 0 || !air || (i1 != Block.grass.blockID && i1 != Block.dirt.blockID))
+             {
+                 return false;
+             }
