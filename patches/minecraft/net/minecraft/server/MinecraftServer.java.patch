@@ -19,6 +19,15 @@
  public abstract class MinecraftServer implements ICommandSender, Runnable, IPlayerUsage
  {
      /** Instance of Minecraft Server. */
+@@ -80,7 +85,7 @@
+     private int serverPort = -1;
+ 
+     /** The server world instances. */
+-    public WorldServer[] worldServers;
++    public WorldServer[] worldServers = new WorldServer[0];
+ 
+     /** The ServerConfigurationManager instance. */
+     private ServerConfigurationManager serverConfigManager;
 @@ -133,7 +138,8 @@
      public final long[] tickTimeArray = new long[100];
  
@@ -96,7 +105,15 @@
          this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();
      }
-@@ -399,7 +380,14 @@
+@@ -346,6 +327,7 @@
+         if (!this.worldIsBeingDeleted)
+         {
+             WorldServer[] aworldserver = this.worldServers;
++            if (aworldserver == null) return; //ForgE: Just in case, NPE protection as it has been encountered.
+             int i = aworldserver.length;
+ 
+             for (int j = 0; j < i; ++j)
+@@ -399,7 +381,14 @@
              for (int i = 0; i < this.worldServers.length; ++i)
              {
                  WorldServer worldserver = this.worldServers[i];
@@ -111,7 +128,7 @@
              }
  
              if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
-@@ -623,13 +611,15 @@
+@@ -623,13 +612,15 @@
          this.theProfiler.startSection("levels");
          int i;
  
@@ -132,7 +149,7 @@
                  this.theProfiler.startSection(worldserver.getWorldInfo().getWorldName());
                  this.theProfiler.startSection("pools");
                  worldserver.getWorldVec3Pool().clear();
-@@ -676,9 +666,11 @@
+@@ -676,9 +667,11 @@
                  this.theProfiler.endSection();
              }
  
@@ -147,7 +164,7 @@
          this.theProfiler.endStartSection("connection");
          this.getNetworkThread().networkTick();
          this.theProfiler.endStartSection("players");
-@@ -732,7 +724,13 @@
+@@ -732,7 +725,13 @@
       */
      public WorldServer worldServerForDimension(int par1)
      {
@@ -162,7 +179,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -1103,6 +1101,7 @@
+@@ -1103,6 +1102,7 @@
  
              if (worldserver != null)
              {
