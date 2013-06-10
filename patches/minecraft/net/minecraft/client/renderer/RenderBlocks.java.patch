@@ -91,3 +91,18 @@
              {
                  d5 = (double)par2 + 0.5D + 0.5D;
                  d6 = (double)par2 + 0.5D - 0.5D;
+@@ -3050,10 +3053,10 @@
+         double d17 = (double)par2 + 0.5D + 0.0625D;
+         double d18 = (double)par4 + 0.5D - 0.0625D;
+         double d19 = (double)par4 + 0.5D + 0.0625D;
+-        boolean flag = par1BlockPane.canThisPaneConnectToThisBlockID(this.blockAccess.getBlockId(par2, par3, par4 - 1));
+-        boolean flag1 = par1BlockPane.canThisPaneConnectToThisBlockID(this.blockAccess.getBlockId(par2, par3, par4 + 1));
+-        boolean flag2 = par1BlockPane.canThisPaneConnectToThisBlockID(this.blockAccess.getBlockId(par2 - 1, par3, par4));
+-        boolean flag3 = par1BlockPane.canThisPaneConnectToThisBlockID(this.blockAccess.getBlockId(par2 + 1, par3, par4));
++        boolean flag = par1BlockPane.canPaneConnectTo(this.blockAccess,par2, par3, par4, NORTH);
++        boolean flag1 = par1BlockPane.canPaneConnectTo(this.blockAccess,par2, par3, par4, SOUTH);
++        boolean flag2 = par1BlockPane.canPaneConnectTo(this.blockAccess,par2, par3, par4, WEST);
++        boolean flag3 = par1BlockPane.canPaneConnectTo(this.blockAccess,par2, par3, par4, EAST);
+         boolean flag4 = par1BlockPane.shouldSideBeRendered(this.blockAccess, par2, par3 + 1, par4, 1);
+         boolean flag5 = par1BlockPane.shouldSideBeRendered(this.blockAccess, par2, par3 - 1, par4, 0);
+ 

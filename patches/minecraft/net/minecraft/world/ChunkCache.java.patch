@@ -1,6 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/world/ChunkCache.java
 +++ ../src_work/minecraft/net/minecraft/world/ChunkCache.java
-@@ -108,7 +108,15 @@
+@@ -8,6 +8,7 @@
+ import net.minecraft.util.Vec3Pool;
+ import net.minecraft.world.biome.BiomeGenBase;
+ import net.minecraft.world.chunk.Chunk;
++import net.minecraftforge.common.ForgeDirection;
+ 
+ public class ChunkCache implements IBlockAccess
+ {
+@@ -108,7 +109,15 @@
      {
          int l = (par1 >> 4) - this.chunkX;
          int i1 = (par3 >> 4) - this.chunkZ;
@@ -17,7 +25,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -159,7 +167,12 @@
+@@ -159,7 +168,12 @@
          {
              int l = (par1 >> 4) - this.chunkX;
              int i1 = (par3 >> 4) - this.chunkZ;
@@ -31,7 +39,7 @@
          }
      }
  
-@@ -306,8 +319,7 @@
+@@ -306,8 +320,7 @@
       */
      public boolean doesBlockHaveSolidTopSurface(int par1, int par2, int par3)
      {
@@ -41,3 +49,26 @@
      }
  
      /**
+@@ -449,4 +462,22 @@
+         int i1 = this.getBlockId(par1, par2, par3);
+         return i1 == 0 ? 0 : Block.blocksList[i1].isProvidingStrongPower(this, par1, par2, par3, par4);
+     }
++
++    public boolean isBlockSolidOnSide(int x, int y, int z, ForgeDirection side, boolean _default)
++    {
++        if (x < -30000000 || z < -30000000 || x >= 30000000 || z >= 30000000)
++        {
++            return _default;
++        }
++
++        int blockId = getBlockId(x, y, z);
++        Block block = Block.blocksList[blockId];
++
++        if (block != null)
++        {
++            return block.isBlockSolidOnSide(this.worldObj, x, y, z, side);
++        }
++
++        return false;
++    }
+ }

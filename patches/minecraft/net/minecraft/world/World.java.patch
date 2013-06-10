@@ -812,7 +812,7 @@
      }
  
      /**
-@@ -4321,4 +4491,114 @@
+@@ -4321,4 +4491,115 @@
      {
          return this.worldLogAgent;
      }
@@ -856,6 +856,7 @@
 +     * @param _default The defult to return if the block doesn't exist.
 +     * @return True if the side is solid
 +     */
++    @Override
 +    public boolean isBlockSolidOnSide(int x, int y, int z, ForgeDirection side, boolean _default)
 +    {
 +        if (x < -30000000 || z < -30000000 || x >= 30000000 || z >= 30000000)
