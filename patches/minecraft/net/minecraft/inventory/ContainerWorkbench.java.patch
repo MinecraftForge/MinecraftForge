@@ -1,0 +1,17 @@
+--- ../src_base/minecraft/net/minecraft/inventory/ContainerWorkbench.java
++++ ../src_work/minecraft/net/minecraft/inventory/ContainerWorkbench.java
+@@ -12,10 +12,10 @@
+     /** The crafting matrix inventory (3x3). */
+     public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
+     public IInventory craftResult = new InventoryCraftResult();
+-    private World worldObj;
+-    private int posX;
+-    private int posY;
+-    private int posZ;
++    public final World worldObj;
++    public final int posX;
++    public final int posY;
++    public final int posZ;
+ 
+     public ContainerWorkbench(InventoryPlayer par1InventoryPlayer, World par2World, int par3, int par4, int par5)
+     {

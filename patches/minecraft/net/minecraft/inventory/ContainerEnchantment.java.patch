@@ -8,6 +8,21 @@
  
  public class ContainerEnchantment extends Container
  {
+@@ -19,10 +20,10 @@
+     public IInventory tableInventory = new SlotEnchantmentTable(this, "Enchant", true, 1);
+ 
+     /** current world (for bookshelf counting) */
+-    private World worldPointer;
+-    private int posX;
+-    private int posY;
+-    private int posZ;
++    public final World worldPointer;
++    public final int posX;
++    public final int posY;
++    public final int posZ;
+     private Random rand = new Random();
+ 
+     /** used as seed for EnchantmentNameParts (see GuiEnchantment) */
 @@ -109,6 +110,7 @@
                  {
                      i = 0;

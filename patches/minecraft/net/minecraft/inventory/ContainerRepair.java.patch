@@ -1,5 +1,20 @@
 --- ../src_base/minecraft/net/minecraft/inventory/ContainerRepair.java
 +++ ../src_work/minecraft/net/minecraft/inventory/ContainerRepair.java
+@@ -23,10 +23,10 @@
+      * The 2slots where you put your items in that you want to merge and/or rename.
+      */
+     private IInventory inputSlots = new InventoryRepair(this, "Repair", true, 2);
+-    private World theWorld;
+-    private int field_82861_i;
+-    private int field_82858_j;
+-    private int field_82859_k;
++    public final World theWorld;
++    public final int field_82861_i;
++    public final int field_82858_j;
++    public final int field_82859_k;
+ 
+     /** The maximum cost of repairing/renaming in the anvil. */
+     public int maximumCost = 0;
 @@ -305,6 +305,11 @@
                  k = Math.max(1, k / 2);
              }

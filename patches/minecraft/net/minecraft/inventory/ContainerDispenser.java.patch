@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/inventory/ContainerDispenser.java
++++ ../src_work/minecraft/net/minecraft/inventory/ContainerDispenser.java
+@@ -6,7 +6,7 @@
+ 
+ public class ContainerDispenser extends Container
+ {
+-    private TileEntityDispenser tileEntityDispenser;
++    public final TileEntityDispenser tileEntityDispenser;
+ 
+     public ContainerDispenser(IInventory par1IInventory, TileEntityDispenser par2TileEntityDispenser)
+     {

@@ -1,5 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/inventory/ContainerFurnace.java
 +++ ../src_work/minecraft/net/minecraft/inventory/ContainerFurnace.java
+@@ -10,7 +10,7 @@
+ 
+ public class ContainerFurnace extends Container
+ {
+-    private TileEntityFurnace furnace;
++    public final TileEntityFurnace furnace;
+     private int lastCookTime = 0;
+     private int lastBurnTime = 0;
+     private int lastItemBurnTime = 0;
 @@ -125,7 +125,7 @@
              }
              else if (par2 != 1 && par2 != 0)
