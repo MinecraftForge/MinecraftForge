@@ -26,7 +26,7 @@ class PreemptiveBasicAuthHandler(urllib2.BaseHandler):
 
 def getBuildInfo(url, current_version=None):
 	handler = PreemptiveBasicAuthHandler()
-	handler.add_password(None, 'jenkins.minecraftforge.net', 'console_script', 'd29a4bb55ecdf4f99295c77cc4364fe6')
+	handler.add_password(None, 'jenkins.minecraftforge.net:81', 'console_script', 'fd584bffa72fcac12181f37f80001200')
 	file = urllib2.build_opener(handler).open(url)
 	data = file.read()
 	file.close()
@@ -86,4 +86,4 @@ def make_changelog(job_path, target_build, change_file, current_version=None):
 	file.close()
 	
 if __name__ == '__main__':
-	make_changelog("http://jenkins.minecraftforge.net/job/minecraftforge/", 70000, 'changelog.txt', 'pinecone')
+	make_changelog("http://jenkins.minecraftforge.net:81/job/minecraftforge/", 70000, 'changelog.txt', 'pinecone')
