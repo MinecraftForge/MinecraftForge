@@ -101,7 +101,7 @@ def main():
     if not options.skip_changelog:
         changelog_file = 'forge-%s/minecraftforge-changelog-%s.txt' % (version_str, version_str)
         try:
-            make_changelog("http://jenkins.minecraftforge.net/job/minecraftforge/", build_num, changelog_file, version_str)
+            make_changelog("http://jenkins.minecraftforge.net:81/job/minecraftforge/", build_num, changelog_file, version_str)
         except HTTPError, e:
             print 'Changelog failed to generate: %s' % e
             options.skip_changelog = True
