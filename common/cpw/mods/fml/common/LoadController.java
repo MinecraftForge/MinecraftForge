@@ -104,11 +104,11 @@ public class LoadController
         }
     }
 
-    public void transition(LoaderState desiredState)
+    public void transition(LoaderState desiredState, boolean forceState)
     {
         LoaderState oldState = state;
         state = state.transition(!errors.isEmpty());
-        if (state != desiredState)
+        if (state != desiredState && !forceState)
         {
             Throwable toThrow = null;
             FMLLog.severe("Fatal errors were detected during the transition from %s to %s. Loading cannot continue", oldState, desiredState);
@@ -147,6 +147,12 @@ public class LoadController
                 throw new LoaderException(toThrow);
             }
         }
+        else if (state != desiredState && forceState)
+        {
+            FMLLog.info("The state engine was in incorrect state %s and forced into state %s. Errors may have been discarded.", state, desiredState);
+            forceState(desiredState);
+        }
+
     }
 
     public ModContainer activeContainer()
