@@ -84,31 +84,20 @@ public class BiomeDictionary
     }
 
     /**
-<<<<<<< HEAD
-     * Registers a biome with a set of biome types
-=======
      * Registers a biome with a set of biome types. DEPRECATED - use Collection based version
->>>>>>> Redesigned BiomeDictionary to increase performance, reduce memory resources and fix bugs:
      * 
      * @param biome the biome to be registered
      * @param type the set of types to register the biome
      * @return returns true if the biome was registered successfully
      */
-<<<<<<< HEAD
-=======
     @Deprecated
->>>>>>> Redesigned BiomeDictionary to increase performance, reduce memory resources and fix bugs:
     public static boolean registerBiomeType(BiomeGenBase biome, Type ... types)
     {
         return registerBiomeType(biome, Arrays.asList(types));
     }
     
     /**
-<<<<<<< HEAD
-     * Returns an array of biomes registered with a specific type
-=======
      * Returns an array of biomes registered with a specific type. DEPRECATED - use Collection based version see {@link getBiomeListForType()}
->>>>>>> Redesigned BiomeDictionary to increase performance, reduce memory resources and fix bugs:
      * 
      * @param type the Type to look for
      * @return an array of biomes of the specified type
@@ -149,19 +138,12 @@ public class BiomeDictionary
     }
 
     /**
-<<<<<<< HEAD
-     * Gets an array of Types that a specific biome is registered with
-=======
      * Gets an array of Types that a specific biome is registered with. DEPRECATED - use Collection based version {@link getTypesListForBiome()}
->>>>>>> Redesigned BiomeDictionary to increase performance, reduce memory resources and fix bugs:
      * 
      * @param biome the biome to check
      * @return the array of types
      */
-<<<<<<< HEAD
-=======
     @Deprecated
->>>>>>> Redesigned BiomeDictionary to increase performance, reduce memory resources and fix bugs:
     public static Type[] getTypesForBiome(BiomeGenBase biome)
     {
         return getTypesListForBiome(biome).toArray(new Type[0]);
@@ -251,11 +233,8 @@ public class BiomeDictionary
     {
         if (biome == null) return;
         
-<<<<<<< HEAD
-=======
         final EnumSet<Type> types = EnumSet.noneOf(Type.class);
         
->>>>>>> Redesigned BiomeDictionary to increase performance, reduce memory resources and fix bugs:
         if(biome.theBiomeDecorator.treesPerChunk >= 3)
         {
             if(biome.isHighHumidity() && biome.temperature >= 1.0F)
