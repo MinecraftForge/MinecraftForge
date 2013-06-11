@@ -30,7 +30,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -384,6 +387,38 @@
+@@ -384,6 +387,65 @@
      {
          double d0 = (double)MathHelper.clamp_float(this.getFloatTemperature(), 0.0F, 1.0F);
          double d1 = (double)MathHelper.clamp_float(this.getFloatRainfall(), 0.0F, 1.0F);
@@ -61,11 +61,38 @@
 +        return event.newColor;
 +    }
 +    
-+
 +    @SideOnly(Side.CLIENT)
 +    public int getModdedBiomeFoliageColor(int original)
 +    {
-+        BiomeEvent.GetFoliageColor event = new BiomeEvent.GetFoliageColor(this, original);
++        BiomeEvent.GetFoliageColor event = new BiomeEvent.GetFoliageColor(this, original, Block.leaves.blockID, 0);
++        MinecraftForge.EVENT_BUS.post(event);
++        return event.newColor;
++    }
++    
++    @SideOnly(Side.CLIENT)
++    public int getBiomeFoliageColor(int blockId, int metadata)
++    {
++        if (Block.leaves.blockID == blockId)
++        {
++            if (metadata == 1)
++            {
++                return getModdedBiomeFoliageColor(ColorizerFoliage.getFoliageColorPine(), blockId, metadata);
++            }
++            if (metadata == 2)
++            {
++                return getModdedBiomeFoliageColor(ColorizerFoliage.getFoliageColorBirch(), blockId, metadata);
++            }
++        }
++        
++        double d0 = (double)MathHelper.clamp_float(this.getFloatTemperature(), 0.0F, 1.0F);
++        double d1 = (double)MathHelper.clamp_float(this.getFloatRainfall(), 0.0F, 1.0F);
++        return getModdedBiomeFoliageColor(ColorizerFoliage.getFoliageColor(d0, d1), blockId, metadata);
++    }
++    
++    @SideOnly(Side.CLIENT)
++    public int getModdedBiomeFoliageColor(int original, int blockId, int metadata)
++    {
++        BiomeEvent.GetFoliageColor event = new BiomeEvent.GetFoliageColor(this, original, blockId, metadata);
 +        MinecraftForge.EVENT_BUS.post(event);
 +        return event.newColor;
      }
