@@ -84,23 +84,36 @@ public class BiomeDictionary
     }
 
     /**
+<<<<<<< HEAD
      * Registers a biome with a set of biome types
+=======
+     * Registers a biome with a set of biome types. DEPRECATED - use Collection based version
+>>>>>>> Redesigned BiomeDictionary to increase performance, reduce memory resources and fix bugs:
      * 
      * @param biome the biome to be registered
      * @param type the set of types to register the biome
      * @return returns true if the biome was registered successfully
      */
+<<<<<<< HEAD
+=======
+    @Deprecated
+>>>>>>> Redesigned BiomeDictionary to increase performance, reduce memory resources and fix bugs:
     public static boolean registerBiomeType(BiomeGenBase biome, Type ... types)
     {
         return registerBiomeType(biome, Arrays.asList(types));
     }
     
     /**
+<<<<<<< HEAD
      * Returns an array of biomes registered with a specific type
+=======
+     * Returns an array of biomes registered with a specific type. DEPRECATED - use Collection based version see {@link getBiomeListForType()}
+>>>>>>> Redesigned BiomeDictionary to increase performance, reduce memory resources and fix bugs:
      * 
      * @param type the Type to look for
      * @return an array of biomes of the specified type
      */
+    @Deprecated
     public static BiomeGenBase[] getBiomesForType(Type type)
     {
         return getBiomeListForType(type).toArray(new BiomeGenBase[0]);
@@ -136,11 +149,19 @@ public class BiomeDictionary
     }
 
     /**
+<<<<<<< HEAD
      * Gets an array of Types that a specific biome is registered with
+=======
+     * Gets an array of Types that a specific biome is registered with. DEPRECATED - use Collection based version {@link getTypesListForBiome()}
+>>>>>>> Redesigned BiomeDictionary to increase performance, reduce memory resources and fix bugs:
      * 
      * @param biome the biome to check
      * @return the array of types
      */
+<<<<<<< HEAD
+=======
+    @Deprecated
+>>>>>>> Redesigned BiomeDictionary to increase performance, reduce memory resources and fix bugs:
     public static Type[] getTypesForBiome(BiomeGenBase biome)
     {
         return getTypesListForBiome(biome).toArray(new Type[0]);
@@ -230,49 +251,55 @@ public class BiomeDictionary
     {
         if (biome == null) return;
         
+<<<<<<< HEAD
+=======
+        final EnumSet<Type> types = EnumSet.noneOf(Type.class);
+        
+>>>>>>> Redesigned BiomeDictionary to increase performance, reduce memory resources and fix bugs:
         if(biome.theBiomeDecorator.treesPerChunk >= 3)
         {
             if(biome.isHighHumidity() && biome.temperature >= 1.0F)
             {
-                BiomeDictionary.registerBiomeType(biome, JUNGLE);
+                types.add(JUNGLE);
             }
             else if(!biome.isHighHumidity())
             {
-                BiomeDictionary.registerBiomeType(biome, FOREST);
+                types.add(FOREST);
             }
         }
         else if(biome.maxHeight <= 0.3F && biome.maxHeight >= 0.0F)
         {
             if(!biome.isHighHumidity() || biome.minHeight >= 0.0F)
             {
-                BiomeDictionary.registerBiomeType(biome, PLAINS);
+                types.add(PLAINS);
             }
         }
 
         if(biome.isHighHumidity() && biome.minHeight < 0.0F && (biome.maxHeight <= 0.3F && biome.maxHeight >= 0.0F))
         {
-            BiomeDictionary.registerBiomeType(biome, SWAMP);
+            types.add(SWAMP);
         }
 
         if(biome.minHeight <= -0.5F)
         {
-            BiomeDictionary.registerBiomeType(biome, WATER);
+            types.add(WATER);
         }
 
         if(biome.maxHeight >= 1.5F)
         {
-            BiomeDictionary.registerBiomeType(biome, MOUNTAIN);
+            types.add(MOUNTAIN);
         }
         
         if(biome.getEnableSnow() || biome.temperature < 0.2F)
         {
-            BiomeDictionary.registerBiomeType(biome, FROZEN);
+            types.add(FROZEN);
         }
         
         if(!biome.isHighHumidity() && biome.temperature >= 1.0F)
         {
-            BiomeDictionary.registerBiomeType(biome, DESERT);
+            types.add(DESERT);
         }
+        registerBiomeType(biome, types);
     }
 
     //Internal implementation    
