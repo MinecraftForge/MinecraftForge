@@ -820,7 +820,7 @@
      }
  
      /**
-@@ -4287,31 +4461,27 @@
+@@ -4287,38 +4461,121 @@
  
      public void func_96440_m(int par1, int par2, int par3, int par4)
      {
@@ -849,31 +849,13 @@
 -                    {
 -                        block.onNeighborBlockChange(this, j1, par2, k1, par4);
 -                    }
-+        for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS)
-+        {
-+            int x = par1 + dir.offsetX;
-+            int y = par2 + dir.offsetY;
-+            int z = par3 + dir.offsetZ;
-+            int blockID = getBlockId(x, y, z);
-+            
-+            if(blockID != 0)
-+            {
-+                Block block = Block.blocksList[blockID];
-+                block.onNeighborTileChange(this, x, y, z, par1, par2, par3);
-+                
-+                if(Block.isNormalCube(blockID))
-+                {
-+                    x += dir.offsetX;
-+                    y += dir.offsetY;
-+                    z += dir.offsetZ;
-+                    blockID = getBlockId(x, y, z);
-+                    block = Block.blocksList[blockID];
-+                    if(blockID != 0 && block.weakTileChanges())
-+                        block.onNeighborTileChange(this, x, y, z, par1, par2, par3);
-                 }
-             }
-         }
-@@ -4321,4 +4491,114 @@
+-                }
+-            }
+-        }
++        ForgeHooks.onTileChanged(this, par1, par2, par3);
+     }
+ 
+     public ILogAgent getWorldLogAgent()
      {
          return this.worldLogAgent;
      }
