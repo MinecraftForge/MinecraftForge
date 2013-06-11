@@ -1,6 +1,17 @@
 package net.minecraftforge.common;
 
 import java.util.*;
+
+import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
+
 import net.minecraft.world.biome.*;
 import static net.minecraft.world.biome.BiomeGenBase.*;
 import static net.minecraftforge.common.BiomeDictionary.Type.*;
@@ -24,25 +35,24 @@ public class BiomeDictionary
         END,
         MUSHROOM,
         MAGICAL;
+        
+        private Set<BiomeGenBase> biomes = Sets.newHashSet();
     }
 
-    private static final int BIOME_LIST_SIZE = 256;
-    private static BiomeInfo[] biomeList = new BiomeInfo[BIOME_LIST_SIZE];
-    private static ArrayList<BiomeGenBase>[] typeInfoList = new ArrayList[Type.values().length];
-
-    private static class BiomeInfo
+    private static <K, V extends Enum<V>> SetMultimap<K, V> newMultimap(final Class<V> valueClass)
     {
-        public EnumSet<Type> typeList;
-
-        public BiomeInfo(Type[] types)
-        {
-            typeList = EnumSet.noneOf(Type.class);
-            for(Type t : types)
-            {
-                typeList.add(t);
-            }
-        }
+        return Multimaps.newSetMultimap(Maps.<K, Collection<V>>newHashMap(),
+                new Supplier<Set<V>>()
+                {
+                    @Override
+                    public Set<V> get()
+                    {
+                        return EnumSet.noneOf(valueClass);
+                    }
+                });
     }
+    
+    private static Multimap<BiomeGenBase, Type> biomeTypesMap = newMultimap(Type.class);
 
     static
     {
@@ -50,37 +60,22 @@ public class BiomeDictionary
     }
 
     /**
-     * Registers a biome with a specific biome type
+     * Registers a biome with a set of biome types
      * 
      * @param biome the biome to be registered
-     * @param type the type to register the biome as
+     * @param types the set of types to register the biome
      * @return returns true if the biome was registered successfully
      */
-    public static boolean registerBiomeType(BiomeGenBase biome, Type ... types)
+    public static boolean registerBiomeType(BiomeGenBase biome, Collection<Type> types)
     {   
-        if(BiomeGenBase.biomeList[biome.biomeID] != null)
+        if (biome != null && types != null)
         {
-            for(Type type : types)
+            for (Type type: types)
             {
-                if(typeInfoList[type.ordinal()] == null)
-                {
-                    typeInfoList[type.ordinal()] = new ArrayList<BiomeGenBase>();
-                }
-
-                typeInfoList[type.ordinal()].add(biome);
+                type.biomes.add(biome);
             }
-
-            if(biomeList[biome.biomeID] == null)
-            {
-                biomeList[biome.biomeID] = new BiomeInfo(types);
-            }
-            else
-            {
-                for(Type type : types)
-                {
-                    biomeList[biome.biomeID].typeList.add(type);
-                }
-            }
+            
+            biomeTypesMap.putAll(biome, types);
 
             return true;
         }
@@ -89,37 +84,66 @@ public class BiomeDictionary
     }
 
     /**
-     * Returns a list of biomes registered with a specific type
+     * Registers a biome with a set of biome types
+     * 
+     * @param biome the biome to be registered
+     * @param type the set of types to register the biome
+     * @return returns true if the biome was registered successfully
+     */
+    public static boolean registerBiomeType(BiomeGenBase biome, Type ... types)
+    {
+        return registerBiomeType(biome, Arrays.asList(types));
+    }
+    
+    /**
+     * Returns an array of biomes registered with a specific type
      * 
      * @param type the Type to look for
-     * @return a list of biomes of the specified type, null if there are none
+     * @return an array of biomes of the specified type
      */
     public static BiomeGenBase[] getBiomesForType(Type type)
     {
-        if(typeInfoList[type.ordinal()] != null)
-        {
-            return (BiomeGenBase[])typeInfoList[type.ordinal()].toArray(new BiomeGenBase[0]);
-        }
+        return getBiomeListForType(type).toArray(new BiomeGenBase[0]);
+    }
 
-        return new BiomeGenBase[0];
+    /**
+     * Returns a list of biomes registered with a specific type
+     * 
+     * @param type the Type to look for
+     * @return an list of biomes of the specified type
+     */
+    public static Collection<BiomeGenBase> getBiomeListForType(Type type)
+    {
+        return ImmutableList.copyOf(type.biomes);
     }
 
     /**
      * Gets a list of Types that a specific biome is registered with
      * 
      * @param biome the biome to check
-     * @return the list of types, null if there are none
+     * @return the list of types
      */
-    public static Type[] getTypesForBiome(BiomeGenBase biome)
+    public static Collection<Type> getTypesListForBiome(BiomeGenBase biome)
     {
         checkRegistration(biome);
 
-        if(biomeList[biome.biomeID] != null)
+        if(biome != null)
         {
-            return (Type[])biomeList[biome.biomeID].typeList.toArray(new Type[0]);
+            return ImmutableList.copyOf(biomeTypesMap.get(biome));
         }
 
-        return new Type[0];
+        return Collections.emptyList();
+    }
+
+    /**
+     * Gets an array of Types that a specific biome is registered with
+     * 
+     * @param biome the biome to check
+     * @return the array of types
+     */
+    public static Type[] getTypesForBiome(BiomeGenBase biome)
+    {
+        return getTypesListForBiome(biome).toArray(new Type[0]);
     }
 
     /**
@@ -131,17 +155,17 @@ public class BiomeDictionary
      */
     public static boolean areBiomesEquivalent(BiomeGenBase biomeA, BiomeGenBase biomeB)
     {
-        int a = biomeA.biomeID;
-        int b = biomeB.biomeID;
-
-        checkRegistration(biomeA);
-        checkRegistration(biomeB);
-
-        if(biomeList[a] != null && biomeList[b] != null)
+        if (biomeA != null && biomeB != null)
         {
-            for(Type type : biomeList[a].typeList)
+            checkRegistration(biomeA);
+            checkRegistration(biomeB);
+
+            Collection<Type> aTypes = getTypesListForBiome(biomeA);
+            Collection<Type> bTypes = getTypesListForBiome(biomeB);
+            
+            for(Type type : aTypes)
             {
-                if(containsType(biomeList[b], type))
+                if(bTypes.contains(type))
                 {
                     return true;
                 }
@@ -161,13 +185,7 @@ public class BiomeDictionary
     public static boolean isBiomeOfType(BiomeGenBase biome, Type type)
     {
         checkRegistration(biome);
-
-        if(biomeList[biome.biomeID] != null)
-        {
-            return containsType(biomeList[biome.biomeID], type);
-        }
-
-        return false;
+        return biomeTypesMap.containsEntry(biome, type);
     }
 
     /**
@@ -176,13 +194,13 @@ public class BiomeDictionary
      * @return returns true if the biome has been registered, false otherwise
      */
     public static boolean isBiomeRegistered(BiomeGenBase biome)
-    {    
-        return biomeList[biome.biomeID] != null;
+    {
+        return biomeTypesMap.containsKey(biome);
     }
 
     public static boolean isBiomeRegistered(int biomeID)
     {
-        return biomeList[biomeID] != null;
+        return isBiomeRegistered(BiomeGenBase.biomeList[biomeID]);
     }
 
     /**
@@ -193,12 +211,9 @@ public class BiomeDictionary
      */
     public static void registerAllBiomes()
     {
-        for(int i = 0; i < BIOME_LIST_SIZE; i++)
+        for (BiomeGenBase biome: BiomeGenBase.biomeList)
         {
-            if(BiomeGenBase.biomeList[i] != null)
-            {
-                checkRegistration(BiomeGenBase.biomeList[i]);
-            }
+            checkRegistration(biome);
         }
     }
 
@@ -212,7 +227,9 @@ public class BiomeDictionary
      * @param biome the biome to be considered
      */
     public static void makeBestGuess(BiomeGenBase biome)
-    {    
+    {
+        if (biome == null) return;
+        
         if(biome.theBiomeDecorator.treesPerChunk >= 3)
         {
             if(biome.isHighHumidity() && biome.temperature >= 1.0F)
@@ -267,35 +284,30 @@ public class BiomeDictionary
         }
     }
 
-    private static boolean containsType(BiomeInfo info, Type type)
-    {
-        return info.typeList.contains(type);
-    }
-
     private static void registerVanillaBiomes()
     {
-        registerBiomeType(ocean,               WATER          );
-        registerBiomeType(plains,              PLAINS         );
-        registerBiomeType(desert,              DESERT         );
-        registerBiomeType(extremeHills,        MOUNTAIN       );
-        registerBiomeType(forest,              FOREST         );
-        registerBiomeType(taiga,               FOREST,  FROZEN);
-        registerBiomeType(taigaHills,          FOREST,  FROZEN);
-        registerBiomeType(swampland,           SWAMP          );
-        registerBiomeType(river,               WATER          );
-        registerBiomeType(frozenOcean,         WATER,   FROZEN);
-        registerBiomeType(frozenRiver,         WATER,   FROZEN);
-        registerBiomeType(icePlains,           FROZEN         );
-        registerBiomeType(iceMountains,        FROZEN         );
-        registerBiomeType(beach,               BEACH          );
-        registerBiomeType(desertHills,         DESERT         );
-        registerBiomeType(jungle,              JUNGLE         );
-        registerBiomeType(jungleHills,         JUNGLE         );
-        registerBiomeType(forestHills,         FOREST         );
-        registerBiomeType(sky,                 END            );
-        registerBiomeType(hell,                NETHER         );
-        registerBiomeType(mushroomIsland,      MUSHROOM       );
-        registerBiomeType(extremeHillsEdge,    MOUNTAIN       );
-        registerBiomeType(mushroomIslandShore, MUSHROOM, BEACH);
+        registerBiomeType(ocean,               ImmutableList.of(WATER          ));
+        registerBiomeType(plains,              ImmutableList.of(PLAINS         ));
+        registerBiomeType(desert,              ImmutableList.of(DESERT         ));
+        registerBiomeType(extremeHills,        ImmutableList.of(MOUNTAIN       ));
+        registerBiomeType(forest,              ImmutableList.of(FOREST         ));
+        registerBiomeType(taiga,               ImmutableList.of(FOREST,  FROZEN));
+        registerBiomeType(taigaHills,          ImmutableList.of(FOREST,  FROZEN));
+        registerBiomeType(swampland,           ImmutableList.of(SWAMP          ));
+        registerBiomeType(river,               ImmutableList.of(WATER          ));
+        registerBiomeType(frozenOcean,         ImmutableList.of(WATER,   FROZEN));
+        registerBiomeType(frozenRiver,         ImmutableList.of(WATER,   FROZEN));
+        registerBiomeType(icePlains,           ImmutableList.of(FROZEN         ));
+        registerBiomeType(iceMountains,        ImmutableList.of(FROZEN         ));
+        registerBiomeType(beach,               ImmutableList.of(BEACH          ));
+        registerBiomeType(desertHills,         ImmutableList.of(DESERT         ));
+        registerBiomeType(jungle,              ImmutableList.of(JUNGLE         ));
+        registerBiomeType(jungleHills,         ImmutableList.of(JUNGLE         ));
+        registerBiomeType(forestHills,         ImmutableList.of(FOREST         ));
+        registerBiomeType(sky,                 ImmutableList.of(END            ));
+        registerBiomeType(hell,                ImmutableList.of(NETHER         ));
+        registerBiomeType(mushroomIsland,      ImmutableList.of(MUSHROOM       ));
+        registerBiomeType(extremeHillsEdge,    ImmutableList.of(MOUNTAIN       ));
+        registerBiomeType(mushroomIslandShore, ImmutableList.of(MUSHROOM, BEACH));
     }
 }
