@@ -92,6 +92,8 @@ public class RelaunchClassLoader extends URLClassLoader
         addTransformerExclusion("com.google.common.");
         addTransformerExclusion("org.bouncycastle.");
         addTransformerExclusion("cpw.mods.fml.common.asm.transformers.deobf.");
+        addTransformerExclusion("cpw.mods.fml.common.patcher.");
+        addTransformerExclusion("cpw.mods.fml.repackage.");
 
         if (DEBUG_CLASSLOADING_SAVE)
         {
@@ -101,7 +103,7 @@ public class RelaunchClassLoader extends URLClassLoader
             {
                 temp_folder = new File(FMLRelaunchLog.minecraftHome, "CLASSLOADER_TEMP" + x++);
             }
-            
+
             if (temp_folder.exists())
             {
                 FMLRelaunchLog.info("DEBUG_CLASSLOADING_SAVE enabled,  but 10 temp directories already exist, clean them and try again.");

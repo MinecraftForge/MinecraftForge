@@ -30,6 +30,7 @@ import java.security.cert.TrustAnchor;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.swing.JOptionPane;
@@ -41,7 +42,9 @@ import org.objectweb.asm.Opcodes;
 
 import cpw.mods.fml.common.CertificateHelper;
 import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
+import cpw.mods.fml.common.patcher.ClassPatchManager;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
+import cpw.mods.fml.relauncher.FMLRelauncher;
 import cpw.mods.fml.relauncher.IFMLCallHook;
 import cpw.mods.fml.relauncher.RelaunchClassLoader;
 
@@ -138,7 +141,11 @@ public class FMLSanityChecker implements IFMLCallHook
     public void injectData(Map<String, Object> data)
     {
         cl = (RelaunchClassLoader) data.get("classLoader");
-        FMLDeobfuscatingRemapper.INSTANCE.setup((File)data.get("mcLocation"), cl, (String) data.get("deobfuscationFileName"));
+        File mcDir = (File)data.get("mcLocation");
+        FMLDeobfuscatingRemapper.INSTANCE.setup(mcDir, cl, (String) data.get("deobfuscationFileName"));
+        File binpatches = new File(mcDir,"binpatch");
+        File side = new File(binpatches,FMLRelauncher.side().toLowerCase(Locale.ENGLISH));
+        ClassPatchManager.INSTANCE.setup(side);
     }
 
 }
