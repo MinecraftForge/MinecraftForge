@@ -73,6 +73,57 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         mcpNameBiMap=ImmutableBiMap.of();
     }
 
+    public void setupLoadOnly(String deobfFileName, boolean loadAll)
+    {
+        try
+        {
+            File mapData = new File(deobfFileName);
+            mapData = mapData.getCanonicalFile();
+            ZipFile mapZip = new ZipFile(mapData);
+            ZipEntry classData = mapZip.getEntry("joined.srg");
+            ZipInputSupplier zis = new ZipInputSupplier(mapZip, classData);
+            InputSupplier<InputStreamReader> srgSupplier = CharStreams.newReaderSupplier(zis,Charsets.UTF_8);
+            List<String> srgList = CharStreams.readLines(srgSupplier);
+            rawMethodMaps = Maps.newHashMap();
+            rawFieldMaps = Maps.newHashMap();
+            Builder<String, String> builder = ImmutableBiMap.<String,String>builder();
+            Builder<String, String> mcpBuilder = ImmutableBiMap.<String,String>builder();
+            Splitter splitter = Splitter.on(CharMatcher.anyOf(": ")).omitEmptyStrings().trimResults();
+            for (String line : srgList)
+            {
+                String[] parts = Iterables.toArray(splitter.split(line),String.class);
+                String typ = parts[0];
+                if ("CL".equals(typ))
+                {
+                    parseClass(builder, parts);
+                    parseMCPClass(mcpBuilder,parts);
+                }
+                else if ("MD".equals(typ) && loadAll)
+                {
+                    parseMethod(parts);
+                }
+                else if ("FD".equals(typ) && loadAll)
+                {
+                    parseField(parts);
+                }
+            }
+            classNameBiMap = builder.build();
+            // Special case some mappings for modloader mods
+            mcpBuilder.put("BaseMod","net/minecraft/src/BaseMod");
+            mcpBuilder.put("ModLoader","net/minecraft/src/ModLoader");
+            mcpBuilder.put("EntityRendererProxy","net/minecraft/src/EntityRendererProxy");
+            mcpBuilder.put("MLProp","net/minecraft/src/MLProp");
+            mcpBuilder.put("TradeEntry","net/minecraft/src/TradeEntry");
+            mcpNameBiMap = mcpBuilder.build();
+        }
+        catch (IOException ioe)
+        {
+            FMLRelaunchLog.log(Level.SEVERE, ioe, "An error occurred loading the deobfuscation map data");
+        }
+        methodNameMaps = Maps.newHashMapWithExpectedSize(rawMethodMaps.size());
+        fieldNameMaps = Maps.newHashMapWithExpectedSize(rawFieldMaps.size());
+
+    }
     public void setup(File mcDir, RelaunchClassLoader classLoader, String deobfFileName)
     {
         this.classLoader = classLoader;
