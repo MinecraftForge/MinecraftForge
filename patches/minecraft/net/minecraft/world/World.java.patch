@@ -820,7 +820,7 @@
      }
  
      /**
-@@ -4287,31 +4461,27 @@
+@@ -4287,30 +4461,28 @@
  
      public void func_96440_m(int par1, int par2, int par3, int par4)
      {
@@ -843,37 +843,36 @@
 -                    j1 += Direction.offsetX[i1];
 -                    k1 += Direction.offsetZ[i1];
 -                    l1 = this.getBlockId(j1, par2, k1);
--                    block = Block.blocksList[l1];
++        for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS)
++        {
++            int j1 = par1 + dir.offsetX;
++            int y = par2 + dir.offsetY;
++            int k1 = par3 + dir.offsetZ;
++            int l1 = getBlockId(j1, y, k1);
++            Block block = Block.blocksList[l1];
++            
++            if(block != null)
++            {
++                block.onNeighborTileChange(this, j1, y, k1, par1, par2, par3);
++                
++                if(Block.isNormalCube(l1))
++                {
++                    j1 += dir.offsetX;
++                    y += dir.offsetY;
++                    k1 += dir.offsetZ;
++                    l1 = getBlockId(j1, y, k1);
+                     block = Block.blocksList[l1];
 -
 -                    if (Block.redstoneComparatorIdle.func_94487_f(l1))
 -                    {
 -                        block.onNeighborBlockChange(this, j1, par2, k1, par4);
--                    }
-+        for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS)
-+        {
-+            int x = par1 + dir.offsetX;
-+            int y = par2 + dir.offsetY;
-+            int z = par3 + dir.offsetZ;
-+            int blockID = getBlockId(x, y, z);
-+            Block block = Block.blocksList[blockID];
-+            
-+            if(block != null)
-+            {
-+                block.onNeighborTileChange(this, x, y, z, par1, par2, par3);
-+                
-+                if(Block.isNormalCube(blockID))
-+                {
-+                    x += dir.offsetX;
-+                    y += dir.offsetY;
-+                    z += dir.offsetZ;
-+                    blockID = getBlockId(x, y, z);
-+                    block = Block.blocksList[blockID];
 +                    if(block != null && block.weakTileChanges())
-+                        block.onNeighborTileChange(this, x, y, z, par1, par2, par3);
++                    {
++                        block.onNeighborTileChange(this, j1, y, k1, par1, par2, par3);
+                     }
                  }
              }
-         }
-@@ -4321,4 +4491,115 @@
+@@ -4321,4 +4493,115 @@
      {
          return this.worldLogAgent;
      }
