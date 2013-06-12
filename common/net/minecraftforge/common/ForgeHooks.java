@@ -381,36 +381,4 @@ public class ForgeHooks
         Block block = Block.blocksList[world.getBlockId(x, y, z)];
         return (block == null ? 0 : block.getEnchantPowerBonus(world, x, y, z));
     }
-
-    /**
-     * Replacement body for World.func_96440_m. Not hardcoded to comparators and the x/z plane.
-     * Do not call outside of forge internals
-     */
-    public static void onTileChanged(World world, int par1, int par2, int par3)
-    {
-        for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS)
-        {
-            int x = par1 + dir.offsetX;
-            int y = par2 + dir.offsetY;
-            int z = par3 + dir.offsetZ;
-            int blockID = world.getBlockId(x, y, z);
-            
-            if(blockID != 0)
-            {
-                Block block = Block.blocksList[blockID];
-                block.onNeighborTileChange(world, x, y, z, par1, par2, par3);
-                
-                if(Block.isNormalCube(blockID))
-                {
-                    x += dir.offsetX;
-                    y += dir.offsetY;
-                    z += dir.offsetZ;
-                    blockID = world.getBlockId(x, y, z);
-                    block = Block.blocksList[blockID];
-                    if(blockID != 0 && block.weakTileChanges())
-                        block.onNeighborTileChange(world, x, y, z, par1, par2, par3);
-                }
-            }
-        }
-    }
 }

@@ -1111,14 +1111,14 @@
 +    }
 +    
 +    /**
-+     * Called when a tile entity on a side of this block changes is created or is destroyed
++     * Called when a tile entity on a side of this block changes is created or is destroyed.
 +     * @param world The world
-+     * @param x X
-+     * @param y Y
-+     * @param z Z
-+     * @param tileX The x position of the tile
-+     * @param tileY The y position of the tile
-+     * @param tileZ The z position of the tile
++     * @param x The x position of this block instance
++     * @param y The y position of this block instance
++     * @param z The z position of this block instance
++     * @param tileX The x position of the tile that changed
++     * @param tileY The y position of the tile that changed
++     * @param tileZ The z position of the tile that changed
 +     */
 +    public void onNeighborTileChange(World world, int x, int y, int z, int tileX, int tileY, int tileZ)
 +    {
