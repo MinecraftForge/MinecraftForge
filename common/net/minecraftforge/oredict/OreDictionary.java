@@ -56,12 +56,16 @@ public class OreDictionary
             registerOre("oreRedstone", Block.oreRedstone);
             registerOre("oreEmerald", Block.oreEmerald);
             registerOre("oreQuartz", Block.oreNetherQuartz);
+            registerOre("stone", Block.stone);
+            registerOre("cobblestone", Block.cobblestone);
         }
 
         // Build our list of items to replace with ore tags
         Map<ItemStack, String> replacements = new HashMap<ItemStack, String>();
         replacements.put(new ItemStack(Block.planks, 1, WILDCARD_VALUE), "plankWood");
         replacements.put(new ItemStack(Item.stick), "stickWood");
+        replacements.put(new ItemStack(Block.stone), "stone");
+        replacements.put(new ItemStack(Block.cobblestone), "cobblestone");
 
         // Register dyes
         String[] dyes =
