@@ -9,7 +9,7 @@
  
  public class EntityMinecartHopper extends EntityMinecartContainer implements Hopper
  {
-@@ -53,6 +55,10 @@
+@@ -54,6 +56,10 @@
       */
      public boolean interact(EntityPlayer par1EntityPlayer)
      {
@@ -19,4 +19,4 @@
 +        }
          if (!this.worldObj.isRemote)
          {
-             par1EntityPlayer.func_96125_a(this);
+             par1EntityPlayer.displayGUIHopperMinecart(this);

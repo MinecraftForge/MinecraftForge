@@ -1,7 +1,7 @@
 --- ../src_base/minecraft/net/minecraft/world/chunk/storage/AnvilSaveHandler.java
 +++ ../src_work/minecraft/net/minecraft/world/chunk/storage/AnvilSaveHandler.java
 @@ -24,15 +24,9 @@
-         File file1 = this.getSaveDirectory();
+         File file1 = this.getWorldDirectory();
          File file2;
  
 -        if (par1WorldProvider instanceof WorldProviderHell)

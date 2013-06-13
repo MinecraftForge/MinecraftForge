@@ -19,6 +19,15 @@
  public abstract class MinecraftServer implements ICommandSender, Runnable, IPlayerUsage
  {
      /** Instance of Minecraft Server. */
+@@ -80,7 +85,7 @@
+     private int serverPort = -1;
+ 
+     /** The server world instances. */
+-    public WorldServer[] worldServers;
++    public WorldServer[] worldServers = new WorldServer[0];
+ 
+     /** The ServerConfigurationManager instance. */
+     private ServerConfigurationManager serverConfigManager;
 @@ -133,7 +138,8 @@
      public final long[] tickTimeArray = new long[100];
  
@@ -29,7 +38,7 @@
      private KeyPair serverKeyPair;
  
      /** Username of the server owner (for integrated servers) */
-@@ -209,8 +215,6 @@
+@@ -210,8 +216,6 @@
      {
          this.convertMapIfNeeded(par1Str);
          this.setUserMessage("menu.loadingLevel");
@@ -38,7 +47,7 @@
          ISaveHandler isavehandler = this.anvilConverterForAnvilFile.getSaveLoader(par1Str, true);
          WorldInfo worldinfo = isavehandler.loadWorldInfo();
          WorldSettings worldsettings;
-@@ -230,46 +234,23 @@
+@@ -231,46 +235,23 @@
              worldsettings.enableBonusChest();
          }
  
@@ -96,7 +105,15 @@
          this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();
      }
-@@ -398,7 +379,14 @@
+@@ -346,6 +327,7 @@
+         if (!this.worldIsBeingDeleted)
+         {
+             WorldServer[] aworldserver = this.worldServers;
++            if (aworldserver == null) return; //ForgE: Just in case, NPE protection as it has been encountered.
+             int i = aworldserver.length;
+ 
+             for (int j = 0; j < i; ++j)
+@@ -399,7 +381,14 @@
              for (int i = 0; i < this.worldServers.length; ++i)
              {
                  WorldServer worldserver = this.worldServers[i];
@@ -111,7 +128,7 @@
              }
  
              if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
-@@ -622,13 +610,15 @@
+@@ -624,13 +613,15 @@
          this.theProfiler.startSection("levels");
          int i;
  
@@ -132,7 +149,7 @@
                  this.theProfiler.startSection(worldserver.getWorldInfo().getWorldName());
                  this.theProfiler.startSection("pools");
                  worldserver.getWorldVec3Pool().clear();
-@@ -675,9 +665,11 @@
+@@ -677,9 +668,11 @@
                  this.theProfiler.endSection();
              }
  
@@ -147,7 +164,7 @@
          this.theProfiler.endStartSection("connection");
          this.getNetworkThread().networkTick();
          this.theProfiler.endStartSection("players");
-@@ -731,7 +723,13 @@
+@@ -733,7 +726,13 @@
       */
      public WorldServer worldServerForDimension(int par1)
      {
@@ -162,7 +179,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -1102,6 +1100,7 @@
+@@ -1104,6 +1103,7 @@
  
              if (worldserver != null)
              {

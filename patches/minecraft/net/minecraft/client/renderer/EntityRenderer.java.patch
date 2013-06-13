@@ -56,17 +56,24 @@
                  GL11.glRotatef(entityliving.prevRotationYaw + (entityliving.rotationYaw - entityliving.prevRotationYaw) * par1 + 180.0F, 0.0F, -1.0F, 0.0F);
                  GL11.glRotatef(entityliving.prevRotationPitch + (entityliving.rotationPitch - entityliving.prevRotationPitch) * par1, -1.0F, 0.0F, 0.0F);
              }
-@@ -1142,7 +1146,9 @@
+@@ -1142,23 +1146,20 @@
              {
                  RenderHelper.enableStandardItemLighting();
                  this.mc.mcProfiler.endStartSection("entities");
 +                ForgeHooksClient.setRenderPass(0);
                  renderglobal.renderEntities(entityliving.getPosition(par1), frustrum, par1);
+-                this.enableLightmap((double)par1);
+-                this.mc.mcProfiler.endStartSection("litParticles");
+-                effectrenderer.renderLitParticles(entityliving, par1);
+-                RenderHelper.disableStandardItemLighting();
+-                this.setupFog(0, par1);
+-                this.mc.mcProfiler.endStartSection("particles");
+-                effectrenderer.renderParticles(entityliving, par1);
+-                this.disableLightmap((double)par1);
 +                ForgeHooksClient.setRenderPass(-1);
-                 this.enableLightmap((double)par1);
-                 this.mc.mcProfiler.endStartSection("litParticles");
-                 effectrenderer.renderLitParticles(entityliving, par1);
-@@ -1157,8 +1163,11 @@
+ 
+                 if (this.mc.objectMouseOver != null && entityliving.isInsideOfMaterial(Material.water) && entityliving instanceof EntityPlayer && !this.mc.gameSettings.hideGUI)
+                 {
                      entityplayer = (EntityPlayer)entityliving;
                      GL11.glDisable(GL11.GL_ALPHA_TEST);
                      this.mc.mcProfiler.endStartSection("outline");
@@ -80,7 +87,7 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1213,6 +1222,13 @@
+@@ -1213,6 +1214,13 @@
                  renderglobal.sortAndRender(entityliving, 1, (double)par1);
              }
  
@@ -94,7 +101,7 @@
              GL11.glDepthMask(true);
              GL11.glEnable(GL11.GL_CULL_FACE);
              GL11.glDisable(GL11.GL_BLEND);
-@@ -1222,15 +1238,18 @@
+@@ -1222,15 +1230,18 @@
                  entityplayer = (EntityPlayer)entityliving;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
                  this.mc.mcProfiler.endStartSection("outline");
@@ -116,10 +123,20 @@
              GL11.glDisable(GL11.GL_BLEND);
              this.mc.mcProfiler.endStartSection("weather");
              this.renderRainSnow(par1);
-@@ -1240,6 +1259,9 @@
+@@ -1240,6 +1251,19 @@
              {
                  this.renderCloudsCheck(renderglobal, par1);
              }
++
++            //Forge: Moved section from above, now particles are the last thing to render.
++            this.enableLightmap((double)par1);
++            this.mc.mcProfiler.endStartSection("litParticles");
++            effectrenderer.renderLitParticles(entityliving, par1);
++            RenderHelper.disableStandardItemLighting();
++            this.setupFog(0, par1);
++            this.mc.mcProfiler.endStartSection("particles");
++            effectrenderer.renderParticles(entityliving, par1);
++            this.disableLightmap((double)par1);
 +
 +            this.mc.mcProfiler.endStartSection("FRenderLast");
 +            ForgeHooksClient.dispatchRenderLast(renderglobal, par1);

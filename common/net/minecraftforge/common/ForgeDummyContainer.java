@@ -3,12 +3,17 @@ package net.minecraftforge.common;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.logging.Level;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.management.PlayerInstance;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.common.network.ForgeConnectionHandler;
+import net.minecraftforge.common.network.ForgeNetworkHandler;
+import net.minecraftforge.common.network.ForgePacketHandler;
+import net.minecraftforge.common.network.ForgeTinyPacketHandler;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -19,11 +24,20 @@ import cpw.mods.fml.common.LoadController;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.WorldAccessContainer;
+import cpw.mods.fml.common.event.FMLConstructionEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.FMLNetworkHandler;
+import cpw.mods.fml.common.network.NetworkMod;
 
 import static net.minecraftforge.common.ForgeVersion.*;
 
+@NetworkMod(
+        channels = "FORGE",
+        connectionHandler = ForgeConnectionHandler.class,
+        packetHandler     = ForgePacketHandler.class,
+        tinyPacketHandler = ForgeTinyPacketHandler.class
+    )
 public class ForgeDummyContainer extends DummyModContainer implements WorldAccessContainer
 {
     public static int clumpingThreshold = 64;
@@ -83,7 +97,7 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
             clumpingThreshold = 64;
             prop.set(64);
         }
-        
+
         prop = config.get(Configuration.CATEGORY_GENERAL, "legacyFurnaceOutput", false);
         prop.comment = "Controls the sides of vanilla furnaces for Forge's ISidedInventroy, Vanilla defines the output as the bottom, but mods/Forge define it as the sides. Settings this to true will restore the old side relations.";
         legacyFurnaceSides = prop.getBoolean(false);
@@ -121,6 +135,21 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     {
     	bus.register(this);
         return true;
+    }
+
+    @Subscribe
+    public void modConstruction(FMLConstructionEvent evt)
+    {
+        FMLLog.info("Registering Forge Packet Handler");
+        try
+        {
+            FMLNetworkHandler.instance().registerNetworkMod(new ForgeNetworkHandler(this));
+            FMLLog.info("Succeeded registering Forge Packet Handler");
+        }
+        catch (Exception e)
+        {
+            FMLLog.log(Level.SEVERE, e, "Failed to register packet handler for Forge");
+        }
     }
 
     @Subscribe

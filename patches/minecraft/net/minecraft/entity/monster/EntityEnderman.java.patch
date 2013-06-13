@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/entity/monster/EntityEnderman.java
 +++ ../src_work/minecraft/net/minecraft/entity/monster/EntityEnderman.java
-@@ -11,6 +11,8 @@
+@@ -12,6 +12,8 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
@@ -9,7 +9,7 @@
  
  public class EntityEnderman extends EntityMob
  {
-@@ -264,12 +266,17 @@
+@@ -275,12 +277,17 @@
       */
      protected boolean teleportTo(double par1, double par3, double par5)
      {
@@ -30,7 +30,7 @@
          boolean flag = false;
          int i = MathHelper.floor_double(this.posX);
          int j = MathHelper.floor_double(this.posY);
-@@ -439,7 +446,7 @@
+@@ -457,7 +464,7 @@
                      }
                  }
  

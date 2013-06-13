@@ -1,0 +1,17 @@
+--- ../src_base/minecraft/net/minecraft/util/ChunkCoordinates.java
++++ ../src_work/minecraft/net/minecraft/util/ChunkCoordinates.java
+@@ -64,10 +64,10 @@
+      */
+     public float getDistanceSquared(int par1, int par2, int par3)
+     {
+-        int l = this.posX - par1;
+-        int i1 = this.posY - par2;
+-        int j1 = this.posZ - par3;
+-        return (float)(l * l + i1 * i1 + j1 * j1);
++        float l = this.posX - par1;
++        float i1 = this.posY - par2;
++        float j1 = this.posZ - par3;
++        return l * l + i1 * i1 + j1 * j1;
+     }
+ 
+     /**

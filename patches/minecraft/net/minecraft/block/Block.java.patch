@@ -131,7 +131,17 @@
                  }
              }
          }
-@@ -1086,7 +1105,7 @@
+@@ -926,7 +945,8 @@
+     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
+     {
+         int l = par1World.getBlockId(par2, par3, par4);
+-        return l == 0 || blocksList[l].blockMaterial.isReplaceable();
++        Block block = Block.blocksList[l];
++        return block == null || block.isBlockReplaceable(par1World, par2, par3, par4);
+     }
+ 
+     /**
+@@ -1086,7 +1106,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -140,7 +150,7 @@
          {
              ItemStack itemstack = this.createStackedBlock(par6);
  
-@@ -1102,12 +1121,13 @@
+@@ -1102,12 +1122,13 @@
          }
      }
  
@@ -155,7 +165,7 @@
      }
  
      /**
-@@ -1435,4 +1455,881 @@
+@@ -1443,4 +1464,944 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -259,7 +269,7 @@
 +     */
 +    public boolean isBlockReplaceable(World world, int x, int y, int z)
 +    {
-+        return false;
++        return blockMaterial.isReplaceable();
 +    }
 +
 +    /**
@@ -724,6 +734,23 @@
 +    }
 +
 +    /**
++     * Called when the block is destroyed by an explosion.
++     * Useful for allowing the block to take into account tile entities,
++     * metadata, etc. when exploded, before it is removed.
++     *
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @param Explosion The explosion instance affecting the block
++     */
++    public void onBlockExploded(World world, int x, int y, int z, Explosion explosion)
++    {
++        world.setBlockToAir(x, y, z);
++        onBlockDestroyedByExplosion(world, x, y, z, explosion);
++    }
++
++    /**
 +     * Determine if this block can make a redstone connection on the side provided,
 +     * Useful to control which sides are inputs and outputs for redstone wires.
 +     *
@@ -1006,11 +1033,14 @@
 +     */
 +    public boolean isBeaconBase(World worldObj, int x, int y, int z, int beaconX, int beaconY, int beaconZ)
 +    {
-+        return (blockID == blockEmerald.blockID || blockID == blockGold.blockID || blockID == blockDiamond.blockID || blockID == blockSteel.blockID);
++        return (blockID == blockEmerald.blockID || blockID == blockGold.blockID || blockID == blockDiamond.blockID || blockID == blockIron.blockID);
 +    }
 +
 +    /**
-+     * Rotate the block around the specified axis by one rotation
++     * Rotate the block. For vanilla blocks this rotates around the axis passed in (generally, it should be the "face" that was hit).
++     * Note: for mod blocks, this is up to the block and modder to decide. It is not mandated that it be a rotation around the
++     * face, but could be a rotation to orient *to* that face, or a visiting of possible rotations.
++     * The method should return true if the rotation was successful though.
 +     *
 +     * @param worldObj The world
 +     * @param x X position
@@ -1026,6 +1056,7 @@
 +
 +    /**
 +     * Get the rotations that can apply to the block at the specified coordinates. Null means no rotations are possible.
++     * Note, this is up to the block to decide. It may not be accurate or representative.
 +     * @param worldObj The world
 +     * @param x X position
 +     * @param y Y position
@@ -1035,5 +1066,47 @@
 +    public ForgeDirection[] getValidRotations(World worldObj, int x, int y, int z)
 +    {
 +        return RotationHelper.getValidVanillaBlockRotations(this);
++    }
++
++    /**
++     * Determines the amount of enchanting power this block can provide to an enchanting table.
++     * @param world The World
++     * @param x X position
++     * @param y Y position
++     * @param z Z position
++     * @return The amount of enchanting power this block produces.
++     */
++    public float getEnchantPowerBonus(World world, int x, int y, int z)
++    {
++        return getEnchantPower(world, x, y, z);
++    }
++
++    @Deprecated //Changed return to float, see above.
++    public int getEnchantPower(World world, int x, int y, int z)
++    {
++        return blockID == bookShelf.blockID ? 1 : 0;
++    }
++    /**
++     * Common way to recolour a block with an external tool
++     * @param world The world
++     * @param x X
++     * @param y Y
++     * @param z Z
++     * @param side The side hit with the colouring tool
++     * @param colour The colour to change to
++     * @return If the recolouring was successful
++     */
++    public boolean recolourBlock(World world, int x, int y, int z, ForgeDirection side, int colour)
++    {
++        if (blockID == cloth.blockID)
++        {
++            int meta = world.getBlockMetadata(x, y, z);
++            if (meta != colour)
++            {
++                world.setBlockMetadataWithNotify(x, y, z, colour, 3);
++                return true;
++            }
++        }
++        return false;
 +    }
  }

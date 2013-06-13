@@ -1,0 +1,19 @@
+--- ../src_base/minecraft/net/minecraft/nbt/NBTTagList.java
++++ ../src_work/minecraft/net/minecraft/nbt/NBTTagList.java
+@@ -1,7 +1,5 @@
+ package net.minecraft.nbt;
+ 
+-import cpw.mods.fml.relauncher.Side;
+-import cpw.mods.fml.relauncher.SideOnly;
+ import java.io.DataInput;
+ import java.io.DataOutput;
+ import java.io.IOException;
+@@ -92,8 +90,6 @@
+         this.tagList.add(par1NBTBase);
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+-
+     /**
+      * Removes a tag at the given index.
+      */

@@ -32,7 +32,23 @@
      }
  
      /**
-@@ -135,7 +146,29 @@
+@@ -80,6 +91,15 @@
+      */
+     public void onUpdate()
+     {
++        ItemStack stack = this.getDataWatcher().getWatchableObjectItemStack(10);
++        if (stack != null && stack.getItem() != null)
++        {
++            if (stack.getItem().onEntityItemUpdate(this))
++            {
++                return;
++            }
++        }
++
+         super.onUpdate();
+ 
+         if (this.delayBeforeCanPickup > 0)
+@@ -135,7 +155,29 @@
  
          ++this.age;
  
@@ -63,7 +79,7 @@
          {
              this.setDead();
          }
-@@ -270,6 +303,7 @@
+@@ -270,6 +312,7 @@
      {
          par1NBTTagCompound.setShort("Health", (short)((byte)this.health));
          par1NBTTagCompound.setShort("Age", (short)this.age);
@@ -71,7 +87,7 @@
  
          if (this.getEntityItem() != null)
          {
-@@ -287,10 +321,17 @@
+@@ -287,10 +330,17 @@
          NBTTagCompound nbttagcompound1 = par1NBTTagCompound.getCompoundTag("Item");
          this.setEntityItemStack(ItemStack.loadItemStackFromNBT(nbttagcompound1));
  
@@ -90,7 +106,7 @@
      }
  
      /**
-@@ -300,10 +341,22 @@
+@@ -300,10 +350,22 @@
      {
          if (!this.worldObj.isRemote)
          {

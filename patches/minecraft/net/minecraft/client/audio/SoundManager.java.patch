@@ -41,7 +41,7 @@
              sndSystem = new SoundSystem();
              this.options.soundVolume = f;
              this.options.musicVolume = f1;
-@@ -177,10 +187,12 @@
+@@ -179,10 +189,12 @@
                  }
  
                  SoundPoolEntry soundpoolentry = this.soundPoolMusic.getRandomSound();
@@ -55,7 +55,7 @@
                      sndSystem.backgroundMusic("BgMusic", soundpoolentry.soundUrl, soundpoolentry.soundName, false);
                      sndSystem.setVolume("BgMusic", this.options.musicVolume);
                      sndSystem.play("BgMusic");
-@@ -247,6 +259,7 @@
+@@ -249,6 +261,7 @@
              if (par1Str != null)
              {
                  SoundPoolEntry soundpoolentry = this.soundPoolStreaming.getRandomSoundFromSoundPool(par1Str);
@@ -63,7 +63,7 @@
  
                  if (soundpoolentry != null)
                  {
-@@ -258,6 +271,7 @@
+@@ -260,6 +273,7 @@
                      float f3 = 16.0F;
                      sndSystem.newStreamingSource(true, s1, soundpoolentry.soundUrl, soundpoolentry.soundName, false, par2, par3, par4, 2, f3 * 4.0F);
                      sndSystem.setVolume(s1, 0.5F * this.options.soundVolume);
@@ -71,7 +71,7 @@
                      sndSystem.play(s1);
                  }
              }
-@@ -437,6 +451,7 @@
+@@ -439,6 +453,7 @@
          if (loaded && this.options.soundVolume != 0.0F)
          {
              SoundPoolEntry soundpoolentry = this.soundPoolSounds.getRandomSoundFromSoundPool(par1Str);
@@ -79,7 +79,7 @@
  
              if (soundpoolentry != null && par5 > 0.0F)
              {
-@@ -458,6 +473,7 @@
+@@ -460,6 +475,7 @@
                  }
  
                  sndSystem.setVolume(s1, par5 * this.options.soundVolume);
@@ -87,7 +87,7 @@
                  sndSystem.play(s1);
              }
          }
-@@ -472,6 +488,7 @@
+@@ -474,6 +490,7 @@
          if (loaded && this.options.soundVolume != 0.0F)
          {
              SoundPoolEntry soundpoolentry = this.soundPoolSounds.getRandomSoundFromSoundPool(par1Str);
@@ -95,7 +95,7 @@
  
              if (soundpoolentry != null)
              {
-@@ -487,6 +504,7 @@
+@@ -489,6 +506,7 @@
                  par2 *= 0.25F;
                  sndSystem.setPitch(s1, par3);
                  sndSystem.setVolume(s1, par2 * this.options.soundVolume);

@@ -9,7 +9,27 @@
  @SideOnly(Side.CLIENT)
  public class GuiIngame extends Gui
  {
-@@ -170,7 +172,7 @@
+@@ -90,9 +92,16 @@
+ 
+         ItemStack itemstack = this.mc.thePlayer.inventory.armorItemInSlot(3);
+ 
+-        if (this.mc.gameSettings.thirdPersonView == 0 && itemstack != null && itemstack.itemID == Block.pumpkin.blockID)
+-        {
+-            this.renderPumpkinBlur(k, l);
++        if (this.mc.gameSettings.thirdPersonView == 0 && itemstack != null && itemstack.getItem() != null)
++        {
++            if (itemstack.itemID == Block.pumpkin.blockID)
++            {
++                this.renderPumpkinBlur(k, l);
++            }
++            else
++            {
++                itemstack.getItem().renderHelmetOverlay(itemstack, mc.thePlayer, scaledresolution, par1, par2, par3, par4);
++            }
+         }
+ 
+         if (!this.mc.thePlayer.isPotionActive(Potion.confusion))
+@@ -174,7 +183,7 @@
  
                  k3 = l - 39;
                  l2 = k3 - 10;
@@ -18,3 +38,21 @@
                  i3 = -1;
  
                  if (this.mc.thePlayer.isPotionActive(Potion.regeneration))
+@@ -435,7 +444,16 @@
+                     GL11.glPushMatrix();
+                     GL11.glEnable(GL11.GL_BLEND);
+                     GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+-                    fontrenderer.drawStringWithShadow(s1, i1, j1, 16777215 + (j5 << 24));
++                    FontRenderer font = highlightingItemStack.getItem().getFontRenderer(highlightingItemStack);
++                    if (font != null)
++                    {
++                        i1 = (k - font.getStringWidth(s1)) / 2;
++                        font.drawStringWithShadow(s1, i1, j1, 16777215 + (j5 << 24));
++                    }
++                    else
++                    {
++                        fontrenderer.drawStringWithShadow(s1, i1, j1, 16777215 + (j5 << 24));
++                    }
+                     GL11.glDisable(GL11.GL_BLEND);
+                     GL11.glPopMatrix();
+                 }

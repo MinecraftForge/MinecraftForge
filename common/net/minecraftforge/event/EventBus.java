@@ -24,6 +24,11 @@ public class EventBus
     
     public void register(Object target)
     {
+        if (listeners.containsKey(target))
+        {
+            return;
+        }
+
         Set<? extends Class<?>> supers = TypeToken.of(target.getClass()).getTypes().rawTypes();
         for (Method method : target.getClass().getMethods())
         {

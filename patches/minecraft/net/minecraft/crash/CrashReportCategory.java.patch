@@ -1,0 +1,16 @@
+--- ../src_base/minecraft/net/minecraft/crash/CrashReportCategory.java
++++ ../src_work/minecraft/net/minecraft/crash/CrashReportCategory.java
+@@ -130,8 +130,11 @@
+     public int func_85073_a(int par1)
+     {
+         StackTraceElement[] astacktraceelement = Thread.currentThread().getStackTrace();
+-        this.stackTrace = new StackTraceElement[astacktraceelement.length - 3 - par1];
+-        System.arraycopy(astacktraceelement, 3 + par1, this.stackTrace, 0, this.stackTrace.length);
++        //BugFix: Causes AIOOB for stacks < 3 + par1
++        int len = astacktraceelement.length - 3 - par1;
++        if (len <= 0) len = astacktraceelement.length;
++        this.stackTrace = new StackTraceElement[len];
++        System.arraycopy(astacktraceelement, astacktraceelement.length - len, this.stackTrace, 0, this.stackTrace.length);
+         return this.stackTrace.length;
+     }
+ 

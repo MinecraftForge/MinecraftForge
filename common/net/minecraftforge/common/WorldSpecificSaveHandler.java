@@ -11,7 +11,7 @@ import net.minecraft.world.storage.WorldInfo;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 
-//Class used internally to provide the world specific data directories. 
+//Class used internally to provide the world specific data directories.
 
 public class WorldSpecificSaveHandler implements ISaveHandler
 {
@@ -34,7 +34,7 @@ public class WorldSpecificSaveHandler implements ISaveHandler
     @Override public void saveWorldInfo(WorldInfo var1){ parent.saveWorldInfo(var1); }
     @Override public IPlayerFileData getSaveHandler() { return parent.getSaveHandler(); }
     @Override public void flush() { parent.flush(); }
-    @Override public String getSaveDirectoryName() { return parent.getSaveDirectoryName(); }
+    @Override public String getWorldDirectoryName() { return parent.getWorldDirectoryName(); }
 
     @Override
     public File getMapFileFromName(String name)

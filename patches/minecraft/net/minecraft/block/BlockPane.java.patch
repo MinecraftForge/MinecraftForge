@@ -1,0 +1,51 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockPane.java
++++ ../src_work/minecraft/net/minecraft/block/BlockPane.java
+@@ -13,6 +13,7 @@
+ import net.minecraft.util.Icon;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeDirection;
+ 
+ public class BlockPane extends Block
+ {
+@@ -90,10 +91,10 @@
+      */
+     public void addCollisionBoxesToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity)
+     {
+-        boolean flag = this.canThisPaneConnectToThisBlockID(par1World.getBlockId(par2, par3, par4 - 1));
+-        boolean flag1 = this.canThisPaneConnectToThisBlockID(par1World.getBlockId(par2, par3, par4 + 1));
+-        boolean flag2 = this.canThisPaneConnectToThisBlockID(par1World.getBlockId(par2 - 1, par3, par4));
+-        boolean flag3 = this.canThisPaneConnectToThisBlockID(par1World.getBlockId(par2 + 1, par3, par4));
++        boolean flag = this.canPaneConnectTo(par1World,par2, par3, par4,ForgeDirection.NORTH);
++        boolean flag1 = this.canPaneConnectTo(par1World,par2, par3, par4,ForgeDirection.SOUTH);
++        boolean flag2 = this.canPaneConnectTo(par1World,par2, par3, par4,ForgeDirection.WEST);
++        boolean flag3 = this.canPaneConnectTo(par1World,par2, par3, par4,ForgeDirection.EAST);
+ 
+         if ((!flag2 || !flag3) && (flag2 || flag3 || flag || flag1))
+         {
+@@ -151,10 +152,10 @@
+         float f1 = 0.5625F;
+         float f2 = 0.4375F;
+         float f3 = 0.5625F;
+-        boolean flag = this.canThisPaneConnectToThisBlockID(par1IBlockAccess.getBlockId(par2, par3, par4 - 1));
+-        boolean flag1 = this.canThisPaneConnectToThisBlockID(par1IBlockAccess.getBlockId(par2, par3, par4 + 1));
+-        boolean flag2 = this.canThisPaneConnectToThisBlockID(par1IBlockAccess.getBlockId(par2 - 1, par3, par4));
+-        boolean flag3 = this.canThisPaneConnectToThisBlockID(par1IBlockAccess.getBlockId(par2 + 1, par3, par4));
++        boolean flag = this.canPaneConnectTo(par1IBlockAccess,par2, par3, par4,ForgeDirection.NORTH);
++        boolean flag1 = this.canPaneConnectTo(par1IBlockAccess,par2, par3, par4,ForgeDirection.SOUTH);
++        boolean flag2 = this.canPaneConnectTo(par1IBlockAccess,par2, par3, par4,ForgeDirection.WEST);
++        boolean flag3 = this.canPaneConnectTo(par1IBlockAccess,par2, par3, par4,ForgeDirection.EAST);
+ 
+         if ((!flag2 || !flag3) && (flag2 || flag3 || flag || flag1))
+         {
+@@ -240,4 +241,10 @@
+         this.blockIcon = par1IconRegister.registerIcon(this.field_94402_c);
+         this.theIcon = par1IconRegister.registerIcon(this.sideTextureIndex);
+     }
++
++    // FORGE START
++    public boolean canPaneConnectTo(IBlockAccess access, int x, int y, int z, ForgeDirection dir)
++    {
++        return canThisPaneConnectToThisBlockID(access.getBlockId(x+dir.offsetX, y+dir.offsetY, z+dir.offsetZ)) || access.isBlockSolidOnSide(x+dir.offsetX, y+dir.offsetY, z+dir.offsetZ, dir.getOpposite(), false);
++    }
+ }

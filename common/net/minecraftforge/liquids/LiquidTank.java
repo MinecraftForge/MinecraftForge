@@ -1,5 +1,6 @@
 package net.minecraftforge.liquids;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
 /**
@@ -143,5 +144,37 @@ public class LiquidTank implements ILiquidTank {
     public String getLiquidName()
     {
         return liquid!= null ? LiquidDictionary.findLiquidName(liquid) : null;
+    }
+
+    public boolean containsValidLiquid()
+    {
+        return LiquidDictionary.findLiquidName(liquid) != null;
+    }
+
+
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt)
+    {
+        if (containsValidLiquid())
+        {
+            liquid.writeToNBT(nbt);
+        }
+        else
+        {
+            nbt.setString("emptyTank", "");
+        }
+        return nbt;
+    }
+
+    public LiquidTank readFromNBT(NBTTagCompound nbt)
+    {
+        if (!nbt.hasKey("emptyTank"))
+        {
+            LiquidStack liquid = LiquidStack.loadLiquidStackFromNBT(nbt);
+            if (liquid != null)
+            {
+                setLiquid(liquid);
+            }
+        }
+        return this;
     }
 }

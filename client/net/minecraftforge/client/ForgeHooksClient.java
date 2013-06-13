@@ -4,14 +4,20 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.TreeSet;
 
+import javax.imageio.ImageIO;
+
+import org.lwjgl.LWJGLException;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.PixelFormat;
 
 import cpw.mods.fml.client.FMLClientHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.client.texturepacks.ITexturePack;
@@ -20,12 +26,14 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureLoadEvent;
@@ -42,13 +50,22 @@ public class ForgeHooksClient
         return FMLClientHandler.instance().getClient().renderEngine;
     }
 
+    @Deprecated //Deprecated in 1.5.1, move to the more detailed one below.
+    @SuppressWarnings("deprecation")
     public static String getArmorTexture(ItemStack armor, String _default)
     {
+        String result = null;
         if (armor.getItem() instanceof IArmorTextureProvider)
         {
-            return ((IArmorTextureProvider)armor.getItem()).getArmorTextureFile(armor);
+            result = ((IArmorTextureProvider)armor.getItem()).getArmorTextureFile(armor);
         }
-        return _default;
+        return result != null ? result : _default;
+    }
+
+    public static String getArmorTexture(Entity entity, ItemStack armor, String _default, int slot, int layer)
+    {
+        String result = armor.getItem().getArmorTexture(armor, entity, slot, layer);
+        return result != null ? result : _default;
     }
 
     public static boolean renderEntityItem(EntityItem entity, ItemStack item, float bobing, float rotation, Random random, RenderEngine engine, RenderBlocks renderBlocks)
@@ -69,10 +86,11 @@ public class ForgeHooksClient
         }
         boolean is3D = customRenderer.shouldUseRenderHelper(ENTITY, item, BLOCK_3D);
 
-        if (item.getItem() instanceof ItemBlock && (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[item.itemID].getRenderType())))
+        engine.bindTexture(item.getItemSpriteNumber() == 0 ? "/terrain.png" : "/gui/items.png");
+        Block block = (item.itemID < Block.blocksList.length ? Block.blocksList[item.itemID] : null);
+        if (is3D || (block != null && RenderBlocks.renderItemIn3d(block.getRenderType())))
         {
-            engine.bindTexture("/terrain.png");
-            int renderType = Block.blocksList[item.itemID].getRenderType();
+            int renderType = (block != null ? block.getRenderType() : 1);
             float scale = (renderType == 1 || renderType == 19 || renderType == 12 || renderType == 2 ? 0.5F : 0.25F);
 
             if (RenderItem.renderInFrame)
@@ -85,7 +103,7 @@ public class ForgeHooksClient
             GL11.glScalef(scale, scale, scale);
             
             int size = item.stackSize;
-            int count = (size > 20 ? 4 : (size > 5 ? 3 : (size > 1 ? 2 : 1)));
+            int count = (size > 40 ? 5 : (size > 20 ? 4 : (size > 5 ? 3 : (size > 1 ? 2 : 1))));
 
             for(int j = 0; j < count; j++)
             {
@@ -93,9 +111,9 @@ public class ForgeHooksClient
                 if (j > 0)
                 {
                     GL11.glTranslatef(
-                        ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / 0.5F,
-                        ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / 0.5F,
-                        ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / 0.5F);
+                        ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / scale,
+                        ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / scale,
+                        ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / scale);
                 }
                 customRenderer.renderItem(ENTITY, item, renderBlocks, entity);
                 GL11.glPopMatrix();
@@ -103,7 +121,6 @@ public class ForgeHooksClient
         }
         else
         {
-            engine.bindTexture(item.getItemSpriteNumber() == 0 ? "/terrain.png" : "/gui/items.png");
             GL11.glScalef(0.5F, 0.5F, 0.5F);
             customRenderer.renderItem(ENTITY, item, renderBlocks, entity);
         }
@@ -165,14 +182,20 @@ public class ForgeHooksClient
         }
         return true;
     }
-
+    
+    @Deprecated
     public static void renderEquippedItem(IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLiving entity, ItemStack item)
     {
-        if (customRenderer.shouldUseRenderHelper(EQUIPPED, item, EQUIPPED_BLOCK))
+        renderEquippedItem(ItemRenderType.EQUIPPED, customRenderer, renderBlocks, entity, item);
+    }
+
+    public static void renderEquippedItem(ItemRenderType type, IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLiving entity, ItemStack item)
+    {
+        if (customRenderer.shouldUseRenderHelper(type, item, EQUIPPED_BLOCK))
         {
             GL11.glPushMatrix();
             GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
-            customRenderer.renderItem(EQUIPPED, item, renderBlocks, entity);
+            customRenderer.renderItem(type, item, renderBlocks, entity);
             GL11.glPopMatrix();
         }
         else
@@ -184,7 +207,7 @@ public class ForgeHooksClient
             GL11.glRotatef(50.0F, 0.0F, 1.0F, 0.0F);
             GL11.glRotatef(335.0F, 0.0F, 0.0F, 1.0F);
             GL11.glTranslatef(-0.9375F, -0.0625F, 0.0F);
-            customRenderer.renderItem(EQUIPPED, item, renderBlocks, entity);
+            customRenderer.renderItem(type, item, renderBlocks, entity);
             GL11.glDisable(GL12.GL_RESCALE_NORMAL);
             GL11.glPopMatrix();
         }
@@ -260,5 +283,29 @@ public class ForgeHooksClient
     public static void setRenderPass(int pass)
     {
         renderPass = pass;
+    }
+
+    public static ModelBiped getArmorModel(EntityLiving entityLiving, ItemStack itemStack, int slotID, ModelBiped _default)
+    {
+        ModelBiped modelbiped = itemStack.getItem().getArmorModel(entityLiving, itemStack, slotID);
+        return modelbiped == null ? _default : modelbiped;
+    }
+
+    static int stencilBits = 0;
+    public static void createDisplay() throws LWJGLException
+    {
+        ImageIO.setUseCache(false); //Disable on-disc stream cache should speed up texture pack reloading.
+        PixelFormat format = new PixelFormat().withDepthBits(24);
+        try
+        {
+            //TODO: Figure out how to determine the max bits.
+            Display.create(format.withStencilBits(8));
+            stencilBits = 8;
+        }
+        catch(LWJGLException e)
+        {
+            Display.create(format);
+            stencilBits = 0;
+        }
     }
 }

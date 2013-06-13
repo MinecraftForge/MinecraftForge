@@ -25,3 +25,19 @@
                      return i;
                  }
                  catch (Exception exception)
+@@ -417,6 +421,7 @@
+     {
+         this.textureMapBlocks.updateAnimations();
+         this.textureMapItems.updateAnimations();
++        this.resetBoundTexture(); //Forge: BugFix, Animations don't use our bindTexture, and thus don't change the cached texture.
+     }
+ 
+     /**
+@@ -515,6 +520,7 @@
+     {
+         this.textureMapBlocks.refreshTextures();
+         this.textureMapItems.refreshTextures();
++        this.resetBoundTexture(); //Forge: BugFix, Animations don't use our bindTexture, and thus don't change the cached texture.
+     }
+ 
+     public Icon getMissingIcon(int par1)
