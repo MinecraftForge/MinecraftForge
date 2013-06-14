@@ -28,6 +28,8 @@ import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import com.google.common.base.Throwables;
+
 public class FMLRelaunchLog
 {
 
@@ -180,8 +182,9 @@ public class FMLRelaunchLog
                 }
             };
         }
-        catch (Exception e)
+        catch (Throwable t)
         {
+            throw Throwables.propagate(t);
         }
 
         resetLoggingHandlers();

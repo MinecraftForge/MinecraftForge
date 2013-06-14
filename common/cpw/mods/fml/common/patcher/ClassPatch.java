@@ -14,4 +14,10 @@ public class ClassPatch {
         this.existsAtTarget = existsAtTarget;
         this.patch = patch;
     }
+
+    @Override
+    public String toString()
+    {
+        return String.format("%s : %s => %s (%b) size %d", name, sourceClassName, targetClassName, existsAtTarget, patch.length);
+    }
 }

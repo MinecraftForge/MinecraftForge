@@ -6,17 +6,17 @@ import java.util.logging.Level;
 
 import com.google.common.base.Throwables;
 
-public class LaunchWrapper {
+public class ServerLaunchWrapper {
 
     /**
      * @param args
      */
     public static void main(String[] args)
     {
-        new LaunchWrapper().run(args);
+        new ServerLaunchWrapper().run(args);
     }
 
-    private LaunchWrapper()
+    private ServerLaunchWrapper()
     {
 
     }

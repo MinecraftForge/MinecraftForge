@@ -140,8 +140,8 @@
     <mkdir dir="${basedir}/target" />
     <jar destfile="${basedir}/target/${universal.jarname}.zip" duplicate="preserve">
       <manifest>
-        <attribute name="Main-Class" value="net.minecraft.server.MinecraftServer"/>
-        <attribute name="Class-Path" value="minecraft_server.jar"/>
+        <attribute name="Main-Class" value="cpw.mods.fml.relauncher.ServerLaunchWrapper"/>
+        <attribute name="Class-Path" value="minecraft_server.jar:lib/guava-14.0-rc3.jar:lib/bcprov-jdk15on-148-src.zip:lib/asm-debug-all-4.1.jar:lib/scala-library.jar:lib/argo-3.2-src.jar"/>
       </manifest>
       <fileset dir="${client.mcp.obfoutput}" includes="**/*.class" excludes="*.class"/>
     </jar>
