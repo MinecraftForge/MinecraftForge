@@ -59,7 +59,7 @@ public class InventoryAdapters {
         if (inv instanceof TileEntityChest)
         {
             TileEntityChest chest = (TileEntityChest) inv;
-            return asLinearInventory(Block.chest.func_94442_h_(chest.worldObj, chest.xCoord, chest.yCoord, chest.zCoord), side);
+            return asLinearInventory(Block.chest.getInventory(chest.worldObj, chest.xCoord, chest.yCoord, chest.zCoord), side);
         }
 
         if (inv instanceof net.minecraft.inventory.ISidedInventory)
@@ -148,7 +148,7 @@ public class InventoryAdapters {
 
         if (inv == null)
         {
-            List list = world.func_94576_a((Entity) null, AxisAlignedBB.getAABBPool().getAABB(x, y, z, x + 1, y + 1, z + 1), IEntitySelector.field_96566_b);
+            List list = world.getEntitiesWithinAABBExcludingEntity((Entity) null, AxisAlignedBB.getAABBPool().getAABB(x, y, z, x + 1, y + 1, z + 1), IEntitySelector.selectInventories);
 
             if (list != null && list.size() > 0)
             {
@@ -450,7 +450,7 @@ public class InventoryAdapters {
                 // old items and insert all the new ones
 
                 if (is != null && !inv.isStackValidForSlot(slotIndex, is)) return false;
-                if (is != null && !inv.func_102007_a(slotIndex, is, side)) return false;
+                if (is != null && !inv.canInsertItem(slotIndex, is, side)) return false;
             }
             else if (newCount > oldCount && is != null)
             {
@@ -459,7 +459,7 @@ public class InventoryAdapters {
                 newItems.stackSize = newCount - oldCount;
 
                 if (!inv.isStackValidForSlot(slotIndex, newItems)) return false;
-                if (!inv.func_102007_a(slotIndex, newItems, side)) return false;
+                if (!inv.canInsertItem(slotIndex, newItems, side)) return false;
             }
 
             if (!simulate) inv.setInventorySlotContents(slotIndex, is);
@@ -472,13 +472,13 @@ public class InventoryAdapters {
         public boolean shouldExtractItems()
         {
             ItemStack stack = inv.getStackInSlot(slotIndex);
-            return stack != null && inv.func_102008_b(slotIndex, stack, side);
+            return stack != null && inv.canExtractItem(slotIndex, stack, side);
         }
 
         @Override
         public boolean shouldInsertItem(ItemStack is)
         {
-            return is != null && inv.isStackValidForSlot(slotIndex, is) && inv.func_102007_a(slotIndex, is, side);
+            return is != null && inv.isStackValidForSlot(slotIndex, is) && inv.canExtractItem(slotIndex, is, side);
         }
     }
 
@@ -491,7 +491,7 @@ public class InventoryAdapters {
         {
             this.inv = inv;
             this.side = side.ordinal();
-            this.accessibleSlotIndices = inv.getSizeInventorySide(this.side);
+            this.accessibleSlotIndices = inv.getAccessibleSlotsFromSide(this.side);
         }
 
         @Override
