@@ -15,8 +15,8 @@
       <arg value="${mcp.home}" />
     </exec>
     <propertyfile file="fmlversion.properties">
-      <entry key="fmlbuild.build.number" type="int" value="${version.build}"/>
-      <entry key="fmlbuild.deobfuscation.hash" type="string" value="${deobf.checksum}"/>
+      <entry key="fmlbuild.build.number" type="int" value="${version.build}" />
+      <entry key="fmlbuild.deobfuscation.hash" type="string" value="${deobf.checksum}" />
     </propertyfile>
   </target>
 
@@ -34,11 +34,11 @@
       <os family="Windows" />
     </condition>
     <condition property="mcp.exists">
-      <available file="${mcp.home}/runtime/commands.py"/>
+      <available file="${mcp.home}/runtime/commands.py" />
     </condition>
-  	<condition property="signature.exists">
-        <available file="${env.JENKINS_HOME}/fmlsigned.properties"/>
-  	</condition>
+    <condition property="signature.exists">
+      <available file="${env.JENKINS_HOME}/fmlsigned.properties" />
+    </condition>
     <property name="mcp.obfoutput" location="${mcp.home}/reobf" />
     <property name="client.mcp.obfoutput" location="${mcp.obfoutput}/minecraft" />
     <property name="mcp.srcdir" location="${mcp.home}/src" />
@@ -54,7 +54,7 @@
     <condition property="version.build" value="${env.BUILD_NUMBER}" else="1">
       <isset property="env.BUILD_NUMBER" />
     </condition>
-    <available file="eclipse" property="eclipse.exists"/>
+    <available file="eclipse" property="eclipse.exists" />
   </target>
 
   <target name="makeversion" depends="buildenvsetup">
@@ -89,19 +89,19 @@
       <arg value="${mcp.home}/runtime/reobfuscate.py" />
     </exec>
     <fail message="Reobfuscation failed">
-        <condition>
-            <not>
-                <and>
-                  <available file="${mcp.home}/temp/client.md5"/>
-                  <available file="${mcp.home}/temp/client_reobf.md5"/>
-                </and>
-            </not>
-        </condition>
+      <condition>
+        <not>
+          <and>
+            <available file="${mcp.home}/temp/client.md5" />
+            <available file="${mcp.home}/temp/client_reobf.md5" />
+          </and>
+        </not>
+      </condition>
     </fail>
     <exec executable="${python.exe}" dir="${mcp.home}">
-      <arg value="${basedir}/generatechangedfilelist.py"/>
-      <arg value="${mcp.home}"/>
-      <arg value="${basedir}/difflist.txt"/>
+      <arg value="${basedir}/generatechangedfilelist.py" />
+      <arg value="${mcp.home}" />
+      <arg value="${basedir}/difflist.txt" />
     </exec>
   </target>
 
@@ -110,11 +110,11 @@
       <arg value="${mcp.home}/runtime/recompile.py" />
     </exec>
     <fail message="Compilation failed">
-        <condition>
-            <not>
-              <available file="${mcp.home}/bin/minecraft/net/minecraft/client/Minecraft.class"/>
-            </not>
-        </condition>
+      <condition>
+        <not>
+          <available file="${mcp.home}/bin/minecraft/net/minecraft/client/Minecraft.class" />
+        </not>
+      </condition>
     </fail>
   </target>
 
@@ -140,19 +140,19 @@
     <mkdir dir="${basedir}/target" />
     <jar destfile="${basedir}/target/${universal.jarname}.zip" duplicate="preserve">
       <manifest>
-        <attribute name="Main-Class" value="cpw.mods.fml.relauncher.ServerLaunchWrapper"/>
-        <attribute name="Class-Path" value="minecraft_server.jar:lib/guava-14.0-rc3.jar:lib/bcprov-jdk15on-148-src.zip:lib/asm-debug-all-4.1.jar:lib/scala-library.jar:lib/argo-3.2-src.jar"/>
+        <attribute name="Main-Class" value="cpw.mods.fml.relauncher.ServerLaunchWrapper" />
+        <attribute name="Class-Path" value="minecraft_server.jar:lib/guava-14.0-rc3.jar:lib/bcprov-jdk15on-148-src.zip:lib/asm-debug-all-4.1.jar:lib/scala-library.jar:lib/argo-3.2-src.jar" />
       </manifest>
-      <fileset dir="${client.mcp.obfoutput}" includes="**/*.class" excludes="*.class"/>
+      <fileset dir="${client.mcp.obfoutput}" includes="**/*.class" excludes="*.class" />
     </jar>
-  	<antcall target="signjar"/>
-    <zip update="true" destfile="${basedir}/target/${universal.jarname}.zip" >
-      <fileset dir="${client.mcp.obfoutput}" includes="*.class"/>
-      <zipfileset dir="${basedir}" includes="fmlversion.properties"/>
+    <antcall target="signjar" />
+    <zip update="true" destfile="${basedir}/target/${universal.jarname}.zip">
+      <fileset dir="${client.mcp.obfoutput}" includes="*.class" />
+      <zipfileset dir="${basedir}" includes="fmlversion.properties" />
       <zipfileset dir="${basedir}" includes="LICENSE-fml.txt" />
-        <zipfileset dir="${common.src.dir}" includes="mcpmod.info" />
-        <zipfileset dir="${client.src.dir}" includes="mcp.png" />
-      <zipfileset dir="${basedir}" includes="install/CREDITS-fml.txt" fullpath="CREDITS-fml.txt"/>
+      <zipfileset dir="${common.src.dir}" includes="mcpmod.info" />
+      <zipfileset dir="${client.src.dir}" includes="mcp.png" />
+      <zipfileset dir="${basedir}" includes="install/CREDITS-fml.txt" fullpath="CREDITS-fml.txt" />
       <zipfileset dir="${common.src.dir}" includes="*.cfg" />
       <mappedresources>
         <concat>
@@ -205,25 +205,25 @@
   </target>
 
   <target name="build-deobf-data" depends="makeversion">
-    <mkdir dir="build-tmp-deobf"/>
+    <mkdir dir="build-tmp-deobf" />
     <copy todir="build-tmp-deobf">
       <mappedresources>
-        <fileset dir="${mcp.home}/conf" includes="packaged.srg"/>
-        <globmapper from="packaged.srg" to="joined.srg"/>
+        <fileset dir="${mcp.home}/conf" includes="packaged.srg" />
+        <globmapper from="packaged.srg" to="joined.srg" />
       </mappedresources>
     </copy>
-    <touch millis="0" file="build-tmp-deobf/joined.srg"/>
+    <touch millis="0" file="build-tmp-deobf/joined.srg" />
     <zip file="deobfuscation_data_${version.minecraft}.zip" encoding="UTF-8">
-      <fileset dir="build-tmp-deobf" includes="joined.srg"/>
+      <fileset dir="build-tmp-deobf" includes="joined.srg" />
     </zip>
-    <checksum algorithm="SHA1" property="deobf.checksum" file="deobfuscation_data_${version.minecraft}.zip"/>
-    <antcall target="writeversion"/>
+    <checksum algorithm="SHA1" property="deobf.checksum" file="deobfuscation_data_${version.minecraft}.zip" />
+    <antcall target="writeversion" />
     <delete dir="build-tmp-deobf" />
   </target>
 
   <target name="build" depends="buildenvsetup,merge-client,merge-common,build-deobf-data,build-universal,build-source-pack" />
 
-  <target name="jenkinsbuild" depends="buildenvsetup,jenkinsfmldecompile,patch,build"/>
+  <target name="jenkinsbuild" depends="buildenvsetup,jenkinsfmldecompile,patch,build" />
 
   <target name="patch" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${basedir}">
@@ -242,25 +242,25 @@
     </condition>
     <fail if="do.not.continue">You have decided not to continue. This script will stop now.</fail>
     <echo>Preparing the MCP environment at ${mcp.home}</echo>
-    <antcall target="fmldecompile"/>
+    <antcall target="fmldecompile" />
     <echo>Moving old patched sources at ${patch.mcp.srcdir} out of the way</echo>
     <move todir="${mcp.home}/src-work${timestamp}" failonerror="false" verbose="true">
-      <fileset dir="${patch.mcp.srcdir}"/>
+      <fileset dir="${patch.mcp.srcdir}" />
     </move>
     <echo>Deleting old patch references at ${clean.mcp.srcdir}</echo>
-    <delete dir="${clean.mcp.srcdir}" failonerror="false"/>
+    <delete dir="${clean.mcp.srcdir}" failonerror="false" />
     <echo>Creating new patch references at ${clean.mcp.srcdir}</echo>
     <copy todir="${clean.mcp.srcdir}">
-      <fileset dir="${mcp.srcdir}"/>
+      <fileset dir="${mcp.srcdir}" />
     </copy>
-    <antcall target="cleanargo"/>
-    <antcall target="patch"/>
+    <antcall target="cleanargo" />
+    <antcall target="patch" />
     <echo>Creating clean patched references at ${patch.mcp.srcdir}</echo>
     <copy todir="${patch.mcp.srcdir}">
-      <fileset dir="${mcp.srcdir}"/>
+      <fileset dir="${mcp.srcdir}" />
     </copy>
-    <antcall target="writeversion"/>
-    <antcall target="makeeclipse"/>
+    <antcall target="writeversion" />
+    <antcall target="makeeclipse" />
     <echo>Setup complete! You should now be able to open ${basedir}/eclipse as a workspace in eclipse and import/refresh the FML project</echo>
   </target>
 
@@ -284,45 +284,45 @@
   <target name="repatch" depends="buildenvsetup,checkpatches">
     <echo>Moving old patched sources at ${mcp.home}/src-work out of the way</echo>
     <move todir="${mcp.home}/src-work${timestamp}" failonerror="false" verbose="true">
-      <fileset dir="${patch.mcp.srcdir}"/>
+      <fileset dir="${patch.mcp.srcdir}" />
     </move>
-    <delete dir="${mcp.srcdir}"/>
+    <delete dir="${mcp.srcdir}" />
     <copy todir="${mcp.srcdir}">
-      <fileset dir="${clean.mcp.srcdir}"/>
+      <fileset dir="${clean.mcp.srcdir}" />
     </copy>
 
-    <antcall target="cleanargo"/>
+    <antcall target="cleanargo" />
 
-    <antcall target="patch"/>
+    <antcall target="patch" />
     <copy todir="${patch.mcp.srcdir}">
-      <fileset dir="${mcp.srcdir}"/>
+      <fileset dir="${mcp.srcdir}" />
     </copy>
   </target>
 
   <target name="repatchclean" depends="buildenvsetup">
-    <delete dir="${mcp.srcdir}"/>
+    <delete dir="${mcp.srcdir}" />
     <copy todir="${mcp.srcdir}">
-      <fileset dir="${clean.mcp.srcdir}"/>
+      <fileset dir="${clean.mcp.srcdir}" />
     </copy>
 
-    <antcall target="cleanargo"/>
+    <antcall target="cleanargo" />
 
-    <antcall target="patch"/>
+    <antcall target="patch" />
   </target>
 
   <target name="cleanargo" depends="buildenvsetup">
-    <delete dir="${client.mcp.srcdir}/argo"/>
-    <delete dir="${client.mcp.srcdir}/org"/>
+    <delete dir="${client.mcp.srcdir}/argo" />
+    <delete dir="${client.mcp.srcdir}/org" />
   </target>
 
   <target name="checkpatches" depends="buildenvsetup">
     <uptodate property="checkUptodate.uptodate">
       <srcfiles dir="${patch.mcp.srcdir}" includes="**/*.java">
         <present targetdir="${patch.src.dir}">
-            <globmapper from="*.java" to="*.java.patch"/>
+          <globmapper from="*.java" to="*.java.patch" />
         </present>
       </srcfiles>
-      <globmapper from="*.java" to="${patch.src.dir}/*.java.patch"/>
+      <globmapper from="*.java" to="${patch.src.dir}/*.java.patch" />
     </uptodate>
     <fail unless="checkUptodate.uptodate">
         A patch is out of date. Update your patches!
@@ -332,8 +332,8 @@
   <target name="updatepatches" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${basedir}">
       <arg value="${basedir}/update_patches.py" />
-      <arg value="${mcp.home}"/>
-      <arg value="${basedir}"/>
+      <arg value="${mcp.home}" />
+      <arg value="${basedir}" />
     </exec>
   </target>
 
@@ -341,30 +341,43 @@
     <echo>
       Extracting fresh eclipse workspace to ${basedir}/eclipse
     </echo>
-    <unzip src="${basedir}/eclipse-workspace-dev.zip" dest="${basedir}"/>
+    <unzip src="${basedir}/eclipse-workspace-dev.zip" dest="${basedir}" />
   </target>
 
   <target name="makerenamedsource" depends="buildenvsetup,repatch,merge-client,merge-common,reobfuscate">
     <copy todir="${tmp.mcp.srcdir}">
-      <fileset dir="${mcp.srcdir}"/>
+      <fileset dir="${mcp.srcdir}" />
     </copy>
     <exec executable="${python.exe}" dir="${mcp.home}">
       <arg value="${mcp.home}/runtime/updatenames.py" />
       <arg value="-f" />
     </exec>
     <copy todir="${renamed.mcp.srcdir}">
-      <fileset dir="${mcp.srcdir}"/>
+      <fileset dir="${mcp.srcdir}" />
     </copy>
     <move todir="${mcp.srcdir}">
-      <fileset dir="${tmp.mcp.srcdir}"/>
+      <fileset dir="${tmp.mcp.srcdir}" />
     </move>
   </target>
   <target name="signjar" depends="buildenvsetup,makeversion" if="signature.exists">
     <condition property="universal.jarname" value="${modname}-universal-${version.minecraft}-${version}" else="${modname}-universal-${version.minecraft}-${version}-${version.branch}">
       <equals arg1="${version.branch}" arg2="master" />
     </condition>
-  	<property file="${env.JENKINS_HOME}/fmlsigned.properties" prefix="sign"/>
-  	<echo>${env.JENKINS_HOME} ${universal.jarname} ${sign.KEYPASS}</echo>
-  	<signjar alias="FML" jar="${basedir}/target/${universal.jarname}.zip" keypass="${sign.KEYPASS}" keystore="${env.JENKINS_HOME}/${sign.KEYSTORE}" storepass="${sign.STOREPASS}" verbose="true"/>
+    <property file="${env.JENKINS_HOME}/fmlsigned.properties" prefix="sign" />
+    <echo>${env.JENKINS_HOME} ${universal.jarname} ${sign.KEYPASS}</echo>
+    <signjar alias="FML" jar="${basedir}/target/${universal.jarname}.zip" keypass="${sign.KEYPASS}" keystore="${env.JENKINS_HOME}/${sign.KEYSTORE}" storepass="${sign.STOREPASS}" verbose="true" />
+  </target>
+  <target name="makebinpatches">
+    <java classname="cpw.mods.fml.patcher.GenDiffSet">
+      <classpath>
+        <fileset dir="${mcp.home}/lib" includes="guava-14.0-rc3.jar"/>
+        <dirset dir="${mcp.obfoutput}"/>
+      </classpath>
+      <arg path="${mcp.home}/jars/bin/minecraft.jar.backup"/>
+      <arg path="${mcp.home}/jars/bin/minecraft.jar.backup"/>
+      <arg path="${mcp.obfoutput}"/>
+      <arg path="${basedir}/deobfuscation_data_${version.minecraft}.zip"/>
+      <arg path="${basedir}/binpatch/client"/>
+    </java>
   </target>
 </project>

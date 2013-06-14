@@ -37,11 +37,13 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
+import net.minecraft.launchwrapper.LaunchClassLoader;
+
 import cpw.mods.fml.common.CertificateHelper;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 
-public class RelaunchLibraryManager
+public class CoreModManager
 {
     private static String[] rootPlugins =  { "cpw.mods.fml.relauncher.FMLCorePlugin" , "net.minecraftforge.classloading.FMLForgePlugin" };
     private static List<String> loadedLibraries = new ArrayList<String>();
@@ -50,12 +52,12 @@ public class RelaunchLibraryManager
     private static List<ILibrarySet> libraries;
     private static boolean deobfuscatedEnvironment;
 
-    public static void handleLaunch(File mcDir, RelaunchClassLoader actualClassLoader)
+    public static void handleLaunch(File mcDir, LaunchClassLoader classLoader)
     {
         try
         {
             // Are we in a 'decompiled' environment?
-            byte[] bs = actualClassLoader.getClassBytes("net.minecraft.world.World");
+            byte[] bs = classLoader.getClassBytes("net.minecraft.world.World");
             if (bs != null)
             {
                 FMLRelaunchLog.info("Managed to load a deobfuscated Minecraft name- we are in a deobfuscated environment. Skipping runtime deobfuscation");
@@ -72,17 +74,12 @@ public class RelaunchLibraryManager
         }
         pluginLocations = new HashMap<IFMLLoadingPlugin, File>();
         loadPlugins = new ArrayList<IFMLLoadingPlugin>();
-        libraries = new ArrayList<ILibrarySet>();
         for (String s : rootPlugins)
         {
             try
             {
-                IFMLLoadingPlugin plugin = (IFMLLoadingPlugin) Class.forName(s, true, actualClassLoader).newInstance();
+                IFMLLoadingPlugin plugin = (IFMLLoadingPlugin) Class.forName(s, true, classLoader).newInstance();
                 loadPlugins.add(plugin);
-                for (String libName : plugin.getLibraryRequestClass())
-                {
-                    libraries.add((ILibrarySet) Class.forName(libName, true, actualClassLoader).newInstance());
-                }
             }
             catch (Exception e)
             {
@@ -107,14 +104,14 @@ public class RelaunchLibraryManager
             FMLRelaunchLog.info("Found a command line coremod : %s", s);
             try
             {
-                actualClassLoader.addTransformerExclusion(s);
-                Class<?> coreModClass = Class.forName(s, true, actualClassLoader);
+                classLoader.addTransformerExclusion(s);
+                Class<?> coreModClass = Class.forName(s, true, classLoader);
                 TransformerExclusions trExclusions = coreModClass.getAnnotation(IFMLLoadingPlugin.TransformerExclusions.class);
                 if (trExclusions!=null)
                 {
                     for (String st : trExclusions.value())
                     {
-                        actualClassLoader.addTransformerExclusion(st);
+                        classLoader.addTransformerExclusion(st);
                     }
                 }
                 IFMLLoadingPlugin plugin = (IFMLLoadingPlugin) coreModClass.newInstance();
@@ -123,7 +120,7 @@ public class RelaunchLibraryManager
                 {
                     for (String libName : plugin.getLibraryRequestClass())
                     {
-                        libraries.add((ILibrarySet) Class.forName(libName, true, actualClassLoader).newInstance());
+                        libraries.add((ILibrarySet) Class.forName(libName, true, classLoader).newInstance());
                     }
                 }
             }
@@ -133,7 +130,7 @@ public class RelaunchLibraryManager
                 throw new RuntimeException(e);
             }
         }
-        discoverCoreMods(mcDir, actualClassLoader, loadPlugins, libraries);
+        discoverCoreMods(mcDir, classLoader, loadPlugins, libraries);
 
         List<Throwable> caughtErrors = new ArrayList<Throwable>();
         try
@@ -213,7 +210,7 @@ public class RelaunchLibraryManager
 
                     try
                     {
-                        actualClassLoader.addURL(libFile.toURI().toURL());
+                        classLoader.addURL(libFile.toURI().toURL());
                         loadedLibraries.add(libName);
                     }
                     catch (MalformedURLException e)
@@ -268,14 +265,14 @@ public class RelaunchLibraryManager
             {
                 for (String xformClass : plug.getASMTransformerClass())
                 {
-                    actualClassLoader.registerTransformer(xformClass);
+                    classLoader.registerTransformer(xformClass);
                 }
             }
         }
         // Deobfuscation transformer, always last
         if (!deobfuscatedEnvironment)
         {
-            actualClassLoader.registerTransformer("cpw.mods.fml.common.asm.transformers.DeobfuscationTransformer");
+            classLoader.registerTransformer("cpw.mods.fml.common.asm.transformers.DeobfuscationTransformer");
         }
         downloadMonitor.updateProgressString("Running coremod plugins");
         Map<String,Object> data = new HashMap<String,Object>();
@@ -292,10 +289,10 @@ public class RelaunchLibraryManager
             {
                 try
                 {
-                    IFMLCallHook call = (IFMLCallHook) Class.forName(setupClass, true, actualClassLoader).newInstance();
+                    IFMLCallHook call = (IFMLCallHook) Class.forName(setupClass, true, classLoader).newInstance();
                     Map<String,Object> callData = new HashMap<String, Object>();
                     callData.put("mcLocation", mcDir);
-                    callData.put("classLoader", actualClassLoader);
+                    callData.put("classLoader", classLoader);
                     callData.put("coremodLocation", pluginLocations.get(plugin));
                     callData.put("deobfuscationFileName", FMLInjectionData.debfuscationDataName());
                     call.injectData(callData);
@@ -317,7 +314,7 @@ public class RelaunchLibraryManager
         try
         {
             downloadMonitor.updateProgressString("Validating minecraft");
-            Class<?> loaderClazz = Class.forName("cpw.mods.fml.common.Loader", true, actualClassLoader);
+            Class<?> loaderClazz = Class.forName("cpw.mods.fml.common.Loader", true, classLoader);
             Method m = loaderClazz.getMethod("injectData", Object[].class);
             m.invoke(null, (Object)FMLInjectionData.data());
             m = loaderClazz.getMethod("instance");
@@ -333,7 +330,7 @@ public class RelaunchLibraryManager
         }
     }
 
-    private static void discoverCoreMods(File mcDir, RelaunchClassLoader classLoader, List<IFMLLoadingPlugin> loadPlugins, List<ILibrarySet> libraries)
+    private static void discoverCoreMods(File mcDir, LaunchClassLoader classLoader, List<IFMLLoadingPlugin> loadPlugins, List<ILibrarySet> libraries)
     {
         downloadMonitor.updateProgressString("Discovering coremods");
         File coreMods = setupCoreModDir(mcDir);

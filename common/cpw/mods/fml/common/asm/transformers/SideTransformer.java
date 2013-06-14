@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -23,13 +23,13 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import cpw.mods.fml.relauncher.FMLRelauncher;
+import cpw.mods.fml.relauncher.FMLLaunchHandler;
 import cpw.mods.fml.relauncher.IClassTransformer;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class SideTransformer implements IClassTransformer
 {
-    private static String SIDE = FMLRelauncher.side();
+    private static String SIDE = FMLLaunchHandler.side().name();
     private static final boolean DEBUG = false;
     @SuppressWarnings("unchecked")
     @Override

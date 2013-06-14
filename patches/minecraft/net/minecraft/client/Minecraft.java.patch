@@ -1,18 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src-work/minecraft/net/minecraft/client/Minecraft.java
-@@ -1,5 +1,11 @@
+@@ -1,5 +1,9 @@
  package net.minecraft.client;
  
 +import cpw.mods.fml.client.FMLClientHandler;
 +import cpw.mods.fml.common.FMLCommonHandler;
 +import cpw.mods.fml.common.registry.GameData;
 +import cpw.mods.fml.common.registry.ItemData;
-+import cpw.mods.fml.relauncher.ArgsWrapper;
-+import cpw.mods.fml.relauncher.FMLRelauncher;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.awt.BorderLayout;
-@@ -115,6 +121,8 @@
+@@ -115,6 +119,8 @@
  import org.lwjgl.opengl.PixelFormat;
  import org.lwjgl.util.glu.GLU;
  
@@ -21,7 +19,7 @@
  @SideOnly(Side.CLIENT)
  public abstract class Minecraft implements Runnable, IPlayerUsage
  {
-@@ -299,6 +307,8 @@
+@@ -299,6 +305,8 @@
          this.field_71466_p = new FontRenderer(this.field_71474_y, "/font/default.png", this.field_71446_o, false);
          this.field_71464_q = new FontRenderer(this.field_71474_y, "/font/alternate.png", this.field_71446_o, false);
  
@@ -30,7 +28,7 @@
          if (this.field_71474_y.field_74363_ab != null)
          {
              StringTranslate.func_74808_a().func_74810_a(this.field_71474_y.field_74363_ab, false);
-@@ -334,6 +344,8 @@
+@@ -334,6 +342,8 @@
          GL11.glViewport(0, 0, this.field_71443_c, this.field_71440_d);
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
  
@@ -39,7 +37,7 @@
          try
          {
              this.field_71430_V = new ThreadDownloadResources(this.field_71412_D, this);
-@@ -362,6 +374,8 @@
+@@ -362,6 +372,8 @@
          {
              this.func_71352_k();
          }
@@ -48,7 +46,7 @@
      }
  
      private void func_71357_I() throws LWJGLException
-@@ -723,9 +737,11 @@
+@@ -723,9 +735,11 @@
  
              if (!this.field_71454_w)
              {
@@ -60,7 +58,7 @@
              }
  
              GL11.glFlush();
-@@ -1255,10 +1271,14 @@
+@@ -1255,10 +1269,14 @@
  
      public void func_71407_l()
      {
@@ -75,7 +73,7 @@
  
          this.field_71424_I.func_76320_a("stats");
          this.field_71413_E.func_77449_e();
-@@ -1716,6 +1736,8 @@
+@@ -1716,6 +1734,8 @@
              this.field_71453_ak.func_74428_b();
          }
  
@@ -84,7 +82,7 @@
          this.field_71424_I.func_76319_b();
          this.field_71423_H = func_71386_F();
      }
-@@ -1754,8 +1776,27 @@
+@@ -1754,8 +1774,27 @@
          }
  
          this.field_71413_E.func_77450_a(StatList.field_75936_f, 1);
@@ -112,16 +110,3 @@
          this.field_71455_al = true;
          this.field_71461_s.func_73720_a(StatCollector.func_74838_a("menu.loadingLevel"));
  
-@@ -1977,6 +2018,12 @@
- 
-     public static void main(String[] p_main_0_)
-     {
-+        FMLRelauncher.handleClientRelaunch(new ArgsWrapper(p_main_0_));
-+    }
-+
-+    public static void fmlReentry(ArgsWrapper wrapper)
-+    {
-+        String[] p_main_0_ = wrapper.args;
-         HashMap hashmap = new HashMap();
-         boolean flag = false;
-         boolean flag1 = true;
