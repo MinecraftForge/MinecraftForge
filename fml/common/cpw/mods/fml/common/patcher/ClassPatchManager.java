@@ -105,9 +105,10 @@ public class ClassPatchManager {
             input.readFully(patchBytes);
 
             ClassPatch cp = new ClassPatch(name, sourceClassName, targetClassName, exists, patchBytes);
-            patches.put(name, cp);
+            patches.put(sourceClassName, cp);
         }
 
         FMLLog.fine("Read %d binary patches from %s", patches.size(), dirToScan.getAbsolutePath());
+        FMLLog.fine("Patch list : %s", patches);
     }
 }

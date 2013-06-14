@@ -24,7 +24,7 @@ public class FMLRelauncher
 {
     private static FMLRelauncher INSTANCE;
     public static String logFileNamePattern;
-    private static String side;
+    static String side;
     private RelaunchClassLoader classLoader;
     private Object newApplet;
     private Class<? super Object> appletClass;
