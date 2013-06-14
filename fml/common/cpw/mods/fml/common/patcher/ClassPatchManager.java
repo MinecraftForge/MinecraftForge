@@ -3,9 +3,19 @@ package cpw.mods.fml.common.patcher;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.security.CodeSource;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.io.ByteArrayDataInput;
@@ -13,6 +23,8 @@ import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.FMLRelaunchLog;
+import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.repackage.com.nothome.delta.GDiffPatcher;
 
 public class ClassPatchManager {
@@ -67,48 +79,59 @@ public class ClassPatchManager {
         return inputData;
     }
 
-    public void setup(File dirToScan)
+    public void setup(Side side, CodeSource fmlLib)
     {
-        File[] patchFiles = dirToScan.listFiles(new FilenameFilter()
+        Pattern binpatchMatcher = Pattern.compile(String.format("binpatch/%s/*.binpatch", side.toString().toLowerCase(Locale.ENGLISH)));
+        JarFile fmlJar;
+        try
         {
-            @Override
-            public boolean accept(File dir, String name)
-            {
-                return Files.getFileExtension(new File(dir,name).getPath()).equals("binpatch");
-            }
-        });
-
-        if (patchFiles == null)
-        {
-            return;
+            File fmlJarFile = new File(fmlLib.getLocation().toURI());
+            fmlJar = new JarFile(fmlJarFile);
         }
+        catch (Exception e)
+        {
+            FMLRelaunchLog.log(Level.SEVERE, e, "Error occurred reading binary patches. Problems may occur");
+            throw Throwables.propagate(e);
+        }
+
         patches = ArrayListMultimap.create();
-        for (File patch : patchFiles)
+
+        for (JarEntry entry : Collections.list(fmlJar.entries()))
         {
-            FMLLog.finest("Reading patch data from %s", patch.getAbsolutePath());
-            ByteArrayDataInput input;
-            try
+            if (binpatchMatcher.matcher(entry.getName()).matches())
             {
-                input = ByteStreams.newDataInput(Files.toByteArray(patch));
+                ClassPatch cp = readPatch(entry, fmlJar);
+                if (cp != null)
+                {
+                    patches.put(cp.sourceClassName, cp);
+                }
             }
-            catch (IOException e)
-            {
-                FMLLog.log(Level.WARNING, e, "Unable to read binpatch file %s - ignoring", patch.getAbsolutePath());
-                continue;
-            }
-            String name = input.readUTF();
-            String sourceClassName = input.readUTF();
-            String targetClassName = input.readUTF();
-            boolean exists = input.readBoolean();
-            int patchLength = input.readInt();
-            byte[] patchBytes = new byte[patchLength];
-            input.readFully(patchBytes);
-
-            ClassPatch cp = new ClassPatch(name, sourceClassName, targetClassName, exists, patchBytes);
-            patches.put(sourceClassName, cp);
         }
+        FMLLog.fine("Read %d binary patches from %s", patches.size(), fmlJar.getName());
+        FMLLog.fine("Patch list :\n\t%s", Joiner.on("\t\n").join(patches.asMap().entrySet()));
+    }
 
-        FMLLog.fine("Read %d binary patches from %s", patches.size(), dirToScan.getAbsolutePath());
-        FMLLog.fine("Patch list : %s", patches);
+    private ClassPatch readPatch(JarEntry patchEntry, JarFile jarFile)
+    {
+        FMLLog.finest("Reading patch data from %s in file %s", patchEntry.getName(), jarFile.getName());
+        ByteArrayDataInput input;
+        try
+        {
+            input = ByteStreams.newDataInput(ByteStreams.toByteArray(jarFile.getInputStream(patchEntry)));
+        }
+        catch (IOException e)
+        {
+            FMLLog.log(Level.WARNING, e, "Unable to read binpatch file %s - ignoring", patchEntry.getName());
+            return null;
+        }
+        String name = input.readUTF();
+        String sourceClassName = input.readUTF();
+        String targetClassName = input.readUTF();
+        boolean exists = input.readBoolean();
+        int patchLength = input.readInt();
+        byte[] patchBytes = new byte[patchLength];
+        input.readFully(patchBytes);
+
+        return new ClassPatch(name, sourceClassName, targetClassName, exists, patchBytes);
     }
 }

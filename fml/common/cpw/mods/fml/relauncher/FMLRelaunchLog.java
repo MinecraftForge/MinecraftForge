@@ -148,6 +148,8 @@ public class FMLRelaunchLog
 
     private static FMLLogFormatter formatter;
 
+    static String logFileNamePattern;
+
     private FMLRelaunchLog()
     {
     }
@@ -174,7 +176,7 @@ public class FMLRelaunchLog
         formatter = new FMLLogFormatter();
         try
         {
-            File logPath = new File(minecraftHome, FMLRelauncher.logFileNamePattern);
+            File logPath = new File(minecraftHome, logFileNamePattern);
             fileHandler = new FileHandler(logPath.getPath(), 0, 3)
             {
                 public synchronized void close() throws SecurityException {

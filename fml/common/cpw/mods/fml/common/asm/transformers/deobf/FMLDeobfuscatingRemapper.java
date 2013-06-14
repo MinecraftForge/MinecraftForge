@@ -26,6 +26,8 @@ import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import net.minecraft.launchwrapper.LaunchClassLoader;
+
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.commons.Remapper;
 
@@ -49,7 +51,6 @@ import com.google.common.io.InputSupplier;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
-import cpw.mods.fml.relauncher.RelaunchClassLoader;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 
@@ -65,7 +66,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     private Map<String,Map<String,String>> fieldNameMaps;
     private Map<String,Map<String,String>> methodNameMaps;
 
-    private RelaunchClassLoader classLoader;
+    private LaunchClassLoader classLoader;
 
     private FMLDeobfuscatingRemapper()
     {
@@ -124,7 +125,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         fieldNameMaps = Maps.newHashMapWithExpectedSize(rawFieldMaps.size());
 
     }
-    public void setup(File mcDir, RelaunchClassLoader classLoader, String deobfFileName)
+    public void setup(File mcDir, LaunchClassLoader classLoader, String deobfFileName)
     {
         this.classLoader = classLoader;
         try

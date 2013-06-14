@@ -1,15 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/server/MinecraftServer.java
 +++ ../src-work/minecraft/net/minecraft/server/MinecraftServer.java
-@@ -1,5 +1,8 @@
+@@ -1,5 +1,6 @@
  package net.minecraft.server;
  
 +import cpw.mods.fml.common.FMLCommonHandler;
-+import cpw.mods.fml.relauncher.ArgsWrapper;
-+import cpw.mods.fml.relauncher.FMLRelauncher;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.awt.GraphicsEnvironment;
-@@ -352,7 +355,11 @@
+@@ -352,7 +353,11 @@
          {
              if (this.func_71197_b())
              {
@@ -21,7 +19,7 @@
  
                  for (long j = 0L; this.field_71317_u; this.field_71296_Q = true)
                  {
-@@ -391,6 +398,7 @@
+@@ -391,6 +396,7 @@
  
                      Thread.sleep(1L);
                  }
@@ -29,7 +27,7 @@
              }
              else
              {
-@@ -399,6 +407,10 @@
+@@ -399,6 +405,10 @@
          }
          catch (Throwable throwable)
          {
@@ -40,7 +38,7 @@
              throwable.printStackTrace();
              this.func_98033_al().func_98234_c("Encountered an unexpected exception " + throwable.getClass().getSimpleName(), throwable);
              CrashReport crashreport = null;
-@@ -429,6 +441,10 @@
+@@ -429,6 +439,10 @@
          {
              try
              {
@@ -51,7 +49,7 @@
                  this.func_71260_j();
                  this.field_71316_v = true;
              }
-@@ -438,6 +454,8 @@
+@@ -438,6 +452,8 @@
              }
              finally
              {
@@ -60,7 +58,7 @@
                  this.func_71240_o();
              }
          }
-@@ -454,8 +472,10 @@
+@@ -454,8 +470,10 @@
  
      public void func_71217_p()
      {
@@ -71,7 +69,7 @@
          ++this.field_71315_w;
  
          if (this.field_71295_T)
-@@ -501,6 +521,7 @@
+@@ -501,6 +519,7 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -79,7 +77,7 @@
      }
  
      public void func_71190_q()
-@@ -528,6 +549,7 @@
+@@ -528,6 +547,7 @@
                  }
  
                  this.field_71304_b.func_76320_a("tick");
@@ -87,7 +85,7 @@
                  CrashReport crashreport;
  
                  try
-@@ -552,6 +574,7 @@
+@@ -552,6 +572,7 @@
                      throw new ReportedException(crashreport);
                  }
  
@@ -95,7 +93,7 @@
                  this.field_71304_b.func_76319_b();
                  this.field_71304_b.func_76320_a("tracker");
                  worldserver.func_73039_n().func_72788_a();
-@@ -679,7 +702,7 @@
+@@ -679,7 +700,7 @@
  
      public String getServerModName()
      {
@@ -104,17 +102,3 @@
      }
  
      public CrashReport func_71230_b(CrashReport p_71230_1_)
-@@ -1137,6 +1160,13 @@
-     @SideOnly(Side.SERVER)
-     public static void main(String[] p_main_0_)
-     {
-+        FMLRelauncher.handleServerRelaunch(new ArgsWrapper(p_main_0_));
-+    }
-+
-+    @SideOnly(Side.SERVER)
-+    public static void fmlReentry(ArgsWrapper wrap)
-+    {
-+        String[] p_main_0_ = wrap.args;
-         StatList.func_75919_a();
-         ILogAgent ilogagent = null;
- 
