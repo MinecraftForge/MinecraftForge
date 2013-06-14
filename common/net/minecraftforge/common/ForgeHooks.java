@@ -344,6 +344,11 @@ public class ForgeHooks
         return (MinecraftForge.EVENT_BUS.post(event) ? 0.0f : event.distance);
     }
 
+    public static boolean isLivingOnLadder(Block block, World world, int x, int y, int z, EntityLiving entity)
+    {
+        return block != null && block.isLadder(world, x, y, z, entity);
+    }
+    @Deprecated //See above
     public static boolean isLivingOnLadder(Block block, World world, int x, int y, int z)
     {
         return block != null && block.isLadder(world, x, y, z);

@@ -139,7 +139,7 @@
          int k = MathHelper.floor_double(this.posZ);
          int l = this.worldObj.getBlockId(i, j, k);
 -        return l == Block.ladder.blockID || l == Block.vine.blockID;
-+        return ForgeHooks.isLivingOnLadder(Block.blocksList[l], worldObj, i, j, k);
++        return ForgeHooks.isLivingOnLadder(Block.blocksList[l], worldObj, i, j, k, this);
      }
  
      /**
