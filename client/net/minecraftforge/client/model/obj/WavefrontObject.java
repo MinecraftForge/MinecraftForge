@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.minecraft.util.Icon;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.client.model.ModelFormatException;
@@ -199,6 +200,17 @@ public class WavefrontObject implements IModelCustom
             if (partName.equalsIgnoreCase(groupObject.name))
             {
                 groupObject.render();
+            }
+        }
+    }
+
+    public void renderPart(String partName, Icon icon)
+    {
+        for(GroupObject groupObject : groupObjects)
+        {
+            if(partName.equalsIgnoreCase(groupObject.name))
+            {
+                groupObject.render(icon);
             }
         }
     }

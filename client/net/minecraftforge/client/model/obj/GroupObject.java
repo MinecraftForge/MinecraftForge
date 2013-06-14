@@ -2,6 +2,7 @@ package net.minecraftforge.client.model.obj;
 
 import java.util.ArrayList;
 
+import net.minecraft.util.Icon;
 import net.minecraft.client.renderer.Tessellator;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -41,6 +42,17 @@ public class GroupObject
         }
     }
 
+    public void render(Icon icon)
+    {
+        if (faces.size() > 0)
+        {
+            Tessellator tessellator = Tessellator.instance;
+            tessellator.startDrawing(glDrawingMode);
+            render(tessellator, icon);
+            tessellator.draw();
+        }
+    }
+
     public void render(Tessellator tessellator)
     {
         if (faces.size() > 0)
@@ -48,6 +60,17 @@ public class GroupObject
             for (Face face : faces)
             {
                 face.addFaceForRender(tessellator);
+            }
+        }
+    }
+
+    public void render(Tessellator tessellator, Icon icon)
+    {
+        if(faces.size() > 0)
+        {
+            for(Face face : faces)
+            {
+                face.addFaceForRender(tessellator, icon);
             }
         }
     }

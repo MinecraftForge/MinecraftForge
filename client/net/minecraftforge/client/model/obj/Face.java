@@ -1,6 +1,7 @@
 package net.minecraftforge.client.model.obj;
 
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.Icon;
 import net.minecraft.util.Vec3;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -8,11 +9,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class Face
 {
-
     public Vertex[] vertices;
     public Vertex[] vertexNormals;
     public Vertex faceNormal;
     public TextureCoordinate[] textureCoordinates;
+    public TextureCoordinate[] scaledTextureCoordinates;
 
     public void addFaceForRender(Tessellator tessellator)
     {
@@ -63,6 +64,44 @@ public class Face
                 }
 
                 tessellator.addVertexWithUV(vertices[i].x, vertices[i].y, vertices[i].z, textureCoordinates[i].u + offsetU, textureCoordinates[i].v + offsetV);
+            }
+            else
+            {
+                tessellator.addVertex(vertices[i].x, vertices[i].y, vertices[i].z);
+            }
+        }
+    }
+
+    public void addFaceForRender(Tessellator tessellator, Icon icon)
+    {
+        if (faceNormal == null)
+        {
+            faceNormal = this.calculateFaceNormal();
+        }
+
+        tessellator.setNormal(faceNormal.x, faceNormal.y, faceNormal.z);
+        
+        //If there are no scaled coordinates for this face, but there are texture coordinates for the face compute and cache the coordinates.
+        if(scaledTextureCoordinates == null && textureCoordinates != null)
+        {
+            scaledTextureCoordinates = new TextureCoordinate[textureCoordinates.length];
+            
+            for(int i = 0; i < textureCoordinates.length; ++i)
+            {
+                double u = textureCoordinates[i].u;
+                double v = textureCoordinates[i].v;
+                double interpolatedU = icon.getInterpolatedU((Math.floor(u) == u ? 0 : (u - (Math.ceil(u) - 1))) * 16);
+                double interpolatedV = icon.getInterpolatedV((Math.floor(v) == v ? 0 : (v - (Math.ceil(v) - 1))) * 16);
+                
+                scaledTextureCoordinates[i] = new TextureCoordinate((float)interpolatedU, (float)interpolatedV);
+            }
+        }
+        
+        for (int i = 0; i < vertices.length; ++i)
+        {
+            if (scaledTextureCoordinates != null && scaledTextureCoordinates.length != 0)
+            {
+                tessellator.addVertexWithUV(vertices[i].x, vertices[i].y, vertices[i].z, scaledTextureCoordinates[i].u, scaledTextureCoordinates[i].v);
             }
             else
             {
