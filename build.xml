@@ -369,6 +369,7 @@
     <signjar alias="FML" jar="${basedir}/target/${universal.jarname}.zip" keypass="${sign.KEYPASS}" keystore="${env.JENKINS_HOME}/${sign.KEYSTORE}" storepass="${sign.STOREPASS}" verbose="true" />
   </target>
   <target name="makebinpatches" depends="buildenvsetup,makeversion">
+    <delete dir="${basedir}/binpatch" verbose="true"/>
     <java classname="cpw.mods.fml.common.patcher.GenDiffSet">
       <classpath>
         <pathelement path="${mcp.obfoutput}/minecraft"/>
