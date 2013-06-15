@@ -28,6 +28,8 @@ import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import net.minecraft.launchwrapper.LogWrapper;
+
 import com.google.common.base.Throwables;
 
 public class FMLRelaunchLog
@@ -163,6 +165,7 @@ public class FMLRelaunchLog
         globalLogger.setLevel(Level.OFF);
 
         log.myLog = Logger.getLogger("ForgeModLoader");
+        LogWrapper.retarget(log.myLog);
 
         Logger stdOut = Logger.getLogger("STDOUT");
         stdOut.setParent(log.myLog);

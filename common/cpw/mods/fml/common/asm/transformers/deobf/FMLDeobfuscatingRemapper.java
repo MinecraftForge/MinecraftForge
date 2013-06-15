@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -119,7 +120,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         }
         catch (IOException ioe)
         {
-            FMLRelaunchLog.log(Level.SEVERE, ioe, "An error occurred loading the deobfuscation map data");
+            Logger.getLogger("FML").log(Level.SEVERE, "An error occurred loading the deobfuscation map data", ioe);
         }
         methodNameMaps = Maps.newHashMapWithExpectedSize(rawMethodMaps.size());
         fieldNameMaps = Maps.newHashMapWithExpectedSize(rawFieldMaps.size());

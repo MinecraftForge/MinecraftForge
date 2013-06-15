@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.omg.CORBA.REBIND;
@@ -28,6 +29,7 @@ public class GenDiffSet {
         String deobfFileName = args[3];
         String binPatchOutputDir = args[4];
 
+        Logger.getLogger("GENDIFF").log(Level.INFO, String.format("Creating patches at %s for %s from %s", binPatchOutputDir, targetJar, reobfuscationOutputPath));
         Delta delta = new Delta();
         FMLDeobfuscatingRemapper remapper = FMLDeobfuscatingRemapper.INSTANCE;
         remapper.setupLoadOnly(deobfFileName, false);

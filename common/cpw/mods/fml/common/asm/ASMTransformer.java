@@ -5,12 +5,14 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
 
 package cpw.mods.fml.common.asm;
+
+import net.minecraft.launchwrapper.IClassTransformer;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -19,7 +21,6 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 
 import cpw.mods.fml.common.registry.BlockProxy;
-import cpw.mods.fml.relauncher.IClassTransformer;
 
 public class ASMTransformer implements IClassTransformer
 {

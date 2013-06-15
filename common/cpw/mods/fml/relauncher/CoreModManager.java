@@ -78,6 +78,7 @@ public class CoreModManager
         {
             try
             {
+                FMLRelaunchLog.finest("Adding coremod for loading %s", s);
                 IFMLLoadingPlugin plugin = (IFMLLoadingPlugin) Class.forName(s, true, classLoader).newInstance();
                 loadPlugins.add(plugin);
             }
@@ -146,6 +147,7 @@ public class CoreModManager
                 return;
             }
 
+            libraries = new ArrayList<ILibrarySet>();
             for (ILibrarySet lib : libraries)
             {
                 for (int i=0; i<lib.getLibraries().length; i++)
@@ -265,6 +267,7 @@ public class CoreModManager
             {
                 for (String xformClass : plug.getASMTransformerClass())
                 {
+                    FMLRelaunchLog.finest("Registering transformer %s", xformClass);
                     classLoader.registerTransformer(xformClass);
                 }
             }

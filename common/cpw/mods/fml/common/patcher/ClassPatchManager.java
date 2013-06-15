@@ -23,6 +23,7 @@ import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.launcher.FMLTweaker;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.repackage.com.nothome.delta.GDiffPatcher;
@@ -79,13 +80,14 @@ public class ClassPatchManager {
         return inputData;
     }
 
-    public void setup(Side side, CodeSource fmlLib)
+    public void setup(Side side)
     {
-        Pattern binpatchMatcher = Pattern.compile(String.format("binpatch/%s/*.binpatch", side.toString().toLowerCase(Locale.ENGLISH)));
+        Pattern binpatchMatcher = Pattern.compile(String.format("binpatch/%s/.*.binpatch", side.toString().toLowerCase(Locale.ENGLISH)));
         JarFile fmlJar;
         try
         {
-            File fmlJarFile = new File(fmlLib.getLocation().toURI());
+            FMLRelaunchLog.fine("FML URI is %s", FMLTweaker.getJarLocation());
+            File fmlJarFile = new File(FMLTweaker.getJarLocation());
             fmlJar = new JarFile(fmlJarFile);
         }
         catch (Exception e)
