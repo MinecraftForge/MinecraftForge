@@ -54,7 +54,7 @@ import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
 public class AccessTransformer implements IClassTransformer
 {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private class Modifier
     {
         public String name = "";
