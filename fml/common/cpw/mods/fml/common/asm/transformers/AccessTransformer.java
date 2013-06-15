@@ -32,6 +32,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import net.minecraft.launchwrapper.IClassTransformer;
+
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
@@ -48,11 +50,11 @@ import com.google.common.io.LineProcessor;
 import com.google.common.io.Resources;
 
 import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
-import cpw.mods.fml.relauncher.IClassTransformer;
+import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
 public class AccessTransformer implements IClassTransformer
 {
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     private class Modifier
     {
         public String name = "";
@@ -152,6 +154,7 @@ public class AccessTransformer implements IClassTransformer
                 return true;
             }
         });
+        FMLRelaunchLog.fine("Loaded %d rules from AccessTransformer config file %s", modifiers.size(), rulesFile);
     }
 
     @SuppressWarnings("unchecked")
@@ -163,7 +166,7 @@ public class AccessTransformer implements IClassTransformer
 
         if (DEBUG)
         {
-            System.out.printf("Considering all methods and fields on %s (%s): %b\n", name, transformedName, makeAllPublic);
+            FMLRelaunchLog.fine("Considering all methods and fields on %s (%s): %b\n", name, transformedName, makeAllPublic);
         }
         if (!makeAllPublic && !modifiers.containsKey(name)) { return bytes; }
 

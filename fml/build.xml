@@ -132,7 +132,7 @@
 
   <target name="merge-source" depends="buildenvsetup,merge-client,merge-common" />
 
-  <target name="build-universal" depends="buildenvsetup,merge-client,merge-common,reobfuscate,makeversion">
+  <target name="build-universal" depends="buildenvsetup,merge-client,merge-common,reobfuscate,makeversion,makebinpatches">
     <condition property="universal.jarname" value="${modname}-universal-${version.minecraft}-${version}" else="${modname}-universal-${version.minecraft}-${version}-${version.branch}">
       <equals arg1="${version.branch}" arg2="master" />
     </condition>
@@ -143,11 +143,12 @@
         <attribute name="Main-Class" value="cpw.mods.fml.relauncher.ServerLaunchWrapper" />
         <attribute name="Class-Path" value="minecraft_server.jar:lib/guava-14.0-rc3.jar:lib/bcprov-jdk15on-148-src.zip:lib/asm-debug-all-4.1.jar:lib/scala-library.jar:lib/argo-3.2-src.jar" />
       </manifest>
-      <fileset dir="${client.mcp.obfoutput}" includes="**/*.class" excludes="*.class" />
+      <fileset dir="${client.mcp.obfoutput}" includes="**/*.class" excludes="*.class,net/minecraft/**/*.class" />
     </jar>
     <antcall target="signjar" />
     <zip update="true" destfile="${basedir}/target/${universal.jarname}.zip">
-      <fileset dir="${client.mcp.obfoutput}" includes="*.class" />
+      <zipfileset dir="${basedir}/binpatch" prefix="binpatch" includes="**/*.binpatch"/>
+<!--      <fileset dir="${client.mcp.obfoutput}" includes="*.class" />-->
       <zipfileset dir="${basedir}" includes="fmlversion.properties" />
       <zipfileset dir="${basedir}" includes="LICENSE-fml.txt" />
       <zipfileset dir="${common.src.dir}" includes="mcpmod.info" />
@@ -367,17 +368,28 @@
     <echo>${env.JENKINS_HOME} ${universal.jarname} ${sign.KEYPASS}</echo>
     <signjar alias="FML" jar="${basedir}/target/${universal.jarname}.zip" keypass="${sign.KEYPASS}" keystore="${env.JENKINS_HOME}/${sign.KEYSTORE}" storepass="${sign.STOREPASS}" verbose="true" />
   </target>
-  <target name="makebinpatches">
-    <java classname="cpw.mods.fml.patcher.GenDiffSet">
+  <target name="makebinpatches" depends="buildenvsetup,makeversion">
+    <java classname="cpw.mods.fml.common.patcher.GenDiffSet">
       <classpath>
-        <fileset dir="${mcp.home}/lib" includes="guava-14.0-rc3.jar"/>
-        <dirset dir="${mcp.obfoutput}"/>
+        <pathelement path="${mcp.obfoutput}/minecraft"/>
+        <fileset dir="${mcp.home}/lib" includes="guava-14.0-rc3.jar,asm-debug-all-4.1.jar"/>
       </classpath>
       <arg path="${mcp.home}/jars/bin/minecraft.jar.backup"/>
       <arg path="${mcp.home}/jars/bin/minecraft.jar.backup"/>
-      <arg path="${mcp.obfoutput}"/>
+      <arg path="${mcp.obfoutput}/minecraft"/>
       <arg path="${basedir}/deobfuscation_data_${version.minecraft}.zip"/>
       <arg path="${basedir}/binpatch/client"/>
+    </java>
+    <java classname="cpw.mods.fml.common.patcher.GenDiffSet">
+      <classpath>
+        <pathelement path="${mcp.obfoutput}/minecraft"/>
+        <fileset dir="${mcp.home}/lib" includes="guava-14.0-rc3.jar,asm-debug-all-4.1.jar"/>
+      </classpath>
+      <arg path="${mcp.home}/jars/bin/minecraft.jar.backup"/>
+      <arg path="${mcp.home}/jars/minecraft_server.jar.backup"/>
+      <arg path="${mcp.obfoutput}/minecraft"/>
+      <arg path="${basedir}/deobfuscation_data_${version.minecraft}.zip"/>
+      <arg path="${basedir}/binpatch/server"/>
     </java>
   </target>
 </project>

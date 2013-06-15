@@ -16,6 +16,7 @@ import java.applet.Applet;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URLClassLoader;
+import java.util.logging.Level;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -104,7 +105,7 @@ public class FMLLaunchHandler
         }
         catch (Throwable t)
         {
-            FMLRelaunchLog.severe("An error occurred trying to configure the minecraft home at %s for Forge Mod Loader", minecraftHome.getAbsolutePath());
+            FMLRelaunchLog.log(Level.SEVERE, t, "An error occurred trying to configure the minecraft home at %s for Forge Mod Loader", minecraftHome.getAbsolutePath());
             throw Throwables.propagate(t);
         }
     }
