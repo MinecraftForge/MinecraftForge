@@ -1,15 +1,24 @@
 --- ../src_base/minecraft/net/minecraft/entity/monster/EntityEnderman.java
 +++ ../src_work/minecraft/net/minecraft/entity/monster/EntityEnderman.java
-@@ -12,6 +12,8 @@
+@@ -12,6 +12,9 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.living.EnderTeleportEvent;
++import net.minecraftforge.event.entity.player.EnderFacingEvent;
  
  public class EntityEnderman extends EntityMob
  {
-@@ -275,12 +277,17 @@
+@@ -108,6 +111,7 @@
+     {
+         ItemStack itemstack = par1EntityPlayer.inventory.armorInventory[3];
+ 
++        if (MinecraftForge.EVENT_BUS.post(new EnderFacingEvent(this, par1EntityPlayer))) return false;
+         if (itemstack != null && itemstack.itemID == Block.pumpkin.blockID)
+         {
+             return false;
+@@ -275,12 +279,17 @@
       */
      protected boolean teleportTo(double par1, double par3, double par5)
      {
@@ -30,7 +39,7 @@
          boolean flag = false;
          int i = MathHelper.floor_double(this.posX);
          int j = MathHelper.floor_double(this.posY);
-@@ -457,7 +464,7 @@
+@@ -457,7 +466,7 @@
                      }
                  }
  
