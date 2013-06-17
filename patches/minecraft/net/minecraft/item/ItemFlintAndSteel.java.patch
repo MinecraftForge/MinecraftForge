@@ -1,0 +1,13 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemFlintAndSteel.java
++++ ../src_work/minecraft/net/minecraft/item/ItemFlintAndSteel.java
+@@ -57,9 +57,7 @@
+         }
+         else
+         {
+-            int i1 = par3World.getBlockId(par4, par5, par6);
+-
+-            if (i1 == 0)
++            if (par3World.isAirBlock(par4, par5, par6))
+             {
+                 par3World.playSoundEffect((double)par4 + 0.5D, (double)par5 + 0.5D, (double)par6 + 0.5D, "fire.ignite", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F);
+                 par3World.setBlock(par4, par5, par6, Block.fire.blockID);
