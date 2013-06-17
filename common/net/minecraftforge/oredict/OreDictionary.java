@@ -106,6 +106,10 @@ public class OreDictionary
         {
             new ItemStack(Block.blockLapis),
             new ItemStack(Item.cookie),
+            new ItemStack(Block.stoneBrick),
+            new ItemStack(Block.stoneSingleSlab),
+            new ItemStack(Block.stairsCobblestone),
+            new ItemStack(Block.cobblestoneWall)
         };
 
         List recipes = CraftingManager.getInstance().getRecipeList();
