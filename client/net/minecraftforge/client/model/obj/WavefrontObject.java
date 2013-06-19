@@ -49,20 +49,32 @@ public class WavefrontObject implements IModelCustom
     public WavefrontObject(String fileName, URL resource) throws ModelFormatException
     {
         this.fileName = fileName;
-        loadObjModel(resource);
+        
+        try
+        {
+            loadObjModel(resource.openStream());
+        }
+        catch (IOException e)
+        {
+            throw new ModelFormatException("IO Exception reading model format", e);
+        }
+    }
+    
+    public WavefrontObject(String filename, InputStream inputStream) throws ModelFormatException
+    {
+        this.fileName = filename;
+        loadObjModel(inputStream);
     }
 
-    private void loadObjModel(URL fileURL) throws ModelFormatException
+    private void loadObjModel(InputStream inputStream) throws ModelFormatException
     {
         BufferedReader reader = null;
-        InputStream inputStream = null;
 
         String currentLine = null;
         int lineCount = 0;
 
         try
         {
-            inputStream = fileURL.openStream();
             reader = new BufferedReader(new InputStreamReader(inputStream));
 
             while ((currentLine = reader.readLine()) != null)
