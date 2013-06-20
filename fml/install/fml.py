@@ -1,5 +1,5 @@
 import os, os.path, sys
-import urllib, zipfile
+import urllib, zipfile, json, urllib2
 import shutil, glob, fnmatch
 import subprocess, logging, re, shlex
 import csv, ConfigParser
@@ -9,6 +9,7 @@ from zipfile import ZipFile
 from pprint import pprint
 
 mcp_version = '7.42'
+uses_new_assets = False
 
 def download_deps(mcp_path):
     ret = True
@@ -39,11 +40,20 @@ def config_get_section(config, section):
             dict[option] = None
     return dict
 
-def download_file(url, target, md5=None):
+def download_file(url, target, md5=None, root=None, prefix=''):
     name = os.path.basename(target)
+    
+    if not root is None:
+        name = os.path.abspath(target)
+        name = name[len(os.path.abspath(root)) + 1:]
+    
+    dir = os.path.dirname(target)
+    if not os.path.isdir(dir):
+        os.makedirs(dir)
+    
     if os.path.isfile(target) and not md5 == None:
         if not get_md5(target) == md5:
-            print 'Modified %s detected, removing' % name
+            print '%s%s Modified, removing' % (prefix, name)
             os.remove(target)
     
     if not os.path.isfile(target):
@@ -51,16 +61,17 @@ def download_file(url, target, md5=None):
             urllib.urlretrieve(url, target)
             if not md5 == None:
                 if not get_md5(target) == md5:
-                    print 'Download of %s failed md5 check, deleting' % name
+                    print '%sDownload of %s failed md5 check, deleting' % (prefix, name)
                     os.remove(target)
                     return False
-            print 'Downloaded %s' % name
+            if prefix == '':
+                print 'Downloaded %s' % name
+            else:
+                print '%s%s Done' % (prefix, name)
         except Exception as e:
             print e
-            print 'Download of %s failed, download it manually from \'%s\' to \'%s\'' % (target, url, target)
+            print '%sDownload of %s failed, download it manually from \'%s\' to \'%s\'' % (prefix, target, url, target)
             return False
-    else:
-        print 'File Exists: %s' % os.path.basename(target)
     return True
     
 def download_native(url, folder, name):
@@ -100,13 +111,8 @@ def download_minecraft(mcp_dir, fml_dir, version=None):
     bin_folder = os.path.join(mcp_dir, 'jars', 'bin')
     if not os.path.exists(bin_folder):
         os.makedirs(bin_folder)
-        
+    
     failed = False
-
-    for lib in default['libraries'].split(' '):
-        failed = not download_file(default['base_url'] + lib, os.path.join(bin_folder, lib)) or failed
-    for native in default['natives'].split(' '):
-        failed = not download_native(default['base_url'], os.path.join(bin_folder, 'natives'), native) or failed
     
     if not config.has_section(version):
         print 'Error: Invalid minecraft version, could not find \'%s\' in mc_versions.cfg' % version
@@ -117,33 +123,239 @@ def download_minecraft(mcp_dir, fml_dir, version=None):
     client_jar = os.path.join(bin_folder, 'minecraft.jar')
     server_jar = os.path.join(mcp_dir, 'jars', 'minecraft_server.jar')
     
+    if not 'client_url' in mc_info.keys():
+        global uses_new_assets
+        uses_new_assets = True
+        base_url = 'https://s3.amazonaws.com/Minecraft.Download/versions/%s' % version
+        mc_info['client_url'] = '%s/%s.jar' % (base_url, version)
+        mc_info['json_url']   = '%s/%s.json' % (base_url, version)
+        mc_info['server_url'] = '%s/minecraft_server.%s.jar' % (base_url, version)
+        
+        version_dir = os.path.join(mcp_dir, 'jars', 'versions', version)
+        if not os.path.isdir(version_dir):
+            os.makedirs(version_dir)
+            
+        client_jar = os.path.join(version_dir, '%s.jar' % version)
+        json_file  = os.path.join(version_dir, '%s.json' % version)
+        server_jar = os.path.join(mcp_dir, 'jars', 'minecraft_server.%s.jar' % version)
+        
+        headers = get_headers(mc_info['json_url'])
+        if not headers is None:
+            mc_info['json_md5'] = headers['ETag']
+        else:
+            mc_info['json_md5'] = None
+        
+        if not download_file(mc_info['json_url'], json_file, mc_info['json_md5']):
+            print 'Failed to download version json'
+            sys.exit(1)
+        
+        version_json = None
+        try:
+            version_json = json.load(open(json_file))
+        except Exception as e:
+            os.remove(json_file)
+            print 'Failed to download version json'
+            sys.exit(1)
+        
+        failed = download_libraries(mcp_dir, version_json['libraries']) or failed
+        
+    else:
+        for lib in default['libraries'].split(' '):
+            failed = not download_file(default['base_url'] + lib, os.path.join(bin_folder, lib)) or failed
+        for native in default['natives'].split(' '):
+            failed = not download_native(default['base_url'], os.path.join(bin_folder, 'natives'), native) or failed
+    
     # Remove any invalid files
-    file_backup(os.path.join(mcp_dir, 'jars', 'bin'), 'minecraft.jar', mc_info['client_md5'])
-    file_backup(os.path.join(mcp_dir, 'jars'), 'minecraft_server.jar', mc_info['server_md5'])
+    file_backup(client_jar, mc_info['client_md5'])
+    file_backup(server_jar, mc_info['server_md5'])
         
     failed = not download_file(mc_info['client_url'], client_jar, mc_info['client_md5']) or failed
     failed = not download_file(mc_info['server_url'], server_jar, mc_info['server_md5']) or failed
     
     # Backup clean jars, or delete if corrupted
-    file_backup(os.path.join(mcp_dir, 'jars', 'bin'), 'minecraft.jar', mc_info['client_md5'])
-    file_backup(os.path.join(mcp_dir, 'jars'), 'minecraft_server.jar', mc_info['server_md5'])
+    file_backup(client_jar, mc_info['client_md5'])
+    file_backup(server_jar, mc_info['server_md5'])
     
     if failed:
         print 'Something failed verifying minecraft files, see log for details.'
         sys.exit(1)
 
+def download_libraries(mcp_dir, libraries):
+    lib_dir = os.path.join(mcp_dir, 'jars', 'libraries')
+    base_url = 'https://s3.amazonaws.com/Minecraft.Download/libraries'
+    
+    downloads = []
+    failed = False
+    
+    for lib in libraries:
+        name = lib['name'].split(':')
+        domain  = name[0].split('.')
+        root    = name[1]
+        version = name[2]
+        path = domain + [root, version]
+        extract = None
+        if 'extract' in lib.keys():
+            extract = lib['extract']
+        
+        file_names = ['%s-%s.jar' % (root, version)]
+        
+        if 'natives' in lib.keys():
+            file_names = []
+            for k,v in lib['natives'].items():
+                file_names.append('%s-%s-%s.jar' % (root, version, v))
+                
+        for file_name in file_names:
+            url = '%s/%s/%s' % (base_url, '/'.join(path), file_name)
+            file_path = os.path.join(lib_dir, os.sep.join(path), file_name)
+            headers = get_headers(url)
+            if headers is None:
+                print 'Could not retreive headers for library: %s ( %s )' % (lib['name'], url)
+                failed = True
+            else:
+                downloads.append({
+                    'url' : url,
+                    'file' : file_path,
+                    'md5'  : headers['ETag'],
+                    'size' : headers['Content-Length'],
+                    'extract' : extract
+                })
+    
+    natives_dir = os.path.join(lib_dir, 'natives')
+    if not os.path.isdir(natives_dir):
+        os.makedirs(natives_dir)
+    
+    missing = []
+    for dl in downloads:
+        if os.path.isfile(dl['file']):
+            if dl['md5'] is None or not get_md5(dl['file']) == dl['md5']:
+                missing.append(dl)
+                
+    if len(missing) == 0:
+        return failed
+        
+    print 'Downloading %s libraries' % len(missing)
+    for dl in missing:
+        if download_file(dl['url'], dl['file'], dl['md5'], prefix='    '):
+            if not dl['extract'] is None:
+                excludes = []
+                if 'exclude' in dl['extract'].keys():
+                    excludes = dl['extract']['exclude']
+                    
+                def is_filtered(name, excludes):
+                    for ex in excludes:
+                        if name.startswith(ex):
+                            return True
+                    return name.endswith('/')
+                    
+                zip = ZipFile(dl['file'])
+                for name in zip.namelist():
+                    if is_filtered(name, excludes):
+                        continue
+                    out_file = os.path.join(natives_dir, os.sep.join(name.split('/')))
+                    
+                    if not os.path.isfile(out_file):                    
+                        dir = os.path.dirname(out_file)
+                        if not os.path.isdir(dir):
+                            os.makedirs(dir)
+                    
+                        print '        Extracting %s' % name
+                        out = open(out_file, 'wb')
+                        out.write(zip.read(name))
+                        out.flush()
+                        out.close()
+                zip.close()
+        else:
+            failed = True
+        
+    return failed
+
+def get_headers(url):
+    class HeadRequest(urllib2.Request):
+        def get_method(self):
+            return 'HEAD'
+    response = urllib2.urlopen(HeadRequest(url))
+    array = [line.rstrip('\r\n') for line in response.info().headers]
+    dict = {}
+    for line in array:
+        pts = line.split(':', 1)
+        pts[1] = pts[1].strip()
+        if pts[1][0] == '"' and pts[1][-1] == '"':
+            pts[1] = pts[1][1:-1]
+        dict[pts[0]] = pts[1]
+    
+    return dict
+    
 def get_md5(file):
     if not os.path.isfile(file):
         return ""
     with open(file, 'rb') as fh:
         return md5(fh.read()).hexdigest()
 
-def pre_decompile(mcp_dir, fml_dir):
+def pre_decompile(mcp_dir, fml_dir, disable_assets = False):
     download_minecraft(mcp_dir, fml_dir)
     
-def file_backup(base, file, md5):
-    bck_jar = os.path.join(base, file + '.backup')
-    src_jar = os.path.join(base, file)
+    if not disable_assets:
+        download_assets(mcp_dir)
+    
+def download_assets(mcp_dir):
+    if not uses_new_assets:
+        return
+    from xml.dom.minidom import parse
+    asset_dir = os.path.join(mcp_dir, 'jars', 'assets')
+    base_url = 'https://s3.amazonaws.com/Minecraft.Resources'
+    
+    print 'Gathering assets list from %s' % base_url
+    
+    files = []
+    failed = False
+    
+    try:
+        url = urllib.urlopen(base_url)
+        xml = parse(url)
+        
+        def get(xml, key):
+            return xml.getElementsByTagName(key)[0].firstChild.nodeValue
+        
+        for asset in xml.getElementsByTagName('Contents'):
+            path = get(asset, 'Key')
+            if path.endswith('/'):
+                continue
+                
+            file = os.path.join(asset_dir, os.sep.join(path.split('/')))
+            md5 = get(asset, 'ETag').replace('"', '')
+            
+            if os.path.isfile(file):
+                if get_md5(file) == md5:
+                    continue
+                
+            files.append({
+                'file' : file,
+                'url'  : '%s/%s' % (base_url, path),
+                'size' : get(asset, 'Size'),
+                'md5'  : md5
+            })
+    except Exception as e:
+        print 'Error gathering asset list:'
+        pprint(e)
+        sys.exit(1)
+    
+    if len(files) == 0:
+        print 'No new assets need to download'
+        return
+        
+    print 'Downloading %s assets' % len(files)
+    for file in files:
+        failed = not download_file(file['url'], file['file'], file['md5'], root=asset_dir, prefix='    ') or failed
+    
+    if failed:
+        print 'Downloading assets failed, please review log for more details'
+    sys.exit(1)
+    
+def file_backup(file, md5):
+    base = os.path.dirname(file)
+    name = os.path.basename(file)
+    bck_jar = os.path.join(base, name + '.backup')
+    src_jar = os.path.join(base, name)
     
     if not os.path.isfile(src_jar) and not os.path.isfile(bck_jar):
         return
@@ -163,10 +375,11 @@ def file_backup(base, file, md5):
         else:
             shutil.copy(src_jar, bck_jar)
         
-def post_decompile(mcp_dir, fml_dir):
-    bin_dir = os.path.join(mcp_dir, 'jars', 'bin')
-    back_jar = os.path.join(bin_dir, 'minecraft.jar.backup')
-    src_jar = os.path.join(bin_dir, 'minecraft.jar')
+def post_decompile(mcp_dir, fml_dir, client_jar):
+    dir = os.path.dirname(client_jar)
+    name = os.path.basename(client_jar)
+    back_jar = os.path.join(dir, '%s.backup' % name)
+    src_jar = client_jar
     
     if not os.path.isfile(src_jar):
         return
@@ -224,7 +437,7 @@ def cleanup_source(path):
             updatefile(src_file)
 
 compile_tools = True
-def setup_fml(fml_dir, mcp_dir, disable_at=False, disable_merge=False, enable_server=False, disable_client=False):
+def setup_fml(fml_dir, mcp_dir, disable_at=False, disable_merge=False, enable_server=False, disable_client=False, disable_assets=False):
     global compile_tools
     sys.path.append(mcp_dir)
     from runtime.decompile import decompile
@@ -248,14 +461,17 @@ def setup_fml(fml_dir, mcp_dir, disable_at=False, disable_merge=False, enable_se
         sys.exit(1)
     
     compile_tools = True
+    client_jar = None
     
     def applyrg_shunt(self, side, reobf=False, applyrg_real = Commands.applyrg):
         global compile_tools
+        global client_jar
         if not self.has_wine and not self.has_astyle:
                 self.logger.error('!! Please install either wine or astyle for source cleanup !!')
                 self.logger.error('!! This is REQUIRED by FML/Forge Cannot proceed !!')
                 sys.exit(1)
         jars = {CLIENT: self.jarclient, SERVER: self.jarserver}
+        client_jar = os.path.abspath(self.jarclient)
         
         dir_bin = os.path.join(fml_dir, 'bin')
         if not os.path.isdir(dir_bin):
@@ -328,7 +544,7 @@ def setup_fml(fml_dir, mcp_dir, disable_at=False, disable_merge=False, enable_se
         return ret
     
     try:
-        pre_decompile(mcp_dir, fml_dir)
+        pre_decompile(mcp_dir, fml_dir, disable_assets=disable_assets)
         
         os.chdir(mcp_dir)
         Commands.applyrg = applyrg_shunt
@@ -339,7 +555,7 @@ def setup_fml(fml_dir, mcp_dir, disable_at=False, disable_merge=False, enable_se
         reset_logger()
         os.chdir(fml_dir)
         
-        post_decompile(mcp_dir, fml_dir)
+        post_decompile(mcp_dir, fml_dir, client_jar)
         
     except SystemExit, e:
         print 'Decompile Exception: %d ' % e.code
