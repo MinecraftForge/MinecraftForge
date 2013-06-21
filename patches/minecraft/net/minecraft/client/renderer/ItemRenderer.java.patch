@@ -66,42 +66,127 @@
          {
              this.mc.renderEngine.bindTexture("/terrain.png");
              this.renderBlocksInstance.renderBlockAsItem(Block.blocksList[par2ItemStack.itemID], par2ItemStack.getItemDamage(), 1.0F);
-@@ -272,7 +306,7 @@
+@@ -272,8 +306,10 @@
          Render render;
          RenderPlayer renderplayer;
  
 -        if (itemstack != null && itemstack.itemID == Item.map.itemID)
-+        if (itemstack != null && itemstack.getItem() instanceof ItemMap)
-         {
+-        {
++        IItemRenderer custom = null;
++        if (itemstack != null && (itemstack.getItem() instanceof ItemMap || (custom=MinecraftForgeClient.getItemRenderer(itemstack, FIRST_PERSON_HOLDING))!=null))
++        {
++            boolean isMap = itemstack.getItem() instanceof ItemMap;
              GL11.glPushMatrix();
              f4 = 0.8F;
-@@ -340,11 +374,20 @@
-             tessellator.addVertexWithUV((double)(128 + b0), (double)(0 - b0), 0.0D, 1.0D, 0.0D);
-             tessellator.addVertexWithUV((double)(0 - b0), (double)(0 - b0), 0.0D, 0.0D, 0.0D);
-             tessellator.draw();
+             f7 = entityclientplayermp.getSwingProgress(par1);
+@@ -297,24 +333,28 @@
+             GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
+             GL11.glRotatef(f7 * -85.0F, 0.0F, 0.0F, 1.0F);
+             GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTextureForDownloadableImage(this.mc.thePlayer.skinUrl, this.mc.thePlayer.getTexture()));
+-            this.mc.renderEngine.resetBoundTexture();
+-
+-            for (k = 0; k < 2; ++k)
+-            {
+-                int l = k * 2 - 1;
+-                GL11.glPushMatrix();
+-                GL11.glTranslatef(-0.0F, -0.6F, 1.1F * (float)l);
+-                GL11.glRotatef((float)(-45 * l), 1.0F, 0.0F, 0.0F);
+-                GL11.glRotatef(-90.0F, 0.0F, 0.0F, 1.0F);
+-                GL11.glRotatef(59.0F, 0.0F, 0.0F, 1.0F);
+-                GL11.glRotatef((float)(-65 * l), 0.0F, 1.0F, 0.0F);
+-                render = RenderManager.instance.getEntityRenderObject(this.mc.thePlayer);
+-                renderplayer = (RenderPlayer)render;
+-                f10 = 1.0F;
+-                GL11.glScalef(f10, f10, f10);
+-                renderplayer.renderFirstPersonArm(this.mc.thePlayer);
+-                GL11.glPopMatrix();
++            
++            if (isMap || custom.shouldUseRenderHelper(FIRST_PERSON_HOLDING, itemstack, HOLD_HANDS))
++            {
++                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTextureForDownloadableImage(this.mc.thePlayer.skinUrl, this.mc.thePlayer.getTexture()));
++                this.mc.renderEngine.resetBoundTexture();
++    
++                for (k = 0; k < 2; ++k)
++                {
++                    int l = k * 2 - 1;
++                    GL11.glPushMatrix();
++                    GL11.glTranslatef(-0.0F, -0.6F, 1.1F * (float)l);
++                    GL11.glRotatef((float)(-45 * l), 1.0F, 0.0F, 0.0F);
++                    GL11.glRotatef(-90.0F, 0.0F, 0.0F, 1.0F);
++                    GL11.glRotatef(59.0F, 0.0F, 0.0F, 1.0F);
++                    GL11.glRotatef((float)(-65 * l), 0.0F, 1.0F, 0.0F);
++                    render = RenderManager.instance.getEntityRenderObject(this.mc.thePlayer);
++                    renderplayer = (RenderPlayer)render;
++                    f10 = 1.0F;
++                    GL11.glScalef(f10, f10, f10);
++                    renderplayer.renderFirstPersonArm(this.mc.thePlayer);
++                    GL11.glPopMatrix();
++                }
+             }
+ 
+             f6 = entityclientplayermp.getSwingProgress(par1);
+@@ -330,23 +370,42 @@
+             GL11.glTranslatef(-1.0F, -1.0F, 0.0F);
+             f10 = 0.015625F;
+             GL11.glScalef(f10, f10, f10);
+-            this.mc.renderEngine.bindTexture("/misc/mapbg.png");
+-            Tessellator tessellator = Tessellator.instance;
+-            GL11.glNormal3f(0.0F, 0.0F, -1.0F);
+-            tessellator.startDrawingQuads();
+-            byte b0 = 7;
+-            tessellator.addVertexWithUV((double)(0 - b0), (double)(128 + b0), 0.0D, 0.0D, 1.0D);
+-            tessellator.addVertexWithUV((double)(128 + b0), (double)(128 + b0), 0.0D, 1.0D, 1.0D);
+-            tessellator.addVertexWithUV((double)(128 + b0), (double)(0 - b0), 0.0D, 1.0D, 0.0D);
+-            tessellator.addVertexWithUV((double)(0 - b0), (double)(0 - b0), 0.0D, 0.0D, 0.0D);
+-            tessellator.draw();
 -            MapData mapdata = Item.map.getMapData(itemstack, this.mc.theWorld);
 -
 -            if (mapdata != null)
 -            {
 -                this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.renderEngine, mapdata);
-+
-+            IItemRenderer custom = MinecraftForgeClient.getItemRenderer(itemstack, FIRST_PERSON_MAP);
-+            MapData mapdata = ((ItemMap)itemstack.getItem()).getMapData(itemstack, this.mc.theWorld);
-+
-+            if (custom == null)
+-            }
+-
++            
++            if (isMap || custom.shouldUseRenderHelper(FIRST_PERSON_HOLDING, itemstack, HOLD_BACKGROUND))
 +            {
-+                if (mapdata != null)
++                this.mc.renderEngine.bindTexture("/misc/mapbg.png");
++                Tessellator tessellator = Tessellator.instance;
++                GL11.glNormal3f(0.0F, 0.0F, -1.0F);
++                tessellator.startDrawingQuads();
++                byte b0 = 7;
++                tessellator.addVertexWithUV((double)(0 - b0), (double)(128 + b0), 0.0D, 0.0D, 1.0D);
++                tessellator.addVertexWithUV((double)(128 + b0), (double)(128 + b0), 0.0D, 1.0D, 1.0D);
++                tessellator.addVertexWithUV((double)(128 + b0), (double)(0 - b0), 0.0D, 1.0D, 0.0D);
++                tessellator.addVertexWithUV((double)(0 - b0), (double)(0 - b0), 0.0D, 0.0D, 0.0D);
++                tessellator.draw();
++            }
++
++            if (isMap)
++            {
++                custom = MinecraftForgeClient.getItemRenderer(itemstack, FIRST_PERSON_MAP);
++                MapData mapdata = ((ItemMap)itemstack.getItem()).getMapData(itemstack, this.mc.theWorld);
++                if (custom == null)
 +                {
-+                    this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.renderEngine, mapdata);
++                    if (mapdata != null)
++                    {
++                        this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.renderEngine, mapdata);
++                    }
++                }
++                else
++                {
++                    custom.renderItem(FIRST_PERSON_MAP, itemstack, mc.thePlayer, mc.renderEngine, mapdata);
 +                }
 +            }
 +            else
 +            {
-+                custom.renderItem(FIRST_PERSON_MAP, itemstack, mc.thePlayer, mc.renderEngine, mapdata);
-             }
- 
++                custom.renderItem(FIRST_PERSON_HOLDING, itemstack, mc.thePlayer, mc.renderEngine);
++            }
++            
              GL11.glPopMatrix();
-@@ -446,17 +489,20 @@
+         }
+         else if (itemstack != null)
+@@ -446,17 +505,20 @@
  
              if (itemstack.getItem().requiresMultipleRenderPasses())
              {

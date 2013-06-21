@@ -69,7 +69,17 @@ public interface IItemRenderer
          * RenderEngine engine - The RenderEngine instance
          * MapData mapData - The map data
          */
-        FIRST_PERSON_MAP
+        FIRST_PERSON_MAP,
+        
+        /**
+         * The render type used when in first person and an item similar to a map should be rendered.
+         * All appropriate rotations have been applied.
+         * 
+         * Data Parameters:
+         * EntityPlayer player - The player holding the map
+         * RenderEngine engine - The RenderEngine instance
+         */
+        FIRST_PERSON_HOLDING
     }
     
     public enum ItemRendererHelper
@@ -102,7 +112,17 @@ public interface IItemRenderer
          * Determines if the item should be rendered in GUI inventory slots as a 3D
          * block or as a 2D texture.
          */
-        INVENTORY_BLOCK
+        INVENTORY_BLOCK,
+        
+        /**
+         * Determines if hands should be rendered when being held.
+         */
+        HOLD_HANDS,
+        
+        /**
+         * Determines if the map background should be rendered when being held.
+         */
+        HOLD_BACKGROUND
     }
     
     /** 
