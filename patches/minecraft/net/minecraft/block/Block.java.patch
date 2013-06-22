@@ -165,7 +165,7 @@
      }
  
      /**
-@@ -1443,4 +1464,950 @@
+@@ -1443,4 +1464,956 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -820,6 +820,12 @@
 +     * @param target The full target the player is looking at
 +     * @return A ItemStack to add to the player's inventory, Null if nothing should be added.
 +     */
++    public ItemStack getPickBlock(MovingObjectPosition target, EntityPlayer player,  World world, int x, int y, int z)
++    {
++        return getPickBlock(target, world, x, y, z);
++    }
++    
++    @Deprecated // See EntityPlayer sensitive one above.
 +    public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z)
 +    {
 +        int id = idPicked(world, x, y, z);
