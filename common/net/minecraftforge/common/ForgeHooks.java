@@ -261,7 +261,7 @@ public class ForgeHooks
                 return false;
             }
 
-            result = var8.getPickBlock(target, world, x, y, z);
+            result = var8.getPickBlock(target, player, world, x, y, z);
         }
         else
         {
