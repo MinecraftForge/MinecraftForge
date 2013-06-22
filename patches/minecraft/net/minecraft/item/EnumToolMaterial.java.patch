@@ -6,7 +6,7 @@
      private final int enchantability;
 +
 +    //Added by forge for custom Armor materials.
-+    public Item customCraftingMaterial = null;
++    public int customCraftingMaterialID = 0;
  
      private EnumToolMaterial(int par3, int par4, float par5, int par6, int par7)
      {
@@ -22,7 +22,7 @@
 +            case GOLD:    return Item.ingotGold.itemID;
 +            case IRON:    return Item.ingotIron.itemID;
 +            case EMERALD: return Item.diamond.itemID;
-+            default:      return (customCraftingMaterial == null ? 0 : customCraftingMaterial.itemID);
++            default:      return customCraftingMaterialID;
 +        }
      }
  }
