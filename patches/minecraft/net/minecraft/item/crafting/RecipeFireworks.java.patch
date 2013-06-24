@@ -4,23 +4,23 @@
              {
                  this.field_92102_a = new ItemStack(Item.firework);
  
-+                var15 = new NBTTagCompound();
-                 if (var6 > 0)
++                nbttagcompound = new NBTTagCompound();
+                 if (l > 0)
                  {
--                    var15 = new NBTTagCompound();
-                     var18 = new NBTTagCompound("Fireworks");
-                     NBTTagList var25 = new NBTTagList("Explosions");
+-                    nbttagcompound = new NBTTagCompound();
+                     nbttagcompound1 = new NBTTagCompound("Fireworks");
+                     NBTTagList nbttaglist = new NBTTagList("Explosions");
  
 @@ -110,9 +110,9 @@
-                     var18.setTag("Explosions", var25);
-                     var18.setByte("Flight", (byte)var4);
-                     var15.setTag("Fireworks", var18);
--                    this.field_92102_a.setTagCompound(var15);
+                     nbttagcompound1.setTag("Explosions", nbttaglist);
+                     nbttagcompound1.setByte("Flight", (byte)j);
+                     nbttagcompound.setTag("Fireworks", nbttagcompound1);
+-                    this.field_92102_a.setTagCompound(nbttagcompound);
 -                }
 -
 +                }
 +
-+                this.field_92102_a.setTagCompound(var15);
++                this.field_92102_a.setTagCompound(nbttagcompound);
                  return true;
              }
-             else if (var4 == 1 && var3 == 0 && var6 == 0 && var5 > 0 && var8 <= 1)
+             else if (j == 1 && i == 0 && l == 0 && k > 0 && j1 <= 1)

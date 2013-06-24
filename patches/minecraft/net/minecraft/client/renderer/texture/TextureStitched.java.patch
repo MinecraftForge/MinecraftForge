@@ -1,0 +1,45 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/texture/TextureStitched.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/texture/TextureStitched.java
+@@ -3,9 +3,13 @@
+ import cpw.mods.fml.client.TextureFXManager;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
++import java.awt.image.BufferedImage;
+ import java.io.BufferedReader;
+ import java.util.ArrayList;
+ import java.util.List;
++
++import net.minecraft.client.texturepacks.ITexturePack;
+ import net.minecraft.util.Icon;
+ import net.minecraft.util.Tuple;
+ 
+@@ -252,4 +256,28 @@
+             t.createAndUploadTexture();
+         }
+     }
++
++    //===================================================================================================
++    //                                           Forge Start
++    //===================================================================================================
++    /**
++     * Called when texture packs are refreshed, from TextureManager.createNewTexture,
++     * allows for finer control over loading the animation lists and verification of the image.
++     * If the return value from this is true, no further loading will be done by vanilla code.
++     * 
++     * You need to add all Texture's to the textures argument. At the end of this function at least one
++     * entry should be in that argument, or a error should of been thrown.
++     * 
++     * @param manager The invoking manager
++     * @param texturepack Current texture pack
++     * @param name The name of the texture
++     * @param fileName Resource path for this texture
++     * @param image Buffered image of the loaded resource
++     * @param textures ArrayList of element type Texture, split textures should be added to this list for the stitcher to handle.  
++     * @return Return true to skip further vanilla texture loading for this texture
++     */
++    public boolean loadTexture(TextureManager manager, ITexturePack texturepack, String name, String fileName, BufferedImage image, ArrayList textures)
++    {
++        return false;
++    }
+ }

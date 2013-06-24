@@ -1,6 +1,7 @@
 package net.minecraftforge.event.entity;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.world.World;
 import net.minecraftforge.event.Event;
 
 public class EntityEvent extends Event
@@ -10,6 +11,14 @@ public class EntityEvent extends Event
     public EntityEvent(Entity entity)
     {
         this.entity = entity;
+    }
+
+    public static class EntityConstructing extends EntityEvent
+    {
+        public EntityConstructing(Entity entity)
+        {
+            super(entity);
+        }
     }
 
     public static class CanUpdate extends EntityEvent

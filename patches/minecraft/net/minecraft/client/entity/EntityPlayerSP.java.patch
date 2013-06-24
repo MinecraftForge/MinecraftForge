@@ -1,0 +1,24 @@
+--- ../src_base/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
++++ ../src_work/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
+@@ -46,6 +46,8 @@
+ import net.minecraft.util.Session;
+ import net.minecraft.util.StringUtils;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
+ 
+ @SideOnly(Side.CLIENT)
+ public class EntityPlayerSP extends EntityPlayer
+@@ -661,6 +663,12 @@
+ 
+     public void playSound(String par1Str, float par2, float par3)
+     {
++        PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(this, par1Str, par2, par3);
++        if (MinecraftForge.EVENT_BUS.post(event))
++        {
++            return;
++        }
++        par1Str = event.name;
+         this.worldObj.playSound(this.posX, this.posY - (double)this.yOffset, this.posZ, par1Str, par2, par3, false);
+     }
+ }

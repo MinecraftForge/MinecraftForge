@@ -6,6 +6,7 @@ import net.minecraft.entity.Entity;
  * This interface should be implemented by an Entity that can be 'thrown', like snowballs.
  * This was created to mimic ModLoaderMP's 'owner' functionality.
  */
+@Deprecated //Moved to FML cpw.mods.fml.common.registry.IThrowableEntity
 public interface IThrowableEntity
 {
     /**

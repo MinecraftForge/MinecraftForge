@@ -63,7 +63,7 @@ public class ForgeHooks
         {
             return;
         }
-        world.setBlockAndMetadataWithNotify(x, y, z, grass.block.blockID, grass.metadata);
+        world.setBlock(x, y, z, grass.block.blockID, grass.metadata, 3);
     }
 
     public static ItemStack getGrassSeed(World world)
@@ -116,7 +116,7 @@ public class ForgeHooks
         }
         return true;
     }
-    
+
     public static boolean canToolHarvestBlock(Block block, int metadata, ItemStack stack)
     {
         if (stack == null) return false;
@@ -147,7 +147,7 @@ public class ForgeHooks
         }
         else
         {
-             return player.getCurrentPlayerStrVsBlock(block, metadata) / hardness / 30F;
+             return player.getCurrentPlayerStrVsBlock(block, false, metadata) / hardness / 30F;
         }
     }
 
@@ -167,19 +167,19 @@ public class ForgeHooks
 
         MinecraftForge.setToolClass(Item.pickaxeWood,    "pickaxe", 0);
         MinecraftForge.setToolClass(Item.pickaxeStone,   "pickaxe", 1);
-        MinecraftForge.setToolClass(Item.pickaxeSteel,   "pickaxe", 2);
+        MinecraftForge.setToolClass(Item.pickaxeIron,   "pickaxe", 2);
         MinecraftForge.setToolClass(Item.pickaxeGold,    "pickaxe", 0);
         MinecraftForge.setToolClass(Item.pickaxeDiamond, "pickaxe", 3);
 
         MinecraftForge.setToolClass(Item.axeWood,    "axe", 0);
         MinecraftForge.setToolClass(Item.axeStone,   "axe", 1);
-        MinecraftForge.setToolClass(Item.axeSteel,   "axe", 2);
+        MinecraftForge.setToolClass(Item.axeIron,   "axe", 2);
         MinecraftForge.setToolClass(Item.axeGold,    "axe", 0);
         MinecraftForge.setToolClass(Item.axeDiamond, "axe", 3);
 
         MinecraftForge.setToolClass(Item.shovelWood,    "shovel", 0);
         MinecraftForge.setToolClass(Item.shovelStone,   "shovel", 1);
-        MinecraftForge.setToolClass(Item.shovelSteel,   "shovel", 2);
+        MinecraftForge.setToolClass(Item.shovelIron,   "shovel", 2);
         MinecraftForge.setToolClass(Item.shovelGold,    "shovel", 0);
         MinecraftForge.setToolClass(Item.shovelDiamond, "shovel", 3);
 
@@ -205,7 +205,7 @@ public class ForgeHooks
         MinecraftForge.setBlockHarvestLevel(Block.oreGold,      "pickaxe", 2);
         MinecraftForge.setBlockHarvestLevel(Block.blockGold,    "pickaxe", 2);
         MinecraftForge.setBlockHarvestLevel(Block.oreIron,      "pickaxe", 1);
-        MinecraftForge.setBlockHarvestLevel(Block.blockSteel,   "pickaxe", 1);
+        MinecraftForge.setBlockHarvestLevel(Block.blockIron,   "pickaxe", 1);
         MinecraftForge.setBlockHarvestLevel(Block.oreLapis,     "pickaxe", 1);
         MinecraftForge.setBlockHarvestLevel(Block.blockLapis,   "pickaxe", 1);
         MinecraftForge.setBlockHarvestLevel(Block.oreRedstone,  "pickaxe", 2);
@@ -213,22 +213,6 @@ public class ForgeHooks
         MinecraftForge.removeBlockEffectiveness(Block.oreRedstone, "pickaxe");
         MinecraftForge.removeBlockEffectiveness(Block.obsidian,    "pickaxe");
         MinecraftForge.removeBlockEffectiveness(Block.oreRedstoneGlowing, "pickaxe");
-    }
-
-    public static String getTexture(String _default, Object obj)
-    {
-        if (obj instanceof Item)
-        {
-            return ((Item)obj).getTextureFile();
-        }
-        else if (obj instanceof Block)
-        {
-            return ((Block)obj).getTextureFile();
-        }
-        else
-        {
-            return _default;
-        }
     }
 
     public static int getTotalArmorValue(EntityPlayer player)
@@ -360,6 +344,11 @@ public class ForgeHooks
         return (MinecraftForge.EVENT_BUS.post(event) ? 0.0f : event.distance);
     }
 
+    public static boolean isLivingOnLadder(Block block, World world, int x, int y, int z, EntityLiving entity)
+    {
+        return block != null && block.isLadder(world, x, y, z, entity);
+    }
+    @Deprecated //See above
     public static boolean isLivingOnLadder(Block block, World world, int x, int y, int z)
     {
         return block != null && block.isLadder(world, x, y, z);
@@ -385,5 +374,16 @@ public class ForgeHooks
 
         player.joinEntityItemWithWorld(event.entityItem);
         return event.entityItem;
+    }
+
+    public static float getEnchantPower(World world, int x, int y, int z)
+    {
+        if (world.isAirBlock(x, y, z))
+        {
+            return 0;
+        }
+
+        Block block = Block.blocksList[world.getBlockId(x, y, z)];
+        return (block == null ? 0 : block.getEnchantPowerBonus(world, x, y, z));
     }
 }

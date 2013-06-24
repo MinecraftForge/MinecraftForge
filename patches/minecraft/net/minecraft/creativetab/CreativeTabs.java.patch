@@ -55,23 +55,23 @@
  
 @@ -149,11 +172,41 @@
          {
-             Item var5 = var2[var4];
+             Item item = aitem[j];
  
--            if (var5 != null && var5.getCreativeTab() == this)
+-            if (item != null && item.getCreativeTab() == this)
 -            {
--                var5.getSubItems(var5.itemID, this, par1List);
+-                item.getSubItems(item.itemID, this, par1List);
 -            }
 -        }
-+            if (var5 == null)
++            if (item == null)
 +            {
 +                continue;
 +            }
 +
-+            for(CreativeTabs tab : var5.getCreativeTabs())
++            for(CreativeTabs tab : item.getCreativeTabs())
 +            {
 +                if (tab == this)
 +                {
-+                    var5.getSubItems(var5.itemID, this, par1List);
++                    item.getSubItems(item.itemID, this, par1List);
 +                }
 +            }
 +        }

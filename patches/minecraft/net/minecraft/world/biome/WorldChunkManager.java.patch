@@ -18,7 +18,7 @@
 +
  public class WorldChunkManager
  {
-+    public static ArrayList<BiomeGenBase> allowedBiomes = new ArrayList<BiomeGenBase>(Arrays.asList(forest, plains, taiga, taigaHills, forestHills, jungle. jungleHills));
++    public static ArrayList<BiomeGenBase> allowedBiomes = new ArrayList<BiomeGenBase>(Arrays.asList(forest, plains, taiga, taigaHills, forestHills, jungle, jungleHills));
      private GenLayer genBiomes;
  
      /** A GenLayer containing the indices into BiomeGenBase.biomeList[] */
@@ -39,10 +39,10 @@
      public WorldChunkManager(long par1, WorldType par3WorldType)
      {
          this();
-         GenLayer[] var4 = GenLayer.initializeAllBiomeGenerators(par1, par3WorldType);
-+        var4 = getModdedBiomeGenerators(par3WorldType, par1, var4);
-         this.genBiomes = var4[0];
-         this.biomeIndexLayer = var4[1];
+         GenLayer[] agenlayer = GenLayer.initializeAllBiomeGenerators(par1, par3WorldType);
++        agenlayer = getModdedBiomeGenerators(par3WorldType, par1, agenlayer);
+         this.genBiomes = agenlayer[0];
+         this.biomeIndexLayer = agenlayer[1];
      }
 @@ -264,4 +265,11 @@
      {

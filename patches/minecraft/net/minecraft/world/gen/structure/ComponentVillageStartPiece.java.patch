@@ -10,9 +10,9 @@
      public final int terrainType;
 @@ -32,6 +33,7 @@
          this.terrainType = par7;
-         BiomeGenBase var8 = par1WorldChunkManager.getBiomeGenAt(par4, par5);
-         this.inDesert = var8 == BiomeGenBase.desert || var8 == BiomeGenBase.desertHills;
-+        this.biome = var8;
+         BiomeGenBase biomegenbase = par1WorldChunkManager.getBiomeGenAt(par4, par5);
+         this.inDesert = biomegenbase == BiomeGenBase.desert || biomegenbase == BiomeGenBase.desertHills;
++        this.biome = biomegenbase;
          this.startPiece = this;
      }
  

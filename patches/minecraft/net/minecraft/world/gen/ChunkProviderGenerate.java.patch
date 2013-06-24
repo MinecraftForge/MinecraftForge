@@ -54,9 +54,9 @@
 +        MinecraftForge.EVENT_BUS.post(event);
 +        if (event.getResult() == Result.DENY) return;
 +
-         byte var5 = 63;
-         double var6 = 0.03125D;
-         this.stoneNoise = this.noiseGen4.generateNoiseOctaves(this.stoneNoise, par1 * 16, par2 * 16, 0, 16, 16, 1, var6 * 2.0D, var6 * 2.0D, var6 * 2.0D);
+         byte b0 = 63;
+         double d0 = 0.03125D;
+         this.stoneNoise = this.noiseGen4.generateNoiseOctaves(this.stoneNoise, par1 * 16, par2 * 16, 0, 16, 16, 1, d0 * 2.0D, d0 * 2.0D, d0 * 2.0D);
 @@ -324,6 +353,10 @@
       */
      private double[] initializeNoiseField(double[] par1ArrayOfDouble, int par2, int par3, int par4, int par5, int par6, int par7)
@@ -69,60 +69,60 @@
          {
              par1ArrayOfDouble = new double[par5 * par6 * par7];
 @@ -492,6 +525,8 @@
-         this.rand.setSeed((long)par2 * var7 + (long)par3 * var9 ^ this.worldObj.getSeed());
-         boolean var11 = false;
+         this.rand.setSeed((long)par2 * i1 + (long)par3 * j1 ^ this.worldObj.getSeed());
+         boolean flag = false;
  
-+        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(par1IChunkProvider, worldObj, rand, par2, par3, var11));
++        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(par1IChunkProvider, worldObj, rand, par2, par3, flag));
 +
          if (this.mapFeaturesEnabled)
          {
              this.mineshaftGenerator.generateStructuresInChunk(this.worldObj, this.rand, par2, par3);
 @@ -504,7 +539,8 @@
-         int var13;
-         int var14;
+         int l1;
+         int i2;
  
--        if (!var11 && this.rand.nextInt(4) == 0)
-+        if (TerrainGen.populate(par1IChunkProvider, worldObj, rand, par2, par3, var11, LAKE) && 
-+                !var11 && this.rand.nextInt(4) == 0)
+-        if (!flag && this.rand.nextInt(4) == 0)
++        if (TerrainGen.populate(par1IChunkProvider, worldObj, rand, par2, par3, flag, LAKE) && 
++                !flag && this.rand.nextInt(4) == 0)
          {
-             var12 = var4 + this.rand.nextInt(16) + 8;
-             var13 = this.rand.nextInt(128);
+             k1 = k + this.rand.nextInt(16) + 8;
+             l1 = this.rand.nextInt(128);
 @@ -512,7 +548,8 @@
-             (new WorldGenLakes(Block.waterStill.blockID)).generate(this.worldObj, this.rand, var12, var13, var14);
+             (new WorldGenLakes(Block.waterStill.blockID)).generate(this.worldObj, this.rand, k1, l1, i2);
          }
  
--        if (!var11 && this.rand.nextInt(8) == 0)
-+        if (TerrainGen.populate(par1IChunkProvider, worldObj, rand, par2, par3, var11, LAVA) &&
-+                !var11 && this.rand.nextInt(8) == 0)
+-        if (!flag && this.rand.nextInt(8) == 0)
++        if (TerrainGen.populate(par1IChunkProvider, worldObj, rand, par2, par3, flag, LAVA) &&
++                !flag && this.rand.nextInt(8) == 0)
          {
-             var12 = var4 + this.rand.nextInt(16) + 8;
-             var13 = this.rand.nextInt(this.rand.nextInt(120) + 8);
+             k1 = k + this.rand.nextInt(16) + 8;
+             l1 = this.rand.nextInt(this.rand.nextInt(120) + 8);
 @@ -524,7 +561,8 @@
              }
          }
  
--        for (var12 = 0; var12 < 8; ++var12)
-+        boolean doGen = TerrainGen.populate(par1IChunkProvider, worldObj, rand, par2, par3, var11, DUNGEON);
-+        for (var12 = 0; doGen && var12 < 8; ++var12)
+-        for (k1 = 0; k1 < 8; ++k1)
++        boolean doGen = TerrainGen.populate(par1IChunkProvider, worldObj, rand, par2, par3, flag, DUNGEON);
++        for (k1 = 0; doGen && k1 < 8; ++k1)
          {
-             var13 = var4 + this.rand.nextInt(16) + 8;
-             var14 = this.rand.nextInt(128);
+             l1 = k + this.rand.nextInt(16) + 8;
+             i2 = this.rand.nextInt(128);
 @@ -541,7 +579,8 @@
-         var4 += 8;
-         var5 += 8;
+         k += 8;
+         l += 8;
  
--        for (var12 = 0; var12 < 16; ++var12)
-+        doGen = TerrainGen.populate(par1IChunkProvider, worldObj, rand, par2, par3, var11, ICE);
-+        for (var12 = 0; doGen && var12 < 16; ++var12)
+-        for (k1 = 0; k1 < 16; ++k1)
++        doGen = TerrainGen.populate(par1IChunkProvider, worldObj, rand, par2, par3, flag, ICE);
++        for (k1 = 0; doGen && k1 < 16; ++k1)
          {
-             for (var13 = 0; var13 < 16; ++var13)
+             for (l1 = 0; l1 < 16; ++l1)
              {
 @@ -558,6 +597,8 @@
                  }
              }
          }
 +
-+        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(par1IChunkProvider, worldObj, rand, par2, par3, var11));
++        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(par1IChunkProvider, worldObj, rand, par2, par3, flag));
  
          BlockSand.fallInstantly = false;
      }

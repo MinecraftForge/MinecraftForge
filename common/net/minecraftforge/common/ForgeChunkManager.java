@@ -498,6 +498,10 @@ public class ForgeChunkManager
             for (String modId : loadedTickets.keySet())
             {
                 LoadingCallback loadingCallback = callbacks.get(modId);
+                if (loadingCallback == null)
+                {
+                    continue;
+                }
                 int maxTicketLength = getMaxTicketLengthFor(modId);
                 List<Ticket> tickets = loadedTickets.get(modId);
                 if (loadingCallback instanceof OrderedLoadingCallback)
@@ -516,6 +520,10 @@ public class ForgeChunkManager
             for (String modId : playerLoadedTickets.keySet())
             {
                 LoadingCallback loadingCallback = callbacks.get(modId);
+                if (loadingCallback == null)
+                {
+                    continue;
+                }
                 ListMultimap<String,Ticket> tickets = playerLoadedTickets.get(modId);
                 if (loadingCallback instanceof PlayerOrderedLoadingCallback)
                 {
@@ -775,7 +783,7 @@ public class ForgeChunkManager
 
     static void loadConfiguration()
     {
-        for (String mod : config.categories.keySet())
+        for (String mod : config.getCategoryNames())
         {
             if (mod.equals("Forge") || mod.equals("defaults"))
             {
@@ -786,7 +794,10 @@ public class ForgeChunkManager
             ticketConstraints.put(mod, modTC.getInt(200));
             chunkConstraints.put(mod, modCPT.getInt(25));
         }
-        config.save();
+        if (config.hasChanged())
+        {
+            config.save();
+        }
     }
 
     /**
@@ -936,7 +947,7 @@ public class ForgeChunkManager
 
         Property dormantChunkCacheSizeProperty = config.get("defaults", "dormantChunkCacheSize", 0);
         dormantChunkCacheSizeProperty.comment = "Unloaded chunks can first be kept in a dormant cache for quicker\n" +
-                    "loading times. Specify the size of that cache here";
+                    "loading times. Specify the size (in chunks) of that cache here";
         dormantChunkCacheSize = dormantChunkCacheSizeProperty.getInt(0);
         FMLLog.info("Configured a dormant chunk cache size of %d", dormantChunkCacheSizeProperty.getInt(0));
 
@@ -953,7 +964,7 @@ public class ForgeChunkManager
         sampleTC.comment = "Maximum ticket count for the mod. Zero disables chunkloading capabilities.";
         sampleTC = config.get("Forge", "maximumChunksPerTicket", 25);
         sampleTC.comment = "Maximum chunks per ticket for the mod.";
-        for (String mod : config.categories.keySet())
+        for (String mod : config.getCategoryNames())
         {
             if (mod.equals("Forge") || mod.equals("defaults"))
             {
@@ -965,12 +976,12 @@ public class ForgeChunkManager
     }
 
 
-    public static Map<String,Property> getConfigMapFor(Object mod)
+    public static ConfigCategory getConfigFor(Object mod)
     {
         ModContainer container = getContainer(mod);
         if (container != null)
         {
-            return config.getCategory(container.getModId()).getValues();
+            return config.getCategory(container.getModId());
         }
 
         return null;
@@ -981,8 +992,8 @@ public class ForgeChunkManager
         ModContainer container = getContainer(mod);
         if (container != null)
         {
-            Map<String, Property> props = config.getCategory(container.getModId()).getValues();
-            props.put(propertyName, new Property(propertyName, value, type));
+            ConfigCategory cat = config.getCategory(container.getModId());
+            cat.put(propertyName, new Property(propertyName, value, type));
         }
     }
 }

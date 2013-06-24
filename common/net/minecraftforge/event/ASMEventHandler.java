@@ -3,11 +3,14 @@ package net.minecraftforge.event;
 import static org.objectweb.asm.Opcodes.*;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
+
+import com.google.common.collect.Maps;
 
 
 public class ASMEventHandler implements IEventListener
@@ -16,6 +19,7 @@ public class ASMEventHandler implements IEventListener
     private static final String HANDLER_DESC = Type.getInternalName(IEventListener.class);
     private static final String HANDLER_FUNC_DESC = Type.getMethodDescriptor(IEventListener.class.getDeclaredMethods()[0]);    
     private static final ASMClassLoader LOADER = new ASMClassLoader();
+    private static final HashMap<Method, Class<?>> cache = Maps.newHashMap();
     
     private final IEventListener handler;
     private final ForgeSubscribe subInfo;
@@ -44,6 +48,11 @@ public class ASMEventHandler implements IEventListener
     
     public Class<?> createWrapper(Method callback)
     {
+        if (cache.containsKey(callback))
+        {
+            return cache.get(callback);
+        }
+
         ClassWriter cw = new ClassWriter(0);
         MethodVisitor mv;
         
@@ -92,7 +101,9 @@ public class ASMEventHandler implements IEventListener
             mv.visitEnd();
         }
         cw.visitEnd();
-        return LOADER.define(name, cw.toByteArray());
+        Class<?> ret = LOADER.define(name, cw.toByteArray());
+        cache.put(callback, ret);
+        return ret;
     }
     
     private String getUniqueName(Method callback)

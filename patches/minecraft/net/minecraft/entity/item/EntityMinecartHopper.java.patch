@@ -1,0 +1,22 @@
+--- ../src_base/minecraft/net/minecraft/entity/item/EntityMinecartHopper.java
++++ ../src_work/minecraft/net/minecraft/entity/item/EntityMinecartHopper.java
+@@ -9,6 +9,8 @@
+ import net.minecraft.tileentity.TileEntityHopper;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.minecart.MinecartInteractEvent;
+ 
+ public class EntityMinecartHopper extends EntityMinecartContainer implements Hopper
+ {
+@@ -54,6 +56,10 @@
+      */
+     public boolean interact(EntityPlayer par1EntityPlayer)
+     {
++        if(MinecraftForge.EVENT_BUS.post(new MinecartInteractEvent(this, par1EntityPlayer))) 
++        {
++            return true;
++        }
+         if (!this.worldObj.isRemote)
+         {
+             par1EntityPlayer.displayGUIHopperMinecart(this);

@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemArmor.java
++++ ../src_work/minecraft/net/minecraft/item/ItemArmor.java
+@@ -218,7 +218,7 @@
+ 
+         if (itemstack1 == null)
+         {
+-            par3EntityPlayer.setCurrentItemOrArmor(i, par1ItemStack.copy());
++            par3EntityPlayer.setCurrentItemOrArmor(i + 1, par1ItemStack.copy()); //Forge: Vanilla bug fix associated with fixed setCurrentItemOrArmor indexs for players.
+             par1ItemStack.stackSize = 0;
+         }
+ 

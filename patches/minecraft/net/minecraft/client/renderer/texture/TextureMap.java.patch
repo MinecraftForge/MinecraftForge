@@ -1,0 +1,137 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
+@@ -20,6 +20,8 @@
+ import net.minecraft.client.texturepacks.ITexturePack;
+ import net.minecraft.item.Item;
+ import net.minecraft.util.Icon;
++import net.minecraftforge.client.ForgeHooksClient;
++import net.minecraftforge.common.ForgeDummyContainer;
+ 
+ @SideOnly(Side.CLIENT)
+ public class TextureMap implements IconRegister
+@@ -48,6 +50,7 @@
+     public void refreshTextures()
+     {
+         this.textureStichedMap.clear();
++        ForgeHooksClient.onTextureStitchedPre(this);
+         int i;
+         int j;
+ 
+@@ -91,14 +94,22 @@
+         StitchHolder stitchholder = new StitchHolder(texture);
+         stitcher.addStitchHolder(stitchholder);
+         hashmap.put(stitchholder, Arrays.asList(new Texture[] {texture}));
+-        Iterator iterator = this.textureStichedMap.keySet().iterator();
+-
+-        while (iterator.hasNext())
+-        {
+-            String s = (String)iterator.next();
+-            String s1 = this.basePath + s + this.textureExt;
+-            List list = TextureManager.instance().createTexture(s1);
+-
++
++        for (Map.Entry<String, TextureStitched> entry : ((Map<String, TextureStitched>)textureStichedMap).entrySet())
++        {
++            String name = entry.getKey();
++            String path;
++            if (name.indexOf(':') == -1)
++            {
++                path = this.basePath + name + this.textureExt;
++            }
++            else
++            {
++                String domain = name.substring(0, name.indexOf(':'));
++                String file = name.substring(name.indexOf(':') + 1);
++                path = "mods/" + domain +"/" + basePath + file + textureExt;
++            }
++            List list = TextureManager.instance().createNewTexture(name, path, entry.getValue());
+             if (!list.isEmpty())
+             {
+                 StitchHolder stitchholder1 = new StitchHolder((Texture)list.get(0));
+@@ -117,7 +128,7 @@
+         }
+ 
+         this.atlasTexture = stitcher.getTexture();
+-        iterator = stitcher.getStichSlots().iterator();
++        Iterator iterator = stitcher.getStichSlots().iterator();
+ 
+         while (iterator.hasNext())
+         {
+@@ -151,7 +162,17 @@
+             if (list1.size() > 1)
+             {
+                 this.listTextureStiched.add(texturestitched);
+-                String s3 = this.basePath + s2 + ".txt";
++                String s3;
++                if (s2.indexOf(':') == -1)
++                {
++                    s3 = basePath + s2 + ".txt";
++                }
++                else
++                {
++                    String domain = s2.substring(0, s2.indexOf(':'));
++                    String file = s2.substring(s2.indexOf(':') + 1);
++                    s3 = "mods/" + domain + "/" + basePath + file + ".txt";
++                }
+                 ITexturePack itexturepack = Minecraft.getMinecraft().texturePackList.getSelectedTexturePack();
+                 boolean flag1 = !itexturepack.func_98138_b("/" + this.basePath + s2 + ".png", false);
+ 
+@@ -177,7 +198,11 @@
+             texturestitched1.copyFrom(this.missingTextureStiched);
+         }
+ 
+-        this.atlasTexture.writeImage("debug.stitched_" + this.textureName + ".png");
++        if (!ForgeDummyContainer.disableStitchedFileSaving)
++        {
++            this.atlasTexture.writeImage("debug.stitched_" + this.textureName + ".png");
++        }
++        ForgeHooksClient.onTextureStitchedPost(this);
+         this.atlasTexture.uploadTexture();
+     }
+ 
+@@ -202,6 +227,7 @@
+         if (par1Str == null)
+         {
+             (new RuntimeException("Don\'t register null!")).printStackTrace();
++            par1Str = "null"; //Don't allow things to actually register null..
+         }
+ 
+         TextureStitched texturestitched = (TextureStitched)this.textureStichedMap.get(par1Str);
+@@ -219,4 +245,37 @@
+     {
+         return this.missingTextureStiched;
+     }
++
++    //===================================================================================================
++    //                                           Forge Start
++    //===================================================================================================
++    /**
++     * Grabs the registered entry for the specified name, returning null if there was not a entry.
++     * Opposed to func_94245_a, this will not instantiate the entry, useful to test if a maping exists.
++     *
++     * @param name The name of the entry to find
++     * @return The registered entry, null if nothing was registered.
++     */
++    public TextureStitched getTextureExtry(String name)
++    {
++        return (TextureStitched)textureStichedMap.get(name);
++    }
++
++    /**
++     * Adds a texture registry entry to this map for the specified name if one does not already exist.
++     * Returns false if the map already contains a entry for the specified name.
++     *
++     * @param name Entry name
++     * @param entry Entry instance
++     * @return True if the entry was added to the map, false otherwise.
++     */
++    public boolean setTextureEntry(String name, TextureStitched entry)
++    {
++        if (!textureStichedMap.containsKey(name))
++        {
++            textureStichedMap.put(name, entry);
++            return true;
++        }
++        return false;
++    }
+ }

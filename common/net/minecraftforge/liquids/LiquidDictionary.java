@@ -3,11 +3,12 @@ package net.minecraftforge.liquids;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.block.Block;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
-import net.minecraftforge.oredict.OreDictionary.OreRegisterEvent;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -18,7 +19,7 @@ import com.google.common.collect.ImmutableMap;
 public abstract class LiquidDictionary
 {
 
-    private static Map<String, LiquidStack> liquids = new HashMap<String, LiquidStack>();
+    private static BiMap<String, LiquidStack> liquids = HashBiMap.create();
 
     /**
      * When creating liquids you should call this function.
@@ -33,11 +34,16 @@ public abstract class LiquidDictionary
      */
     public static LiquidStack getOrCreateLiquid(String name, LiquidStack liquid)
     {
+        if (liquid == null)
+        {
+            throw new NullPointerException("You cannot register a null LiquidStack");
+        }
         LiquidStack existing = liquids.get(name);
         if(existing != null) {
             return existing.copy();
         }
         liquids.put(name, liquid.copy());
+
         MinecraftForge.EVENT_BUS.post(new LiquidRegisterEvent(name, liquid));
         return liquid;
     }
@@ -63,6 +69,10 @@ public abstract class LiquidDictionary
         return liquid;
     }
 
+    public static LiquidStack getCanonicalLiquid(String name)
+    {
+        return liquids.get(name);
+    }
     /**
      * Get an immutable list of the liquids defined
      *
@@ -86,5 +96,28 @@ public abstract class LiquidDictionary
             this.Name = name;
             this.Liquid = liquid.copy();
         }
+    }
+
+    static
+    {
+        getOrCreateLiquid("Water", new LiquidStack(Block.waterStill, LiquidContainerRegistry.BUCKET_VOLUME));
+        getOrCreateLiquid("Lava", new LiquidStack(Block.lavaStill, LiquidContainerRegistry.BUCKET_VOLUME));
+    }
+
+    public static String findLiquidName(LiquidStack reference)
+    {
+        if (reference != null)
+        {
+            return liquids.inverse().get(reference);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public static LiquidStack getCanonicalLiquid(LiquidStack liquidStack)
+    {
+        return liquids.get(liquids.inverse().get(liquidStack));
     }
 }

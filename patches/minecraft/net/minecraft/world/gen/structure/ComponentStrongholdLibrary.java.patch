@@ -11,7 +11,7 @@
  public class ComponentStrongholdLibrary extends ComponentStronghold
  {
 @@ -145,12 +148,14 @@
-                 this.placeBlockAtCurrentPosition(par1World, Block.torchWood.blockID, 0, var8, 8, var9 + 1, par3StructureBoundingBox);
+                 this.placeBlockAtCurrentPosition(par1World, Block.torchWood.blockID, 0, b1, 8, b2 + 1, par3StructureBoundingBox);
              }
  
 -            this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 3, 3, 5, WeightedRandomChestContent.func_92080_a(strongholdLibraryChestContents, new WeightedRandomChestContent[] {Item.enchantedBook.func_92112_a(par2Random, 1, 5, 2)}), 1 + par2Random.nextInt(4));

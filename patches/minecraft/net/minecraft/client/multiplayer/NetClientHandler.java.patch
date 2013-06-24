@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/multiplayer/NetClientHandler.java
 +++ ../src_work/minecraft/net/minecraft/client/multiplayer/NetClientHandler.java
-@@ -160,6 +160,11 @@
+@@ -176,6 +176,11 @@
  import net.minecraft.world.storage.MapStorage;
  import org.lwjgl.input.Keyboard;
  
@@ -12,7 +12,7 @@
  @SideOnly(Side.CLIENT)
  public class NetClientHandler extends NetHandler
  {
-@@ -744,7 +749,7 @@
+@@ -762,7 +767,7 @@
  
      public void handleKickDisconnect(Packet255KickDisconnect par1Packet255KickDisconnect)
      {
@@ -20,8 +20,8 @@
 +        this.netManager.networkShutdown("disconnect.kicked", par1Packet255KickDisconnect.reason);
          this.disconnected = true;
          this.mc.loadWorld((WorldClient)null);
-         this.mc.displayGuiScreen(new GuiDisconnected("disconnect.disconnected", "disconnect.genericReason", new Object[] {par1Packet255KickDisconnect.reason}));
-@@ -810,7 +815,11 @@
+ 
+@@ -844,7 +849,11 @@
      public void handleChat(Packet3Chat par1Packet3Chat)
      {
          par1Packet3Chat = FMLNetworkHandler.handleChatMessage(this, par1Packet3Chat);
@@ -34,13 +34,13 @@
      }
  
      public void handleAnimation(Packet18Animation par1Packet18Animation)
-@@ -1192,6 +1201,10 @@
+@@ -1278,6 +1287,10 @@
                  {
-                     var2.readFromNBT(par1Packet132TileEntityData.customParam1);
+                     tileentity.readFromNBT(par1Packet132TileEntityData.customParam1);
                  }
 +                else
 +                {
-+                    var2.onDataPacket(netManager,  par1Packet132TileEntityData);
++                    tileentity.onDataPacket(netManager,  par1Packet132TileEntityData);
 +                }
              }
          }

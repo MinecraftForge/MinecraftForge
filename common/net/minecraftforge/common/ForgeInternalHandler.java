@@ -19,14 +19,7 @@ public class ForgeInternalHandler
     {
         if (!event.world.isRemote)
         {
-            if (event.entity.getPersistentID() == null)
-            {
-                event.entity.generatePersistentID();
-            }
-            else
-            {
-                ForgeChunkManager.loadEntity(event.entity);
-            }
+            ForgeChunkManager.loadEntity(event.entity);
         }
 
         Entity entity = event.entity;

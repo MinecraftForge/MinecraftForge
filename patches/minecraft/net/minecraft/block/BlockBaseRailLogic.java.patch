@@ -1,0 +1,70 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockBaseRailLogic.java
++++ ../src_work/minecraft/net/minecraft/block/BlockBaseRailLogic.java
+@@ -16,6 +16,8 @@
+     /** The chunk position the rail is at. */
+     private List railChunkPosition;
+ 
++    private final boolean canMakeSlopes;
++
+     final BlockRailBase theRail;
+ 
+     public BlockBaseRailLogic(BlockRailBase par1, World par2, int par3, int par4, int par5)
+@@ -27,17 +29,11 @@
+         this.railY = par4;
+         this.railZ = par5;
+         int l = par2.getBlockId(par3, par4, par5);
+-        int i1 = par2.getBlockMetadata(par3, par4, par5);
+-
+-        if (((BlockRailBase)Block.blocksList[l]).isPowered)
+-        {
+-            this.isStraightRail = true;
+-            i1 &= -9;
+-        }
+-        else
+-        {
+-            this.isStraightRail = false;
+-        }
++
++        BlockRailBase target = (BlockRailBase)Block.blocksList[l];
++        int i1 = target.getBasicRailMetadata(par2, null, par3, par4, par5);
++        isStraightRail = !target.isFlexibleRail(par2, par3, par4, par5);
++        canMakeSlopes = target.canMakeSlopes(par2, par3, par4, par5);
+ 
+         this.setBasicRail(i1);
+     }
+@@ -232,7 +228,7 @@
+             }
+         }
+ 
+-        if (b0 == 0)
++        if (b0 == 0 && canMakeSlopes)
+         {
+             if (BlockRailBase.isRailBlockAt(this.logicWorld, this.railX, this.railY + 1, this.railZ - 1))
+             {
+@@ -245,7 +241,7 @@
+             }
+         }
+ 
+-        if (b0 == 1)
++        if (b0 == 1 && canMakeSlopes)
+         {
+             if (BlockRailBase.isRailBlockAt(this.logicWorld, this.railX + 1, this.railY + 1, this.railZ))
+             {
+@@ -390,7 +386,7 @@
+             }
+         }
+ 
+-        if (b0 == 0)
++        if (b0 == 0 && canMakeSlopes)
+         {
+             if (BlockRailBase.isRailBlockAt(this.logicWorld, this.railX, this.railY + 1, this.railZ - 1))
+             {
+@@ -403,7 +399,7 @@
+             }
+         }
+ 
+-        if (b0 == 1)
++        if (b0 == 1 && canMakeSlopes)
+         {
+             if (BlockRailBase.isRailBlockAt(this.logicWorld, this.railX + 1, this.railY + 1, this.railZ))
+             {

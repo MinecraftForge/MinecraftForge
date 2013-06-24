@@ -2,9 +2,9 @@
 +++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenDeadBush.java
 @@ -18,10 +18,16 @@
      {
-         int var11;
+         int l;
  
--        for (boolean var6 = false; ((var11 = par1World.getBlockId(par3, par4, par5)) == 0 || var11 == Block.leaves.blockID) && par4 > 0; --par4)
+-        for (boolean flag = false; ((l = par1World.getBlockId(par3, par4, par5)) == 0 || l == Block.leaves.blockID) && par4 > 0; --par4)
 +        Block block = null;
 +        do 
          {
@@ -18,5 +18,5 @@
 +            par4--;
 +        } while (par4 > 0);
  
-         for (int var7 = 0; var7 < 4; ++var7)
+         for (int i1 = 0; i1 < 4; ++i1)
          {

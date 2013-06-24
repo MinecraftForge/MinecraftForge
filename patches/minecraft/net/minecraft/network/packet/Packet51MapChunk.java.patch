@@ -20,46 +20,46 @@
 @@ -59,17 +62,22 @@
          this.zCh = par1Chunk.zPosition;
          this.includeInitialize = par2;
-         Packet51MapChunkData var4 = getMapChunkData(par1Chunk, par2, par3);
--        Deflater var5 = new Deflater(-1);
-         this.yChMax = var4.chunkHasAddSectionFlag;
-         this.yChMin = var4.chunkExistFlag;
+         Packet51MapChunkData packet51mapchunkdata = getMapChunkData(par1Chunk, par2, par3);
+-        Deflater deflater = new Deflater(-1);
+         this.yChMax = packet51mapchunkdata.chunkHasAddSectionFlag;
+         this.yChMin = packet51mapchunkdata.chunkExistFlag;
 -
-+        this.compressedChunkData = var4.compressedData;
++        this.compressedChunkData = packet51mapchunkdata.compressedData;
 +        this.deflateGate = new Semaphore(1);
 +    }
 +
 +    private void deflate()
 +    {
-+        Deflater var5 = new Deflater(-1);
++        Deflater deflater = new Deflater(-1);
          try
          {
--            this.compressedChunkData = var4.compressedData;
--            var5.setInput(var4.compressedData, 0, var4.compressedData.length);
-+            var5.setInput(compressedChunkData, 0, compressedChunkData.length);
-             var5.finish();
--            this.chunkData = new byte[var4.compressedData.length];
--            this.tempLength = var5.deflate(this.chunkData);
+-            this.compressedChunkData = packet51mapchunkdata.compressedData;
+-            deflater.setInput(packet51mapchunkdata.compressedData, 0, packet51mapchunkdata.compressedData.length);
++            deflater.setInput(compressedChunkData, 0, compressedChunkData.length);
+             deflater.finish();
+-            this.chunkData = new byte[packet51mapchunkdata.compressedData.length];
+-            this.tempLength = deflater.deflate(this.chunkData);
 +            byte[] deflated = new byte[compressedChunkData.length];
-+            this.tempLength = var5.deflate(deflated);
++            this.tempLength = deflater.deflate(deflated);
 +            this.chunkData = deflated;
          }
          finally
          {
 @@ -97,13 +105,16 @@
          par1DataInputStream.readFully(temp, 0, this.tempLength);
-         int var2 = 0;
-         int var3;
+         int i = 0;
+         int j;
 +        int msb = 0; //BugFix: MC does not read the MSB array from the packet properly, causing issues for servers that use blocks > 256
  
-         for (var3 = 0; var3 < 16; ++var3)
+         for (j = 0; j < 16; ++j)
          {
-             var2 += this.yChMin >> var3 & 1;
-+            msb  += this.yChMax >> var3 & 1;
+             i += this.yChMin >> j & 1;
++            msb  += this.yChMax >> j & 1;
          }
  
-         var3 = 12288 * var2;
-+        var3 += 2048 * msb;
+         j = 12288 * i;
++        j += 2048 * msb;
  
          if (this.includeInitialize)
          {

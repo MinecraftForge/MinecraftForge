@@ -40,13 +40,14 @@ public class Property
     }
 
     private String name;
-    public String value;
+    private String value;
     public String comment;
-    public String[] valueList;
+    private String[] values;
 
     private final boolean wasRead;
     private final boolean isList;
     private final Type type;
+    private boolean changed = false;
 
     public Property()
     {
@@ -77,10 +78,20 @@ public class Property
     Property(String name, String[] values, Type type, boolean read)
     {
         setName(name);
-        this.type  = type;
-        valueList  = values;
-        wasRead    = read;
-        isList     = true;
+        this.type   = type;
+        this.values = values;
+        wasRead     = read;
+        isList      = true;
+    }
+
+    /**
+     * Returns the value in this property as it's raw string.
+     * 
+     * @return current value
+     */
+    public String getString()
+    {
+        return value;
     }
 
     /**
@@ -197,6 +208,11 @@ public class Property
         }
     }
 
+    public String[] getStringList()
+    {
+        return values;
+    }
+
     /**
      * Returns the integer value of all values that can
      * be parsed in the list.
@@ -207,7 +223,7 @@ public class Property
     {
         ArrayList<Integer> nums = new ArrayList<Integer>();
         
-        for (String value : valueList)
+        for (String value : values)
         {
             try
             {
@@ -232,7 +248,7 @@ public class Property
      */
     public boolean isIntList()
     {
-        for (String value : valueList)
+        for (String value : values)
         {
             try
             {
@@ -254,21 +270,21 @@ public class Property
      */
     public boolean[] getBooleanList()
     {
-        ArrayList<Boolean> values = new ArrayList<Boolean>();
-        for (String value : valueList)
+        ArrayList<Boolean> tmp = new ArrayList<Boolean>();
+        for (String value : values)
         {
             try
             {
-                values.add(Boolean.parseBoolean(value));
+                tmp.add(Boolean.parseBoolean(value));
             }
             catch (NumberFormatException e){}
         }
 
-        boolean[] primitives = new boolean[values.size()];
+        boolean[] primitives = new boolean[tmp.size()];
 
-        for (int i = 0; i < values.size(); i++)
+        for (int i = 0; i < tmp.size(); i++)
         {
-            primitives[i] = values.get(i);
+            primitives[i] = tmp.get(i);
         }
 
         return primitives;
@@ -280,7 +296,7 @@ public class Property
      */
     public boolean isBooleanList()
     {
-        for (String value : valueList)
+        for (String value : values)
         {
             if (!"true".equalsIgnoreCase(value) && !"false".equalsIgnoreCase(value))
             {
@@ -299,21 +315,21 @@ public class Property
      */
     public double[] getDoubleList()
     {
-        ArrayList<Double> values = new ArrayList<Double>();
-        for (String value : valueList)
+        ArrayList<Double> tmp = new ArrayList<Double>();
+        for (String value : values)
         {
             try
             {
-                values.add(Double.parseDouble(value));
+                tmp.add(Double.parseDouble(value));
             }
             catch (NumberFormatException e) {}
         }
 
-        double[] primitives = new double[values.size()];
+        double[] primitives = new double[tmp.size()];
 
-        for (int i = 0; i < values.size(); i++)
+        for (int i = 0; i < tmp.size(); i++)
         {
-            primitives[i] = values.get(i);
+            primitives[i] = tmp.get(i);
         }
 
         return primitives;
@@ -325,7 +341,7 @@ public class Property
      */
     public boolean isDoubleList()
     {
-        for (String value : valueList)
+        for (String value : values)
         {
             try
             {
@@ -371,4 +387,23 @@ public class Property
     {
         return isList;
     }
+
+    public boolean hasChanged(){ return changed; }
+    void resetChangedState(){ changed = false; }
+
+    public void set(String value)
+    {
+        this.value = value;
+        changed = true;
+    }
+
+    public void set(String[] values)
+    {
+        this.values = values;
+        changed = true;
+    }
+
+    public void set(int     value){ set(Integer.toString(value)); }
+    public void set(boolean value){ set(Boolean.toString(value)); }
+    public void set(double  value){ set(Double.toString(value));  }
 }

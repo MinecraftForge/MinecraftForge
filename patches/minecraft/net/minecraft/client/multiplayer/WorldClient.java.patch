@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/multiplayer/WorldClient.java
 +++ ../src_work/minecraft/net/minecraft/client/multiplayer/WorldClient.java
-@@ -27,6 +27,9 @@
+@@ -29,6 +29,9 @@
  import net.minecraft.world.chunk.IChunkProvider;
  import net.minecraft.world.storage.SaveHandlerMP;
  
@@ -10,8 +10,8 @@
  @SideOnly(Side.CLIENT)
  public class WorldClient extends World
  {
-@@ -57,8 +60,11 @@
-         super(new SaveHandlerMP(), "MpServer", WorldProvider.getProviderForDimension(par3), par2WorldSettings, par5Profiler);
+@@ -59,8 +62,11 @@
+         super(new SaveHandlerMP(), "MpServer", WorldProvider.getProviderForDimension(par3), par2WorldSettings, par5Profiler, par6ILogAgent);
          this.sendQueue = par1NetClientHandler;
          this.difficultySetting = par4;
 +        this.mapStorage = par1NetClientHandler.mapStorage;
@@ -23,7 +23,7 @@
      }
  
      /**
-@@ -289,6 +295,12 @@
+@@ -291,6 +297,12 @@
       */
      protected void updateWeather()
      {

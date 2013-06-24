@@ -1,0 +1,50 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
+@@ -66,17 +66,42 @@
+ 
+     public List createTexture(String par1Str)
+     {
++        return createNewTexture(par1Str, par1Str, null);
++    }
++
++    public List createNewTexture(String textureName, String textureFile, TextureStitched stitched)
++    {
++        String par1Str = textureFile;
+         ArrayList arraylist = new ArrayList();
+         ITexturePack itexturepack = Minecraft.getMinecraft().texturePackList.getSelectedTexturePack();
+ 
+         try
+         {
+-            BufferedImage bufferedimage = ImageIO.read(itexturepack.getResourceAsStream("/" + par1Str));
+-            int i = bufferedimage.getHeight();
+-            int j = bufferedimage.getWidth();
+-            String s1 = this.getBasename(par1Str);
++            BufferedImage bufferedimage = null;
++            int i = 0;
++            int j = 0;
++            FileNotFoundException fnfe = null;
++            try
++            {
++                bufferedimage = ImageIO.read(itexturepack.getResourceAsStream("/" + textureFile));
++                i = bufferedimage.getHeight();
++                j = bufferedimage.getWidth();
++            }
++            catch (FileNotFoundException e)
++            {
++                fnfe = e;
++            }
++            String s1 = textureName;
+ 
+-            if (this.hasAnimationTxt(par1Str, itexturepack))
++            if (stitched != null && stitched.loadTexture(this, itexturepack, textureName, textureFile, bufferedimage, arraylist))
++            {
++                ;
++            }
++            else if (fnfe != null)
++            {
++                throw fnfe;
++            }
++            else if (this.hasAnimationTxt(par1Str, itexturepack))
+             {
+                 int k = j;
+                 int l = j;

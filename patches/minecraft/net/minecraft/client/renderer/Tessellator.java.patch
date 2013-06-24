@@ -152,7 +152,7 @@
 +                rawBuffer = null;
              }
  
-             int var1 = this.rawBufferIndex * 4;
+             int i = this.rawBufferIndex * 4;
 @@ -442,6 +470,19 @@
       */
      public void addVertex(double par1, double par3, double par5)

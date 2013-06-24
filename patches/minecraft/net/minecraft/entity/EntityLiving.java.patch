@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/entity/EntityLiving.java
 +++ ../src_work/minecraft/net/minecraft/entity/EntityLiving.java
-@@ -20,6 +20,7 @@
+@@ -22,6 +22,7 @@
  import net.minecraft.entity.item.EntityXPOrb;
  import net.minecraft.entity.monster.EntityCreeper;
  import net.minecraft.entity.monster.EntityGhast;
@@ -8,7 +8,7 @@
  import net.minecraft.entity.passive.EntityWolf;
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.entity.projectile.EntityArrow;
-@@ -45,6 +46,11 @@
+@@ -50,6 +51,11 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
  
@@ -20,7 +20,7 @@
  public abstract class EntityLiving extends Entity
  {
      /**
-@@ -387,6 +393,7 @@
+@@ -400,6 +406,7 @@
      public void setAttackTarget(EntityLiving par1EntityLiving)
      {
          this.attackTarget = par1EntityLiving;
@@ -28,15 +28,15 @@
      }
  
      /**
-@@ -483,6 +490,7 @@
+@@ -496,6 +503,7 @@
      {
          this.entityLivingToAttack = par1EntityLiving;
-         this.revengeTimer = this.entityLivingToAttack != null ? 60 : 0;
+         this.revengeTimer = this.entityLivingToAttack != null ? 100 : 0;
 +        ForgeHooks.onLivingSetAttackTarget(this, par1EntityLiving);
      }
  
      protected void entityInit()
-@@ -792,6 +800,11 @@
+@@ -807,6 +815,11 @@
       */
      public void onUpdate()
      {
@@ -48,7 +48,7 @@
          super.onUpdate();
  
          if (!this.worldObj.isRemote)
-@@ -977,6 +990,11 @@
+@@ -992,6 +1005,11 @@
       */
      public boolean attackEntityFrom(DamageSource par1DamageSource, int par2)
      {
@@ -60,7 +60,7 @@
          if (this.isEntityInvulnerable())
          {
              return false;
-@@ -1188,6 +1206,11 @@
+@@ -1229,6 +1247,11 @@
      {
          if (!this.isEntityInvulnerable())
          {
@@ -71,8 +71,8 @@
 +            }
              par2 = this.applyArmorCalculations(par1DamageSource, par2);
              par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
-             this.health -= par2;
-@@ -1252,6 +1275,11 @@
+             int j = this.getHealth();
+@@ -1295,6 +1318,11 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -81,37 +81,37 @@
 +            return;
 +        }
 +
-         Entity var2 = par1DamageSource.getEntity();
+         Entity entity = par1DamageSource.getEntity();
+         EntityLiving entityliving = this.func_94060_bK();
  
-         if (this.scoreValue >= 0 && var2 != null)
-@@ -1274,6 +1302,10 @@
-             {
-                 var3 = EnchantmentHelper.getLootingModifier((EntityLiving)var2);
+@@ -1319,6 +1347,10 @@
+                 i = EnchantmentHelper.getLootingModifier((EntityLiving)entity);
              }
-+
+ 
 +            captureDrops = true;
 +            capturedDrops.clear();
-+            int var4 = 0;
- 
++            int j = 0;
++
              if (!this.isChild() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
              {
-@@ -1282,7 +1314,7 @@
+                 this.dropFewItems(this.recentlyHit > 0, i);
+@@ -1326,7 +1358,7 @@
  
                  if (this.recentlyHit > 0)
                  {
--                    int var4 = this.rand.nextInt(200) - var3;
-+                    var4 = this.rand.nextInt(200) - var3;
+-                    int j = this.rand.nextInt(200) - i;
++                    j = this.rand.nextInt(200) - i;
  
-                     if (var4 < 5)
+                     if (j < 5)
                      {
-@@ -1290,6 +1322,16 @@
+@@ -1334,6 +1366,16 @@
                      }
                  }
              }
 +
 +            captureDrops = false;
 +
-+            if (!ForgeHooks.onLivingDrops(this, par1DamageSource, capturedDrops, var3, recentlyHit > 0, var4))
++            if (!ForgeHooks.onLivingDrops(this, par1DamageSource, capturedDrops, i, recentlyHit > 0, j))
 +            {
 +                for (EntityItem item : capturedDrops)
 +                {
@@ -121,7 +121,7 @@
          }
  
          this.worldObj.setEntityState(this, (byte)3);
-@@ -1334,6 +1376,12 @@
+@@ -1378,6 +1420,12 @@
       */
      protected void fall(float par1)
      {
@@ -132,18 +132,18 @@
 +        }
 +
          super.fall(par1);
-         int var2 = MathHelper.ceiling_float_int(par1 - 3.0F);
+         int i = MathHelper.ceiling_float_int(par1 - 3.0F);
  
-@@ -1536,7 +1584,7 @@
-         int var2 = MathHelper.floor_double(this.boundingBox.minY);
-         int var3 = MathHelper.floor_double(this.posZ);
-         int var4 = this.worldObj.getBlockId(var1, var2, var3);
--        return var4 == Block.ladder.blockID || var4 == Block.vine.blockID;
-+        return ForgeHooks.isLivingOnLadder(Block.blocksList[var4], worldObj, var1, var2, var3);
+@@ -1580,7 +1628,7 @@
+         int j = MathHelper.floor_double(this.boundingBox.minY);
+         int k = MathHelper.floor_double(this.posZ);
+         int l = this.worldObj.getBlockId(i, j, k);
+-        return l == Block.ladder.blockID || l == Block.vine.blockID;
++        return ForgeHooks.isLivingOnLadder(Block.blocksList[l], worldObj, i, j, k, this);
      }
  
      /**
-@@ -1949,6 +1997,7 @@
+@@ -2002,6 +2050,7 @@
          }
  
          this.isAirBorne = true;
@@ -151,7 +151,7 @@
      }
  
      /**
-@@ -2486,8 +2535,6 @@
+@@ -2554,8 +2603,6 @@
          return this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
      }
  
@@ -160,9 +160,27 @@
      /**
       * Remove the speified potion effect from this entity.
       */
-@@ -2944,4 +2991,42 @@
+@@ -2984,6 +3031,17 @@
+      */
+     public void swingItem()
      {
-         this.dataWatcher.updateObject(10, Byte.valueOf((byte)par1));
++        ItemStack stack = this.getHeldItem();
++
++        if (stack != null && stack.getItem() != null)
++        {
++            Item item = stack.getItem();
++            if (item.onEntitySwing(this, stack))
++            {
++                return;
++            }
++        }
++
+         if (!this.isSwingInProgress || this.swingProgressInt >= this.getArmSwingAnimationEnd() / 2 || this.swingProgressInt < 0)
+         {
+             this.swingProgressInt = -1;
+@@ -3084,4 +3142,42 @@
+     {
+         return this.persistenceRequired;
      }
 +
 +    /***

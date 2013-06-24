@@ -15,4 +15,4 @@
 +    @SideOnly(Side.CLIENT)
      public void render(Tessellator par1Tessellator, float par2)
      {
-         for (int var3 = 0; var3 < this.quadList.length; ++var3)
+         for (int i = 0; i < this.quadList.length; ++i)

@@ -2,9 +2,9 @@
 +++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenShrub.java
 @@ -19,10 +19,16 @@
      {
-         int var15;
+         int l;
  
--        for (boolean var6 = false; ((var15 = par1World.getBlockId(par3, par4, par5)) == 0 || var15 == Block.leaves.blockID) && par4 > 0; --par4)
+-        for (boolean flag = false; ((l = par1World.getBlockId(par3, par4, par5)) == 0 || l == Block.leaves.blockID) && par4 > 0; --par4)
 +        Block block = null;
 +        do 
          {
@@ -18,17 +18,17 @@
 +            par4--;
 +        } while (par4 > 0);
  
-         int var7 = par1World.getBlockId(par3, par4, par5);
+         int i1 = par1World.getBlockId(par3, par4, par5);
  
 @@ -44,7 +50,10 @@
                      {
-                         int var14 = var13 - par5;
+                         int l2 = k2 - par5;
  
--                        if ((Math.abs(var12) != var10 || Math.abs(var14) != var10 || par2Random.nextInt(2) != 0) && !Block.opaqueCubeLookup[par1World.getBlockId(var11, var8, var13)])
-+                        block = Block.blocksList[par1World.getBlockId(var11, var8, var13)];
+-                        if ((Math.abs(j2) != l1 || Math.abs(l2) != l1 || par2Random.nextInt(2) != 0) && !Block.opaqueCubeLookup[par1World.getBlockId(i2, j1, k2)])
++                        block = Block.blocksList[par1World.getBlockId(i2, j1, k2)];
 +
-+                        if ((Math.abs(var12) != var10 || Math.abs(var14) != var10 || par2Random.nextInt(2) != 0) && 
-+                            (block == null || block.canBeReplacedByLeaves(par1World, var11, var8, var13)))
++                        if ((Math.abs(j2) != l1 || Math.abs(l2) != l1 || par2Random.nextInt(2) != 0) && 
++                            (block == null || block.canBeReplacedByLeaves(par1World, i2, j1, k2)))
                          {
-                             this.setBlockAndMetadata(par1World, var11, var8, var13, Block.leaves.blockID, this.field_76527_a);
+                             this.setBlockAndMetadata(par1World, i2, j1, k2, Block.leaves.blockID, this.field_76527_a);
                          }

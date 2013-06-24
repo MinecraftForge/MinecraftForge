@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/item/BehaviorDispenseArmor.java
++++ ../src_work/minecraft/net/minecraft/item/BehaviorDispenseArmor.java
+@@ -31,7 +31,7 @@
+             int i1 = EntityLiving.getArmorPosition(par2ItemStack);
+             ItemStack itemstack1 = par2ItemStack.copy();
+             itemstack1.stackSize = 1;
+-            entityliving.setCurrentItemOrArmor(i1 - l, itemstack1);
++            entityliving.setCurrentItemOrArmor(i1, itemstack1); //Forge: Vanilla bug fix associated with fixed setCurrentItemOrArmor indexs for players.
+             entityliving.func_96120_a(i1, 2.0F);
+             --par2ItemStack.stackSize;
+             return par2ItemStack;

@@ -1,0 +1,41 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntityEnderman.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntityEnderman.java
+@@ -12,6 +12,8 @@
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.util.Vec3;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.living.EnderTeleportEvent;
+ 
+ public class EntityEnderman extends EntityMob
+ {
+@@ -275,12 +277,17 @@
+      */
+     protected boolean teleportTo(double par1, double par3, double par5)
+     {
++        EnderTeleportEvent event = new EnderTeleportEvent(this, par1, par3, par5, 0);
++        if (MinecraftForge.EVENT_BUS.post(event)){
++            return false;
++        }
++
+         double d3 = this.posX;
+         double d4 = this.posY;
+         double d5 = this.posZ;
+-        this.posX = par1;
+-        this.posY = par3;
+-        this.posZ = par5;
++        this.posX = event.targetX;
++        this.posY = event.targetY;
++        this.posZ = event.targetZ;
+         boolean flag = false;
+         int i = MathHelper.floor_double(this.posX);
+         int j = MathHelper.floor_double(this.posY);
+@@ -457,7 +464,7 @@
+                     }
+                 }
+ 
+-                return false;
++                return super.attackEntityFrom(par1DamageSource, par2);
+             }
+             else
+             {

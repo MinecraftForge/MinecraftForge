@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/texture/Stitcher.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/texture/Stitcher.java
+@@ -182,7 +182,7 @@
+ 
+             if (flag4 ^ flag5)
+             {
+-                flag1 = flag4 && flag2;
++                flag1 = flag5 && flag3; //Forge: Bug fix: Attempt to fill all downward space before expanding width
+             }
+             else
+             {

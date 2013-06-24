@@ -1,0 +1,22 @@
+--- ../src_base/minecraft/net/minecraft/inventory/ContainerRepair.java
++++ ../src_work/minecraft/net/minecraft/inventory/ContainerRepair.java
+@@ -305,6 +305,11 @@
+                 k = Math.max(1, k / 2);
+             }
+ 
++            if (flag && itemstack1!=null && !Item.itemsList[itemstack1.itemID].isBookEnchantable(itemstack1,itemstack2))
++            {
++                itemstack1 = null;
++            }
++
+             this.maximumCost = k + i;
+ 
+             if (i <= 0)
+@@ -322,6 +327,7 @@
+             {
+                 itemstack1 = null;
+             }
++
+ 
+             if (itemstack1 != null)
+             {

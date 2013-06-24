@@ -1,0 +1,28 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockPortal.java
++++ ../src_work/minecraft/net/minecraft/block/BlockPortal.java
+@@ -118,7 +118,7 @@
+         }
+         else
+         {
+-            if (par1World.getBlockId(par2 - b0, par3, par4 - b1) == 0)
++            if (par1World.isAirBlock(par2 - b0, par3, par4 - b1))
+             {
+                 par2 -= b0;
+                 par4 -= b1;
+@@ -136,6 +136,7 @@
+                     if (l != -1 && l != 2 || i1 != -1 && i1 != 3)
+                     {
+                         int j1 = par1World.getBlockId(par2 + b0 * l, par3 + i1, par4 + b1 * l);
++                        boolean isAirBlock = par1World.isAirBlock(par2 + b0 * l, par3 + i1, par4 + b1 * l);
+ 
+                         if (flag)
+                         {
+@@ -144,7 +145,7 @@
+                                 return false;
+                             }
+                         }
+-                        else if (j1 != 0 && j1 != Block.fire.blockID)
++                        else if (!isAirBlock && j1 != Block.fire.blockID)
+                         {
+                             return false;
+                         }

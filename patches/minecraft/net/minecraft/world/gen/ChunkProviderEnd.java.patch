@@ -36,9 +36,9 @@
 +        MinecraftForge.EVENT_BUS.post(event);
 +        if (event.getResult() == Result.DENY) return;
 +
-         for (int var5 = 0; var5 < 16; ++var5)
+         for (int k = 0; k < 16; ++k)
          {
-             for (int var6 = 0; var6 < 16; ++var6)
+             for (int l = 0; l < 16; ++l)
 @@ -201,6 +217,10 @@
       */
      private double[] initializeNoiseField(double[] par1ArrayOfDouble, int par2, int par3, int par4, int par5, int par6, int par7)
@@ -57,10 +57,10 @@
 +
 +        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(par1IChunkProvider, endWorld, endWorld.rand, par2, par3, false));
 +
-         int var4 = par2 * 16;
-         int var5 = par3 * 16;
-         BiomeGenBase var6 = this.endWorld.getBiomeGenForCoords(var4 + 16, var5 + 16);
-         var6.decorate(this.endWorld, this.endWorld.rand, var4, var5);
+         int k = par2 * 16;
+         int l = par3 * 16;
+         BiomeGenBase biomegenbase = this.endWorld.getBiomeGenForCoords(k + 16, l + 16);
+         biomegenbase.decorate(this.endWorld, this.endWorld.rand, k, l);
 +
 +        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(par1IChunkProvider, endWorld, endWorld.rand, par2, par3, false));
 +

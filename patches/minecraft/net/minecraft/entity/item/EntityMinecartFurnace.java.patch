@@ -1,0 +1,22 @@
+--- ../src_base/minecraft/net/minecraft/entity/item/EntityMinecartFurnace.java
++++ ../src_work/minecraft/net/minecraft/entity/item/EntityMinecartFurnace.java
+@@ -8,6 +8,8 @@
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.minecart.MinecartInteractEvent;
+ 
+ public class EntityMinecartFurnace extends EntityMinecart
+ {
+@@ -126,6 +128,10 @@
+      */
+     public boolean interact(EntityPlayer par1EntityPlayer)
+     {
++        if(MinecraftForge.EVENT_BUS.post(new MinecartInteractEvent(this, par1EntityPlayer))) 
++        {
++            return true;
++        }
+         ItemStack itemstack = par1EntityPlayer.inventory.getCurrentItem();
+ 
+         if (itemstack != null && itemstack.itemID == Item.coal.itemID)

@@ -1,0 +1,12 @@
+--- ../src_base/minecraft/net/minecraft/inventory/SlotArmor.java
++++ ../src_work/minecraft/net/minecraft/inventory/SlotArmor.java
+@@ -41,7 +41,8 @@
+      */
+     public boolean isItemValid(ItemStack par1ItemStack)
+     {
+-        return par1ItemStack == null ? false : (par1ItemStack.getItem() instanceof ItemArmor ? ((ItemArmor)par1ItemStack.getItem()).armorType == this.armorType : (par1ItemStack.getItem().itemID != Block.pumpkin.blockID && par1ItemStack.getItem().itemID != Item.skull.itemID ? false : this.armorType == 0));
++        Item item = (par1ItemStack == null ? null : par1ItemStack.getItem());
++        return item != null && item.isValidArmor(par1ItemStack, armorType, parent.thePlayer);
+     }
+ 
+     @SideOnly(Side.CLIENT)

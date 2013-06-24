@@ -5,6 +5,8 @@
 
 package net.minecraftforge.client;
 
+import java.util.BitSet;
+
 import org.lwjgl.opengl.Display;
 
 import net.minecraft.block.Block;
@@ -18,44 +20,13 @@ import net.minecraftforge.common.MinecraftForge;
 
 public class MinecraftForgeClient
 {
-    /** Register a new render context handler.  A render context is a block
-     * of rendering performed with similar OpenGL modes, for example,
-     * texture name.
-     * @param texture The name of the texture for this render context.
-     * @param subid The subid of this render context.  0 is the default pass
-     * for normal rendering, higher subids render later.  All subids of 0
-     * will render before all subids of 1, etc.
-     * @param handler The handler to register.
-     */
-    public static void registerRenderContextHandler(String texture, int subid, IRenderContextHandler handler)
-    {
-        ForgeHooksClient.registerRenderContextHandler(texture, subid, handler);
-    }
-
     /**
-     * Preload a texture.  Textures must be preloaded before the first
-     * use, or they will cause visual anomalies.
+     * NO-OP now. Not needed with new texturing system in MC 1.5
      */
+    @Deprecated // without replacement
     public static void preloadTexture(String texture)
     {
-        ForgeHooksClient.engine().getTexture(texture);
-    }
-
-    /** Render a block.  Render a block which may have a custom texture.
-     */
-    public static void renderBlock(RenderBlocks render, Block block, int x, int y, int z)
-    {
-        ForgeHooksClient.beforeBlockRender(block, render);
-        render.renderBlockByRenderType(block, x, y, z);
-        ForgeHooksClient.afterBlockRender(block, render);
-    }
-
-    /**
-     * Get the current render pass.
-     */
-    public static int getRenderPass()
-    {
-        return ForgeHooksClient.renderPass;
+//        ForgeHooksClient.engine().getTexture(texture);
     }
 
     private static IItemRenderer[] customItemRenderers = new IItemRenderer[Item.itemsList.length];
@@ -81,5 +52,50 @@ public class MinecraftForgeClient
             return customItemRenderers[item.itemID];
         }
         return null;
+    }
+
+    public static int getRenderPass()
+    {
+        return ForgeHooksClient.renderPass;
+    }
+
+    public static int getStencilBits()
+    {
+        return ForgeHooksClient.stencilBits;
+    }
+
+
+    private static BitSet stencilBits = new BitSet(getStencilBits());
+    static
+    {
+        stencilBits.set(0,getStencilBits());
+    }
+
+    /**
+     * Reserve a stencil bit for use in rendering
+     *
+     * @return A bit or -1 if no further stencil bits are available
+     */
+    public static int reserveStencilBit()
+    {
+        int bit = stencilBits.nextSetBit(0);
+        if (bit >= 0)
+        {
+            stencilBits.clear(bit);
+        }
+        return bit;
+    }
+
+    /**
+     * Release the stencil bit for other use
+     *
+     * @param bit The bit from {@link #reserveStencilBit()}
+     */
+    public static void releaseStencilBit(int bit)
+    {
+        if (bit >= 0 && bit < getStencilBits())
+        {
+            stencilBits.set(bit);
+        }
     }
 }

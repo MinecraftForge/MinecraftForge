@@ -1,0 +1,3 @@
+[submodule "fml"]
+	path = fml
+	url = https://github.com/MinecraftForge/FML.git

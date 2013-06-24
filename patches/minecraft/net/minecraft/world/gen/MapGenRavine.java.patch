@@ -1,0 +1,118 @@
+--- ../src_base/minecraft/net/minecraft/world/gen/MapGenRavine.java
++++ ../src_work/minecraft/net/minecraft/world/gen/MapGenRavine.java
+@@ -4,6 +4,7 @@
+ import net.minecraft.block.Block;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++import net.minecraft.world.biome.BiomeGenBase;
+ 
+ public class MapGenRavine extends MapGenBase
+ {
+@@ -127,7 +128,7 @@
+ 
+                                 if (i4 >= 0 && i4 < 128)
+                                 {
+-                                    if (par5ArrayOfByte[k3] == Block.waterMoving.blockID || par5ArrayOfByte[k3] == Block.waterStill.blockID)
++                                    if (isOceanBlock(par5ArrayOfByte, k3, j3, i4, l3, par3, par4))
+                                     {
+                                         flag1 = true;
+                                     }
+@@ -161,29 +162,12 @@
+ 
+                                         if ((d12 * d12 + d13 * d13) * (double)this.field_75046_d[k4] + d14 * d14 / 6.0D < 1.0D)
+                                         {
+-                                            byte b0 = par5ArrayOfByte[j4];
+-
+-                                            if (b0 == Block.grass.blockID)
++                                            if (isTopBlock(par5ArrayOfByte, j4, j3, k4, k3, par3, par4))
+                                             {
+                                                 flag2 = true;
+                                             }
+ 
+-                                            if (b0 == Block.stone.blockID || b0 == Block.dirt.blockID || b0 == Block.grass.blockID)
+-                                            {
+-                                                if (k4 < 10)
+-                                                {
+-                                                    par5ArrayOfByte[j4] = (byte)Block.lavaMoving.blockID;
+-                                                }
+-                                                else
+-                                                {
+-                                                    par5ArrayOfByte[j4] = 0;
+-
+-                                                    if (flag2 && par5ArrayOfByte[j4 - 1] == Block.dirt.blockID)
+-                                                    {
+-                                                        par5ArrayOfByte[j4 - 1] = this.worldObj.getBiomeGenForCoords(j3 + par3 * 16, k3 + par4 * 16).topBlock;
+-                                                    }
+-                                                }
+-                                            }
++                                            digBlock(par5ArrayOfByte, j4, j3, k4, k3, par3, par4, flag2);
+                                         }
+ 
+                                         --j4;
+@@ -223,4 +207,66 @@
+             }
+         }
+     }
++
++    protected boolean isOceanBlock(byte[] data, int index, int x, int y, int z, int chunkX, int chunkZ)
++    {
++        return data[index] == Block.waterMoving.blockID || data[index] == Block.waterStill.blockID;
++    }
++
++    //Exception biomes to make sure we generate like vanilla
++    private boolean isExceptionBiome(BiomeGenBase biome)
++    {
++        if (biome == BiomeGenBase.mushroomIsland) return true;
++        if (biome == BiomeGenBase.beach) return true;
++        if (biome == BiomeGenBase.desert) return true;
++        return false;
++    }
++
++    //Determine if the block at the specified location is the top block for the biome, we take into account
++    //Vanilla bugs to make sure that we generate the map the same way vanilla does.
++    private boolean isTopBlock(byte[] data, int index, int x, int y, int z, int chunkX, int chunkZ)
++    {
++        BiomeGenBase biome = worldObj.getBiomeGenForCoords(x + chunkX * 16, z + chunkZ * 16);
++        return (isExceptionBiome(biome) ? data[index] == Block.grass.blockID : data[index] == biome.topBlock);
++    }
++
++    /**
++     * Digs out the current block, default implementation removes stone, filler, and top block
++     * Sets the block to lava if y is less then 10, and air other wise.
++     * If setting to air, it also checks to see if we've broken the surface and if so 
++     * tries to make the floor the biome's top block
++     * 
++     * @param data Block data array
++     * @param index Pre-calculated index into block data
++     * @param x local X position
++     * @param y local Y position
++     * @param z local Z position
++     * @param chunkX Chunk X position
++     * @param chunkZ Chunk Y position
++     * @param foundTop True if we've encountered the biome's top block. Ideally if we've broken the surface.
++     */
++    protected void digBlock(byte[] data, int index, int x, int y, int z, int chunkX, int chunkZ, boolean foundTop)
++    {
++        BiomeGenBase biome = worldObj.getBiomeGenForCoords(x + chunkX * 16, z + chunkZ * 16);
++        int top    = (isExceptionBiome(biome) ? Block.grass.blockID : biome.topBlock);
++        int filler = (isExceptionBiome(biome) ? Block.dirt.blockID  : biome.fillerBlock);
++        int block  = data[index];
++
++        if (block == Block.stone.blockID || block == filler || block == top)
++        {
++            if (y < 10)
++            {
++                data[index] = (byte)Block.lavaMoving.blockID;
++            }
++            else
++            {
++                data[index] = 0;
++
++                if (foundTop && data[index - 1] == filler)
++                {
++                    data[index - 1] = (byte)top;
++                }
++            }
++        }
++    }
+ }
