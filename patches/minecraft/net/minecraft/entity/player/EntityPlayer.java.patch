@@ -464,7 +464,7 @@
          if (par1ChunkCoordinates != null)
          {
              this.spawnChunk = new ChunkCoordinates(par1ChunkCoordinates);
-@@ -1659,6 +1830,22 @@
+@@ -1659,6 +1830,30 @@
          {
              this.spawnChunk = null;
              this.spawnForced = false;
@@ -481,13 +481,21 @@
 +        if (chunkCoordinates != null) {
 +            this.spawnChunkMap.put(dimension, new ChunkCoordinates(chunkCoordinates));
 +            this.spawnForcedMap.put(dimension, forced);
++            if (this.dimension == 0) {
++                this.spawnChunk = new ChunkCoordinates(chunkCoordinates);
++                this.spawnForced = forced;
++            }
 +        } else {
 +            this.spawnChunkMap.remove(dimension);
 +            this.spawnForcedMap.remove(dimension);
++            if (this.dimension == 0) {
++                this.spawnChunk = null;
++                this.spawnForced = false;
++            }
          }
      }
  
-@@ -1835,6 +2022,10 @@
+@@ -1835,6 +2030,10 @@
  
              super.fall(par1);
          }
@@ -498,7 +506,7 @@
      }
  
      /**
-@@ -1876,7 +2067,7 @@
+@@ -1876,7 +2075,7 @@
          {
              if (par1ItemStack.getItem().requiresMultipleRenderPasses())
              {
@@ -507,7 +515,7 @@
              }
  
              if (this.itemInUse != null && par1ItemStack.itemID == Item.bow.itemID)
-@@ -1898,6 +2089,7 @@
+@@ -1898,6 +2097,7 @@
                      return Item.bow.getItemIconForUseDuration(0);
                  }
              }
@@ -515,7 +523,7 @@
          }
  
          return icon;
-@@ -2136,7 +2328,17 @@
+@@ -2136,7 +2336,17 @@
              this.setScore(par1EntityPlayer.getScore());
          }
  
@@ -533,7 +541,7 @@
      }
  
      /**
-@@ -2208,7 +2410,14 @@
+@@ -2208,7 +2418,14 @@
       */
      public void setCurrentItemOrArmor(int par1, ItemStack par2ItemStack)
      {
