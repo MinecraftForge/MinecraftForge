@@ -60,7 +60,7 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
      }
-@@ -720,4 +736,534 @@
+@@ -720,4 +736,545 @@
      {
          StatList.initStats();
      }
@@ -593,5 +593,16 @@
 +    public boolean canHarvestBlock(Block par1Block, ItemStack itemStack)
 +    {
 +        return canHarvestBlock(par1Block);  
++    }
++    
++    /**
++     * If your Item can be smelted, this determines the number of ticks it takes to smelt
++     * Note: Only called if your Item is registered as a smeltable Item
++     * @param stack the ItemStack being smelted
++     * @return 
++     */
++    public int getSmeltingTime(ItemStack stack)
++    {
++        return itemID == Item.beefRaw.itemID ? 1000 : 200;
 +    }
  }
