@@ -15,7 +15,7 @@
  
  public abstract class ServerConfigurationManager
  {
-@@ -386,6 +390,16 @@
+@@ -386,13 +390,23 @@
       */
      public EntityPlayerMP respawnPlayer(EntityPlayerMP par1EntityPlayerMP, int par2, boolean par3)
      {
@@ -32,6 +32,15 @@
          par1EntityPlayerMP.getServerForPlayer().getEntityTracker().removePlayerFromTrackers(par1EntityPlayerMP);
          par1EntityPlayerMP.getServerForPlayer().getEntityTracker().removeEntityFromAllTrackingPlayers(par1EntityPlayerMP);
          par1EntityPlayerMP.getServerForPlayer().getPlayerManager().removePlayer(par1EntityPlayerMP);
+         this.playerEntityList.remove(par1EntityPlayerMP);
+         this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension).removePlayerEntityDangerously(par1EntityPlayerMP);
+-        ChunkCoordinates chunkcoordinates = par1EntityPlayerMP.getBedLocation();
+-        boolean flag1 = par1EntityPlayerMP.isSpawnForced();
++        ChunkCoordinates chunkcoordinates = par1EntityPlayerMP.getBedLocation(par2);
++        boolean flag1 = par1EntityPlayerMP.isSpawnForced(par2);
+         par1EntityPlayerMP.dimension = par2;
+         Object object;
+ 
 @@ -408,6 +422,7 @@
          EntityPlayerMP entityplayermp1 = new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension), par1EntityPlayerMP.username, (ItemInWorldManager)object);
          entityplayermp1.playerNetServerHandler = par1EntityPlayerMP.playerNetServerHandler;
