@@ -58,6 +58,7 @@ public class MCPMerger
     private static HashSet<String> copyToServer = new HashSet<String>();
     private static HashSet<String> copyToClient = new HashSet<String>();
     private static HashSet<String> dontAnnotate = new HashSet<String>();
+    private static HashSet<String> dontProcess  = new HashSet<String>();
     private static final boolean DEBUG = false;
 
     public static void main(String[] args)
@@ -155,7 +156,8 @@ public class MCPMerger
                 {
                     case '!': dontAnnotate.add(line); break;
                     case '<': copyToClient.add(line); break;
-                    case '>': copyToServer.add(line); break; 
+                    case '>': copyToServer.add(line); break;
+                    case '^': dontProcess.add(line);  break;
                 }
             }
 
@@ -344,8 +346,20 @@ public class MCPMerger
                 outFile.putNextEntry(entry);
                 continue;
             }
+
             String entryName = entry.getName();
-            if (!entryName.endsWith(".class") || entryName.startsWith("."))
+            
+            boolean filtered = false;
+            for (String filter : dontProcess)
+            {
+                if (entryName.startsWith(filter))
+                {
+                    filtered = true;
+                    break;
+                }
+            }
+            
+            if (filtered || !entryName.endsWith(".class") || entryName.startsWith("."))
             {
                 ZipEntry newEntry = new ZipEntry(entry.getName());
                 outFile.putNextEntry(newEntry);
