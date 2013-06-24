@@ -603,6 +603,6 @@
 +     */
 +    public int getSmeltingTime(ItemStack stack)
 +    {
-+        return itemID == Item.beefRaw.itemID ? 1000 : 200;
++        return 200;
 +    }
  }
