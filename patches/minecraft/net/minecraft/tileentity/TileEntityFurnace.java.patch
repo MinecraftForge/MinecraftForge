@@ -21,6 +21,15 @@
  {
      private static final int[] field_102010_d = new int[] {0};
      private static final int[] field_102011_e = new int[] {2, 1};
+@@ -219,7 +222,7 @@
+      */
+     public int getCookProgressScaled(int par1)
+     {
+-        return this.furnaceCookTime * par1 / 200;
++        return this.furnaceCookTime * par1 / (furnaceItemStacks[0] != null ? furnaceItemStacks[0].getItem().getSmeltingTime(furnaceItemStacks[0]) : 200);
+     }
+ 
+     @SideOnly(Side.CLIENT)
 @@ -276,8 +279,7 @@
  
                          if (this.furnaceItemStacks[1].stackSize == 0)
@@ -31,6 +40,15 @@
                          }
                      }
                  }
+@@ -287,7 +289,7 @@
+             {
+                 ++this.furnaceCookTime;
+ 
+-                if (this.furnaceCookTime == 200)
++                if (this.furnaceCookTime == furnaceItemStacks[0].getItem().getSmeltingTime(furnaceItemStacks[0]))
+                 {
+                     this.furnaceCookTime = 0;
+                     this.smeltItem();
 @@ -323,8 +325,12 @@
          }
          else
