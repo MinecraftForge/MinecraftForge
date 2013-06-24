@@ -154,7 +154,7 @@ public class AccessTransformer implements IClassTransformer
                 return true;
             }
         });
-        FMLRelaunchLog.fine("Loaded %d rules from AccessTransformer config file %s", modifiers.size(), rulesFile);
+        System.out.printf("Loaded %d rules from AccessTransformer config file %s\n", modifiers.size(), rulesFile);
     }
 
     @SuppressWarnings("unchecked")

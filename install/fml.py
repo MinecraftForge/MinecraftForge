@@ -439,6 +439,7 @@ def cleanup_source(path):
 compile_tools = True
 def setup_fml(fml_dir, mcp_dir, disable_at=False, disable_merge=False, enable_server=False, disable_client=False, disable_assets=False):
     global compile_tools
+    global client_jar
     sys.path.append(mcp_dir)
     from runtime.decompile import decompile
     from runtime.cleanup import cleanup
@@ -554,7 +555,6 @@ def setup_fml(fml_dir, mcp_dir, disable_at=False, disable_merge=False, enable_se
         decompile(None, False, False, True, True, False, True, False, False, False, False, not disable_client, enable_server)
         reset_logger()
         os.chdir(fml_dir)
-        
         post_decompile(mcp_dir, fml_dir, client_jar)
         
     except SystemExit, e:
