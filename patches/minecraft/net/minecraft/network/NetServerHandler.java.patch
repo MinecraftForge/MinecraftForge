@@ -1,9 +1,10 @@
 --- ../src_base/minecraft/net/minecraft/network/NetServerHandler.java
 +++ ../src_work/minecraft/net/minecraft/network/NetServerHandler.java
-@@ -65,6 +65,13 @@
- import net.minecraft.util.ReportedException;
+@@ -69,6 +69,14 @@
  import net.minecraft.world.WorldServer;
+ import org.apache.commons.lang3.StringUtils;
  
++import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.Event;
 +import net.minecraftforge.event.ForgeEventFactory;
@@ -14,7 +15,7 @@
  public class NetServerHandler extends NetHandler
  {
      /** The underlying network manager for this server handler. */
-@@ -233,6 +240,11 @@
+@@ -242,6 +250,11 @@
                      if (this.playerEntity.ridingEntity != null)
                      {
                          this.playerEntity.ridingEntity.updateRiderPosition();
@@ -26,7 +27,7 @@
                      }
  
                      this.mcServer.getConfigurationManager().serverUpdateMountedMovingPlayer(this.playerEntity);
-@@ -305,9 +317,9 @@
+@@ -319,9 +332,9 @@
                  d4 = d1 - this.playerEntity.posX;
                  double d6 = d2 - this.playerEntity.posY;
                  double d7 = d3 - this.playerEntity.posZ;
@@ -38,8 +39,8 @@
 +                double d10 = Math.max(Math.abs(d7), Math.abs(this.playerEntity.motionZ));
                  double d11 = d8 * d8 + d9 * d9 + d10 * d10;
  
-                 if (d11 > 100.0D && (!this.mcServer.isSinglePlayer() || !this.mcServer.getServerOwner().equals(this.playerEntity.username)))
-@@ -323,6 +335,11 @@
+                 if (d11 > 100.0D && (!this.mcServer.isSinglePlayer() || !this.mcServer.getServerOwner().equals(this.playerEntity.getCommandSenderName())))
+@@ -337,6 +350,11 @@
                  if (this.playerEntity.onGround && !par1Packet10Flying.onGround && d6 > 0.0D)
                  {
                      this.playerEntity.addExhaustion(0.2F);
@@ -51,8 +52,8 @@
                  }
  
                  this.playerEntity.moveEntity(d4, d6, d7);
-@@ -347,10 +364,15 @@
-                     this.mcServer.getLogAgent().logWarning(this.playerEntity.username + " moved wrongly!");
+@@ -361,10 +379,15 @@
+                     this.mcServer.getLogAgent().logWarning(this.playerEntity.getCommandSenderName() + " moved wrongly!");
                  }
  
 +                if (!this.hasMoved) //Fixes "Moved Too Fast" kick when being teleported while moving
@@ -68,7 +69,7 @@
                  {
                      this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, f2, f3);
                      return;
-@@ -358,7 +380,7 @@
+@@ -372,7 +395,7 @@
  
                  AxisAlignedBB axisalignedbb = this.playerEntity.boundingBox.copy().expand((double)f4, (double)f4, (double)f4).addCoord(0.0D, -0.55D, 0.0D);
  
@@ -77,7 +78,7 @@
                  {
                      if (d12 >= -0.03125D)
                      {
-@@ -377,6 +399,11 @@
+@@ -391,6 +414,11 @@
                      this.ticksForFloatKick = 0;
                  }
  
@@ -89,7 +90,7 @@
                  this.playerEntity.onGround = par1Packet10Flying.onGround;
                  this.mcServer.getConfigurationManager().serverUpdateMountedMovingPlayer(this.playerEntity);
                  this.playerEntity.updateFlyingState(this.playerEntity.posY - d0, par1Packet10Flying.onGround);
-@@ -443,7 +470,10 @@
+@@ -461,7 +489,10 @@
                  double d2 = this.playerEntity.posZ - ((double)k + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
@@ -101,7 +102,21 @@
                  {
                      return;
                  }
-@@ -503,7 +533,11 @@
+@@ -481,6 +512,13 @@
+                 else
+                 {
+                     this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(i, j, k, worldserver));
++                    // Update any tile entity data for this block
++                    TileEntity tileentity = worldserver.getBlockTileEntity(i, j, k);
++
++                    if (tileentity != null)
++                    {
++                        this.playerEntity.playerNetServerHandler.sendPacketToPlayer(tileentity.getDescriptionPacket());
++                    }
+                 }
+             }
+             else if (par1Packet14BlockDig.status == 2)
+@@ -521,7 +559,11 @@
                  return;
              }
  
@@ -114,7 +129,7 @@
          }
          else if (par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit() - 1 && (par1Packet15Place.getDirection() == 1 || par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit()))
          {
-@@ -512,7 +546,9 @@
+@@ -530,7 +572,9 @@
          }
          else
          {
@@ -125,22 +140,16 @@
              {
                  this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, worldserver, itemstack, i, j, k, l, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
              }
-@@ -691,7 +727,14 @@
-                         return;
+@@ -710,6 +754,8 @@
                      }
  
-+                    String old = s;
-                     s = "<" + this.playerEntity.getTranslatedEntityName() + "> " + s;
-+                    ServerChatEvent event = new ServerChatEvent(this.playerEntity, old, s);
-+                    if (MinecraftForge.EVENT_BUS.post(event))
-+                    {
-+                        return;
-+                    }
-+                    s = event.line;
-                     this.mcServer.getLogAgent().logInfo(s);
-                     this.mcServer.getConfigurationManager().sendPacketToAllPlayers(new Packet3Chat(s, false));
+                     ChatMessageComponent chatmessagecomponent = ChatMessageComponent.func_111082_b("chat.type.text", new Object[] {this.playerEntity.getTranslatedEntityName(), s});
++                    chatmessagecomponent = ForgeHooks.onServerChatEvent(this, s, chatmessagecomponent);
++                    if (chatmessagecomponent == null) return;
+                     this.mcServer.getConfigurationManager().func_110459_a(chatmessagecomponent, false);
                  }
-@@ -822,7 +865,7 @@
+ 
+@@ -850,7 +896,7 @@
                      return;
                  }
  
@@ -149,12 +158,3 @@
              }
          }
      }
-@@ -1220,7 +1263,7 @@
-             }
-         }
-     }
--    
-+
- 
-     @Override
- 

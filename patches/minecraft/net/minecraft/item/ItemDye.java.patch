@@ -4,7 +4,7 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
  
-+import net.minecraftforge.common.FakePlayerFactory;
++import net.minecraftforge.common.FakePlayer;
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.Event.Result;
@@ -26,7 +26,7 @@
  
      public static boolean func_96604_a(ItemStack par0ItemStack, World par1World, int par2, int par3, int par4)
      {
-+        return applyBonemeal(par0ItemStack, par1World, par2, par3, par4, FakePlayerFactory.getMinecraft(par1World));
++        return applyBonemeal(par0ItemStack, par1World, par2, par3, par4, FakePlayer.get(par1World, "[Minecraft]"));
 +    }
 +
 +    public static boolean applyBonemeal(ItemStack par0ItemStack, World par1World, int par2, int par3, int par4, EntityPlayer player)
@@ -85,4 +85,4 @@
 +        }
      }
  
-     /**
+     public boolean func_111207_a(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, EntityLivingBase par3EntityLivingBase)
