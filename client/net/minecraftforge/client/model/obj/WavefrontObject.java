@@ -207,12 +207,17 @@ public class WavefrontObject implements IModelCustom
     {
         for (GroupObject groupObject : groupObjects)
         {
+            boolean shouldRender = true;
             for (String excludedGroupName : excludedGroupNames)
             {
-                if (!excludedGroupName.equalsIgnoreCase(groupObject.name))
+                if (excludedGroupName.equalsIgnoreCase(groupObject.name))
                 {
-                    groupObject.render();
+                    shouldRender = false;
                 }
+            }
+            if (shouldRender)
+            {
+                groupObject.render();
             }
         }
     }
