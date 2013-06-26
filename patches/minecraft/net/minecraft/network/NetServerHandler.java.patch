@@ -101,7 +101,29 @@
                  {
                      return;
                  }
-@@ -503,7 +533,11 @@
+@@ -463,6 +493,13 @@
+                 else
+                 {
+                     this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(i, j, k, worldserver));
++                    // Update any tile entity data for this block
++                    TileEntity tileentity = worldserver.getBlockTileEntity(i, j, k);
++
++                    if (tileentity != null)
++                    {
++                        this.playerEntity.playerNetServerHandler.sendPacketToPlayer(tileentity.getDescriptionPacket());
++                    }
+                 }
+             }
+             else if (par1Packet14BlockDig.status == 2)
+@@ -485,6 +522,7 @@
+             }
+         }
+     }
++
+ 
+     public void handlePlace(Packet15Place par1Packet15Place)
+     {
+@@ -503,7 +541,11 @@
                  return;
              }
  
@@ -114,7 +136,7 @@
          }
          else if (par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit() - 1 && (par1Packet15Place.getDirection() == 1 || par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit()))
          {
-@@ -512,7 +546,9 @@
+@@ -512,7 +554,9 @@
          }
          else
          {
@@ -125,7 +147,7 @@
              {
                  this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, worldserver, itemstack, i, j, k, l, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
              }
-@@ -691,7 +727,14 @@
+@@ -691,7 +735,14 @@
                          return;
                      }
  
@@ -140,7 +162,7 @@
                      this.mcServer.getLogAgent().logInfo(s);
                      this.mcServer.getConfigurationManager().sendPacketToAllPlayers(new Packet3Chat(s, false));
                  }
-@@ -822,7 +865,7 @@
+@@ -822,7 +873,7 @@
                      return;
                  }
  
@@ -149,7 +171,7 @@
              }
          }
      }
-@@ -1220,7 +1263,7 @@
+@@ -1220,7 +1271,7 @@
              }
          }
      }

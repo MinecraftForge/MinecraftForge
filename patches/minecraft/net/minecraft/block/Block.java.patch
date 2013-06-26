@@ -150,7 +150,7 @@
          {
              ItemStack itemstack = this.createStackedBlock(par6);
  
-@@ -1102,12 +1122,13 @@
+@@ -1102,12 +1122,21 @@
          }
      }
  
@@ -162,10 +162,18 @@
      {
 -        return this.renderAsNormalBlock() && !this.isBlockContainer;
 +        return this.renderAsNormalBlock() && !this.hasTileEntity(silk_check_meta);
++    }
++
++    public boolean func_71906_q_CodeFix_Public(){
++        return canSilkHarvest();
++    }
++
++    public void func_71923_g_CodeFix_Public(net.minecraft.world.World a, int b, int c, int d, int e){
++        dropXpOnBlockBreak(a, b, c, d, e);
      }
  
      /**
-@@ -1443,4 +1464,950 @@
+@@ -1443,4 +1472,962 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -1114,5 +1122,17 @@
 +            }
 +        }
 +        return false;
++    }
++
++    /**
++     * Get experience of block
++     * @param world The world
++     * @param meta Metadata
++     * @param enchantmentLevel Enchantment level
++     * @return The amount of experience yielded by block.
++     */
++    public int getExpDrop(World world, int meta, int enchantmentLevel)
++    {
++        return 0;
 +    }
  }
