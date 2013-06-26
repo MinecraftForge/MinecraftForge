@@ -40,6 +40,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
@@ -83,7 +84,6 @@ public class FMLModContainer implements ModContainer
     private boolean overridesMetadata;
     private EventBus eventBus;
     private LoadController controller;
-    private Multimap<Class<? extends Annotation>, Object> annotations;
     private DefaultArtifactVersion processedVersion;
     private boolean isNetworkMod;
 
@@ -107,6 +107,7 @@ public class FMLModContainer implements ModContainer
     private Certificate certificate;
     private String modLanguage;
     private ILanguageAdapter languageAdapter;
+    private ListMultimap<Class<? extends FMLEvent>,Method> eventMethods;
 
     public FMLModContainer(String className, File modSource, Map<String,Object> modDescriptor)
     {
@@ -115,6 +116,7 @@ public class FMLModContainer implements ModContainer
         this.descriptor = modDescriptor;
         this.modLanguage = (String) modDescriptor.get("modLanguage");
         this.languageAdapter = "scala".equals(modLanguage) ? new ILanguageAdapter.ScalaAdapter() : new ILanguageAdapter.JavaAdapter();
+        this.eventMethods = ArrayListMultimap.create();
     }
 
     private ILanguageAdapter getLanguageAdapter()
@@ -312,10 +314,9 @@ public class FMLModContainer implements ModContainer
         }
     }
 
-    private Multimap<Class<? extends Annotation>, Object> gatherAnnotations(Class<?> clazz) throws Exception
+    private Method gatherAnnotations(Class<?> clazz) throws Exception
     {
-        Multimap<Class<? extends Annotation>,Object> anns = ArrayListMultimap.create();
-
+        Method factoryMethod = null;
         for (Method m : clazz.getDeclaredMethods())
         {
             for (Annotation a : m.getAnnotations())
@@ -323,20 +324,47 @@ public class FMLModContainer implements ModContainer
                 if (modTypeAnnotations.containsKey(a.annotationType()))
                 {
                     Class<?>[] paramTypes = new Class[] { modTypeAnnotations.get(a.annotationType()) };
-
                     if (Arrays.equals(m.getParameterTypes(), paramTypes))
                     {
                         m.setAccessible(true);
-                        anns.put(a.annotationType(), m);
+                        eventMethods.put(modTypeAnnotations.get(a.annotationType()), m);
                     }
                     else
                     {
                         FMLLog.log(getModId(), Level.SEVERE,"The mod %s appears to have an invalid method annotation %s. This annotation can only apply to methods with argument types %s -it will not be called", getModId(), a.annotationType().getSimpleName(), Arrays.toString(paramTypes));
                     }
                 }
+                else if (a.annotationType().equals(Mod.EventHandler.class))
+                {
+                    if (m.getParameterTypes().length == 1 && modAnnotationTypes.containsKey(m.getParameterTypes()[0]))
+                    {
+                        m.setAccessible(true);
+                        eventMethods.put((Class<? extends FMLEvent>) m.getParameterTypes()[1],m);
+                    }
+                    else
+                    {
+                        FMLLog.log(getModId(), Level.SEVERE,"The mod %s appears to have an invalid event annotation %s. This annotation can only apply to methods with recognized event arguments - it will not be called", getModId(), a.annotationType().getSimpleName());
+                    }
+                }
+                else if (a.annotationType().equals(Mod.InstanceFactory.class))
+                {
+                    if (Modifier.isStatic(m.getModifiers()) && m.getParameterTypes().length == 0 && factoryMethod == null)
+                    {
+                        m.setAccessible(true);
+                        factoryMethod = m;
+                    }
+                    else if (!(Modifier.isStatic(m.getModifiers()) && m.getParameterTypes().length == 0))
+                    {
+                        FMLLog.log(getModId(),  Level.SEVERE, "The InstanceFactory annotation can only apply to a static method, taking zero arguments - it will be ignored on %s(%s)", m.getName(), Arrays.asList(m.getParameterTypes()));
+                    }
+                    else if (factoryMethod != null)
+                    {
+                        FMLLog.log(getModId(), Level.SEVERE, "The InstanceFactory annotation can only be used once, the application to %s(%s) will be ignored", m.getName(), Arrays.asList(m.getParameterTypes()));
+                    }
+                }
             }
         }
-        return anns;
+        return factoryMethod;
     }
 
     private void processFieldAnnotations(ASMDataTable asmDataTable) throws Exception
@@ -461,9 +489,9 @@ public class FMLModContainer implements ModContainer
                 }
             }
 
-            annotations = gatherAnnotations(clazz);
+            Method factoryMethod = gatherAnnotations(clazz);
             isNetworkMod = FMLNetworkHandler.instance().registerNetworkMod(this, clazz, event.getASMHarvestedData());
-            modInstance = getLanguageAdapter().getNewInstance(this,clazz, modClassLoader);
+            modInstance = getLanguageAdapter().getNewInstance(this,clazz, modClassLoader, factoryMethod);
             if (fingerprintNotPresent)
             {
                 eventBus.post(new FMLFingerprintViolationEvent(source.isDirectory(), source, ImmutableSet.copyOf(this.sourceFingerprints), expectedFingerprint));
@@ -481,23 +509,20 @@ public class FMLModContainer implements ModContainer
     @Subscribe
     public void handleModStateEvent(FMLEvent event)
     {
-        Class<? extends Annotation> annotation = modAnnotationTypes.get(event.getClass());
-        if (annotation == null)
+        if (!eventMethods.containsKey(event.getClass()))
         {
             return;
         }
         try
         {
-            for (Object o : annotations.get(annotation))
+            for (Method m : eventMethods.get(event.getClass()))
             {
-                Method m = (Method) o;
                 m.invoke(modInstance, event);
             }
         }
         catch (Throwable t)
         {
             controller.errorOccurred(this, t);
-            Throwables.propagateIfPossible(t);
         }
     }
 
