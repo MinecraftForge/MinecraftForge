@@ -38,6 +38,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.ListMultimap;
@@ -48,6 +49,7 @@ import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import cpw.mods.fml.common.Mod.CustomProperty;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.Metadata;
 import cpw.mods.fml.common.discovery.ASMDataTable;
@@ -108,6 +110,7 @@ public class FMLModContainer implements ModContainer
     private String modLanguage;
     private ILanguageAdapter languageAdapter;
     private ListMultimap<Class<? extends FMLEvent>,Method> eventMethods;
+    private Map<String, String> customModProperties;
 
     public FMLModContainer(String className, File modSource, Map<String,Object> modDescriptor)
     {
@@ -489,6 +492,22 @@ public class FMLModContainer implements ModContainer
                 }
             }
 
+            CustomProperty[] props = (CustomProperty[]) descriptor.get("customProperties");
+            if (props!=null && props.length > 0)
+            {
+                com.google.common.collect.ImmutableMap.Builder<String, String> builder = ImmutableMap.<String,String>builder();
+                for (CustomProperty p : props)
+                {
+                    builder.put(p.k(),p.v());
+                }
+                customModProperties = builder.build();
+            }
+            else
+            {
+                customModProperties = EMPTY_PROPERTIES;
+            }
+
+
             Method factoryMethod = gatherAnnotations(clazz);
             isNetworkMod = FMLNetworkHandler.instance().registerNetworkMod(this, clazz, event.getASMHarvestedData());
             modInstance = getLanguageAdapter().getNewInstance(this,clazz, modClassLoader, factoryMethod);
@@ -569,5 +588,11 @@ public class FMLModContainer implements ModContainer
     public String toString()
     {
         return "FMLMod:"+getModId()+"{"+getVersion()+"}";
+    }
+
+    @Override
+    public Map<String, String> getCustomModProperties()
+    {
+        return customModProperties;
     }
 }

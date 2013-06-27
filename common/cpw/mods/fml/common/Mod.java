@@ -179,6 +179,33 @@ public @interface Mod
     String asmHookClass() default "";
 
     /**
+     * A list of custom properties for this mod. Completely up to the mod author if/when they
+     * want to put anything in here.
+     * @return an optional list of custom properties
+     */
+    CustomProperty[] customProperties() default {};
+
+    /**
+     * A custom key => value property pair for use with {@link Mod#customProperties()}
+     * @author cpw
+     *
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({})
+    public @interface CustomProperty
+    {
+        /**
+         * A key. Should be unique.
+         * @return A key
+         */
+        String k();
+        /**
+         * A value. Can be anything.
+         * @return A value
+         */
+        String v();
+    }
+    /**
      * Marks the associated method as handling an FML lifecycle event.
      * The method must have a single parameter, one of the following types. This annotation
      * replaces the multiple different annotations that previously were used.
