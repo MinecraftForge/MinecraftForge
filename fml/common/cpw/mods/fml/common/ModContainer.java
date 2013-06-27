@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -15,8 +15,10 @@ package cpw.mods.fml.common;
 import java.io.File;
 import java.security.cert.Certificate;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.EventBus;
 
 import cpw.mods.fml.common.versioning.ArtifactVersion;
@@ -131,4 +133,7 @@ public interface ModContainer
     VersionRange acceptableMinecraftVersionRange();
 
     Certificate getSigningCertificate();
+
+    public static final Map<String,String> EMPTY_PROPERTIES = ImmutableMap.of();
+    Map<String,String> getCustomModProperties();
 }
