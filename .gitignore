@@ -14,3 +14,4 @@ fmlbranding.properties
 /deobfuscation_data*.zip
 /binpatch
 /mcp_data/
+/map_client.txt

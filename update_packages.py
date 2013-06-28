@@ -15,7 +15,7 @@ def get_merged_info(fml_dir, mcp_dir):
         from fml import gen_merged_srg
         values = create_merged_srg(mcp_dir, None)
     else:
-        with open(joined, 'r') as fh:
+        with closing(open(joined, 'r')) as fh:
             for line in fh:
                 pts = line.rstrip('\r\n').split(' ')
                 if pts[0] == 'MD:':
@@ -23,6 +23,20 @@ def get_merged_info(fml_dir, mcp_dir):
                 else:
                     values[pts[0]][pts[1]] = pts[2]
     return {t:{v.split(' ')[0]:k for k, v in m.items()} for t,m in values.items()}
+
+def load_suggestions(fml_dir):
+    map_file = os.path.join(fml_dir, 'map_client.txt')
+    if not os.path.isfile(map_file):
+        return None
+
+    map = {}
+    with closing(open(map_file, 'r')) as fh:
+        for line in fh:
+            if line[0] == ' ': 
+                continue
+            line = line[0:-2].split(' -> ')
+            map[line[1]] = line[0].rsplit('.', 1)[0]
+    return map
 
 def main():
     parser = OptionParser()
@@ -34,6 +48,7 @@ def main():
     
     from fml import read_mc_versions, load_srg
     info = read_mc_versions(options.fml_dir, work_dir=os.path.join(options.mcp_dir, 'jars'))
+    suggs = load_suggestions(options.fml_dir)
     
     types = {'client' : [], 'server' : []}
     for type in ['client', 'server']:
@@ -52,34 +67,38 @@ def main():
             for line in reader:
                 pkgs[line['class']] = line['package']
     
-    classes = []
+    classes = {}
     for cls in srg['CL:'].keys():
         if cls.startswith('net/minecraft/src/'):
             obf = srg['CL:'][cls]
             cls = cls[18:]
-            classes.append(cls)
+            classes[cls] = obf
             for type in ['server', 'client']:
                 if obf in types[type]:
                     types[type].remove(obf)
                     types[type].append(cls)
     
     for cls in pkgs.keys():
-        if not cls in classes:
+        if not cls in classes.keys():
             print 'Removed Class: %s/%s' % (pkgs[cls], cls)
             pkgs.pop(cls)
-        
-    for cls in classes:
+    
+    for cls,obf in classes.items():
         if not cls in pkgs.keys():
+            sug = ''
+            if not suggs is None and obf in suggs.keys():
+                sug = '_' + suggs[obf].replace('.', '_')
+                
             print 'New Class: %s' % cls
             if cls.find('/') == -1:
                 if cls in types['server'] and cls in types['client']:
-                    pkgs[cls] = 'get_me_out_of_here_shared'
+                    pkgs[cls] = 'get_me_out_of_here_shared' + sug
                 elif cls in types['server']:
-                    pkgs[cls] = 'get_me_out_of_here_server'
+                    pkgs[cls] = 'get_me_out_of_here_server' + sug
                 elif cls in types['client']:
-                    pkgs[cls] = 'get_me_out_of_here_client'
+                    pkgs[cls] = 'get_me_out_of_here_client' + sug
                 else:
-                    pkgs[cls] = 'get_me_out_of_here_src'
+                    pkgs[cls] = 'get_me_out_of_here_src' + sug
     
     tmp=[]
     for cls,pkg in pkgs.items():
