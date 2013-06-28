@@ -1,20 +1,24 @@
 import os, os.path, sys
 from optparse import OptionParser
 
-from fml import setup_fml, finish_setup_fml, apply_fml_patches, setup_mcp
+from fml import setup_fml, finish_setup_fml, apply_fml_patches, setup_mcp, download_mcp
 
-def fml_main(fml_dir, mcp_dir, dont_gen_conf=True, disable_patches=False, disable_at=False, disable_merge=False, enable_server=False, 
-            disable_client=False, disable_rename=False, disable_assets=False):
+def fml_main(fml_dir, mcp_dir, gen_conf=True, disable_patches=False, disable_at=False, disable_merge=False, enable_server=False, 
+            disable_client=False, disable_rename=False, disable_assets=False, decompile=False):
     print '================ Forge ModLoader Setup Start ==================='
-    setup_mcp(fml_dir, mcp_dir, dont_gen_conf, download)
-    setup_fml(fml_dir, mcp_dir, disable_at=disable_at, disable_merge=disable_merge, 
+    download_mcp(fml_dir, mcp_dir)
+    setup_mcp(fml_dir, mcp_dir, gen_conf)
+    if decompile:
+        decompile_minecraft(fml_dir, mcp_dir, disable_at=disable_at, disable_merge=disable_merge, 
               enable_server=enable_server, disable_client=disable_client,
               disable_assets=disable_assets)
-    if disable_patches:
-        print 'Patching disabled'
+        if disable_patches:
+            print 'Patching disabled'
+        else:
+            apply_fml_patches(fml_dir, mcp_dir, os.path.join(mcp_dir, 'src'))
+        finish_setup_fml(fml_dir, mcp_dir, enable_server=enable_server, disable_client=disable_client, disable_rename=disable_rename)
     else:
-        apply_fml_patches(fml_dir, mcp_dir, os.path.join(mcp_dir, 'src'))
-    finish_setup_fml(fml_dir, mcp_dir, enable_server=enable_server, disable_client=disable_client, disable_rename=disable_rename)
+        print 'Decompile free install is on the to-do!'
     print '================  Forge ModLoader Setup End  ==================='
     
 if __name__ == '__main__':
@@ -27,6 +31,7 @@ if __name__ == '__main__':
     parser.add_option('-e', '--no-merge',  action="store_true", dest='no_merge',      help='Disable merging server code into client', default=False)
     parser.add_option('-n', '--no-rename', action="store_true", dest='no_rename',     help='Disable running updatenames',             default=False)
     parser.add_option('-a', '--no-assets', action="store_true", dest='no_assets',     help='Disable downloading of assets folder',    default=False)
+    parser.add_option('-d', '--decompile', action="store_true", dest='decompile',     help='Decompile minecraft and apply patches',   default=True)
     options, _ = parser.parse_args()
     
     fml_dir = os.path.dirname(os.path.abspath(__file__))
@@ -46,4 +51,5 @@ if __name__ == '__main__':
     fml_main(fml_dir, mcp_dir, disable_patches=options.no_patch, 
         disable_at=options.no_access, disable_merge=options.no_merge,
         enable_server=options.enable_server, disable_client=options.no_client,
-        disable_rename=options.no_rename, disable_assets=options.assets)
+        disable_rename=options.no_rename, disable_assets=options.assets,
+        decompile=options.decompile, gen_conf=False)
