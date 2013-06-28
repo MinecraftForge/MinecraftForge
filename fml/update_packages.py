@@ -4,15 +4,16 @@ import csv, re
 from pprint import pprint
 from zipfile import ZipFile
 from optparse import OptionParser
+from contextlib import closing
 
-def get_merged_info(mcp_dir):
+def get_merged_info(fml_dir, mcp_dir):
     joined = os.path.join(mcp_dir, 'conf', 'joined.srg')
     values = {'PK:': {}, 'CL:': {}, 'FD:': {}, 'MD:': {}}
     
     if not os.path.isfile(joined):
-        sys.path.append('install')
+        sys.path.append(os.path.join(fml_dir, 'install'))
         from fml import gen_merged_srg
-        values = gen_merged_srg(mcp_dir, None)
+        values = create_merged_srg(mcp_dir, None)
     else:
         with open(joined, 'r') as fh:
             for line in fh:
@@ -25,41 +26,28 @@ def get_merged_info(mcp_dir):
 
 def main():
     parser = OptionParser()
-    parser.add_option('-m', '--mcp-dir', action='store_true', dest='mcp_dir', help='Path to download/extract MCP to', default=None)
+    parser.add_option('-m', '--mcp-dir', action='store', dest='mcp_dir', help='MCP install folder', default='mcp')
+    parser.add_option('-f', '--fml-dir', action='store', dest='fml_dir', help='FML instlal folder', default='.')
     options, _ = parser.parse_args()
     
-    fml_dir = os.path.dirname(os.path.abspath(__file__))
-    mcp_dir = os.path.abspath('mcp')
+    sys.path.append(os.path.join(options.fml_dir, 'install'))
     
-    if not options.mcp_dir is None:
-        mcp_dir = os.path.abspath(options.mcp_dir)
-    elif os.path.isfile(os.path.join('..', 'runtime', 'commands.py')):
-        mcp_dir = os.path.abspath('..')
+    from fml import read_mc_versions, load_srg
+    info = read_mc_versions(options.fml_dir, work_dir=os.path.join(options.mcp_dir, 'jars'))
+    
+    types = {'client' : [], 'server' : []}
+    for type in ['client', 'server']:
+        with closing(ZipFile(info['%s_file' % type])) as zip:
+            for i in zip.filelist:
+                if i.filename.endswith('.class') and i.filename.find('/') == -1:
+                    types[type].append(i.filename[:-6])
 
-    client_jar = os.path.join(mcp_dir, 'jars', 'bin', 'minecraft.jar.backup')
-    server_jar = os.path.join(mcp_dir, 'jars', 'minecraft_server.jar.backup')
-    
-    server_classes = []
-    client_classes = []
-    
-    zip = ZipFile(client_jar)
-    for i in zip.filelist:
-        if i.filename.endswith('.class') and i.filename.find('/') == -1:
-            client_classes.append(i.filename[:-6])
-    zip.close()
-    
-    zip = ZipFile(server_jar)
-    for i in zip.filelist:
-        if i.filename.endswith('.class') and i.filename.find('/') == -1:
-            server_classes.append(i.filename[:-6])
-    zip.close()
-
-    srg = get_merged_info(mcp_dir)
-    pkgs = {}    
+    srg = get_merged_info(options.fml_dir, options.mcp_dir)
+    pkgs = {}
     pkg_file = os.path.join('conf', 'packages.csv')
     
     if os.path.isfile(pkg_file):
-        with open(pkg_file) as fh:
+        with closing(open(pkg_file)) as fh:
             reader = csv.DictReader(fh)
             for line in reader:
                 pkgs[line['class']] = line['package']
@@ -70,12 +58,10 @@ def main():
             obf = srg['CL:'][cls]
             cls = cls[18:]
             classes.append(cls)
-            if obf in server_classes:
-                server_classes.remove(obf)
-                server_classes.append(cls)
-            if obf in client_classes:
-                client_classes.remove(obf)
-                client_classes.append(cls)
+            for type in ['server', 'client']:
+                if obf in types[type]:
+                    types[type].remove(obf)
+                    types[type].append(cls)
     
     for cls in pkgs.keys():
         if not cls in classes:
@@ -86,11 +72,11 @@ def main():
         if not cls in pkgs.keys():
             print 'New Class: %s' % cls
             if cls.find('/') == -1:
-                if cls in server_classes and cls in client_classes:
+                if cls in types['server'] and cls in types['client']:
                     pkgs[cls] = 'get_me_out_of_here_shared'
-                elif cls in server_classes:
+                elif cls in types['server']:
                     pkgs[cls] = 'get_me_out_of_here_server'
-                elif cls in client_classes:
+                elif cls in types['client']:
                     pkgs[cls] = 'get_me_out_of_here_client'
                 else:
                     pkgs[cls] = 'get_me_out_of_here_src'
@@ -99,7 +85,7 @@ def main():
     for cls,pkg in pkgs.items():
         tmp.append({'class': cls, 'package': pkg})
     
-    with open(pkg_file, 'wb') as fh:
+    with closing(open(pkg_file, 'wb')) as fh:
         writer = csv.DictWriter(fh, fieldnames=['class', 'package'], lineterminator='\n')
         writer.writeheader()
         for row in sorted(tmp, key=lambda x: (x['package'], x['class'])):
