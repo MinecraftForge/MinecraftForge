@@ -35,14 +35,18 @@ public class PlayerEvent extends LivingEvent
         public final int metadata;
         public final float originalSpeed;
         public float newSpeed = 0.0f;
+        public final int x, y, z;
 
-        public BreakSpeed(EntityPlayer player, Block block, int metadata, float original)
+        public BreakSpeed(EntityPlayer player, Block block, int metadata, float original, int x, int y, int z)
         {
             super(player);
             this.block = block;
             this.metadata = metadata;
             this.originalSpeed = original;
             this.newSpeed = original;
+            this.x = x;
+            this.y = y;
+            this.z = z;
         }
     }
 }
