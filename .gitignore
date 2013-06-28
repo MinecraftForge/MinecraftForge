@@ -13,3 +13,4 @@ fmlbranding.properties
 /eclipse
 /deobfuscation_data*.zip
 /binpatch
+/mcp_data/

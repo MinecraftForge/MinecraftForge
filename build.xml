@@ -79,8 +79,11 @@
   <target name="clean" depends="buildenvsetup,makeclean" if="mcp.exists">
     <exec executable="${python.exe}" dir="${mcp.home}">
       <arg value="${basedir}/decompile.py" />
+      <arg value="--mcp-dir" />
       <arg value="${mcp.home}" />
+      <arg value="--fml-dir" />
       <arg value="${basedir}" />
+      <arg value="--gen-conf" />
     </exec>
   </target>
 
@@ -268,7 +271,9 @@
   <target name="fmldecompile" depends="buildenvsetup,makeclean">
     <exec executable="${python.exe}" dir="${basedir}">
       <arg value="${basedir}/decompile.py" />
+      <arg value="--mcp-dir" />
       <arg value="${mcp.home}" />
+      <arg value="--fml-dir" />
       <arg value="${basedir}" />
     </exec>
   </target>
@@ -276,9 +281,10 @@
   <target name="jenkinsfmldecompile" depends="buildenvsetup,makeclean">
     <exec executable="${python.exe}" dir="${basedir}">
       <arg value="${basedir}/decompile.py" />
+      <arg value="--mcp-dir" />
       <arg value="${mcp.home}" />
+      <arg value="--fml-dir" />
       <arg value="${basedir}" />
-      <arg value="-no_gen_conf" />
     </exec>
   </target>
 

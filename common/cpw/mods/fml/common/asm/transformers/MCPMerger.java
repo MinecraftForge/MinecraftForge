@@ -72,9 +72,8 @@ public class MCPMerger
         File map_file = new File(args[0]);
         File client_jar = new File(args[1]);
         File server_jar = new File(args[2]);
-        File client_jar_tmp = new File(args[1] + ".MergeBack");
-        File server_jar_tmp = new File(args[2] + ".MergeBack");
-
+        File client_jar_tmp = new File(args[1] + ".backup_merge");
+        File server_jar_tmp = new File(args[2] + ".backup_merge");
 
         if (client_jar_tmp.exists() && !client_jar_tmp.delete())
         {

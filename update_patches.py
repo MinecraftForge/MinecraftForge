@@ -63,7 +63,7 @@ def main():
 
     cleanDirs(patchd)
     
-    backup = os.path.join(mcp, 'runtime', 'commands.py.bck')
+    backup = os.path.join(mcp, 'runtime', 'commands.py.backup')
     runtime = os.path.join(mcp, 'runtime', 'commands.py')
     patch_file = os.path.join(fml_dir, 'commands.patch')
     
