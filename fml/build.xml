@@ -275,6 +275,7 @@
       <arg value="${mcp.home}" />
       <arg value="--fml-dir" />
       <arg value="${basedir}" />
+      <arg value="--gen-conf" />
     </exec>
   </target>
 
