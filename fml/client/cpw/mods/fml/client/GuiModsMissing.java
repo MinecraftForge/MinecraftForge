@@ -24,6 +24,7 @@ public class GuiModsMissing extends GuiErrorScreen
 
     public GuiModsMissing(MissingModsException modsMissing)
     {
+        super(null,null);
         this.modsMissing = modsMissing;
     }
 

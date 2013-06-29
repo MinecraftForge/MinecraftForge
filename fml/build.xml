@@ -381,23 +381,21 @@
     <signjar alias="FML" jar="${basedir}/target/${universal.jarname}.zip" keypass="${sign.KEYPASS}" keystore="${env.JENKINS_HOME}/${sign.KEYSTORE}" storepass="${sign.STOREPASS}" verbose="true" />
   </target>
   <target name="makebinpatches" depends="buildenvsetup,makeversion">
+    <path id="diffset.libs">
+      <pathelement path="${mcp.home}/jars/libraries/com/google/guava/guava/14.0/guava-14.0.jar"/>
+      <pathelement path="${mcp.home}/jars/libraries/org/ow2/asm/asm-all/4.1/asm-all-4.1.jar"/>
+      <pathelement path="${mcp.home}/jars/libraries/lzma/lzma/0.0.1/lzma-0.0.1.jar"/>
+      <pathelement path="${mcp.obfoutput}/minecraft"/>
+    </path>
     <delete dir="${basedir}/binpatch" verbose="true"/>
-    <java classname="cpw.mods.fml.common.patcher.GenDiffSet">
-      <classpath>
-        <pathelement path="${mcp.obfoutput}/minecraft"/>
-        <fileset dir="${mcp.home}/lib" includes="guava-14.0-rc3.jar,asm-debug-all-4.1.jar"/>
-      </classpath>
+    <java classname="cpw.mods.fml.common.patcher.GenDiffSet" classpathref="diffset.libs">
       <arg path="${mcp.home}/jars/versions/${version.minecraft}/${version.minecraft}.jar.backup"/>
       <arg path="${mcp.obfoutput}/minecraft"/>
       <arg path="${basedir}/deobfuscation_data-${version.minecraft}.lzma"/>
       <arg path="${basedir}/binpatch/client"/>
       <arg value="false"/>
     </java>
-    <java classname="cpw.mods.fml.common.patcher.GenDiffSet">
-      <classpath>
-        <pathelement path="${mcp.obfoutput}/minecraft"/>
-        <fileset dir="${mcp.home}/lib" includes="guava-14.0-rc3.jar,asm-debug-all-4.1.jar"/>
-      </classpath>
+    <java classname="cpw.mods.fml.common.patcher.GenDiffSet"  classpathref="diffset.libs">
       <arg path="${mcp.home}/jars/minecraft_server.${version.minecraft}.jar.backup"/>
       <arg path="${mcp.obfoutput}/minecraft"/>
       <arg path="${basedir}/deobfuscation_data-${version.minecraft}.lzma"/>
