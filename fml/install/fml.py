@@ -1169,23 +1169,40 @@ def download_libraries(mcp_dir, libraries, natives_dir):
             for k,v in lib['natives'].items():
                 file_names.append('%s-%s-%s.jar' % (root, version, v))
                 
+        if 'children' in lib.keys():
+            for child in lib['children']:
+                file_names.append('%s-%s-%s.jar' % (root, version, child))
+                
         for file_name in file_names:
             url = '%s/%s/%s' % (root_url, '/'.join(path), file_name)
             file_path = os.path.join(lib_dir, os.sep.join(path), file_name)
             headers = get_headers(url)
             if headers is None:
-                print 'Could not retreive headers for library: %s ( %s )' % (lib['name'], url)
+                print('Could not retreive headers for library: %s ( %s )' % (lib['name'], url))
                 failed = True
             else:
+                md5 = None
+                if 'ETag' in headers.keys(): # Amazon headers, Mojang's server
+                    md5 = headers['ETag']
+                else: # Could be a normal maven repo, check for .md5 file
+                    try:
+                        md5 = urllib2.urlopen(url + '.md5').read().split(' ')[0].replace('\r', '').replace('\n', '')
+                        if not len(md5) == 32:
+                            md5 = None
+                            print('Could not retrieve md5 for library %s ( %s.md5 )' % (file_name, url))
+                            failed = True
+                    except (HTTPError):
+                        failed = True
+                        pass
                 downloads.append({
                     'url' : url,
                     'file' : file_path,
-                    'md5'  : headers['ETag'],
+                    'md5'  : md5,
                     'size' : headers['Content-Length'],
                     'extract' : extract
                 })
     
-    return download_list(downloads, natives_dir)
+    return download_list(downloads, natives_dir) or failed
     
 def download_list(list, natives_dir):
     #Downloads a list of files and urls. Verifying md5s if avalible. 
