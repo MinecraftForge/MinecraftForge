@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ObjectArrays;
 
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
 
@@ -20,12 +21,13 @@ public class FMLTweaker implements ITweaker {
     private File assetsDir;
     private String profile;
     private static URI jarLocation;
+    private String[] array;
 
     @Override
     public void acceptOptions(List<String> args, File gameDir, File assetsDir, String profile)
     {
         this.args = args;
-        this.gameDir = gameDir;
+        this.gameDir = (gameDir == null ? new File(".") : gameDir);
         this.assetsDir = assetsDir;
         this.profile = profile;
         try
@@ -51,13 +53,36 @@ public class FMLTweaker implements ITweaker {
     @Override
     public String getLaunchTarget()
     {
-        return "net.minecraft.client.Minecraft";
+        return "net.minecraft.client.main.Main";
     }
 
     @Override
     public String[] getLaunchArguments()
     {
-        return args.toArray(new String[args.size()]);
+        String[] array = args.toArray(new String[args.size()]);
+
+        if (gameDir != null)
+        {
+            array = ObjectArrays.concat(gameDir.getAbsolutePath(),array);
+            array = ObjectArrays.concat("--gameDir",array);
+        }
+
+        if (assetsDir != null)
+        {
+            array = ObjectArrays.concat(assetsDir.getAbsolutePath(),array);
+            array = ObjectArrays.concat("--assetsDir",array);
+        }
+        if (profile != null)
+        {
+            array = ObjectArrays.concat(profile,array);
+            array = ObjectArrays.concat("--version",array);
+        }
+        else
+        {
+            array = ObjectArrays.concat("UnknownFMLProfile",array);
+            array = ObjectArrays.concat("--version",array);
+        }
+        return array;
     }
 
     public File getGameDir()

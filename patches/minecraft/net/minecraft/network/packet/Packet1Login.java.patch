@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/network/packet/Packet1Login.java
 +++ ../src-work/minecraft/net/minecraft/network/packet/Packet1Login.java
 @@ -3,6 +3,8 @@
- import java.io.DataInputStream;
- import java.io.DataOutputStream;
+ import java.io.DataInput;
+ import java.io.DataOutput;
  import java.io.IOException;
 +
 +import cpw.mods.fml.common.network.FMLNetworkHandler;
@@ -30,7 +30,7 @@
 +        this.vanillaCompatible = false;
      }
  
-     public void func_73267_a(DataInputStream p_73267_1_) throws IOException
+     public void func_73267_a(DataInput p_73267_1_) throws IOException
 @@ -46,7 +54,16 @@
          this.field_73560_c = (b0 & 8) == 8;
          int i = b0 & -9;

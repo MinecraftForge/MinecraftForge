@@ -8,9 +8,9 @@
 +
 +import cpw.mods.fml.common.FMLLog;
  import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.server.MinecraftServer;
- import net.minecraft.util.ReportedException;
-@@ -48,6 +51,7 @@
+@@ -51,6 +54,7 @@
                      throw new ReportedException(crashreport);
                  }
  

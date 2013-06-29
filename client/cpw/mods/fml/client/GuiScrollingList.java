@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -15,6 +15,7 @@ package cpw.mods.fml.client;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.Tessellator;
 
@@ -264,7 +265,7 @@ public abstract class GuiScrollingList
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_FOG);
         Tessellator var18 = Tessellator.field_78398_a;
-        this.client.field_71446_o.func_98187_b("/gui/background.png");
+        this.client.field_71446_o.func_110577_a(Gui.field_110325_k);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         float var17 = 32.0F;
         var18.func_78382_b();
@@ -397,7 +398,7 @@ public abstract class GuiScrollingList
     private void overlayBackground(int p_22239_1_, int p_22239_2_, int p_22239_3_, int p_22239_4_)
     {
         Tessellator var5 = Tessellator.field_78398_a;
-        this.client.field_71446_o.func_98187_b("/gui/background.png");
+        this.client.field_71446_o.func_110577_a(Gui.field_110325_k);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         float var6 = 32.0F;
         var5.func_78382_b();

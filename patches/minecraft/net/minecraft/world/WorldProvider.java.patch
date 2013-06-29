@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
-@@ -48,20 +48,12 @@
+@@ -49,20 +49,12 @@
  
      protected void func_76572_b()
      {
@@ -23,7 +23,7 @@
      }
  
      public boolean func_76566_a(int p_76566_1_, int p_76566_2_)
-@@ -178,19 +170,19 @@
+@@ -179,19 +171,19 @@
  
      public int func_76557_i()
      {

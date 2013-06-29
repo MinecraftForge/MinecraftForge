@@ -213,16 +213,21 @@
     <copy todir="build-tmp-deobf">
       <mappedresources>
         <fileset dir="${mcp.home}/conf" includes="packaged.srg" />
-        <globmapper from="packaged.srg" to="joined.srg" />
+        <globmapper from="packaged.srg" to="deobfuscation_data-${version.minecraft}" />
       </mappedresources>
     </copy>
-    <touch millis="0" file="build-tmp-deobf/joined.srg" />
-    <zip file="deobfuscation_data_${version.minecraft}.zip" encoding="UTF-8">
-      <fileset dir="build-tmp-deobf" includes="joined.srg" />
-    </zip>
-    <checksum algorithm="SHA1" property="deobf.checksum" file="deobfuscation_data_${version.minecraft}.zip" />
+    <exec executable="lzma">
+      <arg line="build-tmp-deobf/deobfuscation_data-${version.minecraft}"/>
+      <arg line="-v"/>
+    </exec>
+    <copy todir="${basedir}">
+      <fileset dir="build-tmp-deobf" includes="*.lzma" />
+    </copy>
     <antcall target="writeversion" />
     <delete dir="build-tmp-deobf" />
+    <zip destfile="deobfuscation_data-${version.minecraft}.jar" basedir="${basedir}">
+      <include name="deobfuscation_data-${version.minecraft}.lzma"/>
+    </zip>
   </target>
 
   <target name="build" depends="buildenvsetup,merge-client,merge-common,build-deobf-data,build-universal,build-source-pack" />
@@ -384,7 +389,7 @@
       </classpath>
       <arg path="${mcp.home}/jars/versions/${version.minecraft}/${version.minecraft}.jar.backup"/>
       <arg path="${mcp.obfoutput}/minecraft"/>
-      <arg path="${basedir}/deobfuscation_data_${version.minecraft}.zip"/>
+      <arg path="${basedir}/deobfuscation_data-${version.minecraft}.lzma"/>
       <arg path="${basedir}/binpatch/client"/>
       <arg value="false"/>
     </java>
@@ -395,7 +400,7 @@
       </classpath>
       <arg path="${mcp.home}/jars/minecraft_server.${version.minecraft}.jar.backup"/>
       <arg path="${mcp.obfoutput}/minecraft"/>
-      <arg path="${basedir}/deobfuscation_data_${version.minecraft}.zip"/>
+      <arg path="${basedir}/deobfuscation_data-${version.minecraft}.lzma"/>
       <arg path="${basedir}/binpatch/server"/>
       <arg value="true"/>
     </java>

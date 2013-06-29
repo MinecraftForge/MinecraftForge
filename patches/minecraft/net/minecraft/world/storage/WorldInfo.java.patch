@@ -10,9 +10,9 @@
  import net.minecraft.crash.CrashReportCategory;
 +import net.minecraft.nbt.NBTBase;
  import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.server.MinecraftServer;
  import net.minecraft.world.EnumGameType;
- import net.minecraft.world.GameRules;
-@@ -35,6 +38,7 @@
+@@ -36,6 +39,7 @@
      private boolean field_76110_t;
      private boolean field_76109_u;
      private GameRules field_82577_x;
@@ -20,7 +20,7 @@
  
      protected WorldInfo()
      {
-@@ -534,4 +538,24 @@
+@@ -535,4 +539,24 @@
      {
          return p_85131_0_.field_76110_t;
      }

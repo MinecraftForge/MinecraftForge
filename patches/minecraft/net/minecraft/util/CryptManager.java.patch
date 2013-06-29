@@ -7,11 +7,11 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.io.InputStream;
-@@ -36,6 +37,7 @@
+@@ -35,6 +36,7 @@
  import org.bouncycastle.crypto.params.ParametersWithIV;
  import org.bouncycastle.jce.provider.BouncyCastleProvider;
  
 +@ReobfuscationMarker
  public class CryptManager
  {
-     public static final Charset field_75898_a = Charset.forName("ISO_8859_1");
+     @SideOnly(Side.CLIENT)

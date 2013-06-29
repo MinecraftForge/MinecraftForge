@@ -16,14 +16,13 @@
          Handler[] ahandler = this.field_98242_a.getHandlers();
          int i = ahandler.length;
  
-@@ -37,10 +38,6 @@
+@@ -37,9 +38,6 @@
          }
  
-         LogFormatter logformatter = new LogFormatter(this, (LogAgentINNER1)null);
+         LogFormatter logformatter = new LogFormatter(this, (LogAgentEmptyAnon)null);
 -        ConsoleHandler consolehandler = new ConsoleHandler();
 -        consolehandler.setFormatter(logformatter);
 -        this.field_98242_a.addHandler(consolehandler);
--
+ 
          try
          {
-             FileHandler filehandler = new FileHandler(this.field_98240_b, true);
