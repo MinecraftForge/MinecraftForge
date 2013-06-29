@@ -1,14 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/RenderBlocks.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/RenderBlocks.java
-@@ -34,6 +34,7 @@
- import net.minecraft.block.BlockWall;
+@@ -35,6 +35,7 @@
  import net.minecraft.block.material.Material;
  import net.minecraft.client.Minecraft;
+ import net.minecraft.client.renderer.texture.TextureMap;
 +import net.minecraft.src.FMLRenderAccessLibrary;
  import net.minecraft.util.Direction;
  import net.minecraft.util.Icon;
  import net.minecraft.util.MathHelper;
-@@ -222,7 +223,51 @@
+@@ -223,7 +224,51 @@
          {
              p_78612_1_.func_71902_a(this.field_78669_a, p_78612_2_, p_78612_3_, p_78612_4_);
              this.func_83018_a(p_78612_1_);
@@ -61,7 +61,7 @@
          }
      }
  
-@@ -7618,6 +7663,10 @@
+@@ -7636,6 +7681,10 @@
                  this.func_96447_a((BlockHopper)p_78600_1_, 0, 0, 0, 0, true);
                  GL11.glTranslatef(0.5F, 0.5F, 0.5F);
              }
@@ -72,7 +72,7 @@
          }
          else
          {
-@@ -7676,7 +7725,25 @@
+@@ -7694,7 +7743,25 @@
  
      public static boolean func_78597_b(int p_78597_0_)
      {

@@ -1,13 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/item/Item.java
 +++ ../src-work/minecraft/net/minecraft/item/Item.java
-@@ -1,5 +1,6 @@
- package net.minecraft.item;
+@@ -2,6 +2,8 @@
  
+ import com.google.common.collect.HashMultimap;
+ import com.google.common.collect.Multimap;
++
 +import cpw.mods.fml.common.registry.GameData;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.util.List;
-@@ -215,6 +216,8 @@
+@@ -224,6 +226,8 @@
          }
  
          field_77698_e[256 + p_i3659_1_] = this;

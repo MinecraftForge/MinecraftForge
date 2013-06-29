@@ -23,6 +23,9 @@
       "url" : "http://repo.maven.apache.org/maven2"
     },
     {
+      "name": "lzma:lzma:0.0.1"
+    },
+    {
       "name": "com.paulscode:codecjorbis:20101023"
     },
     {

@@ -13,6 +13,7 @@
 package cpw.mods.fml.common.asm.transformers.deobf;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -81,10 +82,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         try
         {
             File mapData = new File(deobfFileName);
-            mapData = mapData.getCanonicalFile();
-            ZipFile mapZip = new ZipFile(mapData);
-            ZipEntry classData = mapZip.getEntry("joined.srg");
-            ZipInputSupplier zis = new ZipInputSupplier(mapZip, classData);
+            LZMAInputSupplier zis = new LZMAInputSupplier(new FileInputStream(mapData));
             InputSupplier<InputStreamReader> srgSupplier = CharStreams.newReaderSupplier(zis,Charsets.UTF_8);
             List<String> srgList = CharStreams.readLines(srgSupplier);
             rawMethodMaps = Maps.newHashMap();
@@ -132,12 +130,8 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         this.classLoader = classLoader;
         try
         {
-            File libDir = new File(mcDir, "lib");
-            File mapData = new File(libDir, deobfFileName);
-            mapData = mapData.getCanonicalFile();
-            ZipFile mapZip = new ZipFile(mapData);
-            ZipEntry classData = mapZip.getEntry("joined.srg");
-            ZipInputSupplier zis = new ZipInputSupplier(mapZip, classData);
+            InputStream classData = getClass().getResourceAsStream(deobfFileName);
+            LZMAInputSupplier zis = new LZMAInputSupplier(classData);
             InputSupplier<InputStreamReader> srgSupplier = CharStreams.newReaderSupplier(zis,Charsets.UTF_8);
             List<String> srgList = CharStreams.readLines(srgSupplier);
             rawMethodMaps = Maps.newHashMap();

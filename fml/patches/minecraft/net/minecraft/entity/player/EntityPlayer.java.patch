@@ -8,7 +8,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.util.Collection;
-@@ -182,6 +184,7 @@
+@@ -183,6 +185,7 @@
  
      public void func_70071_h_()
      {
@@ -16,7 +16,7 @@
          if (this.field_71074_e != null)
          {
              ItemStack itemstack = this.field_71071_by.func_70448_g();
-@@ -305,6 +308,7 @@
+@@ -306,6 +309,7 @@
          {
              this.field_71100_bB.func_75118_a(this);
          }
@@ -24,9 +24,9 @@
      }
  
      public int func_82145_z()
-@@ -1905,4 +1909,9 @@
+@@ -1954,4 +1958,9 @@
      {
-         return ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.field_71092_bJ);
+         return this.func_70096_w().func_111145_d(17);
      }
 +
 +    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z)

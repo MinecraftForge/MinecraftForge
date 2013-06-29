@@ -7,7 +7,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import net.minecraft.block.Block;
-@@ -311,7 +312,15 @@
+@@ -316,7 +317,15 @@
                  }
              }
  

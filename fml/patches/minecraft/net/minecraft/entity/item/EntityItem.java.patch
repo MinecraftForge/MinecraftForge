@@ -9,7 +9,7 @@
  import net.minecraft.block.Block;
  import net.minecraft.block.material.Material;
  import net.minecraft.entity.Entity;
-@@ -279,6 +281,8 @@
+@@ -277,6 +279,8 @@
                      p_70100_1_.func_71029_a(AchievementList.field_76027_z);
                  }
  

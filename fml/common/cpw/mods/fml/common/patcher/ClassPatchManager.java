@@ -88,6 +88,12 @@ public class ClassPatchManager {
         {
             FMLRelaunchLog.fine("FML URI is %s", FMLTweaker.getJarLocation());
             File fmlJarFile = new File(FMLTweaker.getJarLocation());
+            if (!fmlJarFile.exists() || !fmlJarFile.isFile())
+            {
+                FMLRelaunchLog.log(Level.INFO, "Not found an FML jar, I assume you're developing FML. Hi cpw or Lex!");
+                patches = ArrayListMultimap.create();
+                return;
+            }
             fmlJar = new JarFile(fmlJarFile);
         }
         catch (Exception e)
