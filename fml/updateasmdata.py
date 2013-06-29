@@ -82,7 +82,7 @@ def process_file(file, srg):
                         
                     else:
                         if name not in srg[typ]:
-                            nf.write("%s # -- MISSING MAPPING" %( line ))
+                            nf.write("%s # -- MISSING MAPPING\n" %( line.rstrip() ))
                             print("%s is missing a mapping"% name)
                         else:
                             targ = srg[typ][name]
