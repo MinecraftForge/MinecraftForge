@@ -2,7 +2,10 @@ package cpw.mods.fml.common.patcher;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
@@ -19,11 +22,13 @@ import cpw.mods.fml.repackage.com.nothome.delta.Delta;
 
 public class GenDiffSet {
 
+    private static final List<String> RESERVED_NAMES = Arrays.asList("CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9");
+
     public static void main(String[] args) throws IOException
     {
         String sourceJar = args[0]; //Clean Vanilla jar minecraft.jar or minecraft_server.jar
         String targetDir = args[1]; //Directory containing obfed output classes, typically mcp/reobf/minecraft
-        String deobfData = args[2]; //Path to FML's deobfusication_data.zip
+        String deobfData = args[2]; //Path to FML's deobfusication_data.lzma
         String outputDir = args[3]; //Path to place generated .binpatch
         String killTarget = args[4]; //"true" if we should destroy the target file if it generated a successful .binpatch
 
@@ -40,12 +45,19 @@ public class GenDiffSet {
         for (String name : remapper.getObfedClasses())
         {
 //            Logger.getLogger("GENDIFF").info(String.format("Evaluating path for data :%s",name));
-            File targetFile = new File(targetDir, name.replace('/', File.separatorChar) + ".class");
+            String fileName = name;
+            String jarName = name;
+            if (RESERVED_NAMES.contains(name.toUpperCase(Locale.ENGLISH)))
+            {
+                fileName = "_"+name;
+            }
+            File targetFile = new File(targetDir, fileName.replace('/', File.separatorChar) + ".class");
+            jarName = jarName+".class";
             if (targetFile.exists())
             {
                 String sourceClassName = name.replace('/', '.');
                 String targetClassName = remapper.map(name).replace('/', '.');
-                JarEntry entry = sourceZip.getJarEntry(name);
+                JarEntry entry = sourceZip.getJarEntry(jarName);
 
                 byte[] vanillaBytes = entry != null ? ByteStreams.toByteArray(sourceZip.getInputStream(entry)) : new byte[0];
                 byte[] patchedBytes = Files.toByteArray(targetFile);
