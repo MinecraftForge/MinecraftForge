@@ -41,6 +41,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
@@ -414,5 +415,10 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         methodNameMaps.put(name, ImmutableMap.copyOf(methodMap));
         fieldNameMaps.put(name, ImmutableMap.copyOf(fieldMap));
 //        System.out.printf("Maps: %s %s\n", name, methodMap);
+    }
+
+    public Set<String> getObfedClasses()
+    {
+        return ImmutableSet.copyOf(classNameBiMap.keySet());
     }
 }
