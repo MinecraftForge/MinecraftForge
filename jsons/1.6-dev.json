@@ -13,10 +13,14 @@
     },
     {
       "name": "org.ow2.asm:asm-all:4.1",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2",
       "comment" : "Important for FML, we add this"
     },
     {
-      "name": "net.sf.jopt-simple:jopt-simple:4.5"
+      "name": "net.sf.jopt-simple:jopt-simple:4.5",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
     },
     {
       "name": "com.paulscode:codecjorbis:20101023"
@@ -34,34 +38,58 @@
       "name": "com.paulscode:soundsystem:20120107"
     },
     {
-      "name": "org.lwjgl.lwjgl:lwjgl:2.9.0"
+      "name": "org.lwjgl.lwjgl:lwjgl:2.9.0",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
     },
     {
-      "name": "org.lwjgl.lwjgl:lwjgl_util:2.9.0"
+      "name": "org.lwjgl.lwjgl:lwjgl_util:2.9.0",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
     },
     {
       "name": "argo:argo:2.25_fixed"
     },
     {
-      "name": "org.bouncycastle:bcprov-jdk15on:1.47"
+      "name": "net.sourceforge.argo:argo:2.25",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2",
+      "comment" : "grumble grumble grumble, y u no use proper version/artifact id grumble"
     },
     {
-      "name": "com.google.guava:guava:14.0"
+      "name": "org.bouncycastle:bcprov-jdk15on:1.47",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
     },
     {
-      "name": "org.apache.commons:commons-lang3:3.1"
+      "name": "com.google.guava:guava:14.0",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
     },
     {
-      "name": "commons-io:commons-io:2.4"
+      "name": "org.apache.commons:commons-lang3:3.1",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
     },
     {
-      "name": "net.java.jinput:jinput:2.0.5"
+      "name": "commons-io:commons-io:2.4",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
     },
     {
-      "name": "net.java.jutils:jutils:1.0.0"
+      "name": "net.java.jinput:jinput:2.0.5",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
     },
     {
-      "name": "com.google.code.gson:gson:2.2.2"
+      "name": "net.java.jutils:jutils:1.0.0",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
+    },
+    {
+      "name": "com.google.code.gson:gson:2.2.2",
+      "children" : ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
     },
     {
       "name": "org.lwjgl.lwjgl:lwjgl-platform:2.9.0",
