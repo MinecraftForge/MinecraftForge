@@ -2,26 +2,35 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="jars/bin/jinput.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Minecraft/jars/bin/natives"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="jars/bin/lwjgl_util.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Minecraft/jars/bin/natives"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="jars/bin/lwjgl.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Minecraft/jars/bin/natives"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="jars/bin/minecraft.jar"/>
-	<classpathentry kind="lib" path="lib/argo-3.2-src.jar" sourcepath="lib/argo-3.2-src.jar"/>
-	<classpathentry kind="lib" path="lib/bcprov-debug-jdk15on-148.jar" sourcepath="lib/bcprov-jdk15on-148-src.zip"/>
-	<classpathentry kind="lib" path="lib/asm-debug-all-4.1.jar" sourcepath="lib/asm-4.1-bin.zip"/>
-	<classpathentry kind="lib" path="lib/guava-14.0-rc3.jar" sourcepath="lib/guava-14.0-rc3-sources.jar"/>
-	<classpathentry kind="lib" path="lib/scala-library.jar" sourcepath="lib/scala-library.jar"/>
-	<classpathentry kind="output" path="bin"/>
+    <classpathentry kind="lib" path="jars/libraries/org/ow2/asm/asm-all/4.1/asm-all-4.1.jar" />
+    <classpathentry kind="lib" path="jars/libraries/net/minecraft/launchwrapper/1.3/launchwrapper-1.3.jar" />
+    <classpathentry kind="lib" path="jars/versions/1.6/1.6.jar" />
+    <classpathentry kind="lib" path="jars/libraries/net/sf/jopt-simple/jopt-simple/4.5/jopt-simple-4.5.jar" />
+    <classpathentry kind="lib" path="jars/libraries/com/paulscode/codecjorbis/20101023/codecjorbis-20101023.jar" />
+    <classpathentry kind="lib" path="jars/libraries/com/paulscode/codecwav/20101023/codecwav-20101023.jar" />
+    <classpathentry kind="lib" path="jars/libraries/com/paulscode/libraryjavasound/20101123/libraryjavasound-20101123.jar" />
+    <classpathentry kind="lib" path="jars/libraries/com/paulscode/librarylwjglopenal/20100824/librarylwjglopenal-20100824.jar" />
+    <classpathentry kind="lib" path="jars/libraries/com/paulscode/soundsystem/20120107/soundsystem-20120107.jar" />
+    <classpathentry kind="lib" path="jars/libraries/argo/argo/2.25_fixed/argo-2.25_fixed.jar" />
+    <classpathentry kind="lib" path="jars/libraries/org/bouncycastle/bcprov-jdk15on/1.47/bcprov-jdk15on-1.47.jar" />
+    <classpathentry kind="lib" path="jars/libraries/com/google/guava/guava/14.0/guava-14.0.jar" />
+    <classpathentry kind="lib" path="jars/libraries/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1.jar" />
+    <classpathentry kind="lib" path="jars/libraries/commons-io/commons-io/2.4/commons-io-2.4.jar" />
+    <classpathentry kind="lib" path="jars/libraries/net/java/jutils/jutils/1.0.0/jutils-1.0.0.jar" />
+    <classpathentry kind="lib" path="jars/libraries/com/google/code/gson/gson/2.2.2/gson-2.2.2.jar" />
+    <classpathentry kind="lib" path="jars/libraries/net/java/jinput/jinput/2.0.5/jinput-2.0.5.jar">
+        <attributes>
+            <attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="FML/libraries/natives"/>
+        </attributes>
+    </classpathentry>
+    <classpathentry kind="lib" path="jars/libraries/org/lwjgl/lwjgl/lwjgl/2.9.0/lwjgl-2.9.0.jar">
+        <attributes>
+            <attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="FML/libraries/natives"/>
+        </attributes>
+    </classpathentry>
+    <classpathentry kind="lib" path="jars/libraries/org/lwjgl/lwjgl/lwjgl_util/2.9.0/lwjgl_util-2.9.0.jar">
+        <attributes>
+            <attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="FML/libraries/natives"/>
+        </attributes>
+    </classpathentry>
 </classpath>
