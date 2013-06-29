@@ -20,17 +20,17 @@
     <classpathentry kind="lib" path="jars/libraries/com/google/code/gson/gson/2.2.2/gson-2.2.2.jar" />
     <classpathentry kind="lib" path="jars/libraries/net/java/jinput/jinput/2.0.5/jinput-2.0.5.jar">
         <attributes>
-            <attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="FML/libraries/natives"/>
+            <attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Minecraft/natives"/>
         </attributes>
     </classpathentry>
     <classpathentry kind="lib" path="jars/libraries/org/lwjgl/lwjgl/lwjgl/2.9.0/lwjgl-2.9.0.jar">
         <attributes>
-            <attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="FML/libraries/natives"/>
+            <attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Minecraft/natives"/>
         </attributes>
     </classpathentry>
     <classpathentry kind="lib" path="jars/libraries/org/lwjgl/lwjgl/lwjgl_util/2.9.0/lwjgl_util-2.9.0.jar">
         <attributes>
-            <attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="FML/libraries/natives"/>
+            <attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Minecraft/natives"/>
         </attributes>
     </classpathentry>
 </classpath>
