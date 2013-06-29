@@ -169,13 +169,17 @@ public class WavefrontObject implements IModelCustom
         {
             tessellator.startDrawing(GL11.GL_TRIANGLES);
         }
+        tessellateAll(tessellator);
 
+        tessellator.draw();
+    }
+
+    public void tessellateAll(Tessellator tessellator)
+    {
         for (GroupObject groupObject : groupObjects)
         {
             groupObject.render(tessellator);
         }
-
-        tessellator.draw();
     }
 
     public void renderOnly(String... groupNames)
@@ -192,6 +196,19 @@ public class WavefrontObject implements IModelCustom
         }
     }
 
+    public void tessellateOnly(Tessellator tessellator, String... groupNames) {
+        for (GroupObject groupObject : groupObjects)
+        {
+            for (String groupName : groupNames)
+            {
+                if (groupName.equalsIgnoreCase(groupObject.name))
+                {
+                    groupObject.render(tessellator);
+                }
+            }
+        }
+    }
+
     public void renderPart(String partName)
     {
         for (GroupObject groupObject : groupObjects)
@@ -199,6 +216,16 @@ public class WavefrontObject implements IModelCustom
             if (partName.equalsIgnoreCase(groupObject.name))
             {
                 groupObject.render();
+            }
+        }
+    }
+
+    public void tessellatePart(Tessellator tessellator, String partName) {
+        for (GroupObject groupObject : groupObjects)
+        {
+            if (partName.equalsIgnoreCase(groupObject.name))
+            {
+                groupObject.render(tessellator);
             }
         }
     }
@@ -212,6 +239,20 @@ public class WavefrontObject implements IModelCustom
                 if (!excludedGroupName.equalsIgnoreCase(groupObject.name))
                 {
                     groupObject.render();
+                }
+            }
+        }
+    }
+
+    public void tessellateAllExcept(Tessellator tessellator, String... excludedGroupNames)
+    {
+        for (GroupObject groupObject : groupObjects)
+        {
+            for (String excludedGroupName : excludedGroupNames)
+            {
+                if (!excludedGroupName.equalsIgnoreCase(groupObject.name))
+                {
+                    groupObject.render(tessellator);
                 }
             }
         }
