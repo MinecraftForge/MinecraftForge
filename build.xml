@@ -151,7 +151,7 @@
     <antcall target="signjar" />
     <zip update="true" destfile="${basedir}/target/${universal.jarname}.zip">
       <zipfileset dir="${basedir}/binpatch" prefix="binpatch" includes="**/*.binpatch"/>
-<!--      <fileset dir="${client.mcp.obfoutput}" includes="*.class" />-->
+      <fileset dir="${client.mcp.obfoutput}" includes="*.class" />
       <zipfileset dir="${basedir}" includes="fmlversion.properties" />
       <zipfileset dir="${basedir}" includes="LICENSE-fml.txt" />
       <zipfileset dir="${common.src.dir}" includes="mcpmod.info" />
@@ -382,22 +382,22 @@
         <pathelement path="${mcp.obfoutput}/minecraft"/>
         <fileset dir="${mcp.home}/lib" includes="guava-14.0-rc3.jar,asm-debug-all-4.1.jar"/>
       </classpath>
-      <arg path="${mcp.home}/jars/bin/minecraft.jar.backup"/>
-      <arg path="${mcp.home}/jars/bin/minecraft.jar.backup"/>
+      <arg path="${mcp.home}/jars/versions/${version.minecraft}/${version.minecraft}.jar.backup"/>
       <arg path="${mcp.obfoutput}/minecraft"/>
       <arg path="${basedir}/deobfuscation_data_${version.minecraft}.zip"/>
       <arg path="${basedir}/binpatch/client"/>
+      <arg value="false"/>
     </java>
     <java classname="cpw.mods.fml.common.patcher.GenDiffSet">
       <classpath>
         <pathelement path="${mcp.obfoutput}/minecraft"/>
         <fileset dir="${mcp.home}/lib" includes="guava-14.0-rc3.jar,asm-debug-all-4.1.jar"/>
       </classpath>
-      <arg path="${mcp.home}/jars/bin/minecraft.jar.backup"/>
-      <arg path="${mcp.home}/jars/minecraft_server.jar.backup"/>
+      <arg path="${mcp.home}/jars/minecraft_server.${version.minecraft}.jar.backup"/>
       <arg path="${mcp.obfoutput}/minecraft"/>
       <arg path="${basedir}/deobfuscation_data_${version.minecraft}.zip"/>
       <arg path="${basedir}/binpatch/server"/>
+      <arg value="true"/>
     </java>
   </target>
 </project>
