@@ -232,28 +232,40 @@ public class WavefrontObject implements IModelCustom
 
     public void renderAllExcept(String... excludedGroupNames)
     {
+        boolean exclude;
         for (GroupObject groupObject : groupObjects)
         {
+            exclude=false;
             for (String excludedGroupName : excludedGroupNames)
             {
-                if (!excludedGroupName.equalsIgnoreCase(groupObject.name))
+                if (excludedGroupName.equalsIgnoreCase(groupObject.name))
                 {
-                    groupObject.render();
+                    exclude=true;
                 }
+            }
+            if(!exclude)
+            {
+                groupObject.render();
             }
         }
     }
 
     public void tessellateAllExcept(Tessellator tessellator, String... excludedGroupNames)
     {
+        boolean exclude;
         for (GroupObject groupObject : groupObjects)
         {
+            exclude=false;
             for (String excludedGroupName : excludedGroupNames)
             {
-                if (!excludedGroupName.equalsIgnoreCase(groupObject.name))
+                if (excludedGroupName.equalsIgnoreCase(groupObject.name))
                 {
-                    groupObject.render(tessellator);
+                    exclude=true;
                 }
+            }
+            if(!exclude)
+            {
+                groupObject.render(tessellator);
             }
         }
     }
@@ -388,7 +400,7 @@ public class WavefrontObject implements IModelCustom
                 face.vertices = new Vertex[tokens.length];
                 face.textureCoordinates = new TextureCoordinate[tokens.length];
                 face.vertexNormals = new Vertex[tokens.length];
-                
+
                 for (int i = 0; i < tokens.length; ++i)
                 {
                     subTokens = tokens[i].split("/");
@@ -405,7 +417,7 @@ public class WavefrontObject implements IModelCustom
             {
                 face.vertices = new Vertex[tokens.length];
                 face.textureCoordinates = new TextureCoordinate[tokens.length];
-                
+
                 for (int i = 0; i < tokens.length; ++i)
                 {
                     subTokens = tokens[i].split("/");
@@ -421,7 +433,7 @@ public class WavefrontObject implements IModelCustom
             {
                 face.vertices = new Vertex[tokens.length];
                 face.vertexNormals = new Vertex[tokens.length];
-                
+
                 for (int i = 0; i < tokens.length; ++i)
                 {
                     subTokens = tokens[i].split("//");
@@ -436,7 +448,7 @@ public class WavefrontObject implements IModelCustom
             else if (isValidFace_V_Line(line))
             {
                 face.vertices = new Vertex[tokens.length];
-                
+
                 for (int i = 0; i < tokens.length; ++i)
                 {
                     face.vertices[i] = vertices.get(Integer.parseInt(tokens[i]) - 1);
