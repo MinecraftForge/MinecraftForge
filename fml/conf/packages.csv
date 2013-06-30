@@ -405,10 +405,10 @@ EntitySnowShovelFX,net/minecraft/client/particle
 EntitySpellParticleFX,net/minecraft/client/particle
 EntitySplashFX,net/minecraft/client/particle
 EntitySuspendFX,net/minecraft/client/particle
-RenderCaveSpider,net/minecraft/client/render/entity
-RenderHorse,net/minecraft/client/render/entity
-RenderLeashKnot,net/minecraft/client/render/entity
-RendererLivingEntity,net/minecraft/client/render/entity
+RenderCaveSpider,net/minecraft/client/renderer/entity
+RenderHorse,net/minecraft/client/renderer/entity
+RenderLeashKnot,net/minecraft/client/renderer/entity
+RendererLivingEntity,net/minecraft/client/renderer/entity
 ActiveRenderInfo,net/minecraft/client/renderer
 CallableMouseLocation,net/minecraft/client/renderer
 CallableParticlePositionInfo,net/minecraft/client/renderer
