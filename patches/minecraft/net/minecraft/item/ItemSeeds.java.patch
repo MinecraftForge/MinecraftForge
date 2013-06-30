@@ -17,7 +17,16 @@
  {
      /**
       * The type of block this seed turns into (wheat or pumpkin stems for instance)
-@@ -35,8 +40,9 @@
+@@ -28,6 +33,8 @@
+      */
+     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+     {
++        final int clickedX = par4, clickedY = par5, clickedZ = par6;
++
+         if (par7 != 1)
+         {
+             return false;
+@@ -35,10 +42,22 @@
          else if (par2EntityPlayer.canPlayerEdit(par4, par5, par6, par7, par1ItemStack) && par2EntityPlayer.canPlayerEdit(par4, par5 + 1, par6, par7, par1ItemStack))
          {
              int i1 = par3World.getBlockId(par4, par5, par6);
@@ -26,9 +35,23 @@
 -            if (i1 == this.soilBlockID && par3World.isAirBlock(par4, par5 + 1, par6))
 +            if (soil != null && soil.canSustainPlant(par3World, par4, par5, par6, ForgeDirection.UP, this) && par3World.isAirBlock(par4, par5 + 1, par6))
              {
-                 par3World.setBlock(par4, par5 + 1, par6, this.blockType);
+-                par3World.setBlock(par4, par5 + 1, par6, this.blockType);
++                if (!par3World.isRemote)
++                {
++                    ItemBlock itemblock = (ItemBlock)Item.itemsList[this.blockType];
++                    if (!itemblock.placeBlockAt(par3World, par2EntityPlayer, null, par4, par5 + 1, par6, par7, this.blockType, 0, clickedX, clickedY, clickedZ))
++                    {
++                        return false;
++                    }
++                }
++                else
++                {
++                    par3World.setBlock(par4, par5 + 1, par6, this.blockType);
++                }
                  --par1ItemStack.stackSize;
-@@ -52,4 +58,22 @@
+                 return true;
+             }
+@@ -52,4 +71,22 @@
              return false;
          }
      }

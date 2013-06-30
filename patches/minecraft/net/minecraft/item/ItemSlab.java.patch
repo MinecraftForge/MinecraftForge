@@ -1,0 +1,72 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemSlab.java
++++ ../src_work/minecraft/net/minecraft/item/ItemSlab.java
+@@ -61,6 +61,8 @@
+      */
+     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+     {
++        final int clickedX = par4, clickedY = par5, clickedZ = par6;
++
+         if (this.isFullBlock)
+         {
+             return super.onItemUse(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10);
+@@ -82,12 +84,21 @@
+ 
+             if ((par7 == 1 && !flag || par7 == 0 && flag) && i1 == this.theHalfSlab.blockID && k1 == par1ItemStack.getItemDamage())
+             {
+-                if (par3World.checkNoEntityCollision(this.doubleSlab.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && par3World.setBlock(par4, par5, par6, this.doubleSlab.blockID, k1, 3))
+-                {
+-                    par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.doubleSlab.stepSound.getPlaceSound(), (this.doubleSlab.stepSound.getVolume() + 1.0F) / 2.0F, this.doubleSlab.stepSound.getPitch() * 0.8F);
+-                    --par1ItemStack.stackSize;
+-                }
+-
++                if (!par3World.isRemote)
++                {
++                    if (par3World.checkNoEntityCollision(this.doubleSlab.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && placeBlockAt(par3World, par2EntityPlayer, null, par4, par5, par6, par7, this.doubleSlab.blockID, k1, clickedX, clickedY, clickedZ))
++                    {
++                        --par1ItemStack.stackSize;
++                    }
++                }
++                else
++                {
++                    if (par3World.checkNoEntityCollision(this.doubleSlab.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && par3World.setBlock(par4, par5, par6, this.doubleSlab.blockID, k1, 3))
++                    {
++                        par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.doubleSlab.stepSound.getPlaceSound(), (this.doubleSlab.stepSound.getVolume() + 1.0F) / 2.0F, this.doubleSlab.stepSound.getPitch() * 0.8F);
++                        --par1ItemStack.stackSize;
++                    }
++                }
+                 return true;
+             }
+             else
+@@ -158,6 +169,7 @@
+ 
+     private boolean func_77888_a(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7)
+     {
++        final int clickedX = par4, clickedY = par5, clickedZ = par6;
+         if (par7 == 0)
+         {
+             --par5;
+@@ -194,10 +206,20 @@
+ 
+         if (i1 == this.theHalfSlab.blockID && k1 == par1ItemStack.getItemDamage())
+         {
+-            if (par3World.checkNoEntityCollision(this.doubleSlab.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && par3World.setBlock(par4, par5, par6, this.doubleSlab.blockID, k1, 3))
+-            {
+-                par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.doubleSlab.stepSound.getPlaceSound(), (this.doubleSlab.stepSound.getVolume() + 1.0F) / 2.0F, this.doubleSlab.stepSound.getPitch() * 0.8F);
+-                --par1ItemStack.stackSize;
++            if (!par3World.isRemote)
++            {
++                if(par3World.checkNoEntityCollision(this.doubleSlab.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && placeBlockAt(par3World, par2EntityPlayer, null, par4, par5, par6, par7, this.doubleSlab.blockID, k1, clickedX, clickedY, clickedZ))
++                {
++                    --par1ItemStack.stackSize;
++                }
++            }
++            else
++            {
++                if (par3World.checkNoEntityCollision(this.doubleSlab.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && par3World.setBlock(par4, par5, par6, this.doubleSlab.blockID, k1, 3))
++                {
++                    par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.doubleSlab.stepSound.getPlaceSound(), (this.doubleSlab.stepSound.getVolume() + 1.0F) / 2.0F, this.doubleSlab.stepSound.getPitch() * 0.8F);
++                    --par1ItemStack.stackSize;
++                }
+             }
+ 
+             return true;
