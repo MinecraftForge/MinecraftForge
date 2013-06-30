@@ -85,7 +85,7 @@ def read_mc_versions(fml_dir, version=None, work_dir=None):
             mc_info['library_dir'] = os.path.join(work_dir, 'libraries')
             mc_info['client_file'] = os.path.join(version_dir, '%s.jar' % version)
             mc_info['json_file']   = os.path.join(version_dir, '%s.json' % version)
-            mc_info['server_file'] = os.path.join(work_dir, 'minecraft_server.%s.jar' % version)
+            mc_info['server_file'] = os.path.join(work_dir, 'minecraft_server.jar')
             mc_info['asset_dir']   = os.path.join(work_dir, 'assets')
     else:
         mc_info['new_launcher'] = False
@@ -672,7 +672,7 @@ def create_merged_conf(mcp_dir, fml_dir):
     #Creates the merged conf folder from MCP's conf folder to fml_dir/conf
     
     #Lets grab the files we dont work on
-    for file in ['version.cfg', 'newids.csv', 'joined.exc']:
+    for file in ['version.cfg', 'joined.exc']:
         dst_file = os.path.join(fml_dir, 'conf', file)
         src_file = os.path.join(mcp_dir, 'conf', file)
         if not os.path.isdir(os.path.dirname(dst_file)):
@@ -1016,8 +1016,8 @@ def decompile_minecraft(fml_dir, mcp_dir, disable_at=False, disable_merge=False,
         Commands.applyss = applyss_shunt
         Commands.checkjars = checkjars_shunt
         #decompile -d -n -r
-        #         Conf  JAD    CSV    -r    -d    -a     -n    -p     -o     -l     -g     -c                 -s              --rg
-        decompile(None, False, False, True, True, False, True, False, False, False, False, not disable_client, enable_server, False)
+        #         Conf  JAD    CSV    -r    -d    -a     -n    -p     -o     -l     -g     -c                 -s              --rg  --workDir
+        decompile(None, False, False, True, True, False, True, False, False, False, False, not disable_client, enable_server, False, 'none')
         reset_logger()
         os.chdir(fml_dir)
         post_decompile(mcp_dir, fml_dir)
@@ -1130,6 +1130,7 @@ def download_minecraft(mcp_dir, fml_dir, version=None):
     
     # Remove any invalid files
     for type in ['client', 'server']:
+        print("Backing up %s"%type)
         file_backup(mc_info['%s_file' % type], mc_info['%s_md5' % type])
         failed = not download_file(mc_info['%s_url' % type], mc_info['%s_file' % type], mc_info['%s_md5' % type]) or failed
         file_backup(mc_info['%s_file' % type], mc_info['%s_md5' % type])
