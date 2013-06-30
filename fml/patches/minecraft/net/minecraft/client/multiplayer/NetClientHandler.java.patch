@@ -13,28 +13,28 @@
  
 +    private static byte connectionCompatibilityLevel;
 +
-     public NetClientHandler(Minecraft p_i3103_1_, String p_i3103_2_, int p_i3103_3_) throws IOException
+     public NetClientHandler(Minecraft p_i1176_1_, String p_i1176_2_, int p_i1176_3_) throws IOException
      {
-         this.field_72563_h = p_i3103_1_;
-         Socket socket = new Socket(InetAddress.getByName(p_i3103_2_), p_i3103_3_);
-         this.field_72555_g = new TcpConnection(p_i3103_1_.func_98033_al(), socket, "Client", this);
-+        FMLNetworkHandler.onClientConnectionToRemoteServer(this, p_i3103_2_, p_i3103_3_, this.field_72555_g);
+         this.field_72563_h = p_i1176_1_;
+         Socket socket = new Socket(InetAddress.getByName(p_i1176_2_), p_i1176_3_);
+         this.field_72555_g = new TcpConnection(p_i1176_1_.func_98033_al(), socket, "Client", this);
++        FMLNetworkHandler.onClientConnectionToRemoteServer(this, p_i1176_2_, p_i1176_3_, this.field_72555_g);
      }
  
-     public NetClientHandler(Minecraft p_i11012_1_, String p_i11012_2_, int p_i11012_3_, GuiScreen p_i11012_4_) throws IOException
+     public NetClientHandler(Minecraft p_i1177_1_, String p_i1177_2_, int p_i1177_3_, GuiScreen p_i1177_4_) throws IOException
 @@ -214,6 +218,7 @@
-         this.field_98183_l = p_i11012_4_;
-         Socket socket = new Socket(InetAddress.getByName(p_i11012_2_), p_i11012_3_);
-         this.field_72555_g = new TcpConnection(p_i11012_1_.func_98033_al(), socket, "Client", this);
-+        FMLNetworkHandler.onClientConnectionToRemoteServer(this, p_i11012_2_, p_i11012_3_, this.field_72555_g);
+         this.field_98183_l = p_i1177_4_;
+         Socket socket = new Socket(InetAddress.getByName(p_i1177_2_), p_i1177_3_);
+         this.field_72555_g = new TcpConnection(p_i1177_1_.func_98033_al(), socket, "Client", this);
++        FMLNetworkHandler.onClientConnectionToRemoteServer(this, p_i1177_2_, p_i1177_3_, this.field_72555_g);
      }
  
-     public NetClientHandler(Minecraft p_i3104_1_, IntegratedServer p_i3104_2_) throws IOException
+     public NetClientHandler(Minecraft p_i1178_1_, IntegratedServer p_i1178_2_) throws IOException
 @@ -221,6 +226,7 @@
-         this.field_72563_h = p_i3104_1_;
-         this.field_72555_g = new MemoryConnection(p_i3104_1_.func_98033_al(), this);
-         p_i3104_2_.func_71343_a().func_71754_a((MemoryConnection)this.field_72555_g, p_i3104_1_.func_110432_I().func_111285_a());
-+        FMLNetworkHandler.onClientConnectionToIntegratedServer(this, p_i3104_2_, this.field_72555_g);
+         this.field_72563_h = p_i1178_1_;
+         this.field_72555_g = new MemoryConnection(p_i1178_1_.func_98033_al(), this);
+         p_i1178_2_.func_71343_a().func_71754_a((MemoryConnection)this.field_72555_g, p_i1178_1_.func_110432_I().func_111285_a());
++        FMLNetworkHandler.onClientConnectionToIntegratedServer(this, p_i1178_2_, this.field_72555_g);
      }
  
      public void func_72547_c()

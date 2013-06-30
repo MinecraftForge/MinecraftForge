@@ -21,12 +21,12 @@
 +        this.vanillaCompatible = FMLNetworkHandler.vanillaLoginPacketCompatibility();
 +    }
  
-     public Packet1Login(int p_i3327_1_, WorldType p_i3327_2_, EnumGameType p_i3327_3_, boolean p_i3327_4_, int p_i3327_5_, int p_i3327_6_, int p_i3327_7_, int p_i3327_8_)
+     public Packet1Login(int p_i1440_1_, WorldType p_i1440_2_, EnumGameType p_i1440_3_, boolean p_i1440_4_, int p_i1440_5_, int p_i1440_6_, int p_i1440_7_, int p_i1440_8_)
      {
 @@ -29,6 +36,7 @@
-         this.field_73556_g = (byte)p_i3327_7_;
-         this.field_73562_h = (byte)p_i3327_8_;
-         this.field_73560_c = p_i3327_4_;
+         this.field_73556_g = (byte)p_i1440_7_;
+         this.field_73562_h = (byte)p_i1440_8_;
+         this.field_73560_c = p_i1440_4_;
 +        this.vanillaCompatible = false;
      }
  
