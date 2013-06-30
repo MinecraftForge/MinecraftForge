@@ -11,7 +11,7 @@
  @SideOnly(Side.CLIENT)
  public class IntegratedServer extends MinecraftServer
  {
-@@ -63,44 +67,23 @@
+@@ -65,44 +69,23 @@
      protected void loadAllWorlds(String par1Str, String par2Str, long par3, WorldType par5WorldType, String par6Str)
      {
          this.convertMapIfNeeded(par1Str);

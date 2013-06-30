@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src_work/minecraft/net/minecraft/client/Minecraft.java
-@@ -123,6 +123,14 @@
+@@ -136,6 +136,14 @@
  
  import com.google.common.collect.MapDifference;
  
@@ -13,9 +13,9 @@
 +import net.minecraftforge.event.world.WorldEvent;
 +
  @SideOnly(Side.CLIENT)
- public abstract class Minecraft implements Runnable, IPlayerUsage
+ public class Minecraft implements IPlayerUsage
  {
-@@ -372,7 +380,7 @@
+@@ -414,7 +422,7 @@
  
          try
          {
@@ -24,16 +24,16 @@
          }
          catch (LWJGLException lwjglexception)
          {
-@@ -450,7 +458,7 @@
-         }
- 
+@@ -493,7 +501,7 @@
+         this.effectRenderer = new EffectRenderer(this.theWorld, this.renderEngine);
+         FMLClientHandler.instance().finishMinecraftLoading();
          this.checkGLError("Post startup");
 -        this.ingameGUI = new GuiIngame(this);
 +        this.ingameGUI = new GuiIngameForge(this);
  
          if (this.serverName != null)
          {
-@@ -1238,7 +1246,7 @@
+@@ -1292,7 +1300,7 @@
  
                  if (this.thePlayer.canCurrentToolHarvestBlock(j, k, l))
                  {
@@ -42,7 +42,7 @@
                      this.thePlayer.swingItem();
                  }
              }
-@@ -1304,7 +1312,8 @@
+@@ -1358,7 +1366,8 @@
                  {
                      int j1 = itemstack != null ? itemstack.stackSize : 0;
  
@@ -52,7 +52,7 @@
                      {
                          flag = false;
                          this.thePlayer.swingItem();
-@@ -1330,7 +1339,8 @@
+@@ -1384,7 +1393,8 @@
              {
                  ItemStack itemstack1 = this.thePlayer.inventory.getCurrentItem();
  
@@ -62,7 +62,7 @@
                  {
                      this.entityRenderer.itemRenderer.resetEquippedProgress2();
                  }
-@@ -2010,6 +2020,11 @@
+@@ -2032,6 +2042,11 @@
      {
          this.statFileWriter.syncStats();
  
@@ -74,7 +74,7 @@
          if (par1WorldClient == null)
          {
              NetClientHandler netclienthandler = this.getNetHandler();
-@@ -2027,6 +2042,18 @@
+@@ -2049,6 +2064,18 @@
              if (this.theIntegratedServer != null)
              {
                  this.theIntegratedServer.initiateShutdown();
@@ -93,7 +93,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2354,103 +2381,12 @@
+@@ -2219,103 +2246,12 @@
          if (this.objectMouseOver != null)
          {
              boolean flag = this.thePlayer.capabilities.isCreativeMode;
@@ -201,7 +201,7 @@
  
              if (flag)
              {
-@@ -2539,11 +2475,18 @@
+@@ -2397,11 +2333,18 @@
          par1PlayerUsageSnooper.addData("gl_max_texture_size", Integer.valueOf(getGLMaximumTextureSize()));
      }
  
@@ -220,7 +220,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
-@@ -2551,6 +2494,7 @@
+@@ -2409,6 +2352,7 @@
  
              if (j != 0)
              {

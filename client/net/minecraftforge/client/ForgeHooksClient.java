@@ -19,8 +19,8 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.client.texturepacks.ITexturePack;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -28,47 +28,34 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureLoadEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.IArmorTextureProvider;
 import net.minecraftforge.common.MinecraftForge;
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
 
 public class ForgeHooksClient
 {
-    static RenderEngine engine()
+    static TextureManager engine()
     {
         return FMLClientHandler.instance().getClient().renderEngine;
     }
 
-    @Deprecated //Deprecated in 1.5.1, move to the more detailed one below.
-    @SuppressWarnings("deprecation")
-    public static String getArmorTexture(ItemStack armor, String _default)
-    {
-        String result = null;
-        if (armor.getItem() instanceof IArmorTextureProvider)
-        {
-            result = ((IArmorTextureProvider)armor.getItem()).getArmorTextureFile(armor);
-        }
-        return result != null ? result : _default;
-    }
-
-    public static String getArmorTexture(Entity entity, ItemStack armor, String _default, int slot, int layer)
+    public static String getArmorTexture(Entity entity, ItemStack armor, String _default, int slot, int layer, String type)
     {
         String result = armor.getItem().getArmorTexture(armor, entity, slot, layer);
         return result != null ? result : _default;
     }
 
-    public static boolean renderEntityItem(EntityItem entity, ItemStack item, float bobing, float rotation, Random random, RenderEngine engine, RenderBlocks renderBlocks)
+    public static boolean renderEntityItem(EntityItem entity, ItemStack item, float bobing, float rotation, Random random, TextureManager engine, RenderBlocks renderBlocks)
     {
         IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(item, ENTITY);
         if (customRenderer == null)
@@ -86,7 +73,7 @@ public class ForgeHooksClient
         }
         boolean is3D = customRenderer.shouldUseRenderHelper(ENTITY, item, BLOCK_3D);
 
-        engine.bindTexture(item.getItemSpriteNumber() == 0 ? "/terrain.png" : "/gui/items.png");
+        engine.func_110577_a(item.getItemSpriteNumber() == 0 ? TextureMap.field_110575_b : TextureMap.field_110576_c);
         Block block = (item.itemID < Block.blocksList.length ? Block.blocksList[item.itemID] : null);
         if (is3D || (block != null && RenderBlocks.renderItemIn3d(block.getRenderType())))
         {
@@ -127,7 +114,7 @@ public class ForgeHooksClient
         return true;
     }
 
-    public static boolean renderInventoryItem(RenderBlocks renderBlocks, RenderEngine engine, ItemStack item, boolean inColor, float zLevel, float x, float y)
+    public static boolean renderInventoryItem(RenderBlocks renderBlocks, TextureManager engine, ItemStack item, boolean inColor, float zLevel, float x, float y)
     {
         IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(item, INVENTORY);
         if (customRenderer == null)
@@ -135,7 +122,7 @@ public class ForgeHooksClient
             return false;
         }
 
-        engine.bindTexture(item.getItemSpriteNumber() == 0 ? "/terrain.png" : "/gui/items.png");
+        engine.func_110577_a(item.getItemSpriteNumber() == 0 ? TextureMap.field_110575_b : TextureMap.field_110576_c);
         if (customRenderer.shouldUseRenderHelper(INVENTORY, item, INVENTORY_BLOCK))
         {
             GL11.glPushMatrix();
@@ -182,14 +169,8 @@ public class ForgeHooksClient
         }
         return true;
     }
-    
-    @Deprecated
-    public static void renderEquippedItem(IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLiving entity, ItemStack item)
-    {
-        renderEquippedItem(ItemRenderType.EQUIPPED, customRenderer, renderBlocks, entity, item);
-    }
 
-    public static void renderEquippedItem(ItemRenderType type, IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLiving entity, ItemStack item)
+    public static void renderEquippedItem(ItemRenderType type, IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLivingBase entity, ItemStack item)
     {
         if (customRenderer.shouldUseRenderHelper(type, item, EQUIPPED_BLOCK))
         {
@@ -216,7 +197,7 @@ public class ForgeHooksClient
     //Optifine Helper Functions u.u, these are here specifically for Optifine
     //Note: When using Optfine, these methods are invoked using reflection, which
     //incurs a major performance penalty.
-    public static void orientBedCamera(Minecraft mc, EntityLiving entity)
+    public static void orientBedCamera(Minecraft mc, EntityLivingBase entity)
     {
         int x = MathHelper.floor_double(entity.posX);
         int y = MathHelper.floor_double(entity.posY);
@@ -285,7 +266,7 @@ public class ForgeHooksClient
         renderPass = pass;
     }
 
-    public static ModelBiped getArmorModel(EntityLiving entityLiving, ItemStack itemStack, int slotID, ModelBiped _default)
+    public static ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int slotID, ModelBiped _default)
     {
         ModelBiped modelbiped = itemStack.getItem().getArmorModel(entityLiving, itemStack, slotID);
         return modelbiped == null ? _default : modelbiped;

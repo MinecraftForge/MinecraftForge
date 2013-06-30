@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
 +++ ../src_work/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
-@@ -20,6 +20,10 @@
+@@ -22,6 +22,10 @@
  import net.minecraft.world.EnumGameType;
  import net.minecraft.world.World;
  
@@ -11,7 +11,7 @@
  @SideOnly(Side.CLIENT)
  public class PlayerControllerMP
  {
-@@ -124,6 +128,12 @@
+@@ -125,6 +129,12 @@
       */
      public boolean onPlayerDestroyBlock(int par1, int par2, int par3, int par4)
      {
@@ -24,7 +24,7 @@
          if (this.currentGameType.isAdventure() && !this.mc.thePlayer.canCurrentToolHarvestBlock(par1, par2, par3))
          {
              return false;
-@@ -141,7 +151,7 @@
+@@ -146,7 +156,7 @@
              {
                  worldclient.playAuxSFX(2001, par1, par2, par3, block.blockID + (worldclient.getBlockMetadata(par1, par2, par3) << 12));
                  int i1 = worldclient.getBlockMetadata(par1, par2, par3);
@@ -33,7 +33,7 @@
  
                  if (flag)
                  {
-@@ -342,6 +352,12 @@
+@@ -347,6 +357,12 @@
          float f2 = (float)par8Vec3.zCoord - (float)par6;
          boolean flag = false;
          int i1;
@@ -46,7 +46,7 @@
  
          if (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null)
          {
-@@ -384,7 +400,15 @@
+@@ -389,7 +405,15 @@
          }
          else
          {
@@ -63,7 +63,7 @@
          }
      }
  
-@@ -406,9 +430,10 @@
+@@ -411,9 +435,10 @@
          {
              par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = itemstack1;
  

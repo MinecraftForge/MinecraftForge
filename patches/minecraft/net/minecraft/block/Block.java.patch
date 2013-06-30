@@ -18,7 +18,7 @@
  import net.minecraft.creativetab.CreativeTabs;
  import net.minecraft.enchantment.EnchantmentHelper;
  import net.minecraft.entity.Entity;
- import net.minecraft.entity.EntityLiving;
+ import net.minecraft.entity.EntityLivingBase;
 +import net.minecraft.entity.EnumCreatureType;
  import net.minecraft.entity.item.EntityItem;
  import net.minecraft.entity.item.EntityXPOrb;
@@ -54,7 +54,7 @@
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
-@@ -454,9 +471,10 @@
+@@ -460,9 +477,10 @@
          return this.needsRandomTick;
      }
  
@@ -66,7 +66,7 @@
      }
  
      /**
-@@ -479,7 +497,7 @@
+@@ -485,7 +503,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -75,7 +75,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -489,7 +507,7 @@
+@@ -495,7 +513,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -84,7 +84,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -639,7 +657,13 @@
+@@ -645,7 +663,13 @@
      /**
       * ejects contained items into the world, and notifies neighbours of an update, as appropriate
       */
@@ -99,7 +99,7 @@
  
      /**
       * Returns the quantity of items to drop on block destruction.
-@@ -664,7 +688,7 @@
+@@ -670,7 +694,7 @@
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
          float f = this.getBlockHardness(par2World, par3, par4, par5);
@@ -108,7 +108,7 @@
      }
  
      /**
-@@ -682,18 +706,13 @@
+@@ -688,18 +712,13 @@
      {
          if (!par1World.isRemote)
          {
@@ -131,7 +131,7 @@
                  }
              }
          }
-@@ -926,7 +945,8 @@
+@@ -932,7 +951,8 @@
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
          int l = par1World.getBlockId(par2, par3, par4);
@@ -141,7 +141,7 @@
      }
  
      /**
-@@ -1086,7 +1106,7 @@
+@@ -1092,7 +1112,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -150,7 +150,7 @@
          {
              ItemStack itemstack = this.createStackedBlock(par6);
  
-@@ -1102,12 +1122,13 @@
+@@ -1108,12 +1128,13 @@
          }
      }
  
@@ -165,7 +165,7 @@
      }
  
      /**
-@@ -1443,4 +1464,950 @@
+@@ -1453,4 +1474,945 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -200,12 +200,7 @@
 +     * @param entity The entity trying to use the ladder, CAN be null.
 +     * @return True if the block should act like a ladder
 +     */
-+    public boolean isLadder(World world, int x, int y, int z, EntityLiving entity)
-+    {
-+        return isLadder(world, x, y, z);
-+    }
-+    @Deprecated //See EntityLiving sensitive version above
-+    public boolean isLadder(World world, int x, int y, int z)
++    public boolean isLadder(World world, int x, int y, int z, EntityLivingBase entity)
 +    {
 +        return false;
 +    }
@@ -575,7 +570,7 @@
 +     * @param player The player or camera entity, null in some cases.
 +     * @return True to treat this as a bed
 +     */
-+    public boolean isBed(World world, int x, int y, int z, EntityLiving player)
++    public boolean isBed(World world, int x, int y, int z, EntityLivingBase player)
 +    {
 +        return blockID == Block.bed.blockID;
 +    }

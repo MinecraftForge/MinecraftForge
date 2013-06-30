@@ -8,7 +8,7 @@
  import net.minecraft.client.gui.GuiScreen;
  import net.minecraft.client.renderer.OpenGlHelper;
  import net.minecraft.client.renderer.RenderHelper;
-@@ -139,7 +140,11 @@
+@@ -143,7 +144,11 @@
              }
          }
  
@@ -20,21 +20,21 @@
          InventoryPlayer inventoryplayer = this.mc.thePlayer.inventory;
          ItemStack itemstack = this.draggedStack == null ? inventoryplayer.getItemStack() : this.draggedStack;
  
-@@ -203,8 +208,11 @@
+@@ -207,8 +212,11 @@
          GL11.glTranslatef(0.0F, 0.0F, 32.0F);
          this.zLevel = 200.0F;
          itemRenderer.zLevel = 200.0F;
--        itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.renderEngine, par1ItemStack, par2, par3);
--        itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.renderEngine, par1ItemStack, par2, par3 - (this.draggedStack == null ? 0 : 8), par4Str);
+-        itemRenderer.func_110797_b(this.fontRenderer, this.mc.func_110434_K(), par1ItemStack, par2, par3);
+-        itemRenderer.func_110793_a(this.fontRenderer, this.mc.func_110434_K(), par1ItemStack, par2, par3 - (this.draggedStack == null ? 0 : 8), par4Str);
 +        FontRenderer font = null;
 +        if (par1ItemStack != null) font = par1ItemStack.getItem().getFontRenderer(par1ItemStack);
 +        if (font == null) font = fontRenderer;
-+        itemRenderer.renderItemAndEffectIntoGUI(font, this.mc.renderEngine, par1ItemStack, par2, par3);
-+        itemRenderer.renderItemOverlayIntoGUI(font, this.mc.renderEngine, par1ItemStack, par2, par3 - (this.draggedStack == null ? 0 : 8), par4Str);
++        itemRenderer.func_110797_b(font, this.mc.func_110434_K(), par1ItemStack, par2, par3);
++        itemRenderer.func_110793_a(font, this.mc.func_110434_K(), par1ItemStack, par2, par3 - (this.draggedStack == null ? 0 : 8), par4Str);
          this.zLevel = 0.0F;
          itemRenderer.zLevel = 0.0F;
      }
-@@ -225,7 +233,8 @@
+@@ -229,7 +237,8 @@
              }
          }
  
@@ -44,7 +44,7 @@
      }
  
      /**
-@@ -238,6 +247,11 @@
+@@ -242,6 +251,11 @@
      }
  
      protected void func_102021_a(List par1List, int par2, int par3)
@@ -56,7 +56,7 @@
      {
          if (!par1List.isEmpty())
          {
-@@ -251,7 +265,7 @@
+@@ -255,7 +269,7 @@
              while (iterator.hasNext())
              {
                  String s = (String)iterator.next();
@@ -65,7 +65,7 @@
  
                  if (l > k)
                  {
-@@ -296,7 +310,7 @@
+@@ -300,7 +314,7 @@
              for (int k2 = 0; k2 < par1List.size(); ++k2)
              {
                  String s1 = (String)par1List.get(k2);

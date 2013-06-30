@@ -24,6 +24,8 @@ import net.minecraft.client.multiplayer.NetClientHandler;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.resources.ResourceLocation;
 import net.minecraft.crash.CallableMinecraftVersion;
 import net.minecraft.entity.boss.BossStatus;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -112,7 +114,7 @@ public class GuiIngameForge extends GuiIngame
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             zLevel = -90.0F;
             rand.setSeed((long)(updateCounter * 312871));
-            mc.renderEngine.bindTexture("/gui/icons.png");
+            mc.renderEngine.func_110577_a(TextureMap.field_110576_c);
 
             if (renderCrosshairs) renderCrosshairs(width, height);
             if (renderBossHealth) renderBossHealth();
@@ -167,7 +169,7 @@ public class GuiIngameForge extends GuiIngame
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.bindTexture("/gui/gui.png");
+        mc.renderEngine.func_110577_a("/gui/gui.png");
 
         InventoryPlayer inv = mc.thePlayer.inventory;
         drawTexturedModalRect(width / 2 - 91, height - 22, 0, 0, 182, 22);
@@ -311,7 +313,7 @@ public class GuiIngameForge extends GuiIngame
         }
 
         int health = mc.thePlayer.getHealth();
-        int healthLast = mc.thePlayer.prevHealth;
+        float healthLast = mc.thePlayer.prevHealth;
         int left = width / 2 - 91;
         int top = height - 39;
 

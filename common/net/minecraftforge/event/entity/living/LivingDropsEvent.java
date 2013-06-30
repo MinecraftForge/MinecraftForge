@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import net.minecraft.util.DamageSource;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraftforge.event.Cancelable;
 
 @Cancelable
@@ -16,7 +16,7 @@ public class LivingDropsEvent extends LivingEvent
     public final boolean recentlyHit;
     public final int specialDropValue;
     
-    public LivingDropsEvent(EntityLiving entity, DamageSource source, ArrayList<EntityItem> drops, int lootingLevel, boolean recentlyHit, int specialDropValue)
+    public LivingDropsEvent(EntityLivingBase entity, DamageSource source, ArrayList<EntityItem> drops, int lootingLevel, boolean recentlyHit, int specialDropValue)
     {
         super(entity);
         this.source = source;

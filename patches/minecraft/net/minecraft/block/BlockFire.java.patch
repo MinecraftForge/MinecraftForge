@@ -19,7 +19,7 @@
          this.setBurnRate(Block.planks.blockID, 5, 20);
          this.setBurnRate(Block.woodDoubleSlab.blockID, 5, 20);
          this.setBurnRate(Block.woodSingleSlab.blockID, 5, 20);
-@@ -60,8 +65,7 @@
+@@ -62,8 +67,7 @@
       */
      private void setBurnRate(int par1, int par2, int par3)
      {
@@ -29,7 +29,7 @@
      }
  
      /**
-@@ -121,12 +125,8 @@
+@@ -123,12 +127,8 @@
      {
          if (par1World.getGameRules().getGameRuleBooleanValue("doFireTick"))
          {
@@ -44,7 +44,7 @@
  
              if (!this.canPlaceBlockAt(par1World, par2, par3, par4))
              {
-@@ -155,7 +155,7 @@
+@@ -157,7 +157,7 @@
                          par1World.setBlockToAir(par2, par3, par4);
                      }
                  }
@@ -53,7 +53,7 @@
                  {
                      par1World.setBlockToAir(par2, par3, par4);
                  }
-@@ -169,12 +169,12 @@
+@@ -171,12 +171,12 @@
                          b0 = -50;
                      }
  
@@ -72,7 +72,7 @@
  
                      for (int i1 = par2 - 1; i1 <= par2 + 1; ++i1)
                      {
-@@ -228,9 +228,20 @@
+@@ -230,9 +230,20 @@
          return false;
      }
  
@@ -94,7 +94,7 @@
  
          if (par6Random.nextInt(par5) < j1)
          {
-@@ -264,7 +275,12 @@
+@@ -266,7 +277,12 @@
       */
      private boolean canNeighborBurn(World par1World, int par2, int par3, int par4)
      {
@@ -108,7 +108,7 @@
      }
  
      /**
-@@ -280,12 +296,12 @@
+@@ -282,12 +298,12 @@
          }
          else
          {
@@ -127,7 +127,7 @@
              return l;
          }
      }
-@@ -300,21 +316,24 @@
+@@ -302,21 +318,24 @@
  
      /**
       * Checks the specified block coordinate to see if it can catch fire.  Args: blockAccess, x, y, z
@@ -157,7 +157,7 @@
      }
  
      /**
-@@ -372,9 +391,9 @@
+@@ -374,9 +393,9 @@
          float f1;
          float f2;
  
@@ -170,7 +170,7 @@
              {
                  for (l = 0; l < 2; ++l)
                  {
-@@ -385,7 +404,7 @@
+@@ -387,7 +406,7 @@
                  }
              }
  
@@ -179,7 +179,7 @@
              {
                  for (l = 0; l < 2; ++l)
                  {
-@@ -396,7 +415,7 @@
+@@ -398,7 +417,7 @@
                  }
              }
  
@@ -188,7 +188,7 @@
              {
                  for (l = 0; l < 2; ++l)
                  {
-@@ -407,7 +426,7 @@
+@@ -409,7 +428,7 @@
                  }
              }
  
@@ -197,7 +197,7 @@
              {
                  for (l = 0; l < 2; ++l)
                  {
-@@ -418,7 +437,7 @@
+@@ -420,7 +439,7 @@
                  }
              }
  
@@ -206,7 +206,7 @@
              {
                  for (l = 0; l < 2; ++l)
                  {
-@@ -467,4 +486,46 @@
+@@ -469,4 +488,46 @@
      {
          return this.iconArray[0];
      }
