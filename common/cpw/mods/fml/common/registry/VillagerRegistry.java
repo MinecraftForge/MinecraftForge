@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -19,6 +19,7 @@ import java.util.Random;
 import java.util.Collection;
 import java.util.Collections;
 
+import net.minecraft.client.resources.ResourceLocation;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.item.Item;
 import net.minecraft.util.Tuple;
@@ -32,6 +33,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Registry for villager trading control
@@ -45,8 +48,9 @@ public class VillagerRegistry
 
     private Multimap<Integer, IVillageTradeHandler> tradeHandlers = ArrayListMultimap.create();
     private Map<Class<?>, IVillageCreationHandler> villageCreationHandlers = Maps.newHashMap();
-    private Map<Integer, String> newVillagers = Maps.newHashMap();
     private List<Integer> newVillagerIds = Lists.newArrayList();
+    @SideOnly(Side.CLIENT)
+    private Map<Integer, ResourceLocation> newVillagers;
 
     /**
      * Allow access to the {@link net.minecraft.world.gen.structure.StructureVillagePieces} array controlling new village
@@ -111,20 +115,32 @@ public class VillagerRegistry
     }
 
     /**
+     * Register your villager id
+     * @param id
+     */
+    public void registerVillagerId(int id)
+    {
+        if (newVillagerIds.contains(id))
+        {
+            FMLLog.severe("Attempt to register duplicate villager id %d", id);
+            throw new RuntimeException();
+        }
+        newVillagerIds.add(id);
+    }
+    /**
      * Register a new skin for a villager type
      *
      * @param villagerId
      * @param villagerSkin
      */
-    public void registerVillagerType(int villagerId, String villagerSkin)
+    @SideOnly(Side.CLIENT)
+    public void registerVillagerSkin(int villagerId, ResourceLocation villagerSkin)
     {
-        if (newVillagers.containsKey(villagerId))
+        if (newVillagers == null)
         {
-            FMLLog.severe("Attempt to register duplicate villager id %d", villagerId);
-            throw new RuntimeException();
+            newVillagers = Maps.newHashMap();
         }
         newVillagers.put(villagerId, villagerSkin);
-        newVillagerIds.add(villagerId);
     }
 
     /**
@@ -154,7 +170,8 @@ public class VillagerRegistry
      * @param villagerType
      * @param defaultSkin
      */
-    public static String getVillagerSkin(int villagerType, String defaultSkin)
+    @SideOnly(Side.CLIENT)
+    public static ResourceLocation getVillagerSkin(int villagerType, ResourceLocation defaultSkin)
     {
         if (instance().newVillagers.containsKey(villagerType))
         {

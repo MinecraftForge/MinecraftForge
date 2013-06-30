@@ -26,7 +26,6 @@ import net.minecraft.client.*;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.multiplayer.NetClientHandler;
 import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.settings.KeyBinding;
@@ -564,11 +563,11 @@ public class ModLoader
     {
     }
 
-    @SideOnly(CLIENT)
-    public static BufferedImage loadImage(RenderEngine renderEngine, String path) throws Exception
-    {
-        return TextureFXManager.instance().loadImageFromTexturePack(renderEngine, path);
-    }
+//    @SideOnly(CLIENT)
+//    public static BufferedImage loadImage(RenderEngine renderEngine, String path) throws Exception
+//    {
+//        return TextureFXManager.instance().loadImageFromTexturePack(renderEngine, path);
+//    }
 
     /**
      * Call in from elsewhere. Unimplemented here.
@@ -616,11 +615,11 @@ public class ModLoader
         return keys;
     }
 
-    @Deprecated
-    @SideOnly(CLIENT)
-    public static void registerAllTextureOverrides(RenderEngine cache)
-    {
-    }
+//    @Deprecated
+//    @SideOnly(CLIENT)
+//    public static void registerAllTextureOverrides(RenderEngine cache)
+//    {
+//    }
 
     /**
      * Register a new block

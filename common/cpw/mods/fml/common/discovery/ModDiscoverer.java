@@ -27,7 +27,7 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.ModClassLoader;
 import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.relauncher.RelaunchLibraryManager;
+import cpw.mods.fml.relauncher.CoreModManager;
 
 public class ModDiscoverer
 {
@@ -41,7 +41,7 @@ public class ModDiscoverer
 
     public void findClasspathMods(ModClassLoader modClassLoader)
     {
-        List<String> knownLibraries = ImmutableList.<String>builder().addAll(modClassLoader.getDefaultLibraries()).addAll(RelaunchLibraryManager.getLibraries()).build();
+        List<String> knownLibraries = ImmutableList.<String>builder().addAll(modClassLoader.getDefaultLibraries()).addAll(CoreModManager.getLibraries()).build();
         File[] minecraftSources = modClassLoader.getParentSources();
         if (minecraftSources.length == 1 && minecraftSources[0].isFile())
         {

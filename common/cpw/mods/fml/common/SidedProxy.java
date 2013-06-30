@@ -18,6 +18,29 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Sided proxies are loaded based on the specific environment they find themselves loaded into.
+ * They are used to ensure that client-specific code (such as GUIs) is only loaded into the game
+ * on the client side.
+ * It is applied to static fields of a class, anywhere in your mod code. FML will scan
+ * and load any classes with this annotation at mod construction time.
+ *
+ * <p>
+ * This example will load a CommonProxy on the server side, and a ClientProxy on the client side.
+ *
+ * <pre>{@code
+ *  public class MySidedProxyHolder {
+ *      {@literal @}SidedProxy(modId="MyModId",clientSide="mymod.ClientProxy", serverSide="mymod.CommonProxy")
+ *      public static CommonProxy proxy;
+ *  }
+ *
+ *  public class CommonProxy {
+ *      // Common or server stuff here that needs to be overridden on the client
+ *  }
+ *
+ *  public class ClientProxy extends CommonProxy {
+ *      // Override common stuff with client specific stuff here
+ *  }
+ * </pre>
  * @author cpw
  *
  */

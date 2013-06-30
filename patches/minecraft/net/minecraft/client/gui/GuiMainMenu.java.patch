@@ -7,53 +7,59 @@
 +import cpw.mods.fml.common.FMLCommonHandler;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
- import java.awt.image.BufferedImage;
-@@ -24,6 +26,9 @@
+ import java.io.BufferedReader;
+@@ -9,6 +11,7 @@
+ import java.util.ArrayList;
+ import java.util.Calendar;
+ import java.util.Date;
++import java.util.List;
+ import java.util.Random;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.renderer.Tessellator;
+@@ -23,6 +26,9 @@
+ import org.apache.commons.io.Charsets;
  import org.lwjgl.opengl.GL11;
- import org.lwjgl.util.glu.GLU;
- 
+ import org.lwjgl.util.glu.Project;
++
 +import com.google.common.base.Strings;
 +import com.google.common.collect.Lists;
-+
+ 
  @SideOnly(Side.CLIENT)
  public class GuiMainMenu extends GuiScreen
- {
-@@ -48,6 +53,8 @@
-     private int field_92020_v;
-     private int field_92019_w;
+@@ -52,6 +58,8 @@
+     private ResourceLocation field_110351_G;
+     private GuiButton field_130023_H;
  
 +    private GuiButton fmlModButton = null;
 +
      public GuiMainMenu()
      {
          BufferedReader bufferedreader = null;
-@@ -165,6 +172,9 @@
-         {
-             this.func_73969_a(i, 24, stringtranslate);
-         }
-+
-+        fmlModButton = new GuiButton(6, this.field_73880_f / 2 - 100, i + 48, "Mods");
-+        this.field_73887_h.add(fmlModButton);
- 
-         this.func_96137_a(stringtranslate, i, 24);
- 
-@@ -211,7 +221,14 @@
- 
-     private void func_98060_b(StringTranslate p_98060_1_, int p_98060_2_, int p_98060_3_)
+@@ -203,13 +211,22 @@
+     private void func_130022_h()
      {
--        this.field_73887_h.add(new GuiButton(3, this.field_73880_f / 2 - 100, p_98060_2_ + p_98060_3_ * 2, p_98060_1_.func_74805_b("menu.online")));
-+        //If Minecraft Realms is enabled, halve the size of both buttons and set them next to eachother.
+         this.field_130023_H.field_73748_h = true;
 +        fmlModButton.field_73747_a = 98;
 +        fmlModButton.field_73746_c = this.field_73880_f / 2 + 2;
-+
-+        GuiButton realmButton = new GuiButton(3, this.field_73880_f / 2 - 100, p_98060_2_ + p_98060_3_ * 2, p_98060_1_.func_74805_b("menu.online"));
-+        realmButton.field_73747_a = 98;
-+        realmButton.field_73746_c = this.field_73880_f / 2 - 100;
-+        this.field_73887_h.add(realmButton);
      }
  
-     private void func_73969_a(int p_73969_1_, int p_73969_2_, StringTranslate p_73969_3_)
-@@ -263,6 +280,11 @@
+     private void func_73969_a(int p_73969_1_, int p_73969_2_)
+     {
+         this.field_73887_h.add(new GuiButton(1, this.field_73880_f / 2 - 100, p_73969_1_, I18n.func_135053_a("menu.singleplayer")));
+         this.field_73887_h.add(new GuiButton(2, this.field_73880_f / 2 - 100, p_73969_1_ + p_73969_2_ * 1, I18n.func_135053_a("menu.multiplayer")));
+-        this.field_73887_h.add(this.field_130023_H = new GuiButton(14, this.field_73880_f / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.func_135053_a("menu.online")));
++        //If Minecraft Realms is enabled, halve the size of both buttons and set them next to eachother.
++        fmlModButton = new GuiButton(6, this.field_73880_f / 2 - 100, p_73969_1_ + p_73969_2_ * 2, "Mods");
++        this.field_73887_h.add(fmlModButton);
++
++        field_130023_H = new GuiButton(14, this.field_73880_f / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.func_135053_a("menu.online"));
++        field_130023_H.field_73747_a = 98;
++        field_130023_H.field_73746_c = this.field_73880_f / 2 - 100;
++        this.field_73887_h.add(field_130023_H);
+         this.field_130023_H.field_73748_h = false;
+     }
+ 
+@@ -256,6 +273,11 @@
          if (p_73875_1_.field_73741_f == 4)
          {
              this.field_73882_e.func_71400_g();
@@ -65,7 +71,7 @@
          }
  
          if (p_73875_1_.field_73741_f == 11)
-@@ -501,7 +523,16 @@
+@@ -492,7 +514,16 @@
              s = s + " Demo";
          }
  

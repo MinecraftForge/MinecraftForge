@@ -30,9 +30,12 @@ import java.security.cert.TrustAnchor;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.swing.JOptionPane;
+
+import net.minecraft.launchwrapper.LaunchClassLoader;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -41,9 +44,10 @@ import org.objectweb.asm.Opcodes;
 
 import cpw.mods.fml.common.CertificateHelper;
 import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
+import cpw.mods.fml.common.patcher.ClassPatchManager;
+import cpw.mods.fml.relauncher.FMLLaunchHandler;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
 import cpw.mods.fml.relauncher.IFMLCallHook;
-import cpw.mods.fml.relauncher.RelaunchClassLoader;
 
 public class FMLSanityChecker implements IFMLCallHook
 {
@@ -68,7 +72,7 @@ public class FMLSanityChecker implements IFMLCallHook
         }
     }
 
-    private RelaunchClassLoader cl;
+    private LaunchClassLoader cl;
 
     @Override
     public Void call() throws Exception
@@ -137,8 +141,11 @@ public class FMLSanityChecker implements IFMLCallHook
     @Override
     public void injectData(Map<String, Object> data)
     {
-        cl = (RelaunchClassLoader) data.get("classLoader");
-        FMLDeobfuscatingRemapper.INSTANCE.setup((File)data.get("mcLocation"), cl, (String) data.get("deobfuscationFileName"));
+        cl = (LaunchClassLoader) data.get("classLoader");
+        File mcDir = (File)data.get("mcLocation");
+        FMLDeobfuscatingRemapper.INSTANCE.setup(mcDir, cl, (String) data.get("deobfuscationFileName"));
+        File binpatches = new File(mcDir,"binpatch");
+        ClassPatchManager.INSTANCE.setup(FMLLaunchHandler.side());
     }
 
 }

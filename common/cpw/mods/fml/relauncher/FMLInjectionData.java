@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 
+import net.minecraft.launchwrapper.LaunchClassLoader;
+
 public class FMLInjectionData
 {
     static File minecraftHome;
@@ -33,7 +35,7 @@ public class FMLInjectionData
 
     public static List<String> containers = new ArrayList<String>();
 
-    static void build(File mcHome, RelaunchClassLoader classLoader)
+    static void build(File mcHome, LaunchClassLoader classLoader)
     {
         minecraftHome = mcHome;
         InputStream stream = classLoader.getResourceAsStream("fmlversion.properties");
@@ -62,7 +64,7 @@ public class FMLInjectionData
 
     static String debfuscationDataName()
     {
-        return "deobfuscation_data_"+mccversion+".zip";
+        return "/deobfuscation_data-"+mccversion+".lzma";
     }
     public static Object[] data()
     {

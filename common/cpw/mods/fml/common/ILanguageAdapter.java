@@ -9,14 +9,14 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.relauncher.Side;
 
 public interface ILanguageAdapter {
-    public Object getNewInstance(FMLModContainer container, Class<?> objectClass, ClassLoader classLoader) throws Exception;
+    public Object getNewInstance(FMLModContainer container, Class<?> objectClass, ClassLoader classLoader, Method factoryMarkedAnnotation) throws Exception;
     public boolean supportsStatics();
     public void setProxy(Field target, Class<?> proxyTarget, Object proxy) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException;
     public void setInternalProxies(ModContainer mod, Side side, ClassLoader loader);
 
     public static class ScalaAdapter implements ILanguageAdapter {
         @Override
-        public Object getNewInstance(FMLModContainer container, Class<?> scalaObjectClass, ClassLoader classLoader) throws Exception
+        public Object getNewInstance(FMLModContainer container, Class<?> scalaObjectClass, ClassLoader classLoader, Method factoryMarkedAnnotation) throws Exception
         {
             Class<?> sObjectClass = Class.forName(scalaObjectClass.getName()+"$",true,classLoader);
             return sObjectClass.getField("MODULE$").get(null);
@@ -163,9 +163,16 @@ public interface ILanguageAdapter {
 
     public static class JavaAdapter implements ILanguageAdapter {
         @Override
-        public Object getNewInstance(FMLModContainer container, Class<?> objectClass, ClassLoader classLoader) throws Exception
+        public Object getNewInstance(FMLModContainer container, Class<?> objectClass, ClassLoader classLoader, Method factoryMarkedMethod) throws Exception
         {
-            return objectClass.newInstance();
+            if (factoryMarkedMethod != null)
+            {
+                return factoryMarkedMethod.invoke(null);
+            }
+            else
+            {
+                return objectClass.newInstance();
+            }
         }
 
         @Override

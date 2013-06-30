@@ -7,7 +7,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.io.File;
-@@ -111,9 +112,10 @@
+@@ -113,9 +114,10 @@
          this.func_71245_h(true);
          this.field_98130_m.func_98233_a("Generating keypair");
          this.func_71253_a(CryptManager.func_75891_b());

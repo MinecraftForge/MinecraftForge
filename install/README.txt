@@ -40,8 +40,8 @@ contributors through github.
 
 Notable integrations
 ====================
-Optifine, with the Cx series have started performing the actions necessary for 
-FML compatibility. This means optifine will work well alongside an FML or 
+Optifine has FML compatibility. It varies from Optifine release to release, however
+in general it will work well alongside an FML or 
 Minecraft Forge installation. FML will detect and ensure the good operation of
 Optifine (you can see it in your client as an additional data line on the 
 bottom left).
@@ -49,9 +49,8 @@ bottom left).
 Client notes
 ============
 FML does provide a standard pattern for mods to provide HD textures. This is why
-optifine needed integration code. FML supports very very basic HD texture packs
-up to 128x resolution (some 256x resolution packs work but not all). For full
-featured HD optifine is recommended.
+optifine needed integration code. FML supports HD texture packs
+up to 128x resolution.
 
 Mod information
 ===============
@@ -68,15 +67,13 @@ or server):
 
 Installation
 ============
-To install this on it's own into a minecraft environment, simply copy the
-contents of the fml zip file into the minecraft jar file, using your preferred
-zip management tool (I recommend 7 zip on windows).
+To install on a server, simply execute the FML or Forge jar file, with a copy of
+minecraft_server.jar placed in the same directory. FML will launch it's patched
+copy.
 
-For servers: the minecraft jar file is minecraft_server.jar.
-For clients: the minecraft jar file is minecraft.jar. You will additionally need
-to delete the "META-INF" folder in the minecraft.jar file.
-For bukkit: the mcportcentral custom builds of craftbukkit contain all you need
-already. Please refer to mcportcentral.co.za for more information.
+To install on a client, FIRST delete META-INF from the minecraft.jar file, then
+copy the contents of the FML or Forge jar file into it. FML and Forge provide 
+their own META-INF data which should *not* be deleted.
 
 Forge Installation
 ==================

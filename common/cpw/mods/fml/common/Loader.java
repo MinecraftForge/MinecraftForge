@@ -832,4 +832,10 @@ public class Loader
         }
         return fmlBrandingProperties;
     }
+
+
+    public Map<String,String> getCustomModProperties(String modId)
+    {
+        return getIndexedModList().get(modId).getCustomModProperties();
+    }
 }

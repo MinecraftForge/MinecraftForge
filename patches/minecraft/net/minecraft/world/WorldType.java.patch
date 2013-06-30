@@ -31,14 +31,14 @@
 +
 +    protected BiomeGenBase[] biomesForWorldType;
  
-     public WorldType(int p_i3737_1_, String p_i3737_2_)
+     public WorldType(int p_i1959_1_, String p_i1959_2_)
      {
 @@ -28,6 +45,15 @@
          this.field_77140_h = true;
-         this.field_82748_f = p_i3738_1_;
-         field_77139_a[p_i3738_1_] = this;
+         this.field_82748_f = p_i1960_1_;
+         field_77139_a[p_i1960_1_] = this;
 +
-+        switch (p_i3738_1_)
++        switch (p_i1960_1_)
 +        {
 +            case 8:
 +                biomesForWorldType = base11Biomes;

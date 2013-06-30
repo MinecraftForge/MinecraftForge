@@ -1,125 +1,15 @@
 --- commands.py
 +++ commands.py
-@@ -58,6 +58,8 @@
- 
- 
- def reallyrmtree(path):
-+    if os.path.isfile(os.path.join(path, 'asm-4.1.tar.gz')): #Check if asm exists, indicating the libs folder, if so, don't delete it
-+        return
-     if not sys.platform.startswith('win'):
-         if os.path.exists(path):
-             shutil.rmtree(path)
-@@ -139,6 +141,8 @@
+@@ -139,6 +139,8 @@
              fieldnames = csvreader.fieldnames
      return set(fieldnames)
  
 +def commands_sanity_check():
-+    print 'Commands patch applied successfully'
++    print '    Commands patch applied successfully'
  
  class Commands(object):
      """Contains the commands and initialisation for a full mcp run"""
-@@ -194,6 +198,7 @@
-                 sys.exit(1)
- 
-         self.checkjava()
-+        self.checkscala()
-         self.readcommands(verify, no_patch=no_patch)
- 
-     def checkcommand(self, name, command, java=False, single_line=False, check_return=True, error=True):
-@@ -230,6 +235,9 @@
-             self.checkcommand('java', '%s -version' % self.cmdjava)
-             self.checkcommand('javac', '%s -version' % self.cmdjavac)
-             self.checkcommand('javac runtime', '%s -J-version' % self.cmdjavac)
-+            if self.cmdscalac: 
-+                self.checkcommand('scalac', '%s -version' % self.cmdscalac)
-+                self.checkcommand('scalac runtime', '%s -J-version' % self.cmdscalac)
-             self.checkcommand('retroguard', '%s --version' % self.retroguard, java=True)
- 
-         self.exceptor = os.path.normpath(self.config.get('COMMANDS', 'Exceptor'))
-@@ -268,6 +276,24 @@
-             self.astyle = os.path.normpath(self.config.get('COMMANDS', 'AStyle_%s' % self.osname))
-             if verify:
-                 self.has_astyle = self.checkcommand('astyle', '%s --version' % self.astyle, error=False)
-+
-+        if verify:    
-+            output = self.runcmd('%s --version' % self.astyle).rstrip().split(' ')
-+            try:
-+                version = output[len(output) - 1].split('.')
-+                if int(version[0]) >= 2 and int(version[1]) >= 0:
-+                    self.has_astyle = True
-+                else:
-+                    self.logger.error('!! Astyle version out of date, 2.0+ required found: \"%s\"' % output[len(output) - 1])
-+                    self.as_astyle = False
-+            except:
-+                self.logger.error('!! Could not extract astyle version information !!')
-+                self.logger.error(sys.exc_info()[0])
-+                self.has_astyle = False
-+
-+            if not self.has_astyle:
-+                self.logger.error('!! astyle is needed for FML, can not continue !!')
-+                sys.exit(1)
- 
-         # only check jad and jadretro if we can use it
-         if self.jad:
-@@ -324,6 +350,8 @@
-                 reqs.append('astyle')
-             if self.has_astyle_cfg:
-                 reqs.append('astyle config')
-+            if self.cmdscalac:
-+                reqs.append('scalac')
-             self.logger.info('# found %s', ', '.join(reqs))
-             if not self.has_jad_patch and not no_patch:
-                 self.has_jad = False
-@@ -350,6 +378,13 @@
-         self.cmdfernflower = self.config.get('COMMANDS', 'CmdFernflower', raw=1) % (self.cmdjava, self.fernflower)
-         self.cmdexceptor = self.config.get('COMMANDS', 'CmdExceptor', raw=1) % (self.cmdjava, self.exceptor)
-         self.cmdrecomp = self.config.get('COMMANDS', 'CmdRecomp', raw=1) % self.cmdjavac
-+        try:
-+            if self.cmdscalac: 
-+                self.cmdrecompscalac = self.config.get('COMMANDS', 'CmdRecompScalac', raw=1) % self.cmdscalac
-+            else: 
-+                self.cmdrecompscalac = None
-+        except ConfigParser.NoOptionError:
-+            pass
-         self.cmdstartsrv = self.config.get('COMMANDS', 'CmdStartSrv', raw=1) % self.cmdjava
-         self.cmdstartclt = self.config.get('COMMANDS', 'CmdStartClt', raw=1) % self.cmdjava
- 
-@@ -753,6 +788,34 @@
-         self.cmdjavac = '"%s"' % os.path.join(results[0], 'javac')
-         self.cmdjava = '"%s"' % os.path.join(results[0], 'java')
- 
-+    def checkscala(self):
-+        cmd = None
-+        try:
-+            # TODO:  Verify at least version 2.10
-+            self.runcmd('scalac -version', quiet=True)
-+            cmd = 'scalac'
-+        except (CalledProcessError, OSError):
-+            pass
-+        if cmd is None: # Stupid windows...
-+            try:
-+                # TODO:  Verify at least version 2.10
-+                self.runcmd('scalac.bat -version', quiet=True)
-+                cmd = 'scalac.bat'
-+            except (CalledProcessError, OSError):
-+                pass
-+            
-+        if cmd is None:
-+            self.logger.warning('"scalac" is not found on the PATH.  Scala files will not be recompiled')
-+            self.cmdscalac = None
-+        else:
-+            self.cmdscalac = '"%s"' % cmd
-+            
-+            try:
-+                self.runcmd('%s -target:jvm-1.6 -version' % self.cmdscalac, quiet=True)
-+            except (CalledProcessError, OSError):
-+                self.logger.info('%s does not support jvm-1.6 target, it is out of date. Ignoring' % self.cmdscalac)
-+                self.cmdscalac = None
-+
-     def checkjars(self, side):
-         jarlk = {CLIENT: self.jarclient, SERVER: self.jarserver}
-         md5jarlk = {CLIENT: self.md5jarclt, SERVER: self.md5jarsrv}
-@@ -798,6 +861,8 @@
+@@ -892,6 +894,8 @@
          binlk = {CLIENT: self.binclient, SERVER: self.binserver}
          testlk = {CLIENT: self.testclient, SERVER: self.testserver}
  
@@ -128,7 +18,7 @@
          if not os.path.exists(os.path.join(binlk[side], os.path.normpath(testlk[side] + '.class'))):
              return False
          return True
-@@ -1038,6 +1103,9 @@
+@@ -1223,6 +1227,9 @@
          pathbinlk = {CLIENT: self.binclient, SERVER: self.binserver}
          pathsrclk = {CLIENT: self.srcclient, SERVER: self.srcserver}
          pathlog = {CLIENT: self.clientrecomplog, SERVER: self.serverrecomplog}
@@ -138,46 +28,7 @@
  
          if not os.path.exists(pathbinlk[side]):
              os.makedirs(pathbinlk[side])
-@@ -1051,6 +1119,29 @@
-             all_files = True
-             append_pattern = False
-         pkglist = filterdirs(pathsrclk[side], '*.java', append_pattern=append_pattern, all_files=all_files)
-+        if self.cmdrecompscalac: # Compile scala before java as scala scans java files, but not vice-versa
-+            pkglistscala = pkglist[:]
-+            pkglistscala.extend(filterdirs(pathsrclk[side], '*.scala', append_pattern=append_pattern, all_files=all_files))
-+            dirs = ' '.join(pkglistscala)
-+            classpath = os.pathsep.join(cplk[side])
-+            forkcmd = self.cmdrecompscalac.format(classpath=classpath, sourcepath=pathsrclk[side], outpath=pathbinlk[side], pkgs=dirs)
-+            try:
-+                self.runcmd(forkcmd, log_file=pathlog[side])
-+            except CalledProcessError as ex:
-+                self.logger.error('')
-+                self.logger.error('== ERRORS FOUND in SCALA CODE ==')
-+                self.logger.error('')
-+                for line in ex.output.splitlines():
-+                    if line.strip():
-+                        if line.find("jvm-1.6") != -1:
-+                            self.logger.error(' === Your scala version is out of date, update to at least 2.10.0 ===')
-+                        if line[0] != '[' and line[0:4] != 'Note':
-+                            self.logger.error(line)
-+                            if '^' in line:
-+                                self.logger.error('')
-+                self.logger.error('================================')
-+                self.logger.error('')
-+                raise
-         dirs = ' '.join(pkglist)
-         classpath = os.pathsep.join(cplk[side])
-         forkcmd = self.cmdrecomp.format(classpath=classpath, sourcepath=pathsrclk[side], outpath=pathbinlk[side],
-@@ -1059,7 +1150,7 @@
-             self.runcmd(forkcmd, log_file=pathlog[side])
-         except CalledProcessError as ex:
-             self.logger.error('')
--            self.logger.error('== ERRORS FOUND ==')
-+            self.logger.error('== ERRORS FOUND in JAVA CODE ==')
-             self.logger.error('')
-             for line in ex.output.splitlines():
-                 if line.strip():
-@@ -1072,7 +1163,7 @@
+@@ -1280,7 +1287,7 @@
              raise
  
      def startserver(self):
@@ -186,7 +37,7 @@
          classpath = [os.path.join('..', p) for p in classpath]
          classpath = os.pathsep.join(classpath)
          os.chdir(self.dirjars)
-@@ -1080,7 +1171,7 @@
+@@ -1288,7 +1295,7 @@
          self.runmc(forkcmd)
  
      def startclient(self):
@@ -195,47 +46,7 @@
          classpath = [os.path.join('..', p) for p in classpath]
          classpath = os.pathsep.join(classpath)
          natives = os.path.join('..', self.dirnatives)
-@@ -1207,20 +1298,20 @@
-         with open(self.csvmethods, 'rb') as fh:
-             methodsreader = csv.DictReader(fh)
-             for row in methodsreader:
--                if int(row['side']) == side:
-+                if int(row['side']) == side or int(row['side']) == 2:
-                     if row['name'] != row['searge']:
-                         names['methods'][row['searge']] = row['name']
-         with open(self.csvfields, 'rb') as fh:
-             fieldsreader = csv.DictReader(fh)
-             for row in fieldsreader:
--                if int(row['side']) == side:
-+                if int(row['side']) == side or int(row['side']) == 2:
-                     if row['name'] != row['searge']:
-                         names['fields'][row['searge']] = row['name']
-         if self.has_param_csv:
-             with open(self.csvparams, 'rb') as fh:
-                 paramsreader = csv.DictReader(fh)
-                 for row in paramsreader:
--                    if int(row['side']) == side:
-+                    if int(row['side']) == side or int(row['side']) == 2:
-                         names['params'][row['param']] = row['name']
- 
-         regexps = {
-@@ -1354,13 +1445,13 @@
-         methods = {}
-         for row in methodsreader:
-             #HINT: Only include methods that have a non-empty description
--            if int(row['side']) == side and row['desc']:
-+            if (int(row['side']) == side or int(row['side']) == 2) and row['desc']:
-                 methods[row['searge']] = row['desc'].replace('*/', '* /')
- 
-         fields = {}
-         for row in fieldsreader:
-             #HINT: Only include fields that have a non-empty description
--            if int(row['side']) == side and row['desc']:
-+            if (int(row['side']) == side or int(row['side']) == 2) and row['desc']:
-                 fields[row['searge']] = row['desc'].replace('*/', '* /')
- 
-         regexps = {
-@@ -1437,7 +1528,7 @@
+@@ -1645,7 +1652,7 @@
          self.runcmd(forkcmd)
          return True
  
@@ -244,7 +55,7 @@
          if not reobf:
              md5lk = {CLIENT: self.md5client, SERVER: self.md5server}
          else:
-@@ -1452,6 +1543,9 @@
+@@ -1660,6 +1667,9 @@
                      class_path = ''
                  else:
                      class_path += '/'
@@ -254,40 +65,7 @@
                  for class_file in fnmatch.filter(filelist, '*.class'):
                      class_name = class_path + os.path.splitext(class_file)[0]
                      bin_file = os.path.normpath(os.path.join(path, class_file))
-@@ -1548,6 +1642,8 @@
-         if not os.path.exists(outpathlk[side]):
-             os.makedirs(outpathlk[side])
- 
-+        reserved = ['CON', 'PRN', 'AUX', 'NUL', 'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9', 'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9']
-+
-         # HINT: We extract the modified class files
-         with closing(zipfile.ZipFile(jarlk[side])) as zipjar:
-             for in_class in trgclasses:
-@@ -1561,6 +1657,23 @@
-                     out_class = out_class.replace(self.nullpkg, '')
-                     if out_class[0] == '/':
-                         out_class = out_class[1:]
-+                        
-+                rename = False
-+                for res in reserved:
-+                    if out_class.upper().startswith(res):
-+                        rename = True
-+                        break
-+                        
-+                if rename:
-+                    try:
-+                        f = open(os.path.join(outpathlk[side], '_' + out_class), 'wb')
-+                        f.write(zipjar.read(out_class))
-+                        f.close()
-+                        self.logger.info('> Outputted %s to %s as %s', in_class.ljust(35), outpathlk[side], '_' + out_class)
-+                    except IOError:
-+                        self.logger.error('* File %s failed extracting for %s', out_class, in_class)
-+                    continue
-+                
-                 try:
-                     zipjar.extract(out_class, outpathlk[side])
-                     self.logger.info('> Outputted %s to %s as %s', in_class.ljust(35), outpathlk[side], out_class)
-@@ -1607,6 +1720,9 @@
+@@ -1832,6 +1842,9 @@
                  sys.exit(1)
  
          for entry in newfiles:
@@ -297,7 +75,7 @@
              if entry[3] == 'U':
                  self.logger.info('Retrieving file from server : %s', entry[0])
                  cur_file = os.path.normpath(entry[0])
-@@ -1627,6 +1743,9 @@
+@@ -1852,6 +1865,9 @@
          md5reoblk = {CLIENT: self.md5reobfclient, SERVER: self.md5reobfserver}
          outpathlk = {CLIENT: self.srcmodclient, SERVER: self.srcmodserver}
          src = {CLIENT: self.srcclient, SERVER: self.srcserver}

@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -48,9 +48,8 @@ public class RenderingRegistry
      */
     public static int addNewArmourRendererPrefix(String armor)
     {
-        RenderPlayer.field_77110_j = ObjectArrays.concat(RenderPlayer.field_77110_j, armor);
-        RenderBiped.field_82424_k = RenderPlayer.field_77110_j;
-        return RenderPlayer.field_77110_j.length - 1;
+        RenderBiped.field_82424_k = ObjectArrays.concat(RenderBiped.field_82424_k, armor);
+        return RenderBiped.field_82424_k.length - 1;
     }
 
     /**
