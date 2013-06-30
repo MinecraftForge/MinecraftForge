@@ -205,14 +205,20 @@ public class WavefrontObject implements IModelCustom
 
     public void renderAllExcept(String... excludedGroupNames)
     {
+        boolean exclude;
         for (GroupObject groupObject : groupObjects)
         {
+            exclude = false;
             for (String excludedGroupName : excludedGroupNames)
             {
-                if (!excludedGroupName.equalsIgnoreCase(groupObject.name))
+                if (excludedGroupName.equalsIgnoreCase(groupObject.name))
                 {
-                    groupObject.render();
+                    exclude = true;
                 }
+            }
+            if (!exclude)
+            {
+                groupObject.render();
             }
         }
     }
