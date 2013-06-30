@@ -12,7 +12,7 @@
 @@ -224,6 +226,8 @@
          }
  
-         field_77698_e[256 + p_i3659_1_] = this;
+         field_77698_e[256 + p_i1875_1_] = this;
 +
 +        GameData.newItemAdded(this);
      }
