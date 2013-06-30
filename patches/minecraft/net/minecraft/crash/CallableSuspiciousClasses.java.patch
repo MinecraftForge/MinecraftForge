@@ -8,7 +8,7 @@
 -        {
 -            return this.func_85085_a();
 -        }
--        catch (Exception e)
+-        catch (Exception ex)
 -        {
 -            return null;
 -        }

@@ -1,21 +1,19 @@
 diff -r -U 3 minecraft_server\net\minecraft\src\CallableSuspiciousClasses.java minecraft_server_patched\net\minecraft\src\CallableSuspiciousClasses.java
---- minecraft_server\net\minecraft\src\CallableSuspiciousClasses.java	Sat Jun 29 02:25:12 2013
-+++ minecraft_server_patched\net\minecraft\src\CallableSuspiciousClasses.java	Sat Jun 29 02:29:37 2013
+--- minecraft_server\net\minecraft\src\CallableSuspiciousClasses.java	Sun Jun 30 12:36:32 2013
++++ minecraft_server_patched\net\minecraft\src\CallableSuspiciousClasses.java	Sun Jun 30 12:48:42 2013
 @@ -21,9 +21,14 @@
  
     public String func_85085_a() throws SecurityException, NoSuchFieldException, IllegalAccessException, IllegalArgumentException {
        StringBuilder var1 = new StringBuilder();
--      Field var2 = ClassLoader.class.getDeclaredField("classes");
--      var2.setAccessible(true);
++     ArrayList var3;
++     try {
+       Field var2 = ClassLoader.class.getDeclaredField("classes");
+       var2.setAccessible(true);
 -      ArrayList var3 = new ArrayList((Vector)var2.get(CrashReport.class.getClassLoader()));
-+      ArrayList var3;
-+      try {
-+         Field var2 = ClassLoader.class.getDeclaredField("classes");
-+         var2.setAccessible(true);
-+         var3 = new ArrayList((Vector)var2.get(CrashReport.class.getClassLoader()));
-+      } catch(Exception ex) {
-+    	 return "";
-+      }
++      var3 = new ArrayList((Vector)var2.get(CrashReport.class.getClassLoader()));
++     } catch(Exception ex) {
++      return "";
++     }
        boolean var4 = true;
        boolean var5 = !CrashReport.class.getCanonicalName().equals("net.minecraft.CrashReport");
        HashMap var6 = new HashMap();
@@ -25,29 +23,29 @@ diff -r -U 3 minecraft_server\net\minecraft\src\CallableSuspiciousClasses.java m
     public Object call() {
 -      return this.func_85085_a();
 +     try {
-+		return this.func_85085_a();
-+	 } catch (Exception e) {
-+		return null;
-+	 }
++       return this.func_85085_a();
++     } catch(Exception ex) {
++       return null;
++     }
     }
  }
 diff -r -U 3 minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.java minecraft_server_patched\net\minecraft\src\ComponentStrongholdRightTurn.java
---- minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.java	Sat Jun 29 02:25:13 2013
-+++ minecraft_server_patched\net\minecraft\src\ComponentStrongholdRightTurn.java	Sat Jun 29 02:25:48 2013
+--- minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.java	Sun Jun 30 12:36:32 2013
++++ minecraft_server_patched\net\minecraft\src\ComponentStrongholdRightTurn.java	Sun Jun 30 12:41:20 2013
 @@ -11,6 +11,10 @@
  
  public class ComponentStrongholdRightTurn extends ComponentStrongholdLeftTurn {
  
-+   public ComponentStrongholdRightTurn(int p_i3843_1_, Random p_i3843_2_, StructureBoundingBox p_i3843_3_, int p_i3843_4_) {
-+      super(p_i3843_1_, p_i3843_2_, p_i3843_3_, p_i3843_4_);
++   public ComponentStrongholdRightTurn(int p_i2074_1_, Random p_i2074_2_, StructureBoundingBox p_i2074_3_, int p_i2074_4_) {
++      super(p_i2074_1_, p_i2074_2_, p_i2074_3_, p_i2074_4_);
 +   }
 +
     public void func_74861_a(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_) {
        if(this.field_74885_f != 2 && this.field_74885_f != 3) {
           this.func_74989_b((ComponentStrongholdStairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
 diff -r -U 3 minecraft_server\net\minecraft\src\DedicatedServer.java minecraft_server_patched\net\minecraft\src\DedicatedServer.java
---- minecraft_server\net\minecraft\src\DedicatedServer.java	Sat Jun 29 02:25:13 2013
-+++ minecraft_server_patched\net\minecraft\src\DedicatedServer.java	Sat Jun 29 02:25:48 2013
+--- minecraft_server\net\minecraft\src\DedicatedServer.java	Sun Jun 30 12:36:32 2013
++++ minecraft_server_patched\net\minecraft\src\DedicatedServer.java	Sun Jun 30 12:41:48 2013
 @@ -208,7 +208,7 @@
        System.exit(0);
     }
@@ -58,8 +56,8 @@ diff -r -U 3 minecraft_server\net\minecraft\src\DedicatedServer.java minecraft_s
        this.func_71333_ah();
     }
 diff -r -U 3 minecraft_server\net\minecraft\src\EnumChatFormatting.java minecraft_server_patched\net\minecraft\src\EnumChatFormatting.java
---- minecraft_server\net\minecraft\src\EnumChatFormatting.java	Sat Jun 29 02:25:13 2013
-+++ minecraft_server_patched\net\minecraft\src\EnumChatFormatting.java	Sat Jun 29 02:25:48 2013
+--- minecraft_server\net\minecraft\src\EnumChatFormatting.java	Sun Jun 30 12:36:33 2013
++++ minecraft_server_patched\net\minecraft\src\EnumChatFormatting.java	Sun Jun 30 12:42:08 2013
 @@ -38,7 +38,7 @@
     private final String field_96304_B;
  
@@ -68,43 +66,33 @@ diff -r -U 3 minecraft_server\net\minecraft\src\EnumChatFormatting.java minecraf
 +      this(p_i1336_3_, false);
     }
  
-    private EnumChatFormatting(char p_i10001_3_, boolean p_i10001_4_) {
+    private EnumChatFormatting(char p_i1337_3_, boolean p_i1337_4_) {
 diff -r -U 3 minecraft_server\net\minecraft\src\MemoryConnection.java minecraft_server_patched\net\minecraft\src\MemoryConnection.java
---- minecraft_server\net\minecraft\src\MemoryConnection.java	Sat Jun 29 02:25:14 2013
-+++ minecraft_server_patched\net\minecraft\src\MemoryConnection.java	Sat Jun 29 02:25:48 2013
-@@ -2,6 +2,8 @@
- 
- import java.net.InetSocketAddress;
- import java.net.SocketAddress;
-+import java.util.ArrayList;
-+import java.util.Collections;
- import java.util.List;
- import net.minecraft.src.ILogAgent;
- import net.minecraft.src.INetworkManager;
-@@ -11,7 +13,7 @@
+--- minecraft_server\net\minecraft\src\MemoryConnection.java	Sun Jun 30 12:36:33 2013
++++ minecraft_server_patched\net\minecraft\src\MemoryConnection.java	Sun Jun 30 12:46:26 2013
+@@ -11,13 +11,18 @@
  public class MemoryConnection implements INetworkManager {
  
     private static final SocketAddress field_74444_a = new InetSocketAddress("127.0.0.1", 0);
 -   private final List field_74442_b;
-+   private final List field_74442_b = Collections.synchronizedList(new ArrayList());
++   private final List field_74442_b  = java.util.Collections.synchronizedList(new java.util.ArrayList());
     private final ILogAgent field_98214_c;
     private MemoryConnection field_74443_c;
     private NetHandler field_74440_d;
-@@ -19,6 +21,11 @@
+    private boolean field_74441_e;
     private String field_74438_f;
     private Object[] field_74439_g;
- 
-+   public MemoryConnection(ILogAgent p_i11025_1_, NetHandler p_i11025_2_) {
-+      this.field_74440_d = p_i11025_2_;
-+      this.field_98214_c = p_i11025_1_;
++
++   public MemoryConnection(ILogAgent p_i1392_1_, NetHandler p_i1392_2_) {
++      this.field_74440_d = p_i1392_2_;
++      this.field_98214_c = p_i1392_1_;
 +   }
-+   
+ 
     public void func_74425_a(NetHandler p_74425_1_) {
        this.field_74440_d = p_74425_1_;
-    }
 diff -r -U 3 minecraft_server\net\minecraft\src\RConThreadClient.java minecraft_server_patched\net\minecraft\src\RConThreadClient.java
---- minecraft_server\net\minecraft\src\RConThreadClient.java	Sat Jun 29 02:25:14 2013
-+++ minecraft_server_patched\net\minecraft\src\RConThreadClient.java	Sat Jun 29 02:25:48 2013
+--- minecraft_server\net\minecraft\src\RConThreadClient.java	Sun Jun 30 12:36:33 2013
++++ minecraft_server_patched\net\minecraft\src\RConThreadClient.java	Sun Jun 30 12:51:57 2013
 @@ -32,8 +32,8 @@
     }
  
@@ -132,23 +120,22 @@ diff -r -U 3 minecraft_server\net\minecraft\src\RConThreadClient.java minecraft_
           }
 -
 -         return;
--      }
++      } catch (SocketTimeoutException var17) {
++      } catch (IOException var18) {
++      } catch (Exception var19) {
++         System.out.println(var19);
++      } finally {
++         this.func_72653_g();
+       }
 -
-+     } catch (SocketTimeoutException var17) {
-+     } catch (IOException var18) {
-+     } catch (Exception var19) {
-+        System.out.println(var19);
-+     } finally {
-+        this.func_72653_g();
-+     }
     }
  
     private void func_72654_a(int p_72654_1_, int p_72654_2_, String p_72654_3_) throws IOException {
 diff -r -U 3 minecraft_server\net\minecraft\src\TcpMasterThread.java minecraft_server_patched\net\minecraft\src\TcpMasterThread.java
---- minecraft_server\net\minecraft\src\TcpMasterThread.java	Sat Jun 29 02:25:14 2013
-+++ minecraft_server_patched\net\minecraft\src\TcpMasterThread.java	Sat Jun 29 02:25:48 2013
+--- minecraft_server\net\minecraft\src\TcpMasterThread.java	Sun Jun 30 12:36:34 2013
++++ minecraft_server_patched\net\minecraft\src\TcpMasterThread.java	Sun Jun 30 12:52:29 2013
 @@ -11,6 +11,7 @@
-       this.field_74504_a = p_i3285_1_;
+       this.field_74504_a = p_i1395_1_;
     }
  
 +   @SuppressWarnings("deprecation")
@@ -156,15 +143,13 @@ diff -r -U 3 minecraft_server\net\minecraft\src\TcpMasterThread.java minecraft_s
        try {
           Thread.sleep(5000L);
 diff -r -U 3 minecraft_server\net\minecraft\src\ThreadedFileIOBase.java minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java
---- minecraft_server\net\minecraft\src\ThreadedFileIOBase.java	Sat Jun 29 02:25:14 2013
-+++ minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java	Sat Jun 29 02:25:48 2013
-@@ -20,7 +20,8 @@
+--- minecraft_server\net\minecraft\src\ThreadedFileIOBase.java	Sun Jun 30 12:36:34 2013
++++ minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java	Sun Jun 30 12:52:53 2013
+@@ -20,6 +20,7 @@
     }
  
     public void run() {
--      this.func_75736_b();
-+      while(true)
-+         this.func_75736_b();
++     while(true)
+       this.func_75736_b();
     }
  
-    private void func_75736_b() {
