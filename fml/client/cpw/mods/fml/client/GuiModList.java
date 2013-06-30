@@ -23,6 +23,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSmallButton;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.StringTranslate;
 
 import org.lwjgl.opengl.GL11;
@@ -80,8 +81,7 @@ public class GuiModList extends GuiScreen
             listWidth=Math.max(listWidth,getFontRenderer().func_78256_a(mod.getVersion()) + 10);
         }
         listWidth=Math.min(listWidth, 150);
-        StringTranslate translations = StringTranslate.func_74808_a();
-        this.field_73887_h.add(new GuiSmallButton(6, this.field_73880_f / 2 - 75, this.field_73881_g - 38, translations.func_74805_b("gui.done")));
+        this.field_73887_h.add(new GuiSmallButton(6, this.field_73880_f / 2 - 75, this.field_73881_g - 38, I18n.func_135053_a("gui.done")));
         this.modList=new GuiSlotModList(this, mods, listWidth);
         this.modList.registerScrollButtons(this.field_73887_h, 7, 8);
     }
@@ -120,7 +120,8 @@ public class GuiModList extends GuiScreen
                 if (!logoFile.isEmpty())
                 {
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    this.field_73882_e.field_71446_o.func_98187_b(logoFile);
+                    // TODO
+//                    this.field_73882_e.field_71446_o.func_98187_b(logoFile);
                     Dimension dim = TextureFXManager.instance().getTextureDimensions(logoFile);
                     double scaleX = dim.width / 200.0;
                     double scaleY = dim.height / 65.0;

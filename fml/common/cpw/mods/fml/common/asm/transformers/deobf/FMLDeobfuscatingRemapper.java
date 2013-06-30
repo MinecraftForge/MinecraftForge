@@ -13,6 +13,7 @@
 package cpw.mods.fml.common.asm.transformers.deobf;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,8 +24,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import net.minecraft.launchwrapper.LaunchClassLoader;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.commons.Remapper;
@@ -38,6 +42,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
@@ -49,7 +54,6 @@ import com.google.common.io.InputSupplier;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
-import cpw.mods.fml.relauncher.RelaunchClassLoader;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 
@@ -65,7 +69,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     private Map<String,Map<String,String>> fieldNameMaps;
     private Map<String,Map<String,String>> methodNameMaps;
 
-    private RelaunchClassLoader classLoader;
+    private LaunchClassLoader classLoader;
 
     private FMLDeobfuscatingRemapper()
     {
@@ -73,17 +77,61 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         mcpNameBiMap=ImmutableBiMap.of();
     }
 
-    public void setup(File mcDir, RelaunchClassLoader classLoader, String deobfFileName)
+    public void setupLoadOnly(String deobfFileName, boolean loadAll)
+    {
+        try
+        {
+            File mapData = new File(deobfFileName);
+            LZMAInputSupplier zis = new LZMAInputSupplier(new FileInputStream(mapData));
+            InputSupplier<InputStreamReader> srgSupplier = CharStreams.newReaderSupplier(zis,Charsets.UTF_8);
+            List<String> srgList = CharStreams.readLines(srgSupplier);
+            rawMethodMaps = Maps.newHashMap();
+            rawFieldMaps = Maps.newHashMap();
+            Builder<String, String> builder = ImmutableBiMap.<String,String>builder();
+            Builder<String, String> mcpBuilder = ImmutableBiMap.<String,String>builder();
+            Splitter splitter = Splitter.on(CharMatcher.anyOf(": ")).omitEmptyStrings().trimResults();
+            for (String line : srgList)
+            {
+                String[] parts = Iterables.toArray(splitter.split(line),String.class);
+                String typ = parts[0];
+                if ("CL".equals(typ))
+                {
+                    parseClass(builder, parts);
+                    parseMCPClass(mcpBuilder,parts);
+                }
+                else if ("MD".equals(typ) && loadAll)
+                {
+                    parseMethod(parts);
+                }
+                else if ("FD".equals(typ) && loadAll)
+                {
+                    parseField(parts);
+                }
+            }
+            classNameBiMap = builder.build();
+            // Special case some mappings for modloader mods
+            mcpBuilder.put("BaseMod","net/minecraft/src/BaseMod");
+            mcpBuilder.put("ModLoader","net/minecraft/src/ModLoader");
+            mcpBuilder.put("EntityRendererProxy","net/minecraft/src/EntityRendererProxy");
+            mcpBuilder.put("MLProp","net/minecraft/src/MLProp");
+            mcpBuilder.put("TradeEntry","net/minecraft/src/TradeEntry");
+            mcpNameBiMap = mcpBuilder.build();
+        }
+        catch (IOException ioe)
+        {
+            Logger.getLogger("FML").log(Level.SEVERE, "An error occurred loading the deobfuscation map data", ioe);
+        }
+        methodNameMaps = Maps.newHashMapWithExpectedSize(rawMethodMaps.size());
+        fieldNameMaps = Maps.newHashMapWithExpectedSize(rawFieldMaps.size());
+
+    }
+    public void setup(File mcDir, LaunchClassLoader classLoader, String deobfFileName)
     {
         this.classLoader = classLoader;
         try
         {
-            File libDir = new File(mcDir, "lib");
-            File mapData = new File(libDir, deobfFileName);
-            mapData = mapData.getCanonicalFile();
-            ZipFile mapZip = new ZipFile(mapData);
-            ZipEntry classData = mapZip.getEntry("joined.srg");
-            ZipInputSupplier zis = new ZipInputSupplier(mapZip, classData);
+            InputStream classData = getClass().getResourceAsStream(deobfFileName);
+            LZMAInputSupplier zis = new LZMAInputSupplier(classData);
             InputSupplier<InputStreamReader> srgSupplier = CharStreams.newReaderSupplier(zis,Charsets.UTF_8);
             List<String> srgList = CharStreams.readLines(srgSupplier);
             rawMethodMaps = Maps.newHashMap();
@@ -361,5 +409,10 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         methodNameMaps.put(name, ImmutableMap.copyOf(methodMap));
         fieldNameMaps.put(name, ImmutableMap.copyOf(fieldMap));
 //        System.out.printf("Maps: %s %s\n", name, methodMap);
+    }
+
+    public Set<String> getObfedClasses()
+    {
+        return ImmutableSet.copyOf(classNameBiMap.keySet());
     }
 }

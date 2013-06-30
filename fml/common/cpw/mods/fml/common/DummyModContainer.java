@@ -16,6 +16,7 @@ import java.io.File;
 import java.security.cert.Certificate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.eventbus.EventBus;
@@ -167,5 +168,11 @@ public class DummyModContainer implements ModContainer
     public String toString()
     {
         return md != null ? getModId() : "Dummy Container ("+label+") @" + System.identityHashCode(this);
+    }
+
+    @Override
+    public Map<String, String> getCustomModProperties()
+    {
+        return EMPTY_PROPERTIES;
     }
 }

@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -19,9 +19,6 @@ import java.util.logging.Logger;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.RenderEngine;
-import net.minecraft.client.renderer.texture.Texture;
-import net.minecraft.client.texturepacks.ITexturePack;
 import net.minecraft.world.IBlockAccess;
 
 import cpw.mods.fml.client.TextureFXManager;
@@ -72,8 +69,8 @@ public class FMLRenderAccessLibrary
         return RenderingRegistry.instance().renderItemAsFull3DBlock(modelId);
     }
 
-    public static void doTextureCopy(Texture atlas, Texture source, int targetX, int targetY)
-    {
-        TextureFXManager.instance().getHelper().doTextureCopy(atlas, source, targetX, targetY);        
-    }
+//    public static void doTextureCopy(Texture atlas, Texture source, int targetX, int targetY)
+//    {
+//        TextureFXManager.instance().getHelper().doTextureCopy(atlas, source, targetX, targetY);
+//    }
 }

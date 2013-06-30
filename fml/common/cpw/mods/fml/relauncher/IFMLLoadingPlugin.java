@@ -32,6 +32,7 @@ public interface IFMLLoadingPlugin
      *
      * @return a list of classes that implement the ILibrarySet interface
      */
+    @Deprecated
     String[] getLibraryRequestClass();
     /**
      * Return a list of classes that implements the IClassTransformer interface

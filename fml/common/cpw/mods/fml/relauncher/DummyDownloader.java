@@ -5,12 +5,14 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
 
 package cpw.mods.fml.relauncher;
+
+import java.util.logging.Level;
 
 public class DummyDownloader implements IDownloadDisplay
 {
@@ -46,8 +48,7 @@ public class DummyDownloader implements IDownloadDisplay
     @Override
     public void updateProgressString(String string, Object... data)
     {
-        // TODO Auto-generated method stub
-
+        FMLRelaunchLog.log(Level.FINE, string, data);
     }
 
     @Override

@@ -9,4 +9,4 @@
 -@SideOnly(Side.CLIENT)
  public interface IBossDisplayData
  {
-     int func_70667_aM();
+     float func_70667_aM();

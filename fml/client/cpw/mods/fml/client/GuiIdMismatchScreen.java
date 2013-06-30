@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiYesNo;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.StringTranslate;
 
 import com.google.common.collect.Lists;
@@ -99,7 +100,7 @@ public class GuiIdMismatchScreen extends GuiYesNo {
             if (!allowContinue)
             {
                 var5.field_73746_c = this.field_73880_f / 2 - 75;
-                var5.field_73744_e = StringTranslate.func_74808_a().func_74805_b("gui.done");
+                var5.field_73744_e = I18n.func_135053_a("gui.done");
             }
             var5.func_73737_a(this.field_73882_e, p_73863_1_, p_73863_2_);
         }

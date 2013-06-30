@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/network/packet/Packet1Login.java
 +++ ../src-work/minecraft/net/minecraft/network/packet/Packet1Login.java
 @@ -3,6 +3,8 @@
- import java.io.DataInputStream;
- import java.io.DataOutputStream;
+ import java.io.DataInput;
+ import java.io.DataOutput;
  import java.io.IOException;
 +
 +import cpw.mods.fml.common.network.FMLNetworkHandler;
@@ -21,16 +21,16 @@
 +        this.vanillaCompatible = FMLNetworkHandler.vanillaLoginPacketCompatibility();
 +    }
  
-     public Packet1Login(int p_i3327_1_, WorldType p_i3327_2_, EnumGameType p_i3327_3_, boolean p_i3327_4_, int p_i3327_5_, int p_i3327_6_, int p_i3327_7_, int p_i3327_8_)
+     public Packet1Login(int p_i1440_1_, WorldType p_i1440_2_, EnumGameType p_i1440_3_, boolean p_i1440_4_, int p_i1440_5_, int p_i1440_6_, int p_i1440_7_, int p_i1440_8_)
      {
 @@ -29,6 +36,7 @@
-         this.field_73556_g = (byte)p_i3327_7_;
-         this.field_73562_h = (byte)p_i3327_8_;
-         this.field_73560_c = p_i3327_4_;
+         this.field_73556_g = (byte)p_i1440_7_;
+         this.field_73562_h = (byte)p_i1440_8_;
+         this.field_73560_c = p_i1440_4_;
 +        this.vanillaCompatible = false;
      }
  
-     public void func_73267_a(DataInputStream p_73267_1_) throws IOException
+     public void func_73267_a(DataInput p_73267_1_) throws IOException
 @@ -46,7 +54,16 @@
          this.field_73560_c = (b0 & 8) == 8;
          int i = b0 & -9;

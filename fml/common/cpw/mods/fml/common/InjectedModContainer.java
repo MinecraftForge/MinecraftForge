@@ -15,6 +15,7 @@ package cpw.mods.fml.common;
 import java.io.File;
 import java.security.cert.Certificate;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.eventbus.EventBus;
@@ -153,5 +154,11 @@ public class InjectedModContainer implements ModContainer
     public String toString()
     {
         return "Wrapped{"+wrappedContainer.toString()+"}";
+    }
+
+    @Override
+    public Map<String, String> getCustomModProperties()
+    {
+        return wrappedContainer.getCustomModProperties();
     }
 }

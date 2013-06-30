@@ -5,12 +5,15 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
 
 package cpw.mods.fml.common.asm.transformers;
+
+import net.minecraft.launchwrapper.IClassNameTransformer;
+import net.minecraft.launchwrapper.IClassTransformer;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -20,8 +23,6 @@ import org.objectweb.asm.tree.ClassNode;
 
 import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import cpw.mods.fml.common.asm.transformers.deobf.FMLRemappingAdapter;
-import cpw.mods.fml.relauncher.IClassNameTransformer;
-import cpw.mods.fml.relauncher.IClassTransformer;
 
 public class DeobfuscationTransformer implements IClassTransformer, IClassNameTransformer {
 

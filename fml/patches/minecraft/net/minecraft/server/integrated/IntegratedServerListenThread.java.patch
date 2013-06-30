@@ -7,12 +7,3 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.io.IOException;
-@@ -64,7 +65,7 @@
-             }
-         }
- 
--        return this.field_71757_g.func_71767_c().getHostAddress() + ":" + this.field_71757_g.func_71765_d();
-+        return FMLNetworkHandler.computeLocalHost().getHostAddress() + ":" + this.field_71757_g.func_71765_d();
-     }
- 
-     public void func_71744_a()

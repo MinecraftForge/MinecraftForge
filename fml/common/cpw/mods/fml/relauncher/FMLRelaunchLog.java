@@ -28,6 +28,10 @@ import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import net.minecraft.launchwrapper.LogWrapper;
+
+import com.google.common.base.Throwables;
+
 public class FMLRelaunchLog
 {
 
@@ -146,6 +150,8 @@ public class FMLRelaunchLog
 
     private static FMLLogFormatter formatter;
 
+    static String logFileNamePattern;
+
     private FMLRelaunchLog()
     {
     }
@@ -159,6 +165,7 @@ public class FMLRelaunchLog
         globalLogger.setLevel(Level.OFF);
 
         log.myLog = Logger.getLogger("ForgeModLoader");
+        LogWrapper.retarget(log.myLog);
 
         Logger stdOut = Logger.getLogger("STDOUT");
         stdOut.setParent(log.myLog);
@@ -172,7 +179,7 @@ public class FMLRelaunchLog
         formatter = new FMLLogFormatter();
         try
         {
-            File logPath = new File(minecraftHome, FMLRelauncher.logFileNamePattern);
+            File logPath = new File(minecraftHome, logFileNamePattern);
             fileHandler = new FileHandler(logPath.getPath(), 0, 3)
             {
                 public synchronized void close() throws SecurityException {
@@ -180,8 +187,9 @@ public class FMLRelaunchLog
                 }
             };
         }
-        catch (Exception e)
+        catch (Throwable t)
         {
+            throw Throwables.propagate(t);
         }
 
         resetLoggingHandlers();

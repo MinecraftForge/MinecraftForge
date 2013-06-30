@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -15,6 +15,7 @@ package cpw.mods.fml.client;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSmallButton;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.StringTranslate;
 import cpw.mods.fml.common.network.ModMissingPacket;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
@@ -31,8 +32,7 @@ public class GuiModsMissingForServer extends GuiScreen
     @Override
     public void func_73866_w_()
     {
-        StringTranslate translations = StringTranslate.func_74808_a();
-        this.field_73887_h.add(new GuiSmallButton(1, this.field_73880_f / 2 - 75, this.field_73881_g - 38, translations.func_74805_b("gui.done")));
+        this.field_73887_h.add(new GuiSmallButton(1, this.field_73880_f / 2 - 75, this.field_73881_g - 38, I18n.func_135053_a("gui.done")));
     }
 
     @Override

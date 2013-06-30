@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -28,6 +28,7 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StringTranslate;
@@ -45,7 +46,7 @@ public class LanguageRegistry
 
     public String getStringLocalization(String key)
     {
-        return getStringLocalization(key, StringTranslate.func_74808_a().func_74811_c());
+        return getStringLocalization(key, Minecraft.func_71410_x().func_135016_M().func_135041_c().func_135034_a());
     }
 
     public String getStringLocalization(String key, String lang)
@@ -93,9 +94,9 @@ public class LanguageRegistry
 
     public static void reloadLanguageTable()
     {
-        // reload language table by forcing lang to null and reloading the properties file
-        String lang = StringTranslate.func_74808_a().func_74811_c();
-        StringTranslate.func_74808_a().func_74810_a(lang, true);
+//        // reload language table by forcing lang to null and reloading the properties file
+//        String lang = StringTranslate.func_74808_a().func_74811_c();
+//        StringTranslate.func_74808_a().func_74810_a(lang, true);
     }
 
 
@@ -120,17 +121,17 @@ public class LanguageRegistry
         instance().addNameForObject(objectToName, "en_US", name);
     }
 
-    public void loadLanguageTable(Properties languagePack, String lang)
+    public void loadLanguageTable(Map field_135032_a, String lang)
     {
         Properties usPack=modLanguageData.get("en_US");
         if (usPack!=null) {
-            languagePack.putAll(usPack);
+            field_135032_a.putAll(usPack);
         }
         Properties langPack=modLanguageData.get(lang);
         if (langPack==null) {
             return;
         }
-        languagePack.putAll(langPack);
+        field_135032_a.putAll(langPack);
     }
 
     public void loadLocalization(String localizationFile, String lang, boolean isXML)

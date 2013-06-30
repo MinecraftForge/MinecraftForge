@@ -28,7 +28,6 @@ import com.google.common.collect.Maps;
 import cpw.mods.fml.common.FMLLog;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderEngine;
 
 public class TextureFXManager
 {
@@ -39,26 +38,26 @@ public class TextureFXManager
     private Map<Integer,TextureHolder> texturesById = Maps.newHashMap();
     private Map<String, TextureHolder> texturesByName = Maps.newHashMap();
 
-    private TextureHelper helper;
+//    private TextureHelper helper;
 
     void setClient(Minecraft client)
     {
         this.client = client;
     }
-    public BufferedImage loadImageFromTexturePack(RenderEngine renderEngine, String path) throws IOException
-    {
-        InputStream image=client.field_71418_C.func_77292_e().func_77532_a(path);
-        if (image==null) {
-            throw new RuntimeException(String.format("The requested image path %s is not found",path));
-        }
-        BufferedImage result=ImageIO.read(image);
-        if (result==null)
-        {
-            throw new RuntimeException(String.format("The requested image path %s appears to be corrupted",path));
-        }
-        return result;
-    }
-
+//    public BufferedImage loadImageFromTexturePack(RenderEngine renderEngine, String path) throws IOException
+//    {
+//        InputStream image=client.field_71418_C.func_77292_e().func_77532_a(path);
+//        if (image==null) {
+//            throw new RuntimeException(String.format("The requested image path %s is not found",path));
+//        }
+//        BufferedImage result=ImageIO.read(image);
+//        if (result==null)
+//        {
+//            throw new RuntimeException(String.format("The requested image path %s appears to be corrupted",path));
+//        }
+//        return result;
+//    }
+//
     public static TextureFXManager instance()
     {
         return INSTANCE;
@@ -111,33 +110,33 @@ public class TextureFXManager
     }
 
 
-    public TextureHelper getHelper()
-    {
-        if (helper == null)
-        {
-            ContextCapabilities capabilities = GLContext.getCapabilities();
-            boolean has43 = false;
-            try
-            {
-                has43 = capabilities.getClass().getField("GL_ARB_copy_image").getBoolean(capabilities);
-            }
-            catch (Exception e)
-            {
-                //e.printStackTrace();
-                // NOOP - LWJGL needs updating
-                FMLLog.info("Forge Mod Loader has detected an older LWJGL version, new advanced texture animation features are disabled");
-            }
-//            if (has43 && Boolean.parseBoolean(System.getProperty("fml.useGL43","true")))
+//    public TextureHelper getHelper()
+//    {
+//        if (helper == null)
+//        {
+//            ContextCapabilities capabilities = GLContext.getCapabilities();
+//            boolean has43 = false;
+//            try
 //            {
-//                FMLLog.info("Using the new OpenGL 4.3 advanced capability for animations");
-//                helper = new OpenGL43TextureHelper();
+//                has43 = capabilities.getClass().getField("GL_ARB_copy_image").getBoolean(capabilities);
 //            }
-//            else
-            {
-                FMLLog.info("Not using advanced OpenGL 4.3 advanced capability for animations : OpenGL 4.3 is %s", has43 ? "available" : "not available");
-                helper = new CopySubimageTextureHelper();
-            }
-        }
-        return helper;
-    }
+//            catch (Exception e)
+//            {
+//                //e.printStackTrace();
+//                // NOOP - LWJGL needs updating
+//                FMLLog.info("Forge Mod Loader has detected an older LWJGL version, new advanced texture animation features are disabled");
+//            }
+////            if (has43 && Boolean.parseBoolean(System.getProperty("fml.useGL43","true")))
+////            {
+////                FMLLog.info("Using the new OpenGL 4.3 advanced capability for animations");
+////                helper = new OpenGL43TextureHelper();
+////            }
+////            else
+//            {
+//                FMLLog.info("Not using advanced OpenGL 4.3 advanced capability for animations : OpenGL 4.3 is %s", has43 ? "available" : "not available");
+////                helper = new CopySubimageTextureHelper();
+//            }
+//        }
+//        return helper;
+//    }
 }

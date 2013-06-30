@@ -9,7 +9,7 @@
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.entity.boss.EntityDragon;
-@@ -53,6 +55,11 @@
+@@ -51,6 +53,11 @@
  
      public void func_72786_a(Entity p_72786_1_)
      {

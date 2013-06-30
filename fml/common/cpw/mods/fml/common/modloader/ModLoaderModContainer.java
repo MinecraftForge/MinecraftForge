@@ -615,4 +615,10 @@ public class ModLoaderModContainer implements ModContainer
     {
         return null;
     }
+
+    @Override
+    public Map<String, String> getCustomModProperties()
+    {
+        return EMPTY_PROPERTIES;
+    }
 }
