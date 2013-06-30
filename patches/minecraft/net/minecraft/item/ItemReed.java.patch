@@ -1,0 +1,24 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemReed.java
++++ ../src_work/minecraft/net/minecraft/item/ItemReed.java
+@@ -22,6 +22,7 @@
+      */
+     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+     {
++        final int clickedX = par4, clickedY = par5, clickedZ = par6;
+         int i1 = par3World.getBlockId(par4, par5, par6);
+ 
+         if (i1 == Block.snow.blockID && (par3World.getBlockMetadata(par4, par5, par6) & 7) < 1)
+@@ -76,7 +77,12 @@
+                 Block block = Block.blocksList[this.spawnID];
+                 int j1 = block.onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, 0);
+ 
+-                if (par3World.setBlock(par4, par5, par6, this.spawnID, j1, 3))
++                if (!par3World.isRemote)
++                {
++                    ItemBlock itemblock = (ItemBlock)Item.itemsList[this.spawnID];
++                    itemblock.placeBlockAt(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, par7, this.spawnID, j1, clickedX, clickedY, clickedZ);
++                }
++                else if (par3World.setBlock(par4, par5, par6, this.spawnID, j1, 3))
+                 {
+                     if (par3World.getBlockId(par4, par5, par6) == this.spawnID)
+                     {

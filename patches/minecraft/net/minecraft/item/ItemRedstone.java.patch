@@ -1,0 +1,33 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemRedstone.java
++++ ../src_work/minecraft/net/minecraft/item/ItemRedstone.java
+@@ -19,6 +19,8 @@
+      */
+     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+     {
++        final int clickedX = par4, clickedY = par5, clickedZ = par6;
++
+         if (par3World.getBlockId(par4, par5, par6) != Block.snow.blockID)
+         {
+             if (par7 == 0)
+@@ -65,8 +67,19 @@
+         {
+             if (Block.redstoneWire.canPlaceBlockAt(par3World, par4, par5, par6))
+             {
+-                --par1ItemStack.stackSize;
+-                par3World.setBlock(par4, par5, par6, Block.redstoneWire.blockID);
++                if (!par3World.isRemote)
++                {
++                    ItemBlock itemblock = (ItemBlock)Item.itemsList[Block.redstoneWire.blockID];
++                    if (!itemblock.placeBlockAt(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, par7, Block.redstoneWire.blockID, 0, clickedX, clickedY, clickedZ))
++                    {
++                        return false;
++                    }
++                }
++                else
++                {
++                    --par1ItemStack.stackSize;
++                    par3World.setBlock(par4, par5, par6, Block.redstoneWire.blockID);
++                }
+             }
+ 
+             return true;
