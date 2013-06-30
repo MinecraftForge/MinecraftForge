@@ -920,10 +920,10 @@ SlotEnchantment,net/minecraft/inventory
 SlotEnchantmentTable,net/minecraft/inventory
 SlotFurnace,net/minecraft/inventory
 SlotMerchantResult,net/minecraft/inventory
-AnimalChest,net/minecraft/inventroy
-ContainerHorseInventory,net/minecraft/inventroy
-ContainerHorseInventorySlotArmor,net/minecraft/inventroy
-ContainerHorseInventorySlotSaddle,net/minecraft/inventroy
+AnimalChest,net/minecraft/inventory
+ContainerHorseInventory,net/minecraft/inventory
+ContainerHorseInventorySlotArmor,net/minecraft/inventory
+ContainerHorseInventorySlotSaddle,net/minecraft/inventory
 BehaviorDispenseArmor,net/minecraft/item
 BehaviorDispenseMinecart,net/minecraft/item
 EnumAction,net/minecraft/item
