@@ -15,8 +15,8 @@
 +import java.util.List;
  import java.util.Random;
  import net.minecraft.client.Minecraft;
- import net.minecraft.client.renderer.Tessellator;
-@@ -23,6 +26,9 @@
+ import net.minecraft.client.mco.ExceptionMcoService;
+@@ -26,6 +29,9 @@
  import org.apache.commons.io.Charsets;
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.util.glu.Project;
@@ -26,7 +26,7 @@
  
  @SideOnly(Side.CLIENT)
  public class GuiMainMenu extends GuiScreen
-@@ -52,6 +58,8 @@
+@@ -55,6 +61,8 @@
      private ResourceLocation field_110351_G;
      private GuiButton field_130023_H;
  
@@ -35,7 +35,7 @@
      public GuiMainMenu()
      {
          BufferedReader bufferedreader = null;
-@@ -203,13 +211,22 @@
+@@ -206,13 +214,22 @@
      private void func_130022_h()
      {
          this.field_130023_H.field_73748_h = true;
@@ -59,7 +59,7 @@
          this.field_130023_H.field_73748_h = false;
      }
  
-@@ -256,6 +273,11 @@
+@@ -259,6 +276,11 @@
          if (p_73875_1_.field_73741_f == 4)
          {
              this.field_73882_e.func_71400_g();
@@ -71,7 +71,7 @@
          }
  
          if (p_73875_1_.field_73741_f == 11)
-@@ -492,7 +514,16 @@
+@@ -520,7 +542,16 @@
              s = s + " Demo";
          }
  

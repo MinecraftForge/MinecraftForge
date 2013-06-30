@@ -468,7 +468,7 @@ public class FMLCommonHandler
         MinecraftServer server = getMinecraftServerInstance();
         Loader.instance().serverStopped();
         // FORCE the internal server to stop: hello optifine workaround!
-        ObfuscationReflectionHelper.setPrivateValue(MinecraftServer.class, server, false, "field_71316_v", "u", "serverStopped");
+        if (server!=null) ObfuscationReflectionHelper.setPrivateValue(MinecraftServer.class, server, false, "field_71316_v", "u", "serverStopped");
     }
 
     public String getModName()
