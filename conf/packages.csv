@@ -297,13 +297,15 @@ BackupList,net/minecraft/client/mco
 ExceptionMcoHttp,net/minecraft/client/mco
 ExceptionMcoService,net/minecraft/client/mco
 ExceptionRetryCall,net/minecraft/client/mco
+GuiScreenClientOutdated,net/minecraft/client/mco
+GuiScreenConfirmationType,net/minecraft/client/mco
 McoClient,net/minecraft/client/mco
 McoServer,net/minecraft/client/mco
 McoServerAddress,net/minecraft/client/mco
 McoServerList,net/minecraft/client/mco
 McoServerListEmptyAnon,net/minecraft/client/mco
-McoServerListUpdateThread,net/minecraft/client/mco
-McoServerListUpdateThreadComparer,net/minecraft/client/mco
+McoServerListUpdateTask,net/minecraft/client/mco
+McoServerListUpdateTaskComparator,net/minecraft/client/mco
 PendingInvite,net/minecraft/client/mco
 PendingInvitesList,net/minecraft/client/mco
 Request,net/minecraft/client/mco
@@ -405,10 +407,6 @@ EntitySnowShovelFX,net/minecraft/client/particle
 EntitySpellParticleFX,net/minecraft/client/particle
 EntitySplashFX,net/minecraft/client/particle
 EntitySuspendFX,net/minecraft/client/particle
-RenderCaveSpider,net/minecraft/client/renderer/entity
-RenderHorse,net/minecraft/client/renderer/entity
-RenderLeashKnot,net/minecraft/client/renderer/entity
-RendererLivingEntity,net/minecraft/client/renderer/entity
 ActiveRenderInfo,net/minecraft/client/renderer
 CallableMouseLocation,net/minecraft/client/renderer
 CallableParticlePositionInfo,net/minecraft/client/renderer
@@ -446,6 +444,7 @@ RenderBat,net/minecraft/client/renderer/entity
 RenderBiped,net/minecraft/client/renderer/entity
 RenderBlaze,net/minecraft/client/renderer/entity
 RenderBoat,net/minecraft/client/renderer/entity
+RenderCaveSpider,net/minecraft/client/renderer/entity
 RenderChicken,net/minecraft/client/renderer/entity
 RenderCow,net/minecraft/client/renderer/entity
 RenderCreeper,net/minecraft/client/renderer/entity
@@ -458,8 +457,10 @@ RenderFireball,net/minecraft/client/renderer/entity
 RenderFish,net/minecraft/client/renderer/entity
 RenderGhast,net/minecraft/client/renderer/entity
 RenderGiantZombie,net/minecraft/client/renderer/entity
+RenderHorse,net/minecraft/client/renderer/entity
 RenderIronGolem,net/minecraft/client/renderer/entity
 RenderItem,net/minecraft/client/renderer/entity
+RenderLeashKnot,net/minecraft/client/renderer/entity
 RenderLightningBolt,net/minecraft/client/renderer/entity
 RenderLiving,net/minecraft/client/renderer/entity
 RenderMagmaCube,net/minecraft/client/renderer/entity
@@ -486,6 +487,7 @@ RenderWither,net/minecraft/client/renderer/entity
 RenderWolf,net/minecraft/client/renderer/entity
 RenderXPOrb,net/minecraft/client/renderer/entity
 RenderZombie,net/minecraft/client/renderer/entity
+RendererLivingEntity,net/minecraft/client/renderer/entity
 AbstractTexture,net/minecraft/client/renderer/texture
 DynamicTexture,net/minecraft/client/renderer/texture
 IconRegister,net/minecraft/client/renderer/texture
@@ -522,7 +524,6 @@ DefaultResourcePack,net/minecraft/client/resources
 FallbackResourceManager,net/minecraft/client/resources
 FileResourcePack,net/minecraft/client/resources
 FolderResourcePack,net/minecraft/client/resources
-FolderResourcePackFilter,net/minecraft/client/resources
 FoliageColorReloadListener,net/minecraft/client/resources
 GrassColorReloadListener,net/minecraft/client/resources
 GuiScreenTemporaryResourcePackSelect,net/minecraft/client/resources
@@ -581,6 +582,7 @@ CommandHandler,net/minecraft/command
 CommandHelp,net/minecraft/command
 CommandKill,net/minecraft/command
 CommandNotFoundException,net/minecraft/command
+CommandPlaySound,net/minecraft/command
 CommandServerBan,net/minecraft/command
 CommandServerBanIp,net/minecraft/command
 CommandServerBanlist,net/minecraft/command
@@ -886,6 +888,7 @@ EntitySmallFireball,net/minecraft/entity/projectile
 EntitySnowball,net/minecraft/entity/projectile
 EntityThrowable,net/minecraft/entity/projectile
 EntityWitherSkull,net/minecraft/entity/projectile
+AnimalChest,net/minecraft/inventory
 Container,net/minecraft/inventory
 ContainerBeacon,net/minecraft/inventory
 ContainerBrewingStand,net/minecraft/inventory
@@ -894,6 +897,9 @@ ContainerDispenser,net/minecraft/inventory
 ContainerEnchantment,net/minecraft/inventory
 ContainerFurnace,net/minecraft/inventory
 ContainerHopper,net/minecraft/inventory
+ContainerHorseInventory,net/minecraft/inventory
+ContainerHorseInventorySlotArmor,net/minecraft/inventory
+ContainerHorseInventorySlotSaddle,net/minecraft/inventory
 ContainerMerchant,net/minecraft/inventory
 ContainerPlayer,net/minecraft/inventory
 ContainerRepair,net/minecraft/inventory
@@ -920,10 +926,6 @@ SlotEnchantment,net/minecraft/inventory
 SlotEnchantmentTable,net/minecraft/inventory
 SlotFurnace,net/minecraft/inventory
 SlotMerchantResult,net/minecraft/inventory
-AnimalChest,net/minecraft/inventory
-ContainerHorseInventory,net/minecraft/inventory
-ContainerHorseInventorySlotArmor,net/minecraft/inventory
-ContainerHorseInventorySlotSaddle,net/minecraft/inventory
 BehaviorDispenseArmor,net/minecraft/item
 BehaviorDispenseMinecart,net/minecraft/item
 EnumAction,net/minecraft/item

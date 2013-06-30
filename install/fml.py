@@ -81,7 +81,7 @@ def read_mc_versions(fml_dir, version=None, work_dir=None):
         mc_info['server_url'] = '%s/minecraft_server.%s.jar' % (base_url, version)
         if not work_dir is None:
             version_dir = os.path.join(work_dir, 'versions', version)
-            mc_info['natives_dir'] = os.path.join(work_dir, 'libraries', 'natives')
+            mc_info['natives_dir'] = os.path.join(version_dir, '%s-natives' % version)
             mc_info['library_dir'] = os.path.join(work_dir, 'libraries')
             mc_info['client_file'] = os.path.join(version_dir, '%s.jar' % version)
             mc_info['json_file']   = os.path.join(version_dir, '%s.json' % version)
@@ -272,7 +272,7 @@ def file_backup(file, md5=None):
     
     if os.path.isfile(src):
         if not get_md5(src) == md5 and not md5 is None:
-            print 'Modified %s detected, removing' % os.path.basename(src_jar)
+            print 'Modified %s detected, removing' % os.path.basename(src)
             os.remove(src)
         else:
             shutil.copy(src, bck) 
@@ -1016,8 +1016,8 @@ def decompile_minecraft(fml_dir, mcp_dir, disable_at=False, disable_merge=False,
         Commands.applyss = applyss_shunt
         Commands.checkjars = checkjars_shunt
         #decompile -d -n -r
-        #         Conf  JAD    CSV    -r    -d    -a     -n    -p     -o     -l     -g     -c                 -s              --rg  --workDir
-        decompile(None, False, False, True, True, False, True, False, False, False, False, not disable_client, enable_server, False, 'none')
+        #         Conf  JAD    CSV    -r    -d    -a     -n    -p     -o     -l     -g     -c                 -s              --rg  --workDir --json(None=compute) --nocopy
+        decompile(None, False, False, True, True, False, True, False, False, False, False, not disable_client, enable_server, False, os.path.join(mcp_dir,'jars'), None, True)
         reset_logger()
         os.chdir(fml_dir)
         post_decompile(mcp_dir, fml_dir)
@@ -1034,7 +1034,7 @@ def decompile_minecraft(fml_dir, mcp_dir, disable_at=False, disable_merge=False,
     cleanup_source(src_dir)
     
     os.chdir(mcp_dir)
-    commands = Commands(verify=True)
+    commands = Commands(verify=True,workdir=os.path.join(mcp_dir,'jars'))
     
     if not disable_client:
         updatemd5_side(mcp_dir, commands, CLIENT)
