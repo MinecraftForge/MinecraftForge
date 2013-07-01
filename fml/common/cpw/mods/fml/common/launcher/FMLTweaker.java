@@ -47,6 +47,7 @@ public class FMLTweaker implements ITweaker {
         classLoader.addTransformerExclusion("cpw.mods.fml.repackage.");
         classLoader.addTransformerExclusion("cpw.mods.fml.relauncher.");
         classLoader.addTransformerExclusion("cpw.mods.fml.common.asm.transformers.");
+        classLoader.addClassLoaderExclusion("LZMA.");
         FMLLaunchHandler.configureForClientLaunch(classLoader, this);
     }
 
