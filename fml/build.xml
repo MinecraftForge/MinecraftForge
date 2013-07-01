@@ -131,9 +131,10 @@
     </copy>
   </target>
 
-  <target name="merge-common">
+  <target name="merge-common" depends="buildenvsetup,build-deobf-data">
     <copy todir="${client.mcp.srcdir}" overwrite="true" verbose="true">
       <fileset dir="${common.src.dir}" includes="**/*.java" />
+      <fileset dir="${basedir}" includes="deobfuscation_data-${version.minecraft}.lzma"/>
     </copy>
   </target>
 
@@ -233,7 +234,7 @@
     <delete dir="build-tmp-deobf" />
   </target>
 
-  <target name="build" depends="buildenvsetup,merge-client,merge-common,build-deobf-data,build-universal,build-source-pack" />
+  <target name="build" depends="buildenvsetup,build-deobf-data,merge-client,merge-common,build-universal,build-source-pack" />
 
   <target name="jenkinsbuild" depends="buildenvsetup,jenkinsfmldecompile,patch,build" />
 
