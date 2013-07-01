@@ -1,8 +1,11 @@
 package cpw.mods.fml.common.patcher;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.security.CodeSource;
 import java.util.Collections;
@@ -10,8 +13,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Pack200;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
+
+import LZMA.LzmaInputStream;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -83,18 +91,20 @@ public class ClassPatchManager {
     public void setup(Side side)
     {
         Pattern binpatchMatcher = Pattern.compile(String.format("binpatch/%s/.*.binpatch", side.toString().toLowerCase(Locale.ENGLISH)));
-        JarFile fmlJar;
+        JarInputStream jis;
         try
         {
-            FMLRelaunchLog.fine("FML URI is %s", FMLTweaker.getJarLocation());
-            File fmlJarFile = new File(FMLTweaker.getJarLocation());
-            if (!fmlJarFile.exists() || !fmlJarFile.isFile())
+            InputStream binpatchesCompressed = getClass().getResourceAsStream("/binpatches.pack.lzma");
+            if (binpatchesCompressed==null)
             {
-                FMLRelaunchLog.log(Level.INFO, "Not found an FML jar, I assume you're developing FML. Hi cpw or Lex!");
-                patches = ArrayListMultimap.create();
+                FMLRelaunchLog.log(Level.SEVERE, "The binary patch set is missing. Things are probably about to go very wrong.");
                 return;
             }
-            fmlJar = new JarFile(fmlJarFile);
+            LzmaInputStream binpatchesDecompressed = new LzmaInputStream(binpatchesCompressed);
+            ByteArrayOutputStream jarBytes = new ByteArrayOutputStream();
+            JarOutputStream jos = new JarOutputStream(jarBytes);
+            Pack200.newUnpacker().unpack(binpatchesDecompressed, jos);
+            jis = new JarInputStream(new ByteArrayInputStream(jarBytes.toByteArray()));
         }
         catch (Exception e)
         {
@@ -104,28 +114,43 @@ public class ClassPatchManager {
 
         patches = ArrayListMultimap.create();
 
-        for (JarEntry entry : Collections.list(fmlJar.entries()))
+        do
         {
-            if (binpatchMatcher.matcher(entry.getName()).matches())
+            try
             {
-                ClassPatch cp = readPatch(entry, fmlJar);
-                if (cp != null)
+                JarEntry entry = jis.getNextJarEntry();
+                if (entry == null)
                 {
-                    patches.put(cp.sourceClassName, cp);
+                    break;
+                }
+                if (binpatchMatcher.matcher(entry.getName()).matches())
+                {
+                    ClassPatch cp = readPatch(entry, jis);
+                    if (cp != null)
+                    {
+                        patches.put(cp.sourceClassName, cp);
+                    }
+                }
+                else
+                {
+                    jis.closeEntry();
                 }
             }
-        }
-        FMLLog.fine("Read %d binary patches from %s", patches.size(), fmlJar.getName());
+            catch (IOException e)
+            {
+            }
+        } while (true);
+        FMLLog.fine("Read %d binary patches", patches.size());
         FMLLog.fine("Patch list :\n\t%s", Joiner.on("\t\n").join(patches.asMap().entrySet()));
     }
 
-    private ClassPatch readPatch(JarEntry patchEntry, JarFile jarFile)
+    private ClassPatch readPatch(JarEntry patchEntry, JarInputStream jis)
     {
-        FMLLog.finest("Reading patch data from %s in file %s", patchEntry.getName(), jarFile.getName());
+        FMLLog.finest("Reading patch data from %s", patchEntry.getName());
         ByteArrayDataInput input;
         try
         {
-            input = ByteStreams.newDataInput(ByteStreams.toByteArray(jarFile.getInputStream(patchEntry)));
+            input = ByteStreams.newDataInput(ByteStreams.toByteArray(jis));
         }
         catch (IOException e)
         {

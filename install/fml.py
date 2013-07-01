@@ -85,7 +85,7 @@ def read_mc_versions(fml_dir, version=None, work_dir=None):
             mc_info['library_dir'] = os.path.join(work_dir, 'libraries')
             mc_info['client_file'] = os.path.join(version_dir, '%s.jar' % version)
             mc_info['json_file']   = os.path.join(version_dir, '%s.json' % version)
-            mc_info['server_file'] = os.path.join(work_dir, 'minecraft_server.jar')
+            mc_info['server_file'] = os.path.join(work_dir, 'minecraft_server.%s.jar' % version)
             mc_info['asset_dir']   = os.path.join(work_dir, 'assets')
     else:
         mc_info['new_launcher'] = False
