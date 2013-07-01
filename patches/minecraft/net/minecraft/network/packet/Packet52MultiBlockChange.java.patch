@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/network/packet/Packet52MultiBlockChange.java
 +++ ../src_work/minecraft/net/minecraft/network/packet/Packet52MultiBlockChange.java
-@@ -6,6 +6,8 @@
+@@ -7,6 +7,8 @@
  import java.io.IOException;
  import net.minecraft.world.World;
  import net.minecraft.world.chunk.Chunk;
@@ -9,7 +9,7 @@
  
  public class Packet52MultiBlockChange extends Packet
  {
-@@ -38,10 +40,8 @@
+@@ -39,10 +41,8 @@
  
          try
          {

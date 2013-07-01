@@ -17,7 +17,7 @@
  
  public class BlockNetherStalk extends BlockFlower
  {
-@@ -39,7 +42,8 @@
+@@ -38,7 +41,8 @@
       */
      public boolean canBlockStay(World par1World, int par2, int par3, int par4)
      {
@@ -27,7 +27,7 @@
      }
  
      /**
-@@ -81,25 +85,7 @@
+@@ -80,25 +84,7 @@
       */
      public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
      {
@@ -54,8 +54,8 @@
      }
  
      /**
-@@ -143,4 +129,23 @@
-             this.iconArray[i] = par1IconRegister.registerIcon(field_94373_a[i]);
+@@ -142,4 +128,23 @@
+             this.iconArray[i] = par1IconRegister.registerIcon(this.func_111023_E() + "_stage_" + i);
          }
      }
 +

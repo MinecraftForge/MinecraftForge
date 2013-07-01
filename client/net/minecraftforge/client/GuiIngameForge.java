@@ -1,42 +1,37 @@
 package net.minecraftforge.client;
 
+import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.*;
+
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
-
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-
-import cpw.mods.fml.common.FMLCommonHandler;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiIngame;
-import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.gui.GuiPlayerInfo;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.multiplayer.NetClientHandler;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.resources.ResourceLocation;
 import net.minecraft.crash.CallableMinecraftVersion;
-import net.minecraft.entity.boss.BossStatus;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeInstance;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.Direction;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.FoodStats;
-import net.minecraft.util.Icon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
 import net.minecraft.util.StringUtils;
@@ -46,10 +41,18 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
-import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.*;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+
+import cpw.mods.fml.common.FMLCommonHandler;
 
 public class GuiIngameForge extends GuiIngame
 {
+    private static final ResourceLocation VIGNETTE     = new ResourceLocation("textures/misc/vignette.png");
+    private static final ResourceLocation WIDGITS      = new ResourceLocation("textures/gui/widgets.png");
+    private static final ResourceLocation PUMPKIN_BLUR = new ResourceLocation("textures/misc/pumpkinblur.png");
+    
     private static final int WHITE = 0xFFFFFF;
 
     //Flags to toggle the rendering of certain aspects of the HUD, valid conditions
@@ -63,9 +66,14 @@ public class GuiIngameForge extends GuiIngame
     public static boolean renderHealth = true;
     public static boolean renderArmor = true;
     public static boolean renderFood = true;
+    public static boolean renderHealthMount = true;
     public static boolean renderAir = true;
     public static boolean renderExperiance = true;
+    public static boolean renderJumpBar = true;
     public static boolean renderObjective = true;
+    
+    public static int left_height = 39;
+    public static int right_height = 39;
 
     private ScaledResolution res = null;
     private FontRenderer fontrenderer = null;
@@ -84,6 +92,12 @@ public class GuiIngameForge extends GuiIngame
         eventParent = new RenderGameOverlayEvent(partialTicks, res, mouseX, mouseY);
         int width = res.getScaledWidth();
         int height = res.getScaledHeight();
+        renderHealthMount = mc.thePlayer.ridingEntity instanceof EntityLivingBase;
+        renderFood = mc.thePlayer.ridingEntity == null;
+        renderJumpBar = mc.thePlayer.func_110317_t();
+        
+        right_height = 39;
+        left_height = 39;
 
         if (pre(ALL)) return;
 
@@ -112,22 +126,30 @@ public class GuiIngameForge extends GuiIngame
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             zLevel = -90.0F;
             rand.setSeed((long)(updateCounter * 312871));
-            mc.renderEngine.bindTexture("/gui/icons.png");
 
             if (renderCrosshairs) renderCrosshairs(width, height);
             if (renderBossHealth) renderBossHealth();
-
+            
             if (this.mc.playerController.shouldDrawHUD())
             {
-                if (renderArmor)  renderArmor(width, height);
                 if (renderHealth) renderHealth(width, height);
+                if (renderArmor)  renderArmor(width, height);
                 if (renderFood)   renderFood(width, height);
+                if (renderHealthMount) renderHealthMount(width, height);
                 if (renderAir)    renderAir(width, height);
             }
             if (renderHotbar) renderHotbar(width, height, partialTicks);
         }
 
-        if (renderExperiance) renderExperience(width, height);
+        if (renderJumpBar)
+        {
+            renderJumpBar(width, height);
+        }
+        else if (renderExperiance) 
+        {
+            renderExperience(width, height);
+        }
+
         renderSleepFade(width, height);
         renderToolHightlight(width, height);
         renderHUDText(width, height);
@@ -167,7 +189,7 @@ public class GuiIngameForge extends GuiIngame
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.bindTexture("/gui/gui.png");
+        mc.renderEngine.func_110577_a(WIDGITS);
 
         InventoryPlayer inv = mc.thePlayer.inventory;
         drawTexturedModalRect(width / 2 - 91, height - 22, 0, 0, 182, 22);
@@ -193,6 +215,7 @@ public class GuiIngameForge extends GuiIngame
     protected void renderCrosshairs(int width, int height)
     {
         if (pre(CROSSHAIRS)) return;
+        bind(Gui.field_110324_m);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ONE_MINUS_SRC_COLOR);
         drawTexturedModalRect(width / 2 - 7, height / 2 - 7, 0, 0, 16, 16);
@@ -237,7 +260,7 @@ public class GuiIngameForge extends GuiIngame
         mc.mcProfiler.startSection("armor");
 
         int left = width / 2 - 91;
-        int top = height - 49;
+        int top = height - left_height;
 
         int level = ForgeHooks.getTotalArmorValue(mc.thePlayer);
         for (int i = 1; level > 0 && i < 20; i += 2)
@@ -256,6 +279,7 @@ public class GuiIngameForge extends GuiIngame
             }
             left += 8;
         }
+        left_height += 10;
 
         mc.mcProfiler.endSection();
         post(ARMOR);
@@ -269,7 +293,7 @@ public class GuiIngameForge extends GuiIngame
 
         if (f1 > 0.0F)
         {
-            renderPortalOverlay(f1, width, height);
+            func_130015_b(f1, width, height);
         }
 
         post(PORTAL);
@@ -280,7 +304,7 @@ public class GuiIngameForge extends GuiIngame
         if (pre(AIR)) return;
         mc.mcProfiler.startSection("air");
         int left = width / 2 + 91;
-        int top = height - 49;
+        int top = height - right_height;
 
         if (mc.thePlayer.isInsideOfMaterial(Material.water))
         {
@@ -292,6 +316,7 @@ public class GuiIngameForge extends GuiIngame
             {
                 drawTexturedModalRect(left - i * 8 - 9, top, (i < full ? 16 : 25), 18, 9, 9);
             }
+            right_height += 10;
         }
 
         mc.mcProfiler.endSection();
@@ -300,6 +325,7 @@ public class GuiIngameForge extends GuiIngame
 
     public void renderHealth(int width, int height)
     {
+        bind(field_110324_m);
         if (pre(HEALTH)) return;
         mc.mcProfiler.startSection("health");
 
@@ -310,47 +336,72 @@ public class GuiIngameForge extends GuiIngame
             highlight = false;
         }
 
-        int health = mc.thePlayer.getHealth();
-        int healthLast = mc.thePlayer.prevHealth;
+        AttributeInstance attrMaxHealth = this.mc.thePlayer.func_110148_a(SharedMonsterAttributes.field_111267_a);
+        int health = MathHelper.ceiling_float_int(mc.thePlayer.func_110143_aJ());
+        int healthLast = MathHelper.ceiling_float_int(mc.thePlayer.prevHealth);
+        float healthMax = (float)attrMaxHealth.func_111126_e();
+        float absorb = this.mc.thePlayer.func_110139_bj();
+
+        int healthRows = MathHelper.ceiling_float_int((healthMax + absorb) / 2.0F / 10.0F);
+        int rowHeight = Math.max(10 - (healthRows - 2), 3);
+        
+        this.rand.setSeed((long)(updateCounter * 312871));
+        
         int left = width / 2 - 91;
-        int top = height - 39;
+        int top = height - left_height;
+        left_height += (healthRows * rowHeight);
+        if (rowHeight != 10) left_height += 10 - rowHeight;
 
         int regen = -1;
         if (mc.thePlayer.isPotionActive(Potion.regeneration))
         {
-            regen = this.updateCounter % 25;
+            regen = updateCounter % 25;
         }
-
-        for (int i = 0; i < 10; ++i)
+        
+        final int TOP =  9 * (mc.theWorld.getWorldInfo().isHardcoreModeEnabled() ? 5 : 0);
+        final int BACKGROUND = (highlight ? 25 : 16);
+        int MARGIN = 16;
+        if (mc.thePlayer.isPotionActive(Potion.poison))      MARGIN += 36;
+        else if (mc.thePlayer.isPotionActive(Potion.wither)) MARGIN += 72;
+        float absorbRemaining = absorb;
+        
+        for (int i = MathHelper.ceiling_float_int((healthMax + absorb) / 2.0F) - 1; i >= 0; --i)
         {
-            int idx = i * 2 + 1;
-            int iconX = 16;
-            if (mc.thePlayer.isPotionActive(Potion.poison)) iconX += 36;
-            else if (mc.thePlayer.isPotionActive(Potion.wither)) iconX += 72;
+            int b0 = (highlight ? 1 : 0);
+            int row = MathHelper.ceiling_float_int((float)(i + 1) / 10.0F) - 1;
+            int x = left + i % 10 * 8;
+            int y = top - row * rowHeight;
 
-            int x = left + i * 8;
-            int y = top;
-            if (health <= 4) y = top + rand.nextInt(2);
-            if (i == regen) y -= 2;
+            if (health <= 4) y += rand.nextInt(2);
+            if (i == regen) y -= 2;     
 
-            byte iconY = 0;
-            if (mc.theWorld.getWorldInfo().isHardcoreModeEnabled()) iconY = 5;
-
-            drawTexturedModalRect(x, y, 16 + (highlight ? 9 : 0), 9 * iconY, 9, 9);
+            drawTexturedModalRect(x, y, BACKGROUND, TOP, 9, 9);
 
             if (highlight)
             {
-                if (idx < healthLast)
-                    drawTexturedModalRect(x, y, iconX + 54, 9 * iconY, 9, 9);
-                else if (idx == healthLast)
-                    drawTexturedModalRect(x, y, iconX + 63, 9 * iconY, 9, 9);
+                if (i * 2 + 1 < healthLast)
+                    drawTexturedModalRect(x, y, MARGIN + 54, TOP, 9, 9); //6
+                else if (i * 2 + 1 == healthLast)
+                    drawTexturedModalRect(x, y, MARGIN + 63, TOP, 9, 9); //7
             }
 
-            if (idx < health)
-                drawTexturedModalRect(x, y, iconX + 36, 9 * iconY, 9, 9);
-            else if (idx == health)
-                drawTexturedModalRect(x, y, iconX + 45, 9 * iconY, 9, 9);
+            if (absorbRemaining > 0.0F)
+            {
+                if (absorbRemaining == absorb && absorb % 2.0F == 1.0F)
+                    drawTexturedModalRect(x, y, MARGIN + 153, TOP, 9, 9); //17
+                else
+                    drawTexturedModalRect(x, y, MARGIN + 144, TOP, 9, 9); //16
+                absorbRemaining -= 2.0F;
+            }
+            else
+            {
+                if (i * 2 + 1 < health)
+                    drawTexturedModalRect(x, y, MARGIN + 36, TOP, 9, 9); //4
+                else if (i * 2 + 1 == health)
+                    drawTexturedModalRect(x, y, MARGIN + 45, TOP, 9, 9); //5
+            }
         }
+        
         mc.mcProfiler.endSection();
         post(HEALTH);
     }
@@ -361,7 +412,8 @@ public class GuiIngameForge extends GuiIngame
         mc.mcProfiler.startSection("food");
 
         int left = width / 2 + 91;
-        int top = height - 39;
+        int top = height - right_height;
+        right_height += 10;
         boolean unused = false;// Unused flag in vanilla, seems to be part of a 'fade out' mechanic
 
         FoodStats stats = mc.thePlayer.getFoodStats();
@@ -388,30 +440,20 @@ public class GuiIngameForge extends GuiIngame
                 y = top + (rand.nextInt(3) - 1);
             }
 
-            this.drawTexturedModalRect(x, y, 16 + backgound * 9, 27, 9, 9);
+            drawTexturedModalRect(x, y, 16 + backgound * 9, 27, 9, 9);
 
             if (unused)
             {
                 if (idx < levelLast)
-                {
                     drawTexturedModalRect(x, y, icon + 54, 27, 9, 9);
-                }
-
-                if (idx == levelLast)
-                {
+                else if (idx == levelLast)
                     drawTexturedModalRect(x, y, icon + 63, 27, 9, 9);
-                }
             }
 
             if (idx < level)
-            {
                 drawTexturedModalRect(x, y, icon + 36, 27, 9, 9);
-            }
-
-            if (idx == level)
-            {
+            else if (idx == level)
                 drawTexturedModalRect(x, y, icon + 45, 27, 9, 9);
-            }
         }
         mc.mcProfiler.endSection();
         post(FOOD);
@@ -442,48 +484,77 @@ public class GuiIngameForge extends GuiIngame
 
     protected void renderExperience(int width, int height)
     {
+        bind(field_110324_m);
         if (pre(EXPERIENCE)) return;
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        if (mc.playerController.shouldDrawHUD())
+        
+        if (mc.playerController.func_78763_f())
         {
             mc.mcProfiler.startSection("expBar");
-            mc.renderEngine.bindTexture("/gui/icons.png");
             int cap = this.mc.thePlayer.xpBarCap();
             int left = width / 2 - 91;
-
+    
             if (cap > 0)
             {
-                short short1 = 182;
-                int l2 = (int)(this.mc.thePlayer.experience * (float)(short1 + 1));
-                int k2 = height - 32 + 3;
-                this.drawTexturedModalRect(left, k2, 0, 64, short1, 5);
-
-                if (l2 > 0)
+                short barWidth = 182;
+                int filled = (int)(mc.thePlayer.experience * (float)(barWidth + 1));
+                int top = height - 32 + 3;
+                drawTexturedModalRect(left, top, 0, 64, barWidth, 5);
+    
+                if (filled > 0)
                 {
-                    this.drawTexturedModalRect(left, k2, 0, 69, l2, 5);
+                    drawTexturedModalRect(left, top, 0, 69, filled, 5);
                 }
             }
-            mc.mcProfiler.endSection();
-        }
 
-        if (mc.playerController.func_78763_f() && mc.thePlayer.experienceLevel > 0)
-        {
-            mc.mcProfiler.startSection("expLevel");
-            boolean flag1 = false;
-            int color = flag1 ? 16777215 : 8453920;
-            String text = "" + mc.thePlayer.experienceLevel;
-            int x = (width - fontrenderer.getStringWidth(text)) / 2;
-            int y = height - 31 - 4;
-            fontrenderer.drawString(text, x + 1, y, 0);
-            fontrenderer.drawString(text, x - 1, y, 0);
-            fontrenderer.drawString(text, x, y + 1, 0);
-            fontrenderer.drawString(text, x, y - 1, 0);
-            fontrenderer.drawString(text, x, y, color);
-            mc.mcProfiler.endSection();
+            this.mc.mcProfiler.endSection();
+            
+        
+            if (mc.playerController.func_78763_f() && mc.thePlayer.experienceLevel > 0)
+            {
+                mc.mcProfiler.startSection("expLevel");
+                boolean flag1 = false;
+                int color = flag1 ? 16777215 : 8453920;
+                String text = "" + mc.thePlayer.experienceLevel;
+                int x = (width - fontrenderer.getStringWidth(text)) / 2;
+                int y = height - 31 - 4;
+                fontrenderer.drawString(text, x + 1, y, 0);
+                fontrenderer.drawString(text, x - 1, y, 0);
+                fontrenderer.drawString(text, x, y + 1, 0);
+                fontrenderer.drawString(text, x, y - 1, 0);
+                fontrenderer.drawString(text, x, y, color);
+                mc.mcProfiler.endSection();
+            }
         }
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         post(EXPERIENCE);
+    }
+
+    protected void renderJumpBar(int width, int height)
+    {
+        bind(field_110324_m);
+        if (pre(JUMPBAR)) return;
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        
+        mc.mcProfiler.startSection("jumpBar");
+        float charge = mc.thePlayer.func_110319_bJ();
+        final int barWidth = 182;
+        int x = (width / 2) - (barWidth / 2);
+        int filled = (int)(charge * (float)(barWidth + 1));
+        int top = height - 32 + 3;
+
+        drawTexturedModalRect(x, top, 0, 84, barWidth, 5);
+
+        if (filled > 0)
+        {
+            this.drawTexturedModalRect(x, top, 0, 89, filled, 5);
+        }
+
+        mc.mcProfiler.endSection();
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
+        post(JUMPBAR);
     }
 
     protected void renderToolHightlight(int width, int height)
@@ -719,7 +790,7 @@ public class GuiIngameForge extends GuiIngame
 
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-                    mc.renderEngine.bindTexture("/gui/icons.png");
+                    mc.func_110434_K().func_110577_a(Gui.field_110324_m);
                     int pingIndex = 4;
                     int ping = player.responseTime;
                     if (ping < 0) pingIndex = 5;
@@ -736,6 +807,54 @@ public class GuiIngameForge extends GuiIngame
         }
     }
 
+    protected void renderHealthMount(int width, int height)
+    {
+        Entity tmp = mc.thePlayer.ridingEntity;
+        if (!(tmp instanceof EntityLivingBase)) return;
+
+        bind(field_110324_m);
+        
+        if (pre(HEALTHMOUNT)) return;
+        
+        boolean unused = false;
+        int left_align = width / 2 + 91;
+        
+        mc.mcProfiler.endStartSection("mountHealth");
+        EntityLivingBase mount = (EntityLivingBase)tmp;
+        int health = (int)Math.ceil((double)mount.func_110143_aJ());
+        float healthMax = mount.func_110138_aP();
+        int hearts = (int)(healthMax + 0.5F) / 2;
+
+        if (hearts > 30) hearts = 30;
+        
+        final int MARGIN = 52;
+        final int BACKGROUND = MARGIN + (unused ? 1 : 0);
+        final int HALF = MARGIN + 45;
+        final int FULL = MARGIN + 36;
+
+        for (int heart = 0; hearts > 0; heart += 20)
+        {
+            int top = height - right_height;
+            
+            int rowCount = Math.min(hearts, 10);
+            hearts -= rowCount;
+
+            for (int i = 0; i < rowCount; ++i)
+            {
+                int x = left_align - i * 8 - 9;
+                drawTexturedModalRect(x, top, BACKGROUND, 9, 9, 9);
+
+                if (i * 2 + 1 + heart < health)
+                    drawTexturedModalRect(x, top, FULL, 9, 9, 9);
+                else if (i * 2 + 1 + heart == health)
+                    drawTexturedModalRect(x, top, HALF, 9, 9, 9);
+            }
+
+            right_height += 10;
+        }
+        post(HEALTHMOUNT);
+    }
+
     //Helper macros
     private boolean pre(ElementType type)
     {
@@ -744,5 +863,9 @@ public class GuiIngameForge extends GuiIngame
     private void post(ElementType type)
     {
         MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Post(eventParent, type));
+    }
+    private void bind(ResourceLocation res)
+    {
+        mc.func_110434_K().func_110577_a(res);
     }
 }

@@ -53,7 +53,7 @@ def main():
     
 def setup_fml(mcp_dir, fml_dir, build_num=0):
     print 'Setting up Forge ModLoader'
-    os.environ['WORKSPACE'] = os.path.join(mcp_dir, '..')
+    os.environ['WORKSPACE'] = os.path.abspath(os.path.join(mcp_dir, '..'))
     os.environ['BUILD_NUMBER'] = str(build_num)
 
     BUILD = ['ant', 'jenkinsbuild']

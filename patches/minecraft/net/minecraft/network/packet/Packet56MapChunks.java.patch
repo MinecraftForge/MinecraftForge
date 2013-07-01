@@ -1,7 +1,7 @@
 --- ../src_base/minecraft/net/minecraft/network/packet/Packet56MapChunks.java
 +++ ../src_work/minecraft/net/minecraft/network/packet/Packet56MapChunks.java
 @@ -6,6 +6,7 @@
- import java.io.DataOutputStream;
+ import java.io.DataOutput;
  import java.io.IOException;
  import java.util.List;
 +import java.util.concurrent.Semaphore;
@@ -67,9 +67,9 @@
          }
          finally
          {
-@@ -155,6 +164,16 @@
+@@ -155,6 +164,15 @@
       */
-     public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException
+     public void writePacketData(DataOutput par1DataOutput) throws IOException
      {
 +        if (this.chunkDataBuffer == null)
 +        {
@@ -80,7 +80,6 @@
 +            }
 +            deflateGate.release();
 +        }
-+
-         par1DataOutputStream.writeShort(this.chunkPostX.length);
-         par1DataOutputStream.writeInt(this.dataLength);
-         par1DataOutputStream.writeBoolean(this.skyLightSent);
+         par1DataOutput.writeShort(this.chunkPostX.length);
+         par1DataOutput.writeInt(this.dataLength);
+         par1DataOutput.writeBoolean(this.skyLightSent);

@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/server/MinecraftServer.java
 +++ ../src_work/minecraft/net/minecraft/server/MinecraftServer.java
-@@ -12,6 +12,7 @@
+@@ -11,6 +11,7 @@
  import java.text.SimpleDateFormat;
  import java.util.ArrayList;
  import java.util.Date;
@@ -8,7 +8,7 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.logging.Level;
-@@ -56,6 +57,10 @@
+@@ -54,6 +55,10 @@
  import net.minecraft.world.storage.ISaveHandler;
  import net.minecraft.world.storage.WorldInfo;
  
@@ -19,7 +19,7 @@
  public abstract class MinecraftServer implements ICommandSender, Runnable, IPlayerUsage
  {
      /** Instance of Minecraft Server. */
-@@ -80,7 +85,7 @@
+@@ -78,7 +83,7 @@
      private int serverPort = -1;
  
      /** The server world instances. */
@@ -28,8 +28,8 @@
  
      /** The ServerConfigurationManager instance. */
      private ServerConfigurationManager serverConfigManager;
-@@ -133,7 +138,8 @@
-     public final long[] tickTimeArray = new long[100];
+@@ -132,7 +137,8 @@
+     public final long[] tickTimeArray;
  
      /** Stats are [dimension][tick%100] system.nanoTime is stored. */
 -    public long[][] timeOfLastDimensionTick;
@@ -38,7 +38,7 @@
      private KeyPair serverKeyPair;
  
      /** Username of the server owner (for integrated servers) */
-@@ -210,8 +216,6 @@
+@@ -216,8 +222,6 @@
      {
          this.convertMapIfNeeded(par1Str);
          this.setUserMessage("menu.loadingLevel");
@@ -47,7 +47,7 @@
          ISaveHandler isavehandler = this.anvilConverterForAnvilFile.getSaveLoader(par1Str, true);
          WorldInfo worldinfo = isavehandler.loadWorldInfo();
          WorldSettings worldsettings;
-@@ -231,46 +235,23 @@
+@@ -237,46 +241,23 @@
              worldsettings.enableBonusChest();
          }
  
@@ -105,7 +105,7 @@
          this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();
      }
-@@ -346,6 +327,7 @@
+@@ -358,6 +339,7 @@
          if (!this.worldIsBeingDeleted)
          {
              WorldServer[] aworldserver = this.worldServers;
@@ -113,7 +113,7 @@
              int i = aworldserver.length;
  
              for (int j = 0; j < i; ++j)
-@@ -399,7 +381,14 @@
+@@ -411,7 +393,14 @@
              for (int i = 0; i < this.worldServers.length; ++i)
              {
                  WorldServer worldserver = this.worldServers[i];
@@ -128,7 +128,7 @@
              }
  
              if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
-@@ -624,13 +613,15 @@
+@@ -636,13 +625,15 @@
          this.theProfiler.startSection("levels");
          int i;
  
@@ -149,7 +149,7 @@
                  this.theProfiler.startSection(worldserver.getWorldInfo().getWorldName());
                  this.theProfiler.startSection("pools");
                  worldserver.getWorldVec3Pool().clear();
-@@ -677,9 +668,11 @@
+@@ -689,9 +680,11 @@
                  this.theProfiler.endSection();
              }
  
@@ -164,7 +164,7 @@
          this.theProfiler.endStartSection("connection");
          this.getNetworkThread().networkTick();
          this.theProfiler.endStartSection("players");
-@@ -733,7 +726,13 @@
+@@ -745,7 +738,13 @@
       */
      public WorldServer worldServerForDimension(int par1)
      {
@@ -179,7 +179,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -1104,6 +1103,7 @@
+@@ -1108,6 +1107,7 @@
  
              if (worldserver != null)
              {

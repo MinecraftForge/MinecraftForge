@@ -3,7 +3,7 @@
 @@ -25,6 +25,10 @@
       * True if the renderer supports multitextures and the OpenGL version != 1.3
       */
-     private static boolean useMultitextureARB = false;
+     private static boolean useMultitextureARB;
 +
 +    /* Stores the last values sent into setLightmapTextureCoords */
 +    public static float lastBrightnessX = 0.0f;

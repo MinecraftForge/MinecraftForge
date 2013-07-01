@@ -1,8 +1,8 @@
 --- ../src_base/minecraft/net/minecraft/network/packet/Packet51MapChunk.java
 +++ ../src_work/minecraft/net/minecraft/network/packet/Packet51MapChunk.java
 @@ -5,6 +5,7 @@
- import java.io.DataInputStream;
- import java.io.DataOutputStream;
+ import java.io.DataInput;
+ import java.io.DataOutput;
  import java.io.IOException;
 +import java.util.concurrent.Semaphore;
  import java.util.zip.DataFormatException;
@@ -47,7 +47,7 @@
          finally
          {
 @@ -97,13 +105,16 @@
-         par1DataInputStream.readFully(temp, 0, this.tempLength);
+         par1DataInput.readFully(temp, 0, this.tempLength);
          int i = 0;
          int j;
 +        int msb = 0; //BugFix: MC does not read the MSB array from the packet properly, causing issues for servers that use blocks > 256
@@ -65,7 +65,7 @@
          {
 @@ -133,6 +144,16 @@
       */
-     public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException
+     public void writePacketData(DataOutput par1DataOutput) throws IOException
      {
 +        if (chunkData == null)
 +        {
@@ -77,6 +77,6 @@
 +            deflateGate.release();
 +        }
 +
-         par1DataOutputStream.writeInt(this.xCh);
-         par1DataOutputStream.writeInt(this.zCh);
-         par1DataOutputStream.writeBoolean(this.includeInitialize);
+         par1DataOutput.writeInt(this.xCh);
+         par1DataOutput.writeInt(this.zCh);
+         par1DataOutput.writeBoolean(this.includeInitialize);

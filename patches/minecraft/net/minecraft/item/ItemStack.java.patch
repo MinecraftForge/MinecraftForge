@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemStack.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemStack.java
-@@ -249,7 +249,9 @@
+@@ -252,7 +252,9 @@
       */
      public boolean isItemDamaged()
      {
@@ -11,7 +11,7 @@
      }
  
      /**
-@@ -257,6 +259,10 @@
+@@ -260,6 +262,10 @@
       */
      public int getItemDamageForDisplay()
      {
@@ -22,7 +22,7 @@
          return this.itemDamage;
      }
  
-@@ -265,6 +271,10 @@
+@@ -268,6 +274,10 @@
       */
      public int getItemDamage()
      {
@@ -33,7 +33,7 @@
          return this.itemDamage;
      }
  
-@@ -273,6 +283,12 @@
+@@ -276,6 +286,12 @@
       */
      public void setItemDamage(int par1)
      {
@@ -46,7 +46,7 @@
          this.itemDamage = par1;
  
          if (this.itemDamage < 0)
-@@ -286,7 +302,7 @@
+@@ -289,7 +305,7 @@
       */
      public int getMaxDamage()
      {
@@ -55,7 +55,7 @@
      }
  
      /**
-@@ -324,8 +340,8 @@
+@@ -327,8 +343,8 @@
                  }
              }
  
@@ -66,15 +66,6 @@
          }
      }
  
-@@ -388,7 +404,7 @@
-      */
-     public int getDamageVsEntity(Entity par1Entity)
-     {
--        return Item.itemsList[this.itemID].getDamageVsEntity(par1Entity);
-+        return Item.itemsList[this.itemID].getDamageVsEntity(par1Entity, this);
-     }
- 
-     /**
 @@ -396,7 +412,7 @@
       */
      public boolean canHarvestBlock(Block par1Block)
@@ -83,4 +74,4 @@
 +        return Item.itemsList[this.itemID].canHarvestBlock(par1Block, this);
      }
  
-     public boolean interactWith(EntityLiving par1EntityLiving)
+     public boolean func_111282_a(EntityPlayer par1EntityPlayer, EntityLivingBase par2EntityLivingBase)
