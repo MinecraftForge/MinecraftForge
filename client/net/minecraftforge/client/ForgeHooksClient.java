@@ -36,7 +36,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.client.event.TextureLoadEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
@@ -219,11 +218,6 @@ public class ForgeHooksClient
     public static void dispatchRenderLast(RenderGlobal context, float partialTicks)
     {
         MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, partialTicks));
-    }
-
-    public static void onTextureLoad(String texture, ITexturePack pack)
-    {
-        MinecraftForge.EVENT_BUS.post(new TextureLoadEvent(texture, pack));
     }
 
     public static void onTextureStitchedPre(TextureMap map)

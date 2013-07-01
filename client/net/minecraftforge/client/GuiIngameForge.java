@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.gui.GuiPlayerInfo;
@@ -27,6 +28,8 @@ import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.ResourceLocation;
 import net.minecraft.crash.CallableMinecraftVersion;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeInstance;
 import net.minecraft.entity.boss.BossStatus;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -52,6 +55,10 @@ import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType
 
 public class GuiIngameForge extends GuiIngame
 {
+    private static final ResourceLocation VIGNETTE     = new ResourceLocation("textures/misc/vignette.png");
+    private static final ResourceLocation WIDGITS      = new ResourceLocation("textures/gui/widgets.png");
+    private static final ResourceLocation PUMPKIN_BLUR = new ResourceLocation("textures/misc/pumpkinblur.png");
+    
     private static final int WHITE = 0xFFFFFF;
 
     //Flags to toggle the rendering of certain aspects of the HUD, valid conditions
@@ -169,7 +176,7 @@ public class GuiIngameForge extends GuiIngame
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.func_110577_a("/gui/gui.png");
+        mc.renderEngine.func_110577_a(WIDGITS);
 
         InventoryPlayer inv = mc.thePlayer.inventory;
         drawTexturedModalRect(width / 2 - 91, height - 22, 0, 0, 182, 22);
@@ -271,7 +278,7 @@ public class GuiIngameForge extends GuiIngame
 
         if (f1 > 0.0F)
         {
-            renderPortalOverlay(f1, width, height);
+            func_130015_b(f1, width, height);
         }
 
         post(PORTAL);
@@ -312,8 +319,11 @@ public class GuiIngameForge extends GuiIngame
             highlight = false;
         }
 
-        int health = mc.thePlayer.getHealth();
-        float healthLast = mc.thePlayer.prevHealth;
+        AttributeInstance attrMaxHealth = this.mc.thePlayer.func_110148_a(SharedMonsterAttributes.field_111267_a);
+        float maxHealth = (float)attrMaxHealth.func_111126_e();
+        
+        int health = MathHelper.ceiling_float_int(mc.thePlayer.func_110143_aJ());
+        int healthLast = MathHelper.ceiling_float_int(mc.thePlayer.prevHealth);
         int left = width / 2 - 91;
         int top = height - 39;
 
@@ -449,7 +459,7 @@ public class GuiIngameForge extends GuiIngame
         if (mc.playerController.shouldDrawHUD())
         {
             mc.mcProfiler.startSection("expBar");
-            mc.renderEngine.bindTexture("/gui/icons.png");
+            mc.func_110434_K().func_110577_a(WIDGITS);
             int cap = this.mc.thePlayer.xpBarCap();
             int left = width / 2 - 91;
 
@@ -721,7 +731,7 @@ public class GuiIngameForge extends GuiIngame
 
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-                    mc.renderEngine.bindTexture("/gui/icons.png");
+                    mc.func_110434_K().func_110577_a(Gui.field_110324_m);
                     int pingIndex = 4;
                     int ping = player.responseTime;
                     if (ping < 0) pingIndex = 5;
