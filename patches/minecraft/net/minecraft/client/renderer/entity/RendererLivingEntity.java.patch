@@ -1,6 +1,6 @@
---- ../src_base/minecraft/net/minecraft/client/render/entity/RendererLivingEntity.java
-+++ ../src_work/minecraft/net/minecraft/client/render/entity/RendererLivingEntity.java
-@@ -18,6 +18,9 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/entity/RendererLivingEntity.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RendererLivingEntity.java
+@@ -17,6 +17,9 @@
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.entity.projectile.EntityArrow;
  import net.minecraft.util.MathHelper;
@@ -10,7 +10,7 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
-@@ -29,6 +32,9 @@
+@@ -28,6 +31,9 @@
  
      /** The model to be used during the render passes. */
      protected ModelBase renderPassModel;
@@ -20,7 +20,7 @@
  
      public RendererLivingEntity(ModelBase par1ModelBase, float par2)
      {
-@@ -440,12 +446,13 @@
+@@ -439,12 +445,13 @@
  
      protected void func_130008_a(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6)
      {
@@ -35,7 +35,7 @@
  
              if (d3 < (double)(f2 * f2))
              {
-@@ -489,6 +496,7 @@
+@@ -488,6 +495,7 @@
                  }
              }
          }

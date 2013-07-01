@@ -1,6 +1,6 @@
 package net.minecraftforge.client.event;
 
-import net.minecraft.client.render.entity.RendererLivingEntity;
+import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraftforge.event.Cancelable;
 import net.minecraftforge.event.Event;

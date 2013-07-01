@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
-@@ -227,12 +227,14 @@
+@@ -224,12 +224,14 @@
  
          if (par4EntityLivingBase.isPlayerSleeping())
          {

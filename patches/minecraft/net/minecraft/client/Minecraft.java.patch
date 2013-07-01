@@ -33,7 +33,7 @@
  
          if (this.serverName != null)
          {
-@@ -1292,7 +1300,7 @@
+@@ -1296,7 +1304,7 @@
  
                  if (this.thePlayer.canCurrentToolHarvestBlock(j, k, l))
                  {
@@ -42,7 +42,7 @@
                      this.thePlayer.swingItem();
                  }
              }
-@@ -1358,7 +1366,8 @@
+@@ -1362,7 +1370,8 @@
                  {
                      int j1 = itemstack != null ? itemstack.stackSize : 0;
  
@@ -52,7 +52,7 @@
                      {
                          flag = false;
                          this.thePlayer.swingItem();
-@@ -1384,7 +1393,8 @@
+@@ -1388,7 +1397,8 @@
              {
                  ItemStack itemstack1 = this.thePlayer.inventory.getCurrentItem();
  
@@ -62,7 +62,7 @@
                  {
                      this.entityRenderer.itemRenderer.resetEquippedProgress2();
                  }
-@@ -2032,6 +2042,11 @@
+@@ -2036,6 +2046,11 @@
      {
          this.statFileWriter.syncStats();
  
@@ -74,7 +74,7 @@
          if (par1WorldClient == null)
          {
              NetClientHandler netclienthandler = this.getNetHandler();
-@@ -2049,6 +2064,18 @@
+@@ -2053,6 +2068,18 @@
              if (this.theIntegratedServer != null)
              {
                  this.theIntegratedServer.initiateShutdown();
@@ -93,7 +93,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2219,103 +2246,12 @@
+@@ -2223,103 +2250,12 @@
          if (this.objectMouseOver != null)
          {
              boolean flag = this.thePlayer.capabilities.isCreativeMode;
@@ -201,7 +201,7 @@
  
              if (flag)
              {
-@@ -2397,11 +2333,18 @@
+@@ -2401,11 +2337,18 @@
          par1PlayerUsageSnooper.addData("gl_max_texture_size", Integer.valueOf(getGLMaximumTextureSize()));
      }
  
@@ -220,7 +220,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
-@@ -2409,6 +2352,7 @@
+@@ -2413,6 +2356,7 @@
  
              if (j != 0)
              {

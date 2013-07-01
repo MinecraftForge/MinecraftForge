@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/entity/RenderPlayer.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RenderPlayer.java
-@@ -22,7 +22,16 @@
+@@ -21,7 +21,16 @@
  import net.minecraft.scoreboard.ScoreObjective;
  import net.minecraft.scoreboard.Scoreboard;
  import net.minecraft.util.MathHelper;
@@ -17,7 +17,7 @@
  
  @SideOnly(Side.CLIENT)
  public class RenderPlayer extends RendererLivingEntity
-@@ -44,6 +53,13 @@
+@@ -43,6 +52,13 @@
      {
          ItemStack itemstack = par1AbstractClientPlayer.inventory.armorItemInSlot(3 - par2);
  
@@ -31,7 +31,7 @@
          if (itemstack != null)
          {
              Item item = itemstack.getItem();
-@@ -51,7 +67,7 @@
+@@ -50,7 +66,7 @@
              if (item instanceof ItemArmor)
              {
                  ItemArmor itemarmor = (ItemArmor)item;
@@ -40,7 +40,7 @@
                  ModelBiped modelbiped = par2 == 2 ? this.modelArmor : this.modelArmorChestplate;
                  modelbiped.bipedHead.showModel = par2 == 0;
                  modelbiped.bipedHeadwear.showModel = par2 == 0;
-@@ -60,15 +76,17 @@
+@@ -59,15 +75,17 @@
                  modelbiped.bipedLeftArm.showModel = par2 == 1;
                  modelbiped.bipedRightLeg.showModel = par2 == 2 || par2 == 3;
                  modelbiped.bipedLeftLeg.showModel = par2 == 2 || par2 == 3;
@@ -61,7 +61,7 @@
                      float f2 = (float)(j >> 16 & 255) / 255.0F;
                      float f3 = (float)(j >> 8 & 255) / 255.0F;
                      float f4 = (float)(j & 255) / 255.0F;
-@@ -106,7 +124,7 @@
+@@ -105,7 +123,7 @@
  
              if (item instanceof ItemArmor)
              {
@@ -70,7 +70,7 @@
                  float f1 = 1.0F;
                  GL11.glColor3f(f1, f1, f1);
              }
-@@ -115,6 +133,7 @@
+@@ -114,6 +132,7 @@
  
      public void func_110819_a(AbstractClientPlayer par1AbstractClientPlayer, double par2, double par4, double par6, float par8, float par9)
      {
@@ -78,7 +78,7 @@
          float f2 = 1.0F;
          GL11.glColor3f(f2, f2, f2);
          ItemStack itemstack = par1AbstractClientPlayer.inventory.getCurrentItem();
-@@ -146,6 +165,7 @@
+@@ -145,6 +164,7 @@
          this.modelArmorChestplate.aimedBow = this.modelArmor.aimedBow = this.modelBipedMain.aimedBow = false;
          this.modelArmorChestplate.isSneak = this.modelArmor.isSneak = this.modelBipedMain.isSneak = false;
          this.modelArmorChestplate.heldItemRight = this.modelArmor.heldItemRight = this.modelBipedMain.heldItemRight = 0;
@@ -86,7 +86,7 @@
      }
  
      protected ResourceLocation func_110817_a(AbstractClientPlayer par1AbstractClientPlayer)
-@@ -155,21 +175,30 @@
+@@ -154,21 +174,30 @@
  
      protected void func_110820_a(AbstractClientPlayer par1AbstractClientPlayer, float par2)
      {
@@ -121,7 +121,7 @@
                  {
                      f2 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
-@@ -221,6 +250,7 @@
+@@ -220,6 +249,7 @@
          boolean flag = par1AbstractClientPlayer.func_110310_o().func_110557_a();
          boolean flag1 = !par1AbstractClientPlayer.isInvisible();
          boolean flag2 = !par1AbstractClientPlayer.getHideCape();
@@ -129,7 +129,7 @@
          float f6;
  
          if (flag && flag1 && flag2)
-@@ -272,7 +302,7 @@
+@@ -271,7 +301,7 @@
  
          ItemStack itemstack1 = par1AbstractClientPlayer.inventory.getCurrentItem();
  
@@ -138,7 +138,7 @@
          {
              GL11.glPushMatrix();
              this.modelBipedMain.bipedRightArm.postRender(0.0625F);
-@@ -292,7 +322,11 @@
+@@ -291,7 +321,11 @@
  
              float f11;
  
@@ -151,7 +151,7 @@
              {
                  f11 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -349,7 +383,7 @@
+@@ -348,7 +382,7 @@
  
              if (itemstack1.getItem().requiresMultipleRenderPasses())
              {
@@ -160,7 +160,7 @@
                  {
                      int k = itemstack1.getItem().getColorFromItemStack(itemstack1, j);
                      f13 = (float)(k >> 16 & 255) / 255.0F;
-@@ -371,6 +405,7 @@
+@@ -370,6 +404,7 @@
  
              GL11.glPopMatrix();
          }
