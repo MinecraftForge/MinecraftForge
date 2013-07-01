@@ -184,6 +184,7 @@
     <property name="srcpack.jarname" value="${modname}-src-${version.minecraft}-${version}-${version.branch}" />
     <zip destfile="${basedir}/target/${srcpack.jarname}.zip">
       <zipfileset dir="${basedir}" includes="LICENSE-fml.txt,difflist.txt,commands.patch,mcp_merge.cfg,mc_versions.cfg" prefix="fml" />
+      <zipfileset dir="${basedir}" includes="deobfuscation_data-${version.minecraft}.lzma" prefix="fml/common" />
       <zipfileset dir="${common.src.dir}" includes="**/*.java" prefix="fml/common" />
       <zipfileset dir="${client.src.dir}" includes="**/*.java" prefix="fml/client" />
       <zipfileset dir="${client.src.dir}" includes="mcp.png" prefix="fml/client" />
@@ -230,9 +231,6 @@
     </copy>
     <antcall target="writeversion" />
     <delete dir="build-tmp-deobf" />
-    <zip destfile="deobfuscation_data-${version.minecraft}.jar" basedir="${basedir}">
-      <include name="deobfuscation_data-${version.minecraft}.lzma"/>
-    </zip>
   </target>
 
   <target name="build" depends="buildenvsetup,merge-client,merge-common,build-deobf-data,build-universal,build-source-pack" />
