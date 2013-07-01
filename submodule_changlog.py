@@ -28,10 +28,15 @@ def main(options, args):
             start = line[19:]
         elif line[0:18] == '+Subproject commit':
             end = line[19:]
+            if end.endswith('-dirty'):
+                end = end[0:len(end)-6]
     
     if start == None or end == None:
         print('Could not extract start and end range')
         sys.exit(1)
+    
+    print('Start: %s' % start)
+    print('End: %s' % end)
     
     output = run_command(['git', 'log', '--reverse', '--pretty=oneline', '%s...%s' % (start, end)], './fml')
     print('Updated FML:')
