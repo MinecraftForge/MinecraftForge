@@ -5,7 +5,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="jars/libraries/org/ow2/asm/asm-all/4.1/asm-all-4.1.jar" sourcepath="jars/libraries/org/ow2/asm/asm-all/4.1/asm-all-4.1-sources.jar"/>
 	<classpathentry kind="lib" path="jars/libraries/net/minecraft/launchwrapper/1.3/launchwrapper-1.3.jar"/>
-	<classpathentry kind="lib" path="jars/versions/1.6/1.6.jar"/>
+	<classpathentry kind="lib" path="jars/versions/1.6.1/1.6.1.jar"/>
+	<classpathentry kind="lib" path="jars/libraries/lzma/lzma/0.0.1/lzma-0.0.1.jar"/>
 	<classpathentry kind="lib" path="jars/libraries/net/sf/jopt-simple/jopt-simple/4.5/jopt-simple-4.5.jar" sourcepath="jars/libraries/net/sf/jopt-simple/jopt-simple/4.5/jopt-simple-4.5-sources.jar"/>
 	<classpathentry kind="lib" path="jars/libraries/com/paulscode/codecjorbis/20101023/codecjorbis-20101023.jar"/>
 	<classpathentry kind="lib" path="jars/libraries/com/paulscode/codecwav/20101023/codecwav-20101023.jar"/>
@@ -21,17 +22,17 @@
 	<classpathentry kind="lib" path="jars/libraries/com/google/code/gson/gson/2.2.2/gson-2.2.2.jar" sourcepath="jars/libraries/com/google/code/gson/gson/2.2.2/gson-2.2.2-sources.jar"/>
 	<classpathentry kind="lib" path="jars/libraries/net/java/jinput/jinput/2.0.5/jinput-2.0.5.jar" sourcepath="jars/libraries/net/java/jinput/jinput/2.0.5/jinput-2.0.5-sources.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Minecraft/natives"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Minecraft/jars/versions/1.6.1/1.6.1-natives"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="jars/libraries/org/lwjgl/lwjgl/lwjgl/2.9.0/lwjgl-2.9.0.jar" sourcepath="jars/libraries/org/lwjgl/lwjgl/lwjgl/2.9.0/lwjgl-2.9.0-sources.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Minecraft/natives"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Minecraft/jars/versions/1.6.1/1.6.1-natives"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="jars/libraries/org/lwjgl/lwjgl/lwjgl_util/2.9.0/lwjgl_util-2.9.0.jar" sourcepath="jars/libraries/org/lwjgl/lwjgl/lwjgl_util/2.9.0/lwjgl_util-2.9.0-sources.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Minecraft/natives"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Minecraft/jars/versions/1.6.1/1.6.1-natives"/>
 		</attributes>
 	</classpathentry>
 </classpath>
