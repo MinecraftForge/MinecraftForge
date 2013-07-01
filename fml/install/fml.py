@@ -506,7 +506,7 @@ def copytree(src, dst, verbose=0, symlinks=False):
 #==========================================================================
 #                      MCP Related Functions
 #==========================================================================
-def download_mcp(mcp_dir, fml_dir, version=None):
+def download_mcp(fml_dir, mcp_dir, version=None):
     if os.path.isfile(os.path.join(mcp_dir, 'runtime', 'commands.py')):
         print 'MCP Detected already, not downloading'
         return True
@@ -517,6 +517,7 @@ def download_mcp(mcp_dir, fml_dir, version=None):
 
     mc_info = read_mc_versions(fml_dir, version=version)
     
+    print('Checking MCP zip (may take time to download)')
     if not download_file(mc_info['mcp_url'], mc_info['mcp_file'], mc_info['mcp_md5']):
         sys.exit(1)
         
@@ -1285,7 +1286,7 @@ def download_assets(mcp_dir):
     
     if failed:
         print('    Downloading assets failed, please review log for more details')
-    sys.exit(1)
+    
 #==========================================================================
 #                            Transformers
 #==========================================================================

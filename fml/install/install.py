@@ -1,10 +1,11 @@
 import os, os.path, sys
 from optparse import OptionParser
 
-from fml import setup_fml, finish_setup_fml, apply_fml_patches, setup_mcp, download_mcp
 
 def fml_main(fml_dir, mcp_dir, gen_conf=True, disable_patches=False, disable_at=False, disable_merge=False, enable_server=False, 
             disable_client=False, disable_rename=False, disable_assets=False, decompile=False):
+    sys.path.append(fml_dir)
+    from fml import download_mcp, setup_mcp, decompile_minecraft, apply_fml_patches, finish_setup_fml
     print '================ Forge ModLoader Setup Start ==================='
     download_mcp(fml_dir, mcp_dir)
     setup_mcp(fml_dir, mcp_dir, gen_conf)
@@ -30,7 +31,7 @@ if __name__ == '__main__':
     parser.add_option('-c', '--no-client', action="store_true", dest='no_client',     help='Disable decompilation of server',         default=False)
     parser.add_option('-e', '--no-merge',  action="store_true", dest='no_merge',      help='Disable merging server code into client', default=False)
     parser.add_option('-n', '--no-rename', action="store_true", dest='no_rename',     help='Disable running updatenames',             default=False)
-    parser.add_option('-a', '--no-assets', action="store_true", dest='no_assets',     help='Disable downloading of assets folder',    default=False)
+    parser.add_option(      '--no-assets', action="store_true", dest='no_assets',     help='Disable downloading of assets folder',    default=False)
     parser.add_option('-d', '--decompile', action="store_true", dest='decompile',     help='Decompile minecraft and apply patches',   default=True)
     options, _ = parser.parse_args()
     
@@ -51,5 +52,5 @@ if __name__ == '__main__':
     fml_main(fml_dir, mcp_dir, disable_patches=options.no_patch, 
         disable_at=options.no_access, disable_merge=options.no_merge,
         enable_server=options.enable_server, disable_client=options.no_client,
-        disable_rename=options.no_rename, disable_assets=options.assets,
+        disable_rename=options.no_rename, disable_assets=options.no_assets,
         decompile=options.decompile, gen_conf=False)

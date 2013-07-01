@@ -30,11 +30,6 @@
 			<type>2</type>
 			<locationURI>MCP_LOC/lib</locationURI>
 		</link>
-		<link>
-			<name>natives</name>
-			<type>2</type>
-			<locationURI>MCP_LOC/jars/libraries/natives</locationURI>
-		</link>
 	</linkedResources>
 	<filteredResources>
 		<filter>
@@ -71,15 +66,6 @@
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
 				<arguments>1.0-name-matches-false-false-*.jar</arguments>
-			</matcher>
-		</filter>
-		<filter>
-			<id>1307293480435</id>
-			<name>jars/bin/natives</name>
-			<type>6</type>
-			<matcher>
-				<id>org.eclipse.ui.ide.multiFilter</id>
-				<arguments>1.0-name-matches-false-false-*</arguments>
 			</matcher>
 		</filter>
 	</filteredResources>
