@@ -12,20 +12,14 @@
 
 package cpw.mods.fml.relauncher;
 
-import java.applet.Applet;
 import java.io.File;
-import java.lang.reflect.Method;
-import java.net.URLClassLoader;
 import java.util.logging.Level;
 
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
+import net.minecraft.launchwrapper.LaunchClassLoader;
 
 import com.google.common.base.Throwables;
 
 import cpw.mods.fml.common.launcher.FMLTweaker;
-
-import net.minecraft.launchwrapper.LaunchClassLoader;
 
 public class FMLLaunchHandler
 {
@@ -66,15 +60,8 @@ public class FMLLaunchHandler
         this.classLoader.addTransformerExclusion("cpw.mods.fml.common.patcher.");
     }
 
-    private void showWindow(boolean showIt)
-    {
-        if (CoreModManager.downloadMonitor != null) { return; }
-        CoreModManager.downloadMonitor = new DummyDownloader();
-    }
-
     private void setupClient()
     {
-        showWindow(true);
         FMLRelaunchLog.logFileNamePattern = "ForgeModLoader-client-%g.log";
         side = Side.CLIENT;
         setupHome();
@@ -82,7 +69,6 @@ public class FMLLaunchHandler
 
     private void setupServer()
     {
-        showWindow(false);
         FMLRelaunchLog.logFileNamePattern = "ForgeModLoader-server-%g.log";
         side = Side.SERVER;
         setupHome();

@@ -146,15 +146,25 @@
     </condition>
 
     <mkdir dir="${basedir}/target" />
-    <jar destfile="${basedir}/target/${universal.jarname}.zip" duplicate="preserve">
+    <path id="server.classpath">
+      <pathelement path="${mcp.home}/jars/libraries/net/minecraft/launchwrapper/1.3/launchwrapper-1.3.jar"/>
+      <pathelement path="${mcp.home}/jars/libraries/org/ow2/asm/asm-all/4.1/asm-all-4.1.jar"/>
+      <pathelement path="${mcp.home}/jars/libraries/lzma/lzma/0.0.1/lzma-0.0.1.jar"/>
+      <pathelement path="${mcp.home}/jars/libraries/net/sf/jopt-simple/jopt-simple/4.5/jopt-simple-4.5.jar"/>
+      <pathelement path="${mcp.home}/jars/minecraft_server.${version.minecraft}.jar"/>
+    </path>
+    <manifestclasspath property="server.jar.classpath" jarfile="${mcp.home}/jars/minecraft_server.jar">
+      <classpath refid="server.classpath" />
+    </manifestclasspath>
+    <jar destfile="${basedir}/target/${universal.jarname}.jar" duplicate="preserve">
       <manifest>
         <attribute name="Main-Class" value="cpw.mods.fml.relauncher.ServerLaunchWrapper" />
-        <attribute name="Class-Path" value="minecraft_server.jar:lib/guava-14.0-rc3.jar:lib/bcprov-jdk15on-148-src.zip:lib/asm-debug-all-4.1.jar:lib/scala-library.jar:lib/argo-3.2-src.jar" />
+        <attribute name="Class-Path" value="${server.jar.classpath}" />
       </manifest>
       <fileset dir="${client.mcp.obfoutput}" includes="**/*.class" excludes="*.class,net/minecraft/**/*.class" />
     </jar>
     <antcall target="signjar" />
-    <zip update="true" destfile="${basedir}/target/${universal.jarname}.zip">
+    <zip update="true" destfile="${basedir}/target/${universal.jarname}.jar">
       <fileset dir="${basedir}" includes="binpatches.pack.lzma,deobfuscation_data-${version.minecraft}.lzma"/>
       <fileset dir="${client.mcp.obfoutput}" includes="*.class" />
       <zipfileset dir="${basedir}" includes="fmlversion.properties" />
