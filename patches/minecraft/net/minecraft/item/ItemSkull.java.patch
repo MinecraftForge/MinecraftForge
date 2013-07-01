@@ -1,0 +1,29 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemSkull.java
++++ ../src_work/minecraft/net/minecraft/item/ItemSkull.java
+@@ -36,6 +36,7 @@
+      */
+     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+     {
++        final int clickedX = par4, clickedY = par5, clickedZ = par6;
+         if (par7 == 0)
+         {
+             return false;
+@@ -81,7 +82,17 @@
+             }
+             else
+             {
+-                par3World.setBlock(par4, par5, par6, Block.skull.blockID, par7, 2);
++                if (!par3World.isRemote)
++                {
++                    ItemBlock itemblock = (ItemBlock)Item.itemsList[Block.skull.blockID];
++                    if (!itemblock.placeBlockAt(par3World, par2EntityPlayer, null, par4, par5, par6, par7, Block.skull.blockID, par7, clickedX, clickedY, clickedZ))
++                    {
++                        return false;
++                    }
++
++                    par7 = par3World.getBlockMetadata(par4, par5, par6);
++                }
++                else par3World.setBlock(par4, par5, par6, Block.skull.blockID, par7, 2);
+                 int i1 = 0;
+ 
+                 if (par7 == 1)

@@ -15,7 +15,16 @@
  {
      /** Block ID of the crop this seed food should place. */
      private int cropId;
-@@ -31,8 +35,9 @@
+@@ -24,6 +28,8 @@
+      */
+     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+     {
++        final int clickedX = par4, clickedY = par5, clickedZ = par6;
++
+         if (par7 != 1)
+         {
+             return false;
+@@ -31,10 +37,22 @@
          else if (par2EntityPlayer.canPlayerEdit(par4, par5, par6, par7, par1ItemStack) && par2EntityPlayer.canPlayerEdit(par4, par5 + 1, par6, par7, par1ItemStack))
          {
              int i1 = par3World.getBlockId(par4, par5, par6);
@@ -24,9 +33,23 @@
 -            if (i1 == this.soilId && par3World.isAirBlock(par4, par5 + 1, par6))
 +            if (soil != null && soil.canSustainPlant(par3World, par4, par5, par6, ForgeDirection.UP, this) && par3World.isAirBlock(par4, par5 + 1, par6))
              {
-                 par3World.setBlock(par4, par5 + 1, par6, this.cropId);
+-                par3World.setBlock(par4, par5 + 1, par6, this.cropId);
++                if (!par3World.isRemote)
++                {
++                    ItemBlock itemblock = (ItemBlock)Item.itemsList[this.cropId];
++                    if (!itemblock.placeBlockAt(par3World, par2EntityPlayer, null, par4, par5 + 1, par6, par7, this.cropId, 0, clickedX, clickedY, clickedZ))
++                    {
++                        return false;
++                    }
++                }
++                else 
++                {
++                    par3World.setBlock(par4, par5 + 1, par6, this.cropId);
++                }
                  --par1ItemStack.stackSize;
-@@ -48,4 +53,22 @@
+                 return true;
+             }
+@@ -48,4 +66,22 @@
              return false;
          }
      }

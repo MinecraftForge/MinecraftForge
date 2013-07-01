@@ -10,7 +10,15 @@
  
  public class ItemHoe extends Item
  {
-@@ -32,10 +35,23 @@
+@@ -26,16 +29,31 @@
+      */
+     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+     {
++        final int clickedX = par4, clickedY = par5, clickedZ = par6;
++
+         if (!par2EntityPlayer.canPlayerEdit(par4, par5, par6, par7, par1ItemStack))
+         {
+             return false;
          }
          else
          {
@@ -36,3 +44,24 @@
              {
                  return false;
              }
+@@ -50,7 +68,19 @@
+                 }
+                 else
+                 {
+-                    par3World.setBlock(par4, par5, par6, block.blockID);
++                    // Hoes - blockface -1 for 'SELF'
++                    if (!par3World.isRemote)
++                    {
++                        ItemBlock itemblock = (ItemBlock)Item.itemsList[block.blockID];
++                        if (!itemblock.placeBlockAt(par3World, par2EntityPlayer, null, par4, par5, par6, par7, block.blockID, 0, clickedX, clickedY, clickedZ))
++                        {
++                            return false;
++                        }
++                    }
++                    else
++                    {
++                        par3World.setBlock(par4, par5, par6, block.blockID);
++                    }
+                     par1ItemStack.damageItem(1, par2EntityPlayer);
+                     return true;
+                 }
