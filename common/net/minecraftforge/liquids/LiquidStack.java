@@ -66,17 +66,6 @@ public class LiquidStack
         return nbt;
     }
 
-
-    /**
-     * NO-OP now. Use {@link #loadLiquidStackFromNBT(NBTTagCompound)} to get a new instance
-     *
-     * @param nbt
-     */
-    @Deprecated
-    public void readFromNBT(NBTTagCompound nbt)
-    {
-    }
-
     /**
      * @return A copy of this LiquidStack
      */
