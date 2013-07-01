@@ -1,6 +1,7 @@
 import os, os.path, sys, glob
 import shutil, fnmatch
-import logging, zipfile, re
+import logging, zipfile, re, subprocess
+from pprint import pformat
 from optparse import OptionParser
 from urllib2 import HTTPError
 
@@ -81,7 +82,9 @@ def main():
         error_level = e.code
     
     extract_fml_obfed(fml_dir, mcp_dir, reobf_dir, client_dir)
-    extract_paulscode(mcp_dir, client_dir)
+    #extract_paulscode(mcp_dir, client_dir)
+    gen_bin_patches(mcp_dir, os.path.join(forge_dir, 'fml'), build_num, client_dir)
+    
     version = load_version(build_num)
     version_forge = '%d.%d.%d.%d' % (version['major'], version['minor'], version['revision'], version['build'])
     version_mc = load_mc_version(fml_dir)
@@ -141,7 +144,8 @@ def main():
         'common/fml_marker.cfg',
         'common/fmlversion.properties',
         'common/mcpmod.info',
-        'client/mcp.png'
+        'client/mcp.png',
+        'common/deobfuscation_data-%s.lzma' % version_mc
     ]
     for file in FML_FILES:
         zip_add(os.path.join(fml_dir, file))
@@ -321,5 +325,37 @@ def zip_folder_filter(path, key, zip, filter):
                 print file_key
                 zip.write(file_path, file_key)
 
+def gen_bin_patches(mcp_dir, fml_dir, build_num, client_dir):
+    print('Creating Binary patches')
+    os.environ['WORKSPACE'] = os.path.join(mcp_dir, '..')
+    os.environ['BUILD_NUMBER'] = str(build_num)
+
+    BUILD = ['ant', 'makebinpatches']
+    if sys.platform.startswith('win'):
+        BUILD = ['cmd', '/C'] + BUILD
+    
+    if not run_command(BUILD, cwd=fml_dir):
+        print('Could not crate binary patches')
+        sys.exit(1)
+    
+    fml_lzma = os.path.join(fml_dir, 'binpatches.pack.lzma')
+    obf_lzma = os.path.join(client_dir, 'binpatches.pack.lzma')
+    shutil.move(fml_lzma, obf_lzma)
+
+def run_command(command, cwd='.', verbose=True):
+    print('Running command: ')
+    print(pformat(command))
+        
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, cwd=cwd)
+    while process.poll() is None:
+        line = process.stdout.readline()
+        if line:
+            line = line.rstrip()
+            print(line)
+    if process.returncode:
+        print "failed: {0}".format(process.returncode)
+        return False
+    return True   
+        
 if __name__ == '__main__':
     main()
