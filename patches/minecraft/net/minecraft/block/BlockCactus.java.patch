@@ -23,8 +23,8 @@
      }
  
 @@ -182,4 +186,22 @@
-         this.cactusTopIcon = par1IconRegister.registerIcon("cactus_top");
-         this.cactusBottomIcon = par1IconRegister.registerIcon("cactus_bottom");
+         this.cactusTopIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_top");
+         this.cactusBottomIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_bottom");
      }
 +
 +    @Override

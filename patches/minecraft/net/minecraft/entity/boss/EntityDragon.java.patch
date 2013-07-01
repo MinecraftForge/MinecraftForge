@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/entity/boss/EntityDragon.java
 +++ ../src_work/minecraft/net/minecraft/entity/boss/EntityDragon.java
-@@ -531,10 +531,11 @@
+@@ -527,10 +527,11 @@
                  for (int i2 = k; i2 <= j1; ++i2)
                  {
                      int j2 = this.worldObj.getBlockId(k1, l1, i2);

@@ -1,12 +1,12 @@
 package net.minecraftforge.event.entity.living;
 
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 
 public class LivingSetAttackTargetEvent extends LivingEvent
 {
 
-    public final EntityLiving target;
-    public LivingSetAttackTargetEvent(EntityLiving entity, EntityLiving target)
+    public final EntityLivingBase target;
+    public LivingSetAttackTargetEvent(EntityLivingBase entity, EntityLivingBase target)
     {
         super(entity);
         this.target = target;
