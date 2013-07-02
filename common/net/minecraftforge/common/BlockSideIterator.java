@@ -1,5 +1,11 @@
 package net.minecraftforge.common;
 
+/**
+ * 
+ * @author fuj1n
+ *
+ */
+
 public class BlockSideIterator{
 	
 	private final int x, y, z;
