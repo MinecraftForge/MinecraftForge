@@ -626,6 +626,7 @@ public class ModLoader
      *
      * @param block
      */
+    @SuppressWarnings("deprecation")
     public static void registerBlock(Block block)
     {
         GameRegistry.registerBlock(block);
@@ -637,6 +638,7 @@ public class ModLoader
      * @param block
      * @param itemclass
      */
+    @SuppressWarnings("deprecation")
     public static void registerBlock(Block block, Class<? extends ItemBlock> itemclass)
     {
         GameRegistry.registerBlock(block, itemclass);
