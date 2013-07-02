@@ -20,6 +20,7 @@ import java.lang.annotation.Target;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.network.packet.Packet250CustomPayload;
 
+import cpw.mods.fml.common.event.FMLEvent;
 import cpw.mods.fml.common.event.FMLFingerprintViolationEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -67,6 +68,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
  *      {
  *          // Do stuff in pre-init phase (read config, create blocks and items, register them)
  *      }
+ * }
  * }
  * </pre>
  *

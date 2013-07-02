@@ -40,6 +40,7 @@ import java.lang.annotation.Target;
  *  public class ClientProxy extends CommonProxy {
  *      // Override common stuff with client specific stuff here
  *  }
+ * }
  * </pre>
  * @author cpw
  *
