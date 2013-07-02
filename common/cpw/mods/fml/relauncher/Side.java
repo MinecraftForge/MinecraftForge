@@ -13,7 +13,17 @@
 package cpw.mods.fml.relauncher;
 
 public enum Side {
-    CLIENT, SERVER;
+
+    /**
+     * The client side. Specifically, an environment where rendering capability exists.
+     * Usually in the game client.
+     */
+    CLIENT,
+    /**
+     * The server side. Specifically, an environment where NO rendering capability exists.
+     * Usually on the dedicated server.
+     */
+    SERVER;
 
     /**
      * @return If this is the server environment

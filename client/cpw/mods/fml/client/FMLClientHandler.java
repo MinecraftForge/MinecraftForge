@@ -83,7 +83,7 @@ import cpw.mods.fml.relauncher.Side;
 /**
  * Handles primary communication from hooked code into the system
  *
- * The FML entry point is {@link #beginMinecraftLoading(Minecraft)} called from
+ * The FML entry point is {@link #beginMinecraftLoading(Minecraft, List)} called from
  * {@link Minecraft}
  *
  * Obfuscated code should focus on this class and other members of the "server"
@@ -137,7 +137,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      * Called to start the whole game off
      *
      * @param minecraft The minecraft instance being launched
-     * @param field_110449_ao
+     * @param resourcePackList The resource pack list we will populate with mods
      */
     public void beginMinecraftLoading(Minecraft minecraft, List resourcePackList)
     {

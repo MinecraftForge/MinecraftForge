@@ -1,4 +1,4 @@
-/* 
+/*
  *
  * Copyright (c) 2001 Torgeir Veimo
  *
@@ -31,26 +31,26 @@ import java.io.IOException;
  * Interface for DIFF writers.
  */
 public interface DiffWriter extends Closeable {
-    
+
     /**
      * Add a GDIFF copy instruction.
      */
     public void addCopy(long offset, int length) throws IOException;
-    
+
     /**
      * Add a GDIFF data instruction.
      * Implementors should buffer the data.
      */
 	public void addData(byte b) throws IOException;
-	
+
 	/**
 	 * Flushes to output, e.g. any data added.
 	 */
     public void flush() throws IOException;
-    
+
     /**
      * Closes this stream.
-     * Note that {@link Diff} will invoke this method at the end.
+     * Note that {@link DiffWriter} will invoke this method at the end.
      */
     public void close() throws IOException;
 }

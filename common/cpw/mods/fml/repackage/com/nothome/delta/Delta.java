@@ -62,12 +62,12 @@ import java.nio.channels.ReadableByteChannel;
  * Newer versions may eventually support paging in/out of checksums.
  */
 public class Delta {
-    
+
     /**
      * Debug flag.
      */
     final static boolean debug = false;
-    
+
     /**
      * Default size of 16.
      * For "Lorem ipsum" text files (see the tests) the ideal size is about 14.
@@ -76,16 +76,16 @@ public class Delta {
      * Use a size like 64 or 128 for large files.
      */
     public static final int DEFAULT_CHUNK_SIZE = 1<<4;
-    
+
     /**
      * Chunk Size.
      */
     private int S;
-    
+
     private SourceState source;
     private TargetState target;
     private DiffWriter output;
-    
+
     /**
      * Constructs a new Delta.
      * In the future, additional constructor arguments will set the algorithm details.
@@ -93,12 +93,12 @@ public class Delta {
     public Delta() {
         setChunkSize(DEFAULT_CHUNK_SIZE);
     }
-    
+
     /**
      * Sets the chunk size used.
      * Larger chunks are faster and use less memory, but create larger patches
      * as well.
-     * 
+     *
      * @param size
      */
     public void setChunkSize(int size) {
@@ -106,17 +106,17 @@ public class Delta {
             throw new IllegalArgumentException("Invalid size");
         S = size;
     }
-    
+
     /**
      * Compares the source bytes with target bytes, writing to output.
      */
     public void compute(byte source[], byte target[], OutputStream output)
     throws IOException {
-        compute(new ByteBufferSeekableSource(source), 
+        compute(new ByteBufferSeekableSource(source),
                 new ByteArrayInputStream(target),
                 new GDiffWriter(output));
     }
-    
+
     /**
      * Compares the source bytes with target bytes, returning output.
      */
@@ -126,20 +126,20 @@ public class Delta {
         compute(source, target, os);
         return os.toByteArray();
     }
-    
+
     /**
      * Compares the source bytes with target input, writing to output.
      */
     public void compute(byte[] sourceBytes, InputStream inputStream,
             DiffWriter diffWriter) throws IOException
     {
-        compute(new ByteBufferSeekableSource(sourceBytes), 
+        compute(new ByteBufferSeekableSource(sourceBytes),
                 inputStream, diffWriter);
     }
-    
+
     /**
      * Compares the source file with a target file, writing to output.
-     * 
+     *
      * @param output will be closed
      */
     public void compute(File sourceFile, File targetFile, DiffWriter output)
@@ -153,25 +153,25 @@ public class Delta {
             is.close();
         }
     }
-    
+
     /**
      * Compares the source with a target, writing to output.
-     * 
+     *
      * @param output will be closed
      */
     public void compute(SeekableSource seekSource, InputStream targetIS, DiffWriter output)
     throws IOException {
-        
+
         if (debug) {
             debug("using match length S = " + S);
         }
-        
+
         source = new SourceState(seekSource);
         target = new TargetState(targetIS);
         this.output = output;
         if (debug)
             debug("checksums " + source.checksum);
-        
+
         while (!target.eof()) {
             debug("!target.eof()");
             int index = target.find(source);
@@ -196,7 +196,7 @@ public class Delta {
         }
         output.close();
     }
-    
+
     private void addData() throws IOException {
         int i = target.read();
         if (debug)
@@ -205,12 +205,12 @@ public class Delta {
             return;
         output.addData((byte)i);
     }
-    
+
     class SourceState {
 
         private Checksum checksum;
         private SeekableSource source;
-        
+
         public SourceState(SeekableSource source) throws IOException {
             checksum = new Checksum(source, S);
             this.source = source;
@@ -232,23 +232,23 @@ public class Delta {
                 " source=" + this.source +
                 "";
         }
-        
+
     }
-        
+
     class TargetState {
-        
+
         private ReadableByteChannel c;
         private ByteBuffer tbuf = ByteBuffer.allocate(blocksize());
         private ByteBuffer sbuf = ByteBuffer.allocate(blocksize());
         private long hash;
         private boolean hashReset = true;
         private boolean eof;
-        
+
         TargetState(InputStream targetIS) throws IOException {
             c = Channels.newChannel(targetIS);
             tbuf.limit(0);
         }
-        
+
         private int blocksize() {
             return Math.min(1024 * 16, S * 4);
         }
@@ -362,13 +362,13 @@ public class Delta {
                 " eof=" + this.eof +
                 "]";
         }
-        
+
         private String dump() { return dump(tbuf); }
-        
+
         private String dump(ByteBuffer bb) {
             return getTextDump(bb);
         }
-        
+
         private void append(StringBuffer sb, int value) {
             char b1 = (char)((value >> 4) & 0x0F);
             char b2 = (char)((value) & 0x0F);
@@ -392,7 +392,7 @@ public class Delta {
         }
 
     }
-    
+
     /**
      * Creates a patch using file names.
      */
@@ -426,6 +426,7 @@ public class Delta {
                     "source or target is too large, max length is "
                     + Integer.MAX_VALUE);
             System.err.println("aborting..");
+            output.close();
             return;
         }
 
@@ -437,7 +438,7 @@ public class Delta {
         if (debug) //gls031504a
             System.out.println("finished generating delta");
     }
-    
+
     private void debug(String s) {
         if (debug)
             System.err.println(s);

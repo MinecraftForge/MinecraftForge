@@ -52,13 +52,14 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 
 /**
- * This class patches an input file with a GDIFF patch fil�e.
+ * This class patches an input file with a GDIFF patch file.
  *
  * The patch file follows the GDIFF file specification available at
- * {@link http://www.w3.org/TR/NOTE-gdiff-19970901.html}.
+ *
+ * <a href="http://www.w3.org/TR/NOTE-gdiff-19970901.html">http://www.w3.org/TR/NOTE-gdiff-19970901.html</a>.
  */
 public class GDiffPatcher {
-    
+
     private ByteBuffer buf = ByteBuffer.allocate(1024);
     private byte buf2[] = buf.array();
 
@@ -67,14 +68,14 @@ public class GDiffPatcher {
      */
     public GDiffPatcher() {
     }
-    
+
     /**
      * Patches to an output file.
      */
     public void patch(File sourceFile, File patchFile, File outputFile)
 		throws IOException
 	{
-        RandomAccessFileSeekableSource source =new RandomAccessFileSeekableSource(new RandomAccessFile(sourceFile, "r")); 
+        RandomAccessFileSeekableSource source =new RandomAccessFileSeekableSource(new RandomAccessFile(sourceFile, "r"));
         InputStream patch = new FileInputStream(patchFile);
         OutputStream output = new FileOutputStream(outputFile);
         try {
@@ -87,14 +88,14 @@ public class GDiffPatcher {
             output.close();
         }
     }
-    
+
     /**
      * Patches to an output stream.
      */
     public void patch(byte[] source, InputStream patch, OutputStream output) throws IOException {
         patch(new ByteBufferSeekableSource(source), patch, output);
     }
-    
+
     /**
      * Patches in memory, returning the patch result.
      */
@@ -103,12 +104,12 @@ public class GDiffPatcher {
         patch(source, new ByteArrayInputStream(patch), os);
         return os.toByteArray();
     }
-    
+
     /**
      * Patches to an output stream.
      */
     public void patch(SeekableSource source, InputStream patch, OutputStream out) throws IOException {
-        
+
         DataOutputStream outOS = new DataOutputStream(out);
         DataInputStream patchIS = new DataInputStream(patch);
 
@@ -128,12 +129,12 @@ public class GDiffPatcher {
                 break;
             int length;
             int offset;
-            
+
             if (command <= DATA_MAX) {
                 append(command, patchIS, outOS);
                 continue;
             }
-            
+
             switch (command) {
             case DATA_USHORT: // ushort, n bytes following; append
                 length = patchIS.readUnsignedShort();
@@ -178,7 +179,7 @@ public class GDiffPatcher {
                 length = patchIS.readInt();
                 copy(loffset, length, source, outOS);
                 break;
-            default: 
+            default:
                 throw new IllegalStateException("command " + command);
             }
         }
