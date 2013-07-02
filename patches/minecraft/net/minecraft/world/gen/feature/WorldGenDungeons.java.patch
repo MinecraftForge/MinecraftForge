@@ -9,7 +9,12 @@
  
  public class WorldGenDungeons extends WorldGenerator
  {
-@@ -127,7 +129,8 @@
+@@ -122,12 +124,12 @@
+                                 if (k2 == 1)
+                                 {
+                                     par1World.setBlock(i2, par4, j2, Block.chest.blockID, 0, 2);
+-                                    WeightedRandomChestContent[] aweightedrandomchestcontent = WeightedRandomChestContent.func_92080_a(field_111189_a, new WeightedRandomChestContent[] {Item.enchantedBook.func_92114_b(par2Random)});
+                                     TileEntityChest tileentitychest = (TileEntityChest)par1World.getBlockTileEntity(i2, par4, j2);
  
                                      if (tileentitychest != null)
                                      {
@@ -19,7 +24,7 @@
                                      }
  
                                      break label101;
-@@ -169,7 +172,6 @@
+@@ -169,7 +171,6 @@
       */
      private String pickMobSpawner(Random par1Random)
      {
