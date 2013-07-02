@@ -191,6 +191,33 @@
     </zip>
   </target>
 
+  <target name="build-installer" depends="build-universal">
+    <condition property="version.fullname" value="${version.minecraft}-${version}" else="${version.minecraft}-${version}-${version.branch}">
+      <equals arg1="${version.branch}" arg2="master" />
+    </condition>
+    <tstamp>
+      <format property="current.time" pattern="yyyy-MM-dd'T'HH:mm:ssZ" />
+    </tstamp>
+  
+    <delete file="${basedir}/installer_base.jar" />
+    <delete file="${basedir}/install_profile.json" />
+    <get src="http://files.minecraftforge.net/installer/forge-installer-1.0.jar" dest="${basedir}/installer_base.jar" />
+    <copy file="${basedir}/jsons/${version.minecraft}-rel.json" tofile="${basedir}/install_profile.json" />
+    <copy file="${basedir}/installer_base.jar" tofile="${basedir}/target/${modname}-installer-${version.fullname}.jar" />
+    <replace file="${basedir}/install_profile.json">
+      <replaceFilter token="@version@" value="${version}" />
+      <replaceFilter token="@minecraft_version@" value="${version.minecraft}" />
+      <replaceFilter token="@timestamp@" value="${current.time}" />
+      <replaceFilter token="@universal_jar@" value="${modname}-universal-${version.fullname}.jar" />
+    </replace>
+    <jar destfile="${basedir}/target/${modname}-installer-${version.fullname}.jar" update="true">
+      <zipfileset dir="${basedir}" includes="install_profile.json" />
+      <zipfileset dir="${basedir}/jsons" includes="big_logo.png" />
+      <zipfileset dir="${basedir}/target" includes="${modname}-universal-${version.fullname}.jar" />
+    </jar>
+    <delete file="${basedir}/install_profile.json" />
+  </target>
+
   <target name="build-source-pack" depends="makeversion">
     <property name="srcpack.jarname" value="${modname}-src-${version.minecraft}-${version}-${version.branch}" />
     <zip destfile="${basedir}/target/${srcpack.jarname}.zip">
@@ -245,7 +272,7 @@
     <delete dir="build-tmp-deobf" />
   </target>
 
-  <target name="build" depends="buildenvsetup,build-deobf-data,merge-client,merge-common,build-universal,build-source-pack" />
+  <target name="build" depends="buildenvsetup,build-deobf-data,merge-client,merge-common,build-universal,build-installer,build-source-pack" />
 
   <target name="jenkinsbuild" depends="buildenvsetup,jenkinsfmldecompile,patch,build" />
 

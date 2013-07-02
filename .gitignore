@@ -16,3 +16,4 @@ fmlbranding.properties
 /mcp_data/
 /map_client.txt
 /*.lzma
+/installer_base.jar
