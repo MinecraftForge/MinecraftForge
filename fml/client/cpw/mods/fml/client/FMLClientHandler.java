@@ -13,6 +13,7 @@
 package cpw.mods.fml.client;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -169,6 +170,8 @@ public class FMLClientHandler implements IFMLSidedHandler
         try
         {
             Loader.instance().loadMods();
+            // Reload resources
+            client.func_110436_a();
         }
         catch (WrongMinecraftVersionException wrong)
         {
@@ -563,14 +566,24 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public void addModAsResource(ModContainer container)
     {
-        File modSource = container.getSource();
-        if (modSource.isFile())
+        Class<?> resourcePackType = container.getCustomResourcePackClass();
+        if (resourcePackType != null)
         {
-            resourcePackList.add(new FileResourcePack(modSource));
-        }
-        else if (modSource.isDirectory())
-        {
-            resourcePackList.add(new FolderResourcePack(modSource));
+            try
+            {
+                ResourcePack pack = (ResourcePack) resourcePackType.getConstructor(ModContainer.class).newInstance(container);
+                resourcePackList.add(pack);
+            }
+            catch (NoSuchMethodException e)
+            {
+                FMLLog.log(Level.SEVERE, "The container %s (type %s) returned an invalid class for it's resource pack.", container.getName(), container.getClass().getName());
+                return;
+            }
+            catch (Exception e)
+            {
+                FMLLog.log(Level.SEVERE, e, "An unexpected exception occurred constructing the custom resource pack for %s", container.getName());
+                throw Throwables.propagate(e);
+            }
         }
     }
 }
