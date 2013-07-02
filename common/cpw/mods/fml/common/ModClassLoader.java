@@ -82,8 +82,21 @@ public class ModClassLoader extends URLClassLoader
 
     public Class<? extends BaseModProxy> loadBaseModClass(String modClazzName) throws Exception
     {
-        AccessTransformer transformer = (AccessTransformer)mainClassLoader.getTransformers().get(0);
-        transformer.ensurePublicAccessFor(modClazzName);
+        AccessTransformer accessTransformer = null;
+        for (IClassTransformer transformer : mainClassLoader.getTransformers())
+        {
+            if (transformer instanceof AccessTransformer)
+            {
+                accessTransformer = (AccessTransformer) transformer;
+                break;
+            }
+        }
+        if (accessTransformer == null)
+        {
+            FMLLog.log(Level.SEVERE, "No access transformer found");
+            throw new LoaderException();
+        }
+        accessTransformer.ensurePublicAccessFor(modClazzName);
         return (Class<? extends BaseModProxy>) Class.forName(modClazzName, true, this);
     }
 }
