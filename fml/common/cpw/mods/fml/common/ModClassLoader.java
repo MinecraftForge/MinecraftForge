@@ -20,6 +20,7 @@ import java.net.URLClassLoader;
 import java.util.List;
 import java.util.logging.Level;
 
+import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 
 import com.google.common.collect.ImmutableList;
