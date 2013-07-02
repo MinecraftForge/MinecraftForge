@@ -20,13 +20,13 @@
     {
       "name": "org.scala-lang:scala-library:2.10.2",
       "children" : ["sources"],
-      "url" : "http://repo.maven.apache.org/maven2"
+      "url" : "http://repo.maven.apache.org/maven2",
       "comment" : "Important for FML, we add this"
     },
     {
       "name": "org.scala-lang:scala-compiler:2.10.2",
       "children" : ["sources"],
-      "url" : "http://repo.maven.apache.org/maven2"
+      "url" : "http://repo.maven.apache.org/maven2",
       "comment" : "Important for FML, we add this"
     },
     {
