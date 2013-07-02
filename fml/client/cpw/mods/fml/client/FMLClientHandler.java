@@ -12,6 +12,7 @@
  */
 package cpw.mods.fml.client;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,6 +29,9 @@ import net.minecraft.client.multiplayer.NetClientHandler;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.resources.FileResourcePack;
+import net.minecraft.client.resources.FolderResourcePack;
+import net.minecraft.client.resources.ResourcePack;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -126,14 +130,18 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private boolean serverShouldBeKilledQuietly;
 
+    private List<ResourcePack> resourcePackList;
+
     /**
      * Called to start the whole game off
      *
      * @param minecraft The minecraft instance being launched
+     * @param field_110449_ao
      */
-    public void beginMinecraftLoading(Minecraft minecraft)
+    public void beginMinecraftLoading(Minecraft minecraft, List resourcePackList)
     {
         client = minecraft;
+        this.resourcePackList = resourcePackList;
         if (minecraft.func_71355_q())
         {
             FMLLog.severe("DEMO MODE DETECTED, FML will not work. Finishing now.");
@@ -549,5 +557,20 @@ public class FMLClientHandler implements IFMLSidedHandler
     public boolean isGUIOpen(Class<? extends GuiScreen> gui)
     {
         return client.field_71462_r != null && client.field_71462_r.getClass().equals(gui);
+    }
+
+
+    @Override
+    public void addModAsResource(ModContainer container)
+    {
+        File modSource = container.getSource();
+        if (modSource.isFile())
+        {
+            resourcePackList.add(new FileResourcePack(modSource));
+        }
+        else if (modSource.isDirectory())
+        {
+            resourcePackList.add(new FolderResourcePack(modSource));
+        }
     }
 }

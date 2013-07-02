@@ -84,6 +84,7 @@ public class LoadController
                 activeModList.add(mod);
                 modStates.put(mod.getModId(), ModState.UNLOADED);
                 eventBus.put(mod.getModId(), bus);
+                FMLCommonHandler.instance().addModToResourcePack(mod);
             }
             else
             {
