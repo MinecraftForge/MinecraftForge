@@ -46,7 +46,7 @@ public class EnumHelper
         {EnumMovingObjectType.class},
         {EnumSkyBlock.class, int.class},
         {EnumStatus.class},
-        {EnumToolMaterial.class, int.class, int.class, float.class, int.class, int.class}
+        {EnumToolMaterial.class, int.class, int.class, float.class, float.class, int.class}
     }; 
 
     public static EnumAction addAction(String name)
@@ -102,7 +102,7 @@ public class EnumHelper
     {
         return addEnum(EnumStatus.class, name);
     }
-    public static EnumToolMaterial addToolMaterial(String name, int harvestLevel, int maxUses, float efficiency, int damage, int enchantability)
+    public static EnumToolMaterial addToolMaterial(String name, int harvestLevel, int maxUses, float efficiency, float damage, int enchantability)
     {
         return addEnum(EnumToolMaterial.class, name, harvestLevel, maxUses, efficiency, damage, enchantability);
     }
