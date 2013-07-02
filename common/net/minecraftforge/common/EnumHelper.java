@@ -59,7 +59,7 @@ public class EnumHelper
     }
     public static EnumArt addArt(String name, String tile, int sizeX, int sizeY, int offsetX, int offsetY)
     {
-        return addEnum(EnumArt.class, name, tile, sizeX, sizeY, offsetX, offsetY);
+        return addEnum(EnumArt.class, toname, tile, sizeX, sizeY, offsetX, offsetY);
     }
     public static EnumCreatureAttribute addCreatureAttribute(String name)
     {
