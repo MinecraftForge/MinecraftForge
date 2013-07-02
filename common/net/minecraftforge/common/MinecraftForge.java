@@ -187,7 +187,9 @@ public class MinecraftForge
 
        Block filler = new Block(0, Material.air)
        {
-           @SideOnly(Side.CLIENT) public void func_94332_a(IconRegister register){}
+           @SideOnly(Side.CLIENT)
+           @Override
+           public void registerIcons(IconRegister register){}
        };
        Block.blocksList[0] = null;
        Block.opaqueCubeLookup[0] = false;
