@@ -49,7 +49,6 @@ public class CoreModManager
     private static List<String> loadedLibraries = new ArrayList<String>();
     private static Map<IFMLLoadingPlugin, File> pluginLocations;
     private static List<IFMLLoadingPlugin> loadPlugins;
-    private static List<ILibrarySet> libraries;
     private static boolean deobfuscatedEnvironment;
 
     public static void handleLaunch(File mcDir, LaunchClassLoader classLoader)
@@ -117,13 +116,6 @@ public class CoreModManager
                 }
                 IFMLLoadingPlugin plugin = (IFMLLoadingPlugin) coreModClass.newInstance();
                 loadPlugins.add(plugin);
-                if (plugin.getLibraryRequestClass()!=null)
-                {
-                    for (String libName : plugin.getLibraryRequestClass())
-                    {
-                        libraries.add((ILibrarySet) Class.forName(libName, true, classLoader).newInstance());
-                    }
-                }
             }
             catch (Throwable e)
             {
@@ -131,7 +123,7 @@ public class CoreModManager
                 throw new RuntimeException(e);
             }
         }
-        discoverCoreMods(mcDir, classLoader, loadPlugins, libraries);
+        discoverCoreMods(mcDir, classLoader, loadPlugins);
 
         for (IFMLLoadingPlugin plug : loadPlugins)
         {
@@ -204,7 +196,7 @@ public class CoreModManager
         }
     }
 
-    private static void discoverCoreMods(File mcDir, LaunchClassLoader classLoader, List<IFMLLoadingPlugin> loadPlugins, List<ILibrarySet> libraries)
+    private static void discoverCoreMods(File mcDir, LaunchClassLoader classLoader, List<IFMLLoadingPlugin> loadPlugins)
     {
         FMLRelaunchLog.fine("Discovering coremods");
         File coreMods = setupCoreModDir(mcDir);
@@ -308,13 +300,6 @@ public class CoreModManager
                 IFMLLoadingPlugin plugin = (IFMLLoadingPlugin) coreModClass.newInstance();
                 loadPlugins.add(plugin);
                 pluginLocations .put(plugin, coreMod);
-                if (plugin.getLibraryRequestClass()!=null)
-                {
-                    for (String libName : plugin.getLibraryRequestClass())
-                    {
-                        libraries.add((ILibrarySet) Class.forName(libName, true, classLoader).newInstance());
-                    }
-                }
                 FMLRelaunchLog.fine("Loaded coremod %s", coreMod.getName());
             }
             catch (ClassNotFoundException cnfe)

@@ -16,10 +16,11 @@ import java.util.Map;
 
 public class FMLCorePlugin implements IFMLLoadingPlugin
 {
+    @SuppressWarnings("deprecation")
     @Override
     public String[] getLibraryRequestClass()
     {
-        return new String[] {"cpw.mods.fml.relauncher.CoreFMLLibraries"};
+        return null;
     }
 
     @Override
