@@ -1,9 +1,11 @@
 import os, os.path, sys, glob
-import shutil, fnmatch
+import shutil, fnmatch, time
 import logging, zipfile, re, subprocess
 from pprint import pformat
 from optparse import OptionParser
 from urllib2 import HTTPError
+from contextlib import closing
+from datetime import datetime
 
 forge_dir = os.path.dirname(os.path.abspath(__file__))
 from forge import reset_logger, load_version, zip_folder, zip_create, inject_version, build_forge_dev
@@ -94,7 +96,7 @@ def main():
     if not branch == "":
         version_str = '%s-%s' % (version_str, branch)
         
-    out_folder = os.path.join(forge_dir, 'forge-%s' % version_str)
+    out_folder = os.path.join(forge_dir, 'target')
     if os.path.isdir(out_folder):
         shutil.rmtree(out_folder)
         
@@ -102,7 +104,7 @@ def main():
     
 #    options.skip_changelog = True #Disable till jenkins fixes its shit
     if not options.skip_changelog:
-        changelog_file = 'forge-%s/minecraftforge-changelog-%s.txt' % (version_str, version_str)
+        changelog_file = 'target/minecraftforge-changelog-%s.txt' % (version_str)
         try:
             make_changelog("http://jenkins.minecraftforge.net:81/job/minecraftforge/", build_num, changelog_file, version_str)
         except HTTPError, e:
@@ -120,9 +122,9 @@ def main():
         fh.write('forge.build.number=%d\n' % version['build'])
     
     if not options.sign_jar is None:
-        sign_jar(forge_dir, options.sign_jar, client_dir, 'minecraftforge-universal-%s.zip' % version_str)
+        sign_jar(forge_dir, options.sign_jar, client_dir, 'minecraftforge-universal-%s.jar' % version_str)
     else:
-        zip_start('minecraftforge-universal-%s.zip' % version_str)
+        zip_start('minecraftforge-universal-%s.jar' % version_str)
         zip_folder(client_dir, '', zip)
         zip_add('MANIFEST.MF','META-INF/MANIFEST.MF')
     zip_add('client/forge_logo.png')
@@ -152,6 +154,8 @@ def main():
     
     zip_end()
     
+    build_installer(forge_dir, version_str, version_forge, version_mc, out_folder)
+    
     inject_version(os.path.join(forge_dir, 'common/net/minecraftforge/common/ForgeVersion.java'.replace('/', os.sep)), build_num)
     zip_start('minecraftforge-src-%s.zip' % version_str, 'forge')
     zip_add('client',  'client')
@@ -173,6 +177,49 @@ def main():
     print '=================================== Release Finished %d =================================' % error_level
     sys.exit(error_level)
     
+def build_installer(forge_dir, version_str, version_forge, version_minecraft, out_folder):
+    file_name = 'minecraftforge-installer-%s.jar' % version_str
+    universal_name = 'minecraftforge-universal-%s.jar' % version_str
+    
+    def getTZ():
+        ret = '-'
+        t = time.timezone
+        print t
+        if (t < 0):
+            ret = '+'
+            t *= -1
+        
+        h = int(t/60/60)
+        t -= (h*60*60)
+        m = int(t/60)
+        return '%s%02d%02d' % (ret, h, m)
+    timestamp = datetime.now().replace(microsecond=0).isoformat() + getTZ()
+    
+    print '================== %s Start ==================' % file_name
+    with closing(zipfile.ZipFile(os.path.join(forge_dir, 'fml', 'installer_base.jar'), mode='a')) as zip_in:
+        with closing(zipfile.ZipFile(os.path.join(out_folder, file_name), 'w', zipfile.ZIP_DEFLATED)) as zip_out:
+            # Copy everything over
+            for i in zip_in.filelist:
+                if not i.filename in ['install_profile.json', 'big_logo.png']:
+                    print('    %s' % i.filename)
+                    zip_out.writestr(i.filename, zip_in.read(i.filename))
+            print('    %s' % universal_name)
+            zip_out.write(os.path.join(out_folder, universal_name), universal_name)
+            print('    big_logo.png')
+            zip_out.write(os.path.join(forge_dir, 'client', 'forge_logo.png'), 'big_logo.png')
+            with closing(open(os.path.join(forge_dir, 'fml', 'jsons', '%s-rel.json' % version_minecraft), 'r')) as fh:
+                data = fh.read()
+                data = data.replace('@version@', version_forge)
+                data = data.replace('@timestamp@', timestamp)
+                data = data.replace('@minecraft_version@', version_minecraft)
+                data = data.replace('@universal_jar@', universal_name)
+                data = data.replace('FML', 'Forge')
+                data = data.replace('cpw.mods:fml:', 'net.minecraftforge:minecraftforge:')
+                print('    install_profile.json')
+                zip_out.writestr('install_profile.json', data)
+            
+    print '================== %s Finished ==================' % file_name
+    
 def zip_add(file, key=None):
     if key == None:
         key = os.path.basename(file)
@@ -193,7 +240,7 @@ def zip_start(name, base=None):
     zip_name = name
     
     print '================== %s Start ==================' % zip_name
-    zip_file = os.path.join(forge_dir, 'forge-%s' % version_str, name)
+    zip_file = os.path.join(forge_dir, 'target', name)
     zip = zipfile.ZipFile(zip_file, 'w', zipfile.ZIP_DEFLATED)
     zip_base = base
     
