@@ -147,4 +147,22 @@ public class BlockSideIterator{
 		}
 		return -1;
 	}
+	
+	public static ForgeDirection convertIntToForgeDir(int dir){
+		switch(dir){
+		case 0:
+			return ForgeDirection.DOWN;
+		case 1:
+			return ForgeDirection.UP;
+		case 2:
+			return ForgeDirection.WEST;
+		case 3:
+			return ForgeDirection.EAST;
+		case 4:
+			return ForgeDirection.SOUTH;
+		case 5:
+			return ForgeDirection.NORTH;
+		}
+		return ForgeDirection.UNKNOWN;
+	}
 }
