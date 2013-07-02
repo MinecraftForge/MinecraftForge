@@ -25,7 +25,7 @@
          this.func_71357_I();
          this.field_71466_p = new FontRenderer(this.field_71474_y, new ResourceLocation("textures/font/ascii.png"), this.field_71446_o, false);
  
-+        FMLClientHandler.instance().beginMinecraftLoading(this);
++        FMLClientHandler.instance().beginMinecraftLoading(this, this.field_110449_ao);
 +
          if (this.field_71474_y.field_74363_ab != null)
          {
