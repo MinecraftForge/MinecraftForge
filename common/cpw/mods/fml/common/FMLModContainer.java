@@ -89,6 +89,7 @@ public class FMLModContainer implements ModContainer
     private DefaultArtifactVersion processedVersion;
     private boolean isNetworkMod;
 
+    @SuppressWarnings("deprecation")
     private static final BiMap<Class<? extends FMLEvent>, Class<? extends Annotation>> modAnnotationTypes = ImmutableBiMap.<Class<? extends FMLEvent>, Class<? extends Annotation>>builder()
         .put(FMLPreInitializationEvent.class, Mod.PreInit.class)
         .put(FMLInitializationEvent.class, Mod.Init.class)
@@ -342,7 +343,7 @@ public class FMLModContainer implements ModContainer
                     if (m.getParameterTypes().length == 1 && modAnnotationTypes.containsKey(m.getParameterTypes()[0]))
                     {
                         m.setAccessible(true);
-                        eventMethods.put((Class<? extends FMLEvent>) m.getParameterTypes()[1],m);
+                        eventMethods.put((Class<? extends FMLEvent>) m.getParameterTypes()[0],m);
                     }
                     else
                     {
