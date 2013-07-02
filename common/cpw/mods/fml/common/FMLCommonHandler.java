@@ -486,4 +486,9 @@ public class FMLCommonHandler
         }
         return Joiner.on(',').join(modNames);
     }
+
+    public void addModToResourcePack(ModContainer container)
+    {
+        sidedDelegate.addModAsResource(container);
+    }
 }
