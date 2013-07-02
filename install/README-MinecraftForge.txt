@@ -10,15 +10,15 @@ The install scripts should take care of everything for you, you do NOT need to
 have MCP installed before running install.cmd/sh as Forge will download it for you.
 
 Just start the install.cmd/.sh, MCForge will install itself into the proper
-locations and copy all needed files, as well as modifying the needed baseclasses.
+locations and copy all needed files, as well as modifying the needed base classes.
 
-Forge also includes a snapshot of the MCP mapings, this may not be the current 
-version of the mapings. But you must use the provided mapings in order for the 
+Forge also includes a snapshot of the MCP mappings, this may not be the current 
+version of the mappings. But you must use the provided mappings in order for the 
 patch files to work together.
 
 
 Requirements:
-  You must ahve a JDK installed and accessible, there is a big in java 1.6_21 that 
+  You must have a JDK installed and accessible, there is a bug in java 1.6_21 that 
   causes compile errors, just update your jdk to fix them.
 
 For Mac users: 
@@ -27,4 +27,4 @@ For Mac users:
   
 For Linux users:
   Astyle is required for the patches to apply properly, so either install wine, or astyle
-  Instalation instructions are distro specific, so I can not give them here.
+  Installation instructions are distro specific, so I can not give them here.
