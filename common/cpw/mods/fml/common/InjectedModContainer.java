@@ -161,4 +161,10 @@ public class InjectedModContainer implements ModContainer
     {
         return wrappedContainer.getCustomModProperties();
     }
+
+    @Override
+    public Class<?> getCustomResourcePackClass()
+    {
+        return wrappedContainer.getCustomResourcePackClass();
+    }
 }

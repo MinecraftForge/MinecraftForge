@@ -175,4 +175,9 @@ public class DummyModContainer implements ModContainer
     {
         return EMPTY_PROPERTIES;
     }
+    @Override
+    public Class<?> getCustomResourcePackClass()
+    {
+        return null;
+    }
 }

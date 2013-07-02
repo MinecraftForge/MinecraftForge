@@ -136,4 +136,6 @@ public interface ModContainer
 
     public static final Map<String,String> EMPTY_PROPERTIES = ImmutableMap.of();
     Map<String,String> getCustomModProperties();
+
+    public Class<?> getCustomResourcePackClass();
 }
