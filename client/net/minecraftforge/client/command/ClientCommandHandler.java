@@ -99,8 +99,6 @@ public class ClientCommandHandler extends CommandHandler
 
     public void autoComplete(String leftOfCursor, String full)
     {
-        System.out.println("par1: " + leftOfCursor + " == par2: " + full + " Thread=" + Thread.currentThread().getName());
-
         latestAutoComplete = null;
 
         if (leftOfCursor.charAt(0) == '/')
