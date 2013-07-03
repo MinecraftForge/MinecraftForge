@@ -51,7 +51,7 @@ import cpw.mods.fml.relauncher.IFMLCallHook;
 
 public class FMLSanityChecker implements IFMLCallHook
 {
-    private static final String FMLFINGERPRINT = "AE:F6:54:79:96:E9:1B:D1:59:70:6C:B4:6B:F5:4A:89:C5:CE:08:1D".toLowerCase().replace(":","");
+    private static final String FMLFINGERPRINT = "51:0A:FB:4C:AF:A4:A0:F2:F5:CF:C5:0E:B4:CC:3C:30:24:4A:E3:8E".toLowerCase().replace(":","");
     private static final String FORGEFINGERPRINT = "DE:4C:F8:A3:F3:BC:15:63:58:10:04:4C:39:24:0B:F9:68:04:EA:7D".toLowerCase().replace(":", "");
     static class MLDetectorClassVisitor extends ClassVisitor
     {
