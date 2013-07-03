@@ -24,13 +24,13 @@
          GL11.glTranslatef(0.0F, 0.0F, 32.0F);
          this.zLevel = 200.0F;
          itemRenderer.zLevel = 200.0F;
--        itemRenderer.func_110797_b(this.fontRenderer, this.mc.func_110434_K(), par1ItemStack, par2, par3);
--        itemRenderer.func_110793_a(this.fontRenderer, this.mc.func_110434_K(), par1ItemStack, par2, par3 - (this.draggedStack == null ? 0 : 8), par4Str);
+-        itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.func_110434_K(), par1ItemStack, par2, par3);
+-        itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.func_110434_K(), par1ItemStack, par2, par3 - (this.draggedStack == null ? 0 : 8), par4Str);
 +        FontRenderer font = null;
 +        if (par1ItemStack != null) font = par1ItemStack.getItem().getFontRenderer(par1ItemStack);
 +        if (font == null) font = fontRenderer;
-+        itemRenderer.func_110797_b(font, this.mc.func_110434_K(), par1ItemStack, par2, par3);
-+        itemRenderer.func_110793_a(font, this.mc.func_110434_K(), par1ItemStack, par2, par3 - (this.draggedStack == null ? 0 : 8), par4Str);
++        itemRenderer.renderItemAndEffectIntoGUI(font, this.mc.func_110434_K(), par1ItemStack, par2, par3);
++        itemRenderer.renderItemOverlayIntoGUI(font, this.mc.func_110434_K(), par1ItemStack, par2, par3 - (this.draggedStack == null ? 0 : 8), par4Str);
          this.zLevel = 0.0F;
          itemRenderer.zLevel = 0.0F;
      }

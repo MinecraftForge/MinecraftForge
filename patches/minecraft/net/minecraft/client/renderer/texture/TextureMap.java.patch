@@ -21,7 +21,7 @@
              String s = (String)entry.getKey();
              TextureAtlasSprite textureatlassprite = (TextureAtlasSprite)entry.getValue();
 -            ResourceLocation resourcelocation = new ResourceLocation(this.basePath + s + ".png");
-+            ResourceLocation resourcelocation = new ResourceLocation(fixDomain(basePath, s) + ".png");
++            ResourceLocation resourcelocation = new ResourceLocation(ForgeHooksClient.fixDomain(basePath, s) + ".png");
  
              try
              {
@@ -49,7 +49,7 @@
          }
  
          Object object = (TextureAtlasSprite)this.field_110574_e.get(par1Str);
-@@ -253,4 +260,58 @@
+@@ -253,4 +260,37 @@
      {
          this.updateAnimations();
      }
@@ -85,26 +85,5 @@
 +            return true;
 +        }
 +        return false;
-+    }
-+
-+    //This properly moves the domain, if provided, to the front of the string before concatenating
-+    private String fixDomain(String base, String complex)
-+    {
-+        int idx = complex.indexOf(':');
-+        if (idx == -1)
-+        {
-+            return base + complex;
-+        }
-+
-+        String name = complex.substring(idx + 1, complex.length());
-+        if (idx > 1)
-+        {
-+            String domain = complex.substring(0, idx);
-+            return domain + ':' + base + name;
-+        }
-+        else
-+        {
-+            return base + name;
-+        }
 +    }
  }

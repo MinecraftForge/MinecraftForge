@@ -33,6 +33,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.resources.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -43,6 +44,7 @@ import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
 
 public class ForgeHooksClient
 {
+    private static final ResourceLocation ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
     static TextureManager engine()
     {
         return FMLClientHandler.instance().getClient().renderEngine;
@@ -166,7 +168,12 @@ public class ForgeHooksClient
             GL11.glPopMatrix();
             GL11.glEnable(GL11.GL_LIGHTING);
         }
+        
         return true;
+    }
+
+    public static void renderEffectOverlay(TextureManager manager, RenderItem render)
+    {
     }
 
     public static void renderEquippedItem(ItemRenderType type, IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLivingBase entity, ItemStack item)
@@ -281,6 +288,27 @@ public class ForgeHooksClient
         {
             Display.create(format);
             stencilBits = 0;
+        }
+    }
+
+    //This properly moves the domain, if provided, to the front of the string before concatenating
+    public static String fixDomain(String base, String complex)
+    {
+        int idx = complex.indexOf(':');
+        if (idx == -1)
+        {
+            return base + complex;
+        }
+
+        String name = complex.substring(idx + 1, complex.length());
+        if (idx > 1)
+        {
+            String domain = complex.substring(0, idx);
+            return domain + ':' + base + name;
+        }
+        else
+        {
+            return base + name;
         }
     }
 }

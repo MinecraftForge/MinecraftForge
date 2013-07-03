@@ -76,7 +76,32 @@
                          f8 = 1.0F;
  
                          if (this.renderWithColor)
-@@ -240,32 +231,26 @@
+@@ -152,11 +143,11 @@
+                             f4 = (float)(i >> 8 & 255) / 255.0F;
+                             f6 = (float)(i & 255) / 255.0F;
+                             GL11.glColor4f(f5 * f8, f4 * f8, f6 * f8, 1.0F);
+-                            this.renderDroppedItem(par1EntityItem, icon, b0, par9, f5 * f8, f4 * f8, f6 * f8);
++                            this.renderDroppedItem(par1EntityItem, icon, b0, par9, f5 * f8, f4 * f8, f6 * f8, k);
+                         }
+                         else
+                         {
+-                            this.renderDroppedItem(par1EntityItem, icon, b0, par9, 1.0F, 1.0F, 1.0F);
++                            this.renderDroppedItem(par1EntityItem, icon, b0, par9, 1.0F, 1.0F, 1.0F, k);
+                         }
+                     }
+                 }
+@@ -204,6 +195,10 @@
+      * Renders a dropped item
+      */
+     private void renderDroppedItem(EntityItem par1EntityItem, Icon par2Icon, int par3, float par4, float par5, float par6, float par7)
++    {
++        renderDroppedItem(par1EntityItem, par2Icon, par3, par4, par5, par6, par7, 0);
++    }
++    private void renderDroppedItem(EntityItem par1EntityItem, Icon par2Icon, int par3, float par4, float par5, float par6, float par7, int pass)
+     {
+         Tessellator tessellator = Tessellator.instance;
+ 
+@@ -240,32 +235,26 @@
              f11 = 0.021875F;
              ItemStack itemstack = par1EntityItem.getEntityItem();
              int j = itemstack.stackSize;
@@ -124,7 +149,27 @@
                  {
                      this.func_110776_a(TextureMap.field_110575_b);
                  }
-@@ -353,10 +338,10 @@
+@@ -277,7 +266,7 @@
+                 GL11.glColor4f(par5, par6, par7, 1.0F);
+                 ItemRenderer.renderItemIn2D(tessellator, f5, f6, f4, f7, ((Icon)par2Icon).getOriginX(), ((Icon)par2Icon).getOriginY(), f12);
+ 
+-                if (itemstack.hasEffect())
++                if (itemstack.hasEffect(pass))
+                 {
+                     GL11.glDepthFunc(GL11.GL_EQUAL);
+                     GL11.glDisable(GL11.GL_LIGHTING);
+@@ -348,6 +337,10 @@
+      */
+     public void renderItemIntoGUI(FontRenderer par1FontRenderer, TextureManager par2TextureManager, ItemStack par3ItemStack, int par4, int par5)
+     {
++        renderItemIntoGUI(par1FontRenderer, par2TextureManager, par3ItemStack, par4, par5, false);
++    }
++    public void renderItemIntoGUI(FontRenderer par1FontRenderer, TextureManager par2TextureManager, ItemStack par3ItemStack, int par4, int par5, boolean renderEffect)
++    {
+         int k = par3ItemStack.itemID;
+         int l = par3ItemStack.getItemDamage();
+         Object object = par3ItemStack.getIconIndex();
+@@ -356,10 +349,10 @@
          float f1;
          float f2;
  
@@ -137,7 +182,7 @@
              GL11.glPushMatrix();
              GL11.glTranslatef((float)(par4 - 2), (float)(par5 + 3), -3.0F + this.zLevel);
              GL11.glScalef(10.0F, 10.0F, 10.0F);
-@@ -383,11 +368,11 @@
+@@ -386,11 +379,11 @@
          else if (Item.itemsList[k].requiresMultipleRenderPasses())
          {
              GL11.glDisable(GL11.GL_LIGHTING);
@@ -146,27 +191,63 @@
 -            for (int j1 = 0; j1 <= 1; ++j1)
 -            {
 -                Icon icon = Item.itemsList[k].getIconFromDamageForRenderPass(l, j1);
-+            par2TextureManager.func_110577_a(par3ItemStack.getItemSpriteNumber() == 0 ? TextureMap.field_110575_b : TextureMap.field_110576_c);
 +
-+            for (int j1 = 0; j1 <= Item.itemsList[k].getRenderPasses(l); ++j1)
++            for (int j1 = 0; j1 < Item.itemsList[k].getRenderPasses(l); ++j1)
 +            {
++                par2TextureManager.func_110577_a(par3ItemStack.getItemSpriteNumber() == 0 ? TextureMap.field_110575_b : TextureMap.field_110576_c);
 +                Icon icon = Item.itemsList[k].getIcon(par3ItemStack, j1);
                  int k1 = Item.itemsList[k].getColorFromItemStack(par3ItemStack, j1);
                  f1 = (float)(k1 >> 16 & 255) / 255.0F;
                  f2 = (float)(k1 >> 8 & 255) / 255.0F;
-@@ -435,7 +420,10 @@
+@@ -402,6 +395,24 @@
+                 }
+ 
+                 this.renderIcon(par4, par5, icon, 16, 16);
++
++                if (par3ItemStack.hasEffect(j1))
++                {
++                    GL11.glDepthFunc(GL11.GL_GREATER);
++                    GL11.glDisable(GL11.GL_LIGHTING);
++                    GL11.glDepthMask(false);
++                    par2TextureManager.func_110577_a(field_110798_h);
++                    this.zLevel -= 50.0F;
++                    GL11.glEnable(GL11.GL_BLEND);
++                    GL11.glBlendFunc(GL11.GL_DST_COLOR, GL11.GL_DST_COLOR);
++                    GL11.glColor4f(0.5F, 0.25F, 0.8F, 1.0F);
++                    this.renderGlint(par4 * 431278612 + par5 * 32178161, par4 - 2, par5 - 2, 20, 20);
++                    GL11.glDisable(GL11.GL_BLEND);
++                    GL11.glDepthMask(true);
++                    this.zLevel += 50.0F;
++                    GL11.glEnable(GL11.GL_LIGHTING);
++                    GL11.glDepthFunc(GL11.GL_LEQUAL);
++                }
+             }
+ 
+             GL11.glEnable(GL11.GL_LIGHTING);
+@@ -441,8 +452,12 @@
      {
          if (par3ItemStack != null)
          {
--            this.func_110795_a(par1FontRenderer, par2TextureManager, par3ItemStack, par4, par5);
+-            this.renderItemIntoGUI(par1FontRenderer, par2TextureManager, par3ItemStack, par4, par5);
+-
 +            if (!ForgeHooksClient.renderInventoryItem(renderBlocks, par2TextureManager, par3ItemStack, renderWithColor, zLevel, (float)par4, (float)par5))
 +            {
-+                this.func_110795_a(par1FontRenderer, par2TextureManager, par3ItemStack, par4, par5);
++                this.renderItemIntoGUI(par1FontRenderer, par2TextureManager, par3ItemStack, par4, par5, true);
 +            }
- 
++
++            /* Modders must handle this themselves if they use custom renderers!
              if (par3ItemStack.hasEffect())
              {
-@@ -573,4 +561,47 @@
+                 GL11.glDepthFunc(GL11.GL_GREATER);
+@@ -460,6 +475,7 @@
+                 GL11.glEnable(GL11.GL_LIGHTING);
+                 GL11.glDepthFunc(GL11.GL_LEQUAL);
+             }
++            */
+         }
+     }
+ 
+@@ -583,4 +599,47 @@
      {
          this.doRenderItem((EntityItem)par1Entity, par2, par4, par6, par8, par9);
      }

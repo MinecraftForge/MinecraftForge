@@ -70,6 +70,15 @@ def main():
     zf.extractall(temp_dir)
     zf.close()
     
+    if os.path.isfile('MANIFEST.MF'):
+        os.remove('MANIFEST.MF')
+        
+    fml_name = os.path.basename(fml[0]).replace('src', 'universal').replace('.zip', '.jar').replace('-master.', '.')
+    print('Extracting %s MANIFEST.MF' % fml_name)
+    with closing(zipfile.ZipFile(os.path.join(forge_dir, 'fml', 'target', fml_name), mode='r')) as zip_in:
+        with closing(open('MANIFEST.MF', 'wb')) as out:
+            out.write(zip_in.read('META-INF/MANIFEST.MF'))
+    
     error_level = 0
     try:
         sys.path.append(mcp_dir)
@@ -82,6 +91,7 @@ def main():
     except SystemExit, e:
         print 'Reobfusicate Exception: %d ' % e.code
         error_level = e.code
+    
     
     extract_fml_obfed(fml_dir, mcp_dir, reobf_dir, client_dir)
     #extract_paulscode(mcp_dir, client_dir)
@@ -173,6 +183,8 @@ def main():
     if os.path.exists(version_file):
         os.remove(version_file)
     shutil.rmtree(temp_dir)
+    if os.path.isfile('MANIFEST.MF'):
+        os.remove('MANIFEST.MF')
     
     print '=================================== Release Finished %d =================================' % error_level
     sys.exit(error_level)

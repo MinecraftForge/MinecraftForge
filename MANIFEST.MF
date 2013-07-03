@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-Ant-Version: Apache Ant 1.8.2
-Created-By: 1.7.0_09-b30 (Oracle Corporation)
-Main-Class: net.minecraft.server.MinecraftServer
-Class-Path: minecraft_server.jar
-

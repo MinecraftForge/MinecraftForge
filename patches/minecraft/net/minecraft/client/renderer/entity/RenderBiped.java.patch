@@ -99,7 +99,7 @@
              if (item instanceof ItemArmor)
              {
 -                this.func_110776_a(func_110858_a((ItemArmor)item, par2, "overlay"));
-+                this.func_110776_a(getArmorResource(par1EntityLiving, itemstack, par2, "overlay"));
++                this.func_110776_a(getArmorResource(par1, itemstack, par2, "overlay"));
                  float f1 = 1.0F;
                  GL11.glColor3f(f1, f1, f1);
              }

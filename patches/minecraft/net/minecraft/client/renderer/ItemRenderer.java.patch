@@ -58,6 +58,15 @@
          {
              texturemanager.func_110577_a(texturemanager.func_130087_a(0));
              this.renderBlocksInstance.renderBlockAsItem(Block.blocksList[par2ItemStack.itemID], par2ItemStack.getItemDamage(), 1.0F);
+@@ -94,7 +120,7 @@
+             GL11.glTranslatef(-0.9375F, -0.0625F, 0.0F);
+             renderItemIn2D(tessellator, f1, f2, f, f3, icon.getOriginX(), icon.getOriginY(), 0.0625F);
+ 
+-            if (par2ItemStack.hasEffect() && par3 == 0)
++            if (par2ItemStack.hasEffect(par3))
+             {
+                 GL11.glDepthFunc(GL11.GL_EQUAL);
+                 GL11.glDisable(GL11.GL_LIGHTING);
 @@ -266,7 +292,7 @@
          Render render;
          RenderPlayer renderplayer;
@@ -75,7 +84,7 @@
 -
 -            if (mapdata != null)
 -            {
--                this.mapItemRenderer.func_111275_a(this.mc.thePlayer, this.mc.func_110434_K(), mapdata);
+-                this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.func_110434_K(), mapdata);
 +
 +            IItemRenderer custom = MinecraftForgeClient.getItemRenderer(itemstack, FIRST_PERSON_MAP);
 +            MapData mapdata = ((ItemMap)itemstack.getItem()).getMapData(itemstack, this.mc.theWorld);
@@ -84,7 +93,7 @@
 +            {
 +                if (mapdata != null)
 +                {
-+                    this.mapItemRenderer.func_111275_a(this.mc.thePlayer, this.mc.func_110434_K(), mapdata);
++                    this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.func_110434_K(), mapdata);
 +                }
 +            }
 +            else
