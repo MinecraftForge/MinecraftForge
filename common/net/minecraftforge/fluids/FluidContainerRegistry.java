@@ -1,4 +1,3 @@
-
 package net.minecraftforge.fluids;
 
 import java.util.Arrays;
@@ -212,7 +211,7 @@ public abstract class FluidContainerRegistry {
 
     public static FluidContainerData[] getRegisteredFluidContainerData() {
 
-        return (FluidContainerData[]) containerFluidMap.values().toArray();
+        return  containerFluidMap.values().toArray(new FluidContainerData[containerFluidMap.size()]);
     }
 
     /**
