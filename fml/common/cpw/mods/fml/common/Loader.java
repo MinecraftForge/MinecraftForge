@@ -344,6 +344,12 @@ public class Loader
 
         FMLLog.info("Searching %s for mods", canonicalModsDir.getAbsolutePath());
         discoverer.findModDirMods(canonicalModsDir);
+        File versionSpecificModsDir = new File(canonicalModsDir,mccversion);
+        if (versionSpecificModsDir.isDirectory())
+        {
+            FMLLog.info("Also searching %s for mods", versionSpecificModsDir);
+            discoverer.findModDirMods(versionSpecificModsDir);
+        }
 
         mods.addAll(discoverer.identifyMods());
         identifyDuplicates(mods);

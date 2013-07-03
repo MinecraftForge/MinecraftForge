@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -14,10 +14,10 @@ package cpw.mods.fml.common.discovery;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import com.google.common.collect.Lists;
 
@@ -35,11 +35,16 @@ public class JarDiscoverer implements ITypeDiscoverer
     {
         List<ModContainer> foundMods = Lists.newArrayList();
         FMLLog.fine("Examining file %s for potential mods", candidate.getModContainer().getName());
-        ZipFile jar = null;
+        JarFile jar = null;
         try
         {
-            jar = new ZipFile(candidate.getModContainer());
+            jar = new JarFile(candidate.getModContainer());
 
+            if (jar.getManifest()!=null && jar.getManifest().getMainAttributes().get("FMLCorePlugin") != null)
+            {
+                FMLLog.finest("Ignoring coremod %s", candidate.getModContainer());
+                return foundMods;
+            }
             ZipEntry modInfo = jar.getEntry("mcmod.info");
             MetadataCollection mc = null;
             if (modInfo != null)
