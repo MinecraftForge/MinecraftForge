@@ -7,16 +7,11 @@ package net.minecraftforge.client;
 
 import java.util.BitSet;
 
-import org.lwjgl.opengl.Display;
-
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
+import net.minecraft.command.ICommand;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.world.World;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.client.command.ClientCommandHandler;
 
 public class MinecraftForgeClient
 {
@@ -88,5 +83,18 @@ public class MinecraftForgeClient
         {
             stencilBits.set(bit);
         }
+    }
+    
+    public static ClientCommandHandler clientCommandHandler = new ClientCommandHandler();
+    
+    /**
+     * Register a client-side command. This command is executed on the client
+     * and is never sent to server
+     * 
+     * @param command The command to register
+     */
+    public static void registerClientCommand(ICommand command)
+    {
+        clientCommandHandler.registerCommand(command);
     }
 }
