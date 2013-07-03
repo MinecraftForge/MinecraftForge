@@ -37,6 +37,8 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
+import com.google.common.collect.ObjectArrays;
+
 import net.minecraft.launchwrapper.LaunchClassLoader;
 
 import cpw.mods.fml.common.CertificateHelper;
@@ -209,11 +211,18 @@ public class CoreModManager
             }
         };
         File[] coreModList = coreMods.listFiles(ff);
+        File versionedModDir = new File(coreMods,FMLInjectionData.mccversion);
+        if (versionedModDir.isDirectory())
+        {
+            File[] versionedCoreMods = versionedModDir.listFiles(ff);
+            coreModList = ObjectArrays.concat(coreModList,versionedCoreMods, File.class);
+        }
+
         Arrays.sort(coreModList);
 
         for (File coreMod : coreModList)
         {
-            FMLRelaunchLog.fine("Found a candidate coremod %s", coreMod.getName());
+            FMLRelaunchLog.fine("Examining for coremod candidacy %s", coreMod.getName());
             JarFile jar;
             Attributes mfAttributes;
             try
@@ -221,21 +230,21 @@ public class CoreModManager
                 jar = new JarFile(coreMod);
                 if (jar.getManifest() == null)
                 {
-                    FMLRelaunchLog.warning("Found an un-manifested jar file in the coremods folder : %s, it will be ignored.", coreMod.getName());
+                    // Not a coremod
                     continue;
                 }
                 mfAttributes = jar.getManifest().getMainAttributes();
             }
             catch (IOException ioe)
             {
-                FMLRelaunchLog.log(Level.SEVERE, ioe, "Unable to read the coremod jar file %s - ignoring", coreMod.getName());
+                FMLRelaunchLog.log(Level.SEVERE, ioe, "Unable to read the jar file %s - ignoring", coreMod.getName());
                 continue;
             }
 
             String fmlCorePlugin = mfAttributes.getValue("FMLCorePlugin");
             if (fmlCorePlugin == null)
             {
-                FMLRelaunchLog.severe("The coremod %s does not contain a valid jar manifest- it will be ignored", coreMod.getName());
+                // Not a coremod
                 continue;
             }
 
@@ -327,7 +336,7 @@ public class CoreModManager
      */
     private static File setupCoreModDir(File mcDir)
     {
-        File coreModDir = new File(mcDir,"coremods");
+        File coreModDir = new File(mcDir,"mods");
         try
         {
             coreModDir = coreModDir.getCanonicalFile();
