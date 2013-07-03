@@ -1,5 +1,45 @@
 --- ../src_base/minecraft/net/minecraft/entity/boss/EntityDragon.java
 +++ ../src_work/minecraft/net/minecraft/entity/boss/EntityDragon.java
+@@ -75,7 +75,7 @@
+     {
+         super(par1World);
+         this.dragonPartArray = new EntityDragonPart[] {this.dragonPartHead = new EntityDragonPart(this, "head", 6.0F, 6.0F), this.dragonPartBody = new EntityDragonPart(this, "body", 8.0F, 8.0F), this.dragonPartTail1 = new EntityDragonPart(this, "tail", 4.0F, 4.0F), this.dragonPartTail2 = new EntityDragonPart(this, "tail", 4.0F, 4.0F), this.dragonPartTail3 = new EntityDragonPart(this, "tail", 4.0F, 4.0F), this.dragonPartWing1 = new EntityDragonPart(this, "wing", 4.0F, 4.0F), this.dragonPartWing2 = new EntityDragonPart(this, "wing", 4.0F, 4.0F)};
+-        this.setEntityHealth(this.getMaxHealth());
++        this.setEntityHealth(this.func_110138_aP());
+         this.setSize(16.0F, 8.0F);
+         this.noClip = true;
+         this.isImmuneToFire = true;
+@@ -100,7 +100,7 @@
+      */
+     public double[] getMovementOffsets(int par1, float par2)
+     {
+-        if (this.func_110183_aJ() <= 0.0F)
++        if (this.func_110143_aJ() <= 0.0F)
+         {
+             par2 = 0.0F;
+         }
+@@ -142,7 +142,7 @@
+         this.prevAnimTime = this.animTime;
+         float f2;
+ 
+-        if (this.func_110183_aJ() <= 0.0F)
++        if (this.func_110143_aJ() <= 0.0F)
+         {
+             f = (this.rand.nextFloat() - 0.5F) * 8.0F;
+             f1 = (this.rand.nextFloat() - 0.5F) * 4.0F;
+@@ -396,9 +396,9 @@
+ 
+                 this.healingEnderCrystal = null;
+             }
+-            else if (this.ticksExisted % 10 == 0 && this.func_110183_aJ() < this.getMaxHealth())
+-            {
+-                this.setEntityHealth(this.func_110183_aJ() + 1.0F);
++            else if (this.ticksExisted % 10 == 0 && this.func_110143_aJ() < this.func_110138_aP())
++            {
++                this.setEntityHealth(this.func_110143_aJ() + 1.0F);
+             }
+         }
+ 
 @@ -527,10 +527,11 @@
                  for (int i2 = k; i2 <= j1; ++i2)
                  {
@@ -15,3 +55,20 @@
                          {
                              flag1 = this.worldObj.setBlockToAir(k1, l1, i2) || flag1;
                          }
+@@ -753,16 +754,4 @@
+     {
+         return 5.0F;
+     }
+-
+-    @Override
+-    public float getMaxHealth()
+-    {
+-        return 0.0f;
+-    }
+-
+-    @Override
+-    public float func_110183_aJ()
+-    {
+-        return 0.0f;
+-    }
+ }

@@ -1,0 +1,46 @@
+--- ../src_base/minecraft/net/minecraft/entity/boss/EntityWither.java
++++ ../src_work/minecraft/net/minecraft/entity/boss/EntityWither.java
+@@ -45,7 +45,7 @@
+     public EntityWither(World par1World)
+     {
+         super(par1World);
+-        this.setEntityHealth(this.getMaxHealth());
++        this.setEntityHealth(this.func_110138_aP());
+         this.setSize(0.9F, 4.0F);
+         this.isImmuneToFire = true;
+         this.getNavigator().setCanSwim(true);
+@@ -380,7 +380,7 @@
+     public void func_82206_m()
+     {
+         this.func_82215_s(220);
+-        this.setEntityHealth(this.getMaxHealth() / 3.0F);
++        this.setEntityHealth(this.func_110138_aP() / 3.0F);
+     }
+ 
+     /**
+@@ -633,7 +633,7 @@
+      */
+     public boolean isArmored()
+     {
+-        return this.func_110183_aJ() <= this.getMaxHealth() / 2.0F;
++        return this.func_110143_aJ() <= this.func_110138_aP() / 2.0F;
+     }
+ 
+     /**
+@@ -651,16 +651,4 @@
+     {
+         this.ridingEntity = null;
+     }
+-
+-    @Override
+-    public float getMaxHealth()
+-    {
+-        return 0.0f;
+-    }
+-
+-    @Override
+-    public float func_110183_aJ()
+-    {
+-        return 0.0f;
+-    }
+ }
