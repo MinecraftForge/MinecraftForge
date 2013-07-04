@@ -4,7 +4,7 @@
   "releaseTime": "{timestamp}",
   "type": "release",
   "processArguments": "username_session_version",
-  "minecraftArguments": "--username ${auth_player_name} --session ${auth_session} --version ${version_name} --gameDir ${game_directory} --assetsDir ${game_assets} --tweakClass cpw.mods.fml.common.launcher.FMLTweaker",
+  "minecraftArguments": "--version FML_DEV --tweakClass cpw.mods.fml.common.launcher.FMLTweaker",
   "minimumLauncherVersion": 2,
   "libraries": [
     {
@@ -133,5 +133,5 @@
       }
     }
   ],
-  "mainClass": "net.minecraft.client.main.Main"
+  "mainClass": "net.minecraft.launchwrapper.Launch"
 }

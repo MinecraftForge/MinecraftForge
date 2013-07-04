@@ -12,7 +12,7 @@
   "versionInfo": {
     "id": "FML@version@",
     "time": "@timestamp@",
-    "releaseTime": "@timestamp@",
+    "releaseTime": "1960-01-01T00:00:00-0700",
     "type": "release",
     "processArguments": "username_session_version",
     "minecraftArguments": "--username ${auth_player_name} --session ${auth_session} --version ${version_name} --gameDir ${game_directory} --assetsDir ${game_assets} --tweakClass cpw.mods.fml.common.launcher.FMLTweaker",
