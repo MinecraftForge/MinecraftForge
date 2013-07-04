@@ -33,7 +33,7 @@
  
      def startserver(self, mainclass, extraargs):
 -        classpath = [self.binserver] + self.cpathserver
-+        classpath = [self.binclient, self.srcclient] + self.cpathserver
++        classpath = [self.binclient, self.srcclient] + self.cpathserver + self.cpathclient
          classpath = [os.path.join('..', p) for p in classpath]
          classpath = os.pathsep.join(classpath)
          os.chdir(self.dirjars)
