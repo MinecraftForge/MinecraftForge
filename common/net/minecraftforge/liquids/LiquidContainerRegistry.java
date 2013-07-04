@@ -12,7 +12,7 @@ import java.util.Set;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
+@Deprecated //See new net.minecraftforge.fluids
 public class LiquidContainerRegistry
 {
     public static final int BUCKET_VOLUME = 1000;
