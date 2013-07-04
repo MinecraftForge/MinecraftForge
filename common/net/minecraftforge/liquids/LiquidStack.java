@@ -22,6 +22,7 @@ import net.minecraft.util.Icon;
  *
  * @author SirSengir
  */
+@Deprecated //See new net.minecraftforge.fluids
 public class LiquidStack
 {
     public final int itemID;
