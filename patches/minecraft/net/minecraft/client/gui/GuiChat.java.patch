@@ -1,0 +1,54 @@
+--- ../src_base/minecraft/net/minecraft/client/gui/GuiChat.java
++++ ../src_work/minecraft/net/minecraft/client/gui/GuiChat.java
+@@ -7,8 +7,13 @@
+ import java.util.Iterator;
+ import java.util.List;
+ import net.minecraft.network.packet.Packet203AutoComplete;
++import net.minecraft.util.EnumChatFormatting;
++import net.minecraftforge.client.MinecraftForgeClient;
++
+ import org.lwjgl.input.Keyboard;
+ import org.lwjgl.input.Mouse;
++
++import com.google.common.collect.ObjectArrays;
+ 
+ @SideOnly(Side.CLIENT)
+ public class GuiChat extends GuiScreen
+@@ -268,20 +273,21 @@
+ 
+                 if (stringbuilder.length() > 0)
+                 {
+-                    stringbuilder.append(", ");
++                    stringbuilder.append(EnumChatFormatting.RESET + ", ");
+                 }
+             }
+ 
+             this.mc.ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(stringbuilder.toString(), 1);
+         }
+ 
+-        this.inputField.writeText((String)this.field_73904_o.get(this.field_73903_n++));
++        this.inputField.writeText(EnumChatFormatting.func_110646_a((String)this.field_73904_o.get(this.field_73903_n++)));
+     }
+ 
+     private void func_73893_a(String par1Str, String par2Str)
+     {
+         if (par1Str.length() >= 1)
+         {
++            MinecraftForgeClient.clientCommandHandler.autoComplete(par1Str, par2Str);
+             this.mc.thePlayer.sendQueue.addToSendQueue(new Packet203AutoComplete(par1Str));
+             this.field_73905_m = true;
+         }
+@@ -344,6 +350,13 @@
+             String[] astring1 = par1ArrayOfStr;
+             int i = par1ArrayOfStr.length;
+ 
++            String[] clientAutoComplete = MinecraftForgeClient.clientCommandHandler.latestAutoComplete;
++            if (clientAutoComplete != null)
++            {
++                astring1 = ObjectArrays.concat(clientAutoComplete, astring1, String.class);
++                i = astring1.length;
++            }
++            
+             for (int j = 0; j < i; ++j)
+             {
+                 String s = astring1[j];
