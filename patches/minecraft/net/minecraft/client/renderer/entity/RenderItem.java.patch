@@ -148,7 +148,7 @@
 -                Icon icon = Item.itemsList[k].getIconFromDamageForRenderPass(l, j1);
 +            par2TextureManager.func_110577_a(par3ItemStack.getItemSpriteNumber() == 0 ? TextureMap.field_110575_b : TextureMap.field_110576_c);
 +
-+            for (int j1 = 0; j1 <= Item.itemsList[k].getRenderPasses(l); ++j1)
++            for (int j1 = 0; j1 < Item.itemsList[k].getRenderPasses(l); ++j1)
 +            {
 +                Icon icon = Item.itemsList[k].getIcon(par3ItemStack, j1);
                  int k1 = Item.itemsList[k].getColorFromItemStack(par3ItemStack, j1);
