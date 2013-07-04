@@ -170,8 +170,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         try
         {
             Loader.instance().loadMods();
-            // Reload resources
-            client.func_110436_a();
         }
         catch (WrongMinecraftVersionException wrong)
         {
@@ -234,7 +232,8 @@ public class FMLClientHandler implements IFMLSidedHandler
             haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
             return;
         }
-        LanguageRegistry.reloadLanguageTable();
+        // Reload resources
+        client.func_110436_a();
         RenderingRegistry.instance().loadEntityRenderers((Map<Class<? extends Entity>, Render>)RenderManager.field_78727_a.field_78729_o);
 
         loading = false;
