@@ -28,7 +28,7 @@ public class ModLoaderFuelHelper implements IFuelHandler
     @Override
     public int getBurnTime(ItemStack fuel)
     {
-        return mod.addFuel(fuel.field_77993_c, fuel.field_77993_c);
+        return mod.addFuel(fuel.field_77993_c, fuel.func_77960_j());
     }
 
 }
