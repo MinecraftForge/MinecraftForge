@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemInWorldManager.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemInWorldManager.java
-@@ -1,15 +1,29 @@
+@@ -1,15 +1,30 @@
  package net.minecraft.item;
  
  import net.minecraft.block.Block;
@@ -13,6 +13,7 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
  
++import net.minecraftforge.common.BlockSnapshot;
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.Event;
@@ -30,7 +31,7 @@
      /** The world object that this object is connected to. */
      public World theWorld;
  
-@@ -145,6 +159,13 @@
+@@ -145,6 +160,13 @@
      {
          if (!this.gameType.isAdventure() || this.thisPlayerMP.canCurrentToolHarvestBlock(par1, par2, par3))
          {
@@ -44,7 +45,7 @@
              if (this.isCreative())
              {
                  if (!this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4))
-@@ -154,15 +175,33 @@
+@@ -154,15 +176,33 @@
              }
              else
              {
@@ -83,7 +84,7 @@
                  }
  
                  if (i1 > 0 && f >= 1.0F)
-@@ -236,7 +275,7 @@
+@@ -236,7 +276,7 @@
              block.onBlockHarvested(this.theWorld, par1, par2, par3, l, this.thisPlayerMP);
          }
  
@@ -92,7 +93,7 @@
  
          if (block != null && flag)
          {
-@@ -251,44 +290,119 @@
+@@ -251,48 +291,122 @@
       */
      public boolean tryHarvestBlock(int par1, int par2, int par3)
      {
@@ -113,9 +114,12 @@
 +                ((EntityPlayerMP) this.thisPlayerMP).playerNetServerHandler.sendPacketToPlayer(packet);
 +            }
 +
-+            event = new BlockBreakEvent(this.theWorld, par1, par2, par3, this.theWorld.getBlockMetadata(par1, par2, par3), block, this.thisPlayerMP);
++            BlockSnapshot blocksnapshot = new BlockSnapshot(this.theWorld, par1, par2, par3, this.theWorld.getBlockMetadata(par1, par2, par3));
++            event = new BlockBreakEvent(this.theWorld, par1, par2, par3, this.theWorld.getBlockMetadata(par1, par2, par3), blocksnapshot, this.thisPlayerMP);
 +            // Adventure mode pre-cancel
 +            event.setCanceled(this.gameType.isAdventure() && !this.thisPlayerMP.canCurrentToolHarvestBlock(par1, par2, par3));
++            // Sword + Creative mode pre-cancel
++            event.setCanceled(event.isCanceled() || (this.gameType.isCreative() && this.thisPlayerMP.getHeldItem() != null && this.thisPlayerMP.getHeldItem().getItem() instanceof ItemSword));
 +            // Calculate default block experience
 +
 +            if (block != null && !event.isCanceled() && !this.isCreative() && this.thisPlayerMP.canHarvestBlock(block))
@@ -151,6 +155,9 @@
          {
              return false;
          }
+-        else if (this.gameType.isCreative() && this.thisPlayerMP.getHeldItem() != null && this.thisPlayerMP.getHeldItem().getItem() instanceof ItemSword)
+-        {
+-            return false;
 +
 +        int l = this.theWorld.getBlockId(par1, par2, par3);
 +
@@ -175,7 +182,7 @@
 +        {
 +            flag = this.removeBlock(par1, par2, par3);
 +            this.thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, this.theWorld));
-+        }
+         }
          else
          {
 -            int l = this.theWorld.getBlockId(par1, par2, par3);
@@ -245,7 +252,7 @@
      }
  
      /**
-@@ -321,6 +435,7 @@
+@@ -325,6 +439,7 @@
              if (itemstack1.stackSize == 0)
              {
                  par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
@@ -253,7 +260,7 @@
              }
  
              if (!par1EntityPlayer.isUsingItem())
-@@ -338,35 +453,56 @@
+@@ -342,35 +457,56 @@
       */
      public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
      {
@@ -337,7 +344,7 @@
      }
  
      /**
-@@ -376,4 +512,13 @@
+@@ -380,4 +516,13 @@
      {
          this.theWorld = par1WorldServer;
      }

@@ -5,6 +5,7 @@ package net.minecraftforge.liquids;
  *
  * @author cpw
  */
+@Deprecated //See new net.minecraftforge.fluids
 public interface ILiquidTank {
 
     /**

@@ -13,6 +13,7 @@ package net.minecraftforge.liquids;
  * Liquids implement this interface
  *
  */
+@Deprecated //See new net.minecraftforge.fluids
 public interface ILiquid {
 
     /**

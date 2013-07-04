@@ -12,7 +12,7 @@
  
  public class BiomeDecorator
  {
-@@ -206,26 +211,31 @@
+@@ -199,26 +204,31 @@
       */
      protected void decorate()
      {
@@ -48,7 +48,7 @@
          {
              j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              k = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-@@ -241,7 +251,8 @@
+@@ -234,7 +244,8 @@
  
          int l;
  
@@ -58,7 +58,7 @@
          {
              k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-@@ -250,7 +261,8 @@
+@@ -243,7 +254,8 @@
              worldgenerator.generate(this.currentWorld, this.randomGenerator, k, this.currentWorld.getHeightValue(k, l), l);
          }
  
@@ -68,7 +68,7 @@
          {
              k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-@@ -259,7 +271,8 @@
+@@ -252,7 +264,8 @@
  
          int i1;
  
@@ -78,7 +78,7 @@
          {
              k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              l = this.randomGenerator.nextInt(128);
-@@ -275,7 +288,8 @@
+@@ -268,7 +281,8 @@
              }
          }
  
@@ -88,7 +88,7 @@
          {
              k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              l = this.randomGenerator.nextInt(128);
-@@ -284,7 +298,8 @@
+@@ -277,7 +291,8 @@
              worldgenerator1.generate(this.currentWorld, this.randomGenerator, k, l, i1);
          }
  
@@ -98,7 +98,7 @@
          {
              k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              l = this.randomGenerator.nextInt(128);
-@@ -292,7 +307,8 @@
+@@ -285,7 +300,8 @@
              (new WorldGenDeadBush(Block.deadBush.blockID)).generate(this.currentWorld, this.randomGenerator, k, l, i1);
          }
  
@@ -108,7 +108,7 @@
          {
              k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-@@ -305,7 +321,8 @@
+@@ -298,7 +314,8 @@
              this.waterlilyGen.generate(this.currentWorld, this.randomGenerator, k, i1, l);
          }
  
@@ -118,7 +118,7 @@
          {
              if (this.randomGenerator.nextInt(4) == 0)
              {
-@@ -324,7 +341,7 @@
+@@ -317,7 +334,7 @@
              }
          }
  
@@ -127,7 +127,7 @@
          {
              j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              k = this.randomGenerator.nextInt(128);
-@@ -332,7 +349,7 @@
+@@ -325,7 +342,7 @@
              this.mushroomBrownGen.generate(this.currentWorld, this.randomGenerator, j, k, l);
          }
  
@@ -136,7 +136,7 @@
          {
              j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              k = this.randomGenerator.nextInt(128);
-@@ -340,7 +357,8 @@
+@@ -333,7 +350,8 @@
              this.mushroomRedGen.generate(this.currentWorld, this.randomGenerator, j, k, l);
          }
  
@@ -146,7 +146,7 @@
          {
              k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-@@ -348,7 +366,7 @@
+@@ -341,7 +359,7 @@
              this.reedGen.generate(this.currentWorld, this.randomGenerator, k, i1, l);
          }
  
@@ -155,7 +155,7 @@
          {
              k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              l = this.randomGenerator.nextInt(128);
-@@ -356,7 +374,8 @@
+@@ -349,7 +367,8 @@
              this.reedGen.generate(this.currentWorld, this.randomGenerator, k, l, i1);
          }
  
@@ -165,7 +165,7 @@
          {
              j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              k = this.randomGenerator.nextInt(128);
-@@ -364,7 +383,8 @@
+@@ -357,7 +376,8 @@
              (new WorldGenPumpkin()).generate(this.currentWorld, this.randomGenerator, j, k, l);
          }
  
@@ -175,7 +175,7 @@
          {
              k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              l = this.randomGenerator.nextInt(128);
-@@ -372,7 +392,8 @@
+@@ -365,7 +385,8 @@
              this.cactusGen.generate(this.currentWorld, this.randomGenerator, k, l, i1);
          }
  
@@ -185,7 +185,7 @@
          {
              for (j = 0; j < 50; ++j)
              {
-@@ -390,6 +411,8 @@
+@@ -383,6 +404,8 @@
                  (new WorldGenLiquids(Block.lavaMoving.blockID)).generate(this.currentWorld, this.randomGenerator, k, l, i1);
              }
          }
@@ -194,7 +194,7 @@
      }
  
      /**
-@@ -425,13 +448,23 @@
+@@ -418,13 +441,23 @@
       */
      protected void generateOres()
      {

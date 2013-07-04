@@ -4,7 +4,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
-
+@Deprecated //See new net.minecraftforge.fluids
 public class LiquidEvent extends Event {
     public final LiquidStack liquid;
     public final int x;

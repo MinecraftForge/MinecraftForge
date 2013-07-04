@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/entity/player/EntityPlayer.java
 +++ ../src_work/minecraft/net/minecraft/entity/player/EntityPlayer.java
-@@ -66,8 +66,23 @@
+@@ -68,8 +68,21 @@
  import net.minecraft.world.World;
  import net.minecraft.world.chunk.IChunkProvider;
  
@@ -16,24 +16,13 @@
 +import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 +import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 +
- public abstract class EntityPlayer extends EntityLiving implements ICommandSender
+ public abstract class EntityPlayer extends EntityLivingBase implements ICommandSender
  {
 +    public static final String PERSISTED_NBT_TAG = "PlayerPersisted";
-+    public int maxHealth = 20;
-+
      /** Inventory of the player */
      public InventoryPlayer inventory = new InventoryPlayer(this);
      private InventoryEnderChest theInventoryEnderChest = new InventoryEnderChest();
-@@ -181,7 +196,7 @@
- 
-     public int getMaxHealth()
-     {
--        return 20;
-+        return maxHealth <= 0 ? 20 : maxHealth;
-     }
- 
-     protected void entityInit()
-@@ -268,6 +283,7 @@
+@@ -269,6 +282,7 @@
  
              if (itemstack == this.itemInUse)
              {
@@ -41,21 +30,27 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(itemstack, 5);
-@@ -528,11 +544,11 @@
-         this.cameraYaw = 0.0F;
-         this.addMountedMovementStat(this.posX - d0, this.posY - d1, this.posZ - d2);
+@@ -539,11 +553,11 @@
+             this.cameraYaw = 0.0F;
+             this.addMountedMovementStat(this.posX - d0, this.posY - d1, this.posZ - d2);
  
--        if (this.ridingEntity instanceof EntityPig)
-+        if (this.ridingEntity instanceof EntityLiving && ((EntityLiving)ridingEntity).shouldRiderFaceForward(this))
-         {
-             this.rotationPitch = f1;
-             this.rotationYaw = f;
--            this.renderYawOffset = ((EntityPig)this.ridingEntity).renderYawOffset;
-+            this.renderYawOffset = ((EntityLiving)this.ridingEntity).renderYawOffset;
+-            if (this.ridingEntity instanceof EntityPig)
++            if (this.ridingEntity instanceof EntityLivingBase && ((EntityLivingBase)ridingEntity).shouldRiderFaceForward(this))
+             {
+                 this.rotationPitch = f1;
+                 this.rotationYaw = f;
+-                this.renderYawOffset = ((EntityPig)this.ridingEntity).renderYawOffset;
++                this.renderYawOffset = ((EntityLivingBase)this.ridingEntity).renderYawOffset;
+             }
          }
      }
- 
-@@ -661,6 +677,9 @@
+@@ -686,11 +700,15 @@
+      */
+     public void onDeath(DamageSource par1DamageSource)
+     {
++        if (ForgeHooks.onLivingDeath(this, par1DamageSource)) return;
+         super.onDeath(par1DamageSource);
+         this.setSize(0.2F, 0.2F);
          this.setPosition(this.posX, this.posY, this.posZ);
          this.motionY = 0.10000000149011612D;
  
@@ -65,7 +60,7 @@
          if (this.username.equals("Notch"))
          {
              this.dropPlayerItemWithRandomChoice(new ItemStack(Item.appleRed, 1), true);
-@@ -669,6 +688,20 @@
+@@ -699,6 +717,20 @@
          if (!this.worldObj.getGameRules().getGameRuleBooleanValue("keepInventory"))
          {
              this.inventory.dropAllItems();
@@ -86,7 +81,7 @@
          }
  
          if (par1DamageSource != null)
-@@ -719,7 +752,20 @@
+@@ -749,7 +781,20 @@
       */
      public EntityItem dropOneItem(boolean par1)
      {
@@ -108,7 +103,7 @@
      }
  
      /**
-@@ -728,7 +774,7 @@
+@@ -758,7 +803,7 @@
       */
      public EntityItem dropPlayerItem(ItemStack par1ItemStack)
      {
@@ -117,7 +112,7 @@
      }
  
      /**
-@@ -780,15 +826,28 @@
+@@ -814,15 +859,28 @@
       */
      public void joinEntityItemWithWorld(EntityItem par1EntityItem)
      {
@@ -148,7 +143,7 @@
  
          if (f > 1.0F)
          {
-@@ -799,7 +858,9 @@
+@@ -833,7 +891,9 @@
              {
                  float f1 = (float)(i * i + 1);
  
@@ -159,7 +154,7 @@
                  {
                      f += f1 * 0.08F;
                  }
-@@ -830,7 +891,8 @@
+@@ -864,7 +924,8 @@
              f /= 5.0F;
          }
  
@@ -169,7 +164,7 @@
      }
  
      /**
-@@ -838,7 +900,7 @@
+@@ -872,7 +933,7 @@
       */
      public boolean canHarvestBlock(Block par1Block)
      {
@@ -178,60 +173,40 @@
      }
  
      /**
-@@ -857,6 +919,9 @@
-         this.experienceTotal = par1NBTTagCompound.getInteger("XpTotal");
-         this.setScore(par1NBTTagCompound.getInteger("Score"));
- 
-+        int tmp = par1NBTTagCompound.getInteger("MaxHealth");
-+        maxHealth = (tmp <= 0 ? 20 : tmp);
-+
-         if (this.sleeping)
+@@ -982,6 +1043,7 @@
+      */
+     public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
+     {
++        if (ForgeHooks.onLivingAttack(this, par1DamageSource, par2)) return false;
+         if (this.isEntityInvulnerable())
          {
-             this.playerLocation = new ChunkCoordinates(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ));
-@@ -893,6 +958,7 @@
-         par1NBTTagCompound.setInteger("XpLevel", this.experienceLevel);
-         par1NBTTagCompound.setInteger("XpTotal", this.experienceTotal);
-         par1NBTTagCompound.setInteger("Score", this.getScore());
-+        par1NBTTagCompound.setInteger("MaxHealth", maxHealth);
- 
-         if (this.spawnChunk != null)
-         {
-@@ -1096,12 +1162,22 @@
+             return false;
+@@ -1135,12 +1197,15 @@
      {
          if (!this.isEntityInvulnerable())
          {
 +            par2 = ForgeHooks.onLivingHurt(this, par1DamageSource, par2);
-+            if (par2 <= 0)
-+            {
-+                return;
-+            }
-+
-             if (!par1DamageSource.isUnblockable() && this.isBlocking())
++            if (par2 <= 0) return;
+             if (!par1DamageSource.isUnblockable() && this.isBlocking() && par2 > 0.0F)
              {
-                 par2 = 1 + par2 >> 1;
+                 par2 = (1.0F + par2) * 0.5F;
              }
  
 -            par2 = this.applyArmorCalculations(par1DamageSource, par2);
 +            par2 = ArmorProperties.ApplyArmor(this, inventory.armorInventory, par1DamageSource, par2);
-+            if (par2 <= 0)
-+            {
-+                return;
-+            }
++            if (par2 <= 0) return;
              par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
-             this.addExhaustion(par1DamageSource.getHungerDamage());
-             int j = this.getHealth();
-@@ -1144,6 +1220,10 @@
+             float f1 = par2;
+             par2 = Math.max(par2 - this.func_110139_bj(), 0.0F);
+@@ -1190,6 +1255,7 @@
  
      public boolean interactWith(Entity par1Entity)
      {
-+        if (MinecraftForge.EVENT_BUS.post(new EntityInteractEvent(this, par1Entity)))
-+        {
-+            return false;
-+        }
-         if (par1Entity.interact(this))
-         {
-             return true;
-@@ -1187,7 +1267,9 @@
++        if (MinecraftForge.EVENT_BUS.post(new EntityInteractEvent(this, par1Entity))) return false;
+         ItemStack itemstack = this.getCurrentEquippedItem();
+         ItemStack itemstack1 = itemstack != null ? itemstack.copy() : null;
+ 
+@@ -1246,7 +1312,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -241,7 +216,7 @@
      }
  
      /**
-@@ -1204,6 +1286,15 @@
+@@ -1263,6 +1331,15 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -257,7 +232,7 @@
          if (par1Entity.canAttackWithItem())
          {
              if (!par1Entity.func_85031_j(this))
-@@ -1378,6 +1469,12 @@
+@@ -1421,6 +1498,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -270,7 +245,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1417,6 +1514,11 @@
+@@ -1465,6 +1548,11 @@
          {
              int l = this.worldObj.getBlockMetadata(par1, par2, par3);
              int i1 = BlockBed.getDirection(l);
@@ -282,7 +257,7 @@
              float f = 0.5F;
              float f1 = 0.5F;
  
-@@ -1487,10 +1589,12 @@
+@@ -1535,10 +1623,12 @@
          ChunkCoordinates chunkcoordinates = this.playerLocation;
          ChunkCoordinates chunkcoordinates1 = this.playerLocation;
  
@@ -299,7 +274,7 @@
  
              if (chunkcoordinates1 == null)
              {
-@@ -1527,7 +1631,9 @@
+@@ -1575,7 +1665,9 @@
       */
      private boolean isInBed()
      {
@@ -310,7 +285,7 @@
      }
  
      /**
-@@ -1542,9 +1648,12 @@
+@@ -1590,9 +1682,12 @@
          ichunkprovider.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          ichunkprovider.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -326,7 +301,7 @@
              return chunkcoordinates1;
          }
          else
-@@ -1566,10 +1675,13 @@
+@@ -1614,10 +1709,13 @@
      {
          if (this.playerLocation != null)
          {
@@ -344,7 +319,7 @@
              {
                  case 0:
                      return 90.0F;
-@@ -1835,6 +1947,10 @@
+@@ -1891,6 +1989,10 @@
  
              super.fall(par1);
          }
@@ -355,7 +330,7 @@
      }
  
      /**
-@@ -1876,7 +1992,7 @@
+@@ -1932,7 +2034,7 @@
          {
              if (par1ItemStack.getItem().requiresMultipleRenderPasses())
              {
@@ -364,7 +339,7 @@
              }
  
              if (this.itemInUse != null && par1ItemStack.itemID == Item.bow.itemID)
-@@ -1898,6 +2014,7 @@
+@@ -1954,6 +2056,7 @@
                      return Item.bow.getItemIconForUseDuration(0);
                  }
              }
@@ -372,7 +347,7 @@
          }
  
          return icon;
-@@ -2137,6 +2254,14 @@
+@@ -2176,6 +2279,14 @@
          }
  
          this.theInventoryEnderChest = par1EntityPlayer.theInventoryEnderChest;
@@ -387,7 +362,7 @@
      }
  
      /**
-@@ -2208,7 +2333,14 @@
+@@ -2239,7 +2350,14 @@
       */
      public void setCurrentItemOrArmor(int par1, ItemStack par2ItemStack)
      {

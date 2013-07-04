@@ -1,23 +1,15 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/WorldRenderer.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/WorldRenderer.java
-@@ -17,13 +17,15 @@
- import net.minecraft.world.chunk.Chunk;
- import org.lwjgl.opengl.GL11;
- 
-+import net.minecraftforge.client.ForgeHooksClient;
-+
- @SideOnly(Side.CLIENT)
- public class WorldRenderer
- {
+@@ -23,7 +23,7 @@
      /** Reference to the World object. */
      public World worldObj;
      private int glRenderList = -1;
 -    private static Tessellator tessellator = Tessellator.instance;
 +    //private static Tessellator tessellator = Tessellator.instance;
-     public static int chunksUpdated = 0;
+     public static int chunksUpdated;
      public int posX;
      public int posY;
-@@ -192,15 +194,16 @@
+@@ -192,15 +192,16 @@
                                          GL11.glTranslatef(-8.0F, -8.0F, -8.0F);
                                          GL11.glScalef(f, f, f);
                                          GL11.glTranslatef(8.0F, 8.0F, 8.0F);
@@ -37,7 +29,7 @@
                                          {
                                              TileEntity tileentity = chunkcache.getBlockTileEntity(k2, i2, j2);
  
-@@ -212,14 +215,15 @@
+@@ -212,14 +213,15 @@
  
                                          int i3 = block.getRenderBlockPass();
  
@@ -56,7 +48,7 @@
                                      }
                                  }
                              }
-@@ -228,10 +232,11 @@
+@@ -228,10 +230,11 @@
  
                      if (flag2)
                      {

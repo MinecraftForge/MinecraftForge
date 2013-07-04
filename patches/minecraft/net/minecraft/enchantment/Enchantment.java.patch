@@ -7,7 +7,7 @@
 +
 +import com.google.common.collect.ObjectArrays;
 +
- import net.minecraft.entity.EntityLiving;
+ import net.minecraft.entity.EntityLivingBase;
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.DamageSource;
 @@ -205,6 +208,27 @@

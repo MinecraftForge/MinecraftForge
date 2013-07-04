@@ -19,7 +19,7 @@
 +public class BlockLeaves extends BlockLeavesBase implements IShearable
  {
      public static final String[] LEAF_TYPES = new String[] {"oak", "spruce", "birch", "jungle"};
-     public static final String[][] field_94396_b = new String[][] {{"leaves", "leaves_spruce", "leaves", "leaves_jungle"}, {"leaves_opaque", "leaves_spruce_opaque", "leaves_opaque", "leaves_jungle_opaque"}};
+     public static final String[][] field_94396_b = new String[][] {{"leaves_oak", "leaves_spruce", "leaves_birch", "leaves_jungle"}, {"leaves_oak_opaque", "leaves_spruce_opaque", "leaves_birch_opaque", "leaves_jungle_opaque"}};
 @@ -107,10 +111,9 @@
                      {
                          int j2 = par1World.getBlockId(par2 + k1, par3 + l1, par4 + i2);

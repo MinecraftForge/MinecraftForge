@@ -25,7 +25,7 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.nbt.NBTTagDouble;
-@@ -25,12 +33,16 @@
+@@ -26,12 +34,16 @@
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.Direction;
  import net.minecraft.util.MathHelper;
@@ -42,7 +42,7 @@
  
  public abstract class Entity
  {
-@@ -225,6 +237,13 @@
+@@ -218,6 +230,13 @@
      private boolean invulnerable;
      private UUID entityUniqueID;
      public EnumEntitySize myEntitySize;
@@ -56,7 +56,7 @@
  
      public Entity(World par1World)
      {
-@@ -274,6 +293,15 @@
+@@ -245,6 +264,15 @@
          this.dataWatcher.addObject(0, Byte.valueOf((byte)0));
          this.dataWatcher.addObject(1, Short.valueOf((short)300));
          this.entityInit();
@@ -72,16 +72,7 @@
      }
  
      protected abstract void entityInit();
-@@ -554,7 +582,7 @@
-         if (!this.worldObj.isRemote)
-         {
-             this.setFlag(0, this.fire > 0);
--            this.setFlag(2, this.ridingEntity != null);
-+            this.setFlag(2, this.ridingEntity != null && ridingEntity.shouldRiderSit());
-         }
- 
-         this.firstUpdate = false;
-@@ -1534,6 +1562,21 @@
+@@ -1515,6 +1543,21 @@
              par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
              par1NBTTagCompound.setLong("UUIDMost", this.entityUniqueID.getMostSignificantBits());
              par1NBTTagCompound.setLong("UUIDLeast", this.entityUniqueID.getLeastSignificantBits());
@@ -103,7 +94,7 @@
              this.writeEntityToNBT(par1NBTTagCompound);
  
              if (this.ridingEntity != null)
-@@ -1604,6 +1647,26 @@
+@@ -1585,6 +1628,26 @@
  
              this.setPosition(this.posX, this.posY, this.posZ);
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -130,32 +121,32 @@
              this.readEntityFromNBT(par1NBTTagCompound);
          }
          catch (Throwable throwable)
-@@ -1698,7 +1761,14 @@
-     {
-         EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
-         entityitem.delayBeforeCanPickup = 10;
--        this.worldObj.spawnEntityInWorld(entityitem);
-+        if (captureDrops)
-+        {
-+            capturedDrops.add(entityitem);
-+        }
-+        else
-+        {
-+            this.worldObj.spawnEntityInWorld(entityitem);
-+        }
-         return entityitem;
+@@ -1687,7 +1750,14 @@
+         {
+             EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
+             entityitem.delayBeforeCanPickup = 10;
+-            this.worldObj.spawnEntityInWorld(entityitem);
++            if (captureDrops)
++            {
++                capturedDrops.add(entityitem);
++            }
++            else
++            {
++                this.worldObj.spawnEntityInWorld(entityitem);
++            }
+             return entityitem;
+         }
      }
- 
-@@ -2056,7 +2126,7 @@
+@@ -1985,7 +2055,7 @@
       */
      public boolean isRiding()
      {
--        return this.ridingEntity != null || this.getFlag(2);
-+        return (this.ridingEntity != null && ridingEntity.shouldRiderSit()) || this.getFlag(2);
+-        return this.ridingEntity != null;
++        return this.ridingEntity != null && ridingEntity.shouldRiderSit();
      }
  
      /**
-@@ -2400,7 +2470,7 @@
+@@ -2344,7 +2414,7 @@
  
      public float func_82146_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
      {
@@ -164,7 +155,7 @@
      }
  
      public boolean func_96091_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
-@@ -2458,4 +2528,145 @@
+@@ -2407,4 +2477,145 @@
      {
          return this.getEntityName();
      }
