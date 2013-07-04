@@ -6,7 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandHandler;
-import net.minecraft.command.CommandNotFoundException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
@@ -28,11 +27,6 @@ import cpw.mods.fml.client.FMLClientHandler;
  */
 public class ClientCommandHandler extends CommandHandler
 {
-
-    public ClientCommandHandler()
-    {
-        this.registerCommand(new ClientCommandClearChat());
-    }
 
     /**
      * @return 1 if successfully executed, 0 if wrong usage, it doesn't exist or
@@ -111,9 +105,12 @@ public class ClientCommandHandler extends CommandHandler
                 List<String> commands = getPossibleCommands(mc.thePlayer, leftOfCursor);
                 if (commands != null && !commands.isEmpty())
                 {
-                    for (int i = 0; i < commands.size(); i++)
+                    if (leftOfCursor.indexOf(' ') == -1)
                     {
-                        commands.set(i, EnumChatFormatting.GRAY + "/" + commands.get(i));
+                        for (int i = 0; i < commands.size(); i++)
+                        {
+                            commands.set(i, EnumChatFormatting.GRAY + "/" + commands.get(i));
+                        }
                     }
                     latestAutoComplete = commands.toArray(new String[commands.size()]);
                 }
