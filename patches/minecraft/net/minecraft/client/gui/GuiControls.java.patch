@@ -32,7 +32,7 @@
 -        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, I18n.func_135053_a("gui.done")));
 +        scrollPane = new GuiControlsScrollPanel(this, options, mc);
 +        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height - 28, I18n.func_135053_a("gui.done")));
-+        scrollPane.func_110509_d(7, 8);
++        scrollPane.registerScrollButtons(7, 8);
          this.screenTitle = I18n.func_135053_a("controls.title");
      }
  

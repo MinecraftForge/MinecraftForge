@@ -17,7 +17,7 @@
  
  @SideOnly(Side.CLIENT)
  public class RenderPlayer extends RendererLivingEntity
-@@ -43,6 +52,13 @@
+@@ -46,6 +55,13 @@
      {
          ItemStack itemstack = par1AbstractClientPlayer.inventory.armorItemInSlot(3 - par2);
  
@@ -31,7 +31,7 @@
          if (itemstack != null)
          {
              Item item = itemstack.getItem();
-@@ -50,7 +66,7 @@
+@@ -53,7 +69,7 @@
              if (item instanceof ItemArmor)
              {
                  ItemArmor itemarmor = (ItemArmor)item;
@@ -40,7 +40,7 @@
                  ModelBiped modelbiped = par2 == 2 ? this.modelArmor : this.modelArmorChestplate;
                  modelbiped.bipedHead.showModel = par2 == 0;
                  modelbiped.bipedHeadwear.showModel = par2 == 0;
-@@ -59,15 +75,17 @@
+@@ -62,15 +78,17 @@
                  modelbiped.bipedLeftArm.showModel = par2 == 1;
                  modelbiped.bipedRightLeg.showModel = par2 == 2 || par2 == 3;
                  modelbiped.bipedLeftLeg.showModel = par2 == 2 || par2 == 3;
@@ -61,34 +61,34 @@
                      float f2 = (float)(j >> 16 & 255) / 255.0F;
                      float f3 = (float)(j >> 8 & 255) / 255.0F;
                      float f4 = (float)(j & 255) / 255.0F;
-@@ -105,7 +123,7 @@
+@@ -108,7 +126,7 @@
  
              if (item instanceof ItemArmor)
              {
 -                this.func_110776_a(RenderBiped.func_110858_a((ItemArmor)item, par2, "overlay"));
-+                this.func_110776_a(RenderBiped.getArmorResource(par1AbstractClientPlayer, itemstack, par2, "overlay"));
++                this.func_110776_a(RenderBiped.getArmorResource(par1, itemstack, par2, "overlay"));
                  float f1 = 1.0F;
                  GL11.glColor3f(f1, f1, f1);
              }
-@@ -114,6 +132,7 @@
+@@ -117,6 +135,7 @@
  
-     public void func_110819_a(AbstractClientPlayer par1AbstractClientPlayer, double par2, double par4, double par6, float par8, float par9)
+     public void renderPlayer(AbstractClientPlayer par1, double par2, double par4, double par6, float par8, float par9)
      {
-+        if (MinecraftForge.EVENT_BUS.post(new RenderPlayerEvent.Pre(par1AbstractClientPlayer, this))) return;
++        if (MinecraftForge.EVENT_BUS.post(new RenderPlayerEvent.Pre(par1, this))) return;
          float f2 = 1.0F;
          GL11.glColor3f(f2, f2, f2);
-         ItemStack itemstack = par1AbstractClientPlayer.inventory.getCurrentItem();
-@@ -145,6 +164,7 @@
+         ItemStack itemstack = par1.inventory.getCurrentItem();
+@@ -148,6 +167,7 @@
          this.modelArmorChestplate.aimedBow = this.modelArmor.aimedBow = this.modelBipedMain.aimedBow = false;
          this.modelArmorChestplate.isSneak = this.modelArmor.isSneak = this.modelBipedMain.isSneak = false;
          this.modelArmorChestplate.heldItemRight = this.modelArmor.heldItemRight = this.modelBipedMain.heldItemRight = 0;
-+        MinecraftForge.EVENT_BUS.post(new RenderPlayerEvent.Post(par1AbstractClientPlayer, this));
++        MinecraftForge.EVENT_BUS.post(new RenderPlayerEvent.Post(par1, this));
      }
  
      protected ResourceLocation func_110817_a(AbstractClientPlayer par1AbstractClientPlayer)
-@@ -154,21 +174,30 @@
- 
-     protected void func_110820_a(AbstractClientPlayer par1AbstractClientPlayer, float par2)
+@@ -160,21 +180,30 @@
+      */
+     protected void renderSpecials(AbstractClientPlayer par1AbstractClientPlayer, float par2)
      {
 +        RenderPlayerEvent.Specials.Pre event = new RenderPlayerEvent.Specials.Pre(par1AbstractClientPlayer, this, par2);
 +        if (MinecraftForge.EVENT_BUS.post(event))
@@ -121,7 +121,7 @@
                  {
                      f2 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
-@@ -220,6 +249,7 @@
+@@ -226,6 +255,7 @@
          boolean flag = par1AbstractClientPlayer.func_110310_o().func_110557_a();
          boolean flag1 = !par1AbstractClientPlayer.isInvisible();
          boolean flag2 = !par1AbstractClientPlayer.getHideCape();
@@ -129,7 +129,7 @@
          float f6;
  
          if (flag && flag1 && flag2)
-@@ -271,7 +301,7 @@
+@@ -277,7 +307,7 @@
  
          ItemStack itemstack1 = par1AbstractClientPlayer.inventory.getCurrentItem();
  
@@ -138,7 +138,7 @@
          {
              GL11.glPushMatrix();
              this.modelBipedMain.bipedRightArm.postRender(0.0625F);
-@@ -291,7 +321,11 @@
+@@ -297,7 +327,11 @@
  
              float f11;
  
@@ -151,7 +151,7 @@
              {
                  f11 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -348,7 +382,7 @@
+@@ -354,7 +388,7 @@
  
              if (itemstack1.getItem().requiresMultipleRenderPasses())
              {
@@ -160,7 +160,7 @@
                  {
                      int k = itemstack1.getItem().getColorFromItemStack(itemstack1, j);
                      f13 = (float)(k >> 16 & 255) / 255.0F;
-@@ -370,6 +404,7 @@
+@@ -376,6 +410,7 @@
  
              GL11.glPopMatrix();
          }

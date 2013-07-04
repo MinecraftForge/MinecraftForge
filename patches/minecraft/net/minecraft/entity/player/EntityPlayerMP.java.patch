@@ -53,12 +53,12 @@
                  }
              }
          }
-@@ -375,11 +377,24 @@
+@@ -375,11 +377,25 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
 +        if (ForgeHooks.onLivingDeath(this, par1DamageSource)) return;
-         this.mcServer.getConfigurationManager().func_110460_a(this.func_110142_aN().func_111182_b());
+         this.mcServer.getConfigurationManager().sendChatMsg(this.func_110142_aN().func_94546_b());
  
          if (!this.worldObj.getGameRules().getGameRuleBooleanValue("keepInventory"))
          {
@@ -66,6 +66,7 @@
 +            capturedDrops.clear();
 +
              this.inventory.dropAllItems();
++
 +            captureDrops = false;
 +            PlayerDropsEvent event = new PlayerDropsEvent(this, par1DamageSource, capturedDrops, recentlyHit > 0);
 +            if (!MinecraftForge.EVENT_BUS.post(event))

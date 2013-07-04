@@ -75,7 +75,7 @@
 -
 -            if (mapdata != null)
 -            {
--                this.mapItemRenderer.func_111275_a(this.mc.thePlayer, this.mc.func_110434_K(), mapdata);
+-                this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.func_110434_K(), mapdata);
 +
 +            IItemRenderer custom = MinecraftForgeClient.getItemRenderer(itemstack, FIRST_PERSON_MAP);
 +            MapData mapdata = ((ItemMap)itemstack.getItem()).getMapData(itemstack, this.mc.theWorld);
@@ -84,7 +84,7 @@
 +            {
 +                if (mapdata != null)
 +                {
-+                    this.mapItemRenderer.func_111275_a(this.mc.thePlayer, this.mc.func_110434_K(), mapdata);
++                    this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.func_110434_K(), mapdata);
 +                }
 +            }
 +            else

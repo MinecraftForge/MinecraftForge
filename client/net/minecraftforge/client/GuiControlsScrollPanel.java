@@ -63,7 +63,7 @@ public class GuiControlsScrollPanel extends GuiSlot
     }
 
     @Override
-    protected void func_130003_c() {}
+    protected void drawBackground() {}
 
     @Override
     public void drawScreen(int mX, int mY, float f)

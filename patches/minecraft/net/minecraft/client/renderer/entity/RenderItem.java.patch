@@ -124,7 +124,7 @@
                  {
                      this.func_110776_a(TextureMap.field_110575_b);
                  }
-@@ -353,10 +338,10 @@
+@@ -356,10 +341,10 @@
          float f1;
          float f2;
  
@@ -137,7 +137,7 @@
              GL11.glPushMatrix();
              GL11.glTranslatef((float)(par4 - 2), (float)(par5 + 3), -3.0F + this.zLevel);
              GL11.glScalef(10.0F, 10.0F, 10.0F);
-@@ -383,11 +368,11 @@
+@@ -386,11 +371,11 @@
          else if (Item.itemsList[k].requiresMultipleRenderPasses())
          {
              GL11.glDisable(GL11.GL_LIGHTING);
@@ -154,19 +154,19 @@
                  int k1 = Item.itemsList[k].getColorFromItemStack(par3ItemStack, j1);
                  f1 = (float)(k1 >> 16 & 255) / 255.0F;
                  f2 = (float)(k1 >> 8 & 255) / 255.0F;
-@@ -435,7 +420,10 @@
+@@ -441,7 +426,10 @@
      {
          if (par3ItemStack != null)
          {
--            this.func_110795_a(par1FontRenderer, par2TextureManager, par3ItemStack, par4, par5);
+-            this.renderItemIntoGUI(par1FontRenderer, par2TextureManager, par3ItemStack, par4, par5);
 +            if (!ForgeHooksClient.renderInventoryItem(renderBlocks, par2TextureManager, par3ItemStack, renderWithColor, zLevel, (float)par4, (float)par5))
 +            {
-+                this.func_110795_a(par1FontRenderer, par2TextureManager, par3ItemStack, par4, par5);
++                this.renderItemIntoGUI(par1FontRenderer, par2TextureManager, par3ItemStack, par4, par5);
 +            }
  
              if (par3ItemStack.hasEffect())
              {
-@@ -573,4 +561,47 @@
+@@ -583,4 +571,47 @@
      {
          this.doRenderItem((EntityItem)par1Entity, par2, par4, par6, par8, par9);
      }

@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/gui/GuiSlot.java
 +++ ../src_work/minecraft/net/minecraft/client/gui/GuiSlot.java
-@@ -325,16 +325,7 @@
+@@ -331,16 +331,7 @@
          GL11.glDisable(GL11.GL_LIGHTING);
          GL11.glDisable(GL11.GL_FOG);
          Tessellator tessellator = Tessellator.instance;
@@ -18,7 +18,7 @@
          j1 = this.width / 2 - 92 - 16;
          k1 = this.top + 4 - (int)this.amountScrolled;
  
-@@ -478,4 +469,18 @@
+@@ -484,4 +475,18 @@
          tessellator.addVertexWithUV(0.0D, (double)par1, 0.0D, 0.0D, (double)((float)par1 / f));
          tessellator.draw();
      }

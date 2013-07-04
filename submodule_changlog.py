@@ -35,8 +35,8 @@ def main(options, args):
         print('Could not extract start and end range')
         sys.exit(1)
     
-    print('Start: %s' % start)
-    print('End: %s' % end)
+    #print('Start: %s' % start)
+    #print('End: %s' % end)
     
     output = run_command(['git', 'log', '--reverse', '--pretty=oneline', '%s...%s' % (start, end)], './fml')
     print('Updated FML:')

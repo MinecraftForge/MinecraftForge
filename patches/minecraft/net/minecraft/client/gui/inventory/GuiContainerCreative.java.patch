@@ -196,8 +196,8 @@
          GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 -        ItemStack itemstack = new ItemStack(par1CreativeTabs.getTabIconItem());
 +        ItemStack itemstack = par1CreativeTabs.getIconItemStack();
-         itemRenderer.func_110797_b(this.fontRenderer, this.mc.func_110434_K(), itemstack, l, i1);
-         itemRenderer.func_110794_c(this.fontRenderer, this.mc.func_110434_K(), itemstack, l, i1);
+         itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.func_110434_K(), itemstack, l, i1);
+         itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.func_110434_K(), itemstack, l, i1);
          GL11.glDisable(GL11.GL_LIGHTING);
 @@ -912,6 +984,15 @@
          {

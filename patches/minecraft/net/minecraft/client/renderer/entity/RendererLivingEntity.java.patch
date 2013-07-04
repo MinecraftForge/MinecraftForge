@@ -20,9 +20,9 @@
  
      public RendererLivingEntity(ModelBase par1ModelBase, float par2)
      {
-@@ -439,12 +445,13 @@
- 
-     protected void func_130008_a(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6)
+@@ -442,12 +448,13 @@
+      */
+     protected void passSpecialRender(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6)
      {
 +        if (MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Specials.Pre(par1EntityLivingBase, this))) return;
          if (this.func_110813_b(par1EntityLivingBase))
@@ -35,7 +35,7 @@
  
              if (d3 < (double)(f2 * f2))
              {
-@@ -488,6 +495,7 @@
+@@ -491,6 +498,7 @@
                  }
              }
          }
