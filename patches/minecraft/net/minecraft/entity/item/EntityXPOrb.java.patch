@@ -1,0 +1,28 @@
+--- ../src_base/minecraft/net/minecraft/entity/item/EntityXPOrb.java
++++ ../src_work/minecraft/net/minecraft/entity/item/EntityXPOrb.java
+@@ -10,6 +10,8 @@
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.player.EntityXPOrbPickupEvent;
+ 
+ public class EntityXPOrb extends Entity
+ {
+@@ -247,6 +249,16 @@
+     {
+         if (!this.worldObj.isRemote)
+         {
++            EntityXPOrbPickupEvent event = new EntityXPOrbPickupEvent(par1EntityPlayer, this, this.xpValue, par1EntityPlayer.xpCooldown);
++            
++            if (MinecraftForge.EVENT_BUS.post(event))
++            {
++                return;
++            }
++            
++            this.xpValue = event.xpValue;
++            par1EntityPlayer.xpCooldown = event.xpCooldown;
++            
+             if (this.field_70532_c == 0 && par1EntityPlayer.xpCooldown == 0)
+             {
+                 par1EntityPlayer.xpCooldown = 2;
