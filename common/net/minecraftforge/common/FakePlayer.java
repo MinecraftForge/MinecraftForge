@@ -1,25 +1,34 @@
 package net.minecraftforge.common;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemInWorldManager;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
-//Preliminary, simple Fake Player class 
-public class FakePlayer extends EntityPlayer
+public class FakePlayer
 {
-    public FakePlayer(World world, String name)
-    {
-        super(world, name);
-    }
+    // Map of all active fake player usernames to their entities
+    private static Map<String, EntityPlayerMP> fakePlayers = new HashMap<String, EntityPlayerMP>();
 
-    public void sendChatToPlayer(String s){}
-    public boolean canCommandSenderUseCommand(int i, String s){ return false; }
-    public ChunkCoordinates getPlayerCoordinates()
+    /**
+     * Get a fake player with a given username
+     */
+    public static EntityPlayerMP get(World world, String username)
     {
-        return new ChunkCoordinates(0,0,0);
-    }
+        if (!fakePlayers.containsKey(username))
+        {
+            EntityPlayerMP fakePlayer = new EntityPlayerMP(FMLCommonHandler.instance().getMinecraftServerInstance(), world, username, new ItemInWorldManager(world));
+            fakePlayers.put(username, fakePlayer);
+        }
 
-    @Override
-    public void sendChatToPlayer(ChatMessageComponent chatmessagecomponent){}
+        return fakePlayers.get(username);
+    }
 }

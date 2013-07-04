@@ -102,7 +102,21 @@
                  {
                      return;
                  }
-@@ -521,7 +552,11 @@
+@@ -481,6 +512,13 @@
+                 else
+                 {
+                     this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(i, j, k, worldserver));
++                    // Update any tile entity data for this block
++                    TileEntity tileentity = worldserver.getBlockTileEntity(i, j, k);
++
++                    if (tileentity != null)
++                    {
++                        this.playerEntity.playerNetServerHandler.sendPacketToPlayer(tileentity.getDescriptionPacket());
++                    }
+                 }
+             }
+             else if (par1Packet14BlockDig.status == 2)
+@@ -521,7 +559,11 @@
                  return;
              }
  
@@ -115,7 +129,7 @@
          }
          else if (par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit() - 1 && (par1Packet15Place.getDirection() == 1 || par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit()))
          {
-@@ -530,7 +565,9 @@
+@@ -530,7 +572,9 @@
          }
          else
          {
@@ -126,7 +140,7 @@
              {
                  this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, worldserver, itemstack, i, j, k, l, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
              }
-@@ -710,6 +747,8 @@
+@@ -710,6 +754,8 @@
                      }
  
                      ChatMessageComponent chatmessagecomponent = ChatMessageComponent.func_111082_b("chat.type.text", new Object[] {this.playerEntity.getTranslatedEntityName(), s});
@@ -135,7 +149,7 @@
                      this.mcServer.getConfigurationManager().func_110459_a(chatmessagecomponent, false);
                  }
  
-@@ -850,7 +889,7 @@
+@@ -850,7 +896,7 @@
                      return;
                  }
  

@@ -1,0 +1,53 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockOre.java
++++ ../src_work/minecraft/net/minecraft/block/BlockOre.java
+@@ -59,7 +59,7 @@
+     public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
+     {
+         super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, par7);
+-
++        /* Delegated to getExpDrop
+         if (this.idDropped(par5, par1World.rand, par7) != this.blockID)
+         {
+             int j1 = 0;
+@@ -87,8 +87,41 @@
+ 
+             this.dropXpOnBlockBreak(par1World, par2, par3, par4, j1);
+         }
++        */
+     }
+ 
++    public int getExpDrop(World world, int meta, int enchantmentLevel)
++    {
++        if (this.idDropped(meta, world.rand, enchantmentLevel) != this.blockID)
++        {
++            int j1 = 0;
++    
++            if (this.blockID == Block.oreCoal.blockID)
++            {
++                j1 = MathHelper.getRandomIntegerInRange(world.rand, 0, 2);
++            }
++            else if (this.blockID == Block.oreDiamond.blockID)
++            {
++                j1 = MathHelper.getRandomIntegerInRange(world.rand, 3, 7);
++            }
++            else if (this.blockID == Block.oreEmerald.blockID)
++            {
++                j1 = MathHelper.getRandomIntegerInRange(world.rand, 3, 7);
++            }
++            else if (this.blockID == Block.oreLapis.blockID)
++            {
++                j1 = MathHelper.getRandomIntegerInRange(world.rand, 2, 5);
++            }
++            else if (this.blockID == Block.oreNetherQuartz.blockID)
++            {
++                j1 = MathHelper.getRandomIntegerInRange(world.rand, 2, 5);
++            }
++    
++            return j1;
++        }
++    
++        return 0;
++    }
+     /**
+      * Determines the damage on the item the block drops. Used in cloth and wood.
+      */
