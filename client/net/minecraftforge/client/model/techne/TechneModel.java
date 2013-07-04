@@ -35,7 +35,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.RenderEngine;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.client.model.ModelFormatException;
 
@@ -235,6 +234,7 @@ public class TechneModel extends ModelBase implements IModelCustom {
     
     private void bindTexture()
     {
+        /* TODO: Update to 1.6
         if (texture != null)
         {
             if (!textureNameSet)
@@ -267,6 +267,7 @@ public class TechneModel extends ModelBase implements IModelCustom {
                 Minecraft.getMinecraft().renderEngine.resetBoundTexture();
             }
         }
+        */
     }
     
     @Override
