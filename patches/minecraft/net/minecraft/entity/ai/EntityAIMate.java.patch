@@ -1,0 +1,42 @@
+--- ../src_base/minecraft/net/minecraft/entity/ai/EntityAIMate.java
++++ ../src_work/minecraft/net/minecraft/entity/ai/EntityAIMate.java
+@@ -7,6 +7,8 @@
+ import net.minecraft.entity.item.EntityXPOrb;
+ import net.minecraft.entity.passive.EntityAnimal;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.living.LivingBreedEvent;
+ 
+ public class EntityAIMate extends EntityAIBase
+ {
+@@ -118,8 +120,17 @@
+             this.targetMate.resetInLove();
+             var1.setGrowingAge(-24000);
+             var1.setLocationAndAngles(this.theAnimal.posX, this.theAnimal.posY, this.theAnimal.posZ, 0.0F, 0.0F);
++            
++            Random var2 = this.theAnimal.getRNG();
++            
++            LivingBreedEvent event = new LivingBreedEvent(theAnimal, targetMate, var1, var2.nextInt(7) + 1);
++            if (MinecraftForge.EVENT_BUS.post(event))
++            {
++                return;
++            }
++            var1 = event.child;
++            
+             this.theWorld.spawnEntityInWorld(var1);
+-            Random var2 = this.theAnimal.getRNG();
+ 
+             for (int var3 = 0; var3 < 7; ++var3)
+             {
+@@ -129,7 +140,10 @@
+                 this.theWorld.spawnParticle("heart", this.theAnimal.posX + (double)(var2.nextFloat() * this.theAnimal.width * 2.0F) - (double)this.theAnimal.width, this.theAnimal.posY + 0.5D + (double)(var2.nextFloat() * this.theAnimal.height), this.theAnimal.posZ + (double)(var2.nextFloat() * this.theAnimal.width * 2.0F) - (double)this.theAnimal.width, var4, var6, var8);
+             }
+ 
+-            this.theWorld.spawnEntityInWorld(new EntityXPOrb(this.theWorld, this.theAnimal.posX, this.theAnimal.posY, this.theAnimal.posZ, var2.nextInt(7) + 1));
++            if (event.xp > 0)
++            {
++                this.theWorld.spawnEntityInWorld(new EntityXPOrb(this.theWorld, this.theAnimal.posX, this.theAnimal.posY, this.theAnimal.posZ, event.xp));
++            }
+         }
+     }
+ }
