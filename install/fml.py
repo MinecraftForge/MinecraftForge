@@ -923,7 +923,7 @@ def decompile_minecraft(fml_dir, mcp_dir, disable_at=False, disable_merge=False,
     src_dir = os.path.join(mcp_dir, 'src')        
     if os.path.isdir(src_dir):
         os.chdir(mcp_dir)
-        cleanup(None, False)
+        cleanup(None, False, False)
         reset_logger()
         os.chdir(fml_dir)
         
