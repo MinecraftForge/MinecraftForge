@@ -1,0 +1,32 @@
+--- ../src_base/minecraft/net/minecraft/entity/item/EntityItemFrame.java
++++ ../src_work/minecraft/net/minecraft/entity/item/EntityItemFrame.java
+@@ -8,6 +8,8 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.item.PutItemInFrameEvent;
+ 
+ public class EntityItemFrame extends EntityHanging
+ {
+@@ -145,9 +147,14 @@
+             if (itemstack != null && !this.worldObj.isRemote)
+             {
+-                this.setDisplayedItem(itemstack);
+-
+-                if (!par1EntityPlayer.capabilities.isCreativeMode && --itemstack.stackSize <= 0)
+-                {
+-                    par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, (ItemStack)null);
+-                }
++                PutItemInFrameEvent event = new PutItemInFrameEvent(this, itemstack, par1EntityPlayer);
++
++                if (!MinecraftForge.EVENT_BUS.post(event))
++                {
++                    this.setDisplayedItem(itemstack);
++
++                    if (!par1EntityPlayer.capabilities.isCreativeMode && --itemstack.stackSize <= 0)
++                    {
++                        par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, (ItemStack)null);
++                    }
++                }
+             }
