@@ -283,4 +283,25 @@ public class ForgeHooksClient
             stencilBits = 0;
         }
     }
+
+    //This properly moves the domain, if provided, to the front of the string before concatenating
+    public static String fixDomain(String base, String complex)
+    {
+        int idx = complex.indexOf(':');
+        if (idx == -1)
+        {
+            return base + complex;
+        }
+
+        String name = complex.substring(idx + 1, complex.length());
+        if (idx > 1)
+        {
+            String domain = complex.substring(0, idx);
+            return domain + ':' + base + name;
+        }
+        else
+        {
+            return base + name;
+        }
+    }
 }
