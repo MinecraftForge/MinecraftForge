@@ -311,6 +311,13 @@
       <fileset dir="${mcp.srcdir}" />
     </copy>
     <antcall target="writeversion" />
+    <delete>
+      <fileset dir="${basedir}" includes="deobfuscation_data-*.lzma" />
+    </delete>
+    <antcall target="build-deobf-data" />
+    <copy todir="${common.src.dir}">
+      <fileset dir="${basedir}" includes="deobfuscation_data-*.lzma" />
+    </copy>
     <antcall target="makeeclipse" />
     <echo>Setup complete! You should now be able to open ${basedir}/eclipse as a workspace in eclipse and import/refresh the FML project</echo>
   </target>
