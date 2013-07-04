@@ -1,0 +1,43 @@
+--- C:/Users/Adam/Desktop/forge container patch/old/Container.java	Sun May 12 00:50:56 2013
++++ C:/Users/Adam/Desktop/forge container patch/new/Container.java	Sun May 12 00:51:10 2013
+@@ -30,6 +30,9 @@
+      */
+     protected List crafters = new ArrayList();
+     private Set playerList = new HashSet();
++    
++    /** player that is using container */
++    private EntityPlayer inventoryPlayer;
+ 
+     /**
+      * the slot is assumed empty
+@@ -69,6 +72,30 @@
+         }
+ 
+         return arraylist;
++    }
++    
++    /**
++     * sets player that is using container
++     */
++    public void setPlayer(EntityPlayer player)
++    {
++    	this.inventoryPlayer = player;
++    }
++    
++    /**
++     * returns player that is using container
++     */
++    public EntityPlayer getPlayer()
++    {
++    	return this.inventoryPlayer;
++    }
++    
++    /**
++     * returns inventory of this container as IInventory
++     */
++    public IInventory getIInventory()
++    {
++    	return null;
+     }
+ 
+     @SideOnly(Side.CLIENT)
