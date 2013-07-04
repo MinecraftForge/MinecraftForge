@@ -75,3 +75,21 @@
      }
  
      public boolean func_111282_a(EntityPlayer par1EntityPlayer, EntityLivingBase par2EntityLivingBase)
+@@ -737,10 +753,16 @@
+         return arraylist;
+     }
+ 
++    @Deprecated
+     @SideOnly(Side.CLIENT)
+     public boolean hasEffect()
+     {
+-        return this.getItem().hasEffect(this);
++        return hasEffect(0);
++    }
++    @SideOnly(Side.CLIENT)
++    public boolean hasEffect(int pass)
++    {
++        return this.getItem().hasEffect(this, pass);
+     }
+ 
+     @SideOnly(Side.CLIENT)
