@@ -164,7 +164,7 @@ AbstractClientPlayer,net/minecraft/client/entity
 EntityClientPlayerMP,net/minecraft/client/entity
 EntityOtherPlayerMP,net/minecraft/client/entity
 EntityPlayerSP,net/minecraft/client/entity
-RenderMinecartMobSpawner,net/minecraft/client/entity/render
+RenderMinecartMobSpawner,net/minecraft/client/renderer/entity
 ChatClickData,net/minecraft/client/gui
 ChatLine,net/minecraft/client/gui
 FontRenderer,net/minecraft/client/gui
@@ -762,7 +762,7 @@ EntityAIMate,net/minecraft/entity/ai
 EntityAIMoveIndoors,net/minecraft/entity/ai
 EntityAIMoveThroughVillage,net/minecraft/entity/ai
 EntityAIMoveTowardsTarget,net/minecraft/entity/ai
-EntityAIMoveTwardsRestriction,net/minecraft/entity/ai
+EntityAIMoveTowardsRestriction,net/minecraft/entity/ai
 EntityAINearestAttackableTarget,net/minecraft/entity/ai
 EntityAINearestAttackableTargetSelector,net/minecraft/entity/ai
 EntityAINearestAttackableTargetSorter,net/minecraft/entity/ai

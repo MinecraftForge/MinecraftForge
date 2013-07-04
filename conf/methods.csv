@@ -17,8 +17,7 @@ func_70003_b,canCommandSenderUseCommand,2,Returns true if the command sender is 
 func_70004_a,translateString,0,Translates and formats the given string key with the given arguments.
 func_70004_a,translateString,1,Translates and formats the given string key with the given arguments.
 func_70005_c_,getCommandSenderName,2,"Gets the name of this command sender (usually username, but possibly ""Rcon"")"
-func_70006_a,sendChatToPlayer,0,
-func_70006_a,sendChatToPlayer,1,
+func_70006_a,sendChatToPlayer,2,
 func_70007_b,resetLog,2,Clears the RCon log
 func_70008_c,getChatBuffer,2,
 func_70011_f,getDistance,2,"Gets the distance to the position. Args: x, y, z"
@@ -1434,7 +1433,8 @@ func_72849_a,getBlockLightValue_do,2,"Gets the light value of a block location. 
 func_72850_v,isBlockFreezableNaturally,2,checks to see if a given block is both water and has at least one immediately adjacent non-water block
 func_72851_f,notifyBlockChange,2,"The block type change and need to notify other systems  Args: x, y, z, blockID"
 func_72852_a,addTileEntity,2,
-func_72853_d,getMoonPhase,2,
+func_72853_d,getMoonPhase,0,
+func_72853_d,getMoonPhase,1,
 func_72854_c,updateAllPlayersSleepingFlag,2,Updates the flag that indicates whether or not all players in the world are sleeping.
 func_72855_b,checkNoEntityCollision,2,"Returns true if there are no solid, live entities in the specified AxisAlignedBB"
 func_72856_b,getClosestVulnerablePlayerToEntity,2,"Returns the closest vulnerable player to this entity within the given radius, or null if none is found"
@@ -2824,8 +2824,7 @@ func_76356_a,causeThrownDamage,2,
 func_76357_e,canHarmInCreative,2,
 func_76358_a,causeMobDamage,2,
 func_76359_i,setDamageAllowedInCreativeMode,2,
-func_76360_b,getDeathMessage,0,Returns the message to be displayed on player death.
-func_76360_b,getDeathMessage,1,Returns the message to be displayed on player death.
+func_76360_b,getDeathMessage,2,Returns the message to be displayed on player death.
 func_76361_j,setFireDamage,2,Define the damage type as fire based.
 func_76362_a,causeFireballDamage,2,returns EntityDamageSourceIndirect of a fireball
 func_76363_c,isUnblockable,2,
@@ -4118,11 +4117,9 @@ func_82845_b,getArmorCraftingMaterial,2,"Return the crafting material for this a
 func_82846_b,transferStackInSlot,2,Called when a player shift-clicks on a slot. You must override this or you will crash when someone does that.
 func_82847_b,removeCraftingFromCrafters,0,Remove this crafting listener from the listener list.
 func_82848_d,updateRepairOutput,2,"called when the Anvil Input Slot changes, calculates the new result and puts it in the output slot"
-func_82849_b,getStackSizeUsedInRepair,0,
-func_82849_b,getStackSizeUsedInRepair,1,
+func_82849_b,getStackSizeUsedInRepair,2,
 func_82850_a,updateItemName,2,used by the Anvil GUI to update the Item Name being typed by the player
-func_82851_a,getRepairInputInventory,0,
-func_82851_a,getRepairInputInventory,1,
+func_82851_a,getRepairInputInventory,2,
 func_82863_d,getBeacon,2,Returns the Tile Entity behind this beacon inventory / container
 func_82869_a,canTakeStack,2,Return whether this slot's stack can be taken from this slot.
 func_82870_a,onPickupFromSlot,2,
@@ -4233,8 +4230,7 @@ func_90054_a,callUpdatingScreenName,0,
 func_90999_ad,canRenderOnFire,0,Return whether this entity should be rendered as on fire.
 func_92058_a,setEntityItemStack,2,Sets the ItemStack for this entity
 func_92059_d,getEntityItem,2,"Returns the ItemStack corresponding to the Entity (Note: if no item exists, will log an error but still return an ItemStack containing Block.stone)"
-func_92062_k,sendChatMsg,0,Sends the given string to every player as chat message.
-func_92062_k,sendChatMsg,1,Sends the given string to every player as chat message.
+func_92062_k,sendChatMsg,2,Sends the given string to every player as chat message.
 func_92085_d,getIsBlank,2,
 func_92087_a,causeThornsDamage,2,Returns the EntityDamageSource of the Thorns enchantment
 func_92089_a,canApply,2,

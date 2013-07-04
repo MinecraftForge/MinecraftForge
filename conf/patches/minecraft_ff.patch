@@ -54,41 +54,6 @@ diff -r -U 3 minecraft\net\minecraft\src\DedicatedServer.java minecraft_patched\
        super.func_71190_q();
        this.func_71333_ah();
     }
-diff -r -U 3 minecraft\net\minecraft\src\EntityDragon.java minecraft_patched\net\minecraft\src\EntityDragon.java
---- minecraft\net\minecraft\src\EntityDragon.java	Sun Jun 30 21:44:01 2013
-+++ minecraft_patched\net\minecraft\src\EntityDragon.java	Sun Jun 30 21:45:42 2013
-@@ -551,4 +551,14 @@
-    protected float func_70599_aP() {
-       return 5.0F;
-    }
-+
-+   @Override
-+   public float func_70667_aM() {
-+      return 0.0f;
-+   }
-+
-+   @Override
-+   public float func_110183_aJ() {
-+      return 0.0f;
-+   }
- }
-diff -r -U 3 minecraft\net\minecraft\src\EntityWither.java minecraft_patched\net\minecraft\src\EntityWither.java
---- minecraft\net\minecraft\src\EntityWither.java	Sun Jun 30 21:44:02 2013
-+++ minecraft_patched\net\minecraft\src\EntityWither.java	Sun Jun 30 21:45:42 2013
-@@ -458,4 +458,13 @@
-       this.field_70154_o = null;
-    }
- 
-+   @Override
-+   public float func_70667_aM() {
-+      return 0.0f;
-+   }
-+
-+   @Override
-+   public float func_110183_aJ() {
-+      return 0.0f;
-+   }
- }
 diff -r -U 3 minecraft\net\minecraft\src\EnumChatFormatting.java minecraft_patched\net\minecraft\src\EnumChatFormatting.java
 --- minecraft\net\minecraft\src\EnumChatFormatting.java	Sun Jun 30 21:44:02 2013
 +++ minecraft_patched\net\minecraft\src\EnumChatFormatting.java	Sun Jun 30 21:45:42 2013
