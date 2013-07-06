@@ -74,7 +74,7 @@
              }
          }
  
-@@ -228,4 +259,26 @@
+@@ -228,4 +259,31 @@
              }
          }
      }
@@ -99,5 +99,10 @@
 +    public ItemStack getIconItemStack()
 +    {
 +        return new ItemStack(getTabIconItem());
++    }
++
++    public boolean getCanSearch()
++    {
++        return false;
 +    }
  }
