@@ -12,10 +12,12 @@ We use Maven to handle our dependencies.
 2. Check out and install [MCPC API](https://github.com/MinecraftPortCentral/Bukkit/tree/mcpc-api-161) 
  * Note: this is not needed as the repository we use has MCPC-API too, but you might have a newer one (with your own changes :D)
  * Check out this repo and run: 
-3. `python setup.py`
-4. extract eclipse-resources.zip to eclipse/Forge folder
-5. `mvn initialize -P -built` from eclipse/Forge folder
-6. `mvn clean package`
+3. Check out [FML] (https://github.com/MinecraftPortCentral/FML)
+4. Copy entire contents of FML to root folder in fml
+5. `python setup.py`
+6. extract eclipse-resources.zip to eclipse/Forge folder
+7. `mvn initialize -P -built` from eclipse/Forge folder
+8. `mvn clean package`
 
 If you get "Could not find artifact net.minecraftforge:minecraft-forge:jar", repeat step 3. To fix "out of heap space", run mvn with more memory: MAVEN\_OPTS=-mx2G
 
