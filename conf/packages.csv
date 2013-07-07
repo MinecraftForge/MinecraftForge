@@ -151,6 +151,7 @@ CallableTexturePack,net/minecraft/client
 CallableType2,net/minecraft/client
 CallableUpdatingScreenName,net/minecraft/client
 Minecraft,net/minecraft/client
+MinecraftINNER13,net/minecraft/client
 StatStringFormatKeyInv,net/minecraft/client
 ThreadClientSleep,net/minecraft/client
 ScheduledSound,net/minecraft/client/audio
@@ -164,7 +165,6 @@ AbstractClientPlayer,net/minecraft/client/entity
 EntityClientPlayerMP,net/minecraft/client/entity
 EntityOtherPlayerMP,net/minecraft/client/entity
 EntityPlayerSP,net/minecraft/client/entity
-RenderMinecartMobSpawner,net/minecraft/client/renderer/entity
 ChatClickData,net/minecraft/client/gui
 ChatLine,net/minecraft/client/gui
 FontRenderer,net/minecraft/client/gui
@@ -376,6 +376,8 @@ ThreadConnectToServer,net/minecraft/client/multiplayer
 ThreadLanServerFind,net/minecraft/client/multiplayer
 ThreadLanServerPing,net/minecraft/client/multiplayer
 WorldClient,net/minecraft/client/multiplayer
+WorldClientINNER3,net/minecraft/client/multiplayer
+WorldClientINNER4,net/minecraft/client/multiplayer
 EffectRenderer,net/minecraft/client/particle
 EntityAuraFX,net/minecraft/client/particle
 EntityBreakingFX,net/minecraft/client/particle
@@ -466,6 +468,7 @@ RenderLiving,net/minecraft/client/renderer/entity
 RenderMagmaCube,net/minecraft/client/renderer/entity
 RenderManager,net/minecraft/client/renderer/entity
 RenderMinecart,net/minecraft/client/renderer/entity
+RenderMinecartMobSpawner,net/minecraft/client/renderer/entity
 RenderMooshroom,net/minecraft/client/renderer/entity
 RenderOcelot,net/minecraft/client/renderer/entity
 RenderPainting,net/minecraft/client/renderer/entity
@@ -761,8 +764,8 @@ EntityAILookIdle,net/minecraft/entity/ai
 EntityAIMate,net/minecraft/entity/ai
 EntityAIMoveIndoors,net/minecraft/entity/ai
 EntityAIMoveThroughVillage,net/minecraft/entity/ai
-EntityAIMoveTowardsTarget,net/minecraft/entity/ai
 EntityAIMoveTowardsRestriction,net/minecraft/entity/ai
+EntityAIMoveTowardsTarget,net/minecraft/entity/ai
 EntityAINearestAttackableTarget,net/minecraft/entity/ai
 EntityAINearestAttackableTargetSelector,net/minecraft/entity/ai
 EntityAINearestAttackableTargetSorter,net/minecraft/entity/ai
@@ -800,10 +803,8 @@ AttributeInstance,net/minecraft/entity/ai/attributes
 AttributeModifier,net/minecraft/entity/ai/attributes
 BaseAttribute,net/minecraft/entity/ai/attributes
 BaseAttributeMap,net/minecraft/entity/ai/attributes
-ClientsideAttributeMap,net/minecraft/entity/ai/attributes
 ModifiableAttributeInstance,net/minecraft/entity/ai/attributes
 RangedAttribute,net/minecraft/entity/ai/attributes
-ReadonlyAttributeInstance,net/minecraft/entity/ai/attributes
 ServersideAttributeMap,net/minecraft/entity/ai/attributes
 BossStatus,net/minecraft/entity/boss
 EntityDragon,net/minecraft/entity/boss
@@ -851,6 +852,8 @@ EntitySnowman,net/minecraft/entity/monster
 EntitySpider,net/minecraft/entity/monster
 EntityWitch,net/minecraft/entity/monster
 EntityZombie,net/minecraft/entity/monster
+EntityZombieGroupData,net/minecraft/entity/monster
+EntityZombieINNER1,net/minecraft/entity/monster
 FilterIMob,net/minecraft/entity/monster
 IMob,net/minecraft/entity/monster
 ContainerSheep,net/minecraft/entity/passive
@@ -1068,6 +1071,7 @@ Packet12PlayerLook,net/minecraft/network/packet
 Packet130UpdateSign,net/minecraft/network/packet
 Packet131MapData,net/minecraft/network/packet
 Packet132TileEntityData,net/minecraft/network/packet
+Packet133TileEditorOpen,net/minecraft/network/packet
 Packet13PlayerLookMove,net/minecraft/network/packet
 Packet14BlockDig,net/minecraft/network/packet
 Packet15Place,net/minecraft/network/packet
@@ -1115,6 +1119,7 @@ Packet41EntityEffect,net/minecraft/network/packet
 Packet42RemoveEntityEffect,net/minecraft/network/packet
 Packet43Experience,net/minecraft/network/packet
 Packet44UpdateAttributes,net/minecraft/network/packet
+Packet44UpdateAttributesSnapshot,net/minecraft/network/packet
 Packet4UpdateTime,net/minecraft/network/packet
 Packet51MapChunk,net/minecraft/network/packet
 Packet51MapChunkData,net/minecraft/network/packet
@@ -1173,6 +1178,7 @@ ScoreboardSaveData,net/minecraft/scoreboard
 ServerCommandScoreboard,net/minecraft/scoreboard
 ServerCommandTestFor,net/minecraft/scoreboard
 ServerScoreboard,net/minecraft/scoreboard
+Team,net/minecraft/scoreboard
 CallableIsServerModded,net/minecraft/server
 CallableServerMemoryStats,net/minecraft/server
 CallableServerProfiler,net/minecraft/server
