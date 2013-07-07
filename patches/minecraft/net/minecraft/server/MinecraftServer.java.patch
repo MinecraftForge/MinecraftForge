@@ -802,7 +802,7 @@
          this.theProfiler.endSection();
      }
  
-@@ -745,7 +929,23 @@
+@@ -745,7 +929,22 @@
       */
      public WorldServer worldServerForDimension(int par1)
      {
@@ -811,7 +811,6 @@
 +        // verify the nether or the end is allowed, and if not return overworld
 +        if ((par1 == -1 && !this.getAllowNether()) || (par1 == 1 && !this.server.getAllowEnd()))
 +        {
-+            System.out.println("worldServerForDimension RETURNING DIMENSION 0!");
 +            return DimensionManager.getWorld(0);
 +        }
 +
@@ -821,13 +820,13 @@
 +            DimensionManager.initDimension(par1);
 +            ret = DimensionManager.getWorld(par1);
 +        }
-+        //System.out.println("worldServerForDimension RETURNING DIMENSION " + ret);
++
 +        return ret;
 +        // MCPC+ end
      }
  
      @SideOnly(Side.SERVER)
-@@ -815,14 +1015,70 @@
+@@ -815,14 +1014,70 @@
       */
      public String getPlugins()
      {
@@ -906,7 +905,7 @@
      }
  
      /**
-@@ -830,7 +1086,7 @@
+@@ -830,7 +1085,7 @@
       */
      public boolean isDebuggingEnabled()
      {
@@ -915,7 +914,7 @@
      }
  
      /**
-@@ -864,7 +1120,7 @@
+@@ -864,7 +1119,7 @@
      {
          par1CrashReport.func_85056_g().addCrashSectionCallable("Profiler Position", new CallableIsServerModded(this));
  
@@ -924,7 +923,7 @@
          {
              par1CrashReport.func_85056_g().addCrashSectionCallable("Vec3 Pool Size", new CallableServerProfiler(this));
          }
-@@ -882,54 +1138,49 @@
+@@ -882,54 +1137,49 @@
       */
      public List getPossibleCompletions(ICommandSender par1ICommandSender, String par2Str)
      {
@@ -1000,7 +999,7 @@
      }
  
      /**
-@@ -1037,9 +1288,11 @@
+@@ -1037,9 +1287,11 @@
  
      public void setDifficultyForAllWorlds(int par1)
      {
@@ -1015,7 +1014,7 @@
  
              if (worldserver != null)
              {
-@@ -1102,17 +1355,18 @@
+@@ -1102,17 +1354,18 @@
          this.worldIsBeingDeleted = true;
          this.getActiveAnvilConverter().flushCache();
  
@@ -1038,7 +1037,7 @@
          this.initiateShutdown();
      }
  
-@@ -1143,22 +1397,23 @@
+@@ -1143,22 +1396,23 @@
          par1PlayerUsageSnooper.addData("avg_rec_packet_size", Integer.valueOf((int)MathHelper.average(this.receivedPacketSizeArray)));
          int i = 0;
  
@@ -1078,7 +1077,7 @@
          }
  
          par1PlayerUsageSnooper.addData("worlds", Integer.valueOf(i));
-@@ -1185,14 +1440,14 @@
+@@ -1185,14 +1439,14 @@
       */
      public int textureSize()
      {
@@ -1095,7 +1094,7 @@
      }
  
      public void setOnlineMode(boolean par1)
-@@ -1285,9 +1540,11 @@
+@@ -1285,9 +1539,11 @@
       */
      public void setGameType(EnumGameType par1EnumGameType)
      {
@@ -1110,7 +1109,7 @@
          }
      }
  
-@@ -1307,7 +1564,7 @@
+@@ -1307,7 +1563,7 @@
      /**
       * On dedicated does nothing. On integrated, sets commandsAllowedForAll, gameType and allows external connections.
       */
@@ -1119,7 +1118,7 @@
  
      public int getTickCounter()
      {
-@@ -1335,7 +1592,7 @@
+@@ -1335,7 +1591,7 @@
  
      public World func_130014_f_()
      {
@@ -1128,17 +1127,12 @@
      }
  
      /**
-@@ -1384,121 +1641,258 @@
+@@ -1384,121 +1640,251 @@
      @SideOnly(Side.SERVER)
      public static void main(String[] par0ArrayOfStr)
      {
-+    	par0ArrayOfStr = ServerLaunchWrapper.startupArgs;
-+    	for (int i = 0; i < par0ArrayOfStr.length; i++)
-+    	{
-+    		System.out.println("FOUND " + par0ArrayOfStr[i]);
-+    	}
++        par0ArrayOfStr = ServerLaunchWrapper.startupArgs;
 +        options = loadOptions(par0ArrayOfStr);
-+        System.out.println("options = " + options);
 +        if (options == null)
 +        {
 +            return;
@@ -1231,7 +1225,7 @@
 +        }
 +        catch (Exception exception)
 +        {
-+        	Logger.getAnonymousLogger().log(Level.SEVERE, "Failed to start the minecraft server", exception);
++            Logger.getAnonymousLogger().log(Level.SEVERE, "Failed to start the minecraft server", exception);
 +        }
 +    }
 +
@@ -1344,7 +1338,6 @@
 +    // MCPC+ end
 +
 +    public static OptionSet loadOptions(String[] args) {
-+    	System.out.println("args = " + args);
 +        OptionParser parser = new OptionParser() {
 +            {
 +                acceptsAll(Arrays.asList("?", "help"), "Show the help");
@@ -1481,7 +1474,6 @@
 +                configuration = YamlConfiguration.loadConfiguration(configFile);
 +                configuration.options().copyDefaults(true);
 +                configuration.setDefaults(YamlConfiguration.loadConfiguration(MinecraftServer.class.getClassLoader().getResourceAsStream("configurations/bukkit.yml")));
-+                System.out.println("configuration = " + configuration);
 +                try {
 +                    configuration.save(configFile);
 +                } catch (IOException ex) {

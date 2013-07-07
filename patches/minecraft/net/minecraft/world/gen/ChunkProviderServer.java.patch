@@ -130,7 +130,7 @@
  
          while (iterator.hasNext())
          {
-@@ -98,18 +138,49 @@
+@@ -98,18 +138,46 @@
          }
      }
  
@@ -144,7 +144,6 @@
 -        long k = ChunkCoordIntPair.chunkXZ2Int(par1, par2);
 -        this.chunksToUnload.remove(Long.valueOf(k));
 -        Chunk chunk = (Chunk)this.loadedChunkHashMap.getValueByKey(k);
-+        //System.out.println("loadChunk @ " + par1 + ", " + par2);
 +        return getChunkAt(par1, par2, null);
 +    }
 +
@@ -173,18 +172,16 @@
          {
 -            chunk = this.safeLoadChunk(par1, par2);
 +            org.bukkit.craftbukkit.SpigotTimings.syncChunkLoadTimer.startTiming(); // Spigot
-+            //System.out.println("fetchDormantChunk @ coords " + i + ", " + j);
 +            chunk = ForgeChunkManager.fetchDormantChunk(LongHash.toLong(i, j), this.worldObj);
-+            //System.out.println("DORMANT CHUNK = " + chunk);
++
 +            if (chunk == null)
 +            {
-+                //System.out.println("calling safeLoadChunk @ coords " + i + ", " + j);
 +                chunk = this.safeLoadChunk(i, j);
 +            }
  
              if (chunk == null)
              {
-@@ -121,31 +192,55 @@
+@@ -121,31 +189,55 @@
                  {
                      try
                      {
@@ -250,7 +247,7 @@
          return chunk;
      }
  
-@@ -155,17 +250,37 @@
+@@ -155,14 +247,32 @@
       */
      public Chunk provideChunk(int par1, int par2)
      {
@@ -282,26 +279,11 @@
       * used by loadChunk, but catches any exceptions if the load fails.
       */
 -    private Chunk safeLoadChunk(int par1, int par2)
--    {
 +    public Chunk safeLoadChunk(int par1, int par2)   // CraftBukkit - private -> public
-+    {
-+        //System.out.println("safeLoadChunk @ " + par1 + ", " + par2);
+     {
          if (this.currentChunkLoader == null)
          {
-+            //System.out.println("CURRENTCHUNKLOADER == NULL");
-             return null;
-         }
-         else
-@@ -173,7 +288,7 @@
-             try
-             {
-                 Chunk chunk = this.currentChunkLoader.loadChunk(this.worldObj, par1, par2);
--
-+                //System.out.println("safeLoadChunk = " + chunk);
-                 if (chunk != null)
-                 {
-                     chunk.lastSaveTime = this.worldObj.getTotalWorldTime();
-@@ -197,7 +312,7 @@
+@@ -197,7 +307,7 @@
      /**
       * used by saveChunks, but catches any exceptions if the save fails.
       */
@@ -310,7 +292,7 @@
      {
          if (this.currentChunkLoader != null)
          {
-@@ -215,7 +330,7 @@
+@@ -215,7 +325,7 @@
      /**
       * used by saveChunks, but catches any exceptions if the save fails.
       */
@@ -319,7 +301,7 @@
      {
          if (this.currentChunkLoader != null)
          {
-@@ -224,14 +339,16 @@
+@@ -224,14 +334,16 @@
                  par1Chunk.lastSaveTime = this.worldObj.getTotalWorldTime();
                  this.currentChunkLoader.saveChunk(this.worldObj, par1Chunk);
              }
@@ -342,7 +324,7 @@
          }
      }
  
-@@ -249,7 +366,27 @@
+@@ -249,7 +361,27 @@
              if (this.currentChunkProvider != null)
              {
                  this.currentChunkProvider.populate(par1IChunkProvider, par2, par3);
@@ -371,7 +353,7 @@
                  chunk.setChunkModified();
              }
          }
-@@ -262,10 +399,13 @@
+@@ -262,10 +394,13 @@
      public boolean saveChunks(boolean par1, IProgressUpdate par2IProgressUpdate)
      {
          int i = 0;
@@ -389,7 +371,7 @@
  
              if (par1)
              {
-@@ -303,20 +443,51 @@
+@@ -303,20 +438,50 @@
      {
          if (!this.worldObj.canNotSave)
          {
@@ -435,7 +417,6 @@
 -                }
 -            }
 +                    // this.unloadQueue.remove(integer);
-+                   // System.out.println("UNLOADING CHUNK @ " + chunk.xPosition + ", " + chunk.zPosition);
 +                    this.loadedChunkHashMap.remove(chunkcoordinates); // CraftBukkit
 +                    loadedChunks.remove(chunk); // MCPC+ - vanilla compatibility   
 +                    ForgeChunkManager.putDormantChunk(chunkcoordinates, chunk);
@@ -452,7 +433,7 @@
  
              if (this.currentChunkLoader != null)
              {
-@@ -340,7 +511,7 @@
+@@ -340,7 +505,7 @@
       */
      public String makeString()
      {
@@ -461,7 +442,7 @@
      }
  
      /**
-@@ -361,7 +532,7 @@
+@@ -361,7 +526,7 @@
  
      public int getLoadedChunkCount()
      {

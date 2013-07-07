@@ -353,7 +353,6 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public boolean teleport(Location location, PlayerTeleportEvent.TeleportCause cause) {
-        System.out.println("CraftPlayer teleport to location " + location.getWorld());
         net.minecraft.entity.player.EntityPlayerMP entity = getHandle();
 
         if (getHealth() == 0 || entity.isDead) {

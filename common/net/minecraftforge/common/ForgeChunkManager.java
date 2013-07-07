@@ -746,11 +746,6 @@ public class ForgeChunkManager
             return;
         }
 
-        /*if (ticket.entity != null && !persistentEntities.contains(ticket.entity))
-        {
-            System.out.println("ADDING ENTITY " + ticket.entity + " to persistentEntities");
-            persistentEntities.add(ticket.entity);
-        }*/
         // MCPC+ start - guarantee forced chunks are loaded
         if (!getPersistentChunksFor(ticket.world).containsKey(chunk) && !ticket.world.getChunkProvider().chunkExists(chunk.chunkXPos, chunk.chunkZPos))
         {
