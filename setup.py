@@ -111,7 +111,7 @@ def setup_eclipse(forge_dir):
         zf.extractall(forge_dir)
         zf.close()
 
-    if not os.path.isdir(eclipse_resources_dir) and os.path.isfile(eclipse_resources_zip):
+    if os.path.isdir(eclipse_resources_dir) and os.path.isfile(eclipse_resources_zip):
         print 'Extracting Eclipse Resources'
         zf = zipfile.ZipFile(eclipse_resources_zip)
         zf.extractall(eclipse_resources_dir)
