@@ -1,0 +1,154 @@
+--- ../src_base/minecraft/net/minecraft/network/TcpConnection.java
++++ ../src_work/minecraft/net/minecraft/network/TcpConnection.java
+@@ -25,20 +25,22 @@
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.CryptManager;
+ 
++import java.io.IOException; // CraftBukkit
++
+ public class TcpConnection implements INetworkManager
+ {
+     public static AtomicInteger field_74471_a = new AtomicInteger();
+     public static AtomicInteger field_74469_b = new AtomicInteger();
+ 
+     /** The object used for synchronization on the send queue. */
+-    private final Object sendQueueLock;
++    private final Object sendQueueLock = new Object();
+     private final ILogAgent field_98215_i;
+ 
+     /** The socket used by this network manager. */
+-    private Socket networkSocket;
++    public Socket networkSocket; // CraftBukkit - private -> public
+ 
+     /** The InetSocketAddress of the remote endpoint */
+-    private final SocketAddress remoteSocketAddress;
++    private SocketAddress remoteSocketAddress; // Spigot - remove final
+ 
+     /** The input stream connected to the socket. */
+     private volatile DataInputStream socketInputStream;
+@@ -47,7 +49,7 @@
+     private volatile DataOutputStream socketOutputStream;
+ 
+     /** Whether the network is currently operational. */
+-    private volatile boolean isRunning;
++    private volatile boolean isRunning = true;
+ 
+     /**
+      * Whether this network manager is currently terminating (and should ignore further errors).
+@@ -57,13 +59,13 @@
+     /**
+      * Linked list of packets that have been read and are awaiting processing.
+      */
+-    private List readPackets;
++    private java.util.Queue readPackets = new java.util.concurrent.ConcurrentLinkedQueue(); // CraftBukkit - Concurrent linked queue
+ 
+     /** Linked list of packets awaiting sending. */
+-    private List dataPackets;
++    private List dataPackets = Collections.synchronizedList(new ArrayList());
+ 
+     /** Linked list of packets with chunk data that are awaiting sending. */
+-    private List chunkDataPackets;
++    private List chunkDataPackets = Collections.synchronizedList(new ArrayList());
+ 
+     /** A reference to the NetHandler object. */
+     private NetHandler theNetHandler;
+@@ -80,7 +82,7 @@
+     private Thread readThread;
+ 
+     /** A String indicating why the network has shutdown. */
+-    private String terminationReason;
++    private String terminationReason = "";
+     private Object[] field_74480_w;
+     private int field_74490_x;
+ 
+@@ -99,7 +101,7 @@
+     /**
+      * Delay for sending pending chunk data packets (as opposed to pending non-chunk data packets)
+      */
+-    private int chunkDataPacketsDelay;
++    private int chunkDataPacketsDelay = 50;
+ 
+     @SideOnly(Side.CLIENT)
+     public TcpConnection(ILogAgent par1ILogAgent, Socket par2Socket, String par3Str, NetHandler par4NetHandler) throws IOException
+@@ -107,15 +109,8 @@
+         this(par1ILogAgent, par2Socket, par3Str, par4NetHandler, (PrivateKey)null);
+     }
+ 
+-    public TcpConnection(ILogAgent par1ILogAgent, Socket par2Socket, String par3Str, NetHandler par4NetHandler, PrivateKey par5PrivateKey) throws IOException
+-    {
+-        this.sendQueueLock = new Object();
+-        this.isRunning = true;
+-        this.readPackets = Collections.synchronizedList(new ArrayList());
+-        this.dataPackets = Collections.synchronizedList(new ArrayList());
+-        this.chunkDataPackets = Collections.synchronizedList(new ArrayList());
+-        this.terminationReason = "";
+-        this.chunkDataPacketsDelay = 50;
++    public TcpConnection(ILogAgent par1ILogAgent, Socket par2Socket, String par3Str, NetHandler par4NetHandler, PrivateKey par5PrivateKey) throws IOException   // CraftBukkit - throws IOException
++    {
+         this.field_74463_A = par5PrivateKey;
+         this.networkSocket = par2Socket;
+         this.field_98215_i = par1ILogAgent;
+@@ -212,7 +207,8 @@
+                 }
+             }
+ 
+-            if (this.chunkDataPacketsDelay-- <= 0 && (this.field_74468_e == 0 || !this.chunkDataPackets.isEmpty() && MinecraftServer.func_130071_aq() - ((Packet)this.chunkDataPackets.get(0)).creationTimeMillis >= (long)this.field_74468_e))
++            // CraftBukkit - don't allow low priority packet to be sent unless it was placed in the queue before the first packet on the high priority queue TODO: is this still right?
++            if ((flag || this.chunkDataPacketsDelay-- <= 0) && !this.chunkDataPackets.isEmpty() && (this.dataPackets.isEmpty() || ((Packet) this.dataPackets.get(0)).creationTimeMillis > ((Packet) this.chunkDataPackets.get(0)).creationTimeMillis))
+             {
+                 packet = this.func_74460_a(true);
+ 
+@@ -372,7 +368,7 @@
+      */
+     private void onNetworkError(Exception par1Exception)
+     {
+-        par1Exception.printStackTrace();
++        // exception.printStackTrace(); // CraftBukkit - Remove console spam
+         this.networkShutdown("disconnect.genericReason", new Object[] {"Internal exception: " + par1Exception.toString()});
+     }
+ 
+@@ -449,7 +445,15 @@
+ 
+         while (!this.readPackets.isEmpty() && i-- >= 0)
+         {
+-            Packet packet = (Packet)this.readPackets.remove(0);
++            Packet packet = (Packet) this.readPackets.poll(); // CraftBukkit - remove -> poll
++
++            // CraftBukkit start
++            if (this.theNetHandler instanceof NetLoginHandler ? ((NetLoginHandler) this.theNetHandler).connectionComplete : ((NetServerHandler) this.theNetHandler).connectionClosed)
++            {
++                continue;
++            }
++
++            // CraftBukkit end
+             packet.processPacket(this.theNetHandler);
+         }
+ 
+@@ -484,7 +488,7 @@
+         }
+     }
+ 
+-    private void decryptInputStream() throws IOException
++    private void decryptInputStream() throws IOException   // CraftBukkit - throws IOException
+     {
+         this.isInputBeingDecrypted = true;
+         InputStream inputstream = this.networkSocket.getInputStream();
+@@ -494,7 +498,7 @@
+     /**
+      * flushes the stream and replaces it with an encryptedOutputStream
+      */
+-    private void encryptOuputStream() throws IOException
++    private void encryptOuputStream() throws IOException   // CraftBukkit - throws IOException
+     {
+         this.socketOutputStream.flush();
+         this.isOutputEncrypted = true;
+@@ -583,4 +587,9 @@
+     {
+         return par0TcpConnection.writeThread;
+     }
++
++    public void setSocketAddress(SocketAddress address)
++    {
++        remoteSocketAddress = address;    // Spigot
++    }
+ }

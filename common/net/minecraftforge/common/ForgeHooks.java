@@ -365,6 +365,12 @@ public class ForgeHooks
     {
         player.captureDrops = true;
         EntityItem ret = player.dropPlayerItemWithRandomChoice(item, false);
+        // MCPC+ start - dropPlayerItemWithRandomChoice() returns null if a Bukkit plugin cancels PlayerDropItemEvent
+        if (ret == null)
+        {
+            return null;
+        }
+        // MCPC+ end
         player.capturedDrops.clear();
         player.captureDrops = false;
 

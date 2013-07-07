@@ -1,0 +1,390 @@
+--- ../src_base/minecraft/net/minecraft/world/Teleporter.java
++++ ../src_work/minecraft/net/minecraft/world/Teleporter.java
+@@ -9,6 +9,12 @@
+ import net.minecraft.util.Direction;
+ import net.minecraft.util.LongHashMap;
+ import net.minecraft.util.MathHelper;
++// CraftBukkit start
++import org.bukkit.Location;
++import org.bukkit.event.entity.EntityPortalExitEvent;
++import org.bukkit.util.Vector;
++import net.minecraft.util.ChunkCoordinates;
++// CraftBukkit end
+ 
+ public class Teleporter
+ {
+@@ -47,44 +53,116 @@
+         }
+         else
+         {
+-            int i = MathHelper.floor_double(par1Entity.posX);
+-            int j = MathHelper.floor_double(par1Entity.posY) - 1;
+-            int k = MathHelper.floor_double(par1Entity.posZ);
+-            byte b0 = 1;
+-            byte b1 = 0;
+-
+-            for (int l = -2; l <= 2; ++l)
+-            {
+-                for (int i1 = -2; i1 <= 2; ++i1)
+-                {
+-                    for (int j1 = -1; j1 < 3; ++j1)
++            // CraftBukkit start - Modularize end portal creation
++            ChunkCoordinates created = this.createEndPortal(par2, par4, par6);
++            par1Entity.setLocationAndAngles((double) created.posX, (double) created.posY, (double) created.posZ, par1Entity.rotationYaw, 0.0F);
++            par1Entity.motionX = par1Entity.motionY = par1Entity.motionZ = 0.0D;
++        }
++    }
++
++    // Split out from original a(Entity, double, double, double, float) method in order to enable being called from createPortal
++    private ChunkCoordinates createEndPortal(double x, double y, double z)
++    {
++        int i = MathHelper.floor_double(x);
++        int j = MathHelper.floor_double(y) - 1;
++        int k = MathHelper.floor_double(z);
++        // CraftBukkit end
++        byte b0 = 1;
++        byte b1 = 0;
++
++        for (int l = -2; l <= 2; ++l)
++        {
++            for (int i1 = -2; i1 <= 2; ++i1)
++            {
++                for (int j1 = -1; j1 < 3; ++j1)
++                {
++                    int k1 = i + i1 * b0 + l * b1;
++                    int l1 = j + j1;
++                    int i2 = k + i1 * b1 - l * b0;
++                    boolean flag = j1 < 0;
++                    this.worldServerInstance.setBlock(k1, l1, i2, flag ? Block.obsidian.blockID : 0);
++                }
++            }
++        }
++
++        // CraftBukkit start
++        return new ChunkCoordinates(i, j, k);
++    }
++
++    // use logic based on creation to verify end portal
++    private ChunkCoordinates findEndPortal(ChunkCoordinates portal)
++    {
++        int i = portal.posX;
++        int j = portal.posY - 1;
++        int k = portal.posZ;
++        byte b0 = 1;
++        byte b1 = 0;
++
++        for (int l = -2; l <= 2; ++l)
++        {
++            for (int i1 = -2; i1 <= 2; ++i1)
++            {
++                for (int j1 = -1; j1 < 3; ++j1)
++                {
++                    int k1 = i + i1 * b0 + l * b1;
++                    int l1 = j + j1;
++                    int i2 = k + i1 * b1 - l * b0;
++                    boolean flag = j1 < 0;
++
++                    if (this.worldServerInstance.getBlockId(k1, l1, i2) != (flag ? Block.obsidian.blockID : 0))
+                     {
+-                        int k1 = i + i1 * b0 + l * b1;
+-                        int l1 = j + j1;
+-                        int i2 = k + i1 * b1 - l * b0;
+-                        boolean flag = j1 < 0;
+-                        this.worldServerInstance.setBlock(k1, l1, i2, flag ? Block.obsidian.blockID : 0);
++                        return null;
+                     }
+                 }
+             }
+-
+-            par1Entity.setLocationAndAngles((double)i, (double)j, (double)k, par1Entity.rotationYaw, 0.0F);
+-            par1Entity.motionX = par1Entity.motionY = par1Entity.motionZ = 0.0D;
+-        }
+-    }
++        }
++
++        return new ChunkCoordinates(i, j, k);
++    }
++    // CraftBukkit end
+ 
+     /**
+      * Place an entity in a nearby portal which already exists.
+      */
+     public boolean placeInExistingPortal(Entity par1Entity, double par2, double par4, double par6, float par8)
+     {
+-        short short1 = 128;
++        // CraftBukkit start - Modularize portal search process and entity teleportation
++        ChunkCoordinates found = this.findPortal(par1Entity.posX, par1Entity.posY, par1Entity.posZ, 128);
++
++        if (found == null)
++        {
++            return false;
++        }
++
++        Location exit = new Location(this.worldServerInstance.getWorld(), found.posX, found.posY, found.posZ, par8, par1Entity.rotationPitch);
++        Vector velocity = par1Entity.getBukkitEntity().getVelocity();
++        this.adjustExit(par1Entity, exit, velocity);
++        par1Entity.setLocationAndAngles(exit.getX(), exit.getY(), exit.getZ(), exit.getYaw(), exit.getPitch());
++
++        if (par1Entity.motionX != velocity.getX() || par1Entity.motionY != velocity.getY() || par1Entity.motionZ != velocity.getZ())
++        {
++            par1Entity.getBukkitEntity().setVelocity(velocity);
++        }
++
++        return true;
++    }
++
++    public ChunkCoordinates findPortal(double x, double y, double z, int short1)
++    {
++        if (this.worldServerInstance.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END)
++        {
++            return this.findEndPortal(this.worldServerInstance.provider.getEntrancePortalLocation());
++        }
++
++        // CraftBukkit end
+         double d3 = -1.0D;
+         int i = 0;
+         int j = 0;
+         int k = 0;
+-        int l = MathHelper.floor_double(par1Entity.posX);
+-        int i1 = MathHelper.floor_double(par1Entity.posZ);
++        // CraftBukkit start
++        int l = MathHelper.floor_double(x);
++        int i1 = MathHelper.floor_double(z);
++        // CraftBukkit end
+         long j1 = ChunkCoordIntPair.chunkXZ2Int(l, i1);
+         boolean flag = true;
+         double d4;
+@@ -104,11 +182,11 @@
+         {
+             for (k1 = l - short1; k1 <= l + short1; ++k1)
+             {
+-                double d5 = (double)k1 + 0.5D - par1Entity.posX;
++                double d5 = (double) k1 + 0.5D - x; // CraftBukkit
+ 
+                 for (int l1 = i1 - short1; l1 <= i1 + short1; ++l1)
+                 {
+-                    double d6 = (double)l1 + 0.5D - par1Entity.posZ;
++                    double d6 = (double) l1 + 0.5D - z; // CraftBukkit
+ 
+                     for (int i2 = this.worldServerInstance.getActualHeight() - 1; i2 >= 0; --i2)
+                     {
+@@ -119,7 +197,7 @@
+                                 --i2;
+                             }
+ 
+-                            d4 = (double)i2 + 0.5D - par1Entity.posY;
++                            d4 = (double) i2 + 0.5D - y; // CraftBukkit
+                             double d7 = d5 * d5 + d4 * d4 + d6 * d6;
+ 
+                             if (d3 < 0.0D || d7 < d3)
+@@ -143,6 +221,38 @@
+                 this.destinationCoordinateKeys.add(Long.valueOf(j1));
+             }
+ 
++            // CraftBukkit start - Moved entity teleportation logic into exit
++            return new ChunkCoordinates(i, j, k);
++        }
++        else
++        {
++            return null;
++        }
++    }
++    // Entity repositioning logic split out from original b method and combined with repositioning logic for The End from original a method
++    public void adjustExit(Entity entity, Location position, Vector velocity)
++    {
++        Location from = position.clone();
++        Vector before = velocity.clone();
++        int i = position.getBlockX();
++        int j = position.getBlockY();
++        int k = position.getBlockZ();
++        float f = position.getYaw();
++
++        if (this.worldServerInstance.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END)
++        {
++            // entity.setPositionRotation((double) i, (double) j, (double) k, entity.yaw, 0.0F);
++            // entity.motX = entity.motY = entity.motZ = 0.0D;
++            position.setPitch(0.0F);
++            velocity.setX(0);
++            velocity.setY(0);
++            velocity.setZ(0);
++        }
++        else
++        {
++            double d4;
++            int k1;
++            // CraftBukkit end
+             double d8 = (double)i + 0.5D;
+             double d9 = (double)j + 0.5D;
+             d4 = (double)k + 0.5D;
+@@ -168,7 +278,7 @@
+                 j2 = 1;
+             }
+ 
+-            int k2 = par1Entity.getTeleportDirection();
++            int k2 = entity.getTeleportDirection();
+ 
+             if (j2 > -1)
+             {
+@@ -240,33 +350,77 @@
+                     f6 = 1.0F;
+                 }
+ 
+-                double d10 = par1Entity.motionX;
+-                double d11 = par1Entity.motionZ;
+-                par1Entity.motionX = d10 * (double)f3 + d11 * (double)f6;
+-                par1Entity.motionZ = d10 * (double)f5 + d11 * (double)f4;
+-                par1Entity.rotationYaw = par8 - (float)(k2 * 90) + (float)(j2 * 90);
++                // CraftBukkit start
++                double d10 = velocity.getX();
++                double d11 = velocity.getZ();
++                // CraftBukkit end
++                // CraftBukkit start - Adjust position and velocity instances instead of entity
++                velocity.setX(d10 * (double) f3 + d11 * (double) f6);
++                velocity.setZ(d10 * (double) f5 + d11 * (double) f4);
++                f = f - (float)(k2 * 90) + (float)(j2 * 90);
+             }
+             else
+             {
+-                par1Entity.motionX = par1Entity.motionY = par1Entity.motionZ = 0.0D;
+-            }
+-
+-            par1Entity.setLocationAndAngles(d8, d9, d4, par1Entity.rotationYaw, par1Entity.rotationPitch);
++                // entity.motX = entity.motY = entity.motZ = 0.0D;
++                velocity.setX(0);
++                velocity.setY(0);
++                velocity.setZ(0);
++            }
++
++            // entity.setPositionRotation(d8, d9, d4, entity.yaw, entity.pitch);
++            position.setX(d8);
++            position.setY(d9);
++            position.setZ(d4);
++            position.setYaw(f);
++        }
++
++        EntityPortalExitEvent event = new EntityPortalExitEvent(entity.getBukkitEntity(), from, position, before, velocity);
++        this.worldServerInstance.getServer().getPluginManager().callEvent(event);
++        Location to = event.getTo();
++
++        if (event.isCancelled() || to == null || !entity.isEntityAlive())
++        {
++            position.setX(from.getX());
++            position.setY(from.getY());
++            position.setZ(from.getZ());
++            position.setYaw(from.getYaw());
++            position.setPitch(from.getPitch());
++            velocity.copy(before);
++        }
++        else
++        {
++            position.setX(to.getX());
++            position.setY(to.getY());
++            position.setZ(to.getZ());
++            position.setYaw(to.getYaw());
++            position.setPitch(to.getPitch());
++            velocity.copy(event.getAfter()); // event.getAfter() will never be null, as setAfter() will cause an NPE if null is passed in
++        }
++
++        // CraftBukkit end
++    }
++
++    public boolean makePortal(Entity par1Entity)
++    {
++        // CraftBukkit start - Allow for portal creation to be based on coordinates instead of entity
++        return this.createPortal(par1Entity.posX, par1Entity.posY, par1Entity.posZ, 16);
++    }
++
++    public boolean createPortal(double x, double y, double z, int b0)
++    {
++        if (this.worldServerInstance.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END)
++        {
++            this.createEndPortal(x, y, z);
+             return true;
+         }
+-        else
+-        {
+-            return false;
+-        }
+-    }
+-
+-    public boolean makePortal(Entity par1Entity)
+-    {
+-        byte b0 = 16;
++
++        // CraftBukkit end
+         double d0 = -1.0D;
+-        int i = MathHelper.floor_double(par1Entity.posX);
+-        int j = MathHelper.floor_double(par1Entity.posY);
+-        int k = MathHelper.floor_double(par1Entity.posZ);
++        // CraftBukkit start
++        int i = MathHelper.floor_double(x);
++        int j = MathHelper.floor_double(y);
++        int k = MathHelper.floor_double(z);
++        // CraftBukkit end
+         int l = i;
+         int i1 = j;
+         int j1 = k;
+@@ -290,11 +444,11 @@
+ 
+         for (i2 = i - b0; i2 <= i + b0; ++i2)
+         {
+-            d1 = (double)i2 + 0.5D - par1Entity.posX;
++            d1 = (double) i2 + 0.5D - x; // CraftBukkit
+ 
+             for (j2 = k - b0; j2 <= k + b0; ++j2)
+             {
+-                d2 = (double)j2 + 0.5D - par1Entity.posZ;
++                d2 = (double) j2 + 0.5D - z; // CraftBukkit
+                 label274:
+ 
+                 for (k2 = this.worldServerInstance.getActualHeight() - 1; k2 >= 0; --k2)
+@@ -335,12 +489,12 @@
+                                 }
+                             }
+ 
+-                            d4 = (double)k2 + 0.5D - par1Entity.posY;
+-                            d3 = d1 * d1 + d4 * d4 + d2 * d2;
+-
+-                            if (d0 < 0.0D || d3 < d0)
++                            d3 = (double) k2 + 0.5D - y; // CraftBukkit
++                            d4 = d1 * d1 + d3 * d3 + d2 * d2;
++
++                            if (d0 < 0.0D || d4 < d0)
+                             {
+-                                d0 = d3;
++                                d0 = d4;
+                                 l = i2;
+                                 i1 = k2;
+                                 j1 = j2;
+@@ -356,11 +510,11 @@
+         {
+             for (i2 = i - b0; i2 <= i + b0; ++i2)
+             {
+-                d1 = (double)i2 + 0.5D - par1Entity.posX;
++                d1 = (double) i2 + 0.5D - x; // CraftBukkit
+ 
+                 for (j2 = k - b0; j2 <= k + b0; ++j2)
+                 {
+-                    d2 = (double)j2 + 0.5D - par1Entity.posZ;
++                    d2 = (double) j2 + 0.5D - z; // CraftBukkit
+                     label222:
+ 
+                     for (k2 = this.worldServerInstance.getActualHeight() - 1; k2 >= 0; --k2)
+@@ -392,12 +546,12 @@
+                                     }
+                                 }
+ 
+-                                d4 = (double)k2 + 0.5D - par1Entity.posY;
+-                                d3 = d1 * d1 + d4 * d4 + d2 * d2;
+-
+-                                if (d0 < 0.0D || d3 < d0)
++                                d3 = (double) k2 + 0.5D - y; // CraftBukkit
++                                d4 = d1 * d1 + d3 * d3 + d2 * d2;
++
++                                if (d0 < 0.0D || d4 < d0)
+                                 {
+-                                    d0 = d3;
++                                    d0 = d4;
+                                     l = i2;
+                                     i1 = k2;
+                                     j1 = j2;

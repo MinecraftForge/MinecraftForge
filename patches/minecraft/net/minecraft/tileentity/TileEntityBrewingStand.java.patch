@@ -1,15 +1,95 @@
 --- ../src_base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
 +++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
-@@ -11,6 +11,8 @@
+@@ -11,6 +11,15 @@
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.nbt.NBTTagList;
  import net.minecraft.potion.PotionHelper;
++import net.minecraft.server.MinecraftServer;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.brewing.PotionBrewedEvent;
++
++// CraftBukkit start
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.event.inventory.BrewEvent;
++// CraftBukkit end
  
  public class TileEntityBrewingStand extends TileEntity implements ISidedInventory
  {
-@@ -122,7 +124,7 @@
+@@ -18,8 +27,8 @@
+     private static final int[] field_102016_b = new int[] {0, 1, 2};
+ 
+     /** The itemstacks currently placed in the slots of the brewing stand */
+-    private ItemStack[] brewingItemStacks = new ItemStack[4];
+-    private int brewTime;
++    public ItemStack[] brewingItemStacks = new ItemStack[4]; // CraftBukkit - private -> public
++    public int brewTime; // CraftBukkit - private -> public
+ 
+     /**
+      * an integer with each bit specifying whether that slot of the stand contains a potion
+@@ -27,6 +36,39 @@
+     private int filledSlots;
+     private int ingredientID;
+     private String field_94132_e;
++    private int lastTick = MinecraftServer.currentTick; // CraftBukkit
++
++    public TileEntityBrewingStand() {}
++
++    // CraftBukkit start
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    private int maxStack = 64;
++
++    public void onOpen(CraftHumanEntity who)
++    {
++        transaction.add(who);
++    }
++
++    public void onClose(CraftHumanEntity who)
++    {
++        transaction.remove(who);
++    }
++
++    public List<HumanEntity> getViewers()
++    {
++        return transaction;
++    }
++
++    public ItemStack[] getContents()
++    {
++        return this.brewingItemStacks;
++    }
++
++    public void setMaxStackSize(int size)
++    {
++        maxStack = size;
++    }
++    // CraftBukkit end
+ 
+     /**
+      * Returns the name of the inventory.
+@@ -64,12 +106,17 @@
+      */
+     public void updateEntity()
+     {
++        // CraftBukkit start - Use wall time instead of ticks for brewing
++        int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++        this.lastTick = MinecraftServer.currentTick;
++
+         if (this.brewTime > 0)
+         {
+-            --this.brewTime;
+-
+-            if (this.brewTime == 0)
+-            {
++            this.brewTime -= elapsedTicks;
++
++            if (this.brewTime <= 0)   // == -> <=
++            {
++                // CraftBukkit end
+                 this.brewPotions();
+                 this.onInventoryChanged();
+             }
+@@ -122,7 +169,7 @@
  
                  for (int i = 0; i < 3; ++i)
                  {
@@ -18,8 +98,24 @@
                      {
                          int j = this.brewingItemStacks[i].getItemDamage();
                          int k = this.getPotionResult(j, itemstack);
-@@ -161,7 +163,7 @@
+@@ -159,9 +206,23 @@
+         {
+             ItemStack itemstack = this.brewingItemStacks[3];
  
++            // CraftBukkit start
++            if (getOwner() != null)
++            {
++                BrewEvent event = new BrewEvent(worldObj.getWorld().getBlockAt(xCoord, yCoord, zCoord), (org.bukkit.inventory.BrewerInventory) this.getOwner().getInventory());
++                org.bukkit.Bukkit.getPluginManager().callEvent(event);
++
++                if (event.isCancelled())
++                {
++                    return;
++                }
++            }
++
++            // CraftBukkit end
++
              for (int i = 0; i < 3; ++i)
              {
 -                if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].itemID == Item.potion.itemID)
@@ -27,7 +123,7 @@
                  {
                      int j = this.brewingItemStacks[i].getItemDamage();
                      int k = this.getPotionResult(j, itemstack);
-@@ -184,7 +186,7 @@
+@@ -184,7 +245,7 @@
  
              if (Item.itemsList[itemstack.itemID].hasContainerItem())
              {
@@ -36,7 +132,7 @@
              }
              else
              {
-@@ -195,6 +197,8 @@
+@@ -195,6 +256,8 @@
                      this.brewingItemStacks[3] = null;
                  }
              }
@@ -45,7 +141,16 @@
          }
      }
  
-@@ -343,7 +347,7 @@
+@@ -323,7 +386,7 @@
+      */
+     public int getInventoryStackLimit()
+     {
+-        return 64;
++        return this.maxStack; // CraftBukkit
+     }
+ 
+     /**
+@@ -343,7 +406,7 @@
       */
      public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
      {

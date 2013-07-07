@@ -1,0 +1,41 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockPressurePlate.java
++++ ../src_work/minecraft/net/minecraft/block/BlockPressurePlate.java
+@@ -7,6 +7,7 @@
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.world.World;
++import org.bukkit.event.entity.EntityInteractEvent; // CraftBukkit
+ 
+ public class BlockPressurePlate extends BlockBasePressurePlate
+ {
+@@ -65,6 +66,30 @@
+             while (iterator.hasNext())
+             {
+                 Entity entity = (Entity)iterator.next();
++                // CraftBukkit start - Call interact event when turning on a pressure plate
++                if (this.getPowerSupply(par1World.getBlockMetadata(par2, par3, par4)) == 0)
++                {
++                    org.bukkit.World bworld = par1World.getWorld();
++                    org.bukkit.plugin.PluginManager manager = par1World.getServer().getPluginManager();
++                    org.bukkit.event.Cancellable cancellable;
++
++                    if (entity instanceof EntityPlayer)
++                    {
++                        cancellable = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((EntityPlayer) entity, org.bukkit.event.block.Action.PHYSICAL, par2, par3, par4, -1, null);
++                    }
++                    else
++                    {
++                        cancellable = new EntityInteractEvent(entity.getBukkitEntity(), bworld.getBlockAt(par2, par3, par4));
++                        manager.callEvent((EntityInteractEvent) cancellable);
++                    }
++
++                    // We only want to block turning the plate on if all events are cancelled
++                    if (cancellable.isCancelled())
++                    {
++                        continue;
++                    }
++                }
++                // CraftBukkit end
+ 
+                 if (!entity.doesEntityNotTriggerPressurePlate())
+                 {

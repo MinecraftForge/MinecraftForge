@@ -1,0 +1,66 @@
+--- ../src_base/minecraft/cpw/mods/fml/common/network/FMLNetworkHandler.java
++++ ../src_work/minecraft/cpw/mods/fml/common/network/FMLNetworkHandler.java
+@@ -49,6 +49,10 @@
+ import cpw.mods.fml.common.registry.EntityRegistry;
+ import cpw.mods.fml.common.registry.GameRegistry;
+ import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
++// MCPC+ start
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.CraftServer;
++// MCPC+ end
+ 
+ public class FMLNetworkHandler
+ {
+@@ -128,7 +132,7 @@
+             {
+                 // No FML on the client
+                 FMLLog.fine("Connection from %s rejected - no FML packet received from client", userName);
+-                netLoginHandler.completeConnection("You don't have FML installed, you cannot connect to this server");
++                netLoginHandler.completeConnection(((CraftServer) Bukkit.getServer()).configuration.getString("settings.fml-missing-message", "You do not have FML installed, you cannot connect to this server")); // MCPC+
+                 return;
+             }
+             else
+@@ -163,19 +167,21 @@
+             loginStates.put(netLoginHandler, CONNECTION_VALID);
+             break;
+         case CONNECTION_VALID:
++            server.getConfigurationManager().allowLoginEvent = true; // MCPC+ - allow login event to be sent
+             netLoginHandler.completeConnection(null);
++            server.getConfigurationManager().allowLoginEvent = false; // MCPC+ - reset login event flag
+             loginStates.remove(netLoginHandler);
+             break;
+         case MISSING_MODS_OR_VERSIONS:
+-            netLoginHandler.completeConnection("The server requires mods that are absent or out of date on your client");
++            netLoginHandler.completeConnection(((CraftServer) Bukkit.getServer()).configuration.getString("settings.fml-missing-mods-message", "The server requires mods that are absent or out of date on your client")); // MCPC+
+             loginStates.remove(netLoginHandler);
+             break;
+         case FML_OUT_OF_DATE:
+-            netLoginHandler.completeConnection("Your client is not running a new enough version of FML to connect to this server");
++            netLoginHandler.completeConnection(((CraftServer) Bukkit.getServer()).configuration.getString("settings.fml-outdated-message", "Your client is not running a new enough version of FML to connect to this server")); // MCPC+
+             loginStates.remove(netLoginHandler);
+             break;
+         default:
+-            netLoginHandler.completeConnection("There was a problem during FML negotiation");
++            netLoginHandler.completeConnection(((CraftServer) Bukkit.getServer()).configuration.getString("settings.fml-other-error-message", "There was a problem during FML negotiation")); // MCPC+
+             loginStates.remove(netLoginHandler);
+             break;
+         }
+@@ -191,14 +197,11 @@
+     private boolean handleVanillaLoginKick(NetLoginHandler netLoginHandler, MinecraftServer server, SocketAddress address, String userName)
+     {
+         // Vanilla reasons first
++        // MCPC+ start
+         ServerConfigurationManager playerList = server.getConfigurationManager();
+-        String kickReason = playerList.allowUserToConnect(address, userName);
+-
+-        if (kickReason != null)
+-        {
+-            netLoginHandler.completeConnection(kickReason);
+-        }
+-        return kickReason == null;
++        EntityPlayerMP player = playerList.attemptLogin(netLoginHandler, netLoginHandler.clientUsername, netLoginHandler.hostname);
++        return player != null;
++        // MCPC+ end
+     }
+ 
+     public static void handleLoginPacketOnServer(NetLoginHandler handler, Packet1Login login)

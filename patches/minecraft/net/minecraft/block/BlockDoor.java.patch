@@ -1,6 +1,15 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockDoor.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockDoor.java
-@@ -290,7 +290,7 @@
+@@ -15,6 +15,8 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
++
+ public class BlockDoor extends Block
+ {
+     @SideOnly(Side.CLIENT)
+@@ -290,7 +292,7 @@
      {
          if (this.blockMaterial == Material.iron)
          {
@@ -9,3 +18,55 @@
          }
          else
          {
+@@ -377,15 +379,32 @@
+                 {
+                     this.dropBlockAsItem(par1World, par2, par3, par4, i1, 0);
+                 }
+-            }
+-            else
+-            {
+-                boolean flag1 = par1World.isBlockIndirectlyGettingPowered(par2, par3, par4) || par1World.isBlockIndirectlyGettingPowered(par2, par3 + 1, par4);
+-
+-                if ((flag1 || par5 > 0 && Block.blocksList[par5].canProvidePower()) && par5 != this.blockID)
+-                {
+-                    this.onPoweredBlockChange(par1World, par2, par3, par4, flag1);
+-                }
++
++                // CraftBukkit start
++            }
++            else if (par5 > 0 && Block.blocksList[par5].canProvidePower())
++            {
++                org.bukkit.World bworld = par1World.getWorld();
++                org.bukkit.block.Block block = bworld.getBlockAt(par2, par3, par4);
++                org.bukkit.block.Block blockTop = bworld.getBlockAt(par2, par3 + 1, par4);
++                int power = block.getBlockPower();
++                int powerTop = blockTop.getBlockPower();
++
++                if (powerTop > power)
++                {
++                    power = powerTop;
++                }
++
++                int oldPower = (par1World.getBlockMetadata(par2, par3, par4) & 4) > 0 ? 15 : 0;
++
++                if (oldPower == 0 ^ power == 0)
++                {
++                    BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, oldPower, power);
++                    par1World.getServer().getPluginManager().callEvent(eventRedstone);
++                    this.onPoweredBlockChange(par1World, par2, par3, par4, eventRedstone.getNewCurrent() > 0);
++                }
++
++                // CraftBukkit end
+             }
+         }
+         else
+@@ -394,8 +413,7 @@
+             {
+                 par1World.setBlockToAir(par2, par3, par4);
+             }
+-
+-            if (par5 > 0 && par5 != this.blockID)
++            else if (par5 > 0 && par5 != this.blockID)   // CraftBukkit
+             {
+                 this.onNeighborBlockChange(par1World, par2, par3 - 1, par4, par5);
+             }

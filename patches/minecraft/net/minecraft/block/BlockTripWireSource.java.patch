@@ -1,16 +1,17 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockTripWireSource.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockTripWireSource.java
-@@ -8,6 +8,9 @@
+@@ -8,6 +8,10 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
 +import net.minecraftforge.common.ForgeDirection;
 +import static net.minecraftforge.common.ForgeDirection.*;
++import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
 +
  public class BlockTripWireSource extends Block
  {
      public BlockTripWireSource(int par1)
-@@ -64,7 +67,11 @@
+@@ -64,7 +68,11 @@
       */
      public boolean canPlaceBlockOnSide(World par1World, int par2, int par3, int par4, int par5)
      {
@@ -23,7 +24,7 @@
      }
  
      /**
-@@ -72,7 +79,10 @@
+@@ -72,7 +80,10 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
@@ -35,7 +36,7 @@
      }
  
      /**
-@@ -82,22 +92,22 @@
+@@ -82,22 +93,22 @@
      {
          byte b0 = 0;
  
@@ -62,7 +63,7 @@
          {
              b0 = 3;
          }
-@@ -127,22 +137,22 @@
+@@ -127,22 +138,22 @@
                  int j1 = i1 & 3;
                  boolean flag = false;
  
@@ -89,7 +90,7 @@
                  {
                      flag = true;
                  }
-@@ -163,7 +173,7 @@
+@@ -163,7 +174,7 @@
          boolean flag2 = (par6 & 8) == 8;
          boolean flag3 = par5 == Block.tripWireSource.blockID;
          boolean flag4 = false;
@@ -98,3 +99,20 @@
          int i2 = Direction.offsetX[l1];
          int j2 = Direction.offsetZ[l1];
          int k2 = 0;
+@@ -230,6 +241,16 @@
+             this.playSoundEffect(par1World, l2, par3, k3, flag3, flag4, flag1, flag2);
+         }
+ 
++        // CraftBukkit start
++        org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3, par4);
++        BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, 15, 0);
++        par1World.getServer().getPluginManager().callEvent(eventRedstone);
++
++        if (eventRedstone.getNewCurrent() > 0)
++        {
++            return;
++        }
++        // CraftBukkit end
+         this.playSoundEffect(par1World, par2, par3, par4, flag3, flag4, flag1, flag2);
+ 
+         if (par5 > 0)

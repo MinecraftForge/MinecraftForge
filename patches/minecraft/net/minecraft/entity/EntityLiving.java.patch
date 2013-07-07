@@ -1,6 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/entity/EntityLiving.java
 +++ ../src_work/minecraft/net/minecraft/entity/EntityLiving.java
-@@ -31,6 +31,7 @@
+@@ -5,6 +5,9 @@
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.UUID;
++
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.enchantment.EnchantmentHelper;
+ import net.minecraft.entity.ai.EntityAITasks;
+@@ -31,6 +34,7 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
@@ -8,7 +18,24 @@
  
  public abstract class EntityLiving extends EntityLivingBase
  {
-@@ -141,6 +142,7 @@
+@@ -57,13 +61,13 @@
+     private ItemStack[] equipment = new ItemStack[5];
+ 
+     /** Chances for each equipment piece from dropping when this entity dies. */
+-    protected float[] equipmentDropChances = new float[5];
++    public float[] equipmentDropChances = new float[5]; // CraftBukkit - protected -> public
+ 
+     /** Whether this entity can pick up items from the ground. */
+-    private boolean canPickUpLoot;
++    public boolean canPickUpLoot; // CraftBukkit - private -> public
+ 
+     /** Whether this entity should NOT despawn. */
+-    private boolean persistenceRequired;
++    public boolean persistenceRequired = !canDespawn(); // CraftBukkit - private -> public
+     protected float defaultPitch;
+ 
+     /** This entity's current target. */
+@@ -141,6 +145,7 @@
      public void setAttackTarget(EntityLivingBase par1EntityLivingBase)
      {
          this.attackTarget = par1EntityLivingBase;
@@ -16,7 +43,90 @@
      }
  
      /**
-@@ -726,8 +728,6 @@
+@@ -291,6 +296,8 @@
+      */
+     protected void dropFewItems(boolean par1, int par2)
+     {
++        // CraftBukkit start - Whole method
++        List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
+         int j = this.getDropItemId();
+ 
+         if (j > 0)
+@@ -302,11 +309,30 @@
+                 k += this.rand.nextInt(par2 + 1);
+             }
+ 
+-            for (int l = 0; l < k; ++l)
+-            {
+-                this.dropItem(j, 1);
+-            }
+-        }
++            if (k > 0)
++            {
++                loot.add(new org.bukkit.inventory.ItemStack(j, k));
++            }
++        }
++
++        // Determine rare item drops and add them to the loot
++        if (this.recentlyHit > 0)
++        {
++            int k = this.rand.nextInt(200) - par2;
++
++            if (k < 5)
++            {
++                ItemStack itemstack = this.dropRareDrop(k <= 0 ? 1 : 0);
++
++                if (itemstack != null)
++                {
++                    loot.add(org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack));
++                }
++            }
++        }
++
++        CraftEventFactory.callEntityDeathEvent(this, loot); // raise event even for those times when the entity does not drop loot
++        // CraftBukkit end
+     }
+ 
+     /**
+@@ -374,6 +400,22 @@
+         super.readEntityFromNBT(par1NBTTagCompound);
+         this.setCanPickUpLoot(par1NBTTagCompound.getBoolean("CanPickUpLoot"));
+         this.persistenceRequired = par1NBTTagCompound.getBoolean("PersistenceRequired");
++        // CraftBukkit start - If looting or persistence is false only use it if it was set after we started using it
++        boolean data = par1NBTTagCompound.getBoolean("CanPickUpLoot");
++
++        if (isLevelAtLeast(par1NBTTagCompound, 1) || data)
++        {
++            this.canPickUpLoot = data;
++        }
++
++        data = par1NBTTagCompound.getBoolean("PersistenceRequired");
++
++        if (isLevelAtLeast(par1NBTTagCompound, 1) || data)
++        {
++            this.persistenceRequired = data;
++        }
++
++        // CraftBukkit end
+ 
+         if (par1NBTTagCompound.hasKey("CustomName") && par1NBTTagCompound.getString("CustomName").length() > 0)
+         {
+@@ -562,12 +604,12 @@
+                 double d2 = entityplayer.posZ - this.posZ;
+                 double d3 = d0 * d0 + d1 * d1 + d2 * d2;
+ 
+-                if (this.canDespawn() && d3 > 16384.0D)
++                if (d3 > 16384.0D)   // CraftBukkit - remove isTypeNotPersistent() check
+                 {
+                     this.setDead();
+                 }
+ 
+-                if (this.entityAge > 600 && this.rand.nextInt(800) == 0 && d3 > 1024.0D && this.canDespawn())
++                if (this.entityAge > 600 && this.rand.nextInt(800) == 0 && d3 > 1024.0D)   // CraftBukkit - remove isTypeNotPersistent() check
+                 {
+                     this.setDead();
+                 }
+@@ -726,8 +768,6 @@
          return this.worldObj.checkNoEntityCollision(this.boundingBox) && this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(this.boundingBox);
      }
  
@@ -25,3 +135,11 @@
      /**
       * Returns render size modifier
       */
+@@ -1246,4 +1286,7 @@
+ 
+         this.field_110170_bx = null;
+     }
++    public boolean func_70692_ba_CodeFix_Public(){
++        return canDespawn();
++    }
+ }

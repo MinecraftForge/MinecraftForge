@@ -1,15 +1,30 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockPortal.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockPortal.java
-@@ -118,7 +118,7 @@
+@@ -9,6 +9,10 @@
+ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.event.entity.EntityPortalEnterEvent;
++import org.bukkit.event.world.PortalCreateEvent;
++// CraftBukkit end
+ 
+ public class BlockPortal extends BlockBreakable
+ {
+@@ -118,7 +122,11 @@
          }
          else
          {
 -            if (par1World.getBlockId(par2 - b0, par3, par4 - b1) == 0)
++            // CraftBukkit start
++            java.util.Collection<org.bukkit.block.Block> blocks = new java.util.HashSet<org.bukkit.block.Block>();
++            org.bukkit.World bworld = par1World.getWorld();
++            // CraftBukkit end
 +            if (par1World.isAirBlock(par2 - b0, par3, par4 - b1))
              {
                  par2 -= b0;
                  par4 -= b1;
-@@ -136,6 +136,7 @@
+@@ -136,6 +144,7 @@
                      if (l != -1 && l != 2 || i1 != -1 && i1 != 3)
                      {
                          int j1 = par1World.getBlockId(par2 + b0 * l, par3 + i1, par4 + b1 * l);
@@ -17,12 +32,52 @@
  
                          if (flag)
                          {
-@@ -144,7 +145,7 @@
+@@ -143,8 +152,12 @@
+                             {
                                  return false;
                              }
++                            else // CraftBukkit
++                            {
++                                blocks.add(bworld.getBlockAt(par2 + b0 * l, par3 + i1, par4 + b1 * l)); // CraftBukkit
++                            }
                          }
 -                        else if (j1 != 0 && j1 != Block.fire.blockID)
 +                        else if (!isAirBlock && j1 != Block.fire.blockID)
                          {
                              return false;
                          }
+@@ -152,6 +165,23 @@
+                 }
+             }
+ 
++            // CraftBukkit start
++            for (l = 0; l < 2; ++l)
++            {
++                for (i1 = 0; i1 < 3; ++i1)
++                {
++                    blocks.add(bworld.getBlockAt(par2 + b0 * l, par3 + i1, par4 + b1 * l));
++                }
++            }
++
++            PortalCreateEvent event = new PortalCreateEvent(blocks, bworld, PortalCreateEvent.CreateReason.FIRE);
++            par1World.getServer().getPluginManager().callEvent(event);
++
++            if (event.isCancelled())
++            {
++                return false;
++            }
++            // CraftBukkit end
+             for (l = 0; l < 2; ++l)
+             {
+                 for (i1 = 0; i1 < 3; ++i1)
+@@ -262,6 +292,10 @@
+     {
+         if (par5Entity.ridingEntity == null && par5Entity.riddenByEntity == null)
+         {
++            // CraftBukkit start - Entity in portal
++            EntityPortalEnterEvent event = new EntityPortalEnterEvent(par5Entity.getBukkitEntity(), new org.bukkit.Location(par1World.getWorld(), par2, par3, par4));
++            par1World.getServer().getPluginManager().callEvent(event);
++            // CraftBukkit end
+             par5Entity.setInPortal();
+         }
+     }

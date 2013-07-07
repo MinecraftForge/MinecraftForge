@@ -1,6 +1,134 @@
 --- ../src_base/minecraft/net/minecraft/entity/player/InventoryPlayer.java
 +++ ../src_work/minecraft/net/minecraft/entity/player/InventoryPlayer.java
-@@ -357,6 +357,14 @@
+@@ -12,6 +12,12 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.util.ReportedException;
++// CraftBukkit start
++import java.util.List;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++import net.minecraft.entity.Entity;
++// CraftBukkit end
+ 
+ public class InventoryPlayer implements IInventory
+ {
+@@ -40,6 +46,46 @@
+      */
+     public boolean inventoryChanged;
+ 
++    // CraftBukkit start
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    private int maxStack = MAX_STACK;
++
++    public ItemStack[] getContents()
++    {
++        return this.mainInventory;
++    }
++
++    public ItemStack[] getArmorContents()
++    {
++        return this.armorInventory;
++    }
++
++    public void onOpen(CraftHumanEntity who)
++    {
++        transaction.add(who);
++    }
++
++    public void onClose(CraftHumanEntity who)
++    {
++        transaction.remove(who);
++    }
++
++    public List<HumanEntity> getViewers()
++    {
++        return transaction;
++    }
++
++    public org.bukkit.inventory.InventoryHolder getOwner()
++    {
++        return this.player.getBukkitEntity();
++    }
++
++    public void setMaxStackSize(int size)
++    {
++        maxStack = size;
++    }
++    // CraftBukkit end
++
+     public InventoryPlayer(EntityPlayer par1EntityPlayer)
+     {
+         this.player = par1EntityPlayer;
+@@ -107,21 +153,33 @@
+         return -1;
+     }
+ 
+-    /**
+-     * Returns the first item stack that is empty.
+-     */
+-    public int getFirstEmptyStack()
+-    {
++    // CraftBukkit start - Watch method above! :D
++    public int canHold(ItemStack itemstack)
++    {
++        int remains = itemstack.stackSize;
++
+         for (int i = 0; i < this.mainInventory.length; ++i)
+         {
+             if (this.mainInventory[i] == null)
+             {
+-                return i;
+-            }
+-        }
+-
+-        return -1;
+-    }
++                return itemstack.stackSize;
++            }
++
++            // Taken from firstPartial(ItemStack)
++            if (this.mainInventory[i] != null && this.mainInventory[i].itemID == itemstack.itemID && this.mainInventory[i].isStackable() && this.mainInventory[i].stackSize < this.mainInventory[i].getMaxStackSize() && this.mainInventory[i].stackSize < this.getInventoryStackLimit() && (!this.mainInventory[i].getHasSubtypes() || this.mainInventory[i].getItemDamage() == itemstack.getItemDamage()))
++            {
++                remains -= (this.mainInventory[i].getMaxStackSize() < this.getInventoryStackLimit() ? this.mainInventory[i].getMaxStackSize() : this.getInventoryStackLimit()) - this.mainInventory[i].stackSize;
++            }
++
++            if (remains <= 0)
++            {
++                return itemstack.stackSize;
++            }
++        }
++
++        return itemstack.stackSize - remains;
++    }
++    // CraftBukkit end
+ 
+     @SideOnly(Side.CLIENT)
+ 
+@@ -189,6 +247,22 @@
+         {
+             this.currentItem -= 9;
+         }
++    }
++
++    /**
++     * Returns the first item stack that is empty.
++     */
++    public int getFirstEmptyStack()
++    {
++        for (int i = 0; i < this.mainInventory.length; ++i)
++        {
++            if (this.mainInventory[i] == null)
++            {
++                return i;
++            }
++        }
++
++        return -1;
+     }
+ 
+     /**
+@@ -357,6 +431,14 @@
              if (this.mainInventory[i] != null)
              {
                  this.mainInventory[i].updateAnimation(this.player.worldObj, this.player, i, this.currentItem == i);
@@ -15,3 +143,25 @@
              }
          }
      }
+@@ -673,7 +755,7 @@
+      */
+     public int getInventoryStackLimit()
+     {
+-        return 64;
++        return maxStack; // CraftBukkit
+     }
+ 
+     /**
+@@ -786,6 +868,12 @@
+ 
+     public ItemStack getItemStack()
+     {
++        // CraftBukkit start
++        if (this.itemStack != null && this.itemStack.stackSize == 0)
++        {
++            this.setItemStack(null);
++        }
++        // CraftBukkit end
+         return this.itemStack;
+     }
+ 

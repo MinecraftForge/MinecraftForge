@@ -1,0 +1,258 @@
+--- ../src_base/minecraft/net/minecraft/entity/item/EntityBoat.java
++++ ../src_work/minecraft/net/minecraft/entity/item/EntityBoat.java
+@@ -14,6 +14,15 @@
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.entity.Vehicle;
++import org.bukkit.event.vehicle.VehicleDamageEvent;
++import org.bukkit.event.vehicle.VehicleDestroyEvent;
++import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
++import org.bukkit.event.vehicle.VehicleMoveEvent;
++// CraftBukkit end
+ 
+ public class EntityBoat extends Entity
+ {
+@@ -32,6 +41,32 @@
+     @SideOnly(Side.CLIENT)
+     private double velocityZ;
+ 
++    // CraftBukkit start
++    public double maxSpeed = 0.4D;
++    public double occupiedDeceleration = 0.2D;
++    public double unoccupiedDeceleration = -1;
++    public boolean landBoats = false;
++
++    @Override
++
++    /**
++     * Applies a velocity to each of the entities pushing them away from each other. Args: entity
++     */
++    public void applyEntityCollision(Entity entity)
++    {
++        org.bukkit.entity.Entity hitEntity = (entity == null) ? null : entity.getBukkitEntity();
++        VehicleEntityCollisionEvent event = new VehicleEntityCollisionEvent((Vehicle) this.getBukkitEntity(), hitEntity);
++        this.worldObj.getServer().getPluginManager().callEvent(event);
++
++        if (event.isCancelled())
++        {
++            return;
++        }
++
++        super.applyEntityCollision(entity);
++    }
++    // CraftBukkit end
++
+     public EntityBoat(World par1World)
+     {
+         super(par1World);
+@@ -93,6 +128,7 @@
+         this.prevPosX = par2;
+         this.prevPosY = par4;
+         this.prevPosZ = par6;
++        this.worldObj.getServer().getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleCreateEvent((Vehicle) this.getBukkitEntity())); // CraftBukkit
+     }
+ 
+     /**
+@@ -114,6 +150,19 @@
+         }
+         else if (!this.worldObj.isRemote && !this.isDead)
+         {
++            // CraftBukkit start
++            Vehicle vehicle = (Vehicle) this.getBukkitEntity();
++            org.bukkit.entity.Entity attacker = (par1DamageSource.getEntity() == null) ? null : par1DamageSource.getEntity().getBukkitEntity();
++            VehicleDamageEvent event = new VehicleDamageEvent(vehicle, attacker, (double) par2);
++            this.worldObj.getServer().getPluginManager().callEvent(event);
++
++            if (event.isCancelled())
++            {
++                return true;
++            }
++
++            // i = event.getDamage(); // TODO Why don't we do this?
++            // CraftBukkit end
+             this.setForwardDirection(-this.getForwardDirection());
+             this.setTimeSinceHit(10);
+             this.setDamageTaken(this.getDamageTaken() + par2 * 10.0F);
+@@ -122,6 +171,16 @@
+ 
+             if (flag || this.getDamageTaken() > 40.0F)
+             {
++                // CraftBukkit start
++                VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, attacker);
++                this.worldObj.getServer().getPluginManager().callEvent(destroyEvent);
++
++                if (destroyEvent.isCancelled())
++                {
++                    this.setDamageTaken(40F); // Maximize damage so this doesn't get triggered again right away
++                    return true;
++                }
++                // CraftBukkit end
+                 if (this.riddenByEntity != null)
+                 {
+                     this.riddenByEntity.mountEntity(this);
+@@ -217,6 +276,13 @@
+      */
+     public void onUpdate()
+     {
++        // CraftBukkit start
++        double prevX = this.posX;
++        double prevY = this.posY;
++        double prevZ = this.posZ;
++        float prevYaw = this.rotationYaw;
++        float prevPitch = this.rotationPitch;
++        // CraftBukkit end
+         super.onUpdate();
+ 
+         if (this.getTimeSinceHit() > 0)
+@@ -338,12 +404,30 @@
+                 if (d4 > 0.0D)
+                 {
+                     d5 = -Math.sin((double)(this.riddenByEntity.rotationYaw * (float)Math.PI / 180.0F));
+-                    d11 = Math.cos((double)(this.riddenByEntity.rotationYaw * (float)Math.PI / 180.0F));
++                    d10 = Math.cos((double)(this.riddenByEntity.rotationYaw * (float)Math.PI / 180.0F));
+                     this.motionX += d5 * this.speedMultiplier * 0.05000000074505806D;
+-                    this.motionZ += d11 * this.speedMultiplier * 0.05000000074505806D;
+-                }
+-            }
+-
++                    this.motionZ += d10 * this.speedMultiplier * 0.05000000074505806D;
++                }
++            }
++            // CraftBukkit start - Support unoccupied deceleration
++            else if (unoccupiedDeceleration >= 0)
++            {
++                this.motionX *= unoccupiedDeceleration;
++                this.motionZ *= unoccupiedDeceleration;
++
++                // Kill lingering speed
++                if (motionX <= 0.00001)
++                {
++                    motionX = 0;
++                }
++
++                if (motionZ <= 0.00001)
++                {
++                    motionZ = 0;
++                }
++            }
++
++            // CraftBukkit end
+             d4 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+ 
+             if (d4 > 0.35D)
+@@ -373,7 +457,7 @@
+                 }
+             }
+ 
+-            if (this.onGround)
++            if (this.onGround && !this.landBoats)   // CraftBukkit
+             {
+                 this.motionX *= 0.5D;
+                 this.motionY *= 0.5D;
+@@ -386,18 +470,28 @@
+             {
+                 if (!this.worldObj.isRemote && !this.isDead)
+                 {
+-                    this.setDead();
+-                    int k;
+-
+-                    for (k = 0; k < 3; ++k)
++                    // CraftBukkit start
++                    Vehicle vehicle = (Vehicle) this.getBukkitEntity();
++                    VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, null);
++                    this.worldObj.getServer().getPluginManager().callEvent(destroyEvent);
++
++                    if (!destroyEvent.isCancelled())
+                     {
+-                        this.dropItemWithOffset(Block.planks.blockID, 1, 0.0F);
++                        this.setDead();
++                        int k;
++
++                        for (k = 0; k < 3; ++k)
++                        {
++                            this.dropItemWithOffset(Block.planks.blockID, 1, 0.0F);
++                        }
++
++                        for (k = 0; k < 2; ++k)
++                        {
++                            this.dropItemWithOffset(Item.stick.itemID, 1, 0.0F);
++                        }
+                     }
+ 
+-                    for (k = 0; k < 2; ++k)
+-                    {
+-                        this.dropItemWithOffset(Item.stick.itemID, 1, 0.0F);
+-                    }
++                    // CraftBukkit end
+                 }
+             }
+             else
+@@ -431,6 +525,21 @@
+ 
+             this.rotationYaw = (float)((double)this.rotationYaw + d12);
+             this.setRotation(this.rotationYaw, this.rotationPitch);
++            // CraftBukkit start
++            org.bukkit.Server server = this.worldObj.getServer();
++            org.bukkit.World bworld = this.worldObj.getWorld();
++            Location from = new Location(bworld, prevX, prevY, prevZ, prevYaw, prevPitch);
++            Location to = new Location(bworld, this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
++            Vehicle vehicle = (Vehicle) this.getBukkitEntity();
++            server.getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleUpdateEvent(vehicle));
++
++            if (!from.equals(to))
++            {
++                VehicleMoveEvent event = new VehicleMoveEvent(vehicle, from, to);
++                server.getPluginManager().callEvent(event);
++            }
++
++            // CraftBukkit end
+ 
+             if (!this.worldObj.isRemote)
+             {
+@@ -462,10 +571,24 @@
+ 
+                         if (i2 == Block.snow.blockID)
+                         {
++                            // CraftBukkit start
++                            if (CraftEventFactory.callEntityChangeBlockEvent(this, i1, l1, j1, 0, 0).isCancelled())
++                            {
++                                continue;
++                            }
++
++                            // CraftBukkit end
+                             this.worldObj.setBlockToAir(i1, l1, j1);
+                         }
+                         else if (i2 == Block.waterlily.blockID)
+                         {
++                            // CraftBukkit start
++                            if (CraftEventFactory.callEntityChangeBlockEvent(this, i1, l1, j1, 0, 0).isCancelled())
++                            {
++                                continue;
++                            }
++
++                            // CraftBukkit end
+                             this.worldObj.destroyBlock(i1, l1, j1, true);
+                         }
+                     }
+@@ -473,6 +596,7 @@
+ 
+                 if (this.riddenByEntity != null && this.riddenByEntity.isDead)
+                 {
++                    this.riddenByEntity.ridingEntity = null; // CraftBukkit
+                     this.riddenByEntity = null;
+                 }
+             }
+@@ -505,6 +629,9 @@
+         return 0.0F;
+     }
+ 
++    /**
++     * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
++     */
+     public boolean func_130002_c(EntityPlayer par1EntityPlayer)
+     {
+         if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != par1EntityPlayer)

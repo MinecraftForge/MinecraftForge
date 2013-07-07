@@ -1,44 +1,149 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenSwamp.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenSwamp.java
-@@ -47,7 +47,7 @@
-                         {
-                             l1 = par1World.getBlockId(j1, i1, k1);
+@@ -2,16 +2,28 @@
  
--                            if (l1 != 0 && l1 != Block.leaves.blockID)
-+                            if (l1 != 0 && (Block.blocksList[l1] != null && !Block.blocksList[l1].isLeaves(par1World, j1, i1, k1)))
+ import java.util.Random;
+ import net.minecraft.block.Block;
++import net.minecraft.block.BlockSapling.TreeGenerator;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.world.World;
+ 
+-public class WorldGenSwamp extends WorldGenerator
++import org.bukkit.BlockChangeDelegate; // CraftBukkit
++
++public class WorldGenSwamp extends WorldGenerator implements TreeGenerator   // CraftBukkit add interface
+ {
++    public WorldGenSwamp() {}
++
+     public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
+     {
++        // CraftBukkit start - Moved to generate
++        return this.generate((BlockChangeDelegate) par1World, par2Random, par3, par4, par5);
++    }
++
++    public boolean generate(BlockChangeDelegate par1World, Random par2Random, int par3, int par4, int par5)
++    {
++        // CraftBukkit end
+         int l;
+ 
+-        for (l = par2Random.nextInt(4) + 5; par1World.getBlockMaterial(par3, par4 - 1, par5) == Material.water; --par4)
++        for (l = par2Random.nextInt(4) + 5; par1World.getTypeId(par3, par4 - 1, par5) != 0 && Block.blocksList[par1World.getTypeId(par3, par4 - 1, par5)].blockMaterial == Material.water; --par4)   // CraftBukkit - bypass world.getMaterial
+         {
+             ;
+         }
+@@ -45,7 +57,7 @@
+                     {
+                         if (i1 >= 0 && i1 < 128)
+                         {
+-                            l1 = par1World.getBlockId(j1, i1, k1);
++                            l1 = par1World.getTypeId(j1, i1, k1);
+ 
+                             if (l1 != 0 && l1 != Block.leaves.blockID)
                              {
-                                 if (l1 != Block.waterStill.blockID && l1 != Block.waterMoving.blockID)
-                                 {
-@@ -94,7 +94,10 @@
+@@ -73,11 +85,11 @@
+             }
+             else
+             {
+-                i1 = par1World.getBlockId(par3, par4 - 1, par5);
++                i1 = par1World.getTypeId(par3, par4 - 1, par5);
+ 
+                 if ((i1 == Block.grass.blockID || i1 == Block.dirt.blockID) && par4 < 128 - l - 1)
+                 {
+-                    this.setBlock(par1World, par3, par4 - 1, par5, Block.dirt.blockID);
++                    this.setType(par1World, par3, par4 - 1, par5, Block.dirt.blockID);
+                     int i2;
+                     int j2;
+ 
+@@ -94,9 +106,9 @@
                              {
                                  int l2 = k2 - par5;
  
 -                                if ((Math.abs(i2) != k1 || Math.abs(l2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0) && !Block.opaqueCubeLookup[par1World.getBlockId(l1, j2, k2)])
-+                                Block block = Block.blocksList[par1World.getBlockId(l1, j2, k2)];
-+
-+                                if ((Math.abs(i2) != k1 || Math.abs(l2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0) && 
-+                                    (block == null || block.canBeReplacedByLeaves(par1World, l1, j2, k2)))
++                                if ((Math.abs(i2) != k1 || Math.abs(l2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0) && !Block.opaqueCubeLookup[par1World.getTypeId(l1, j2, k2)])
                                  {
-                                     this.setBlock(par1World, l1, j2, k2, Block.leaves.blockID);
+-                                    this.setBlock(par1World, l1, j2, k2, Block.leaves.blockID);
++                                    this.setType(par1World, l1, j2, k2, Block.leaves.blockID);
                                  }
-@@ -106,7 +109,9 @@
-                     {
-                         j1 = par1World.getBlockId(par3, par4 + j2, par5);
- 
--                        if (j1 == 0 || j1 == Block.leaves.blockID || j1 == Block.waterMoving.blockID || j1 == Block.waterStill.blockID)
-+                        Block block = Block.blocksList[j1];
-+
-+                        if (j1 == 0 || (block != null && block.isLeaves(par1World, par3, par4 + j2, par5)) || j1 == Block.waterMoving.blockID || j1 == Block.waterStill.blockID)
-                         {
-                             this.setBlock(par1World, par3, par4 + j2, par5, Block.wood.blockID);
+                             }
                          }
-@@ -121,7 +126,8 @@
+@@ -104,11 +116,11 @@
+ 
+                     for (j2 = 0; j2 < l; ++j2)
+                     {
+-                        j1 = par1World.getBlockId(par3, par4 + j2, par5);
++                        j1 = par1World.getTypeId(par3, par4 + j2, par5);
+ 
+                         if (j1 == 0 || j1 == Block.leaves.blockID || j1 == Block.waterMoving.blockID || j1 == Block.waterStill.blockID)
+                         {
+-                            this.setBlock(par1World, par3, par4 + j2, par5, Block.wood.blockID);
++                            this.setType(par1World, par3, par4 + j2, par5, Block.wood.blockID);
+                         }
+                     }
+ 
+@@ -121,26 +133,26 @@
                          {
                              for (i2 = par5 - k1; i2 <= par5 + k1; ++i2)
                              {
 -                                if (par1World.getBlockId(l1, j2, i2) == Block.leaves.blockID)
-+                                Block block = Block.blocksList[par1World.getBlockId(l1, j2, i2)];
-+                                if (block != null && block.isLeaves(par1World, l1, j2, i2))
++                                if (par1World.getTypeId(l1, j2, i2) == Block.leaves.blockID)
                                  {
-                                     if (par2Random.nextInt(4) == 0 && par1World.getBlockId(l1 - 1, j2, i2) == 0)
+-                                    if (par2Random.nextInt(4) == 0 && par1World.getBlockId(l1 - 1, j2, i2) == 0)
++                                    if (par2Random.nextInt(4) == 0 && par1World.getTypeId(l1 - 1, j2, i2) == 0)
                                      {
+-                                        this.generateVines(par1World, l1 - 1, j2, i2, 8);
++                                        this.b(par1World, l1 - 1, j2, i2, 8);
+                                     }
+ 
+-                                    if (par2Random.nextInt(4) == 0 && par1World.getBlockId(l1 + 1, j2, i2) == 0)
++                                    if (par2Random.nextInt(4) == 0 && par1World.getTypeId(l1 + 1, j2, i2) == 0)
+                                     {
+-                                        this.generateVines(par1World, l1 + 1, j2, i2, 2);
++                                        this.b(par1World, l1 + 1, j2, i2, 2);
+                                     }
+ 
+-                                    if (par2Random.nextInt(4) == 0 && par1World.getBlockId(l1, j2, i2 - 1) == 0)
++                                    if (par2Random.nextInt(4) == 0 && par1World.getTypeId(l1, j2, i2 - 1) == 0)
+                                     {
+-                                        this.generateVines(par1World, l1, j2, i2 - 1, 1);
++                                        this.b(par1World, l1, j2, i2 - 1, 1);
+                                     }
+ 
+-                                    if (par2Random.nextInt(4) == 0 && par1World.getBlockId(l1, j2, i2 + 1) == 0)
++                                    if (par2Random.nextInt(4) == 0 && par1World.getTypeId(l1, j2, i2 + 1) == 0)
+                                     {
+-                                        this.generateVines(par1World, l1, j2, i2 + 1, 4);
++                                        this.b(par1World, l1, j2, i2 + 1, 4);
+                                     }
+                                 }
+                             }
+@@ -161,24 +173,22 @@
+         }
+     }
+ 
+-    /**
+-     * Generates vines at the given position until it hits a block.
+-     */
+-    private void generateVines(World par1World, int par2, int par3, int par4, int par5)
++    // CraftBukkit - change signature
++    private void b(BlockChangeDelegate world, int i, int j, int k, int l)
+     {
+-        this.setBlockAndMetadata(par1World, par2, par3, par4, Block.vine.blockID, par5);
++        this.setTypeAndData(world, i, j, k, Block.vine.blockID, l);
+         int i1 = 4;
+ 
+         while (true)
+         {
+-            --par3;
++            --j;
+ 
+-            if (par1World.getBlockId(par2, par3, par4) != 0 || i1 <= 0)
++            if (world.getTypeId(i, j, k) != 0 || i1 <= 0)
+             {
+                 return;
+             }
+ 
+-            this.setBlockAndMetadata(par1World, par2, par3, par4, Block.vine.blockID, par5);
++            this.setTypeAndData(world, i, j, k, Block.vine.blockID, l);
+             --i1;
+         }
+     }

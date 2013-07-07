@@ -1,0 +1,63 @@
+--- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenerator.java
++++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenerator.java
+@@ -2,6 +2,8 @@
+ 
+ import java.util.Random;
+ import net.minecraft.world.World;
++
++import org.bukkit.BlockChangeDelegate; // CraftBukkit
+ 
+ public abstract class WorldGenerator
+ {
+@@ -21,13 +23,44 @@
+         this.doBlockNotify = par1;
+     }
+ 
+-    public abstract boolean generate(World world, Random random, int i, int j, int k);
++    public abstract boolean generate(World par1World, Random par2Random, int par3, int par4, int par5);
+ 
+     /**
+      * Rescales the generator settings, only used in WorldGenBigTree
+      */
+     public void setScale(double par1, double par3, double par5) {}
+ 
++    // CraftBukkit - change signature
++    protected void setType(BlockChangeDelegate world, int i, int j, int k, int l)
++    {
++        this.setTypeAndData(world, i, j, k, l, 0);
++    }
++
++    // CraftBukkit - change signature
++    protected void setTypeAndData(BlockChangeDelegate world, int i, int j, int k, int l, int i1)
++    {
++        if (this.doBlockNotify)
++        {
++            // CraftBukkit - BlockChangeDelegate doesn't have the 6th parameter
++            world.setTypeIdAndData(i, j, k, l, i1);
++        }
++        else
++        {
++            // CraftBukkit start - Layering violation :(
++            if (world instanceof World)
++            {
++                ((World) world).setBlock(i, j, k, l, i1, 2);
++            }
++            else
++            {
++                world.setRawTypeIdAndData(i, j, k, l, i1);
++            }
++
++            // CraftBukkit end
++        }
++    }
++    
++    // MCPC+ start - vanilla compatibility
+     /**
+      * Sets the block without metadata in the world, notifying neighbors if enabled.
+      */
+@@ -50,4 +83,5 @@
+             par1World.setBlock(par2, par3, par4, par5, par6, 2);
+         }
+     }
++    // MCPC+ end    
+ }

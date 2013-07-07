@@ -1,0 +1,30 @@
+--- ../src_base/minecraft/cpw/mods/fml/common/asm/FMLSanityChecker.java
++++ ../src_work/minecraft/cpw/mods/fml/common/asm/FMLSanityChecker.java
+@@ -109,10 +109,11 @@
+         {
+             goodFML = true;
+         }
+-        if (!goodFML)
++        /*if (!goodFML)
+         {
+-            FMLRelaunchLog.severe("FML appears to be missing any signature data. This is not a good thing");
+-        }
++            FMLLog.severe("FML appears to be missing any signature data. This is not a good thing");
++        }*/
++        // MCPC+ end
+         byte[] mlClass = cl.getClassBytes("ModLoader");
+         // Only care in obfuscated env
+         if (mlClass == null)
+@@ -144,8 +145,10 @@
+         cl = (LaunchClassLoader) data.get("classLoader");
+         File mcDir = (File)data.get("mcLocation");
+         FMLDeobfuscatingRemapper.INSTANCE.setup(mcDir, cl, (String) data.get("deobfuscationFileName"));
+-        File binpatches = new File(mcDir,"binpatch");
+-        ClassPatchManager.INSTANCE.setup(FMLLaunchHandler.side());
++        // MCPC+ start - disable binary patches
++        // File binpatches = new File(mcDir,"binpatch");
++        // ClassPatchManager.INSTANCE.setup(FMLLaunchHandler.side());
++        // MCPC+ end
+     }
+ 
+ }

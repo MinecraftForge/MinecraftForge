@@ -1,0 +1,60 @@
+--- ../src_base/minecraft/net/minecraft/world/storage/WorldInfo.java
++++ ../src_work/minecraft/net/minecraft/world/storage/WorldInfo.java
+@@ -7,7 +7,6 @@
+ import net.minecraft.crash.CrashReportCategory;
+ import net.minecraft.nbt.NBTBase;
+ import net.minecraft.nbt.NBTTagCompound;
+-import net.minecraft.server.MinecraftServer;
+ import net.minecraft.world.EnumGameType;
+ import net.minecraft.world.GameRules;
+ import net.minecraft.world.WorldSettings;
+@@ -151,6 +150,7 @@
+         this.thunderTime = par1NBTTagCompound.getInteger("thunderTime");
+         this.thundering = par1NBTTagCompound.getBoolean("thundering");
+         this.hardcore = par1NBTTagCompound.getBoolean("hardcore");
++        this.dimension = par1NBTTagCompound.getInteger("dimension"); // MCPC+
+ 
+         if (par1NBTTagCompound.hasKey("initialized"))
+         {
+@@ -227,6 +227,7 @@
+         this.allowCommands = par1WorldInfo.allowCommands;
+         this.initialized = par1WorldInfo.initialized;
+         this.theGameRules = par1WorldInfo.theGameRules;
++        this.dimension = par1WorldInfo.dimension; // MCPC+
+     }
+ 
+     /**
+@@ -263,7 +264,7 @@
+         par1NBTTagCompound.setLong("Time", this.totalTime);
+         par1NBTTagCompound.setLong("DayTime", this.worldTime);
+         par1NBTTagCompound.setLong("SizeOnDisk", this.sizeOnDisk);
+-        par1NBTTagCompound.setLong("LastPlayed", MinecraftServer.func_130071_aq());
++        par1NBTTagCompound.setLong("LastPlayed", System.currentTimeMillis());
+         par1NBTTagCompound.setString("LevelName", this.levelName);
+         par1NBTTagCompound.setInteger("version", this.saveVersion);
+         par1NBTTagCompound.setInteger("rainTime", this.rainTime);
+@@ -274,6 +275,7 @@
+         par1NBTTagCompound.setBoolean("allowCommands", this.allowCommands);
+         par1NBTTagCompound.setBoolean("initialized", this.initialized);
+         par1NBTTagCompound.setCompoundTag("GameRules", this.theGameRules.writeGameRulesToNBT());
++        par1NBTTagCompound.setInteger("dimension", this.dimension); // MCPC+
+ 
+         if (par2NBTTagCompound != null)
+         {
+@@ -339,6 +341,16 @@
+     {
+         return this.playerTag;
+     }
++
++    // MCPC+ start
++    /**
++     * Sets the Dimension.
++     */
++    public void setDimension(int dim)
++    {
++        this.dimension = dim;
++    }
++    // MCPC+ end
+ 
+     public int getDimension()
+     {

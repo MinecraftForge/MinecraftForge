@@ -1,0 +1,76 @@
+--- ../src_base/minecraft/net/minecraft/tileentity/TileEntityDispenser.java
++++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityDispenser.java
+@@ -7,6 +7,13 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
+ 
++// CraftBukkit start
++import java.util.List;
++
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++// CraftBukkit end
++
+ public class TileEntityDispenser extends TileEntity implements IInventory
+ {
+     private ItemStack[] dispenserContents = new ItemStack[9];
+@@ -16,6 +23,38 @@
+      */
+     private Random dispenserRandom = new Random();
+     protected String customName;
++
++    // CraftBukkit start
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    private int maxStack = MAX_STACK;
++
++    public ItemStack[] getContents()
++    {
++        return this.dispenserContents;
++    }
++
++    public void onOpen(CraftHumanEntity who)
++    {
++        transaction.add(who);
++    }
++
++    public void onClose(CraftHumanEntity who)
++    {
++        transaction.remove(who);
++    }
++
++    public List<HumanEntity> getViewers()
++    {
++        return transaction;
++    }
++
++    public void setMaxStackSize(int size)
++    {
++        maxStack = size;
++    }
++    // CraftBukkit end
++
++    public TileEntityDispenser() {}
+ 
+     /**
+      * Returns the number of slots in the inventory.
+@@ -96,6 +135,11 @@
+         {
+             if (this.dispenserContents[k] != null && this.dispenserRandom.nextInt(j++) == 0)
+             {
++                if (this.dispenserContents[k].stackSize == 0)
++                {
++                    continue;    // CraftBukkit
++                }
++
+                 i = k;
+             }
+         }
+@@ -216,7 +260,7 @@
+      */
+     public int getInventoryStackLimit()
+     {
+-        return 64;
++        return maxStack; // CraftBukkit
+     }
+ 
+     /**

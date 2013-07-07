@@ -1,0 +1,34 @@
+--- ../src_base/minecraft/net/minecraft/tileentity/TileEntitySign.java
++++ ../src_work/minecraft/net/minecraft/tileentity/TileEntitySign.java
+@@ -16,7 +16,9 @@
+      * really used when the > < are going to be visible.
+      */
+     public int lineBeingEdited = -1;
+-    private boolean isEditable = true;
++    public boolean isEditable = true; // CraftBukkit - private -> public
++
++    public TileEntitySign() {}
+ 
+     /**
+      * Writes a tile entity to NBT.
+@@ -55,7 +57,19 @@
+     public Packet getDescriptionPacket()
+     {
+         String[] astring = new String[4];
+-        System.arraycopy(this.signText, 0, astring, 0, 4);
++
++        // CraftBukkit start - Limit sign text to 15 chars per line
++        for (int i = 0; i < 4; ++i)
++        {
++            astring[i] = this.signText[i];
++
++            if (this.signText[i].length() > 15)
++            {
++                astring[i] = this.signText[i].substring(0, 15);
++            }
++        }
++
++        // CraftBukkit end
+         return new Packet130UpdateSign(this.xCoord, this.yCoord, this.zCoord, astring);
+     }
+ 

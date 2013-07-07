@@ -1,0 +1,38 @@
+--- ../src_base/minecraft/net/minecraft/world/WorldServerMulti.java
++++ ../src_work/minecraft/net/minecraft/world/WorldServerMulti.java
+@@ -8,16 +8,29 @@
+ 
+ public class WorldServerMulti extends WorldServer
+ {
+-    public WorldServerMulti(MinecraftServer par1MinecraftServer, ISaveHandler par2ISaveHandler, String par3Str, int par4, WorldSettings par5WorldSettings, WorldServer par6WorldServer, Profiler par7Profiler, ILogAgent par8ILogAgent)
++    // CraftBukkit start - Changed signature
++    public WorldServerMulti(MinecraftServer minecraftserver, ISaveHandler isavehandler, String s, int i, WorldSettings worldsettings, WorldServer worldserver, Profiler profiler, ILogAgent ilogagent, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen)
+     {
+-        super(par1MinecraftServer, par2ISaveHandler, par3Str, par4, par5WorldSettings, par7Profiler, par8ILogAgent);
+-        this.mapStorage = par6WorldServer.mapStorage;
+-        this.worldScoreboard = par6WorldServer.getScoreboard();
+-        this.worldInfo = new DerivedWorldInfo(par6WorldServer.getWorldInfo());
++        super(minecraftserver, isavehandler, s, i, worldsettings, profiler, ilogagent, env, gen);
++        // CraftBukkit end
++        this.mapStorage = worldserver.mapStorage;
++        this.worldScoreboard = worldserver.getScoreboard();
++        // this.worldData = new SecondaryWorldData(worldserver.getWorldData()); // CraftBukkit - use unique worlddata
+     }
++
++    // protected void a() {} // CraftBukkit - save world data!
++
++    // MCPC+ start - vanilla compatibility
++    public WorldServerMulti(MinecraftServer minecraftserver, ISaveHandler isavehandler, String s, int i, WorldSettings worldsettings, WorldServer worldserver, Profiler profiler, ILogAgent ilogagent) {
++        super(minecraftserver, isavehandler, s, i, ilogagent, worldsettings, profiler);
++        this.mapStorage = worldserver.mapStorage;
++        this.worldInfo = new DerivedWorldInfo(worldserver.getWorldInfo());
++    }
++    // MCPC+ end
+ 
+     /**
+      * Saves the chunks to disk.
+      */
+-    protected void saveLevel() throws MinecraftException {}
++    // MCPC+ - disable this so level.dat is created correctly in newly created worlds
++    //protected void saveLevel() throws MinecraftException {}
+ }

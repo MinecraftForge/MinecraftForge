@@ -1,0 +1,53 @@
+--- ../src_base/minecraft/net/minecraft/dispenser/DispenserBehaviorDye.java
++++ ../src_work/minecraft/net/minecraft/dispenser/DispenserBehaviorDye.java
+@@ -5,6 +5,10 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.event.block.BlockDispenseEvent;
++// CraftBukkit end
+ 
+ final class DispenserBehaviorDye extends BehaviorDefaultDispenseItem
+ {
+@@ -22,8 +26,38 @@
+             int i = par1IBlockSource.getXInt() + enumfacing.getFrontOffsetX();
+             int j = par1IBlockSource.getYInt() + enumfacing.getFrontOffsetY();
+             int k = par1IBlockSource.getZInt() + enumfacing.getFrontOffsetZ();
++            // CraftBukkit start
++            ItemStack itemstack1 = par2ItemStack.splitStack(1);
++            org.bukkit.block.Block block = world.getWorld().getBlockAt(par1IBlockSource.getXInt(), par1IBlockSource.getYInt(), par1IBlockSource.getZInt());
++            CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
++            BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
+ 
+-            if (ItemDye.func_96604_a(par2ItemStack, world, i, j, k))
++            if (!BlockDispenser.eventFired)
++            {
++                world.getServer().getPluginManager().callEvent(event);
++            }
++
++            if (event.isCancelled())
++            {
++                par2ItemStack.stackSize++;
++                return par2ItemStack;
++            }
++
++            if (!event.getItem().equals(craftItem))
++            {
++                par2ItemStack.stackSize++;
++                // Chain to handler for new item
++                ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++                IBehaviorDispenseItem ibehaviordispenseitem = (IBehaviorDispenseItem) BlockDispenser.dispenseBehaviorRegistry.func_82594_a(eventStack.getItem());
++
++                if (ibehaviordispenseitem != IBehaviorDispenseItem.itemDispenseBehaviorProvider && ibehaviordispenseitem != this)
++                {
++                    ibehaviordispenseitem.dispense(par1IBlockSource, eventStack);
++                    return par2ItemStack;
++                }
++            }
++            // CraftBukkit end
++            if (ItemDye.func_96604_a(itemstack1, world, i, j, k))   // CraftBukkit - itemstack -> itemstack1
+             {
+                 if (!world.isRemote)
+                 {

@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/entity/item/EntityFireworkRocket.java
++++ ../src_work/minecraft/net/minecraft/entity/item/EntityFireworkRocket.java
+@@ -16,7 +16,7 @@
+     /**
+      * The lifetime of the firework in ticks. When the age reaches the lifetime the firework explodes.
+      */
+-    private int lifetime;
++    public int lifetime; // CraftBukkit - private -> public
+ 
+     public EntityFireworkRocket(World par1World)
+     {

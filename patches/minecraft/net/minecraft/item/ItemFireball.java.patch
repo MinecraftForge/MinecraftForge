@@ -1,0 +1,21 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemFireball.java
++++ ../src_work/minecraft/net/minecraft/item/ItemFireball.java
+@@ -65,6 +65,18 @@
+ 
+                 if (i1 == 0)
+                 {
++                    // CraftBukkit start
++                    if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(par3World, par4, par5, par6, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FIREBALL, par2EntityPlayer).isCancelled())
++                    {
++                        if (!par2EntityPlayer.capabilities.isCreativeMode)
++                        {
++                            --par1ItemStack.stackSize;
++                        }
++
++                        return false;
++                    }
++
++                    // CraftBukkit end
+                     par3World.playSoundEffect((double)par4 + 0.5D, (double)par5 + 0.5D, (double)par6 + 0.5D, "fire.ignite", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F);
+                     par3World.setBlock(par4, par5, par6, Block.fire.blockID);
+                 }

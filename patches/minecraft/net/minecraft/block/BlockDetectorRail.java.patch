@@ -1,0 +1,54 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockDetectorRail.java
++++ ../src_work/minecraft/net/minecraft/block/BlockDetectorRail.java
+@@ -14,6 +14,7 @@
+ import net.minecraft.util.Icon;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
+ 
+ public class BlockDetectorRail extends BlockRailBase
+ {
+@@ -108,6 +109,15 @@
+             flag1 = true;
+         }
+ 
++        // CraftBukkit start
++        if (flag != flag1)
++        {
++            org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3, par4);
++            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, flag ? 15 : 0, flag1 ? 15 : 0);
++            par1World.getServer().getPluginManager().callEvent(eventRedstone);
++            flag1 = eventRedstone.getNewCurrent() > 0;
++        }
++        // CraftBukkit end
+         if (flag1 && !flag)
+         {
+             par1World.setBlockMetadataWithNotify(par2, par3, par4, par5 | 8, 3);
+@@ -169,27 +179,4 @@
+ 
+         return 0;
+     }
+-
+-    @SideOnly(Side.CLIENT)
+-
+-    /**
+-     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+-     * is the only chance you get to register icons.
+-     */
+-    public void registerIcons(IconRegister par1IconRegister)
+-    {
+-        this.iconArray = new Icon[2];
+-        this.iconArray[0] = par1IconRegister.registerIcon(this.func_111023_E());
+-        this.iconArray[1] = par1IconRegister.registerIcon(this.func_111023_E() + "_powered");
+-    }
+-
+-    @SideOnly(Side.CLIENT)
+-
+-    /**
+-     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
+-     */
+-    public Icon getIcon(int par1, int par2)
+-    {
+-        return (par2 & 8) != 0 ? this.iconArray[1] : this.iconArray[0];
+-    }
+ }

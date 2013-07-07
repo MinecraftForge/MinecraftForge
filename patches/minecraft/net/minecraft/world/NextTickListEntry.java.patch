@@ -1,0 +1,20 @@
+--- ../src_base/minecraft/net/minecraft/world/NextTickListEntry.java
++++ ../src_work/minecraft/net/minecraft/world/NextTickListEntry.java
+@@ -5,7 +5,7 @@
+ public class NextTickListEntry implements Comparable
+ {
+     /** The id number for the next tick entry */
+-    private static long nextTickEntryID;
++    private static long nextTickEntryID = 0L;
+ 
+     /** X position this tick is occuring at */
+     public int xCoord;
+@@ -52,7 +52,7 @@
+ 
+     public int hashCode()
+     {
+-        return (this.xCoord * 1024 * 1024 + this.zCoord * 1024 + this.yCoord) * 256;
++        return (this.xCoord * 257) ^ this.yCoord ^ (this.zCoord * 60217); // Spigot - better hash
+     }
+ 
+     /**

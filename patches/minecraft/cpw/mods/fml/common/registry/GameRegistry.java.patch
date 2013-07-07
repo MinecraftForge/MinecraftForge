@@ -1,0 +1,126 @@
+--- ../src_base/minecraft/cpw/mods/fml/common/registry/GameRegistry.java
++++ ../src_work/minecraft/cpw/mods/fml/common/registry/GameRegistry.java
+@@ -12,6 +12,7 @@
+ 
+ package cpw.mods.fml.common.registry;
+ 
++import java.io.File;
+ import java.lang.reflect.Constructor;
+ import java.util.List;
+ import java.util.Map;
+@@ -31,11 +32,21 @@
+ import net.minecraft.item.crafting.IRecipe;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.world.World;
+ import net.minecraft.world.WorldType;
+ import net.minecraft.world.biome.BiomeGenBase;
+ import net.minecraft.world.chunk.IChunkProvider;
++// MCPC+ start
++import java.io.IOException;
++
++import org.bukkit.Location;
++import org.bukkit.configuration.file.YamlConfiguration;
++import org.bukkit.craftbukkit.Main;
++
++import net.minecraft.entity.player.EntityPlayerMP;
++// MCPC+ end
+ 
+ import com.google.common.base.Function;
+ import com.google.common.collect.ArrayListMultimap;
+@@ -68,7 +79,7 @@
+     private static List<ICraftingHandler> craftingHandlers = Lists.newArrayList();
+     private static List<IPickupNotifier> pickupHandlers = Lists.newArrayList();
+     private static List<IPlayerTracker> playerTrackers = Lists.newArrayList();
+-
++    private static org.bukkit.configuration.file.YamlConfiguration configuration = MinecraftServer.configuration; // MCPC+
+     /**
+      * Register a world generator - something that inserts new block types into the world
+      *
+@@ -76,7 +87,29 @@
+      */
+     public static void registerWorldGenerator(IWorldGenerator generator)
+     {
+-        worldGenerators.add(generator);
++        // MCPC+ start - add config options to enable/disable mod world generators
++        String modId = Loader.instance().activeModContainer().getModId();
++        modId = modId.replaceAll("[^A-Za-z0-9]", ""); // remove all non-digits/alphanumeric
++        modId.replace(" ", "_");
++        String generatorName = modId + "-" + generator.getClass().getSimpleName();
++        if (!configuration.isBoolean("world-settings.default.worldgen-" + generatorName))
++                configuration.set("world-settings.default.worldgen-" + generatorName, true);
++        boolean generatorEnabled = configuration.getBoolean("world-settings.default.worldgen-" + generatorName);
++        try {
++            configuration.save((File) MinecraftServer.configFile);
++        } catch (IOException e) {
++            e.printStackTrace();
++        }
++        if (!generatorEnabled)
++        {
++            FMLLog.info(Loader.instance().activeModContainer().getModId() + " world generator " + generator + " is DISABLED. Skipping registration.");
++        }
++        else 
++        {
++            FMLLog.info(Loader.instance().activeModContainer().getModId() + " registered world generator " + generator);
++            worldGenerators.add(generator);
++        }
++        // MCPC+ end
+     }
+ 
+     /**
+@@ -147,6 +180,7 @@
+      */
+     public static void registerItem(net.minecraft.item.Item item, String name, String modId)
+     {
++        GameRegistry.registerMaterial(item, name, modId); // MCPC+ - register bukkit material
+         GameData.setName(item, name, modId);
+     }
+ 
+@@ -234,6 +268,33 @@
+         blockRegistry.put(Loader.instance().activeModContainer(), (BlockProxy) block);
+     }
+ 
++    // MCPC+ start - register bukkit material names for modded items/blocks
++    /**
++     * Register the specified Material with a mod specific name : overrides the standard type XID name
++     * @param item The material to register
++     * @param name The material-unique name to register it as - null will default to modId_itemId
++     * @param modId An optional modId that will "own" this block - generally used by multi-mod systems
++     * where one mod should "own" all the blocks of all the mods, null defaults to the active mod
++     */
++    public static void registerMaterial(net.minecraft.item.Item item, String name, String modId)
++    {
++        if (name != null)
++        {
++            if (modId == null)
++               modId = Loader.instance().activeModContainer().getModId();
++            String materialName = modId + "_" + name;
++            org.bukkit.Material.setMaterialName(item.itemID, materialName);
++        }
++        else 
++        {
++            if (modId == null)
++                modId = Loader.instance().activeModContainer().getModId();
++            String materialName = modId + "_" + String.valueOf(item.itemID);
++            org.bukkit.Material.setMaterialName(item.itemID, materialName);
++        }
++    }
++    // MCPC+ end
++
+     public static void addRecipe(ItemStack output, Object... params)
+     {
+         addShapedRecipe(output, params);
+@@ -364,6 +425,11 @@
+ 	{
+ 		for(IPlayerTracker tracker : playerTrackers)
+ 			tracker.onPlayerChangedDimension(player);
++        // MCPC+ start - update compassTarget to new world when changing dimensions or it will leave a reference to the last world object causing a memory leak
++        // This is required for mods that implement their own dimension transfer methods which bypass ServerConfigurationManager
++        EntityPlayerMP playermp = (EntityPlayerMP)player;
++        playermp.compassTarget = new Location(playermp.worldObj.getWorld(), playermp.posX, playermp.posY, playermp.posZ);
++        // MCPC+ end
+ 	}
+ 
+ 	public static void onPlayerRespawn(EntityPlayer player)

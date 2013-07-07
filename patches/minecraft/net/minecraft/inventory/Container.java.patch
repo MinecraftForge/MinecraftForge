@@ -1,0 +1,240 @@
+--- ../src_base/minecraft/net/minecraft/inventory/Container.java
++++ ../src_work/minecraft/net/minecraft/inventory/Container.java
+@@ -8,9 +8,20 @@
+ import java.util.List;
+ import java.util.Set;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.entity.player.InventoryPlayer;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.MathHelper;
++
++// CraftBukkit start
++import java.util.HashMap;
++import java.util.Map;
++import org.bukkit.craftbukkit.inventory.CraftInventory;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.event.Event.Result;
++import org.bukkit.event.inventory.InventoryDragEvent;
++import org.bukkit.inventory.InventoryView;
++// CraftBukkit end
+ 
+ public abstract class Container
+ {
+@@ -23,7 +34,7 @@
+     @SideOnly(Side.CLIENT)
+     private short transactionID;
+     private int field_94535_f = -1;
+-    private int field_94536_g;
++    public int field_94536_g; // CraftBukkit - private -> public
+     private final Set field_94537_h = new HashSet();
+ 
+     /**
+@@ -32,6 +43,46 @@
+     protected List crafters = new ArrayList();
+     private Set playerList = new HashSet();
+ 
++    // CraftBukkit start
++    public boolean checkReachable = true;
++    public InventoryView getBukkitView() { return null; } // MCPC+ - concrete, return null - for mod containers TODO: synthesize a wrapper
++    public void transferTo(Container other, org.bukkit.craftbukkit.entity.CraftHumanEntity player)
++    {
++        InventoryView source = this.getBukkitView(), destination = other.getBukkitView();
++        // MCPC+ start - add null checks to skip modded inventories with no Bukkit wrappers, and
++        // catch AbstractMethodErrors for modded IInventory's with no onClose()
++        if (source != null) {
++            try {
++                ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
++            } catch (AbstractMethodError ex) {
++                // modded
++            }
++
++            try {
++                ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
++            } catch (AbstractMethodError ex) {
++                // modded
++            }
++        }
++        if (destination != null) {
++            try {
++                ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
++            } catch (AbstractMethodError ex) {
++                // modded
++            }
++
++            try {
++                ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
++            } catch (AbstractMethodError ex) {
++                // modded
++            }
++        }
++        // MCPC+ end
++    }
++    // CraftBukkit end
++
++    public Container() {}
++
+     /**
+      * the slot is assumed empty
+      */
+@@ -39,7 +90,7 @@
+     {
+         par1Slot.slotNumber = this.inventorySlots.size();
+         this.inventorySlots.add(par1Slot);
+-        this.inventoryItemStacks.add((Object)null);
++        this.inventoryItemStacks.add(null);
+         return par1Slot;
+     }
+ 
+@@ -187,11 +238,12 @@
+             }
+             else if (this.field_94536_g == 2)
+             {
+-                if (!this.field_94537_h.isEmpty())
++                if (!this.field_94537_h.isEmpty() && getBukkitView() != null) // MCPC+ - only for containers with Bukkit wrappers
+                 {
+                     itemstack1 = inventoryplayer.getItemStack().copy();
+                     l = inventoryplayer.getItemStack().stackSize;
+                     Iterator iterator = this.field_94537_h.iterator();
++                    Map<Integer, ItemStack> draggedSlots = new HashMap<Integer, ItemStack>(); // CraftBukkit - Store slots from drag in map (raw slot id -> new stack)
+ 
+                     while (iterator.hasNext())
+                     {
+@@ -214,6 +266,84 @@
+                             }
+ 
+                             l -= itemstack2.stackSize - j1;
++                            draggedSlots.put(slot1.slotNumber, itemstack2); // CraftBukkit - Put in map instead of setting, Should be Slot.rawSlotIndex
++                        }
++                    }
++
++                    // CraftBukkit start - InventoryDragEvent
++                    InventoryView view = getBukkitView();
++                    org.bukkit.inventory.ItemStack newcursor = CraftItemStack.asCraftMirror(itemstack1);
++                    newcursor.setAmount(l);
++                    Map<Integer, org.bukkit.inventory.ItemStack> eventmap = new HashMap<Integer, org.bukkit.inventory.ItemStack>();
++
++                    for (Map.Entry<Integer, ItemStack> ditem : draggedSlots.entrySet())
++                    {
++                        eventmap.put(ditem.getKey(), CraftItemStack.asBukkitCopy(ditem.getValue()));
++                    }
++
++                    // It's essential that we set the cursor to the new value here to prevent item duplication if a plugin closes the inventory.
++                    ItemStack oldCursor = inventoryplayer.getItemStack();
++                    inventoryplayer.setItemStack(CraftItemStack.asNMSCopy(newcursor));
++                    InventoryDragEvent event = new InventoryDragEvent(view, (newcursor.getType() != org.bukkit.Material.AIR ? newcursor : null), CraftItemStack.asBukkitCopy(oldCursor), this.field_94535_f == 1, eventmap); // Should be dragButton
++                    par4EntityPlayer.worldObj.getServer().getPluginManager().callEvent(event);
++                    // Whether or not a change was made to the inventory that requires an update.
++                    boolean needsUpdate = event.getResult() != Result.DEFAULT;
++
++                    if (event.getResult() != Result.DENY)
++                    {
++                        for (Map.Entry<Integer, ItemStack> dslot : draggedSlots.entrySet())
++                        {
++                            view.setItem(dslot.getKey(), CraftItemStack.asBukkitCopy(dslot.getValue()));
++                        }
++
++                        // The only time the carried item will be set to null is if the inventory is closed by the server.
++                        // If the inventory is closed by the server, then the cursor items are dropped.  This is why we change the cursor early.
++                        if (inventoryplayer.getItemStack() != null)
++                        {
++                            inventoryplayer.setItemStack(CraftItemStack.asNMSCopy(event.getCursor()));
++                            needsUpdate = true;
++                        }
++                    }
++                    else
++                    {
++                        inventoryplayer.setItemStack(oldCursor);
++                    }
++
++                    if (needsUpdate && par4EntityPlayer instanceof EntityPlayerMP)
++                    {
++                        ((EntityPlayerMP) par4EntityPlayer).sendContainerToPlayer(this);
++                    }
++
++                    // CraftBukkit end
++                }
++                // MCPC+ start - vanilla behavior for modded containers with no Bukkit wrapper
++                else if (!this.field_94537_h.isEmpty())
++                {
++                    itemstack1 = inventoryplayer.getItemStack().copy();
++                    l = inventoryplayer.getItemStack().stackSize;
++                    Iterator iterator = this.field_94537_h.iterator();
++
++                    while (iterator.hasNext())
++                    {
++                        Slot slot1 = (Slot)iterator.next();
++
++                        if (slot1 != null && func_94527_a(slot1, inventoryplayer.getItemStack(), true) && slot1.isItemValid(inventoryplayer.getItemStack()) && inventoryplayer.getItemStack().stackSize >= this.field_94537_h.size() && this.func_94531_b(slot1))
++                        {
++                            ItemStack itemstack2 = itemstack1.copy();
++                            int j1 = slot1.getHasStack() ? slot1.getStack().stackSize : 0;
++                            func_94525_a(this.field_94537_h, this.field_94535_f, itemstack2, j1);
++
++                            if (itemstack2.stackSize > itemstack2.getMaxStackSize())
++                            {
++                                itemstack2.stackSize = itemstack2.getMaxStackSize();
++                            }
++
++                            if (itemstack2.stackSize > slot1.getSlotStackLimit())
++                            {
++                                itemstack2.stackSize = slot1.getSlotStackLimit();
++                            }
++
++                            l -= itemstack2.stackSize - j1;
+                             slot1.putStack(itemstack2);
+                         }
+                     }
+@@ -227,6 +357,7 @@
+ 
+                     inventoryplayer.setItemStack(itemstack1);
+                 }
++                // MCPC+ end
+ 
+                 this.func_94533_d();
+             }
+@@ -259,10 +390,17 @@
+ 
+                         if (par2 == 1)
+                         {
+-                            par4EntityPlayer.dropPlayerItem(inventoryplayer.getItemStack().splitStack(1));
+-
+-                            if (inventoryplayer.getItemStack().stackSize == 0)
+-                            {
++                            // CraftBukkit start - Store a reference
++                            ItemStack itemstack4 = inventoryplayer.getItemStack();
++
++                            if (itemstack4.stackSize > 0)
++                            {
++                                par4EntityPlayer.dropPlayerItem(itemstack4.splitStack(1));
++                            }
++
++                            if (itemstack4.stackSize == 0)
++                            {
++                                // CraftBukkit end
+                                 inventoryplayer.setItemStack((ItemStack)null);
+                             }
+                         }
+@@ -323,11 +461,13 @@
+                                     k1 = slot2.getSlotStackLimit();
+                                 }
+ 
++                                // CraftBukkit start
+                                 if (itemstack4.stackSize >= k1)
+                                 {
+                                     slot2.putStack(itemstack4.splitStack(k1));
+                                 }
+ 
++                                // CraftBukkit end
+                                 if (itemstack4.stackSize == 0)
+                                 {
+                                     inventoryplayer.setItemStack((ItemStack)null);
+@@ -600,7 +740,7 @@
+         }
+     }
+ 
+-    public abstract boolean canInteractWith(EntityPlayer entityplayer);
++    public abstract boolean canInteractWith(EntityPlayer par1EntityPlayer);
+ 
+     /**
+      * merges provided ItemStack with the first avaliable one in the container/player inventory

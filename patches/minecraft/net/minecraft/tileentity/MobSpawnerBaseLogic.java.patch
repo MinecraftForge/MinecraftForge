@@ -1,0 +1,55 @@
+--- ../src_base/minecraft/net/minecraft/tileentity/MobSpawnerBaseLogic.java
++++ ../src_work/minecraft/net/minecraft/tileentity/MobSpawnerBaseLogic.java
+@@ -3,6 +3,7 @@
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.ArrayList;
++import java.util.Collection;
+ import java.util.Iterator;
+ import java.util.List;
+ import net.minecraft.entity.Entity;
+@@ -17,6 +18,8 @@
+ import net.minecraft.util.WeightedRandom;
+ import net.minecraft.world.World;
+ 
++import org.bukkit.event.entity.CreatureSpawnEvent; // CraftBukkit
++
+ public abstract class MobSpawnerBaseLogic
+ {
+     /** The delay to spawn. */
+@@ -175,7 +178,7 @@
+ 
+             if (par1Entity.worldObj != null)
+             {
+-                par1Entity.worldObj.spawnEntityInWorld(par1Entity);
++                par1Entity.worldObj.addEntity(par1Entity, CreatureSpawnEvent.SpawnReason.SPAWNER); // CraftBukkit
+             }
+ 
+             NBTTagCompound nbttagcompound1;
+@@ -202,7 +205,7 @@
+ 
+                     if (par1Entity.worldObj != null)
+                     {
+-                        par1Entity.worldObj.spawnEntityInWorld(entity2);
++                        par1Entity.worldObj.addEntity(entity2, CreatureSpawnEvent.SpawnReason.SPAWNER); // CraftBukkit
+                     }
+ 
+                     entity1.mountEntity(entity2);
+@@ -214,7 +217,7 @@
+         else if (par1Entity instanceof EntityLivingBase && par1Entity.worldObj != null)
+         {
+             ((EntityLiving)par1Entity).func_110161_a((EntityLivingData)null);
+-            this.getSpawnerWorld().spawnEntityInWorld(par1Entity);
++            this.getSpawnerWorld().addEntity(par1Entity, CreatureSpawnEvent.SpawnReason.SPAWNER); // CraftBukkit
+         }
+ 
+         return par1Entity;
+@@ -371,7 +374,7 @@
+         this.randomMinecart = par1WeightedRandomMinecart;
+     }
+ 
+-    public abstract void func_98267_a(int i);
++    public abstract void func_98267_a(int par1);
+ 
+     public abstract World getSpawnerWorld();
+ 

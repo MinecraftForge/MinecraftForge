@@ -1,0 +1,112 @@
+--- ../src_base/minecraft/net/minecraft/inventory/ContainerWorkbench.java
++++ ../src_work/minecraft/net/minecraft/inventory/ContainerWorkbench.java
+@@ -1,29 +1,45 @@
+ package net.minecraft.inventory;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+ import net.minecraft.block.Block;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.entity.player.InventoryPlayer;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.item.crafting.CraftingManager;
++import net.minecraft.network.packet.Packet103SetSlot;
+ import net.minecraft.world.World;
++// CraftBukkit end
+ 
+ public class ContainerWorkbench extends Container
+ {
+     /** The crafting matrix inventory (3x3). */
+-    public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
+-    public IInventory craftResult = new InventoryCraftResult();
++    public InventoryCrafting craftMatrix; // CraftBukkit - move initialization into constructor
++    public IInventory craftResult; // CraftBukkit - move initialization into constructor
+     private World worldObj;
+     private int posX;
+     private int posY;
+     private int posZ;
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    private InventoryPlayer player;
++    // CraftBukkit end
+ 
+     public ContainerWorkbench(InventoryPlayer par1InventoryPlayer, World par2World, int par3, int par4, int par5)
+     {
++        // CraftBukkit start - Switched order of IInventory construction and stored player
++        this.craftResult = new InventoryCraftResult();
++        this.craftMatrix = new InventoryCrafting(this, 3, 3, par1InventoryPlayer.player); // CraftBukkit - pass player
++        this.craftMatrix.resultInventory = this.craftResult;
++        this.player = par1InventoryPlayer;
++        // CraftBukkit end
+         this.worldObj = par2World;
+         this.posX = par3;
+         this.posY = par4;
+         this.posZ = par5;
+-        this.addSlotToContainer(new SlotCrafting(par1InventoryPlayer.player, this.craftMatrix, this.craftResult, 0, 124, 35));
++        this.addSlotToContainer((Slot)(new SlotCrafting(par1InventoryPlayer.player, this.craftMatrix, this.craftResult, 0, 124, 35)));
+         int l;
+         int i1;
+ 
+@@ -48,7 +64,7 @@
+             this.addSlotToContainer(new Slot(par1InventoryPlayer, l, 8 + l * 18, 142));
+         }
+ 
+-        this.onCraftMatrixChanged(this.craftMatrix);
++        this.onCraftMatrixChanged((IInventory) this.craftMatrix);
+     }
+ 
+     /**
+@@ -56,7 +72,19 @@
+      */
+     public void onCraftMatrixChanged(IInventory par1IInventory)
+     {
+-        this.craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(this.craftMatrix, this.worldObj));
++        // CraftBukkit start
++        CraftingManager.getInstance().lastCraftView = getBukkitView();
++        ItemStack craftResult = CraftingManager.getInstance().findMatchingRecipe(this.craftMatrix, this.worldObj);
++        this.craftResult.setInventorySlotContents(0, craftResult);
++
++        if (super.crafters.size() < 1)
++        {
++            return;
++        }
++
++        EntityPlayerMP player = (EntityPlayerMP) super.crafters.get(0); // TODO: Is this _always_ correct? Seems like it.
++        player.playerNetServerHandler.sendPacketToPlayer(new Packet103SetSlot(player.openContainer.windowId, 0, craftResult));
++        // CraftBukkit end
+     }
+ 
+     /**
+@@ -82,6 +110,11 @@
+ 
+     public boolean canInteractWith(EntityPlayer par1EntityPlayer)
+     {
++        if (!this.checkReachable)
++        {
++            return true;    // CraftBukkit
++        }
++
+         return this.worldObj.getBlockId(this.posX, this.posY, this.posZ) != Block.workbench.blockID ? false : par1EntityPlayer.getDistanceSq((double)this.posX + 0.5D, (double)this.posY + 0.5D, (double)this.posZ + 0.5D) <= 64.0D;
+     }
+ 
+@@ -150,4 +183,18 @@
+     {
+         return par2Slot.inventory != this.craftResult && super.func_94530_a(par1ItemStack, par2Slot);
+     }
++
++    // CraftBukkit start
++    public CraftInventoryView getBukkitView()
++    {
++        if (bukkitEntity != null)
++        {
++            return bukkitEntity;
++        }
++
++        CraftInventoryCrafting inventory = new CraftInventoryCrafting(this.craftMatrix, this.craftResult);
++        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
+ }

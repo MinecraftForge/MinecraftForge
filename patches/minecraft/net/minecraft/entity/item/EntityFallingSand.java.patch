@@ -1,0 +1,80 @@
+--- ../src_base/minecraft/net/minecraft/entity/item/EntityFallingSand.java
++++ ../src_work/minecraft/net/minecraft/entity/item/EntityFallingSand.java
+@@ -16,6 +16,10 @@
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityDamageEvent;
++// CraftBukkit end
+ 
+ public class EntityFallingSand extends Entity
+ {
+@@ -116,13 +120,15 @@
+ 
+                 if (this.fallTime == 1)
+                 {
+-                    if (this.worldObj.getBlockId(i, j, k) != this.blockID)
++                    // CraftBukkit - compare data and call event
++                    if (this.fallTime != 1 || this.worldObj.getBlockId(i, j, k) != this.blockID || this.worldObj.getBlockMetadata(i, j, k) != this.metadata || CraftEventFactory.callEntityChangeBlockEvent(this, i, j, k, 0, 0).isCancelled())
+                     {
+                         this.setDead();
+                         return;
+                     }
+ 
+                     this.worldObj.setBlockToAir(i, j, k);
++                    org.spigotmc.OrebfuscatorManager.updateNearbyBlocks(worldObj, i, j, k); // Spigot (Orebfuscator)
+                 }
+ 
+                 if (this.onGround)
+@@ -135,8 +141,16 @@
+                     {
+                         this.setDead();
+ 
+-                        if (!this.isBreakingAnvil && this.worldObj.canPlaceEntityOnSide(this.blockID, i, j, k, true, 1, (Entity)null, (ItemStack)null) && !BlockSand.canFallBelow(this.worldObj, i, j - 1, k) && this.worldObj.setBlock(i, j, k, this.blockID, this.metadata, 3))
++                        // CraftBukkit start
++                        if (!this.isBreakingAnvil && this.worldObj.canPlaceEntityOnSide(this.blockID, i, j, k, true, 1, (Entity) null, (ItemStack) null) && !BlockSand.canFallBelow(this.worldObj, i, j - 1, k) /* mimic the false conditions of setTypeIdAndData */ && i >= -30000000 && k >= -30000000 && i < 30000000 && k < 30000000 && j > 0 && j < 256 && !(this.worldObj.getBlockId(i, j, k) == this.blockID && this.worldObj.getBlockMetadata(i, j, k) == this.metadata))
+                         {
++                            if (CraftEventFactory.callEntityChangeBlockEvent(this, i, j, k, this.blockID, this.metadata).isCancelled())
++                            {
++                                return;
++                            }
++
++                            this.worldObj.setBlock(i, j, k, this.blockID, this.metadata, 3);
++                            // CraftBukkit end
+                             if (Block.blocksList[this.blockID] instanceof BlockSand)
+                             {
+                                 ((BlockSand)Block.blocksList[this.blockID]).onFinishFalling(this.worldObj, i, j, k, this.metadata);
+@@ -204,7 +218,17 @@
+                 while (iterator.hasNext())
+                 {
+                     Entity entity = (Entity)iterator.next();
+-                    entity.attackEntityFrom(damagesource, (float)Math.min(MathHelper.floor_float((float)i * this.fallHurtAmount), this.fallHurtMax));
++                    // CraftBukkit start
++                    float damage = (float) Math.min(MathHelper.floor_float((float) i * this.fallHurtAmount), this.fallHurtMax);
++                    EntityDamageEvent event = CraftEventFactory.callEntityDamageEvent(this, entity, EntityDamageEvent.DamageCause.FALLING_BLOCK, damage);
++
++                    if (event.isCancelled())
++                    {
++                        continue;
++                    }
++
++                    entity.attackEntityFrom(damagesource, (float) event.getDamage());
++                    // CraftBukkit end
+                 }
+ 
+                 if (this.blockID == Block.anvil.blockID && (double)this.rand.nextFloat() < 0.05000000074505806D + (double)i * 0.05D)
+@@ -284,6 +308,12 @@
+             this.fallingBlockTileEntityData = par1NBTTagCompound.getCompoundTag("TileEntityData");
+         }
+ 
++        // CraftBukkit start - Backward compatibility, remove in 1.6
++        if (par1NBTTagCompound.hasKey("Bukkit.tileData"))
++        {
++            this.fallingBlockTileEntityData = (NBTTagCompound) par1NBTTagCompound.getCompoundTag("Bukkit.tileData").copy();
++        }
++        // CraftBukkit end
+         if (this.blockID == 0)
+         {
+             this.blockID = Block.sand.blockID;

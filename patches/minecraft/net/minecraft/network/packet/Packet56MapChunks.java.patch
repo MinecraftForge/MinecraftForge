@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/network/packet/Packet56MapChunks.java
 +++ ../src_work/minecraft/net/minecraft/network/packet/Packet56MapChunks.java
-@@ -6,6 +6,7 @@
+@@ -6,9 +6,11 @@
  import java.io.DataOutput;
  import java.io.IOException;
  import java.util.List;
@@ -8,17 +8,32 @@
  import java.util.zip.DataFormatException;
  import java.util.zip.Deflater;
  import java.util.zip.Inflater;
-@@ -31,6 +32,9 @@
++import net.minecraft.world.World;
+ import net.minecraft.world.chunk.Chunk;
+ 
+ public class Packet56MapChunks extends Packet
+@@ -30,7 +32,19 @@
+      * nether.
       */
      private boolean skyLightSent;
-     private static byte[] chunkDataNotCompressed = new byte[0];
-+    private int maxLen = 0;
-+
-+    private Semaphore deflateGate;
+-    private static byte[] chunkDataNotCompressed = new byte[0];
++    private byte[] chunkDataNotCompressed = new byte[0]; // CraftBukkit - remove static
++    // CraftBukkit start
++    static final ThreadLocal<Deflater> localDeflater = new ThreadLocal<Deflater>()
++    {
++        @Override
++        protected Deflater initialValue()
++        {
++            // Don't use higher compression level, slows things down too much
++            return new Deflater(4); // Spigot - use lower compression level still
++        }
++    };
++    // CraftBukkit end
++    private World world; // Spigot
  
      public Packet56MapChunks() {}
  
-@@ -49,15 +53,6 @@
+@@ -49,15 +63,19 @@
          {
              Chunk chunk = (Chunk)par1List.get(k);
              Packet51MapChunkData packet51mapchunkdata = Packet51MapChunk.getMapChunkData(chunk, true, 65535);
@@ -28,58 +43,105 @@
 -                byte[] abyte = new byte[j + packet51mapchunkdata.compressedData.length];
 -                System.arraycopy(chunkDataNotCompressed, 0, abyte, 0, chunkDataNotCompressed.length);
 -                chunkDataNotCompressed = abyte;
--            }
--
++            // Spigot start
++            world = chunk.worldObj;
++            /*
++            if (buildBuffer.length < j + packet51mapchunkdata.a.length) {
++                byte[] abyte = new byte[j + packet51mapchunkdata.a.length];
++
++                System.arraycopy(buildBuffer, 0, abyte, 0, buildBuffer.length);
++                buildBuffer = abyte;
+             }
+ 
 -            System.arraycopy(packet51mapchunkdata.compressedData, 0, chunkDataNotCompressed, j, packet51mapchunkdata.compressedData.length);
++            System.arraycopy(packet51mapchunkdata.a, 0, buildBuffer, j, packet51mapchunkdata.a.length);
++            */
++            // Spigot end
              j += packet51mapchunkdata.compressedData.length;
              this.chunkPostX[k] = chunk.xPosition;
              this.chunkPosZ[k] = chunk.zPosition;
-@@ -65,15 +60,29 @@
-             this.field_73588_b[k] = packet51mapchunkdata.chunkHasAddSectionFlag;
+@@ -66,25 +84,62 @@
              this.field_73584_f[k] = packet51mapchunkdata.compressedData;
          }
-+        deflateGate = new Semaphore(1);
-+        maxLen = j;
-+    }
-+
-+    private void deflate()
-+    {
-+        byte[] data = new byte[maxLen];
-+        int offset = 0;
-+        for (int x = 0; x < field_73584_f.length; x++)
-+        {
-+            System.arraycopy(field_73584_f[x], 0, data, offset, field_73584_f[x].length);
-+            offset += field_73584_f[x].length;
-+        }
  
++        /* CraftBukkit start - Moved to compress()
          Deflater deflater = new Deflater(-1);
  
-         try
-         {
+-        try
+-        {
 -            deflater.setInput(chunkDataNotCompressed, 0, j);
-+            deflater.setInput(data, 0, maxLen);
++        try {
++            deflater.setInput(buildBuffer, 0, j);
              deflater.finish();
 -            this.chunkDataBuffer = new byte[j];
 -            this.dataLength = deflater.deflate(this.chunkDataBuffer);
-+            byte[] deflated = new byte[maxLen];
-+            this.dataLength = deflater.deflate(deflated);
-+            this.chunkDataBuffer = deflated;
+-        }
+-        finally
+-        {
++            this.buffer = new byte[j];
++            this.size = deflater.deflate(this.buffer);
++        } finally {
+             deflater.end();
          }
-         finally
-         {
-@@ -155,6 +164,15 @@
-      */
-     public void writePacketData(DataOutput par1DataOutput) throws IOException
-     {
-+        if (this.chunkDataBuffer == null)
+-    }
++        */
++    }
++
++    // Add compression method
++    public void compress()
++    {
++        if (this.chunkDataBuffer != null)
 +        {
-+            deflateGate.acquireUninterruptibly();
-+            if (this.chunkDataBuffer == null)
-+            {
-+                deflate();
-+            }
-+            deflateGate.release();
++            return;
 +        }
++
++        // Spigot start
++        int finalBufferSize = 0;
++
++        // Obfuscate all sections
++        for (int i = 0; i < field_73590_a.length; i++)
++        {
++            org.spigotmc.OrebfuscatorManager.obfuscate(chunkPostX[i], chunkPosZ[i], field_73590_a[i], field_73584_f[i], world);
++            finalBufferSize += field_73584_f[i].length;
++        }
++
++        // Now it's time to efficiently copy the chunk to the build buffer
++        chunkDataNotCompressed = new byte[finalBufferSize];
++        int bufferLocation = 0;
++
++        for (int i = 0; i < field_73590_a.length; i++)
++        {
++            System.arraycopy(field_73584_f[i], 0, chunkDataNotCompressed, bufferLocation, field_73584_f[i].length);
++            bufferLocation += field_73584_f[i].length;
++        }
++
++        // Spigot end
++        Deflater deflater = localDeflater.get();
++        deflater.reset();
++        deflater.setInput(this.chunkDataNotCompressed);
++        deflater.finish();
++        this.chunkDataBuffer = new byte[this.chunkDataNotCompressed.length + 100];
++        this.dataLength = deflater.deflate(this.chunkDataBuffer);
++    }
++    // CraftBukkit end
+ 
+     /**
+      * Abstract. Reads the raw packet data from the data stream.
+      */
+-    public void readPacketData(DataInput par1DataInput) throws IOException
++    public void readPacketData(DataInput par1DataInput) throws IOException   // CraftBukkit - throws IOException
+     {
+         short short1 = par1DataInput.readShort();
+         this.dataLength = par1DataInput.readInt();
+@@ -153,8 +208,9 @@
+     /**
+      * Abstract. Writes the raw packet data to the data stream.
+      */
+-    public void writePacketData(DataOutput par1DataOutput) throws IOException
+-    {
++    public void writePacketData(DataOutput par1DataOutput) throws IOException   // CraftBukkit - throws IOException
++    {
++        compress(); // CraftBukkit
          par1DataOutput.writeShort(this.chunkPostX.length);
          par1DataOutput.writeInt(this.dataLength);
          par1DataOutput.writeBoolean(this.skyLightSent);

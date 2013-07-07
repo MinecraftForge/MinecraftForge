@@ -102,11 +102,19 @@ def run_command(command, cwd='.', verbose=True):
 def setup_eclipse(forge_dir):
     eclipse_dir = os.path.join(forge_dir, 'eclipse')
     eclipse_zip = os.path.join(forge_dir, 'eclipse-workspace-dev.zip')
+    eclipse_resources_dir = os.path.join(forge_dir, 'eclipse', 'Forge')
+    eclipse_resources_zip = os.path.join(forge_dir, 'eclipse-resources.zip')
     
     if not os.path.isdir(eclipse_dir) and os.path.isfile(eclipse_zip):
-        print 'Extracting Dev Workspace'
+        print 'Extracting Eclipse Workspace'
         zf = zipfile.ZipFile(eclipse_zip)
         zf.extractall(forge_dir)
+        zf.close()
+
+    if not os.path.isdir(eclipse_resources_dir) and os.path.isfile(eclipse_resources_zip):
+        print 'Extracting Eclipse Resources'
+        zf = zipfile.ZipFile(eclipse_resources_zip)
+        zf.extractall(eclipse_resources_dir)
         zf.close()
         
 if __name__ == '__main__':

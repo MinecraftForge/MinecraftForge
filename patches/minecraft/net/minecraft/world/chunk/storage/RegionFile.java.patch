@@ -1,0 +1,100 @@
+--- ../src_base/minecraft/net/minecraft/world/chunk/storage/RegionFile.java
++++ ../src_work/minecraft/net/minecraft/world/chunk/storage/RegionFile.java
+@@ -103,6 +103,61 @@
+             ioexception.printStackTrace();
+         }
+     }
++
++    // CraftBukkit start - This is a copy (sort of) of the method below it, make sure they stay in sync
++
++    public synchronized boolean chunkExists(int i, int j)
++    {
++        if (this.outOfBounds(i, j))
++        {
++            return false;
++        }
++        else
++        {
++            try
++            {
++                int k = this.getOffset(i, j);
++
++                if (k == 0)
++                {
++                    return false;
++                }
++                else
++                {
++                    int l = k >> 8;
++                    int i1 = k & 255;
++
++                    if (l + i1 > this.sectorFree.size())
++                    {
++                        return false;
++                    }
++
++                    this.dataFile.seek((long)(l * 4096));
++                    int j1 = this.dataFile.readInt();
++
++                    if (j1 > 4096 * i1 || j1 <= 0)
++                    {
++                        return false;
++                    }
++
++                    byte b0 = this.dataFile.readByte();
++
++                    if (b0 == 1 || b0 == 2)
++                    {
++                        return true;
++                    }
++                }
++            }
++            catch (IOException ioexception)
++            {
++                return false;
++            }
++        }
++
++        return false;
++    }
++
++    // CraftBukkit end
+ 
+     /**
+      * args: x, y - get uncompressed chunk stream from the region file
+@@ -287,7 +342,7 @@
+     /**
+      * args: sectorNumber, data, length - write the chunk data to this RegionFile
+      */
+-    private void write(int par1, byte[] par2ArrayOfByte, int par3) throws IOException
++    private void write(int par1, byte[] par2ArrayOfByte, int par3) throws IOException   // CraftBukkit - added throws
+     {
+         this.dataFile.seek((long)(par1 * 4096));
+         this.dataFile.writeInt(par3 + 1);
+@@ -322,7 +377,7 @@
+     /**
+      * args: x, z, offset - sets the chunk's offset in the region file
+      */
+-    private void setOffset(int par1, int par2, int par3) throws IOException
++    private void setOffset(int par1, int par2, int par3) throws IOException   // CraftBukkit - added throws
+     {
+         this.offsets[par1 + par2 * 32] = par3;
+         this.dataFile.seek((long)((par1 + par2 * 32) * 4));
+@@ -332,7 +387,7 @@
+     /**
+      * args: x, z, timestamp - sets the chunk's write timestamp
+      */
+-    private void setChunkTimestamp(int par1, int par2, int par3) throws IOException
++    private void setChunkTimestamp(int par1, int par2, int par3) throws IOException   // CraftBukkit - added throws
+     {
+         this.chunkTimestamps[par1 + par2 * 32] = par3;
+         this.dataFile.seek((long)(4096 + (par1 + par2 * 32) * 4));
+@@ -342,7 +397,7 @@
+     /**
+      * close this RegionFile and prevent further writes
+      */
+-    public void close() throws IOException
++    public void close() throws IOException   // CraftBukkit - added throws
+     {
+         if (this.dataFile != null)
+         {

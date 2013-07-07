@@ -1,29 +1,48 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemDye.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemDye.java
-@@ -21,6 +21,12 @@
+@@ -17,9 +17,21 @@
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.passive.EntitySheep;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.util.Icon;
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
- 
++
 +import net.minecraftforge.common.FakePlayerFactory;
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.Event.Result;
 +import net.minecraftforge.event.entity.player.BonemealEvent;
-+
++// CraftBukkit start
++import net.minecraft.entity.player.EntityPlayerMP;
++import org.bukkit.entity.Player;
++import org.bukkit.event.entity.SheepDyeWoolEvent;
++// CraftBukkit end
+ 
  public class ItemDye extends Item
  {
-     /** List of dye color names */
-@@ -73,7 +79,7 @@
+@@ -73,7 +85,7 @@
          {
              if (par1ItemStack.getItemDamage() == 15)
              {
 -                if (func_96604_a(par1ItemStack, par3World, par4, par5, par6))
-+                if (applyBonemeal(par1ItemStack, par3World, par4, par5, par6, par2EntityPlayer))
++                if (a(par1ItemStack, par3World, par4, par5, par6, par2EntityPlayer))
                  {
                      if (!par3World.isRemote)
                      {
-@@ -141,7 +147,27 @@
+@@ -139,17 +151,48 @@
+         }
+     }
  
++
++    // MCPC+ end - CB compatibility (TODO: add manual plugin mapping?)
++    public static boolean a(ItemStack itemstack, World world, int i, int j, int k, EntityPlayer entityplayer)
++    {
++        return applyBonemeal(itemstack, world, i, j, k, entityplayer);
++    }
++    // MCPC+ end
++    
      public static boolean func_96604_a(ItemStack par0ItemStack, World par1World, int par2, int par3, int par4)
      {
 +        return applyBonemeal(par0ItemStack, par1World, par2, par3, par4, FakePlayerFactory.getMinecraft(par1World));
@@ -32,7 +51,7 @@
 +    public static boolean applyBonemeal(ItemStack par0ItemStack, World par1World, int par2, int par3, int par4, EntityPlayer player)
 +    {
          int l = par1World.getBlockId(par2, par3, par4);
-+
+ 
 +        BonemealEvent event = new BonemealEvent(player, par1World, l, par2, par3, par4);
 +        if (MinecraftForge.EVENT_BUS.post(event))
 +        {
@@ -47,10 +66,22 @@
 +            }
 +            return true;
 +        }
- 
++
          if (l == Block.sapling.blockID)
          {
-@@ -244,16 +270,9 @@
+             if (!par1World.isRemote)
+             {
+                 if ((double)par1World.rand.nextFloat() < 0.45D)
+                 {
+-                    ((BlockSapling)Block.sapling).markOrGrowMarked(par1World, par2, par3, par4, par1World.rand);
++                    // CraftBukkit start // MCPC+ - cbPlayer
++                    Player cbPlayer = (player instanceof EntityPlayerMP) ? (Player) player.getBukkitEntity() : null;
++                    ((BlockSapling) Block.sapling).growTree(par1World, par2, par3, par4, par1World.rand, true, cbPlayer, null);
++                    // CraftBukkit end
+                 }
+ 
+                 --par0ItemStack.stackSize;
+@@ -244,16 +287,9 @@
                                              par1World.setBlock(j1, k1, l1, Block.tallGrass.blockID, 1, 3);
                                          }
                                      }
@@ -69,7 +100,25 @@
                                      }
                                  }
                              }
-@@ -318,6 +337,16 @@
+@@ -284,10 +320,13 @@
+             {
+                 if ((double)par1World.rand.nextFloat() < 0.4D)
+                 {
+-                    ((BlockMushroom)Block.blocksList[l]).fertilizeMushroom(par1World, par2, par3, par4, par1World.rand);
+-                }
+-
+-                --par0ItemStack.stackSize;
++                    // CraftBukkit start - Validate // MCPC+
++                    Player cbPlayer = (player instanceof EntityPlayerMP) ? (Player) player.getBukkitEntity() : null;
++                    ((BlockMushroom) Block.blocksList[l]).fertilizeMushroom(par1World, par2, par3, par4, par1World.rand, true, cbPlayer, par0ItemStack);
++                }
++
++                //--par0ItemStack.stackSize; - called later if the bonemeal attempt was not cancelled by a plugin
++                // CraftBukkit end
+             }
+ 
+             return true;
+@@ -318,6 +357,16 @@
                  par0World.spawnParticle("happyVillager", (double)((float)par1 + itemRand.nextFloat()), (double)par2 + (double)itemRand.nextFloat() * block.getBlockBoundsMaxY(), (double)((float)par3 + itemRand.nextFloat()), d0, d1, d2);
              }
          }
@@ -86,3 +135,22 @@
      }
  
      public boolean func_111207_a(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, EntityLivingBase par3EntityLivingBase)
+@@ -329,6 +378,18 @@
+ 
+             if (!entitysheep.getSheared() && entitysheep.getFleeceColor() != i)
+             {
++                // CraftBukkit start
++                byte bColor = (byte) i;
++                SheepDyeWoolEvent event = new SheepDyeWoolEvent((org.bukkit.entity.Sheep) entitysheep.getBukkitEntity(), org.bukkit.DyeColor.getByData(bColor));
++                entitysheep.worldObj.getServer().getPluginManager().callEvent(event);
++
++                if (event.isCancelled())
++                {
++                    return false;
++                }
++
++                i = (byte) event.getColor().getWoolData();
++                // CraftBukkit end
+                 entitysheep.setFleeceColor(i);
+                 --par1ItemStack.stackSize;
+             }

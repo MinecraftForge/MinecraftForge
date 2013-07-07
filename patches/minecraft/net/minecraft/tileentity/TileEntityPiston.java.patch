@@ -1,0 +1,14 @@
+--- ../src_base/minecraft/net/minecraft/tileentity/TileEntityPiston.java
++++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityPiston.java
+@@ -164,6 +164,11 @@
+      */
+     public void updateEntity()
+     {
++        if (this.worldObj == null)
++        {
++            return;    // CraftBukkit
++        }
++
+         this.lastProgress = this.progress;
+ 
+         if (this.lastProgress >= 1.0F)

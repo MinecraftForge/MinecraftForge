@@ -1,0 +1,70 @@
+--- ../src_base/minecraft/net/minecraft/inventory/IInventory.java
++++ ../src_work/minecraft/net/minecraft/inventory/IInventory.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.inventory;
+ 
++import org.bukkit.craftbukkit.entity.CraftHumanEntity; // CraftBukkit
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.item.ItemStack;
+ 
+@@ -13,24 +14,24 @@
+     /**
+      * Returns the stack in slot i
+      */
+-    ItemStack getStackInSlot(int i);
++    ItemStack getStackInSlot(int par1);
+ 
+     /**
+      * Removes from an inventory slot (first arg) up to a specified number (second arg) of items and returns them in a
+      * new stack.
+      */
+-    ItemStack decrStackSize(int i, int j);
++    ItemStack decrStackSize(int par1, int par2);
+ 
+     /**
+      * When some containers are closed they call this on each slot, then drop whatever it returns as an EntityItem -
+      * like when you close a workbench GUI.
+      */
+-    ItemStack getStackInSlotOnClosing(int i);
++    ItemStack getStackInSlotOnClosing(int par1);
+ 
+     /**
+      * Sets the given item stack to the specified slot in the inventory (can be crafting or armor sections).
+      */
+-    void setInventorySlotContents(int i, ItemStack itemstack);
++    void setInventorySlotContents(int par1, ItemStack par2ItemStack);
+ 
+     /**
+      * Returns the name of the inventory.
+@@ -57,7 +58,7 @@
+     /**
+      * Do not make give this method the name canInteractWith because it clashes with Container
+      */
+-    boolean isUseableByPlayer(EntityPlayer entityplayer);
++    boolean isUseableByPlayer(EntityPlayer par1EntityPlayer);
+ 
+     void openChest();
+ 
+@@ -66,5 +67,21 @@
+     /**
+      * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+      */
+-    boolean isStackValidForSlot(int i, ItemStack itemstack);
++    boolean isStackValidForSlot(int par1, ItemStack par2ItemStack);
++
++    // CraftBukkit start
++    ItemStack[] getContents();
++
++    void onOpen(CraftHumanEntity who);
++
++    void onClose(CraftHumanEntity who);
++
++    java.util.List<org.bukkit.entity.HumanEntity> getViewers();
++
++    org.bukkit.inventory.InventoryHolder getOwner();
++
++    void setMaxStackSize(int size);
++
++    int MAX_STACK = 64;
++    // CraftBukkit end
+ }

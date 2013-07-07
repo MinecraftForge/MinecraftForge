@@ -1,0 +1,33 @@
+--- ../src_base/minecraft/net/minecraft/entity/passive/EntityChicken.java
++++ ../src_work/minecraft/net/minecraft/entity/passive/EntityChicken.java
+@@ -151,21 +151,26 @@
+      */
+     protected void dropFewItems(boolean par1, int par2)
+     {
++        // CraftBukkit start - Whole method
++        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
+         int j = this.rand.nextInt(3) + this.rand.nextInt(1 + par2);
+ 
+-        for (int k = 0; k < j; ++k)
++        if (j > 0)
+         {
+-            this.dropItem(Item.feather.itemID, 1);
++            loot.add(new org.bukkit.inventory.ItemStack(Item.feather.itemID, j));
+         }
+ 
+         if (this.isBurning())
+         {
+-            this.dropItem(Item.chickenCooked.itemID, 1);
++            loot.add(new org.bukkit.inventory.ItemStack(Item.chickenCooked.itemID, 1));
+         }
+         else
+         {
+-            this.dropItem(Item.chickenRaw.itemID, 1);
++            loot.add(new org.bukkit.inventory.ItemStack(Item.chickenRaw.itemID, 1));
+         }
++
++        org.bukkit.craftbukkit.event.CraftEventFactory.callEntityDeathEvent(this, loot);
++        // CraftBukkit end
+     }
+ 
+     /**

@@ -1,0 +1,44 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemSkull.java
++++ ../src_work/minecraft/net/minecraft/item/ItemSkull.java
+@@ -36,6 +36,8 @@
+      */
+     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+     {
++        final int clickedX = par4, clickedY = par5, clickedZ = par6; // CraftBukkit
++
+         if (par7 == 0)
+         {
+             return false;
+@@ -81,7 +83,15 @@
+             }
+             else
+             {
+-                par3World.setBlock(par4, par5, par6, Block.skull.blockID, par7, 2);
++                // CraftBukkit start - Handle in ItemBlock
++                // world.setTypeIdAndData(i, j, k, Block.SKULL.id, l, 2);
++                if (!ItemBlock.processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, Block.skull.blockID, par7, clickedX, clickedY, clickedZ))
++                {
++                    return false;
++                }
++
++                par7 = par3World.getBlockMetadata(par4, par5, par6);
++                // CraftBukkit end
+                 int i1 = 0;
+ 
+                 if (par7 == 1)
+@@ -167,15 +177,4 @@
+     {
+         return par1ItemStack.getItemDamage() == 3 && par1ItemStack.hasTagCompound() && par1ItemStack.getTagCompound().hasKey("SkullOwner") ? StatCollector.translateToLocalFormatted("item.skull.player.name", new Object[] {par1ItemStack.getTagCompound().getString("SkullOwner")}): super.getItemDisplayName(par1ItemStack);
+     }
+-
+-    @SideOnly(Side.CLIENT)
+-    public void registerIcons(IconRegister par1IconRegister)
+-    {
+-        this.field_94586_c = new Icon[field_94587_a.length];
+-
+-        for (int i = 0; i < field_94587_a.length; ++i)
+-        {
+-            this.field_94586_c[i] = par1IconRegister.registerIcon(this.func_111208_A() + "_" + field_94587_a[i]);
+-        }
+-    }
+ }

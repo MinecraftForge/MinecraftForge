@@ -1,6 +1,32 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemMap.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemMap.java
-@@ -98,7 +98,7 @@
+@@ -14,6 +14,10 @@
+ import net.minecraft.world.chunk.Chunk;
+ import net.minecraft.world.storage.MapData;
+ import net.minecraft.world.storage.MapInfo;
++// CraftBukkit start
++import org.bukkit.Bukkit;
++import org.bukkit.event.server.MapInitializeEvent;
++// CraftBukkit end
+ 
+ public class ItemMap extends ItemMapBase
+ {
+@@ -52,9 +56,13 @@
+             int i = 128 * (1 << mapdata.scale);
+             mapdata.xCenter = Math.round((float)par2World.getWorldInfo().getSpawnX() / (float)i) * i;
+             mapdata.zCenter = Math.round((float)(par2World.getWorldInfo().getSpawnZ() / i)) * i;
+-            mapdata.dimension = par2World.provider.dimensionId;
++            mapdata.dimension = par2World.provider.dimensionId; // MCPC+ - note - from FML, needed?
+             mapdata.markDirty();
+             par2World.setItemData(s, mapdata);
++            // CraftBukkit start
++            MapInitializeEvent event = new MapInitializeEvent(mapdata.mapView);
++            Bukkit.getServer().getPluginManager().callEvent(event);
++            // CraftBukkit end
+         }
+ 
+         return mapdata;
+@@ -98,7 +106,7 @@
                              boolean flag = k2 * k2 + l2 * l2 > (j1 - 2) * (j1 - 2);
                              int i3 = (j / i + k1 - short1 / 2) * i;
                              int j3 = (k / i + j2 - short2 / 2) * i;
@@ -9,7 +35,7 @@
                              Chunk chunk = par1World.getChunkFromBlockCoords(i3, j3);
  
                              if (!chunk.isEmpty())
-@@ -194,7 +194,7 @@
+@@ -194,7 +202,7 @@
                                  j4 = 0;
                                  k4 = 0;
  
@@ -18,3 +44,14 @@
                                  {
                                      if (aint[l4] > j4)
                                      {
+@@ -330,6 +338,10 @@
+             mapdata1.dimension = mapdata.dimension;
+             mapdata1.markDirty();
+             par2World.setItemData("map_" + par1ItemStack.getItemDamage(), mapdata1);
++            // CraftBukkit start
++            MapInitializeEvent event = new MapInitializeEvent(mapdata1.mapView);
++            Bukkit.getServer().getPluginManager().callEvent(event);
++            // CraftBukkit end
+         }
+     }
+ 

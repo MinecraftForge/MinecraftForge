@@ -1,0 +1,48 @@
+--- ../src_base/minecraft/net/minecraft/dispenser/DispenserBehaviorEmptyBucket.java
++++ ../src_work/minecraft/net/minecraft/dispenser/DispenserBehaviorEmptyBucket.java
+@@ -7,6 +7,10 @@
+ import net.minecraft.tileentity.TileEntityDispenser;
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.event.block.BlockDispenseEvent;
++// CraftBukkit end
+ 
+ final class DispenserBehaviorEmptyBucket extends BehaviorDefaultDispenseItem
+ {
+@@ -40,6 +44,34 @@
+             item = Item.bucketLava;
+         }
+ 
++        // CraftBukkit start
++        org.bukkit.block.Block block = world.getWorld().getBlockAt(par1IBlockSource.getXInt(), par1IBlockSource.getYInt(), par1IBlockSource.getZInt());
++        CraftItemStack craftItem = CraftItemStack.asCraftMirror(par2ItemStack);
++        BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(i, j, k));
++
++        if (!BlockDispenser.eventFired)
++        {
++            world.getServer().getPluginManager().callEvent(event);
++        }
++
++        if (event.isCancelled())
++        {
++            return par2ItemStack;
++        }
++
++        if (!event.getItem().equals(craftItem))
++        {
++            // Chain to handler for new item
++            ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++            IBehaviorDispenseItem ibehaviordispenseitem = (IBehaviorDispenseItem) BlockDispenser.dispenseBehaviorRegistry.func_82594_a(eventStack.getItem());
++
++            if (ibehaviordispenseitem != IBehaviorDispenseItem.itemDispenseBehaviorProvider && ibehaviordispenseitem != this)
++            {
++                ibehaviordispenseitem.dispense(par1IBlockSource, eventStack);
++                return par2ItemStack;
++            }
++        }
++        // CraftBukkit end
+         world.setBlockToAir(i, j, k);
+ 
+         if (--par2ItemStack.stackSize == 0)

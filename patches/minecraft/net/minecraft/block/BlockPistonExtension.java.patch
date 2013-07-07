@@ -1,0 +1,28 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockPistonExtension.java
++++ ../src_work/minecraft/net/minecraft/block/BlockPistonExtension.java
+@@ -39,6 +39,12 @@
+     public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
+     {
+         super.breakBlock(par1World, par2, par3, par4, par5, par6);
++        // CraftBukkit start
++        if ((par6 & 7) >= Facing.oppositeSide.length)
++        {
++            return;  // fix a piston AIOOBE issue
++        }
++        // CraftBukkit end
+         int j1 = Facing.oppositeSide[getDirectionMeta(par6)];
+         par2 += Facing.offsetsXForSide[j1];
+         par3 += Facing.offsetsYForSide[j1];
+@@ -223,6 +229,12 @@
+     public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
+     {
+         int i1 = getDirectionMeta(par1World.getBlockMetadata(par2, par3, par4));
++        // CraftBukkit start
++        if ((i1 & 7) >= Facing.oppositeSide.length)
++        {
++            return;    // fix a piston AIOOBE issue
++        }
++        // CraftBukkit end
+         int j1 = par1World.getBlockId(par2 - Facing.offsetsXForSide[i1], par3 - Facing.offsetsYForSide[i1], par4 - Facing.offsetsZForSide[i1]);
+ 
+         if (j1 != Block.pistonBase.blockID && j1 != Block.pistonStickyBase.blockID)

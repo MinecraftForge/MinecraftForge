@@ -1,0 +1,111 @@
+--- ../src_base/minecraft/net/minecraft/inventory/InventoryCrafting.java
++++ ../src_work/minecraft/net/minecraft/inventory/InventoryCrafting.java
+@@ -1,7 +1,15 @@
+ package net.minecraft.inventory;
+ 
++// CraftBukkit start
++import java.util.List;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.item.ItemStack;
++import net.minecraft.item.crafting.IRecipe;
++
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.event.inventory.InventoryType;
++// CraftBukkit end
+ 
+ public class InventoryCrafting implements IInventory
+ {
+@@ -16,6 +24,56 @@
+      */
+     private Container eventHandler;
+ 
++    // CraftBukkit start
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    public IRecipe currentRecipe;
++    public IInventory resultInventory;
++    private EntityPlayer owner;
++    private int maxStack = MAX_STACK;
++
++    public ItemStack[] getContents()
++    {
++        return this.stackList;
++    }
++
++    public void onOpen(CraftHumanEntity who)
++    {
++        transaction.add(who);
++    }
++
++    public InventoryType getInvType()
++    {
++        return stackList.length == 4 ? InventoryType.CRAFTING : InventoryType.WORKBENCH;
++    }
++
++    public void onClose(CraftHumanEntity who)
++    {
++        transaction.remove(who);
++    }
++
++    public List<HumanEntity> getViewers()
++    {
++        return transaction;
++    }
++
++    public org.bukkit.inventory.InventoryHolder getOwner()
++    {
++        return owner.getBukkitEntity();
++    }
++
++    public void setMaxStackSize(int size)
++    {
++        maxStack = size;
++        resultInventory.setMaxStackSize(size);
++    }
++
++    public InventoryCrafting(Container container, int i, int j, EntityPlayer player)
++    {
++        this(container, i, j);
++        this.owner = player;
++    }
++    // CraftBukkit end
++
+     public InventoryCrafting(Container par1Container, int par2, int par3)
+     {
+         int k = par2 * par3;
+@@ -105,7 +163,7 @@
+             {
+                 itemstack = this.stackList[par1];
+                 this.stackList[par1] = null;
+-                this.eventHandler.onCraftMatrixChanged(this);
++                this.eventHandler.onCraftMatrixChanged((IInventory) this);
+                 return itemstack;
+             }
+             else
+@@ -117,7 +175,7 @@
+                     this.stackList[par1] = null;
+                 }
+ 
+-                this.eventHandler.onCraftMatrixChanged(this);
++                this.eventHandler.onCraftMatrixChanged((IInventory) this);
+                 return itemstack;
+             }
+         }
+@@ -133,7 +191,7 @@
+     public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
+     {
+         this.stackList[par1] = par2ItemStack;
+-        this.eventHandler.onCraftMatrixChanged(this);
++        this.eventHandler.onCraftMatrixChanged((IInventory) this);
+     }
+ 
+     /**
+@@ -142,7 +200,7 @@
+      */
+     public int getInventoryStackLimit()
+     {
+-        return 64;
++        return maxStack; // CraftBukkit
+     }
+ 
+     /**

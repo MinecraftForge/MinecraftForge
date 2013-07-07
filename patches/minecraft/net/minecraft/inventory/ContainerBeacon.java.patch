@@ -1,0 +1,56 @@
+--- ../src_base/minecraft/net/minecraft/inventory/ContainerBeacon.java
++++ ../src_work/minecraft/net/minecraft/inventory/ContainerBeacon.java
+@@ -6,6 +6,7 @@
+ import net.minecraft.entity.player.InventoryPlayer;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.tileentity.TileEntityBeacon;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView; // CraftBukkit
+ 
+ public class ContainerBeacon extends Container
+ {
+@@ -18,9 +19,14 @@
+     private int field_82865_g;
+     private int field_82867_h;
+     private int field_82868_i;
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    private InventoryPlayer player;
++    // CraftBukkit end
+ 
+     public ContainerBeacon(InventoryPlayer par1InventoryPlayer, TileEntityBeacon par2TileEntityBeacon)
+     {
++        player = par1InventoryPlayer; // CraftBukkit
+         this.theBeacon = par2TileEntityBeacon;
+         this.addSlotToContainer(this.beaconSlot = new SlotBeacon(this, par2TileEntityBeacon, 0, 136, 110));
+         byte b0 = 36;
+@@ -82,6 +88,11 @@
+ 
+     public boolean canInteractWith(EntityPlayer par1EntityPlayer)
+     {
++        if (!this.checkReachable)
++        {
++            return true;    // CraftBukkit
++        }
++
+         return this.theBeacon.isUseableByPlayer(par1EntityPlayer);
+     }
+ 
+@@ -152,4 +163,18 @@
+ 
+         return itemstack;
+     }
++
++    // CraftBukkit start
++    public CraftInventoryView getBukkitView()
++    {
++        if (bukkitEntity != null)
++        {
++            return bukkitEntity;
++        }
++
++        org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryBeacon(this.theBeacon);
++        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
+ }

@@ -6,6 +6,7 @@ import java.util.*;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 
+import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.block.EnumMobType;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnumEnchantmentType;
@@ -21,6 +22,12 @@ import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.gen.structure.EnumDoor;
 import net.minecraftforge.classloading.FMLForgePlugin;
+// MCPC+ start
+import org.bukkit.World;
+import org.bukkit.block.Biome;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.entity.EntityType;
+// MCPC+ end
 
 public class EnumHelper
 {
@@ -48,6 +55,36 @@ public class EnumHelper
         {EnumStatus.class},
         {EnumToolMaterial.class, int.class, int.class, float.class, float.class, int.class}
     }; 
+
+    // MCPC start
+    public static Biome addBukkitBiome(String name) 
+    {
+        return (Biome)addEnum(Biome.class, name, new Class[0], new Object[0]);
+    }
+
+    public static World.Environment addBukkitEnvironment(int id, String name)
+    {
+        if (!isSetup)
+        {
+            setup();
+        }
+
+        return (World.Environment)addEnum(World.Environment.class, name, new Class[] { Integer.TYPE }, new Object[] { Integer.valueOf(id) });
+    }
+
+    public static EntityType addBukkitEntityType(String name, Class <? extends org.bukkit.entity.Entity> clazz, int typeId, boolean independent) {
+        EntityType bukkitType = addEnum(EntityType.class, name, new Class[] { String.class, Class.class, Integer.TYPE, Boolean.TYPE }, new Object[] { name, clazz, typeId, independent });
+
+        Map<String, EntityType> NAME_MAP = ReflectionHelper.getPrivateValue(EntityType.class, null, "NAME_MAP"); // TODO: access
+        Map<Short, EntityType> ID_MAP = ReflectionHelper.getPrivateValue(EntityType.class, null, "ID_MAP");
+
+        NAME_MAP.put(name.toLowerCase(), bukkitType);
+        ID_MAP.put((short)typeId, bukkitType);
+
+
+        return bukkitType;
+    }
+    // MCPC end
 
     public static EnumAction addAction(String name)
     {
@@ -275,6 +312,86 @@ public class EnumHelper
             throw new RuntimeException(e.getMessage(), e);
         }
     }
+
+    // MCPC+ start
+    @SuppressWarnings("unchecked")
+    public static <T extends Enum<?>> T replaceEnum(Class<T> enumType, String enumName, int ordinal,  Class<?>[] paramTypes, Object[] paramValues)
+    {
+        if (!isSetup)
+        {
+            setup();
+        }
+
+        Field valuesField = null;
+        Field[] fields = enumType.getDeclaredFields();
+
+        for (Field field : fields)
+        {
+            String name = field.getName();
+            if (name.equals("$VALUES") || name.equals("ENUM$VALUES")) //Added 'ENUM$VALUES' because Eclipse's internal compiler doesn't follow standards
+            {
+                valuesField = field;
+                break;
+            }
+        }
+
+        int flags = (FMLForgePlugin.RUNTIME_DEOBF ? Modifier.PUBLIC : Modifier.PRIVATE) | Modifier.STATIC | Modifier.FINAL | 0x1000 /*SYNTHETIC*/;
+        if (valuesField == null)
+        {
+            String valueType = String.format("[L%s;", enumType.getName().replace('.', '/'));
+
+            for (Field field : fields)
+            {
+                if ((field.getModifiers() & flags) == flags &&
+                     field.getType().getName().replace('.', '/').equals(valueType)) //Apparently some JVMs return .'s and some don't..
+                {
+                    valuesField = field;
+                    break;
+                }
+            }
+        }
+
+        if (valuesField == null)
+        {
+            FMLLog.severe("Could not find $VALUES field for enum: %s", enumType.getName());
+            FMLLog.severe("Runtime Deobf: %s", FMLForgePlugin.RUNTIME_DEOBF);
+            FMLLog.severe("Flags: %s", String.format("%16s", Integer.toBinaryString(flags)).replace(' ', '0'));
+            FMLLog.severe("Fields:");
+            for (Field field : fields)
+            {
+                String mods = String.format("%16s", Integer.toBinaryString(field.getModifiers())).replace(' ', '0');
+                FMLLog.severe("       %s %s: %s", mods, field.getName(), field.getType().getName());
+            }
+            return null;
+        }
+
+        valuesField.setAccessible(true);
+        try
+        {
+            Enum[] previousValues = (Enum[])(Enum[])valuesField.get(enumType);
+            Enum[] newValues = new Enum[previousValues.length];
+            Enum newValue = null;
+            for (Enum enumValue : previousValues)
+            {
+                if (enumValue.ordinal() == ordinal)
+                {
+                    newValue = makeEnum(enumType, enumName, ordinal, paramTypes, paramValues);
+                    newValues[enumValue.ordinal()] =  newValue;
+                }
+                else newValues[enumValue.ordinal()] = enumValue;
+            }
+            List values = new ArrayList(Arrays.asList(newValues));
+            setFailsafeFieldValue(valuesField, null, values.toArray((Enum[])(Enum[])Array.newInstance(enumType, 0)));
+            cleanEnumCache(enumType);
+            return (T) newValue;
+        } 
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+    // MCPC+ end
 
     static
     {

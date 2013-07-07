@@ -1,0 +1,43 @@
+--- ../src_base/minecraft/net/minecraft/entity/ai/EntityAIEatGrass.java
++++ ../src_work/minecraft/net/minecraft/entity/ai/EntityAIEatGrass.java
+@@ -4,6 +4,10 @@
+ import net.minecraft.entity.EntityLiving;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.Material;
++// CraftBukkit end
+ 
+ public class EntityAIEatGrass extends EntityAIBase
+ {
+@@ -84,14 +88,24 @@
+ 
+             if (this.theWorld.getBlockId(i, j, k) == Block.tallGrass.blockID)
+             {
+-                this.theWorld.destroyBlock(i, j, k, false);
+-                this.theEntity.eatGrassBonus();
++                // CraftBukkit start
++                if (!CraftEventFactory.callEntityChangeBlockEvent(this.theEntity.getBukkitEntity(), this.theEntity.worldObj.getWorld().getBlockAt(i, j, k), Material.AIR).isCancelled())
++                {
++                    this.theWorld.destroyBlock(i, j, k, false);
++                    this.theEntity.eatGrassBonus();
++                }
++                // CraftBukkit end
+             }
+             else if (this.theWorld.getBlockId(i, j - 1, k) == Block.grass.blockID)
+             {
+-                this.theWorld.playAuxSFX(2001, i, j - 1, k, Block.grass.blockID);
+-                this.theWorld.setBlock(i, j - 1, k, Block.dirt.blockID, 0, 2);
+-                this.theEntity.eatGrassBonus();
++                // CraftBukkit start
++                if (!CraftEventFactory.callEntityChangeBlockEvent(this.theEntity.getBukkitEntity(), this.theEntity.worldObj.getWorld().getBlockAt(i, j - 1, k), Material.DIRT).isCancelled())
++                {
++                    this.theWorld.playAuxSFX(2001, i, j - 1, k, Block.grass.blockID);
++                    this.theWorld.setBlock(i, j - 1, k, Block.dirt.blockID, 0, 2);
++                    this.theEntity.eatGrassBonus();
++                }
++                // CraftBukkit end
+             }
+         }
+     }

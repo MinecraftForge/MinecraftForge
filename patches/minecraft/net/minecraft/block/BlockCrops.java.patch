@@ -16,7 +16,21 @@
  
  public class BlockCrops extends BlockFlower
  {
-@@ -103,11 +105,11 @@
+@@ -52,10 +54,9 @@
+             {
+                 float f = this.getGrowthRate(par1World, par2, par3, par4);
+ 
+-                if (par5Random.nextInt((int)(25.0F / f) + 1) == 0)
+-                {
+-                    ++l;
+-                    par1World.setBlockMetadataWithNotify(par2, par3, par4, l, 2);
++                if (par5Random.nextInt((int)(par1World.growthOdds / par1World.getWorld().wheatGrowthModifier * (25.0F / f)) + 1) == 0)    // Spigot
++                {
++                    org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(par1World, par2, par3, par4, this.blockID, ++l); // CraftBukkit
+                 }
+             }
+         }
+@@ -103,11 +104,11 @@
                  int j3 = par1World.getBlockId(l2, par3 - 1, i3);
                  float f1 = 0.0F;
  
@@ -30,7 +44,7 @@
                      {
                          f1 = 3.0F;
                      }
-@@ -175,22 +177,25 @@
+@@ -175,22 +176,25 @@
      public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
      {
          super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, 0);

@@ -1,0 +1,69 @@
+--- ../src_base/minecraft/net/minecraft/inventory/InventoryBasic.java
++++ ../src_work/minecraft/net/minecraft/inventory/InventoryBasic.java
+@@ -2,14 +2,19 @@
+ 
+ import java.util.ArrayList;
+ import java.util.List;
++// MCPC+ start
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.inventory.InventoryHolder;
++// MCPC+ end
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.item.ItemStack;
+ 
+-public class InventoryBasic implements IInventory
++public class InventoryBasic implements IInventory   // CraftBukkit - abstract // MCPC+ - concrete
+ {
+     private String inventoryTitle;
+     private int slotsCount;
+-    private ItemStack[] inventoryContents;
++    protected ItemStack[] inventoryContents; // CraftBukkit - protected
+     private List field_70480_d;
+     private boolean field_94051_e;
+ 
+@@ -178,6 +183,44 @@
+     public void openChest() {}
+ 
+     public void closeChest() {}
++    
++    // MCPC+ start - stubs for non-abstract vanilla class
++    @Override
++    public ItemStack[] getContents() {
++        // TODO Auto-generated method stub
++        return null;
++    }
++
++    @Override
++    public void onOpen(CraftHumanEntity who) {
++        // TODO Auto-generated method stub
++        
++    }
++
++    @Override
++    public void onClose(CraftHumanEntity who) {
++        // TODO Auto-generated method stub
++        
++    }
++
++    @Override
++    public List<HumanEntity> getViewers() {
++        // TODO Auto-generated method stub
++        return null;
++    }
++
++    @Override
++    public InventoryHolder getOwner() {
++        // TODO Auto-generated method stub
++        return null;
++    }
++
++    @Override
++    public void setMaxStackSize(int size) {
++        // TODO Auto-generated method stub
++        
++    }
++    // MCPC+ end    
+ 
+     /**
+      * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.

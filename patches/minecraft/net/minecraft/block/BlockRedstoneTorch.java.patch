@@ -1,0 +1,58 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockRedstoneTorch.java
++++ ../src_work/minecraft/net/minecraft/block/BlockRedstoneTorch.java
+@@ -10,6 +10,7 @@
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
+ 
+ public class BlockRedstoneTorch extends BlockTorch
+ {
+@@ -146,10 +147,28 @@
+             list.remove(0);
+         }
+ 
++        // CraftBukkit start
++        org.bukkit.plugin.PluginManager manager = par1World.getServer().getPluginManager();
++        org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3, par4);
++        int oldCurrent = this.torchActive ? 15 : 0;
++        BlockRedstoneEvent event = new BlockRedstoneEvent(block, oldCurrent, oldCurrent);
++        // CraftBukkit end
+         if (this.torchActive)
+         {
+             if (flag)
+             {
++                // CraftBukkit start
++                if (oldCurrent != 0)
++                {
++                    event.setNewCurrent(0);
++                    manager.callEvent(event);
++
++                    if (event.getNewCurrent() != 0)
++                    {
++                        return;
++                    }
++                }
++                // CraftBukkit end
+                 par1World.setBlock(par2, par3, par4, Block.torchRedstoneIdle.blockID, par1World.getBlockMetadata(par2, par3, par4), 3);
+ 
+                 if (this.checkForBurnout(par1World, par2, par3, par4, true))
+@@ -168,6 +187,18 @@
+         }
+         else if (!flag && !this.checkForBurnout(par1World, par2, par3, par4, false))
+         {
++            // CraftBukkit start
++            if (oldCurrent != 15)
++            {
++                event.setNewCurrent(15);
++                manager.callEvent(event);
++
++                if (event.getNewCurrent() != 15)
++                {
++                    return;
++                }
++            }
++            // CraftBukkit end
+             par1World.setBlock(par2, par3, par4, Block.torchRedstoneActive.blockID, par1World.getBlockMetadata(par2, par3, par4), 3);
+         }
+     }

@@ -13,6 +13,18 @@
  {
      protected BlockReed(int par1)
      {
+@@ -36,9 +40,9 @@
+             {
+                 int i1 = par1World.getBlockMetadata(par2, par3, par4);
+ 
+-                if (i1 == 15)
++                if (i1 >= (byte) range(3, (par1World.growthOdds / par1World.getWorld().sugarGrowthModifier * 15) + 0.5F, 15))   // Spigot
+                 {
+-                    par1World.setBlock(par2, par3 + 1, par4, this.blockID);
++                    org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(par1World, par2, par3 + 1, par4, this.blockID, 0); // CraftBukkit
+                     par1World.setBlockMetadataWithNotify(par2, par3, par4, 0, 4);
+                 }
+                 else
 @@ -54,8 +58,8 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)

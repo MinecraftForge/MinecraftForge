@@ -1,0 +1,57 @@
+--- ../src_base/minecraft/net/minecraft/inventory/InventoryCraftResult.java
++++ ../src_work/minecraft/net/minecraft/inventory/InventoryCraftResult.java
+@@ -1,12 +1,45 @@
+ package net.minecraft.inventory;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.item.ItemStack;
++// CraftBukkit end
+ 
+ public class InventoryCraftResult implements IInventory
+ {
+     /** A list of one item containing the result of the crafting formula */
+     private ItemStack[] stackResult = new ItemStack[1];
++
++    // CraftBukkit start
++    private int maxStack = MAX_STACK;
++
++    public ItemStack[] getContents()
++    {
++        return this.stackResult;
++    }
++
++    public org.bukkit.inventory.InventoryHolder getOwner()
++    {
++        return null; // Result slots don't get an owner
++    }
++
++    // Don't need a transaction; the InventoryCrafting keeps track of it for us
++    public void onOpen(CraftHumanEntity who) {}
++    public void onClose(CraftHumanEntity who) {}
++    public java.util.List<HumanEntity> getViewers()
++    {
++        return new java.util.ArrayList<HumanEntity>();
++    }
++
++    public void setMaxStackSize(int size)
++    {
++        maxStack = size;
++    }
++    // CraftBukkit end
++
++    public InventoryCraftResult() {}
+ 
+     /**
+      * Returns the number of slots in the inventory.
+@@ -91,7 +124,7 @@
+      */
+     public int getInventoryStackLimit()
+     {
+-        return 64;
++        return maxStack; // CraftBukkit
+     }
+ 
+     /**

@@ -1,0 +1,289 @@
+--- ../src_base/minecraft/net/minecraft/server/management/PlayerManager.java
++++ ../src_work/minecraft/net/minecraft/server/management/PlayerManager.java
+@@ -8,6 +8,12 @@
+ import net.minecraft.world.WorldProvider;
+ import net.minecraft.world.WorldServer;
+ 
++// CraftBukkit start
++import java.util.Collections;
++import java.util.Queue;
++import java.util.LinkedList;
++// CraftBukkit end
++
+ public class PlayerManager
+ {
+     private final WorldServer theWorldServer;
+@@ -24,8 +30,8 @@
+      * contains a PlayerInstance for every chunk they can see. the "player instance" cotains a list of all players who
+      * can also that chunk
+      */
+-    private final List chunkWatcherWithPlayers = new ArrayList();
+-    private final List field_111193_e = new ArrayList();
++    private final Queue chunkWatcherWithPlayers = new java.util.concurrent.ConcurrentLinkedQueue(); // CraftBukkit ArrayList -> ConcurrentLinkedQueue
++    private final Queue field_111193_e = new java.util.concurrent.ConcurrentLinkedQueue(); // CraftBukkit ArrayList -> ConcurrentLinkedQueue
+ 
+     /**
+      * Number of chunks the server sends to the client. Valid 3<=x<=15. In server.properties.
+@@ -35,6 +41,7 @@
+ 
+     /** x, z direction vectors: east, south, west, north */
+     private final int[][] xzDirectionsConst = new int[][] {{1, 0}, {0, 1}, { -1, 0}, {0, -1}};
++    private boolean wasNotEmpty; // CraftBukkit
+ 
+     public PlayerManager(WorldServer par1WorldServer, int par2)
+     {
+@@ -42,7 +49,7 @@
+         {
+             throw new IllegalArgumentException("Too big view radius!");
+         }
+-        else if (par2 < 3)
++        else if (par2 < 1) // Spigot
+         {
+             throw new IllegalArgumentException("Too small view radius!");
+         }
+@@ -70,34 +77,53 @@
+         if (i - this.field_111192_g > 8000L)
+         {
+             this.field_111192_g = i;
+-
+-            for (j = 0; j < this.field_111193_e.size(); ++j)
+-            {
+-                playerinstance = (PlayerInstance)this.field_111193_e.get(j);
++        // CraftBukkit start - Use iterator
++            java.util.Iterator iterator = this.field_111193_e.iterator();
++
++        while (iterator.hasNext())
++        {
++                playerinstance = (PlayerInstance) iterator.next();
++            playerinstance.sendChunkUpdate();
++                playerinstance.func_111194_a();
++            }
++        }
++        else
++        {
++            java.util.Iterator iterator = this.chunkWatcherWithPlayers.iterator();
++
++            while (iterator.hasNext())
++            {
++                playerinstance = (PlayerInstance) iterator.next();
+                 playerinstance.sendChunkUpdate();
+-                playerinstance.func_111194_a();
+-            }
++                iterator.remove();
++        // CraftBukkit end
++            }
++        }
++
++        // this.d.clear(); // CraftBukkit - Removals are already covered
++        if (this.players.isEmpty())
++        {
++            if (!wasNotEmpty)
++            {
++                return;    // CraftBukkit - Only do unload when we go from non-empty to empty
++            }
++
++            WorldProvider worldprovider = this.theWorldServer.provider;
++
++            if (!worldprovider.canRespawnHere())
++            {
++                this.theWorldServer.theChunkProviderServer.unloadAllChunks();
++            }
++
++            // CraftBukkit start
++            wasNotEmpty = false;
+         }
+         else
+         {
+-            for (j = 0; j < this.chunkWatcherWithPlayers.size(); ++j)
+-            {
+-                playerinstance = (PlayerInstance)this.chunkWatcherWithPlayers.get(j);
+-                playerinstance.sendChunkUpdate();
+-            }
+-        }
+-
+-        this.chunkWatcherWithPlayers.clear();
+-
+-        if (this.players.isEmpty())
+-        {
+-            WorldProvider worldprovider = this.theWorldServer.provider;
+-
+-            if (!worldprovider.canRespawnHere())
+-            {
+-                this.theWorldServer.theChunkProviderServer.unloadAllChunks();
+-            }
+-        }
++            wasNotEmpty = true;
++        }
++
++        // CraftBukkit end
+     }
+ 
+     public PlayerInstance getOrCreateChunkWatcher(int par1, int par2, boolean par3)
+@@ -114,6 +140,19 @@
+ 
+         return playerinstance;
+     }
++    // CraftBukkit start
++    public final boolean isChunkInUse(int x, int z)
++    {
++        PlayerInstance pi = getOrCreateChunkWatcher(x, z, false);
++
++        if (pi != null)
++        {
++            return (PlayerInstance.getPlayersInChunk(pi).size() > 0);
++        }
++
++        return false;
++    }
++    // CraftBukkit end
+ 
+     /**
+      * the "PlayerInstance"/ chunkWatcher will send this chunk to all players who are in line of sight
+@@ -139,15 +178,25 @@
+         int j = (int)par1EntityPlayerMP.posZ >> 4;
+         par1EntityPlayerMP.managedPosX = par1EntityPlayerMP.posX;
+         par1EntityPlayerMP.managedPosZ = par1EntityPlayerMP.posZ;
++        // CraftBukkit start - Load nearby chunks first
++        List<ChunkCoordIntPair> chunkList = new LinkedList<ChunkCoordIntPair>();
+ 
+         for (int k = i - this.playerViewRadius; k <= i + this.playerViewRadius; ++k)
+         {
+             for (int l = j - this.playerViewRadius; l <= j + this.playerViewRadius; ++l)
+             {
+-                this.getOrCreateChunkWatcher(k, l, true).addPlayerToChunkWatchingList(par1EntityPlayerMP);
+-            }
+-        }
+-
++                chunkList.add(new ChunkCoordIntPair(k, l));
++            }
++        }
++
++        Collections.sort(chunkList, new ChunkCoordComparator(par1EntityPlayerMP));
++
++        for (ChunkCoordIntPair pair : chunkList)
++        {
++            this.getOrCreateChunkWatcher(pair.chunkXPos, pair.chunkZPos, true).addPlayerToChunkWatchingList(par1EntityPlayerMP);
++        }
++
++        // CraftBukkit end
+         this.players.add(par1EntityPlayerMP);
+         this.filterChunkLoadQueue(par1EntityPlayerMP);
+     }
+@@ -258,6 +307,7 @@
+             int i1 = this.playerViewRadius;
+             int j1 = i - k;
+             int k1 = j - l;
++            List<ChunkCoordIntPair> chunksToLoad = new LinkedList<ChunkCoordIntPair>(); // CraftBukkit
+ 
+             if (j1 != 0 || k1 != 0)
+             {
+@@ -267,7 +317,7 @@
+                     {
+                         if (!this.func_72684_a(l1, i2, k, l, i1))
+                         {
+-                            this.getOrCreateChunkWatcher(l1, i2, true).addPlayerToChunkWatchingList(par1EntityPlayerMP);
++                            chunksToLoad.add(new ChunkCoordIntPair(l1, i2)); // CraftBukkit
+                         }
+ 
+                         if (!this.func_72684_a(l1 - j1, i2 - k1, i, j, i1))
+@@ -285,6 +335,20 @@
+                 this.filterChunkLoadQueue(par1EntityPlayerMP);
+                 par1EntityPlayerMP.managedPosX = par1EntityPlayerMP.posX;
+                 par1EntityPlayerMP.managedPosZ = par1EntityPlayerMP.posZ;
++                // CraftBukkit start - send nearest chunks first
++                Collections.sort(chunksToLoad, new ChunkCoordComparator(par1EntityPlayerMP));
++
++                for (ChunkCoordIntPair pair : chunksToLoad)
++                {
++                    this.getOrCreateChunkWatcher(pair.chunkXPos, pair.chunkZPos, true).addPlayerToChunkWatchingList(par1EntityPlayerMP);
++                }
++
++                if (i1 > 1 || i1 < -1 || j1 > 1 || j1 < -1)
++                {
++                    Collections.sort(par1EntityPlayerMP.loadedChunks, new ChunkCoordComparator(par1EntityPlayerMP));
++                }
++
++                // CraftBukkit end
+             }
+         }
+     }
+@@ -313,13 +377,70 @@
+         return par0PlayerManager.playerInstances;
+     }
+ 
+-    static List func_111191_d(PlayerManager par0PlayerManager)
+-    {
+-        return par0PlayerManager.field_111193_e;
+-    }
+-
+-    static List getChunkWatchersWithPlayers(PlayerManager par0PlayerManager)
+-    {
+-        return par0PlayerManager.chunkWatcherWithPlayers;
+-    }
++    static Queue func_111191_d(PlayerManager playermanager)   // CraftBukkit List -> Queue
++    {
++        return playermanager.field_111193_e;
++    }
++
++    static Queue getChunkWatchersWithPlayers(PlayerManager playermanager)   // CraftBukkit List -> Queue
++    {
++        return playermanager.chunkWatcherWithPlayers;
++    }
++
++    // CraftBukkit start - Sorter to load nearby chunks first
++    private static class ChunkCoordComparator implements java.util.Comparator<ChunkCoordIntPair>
++    {
++        private int x;
++        private int z;
++
++        public ChunkCoordComparator(EntityPlayerMP entityplayer)
++        {
++            x = (int) entityplayer.posX >> 4;
++            z = (int) entityplayer.posZ >> 4;
++        }
++
++        public int compare(ChunkCoordIntPair a, ChunkCoordIntPair b)
++        {
++            if (a.equals(b))
++            {
++                return 0;
++            }
++
++            // Subtract current position to set center point
++            int ax = a.chunkXPos - this.x;
++            int az = a.chunkZPos - this.z;
++            int bx = b.chunkXPos - this.x;
++            int bz = b.chunkZPos - this.z;
++            int result = ((ax - bx) * (ax + bx)) + ((az - bz) * (az + bz));
++
++            if (result != 0)
++            {
++                return result;
++            }
++
++            if (ax < 0)
++            {
++                if (bx < 0)
++                {
++                    return bz - az;
++                }
++                else
++                {
++                    return -1;
++                }
++            }
++            else
++            {
++                if (bx < 0)
++                {
++                    return 1;
++                }
++                else
++                {
++                    return az - bz;
++                }
++            }
++        }
++    }
++    // CraftBukkit end
+ }

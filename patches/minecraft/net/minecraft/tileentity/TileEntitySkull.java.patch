@@ -1,0 +1,16 @@
+--- ../src_base/minecraft/net/minecraft/tileentity/TileEntitySkull.java
++++ ../src_work/minecraft/net/minecraft/tileentity/TileEntitySkull.java
+@@ -78,6 +78,13 @@
+         this.skullRotation = par1;
+     }
+ 
++    // CraftBukkit start
++    public int getRotation()
++    {
++        return this.skullRotation;
++    }
++    // CraftBukkit end
++
+     @SideOnly(Side.CLIENT)
+     public int func_82119_b()
+     {

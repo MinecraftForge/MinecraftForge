@@ -1,6 +1,7 @@
 package net.minecraftforge.common;
 
 import java.io.File;
+import java.util.UUID; // MCPC+
 
 import net.minecraft.world.chunk.storage.IChunkLoader;
 import net.minecraft.world.storage.IPlayerFileData;
@@ -41,4 +42,12 @@ public class WorldSpecificSaveHandler implements ISaveHandler
     {
         return new File(dataDir, name + ".dat");
     }
+
+    // MCPC+ start
+    @Override
+    public UUID getUUID() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    // MCPC+ end
 }

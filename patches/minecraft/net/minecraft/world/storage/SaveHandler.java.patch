@@ -1,0 +1,125 @@
+--- ../src_base/minecraft/net/minecraft/world/storage/SaveHandler.java
++++ ../src_work/minecraft/net/minecraft/world/storage/SaveHandler.java
+@@ -6,9 +6,13 @@
+ import java.io.FileInputStream;
+ import java.io.FileOutputStream;
+ import java.io.IOException;
++import java.io.InputStream;
++import java.io.OutputStream;
++import java.util.logging.Logger;
+ 
+ import cpw.mods.fml.common.FMLCommonHandler;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.nbt.CompressedStreamTools;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.server.MinecraftServer;
+@@ -16,6 +20,12 @@
+ import net.minecraft.world.WorldProvider;
+ import net.minecraft.world.chunk.storage.IChunkLoader;
+ 
++// CraftBukkit start
++import java.util.UUID;
++
++import org.bukkit.craftbukkit.entity.CraftPlayer;
++// CraftBukkit end
++
+ public class SaveHandler implements ISaveHandler, IPlayerFileData
+ {
+     /** The directory in which to save world data. */
+@@ -32,6 +42,7 @@
+ 
+     /** The directory name of the world */
+     private final String saveDirectoryName;
++    private UUID uuid = null; // CraftBukkit
+ 
+     public SaveHandler(File par1File, String par2Str, boolean par3)
+     {
+@@ -79,7 +90,7 @@
+     /**
+      * Gets the File object corresponding to the base directory of this world.
+      */
+-    public File getWorldDirectory()
++    public File getWorldDirectory()   // CraftBukkit - protected to public
+     {
+         return this.worldDirectory;
+     }
+@@ -87,7 +98,7 @@
+     /**
+      * Checks the session lock to prevent save collisions
+      */
+-    public void checkSessionLock() throws MinecraftException
++    public void checkSessionLock() throws MinecraftException   // CraftBukkit - throws ExceptionWorldConflict
+     {
+         try
+         {
+@@ -293,6 +304,14 @@
+ 
+         if (nbttagcompound != null)
+         {
++            // CraftBukkit start
++            if (par1EntityPlayer instanceof EntityPlayerMP)
++            {
++                CraftPlayer player = (CraftPlayer) par1EntityPlayer.getBukkitEntity(); // MCPC+ - make sure we set our bukkitEntity to avoid null
++                player.setFirstPlayed(new File(playersDirectory, par1EntityPlayer.username + ".dat").lastModified());
++            }
++
++            // CraftBukkit end
+             par1EntityPlayer.readFromNBT(nbttagcompound);
+         }
+ 
+@@ -310,7 +329,7 @@
+ 
+             if (file1.exists())
+             {
+-                return CompressedStreamTools.readCompressed(new FileInputStream(file1));
++                return CompressedStreamTools.readCompressed((InputStream)(new FileInputStream(file1)));
+             }
+         }
+         catch (Exception exception)
+@@ -367,4 +386,45 @@
+     {
+         return this.saveDirectoryName;
+     }
++
++    // CraftBukkit start
++    public UUID getUUID()
++    {
++        if (uuid != null)
++        {
++            return uuid;
++        }
++
++        try
++        {
++            File file1 = new File(this.worldDirectory, "uid.dat");
++
++            if (!file1.exists())
++            {
++                DataOutputStream dos = new DataOutputStream(new FileOutputStream(file1));
++                uuid = UUID.randomUUID();
++                dos.writeLong(uuid.getMostSignificantBits());
++                dos.writeLong(uuid.getLeastSignificantBits());
++                dos.close();
++            }
++            else
++            {
++                DataInputStream dis = new DataInputStream(new FileInputStream(file1));
++                uuid = new UUID(dis.readLong(), dis.readLong());
++                dis.close();
++            }
++
++            return uuid;
++        }
++        catch (IOException ex)
++        {
++            return null;
++        }
++    }
++
++    public File getPlayerDir()
++    {
++        return playersDirectory;
++    }
++    // CraftBukkit end
+ }

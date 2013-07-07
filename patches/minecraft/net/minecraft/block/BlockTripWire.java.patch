@@ -1,0 +1,60 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockTripWire.java
++++ ../src_work/minecraft/net/minecraft/block/BlockTripWire.java
+@@ -13,6 +13,7 @@
+ import net.minecraft.util.Direction;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import org.bukkit.event.entity.EntityInteractEvent; // CraftBukkit
+ 
+ public class BlockTripWire extends Block
+ {
+@@ -254,6 +255,49 @@
+             }
+         }
+ 
++        // CraftBukkit start - Call interact even when triggering connected tripwire
++        if (flag != flag1 && flag1 && (par1World.getBlockMetadata(par2, par3, par4) & 4) == 4)
++        {
++            org.bukkit.World bworld = par1World.getWorld();
++            org.bukkit.plugin.PluginManager manager = par1World.getServer().getPluginManager();
++            org.bukkit.block.Block block = bworld.getBlockAt(par2, par3, par4);
++            boolean allowed = false;
++
++            // If all of the events are cancelled block the tripwire trigger, else allow
++            for (Object object : list)
++            {
++                if (object != null)
++                {
++                    org.bukkit.event.Cancellable cancellable;
++
++                    if (object instanceof EntityPlayer)
++                    {
++                        cancellable = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((EntityPlayer) object, org.bukkit.event.block.Action.PHYSICAL, par2, par3, par4, -1, null);
++                    }
++                    else if (object instanceof Entity)
++                    {
++                        cancellable = new EntityInteractEvent(((Entity) object).getBukkitEntity(), block);
++                        manager.callEvent((EntityInteractEvent) cancellable);
++                    }
++                    else
++                    {
++                        continue;
++                    }
++
++                    if (!cancellable.isCancelled())
++                    {
++                        allowed = true;
++                        break;
++                    }
++                }
++            }
++
++            if (!allowed)
++            {
++                return;
++            }
++        }
++        // CraftBukkit end
+         if (flag1 && !flag)
+         {
+             l |= 1;

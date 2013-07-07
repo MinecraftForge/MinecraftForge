@@ -1,0 +1,149 @@
+--- ../src_base/minecraft/net/minecraft/tileentity/TileEntityChest.java
++++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityChest.java
+@@ -13,9 +13,14 @@
+ import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.util.AxisAlignedBB;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++// CraftBukkit end
++
+ public class TileEntityChest extends TileEntity implements IInventory
+ {
+-    private ItemStack[] chestContents = new ItemStack[36];
++    private ItemStack[] chestContents = new ItemStack[27]; // CraftBukkit - 36 -> 27
+ 
+     /** Determines if the check for adjacent chests has taken place. */
+     public boolean adjacentChestChecked;
+@@ -46,6 +51,38 @@
+     private int field_94046_i = -1;
+     private String field_94045_s;
+ 
++    public TileEntityChest() {}
++
++    // CraftBukkit start
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    private int maxStack = MAX_STACK;
++
++    public ItemStack[] getContents()
++    {
++        return this.chestContents;
++    }
++
++    public void onOpen(CraftHumanEntity who)
++    {
++        transaction.add(who);
++    }
++
++    public void onClose(CraftHumanEntity who)
++    {
++        transaction.remove(who);
++    }
++
++    public List<HumanEntity> getViewers()
++    {
++        return transaction;
++    }
++
++    public void setMaxStackSize(int size)
++    {
++        maxStack = size;
++    }
++    // CraftBukkit end
++
+     /**
+      * Returns the number of slots in the inventory.
+      */
+@@ -212,7 +249,7 @@
+      */
+     public int getInventoryStackLimit()
+     {
+-        return 64;
++        return maxStack; // CraftBukkit
+     }
+ 
+     /**
+@@ -220,6 +257,11 @@
+      */
+     public boolean isUseableByPlayer(EntityPlayer par1EntityPlayer)
+     {
++        if (this.worldObj == null)
++        {
++            return true;    // CraftBukkit
++        }
++
+         return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ? false : par1EntityPlayer.getDistanceSq((double)this.xCoord + 0.5D, (double)this.yCoord + 0.5D, (double)this.zCoord + 0.5D) <= 64.0D;
+     }
+ 
+@@ -341,6 +383,12 @@
+     public void updateEntity()
+     {
+         super.updateEntity();
++
++        if (this.worldObj == null)
++        {
++            return;    // CraftBukkit
++        }
++
+         this.checkForAdjacentChests();
+         ++this.ticksSinceSync;
+         float f;
+@@ -458,8 +506,28 @@
+             this.numUsingPlayers = 0;
+         }
+ 
++        int oldPower = Math.max(0, Math.min(15, this.numUsingPlayers)); // CraftBukkit - Get power before new viewer is added
+         ++this.numUsingPlayers;
++
++        if (this.worldObj == null)
++        {
++            return;    // CraftBukkit
++        }
++
+         this.worldObj.addBlockEvent(this.xCoord, this.yCoord, this.zCoord, this.getBlockType().blockID, 1, this.numUsingPlayers);
++
++        // CraftBukkit start - Call redstone event
++        if (this.getBlockType().blockID == Block.chestTrapped.blockID)
++        {
++            int newPower = Math.max(0, Math.min(15, this.numUsingPlayers));
++
++            if (oldPower != newPower)
++            {
++                org.bukkit.craftbukkit.event.CraftEventFactory.callRedstoneChange(worldObj, this.xCoord, this.yCoord, this.zCoord, oldPower, newPower);
++            }
++        }
++
++        // CraftBukkit end
+         this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord, this.zCoord, this.getBlockType().blockID);
+         this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord - 1, this.zCoord, this.getBlockType().blockID);
+     }
+@@ -468,8 +536,28 @@
+     {
+         if (this.getBlockType() != null && this.getBlockType() instanceof BlockChest)
+         {
++            int oldPower = Math.max(0, Math.min(15, this.numUsingPlayers)); // CraftBukkit - Get power before new viewer is added
+             --this.numUsingPlayers;
++
++            if (this.worldObj == null)
++            {
++                return;    // CraftBukkit
++            }
++
+             this.worldObj.addBlockEvent(this.xCoord, this.yCoord, this.zCoord, this.getBlockType().blockID, 1, this.numUsingPlayers);
++
++            // CraftBukkit start - Call redstone event
++            if (this.getBlockType().blockID == Block.chestTrapped.blockID)
++            {
++                int newPower = Math.max(0, Math.min(15, this.numUsingPlayers));
++
++                if (oldPower != newPower)
++                {
++                    org.bukkit.craftbukkit.event.CraftEventFactory.callRedstoneChange(worldObj, this.xCoord, this.yCoord, this.zCoord, oldPower, newPower);
++                }
++            }
++
++            // CraftBukkit end
+             this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord, this.zCoord, this.getBlockType().blockID);
+             this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord - 1, this.zCoord, this.getBlockType().blockID);
+         }

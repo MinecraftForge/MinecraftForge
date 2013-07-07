@@ -1,0 +1,64 @@
+--- ../src_base/minecraft/net/minecraft/entity/ai/EntityAITarget.java
++++ ../src_work/minecraft/net/minecraft/entity/ai/EntityAITarget.java
+@@ -10,6 +10,10 @@
+ import net.minecraft.pathfinding.PathPoint;
+ import net.minecraft.util.MathHelper;
+ import org.apache.commons.lang3.StringUtils;
++// CraftBukkit start
++import org.bukkit.craftbukkit.entity.CraftEntity;
++import org.bukkit.event.entity.EntityTargetEvent;
++// CraftBukkit end
+ 
+ public abstract class EntityAITarget extends EntityAIBase
+ {
+@@ -171,6 +175,50 @@
+                     }
+                 }
+ 
++                // CraftBukkit start - Check all the different target goals for the reason, default to RANDOM_TARGET
++                EntityTargetEvent.TargetReason reason = EntityTargetEvent.TargetReason.RANDOM_TARGET;
++
++                if (this instanceof EntityAIDefendVillage)
++                {
++                    reason = EntityTargetEvent.TargetReason.DEFEND_VILLAGE;
++                }
++                else if (this instanceof EntityAIHurtByTarget)
++                {
++                    reason = EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY;
++                }
++                else if (this instanceof EntityAINearestAttackableTarget)
++                {
++                    if (par1EntityLivingBase instanceof EntityPlayer)
++                    {
++                        reason = EntityTargetEvent.TargetReason.CLOSEST_PLAYER;
++                    }
++                }
++                else if (this instanceof EntityAIOwnerHurtByTarget)
++                {
++                    reason = EntityTargetEvent.TargetReason.TARGET_ATTACKED_OWNER;
++                }
++                else if (this instanceof EntityAIOwnerHurtTarget)
++                {
++                    reason = EntityTargetEvent.TargetReason.OWNER_ATTACKED_TARGET;
++                }
++
++                org.bukkit.event.entity.EntityTargetLivingEntityEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTargetLivingEvent(this.taskOwner, par1EntityLivingBase, reason);
++
++                if (event.isCancelled() || event.getTarget() == null)
++                {
++                    this.taskOwner.setAttackTarget(null);
++                    return false;
++                }
++                else if (par1EntityLivingBase.getBukkitEntity() != event.getTarget())
++                {
++                    this.taskOwner.setAttackTarget((EntityLivingBase)((CraftEntity) event.getTarget()).getHandle());
++                }
++
++                if (this.taskOwner instanceof EntityCreature)
++                {
++                    ((EntityCreature) this.taskOwner).entityToAttack = ((CraftEntity) event.getTarget()).getHandle();
++                }
++                // CraftBukkit end
+                 return true;
+             }
+         }

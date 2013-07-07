@@ -1,0 +1,43 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntityMob.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntityMob.java
+@@ -11,6 +11,10 @@
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.EnumSkyBlock;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.event.entity.EntityTargetEvent;
++import net.minecraft.potion.Potion;
++// CraftBukkit end
+ 
+ public abstract class EntityMob extends EntityCreature implements IMob
+ {
+@@ -77,7 +81,28 @@
+             {
+                 if (entity != this)
+                 {
+-                    this.entityToAttack = entity;
++                    // CraftBukkit start - We still need to call events for entities without goals
++                    if (entity != this.entityToAttack && (this instanceof EntityBlaze || this instanceof EntityEnderman || this instanceof EntitySpider || this instanceof EntityGiantZombie || this instanceof EntitySilverfish))
++                    {
++                        EntityTargetEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTargetEvent(this, entity, EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY);
++
++                        if (!event.isCancelled())
++                        {
++                            if (event.getTarget() == null)
++                            {
++                                this.entityToAttack = null;
++                            }
++                            else
++                            {
++                                this.entityToAttack = ((org.bukkit.craftbukkit.entity.CraftEntity) event.getTarget()).getHandle();
++                            }
++                        }
++                    }
++                    else
++                    {
++                        this.entityToAttack = entity;
++                    }
++                    // CraftBukkit end
+                 }
+ 
+                 return true;

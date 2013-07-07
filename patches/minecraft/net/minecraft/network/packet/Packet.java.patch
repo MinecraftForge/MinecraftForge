@@ -1,0 +1,100 @@
+--- ../src_base/minecraft/net/minecraft/network/packet/Packet.java
++++ ../src_work/minecraft/net/minecraft/network/packet/Packet.java
+@@ -16,6 +16,8 @@
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.IntHashMap;
+ 
++import org.bukkit.craftbukkit.inventory.CraftItemStack; // CraftBukkit
++
+ public abstract class Packet
+ {
+     /** Maps packet id to packet class */
+@@ -45,6 +47,18 @@
+      * separate them into a different send queue.
+      */
+     public boolean isChunkDataPacket;
++    // CraftBukkit start - Calculate packet ID once - used a bunch of times
++    private int packetID;
++
++    public Packet()
++    {
++        // MCPC+ start - Do not try to get a packet ID for a class that does not exist. Fixes Pixelmon
++        Integer packetID_ = (Integer) packetClassToIdMap.get(this.getClass());
++        if (packetID_ != null)
++            packetID = packetID_.intValue();
++        // MCPC+ end
++    }
++    // CraftBukkit end
+ 
+     /**
+      * Adds a two way mapping between the packet ID and packet class.
+@@ -127,13 +141,13 @@
+      */
+     public final int getPacketId()
+     {
+-        return ((Integer)packetClassToIdMap.get(this.getClass())).intValue();
++        return packetID; // ((Integer) a.get(this.getClass())).intValue(); // CraftBukkit
+     }
+ 
+     /**
+      * Read a packet, prefixed by its ID, from the data stream.
+      */
+-    public static Packet readPacket(ILogAgent par0ILogAgent, DataInput par1DataInput, boolean par2, Socket par3Socket) throws IOException
++    public static Packet readPacket(ILogAgent par0ILogAgent, DataInput par1DataInput, boolean par2, Socket par3Socket) throws IOException   // CraftBukkit - throws IOException
+     {
+         boolean flag1 = false;
+         Packet packet = null;
+@@ -172,7 +186,19 @@
+             par0ILogAgent.logSevere("Reached end of stream for " + par3Socket.getInetAddress());
+             return null;
+         }
+-
++        // CraftBukkit start
++        catch (java.net.SocketTimeoutException exception)
++        {
++            par0ILogAgent.logInfo("Read timed out");
++            return null;
++        }
++        catch (java.net.SocketException exception)
++        {
++            par0ILogAgent.logInfo("Connection reset");
++            return null;
++        }
++
++        // CraftBukkit end
+         PacketCount.countPacket(j, (long)packet.getPacketSize());
+         ++receivedID;
+         receivedSize += (long)packet.getPacketSize();
+@@ -278,7 +304,7 @@
+      */
+     public boolean canProcessAsync()
+     {
+-        return false;
++        return this instanceof Packet3Chat && !((Packet3Chat) this).message.startsWith("/"); // CraftBukkit - async chat
+     }
+ 
+     public String toString()
+@@ -301,6 +327,14 @@
+             short short2 = par0DataInput.readShort();
+             itemstack = new ItemStack(short1, b0, short2);
+             itemstack.stackTagCompound = readNBTTagCompound(par0DataInput);
++
++            // CraftBukkit start
++            if (itemstack.stackTagCompound != null)
++            {
++                CraftItemStack.setItemMeta(itemstack, CraftItemStack.getItemMeta(itemstack));
++            }
++
++            // CraftBukkit end
+         }
+ 
+         return itemstack;
+@@ -311,7 +345,7 @@
+      */
+     public static void writeItemStack(ItemStack par0ItemStack, DataOutput par1DataOutput) throws IOException
+     {
+-        if (par0ItemStack == null)
++        if (par0ItemStack == null || par0ItemStack.getItem() == null)   // CraftBukkit - NPE fix itemstack.getItem()
+         {
+             par1DataOutput.writeShort(-1);
+         }

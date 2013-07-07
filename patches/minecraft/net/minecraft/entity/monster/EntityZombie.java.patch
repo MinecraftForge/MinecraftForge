@@ -1,0 +1,103 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntityZombie.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntityZombie.java
+@@ -31,9 +31,15 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.potion.Potion;
+ import net.minecraft.potion.PotionEffect;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++//CraftBukkit start
++import org.bukkit.craftbukkit.entity.CraftLivingEntity;
++import org.bukkit.event.entity.EntityCombustByEntityEvent;
++import org.bukkit.event.entity.EntityCombustEvent;
++//CraftBukkit end
+ 
+ public class EntityZombie extends EntityMob
+ {
+@@ -45,6 +51,7 @@
+      * Ticker used to determine the time remaining for this zombie to convert into a villager when cured.
+      */
+     private int conversionTime;
++    private int lastTick = MinecraftServer.currentTick; // CraftBukkit
+ 
+     public EntityZombie(World par1World)
+     {
+@@ -180,7 +187,15 @@
+ 
+                 if (flag)
+                 {
+-                    this.setFire(8);
++                    // CraftBukkit start
++                    EntityCombustEvent event = new EntityCombustEvent(this.getBukkitEntity(), 8);
++                    this.worldObj.getServer().getPluginManager().callEvent(event);
++
++                    if (!event.isCancelled())
++                    {
++                        this.setFire(event.getDuration());
++                    }
++                    // CraftBukkit end
+                 }
+             }
+         }
+@@ -253,6 +268,11 @@
+         if (!this.worldObj.isRemote && this.isConverting())
+         {
+             int i = this.getConversionTimeBoost();
++            // CraftBukkit start - Use wall time instead of ticks for villager conversion
++            int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++            this.lastTick = MinecraftServer.currentTick;
++            i *= elapsedTicks;
++            // CraftBukkit end
+             this.conversionTime -= i;
+ 
+             if (this.conversionTime <= 0)
+@@ -270,7 +290,15 @@
+ 
+         if (flag && this.getHeldItem() == null && this.isBurning() && this.rand.nextFloat() < (float)this.worldObj.difficultySetting * 0.3F)
+         {
+-            par1Entity.setFire(2 * this.worldObj.difficultySetting);
++            // CraftBukkit start
++            EntityCombustByEntityEvent event = new EntityCombustByEntityEvent(this.getBukkitEntity(), par1Entity.getBukkitEntity(), 2 * this.worldObj.difficultySetting);
++            this.worldObj.getServer().getPluginManager().callEvent(event);
++
++            if (!event.isCancelled())
++            {
++                par1Entity.setFire(event.getDuration());
++            }
++            // CraftBukkit end
+         }
+ 
+         return flag;
+@@ -324,20 +352,22 @@
+         return EnumCreatureAttribute.UNDEAD;
+     }
+ 
+-    protected void dropRareDrop(int par1)
++    // CraftBukkit start - Return rare dropped item instead of dropping it
++    protected ItemStack dropRareDrop(int i)
+     {
+         switch (this.rand.nextInt(3))
+         {
+             case 0:
+-                this.dropItem(Item.ingotIron.itemID, 1);
+-                break;
++                return new ItemStack(Item.ingotIron.itemID, 1, 0);
+             case 1:
+-                this.dropItem(Item.carrot.itemID, 1);
+-                break;
++                return new ItemStack(Item.carrot.itemID, 1, 0);
+             case 2:
+-                this.dropItem(Item.potato.itemID, 1);
+-        }
+-    }
++                return new ItemStack(Item.potato.itemID, 1, 0);
++            default:
++                return null;
++        }
++    }
++    // CraftBukkit end
+ 
+     /**
+      * Makes entity wear random armor based on difficulty

@@ -1,0 +1,57 @@
+--- ../src_base/minecraft/net/minecraft/dispenser/DispenserBehaviorBoat.java
++++ ../src_work/minecraft/net/minecraft/dispenser/DispenserBehaviorBoat.java
+@@ -6,6 +6,10 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.event.block.BlockDispenseEvent;
++// CraftBukkit end
+ 
+ final class DispenserBehaviorBoat extends BehaviorDefaultDispenseItem
+ {
+@@ -41,9 +45,41 @@
+             d3 = 0.0D;
+         }
+ 
+-        EntityBoat entityboat = new EntityBoat(world, d0, d1 + d3, d2);
++        // CraftBukkit start
++        ItemStack itemstack1 = par2ItemStack.splitStack(1);
++        org.bukkit.block.Block block = world.getWorld().getBlockAt(par1IBlockSource.getXInt(), par1IBlockSource.getYInt(), par1IBlockSource.getZInt());
++        CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
++        BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(d0, d1 + d3, d2));
++
++        if (!BlockDispenser.eventFired)
++        {
++            world.getServer().getPluginManager().callEvent(event);
++        }
++
++        if (event.isCancelled())
++        {
++            par2ItemStack.stackSize++;
++            return par2ItemStack;
++        }
++
++        if (!event.getItem().equals(craftItem))
++        {
++            par2ItemStack.stackSize++;
++            // Chain to handler for new item
++            ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++            IBehaviorDispenseItem ibehaviordispenseitem = (IBehaviorDispenseItem) BlockDispenser.dispenseBehaviorRegistry.func_82594_a(eventStack.getItem());
++
++            if (ibehaviordispenseitem != IBehaviorDispenseItem.itemDispenseBehaviorProvider && ibehaviordispenseitem != this)
++            {
++                ibehaviordispenseitem.dispense(par1IBlockSource, eventStack);
++                return par2ItemStack;
++            }
++        }
++
++        EntityBoat entityboat = new EntityBoat(world, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ());
++        // CraftBukkit end
+         world.spawnEntityInWorld(entityboat);
+-        par2ItemStack.splitStack(1);
++        // itemstack.a(1); // CraftBukkit - handled during event processing
+         return par2ItemStack;
+     }
+ 

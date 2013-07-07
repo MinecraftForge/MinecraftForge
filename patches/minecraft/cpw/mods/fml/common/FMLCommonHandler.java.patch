@@ -1,0 +1,15 @@
+--- ../src_base/minecraft/cpw/mods/fml/common/FMLCommonHandler.java
++++ ../src_work/minecraft/cpw/mods/fml/common/FMLCommonHandler.java
+@@ -473,7 +473,11 @@
+ 
+     public String getModName()
+     {
+-        List<String> modNames = Lists.newArrayListWithExpectedSize(3);
++        // MCPC+ start    
++        List<String> modNames = Lists.newArrayListWithExpectedSize(5);
++        modNames.add("mcpc");
++        modNames.add("craftbukkit");
++        // MCPC+ end        
+         modNames.add("fml");
+         if (!noForge)
+         {

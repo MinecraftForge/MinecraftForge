@@ -1,0 +1,81 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemDoor.java
++++ ../src_work/minecraft/net/minecraft/item/ItemDoor.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.item;
+ 
++import net.minecraft.entity.player.EntityPlayerMP;
++import net.minecraft.network.packet.Packet53BlockChange;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.creativetab.CreativeTabs;
+@@ -25,6 +27,8 @@
+      */
+     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+     {
++        final int clickedX = par4, clickedY = par5, clickedZ = par6; // CraftBukkit
++
+         if (par7 != 1)
+         {
+             return false;
+@@ -52,7 +56,14 @@
+                 else
+                 {
+                     int i1 = MathHelper.floor_double((double)((par2EntityPlayer.rotationYaw + 180.0F) * 4.0F / 360.0F) - 0.5D) & 3;
+-                    placeDoorBlock(par3World, par4, par5, par6, i1, block);
++
++                    // CraftBukkit start
++                    if (!place(par3World, par4, par5, par6, i1, block, par2EntityPlayer, clickedX, clickedY, clickedZ))
++                    {
++                        return false;
++                    }
++
++                    // CraftBukkit end
+                     --par1ItemStack.stackSize;
+                     return true;
+                 }
+@@ -66,6 +77,13 @@
+ 
+     public static void placeDoorBlock(World par0World, int par1, int par2, int par3, int par4, Block par5Block)
+     {
++        // CraftBukkit start
++        place(par0World, par1, par2, par3, par4, par5Block, null, par1, par2, par3);
++    }
++
++    public static boolean place(World par0World, int par1, int par2, int par3, int par4, Block par5Block, EntityPlayer entityplayer, int clickedX, int clickedY, int clickedZ)
++    {
++        // CraftBukkit end
+         byte b0 = 0;
+         byte b1 = 0;
+ 
+@@ -104,9 +122,30 @@
+             flag2 = true;
+         }
+ 
+-        par0World.setBlock(par1, par2, par3, par5Block.blockID, par4, 2);
++        // CraftBukkit start
++        if (entityplayer != null)
++        {
++            if (!ItemBlock.processBlockPlace(par0World, entityplayer, null, par1, par2, par3, par5Block.blockID, par4, clickedX, clickedY, clickedZ))
++            {
++                ((EntityPlayerMP) entityplayer).playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2 + 1, par3, par0World));
++                return false;
++            }
++
++            if (par0World.getBlockId(par1, par2, par3) != par5Block.blockID)
++            {
++                ((EntityPlayerMP) entityplayer).playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2 + 1, par3, par0World));
++                return true;
++            }
++        }
++        else
++        {
++            par0World.setBlock(par1, par2, par3, par5Block.blockID, par4, 2);
++        }
++
++        // CraftBukkit end
+         par0World.setBlock(par1, par2 + 1, par3, par5Block.blockID, 8 | (flag2 ? 1 : 0), 2);
+         par0World.notifyBlocksOfNeighborChange(par1, par2, par3, par5Block.blockID);
+         par0World.notifyBlocksOfNeighborChange(par1, par2 + 1, par3, par5Block.blockID);
++        return true; // CraftBukkit
+     }
+ }

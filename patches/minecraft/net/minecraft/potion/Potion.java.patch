@@ -1,0 +1,127 @@
+--- ../src_base/minecraft/net/minecraft/potion/Potion.java
++++ ../src_work/minecraft/net/minecraft/potion/Potion.java
+@@ -14,8 +14,14 @@
+ import net.minecraft.entity.ai.attributes.AttributeModifier;
+ import net.minecraft.entity.ai.attributes.BaseAttributeMap;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.projectile.EntityPotion;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.StringUtils;
++
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
++// CraftBukkit end
+ 
+ public class Potion
+ {
+@@ -110,12 +116,13 @@
+         }
+ 
+         this.liquidColor = par3;
++        org.bukkit.potion.PotionEffectType.registerPotionEffectType(new org.bukkit.craftbukkit.potion.CraftPotionEffectType(this)); // CraftBukkit
+     }
+ 
+     /**
+      * Sets the index for the icon displayed in the player's inventory when the status is active.
+      */
+-    public Potion setIconIndex(int par1, int par2)
++    protected Potion setIconIndex(int par1, int par2)
+     {
+         this.statusIconIndex = par1 + par2 * 8;
+         return this;
+@@ -135,14 +142,14 @@
+         {
+             if (par1EntityLivingBase.func_110143_aJ() < par1EntityLivingBase.func_110138_aP())
+             {
+-                par1EntityLivingBase.heal(1.0F);
++                par1EntityLivingBase.heal(1.0F, RegainReason.MAGIC_REGEN); // CraftBukkit
+             }
+         }
+         else if (this.id == poison.id)
+         {
+             if (par1EntityLivingBase.func_110143_aJ() > 1.0F)
+             {
+-                par1EntityLivingBase.attackEntityFrom(DamageSource.magic, 1.0F);
++                par1EntityLivingBase.attackEntityFrom(CraftEventFactory.POISON, 1.0F); // CraftBukkit - DamageSource.MAGIC -> CraftEventFactory.POISON
+             }
+         }
+         else if (this.id == wither.id)
+@@ -169,7 +176,7 @@
+         }
+         else
+         {
+-            par1EntityLivingBase.heal((float)Math.max(4 << par2, 0));
++            par1EntityLivingBase.heal((float) Math.max(4 << par2, 0), RegainReason.MAGIC); // CraftBukkit
+         }
+     }
+ 
+@@ -178,28 +185,36 @@
+      */
+     public void affectEntity(EntityLivingBase par1EntityLivingBase, EntityLivingBase par2EntityLivingBase, int par3, double par4)
+     {
++        // CraftBukkit start - Delegate; we need EntityPotion
++        applyInstantEffect(par1EntityLivingBase, par2EntityLivingBase, par3, par4, null);
++    }
++
++    public void applyInstantEffect(EntityLivingBase entityliving, EntityLivingBase entitylivingbase1, int i, double d0, EntityPotion potion)
++    {
++        // CraftBukkit end
+         int j;
+ 
+-        if ((this.id != heal.id || par2EntityLivingBase.isEntityUndead()) && (this.id != harm.id || !par2EntityLivingBase.isEntityUndead()))
+-        {
+-            if (this.id == harm.id && !par2EntityLivingBase.isEntityUndead() || this.id == heal.id && par2EntityLivingBase.isEntityUndead())
+-            {
+-                j = (int)(par4 * (double)(6 << par3) + 0.5D);
+-
+-                if (par1EntityLivingBase == null)
++        if ((this.id != heal.id || entitylivingbase1.isEntityUndead()) && (this.id != harm.id || !entitylivingbase1.isEntityUndead()))
++        {
++            if (this.id == harm.id && !entitylivingbase1.isEntityUndead() || this.id == heal.id && entitylivingbase1.isEntityUndead())
++            {
++                j = (int)(d0 * (double)(6 << i) + 0.5D);
++
++                if (entityliving == null)
+                 {
+-                    par2EntityLivingBase.attackEntityFrom(DamageSource.magic, (float)j);
++                    entitylivingbase1.attackEntityFrom(DamageSource.magic, (float) j);
+                 }
+                 else
+                 {
+-                    par2EntityLivingBase.attackEntityFrom(DamageSource.causeIndirectMagicDamage(par2EntityLivingBase, par1EntityLivingBase), (float)j);
++                    // CraftBukkit - The "damager" needs to be the potion
++                    entitylivingbase1.attackEntityFrom(DamageSource.causeIndirectMagicDamage(potion != null ? potion : entitylivingbase1, entityliving), (float) j);
+                 }
+             }
+         }
+         else
+         {
+-            j = (int)(par4 * (double)(4 << par3) + 0.5D);
+-            par2EntityLivingBase.heal((float)j);
++            j = (int)(d0 * (double)(4 << i) + 0.5D);
++            entitylivingbase1.heal((float) j, RegainReason.MAGIC);
+         }
+     }
+ 
+@@ -219,15 +234,15 @@
+         int k;
+ 
+         if (this.id == regeneration.id)
+-        {
++            {
+             k = 50 >> par2;
+-            return k > 0 ? par1 % k == 0 : true;
+-        }
++                return k > 0 ? par1 % k == 0 : true;
++            }
+         else if (this.id == poison.id)
+-        {
++            {
+             k = 25 >> par2;
+             return k > 0 ? par1 % k == 0 : true;
+-        }
++            }
+         else if (this.id == wither.id)
+         {
+             k = 40 >> par2;

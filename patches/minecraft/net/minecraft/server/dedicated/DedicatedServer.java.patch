@@ -1,0 +1,169 @@
+--- ../src_base/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
++++ ../src_work/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -10,6 +10,7 @@
+ import java.util.Collections;
+ import java.util.List;
+ import java.util.Random;
++import java.util.concurrent.Callable;
+ import net.minecraft.command.ICommandSender;
+ import net.minecraft.command.ServerCommand;
+ import net.minecraft.crash.CrashReport;
+@@ -31,6 +32,15 @@
+ import net.minecraft.world.World;
+ import net.minecraft.world.WorldSettings;
+ import net.minecraft.world.WorldType;
++import net.minecraft.world.chunk.storage.AnvilSaveConverter;
++
++// CraftBukkit start
++import java.io.PrintStream;
++import java.util.logging.Level;
++
++import org.bukkit.craftbukkit.LoggerOutputStream;
++import org.bukkit.event.server.ServerCommandEvent;
++// CraftBukkit end
+ 
+ public class DedicatedServer extends MinecraftServer implements IServer
+ {
+@@ -38,27 +48,41 @@
+     private final ILogAgent field_98131_l;
+     private RConThreadQuery theRConThreadQuery;
+     private RConThreadMain theRConThreadMain;
+-    private PropertyManager settings;
++    public PropertyManager settings; // CraftBukkit - private -> public
+     private boolean canSpawnStructures;
+     private EnumGameType gameType;
+     private NetworkListenThread networkThread;
+     private boolean guiIsEnabled;
+ 
++    // MCPC+ start - vanilla compatibility
+     public DedicatedServer(File par1File)
+     {
+         super(par1File);
+         this.field_98131_l = new LogAgent("Minecraft-Server", (String)null, (new File(par1File, "server.log")).getAbsolutePath());
+         new DedicatedServerSleepThread(this);
+     }
++    // MCPC+ end
++    // CraftBukkit start - Signature changed
++    public DedicatedServer(joptsimple.OptionSet options)
++    {
++        super(options);
++        // CraftBukkit end
++        this.field_98131_l = new LogAgent("Minecraft-Server", (String) null, (String) null); // CraftBukkit - null last argument
++        new DedicatedServerSleepThread(this);
++    }
+ 
+     /**
+      * Initialises the server and starts it.
+      */
+-    protected boolean startServer() throws IOException
++    protected boolean startServer() throws java.net.UnknownHostException   // CraftBukkit - throws UnknownHostException
+     {
+         DedicatedServerCommandThread dedicatedservercommandthread = new DedicatedServerCommandThread(this);
+         dedicatedservercommandthread.setDaemon(true);
+         dedicatedservercommandthread.start();
++        // CraftBukkit start
++        System.setOut(new PrintStream(new LoggerOutputStream(this.getLogAgent().func_120013_a(), Level.INFO), true));
++        System.setErr(new PrintStream(new LoggerOutputStream(this.getLogAgent().func_120013_a(), Level.SEVERE), true));
++        // CraftBukkit end
+         this.getLogAgent().logInfo("Starting minecraft server version 1.6.1");
+ 
+         if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L)
+@@ -69,7 +93,7 @@
+         FMLCommonHandler.instance().onServerStart(this);
+ 
+         this.getLogAgent().logInfo("Loading properties");
+-        this.settings = new PropertyManager(new File("server.properties"), this.getLogAgent());
++        this.settings = new PropertyManager(this.options, this.getLogAgent()); // CraftBukkit - CLI argument support
+ 
+         if (this.isSinglePlayer())
+         {
+@@ -122,7 +146,7 @@
+         {
+             this.networkThread = new DedicatedServerListenThread(this, inetaddress, this.getServerPort());
+         }
+-        catch (IOException ioexception)
++        catch (Throwable ioexception)     // CraftBukkit - IOException -> Throwable
+         {
+             this.getLogAgent().logWarning("**** FAILED TO BIND TO PORT!");
+             this.getLogAgent().logWarningFormatted("The exception was: {0}", new Object[] {ioexception.toString()});
+@@ -130,6 +154,8 @@
+             return false;
+         }
+ 
++        this.setConfigurationManager((ServerConfigurationManager)(new DedicatedPlayerList(this)));  // CraftBukkit
++
+         if (!this.isServerInOnlineMode())
+         {
+             this.getLogAgent().logWarning("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
+@@ -140,7 +166,8 @@
+ 
+         FMLCommonHandler.instance().onServerStarted();
+ 
+-        this.setConfigurationManager(new DedicatedPlayerList(this));
++        // this.a((PlayerList) (new DedicatedPlayerList(this))); // CraftBukkit - moved up
++        this.anvilConverterForAnvilFile = new AnvilSaveConverter(server.getWorldContainer()); // CraftBukkit - moved from MinecraftServer constructor
+         long j = System.nanoTime();
+ 
+         if (this.getFolderName() == null)
+@@ -200,11 +227,28 @@
+             this.getLogAgent().logInfo("Starting remote control listener");
+             this.theRConThreadMain = new RConThreadMain(this);
+             this.theRConThreadMain.startThread();
++            this.remoteConsole = new org.bukkit.craftbukkit.command.CraftRemoteConsoleCommandSender(); // CraftBukkit
++        }
++
++        // CraftBukkit start
++        if (this.server.getBukkitSpawnRadius() > -1)
++        {
++            this.getLogAgent().logInfo("'settings.spawn-radius' in bukkit.yml has been moved to 'spawn-protection' in server.properties. I will move your config for you.");
++            this.settings.properties.remove("spawn-protection");
++            this.settings.getIntProperty("spawn-protection", this.server.getBukkitSpawnRadius());
++            this.server.removeBukkitSpawnRadius();
++            this.settings.saveProperties();
+         }
+ 
+         return FMLCommonHandler.instance().handleServerStarting(this);
+     }
+ 
++    public PropertyManager getPropertyManager()
++    {
++        return this.settings;
++    }
++    // CraftBukkit end
++
+     public boolean canStructuresSpawn()
+     {
+         return this.canSpawnStructures;
+@@ -220,7 +264,7 @@
+      */
+     public int getDifficulty()
+     {
+-        return this.settings.getIntProperty("difficulty", 1);
++        return Math.max(0, Math.min(3, this.settings.getIntProperty("difficulty", 1))); // CraftBukkit - clamp values
+     }
+ 
+     /**
+@@ -270,7 +314,7 @@
+         System.exit(0);
+     }
+ 
+-    public void updateTimeLightAndEntities()
++    public void updateTimeLightAndEntities()   // CraftBukkit - protected -> public
+     {
+         super.updateTimeLightAndEntities();
+         this.executePendingCommands();
+@@ -311,7 +355,13 @@
+         while (!this.pendingCommandList.isEmpty())
+         {
+             ServerCommand servercommand = (ServerCommand)this.pendingCommandList.remove(0);
+-            this.getCommandManager().executeCommand(servercommand.sender, servercommand.command);
++            // CraftBukkit start - ServerCommand for preprocessing
++            ServerCommandEvent event = new ServerCommandEvent(this.console, servercommand.command);
++            this.server.getPluginManager().callEvent(event);
++            servercommand = new ServerCommand(event.getCommand(), servercommand.sender);
++            // this.getCommandHandler().a(servercommand.source, servercommand.command); // Called in dispatchServerCommand
++            this.server.dispatchServerCommand(this.console, servercommand);
++            // CraftBukkit end
+         }
+     }
+ 

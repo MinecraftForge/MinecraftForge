@@ -1,6 +1,30 @@
 --- ../src_base/minecraft/net/minecraft/inventory/ContainerRepair.java
 +++ ../src_work/minecraft/net/minecraft/inventory/ContainerRepair.java
-@@ -315,6 +315,11 @@
+@@ -15,6 +15,8 @@
+ import net.minecraft.world.World;
+ import org.apache.commons.lang3.StringUtils;
+ 
++import org.bukkit.craftbukkit.inventory.CraftInventoryView; // CraftBukkit
++
+ public class ContainerRepair extends Container
+ {
+     /** Here comes out item you merged and/or renamed. */
+@@ -38,9 +40,14 @@
+ 
+     /** The player that has this container open. */
+     private final EntityPlayer thePlayer;
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    private InventoryPlayer player;
++    // CraftBukkit end
+ 
+     public ContainerRepair(InventoryPlayer par1InventoryPlayer, World par2World, int par3, int par4, int par5, EntityPlayer par6EntityPlayer)
+     {
++        this.player = par1InventoryPlayer; // CraftBukkit
+         this.theWorld = par2World;
+         this.field_82861_i = par3;
+         this.field_82858_j = par4;
+@@ -315,6 +322,11 @@
                  k = Math.max(1, k / 2);
              }
  
@@ -12,11 +36,34 @@
              this.maximumCost = k + i;
  
              if (i <= 0)
-@@ -331,6 +336,7 @@
-             {
-                 itemstack1 = null;
-             }
-+
+@@ -399,6 +411,11 @@
  
-             if (itemstack1 != null)
-             {
+     public boolean canInteractWith(EntityPlayer par1EntityPlayer)
+     {
++        if (!this.checkReachable)
++        {
++            return true;    // CraftBukkit
++        }
++
+         return this.theWorld.getBlockId(this.field_82861_i, this.field_82858_j, this.field_82859_k) != Block.anvil.blockID ? false : par1EntityPlayer.getDistanceSq((double)this.field_82861_i + 0.5D, (double)this.field_82858_j + 0.5D, (double)this.field_82859_k + 0.5D) <= 64.0D;
+     }
+ 
+@@ -489,4 +506,18 @@
+     {
+         return par0ContainerRepair.stackSizeToBeUsedInRepair;
+     }
++
++    // CraftBukkit start
++    public CraftInventoryView getBukkitView()
++    {
++        if (bukkitEntity != null)
++        {
++            return bukkitEntity;
++        }
++
++        org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryAnvil(this.inputSlots, this.outputSlot);
++        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
+ }

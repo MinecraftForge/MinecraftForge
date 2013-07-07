@@ -1,0 +1,229 @@
+--- ../src_base/minecraft/net/minecraft/world/chunk/storage/ExtendedBlockStorage.java
++++ ../src_work/minecraft/net/minecraft/world/chunk/storage/ExtendedBlockStorage.java
+@@ -57,6 +57,29 @@
+         }
+     }
+ 
++    // CraftBukkit start
++    public ExtendedBlockStorage(int y, boolean flag, byte[] blkIds, byte[] extBlkIds)
++    {
++        this.yBase = y;
++        this.blockLSBArray = blkIds;
++
++        if (extBlkIds != null)
++        {
++            this.blockMSBArray = new NibbleArray(extBlkIds, 4);
++        }
++
++        this.blockMetadataArray = new NibbleArray(this.blockLSBArray.length, 4);
++        this.blocklightArray = new NibbleArray(this.blockLSBArray.length, 4);
++
++        if (flag)
++        {
++            this.skylightArray = new NibbleArray(this.blockLSBArray.length, 4);
++        }
++
++        this.removeInvalidBlocks();
++    }
++    // CraftBukkit end
++
+     /**
+      * Returns the extended block ID for a location in a chunk, merged from a byte array and a NibbleArray to form a
+      * full 12-bit block ID.
+@@ -200,6 +223,106 @@
+ 
+     public void removeInvalidBlocks()
+     {
++        // CraftBukkit start - Optimize for speed
++        byte[] blkIds = this.blockLSBArray;
++        int cntNonEmpty = 0;
++        int cntTicking = 0;
++
++        if (this.blockMSBArray == null)   // No extended block IDs?  Don't waste time messing with them
++        {
++            for (int off = 0; off < blkIds.length; off++)
++            {
++                int l = blkIds[off] & 0xFF;
++
++                if (l > 0)
++                {
++                    if (Block.blocksList[l] == null)
++                    {
++                        blkIds[off] = 0;
++                    }
++                    else
++                    {
++                        ++cntNonEmpty;
++
++                        if (Block.blocksList[l].getTickRandomly())
++                        {
++                            ++cntTicking;
++                        }
++                    }
++                }
++            }
++        }
++        else
++        {
++            this.blockMSBArray.forceToNonTrivialArray(); // Spigot
++            byte[] ext = this.blockMSBArray.getValueArray();
++
++            for (int off = 0, off2 = 0; off < blkIds.length;)
++            {
++                byte extid = ext[off2];
++                int l = (blkIds[off] & 0xFF) | ((extid & 0xF) << 8); // Even data
++
++                if (l > 0)
++                {
++                    if (Block.blocksList[l] == null)
++                    {
++                        blkIds[off] = 0;
++                        ext[off2] &= 0xF0;
++                    }
++                    else
++                    {
++                        ++cntNonEmpty;
++
++                        if (Block.blocksList[l].getTickRandomly())
++                        {
++                            ++cntTicking;
++                        }
++                    }
++                }
++
++                off++;
++                l = (blkIds[off] & 0xFF) | ((extid & 0xF0) << 4); // Odd data
++
++                if (l > 0)
++                {
++                    if (Block.blocksList[l] == null)
++                    {
++                        blkIds[off] = 0;
++                        ext[off2] &= 0x0F;
++                    }
++                    else
++                    {
++                        ++cntNonEmpty;
++
++                        if (Block.blocksList[l].getTickRandomly())
++                        {
++                            ++cntTicking;
++                        }
++                    }
++                }
++
++                off++;
++                off2++;
++            }
++
++            // Spigot start
++            this.blockMSBArray.detectAndProcessTrivialArray();
++
++            if (this.blockMSBArray.isTrivialArray() && (this.blockMSBArray.getTrivialArrayValue() == 0))
++            {
++                this.blockMSBArray = null;
++            }
++
++            // Spigot end
++        }
++
++        this.blockRefCount = cntNonEmpty;
++        this.tickRefCount = cntTicking;
++    }
++
++    public void old_recalcBlockCounts()
++    {
++        // CraftBukkit end
+         this.blockRefCount = 0;
+         this.tickRefCount = 0;
+ 
+@@ -282,7 +405,7 @@
+      */
+     public void setBlockLSBArray(byte[] par1ArrayOfByte)
+     {
+-        this.blockLSBArray = par1ArrayOfByte;
++        this.blockLSBArray = this.validateByteArray(par1ArrayOfByte); // CraftBukkit - Validate data
+     }
+ 
+     /**
+@@ -290,7 +413,24 @@
+      */
+     public void setBlockMSBArray(NibbleArray par1NibbleArray)
+     {
+-        this.blockMSBArray = par1NibbleArray;
++        // CraftBukkit start - Don't hang on to an empty nibble array
++        boolean empty = true;
++
++        // Spigot start
++        if ((!par1NibbleArray.isTrivialArray()) || (par1NibbleArray.getTrivialArrayValue() != 0))
++            {
++                empty = false;
++        }
++
++        // Spigot end
++
++        if (empty)
++        {
++            return;
++        }
++
++        // CraftBukkit end
++        this.blockMSBArray = this.validateNibbleArray(par1NibbleArray); // CraftBukkit - Validate data
+     }
+ 
+     /**
+@@ -298,7 +438,7 @@
+      */
+     public void setBlockMetadataArray(NibbleArray par1NibbleArray)
+     {
+-        this.blockMetadataArray = par1NibbleArray;
++        this.blockMetadataArray = this.validateNibbleArray(par1NibbleArray); // CraftBukkit - Validate data
+     }
+ 
+     /**
+@@ -306,7 +446,7 @@
+      */
+     public void setBlocklightArray(NibbleArray par1NibbleArray)
+     {
+-        this.blocklightArray = par1NibbleArray;
++        this.blocklightArray = this.validateNibbleArray(par1NibbleArray); // CraftBukkit - Validate data
+     }
+ 
+     /**
+@@ -314,8 +454,34 @@
+      */
+     public void setSkylightArray(NibbleArray par1NibbleArray)
+     {
+-        this.skylightArray = par1NibbleArray;
+-    }
++        this.skylightArray = this.validateNibbleArray(par1NibbleArray); // CraftBukkit - Validate data
++    }
++    
++    // CraftBukkit start - Validate array lengths
++    private NibbleArray validateNibbleArray(NibbleArray nibbleArray)
++    {
++        // Spigot start - fix for more awesome nibble arrays
++        if (nibbleArray != null && nibbleArray.getByteLength() < 2048)
++        {
++            nibbleArray.resizeArray(2048);
++        }
++
++        // Spigot end
++        return nibbleArray;
++    }
++
++    private byte[] validateByteArray(byte[] byteArray)
++    {
++        if (byteArray != null && byteArray.length < 4096)
++        {
++            byte[] newArray = new byte[4096];
++            System.arraycopy(byteArray, 0, newArray, 0, byteArray.length);
++            byteArray = newArray;
++        }
++
++        return byteArray;
++    }
++    // CraftBukkit end
+ 
+     @SideOnly(Side.CLIENT)
+ 

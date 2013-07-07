@@ -1,6 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/item/Item.java
 +++ ../src_work/minecraft/net/minecraft/item/Item.java
-@@ -11,13 +11,18 @@
+@@ -4,6 +4,7 @@
+ import com.google.common.collect.Multimap;
+ 
+ import cpw.mods.fml.common.registry.GameData;
++import cpw.mods.fml.common.registry.ItemProxy;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.List;
+@@ -11,13 +12,18 @@
  import java.util.UUID;
  import net.minecraft.block.Block;
  import net.minecraft.block.material.Material;
@@ -19,17 +27,21 @@
  import net.minecraft.potion.Potion;
  import net.minecraft.potion.PotionHelper;
  import net.minecraft.stats.StatList;
-@@ -26,7 +31,9 @@
+@@ -26,9 +32,11 @@
  import net.minecraft.util.MovingObjectPosition;
  import net.minecraft.util.StatCollector;
  import net.minecraft.util.Vec3;
 +import net.minecraft.util.WeightedRandomChestContent;
  import net.minecraft.world.World;
+-
+-public class Item
 +import net.minecraftforge.common.ChestGenHooks;
- 
- public class Item
++
++public class Item implements ItemProxy // MCPC+ - marker interface
  {
-@@ -248,13 +255,16 @@
+     protected static final UUID field_111210_e = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
+     private CreativeTabs tabToDisplayOn;
+@@ -248,18 +256,23 @@
      protected Icon itemIcon;
      protected String field_111218_cA;
  
@@ -47,7 +59,15 @@
          }
  
          itemsList[256 + par1] = this;
-@@ -600,6 +610,7 @@
+-
++        
+         GameData.newItemAdded(this);
++
++        org.bukkit.Material.addMaterial(this.itemID); // MCPC+ - many mods do not register items through GameRegistry so to be safe we need to add materials here
+     }
+ 
+     public Item setMaxStackSize(int par1)
+@@ -600,6 +613,7 @@
      }
  
      @SideOnly(Side.CLIENT)
@@ -55,7 +75,7 @@
      public boolean hasEffect(ItemStack par1ItemStack)
      {
          return par1ItemStack.isItemEnchanted();
-@@ -639,6 +650,10 @@
+@@ -639,6 +653,10 @@
          float f7 = f4 * f5;
          float f8 = f3 * f5;
          double d3 = 5.0D;
@@ -66,7 +86,7 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
      }
-@@ -736,4 +751,514 @@
+@@ -736,4 +754,514 @@
      {
          StatList.initStats();
      }
@@ -522,7 +542,7 @@
 +    {
 +        return stack.itemDamage;
 +    }
-+    
++
 +    /**
 +     * Return the maxDamage for this ItemStack. Defaults to the maxDamage field in this item, 
 +     * but can be overridden here for other sources such as NBT.

@@ -1,0 +1,21 @@
+--- ../src_base/minecraft/net/minecraft/village/VillageSiege.java
++++ ../src_work/minecraft/net/minecraft/village/VillageSiege.java
+@@ -200,7 +200,7 @@
+             }
+ 
+             entityzombie.setLocationAndAngles(vec3.xCoord, vec3.yCoord, vec3.zCoord, this.worldObj.rand.nextFloat() * 360.0F, 0.0F);
+-            this.worldObj.spawnEntityInWorld(entityzombie);
++            this.worldObj.addEntity(entityzombie, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_INVASION); // CraftBukkit
+             ChunkCoordinates chunkcoordinates = this.theVillage.getCenter();
+             entityzombie.func_110171_b(chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, this.theVillage.getVillageRadius());
+             return true;
+@@ -217,7 +217,8 @@
+ 
+             if (this.theVillage.isInRange(i1, j1, k1) && SpawnerAnimals.canCreatureTypeSpawnAtLocation(EnumCreatureType.monster, this.worldObj, i1, j1, k1))
+             {
+-                this.worldObj.getWorldVec3Pool().getVecFromPool((double)i1, (double)j1, (double)k1);
++                // CraftBukkit - add Return
++                return this.worldObj.getWorldVec3Pool().getVecFromPool((double) i1, (double) j1, (double) k1);
+             }
+         }
+ 

@@ -1,0 +1,177 @@
+--- ../src_base/minecraft/net/minecraft/tileentity/TileEntityCommandBlock.java
++++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityCommandBlock.java
+@@ -11,16 +11,30 @@
+ import net.minecraft.util.ChatMessageComponent;
+ import net.minecraft.util.ChunkCoordinates;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import java.util.ArrayList;
++import com.google.common.base.Joiner;
++import net.minecraft.command.PlayerSelector;
++import net.minecraft.entity.player.EntityPlayerMP;
++// CraftBukkit end
+ 
+ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
+ {
+     private int succesCount;
+ 
+     /** The command this block will execute when powered. */
+-    private String command = "";
++    public String command = ""; // CraftBukkit - private -> public
+ 
+     /** The name of command sender (usually username, but possibly "Rcon") */
+     private String commandSenderName = "@";
++    // CraftBukkit start
++    private final org.bukkit.command.BlockCommandSender sender;
++
++    public TileEntityCommandBlock()
++    {
++        sender = new org.bukkit.craftbukkit.command.CraftBlockCommandSender(this);
++    }
++    // CraftBukkit end
+ 
+     /**
+      * Sets the command this block will execute when powered.
+@@ -46,8 +60,108 @@
+ 
+             if (minecraftserver != null && minecraftserver.isCommandBlockEnabled())
+             {
+-                ICommandManager icommandmanager = minecraftserver.getCommandManager();
+-                return icommandmanager.executeCommand(this, this.command);
++                // CraftBukkit start - Handle command block commands using Bukkit dispatcher
++                org.bukkit.command.SimpleCommandMap commandMap = minecraftserver.server.getCommandMap();
++                Joiner joiner = Joiner.on(" ");
++                String command = this.command;
++
++                if (this.command.startsWith("/"))
++                {
++                    command = this.command.substring(1);
++                }
++
++                String[] args = command.split(" ");
++                ArrayList<String[]> commands = new ArrayList<String[]>();
++
++                // Block disallowed commands
++                if (args[0].equalsIgnoreCase("stop") || args[0].equalsIgnoreCase("kick") || args[0].equalsIgnoreCase("op") ||
++                        args[0].equalsIgnoreCase("deop") || args[0].equalsIgnoreCase("ban") || args[0].equalsIgnoreCase("ban-ip") ||
++                        args[0].equalsIgnoreCase("pardon") || args[0].equalsIgnoreCase("pardon-ip") || args[0].equalsIgnoreCase("reload"))
++                {
++                    return 0;
++                }
++
++                // Make sure this is a valid command
++                if (commandMap.getCommand(args[0]) == null)
++                {
++                    return 0;
++                }
++
++                // If the world has no players don't run
++                if (this.worldObj.playerEntities.isEmpty())
++                {
++                    return 0;
++                }
++
++                // testfor command requires special handling
++                if (args[0].equalsIgnoreCase("testfor"))
++                {
++                    if (args.length < 2)
++                    {
++                        return 0;
++                    }
++
++                    EntityPlayerMP[] players = PlayerSelector.matchPlayers(this, args[1]);
++
++                    if (players != null && players.length > 0)
++                    {
++                        return players.length;
++                    }
++                    else
++                    {
++                        EntityPlayerMP player = MinecraftServer.getServer().getConfigurationManager().getPlayerForUsername(args[1]);
++
++                        if (player == null)
++                        {
++                            return 0;
++                        }
++                        else
++                        {
++                            return 1;
++                        }
++                    }
++                }
++
++                commands.add(args);
++                // Find positions of command block syntax, if any
++                ArrayList<String[]> newCommands = new ArrayList<String[]>();
++
++                for (int i = 0; i < args.length; i++)
++                {
++                    if (PlayerSelector.hasArguments(args[i]))
++                    {
++                        for (int j = 0; j < commands.size(); j++)
++                        {
++                            newCommands.addAll(this.buildCommands(commands.get(j), i));
++                        }
++
++                        ArrayList<String[]> temp = commands;
++                        commands = newCommands;
++                        newCommands = temp;
++                        newCommands.clear();
++                    }
++                }
++
++                int completed = 0;
++
++                // Now dispatch all of the commands we ended up with
++                for (int i = 0; i < commands.size(); i++)
++                {
++                    try
++                    {
++                        if (commandMap.dispatch(sender, joiner.join(java.util.Arrays.asList(commands.get(i)))))
++                        {
++                            completed++;
++                        }
++                    }
++                    catch (Throwable exception)
++                    {
++                        minecraftserver.getLogAgent().logWarningException(String.format("CommandBlock at (%d,%d,%d) failed to handle command", this.xCoord, this.yCoord, this.zCoord), exception);
++                    }
++                }
++
++                return completed;
++                // CraftBukkit end
+             }
+             else
+             {
+@@ -56,6 +170,31 @@
+         }
+     }
+ 
++    // CraftBukkit start
++    private ArrayList<String[]> buildCommands(String[] args, int pos)
++    {
++        ArrayList<String[]> commands = new ArrayList<String[]>();
++        EntityPlayerMP[] players = PlayerSelector.matchPlayers(this, args[pos]);
++
++        if (players != null)
++        {
++            for (EntityPlayerMP player : players)
++            {
++                if (player.worldObj != this.worldObj)
++                {
++                    continue;
++                }
++
++                String[] command = args.clone();
++                command[pos] = player.getEntityName();
++                commands.add(command);
++            }
++        }
++
++        return commands;
++    }
++    // CraftBukkit end
++
+     @SideOnly(Side.CLIENT)
+ 
+     /**

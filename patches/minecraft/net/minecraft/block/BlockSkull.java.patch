@@ -9,34 +9,77 @@
  import java.util.Random;
  import net.minecraft.block.material.Material;
  import net.minecraft.client.renderer.texture.IconRegister;
-@@ -135,11 +137,6 @@
+@@ -19,6 +21,10 @@
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.craftbukkit.util.BlockStateListPopulator;
++import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
++// CraftBukkit end
+ 
+ public class BlockSkull extends BlockContainer
+ {
+@@ -134,10 +140,27 @@
+         return par1;
      }
  
++    // CraftBukkit start - Special case dropping so we can get info from the tile entity
      /**
--     * Drops the block items with a specified chance of dropping the specified items
--     */
--    public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7) {}
--
--    /**
-      * Called when the block is attempted to be harvested
+      * Drops the block items with a specified chance of dropping the specified items
       */
-     public void onBlockHarvested(World par1World, int par2, int par3, int par4, int par5, EntityPlayer par6EntityPlayer)
-@@ -150,6 +147,8 @@
+-    public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7) {}
++    public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
++    {
++        if (par1World.rand.nextFloat() < par6)
++        {
++            ItemStack itemstack = new ItemStack(Item.skull.itemID, 1, this.getDamageValue(par1World, par2, par3, par4));
++            TileEntitySkull tileentityskull = (TileEntitySkull) par1World.getBlockTileEntity(par2, par3, par4);
++
++            if (tileentityskull.getSkullType() == 3 && tileentityskull.getExtraType() != null && tileentityskull.getExtraType().length() > 0)
++            {
++                itemstack.setTagCompound(new NBTTagCompound());
++                itemstack.getTagCompound().setString("SkullOwner", tileentityskull.getExtraType());
++            }
++
++            this.dropBlockAsItem_do(par1World, par2, par3, par4, itemstack);
++        }
++    }
++    // CraftBukkit end
+ 
+     /**
+      * Called when the block is attempted to be harvested
+@@ -150,6 +173,8 @@
              par1World.setBlockMetadataWithNotify(par2, par3, par4, par5, 4);
          }
  
-+        dropBlockAsItem(par1World, par2, par3, par4, par5, 0);
++        //dropBlockAsItem(par1World, par2, par3, par4, par5, 0); // MCPC+ - disable Forge's drops for now, use CB drop instead
 +
          super.onBlockHarvested(par1World, par2, par3, par4, par5, par6EntityPlayer);
      }
  
-@@ -158,24 +157,30 @@
+@@ -158,24 +183,30 @@
       */
      public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
      {
 -        if (!par1World.isRemote)
 -        {
 -            if ((par6 & 8) == 0)
+-            {
+-                ItemStack itemstack = new ItemStack(Item.skull.itemID, 1, this.getDamageValue(par1World, par2, par3, par4));
+-                TileEntitySkull tileentityskull = (TileEntitySkull)par1World.getBlockTileEntity(par2, par3, par4);
+-
+-                if (tileentityskull.getSkullType() == 3 && tileentityskull.getExtraType() != null && tileentityskull.getExtraType().length() > 0)
+-                {
+-                    itemstack.setTagCompound(new NBTTagCompound());
+-                    itemstack.getTagCompound().setString("SkullOwner", tileentityskull.getExtraType());
+-                }
+-
+-                this.dropBlockAsItem_do(par1World, par2, par3, par4, itemstack);
+-            }
+-
+-            super.breakBlock(par1World, par2, par3, par4, par5, par6);
+-        }
 +        super.breakBlock(par1World, par2, par3, par4, par5, par6);
 +    }
 +
@@ -50,22 +93,9 @@
 +            TileEntitySkull tileentityskull = (TileEntitySkull)world.getBlockTileEntity(x, y, z);
 +
 +            if (tileentityskull == null)
-             {
--                ItemStack itemstack = new ItemStack(Item.skull.itemID, 1, this.getDamageValue(par1World, par2, par3, par4));
--                TileEntitySkull tileentityskull = (TileEntitySkull)par1World.getBlockTileEntity(par2, par3, par4);
--
--                if (tileentityskull.getSkullType() == 3 && tileentityskull.getExtraType() != null && tileentityskull.getExtraType().length() > 0)
--                {
--                    itemstack.setTagCompound(new NBTTagCompound());
--                    itemstack.getTagCompound().setString("SkullOwner", tileentityskull.getExtraType());
--                }
--
--                this.dropBlockAsItem_do(par1World, par2, par3, par4, itemstack);
++            {
 +                return drops;
-             }
--
--            super.breakBlock(par1World, par2, par3, par4, par5, par6);
--        }
++            }
 +            if (tileentityskull.getSkullType() == 3 && tileentityskull.getExtraType() != null && tileentityskull.getExtraType().length() > 0)
 +            {
 +                itemstack.setTagCompound(new NBTTagCompound());
@@ -77,3 +107,110 @@
      }
  
      /**
+@@ -202,16 +233,18 @@
+             {
+                 if (par1World.getBlockId(par2, par3 - 1, par4 + i1) == l && par1World.getBlockId(par2, par3 - 1, par4 + i1 + 1) == l && par1World.getBlockId(par2, par3 - 2, par4 + i1 + 1) == l && par1World.getBlockId(par2, par3 - 1, par4 + i1 + 2) == l && this.func_82528_d(par1World, par2, par3, par4 + i1, 1) && this.func_82528_d(par1World, par2, par3, par4 + i1 + 1, 1) && this.func_82528_d(par1World, par2, par3, par4 + i1 + 2, 1))
+                 {
++                    // CraftBukkit start - Use BlockStateListPopulator
++                    BlockStateListPopulator blockList = new BlockStateListPopulator(par1World.getWorld());
+                     par1World.setBlockMetadataWithNotify(par2, par3, par4 + i1, 8, 2);
+                     par1World.setBlockMetadataWithNotify(par2, par3, par4 + i1 + 1, 8, 2);
+                     par1World.setBlockMetadataWithNotify(par2, par3, par4 + i1 + 2, 8, 2);
+-                    par1World.setBlock(par2, par3, par4 + i1, 0, 0, 2);
+-                    par1World.setBlock(par2, par3, par4 + i1 + 1, 0, 0, 2);
+-                    par1World.setBlock(par2, par3, par4 + i1 + 2, 0, 0, 2);
+-                    par1World.setBlock(par2, par3 - 1, par4 + i1, 0, 0, 2);
+-                    par1World.setBlock(par2, par3 - 1, par4 + i1 + 1, 0, 0, 2);
+-                    par1World.setBlock(par2, par3 - 1, par4 + i1 + 2, 0, 0, 2);
+-                    par1World.setBlock(par2, par3 - 2, par4 + i1 + 1, 0, 0, 2);
++                    blockList.setTypeId(par2, par3, par4 + i1, 0);
++                    blockList.setTypeId(par2, par3, par4 + i1 + 1, 0);
++                    blockList.setTypeId(par2, par3, par4 + i1 + 2, 0);
++                    blockList.setTypeId(par2, par3 - 1, par4 + i1, 0);
++                    blockList.setTypeId(par2, par3 - 1, par4 + i1 + 1, 0);
++                    blockList.setTypeId(par2, par3 - 1, par4 + i1 + 2, 0);
++                    blockList.setTypeId(par2, par3 - 2, par4 + i1 + 1, 0);
+ 
+                     if (!par1World.isRemote)
+                     {
+@@ -219,7 +252,11 @@
+                         entitywither.setLocationAndAngles((double)par2 + 0.5D, (double)par3 - 1.45D, (double)(par4 + i1) + 1.5D, 90.0F, 0.0F);
+                         entitywither.renderYawOffset = 90.0F;
+                         entitywither.func_82206_m();
+-                        par1World.spawnEntityInWorld(entitywither);
++
++                        if (par1World.addEntity(entitywither, SpawnReason.BUILD_WITHER))
++                        {
++                            blockList.updateList();
++                        }
+                     }
+ 
+                     for (j1 = 0; j1 < 120; ++j1)
+@@ -227,13 +264,7 @@
+                         par1World.spawnParticle("snowballpoof", (double)par2 + par1World.rand.nextDouble(), (double)(par3 - 2) + par1World.rand.nextDouble() * 3.9D, (double)(par4 + i1 + 1) + par1World.rand.nextDouble(), 0.0D, 0.0D, 0.0D);
+                     }
+ 
+-                    par1World.notifyBlockChange(par2, par3, par4 + i1, 0);
+-                    par1World.notifyBlockChange(par2, par3, par4 + i1 + 1, 0);
+-                    par1World.notifyBlockChange(par2, par3, par4 + i1 + 2, 0);
+-                    par1World.notifyBlockChange(par2, par3 - 1, par4 + i1, 0);
+-                    par1World.notifyBlockChange(par2, par3 - 1, par4 + i1 + 1, 0);
+-                    par1World.notifyBlockChange(par2, par3 - 1, par4 + i1 + 2, 0);
+-                    par1World.notifyBlockChange(par2, par3 - 2, par4 + i1 + 1, 0);
++                    // CraftBukkit end
+                     return;
+                 }
+             }
+@@ -242,37 +273,36 @@
+             {
+                 if (par1World.getBlockId(par2 + i1, par3 - 1, par4) == l && par1World.getBlockId(par2 + i1 + 1, par3 - 1, par4) == l && par1World.getBlockId(par2 + i1 + 1, par3 - 2, par4) == l && par1World.getBlockId(par2 + i1 + 2, par3 - 1, par4) == l && this.func_82528_d(par1World, par2 + i1, par3, par4, 1) && this.func_82528_d(par1World, par2 + i1 + 1, par3, par4, 1) && this.func_82528_d(par1World, par2 + i1 + 2, par3, par4, 1))
+                 {
++                    // CraftBukkit start - Use BlockStateListPopulator
++                    BlockStateListPopulator blockList = new BlockStateListPopulator(par1World.getWorld());
+                     par1World.setBlockMetadataWithNotify(par2 + i1, par3, par4, 8, 2);
+                     par1World.setBlockMetadataWithNotify(par2 + i1 + 1, par3, par4, 8, 2);
+                     par1World.setBlockMetadataWithNotify(par2 + i1 + 2, par3, par4, 8, 2);
+-                    par1World.setBlock(par2 + i1, par3, par4, 0, 0, 2);
+-                    par1World.setBlock(par2 + i1 + 1, par3, par4, 0, 0, 2);
+-                    par1World.setBlock(par2 + i1 + 2, par3, par4, 0, 0, 2);
+-                    par1World.setBlock(par2 + i1, par3 - 1, par4, 0, 0, 2);
+-                    par1World.setBlock(par2 + i1 + 1, par3 - 1, par4, 0, 0, 2);
+-                    par1World.setBlock(par2 + i1 + 2, par3 - 1, par4, 0, 0, 2);
+-                    par1World.setBlock(par2 + i1 + 1, par3 - 2, par4, 0, 0, 2);
++                    blockList.setTypeId(par2 + i1, par3, par4, 0);
++                    blockList.setTypeId(par2 + i1 + 1, par3, par4, 0);
++                    blockList.setTypeId(par2 + i1 + 2, par3, par4, 0);
++                    blockList.setTypeId(par2 + i1, par3 - 1, par4, 0);
++                    blockList.setTypeId(par2 + i1 + 1, par3 - 1, par4, 0);
++                    blockList.setTypeId(par2 + i1 + 2, par3 - 1, par4, 0);
++                    blockList.setTypeId(par2 + i1 + 1, par3 - 2, par4, 0);
+ 
+                     if (!par1World.isRemote)
+                     {
+                         entitywither = new EntityWither(par1World);
+                         entitywither.setLocationAndAngles((double)(par2 + i1) + 1.5D, (double)par3 - 1.45D, (double)par4 + 0.5D, 0.0F, 0.0F);
+                         entitywither.func_82206_m();
+-                        par1World.spawnEntityInWorld(entitywither);
++
++                        if (par1World.addEntity(entitywither, SpawnReason.BUILD_WITHER))
++                        {
++                            blockList.updateList();
++                        }
+                     }
+ 
+                     for (j1 = 0; j1 < 120; ++j1)
+                     {
+                         par1World.spawnParticle("snowballpoof", (double)(par2 + i1 + 1) + par1World.rand.nextDouble(), (double)(par3 - 2) + par1World.rand.nextDouble() * 3.9D, (double)par4 + par1World.rand.nextDouble(), 0.0D, 0.0D, 0.0D);
+                     }
+-
+-                    par1World.notifyBlockChange(par2 + i1, par3, par4, 0);
+-                    par1World.notifyBlockChange(par2 + i1 + 1, par3, par4, 0);
+-                    par1World.notifyBlockChange(par2 + i1 + 2, par3, par4, 0);
+-                    par1World.notifyBlockChange(par2 + i1, par3 - 1, par4, 0);
+-                    par1World.notifyBlockChange(par2 + i1 + 1, par3 - 1, par4, 0);
+-                    par1World.notifyBlockChange(par2 + i1 + 2, par3 - 1, par4, 0);
+-                    par1World.notifyBlockChange(par2 + i1 + 1, par3 - 2, par4, 0);
++                    // CraftBukkit end
+                     return;
+                 }
+             }

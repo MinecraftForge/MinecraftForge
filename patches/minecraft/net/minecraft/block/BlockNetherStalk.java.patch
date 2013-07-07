@@ -9,7 +9,7 @@
  import java.util.Random;
  import net.minecraft.client.renderer.texture.IconRegister;
  import net.minecraft.creativetab.CreativeTabs;
-@@ -9,6 +11,7 @@
+@@ -9,11 +11,13 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.Icon;
  import net.minecraft.world.World;
@@ -17,7 +17,13 @@
  
  public class BlockNetherStalk extends BlockFlower
  {
-@@ -38,7 +41,8 @@
+     @SideOnly(Side.CLIENT)
+     private Icon[] iconArray;
++    private static final String[] field_94373_a = new String[] {"netherStalk_0", "netherStalk_1", "netherStalk_2"};
+ 
+     protected BlockNetherStalk(int par1)
+     {
+@@ -38,7 +42,8 @@
       */
      public boolean canBlockStay(World par1World, int par2, int par3, int par4)
      {
@@ -27,6 +33,16 @@
      }
  
      /**
+@@ -50,8 +55,7 @@
+ 
+         if (l < 3 && par5Random.nextInt(10) == 0)
+         {
+-            ++l;
+-            par1World.setBlockMetadataWithNotify(par2, par3, par4, l, 2);
++            org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(par1World, par2, par3, par4, this.blockID, ++l); // CraftBukkit
+         }
+ 
+         super.updateTick(par1World, par2, par3, par4, par5Random);
 @@ -80,25 +84,7 @@
       */
      public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)

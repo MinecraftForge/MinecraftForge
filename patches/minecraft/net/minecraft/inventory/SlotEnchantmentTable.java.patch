@@ -1,0 +1,81 @@
+--- ../src_base/minecraft/net/minecraft/inventory/SlotEnchantmentTable.java
++++ ../src_work/minecraft/net/minecraft/inventory/SlotEnchantmentTable.java
+@@ -1,16 +1,58 @@
+ package net.minecraft.inventory;
+ 
++// CraftBukkit start
++import java.util.List;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
+ import net.minecraft.item.ItemStack;
++// CraftBukkit end
+ 
+-class SlotEnchantmentTable extends InventoryBasic
++public class SlotEnchantmentTable extends InventoryBasic   // CraftBukkit -> public
+ {
+     /** The brewing stand this slot belongs to. */
+-    final ContainerEnchantment container;
++    private final ContainerEnchantment container;
++
++    // CraftBukkit start
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    public org.bukkit.entity.Player player;
++    private int maxStack = MAX_STACK;
++
++    public ItemStack[] getContents()
++    {
++        return this.inventoryContents;
++    }
++
++    public void onOpen(CraftHumanEntity who)
++    {
++        transaction.add(who);
++    }
++
++    public void onClose(CraftHumanEntity who)
++    {
++        transaction.remove(who);
++    }
++
++    public List<HumanEntity> getViewers()
++    {
++        return transaction;
++    }
++
++    public org.bukkit.inventory.InventoryHolder getOwner()
++    {
++        return this.player;
++    }
++
++    public void setMaxStackSize(int size)
++    {
++        maxStack = size;
++    }
++    // CraftBukkit end
+ 
+     SlotEnchantmentTable(ContainerEnchantment par1ContainerEnchantment, String par2Str, boolean par3, int par4)
+     {
+         super(par2Str, par3, par4);
+         this.container = par1ContainerEnchantment;
++        this.setMaxStackSize(1); // CraftBukkit
+     }
+ 
+     /**
+@@ -19,7 +61,7 @@
+      */
+     public int getInventoryStackLimit()
+     {
+-        return 1;
++        return maxStack; // CraftBukkit
+     }
+ 
+     /**
+@@ -28,7 +70,7 @@
+     public void onInventoryChanged()
+     {
+         super.onInventoryChanged();
+-        this.container.onCraftMatrixChanged(this);
++        this.container.onCraftMatrixChanged((IInventory) this);
+     }
+ 
+     /**

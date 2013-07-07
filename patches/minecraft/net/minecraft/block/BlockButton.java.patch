@@ -1,16 +1,20 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockButton.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockButton.java
-@@ -14,6 +14,9 @@
+@@ -14,6 +14,13 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
 +import net.minecraftforge.common.ForgeDirection;
 +import static net.minecraftforge.common.ForgeDirection.*;
++// CraftBukkit start
++import org.bukkit.event.block.BlockRedstoneEvent;
++import org.bukkit.event.entity.EntityInteractEvent;
++// CraftBukkit end
 +
  public abstract class BlockButton extends Block
  {
      /** Whether this button is sensible to arrows, used by wooden buttons. */
-@@ -66,7 +69,11 @@
+@@ -66,7 +73,11 @@
       */
      public boolean canPlaceBlockOnSide(World par1World, int par2, int par3, int par4, int par5)
      {
@@ -23,7 +27,7 @@
      }
  
      /**
-@@ -74,7 +81,10 @@
+@@ -74,7 +85,10 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
@@ -35,7 +39,7 @@
      }
  
      /**
-@@ -86,19 +96,22 @@
+@@ -86,19 +100,22 @@
          int k1 = j1 & 8;
          j1 &= 7;
  
@@ -62,7 +66,7 @@
          {
              j1 = 1;
          }
-@@ -115,7 +128,11 @@
+@@ -115,7 +132,11 @@
       */
      private int getOrientation(World par1World, int par2, int par3, int par4)
      {
@@ -75,7 +79,7 @@
      }
  
      /**
-@@ -129,22 +146,22 @@
+@@ -129,22 +150,22 @@
              int i1 = par1World.getBlockMetadata(par2, par3, par4) & 7;
              boolean flag = false;
  
@@ -102,3 +106,74 @@
              {
                  flag = true;
              }
+@@ -235,6 +256,18 @@
+         }
+         else
+         {
++            // CraftBukkit start
++            org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3, par4);
++            int old = (k1 != 8) ? 15 : 0;
++            int current = (k1 == 8) ? 15 : 0;
++            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);
++            par1World.getServer().getPluginManager().callEvent(eventRedstone);
++
++            if ((eventRedstone.getNewCurrent() > 0) != (k1 == 8))
++            {
++                return true;
++            }
++            // CraftBukkit end
+             par1World.setBlockMetadataWithNotify(par2, par3, par4, j1 + k1, 3);
+             par1World.markBlockRangeForRenderUpdate(par2, par3, par4, par2, par3, par4);
+             par1World.playSoundEffect((double)par2 + 0.5D, (double)par3 + 0.5D, (double)par4 + 0.5D, "random.click", 0.3F, 0.6F);
+@@ -306,6 +339,16 @@
+ 
+             if ((l & 8) != 0)
+             {
++                // CraftBukkit start
++                org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3, par4);
++                BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, 15, 0);
++                par1World.getServer().getPluginManager().callEvent(eventRedstone);
++
++                if (eventRedstone.getNewCurrent() > 0)
++                {
++                    return;
++                }
++                // CraftBukkit end
+                 if (this.sensible)
+                 {
+                     this.func_82535_o(par1World, par2, par3, par4);
+@@ -359,6 +402,34 @@
+         List list = par1World.getEntitiesWithinAABB(EntityArrow.class, AxisAlignedBB.getAABBPool().getAABB((double)par2 + this.minX, (double)par3 + this.minY, (double)par4 + this.minZ, (double)par2 + this.maxX, (double)par3 + this.maxY, (double)par4 + this.maxZ));
+         boolean flag1 = !list.isEmpty();
+ 
++        // CraftBukkit start - Call interact event when arrows turn on wooden buttons
++        if (flag != flag1 && flag1)
++        {
++            org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3, par4);
++            boolean allowed = false;
++
++            // If all of the events are cancelled block the button press, else allow
++            for (Object object : list)
++            {
++                if (object != null)
++                {
++                    EntityInteractEvent event = new EntityInteractEvent(((Entity) object).getBukkitEntity(), block);
++                    par1World.getServer().getPluginManager().callEvent(event);
++
++                    if (!event.isCancelled())
++                    {
++                        allowed = true;
++                        break;
++                    }
++                }
++            }
++
++            if (!allowed)
++            {
++                return;
++            }
++        }
++        // CraftBukkit end
+         if (flag1 && !flag)
+         {
+             par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 | 8, 3);

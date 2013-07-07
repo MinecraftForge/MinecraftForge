@@ -1,0 +1,46 @@
+--- ../src_base/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
++++ ../src_work/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
+@@ -28,8 +28,8 @@
+     /**
+      * Is the entity that throws this 'thing' (snowball, ender pearl, eye of ender or potion)
+      */
+-    private EntityLivingBase thrower;
+-    private String throwerName;
++    public EntityLivingBase thrower; // CraftBukkit - private -> public
++    public String throwerName; // CraftBukkit - private -> public
+     private int ticksInGround;
+     private int ticksInAir;
+ 
+@@ -207,7 +207,7 @@
+ 
+                     if (movingobjectposition1 != null)
+                     {
+-                        double d1 = vec3.distanceTo(movingobjectposition1.hitVec);
++                        double d1 = vec3.squareDistanceTo(movingobjectposition1.hitVec); // CraftBukkit - distance efficiency
+ 
+                         if (d1 < d0 || d0 == 0.0D)
+                         {
+@@ -233,6 +233,14 @@
+             else
+             {
+                 this.onImpact(movingobjectposition);
++
++                // CraftBukkit start
++                if (this.isDead)
++                {
++                    org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this);
++                }
++
++                // CraftBukkit end
+             }
+         }
+ 
+@@ -296,7 +304,7 @@
+     /**
+      * Called when this EntityThrowable hits a block or entity.
+      */
+-    protected abstract void onImpact(MovingObjectPosition movingobjectposition);
++    protected abstract void onImpact(MovingObjectPosition par1MovingObjectPosition);
+ 
+     /**
+      * (abstract) Protected helper method to write subclass entity data to NBT.

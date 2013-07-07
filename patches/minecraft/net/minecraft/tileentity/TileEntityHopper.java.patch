@@ -1,0 +1,203 @@
+--- ../src_base/minecraft/net/minecraft/tileentity/TileEntityHopper.java
++++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityHopper.java
+@@ -7,9 +7,11 @@
+ import net.minecraft.command.IEntitySelector;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.item.EntityItem;
++import net.minecraft.entity.item.EntityMinecartHopper;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.inventory.IInventory;
+ import net.minecraft.inventory.ISidedInventory;
++import net.minecraft.inventory.InventoryLargeChest;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
+@@ -18,6 +20,15 @@
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.event.inventory.InventoryMoveItemEvent;
++import org.bukkit.event.inventory.InventoryPickupItemEvent;
++import org.bukkit.inventory.Inventory;
++// CraftBukkit end
++
+ public class TileEntityHopper extends TileEntity implements Hopper
+ {
+     private ItemStack[] hopperItemStacks = new ItemStack[5];
+@@ -25,6 +36,38 @@
+     /** The name that is displayed if the hopper was renamed */
+     private String inventoryName;
+     private int transferCooldown = -1;
++
++    // CraftBukkit start
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    private int maxStack = MAX_STACK;
++
++    public ItemStack[] getContents()
++    {
++        return this.hopperItemStacks;
++    }
++
++    public void onOpen(CraftHumanEntity who)
++    {
++        transaction.add(who);
++    }
++
++    public void onClose(CraftHumanEntity who)
++    {
++        transaction.remove(who);
++    }
++
++    public List<HumanEntity> getViewers()
++    {
++        return transaction;
++    }
++
++    public void setMaxStackSize(int size)
++    {
++        maxStack = size;
++    }
++    // CraftBukkit end
++
++    public TileEntityHopper() {}
+ 
+     /**
+      * Reads a tile entity from NBT.
+@@ -283,11 +326,51 @@
+                 if (this.getStackInSlot(i) != null)
+                 {
+                     ItemStack itemstack = this.getStackInSlot(i).copy();
+-                    ItemStack itemstack1 = insertStack(iinventory, this.decrStackSize(i, 1), Facing.oppositeSide[BlockHopper.getDirectionFromMetadata(this.getBlockMetadata())]);
++                    // CraftBukkit start - Call event when pushing items into other inventories
++                    CraftItemStack oitemstack = CraftItemStack.asCraftMirror(this.decrStackSize(i, 1));
++                    Inventory destinationInventory;
++
++                    // Have to special case large chests as they work oddly
++                    if (iinventory instanceof InventoryLargeChest)
++                    {
++                        destinationInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((InventoryLargeChest) iinventory);
++                    }
++                    else
++                    {
++                        // MCPC+ start - support mod inventories, with no owners
++                        if (iinventory.getOwner() != null) {
++                            destinationInventory = iinventory.getOwner().getInventory();
++                        } else {
++                            // TODO: create a mod inventory for passing to the event, instead of null
++                            destinationInventory = null;
++                        }
++                        // MCPC+ end
++                    }
++
++                    InventoryMoveItemEvent event = new InventoryMoveItemEvent(this.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
++                    this.getWorldObj().getServer().getPluginManager().callEvent(event);
++
++                    if (event.isCancelled())
++                    {
++                        this.setInventorySlotContents(i, itemstack);
++                        this.setTransferCooldown(8); // Delay hopper checks
++                        return false;
++                    }
++
++                    ItemStack itemstack1 = insertStack(iinventory, CraftItemStack.asNMSCopy(event.getItem()), Facing.oppositeSide[BlockHopper.getDirectionFromMetadata(this.getBlockMetadata())]);
+ 
+                     if (itemstack1 == null || itemstack1.stackSize == 0)
+                     {
+-                        iinventory.onInventoryChanged();
++                        if (event.getItem().equals(oitemstack))
++                        {
++                            iinventory.onInventoryChanged();
++                        }
++                        else
++                        {
++                            this.setInventorySlotContents(i, itemstack);
++                        }
++
++                        // CraftBukkit end
+                         return true;
+                     }
+ 
+@@ -356,11 +439,60 @@
+         if (itemstack != null && canExtractItemFromInventory(par1IInventory, itemstack, par2, par3))
+         {
+             ItemStack itemstack1 = itemstack.copy();
+-            ItemStack itemstack2 = insertStack(par0Hopper, par1IInventory.decrStackSize(par2, 1), -1);
++            // CraftBukkit start - Call event on collection of items from inventories into the hopper
++            CraftItemStack oitemstack = CraftItemStack.asCraftMirror(par1IInventory.decrStackSize(par2, 1));
++            Inventory sourceInventory;
++
++            // Have to special case large chests as they work oddly
++            if (par1IInventory instanceof InventoryLargeChest)
++            {
++                sourceInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((InventoryLargeChest) par1IInventory);
++            }
++            else
++            {
++                // MCPC+ start - support mod inventories, with no owners
++                if (par1IInventory.getOwner() != null) {
++                    sourceInventory = par1IInventory.getOwner().getInventory();
++                } else {
++                    // TODO: create a mod inventory for passing to the event, instead of null
++                    sourceInventory = null;
++                }
++                // MCPC+ end
++            }
++
++            InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), par0Hopper.getOwner().getInventory(), false);
++            par0Hopper.getWorldObj().getServer().getPluginManager().callEvent(event);
++
++            if (event.isCancelled())
++            {
++                par1IInventory.setInventorySlotContents(par2, itemstack1);
++
++                if (par0Hopper instanceof TileEntityHopper)
++                {
++                    ((TileEntityHopper) par0Hopper).setTransferCooldown(8); // Delay hopper checks
++                }
++                else if (par0Hopper instanceof EntityMinecartHopper)
++                {
++                    ((EntityMinecartHopper) par0Hopper).setTransferTicker(4); // Delay hopper minecart checks
++                }
++
++                return false;
++            }
++
++            ItemStack itemstack2 = insertStack(par0Hopper, CraftItemStack.asNMSCopy(event.getItem()), -1);
+ 
+             if (itemstack2 == null || itemstack2.stackSize == 0)
+             {
+-                par1IInventory.onInventoryChanged();
++                if (event.getItem().equals(oitemstack))
++                {
++                    par1IInventory.onInventoryChanged();
++                }
++                else
++                {
++                    par1IInventory.setInventorySlotContents(par2, itemstack1);
++                }
++
++                // CraftBukkit end
+                 return true;
+             }
+ 
+@@ -380,6 +512,16 @@
+         }
+         else
+         {
++            // CraftBukkit start
++            InventoryPickupItemEvent event = new InventoryPickupItemEvent(par0IInventory.getOwner().getInventory(), (org.bukkit.entity.Item) par1EntityItem.getBukkitEntity());
++            par1EntityItem.worldObj.getServer().getPluginManager().callEvent(event);
++
++            if (event.isCancelled())
++            {
++                return false;
++            }
++
++            // CraftBukkit end
+             ItemStack itemstack = par1EntityItem.getEntityItem().copy();
+             ItemStack itemstack1 = insertStack(par0IInventory, itemstack, -1);
+ 

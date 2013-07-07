@@ -1,6 +1,68 @@
 --- ../src_base/minecraft/net/minecraft/world/storage/MapData.java
 +++ ../src_work/minecraft/net/minecraft/world/storage/MapData.java
-@@ -173,7 +173,7 @@
+@@ -9,9 +9,20 @@
+ import java.util.Map;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.item.ItemStack;
+-import net.minecraft.nbt.*;
++import net.minecraft.nbt.NBTBase;
++import net.minecraft.nbt.NBTTagByte;
++import net.minecraft.nbt.NBTTagCompound;
++import net.minecraft.nbt.NBTTagInt;
+ import net.minecraft.world.World;
+ import net.minecraft.world.WorldSavedData;
++
++// CraftBukkit start
++import java.util.UUID;
++
++import org.bukkit.craftbukkit.CraftServer;
++import org.bukkit.craftbukkit.CraftWorld;
++import org.bukkit.craftbukkit.map.CraftMapView;
++// CraftBukkit end
+ 
+ public class MapData extends WorldSavedData
+ {
+@@ -34,9 +45,19 @@
+     private Map playersHashMap = new HashMap();
+     public Map playersVisibleOnMap = new LinkedHashMap();
+ 
++    // CraftBukkit start
++    public final CraftMapView mapView;
++    private CraftServer server;
++    private UUID uniqueId = null;
++    // CraftBukkit end
++
+     public MapData(String par1Str)
+     {
+         super(par1Str);
++        // CraftBukkit start
++        mapView = new CraftMapView(this);
++        server = (CraftServer) org.bukkit.Bukkit.getServer();
++        // CraftBukkit end
+     }
+ 
+     /**
+@@ -44,16 +65,9 @@
+      */
+     public void readFromNBT(NBTTagCompound par1NBTTagCompound)
+     {
+-        NBTBase dimension = par1NBTTagCompound.getTag("dimension");
+-
+-        if (dimension instanceof NBTTagByte)
+-        {
+-            this.dimension = ((NBTTagByte)dimension).data;
+-        }
+-        else
+-        {
+-            this.dimension = ((NBTTagInt)dimension).data;
+-        }
++        // CraftBukkit start
++        NBTBase dimTag = par1NBTTagCompound.getTag("dimension");
++        int dimension = (dimTag instanceof NBTTagByte) ? ((NBTTagByte) dimTag).data : ((NBTTagInt) dimTag).data;
+ 
+         this.xCenter = par1NBTTagCompound.getInteger("xCenter");
+         this.zCenter = par1NBTTagCompound.getInteger("zCenter");
+@@ -173,7 +187,7 @@
              par8 += par8 < 0.0D ? -8.0D : 8.0D;
              b3 = (byte)((int)(par8 * 16.0D / 360.0D));
  

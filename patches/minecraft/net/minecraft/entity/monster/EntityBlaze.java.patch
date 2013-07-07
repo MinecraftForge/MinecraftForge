@@ -1,0 +1,24 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntityBlaze.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntityBlaze.java
+@@ -206,12 +206,17 @@
+     {
+         if (par1)
+         {
++            // CraftBukkit start
++            java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
+             int j = this.rand.nextInt(2 + par2);
+ 
+-            for (int k = 0; k < j; ++k)
+-            {
+-                this.dropItem(Item.blazeRod.itemID, 1);
+-            }
++            if (j > 0)
++            {
++                loot.add(new org.bukkit.inventory.ItemStack(Item.blazeRod.itemID, j));
++            }
++
++            org.bukkit.craftbukkit.event.CraftEventFactory.callEntityDeathEvent(this, loot);
++            // CraftBukkit end
+         }
+     }
+ 

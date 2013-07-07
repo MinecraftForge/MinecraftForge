@@ -1,0 +1,39 @@
+--- ../src_base/minecraft/net/minecraft/entity/projectile/EntityLargeFireball.java
++++ ../src_work/minecraft/net/minecraft/entity/projectile/EntityLargeFireball.java
+@@ -8,6 +8,7 @@
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.MovingObjectPosition;
+ import net.minecraft.world.World;
++import org.bukkit.event.entity.ExplosionPrimeEvent; // CraftBukkit
+ 
+ public class EntityLargeFireball extends EntityFireball
+ {
+@@ -41,7 +42,17 @@
+                 par1MovingObjectPosition.entityHit.attackEntityFrom(DamageSource.causeFireballDamage(this, this.shootingEntity), 6.0F);
+             }
+ 
+-            this.worldObj.newExplosion((Entity)null, this.posX, this.posY, this.posZ, (float)this.field_92057_e, true, this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"));
++            // CraftBukkit start
++            ExplosionPrimeEvent event = new ExplosionPrimeEvent((org.bukkit.entity.Explosive) org.bukkit.craftbukkit.entity.CraftEntity.getEntity(this.worldObj.getServer(), this));
++            this.worldObj.getServer().getPluginManager().callEvent(event);
++
++            if (!event.isCancelled())
++            {
++                // give 'this' instead of (Entity) null so we know what causes the damage
++                this.worldObj.newExplosion(this, this.posX, this.posY, this.posZ, event.getRadius(), event.getFire(), this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"));
++            }
++
++            // CraftBukkit end
+             this.setDead();
+         }
+     }
+@@ -64,7 +75,8 @@
+ 
+         if (par1NBTTagCompound.hasKey("ExplosionPower"))
+         {
+-            this.field_92057_e = par1NBTTagCompound.getInteger("ExplosionPower");
++            // CraftBukkit - set yield when setting explosionpower
++            this.yield = this.field_92057_e = par1NBTTagCompound.getInteger("ExplosionPower");
+         }
+     }
+ }

@@ -1,6 +1,22 @@
 --- ../src_base/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
 +++ ../src_work/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
-@@ -48,10 +48,14 @@
+@@ -22,6 +22,7 @@
+ import net.minecraft.item.ItemInWorldManager;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.network.INetworkManager;
++import net.minecraft.network.NetLoginHandler;
+ import net.minecraft.network.NetServerHandler;
+ import net.minecraft.network.packet.Packet;
+ import net.minecraft.network.packet.Packet16BlockItemSwitch;
+@@ -29,6 +30,7 @@
+ import net.minecraft.network.packet.Packet201PlayerInfo;
+ import net.minecraft.network.packet.Packet202PlayerAbilities;
+ import net.minecraft.network.packet.Packet209SetPlayerTeam;
++import net.minecraft.network.packet.Packet250CustomPayload;
+ import net.minecraft.network.packet.Packet3Chat;
+ import net.minecraft.network.packet.Packet41EntityEffect;
+ import net.minecraft.network.packet.Packet43Experience;
+@@ -48,10 +50,36 @@
  import net.minecraft.util.EnumChatFormatting;
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.EnumGameType;
@@ -10,46 +26,646 @@
  import net.minecraft.world.WorldServer;
  import net.minecraft.world.demo.DemoWorldManager;
  import net.minecraft.world.storage.IPlayerFileData;
++import net.minecraft.network.NetLoginHandler;
 +
++import cpw.mods.fml.common.FMLLog;
 +import net.minecraftforge.common.DimensionManager;
++import net.minecraftforge.common.network.packet.DimensionRegisterPacket;
++import net.minecraftforge.common.network.ForgePacket;
++// CraftBukkit start
++import org.bukkit.craftbukkit.CraftServer;
++import org.bukkit.craftbukkit.CraftWorld;
++import org.bukkit.craftbukkit.chunkio.ChunkIOExecutor;
++
++import org.bukkit.Bukkit;
++import org.bukkit.Location;
++import org.bukkit.TravelAgent;
++import org.bukkit.entity.Player;
++import org.bukkit.event.player.PlayerChangedWorldEvent;
++import org.bukkit.event.player.PlayerPortalEvent;
++import org.bukkit.event.player.PlayerJoinEvent;
++import org.bukkit.event.player.PlayerLoginEvent;
++import org.bukkit.event.player.PlayerQuitEvent;
++import org.bukkit.event.player.PlayerRespawnEvent;
++import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
++import org.bukkit.util.Vector;
++// CraftBukkit end
  
  public abstract class ServerConfigurationManager
  {
-@@ -387,13 +391,23 @@
+@@ -61,7 +89,7 @@
+     private final MinecraftServer mcServer;
+ 
+     /** A list of player entities that exist on this server. */
+-    public final List playerEntityList = new ArrayList();
++    public final List playerEntityList = new java.util.concurrent.CopyOnWriteArrayList(); // CraftBukkit - ArrayList -> CopyOnWriteArrayList: Iterator safety
+     private final BanList bannedPlayers = new BanList(new File("banned-players.txt"));
+     private final BanList bannedIPs = new BanList(new File("banned-ips.txt"));
+ 
+@@ -69,15 +97,15 @@
+     private Set ops = new HashSet();
+ 
+     /** The Set of all whitelisted players. */
+-    private Set whiteListedPlayers = new HashSet();
++    private Set whiteListedPlayers = new java.util.LinkedHashSet(); // CraftBukkit - HashSet -> LinkedHashSet
+ 
+     /** Reference to the PlayerNBTManager object. */
+-    private IPlayerFileData playerNBTManagerObj;
++    public IPlayerFileData playerNBTManagerObj; // CraftBukkit - private -> public
+ 
+     /**
+      * Server setting to only allow OPs and whitelisted players to join the server.
+      */
+-    private boolean whiteListEnforced;
++    public boolean whiteListEnforced; // CraftBukkit - private -> public
+ 
+     /** The maximum number of players that can be connected at a time. */
+     protected int maxPlayers;
+@@ -91,9 +119,17 @@
+      * index into playerEntities of player to ping, updated every tick; currently hardcoded to max at 200 players
+      */
+     private int playerPingIndex;
++    public boolean allowLoginEvent = false;
++
++    // CraftBukkit start
++    private CraftServer cserver;
+ 
+     public ServerConfigurationManager(MinecraftServer par1MinecraftServer)
+     {
++        par1MinecraftServer.server = new CraftServer(par1MinecraftServer, this);
++        par1MinecraftServer.console = org.bukkit.craftbukkit.command.ColouredConsoleSender.getInstance();
++        this.cserver = par1MinecraftServer.server;
++        // CraftBukkit end
+         this.mcServer = par1MinecraftServer;
+         this.bannedPlayers.setListActive(false);
+         this.bannedIPs.setListActive(false);
+@@ -112,18 +148,39 @@
+             s = par1INetworkManager.getSocketAddress().toString();
+         }
+ 
+-        this.mcServer.getLogAgent().logInfo(par2EntityPlayerMP.getCommandSenderName() + "[" + s + "] logged in with entity id " + par2EntityPlayerMP.entityId + " at (" + par2EntityPlayerMP.posX + ", " + par2EntityPlayerMP.posY + ", " + par2EntityPlayerMP.posZ + ")");
++        // CraftBukkit - add world and location to 'logged in' message.
++        this.mcServer.getLogAgent().logInfo(par2EntityPlayerMP.getCommandSenderName() + "[" + s + "] logged in with entity id " + par2EntityPlayerMP.entityId + " at ([" + par2EntityPlayerMP.worldObj.worldInfo.getWorldName() + "] " + par2EntityPlayerMP.posX + ", " + par2EntityPlayerMP.posY + ", " + par2EntityPlayerMP.posZ + ")");
+         WorldServer worldserver = this.mcServer.worldServerForDimension(par2EntityPlayerMP.dimension);
+         ChunkCoordinates chunkcoordinates = worldserver.getSpawnPoint();
+         this.func_72381_a(par2EntityPlayerMP, (EntityPlayerMP)null, worldserver);
+         NetServerHandler netserverhandler = new NetServerHandler(this.mcServer, par1INetworkManager, par2EntityPlayerMP);
+-        netserverhandler.sendPacketToPlayer(new Packet1Login(par2EntityPlayerMP.entityId, worldserver.getWorldInfo().getTerrainType(), par2EntityPlayerMP.theItemInWorldManager.getGameType(), worldserver.getWorldInfo().isHardcoreModeEnabled(), worldserver.provider.dimensionId, worldserver.difficultySetting, worldserver.getHeight(), this.getMaxPlayers()));
++        // CraftBukkit start -- Don't send a higher than 60 MaxPlayer size, otherwise the PlayerInfo window won't render correctly.
++        int maxPlayers = this.getMaxPlayers();
++
++        if (maxPlayers > 60)
++        {
++            maxPlayers = 60;
++        }
++
++        // MCPC+ start - send DimensionRegisterPacket to client before attempting to login to a Bukkit dimension
++        if (DimensionManager.isBukkitDimension(par2EntityPlayerMP.dimension))
++        {
++            System.out.println("SENDING DIMENSIONREGISTERPACKET FOR LOGIN player dimension = " + par2EntityPlayerMP.dimension  +", prov id = " + worldserver.getWorld().getEnvironment().getId());
++            Packet250CustomPayload[] pkt = ForgePacket.makePacketSet(new DimensionRegisterPacket(par2EntityPlayerMP.dimension, worldserver.getWorld().getEnvironment().getId()));
++            par2EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(pkt[0]);
++        }
++        // MCPC+ end
++        System.out.println("Sending Packet1Login player dimension = " + par2EntityPlayerMP.dimension + ", provider id = " + worldserver.provider.dimensionId);
++        netserverhandler.sendPacketToPlayer(new Packet1Login(par2EntityPlayerMP.entityId, worldserver.getWorldInfo().getTerrainType(), par2EntityPlayerMP.theItemInWorldManager.getGameType(), worldserver.getWorldInfo().isHardcoreModeEnabled(), worldserver.provider.dimensionId, worldserver.difficultySetting, worldserver.getHeight(), maxPlayers));
++        System.out.println("Packet1Login worldserver difficulty = " + worldserver.difficultySetting);
++        par2EntityPlayerMP.getBukkitEntity().sendSupportedChannels();
++        // CraftBukkit end
+         netserverhandler.sendPacketToPlayer(new Packet6SpawnPosition(chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ));
+         netserverhandler.sendPacketToPlayer(new Packet202PlayerAbilities(par2EntityPlayerMP.capabilities));
+         netserverhandler.sendPacketToPlayer(new Packet16BlockItemSwitch(par2EntityPlayerMP.inventory.currentItem));
+         this.func_96456_a((ServerScoreboard)worldserver.getScoreboard(), par2EntityPlayerMP);
+         this.updateTimeAndWeatherForPlayer(par2EntityPlayerMP, worldserver);
+-        this.sendChatMsg(ChatMessageComponent.func_111082_b("multiplayer.player.joined", new Object[] {par2EntityPlayerMP.getTranslatedEntityName()}).func_111059_a(EnumChatFormatting.YELLOW));
++        // this.sendAll(new Packet3Chat(EnumChatFormat.YELLOW + entityplayermp.getScoreboardDisplayName() + EnumChatFormat.YELLOW + " joined the game.")); // CraftBukkit - handled in event
+         this.playerLoggedIn(par2EntityPlayerMP);
+         netserverhandler.setPlayerLocation(par2EntityPlayerMP.posX, par2EntityPlayerMP.posY, par2EntityPlayerMP.posZ, par2EntityPlayerMP.rotationYaw, par2EntityPlayerMP.rotationPitch);
+         this.mcServer.getNetworkThread().addPlayer(netserverhandler);
+@@ -160,7 +217,7 @@
+         }
+     }
+ 
+-    protected void func_96456_a(ServerScoreboard par1ServerScoreboard, EntityPlayerMP par2EntityPlayerMP)
++    public void func_96456_a(ServerScoreboard par1ServerScoreboard, EntityPlayerMP par2EntityPlayerMP)   // CraftBukkit - protected -> public
+     {
+         HashSet hashset = new HashSet();
+         Iterator iterator = par1ServerScoreboard.func_96525_g().iterator();
+@@ -196,6 +253,11 @@
+      */
+     public void setPlayerManager(WorldServer[] par1ArrayOfWorldServer)
+     {
++        if (this.playerNBTManagerObj != null)
++        {
++            return;    // CraftBukkit
++        }
++
+         this.playerNBTManagerObj = par1ArrayOfWorldServer[0].getSaveHandler().getSaveHandler();
+     }
+ 
+@@ -222,7 +284,7 @@
+      */
+     public NBTTagCompound readPlayerDataFromFile(EntityPlayerMP par1EntityPlayerMP)
+     {
+-        NBTTagCompound nbttagcompound = this.mcServer.worldServers[0].getWorldInfo().getPlayerNBTTagCompound();
++        NBTTagCompound nbttagcompound = this.mcServer.worlds.get(0).getWorldInfo().getPlayerNBTTagCompound(); // CraftBukkit
+         NBTTagCompound nbttagcompound1;
+ 
+         if (par1EntityPlayerMP.getCommandSenderName().equals(this.mcServer.getServerOwner()) && nbttagcompound != null)
+@@ -252,16 +314,58 @@
+      */
+     public void playerLoggedIn(EntityPlayerMP par1EntityPlayerMP)
+     {
+-        this.sendPacketToAllPlayers(new Packet201PlayerInfo(par1EntityPlayerMP.getCommandSenderName(), true, 1000));
++        cserver.detectListNameConflict(par1EntityPlayerMP); // CraftBukkit
++        // this.sendAll(new Packet201PlayerInfo(entityplayermp.name, true, 1000)); // CraftBukkit - replaced with loop below
+         this.playerEntityList.add(par1EntityPlayerMP);
+         WorldServer worldserver = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
+-        worldserver.spawnEntityInWorld(par1EntityPlayerMP);
+-        this.func_72375_a(par1EntityPlayerMP, (WorldServer)null);
++        // CraftBukkit start
++        PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(this.cserver.getPlayer(par1EntityPlayerMP), "\u00A7e" + par1EntityPlayerMP.username + " joined the game.");
++        this.cserver.getPluginManager().callEvent(playerJoinEvent);
++        String joinMessage = playerJoinEvent.getJoinMessage();
++
++        if ((joinMessage != null) && (joinMessage.length() > 0))
++        {
++            this.mcServer.getConfigurationManager().sendPacketToAllPlayers(new Packet3Chat(ChatMessageComponent.func_111066_d(joinMessage)));
++        }
++
++        this.cserver.onPlayerJoin(playerJoinEvent.getPlayer());
++        ChunkIOExecutor.adjustPoolSize(this.getCurrentPlayerCount());
++        // CraftBukkit end
++
++        // CraftBukkit start - Only add if the player wasn't moved in the event
++        if (par1EntityPlayerMP.worldObj == worldserver && !worldserver.playerEntities.contains(par1EntityPlayerMP))
++        {
++            worldserver.spawnEntityInWorld(par1EntityPlayerMP);
++            this.func_72375_a(par1EntityPlayerMP, (WorldServer) null);
++        }
++
++        // CraftBukkit end
++        // CraftBukkit start - sendAll above replaced with this loop
++        Packet201PlayerInfo packet = new Packet201PlayerInfo(par1EntityPlayerMP.listName, true, 1000);
+ 
+         for (int i = 0; i < this.playerEntityList.size(); ++i)
+         {
+             EntityPlayerMP entityplayermp1 = (EntityPlayerMP)this.playerEntityList.get(i);
+-            par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet201PlayerInfo(entityplayermp1.getCommandSenderName(), true, entityplayermp1.ping));
++
++            if (entityplayermp1.getBukkitEntity().canSee(par1EntityPlayerMP.getBukkitEntity()))
++            {
++                entityplayermp1.playerNetServerHandler.sendPacketToPlayer(packet);
++            }
++        }
++
++        // CraftBukkit end
++
++        for (int i = 0; i < this.playerEntityList.size(); ++i)
++        {
++            EntityPlayerMP entityplayermp1 = (EntityPlayerMP)this.playerEntityList.get(i);
++
++            // CraftBukkit start - .name -> .listName
++            if (par1EntityPlayerMP.getBukkitEntity().canSee(entityplayermp1.getBukkitEntity()))
++            {
++                par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet201PlayerInfo(entityplayermp1.listName, true, entityplayermp1.ping));
++            }
++
++            // CraftBukkit end
+         }
+     }
+ 
+@@ -273,25 +377,56 @@
+         par1EntityPlayerMP.getServerForPlayer().getPlayerManager().updateMountedMovingPlayer(par1EntityPlayerMP);
+     }
+ 
+-    /**
+-     * Called when a player disconnects from the game. Writes player data to disk and removes them from the world.
+-     */
+-    public void playerLoggedOut(EntityPlayerMP par1EntityPlayerMP)
+-    {
+-        GameRegistry.onPlayerLogout(par1EntityPlayerMP);
+-        this.writePlayerData(par1EntityPlayerMP);
+-        WorldServer worldserver = par1EntityPlayerMP.getServerForPlayer();
+-
+-        if (par1EntityPlayerMP.ridingEntity != null)
+-        {
+-            worldserver.removePlayerEntityDangerously(par1EntityPlayerMP.ridingEntity);
++    public String disconnect(EntityPlayerMP entityplayermp)   // CraftBukkit - return string
++    {
++        if (entityplayermp.playerNetServerHandler.connectionClosed)
++        {
++            return null;    // CraftBukkit - exploitsies fix
++        }
++
++        // CraftBukkit start - Quitting must be before we do final save of data, in case plugins need to modify it
++        org.bukkit.craftbukkit.event.CraftEventFactory.handleInventoryCloseEvent(entityplayermp);
++        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(this.cserver.getPlayer(entityplayermp), "\u00A7e" + entityplayermp.username + " left the game.");
++        this.cserver.getPluginManager().callEvent(playerQuitEvent);
++        entityplayermp.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
++        // CraftBukkit end
++        GameRegistry.onPlayerLogout(entityplayermp); // Forge
++        this.writePlayerData(entityplayermp);
++        WorldServer worldserver = entityplayermp.getServerForPlayer();
++
++        if (entityplayermp.ridingEntity != null)
++        {
++            worldserver.removePlayerEntityDangerously(entityplayermp.ridingEntity);
+             System.out.println("removing player mount");
+         }
+ 
+-        worldserver.removeEntity(par1EntityPlayerMP);
+-        worldserver.getPlayerManager().removePlayer(par1EntityPlayerMP);
+-        this.playerEntityList.remove(par1EntityPlayerMP);
+-        this.sendPacketToAllPlayers(new Packet201PlayerInfo(par1EntityPlayerMP.getCommandSenderName(), false, 9999));
++        worldserver.removeEntity(entityplayermp);
++        worldserver.getPlayerManager().removePlayer(entityplayermp);
++        this.playerEntityList.remove(entityplayermp);
++        ChunkIOExecutor.adjustPoolSize(this.getCurrentPlayerCount()); // CraftBukkit
++        // CraftBukkit start - .name -> .listName, replace sendAll with loop
++        Packet201PlayerInfo packet = new Packet201PlayerInfo(entityplayermp.listName, false, 9999);
++
++        for (int i = 0; i < this.playerEntityList.size(); ++i)
++        {
++            EntityPlayerMP entityplayermp1 = (EntityPlayerMP)this.playerEntityList.get(i);
++
++            if (entityplayermp1.getBukkitEntity().canSee(entityplayermp.getBukkitEntity()))
++            {
++                entityplayermp1.playerNetServerHandler.sendPacketToPlayer(packet);
++            }
++        }
++
++        // This removes the scoreboard (and player reference) for the specific player in the manager
++        this.cserver.getScoreboardManager().removePlayer(entityplayermp.getBukkitEntity());
++        return playerQuitEvent.getQuitMessage();
++        // CraftBukkit end
++    }
++    
++    // MCPC+ start - vanilla compatibility
++    public void playerLoggedOut(EntityPlayerMP entityPlayerMP)
++    {
++        disconnect(entityPlayerMP);
+     }
+ 
+     /**
+@@ -340,9 +475,75 @@
+         }
+     }
+ 
+-    /**
+-     * also checks for multiple logins
+-     */
++    // CraftBukkit start - Whole method and signature
++    public EntityPlayerMP attemptLogin(NetLoginHandler pendingconnection, String s, String hostname)
++    {
++        // Instead of kicking then returning, we need to store the kick reason
++        // in the event, check with plugins to see if it's ok, and THEN kick
++        // depending on the outcome.
++        EntityPlayerMP entity = new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(0), s, this.mcServer.isDemo() ? new DemoWorldManager(this.mcServer.worldServerForDimension(0)) : new ItemInWorldManager(this.mcServer.worldServerForDimension(0)));
++        Player player = entity.getBukkitEntity();
++        PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, pendingconnection.getSocket().getInetAddress());
++        SocketAddress socketaddress = pendingconnection.myTCPConnection.getSocketAddress();
++
++        if (this.bannedPlayers.isBanned(s))
++        {
++            BanEntry banentry = (BanEntry) this.bannedPlayers.getBannedList().get(s);
++            String s1 = "You are banned from this server!\nReason: " + banentry.getBanReason();
++
++            if (banentry.getBanEndDate() != null)
++            {
++                s1 = s1 + "\nYour ban will be removed on " + dateFormat.format(banentry.getBanEndDate());
++            }
++
++            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, s1);
++        }
++        else if (!this.isAllowedToLogin(s))
++        {
++            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, cserver.whitelistMessage); // Spigot
++        }
++        // MCPC+ start - if login event is allowed, execute remaining login code
++        else if (allowLoginEvent)
++        {
++            String s2 = socketaddress.toString();
++            s2 = s2.substring(s2.indexOf("/") + 1);
++            s2 = s2.substring(0, s2.indexOf(":"));
++
++            if (this.bannedIPs.isBanned(s2))
++            {
++                BanEntry banentry1 = (BanEntry)this.bannedIPs.getBannedList().get(s2);
++                String s3 = "Your IP address is banned from this server!\nReason: " + banentry1.getBanReason();
++
++                if (banentry1.getBanEndDate() != null)
++                {
++                    s3 = s3 + "\nYour ban will be removed on " + dateFormat.format(banentry1.getBanEndDate());
++                }
++
++                event.disallow(PlayerLoginEvent.Result.KICK_BANNED, s3);
++            }
++            else if (this.playerEntityList.size() >= this.maxPlayers)
++            {
++                event.disallow(PlayerLoginEvent.Result.KICK_FULL, "The server is full!");
++            }
++            else
++            {
++                event.disallow(PlayerLoginEvent.Result.ALLOWED, s2);
++            }
++            this.cserver.getPluginManager().callEvent(event);
++        }
++        // MCPC+ end
++
++        if (event.getResult() != PlayerLoginEvent.Result.ALLOWED)
++        {
++            pendingconnection.raiseErrorAndDisconnect(event.getKickMessage());
++            return null;
++        }
++
++        return entity;
++        // CraftBukkit end
++    }
++
++    // MCPC+ start - vanilla compatibility
+     public EntityPlayerMP createPlayerForUser(String par1Str)
+     {
+         ArrayList arraylist = new ArrayList();
+@@ -352,7 +553,7 @@
+         {
+             entityplayermp = (EntityPlayerMP)this.playerEntityList.get(i);
+ 
+-            if (entityplayermp.getCommandSenderName().equalsIgnoreCase(par1Str))
++            if (entityplayermp.username.equalsIgnoreCase(par1Str))
+             {
+                 arraylist.add(entityplayermp);
+             }
+@@ -377,8 +578,50 @@
+             object = new ItemInWorldManager(this.mcServer.worldServerForDimension(0));
+         }
+ 
+-        return new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(0), par1Str, (ItemInWorldManager)object);
+-    }
++        return new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(0), par1Str, (ItemInWorldManager) object);
++    }
++    // MCPC+ end
++
++    public EntityPlayerMP processLogin(EntityPlayerMP player)
++    {
++        String s = player.username; // CraftBukkit
++        ArrayList arraylist = new ArrayList();
++        EntityPlayerMP entityplayermp;
++
++        for (int i = 0; i < this.playerEntityList.size(); ++i)
++        {
++            entityplayermp = (EntityPlayerMP)this.playerEntityList.get(i);
++
++            if (entityplayermp.getCommandSenderName().equalsIgnoreCase(s))
++            {
++                arraylist.add(entityplayermp);
++            }
++        }
++
++        Iterator iterator = arraylist.iterator();
++
++        while (iterator.hasNext())
++        {
++            entityplayermp = (EntityPlayerMP)iterator.next();
++            entityplayermp.playerNetServerHandler.kickPlayerFromServer("You logged in from another location");
++        }
++
++        /* CraftBukkit start
++        Object object;
++
++        if (this.server.M()) {
++            object = new DemoPlayerInteractManager(this.server.getWorldServer(0));
++        } else {
++            object = new PlayerInteractManager(this.server.getWorldServer(0));
++        }
++
++        return new EntityPlayer(this.server, this.server.getWorldServer(0), s, (PlayerInteractManager) object);
++        */
++        return player;
++        // CraftBukkit end
++    }
++
++    // CraftBukkit start
+ 
+     /**
+      * creates and returns a respawned player based on the provided PlayerEntity. Args are the PlayerEntityMP to
+@@ -387,80 +630,198 @@
       */
      public EntityPlayerMP respawnPlayer(EntityPlayerMP par1EntityPlayerMP, int par2, boolean par3)
      {
-+        World world = mcServer.worldServerForDimension(par2);
-+        if (world == null)
-+        {
-+            par2 = 0;
-+        }
-+        else if (!world.provider.canRespawnHere())
-+        {
-+            par2 = world.provider.getRespawnDimension(par1EntityPlayerMP);
-+        }
-+
-         par1EntityPlayerMP.getServerForPlayer().getEntityTracker().removePlayerFromTrackers(par1EntityPlayerMP);
-         par1EntityPlayerMP.getServerForPlayer().getEntityTracker().removeEntityFromAllTrackingPlayers(par1EntityPlayerMP);
-         par1EntityPlayerMP.getServerForPlayer().getPlayerManager().removePlayer(par1EntityPlayerMP);
-         this.playerEntityList.remove(par1EntityPlayerMP);
-         this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension).removePlayerEntityDangerously(par1EntityPlayerMP);
+-        par1EntityPlayerMP.getServerForPlayer().getEntityTracker().removePlayerFromTrackers(par1EntityPlayerMP);
+-        par1EntityPlayerMP.getServerForPlayer().getEntityTracker().removeEntityFromAllTrackingPlayers(par1EntityPlayerMP);
+-        par1EntityPlayerMP.getServerForPlayer().getPlayerManager().removePlayer(par1EntityPlayerMP);
+-        this.playerEntityList.remove(par1EntityPlayerMP);
+-        this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension).removePlayerEntityDangerously(par1EntityPlayerMP);
 -        ChunkCoordinates chunkcoordinates = par1EntityPlayerMP.getBedLocation();
 -        boolean flag1 = par1EntityPlayerMP.isSpawnForced();
-+        ChunkCoordinates chunkcoordinates = par1EntityPlayerMP.getBedLocation(par2);
-+        boolean flag1 = par1EntityPlayerMP.isSpawnForced(par2);
-         par1EntityPlayerMP.dimension = par2;
-         Object object;
+-        par1EntityPlayerMP.dimension = par2;
+-        Object object;
+-
+-        if (this.mcServer.isDemo())
+-        {
+-            object = new DemoWorldManager(this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension));
++        System.out.println("respawnPlayer " + par2 + ", flag = " + par3);
++        return this.moveToWorld(par1EntityPlayerMP, par2, par3, null, true);
++    }
++
++    public EntityPlayerMP moveToWorld(EntityPlayerMP entityplayermp, int i, boolean flag, Location location, boolean avoidSuffocation)
++    {
++        System.out.println("moveToWorld i = " + i);
++        // MCPC+ start - handle canRespawnHere for mods
++        World world = mcServer.worldServerForDimension(i);
++        System.out.println("difficulty = " + world.difficultySetting);
++        boolean canRespawnHere = true;
++        if (world == null)
++        {
++            i = 0;
++        }
++        else if (!world.provider.canRespawnHere() && i != 0 && i != -1 && i != 1 && !DimensionManager.isBukkitDimension(i)) // ignore vanilla
++        {
++            canRespawnHere = false;
++            i = world.provider.getRespawnDimension(entityplayermp);
++        }
++        // MCPC+ end
++        System.out.println("moveToWorld i now = " + i + ", location = " + location);
++        // CraftBukkit end
++        entityplayermp.getServerForPlayer().getEntityTracker().removePlayerFromTrackers(entityplayermp);
++        // entityplayermp.o().getTracker().untrackEntity(entityplayermp); // CraftBukkit
++        entityplayermp.getServerForPlayer().getPlayerManager().removePlayer(entityplayermp);
++        this.playerEntityList.remove(entityplayermp);
++        this.mcServer.worldServerForDimension(entityplayermp.dimension).removePlayerEntityDangerously(entityplayermp);
++        ChunkCoordinates chunkcoordinates = entityplayermp.getBedLocation(i);
++        boolean flag1 = entityplayermp.isSpawnForced(i);
++        // MCPC+ start
++        if (!canRespawnHere)
++            entityplayermp.dimension = i;
++        // MCPC+ end
++        // CraftBukkit start
++        EntityPlayerMP entityplayermp1 = entityplayermp;
++        org.bukkit.World fromWorld = entityplayermp1.getBukkitEntity().getWorld();
++        entityplayermp1.playerConqueredTheEnd = false;
++        entityplayermp1.clonePlayer(entityplayermp, flag);
++        ChunkCoordinates chunkcoordinates1;
++
++        if (location == null)
++        {
++            boolean isBedSpawn = false;
++            CraftWorld cworld = (CraftWorld) this.mcServer.server.getWorld(entityplayermp.spawnWorld);
++            System.out.println("cworld = " + cworld);
++            // MCPC+ start - handle canRespawnHere for mods
++            if (world != null && !canRespawnHere)
++            {
++                cworld = (CraftWorld) mcServer.worldServerForDimension(i).getWorld(); // make sure to hotload the dimension if it got unloaded
++                System.out.println("CANNOT RESPAWN IN " + world.provider + ", cworld now = " + cworld);
++                if (chunkcoordinates == null)
++                {
++                    System.out.println("CHUNKCOORDINATES NULL!!");
++                    location = new Location(cworld, cworld.getSpawnLocation().getX() + 0.5, cworld.getSpawnLocation().getY(), cworld.getSpawnLocation().getZ() + 0.5); // use the spawnpoint as location
++                }
++            }
++            // MCPC+ end
++
++            if (cworld != null && chunkcoordinates != null)
++            {
++                chunkcoordinates1 = EntityPlayer.verifyRespawnCoordinates(cworld.getHandle(), chunkcoordinates, flag1);
++
++                if (chunkcoordinates1 != null)
++                {
++                    System.out.println("chunkcoordinates = " + chunkcoordinates + ", flag = " + flag1);
++                    isBedSpawn = true;
++                    location = new Location(cworld, chunkcoordinates1.posX + 0.5, chunkcoordinates1.posY, chunkcoordinates1.posZ + 0.5);
++                }
++                else
++                {
++                    System.out.println("2CHUNKCOORDINATES NULL!!" + ", flag = " + flag1);
++                    entityplayermp1.setSpawnChunk(null, true);
++                    entityplayermp1.playerNetServerHandler.sendPacketToPlayer(new Packet70GameEvent(0, 0));
++                }
++            }
++
++            if (location == null)
++            {
++                System.out.println("LOCATION = NULL, setting world to overworld");
++                cworld = (CraftWorld) this.mcServer.server.getWorlds().get(0);
++                chunkcoordinates = cworld.getHandle().getSpawnPoint();
++                location = new Location(cworld, chunkcoordinates.posX + 0.5, chunkcoordinates.posY, chunkcoordinates.posZ + 0.5);
++            }
++
++            Player respawnPlayer = this.cserver.getPlayer(entityplayermp1);
++            PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(respawnPlayer, location, isBedSpawn);
++            this.cserver.getPluginManager().callEvent(respawnEvent);
++            System.out.println("location = " + location + ", location world = " + location.getWorld());
++            System.out.println("location provider dim = " + ((CraftWorld) location.getWorld()).getHandle().provider.dimensionId + ", env = " + location.getWorld().getEnvironment());
++            if (canRespawnHere) // MCPC+ - avoid plugins changing our respawn location if a forge mod wants a change. Breaks DimensionalDoors respawning in Limbo
++            {
++                location = respawnEvent.getRespawnLocation();
++                System.out.println("CANRESPAWN HERE setting bed location " + location);
++            }
++            entityplayermp.reset();
+         }
+         else
+         {
+-            object = new ItemInWorldManager(this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension));
+-        }
+-
+-        EntityPlayerMP entityplayermp1 = new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension), par1EntityPlayerMP.getCommandSenderName(), (ItemInWorldManager)object);
+-        entityplayermp1.playerNetServerHandler = par1EntityPlayerMP.playerNetServerHandler;
+-        entityplayermp1.clonePlayer(par1EntityPlayerMP, par3);
+-        entityplayermp1.entityId = par1EntityPlayerMP.entityId;
+-        WorldServer worldserver = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
+-        this.func_72381_a(entityplayermp1, par1EntityPlayerMP, worldserver);
+-        ChunkCoordinates chunkcoordinates1;
+-
+-        if (chunkcoordinates != null)
+-        {
+-            chunkcoordinates1 = EntityPlayer.verifyRespawnCoordinates(this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension), chunkcoordinates, flag1);
+-
+-            if (chunkcoordinates1 != null)
+-            {
+-                entityplayermp1.setLocationAndAngles((double)((float)chunkcoordinates1.posX + 0.5F), (double)((float)chunkcoordinates1.posY + 0.1F), (double)((float)chunkcoordinates1.posZ + 0.5F), 0.0F, 0.0F);
+-                entityplayermp1.setSpawnChunk(chunkcoordinates, flag1);
+-            }
+-            else
+-            {
+-                entityplayermp1.playerNetServerHandler.sendPacketToPlayer(new Packet70GameEvent(0, 0));
+-            }
+-        }
+-
++            location.setWorld(this.mcServer.worldServerForDimension(i).getWorld());
++        }
++
++        WorldServer worldserver = ((CraftWorld) location.getWorld()).getHandle();
++        System.out.println("difficulty NOW = " + worldserver.difficultySetting);
++        System.out.println("New world dimension = " + worldserver.provider.dimensionId + ", name = " + worldserver.getWorldInfo().getWorldName() + ", location = " + location);
++        entityplayermp1.setPositionAndRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
++        // CraftBukkit end
+         worldserver.theChunkProviderServer.loadChunk((int)entityplayermp1.posX >> 4, (int)entityplayermp1.posZ >> 4);
  
-@@ -409,6 +423,7 @@
-         EntityPlayerMP entityplayermp1 = new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension), par1EntityPlayerMP.getCommandSenderName(), (ItemInWorldManager)object);
-         entityplayermp1.playerNetServerHandler = par1EntityPlayerMP.playerNetServerHandler;
-         entityplayermp1.clonePlayer(par1EntityPlayerMP, par3);
-+        entityplayermp1.dimension = par2;
-         entityplayermp1.entityId = par1EntityPlayerMP.entityId;
-         WorldServer worldserver = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
-         this.func_72381_a(entityplayermp1, par1EntityPlayerMP, worldserver);
-@@ -453,6 +468,11 @@
+-        while (!worldserver.getCollidingBoundingBoxes(entityplayermp1, entityplayermp1.boundingBox).isEmpty())
++        while (avoidSuffocation && !worldserver.getCollidingBoundingBoxes(entityplayermp1, entityplayermp1.boundingBox).isEmpty())   // CraftBukkit
+         {
+             entityplayermp1.setPosition(entityplayermp1.posX, entityplayermp1.posY + 1.0D, entityplayermp1.posZ);
+         }
+ 
+-        entityplayermp1.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(entityplayermp1.dimension, (byte)entityplayermp1.worldObj.difficultySetting, entityplayermp1.worldObj.getWorldInfo().getTerrainType(), entityplayermp1.worldObj.getHeight(), entityplayermp1.theItemInWorldManager.getGameType()));
++        int actualDimension = worldserver.provider.dimensionId;
++        System.out.println("actualDimension = " + actualDimension + " with difficulty " + worldserver.getWorld().getDifficulty());
++        // MCPC+ - change dim for bukkit added dimensions
++        if (DimensionManager.isBukkitDimension(actualDimension))
++        {
++            /*if (i == entityplayermp1.dimension)
++            {
++                actualDimension = worldserver.provider.dimensionId; // handle new respawn location which is based on bedspawn
++            }*/
++            System.out.println("SENDING DIMENSIONREGISTERPACKET with actualDimension " + actualDimension + ", provider id = " + worldserver.getWorld().getEnvironment().getId());
++            Packet250CustomPayload[] pkt = ForgePacket.makePacketSet(new DimensionRegisterPacket(actualDimension, worldserver.getWorld().getEnvironment().getId()));
++            entityplayermp1.playerNetServerHandler.sendPacketToPlayer(pkt[0]);
++        }
++        System.out.println("Sending Packet9Respawn actualDimension = " + actualDimension + " for world " + worldserver.getWorldInfo().getWorldName());
++        // MCPC+ end
++        // CraftBukkit start
++        entityplayermp1.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(actualDimension, (byte) worldserver.difficultySetting, worldserver.getWorldInfo().getTerrainType(), worldserver.getHeight(), entityplayermp.theItemInWorldManager.getGameType()));
++        entityplayermp1.setWorld(worldserver);
++        entityplayermp1.isDead = false;
++        entityplayermp1.playerNetServerHandler.teleport(new Location(worldserver.getWorld(), entityplayermp1.posX, entityplayermp1.posY, entityplayermp1.posZ, entityplayermp1.rotationYaw, entityplayermp1.rotationPitch));
++        entityplayermp1.setSneaking(false);
+         chunkcoordinates1 = worldserver.getSpawnPoint();
+-        entityplayermp1.playerNetServerHandler.setPlayerLocation(entityplayermp1.posX, entityplayermp1.posY, entityplayermp1.posZ, entityplayermp1.rotationYaw, entityplayermp1.rotationPitch);
++        // CraftBukkit end
+         entityplayermp1.playerNetServerHandler.sendPacketToPlayer(new Packet6SpawnPosition(chunkcoordinates1.posX, chunkcoordinates1.posY, chunkcoordinates1.posZ));
+         entityplayermp1.playerNetServerHandler.sendPacketToPlayer(new Packet43Experience(entityplayermp1.experience, entityplayermp1.experienceTotal, entityplayermp1.experienceLevel));
+         this.updateTimeAndWeatherForPlayer(entityplayermp1, worldserver);
+         worldserver.getPlayerManager().addPlayer(entityplayermp1);
+         worldserver.spawnEntityInWorld(entityplayermp1);
+         this.playerEntityList.add(entityplayermp1);
+-        entityplayermp1.addSelfToInternalCraftingInventory();
++        // CraftBukkit start - Added from changeDimension
++        this.syncPlayerInventory(entityplayermp1); // CraftBukkit
++        entityplayermp1.sendPlayerAbilities();
++        Iterator iterator = entityplayermp1.getActivePotionEffects().iterator();
++
++        while (iterator.hasNext())
++        {
++            PotionEffect potioneffect = (PotionEffect)iterator.next();
++            entityplayermp1.playerNetServerHandler.sendPacketToPlayer(new Packet41EntityEffect(entityplayermp1.entityId, potioneffect));
++        }
++
++        // entityplayermp1.syncInventory();
++        // CraftBukkit end
+         entityplayermp1.setEntityHealth(entityplayermp1.func_110143_aJ());
+-        GameRegistry.onPlayerRespawn(entityplayermp1);
++
++        // CraftBukkit start - Don't fire on respawn
++        if (fromWorld != location.getWorld())
++        {
++            PlayerChangedWorldEvent event = new PlayerChangedWorldEvent((Player) entityplayermp1.getBukkitEntity(), fromWorld);
++            Bukkit.getServer().getPluginManager().callEvent(event);
++        }
++        System.out.println("dimension = " + actualDimension + ", with difficulty " + worldserver.getWorld().getDifficulty());
++        // CraftBukkit end
++        GameRegistry.onPlayerRespawn(entityplayermp1); // Forge
+         return entityplayermp1;
+     }
  
      public void transferPlayerToDimension(EntityPlayerMP par1EntityPlayerMP, int par2)
      {
@@ -58,10 +674,17 @@
 +
 +    public void transferPlayerToDimension(EntityPlayerMP par1EntityPlayerMP, int par2, Teleporter teleporter)
 +    {
++        System.out.println("transferPlayerToDimension " + par2 + " in teleporter " + teleporter);
          int j = par1EntityPlayerMP.dimension;
          WorldServer worldserver = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
          par1EntityPlayerMP.dimension = par2;
-@@ -460,7 +480,7 @@
+         WorldServer worldserver1 = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
++        // MCPC+ start - handle chunk requests for mods that call this method directly such as Twilight Forest.
++        if (!worldserver1.getServer().getLoadChunkOnRequest())
++        {
++            worldserver1.theChunkProviderServer.loadChunkOnProvideRequest = true;
++        }
++        // MCPC+ end
          par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(par1EntityPlayerMP.dimension, (byte)par1EntityPlayerMP.worldObj.difficultySetting, worldserver1.getWorldInfo().getTerrainType(), worldserver1.getHeight(), par1EntityPlayerMP.theItemInWorldManager.getGameType()));
          worldserver.removePlayerEntityDangerously(par1EntityPlayerMP);
          par1EntityPlayerMP.isDead = false;
@@ -70,14 +693,116 @@
          this.func_72375_a(par1EntityPlayerMP, worldserver);
          par1EntityPlayerMP.playerNetServerHandler.setPlayerLocation(par1EntityPlayerMP.posX, par1EntityPlayerMP.posY, par1EntityPlayerMP.posZ, par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
          par1EntityPlayerMP.theItemInWorldManager.setWorld(worldserver1);
-@@ -482,38 +502,23 @@
+@@ -473,8 +834,98 @@
+             PotionEffect potioneffect = (PotionEffect)iterator.next();
+             par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet41EntityEffect(par1EntityPlayerMP.entityId, potioneffect));
+         }
+-
++        System.out.println("worldserver difficulty = " + worldserver1.difficultySetting);
+         GameRegistry.onPlayerChangedDimension(par1EntityPlayerMP);
++        // MCPC+ start - handle chunk requests for mods that call this method directly such as Twilight Forest.
++        if (!worldserver1.getServer().getLoadChunkOnRequest())
++        {
++            worldserver1.theChunkProviderServer.loadChunkOnProvideRequest = false;
++        }
++        // MCPC+ end
++    }
++
++    // CraftBukkit start - Replaced the standard handling of portals with a more customised method.
++    public void changeDimension(EntityPlayerMP entityplayermp, int i, TeleportCause cause)
++    {
++        System.out.println("changeDimension " + entityplayermp + " to dimension " + i);
++        // MCPC+ start - Allow Forge hotloading on teleport
++        WorldServer exitWorld = this.mcServer.worldServerForDimension(i);
++
++        Location enter = entityplayermp.getBukkitEntity().getLocation();
++        Location exit = null;
++        boolean useTravelAgent = false; // don't use agent for custom worlds or return from THE_END
++
++        if (exitWorld != null)
++        {
++            if ((cause == TeleportCause.END_PORTAL) && (i == 0))
++            {
++                // THE_END -> NORMAL; use bed if available, otherwise default spawn
++                ChunkCoordinates chunkcoordinates = entityplayermp.getBedLocation();
++                CraftWorld spawnWorld = (CraftWorld) this.mcServer.server.getWorld(entityplayermp.spawnWorld);
++
++                if (spawnWorld != null && chunkcoordinates != null)
++                {
++                    ChunkCoordinates chunkcoordinates1 = EntityPlayer.verifyRespawnCoordinates(spawnWorld.getHandle(), chunkcoordinates, entityplayermp.isSpawnForced());
++
++                    if (chunkcoordinates1 != null)
++                    {
++                        exit = new Location(spawnWorld, chunkcoordinates1.posX + 0.5, chunkcoordinates1.posY, chunkcoordinates1.posZ + 0.5);
++                    }
++                }
++
++                if (exit == null || ((CraftWorld) exit.getWorld()).getHandle().provider.dimensionId != 0)
++                {
++                    exit = exitWorld.getWorld().getSpawnLocation();
++                }
++            }
++            else
++            {
++                // NORMAL <-> NETHER or NORMAL -> THE_END
++                exit = this.calculateTarget(enter, exitWorld);
++                useTravelAgent = true;
++            }
++        }
++
++        TravelAgent agent = exit != null ? (TravelAgent)((CraftWorld) exit.getWorld()).getHandle().getDefaultTeleporter() : org.bukkit.craftbukkit.CraftTravelAgent.DEFAULT;  // return arbitrary TA to compensate for implementation dependent plugins
++        PlayerPortalEvent event = new PlayerPortalEvent(entityplayermp.getBukkitEntity(), enter, exit, agent, cause);
++        event.useTravelAgent(useTravelAgent);
++        Bukkit.getServer().getPluginManager().callEvent(event);
++
++        if (event.isCancelled() || event.getTo() == null)
++        {
++            return;
++        }
++
++        exit = event.useTravelAgent() ? event.getPortalTravelAgent().findOrCreate(event.getTo()) : event.getTo();
++
++        if (exit == null)
++        {
++            return;
++        }
++
++        exitWorld = ((CraftWorld) exit.getWorld()).getHandle();
++        Vector velocity = entityplayermp.getBukkitEntity().getVelocity();
++        // MCPC+ start - if we are force allowing all chunk requests, avoid access to loadChunkOnProvideRequest
++        if (exitWorld.getServer().getLoadChunkOnRequest())
++        {
++            exitWorld.getDefaultTeleporter().adjustExit(entityplayermp, exit, velocity);
++        }
++        else 
++        {
++            boolean before = exitWorld.theChunkProviderServer.loadChunkOnProvideRequest;
++            exitWorld.theChunkProviderServer.loadChunkOnProvideRequest = true;
++            exitWorld.getDefaultTeleporter().adjustExit(entityplayermp, exit, velocity); // Should be getTravelAgent
++            exitWorld.theChunkProviderServer.loadChunkOnProvideRequest = before;
++        }
++        // MCPC+ end
++        this.moveToWorld(entityplayermp, exitWorld.provider.dimensionId, true, exit, false); // Vanilla doesn't check for suffocation when handling portals, so neither should we
++
++        if (entityplayermp.motionX != velocity.getX() || entityplayermp.motionY != velocity.getY() || entityplayermp.motionZ != velocity.getZ())
++        {
++            entityplayermp.getBukkitEntity().setVelocity(velocity);
++        }
++
++        // CraftBukkit end
+     }
+ 
+     /**
+@@ -482,38 +933,25 @@
       */
      public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer)
      {
 -        double d0 = par1Entity.posX;
 -        double d1 = par1Entity.posZ;
 -        double d2 = 8.0D;
-+        transferEntityToWorld(par1Entity, par2, par3WorldServer, par4WorldServer, par4WorldServer.getDefaultTeleporter());
++        // CraftBukkit start - Split into modular functions
++        Location exit = this.calculateTarget(par1Entity.getBukkitEntity().getLocation(), par4WorldServer);
++        this.repositionEntity(par1Entity, exit, true);
 +    }
 +
 +    public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer, Teleporter teleporter)
@@ -120,7 +845,7 @@
          {
              ChunkCoordinates chunkcoordinates;
  
-@@ -550,7 +555,7 @@
+@@ -550,7 +988,7 @@
                  par4WorldServer.spawnEntityInWorld(par1Entity);
                  par1Entity.setLocationAndAngles(d0, par1Entity.posY, d1, par1Entity.rotationYaw, par1Entity.rotationPitch);
                  par4WorldServer.updateEntityWithOptionalForce(par1Entity, false);
@@ -129,3 +854,271 @@
              }
  
              par3WorldServer.theProfiler.endSection();
+@@ -559,6 +997,118 @@
+         par1Entity.setWorld(par4WorldServer);
+     }
+ 
++    // Copy of original a(Entity, int, WorldServer, WorldServer) method with only location calculation logic
++    public Location calculateTarget(Location enter, World target)
++    {
++        WorldServer worldserver = ((CraftWorld) enter.getWorld()).getHandle();
++        WorldServer worldserver1 = ((CraftWorld) target.getWorld()).getHandle();
++        int i = worldserver.provider.dimensionId;
++        double y = enter.getY();
++        float yaw = enter.getYaw();
++        float pitch = enter.getPitch();
++        double d0 = enter.getX();
++        double d1 = enter.getZ();
++        double d2 = 8.0D;
++
++        if (worldserver1.provider.dimensionId == -1)
++        {
++            d0 /= d2;
++            d1 /= d2;
++            /*
++            entity.setPositionRotation(d0, entity.locY, d1, entity.yaw, entity.pitch);
++            if (entity.isAlive()) {
++                worldserver.entityJoinedWorld(entity, false);
++            }
++            */
++        }
++        else if (worldserver1.provider.dimensionId == 0)
++        {
++            d0 *= d2;
++            d1 *= d2;
++        }
++        else
++        {
++            ChunkCoordinates chunkcoordinates;
++
++            if (i == 1)
++            {
++                // use default NORMAL world spawn instead of target
++                worldserver1 = this.mcServer.worlds.get(0);
++                chunkcoordinates = worldserver1.getSpawnPoint();
++            }
++            else
++            {
++                chunkcoordinates = worldserver1.getEntrancePortalLocation();
++            }
++
++            d0 = (double)chunkcoordinates.posX;
++            y = (double) chunkcoordinates.posY;
++            d1 = (double)chunkcoordinates.posZ;
++            yaw = 90.0F;
++            pitch = 0.0F;
++        }
++
++        if (i != 1)
++        {
++            d0 = (double)MathHelper.clamp_int((int)d0, -29999872, 29999872);
++            d1 = (double)MathHelper.clamp_int((int)d1, -29999872, 29999872);
++        }
++
++        // entity.spawnIn(worldserver1);
++        return new Location(worldserver1.getWorld(), d0, y, d1, yaw, pitch);
++    }
++
++    // copy of original a(Entity, int, WorldServer, WorldServer) method with only entity repositioning logic
++    public void repositionEntity(Entity entity, Location exit, boolean portal)
++    {
++        int i = entity.dimension;
++        WorldServer worldserver = (WorldServer) entity.worldObj;
++        WorldServer worldserver1 = ((CraftWorld) exit.getWorld()).getHandle();
++        worldserver.theProfiler.startSection("moving");
++        entity.setLocationAndAngles(exit.getX(), exit.getY(), exit.getZ(), exit.getYaw(), exit.getPitch());
++
++        if (entity.isEntityAlive())
++        {
++            worldserver.updateEntityWithOptionalForce(entity, false);
++        }
++
++        worldserver.theProfiler.endSection();
++
++        if (i != 1)
++        {
++            worldserver.theProfiler.startSection("placing");
++
++            /*
++            d0 = (double) MathHelper.a((int) d0, -29999872, 29999872);
++            d1 = (double) MathHelper.a((int) d1, -29999872, 29999872);
++            */
++            if (entity.isEntityAlive())
++            {
++                worldserver1.spawnEntityInWorld(entity);
++                // entity.setPositionRotation(d0, entity.locY, d1, entity.yaw, entity.pitch)
++                worldserver1.updateEntityWithOptionalForce(entity, false);
++
++                // worldserver1.s().a(entity, d3, d4, d5, f);
++                if (portal)
++                {
++                    Vector velocity = entity.getBukkitEntity().getVelocity();
++                    worldserver1.getDefaultTeleporter().adjustExit(entity, exit, velocity); // Should be getTravelAgent
++                    entity.setLocationAndAngles(exit.getX(), exit.getY(), exit.getZ(), exit.getYaw(), exit.getPitch());
++
++                    if (entity.motionX != velocity.getX() || entity.motionY != velocity.getY() || entity.motionZ != velocity.getZ())
++                    {
++                        entity.getBukkitEntity().setVelocity(velocity);
++                    }
++                }
++            }
++
++            worldserver.theProfiler.endSection();
++        }
++
++        entity.setWorld(worldserver1);
++        // CraftBukkit end
++    }
++
+     /**
+      * sends 1 player per tick, but only sends a player once every 600 ticks
+      */
+@@ -569,12 +1119,38 @@
+             this.playerPingIndex = 0;
+         }
+ 
+-        if (this.playerPingIndex < this.playerEntityList.size())
+-        {
+-            EntityPlayerMP entityplayermp = (EntityPlayerMP)this.playerEntityList.get(this.playerPingIndex);
+-            this.sendPacketToAllPlayers(new Packet201PlayerInfo(entityplayermp.getCommandSenderName(), true, entityplayermp.ping));
+-        }
+-    }
++        /* CraftBukkit start - Remove updating of lag to players -- it spams way to much on big servers.
++        if (this.n < this.players.size()) {
++            EntityPlayer entityplayermp = (EntityPlayer) this.players.get(this.n);
++
++            this.sendAll(new Packet201PlayerInfo(entityplayermp.getName(), true, entityplayermp.ping));
++        }
++        // CraftBukkit end */
++        // Spigot start
++        if (this.playerEntityList.size() == 0 || !org.bukkit.craftbukkit.Spigot.tabPing)
++        {
++            return;
++        }
++
++        int index = MinecraftServer.currentTick % this.playerEntityList.size();
++        EntityPlayerMP player = (EntityPlayerMP) this.playerEntityList.get(index);
++
++        if (player.lastPing == -1 || Math.abs(player.ping - player.lastPing) > 20)
++        {
++            Packet packet = new Packet201PlayerInfo(player.listName, true, player.ping);
++
++            for (EntityPlayerMP splayer : (List<EntityPlayerMP>) this.playerEntityList)
++            {
++                if (splayer.getBukkitEntity().canSee(player.getBukkitEntity()))
++                {
++                    splayer.playerNetServerHandler.sendPacketToPlayer(packet);
++                }
++            }
++
++            player.lastPing = player.ping;
++        }
++    }
++    // Spigot end
+ 
+     /**
+      * sends a packet to all players
+@@ -654,6 +1230,15 @@
+     public void addOp(String par1Str)
+     {
+         this.ops.add(par1Str.toLowerCase());
++        // CraftBukkit start
++        Player player = mcServer.server.getPlayer(par1Str);
++
++        if (player != null)
++        {
++            player.recalculatePermissions();
++        }
++
++        // CraftBukkit end
+     }
+ 
+     /**
+@@ -662,6 +1247,15 @@
+     public void removeOp(String par1Str)
+     {
+         this.ops.remove(par1Str.toLowerCase());
++        // CraftBukkit start
++        Player player = mcServer.server.getPlayer(par1Str);
++
++        if (player != null)
++        {
++            player.recalculatePermissions();
++        }
++
++        // CraftBukkit end
+     }
+ 
+     /**
+@@ -678,7 +1272,8 @@
+      */
+     public boolean areCommandsAllowed(String par1Str)
+     {
+-        return this.ops.contains(par1Str.trim().toLowerCase()) || this.mcServer.isSinglePlayer() && this.mcServer.worldServers[0].getWorldInfo().areCommandsAllowed() && this.mcServer.getServerOwner().equalsIgnoreCase(par1Str) || this.commandsAllowedForAll;
++        if (par1Str == null) return false; // MCPC+ - fixes Aether ServerPlayerAPI initialization which passes a null username
++        return this.ops.contains(par1Str.trim().toLowerCase()) || (this.mcServer.isSinglePlayer() && this.mcServer.worldServers[0].getWorldInfo().areCommandsAllowed() && this.mcServer.getServerOwner().equalsIgnoreCase(par1Str)) || this.commandsAllowedForAll;
+     }
+ 
+     public EntityPlayerMP getPlayerForUsername(String par1Str)
+@@ -756,7 +1351,7 @@
+                         }
+                     }
+ 
+-                    if (this.func_96457_a(entityplayermp, par8Map) && (par5 == EnumGameType.NOT_SET.getID() || par5 == entityplayermp.theItemInWorldManager.getGameType().getID()) && (par6 <= 0 || entityplayermp.experienceLevel >= par6) && entityplayermp.experienceLevel <= par7)
++                    if (this.func_96457_a((EntityPlayer) entityplayermp, par8Map) && (par5 == EnumGameType.NOT_SET.getID() || par5 == entityplayermp.theItemInWorldManager.getGameType().getID()) && (par6 <= 0 || entityplayermp.experienceLevel >= par6) && entityplayermp.experienceLevel <= par7)
+                     {
+                         ((List)object).add(entityplayermp);
+                     }
+@@ -852,6 +1447,13 @@
+         {
+             EntityPlayerMP entityplayermp = (EntityPlayerMP)this.playerEntityList.get(j);
+ 
++            // CraftBukkit start - Test if player receiving packet can see the source of the packet
++            if (par1EntityPlayer != null && par1EntityPlayer instanceof EntityPlayerMP && !entityplayermp.getBukkitEntity().canSee(((EntityPlayerMP) par1EntityPlayer).getBukkitEntity()))
++            {
++                continue;
++            }
++
++            // CraftBukkit end
+             if (entityplayermp != par1EntityPlayer && entityplayermp.dimension == par10)
+             {
+                 double d4 = par2 - entityplayermp.posX;
+@@ -920,7 +1522,7 @@
+ 
+         if (par2WorldServer.isRaining())
+         {
+-            par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet70GameEvent(1, 0));
++            par1EntityPlayerMP.setPlayerWeather(org.bukkit.WeatherType.DOWNFALL, false); // CraftBukkit - handle player specific weather
+         }
+     }
+ 
+@@ -955,7 +1557,10 @@
+      */
+     public String[] getAvailablePlayerDat()
+     {
+-        return this.mcServer.worldServers[0].getSaveHandler().getSaveHandler().getAvailablePlayerDat();
++        // MCPC+ start - don't crash if the overworld isn't loaded
++        List<WorldServer> worldServers = this.mcServer.worlds;
++        return worldServers.isEmpty() ? new String[0] : worldServers.get(0).getSaveHandler().getSaveHandler().getAvailablePlayerDat(); // CraftBukkit
++        // MCPC+ end
+     }
+ 
+     public boolean isWhiteListEnabled()
+@@ -1044,7 +1649,16 @@
+     {
+         while (!this.playerEntityList.isEmpty())
+         {
+-            ((EntityPlayerMP)this.playerEntityList.get(0)).playerNetServerHandler.kickPlayerFromServer("Server closed");
++            // Spigot start
++            EntityPlayerMP p = (EntityPlayerMP) this.playerEntityList.get(0);
++            p.playerNetServerHandler.kickPlayerFromServer(this.mcServer.server.getShutdownMessage());
++
++            if ((!this.playerEntityList.isEmpty()) && (this.playerEntityList.get(0) == p))
++            {
++                this.playerEntityList.remove(0); // Prevent shutdown hang if already disconnected
++            }
++
++            // Spigot end
+         }
+     }
+ 

@@ -1,0 +1,55 @@
+--- ../src_base/minecraft/net/minecraft/world/storage/MapInfo.java
++++ ../src_work/minecraft/net/minecraft/world/storage/MapInfo.java
+@@ -59,22 +59,37 @@
+         {
+             int i;
+             int j;
++            // Spigot start
++            boolean custom = this.mapDataObj.mapView.renderers.size() > 1 || !(this.mapDataObj.mapView.renderers.get(0) instanceof org.bukkit.craftbukkit.map.CraftMapRenderer);
++            org.bukkit.craftbukkit.map.RenderData render = (custom) ? this.mapDataObj.mapView.render((org.bukkit.craftbukkit.entity.CraftPlayer) entityplayerObj.getBukkitEntity()) : null; // CraftBukkit
+ 
+             if (--this.ticksUntilPlayerLocationMapUpdate < 0)
+             {
+                 this.ticksUntilPlayerLocationMapUpdate = 4;
+-                abyte = new byte[this.mapDataObj.playersVisibleOnMap.size() * 3 + 1];
++                abyte = new byte[((custom) ? render.cursors.size() : this.mapDataObj.playersVisibleOnMap.size()) * 3 + 1]; // CraftBukkit
+                 abyte[0] = 1;
+                 i = 0;
+ 
+-                for (Iterator iterator = this.mapDataObj.playersVisibleOnMap.values().iterator(); iterator.hasNext(); ++i)
++                // CraftBukkit start
++
++                // Spigot start
++                for (Iterator iterator = ((custom) ? render.cursors.iterator() : this.mapDataObj.playersVisibleOnMap.values().iterator()); iterator.hasNext(); ++i)
+                 {
+-                    MapCoord mapcoord = (MapCoord)iterator.next();
+-                    abyte[i * 3 + 1] = (byte)(mapcoord.iconSize << 4 | mapcoord.iconRotation & 15);
+-                    abyte[i * 3 + 2] = mapcoord.centerX;
+-                    abyte[i * 3 + 3] = mapcoord.centerZ;
++                    org.bukkit.map.MapCursor cursor = (custom) ? (org.bukkit.map.MapCursor) iterator.next() : null;
++
++                    if (cursor != null && !cursor.isVisible())
++                    {
++                        continue;
++                    }
++
++                    MapCoord deco = (custom) ? null : (MapCoord) iterator.next();
++                    abyte[i * 3 + 1] = (byte)(((custom) ? cursor.getRawType() : deco.iconSize) << 4 | ((custom) ? cursor.getDirection() : deco.iconRotation) & 15);
++                    abyte[i * 3 + 2] = (byte)((custom) ? cursor.getX() : deco.centerX);
++                    abyte[i * 3 + 3] = (byte)((custom) ? cursor.getY() : deco.centerZ);
+                 }
+ 
++                // Spigot end
++                // CraftBukkit end
+                 boolean flag = !par1ItemStack.isOnItemFrame();
+ 
+                 if (this.lastPlayerLocationOnMap != null && this.lastPlayerLocationOnMap.length == abyte.length)
+@@ -115,7 +130,7 @@
+ 
+                     for (int i1 = 0; i1 < abyte1.length - 3; ++i1)
+                     {
+-                        abyte1[i1 + 3] = this.mapDataObj.colors[(i1 + j) * 128 + i];
++                        abyte1[i1 + 3] = ((custom) ? render.buffer : this.mapDataObj.colors)[(i1 + j) * 128 + i]; // Spigot
+                     }
+ 
+                     this.field_76210_c[i] = -1;

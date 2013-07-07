@@ -9,18 +9,50 @@
  import java.util.Random;
  import net.minecraft.block.Block;
  import net.minecraft.entity.EntityAgeable;
-@@ -26,7 +28,9 @@
+@@ -26,7 +28,14 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
  
 -public class EntitySheep extends EntityAnimal
 +import net.minecraftforge.common.IShearable;
++// CraftBukkit start
++import org.bukkit.event.entity.SheepRegrowWoolEvent;
++import org.bukkit.event.player.PlayerShearEntityEvent;
++import net.minecraft.inventory.InventoryCraftResult;
++// CraftBukkit end
 +
 +public class EntitySheep extends EntityAnimal implements IShearable
  {
      private final InventoryCrafting field_90016_e = new InventoryCrafting(new ContainerSheep(this), 2, 1);
  
-@@ -141,28 +145,6 @@
+@@ -60,6 +69,7 @@
+         this.tasks.addTask(8, new EntityAILookIdle(this));
+         this.field_90016_e.setInventorySlotContents(0, new ItemStack(Item.dyePowder, 1, 0));
+         this.field_90016_e.setInventorySlotContents(1, new ItemStack(Item.dyePowder, 1, 0));
++        this.field_90016_e.resultInventory = new InventoryCraftResult(); // CraftBukkit - add result slot for event
+     }
+ 
+     /**
+@@ -109,10 +119,16 @@
+      */
+     protected void dropFewItems(boolean par1, int par2)
+     {
++        // CraftBukkit start - Whole method
++        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
++
+         if (!this.getSheared())
+         {
+-            this.entityDropItem(new ItemStack(Block.cloth.blockID, 1, this.getFleeceColor()), 0.0F);
+-        }
++            loot.add(new org.bukkit.inventory.ItemStack(org.bukkit.Material.WOOL, 1, (short) 0, (byte) this.getFleeceColor()));
++        }
++
++        org.bukkit.craftbukkit.event.CraftEventFactory.callEntityDeathEvent(this, loot);
++        // CraftBukkit end
+     }
+ 
+     /**
+@@ -141,29 +157,8 @@
       */
      public boolean interact(EntityPlayer par1EntityPlayer)
      {
@@ -47,9 +79,29 @@
 -        }
 -
          return super.interact(par1EntityPlayer);
++        // MCPC+ - TODO: missing PlayerShearEvent!
      }
  
-@@ -343,4 +325,24 @@
+     @SideOnly(Side.CLIENT)
+@@ -298,7 +293,16 @@
+      */
+     public void eatGrassBonus()
+     {
+-        this.setSheared(false);
++        // CraftBukkit start
++        SheepRegrowWoolEvent event = new SheepRegrowWoolEvent((org.bukkit.entity.Sheep) this.getBukkitEntity());
++        this.worldObj.getServer().getPluginManager().callEvent(event);
++
++        if (!event.isCancelled())
++        {
++            this.setSheared(false);
++        }
++
++        // CraftBukkit end
+ 
+         if (this.isChild())
+         {
+@@ -343,4 +347,24 @@
      {
          return this.func_90015_b(par1EntityAgeable);
      }

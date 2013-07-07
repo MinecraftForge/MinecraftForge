@@ -1,49 +1,226 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockPistonBase.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockPistonBase.java
-@@ -439,7 +439,7 @@
+@@ -18,6 +18,11 @@
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.event.block.BlockPistonRetractEvent;
++import org.bukkit.event.block.BlockPistonExtendEvent;
++// CraftBukkit end
+ 
+ public class BlockPistonBase extends Block
+ {
+@@ -170,13 +175,35 @@
+ 
+             if (flag && !isExtended(l))
+             {
+-                if (canExtend(par1World, par2, par3, par4, i1))
+-                {
++                // CraftBukkit start
++                int length = canExtend_IntCB(par1World, par2, par3, par4, i1); // MCPC+ - update from rename
++
++                if (length >= 0)
++                {
++                    org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3, par4);
++                    BlockPistonExtendEvent event = new BlockPistonExtendEvent(block, length, CraftBlock.notchToBlockFace(i1));
++                    par1World.getServer().getPluginManager().callEvent(event);
++
++                    if (event.isCancelled())
++                    {
++                        return;
++                    }
++                    // CraftBukkit end
+                     par1World.addBlockEvent(par2, par3, par4, this.blockID, 0, i1);
+                 }
+             }
+             else if (!flag && isExtended(l))
+             {
++                // CraftBukkit start
++                org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3, par4);
++                BlockPistonRetractEvent event = new BlockPistonRetractEvent(block, CraftBlock.notchToBlockFace(i1));
++                par1World.getServer().getPluginManager().callEvent(event);
++
++                if (event.isCancelled())
++                {
++                    return;
++                }
++                // CraftBukkit end
+                 par1World.setBlockMetadataWithNotify(par2, par3, par4, i1, 2);
+                 par1World.addBlockEvent(par2, par3, par4, this.blockID, 1, i1);
+             }
+@@ -366,6 +393,12 @@
+      */
+     public static int getOrientation(int par0)
+     {
++        // CraftBukkit start
++        if ((par0 & 7) >= Facing.oppositeSide.length)
++        {
++            return 7;  // check for AIOOB on piston data
++        }
++        // CraftBukkit end
+         return par0 & 7;
+     }
+ 
+@@ -439,14 +472,21 @@
                  return false;
              }
  
 -            return !(Block.blocksList[par0] instanceof ITileEntityProvider);
+-        }
+-    }
+-
 +            return !par1World.blockHasTileEntity(par2, par3, par4);
-         }
-     }
- 
-@@ -457,14 +457,14 @@
++        }
++    }
++    
++    // MCPC+ start - vanilla compatibility
++    private static boolean canExtend(World world, int i, int j, int k, int l) {
++        return canExtend_IntCB(world, i, j, k, l) >= 0;
++    }
++    // MCPC+ end    
++
++    // CraftBukkit - boolean -> int return
+     /**
+      * checks to see if this piston could push the blocks in front of it.
+      */
+-    private static boolean canExtend(World par0World, int par1, int par2, int par3, int par4)
++    private static int canExtend_IntCB(World par0World, int par1, int par2, int par3, int par4) // MCPC+ - rename and wrap
+     {
+         int i1 = par1 + Facing.offsetsXForSide[par4];
+         int j1 = par2 + Facing.offsetsYForSide[par4];
+@@ -457,16 +497,66 @@
          {
              if (l1 < 13)
              {
 -                if (j1 <= 0 || j1 >= 255)
 +                if (j1 <= 0 || j1 >= par0World.getHeight() - 1)
-                 {
-                     return false;
-                 }
- 
-                 int i2 = par0World.getBlockId(i1, j1, k1);
- 
--                if (i2 != 0)
++                {
++                    return -1; // CraftBukkit
++                }
++
++                int i2 = par0World.getBlockId(i1, j1, k1);
++
 +                if (!par0World.isAirBlock(i1, j1, k1))
-                 {
-                     if (!canPushBlock(i2, par0World, i1, j1, k1, true))
-                     {
-@@ -507,14 +507,14 @@
- 
-             if (l1 < 13)
-             {
--                if (j1 <= 0 || j1 >= 255)
++                {
++                    if (!canPushBlock(i2, par0World, i1, j1, k1, true))
++                    {
++                        return -1; // CraftBukkit
++                    }
++
++                    if (Block.blocksList[i2].getMobilityFlag() != 1)
++                    {
++                        if (l1 == 12)
++                        {
++                            return -1; // CraftBukkit
++                        }
++
++                        i1 += Facing.offsetsXForSide[par4];
++                        j1 += Facing.offsetsYForSide[par4];
++                        k1 += Facing.offsetsZForSide[par4];
++                        ++l1;
++                        continue;
++                    }
++                }
++            }
++
++            return l1; // CraftBukkit
++        }
++    }
++
++    /**
++     * attempts to extend the piston. returns false if impossible.
++     */
++    private boolean tryExtend(World par1World, int par2, int par3, int par4, int par5)
++    {
++        int i1 = par2 + Facing.offsetsXForSide[par5];
++        int j1 = par3 + Facing.offsetsYForSide[par5];
++        int k1 = par4 + Facing.offsetsZForSide[par5];
++        int l1 = 0;
++
++        while (true)
++        {
++            int i2;
++
++            if (l1 < 13)
++            {
 +                if (j1 <= 0 || j1 >= par1World.getHeight() - 1)
                  {
                      return false;
                  }
  
-                 i2 = par1World.getBlockId(i1, j1, k1);
- 
+-                int i2 = par0World.getBlockId(i1, j1, k1);
+-
 -                if (i2 != 0)
+-                {
+-                    if (!canPushBlock(i2, par0World, i1, j1, k1, true))
++                i2 = par1World.getBlockId(i1, j1, k1);
++
 +                if (!par1World.isAirBlock(i1, j1, k1))
-                 {
-                     if (!canPushBlock(i2, par1World, i1, j1, k1, true))
++                {
++                    if (!canPushBlock(i2, par1World, i1, j1, k1, true))
                      {
-@@ -535,7 +535,9 @@
+                         return false;
+                     }
+@@ -478,56 +568,6 @@
+                             return false;
+                         }
+ 
+-                        i1 += Facing.offsetsXForSide[par4];
+-                        j1 += Facing.offsetsYForSide[par4];
+-                        k1 += Facing.offsetsZForSide[par4];
+-                        ++l1;
+-                        continue;
+-                    }
+-                }
+-            }
+-
+-            return true;
+-        }
+-    }
+-
+-    /**
+-     * attempts to extend the piston. returns false if impossible.
+-     */
+-    private boolean tryExtend(World par1World, int par2, int par3, int par4, int par5)
+-    {
+-        int i1 = par2 + Facing.offsetsXForSide[par5];
+-        int j1 = par3 + Facing.offsetsYForSide[par5];
+-        int k1 = par4 + Facing.offsetsZForSide[par5];
+-        int l1 = 0;
+-
+-        while (true)
+-        {
+-            int i2;
+-
+-            if (l1 < 13)
+-            {
+-                if (j1 <= 0 || j1 >= 255)
+-                {
+-                    return false;
+-                }
+-
+-                i2 = par1World.getBlockId(i1, j1, k1);
+-
+-                if (i2 != 0)
+-                {
+-                    if (!canPushBlock(i2, par1World, i1, j1, k1, true))
+-                    {
+-                        return false;
+-                    }
+-
+-                    if (Block.blocksList[i2].getMobilityFlag() != 1)
+-                    {
+-                        if (l1 == 12)
+-                        {
+-                            return false;
+-                        }
+-
+                         i1 += Facing.offsetsXForSide[par5];
+                         j1 += Facing.offsetsYForSide[par5];
+                         k1 += Facing.offsetsZForSide[par5];
+@@ -535,7 +575,9 @@
                          continue;
                      }
  

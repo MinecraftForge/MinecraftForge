@@ -1,0 +1,63 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntitySnowman.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntitySnowman.java
+@@ -16,6 +16,11 @@
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.block.EntityBlockFormEvent;
++import org.bukkit.event.entity.EntityDamageEvent;
++// CraftBukkit end
+ 
+ public class EntitySnowman extends EntityGolem implements IRangedAttackMob
+ {
+@@ -64,7 +69,7 @@
+ 
+         if (this.worldObj.getBiomeGenForCoords(i, j).getFloatTemperature() > 1.0F)
+         {
+-            this.attackEntityFrom(DamageSource.onFire, 1.0F);
++            this.attackEntityFrom(CraftEventFactory.MELTING, 1.0F); // CraftBukkit - DamageSource.BURN -> CraftEventFactory.MELTING
+         }
+ 
+         for (i = 0; i < 4; ++i)
+@@ -75,7 +80,18 @@
+ 
+             if (this.worldObj.getBlockId(j, k, l) == 0 && this.worldObj.getBiomeGenForCoords(j, l).getFloatTemperature() < 0.8F && Block.snow.canPlaceBlockAt(this.worldObj, j, k, l))
+             {
+-                this.worldObj.setBlock(j, k, l, Block.snow.blockID);
++                // CraftBukkit start
++                org.bukkit.block.BlockState blockState = this.worldObj.getWorld().getBlockAt(j, k, l).getState();
++                blockState.setTypeId(Block.snow.blockID);
++                EntityBlockFormEvent event = new EntityBlockFormEvent(this.getBukkitEntity(), blockState.getBlock(), blockState);
++                this.worldObj.getServer().getPluginManager().callEvent(event);
++
++                if (!event.isCancelled())
++                {
++                    blockState.update(true);
++                }
++
++                // CraftBukkit end
+             }
+         }
+     }
+@@ -94,12 +110,17 @@
+      */
+     protected void dropFewItems(boolean par1, int par2)
+     {
++        // CraftBukkit start
++        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
+         int j = this.rand.nextInt(16);
+ 
+-        for (int k = 0; k < j; ++k)
++        if (j > 0)
+         {
+-            this.dropItem(Item.snowball.itemID, 1);
++            loot.add(new org.bukkit.inventory.ItemStack(Item.snowball.itemID, j));
+         }
++
++        CraftEventFactory.callEntityDeathEvent(this, loot);
++        // CraftBukkit end
+     }
+ 
+     /**

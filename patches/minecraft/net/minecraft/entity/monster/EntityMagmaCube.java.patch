@@ -1,0 +1,28 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntityMagmaCube.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntityMagmaCube.java
+@@ -77,6 +77,8 @@
+      */
+     protected void dropFewItems(boolean par1, int par2)
+     {
++        // CraftBukkit start - Whole method
++        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
+         int j = this.getDropItemId();
+ 
+         if (j > 0 && this.getSlimeSize() > 1)
+@@ -88,11 +90,14 @@
+                 k += this.rand.nextInt(par2 + 1);
+             }
+ 
+-            for (int l = 0; l < k; ++l)
++            if (k > 0)
+             {
+-                this.dropItem(j, 1);
++                loot.add(new org.bukkit.inventory.ItemStack(j, k));
+             }
+         }
++
++        org.bukkit.craftbukkit.event.CraftEventFactory.callEntityDeathEvent(this, loot);
++        // CraftBukkit end
+     }
+ 
+     /**

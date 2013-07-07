@@ -1,0 +1,67 @@
+--- ../src_base/minecraft/net/minecraft/entity/passive/EntityPig.java
++++ ../src_work/minecraft/net/minecraft/entity/passive/EntityPig.java
+@@ -19,6 +19,7 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.stats.AchievementList;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
+ 
+ public class EntityPig extends EntityAnimal
+ {
+@@ -162,24 +163,29 @@
+      */
+     protected void dropFewItems(boolean par1, int par2)
+     {
++        // CraftBukkit start
++        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
+         int j = this.rand.nextInt(3) + 1 + this.rand.nextInt(1 + par2);
+ 
+-        for (int k = 0; k < j; ++k)
++        if (j > 0)
+         {
+             if (this.isBurning())
+             {
+-                this.dropItem(Item.porkCooked.itemID, 1);
++                loot.add(new org.bukkit.inventory.ItemStack(Item.porkCooked.itemID, j));
+             }
+             else
+             {
+-                this.dropItem(Item.porkRaw.itemID, 1);
++                loot.add(new org.bukkit.inventory.ItemStack(Item.porkRaw.itemID, j));
+             }
+         }
+ 
+         if (this.getSaddled())
+         {
+-            this.dropItem(Item.saddle.itemID, 1);
+-        }
++            loot.add(new org.bukkit.inventory.ItemStack(Item.saddle.itemID, 1));
++        }
++
++        CraftEventFactory.callEntityDeathEvent(this, loot);
++        // CraftBukkit end
+     }
+ 
+     /**
+@@ -213,8 +219,20 @@
+         if (!this.worldObj.isRemote)
+         {
+             EntityPigZombie entitypigzombie = new EntityPigZombie(this.worldObj);
++
++            // MCPC+ start
++            if (par1EntityLightningBolt != null)
++            {
++                // CraftBukkit start
++                if (CraftEventFactory.callPigZapEvent(this, par1EntityLightningBolt, entitypigzombie).isCancelled())
++                {
++                    return;
++                }
++                // CraftBukkit end
++            } // MCPC+ end
+             entitypigzombie.setLocationAndAngles(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
+-            this.worldObj.spawnEntityInWorld(entitypigzombie);
++            // CraftBukkit - added a reason for spawning this creature
++            this.worldObj.addEntity(entitypigzombie, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
+             this.setDead();
+         }
+     }

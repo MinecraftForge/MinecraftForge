@@ -1,0 +1,99 @@
+--- ../src_base/minecraft/net/minecraft/entity/effect/EntityLightningBolt.java
++++ ../src_work/minecraft/net/minecraft/entity/effect/EntityLightningBolt.java
+@@ -10,6 +10,7 @@
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.util.Vec3;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
+ 
+ public class EntityLightningBolt extends EntityWeatherEffect
+ {
+@@ -28,15 +29,28 @@
+      */
+     private int boltLivingTime;
+ 
++    // CraftBukkit start
++    public boolean isEffect = false;
++
+     public EntityLightningBolt(World par1World, double par2, double par4, double par6)
+     {
++        this(par1World, par2, par4, par6, false);
++    }
++
++    public EntityLightningBolt(World par1World, double par2, double par4, double par6, boolean isEffect)
++    {
++        // CraftBukkit end
+         super(par1World);
++        // CraftBukkit start
++        this.isEffect = isEffect;
++        // CraftBukkit end
+         this.setLocationAndAngles(par2, par4, par6, 0.0F, 0.0F);
+         this.lightningState = 2;
+         this.boltVertex = this.rand.nextLong();
+         this.boltLivingTime = this.rand.nextInt(3) + 1;
+ 
+-        if (!par1World.isRemote && par1World.getGameRules().getGameRuleBooleanValue("doFireTick") && par1World.difficultySetting >= 2 && par1World.doChunksNearChunkExist(MathHelper.floor_double(par2), MathHelper.floor_double(par4), MathHelper.floor_double(par6), 10))
++        // CraftBukkit
++        if (!isEffect && !par1World.isRemote && par1World.getGameRules().getGameRuleBooleanValue("doFireTick") && par1World.difficultySetting >= 2 && par1World.doChunksNearChunkExist(MathHelper.floor_double(par2), MathHelper.floor_double(par4), MathHelper.floor_double(par6), 10))
+         {
+             int i = MathHelper.floor_double(par2);
+             int j = MathHelper.floor_double(par4);
+@@ -44,7 +58,12 @@
+ 
+             if (par1World.getBlockId(i, j, k) == 0 && Block.fire.canPlaceBlockAt(par1World, i, j, k))
+             {
+-                par1World.setBlock(i, j, k, Block.fire.blockID);
++                // CraftBukkit start
++                if (!CraftEventFactory.callBlockIgniteEvent(par1World, i, j, k, this).isCancelled())
++                {
++                    par1World.setBlock(i, j, k, Block.fire.blockID);
++                }
++                // CraftBukkit end
+             }
+ 
+             for (i = 0; i < 4; ++i)
+@@ -55,7 +74,12 @@
+ 
+                 if (par1World.getBlockId(j, k, l) == 0 && Block.fire.canPlaceBlockAt(par1World, j, k, l))
+                 {
+-                    par1World.setBlock(j, k, l, Block.fire.blockID);
++                    // CraftBukkit start
++                    if (!CraftEventFactory.callBlockIgniteEvent(par1World, j, k, l, this).isCancelled())
++                    {
++                        par1World.setBlock(i, j, k, Block.fire.blockID);
++                    }
++                    // CraftBukkit end
+                 }
+             }
+         }
+@@ -88,7 +112,8 @@
+                 this.lightningState = 1;
+                 this.boltVertex = this.rand.nextLong();
+ 
+-                if (!this.worldObj.isRemote && this.worldObj.getGameRules().getGameRuleBooleanValue("doFireTick") && this.worldObj.doChunksNearChunkExist(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ), 10))
++                // CraftBukkit
++                if (!isEffect && !this.worldObj.isRemote && this.worldObj.getGameRules().getGameRuleBooleanValue("doFireTick") && this.worldObj.doChunksNearChunkExist(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ), 10))
+                 {
+                     int i = MathHelper.floor_double(this.posX);
+                     int j = MathHelper.floor_double(this.posY);
+@@ -96,13 +121,18 @@
+ 
+                     if (this.worldObj.getBlockId(i, j, k) == 0 && Block.fire.canPlaceBlockAt(this.worldObj, i, j, k))
+                     {
+-                        this.worldObj.setBlock(i, j, k, Block.fire.blockID);
++                        // CraftBukkit start
++                        if (!CraftEventFactory.callBlockIgniteEvent(worldObj, i, j, k, this).isCancelled())
++                        {
++                            worldObj.setBlock(i, j, k, Block.fire.blockID);
++                        }
++                        // CraftBukkit end
+                     }
+                 }
+             }
+         }
+ 
+-        if (this.lightningState >= 0)
++        if (this.lightningState >= 0 && !this.isEffect)   // CraftBukkit - add !this.isEffect
+         {
+             if (this.worldObj.isRemote)
+             {

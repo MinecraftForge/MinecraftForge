@@ -1,12 +1,12 @@
 --- ../src_base/minecraft/net/minecraft/world/chunk/storage/AnvilSaveHandler.java
 +++ ../src_work/minecraft/net/minecraft/world/chunk/storage/AnvilSaveHandler.java
-@@ -24,15 +24,9 @@
+@@ -23,23 +23,12 @@
+     {
          File file1 = this.getWorldDirectory();
          File file2;
- 
+-
 -        if (par1WorldProvider instanceof WorldProviderHell)
-+        if (par1WorldProvider.getSaveFolder() != null)
-         {
+-        {
 -            file2 = new File(file1, "DIM-1");
 -            file2.mkdirs();
 -            return new AnvilChunkLoader(file2);
@@ -14,7 +14,32 @@
 -        else if (par1WorldProvider instanceof WorldProviderEnd)
 -        {
 -            file2 = new File(file1, "DIM1");
-+            file2 = new File(file1, par1WorldProvider.getSaveFolder());
-             file2.mkdirs();
-             return new AnvilChunkLoader(file2);
+-            file2.mkdirs();
+-            return new AnvilChunkLoader(file2);
+-        }
+-        else
+-        {
+-            return new AnvilChunkLoader(file1);
+-        }
++        // MCPC+ start
++        // To workaround the issue of Bukkit relying on every world having a seperate container
++        // we won't be generating a DIMXX folder for chunk loaders since this name is already generated
++        // for the world container with provider.getSaveFolder().
++        return new AnvilChunkLoader(file1);
++        // MCPC+ end
+     }
+ 
+     /**
+@@ -60,9 +49,10 @@
+         {
+             ThreadedFileIOBase.threadedIOInstance.waitForFinish();
          }
+-        catch (InterruptedException interruptedexception)
++        catch (InterruptedException e)
+         {
+-            interruptedexception.printStackTrace();
++            // TODO Auto-generated catch block
++            e.printStackTrace();
+         }
+ 
+         RegionFileCache.clearRegionFileReferences();

@@ -1,0 +1,115 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntityPigZombie.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntityPigZombie.java
+@@ -13,6 +13,10 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.event.entity.EntityTargetEvent;
++// CraftBukkit end
+ 
+ public class EntityPigZombie extends EntityZombie
+ {
+@@ -20,7 +24,7 @@
+     private static final AttributeModifier field_110190_br = (new AttributeModifier(field_110189_bq, "Attacking speed boost", 0.45D, 0)).func_111168_a(false);
+ 
+     /** Above zero if this PigZombie is Angry. */
+-    private int angerLevel;
++    public int angerLevel; // CraftBukkit - private -> public
+ 
+     /** A random delay until this PigZombie next makes a sound. */
+     private int randomSoundDelay;
+@@ -149,6 +153,24 @@
+      */
+     private void becomeAngryAt(Entity par1Entity)
+     {
++        // CraftBukkit start
++        org.bukkit.entity.Entity bukkitTarget = par1Entity == null ? null : par1Entity.getBukkitEntity();
++        EntityTargetEvent event = new EntityTargetEvent(this.getBukkitEntity(), bukkitTarget, EntityTargetEvent.TargetReason.PIG_ZOMBIE_TARGET);
++        this.worldObj.getServer().getPluginManager().callEvent(event);
++
++        if (event.isCancelled())
++        {
++            return;
++        }
++
++        if (event.getTarget() == null)
++        {
++            this.entityToAttack = null;
++            return;
++        }
++
++        par1Entity = ((org.bukkit.craftbukkit.entity.CraftEntity) event.getTarget()).getHandle();
++        // CraftBukkit end
+         this.entityToAttack = par1Entity;
+         this.angerLevel = 400 + this.rand.nextInt(400);
+         this.randomSoundDelay = this.rand.nextInt(40);
+@@ -184,20 +206,40 @@
+      */
+     protected void dropFewItems(boolean par1, int par2)
+     {
++        // CraftBukkit start
++        List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
+         int j = this.rand.nextInt(2 + par2);
+-        int k;
+-
+-        for (k = 0; k < j; ++k)
+-        {
+-            this.dropItem(Item.rottenFlesh.itemID, 1);
++
++        if (j > 0)
++        {
++            loot.add(CraftItemStack.asNewCraftStack(Item.rottenFlesh, j));
+         }
+ 
+         j = this.rand.nextInt(2 + par2);
+ 
+-        for (k = 0; k < j; ++k)
+-        {
+-            this.dropItem(Item.goldNugget.itemID, 1);
+-        }
++        if (j > 0)
++        {
++            loot.add(CraftItemStack.asNewCraftStack(Item.goldNugget, j));
++        }
++
++        // Determine rare item drops and add them to the loot
++        if (this.recentlyHit > 0)
++        {
++            int k = this.rand.nextInt(200) - par2;
++
++            if (k < 5)
++            {
++                ItemStack itemstack = this.dropRareDrop(k <= 0 ? 1 : 0);
++
++                if (itemstack != null)
++                {
++                    loot.add(CraftItemStack.asCraftMirror(itemstack));
++                }
++            }
++        }
++
++        org.bukkit.craftbukkit.event.CraftEventFactory.callEntityDeathEvent(this, loot);
++        // CraftBukkit end
+     }
+ 
+     /**
+@@ -208,10 +250,13 @@
+         return false;
+     }
+ 
+-    protected void dropRareDrop(int par1)
+-    {
+-        this.dropItem(Item.ingotGold.itemID, 1);
+-    }
++    // CraftBukkit start - Return rare dropped item instead of dropping it
++    protected ItemStack dropRareDrop(int i)
++    {
++        return new ItemStack(Item.ingotGold.itemID, 1, 0);
++    }
++    // CraftBukkit end    
++    // MCPC+ - TODO: vanilla compatibility with void dropRareDrop() + all other mobs using dropRareDrop()
+ 
+     /**
+      * Returns the item ID for the item the mob drops on death.

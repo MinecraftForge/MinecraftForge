@@ -1,0 +1,92 @@
+--- ../src_base/minecraft/net/minecraft/entity/projectile/EntityPotion.java
++++ ../src_work/minecraft/net/minecraft/entity/projectile/EntityPotion.java
+@@ -13,13 +13,19 @@
+ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.util.MovingObjectPosition;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import java.util.HashMap;
++import org.bukkit.craftbukkit.entity.CraftLivingEntity;
++import org.bukkit.entity.LivingEntity;
++import net.minecraft.entity.player.EntityPlayerMP;
++// CraftBukkit end
+ 
+ public class EntityPotion extends EntityThrowable
+ {
+     /**
+      * The damage value of the thrown potion that this EntityPotion represents.
+      */
+-    private ItemStack potionDamage;
++    public ItemStack potionDamage; // CraftBukkit private --> public
+ 
+     public EntityPotion(World par1World)
+     {
+@@ -99,14 +105,16 @@
+         {
+             List list = Item.potion.getEffects(this.potionDamage);
+ 
+-            if (list != null && !list.isEmpty())
++            if (true || list != null && !list.isEmpty())   // CraftBukkit - Call event even if no effects to apply
+             {
+                 AxisAlignedBB axisalignedbb = this.boundingBox.expand(4.0D, 2.0D, 4.0D);
+                 List list1 = this.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, axisalignedbb);
+ 
+-                if (list1 != null && !list1.isEmpty())
++                if (list1 != null)   // CraftBukkit - Run code even if there are no entities around
+                 {
+                     Iterator iterator = list1.iterator();
++                    // CraftBukkit
++                    HashMap<LivingEntity, Double> affected = new HashMap<LivingEntity, Double>();
+ 
+                     while (iterator.hasNext())
+                     {
+@@ -122,6 +130,25 @@
+                                 d1 = 1.0D;
+                             }
+ 
++                            // CraftBukkit start
++                            affected.put((LivingEntity) entitylivingbase.getBukkitEntity(), d1);
++                        }
++                    }
++
++                    org.bukkit.event.entity.PotionSplashEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPotionSplashEvent(this, affected);
++
++                    if (!event.isCancelled() && list != null && !list.isEmpty())   // do not process effects if there are no effects to process
++                    {
++                        for (LivingEntity victim : event.getAffectedEntities())
++                        {
++                            if (!(victim instanceof CraftLivingEntity))
++                            {
++                                continue;
++                            }
++
++                            EntityLivingBase entitylivingbase = ((CraftLivingEntity) victim).getHandle();
++                            double d1 = event.getIntensity(victim);
++                            // CraftBukkit end
+                             Iterator iterator1 = list.iterator();
+ 
+                             while (iterator1.hasNext())
+@@ -129,9 +156,22 @@
+                                 PotionEffect potioneffect = (PotionEffect)iterator1.next();
+                                 int i = potioneffect.getPotionID();
+ 
++                                // CraftBukkit start - Abide by PVP settings - for players only!
++                                if (!this.worldObj.pvpMode && this.getThrower() instanceof EntityPlayerMP && entitylivingbase instanceof EntityPlayerMP && entitylivingbase != this.getThrower())
++                                {
++                                    // Block SLOWER_MOVEMENT, SLOWER_DIG, HARM, BLINDNESS, HUNGER, WEAKNESS and POISON potions
++                                    if (i == 2 || i == 4 || i == 7 || i == 15 || i == 17 || i == 18 || i == 19)
++                                    {
++                                        continue;
++                                    }
++                                }
++
++                                // CraftBukkit end
++
+                                 if (Potion.potionTypes[i].isInstant())
+                                 {
+-                                    Potion.potionTypes[i].affectEntity(this.getThrower(), entitylivingbase, potioneffect.getAmplifier(), d1);
++                                    // CraftBukkit - Added 'this'
++                                    Potion.potionTypes[i].applyInstantEffect(this.getThrower(), entitylivingbase, potioneffect.getAmplifier(), d1, this);
+                                 }
+                                 else
+                                 {

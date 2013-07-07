@@ -1,0 +1,27 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemBed.java
++++ ../src_work/minecraft/net/minecraft/item/ItemBed.java
+@@ -21,6 +21,8 @@
+      */
+     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+     {
++        final int clickedX = par4, clickedY = par5, clickedZ = par6; // CraftBukkit
++
+         if (par3World.isRemote)
+         {
+             return true;
+@@ -61,7 +63,14 @@
+             {
+                 if (par3World.isAirBlock(par4, par5, par6) && par3World.isAirBlock(par4 + b0, par5, par6 + b1) && par3World.doesBlockHaveSolidTopSurface(par4, par5 - 1, par6) && par3World.doesBlockHaveSolidTopSurface(par4 + b0, par5 - 1, par6 + b1))
+                 {
+-                    par3World.setBlock(par4, par5, par6, blockbed.blockID, i1, 3);
++                    // CraftBukkit start
++                    // world.setTypeIdAndData(i, j, k, blockbed.id, i1, 3);
++                    if (!ItemBlock.processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, blockbed.blockID, i1, clickedX, clickedY, clickedZ))
++                    {
++                        return false;
++                    }
++
++                    // CraftBukkit end
+ 
+                     if (par3World.getBlockId(par4, par5, par6) == blockbed.blockID)
+                     {

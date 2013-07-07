@@ -1,16 +1,61 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockFarmland.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockFarmland.java
-@@ -10,6 +10,9 @@
- import net.minecraft.util.AxisAlignedBB;
+@@ -11,6 +11,13 @@
  import net.minecraft.util.Icon;
  import net.minecraft.world.World;
-+
+ 
 +import net.minecraftforge.common.ForgeDirection;
 +import net.minecraftforge.common.IPlantable;
- 
++// CraftBukkit start
++import org.bukkit.event.entity.EntityInteractEvent;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++// CraftBukkit end
++
  public class BlockFarmland extends Block
  {
-@@ -115,7 +118,8 @@
+     @SideOnly(Side.CLIENT)
+@@ -77,6 +84,15 @@
+             }
+             else if (!this.isCropsNearby(par1World, par2, par3, par4))
+             {
++                // CraftBukkit start
++                org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3, par4);
++
++                if (CraftEventFactory.callBlockFadeEvent(block, Block.dirt.blockID).isCancelled())
++                {
++                    return;
++                }
++
++                // CraftBukkit end
+                 par1World.setBlock(par2, par3, par4, Block.dirt.blockID);
+             }
+         }
+@@ -98,6 +114,24 @@
+                 return;
+             }
+ 
++            // CraftBukkit start - Interact soil
++            org.bukkit.event.Cancellable cancellable;
++
++            if (par5Entity instanceof EntityPlayer)
++            {
++                cancellable = CraftEventFactory.callPlayerInteractEvent((EntityPlayer) par5Entity, org.bukkit.event.block.Action.PHYSICAL, par2, par3, par4, -1, null);
++            }
++            else
++            {
++                cancellable = new EntityInteractEvent(par5Entity.getBukkitEntity(), par1World.getWorld().getBlockAt(par2, par3, par4));
++                par1World.getServer().getPluginManager().callEvent((EntityInteractEvent) cancellable);
++            }
++
++            if (cancellable.isCancelled())
++            {
++                return;
++            }
++            // CraftBukkit end
+             par1World.setBlock(par2, par3, par4, Block.dirt.blockID);
+         }
+     }
+@@ -115,7 +149,8 @@
              {
                  int j1 = par1World.getBlockId(l, par3 + 1, i1);
  

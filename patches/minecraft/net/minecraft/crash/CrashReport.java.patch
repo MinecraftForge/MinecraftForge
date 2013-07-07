@@ -1,6 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/crash/CrashReport.java
 +++ ../src_work/minecraft/net/minecraft/crash/CrashReport.java
-@@ -245,7 +245,8 @@
+@@ -55,6 +55,7 @@
+         this.field_85061_c.addCrashSectionCallable("AABB Pool Size", new CallableCrashMemoryReport(this));
+         this.field_85061_c.addCrashSectionCallable("Suspicious classes", new CallableSuspiciousClasses(this));
+         this.field_85061_c.addCrashSectionCallable("IntCache", new CallableIntCache(this));
++        this.field_85061_c.addCrashSectionCallable("CraftBukkit Information", (new org.bukkit.craftbukkit.CraftCrashReport()));  // CraftBukkit
+         FMLCommonHandler.instance().enhanceCrashReport(this, this.field_85061_c);
+     }
+ 
+@@ -245,7 +246,8 @@
              StackTraceElement stacktraceelement = null;
              StackTraceElement stacktraceelement1 = null;
  

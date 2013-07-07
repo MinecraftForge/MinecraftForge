@@ -1,0 +1,14 @@
+--- ../src_base/minecraft/net/minecraft/network/MemoryConnection.java
++++ ../src_work/minecraft/net/minecraft/network/MemoryConnection.java
+@@ -175,4 +175,11 @@
+             this.readPacketCache.add(par1Packet);
+         }
+     }
++
++    @Override
++    public void setSocketAddress(SocketAddress address)
++    {
++        // TODO Auto-generated method stub
++        
++    }
+ }

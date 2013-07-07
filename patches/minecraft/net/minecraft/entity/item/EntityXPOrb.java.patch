@@ -1,0 +1,160 @@
+--- ../src_base/minecraft/net/minecraft/entity/item/EntityXPOrb.java
++++ ../src_work/minecraft/net/minecraft/entity/item/EntityXPOrb.java
+@@ -10,6 +10,10 @@
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTargetEvent;
++// CraftBukkit end
+ 
+ public class EntityXPOrb extends Entity
+ {
+@@ -26,7 +30,7 @@
+     private int xpOrbHealth = 5;
+ 
+     /** This is how much XP this orb has. */
+-    private int xpValue;
++    public int xpValue; // CraftBukkit - private -> public
+ 
+     /** The closest EntityPlayer to this orb. */
+     private EntityPlayer closestPlayer;
+@@ -133,18 +137,27 @@
+ 
+         if (this.closestPlayer != null)
+         {
+-            double d1 = (this.closestPlayer.posX - this.posX) / d0;
+-            double d2 = (this.closestPlayer.posY + (double)this.closestPlayer.getEyeHeight() - this.posY) / d0;
+-            double d3 = (this.closestPlayer.posZ - this.posZ) / d0;
+-            double d4 = Math.sqrt(d1 * d1 + d2 * d2 + d3 * d3);
+-            double d5 = 1.0D - d4;
+-
+-            if (d5 > 0.0D)
+-            {
+-                d5 *= d5;
+-                this.motionX += d1 / d4 * d5 * 0.1D;
+-                this.motionY += d2 / d4 * d5 * 0.1D;
+-                this.motionZ += d3 / d4 * d5 * 0.1D;
++            // CraftBukkit start
++            EntityTargetEvent event = CraftEventFactory.callEntityTargetEvent(this, closestPlayer, EntityTargetEvent.TargetReason.CLOSEST_PLAYER);
++            Entity target = event.getTarget() == null ? null : ((org.bukkit.craftbukkit.entity.CraftEntity) event.getTarget()).getHandle();
++
++            if (!event.isCancelled() && target != null)
++            {
++                double d1 = (target.posX - this.posX) / d0;
++                double d2 = (target.posY + (double) target.getEyeHeight() - this.posY) / d0;
++                double d3 = (target.posZ - this.posZ) / d0;
++                double d4 = Math.sqrt(d1 * d1 + d2 * d2 + d3 * d3);
++                double d5 = 1.0D - d4;
++
++                if (d5 > 0.0D)
++                {
++                    d5 *= d5;
++                    this.motionX += d1 / d4 * d5 * 0.1D;
++                    this.motionY += d2 / d4 * d5 * 0.1D;
++                    this.motionZ += d3 / d4 * d5 * 0.1D;
++                }
++
++                // CraftBukkit end
+             }
+         }
+ 
+@@ -252,7 +265,7 @@
+                 par1EntityPlayer.xpCooldown = 2;
+                 this.playSound("random.orb", 0.1F, 0.5F * ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7F + 1.8F));
+                 par1EntityPlayer.onItemPickup(this, 1);
+-                par1EntityPlayer.addExperience(this.xpValue);
++                par1EntityPlayer.addExperience(CraftEventFactory.callPlayerExpChangeEvent(par1EntityPlayer, this.xpValue).getAmount()); // CraftBukkit - this.value to event.getAmount()
+                 this.setDead();
+             }
+         }
+@@ -282,6 +295,88 @@
+      */
+     public static int getXPSplit(int par0)
+     {
++        // CraftBukkit start
++        if (par0 > 162670129)
++        {
++            return par0 - 100000;
++        }
++
++        if (par0 > 81335063)
++        {
++            return 81335063;
++        }
++
++        if (par0 > 40667527)
++        {
++            return 40667527;
++        }
++
++        if (par0 > 20333759)
++        {
++            return 20333759;
++        }
++
++        if (par0 > 10166857)
++        {
++            return 10166857;
++        }
++
++        if (par0 > 5083423)
++        {
++            return 5083423;
++        }
++
++        if (par0 > 2541701)
++        {
++            return 2541701;
++        }
++
++        if (par0 > 1270849)
++        {
++            return 1270849;
++        }
++
++        if (par0 > 635413)
++        {
++            return 635413;
++        }
++
++        if (par0 > 317701)
++        {
++            return 317701;
++        }
++
++        if (par0 > 158849)
++        {
++            return 158849;
++        }
++
++        if (par0 > 79423)
++        {
++            return 79423;
++        }
++
++        if (par0 > 39709)
++        {
++            return 39709;
++        }
++
++        if (par0 > 19853)
++        {
++            return 19853;
++        }
++
++        if (par0 > 9923)
++        {
++            return 9923;
++        }
++
++        if (par0 > 4957)
++        {
++            return 4957;
++        }
++
++        // CraftBukkit end
+         return par0 >= 2477 ? 2477 : (par0 >= 1237 ? 1237 : (par0 >= 617 ? 617 : (par0 >= 307 ? 307 : (par0 >= 149 ? 149 : (par0 >= 73 ? 73 : (par0 >= 37 ? 37 : (par0 >= 17 ? 17 : (par0 >= 7 ? 7 : (par0 >= 3 ? 3 : 1)))))))));
+     }
+ 

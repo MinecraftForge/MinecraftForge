@@ -1,10 +1,11 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockTrapDoor.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockTrapDoor.java
-@@ -11,8 +11,13 @@
+@@ -11,8 +11,14 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
 +import net.minecraftforge.common.ForgeDirection;
++import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
 +
  public class BlockTrapDoor extends Block
  {
@@ -14,7 +15,7 @@
      protected BlockTrapDoor(int par1, Material par2Material)
      {
          super(par1, par2Material);
-@@ -194,7 +199,7 @@
+@@ -194,17 +200,27 @@
                  --j1;
              }
  
@@ -23,7 +24,32 @@
              {
                  par1World.setBlockToAir(par2, par3, par4);
                  this.dropBlockAsItem(par1World, par2, par3, par4, i1, 0);
-@@ -259,6 +264,10 @@
+             }
+ 
+-            boolean flag = par1World.isBlockIndirectlyGettingPowered(par2, par3, par4);
+-
+-            if (flag || par5 > 0 && Block.blocksList[par5].canProvidePower())
+-            {
+-                this.onPoweredBlockChange(par1World, par2, par3, par4, flag);
++            // CraftBukkit start
++            if (par5 == 0 || par5 > 0 && Block.blocksList[par5] != null && Block.blocksList[par5].canProvidePower())
++            {
++                org.bukkit.World bworld = par1World.getWorld();
++                org.bukkit.block.Block block = bworld.getBlockAt(par2, par3, par4);
++                int power = block.getBlockPower();
++                int oldPower = (par1World.getBlockMetadata(par2, par3, par4) & 4) > 0 ? 15 : 0;
++
++                if (oldPower == 0 ^ power == 0 || (Block.blocksList[par5] != null && Block.blocksList[par5].canProvidePower()))
++                {
++                    BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, oldPower, power);
++                    par1World.getServer().getPluginManager().callEvent(eventRedstone);
++                    this.onPoweredBlockChange(par1World, par2, par3, par4, eventRedstone.getNewCurrent() > 0);
++                }
++            // CraftBukkit end
+             }
+         }
+     }
+@@ -259,6 +275,10 @@
       */
      public boolean canPlaceBlockOnSide(World par1World, int par2, int par3, int par4, int par5)
      {
@@ -34,7 +60,7 @@
          if (par5 == 0)
          {
              return false;
-@@ -289,7 +298,7 @@
+@@ -289,7 +309,7 @@
                  --par2;
              }
  
@@ -43,7 +69,7 @@
          }
      }
  
-@@ -304,6 +313,10 @@
+@@ -304,6 +324,10 @@
       */
      private static boolean isValidSupportBlock(int par0)
      {

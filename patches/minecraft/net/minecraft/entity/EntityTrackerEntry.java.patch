@@ -1,0 +1,285 @@
+--- ../src_base/minecraft/net/minecraft/entity/EntityTrackerEntry.java
++++ ../src_work/minecraft/net/minecraft/entity/EntityTrackerEntry.java
+@@ -55,8 +55,14 @@
+ import net.minecraft.network.packet.Packet44UpdateAttributes;
+ import net.minecraft.network.packet.Packet5PlayerInventory;
+ import net.minecraft.potion.PotionEffect;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.storage.MapData;
++
++// CraftBukkit start
++import org.bukkit.entity.Player;
++import org.bukkit.event.player.PlayerVelocityEvent;
++// CraftBukkit end
+ 
+ public class EntityTrackerEntry
+ {
+@@ -74,23 +80,23 @@
+     public double motionX;
+     public double motionY;
+     public double motionZ;
+-    public int ticks;
++    public int ticks = 0;
+     private double posX;
+     private double posY;
+     private double posZ;
+ 
+     /** set to true on first sendLocationToClients */
+-    private boolean isDataInitialized;
++    private boolean isDataInitialized = false;
+     private boolean sendVelocityUpdates;
+ 
+     /**
+      * every 400 ticks a  full teleport packet is sent, rather than just a "move me +x" command, so that position
+      * remains fully synced.
+      */
+-    private int ticksSinceLastForcedTeleport;
++    private int ticksSinceLastForcedTeleport = 0;
+     private Entity field_85178_v;
+-    private boolean ridingEntity;
+-    public boolean playerEntitiesUpdated;
++    private boolean ridingEntity = false;
++    public boolean playerEntitiesUpdated = false;
+ 
+     /**
+      * Holds references to all the players that are currently receiving position updates for this entity.
+@@ -138,21 +144,21 @@
+             this.sendEventsToPlayers(par1List);
+         }
+ 
+-        if (this.field_85178_v != this.myEntity.ridingEntity || this.myEntity.ridingEntity != null && this.ticks % 60 == 0)
++        if (this.field_85178_v != this.myEntity.ridingEntity /* || this.tracker.vehicle != null && this.m % 60 == 0 */)   // CraftBukkit - Revert to 1.4 logic, this packet is a toggle
+         {
+             this.field_85178_v = this.myEntity.ridingEntity;
+             this.sendPacketToAllTrackingPlayers(new Packet39AttachEntity(0, this.myEntity, this.myEntity.ridingEntity));
+         }
+ 
+-        if (this.myEntity instanceof EntityItemFrame && this.ticks % 10 == 0)
++        if (this.myEntity instanceof EntityItemFrame /*&& this.m % 10 == 0*/)   // CraftBukkit - Moved below, should always enter this block
+         {
+             EntityItemFrame entityitemframe = (EntityItemFrame)this.myEntity;
+             ItemStack itemstack = entityitemframe.getDisplayedItem();
+ 
+-            if (itemstack != null && itemstack.getItem() instanceof ItemMap)
++            if (this.ticks % 10 == 0 && itemstack != null && itemstack.getItem() instanceof ItemMap)  // CraftBukkit - Moved this.m % 10 logic here so item frames do not enter the other blocks
+             {
+                 MapData mapdata = Item.map.getMapData(itemstack, this.myEntity.worldObj);
+-                Iterator iterator = par1List.iterator();
++                Iterator iterator = this.trackingPlayers.iterator();  // CraftBukkit
+ 
+                 while (iterator.hasNext())
+                 {
+@@ -194,6 +200,22 @@
+                 boolean flag = Math.abs(j1) >= 4 || Math.abs(k1) >= 4 || Math.abs(l1) >= 4 || this.ticks % 60 == 0;
+                 boolean flag1 = Math.abs(l - this.lastYaw) >= 4 || Math.abs(i1 - this.lastPitch) >= 4;
+ 
++                // CraftBukkit start - Code moved from below
++                if (flag)
++                {
++                    this.lastScaledXPosition = i;
++                    this.lastScaledYPosition = j;
++                    this.lastScaledZPosition = k;
++                }
++
++                if (flag1)
++                {
++                    this.lastYaw = l;
++                    this.lastPitch = i1;
++                }
++
++                // CraftBukkit end
++
+                 if (this.ticks > 0 || this.myEntity instanceof EntityArrow)
+                 {
+                     if (j1 >= -128 && j1 < 128 && k1 >= -128 && k1 < 128 && l1 >= -128 && l1 < 128 && this.ticksSinceLastForcedTeleport <= 400 && !this.ridingEntity)
+@@ -214,6 +236,14 @@
+                     else
+                     {
+                         this.ticksSinceLastForcedTeleport = 0;
++
++                        // CraftBukkit start - Refresh list of who can see a player before sending teleport packet
++                        if (this.myEntity instanceof EntityPlayerMP)
++                        {
++                            this.sendEventsToPlayers(new java.util.ArrayList(this.trackingPlayers));
++                        }
++
++                        // CraftBukkit end
+                         object = new Packet34EntityTeleport(this.myEntity.entityId, i, j, k, (byte)l, (byte)i1);
+                     }
+                 }
+@@ -241,20 +271,18 @@
+                 }
+ 
+                 this.func_111190_b();
+-
+-                if (flag)
+-                {
+-                    this.lastScaledXPosition = i;
+-                    this.lastScaledYPosition = j;
+-                    this.lastScaledZPosition = k;
+-                }
+-
+-                if (flag1)
+-                {
+-                    this.lastYaw = l;
+-                    this.lastPitch = i1;
+-                }
+-
++                /* CraftBukkit start - Code moved up
++                if (flag) {
++                    this.xLoc = i;
++                    this.yLoc = j;
++                    this.zLoc = k;
++                }
++
++                if (flag1) {
++                    this.yRot = l;
++                    this.xRot = i1;
++                }
++                // CraftBukkit end */
+                 this.ridingEntity = false;
+             }
+             else
+@@ -292,7 +320,32 @@
+ 
+         if (this.myEntity.velocityChanged)
+         {
+-            this.sendPacketToAllAssociatedPlayers(new Packet28EntityVelocity(this.myEntity));
++            // CraftBukkit start - Create PlayerVelocity event
++            boolean cancelled = false;
++
++            if (this.myEntity instanceof EntityPlayerMP)
++            {
++                Player player = (Player) this.myEntity.getBukkitEntity();
++                org.bukkit.util.Vector velocity = player.getVelocity();
++                PlayerVelocityEvent event = new PlayerVelocityEvent(player, velocity);
++                this.myEntity.worldObj.getServer().getPluginManager().callEvent(event);
++
++                if (event.isCancelled())
++                {
++                    cancelled = true;
++                }
++                else if (!velocity.equals(event.getVelocity()))
++                {
++                    player.setVelocity(velocity);
++                }
++            }
++
++            if (!cancelled)
++            {
++                this.sendPacketToAllAssociatedPlayers((Packet)(new Packet28EntityVelocity(this.myEntity)));
++            }
++
++            // CraftBukkit end
+             this.myEntity.velocityChanged = false;
+         }
+     }
+@@ -372,6 +425,11 @@
+      */
+     public void tryStartWachingThis(EntityPlayerMP par1EntityPlayerMP)
+     {
++        if (Thread.currentThread() != MinecraftServer.getServer().primaryThread)
++        {
++            throw new IllegalStateException("Asynchronous player tracker update!");    // Spigot
++        }
++
+         if (par1EntityPlayerMP != this.myEntity)
+         {
+             double d0 = par1EntityPlayerMP.posX - (double)(this.lastScaledXPosition / 32);
+@@ -381,6 +439,19 @@
+             {
+                 if (!this.trackingPlayers.contains(par1EntityPlayerMP) && (this.isPlayerWatchingThisChunk(par1EntityPlayerMP) || this.myEntity.field_98038_p))
+                 {
++                    // CraftBukkit start
++                    if (this.myEntity instanceof EntityPlayerMP)
++                    {
++                        Player player = ((EntityPlayerMP) this.myEntity).getBukkitEntity();
++
++                        if (!par1EntityPlayerMP.getBukkitEntity().canSee(player))
++                        {
++                            return;
++                        }
++                    }
++
++                    par1EntityPlayerMP.destroyedItemsNetCache.remove(Integer.valueOf(this.myEntity.entityId));
++                    // CraftBukkit end
+                     this.trackingPlayers.add(par1EntityPlayerMP);
+                     Packet packet = this.getPacketForThisEntity();
+                     par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(packet);
+@@ -413,20 +484,22 @@
+                         FMLNetworkHandler.makeEntitySpawnAdjustment(this.myEntity.entityId, par1EntityPlayerMP, this.lastScaledXPosition, this.lastScaledYPosition, this.lastScaledZPosition);
+                     }
+ 
+-                    if (this.sendVelocityUpdates && !(packet instanceof Packet24MobSpawn))
+-                    {
+-                        par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet28EntityVelocity(this.myEntity.entityId, this.myEntity.motionX, this.myEntity.motionY, this.myEntity.motionZ));
+-                    }
+-
+-                    if (this.myEntity.ridingEntity != null)
++                    // CraftBukkit start
++                    if (this.myEntity.ridingEntity != null && this.myEntity.entityId > this.myEntity.ridingEntity.entityId)
+                     {
+                         par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet39AttachEntity(0, this.myEntity, this.myEntity.ridingEntity));
+                     }
++                    else if (this.myEntity.riddenByEntity != null && this.myEntity.entityId > this.myEntity.riddenByEntity.entityId)
++                    {
++                        par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet39AttachEntity(0, this.myEntity.riddenByEntity, this.myEntity));
++                    }
+ 
+                     if (this.myEntity instanceof EntityLiving && ((EntityLiving)this.myEntity).func_110166_bE() != null)
+                     {
+                         par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet39AttachEntity(1, this.myEntity, ((EntityLiving)this.myEntity).func_110166_bE()));
+                     }
++
++                    // CraftBukkit end
+ 
+                     if (this.myEntity instanceof EntityLivingBase)
+                     {
+@@ -451,6 +524,11 @@
+                         }
+                     }
+ 
++                    // CraftBukkit start - Fix for nonsensical head yaw
++                    this.lastHeadMotion = MathHelper.floor_float(this.myEntity.getRotationYawHead() * 256.0F / 360.0F); // tracker.ao() should be getHeadRotation
++                    this.sendPacketToAllTrackingPlayers(new Packet35EntityHeadRotation(this.myEntity.entityId, (byte) lastHeadMotion));
++                    // CraftBukkit end
++
+                     if (this.myEntity instanceof EntityLivingBase)
+                     {
+                         EntityLivingBase entitylivingbase = (EntityLivingBase)this.myEntity;
+@@ -489,15 +567,18 @@
+     {
+         if (this.myEntity.isDead)
+         {
+-            this.myEntity.worldObj.getWorldLogAgent().logWarning("Fetching addPacket for removed entity");
+-        }
+-
++            // CraftBukkit start - Remove useless error spam, just return
++            // this.tracker.world.getLogger().warning("Fetching addPacket for removed entity");
++            return null;
++            // CraftBukkit end
++        }
++        
+         Packet pkt = FMLNetworkHandler.getEntitySpawningPacket(this.myEntity);
+ 
+         if (pkt != null)
+         {
+             return pkt;
+-        }
++        }        
+ 
+         if (this.myEntity instanceof EntityItem)
+         {
+@@ -643,6 +724,11 @@
+ 
+     public void removePlayerFromTracker(EntityPlayerMP par1EntityPlayerMP)
+     {
++        if (Thread.currentThread() != MinecraftServer.getServer().primaryThread)
++        {
++            throw new IllegalStateException("Asynchronous player tracker clear!");    // Spigot
++        }
++
+         if (this.trackingPlayers.contains(par1EntityPlayerMP))
+         {
+             this.trackingPlayers.remove(par1EntityPlayerMP);

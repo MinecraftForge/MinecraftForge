@@ -1,0 +1,43 @@
+--- ../src_base/minecraft/net/minecraft/world/storage/ISaveHandler.java
++++ ../src_work/minecraft/net/minecraft/world/storage/ISaveHandler.java
+@@ -16,22 +16,22 @@
+     /**
+      * Checks the session lock to prevent save collisions
+      */
+-    void checkSessionLock() throws MinecraftException;
++    void checkSessionLock() throws MinecraftException; // CraftBukkit - throws ExceptionWorldConflict
+ 
+     /**
+      * Returns the chunk loader with the provided world provider
+      */
+-    IChunkLoader getChunkLoader(WorldProvider worldprovider);
++    IChunkLoader getChunkLoader(WorldProvider par1WorldProvider);
+ 
+     /**
+      * Saves the given World Info with the given NBTTagCompound as the Player.
+      */
+-    void saveWorldInfoWithPlayer(WorldInfo worldinfo, NBTTagCompound nbttagcompound);
++    void saveWorldInfoWithPlayer(WorldInfo par1WorldInfo, NBTTagCompound par2NBTTagCompound);
+ 
+     /**
+      * Saves the passed in world info.
+      */
+-    void saveWorldInfo(WorldInfo worldinfo);
++    void saveWorldInfo(WorldInfo par1WorldInfo);
+ 
+     /**
+      * returns null if no saveHandler is relevent (eg. SMP)
+@@ -46,10 +46,12 @@
+     /**
+      * Gets the file location of the given map
+      */
+-    File getMapFileFromName(String s);
++    File getMapFileFromName(String par1Str);
+ 
+     /**
+      * Returns the name of the directory where world information is saved.
+      */
+     String getWorldDirectoryName();
++
++    java.util.UUID getUUID(); // CraftBukkit
+ }

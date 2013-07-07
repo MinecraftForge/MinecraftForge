@@ -1,0 +1,30 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemMonsterPlacer.java
++++ ../src_work/minecraft/net/minecraft/item/ItemMonsterPlacer.java
+@@ -35,6 +35,9 @@
+         this.setCreativeTab(CreativeTabs.tabMisc);
+     }
+ 
++    /**
++     * Gets the localized name of the given item stack.
++     */
+     public String getItemDisplayName(ItemStack par1ItemStack)
+     {
+         String s = ("" + StatCollector.translateToLocal(this.getUnlocalizedName() + ".name")).trim();
+@@ -61,7 +64,7 @@
+      */
+     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+     {
+-        if (par3World.isRemote)
++        if (par3World.isRemote || par1ItemStack.getItemDamage() == 48 || par1ItemStack.getItemDamage() == 49 || par1ItemStack.getItemDamage() == 63 || par1ItemStack.getItemDamage() == 64)   // CraftBukkit
+         {
+             return true;
+         }
+@@ -181,7 +184,7 @@
+                     entityliving.rotationYawHead = entityliving.rotationYaw;
+                     entityliving.renderYawOffset = entityliving.rotationYaw;
+                     entityliving.func_110161_a((EntityLivingData)null);
+-                    par0World.spawnEntityInWorld(entity);
++                    par0World.addEntity(entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG); // CraftBukkit
+                     entityliving.playLivingSound();
+                 }
+             }

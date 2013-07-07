@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/entity/ai/EntityAISit.java
++++ ../src_work/minecraft/net/minecraft/entity/ai/EntityAISit.java
+@@ -23,7 +23,7 @@
+     {
+         if (!this.theEntity.isTamed())
+         {
+-            return false;
++            return this.isSitting && this.theEntity.getAttackTarget() == null; // CraftBukkit - Allow sitting for wild animals
+         }
+         else if (this.theEntity.isInWater())
+         {

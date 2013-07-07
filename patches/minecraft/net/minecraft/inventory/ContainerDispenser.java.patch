@@ -1,0 +1,64 @@
+--- ../src_base/minecraft/net/minecraft/inventory/ContainerDispenser.java
++++ ../src_work/minecraft/net/minecraft/inventory/ContainerDispenser.java
+@@ -1,16 +1,29 @@
+ package net.minecraft.inventory;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftInventory;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.player.InventoryPlayer;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.tileentity.TileEntityDispenser;
++// CraftBukkit end
+ 
+ public class ContainerDispenser extends Container
+ {
+-    private TileEntityDispenser tileEntityDispenser;
++    public TileEntityDispenser tileEntityDispenser; // CraftBukkit - private -> public
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    private InventoryPlayer player;
++    // CraftBukkit end
+ 
+     public ContainerDispenser(IInventory par1IInventory, TileEntityDispenser par2TileEntityDispenser)
+     {
+         this.tileEntityDispenser = par2TileEntityDispenser;
++        // CraftBukkit start - Save player
++        // TODO: Should we check to make sure it really is an InventoryPlayer?
++        this.player = (InventoryPlayer)par1IInventory;
++        // CraftBukkit end
+         int i;
+         int j;
+ 
+@@ -38,6 +51,11 @@
+ 
+     public boolean canInteractWith(EntityPlayer par1EntityPlayer)
+     {
++        if (!this.checkReachable)
++        {
++            return true;    // CraftBukkit
++        }
++
+         return this.tileEntityDispenser.isUseableByPlayer(par1EntityPlayer);
+     }
+ 
+@@ -85,4 +103,18 @@
+ 
+         return itemstack;
+     }
++
++    // CraftBukkit start
++    public CraftInventoryView getBukkitView()
++    {
++        if (bukkitEntity != null)
++        {
++            return bukkitEntity;
++        }
++
++        CraftInventory inventory = new CraftInventory(this.tileEntityDispenser);
++        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
+ }

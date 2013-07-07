@@ -1,0 +1,33 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockCommandBlock.java
++++ ../src_work/minecraft/net/minecraft/block/BlockCommandBlock.java
+@@ -8,6 +8,7 @@
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityCommandBlock;
+ import net.minecraft.world.World;
++import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
+ 
+ public class BlockCommandBlock extends BlockContainer
+ {
+@@ -35,13 +36,20 @@
+             boolean flag = par1World.isBlockIndirectlyGettingPowered(par2, par3, par4);
+             int i1 = par1World.getBlockMetadata(par2, par3, par4);
+             boolean flag1 = (i1 & 1) != 0;
++            // CraftBukkit start
++            org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3, par4);
++            int old = flag1 ? 15 : 0;
++            int current = flag ? 15 : 0;
++            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);
++            par1World.getServer().getPluginManager().callEvent(eventRedstone);
++            // CraftBukkit end
+ 
+-            if (flag && !flag1)
++            if (eventRedstone.getNewCurrent() > 0 && !(eventRedstone.getOldCurrent() > 0))   // CraftBukkit
+             {
+                 par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 | 1, 4);
+                 par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));
+             }
+-            else if (!flag && flag1)
++            else if (!(eventRedstone.getNewCurrent() > 0) && eventRedstone.getOldCurrent() > 0)     // CraftBukkit
+             {
+                 par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 & -2, 4);
+             }

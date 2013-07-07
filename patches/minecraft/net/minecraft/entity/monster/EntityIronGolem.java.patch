@@ -1,0 +1,43 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntityIronGolem.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntityIronGolem.java
+@@ -26,6 +26,7 @@
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.village.Village;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.inventory.CraftItemStack; // CraftBukkit
+ 
+ public class EntityIronGolem extends EntityGolem
+ {
+@@ -262,20 +263,25 @@
+      */
+     protected void dropFewItems(boolean par1, int par2)
+     {
++        // CraftBukkit start
++        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
+         int j = this.rand.nextInt(3);
+         int k;
+ 
+-        for (k = 0; k < j; ++k)
+-        {
+-            this.dropItem(Block.plantRed.blockID, 1);
++        if (j > 0)
++        {
++            loot.add(CraftItemStack.asNewCraftStack(Item.itemsList[Block.plantRed.blockID], j));
+         }
+ 
+         k = 3 + this.rand.nextInt(3);
+ 
+-        for (int l = 0; l < k; ++l)
+-        {
+-            this.dropItem(Item.ingotIron.itemID, 1);
+-        }
++        if (k > 0)
++        {
++            loot.add(CraftItemStack.asNewCraftStack(Item.ingotIron, k));
++        }
++
++        org.bukkit.craftbukkit.event.CraftEventFactory.callEntityDeathEvent(this, loot);
++        // CraftBukkit end
+     }
+ 
+     public int getHoldRoseTick()

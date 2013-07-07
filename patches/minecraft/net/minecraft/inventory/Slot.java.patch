@@ -9,6 +9,15 @@
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.Icon;
+@@ -9,7 +11,7 @@
+ public class Slot
+ {
+     /** The index of the slot in the inventory. */
+-    private final int slotIndex;
++    public final int slotIndex; // CraftBukkit - private -> public
+ 
+     /** The inventory we want to extract a slot from. */
+     public final IInventory inventory;
 @@ -22,6 +24,13 @@
  
      /** display position of the inventory slot on the screen y axis */

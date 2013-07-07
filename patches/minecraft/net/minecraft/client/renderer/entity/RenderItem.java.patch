@@ -199,53 +199,32 @@
                  int k1 = Item.itemsList[k].getColorFromItemStack(par3ItemStack, j1);
                  f1 = (float)(k1 >> 16 & 255) / 255.0F;
                  f2 = (float)(k1 >> 8 & 255) / 255.0F;
-@@ -402,6 +395,11 @@
+@@ -402,6 +395,24 @@
                  }
  
                  this.renderIcon(par4, par5, icon, 16, 16);
 +
 +                if (par3ItemStack.hasEffect(j1))
 +                {
-+                    renderEffect(par2TextureManager, par4, par5);
++                    GL11.glDepthFunc(GL11.GL_GREATER);
++                    GL11.glDisable(GL11.GL_LIGHTING);
++                    GL11.glDepthMask(false);
++                    par2TextureManager.func_110577_a(field_110798_h);
++                    this.zLevel -= 50.0F;
++                    GL11.glEnable(GL11.GL_BLEND);
++                    GL11.glBlendFunc(GL11.GL_DST_COLOR, GL11.GL_DST_COLOR);
++                    GL11.glColor4f(0.5F, 0.25F, 0.8F, 1.0F);
++                    this.renderGlint(par4 * 431278612 + par5 * 32178161, par4 - 2, par5 - 2, 20, 20);
++                    GL11.glDisable(GL11.GL_BLEND);
++                    GL11.glDepthMask(true);
++                    this.zLevel += 50.0F;
++                    GL11.glEnable(GL11.GL_LIGHTING);
++                    GL11.glDepthFunc(GL11.GL_LEQUAL);
 +                }
              }
  
              GL11.glEnable(GL11.GL_LIGHTING);
-@@ -429,10 +427,33 @@
- 
-             this.renderIcon(par4, par5, (Icon)object, 16, 16);
-             GL11.glEnable(GL11.GL_LIGHTING);
-+
-+            if (par3ItemStack.hasEffect(0))
-+            {
-+                renderEffect(par2TextureManager, par4, par5);
-+            }
-         }
- 
-         GL11.glEnable(GL11.GL_CULL_FACE);
-     }
-+    
-+    private void renderEffect(TextureManager manager, int x, int y)
-+    {
-+        GL11.glDepthFunc(GL11.GL_GREATER);
-+        GL11.glDisable(GL11.GL_LIGHTING);
-+        GL11.glDepthMask(false);
-+        manager.func_110577_a(field_110798_h);
-+        this.zLevel -= 50.0F;
-+        GL11.glEnable(GL11.GL_BLEND);
-+        GL11.glBlendFunc(GL11.GL_DST_COLOR, GL11.GL_DST_COLOR);
-+        GL11.glColor4f(0.5F, 0.25F, 0.8F, 1.0F);
-+        this.renderGlint(x * 431278612 + y * 32178161, x - 2, y - 2, 20, 20);
-+        GL11.glDisable(GL11.GL_BLEND);
-+        GL11.glDepthMask(true);
-+        this.zLevel += 50.0F;
-+        GL11.glEnable(GL11.GL_LIGHTING);
-+        GL11.glDepthFunc(GL11.GL_LEQUAL);
-+    }
- 
-     /**
-      * Render the item's icon or block into the GUI, including the glint effect.
-@@ -441,8 +462,12 @@
+@@ -441,8 +452,12 @@
      {
          if (par3ItemStack != null)
          {
@@ -260,7 +239,7 @@
              if (par3ItemStack.hasEffect())
              {
                  GL11.glDepthFunc(GL11.GL_GREATER);
-@@ -460,6 +485,7 @@
+@@ -460,6 +475,7 @@
                  GL11.glEnable(GL11.GL_LIGHTING);
                  GL11.glDepthFunc(GL11.GL_LEQUAL);
              }
@@ -268,7 +247,7 @@
          }
      }
  
-@@ -583,4 +609,47 @@
+@@ -583,4 +599,47 @@
      {
          this.doRenderItem((EntityItem)par1Entity, par2, par4, par6, par8, par9);
      }

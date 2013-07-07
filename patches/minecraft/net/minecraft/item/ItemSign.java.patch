@@ -1,0 +1,57 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemSign.java
++++ ../src_work/minecraft/net/minecraft/item/ItemSign.java
+@@ -3,6 +3,7 @@
+ import net.minecraft.block.Block;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntitySign;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
+@@ -22,6 +23,8 @@
+      */
+     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+     {
++        final int clickedX = par4, clickedY = par5, clickedZ = par6; // CraftBukkit
++
+         if (par7 == 0)
+         {
+             return false;
+@@ -67,22 +70,34 @@
+             }
+             else
+             {
++                // CraftBukkit start
++                final Block block;
++
+                 if (par7 == 1)
+                 {
+                     int i1 = MathHelper.floor_double((double)((par2EntityPlayer.rotationYaw + 180.0F) * 16.0F / 360.0F) + 0.5D) & 15;
+-                    par3World.setBlock(par4, par5, par6, Block.signPost.blockID, i1, 2);
++                    // world.setTypeIdAndData(i, j, k, Block.SIGN_POST.id, i1, 2);
++                    block = Block.signPost;
++                    par7 = i1;
+                 }
+                 else
+                 {
+-                    par3World.setBlock(par4, par5, par6, Block.signWall.blockID, par7, 2);
++                    // world.setTypeIdAndData(i, j, k, Block.WALL_SIGN.id, l, 2);
++                    block = Block.signWall;
+                 }
+ 
++                if (!ItemBlock.processBlockPlace(par3World, par2EntityPlayer, null, par4, par5, par6, block.blockID, par7, clickedX, clickedY, clickedZ))
++                {
++                    return false;
++                }
++
++                // CraftBukkit end
+                 --par1ItemStack.stackSize;
+                 TileEntitySign tileentitysign = (TileEntitySign)par3World.getBlockTileEntity(par4, par5, par6);
+ 
+                 if (tileentitysign != null)
+                 {
+-                    par2EntityPlayer.displayGUIEditSign(tileentitysign);
++                    par2EntityPlayer.displayGUIEditSign((TileEntity) tileentitysign);
+                 }
+ 
+                 return true;

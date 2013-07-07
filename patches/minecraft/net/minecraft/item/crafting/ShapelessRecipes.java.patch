@@ -1,0 +1,57 @@
+--- ../src_base/minecraft/net/minecraft/item/crafting/ShapelessRecipes.java
++++ ../src_work/minecraft/net/minecraft/item/crafting/ShapelessRecipes.java
+@@ -7,10 +7,15 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.world.World;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.inventory.CraftShapelessRecipe;
++// CraftBukkit end
++
+ public class ShapelessRecipes implements IRecipe
+ {
+     /** Is the ItemStack that you get when craft the recipe. */
+-    private final ItemStack recipeOutput;
++    public final ItemStack recipeOutput; // Spigot
+ 
+     /** Is a List of ItemStack that composes the recipe. */
+     public final List recipeItems;
+@@ -20,6 +25,25 @@
+         this.recipeOutput = par1ItemStack;
+         this.recipeItems = par2List;
+     }
++
++    // CraftBukkit start
++    @SuppressWarnings("unchecked")
++    public org.bukkit.inventory.ShapelessRecipe toBukkitRecipe()
++    {
++        CraftItemStack result = CraftItemStack.asCraftMirror(this.recipeOutput);
++        CraftShapelessRecipe recipe = new CraftShapelessRecipe(result, this);
++
++        for (ItemStack stack : (List<ItemStack>) this.recipeItems)
++        {
++            if (stack != null)
++            {
++                recipe.addIngredient(org.bukkit.Material.getMaterial(stack.itemID), stack.getItemDamage());
++            }
++        }
++
++        return recipe;
++    }
++    // CraftBukkit end
+ 
+     public ItemStack getRecipeOutput()
+     {
+@@ -82,4 +106,11 @@
+     {
+         return this.recipeItems.size();
+     }
++
++    // Spigot start
++    public java.util.List<ItemStack> getIngredients()
++    {
++        return java.util.Collections.unmodifiableList(recipeItems);
++    }
++    // Spigot end
+ }

@@ -1,0 +1,65 @@
+--- ../src_base/minecraft/net/minecraft/command/ServerCommandManager.java
++++ ../src_work/minecraft/net/minecraft/command/ServerCommandManager.java
+@@ -11,8 +11,16 @@
+ 
+ public class ServerCommandManager extends CommandHandler implements IAdminCommand
+ {
++    // MCPC+ start - moved commands to it's own method to be executed further in server startup + changed to registerVanillaCommand
+     public ServerCommandManager()
+     {
++        CommandBase.setAdminCommander(this);
++    }
++
++    public void registerVanillaCommands()
++    {
++        // MCPC+ - do not register vanilla commands replaced by Bukkit
++        /*    
+         this.registerCommand(new CommandTime());
+         this.registerCommand(new CommandGameMode());
+         this.registerCommand(new CommandDifficulty());
+@@ -28,19 +36,23 @@
+         this.registerCommand(new CommandServerEmote());
+         this.registerCommand(new CommandShowSeed());
+         this.registerCommand(new CommandHelp());
+-        this.registerCommand(new CommandDebug());
++        */
++        this.registerCommand("vanilla.command", new CommandDebug()); // MCPC+ - add permission node
++        /*
+         this.registerCommand(new CommandServerMessage());
+         this.registerCommand(new CommandServerSay());
+         this.registerCommand(new CommandSetSpawnpoint());
+         this.registerCommand(new CommandGameRule());
+         this.registerCommand(new CommandClearInventory());
+         this.registerCommand(new ServerCommandTestFor());
+-        this.registerCommand(new CommandSpreadPlayers());
+-        this.registerCommand(new CommandPlaySound());
+-        this.registerCommand(new ServerCommandScoreboard());
++        */
++        this.registerCommand("vanilla.command", new CommandSpreadPlayers()); // MCPC+ - add permission node
++        this.registerCommand("vanilla.command", new CommandPlaySound()); // MCPC+ - add permission node
++        this.registerCommand("vanilla.command", new ServerCommandScoreboard()); // MCPC+ - add permission node // TODO: remove once Bukkit implements
+ 
+         if (MinecraftServer.getServer().isDedicatedServer())
+         {
++            /*
+             this.registerCommand(new CommandServerOp());
+             this.registerCommand(new CommandServerDeop());
+             this.registerCommand(new CommandServerStop());
+@@ -55,14 +67,14 @@
+             this.registerCommand(new CommandServerKick());
+             this.registerCommand(new CommandServerList());
+             this.registerCommand(new CommandServerWhitelist());
++            */
+         }
+         else
+         {
+-            this.registerCommand(new CommandServerPublishLocal());
++            this.registerCommand("vanilla.command", new CommandServerPublishLocal()); // MCPC+ - add permission node
+         }
+-
+-        CommandBase.setAdminCommander(this);
+     }
++    // MCPC+ end
+ 
+     /**
+      * Sends a message to the admins of the server from a given CommandSender with the given resource string and given

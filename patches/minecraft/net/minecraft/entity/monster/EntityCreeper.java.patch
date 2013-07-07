@@ -1,0 +1,145 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntityCreeper.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntityCreeper.java
+@@ -20,6 +20,10 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.ExplosionPrimeEvent;
++// CraftBukkit end
+ 
+ public class EntityCreeper extends EntityMob
+ {
+@@ -37,6 +41,7 @@
+ 
+     /** Explosion radius for this creeper. */
+     private int explosionRadius = 3;
++    private int record = -1; // CraftBukkit
+ 
+     public EntityCreeper(World par1World)
+     {
+@@ -156,17 +161,22 @@
+                 if (!this.worldObj.isRemote)
+                 {
+                     boolean flag = this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing");
+-
+-                    if (this.getPowered())
++                    // CraftBukkit start
++                    float radius = this.getPowered() ? 6.0F : 3.0F;
++                    ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), radius, false);
++                    this.worldObj.getServer().getPluginManager().callEvent(event);
++
++                    if (!event.isCancelled())
+                     {
+-                        this.worldObj.createExplosion(this, this.posX, this.posY, this.posZ, (float)(this.explosionRadius * 2), flag);
++                        this.worldObj.newExplosion(this, this.posX, this.posY, this.posZ, event.getRadius(), event.getFire(), flag);
++                        this.setDead();
+                     }
+                     else
+                     {
+-                        this.worldObj.createExplosion(this, this.posX, this.posY, this.posZ, (float)this.explosionRadius, flag);
++                        this.timeSinceIgnited = 0;
+                     }
+ 
+-                    this.setDead();
++                    // CraftBukkit end
+                 }
+             }
+         }
+@@ -195,14 +205,54 @@
+      */
+     public void onDeath(DamageSource par1DamageSource)
+     {
++        // CraftBukkit start - Rearranged the method (super call to end, drop to dropDeathLoot)
++        if (par1DamageSource.getEntity() instanceof EntitySkeleton)
++        {
++            int i = Item.record13.itemID + this.rand.nextInt(Item.recordWait.itemID - Item.record13.itemID + 1);
++            // this.b(i, 1); // CraftBukkit
++            this.record = i;
++        }
++
+         super.onDeath(par1DamageSource);
+-
+-        if (par1DamageSource.getEntity() instanceof EntitySkeleton)
+-        {
+-            int i = Item.record13.itemID + this.rand.nextInt(Item.recordWait.itemID - Item.record13.itemID + 1);
+-            this.dropItem(i, 1);
+-        }
+-    }
++        // CraftBukkit end
++    }
++
++    // CraftBukkit start - Whole method
++
++    /**
++     * Drop 0-2 items of this living's type. @param par1 - Whether this entity has recently been hit by a player. @param
++     * par2 - Level of Looting used to kill this mob.
++     */
++    protected void dropFewItems(boolean flag, int i)
++    {
++        int j = this.getDropItemId();
++        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
++
++        if (j > 0)
++        {
++            int k = this.rand.nextInt(3);
++
++            if (i > 0)
++            {
++                k += this.rand.nextInt(i + 1);
++            }
++
++            if (k > 0)
++            {
++                loot.add(new org.bukkit.inventory.ItemStack(j, k));
++            }
++        }
++
++        // Drop a music disc?
++        if (this.record != -1)
++        {
++            loot.add(new org.bukkit.inventory.ItemStack(this.record, 1));
++            this.record = -1;
++        }
++
++        CraftEventFactory.callEntityDeathEvent(this, loot); // raise event even for those times when the entity does not drop loot
++    }
++    // CraftBukkit end
+ 
+     public boolean attackEntityAsMob(Entity par1Entity)
+     {
+@@ -257,6 +307,32 @@
+     public void onStruckByLightning(EntityLightningBolt par1EntityLightningBolt)
+     {
+         super.onStruckByLightning(par1EntityLightningBolt);
+-        this.dataWatcher.updateObject(17, Byte.valueOf((byte)1));
++
++        // MCPC+ start
++        if (par1EntityLightningBolt != null)
++        {
++            // CraftBukkit start
++            if (CraftEventFactory.callCreeperPowerEvent(this, par1EntityLightningBolt, org.bukkit.event.entity.CreeperPowerEvent.PowerCause.LIGHTNING).isCancelled())
++            {
++                return;
++            }
++        }
++        // MCPC+ end
++
++        this.setPowered(true);
++    }
++
++    public void setPowered(boolean powered)
++    {
++        if (!powered)
++        {
++            this.dataWatcher.updateObject(17, Byte.valueOf((byte) 0));
++        }
++        else
++        {
++            this.dataWatcher.updateObject(17, Byte.valueOf((byte) 1));
++        }
++
++        // CraftBukkit end
+     }
+ }

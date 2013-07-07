@@ -1,0 +1,17 @@
+--- ../src_base/minecraft/net/minecraft/world/chunk/storage/ChunkLoader.java
++++ ../src_work/minecraft/net/minecraft/world/chunk/storage/ChunkLoader.java
+@@ -111,9 +111,11 @@
+                 NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+                 nbttagcompound1.setByte("Y", (byte)(k & 255));
+                 nbttagcompound1.setByteArray("Blocks", abyte);
+-                nbttagcompound1.setByteArray("Data", nibblearray.data);
+-                nbttagcompound1.setByteArray("SkyLight", nibblearray1.data);
+-                nbttagcompound1.setByteArray("BlockLight", nibblearray2.data);
++                // Spigot start - a -> getValueArray() accessor
++                nbttagcompound1.setByteArray("Data", nibblearray.getValueArray());
++                nbttagcompound1.setByteArray("SkyLight", nibblearray1.getValueArray());
++                nbttagcompound1.setByteArray("BlockLight", nibblearray2.getValueArray());
++                // Spigot end
+                 nbttaglist.appendTag(nbttagcompound1);
+             }
+         }

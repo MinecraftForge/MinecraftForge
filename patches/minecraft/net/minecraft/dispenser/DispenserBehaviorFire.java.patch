@@ -1,0 +1,66 @@
+--- ../src_base/minecraft/net/minecraft/dispenser/DispenserBehaviorFire.java
++++ ../src_work/minecraft/net/minecraft/dispenser/DispenserBehaviorFire.java
+@@ -5,6 +5,10 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.event.block.BlockDispenseEvent;
++// CraftBukkit end
+ 
+ final class DispenserBehaviorFire extends BehaviorDefaultDispenseItem
+ {
+@@ -20,15 +24,48 @@
+         int i = par1IBlockSource.getXInt() + enumfacing.getFrontOffsetX();
+         int j = par1IBlockSource.getYInt() + enumfacing.getFrontOffsetY();
+         int k = par1IBlockSource.getZInt() + enumfacing.getFrontOffsetZ();
++        // CraftBukkit start
++        org.bukkit.block.Block block = world.getWorld().getBlockAt(par1IBlockSource.getXInt(), par1IBlockSource.getYInt(), par1IBlockSource.getZInt());
++        CraftItemStack craftItem = CraftItemStack.asCraftMirror(par2ItemStack);
++        BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
++
++        if (!BlockDispenser.eventFired)
++        {
++            world.getServer().getPluginManager().callEvent(event);
++        }
++
++        if (event.isCancelled())
++        {
++            return par2ItemStack;
++        }
++
++        if (!event.getItem().equals(craftItem))
++        {
++            // Chain to handler for new item
++            ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++            IBehaviorDispenseItem ibehaviordispenseitem = (IBehaviorDispenseItem) BlockDispenser.dispenseBehaviorRegistry.func_82594_a(eventStack.getItem());
++
++            if (ibehaviordispenseitem != IBehaviorDispenseItem.itemDispenseBehaviorProvider && ibehaviordispenseitem != this)
++            {
++                ibehaviordispenseitem.dispense(par1IBlockSource, eventStack);
++                return par2ItemStack;
++            }
++        }
++        // CraftBukkit end
+ 
+         if (world.isAirBlock(i, j, k))
+         {
+-            world.setBlock(i, j, k, Block.fire.blockID);
++            // CraftBukkit start - Ignition by dispensing flint and steel
++            if (!org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(world, i, j, k, par1IBlockSource.getXInt(), par1IBlockSource.getYInt(), par1IBlockSource.getZInt()).isCancelled())
++            {
++                world.setBlock(i, j, k, Block.fire.blockID);
+ 
+-            if (par2ItemStack.attemptDamageItem(1, world.rand))
+-            {
+-                par2ItemStack.stackSize = 0;
++                if (par2ItemStack.attemptDamageItem(1, world.rand))
++                {
++                    par2ItemStack.stackSize = 0;
++                }
+             }
++            // CraftBukkit end
+         }
+         else if (world.getBlockId(i, j, k) == Block.tnt.blockID)
+         {

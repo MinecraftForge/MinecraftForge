@@ -1,0 +1,69 @@
+--- ../src_base/minecraft/net/minecraft/inventory/InventoryMerchant.java
++++ ../src_work/minecraft/net/minecraft/inventory/InventoryMerchant.java
+@@ -1,10 +1,15 @@
+ package net.minecraft.inventory;
+ 
++// CraftBukkit start
++import java.util.List;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
+ import net.minecraft.entity.IMerchant;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.village.MerchantRecipe;
+ import net.minecraft.village.MerchantRecipeList;
++// CraftBukkit end
+ 
+ public class InventoryMerchant implements IInventory
+ {
+@@ -14,6 +19,41 @@
+     private MerchantRecipe currentRecipe;
+     private int currentRecipeIndex;
+ 
++    // CraftBukkit start
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    private int maxStack = MAX_STACK;
++
++    public ItemStack[] getContents()
++    {
++        return this.theInventory;
++    }
++
++    public void onOpen(CraftHumanEntity who)
++    {
++        transaction.add(who);
++    }
++
++    public void onClose(CraftHumanEntity who)
++    {
++        transaction.remove(who);
++    }
++
++    public List<HumanEntity> getViewers()
++    {
++        return transaction;
++    }
++
++    public void setMaxStackSize(int i)
++    {
++        maxStack = i;
++    }
++
++    public org.bukkit.inventory.InventoryHolder getOwner()
++    {
++        return thePlayer.getBukkitEntity();
++    }
++    // CraftBukkit end
++
+     public InventoryMerchant(EntityPlayer par1EntityPlayer, IMerchant par2IMerchant)
+     {
+         this.thePlayer = par1EntityPlayer;
+@@ -154,7 +194,7 @@
+      */
+     public int getInventoryStackLimit()
+     {
+-        return 64;
++        return maxStack; // CraftBukkit
+     }
+ 
+     /**

@@ -1,0 +1,26 @@
+--- ../src_base/minecraft/net/minecraft/network/packet/Packet63WorldParticles.java
++++ ../src_work/minecraft/net/minecraft/network/packet/Packet63WorldParticles.java
+@@ -42,6 +42,23 @@
+ 
+     /** The number of particles to create. */
+     private int quantity;
++
++    public Packet63WorldParticles() {}
++
++    // Spigot start - Added constructor
++    public Packet63WorldParticles(String particleName, float x, float y, float z, float offsetX, float offsetY, float offsetZ, float speed, int count)
++    {
++        particleName = particleName;
++        posX = x;
++        posY = y;
++        posZ = z;
++        offsetX = offsetX;
++        offsetY = offsetY;
++        offsetZ = offsetZ;
++        speed = speed;
++        quantity = count;
++    }
++    // Spigot end
+ 
+     /**
+      * Abstract. Reads the raw packet data from the data stream.

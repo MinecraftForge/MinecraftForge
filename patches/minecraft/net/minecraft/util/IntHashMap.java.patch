@@ -1,0 +1,33 @@
+--- ../src_base/minecraft/net/minecraft/util/IntHashMap.java
++++ ../src_work/minecraft/net/minecraft/util/IntHashMap.java
+@@ -19,9 +19,9 @@
+ 
+     /** A serial stamp used to mark changes */
+     private transient volatile int versionStamp;
+-
+-    /** The set of all the keys stored in this MCHash object */
+-    private Set keySet = new HashSet();
++    // private Set f = new HashSet(); // CraftBukkit - expensive and unused
++
++    public IntHashMap() {}
+ 
+     /**
+      * Makes the passed in integer suitable for hashing by a number of shifts
+@@ -89,7 +89,7 @@
+      */
+     public void addKey(int par1, Object par2Obj)
+     {
+-        this.keySet.add(Integer.valueOf(par1));
++        // this.f.add(Integer.valueOf(i)); // CraftBukkit
+         int j = computeHash(par1);
+         int k = getSlotIndex(j, this.slots.length);
+ 
+@@ -162,7 +162,7 @@
+      */
+     public Object removeObject(int par1)
+     {
+-        this.keySet.remove(Integer.valueOf(par1));
++        // this.f.remove(Integer.valueOf(i)); // CraftBukkit
+         IntHashMapEntry inthashmapentry = this.removeEntry(par1);
+         return inthashmapentry == null ? null : inthashmapentry.valueEntry;
+     }

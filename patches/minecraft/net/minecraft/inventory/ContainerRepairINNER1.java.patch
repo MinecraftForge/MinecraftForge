@@ -1,0 +1,70 @@
+--- ../src_base/minecraft/net/minecraft/inventory/ContainerRepairINNER1.java
++++ ../src_work/minecraft/net/minecraft/inventory/ContainerRepairINNER1.java
+@@ -1,15 +1,57 @@
+ package net.minecraft.inventory;
+ 
++// CraftBukkit start
++import java.util.List;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
+ import net.minecraft.item.ItemStack;
++// CraftBukkit end
+ 
+-class ContainerRepairINNER1 extends InventoryBasic
++public class ContainerRepairINNER1 extends InventoryBasic   // CraftBukkit - public
+ {
+     final ContainerRepair field_135010_a;
++
++    // CraftBukkit start
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    public org.bukkit.entity.Player player;
++    private int maxStack = MAX_STACK;
++
++    public ItemStack[] getContents()
++    {
++        return this.inventoryContents;
++    }
++
++    public void onOpen(CraftHumanEntity who)
++    {
++        transaction.add(who);
++    }
++
++    public void onClose(CraftHumanEntity who)
++    {
++        transaction.remove(who);
++    }
++
++    public List<HumanEntity> getViewers()
++    {
++        return transaction;
++    }
++
++    public org.bukkit.inventory.InventoryHolder getOwner()
++    {
++        return this.player;
++    }
++
++    public void setMaxStackSize(int size)
++    {
++        maxStack = size;
++    }
++    // CraftBukkit end
+ 
+     ContainerRepairINNER1(ContainerRepair par1ContainerRepair, String par2Str, boolean par3, int par4)
+     {
+         super(par2Str, par3, par4);
+         this.field_135010_a = par1ContainerRepair;
++        this.setMaxStackSize(1); // CraftBukkit
+     }
+ 
+     /**
+@@ -18,7 +60,7 @@
+     public void onInventoryChanged()
+     {
+         super.onInventoryChanged();
+-        this.field_135010_a.onCraftMatrixChanged(this);
++        this.field_135010_a.onCraftMatrixChanged((IInventory) this);
+     }
+ 
+     /**

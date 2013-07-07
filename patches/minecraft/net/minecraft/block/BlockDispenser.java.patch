@@ -1,0 +1,28 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockDispenser.java
++++ ../src_work/minecraft/net/minecraft/block/BlockDispenser.java
+@@ -37,6 +37,7 @@
+     protected Icon furnaceFrontIcon;
+     @SideOnly(Side.CLIENT)
+     protected Icon field_96473_e;
++    public static boolean eventFired = false; // CraftBukkit
+ 
+     protected BlockDispenser(int par1)
+     {
+@@ -146,7 +147,8 @@
+         }
+     }
+ 
+-    protected void dispense(World par1World, int par2, int par3, int par4)
++    // CraftBukkit - private -> public
++    public void dispense(World par1World, int par2, int par3, int par4)
+     {
+         BlockSourceImpl blocksourceimpl = new BlockSourceImpl(par1World, par2, par3, par4);
+         TileEntityDispenser tileentitydispenser = (TileEntityDispenser)blocksourceimpl.getBlockTileEntity();
+@@ -167,6 +169,7 @@
+                 if (ibehaviordispenseitem != IBehaviorDispenseItem.itemDispenseBehaviorProvider)
+                 {
+                     ItemStack itemstack1 = ibehaviordispenseitem.dispense(blocksourceimpl, itemstack);
++                    eventFired = false; // CraftBukkit - reset event status
+                     tileentitydispenser.setInventorySlotContents(l, itemstack1.stackSize == 0 ? null : itemstack1);
+                 }
+             }

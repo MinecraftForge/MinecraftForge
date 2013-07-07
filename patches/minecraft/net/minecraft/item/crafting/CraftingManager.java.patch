@@ -1,11 +1,145 @@
 --- ../src_base/minecraft/net/minecraft/item/crafting/CraftingManager.java
 +++ ../src_work/minecraft/net/minecraft/item/crafting/CraftingManager.java
-@@ -284,7 +284,7 @@
+@@ -10,13 +10,19 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.world.World;
+ 
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
++
+ public class CraftingManager
+ {
+     /** The static instance of this class */
+     private static final CraftingManager instance = new CraftingManager();
++    // CraftBukkit start
+ 
+     /** A list of all the recipes added */
+-    private List recipes = new ArrayList();
++    public List recipes = new ArrayList(); // private -> public
++    public IRecipe lastRecipe;
++    public org.bukkit.inventory.InventoryView lastCraftView;
++    // CraftBukkit end
+ 
+     /**
+      * Returns the static instance of this class
+@@ -26,7 +32,8 @@
+         return instance;
+     }
+ 
+-    private CraftingManager()
++    // CraftBukkit - private -> public
++    public CraftingManager()
+     {
+         (new RecipesTools()).addRecipes(this);
+         (new RecipesWeapons()).addRecipes(this);
+@@ -148,9 +155,18 @@
+         this.addShapelessRecipe(new ItemStack(Item.fireballCharge, 3), new Object[] {Item.gunpowder, Item.blazePowder, new ItemStack(Item.coal, 1, 1)});
+         this.addRecipe(new ItemStack(Block.daylightSensor), new Object[] {"GGG", "QQQ", "WWW", 'G', Block.glass, 'Q', Item.netherQuartz, 'W', Block.woodSingleSlab});
+         this.addRecipe(new ItemStack(Block.hopperBlock), new Object[] {"I I", "ICI", " I ", 'I', Item.ingotIron, 'C', Block.chest});
++        // Collections.sort(this.recipes, new RecipeSorter(this)); // CraftBukkit - moved below
++        this.sort(); // CraftBukkit - call new sort method
++    }
++
++    // CraftBukkit start
++    public void sort()
++    {
+         Collections.sort(this.recipes, new RecipeSorter(this));
+     }
+-
++    // CraftBukkit end
++
++    // CraftBukkit - default -> public
+     public ShapedRecipes addRecipe(ItemStack par1ItemStack, Object ... par2ArrayOfObj)
+     {
+         String s = "";
+@@ -225,32 +241,33 @@
+         return shapedrecipes;
+     }
+ 
++    // CraftBukkit - default -> public
+     public void addShapelessRecipe(ItemStack par1ItemStack, Object ... par2ArrayOfObj)
+     {
+         ArrayList arraylist = new ArrayList();
+-        Object[] aobject = par2ArrayOfObj;
++        Object[] aobject1 = par2ArrayOfObj;
+         int i = par2ArrayOfObj.length;
+ 
+         for (int j = 0; j < i; ++j)
+         {
+-            Object object1 = aobject[j];
+-
+-            if (object1 instanceof ItemStack)
+-            {
+-                arraylist.add(((ItemStack)object1).copy());
+-            }
+-            else if (object1 instanceof Item)
+-            {
+-                arraylist.add(new ItemStack((Item)object1));
++            Object object = aobject1[j];
++
++            if (object instanceof ItemStack)
++            {
++                arraylist.add(((ItemStack) object).copy());
++            }
++            else if (object instanceof Item)
++            {
++                arraylist.add(new ItemStack((Item) object));
+             }
+             else
+             {
+-                if (!(object1 instanceof Block))
++                if (!(object instanceof Block))
+                 {
+                     throw new RuntimeException("Invalid shapeless recipy!");
+                 }
+ 
+-                arraylist.add(new ItemStack((Block)object1));
++                arraylist.add(new ItemStack((Block) object));
              }
          }
  
--        if (i == 2 && itemstack.itemID == itemstack1.itemID && itemstack.stackSize == 1 && itemstack1.stackSize == 1 && Item.itemsList[itemstack.itemID].isDamageable())
-+        if (i == 2 && itemstack.itemID == itemstack1.itemID && itemstack.stackSize == 1 && itemstack1.stackSize == 1 && Item.itemsList[itemstack.itemID].isRepairable())
+@@ -297,7 +314,22 @@
+                 j1 = 0;
+             }
+ 
+-            return new ItemStack(itemstack.itemID, 1, j1);
++            // MCPC+ start - vanilla compatibility
++            if (par1InventoryCrafting.resultInventory == null)
++            {
++                return new ItemStack(itemstack.itemID, 1, j1);
++            }
++            // MCPC+ end
++            // CraftBukkit start - Construct a dummy repair recipe
++            ItemStack result = new ItemStack(itemstack.itemID, 1, j1);
++            List<ItemStack> ingredients = new ArrayList<ItemStack>();
++            ingredients.add(itemstack.copy());
++            ingredients.add(itemstack1.copy());
++            ShapelessRecipes recipe = new ShapelessRecipes(result.copy(), ingredients);
++            par1InventoryCrafting.currentRecipe = recipe;
++            result = CraftEventFactory.callPreCraftEvent(par1InventoryCrafting, result, lastCraftView, true);
++            return result;
++            // CraftBukkit end
+         }
+         else
          {
-             Item item = Item.itemsList[itemstack.itemID];
-             int k = item.getMaxDamage() - itemstack.getItemDamageForDisplay();
+@@ -305,10 +337,20 @@
+             {
+                 IRecipe irecipe = (IRecipe)this.recipes.get(j);
+ 
+-                if (irecipe.matches(par1InventoryCrafting, par2World))
++                if (irecipe.matches(par1InventoryCrafting, par2World) && par1InventoryCrafting.resultInventory != null) // MCPC+ - add null check for vanilla compatibility
++                {
++                    // CraftBukkit start - INVENTORY_PRE_CRAFT event
++                    par1InventoryCrafting.currentRecipe = irecipe;
++                    ItemStack result = irecipe.getCraftingResult(par1InventoryCrafting);
++                    return CraftEventFactory.callPreCraftEvent(par1InventoryCrafting, result, lastCraftView, false);
++                    // CraftBukkit end
++                }
++                // MCPC+ start - vanilla
++                else if (irecipe.matches(par1InventoryCrafting, par2World))
+                 {
+                     return irecipe.getCraftingResult(par1InventoryCrafting);
+                 }
++                // MCPC+ end
+             }
+ 
+             return null;

@@ -1,0 +1,143 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntitySkeleton.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntitySkeleton.java
+@@ -33,6 +33,7 @@
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
+ import net.minecraft.world.WorldProviderHell;
++import org.bukkit.event.entity.EntityCombustEvent; // CraftBukkit
+ 
+ public class EntitySkeleton extends EntityMob implements IRangedAttackMob
+ {
+@@ -167,7 +168,15 @@
+ 
+                 if (flag)
+                 {
+-                    this.setFire(8);
++                    // CraftBukkit start
++                    EntityCombustEvent event = new EntityCombustEvent(this.getBukkitEntity(), 8);
++                    this.worldObj.getServer().getPluginManager().callEvent(event);
++
++                    if (!event.isCancelled())
++                    {
++                        this.setFire(event.getDuration());
++                    }
++                    // CraftBukkit end
+                 }
+             }
+         }
+@@ -228,42 +237,64 @@
+      */
+     protected void dropFewItems(boolean par1, int par2)
+     {
+-        int j;
+-        int k;
++        // CraftBukkit start - Whole method
++        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
+ 
+         if (this.getSkeletonType() == 1)
+         {
+-            j = this.rand.nextInt(3 + par2) - 1;
+-
+-            for (k = 0; k < j; ++k)
+-            {
+-                this.dropItem(Item.coal.itemID, 1);
++            int count = this.rand.nextInt(3 + par2) - 1;
++
++            if (count > 0)
++            {
++                loot.add(new org.bukkit.inventory.ItemStack(org.bukkit.Material.COAL, count));
+             }
+         }
+         else
+         {
+-            j = this.rand.nextInt(3 + par2);
+-
+-            for (k = 0; k < j; ++k)
+-            {
+-                this.dropItem(Item.arrow.itemID, 1);
+-            }
+-        }
+-
+-        j = this.rand.nextInt(3 + par2);
+-
+-        for (k = 0; k < j; ++k)
+-        {
+-            this.dropItem(Item.bone.itemID, 1);
+-        }
+-    }
+-
+-    protected void dropRareDrop(int par1)
++            int count = this.rand.nextInt(3 + par2);
++
++            if (count > 0)
++            {
++                loot.add(new org.bukkit.inventory.ItemStack(org.bukkit.Material.ARROW, count));
++            }
++        }
++
++        int count = this.rand.nextInt(3 + par2);
++
++        if (count > 0)
++        {
++            loot.add(new org.bukkit.inventory.ItemStack(org.bukkit.Material.BONE, count));
++        }
++
++        // Determine rare item drops and add them to the loot
++        if (this.recentlyHit > 0)
++        {
++            int k = this.rand.nextInt(200) - par2;
++
++            if (k < 5)
++            {
++                ItemStack itemstack = this.dropRareDrop(k <= 0 ? 1 : 0);
++
++                if (itemstack != null)
++                {
++                    loot.add(org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack));
++                }
++            }
++        }
++
++        org.bukkit.craftbukkit.event.CraftEventFactory.callEntityDeathEvent(this, loot);
++        // CraftBukkit end
++    }
++
++    // CraftBukkit - return rare dropped item instead of dropping it
++    protected ItemStack dropRareDrop(int i)
+     {
+         if (this.getSkeletonType() == 1)
+         {
+-            this.entityDropItem(new ItemStack(Item.skull.itemID, 1, 1), 0.0F);
+-        }
++            return new ItemStack(Item.skull.itemID, 1, 1); // CraftBukkit
++        }
++
++        return null; // CraftBukkit
+     }
+ 
+     /**
+@@ -353,8 +384,23 @@
+             entityarrow.setFire(100);
+         }
+ 
++        // Spigot -  Skeletons should throw EntityShootBowEvents
++        org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityShootBowEvent(this, this.getHeldItem(), entityarrow, 1.6F);
++
++        if (event.isCancelled())
++        {
++            event.getProjectile().remove();
++            return;
++        }
++
++        if (event.getProjectile() == entityarrow.getBukkitEntity())
++        {
++            this.worldObj.spawnEntityInWorld(entityarrow);
++        }
++
++        // Spigot end
+         this.playSound("random.bow", 1.0F, 1.0F / (this.getRNG().nextFloat() * 0.4F + 0.8F));
+-        this.worldObj.spawnEntityInWorld(entityarrow);
++        // this.world.addEntity(entityarrow); // Spigot - moved up
+     }
+ 
+     /**

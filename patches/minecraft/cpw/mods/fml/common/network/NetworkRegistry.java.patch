@@ -1,0 +1,82 @@
+--- ../src_base/minecraft/cpw/mods/fml/common/network/NetworkRegistry.java
++++ ../src_work/minecraft/cpw/mods/fml/common/network/NetworkRegistry.java
+@@ -43,7 +43,14 @@
+ import cpw.mods.fml.common.ModContainer;
+ import cpw.mods.fml.common.network.FMLPacket.Type;
+ import cpw.mods.fml.relauncher.Side;
+-
++// MCPC+ start
++import java.io.UnsupportedEncodingException;
++import java.util.logging.Logger;
++
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.CraftServer;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
++// MCPC+ end
+ /**
+  * @author cpw
+  *
+@@ -235,14 +242,17 @@
+         if ("REGISTER".equals(packet.channel))
+         {
+             handleRegistrationPacket(packet, (Player)handler.getPlayer());
++            handleBukkitRegistrationPacket(packet, (CraftPlayer)((NetServerHandler)(handler)).getPlayerB()); // MCPC+
+         }
+         else if ("UNREGISTER".equals(packet.channel))
+         {
+             handleUnregistrationPacket(packet, (Player)handler.getPlayer());
++            handleBukkitUnregistrationPacket(packet, (CraftPlayer)((NetServerHandler)(handler)).getPlayerB()); // MCPC+
+         }
+         else
+         {
+             handlePacket(packet, network, (Player)handler.getPlayer());
++            handler.handleVanilla250Packet(packet);  // MCPC+ send it back for CB dispatch
+         }
+     }
+ 
+@@ -272,6 +282,45 @@
+             deactivateChannel(player, channel);
+         }
+     }
++
++    // MCPC+ start - handle CB plugin registration
++    private void handleBukkitRegistrationPacket(Packet250CustomPayload packet, CraftPlayer player)
++    {
++        try
++        {
++            String channels = new String(packet.data, "UTF8");
++
++            for (String channel : channels.split("\0"))
++            {
++                if (((CraftServer)(Bukkit.getServer())).getConnectionLoggingEnabled()) {
++                    System.out.println("adding plugin channel " + channel);
++                }
++                player.addChannel(channel);
++            }
++        }
++        catch (UnsupportedEncodingException ex)
++        {
++            throw new AssertionError(ex);
++        }
++    }
++
++    private void handleBukkitUnregistrationPacket(Packet250CustomPayload packet, CraftPlayer player)
++    {
++        try
++        {
++            String channels = new String(packet.data, "UTF8");
++
++            for (String channel : channels.split("\0"))
++            {
++                player.removeChannel(channel);
++            }
++        }
++        catch (UnsupportedEncodingException ex)
++        {
++            throw new AssertionError(ex);
++        }
++    }
++    // MCPC+ end
+ 
+     private List<String> extractChannelList(Packet250CustomPayload packet)
+     {

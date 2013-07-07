@@ -9,25 +9,47 @@
  import java.util.Random;
  import net.minecraft.client.renderer.texture.IconRegister;
  import net.minecraft.creativetab.CreativeTabs;
-@@ -12,6 +14,8 @@
+@@ -12,6 +14,9 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
 +import net.minecraftforge.common.ForgeDirection;
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
 +
  public class BlockStem extends BlockFlower
  {
      /** Defines if it is a Melon or a Pumpkin that the stem is producing. */
-@@ -106,7 +110,8 @@
+@@ -49,14 +54,13 @@
+         {
+             float f = this.getGrowthModifier(par1World, par2, par3, par4);
+ 
+-            if (par5Random.nextInt((int)(25.0F / f) + 1) == 0)
++            if (par5Random.nextInt((int)(par1World.growthOdds / (this.blockID == Block.pumpkinStem.blockID ? par1World.getWorld().pumpkinGrowthModifier : par1World.getWorld().melonGrowthModifier) * (25.0F / f)) + 1) == 0)    // Spigot
+             {
+                 int l = par1World.getBlockMetadata(par2, par3, par4);
+ 
+                 if (l < 7)
+                 {
+-                    ++l;
+-                    par1World.setBlockMetadataWithNotify(par2, par3, par4, l, 2);
++                    CraftEventFactory.handleBlockGrowEvent(par1World, par2, par3, par4, this.blockID, ++l); // CraftBukkit
+                 }
+                 else
+                 {
+@@ -106,9 +110,10 @@
  
                      int l1 = par1World.getBlockId(j1, par3 - 1, k1);
  
 -                    if (par1World.getBlockId(j1, par3, k1) == 0 && (l1 == Block.tilledField.blockID || l1 == Block.dirt.blockID || l1 == Block.grass.blockID))
+-                    {
+-                        par1World.setBlock(j1, par3, k1, this.fruitType.blockID);
 +                    boolean isSoil = (blocksList[l1] != null && blocksList[l1].canSustainPlant(par1World, j1, par3 - 1, k1, ForgeDirection.UP, this));
 +                    if (par1World.getBlockId(j1, par3, k1) == 0 && (isSoil || l1 == Block.dirt.blockID || l1 == Block.grass.blockID))
-                     {
-                         par1World.setBlock(j1, par3, k1, this.fruitType.blockID);
++                    {
++                        CraftEventFactory.handleBlockGrowEvent(par1World, j1, par3, k1, this.fruitType.blockID, 0); // CraftBukkit
                      }
+                 }
+             }
 @@ -149,11 +154,11 @@
                  int j3 = par1World.getBlockId(l2, par3 - 1, i3);
                  float f1 = 0.0F;

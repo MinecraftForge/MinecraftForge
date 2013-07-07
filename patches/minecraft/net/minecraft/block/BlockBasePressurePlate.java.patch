@@ -1,0 +1,59 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockBasePressurePlate.java
++++ ../src_work/minecraft/net/minecraft/block/BlockBasePressurePlate.java
+@@ -10,6 +10,7 @@
+ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
+ 
+ public abstract class BlockBasePressurePlate extends Block
+ {
+@@ -154,6 +155,18 @@
+         int i1 = this.getPlateState(par1World, par2, par3, par4);
+         boolean flag = par5 > 0;
+         boolean flag1 = i1 > 0;
++        // CraftBukkit start - Interact Pressure Plate
++        org.bukkit.World bworld = par1World.getWorld();
++        org.bukkit.plugin.PluginManager manager = par1World.getServer().getPluginManager();
++
++        if (flag != flag1)
++        {
++            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bworld.getBlockAt(par2, par3, par4), par5, i1);
++            manager.callEvent(eventRedstone);
++            flag1 = eventRedstone.getNewCurrent() > 0;
++            i1 = eventRedstone.getNewCurrent();
++        }
++        // CraftBukkit end
+ 
+         if (par5 != i1)
+         {
+@@ -253,26 +266,15 @@
+      * Returns the current state of the pressure plate. Returns a value between 0 and 15 based on the number of items on
+      * it.
+      */
+-    protected abstract int getPlateState(World world, int i, int j, int k);
++    protected abstract int getPlateState(World par1World, int par2, int par3, int par4);
+ 
+     /**
+      * Argument is metadata. Returns power level (0-15)
+      */
+-    protected abstract int getPowerSupply(int i);
++    protected abstract int getPowerSupply(int par1);
+ 
+     /**
+      * Argument is weight (0-15). Return the metadata to be set because of it.
+      */
+-    protected abstract int getMetaFromWeight(int i);
+-
+-    @SideOnly(Side.CLIENT)
+-
+-    /**
+-     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+-     * is the only chance you get to register icons.
+-     */
+-    public void registerIcons(IconRegister par1IconRegister)
+-    {
+-        this.blockIcon = par1IconRegister.registerIcon(this.pressurePlateIconName);
+-    }
++    protected abstract int getMetaFromWeight(int par1);
+ }

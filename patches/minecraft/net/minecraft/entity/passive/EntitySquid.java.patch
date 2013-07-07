@@ -1,0 +1,63 @@
+--- ../src_base/minecraft/net/minecraft/entity/passive/EntitySquid.java
++++ ../src_work/minecraft/net/minecraft/entity/passive/EntitySquid.java
+@@ -6,6 +6,7 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.TrigMath; // CraftBukkit
+ 
+ public class EntitySquid extends EntityWaterMob
+ {
+@@ -96,22 +97,29 @@
+      */
+     protected void dropFewItems(boolean par1, int par2)
+     {
+-        int j = this.rand.nextInt(3 + par2) + 1;
+-
+-        for (int k = 0; k < j; ++k)
+-        {
+-            this.entityDropItem(new ItemStack(Item.dyePowder, 1, 0), 0.0F);
+-        }
++        // CraftBukkit start - Whole method
++        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
++        int count = this.rand.nextInt(3 + par2) + 1;
++
++        if (count > 0)
++        {
++            loot.add(new org.bukkit.inventory.ItemStack(org.bukkit.Material.INK_SACK, count));
++        }
++
++        org.bukkit.craftbukkit.event.CraftEventFactory.callEntityDeathEvent(this, loot);
++        // CraftBukkit end
+     }
+ 
+     /**
+      * Checks if this entity is inside water (if inWater field is true as a result of handleWaterMovement() returning
+      * true)
+      */
++    /* CraftBukkit start - Delegate to Entity to use existing inWater value
+     public boolean isInWater()
+     {
+-        return this.worldObj.handleMaterialAcceleration(this.boundingBox.expand(0.0D, -0.6000000238418579D, 0.0D), Material.water, this);
+-    }
++        return this.worldObj.handleMaterialAcceleration(this.boundingBox.expand(0.0D, -0.6000000238418579D, 0.0D), Material.water, (Entity) this);
++    }
++    // CraftBukkit end */
+ 
+     /**
+      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
+@@ -170,10 +178,12 @@
+             }
+ 
+             f = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
+-            this.renderYawOffset += (-((float)Math.atan2(this.motionX, this.motionZ)) * 180.0F / (float)Math.PI - this.renderYawOffset) * 0.1F;
++            // CraftBukkit - Math -> TrigMath
++            this.renderYawOffset += (-((float) TrigMath.atan2(this.motionX, this.motionZ)) * 180.0F / (float)Math.PI - this.renderYawOffset) * 0.1F;
+             this.rotationYaw = this.renderYawOffset;
+             this.squidYaw += (float)Math.PI * this.field_70871_bB * 1.5F;
+-            this.squidPitch += (-((float)Math.atan2((double)f, this.motionY)) * 180.0F / (float)Math.PI - this.squidPitch) * 0.1F;
++            // CraftBukkit - Math -> TrigMath
++            this.squidPitch += (-((float) TrigMath.atan2((double) f, this.motionY)) * 180.0F / (float)Math.PI - this.squidPitch) * 0.1F;
+         }
+         else
+         {

@@ -1,0 +1,96 @@
+--- ../src_base/minecraft/net/minecraft/entity/EntityCreature.java
++++ ../src_work/minecraft/net/minecraft/entity/EntityCreature.java
+@@ -1,6 +1,7 @@
+ package net.minecraft.entity;
+ 
+ import java.util.UUID;
++
+ import net.minecraft.entity.ai.EntityAIBase;
+ import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
+ import net.minecraft.entity.ai.attributes.AttributeInstance;
+@@ -11,15 +12,19 @@
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.util.Vec3;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.craftbukkit.entity.CraftEntity;
++import org.bukkit.event.entity.EntityTargetEvent;
++// CraftBukkit end
+ 
+ public abstract class EntityCreature extends EntityLiving
+ {
+     public static final UUID field_110179_h = UUID.fromString("E199AD21-BA8A-4C53-8D13-6182D5C69D3A");
+     public static final AttributeModifier field_110181_i = (new AttributeModifier(field_110179_h, "Fleeing speed bonus", 2.0D, 2)).func_111168_a(false);
+-    private PathEntity pathToEntity;
++    public PathEntity pathToEntity; // CraftBukkit - private -> public
+ 
+     /** The Entity this EntityCreature is set to attack. */
+-    protected Entity entityToAttack;
++    public Entity entityToAttack; // CraftBukkit - protected -> public
+ 
+     /**
+      * returns true if a creature has attacked recently only used for creepers and skeletons
+@@ -63,7 +68,28 @@
+ 
+         if (this.entityToAttack == null)
+         {
+-            this.entityToAttack = this.findPlayerToAttack();
++            // CraftBukkit start
++            Entity target = this.findPlayerToAttack();
++
++            if (target != null)
++            {
++                EntityTargetEvent event = new EntityTargetEvent(this.getBukkitEntity(), target.getBukkitEntity(), EntityTargetEvent.TargetReason.CLOSEST_PLAYER);
++                this.worldObj.getServer().getPluginManager().callEvent(event);
++
++                if (!event.isCancelled())
++                {
++                    if (event.getTarget() == null)
++                    {
++                        this.entityToAttack = null;
++                    }
++                    else
++                    {
++                        this.entityToAttack = ((CraftEntity) event.getTarget()).getHandle();
++                    }
++                }
++            }
++
++            // CraftBukkit end
+ 
+             if (this.entityToAttack != null)
+             {
+@@ -81,7 +107,22 @@
+         }
+         else
+         {
+-            this.entityToAttack = null;
++            // CraftBukkit start
++            EntityTargetEvent event = new EntityTargetEvent(this.getBukkitEntity(), null, EntityTargetEvent.TargetReason.TARGET_DIED);
++            this.worldObj.getServer().getPluginManager().callEvent(event);
++
++            if (!event.isCancelled())
++            {
++                if (event.getTarget() == null)
++                {
++                    this.entityToAttack = null;
++                }
++                else
++                {
++                    this.entityToAttack = ((CraftEntity) event.getTarget()).getHandle();
++                }
++            }
++            // CraftBukkit end
+         }
+ 
+         this.worldObj.theProfiler.endSection();
+@@ -128,7 +169,8 @@
+                 double d1 = vec3.xCoord - this.posX;
+                 double d2 = vec3.zCoord - this.posZ;
+                 double d3 = vec3.yCoord - (double)i;
+-                float f2 = (float)(Math.atan2(d2, d1) * 180.0D / Math.PI) - 90.0F;
++                // CraftBukkit - Math -> TrigMath
++                float f2 = (float)(org.bukkit.craftbukkit.TrigMath.atan2(d2, d1) * 180.0D / Math.PI) - 90.0F;
+                 float f3 = MathHelper.wrapAngleTo180_float(f2 - this.rotationYaw);
+                 this.moveForward = (float)this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111126_e();
+ 

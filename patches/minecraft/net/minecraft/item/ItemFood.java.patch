@@ -1,0 +1,29 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemFood.java
++++ ../src_work/minecraft/net/minecraft/item/ItemFood.java
+@@ -2,6 +2,8 @@
+ 
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.player.EntityPlayerMP;
++import net.minecraft.network.packet.Packet8UpdateHealth;
+ import net.minecraft.potion.PotionEffect;
+ import net.minecraft.world.World;
+ 
+@@ -54,6 +56,17 @@
+     public ItemStack onEaten(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
+     {
+         --par1ItemStack.stackSize;
++        // CraftBukkit start
++        int oldFoodLevel = par3EntityPlayer.getFoodStats().foodLevel;
++        org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callFoodLevelChangeEvent(par3EntityPlayer, this.getHealAmount() + oldFoodLevel);
++
++        if (!event.isCancelled())
++        {
++            par3EntityPlayer.getFoodStats().addStats(event.getFoodLevel() - oldFoodLevel, this.getSaturationModifier());
++        }
++
++        ((EntityPlayerMP) par3EntityPlayer).playerNetServerHandler.sendPacketToPlayer(new Packet8UpdateHealth(par3EntityPlayer.func_110143_aJ(), par3EntityPlayer.getFoodStats().foodLevel, par3EntityPlayer.getFoodStats().foodSaturationLevel));
++        // CraftBukkit end
+         par3EntityPlayer.getFoodStats().addStats(this);
+         par2World.playSoundAtEntity(par3EntityPlayer, "random.burp", 0.5F, par2World.rand.nextFloat() * 0.1F + 0.9F);
+         this.onFoodEaten(par1ItemStack, par2World, par3EntityPlayer);

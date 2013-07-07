@@ -1,0 +1,80 @@
+--- ../src_base/minecraft/net/minecraft/dispenser/DispenserBehaviorFilledBucket.java
++++ ../src_work/minecraft/net/minecraft/dispenser/DispenserBehaviorFilledBucket.java
+@@ -5,6 +5,12 @@
+ import net.minecraft.item.ItemBucket;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.EnumFacing;
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.event.block.BlockDispenseEvent;
++import net.minecraft.tileentity.TileEntityDispenser;
++import net.minecraft.world.World;
++// CraftBukkit end
+ 
+ final class DispenserBehaviorFilledBucket extends BehaviorDefaultDispenseItem
+ {
+@@ -20,11 +26,62 @@
+         int j = par1IBlockSource.getYInt();
+         int k = par1IBlockSource.getZInt();
+         EnumFacing enumfacing = BlockDispenser.getFacing(par1IBlockSource.getBlockMetadata());
++        // CraftBukkit start
++        World world = par1IBlockSource.getWorld();
++        int x = i + enumfacing.getFrontOffsetX();
++        int y = j + enumfacing.getFrontOffsetY();
++        int z = k + enumfacing.getFrontOffsetZ();
++
++        if (world.isAirBlock(x, y, z) || !world.getBlockMaterial(x, y, z).isSolid())
++        {
++            org.bukkit.block.Block block = world.getWorld().getBlockAt(i, j, k);
++            CraftItemStack craftItem = CraftItemStack.asCraftMirror(par2ItemStack);
++            BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(x, y, z));
++
++            if (!BlockDispenser.eventFired)
++            {
++                world.getServer().getPluginManager().callEvent(event);
++            }
++
++            if (event.isCancelled())
++            {
++                return par2ItemStack;
++            }
++
++            if (!event.getItem().equals(craftItem))
++            {
++                // Chain to handler for new item
++                ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++                IBehaviorDispenseItem ibehaviordispenseitem = (IBehaviorDispenseItem) BlockDispenser.dispenseBehaviorRegistry.func_82594_a(eventStack.getItem());
++
++                if (ibehaviordispenseitem != IBehaviorDispenseItem.itemDispenseBehaviorProvider && ibehaviordispenseitem != this)
++                {
++                    ibehaviordispenseitem.dispense(par1IBlockSource, eventStack);
++                    return par2ItemStack;
++                }
++            }
++
++            itembucket = (ItemBucket) CraftItemStack.asNMSCopy(event.getItem()).getItem();
++        }
++
++        // CraftBukkit end
+ 
+         if (itembucket.tryPlaceContainedLiquid(par1IBlockSource.getWorld(), i + enumfacing.getFrontOffsetX(), j + enumfacing.getFrontOffsetY(), k + enumfacing.getFrontOffsetZ()))
+         {
+-            par2ItemStack.itemID = Item.bucketEmpty.itemID;
+-            par2ItemStack.stackSize = 1;
++            // CraftBukkit start - Handle stacked buckets
++            Item item = Item.bucketEmpty;
++
++            if (--par2ItemStack.stackSize == 0)
++            {
++                par2ItemStack.itemID = item.itemID;
++                par2ItemStack.stackSize = 1;
++            }
++            else if (((TileEntityDispenser) par1IBlockSource.getBlockTileEntity()).addItem(new ItemStack(item)) < 0)
++            {
++                this.defaultDispenserItemBehavior.dispense(par1IBlockSource, new ItemStack(item));
++            }
++
++            // CraftBukkit end
+             return par2ItemStack;
+         }
+         else

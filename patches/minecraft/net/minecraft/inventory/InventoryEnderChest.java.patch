@@ -1,0 +1,67 @@
+--- ../src_base/minecraft/net/minecraft/inventory/InventoryEnderChest.java
++++ ../src_work/minecraft/net/minecraft/inventory/InventoryEnderChest.java
+@@ -1,14 +1,64 @@
+ package net.minecraft.inventory;
+ 
++// CraftBukkit start
++import java.util.List;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.tileentity.TileEntityEnderChest;
++// CraftBukkit end
+ 
+ public class InventoryEnderChest extends InventoryBasic
+ {
+     private TileEntityEnderChest associatedChest;
++
++    // CraftBukkit start
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    public org.bukkit.entity.Player player;
++    private int maxStack = MAX_STACK;
++
++    public ItemStack[] getContents()
++    {
++        return this.inventoryContents;
++    }
++
++    public void onOpen(CraftHumanEntity who)
++    {
++        transaction.add(who);
++    }
++
++    public void onClose(CraftHumanEntity who)
++    {
++        transaction.remove(who);
++    }
++
++    public List<HumanEntity> getViewers()
++    {
++        return transaction;
++    }
++
++    public org.bukkit.inventory.InventoryHolder getOwner()
++    {
++        return this.player;
++    }
++
++    public void setMaxStackSize(int size)
++    {
++        maxStack = size;
++    }
++
++    /**
++     * Returns the maximum stack size for a inventory slot. Seems to always be 64, possibly will be extended. *Isn't
++     * this more of a set than a get?*
++     */
++    public int getInventoryStackLimit()
++    {
++        return maxStack;
++    }
++    // CraftBukkit end
+ 
+     public InventoryEnderChest()
+     {

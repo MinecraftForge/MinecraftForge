@@ -10,10 +10,29 @@
  import net.minecraft.entity.EntityLivingBase;
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.DamageSource;
-@@ -205,6 +208,27 @@
-         return this.type.canEnchantItem(par1ItemStack.getItem());
+@@ -8,6 +11,7 @@
+ 
+ public abstract class Enchantment
+ {
++    // CraftBukkit - update CraftEnchant.getName(i) if this changes
+     public static final Enchantment[] enchantmentsList = new Enchantment[256];
+     public static final Enchantment[] field_92090_c;
+ 
+@@ -111,6 +115,8 @@
+         {
+             enchantmentsList[par1] = this;
+         }
++
++        org.bukkit.enchantments.Enchantment.registerEnchantment(new org.bukkit.craftbukkit.enchantments.CraftEnchantment(this)); // CraftBukkit
      }
  
+     public int getWeight()
+@@ -203,6 +209,27 @@
+     public boolean canApply(ItemStack par1ItemStack)
+     {
+         return this.type.canEnchantItem(par1ItemStack.getItem());
++    }
++
 +    /**
 +     * This applies specifically to applying at the enchanting table. The other method {@link #func_92037_a(ItemStack)}
 +     * applies for <i>all possible</i> enchantments.
@@ -33,8 +52,6 @@
 +    public static void addToBookList(Enchantment enchantment)
 +    {
 +        ObjectArrays.concat(field_92090_c, enchantment);
-+    }
-+
+     }
+ 
      static
-     {
-         ArrayList arraylist = new ArrayList();

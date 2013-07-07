@@ -1,0 +1,16 @@
+--- ../src_base/minecraft/net/minecraft/pathfinding/Path.java
++++ ../src_work/minecraft/net/minecraft/pathfinding/Path.java
+@@ -3,10 +3,12 @@
+ public class Path
+ {
+     /** Contains the points in this path */
+-    private PathPoint[] pathPoints = new PathPoint[1024];
++    private PathPoint[] pathPoints = new PathPoint[128]; // CraftBukkit - reduce default size
+ 
+     /** The number of points in this path */
+     private int count;
++
++    public Path() {}
+ 
+     /**
+      * Adds a point to the path

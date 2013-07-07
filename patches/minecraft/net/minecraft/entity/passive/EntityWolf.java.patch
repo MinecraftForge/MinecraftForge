@@ -1,0 +1,29 @@
+--- ../src_base/minecraft/net/minecraft/entity/passive/EntityWolf.java
++++ ../src_work/minecraft/net/minecraft/entity/passive/EntityWolf.java
+@@ -181,7 +181,8 @@
+      */
+     protected String getLivingSound()
+     {
+-        return this.isAngry() ? "mob.wolf.growl" : (this.rand.nextInt(3) == 0 ? (this.isTamed() && this.dataWatcher.func_111145_d(18) < 10.0F ? "mob.wolf.whine" : "mob.wolf.panting") : "mob.wolf.bark");
++        // CraftBukkit - (getInt(18) < 10) -> (getInt(18) < this.getMaxHealth() / 2)
++        return this.isAngry() ? "mob.wolf.growl" : (this.rand.nextInt(3) == 0 ? (this.isTamed() && this.dataWatcher.func_111145_d(18) < (this.func_110138_aP() / 2) ? "mob.wolf.whine" : "mob.wolf.panting") : "mob.wolf.bark");
+     }
+ 
+     /**
+@@ -462,13 +463,14 @@
+ 
+             if (!this.worldObj.isRemote)
+             {
+-                if (this.rand.nextInt(3) == 0)
++                // CraftBukkit - added event call and isCancelled check.
++                if (this.rand.nextInt(3) == 0 && !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTameEvent(this, par1EntityPlayer).isCancelled())
+                 {
+                     this.setTamed(true);
+                     this.setPathToEntity((PathEntity)null);
+                     this.setAttackTarget((EntityLivingBase)null);
+                     this.aiSit.setSitting(true);
+-                    this.setEntityHealth(20.0F);
++                    this.setEntityHealth(this.func_110138_aP()); // CraftBukkit - 20.0 -> getMaxHealth()
+                     this.setOwner(par1EntityPlayer.getCommandSenderName());
+                     this.playTameEffect(true);
+                     this.worldObj.setEntityState(this, (byte)7);

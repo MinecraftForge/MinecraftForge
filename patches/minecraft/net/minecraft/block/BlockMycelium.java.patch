@@ -1,20 +1,69 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockMycelium.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockMycelium.java
-@@ -41,7 +41,7 @@
+@@ -9,6 +9,12 @@
+ import net.minecraft.util.Icon;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++
++// CraftBukkit start
++import org.bukkit.block.BlockState;
++import org.bukkit.event.block.BlockFadeEvent;
++import org.bukkit.event.block.BlockSpreadEvent;
++// CraftBukkit end
+ 
+ public class BlockMycelium extends Block
+ {
+@@ -41,22 +47,48 @@
      {
          if (!par1World.isRemote)
          {
 -            if (par1World.getBlockLightValue(par2, par3 + 1, par4) < 4 && Block.lightOpacity[par1World.getBlockId(par2, par3 + 1, par4)] > 2)
 +            if (par1World.getBlockLightValue(par2, par3 + 1, par4) < 4 && par1World.getBlockLightOpacity(par2, par3 + 1, par4) > 2)
              {
-                 par1World.setBlock(par2, par3, par4, Block.dirt.blockID);
+-                par1World.setBlock(par2, par3, par4, Block.dirt.blockID);
++                // CraftBukkit start
++                org.bukkit.World bworld = par1World.getWorld();
++                BlockState blockState = bworld.getBlockAt(par2, par3, par4).getState();
++                blockState.setTypeId(Block.dirt.blockID);
++                BlockFadeEvent event = new BlockFadeEvent(blockState.getBlock(), blockState);
++                par1World.getServer().getPluginManager().callEvent(event);
++
++                if (!event.isCancelled())
++                {
++                    blockState.update(true);
++                }
++
++                // CraftBukkit end
              }
-@@ -54,7 +54,7 @@
+             else if (par1World.getBlockLightValue(par2, par3 + 1, par4) >= 9)
+             {
+-                for (int l = 0; l < 4; ++l)
++                int numGrowth = Math.min(4, Math.max(20, (int)(4 * 100F / par1World.growthOdds)));  // Spigot
++
++                for (int l = 0; l < numGrowth; ++l)   // Spigot
+                 {
+                     int i1 = par2 + par5Random.nextInt(3) - 1;
+                     int j1 = par3 + par5Random.nextInt(5) - 3;
                      int k1 = par4 + par5Random.nextInt(3) - 1;
                      int l1 = par1World.getBlockId(i1, j1 + 1, k1);
  
 -                    if (par1World.getBlockId(i1, j1, k1) == Block.dirt.blockID && par1World.getBlockLightValue(i1, j1 + 1, k1) >= 4 && Block.lightOpacity[l1] <= 2)
 +                    if (par1World.getBlockId(i1, j1, k1) == Block.dirt.blockID && par1World.getBlockLightValue(i1, j1 + 1, k1) >= 4 && par1World.getBlockLightOpacity(i1, j1 + 1, k1) <= 2)
                      {
-                         par1World.setBlock(i1, j1, k1, this.blockID);
+-                        par1World.setBlock(i1, j1, k1, this.blockID);
++                        // CraftBukkit start
++                        org.bukkit.World bworld = par1World.getWorld();
++                        BlockState blockState = bworld.getBlockAt(i1, j1, k1).getState();
++                        blockState.setTypeId(this.blockID);
++                        BlockSpreadEvent event = new BlockSpreadEvent(blockState.getBlock(), bworld.getBlockAt(par2, par3, par4), blockState);
++                        par1World.getServer().getPluginManager().callEvent(event);
++
++                        if (!event.isCancelled())
++                        {
++                            blockState.update(true);
++                        }
++
++                        // CraftBukkit end
                      }
+                 }
+             }

@@ -1,0 +1,40 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemReed.java
++++ ../src_work/minecraft/net/minecraft/item/ItemReed.java
+@@ -22,6 +22,7 @@
+      */
+     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+     {
++        final int clickedX = par4, clickedY = par5, clickedZ = par6; // CraftBukkit
+         int i1 = par3World.getBlockId(par4, par5, par6);
+ 
+         if (i1 == Block.snow.blockID && (par3World.getBlockMetadata(par4, par5, par6) & 7) < 1)
+@@ -75,18 +76,20 @@
+             {
+                 Block block = Block.blocksList[this.spawnID];
+                 int j1 = block.onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, 0);
+-
+-                if (par3World.setBlock(par4, par5, par6, this.spawnID, j1, 3))
+-                {
+-                    if (par3World.getBlockId(par4, par5, par6) == this.spawnID)
+-                    {
+-                        Block.blocksList[this.spawnID].onBlockPlacedBy(par3World, par4, par5, par6, par2EntityPlayer, par1ItemStack);
+-                        Block.blocksList[this.spawnID].onPostBlockPlaced(par3World, par4, par5, par6, j1);
++                // CraftBukkit start - Redirect to common handler
++                ItemBlock.processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, this.spawnID, j1, clickedX, clickedY, clickedZ);
++                /*
++                if (world.setTypeIdAndData(i, j, k, this.id, j1, 3)) {
++                    if (world.getTypeId(i, j, k) == this.id) {
++                        Block.byId[this.id].postPlace(world, i, j, k, entityhuman, itemstack);
++                        Block.byId[this.id].postPlace(world, i, j, k, j1);
+                     }
+ 
+-                    par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
+-                    --par1ItemStack.stackSize;
++                    world.makeSound((double) ((float) i + 0.5F), (double) ((float) j + 0.5F), (double) ((float) k + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume1() + 1.0F) / 2.0F, block.stepSound.getVolume2() * 0.8F);
++                    --itemstack.count;
+                 }
++                */
++                // CraftBukkit end
+             }
+ 
+             return true;

@@ -1,0 +1,24 @@
+--- ../src_base/minecraft/net/minecraft/entity/ai/EntityAIArrowAttack.java
++++ ../src_work/minecraft/net/minecraft/entity/ai/EntityAIArrowAttack.java
+@@ -4,6 +4,10 @@
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.IRangedAttackMob;
+ import net.minecraft.util.MathHelper;
++// CraftBukkit start
++import org.bukkit.event.entity.EntityTargetEvent;
++import net.minecraft.entity.Entity;
++// CraftBukkit end
+ 
+ public class EntityAIArrowAttack extends EntityAIBase
+ {
+@@ -89,6 +93,10 @@
+      */
+     public void resetTask()
+     {
++        // CraftBukkit start
++        EntityTargetEvent.TargetReason reason = this.attackTarget.isEntityAlive() ? EntityTargetEvent.TargetReason.FORGOT_TARGET : EntityTargetEvent.TargetReason.TARGET_DIED;
++        org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTargetEvent((Entity) rangedAttackEntityHost, null, reason);
++        // CraftBukkit end
+         this.attackTarget = null;
+         this.field_75318_f = 0;
+         this.rangedAttackTime = -1;

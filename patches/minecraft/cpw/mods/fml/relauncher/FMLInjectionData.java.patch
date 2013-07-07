@@ -1,0 +1,40 @@
+--- ../src_base/minecraft/cpw/mods/fml/relauncher/FMLInjectionData.java
++++ ../src_work/minecraft/cpw/mods/fml/relauncher/FMLInjectionData.java
+@@ -60,7 +60,37 @@
+         mccversion = properties.getProperty("fmlbuild.mcversion", "missing");
+         mcpversion = properties.getProperty("fmlbuild.mcpversion", "missing");
+         deobfuscationDataHash = properties.getProperty("fmlbuild.deobfuscation.hash","deadbeef");
++        // MCPC+ start - obfuscation for 1.5.1
++        /*if (obf151()) {
++            mccversion = "1.5.1";
++            deobfuscationDataHash = "22e221a0d89516c1f721d6cab056a7e37471d0a6"; // final 1.5.1 deobf, Forge 7.7.2.682
++            FMLRelaunchLog.log(Level.INFO, "MCPC+ enabling 1.5.1 obfuscation compatibility mode");
++        }
+     }
++
++    private static boolean isObfuscated151;
++    private static boolean checkedObfuscated151 = false;
++
++    public static boolean obf151() {
++        if (!checkedObfuscated151) {
++            // This class is reobfuscated (original name: MCPCCompatibilityMarker) in the 1.5.1-compatibility build
++            // so we can detect it here. Load the proper 1.5.1 deobfuscation data instead of 1.5.2.
++            isObfuscated151 = classExists("za.co.mcportcentral.MCPCCompatibilityMarker151");
++            checkedObfuscated151 = true;
++        }
++
++        return isObfuscated151;
++    }
++
++    private static boolean classExists(String className) {
++        try {
++            Class.forName(className);
++        } catch (ClassNotFoundException ex) {
++            return false;
++        }
++        return true;*/
++    }
++    // MCPC+ end
+ 
+     static String debfuscationDataName()
+     {

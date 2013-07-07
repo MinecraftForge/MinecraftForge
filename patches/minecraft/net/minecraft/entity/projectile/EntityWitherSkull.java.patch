@@ -1,0 +1,43 @@
+--- ../src_base/minecraft/net/minecraft/entity/projectile/EntityWitherSkull.java
++++ ../src_work/minecraft/net/minecraft/entity/projectile/EntityWitherSkull.java
+@@ -10,6 +10,7 @@
+ import net.minecraft.util.MovingObjectPosition;
+ import net.minecraft.world.Explosion;
+ import net.minecraft.world.World;
++import org.bukkit.event.entity.ExplosionPrimeEvent; // CraftBukkit
+ 
+ public class EntityWitherSkull extends EntityFireball
+ {
+@@ -73,12 +74,12 @@
+                 {
+                     if (par1MovingObjectPosition.entityHit.attackEntityFrom(DamageSource.causeMobDamage(this.shootingEntity), 8.0F) && !par1MovingObjectPosition.entityHit.isEntityAlive())
+                     {
+-                        this.shootingEntity.heal(5.0F);
++                        this.shootingEntity.heal(5.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.WITHER); // CraftBukkit
+                     }
+                 }
+                 else
+                 {
+-                    par1MovingObjectPosition.entityHit.attackEntityFrom(DamageSource.magic, 5.0F);
++                    par1MovingObjectPosition.entityHit.attackEntityFrom(DamageSource.magic, 5);
+                 }
+ 
+                 if (par1MovingObjectPosition.entityHit instanceof EntityLivingBase)
+@@ -104,7 +105,16 @@
+                 }
+             }
+ 
+-            this.worldObj.newExplosion(this, this.posX, this.posY, this.posZ, 1.0F, false, this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"));
++            // CraftBukkit start
++            ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), 1.0F, false);
++            this.worldObj.getServer().getPluginManager().callEvent(event);
++
++            if (!event.isCancelled())
++            {
++                this.worldObj.newExplosion(this, this.posX, this.posY, this.posZ, event.getRadius(), event.getFire(), this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"));
++            }
++
++            // CraftBukkit end
+             this.setDead();
+         }
+     }

@@ -1,6 +1,24 @@
 --- ../src_base/minecraft/net/minecraft/item/crafting/RecipeFireworks.java
 +++ ../src_work/minecraft/net/minecraft/item/crafting/RecipeFireworks.java
-@@ -91,9 +91,9 @@
+@@ -9,9 +9,16 @@
+ import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.world.World;
+ 
+-public class RecipeFireworks implements IRecipe
++public class RecipeFireworks extends ShapelessRecipes implements IRecipe   // CraftBukkit - added extends
+ {
+     private ItemStack field_92102_a;
++
++    // CraftBukkit start - Delegate to new parent class with bogus info
++    public RecipeFireworks()
++    {
++        super(new ItemStack(Item.firework, 0, 0), java.util.Arrays.asList(new ItemStack(Item.gunpowder, 0, 5)));
++    }
++    // CraftBukkit end
+ 
+     /**
+      * Used to check if a recipe matches current crafting inventory
+@@ -91,9 +98,9 @@
              {
                  this.field_92102_a = new ItemStack(Item.firework);
  
@@ -11,7 +29,7 @@
                      nbttagcompound1 = new NBTTagCompound("Fireworks");
                      NBTTagList nbttaglist = new NBTTagList("Explosions");
  
-@@ -110,9 +110,9 @@
+@@ -110,9 +117,9 @@
                      nbttagcompound1.setTag("Explosions", nbttaglist);
                      nbttagcompound1.setByte("Flight", (byte)j);
                      nbttagcompound.setTag("Fireworks", nbttagcompound1);

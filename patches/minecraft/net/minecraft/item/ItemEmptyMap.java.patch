@@ -1,0 +1,22 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemEmptyMap.java
++++ ../src_work/minecraft/net/minecraft/item/ItemEmptyMap.java
+@@ -3,6 +3,8 @@
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.world.World;
++import net.minecraft.world.WorldSavedData;
++import net.minecraft.world.WorldServer;
+ import net.minecraft.world.storage.MapData;
+ 
+ public class ItemEmptyMap extends ItemMapBase
+@@ -26,8 +28,9 @@
+         int i = 128 * (1 << mapdata.scale);
+         mapdata.xCenter = (int)(Math.round(par3EntityPlayer.posX / (double)i) * (long)i);
+         mapdata.zCenter = (int)(Math.round(par3EntityPlayer.posZ / (double)i) * (long)i);
+-        mapdata.dimension = (byte)par2World.provider.dimensionId;
++        mapdata.dimension = (byte)((WorldServer) par2World).provider.dimensionId;  // CraftBukkit - use bukkit dimension
+         mapdata.markDirty();
++        org.bukkit.craftbukkit.event.CraftEventFactory.callEvent(new org.bukkit.event.server.MapInitializeEvent(mapdata.mapView)); // CraftBukkit
+         --par1ItemStack.stackSize;
+ 
+         if (par1ItemStack.stackSize <= 0)

@@ -1,0 +1,42 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockDragonEgg.java
++++ ../src_work/minecraft/net/minecraft/block/BlockDragonEgg.java
+@@ -8,6 +8,7 @@
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import org.bukkit.event.block.BlockFromToEvent; // CraftBukkit
+ 
+ public class BlockDragonEgg extends Block
+ {
+@@ -53,7 +54,8 @@
+ 
+             if (!BlockSand.fallInstantly && par1World.checkChunksExist(par2 - b0, par3 - b0, par4 - b0, par2 + b0, par3 + b0, par4 + b0))
+             {
+-                EntityFallingSand entityfallingsand = new EntityFallingSand(par1World, (double)((float)par2 + 0.5F), (double)((float)par3 + 0.5F), (double)((float)par4 + 0.5F), this.blockID);
++                // CraftBukkit - added data
++                EntityFallingSand entityfallingsand = new EntityFallingSand(par1World, (double)((float) par2 + 0.5F), (double)((float) par3 + 0.5F), (double)((float) par4 + 0.5F), this.blockID, par1World.getBlockMetadata(par2, par3, par4));
+                 par1World.spawnEntityInWorld(entityfallingsand);
+             }
+             else
+@@ -105,6 +107,21 @@
+ 
+                 if (par1World.getBlockId(i1, j1, k1) == 0)
+                 {
++                    // CraftBukkit start
++                    org.bukkit.block.Block from = par1World.getWorld().getBlockAt(par2, par3, par4);
++                    org.bukkit.block.Block to = par1World.getWorld().getBlockAt(i1, j1, k1);
++                    BlockFromToEvent event = new BlockFromToEvent(from, to);
++                    org.bukkit.Bukkit.getPluginManager().callEvent(event);
++
++                    if (event.isCancelled())
++                    {
++                        return;
++                    }
++
++                    i1 = event.getToBlock().getX();
++                    j1 = event.getToBlock().getY();
++                    k1 = event.getToBlock().getZ();
++                    // CraftBukkit end
+                     if (!par1World.isRemote)
+                     {
+                         par1World.setBlock(i1, j1, k1, this.blockID, par1World.getBlockMetadata(par2, par3, par4), 2);

@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/entity/ai/EntityMoveHelper.java
++++ ../src_work/minecraft/net/minecraft/entity/ai/EntityMoveHelper.java
+@@ -61,7 +61,7 @@
+ 
+             if (d3 >= 2.500000277905201E-7D)
+             {
+-                float f = (float)(Math.atan2(d1, d0) * 180.0D / Math.PI) - 90.0F;
++                float f = (float)(org.bukkit.craftbukkit.TrigMath.atan2(d1, d0) * 180.0D / Math.PI) - 90.0F;  // CraftBukkit - Math -> TrigMath
+                 this.entity.rotationYaw = this.limitAngle(this.entity.rotationYaw, f, 30.0F);
+                 this.entity.setAIMoveSpeed((float)(this.speed * this.entity.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111126_e()));
+ 

@@ -1,0 +1,44 @@
+--- ../src_base/minecraft/cpw/mods/fml/relauncher/FMLRelaunchLog.java
++++ ../src_work/minecraft/cpw/mods/fml/relauncher/FMLRelaunchLog.java
+@@ -35,6 +35,7 @@
+ public class FMLRelaunchLog
+ {
+ 
++    public static boolean useOnlyThisLogger = false; // MCPC+ - FML logger vs. CB logger
+     private static class ConsoleLogWrapper extends Handler
+     {
+         @Override
+@@ -167,10 +168,15 @@
+         log.myLog = Logger.getLogger("ForgeModLoader");
+         LogWrapper.retarget(log.myLog);
+ 
++        // MCPC+ start - FML and CraftBukkit logging compatibility - add conditional
+         Logger stdOut = Logger.getLogger("STDOUT");
+-        stdOut.setParent(log.myLog);
+         Logger stdErr = Logger.getLogger("STDERR");
+-        stdErr.setParent(log.myLog);
++        if (useOnlyThisLogger)
++        {
++            stdOut.setParent(log.myLog);
++            stdErr.setParent(log.myLog);
++        }
++        // MCPC+ end
+         log.myLog.setLevel(Level.ALL);
+         log.myLog.setUseParentHandlers(false);
+         consoleLogThread = new Thread(new ConsoleLogThread());
+@@ -197,8 +203,13 @@
+         // Set system out to a log stream
+         errCache = System.err;
+ 
+-        System.setOut(new PrintStream(new LoggingOutStream(stdOut), true));
+-        System.setErr(new PrintStream(new LoggingOutStream(stdErr), true));
++        // MCPC+ start - conditional
++        if (useOnlyThisLogger)
++        {
++            System.setOut(new PrintStream(new LoggingOutStream(stdOut), true));
++            System.setErr(new PrintStream(new LoggingOutStream(stdErr), true));
++        }
++        // MCPC+ end
+ 
+         configured = true;
+     }

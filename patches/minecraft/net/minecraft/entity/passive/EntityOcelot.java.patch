@@ -1,6 +1,28 @@
 --- ../src_base/minecraft/net/minecraft/entity/passive/EntityOcelot.java
 +++ ../src_work/minecraft/net/minecraft/entity/passive/EntityOcelot.java
-@@ -334,8 +334,9 @@
+@@ -199,7 +199,10 @@
+      * Drop 0-2 items of this living's type. @param par1 - Whether this entity has recently been hit by a player. @param
+      * par2 - Level of Looting used to kill this mob.
+      */
+-    protected void dropFewItems(boolean par1, int par2) {}
++    protected void dropFewItems(boolean par1, int par2)
++    {
++        org.bukkit.craftbukkit.event.CraftEventFactory.callEntityDeathEvent(this); // CraftBukkit - Call EntityDeathEvent
++    }
+ 
+     /**
+      * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
+@@ -229,7 +232,8 @@
+ 
+             if (!this.worldObj.isRemote)
+             {
+-                if (this.rand.nextInt(3) == 0)
++                // CraftBukkit - added event call and isCancelled check
++                if (this.rand.nextInt(3) == 0 && !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTameEvent(this, par1EntityPlayer).isCancelled())
+                 {
+                     this.setTamed(true);
+                     this.setTameSkin(1 + this.worldObj.rand.nextInt(3));
+@@ -334,8 +338,9 @@
                  }
  
                  int l = this.worldObj.getBlockId(i, j - 1, k);

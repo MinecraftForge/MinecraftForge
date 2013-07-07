@@ -1,0 +1,48 @@
+--- ../src_base/minecraft/net/minecraft/network/packet/Packet2ClientProtocol.java
++++ ../src_work/minecraft/net/minecraft/network/packet/Packet2ClientProtocol.java
+@@ -4,14 +4,16 @@
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.io.DataInput;
+ import java.io.DataOutput;
+-import java.io.IOException;
++
++import java.io.IOException; // CraftBukkit
++import org.bukkit.craftbukkit.Spigot;
+ 
+ public class Packet2ClientProtocol extends Packet
+ {
+     private int protocolVersion;
+     private String username;
+-    private String serverHost;
+-    private int serverPort;
++    public String serverHost; // CraftBukkit private -> public
++    public int serverPort; // CraftBukkit private -> public
+ 
+     public Packet2ClientProtocol() {}
+ 
+@@ -27,18 +29,23 @@
+     /**
+      * Abstract. Reads the raw packet data from the data stream.
+      */
+-    public void readPacketData(DataInput par1DataInput) throws IOException
++    public void readPacketData(DataInput par1DataInput) throws IOException   // CraftBukkit - throws IOException
+     {
+         this.protocolVersion = par1DataInput.readByte();
+         this.username = readString(par1DataInput, 16);
+         this.serverHost = readString(par1DataInput, 255);
+         this.serverPort = par1DataInput.readInt();
++
++        if (!Spigot.validName.matcher(this.username).matches())
++        {
++            throw new IOException("Invalid name!");    // Spigot
++        }
+     }
+ 
+     /**
+      * Abstract. Writes the raw packet data to the data stream.
+      */
+-    public void writePacketData(DataOutput par1DataOutput) throws IOException
++    public void writePacketData(DataOutput par1DataOutput) throws IOException   // CraftBukkit - throws IOException
+     {
+         par1DataOutput.writeByte(this.protocolVersion);
+         writeString(this.username, par1DataOutput);

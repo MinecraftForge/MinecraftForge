@@ -1,0 +1,16 @@
+--- ../src_base/minecraft/net/minecraft/entity/ai/EntityAIBreakDoor.java
++++ ../src_work/minecraft/net/minecraft/entity/ai/EntityAIBreakDoor.java
+@@ -70,6 +70,13 @@
+ 
+         if (this.breakingTime == 240 && this.theEntity.worldObj.difficultySetting == 3)
+         {
++            // CraftBukkit start
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityBreakDoorEvent(this.theEntity, this.entityPosX, this.entityPosY, this.entityPosZ).isCancelled())
++            {
++                this.updateTask();
++                return;
++            }
++            // CraftBukkit end
+             this.theEntity.worldObj.setBlockToAir(this.entityPosX, this.entityPosY, this.entityPosZ);
+             this.theEntity.worldObj.playAuxSFX(1012, this.entityPosX, this.entityPosY, this.entityPosZ, 0);
+             this.theEntity.worldObj.playAuxSFX(2001, this.entityPosX, this.entityPosY, this.entityPosZ, this.targetDoor.blockID);

@@ -1,0 +1,37 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockDaylightDetector.java
++++ ../src_work/minecraft/net/minecraft/block/BlockDaylightDetector.java
+@@ -90,6 +90,7 @@
+ 
+             if (l != i1)
+             {
++                i1 = org.bukkit.craftbukkit.event.CraftEventFactory.callRedstoneChange(par1World, par2, par3, par4, l, i1).getNewCurrent(); // CraftBukkit - Call BlockRedstoneEvent
+                 par1World.setBlockMetadataWithNotify(par2, par3, par4, i1, 3);
+             }
+         }
+@@ -127,26 +128,4 @@
+     {
+         return new TileEntityDaylightDetector();
+     }
+-
+-    @SideOnly(Side.CLIENT)
+-
+-    /**
+-     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
+-     */
+-    public Icon getIcon(int par1, int par2)
+-    {
+-        return par1 == 1 ? this.iconArray[0] : this.iconArray[1];
+-    }
+-
+-    @SideOnly(Side.CLIENT)
+-
+-    /**
+-     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+-     * is the only chance you get to register icons.
+-     */
+-    public void registerIcons(IconRegister par1IconRegister)
+-    {
+-        this.iconArray[0] = par1IconRegister.registerIcon(this.func_111023_E() + "_top");
+-        this.iconArray[1] = par1IconRegister.registerIcon(this.func_111023_E() + "_side");
+-    }
+ }

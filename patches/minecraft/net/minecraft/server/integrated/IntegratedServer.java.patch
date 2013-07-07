@@ -1,17 +1,28 @@
 --- ../src_base/minecraft/net/minecraft/server/integrated/IntegratedServer.java
 +++ ../src_work/minecraft/net/minecraft/server/integrated/IntegratedServer.java
-@@ -23,6 +23,10 @@
+@@ -13,8 +13,10 @@
+ import net.minecraft.network.NetworkListenThread;
+ import net.minecraft.profiler.PlayerUsageSnooper;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.server.dedicated.PropertyManager;
+ import net.minecraft.util.CryptManager;
+ import net.minecraft.world.EnumGameType;
++import net.minecraft.world.MinecraftException;
+ import net.minecraft.world.WorldManager;
+ import net.minecraft.world.WorldServer;
+ import net.minecraft.world.WorldServerMulti;
+@@ -22,6 +24,10 @@
+ import net.minecraft.world.WorldType;
  import net.minecraft.world.demo.DemoWorldServer;
  import net.minecraft.world.storage.ISaveHandler;
- 
++
 +import net.minecraftforge.common.DimensionManager;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.world.WorldEvent;
-+
+ 
  @SideOnly(Side.CLIENT)
  public class IntegratedServer extends MinecraftServer
- {
-@@ -65,44 +69,23 @@
+@@ -65,44 +71,23 @@
      protected void loadAllWorlds(String par1Str, String par2Str, long par3, WorldType par5WorldType, String par6Str)
      {
          this.convertMapIfNeeded(par1Str);
@@ -68,3 +79,48 @@
          this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();
      }
+@@ -110,7 +95,7 @@
+     /**
+      * Initialises the server and starts it.
+      */
+-    protected boolean startServer() throws IOException
++    protected boolean startServer()
+     {
+         this.serverLogAgent.logInfo("Starting integrated minecraft server version 1.6.1");
+         this.setOnlineMode(false);
+@@ -128,8 +113,9 @@
+ 
+     /**
+      * Main function called by run() every loop.
+-     */
+-    public void tick()
++     * @throws MinecraftException 
++     */
++    public void tick() throws MinecraftException
+     {
+         boolean flag = this.isGamePaused;
+         this.isGamePaused = this.theServerListeningThread.isGamePaused();
+@@ -253,8 +239,9 @@
+ 
+     /**
+      * Saves all necessary data as preparation for stopping the server.
+-     */
+-    public void stopServer()
++     * @throws MinecraftException 
++     */
++    public void stopServer() throws MinecraftException
+     {
+         super.stopServer();
+ 
+@@ -312,4 +299,11 @@
+     {
+         return this.getServerListeningThread();
+     }
++
++    @Override
++    public PropertyManager getPropertyManager()
++    {
++        // TODO Auto-generated method stub
++        return null;
++    }
+ }

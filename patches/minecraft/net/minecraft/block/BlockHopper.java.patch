@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockHopper.java
++++ ../src_work/minecraft/net/minecraft/block/BlockHopper.java
+@@ -238,7 +238,7 @@
+ 
+     public static int getDirectionFromMetadata(int par0)
+     {
+-        return par0 & 7;
++        return Math.min(par0 & 7, 5); // CraftBukkit - Fix AIOOBE in callers
+     }
+ 
+     @SideOnly(Side.CLIENT)

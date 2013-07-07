@@ -9,15 +9,27 @@
  import java.util.Map;
  import net.minecraft.block.Block;
  import net.minecraft.item.Item;
-@@ -13,6 +15,8 @@
+@@ -11,8 +13,10 @@
+     private static final FurnaceRecipes smeltingBase = new FurnaceRecipes();
+ 
      /** The list of smelting results. */
-     private Map smeltingList = new HashMap();
+-    private Map smeltingList = new HashMap();
++    public Map smeltingList = new HashMap(); // CraftBukkit - private -> public
      private Map experienceList = new HashMap();
 +    private HashMap<List<Integer>, ItemStack> metaSmeltingList = new HashMap<List<Integer>, ItemStack>();
 +    private HashMap<List<Integer>, Float> metaExperience = new HashMap<List<Integer>, Float>();
  
      /**
       * Used to call methods addSmelting and getSmeltingResult.
+@@ -22,7 +26,7 @@
+         return smeltingBase;
+     }
+ 
+-    private FurnaceRecipes()
++    public FurnaceRecipes()   // CraftBukkit - private -> public
+     {
+         this.addSmelting(Block.oreIron.blockID, new ItemStack(Item.ingotIron), 0.7F);
+         this.addSmelting(Block.oreGold.blockID, new ItemStack(Item.ingotGold), 1.0F);
 @@ -57,7 +61,9 @@
  
      /**

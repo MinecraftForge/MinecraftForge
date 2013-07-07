@@ -1,0 +1,25 @@
+--- ../src_base/minecraft/cpw/mods/fml/relauncher/FMLLogFormatter.java
++++ ../src_work/minecraft/cpw/mods/fml/relauncher/FMLLogFormatter.java
+@@ -23,10 +23,20 @@
+ import java.util.logging.Level;
+ import java.util.logging.LogRecord;
+ 
+-final class FMLLogFormatter extends Formatter
++public final class FMLLogFormatter extends Formatter // MCPC+ - public for MinecraftServer
+ {
+     static final String LINE_SEPARATOR = System.getProperty("line.separator");
+-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
++    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); // MCPC+ - static for setFormat (TODO)
++    
++    // MCPC+ start
++    public static void setFormat(boolean nojline, SimpleDateFormat date_format)
++    {
++        if (date_format != null)
++            dateFormat = date_format;
++        else if (nojline)
++            dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
++    }
++    // MCPC+ end
+ 
+     public String format(LogRecord record)
+     {

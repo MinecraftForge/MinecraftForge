@@ -9,18 +9,19 @@
  import java.util.List;
  import java.util.Random;
  import net.minecraft.block.material.Material;
-@@ -16,7 +18,9 @@
+@@ -16,7 +18,10 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
 -public class BlockLeaves extends BlockLeavesBase
 +import net.minecraftforge.common.IShearable;
++import org.bukkit.event.block.LeavesDecayEvent; // CraftBukkit
 +
 +public class BlockLeaves extends BlockLeavesBase implements IShearable
  {
      public static final String[] LEAF_TYPES = new String[] {"oak", "spruce", "birch", "jungle"};
      public static final String[][] field_94396_b = new String[][] {{"leaves_oak", "leaves_spruce", "leaves_birch", "leaves_jungle"}, {"leaves_oak_opaque", "leaves_spruce_opaque", "leaves_birch_opaque", "leaves_jungle_opaque"}};
-@@ -107,10 +111,9 @@
+@@ -107,10 +112,9 @@
                      {
                          int j2 = par1World.getBlockId(par2 + k1, par3 + l1, par4 + i2);
  
@@ -33,7 +34,7 @@
                          }
                      }
                  }
-@@ -156,11 +159,13 @@
+@@ -156,11 +160,13 @@
                              {
                                  k2 = par1World.getBlockId(par2 + l1, par3 + i2, par4 + j2);
  
@@ -49,7 +50,23 @@
                                  {
                                      this.adjacentTreeBlocks[(l1 + k1) * j1 + (i2 + k1) * b1 + j2 + k1] = -2;
                                  }
-@@ -325,15 +330,7 @@
+@@ -250,6 +256,15 @@
+ 
+     private void removeLeaves(World par1World, int par2, int par3, int par4)
+     {
++        // CraftBukkit start
++        LeavesDecayEvent event = new LeavesDecayEvent(par1World.getWorld().getBlockAt(par2, par3, par4));
++        par1World.getServer().getPluginManager().callEvent(event);
++
++        if (event.isCancelled())
++        {
++            return;
++        }
++        // CraftBukkit end
+         this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
+         par1World.setBlockToAir(par2, par3, par4);
+     }
+@@ -325,15 +340,7 @@
       */
      public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {
@@ -66,7 +83,7 @@
      }
  
      /**
-@@ -414,4 +411,30 @@
+@@ -414,4 +421,30 @@
              }
          }
      }

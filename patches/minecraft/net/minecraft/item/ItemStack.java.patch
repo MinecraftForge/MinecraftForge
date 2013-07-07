@@ -1,6 +1,63 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemStack.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemStack.java
-@@ -252,7 +252,9 @@
+@@ -20,6 +20,7 @@
+ import net.minecraft.entity.ai.attributes.AttributeModifier;
+ import net.minecraft.entity.item.EntityItemFrame;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.nbt.NBTBase;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
+@@ -88,6 +89,8 @@
+ 
+     public ItemStack(int par1, int par2, int par3)
+     {
++        this.stackSize = 0;
++        this.itemFrame = null;
+         this.itemID = par1;
+         this.stackSize = par2;
+         this.itemDamage = par3;
+@@ -105,7 +108,11 @@
+         return itemstack.getItem() != null ? itemstack : null;
+     }
+ 
+-    private ItemStack() {}
++    private ItemStack()
++    {
++        this.stackSize = 0;
++        this.itemFrame = null;
++    }
+ 
+     /**
+      * Remove the argument from the stack size. Return a new stack object with argument size.
+@@ -128,6 +135,7 @@
+      */
+     public Item getItem()
+     {
++        if (this.itemID < 0) return null; // MCPC+
+         return Item.itemsList[this.itemID];
+     }
+ 
+@@ -192,7 +200,7 @@
+ 
+         if (this.stackTagCompound != null)
+         {
+-            par1NBTTagCompound.setTag("tag", this.stackTagCompound);
++            par1NBTTagCompound.setTag("tag", this.stackTagCompound.copy()); // CraftBukkit - make defensive copy, data is going to another thread
+         }
+ 
+         return par1NBTTagCompound;
+@@ -214,7 +222,8 @@
+ 
+         if (par1NBTTagCompound.hasKey("tag"))
+         {
+-            this.stackTagCompound = par1NBTTagCompound.getCompoundTag("tag");
++            // CraftBukkit - clear name from compound and make defensive copy as this data may be coming from the save thread
++            this.stackTagCompound = (NBTTagCompound) par1NBTTagCompound.getCompoundTag("tag").copy(); // MCPC+ - remove setName("")
+         }
+     }
+ 
+@@ -252,7 +261,9 @@
       */
      public boolean isItemDamaged()
      {
@@ -11,7 +68,7 @@
      }
  
      /**
-@@ -260,6 +262,10 @@
+@@ -260,6 +271,10 @@
       */
      public int getItemDamageForDisplay()
      {
@@ -22,7 +79,7 @@
          return this.itemDamage;
      }
  
-@@ -268,6 +274,10 @@
+@@ -268,6 +283,10 @@
       */
      public int getItemDamage()
      {
@@ -33,7 +90,7 @@
          return this.itemDamage;
      }
  
-@@ -276,6 +286,12 @@
+@@ -276,6 +295,12 @@
       */
      public void setItemDamage(int par1)
      {
@@ -46,7 +103,7 @@
          this.itemDamage = par1;
  
          if (this.itemDamage < 0)
-@@ -289,7 +305,7 @@
+@@ -289,7 +314,7 @@
       */
      public int getMaxDamage()
      {
@@ -55,7 +112,44 @@
      }
  
      /**
-@@ -327,8 +343,8 @@
+@@ -298,8 +323,15 @@
+      * getMaxDamage(). Returns false otherwise or if the ItemStack can't be damaged or if all points of damage are
+      * negated.
+      */
++    // Spigot start
+     public boolean attemptDamageItem(int par1, Random par2Random)
+     {
++        return isDamaged(par1, par2Random, null);
++    }
++
++    public boolean isDamaged(int par1, Random par2Random, EntityLivingBase entitylivingbase)
++    {
++        // Spigot end
+         if (!this.isItemStackDamageable())
+         {
+             return false;
+@@ -321,14 +353,29 @@
+ 
+                 par1 -= k;
+ 
++                // Spigot start
++                if (entitylivingbase instanceof EntityPlayerMP)
++                {
++                    org.bukkit.craftbukkit.inventory.CraftItemStack item = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(this);
++                    org.bukkit.event.player.PlayerItemDamageEvent event = new org.bukkit.event.player.PlayerItemDamageEvent((org.bukkit.entity.Player) entitylivingbase.getBukkitEntity(), item, par1);
++                    org.bukkit.Bukkit.getServer().getPluginManager().callEvent(event);
++
++                    if (event.isCancelled())
++                    {
++                        return false;
++                    }
++
++                    par1 = event.getDamage();
++                }
++
+                 if (par1 <= 0)
+                 {
+                     return false;
                  }
              }
  
@@ -66,7 +160,30 @@
          }
      }
  
-@@ -396,7 +412,7 @@
+@@ -362,6 +409,13 @@
+                         this.stackSize = 0;
+                     }
+ 
++                    // CraftBukkit start - Check for item breaking
++                    if (this.stackSize == 0 && par2EntityLivingBase instanceof EntityPlayer)
++                    {
++                        org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerItemBreakEvent((EntityPlayer) par2EntityLivingBase, this);
++                    }
++
++                    // CraftBukkit end
+                     this.itemDamage = 0;
+                 }
+             }
+@@ -373,7 +427,7 @@
+      */
+     public void hitEntity(EntityLivingBase par1EntityLivingBase, EntityPlayer par2EntityPlayer)
+     {
+-        boolean flag = Item.itemsList[this.itemID].hitEntity(this, par1EntityLivingBase, par2EntityPlayer);
++        boolean flag = Item.itemsList[this.itemID].hitEntity(this, par1EntityLivingBase, (EntityLivingBase) par2EntityPlayer);
+ 
+         if (flag)
+         {
+@@ -396,7 +450,7 @@
       */
      public boolean canHarvestBlock(Block par1Block)
      {
@@ -75,7 +192,24 @@
      }
  
      public boolean func_111282_a(EntityPlayer par1EntityPlayer, EntityLivingBase par2EntityLivingBase)
-@@ -737,10 +753,16 @@
+@@ -478,7 +532,15 @@
+             --this.animationsToGo;
+         }
+ 
+-        Item.itemsList[this.itemID].onUpdate(this, par1World, par2Entity, par3, par4);
++        // MCPC+ start - print exception instead of kicking client (if they have a corrupted item in their inventory)
++        try {
++            Item.itemsList[this.itemID].onUpdate(this, par1World, par2Entity, par3, par4);
++        } catch (Throwable ex) {
++            System.out.println("updateAnimation exception");
++            ex.printStackTrace();
++            return;
++        }
++        // MCPC+ end
+     }
+ 
+     public void onCrafting(World par1World, EntityPlayer par2EntityPlayer, int par3)
+@@ -737,10 +799,16 @@
          return arraylist;
      }
  

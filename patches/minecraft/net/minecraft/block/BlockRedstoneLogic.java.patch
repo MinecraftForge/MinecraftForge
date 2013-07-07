@@ -1,0 +1,33 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockRedstoneLogic.java
++++ ../src_work/minecraft/net/minecraft/block/BlockRedstoneLogic.java
+@@ -11,6 +11,7 @@
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
+ 
+ public abstract class BlockRedstoneLogic extends BlockDirectional
+ {
+@@ -61,10 +62,22 @@
+ 
+             if (this.isRepeaterPowered && !flag)
+             {
++                // CraftBukkit start
++                if (CraftEventFactory.callRedstoneChange(par1World, par2, par3, par4, 15, 0).getNewCurrent() != 0)
++                {
++                    return;
++                }
++                // CraftBukkit end
+                 par1World.setBlock(par2, par3, par4, this.func_94484_i().blockID, l, 2);
+             }
+             else if (!this.isRepeaterPowered)
+             {
++                // CraftBukkit start
++                if (CraftEventFactory.callRedstoneChange(par1World, par2, par3, par4, 0, 15).getNewCurrent() != 15)
++                {
++                    return;
++                }
++                // CraftBukkit end
+                 par1World.setBlock(par2, par3, par4, this.func_94485_e().blockID, l, 2);
+ 
+                 if (!flag)

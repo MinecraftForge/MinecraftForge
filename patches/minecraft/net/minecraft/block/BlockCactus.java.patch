@@ -1,6 +1,12 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockCactus.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockCactus.java
-@@ -12,7 +12,11 @@
+@@ -7,12 +7,18 @@
+ import net.minecraft.client.renderer.texture.IconRegister;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.Entity;
++import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.util.DamageSource;
  import net.minecraft.util.Icon;
  import net.minecraft.world.World;
  
@@ -8,12 +14,25 @@
 +import net.minecraftforge.common.EnumPlantType;
 +import net.minecraftforge.common.ForgeDirection;
 +import net.minecraftforge.common.IPlantable;
++import org.bukkit.event.entity.EntityDamageByBlockEvent;  // CraftBukkit
 +
 +public class BlockCactus extends Block implements IPlantable
  {
      @SideOnly(Side.CLIENT)
      private Icon cactusTopIcon;
-@@ -158,7 +162,7 @@
+@@ -44,9 +50,9 @@
+             {
+                 int i1 = par1World.getBlockMetadata(par2, par3, par4);
+ 
+-                if (i1 == 15)
++                if (i1 >= (byte) range(3, (par1World.growthOdds / par1World.getWorld().cactusGrowthModifier * 15) + 0.5F, 15))   // Spigot
+                 {
+-                    par1World.setBlock(par2, par3 + 1, par4, this.blockID);
++                    org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(par1World, par2, par3 + 1, par4, this.blockID, 0); // CraftBukkit
+                     par1World.setBlockMetadataWithNotify(par2, par3, par4, 0, 4);
+                     this.onNeighborBlockChange(par1World, par2, par3 + 1, par4, this.blockID);
+                 }
+@@ -158,7 +164,7 @@
          else
          {
              int l = par1World.getBlockId(par2, par3 - 1, par4);
@@ -22,11 +41,42 @@
          }
      }
  
-@@ -182,4 +186,22 @@
-         this.cactusTopIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_top");
-         this.cactusBottomIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_bottom");
-     }
+@@ -167,19 +173,42 @@
+      */
+     public void onEntityCollidedWithBlock(World par1World, int par2, int par3, int par4, Entity par5Entity)
+     {
++        // CraftBukkit start - EntityDamageByBlock event
++        if (par5Entity instanceof EntityLivingBase)
++        {
++            org.bukkit.block.Block damager = par1World.getWorld().getBlockAt(par2, par3, par4);
++            org.bukkit.entity.Entity damagee = (par5Entity == null) ? null : par5Entity.getBukkitEntity();
++            EntityDamageByBlockEvent event = new EntityDamageByBlockEvent(damager, damagee, org.bukkit.event.entity.EntityDamageEvent.DamageCause.CONTACT, 1D);
++            par1World.getServer().getPluginManager().callEvent(event);
 +
++            if (!event.isCancelled())
++            {
++                damagee.setLastDamageCause(event);
++                par5Entity.attackEntityFrom(DamageSource.cactus, (float) event.getDamage());
++            }
++
++            return;
++        }
++
++        // CraftBukkit end
+         par5Entity.attackEntityFrom(DamageSource.cactus, 1.0F);
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+-
+-    /**
+-     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+-     * is the only chance you get to register icons.
+-     */
+-    public void registerIcons(IconRegister par1IconRegister)
+-    {
+-        this.blockIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_side");
+-        this.cactusTopIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_top");
+-        this.cactusBottomIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_bottom");
 +    @Override
 +    public EnumPlantType getPlantType(World world, int x, int y, int z)
 +    {
@@ -43,5 +93,5 @@
 +    public int getPlantMetadata(World world, int x, int y, int z)
 +    {
 +        return -1;
-+    }
+     }
  }

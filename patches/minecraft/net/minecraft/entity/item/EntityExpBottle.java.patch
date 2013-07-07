@@ -1,0 +1,22 @@
+--- ../src_base/minecraft/net/minecraft/entity/item/EntityExpBottle.java
++++ ../src_work/minecraft/net/minecraft/entity/item/EntityExpBottle.java
+@@ -47,8 +47,18 @@
+     {
+         if (!this.worldObj.isRemote)
+         {
+-            this.worldObj.playAuxSFX(2002, (int)Math.round(this.posX), (int)Math.round(this.posY), (int)Math.round(this.posZ), 0);
++            // CraftBukkit moved after event
++            // this.world.triggerEffect(2002, (int) Math.round(this.locX), (int) Math.round(this.locY), (int) Math.round(this.locZ), 0);
+             int i = 3 + this.worldObj.rand.nextInt(5) + this.worldObj.rand.nextInt(5);
++            // CraftBukkit start
++            org.bukkit.event.entity.ExpBottleEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callExpBottleEvent(this, i);
++            i = event.getExperience();
++
++            if (event.getShowEffect())
++            {
++                this.worldObj.playAuxSFX(2002, (int) Math.round(this.posX), (int) Math.round(this.posY), (int) Math.round(this.posZ), 0);
++            }
++            // CraftBukkit end
+ 
+             while (i > 0)
+             {

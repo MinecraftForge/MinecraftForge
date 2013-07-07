@@ -1,36 +1,77 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga1.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga1.java
-@@ -43,7 +43,9 @@
-                         {
-                             k2 = par1World.getBlockId(i2, l1, j2);
+@@ -2,12 +2,24 @@
  
--                            if (k2 != 0 && k2 != Block.leaves.blockID)
-+                            Block block = Block.blocksList[k2];
+ import java.util.Random;
+ import net.minecraft.block.Block;
++import net.minecraft.block.BlockSapling.TreeGenerator;
+ import net.minecraft.world.World;
+ 
+-public class WorldGenTaiga1 extends WorldGenerator
++import org.bukkit.BlockChangeDelegate; // CraftBukkit
 +
-+                            if (k2 != 0 && (block == null || !block.isLeaves(par1World, i2, l1, j2)))
++public class WorldGenTaiga1 extends WorldGenerator implements TreeGenerator   // CraftBukkit add interface
+ {
++    public WorldGenTaiga1() {}
++
+     public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
+     {
++        // CraftBukkit start - Moved to generate
++        return this.generate((BlockChangeDelegate) par1World, par2Random, par3, par4, par5);
++    }
++
++    public boolean generate(BlockChangeDelegate par1World, Random par2Random, int par3, int par4, int par5)
++    {
++        // CraftBukkit end
+         int l = par2Random.nextInt(5) + 7;
+         int i1 = l - par2Random.nextInt(2) - 3;
+         int j1 = l - i1;
+@@ -41,7 +53,7 @@
+                     {
+                         if (l1 >= 0 && l1 < 128)
+                         {
+-                            k2 = par1World.getBlockId(i2, l1, j2);
++                            k2 = par1World.getTypeId(i2, l1, j2);
+ 
+                             if (k2 != 0 && k2 != Block.leaves.blockID)
                              {
-                                 flag = false;
-                             }
-@@ -79,7 +81,10 @@
+@@ -62,11 +74,11 @@
+             }
+             else
+             {
+-                l1 = par1World.getBlockId(par3, par4 - 1, par5);
++                l1 = par1World.getTypeId(par3, par4 - 1, par5);
+ 
+                 if ((l1 == Block.grass.blockID || l1 == Block.dirt.blockID) && par4 < 128 - l - 1)
+                 {
+-                    this.setBlock(par1World, par3, par4 - 1, par5, Block.dirt.blockID);
++                    this.setType(par1World, par3, par4 - 1, par5, Block.dirt.blockID);
+                     l2 = 0;
+ 
+                     for (i2 = par4 + l; i2 >= par4 + i1; --i2)
+@@ -79,9 +91,9 @@
                              {
                                  int j3 = i3 - par5;
  
 -                                if ((Math.abs(k2) != l2 || Math.abs(j3) != l2 || l2 <= 0) && !Block.opaqueCubeLookup[par1World.getBlockId(j2, i2, i3)])
-+                                Block block = Block.blocksList[par1World.getBlockId(j2, i2, i3)];
-+
-+                                if ((Math.abs(k2) != l2 || Math.abs(j3) != l2 || l2 <= 0) && 
-+                                    (block == null || block.canBeReplacedByLeaves(par1World, j2, i2, i3)))
++                                if ((Math.abs(k2) != l2 || Math.abs(j3) != l2 || l2 <= 0) && !Block.opaqueCubeLookup[par1World.getTypeId(j2, i2, i3)])
                                  {
-                                     this.setBlockAndMetadata(par1World, j2, i2, i3, Block.leaves.blockID, 1);
+-                                    this.setBlockAndMetadata(par1World, j2, i2, i3, Block.leaves.blockID, 1);
++                                    this.setTypeAndData(par1World, j2, i2, i3, Block.leaves.blockID, 1);
                                  }
-@@ -100,7 +105,9 @@
-                     {
-                         j2 = par1World.getBlockId(par3, par4 + i2, par5);
- 
--                        if (j2 == 0 || j2 == Block.leaves.blockID)
-+                        Block block = Block.blocksList[j2];
-+
-+                        if (j2 == 0 || block == null || block.isLeaves(par1World, par3, par4 + i2, par5))
-                         {
-                             this.setBlockAndMetadata(par1World, par3, par4 + i2, par5, Block.wood.blockID, 1);
+                             }
                          }
+@@ -98,11 +110,11 @@
+ 
+                     for (i2 = 0; i2 < l - 1; ++i2)
+                     {
+-                        j2 = par1World.getBlockId(par3, par4 + i2, par5);
++                        j2 = par1World.getTypeId(par3, par4 + i2, par5);
+ 
+                         if (j2 == 0 || j2 == Block.leaves.blockID)
+                         {
+-                            this.setBlockAndMetadata(par1World, par3, par4 + i2, par5, Block.wood.blockID, 1);
++                            this.setTypeAndData(par1World, par3, par4 + i2, par5, Block.wood.blockID, 1);
+                         }
+                     }
+ 

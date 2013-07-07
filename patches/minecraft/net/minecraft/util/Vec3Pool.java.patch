@@ -1,0 +1,180 @@
+--- ../src_base/minecraft/net/minecraft/util/Vec3Pool.java
++++ ../src_work/minecraft/net/minecraft/util/Vec3Pool.java
+@@ -9,9 +9,14 @@
+ {
+     private final int truncateArrayResetThreshold;
+     private final int minimumSize;
+-
+-    /** items at and above nextFreeSpace are assumed to be available */
+-    private final List vec3Cache = new ArrayList();
++    // CraftBukkit start
++    // private final List pool = new ArrayList();
++    private Vec3 freelist = null;
++    private Vec3 alloclist = null;
++    private Vec3 freelisthead = null;
++    private Vec3 alloclisthead = null;
++    private int total_size = 0;
++    // CraftBukkit end
+     private int nextFreeSpace;
+     private int maximumSizeSinceLastTruncation;
+     private int resetCount;
+@@ -25,59 +30,111 @@
+     /**
+      * extends the pool if all vecs are currently "out"
+      */
+-    public Vec3 getVecFromPool(double par1, double par3, double par5)
++    public synchronized final Vec3 getVecFromPool(double par1, double par3, double par5)   // CraftBukkit - add final // MCPC+ - synchronize
+     {
+-        if (this.func_82589_e())
++        if (this.resetCount == 0)
+         {
+-            return new Vec3(this, par1, par3, par5);
++            return Vec3.createVectorHelper(par1, par3, par5);    // CraftBukkit - Don't pool objects indefinitely if thread doesn't adhere to contract
++        }
++
++        Vec3 vec3;
++
++        if (this.freelist == null)   // CraftBukkit
++        {
++            vec3 = new Vec3(this, par1, par3, par5);
++            this.total_size++; // CraftBukkit
+         }
+         else
+         {
+-            Vec3 vec3;
++            // CraftBukkit start
++            vec3 = this.freelist;
++            this.freelist = vec3.next;
++            // CraftBukkit end
++            vec3.setComponents(par1, par3, par5);
++        }
+ 
+-            if (this.nextFreeSpace >= this.vec3Cache.size())
++        // CraftBukkit start
++        if (this.alloclist == null)
++        {
++            this.alloclisthead = vec3;
++        }
++
++        vec3.next = this.alloclist; // Add to allocated list
++        this.alloclist = vec3;
++        // CraftBukkit end
++        ++this.nextFreeSpace;
++        return vec3;
++    }
++
++    // CraftBukkit start - Offer back vector (can save LOTS of unneeded bloat) - works about 90% of the time
++    public synchronized void release(Vec3 v) // MCPC+ - synchronize
++    {
++        if (this.alloclist == v)
++        {
++            this.alloclist = v.next; // Pop off alloc list
++
++            // Push on to free list
++            if (this.freelist == null)
+             {
+-                vec3 = new Vec3(this, par1, par3, par5);
+-                this.vec3Cache.add(vec3);
+-            }
+-            else
+-            {
+-                vec3 = (Vec3)this.vec3Cache.get(this.nextFreeSpace);
+-                vec3.setComponents(par1, par3, par5);
++                this.freelisthead = v;
+             }
+ 
+-            ++this.nextFreeSpace;
+-            return vec3;
++            v.next = this.freelist;
++            this.freelist = v;
++            this.nextFreeSpace--;
+         }
+     }
++    // CraftBukkit end
+ 
+     /**
+      * Will truncate the array everyN clears to the maximum size observed since the last truncation.
+      */
+-    public void clear()
++    public synchronized void clear() // MCPC+ - synchronize
+     {
+-        if (!this.func_82589_e())
++        if (this.nextFreeSpace > this.maximumSizeSinceLastTruncation)
+         {
+-            if (this.nextFreeSpace > this.maximumSizeSinceLastTruncation)
++            this.maximumSizeSinceLastTruncation = this.nextFreeSpace;
++        }
++
++        // CraftBukkit start - Intelligent cache
++        // Take any allocated blocks and put them on free list
++        if (this.alloclist != null)
++        {
++            if (this.freelist == null)
+             {
+-                this.maximumSizeSinceLastTruncation = this.nextFreeSpace;
++                this.freelist = this.alloclist;
++                this.freelisthead = this.alloclisthead;
++            }
++            else
++            {
++                this.alloclisthead.next = this.freelist;
++                this.freelist = this.alloclist;
++                this.freelisthead = this.alloclisthead;
+             }
+ 
+-            if (this.resetCount++ == this.truncateArrayResetThreshold)
++            this.alloclist = null;
++        }
++
++        if ((this.resetCount++ & 0xff) == 0)
++        {
++            int newSize = total_size - (total_size >> 3);
++
++            if (newSize > this.maximumSizeSinceLastTruncation)   // newSize will be 87.5%, but if we were not in that range, we clear some of the cache
+             {
+-                int i = Math.max(this.maximumSizeSinceLastTruncation, this.vec3Cache.size() - this.minimumSize);
+-
+-                while (this.vec3Cache.size() > i)
++                for (int i = total_size; i > newSize; i--)
+                 {
+-                    this.vec3Cache.remove(i);
++                    freelist = freelist.next;
+                 }
+ 
+-                this.maximumSizeSinceLastTruncation = 0;
+-                this.resetCount = 0;
++                total_size = newSize;
+             }
+ 
+-            this.nextFreeSpace = 0;
++            this.maximumSizeSinceLastTruncation = 0;
++            // this.f = 0; // We do not reset to zero; it doubles for a flag
+         }
++
++        this.nextFreeSpace = 0;
++        // CraftBukkit end
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -86,13 +143,19 @@
+         if (!this.func_82589_e())
+         {
+             this.nextFreeSpace = 0;
+-            this.vec3Cache.clear();
++            // MCPC+ start
++            freelist = null;
++            alloclist = null;
++            freelisthead = null;
++            alloclisthead = null;
++            total_size = 0;
++            // MCPC+ end
+         }
+     }
+ 
+     public int getPoolSize()
+     {
+-        return this.vec3Cache.size();
++        return this.total_size; // CraftBukkit
+     }
+ 
+     public int func_82590_d()

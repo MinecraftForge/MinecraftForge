@@ -1,0 +1,16 @@
+--- ../src_base/minecraft/net/minecraft/tileentity/TileEntityRecordPlayer.java
++++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityRecordPlayer.java
+@@ -46,6 +46,13 @@
+ 
+     public void func_96098_a(ItemStack par1ItemStack)
+     {
++        // CraftBukkit start - There can only be one
++        if (par1ItemStack != null)
++        {
++            par1ItemStack.stackSize = 1;
++        }
++
++        // CraftBukkit end
+         this.record = par1ItemStack;
+         this.onInventoryChanged();
+     }

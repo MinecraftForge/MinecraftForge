@@ -1,6 +1,59 @@
 --- ../src_base/minecraft/net/minecraft/entity/boss/EntityDragon.java
 +++ ../src_work/minecraft/net/minecraft/entity/boss/EntityDragon.java
-@@ -527,10 +527,11 @@
+@@ -19,6 +19,15 @@
+ import net.minecraft.util.Vec3;
+ import net.minecraft.world.Explosion;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.block.BlockState;
++import org.bukkit.craftbukkit.util.BlockStateListPopulator;
++import org.bukkit.event.entity.EntityCreatePortalEvent;
++import org.bukkit.event.entity.EntityExplodeEvent;
++import org.bukkit.event.entity.EntityRegainHealthEvent;
++import org.bukkit.Bukkit;import net.minecraft.entity.player.EntityPlayerMP;
++import net.minecraft.network.packet.Packet53BlockChange;
++// CraftBukkit end
+ 
+ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEntityMultiPart, IMob
+ {
+@@ -70,6 +79,7 @@
+ 
+     /** The current endercrystal that is healing this dragon */
+     public EntityEnderCrystal healingEnderCrystal;
++    private Explosion explosionSource = new Explosion(null, this, Double.NaN, Double.NaN, Double.NaN, Float.NaN); // CraftBukkit - reusable source for CraftTNTPrimed.getSource()
+ 
+     public EntityDragon(World par1World)
+     {
+@@ -398,7 +408,16 @@
+             }
+             else if (this.ticksExisted % 10 == 0 && this.func_110143_aJ() < this.func_110138_aP())
+             {
+-                this.setEntityHealth(this.func_110143_aJ() + 1.0F);
++                // CraftBukkit start
++                EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), 1.0D, EntityRegainHealthEvent.RegainReason.ENDER_CRYSTAL);
++                this.worldObj.getServer().getPluginManager().callEvent(event);
++
++                if (!event.isCancelled())
++                {
++                    this.setEntityHealth((float)(this.func_110143_aJ() + event.getAmount()));
++                }
++
++                // CraftBukkit end
+             }
+         }
+ 
+@@ -519,6 +538,10 @@
+         int j1 = MathHelper.floor_double(par1AxisAlignedBB.maxZ);
+         boolean flag = false;
+         boolean flag1 = false;
++        // CraftBukkit start - Create a list to hold all the destroyed blocks
++        List<org.bukkit.block.Block> destroyedBlocks = new java.util.ArrayList<org.bukkit.block.Block>();
++        org.bukkit.craftbukkit.CraftWorld craftWorld = this.worldObj.getWorld();
++        // CraftBukkit end
+ 
+         for (int k1 = i; k1 <= l; ++k1)
+         {
+@@ -527,12 +550,17 @@
                  for (int i2 = k; i2 <= j1; ++i2)
                  {
                      int j2 = this.worldObj.getBlockId(k1, l1, i2);
@@ -13,5 +66,192 @@
 -                        if (j2 != Block.obsidian.blockID && j2 != Block.whiteStone.blockID && j2 != Block.bedrock.blockID && this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"))
 +                        if (block.canEntityDestroy(worldObj, k1, l1, i2, this) && this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"))
                          {
-                             flag1 = this.worldObj.setBlockToAir(k1, l1, i2) || flag1;
+-                            flag1 = this.worldObj.setBlockToAir(k1, l1, i2) || flag1;
++                            // CraftBukkit start - Add blocks to list rather than destroying them
++                            // flag1 = this.world.setAir(k1, l1, i2) || flag1;
++                            flag1 = true;
++                            destroyedBlocks.add(craftWorld.getBlockAt(k1, l1, i2));
++                            // CraftBukkit end
                          }
+                         else
+                         {
+@@ -545,6 +573,51 @@
+ 
+         if (flag1)
+         {
++            // CraftBukkit start - Set off an EntityExplodeEvent for the dragon exploding all these blocks
++            org.bukkit.entity.Entity bukkitEntity = this.getBukkitEntity();
++            EntityExplodeEvent event = new EntityExplodeEvent(bukkitEntity, bukkitEntity.getLocation(), destroyedBlocks, 0F);
++            Bukkit.getPluginManager().callEvent(event);
++
++            if (event.isCancelled())
++            {
++                // This flag literally means 'Dragon hit something hard' (Obsidian, White Stone or Bedrock) and will cause the dragon to slow down.
++                // We should consider adding an event extension for it, or perhaps returning true if the event is cancelled.
++                return flag;
++            }
++            else if (event.getYield() == 0F)
++            {
++                // Yield zero ==> no drops
++                for (org.bukkit.block.Block block : event.blockList())
++                {
++                    this.worldObj.setBlockToAir(block.getX(), block.getY(), block.getZ());
++                }
++            }
++            else
++            {
++                for (org.bukkit.block.Block block : event.blockList())
++                {
++                    int blockId = block.getTypeId();
++
++                    if (blockId == 0)
++                    {
++                        continue;
++                    }
++
++                    int blockX = block.getX();
++                    int blockY = block.getY();
++                    int blockZ = block.getZ();
++
++                    if (Block.blocksList[blockId].canDropFromExplosion(explosionSource))
++                    {
++                        Block.blocksList[blockId].dropBlockAsItemWithChance(this.worldObj, blockX, blockY, blockZ, block.getData(), event.getYield(), 0);
++                    }
++
++                    Block.blocksList[blockId].onBlockDestroyedByExplosion(worldObj, blockX, blockY, blockZ, explosionSource);
++                    this.worldObj.setBlockToAir(blockX, blockY, blockZ);
++                }
++            }
++
++            // CraftBukkit end
+             double d0 = par1AxisAlignedBB.minX + (par1AxisAlignedBB.maxX - par1AxisAlignedBB.minX) * (double)this.rand.nextFloat();
+             double d1 = par1AxisAlignedBB.minY + (par1AxisAlignedBB.maxY - par1AxisAlignedBB.minY) * (double)this.rand.nextFloat();
+             double d2 = par1AxisAlignedBB.minZ + (par1AxisAlignedBB.maxZ - par1AxisAlignedBB.minZ) * (double)this.rand.nextFloat();
+@@ -585,7 +658,7 @@
+         return false;
+     }
+ 
+-    protected boolean func_82195_e(DamageSource par1DamageSource, float par2)
++    public boolean func_82195_e(DamageSource par1DamageSource, float par2)   // CraftBukkit - protected -> public
+     {
+         return super.attackEntityFrom(par1DamageSource, par2);
+     }
+@@ -612,7 +685,7 @@
+         {
+             if (this.deathTicks > 150 && this.deathTicks % 5 == 0)
+             {
+-                i = 1000;
++                i = expToDrop / 12; // CraftBukkit - drop experience as dragon falls from sky. use experience drop from death event. This is now set in getExpReward()
+ 
+                 while (i > 0)
+                 {
+@@ -633,7 +706,7 @@
+ 
+         if (this.deathTicks == 200 && !this.worldObj.isRemote)
+         {
+-            i = 2000;
++            i = expToDrop - 10 * (expToDrop / 12); // CraftBukkit - drop the remaining experience
+ 
+             while (i > 0)
+             {
+@@ -655,6 +728,8 @@
+         byte b0 = 64;
+         BlockEndPortal.bossDefeated = true;
+         byte b1 = 4;
++        // CraftBukkit start - Replace any "this.world" in the following with just "world"!
++        BlockStateListPopulator world = new BlockStateListPopulator(this.worldObj.getWorld());
+ 
+         for (int k = b0 - 1; k <= b0 + 32; ++k)
+         {
+@@ -672,35 +747,64 @@
+                         {
+                             if (d2 <= ((double)(b1 - 1) - 0.5D) * ((double)(b1 - 1) - 0.5D))
+                             {
+-                                this.worldObj.setBlock(l, k, i1, Block.bedrock.blockID);
++                                world.setTypeId(l, k, i1, Block.bedrock.blockID);
+                             }
+                         }
+                         else if (k > b0)
+                         {
+-                            this.worldObj.setBlock(l, k, i1, 0);
++                            world.setTypeId(l, k, i1, 0);
+                         }
+                         else if (d2 > ((double)(b1 - 1) - 0.5D) * ((double)(b1 - 1) - 0.5D))
+                         {
+-                            this.worldObj.setBlock(l, k, i1, Block.bedrock.blockID);
++                            world.setTypeId(l, k, i1, Block.bedrock.blockID);
+                         }
+                         else
+                         {
+-                            this.worldObj.setBlock(l, k, i1, Block.endPortal.blockID);
++                            world.setTypeId(l, k, i1, Block.endPortal.blockID);
+                         }
+                     }
+                 }
+             }
+         }
+ 
+-        this.worldObj.setBlock(par1, b0 + 0, par2, Block.bedrock.blockID);
+-        this.worldObj.setBlock(par1, b0 + 1, par2, Block.bedrock.blockID);
+-        this.worldObj.setBlock(par1, b0 + 2, par2, Block.bedrock.blockID);
+-        this.worldObj.setBlock(par1 - 1, b0 + 2, par2, Block.torchWood.blockID);
+-        this.worldObj.setBlock(par1 + 1, b0 + 2, par2, Block.torchWood.blockID);
+-        this.worldObj.setBlock(par1, b0 + 2, par2 - 1, Block.torchWood.blockID);
+-        this.worldObj.setBlock(par1, b0 + 2, par2 + 1, Block.torchWood.blockID);
+-        this.worldObj.setBlock(par1, b0 + 3, par2, Block.bedrock.blockID);
+-        this.worldObj.setBlock(par1, b0 + 4, par2, Block.dragonEgg.blockID);
++        world.setTypeId(par1, b0 + 0, par2, Block.bedrock.blockID);
++        world.setTypeId(par1, b0 + 1, par2, Block.bedrock.blockID);
++        world.setTypeId(par1, b0 + 2, par2, Block.bedrock.blockID);
++        world.setTypeId(par1 - 1, b0 + 2, par2, Block.torchWood.blockID);
++        world.setTypeId(par1 + 1, b0 + 2, par2, Block.torchWood.blockID);
++        world.setTypeId(par1, b0 + 2, par2 - 1, Block.torchWood.blockID);
++        world.setTypeId(par1, b0 + 2, par2 + 1, Block.torchWood.blockID);
++        world.setTypeId(par1, b0 + 3, par2, Block.bedrock.blockID);
++        world.setTypeId(par1, b0 + 4, par2, Block.dragonEgg.blockID);
++        EntityCreatePortalEvent event = new EntityCreatePortalEvent((org.bukkit.entity.LivingEntity) this.getBukkitEntity(), java.util.Collections.unmodifiableList(world.getList()), org.bukkit.PortalType.ENDER);
++        this.worldObj.getServer().getPluginManager().callEvent(event);
++
++        if (!event.isCancelled())
++        {
++            for (BlockState state : event.getBlocks())
++            {
++                state.update(true);
++            }
++        }
++        else
++        {
++            for (BlockState state : event.getBlocks())
++            {
++                Packet53BlockChange packet = new Packet53BlockChange(state.getX(), state.getY(), state.getZ(), this.worldObj);
++
++                for (Iterator it = this.worldObj.playerEntities.iterator(); it.hasNext();)
++                {
++                    EntityPlayer entity = (EntityPlayer) it.next();
++
++                    if (entity instanceof EntityPlayerMP)
++                    {
++                        ((EntityPlayerMP) entity).playerNetServerHandler.sendPacketToPlayer(packet);
++                    }
++                }
++            }
++        }
++
++        // CraftBukkit end
+         BlockEndPortal.bossDefeated = false;
+     }
+ 
+@@ -753,4 +857,13 @@
+     {
+         return 5.0F;
+     }
++
++    // CraftBukkit start
++    public int getExpReward()
++    {
++        // This value is equal to the amount of experience dropped while falling from the sky (10 * 1000)
++        // plus what is dropped when the dragon hits the ground (2000)
++        return 12000;
++    }
++    // CraftBukkit end
+ }

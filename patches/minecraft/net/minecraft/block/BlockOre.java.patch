@@ -1,0 +1,44 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockOre.java
++++ ../src_work/minecraft/net/minecraft/block/BlockOre.java
+@@ -59,7 +59,28 @@
+     public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
+     {
+         super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, par7);
++        /* CraftBukkit start - Delegated to getExpDrop
++        if (this.getDropType(l, world.random, i1) != this.id) {
++            int j1 = 0;
+ 
++            if (this.id == Block.COAL_ORE.id) {
++                j1 = MathHelper.nextInt(world.random, 0, 2);
++            } else if (this.id == Block.DIAMOND_ORE.id) {
++                j1 = MathHelper.nextInt(world.random, 3, 7);
++            } else if (this.id == Block.EMERALD_ORE.id) {
++                j1 = MathHelper.nextInt(world.random, 3, 7);
++            } else if (this.id == Block.LAPIS_ORE.id) {
++                j1 = MathHelper.nextInt(world.random, 2, 5);
++            } else if (this.id == Block.QUARTZ_ORE.id) {
++                j1 = MathHelper.nextInt(world.random, 2, 5);
++            }
++
++            this.j(world, i, j, k, j1);
++        } */
++    }
++
++    public int getExpDrop(World par1World, int par5, int par7)
++    {
+         if (this.idDropped(par5, par1World.rand, par7) != this.blockID)
+         {
+             int j1 = 0;
+@@ -85,8 +106,11 @@
+                 j1 = MathHelper.getRandomIntegerInRange(par1World.rand, 2, 5);
+             }
+ 
+-            this.dropXpOnBlockBreak(par1World, par2, par3, par4, j1);
++            return j1;
+         }
++
++        return 0;
++        // CraftBukkit end
+     }
+ 
+     /**

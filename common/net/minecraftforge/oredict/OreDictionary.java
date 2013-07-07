@@ -14,8 +14,10 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
+import org.spigotmc.OrebfuscatorManager; // MCPC+
 
 public class OreDictionary
 {
@@ -115,7 +117,7 @@ public class OreDictionary
             {
                 ShapedRecipes recipe = (ShapedRecipes)obj;
                 ItemStack output = recipe.getRecipeOutput();
-                if (output != null && containsMatch(false, exclusions, output))
+                if ((output != null && containsMatch(false, exclusions, output)) || output == null) // MCPC+ - fixes NPE's with null recipes being added to forge
                 {
                     continue;
                 }
@@ -130,7 +132,7 @@ public class OreDictionary
             {
                 ShapelessRecipes recipe = (ShapelessRecipes)obj;
                 ItemStack output = recipe.getRecipeOutput();
-                if (output != null && containsMatch(false, exclusions, output))
+                if ((output != null && containsMatch(false, exclusions, output)) || output == null) // MCPC+ - fixes NPE's with null recipes being added to forge
                 {
                     continue;
                 }

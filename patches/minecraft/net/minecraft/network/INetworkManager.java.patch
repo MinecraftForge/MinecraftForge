@@ -1,0 +1,22 @@
+--- ../src_base/minecraft/net/minecraft/network/INetworkManager.java
++++ ../src_work/minecraft/net/minecraft/network/INetworkManager.java
+@@ -11,7 +11,7 @@
+     /**
+      * Sets the NetHandler for this NetworkManager. Server-only.
+      */
+-    void setNetHandler(NetHandler nethandler);
++    void setNetHandler(NetHandler connection);
+ 
+     /**
+      * Adds the packet to the correct send queue (chunk data packets go to a separate queue).
+@@ -47,7 +47,9 @@
+      * Shuts down the network with the specified reason. Closes all streams and sockets, spawns NetworkMasterThread to
+      * stop reading and writing threads.
+      */
+-    void networkShutdown(String s, Object ... var2);
++    void networkShutdown(String s, Object... aobject);
++
++    void setSocketAddress(java.net.SocketAddress address); // Spigot
+ 
+     @SideOnly(Side.CLIENT)
+     void closeConnections();

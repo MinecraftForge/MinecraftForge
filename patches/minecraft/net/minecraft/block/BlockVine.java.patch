@@ -13,18 +13,85 @@
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.item.Item;
  import net.minecraft.item.ItemStack;
-@@ -15,7 +18,9 @@
+@@ -15,7 +18,10 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
 -public class BlockVine extends Block
 +import net.minecraftforge.common.IShearable;
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
 +
 +public class BlockVine extends Block implements IShearable
  {
      public BlockVine(int par1)
      {
-@@ -440,14 +445,26 @@
+@@ -314,7 +320,11 @@
+ 
+                     if (l1 > 0)
+                     {
+-                        par1World.setBlock(par2, par3 + 1, par4, this.blockID, l1, 2);
++                        // CraftBukkit start - Call BlockSpreadEvent
++                        org.bukkit.block.Block source = par1World.getWorld().getBlockAt(par2, par3, par4);
++                        org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3 + 1, par4);
++                        CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, l1);
++                        // CraftBukkit end
+                     }
+                 }
+             }
+@@ -342,27 +352,33 @@
+                     {
+                         i2 = k1 + 1 & 3;
+                         j2 = k1 + 3 & 3;
++                        // CraftBukkit start - Call BlockSpreadEvent
++                        org.bukkit.block.Block source = par1World.getWorld().getBlockAt(par2, par3, par4);
++                        org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2 + Direction.offsetX[k1], par3, par4 + Direction.offsetZ[k1]);
+ 
+                         if ((i1 & 1 << i2) != 0 && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[k1] + Direction.offsetX[i2], par3, par4 + Direction.offsetZ[k1] + Direction.offsetZ[i2])))
+                         {
+-                            par1World.setBlock(par2 + Direction.offsetX[k1], par3, par4 + Direction.offsetZ[k1], this.blockID, 1 << i2, 2);
++                            CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, 1 << i2);
+                         }
+                         else if ((i1 & 1 << j2) != 0 && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[k1] + Direction.offsetX[j2], par3, par4 + Direction.offsetZ[k1] + Direction.offsetZ[j2])))
+                         {
+-                            par1World.setBlock(par2 + Direction.offsetX[k1], par3, par4 + Direction.offsetZ[k1], this.blockID, 1 << j2, 2);
++                            CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, 1 << j2);
+                         }
+                         else if ((i1 & 1 << i2) != 0 && par1World.isAirBlock(par2 + Direction.offsetX[k1] + Direction.offsetX[i2], par3, par4 + Direction.offsetZ[k1] + Direction.offsetZ[i2]) && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[i2], par3, par4 + Direction.offsetZ[i2])))
+                         {
+-                            par1World.setBlock(par2 + Direction.offsetX[k1] + Direction.offsetX[i2], par3, par4 + Direction.offsetZ[k1] + Direction.offsetZ[i2], this.blockID, 1 << (k1 + 2 & 3), 2);
++                            block = par1World.getWorld().getBlockAt(par2 + Direction.offsetX[k1] + Direction.offsetX[i2], par3, par4 + Direction.offsetZ[k1] + Direction.offsetZ[i2]);
++                            CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, 1 << (k1 + 2 & 3));
+                         }
+                         else if ((i1 & 1 << j2) != 0 && par1World.isAirBlock(par2 + Direction.offsetX[k1] + Direction.offsetX[j2], par3, par4 + Direction.offsetZ[k1] + Direction.offsetZ[j2]) && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[j2], par3, par4 + Direction.offsetZ[j2])))
+                         {
+-                            par1World.setBlock(par2 + Direction.offsetX[k1] + Direction.offsetX[j2], par3, par4 + Direction.offsetZ[k1] + Direction.offsetZ[j2], this.blockID, 1 << (k1 + 2 & 3), 2);
++                            block = par1World.getWorld().getBlockAt(par2 + Direction.offsetX[k1] + Direction.offsetX[j2], par3, par4 + Direction.offsetZ[k1] + Direction.offsetZ[j2]);
++                            CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, 1 << (k1 + 2 & 3));
+                         }
+                         else if (this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[k1], par3 + 1, par4 + Direction.offsetZ[k1])))
+                         {
+-                            par1World.setBlock(par2 + Direction.offsetX[k1], par3, par4 + Direction.offsetZ[k1], this.blockID, 0, 2);
+-                        }
++                            CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, 0);
++                        }
++                        // CraftBukkit end
+                     }
+                 }
+                 else if (par3 > 1)
+@@ -375,7 +391,11 @@
+ 
+                         if (i2 > 0)
+                         {
+-                            par1World.setBlock(par2, par3 - 1, par4, this.blockID, i2, 2);
++                            // CraftBukkit start - Call BlockSpreadEvent
++                            org.bukkit.block.Block source = par1World.getWorld().getBlockAt(par2, par3, par4);
++                            org.bukkit.block.Block block = par1World.getWorld().getBlockAt(par2, par3 - 1, par4);
++                            CraftEventFactory.handleBlockSpreadEvent(block, source, this.blockID, i2);
++                            // CraftBukkit end
+                         }
+                     }
+                     else if (l1 == this.blockID)
+@@ -440,14 +460,26 @@
       */
      public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {

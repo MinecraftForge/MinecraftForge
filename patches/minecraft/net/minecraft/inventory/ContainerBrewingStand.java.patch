@@ -1,0 +1,76 @@
+--- ../src_base/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
++++ ../src_work/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
+@@ -6,6 +6,10 @@
+ import net.minecraft.entity.player.InventoryPlayer;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.tileentity.TileEntityBrewingStand;
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftInventoryBrewer;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++// CraftBukkit end
+ 
+ public class ContainerBrewingStand extends Container
+ {
+@@ -14,9 +18,14 @@
+     /** Instance of Slot. */
+     private final Slot theSlot;
+     private int brewTime;
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    private InventoryPlayer player;
++    // CraftBukkit end
+ 
+     public ContainerBrewingStand(InventoryPlayer par1InventoryPlayer, TileEntityBrewingStand par2TileEntityBrewingStand)
+     {
++        player = par1InventoryPlayer; // CraftBukkit
+         this.tileBrewingStand = par2TileEntityBrewingStand;
+         this.addSlotToContainer(new SlotBrewingStandPotion(par1InventoryPlayer.player, par2TileEntityBrewingStand, 0, 56, 46));
+         this.addSlotToContainer(new SlotBrewingStandPotion(par1InventoryPlayer.player, par2TileEntityBrewingStand, 1, 79, 53));
+@@ -64,6 +73,16 @@
+         this.brewTime = this.tileBrewingStand.getBrewTime();
+     }
+ 
++    public boolean canInteractWith(EntityPlayer par1EntityPlayer)
++    {
++        if (!this.checkReachable)
++        {
++            return true;    // CraftBukkit
++        }
++
++        return this.tileBrewingStand.isUseableByPlayer(par1EntityPlayer);
++    }
++
+     @SideOnly(Side.CLIENT)
+     public void updateProgressBar(int par1, int par2)
+     {
+@@ -71,11 +90,6 @@
+         {
+             this.tileBrewingStand.setBrewTime(par2);
+         }
+-    }
+-
+-    public boolean canInteractWith(EntityPlayer par1EntityPlayer)
+-    {
+-        return this.tileBrewingStand.isUseableByPlayer(par1EntityPlayer);
+     }
+ 
+     /**
+@@ -155,4 +169,18 @@
+ 
+         return itemstack;
+     }
++
++    // CraftBukkit start
++    public CraftInventoryView getBukkitView()
++    {
++        if (bukkitEntity != null)
++        {
++            return bukkitEntity;
++        }
++
++        CraftInventoryBrewer inventory = new CraftInventoryBrewer(this.tileBrewingStand);
++        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
+ }

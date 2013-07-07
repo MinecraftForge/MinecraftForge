@@ -1,16 +1,30 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemInWorldManager.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemInWorldManager.java
-@@ -8,8 +8,19 @@
+@@ -1,15 +1,33 @@
+ package net.minecraft.item;
+ 
+ import net.minecraft.block.Block;
++import net.minecraft.enchantment.EnchantmentHelper;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.network.packet.Packet53BlockChange;
++import net.minecraft.server.MinecraftServer;
++import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.world.EnumGameType;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
  
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.Event;
 +import net.minecraftforge.event.ForgeEventFactory;
 +import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
-+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-+import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
++// CraftBukkit start
++import org.bukkit.event.block.BlockBreakEvent;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.Event;
++import org.bukkit.event.block.Action;
++import org.bukkit.event.player.PlayerInteractEvent;
++// CraftBukkit end
 +
  public class ItemInWorldManager
  {
@@ -20,60 +34,148 @@
      /** The world object that this object is connected to. */
      public World theWorld;
  
-@@ -145,6 +156,13 @@
+@@ -78,7 +96,7 @@
+ 
+     public void updateBlockRemoving()
      {
+-        ++this.curblockDamage;
++        this.curblockDamage = MinecraftServer.currentTick; // CraftBukkit
+         int i;
+         float f;
+         int j;
+@@ -141,10 +159,33 @@
+      * if not creative, it calls destroyBlockInWorldPartially untill the block is broken first. par4 is the specific
+      * side. tryHarvestBlock can also be the result of this call
+      */
+-    public void onBlockClicked(int par1, int par2, int par3, int par4)
+-    {
++    public void onBlockClicked(int par1, int par2, int par3, int par4) // MCPC+ - merge this whole method by hand
++    {
++        // this.world.douseFire((EntityHuman) null, i, j, k, l); // CraftBukkit - moved down
++        // CraftBukkit
++        org.bukkit.event.player.PlayerInteractEvent playerinteractevent = CraftEventFactory.callPlayerInteractEvent(this.thisPlayerMP, org.bukkit.event.block.Action.LEFT_CLICK_BLOCK, par1, par2, par3, par4, this.thisPlayerMP.inventory.getCurrentItem());
++
          if (!this.gameType.isAdventure() || this.thisPlayerMP.canCurrentToolHarvestBlock(par1, par2, par3))
          {
-+            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(thisPlayerMP, Action.LEFT_CLICK_BLOCK, par1, par2, par3, par4);
-+            if (event.isCanceled())
++            net.minecraftforge.event.entity.player.PlayerInteractEvent playerinteractevent1 = ForgeEventFactory.onPlayerInteract(this.thisPlayerMP, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, par1, par2, par3, par4); // Forge
++
++            // CraftBukkit start
++            if (playerinteractevent.isCancelled() || playerinteractevent1.isCanceled()) // Forge
 +            {
-+                thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, theWorld));
++                // Let the client know the block still exists
++                ((EntityPlayerMP) this.thisPlayerMP).playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, this.theWorld));
++                // Update any tile entity data for this block
++                TileEntity tileentity = this.theWorld.getBlockTileEntity(par1, par2, par3);
++
++                if (tileentity != null)
++                {
++                    this.thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(tileentity.getDescriptionPacket());
++                }
++
 +                return;
 +            }
 +
++            // CraftBukkit end
              if (this.isCreative())
              {
                  if (!this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4))
-@@ -154,15 +172,33 @@
+@@ -154,16 +195,66 @@
              }
              else
              {
 -                this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4);
++                //this.world.douseFire(this.player, i, j, k, l);  // Forge
                  this.initialDamage = this.curblockDamage;
                  float f = 1.0F;
                  int i1 = this.theWorld.getBlockId(par1, par2, par3);
- 
+-
 -                if (i1 > 0)
 -                {
 -                    Block.blocksList[i1].onBlockClicked(this.theWorld, par1, par2, par3, this.thisPlayerMP);
 -                    f = Block.blocksList[i1].getPlayerRelativeBlockHardness(this.thisPlayerMP, this.thisPlayerMP.worldObj, par1, par2, par3);
-+                Block block = Block.blocksList[i1];
+-                }
++                // CraftBukkit start - Swings at air do *NOT* exist.
++                Block block = Block.blocksList[i1]; // Forge
 +
 +                if (block != null)
 +                {
-+                    if (event.useBlock != Event.Result.DENY)
++                    if (playerinteractevent.useInteractedBlock() == org.bukkit.event.Event.Result.DENY || playerinteractevent1.useBlock == net.minecraftforge.event.Event.Result.DENY)   // MCPC
 +                    {
-+                        block.onBlockClicked(theWorld, par1, par2, par3, thisPlayerMP);
-+                        theWorld.extinguishFire(thisPlayerMP, par1, par2, par3, par4);
++                        // If we denied a door from opening, we need to send a correcting update to the client, as it already opened the door.
++                        if (i1 == Block.doorWood.blockID)
++                        {
++                            // For some reason *BOTH* the bottom/top part have to be marked updated.
++                            boolean bottom = (this.theWorld.getBlockMetadata(par1, par2, par3) & 8) == 0;
++                            ((EntityPlayerMP) this.thisPlayerMP).playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, this.theWorld));
++                            ((EntityPlayerMP) this.thisPlayerMP).playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2 + (bottom ? 1 : -1), par3, this.theWorld));
++                        }
++                        else if (i1 == Block.trapdoor.blockID)
++                        {
++                            ((EntityPlayerMP) this.thisPlayerMP).playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, this.theWorld));
++                        }
 +                    }
 +                    else
 +                    {
-+                        thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, theWorld));
++                        // Forge start
++                        block.onBlockClicked(theWorld, par1, par2, par3, this.thisPlayerMP);
++                        theWorld.extinguishFire(this.thisPlayerMP, par1, par2, par3, par4);
++                        f = block.getPlayerRelativeBlockHardness(this.thisPlayerMP, this.theWorld, par1, par2, par3);
++                        // Forge end
 +                    }
-+                    f = block.getPlayerRelativeBlockHardness(thisPlayerMP, thisPlayerMP.worldObj, par1, par2, par3);
 +                }
 +
-+                if (event.useItem == Event.Result.DENY)
++                if (playerinteractevent.useItemInHand() == org.bukkit.event.Event.Result.DENY || playerinteractevent1.useItem == net.minecraftforge.event.Event.Result.DENY)   // Forge
 +                {
-+                    if (f >= 1.0f)
++                    // If we 'insta destroyed' then the client needs to be informed.
++                    if (f > 1.0f)
 +                    {
-+                        thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, theWorld));
++                        ((EntityPlayerMP) this.thisPlayerMP).playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, this.theWorld));
 +                    }
++
 +                    return;
-                 }
++                }
++
++                org.bukkit.event.block.BlockDamageEvent blockEvent = CraftEventFactory.callBlockDamageEvent(this.thisPlayerMP, par1, par2, par3, this.thisPlayerMP.inventory.getCurrentItem(), f >= 1.0f);
++
++                if (blockEvent.isCancelled())
++                {
++                    // Let the client know the block still exists
++                    ((EntityPlayerMP) this.thisPlayerMP).playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, this.theWorld));
++                    return;
++                }
++
++                if (blockEvent.getInstaBreak())
++                {
++                    f = 2.0f;
++                }
++
++                // CraftBukkit end
  
                  if (i1 > 0 && f >= 1.0F)
-@@ -236,7 +272,7 @@
+                 {
+@@ -187,6 +278,7 @@
+     {
+         if (par1 == this.partiallyDestroyedBlockX && par2 == this.partiallyDestroyedBlockY && par3 == this.partiallyDestroyedBlockZ)
+         {
++            this.curblockDamage = MinecraftServer.currentTick; // CraftBukkit
+             int l = this.curblockDamage - this.initialDamage;
+             int i1 = this.theWorld.getBlockId(par1, par2, par3);
+ 
+@@ -211,6 +303,13 @@
+                     this.field_73093_n = this.initialDamage;
+                 }
+             }
++
++            // CraftBukkit start - Force block reset to client
++        }
++        else
++        {
++            this.thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, this.theWorld));
++            // CraftBukkit end
+         }
+     }
+ 
+@@ -236,7 +335,7 @@
              block.onBlockHarvested(this.theWorld, par1, par2, par3, l, this.thisPlayerMP);
          }
  
@@ -82,17 +184,105 @@
  
          if (block != null && flag)
          {
-@@ -261,19 +297,30 @@
+@@ -251,29 +350,115 @@
+      */
+     public boolean tryHarvestBlock(int par1, int par2, int par3)
+     {
+-        if (this.gameType.isAdventure() && !this.thisPlayerMP.canCurrentToolHarvestBlock(par1, par2, par3))
++        // CraftBukkit start
++        BlockBreakEvent event = null;
++
++        if (this.thisPlayerMP instanceof EntityPlayerMP)
++        {
++            org.bukkit.block.Block block = this.theWorld.getWorld().getBlockAt(par1, par2, par3);
++
++            // Tell client the block is gone immediately then process events
++            if (theWorld.getBlockTileEntity(par1, par2, par3) == null)
++            {
++                Packet53BlockChange packet = new Packet53BlockChange(par1, par2, par3, this.theWorld);
++                packet.type = 0;
++                packet.metadata = 0;
++                ((EntityPlayerMP) this.thisPlayerMP).playerNetServerHandler.sendPacketToPlayer(packet);
++            }
++
++            event = new BlockBreakEvent(block, this.thisPlayerMP.getBukkitEntity());
++            // Adventure mode pre-cancel
++            event.setCancelled(this.gameType.isAdventure() && !this.thisPlayerMP.canCurrentToolHarvestBlock(par1, par2, par3));
++            // Sword + Creative mode pre-cancel
++            event.setCancelled(event.isCancelled() || (this.gameType.isCreative() && this.thisPlayerMP.getHeldItem() != null && this.thisPlayerMP.getHeldItem().getItem() instanceof ItemSword));
++            // Calculate default block experience
++            Block nmsBlock = Block.blocksList[block.getTypeId()];
++
++            if (nmsBlock != null && !event.isCancelled() && !this.isCreative() && this.thisPlayerMP.canHarvestBlock(nmsBlock))
++            {
++                // Copied from Block.a(world, entityhuman, int, int, int, int)
++                if (!(nmsBlock.func_71906_q_CodeFix_Public() && EnchantmentHelper.getSilkTouchModifier(this.thisPlayerMP)))
++                {
++                    int data = block.getData();
++                    int bonusLevel = EnchantmentHelper.getFortuneModifier(this.thisPlayerMP);
++                    event.setExpToDrop(nmsBlock.getExpDrop(this.theWorld, data, bonusLevel));
++                }
++            }
++
++            this.theWorld.getServer().getPluginManager().callEvent(event);
++
++            if (event.isCancelled())
++            {
++                // Let the client know the block still exists
++                ((EntityPlayerMP) this.thisPlayerMP).playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, this.theWorld));
++                // Update any tile entity data for this block
++                TileEntity tileentity = this.theWorld.getBlockTileEntity(par1, par2, par3);
++
++                if (tileentity != null)
++                {
++                    this.thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(tileentity.getDescriptionPacket());
++                }
++
++                return false;
++            }
++            // Spigot (Orebfuscator) start
++            else
++            {
++                org.spigotmc.OrebfuscatorManager.updateNearbyBlocks(theWorld, par1, par2, par3);
++            }
++
++            // Spigot (Orebfuscator) end            
++        }
++        
++        // Forge start
++        ItemStack stack = thisPlayerMP.getCurrentEquippedItem();
++        if (stack != null && stack.getItem().onBlockStartBreak(stack, par1, par2, par3, thisPlayerMP))
+         {
+             return false;
+         }
+-        else if (this.gameType.isCreative() && this.thisPlayerMP.getHeldItem() != null && this.thisPlayerMP.getHeldItem().getItem() instanceof ItemSword)
+-        {
++        // Forge end
++
++        if (false)   // Never trigger
++        {
++            // CraftBukkit end
+             return false;
          }
          else
          {
-+            ItemStack stack = thisPlayerMP.getCurrentEquippedItem();
-+            if (stack != null && stack.getItem().onBlockStartBreak(stack, par1, par2, par3, thisPlayerMP))
-+            {
-+                return false;
-+            }
              int l = this.theWorld.getBlockId(par1, par2, par3);
++
++            if (Block.blocksList[l] == null)
++            {
++                return false;    // CraftBukkit - A plugin set block to air without cancelling
++            }
++
              int i1 = this.theWorld.getBlockMetadata(par1, par2, par3);
++
++            // CraftBukkit start - Special case skulls, their item data comes from a tile entity
++            if (l == Block.skull.blockID && !this.isCreative())
++            {
++                Block.skull.dropBlockAsItemWithChance(theWorld, par1, par2, par3, i1, 1.0F, 0);
++                return this.removeBlock(par1, par2, par3);
++            }
++
++            // CraftBukkit end
              this.theWorld.playAuxSFXAtEntity(this.thisPlayerMP, 2001, par1, par2, par3, l + (this.theWorld.getBlockMetadata(par1, par2, par3) << 12));
 -            boolean flag = this.removeBlock(par1, par2, par3);
 +            boolean flag = false;
@@ -115,7 +305,7 @@
  
                  if (itemstack != null)
                  {
-@@ -285,6 +332,7 @@
+@@ -285,12 +470,20 @@
                      }
                  }
  
@@ -123,7 +313,35 @@
                  if (flag && flag1)
                  {
                      Block.blocksList[l].harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, i1);
-@@ -325,6 +373,7 @@
+                 }
+             }
+ 
++            // CraftBukkit start - Drop event experience
++            if (flag && event != null)
++            {
++                Block.blocksList[l].func_71923_g_CodeFix_Public(this.theWorld, par1, par2, par3, event.getExpToDrop());
++            }
++
++            // CraftBukkit end
+             return flag;
+         }
+     }
+@@ -300,12 +493,14 @@
+      */
+     public boolean tryUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack)
+     {
++        System.out.println("tryUseItem " + par3ItemStack + " with stacksize " + par3ItemStack.stackSize);
+         int i = par3ItemStack.stackSize;
+         int j = par3ItemStack.getItemDamage();
+         ItemStack itemstack1 = par3ItemStack.useItemRightClick(par2World, par1EntityPlayer);
+ 
+         if (itemstack1 == par3ItemStack && (itemstack1 == null || itemstack1.stackSize == i && itemstack1.getMaxItemUseDuration() <= 0 && itemstack1.getItemDamage() == j))
+         {
++            System.out.println("tryUseItem1");
+             return false;
+         }
+         else
+@@ -325,6 +520,7 @@
              if (itemstack1.stackSize == 0)
              {
                  par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
@@ -131,10 +349,12 @@
              }
  
              if (!par1EntityPlayer.isUsingItem())
-@@ -342,35 +391,56 @@
+@@ -340,38 +536,94 @@
+      * Activate the clicked on block, otherwise use the held item. Args: player, world, itemStack, x, y, z, side,
+      * xOffset, yOffset, zOffset
       */
-     public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
-     {
+-    public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+-    {
 -        int i1;
 -
 -        if (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null)
@@ -149,12 +369,8 @@
 -
 -        if (par3ItemStack == null)
 -        {
-+        PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(par1EntityPlayer, Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7);
-+        if (event.isCanceled())
-+        {
-+            thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par4, par5, par6, theWorld));
-             return false;
-         }
+-            return false;
+-        }
 -        else if (this.isCreative())
 -        {
 -            i1 = par3ItemStack.getItemDamage();
@@ -168,54 +384,99 @@
 -        {
 -            return par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10);
 -        }
-+
-+        Item item = (par3ItemStack != null ? par3ItemStack.getItem() : null);
-+        if (item != null && item.onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10))
-+        {
-+            if (par3ItemStack.stackSize <= 0) ForgeEventFactory.onPlayerDestroyItem(thisPlayerMP, par3ItemStack);
-+            return true;
-+        }
-+
+-    }
++    public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10) // MCPC+ - manually merge whole method by hand
++    {
 +        int i1 = par2World.getBlockId(par4, par5, par6);
-+        Block block = Block.blocksList[i1];
++
++        // CraftBukkit start - Interact
 +        boolean result = false;
 +
-+        if (block != null && (!par1EntityPlayer.isSneaking() || ( par1EntityPlayer.getHeldItem() == null || par1EntityPlayer.getHeldItem().getItem().shouldPassSneakingClickToBlock(par2World, par4, par5, par6))))
++        if (i1 > 0)
 +        {
-+            if (event.useBlock != Event.Result.DENY)
-+            {
-+                result = block.onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10);
-+            }
-+            else
++            org.bukkit.event.player.PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(par1EntityPlayer, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7, par3ItemStack);
++            net.minecraftforge.event.entity.player.PlayerInteractEvent forgeEvent = ForgeEventFactory.onPlayerInteract(par1EntityPlayer, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7);
++            // MCPC+ start
++            // if forge event is explicitly cancelled, return
++            if (forgeEvent.isCanceled())
 +            {
 +                thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par4, par5, par6, theWorld));
-+                result = event.useItem != Event.Result.ALLOW;
++                return false;
 +            }
-+        }
-+
-+        if (par3ItemStack != null && !result && event.useItem != Event.Result.DENY)
-+        {
-+            int meta = par3ItemStack.getItemDamage();
-+            int size = par3ItemStack.stackSize;
-+            result = par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10);
-+            if (isCreative())
++            // if we have no explicit deny, check if item can be used
++            if (event.useItemInHand() != org.bukkit.event.Event.Result.DENY && forgeEvent.useItem != net.minecraftforge.event.Event.Result.DENY)
 +            {
-+                par3ItemStack.setItemDamage(meta);
-+                par3ItemStack.stackSize = size;
++                Item item = (par3ItemStack != null ? par3ItemStack.getItem() : null);
++                // try to use an item in hand before activating a block. Used for items such as IC2's wrench.
++                if (item != null && item.onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10))
++                {
++                    if (par3ItemStack.stackSize <= 0) ForgeEventFactory.onPlayerDestroyItem(thisPlayerMP, par3ItemStack);
++                        return true;
++                }
 +            }
-+            if (par3ItemStack.stackSize <= 0) ForgeEventFactory.onPlayerDestroyItem(thisPlayerMP, par3ItemStack);
++            // MCPC+ end
++            if (event.useInteractedBlock() == org.bukkit.event.Event.Result.DENY || forgeEvent.useBlock == net.minecraftforge.event.Event.Result.DENY)
++            {
++                // If we denied a door from opening, we need to send a correcting update to the client, as it already opened the door.
++                if (i1 == Block.doorWood.blockID)
++                {
++                    boolean bottom = (par2World.getBlockMetadata(par4, par5, par6) & 8) == 0;
++                    ((EntityPlayerMP) par1EntityPlayer).playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par4, par5 + (bottom ? 1 : -1), par6, par2World));
++                }
++
++                result = (event.useItemInHand() != org.bukkit.event.Event.Result.ALLOW);
++            }
++            else if (!par1EntityPlayer.isSneaking() || par3ItemStack == null || par1EntityPlayer.getHeldItem().getItem().shouldPassSneakingClickToBlock(par2World, par4, par5, par6))
++            {
++                result = Block.blocksList[i1].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10);
++            }
++
++            if (par3ItemStack != null && !result)
++            {
++                int meta = par3ItemStack.getItemDamage();
++                int size = par3ItemStack.stackSize;
++                result = par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10);
++
++                // The item count should not decrement in Creative mode.
++                if (this.isCreative())
++                {
++                    par3ItemStack.setItemDamage(meta);
++                    par3ItemStack.stackSize = size;
++                }
++
++                if (par3ItemStack.stackSize <= 0)
++                {
++                    ForgeEventFactory.onPlayerDestroyItem(this.thisPlayerMP, par3ItemStack);
++                }
++            }
++
++            // If we have 'true' and no explicit deny *or* an explicit allow -- run the item part of the hook
++            if (!noTryItem(par2World, par4, par5, par6) && // MCPC+
++                    par3ItemStack != null && ((!result && event.useItemInHand() != org.bukkit.event.Event.Result.DENY) || event.useItemInHand() == org.bukkit.event.Event.Result.ALLOW))
++            {
++                this.tryUseItem(par1EntityPlayer, par2World, par3ItemStack);
++            }
 +        }
 +
-+        /* Re-enable if this causes bukkit incompatibility, or re-write client side to only send a single packet per right click.
-+        if (par3ItemStack != null && ((!result && event.useItem != Event.Result.DENY) || event.useItem == Event.Result.ALLOW))
-+        {
-+            this.tryUseItem(thisPlayerMP, par2World, par3ItemStack);
-+        }*/
 +        return result;
-     }
++        // CraftBukkit end
++    }
++
++    // MCPC+ start
++    private boolean noTryItem(World world, int x, int y, int z)
++    {
++        if (world == null) return false;
++        if (!world.blockHasTileEntity(x, y, z)) return false;
++        TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
++        if (tileEntity == null) return false;
++        // ignore incorrect result from Thaumcraft crucible to prevent flooding extra water
++        return tileEntity.getClass().getName().equals("thaumcraft.common.tiles.TileCrucible");
++    }
++    // MCPC+ end
  
      /**
-@@ -380,4 +450,13 @@
+      * Sets the world instance.
+@@ -380,4 +632,13 @@
      {
          this.theWorld = par1WorldServer;
      }

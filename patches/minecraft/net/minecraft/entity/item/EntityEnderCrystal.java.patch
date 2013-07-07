@@ -1,0 +1,46 @@
+--- ../src_base/minecraft/net/minecraft/entity/item/EntityEnderCrystal.java
++++ ../src_work/minecraft/net/minecraft/entity/item/EntityEnderCrystal.java
+@@ -8,6 +8,7 @@
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
+ 
+ public class EntityEnderCrystal extends Entity
+ {
+@@ -62,7 +63,12 @@
+ 
+         if (this.worldObj.getBlockId(i, j, k) != Block.fire.blockID)
+         {
+-            this.worldObj.setBlock(i, j, k, Block.fire.blockID);
++            // CraftBukkit start
++            if (!CraftEventFactory.callBlockIgniteEvent(this.worldObj, i, j, k, this).isCancelled())
++            {
++                this.worldObj.setBlock(i, j, k, Block.fire.blockID);
++            }
++            // CraftBukkit end
+         }
+     }
+ 
+@@ -103,6 +109,12 @@
+         {
+             if (!this.isDead && !this.worldObj.isRemote)
+             {
++                // CraftBukkit start - All non-living entities need this
++                if (CraftEventFactory.handleNonLivingEntityDamageEvent(this, par1DamageSource, par2))
++                {
++                    return false;
++                }
++                // CraftBukkit end
+                 this.health = 0;
+ 
+                 if (this.health <= 0)
+@@ -111,7 +123,7 @@
+ 
+                     if (!this.worldObj.isRemote)
+                     {
+-                        this.worldObj.createExplosion((Entity)null, this.posX, this.posY, this.posZ, 6.0F, true);
++                        this.worldObj.createExplosion(this, this.posX, this.posY, this.posZ, 6.0F, true); // CraftBukkit - (Entity) null -> this
+                     }
+                 }
+             }

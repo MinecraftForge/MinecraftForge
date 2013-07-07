@@ -1,0 +1,61 @@
+--- ../src_base/minecraft/net/minecraft/entity/EntityAgeable.java
++++ ../src_work/minecraft/net/minecraft/entity/EntityAgeable.java
+@@ -10,13 +10,14 @@
+ {
+     private float field_98056_d = -1.0F;
+     private float field_98057_e;
++    public boolean ageLocked = false; // CraftBukkit
+ 
+     public EntityAgeable(World par1World)
+     {
+         super(par1World);
+     }
+ 
+-    public abstract EntityAgeable createChild(EntityAgeable entityageable);
++    public abstract EntityAgeable createChild(EntityAgeable par1EntityAgeable);
+ 
+     /**
+      * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
+@@ -39,7 +40,7 @@
+                     {
+                         entityageable.setGrowingAge(-24000);
+                         entityageable.setLocationAndAngles(this.posX, this.posY, this.posZ, 0.0F, 0.0F);
+-                        this.worldObj.spawnEntityInWorld(entityageable);
++                        this.worldObj.addEntity(entityageable, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG); // CraftBukkit
+ 
+                         if (itemstack.hasDisplayName())
+                         {
+@@ -50,7 +51,7 @@
+                         {
+                             --itemstack.stackSize;
+ 
+-                            if (itemstack.stackSize <= 0)
++                            if (itemstack.stackSize == 0)    // CraftBukkit - allow less than 0 stacks as "infinite"
+                             {
+                                 par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, (ItemStack)null);
+                             }
+@@ -113,6 +114,7 @@
+     {
+         super.writeEntityToNBT(par1NBTTagCompound);
+         par1NBTTagCompound.setInteger("Age", this.getGrowingAge());
++        par1NBTTagCompound.setBoolean("AgeLocked", this.ageLocked); // CraftBukkit
+     }
+ 
+     /**
+@@ -122,6 +124,7 @@
+     {
+         super.readEntityFromNBT(par1NBTTagCompound);
+         this.setGrowingAge(par1NBTTagCompound.getInteger("Age"));
++        this.ageLocked = par1NBTTagCompound.getBoolean("AgeLocked"); // CraftBukkit
+     }
+ 
+     /**
+@@ -132,7 +135,7 @@
+     {
+         super.onLivingUpdate();
+ 
+-        if (this.worldObj.isRemote)
++        if (this.worldObj.isRemote || this.ageLocked)   // CraftBukkit
+         {
+             this.func_98054_a(this.isChild());
+         }

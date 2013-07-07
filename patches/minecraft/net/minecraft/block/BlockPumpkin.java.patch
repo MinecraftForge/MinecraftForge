@@ -1,6 +1,109 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockPumpkin.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockPumpkin.java
-@@ -123,7 +123,8 @@
+@@ -12,6 +12,11 @@
+ import net.minecraft.util.Icon;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.craftbukkit.util.BlockStateListPopulator;
++import org.bukkit.event.block.BlockRedstoneEvent;
++import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
++// CraftBukkit end
+ 
+ public class BlockPumpkin extends BlockDirectional
+ {
+@@ -51,15 +56,20 @@
+         {
+             if (!par1World.isRemote)
+             {
+-                par1World.setBlock(par2, par3, par4, 0, 0, 2);
+-                par1World.setBlock(par2, par3 - 1, par4, 0, 0, 2);
+-                par1World.setBlock(par2, par3 - 2, par4, 0, 0, 2);
++                // CraftBukkit start - Use BlockStateListPopulator
++                BlockStateListPopulator blockList = new BlockStateListPopulator(par1World.getWorld());
++                blockList.setTypeId(par2, par3, par4, 0);
++                blockList.setTypeId(par2, par3 - 1, par4, 0);
++                blockList.setTypeId(par2, par3 - 2, par4, 0);
+                 EntitySnowman entitysnowman = new EntitySnowman(par1World);
+                 entitysnowman.setLocationAndAngles((double)par2 + 0.5D, (double)par3 - 1.95D, (double)par4 + 0.5D, 0.0F, 0.0F);
+-                par1World.spawnEntityInWorld(entitysnowman);
+-                par1World.notifyBlockChange(par2, par3, par4, 0);
+-                par1World.notifyBlockChange(par2, par3 - 1, par4, 0);
+-                par1World.notifyBlockChange(par2, par3 - 2, par4, 0);
++
++                if (par1World.addEntity(entitysnowman, SpawnReason.BUILD_SNOWMAN))
++                {
++                    blockList.updateList();
++                }
++
++                // CraftBukkit end
+             }
+ 
+             for (int l = 0; l < 120; ++l)
+@@ -74,45 +84,37 @@
+ 
+             if (flag || flag1)
+             {
+-                par1World.setBlock(par2, par3, par4, 0, 0, 2);
+-                par1World.setBlock(par2, par3 - 1, par4, 0, 0, 2);
+-                par1World.setBlock(par2, par3 - 2, par4, 0, 0, 2);
++                // CraftBukkit start - Use BlockStateListPopulator
++                BlockStateListPopulator blockList = new BlockStateListPopulator(par1World.getWorld());
++                blockList.setTypeId(par2, par3, par4, 0);
++                blockList.setTypeId(par2, par3 - 1, par4, 0);
++                blockList.setTypeId(par2, par3 - 2, par4, 0);
+ 
+                 if (flag)
+                 {
+-                    par1World.setBlock(par2 - 1, par3 - 1, par4, 0, 0, 2);
+-                    par1World.setBlock(par2 + 1, par3 - 1, par4, 0, 0, 2);
++                    blockList.setTypeId(par2 - 1, par3 - 1, par4, 0);
++                    blockList.setTypeId(par2 + 1, par3 - 1, par4, 0);
+                 }
+                 else
+                 {
+-                    par1World.setBlock(par2, par3 - 1, par4 - 1, 0, 0, 2);
+-                    par1World.setBlock(par2, par3 - 1, par4 + 1, 0, 0, 2);
++                    blockList.setTypeId(par2, par3 - 1, par4 - 1, 0);
++                    blockList.setTypeId(par2, par3 - 1, par4 + 1, 0);
+                 }
+ 
+                 EntityIronGolem entityirongolem = new EntityIronGolem(par1World);
+                 entityirongolem.setPlayerCreated(true);
+                 entityirongolem.setLocationAndAngles((double)par2 + 0.5D, (double)par3 - 1.95D, (double)par4 + 0.5D, 0.0F, 0.0F);
+-                par1World.spawnEntityInWorld(entityirongolem);
+ 
+-                for (int i1 = 0; i1 < 120; ++i1)
++                if (par1World.addEntity(entityirongolem, SpawnReason.BUILD_IRONGOLEM))
+                 {
+-                    par1World.spawnParticle("snowballpoof", (double)par2 + par1World.rand.nextDouble(), (double)(par3 - 2) + par1World.rand.nextDouble() * 3.9D, (double)par4 + par1World.rand.nextDouble(), 0.0D, 0.0D, 0.0D);
++                    for (int i1 = 0; i1 < 120; ++i1)
++                    {
++                        par1World.spawnParticle("snowballpoof", (double) par2 + par1World.rand.nextDouble(), (double)(par3 - 2) + par1World.rand.nextDouble() * 3.9D, (double) par4 + par1World.rand.nextDouble(), 0.0D, 0.0D, 0.0D);
++                    }
++
++                    blockList.updateList();
+                 }
+-
+-                par1World.notifyBlockChange(par2, par3, par4, 0);
+-                par1World.notifyBlockChange(par2, par3 - 1, par4, 0);
+-                par1World.notifyBlockChange(par2, par3 - 2, par4, 0);
+-
+-                if (flag)
+-                {
+-                    par1World.notifyBlockChange(par2 - 1, par3 - 1, par4, 0);
+-                    par1World.notifyBlockChange(par2 + 1, par3 - 1, par4, 0);
+-                }
+-                else
+-                {
+-                    par1World.notifyBlockChange(par2, par3 - 1, par4 - 1, 0);
+-                    par1World.notifyBlockChange(par2, par3 - 1, par4 + 1, 0);
+-                }
++                // CraftBukkit end
+             }
+         }
+     }
+@@ -123,7 +125,8 @@
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
          int l = par1World.getBlockId(par2, par3, par4);
@@ -10,3 +113,27 @@
      }
  
      /**
+@@ -134,6 +137,23 @@
+         int l = MathHelper.floor_double((double)(par5EntityLivingBase.rotationYaw * 4.0F / 360.0F) + 2.5D) & 3;
+         par1World.setBlockMetadataWithNotify(par2, par3, par4, l, 2);
+     }
++
++    // CraftBukkit start
++    /**
++     * Lets the block know when one of its neighbor changes. Doesn't know which neighbor changed (coordinates passed are
++     * their own) Args: x, y, z, neighbor blockID
++     */
++    public void onNeighborBlockChange(World world, int i, int j, int k, int l)
++    {
++        if (Block.blocksList[l] != null && Block.blocksList[l].canProvidePower())
++        {
++            org.bukkit.block.Block block = world.getWorld().getBlockAt(i, j, k);
++            int power = block.getBlockPower();
++            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, power, power);
++            world.getServer().getPluginManager().callEvent(eventRedstone);
++        }
++    }
++    // CraftBukkit end
+ 
+     @SideOnly(Side.CLIENT)
+ 

@@ -1,6 +1,12 @@
 --- ../src_base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src_work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -10,8 +10,11 @@
+@@ -5,17 +5,26 @@
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.HashMap;
+ import java.util.Map;
++import java.util.concurrent.Callable;
+ import java.util.logging.Level;
+ 
  import net.minecraft.block.Block;
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.nbt.NBTTagCompound;
@@ -10,13 +16,45 @@
  import net.minecraft.server.MinecraftServer;
 +import net.minecraft.util.AxisAlignedBB;
  import net.minecraft.world.World;
++
++import org.bukkit.CustomTimingsHandler; // Spigot
++import org.bukkit.inventory.InventoryHolder; // CraftBukkit
  
  public class TileEntity
-@@ -308,4 +311,93 @@
+ {
++    public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.SpigotTimings.getTileEntityTimings(this); // Spigot
++
+     /**
+      * A HashMap storing string names of classes mapping to the actual java.lang.Class type.
+      */
+@@ -276,7 +285,7 @@
+     public void func_85027_a(CrashReportCategory par1CrashReportCategory)
+     {
+         par1CrashReportCategory.addCrashSectionCallable("Name", new CallableTileEntityName(this));
+-        CrashReportCategory.func_85068_a(par1CrashReportCategory, this.xCoord, this.yCoord, this.zCoord, this.getBlockType().blockID, this.getBlockMetadata());
++        CrashReportCategory.func_85068_a(par1CrashReportCategory, this.xCoord, this.yCoord, this.zCoord, this.getBlockType() == null ? 0 : this.getBlockType().blockID, this.getBlockMetadata()); // MCPC+ - dont pass blocktype if null
+         par1CrashReportCategory.addCrashSectionCallable("Actual block type", new CallableTileEntityID(this));
+         par1CrashReportCategory.addCrashSectionCallable("Actual block data value", new CallableTileEntityData(this));
+     }
+@@ -308,4 +317,107 @@
          addMapping(TileEntityHopper.class, "Hopper");
          addMapping(TileEntityComparator.class, "Comparator");
      }
 +
++    // CraftBukkit start
++    public InventoryHolder getOwner()
++    {
++        org.bukkit.block.BlockState state = worldObj.getWorld().getBlockAt(xCoord, yCoord, zCoord).getState();
++
++        if (state instanceof InventoryHolder)
++        {
++            return (InventoryHolder) state;
++        }
++
++        return null;
++    }
++    // CraftBukkit end
++    
 +    // -- BEGIN FORGE PATCHES --
 +    /**
 +     * Determines if this TileEntity requires update calls.

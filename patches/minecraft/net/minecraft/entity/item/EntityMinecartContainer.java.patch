@@ -1,15 +1,74 @@
 --- ../src_base/minecraft/net/minecraft/entity/item/EntityMinecartContainer.java
 +++ ../src_work/minecraft/net/minecraft/entity/item/EntityMinecartContainer.java
-@@ -8,6 +8,8 @@
+@@ -8,16 +8,66 @@
  import net.minecraft.nbt.NBTTagList;
  import net.minecraft.util.DamageSource;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.minecart.MinecartInteractEvent;
++// CraftBukkit start
++import java.util.List;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.inventory.InventoryHolder;
++// CraftBukkit end
  
  public abstract class EntityMinecartContainer extends EntityMinecart implements IInventory
  {
-@@ -280,6 +282,10 @@
+-    private ItemStack[] minecartContainerItems = new ItemStack[36];
++    private ItemStack[] minecartContainerItems = new ItemStack[27]; // CraftBukkit - 36 -> 27
+ 
+     /**
+      * When set to true, the minecart will drop all items when setDead() is called. When false (such as when travelling
+      * dimensions) it preserves its contents.
+      */
+     private boolean dropContentsWhenDead = true;
++
++    // CraftBukkit start
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    private int maxStack = MAX_STACK;
++
++    public ItemStack[] getContents()
++    {
++        return this.minecartContainerItems;
++    }
++
++    public void onOpen(CraftHumanEntity who)
++    {
++        transaction.add(who);
++    }
++
++    public void onClose(CraftHumanEntity who)
++    {
++        transaction.remove(who);
++    }
++
++    public List<HumanEntity> getViewers()
++    {
++        return transaction;
++    }
++
++    public InventoryHolder getOwner()
++    {
++        org.bukkit.entity.Entity cart = getBukkitEntity();
++
++        if (cart instanceof InventoryHolder)
++        {
++            return (InventoryHolder) cart;
++        }
++
++        return null;
++    }
++
++    public void setMaxStackSize(int size)
++    {
++        maxStack = size;
++    }
++    // CraftBukkit end
+ 
+     public EntityMinecartContainer(World par1World)
+     {
+@@ -280,6 +330,10 @@
  
      public boolean func_130002_c(EntityPlayer par1EntityPlayer)
      {

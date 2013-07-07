@@ -1,0 +1,15 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockIce.java
++++ ../src_work/minecraft/net/minecraft/block/BlockIce.java
+@@ -96,6 +96,12 @@
+     {
+         if (par1World.getSavedLightValue(EnumSkyBlock.Block, par2, par3, par4) > 11 - Block.lightOpacity[this.blockID])
+         {
++            // CraftBukkit start
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockFadeEvent(par1World.getWorld().getBlockAt(par2, par3, par4), Block.waterStill.blockID).isCancelled())
++            {
++                return;
++            }
++            // CraftBukkit end
+             if (par1World.provider.isHellWorld)
+             {
+                 par1World.setBlockToAir(par2, par3, par4);

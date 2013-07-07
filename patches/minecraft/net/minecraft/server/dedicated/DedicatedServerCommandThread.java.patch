@@ -1,0 +1,58 @@
+--- ../src_base/minecraft/net/minecraft/server/dedicated/DedicatedServerCommandThread.java
++++ ../src_work/minecraft/net/minecraft/server/dedicated/DedicatedServerCommandThread.java
+@@ -3,6 +3,8 @@
+ import java.io.BufferedReader;
+ import java.io.IOException;
+ import java.io.InputStreamReader;
++
++import static net.minecraft.server.MinecraftServer.*; // MCPC+
+ 
+ class DedicatedServerCommandThread extends Thread
+ {
+@@ -15,19 +17,42 @@
+ 
+     public void run()
+     {
+-        BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in));
++        // CraftBukkit start
++        if (!useConsole)
++        {
++            return;
++        }
++
++        // CraftBukkit end
++        jline.console.ConsoleReader bufferedreader = this.server.reader; // CraftBukkit
+         String s;
+ 
+         try
+         {
+-            while (!this.server.isServerStopped() && this.server.isServerRunning() && (s = bufferedreader.readLine()) != null)
++            // CraftBukkit start - JLine disabling compatibility
++            while (!this.server.isServerStopped() && this.server.isServerRunning())
+             {
+-                this.server.addPendingCommand(s, this.server);
++                if (useJline)
++                {
++                    s = bufferedreader.readLine(">", null);
++                }
++                else
++                {
++                    s = bufferedreader.readLine();
++                }
++
++                if (s != null)
++                {
++                    this.server.addPendingCommand(s, this.server);
++                }
++
++                // CraftBukkit end
+             }
+         }
+         catch (IOException ioexception)
+         {
+-            ioexception.printStackTrace();
++            // CraftBukkit
++            java.util.logging.Logger.getLogger("").log(java.util.logging.Level.SEVERE, null, ioexception);
+         }
+     }
+ }

@@ -1,0 +1,43 @@
+--- ../src_base/minecraft/net/minecraft/inventory/ContainerMerchant.java
++++ ../src_work/minecraft/net/minecraft/inventory/ContainerMerchant.java
+@@ -7,6 +7,7 @@
+ import net.minecraft.entity.player.InventoryPlayer;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView; // CraftBukkit
+ 
+ public class ContainerMerchant extends Container
+ {
+@@ -17,6 +18,22 @@
+     /** Instance of World. */
+     private final World theWorld;
+ 
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    private InventoryPlayer player;
++
++    @Override
++    public CraftInventoryView getBukkitView()
++    {
++        if (bukkitEntity == null)
++        {
++            bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), new org.bukkit.craftbukkit.inventory.CraftInventoryMerchant(this.getMerchantInventory()), this);
++        }
++
++        return bukkitEntity;
++    }
++    // CraftBukkit end
++
+     public ContainerMerchant(InventoryPlayer par1InventoryPlayer, IMerchant par2IMerchant, World par3World)
+     {
+         this.theMerchant = par2IMerchant;
+@@ -24,7 +41,8 @@
+         this.merchantInventory = new InventoryMerchant(par1InventoryPlayer.player, par2IMerchant);
+         this.addSlotToContainer(new Slot(this.merchantInventory, 0, 36, 53));
+         this.addSlotToContainer(new Slot(this.merchantInventory, 1, 62, 53));
+-        this.addSlotToContainer(new SlotMerchantResult(par1InventoryPlayer.player, par2IMerchant, this.merchantInventory, 2, 120, 53));
++        this.addSlotToContainer((Slot)(new SlotMerchantResult(par1InventoryPlayer.player, par2IMerchant, this.merchantInventory, 2, 120, 53)));
++        this.player = par1InventoryPlayer; // CraftBukkit - save player
+         int i;
+ 
+         for (i = 0; i < 3; ++i)

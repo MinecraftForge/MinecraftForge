@@ -1,0 +1,26 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemLilyPad.java
++++ ../src_work/minecraft/net/minecraft/item/ItemLilyPad.java
+@@ -34,6 +34,7 @@
+                 int i = movingobjectposition.blockX;
+                 int j = movingobjectposition.blockY;
+                 int k = movingobjectposition.blockZ;
++                final int clickedX = i, clickedY = j, clickedZ = k; // CraftBukkit
+ 
+                 if (!par2World.canMineBlock(par3EntityPlayer, i, j, k))
+                 {
+@@ -47,7 +48,14 @@
+ 
+                 if (par2World.getBlockMaterial(i, j, k) == Material.water && par2World.getBlockMetadata(i, j, k) == 0 && par2World.isAirBlock(i, j + 1, k))
+                 {
+-                    par2World.setBlock(i, j + 1, k, Block.waterlily.blockID);
++                    // CraftBukkit start
++                    // world.setTypeIdUpdate(i, j + 1, k, Block.WATER_LILY.id);
++                    if (!processBlockPlace(par2World, par3EntityPlayer, null, i, j + 1, k, Block.waterlily.blockID, 0, clickedX, clickedY, clickedZ))
++                    {
++                        return par1ItemStack;
++                    }
++
++                    // CraftBukkit end
+ 
+                     if (!par3EntityPlayer.capabilities.isCreativeMode)
+                     {

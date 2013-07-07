@@ -1,0 +1,20 @@
+--- ../src_base/minecraft/net/minecraft/util/Vec3.java
++++ ../src_work/minecraft/net/minecraft/util/Vec3.java
+@@ -19,6 +19,7 @@
+ 
+     /** Z coordinate of Vec3D */
+     public double zCoord;
++    public Vec3 next; // CraftBukkit
+ 
+     /**
+      * Static method for creating a new Vec3D given the three x,y,z values. This is only called from the other static
+@@ -244,6 +245,9 @@
+         this.yCoord = d1;
+         this.zCoord = d2;
+     }
++    public Vec3 func_72439_b_CodeFix_Public(double a, double b, double c){
++        return setComponents(a, b, c);
++    }
+ 
+     @SideOnly(Side.CLIENT)
+ 

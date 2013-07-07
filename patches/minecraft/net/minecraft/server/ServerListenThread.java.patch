@@ -1,0 +1,61 @@
+--- ../src_base/minecraft/net/minecraft/server/ServerListenThread.java
++++ ../src_work/minecraft/net/minecraft/server/ServerListenThread.java
+@@ -30,7 +30,9 @@
+     private final InetAddress myServerAddress;
+     private final int myPort;
+ 
+-    public ServerListenThread(NetworkListenThread par1NetworkListenThread, InetAddress par2InetAddress, int par3) throws IOException
++    long connectionThrottle; // CraftBukkit
++
++    public ServerListenThread(NetworkListenThread par1NetworkListenThread, InetAddress par2InetAddress, int par3) throws IOException   // CraftBukkit - added throws
+     {
+         super("Listen thread");
+         this.myNetworkListenThread = par1NetworkListenThread;
+@@ -78,12 +80,37 @@
+             try
+             {
+                 Socket socket = this.myServerSocket.accept();
++                // CraftBukkit start - Connection throttle
++                InetAddress address = socket.getInetAddress();
++                long currentTime = System.currentTimeMillis();
++
++                if (((MinecraftServer) this.myNetworkListenThread.getServer()).server == null)
++                {
++                    socket.close();
++                    continue;
++                }
++
++                connectionThrottle = ((MinecraftServer) this.myNetworkListenThread.getServer()).server.getConnectionThrottle();
++
++                synchronized (this.recentConnections)
++                {
++                    if (this.recentConnections.containsKey(address) && !"127.0.0.1".equals(address.getHostAddress()) && currentTime - ((Long) this.recentConnections.get(address)).longValue() < connectionThrottle)
++                    {
++                        this.recentConnections.put(address, Long.valueOf(currentTime));
++                        socket.close();
++                        continue;
++                    }
++
++                    this.recentConnections.put(address, Long.valueOf(currentTime));
++                }
++
++                // CraftBukkit end
+                 NetLoginHandler netloginhandler = new NetLoginHandler(this.myNetworkListenThread.getServer(), socket, "Connection #" + this.connectionCounter++);
+                 this.addPendingConnection(netloginhandler);
+             }
+             catch (IOException ioexception)
+             {
+-                ioexception.printStackTrace();
++                this.myNetworkListenThread.getServer().getLogAgent().logWarning("DSCT: " + ioexception.getMessage()); // CraftBukkit
+             }
+         }
+ 
+@@ -94,7 +121,7 @@
+     {
+         if (par1NetLoginHandler == null)
+         {
+-            throw new IllegalArgumentException("Got null pendingconnection!");
++            throw new IllegalArgumentException("Got null netloginhandler!");
+         }
+         else
+         {

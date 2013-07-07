@@ -1,0 +1,16 @@
+--- ../src_base/minecraft/net/minecraft/network/packet/Packet3Chat.java
++++ ../src_work/minecraft/net/minecraft/network/packet/Packet3Chat.java
+@@ -83,4 +83,13 @@
+     {
+         return this.isServer;
+     }
++
++    /**
++     * If this returns true, the packet may be processed on any thread; otherwise it is queued for the main thread to
++     * handle.
++     */
++    public boolean canProcessAsync()
++    {
++        return !this.message.startsWith("/");
++    }
+ }

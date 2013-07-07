@@ -1,0 +1,20 @@
+--- ../src_base/minecraft/net/minecraft/item/crafting/RecipesMapCloning.java
++++ ../src_work/minecraft/net/minecraft/item/crafting/RecipesMapCloning.java
+@@ -4,9 +4,15 @@
+ import net.minecraft.item.Item;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.world.World;
++public class RecipesMapCloning extends ShapelessRecipes implements IRecipe   // CraftBukkit - added extends
++{
++    // CraftBukkit start - Delegate to new parent class
++    public RecipesMapCloning()
++    {
++        super(new ItemStack(Item.map, 0, -1), java.util.Arrays.asList(new ItemStack(Item.emptyMap, 0, 0)));
++    }
++    // CraftBukkit end
+ 
+-public class RecipesMapCloning implements IRecipe
+-{
+     /**
+      * Used to check if a recipe matches current crafting inventory
+      */

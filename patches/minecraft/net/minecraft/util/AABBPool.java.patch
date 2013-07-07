@@ -1,0 +1,47 @@
+--- ../src_base/minecraft/net/minecraft/util/AABBPool.java
++++ ../src_work/minecraft/net/minecraft/util/AABBPool.java
+@@ -43,6 +43,12 @@
+      */
+     public AxisAlignedBB getAABB(double par1, double par3, double par5, double par7, double par9, double par11)
+     {
++        // CraftBukkit - don't pool objects indefinitely if thread doesn't adhere to contract
++        if (this.numCleans == 0)
++        {
++            return new AxisAlignedBB(par1, par3, par5, par7, par9, par11);
++        }
++
+         AxisAlignedBB axisalignedbb;
+ 
+         if (this.nextPoolIndex >= this.listAABB.size())
+@@ -71,19 +77,26 @@
+             this.maxPoolIndex = this.nextPoolIndex;
+         }
+ 
+-        if (this.numCleans++ == this.maxNumCleans)
++        // CraftBukkit start - Intelligent cache
++        if ((this.numCleans++ & 0xff) == 0)
+         {
+-            int i = Math.max(this.maxPoolIndex, this.listAABB.size() - this.numEntriesToRemove);
++            int newSize = this.listAABB.size() - (this.listAABB.size() >> 3);
+ 
+-            while (this.listAABB.size() > i)
++            // newSize will be 87.5%, but if we were not in that range, we clear some of the cache
++            if (newSize > this.maxPoolIndex)
+             {
+-                this.listAABB.remove(i);
++                // Work down from size() to prevent insane array copies
++                for (int i = this.listAABB.size() - 1; i > newSize; i--)
++                {
++                    this.listAABB.remove(i);
++                }
+             }
+ 
+             this.maxPoolIndex = 0;
+-            this.numCleans = 0;
++            // this.resizeTime = 0; // We do not reset to zero; it doubles for a flag
+         }
+ 
++        // CraftBukkit end
+         this.nextPoolIndex = 0;
+     }
+ 

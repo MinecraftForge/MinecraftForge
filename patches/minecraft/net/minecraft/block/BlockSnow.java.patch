@@ -1,12 +1,10 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockSnow.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockSnow.java
-@@ -96,8 +96,12 @@
-      */
+@@ -97,7 +97,11 @@
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
--        int l = par1World.getBlockId(par2, par3 - 1, par4);
+         int l = par1World.getBlockId(par2, par3 - 1, par4);
 -        return l == 0 ? false : (l == this.blockID && (par1World.getBlockMetadata(par2, par3 - 1, par4) & 7) == 7 ? true : (l != Block.leaves.blockID && !Block.blocksList[l].isOpaqueCube() ? false : par1World.getBlockMaterial(par2, par3 - 1, par4).blocksMovement()));
-+        int l = par1World.getBlockId(par2, par3 - 1, par4);        
 +        Block block = Block.blocksList[l];
 +        if (block == null) return false;
 +        if (block == this && (par1World.getBlockMetadata(par2, par3 - 1, par4) & 7) == 7) return true;
@@ -45,15 +43,21 @@
      }
  
      /**
-@@ -162,7 +162,6 @@
+@@ -162,6 +162,13 @@
      {
          if (par1World.getSavedLightValue(EnumSkyBlock.Block, par2, par3, par4) > 11)
          {
--            this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
++            // CraftBukkit start
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockFadeEvent(par1World.getWorld().getBlockAt(par2, par3, par4), 0).isCancelled())
++            {
++                return;
++            }
++
++            // CraftBukkit end
+             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
              par1World.setBlockToAir(par2, par3, par4);
          }
-     }
-@@ -177,4 +176,10 @@
+@@ -177,4 +184,10 @@
      {
          return par5 == 1 ? true : super.shouldSideBeRendered(par1IBlockAccess, par2, par3, par4, par5);
      }

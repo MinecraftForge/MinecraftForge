@@ -1,0 +1,124 @@
+--- ../src_base/minecraft/net/minecraft/item/crafting/ShapedRecipes.java
++++ ../src_work/minecraft/net/minecraft/item/crafting/ShapedRecipes.java
+@@ -1,23 +1,27 @@
+ package net.minecraft.item.crafting;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.inventory.CraftShapedRecipe;
+ import net.minecraft.inventory.InventoryCrafting;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.world.World;
++// CraftBukkit end
+ 
+ public class ShapedRecipes implements IRecipe
+ {
+     /** How many horizontal slots this recipe is wide. */
+-    public final int recipeWidth;
++    public int recipeWidth;
+ 
+     /** How many vertical slots this recipe uses. */
+-    public final int recipeHeight;
++    public int recipeHeight;
+ 
+     /** Is a array of ItemStack that composes the recipe. */
+-    public final ItemStack[] recipeItems;
++    public ItemStack[] recipeItems;
+ 
+     /** Is the ItemStack that you get when craft the recipe. */
+-    private ItemStack recipeOutput;
++    public ItemStack recipeOutput; // Spigot
+ 
+     /** Is the itemID of the output item that you get when craft the recipe. */
+     public final int recipeOutputItemID;
+@@ -32,6 +36,77 @@
+         this.recipeOutput = par4ItemStack;
+     }
+ 
++    // CraftBukkit start
++    public org.bukkit.inventory.ShapedRecipe toBukkitRecipe()
++    {
++        CraftItemStack result = CraftItemStack.asCraftMirror(this.recipeOutput);
++        CraftShapedRecipe recipe = new CraftShapedRecipe(result, this);
++
++        switch (this.recipeHeight)
++        {
++            case 1:
++                switch (this.recipeWidth)
++                {
++                    case 1:
++                        recipe.shape("a");
++                        break;
++                    case 2:
++                        recipe.shape("ab");
++                        break;
++                    case 3:
++                        recipe.shape("abc");
++                        break;
++                }
++
++                break;
++            case 2:
++                switch (this.recipeWidth)
++                {
++                    case 1:
++                        recipe.shape("a", "b");
++                        break;
++                    case 2:
++                        recipe.shape("ab", "cd");
++                        break;
++                    case 3:
++                        recipe.shape("abc", "def");
++                        break;
++                }
++
++                break;
++            case 3:
++                switch (this.recipeWidth)
++                {
++                    case 1:
++                        recipe.shape("a", "b", "c");
++                        break;
++                    case 2:
++                        recipe.shape("ab", "cd", "ef");
++                        break;
++                    case 3:
++                        recipe.shape("abc", "def", "ghi");
++                        break;
++                }
++
++                break;
++        }
++
++        char c = 'a';
++
++        for (ItemStack stack : this.recipeItems)
++        {
++            if (stack != null)
++            {
++                recipe.setIngredient(c, org.bukkit.Material.getMaterial(stack.itemID), stack.getItemDamage());
++            }
++
++            c++;
++        }
++
++        return recipe;
++    }
++    // CraftBukkit end
++
+     public ItemStack getRecipeOutput()
+     {
+         return this.recipeOutput;
+@@ -147,4 +222,11 @@
+         this.field_92101_f = true;
+         return this;
+     }
++
++    // Spigot start
++    public java.util.List<ItemStack> getIngredients()
++    {
++        return java.util.Arrays.asList(recipeItems);
++    }
++    // Spigot end
+ }

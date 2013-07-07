@@ -1,0 +1,17 @@
+--- ../src_base/minecraft/cpw/mods/fml/relauncher/ServerLaunchWrapper.java
++++ ../src_work/minecraft/cpw/mods/fml/relauncher/ServerLaunchWrapper.java
+@@ -9,11 +9,14 @@
+ 
+ public class ServerLaunchWrapper {
+ 
++    public static String[] startupArgs; // MCPC+
++
+     /**
+      * @param args
+      */
+     public static void main(String[] args)
+     {
++        startupArgs = args;
+         new ServerLaunchWrapper().run(args);
+     }
+ 

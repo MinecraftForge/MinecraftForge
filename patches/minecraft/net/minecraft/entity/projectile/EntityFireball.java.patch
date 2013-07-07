@@ -1,0 +1,89 @@
+--- ../src_base/minecraft/net/minecraft/entity/projectile/EntityFireball.java
++++ ../src_work/minecraft/net/minecraft/entity/projectile/EntityFireball.java
+@@ -28,6 +28,8 @@
+     public double accelerationX;
+     public double accelerationY;
+     public double accelerationZ;
++    public float yield = 1; // CraftBukkit
++    public boolean isIncendiary = true; // CraftBukkit
+ 
+     public EntityFireball(World par1World)
+     {
+@@ -71,6 +73,13 @@
+         this.setPosition(this.posX, this.posY, this.posZ);
+         this.yOffset = 0.0F;
+         this.motionX = this.motionY = this.motionZ = 0.0D;
++        // CraftBukkit start - Added setDirection method
++        this.setDirection(par3, par5, par7);
++    }
++
++    public void setDirection(double par3, double par5, double par7)
++    {
++        // CraftBukkit end
+         par3 += this.rand.nextGaussian() * 0.4D;
+         par5 += this.rand.nextGaussian() * 0.4D;
+         par7 += this.rand.nextGaussian() * 0.4D;
+@@ -149,7 +158,7 @@
+ 
+                     if (movingobjectposition1 != null)
+                     {
+-                        double d1 = vec3.distanceTo(movingobjectposition1.hitVec);
++                        double d1 = vec3.squareDistanceTo(movingobjectposition1.hitVec); // CraftBukkit - distance efficiency
+ 
+                         if (d1 < d0 || d0 == 0.0D)
+                         {
+@@ -168,6 +177,14 @@
+             if (movingobjectposition != null)
+             {
+                 this.onImpact(movingobjectposition);
++
++                // CraftBukkit start
++                if (this.isDead)
++                {
++                    org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this);
++                }
++
++                // CraftBukkit end
+             }
+ 
+             this.posX += this.motionX;
+@@ -233,7 +250,7 @@
+     /**
+      * Called when this EntityFireball hits a block or entity.
+      */
+-    protected abstract void onImpact(MovingObjectPosition movingobjectposition);
++    protected abstract void onImpact(MovingObjectPosition par1MovingObjectPosition);
+ 
+     /**
+      * (abstract) Protected helper method to write subclass entity data to NBT.
+@@ -245,7 +262,8 @@
+         par1NBTTagCompound.setShort("zTile", (short)this.zTile);
+         par1NBTTagCompound.setByte("inTile", (byte)this.inTile);
+         par1NBTTagCompound.setByte("inGround", (byte)(this.inGround ? 1 : 0));
+-        par1NBTTagCompound.setTag("direction", this.newDoubleNBTList(new double[] {this.motionX, this.motionY, this.motionZ}));
++        // CraftBukkit - Fix direction being mismapped to invalid variables
++        par1NBTTagCompound.setTag("power", this.newDoubleNBTList(new double[] { this.accelerationX, this.accelerationY, this.accelerationZ}));
+     }
+ 
+     /**
+@@ -259,12 +277,14 @@
+         this.inTile = par1NBTTagCompound.getByte("inTile") & 255;
+         this.inGround = par1NBTTagCompound.getByte("inGround") == 1;
+ 
+-        if (par1NBTTagCompound.hasKey("direction"))
+-        {
+-            NBTTagList nbttaglist = par1NBTTagCompound.getTagList("direction");
+-            this.motionX = ((NBTTagDouble)nbttaglist.tagAt(0)).data;
+-            this.motionY = ((NBTTagDouble)nbttaglist.tagAt(1)).data;
+-            this.motionZ = ((NBTTagDouble)nbttaglist.tagAt(2)).data;
++        // CraftBukkit start - direction -> power
++        if (par1NBTTagCompound.hasKey("power"))
++        {
++            NBTTagList nbttaglist = par1NBTTagCompound.getTagList("power");
++            this.accelerationX = ((NBTTagDouble) nbttaglist.tagAt(0)).data;
++            this.accelerationY = ((NBTTagDouble) nbttaglist.tagAt(1)).data;
++            this.accelerationZ = ((NBTTagDouble) nbttaglist.tagAt(2)).data;
++            // CraftBukkit end
+         }
+         else
+         {

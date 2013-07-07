@@ -1,0 +1,84 @@
+--- ../src_base/minecraft/net/minecraft/inventory/InventoryLargeChest.java
++++ ../src_work/minecraft/net/minecraft/inventory/InventoryLargeChest.java
+@@ -1,7 +1,13 @@
+ package net.minecraft.inventory;
+ 
++// CraftBukkit start
++import java.util.List;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.item.ItemStack;
++
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++// CraftBukkit end
+ 
+ public class InventoryLargeChest implements IInventory
+ {
+@@ -9,10 +15,56 @@
+     private String name;
+ 
+     /** Inventory object corresponding to double chest upper part */
+-    private IInventory upperChest;
++    public IInventory upperChest; // CraftBukkit - private -> public
+ 
+     /** Inventory object corresponding to double chest lower part */
+-    private IInventory lowerChest;
++    public IInventory lowerChest; // CraftBukkit - private -> public
++
++    // CraftBukkit start
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++
++    public ItemStack[] getContents()
++    {
++        ItemStack[] result = new ItemStack[this.getSizeInventory()];
++
++        for (int i = 0; i < result.length; i++)
++        {
++            result[i] = this.getStackInSlot(i);
++        }
++
++        return result;
++    }
++
++    public void onOpen(CraftHumanEntity who)
++    {
++        this.upperChest.onOpen(who);
++        this.lowerChest.onOpen(who);
++        transaction.add(who);
++    }
++
++    public void onClose(CraftHumanEntity who)
++    {
++        this.upperChest.onClose(who);
++        this.lowerChest.onClose(who);
++        transaction.remove(who);
++    }
++
++    public List<HumanEntity> getViewers()
++    {
++        return transaction;
++    }
++
++    public org.bukkit.inventory.InventoryHolder getOwner()
++    {
++        return null; // This method won't be called since CraftInventoryDoubleChest doesn't defer to here
++    }
++
++    public void setMaxStackSize(int size)
++    {
++        this.upperChest.setMaxStackSize(size);
++        this.lowerChest.setMaxStackSize(size);
++    }
++    // CraftBukkit end
+ 
+     public InventoryLargeChest(String par1Str, IInventory par2IInventory, IInventory par3IInventory)
+     {
+@@ -112,7 +164,7 @@
+      */
+     public int getInventoryStackLimit()
+     {
+-        return this.upperChest.getInventoryStackLimit();
++        return Math.min(this.upperChest.getInventoryStackLimit(), this.lowerChest.getInventoryStackLimit()); // CraftBukkit - check both sides
+     }
+ 
+     /**

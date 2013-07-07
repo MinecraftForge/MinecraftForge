@@ -1,0 +1,26 @@
+--- ../src_base/minecraft/net/minecraft/server/ThreadDedicatedServer.java
++++ ../src_work/minecraft/net/minecraft/server/ThreadDedicatedServer.java
+@@ -3,6 +3,7 @@
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import net.minecraft.server.dedicated.DedicatedServer;
++import net.minecraft.world.MinecraftException;
+ 
+ @SideOnly(Side.SERVER)
+ public final class ThreadDedicatedServer extends Thread
+@@ -16,6 +17,14 @@
+ 
+     public void run()
+     {
+-        this.field_96244_a.stopServer();
++        try
++        {
++            this.field_96244_a.stopServer();
++        }
++        catch (MinecraftException e)
++        {
++            // TODO Auto-generated catch block
++            e.printStackTrace();
++        }
+     }
+ }

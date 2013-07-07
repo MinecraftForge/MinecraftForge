@@ -23,16 +23,51 @@
      }
  
      /**
-@@ -296,6 +302,12 @@
+@@ -117,7 +123,7 @@
+      * plays random cave ambient sounds and runs updateTick on random blocks within each chunk in the vacinity of a
+      * player
+      */
+-    protected void tickBlocksAndAmbiance()
++    /*protected void tickBlocksAndAmbiance()
+     {
+         super.tickBlocksAndAmbiance();
+         this.previousActiveChunkSet.retainAll(this.activeChunkSet);
+@@ -151,7 +157,24 @@
+                 }
+             }
+         }
+-    }
++    }*/
++    // MCPC+ start
++    /**
++     * plays random cave ambient sounds and runs updateTick on random blocks within each chunk in the vacinity of a
++     * player
++     */
++    protected void tickBlocksAndAmbiance()
++    {
++        try
++        {
++            this.setActivePlayerChunksAndCheckLight();
++        }
++        catch (Exception e)
++        {
++            org.bukkit.craftbukkit.util.ExceptionReporter.handle(e, "Spigot has detected an unexpected exception while ticking chunks");
++        }
++    }
++    // MCPC+ end
+ 
+     public void doPreChunk(int par1, int par2, boolean par3)
+     {
+@@ -295,6 +318,12 @@
+      * Updates all weather states.
       */
      protected void updateWeather()
-     {
++    {
 +        super.updateWeather();
 +    }
 +
 +    @Override
 +    public void updateWeatherBody()
-+    {
+     {
          if (!this.provider.hasNoSky)
          {
-             this.prevRainingStrength = this.rainingStrength;

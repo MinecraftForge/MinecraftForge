@@ -1,0 +1,19 @@
+--- ../src_base/minecraft/net/minecraft/tileentity/TileEntityNote.java
++++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityNote.java
+@@ -80,7 +80,15 @@
+                 b0 = 4;
+             }
+ 
+-            par1World.addBlockEvent(par2, par3, par4, Block.music.blockID, b0, this.note);
++            // CraftBukkit start
++            org.bukkit.event.block.NotePlayEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callNotePlayEvent(this.worldObj, par2, par3, par4, b0, this.note);
++
++            if (!event.isCancelled())
++            {
++                this.worldObj.addBlockEvent(par2, par3, par4, Block.music.blockID, event.getInstrument().getType(), event.getNote().getId());
++            }
++
++            // CraftBukkit end
+         }
+     }
+ }

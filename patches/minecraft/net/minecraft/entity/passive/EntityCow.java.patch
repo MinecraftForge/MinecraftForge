@@ -1,0 +1,79 @@
+--- ../src_base/minecraft/net/minecraft/entity/passive/EntityCow.java
++++ ../src_work/minecraft/net/minecraft/entity/passive/EntityCow.java
+@@ -14,6 +14,10 @@
+ import net.minecraft.item.Item;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++// CraftBukkit end
+ 
+ public class EntityCow extends EntityAnimal
+ {
+@@ -101,27 +105,25 @@
+      */
+     protected void dropFewItems(boolean par1, int par2)
+     {
++        // CraftBukkit start - Whole method
++        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
+         int j = this.rand.nextInt(3) + this.rand.nextInt(1 + par2);
+         int k;
+ 
+-        for (k = 0; k < j; ++k)
++        if (j > 0)
+         {
+-            this.dropItem(Item.leather.itemID, 1);
++            loot.add(new org.bukkit.inventory.ItemStack(Item.leather.itemID, j));
+         }
+ 
+         j = this.rand.nextInt(3) + 1 + this.rand.nextInt(1 + par2);
+ 
+-        for (k = 0; k < j; ++k)
++        if (j > 0)
+         {
+-            if (this.isBurning())
+-            {
+-                this.dropItem(Item.beefCooked.itemID, 1);
+-            }
+-            else
+-            {
+-                this.dropItem(Item.beefRaw.itemID, 1);
+-            }
++            loot.add(new org.bukkit.inventory.ItemStack(this.isBurning() ? Item.beefCooked.itemID : Item.beefRaw.itemID, j));
+         }
++
++        CraftEventFactory.callEntityDeathEvent(this, loot);
++        // CraftBukkit end
+     }
+ 
+     /**
+@@ -133,15 +135,25 @@
+ 
+         if (itemstack != null && itemstack.itemID == Item.bucketEmpty.itemID && !par1EntityPlayer.capabilities.isCreativeMode)
+         {
+-            if (itemstack.stackSize-- == 1)
++            // CraftBukkit start - Got milk?
++            org.bukkit.Location loc = this.getBukkitEntity().getLocation();
++            org.bukkit.event.player.PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(par1EntityPlayer, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), -1, itemstack, Item.bucketMilk);
++
++            if (event.isCancelled())
+             {
+-                par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, new ItemStack(Item.bucketMilk));
++                return false;
++            }
++
++            if (--itemstack.stackSize <= 0)
++            {
++                par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, CraftItemStack.asNMSCopy(event.getItemStack()));
+             }
+             else if (!par1EntityPlayer.inventory.addItemStackToInventory(new ItemStack(Item.bucketMilk)))
+             {
+-                par1EntityPlayer.dropPlayerItem(new ItemStack(Item.bucketMilk.itemID, 1, 0));
++                par1EntityPlayer.dropPlayerItem(CraftItemStack.asNMSCopy(event.getItemStack()));
+             }
+ 
++            // CraftBukkit end
+             return true;
+         }
+         else

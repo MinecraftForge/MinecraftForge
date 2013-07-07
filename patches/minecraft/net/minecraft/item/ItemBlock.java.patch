@@ -1,6 +1,33 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemBlock.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemBlock.java
-@@ -64,7 +64,8 @@
+@@ -4,12 +4,14 @@
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.List;
+ import net.minecraft.block.Block;
++import net.minecraft.block.BlockContainer;
+ import net.minecraft.client.renderer.texture.IconRegister;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.util.Icon;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
+ 
+ public class ItemBlock extends Item
+ {
+@@ -58,13 +60,20 @@
+      */
+     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+     {
++        final int clickedX = par4, clickedY = par5, clickedZ = par6;
++        // MCPC+ start - set the current placed item hit coords for canPlaceEntityOnSide
++        par3World.curPlacedItemHitX = par8;
++        par3World.curPlacedItemHitY = par9;
++        par3World.curPlacedItemHitZ = par10;
++        // MCPC+ end        
+         int i1 = par3World.getBlockId(par4, par5, par6);
+ 
+         if (i1 == Block.snow.blockID && (par3World.getBlockMetadata(par4, par5, par6) & 7) < 1)
          {
              par7 = 1;
          }
@@ -10,24 +37,106 @@
          {
              if (par7 == 0)
              {
-@@ -115,14 +116,8 @@
+@@ -114,20 +123,34 @@
+             Block block = Block.blocksList[this.blockID];
              int j1 = this.getMetadata(par1ItemStack.getItemDamage());
              int k1 = Block.blocksList[this.blockID].onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, j1);
- 
+-
 -            if (par3World.setBlock(par4, par5, par6, this.blockID, k1, 3))
 -            {
 -                if (par3World.getBlockId(par4, par5, par6) == this.blockID)
--                {
++            // CraftBukkit start - Redirect to common function handler
++            /*
++            if (world.setTypeIdAndData(i, j, k, this.id, k1, 3)) {
++                if (world.getTypeId(i, j, k) == this.id) {
++                    Block.byId[this.id].postPlace(world, i, j, k, entityplayer, itemstack);
++                    Block.byId[this.id].postPlace(world, i, j, k, k1);
++                }
++
++                world.makeSound((double) ((float) i + 0.5F), (double) ((float) j + 0.5F), (double) ((float) k + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume1() + 1.0F) / 2.0F, block.stepSound.getVolume2() * 0.8F);
++                --itemstack.count;
++            }
++            */            
++            // MCPC+ start - seperate forge/vanilla process block calls            
++            if (block.isForgeBlock) // process forge block
++            {
++                if (placeBlockAt(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10, k1))
+                 {
 -                    Block.blocksList[this.blockID].onBlockPlacedBy(par3World, par4, par5, par6, par2EntityPlayer, par1ItemStack);
 -                    Block.blocksList[this.blockID].onPostBlockPlaced(par3World, par4, par5, par6, k1);
--                }
++                    par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
++                    --par1ItemStack.stackSize;
+                 }
 -
-+            if (placeBlockAt(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10, k1))
+-                par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
+-                --par1ItemStack.stackSize;
+-            }
+-
+-            return true;
++                return true;
++            }
++            else // process vanilla block 
 +            {
-                 par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
-                 --par1ItemStack.stackSize;
-             }
-@@ -148,7 +143,8 @@
++            // MCPC+ end
++                return processBlockPlace(par3World, par2EntityPlayer, par1ItemStack, par4, par5, par6, this.blockID, k1, clickedX, clickedY, clickedZ);
++            }
++            // CraftBukkit end            
+         }
+         else
+         {
+@@ -135,6 +158,51 @@
+         }
+     }
+ 
++    // CraftBukkit start - Add method to process block placement
++    // MCPC+ - public
++    public static boolean processBlockPlace(final World world, final EntityPlayer entityplayer, final ItemStack itemstack, final int x, final int y, final int z, final int id, final int data, final int clickedX, final int clickedY, final int clickedZ)
++    {
++        org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(world, x, y, z);
++        world.callingPlaceEvent = true;
++        world.setBlock(x, y, z, id, data, 2);
++        org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(world, entityplayer, blockstate, clickedX, clickedY, clickedZ);
++
++        if (event.isCancelled() || !event.canBuild())
++        {
++            blockstate.update(true, false);
++            world.callingPlaceEvent = false;
++            return false;
++        }
++
++        world.callingPlaceEvent = false;
++        int newId = world.getBlockId(x, y, z);
++        int newData = world.getBlockMetadata(x, y, z);
++        Block block = Block.blocksList[newId];
++
++        if (block != null && !(block instanceof BlockContainer))   // Containers get placed automatically
++        {
++            block.onBlockAdded(world, x, y, z);
++        }
++
++        world.notifyBlockChange(x, y, z, newId);
++
++        // Skulls don't get block data applied to them
++        if (block != null && block != Block.skull)
++        {
++            block.onBlockPlacedBy(world, x, y, z, entityplayer, itemstack);
++            block.onPostBlockPlaced(world, x, y, z, newData);
++            world.playSoundEffect((double)((float) x + 0.5F), (double)((float) y + 0.5F), (double)((float) z + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
++        }
++
++        if (itemstack != null)
++        {
++            --itemstack.stackSize;
++        }
++
++        return true;
++    }
++    // CraftBukkit end
++
+     @SideOnly(Side.CLIENT)
+ 
+     /**
+@@ -148,7 +216,8 @@
          {
              par5 = 1;
          }
@@ -37,7 +146,7 @@
          {
              if (par5 == 0)
              {
-@@ -231,4 +227,28 @@
+@@ -231,4 +300,28 @@
              this.field_94588_b = par1IconRegister.registerIcon(s);
          }
      }

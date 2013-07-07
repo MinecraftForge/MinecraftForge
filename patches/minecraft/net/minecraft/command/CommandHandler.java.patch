@@ -1,19 +1,28 @@
 --- ../src_base/minecraft/net/minecraft/command/CommandHandler.java
 +++ ../src_work/minecraft/net/minecraft/command/CommandHandler.java
-@@ -12,6 +12,9 @@
+@@ -12,6 +12,14 @@
  import net.minecraft.util.ChatMessageComponent;
  import net.minecraft.util.EnumChatFormatting;
  
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.CommandEvent;
++// MCPC+ start
++import org.bukkit.craftbukkit.command.CraftSimpleCommandMap;
++import org.bukkit.craftbukkit.command.ModCustomCommand;
++import cpw.mods.fml.common.FMLCommonHandler;
++// MCPC+ end
 +
  public class CommandHandler implements ICommandManager
  {
      /** Map of Strings to the ICommand objects they represent */
-@@ -45,6 +48,16 @@
+@@ -43,8 +51,18 @@
+                 throw new CommandNotFoundException();
+             }
  
-             if (icommand.canCommandSenderUseCommand(par1ICommandSender))
-             {
+-            if (icommand.canCommandSenderUseCommand(par1ICommandSender))
+-            {
++            if (true || icommand.canCommandSenderUseCommand(par1ICommandSender)) // MCPC+ start - disable check for permissions since we handle it on Bukkit side
++            {
 +                CommandEvent event = new CommandEvent(icommand, par1ICommandSender, astring);
 +                if (MinecraftForge.EVENT_BUS.post(event))
 +                {
@@ -27,3 +36,34 @@
                  if (i > -1)
                  {
                      EntityPlayerMP[] aentityplayermp = PlayerSelector.matchPlayers(par1ICommandSender, astring[i]);
+@@ -103,9 +121,30 @@
+      */
+     public ICommand registerCommand(ICommand par1ICommand)
+     {
++        // MCPC+ start - register commands with permission nodes, defaulting to class name
++        return registerCommand(par1ICommand, par1ICommand.getClass().getName());
++    }
++
++    public ICommand registerCommand(String permissionGroup, ICommand par1ICommand)
++    {
++        return registerCommand(par1ICommand, permissionGroup + "." + par1ICommand.getCommandName());
++    }
++
++    public ICommand registerCommand(ICommand par1ICommand, String permissionNode)
++    {
++        // MCPC+ end    
+         List list = par1ICommand.getCommandAliases();
+         this.commandMap.put(par1ICommand.getCommandName(), par1ICommand);
+         this.commandSet.add(par1ICommand);
++        // MCPC+ start - register vanilla commands with Bukkit to support permissions.
++        CraftSimpleCommandMap commandMap = FMLCommonHandler.instance().getMinecraftServerInstance().server.getCraftCommandMap();
++        ModCustomCommand customCommand = new ModCustomCommand(par1ICommand.getCommandName());
++        customCommand.setPermission(par1ICommand.getClass().getName());
++        if (list != null)
++            customCommand.setAliases(list);
++        commandMap.register(par1ICommand.getCommandName(), customCommand);
++        FMLCommonHandler.instance().getMinecraftServerInstance().server.getLogger().info("Registered command " + par1ICommand.getCommandName() + " with permission node " + permissionNode);
++        // MCPC+ end
+ 
+         if (list != null)
+         {

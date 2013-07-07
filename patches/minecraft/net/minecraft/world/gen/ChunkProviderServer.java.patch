@@ -1,16 +1,81 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -6,6 +6,9 @@
+@@ -6,7 +6,12 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.Set;
+-
++import net.minecraft.block.BlockSand;
 +
 +import net.minecraftforge.common.DimensionManager;
 +import net.minecraftforge.common.ForgeChunkManager;
- 
++
++import cpw.mods.fml.common.FMLCommonHandler; // MCPC+
  import cpw.mods.fml.common.registry.GameRegistry;
  import net.minecraft.crash.CrashReport;
-@@ -66,7 +69,7 @@
+ import net.minecraft.crash.CrashReportCategory;
+@@ -23,26 +28,43 @@
+ import net.minecraft.world.chunk.Chunk;
+ import net.minecraft.world.chunk.EmptyChunk;
+ import net.minecraft.world.chunk.IChunkProvider;
++import net.minecraft.world.chunk.storage.AnvilChunkLoader;
+ import net.minecraft.world.chunk.storage.IChunkLoader;
++
++// CraftBukkit start
++import java.util.Random;
++
++import net.minecraft.block.BlockSand;
++import net.minecraft.server.MinecraftServer;
++import net.minecraft.world.chunk.storage.AnvilChunkLoader;
++import org.bukkit.Server;
++import org.bukkit.craftbukkit.util.LongHash;
++import org.bukkit.craftbukkit.util.LongHashSet;
++import org.bukkit.craftbukkit.util.LongObjectHashMap;
++import org.bukkit.event.world.ChunkUnloadEvent;
++// CraftBukkit end
+ 
+ public class ChunkProviderServer implements IChunkProvider
+ {
++    // CraftBukkit start
++
+     /**
+      * used by unload100OldestChunks to iterate the loadedChunkHashMap for unload (underlying assumption, first in,
+      * first out)
+      */
+-    private Set chunksToUnload = new HashSet();
+-    private Chunk defaultEmptyChunk;
+-    private IChunkProvider currentChunkProvider;
+-    public IChunkLoader currentChunkLoader;
++    public LongHashSet chunksToUnload = new LongHashSet();
++    public Chunk defaultEmptyChunk;
++    public IChunkProvider currentChunkProvider; // CraftBukkit
++    public IChunkLoader currentChunkLoader; // Spigot
+ 
+     /**
+      * if this is false, the defaultEmptyChunk will be returned by the provider
+      */
+-    public boolean loadChunkOnProvideRequest = true;
+-    private LongHashMap loadedChunkHashMap = new LongHashMap();
+-    private List loadedChunks = new ArrayList();
+-    private WorldServer worldObj;
++    public boolean loadChunkOnProvideRequest = FMLCommonHandler.instance().getMinecraftServerInstance().server.getLoadChunkOnRequest(); // MCPC+ - if true, allows mods to force load chunks. to disable, set load-chunk-on-request in bukkit.yml to false
++    public LongObjectHashMap<Chunk> loadedChunkHashMap = new LongObjectHashMap<Chunk>();
++    public List loadedChunks = new ArrayList(); // MCPC+  vanilla compatibility
++    public WorldServer worldObj;
++    // CraftBukkit end
+ 
+     public ChunkProviderServer(WorldServer par1WorldServer, IChunkLoader par2IChunkLoader, IChunkProvider par3IChunkProvider)
+     {
+@@ -57,7 +79,7 @@
+      */
+     public boolean chunkExists(int par1, int par2)
+     {
+-        return this.loadedChunkHashMap.containsItem(ChunkCoordIntPair.chunkXZ2Int(par1, par2));
++        return this.loadedChunkHashMap.containsKey(LongHash.toLong(par1, par2)); // CraftBukkit
+     }
+ 
+     /**
+@@ -66,21 +88,39 @@
       */
      public void unloadChunksIfNotNearSpawn(int par1, int par2)
      {
@@ -19,40 +84,389 @@
          {
              ChunkCoordinates chunkcoordinates = this.worldObj.getSpawnPoint();
              int k = par1 * 16 + 8 - chunkcoordinates.posX;
-@@ -109,7 +112,11 @@
+             int l = par2 * 16 + 8 - chunkcoordinates.posZ;
+             short short1 = 128;
+ 
+-            if (k < -short1 || k > short1 || l < -short1 || l > short1)
+-            {
+-                this.chunksToUnload.add(Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(par1, par2)));
+-            }
++            // CraftBukkit start
++            if (k < -short1 || k > short1 || l < -short1 || l > short1 || !(this.worldObj.keepSpawnInMemory))   // Added 'this.world.keepSpawnInMemory'
++            {
++                this.chunksToUnload.add(par1, par2);
++                Chunk c = this.loadedChunkHashMap.get(LongHash.toLong(par1, par2));
++
++                if (c != null)
++                {
++                    c.mustSave = true;
++                }
++            }
++
++            // CraftBukkit end
+         }
+         else
+         {
+-            this.chunksToUnload.add(Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(par1, par2)));
++            // CraftBukkit start
++            this.chunksToUnload.add(par1, par2);
++            Chunk c = this.loadedChunkHashMap.get(LongHash.toLong(par1, par2));
++
++            if (c != null)
++            {
++                c.mustSave = true;
++            }
++
++            // CraftBukkit end
+         }
+     }
+ 
+@@ -89,7 +129,7 @@
+      */
+     public void unloadAllChunks()
+     {
+-        Iterator iterator = this.loadedChunks.iterator();
++        Iterator iterator = this.loadedChunkHashMap.values().iterator(); // CraftBukkit
+ 
+         while (iterator.hasNext())
+         {
+@@ -98,18 +138,49 @@
+         }
+     }
+ 
++    // CraftBukkit start - Add async variant, provide compatibility
++
+     /**
+      * loads or generates the chunk at the chunk location specified
+      */
+     public Chunk loadChunk(int par1, int par2)
+     {
+-        long k = ChunkCoordIntPair.chunkXZ2Int(par1, par2);
+-        this.chunksToUnload.remove(Long.valueOf(k));
+-        Chunk chunk = (Chunk)this.loadedChunkHashMap.getValueByKey(k);
++        //System.out.println("loadChunk @ " + par1 + ", " + par2);
++        return getChunkAt(par1, par2, null);
++    }
++
++    public Chunk getChunkAt(int i, int j, Runnable runnable)
++    {
++        this.chunksToUnload.remove(i, j);
++        Chunk chunk = (Chunk) this.loadedChunkHashMap.get(LongHash.toLong(i, j));
++        boolean newChunk = false;
++        AnvilChunkLoader loader = null;
++
++        if (this.currentChunkLoader instanceof AnvilChunkLoader)
++        {
++            loader = (AnvilChunkLoader) this.currentChunkLoader;
++        }
++
++        // If the chunk exists but isn't loaded do it async
++        if (chunk == null && runnable != null && loader != null && loader.chunkExists(this.worldObj, i, j))
++        {
++            org.bukkit.craftbukkit.chunkio.ChunkIOExecutor.queueChunkLoad(this.worldObj, loader, this, i, j, runnable);
++            return null;
++        }
++
++        // CraftBukkit end
  
          if (chunk == null)
          {
 -            chunk = this.safeLoadChunk(par1, par2);
-+            chunk = ForgeChunkManager.fetchDormantChunk(k, this.worldObj);
++            org.bukkit.craftbukkit.SpigotTimings.syncChunkLoadTimer.startTiming(); // Spigot
++            //System.out.println("fetchDormantChunk @ coords " + i + ", " + j);
++            chunk = ForgeChunkManager.fetchDormantChunk(LongHash.toLong(i, j), this.worldObj);
++            //System.out.println("DORMANT CHUNK = " + chunk);
 +            if (chunk == null)
 +            {
-+                chunk = this.safeLoadChunk(par1, par2);
++                //System.out.println("calling safeLoadChunk @ coords " + i + ", " + j);
++                chunk = this.safeLoadChunk(i, j);
 +            }
  
              if (chunk == null)
              {
-@@ -303,6 +310,11 @@
+@@ -121,31 +192,55 @@
+                 {
+                     try
+                     {
+-                        chunk = this.currentChunkProvider.provideChunk(par1, par2);
++                        chunk = this.currentChunkProvider.provideChunk(i, j);
+                     }
+                     catch (Throwable throwable)
+                     {
+                         CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Exception generating new chunk");
+                         CrashReportCategory crashreportcategory = crashreport.makeCategory("Chunk to be generated");
+-                        crashreportcategory.addCrashSection("Location", String.format("%d,%d", new Object[] {Integer.valueOf(par1), Integer.valueOf(par2)}));
+-                        crashreportcategory.addCrashSection("Position hash", Long.valueOf(k));
++                        crashreportcategory.addCrashSection("Location", String.format("%d,%d", new Object[] { Integer.valueOf(i), Integer.valueOf(j)}));
++                        crashreportcategory.addCrashSection("Position hash", Long.valueOf(LongHash.toLong(i, j))); // CraftBukkit - Use LongHash
+                         crashreportcategory.addCrashSection("Generator", this.currentChunkProvider.makeString());
+                         throw new ReportedException(crashreport);
+                     }
+                 }
+-            }
+-
+-            this.loadedChunkHashMap.add(k, chunk);
+-            this.loadedChunks.add(chunk);
++
++                newChunk = true; // CraftBukkit
++            }
++
++            this.loadedChunkHashMap.put(LongHash.toLong(i, j), chunk); // CraftBukkit
++            loadedChunks.add(chunk); // MCPC+ - vanilla compatibility
+ 
+             if (chunk != null)
+             {
+                 chunk.onChunkLoad();
+             }
+ 
+-            chunk.populateChunk(this, this, par1, par2);
+-        }
+-
++            // CraftBukkit start
++            Server server = this.worldObj.getServer();
++
++            if (server != null)
++            {
++                /*
++                 * If it's a new world, the first few chunks are generated inside
++                 * the World constructor. We can't reliably alter that, so we have
++                 * no way of creating a CraftWorld/CraftServer at that point.
++                 */
++                server.getPluginManager().callEvent(new org.bukkit.event.world.ChunkLoadEvent(chunk.bukkitChunk, newChunk));
++            }
++
++            // CraftBukkit end
++            chunk.populateChunk(this, this, i, j);
++            org.bukkit.craftbukkit.SpigotTimings.syncChunkLoadTimer.stopTiming(); // Spigot
++        }
++
++        // CraftBukkit start - If we didn't need to load the chunk run the callback now
++        if (runnable != null)
++        {
++            runnable.run();
++        }
++
++        // CraftBukkit end
+         return chunk;
+     }
+ 
+@@ -155,17 +250,37 @@
+      */
+     public Chunk provideChunk(int par1, int par2)
+     {
+-        Chunk chunk = (Chunk)this.loadedChunkHashMap.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(par1, par2));
+-        return chunk == null ? (!this.worldObj.findingSpawnPoint && !this.loadChunkOnProvideRequest ? this.defaultEmptyChunk : this.loadChunk(par1, par2)) : chunk;
++        // CraftBukkit start
++        Chunk chunk = (Chunk) this.loadedChunkHashMap.get(LongHash.toLong(par1, par2));
++        chunk = chunk == null ? (!this.worldObj.findingSpawnPoint && !this.loadChunkOnProvideRequest ? this.defaultEmptyChunk : this.loadChunk(par1, par2)) : chunk;
++
++        if (chunk == this.defaultEmptyChunk)
++        {
++            return chunk;
++        }
++
++        if (par1 != chunk.xPosition || par2 != chunk.zPosition)
++        {
++            this.worldObj.getWorldLogAgent().logSevere("Chunk (" + chunk.xPosition + ", " + chunk.zPosition + ") stored at  (" + par1 + ", " + par2 + ") in world '" + worldObj.getWorld().getName() + "'");
++            this.worldObj.getWorldLogAgent().logSevere(chunk.getClass().getName());
++            Throwable ex = new Throwable();
++            ex.fillInStackTrace();
++            ex.printStackTrace();
++        }
++
++        return chunk;
++        // CraftBukkit end
+     }
+ 
+     /**
+      * used by loadChunk, but catches any exceptions if the load fails.
+      */
+-    private Chunk safeLoadChunk(int par1, int par2)
+-    {
++    public Chunk safeLoadChunk(int par1, int par2)   // CraftBukkit - private -> public
++    {
++        //System.out.println("safeLoadChunk @ " + par1 + ", " + par2);
+         if (this.currentChunkLoader == null)
+         {
++            //System.out.println("CURRENTCHUNKLOADER == NULL");
+             return null;
+         }
+         else
+@@ -173,7 +288,7 @@
+             try
+             {
+                 Chunk chunk = this.currentChunkLoader.loadChunk(this.worldObj, par1, par2);
+-
++                //System.out.println("safeLoadChunk = " + chunk);
+                 if (chunk != null)
+                 {
+                     chunk.lastSaveTime = this.worldObj.getTotalWorldTime();
+@@ -197,7 +312,7 @@
+     /**
+      * used by saveChunks, but catches any exceptions if the save fails.
+      */
+-    private void safeSaveExtraChunkData(Chunk par1Chunk)
++    public void safeSaveExtraChunkData(Chunk par1Chunk)   // CraftBukkit - private -> public
+     {
+         if (this.currentChunkLoader != null)
+         {
+@@ -215,7 +330,7 @@
+     /**
+      * used by saveChunks, but catches any exceptions if the save fails.
+      */
+-    private void safeSaveChunk(Chunk par1Chunk)
++    public void safeSaveChunk(Chunk par1Chunk)   // CraftBukkit - private -> public
+     {
+         if (this.currentChunkLoader != null)
+         {
+@@ -224,14 +339,16 @@
+                 par1Chunk.lastSaveTime = this.worldObj.getTotalWorldTime();
+                 this.currentChunkLoader.saveChunk(this.worldObj, par1Chunk);
+             }
+-            catch (IOException ioexception)
++            catch (Exception ioexception)     // CraftBukkit - IOException -> Exception
+             {
+                 ioexception.printStackTrace();
+-            }
+-            catch (MinecraftException minecraftexception)
+-            {
+-                minecraftexception.printStackTrace();
+-            }
++                // CraftBukkit start - Remove extra exception
++            }
++
++            // } catch (ExceptionWorldConflict exceptionworldconflict) {
++            //     exceptionworldconflict.printStackTrace();
++            // }
++            // CraftBukkit end
+         }
+     }
+ 
+@@ -249,7 +366,27 @@
+             if (this.currentChunkProvider != null)
+             {
+                 this.currentChunkProvider.populate(par1IChunkProvider, par2, par3);
+-                GameRegistry.generateWorld(par2, par3, worldObj, currentChunkProvider, par1IChunkProvider);
++                // CraftBukkit start
++                BlockSand.fallInstantly = true;
++                Random random = new Random();
++                random.setSeed(worldObj.getSeed());
++                long xRand = random.nextLong() / 2L * 2L + 1L;
++                long zRand = random.nextLong() / 2L * 2L + 1L;
++                random.setSeed((long) par2 * xRand + (long) par3 * zRand ^ worldObj.getSeed());
++                org.bukkit.World world = this.worldObj.getWorld();
++
++                if (world != null)
++                {
++                    for (org.bukkit.generator.BlockPopulator populator : world.getPopulators())
++                    {
++                        populator.populate(world, random, chunk.bukkitChunk);
++                    }
++                }
++
++                BlockSand.fallInstantly = false;
++                this.worldObj.getServer().getPluginManager().callEvent(new org.bukkit.event.world.ChunkPopulateEvent(chunk.bukkitChunk));
++                // CraftBukkit end
++                GameRegistry.generateWorld(par2, par3, this.worldObj, this.currentChunkProvider, par1IChunkProvider); // Forge
+                 chunk.setChunkModified();
+             }
+         }
+@@ -262,10 +399,13 @@
+     public boolean saveChunks(boolean par1, IProgressUpdate par2IProgressUpdate)
+     {
+         int i = 0;
+-
+-        for (int j = 0; j < this.loadedChunks.size(); ++j)
+-        {
+-            Chunk chunk = (Chunk)this.loadedChunks.get(j);
++        // CraftBukkit start
++        Iterator iterator = this.loadedChunkHashMap.values().iterator();
++
++        while (iterator.hasNext())
++        {
++            Chunk chunk = (Chunk)iterator.next();
++            // CraftBukkit end
+ 
+             if (par1)
+             {
+@@ -303,20 +443,51 @@
      {
          if (!this.worldObj.canNotSave)
          {
-+            for (ChunkCoordIntPair forced : this.worldObj.getPersistentChunks().keySet())
+-            for (int i = 0; i < 100; ++i)
+-            {
+-                if (!this.chunksToUnload.isEmpty())
+-                {
+-                    Long olong = (Long)this.chunksToUnload.iterator().next();
+-                    Chunk chunk = (Chunk)this.loadedChunkHashMap.getValueByKey(olong.longValue());
++            // MCPC+ start - remove any chunk that has a ticket associated with it
++            if (!this.chunksToUnload.isEmpty())
 +            {
-+                this.chunksToUnload.remove(ChunkCoordIntPair.chunkXZ2Int(forced.chunkXPos, forced.chunkZPos));
++                for (ChunkCoordIntPair forcedChunk : this.worldObj.getPersistentChunks().keys())
++                {
++                    this.chunksToUnload.remove(forcedChunk.chunkXPos, forcedChunk.chunkZPos);
++                }
++            }
++            // MCPC+ end        
++            // CraftBukkit start
++            Server server = this.worldObj.getServer();
++
++            for (int i = 0; i < 100 && !this.chunksToUnload.isEmpty(); i++)
++            {
++                long chunkcoordinates = this.chunksToUnload.popFirst();
++                Chunk chunk = this.loadedChunkHashMap.get(chunkcoordinates);
++
++                if (chunk == null)
++                {
++                    continue;
++                }
++
++                ChunkUnloadEvent event = new ChunkUnloadEvent(chunk.bukkitChunk);
++                server.getPluginManager().callEvent(event);
++
++                if (!event.isCancelled())
++                {
+                     chunk.onChunkUnload();
+                     this.safeSaveChunk(chunk);
+                     this.safeSaveExtraChunkData(chunk);
+-                    this.chunksToUnload.remove(olong);
+-                    this.loadedChunkHashMap.remove(olong.longValue());
+-                    this.loadedChunks.remove(chunk);
+-                }
+-            }
++                    // this.unloadQueue.remove(integer);
++                   // System.out.println("UNLOADING CHUNK @ " + chunk.xPosition + ", " + chunk.zPosition);
++                    this.loadedChunkHashMap.remove(chunkcoordinates); // CraftBukkit
++                    loadedChunks.remove(chunk); // MCPC+ - vanilla compatibility   
++                    ForgeChunkManager.putDormantChunk(chunkcoordinates, chunk);
++
++                    if (this.loadedChunkHashMap.size() == 0 && ForgeChunkManager.getPersistentChunksFor(this.worldObj).size() == 0 && !DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId))
++                    {
++                            DimensionManager.unloadWorld(this.worldObj.provider.dimensionId); // MCPC+ - unload the dimension
++                            return this.currentChunkProvider.unloadQueuedChunks();
++                    }
++                }
 +            }
 +
-             for (int i = 0; i < 100; ++i)
-             {
-                 if (!this.chunksToUnload.isEmpty())
-@@ -315,6 +327,11 @@
-                     this.chunksToUnload.remove(olong);
-                     this.loadedChunkHashMap.remove(olong.longValue());
-                     this.loadedChunks.remove(chunk);
-+                    ForgeChunkManager.putDormantChunk(ChunkCoordIntPair.chunkXZ2Int(chunk.xPosition, chunk.zPosition), chunk);
-+                    if(loadedChunks.size() == 0 && ForgeChunkManager.getPersistentChunksFor(this.worldObj).size() == 0 && !DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId)) {
-+                        DimensionManager.unloadWorld(this.worldObj.provider.dimensionId);
-+                        return currentChunkProvider.unloadQueuedChunks();
-+                    }
-                 }
-             }
++            // CraftBukkit end
  
+             if (this.currentChunkLoader != null)
+             {
+@@ -340,7 +511,7 @@
+      */
+     public String makeString()
+     {
+-        return "ServerChunkCache: " + this.loadedChunkHashMap.getNumHashElements() + " Drop: " + this.chunksToUnload.size();
++        return "ServerChunkCache: " + this.loadedChunkHashMap.values().size() + " Drop: " + this.chunksToUnload.size(); // CraftBukkit
+     }
+ 
+     /**
+@@ -361,7 +532,7 @@
+ 
+     public int getLoadedChunkCount()
+     {
+-        return this.loadedChunkHashMap.getNumHashElements();
++        return this.loadedChunkHashMap.values().size(); // CraftBukkit
+     }
+ 
+     public void recreateStructures(int par1, int par2) {}

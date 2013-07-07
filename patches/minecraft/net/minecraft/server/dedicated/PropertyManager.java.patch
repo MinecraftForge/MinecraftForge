@@ -1,0 +1,99 @@
+--- ../src_base/minecraft/net/minecraft/server/dedicated/PropertyManager.java
++++ ../src_work/minecraft/net/minecraft/server/dedicated/PropertyManager.java
+@@ -5,11 +5,15 @@
+ import java.io.FileOutputStream;
+ import java.io.IOException;
+ import java.util.Properties;
++import java.util.logging.Level;
++import java.util.logging.Logger;
+ import net.minecraft.logging.ILogAgent;
++
++import joptsimple.OptionSet; // CraftBukkit
+ 
+ public class PropertyManager
+ {
+-    private final Properties properties = new Properties();
++    public final Properties properties = new Properties(); // CraftBukkit - private -> public
+ 
+     /** Reference to the logger. */
+     private final ILogAgent logger;
+@@ -56,6 +60,26 @@
+         }
+     }
+ 
++    // CraftBukkit start
++    private OptionSet options = null;
++
++    public PropertyManager(final OptionSet options, ILogAgent ilogagent)
++    {
++        this((File) options.valueOf("config"), ilogagent);
++        this.options = options;
++    }
++
++    private <T> T getOverride(String name, T value)
++    {
++        if ((this.options != null) && (this.options.has(name)) && !name.equals("online-mode"))    // Spigot
++        {
++            return (T) this.options.valueOf(name);
++        }
++
++        return value;
++    }
++    // CraftBukkit end
++
+     /**
+      * logs an info message then calls saveSettingsToFile Yes this appears to be a potential stack overflow - these 2
+      * functions call each other repeatdly if an exception occurs.
+@@ -75,6 +99,13 @@
+ 
+         try
+         {
++            // CraftBukkit start - Don't attempt writing to file if it's read only
++            if (this.associatedFile.exists() && !this.associatedFile.canWrite())
++            {
++                return;
++            }
++
++            // CraftBukkit end
+             fileoutputstream = new FileOutputStream(this.associatedFile);
+             this.properties.store(fileoutputstream, "Minecraft server properties");
+         }
+@@ -118,7 +149,7 @@
+             this.saveProperties();
+         }
+ 
+-        return this.properties.getProperty(par1Str, par2Str);
++        return this.getOverride(par1Str, this.properties.getProperty(par1Str, par2Str)); // CraftBukkit
+     }
+ 
+     /**
+@@ -128,12 +159,12 @@
+     {
+         try
+         {
+-            return Integer.parseInt(this.getProperty(par1Str, "" + par2));
++            return this.getOverride(par1Str, Integer.parseInt(this.getProperty(par1Str, "" + par2))); // CraftBukkit
+         }
+         catch (Exception exception)
+         {
+             this.properties.setProperty(par1Str, "" + par2);
+-            return par2;
++            return this.getOverride(par1Str, par2); // CraftBukkit
+         }
+     }
+ 
+@@ -144,12 +175,12 @@
+     {
+         try
+         {
+-            return Boolean.parseBoolean(this.getProperty(par1Str, "" + par2));
++            return this.getOverride(par1Str, Boolean.parseBoolean(this.getProperty(par1Str, "" + par2))); // CraftBukkit
+         }
+         catch (Exception exception)
+         {
+             this.properties.setProperty(par1Str, "" + par2);
+-            return par2;
++            return this.getOverride(par1Str, par2); // CraftBukkit
+         }
+     }
+ 

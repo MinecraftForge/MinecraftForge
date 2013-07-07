@@ -1,0 +1,59 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntitySilverfish.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntitySilverfish.java
+@@ -11,6 +11,7 @@
+ import net.minecraft.util.Facing;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
+ 
+ public class EntitySilverfish extends EntityMob
+ {
+@@ -165,28 +166,14 @@
+ 
+                                 if (k1 == Block.silverfish.blockID)
+                                 {
+-                                    if (!this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"))
++                                    // CraftBukkit start
++                                    if (CraftEventFactory.callEntityChangeBlockEvent(this, i + i1, j + l, k + j1, 0, 0).isCancelled())
+                                     {
+-                                        int l1 = this.worldObj.getBlockMetadata(i + i1, j + l, k + j1);
+-                                        Block block = Block.stone;
+-
+-                                        if (l1 == 1)
+-                                        {
+-                                            block = Block.cobblestone;
+-                                        }
+-
+-                                        if (l1 == 2)
+-                                        {
+-                                            block = Block.stoneBrick;
+-                                        }
+-
+-                                        this.worldObj.setBlock(i + i1, j + l, k + j1, block.blockID, 0, 3);
++                                        continue;
+                                     }
+-                                    else
+-                                    {
+-                                        this.worldObj.destroyBlock(i + i1, j + l, k + j1, false);
+-                                    }
+-
++
++                                    // CraftBukkit end
++                                    this.worldObj.destroyBlock(i + i1, j + l, k + j1, false);
+                                     Block.silverfish.onBlockDestroyedByPlayer(this.worldObj, i + i1, j + l, k + j1, 0);
+ 
+                                     if (this.rand.nextBoolean())
+@@ -211,6 +198,13 @@
+ 
+                 if (BlockSilverfish.getPosingIdByMetadata(l))
+                 {
++                    // CraftBukkit start
++                    if (CraftEventFactory.callEntityChangeBlockEvent(this, i + Facing.offsetsXForSide[i2], j + Facing.offsetsYForSide[i2], k + Facing.offsetsZForSide[i2], Block.silverfish.blockID, BlockSilverfish.getMetadataForBlockType(l)).isCancelled())
++                    {
++                        return;
++                    }
++
++                    // CraftBukkit end
+                     this.worldObj.setBlock(i + Facing.offsetsXForSide[i2], j + Facing.offsetsYForSide[i2], k + Facing.offsetsZForSide[i2], Block.silverfish.blockID, BlockSilverfish.getMetadataForBlockType(l), 3);
+                     this.spawnExplosionParticle();
+                     this.setDead();

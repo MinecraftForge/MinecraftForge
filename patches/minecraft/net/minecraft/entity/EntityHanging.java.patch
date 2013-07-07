@@ -1,0 +1,142 @@
+--- ../src_base/minecraft/net/minecraft/entity/EntityHanging.java
++++ ../src_work/minecraft/net/minecraft/entity/EntityHanging.java
+@@ -9,6 +9,13 @@
+ import net.minecraft.util.Direction;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.entity.Hanging;
++import org.bukkit.entity.Painting;
++import org.bukkit.event.hanging.HangingBreakEvent;
++import org.bukkit.event.painting.PaintingBreakEvent;
++import net.minecraft.entity.item.EntityPainting;
++// CraftBukkit end
+ 
+ public abstract class EntityHanging extends Entity
+ {
+@@ -127,6 +134,38 @@
+ 
+             if (!this.isDead && !this.onValidSurface())
+             {
++                // CraftBukkit start
++                Material material = this.worldObj.getBlockMaterial((int) this.posX, (int) this.posY, (int) this.posZ);
++                HangingBreakEvent.RemoveCause cause;
++
++                if (!material.equals(Material.air))
++                {
++                    // TODO: This feels insufficient to catch 100% of suffocation cases
++                    cause = HangingBreakEvent.RemoveCause.OBSTRUCTION;
++                }
++                else
++                {
++                    cause = HangingBreakEvent.RemoveCause.PHYSICS;
++                }
++
++                HangingBreakEvent event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), cause);
++                this.worldObj.getServer().getPluginManager().callEvent(event);
++                PaintingBreakEvent paintingEvent = null;
++
++                if (this instanceof EntityPainting)
++                {
++                    // Fire old painting event until it can be removed
++                    paintingEvent = new PaintingBreakEvent((Painting) this.getBukkitEntity(), PaintingBreakEvent.RemoveCause.valueOf(cause.name()));
++                    paintingEvent.setCancelled(event.isCancelled());
++                    this.worldObj.getServer().getPluginManager().callEvent(paintingEvent);
++                }
++
++                if (isDead || event.isCancelled() || (paintingEvent != null && paintingEvent.isCancelled()))
++                {
++                    return;
++                }
++
++                // CraftBukkit end
+                 this.setDead();
+                 this.func_110128_b((Entity)null);
+             }
+@@ -239,6 +278,39 @@
+         {
+             if (!this.isDead && !this.worldObj.isRemote)
+             {
++                // CraftBukkit start
++                HangingBreakEvent event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), HangingBreakEvent.RemoveCause.DEFAULT);
++                PaintingBreakEvent paintingEvent = null;
++
++                if (par1DamageSource.getEntity() != null)
++                {
++                    event = new org.bukkit.event.hanging.HangingBreakByEntityEvent((Hanging) this.getBukkitEntity(), par1DamageSource.getEntity() == null ? null : par1DamageSource.getEntity().getBukkitEntity());
++
++                    if (this instanceof EntityPainting)
++                    {
++                        // Fire old painting event until it can be removed
++                        paintingEvent = new org.bukkit.event.painting.PaintingBreakByEntityEvent((Painting) this.getBukkitEntity(), par1DamageSource.getEntity() == null ? null : par1DamageSource.getEntity().getBukkitEntity());
++                    }
++                }
++                else if (par1DamageSource.isExplosion())
++                {
++                    event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), HangingBreakEvent.RemoveCause.EXPLOSION);
++                }
++
++                this.worldObj.getServer().getPluginManager().callEvent(event);
++
++                if (paintingEvent != null)
++                {
++                    paintingEvent.setCancelled(event.isCancelled());
++                    this.worldObj.getServer().getPluginManager().callEvent(paintingEvent);
++                }
++
++                if (isDead || event.isCancelled() || (paintingEvent != null && paintingEvent.isCancelled()))
++                {
++                    return true;
++                }
++
++                // CraftBukkit end
+                 this.setDead();
+                 this.setBeenAttacked();
+                 this.func_110128_b(par1DamageSource.getEntity());
+@@ -255,6 +327,30 @@
+     {
+         if (!this.worldObj.isRemote && !this.isDead && par1 * par1 + par3 * par3 + par5 * par5 > 0.0D)
+         {
++            if (isDead)
++            {
++                return;    // CraftBukkit
++            }
++
++            // CraftBukkit start
++            HangingBreakEvent event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), HangingBreakEvent.RemoveCause.PHYSICS);
++            this.worldObj.getServer().getPluginManager().callEvent(event);
++            PaintingBreakEvent paintingEvent = null;
++
++            if (this instanceof EntityPainting)
++            {
++                // Fire old painting event until it can be removed
++                paintingEvent = new PaintingBreakEvent((Painting) this.getBukkitEntity(), PaintingBreakEvent.RemoveCause.valueOf(event.getCause().name()));
++                paintingEvent.setCancelled(event.isCancelled());
++                this.worldObj.getServer().getPluginManager().callEvent(paintingEvent);
++            }
++
++            if (event.isCancelled() || (paintingEvent != null && paintingEvent.isCancelled()))
++            {
++                return;
++            }
++
++            // CraftBukkit end
+             this.setDead();
+             this.func_110128_b((Entity)null);
+         }
+@@ -265,7 +361,7 @@
+      */
+     public void addVelocity(double par1, double par3, double par5)
+     {
+-        if (!this.worldObj.isRemote && !this.isDead && par1 * par1 + par3 * par3 + par5 * par5 > 0.0D)
++        if (false && !this.worldObj.isRemote && !this.isDead && par1 * par1 + par3 * par3 + par5 * par5 > 0.0D)   // CraftBukkit - not needed
+         {
+             this.setDead();
+             this.func_110128_b((Entity)null);
+@@ -335,5 +431,5 @@
+ 
+     public abstract int func_82330_g();
+ 
+-    public abstract void func_110128_b(Entity entity);
++    public abstract void func_110128_b(Entity par1Entity);
+ }

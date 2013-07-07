@@ -6,8 +6,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.List;
 
+// MCPC+ start
+import za.co.mcportcentral.potion.CustomModRecipe;
+import org.bukkit.inventory.Recipe;
+// MCPC+ end
+
 import net.minecraft.block.Block;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
@@ -149,4 +153,17 @@ public class ShapelessOreRecipe implements IRecipe
     {
         return this.input;
     }
+
+    // MCPC+ start - required for Bukkit API
+    @Override
+    public Recipe toBukkitRecipe() {
+        return new CustomModRecipe(this);
+    }
+
+    @Override
+    public List<ItemStack> getIngredients() {
+        throw new UnsupportedOperationException("getIngredients() not supported on net.minecraftforge.oredict.ShapelessOreRecipe");
+        // because the ingredients are not necessarily a list of ItemStacks; but can include alternatives via oredict string names
+    }
+    // MCPC+ end
 }
