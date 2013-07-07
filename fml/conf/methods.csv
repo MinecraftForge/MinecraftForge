@@ -7,7 +7,9 @@ func_100015_a,isKeyDown,0,Returns whether the specified key binding is currently
 func_102007_a,canInsertItem,2,"Returns true if automation can insert the given item in the given slot from the given side. Args: Slot, item, side"
 func_102008_b,canExtractItem,2,"Returns true if automation can extract the given item in the given slot from the given side. Args: Slot, item, side"
 func_102013_b,canExtractItemFromInventory,2,
+func_102015_a,canInsertItemToInventory,2,"Args: inventory, item, slot, side"
 func_102026_a,isBlockTopFacingSurfaceSolid,2,"Performs check to see if the block is a normal, solid block, or if the metadata of the block indicates that its facing puts its solid side upwards. (inverted stairs, for example)"
+func_102027_b,renderBlockWithAmbientOcclusion,0,"Renders non-full-cube block with ambient occusion.  Args: block, x, y, z, red, green, blue (lighting)"
 func_102028_d,isSplashPotionEffect,0,
 func_102028_d,isSplashPotionEffect,1,
 func_70000_a,addServerStatsToSnooper,2,
@@ -162,6 +164,7 @@ func_70305_f,closeChest,2,
 func_70306_a,addMapping,2,Adds a new two-way mapping between the class and its string name in both hashmaps.
 func_70307_a,readFromNBT,2,Reads a tile entity from NBT.
 func_70308_a,setWorldObj,2,Sets the worldObj for this tileEntity.
+func_70309_m,hasWorldObj,2,Returns true if the worldObj isn't null.
 func_70310_b,writeToNBT,2,Writes a tile entity to NBT.
 func_70311_o,getBlockType,2,Gets the block type at the location of this entity (client-only).
 func_70312_q,validate,2,validates a tile entity
@@ -264,6 +267,7 @@ func_70541_f,multipleParticleScaleBy,0,
 func_70542_f,getGreenColorF,0,
 func_70543_e,multiplyVelocity,0,
 func_70589_b,setBaseSpellTextureIndex,0,Sets the base spell texture index
+func_70596_a,applyColourMultiplier,0,"If the block has a colour multiplier, copies it to this particle and returns this particle."
 func_70598_b,setHomeArea,0,
 func_70598_b,setHomeArea,1,
 func_70599_aP,getSoundVolume,2,Returns the volume for the sounds this mob makes.
@@ -505,7 +509,8 @@ func_71018_a,sleepInBedAt,2,Attempts to have the player sleep in a bed at the sp
 func_71019_a,dropPlayerItemWithRandomChoice,2,"Args: itemstack, flag"
 func_71020_j,addExhaustion,2,increases exhaustion level by supplied amount
 func_71021_b,dropPlayerItem,2,Args: itemstack - called when player drops an item stack that's not in his inventory (like items still placed in a workbench while the workbench'es GUI gets closed)
-func_71022_a,alertWolves,2,"Called when the player attack or gets attacked, it's alert all wolves in the area that are owned by the player to join the attack or defend the player."
+func_71022_a,alertWolves,0,"Called when the player attack or gets attacked, it's alert all wolves in the area that are owned by the player to join the attack or defend the player."
+func_71022_a,alertWolves,1,"Called when the player attack or gets attacked, it's alert all wolves in the area that are owned by the player to join the attack or defend the player."
 func_71023_q,addExperience,2,This method increases the player's current amount of experience.
 func_71024_bL,getFoodStats,2,Returns the player's FoodStats object.
 func_71025_t,getTranslator,0,
@@ -564,7 +569,7 @@ func_71124_b,getCurrentItemOrArmor,2,"0 = item, 1-n is armor"
 func_71125_a,updateClientInfo,2,
 func_71126_v,getChatVisibility,2,
 func_71127_g,onUpdateEntity,2,
-func_71128_l,closeInventory,2,
+func_71128_l,closeContainer,2,Closes the container the player currently has open.
 func_71150_b,setHealth,0,Updates health locally.
 func_71151_f,getFOVMultiplier,0,Gets the player's field of view multiplier. (ex. when flying)
 func_71152_a,setXPStats,0,"Sets the current XP, total XP, and level number."
@@ -941,7 +946,7 @@ func_71907_b,setTickRandomly,2,Sets whether this block type will receive random 
 func_71908_a,getPlayerRelativeBlockHardness,2,"Gets the hardness of block at the given coordinates in the given world, relative to the ability of the given EntityPlayer."
 func_71910_a,quantityDroppedWithBonus,2,Returns the usual quantity dropped by the block plus a bonus of 1 to 'i' (inclusive).
 func_71911_a_,getSelectedBoundingBoxFromPool,0,Returns the bounding box of the wired rectangular prism to render.
-func_71913_a,canCollideCheck,2,"Returns whether this block is collideable based on the arguments passed in Args: blockMetaData, unknownFlag"
+func_71913_a,canCollideCheck,2,Returns whether this block is collideable based on the arguments passed in \n@param par1 block metaData \n@param par2 whether the player right-clicked while holding a boat
 func_71914_a,dropBlockAsItemWithChance,2,Drops the block items with a specified chance of dropping the specified items
 func_71915_e,getMobilityFlag,2,"Returns the mobility information of the block, 0 = free, 1 = can't push but can move over, 2 = total immobility and stop pistons"
 func_71916_a,isVecInsideYZBounds,2,Checks if a vector is within the Y and Z bounds of the block.
@@ -1328,9 +1333,10 @@ func_72677_b,getVolume,2,
 func_72678_c,getPitch,2,
 func_72682_c,getChunkWatchersWithPlayers,2,
 func_72683_a,addPlayer,2,Adds an EntityPlayerMP to the PlayerManager.
+func_72684_a,overlaps,2,"Determine if two rectangles centered at the given points overlap for the provided radius. Arguments: x1, z1, x2, z2, radius."
 func_72685_d,updateMountedMovingPlayer,2,"update chunks around a player being moved by server logic (e.g. cart, boat)"
 func_72686_a,getFurthestViewableBlock,2,Get the furthest viewable block given player's view distance
-func_72687_a,flagChunkForUpdate,2,"the ""PlayerInstance""/ chunkWatcher will send this chunk to all players who are in line of sight"
+func_72687_a,markBlockForUpdate,2,Called by WorldManager.markBlockForUpdate; marks a block to be resent to clients.
 func_72688_a,getWorldServer,2,
 func_72689_b,getChunkWatchers,2,
 func_72690_a,getOrCreateChunkWatcher,2,
@@ -1425,9 +1431,9 @@ func_72841_b,getUniqueDataId,2,Returns an unique new data id from the MapStorage
 func_72842_a,getBlockDensity,2,"Gets the percentage of real blocks within within a bounding box, along a specified vector."
 func_72843_D,setRandomSeed,2,puts the World Random seed to a specific state dependant on the inputs
 func_72844_a,getEntityPathToXYZ,2,
-func_72845_h,markBlockForUpdate,2,"On the client, re-renders the block. On the server, sends the block to the client (which will re-render it), including the tile entity description packet if applicable. Args: x, y, z"
+func_72845_h,markBlockForUpdate,2,"On the client, re-renders the block. On the server, sends the block to the client (which will re-render it only if the ID or MD changes), including the tile entity description packet if applicable. Args: x, y, z"
 func_72846_b,getClosestVulnerablePlayer,2,"Returns the closest vulnerable player within the given radius, or null if none is found."
-func_72847_b,releaseEntitySkin,2,Decrement the reference counter for this entity's skin image data
+func_72847_b,onEntityRemoved,2,
 func_72848_b,removeWorldAccess,0,Removes a worldAccess from the worldAccesses object
 func_72849_a,getBlockLightValue_do,2,"Gets the light value of a block location. This is the actual function that gets the value and has a bool flag that indicates if its a half step block to get the maximum light value of a direct neighboring block (left, right, forward, back, and up)"
 func_72850_v,isBlockFreezableNaturally,2,checks to see if a given block is both water and has at least one immediately adjacent non-water block
@@ -1477,7 +1483,7 @@ func_72897_h,joinEntityInSurroundings,0,spwans an entity and loads surrounding c
 func_72898_h,notifyBlocksOfNeighborChange,2,"Notifies neighboring blocks that this specified block changed  Args: x, y, z, blockID"
 func_72899_e,blockExists,2,"Returns whether a block exists at world coordinates x, y, z"
 func_72900_e,removeEntity,2,Schedule the entity for removal during the next tick. Marks the entity dead in anticipation.
-func_72901_a,rayTraceBlocks_do,2,
+func_72901_a,clip,2,"Performs a raycast against all blocks in the world, and optionally liquids."
 func_72902_n,markBlockForRenderUpdate,2,"On the client, re-renders this block. On the server, does nothing. Used for lighting updates."
 func_72903_x,setActivePlayerChunksAndCheckLight,2,
 func_72904_c,checkChunksExist,2,"Checks between a min and max all the chunks inbetween actually exist. Args: minX, minY, minZ, maxX, maxY, maxZ"
@@ -1499,7 +1505,7 @@ func_72919_O,getHorizon,0,Returns horizon height for use in rendering the sky.
 func_72920_a,getPendingBlockUpdates,2,
 func_72921_c,setBlockMetadataWithNotify,2,"Sets the blocks metadata and if set will then notify blocks that this block changed, depending on the flag. Args: x, y, z, metadata, flag. See setBlock for flag description"
 func_72922_b,getFirstUncoveredBlock,2,"Returns the block ID of the first block at this (x,z) location with air above it, searching from sea level upwards."
-func_72923_a,obtainEntitySkin,2,"Start the skin for this entity downloading, if necessary, and increment its reference counter"
+func_72923_a,onEntityAdded,2,
 func_72924_a,getPlayerEntityByName,2,Find a player by name in this world.
 func_72925_a,getSkyBlockTypeBrightness,0,Brightness for SkyBlock.Sky is clear white and (through color computing it is assumed) DEPENDENT ON DAYTIME. Brightness for SkyBlock.Block is yellowish and independent.
 func_72926_e,playAuxSFX,2,See description for func_72706_a.
@@ -1508,7 +1514,7 @@ func_72928_a,markTileEntityForDespawn,2,adds tile entity to despawn list (rename
 func_72929_e,getCelestialAngleRadians,2,Return getCelestialAngle()*2*PI
 func_72931_a,canPlaceEntityOnSide,2,Returns true if the given Entity can be placed on the given side of the given block position.
 func_72932_q,removeBlockTileEntity,2,"Removes the TileEntity for a given block in X,Y,Z coordinates"
-func_72933_a,rayTraceBlocks,2,"ray traces all blocks, including non-collideable ones"
+func_72933_a,clip,2,Performs a raycast against all blocks in the world except liquids.
 func_72934_a,playRecord,2,"Plays a record at the specified coordinates of the specified name. Args: recordName, x, y, z"
 func_72935_r,isDaytime,2,Checks whether its daytime by seeing if the light subtracted from the skylight is less than 4
 func_72936_c,updateLightByType,2,
@@ -1572,7 +1578,8 @@ func_73045_a,getEntityByID,2,"Returns the Entity with the given ID, or null if i
 func_73046_m,getMinecraftServer,2,Gets the MinecraftServer.
 func_73047_i,createBonusChest,2,Creates the bonus chest in the world.
 func_73049_a,getAllTileEntityInBox,2,"pars: min x,y,z , max x,y,z"
-func_73050_b,uncheckedUpdateEntity,2,direct call to super.updateEntityWithOptionalForce
+func_73050_b,uncheckedUpdateEntity,0,direct call to super.updateEntityWithOptionalForce
+func_73050_b,uncheckedUpdateEntity,1,direct call to super.updateEntityWithOptionalForce
 func_73051_P,resetRainAndThunder,2,
 func_73052_b,createSpawnPosition,2,"creates a spawn position at random within 256 blocks of 0,0"
 func_73053_d,wakeAllPlayers,2,
@@ -1635,10 +1642,10 @@ func_73240_a,unloadAllChunks,2,"marks all chunks for unload, ignoring those near
 func_73241_b,unloadChunksIfNotNearSpawn,2,"marks chunk for unload by ""unload100OldestChunks""  if there is no spawn point, or if the center of the chunk is outside 200 blocks (x or z) of the spawn"
 func_73242_b,safeSaveChunk,2,"used by saveChunks, but catches any exceptions if the save fails."
 func_73243_a,safeSaveExtraChunkData,2,"used by saveChunks, but catches any exceptions if the save fails."
-func_73252_b,sendThisChunkToPlayer,2,
+func_73252_b,removePlayer,2,
 func_73253_a,getChunkLocation,2,
 func_73254_a,sendChunkUpdate,2,
-func_73255_a,addPlayerToChunkWatchingList,2,called for all chunks within the visible radius of the player
+func_73255_a,addPlayer,2,
 func_73256_a,sendToAllPlayersWatchingChunk,2,
 func_73257_a,sendTileToAllPlayersWatchingChunk,2,
 func_73258_b,getPlayersInChunk,2,
@@ -1936,6 +1943,7 @@ func_74226_k,needsScrollBars,0,returns (if you are not on the inventoryTab) and 
 func_74227_b,setCurrentCreativeTab,0,
 func_74228_j,updateCreativeSearch,0,
 func_74229_i,getInventory,0,Returns the creative inventory
+func_74230_h,getCurrentTabIndex,0,Returns the current creative tab index.
 func_74231_b,renderCreativeInventoryHoveringText,0,"Renders the creative inventory hovering text if mouse is over it. Returns true if did render or false otherwise. Params: current creative tab to be checked, current mouse x position, current mouse y position."
 func_74233_a,renderCreativeTab,0,Renders passed creative inventory tab into the screen.
 func_74252_a,setNetClientHandler,0,Sets the NetClientHandler.
@@ -2334,7 +2342,7 @@ func_75130_a,onCraftMatrixChanged,2,Callback for when the crafting matrix is cha
 func_75131_a,putStacksInSlots,0,"places itemstacks in first x slots, x being aitemstack.lenght"
 func_75132_a,addCraftingToCrafters,2,
 func_75133_b,retrySlotClick,2,
-func_75134_a,onCraftGuiClosed,2,Callback for when the crafting gui is closed.
+func_75134_a,onContainerClosed,2,Called when the container is closed.
 func_75135_a,mergeItemStack,2,merges provided ItemStack with the first avaliable one in the container/player inventory
 func_75136_a,getNextTransactionID,0,Gets a unique transaction ID. Parameter is unused.
 func_75137_b,updateProgressBar,0,
@@ -2697,7 +2705,7 @@ func_76072_h,getPlayerNBTTagCompound,2,Returns the player's NBTTagCompound to be
 func_76073_f,getWorldTime,2,Get current world time
 func_76074_e,getSpawnZ,2,Returns the z spawn position
 func_76075_d,getSpawnY,2,Return the Y axis spawning point of the player.
-func_76076_i,getDimension,2,
+func_76076_i,getVanillaDimension,2,"Returns vanilla MC dimension (-1,0,1). For custom dimension compatibility, always prefer WorldProvider.dimensionID accessed from World.provider.dimensionID"
 func_76077_q,getGameType,2,Gets the GameType.
 func_76078_e,setSaveVersion,2,Sets the save version of the world
 func_76079_c,getSpawnX,2,Returns the x spawn position
@@ -3411,6 +3419,7 @@ func_77649_a,getDamageVsEntity,0,Returns the damage against a given entity.
 func_77649_a,getDamageVsEntity,1,Returns the damage against a given entity.
 func_77650_f,getIconIndex,0,Returns the icon index of the stack given as argument.
 func_77651_p,getShareTag,2,"If this function returns true (or the item is damageable), the ItemStack's NBT tag will be sent to the client."
+func_77653_i,getItemStackDisplayName,2,
 func_77654_b,onEaten,2,
 func_77655_b,setUnlocalizedName,2,"Sets the unlocalized name of this item to the string passed as the parameter, prefixed by ""item."""
 func_77656_e,setMaxDamage,2,set max damage of an Item
@@ -3858,11 +3867,13 @@ func_82144_au,doesEntityNotTriggerPressurePlate,2,Return whether this entity sho
 func_82145_z,getMaxInPortalTime,2,Return the amount of time this entity should stay in a portal before being transported.
 func_82147_ab,getPortalCooldown,2,Return the amount of cooldown before this entity can use a portal again.
 func_82148_at,getTeleportDirection,2,
+func_82149_j,copyLocationAndAnglesFrom,2,Sets this entity's location and angles to the location and angles of the passed in entity.
 func_82150_aj,isInvisible,2,
 func_82154_e,setIsAnvil,2,
 func_82159_b,getArmorPosition,2,
 func_82160_b,dropEquipment,2,Drop the equipment for this entity.
 func_82161_a,getArmorItemForSlot,2,"Params: Armor slot, Item tier"
+func_82162_bC,enchantEquipment,2,Enchants the entity's armor and held item based on difficulty
 func_82163_bD,initCreature,0,Initialize this creature.
 func_82163_bD,initCreature,1,Initialize this creature.
 func_82164_bB,addRandomArmor,2,Makes entity wear random armor based on difficulty
@@ -3901,7 +3912,7 @@ func_82241_s,getHideCape,0,
 func_82242_a,addExperienceLevel,2,Add experience levels to this player.
 func_82244_d,displayGUIAnvil,2,Displays the GUI for interacting with an anvil.
 func_82245_bX,isSpawnForced,2,
-func_82246_f,canCurrentToolHarvestBlock,2,"Returns true if the item the player is holding can harvest the block at the given coords. Args: x, y, z."
+func_82246_f,isCurrentToolAdventureModeExempt,2,Returns true if the given block can be mined with the current tool in adventure mode.
 func_82247_a,canPlayerEdit,2,
 func_82265_c,setEnabled,0,
 func_82266_h,setDisabledTextColour,0,
@@ -4004,6 +4015,7 @@ func_82581_a,createCrashReport,2,Create a crash report which indicates a NBT rea
 func_82582_d,hasNoTags,2,Return whether this compound has no tags.
 func_82591_c,getPoolSize,2,
 func_82593_b,getPlaceSound,2,Used when a player places a block.
+func_82594_a,getObject,2,
 func_82595_a,putObject,2,Register an object on this registry.
 func_82599_e,getFrontOffsetZ,2,Returns a offset that addresses the block in front of this facing.
 func_82600_a,getFront,2,Returns the facing that represents the block in front of it.
@@ -4064,12 +4076,14 @@ func_82733_a,selectEntitiesWithinAABB,2,
 func_82734_g,getChunkHeightMapMinimum,2,"Gets the heightMapMinimum field of the given chunk, or 0 if the chunk is not loaded. Coords are in blocks. Args: X, Z"
 func_82736_K,getGameRules,2,Gets the GameRules instance.
 func_82737_E,getTotalWorldTime,2,
+func_82740_a,scheduleBlockUpdateWithPriority,2,
 func_82742_i,resetUpdateEntityTick,2,Resets the updateEntityTick field to 0
 func_82743_f,getCreationCloudUpdateTick,0,retrieves the 'date' at which the PartiallyDestroyedBlock was created
 func_82744_b,setCloudUpdateTick,0,saves the current Cloud update tick into the PartiallyDestroyedBlock
 func_82746_a,broadcastSound,2,
 func_82747_f,getWorldTypeID,2,
 func_82752_c,isAdventure,2,Returns true if this is the ADVENTURE game type
+func_82753_a,setPriority,2,
 func_82756_a,getGameRuleStringValue,2,Gets the GameRule's value as String.
 func_82757_a,setValue,2,Set this game rule value.
 func_82758_b,getGameRuleBooleanValue,2,Gets the GameRule's value as boolean.
@@ -4092,6 +4106,7 @@ func_82780_a,renderBlockFlowerpot,0,Renders flower pot
 func_82781_a,getEnchantments,2,Return the enchantments for the specified stack.
 func_82782_a,setEnchantments,2,Set the enchantments for the specified stack.
 func_82787_a,findMatchingRecipe,2,
+func_82788_x,canItemEditBlocks,2,"Returns true if players can use this item to affect the world (e.g. placing blocks, placing ender eyes in portal) when not in creative"
 func_82789_a,getIsRepairable,2,Return whether this item is repairable in an anvil.
 func_82790_a,getColorFromItemStack,0,
 func_82810_a,createHangingEntity,2,Create the hanging entity associated to this item.
@@ -4105,6 +4120,7 @@ func_82829_a,renderCloudsCheck,0,Render clouds if enabled
 func_82830_a,getNightVisionBrightness,0,Gets the night vision brightness
 func_82833_r,getDisplayName,2,returns the display name of the itemstack
 func_82834_c,setItemName,2,Sets the item's name (used by anvil to rename the items).
+func_82835_x,canEditBlocks,2,
 func_82836_z,getItemFrame,2,Return the item frame this stack is on. Returns null if not on an item frame.
 func_82837_s,hasDisplayName,2,Returns true if the itemstack has a display name
 func_82838_A,getRepairCost,2,"Get this stack's repair cost, or 0 if no repair cost is defined."
@@ -4144,11 +4160,13 @@ func_83020_a,setRenderBounds,0,"Sets the bounding box for the block to draw in, 
 func_85028_t,getClassToNameMap,2,
 func_85030_a,playSound,2,
 func_85032_ar,isEntityInvulnerable,2,Return whether this entity is invulnerable to damage.
+func_85033_bc,collideWithNearbyEntities,2,
 func_85034_r,setArrowCountInEntity,2,sets the amount of arrows stuck in the entity. used for rendering those
 func_85035_bI,getArrowCountInEntity,2,"counts the amount of arrows stuck in the entity. getting hit by arrows increases this, used in rendering"
 func_85036_m,setCombatTask,2,sets this entity's combat AI.
 func_85039_t,addScore,2,Add to player's score
 func_85040_s,setScore,2,Set player's score
+func_85041_a,mouseClickMove,0,"Called when a mouse button is pressed and the mouse is moved around. Parameters are : mouseX, mouseY, lastButtonClicked & timeSinceMouseClick."
 func_85044_b,drawItemStack,0,
 func_85052_h,getThrower,2,
 func_85054_d,searchForOtherItemsNearby,2,Looks for other itemstacks nearby and tries to stack them together
@@ -4196,12 +4214,13 @@ func_85145_a,callTileEntityName,2,
 func_85151_d,getLowerChestInventory,2,Return this chest container's lower chest inventory.
 func_85154_a,callEntityType,2,
 func_85156_a,removeTask,2,removes the indicated task from the entity's AI tasks.
-func_85157_q,isAlwaysHarvested,2,Check to see if we can harvest it in any case.
-func_85158_p,setAlwaysHarvested,2,Set as harvestable in any case.
+func_85157_q,isAdventureModeExempt,2,Returns true if blocks with this material can always be mined in adventure mode.
+func_85158_p,setAdventureModeExempt,2,@see #isAdventureModeExempt()
 func_85160_a,callStructureType,2,
 func_85162_a,callChunkPositionHash,2,
 func_85170_a,callServerType,2,
 func_85173_a,playSoundToNearExcept,2,Plays sound to all near players except the player reference given
+func_85174_u,isBlockFullCube,2,
 func_85175_e,blockGetRenderType,2,Returns the render type of the block at the given coordinate.
 func_85176_s,getDefaultTeleporter,2,
 func_85181_a,getRandomModelBox,0,
@@ -4236,11 +4255,21 @@ func_92087_a,causeThornsDamage,2,Returns the EntityDamageSource of the Thorns en
 func_92089_a,canApply,2,
 func_92097_a,negateDamage,2,"Used by ItemStack.attemptDamageItem. Randomly determines if a point of damage should be negated using the enchantment level (par1). If the ItemStack is Armor then there is a flat 60% chance for damage to be negated no matter the enchantment level, otherwise there is a 1-(par/1) chance for damage to be negated."
 func_92103_a,addRecipe,2,
-func_94041_b,isStackValidForSlot,2,Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+func_92111_a,getEnchantedItemStack,2,Returns the ItemStack of an enchanted version of this item.
+func_92115_a,getEnchantedItemStack_do,2,Returns the ItemStack of an enchanted version of this item.
+func_92116_a,addEnchantmentBooksToList,0,Adds the enchantment books from the supplied EnumEnchantmentType to the given list.
+func_94041_b,isItemValidForSlot,2,Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
 func_94042_c,isInvNameLocalized,2,"If this returns false, the inventory name will be used as an unlocalized name, and translated into the player's language. Otherwise it will be used directly."
+func_94043_a,setChestGuiName,2,Sets the custom display name to use when opening a GUI for this specific TileEntityChest.
 func_94049_a,setCustomName,2,
 func_94052_a,setParticleIcon,0,
 func_94053_h,nextTextureIndexX,0,
+func_94056_bM,hasCustomNameTag,2,
+func_94057_bL,getCustomNameTag,2,
+func_94058_c,setCustomNameTag,2,
+func_94059_bO,getAlwaysRenderNameTagForRender,0,
+func_94061_f,setAlwaysRenderNameTag,2,
+func_94062_bN,getAlwaysRenderNameTag,2,
 func_94064_a,displayGUIHopper,2,
 func_94065_a,drawTexturedModelRectFromIcon,0,
 func_94083_c,getTntPlacedBy,2,returns null or the entityliving it was placed or ignited by
@@ -4269,6 +4298,7 @@ func_94116_j,insertItemToInventory,2,Inserts one item from the hopper into the i
 func_94117_a,insertStack,2,"Inserts a stack into an inventory. Args: Inventory, stack, side. Returns leftover items."
 func_94119_v,getOutputInventory,2,Gets the inventory the hopper is pointing at.
 func_94128_d,getAccessibleSlotsFromSide,2,Returns an array containing the indices of the slots that can be accessed by automation on the given side of this block.
+func_94129_a,setGuiDisplayName,2,Sets the custom display name to use when opening a GUI linked to this tile entity.
 func_94140_a,registerDestroyBlockIcons,0,
 func_94143_a,updateIcons,0,
 func_94144_a,renderBlockInMinecart,0,Renders the block that is inside the minecart.
@@ -4370,6 +4400,8 @@ func_94448_e,getBrewingStandIcon,0,
 func_94451_c,getDirectionFromMetadata,2,
 func_94452_d,getIsBlockNotPoweredFromMetadata,2,
 func_94453_b,getHopperIcon,0,
+func_94478_d,isGettingInput,2,
+func_94491_m,getOutputStrength,2,
 func_94501_a,getRailLogic,2,
 func_94502_a,isMinecartTrack,2,
 func_94503_c,canConnectFrom,2,
@@ -4382,12 +4414,13 @@ func_94509_b,refreshConnectedTracks,2,
 func_94510_b,isPartOfTrack,2,
 func_94520_b,containsTranslateKey,2,
 func_94526_b,calcRedstoneFromInventory,2,
+func_94531_b,canDragIntoSlot,2,"Returns true if the player can ""drag-spilt"" items into this slot,. returns true by default. Called to check if the slot can be added to a list of Slots to split the held ItemStack across."
 func_94539_a,setExplosionSource,2,
 func_94540_d,setExplosion,2,
 func_94541_c,isExplosion,2,
 func_94571_i,setBlockToAir,2,"Sets a block to 0 and notifies relevant systems with the block change  Args: x, y, z"
 func_94572_D,getStrongestIndirectPower,2,
-func_94573_a,isBlockTickScheduled,2,"Returns true if the given block will receive a scheduled tick in the future. Args: X, Y, Z, blockID"
+func_94573_a,isBlockTickScheduledThisTick,2,"Returns true if the given block will receive a scheduled tick in this tick. Args: X, Y, Z, blockID"
 func_94574_k,getIndirectPowerOutput,2,"Returns the indirect signal strength being outputted by the given block in the *opposite* of the given direction. Args: X, Y, Z, direction"
 func_94575_c,setBlock,2,"Sets a block and notifies relevant systems with the block change  Args: x, y, z, blockID"
 func_94576_a,getEntitiesWithinAABBExcludingEntity,2,
@@ -4400,8 +4433,11 @@ func_94609_a,callTileEntityID,2,
 func_94611_a,callTileEntityDataInfo,2,
 func_94901_k,getSpriteNumber,0,"Returns 0 for /terrain.png, 1 for /gui/items.png"
 func_96090_ax,getTranslatedEntityName,2,Returns the translated name of the entity.
+func_96094_a,setMinecartName,2,Sets the minecart's name.
 func_96095_a,onActivatorRailPass,2,Called every tick the minecart is on an activator rail.
 func_96096_ay,isIgnited,2,Returns true if the TNT minecart is ignited.
+func_96099_a,setOutputSignal,2,
+func_96100_a,getOutputSignal,2,
 func_96104_c,setCommandSenderName,2,Sets the name of the command sender
 func_96107_aA,getXPos,2,Gets the world X position for this hopper entity.
 func_96108_aC,getZPos,2,Gets the world Z position for this hopper entity.
@@ -4412,6 +4448,9 @@ func_96115_a,setInventoryName,2,
 func_96116_a,suckItemsIntoHopper,2,Sucks one item into the given hopper from an inventory or EntityItem above it.
 func_96117_b,getInventoryAtLocation,2,Gets an inventory at the given location to extract items into or take items from. Can find either a tile entity or regular entity implementing IInventory.
 func_96118_b,getInventoryAboveHopper,2,"Looks for anything, that can hold items (like chests, furnaces, etc.) one block above the given hopper."
+func_96120_a,setEquipmentDropChance,2,
+func_96121_ay,getPathSearchRange,0,
+func_96121_ay,getPathSearchRange,1,
 func_96123_co,getWorldScoreboard,2,
 func_96124_cp,getTeam,2,
 func_96125_a,displayGUIHopperMinecart,2,
@@ -4445,6 +4484,7 @@ func_96446_b,getIconSafe,0,
 func_96447_a,renderBlockHopperMetadata,0,
 func_96448_c,getMissingIcon,0,
 func_96455_e,getMissingIcon,0,
+func_96467_a,registerVanillaDispenserBehaviors,2,
 func_96468_q_,hasComparatorInputOverride,2,"If this returns true, then comparators facing away from this block will use the value from getComparatorInputOverride instead of the actual redstone signal strength."
 func_96471_k,updateMetadata,2,Updates the Metadata to include if the Hopper gets powered by Redstone or not
 func_96472_a,getBehaviorForItemStack,2,Returns the behavior for the given ItemStack.
@@ -4465,6 +4505,11 @@ func_96563_a,callEntityName,2,
 func_96631_a,attemptDamageItem,2,"Attempts to damage the ItemStack with par1 amount of damage, If the ItemStack has the Unbreaking enchantment there is a chance for each point of damage to be negated. Returns true if it takes more damage than getMaxDamage(). Returns false otherwise or if the ItemStack can't be damaged or if all points of damage are negated."
 func_96632_a,callItemDisplayName,2,
 func_96637_b,isReadOnly,2,
+func_96652_c,getScorePoints,2,
+func_96653_e,getPlayerName,2,
+func_96663_f,getColorSuffix,2,Returns the color suffix for the player's team name
+func_96667_a,formatPlayerName,2,Returns the player name including the color prefixes and suffixes
+func_96668_e,getColorPrefix,2,Returns the color prefix for the player's team name
 func_96670_d,getMembershipCollection,2,
 func_96678_d,getDisplayName,2,
 func_96679_b,getName,2,
@@ -4477,6 +4522,7 @@ func_98042_n,setTransferTicker,2,"Sets the transfer ticker, used to determine th
 func_98043_aE,canTransfer,2,Returns whether the hopper cart can currently transfer an item.
 func_98046_c,setTransferCooldown,2,
 func_98047_l,isCoolingDown,2,
+func_98049_a,getSpawnerLogic,2,Returns the spawner logic associated with this spawner
 func_98052_bS,canPickUpLoot,2,
 func_98053_h,setCanPickUpLoot,2,
 func_98076_a,getServerLogger,1,

@@ -6,6 +6,9 @@ field_100002_d,cancelBtn,0,
 field_100003_c,doneBtn,0,
 field_100010_b,iconArray,0,
 field_100013_f,isPotionDurationMax,0,"True if potion effect duration is at maximum, false otherwise."
+field_102009_f,slots_sides,2,
+field_102010_d,slots_top,2,
+field_102011_e,slots_bottom,2,
 field_70009_b,buffer,2,RCon string buffer for log.
 field_70010_a,consoleBuffer,2,only ever used by MinecraftServer.executeCommand
 field_70116_cv,serverPosZ,0,
@@ -1476,7 +1479,7 @@ field_72792_d,entityViewDistance,2,
 field_72793_b,trackedEntities,2,"List of tracked entities, used for iteration operations on tracked entities."
 field_72794_c,trackedEntityIDs,2,
 field_72795_a,theWorld,2,
-field_72814_d,hasExtendedLevels,2,set by !chunk.getAreLevelsEmpty
+field_72814_d,isEmpty,2,True if the chunk cache is empty.
 field_72815_e,worldObj,2,Reference to the World object.
 field_72816_b,chunkZ,2,
 field_72817_c,chunkArray,2,
@@ -1530,7 +1533,8 @@ field_73059_b,theChunkProviderServer,2,
 field_73061_a,mcServer,2,
 field_73062_L,theEntityTracker,2,
 field_73063_M,thePlayerManager,2,
-field_73065_O,pendingTickListEntries,2,All work to do in future ticks.
+field_73064_N,pendingTickListEntriesHashSet,2,
+field_73065_O,pendingTickListEntriesTreeSet,2,All work to do in future ticks.
 field_73066_T,entityIdMap,2,An IntHashMap of entity IDs (integers) to their Entity objects.
 field_73067_Q,blockEventCache,2,Double buffer of ServerBlockEventList[] for holding pending BlockEventData's
 field_73068_P,allPlayersSleeping,2,is false if there are no players
@@ -2717,6 +2721,7 @@ field_75309_a,targetEntity,2,
 field_75310_g,theTameable,2,
 field_75311_b,entityPathNavigate,0,The PathNavigate of our entity.
 field_75311_b,entityPathNavigate,1,The PathNavigate of our entity.
+field_75312_a,entityCallsForHelp,2,
 field_75313_b,theTarget,2,
 field_75314_a,theEntityTameable,2,
 field_75315_b,theOwnerAttacker,2,
@@ -2936,6 +2941,8 @@ field_75768_d,mapDataDir,2,
 field_75769_e,initializationTime,2,The time in milliseconds when this field was initialized. Stored in the session lock file.
 field_75770_b,worldDirectory,2,The directory in which to save world data.
 field_75771_c,playersDirectory,2,The directory in which to save player data.
+field_75778_d,tickCount,2,
+field_75779_e,tickRate,2,
 field_75780_b,executingTaskEntries,2,A list of EntityAITaskEntrys that are currently being executed.
 field_75781_c,theProfiler,2,Instance of Profiler.
 field_75782_a,taskEntries,2,A list of EntityAITaskEntrys in EntityAITasks.
@@ -3841,7 +3848,7 @@ field_77747_aY,sugar,2,
 field_77748_bA,eyeOfEnder,2,
 field_77749_aR,fishingRod,2,
 field_77750_aQ,compass,2,
-field_77751_aT,lightStoneDust,2,
+field_77751_aT,glowstone,2,
 field_77752_aS,pocketSundial,2,
 field_77753_aV,fishCooked,2,
 field_77754_aU,fishRaw,2,
@@ -4728,6 +4735,7 @@ field_82731_v,wither,2,The wither Potion object.
 field_82741_K,vecPool,2,The world-local pool of vectors
 field_82745_f,createdAtCloudUpdateTick,0,keeps track of how many ticks this PartiallyDestroyedBlock already exists
 field_82748_f,worldTypeId,2,ID for this world type.
+field_82754_f,priority,2,
 field_82755_b,isSmoking,2,whether or not this explosion spawns smoke particles
 field_82759_d,valueDouble,2,
 field_82760_b,valueBoolean,2,
@@ -4791,7 +4799,11 @@ field_82893_b,batBody,0,The body box of the bat model.
 field_82894_c,batRightWing,0,The inner right wing box of the bat model.
 field_82895_a,batHead,0,
 field_82896_a,skeletonHead,0,
+field_82898_f,villagerNose,0,
 field_82902_i,witchHat,0,
+field_82906_o,offsetX,0,
+field_82907_q,offsetZ,0,
+field_82908_p,offsetY,0,
 field_82909_b,presetName,0,Name for this preset.
 field_82910_c,presetData,0,Data for this preset.
 field_82911_a,iconId,0,ID for the item used as icon for this preset.
@@ -4811,6 +4823,7 @@ field_83027_i,renderMinY,0,The minimum Y value for rendering (default 0.0).
 field_85037_d,aiArrowAttack,2,
 field_85038_e,aiAttackOnCollide,2,
 field_85042_b,eventButton,0,
+field_85043_c,lastMouseEvent,0,
 field_85045_v,returningStack,0,Used when touchscreen is enabled
 field_85046_u,returningStackTime,0,
 field_85047_t,returningStackDestSlot,0,
@@ -4840,6 +4853,7 @@ field_85141_a,worldInfoInstance,2,
 field_85143_a,worldInfoInstance,2,
 field_85146_a,theTileEntity,2,
 field_85155_a,theEntity,2,
+field_85159_M,isAdventureModeExempt,2,
 field_85161_a,theMapStructureGenerator,2,
 field_85164_c,theMapStructureGenerator,2,
 field_85168_c,theMapStructureGenerator,2,
@@ -4872,6 +4886,7 @@ field_92076_h,skyLightSent,2,"Whether or not the chunk data contains a light nib
 field_92077_h,pitch,2,The pitch in steps of 2p/256
 field_92078_i,yaw,2,The yaw in steps of 2p/256
 field_92086_a,isBlank,2,When isBlank is true the DataWatcher is not watching any objects
+field_92090_c,enchantmentsBookList,2,The list of enchantments applicable by the anvil from a book
 field_92091_k,thorns,2,
 field_92104_bU,firework,2,
 field_92105_bW,enchantedBook,2,
@@ -4882,6 +4897,7 @@ field_92119_C,overrideHeight,0,
 field_94050_c,customName,2,
 field_94054_b,particleTextureIndexX,0,
 field_94055_c,particleTextureIndexY,0,
+field_94063_bt,_combatTracker,2,
 field_94084_b,tntPlacedBy,2,
 field_94102_c,entityName,2,
 field_94106_a,minecartTNTFuse,2,
@@ -4961,8 +4977,8 @@ field_94299_k,textureWrap,0,
 field_94300_h,textureTarget,0,
 field_94301_i,textureMinFilter,0,
 field_94302_r,textureData,0,
-field_94303_q,textureNotModified,0,False if the texture has been modified since it was last uploaded to the GPU.
-field_94304_p,autoCreate,0,"Uninitialized boolean. If true, the texture is re-uploaded every time it's modified. If false, every tick after it's been modified at least once in that tick."
+field_94303_q,textureUploaded,0,If the texture has been uploaded to the GPU
+field_94304_p,autoUpload,0,"If true, the texture is re-uploaded every time it's modified. If false, every tick after it's been modified at least once in that tick."
 field_94313_f,maxHeight,0,
 field_94314_g,forcePowerOf2,0,
 field_94315_d,currentHeight,0,
@@ -5068,6 +5084,7 @@ field_94516_b,logicWorld,2,
 field_94517_c,railX,2,
 field_94518_a,theRail,2,
 field_94557_a,selectAnything,2,
+field_94579_S,pendingTickListEntriesThisTick,2,
 field_94582_cb,minecartTnt,2,
 field_94583_ca,netherQuartz,2,
 field_94584_bZ,netherrackBrick,2,
@@ -5080,6 +5097,7 @@ field_94601_a,bowPullIconNameArray,2,
 field_94610_a,theTileEntity,2,
 field_94612_a,theTileEntity,2,
 field_96093_i,entityUniqueID,2,
+field_96101_a,outputSignal,2,
 field_96105_c,commandSenderName,2,"The name of command sender (usually username, but possibly ""Rcon"")"
 field_96106_a,succesCount,2,
 field_96113_a,isBlocked,2,Whether this hopper minecart is being blocked by an activator rail.
@@ -5137,6 +5155,7 @@ field_98044_b,transferTicker,2,
 field_98048_c,transferCooldown,2,
 field_98051_e,fallingBlockTileEntityData,2,
 field_98130_m,serverLogAgent,0,
+field_98141_g,fallbackTexturePack,0,
 field_98151_a,theTexture,0,
 field_98181_L,worldLogAgent,2,The log agent for this world.
 field_98189_n,partialRenderBounds,0,

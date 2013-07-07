@@ -16,7 +16,7 @@
  
          this.field_72984_F.func_76318_c("pendingTileEntities");
  
-@@ -3645,7 +3646,7 @@
+@@ -3646,7 +3647,7 @@
      @SideOnly(Side.CLIENT)
      public double func_72919_O()
      {
