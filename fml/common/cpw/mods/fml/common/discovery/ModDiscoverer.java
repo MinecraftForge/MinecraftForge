@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -41,7 +41,10 @@ public class ModDiscoverer
 
     public void findClasspathMods(ModClassLoader modClassLoader)
     {
-        List<String> knownLibraries = ImmutableList.<String>builder().addAll(modClassLoader.getDefaultLibraries()).addAll(CoreModManager.getLibraries()).build();
+        List<String> knownLibraries = ImmutableList.<String>builder()
+                .addAll(modClassLoader.getDefaultLibraries())
+                .addAll(CoreModManager.getLoadedCoremods())
+                .build();
         File[] minecraftSources = modClassLoader.getParentSources();
         if (minecraftSources.length == 1 && minecraftSources[0].isFile())
         {

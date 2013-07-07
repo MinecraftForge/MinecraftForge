@@ -48,7 +48,7 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 public class CoreModManager
 {
     private static String[] rootPlugins =  { "cpw.mods.fml.relauncher.FMLCorePlugin" , "net.minecraftforge.classloading.FMLForgePlugin" };
-    private static List<String> loadedLibraries = new ArrayList<String>();
+    private static List<String> loadedCoremods = new ArrayList<String>();
     private static Map<IFMLLoadingPlugin, File> pluginLocations;
     private static List<IFMLLoadingPlugin> loadPlugins;
     private static boolean deobfuscatedEnvironment;
@@ -248,26 +248,10 @@ public class CoreModManager
                 continue;
             }
 
-//            String className = fmlCorePlugin.replace('.', '/').concat(".class");
-//            JarEntry ent = jar.getJarEntry(className);
-//            if (ent ==null)
-//            {
-//                FMLLog.severe("The coremod %s specified %s as it's loading class but it does not include it - it will be ignored", coreMod.getName(), fmlCorePlugin);
-//                continue;
-//            }
-//            try
-//            {
-//                Class<?> coreModClass = Class.forName(fmlCorePlugin, false, classLoader);
-//                FMLLog.severe("The coremods %s specified a class %s that is already present in the classpath - it will be ignored", coreMod.getName(), fmlCorePlugin);
-//                continue;
-//            }
-//            catch (ClassNotFoundException cnfe)
-//            {
-//                // didn't find it, good
-//            }
             try
             {
                 classLoader.addURL(coreMod.toURI().toURL());
+                loadedCoremods.add(coreMod.getName());
             }
             catch (MalformedURLException e)
             {
@@ -356,8 +340,8 @@ public class CoreModManager
         return coreModDir;
     }
 
-    public static List<String> getLibraries()
+    public static List<String> getLoadedCoremods()
     {
-        return loadedLibraries;
+        return loadedCoremods;
     }
 }
