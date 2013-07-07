@@ -63,7 +63,7 @@
 +
      protected int func_130006_a(EntityLiving par1EntityLiving, int par2, float par3)
      {
-         ItemStack itemstack = par1EntityLiving.getCurrentArmor(3 - par2);
+         ItemStack itemstack = par1EntityLiving.func_130225_q(3 - par2);
 @@ -79,7 +114,7 @@
              if (item instanceof ItemArmor)
              {
@@ -99,7 +99,7 @@
              if (item instanceof ItemArmor)
              {
 -                this.func_110776_a(func_110858_a((ItemArmor)item, par2, "overlay"));
-+                this.func_110776_a(getArmorResource(par1, itemstack, par2, "overlay"));
++                this.func_110776_a(getArmorResource(par1EntityLiving, itemstack, par2, "overlay"));
                  float f1 = 1.0F;
                  GL11.glColor3f(f1, f1, f1);
              }

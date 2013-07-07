@@ -19,9 +19,9 @@
 +
 +public class TileEntityFurnace extends TileEntity implements ISidedInventory, net.minecraftforge.common.ISidedInventory
  {
-     private static final int[] field_102010_d = new int[] {0};
-     private static final int[] field_102011_e = new int[] {2, 1};
-@@ -276,8 +279,7 @@
+     private static final int[] slots_top = new int[] {0};
+     private static final int[] slots_bottom = new int[] {2, 1};
+@@ -279,8 +282,7 @@
  
                          if (this.furnaceItemStacks[1].stackSize == 0)
                          {
@@ -31,7 +31,7 @@
                          }
                      }
                  }
-@@ -323,8 +325,12 @@
+@@ -326,8 +328,12 @@
          }
          else
          {
@@ -46,7 +46,7 @@
          }
      }
  
-@@ -335,15 +341,15 @@
+@@ -338,15 +344,15 @@
      {
          if (this.canSmelt())
          {
@@ -66,7 +66,7 @@
              }
  
              --this.furnaceItemStacks[0].stackSize;
-@@ -370,7 +376,7 @@
+@@ -373,7 +379,7 @@
              int i = par0ItemStack.getItem().itemID;
              Item item = par0ItemStack.getItem();
  
@@ -75,7 +75,7 @@
              {
                  Block block = Block.blocksList[i];
  
-@@ -456,4 +462,50 @@
+@@ -459,4 +465,50 @@
      {
          return par3 != 0 || par1 != 1 || par2ItemStack.itemID == Item.bucketEmpty.itemID;
      }

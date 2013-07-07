@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
 +++ ../src_work/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
-@@ -48,10 +48,14 @@
+@@ -52,10 +52,14 @@
  import net.minecraft.util.EnumChatFormatting;
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.EnumGameType;
@@ -15,7 +15,7 @@
  
  public abstract class ServerConfigurationManager
  {
-@@ -387,13 +391,23 @@
+@@ -392,13 +396,23 @@
       */
      public EntityPlayerMP respawnPlayer(EntityPlayerMP par1EntityPlayerMP, int par2, boolean par3)
      {
@@ -41,7 +41,7 @@
          par1EntityPlayerMP.dimension = par2;
          Object object;
  
-@@ -409,6 +423,7 @@
+@@ -414,6 +428,7 @@
          EntityPlayerMP entityplayermp1 = new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension), par1EntityPlayerMP.getCommandSenderName(), (ItemInWorldManager)object);
          entityplayermp1.playerNetServerHandler = par1EntityPlayerMP.playerNetServerHandler;
          entityplayermp1.clonePlayer(par1EntityPlayerMP, par3);
@@ -49,7 +49,7 @@
          entityplayermp1.entityId = par1EntityPlayerMP.entityId;
          WorldServer worldserver = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
          this.func_72381_a(entityplayermp1, par1EntityPlayerMP, worldserver);
-@@ -453,6 +468,11 @@
+@@ -458,6 +473,11 @@
  
      public void transferPlayerToDimension(EntityPlayerMP par1EntityPlayerMP, int par2)
      {
@@ -61,7 +61,7 @@
          int j = par1EntityPlayerMP.dimension;
          WorldServer worldserver = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
          par1EntityPlayerMP.dimension = par2;
-@@ -460,7 +480,7 @@
+@@ -465,7 +485,7 @@
          par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(par1EntityPlayerMP.dimension, (byte)par1EntityPlayerMP.worldObj.difficultySetting, worldserver1.getWorldInfo().getTerrainType(), worldserver1.getHeight(), par1EntityPlayerMP.theItemInWorldManager.getGameType()));
          worldserver.removePlayerEntityDangerously(par1EntityPlayerMP);
          par1EntityPlayerMP.isDead = false;
@@ -70,7 +70,7 @@
          this.func_72375_a(par1EntityPlayerMP, worldserver);
          par1EntityPlayerMP.playerNetServerHandler.setPlayerLocation(par1EntityPlayerMP.posX, par1EntityPlayerMP.posY, par1EntityPlayerMP.posZ, par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
          par1EntityPlayerMP.theItemInWorldManager.setWorld(worldserver1);
-@@ -482,38 +502,23 @@
+@@ -487,38 +507,23 @@
       */
      public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer)
      {
@@ -120,7 +120,7 @@
          {
              ChunkCoordinates chunkcoordinates;
  
-@@ -550,7 +555,7 @@
+@@ -555,7 +560,7 @@
                  par4WorldServer.spawnEntityInWorld(par1Entity);
                  par1Entity.setLocationAndAngles(d0, par1Entity.posY, d1, par1Entity.rotationYaw, par1Entity.rotationPitch);
                  par4WorldServer.updateEntityWithOptionalForce(par1Entity, false);

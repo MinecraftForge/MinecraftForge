@@ -66,23 +66,23 @@
              if (item instanceof ItemArmor)
              {
 -                this.func_110776_a(RenderBiped.func_110858_a((ItemArmor)item, par2, "overlay"));
-+                this.func_110776_a(RenderBiped.getArmorResource(par1, itemstack, par2, "overlay"));
++                this.func_110776_a(RenderBiped.getArmorResource(par1AbstractClientPlayer, itemstack, par2, "overlay"));
                  float f1 = 1.0F;
                  GL11.glColor3f(f1, f1, f1);
              }
 @@ -117,6 +135,7 @@
  
-     public void renderPlayer(AbstractClientPlayer par1, double par2, double par4, double par6, float par8, float par9)
+     public void func_130009_a(AbstractClientPlayer par1AbstractClientPlayer, double par2, double par4, double par6, float par8, float par9)
      {
-+        if (MinecraftForge.EVENT_BUS.post(new RenderPlayerEvent.Pre(par1, this))) return;
++        if (MinecraftForge.EVENT_BUS.post(new RenderPlayerEvent.Pre(par1AbstractClientPlayer, this))) return;
          float f2 = 1.0F;
          GL11.glColor3f(f2, f2, f2);
-         ItemStack itemstack = par1.inventory.getCurrentItem();
+         ItemStack itemstack = par1AbstractClientPlayer.inventory.getCurrentItem();
 @@ -148,6 +167,7 @@
          this.modelArmorChestplate.aimedBow = this.modelArmor.aimedBow = this.modelBipedMain.aimedBow = false;
          this.modelArmorChestplate.isSneak = this.modelArmor.isSneak = this.modelBipedMain.isSneak = false;
          this.modelArmorChestplate.heldItemRight = this.modelArmor.heldItemRight = this.modelBipedMain.heldItemRight = 0;
-+        MinecraftForge.EVENT_BUS.post(new RenderPlayerEvent.Post(par1, this));
++        MinecraftForge.EVENT_BUS.post(new RenderPlayerEvent.Post(par1AbstractClientPlayer, this));
      }
  
      protected ResourceLocation func_110817_a(AbstractClientPlayer par1AbstractClientPlayer)

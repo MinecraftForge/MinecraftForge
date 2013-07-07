@@ -772,7 +772,7 @@ public class GuiIngameForge extends GuiIngame
                 {
                     GuiPlayerInfo player = (GuiPlayerInfo)players.get(i);
                     ScorePlayerTeam team = mc.theWorld.getScoreboard().getPlayersTeam(player.name);
-                    String displayName = ScorePlayerTeam.func_96667_a(team, player.name);
+                    String displayName = ScorePlayerTeam.formatPlayerName(team, player.name);
                     fontrenderer.drawStringWithShadow(displayName, xPos, yPos, 16777215);
 
                     if (scoreobjective != null)
@@ -783,7 +783,7 @@ public class GuiIngameForge extends GuiIngame
                         if (maxX - endX > 5)
                         {
                             Score score = scoreobjective.getScoreboard().func_96529_a(player.name, scoreobjective);
-                            String scoreDisplay = EnumChatFormatting.YELLOW + "" + score.func_96652_c();
+                            String scoreDisplay = EnumChatFormatting.YELLOW + "" + score.getScorePoints();
                             fontrenderer.drawStringWithShadow(scoreDisplay, maxX - fontrenderer.getStringWidth(scoreDisplay), yPos, 16777215);
                         }
                     }

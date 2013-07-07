@@ -10,7 +10,7 @@
  import net.minecraft.client.resources.data.AnimationMetadataSection;
  import net.minecraft.util.Icon;
 @@ -184,6 +186,20 @@
-         this.height = par1;
+         this.field_130224_d = par1;
      }
  
 +    /**

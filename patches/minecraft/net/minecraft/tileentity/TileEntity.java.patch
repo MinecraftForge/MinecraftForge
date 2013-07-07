@@ -12,7 +12,7 @@
  import net.minecraft.world.World;
  
  public class TileEntity
-@@ -308,4 +311,93 @@
+@@ -311,4 +314,93 @@
          addMapping(TileEntityHopper.class, "Hopper");
          addMapping(TileEntityComparator.class, "Comparator");
      }

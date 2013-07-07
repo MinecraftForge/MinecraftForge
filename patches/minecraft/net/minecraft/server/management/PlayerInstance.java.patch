@@ -18,7 +18,7 @@
  
  public class PlayerInstance
  {
-@@ -63,6 +67,8 @@
+@@ -60,6 +64,8 @@
              this.playersInChunk.remove(par1EntityPlayerMP);
              par1EntityPlayerMP.loadedChunks.remove(this.chunkLocation);
  
@@ -27,7 +27,7 @@
              if (this.playersInChunk.isEmpty())
              {
                  long i = (long)this.chunkLocation.chunkXPos + 2147483647L | (long)this.chunkLocation.chunkZPos + 2147483647L << 32;
-@@ -100,7 +106,7 @@
+@@ -97,7 +103,7 @@
  
          this.field_73260_f |= 1 << (par2 >> 4);
  
@@ -36,7 +36,7 @@
          {
              short short1 = (short)(par1 << 12 | par3 << 8 | par2);
  
-@@ -112,6 +118,10 @@
+@@ -109,6 +115,10 @@
                  }
              }
  
@@ -47,7 +47,7 @@
              this.locationOfBlockChange[this.numberOfTilesToUpdate++] = short1;
          }
      }
-@@ -153,12 +163,13 @@
+@@ -150,12 +160,13 @@
              {
                  int l;
  
@@ -62,7 +62,7 @@
                      for (k = 0; k < 16; ++k)
                      {
                          if ((this.field_73260_f & 1 << k) != 0)
-@@ -172,11 +183,14 @@
+@@ -169,11 +180,14 @@
                              }
                          }
                      }

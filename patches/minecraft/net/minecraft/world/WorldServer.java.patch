@@ -131,7 +131,7 @@
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
                  i1 = this.updateLCG >> 2;
 @@ -433,6 +465,9 @@
-     public void func_82740_a(int par1, int par2, int par3, int par4, int par5, int par6)
+     public void scheduleBlockUpdateWithPriority(int par1, int par2, int par3, int par4, int par5, int par6)
      {
          NextTickListEntry nextticklistentry = new NextTickListEntry(par1, par2, par3, par4);
 +        //Keeping here as a note for future when it may be restored.
@@ -159,7 +159,7 @@
                  byte b0 = 0;
  
                  if (this.checkChunksExist(nextticklistentry.xCoord - b0, nextticklistentry.yCoord - b0, nextticklistentry.zCoord - b0, nextticklistentry.xCoord + b0, nextticklistentry.yCoord + b0, nextticklistentry.zCoord + b0))
-@@ -717,16 +755,28 @@
+@@ -696,16 +734,28 @@
      {
          ArrayList arraylist = new ArrayList();
  
@@ -198,7 +198,7 @@
          return arraylist;
      }
  
-@@ -734,6 +784,11 @@
+@@ -713,6 +763,11 @@
       * Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
@@ -210,7 +210,7 @@
      {
          return !this.mcServer.func_96290_a(this, par2, par3, par4, par1EntityPlayer);
      }
-@@ -818,7 +873,7 @@
+@@ -797,7 +852,7 @@
       */
      protected void createBonusChest()
      {
@@ -219,7 +219,7 @@
  
          for (int i = 0; i < 10; ++i)
          {
-@@ -861,6 +916,7 @@
+@@ -840,6 +895,7 @@
              }
  
              this.chunkProvider.saveChunks(par1, par2IProgressUpdate);
@@ -227,15 +227,15 @@
          }
      }
  
-@@ -880,6 +936,7 @@
+@@ -859,6 +915,7 @@
          this.checkSessionLock();
          this.saveHandler.saveWorldInfoWithPlayer(this.worldInfo, this.mcServer.getConfigurationManager().getHostPlayerData());
          this.mapStorage.saveAllData();
 +        this.perWorldStorage.saveAllData();
      }
  
-     /**
-@@ -1093,4 +1150,9 @@
+     protected void onEntityAdded(Entity par1Entity)
+@@ -1066,4 +1123,9 @@
      {
          return this.field_85177_Q;
      }

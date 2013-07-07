@@ -10,7 +10,7 @@
  import net.minecraft.entity.EntityLivingBase;
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.DamageSource;
-@@ -205,6 +208,27 @@
+@@ -207,6 +210,27 @@
          return this.type.canEnchantItem(par1ItemStack.getItem());
      }
  
@@ -32,7 +32,7 @@
 +     */
 +    public static void addToBookList(Enchantment enchantment)
 +    {
-+        ObjectArrays.concat(field_92090_c, enchantment);
++        ObjectArrays.concat(enchantmentsBookList, enchantment);
 +    }
 +
      static

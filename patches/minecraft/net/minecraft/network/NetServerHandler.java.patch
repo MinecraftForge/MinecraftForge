@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/network/NetServerHandler.java
 +++ ../src_work/minecraft/net/minecraft/network/NetServerHandler.java
-@@ -69,6 +69,14 @@
+@@ -71,6 +71,14 @@
  import net.minecraft.world.WorldServer;
  import org.apache.commons.lang3.StringUtils;
  
@@ -15,7 +15,7 @@
  public class NetServerHandler extends NetHandler
  {
      /** The underlying network manager for this server handler. */
-@@ -242,6 +250,11 @@
+@@ -221,6 +229,11 @@
                      if (this.playerEntity.ridingEntity != null)
                      {
                          this.playerEntity.ridingEntity.updateRiderPosition();
@@ -27,21 +27,22 @@
                      }
  
                      this.mcServer.getConfigurationManager().serverUpdateMountedMovingPlayer(this.playerEntity);
-@@ -319,9 +332,9 @@
+@@ -300,9 +313,10 @@
                  d4 = d1 - this.playerEntity.posX;
-                 double d6 = d2 - this.playerEntity.posY;
-                 double d7 = d3 - this.playerEntity.posZ;
--                double d8 = Math.min(Math.abs(d4), Math.abs(this.playerEntity.motionX));
--                double d9 = Math.min(Math.abs(d6), Math.abs(this.playerEntity.motionY));
--                double d10 = Math.min(Math.abs(d7), Math.abs(this.playerEntity.motionZ));
-+                double d8 = Math.max(Math.abs(d4), Math.abs(this.playerEntity.motionX));
-+                double d9 = Math.max(Math.abs(d6), Math.abs(this.playerEntity.motionY));
-+                double d10 = Math.max(Math.abs(d7), Math.abs(this.playerEntity.motionZ));
-                 double d11 = d8 * d8 + d9 * d9 + d10 * d10;
+                 double d5 = d2 - this.playerEntity.posY;
+                 double d6 = d3 - this.playerEntity.posZ;
+-                double d7 = Math.min(Math.abs(d4), Math.abs(this.playerEntity.motionX));
+-                double d8 = Math.min(Math.abs(d5), Math.abs(this.playerEntity.motionY));
+-                double d9 = Math.min(Math.abs(d6), Math.abs(this.playerEntity.motionZ));
++                //BUGFIX: min -> max, grabs the highest distance
++                double d7 = Math.max(Math.abs(d4), Math.abs(this.playerEntity.motionX));
++                double d8 = Math.max(Math.abs(d5), Math.abs(this.playerEntity.motionY));
++                double d9 = Math.max(Math.abs(d6), Math.abs(this.playerEntity.motionZ));
+                 double d10 = d7 * d7 + d8 * d8 + d9 * d9;
  
-                 if (d11 > 100.0D && (!this.mcServer.isSinglePlayer() || !this.mcServer.getServerOwner().equals(this.playerEntity.getCommandSenderName())))
-@@ -337,6 +350,11 @@
-                 if (this.playerEntity.onGround && !par1Packet10Flying.onGround && d6 > 0.0D)
+                 if (d10 > 100.0D && (!this.mcServer.isSinglePlayer() || !this.mcServer.getServerOwner().equals(this.playerEntity.getCommandSenderName())))
+@@ -318,6 +332,11 @@
+                 if (this.playerEntity.onGround && !par1Packet10Flying.onGround && d5 > 0.0D)
                  {
                      this.playerEntity.addExhaustion(0.2F);
 +                }
@@ -51,8 +52,8 @@
 +                    return;
                  }
  
-                 this.playerEntity.moveEntity(d4, d6, d7);
-@@ -361,10 +379,15 @@
+                 this.playerEntity.moveEntity(d4, d5, d6);
+@@ -342,10 +361,15 @@
                      this.mcServer.getLogAgent().logWarning(this.playerEntity.getCommandSenderName() + " moved wrongly!");
                  }
  
@@ -69,16 +70,16 @@
                  {
                      this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, f2, f3);
                      return;
-@@ -372,7 +395,7 @@
+@@ -353,7 +377,7 @@
  
                  AxisAlignedBB axisalignedbb = this.playerEntity.boundingBox.copy().expand((double)f4, (double)f4, (double)f4).addCoord(0.0D, -0.55D, 0.0D);
  
 -                if (!this.mcServer.isFlightAllowed() && !this.playerEntity.theItemInWorldManager.isCreative() && !worldserver.checkBlockCollision(axisalignedbb))
 +                if (!this.mcServer.isFlightAllowed() && !this.playerEntity.theItemInWorldManager.isCreative() && !worldserver.checkBlockCollision(axisalignedbb)  && !this.playerEntity.capabilities.allowFlying)
                  {
-                     if (d12 >= -0.03125D)
+                     if (d11 >= -0.03125D)
                      {
-@@ -391,6 +414,11 @@
+@@ -372,6 +396,11 @@
                      this.ticksForFloatKick = 0;
                  }
  
@@ -90,7 +91,7 @@
                  this.playerEntity.onGround = par1Packet10Flying.onGround;
                  this.mcServer.getConfigurationManager().serverUpdateMountedMovingPlayer(this.playerEntity);
                  this.playerEntity.updateFlyingState(this.playerEntity.posY - d0, par1Packet10Flying.onGround);
-@@ -461,7 +489,10 @@
+@@ -442,7 +471,10 @@
                  double d2 = this.playerEntity.posZ - ((double)k + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
@@ -102,7 +103,7 @@
                  {
                      return;
                  }
-@@ -521,7 +552,11 @@
+@@ -502,7 +534,11 @@
                  return;
              }
  
@@ -115,7 +116,7 @@
          }
          else if (par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit() - 1 && (par1Packet15Place.getDirection() == 1 || par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit()))
          {
-@@ -530,7 +565,9 @@
+@@ -511,7 +547,9 @@
          }
          else
          {
@@ -126,7 +127,7 @@
              {
                  this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, worldserver, itemstack, i, j, k, l, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
              }
-@@ -710,6 +747,8 @@
+@@ -691,6 +729,8 @@
                      }
  
                      ChatMessageComponent chatmessagecomponent = ChatMessageComponent.func_111082_b("chat.type.text", new Object[] {this.playerEntity.getTranslatedEntityName(), s});
@@ -135,7 +136,7 @@
                      this.mcServer.getConfigurationManager().func_110459_a(chatmessagecomponent, false);
                  }
  
-@@ -850,7 +889,7 @@
+@@ -838,7 +878,7 @@
                      return;
                  }
  
