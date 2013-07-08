@@ -26,6 +26,7 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.hash.Hashing;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
@@ -79,6 +80,14 @@ public class ClassPatchManager {
             else if (!patch.existsAtTarget)
             {
                 FMLLog.warning("Patcher expecting empty class data file for %s, but received non-empty", patch.targetClassName);
+            }
+            else
+            {
+                int inputChecksum = Hashing.adler32().hashBytes(inputData).asInt();
+                if (patch.inputChecksum != inputChecksum)
+                {
+                    FMLLog.severe("There is a binary discrepency between the expected input class %s (%s) and the actual class. Checksum on disk is %x, in patch %x. Things are probably about to go very wrong. Did you put something into the jar file?", mappedName, name, inputChecksum, patch.inputChecksum);
+                }
             }
             synchronized (patcher)
             {
@@ -181,10 +190,15 @@ public class ClassPatchManager {
         String sourceClassName = input.readUTF();
         String targetClassName = input.readUTF();
         boolean exists = input.readBoolean();
+        int inputChecksum = 0;
+        if (exists)
+        {
+            inputChecksum = input.readInt();
+        }
         int patchLength = input.readInt();
         byte[] patchBytes = new byte[patchLength];
         input.readFully(patchBytes);
 
-        return new ClassPatch(name, sourceClassName, targetClassName, exists, patchBytes);
+        return new ClassPatch(name, sourceClassName, targetClassName, exists, inputChecksum, patchBytes);
     }
 }

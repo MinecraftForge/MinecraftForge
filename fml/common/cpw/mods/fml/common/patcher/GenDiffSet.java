@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
+import com.google.common.hash.Hashing;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
@@ -64,6 +65,7 @@ public class GenDiffSet {
 
                 byte[] diff = delta.compute(vanillaBytes, patchedBytes);
 
+
                 ByteArrayDataOutput diffOut = ByteStreams.newDataOutput(diff.length + 50);
                 // Original name
                 diffOut.writeUTF(name);
@@ -73,6 +75,10 @@ public class GenDiffSet {
                 diffOut.writeUTF(targetClassName);
                 // exists at original
                 diffOut.writeBoolean(entry != null);
+                if (entry != null)
+                {
+                    diffOut.writeInt(Hashing.adler32().hashBytes(vanillaBytes).asInt());
+                }
                 // length of patch
                 diffOut.writeInt(diff.length);
                 // patch
