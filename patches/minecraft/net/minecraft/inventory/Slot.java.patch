@@ -1,14 +1,17 @@
 --- ../src_base/minecraft/net/minecraft/inventory/Slot.java
 +++ ../src_work/minecraft/net/minecraft/inventory/Slot.java
-@@ -2,6 +2,8 @@
+@@ -2,9 +2,11 @@
  
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
 +import net.minecraft.client.renderer.texture.TextureMap;
-+import net.minecraft.client.resources.ResourceLocation;
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.Icon;
++import net.minecraft.util.ResourceLocation;
+ 
+ public class Slot
+ {
 @@ -22,6 +24,13 @@
  
      /** display position of the inventory slot on the screen y axis */
@@ -39,7 +42,7 @@
 +
 +    /**
 +     * Gets the path of the texture file to use for the background image of this slot when drawing the GUI.
-+     * @return String: The texture file that will be used in GuiContainer.drawSlotInventory for the slot background.  
++     * @return String: The texture file that will be used in GuiContainer.drawSlotInventory for the slot background.
 +     */
 +    @SideOnly(Side.CLIENT)
 +    public ResourceLocation getBackgroundIconTexture()
@@ -49,7 +52,7 @@
 +
 +    /**
 +     * Sets which icon index to use as the background image of the slot when it's empty.
-+     * @param icon The icon to use, null for none  
++     * @param icon The icon to use, null for none
 +     */
 +    public void setBackgroundIcon(Icon icon)
 +    {
@@ -67,9 +70,9 @@
 +    }
 +
 +    /**
-+     * Retrieves the index in the inventory for this slot, this value should typically not 
++     * Retrieves the index in the inventory for this slot, this value should typically not
 +     * be used, but can be useful for some occasions.
-+     * 
++     *
 +     * @return Index in associated inventory for this slot.
 +     */
 +    public int getSlotIndex()

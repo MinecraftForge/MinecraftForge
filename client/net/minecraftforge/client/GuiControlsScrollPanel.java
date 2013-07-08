@@ -10,8 +10,8 @@ import net.minecraft.client.gui.GuiSlot;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.resources.ResourceLocation;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.ResourceLocation;
 
 public class GuiControlsScrollPanel extends GuiSlot
 {

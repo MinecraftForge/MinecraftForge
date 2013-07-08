@@ -17,7 +17,6 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.multiplayer.NetClientHandler;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.resources.ResourceLocation;
 import net.minecraft.crash.CallableMinecraftVersion;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -33,6 +32,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.FoodStats;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraft.util.StringUtils;
 import net.minecraft.world.EnumSkyBlock;
@@ -52,7 +52,7 @@ public class GuiIngameForge extends GuiIngame
     private static final ResourceLocation VIGNETTE     = new ResourceLocation("textures/misc/vignette.png");
     private static final ResourceLocation WIDGITS      = new ResourceLocation("textures/gui/widgets.png");
     private static final ResourceLocation PUMPKIN_BLUR = new ResourceLocation("textures/misc/pumpkinblur.png");
-    
+
     private static final int WHITE = 0xFFFFFF;
 
     //Flags to toggle the rendering of certain aspects of the HUD, valid conditions
@@ -71,7 +71,7 @@ public class GuiIngameForge extends GuiIngame
     public static boolean renderExperiance = true;
     public static boolean renderJumpBar = true;
     public static boolean renderObjective = true;
-    
+
     public static int left_height = 39;
     public static int right_height = 39;
 
@@ -95,7 +95,7 @@ public class GuiIngameForge extends GuiIngame
         renderHealthMount = mc.thePlayer.ridingEntity instanceof EntityLivingBase;
         renderFood = mc.thePlayer.ridingEntity == null;
         renderJumpBar = mc.thePlayer.func_110317_t();
-        
+
         right_height = 39;
         left_height = 39;
 
@@ -129,7 +129,7 @@ public class GuiIngameForge extends GuiIngame
 
             if (renderCrosshairs) renderCrosshairs(width, height);
             if (renderBossHealth) renderBossHealth();
-            
+
             if (this.mc.playerController.shouldDrawHUD())
             {
                 if (renderHealth) renderHealth(width, height);
@@ -145,7 +145,7 @@ public class GuiIngameForge extends GuiIngame
         {
             renderJumpBar(width, height);
         }
-        else if (renderExperiance) 
+        else if (renderExperiance)
         {
             renderExperience(width, height);
         }
@@ -344,9 +344,9 @@ public class GuiIngameForge extends GuiIngame
 
         int healthRows = MathHelper.ceiling_float_int((healthMax + absorb) / 2.0F / 10.0F);
         int rowHeight = Math.max(10 - (healthRows - 2), 3);
-        
+
         this.rand.setSeed((long)(updateCounter * 312871));
-        
+
         int left = width / 2 - 91;
         int top = height - left_height;
         left_height += (healthRows * rowHeight);
@@ -357,14 +357,14 @@ public class GuiIngameForge extends GuiIngame
         {
             regen = updateCounter % 25;
         }
-        
+
         final int TOP =  9 * (mc.theWorld.getWorldInfo().isHardcoreModeEnabled() ? 5 : 0);
         final int BACKGROUND = (highlight ? 25 : 16);
         int MARGIN = 16;
         if (mc.thePlayer.isPotionActive(Potion.poison))      MARGIN += 36;
         else if (mc.thePlayer.isPotionActive(Potion.wither)) MARGIN += 72;
         float absorbRemaining = absorb;
-        
+
         for (int i = MathHelper.ceiling_float_int((healthMax + absorb) / 2.0F) - 1; i >= 0; --i)
         {
             int b0 = (highlight ? 1 : 0);
@@ -373,7 +373,7 @@ public class GuiIngameForge extends GuiIngame
             int y = top - row * rowHeight;
 
             if (health <= 4) y += rand.nextInt(2);
-            if (i == regen) y -= 2;     
+            if (i == regen) y -= 2;
 
             drawTexturedModalRect(x, y, BACKGROUND, TOP, 9, 9);
 
@@ -401,7 +401,7 @@ public class GuiIngameForge extends GuiIngame
                     drawTexturedModalRect(x, y, MARGIN + 45, TOP, 9, 9); //5
             }
         }
-        
+
         mc.mcProfiler.endSection();
         post(HEALTH);
     }
@@ -487,20 +487,20 @@ public class GuiIngameForge extends GuiIngame
         bind(field_110324_m);
         if (pre(EXPERIENCE)) return;
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        
+
         if (mc.playerController.func_78763_f())
         {
             mc.mcProfiler.startSection("expBar");
             int cap = this.mc.thePlayer.xpBarCap();
             int left = width / 2 - 91;
-    
+
             if (cap > 0)
             {
                 short barWidth = 182;
                 int filled = (int)(mc.thePlayer.experience * (float)(barWidth + 1));
                 int top = height - 32 + 3;
                 drawTexturedModalRect(left, top, 0, 64, barWidth, 5);
-    
+
                 if (filled > 0)
                 {
                     drawTexturedModalRect(left, top, 0, 69, filled, 5);
@@ -508,8 +508,8 @@ public class GuiIngameForge extends GuiIngame
             }
 
             this.mc.mcProfiler.endSection();
-            
-        
+
+
             if (mc.playerController.func_78763_f() && mc.thePlayer.experienceLevel > 0)
             {
                 mc.mcProfiler.startSection("expLevel");
@@ -536,7 +536,7 @@ public class GuiIngameForge extends GuiIngame
         bind(field_110324_m);
         if (pre(JUMPBAR)) return;
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        
+
         mc.mcProfiler.startSection("jumpBar");
         float charge = mc.thePlayer.func_110319_bJ();
         final int barWidth = 182;
@@ -813,12 +813,12 @@ public class GuiIngameForge extends GuiIngame
         if (!(tmp instanceof EntityLivingBase)) return;
 
         bind(field_110324_m);
-        
+
         if (pre(HEALTHMOUNT)) return;
-        
+
         boolean unused = false;
         int left_align = width / 2 + 91;
-        
+
         mc.mcProfiler.endStartSection("mountHealth");
         EntityLivingBase mount = (EntityLivingBase)tmp;
         int health = (int)Math.ceil((double)mount.func_110143_aJ());
@@ -826,7 +826,7 @@ public class GuiIngameForge extends GuiIngame
         int hearts = (int)(healthMax + 0.5F) / 2;
 
         if (hearts > 30) hearts = 30;
-        
+
         final int MARGIN = 52;
         final int BACKGROUND = MARGIN + (unused ? 1 : 0);
         final int HALF = MARGIN + 45;
@@ -835,7 +835,7 @@ public class GuiIngameForge extends GuiIngame
         for (int heart = 0; hearts > 0; heart += 20)
         {
             int top = height - right_height;
-            
+
             int rowCount = Math.min(hearts, 10);
             hearts -= rowCount;
 

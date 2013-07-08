@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/ItemRenderer.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/ItemRenderer.java
-@@ -17,6 +17,8 @@
+@@ -16,6 +16,8 @@
  import net.minecraft.entity.EntityLivingBase;
  import net.minecraft.item.EnumAction;
  import net.minecraft.item.Item;

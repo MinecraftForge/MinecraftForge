@@ -1,9 +1,9 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
 @@ -21,6 +21,7 @@
- import net.minecraft.item.Item;
  import net.minecraft.util.Icon;
  import net.minecraft.util.ReportedException;
+ import net.minecraft.util.ResourceLocation;
 +import net.minecraftforge.client.ForgeHooksClient;
  
  @SideOnly(Side.CLIENT)
