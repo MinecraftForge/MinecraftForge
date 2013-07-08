@@ -39,11 +39,19 @@ import cpw.mods.fml.repackage.com.nothome.delta.GDiffPatcher;
 public class ClassPatchManager {
     public static final ClassPatchManager INSTANCE = new ClassPatchManager();
 
+    public static final boolean dumpPatched = Boolean.parseBoolean(System.getProperty("fml.dumpPatchedClasses", "false"));
+
     private GDiffPatcher patcher = new GDiffPatcher();
     private ListMultimap<String, ClassPatch> patches;
+
+    private File tempDir;
     private ClassPatchManager()
     {
-
+        if (dumpPatched)
+        {
+            tempDir = Files.createTempDir();
+            FMLLog.info("Dumping patched classes to %s",tempDir.getAbsolutePath());
+        }
     }
 
     public byte[] applyPatch(String name, String mappedName, byte[] inputData)
@@ -57,6 +65,7 @@ public class ClassPatchManager {
         {
             return inputData;
         }
+        FMLLog.fine("Runtime patching class %s (input size %d), found %d patch%s", mappedName, inputData.length, list.size(), list.size()!=1 ? "es" : "");
         for (ClassPatch patch: list)
         {
             if (!patch.targetClassName.equals(mappedName))
@@ -84,7 +93,18 @@ public class ClassPatchManager {
                 }
             }
         }
-        FMLLog.fine("Successfully applied runtime patches for %s", mappedName);
+        FMLLog.fine("Successfully applied runtime patches for %s (new size %d)", mappedName, inputData.length);
+        if (dumpPatched)
+        {
+            try
+            {
+                Files.write(inputData, new File(tempDir,mappedName));
+            }
+            catch (IOException e)
+            {
+                FMLLog.log(Level.SEVERE, e, "Failed to write %s to %s", mappedName, tempDir.getAbsolutePath());
+            }
+        }
         return inputData;
     }
 
