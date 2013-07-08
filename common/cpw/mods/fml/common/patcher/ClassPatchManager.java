@@ -66,6 +66,7 @@ public class ClassPatchManager {
         {
             return inputData;
         }
+        boolean ignoredError = false;
         FMLLog.fine("Runtime patching class %s (input size %d), found %d patch%s", mappedName, inputData.length, list.size(), list.size()!=1 ? "es" : "");
         for (ClassPatch patch: list)
         {
@@ -87,6 +88,17 @@ public class ClassPatchManager {
                 if (patch.inputChecksum != inputChecksum)
                 {
                     FMLLog.severe("There is a binary discrepency between the expected input class %s (%s) and the actual class. Checksum on disk is %x, in patch %x. Things are probably about to go very wrong. Did you put something into the jar file?", mappedName, name, inputChecksum, patch.inputChecksum);
+                    if (!Boolean.parseBoolean(System.getProperty("fml.ignorePatchDiscrepancies","false")))
+                    {
+                        FMLLog.severe("The game is going to exit, because this is a critical error, and it is very improbable that the modded game will work, please obtain clean jar files.");
+                        System.exit(1);
+                    }
+                    else
+                    {
+                        FMLLog.severe("FML is going to ignore this error, note that the patch will not be applied, and there is likely to be a malfunctioning behaviour, including not running at all");
+                        ignoredError = true;
+                        continue;
+                    }
                 }
             }
             synchronized (patcher)
@@ -102,7 +114,10 @@ public class ClassPatchManager {
                 }
             }
         }
-        FMLLog.fine("Successfully applied runtime patches for %s (new size %d)", mappedName, inputData.length);
+        if (!ignoredError)
+        {
+            FMLLog.fine("Successfully applied runtime patches for %s (new size %d)", mappedName, inputData.length);
+        }
         if (dumpPatched)
         {
             try
