@@ -537,7 +537,6 @@ LanguageManager,net/minecraft/client/resources
 Locale,net/minecraft/client/resources
 ReloadableResourceManager,net/minecraft/client/resources
 Resource,net/minecraft/client/resources
-ResourceLocation,net/minecraft/client/resources
 ResourceManager,net/minecraft/client/resources
 ResourceManagerReloadListener,net/minecraft/client/resources
 ResourcePack,net/minecraft/client/resources
@@ -1298,6 +1297,7 @@ MovementInput,net/minecraft/util
 MovementInputFromOptions,net/minecraft/util
 MovingObjectPosition,net/minecraft/util
 ReportedException,net/minecraft/util
+ResourceLocation,net/minecraft/util
 ScreenShotHelper,net/minecraft/util
 Session,net/minecraft/util
 StatCollector,net/minecraft/util

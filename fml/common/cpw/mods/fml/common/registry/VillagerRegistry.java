@@ -13,15 +13,15 @@
 package cpw.mods.fml.common.registry;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Collection;
-import java.util.Collections;
 
-import net.minecraft.client.resources.ResourceLocation;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.gen.structure.ComponentVillageStartPiece;
