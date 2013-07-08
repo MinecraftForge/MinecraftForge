@@ -52,7 +52,7 @@ public class FluidStack {
      */
     public static FluidStack loadFluidStackFromNBT(NBTTagCompound nbt) {
 
-        if (nbt == null || FluidRegistry.getFluid(nbt.getString("FluidName")) == null) {
+        if ((nbt == null) || (FluidRegistry.getFluid(nbt.getString("FluidName")) == null)) {
             return null;
         }
         FluidStack stack = new FluidStack(FluidRegistry.getFluidID(nbt.getString("FluidName")), nbt.getInteger("Amount"));
@@ -96,7 +96,7 @@ public class FluidStack {
      */
     public boolean isFluidEqual(FluidStack other) {
 
-        return other != null && fluidID == other.fluidID && isFluidStackTagEqual(other);
+        return (other != null) && (fluidID == other.fluidID) && isFluidStackTagEqual(other);
     }
 
     private boolean isFluidStackTagEqual(FluidStack other) {
@@ -109,7 +109,7 @@ public class FluidStack {
      */
     public static boolean areFluidStackTagsEqual(FluidStack stack1, FluidStack stack2) {
 
-        return stack1 == null && stack2 == null ? true : stack1 == null || stack2 == null ? false : stack1.isFluidStackTagEqual(stack2);
+        return (stack1 == null) && (stack2 == null) ? true : (stack1 == null) || (stack2 == null) ? false : stack1.isFluidStackTagEqual(stack2);
     }
 
     /**
@@ -120,7 +120,7 @@ public class FluidStack {
      */
     public boolean containsFluid(FluidStack other) {
 
-        return isFluidEqual(other) && amount >= other.amount;
+        return isFluidEqual(other) && (amount >= other.amount);
     }
 
     /**
@@ -132,7 +132,7 @@ public class FluidStack {
      */
     public boolean isFluidStackIdentical(FluidStack other) {
 
-        return isFluidEqual(other) && amount == other.amount;
+        return isFluidEqual(other) && (amount == other.amount);
     }
 
     /**

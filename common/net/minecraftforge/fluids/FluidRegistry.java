@@ -12,6 +12,8 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
 
+import cpw.mods.fml.common.registry.LanguageRegistry;
+
 /**
  * Handles Fluid registrations. Fluids MUST be registered in order to function.
  * 
@@ -33,6 +35,9 @@ public abstract class FluidRegistry {
     static {
         registerFluid(WATER);
         registerFluid(LAVA);
+
+        LanguageRegistry.instance().addStringLocalization("fluid.water", "Water");
+        LanguageRegistry.instance().addStringLocalization("fluid.lava", "Lava");
     }
 
     private FluidRegistry() {

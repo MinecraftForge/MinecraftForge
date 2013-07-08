@@ -53,7 +53,8 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler {
                 return 0.875F;
             }
         }
-        return !world.getBlockMaterial(x, y, z).isSolid() && world.getBlockId(x, y - block.densityDir, z) == block.blockID ? 1 : block.getQuantaPercentage(world, x, y, z) * 0.875F;
+        return !world.getBlockMaterial(x, y, z).isSolid() && (world.getBlockId(x, y - block.densityDir, z) == block.blockID) ? 1
+                : block.getQuantaPercentage(world, x, y, z) * 0.875F;
     }
 
     /* ISimpleBlockRenderingHandler */
@@ -70,8 +71,8 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler {
         }
         Tessellator tessellator = Tessellator.instance;
         int color = block.colorMultiplier(world, x, y, z);
-        float red = (color >> 16 & 255) / 255.0F;
-        float green = (color >> 8 & 255) / 255.0F;
+        float red = ((color >> 16) & 255) / 255.0F;
+        float green = ((color >> 8) & 255) / 255.0F;
         float blue = (color & 255) / 255.0F;
 
         BlockFluidBase theFluid = (BlockFluidBase) block;
@@ -79,7 +80,7 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler {
 
         boolean renderTop = world.getBlockId(x, y - theFluid.densityDir, z) != theFluid.blockID;
 
-        boolean renderBottom = block.shouldSideBeRendered(world, x, y + theFluid.densityDir, z, 0) && world.getBlockId(x, y + theFluid.densityDir, z) != theFluid.blockID;
+        boolean renderBottom = block.shouldSideBeRendered(world, x, y + theFluid.densityDir, z, 0) && (world.getBlockId(x, y + theFluid.densityDir, z) != theFluid.blockID);
 
         boolean[] renderSides = new boolean[] { block.shouldSideBeRendered(world, x, y, z - 1, 2), block.shouldSideBeRendered(world, x, y, z + 1, 3),
                 block.shouldSideBeRendered(world, x - 1, y, z, 4), block.shouldSideBeRendered(world, x + 1, y, z, 5) };
@@ -144,14 +145,14 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler {
                 } else {
                     float xFlow = MathHelper.sin(flowDir) * 0.25F;
                     float zFlow = MathHelper.cos(flowDir) * 0.25F;
-                    u2 = iconStill.getInterpolatedU(8.0F + (-zFlow - xFlow) * 16.0F);
-                    v2 = iconStill.getInterpolatedV(8.0F + (-zFlow + xFlow) * 16.0F);
-                    u1 = iconStill.getInterpolatedU(8.0F + (-zFlow + xFlow) * 16.0F);
-                    v1 = iconStill.getInterpolatedV(8.0F + (zFlow + xFlow) * 16.0F);
-                    u4 = iconStill.getInterpolatedU(8.0F + (zFlow + xFlow) * 16.0F);
-                    v4 = iconStill.getInterpolatedV(8.0F + (zFlow - xFlow) * 16.0F);
-                    u3 = iconStill.getInterpolatedU(8.0F + (zFlow - xFlow) * 16.0F);
-                    v3 = iconStill.getInterpolatedV(8.0F + (-zFlow - xFlow) * 16.0F);
+                    u2 = iconStill.getInterpolatedU(8.0F + ((-zFlow - xFlow) * 16.0F));
+                    v2 = iconStill.getInterpolatedV(8.0F + ((-zFlow + xFlow) * 16.0F));
+                    u1 = iconStill.getInterpolatedU(8.0F + ((-zFlow + xFlow) * 16.0F));
+                    v1 = iconStill.getInterpolatedV(8.0F + ((zFlow + xFlow) * 16.0F));
+                    u4 = iconStill.getInterpolatedU(8.0F + ((zFlow + xFlow) * 16.0F));
+                    v4 = iconStill.getInterpolatedV(8.0F + ((zFlow - xFlow) * 16.0F));
+                    u3 = iconStill.getInterpolatedU(8.0F + ((zFlow - xFlow) * 16.0F));
+                    v3 = iconStill.getInterpolatedV(8.0F + ((-zFlow - xFlow) * 16.0F));
                 }
                 tessellator.setBrightness(block.getMixedBrightnessForBlock(world, x, y, z));
                 tessellator.setColorOpaque_F(LIGHT_Y_POS * red, LIGHT_Y_POS * green, LIGHT_Y_POS * blue);
@@ -162,10 +163,10 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler {
                     tessellator.addVertexWithUV(x + 1, y + heightSE, z + 1, u4, v4);
                     tessellator.addVertexWithUV(x + 1, y + heightNE, z + 0, u3, v3);
                 } else {
-                    tessellator.addVertexWithUV(x + 1, y + 1 - heightNE, z + 0, u3, v3);
-                    tessellator.addVertexWithUV(x + 1, y + 1 - heightSE, z + 1, u4, v4);
-                    tessellator.addVertexWithUV(x + 0, y + 1 - heightSW, z + 1, u1, v1);
-                    tessellator.addVertexWithUV(x + 0, y + 1 - heightNW, z + 0, u2, v2);
+                    tessellator.addVertexWithUV(x + 1, (y + 1) - heightNE, z + 0, u3, v3);
+                    tessellator.addVertexWithUV(x + 1, (y + 1) - heightSE, z + 1, u4, v4);
+                    tessellator.addVertexWithUV(x + 0, (y + 1) - heightSW, z + 1, u1, v1);
+                    tessellator.addVertexWithUV(x + 0, (y + 1) - heightNW, z + 0, u2, v2);
                 }
             }
 
@@ -224,8 +225,8 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler {
                         ty2 = heightSW;
                         tx1 = x + 1;
                         tx2 = x;
-                        tz1 = z + 1 - RENDER_OFFSET;
-                        tz2 = z + 1 - RENDER_OFFSET;
+                        tz1 = (z + 1) - RENDER_OFFSET;
+                        tz2 = (z + 1) - RENDER_OFFSET;
                     } else if (side == 2) {
                         ty1 = heightSW;
                         ty2 = heightNW;
@@ -236,8 +237,8 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler {
                     } else {
                         ty1 = heightNE;
                         ty2 = heightSE;
-                        tx1 = x + 1 - RENDER_OFFSET;
-                        tx2 = x + 1 - RENDER_OFFSET;
+                        tx1 = (x + 1) - RENDER_OFFSET;
+                        tx2 = (x + 1) - RENDER_OFFSET;
                         tz1 = z;
                         tz2 = z + 1;
                     }
@@ -262,10 +263,10 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler {
                         tessellator.addVertexWithUV(tx2, y + 0, tz2, u2Flow, v3Flow);
                         tessellator.addVertexWithUV(tx1, y + 0, tz1, u1Flow, v3Flow);
                     } else {
-                        tessellator.addVertexWithUV(tx1, y + 1 - 0, tz1, u1Flow, v3Flow);
-                        tessellator.addVertexWithUV(tx2, y + 1 - 0, tz2, u2Flow, v3Flow);
-                        tessellator.addVertexWithUV(tx2, y + 1 - ty2, tz2, u2Flow, v2Flow);
-                        tessellator.addVertexWithUV(tx1, y + 1 - ty1, tz1, u1Flow, v1Flow);
+                        tessellator.addVertexWithUV(tx1, (y + 1) - 0, tz1, u1Flow, v3Flow);
+                        tessellator.addVertexWithUV(tx2, (y + 1) - 0, tz2, u2Flow, v3Flow);
+                        tessellator.addVertexWithUV(tx2, (y + 1) - ty2, tz2, u2Flow, v2Flow);
+                        tessellator.addVertexWithUV(tx1, (y + 1) - ty1, tz1, u1Flow, v1Flow);
                     }
                 }
             }

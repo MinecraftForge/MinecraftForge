@@ -36,7 +36,7 @@ public class ItemFluidContainer extends Item implements IFluidContainerItem {
     @Override
     public FluidStack getFluid(ItemStack container) {
 
-        if (container.stackTagCompound == null || !container.stackTagCompound.hasKey("Fluid")) {
+        if ((container.stackTagCompound == null) || !container.stackTagCompound.hasKey("Fluid")) {
             return null;
         }
         return FluidStack.loadFluidStackFromNBT(container.stackTagCompound.getCompoundTag("Fluid"));
@@ -55,7 +55,7 @@ public class ItemFluidContainer extends Item implements IFluidContainerItem {
             return 0;
         }
         if (!doFill) {
-            if (container.stackTagCompound == null || !container.stackTagCompound.hasKey("Fluid")) {
+            if ((container.stackTagCompound == null) || !container.stackTagCompound.hasKey("Fluid")) {
                 return Math.min(capacity, resource.amount);
             }
             FluidStack stack = FluidStack.loadFluidStackFromNBT(container.stackTagCompound.getCompoundTag("Fluid"));
@@ -85,6 +85,15 @@ public class ItemFluidContainer extends Item implements IFluidContainerItem {
         NBTTagCompound fluidTag = container.stackTagCompound.getCompoundTag("Fluid");
         FluidStack stack = FluidStack.loadFluidStackFromNBT(fluidTag);
 
+        if (stack == null) {
+            if (capacity < resource.amount) {
+                fluidTag.setInteger("Amount", capacity);
+                container.stackTagCompound.setTag("Fluid", fluidTag);
+                return capacity;
+            }
+            container.stackTagCompound.setTag("Fluid", fluidTag);
+            return resource.amount;
+        }
         if (!stack.isFluidEqual(resource)) {
             return 0;
         }
@@ -103,7 +112,7 @@ public class ItemFluidContainer extends Item implements IFluidContainerItem {
     @Override
     public FluidStack drain(ItemStack container, int maxDrain, boolean doDrain) {
 
-        if (container.stackTagCompound == null || !container.stackTagCompound.hasKey("Fluid")) {
+        if ((container.stackTagCompound == null) || !container.stackTagCompound.hasKey("Fluid")) {
             return null;
         }
         FluidStack stack = FluidStack.loadFluidStackFromNBT(container.stackTagCompound.getCompoundTag("Fluid"));

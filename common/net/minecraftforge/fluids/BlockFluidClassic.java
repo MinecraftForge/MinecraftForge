@@ -57,7 +57,7 @@ public class BlockFluidClassic extends BlockFluidBase {
     @Override
     public boolean canCollideCheck(int meta, boolean fullHit) {
 
-        return fullHit && meta == 0;
+        return fullHit && (meta == 0);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class BlockFluidClassic extends BlockFluidBase {
             return super.getLightValue(world, x, y, z);
         }
         int data = quantaPerBlock - world.getBlockMetadata(x, y, z) - 1;
-        return (int) (data / quantaPerBlockFloat * maxScaledLight);
+        return (int) ((data / quantaPerBlockFloat) * maxScaledLight);
     }
 
     @Override
@@ -86,8 +86,8 @@ public class BlockFluidClassic extends BlockFluidBase {
         if (quantaRemaining < quantaPerBlock) {
             int y2 = y - densityDir;
 
-            if (world.getBlockId(x, y2, z) == blockID || world.getBlockId(x - 1, y2, z) == blockID || world.getBlockId(x + 1, y2, z) == blockID
-                    || world.getBlockId(x, y2, z - 1) == blockID || world.getBlockId(x, y2, z + 1) == blockID) {
+            if ((world.getBlockId(x, y2, z) == blockID) || (world.getBlockId(x - 1, y2, z) == blockID) || (world.getBlockId(x + 1, y2, z) == blockID)
+                    || (world.getBlockId(x, y2, z - 1) == blockID) || (world.getBlockId(x, y2, z + 1) == blockID)) {
                 expQuanta = quantaPerBlock - 1;
 
             } else {
@@ -120,7 +120,7 @@ public class BlockFluidClassic extends BlockFluidBase {
             return;
         }
         // Flow outward if possible
-        int flowMeta = quantaPerBlock - quantaRemaining + 1;
+        int flowMeta = (quantaPerBlock - quantaRemaining) + 1;
         if (flowMeta >= quantaPerBlock) {
             return;
         }
@@ -149,12 +149,12 @@ public class BlockFluidClassic extends BlockFluidBase {
 
     public boolean isFlowingVertically(IBlockAccess world, int x, int y, int z) {
 
-        return world.getBlockId(x, y + densityDir, z) == blockID || world.getBlockId(x, y, z) == blockID && canFlowInto(world, x, y + densityDir, z);
+        return (world.getBlockId(x, y + densityDir, z) == blockID) || ((world.getBlockId(x, y, z) == blockID) && canFlowInto(world, x, y + densityDir, z));
     }
 
     public boolean isSourceBlock(IBlockAccess world, int x, int y, int z) {
 
-        return world.getBlockId(x, y, z) == blockID && world.getBlockMetadata(x, y, z) == 0;
+        return (world.getBlockId(x, y, z) == blockID) && (world.getBlockMetadata(x, y, z) == 0);
     }
 
     protected boolean[] getOptimalFlowDirections(World world, int x, int y, int z) {
@@ -208,7 +208,7 @@ public class BlockFluidClassic extends BlockFluidBase {
         int cost = 1000;
 
         for (int adjSide = 0; adjSide < 4; adjSide++) {
-            if (adjSide == 0 && side == 1 || adjSide == 1 && side == 0 || adjSide == 2 && side == 3 || adjSide == 3 && side == 2) {
+            if (((adjSide == 0) && (side == 1)) || ((adjSide == 1) && (side == 0)) || ((adjSide == 2) && (side == 3)) || ((adjSide == 3) && (side == 2))) {
                 continue;
             }
 
@@ -271,7 +271,7 @@ public class BlockFluidClassic extends BlockFluidBase {
             return displacementIds.get(bId);
         }
         Material material = Block.blocksList[bId].blockMaterial;
-        if (material.blocksMovement() || material == Material.water || material == Material.lava || material == Material.portal) {
+        if (material.blocksMovement() || (material == Material.water) || (material == Material.lava) || (material == Material.portal)) {
             return false;
         }
         return true;

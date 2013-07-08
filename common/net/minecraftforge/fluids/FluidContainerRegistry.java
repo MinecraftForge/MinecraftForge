@@ -1,6 +1,7 @@
 
 package net.minecraftforge.fluids;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,9 +25,9 @@ import net.minecraftforge.event.Event;
  */
 public abstract class FluidContainerRegistry {
 
-    private static Map<List, FluidContainerData> containerFluidMap = new HashMap();
+    private static Map<Integer, FluidContainerData> containerFluidMap = new HashMap();
     private static Map<List, FluidContainerData> filledContainerMap = new HashMap();
-    private static Set<List> emptyContainers = new HashSet();
+    private static Set<Integer> emptyContainers = new HashSet();
 
     public static final int BUCKET_VOLUME = 1000;
     public static final ItemStack EMPTY_BUCKET = new ItemStack(Item.bucketEmpty);
@@ -40,6 +41,11 @@ public abstract class FluidContainerRegistry {
 
     private FluidContainerRegistry() {
 
+    }
+
+    private static int getHashcode(int id, int metadata) {
+
+        return metadata | (id << 16);
     }
 
     /**
@@ -122,11 +128,11 @@ public abstract class FluidContainerRegistry {
         if (isFilledContainer(data.filledContainer)) {
             return false;
         }
-        containerFluidMap.put(Arrays.asList(data.filledContainer.itemID, data.filledContainer.getItemDamage()), data);
+        containerFluidMap.put(getHashcode(data.filledContainer.itemID, data.filledContainer.getItemDamage()), data);
 
         if (data.emptyContainer != null) {
             filledContainerMap.put(Arrays.asList(data.emptyContainer.itemID, data.emptyContainer.getItemDamage(), data.fluid.fluidID), data);
-            emptyContainers.add(Arrays.asList(data.emptyContainer.itemID, data.emptyContainer.getItemDamage()));
+            emptyContainers.add(getHashcode(data.emptyContainer.itemID, data.emptyContainer.getItemDamage()));
         }
         MinecraftForge.EVENT_BUS.post(new FluidContainerRegisterEvent(data));
         return true;
@@ -144,7 +150,7 @@ public abstract class FluidContainerRegistry {
         if (container == null) {
             return null;
         }
-        FluidContainerData data = containerFluidMap.get(Arrays.asList(container.itemID, container.getItemDamage()));
+        FluidContainerData data = containerFluidMap.get(getHashcode(container.itemID, container.getItemDamage()));
         return data == null ? null : data.fluid.copy();
     }
 
@@ -161,11 +167,11 @@ public abstract class FluidContainerRegistry {
      */
     public static ItemStack fillFluidContainer(FluidStack fluid, ItemStack container) {
 
-        if (container == null || fluid == null) {
+        if ((container == null) || (fluid == null)) {
             return null;
         }
         FluidContainerData data = filledContainerMap.get(Arrays.asList(container.itemID, container.getItemDamage(), fluid.fluidID));
-        if (data != null && fluid.amount >= data.fluid.amount) {
+        if ((data != null) && (fluid.amount >= data.fluid.amount)) {
             return data.filledContainer.copy();
         }
         return null;
@@ -176,7 +182,7 @@ public abstract class FluidContainerRegistry {
      */
     public static boolean containsFluid(ItemStack container, FluidStack fluid) {
 
-        if (container == null || fluid == null) {
+        if ((container == null) || (fluid == null)) {
             return false;
         }
         FluidContainerData data = filledContainerMap.get(Arrays.asList(container.itemID, container.getItemDamage(), fluid.fluidID));
@@ -191,8 +197,8 @@ public abstract class FluidContainerRegistry {
         if (container.isItemEqual(EMPTY_BUCKET)) {
             return true;
         }
-        FluidContainerData data = containerFluidMap.get(Arrays.asList(container.itemID, container.getItemDamage()));
-        return data != null && data.emptyContainer.isItemEqual(EMPTY_BUCKET);
+        FluidContainerData data = containerFluidMap.get(getHashcode(container.itemID, container.getItemDamage()));
+        return (data != null) && data.emptyContainer.isItemEqual(EMPTY_BUCKET);
     }
 
     public static boolean isContainer(ItemStack container) {
@@ -202,17 +208,18 @@ public abstract class FluidContainerRegistry {
 
     public static boolean isEmptyContainer(ItemStack container) {
 
-        return container != null && emptyContainers.contains(Arrays.asList(container.itemID, container.getItemDamage()));
+        return (container != null) && emptyContainers.contains(getHashcode(container.itemID, container.getItemDamage()));
     }
 
     public static boolean isFilledContainer(ItemStack container) {
 
-        return container != null && getFluidForFilledItem(container) != null;
+        return (container != null) && (getFluidForFilledItem(container) != null);
     }
 
     public static FluidContainerData[] getRegisteredFluidContainerData() {
 
-        return (FluidContainerData[]) containerFluidMap.values().toArray();
+        List<FluidContainerData> list = new ArrayList<FluidContainerData>(containerFluidMap.values());
+        return list.toArray(new FluidContainerData[list.size()]);
     }
 
     /**
@@ -236,7 +243,7 @@ public abstract class FluidContainerRegistry {
             this.filledContainer = filledContainer;
             this.emptyContainer = emptyContainer;
 
-            if (stack == null || filledContainer == null || emptyContainer == null && !nullEmpty) {
+            if ((stack == null) || (filledContainer == null) || ((emptyContainer == null) && !nullEmpty)) {
                 throw new RuntimeException("Invalid FluidContainerData - a parameter was null.");
             }
         }
