@@ -424,7 +424,7 @@ public @interface Mod
      *
      */
     @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.FIELD)
+    @Target(ElementType.METHOD)
     public @interface InstanceFactory {
     }
 }
