@@ -31,7 +31,7 @@
          {
              this.field_71466_p.func_78264_a(this.field_135017_as.func_135042_a());
 @@ -400,6 +409,7 @@
-         this.field_71446_o.func_130088_a(TextureMap.field_110576_c, new TextureMap(1, "textures/items/"));
+         this.field_71446_o.func_130088_a(TextureMap.field_110576_c, new TextureMap(1, "textures/items"));
          GL11.glViewport(0, 0, this.field_71443_c, this.field_71440_d);
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
 +        FMLClientHandler.instance().finishMinecraftLoading();
