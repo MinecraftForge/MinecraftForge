@@ -1,16 +1,12 @@
 package net.minecraftforge.client.model.techne;
 
-import java.net.URL;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.client.model.IModelCustomLoader;
 import net.minecraftforge.client.model.ModelFormatException;
 
 public class TechneModelLoader implements IModelCustomLoader {
-    
+
     @Override
     public String getType()
     {
@@ -18,6 +14,7 @@ public class TechneModelLoader implements IModelCustomLoader {
     }
 
     private static final String[] types = { "tcn" };
+
     @Override
     public String[] getSuffixes()
     {
@@ -25,7 +22,7 @@ public class TechneModelLoader implements IModelCustomLoader {
     }
 
     @Override
-    public IModelCustom loadInstance(String resourceName, URL resource) throws ModelFormatException
+    public IModelCustom loadInstance(String resourceName, ResourceLocation resource) throws ModelFormatException
     {
         return new TechneModel(resourceName, resource);
     }

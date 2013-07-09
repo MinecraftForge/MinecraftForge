@@ -2,9 +2,9 @@ package net.minecraftforge.client.model;
 
 /**
  * Thrown if there is a problem parsing the model
- *
+ * 
  * @author cpw
- *
+ * 
  */
 public class ModelFormatException extends RuntimeException {
 
