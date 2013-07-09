@@ -9,12 +9,9 @@
  import net.minecraft.world.storage.MapData;
  
  public class ItemEmptyMap extends ItemMapBase
-@@ -26,8 +28,9 @@
-         int i = 128 * (1 << mapdata.scale);
-         mapdata.xCenter = (int)(Math.round(par3EntityPlayer.posX / (double)i) * (long)i);
+@@ -28,6 +30,7 @@
          mapdata.zCenter = (int)(Math.round(par3EntityPlayer.posZ / (double)i) * (long)i);
--        mapdata.dimension = (byte)par2World.provider.dimensionId;
-+        mapdata.dimension = (byte)((WorldServer) par2World).provider.dimensionId;  // CraftBukkit - use bukkit dimension
+         mapdata.dimension = (byte)par2World.provider.dimensionId;
          mapdata.markDirty();
 +        org.bukkit.craftbukkit.event.CraftEventFactory.callEvent(new org.bukkit.event.server.MapInitializeEvent(mapdata.mapView)); // CraftBukkit
          --par1ItemStack.stackSize;

@@ -28,15 +28,7 @@
      /**
       * Dispense the specified stack, play the dispense sound and spawn particles.
       */
-@@ -23,14 +33,46 @@
-         int j = par1IBlockSource.getYInt() + enumfacing.getFrontOffsetY();
-         int k = par1IBlockSource.getZInt() + enumfacing.getFrontOffsetZ();
-         AxisAlignedBB axisalignedbb = AxisAlignedBB.getAABBPool().getAABB((double)i, (double)j, (double)k, (double)(i + 1), (double)(j + 1), (double)(k + 1));
--        List list = par1IBlockSource.getWorld().selectEntitiesWithinAABB(EntityLivingBase.class, axisalignedbb, new EntitySelectorArmoredMob(par2ItemStack));
-+        List list = par1IBlockSource.getWorld().selectEntitiesWithinAABB(EntityLivingBase.class, axisalignedbb, (IEntitySelector)(new EntitySelectorArmoredMob(par2ItemStack)));
- 
-         if (list.size() > 0)
-         {
+@@ -30,16 +40,48 @@
              EntityLivingBase entitylivingbase = (EntityLivingBase)list.get(0);
              int l = entitylivingbase instanceof EntityPlayer ? 1 : 0;
              int i1 = EntityLiving.getArmorPosition(par2ItemStack);
@@ -64,7 +56,7 @@
 +                par2ItemStack.stackSize++;
 +                // Chain to handler for new item
 +                ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
-+                IBehaviorDispenseItem ibehaviordispenseitem = (IBehaviorDispenseItem) BlockDispenser.dispenseBehaviorRegistry.func_82594_a(eventStack.getItem());
++                IBehaviorDispenseItem ibehaviordispenseitem = (IBehaviorDispenseItem) BlockDispenser.dispenseBehaviorRegistry.getObject(eventStack.getItem());
 +
 +                if (ibehaviordispenseitem != IBehaviorDispenseItem.itemDispenseBehaviorProvider && ibehaviordispenseitem != this)
 +                {
@@ -75,10 +67,12 @@
 +
 +            // CraftBukkit end
              itemstack1.stackSize = 1;
-             entitylivingbase.setCurrentItemOrArmor(i1 - l, itemstack1);
+-            entitylivingbase.setCurrentItemOrArmor(i1 - l, itemstack1);
++            entitylivingbase.setCurrentItemOrArmor(i1, itemstack1);  //BUGFIX Forge: Vanilla bug fix associated with fixed setCurrentItemOrArmor indexs for players.
  
-@@ -39,7 +81,7 @@
-                 ((EntityLiving)entitylivingbase).func_96120_a(i1, 2.0F);
+             if (entitylivingbase instanceof EntityLiving)
+             {
+                 ((EntityLiving)entitylivingbase).setEquipmentDropChance(i1, 2.0F);
              }
  
 -            --par2ItemStack.stackSize;

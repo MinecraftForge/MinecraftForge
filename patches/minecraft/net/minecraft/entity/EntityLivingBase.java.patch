@@ -1,9 +1,10 @@
 --- ../src_base/minecraft/net/minecraft/entity/EntityLivingBase.java
 +++ ../src_work/minecraft/net/minecraft/entity/EntityLivingBase.java
-@@ -21,14 +21,17 @@
+@@ -20,14 +20,18 @@
  import net.minecraft.entity.item.EntityItem;
  import net.minecraft.entity.item.EntityXPOrb;
  import net.minecraft.entity.monster.EntityZombie;
++import net.minecraft.entity.passive.EntityHorse;
 +import net.minecraft.entity.passive.EntityPig;
  import net.minecraft.entity.passive.EntityWolf;
  import net.minecraft.entity.player.EntityPlayer;
@@ -18,7 +19,7 @@
  import net.minecraft.nbt.NBTTagList;
  import net.minecraft.nbt.NBTTagShort;
  import net.minecraft.network.packet.Packet18Animation;
-@@ -46,14 +49,22 @@
+@@ -46,14 +50,22 @@
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
@@ -36,14 +37,14 @@
      private static final UUID field_110156_b = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
      private static final AttributeModifier field_110157_c = (new AttributeModifier(field_110156_b, "Sprinting speed boost", 0.30000001192092896D, 2)).func_111168_a(false);
      private BaseAttributeMap field_110155_d;
--    private final CombatTracker field_94063_bt = new CombatTracker(this);
+-    private final CombatTracker _combatTracker = new CombatTracker(this);
 -    private final HashMap activePotionsMap = new HashMap();
-+    public CombatTracker field_94063_bt = new CombatTracker(this); // CraftBukkit - private -> public, remove final
++    public CombatTracker _combatTracker = new CombatTracker(this); // CraftBukkit - private -> public, remove final
 +    public final HashMap activePotionsMap = new HashMap(); // CraftBukkit - protected -> public
  
      /** The equipment this mob was previously wearing, used for syncing. */
      private final ItemStack[] previousEquipment = new ItemStack[5];
-@@ -110,7 +121,7 @@
+@@ -110,7 +122,7 @@
      public float jumpMovementFactor = 0.02F;
  
      /** The most recent player that has attacked this entity */
@@ -52,7 +53,7 @@
  
      /**
       * Set to 60 when hit by the player or the player's wolf, then decrements. Used to determine whether the entity
-@@ -133,7 +144,7 @@
+@@ -133,7 +145,7 @@
  
      /** The score value of the Mob, the amount of points the mob is worth. */
      protected int scoreValue;
@@ -61,7 +62,7 @@
  
      /** used to check whether entity is jumping. */
      protected boolean isJumping;
-@@ -160,10 +171,10 @@
+@@ -160,10 +172,10 @@
      protected double newRotationPitch;
  
      /** Whether the DataWatcher needs to be updated with the active potions */
@@ -73,8 +74,8 @@
 +    public EntityLivingBase entityLivingToAttack; // CraftBukkit - private -> public
      private int revengeTimer;
      private EntityLivingBase field_110150_bn;
- 
-@@ -176,6 +187,11 @@
+     private int field_142016_bo;
+@@ -177,6 +189,11 @@
      /** Number of ticks since last jump */
      private int jumpTicks;
      private float field_110151_bq;
@@ -86,7 +87,7 @@
  
      public EntityLivingBase(World par1World)
      {
-@@ -305,7 +321,13 @@
+@@ -306,7 +323,13 @@
          }
          else
          {
@@ -101,7 +102,7 @@
          }
  
          this.prevCameraPitch = this.cameraPitch;
-@@ -369,6 +391,22 @@
+@@ -359,6 +382,22 @@
          this.worldObj.theProfiler.endSection();
      }
  
@@ -124,7 +125,7 @@
      /**
       * If Animal, checks if the age timer is negative
       */
-@@ -384,13 +422,11 @@
+@@ -374,22 +413,21 @@
      {
          ++this.deathTime;
  
@@ -136,32 +137,39 @@
 -            if (!this.worldObj.isRemote && (this.recentlyHit > 0 || this.isPlayer()) && !this.isChild() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
 -            {
 -                i = this.getExperiencePoints(this.attackingPlayer);
-+            // CraftBukkit start - Update getExpReward() above if the removed if() changes!
-+            i = this.expToDrop;
- 
-                 while (i > 0)
-                 {
-@@ -398,8 +434,9 @@
-                     i -= j;
-                     this.worldObj.spawnEntityInWorld(new EntityXPOrb(this.worldObj, this.posX, this.posY, this.posZ, j));
-                 }
+-
+-                while (i > 0)
+-                {
+-                    int j = EntityXPOrb.getXPSplit(i);
+-                    i -= j;
+-                    this.worldObj.spawnEntityInWorld(new EntityXPOrb(this.worldObj, this.posX, this.posY, this.posZ, j));
+-                }
 -            }
 -
++            // CraftBukkit start - Update getExpReward() above if the removed if() changes!
++            i = this.expToDrop;
++
++            while (i > 0)
++            {
++                int j = EntityXPOrb.getXPSplit(i);
++                i -= j;
++                this.worldObj.spawnEntityInWorld(new EntityXPOrb(this.worldObj, this.posX, this.posY, this.posZ, j));
++            }
 +
 +            this.expToDrop = 0;
 +            // CraftBukkit end
              this.setDead();
  
              for (i = 0; i < 20; ++i)
-@@ -451,6 +488,7 @@
+@@ -446,6 +484,7 @@
      {
          this.entityLivingToAttack = par1EntityLivingBase;
-         this.revengeTimer = this.entityLivingToAttack != null ? 100 : 0;
+         this.revengeTimer = this.ticksExisted;
 +        ForgeHooks.onLivingSetAttackTarget(this, par1EntityLivingBase);
      }
  
      public EntityLivingBase func_110144_aD()
-@@ -550,6 +588,23 @@
+@@ -556,6 +595,23 @@
              }
          }
  
@@ -185,7 +193,7 @@
          if (par1NBTTagCompound.hasKey("HealF"))
          {
              this.setEntityHealth(par1NBTTagCompound.getFloat("HealF"));
-@@ -679,12 +734,14 @@
+@@ -685,12 +741,14 @@
  
      public boolean isPotionActive(int par1)
      {
@@ -202,7 +210,7 @@
      }
  
      /**
-@@ -738,8 +795,6 @@
+@@ -744,8 +802,6 @@
          return this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
      }
  
@@ -211,7 +219,7 @@
      /**
       * Remove the speified potion effect from this entity.
       */
-@@ -796,16 +851,28 @@
+@@ -798,16 +854,28 @@
          }
      }
  
@@ -241,7 +249,7 @@
          }
      }
  
-@@ -824,6 +891,7 @@
+@@ -826,6 +894,7 @@
       */
      public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
      {
@@ -249,7 +257,7 @@
          if (this.isEntityInvulnerable())
          {
              return false;
-@@ -854,6 +922,20 @@
+@@ -856,6 +925,20 @@
  
                  this.limbYaw = 1.5F;
                  boolean flag = true;
@@ -270,7 +278,7 @@
  
                  if ((float)this.hurtResistantTime > (float)this.maxHurtResistantTime / 2.0F)
                  {
-@@ -974,6 +1056,7 @@
+@@ -976,6 +1059,7 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -278,23 +286,14 @@
          Entity entity = par1DamageSource.getEntity();
          EntityLivingBase entitylivingbase = this.func_94060_bK();
  
-@@ -982,6 +1065,7 @@
-             entitylivingbase.addToPlayerScore(this, this.scoreValue);
-         }
- 
-+
-         if (entity != null)
-         {
-             entity.onKillEntity(this);
-@@ -997,25 +1081,55 @@
-             {
+@@ -1000,24 +1084,54 @@
                  i = EnchantmentHelper.getLootingModifier((EntityLivingBase)entity);
              }
-+
+ 
 +            captureDrops = true;
 +            capturedDrops.clear();
 +            int j = 0;
- 
++
              if (!this.isChild() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
              {
                  this.dropFewItems(this.recentlyHit > 0, i);
@@ -345,7 +344,7 @@
      }
  
      /**
-@@ -1063,7 +1177,12 @@
+@@ -1065,7 +1179,12 @@
          return "damage.hit";
      }
  
@@ -359,7 +358,7 @@
  
      /**
       * Drop 0-2 items of this living's type. @param par1 - Whether this entity has recently been hit by a player. @param
-@@ -1080,7 +1199,7 @@
+@@ -1082,7 +1201,7 @@
          int j = MathHelper.floor_double(this.boundingBox.minY);
          int k = MathHelper.floor_double(this.posZ);
          int l = this.worldObj.getBlockId(i, j, k);
@@ -368,7 +367,7 @@
      }
  
      /**
-@@ -1096,10 +1215,32 @@
+@@ -1098,10 +1217,32 @@
       */
      protected void fall(float par1)
      {
@@ -402,7 +401,7 @@
  
          if (i > 0)
          {
-@@ -1229,6 +1370,8 @@
+@@ -1231,6 +1372,8 @@
      {
          if (!this.isEntityInvulnerable())
          {
@@ -411,7 +410,7 @@
              par2 = this.applyArmorCalculations(par1DamageSource, par2);
              par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
              float f1 = par2;
-@@ -1290,6 +1433,17 @@
+@@ -1292,6 +1435,17 @@
       */
      public void swingItem()
      {
@@ -429,22 +428,7 @@
          if (!this.isSwingInProgress || this.field_110158_av >= this.getArmSwingAnimationEnd() / 2 || this.field_110158_av < 0)
          {
              this.field_110158_av = -1;
-@@ -1397,12 +1551,12 @@
-     /**
-      * 0 = item, 1-n is armor
-      */
--    public abstract ItemStack getCurrentItemOrArmor(int i);
-+    public abstract ItemStack getCurrentItemOrArmor(int par1);
- 
-     /**
-      * Sets the held item, or an armor slot. Slot 0 is held item. Slot 1-4 is armor. Params: Item, slot
-      */
--    public abstract void setCurrentItemOrArmor(int i, ItemStack itemstack);
-+    public abstract void setCurrentItemOrArmor(int par1, ItemStack par2ItemStack);
- 
-     /**
-      * Set sprinting switch for Entity.
-@@ -1531,6 +1685,7 @@
+@@ -1526,6 +1680,7 @@
          }
  
          this.isAirBorne = true;
@@ -452,7 +436,7 @@
      }
  
      /**
-@@ -1735,6 +1890,11 @@
+@@ -1730,6 +1885,11 @@
       */
      public void onUpdate()
      {
@@ -464,7 +448,7 @@
          super.onUpdate();
  
          if (!this.worldObj.isRemote)
-@@ -1793,7 +1953,7 @@
+@@ -1788,7 +1948,7 @@
          {
              f3 = 1.0F;
              f2 = (float)Math.sqrt((double)f) * 3.0F;
@@ -473,7 +457,7 @@
          }
  
          if (this.swingProgress > 0.0F)
-@@ -2011,6 +2171,15 @@
+@@ -2006,6 +2166,15 @@
              {
                  Entity entity = (Entity)list.get(i);
  
@@ -489,9 +473,9 @@
                  if (entity.canBePushed())
                  {
                      this.collideWithEntity(entity);
-@@ -2255,4 +2424,42 @@
- 
-         this.field_110151_bq = par1;
+@@ -2265,4 +2434,42 @@
+     {
+         return this.getTeam() != null ? this.getTeam().func_142054_a(par1Team) : false;
      }
 +
 +    /***

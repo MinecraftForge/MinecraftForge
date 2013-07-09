@@ -17,7 +17,7 @@
          if (par7 == 0)
          {
              return false;
-@@ -67,22 +70,34 @@
+@@ -71,16 +74,28 @@
              }
              else
              {
@@ -27,14 +27,14 @@
                  if (par7 == 1)
                  {
                      int i1 = MathHelper.floor_double((double)((par2EntityPlayer.rotationYaw + 180.0F) * 16.0F / 360.0F) + 0.5D) & 15;
--                    par3World.setBlock(par4, par5, par6, Block.signPost.blockID, i1, 2);
+-                    par3World.setBlock(par4, par5, par6, Block.signPost.blockID, i1, 3);
 +                    // world.setTypeIdAndData(i, j, k, Block.SIGN_POST.id, i1, 2);
 +                    block = Block.signPost;
 +                    par7 = i1;
                  }
                  else
                  {
--                    par3World.setBlock(par4, par5, par6, Block.signWall.blockID, par7, 2);
+-                    par3World.setBlock(par4, par5, par6, Block.signWall.blockID, par7, 3);
 +                    // world.setTypeIdAndData(i, j, k, Block.WALL_SIGN.id, l, 2);
 +                    block = Block.signWall;
                  }
@@ -48,10 +48,3 @@
                  --par1ItemStack.stackSize;
                  TileEntitySign tileentitysign = (TileEntitySign)par3World.getBlockTileEntity(par4, par5, par6);
  
-                 if (tileentitysign != null)
-                 {
--                    par2EntityPlayer.displayGUIEditSign(tileentitysign);
-+                    par2EntityPlayer.displayGUIEditSign((TileEntity) tileentitysign);
-                 }
- 
-                 return true;

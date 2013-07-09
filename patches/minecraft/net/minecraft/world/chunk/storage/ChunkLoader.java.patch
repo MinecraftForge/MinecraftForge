@@ -7,7 +7,7 @@
 -                nbttagcompound1.setByteArray("Data", nibblearray.data);
 -                nbttagcompound1.setByteArray("SkyLight", nibblearray1.data);
 -                nbttagcompound1.setByteArray("BlockLight", nibblearray2.data);
-+                // Spigot start - a -> getValueArray() accessor
++                // Spigot start - data -> getValueArray() accessor
 +                nbttagcompound1.setByteArray("Data", nibblearray.getValueArray());
 +                nbttagcompound1.setByteArray("SkyLight", nibblearray1.getValueArray());
 +                nbttagcompound1.setByteArray("BlockLight", nibblearray2.getValueArray());

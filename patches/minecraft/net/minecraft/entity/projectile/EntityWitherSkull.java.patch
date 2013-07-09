@@ -8,7 +8,7 @@
  
  public class EntityWitherSkull extends EntityFireball
  {
-@@ -73,12 +74,12 @@
+@@ -73,7 +74,7 @@
                  {
                      if (par1MovingObjectPosition.entityHit.attackEntityFrom(DamageSource.causeMobDamage(this.shootingEntity), 8.0F) && !par1MovingObjectPosition.entityHit.isEntityAlive())
                      {
@@ -17,12 +17,6 @@
                      }
                  }
                  else
-                 {
--                    par1MovingObjectPosition.entityHit.attackEntityFrom(DamageSource.magic, 5.0F);
-+                    par1MovingObjectPosition.entityHit.attackEntityFrom(DamageSource.magic, 5);
-                 }
- 
-                 if (par1MovingObjectPosition.entityHit instanceof EntityLivingBase)
 @@ -104,7 +105,16 @@
                  }
              }

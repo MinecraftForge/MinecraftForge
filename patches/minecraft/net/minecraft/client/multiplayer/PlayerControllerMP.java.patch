@@ -21,7 +21,7 @@
 +            return false;
 +        }
 +
-         if (this.currentGameType.isAdventure() && !this.mc.thePlayer.canCurrentToolHarvestBlock(par1, par2, par3))
+         if (this.currentGameType.isAdventure() && !this.mc.thePlayer.isCurrentToolAdventureModeExempt(par1, par2, par3))
          {
              return false;
 @@ -146,7 +156,7 @@

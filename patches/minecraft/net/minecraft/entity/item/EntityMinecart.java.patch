@@ -433,7 +433,7 @@
                          {
                              par1Entity.motionX *= 0.20000000298023224D;
                              par1Entity.motionZ *= 0.20000000298023224D;
-@@ -1165,4 +1269,237 @@
+@@ -1168,4 +1272,237 @@
      {
          return this.entityName;
      }

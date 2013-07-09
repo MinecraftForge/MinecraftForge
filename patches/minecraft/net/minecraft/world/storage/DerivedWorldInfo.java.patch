@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/world/storage/DerivedWorldInfo.java
++++ ../src_work/minecraft/net/minecraft/world/storage/DerivedWorldInfo.java
+@@ -98,7 +98,7 @@
+      */
+     public int getVanillaDimension()
+     {
+-        return this.theWorldInfo.getVanillaDimension();
++        return this.theWorldInfo.getDimension();  // MCPC+ - we store dimension for all worlds, not just vanilla.
+     }
+ 
+     /**

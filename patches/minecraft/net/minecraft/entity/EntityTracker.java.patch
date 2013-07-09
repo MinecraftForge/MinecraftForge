@@ -1,14 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/entity/EntityTracker.java
 +++ ../src_work/minecraft/net/minecraft/entity/EntityTracker.java
-@@ -4,6 +4,7 @@
- import java.util.HashSet;
- import java.util.Iterator;
- import java.util.Set;
-+import java.util.concurrent.Callable;
- 
- import cpw.mods.fml.common.registry.EntityRegistry;
- import net.minecraft.crash.CrashReport;
-@@ -18,7 +19,9 @@
+@@ -18,7 +18,9 @@
  import net.minecraft.entity.item.EntityFallingSand;
  import net.minecraft.entity.item.EntityFireworkRocket;
  import net.minecraft.entity.item.EntityItem;
@@ -18,7 +10,7 @@
  import net.minecraft.entity.item.EntityTNTPrimed;
  import net.minecraft.entity.item.EntityXPOrb;
  import net.minecraft.entity.passive.EntityBat;
-@@ -33,6 +36,7 @@
+@@ -33,6 +35,7 @@
  import net.minecraft.entity.projectile.EntitySmallFireball;
  import net.minecraft.entity.projectile.EntitySnowball;
  import net.minecraft.network.packet.Packet;
@@ -26,7 +18,7 @@
  import net.minecraft.util.IntHashMap;
  import net.minecraft.util.ReportedException;
  import net.minecraft.world.WorldServer;
-@@ -46,7 +50,7 @@
+@@ -46,7 +49,7 @@
       * List of tracked entities, used for iteration operations on tracked entities.
       */
      private Set trackedEntities = new HashSet();
@@ -35,7 +27,7 @@
      private int entityViewDistance;
  
      public EntityTracker(WorldServer par1WorldServer)
-@@ -132,28 +136,28 @@
+@@ -132,28 +135,28 @@
          }
          else if (par1Entity instanceof EntityMinecart)
          {
@@ -84,7 +76,7 @@
          else if (par1Entity instanceof EntityDragon)
          {
              this.addEntityToTracker(par1Entity, 160, 3, true);
-@@ -187,6 +191,13 @@
+@@ -187,6 +190,13 @@
  
      public void addEntityToTracker(Entity par1Entity, int par2, int par3, boolean par4)
      {
@@ -98,18 +90,7 @@
          if (par2 > this.entityViewDistance)
          {
              par2 = this.entityViewDistance;
-@@ -208,8 +219,8 @@
-         {
-             CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Adding entity to track");
-             CrashReportCategory crashreportcategory = crashreport.makeCategory("Entity To Track");
--            crashreportcategory.addCrashSection("Tracking range", par2 + " blocks");
--            crashreportcategory.addCrashSectionCallable("Update interval", new CallableEntityTracker(this, par3));
-+            crashreportcategory.addCrashSection("Tracking range", (par2 + " blocks"));
-+            crashreportcategory.addCrashSectionCallable("Update interval", (Callable)(new CallableEntityTracker(this, par3)));
-             par1Entity.func_85029_a(crashreportcategory);
-             CrashReportCategory crashreportcategory1 = crashreport.makeCategory("Entity That Is Already Tracked");
-             ((EntityTrackerEntry)this.trackedEntityIDs.lookup(par1Entity.entityId)).myEntity.func_85029_a(crashreportcategory1);
-@@ -228,6 +239,11 @@
+@@ -228,6 +238,11 @@
  
      public void removeEntityFromAllTrackingPlayers(Entity par1Entity)
      {

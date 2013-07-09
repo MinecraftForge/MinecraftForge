@@ -368,7 +368,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
             name = name.substring(0, 64);
         }
 
-        ((net.minecraft.entity.EntityLiving) getHandle()).func_94058_c(name);
+        ((net.minecraft.entity.EntityLiving) getHandle()).setCustomNameTag(name);
     }
 
     public String getCustomName() {
@@ -376,7 +376,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
             return null;
         }
 
-        String name = ((net.minecraft.entity.EntityLiving) getHandle()).func_94057_bL();
+        String name = ((net.minecraft.entity.EntityLiving) getHandle()).getCustomNameTag();
 
         if (name == null || name.length() == 0) {
             return null;
@@ -387,12 +387,12 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
     public void setCustomNameVisible(boolean flag) {
         if (getHandle() instanceof net.minecraft.entity.EntityLiving) {
-            ((net.minecraft.entity.EntityLiving) getHandle()).func_94061_f(flag);
+            ((net.minecraft.entity.EntityLiving) getHandle()).setAlwaysRenderNameTag(flag);
         }
     }
 
     public boolean isCustomNameVisible() {
-        return getHandle() instanceof net.minecraft.entity.EntityLiving && ((net.minecraft.entity.EntityLiving) getHandle()).func_94062_bN();
+        return getHandle() instanceof net.minecraft.entity.EntityLiving && ((net.minecraft.entity.EntityLiving) getHandle()).getAlwaysRenderNameTag();
     }
 
     @Deprecated

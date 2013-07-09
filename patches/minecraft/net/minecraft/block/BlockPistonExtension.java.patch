@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockPistonExtension.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockPistonExtension.java
-@@ -39,6 +39,12 @@
+@@ -59,6 +59,12 @@
      public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
      {
          super.breakBlock(par1World, par2, par3, par4, par5, par6);
@@ -13,7 +13,7 @@
          int j1 = Facing.oppositeSide[getDirectionMeta(par6)];
          par2 += Facing.offsetsXForSide[j1];
          par3 += Facing.offsetsYForSide[j1];
-@@ -223,6 +229,12 @@
+@@ -243,6 +249,12 @@
      public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
      {
          int i1 = getDirectionMeta(par1World.getBlockMetadata(par2, par3, par4));

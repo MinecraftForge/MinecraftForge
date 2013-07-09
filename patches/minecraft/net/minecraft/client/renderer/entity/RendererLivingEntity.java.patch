@@ -1,9 +1,9 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/entity/RendererLivingEntity.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RendererLivingEntity.java
 @@ -17,6 +17,9 @@
- import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.entity.projectile.EntityArrow;
  import net.minecraft.util.MathHelper;
+ import net.minecraft.util.ResourceLocation;
 +import net.minecraftforge.client.event.RenderLivingEvent;
 +import net.minecraftforge.common.MinecraftForge;
 +

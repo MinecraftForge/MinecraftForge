@@ -16,10 +16,11 @@
  
  public class InventoryCrafting implements IInventory
  {
-@@ -16,6 +24,56 @@
+@@ -15,6 +23,56 @@
+      * Class containing the callbacks for the events on_GUIClosed and on_CraftMaxtrixChanged.
       */
      private Container eventHandler;
- 
++
 +    // CraftBukkit start
 +    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +    public IRecipe currentRecipe;
@@ -69,37 +70,9 @@
 +        this.owner = player;
 +    }
 +    // CraftBukkit end
-+
+ 
      public InventoryCrafting(Container par1Container, int par2, int par3)
      {
-         int k = par2 * par3;
-@@ -105,7 +163,7 @@
-             {
-                 itemstack = this.stackList[par1];
-                 this.stackList[par1] = null;
--                this.eventHandler.onCraftMatrixChanged(this);
-+                this.eventHandler.onCraftMatrixChanged((IInventory) this);
-                 return itemstack;
-             }
-             else
-@@ -117,7 +175,7 @@
-                     this.stackList[par1] = null;
-                 }
- 
--                this.eventHandler.onCraftMatrixChanged(this);
-+                this.eventHandler.onCraftMatrixChanged((IInventory) this);
-                 return itemstack;
-             }
-         }
-@@ -133,7 +191,7 @@
-     public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
-     {
-         this.stackList[par1] = par2ItemStack;
--        this.eventHandler.onCraftMatrixChanged(this);
-+        this.eventHandler.onCraftMatrixChanged((IInventory) this);
-     }
- 
-     /**
 @@ -142,7 +200,7 @@
       */
      public int getInventoryStackLimit()

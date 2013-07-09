@@ -1,0 +1,26 @@
+--- ../src_base/minecraft/net/minecraft/network/rcon/RConThreadClient.java
++++ ../src_work/minecraft/net/minecraft/network/rcon/RConThreadClient.java
+@@ -55,16 +55,16 @@
+                 BufferedInputStream bufferedinputstream = new BufferedInputStream(this.clientSocket.getInputStream());
+                 int i = bufferedinputstream.read(this.buffer, 0, 1460);
+ 
+-                if (10 <= i)
++                if (10 > i)
+                 {
+-                    byte b0 = 0;
+-                    int j = RConUtils.getBytesAsLEInt(this.buffer, 0, i);
++                    return;
++                }
+ 
+-                    if (j != i - 4)
+-                    {
+-                        return;
+-                    }
++                byte b0 = 0;
++                int j = RConUtils.getBytesAsLEInt(this.buffer, 0, i);
+ 
++                if (j == i - 4)
++                {
+                     int k = b0 + 4;
+                     int l = RConUtils.getBytesAsLEInt(this.buffer, k, i);
+                     k += 4;

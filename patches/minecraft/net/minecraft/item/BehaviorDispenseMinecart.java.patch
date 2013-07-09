@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/item/BehaviorDispenseMinecart.java
 +++ ../src_work/minecraft/net/minecraft/item/BehaviorDispenseMinecart.java
-@@ -1,16 +1,23 @@
+@@ -1,12 +1,17 @@
  package net.minecraft.item;
  
 +// CraftBukkit start
@@ -18,13 +18,7 @@
  
  final class BehaviorDispenseMinecart extends BehaviorDefaultDispenseItem
  {
-     private final BehaviorDefaultDispenseItem field_96465_b = new BehaviorDefaultDispenseItem();
-+
-+    BehaviorDispenseMinecart() {}
- 
-     /**
-      * Dispense the specified stack, play the dispense sound and spawn particles.
-@@ -42,7 +49,40 @@
+@@ -42,7 +47,40 @@
              d3 = -1.0D;
          }
  
@@ -51,7 +45,7 @@
 +            par2ItemStack.stackSize++;
 +            // Chain to handler for new item
 +            ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
-+            IBehaviorDispenseItem ibehaviordispenseitem = (IBehaviorDispenseItem) BlockDispenser.dispenseBehaviorRegistry.func_82594_a(eventStack.getItem());
++            IBehaviorDispenseItem ibehaviordispenseitem = (IBehaviorDispenseItem) BlockDispenser.dispenseBehaviorRegistry.getObject(eventStack.getItem());
 +
 +            if (ibehaviordispenseitem != IBehaviorDispenseItem.itemDispenseBehaviorProvider && ibehaviordispenseitem != this)
 +            {
@@ -66,12 +60,12 @@
  
          if (par2ItemStack.hasDisplayName())
          {
-@@ -50,7 +90,7 @@
+@@ -50,7 +88,7 @@
          }
  
          world.spawnEntityInWorld(entityminecart);
 -        par2ItemStack.splitStack(1);
-+        // itemstack.a(1); // CraftBukkit - handled during event processing
++        // itemstack.splitStack(1); // CraftBukkit - handled during event processing
          return par2ItemStack;
      }
  

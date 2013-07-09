@@ -108,20 +108,11 @@
          super.onUpdate();
  
          if (this.getTimeSinceHit() > 0)
-@@ -338,12 +404,30 @@
-                 if (d4 > 0.0D)
-                 {
-                     d5 = -Math.sin((double)(this.riddenByEntity.rotationYaw * (float)Math.PI / 180.0F));
--                    d11 = Math.cos((double)(this.riddenByEntity.rotationYaw * (float)Math.PI / 180.0F));
-+                    d10 = Math.cos((double)(this.riddenByEntity.rotationYaw * (float)Math.PI / 180.0F));
-                     this.motionX += d5 * this.speedMultiplier * 0.05000000074505806D;
--                    this.motionZ += d11 * this.speedMultiplier * 0.05000000074505806D;
--                }
--            }
+@@ -343,7 +409,25 @@
+                     this.motionZ += d11 * this.speedMultiplier * 0.05000000074505806D;
+                 }
+             }
 -
-+                    this.motionZ += d10 * this.speedMultiplier * 0.05000000074505806D;
-+                }
-+            }
 +            // CraftBukkit start - Support unoccupied deceleration
 +            else if (unoccupiedDeceleration >= 0)
 +            {

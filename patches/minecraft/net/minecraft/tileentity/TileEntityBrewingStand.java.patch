@@ -152,7 +152,7 @@
      /**
 @@ -343,7 +406,7 @@
       */
-     public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
+     public boolean isItemValidForSlot(int par1, ItemStack par2ItemStack)
      {
 -        return par1 == 3 ? Item.itemsList[par2ItemStack.itemID].isPotionIngredient() : par2ItemStack.itemID == Item.potion.itemID || par2ItemStack.itemID == Item.glassBottle.itemID;
 +        return par1 == 3 ? Item.itemsList[par2ItemStack.itemID].isPotionIngredient() : par2ItemStack.getItem() instanceof ItemPotion || par2ItemStack.itemID == Item.glassBottle.itemID;

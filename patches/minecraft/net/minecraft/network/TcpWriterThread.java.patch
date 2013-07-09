@@ -1,11 +1,7 @@
 --- ../src_base/minecraft/net/minecraft/network/TcpWriterThread.java
 +++ ../src_work/minecraft/net/minecraft/network/TcpWriterThread.java
-@@ -38,10 +38,10 @@
-                 {
-                     if (!TcpConnection.isTerminating(this.theTcpConnection))
-                     {
--                        TcpConnection.sendError(this.theTcpConnection, ioexception);
-+                        TcpConnection.sendError(this.theTcpConnection, (Exception) ioexception);
+@@ -41,7 +41,7 @@
+                         TcpConnection.sendError(this.theTcpConnection, ioexception);
                      }
  
 -                    ioexception.printStackTrace();

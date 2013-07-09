@@ -8,29 +8,7 @@
  import net.minecraft.nbt.NBTBase;
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.nbt.NBTTagList;
-@@ -88,6 +89,8 @@
- 
-     public ItemStack(int par1, int par2, int par3)
-     {
-+        this.stackSize = 0;
-+        this.itemFrame = null;
-         this.itemID = par1;
-         this.stackSize = par2;
-         this.itemDamage = par3;
-@@ -105,7 +108,11 @@
-         return itemstack.getItem() != null ? itemstack : null;
-     }
- 
--    private ItemStack() {}
-+    private ItemStack()
-+    {
-+        this.stackSize = 0;
-+        this.itemFrame = null;
-+    }
- 
-     /**
-      * Remove the argument from the stack size. Return a new stack object with argument size.
-@@ -128,6 +135,7 @@
+@@ -128,6 +129,7 @@
       */
      public Item getItem()
      {
@@ -38,7 +16,7 @@
          return Item.itemsList[this.itemID];
      }
  
-@@ -192,7 +200,7 @@
+@@ -192,7 +194,7 @@
  
          if (this.stackTagCompound != null)
          {
@@ -47,7 +25,7 @@
          }
  
          return par1NBTTagCompound;
-@@ -214,7 +222,8 @@
+@@ -214,7 +216,8 @@
  
          if (par1NBTTagCompound.hasKey("tag"))
          {
@@ -57,7 +35,7 @@
          }
      }
  
-@@ -252,7 +261,9 @@
+@@ -252,7 +255,9 @@
       */
      public boolean isItemDamaged()
      {
@@ -68,7 +46,7 @@
      }
  
      /**
-@@ -260,6 +271,10 @@
+@@ -260,6 +265,10 @@
       */
      public int getItemDamageForDisplay()
      {
@@ -79,7 +57,7 @@
          return this.itemDamage;
      }
  
-@@ -268,6 +283,10 @@
+@@ -268,6 +277,10 @@
       */
      public int getItemDamage()
      {
@@ -90,7 +68,7 @@
          return this.itemDamage;
      }
  
-@@ -276,6 +295,12 @@
+@@ -276,6 +289,12 @@
       */
      public void setItemDamage(int par1)
      {
@@ -103,7 +81,7 @@
          this.itemDamage = par1;
  
          if (this.itemDamage < 0)
-@@ -289,7 +314,7 @@
+@@ -289,7 +308,7 @@
       */
      public int getMaxDamage()
      {
@@ -112,7 +90,7 @@
      }
  
      /**
-@@ -298,8 +323,15 @@
+@@ -298,8 +317,15 @@
       * getMaxDamage(). Returns false otherwise or if the ItemStack can't be damaged or if all points of damage are
       * negated.
       */
@@ -128,7 +106,7 @@
          if (!this.isItemStackDamageable())
          {
              return false;
-@@ -321,14 +353,29 @@
+@@ -321,14 +347,29 @@
  
                  par1 -= k;
  
@@ -160,7 +138,7 @@
          }
      }
  
-@@ -362,6 +409,13 @@
+@@ -362,6 +403,13 @@
                          this.stackSize = 0;
                      }
  
@@ -174,16 +152,7 @@
                      this.itemDamage = 0;
                  }
              }
-@@ -373,7 +427,7 @@
-      */
-     public void hitEntity(EntityLivingBase par1EntityLivingBase, EntityPlayer par2EntityPlayer)
-     {
--        boolean flag = Item.itemsList[this.itemID].hitEntity(this, par1EntityLivingBase, par2EntityPlayer);
-+        boolean flag = Item.itemsList[this.itemID].hitEntity(this, par1EntityLivingBase, (EntityLivingBase) par2EntityPlayer);
- 
-         if (flag)
-         {
-@@ -396,7 +450,7 @@
+@@ -396,7 +444,7 @@
       */
      public boolean canHarvestBlock(Block par1Block)
      {
@@ -192,7 +161,7 @@
      }
  
      public boolean func_111282_a(EntityPlayer par1EntityPlayer, EntityLivingBase par2EntityLivingBase)
-@@ -478,7 +532,15 @@
+@@ -478,7 +526,15 @@
              --this.animationsToGo;
          }
  
@@ -209,7 +178,7 @@
      }
  
      public void onCrafting(World par1World, EntityPlayer par2EntityPlayer, int par3)
-@@ -737,10 +799,16 @@
+@@ -737,10 +793,16 @@
          return arraylist;
      }
  

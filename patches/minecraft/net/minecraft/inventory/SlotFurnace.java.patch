@@ -20,7 +20,7 @@
  
  public class SlotFurnace extends Slot
  {
-@@ -64,6 +70,7 @@
+@@ -64,12 +70,13 @@
       */
      protected void onCrafting(ItemStack par1ItemStack)
      {
@@ -28,10 +28,18 @@
          par1ItemStack.onCrafting(this.thePlayer.worldObj, this.thePlayer, this.field_75228_b);
  
          if (!this.thePlayer.worldObj.isRemote)
-@@ -88,6 +95,17 @@
+         {
+             int i = this.field_75228_b;
+-            float f = FurnaceRecipes.smelting().getExperience(par1ItemStack.itemID);
++            float f = FurnaceRecipes.smelting().getExperience(par1ItemStack);
+             int j;
+ 
+             if (f == 0.0F)
+@@ -87,6 +94,17 @@
+ 
                  i = j;
              }
- 
++
 +            if (this.inventory instanceof TileEntityFurnace) { // MCPC+ - fix IC2 crash
 +            // CraftBukkit start
 +            Player player = (Player) thePlayer.getBukkitEntity();
@@ -42,22 +50,6 @@
 +            i = event.getExpToDrop();
 +            // CraftBukkit end
 +            } // MCPC+
-+
+ 
              while (i > 0)
              {
-                 j = EntityXPOrb.getXPSplit(i);
-@@ -102,12 +120,12 @@
- 
-         if (par1ItemStack.itemID == Item.ingotIron.itemID)
-         {
--            this.thePlayer.addStat(AchievementList.acquireIron, 1);
-+            this.thePlayer.addStat((StatBase) AchievementList.acquireIron, 1);
-         }
- 
-         if (par1ItemStack.itemID == Item.fishCooked.itemID)
-         {
--            this.thePlayer.addStat(AchievementList.cookFish, 1);
-+            this.thePlayer.addStat((StatBase) AchievementList.cookFish, 1);
-         }
-     }
- }

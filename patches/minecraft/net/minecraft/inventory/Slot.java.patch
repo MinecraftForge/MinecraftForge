@@ -1,15 +1,15 @@
 --- ../src_base/minecraft/net/minecraft/inventory/Slot.java
 +++ ../src_work/minecraft/net/minecraft/inventory/Slot.java
-@@ -2,6 +2,8 @@
+@@ -2,14 +2,16 @@
  
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
 +import net.minecraft.client.renderer.texture.TextureMap;
-+import net.minecraft.client.resources.ResourceLocation;
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.Icon;
-@@ -9,7 +11,7 @@
++import net.minecraft.util.ResourceLocation;
+ 
  public class Slot
  {
      /** The index of the slot in the inventory. */

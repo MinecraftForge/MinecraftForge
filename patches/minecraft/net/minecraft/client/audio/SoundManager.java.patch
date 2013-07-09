@@ -23,14 +23,14 @@
          this.options = par2GameSettings;
          this.field_130085_i = par3File;
          this.soundPoolSounds = new SoundPool(par1ResourceManager, "sound", true);
-@@ -81,6 +87,7 @@
-             soundsystemexception.printStackTrace();
-             System.err.println("error linking with the LibraryJavaSound plug-in");
+@@ -75,6 +81,7 @@
+             SoundSystemConfig.addLibrary(LibraryLWJGLOpenAL.class);
+             SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
+             SoundSystemConfig.setCodec("wav", CodecWav.class);
++            MinecraftForge.EVENT_BUS.post(new SoundSetupEvent(this));
          }
-+        MinecraftForge.EVENT_BUS.post(new SoundSetupEvent(this));
- 
-         this.func_130083_h();
-     }
+         catch (SoundSystemException soundsystemexception)
+         {
 @@ -90,6 +97,7 @@
          this.stopAllSounds();
          this.closeMinecraft();

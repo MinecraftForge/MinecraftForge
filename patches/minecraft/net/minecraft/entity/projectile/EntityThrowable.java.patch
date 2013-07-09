@@ -35,12 +35,3 @@
              }
          }
  
-@@ -296,7 +304,7 @@
-     /**
-      * Called when this EntityThrowable hits a block or entity.
-      */
--    protected abstract void onImpact(MovingObjectPosition movingobjectposition);
-+    protected abstract void onImpact(MovingObjectPosition par1MovingObjectPosition);
- 
-     /**
-      * (abstract) Protected helper method to write subclass entity data to NBT.

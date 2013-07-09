@@ -175,7 +175,7 @@
      }
  
      protected abstract void entityInit();
-@@ -346,6 +430,41 @@
+@@ -354,6 +438,41 @@
       */
      protected void setRotation(float par1, float par2)
      {
@@ -217,7 +217,7 @@
          this.rotationYaw = par1 % 360.0F;
          this.rotationPitch = par2 % 360.0F;
      }
-@@ -426,7 +545,7 @@
+@@ -434,7 +553,7 @@
  
              if (this.inPortal)
              {
@@ -226,7 +226,7 @@
                  {
                      if (this.ridingEntity == null && this.timeInPortal++ >= i)
                      {
-@@ -546,7 +665,44 @@
+@@ -554,7 +673,44 @@
      {
          if (!this.isImmuneToFire)
          {
@@ -272,7 +272,7 @@
              this.setFire(15);
          }
      }
-@@ -596,6 +752,14 @@
+@@ -604,6 +760,14 @@
       */
      public void moveEntity(double par1, double par3, double par5)
      {
@@ -287,7 +287,7 @@
          if (this.noClip)
          {
              this.boundingBox.offset(par1, par3, par5);
-@@ -860,6 +1024,33 @@
+@@ -868,6 +1032,33 @@
              d10 = this.posY - d4;
              d11 = this.posZ - d5;
  
@@ -321,7 +321,7 @@
              if (this.canTriggerWalking() && !flag && this.ridingEntity == null)
              {
                  int l = MathHelper.floor_double(this.posX);
-@@ -922,14 +1113,26 @@
+@@ -930,14 +1121,26 @@
  
              if (this.worldObj.isBoundingBoxBurning(this.boundingBox.contract(0.001D, 0.001D, 0.001D)))
              {
@@ -350,7 +350,7 @@
                          this.setFire(8);
                      }
                  }
-@@ -947,6 +1150,8 @@
+@@ -955,6 +1158,8 @@
  
              this.worldObj.theProfiler.endSection();
          }
@@ -359,7 +359,7 @@
      }
  
      /**
-@@ -1051,15 +1256,22 @@
+@@ -1059,15 +1264,22 @@
          return null;
      }
  
@@ -383,7 +383,7 @@
          }
      }
  
-@@ -1250,6 +1462,15 @@
+@@ -1258,6 +1470,15 @@
       */
      public void setWorld(World par1World)
      {
@@ -399,7 +399,7 @@
          this.worldObj = par1World;
      }
  
-@@ -1505,6 +1726,20 @@
+@@ -1513,6 +1734,20 @@
          {
              par1NBTTagCompound.setTag("Pos", this.newDoubleNBTList(new double[] {this.posX, this.posY + (double)this.ySize, this.posZ}));
              par1NBTTagCompound.setTag("Motion", this.newDoubleNBTList(new double[] {this.motionX, this.motionY, this.motionZ}));
@@ -420,7 +420,7 @@
              par1NBTTagCompound.setTag("Rotation", this.newFloatNBTList(new float[] {this.rotationYaw, this.rotationPitch}));
              par1NBTTagCompound.setFloat("FallDistance", this.fallDistance);
              par1NBTTagCompound.setShort("Fire", (short)this.fire);
-@@ -1515,6 +1750,26 @@
+@@ -1523,6 +1758,26 @@
              par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
              par1NBTTagCompound.setLong("UUIDMost", this.entityUniqueID.getMostSignificantBits());
              par1NBTTagCompound.setLong("UUIDLeast", this.entityUniqueID.getLeastSignificantBits());
@@ -447,7 +447,7 @@
              this.writeEntityToNBT(par1NBTTagCompound);
  
              if (this.ridingEntity != null)
-@@ -1549,7 +1804,7 @@
+@@ -1557,7 +1812,7 @@
              this.motionX = ((NBTTagDouble)nbttaglist1.tagAt(0)).data;
              this.motionY = ((NBTTagDouble)nbttaglist1.tagAt(1)).data;
              this.motionZ = ((NBTTagDouble)nbttaglist1.tagAt(2)).data;
@@ -456,7 +456,7 @@
              if (Math.abs(this.motionX) > 10.0D)
              {
                  this.motionX = 0.0D;
-@@ -1564,7 +1819,7 @@
+@@ -1572,7 +1827,7 @@
              {
                  this.motionZ = 0.0D;
              }
@@ -465,11 +465,10 @@
              this.prevPosX = this.lastTickPosX = this.posX = ((NBTTagDouble)nbttaglist.tagAt(0)).data;
              this.prevPosY = this.lastTickPosY = this.posY = ((NBTTagDouble)nbttaglist.tagAt(1)).data;
              this.prevPosZ = this.lastTickPosZ = this.posZ = ((NBTTagDouble)nbttaglist.tagAt(2)).data;
-@@ -1585,7 +1840,92 @@
+@@ -1593,12 +1848,92 @@
  
              this.setPosition(this.posX, this.posY, this.posZ);
              this.setRotation(this.rotationYaw, this.rotationPitch);
--            this.readEntityFromNBT(par1NBTTagCompound);
 +            if (par1NBTTagCompound.hasKey("ForgeData"))
 +            {
 +                customEntityData = par1NBTTagCompound.getCompoundTag("ForgeData");
@@ -490,8 +489,12 @@
 +            {
 +                this.entityUniqueID = new UUID(par1NBTTagCompound.getLong("PersistentIDMSB"), par1NBTTagCompound.getLong("PersistentIDLSB"));
 +            }
-+            this.readEntityFromNBT(par1NBTTagCompound);            
-+
+             this.readEntityFromNBT(par1NBTTagCompound);
+ 
+-            if (this.func_142008_O())
+-            {
+-                this.setPosition(this.posX, this.posY, this.posZ);
+-            }
 +            // CraftBukkit start
 +            if (this instanceof EntityLivingBase)
 +            {
@@ -559,22 +562,7 @@
          }
          catch (Throwable throwable)
          {
-@@ -1607,12 +1947,12 @@
-     /**
-      * (abstract) Protected helper method to read subclass entity data from NBT.
-      */
--    protected abstract void readEntityFromNBT(NBTTagCompound nbttagcompound);
-+    protected abstract void readEntityFromNBT(NBTTagCompound par1NBTTagCompound);
- 
-     /**
-      * (abstract) Protected helper method to write subclass entity data to NBT.
-      */
--    protected abstract void writeEntityToNBT(NBTTagCompound nbttagcompound);
-+    protected abstract void writeEntityToNBT(NBTTagCompound par1NBTTagCompound);
- 
-     public void func_110123_P() {}
- 
-@@ -1687,7 +2027,14 @@
+@@ -1705,7 +2040,14 @@
          {
              EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
              entityitem.delayBeforeCanPickup = 10;
@@ -590,7 +578,7 @@
              return entityitem;
          }
      }
-@@ -1723,6 +2070,9 @@
+@@ -1741,6 +2083,9 @@
          return false;
      }
  
@@ -600,7 +588,7 @@
      public boolean func_130002_c(EntityPlayer par1EntityPlayer)
      {
          return false;
-@@ -1839,13 +2189,44 @@
+@@ -1855,13 +2200,43 @@
       */
      public void mountEntity(Entity par1Entity)
      {
@@ -622,7 +610,7 @@
 +
 +    public void setPassengerOf(Entity entity)
 +    {
-+        // b(null) doesn't really fly for overloaded methods,
++        // mountEntity(null) doesn't really fly for overloaded methods,
 +        // so this method is needed
 +        PluginManager pluginManager = Bukkit.getPluginManager();
 +        this.getBukkitEntity(); // make sure bukkitEntity is initialised
@@ -641,12 +629,11 @@
 +                    VehicleExitEvent event = new VehicleExitEvent((Vehicle) this.ridingEntity.getBukkitEntity(), (LivingEntity) this.bukkitEntity);
 +                    pluginManager.callEvent(event);
 +                }
-+
 +                // CraftBukkit end
                  this.setLocationAndAngles(this.ridingEntity.posX, this.ridingEntity.boundingBox.minY + (double)this.ridingEntity.height, this.ridingEntity.posZ, this.rotationYaw, this.rotationPitch);
                  this.ridingEntity.riddenByEntity = null;
              }
-@@ -1854,13 +2235,25 @@
+@@ -1870,13 +2245,25 @@
          }
          else
          {
@@ -674,7 +661,7 @@
          }
      }
  
-@@ -1985,7 +2378,7 @@
+@@ -2001,7 +2388,7 @@
       */
      public boolean isRiding()
      {
@@ -683,7 +670,7 @@
      }
  
      /**
-@@ -2088,12 +2481,48 @@
+@@ -2104,12 +2491,48 @@
       */
      public void onStruckByLightning(EntityLightningBolt par1EntityLightningBolt)
      {
@@ -734,7 +721,7 @@
          }
      }
  
-@@ -2302,36 +2731,81 @@
+@@ -2321,36 +2744,81 @@
          {
              this.worldObj.theProfiler.startSection("changeDimension");
              MinecraftServer minecraftserver = MinecraftServer.getServer();
@@ -836,7 +823,7 @@
              }
  
              this.isDead = true;
-@@ -2344,7 +2818,7 @@
+@@ -2363,7 +2831,7 @@
  
      public float func_82146_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
      {
@@ -845,7 +832,7 @@
      }
  
      public boolean func_96091_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
-@@ -2407,4 +2881,145 @@
+@@ -2426,4 +2894,149 @@
      {
          return this.getEntityName();
      }
@@ -905,6 +892,10 @@
 +            {
 +                return held.copy();
 +            }
++        }
++        else if (this instanceof EntityLeashKnot)
++        {
++            return new ItemStack(Item.field_111214_ch);
 +        }
 +        else
 +        {

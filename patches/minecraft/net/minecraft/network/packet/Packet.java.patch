@@ -28,7 +28,7 @@
  
      /**
       * Adds a two way mapping between the packet ID and packet class.
-@@ -127,13 +141,13 @@
+@@ -127,7 +141,7 @@
       */
      public final int getPacketId()
      {
@@ -37,13 +37,6 @@
      }
  
      /**
-      * Read a packet, prefixed by its ID, from the data stream.
-      */
--    public static Packet readPacket(ILogAgent par0ILogAgent, DataInput par1DataInput, boolean par2, Socket par3Socket) throws IOException
-+    public static Packet readPacket(ILogAgent par0ILogAgent, DataInput par1DataInput, boolean par2, Socket par3Socket) throws IOException   // CraftBukkit - throws IOException
-     {
-         boolean flag1 = false;
-         Packet packet = null;
 @@ -172,7 +186,19 @@
              par0ILogAgent.logSevere("Reached end of stream for " + par3Socket.getInetAddress());
              return null;

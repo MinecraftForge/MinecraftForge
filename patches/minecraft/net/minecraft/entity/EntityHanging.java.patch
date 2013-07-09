@@ -133,10 +133,3 @@
          {
              this.setDead();
              this.func_110128_b((Entity)null);
-@@ -335,5 +431,5 @@
- 
-     public abstract int func_82330_g();
- 
--    public abstract void func_110128_b(Entity entity);
-+    public abstract void func_110128_b(Entity par1Entity);
- }

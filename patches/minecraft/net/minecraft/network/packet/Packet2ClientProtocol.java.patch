@@ -20,14 +20,7 @@
  
      public Packet2ClientProtocol() {}
  
-@@ -27,18 +29,23 @@
-     /**
-      * Abstract. Reads the raw packet data from the data stream.
-      */
--    public void readPacketData(DataInput par1DataInput) throws IOException
-+    public void readPacketData(DataInput par1DataInput) throws IOException   // CraftBukkit - throws IOException
-     {
-         this.protocolVersion = par1DataInput.readByte();
+@@ -33,6 +35,11 @@
          this.username = readString(par1DataInput, 16);
          this.serverHost = readString(par1DataInput, 255);
          this.serverPort = par1DataInput.readInt();
@@ -39,10 +32,3 @@
      }
  
      /**
-      * Abstract. Writes the raw packet data to the data stream.
-      */
--    public void writePacketData(DataOutput par1DataOutput) throws IOException
-+    public void writePacketData(DataOutput par1DataOutput) throws IOException   // CraftBukkit - throws IOException
-     {
-         par1DataOutput.writeByte(this.protocolVersion);
-         writeString(this.username, par1DataOutput);

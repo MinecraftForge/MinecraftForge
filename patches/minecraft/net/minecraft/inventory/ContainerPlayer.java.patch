@@ -17,7 +17,7 @@
  
  public class ContainerPlayer extends Container
  {
-@@ -14,13 +20,21 @@
+@@ -14,12 +20,20 @@
  
      /** Determines if inventory manipulation should be handled. */
      public boolean isLocalWorld;
@@ -32,30 +32,19 @@
      {
          this.isLocalWorld = par2;
          this.thePlayer = par3EntityPlayer;
--        this.addSlotToContainer(new SlotCrafting(par1InventoryPlayer.player, this.craftMatrix, this.craftResult, 0, 144, 36));
 +        this.craftResult = new InventoryCraftResult(); // CraftBukkit - moved to before InventoryCrafting construction
 +        this.craftMatrix = new InventoryCrafting(this, 2, 2, par1InventoryPlayer.player); // CraftBukkit - pass player
 +        this.craftMatrix.resultInventory = this.craftResult; // CraftBukkit - let InventoryCrafting know about its result slot
 +        this.player = par1InventoryPlayer; // CraftBukkit - save player
-+        this.addSlotToContainer((Slot)(new SlotCrafting(par1InventoryPlayer.player, this.craftMatrix, this.craftResult, 0, 144, 36)));
+         this.addSlotToContainer(new SlotCrafting(par1InventoryPlayer.player, this.craftMatrix, this.craftResult, 0, 144, 36));
          int i;
          int j;
- 
-@@ -34,7 +48,7 @@
- 
-         for (i = 0; i < 4; ++i)
-         {
--            this.addSlotToContainer(new SlotArmor(this, par1InventoryPlayer, par1InventoryPlayer.getSizeInventory() - 1 - i, 8, 8 + i * 18, i));
-+            this.addSlotToContainer((Slot)(new SlotArmor(this, par1InventoryPlayer, par1InventoryPlayer.getSizeInventory() - 1 - i, 8, 8 + i * 18, i)));
-         }
- 
-         for (i = 0; i < 3; ++i)
 @@ -50,7 +64,7 @@
              this.addSlotToContainer(new Slot(par1InventoryPlayer, i, 8 + i * 18, 142));
          }
  
 -        this.onCraftMatrixChanged(this.craftMatrix);
-+        // this.a((IInventory) this.craftInventory); // CraftBukkit - unneeded since it just sets result slot to empty
++        // this.onCraftMatrixChanged(this.craftMatrix); // CraftBukkit - unneeded since it just sets result slot to empty
      }
  
      /**

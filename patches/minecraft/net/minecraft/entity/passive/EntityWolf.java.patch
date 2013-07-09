@@ -1,6 +1,23 @@
 --- ../src_base/minecraft/net/minecraft/entity/passive/EntityWolf.java
 +++ ../src_work/minecraft/net/minecraft/entity/passive/EntityWolf.java
-@@ -181,7 +181,8 @@
+@@ -2,6 +2,8 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++import java.util.Iterator;
++import java.util.List;
+ import net.minecraft.block.BlockColored;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityAgeable;
+@@ -29,6 +31,7 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.pathfinding.PathEntity;
++import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
+@@ -163,7 +166,8 @@
       */
      protected String getLivingSound()
      {
@@ -10,7 +27,7 @@
      }
  
      /**
-@@ -462,13 +463,14 @@
+@@ -446,13 +450,14 @@
  
              if (!this.worldObj.isRemote)
              {

@@ -26,19 +26,3 @@
                  int i1 = 0;
  
                  if (par7 == 1)
-@@ -167,15 +177,4 @@
-     {
-         return par1ItemStack.getItemDamage() == 3 && par1ItemStack.hasTagCompound() && par1ItemStack.getTagCompound().hasKey("SkullOwner") ? StatCollector.translateToLocalFormatted("item.skull.player.name", new Object[] {par1ItemStack.getTagCompound().getString("SkullOwner")}): super.getItemDisplayName(par1ItemStack);
-     }
--
--    @SideOnly(Side.CLIENT)
--    public void registerIcons(IconRegister par1IconRegister)
--    {
--        this.field_94586_c = new Icon[field_94587_a.length];
--
--        for (int i = 0; i < field_94587_a.length; ++i)
--        {
--            this.field_94586_c[i] = par1IconRegister.registerIcon(this.func_111208_A() + "_" + field_94587_a[i]);
--        }
--    }
- }

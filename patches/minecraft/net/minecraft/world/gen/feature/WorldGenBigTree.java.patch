@@ -1,21 +1,24 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenBigTree.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenBigTree.java
-@@ -2,10 +2,13 @@
+@@ -2,10 +2,15 @@
  
  import java.util.Random;
  import net.minecraft.block.Block;
++import net.minecraft.block.BlockSapling;
 +import net.minecraft.block.BlockSapling.TreeGenerator;
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
- 
+-
 -public class WorldGenBigTree extends WorldGenerator
++import net.minecraftforge.common.ForgeDirection;
++
 +import org.bukkit.BlockChangeDelegate; // CraftBukkit
 +
 +public class WorldGenBigTree extends WorldGenerator implements TreeGenerator   // CraftBukkit add interface
  {
      /**
       * Contains three sets of two values that provide complimentary indices for a given 'major' index - 1 and 2 for 0, 0
-@@ -17,7 +20,7 @@
+@@ -17,7 +22,7 @@
      Random rand = new Random();
  
      /** Reference to the World object. */
@@ -24,7 +27,7 @@
      int[] basePos = new int[] {0, 0, 0};
      int heightLimit;
      int height;
-@@ -162,7 +165,7 @@
+@@ -162,7 +167,7 @@
                  else
                  {
                      aint1[b2] = aint[b2] + k1;
@@ -33,7 +36,7 @@
  
                      if (l1 != 0 && l1 != Block.leaves.blockID)
                      {
-@@ -170,7 +173,7 @@
+@@ -170,7 +175,7 @@
                      }
                      else
                      {
@@ -42,7 +45,7 @@
                          ++k1;
                      }
                  }
-@@ -291,7 +294,7 @@
+@@ -291,7 +296,7 @@
                      }
                  }
  
@@ -51,7 +54,7 @@
              }
          }
      }
-@@ -420,9 +423,9 @@
+@@ -420,9 +425,9 @@
                  aint3[b1] = par1ArrayOfInteger[b1] + i;
                  aint3[b2] = MathHelper.floor_double((double)par1ArrayOfInteger[b2] + (double)i * d0);
                  aint3[b3] = MathHelper.floor_double((double)par1ArrayOfInteger[b3] + (double)i * d1);
@@ -64,16 +67,25 @@
                  {
                      break;
                  }
-@@ -440,7 +443,7 @@
+@@ -438,11 +443,14 @@
+      */
+     boolean validTreeLocation()
      {
++        World forgeWorld = this.worldObj instanceof World ? (World)this.worldObj : null;
          int[] aint = new int[] {this.basePos[0], this.basePos[1], this.basePos[2]};
          int[] aint1 = new int[] {this.basePos[0], this.basePos[1] + this.heightLimit - 1, this.basePos[2]};
 -        int i = this.worldObj.getBlockId(this.basePos[0], this.basePos[1] - 1, this.basePos[2]);
+-
+-        if (i != 2 && i != 3)
 +        int i = this.worldObj.getTypeId(this.basePos[0], this.basePos[1] - 1, this.basePos[2]);
- 
-         if (i != 2 && i != 3)
++
++        Block soil = Block.blocksList[i];
++        boolean isValidSoil = forgeWorld != null ? (soil != null && soil.canSustainPlant(forgeWorld, basePos[0], basePos[1] - 1, basePos[2], ForgeDirection.UP, (BlockSapling)Block.sapling)) : (i == 2 && i == 3);
++        if (!isValidSoil)
          {
-@@ -484,6 +487,17 @@
+             return false;
+         }
+@@ -484,6 +492,17 @@
  
      public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
      {

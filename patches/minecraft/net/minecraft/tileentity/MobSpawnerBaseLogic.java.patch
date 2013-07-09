@@ -44,12 +44,3 @@
          }
  
          return par1Entity;
-@@ -371,7 +374,7 @@
-         this.randomMinecart = par1WeightedRandomMinecart;
-     }
- 
--    public abstract void func_98267_a(int i);
-+    public abstract void func_98267_a(int par1);
- 
-     public abstract World getSpawnerWorld();
- 

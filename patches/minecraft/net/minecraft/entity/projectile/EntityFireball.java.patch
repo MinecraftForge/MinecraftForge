@@ -47,15 +47,6 @@
              }
  
              this.posX += this.motionX;
-@@ -233,7 +250,7 @@
-     /**
-      * Called when this EntityFireball hits a block or entity.
-      */
--    protected abstract void onImpact(MovingObjectPosition movingobjectposition);
-+    protected abstract void onImpact(MovingObjectPosition par1MovingObjectPosition);
- 
-     /**
-      * (abstract) Protected helper method to write subclass entity data to NBT.
 @@ -245,7 +262,8 @@
          par1NBTTagCompound.setShort("zTile", (short)this.zTile);
          par1NBTTagCompound.setByte("inTile", (byte)this.inTile);

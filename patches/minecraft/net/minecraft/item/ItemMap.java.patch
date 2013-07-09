@@ -11,12 +11,8 @@
  
  public class ItemMap extends ItemMapBase
  {
-@@ -52,9 +56,13 @@
-             int i = 128 * (1 << mapdata.scale);
-             mapdata.xCenter = Math.round((float)par2World.getWorldInfo().getSpawnX() / (float)i) * i;
-             mapdata.zCenter = Math.round((float)(par2World.getWorldInfo().getSpawnZ() / i)) * i;
--            mapdata.dimension = par2World.provider.dimensionId;
-+            mapdata.dimension = par2World.provider.dimensionId; // MCPC+ - note - from FML, needed?
+@@ -55,6 +59,10 @@
+             mapdata.dimension = par2World.provider.dimensionId;
              mapdata.markDirty();
              par2World.setItemData(s, mapdata);
 +            // CraftBukkit start

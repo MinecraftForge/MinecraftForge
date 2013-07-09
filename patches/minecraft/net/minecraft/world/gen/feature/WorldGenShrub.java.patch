@@ -14,7 +14,7 @@
  {
      private int field_76527_a;
      private int field_76526_b;
-@@ -17,19 +20,26 @@
+@@ -17,19 +20,33 @@
  
      public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
      {
@@ -25,13 +25,22 @@
 +    public boolean generate(BlockChangeDelegate par1World, Random par2Random, int par3, int par4, int par5)
 +    {
 +        // CraftBukkit end
++        World forgeWorld = par1World instanceof World ? (World)par1World : null;
          int l;
  
 -        for (boolean flag = false; ((l = par1World.getBlockId(par3, par4, par5)) == 0 || l == Block.leaves.blockID) && par4 > 0; --par4)
-+        for (boolean flag = false; ((l = par1World.getTypeId(par3, par4, par5)) == 0 || l == Block.leaves.blockID) && par4 > 0; --par4)
++        Block block = null;
++        do 
          {
-             ;
-         }
+-            ;
+-        }
++            block = Block.blocksList[forgeWorld.getBlockId(par3,  par4, par5)];
++            if (block != null && !block.isLeaves(forgeWorld, par3, par4, par5))
++            {
++                break;
++            }
++            par4--;
++        } while (par4 > 0);
  
 -        int i1 = par1World.getBlockId(par3, par4, par5);
 +        int i1 = par1World.getTypeId(par3, par4, par5);
@@ -44,12 +53,15 @@
  
              for (int j1 = par4; j1 <= par4 + 2; ++j1)
              {
-@@ -44,15 +54,22 @@
+@@ -44,15 +61,25 @@
                      {
                          int l2 = k2 - par5;
  
 -                        if ((Math.abs(j2) != l1 || Math.abs(l2) != l1 || par2Random.nextInt(2) != 0) && !Block.opaqueCubeLookup[par1World.getBlockId(i2, j1, k2)])
-+                        if ((Math.abs(j2) != l1 || Math.abs(l2) != l1 || par2Random.nextInt(2) != 0) && !Block.opaqueCubeLookup[par1World.getTypeId(i2, j1, k2)])
++                        block = Block.blocksList[par1World.getTypeId(i2, j1, k2)];
++                        boolean canBeReplacedByLeaves = forgeWorld != null ? (block == null || block.canBeReplacedByLeaves(forgeWorld, i2, j1, k2)) : !Block.opaqueCubeLookup[par1World.getTypeId(i2, j1, k2)];
++
++                        if ((Math.abs(j2) != l1 || Math.abs(l2) != l1 || par2Random.nextInt(2) != 0) && canBeReplacedByLeaves)
                          {
 -                            this.setBlockAndMetadata(par1World, i2, j1, k2, Block.leaves.blockID, this.field_76527_a);
 +                            this.setTypeAndData(par1World, i2, j1, k2, Block.leaves.blockID, this.field_76527_a);

@@ -41,7 +41,7 @@
          }
      }
  
-@@ -167,19 +173,42 @@
+@@ -167,6 +173,24 @@
       */
      public void onEntityCollidedWithBlock(World par1World, int par2, int par3, int par4, Entity par5Entity)
      {
@@ -66,17 +66,11 @@
          par5Entity.attackEntityFrom(DamageSource.cactus, 1.0F);
      }
  
--    @SideOnly(Side.CLIENT)
--
--    /**
--     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
--     * is the only chance you get to register icons.
--     */
--    public void registerIcons(IconRegister par1IconRegister)
--    {
--        this.blockIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_side");
--        this.cactusTopIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_top");
--        this.cactusBottomIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_bottom");
+@@ -182,4 +206,22 @@
+         this.cactusTopIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_top");
+         this.cactusBottomIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_bottom");
+     }
++
 +    @Override
 +    public EnumPlantType getPlantType(World world, int x, int y, int z)
 +    {
@@ -93,5 +87,5 @@
 +    public int getPlantMetadata(World world, int x, int y, int z)
 +    {
 +        return -1;
-     }
++    }
  }

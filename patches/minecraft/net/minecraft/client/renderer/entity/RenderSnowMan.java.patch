@@ -1,13 +1,13 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/entity/RenderSnowMan.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RenderSnowMan.java
-@@ -9,8 +9,14 @@
+@@ -8,9 +8,14 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityLivingBase;
  import net.minecraft.entity.monster.EntitySnowman;
 +import net.minecraft.item.ItemBlock;
  import net.minecraft.item.ItemStack;
+ import net.minecraft.util.ResourceLocation;
  import org.lwjgl.opengl.GL11;
-+
 +import net.minecraftforge.client.IItemRenderer;
 +import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 +import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
@@ -15,7 +15,7 @@
  
  @SideOnly(Side.CLIENT)
  public class RenderSnowMan extends RenderLiving
-@@ -35,12 +41,15 @@
+@@ -35,12 +40,15 @@
          super.renderEquippedItems(par1EntitySnowman, par2);
          ItemStack itemstack = new ItemStack(Block.pumpkin, 1);
  

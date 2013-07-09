@@ -38,7 +38,7 @@ final class CraftScore implements Score {
             Map<String, net.minecraft.scoreboard.Score> scores = board.func_96510_d(playerName);
             net.minecraft.scoreboard.Score score = scores.get(objective.getHandle());
             if (score != null) { // Lazy
-                return score.func_96652_c();
+                return score.getScorePoints();
             }
         }
         return 0; // Lazy

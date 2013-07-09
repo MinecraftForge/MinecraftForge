@@ -1,13 +1,13 @@
 --- ../src_base/minecraft/net/minecraft/client/particle/EffectRenderer.java
 +++ ../src_work/minecraft/net/minecraft/client/particle/EffectRenderer.java
-@@ -13,6 +13,7 @@
- import net.minecraft.client.resources.ResourceLocation;
+@@ -12,6 +12,7 @@
+ import net.minecraft.client.renderer.texture.TextureMap;
  import net.minecraft.entity.Entity;
  import net.minecraft.util.MathHelper;
 +import net.minecraft.util.MovingObjectPosition;
+ import net.minecraft.util.ResourceLocation;
  import net.minecraft.world.World;
  import org.lwjgl.opengl.GL11;
- 
 @@ -63,9 +64,13 @@
              for (int j = 0; j < this.fxLayers[i].size(); ++j)
              {

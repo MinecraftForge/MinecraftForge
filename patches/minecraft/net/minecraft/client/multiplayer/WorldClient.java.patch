@@ -58,7 +58,7 @@
  
      public void doPreChunk(int par1, int par2, boolean par3)
      {
-@@ -295,6 +318,12 @@
+@@ -289,6 +312,12 @@
       * Updates all weather states.
       */
      protected void updateWeather()

@@ -60,7 +60,7 @@
 +     */
 +    public String getSaveFolder()
 +    {
-+        return (/*dimensionId == 0 ? null : */"DIM" + dimensionId);
++        return (/*dimensionId == 0 ? null : */"DIM" + dimensionId); // MCPC+
 +    }
 +
 +    /**

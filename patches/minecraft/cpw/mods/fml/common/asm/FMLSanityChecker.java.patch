@@ -1,21 +1,23 @@
 --- ../src_base/minecraft/cpw/mods/fml/common/asm/FMLSanityChecker.java
 +++ ../src_work/minecraft/cpw/mods/fml/common/asm/FMLSanityChecker.java
-@@ -109,10 +109,11 @@
-         {
-             goodFML = true;
+@@ -183,10 +183,12 @@
+ 
+             }
          }
 -        if (!goodFML)
-+        /*if (!goodFML)
-         {
+-        {
 -            FMLRelaunchLog.severe("FML appears to be missing any signature data. This is not a good thing");
 -        }
++        // MCPC+ start
++        /*if (!goodFML)
++        {
 +            FMLLog.severe("FML appears to be missing any signature data. This is not a good thing");
 +        }*/
 +        // MCPC+ end
          byte[] mlClass = cl.getClassBytes("ModLoader");
          // Only care in obfuscated env
          if (mlClass == null)
-@@ -144,8 +145,10 @@
+@@ -218,8 +220,10 @@
          cl = (LaunchClassLoader) data.get("classLoader");
          File mcDir = (File)data.get("mcLocation");
          FMLDeobfuscatingRemapper.INSTANCE.setup(mcDir, cl, (String) data.get("deobfuscationFileName"));

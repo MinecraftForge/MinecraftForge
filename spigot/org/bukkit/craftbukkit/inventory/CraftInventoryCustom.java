@@ -3,6 +3,8 @@ package org.bukkit.craftbukkit.inventory;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.item.ItemStack;
+
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
@@ -141,7 +143,7 @@ public class CraftInventoryCustom extends CraftInventory {
             return false;
         }
 
-        public boolean isStackValidForSlot(int i, net.minecraft.item.ItemStack itemstack) {
+        public boolean isItemValidForSlot(int i, net.minecraft.item.ItemStack itemstack) {
             return true;
         }
     }

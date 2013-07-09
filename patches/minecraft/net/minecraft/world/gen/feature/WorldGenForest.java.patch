@@ -1,11 +1,13 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenForest.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenForest.java
-@@ -2,9 +2,12 @@
+@@ -2,9 +2,14 @@
  
  import java.util.Random;
  import net.minecraft.block.Block;
++import net.minecraft.block.BlockSapling;
 +import net.minecraft.block.BlockSapling.TreeGenerator;
  import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeDirection;
  
 -public class WorldGenForest extends WorldGenerator
 +import org.bukkit.BlockChangeDelegate; // CraftBukkit
@@ -14,7 +16,7 @@
  {
      public WorldGenForest(boolean par1)
      {
-@@ -13,6 +16,13 @@
+@@ -13,6 +18,14 @@
  
      public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
      {
@@ -25,33 +27,49 @@
 +    public boolean generate(BlockChangeDelegate par1World, Random par2Random, int par3, int par4, int par5)
 +    {
 +        // CraftBukkit end
++        World forgeWorld = par1World instanceof World ? (World)par1World : null;
          int l = par2Random.nextInt(3) + 5;
          boolean flag = true;
  
-@@ -43,7 +53,7 @@
+@@ -43,10 +56,14 @@
                      {
                          if (i1 >= 0 && i1 < 256)
                          {
 -                            l1 = par1World.getBlockId(j1, i1, k1);
 +                            l1 = par1World.getTypeId(j1, i1, k1);
  
-                             if (l1 != 0 && l1 != Block.leaves.blockID)
+-                            if (l1 != 0 && l1 != Block.leaves.blockID)
++                            Block block = Block.blocksList[l1];
++                            // MCPC+ start - refactor forge patch to work with CB patch
++                            boolean isLeaves = forgeWorld != null && block != null ? block.isLeaves(forgeWorld, j1, i1, k1) : (l1 == Block.leaves.blockID);
++                            if (l1 != 0 && !isLeaves)
                              {
-@@ -64,11 +74,11 @@
++                            // MCPC+ end
+                                 flag = false;
+                             }
+                         }
+@@ -64,11 +81,17 @@
              }
              else
              {
 -                i1 = par1World.getBlockId(par3, par4 - 1, par5);
 +                i1 = par1World.getTypeId(par3, par4 - 1, par5);
++                // MCPC+ start - refactor forge patch to work with CB patch
++                Block soil = Block.blocksList[i1];
++                boolean isValidSoil = forgeWorld != null && soil != null ? soil.canSustainPlant(forgeWorld, par3, par4 - 1, par5, ForgeDirection.UP, (BlockSapling)Block.sapling) : (i1 == Block.grass.blockID || i1 == Block.dirt.blockID);
  
-                 if ((i1 == Block.grass.blockID || i1 == Block.dirt.blockID) && par4 < 256 - l - 1)
+-                if ((i1 == Block.grass.blockID || i1 == Block.dirt.blockID) && par4 < 256 - l - 1)
++                if (isValidSoil && par4 < 256 - l - 1)
                  {
 -                    this.setBlock(par1World, par3, par4 - 1, par5, Block.dirt.blockID);
-+                    this.setType(par1World, par3, par4 - 1, par5, Block.dirt.blockID);
++                    if (forgeWorld != null) 
++                        soil.onPlantGrow(forgeWorld, par3, par4 - 1, par5, par3, par4, par5);
++                    else this.setType(par1World, par3, par4 - 1, par5, Block.dirt.blockID);
++                 // MCPC+ end
                      int i2;
  
                      for (i2 = par4 - 3 + l; i2 <= par4 + l; ++i2)
-@@ -86,11 +96,11 @@
+@@ -86,11 +109,11 @@
  
                                  if (Math.abs(j2) != k1 || Math.abs(l2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0)
                                  {
@@ -65,16 +83,22 @@
                                      }
                                  }
                              }
-@@ -99,11 +109,11 @@
+@@ -99,11 +122,16 @@
  
                      for (i2 = 0; i2 < l; ++i2)
                      {
 -                        j1 = par1World.getBlockId(par3, par4 + i2, par5);
 +                        j1 = par1World.getTypeId(par3, par4 + i2, par5);
  
-                         if (j1 == 0 || j1 == Block.leaves.blockID)
+-                        if (j1 == 0 || j1 == Block.leaves.blockID)
++                        Block block = Block.blocksList[j1];
++                        // MCPC+ start - refactor forge patch to work with CB patch
++                        boolean isLeaves = forgeWorld != null && block != null ? block.isLeaves(forgeWorld, par3, par4 + i2, par5) : j1 == Block.leaves.blockID; // MCPC+
++
++                        if (j1 == 0 || isLeaves)
                          {
 -                            this.setBlockAndMetadata(par1World, par3, par4 + i2, par5, Block.wood.blockID, 2);
++                        // MCPC+ end
 +                            this.setTypeAndData(par1World, par3, par4 + i2, par5, Block.wood.blockID, 2);
                          }
                      }

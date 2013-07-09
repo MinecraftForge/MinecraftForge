@@ -10,15 +10,16 @@
  import net.minecraft.block.Block;
  import net.minecraft.enchantment.EnchantmentHelper;
  import net.minecraft.entity.ai.EntityAITasks;
-@@ -31,6 +34,7 @@
+@@ -31,6 +34,8 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
 +import net.minecraftforge.common.ForgeHooks;
++import net.minecraft.entity.passive.EntityHorse;
  
  public abstract class EntityLiving extends EntityLivingBase
  {
-@@ -57,13 +61,13 @@
+@@ -57,13 +62,13 @@
      private ItemStack[] equipment = new ItemStack[5];
  
      /** Chances for each equipment piece from dropping when this entity dies. */
@@ -35,7 +36,7 @@
      protected float defaultPitch;
  
      /** This entity's current target. */
-@@ -141,6 +145,7 @@
+@@ -141,6 +146,7 @@
      public void setAttackTarget(EntityLivingBase par1EntityLivingBase)
      {
          this.attackTarget = par1EntityLivingBase;
@@ -43,7 +44,7 @@
      }
  
      /**
-@@ -291,6 +296,8 @@
+@@ -291,6 +297,8 @@
       */
      protected void dropFewItems(boolean par1, int par2)
      {
@@ -52,7 +53,7 @@
          int j = this.getDropItemId();
  
          if (j > 0)
-@@ -302,11 +309,30 @@
+@@ -302,11 +310,30 @@
                  k += this.rand.nextInt(par2 + 1);
              }
  
@@ -88,7 +89,7 @@
      }
  
      /**
-@@ -374,6 +400,22 @@
+@@ -374,6 +401,22 @@
          super.readEntityFromNBT(par1NBTTagCompound);
          this.setCanPickUpLoot(par1NBTTagCompound.getBoolean("CanPickUpLoot"));
          this.persistenceRequired = par1NBTTagCompound.getBoolean("PersistenceRequired");
@@ -111,7 +112,7 @@
  
          if (par1NBTTagCompound.hasKey("CustomName") && par1NBTTagCompound.getString("CustomName").length() > 0)
          {
-@@ -562,12 +604,12 @@
+@@ -562,12 +605,12 @@
                  double d2 = entityplayer.posZ - this.posZ;
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
@@ -126,7 +127,7 @@
                  {
                      this.setDead();
                  }
-@@ -726,8 +768,6 @@
+@@ -726,8 +769,6 @@
          return this.worldObj.checkNoEntityCollision(this.boundingBox) && this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(this.boundingBox);
      }
  
@@ -135,7 +136,7 @@
      /**
       * Returns render size modifier
       */
-@@ -1246,4 +1286,7 @@
+@@ -1249,4 +1290,7 @@
  
          this.field_110170_bx = null;
      }

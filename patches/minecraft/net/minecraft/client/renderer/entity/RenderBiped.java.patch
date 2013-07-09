@@ -1,12 +1,12 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/entity/RenderBiped.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RenderBiped.java
 @@ -14,9 +14,15 @@
- import net.minecraft.entity.EntityLivingBase;
  import net.minecraft.item.EnumArmorMaterial;
  import net.minecraft.item.Item;
-+import net.minecraft.item.ItemBlock;
  import net.minecraft.item.ItemArmor;
++import net.minecraft.item.ItemBlock;
  import net.minecraft.item.ItemStack;
+ import net.minecraft.util.ResourceLocation;
  import org.lwjgl.opengl.GL11;
 +import static net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED;
 +import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.BLOCK_3D;
@@ -36,7 +36,7 @@
  
 +    /**
 +     * More generic ForgeHook version of the above function, it allows for Items to have more control over what texture they provide.
-+     * 
++     *
 +     * @param entity Entity wearing the armor
 +     * @param stack ItemStack for the armor
 +     * @param slot Slot ID that the item is in
@@ -46,9 +46,9 @@
 +    public static ResourceLocation getArmorResource(Entity entity, ItemStack stack, int slot, String type)
 +    {
 +        ItemArmor item = (ItemArmor)stack.getItem();
-+        String s1 = String.format("textures/models/armor/%s_layer_%d%s.png", 
++        String s1 = String.format("textures/models/armor/%s_layer_%d%s.png",
 +                bipedArmorFilenamePrefix[item.renderIndex], (slot == 2 ? 2 : 1), type == null ? "" : String.format("_%s", type));
-+        
++
 +        s1 = ForgeHooksClient.getArmorTexture(entity, stack, s1, slot, (slot == 2 ? 2 : 1), type);
 +        ResourceLocation resourcelocation = (ResourceLocation)field_110859_k.get(s1);
 +
@@ -63,7 +63,7 @@
 +
      protected int func_130006_a(EntityLiving par1EntityLiving, int par2, float par3)
      {
-         ItemStack itemstack = par1EntityLiving.getCurrentArmor(3 - par2);
+         ItemStack itemstack = par1EntityLiving.func_130225_q(3 - par2);
 @@ -79,7 +114,7 @@
              if (item instanceof ItemArmor)
              {
@@ -99,7 +99,7 @@
              if (item instanceof ItemArmor)
              {
 -                this.func_110776_a(func_110858_a((ItemArmor)item, par2, "overlay"));
-+                this.func_110776_a(getArmorResource(par1, itemstack, par2, "overlay"));
++                this.func_110776_a(getArmorResource(par1EntityLiving, itemstack, par2, "overlay"));
                  float f1 = 1.0F;
                  GL11.glColor3f(f1, f1, f1);
              }

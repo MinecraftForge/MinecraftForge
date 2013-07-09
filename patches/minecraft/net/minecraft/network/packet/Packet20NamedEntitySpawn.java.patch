@@ -28,21 +28,3 @@
          this.name = par1EntityPlayer.getCommandSenderName();
          this.xPosition = MathHelper.floor_double(par1EntityPlayer.posX * 32.0D);
          this.yPosition = MathHelper.floor_double(par1EntityPlayer.posY * 32.0D);
-@@ -58,7 +72,7 @@
-     /**
-      * Abstract. Reads the raw packet data from the data stream.
-      */
--    public void readPacketData(DataInput par1DataInput) throws IOException
-+    public void readPacketData(DataInput par1DataInput) throws IOException   // CraftBukkit
-     {
-         this.entityId = par1DataInput.readInt();
-         this.name = readString(par1DataInput, 16);
-@@ -74,7 +88,7 @@
-     /**
-      * Abstract. Writes the raw packet data to the data stream.
-      */
--    public void writePacketData(DataOutput par1DataOutput) throws IOException
-+    public void writePacketData(DataOutput par1DataOutput) throws IOException   // CraftBukkit
-     {
-         par1DataOutput.writeInt(this.entityId);
-         writeString(this.name, par1DataOutput);

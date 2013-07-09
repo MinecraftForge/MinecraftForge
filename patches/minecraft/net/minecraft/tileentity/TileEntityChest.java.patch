@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/tileentity/TileEntityChest.java
 +++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityChest.java
-@@ -13,9 +13,14 @@
+@@ -15,9 +15,14 @@
  import net.minecraft.nbt.NBTTagList;
  import net.minecraft.util.AxisAlignedBB;
  
@@ -16,12 +16,10 @@
  
      /** Determines if the check for adjacent chests has taken place. */
      public boolean adjacentChestChecked;
-@@ -46,6 +51,38 @@
-     private int field_94046_i = -1;
-     private String field_94045_s;
+@@ -59,6 +64,36 @@
+         this.field_94046_i = par1;
+     }
  
-+    public TileEntityChest() {}
-+
 +    // CraftBukkit start
 +    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +    private int maxStack = MAX_STACK;
@@ -55,7 +53,7 @@
      /**
       * Returns the number of slots in the inventory.
       */
-@@ -212,7 +249,7 @@
+@@ -228,7 +263,7 @@
       */
      public int getInventoryStackLimit()
      {
@@ -64,7 +62,7 @@
      }
  
      /**
-@@ -220,6 +257,11 @@
+@@ -236,6 +271,11 @@
       */
      public boolean isUseableByPlayer(EntityPlayer par1EntityPlayer)
      {
@@ -76,7 +74,7 @@
          return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ? false : par1EntityPlayer.getDistanceSq((double)this.xCoord + 0.5D, (double)this.yCoord + 0.5D, (double)this.zCoord + 0.5D) <= 64.0D;
      }
  
-@@ -341,6 +383,12 @@
+@@ -357,6 +397,12 @@
      public void updateEntity()
      {
          super.updateEntity();
@@ -89,7 +87,7 @@
          this.checkForAdjacentChests();
          ++this.ticksSinceSync;
          float f;
-@@ -458,8 +506,28 @@
+@@ -474,8 +520,28 @@
              this.numUsingPlayers = 0;
          }
  
@@ -118,7 +116,7 @@
          this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord, this.zCoord, this.getBlockType().blockID);
          this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord - 1, this.zCoord, this.getBlockType().blockID);
      }
-@@ -468,8 +536,28 @@
+@@ -484,8 +550,28 @@
      {
          if (this.getBlockType() != null && this.getBlockType() instanceof BlockChest)
          {

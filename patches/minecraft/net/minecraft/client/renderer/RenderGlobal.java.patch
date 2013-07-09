@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/RenderGlobal.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/RenderGlobal.java
-@@ -67,6 +67,9 @@
+@@ -68,6 +68,9 @@
  import org.lwjgl.opengl.ARBOcclusionQuery;
  import org.lwjgl.opengl.GL11;
  
@@ -10,7 +10,7 @@
  @SideOnly(Side.CLIENT)
  public class RenderGlobal implements IWorldAccess
  {
-@@ -446,35 +449,47 @@
+@@ -447,35 +450,47 @@
       */
      public void renderEntities(Vec3 par1Vec3, ICamera par2ICamera, float par3)
      {
@@ -71,15 +71,15 @@
                  ++this.countEntitiesRendered;
  
                  if (entity.isInRangeToRenderVec3D(par1Vec3))
-@@ -488,6 +503,7 @@
+@@ -489,6 +504,7 @@
              for (i = 0; i < list.size(); ++i)
              {
                  entity = (Entity)list.get(i);
 +                if (!entity.shouldRenderInPass(pass)) continue;
+                 boolean flag = entity.isInRangeToRenderVec3D(par1Vec3) && (entity.ignoreFrustumCheck || par2ICamera.isBoundingBoxInFrustum(entity.boundingBox) || entity.riddenByEntity == this.mc.thePlayer);
  
-                 if (entity.isInRangeToRenderVec3D(par1Vec3) && (entity.ignoreFrustumCheck || par2ICamera.isBoundingBoxInFrustum(entity.boundingBox) || entity.riddenByEntity == this.mc.thePlayer) && (entity != this.mc.renderViewEntity || this.mc.gameSettings.thirdPersonView != 0 || this.mc.renderViewEntity.isPlayerSleeping()) && this.theWorld.blockExists(MathHelper.floor_double(entity.posX), 0, MathHelper.floor_double(entity.posZ)))
-                 {
-@@ -501,7 +517,11 @@
+                 if (!flag && entity instanceof EntityLiving)
+@@ -514,7 +530,11 @@
  
              for (i = 0; i < this.tileEntities.size(); ++i)
              {
@@ -92,7 +92,7 @@
              }
  
              this.mc.entityRenderer.disableLightmap((double)par3);
-@@ -936,6 +956,12 @@
+@@ -949,6 +969,12 @@
       */
      public void renderSky(float par1)
      {
@@ -105,7 +105,7 @@
          if (this.mc.theWorld.provider.dimensionId == 1)
          {
              GL11.glDisable(GL11.GL_FOG);
-@@ -1174,6 +1200,13 @@
+@@ -1187,6 +1213,13 @@
  
      public void renderClouds(float par1)
      {
@@ -119,7 +119,7 @@
          if (this.mc.theWorld.provider.isSurfaceWorld())
          {
              if (this.mc.gameSettings.fancyGraphics)
-@@ -1582,6 +1615,11 @@
+@@ -1595,6 +1628,11 @@
      }
  
      public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityPlayer par2EntityPlayer, float par3)

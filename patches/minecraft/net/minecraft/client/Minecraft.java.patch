@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src_work/minecraft/net/minecraft/client/Minecraft.java
-@@ -116,6 +116,7 @@
+@@ -117,6 +117,7 @@
  import net.minecraft.util.Session;
  import net.minecraft.util.Timer;
  import net.minecraft.util.Util;
@@ -8,7 +8,7 @@
  import net.minecraft.world.WorldSettings;
  import net.minecraft.world.chunk.storage.AnvilSaveConverter;
  import net.minecraft.world.storage.ISaveFormat;
-@@ -135,6 +136,14 @@
+@@ -136,6 +137,14 @@
  import org.lwjgl.util.glu.GLU;
  
  import com.google.common.collect.MapDifference;
@@ -23,7 +23,7 @@
  
  @SideOnly(Side.CLIENT)
  public class Minecraft implements IPlayerUsage
-@@ -414,7 +423,7 @@
+@@ -416,7 +425,7 @@
  
          try
          {
@@ -32,7 +32,7 @@
          }
          catch (LWJGLException lwjglexception)
          {
-@@ -493,7 +502,7 @@
+@@ -497,7 +506,7 @@
          this.effectRenderer = new EffectRenderer(this.theWorld, this.renderEngine);
          FMLClientHandler.instance().finishMinecraftLoading();
          this.checkGLError("Post startup");
@@ -41,16 +41,16 @@
  
          if (this.serverName != null)
          {
-@@ -1296,7 +1305,7 @@
+@@ -1300,7 +1309,7 @@
  
-                 if (this.thePlayer.canCurrentToolHarvestBlock(j, k, l))
+                 if (this.thePlayer.isCurrentToolAdventureModeExempt(j, k, l))
                  {
 -                    this.effectRenderer.addBlockHitEffects(j, k, l, this.objectMouseOver.sideHit);
 +                    this.effectRenderer.addBlockHitEffects(j, k, l, this.objectMouseOver);
                      this.thePlayer.swingItem();
                  }
              }
-@@ -1362,7 +1371,8 @@
+@@ -1366,7 +1375,8 @@
                  {
                      int j1 = itemstack != null ? itemstack.stackSize : 0;
  
@@ -60,7 +60,7 @@
                      {
                          flag = false;
                          this.thePlayer.swingItem();
-@@ -1388,7 +1398,8 @@
+@@ -1392,7 +1402,8 @@
              {
                  ItemStack itemstack1 = this.thePlayer.inventory.getCurrentItem();
  
@@ -70,7 +70,7 @@
                  {
                      this.entityRenderer.itemRenderer.resetEquippedProgress2();
                  }
-@@ -2036,6 +2047,11 @@
+@@ -2046,6 +2057,11 @@
      {
          this.statFileWriter.syncStats();
  
@@ -82,7 +82,7 @@
          if (par1WorldClient == null)
          {
              NetClientHandler netclienthandler = this.getNetHandler();
-@@ -2053,6 +2069,18 @@
+@@ -2063,6 +2079,18 @@
              if (this.theIntegratedServer != null)
              {
                  this.theIntegratedServer.initiateShutdown();
@@ -101,7 +101,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2223,103 +2251,12 @@
+@@ -2236,107 +2264,12 @@
          if (this.objectMouseOver != null)
          {
              boolean flag = this.thePlayer.capabilities.isCreativeMode;
@@ -143,6 +143,10 @@
 -                if (this.objectMouseOver.entityHit instanceof EntityPainting)
 -                {
 -                    j = Item.painting.itemID;
+-                }
+-                else if (this.objectMouseOver.entityHit instanceof EntityLeashKnot)
+-                {
+-                    j = Item.field_111214_ch.itemID;
 -                }
 -                else if (this.objectMouseOver.entityHit instanceof EntityItemFrame)
 -                {
@@ -209,7 +213,7 @@
  
              if (flag)
              {
-@@ -2401,11 +2338,18 @@
+@@ -2419,11 +2352,18 @@
          par1PlayerUsageSnooper.addData("gl_max_texture_size", Integer.valueOf(getGLMaximumTextureSize()));
      }
  
@@ -228,7 +232,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
-@@ -2413,6 +2357,7 @@
+@@ -2431,6 +2371,7 @@
  
              if (j != 0)
              {
@@ -236,7 +240,7 @@
                  return i;
              }
          }
-@@ -2465,7 +2410,15 @@
+@@ -2483,7 +2424,15 @@
  
              if (integratedserver != null)
              {

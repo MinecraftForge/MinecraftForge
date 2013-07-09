@@ -59,12 +59,3 @@
      }
  
      /**
-@@ -18,7 +60,7 @@
-     public void onInventoryChanged()
-     {
-         super.onInventoryChanged();
--        this.field_135010_a.onCraftMatrixChanged(this);
-+        this.field_135010_a.onCraftMatrixChanged((IInventory) this);
-     }
- 
-     /**

@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/particle/EntityDiggingFX.java
 +++ ../src_work/minecraft/net/minecraft/client/particle/EntityDiggingFX.java
-@@ -10,20 +10,27 @@
+@@ -10,15 +10,22 @@
  public class EntityDiggingFX extends EntityFX
  {
      private Block blockInstance;
@@ -23,7 +23,10 @@
 +        this.side = side;
      }
  
-     public EntityDiggingFX func_70596_a(int par1, int par2, int par3)
+     /**
+@@ -26,7 +33,7 @@
+      */
+     public EntityDiggingFX applyColourMultiplier(int par1, int par2, int par3)
      {
 -        if (this.blockInstance == Block.grass)
 +        if (this.blockInstance == Block.grass && this.side != 1)

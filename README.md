@@ -9,7 +9,7 @@ Compilation
 We use Maven to handle our dependencies.
 
 1. Install [Maven 3](http://maven.apache.org/download.html)
-2. Check out and install [MCPC API](https://github.com/MinecraftPortCentral/Bukkit/tree/mcpc-api-161) 
+2. Check out and install [MCPC API](https://github.com/MinecraftPortCentral/Bukkit/tree/mcpc-api-162) 
  * Note: this is not needed as the repository we use has MCPC-API too, but you might have a newer one (with your own changes :D)
  * Check out this repo and run: 
 3. Check out [FML] (https://github.com/MinecraftPortCentral/FML)

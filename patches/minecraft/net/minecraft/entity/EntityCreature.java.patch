@@ -1,14 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/entity/EntityCreature.java
 +++ ../src_work/minecraft/net/minecraft/entity/EntityCreature.java
-@@ -1,6 +1,7 @@
- package net.minecraft.entity;
- 
- import java.util.UUID;
-+
- import net.minecraft.entity.ai.EntityAIBase;
- import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
- import net.minecraft.entity.ai.attributes.AttributeInstance;
-@@ -11,15 +12,19 @@
+@@ -11,15 +11,19 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
@@ -30,7 +22,7 @@
  
      /**
       * returns true if a creature has attacked recently only used for creepers and skeletons
-@@ -63,7 +68,28 @@
+@@ -63,7 +67,28 @@
  
          if (this.entityToAttack == null)
          {
@@ -60,7 +52,7 @@
  
              if (this.entityToAttack != null)
              {
-@@ -81,7 +107,22 @@
+@@ -81,7 +106,22 @@
          }
          else
          {
@@ -84,7 +76,7 @@
          }
  
          this.worldObj.theProfiler.endSection();
-@@ -128,7 +169,8 @@
+@@ -128,7 +168,8 @@
                  double d1 = vec3.xCoord - this.posX;
                  double d2 = vec3.zCoord - this.posZ;
                  double d3 = vec3.yCoord - (double)i;

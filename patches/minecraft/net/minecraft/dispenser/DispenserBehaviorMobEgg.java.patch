@@ -40,7 +40,7 @@
 +            par2ItemStack.stackSize++;
 +            // Chain to handler for new item
 +            ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
-+            IBehaviorDispenseItem ibehaviordispenseitem = (IBehaviorDispenseItem) BlockDispenser.dispenseBehaviorRegistry.func_82594_a(eventStack.getItem());
++            IBehaviorDispenseItem ibehaviordispenseitem = (IBehaviorDispenseItem) BlockDispenser.dispenseBehaviorRegistry.getObject(eventStack.getItem());
 +
 +            if (ibehaviordispenseitem != IBehaviorDispenseItem.itemDispenseBehaviorProvider && ibehaviordispenseitem != this)
 +            {
@@ -54,11 +54,11 @@
  
          if (entity instanceof EntityLivingBase && par2ItemStack.hasDisplayName())
          {
-             ((EntityLiving)entity).func_94058_c(par2ItemStack.getDisplayName());
+             ((EntityLiving)entity).setCustomNameTag(par2ItemStack.getDisplayName());
          }
  
 -        par2ItemStack.splitStack(1);
-+        // itemstack.a(1); // Handled during event processing
++        // itemstack1.splitStack(1); // Handled during event processing
 +        // CraftBukkit end
          return par2ItemStack;
      }

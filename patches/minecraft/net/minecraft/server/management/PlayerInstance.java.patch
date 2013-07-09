@@ -26,11 +26,14 @@
  
      final PlayerManager thePlayerManager;
  
-@@ -30,13 +35,21 @@
+@@ -30,10 +35,21 @@
          this.playersInChunk = new ArrayList();
          this.locationOfBlockChange = new short[64];
          this.chunkLocation = new ChunkCoordIntPair(par2, par3);
 -        par1PlayerManager.getWorldServer().theChunkProviderServer.loadChunk(par2, par3);
+-    }
+-
+-    public void addPlayer(EntityPlayerMP par1EntityPlayerMP)
 +        // CraftBukkit start
 +        par1PlayerManager.getWorldServer().theChunkProviderServer.getChunkAt(par2, par3, new Runnable()
 +        {
@@ -40,17 +43,16 @@
 +            }
 +        });
 +        // CraftBukkit end
-     }
- 
-     /**
-      * called for all chunks within the visible radius of the player
-      */
--    public void addPlayerToChunkWatchingList(EntityPlayerMP par1EntityPlayerMP)
-+    public void addPlayerToChunkWatchingList(final EntityPlayerMP par1EntityPlayerMP)   // CraftBukkit - added final to argument
++    }
++
++    /**
++     * called for all chunks within the visible radius of the player
++     */
++    public void addPlayer(final EntityPlayerMP par1EntityPlayerMP)   // CraftBukkit - added final to argument
      {
          if (this.playersInChunk.contains(par1EntityPlayerMP))
          {
-@@ -50,7 +63,25 @@
+@@ -47,7 +63,25 @@
              }
  
              this.playersInChunk.add(par1EntityPlayerMP);
@@ -77,14 +79,7 @@
          }
      }
  
-@@ -58,16 +89,16 @@
-     {
-         if (this.playersInChunk.contains(par1EntityPlayerMP))
-         {
--            Chunk chunk = PlayerManager.getWorldServer(this.thePlayerManager).getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos);
--            par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet51MapChunk(chunk, true, 0));
-+            // TODO: MCPC finish patching
-+            par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet51MapChunk(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos)); // Spigot - remove chunk load call just to unload in favour of specialized constructor
+@@ -60,6 +94,8 @@
              this.playersInChunk.remove(par1EntityPlayerMP);
              par1EntityPlayerMP.loadedChunks.remove(this.chunkLocation);
  
@@ -93,12 +88,7 @@
              if (this.playersInChunk.isEmpty())
              {
                  long i = (long)this.chunkLocation.chunkXPos + 2147483647L | (long)this.chunkLocation.chunkZPos + 2147483647L << 32;
--                this.func_111196_a(chunk);
--                PlayerManager.getChunkWatchers(this.thePlayerManager).remove(i);
-                 PlayerManager.func_111191_d(this.thePlayerManager).remove(this);
- 
-                 if (this.numberOfTilesToUpdate > 0)
-@@ -100,7 +131,7 @@
+@@ -97,7 +133,7 @@
  
          this.field_73260_f |= 1 << (par2 >> 4);
  
@@ -107,7 +97,7 @@
          {
              short short1 = (short)(par1 << 12 | par3 << 8 | par2);
  
-@@ -112,6 +143,10 @@
+@@ -109,6 +145,10 @@
                  }
              }
  
@@ -118,7 +108,7 @@
              this.locationOfBlockChange[this.numberOfTilesToUpdate++] = short1;
          }
      }
-@@ -142,7 +177,7 @@
+@@ -139,7 +179,7 @@
                  i = this.chunkLocation.chunkXPos * 16 + (this.locationOfBlockChange[0] >> 12 & 15);
                  j = this.locationOfBlockChange[0] & 255;
                  k = this.chunkLocation.chunkZPos * 16 + (this.locationOfBlockChange[0] >> 8 & 15);
@@ -127,7 +117,7 @@
  
                  if (PlayerManager.getWorldServer(this.thePlayerManager).blockHasTileEntity(i, j, k))
                  {
-@@ -153,12 +188,13 @@
+@@ -150,12 +190,13 @@
              {
                  int l;
  
@@ -142,7 +132,7 @@
                      for (k = 0; k < 16; ++k)
                      {
                          if ((this.field_73260_f & 1 << k) != 0)
-@@ -172,11 +208,14 @@
+@@ -169,11 +210,14 @@
                              }
                          }
                      }

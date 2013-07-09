@@ -1,20 +1,5 @@
 --- ../src_base/minecraft/net/minecraft/item/crafting/IRecipe.java
 +++ ../src_work/minecraft/net/minecraft/item/crafting/IRecipe.java
-@@ -9,12 +9,12 @@
-     /**
-      * Used to check if a recipe matches current crafting inventory
-      */
--    boolean matches(InventoryCrafting inventorycrafting, World world);
-+    boolean matches(InventoryCrafting par1InventoryCrafting, World par2World);
- 
-     /**
-      * Returns an Item that is the result of this recipe
-      */
--    ItemStack getCraftingResult(InventoryCrafting inventorycrafting);
-+    ItemStack getCraftingResult(InventoryCrafting par1InventoryCrafting);
- 
-     /**
-      * Returns the size of the recipe area
 @@ -22,4 +22,8 @@
      int getRecipeSize();
  

@@ -16,9 +16,9 @@
  {
 +    // CraftBukkit - update CraftEnchant.getName(i) if this changes
      public static final Enchantment[] enchantmentsList = new Enchantment[256];
-     public static final Enchantment[] field_92090_c;
  
-@@ -111,6 +115,8 @@
+     /** The list of enchantments applicable by the anvil from a book */
+@@ -113,6 +117,8 @@
          {
              enchantmentsList[par1] = this;
          }
@@ -27,7 +27,7 @@
      }
  
      public int getWeight()
-@@ -203,6 +209,27 @@
+@@ -205,6 +211,27 @@
      public boolean canApply(ItemStack par1ItemStack)
      {
          return this.type.canEnchantItem(par1ItemStack.getItem());
@@ -51,7 +51,7 @@
 +     */
 +    public static void addToBookList(Enchantment enchantment)
 +    {
-+        ObjectArrays.concat(field_92090_c, enchantment);
++        ObjectArrays.concat(enchantmentsBookList, enchantment);
      }
  
      static

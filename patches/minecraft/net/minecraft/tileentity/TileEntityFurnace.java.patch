@@ -40,8 +40,8 @@
 +
 +public class TileEntityFurnace extends TileEntity implements ISidedInventory, net.minecraftforge.common.ISidedInventory
  {
-     private static final int[] field_102010_d = new int[] {0};
-     private static final int[] field_102011_e = new int[] {2, 1};
+     private static final int[] slots_top = new int[] {0};
+     private static final int[] slots_bottom = new int[] {2, 1};
 @@ -40,6 +58,39 @@
      public int furnaceCookTime;
      private String field_94130_e;
@@ -82,7 +82,7 @@
      /**
       * Returns the number of slots in the inventory.
       */
-@@ -208,7 +259,7 @@
+@@ -211,7 +262,7 @@
       */
      public int getInventoryStackLimit()
      {
@@ -91,7 +91,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -254,20 +305,54 @@
+@@ -257,20 +308,54 @@
      {
          boolean flag = this.furnaceBurnTime > 0;
          boolean flag1 = false;
@@ -152,7 +152,7 @@
                      flag1 = true;
  
                      if (this.furnaceItemStacks[1] != null)
-@@ -276,28 +361,24 @@
+@@ -279,28 +364,24 @@
  
                          if (this.furnaceItemStacks[1].stackSize == 0)
                          {
@@ -192,7 +192,7 @@
  
              if (flag != this.furnaceBurnTime > 0)
              {
-@@ -324,7 +405,8 @@
+@@ -327,7 +408,8 @@
          else
          {
              ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0].getItem().itemID);
@@ -202,7 +202,7 @@
          }
      }
  
-@@ -335,15 +417,32 @@
+@@ -338,15 +420,32 @@
      {
          if (this.canSmelt())
          {
@@ -239,7 +239,7 @@
              }
  
              --this.furnaceItemStacks[0].stackSize;
-@@ -370,7 +469,7 @@
+@@ -373,7 +472,7 @@
              int i = par0ItemStack.getItem().itemID;
              Item item = par0ItemStack.getItem();
  
@@ -248,7 +248,7 @@
              {
                  Block block = Block.blocksList[i];
  
-@@ -456,4 +555,50 @@
+@@ -459,4 +558,50 @@
      {
          return par3 != 0 || par1 != 1 || par2ItemStack.itemID == Item.bucketEmpty.itemID;
      }

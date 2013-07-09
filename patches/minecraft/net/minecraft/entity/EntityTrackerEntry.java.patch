@@ -15,35 +15,6 @@
  
  public class EntityTrackerEntry
  {
-@@ -74,23 +80,23 @@
-     public double motionX;
-     public double motionY;
-     public double motionZ;
--    public int ticks;
-+    public int ticks = 0;
-     private double posX;
-     private double posY;
-     private double posZ;
- 
-     /** set to true on first sendLocationToClients */
--    private boolean isDataInitialized;
-+    private boolean isDataInitialized = false;
-     private boolean sendVelocityUpdates;
- 
-     /**
-      * every 400 ticks a  full teleport packet is sent, rather than just a "move me +x" command, so that position
-      * remains fully synced.
-      */
--    private int ticksSinceLastForcedTeleport;
-+    private int ticksSinceLastForcedTeleport = 0;
-     private Entity field_85178_v;
--    private boolean ridingEntity;
--    public boolean playerEntitiesUpdated;
-+    private boolean ridingEntity = false;
-+    public boolean playerEntitiesUpdated = false;
- 
-     /**
-      * Holds references to all the players that are currently receiving position updates for this entity.
 @@ -138,21 +144,21 @@
              this.sendEventsToPlayers(par1List);
          }
@@ -115,28 +86,20 @@
 -
 -                if (flag)
 -                {
--                    this.lastScaledXPosition = i;
--                    this.lastScaledYPosition = j;
--                    this.lastScaledZPosition = k;
--                }
--
--                if (flag1)
--                {
--                    this.lastYaw = l;
--                    this.lastPitch = i1;
--                }
--
 +                /* CraftBukkit start - Code moved up
 +                if (flag) {
-+                    this.xLoc = i;
-+                    this.yLoc = j;
-+                    this.zLoc = k;
-+                }
-+
+                     this.lastScaledXPosition = i;
+                     this.lastScaledYPosition = j;
+                     this.lastScaledZPosition = k;
+                 }
+ 
+-                if (flag1)
+-                {
 +                if (flag1) {
-+                    this.yRot = l;
-+                    this.xRot = i1;
-+                }
+                     this.lastYaw = l;
+                     this.lastPitch = i1;
+                 }
+-
 +                // CraftBukkit end */
                  this.ridingEntity = false;
              }
@@ -248,7 +211,7 @@
                      if (this.myEntity instanceof EntityLivingBase)
                      {
                          EntityLivingBase entitylivingbase = (EntityLivingBase)this.myEntity;
-@@ -489,15 +567,18 @@
+@@ -489,9 +567,12 @@
      {
          if (this.myEntity.isDead)
          {
@@ -264,13 +227,6 @@
          Packet pkt = FMLNetworkHandler.getEntitySpawningPacket(this.myEntity);
  
          if (pkt != null)
-         {
-             return pkt;
--        }
-+        }        
- 
-         if (this.myEntity instanceof EntityItem)
-         {
 @@ -643,6 +724,11 @@
  
      public void removePlayerFromTracker(EntityPlayerMP par1EntityPlayerMP)

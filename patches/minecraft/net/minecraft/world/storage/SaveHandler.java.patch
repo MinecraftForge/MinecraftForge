@@ -35,24 +35,6 @@
  
      public SaveHandler(File par1File, String par2Str, boolean par3)
      {
-@@ -79,7 +90,7 @@
-     /**
-      * Gets the File object corresponding to the base directory of this world.
-      */
--    public File getWorldDirectory()
-+    public File getWorldDirectory()   // CraftBukkit - protected to public
-     {
-         return this.worldDirectory;
-     }
-@@ -87,7 +98,7 @@
-     /**
-      * Checks the session lock to prevent save collisions
-      */
--    public void checkSessionLock() throws MinecraftException
-+    public void checkSessionLock() throws MinecraftException   // CraftBukkit - throws ExceptionWorldConflict
-     {
-         try
-         {
 @@ -293,6 +304,14 @@
  
          if (nbttagcompound != null)
@@ -68,15 +50,6 @@
              par1EntityPlayer.readFromNBT(nbttagcompound);
          }
  
-@@ -310,7 +329,7 @@
- 
-             if (file1.exists())
-             {
--                return CompressedStreamTools.readCompressed(new FileInputStream(file1));
-+                return CompressedStreamTools.readCompressed((InputStream)(new FileInputStream(file1)));
-             }
-         }
-         catch (Exception exception)
 @@ -367,4 +386,45 @@
      {
          return this.saveDirectoryName;

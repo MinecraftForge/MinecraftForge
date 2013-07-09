@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/pathfinding/Path.java
 +++ ../src_work/minecraft/net/minecraft/pathfinding/Path.java
-@@ -3,10 +3,12 @@
+@@ -3,7 +3,7 @@
  public class Path
  {
      /** Contains the points in this path */
@@ -9,8 +9,3 @@
  
      /** The number of points in this path */
      private int count;
-+
-+    public Path() {}
- 
-     /**
-      * Adds a point to the path

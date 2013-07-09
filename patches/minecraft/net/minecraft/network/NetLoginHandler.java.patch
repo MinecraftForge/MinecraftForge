@@ -48,24 +48,7 @@
          this.clientUsername = par1Packet2ClientProtocol.getUsername();
  
          if (!this.clientUsername.equals(StringUtils.stripControlCodes(this.clientUsername)))
-@@ -146,17 +158,17 @@
-     {
-         if (par1Packet205ClientCommand.forceRespawn == 0)
-         {
--            if (this.field_92079_k)
--            {
--                this.raiseErrorAndDisconnect("Duplicate login");
--                return;
--            }
--
--            this.field_92079_k = true;
-+                if (this.field_92079_k)
-+                {
-+                    this.raiseErrorAndDisconnect("Duplicate login");
-+                    return;
-+                }
-+
-+                this.field_92079_k = true;
+@@ -156,7 +168,7 @@
  
              if (this.mcServer.isServerInOnlineMode())
              {
@@ -128,12 +111,12 @@
              }
              else
              {
--                List list = Arrays.asList(new Serializable[] {Integer.valueOf(1), Integer.valueOf(73), this.mcServer.getMinecraftVersion(), this.mcServer.getMOTD(), Integer.valueOf(serverconfigurationmanager.getCurrentPlayerCount()), Integer.valueOf(serverconfigurationmanager.getMaxPlayers())});
+-                List list = Arrays.asList(new Serializable[] {Integer.valueOf(1), Integer.valueOf(74), this.mcServer.getMinecraftVersion(), this.mcServer.getMOTD(), Integer.valueOf(serverconfigurationmanager.getCurrentPlayerCount()), Integer.valueOf(serverconfigurationmanager.getMaxPlayers())});
 -                Object object;
 -
 -                for (Iterator iterator = list.iterator(); iterator.hasNext(); s = s + object.toString().replaceAll("\u0000", ""))
 +                // CraftBukkit start - Don't create a list from an array
-+                Object[] list = new Object[] { 1, 73, this.mcServer.getMinecraftVersion(), pingEvent.getMotd(), serverconfigurationmanager.getCurrentPlayerCount(), pingEvent.getMaxPlayers() };
++                Object[] list = new Object[] { 1, 74, this.mcServer.getMinecraftVersion(), pingEvent.getMotd(), serverconfigurationmanager.getCurrentPlayerCount(), pingEvent.getMaxPlayers() };
 +                StringBuilder builder = new StringBuilder();
 +
 +                for (Object object : list)
@@ -164,13 +147,13 @@
 -            if (this.myTCPConnection.getSocket() != null)
 -            {
 -                inetaddress = this.myTCPConnection.getSocket().getInetAddress();
-+            if (this.getSocket() != null) // MCPC+ - remove myTCPConnection
++            if (this.getSocket() != null)
 +            {
-+                inetaddress = this.getSocket().getInetAddress(); // MCPC+ - remove myTCPConnection
++                inetaddress = this.getSocket().getInetAddress();
              }
  
              this.myTCPConnection.addToSendQueue(new Packet255KickDisconnect(s));
-@@ -320,11 +352,24 @@
+@@ -325,11 +357,24 @@
          return par0NetLoginHandler.field_72544_i = par1;
      }
      

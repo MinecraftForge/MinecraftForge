@@ -108,7 +108,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -645,7 +671,13 @@
+@@ -646,7 +672,13 @@
      /**
       * ejects contained items into the world, and notifies neighbours of an update, as appropriate
       */
@@ -123,7 +123,7 @@
  
      /**
       * Returns the quantity of items to drop on block destruction.
-@@ -670,7 +702,7 @@
+@@ -671,7 +703,7 @@
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
          float f = this.getBlockHardness(par2World, par3, par4, par5);
@@ -132,7 +132,7 @@
      }
  
      /**
-@@ -686,20 +718,16 @@
+@@ -687,20 +719,16 @@
       */
      public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
      {
@@ -161,7 +161,7 @@
                  }
              }
          }
-@@ -710,7 +738,7 @@
+@@ -711,7 +739,7 @@
       */
      protected void dropBlockAsItem_do(World par1World, int par2, int par3, int par4, ItemStack par5ItemStack)
      {
@@ -170,7 +170,7 @@
          {
              float f = 0.7F;
              double d0 = (double)(par1World.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-@@ -932,7 +960,8 @@
+@@ -933,7 +961,8 @@
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
          int l = par1World.getBlockId(par2, par3, par4);
@@ -180,7 +180,7 @@
      }
  
      /**
-@@ -1092,7 +1121,7 @@
+@@ -1093,7 +1122,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -189,7 +189,7 @@
          {
              ItemStack itemstack = this.createStackedBlock(par6);
  
-@@ -1108,12 +1137,13 @@
+@@ -1109,12 +1138,13 @@
          }
      }
  
@@ -204,7 +204,7 @@
      }
  
      /**
-@@ -1408,6 +1438,12 @@
+@@ -1409,6 +1439,12 @@
          Item.itemsList[pistonStickyBase.blockID] = new ItemPiston(pistonStickyBase.blockID - 256);
          Item.itemsList[cobblestoneWall.blockID] = (new ItemMultiTextureTile(cobblestoneWall.blockID - 256, cobblestoneWall, BlockWall.types)).setUnlocalizedName("cobbleWall");
          Item.itemsList[anvil.blockID] = (new ItemAnvilBlock(anvil)).setUnlocalizedName("anvil");
@@ -217,7 +217,7 @@
  
          for (int i = 0; i < 256; ++i)
          {
-@@ -1453,4 +1489,983 @@
+@@ -1454,4 +1490,983 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }

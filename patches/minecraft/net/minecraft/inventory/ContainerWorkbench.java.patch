@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/inventory/ContainerWorkbench.java
 +++ ../src_work/minecraft/net/minecraft/inventory/ContainerWorkbench.java
-@@ -1,29 +1,45 @@
+@@ -1,24 +1,40 @@
  package net.minecraft.inventory;
  
 +// CraftBukkit start
@@ -43,21 +43,6 @@
          this.worldObj = par2World;
          this.posX = par3;
          this.posY = par4;
-         this.posZ = par5;
--        this.addSlotToContainer(new SlotCrafting(par1InventoryPlayer.player, this.craftMatrix, this.craftResult, 0, 124, 35));
-+        this.addSlotToContainer((Slot)(new SlotCrafting(par1InventoryPlayer.player, this.craftMatrix, this.craftResult, 0, 124, 35)));
-         int l;
-         int i1;
- 
-@@ -48,7 +64,7 @@
-             this.addSlotToContainer(new Slot(par1InventoryPlayer, l, 8 + l * 18, 142));
-         }
- 
--        this.onCraftMatrixChanged(this.craftMatrix);
-+        this.onCraftMatrixChanged((IInventory) this.craftMatrix);
-     }
- 
-     /**
 @@ -56,7 +72,19 @@
       */
      public void onCraftMatrixChanged(IInventory par1IInventory)

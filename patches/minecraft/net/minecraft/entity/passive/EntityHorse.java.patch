@@ -1,0 +1,22 @@
+--- ../src_base/minecraft/net/minecraft/entity/passive/EntityHorse.java
++++ ../src_work/minecraft/net/minecraft/entity/passive/EntityHorse.java
+@@ -1156,6 +1156,19 @@
+         return this.riddenByEntity == null && this.ridingEntity == null && this.func_110248_bS() && this.func_110228_bR() && !this.func_110222_cv() && this.func_110143_aJ() >= this.func_110138_aP();
+     }
+ 
++    /* CraftBukkit start - don't treat horses differently
++    /**
++     * Will get destroyed next tick.
++     */
++    public void setDead()
++    {
++        if (this.worldObj.isRemote || !this.func_110248_bS() && !this.func_110205_ce() || this.func_110143_aJ() <= 0.0F)
++        {
++            super.setDead();
++        }
++    }
++    // CraftBukkit end */
++
+     public void setEating(boolean par1)
+     {
+         this.func_110208_b(32, par1);

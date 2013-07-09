@@ -15,7 +15,7 @@
  
  public class Potion
  {
-@@ -110,12 +116,13 @@
+@@ -110,6 +116,7 @@
          }
  
          this.liquidColor = par3;
@@ -23,13 +23,6 @@
      }
  
      /**
-      * Sets the index for the icon displayed in the player's inventory when the status is active.
-      */
--    public Potion setIconIndex(int par1, int par2)
-+    protected Potion setIconIndex(int par1, int par2)
-     {
-         this.statusIconIndex = par1 + par2 * 8;
-         return this;
 @@ -135,14 +142,14 @@
          {
              if (par1EntityLivingBase.func_110143_aJ() < par1EntityLivingBase.func_110138_aP())
@@ -104,24 +97,3 @@
          }
      }
  
-@@ -219,15 +234,15 @@
-         int k;
- 
-         if (this.id == regeneration.id)
--        {
-+            {
-             k = 50 >> par2;
--            return k > 0 ? par1 % k == 0 : true;
--        }
-+                return k > 0 ? par1 % k == 0 : true;
-+            }
-         else if (this.id == poison.id)
--        {
-+            {
-             k = 25 >> par2;
-             return k > 0 ? par1 % k == 0 : true;
--        }
-+            }
-         else if (this.id == wither.id)
-         {
-             k = 40 >> par2;

@@ -203,7 +203,7 @@
                          {
                              if (flag)
                              {
--                                Item.enchantedBook.func_92115_a(itemstack, enchantmentdata);
+-                                Item.enchantedBook.getEnchantedItemStack_do(itemstack, enchantmentdata);
 +                                int enchantId = entry.getKey().getId();
 +
 +                                if (Enchantment.enchantmentsList[enchantId] == null)
@@ -212,7 +212,7 @@
 +                                }
 +
 +                                EnchantmentData enchantment = new EnchantmentData(enchantId, entry.getValue());
-+                                Item.enchantedBook.func_92115_a(itemstack, enchantment);
++                                Item.enchantedBook.getEnchantedItemStack_do(itemstack, enchantment);
 +                                applied = true;
 +                                itemstack.itemID = Item.enchantedBook.itemID;
 +                                break;

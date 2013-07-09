@@ -1,14 +1,20 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
 @@ -21,6 +21,7 @@
- import net.minecraft.item.Item;
  import net.minecraft.util.Icon;
  import net.minecraft.util.ReportedException;
+ import net.minecraft.util.ResourceLocation;
 +import net.minecraftforge.client.ForgeHooksClient;
  
  @SideOnly(Side.CLIENT)
  public class TextureMap extends AbstractTexture implements TickableTextureObject, IconRegister
-@@ -62,6 +63,7 @@
+@@ -58,10 +59,13 @@
+ 
+     public void func_110571_b(ResourceManager par1ResourceManager)
+     {
++        func_110573_f(); //Re-gather list of Icons, allows for addition/removal of blocks/items after this map was inital constrcuted.
++
+         int i = Minecraft.getGLMaximumTextureSize();
          Stitcher stitcher = new Stitcher(i, i, true);
          this.mapTexturesStiched.clear();
          this.listTextureStiched.clear();
@@ -16,24 +22,19 @@
          Iterator iterator = this.field_110574_e.entrySet().iterator();
  
          while (iterator.hasNext())
-@@ -69,11 +71,14 @@
-             Entry entry = (Entry)iterator.next();
-             String s = (String)entry.getKey();
-             TextureAtlasSprite textureatlassprite = (TextureAtlasSprite)entry.getValue();
--            ResourceLocation resourcelocation = new ResourceLocation(this.basePath + s + ".png");
-+            ResourceLocation resourcelocation = new ResourceLocation(ForgeHooksClient.fixDomain(basePath, s) + ".png");
+@@ -73,7 +77,10 @@
  
              try
              {
--                textureatlassprite.func_130100_a(par1ResourceManager.func_110536_a(resourcelocation));
-+                if (!textureatlassprite.load(par1ResourceManager, resourcelocation))
+-                textureatlassprite.func_130100_a(par1ResourceManager.func_110536_a(resourcelocation1));
++                if (!textureatlassprite.load(par1ResourceManager, resourcelocation1))
 +                {
 +                    continue;
 +                }
              }
              catch (RuntimeException runtimeexception)
              {
-@@ -142,6 +147,7 @@
+@@ -142,6 +149,7 @@
              textureatlassprite1 = (TextureAtlasSprite)iterator1.next();
              textureatlassprite1.copyFrom(this.missingImage);
          }
@@ -41,7 +42,7 @@
      }
  
      private void func_110573_f()
-@@ -212,6 +218,7 @@
+@@ -212,6 +220,7 @@
          if (par1Str == null)
          {
              (new RuntimeException("Don\'t register null!")).printStackTrace();
@@ -49,7 +50,7 @@
          }
  
          Object object = (TextureAtlasSprite)this.field_110574_e.get(par1Str);
-@@ -253,4 +260,37 @@
+@@ -253,4 +262,37 @@
      {
          this.updateAnimations();
      }

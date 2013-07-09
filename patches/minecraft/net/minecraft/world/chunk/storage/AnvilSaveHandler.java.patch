@@ -30,16 +30,3 @@
      }
  
      /**
-@@ -60,9 +49,10 @@
-         {
-             ThreadedFileIOBase.threadedIOInstance.waitForFinish();
-         }
--        catch (InterruptedException interruptedexception)
-+        catch (InterruptedException e)
-         {
--            interruptedexception.printStackTrace();
-+            // TODO Auto-generated catch block
-+            e.printStackTrace();
-         }
- 
-         RegionFileCache.clearRegionFileReferences();

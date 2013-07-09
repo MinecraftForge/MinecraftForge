@@ -1,9 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/entity/RenderPlayer.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RenderPlayer.java
-@@ -21,7 +21,16 @@
+@@ -15,13 +15,22 @@
+ import net.minecraft.item.EnumArmorMaterial;
+ import net.minecraft.item.Item;
+ import net.minecraft.item.ItemArmor;
++import net.minecraft.item.ItemBlock;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.scoreboard.Score;
  import net.minecraft.scoreboard.ScoreObjective;
  import net.minecraft.scoreboard.Scoreboard;
  import net.minecraft.util.MathHelper;
+ import net.minecraft.util.ResourceLocation;
 +import net.minecraftforge.client.ForgeHooksClient;
 +import net.minecraftforge.client.IItemRenderer;
 +import net.minecraftforge.client.MinecraftForgeClient;
@@ -11,7 +18,6 @@
 +import net.minecraftforge.common.MinecraftForge;
 +
  import org.lwjgl.opengl.GL11;
-+import net.minecraft.item.ItemBlock;
 +import static net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED;
 +import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.BLOCK_3D;
  
@@ -66,23 +72,23 @@
              if (item instanceof ItemArmor)
              {
 -                this.func_110776_a(RenderBiped.func_110858_a((ItemArmor)item, par2, "overlay"));
-+                this.func_110776_a(RenderBiped.getArmorResource(par1, itemstack, par2, "overlay"));
++                this.func_110776_a(RenderBiped.getArmorResource(par1AbstractClientPlayer, itemstack, par2, "overlay"));
                  float f1 = 1.0F;
                  GL11.glColor3f(f1, f1, f1);
              }
 @@ -117,6 +135,7 @@
  
-     public void renderPlayer(AbstractClientPlayer par1, double par2, double par4, double par6, float par8, float par9)
+     public void func_130009_a(AbstractClientPlayer par1AbstractClientPlayer, double par2, double par4, double par6, float par8, float par9)
      {
-+        if (MinecraftForge.EVENT_BUS.post(new RenderPlayerEvent.Pre(par1, this))) return;
++        if (MinecraftForge.EVENT_BUS.post(new RenderPlayerEvent.Pre(par1AbstractClientPlayer, this))) return;
          float f2 = 1.0F;
          GL11.glColor3f(f2, f2, f2);
-         ItemStack itemstack = par1.inventory.getCurrentItem();
+         ItemStack itemstack = par1AbstractClientPlayer.inventory.getCurrentItem();
 @@ -148,6 +167,7 @@
          this.modelArmorChestplate.aimedBow = this.modelArmor.aimedBow = this.modelBipedMain.aimedBow = false;
          this.modelArmorChestplate.isSneak = this.modelArmor.isSneak = this.modelBipedMain.isSneak = false;
          this.modelArmorChestplate.heldItemRight = this.modelArmor.heldItemRight = this.modelBipedMain.heldItemRight = 0;
-+        MinecraftForge.EVENT_BUS.post(new RenderPlayerEvent.Post(par1, this));
++        MinecraftForge.EVENT_BUS.post(new RenderPlayerEvent.Post(par1AbstractClientPlayer, this));
      }
  
      protected ResourceLocation func_110817_a(AbstractClientPlayer par1AbstractClientPlayer)
@@ -125,7 +131,7 @@
          boolean flag = par1AbstractClientPlayer.func_110310_o().func_110557_a();
          boolean flag1 = !par1AbstractClientPlayer.isInvisible();
          boolean flag2 = !par1AbstractClientPlayer.getHideCape();
-+        flag = event.renderCape && flag; 
++        flag = event.renderCape && flag;
          float f6;
  
          if (flag && flag1 && flag2)

@@ -1,12 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src_work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -5,17 +5,26 @@
- import cpw.mods.fml.relauncher.SideOnly;
- import java.util.HashMap;
- import java.util.Map;
-+import java.util.concurrent.Callable;
- import java.util.logging.Level;
- 
+@@ -10,12 +10,20 @@
  import net.minecraft.block.Block;
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.nbt.NBTTagCompound;
@@ -27,7 +21,7 @@
      /**
       * A HashMap storing string names of classes mapping to the actual java.lang.Class type.
       */
-@@ -276,7 +285,7 @@
+@@ -279,7 +287,7 @@
      public void func_85027_a(CrashReportCategory par1CrashReportCategory)
      {
          par1CrashReportCategory.addCrashSectionCallable("Name", new CallableTileEntityName(this));
@@ -36,7 +30,7 @@
          par1CrashReportCategory.addCrashSectionCallable("Actual block type", new CallableTileEntityID(this));
          par1CrashReportCategory.addCrashSectionCallable("Actual block data value", new CallableTileEntityData(this));
      }
-@@ -308,4 +317,107 @@
+@@ -311,4 +319,107 @@
          addMapping(TileEntityHopper.class, "Hopper");
          addMapping(TileEntityComparator.class, "Comparator");
      }

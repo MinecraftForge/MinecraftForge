@@ -165,7 +165,7 @@
 +                    {
 +                        Slot slot1 = (Slot)iterator.next();
 +
-+                        if (slot1 != null && func_94527_a(slot1, inventoryplayer.getItemStack(), true) && slot1.isItemValid(inventoryplayer.getItemStack()) && inventoryplayer.getItemStack().stackSize >= this.field_94537_h.size() && this.func_94531_b(slot1))
++                        if (slot1 != null && func_94527_a(slot1, inventoryplayer.getItemStack(), true) && slot1.isItemValid(inventoryplayer.getItemStack()) && inventoryplayer.getItemStack().stackSize >= this.field_94537_h.size() && this.canDragIntoSlot(slot1))
 +                        {
 +                            ItemStack itemstack2 = itemstack1.copy();
 +                            int j1 = slot1.getHasStack() ? slot1.getStack().stackSize : 0;
@@ -215,26 +215,3 @@
                                  inventoryplayer.setItemStack((ItemStack)null);
                              }
                          }
-@@ -323,11 +461,13 @@
-                                     k1 = slot2.getSlotStackLimit();
-                                 }
- 
-+                                // CraftBukkit start
-                                 if (itemstack4.stackSize >= k1)
-                                 {
-                                     slot2.putStack(itemstack4.splitStack(k1));
-                                 }
- 
-+                                // CraftBukkit end
-                                 if (itemstack4.stackSize == 0)
-                                 {
-                                     inventoryplayer.setItemStack((ItemStack)null);
-@@ -600,7 +740,7 @@
-         }
-     }
- 
--    public abstract boolean canInteractWith(EntityPlayer entityplayer);
-+    public abstract boolean canInteractWith(EntityPlayer par1EntityPlayer);
- 
-     /**
-      * merges provided ItemStack with the first avaliable one in the container/player inventory

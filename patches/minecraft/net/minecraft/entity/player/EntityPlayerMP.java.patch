@@ -1,14 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
 +++ ../src_work/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
-@@ -79,6 +79,7 @@
- import net.minecraft.tileentity.TileEntityHopper;
+@@ -81,6 +81,7 @@
+ import net.minecraft.tileentity.TileEntitySign;
  import net.minecraft.util.ChatMessageComponent;
  import net.minecraft.util.ChunkCoordinates;
 +import net.minecraft.util.CombatTracker;
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.EntityDamageSource;
  import net.minecraft.util.MathHelper;
-@@ -90,6 +91,23 @@
+@@ -92,6 +93,23 @@
  import net.minecraft.world.WorldServer;
  import net.minecraft.world.chunk.Chunk;
  
@@ -32,7 +32,7 @@
  public class EntityPlayerMP extends EntityPlayer implements ICrafting
  {
      private String translator = "en_US";
-@@ -128,10 +146,10 @@
+@@ -130,10 +148,10 @@
      private boolean wasHungry = true;
  
      /** Amount of experience the client was last set to */
@@ -45,7 +45,7 @@
  
      /** must be between 3>x>15 (strictly between) */
      private int renderDistance;
-@@ -155,6 +173,17 @@
+@@ -157,6 +175,17 @@
       * and XP
       */
      public boolean playerConqueredTheEnd;
@@ -63,7 +63,7 @@
  
      public EntityPlayerMP(MinecraftServer par1MinecraftServer, World par2World, String par3Str, ItemInWorldManager par4ItemInWorldManager)
      {
-@@ -162,18 +191,10 @@
+@@ -164,18 +193,10 @@
          par4ItemInWorldManager.thisPlayerMP = this;
          this.theItemInWorldManager = par4ItemInWorldManager;
          this.renderDistance = par1MinecraftServer.getConfigurationManager().getViewDistance();
@@ -83,7 +83,7 @@
  
          this.mcServer = par1MinecraftServer;
          this.stepHeight = 0.0F;
-@@ -184,6 +205,11 @@
+@@ -186,6 +207,11 @@
          {
              this.setPosition(this.posX, this.posY + 1.0D, this.posZ);
          }
@@ -95,7 +95,7 @@
      }
  
      /**
-@@ -204,6 +230,7 @@
+@@ -206,6 +232,7 @@
                  this.theItemInWorldManager.setGameType(EnumGameType.getByID(par1NBTTagCompound.getInteger("playerGameType")));
              }
          }
@@ -103,7 +103,7 @@
      }
  
      /**
-@@ -213,7 +240,48 @@
+@@ -215,7 +242,48 @@
      {
          super.writeEntityToNBT(par1NBTTagCompound);
          par1NBTTagCompound.setInteger("playerGameType", this.theItemInWorldManager.getGameType().getID());
@@ -153,7 +153,7 @@
  
      /**
       * Add experience levels to this player.
-@@ -251,11 +319,13 @@
+@@ -253,11 +321,13 @@
          --this.initialInvulnerability;
          this.openContainer.detectAndSendChanges();
  
@@ -168,7 +168,7 @@
  
          while (!this.destroyedItemsNetCache.isEmpty())
          {
-@@ -286,8 +356,15 @@
+@@ -288,8 +358,11 @@
  
                  if (chunkcoordintpair != null && this.worldObj.blockExists(chunkcoordintpair.chunkXPos << 4, 0, chunkcoordintpair.chunkZPos << 4))
                  {
@@ -179,14 +179,10 @@
 +                    arraylist.add(chunk);
 +                    arraylist1.addAll(chunk.chunkTileEntityMap.values());
 +                    // CraftBukkit end
-+                    //BugFix: 16 makes it load an extra chunk, which isn't associated with a player, which makes it not unload unless a player walks near it.
-+                    //ToDo: Find a way to efficiently clean abandoned chunks.
-+                    //arraylist1.addAll(((WorldServer)this.worldObj).getAllTileEntityInBox(chunkcoordintpair.chunkXPos * 16, 0, chunkcoordintpair.chunkZPos * 16, chunkcoordintpair.chunkXPos * 16 + 16, 256, chunkcoordintpair.chunkZPos * 16 + 16));
-+                    //arraylist1.addAll(((WorldServer)this.worldObj).getAllTileEntityInBox(chunkcoordintpair.chunkXPos * 16, 0, chunkcoordintpair.chunkZPos * 16, chunkcoordintpair.chunkXPos * 16 + 15, 256, chunkcoordintpair.chunkZPos * 16 + 15));
                  }
              }
  
-@@ -308,6 +385,7 @@
+@@ -310,6 +383,7 @@
                  {
                      Chunk chunk = (Chunk)iterator2.next();
                      this.getServerForPlayer().getEntityTracker().func_85172_a(this, chunk);
@@ -194,7 +190,7 @@
                  }
              }
          }
-@@ -336,7 +414,8 @@
+@@ -338,7 +412,8 @@
  
              if (this.func_110143_aJ() != this.lastHealth || this.lastFoodLevel != this.foodStats.getFoodLevel() || this.foodStats.getSaturationLevel() == 0.0F != this.wasHungry)
              {
@@ -204,7 +200,7 @@
                  this.lastHealth = this.func_110143_aJ();
                  this.lastFoodLevel = this.foodStats.getFoodLevel();
                  this.wasHungry = this.foodStats.getSaturationLevel() == 0.0F;
-@@ -345,14 +424,8 @@
+@@ -347,14 +422,8 @@
              if (this.func_110143_aJ() + this.func_110139_bj() != this.field_130068_bO)
              {
                  this.field_130068_bO = this.func_110143_aJ() + this.func_110139_bj();
@@ -221,7 +217,7 @@
              }
  
              if (this.experienceTotal != this.lastExperience)
-@@ -360,6 +433,20 @@
+@@ -362,6 +431,20 @@
                  this.lastExperience = this.experienceTotal;
                  this.playerNetServerHandler.sendPacketToPlayer(new Packet43Experience(this.experience, this.experienceTotal, this.experienceLevel));
              }
@@ -242,7 +238,7 @@
          }
          catch (Throwable throwable)
          {
-@@ -375,20 +462,88 @@
+@@ -377,20 +460,88 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -341,7 +337,7 @@
              score.func_96648_a();
          }
  
-@@ -413,7 +568,8 @@
+@@ -415,7 +566,8 @@
          }
          else
          {
@@ -351,7 +347,7 @@
  
              if (!flag && this.initialInvulnerability > 0 && par1DamageSource != DamageSource.outOfWorld)
              {
-@@ -448,7 +604,8 @@
+@@ -450,7 +602,8 @@
  
      public boolean func_96122_a(EntityPlayer par1EntityPlayer)
      {
@@ -361,7 +357,7 @@
      }
  
      /**
-@@ -468,21 +625,27 @@
+@@ -470,21 +623,27 @@
              if (this.dimension == 0 && par1 == 1)
              {
                  this.triggerAchievement(AchievementList.theEnd);
@@ -396,7 +392,7 @@
              this.lastExperience = -1;
              this.lastHealth = -1.0F;
              this.lastFoodLevel = -1;
-@@ -537,6 +700,11 @@
+@@ -539,6 +698,11 @@
       */
      public void wakeUpPlayer(boolean par1, boolean par2, boolean par3)
      {
@@ -408,7 +404,7 @@
          if (this.isPlayerSleeping())
          {
              this.getServerForPlayer().getEntityTracker().sendPacketToAllAssociatedPlayers(this, new Packet18Animation(this, 3));
-@@ -555,7 +723,16 @@
+@@ -557,7 +721,16 @@
       */
      public void mountEntity(Entity par1Entity)
      {
@@ -426,8 +422,8 @@
          this.playerNetServerHandler.sendPacketToPlayer(new Packet39AttachEntity(0, this, this.ridingEntity));
          this.playerNetServerHandler.setPlayerLocation(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
      }
-@@ -574,28 +751,54 @@
-         super.updateFallState(par1, par3);
+@@ -588,28 +761,54 @@
+         }
      }
  
 +    // MCPC+ add vanilla method back with correct signature. Fixes issue #3
@@ -485,7 +481,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -605,9 +808,18 @@
+@@ -619,9 +818,18 @@
       */
      public void displayGUIAnvil(int par1, int par2, int par3)
      {
@@ -506,7 +502,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -622,27 +834,54 @@
+@@ -636,27 +844,54 @@
              this.closeScreen();
          }
  
@@ -567,7 +563,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -652,9 +891,18 @@
+@@ -666,9 +901,18 @@
       */
      public void displayGUIFurnace(TileEntityFurnace par1TileEntityFurnace)
      {
@@ -588,7 +584,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -664,9 +912,18 @@
+@@ -678,9 +922,18 @@
       */
      public void displayGUIDispenser(TileEntityDispenser par1TileEntityDispenser)
      {
@@ -609,7 +605,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -676,9 +933,18 @@
+@@ -690,9 +943,18 @@
       */
      public void displayGUIBrewingStand(TileEntityBrewingStand par1TileEntityBrewingStand)
      {
@@ -630,7 +626,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -688,17 +954,35 @@
+@@ -702,17 +964,35 @@
       */
      public void displayGUIBeacon(TileEntityBeacon par1TileEntityBeacon)
      {
@@ -670,7 +666,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
          InventoryMerchant inventorymerchant = ((ContainerMerchant)this.openContainer).getMerchantInventory();
-@@ -724,6 +1008,16 @@
+@@ -738,6 +1018,16 @@
  
      public void func_110298_a(EntityHorse par1EntityHorse, IInventory par2IInventory)
      {
@@ -687,7 +683,7 @@
          if (this.openContainer != this.inventoryContainer)
          {
              this.closeScreen();
-@@ -731,7 +1025,7 @@
+@@ -745,7 +1035,7 @@
  
          this.incrementWindowID();
          this.playerNetServerHandler.sendPacketToPlayer(new Packet100OpenWindow(this.currentWindowId, 11, par2IInventory.getInvName(), par2IInventory.getSizeInventory(), par2IInventory.isInvNameLocalized(), par1EntityHorse.entityId));
@@ -696,7 +692,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -760,6 +1054,15 @@
+@@ -774,6 +1064,15 @@
      {
          this.playerNetServerHandler.sendPacketToPlayer(new Packet104WindowItems(par1Container.windowId, par2List));
          this.playerNetServerHandler.sendPacketToPlayer(new Packet103SetSlot(-1, -1, this.inventory.getItemStack()));
@@ -712,15 +708,15 @@
      }
  
      /**
-@@ -777,6 +1080,7 @@
+@@ -791,6 +1090,7 @@
       */
      public void closeScreen()
      {
 +        CraftEventFactory.handleInventoryCloseEvent(this); // CraftBukkit
          this.playerNetServerHandler.sendPacketToPlayer(new Packet101CloseWindow(this.openContainer.windowId));
-         this.closeInventory();
+         this.closeContainer();
      }
-@@ -851,6 +1155,7 @@
+@@ -868,6 +1168,7 @@
      public void setPlayerHealthUpdated()
      {
          this.lastHealth = -1.0E8F;
@@ -728,7 +724,7 @@
      }
  
      /**
-@@ -1015,7 +1320,7 @@
+@@ -1032,7 +1333,7 @@
       */
      public void requestTexturePackLoad(String par1Str, int par2)
      {
@@ -737,7 +733,7 @@
          this.playerNetServerHandler.sendPacketToPlayer(new Packet250CustomPayload("MC|TPack", s1.getBytes()));
      }
  
-@@ -1026,4 +1331,103 @@
+@@ -1043,4 +1344,103 @@
      {
          return new ChunkCoordinates(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY + 0.5D), MathHelper.floor_double(this.posZ));
      }
@@ -814,12 +810,12 @@
 +        this.experienceTotal = this.newTotalExp;
 +        this.experience = 0;
 +        this.deathTime = 0;
-+        this.activePotionsMap.clear();
++        this.clearActivePotions(); // Should be removeAllEffects.
 +        super.potionsNeedUpdate = true; // MCPC+ - change to super to temporarily workaround remapping bug with SpecialSource
 +        this.openContainer = this.inventoryContainer;
 +        this.attackingPlayer = null;
 +        this.entityLivingToAttack = null;
-+        this.field_94063_bt = new CombatTracker(this);
++        this._combatTracker = new CombatTracker(this);
 +        this.lastExperience = -1;
 +
 +        if (this.keepLevel || keepInventory)

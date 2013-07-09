@@ -42,7 +42,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
     public String getPrefix() throws IllegalStateException {
         CraftScoreboard scoreboard = checkState();
 
-        return team.func_96668_e();
+        return team.getColorPrefix();
     }
 
     public void setPrefix(String prefix) throws IllegalStateException, IllegalArgumentException {
@@ -56,7 +56,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
     public String getSuffix() throws IllegalStateException {
         CraftScoreboard scoreboard = checkState();
 
-        return team.func_96663_f();
+        return team.getColorSuffix();
     }
 
     public void setSuffix(String suffix) throws IllegalStateException, IllegalArgumentException {

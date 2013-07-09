@@ -18,16 +18,16 @@ public class CraftCreatureSpawner extends CraftBlockState implements CreatureSpa
 
     @Deprecated
     public CreatureType getCreatureType() {
-        return CreatureType.fromName(spawner.func_98049_a().getEntityNameToSpawn());
+        return CreatureType.fromName(spawner.getSpawnerLogic().getEntityNameToSpawn());
     }
 
     public EntityType getSpawnedType() {
-        return EntityType.fromName(spawner.func_98049_a().getEntityNameToSpawn());
+        return EntityType.fromName(spawner.getSpawnerLogic().getEntityNameToSpawn());
     }
 
     @Deprecated
     public void setCreatureType(CreatureType creatureType) {
-        spawner.func_98049_a().setMobID(creatureType.getName());
+        spawner.getSpawnerLogic().setMobID(creatureType.getName());
     }
 
     public void setSpawnedType(EntityType entityType) {
@@ -35,12 +35,12 @@ public class CraftCreatureSpawner extends CraftBlockState implements CreatureSpa
             throw new IllegalArgumentException("Can't spawn EntityType " + entityType + " from mobspawners!");
         }
 
-        spawner.func_98049_a().setMobID(entityType.getName());
+        spawner.getSpawnerLogic().setMobID(entityType.getName());
     }
 
     @Deprecated
     public String getCreatureTypeId() {
-        return spawner.func_98049_a().getEntityNameToSpawn();
+        return spawner.getSpawnerLogic().getEntityNameToSpawn();
     }
 
     @Deprecated
@@ -49,7 +49,7 @@ public class CraftCreatureSpawner extends CraftBlockState implements CreatureSpa
     }
 
     public String getCreatureTypeName() {
-        return spawner.func_98049_a().getEntityNameToSpawn();
+        return spawner.getSpawnerLogic().getEntityNameToSpawn();
     }
 
     public void setCreatureTypeByName(String creatureType) {
@@ -62,11 +62,11 @@ public class CraftCreatureSpawner extends CraftBlockState implements CreatureSpa
     }
 
     public int getDelay() {
-        return spawner.func_98049_a().spawnDelay;
+        return spawner.getSpawnerLogic().spawnDelay;
     }
 
     public void setDelay(int delay) {
-        spawner.func_98049_a().spawnDelay = delay;
+        spawner.getSpawnerLogic().spawnDelay = delay;
     }
 
 }

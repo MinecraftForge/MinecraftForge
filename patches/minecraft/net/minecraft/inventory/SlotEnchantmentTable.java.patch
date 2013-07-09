@@ -70,12 +70,3 @@
      }
  
      /**
-@@ -28,7 +70,7 @@
-     public void onInventoryChanged()
-     {
-         super.onInventoryChanged();
--        this.container.onCraftMatrixChanged(this);
-+        this.container.onCraftMatrixChanged((IInventory) this);
-     }
- 
-     /**

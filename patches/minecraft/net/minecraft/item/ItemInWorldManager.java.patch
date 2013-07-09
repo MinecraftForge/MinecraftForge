@@ -55,7 +55,7 @@
 +        // CraftBukkit
 +        org.bukkit.event.player.PlayerInteractEvent playerinteractevent = CraftEventFactory.callPlayerInteractEvent(this.thisPlayerMP, org.bukkit.event.block.Action.LEFT_CLICK_BLOCK, par1, par2, par3, par4, this.thisPlayerMP.inventory.getCurrentItem());
 +
-         if (!this.gameType.isAdventure() || this.thisPlayerMP.canCurrentToolHarvestBlock(par1, par2, par3))
+         if (!this.gameType.isAdventure() || this.thisPlayerMP.isCurrentToolAdventureModeExempt(par1, par2, par3))
          {
 +            net.minecraftforge.event.entity.player.PlayerInteractEvent playerinteractevent1 = ForgeEventFactory.onPlayerInteract(this.thisPlayerMP, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, par1, par2, par3, par4); // Forge
 +
@@ -188,7 +188,7 @@
       */
      public boolean tryHarvestBlock(int par1, int par2, int par3)
      {
--        if (this.gameType.isAdventure() && !this.thisPlayerMP.canCurrentToolHarvestBlock(par1, par2, par3))
+-        if (this.gameType.isAdventure() && !this.thisPlayerMP.isCurrentToolAdventureModeExempt(par1, par2, par3))
 +        // CraftBukkit start
 +        BlockBreakEvent event = null;
 +
@@ -207,7 +207,7 @@
 +
 +            event = new BlockBreakEvent(block, this.thisPlayerMP.getBukkitEntity());
 +            // Adventure mode pre-cancel
-+            event.setCancelled(this.gameType.isAdventure() && !this.thisPlayerMP.canCurrentToolHarvestBlock(par1, par2, par3));
++            event.setCancelled(this.gameType.isAdventure() && !this.thisPlayerMP.isCurrentToolAdventureModeExempt(par1, par2, par3));
 +            // Sword + Creative mode pre-cancel
 +            event.setCancelled(event.isCancelled() || (this.gameType.isCreative() && this.thisPlayerMP.getHeldItem() != null && this.thisPlayerMP.getHeldItem().getItem() instanceof ItemSword));
 +            // Calculate default block experience
