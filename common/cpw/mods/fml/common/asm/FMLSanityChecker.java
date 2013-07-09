@@ -121,7 +121,7 @@ public class FMLSanityChecker implements IFMLCallHook
             goodFML = true;
         }
 
-        boolean goodMC = FMLLaunchHandler.side() == Side.SERVER; //Server is not signed, so assume it's good.
+        boolean goodMC = true; //Ugh just fucking disable this till cpw fixes it *sleeps* FMLLaunchHandler.side() == Side.SERVER; //Server is not signed, so assume it's good.
         try
         {
             Class cbr = Class.forName("net.minecraft.server.MinecraftServer",false, cl);
