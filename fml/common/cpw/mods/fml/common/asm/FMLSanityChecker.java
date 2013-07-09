@@ -123,7 +123,7 @@ public class FMLSanityChecker implements IFMLCallHook
         boolean goodMC = false;
         try
         {
-            Class cbr = Class.forName("net.minecraft.server.MinecraftServer",true, cl);
+            Class cbr = Class.forName("net.minecraft.server.MinecraftServer",false, cl);
             codeSource = cbr.getProtectionDomain().getCodeSource();
         }
         catch (Exception e)
