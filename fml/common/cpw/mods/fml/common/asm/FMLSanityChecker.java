@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream.GetField;
 import java.io.StringReader;
 import java.net.JarURLConnection;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.security.CodeSource;
 import java.security.cert.CertPath;
@@ -32,6 +33,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.logging.Level;
+import java.util.zip.ZipEntry;
 
 import javax.swing.JOptionPane;
 
@@ -42,6 +47,8 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
 
+import com.google.common.io.ByteStreams;
+
 import cpw.mods.fml.common.CertificateHelper;
 import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import cpw.mods.fml.common.patcher.ClassPatchManager;
@@ -51,8 +58,9 @@ import cpw.mods.fml.relauncher.IFMLCallHook;
 
 public class FMLSanityChecker implements IFMLCallHook
 {
-    private static final String FMLFINGERPRINT = "51:0A:FB:4C:AF:A4:A0:F2:F5:CF:C5:0E:B4:CC:3C:30:24:4A:E3:8E".toLowerCase().replace(":","");
+    private static final String FMLFINGERPRINT =   "51:0A:FB:4C:AF:A4:A0:F2:F5:CF:C5:0E:B4:CC:3C:30:24:4A:E3:8E".toLowerCase().replace(":", "");
     private static final String FORGEFINGERPRINT = "DE:4C:F8:A3:F3:BC:15:63:58:10:04:4C:39:24:0B:F9:68:04:EA:7D".toLowerCase().replace(":", "");
+    private static final String MCFINGERPRINT =    "CD:99:95:96:56:F7:53:DC:28:D8:63:B4:67:69:F7:F8:FB:AE:FC:FC".toLowerCase().replace(":", "");
     static class MLDetectorClassVisitor extends ClassVisitor
     {
         private boolean foundMarker = false;
@@ -79,8 +87,10 @@ public class FMLSanityChecker implements IFMLCallHook
     {
         CodeSource codeSource = getClass().getProtectionDomain().getCodeSource();
         boolean goodFML = false;
+        boolean fmlIsJar = false;
         if (codeSource.getLocation().getProtocol().equals("jar"))
         {
+            fmlIsJar = true;
             Certificate[] certificates = codeSource.getCertificates();
             if (certificates!=null)
             {
@@ -108,6 +118,66 @@ public class FMLSanityChecker implements IFMLCallHook
         else
         {
             goodFML = true;
+        }
+
+        boolean goodMC = false;
+        try
+        {
+            Class cbr = Class.forName("net.minecraft.server.MinecraftServer",true, cl);
+            codeSource = cbr.getProtectionDomain().getCodeSource();
+        }
+        catch (Exception e)
+        {
+            // Probably a development environment
+            goodMC = true;
+        }
+        if (fmlIsJar && !goodMC && codeSource.getLocation().getProtocol().equals("jar"))
+        {
+            try
+            {
+                String mcPath = codeSource.getLocation().getPath().substring(5);
+                mcPath = mcPath.substring(0, mcPath.lastIndexOf('!'));
+                JarFile mcJarFile = new JarFile(mcPath,true);
+                mcJarFile.getManifest();
+                JarEntry serverEntry = mcJarFile.getJarEntry("net/minecraft/server/MinecraftServer.class");
+                ByteStreams.toByteArray(mcJarFile.getInputStream(serverEntry));
+                Certificate[] certificates = serverEntry.getCertificates();
+                if (certificates!=null)
+                {
+
+                    for (Certificate cert : certificates)
+                    {
+                        String fingerprint = CertificateHelper.getFingerprint(cert);
+                        if (fingerprint.equals(MCFINGERPRINT))
+                        {
+                            FMLRelaunchLog.info("Found valid fingerprint for Minecraft. Certificate fingerprint %s", fingerprint);
+                            goodMC = true;
+                        }
+                    }
+                }
+            }
+            catch (Throwable e)
+            {
+                FMLRelaunchLog.log(Level.SEVERE, e, "A critical error occurred trying to read the minecraft jar file");
+            }
+        }
+        else
+        {
+            goodMC = true;
+        }
+        if (!goodMC)
+        {
+            FMLRelaunchLog.severe("The minecraft jar %s appears to be corrupt! There has been CRITICAL TAMPERING WITH MINECRAFT, it is highly unlikely minecraft will work! STOP NOW, get a clean copy and try again!",codeSource.getLocation().getFile());
+            if (!Boolean.parseBoolean(System.getProperty("fml.ignoreInvalidMinecraftCertificates","false")))
+            {
+                FMLRelaunchLog.severe("For your safety, FML will not launch minecraft. You will need to fetch a clean version of the minecraft jar file");
+                System.exit(1);
+            }
+            else
+            {
+                FMLRelaunchLog.severe("FML has been ordered to ignore the invalid or missing minecraft certificate. THIS IS A VERY DANGEROUS THING TO DO");
+
+            }
         }
         if (!goodFML)
         {
