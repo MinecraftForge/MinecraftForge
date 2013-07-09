@@ -22,6 +22,15 @@
          Iterator iterator = this.field_110574_e.entrySet().iterator();
  
          while (iterator.hasNext())
+@@ -73,7 +77,7 @@
+ 
+             try
+             {
+-                textureatlassprite.func_130100_a(par1ResourceManager.func_110536_a(resourcelocation1));
++                if (!textureatlassprite.load(par1ResourceManager, resourcelocation1)) continue;
+             }
+             catch (RuntimeException runtimeexception)
+             {
 @@ -142,6 +146,7 @@
              textureatlassprite1 = (TextureAtlasSprite)iterator1.next();
              textureatlassprite1.copyFrom(this.missingImage);
