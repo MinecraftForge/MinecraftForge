@@ -22,19 +22,7 @@
          Iterator iterator = this.field_110574_e.entrySet().iterator();
  
          while (iterator.hasNext())
-@@ -73,7 +77,10 @@
- 
-             try
-             {
--                textureatlassprite.func_130100_a(par1ResourceManager.func_110536_a(resourcelocation1));
-+                if (!textureatlassprite.load(par1ResourceManager, resourcelocation1))
-+                {
-+                    continue;
-+                }
-             }
-             catch (RuntimeException runtimeexception)
-             {
-@@ -142,6 +149,7 @@
+@@ -142,6 +146,7 @@
              textureatlassprite1 = (TextureAtlasSprite)iterator1.next();
              textureatlassprite1.copyFrom(this.missingImage);
          }
@@ -42,7 +30,7 @@
      }
  
      private void func_110573_f()
-@@ -212,6 +220,7 @@
+@@ -212,6 +217,7 @@
          if (par1Str == null)
          {
              (new RuntimeException("Don\'t register null!")).printStackTrace();
@@ -50,7 +38,7 @@
          }
  
          Object object = (TextureAtlasSprite)this.field_110574_e.get(par1Str);
-@@ -253,4 +262,37 @@
+@@ -253,4 +259,37 @@
      {
          this.updateAnimations();
      }
