@@ -67,7 +67,7 @@ public class ClassPatchManager {
             return inputData;
         }
         boolean ignoredError = false;
-        FMLLog.fine("Runtime patching class %s (input size %d), found %d patch%s", mappedName, inputData.length, list.size(), list.size()!=1 ? "es" : "");
+        FMLLog.fine("Runtime patching class %s (input size %d), found %d patch%s", mappedName, (inputData == null ? 0 : inputData.length), list.size(), list.size()!=1 ? "es" : "");
         for (ClassPatch patch: list)
         {
             if (!patch.targetClassName.equals(mappedName))
