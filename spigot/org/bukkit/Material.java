@@ -26,6 +26,7 @@ import org.bukkit.material.Command;
 import org.bukkit.material.Crops;
 import org.bukkit.material.DetectorRail;
 import org.bukkit.material.Diode;
+import org.bukkit.material.DirectionalContainer;
 import org.bukkit.material.Dispenser;
 import org.bukkit.material.Door;
 import org.bukkit.material.Dye;
@@ -229,8 +230,13 @@ public enum Material {
     HOPPER(154),
     QUARTZ_BLOCK(155),
     QUARTZ_STAIRS(156, Stairs.class),
-    ACTIVATOR_RAIL(157),
-    DROPPER(158),
+    ACTIVATOR_RAIL(157, PoweredRail.class),
+    DROPPER(158, Dispenser.class),
+    STAINED_CLAY(159),
+    HAY_BLOCK(170),
+    CARPET(171),
+    HARD_CLAY(172),
+    COAL_BLOCK(173),
     // ----- Item Separator -----
     IRON_SPADE(256, 1, 250),
     IRON_PICKAXE(257, 1, 250),
@@ -391,6 +397,11 @@ public enum Material {
     QUARTZ(406),
     EXPLOSIVE_MINECART(407, 1),
     HOPPER_MINECART(408, 1),
+    IRON_BARDING(417, 1),
+    GOLD_BARDING(418, 1),
+    DIAMOND_BARDING(419, 1),
+    LEASH(420),
+    NAME_TAG(421),
     GOLD_RECORD(2256, 1),
     GREEN_RECORD(2257, 1),
     RECORD_3(2258, 1),
@@ -763,16 +774,16 @@ public enum Material {
 
     static {
         // MCPC+ start
-    	byId = new Material[32000];
-    	BY_NAME = Maps.newHashMap();
+        byId = new Material[32000];
+        BY_NAME = Maps.newHashMap();
 
-    	reflectionFactory = null;
-    	newConstructorAccessor = null;
-    	newInstance = null;
-    	newFieldAccessor = null;
-    	fieldAccessorSet = null;
-    	isSetup = false;
-    	// MCPC+ end
+        reflectionFactory = null;
+        newConstructorAccessor = null;
+        newInstance = null;
+        newFieldAccessor = null;
+        fieldAccessorSet = null;
+        isSetup = false;
+        // MCPC+ end
         for (Material material : values()) {
             if (byId.length > material.id) {
                 byId[material.id] = material;
@@ -913,6 +924,10 @@ public enum Material {
             case QUARTZ_BLOCK:
             case QUARTZ_STAIRS:
             case DROPPER:
+            case STAINED_CLAY:
+            case HAY_BLOCK:
+            case HARD_CLAY:
+            case COAL_BLOCK:
                 return true;
             default:
                 return false;
@@ -971,6 +986,7 @@ public enum Material {
             case REDSTONE_COMPARATOR_OFF:
             case REDSTONE_COMPARATOR_ON:
             case ACTIVATOR_RAIL:
+            case CARPET:
                 return true;
             default:
                 return false;
@@ -1019,6 +1035,7 @@ public enum Material {
             case JUNGLE_WOOD_STAIRS:
             case TRAPPED_CHEST:
             case DAYLIGHT_DETECTOR:
+            case CARPET:
                 return true;
             default:
                 return false;
@@ -1050,6 +1067,8 @@ public enum Material {
             case SPRUCE_WOOD_STAIRS:
             case BIRCH_WOOD_STAIRS:
             case JUNGLE_WOOD_STAIRS:
+            case HAY_BLOCK:
+            case COAL_BLOCK:
                 return true;
             default:
                 return false;
@@ -1126,6 +1145,10 @@ public enum Material {
             case QUARTZ_ORE:
             case QUARTZ_BLOCK:
             case DROPPER:
+            case STAINED_CLAY:
+            case HAY_BLOCK:
+            case HARD_CLAY:
+            case COAL_BLOCK:
                 return true;
             default:
                 return false;
