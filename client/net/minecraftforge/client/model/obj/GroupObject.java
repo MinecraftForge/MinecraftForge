@@ -7,8 +7,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GroupObject
-{
+public class GroupObject {
 
     public String name;
     public ArrayList<Face> faces = new ArrayList<Face>();

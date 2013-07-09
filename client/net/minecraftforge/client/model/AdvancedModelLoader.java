@@ -3,7 +3,7 @@ package net.minecraftforge.client.model;
 import java.util.Collection;
 import java.util.Map;
 
-import net.minecraft.client.resources.ResourceLocation;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.obj.ObjModelLoader;
 import net.minecraftforge.client.model.techne.TechneModelLoader;
 
@@ -15,72 +15,72 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Common interface for advanced model loading from files, based on file suffix
- * Model support can be queried through the {@link #getSupportedSuffixes()} method.
- * Instances can be created by calling {@link #loadModel(String)} with a class-loadable-path
+ * Model support can be queried through the {@link #getSupportedSuffixes()}
+ * method. Instances can be created by calling {@link #loadModel(String)} with a
+ * class-loadable-path
  * 
  * @author cpw
  * 
  */
 @SideOnly(Side.CLIENT)
-public class AdvancedModelLoader
-{
-	private static Map<String, IModelCustomLoader>	instances	= Maps.newHashMap();
-	
-	/**
-	 * Register a new model handler
-	 * 
-	 * @param modelHandler
-	 *            The model handler to register
-	 */
-	public static void registerModelHandler(IModelCustomLoader modelHandler)
-	{
-		for (String suffix : modelHandler.getSuffixes())
-		{
-			instances.put(suffix, modelHandler);
-		}
-	}
-	
-	/**
-	 * Load the model from the supplied classpath resolvable resource name
-	 * 
-	 * @param resourceName
-	 *            The resource name
-	 * @return A model
-	 * @throws IllegalArgumentException
-	 *             if the resource name cannot be understood
-	 * @throws ModelFormatException
-	 *             if the underlying model handler cannot parse the model format
-	 */
-	public static IModelCustom loadModel(String resourceName) throws IllegalArgumentException, ModelFormatException
-	{
-		int i = resourceName.lastIndexOf('.');
-		int j = resourceName.lastIndexOf(':');
-		if (i == -1 || j == -1)
-		{
-			FMLLog.severe("The resource name %s is not valid", resourceName);
-			throw new IllegalArgumentException("The resource name is not valid");
-		}
-		String suffix = resourceName.substring(i + 1);
-		String modID = resourceName.substring(0, j);
-		IModelCustomLoader loader = instances.get(suffix);
-		if (loader == null)
-		{
-			FMLLog.severe("The resource name %s is not supported", resourceName);
-			throw new IllegalArgumentException("The resource name is not supported");
-		}
-		
-		ResourceLocation resource = new ResourceLocation(modID, resourceName.substring(j + 1));
-		return loader.loadInstance(resourceName, resource);
-	}
-	
-	public static Collection<String> getSupportedSuffixes()
-	{
-		return instances.keySet();
-	}
-	
-	static
-	{
-		registerModelHandler(new ObjModelLoader());
-		registerModelHandler(new TechneModelLoader());
-	}
+public class AdvancedModelLoader {
+    private static Map<String, IModelCustomLoader> instances = Maps.newHashMap();
+
+    /**
+     * Register a new model handler
+     * 
+     * @param modelHandler
+     *            The model handler to register
+     */
+    public static void registerModelHandler(IModelCustomLoader modelHandler)
+    {
+        for (String suffix : modelHandler.getSuffixes())
+        {
+            instances.put(suffix, modelHandler);
+        }
+    }
+
+    /**
+     * Load the model from the supplied classpath resolvable resource name
+     * 
+     * @param resourceName
+     *            The resource name
+     * @return A model
+     * @throws IllegalArgumentException
+     *             if the resource name cannot be understood
+     * @throws ModelFormatException
+     *             if the underlying model handler cannot parse the model format
+     */
+    public static IModelCustom loadModel(String resourceName) throws IllegalArgumentException, ModelFormatException
+    {
+        int i = resourceName.lastIndexOf('.');
+        int j = resourceName.lastIndexOf(':');
+        if (i == -1 || j == -1)
+        {
+            FMLLog.severe("The resource name %s is not valid", resourceName);
+            throw new IllegalArgumentException("The resource name is not valid");
+        }
+        String suffix = resourceName.substring(i + 1);
+        String modID = resourceName.substring(0, j);
+        IModelCustomLoader loader = instances.get(suffix);
+        if (loader == null)
+        {
+            FMLLog.severe("The resource name %s is not supported", resourceName);
+            throw new IllegalArgumentException("The resource name is not supported");
+        }
+
+        ResourceLocation resource = new ResourceLocation(modID, resourceName.substring(j + 1));
+        return loader.loadInstance(resourceName, resource);
+    }
+
+    public static Collection<String> getSupportedSuffixes()
+    {
+        return instances.keySet();
+    }
+
+    static
+    {
+        registerModelHandler(new ObjModelLoader());
+        registerModelHandler(new TechneModelLoader());
+    }
 }
