@@ -55,6 +55,7 @@ import cpw.mods.fml.common.patcher.ClassPatchManager;
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
 import cpw.mods.fml.relauncher.IFMLCallHook;
+import cpw.mods.fml.relauncher.Side;
 
 public class FMLSanityChecker implements IFMLCallHook
 {
@@ -120,7 +121,7 @@ public class FMLSanityChecker implements IFMLCallHook
             goodFML = true;
         }
 
-        boolean goodMC = false;
+        boolean goodMC = FMLLaunchHandler.side() == Side.SERVER; //Server is not signed, so assume it's good.
         try
         {
             Class cbr = Class.forName("net.minecraft.server.MinecraftServer",false, cl);
