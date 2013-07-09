@@ -134,7 +134,6 @@ public class FMLSanityChecker implements IFMLCallHook
             // Probably a development environment
             goodMC = true;
         }
-        fmlIsJar = true;
         if (fmlIsJar && !goodMC && codeSource.getLocation().getProtocol().equals("jar"))
         {
             try
