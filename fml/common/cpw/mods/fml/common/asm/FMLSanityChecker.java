@@ -19,6 +19,7 @@ import java.io.ObjectInputStream.GetField;
 import java.io.StringReader;
 import java.net.JarURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.security.CodeSource;
 import java.security.cert.CertPath;
@@ -47,6 +48,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
 
+import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
 
 import cpw.mods.fml.common.CertificateHelper;
@@ -121,7 +123,7 @@ public class FMLSanityChecker implements IFMLCallHook
             goodFML = true;
         }
 
-        boolean goodMC = true; //Ugh just fucking disable this till cpw fixes it *sleeps* FMLLaunchHandler.side() == Side.SERVER; //Server is not signed, so assume it's good.
+        boolean goodMC = FMLLaunchHandler.side() == Side.SERVER; //Server is not signed, so assume it's good.
         try
         {
             Class cbr = Class.forName("net.minecraft.server.MinecraftServer",false, cl);
@@ -132,12 +134,14 @@ public class FMLSanityChecker implements IFMLCallHook
             // Probably a development environment
             goodMC = true;
         }
+        fmlIsJar = true;
         if (fmlIsJar && !goodMC && codeSource.getLocation().getProtocol().equals("jar"))
         {
             try
             {
                 String mcPath = codeSource.getLocation().getPath().substring(5);
                 mcPath = mcPath.substring(0, mcPath.lastIndexOf('!'));
+                mcPath = URLDecoder.decode(mcPath, Charsets.UTF_8.name());
                 JarFile mcJarFile = new JarFile(mcPath,true);
                 mcJarFile.getManifest();
                 JarEntry serverEntry = mcJarFile.getJarEntry("net/minecraft/server/MinecraftServer.class");
