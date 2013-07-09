@@ -1,7 +1,7 @@
 {
   "install": {
     "profileName": "FML",
-    "target":"FML@version@",
+    "target":"@minecraft_version@-FML@version@",
     "path":"cpw.mods:fml:@version@",
     "version":"FML @version@",
     "filePath":"@universal_jar@",
@@ -10,7 +10,7 @@
     "logo":"/big_logo.png"
   },
   "versionInfo": {
-    "id": "FML@version@",
+    "id": "@minecraft_version@-FML@version@",
     "time": "@timestamp@",
     "releaseTime": "1960-01-01T00:00:00-0700",
     "type": "release",
