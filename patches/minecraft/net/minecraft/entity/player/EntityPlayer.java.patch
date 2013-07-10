@@ -55,7 +55,7 @@
 +                itemInUse.getItem().onUsingItemTick(itemInUse, this, itemInUseCount);
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
-                     this.updateItemUse(itemstack, 5);                
+                     this.updateItemUse(itemstack, 5);
 @@ -448,7 +448,7 @@
                  vec31.rotateAroundX(-this.rotationPitch * (float)Math.PI / 180.0F);
                  vec31.rotateAroundY(-this.rotationYaw * (float)Math.PI / 180.0F);
@@ -63,8 +63,8 @@
 -                this.worldObj.spawnParticle("iconcrack_" + par1ItemStack.getItem().itemID, vec31.xCoord, vec31.yCoord, vec31.zCoord, vec3.xCoord, vec3.yCoord + 0.05D, vec3.zCoord);
 +                this.worldObj.spawnParticle("iconcrack_" + par1ItemStack.getItem().itemID + "_" + par1ItemStack.getItemDamage(), vec31.xCoord, vec31.yCoord, vec31.zCoord, vec3.xCoord, vec3.yCoord + 0.05D, vec3.zCoord);
              }
- 
-             this.playSound("random.eat", 0.5F + 0.5F * (float)this.rand.nextInt(2), (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);                     
+
+             this.playSound("random.eat", 0.5F + 0.5F * (float)this.rand.nextInt(2), (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
 @@ -537,11 +556,11 @@
              this.cameraYaw = 0.0F;
              this.addMountedMovementStat(this.posX - d0, this.posY - d1, this.posZ - d2);
