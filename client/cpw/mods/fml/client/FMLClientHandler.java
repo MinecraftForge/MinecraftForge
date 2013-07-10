@@ -32,7 +32,9 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.resources.FileResourcePack;
 import net.minecraft.client.resources.FolderResourcePack;
+import net.minecraft.client.resources.ReloadableResourceManager;
 import net.minecraft.client.resources.ResourcePack;
+import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -49,6 +51,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.MapDifference.ValueDifference;
+import com.google.common.collect.Maps;
 
 import cpw.mods.fml.client.modloader.ModLoaderClientHelper;
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
@@ -133,16 +136,23 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private List<ResourcePack> resourcePackList;
 
+    private ReloadableResourceManager resourceManager;
+
+    private Map<String, ResourcePack> resourcePackMap;
+
     /**
      * Called to start the whole game off
      *
      * @param minecraft The minecraft instance being launched
      * @param resourcePackList The resource pack list we will populate with mods
+     * @param resourceManager The resource manager
      */
-    public void beginMinecraftLoading(Minecraft minecraft, List resourcePackList)
+    public void beginMinecraftLoading(Minecraft minecraft, List resourcePackList, ReloadableResourceManager resourceManager)
     {
         client = minecraft;
         this.resourcePackList = resourcePackList;
+        this.resourceManager = resourceManager;
+        this.resourcePackMap = Maps.newHashMap();
         if (minecraft.func_71355_q())
         {
             FMLLog.severe("DEMO MODE DETECTED, FML will not work. Finishing now.");
@@ -572,6 +582,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             {
                 ResourcePack pack = (ResourcePack) resourcePackType.getConstructor(ModContainer.class).newInstance(container);
                 resourcePackList.add(pack);
+                resourcePackMap.put(container.getModId(), pack);
             }
             catch (NoSuchMethodException e)
             {
@@ -590,5 +601,10 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void updateResourcePackList()
     {
         client.func_110436_a();
+    }
+
+    public ResourcePack getResourcePackFor(String modId)
+    {
+        return resourcePackMap.get(modId);
     }
 }

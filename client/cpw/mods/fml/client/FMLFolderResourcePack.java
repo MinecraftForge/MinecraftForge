@@ -1,9 +1,12 @@
 package cpw.mods.fml.client;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
+
+import javax.imageio.ImageIO;
 
 import net.minecraft.client.resources.FolderResourcePack;
 
@@ -49,4 +52,11 @@ public class FMLFolderResourcePack extends FolderResourcePack {
             else throw ioe;
         }
     }
+
+    @Override
+    public BufferedImage func_110586_a() throws IOException
+    {
+        return ImageIO.read(func_110591_a(container.getMetadata().logoFile));
+    }
+
 }

@@ -157,7 +157,6 @@ public class AccessTransformer implements IClassTransformer
         System.out.printf("Loaded %d rules from AccessTransformer config file %s\n", modifiers.size(), rulesFile);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes)
     {
@@ -212,7 +211,7 @@ public class AccessTransformer implements IClassTransformer
             }
             if (m.desc.isEmpty())
             {
-                for (FieldNode n : (List<FieldNode>) classNode.fields)
+                for (FieldNode n : classNode.fields)
                 {
                     if (n.name.equals(m.name) || m.name.equals("*"))
                     {
@@ -231,7 +230,7 @@ public class AccessTransformer implements IClassTransformer
             }
             else
             {
-                for (MethodNode n : (List<MethodNode>) classNode.methods)
+                for (MethodNode n : classNode.methods)
                 {
                     if ((n.name.equals(m.name) && n.desc.equals(m.desc)) || m.name.equals("*"))
                     {
