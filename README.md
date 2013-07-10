@@ -1,5 +1,6 @@
 MCPC-Plus
 ===========
+Note: 1.5.X repository has been moved to [MCPC-Plus-Legacy](https://github.com/MinecraftPortCentral/MCPC-Plus-Legacy)
 
 A Forge/Bukkit/Spigot Minecraft Server
 
