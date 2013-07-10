@@ -195,4 +195,9 @@ public class FMLServerHandler implements IFMLSidedHandler
     {
         // NOOP on server
     }
+    @Override
+    public void updateResourcePackList()
+    {
+        // NOOP on server
+    }
 }

@@ -585,4 +585,10 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
         }
     }
+
+    @Override
+    public void updateResourcePackList()
+    {
+        client.func_110436_a();
+    }
 }
