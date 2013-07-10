@@ -5,7 +5,7 @@
   "description": "Modding toolkit to decompile and deobfuscate the Minecraft client and server files.",
   "version": "8.04",
   "mcversion": "1.6.2",
-  "logoFile": "/mcp.png",
+  "logoFile": "/mcplogo.png",
   "url": "http://mcp.ocean-labs.de/",
   "updateUrl": "",
   "authors": ["Searge", "ProfMobius", "IngisKahn", "Fesh0r", "ZeuX", "R4wk", "Others"],
