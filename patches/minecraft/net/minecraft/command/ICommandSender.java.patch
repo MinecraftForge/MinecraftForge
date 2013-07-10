@@ -1,0 +1,13 @@
+--- ../src_base/minecraft/net/minecraft/command/ICommandSender.java
++++ ../src_work/minecraft/net/minecraft/command/ICommandSender.java
+@@ -3,8 +3,9 @@
+ import net.minecraft.util.ChatMessageComponent;
+ import net.minecraft.util.ChunkCoordinates;
+ import net.minecraft.world.World;
++import net.minecraftforge.permissions.api.IPermissible;
+ 
+-public interface ICommandSender
++public interface ICommandSender extends IPermissible
+ {
+     /**
+      * Gets the name of this command sender (usually username, but possibly "Rcon")

@@ -1,0 +1,99 @@
+--- ../src_base/minecraft/net/minecraft/tileentity/TileEntityCommandBlock.java
++++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityCommandBlock.java
+@@ -1,5 +1,8 @@
+ package net.minecraft.tileentity;
+ 
++import java.util.Set;
++
++import cpw.mods.fml.common.Mod;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import net.minecraft.command.ICommandManager;
+@@ -11,6 +14,11 @@
+ import net.minecraft.util.ChatMessageComponent;
+ import net.minecraft.util.ChunkCoordinates;
+ import net.minecraft.world.World;
++import net.minecraftforge.permissions.PermissibleBase;
++import net.minecraftforge.permissions.Permission;
++import net.minecraftforge.permissions.PermissionAttachment;
++import net.minecraftforge.permissions.PermissionAttachmentInfo;
++import net.minecraftforge.permissions.api.IPermissible;
+ 
+ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
+ {
+@@ -150,4 +158,75 @@
+     {
+         this.succesCount = par1;
+     }
++    
++    /* * * * * * * * * * * * *
++     * Permissions Management
++     * * * * * * * * * * * * * */
++        public IPermissible permissibleManager = new PermissibleBase(this);
++        
++
++        public boolean isOp()
++        {
++            return permissibleManager.isOp();
++        }
++
++        public void setOp(boolean value)
++        {
++            permissibleManager.setOp(value);
++        }
++
++        public boolean isPermissionSet(String name){
++            return permissibleManager.isPermissionSet(name);
++        }
++
++        public boolean isPermissionSet(Permission perm)
++        {
++            return permissibleManager.isPermissionSet(perm);
++        }
++
++        public boolean hasPermission(String name)
++        {
++            return permissibleManager.hasPermission(name);
++        }
++
++        public boolean hasPermission(Permission perm)
++        {
++            return permissibleManager.hasPermission(perm);
++        }
++
++        public PermissionAttachment addAttachment(Mod mod, String name, boolean value)
++        {
++            return permissibleManager.addAttachment(mod, name, value);
++        }
++
++        public PermissionAttachment addAttachment(Mod mod)
++        {
++            return permissibleManager.addAttachment(mod);
++        }
++
++        public PermissionAttachment addAttachment(Mod mod, String name, boolean value, int ticks)
++        {
++            return permissibleManager.addAttachment(mod, name, value, ticks);
++        }
++
++        public PermissionAttachment addAttachment(Mod mod, int ticks)
++        {
++            return permissibleManager.addAttachment(mod);
++        }
++
++        public void removeAttachment(PermissionAttachment attachment)
++        {
++            permissibleManager.removeAttachment(attachment);
++        }
++
++        public void recalculatePermissions()
++        {
++            permissibleManager.recalculatePermissions();
++        }
++
++        public Set<PermissionAttachmentInfo> getEffectivePermissions()
++        {
++            return permissibleManager.getEffectivePermissions();
++        }
++
+ }

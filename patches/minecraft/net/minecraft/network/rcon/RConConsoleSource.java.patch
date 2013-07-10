@@ -1,0 +1,105 @@
+--- ../src_base/minecraft/net/minecraft/network/rcon/RConConsoleSource.java
++++ ../src_work/minecraft/net/minecraft/network/rcon/RConConsoleSource.java
+@@ -1,10 +1,26 @@
+ package net.minecraft.network.rcon;
+ 
++import java.util.HashMap;
++import java.util.HashSet;
++import java.util.LinkedList;
++import java.util.List;
++import java.util.Map;
++import java.util.Set;
++
++import cpw.mods.fml.common.Mod;
+ import net.minecraft.command.ICommandSender;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.ChatMessageComponent;
+ import net.minecraft.util.ChunkCoordinates;
+ import net.minecraft.world.World;
++import net.minecraftforge.permissions.ForgePermissionManager;
++import net.minecraftforge.permissions.PermissibleBase;
++import net.minecraftforge.permissions.Permission;
++import net.minecraftforge.permissions.PermissionAttachment;
++import net.minecraftforge.permissions.PermissionAttachmentInfo;
++import net.minecraftforge.permissions.PermissionRemovedExecutor;
++import net.minecraftforge.permissions.api.IPermissible;
++import net.minecraftforge.permissions.api.IServerOperator;
+ 
+ public class RConConsoleSource implements ICommandSender
+ {
+@@ -60,4 +76,75 @@
+     {
+         return MinecraftServer.getServer().func_130014_f_();
+     }
++
++    /* * * * * * * * * * * * *
++     * Permissions Management
++     * * * * * * * * * * * * * */
++        public IPermissible permissibleManager = new PermissibleBase(this);
++        
++
++        public boolean isOp()
++        {
++            return true;
++        }
++
++        public void setOp(boolean value)
++        {
++            //Rcon is always op.
++        }
++
++        public boolean isPermissionSet(String name){
++            return permissibleManager.isPermissionSet(name);
++        }
++
++        public boolean isPermissionSet(Permission perm)
++        {
++            return permissibleManager.isPermissionSet(perm);
++        }
++
++        public boolean hasPermission(String name)
++        {
++            return permissibleManager.hasPermission(name);
++        }
++
++        public boolean hasPermission(Permission perm)
++        {
++            return permissibleManager.hasPermission(perm);
++        }
++
++        public PermissionAttachment addAttachment(Mod mod, String name, boolean value)
++        {
++            return permissibleManager.addAttachment(mod, name, value);
++        }
++
++        public PermissionAttachment addAttachment(Mod mod)
++        {
++            return permissibleManager.addAttachment(mod);
++        }
++
++        public PermissionAttachment addAttachment(Mod mod, String name, boolean value, int ticks)
++        {
++            return permissibleManager.addAttachment(mod, name, value, ticks);
++        }
++
++        public PermissionAttachment addAttachment(Mod mod, int ticks)
++        {
++            return permissibleManager.addAttachment(mod);
++        }
++
++        public void removeAttachment(PermissionAttachment attachment)
++        {
++            permissibleManager.removeAttachment(attachment);
++        }
++
++        public void recalculatePermissions()
++        {
++            permissibleManager.recalculatePermissions();
++        }
++
++        public Set<PermissionAttachmentInfo> getEffectivePermissions()
++        {
++            return permissibleManager.getEffectivePermissions();
++        }
++
+ }
