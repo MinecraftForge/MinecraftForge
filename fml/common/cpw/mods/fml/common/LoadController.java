@@ -95,6 +95,7 @@ public class LoadController
         }
 
         eventChannels = eventBus.build();
+        FMLCommonHandler.instance().updateResourcePackList();
     }
 
     public void distributeStateMessage(LoaderState state, Object... eventData)

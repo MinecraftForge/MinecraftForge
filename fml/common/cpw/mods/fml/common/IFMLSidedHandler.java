@@ -64,4 +64,6 @@ public interface IFMLSidedHandler
     void disconnectIDMismatch(MapDifference<Integer, ItemData> s, NetHandler toKill, INetworkManager mgr);
 
     void addModAsResource(ModContainer container);
+
+    void updateResourcePackList();
 }
