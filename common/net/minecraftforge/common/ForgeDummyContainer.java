@@ -41,7 +41,6 @@ import static net.minecraftforge.common.ForgeVersion.*;
 public class ForgeDummyContainer extends DummyModContainer implements WorldAccessContainer
 {
     public static int clumpingThreshold = 64;
-    public static boolean legacyFurnaceSides = false;
     public static boolean removeErroringEntities = false;
     public static boolean removeErroringTileEntities = false;
     public static boolean disableStitchedFileSaving = false;
@@ -98,10 +97,6 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
             clumpingThreshold = 64;
             prop.set(64);
         }
-
-        prop = config.get(Configuration.CATEGORY_GENERAL, "legacyFurnaceOutput", false);
-        prop.comment = "Controls the sides of vanilla furnaces for Forge's ISidedInventory, Vanilla defines the output as the bottom, but mods/Forge define it as the sides. Settings this to true will restore the old side relations.";
-        legacyFurnaceSides = prop.getBoolean(false);
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "removeErroringEntities", false);
         prop.comment = "Set this to just remove any TileEntity that throws a error in there update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.";

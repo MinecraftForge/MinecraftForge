@@ -12,6 +12,15 @@
  @SideOnly(Side.CLIENT)
  public class EntityRenderer
  {
+@@ -319,7 +324,7 @@
+ 
+                             if (d3 < d2 || d2 == 0.0D)
+                             {
+-                                if (entity == this.mc.renderViewEntity.ridingEntity)
++                                if (entity == this.mc.renderViewEntity.ridingEntity && !entity.canRiderInteract())
+                                 {
+                                     if (d2 == 0.0D)
+                                     {
 @@ -354,8 +359,15 @@
       */
      private void updateFovModifierHand()
