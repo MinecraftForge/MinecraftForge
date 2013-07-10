@@ -1,5 +1,16 @@
 --- commands.py
 +++ commands.py
+@@ -126,8 +126,8 @@
+ 
+ 
+ def truncate(text, length):
+-    if len(text) > length:
+-        return text[:length] + '...'
++    #if len(text) > length:
++    #    return text[:length] + '...'
+     return text
+ 
+ 
 @@ -139,6 +139,8 @@
              fieldnames = csvreader.fieldnames
      return set(fieldnames)
