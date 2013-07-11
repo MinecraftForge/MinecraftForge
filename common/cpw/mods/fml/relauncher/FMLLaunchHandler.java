@@ -87,7 +87,7 @@ public class FMLLaunchHandler
 
         try
         {
-            CoreModManager.handleLaunch(minecraftHome, classLoader);
+            CoreModManager.handleLaunch(minecraftHome, classLoader, tweaker);
         }
         catch (Throwable t)
         {
@@ -100,5 +100,16 @@ public class FMLLaunchHandler
     public static Side side()
     {
         return side;
+    }
+
+
+    private void injectPostfixTransformers()
+    {
+        CoreModManager.injectTransformers(classLoader);
+    }
+
+    public static void appendCoreMods()
+    {
+        INSTANCE.injectPostfixTransformers();
     }
 }
