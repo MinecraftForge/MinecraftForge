@@ -141,7 +141,7 @@ public class ClassPatchManager {
             InputStream binpatchesCompressed = getClass().getResourceAsStream("/binpatches.pack.lzma");
             if (binpatchesCompressed==null)
             {
-                FMLRelaunchLog.log(Level.SEVERE, "The binary patch set is missing. Things are probably about to go very wrong.");
+                FMLRelaunchLog.log(Level.SEVERE, "The binary patch set is missing. Either you are in a development environment, or things are not going to work!");
                 return;
             }
             LzmaInputStream binpatchesDecompressed = new LzmaInputStream(binpatchesCompressed);
@@ -152,7 +152,7 @@ public class ClassPatchManager {
         }
         catch (Exception e)
         {
-            FMLRelaunchLog.log(Level.SEVERE, e, "Error occurred reading binary patches. Problems may occur");
+            FMLRelaunchLog.log(Level.SEVERE, e, "Error occurred reading binary patches. Expect severe problems!");
             throw Throwables.propagate(e);
         }
 

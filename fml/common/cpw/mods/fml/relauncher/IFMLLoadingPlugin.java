@@ -102,4 +102,24 @@ public interface IFMLLoadingPlugin
     {
         public String value() default "";
     }
+
+    /**
+     * Name this coremod something other than the "short class name"
+     * @author cpw
+     *
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    public @interface Name
+    {
+        public String value() default "";
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    public @interface DependsOn
+    {
+        public String[] value() default {};
+    }
+
 }

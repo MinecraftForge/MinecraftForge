@@ -75,6 +75,7 @@ public class FMLTweaker implements ITweaker {
         classLoader.addClassLoaderExclusion("LZMA.");
         FMLLaunchHandler.configureForClientLaunch(classLoader, this);
         runAdditionalTweaks(classLoader);
+        FMLLaunchHandler.appendCoreMods();
     }
 
     void computeCascadedTweaks(LaunchClassLoader classLoader)
@@ -156,6 +157,11 @@ public class FMLTweaker implements ITweaker {
     public static URI getJarLocation()
     {
         return jarLocation;
+    }
+
+    public void injectCascadingTweak(ITweaker tweaker)
+    {
+        cascadedTweaks.add(tweaker);
     }
 
 }
