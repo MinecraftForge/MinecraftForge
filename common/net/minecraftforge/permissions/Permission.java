@@ -24,6 +24,7 @@ public class Permission {
     private final Map<String, Boolean> children = new LinkedHashMap<String, Boolean>();
     private PermissionDefault defaultValue = DEFAULT_PERMISSION;
     private String description;
+    
 
     public Permission(String name) {
         this(name, null, null, null);
@@ -67,6 +68,7 @@ public class Permission {
 
         recalculatePermissibles();
     }
+
 
     /**
      * Returns the unique fully qualified name of this Permission
@@ -258,9 +260,7 @@ public class Permission {
      * @return Permission object
      */
     public static Permission loadPermission(String name, Map<?, ?> data, PermissionDefault def, List<Permission> output) {
-        
-        //Validate.notNull(name, "Name cannot be null");
-        //Validate.notNull(data, "Data cannot be null");
+
         if (name == null)
         {
             return null;

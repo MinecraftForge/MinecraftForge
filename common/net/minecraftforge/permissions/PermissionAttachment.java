@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.minecraftforge.permissions.api.IPermissible;
+import net.minecraftforge.permissions.api.IPermissionCalculator;
+import net.minecraftforge.permissions.api.IPermissionRemovedExecutor;
 
 
 import cpw.mods.fml.common.Mod;
@@ -12,17 +14,16 @@ import cpw.mods.fml.common.Mod;
  * Holds information about a permission attachment on a {@link IPermissible} object
  */
 public class PermissionAttachment {
-    private PermissionRemovedExecutor removed;
+    private IPermissionRemovedExecutor removed;
     private final Map<String, Boolean> permissions = new LinkedHashMap<String, Boolean>();
     private final IPermissible permissible;
     private final Mod mod;
+    private final Map<String, IPermissionCalculator> calculators = new LinkedHashMap<String, IPermissionCalculator>();
 
     public PermissionAttachment(Mod mod, IPermissible Permissible) {
         if (mod == null) {
             throw new IllegalArgumentException("mod cannot be null");
-        }// else if (!mod.isEnabled()) {
-        //    throw new IllegalArgumentException("Plugin " + plugin.getDescription().getFullName() + " is disabled");
-        //}
+        }
 
         this.permissible = Permissible;
         this.mod = mod;
@@ -33,7 +34,7 @@ public class PermissionAttachment {
      *
      * @return Mod responsible for this permission attachment
      */
-    public Mod getPlugin() {
+    public Mod getMod() {
         return mod;
     }
 
@@ -42,7 +43,7 @@ public class PermissionAttachment {
      *
      * @param ex Object to be called when this is removed
      */
-    public void setRemovalCallback(PermissionRemovedExecutor ex) {
+    public void setRemovalCallback(IPermissionRemovedExecutor ex) {
         removed = ex;
     }
 
@@ -51,7 +52,7 @@ public class PermissionAttachment {
      *
      * @return Object to be called when this is removed
      */
-    public PermissionRemovedExecutor getRemovalCallback() {
+    public IPermissionRemovedExecutor getRemovalCallback() {
         return removed;
     }
 
@@ -74,6 +75,11 @@ public class PermissionAttachment {
     public Map<String, Boolean> getPermissions() {
         return new LinkedHashMap<String, Boolean>(permissions);
     }
+    
+    public Map<String, IPermissionCalculator> getCalculators()
+    {
+        return new LinkedHashMap<String, IPermissionCalculator>(calculators);
+    }
 
     /**
      * Sets a permission to the given value, by its fully qualified name
@@ -95,6 +101,29 @@ public class PermissionAttachment {
     public void setPermission(Permission perm, boolean value) {
         setPermission(perm.getName(), value);
     }
+    
+    /**
+     * Sets a permission to the given value, by its fully qualified name
+     *
+     * @param name Name of the permission
+     * @param value New value of the permission
+     */
+    public void setPermission(String name, boolean value, IPermissionCalculator calc) {
+        permissions.put(name.toLowerCase(), value);
+        calculators.put(name.toLowerCase(), calc);
+        permissible.recalculatePermissions();
+    }
+
+    /**
+     * Sets a permission to the given value
+     *
+     * @param perm Permission to set
+     * @param value New value of the permission
+     */
+    public void setPermission(Permission perm, boolean value, IPermissionCalculator calc) {
+        setPermission(perm.getName(), value, calc);
+    }
+    
 
     /**
      * Removes the specified permission from this attachment.
@@ -105,6 +134,7 @@ public class PermissionAttachment {
      */
     public void unsetPermission(String name) {
         permissions.remove(name.toLowerCase());
+        calculators.remove(name.toLowerCase());
         permissible.recalculatePermissions();
     }
 

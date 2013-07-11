@@ -3,7 +3,7 @@ import java.util.Set;
 
 import net.minecraftforge.permissions.Permission;
 import net.minecraftforge.permissions.PermissionAttachment;
-import net.minecraftforge.permissions.PermissionAttachmentInfo;
+import net.minecraftforge.permissions.implementation.PermissionAttachmentInfo;
 
 
 import cpw.mods.fml.common.Mod;
@@ -47,6 +47,29 @@ public interface IPermissible extends IServerOperator {
      * @return Value of the permission
      */
     public boolean hasPermission(Permission perm);
+    
+    /**
+     * Gets the value of the specified permission, if set.
+     * <p>
+     * If a permission override is not set on this object, the default value of the permission will be returned.
+     *
+     * @param name Name of the permission
+     * @param varArgs Additional arguments a permission can take.
+     * @return Value of the permission
+     */
+    public boolean hasPermission(String name, Object... varArgs);
+
+    /**
+     * Gets the value of the specified permission, if set.
+     * <p>
+     * If a permission override is not set on this object, the default value of the permission will be returned
+     *
+     * @param perm Permission to get
+     * @param varArgs Additional arguments a permission can take.
+     * @return Value of the permission
+     */
+    public boolean hasPermission(Permission perm, Object... varArgs);
+
 
     /**
      * Adds a new {@link PermissionAttachment} with a single permission by name and value
@@ -106,6 +129,6 @@ public interface IPermissible extends IServerOperator {
      *
      * @return Set of currently effective net.minecraftforge.permissions
      */
-    public Set<PermissionAttachmentInfo> getEffectivePermissions();
+    public Set<IPermissionAttachmentInfo> getEffectivePermissions();
 
 }

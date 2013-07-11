@@ -18,7 +18,7 @@
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockBed;
  import net.minecraft.block.material.Material;
-@@ -68,8 +73,26 @@
+@@ -68,8 +73,27 @@
  import net.minecraft.world.World;
  import net.minecraft.world.chunk.IChunkProvider;
  
@@ -33,11 +33,12 @@
 +import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 +import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 +import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
-+import net.minecraftforge.permissions.PermissibleBase;
 +import net.minecraftforge.permissions.Permission;
 +import net.minecraftforge.permissions.PermissionAttachment;
-+import net.minecraftforge.permissions.PermissionAttachmentInfo;
 +import net.minecraftforge.permissions.api.IPermissible;
++import net.minecraftforge.permissions.api.IPermissionAttachmentInfo;
++import net.minecraftforge.permissions.implementation.PermissibleBase;
++import net.minecraftforge.permissions.implementation.PermissionAttachmentInfo;
 +
  public abstract class EntityPlayer extends EntityLivingBase implements ICommandSender
  {
@@ -45,7 +46,7 @@
      /** Inventory of the player */
      public InventoryPlayer inventory = new InventoryPlayer(this);
      private InventoryEnderChest theInventoryEnderChest = new InventoryEnderChest();
-@@ -122,11 +145,13 @@
+@@ -122,11 +146,13 @@
       * Holds the last coordinate to spawn based on last bed that the player sleep.
       */
      private ChunkCoordinates spawnChunk;
@@ -59,7 +60,7 @@
  
      /** Holds the coordinate of the player when enter a minecraft to ride. */
      private ChunkCoordinates startMinecartRidingCoordinate;
-@@ -269,6 +294,7 @@
+@@ -269,6 +295,7 @@
  
              if (itemstack == this.itemInUse)
              {
@@ -67,7 +68,7 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(itemstack, 5);
-@@ -539,11 +565,11 @@
+@@ -539,11 +566,11 @@
              this.cameraYaw = 0.0F;
              this.addMountedMovementStat(this.posX - d0, this.posY - d1, this.posZ - d2);
  
@@ -81,7 +82,7 @@
              }
          }
      }
-@@ -686,11 +712,15 @@
+@@ -686,11 +713,15 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -97,7 +98,7 @@
          if (this.username.equals("Notch"))
          {
              this.dropPlayerItemWithRandomChoice(new ItemStack(Item.appleRed, 1), true);
-@@ -699,6 +729,20 @@
+@@ -699,6 +730,20 @@
          if (!this.worldObj.getGameRules().getGameRuleBooleanValue("keepInventory"))
          {
              this.inventory.dropAllItems();
@@ -118,7 +119,7 @@
          }
  
          if (par1DamageSource != null)
-@@ -749,7 +793,20 @@
+@@ -749,7 +794,20 @@
       */
      public EntityItem dropOneItem(boolean par1)
      {
@@ -140,7 +141,7 @@
      }
  
      /**
-@@ -758,7 +815,7 @@
+@@ -758,7 +816,7 @@
       */
      public EntityItem dropPlayerItem(ItemStack par1ItemStack)
      {
@@ -149,7 +150,7 @@
      }
  
      /**
-@@ -814,15 +871,28 @@
+@@ -814,15 +872,28 @@
       */
      public void joinEntityItemWithWorld(EntityItem par1EntityItem)
      {
@@ -180,7 +181,7 @@
  
          if (f > 1.0F)
          {
-@@ -833,7 +903,9 @@
+@@ -833,7 +904,9 @@
              {
                  float f1 = (float)(i * i + 1);
  
@@ -191,7 +192,7 @@
                  {
                      f += f1 * 0.08F;
                  }
-@@ -864,7 +936,8 @@
+@@ -864,7 +937,8 @@
              f /= 5.0F;
          }
  
@@ -201,7 +202,7 @@
      }
  
      /**
-@@ -872,7 +945,7 @@
+@@ -872,7 +946,7 @@
       */
      public boolean canHarvestBlock(Block par1Block)
      {
@@ -210,7 +211,7 @@
      }
  
      /**
-@@ -902,6 +975,14 @@
+@@ -902,6 +976,14 @@
              this.spawnChunk = new ChunkCoordinates(par1NBTTagCompound.getInteger("SpawnX"), par1NBTTagCompound.getInteger("SpawnY"), par1NBTTagCompound.getInteger("SpawnZ"));
              this.spawnForced = par1NBTTagCompound.getBoolean("SpawnForced");
          }
@@ -225,7 +226,7 @@
  
          this.foodStats.readNBT(par1NBTTagCompound);
          this.capabilities.readCapabilitiesFromNBT(par1NBTTagCompound);
-@@ -935,6 +1016,21 @@
+@@ -935,6 +1017,21 @@
              par1NBTTagCompound.setInteger("SpawnZ", this.spawnChunk.posZ);
              par1NBTTagCompound.setBoolean("SpawnForced", this.spawnForced);
          }
@@ -247,7 +248,7 @@
  
          this.foodStats.writeNBT(par1NBTTagCompound);
          this.capabilities.writeCapabilitiesToNBT(par1NBTTagCompound);
-@@ -982,6 +1078,7 @@
+@@ -982,6 +1079,7 @@
       */
      public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
      {
@@ -255,7 +256,7 @@
          if (this.isEntityInvulnerable())
          {
              return false;
-@@ -1135,12 +1232,15 @@
+@@ -1135,12 +1233,15 @@
      {
          if (!this.isEntityInvulnerable())
          {
@@ -272,7 +273,7 @@
              par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
              float f1 = par2;
              par2 = Math.max(par2 - this.func_110139_bj(), 0.0F);
-@@ -1190,6 +1290,7 @@
+@@ -1190,6 +1291,7 @@
  
      public boolean interactWith(Entity par1Entity)
      {
@@ -280,7 +281,7 @@
          ItemStack itemstack = this.getCurrentEquippedItem();
          ItemStack itemstack1 = itemstack != null ? itemstack.copy() : null;
  
-@@ -1246,7 +1347,9 @@
+@@ -1246,7 +1348,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -290,7 +291,7 @@
      }
  
      /**
-@@ -1263,6 +1366,15 @@
+@@ -1263,6 +1367,15 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -306,7 +307,7 @@
          if (par1Entity.canAttackWithItem())
          {
              if (!par1Entity.func_85031_j(this))
-@@ -1421,6 +1533,12 @@
+@@ -1421,6 +1534,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -319,7 +320,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1465,6 +1583,11 @@
+@@ -1465,6 +1584,11 @@
          {
              int l = this.worldObj.getBlockMetadata(par1, par2, par3);
              int i1 = BlockBed.getDirection(l);
@@ -331,7 +332,7 @@
              float f = 0.5F;
              float f1 = 0.5F;
  
-@@ -1535,10 +1658,12 @@
+@@ -1535,10 +1659,12 @@
          ChunkCoordinates chunkcoordinates = this.playerLocation;
          ChunkCoordinates chunkcoordinates1 = this.playerLocation;
  
@@ -348,7 +349,7 @@
  
              if (chunkcoordinates1 == null)
              {
-@@ -1575,7 +1700,9 @@
+@@ -1575,7 +1701,9 @@
       */
      private boolean isInBed()
      {
@@ -359,7 +360,7 @@
      }
  
      /**
-@@ -1590,9 +1717,12 @@
+@@ -1590,9 +1718,12 @@
          ichunkprovider.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          ichunkprovider.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -375,7 +376,7 @@
              return chunkcoordinates1;
          }
          else
-@@ -1614,10 +1744,13 @@
+@@ -1614,10 +1745,13 @@
      {
          if (this.playerLocation != null)
          {
@@ -393,7 +394,7 @@
              {
                  case 0:
                      return 90.0F;
-@@ -1683,14 +1816,40 @@
+@@ -1683,14 +1817,40 @@
      /**
       * Returns the location of the bed the player will respawn at, or null if the player has not slept in a bed.
       */
@@ -438,7 +439,7 @@
      }
  
      /**
-@@ -1698,6 +1857,10 @@
+@@ -1698,6 +1858,10 @@
       */
      public void setSpawnChunk(ChunkCoordinates par1ChunkCoordinates, boolean par2)
      {
@@ -449,7 +450,7 @@
          if (par1ChunkCoordinates != null)
          {
              this.spawnChunk = new ChunkCoordinates(par1ChunkCoordinates);
-@@ -1709,7 +1872,32 @@
+@@ -1709,7 +1873,32 @@
              this.spawnForced = false;
          }
      }
@@ -483,7 +484,7 @@
      /**
       * Will trigger the specified trigger.
       */
-@@ -1891,6 +2079,10 @@
+@@ -1891,6 +2080,10 @@
  
              super.fall(par1);
          }
@@ -494,7 +495,7 @@
      }
  
      /**
-@@ -1932,7 +2124,7 @@
+@@ -1932,7 +2125,7 @@
          {
              if (par1ItemStack.getItem().requiresMultipleRenderPasses())
              {
@@ -503,7 +504,7 @@
              }
  
              if (this.itemInUse != null && par1ItemStack.itemID == Item.bow.itemID)
-@@ -1954,6 +2146,7 @@
+@@ -1954,6 +2147,7 @@
                      return Item.bow.getItemIconForUseDuration(0);
                  }
              }
@@ -511,7 +512,7 @@
          }
  
          return icon;
-@@ -2175,7 +2368,17 @@
+@@ -2175,7 +2369,17 @@
              this.setScore(par1EntityPlayer.getScore());
          }
  
@@ -529,7 +530,7 @@
      }
  
      /**
-@@ -2239,7 +2442,14 @@
+@@ -2239,7 +2443,14 @@
       */
      public void setCurrentItemOrArmor(int par1, ItemStack par2ItemStack)
      {
@@ -545,7 +546,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -2309,4 +2519,75 @@
+@@ -2309,4 +2520,85 @@
      {
          FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
      }
@@ -584,6 +585,16 @@
 +    {
 +        return permissibleManager.hasPermission(perm);
 +    }
++    
++    public boolean hasPermission(String name, Object... varArgs)
++    {
++        return permissibleManager.hasPermission(name);
++    }
++
++    public boolean hasPermission(Permission perm, Object... varArgs)
++    {
++        return permissibleManager.hasPermission(perm);
++    }
 +
 +    public PermissionAttachment addAttachment(Mod mod, String name, boolean value)
 +    {
@@ -615,7 +626,7 @@
 +        permissibleManager.recalculatePermissions();
 +    }
 +
-+    public Set<PermissionAttachmentInfo> getEffectivePermissions()
++    public Set<IPermissionAttachmentInfo> getEffectivePermissions()
 +    {
 +        return permissibleManager.getEffectivePermissions();
 +    }

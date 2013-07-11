@@ -4,11 +4,15 @@ import java.util.Set;
 
 import net.minecraftforge.permissions.api.IPermissible;
 import net.minecraftforge.permissions.api.IPermissionManager;
+import net.minecraftforge.permissions.implementation.DefaultPermissionManager;
+import net.minecraftforge.permissions.implementation.PermissibleBase;
 
 
 public class ForgePermissionManager //implements IPermissionManager
 {
     public static IPermissionManager manager = new DefaultPermissionManager();
+    
+//    public static Class<? extends IPermissible> genericPermissible = PermissibleBase.class;
 
     public static boolean setPermissionManager(IPermissionManager replaceManager)
     {

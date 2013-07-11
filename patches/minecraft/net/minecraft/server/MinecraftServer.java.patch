@@ -19,23 +19,24 @@
  import java.util.logging.Level;
  import java.util.logging.Logger;
  import net.minecraft.command.CommandBase;
-@@ -54,6 +57,15 @@
+@@ -54,6 +57,16 @@
  import net.minecraft.world.storage.ISaveHandler;
  import net.minecraft.world.storage.WorldInfo;
  
 +import net.minecraftforge.common.DimensionManager;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.world.WorldEvent;
-+import net.minecraftforge.permissions.PermissibleBase;
 +import net.minecraftforge.permissions.Permission;
 +import net.minecraftforge.permissions.PermissionAttachment;
-+import net.minecraftforge.permissions.PermissionAttachmentInfo;
 +import net.minecraftforge.permissions.api.IPermissible;
++import net.minecraftforge.permissions.api.IPermissionAttachmentInfo;
++import net.minecraftforge.permissions.implementation.PermissibleBase;
++import net.minecraftforge.permissions.implementation.PermissionAttachmentInfo;
 +
  public abstract class MinecraftServer implements ICommandSender, Runnable, IPlayerUsage
  {
      /** Instance of Minecraft Server. */
-@@ -78,7 +90,7 @@
+@@ -78,7 +91,7 @@
      private int serverPort = -1;
  
      /** The server world instances. */
@@ -44,7 +45,7 @@
  
      /** The ServerConfigurationManager instance. */
      private ServerConfigurationManager serverConfigManager;
-@@ -132,7 +144,8 @@
+@@ -132,7 +145,8 @@
      public final long[] tickTimeArray;
  
      /** Stats are [dimension][tick%100] system.nanoTime is stored. */
@@ -54,7 +55,7 @@
      private KeyPair serverKeyPair;
  
      /** Username of the server owner (for integrated servers) */
-@@ -216,8 +229,6 @@
+@@ -216,8 +230,6 @@
      {
          this.convertMapIfNeeded(par1Str);
          this.setUserMessage("menu.loadingLevel");
@@ -63,7 +64,7 @@
          ISaveHandler isavehandler = this.anvilConverterForAnvilFile.getSaveLoader(par1Str, true);
          WorldInfo worldinfo = isavehandler.loadWorldInfo();
          WorldSettings worldsettings;
-@@ -237,46 +248,23 @@
+@@ -237,46 +249,23 @@
              worldsettings.enableBonusChest();
          }
  
@@ -121,7 +122,7 @@
          this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();
      }
-@@ -358,6 +346,7 @@
+@@ -358,6 +347,7 @@
          if (!this.worldIsBeingDeleted)
          {
              WorldServer[] aworldserver = this.worldServers;
@@ -129,7 +130,7 @@
              int i = aworldserver.length;
  
              for (int j = 0; j < i; ++j)
-@@ -411,7 +400,14 @@
+@@ -411,7 +401,14 @@
              for (int i = 0; i < this.worldServers.length; ++i)
              {
                  WorldServer worldserver = this.worldServers[i];
@@ -144,7 +145,7 @@
              }
  
              if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
-@@ -636,13 +632,15 @@
+@@ -636,13 +633,15 @@
          this.theProfiler.startSection("levels");
          int i;
  
@@ -165,7 +166,7 @@
                  this.theProfiler.startSection(worldserver.getWorldInfo().getWorldName());
                  this.theProfiler.startSection("pools");
                  worldserver.getWorldVec3Pool().clear();
-@@ -689,9 +687,11 @@
+@@ -689,9 +688,11 @@
                  this.theProfiler.endSection();
              }
  
@@ -180,7 +181,7 @@
          this.theProfiler.endStartSection("connection");
          this.getNetworkThread().networkTick();
          this.theProfiler.endStartSection("players");
-@@ -745,7 +745,13 @@
+@@ -745,7 +746,13 @@
       */
      public WorldServer worldServerForDimension(int par1)
      {
@@ -195,7 +196,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -1108,6 +1114,7 @@
+@@ -1108,6 +1115,7 @@
  
              if (worldserver != null)
              {
@@ -203,7 +204,7 @@
                  worldserver.flush();
              }
          }
-@@ -1501,4 +1508,75 @@
+@@ -1501,4 +1509,85 @@
              }
          }
      }
@@ -242,6 +243,16 @@
 +        {
 +            return permissibleManager.hasPermission(perm);
 +        }
++        
++        public boolean hasPermission(String name, Object... varArgs)
++        {
++            return permissibleManager.hasPermission(name);
++        }
++
++        public boolean hasPermission(Permission perm, Object... varArgs)
++        {
++            return permissibleManager.hasPermission(perm);
++        }
 +
 +        public PermissionAttachment addAttachment(Mod mod, String name, boolean value)
 +        {
@@ -273,7 +284,7 @@
 +            permissibleManager.recalculatePermissions();
 +        }
 +
-+        public Set<PermissionAttachmentInfo> getEffectivePermissions()
++        public Set<IPermissionAttachmentInfo> getEffectivePermissions()
 +        {
 +            return permissibleManager.getEffectivePermissions();
 +        }

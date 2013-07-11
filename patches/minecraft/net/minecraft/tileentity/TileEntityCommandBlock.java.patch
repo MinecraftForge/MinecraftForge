@@ -9,19 +9,20 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import net.minecraft.command.ICommandManager;
-@@ -11,6 +14,11 @@
+@@ -11,6 +14,12 @@
  import net.minecraft.util.ChatMessageComponent;
  import net.minecraft.util.ChunkCoordinates;
  import net.minecraft.world.World;
-+import net.minecraftforge.permissions.PermissibleBase;
 +import net.minecraftforge.permissions.Permission;
 +import net.minecraftforge.permissions.PermissionAttachment;
-+import net.minecraftforge.permissions.PermissionAttachmentInfo;
 +import net.minecraftforge.permissions.api.IPermissible;
++import net.minecraftforge.permissions.api.IPermissionAttachmentInfo;
++import net.minecraftforge.permissions.implementation.PermissibleBase;
++import net.minecraftforge.permissions.implementation.PermissionAttachmentInfo;
  
  public class TileEntityCommandBlock extends TileEntity implements ICommandSender
  {
-@@ -150,4 +158,75 @@
+@@ -150,4 +159,85 @@
      {
          this.succesCount = par1;
      }
@@ -60,6 +61,16 @@
 +        {
 +            return permissibleManager.hasPermission(perm);
 +        }
++        
++        public boolean hasPermission(String name, Object... varArgs)
++        {
++            return permissibleManager.hasPermission(name);
++        }
++
++        public boolean hasPermission(Permission perm, Object... varArgs)
++        {
++            return permissibleManager.hasPermission(perm);
++        }
 +
 +        public PermissionAttachment addAttachment(Mod mod, String name, boolean value)
 +        {
@@ -91,7 +102,7 @@
 +            permissibleManager.recalculatePermissions();
 +        }
 +
-+        public Set<PermissionAttachmentInfo> getEffectivePermissions()
++        public Set<IPermissionAttachmentInfo> getEffectivePermissions()
 +        {
 +            return permissibleManager.getEffectivePermissions();
 +        }
