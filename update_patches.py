@@ -28,19 +28,14 @@ def cleanDirs(path):
         
 def main():
     print("Creating patches")
-    
+    forge_dir = os.path.dirname(os.path.abspath(__file__))
     parser = OptionParser()
-    parser.add_option('-m', '--mcp-dir', action='store', dest='mcp_dir', help='Path to MCP', default=None)
+    parser.add_option('-m', '--mcp-dir', action='store', dest='mcp_dir', help='Path to MCP', default=os.path.join(forge_dir, 'mcp'))
     options, _ = parser.parse_args()
     
-    forge_dir = os.path.dirname(os.path.abspath(__file__))
-    
-    mcp = os.path.join(forge_dir, 'mcp')
     if not options.mcp_dir is None:
         mcp = os.path.abspath(options.mcp_dir)
-    elif os.path.isfile(os.path.join('..', 'runtime', 'commands.py')):
-        mcp = os.path.abspath('..')
-    
+
     patchd = os.path.normpath(os.path.join(forge_dir, 'patches'))
     base = os.path.normpath(os.path.join(mcp, 'src_base'))
     work = os.path.normpath(os.path.join(mcp, 'src_work'))
