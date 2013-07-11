@@ -59,12 +59,13 @@
 +        return data[index] == Block.waterMoving.blockID || data[index] == Block.waterStill.blockID;
 +    }
 +
++    /** A list of all the exception Biomes. */
++    public static List exceptionBiomes = Arrays.asList(new BiomeGenBase[] {BiomeGenBase.mushroomIsland, BiomeGenBase.mushroomIslandShore, BiomeGenBase.beach, BiomeGenBase.desert});
++
 +    //Exception biomes to make sure we generate like vanilla
 +    private boolean isExceptionBiome(BiomeGenBase biome)
 +    {
-+        if (biome == BiomeGenBase.mushroomIsland) return true;
-+        if (biome == BiomeGenBase.beach) return true;
-+        if (biome == BiomeGenBase.desert) return true;
++        if (exceptionBiomes.contains(biome)) return true;
 +        return false;
 +    }
 +
