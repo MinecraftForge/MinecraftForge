@@ -67,4 +67,36 @@ public class BiomeManager
             WorldChunkManager.allowedBiomes.remove(biome);
         }
     }
+    
+    public static void addCaveExceptionBiome(BiomeGenBase biome)
+    {
+        if (!MapGenCavesBetterBiomes.exceptionBiomes.contains(biome))
+        {
+    		ArrayList<BiomeGenBase> biomes = new ArrayList<BiomeGenBase>(MapGenCavesBetterBiomes.exceptionBiomes);
+            biomes.add(biome);
+            MapGenCavesBetterBiomes.exceptionBiomes = biomes;
+        }
+    	if (!MapGenRavineBetterBiomes.exceptionBiomes.contains(biome))
+        {
+    		ArrayList<BiomeGenBase> biomes = new ArrayList<BiomeGenBase>(MapGenRavineBetterBiomes.exceptionBiomes);
+            biomes.add(biome);
+            MapGenRavineBetterBiomes.exceptionBiomes = biomes;
+        }
+    }
+
+    public static void removeCaveExceptionBiome(BiomeGenBase biome)
+    {
+        if (MapGenCavesBetterBiomes.exceptionBiomes.contains(biome))
+        {
+        	ArrayList<BiomeGenBase> biomes = new ArrayList<BiomeGenBase>(MapGenCavesBetterBiomes.exceptionBiomes);
+            biomes.remove(biome);
+            MapGenCavesBetterBiomes.exceptionBiomes = biomes;
+        }
+        if (MapGenRavineBetterBiomes.exceptionBiomes.contains(biome))
+        {
+        	ArrayList<BiomeGenBase> biomes = new ArrayList<BiomeGenBase>(MapGenRavineBetterBiomes.exceptionBiomes);
+            biomes.remove(biome);
+            MapGenRavineBetterBiomes.exceptionBiomes = biomes;
+        }
+    }
 }
