@@ -18,7 +18,7 @@ patch files to work together.
 
 
 Requirements:
-  You must ahve a JDK installed and accessible, there is a big in java 1.6_21 that 
+  You must ahve a JDK installed and accessible, there is a bug in java 1.6_21 that 
   causes compile errors, just update your jdk to fix them.
 
 For Mac users: 
