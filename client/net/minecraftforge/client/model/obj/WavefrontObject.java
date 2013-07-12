@@ -4,12 +4,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.resources.Resource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.client.model.ModelFormatException;
 
@@ -19,12 +21,11 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 /**
- *  Wavefront Object importer
- *  Based heavily off of the specifications found at http://en.wikipedia.org/wiki/Wavefront_.obj_file
+ * Wavefront Object importer Based heavily off of the specifications found at
+ * http://en.wikipedia.org/wiki/Wavefront_.obj_file
  */
 @SideOnly(Side.CLIENT)
-public class WavefrontObject implements IModelCustom
-{
+public class WavefrontObject implements IModelCustom {
 
     private static Pattern vertexPattern = Pattern.compile("(v( (\\-){0,1}\\d+\\.\\d+){3,4} *\\n)|(v( (\\-){0,1}\\d+\\.\\d+){3,4} *$)");
     private static Pattern vertexNormalPattern = Pattern.compile("(vn( (\\-){0,1}\\d+\\.\\d+){3,4} *\\n)|(vn( (\\-){0,1}\\d+\\.\\d+){3,4} *$)");
@@ -46,23 +47,34 @@ public class WavefrontObject implements IModelCustom
     private GroupObject currentGroupObject;
     private String fileName;
 
-    public WavefrontObject(String fileName, URL resource) throws ModelFormatException
+<<<<<<< HEAD
+    public WavefrontObject(String fileName, InputStream inputStream) throws ModelFormatException
+=======
+    public WavefrontObject(String fileName, ResourceLocation resource) throws ModelFormatException
+>>>>>>> master
     {
         this.fileName = fileName;
-        loadObjModel(resource);
+        loadObjModel(inputStream);
     }
 
-    private void loadObjModel(URL fileURL) throws ModelFormatException
+<<<<<<< HEAD
+    private void loadObjModel(InputStream inputStream) throws ModelFormatException
+=======
+    private void loadObjModel(ResourceLocation resLoc) throws ModelFormatException
+>>>>>>> master
     {
         BufferedReader reader = null;
-        InputStream inputStream = null;
 
         String currentLine = null;
         int lineCount = 0;
 
         try
         {
-            inputStream = fileURL.openStream();
+<<<<<<< HEAD
+=======
+            Resource res = Minecraft.getMinecraft().func_110442_L().func_110536_a(resLoc);
+            inputStream = res.func_110527_b();
+>>>>>>> master
             reader = new BufferedReader(new InputStreamReader(inputStream));
 
             while ((currentLine = reader.readLine()) != null)
@@ -239,7 +251,7 @@ public class WavefrontObject implements IModelCustom
             }
             catch (NumberFormatException e)
             {
-                throw new ModelFormatException(String.format("Number formatting error at line %d",lineCount), e);
+                throw new ModelFormatException(String.format("Number formatting error at line %d", lineCount), e);
             }
         }
         else
@@ -261,12 +273,11 @@ public class WavefrontObject implements IModelCustom
 
             try
             {
-                if (tokens.length == 3)
-                    return new Vertex(Float.parseFloat(tokens[0]), Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2]));
+                if (tokens.length == 3) return new Vertex(Float.parseFloat(tokens[0]), Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2]));
             }
             catch (NumberFormatException e)
             {
-                throw new ModelFormatException(String.format("Number formatting error at line %d",lineCount), e);
+                throw new ModelFormatException(String.format("Number formatting error at line %d", lineCount), e);
             }
         }
         else
@@ -295,7 +306,7 @@ public class WavefrontObject implements IModelCustom
             }
             catch (NumberFormatException e)
             {
-                throw new ModelFormatException(String.format("Number formatting error at line %d",lineCount), e);
+                throw new ModelFormatException(String.format("Number formatting error at line %d", lineCount), e);
             }
         }
         else
@@ -326,7 +337,8 @@ public class WavefrontObject implements IModelCustom
                 }
                 else if (currentGroupObject.glDrawingMode != GL11.GL_TRIANGLES)
                 {
-                    throw new ModelFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Invalid number of points for face (expected 4, found " + tokens.length + ")");
+                    throw new ModelFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName
+                            + "' - Invalid number of points for face (expected 4, found " + tokens.length + ")");
                 }
             }
             else if (tokens.length == 4)
@@ -337,7 +349,8 @@ public class WavefrontObject implements IModelCustom
                 }
                 else if (currentGroupObject.glDrawingMode != GL11.GL_QUADS)
                 {
-                    throw new ModelFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Invalid number of points for face (expected 3, found " + tokens.length + ")");
+                    throw new ModelFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName
+                            + "' - Invalid number of points for face (expected 3, found " + tokens.length + ")");
                 }
             }
 
@@ -347,7 +360,7 @@ public class WavefrontObject implements IModelCustom
                 face.vertices = new Vertex[tokens.length];
                 face.textureCoordinates = new TextureCoordinate[tokens.length];
                 face.vertexNormals = new Vertex[tokens.length];
-                
+
                 for (int i = 0; i < tokens.length; ++i)
                 {
                     subTokens = tokens[i].split("/");
@@ -364,7 +377,7 @@ public class WavefrontObject implements IModelCustom
             {
                 face.vertices = new Vertex[tokens.length];
                 face.textureCoordinates = new TextureCoordinate[tokens.length];
-                
+
                 for (int i = 0; i < tokens.length; ++i)
                 {
                     subTokens = tokens[i].split("/");
@@ -380,7 +393,7 @@ public class WavefrontObject implements IModelCustom
             {
                 face.vertices = new Vertex[tokens.length];
                 face.vertexNormals = new Vertex[tokens.length];
-                
+
                 for (int i = 0; i < tokens.length; ++i)
                 {
                     subTokens = tokens[i].split("//");
@@ -395,7 +408,7 @@ public class WavefrontObject implements IModelCustom
             else if (isValidFace_V_Line(line))
             {
                 face.vertices = new Vertex[tokens.length];
-                
+
                 for (int i = 0; i < tokens.length; ++i)
                 {
                     face.vertices[i] = vertices.get(Integer.parseInt(tokens[i]) - 1);
@@ -405,7 +418,8 @@ public class WavefrontObject implements IModelCustom
             }
             else
             {
-                throw new ModelFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Incorrect format");
+                throw new ModelFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName
+                        + "' - Incorrect format");
             }
         }
         else
@@ -439,7 +453,9 @@ public class WavefrontObject implements IModelCustom
 
     /***
      * Verifies that the given line from the model file is a valid vertex
-     * @param line the line being validated
+     * 
+     * @param line
+     *            the line being validated
      * @return true if the line is a valid vertex, false otherwise
      */
     private static boolean isValidVertexLine(String line)
@@ -455,7 +471,9 @@ public class WavefrontObject implements IModelCustom
 
     /***
      * Verifies that the given line from the model file is a valid vertex normal
-     * @param line the line being validated
+     * 
+     * @param line
+     *            the line being validated
      * @return true if the line is a valid vertex normal, false otherwise
      */
     private static boolean isValidVertexNormalLine(String line)
@@ -470,8 +488,11 @@ public class WavefrontObject implements IModelCustom
     }
 
     /***
-     * Verifies that the given line from the model file is a valid texture coordinate
-     * @param line the line being validated
+     * Verifies that the given line from the model file is a valid texture
+     * coordinate
+     * 
+     * @param line
+     *            the line being validated
      * @return true if the line is a valid texture coordinate, false otherwise
      */
     private static boolean isValidTextureCoordinateLine(String line)
@@ -486,9 +507,14 @@ public class WavefrontObject implements IModelCustom
     }
 
     /***
-     * Verifies that the given line from the model file is a valid face that is described by vertices, texture coordinates, and vertex normals
-     * @param line the line being validated
-     * @return true if the line is a valid face that matches the format "f v1/vt1/vn1 ..." (with a minimum of 3 points in the face, and a maximum of 4), false otherwise
+     * Verifies that the given line from the model file is a valid face that is
+     * described by vertices, texture coordinates, and vertex normals
+     * 
+     * @param line
+     *            the line being validated
+     * @return true if the line is a valid face that matches the format
+     *         "f v1/vt1/vn1 ..." (with a minimum of 3 points in the face, and a
+     *         maximum of 4), false otherwise
      */
     private static boolean isValidFace_V_VT_VN_Line(String line)
     {
@@ -502,9 +528,14 @@ public class WavefrontObject implements IModelCustom
     }
 
     /***
-     * Verifies that the given line from the model file is a valid face that is described by vertices and texture coordinates
-     * @param line the line being validated
-     * @return true if the line is a valid face that matches the format "f v1/vt1 ..." (with a minimum of 3 points in the face, and a maximum of 4), false otherwise
+     * Verifies that the given line from the model file is a valid face that is
+     * described by vertices and texture coordinates
+     * 
+     * @param line
+     *            the line being validated
+     * @return true if the line is a valid face that matches the format
+     *         "f v1/vt1 ..." (with a minimum of 3 points in the face, and a
+     *         maximum of 4), false otherwise
      */
     private static boolean isValidFace_V_VT_Line(String line)
     {
@@ -518,9 +549,14 @@ public class WavefrontObject implements IModelCustom
     }
 
     /***
-     * Verifies that the given line from the model file is a valid face that is described by vertices and vertex normals
-     * @param line the line being validated
-     * @return true if the line is a valid face that matches the format "f v1//vn1 ..." (with a minimum of 3 points in the face, and a maximum of 4), false otherwise
+     * Verifies that the given line from the model file is a valid face that is
+     * described by vertices and vertex normals
+     * 
+     * @param line
+     *            the line being validated
+     * @return true if the line is a valid face that matches the format
+     *         "f v1//vn1 ..." (with a minimum of 3 points in the face, and a
+     *         maximum of 4), false otherwise
      */
     private static boolean isValidFace_V_VN_Line(String line)
     {
@@ -534,9 +570,14 @@ public class WavefrontObject implements IModelCustom
     }
 
     /***
-     * Verifies that the given line from the model file is a valid face that is described by only vertices
-     * @param line the line being validated
-     * @return true if the line is a valid face that matches the format "f v1 ..." (with a minimum of 3 points in the face, and a maximum of 4), false otherwise
+     * Verifies that the given line from the model file is a valid face that is
+     * described by only vertices
+     * 
+     * @param line
+     *            the line being validated
+     * @return true if the line is a valid face that matches the format
+     *         "f v1 ..." (with a minimum of 3 points in the face, and a maximum
+     *         of 4), false otherwise
      */
     private static boolean isValidFace_V_Line(String line)
     {
@@ -550,9 +591,13 @@ public class WavefrontObject implements IModelCustom
     }
 
     /***
-     * Verifies that the given line from the model file is a valid face of any of the possible face formats
-     * @param line the line being validated
-     * @return true if the line is a valid face that matches any of the valid face formats, false otherwise
+     * Verifies that the given line from the model file is a valid face of any
+     * of the possible face formats
+     * 
+     * @param line
+     *            the line being validated
+     * @return true if the line is a valid face that matches any of the valid
+     *         face formats, false otherwise
      */
     private static boolean isValidFaceLine(String line)
     {
@@ -560,8 +605,11 @@ public class WavefrontObject implements IModelCustom
     }
 
     /***
-     * Verifies that the given line from the model file is a valid group (or object)
-     * @param line the line being validated
+     * Verifies that the given line from the model file is a valid group (or
+     * object)
+     * 
+     * @param line
+     *            the line being validated
      * @return true if the line is a valid group (or object), false otherwise
      */
     private static boolean isValidGroupObjectLine(String line)
