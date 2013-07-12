@@ -75,7 +75,7 @@ def read_mc_versions(fml_dir, version=None, work_dir=None):
     mc_info['version'] = version
     if not 'client_url' in mc_info.keys():
         mc_info['new_launcher'] = True
-        base_url = 'https://s3.amazonaws.com/Minecraft.Download/versions/%s' % version
+        base_url = 'http://s3.amazonaws.com/Minecraft.Download/versions/%s' % version
         mc_info['client_url'] = '%s/%s.jar' % (base_url, version)
         mc_info['json_url']   = '%s/%s.json' % (base_url, version)
         mc_info['server_url'] = '%s/minecraft_server.%s.jar' % (base_url, version)
@@ -1146,7 +1146,7 @@ def download_libraries(mcp_dir, libraries, natives_dir):
     # This list should be in the format of the new launcher's version.json file
     # Under the entry 'libraries'
     lib_dir = os.path.join(mcp_dir, 'jars', 'libraries')
-    default_url = 'https://s3.amazonaws.com/Minecraft.Download/libraries'
+    default_url = 'http://s3.amazonaws.com/Minecraft.Download/libraries'
     
     downloads = []
     failed = False
@@ -1239,7 +1239,7 @@ def download_list(list, natives_dir):
 def download_assets(mcp_dir):
     from xml.dom.minidom import parse
     asset_dir = os.path.join(mcp_dir, 'jars', 'assets')
-    base_url = 'https://s3.amazonaws.com/Minecraft.Resources'
+    base_url = 'http://s3.amazonaws.com/Minecraft.Resources'
     
     print('Gathering assets list from %s' % base_url)
     
