@@ -6,7 +6,7 @@ from optparse import OptionParser
 from urllib2 import HTTPError
 from contextlib import closing
 from datetime import datetime
-
+sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
 forge_dir = os.path.dirname(os.path.abspath(__file__))
 from forge import reset_logger, load_version, zip_folder, zip_create, inject_version, build_forge_dev
 from changelog import make_changelog

@@ -2,7 +2,7 @@ import os, os.path, sys, zipfile
 import shutil, glob, fnmatch, subprocess
 from pprint import pformat
 from optparse import OptionParser
-
+sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
 forge_dir = os.path.dirname(os.path.abspath(__file__))
 
 from forge import apply_forge_patches
