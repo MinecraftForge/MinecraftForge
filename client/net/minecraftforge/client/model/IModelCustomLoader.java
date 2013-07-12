@@ -1,5 +1,11 @@
 package net.minecraftforge.client.model;
 
+<<<<<<< HEAD
+import java.net.URL;
+=======
+import net.minecraft.util.ResourceLocation;
+>>>>>>> master
+
 import net.minecraft.util.ResourceLocation;
 
 /**
@@ -34,5 +40,17 @@ public interface IModelCustomLoader {
      * @throws ModelFormatException
      *             if the model format is not correct
      */
+<<<<<<< HEAD
+    IModelCustom loadInstance(String resourceName, URL resource) throws ModelFormatException;
+    
+    /**
+     * Load a model instance from the supplied location
+     * @param resourceName The resource name to load
+     * @param resLoc The ResourceLocation associated with the model
+     * @return A model instance
+     * @throws ModelFormatException if the model format is not correct
+     */
+=======
+>>>>>>> master
     IModelCustom loadInstance(String resourceName, ResourceLocation resource) throws ModelFormatException;
 }

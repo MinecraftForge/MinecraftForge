@@ -2,6 +2,10 @@ package net.minecraftforge.client.model.techne;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+<<<<<<< HEAD
+import java.io.InputStream;
+=======
+>>>>>>> master
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -15,11 +19,16 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+<<<<<<< HEAD
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelRenderer;
+=======
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.resources.Resource;
 import net.minecraft.util.ResourceLocation;
+>>>>>>> master
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.client.model.ModelFormatException;
 
@@ -48,11 +57,24 @@ public class TechneModel extends ModelBase implements IModelCustom {
     private int textureName;
     private boolean textureNameSet = false;
 
+<<<<<<< HEAD
+    public TechneModel(String fileName, InputStream inputStream) throws ModelFormatException
+=======
     public TechneModel(String fileName, ResourceLocation resource) throws ModelFormatException
+>>>>>>> master
     {
         this.fileName = fileName;
-        loadTechneModel(resource);
+        loadTechneModel(inputStream);
     }
+<<<<<<< HEAD
+    
+    private void loadTechneModel(InputStream inputStream) throws ModelFormatException
+    {
+        try
+        {
+            ZipInputStream zipInput = new ZipInputStream(inputStream);
+            
+=======
 
     private void loadTechneModel(ResourceLocation resLoc) throws ModelFormatException
     {
@@ -61,6 +83,7 @@ public class TechneModel extends ModelBase implements IModelCustom {
             Resource res = Minecraft.getMinecraft().func_110442_L().func_110536_a(resLoc);
             ZipInputStream zipInput = new ZipInputStream(res.func_110527_b());
 
+>>>>>>> master
             ZipEntry entry;
             while ((entry = zipInput.getNextEntry()) != null)
             {

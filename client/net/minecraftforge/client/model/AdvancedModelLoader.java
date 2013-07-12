@@ -69,8 +69,13 @@ public class AdvancedModelLoader {
             throw new IllegalArgumentException("The resource name is not supported");
         }
 
+<<<<<<< HEAD
+        ResourceLocation resLoc = new ResourceLocation(resourceName);
+        return loader.loadInstance(resourceName, resLoc);
+=======
         ResourceLocation resource = new ResourceLocation(modID, resourceName.substring(j + 1));
         return loader.loadInstance(resourceName, resource);
+>>>>>>> master
     }
 
     public static Collection<String> getSupportedSuffixes()

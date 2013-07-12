@@ -47,24 +47,34 @@ public class WavefrontObject implements IModelCustom {
     private GroupObject currentGroupObject;
     private String fileName;
 
+<<<<<<< HEAD
+    public WavefrontObject(String fileName, InputStream inputStream) throws ModelFormatException
+=======
     public WavefrontObject(String fileName, ResourceLocation resource) throws ModelFormatException
+>>>>>>> master
     {
         this.fileName = fileName;
-        loadObjModel(resource);
+        loadObjModel(inputStream);
     }
 
+<<<<<<< HEAD
+    private void loadObjModel(InputStream inputStream) throws ModelFormatException
+=======
     private void loadObjModel(ResourceLocation resLoc) throws ModelFormatException
+>>>>>>> master
     {
         BufferedReader reader = null;
-        InputStream inputStream = null;
 
         String currentLine = null;
         int lineCount = 0;
 
         try
         {
+<<<<<<< HEAD
+=======
             Resource res = Minecraft.getMinecraft().func_110442_L().func_110536_a(resLoc);
             inputStream = res.func_110527_b();
+>>>>>>> master
             reader = new BufferedReader(new InputStreamReader(inputStream));
 
             while ((currentLine = reader.readLine()) != null)
