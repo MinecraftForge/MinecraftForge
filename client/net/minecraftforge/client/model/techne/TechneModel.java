@@ -1,11 +1,8 @@
 package net.minecraftforge.client.model.techne;
 
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -13,15 +10,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.lwjgl.opengl.GL11;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraftforge.client.model.IModelCustom;
+import net.minecraftforge.client.model.ModelFormatException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -31,12 +30,6 @@ import org.xml.sax.SAXException;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelRenderer;
-import net.minecraftforge.client.model.IModelCustom;
-import net.minecraftforge.client.model.ModelFormatException;
 
 /**
  * Techne model importer, based on iChun's Hats importer
@@ -56,17 +49,17 @@ public class TechneModel extends ModelBase implements IModelCustom {
     private int textureName;
     private boolean textureNameSet = false;
 
-    public TechneModel(String fileName, URL resource) throws ModelFormatException
+    public TechneModel(String fileName, InputStream inputStream) throws ModelFormatException
     {
         this.fileName = fileName;
-        loadTechneModel(resource);
+        loadTechneModel(inputStream);
     }
     
-    private void loadTechneModel(URL fileURL) throws ModelFormatException
+    private void loadTechneModel(InputStream inputStream) throws ModelFormatException
     {
         try
         {
-            ZipInputStream zipInput = new ZipInputStream(fileURL.openStream());
+            ZipInputStream zipInput = new ZipInputStream(inputStream);
             
             ZipEntry entry;
             while ((entry = zipInput.getNextEntry()) != null)

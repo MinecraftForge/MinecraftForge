@@ -1,10 +1,9 @@
 package net.minecraftforge.client.model;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.obj.ObjModelLoader;
 import net.minecraftforge.client.model.techne.TechneModelLoader;
 
@@ -61,13 +60,8 @@ public class AdvancedModelLoader {
             throw new IllegalArgumentException("The resource name is not supported");
         }
 
-        URL resource = AdvancedModelLoader.class.getResource(resourceName);
-        if (resource == null)
-        {
-            FMLLog.severe("The resource name %s could not be found", resourceName);
-            throw new IllegalArgumentException("The resource name could not be found");
-        }
-        return loader.loadInstance(resourceName, resource);
+        ResourceLocation resLoc = new ResourceLocation(resourceName);
+        return loader.loadInstance(resourceName, resLoc);
     }
 
     public static Collection<String> getSupportedSuffixes()
