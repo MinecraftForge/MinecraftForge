@@ -17,7 +17,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 /**
  * Common interface for advanced model loading from files, based on file suffix
  * Model support can be queried through the {@link #getSupportedSuffixes()} method.
- * Instances can be created by calling {@link #loadPackModel(String)} with a class-loadable-path
+ * Instances can be created by calling {@link #loadModel(String)} with a class-loadable-path
+ * or by calling {@link #loadPackModel(String)} with a Resource Pack reference
  *
  * @author cpw
  *
