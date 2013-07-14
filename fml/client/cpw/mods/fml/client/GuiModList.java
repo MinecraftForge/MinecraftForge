@@ -17,6 +17,7 @@ package cpw.mods.fml.client;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -134,37 +135,44 @@ public class GuiModList extends GuiScreen
                     ResourcePack pack = FMLClientHandler.instance().getResourcePackFor(selectedMod.getModId());
                     try
                     {
-                        BufferedImage logo;
+                        BufferedImage logo = null;
                         if (pack!=null)
                         {
                             logo = pack.func_110586_a();
                         }
                         else
                         {
-                            logo = ImageIO.read(getClass().getResourceAsStream(logoFile));
+                            InputStream logoResource = getClass().getResourceAsStream(logoFile);
+                            if (logoResource != null)
+                            {
+                                logo = ImageIO.read(logoResource);
+                            }
                         }
-                        ResourceLocation rl = tm.func_110578_a("modlogo", new DynamicTexture(logo));
-                        this.field_73882_e.field_71446_o.func_110577_a(rl);
-                        Dimension dim = new Dimension(logo.getWidth(), logo.getHeight());
-                        double scaleX = dim.width / 200.0;
-                        double scaleY = dim.height / 65.0;
-                        double scale = 1.0;
-                        if (scaleX > 1 || scaleY > 1)
+                        if (logo != null)
                         {
-                            scale = 1.0 / Math.max(scaleX, scaleY);
-                        }
-                        dim.width *= scale;
-                        dim.height *= scale;
-                        int top = 32;
-                        Tessellator tess = Tessellator.field_78398_a;
-                        tess.func_78382_b();
-                        tess.func_78374_a(offset,             top + dim.height, field_73735_i, 0, 1);
-                        tess.func_78374_a(offset + dim.width, top + dim.height, field_73735_i, 1, 1);
-                        tess.func_78374_a(offset + dim.width, top,              field_73735_i, 1, 0);
-                        tess.func_78374_a(offset,             top,              field_73735_i, 0, 0);
-                        tess.func_78381_a();
+                            ResourceLocation rl = tm.func_110578_a("modlogo", new DynamicTexture(logo));
+                            this.field_73882_e.field_71446_o.func_110577_a(rl);
+                            Dimension dim = new Dimension(logo.getWidth(), logo.getHeight());
+                            double scaleX = dim.width / 200.0;
+                            double scaleY = dim.height / 65.0;
+                            double scale = 1.0;
+                            if (scaleX > 1 || scaleY > 1)
+                            {
+                                scale = 1.0 / Math.max(scaleX, scaleY);
+                            }
+                            dim.width *= scale;
+                            dim.height *= scale;
+                            int top = 32;
+                            Tessellator tess = Tessellator.field_78398_a;
+                            tess.func_78382_b();
+                            tess.func_78374_a(offset,             top + dim.height, field_73735_i, 0, 1);
+                            tess.func_78374_a(offset + dim.width, top + dim.height, field_73735_i, 1, 1);
+                            tess.func_78374_a(offset + dim.width, top,              field_73735_i, 1, 0);
+                            tess.func_78374_a(offset,             top,              field_73735_i, 0, 0);
+                            tess.func_78381_a();
 
-                        shifty += 65;
+                            shifty += 65;
+                        }
                     }
                     catch (IOException e)
                     {

@@ -170,7 +170,7 @@
       <zipfileset dir="${basedir}" includes="fmlversion.properties" />
       <zipfileset dir="${basedir}" includes="LICENSE-fml.txt" />
       <zipfileset dir="${common.src.dir}" includes="mcpmod.info" />
-      <zipfileset dir="${client.src.dir}" includes="mcp.png" />
+      <zipfileset dir="${client.src.dir}" includes="mcplogo.png" />
       <zipfileset dir="${basedir}" includes="install/CREDITS-fml.txt" fullpath="CREDITS-fml.txt" />
       <zipfileset dir="${common.src.dir}" includes="*.cfg" />
       <mappedresources>
@@ -198,7 +198,7 @@
     <tstamp>
       <format property="current.time" pattern="yyyy-MM-dd'T'HH:mm:ssZ" />
     </tstamp>
-  
+
     <delete file="${basedir}/installer_base.jar" />
     <delete file="${basedir}/install_profile.json" />
     <get src="http://files.minecraftforge.net/installer/forge-installer-1.0.jar" dest="${basedir}/installer_base.jar" />
