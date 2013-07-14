@@ -232,7 +232,7 @@
          }
      }
  
-@@ -278,35 +375,72 @@
+@@ -278,25 +375,56 @@
          par1EntityPlayerMP.getServerForPlayer().getPlayerManager().updateMountedMovingPlayer(par1EntityPlayerMP);
      }
  
@@ -275,16 +275,6 @@
 -        worldserver.getPlayerManager().removePlayer(par1EntityPlayerMP);
 -        this.playerEntityList.remove(par1EntityPlayerMP);
 -        this.sendPacketToAllPlayers(new Packet201PlayerInfo(par1EntityPlayerMP.getCommandSenderName(), false, 9999));
--    }
--
--    /**
--     * checks ban-lists, then white-lists, then space for the server. Returns null on success, or an error message
--     */
--    public String allowUserToConnect(SocketAddress par1SocketAddress, String par2Str)
--    {
--        if (this.bannedPlayers.isBanned(par2Str))
--        {
--            BanEntry banentry = (BanEntry)this.bannedPlayers.getBannedList().get(par2Str);
 +        worldserver.removeEntity(entityplayermp);
 +        worldserver.getPlayerManager().removePlayer(entityplayermp);
 +        this.playerEntityList.remove(entityplayermp);
@@ -312,8 +302,16 @@
 +    public void playerLoggedOut(EntityPlayerMP entityPlayerMP)
 +    {
 +        disconnect(entityPlayerMP);
-+    }
-+
+     }
+ 
+     /**
+@@ -345,9 +473,75 @@
+         }
+     }
+ 
+-    /**
+-     * also checks for multiple logins
+-     */
 +    // CraftBukkit start - Whole method and signature
 +    public EntityPlayerMP attemptLogin(NetLoginHandler pendingconnection, String s, String hostname)
 +    {
@@ -328,22 +326,13 @@
 +        if (this.bannedPlayers.isBanned(s))
 +        {
 +            BanEntry banentry = (BanEntry) this.bannedPlayers.getBannedList().get(s);
-             String s1 = "You are banned from this server!\nReason: " + banentry.getBanReason();
- 
-             if (banentry.getBanEndDate() != null)
-@@ -314,15 +448,16 @@
-                 s1 = s1 + "\nYour ban will be removed on " + dateFormat.format(banentry.getBanEndDate());
-             }
- 
--            return s1;
--        }
--        else if (!this.isAllowedToLogin(par2Str))
--        {
--            return "You are not white-listed on this server!";
--        }
--        else
--        {
--            String s2 = par1SocketAddress.toString();
++            String s1 = "You are banned from this server!\nReason: " + banentry.getBanReason();
++
++            if (banentry.getBanEndDate() != null)
++            {
++                s1 = s1 + "\nYour ban will be removed on " + dateFormat.format(banentry.getBanEndDate());
++            }
++
 +            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, s1);
 +        }
 +        else if (!this.isAllowedToLogin(s))
@@ -354,30 +343,27 @@
 +        else if (allowLoginEvent)
 +        {
 +            String s2 = socketaddress.toString();
-             s2 = s2.substring(s2.indexOf("/") + 1);
-             s2 = s2.substring(0, s2.indexOf(":"));
- 
-@@ -336,18 +471,31 @@
-                     s3 = s3 + "\nYour ban will be removed on " + dateFormat.format(banentry1.getBanEndDate());
-                 }
- 
--                return s3;
++            s2 = s2.substring(s2.indexOf("/") + 1);
++            s2 = s2.substring(0, s2.indexOf(":"));
++
++            if (this.bannedIPs.isBanned(s2))
++            {
++                BanEntry banentry1 = (BanEntry)this.bannedIPs.getBannedList().get(s2);
++                String s3 = "Your IP address is banned from this server!\nReason: " + banentry1.getBanReason();
++
++                if (banentry1.getBanEndDate() != null)
++                {
++                    s3 = s3 + "\nYour ban will be removed on " + dateFormat.format(banentry1.getBanEndDate());
++                }
++
 +                event.disallow(PlayerLoginEvent.Result.KICK_BANNED, s3);
 +            }
 +            else if (this.playerEntityList.size() >= this.maxPlayers)
 +            {
 +                event.disallow(PlayerLoginEvent.Result.KICK_FULL, "The server is full!");
-             }
-             else
-             {
--                return this.playerEntityList.size() >= this.maxPlayers ? "The server is full!" : null;
--            }
--        }
--    }
--
--    /**
--     * also checks for multiple logins
--     */
++            }
++            else
++            {
 +                event.disallow(PlayerLoginEvent.Result.ALLOWED, s2);
 +            }
 +            this.cserver.getPluginManager().callEvent(event);
@@ -398,7 +384,7 @@
      public EntityPlayerMP createPlayerForUser(String par1Str)
      {
          ArrayList arraylist = new ArrayList();
-@@ -382,8 +530,50 @@
+@@ -382,8 +576,50 @@
              object = new ItemInWorldManager(this.mcServer.worldServerForDimension(0));
          }
  
@@ -451,7 +437,7 @@
  
      /**
       * creates and returns a respawned player based on the provided PlayerEntity. Args are the PlayerEntityMP to
-@@ -392,80 +582,177 @@
+@@ -392,80 +628,177 @@
       */
      public EntityPlayerMP respawnPlayer(EntityPlayerMP par1EntityPlayerMP, int par2, boolean par3)
      {
@@ -674,7 +660,7 @@
          this.func_72375_a(par1EntityPlayerMP, worldserver);
          par1EntityPlayerMP.playerNetServerHandler.setPlayerLocation(par1EntityPlayerMP.posX, par1EntityPlayerMP.posY, par1EntityPlayerMP.posZ, par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
          par1EntityPlayerMP.theItemInWorldManager.setWorld(worldserver1);
-@@ -480,6 +767,95 @@
+@@ -480,6 +813,95 @@
          }
  
          GameRegistry.onPlayerChangedDimension(par1EntityPlayerMP);
@@ -770,7 +756,7 @@
      }
  
      /**
-@@ -487,38 +863,25 @@
+@@ -487,38 +909,25 @@
       */
      public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer)
      {
@@ -822,7 +808,7 @@
          {
              ChunkCoordinates chunkcoordinates;
  
-@@ -555,7 +918,7 @@
+@@ -555,7 +964,7 @@
                  par4WorldServer.spawnEntityInWorld(par1Entity);
                  par1Entity.setLocationAndAngles(d0, par1Entity.posY, d1, par1Entity.rotationYaw, par1Entity.rotationPitch);
                  par4WorldServer.updateEntityWithOptionalForce(par1Entity, false);
@@ -831,7 +817,7 @@
              }
  
              par3WorldServer.theProfiler.endSection();
-@@ -564,6 +927,118 @@
+@@ -564,6 +973,118 @@
          par1Entity.setWorld(par4WorldServer);
      }
  
@@ -950,7 +936,7 @@
      /**
       * sends 1 player per tick, but only sends a player once every 600 ticks
       */
-@@ -574,12 +1049,38 @@
+@@ -574,12 +1095,38 @@
              this.playerPingIndex = 0;
          }
  
@@ -995,7 +981,7 @@
  
      /**
       * sends a packet to all players
-@@ -659,6 +1160,15 @@
+@@ -659,6 +1206,15 @@
      public void addOp(String par1Str)
      {
          this.ops.add(par1Str.toLowerCase());
@@ -1011,7 +997,7 @@
      }
  
      /**
-@@ -667,6 +1177,15 @@
+@@ -667,6 +1223,15 @@
      public void removeOp(String par1Str)
      {
          this.ops.remove(par1Str.toLowerCase());
@@ -1027,7 +1013,7 @@
      }
  
      /**
-@@ -683,7 +1202,8 @@
+@@ -683,7 +1248,8 @@
       */
      public boolean areCommandsAllowed(String par1Str)
      {
@@ -1037,7 +1023,7 @@
      }
  
      public EntityPlayerMP getPlayerForUsername(String par1Str)
-@@ -857,6 +1377,13 @@
+@@ -857,6 +1423,13 @@
          {
              EntityPlayerMP entityplayermp = (EntityPlayerMP)this.playerEntityList.get(j);
  
@@ -1051,7 +1037,7 @@
              if (entityplayermp != par1EntityPlayer && entityplayermp.dimension == par10)
              {
                  double d4 = par2 - entityplayermp.posX;
-@@ -925,7 +1452,7 @@
+@@ -925,7 +1498,7 @@
  
          if (par2WorldServer.isRaining())
          {
@@ -1060,7 +1046,7 @@
          }
      }
  
-@@ -960,7 +1487,10 @@
+@@ -960,7 +1533,10 @@
       */
      public String[] getAvailablePlayerDat()
      {
@@ -1072,7 +1058,7 @@
      }
  
      public boolean isWhiteListEnabled()
-@@ -1049,7 +1579,16 @@
+@@ -1049,7 +1625,16 @@
      {
          while (!this.playerEntityList.isEmpty())
          {
