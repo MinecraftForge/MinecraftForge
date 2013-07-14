@@ -156,7 +156,7 @@ def main():
         'common/fml_marker.cfg',
         'common/fmlversion.properties',
         'common/mcpmod.info',
-        'client/mcp.png',
+        'client/mcplogo.png',
         'common/deobfuscation_data-%s.lzma' % version_mc
     ]
     for file in FML_FILES:
