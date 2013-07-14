@@ -40,7 +40,7 @@
  import net.minecraft.util.ChunkCoordinates;
  import net.minecraft.util.IProgressUpdate;
  import net.minecraft.util.IntHashMap;
-@@ -47,21 +65,40 @@
+@@ -47,21 +65,41 @@
  import net.minecraft.world.biome.WorldChunkManager;
  import net.minecraft.world.chunk.Chunk;
  import net.minecraft.world.chunk.IChunkProvider;
@@ -83,16 +83,17 @@
 -    /** All work to do in future ticks. */
 -    private TreeSet pendingTickListEntriesTreeSet;
 +    private LongObjectHashMap<Set<NextTickListEntry>> tickEntriesByChunk; // Spigot - switch to something better for chunk-wise access
++    private Set pendingTickListEntriesHashSet; // MCPC+ - vanilla compatibility
 +    private TreeSet<NextTickListEntry> tickEntryQueue; // Spigot
      public ChunkProviderServer theChunkProviderServer;
  
      /** set by CommandServerSave{all,Off,On} */
-@@ -84,14 +121,20 @@
+@@ -84,14 +122,20 @@
       */
      private int blockEventCacheIndex;
      public static final WeightedRandomChestContent[] bonusChestContent = new WeightedRandomChestContent[] {new WeightedRandomChestContent(Item.stick.itemID, 0, 1, 3, 10), new WeightedRandomChestContent(Block.planks.blockID, 0, 1, 3, 10), new WeightedRandomChestContent(Block.wood.blockID, 0, 1, 3, 10), new WeightedRandomChestContent(Item.axeStone.itemID, 0, 1, 1, 3), new WeightedRandomChestContent(Item.axeWood.itemID, 0, 1, 1, 5), new WeightedRandomChestContent(Item.pickaxeStone.itemID, 0, 1, 1, 3), new WeightedRandomChestContent(Item.pickaxeWood.itemID, 0, 1, 1, 5), new WeightedRandomChestContent(Item.appleRed.itemID, 0, 2, 3, 5), new WeightedRandomChestContent(Item.bread.itemID, 0, 2, 3, 3)};
 -    private List pendingTickListEntriesThisTick = new ArrayList();
-+    private ArrayList<NextTickListEntry> pendingTickEntries = new ArrayList<NextTickListEntry>(); // Spigot
++    private List<NextTickListEntry> pendingTickEntries = new ArrayList<NextTickListEntry>(); // Spigot
 +    private int nextPendingTickEntry; // Spigot
  
      /** An IntHashMap of entity IDs (integers) to their Entity objects. */
@@ -109,7 +110,7 @@
          this.mcServer = par1MinecraftServer;
          this.theEntityTracker = new EntityTracker(this);
          this.thePlayerManager = new PlayerManager(this, par1MinecraftServer.getConfigurationManager().getViewDistance());
-@@ -101,14 +144,14 @@
+@@ -101,14 +145,15 @@
              this.entityIdMap = new IntHashMap();
          }
  
@@ -123,6 +124,7 @@
 -            this.pendingTickListEntriesTreeSet = new TreeSet();
 +        if (this.tickEntriesByChunk == null)
 +        {
++            this.pendingTickListEntriesHashSet = new HashSet(); // MCPC+ - vanilla compatibility
 +            this.tickEntriesByChunk = new LongObjectHashMap<Set<NextTickListEntry>>();
 +        }
 +
@@ -132,7 +134,7 @@
          }
  
          this.field_85177_Q = new Teleporter(this);
-@@ -121,9 +164,200 @@
+@@ -121,9 +166,201 @@
              this.mapStorage.setData("scoreboard", scoreboardsavedata);
          }
  
@@ -167,6 +169,7 @@
 +        // Spigot start
 +        if (this.tickEntriesByChunk == null)
 +        {
++            this.pendingTickListEntriesHashSet = new HashSet(); // MCPC+ - vanilla compatibility
 +            this.tickEntriesByChunk = new LongObjectHashMap<Set<NextTickListEntry>>();
 +        }
 +
@@ -335,7 +338,7 @@
  
      /**
       * Runs a single tick for the world
-@@ -151,12 +385,18 @@
+@@ -151,12 +388,18 @@
          }
  
          this.theProfiler.startSection("mobSpawner");
@@ -360,7 +363,7 @@
          this.theProfiler.endStartSection("chunkSource");
          this.chunkProvider.unloadQueuedChunks();
          int j = this.calculateSkylightSubtracted(1.0F);
-@@ -184,8 +424,15 @@
+@@ -184,8 +427,15 @@
          this.villageSiegeObj.tick();
          this.theProfiler.endStartSection("portalForcer");
          this.field_85177_Q.removeStalePortalLocations(this.getTotalWorldTime());
@@ -376,7 +379,7 @@
      }
  
      /**
-@@ -194,6 +441,7 @@
+@@ -194,6 +444,7 @@
      public SpawnListEntry spawnRandomCreature(EnumCreatureType par1EnumCreatureType, int par2, int par3, int par4)
      {
          List list = this.getChunkProvider().getPossibleCreatures(par1EnumCreatureType, par2, par3, par4);
@@ -384,7 +387,7 @@
          return list != null && !list.isEmpty() ? (SpawnListEntry)WeightedRandom.getRandomItem(this.rand, list) : null;
      }
  
-@@ -209,7 +457,7 @@
+@@ -209,7 +460,7 @@
          {
              EntityPlayer entityplayer = (EntityPlayer)iterator.next();
  
@@ -393,7 +396,7 @@
              {
                  this.allPlayersSleeping = false;
                  break;
-@@ -237,10 +485,26 @@
+@@ -237,10 +488,26 @@
  
      private void resetRainAndThunder()
      {
@@ -424,7 +427,7 @@
      }
  
      public boolean areAllPlayersAsleep()
-@@ -248,19 +512,28 @@
+@@ -248,19 +515,28 @@
          if (this.allPlayersSleeping && !this.isRemote)
          {
              Iterator iterator = this.playerEntities.iterator();
@@ -457,7 +460,7 @@
              return false;
          }
          else
-@@ -307,18 +580,45 @@
+@@ -307,18 +583,46 @@
       */
      protected void tickBlocksAndAmbiance()
      {
@@ -485,16 +488,17 @@
 +        // Iterator iterator = this.chunkTickList.iterator();
 +
 +        // Spigot start
-+        for (TLongShortIterator iter = activeChunkSet.iterator(); iter.hasNext();)
++        for (TLongShortIterator iter = activeChunkSet_CB.iterator(); iter.hasNext();)
 +        {
 +            iter.advance();
 +            long chunkCoord = iter.key();
 +            int chunkX = World.keyToX(chunkCoord);
 +            int chunkZ = World.keyToZ(chunkCoord);
 +
-+            // If unloaded, or in procedd of being unloaded, drop it
++            // If unloaded, or in process of being unloaded, drop it
 +            if ((!this.chunkExists(chunkX, chunkZ)) || (this.theChunkProviderServer.chunksToUnload.contains(chunkX, chunkZ)))
 +            {
++                activeChunkSet.remove(new ChunkCoordIntPair(chunkX, chunkZ)); // MCPC+ - vanilla compatibility
 +                iter.remove();
 +                continue;
 +            }
@@ -511,7 +515,7 @@
              this.moodSoundAndLightCheck(k, l, chunk);
              this.theProfiler.endStartSection("tickChunk");
              chunk.updateSkylight();
-@@ -328,7 +628,7 @@
+@@ -328,7 +632,7 @@
              int k1;
              int l1;
  
@@ -520,7 +524,7 @@
              {
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
                  i1 = this.updateLCG >> 2;
-@@ -345,7 +645,7 @@
+@@ -345,7 +649,7 @@
              this.theProfiler.endStartSection("iceandsnow");
              int i2;
  
@@ -529,7 +533,7 @@
              {
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
                  i1 = this.updateLCG >> 2;
-@@ -355,12 +655,34 @@
+@@ -355,12 +659,34 @@
  
                  if (this.isBlockFreezableNaturally(j1 + k, l1 - 1, k1 + l))
                  {
@@ -566,7 +570,7 @@
                  }
  
                  if (this.isRaining())
-@@ -403,7 +725,24 @@
+@@ -403,7 +729,24 @@
                          if (block != null && block.getTickRandomly())
                          {
                              ++i;
@@ -592,7 +596,7 @@
                          }
                      }
                  }
-@@ -418,8 +757,21 @@
+@@ -418,8 +761,21 @@
       */
      public boolean isBlockTickScheduledThisTick(int par1, int par2, int par3, int par4)
      {
@@ -616,7 +620,7 @@
      }
  
      /**
-@@ -465,11 +817,9 @@
+@@ -465,11 +821,9 @@
                  nextticklistentry.setPriority(par6);
              }
  
@@ -631,7 +635,7 @@
          }
      }
  
-@@ -486,11 +836,9 @@
+@@ -486,11 +840,9 @@
              nextticklistentry.setScheduledTime((long)par5 + this.worldInfo.getWorldTotalTime());
          }
  
@@ -646,7 +650,7 @@
      }
  
      /**
-@@ -498,7 +846,7 @@
+@@ -498,7 +850,7 @@
       */
      public void updateEntities()
      {
@@ -655,7 +659,7 @@
          {
              if (this.updateEntityTick++ >= 1200)
              {
-@@ -526,17 +874,24 @@
+@@ -526,17 +878,24 @@
       */
      public boolean tickUpdates(boolean par1)
      {
@@ -689,7 +693,7 @@
              }
  
              this.theProfiler.startSection("cleaning");
-@@ -544,26 +899,28 @@
+@@ -544,26 +903,28 @@
  
              for (int j = 0; j < i; ++j)
              {
@@ -728,7 +732,7 @@
                  byte b0 = 0;
  
                  if (this.checkChunksExist(nextticklistentry.xCoord - b0, nextticklistentry.yCoord - b0, nextticklistentry.zCoord - b0, nextticklistentry.xCoord + b0, nextticklistentry.yCoord + b0, nextticklistentry.zCoord + b0))
-@@ -603,61 +960,19 @@
+@@ -603,61 +964,19 @@
              }
  
              this.theProfiler.endSection();
@@ -798,7 +802,7 @@
      }
  
      /**
-@@ -666,17 +981,38 @@
+@@ -666,17 +985,38 @@
       */
      public void updateEntityWithOptionalForce(Entity par1Entity, boolean par2)
      {
@@ -844,7 +848,7 @@
      }
  
      /**
-@@ -685,7 +1021,36 @@
+@@ -685,7 +1025,36 @@
      protected IChunkProvider createChunkProvider()
      {
          IChunkLoader ichunkloader = this.saveHandler.getChunkLoader(this.provider);
@@ -882,7 +886,7 @@
          return this.theChunkProviderServer;
      }
  
-@@ -696,16 +1061,31 @@
+@@ -696,16 +1065,31 @@
      {
          ArrayList arraylist = new ArrayList();
  
@@ -924,7 +928,7 @@
          return arraylist;
      }
  
-@@ -714,6 +1094,11 @@
+@@ -714,6 +1098,11 @@
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
      {
@@ -936,7 +940,7 @@
          return !this.mcServer.func_96290_a(this, par2, par3, par4, par1EntityPlayer);
      }
  
-@@ -724,16 +1109,18 @@
+@@ -724,16 +1113,19 @@
              this.entityIdMap = new IntHashMap();
          }
  
@@ -953,6 +957,7 @@
 +        // Spigot start
 +        if (this.tickEntriesByChunk == null)
 +        {
++            this.pendingTickListEntriesHashSet = new HashSet(); // MCPC+ - vanilla compatibility
 +            this.tickEntriesByChunk = new LongObjectHashMap<Set<NextTickListEntry>>();
 +        }
 +
@@ -965,7 +970,7 @@
          this.createSpawnPosition(par1WorldSettings);
          super.initialize(par1WorldSettings);
      }
-@@ -758,6 +1145,29 @@
+@@ -758,6 +1150,29 @@
              int j = this.provider.getAverageGroundLevel();
              int k = 0;
  
@@ -995,7 +1000,7 @@
              if (chunkposition != null)
              {
                  i = chunkposition.x;
-@@ -770,7 +1180,7 @@
+@@ -770,7 +1185,7 @@
  
              int l = 0;
  
@@ -1004,7 +1009,7 @@
              {
                  i += random.nextInt(64) - random.nextInt(64);
                  k += random.nextInt(64) - random.nextInt(64);
-@@ -797,7 +1207,7 @@
+@@ -797,7 +1212,7 @@
       */
      protected void createBonusChest()
      {
@@ -1013,7 +1018,7 @@
  
          for (int i = 0; i < 10; ++i)
          {
-@@ -840,6 +1250,7 @@
+@@ -840,6 +1255,7 @@
              }
  
              this.chunkProvider.saveChunks(par1, par2IProgressUpdate);
@@ -1021,7 +1026,7 @@
          }
      }
  
-@@ -859,6 +1270,7 @@
+@@ -859,6 +1275,7 @@
          this.checkSessionLock();
          this.saveHandler.saveWorldInfoWithPlayer(this.worldInfo, this.mcServer.getConfigurationManager().getHostPlayerData());
          this.mapStorage.saveAllData();
@@ -1029,7 +1034,7 @@
      }
  
      protected void onEntityAdded(Entity par1Entity)
-@@ -904,9 +1316,23 @@
+@@ -904,9 +1321,23 @@
       */
      public boolean addWeatherEffect(Entity par1Entity)
      {
@@ -1054,7 +1059,7 @@
              return true;
          }
          else
-@@ -929,11 +1355,21 @@
+@@ -929,11 +1360,21 @@
       */
      public Explosion newExplosion(Entity par1Entity, double par2, double par4, double par6, float par8, boolean par9, boolean par10)
      {
@@ -1081,7 +1086,7 @@
  
          if (!par10)
          {
-@@ -1030,14 +1466,16 @@
+@@ -1030,14 +1471,16 @@
  
          if (flag != this.isRaining())
          {
@@ -1106,7 +1111,7 @@
          }
      }
  
-@@ -1066,4 +1504,121 @@
+@@ -1066,4 +1509,123 @@
      {
          return this.field_85177_Q;
      }
@@ -1155,6 +1160,7 @@
 +
 +        chunkset.add(ent);
 +        this.tickEntryQueue.add(ent);
++        this.pendingTickListEntriesHashSet.add(ent); // MCPC+ - vanilla compatibility
 +    }
 +
 +    private void removeNextTickIfNeeded(NextTickListEntry ent)
@@ -1173,6 +1179,7 @@
 +        }
 +
 +        this.tickEntryQueue.remove(ent);
++        this.pendingTickListEntriesHashSet.remove(ent); // MCPC+ - vanilla compatibility
 +    }
 +
 +    private List<NextTickListEntry> getNextTickEntriesForChunk(Chunk chunk, boolean remove)
