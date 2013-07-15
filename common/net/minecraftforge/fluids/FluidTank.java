@@ -23,8 +23,14 @@ public class FluidTank implements IFluidTank {
 
     public FluidTank(FluidStack stack, int capacity) {
 
+        this(stack, capacity, null);
+    }
+
+    public FluidTank(FluidStack stack, int capacity, TileEntity tile) {
+
         this.fluid = stack;
         this.capacity = capacity;
+        this.tile = tile;
     }
 
     public FluidTank(Fluid fluid, int amount, int capacity) {
