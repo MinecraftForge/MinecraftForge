@@ -20,5 +20,6 @@ public class FMLServerTweaker extends FMLTweaker {
         classLoader.addClassLoaderExclusion("LZMA.");
         FMLLaunchHandler.configureForServerLaunch(classLoader, this);
         runAdditionalTweaks(classLoader);
+        FMLLaunchHandler.appendCoreMods();
     }
 }
