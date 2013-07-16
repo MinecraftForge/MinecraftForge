@@ -1,7 +1,7 @@
 import os, os.path, sys, glob
-import shutil, fnmatch, time
+import shutil, fnmatch, time, json
 import logging, zipfile, re, subprocess
-from pprint import pformat
+from pprint import pformat, pprint
 from optparse import OptionParser
 from urllib2 import HTTPError
 from contextlib import closing
@@ -92,9 +92,7 @@ def main():
         print 'Reobfusicate Exception: %d ' % e.code
         error_level = e.code
     
-    
     extract_fml_obfed(fml_dir, mcp_dir, reobf_dir, client_dir)
-    #extract_paulscode(mcp_dir, client_dir)
     gen_bin_patches(mcp_dir, os.path.join(forge_dir, 'fml'), build_num, client_dir)
     
     version = load_version(build_num)
@@ -107,12 +105,14 @@ def main():
         version_str = '%s-%s' % (version_str, branch)
         
     out_folder = os.path.join(forge_dir, 'target')
-    if os.path.isdir(out_folder):
-        shutil.rmtree(out_folder)
-        
-    os.makedirs(out_folder)
+    if not os.path.isdir(out_folder):    
+        os.makedirs(out_folder)
     
-#    options.skip_changelog = True #Disable till jenkins fixes its shit
+    for f in ['minecraftforge-changelog-%s.txt', 'minecraftforge-universal-%s.jar', 'minecraftforge-installer-%s.jar']:
+        fn = os.path.join(out_folder, f % version_str)
+        if os.path.isfile(fn):
+            os.remove(fn)
+    
     if not options.skip_changelog:
         changelog_file = 'target/minecraftforge-changelog-%s.txt' % (version_str)
         try:
@@ -130,6 +130,8 @@ def main():
         fh.write('forge.minor.number=%d\n' % version['minor'])
         fh.write('forge.revision.number=%d\n' % version['revision'])
         fh.write('forge.build.number=%d\n' % version['build'])
+
+    json_data = gather_json(forge_dir, version_mc, version_forge, version_str)
     
     if not options.sign_jar is None:
         sign_jar(forge_dir, options.sign_jar, client_dir, 'minecraftforge-universal-%s.jar' % version_str)
@@ -146,6 +148,8 @@ def main():
     zip_add(version_file)
     if not options.skip_changelog:
         zip_add(changelog_file, 'MinecraftForge-Changelog.txt')
+    print('    version.json')
+    zip.writestr('version.json', json.dumps(json_data['versionInfo'], indent=4, separators=(',', ': ')))
     
     #Add dependancy and licenses from FML
     FML_FILES = [
@@ -164,7 +168,7 @@ def main():
     
     zip_end()
     
-    build_installer(forge_dir, version_str, version_forge, version_mc, out_folder)
+    build_installer(forge_dir, version_str, version_forge, version_mc, out_folder, json.dumps(json_data, indent=4, separators=(',', ': ')))
     
     inject_version(os.path.join(forge_dir, 'common/net/minecraftforge/common/ForgeVersion.java'.replace('/', os.sep)), build_num)
     zip_start('minecraftforge-src-%s.zip' % version_str, 'forge')
@@ -188,15 +192,11 @@ def main():
     
     print '=================================== Release Finished %d =================================' % error_level
     sys.exit(error_level)
-    
-def build_installer(forge_dir, version_str, version_forge, version_minecraft, out_folder):
-    file_name = 'minecraftforge-installer-%s.jar' % version_str
-    universal_name = 'minecraftforge-universal-%s.jar' % version_str
-    
+
+def gather_json(forge_dir, version_mc, version_forge, version_str):
     def getTZ():
         ret = '-'
         t = time.timezone
-        print t
         if (t < 0):
             ret = '+'
             t *= -1
@@ -206,31 +206,38 @@ def build_installer(forge_dir, version_str, version_forge, version_minecraft, ou
         m = int(t/60)
         return '%s%02d%02d' % (ret, h, m)
     timestamp = datetime.now().replace(microsecond=0).isoformat() + getTZ()
-    
+    json_data = {}
+    with closing(open(os.path.join(forge_dir, 'fml', 'jsons', '%s-rel.json' % version_mc), 'r')) as fh:
+        data = fh.read()
+        data = data.replace('@version@', version_forge)
+        data = data.replace('@timestamp@', timestamp)
+        data = data.replace('@minecraft_version@', version_mc)
+        data = data.replace('@universal_jar@', 'minecraftforge-universal-%s.jar' % version_str)
+        data = data.replace('FMLTweaker', 'F_M_L_Tweaker')
+        data = data.replace('FML', 'Forge')
+        data = data.replace('F_M_L_Tweaker', 'FMLTweaker')
+        data = data.replace('cpw.mods:fml:', 'net.minecraftforge:minecraftforge:')
+        json_data = json.loads(data)
+    pprint(json_data)
+    return json_data
+
+def build_installer(forge_dir, version_str, version_forge, version_minecraft, out_folder, json_data):
+    file_name = 'minecraftforge-installer-%s.jar' % version_str
+    universal_name = 'minecraftforge-universal-%s.jar' % version_str
     print '================== %s Start ==================' % file_name
     with closing(zipfile.ZipFile(os.path.join(forge_dir, 'fml', 'installer_base.jar'), mode='a')) as zip_in:
         with closing(zipfile.ZipFile(os.path.join(out_folder, file_name), 'w', zipfile.ZIP_DEFLATED)) as zip_out:
             # Copy everything over
             for i in zip_in.filelist:
                 if not i.filename in ['install_profile.json', 'big_logo.png']:
-                    print('    %s' % i.filename)
+                    #print('    %s' % i.filename)
                     zip_out.writestr(i.filename, zip_in.read(i.filename))
             print('    %s' % universal_name)
             zip_out.write(os.path.join(out_folder, universal_name), universal_name)
             print('    big_logo.png')
             zip_out.write(os.path.join(forge_dir, 'client', 'forge_logo.png'), 'big_logo.png')
-            with closing(open(os.path.join(forge_dir, 'fml', 'jsons', '%s-rel.json' % version_minecraft), 'r')) as fh:
-                data = fh.read()
-                data = data.replace('@version@', version_forge)
-                data = data.replace('@timestamp@', timestamp)
-                data = data.replace('@minecraft_version@', version_minecraft)
-                data = data.replace('@universal_jar@', universal_name)
-                data = data.replace('FMLTweaker', 'F_M_L_Tweaker')
-                data = data.replace('FML', 'Forge')
-                data = data.replace('F_M_L_Tweaker', 'FMLTweaker')
-                data = data.replace('cpw.mods:fml:', 'net.minecraftforge:minecraftforge:')
-                print('    install_profile.json')
-                zip_out.writestr('install_profile.json', data)
+            print('    install_profile.json')
+            zip_out.writestr('install_profile.json', json_data)
             
     print '================== %s Finished ==================' % file_name
     
@@ -301,19 +308,6 @@ def extract_fml_obfed(fml_dir, mcp_dir, reobf_dir, client_dir):
             side = line.split(os.sep)[0]
             if side == 'minecraft':
                 client.extract(line[10:].replace(os.sep, '/'), client_dir)
-        
-    client.close()
-    
-def extract_paulscode(mcp_dir, client_dir):
-    client = zipfile.ZipFile(os.path.join(mcp_dir, 'temp', 'client_reobf.jar'))
-    
-    print 'Extracting Reobfed Paulscode for mac users -.-'
-    
-    for i in client.filelist:
-        if i.filename.startswith('paulscode'):
-            if not os.path.isfile(os.path.join(client_dir, i.filename)):
-                print '   %s' % i.filename
-                client.extract(i.filename, client_dir)
         
     client.close()
 
