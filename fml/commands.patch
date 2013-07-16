@@ -57,7 +57,7 @@
 -            dirs = ' '.join(pkglistscala)
 +            f = NamedTemporaryFile(mode='wb', suffix='.txt', prefix ='scala_src_path_', delete=False) #FML: We write to a temporary file just in case the command is to long
 +            for line in pkglistscala:
-+                f.write('%s\n' % os.path.abspath(line))
++                f.write('"%s"\n' % os.path.abspath(line))
 +            f.close()
 +            dirs = '@"%s"' % f.name
              classpath = os.pathsep.join(cplk[side])
@@ -71,14 +71,17 @@
 +            os.unlink(f.name)
 +        f = NamedTemporaryFile(mode='wb', suffix='.txt', prefix ='java_src_path_', delete=False) #FML: We write to a temporary file just in case the command is to long
 +        for line in pkglist:
-+            f.write('%s\n' % os.path.abspath(line))
++            f.write('"%s"\n' % os.path.abspath(line))
 +        f.close()
 +        dirs = '@"%s"' % f.name
          classpath = os.pathsep.join(cplk[side])
          forkcmd = self.cmdrecomp.format(classpath=classpath, sourcepath=pathsrclk[side], outpath=pathbinlk[side],
                                          pkgs=dirs)
-@@ -1338,7 +1355,7 @@
+@@ -1336,9 +1353,10 @@
+             self.logger.error('==================')
+             self.logger.error('')
              raise
++        os.unlink(f.name)
  
      def startserver(self, mainclass, extraargs):
 -        classpath = [self.binserver] + self.cpathserver
@@ -86,7 +89,7 @@
          classpath = [os.path.join('..', p) for p in classpath]
          classpath = os.pathsep.join(classpath)
          os.chdir(self.dirjars)
-@@ -1703,7 +1720,7 @@
+@@ -1703,7 +1721,7 @@
          self.runcmd(forkcmd)
          return True
  
@@ -95,7 +98,7 @@
          if not reobf:
              md5lk = {CLIENT: self.md5client, SERVER: self.md5server}
          else:
-@@ -1718,6 +1735,9 @@
+@@ -1718,6 +1736,9 @@
                      class_path = ''
                  else:
                      class_path += '/'
@@ -105,7 +108,7 @@
                  for class_file in fnmatch.filter(filelist, '*.class'):
                      class_name = class_path + os.path.splitext(class_file)[0]
                      bin_file = os.path.normpath(os.path.join(path, class_file))
-@@ -1890,6 +1910,9 @@
+@@ -1890,6 +1911,9 @@
                  sys.exit(1)
  
          for entry in newfiles:
@@ -115,7 +118,7 @@
              if entry[3] == 'U':
                  self.logger.info('Retrieving file from server : %s', entry[0])
                  cur_file = os.path.normpath(entry[0])
-@@ -1910,6 +1933,9 @@
+@@ -1910,6 +1934,9 @@
          md5reoblk = {CLIENT: self.md5reobfclient, SERVER: self.md5reobfserver}
          outpathlk = {CLIENT: self.srcmodclient, SERVER: self.srcmodserver}
          src = {CLIENT: self.srcclient, SERVER: self.srcserver}
