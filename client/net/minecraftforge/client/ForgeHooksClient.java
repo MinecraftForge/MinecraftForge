@@ -240,8 +240,8 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Post(map));
 
-        FluidRegistry.WATER.setIcons(BlockFluid.func_94424_b("water"), BlockFluid.func_94424_b("water_flow"));
-        FluidRegistry.LAVA.setIcons(BlockFluid.func_94424_b("lava"), BlockFluid.func_94424_b("lava_flow"));
+        FluidRegistry.WATER.setIcons(BlockFluid.func_94424_b("water_still"), BlockFluid.func_94424_b("water_flow"));
+        FluidRegistry.LAVA.setIcons(BlockFluid.func_94424_b("lava_still"), BlockFluid.func_94424_b("lava_flow"));
     }
 
     /**
