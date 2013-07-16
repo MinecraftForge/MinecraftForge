@@ -21,7 +21,7 @@
      {
          BlockSourceImpl blocksourceimpl = new BlockSourceImpl(par1World, par2, par3, par4);
          TileEntityDispenser tileentitydispenser = (TileEntityDispenser)blocksourceimpl.getBlockTileEntity();
-@@ -75,10 +80,33 @@
+@@ -75,10 +80,38 @@
  
                  if (iinventory != null)
                  {
@@ -29,30 +29,35 @@
 +                    // CraftBukkit start - Fire event when pushing items into other inventories
 +                    CraftItemStack oitemstack = CraftItemStack.asCraftMirror(itemstack.copy().splitStack(1));
 +                    org.bukkit.inventory.Inventory destinationInventory;
++                    InventoryMoveItemEvent event = null; // MCPC+
++                    // MCPC+ start - vanilla compatibility
++                    if (iinventory.getOwner() != null)
++                    {
++                        // Have to special case large chests as they work oddly
++                        if (iinventory instanceof InventoryLargeChest)
++                        {
++                            destinationInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((InventoryLargeChest) iinventory);
++                        }
++                        else
++                        {
++                            destinationInventory = iinventory.getOwner().getInventory();
++                        }
  
 -                    if (itemstack1 == null)
-+                    // Have to special case large chests as they work oddly
-+                    if (iinventory instanceof InventoryLargeChest)
-                     {
-+                        destinationInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((InventoryLargeChest) iinventory);
++                        event = new InventoryMoveItemEvent(tileentitydispenser.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
++                        par1World.getServer().getPluginManager().callEvent(event);
++    
++                        if (event.isCancelled())
++                        {
++                            return;
++                        }
 +                    }
-+                    else
-+                    {
-+                        destinationInventory = iinventory.getOwner().getInventory();
-+                    }
-+
-+                    InventoryMoveItemEvent event = new InventoryMoveItemEvent(tileentitydispenser.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
-+                    par1World.getServer().getPluginManager().callEvent(event);
-+
-+                    if (event.isCancelled())
-+                    {
-+                        return;
-+                    }
++                    // MCPC+ end
 +
 +                    itemstack1 = TileEntityHopper.insertStack(iinventory, CraftItemStack.asNMSCopy(event.getItem()), Facing.oppositeSide[i1]);
 +
-+                    if (event.getItem().equals(oitemstack) && itemstack1 == null)
-+                    {
++                    if (((event != null && event.getItem().equals(oitemstack) && itemstack1 == null)) || (event == null && itemstack1 == null)) // MCPC+
+                     {
 +                        // CraftBukkit end
                          itemstack1 = itemstack.copy();
  

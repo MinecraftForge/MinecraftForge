@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/tileentity/TileEntityChest.java
 +++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityChest.java
-@@ -15,9 +15,14 @@
+@@ -15,6 +15,11 @@
  import net.minecraft.nbt.NBTTagList;
  import net.minecraft.util.AxisAlignedBB;
  
@@ -11,11 +11,7 @@
 +
  public class TileEntityChest extends TileEntity implements IInventory
  {
--    private ItemStack[] chestContents = new ItemStack[36];
-+    private ItemStack[] chestContents = new ItemStack[27]; // CraftBukkit - 36 -> 27
- 
-     /** Determines if the check for adjacent chests has taken place. */
-     public boolean adjacentChestChecked;
+     private ItemStack[] chestContents = new ItemStack[36];
 @@ -59,6 +64,36 @@
          this.field_94046_i = par1;
      }

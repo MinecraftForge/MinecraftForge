@@ -1572,8 +1572,7 @@
      protected void setActivePlayerChunksAndCheckLight()
      {
 -        this.activeChunkSet.clear();
-+        // this.chunkTickList.clear(); // CraftBukkit - removed
-+        //this.activeChunkSet.clear();
++        //this.activeChunkSet.clear(); // CraftBukkit - removed
          this.theProfiler.startSection("buildList");
          int i;
          EntityPlayer entityplayer;
@@ -1639,6 +1638,7 @@
 +                if (!activeChunkSet_CB.contains(hash) && this.chunkExists(dx + chunkX, dz + chunkZ))
 +                {
 +                    activeChunkSet_CB.put(hash, (short) - 1); //no players
++                    activeChunkSet.add(new ChunkCoordIntPair(dx + chunkX, dz + chunkZ)); // MCPC+ - vanilla compatibility
 +                }
 +            }
 +        }

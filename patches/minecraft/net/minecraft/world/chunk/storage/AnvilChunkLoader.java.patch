@@ -33,7 +33,7 @@
      private Object syncLockObject = new Object();
  
      /** Save directory for chunks using the Anvil format */
-@@ -42,79 +45,160 @@
+@@ -42,79 +45,167 @@
          this.chunkSaveLocation = par1File;
      }
  
@@ -154,19 +154,26 @@
 +
 +    protected Object[] a(World world, int i, int j, NBTTagCompound nbttagcompound)   // CraftBukkit - return Chunk -> Object[]
 +    {
-+        if (!nbttagcompound.hasKey("Level"))
++        // MCPC+ start
++        if(nbttagcompound == null)
 +        {
-+            world.getWorldLogAgent().logSevere("Chunk file at " + i + "," + j + " is missing level data, skipping");
++            world.getWorldLogAgent().logSevere("Chunk file at " + i + "," + j + " is missing nbt tag data, this is not good!");
              return null;
          }
 -        else if (!par4NBTTagCompound.getCompoundTag("Level").hasKey("Sections"))
 -        {
 -            par1World.getWorldLogAgent().logSevere("Chunk file at " + par2 + "," + par3 + " is missing block data, skipping");
++        // MCPC+ end
++        if (!nbttagcompound.hasKey("Level"))
++        {
++            world.getWorldLogAgent().logSevere("Chunk file at " + i + "," + j + " is missing level data, skipping");
+             return null;
+         }
 +        else if (!nbttagcompound.getCompoundTag("Level").hasKey("Sections"))
 +        {
 +            world.getWorldLogAgent().logSevere("Chunk file at " + i + "," + j + " is missing block data, skipping");
-             return null;
-         }
++            return null;
++        }
          else
          {
 -            Chunk chunk = this.readChunkFromNBT(par1World, par4NBTTagCompound.getCompoundTag("Level"));
@@ -239,7 +246,7 @@
  
          try
          {
-@@ -122,6 +206,7 @@
+@@ -122,6 +213,7 @@
              NBTTagCompound nbttagcompound1 = new NBTTagCompound();
              nbttagcompound.setTag("Level", nbttagcompound1);
              this.writeChunkToNBT(par2Chunk, par1World, nbttagcompound1);
@@ -247,7 +254,7 @@
              this.addChunkToPending(par2Chunk.getChunkCoordIntPair(), nbttagcompound);
          }
          catch (Exception exception)
-@@ -136,6 +221,12 @@
+@@ -136,6 +228,12 @@
  
          synchronized (this.syncLockObject)
          {
@@ -260,7 +267,7 @@
              if (this.pendingAnvilChunksCoordinates.contains(par1ChunkCoordIntPair))
              {
                  for (int i = 0; i < this.chunksToRemove.size(); ++i)
-@@ -150,6 +241,7 @@
+@@ -150,6 +248,7 @@
  
              this.chunksToRemove.add(new AnvilChunkLoaderPending(par1ChunkCoordIntPair, par2NBTTagCompound));
              this.pendingAnvilChunksCoordinates.add(par1ChunkCoordIntPair);
@@ -268,7 +275,7 @@
              ThreadedFileIOBase.threadedIOInstance.queueIO(this);
          }
      }
-@@ -164,6 +256,15 @@
+@@ -164,6 +263,15 @@
  
          synchronized (this.syncLockObject)
          {
@@ -284,7 +291,7 @@
              if (this.chunksToRemove.isEmpty())
              {
                  return false;
-@@ -171,6 +272,7 @@
+@@ -171,6 +279,7 @@
  
              anvilchunkloaderpending = (AnvilChunkLoaderPending)this.chunksToRemove.remove(0);
              this.pendingAnvilChunksCoordinates.remove(anvilchunkloaderpending.chunkCoordinate);
@@ -292,7 +299,7 @@
          }
  
          if (anvilchunkloaderpending != null)
-@@ -188,10 +290,10 @@
+@@ -188,10 +297,10 @@
          return true;
      }
  
@@ -305,7 +312,7 @@
          dataoutputstream.close();
      }
  
-@@ -249,19 +351,19 @@
+@@ -249,19 +358,19 @@
  
                  if (extendedblockstorage.getBlockMSBArray() != null)
                  {
@@ -332,7 +339,7 @@
                  }
  
                  nbttaglist.appendTag(nbttagcompound1);
-@@ -294,8 +396,10 @@
+@@ -294,8 +403,10 @@
                  catch (Exception e)
                  {
                      FMLLog.log(Level.SEVERE, e,
@@ -345,7 +352,7 @@
                  }
              }
          }
-@@ -316,8 +420,10 @@
+@@ -316,8 +427,10 @@
              catch (Exception e)
              {
                  FMLLog.log(Level.SEVERE, e,
@@ -358,7 +365,7 @@
              }
          }
  
-@@ -395,14 +501,21 @@
+@@ -395,14 +508,21 @@
              chunk.setBiomeArray(par2NBTTagCompound.getByteArray("Biomes"));
          }
  
@@ -382,7 +389,7 @@
                  chunk.hasEntities = true;
  
                  if (entity != null)
-@@ -412,7 +525,7 @@
+@@ -412,7 +532,7 @@
  
                      for (NBTTagCompound nbttagcompound3 = nbttagcompound2; nbttagcompound3.hasKey("Riding"); nbttagcompound3 = nbttagcompound3.getCompoundTag("Riding"))
                      {
@@ -391,7 +398,7 @@
  
                          if (entity2 != null)
                          {
-@@ -426,7 +539,7 @@
+@@ -426,7 +546,7 @@
              }
          }
  
@@ -400,7 +407,7 @@
  
          if (nbttaglist2 != null)
          {
-@@ -442,20 +555,20 @@
+@@ -442,20 +562,20 @@
              }
          }
  

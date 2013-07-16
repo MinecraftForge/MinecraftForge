@@ -1,9 +1,9 @@
 --- ../src_base/minecraft/cpw/mods/fml/relauncher/FMLCorePlugin.java
 +++ ../src_work/minecraft/cpw/mods/fml/relauncher/FMLCorePlugin.java
-@@ -28,8 +28,8 @@
+@@ -27,8 +27,8 @@
+     public String[] getASMTransformerClass()
      {
          return new String[] {
-                              "cpw.mods.fml.common.asm.transformers.PatchingTransformer",
 -                             "cpw.mods.fml.common.asm.transformers.AccessTransformer",
 -                             "cpw.mods.fml.common.asm.transformers.MarkerTransformer",
 +                             "cpw.mods.fml.common.asm.transformers.AccessTransformer", // MCPC+ - still needed for ensurePublicAccessFor()

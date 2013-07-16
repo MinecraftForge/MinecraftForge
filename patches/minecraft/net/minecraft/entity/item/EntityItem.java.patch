@@ -114,7 +114,7 @@
 -        if (!this.worldObj.isRemote && this.age >= 6000)
 +        } // Spigot
 +
-+        // ++this.age; // CraftBukkit - Moved up
++        // ++this.age; // CraftBukkit - Moved up (base age on wall time)
 +
 +        ItemStack item = getDataWatcher().getWatchableObjectItemStack(10);
 +        
