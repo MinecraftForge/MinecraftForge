@@ -173,7 +173,7 @@ public class VillagerRegistry
     @SideOnly(Side.CLIENT)
     public static ResourceLocation getVillagerSkin(int villagerType, ResourceLocation defaultSkin)
     {
-        if (instance().newVillagers.containsKey(villagerType))
+        if (instance().newVillagers != null && instance().newVillagers.containsKey(villagerType))
         {
             return instance().newVillagers.get(villagerType);
         }
