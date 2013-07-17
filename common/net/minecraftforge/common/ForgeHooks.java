@@ -35,6 +35,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.LivingOnLadderEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 
 public class ForgeHooks
@@ -353,7 +354,8 @@ public class ForgeHooks
 
     public static boolean isLivingOnLadder(Block block, World world, int x, int y, int z, EntityLivingBase entity)
     {
-        return block != null && block.isLadder(world, x, y, z, entity);
+        LivingOnLadderEvent event = new LivingOnLadderEvent(entity, block, world, x, y, z);
+        return MinecraftForge.EVENT_BUS.post(event) ? event.isLivingOnLadder() : block != null && block.isLadder(world, x, y, z, entity);
     }
 
     public static void onLivingJump(EntityLivingBase entity)
