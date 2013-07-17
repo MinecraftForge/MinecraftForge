@@ -1852,7 +1852,7 @@
          }
          else
          {
-@@ -3620,8 +4429,78 @@
+@@ -3620,8 +4429,64 @@
                  block = null;
              }
  
@@ -1877,11 +1877,10 @@
 +                NBTTagCompound savedCompound = null;
 +                if (itemstack != null && itemstack.getTagCompound() != null)
 +                {
-+                    System.out.println("ORIGINAL itemstack NBT = " + itemstack.getTagCompound());
 +                    savedCompound = itemstack.getTagCompound(); // save current itemstack NBT
 +                    itemstack.setTagCompound(new NBTTagCompound()); // dont use any itemstack NBT in our simulation, fixes MFR DSU dupe
 +                }
-+                System.out.println("1itemstack NBT = " + itemstack.getTagCompound());
++
 +                org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(this, par2, par3, par4);
 +                this.callingPlaceEvent = true;
 +                int metadata = 0;
@@ -1890,42 +1889,29 @@
 +                    ItemBlock itemblock = (ItemBlock)itemstack.getItem();
 +                    int itemData = itemblock.getMetadata(itemstack.getItemDamage());
 +                    metadata = Block.blocksList[par1].onBlockPlaced(this, par2, par3, par4, par6, this.curPlacedItemHitX, this.curPlacedItemHitY, this.curPlacedItemHitZ, itemData);
-+                    System.out.println("2itemstack NBT = " + itemstack.getTagCompound());
 +                    if (itemblock.placeBlockAt(itemstack, player, this, par2, par3, par4, par6, this.curPlacedItemHitX, this.curPlacedItemHitY, this.curPlacedItemHitZ, metadata))
 +                    {
 +                        // since this is only a simulation, there is no need to play sound or decrement stacksize
 +                    }
-+                    System.out.println("3itemstack NBT = " + itemstack.getTagCompound());
 +                }
 +                this.curPlacedItemHitX = 0;
 +                this.curPlacedItemHitY = 0;
 +                this.curPlacedItemHitZ = 0;
-+               /* if (block1.hasTileEntity(metadata))
-+                {
-+                    TileEntity te = this.getBlockTileEntity(par2, par3, par4);
-+                    if (te != null)
-+                    {
-+                        System.out.println("invalidating te " + te);
-+                        te.invalidate();
-+                    }
-+                }*/
-+                System.out.println("4itemstack NBT = " + itemstack.getTagCompound());
++
 +                // send place event
 +                org.bukkit.event.block.BlockPlaceEvent placeEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(this, player, blockstate, par2, par3, par4);
-+                System.out.println("5itemstack NBT = " + itemstack.getTagCompound());
++
 +                if (placeEvent.isCancelled() || !placeEvent.canBuild())
 +                {
 +                    result = false; // cancel placement
 +                }
 +
 +                blockstate.update(true, false); // revert blockstate since this was only a simulation
-+                System.out.println("6itemstack NBT = " + itemstack.getTagCompound());
 +                this.callingPlaceEvent = false;
 +                if (savedCompound != null)
 +                {
 +                    itemstack.setTagCompound(savedCompound); // restore itemstack NBT
 +                }
-+                System.out.println("finisheditemstack NBT = " + itemstack.getTagCompound());
 +            }
 +        }
 +        return result;
@@ -1933,7 +1919,7 @@
      }
  
      public PathEntity getPathEntityToEntity(Entity par1Entity, Entity par2Entity, float par3, boolean par4, boolean par5, boolean par6, boolean par7)
-@@ -3803,6 +4682,14 @@
+@@ -3803,6 +4668,14 @@
          for (int i = 0; i < this.playerEntities.size(); ++i)
          {
              EntityPlayer entityplayer1 = (EntityPlayer)this.playerEntities.get(i);
@@ -1948,7 +1934,7 @@
              double d5 = entityplayer1.getDistanceSq(par1, par3, par5);
  
              if ((par7 < 0.0D || d5 < par7 * par7) && (d4 == -1.0D || d5 < d4))
-@@ -3835,6 +4722,14 @@
+@@ -3835,6 +4708,14 @@
          {
              EntityPlayer entityplayer1 = (EntityPlayer)this.playerEntities.get(i);
  
@@ -1963,7 +1949,7 @@
              if (!entityplayer1.capabilities.disableDamage && entityplayer1.isEntityAlive())
              {
                  double d5 = entityplayer1.getDistanceSq(par1, par3, par5);
-@@ -3910,7 +4805,7 @@
+@@ -3910,7 +4791,7 @@
       */
      public long getSeed()
      {
@@ -1972,7 +1958,7 @@
      }
  
      public long getTotalWorldTime()
-@@ -3920,7 +4815,7 @@
+@@ -3920,7 +4801,7 @@
  
      public long getWorldTime()
      {
@@ -1981,7 +1967,7 @@
      }
  
      /**
-@@ -3928,7 +4823,7 @@
+@@ -3928,7 +4809,7 @@
       */
      public void setWorldTime(long par1)
      {
@@ -1990,7 +1976,7 @@
      }
  
      /**
-@@ -3936,13 +4831,13 @@
+@@ -3936,13 +4817,13 @@
       */
      public ChunkCoordinates getSpawnPoint()
      {
@@ -2006,7 +1992,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -3966,7 +4861,10 @@
+@@ -3966,7 +4847,10 @@
  
          if (!this.loadedEntityList.contains(par1Entity))
          {
@@ -2018,7 +2004,7 @@
          }
      }
  
-@@ -3974,6 +4872,11 @@
+@@ -3974,6 +4858,11 @@
       * Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
@@ -2030,7 +2016,7 @@
      {
          return true;
      }
-@@ -4032,6 +4935,18 @@
+@@ -4032,6 +4921,18 @@
       */
      public void updateAllPlayersSleepingFlag() {}
  
@@ -2049,7 +2035,7 @@
      public float getWeightedThunderStrength(float par1)
      {
          return (this.prevThunderingStrength + (this.thunderingStrength - this.prevThunderingStrength) * par1) * this.getRainStrength(par1);
-@@ -4094,8 +5009,7 @@
+@@ -4094,8 +4995,7 @@
       */
      public boolean isBlockHighHumidity(int par1, int par2, int par3)
      {
@@ -2059,7 +2045,7 @@
      }
  
      /**
-@@ -4170,7 +5084,7 @@
+@@ -4170,7 +5070,7 @@
       */
      public int getHeight()
      {
@@ -2068,7 +2054,7 @@
      }
  
      /**
-@@ -4178,7 +5092,7 @@
+@@ -4178,7 +5078,7 @@
       */
      public int getActualHeight()
      {
@@ -2077,7 +2063,7 @@
      }
  
      public IUpdatePlayerListBox func_82735_a(EntityMinecart par1EntityMinecart)
-@@ -4221,7 +5135,7 @@
+@@ -4221,7 +5121,7 @@
       */
      public double getHorizon()
      {
@@ -2086,7 +2072,7 @@
      }
  
      /**
-@@ -4349,4 +5263,118 @@
+@@ -4349,4 +5249,118 @@
  
          return MathHelper.clamp_float(f, 0.0F, flag ? 1.5F : 1.0F);
      }
