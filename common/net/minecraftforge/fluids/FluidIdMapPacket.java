@@ -13,17 +13,18 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
-public class FluidIdMapPacket extends ForgePacket {
-
+public class FluidIdMapPacket extends ForgePacket
+{
     private BiMap<String, Integer> fluidIds = HashBiMap.create();
 
     @Override
-    public byte[] generatePacket() {
-
+    public byte[] generatePacket()
+    {
         ByteArrayDataOutput dat = ByteStreams.newDataOutput();
 
         dat.writeInt(FluidRegistry.maxID);
-        for (Map.Entry<String, Integer> entry : FluidRegistry.fluidIDs.entrySet()) {
+        for (Map.Entry<String, Integer> entry : FluidRegistry.fluidIDs.entrySet())
+        {
             dat.writeUTF(entry.getKey());
             dat.writeInt(entry.getValue());
         }
@@ -31,8 +32,8 @@ public class FluidIdMapPacket extends ForgePacket {
     }
 
     @Override
-    public ForgePacket consumePacket(byte[] data) {
-
+    public ForgePacket consumePacket(byte[] data)
+    {
         ByteArrayDataInput dat = ByteStreams.newDataInput(data);
         int listSize = dat.readInt();
         for (int i = 0; i < listSize; i++) {
@@ -44,9 +45,8 @@ public class FluidIdMapPacket extends ForgePacket {
     }
 
     @Override
-    public void execute(INetworkManager network, EntityPlayer player) {
-
+    public void execute(INetworkManager network, EntityPlayer player)
+    {
         FluidRegistry.initFluidIDs(fluidIds);
     }
-
 }

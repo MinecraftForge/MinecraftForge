@@ -31,8 +31,8 @@ import cpw.mods.fml.relauncher.SideOnly;
  * @author King Lemming
  * 
  */
-public class Fluid {
-
+public class Fluid
+{
     /** The unique identification name for this fluid. */
     protected final String fluidName;
 
@@ -40,9 +40,7 @@ public class Fluid {
     protected String unlocalizedName;
 
     /** The Icons for this fluid. */
-    @SideOnly(Side.CLIENT)
     protected Icon stillIcon;
-    @SideOnly(Side.CLIENT)
     protected Icon flowingIcon;
 
     /**
@@ -84,26 +82,31 @@ public class Fluid {
      */
     protected int blockID = -1;
 
-    public Fluid(String fluidName) {
-
+    public Fluid(String fluidName)
+    {
         this.fluidName = fluidName.toLowerCase(Locale.ENGLISH);
         this.unlocalizedName = fluidName;
     }
 
-    public Fluid setUnlocalizedName(String unlocalizedName) {
-
+    public Fluid setUnlocalizedName(String unlocalizedName)
+    {
         this.unlocalizedName = unlocalizedName;
         return this;
     }
 
-    public Fluid setBlockID(int blockID) {
-
-        if (this.blockID == -1 || this.blockID == blockID) {
+    public Fluid setBlockID(int blockID)
+    {
+        if (this.blockID == -1 || this.blockID == blockID)
+        {
             this.blockID = blockID;
-        } else if (!ForgeDummyContainer.forceDuplicateFluidBlockCrash) {
+        }
+        else if (!ForgeDummyContainer.forceDuplicateFluidBlockCrash)
+        {
             FMLLog.warning("A mod has attempted to assign BlockID " + blockID + " to the Fluid '" + fluidName + "' but this Fluid has already been linked to BlockID "
                     + this.blockID + ". Configure your mods to prevent this from happening.");
-        } else {
+        }
+        else
+        {
             FMLLog.severe("A mod has attempted to assign BlockID " + blockID + " to the Fluid '" + fluidName + "' but this Fluid has already been linked to BlockID "
                     + this.blockID + ". Configure your mods to prevent this from happening.");
             throw new LoaderException(new RuntimeException("A mod has attempted to assign BlockID " + blockID + " to the Fluid '" + fluidName
@@ -112,60 +115,60 @@ public class Fluid {
         return this;
     }
 
-    public Fluid setBlockID(Block block) {
-
+    public Fluid setBlockID(Block block)
+    {
         return setBlockID(block.blockID);
     }
 
-    public Fluid setLuminosity(int luminosity) {
-
+    public Fluid setLuminosity(int luminosity)
+    {
         this.luminosity = luminosity;
         return this;
     }
 
-    public Fluid setDensity(int density) {
-
+    public Fluid setDensity(int density)
+    {
         this.density = density;
         return this;
     }
 
-    public Fluid setViscosity(int viscosity) {
-
+    public Fluid setViscosity(int viscosity)
+    {
         this.viscosity = viscosity;
         return this;
     }
 
-    public Fluid setGaseous(boolean isGaseous) {
-
+    public Fluid setGaseous(boolean isGaseous)
+    {
         this.isGaseous = isGaseous;
         return this;
     }
 
-    public final String getName() {
-
+    public final String getName()
+    {
         return this.fluidName;
     }
 
-    public final int getID() {
-
+    public final int getID()
+    {
         return FluidRegistry.getFluidID(this.fluidName);
     }
 
-    public final int getBlockID() {
-
+    public final int getBlockID()
+    {
         return blockID;
     }
 
-    public final boolean canBePlacedInWorld() {
-
+    public final boolean canBePlacedInWorld()
+    {
         return blockID != -1;
     }
 
     /**
      * Returns the localized name of this fluid.
      */
-    public String getLocalizedName() {
-
+    public String getLocalizedName()
+    {
         String s = this.getUnlocalizedName();
         return s == null ? "" : StatCollector.translateToLocal(s);
     }
@@ -173,155 +176,91 @@ public class Fluid {
     /**
      * Returns the unlocalized name of this fluid.
      */
-    public String getUnlocalizedName() {
-
+    public String getUnlocalizedName()
+    {
         return "fluid." + this.unlocalizedName;
     }
 
     /**
      * Returns 0 for "/terrain.png". ALL FLUID TEXTURES MUST BE ON THIS SHEET.
      */
-    public final int getSpriteNumber() {
-
+    public final int getSpriteNumber()
+    {
         return 0;
     }
 
     /* Default Accessors */
-    public final int getLuminosity() {
-
+    public final int getLuminosity()
+    {
         return this.luminosity;
     }
 
-    public final int getDensity() {
-
+    public final int getDensity()
+    {
         return this.density;
     }
 
-    public final int getViscosity() {
-
+    public final int getViscosity()
+    {
         return this.viscosity;
     }
 
-    public final boolean isGaseous() {
-
+    public final boolean isGaseous()
+    {
         return this.isGaseous;
     }
 
-    public int getColor() {
-
+    public int getColor()
+    {
         return 0xFFFFFF;
     }
 
-    /* Stack-based Accessors */
-    public int getLuminosity(FluidStack stack) {
-
-        return getLuminosity();
-    }
-
-    public int getDensity(FluidStack stack) {
-
-        return getDensity();
-    }
-
-    public int getViscosity(FluidStack stack) {
-
-        return getViscosity();
-    }
-
-    public boolean isGaseous(FluidStack stack) {
-
-        return isGaseous();
-    }
-
-    public int getColor(FluidStack stack) {
-
-        return getColor();
-    }
-
-    /* World-based Accessors */
-    public int getLuminosity(World world, int x, int y, int z) {
-
-        return getLuminosity();
-    }
-
-    public int getDensity(World world, int x, int y, int z) {
-
-        return getDensity();
-    }
-
-    public int getViscosity(World world, int x, int y, int z) {
-
-        return getViscosity();
-    }
-
-    public boolean isGaseous(World world, int x, int y, int z) {
-
-        return isGaseous();
-    }
-
-    public int getColor(World world, int x, int y, int z) {
-
-        return getColor();
-    }
-
-    @SideOnly(Side.CLIENT)
-    public final Fluid setStillIcon(Icon stillIcon) {
-
+    public final Fluid setStillIcon(Icon stillIcon)
+    {
         this.stillIcon = stillIcon;
         return this;
     }
 
-    @SideOnly(Side.CLIENT)
-    public final Fluid setFlowingIcon(Icon flowingIcon) {
-
+    public final Fluid setFlowingIcon(Icon flowingIcon)
+    {
         this.flowingIcon = flowingIcon;
         return this;
     }
 
-    @SideOnly(Side.CLIENT)
-    public final Fluid setIcons(Icon stillIcon, Icon flowingIcon) {
-
-        this.stillIcon = stillIcon;
-        this.flowingIcon = flowingIcon;
-        return this;
+    public final Fluid setIcons(Icon stillIcon, Icon flowingIcon)
+    {
+        return this.setStillIcon(stillIcon).setFlowingIcon(flowingIcon);
     }
 
-    @SideOnly(Side.CLIENT)
-    public final Fluid setIcons(Icon commonIcon) {
-
-        this.stillIcon = commonIcon;
-        this.flowingIcon = commonIcon;
-        return this;
+    public final Fluid setIcons(Icon commonIcon)
+    {
+        return this.setStillIcon(commonIcon).setFlowingIcon(commonIcon);
     }
 
-    @SideOnly(Side.CLIENT)
-    public Icon getIcon() {
+    public Icon getIcon(){ return getStillIcon(); }
 
-        return getStillIcon();
-    }
-
-    @SideOnly(Side.CLIENT)
-    public Icon getIcon(FluidStack stack) {
-
-        return getIcon();
-    }
-
-    @SideOnly(Side.CLIENT)
-    public Icon getIcon(World world, int x, int y, int z) {
-
-        return getIcon();
-    }
-
-    @SideOnly(Side.CLIENT)
-    public Icon getStillIcon() {
-
+    public Icon getStillIcon()
+    {
         return this.stillIcon;
     }
 
-    @SideOnly(Side.CLIENT)
-    public Icon getFlowingIcon() {
-
+    public Icon getFlowingIcon()
+    {
         return this.flowingIcon;
     }
 
+    /* Stack-based Accessors */
+    public int getLuminosity(FluidStack stack){ return getLuminosity(); }
+    public int getDensity(FluidStack stack){ return getDensity(); }
+    public int getViscosity(FluidStack stack){ return getViscosity(); }
+    public boolean isGaseous(FluidStack stack){ return isGaseous(); }
+    public int getColor(FluidStack stack){ return getColor(); }
+    public Icon getIcon(FluidStack stack){ return getIcon(); }
+    /* World-based Accessors */
+    public int getLuminosity(World world, int x, int y, int z){ return getLuminosity(); }
+    public int getDensity(World world, int x, int y, int z){ return getDensity(); }
+    public int getViscosity(World world, int x, int y, int z){ return getViscosity(); }
+    public boolean isGaseous(World world, int x, int y, int z){ return isGaseous(); }
+    public int getColor(World world, int x, int y, int z){ return getColor(); }
+    public Icon getIcon(World world, int x, int y, int z){ return getIcon(); }
 }
