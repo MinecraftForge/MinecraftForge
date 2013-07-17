@@ -16,7 +16,7 @@
     "type": "release",
     "processArguments": "username_session_version",
     "minecraftArguments": "--username ${auth_player_name} --session ${auth_session} --version ${version_name} --gameDir ${game_directory} --assetsDir ${game_assets} --tweakClass cpw.mods.fml.common.launcher.FMLTweaker",
-    "minimumLauncherVersion": 2,
+    "minimumLauncherVersion": 4,
     "libraries": [
       {
         "name": "cpw.mods:fml:@version@",
@@ -84,7 +84,95 @@
         "name": "com.google.code.gson:gson:2.2.2"
       },
       {
+        "name": "org.lwjgl.lwjgl:lwjgl:2.9.0",
+        "rules": [
+          {
+            "action": "allow"
+          },
+          {
+            "action": "disallow",
+            "os": {
+              "name": "osx",
+              "version": "^10\\.5\\.\\d$"
+            }
+          }
+        ]
+      },
+      {
+        "name": "org.lwjgl.lwjgl:lwjgl_util:2.9.0",
+        "rules": [
+          {
+            "action": "allow"
+          },
+          {
+            "action": "disallow",
+            "os": {
+              "name": "osx",
+              "version": "^10\\.5\\.\\d$"
+            }
+          }
+        ]
+      },
+      {
         "name": "org.lwjgl.lwjgl:lwjgl-platform:2.9.0",
+        "rules": [
+          {
+            "action": "allow"
+          },
+          {
+            "action": "disallow",
+            "os": {
+              "name": "osx",
+              "version": "^10\\.5\\.\\d$"
+            }
+          }
+        ],
+        "natives": {
+          "linux": "natives-linux",
+          "windows": "natives-windows",
+          "osx": "natives-osx"
+        },
+        "extract": {
+          "exclude": [
+            "META-INF/"
+          ]
+        }
+      },
+      {
+        "name": "org.lwjgl.lwjgl:lwjgl:2.9.1-nightly-20130708-debug3",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "osx",
+              "version": "^10\\.5\\.\\d$"
+            }
+          }
+        ]
+      },
+      {
+        "name": "org.lwjgl.lwjgl:lwjgl_util:2.9.1-nightly-20130708-debug3",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "osx",
+              "version": "^10\\.5\\.\\d$"
+            }
+          }
+        ]
+      },
+      {
+        "name": "org.lwjgl.lwjgl:lwjgl-platform:2.9.1-nightly-20130708-debug3",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "osx",
+              "version": "^10\\.5\\.\\d$"
+            }
+          }
+        ],
         "natives": {
           "linux": "natives-linux",
           "windows": "natives-windows",
