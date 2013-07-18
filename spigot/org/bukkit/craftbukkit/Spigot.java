@@ -13,6 +13,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.spigotmc.Metrics;
 import org.spigotmc.RestartCommand;
 import org.spigotmc.WatchdogThread;
+// MCPC+ start
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.ChunkCoordIntPair;
+// MCPC+ end
 
 public class Spigot {
 
@@ -268,7 +272,12 @@ public class Spigot {
      */
     public static boolean checkIfActive(net.minecraft.entity.Entity entity) {
         SpigotTimings.checkIfActiveTimer.startTiming();
-        boolean isActive = entity.activatedTick >= net.minecraft.server.MinecraftServer.currentTick || entity.defaultActivationState;
+        // MCPC+ start - check if entity is in forced chunk and if so, set to active
+        int i = MathHelper.floor_double(entity.posX);
+        int j = MathHelper.floor_double(entity.posZ);
+        boolean isForced = entity.worldObj.getPersistentChunks().containsKey(new ChunkCoordIntPair(i >> 4, j >> 4));
+        boolean isActive = entity.activatedTick >= net.minecraft.server.MinecraftServer.currentTick || entity.defaultActivationState || isForced;
+        // MCPC+ end
 
         // Should this entity tick?
         if (!isActive) {
