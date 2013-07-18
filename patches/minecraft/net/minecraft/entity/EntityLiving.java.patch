@@ -33,7 +33,7 @@
  
      /** Whether this entity should NOT despawn. */
 -    private boolean persistenceRequired;
-+    public boolean persistenceRequired; // CraftBukkit - private -> public
++    public boolean persistenceRequired = !canDespawn(); // CraftBukkit - private -> public
      protected float defaultPitch;
  
      /** This entity's current target. */
