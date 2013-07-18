@@ -404,11 +404,13 @@
          if (this.isPlayerSleeping())
          {
              this.getServerForPlayer().getEntityTracker().sendPacketToAllAssociatedPlayers(this, new Packet18Animation(this, 3));
-@@ -557,7 +721,16 @@
+@@ -557,9 +721,24 @@
       */
      public void mountEntity(Entity par1Entity)
      {
 -        super.mountEntity(par1Entity);
+-        this.playerNetServerHandler.sendPacketToPlayer(new Packet39AttachEntity(0, this, this.ridingEntity));
+-        this.playerNetServerHandler.setPlayerLocation(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
 +        // CraftBukkit start
 +        this.setPassengerOf(par1Entity);
 +    }
@@ -417,12 +419,20 @@
 +    {
 +        // mount(null) doesn't really fly for overloaded methods,
 +        // so this method is needed
++        Entity currentVehicle = this.ridingEntity;
 +        super.setPassengerOf(entity);
++
++        // Check if the vehicle actually changed.
++        if (currentVehicle != this.ridingEntity)
++        {
++            this.playerNetServerHandler.sendPacketToPlayer(new Packet39AttachEntity(0, this, this.ridingEntity));
++            this.playerNetServerHandler.setPlayerLocation(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
++        }
 +        // CraftBukkit end
-         this.playerNetServerHandler.sendPacketToPlayer(new Packet39AttachEntity(0, this, this.ridingEntity));
-         this.playerNetServerHandler.setPlayerLocation(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
      }
-@@ -588,28 +761,54 @@
+ 
+     /**
+@@ -588,28 +767,54 @@
          }
      }
  
@@ -481,7 +491,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -619,9 +818,18 @@
+@@ -619,9 +824,18 @@
       */
      public void displayGUIAnvil(int par1, int par2, int par3)
      {
@@ -502,7 +512,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -636,27 +844,54 @@
+@@ -636,27 +850,54 @@
              this.closeScreen();
          }
  
@@ -563,7 +573,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -666,9 +901,18 @@
+@@ -666,9 +907,18 @@
       */
      public void displayGUIFurnace(TileEntityFurnace par1TileEntityFurnace)
      {
@@ -584,7 +594,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -678,9 +922,18 @@
+@@ -678,9 +928,18 @@
       */
      public void displayGUIDispenser(TileEntityDispenser par1TileEntityDispenser)
      {
@@ -605,7 +615,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -690,9 +943,18 @@
+@@ -690,9 +949,18 @@
       */
      public void displayGUIBrewingStand(TileEntityBrewingStand par1TileEntityBrewingStand)
      {
@@ -626,7 +636,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -702,17 +964,35 @@
+@@ -702,17 +970,35 @@
       */
      public void displayGUIBeacon(TileEntityBeacon par1TileEntityBeacon)
      {
@@ -666,7 +676,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
          InventoryMerchant inventorymerchant = ((ContainerMerchant)this.openContainer).getMerchantInventory();
-@@ -738,6 +1018,16 @@
+@@ -738,6 +1024,16 @@
  
      public void func_110298_a(EntityHorse par1EntityHorse, IInventory par2IInventory)
      {
@@ -683,7 +693,7 @@
          if (this.openContainer != this.inventoryContainer)
          {
              this.closeScreen();
-@@ -745,7 +1035,7 @@
+@@ -745,7 +1041,7 @@
  
          this.incrementWindowID();
          this.playerNetServerHandler.sendPacketToPlayer(new Packet100OpenWindow(this.currentWindowId, 11, par2IInventory.getInvName(), par2IInventory.getSizeInventory(), par2IInventory.isInvNameLocalized(), par1EntityHorse.entityId));
@@ -692,7 +702,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -774,6 +1064,15 @@
+@@ -774,6 +1070,15 @@
      {
          this.playerNetServerHandler.sendPacketToPlayer(new Packet104WindowItems(par1Container.windowId, par2List));
          this.playerNetServerHandler.sendPacketToPlayer(new Packet103SetSlot(-1, -1, this.inventory.getItemStack()));
@@ -708,7 +718,7 @@
      }
  
      /**
-@@ -791,6 +1090,7 @@
+@@ -791,6 +1096,7 @@
       */
      public void closeScreen()
      {
@@ -716,7 +726,7 @@
          this.playerNetServerHandler.sendPacketToPlayer(new Packet101CloseWindow(this.openContainer.windowId));
          this.closeContainer();
      }
-@@ -868,6 +1168,7 @@
+@@ -868,6 +1174,7 @@
      public void setPlayerHealthUpdated()
      {
          this.lastHealth = -1.0E8F;
@@ -724,7 +734,7 @@
      }
  
      /**
-@@ -1032,7 +1333,7 @@
+@@ -1032,7 +1339,7 @@
       */
      public void requestTexturePackLoad(String par1Str, int par2)
      {
@@ -733,7 +743,7 @@
          this.playerNetServerHandler.sendPacketToPlayer(new Packet250CustomPayload("MC|TPack", s1.getBytes()));
      }
  
-@@ -1043,4 +1344,103 @@
+@@ -1043,4 +1350,103 @@
      {
          return new ChunkCoordinates(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY + 0.5D), MathHelper.floor_double(this.posZ));
      }

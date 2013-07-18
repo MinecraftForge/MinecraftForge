@@ -10,16 +10,17 @@
  import net.minecraft.block.Block;
  import net.minecraft.enchantment.EnchantmentHelper;
  import net.minecraft.entity.ai.EntityAITasks;
-@@ -31,6 +34,8 @@
+@@ -31,6 +34,9 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraft.entity.passive.EntityHorse;
++import net.minecraft.entity.passive.EntityOcelot;
  
  public abstract class EntityLiving extends EntityLivingBase
  {
-@@ -57,13 +62,13 @@
+@@ -57,13 +63,13 @@
      private ItemStack[] equipment = new ItemStack[5];
  
      /** Chances for each equipment piece from dropping when this entity dies. */
@@ -36,7 +37,7 @@
      protected float defaultPitch;
  
      /** This entity's current target. */
-@@ -141,6 +146,7 @@
+@@ -141,6 +147,7 @@
      public void setAttackTarget(EntityLivingBase par1EntityLivingBase)
      {
          this.attackTarget = par1EntityLivingBase;
@@ -44,7 +45,7 @@
      }
  
      /**
-@@ -291,6 +297,8 @@
+@@ -291,6 +298,8 @@
       */
      protected void dropFewItems(boolean par1, int par2)
      {
@@ -53,7 +54,7 @@
          int j = this.getDropItemId();
  
          if (j > 0)
-@@ -302,11 +310,30 @@
+@@ -302,11 +311,30 @@
                  k += this.rand.nextInt(par2 + 1);
              }
  
@@ -89,7 +90,7 @@
      }
  
      /**
-@@ -374,6 +401,22 @@
+@@ -374,6 +402,22 @@
          super.readEntityFromNBT(par1NBTTagCompound);
          this.setCanPickUpLoot(par1NBTTagCompound.getBoolean("CanPickUpLoot"));
          this.persistenceRequired = par1NBTTagCompound.getBoolean("PersistenceRequired");
@@ -112,7 +113,21 @@
  
          if (par1NBTTagCompound.hasKey("CustomName") && par1NBTTagCompound.getString("CustomName").length() > 0)
          {
-@@ -562,12 +605,12 @@
+@@ -547,11 +591,8 @@
+      */
+     protected void despawnEntity()
+     {
+-        if (this.persistenceRequired)
+-        {
+-            this.entityAge = 0;
+-        }
+-        else
++        // CraftBukkit - temporary hack to handle Ocelot despawning
++        if ((this instanceof EntityOcelot && this.canDespawn()) || (!this.persistenceRequired))
+         {
+             EntityPlayer entityplayer = this.worldObj.getClosestPlayerToEntity(this, -1.0D);
+ 
+@@ -562,12 +603,12 @@
                  double d2 = entityplayer.posZ - this.posZ;
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
@@ -127,7 +142,24 @@
                  {
                      this.setDead();
                  }
-@@ -726,8 +769,6 @@
+@@ -576,7 +617,15 @@
+                     this.entityAge = 0;
+                 }
+             }
+-        }
++
++            // CraftBukkit start
++        }
++        else
++        {
++            this.entityAge = 0;
++        }
++
++        // CraftBukkit end
+     }
+ 
+     protected void updateAITasks()
+@@ -726,8 +775,6 @@
          return this.worldObj.checkNoEntityCollision(this.boundingBox) && this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(this.boundingBox);
      }
  
@@ -136,7 +168,7 @@
      /**
       * Returns render size modifier
       */
-@@ -1249,4 +1290,7 @@
+@@ -1249,4 +1296,7 @@
  
          this.field_110170_bx = null;
      }

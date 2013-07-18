@@ -62,6 +62,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     private final Set<String> channels = new HashSet<String>();
     private final Map<String, Player> hiddenPlayers = new MapMaker().softValues().makeMap();
     private int hash = 0;
+    private boolean scaledHealth;
 
     public CraftPlayer(CraftServer server, net.minecraft.entity.player.EntityPlayerMP entity) {
         super(server, entity);
@@ -1001,6 +1002,18 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         }
 
         this.server.getScoreboardManager().setPlayerBoard(this, scoreboard);
+    }
+
+    public float getScaledHealth() {
+        return (float) (this.scaledHealth ? getHealth() / getMaxHealth() * 20.0D : getHealth());
+    }
+
+    public void setScaleHealth(boolean scale) {
+        this.scaledHealth = scale;
+    }
+
+    public boolean isScaledHealth() {
+        return this.scaledHealth;
     }
 
     // Spigot start

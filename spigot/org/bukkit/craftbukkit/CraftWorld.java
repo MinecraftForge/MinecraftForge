@@ -1022,6 +1022,8 @@ public class CraftWorld implements World {
                 // need a net server handler for this one
             } else if (Sheep.class.isAssignableFrom(clazz)) {
                 entity = new net.minecraft.entity.passive.EntitySheep(world);
+            } else if (Horse.class.isAssignableFrom(clazz)) {
+                entity = new net.minecraft.entity.passive.EntityHorse(world);
             } else if (Skeleton.class.isAssignableFrom(clazz)) {
                 entity = new net.minecraft.entity.monster.EntitySkeleton(world);
             } else if (Slime.class.isAssignableFrom(clazz)) {

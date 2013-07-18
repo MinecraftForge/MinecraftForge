@@ -93,3 +93,15 @@
              boolean flag = this.canBePickedUp == 1 || this.canBePickedUp == 2 && par1EntityPlayer.capabilities.isCreativeMode;
  
              if (this.canBePickedUp == 1 && !par1EntityPlayer.inventory.addItemStackToInventory(new ItemStack(Item.arrow, 1)))
+@@ -592,4 +626,11 @@
+         byte b0 = this.dataWatcher.getWatchableObjectByte(16);
+         return (b0 & 1) != 0;
+     }
++
++    // CraftBukkit start
++    public boolean isInGround()
++    {
++        return inGround;
++    }
++    // CraftBukkit end
+ }

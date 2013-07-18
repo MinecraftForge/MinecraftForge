@@ -25,6 +25,7 @@ import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Pig;
@@ -508,6 +509,12 @@ public class CraftEventFactory {
     public static PigZapEvent callPigZapEvent(net.minecraft.entity.Entity pig, net.minecraft.entity.Entity lightning, net.minecraft.entity.Entity pigzombie) {
         PigZapEvent event = new PigZapEvent((Pig) pig.getBukkitEntity(), (LightningStrike) lightning.getBukkitEntity(), (PigZombie) pigzombie.getBukkitEntity());
         pig.getBukkitEntity().getServer().getPluginManager().callEvent(event);
+        return event;
+    }
+
+    public static HorseJumpEvent callHorseJumpEvent(net.minecraft.entity.Entity horse, float power) {
+        HorseJumpEvent event = new HorseJumpEvent((Horse) horse.getBukkitEntity(), power);
+        horse.getBukkitEntity().getServer().getPluginManager().callEvent(event);
         return event;
     }
 

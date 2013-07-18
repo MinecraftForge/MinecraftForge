@@ -1,22 +1,165 @@
 --- ../src_base/minecraft/net/minecraft/entity/passive/EntityHorse.java
 +++ ../src_work/minecraft/net/minecraft/entity/passive/EntityHorse.java
-@@ -1156,6 +1156,19 @@
-         return this.riddenByEntity == null && this.ridingEntity == null && this.func_110248_bS() && this.func_110228_bR() && !this.func_110222_cv() && this.func_110143_aJ() >= this.func_110138_aP();
+@@ -38,10 +38,15 @@
+ import net.minecraft.util.StatCollector;
+ import net.minecraft.world.World;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityDamageEvent;
++// CraftBukkit end
++
+ public class EntityHorse extends EntityAnimal implements IInvBasic
+ {
+     private static final IEntitySelector field_110276_bu = new EntityHorseBredSelector();
+-    private static final Attribute field_110271_bv = (new RangedAttribute("horse.jumpStrength", 0.7D, 0.0D, 2.0D)).func_111117_a("Jump Strength").func_111112_a(true);
++    public static final Attribute field_110271_bv = (new RangedAttribute("horse.jumpStrength", 0.7D, 0.0D, 2.0D)).func_111117_a("Jump Strength").func_111112_a(true); // CraftBukkit - private -> public
+     private static final String[] field_110270_bw = new String[] {null, "textures/entity/horse/armor/horse_armor_iron.png", "textures/entity/horse/armor/horse_armor_gold.png", "textures/entity/horse/armor/horse_armor_diamond.png"};
+     private static final String[] field_110273_bx = new String[] {"", "meo", "goo", "dio"};
+     private static final int[] field_110272_by = new int[] {0, 5, 7, 11};
+@@ -55,7 +60,7 @@
+     public int field_110278_bp;
+     public int field_110279_bq;
+     protected boolean field_110275_br;
+-    private AnimalChest field_110296_bG;
++    public AnimalChest field_110296_bG; // CraftBukkit - private -> public
+     private boolean field_110293_bH;
+     protected int field_110274_bs;
+     protected float field_110277_bt;
+@@ -69,6 +74,7 @@
+     private int field_110285_bP;
+     private String field_110286_bQ;
+     private String[] field_110280_bR = new String[3];
++    public int maxDomestication = 100; // CraftBukkit - store max domestication value
+ 
+     public EntityHorse(World par1World)
+     {
+@@ -380,11 +386,36 @@
+ 
+         if (i > 0)
+         {
+-            this.attackEntityFrom(DamageSource.fall, (float)i);
++            // CraftBukkit start
++            EntityDamageEvent event = CraftEventFactory.callEntityDamageEvent(null, this, EntityDamageEvent.DamageCause.FALL, i);
++
++            if (!event.isCancelled())
++            {
++                float damage = (float) event.getDamage();
++
++                if (damage > 0)
++                {
++                    this.getBukkitEntity().setLastDamageCause(event);
++                    this.attackEntityFrom(DamageSource.fall, damage);
++                }
++            }
+ 
+             if (this.riddenByEntity != null)
+             {
+-                this.riddenByEntity.attackEntityFrom(DamageSource.fall, (float)i);
++                EntityDamageEvent passengerEvent = CraftEventFactory.callEntityDamageEvent(null, this.riddenByEntity, EntityDamageEvent.DamageCause.FALL, i);
++
++                if (!passengerEvent.isCancelled() && this.riddenByEntity != null)   // Check again in case of plugin
++                {
++                    float damage = (float) passengerEvent.getDamage();
++
++                    if (damage > 0)
++                    {
++                        this.riddenByEntity.getBukkitEntity().setLastDamageCause(passengerEvent);
++                        this.riddenByEntity.attackEntityFrom(DamageSource.fall, damage);
++                    }
++                }
++
++                // CraftBukkit end
+             }
+ 
+             int j = this.worldObj.getBlockId(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY - 0.2D - (double)this.prevRotationYaw), MathHelper.floor_double(this.posZ));
+@@ -400,10 +431,10 @@
+     private int func_110225_cC()
+     {
+         int i = this.func_110265_bP();
+-        return this.func_110261_ca() && (i == 1 || i == 2) ? 17 : 2;
+-    }
+-
+-    private void func_110226_cD()
++        return this.func_110261_ca() /* && (i == 1 || i == 2) */ ? 17 : 2; // CraftBukkit - Remove type check
++    }
++
++    public void func_110226_cD()   // CraftBukkit - private -> public
+     {
+         AnimalChest animalchest = this.field_110296_bG;
+         this.field_110296_bG = new AnimalChest("HorseChest", this.func_110225_cC());
+@@ -631,7 +662,7 @@
+ 
+     public int func_110218_cm()
+     {
+-        return 100;
++        return this.maxDomestication; // CraftBukkit - return stored max domestication instead of 100
      }
  
-+    /* CraftBukkit start - don't treat horses differently
-+    /**
-+     * Will get destroyed next tick.
-+     */
-+    public void setDead()
-+    {
-+        if (this.worldObj.isRemote || !this.func_110248_bS() && !this.func_110205_ce() || this.func_110143_aJ() <= 0.0F)
+     /**
+@@ -1326,6 +1357,7 @@
+         par1NBTTagCompound.setInteger("Temper", this.func_110252_cg());
+         par1NBTTagCompound.setBoolean("Tame", this.func_110248_bS());
+         par1NBTTagCompound.setString("OwnerName", this.func_142019_cb());
++        par1NBTTagCompound.setInteger("Bukkit.MaxDomestication", this.maxDomestication); // CraftBukkit
+ 
+         if (this.func_110261_ca())
+         {
+@@ -1378,6 +1410,13 @@
+             this.func_110213_b(par1NBTTagCompound.getString("OwnerName"));
+         }
+ 
++        // CraftBukkit start
++        if (par1NBTTagCompound.hasKey("Bukkit.MaxDomestication"))
 +        {
-+            super.setDead();
++            this.maxDomestication = par1NBTTagCompound.getInteger("Bukkit.MaxDomestication");
 +        }
-+    }
-+    // CraftBukkit end */
 +
-     public void setEating(boolean par1)
++        // CraftBukkit end
+         AttributeInstance attributeinstance = this.func_110140_aT().func_111152_a("Speed");
+ 
+         if (attributeinstance != null)
+@@ -1623,24 +1662,33 @@
      {
-         this.func_110208_b(32, par1);
+         if (this.func_110257_ck())
+         {
++            // CraftBukkit start - fire HorseJumpEvent, use event power
+             if (par1 < 0)
+             {
+                 par1 = 0;
+             }
++
++            float power;
++
++            if (par1 >= 90)
++            {
++                power = 1.0F;
++            }
+             else
++            {
++                power = 0.4F + 0.4F * (float) par1 / 90.0F;
++            }
++
++            org.bukkit.event.entity.HorseJumpEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callHorseJumpEvent(this, power);
++
++            if (!event.isCancelled())
+             {
+                 this.field_110294_bI = true;
+                 this.func_110220_cK();
+-            }
+-
+-            if (par1 >= 90)
+-            {
+-                this.field_110277_bt = 1.0F;
+-            }
+-            else
+-            {
+-                this.field_110277_bt = 0.4F + 0.4F * (float)par1 / 90.0F;
+-            }
++                this.field_110277_bt = event.getPower();
++            }
++
++            // CraftBukkit end
+         }
+     }
+ 

@@ -210,15 +210,19 @@
      }
  
      /**
-@@ -744,8 +802,6 @@
+@@ -744,10 +802,8 @@
          return this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
      }
  
 -    @SideOnly(Side.CLIENT)
 -
-     /**
-      * Remove the speified potion effect from this entity.
+-    /**
+-     * Remove the speified potion effect from this entity.
++    /**
++     * Remove the specified potion effect from this entity.
       */
+     public void removePotionEffectClient(int par1)
+     {
 @@ -798,16 +854,28 @@
          }
      }

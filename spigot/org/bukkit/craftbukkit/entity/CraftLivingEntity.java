@@ -241,7 +241,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
             }
             removePotionEffect(effect.getType());
         }
-        getHandle().addPotionEffect(new net.minecraft.potion.PotionEffect(effect.getType().getId(), effect.getDuration(), effect.getAmplifier()));
+        getHandle().addPotionEffect(new net.minecraft.potion.PotionEffect(effect.getType().getId(), effect.getDuration(), effect.getAmplifier(), effect.isAmbient()));
         return true;
     }
 
@@ -258,12 +258,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     }
 
     public void removePotionEffect(PotionEffectType type) {
-        getHandle().activePotionsMap.remove(type.getId());
-        getHandle().potionsNeedUpdate = true;
-        if (getHandle() instanceof net.minecraft.entity.player.EntityPlayerMP) {
-            if (((net.minecraft.entity.player.EntityPlayerMP) getHandle()).playerNetServerHandler == null) return;
-            ((net.minecraft.entity.player.EntityPlayerMP) getHandle()).playerNetServerHandler.sendPacketToPlayer(new net.minecraft.network.packet.Packet42RemoveEntityEffect(getHandle().entityId, new net.minecraft.potion.PotionEffect(type.getId(), 0, 0)));
-        }
+        getHandle().removePotionEffect(type.getId()); // Should be removeEffect.
     }
 
     public Collection<PotionEffect> getActivePotionEffects() {
@@ -272,7 +267,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
             if (!(raw instanceof net.minecraft.potion.PotionEffect))
                 continue;
             net.minecraft.potion.PotionEffect handle = (net.minecraft.potion.PotionEffect) raw;
-            effects.add(new PotionEffect(PotionEffectType.getById(handle.getPotionID()), handle.getDuration(), handle.getAmplifier()));
+            effects.add(new PotionEffect(PotionEffectType.getById(handle.getPotionID()), handle.getDuration(), handle.getAmplifier(), handle.getIsAmbient()));
         }
         return effects;
     }

@@ -588,7 +588,7 @@
      public boolean func_130002_c(EntityPlayer par1EntityPlayer)
      {
          return false;
-@@ -1855,13 +2200,43 @@
+@@ -1855,13 +2200,50 @@
       */
      public void mountEntity(Entity par1Entity)
      {
@@ -612,6 +612,8 @@
 +    {
 +        // mountEntity(null) doesn't really fly for overloaded methods,
 +        // so this method is needed
++        Entity originalVehicle = this.ridingEntity;
++        Entity originalPassenger = this.ridingEntity == null ? null : this.ridingEntity.riddenByEntity;
 +        PluginManager pluginManager = Bukkit.getPluginManager();
 +        this.getBukkitEntity(); // make sure bukkitEntity is initialised
 +        // CraftBukkit end
@@ -628,23 +630,51 @@
 +                {
 +                    VehicleExitEvent event = new VehicleExitEvent((Vehicle) this.ridingEntity.getBukkitEntity(), (LivingEntity) this.bukkitEntity);
 +                    pluginManager.callEvent(event);
++
++                    if (event.isCancelled() || this.ridingEntity != originalVehicle)
++                    {
++                        return;
++                    }
 +                }
 +                // CraftBukkit end
                  this.setLocationAndAngles(this.ridingEntity.posX, this.ridingEntity.boundingBox.minY + (double)this.ridingEntity.height, this.ridingEntity.posZ, this.rotationYaw, this.rotationPitch);
                  this.ridingEntity.riddenByEntity = null;
              }
-@@ -1870,13 +2245,25 @@
+@@ -1870,13 +2252,48 @@
          }
          else
          {
 +            // CraftBukkit start
 +            if ((this.bukkitEntity instanceof LivingEntity) && (entity.getBukkitEntity() instanceof Vehicle) && entity.worldObj.func_72916_c_CodeFix_Public((int) entity.posX >> 4, (int) entity.posZ >> 4))
 +            {
++                // It's possible to move from one vehicle to another.  We need to check if they're already in a vehicle, and fire an exit event if they are.
++                VehicleExitEvent exitEvent = null;
++
++                if (this.ridingEntity != null)
++                {
++                    exitEvent = new VehicleExitEvent((Vehicle) this.ridingEntity.getBukkitEntity(), (LivingEntity) this.bukkitEntity);
++                    pluginManager.callEvent(exitEvent);
++
++                    if (exitEvent.isCancelled() || this.ridingEntity != originalVehicle || (this.ridingEntity != null && this.ridingEntity.riddenByEntity != originalPassenger))
++                    {
++                        return;
++                    }
++                }
++
 +                VehicleEnterEvent event = new VehicleEnterEvent((Vehicle) entity.getBukkitEntity(), this.bukkitEntity);
 +                pluginManager.callEvent(event);
 +
-+                if (event.isCancelled())
++                // If a plugin messes with the vehicle or the vehicle's passenger
++                if (event.isCancelled() || this.ridingEntity != originalVehicle || (this.ridingEntity != null && this.ridingEntity.riddenByEntity != originalPassenger))
 +                {
++                    // If we only cancelled the enterevent then we need to put the player in a decent position.
++                    if (exitEvent != null && this.ridingEntity == originalVehicle && this.ridingEntity != null && this.ridingEntity.riddenByEntity == originalPassenger)
++                    {
++                        this.setLocationAndAngles(this.ridingEntity.posX, this.ridingEntity.boundingBox.minY + (double) this.ridingEntity.height, this.ridingEntity.posZ, this.rotationYaw, this.rotationPitch);
++                        this.ridingEntity.riddenByEntity = null;
++                        this.ridingEntity = null;
++                    }
++
 +                    return;
 +                }
 +            }
@@ -661,7 +691,7 @@
          }
      }
  
-@@ -2001,7 +2388,7 @@
+@@ -2001,7 +2418,7 @@
       */
      public boolean isRiding()
      {
@@ -670,7 +700,7 @@
      }
  
      /**
-@@ -2104,12 +2491,48 @@
+@@ -2104,12 +2521,48 @@
       */
      public void onStruckByLightning(EntityLightningBolt par1EntityLightningBolt)
      {
@@ -721,7 +751,7 @@
          }
      }
  
-@@ -2321,36 +2744,81 @@
+@@ -2321,36 +2774,81 @@
          {
              this.worldObj.theProfiler.startSection("changeDimension");
              MinecraftServer minecraftserver = MinecraftServer.getServer();
@@ -823,7 +853,7 @@
              }
  
              this.isDead = true;
-@@ -2363,7 +2831,7 @@
+@@ -2363,7 +2861,7 @@
  
      public float func_82146_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
      {
@@ -832,7 +862,7 @@
      }
  
      public boolean func_96091_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
-@@ -2426,4 +2894,160 @@
+@@ -2426,4 +2924,160 @@
      {
          return this.getEntityName();
      }
