@@ -212,7 +212,7 @@
  
      protected void convertMapIfNeeded(String par1Str)
      {
-@@ -214,71 +319,94 @@
+@@ -214,71 +319,89 @@
  
      protected void loadAllWorlds(String par1Str, String par2Str, long par3, WorldType par5WorldType, String par6Str)
      {
@@ -273,7 +273,7 @@
 +        {
 +            overWorld.getWorld().getPopulators().addAll(overWorldGen.getDefaultPopulators(overWorld.getWorld()));
 +        }
-+        this.worlds.add(overWorld); // MCPC+ - CB expects overworld in position 0 so we must add it first
++
 +        for (int dimension : DimensionManager.getStaticDimensionIDs())
 +        {
 +            String worldType = "";
@@ -323,7 +323,7 @@
 +
 +                this.setUserMessage(name);
 +            }
-+            // CraftBukkit
++
 +            world = (dimension == 0 ? overWorld : new WorldServerMulti(this, new AnvilSaveHandler(server.getWorldContainer(), name, true), name, dimension, worldsettings, overWorld, this.theProfiler, this.getLogAgent(), env, gen));
 +            // MCPC+ end
 +            if (gen != null)
@@ -345,12 +345,7 @@
 -
 +                world.getWorldInfo().setGameType(this.getGameType());
 +            }
-+            // MCPC+ start - DimensionManager.setWorld adds all worlds except vanilla for us when the world is created.
-+            if (dimension == -1 || dimension == 1)
-+            {
-+                this.worlds.add(world);
-+            }
-+            // MCPC+ end
++
 +            this.serverConfigManager.setPlayerManager(this.worlds.toArray(new WorldServer[this.worlds.size()]));
 +            // CraftBukkit end
 +            MinecraftForge.EVENT_BUS.post(new WorldEvent.Load((World)world)); // Forge
@@ -361,7 +356,7 @@
      }
  
      protected void initialWorldChunkLoad()
-@@ -290,28 +418,41 @@
+@@ -290,28 +413,41 @@
          int i = 0;
          this.setUserMessage("menu.generatingTerrain");
          byte b0 = 0;
@@ -424,7 +419,7 @@
          this.clearCurrentTask();
      }
  
-@@ -348,21 +489,20 @@
+@@ -348,21 +484,20 @@
      {
          this.currentTask = null;
          this.percentDone = 0;
@@ -452,7 +447,7 @@
  
                  if (worldserver != null)
                  {
-@@ -371,27 +511,33 @@
+@@ -371,27 +506,33 @@
                          this.getLogAgent().logInfo("Saving chunks for level \'" + worldserver.getWorldInfo().getWorldName() + "\'/" + worldserver.provider.getDimensionName());
                      }
  
@@ -497,7 +492,7 @@
  
              if (this.getNetworkThread() != null)
              {
-@@ -408,10 +554,11 @@
+@@ -408,10 +549,11 @@
              this.getLogAgent().logInfo("Saving worlds");
              this.saveAllWorlds(false);
  
@@ -513,7 +508,7 @@
              }
  
              if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
-@@ -457,45 +604,36 @@
+@@ -457,45 +599,36 @@
  
                  long i = func_130071_aq();
  
@@ -582,7 +577,7 @@
                  FMLCommonHandler.instance().handleServerStopping();
              }
              else
-@@ -537,6 +675,8 @@
+@@ -537,6 +670,8 @@
          }
          finally
          {
@@ -591,7 +586,7 @@
              try
              {
                  if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
-@@ -552,6 +692,16 @@
+@@ -552,6 +687,16 @@
              }
              finally
              {
@@ -608,7 +603,7 @@
                  FMLCommonHandler.instance().handleServerStopped();
                  this.serverStopped = true;
                  this.systemExitNow();
-@@ -577,12 +727,12 @@
+@@ -577,12 +722,12 @@
      /**
       * Main function called by run() every loop.
       */
@@ -625,7 +620,7 @@
          ++this.tickCounter;
  
          if (this.startProfiling)
-@@ -595,7 +745,7 @@
+@@ -595,7 +740,7 @@
          this.theProfiler.startSection("root");
          this.updateTimeLightAndEntities();
  
@@ -634,7 +629,7 @@
          {
              this.theProfiler.startSection("save");
              this.serverConfigManager.saveAllPlayerData();
-@@ -634,75 +784,111 @@
+@@ -634,75 +779,111 @@
      public void updateTimeLightAndEntities()
      {
          this.theProfiler.startSection("levels");
@@ -800,7 +795,7 @@
          this.theProfiler.endSection();
      }
  
-@@ -745,7 +931,22 @@
+@@ -745,7 +926,22 @@
       */
      public WorldServer worldServerForDimension(int par1)
      {
@@ -824,7 +819,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -815,14 +1016,70 @@
+@@ -815,14 +1011,70 @@
       */
      public String getPlugins()
      {
@@ -903,7 +898,7 @@
      }
  
      /**
-@@ -830,7 +1087,7 @@
+@@ -830,7 +1082,7 @@
       */
      public boolean isDebuggingEnabled()
      {
@@ -912,7 +907,7 @@
      }
  
      /**
-@@ -864,7 +1121,7 @@
+@@ -864,7 +1116,7 @@
      {
          par1CrashReport.func_85056_g().addCrashSectionCallable("Profiler Position", new CallableIsServerModded(this));
  
@@ -921,7 +916,7 @@
          {
              par1CrashReport.func_85056_g().addCrashSectionCallable("Vec3 Pool Size", new CallableServerProfiler(this));
          }
-@@ -882,6 +1139,8 @@
+@@ -882,6 +1134,8 @@
       */
      public List getPossibleCompletions(ICommandSender par1ICommandSender, String par2Str)
      {
@@ -930,7 +925,7 @@
          ArrayList arraylist = new ArrayList();
  
          if (par2Str.startsWith("/"))
-@@ -930,6 +1189,9 @@
+@@ -930,6 +1184,9 @@
  
              return arraylist;
          }
@@ -940,7 +935,7 @@
      }
  
      /**
-@@ -1037,9 +1299,11 @@
+@@ -1037,9 +1294,11 @@
  
      public void setDifficultyForAllWorlds(int par1)
      {
@@ -955,7 +950,7 @@
  
              if (worldserver != null)
              {
-@@ -1102,17 +1366,18 @@
+@@ -1102,17 +1361,18 @@
          this.worldIsBeingDeleted = true;
          this.getActiveAnvilConverter().flushCache();
  
@@ -978,7 +973,7 @@
          this.initiateShutdown();
      }
  
-@@ -1143,22 +1408,23 @@
+@@ -1143,22 +1403,23 @@
          par1PlayerUsageSnooper.addData("avg_rec_packet_size", Integer.valueOf((int)MathHelper.average(this.receivedPacketSizeArray)));
          int i = 0;
  
@@ -1018,7 +1013,7 @@
          }
  
          par1PlayerUsageSnooper.addData("worlds", Integer.valueOf(i));
-@@ -1185,14 +1451,14 @@
+@@ -1185,14 +1446,14 @@
       */
      public int textureSize()
      {
@@ -1035,7 +1030,7 @@
      }
  
      public void setOnlineMode(boolean par1)
-@@ -1285,9 +1551,11 @@
+@@ -1285,9 +1546,11 @@
       */
      public void setGameType(EnumGameType par1EnumGameType)
      {
@@ -1050,7 +1045,7 @@
          }
      }
  
-@@ -1335,7 +1603,7 @@
+@@ -1335,7 +1598,7 @@
  
      public World func_130014_f_()
      {
@@ -1059,7 +1054,7 @@
      }
  
      /**
-@@ -1384,121 +1652,251 @@
+@@ -1384,121 +1647,251 @@
      @SideOnly(Side.SERVER)
      public static void main(String[] par0ArrayOfStr)
      {

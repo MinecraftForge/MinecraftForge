@@ -77,7 +77,6 @@ public class DimensionManager
 
     public static boolean registerProviderType(int id, Class<? extends WorldProvider> provider, boolean keepLoaded)
     {
-        System.out.println("registerProviderType " + id + ", provider = " + provider + ", keepLoaded = " + keepLoaded);
         if (providers.containsKey(id))
         {
             return false;
@@ -89,7 +88,6 @@ public class DimensionManager
             worldType = provider.getSimpleName().toLowerCase();
             worldType = worldType.replace("worldprovider", "");
             worldType = worldType.replace("provider", "");
-            System.out.println("worldType = " + worldType);
             registerBukkitEnvironment(id, worldType);
         }
         else
@@ -162,7 +160,6 @@ public class DimensionManager
 
     public static void registerDimension(int id, int providerType)
     {
-        System.out.println("registerDimension " + id + " for providerType " + providerType);
         if (!providers.containsKey(providerType))
         {
             throw new IllegalArgumentException(String.format("Failed to register dimension for id %d, provider type %d does not exist", id, providerType));
@@ -259,6 +256,11 @@ public class DimensionManager
             {
                 weakWorldMap.put(world, world);
             }
+            // handle all world adds here for Bukkit
+            if (!MinecraftServer.getServer().worlds.contains(world))
+            {
+                MinecraftServer.getServer().worlds.add(world);
+            }
             // MCPC+ end
             MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
             FMLLog.info("Loading dimension %d (%s) (%s)", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
@@ -285,20 +287,12 @@ public class DimensionManager
                 continue;
             }
             tmp.add(entry.getValue());
-            // MCPC+ start - add world if it does not exist
-            if (!MinecraftServer.getServer().worlds.contains(entry.getValue()))
-            {
-                System.out.println("Adding world " + entry.getValue().getWorldInfo().getWorldName());
-                MinecraftServer.getServer().worlds.add(entry.getValue());
-            }
-            // MCPC+ end
         }
 
         MinecraftServer.getServer().worldServers = tmp.toArray(new WorldServer[tmp.size()]);
     }
 
     public static void initDimension(int dim) {
-        System.out.println("initDimension " + dim);
         if (dim == 0) return; // MCPC+ - overworld
         WorldServer overworld = getWorld(0);
         if (overworld == null) {
@@ -308,7 +302,6 @@ public class DimensionManager
             // MCPC+ start - Fixes MultiVerse issue when mods such as Twilight Forest try to hotload their dimension when using its WorldProvider
             if(overworld.getMinecraftServer().server.craftWorldLoading)
             {
-                System.out.println("CRAFTWORLD IS LOADING A DIMENSION, CANCELLING!");
                 return;
             }
             // MCPC+ end
@@ -325,7 +318,6 @@ public class DimensionManager
         String worldType;
         String name;
         String oldName = "";
-
         Environment env = Environment.getEnvironment(getProviderType(dim));
         if (dim >= -1 && dim <= 1)
         {
@@ -359,7 +351,6 @@ public class DimensionManager
         {
             world.getWorld().getPopulators().addAll(gen.getDefaultPopulators(world.getWorld()));
         }
-        //mcServer.worlds.add(world); world is added to this collection in setWorld. since  it is a list and not a set, it will be added twice
         mcServer.getConfigurationManager().setPlayerManager(mcServer.worlds.toArray(new WorldServer[mcServer.worlds.size()]));
         // MCPC+ end
         world.addWorldAccess(new WorldManager(mcServer, world));
@@ -369,7 +360,7 @@ public class DimensionManager
         {
             world.getWorldInfo().setGameType(mcServer.getGameType());
         }
-        System.out.println("1mcServer.getDifficulty() = " + mcServer.getDifficulty());
+
         mcServer.setDifficultyForAllWorlds(mcServer.getDifficulty());
     }
 
@@ -384,7 +375,6 @@ public class DimensionManager
 
         String worldType;
         String name;
-        System.out.println("initDimension CREATOR NAME = " + creator.name());
 
         int providerId = 0;
         if (creator.environment() != null)
@@ -396,12 +386,9 @@ public class DimensionManager
         {
             // do nothing
         }
-        System.out.println("creator env id = " + providerId);
+
         Environment env = creator.environment();
-        System.out.println("env = " + env);
-
         worldType = env.name().toLowerCase();
-
         name = creator.name();
         int dim = 0;
         // Use saved dimension from level.dat if it exists. This guarantees that after a world is created, the same dimension will be used. Fixes issues with MultiVerse
@@ -421,8 +408,6 @@ public class DimensionManager
 
         registerDimension(dim, providerId);
         addBukkitDimension(dim);
-        System.out.println("DIM = " + dim + ", environment = " + creator.environment());
-
         ChunkGenerator gen = creator.generator();
         if (mcServer instanceof DedicatedServer) {
             worldSettings.func_82750_a(((DedicatedServer) mcServer).getStringProperty("generator-settings", ""));
@@ -443,7 +428,6 @@ public class DimensionManager
         {
             world.getWorldInfo().setGameType(mcServer.getGameType());
         }
-        System.out.println("mcServer.getDifficulty() = " + mcServer.getDifficulty());
         mcServer.setDifficultyForAllWorlds(mcServer.getDifficulty());
 
         return world;

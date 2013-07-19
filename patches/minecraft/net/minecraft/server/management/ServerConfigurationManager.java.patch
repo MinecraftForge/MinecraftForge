@@ -52,15 +52,6 @@
  
  public abstract class ServerConfigurationManager
  {
-@@ -65,7 +90,7 @@
-     private final MinecraftServer mcServer;
- 
-     /** A list of player entities that exist on this server. */
--    public final List playerEntityList = new ArrayList();
-+    public final List playerEntityList = new java.util.concurrent.CopyOnWriteArrayList(); // CraftBukkit - ArrayList -> CopyOnWriteArrayList: Iterator safety
-     private final BanList bannedPlayers = new BanList(new File("banned-players.txt"));
-     private final BanList bannedIPs = new BanList(new File("banned-ips.txt"));
- 
 @@ -73,15 +98,15 @@
      private Set ops = new HashSet();
  
@@ -437,7 +428,7 @@
  
      /**
       * creates and returns a respawned player based on the provided PlayerEntity. Args are the PlayerEntityMP to
-@@ -392,80 +628,177 @@
+@@ -392,80 +628,178 @@
       */
      public EntityPlayerMP respawnPlayer(EntityPlayerMP par1EntityPlayerMP, int par2, boolean par3)
      {
@@ -589,6 +580,7 @@
 +        if (DimensionManager.isBukkitDimension(actualDimension))
 +        {
 +            Packet250CustomPayload[] pkt = ForgePacket.makePacketSet(new DimensionRegisterPacket(actualDimension, worldserver.getWorld().getEnvironment().getId()));
++            entityplayermp1.playerNetServerHandler.sendPacketToPlayer(pkt[0]);
 +        }
 +        // MCPC+ end
 +        // CraftBukkit start
@@ -660,7 +652,7 @@
          this.func_72375_a(par1EntityPlayerMP, worldserver);
          par1EntityPlayerMP.playerNetServerHandler.setPlayerLocation(par1EntityPlayerMP.posX, par1EntityPlayerMP.posY, par1EntityPlayerMP.posZ, par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
          par1EntityPlayerMP.theItemInWorldManager.setWorld(worldserver1);
-@@ -480,6 +813,107 @@
+@@ -480,6 +814,107 @@
          }
  
          GameRegistry.onPlayerChangedDimension(par1EntityPlayerMP);
@@ -768,7 +760,7 @@
      }
  
      /**
-@@ -487,38 +921,25 @@
+@@ -487,38 +922,25 @@
       */
      public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer)
      {
@@ -820,7 +812,7 @@
          {
              ChunkCoordinates chunkcoordinates;
  
-@@ -555,7 +976,7 @@
+@@ -555,7 +977,7 @@
                  par4WorldServer.spawnEntityInWorld(par1Entity);
                  par1Entity.setLocationAndAngles(d0, par1Entity.posY, d1, par1Entity.rotationYaw, par1Entity.rotationPitch);
                  par4WorldServer.updateEntityWithOptionalForce(par1Entity, false);
@@ -829,7 +821,7 @@
              }
  
              par3WorldServer.theProfiler.endSection();
-@@ -564,6 +985,118 @@
+@@ -564,6 +986,118 @@
          par1Entity.setWorld(par4WorldServer);
      }
  
@@ -948,7 +940,7 @@
      /**
       * sends 1 player per tick, but only sends a player once every 600 ticks
       */
-@@ -574,12 +1107,38 @@
+@@ -574,12 +1108,38 @@
              this.playerPingIndex = 0;
          }
  
@@ -993,7 +985,7 @@
  
      /**
       * sends a packet to all players
-@@ -659,6 +1218,15 @@
+@@ -659,6 +1219,15 @@
      public void addOp(String par1Str)
      {
          this.ops.add(par1Str.toLowerCase());
@@ -1009,7 +1001,7 @@
      }
  
      /**
-@@ -667,6 +1235,15 @@
+@@ -667,6 +1236,15 @@
      public void removeOp(String par1Str)
      {
          this.ops.remove(par1Str.toLowerCase());
@@ -1025,7 +1017,7 @@
      }
  
      /**
-@@ -683,7 +1260,8 @@
+@@ -683,7 +1261,8 @@
       */
      public boolean areCommandsAllowed(String par1Str)
      {
@@ -1035,7 +1027,7 @@
      }
  
      public EntityPlayerMP getPlayerForUsername(String par1Str)
-@@ -857,6 +1435,13 @@
+@@ -857,6 +1436,13 @@
          {
              EntityPlayerMP entityplayermp = (EntityPlayerMP)this.playerEntityList.get(j);
  
@@ -1049,7 +1041,7 @@
              if (entityplayermp != par1EntityPlayer && entityplayermp.dimension == par10)
              {
                  double d4 = par2 - entityplayermp.posX;
-@@ -925,7 +1510,7 @@
+@@ -925,7 +1511,7 @@
  
          if (par2WorldServer.isRaining())
          {
@@ -1058,7 +1050,7 @@
          }
      }
  
-@@ -960,7 +1545,10 @@
+@@ -960,7 +1546,10 @@
       */
      public String[] getAvailablePlayerDat()
      {
@@ -1070,7 +1062,7 @@
      }
  
      public boolean isWhiteListEnabled()
-@@ -1049,7 +1637,16 @@
+@@ -1049,7 +1638,16 @@
      {
          while (!this.playerEntityList.isEmpty())
          {
