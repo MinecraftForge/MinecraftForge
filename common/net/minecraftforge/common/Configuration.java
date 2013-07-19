@@ -32,6 +32,8 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import pwnedary.electronum.GetProperty;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.Property;
