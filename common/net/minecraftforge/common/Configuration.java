@@ -32,8 +32,6 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import pwnedary.electronum.GetProperty;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.Property;
@@ -935,40 +933,59 @@ public class Configuration
 	 * @param type the class to search in
 	 * @author pwnedary
 	 */
-    public void parseAnnotations(Class<?> type) {
+    public void parseAnnotations(Class<?> type)
+    {
     	// config.load(); // loading the configuration from its file
 		Field[] fields = type.getDeclaredFields();
-		for (int i = 0; i < fields.length; i++) {
+		for (int i = 0; i < fields.length; i++)
+		{
 			Field field = fields[i];
-			if (!Modifier.isStatic(field.getModifiers())) continue;
+			if (!Modifier.isStatic(field.getModifiers()))
+			{
+				continue;
+			}
 
 			GetProperty gp = field.getAnnotation(GetProperty.class);
-			if (gp == null) continue;
+			if (gp == null)
+			{
+				continue;
+			}
 
-			try {
+			try
+			{
 				String name = gp.name().isEmpty() ? field.getName() : gp.name();
 				// System.out.println("Getting value of property: " + name);
 				boolean usePresent = gp.usePresent();
 				Property property = null;
-				if (field.getType().equals(String.class)) { // field == String
+				if (field.getType().equals(String.class))
+				{ // field == String
 					String defaultString = usePresent && gp.defaultString().isEmpty() ? (String) field.get(null) : gp.defaultString();
 					property = this.get(gp.category(), name, defaultString);
 					field.set(null, property.getString());
-				} else if (field.getType().equals(int.class)) { // field == Integer
+				}
+				else if (field.getType().equals(int.class))
+				{ // field == Integer
 					int defaultInt = usePresent && gp.defaultInt() == -1 ? field.getInt(null) : gp.defaultInt();
 					property = this.get(gp.category(), name, defaultInt);
 					field.set(null, property.getInt(defaultInt));
-				} else if (field.getType().equals(boolean.class)) { // field == Boolean
+				}
+				else if (field.getType().equals(boolean.class))
+				{ // field == Boolean
 					boolean defaultBoolean = gp.usePresent() ? field.getBoolean(null) : gp.defaultBoolean();
 					property = this.get(gp.category(), name, defaultBoolean);
 					field.set(null, property.getBoolean(defaultBoolean));
-				} else if (field.getType().equals(double.class)) { // field == Double
+				}
+				else if (field.getType().equals(double.class))
+				{ // field == Double
 					double defaultDouble = usePresent && gp.defaultDouble() == -1.0d ? field.getDouble(null) : gp.defaultDouble();
 					property = this.get(gp.category(), name, defaultDouble);
 					field.set(null, property.getDouble(defaultDouble));
 				}
-				if (!gp.comment().isEmpty()) property.comment = gp.comment(); // use comment
-			} catch (IllegalArgumentException | IllegalAccessException e) {
+				if (!gp.comment().isEmpty()) {
+					property.comment = gp.comment(); // use comment
+				}
+			} catch (IllegalArgumentException | IllegalAccessException e)
+			{
 				e.printStackTrace();
 			}
 		}
