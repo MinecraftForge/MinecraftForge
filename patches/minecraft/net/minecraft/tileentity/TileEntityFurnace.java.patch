@@ -189,17 +189,22 @@
  
              if (flag != this.furnaceBurnTime > 0)
              {
-@@ -327,7 +408,8 @@
+@@ -326,8 +407,12 @@
+         }
          else
          {
-             ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0].getItem().itemID);
+-            ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0].getItem().itemID);
 -            return itemstack == null ? false : (this.furnaceItemStacks[2] == null ? true : (!this.furnaceItemStacks[2].isItemEqual(itemstack) ? false : (this.furnaceItemStacks[2].stackSize < this.getInventoryStackLimit() && this.furnaceItemStacks[2].stackSize < this.furnaceItemStacks[2].getMaxStackSize() ? true : this.furnaceItemStacks[2].stackSize < itemstack.getMaxStackSize())));
-+            // CraftBukkit - consider resultant count instead of current count
-+            return itemstack == null ? false : (this.furnaceItemStacks[2] == null ? true : (!this.furnaceItemStacks[2].isItemEqual(itemstack) ? false : (this.furnaceItemStacks[2].stackSize + itemstack.stackSize <= this.getInventoryStackLimit() && this.furnaceItemStacks[2].stackSize < this.furnaceItemStacks[2].getMaxStackSize() ? true : this.furnaceItemStacks[2].stackSize + itemstack.stackSize <= itemstack.getMaxStackSize())));
++            ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0]);
++            if (itemstack == null) return false;
++            if (this.furnaceItemStacks[2] == null) return true;
++            if (!this.furnaceItemStacks[2].isItemEqual(itemstack)) return false;
++            int result = furnaceItemStacks[2].stackSize + itemstack.stackSize;
++            return (result <= getInventoryStackLimit() && result <= itemstack.getMaxStackSize());
          }
      }
  
-@@ -338,15 +420,32 @@
+@@ -338,15 +423,32 @@
      {
          if (this.canSmelt())
          {
@@ -236,7 +241,7 @@
              }
  
              --this.furnaceItemStacks[0].stackSize;
-@@ -373,7 +472,7 @@
+@@ -373,7 +475,7 @@
              int i = par0ItemStack.getItem().itemID;
              Item item = par0ItemStack.getItem();
  
