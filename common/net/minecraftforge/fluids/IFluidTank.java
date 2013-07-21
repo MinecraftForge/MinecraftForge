@@ -49,8 +49,8 @@ public interface IFluidTank
      * 
      * @param maxDrain
      *            Maximum amount of fluid to be removed from the container.
-     * @param doFill
-     *            If false, the fill will only be simulated.
+     * @param doDrain
+     *            If false, the drain will only be simulated.
      * @return Amount of fluid that was removed from the tank.
      */
     FluidStack drain(int maxDrain, boolean doDrain);
