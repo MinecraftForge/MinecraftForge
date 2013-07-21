@@ -33,7 +33,7 @@
  import net.minecraft.util.ReportedException;
  import net.minecraft.util.StatCollector;
  import net.minecraft.util.Vec3;
-@@ -33,8 +42,51 @@
+@@ -33,8 +42,52 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
  
@@ -66,6 +66,7 @@
 +// CraftBukkit end
 +// MCPC+ start
 +import cpw.mods.fml.common.registry.EntityRegistry;
++import net.minecraft.world.Teleporter;
 +import net.minecraftforge.common.EnumHelper;
 +// MCPC+ end
 +import net.minecraftforge.common.IExtendedEntityProperties;
@@ -85,7 +86,7 @@
      private static int nextEntityID;
      public int entityId;
      public double renderDistanceWeight;
-@@ -171,12 +223,12 @@
+@@ -171,12 +224,12 @@
       * The amount of ticks you have to stand inside of fire before be set on fire
       */
      public int fireResistance;
@@ -100,7 +101,7 @@
  
      /**
       * Remaining time an entity will be "immune" to further damage after being hurt.
-@@ -184,7 +236,7 @@
+@@ -184,7 +237,7 @@
      public int hurtResistantTime;
      private boolean firstUpdate;
      protected boolean isImmuneToFire;
@@ -109,7 +110,7 @@
      private double entityRiderPitchDelta;
      private double entityRiderYawDelta;
  
-@@ -216,8 +268,24 @@
+@@ -216,8 +269,24 @@
      public int dimension;
      protected int teleportDirection;
      private boolean invulnerable;
@@ -135,7 +136,7 @@
  
      public Entity(World par1World)
      {
-@@ -232,19 +300,35 @@
+@@ -232,19 +301,35 @@
          this.fireResistance = 1;
          this.firstUpdate = true;
          this.dataWatcher = new DataWatcher();
@@ -175,7 +176,7 @@
      }
  
      protected abstract void entityInit();
-@@ -354,6 +438,41 @@
+@@ -354,6 +439,41 @@
       */
      protected void setRotation(float par1, float par2)
      {
@@ -217,7 +218,7 @@
          this.rotationYaw = par1 % 360.0F;
          this.rotationPitch = par2 % 360.0F;
      }
-@@ -434,7 +553,7 @@
+@@ -434,7 +554,7 @@
  
              if (this.inPortal)
              {
@@ -226,7 +227,7 @@
                  {
                      if (this.ridingEntity == null && this.timeInPortal++ >= i)
                      {
-@@ -554,7 +673,44 @@
+@@ -554,7 +674,44 @@
      {
          if (!this.isImmuneToFire)
          {
@@ -272,7 +273,7 @@
              this.setFire(15);
          }
      }
-@@ -604,6 +760,14 @@
+@@ -604,6 +761,14 @@
       */
      public void moveEntity(double par1, double par3, double par5)
      {
@@ -287,12 +288,12 @@
          if (this.noClip)
          {
              this.boundingBox.offset(par1, par3, par5);
-@@ -868,6 +1032,33 @@
+@@ -868,6 +1033,33 @@
              d10 = this.posY - d4;
              d11 = this.posZ - d5;
  
 +            // CraftBukkit start
-+            if ((this.isCollidedHorizontally) && (this.getBukkitEntity() instanceof Vehicle))
++            if ((this.isCollidedHorizontally) && (this.getBukkitEntity() instanceof Vehicle) && this.worldObj.getWorld() != null) // MCPC+ - fixes MFR NPE with grinder/slaughterhouse
 +            {
 +                Vehicle vehicle = (Vehicle) this.getBukkitEntity();
 +                org.bukkit.block.Block block = this.worldObj.getWorld().getBlockAt(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY - (double) this.yOffset), MathHelper.floor_double(this.posZ));
@@ -321,7 +322,7 @@
              if (this.canTriggerWalking() && !flag && this.ridingEntity == null)
              {
                  int l = MathHelper.floor_double(this.posX);
-@@ -930,14 +1121,26 @@
+@@ -930,14 +1122,26 @@
  
              if (this.worldObj.isBoundingBoxBurning(this.boundingBox.contract(0.001D, 0.001D, 0.001D)))
              {
@@ -350,7 +351,7 @@
                          this.setFire(8);
                      }
                  }
-@@ -955,6 +1158,8 @@
+@@ -955,6 +1159,8 @@
  
              this.worldObj.theProfiler.endSection();
          }
@@ -359,7 +360,7 @@
      }
  
      /**
-@@ -1059,15 +1264,22 @@
+@@ -1059,15 +1265,22 @@
          return null;
      }
  
@@ -383,7 +384,7 @@
          }
      }
  
-@@ -1258,6 +1470,15 @@
+@@ -1258,6 +1471,15 @@
       */
      public void setWorld(World par1World)
      {
@@ -399,7 +400,7 @@
          this.worldObj = par1World;
      }
  
-@@ -1513,6 +1734,20 @@
+@@ -1513,6 +1735,20 @@
          {
              par1NBTTagCompound.setTag("Pos", this.newDoubleNBTList(new double[] {this.posX, this.posY + (double)this.ySize, this.posZ}));
              par1NBTTagCompound.setTag("Motion", this.newDoubleNBTList(new double[] {this.motionX, this.motionY, this.motionZ}));
@@ -420,7 +421,7 @@
              par1NBTTagCompound.setTag("Rotation", this.newFloatNBTList(new float[] {this.rotationYaw, this.rotationPitch}));
              par1NBTTagCompound.setFloat("FallDistance", this.fallDistance);
              par1NBTTagCompound.setShort("Fire", (short)this.fire);
-@@ -1523,6 +1758,26 @@
+@@ -1523,6 +1759,26 @@
              par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
              par1NBTTagCompound.setLong("UUIDMost", this.entityUniqueID.getMostSignificantBits());
              par1NBTTagCompound.setLong("UUIDLeast", this.entityUniqueID.getLeastSignificantBits());
@@ -447,7 +448,7 @@
              this.writeEntityToNBT(par1NBTTagCompound);
  
              if (this.ridingEntity != null)
-@@ -1557,7 +1812,7 @@
+@@ -1557,7 +1813,7 @@
              this.motionX = ((NBTTagDouble)nbttaglist1.tagAt(0)).data;
              this.motionY = ((NBTTagDouble)nbttaglist1.tagAt(1)).data;
              this.motionZ = ((NBTTagDouble)nbttaglist1.tagAt(2)).data;
@@ -456,7 +457,7 @@
              if (Math.abs(this.motionX) > 10.0D)
              {
                  this.motionX = 0.0D;
-@@ -1572,7 +1827,7 @@
+@@ -1572,7 +1828,7 @@
              {
                  this.motionZ = 0.0D;
              }
@@ -465,7 +466,7 @@
              this.prevPosX = this.lastTickPosX = this.posX = ((NBTTagDouble)nbttaglist.tagAt(0)).data;
              this.prevPosY = this.lastTickPosY = this.posY = ((NBTTagDouble)nbttaglist.tagAt(1)).data;
              this.prevPosZ = this.lastTickPosZ = this.posZ = ((NBTTagDouble)nbttaglist.tagAt(2)).data;
-@@ -1593,12 +1848,92 @@
+@@ -1593,12 +1849,92 @@
  
              this.setPosition(this.posX, this.posY, this.posZ);
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -562,7 +563,7 @@
          }
          catch (Throwable throwable)
          {
-@@ -1705,7 +2040,14 @@
+@@ -1705,7 +2041,14 @@
          {
              EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
              entityitem.delayBeforeCanPickup = 10;
@@ -578,7 +579,7 @@
              return entityitem;
          }
      }
-@@ -1741,6 +2083,9 @@
+@@ -1741,6 +2084,9 @@
          return false;
      }
  
@@ -588,7 +589,7 @@
      public boolean func_130002_c(EntityPlayer par1EntityPlayer)
      {
          return false;
-@@ -1855,13 +2200,50 @@
+@@ -1855,13 +2201,50 @@
       */
      public void mountEntity(Entity par1Entity)
      {
@@ -640,7 +641,7 @@
                  this.setLocationAndAngles(this.ridingEntity.posX, this.ridingEntity.boundingBox.minY + (double)this.ridingEntity.height, this.ridingEntity.posZ, this.rotationYaw, this.rotationPitch);
                  this.ridingEntity.riddenByEntity = null;
              }
-@@ -1870,13 +2252,48 @@
+@@ -1870,13 +2253,48 @@
          }
          else
          {
@@ -691,7 +692,7 @@
          }
      }
  
-@@ -2001,7 +2418,7 @@
+@@ -2001,7 +2419,7 @@
       */
      public boolean isRiding()
      {
@@ -700,7 +701,7 @@
      }
  
      /**
-@@ -2104,12 +2521,48 @@
+@@ -2104,12 +2522,48 @@
       */
      public void onStruckByLightning(EntityLightningBolt par1EntityLightningBolt)
      {
@@ -751,7 +752,7 @@
          }
      }
  
-@@ -2321,36 +2774,81 @@
+@@ -2321,36 +2775,71 @@
          {
              this.worldObj.theProfiler.startSection("changeDimension");
              MinecraftServer minecraftserver = MinecraftServer.getServer();
@@ -770,24 +771,14 @@
 +            // int j = this.dimension;
 +            // MCPC+ start - Allow Forge hotloading on teleport
 +            WorldServer exitWorld = minecraftserver.worldServerForDimension(par1);
-+            /*
-+            if (this.dimension < CraftWorld.CUSTOM_DIMENSION_OFFSET)   // Plugins must specify exit from custom Bukkit worlds
-+            {
-+                // Only target existing worlds (compensate for allow-nether/allow-end as false)
-+                for (WorldServer world : minecraftserver.worlds)
-+                {
-+                    if (world.dimension == par1)
-+                    {
-+                        exitWorld = world;
-+                    }
-+                }
-+            }
-+            // MCPC+ end - */
 +
 +            Location enter = this.getBukkitEntity().getLocation();
 +            Location exit = exitWorld != null ? minecraftserver.getConfigurationManager().calculateTarget(enter, minecraftserver.worldServerForDimension(par1)) : null;
 +            boolean useTravelAgent = exitWorld != null && !(this.dimension == 1 && exitWorld.dimension == 1); // don't use agent for custom worlds or return from THE_END
-+            TravelAgent agent = exit != null ? (TravelAgent)((CraftWorld) exit.getWorld()).getHandle().getDefaultTeleporter() : org.bukkit.craftbukkit.CraftTravelAgent.DEFAULT;  // return arbitrary TA to compensate for implementation dependent plugins
++            // MCPC+ start - check if teleporter is instance of TravelAgent before attempting to cast to it
++            Teleporter teleporter = exit != null ? ((CraftWorld) exit.getWorld()).getHandle().getDefaultTeleporter() : null;
++            TravelAgent agent = (teleporter != null && teleporter instanceof TravelAgent) ? (TravelAgent)teleporter : org.bukkit.craftbukkit.CraftTravelAgent.DEFAULT;  // return arbitrary TA to compensate for implementation dependent plugins
++            // MCPC+ end
 +            EntityPortalEvent event = new EntityPortalEvent(this.getBukkitEntity(), enter, exit, agent);
 +            event.useTravelAgent(useTravelAgent);
 +            event.getEntity().getServer().getPluginManager().callEvent(event);
@@ -853,7 +844,7 @@
              }
  
              this.isDead = true;
-@@ -2363,7 +2861,7 @@
+@@ -2363,7 +2852,7 @@
  
      public float func_82146_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
      {
@@ -862,7 +853,7 @@
      }
  
      public boolean func_96091_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
-@@ -2426,4 +2924,160 @@
+@@ -2426,4 +2915,160 @@
      {
          return this.getEntityName();
      }
