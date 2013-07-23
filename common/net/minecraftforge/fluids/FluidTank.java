@@ -14,29 +14,23 @@ public class FluidTank implements IFluidTank {
 
     protected FluidStack fluid;
     protected int capacity;
-    protected TileEntity tile;
-
-    public FluidTank(int capacity) {
-
-        this(null, capacity);
-    }
-
-    public FluidTank(FluidStack stack, int capacity) {
-
-        this(stack, capacity, null);
-    }
-
-    public FluidTank(FluidStack stack, int capacity, TileEntity tile) {
-
-        this.fluid = stack;
-        this.capacity = capacity;
+    protected final TileEntity tile;
+    
+    public FluidTank(TileEntity tile, FluidStack fluid, int capacity) {
         this.tile = tile;
+        this.fluid = fluid;
+        this.capacity = capacity;
+    }
+    
+    public FluidTank(TileEntity tile, int capacity) {
+        this(tile, (FluidStack)null, capacity);
+    }
+    
+    public FluidTank(TileEntity tile, Fluid fluid, int capacity) {
+        this(tile, new FluidStack(fluid, 0), capacity);
     }
 
-    public FluidTank(Fluid fluid, int amount, int capacity) {
-
-        this(new FluidStack(fluid, amount), capacity);
-    }
+    
 
     public FluidTank readFromNBT(NBTTagCompound nbt) {
 
