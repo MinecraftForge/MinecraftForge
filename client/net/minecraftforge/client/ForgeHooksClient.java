@@ -54,9 +54,15 @@ public class ForgeHooksClient
         return FMLClientHandler.instance().getClient().renderEngine;
     }
 
+    @Deprecated
     public static String getArmorTexture(Entity entity, ItemStack armor, String _default, int slot, int layer, String type)
     {
-        String result = armor.getItem().getArmorTexture(armor, entity, slot, layer);
+        return getArmorTexture(entity, armor, _default, slot, type);
+    }
+
+    public static String getArmorTexture(Entity entity, ItemStack armor, String _default, int slot, String type)
+    {
+        String result = armor.getItem().getArmorTexture(armor, entity, slot, type);
         return result != null ? result : _default;
     }
 
