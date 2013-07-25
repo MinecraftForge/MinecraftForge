@@ -10,11 +10,11 @@ import net.minecraft.world.World;
 
 /**
  * This is a fluid block implementation which emulates vanilla Minecraft fluid behavior.
- * 
+ *
  * It is highly recommended that you use/extend this class for "classic" fluid blocks.
- * 
+ *
  * @author King Lemming
- * 
+ *
  */
 public class BlockFluidClassic extends BlockFluidBase
 {
@@ -92,8 +92,8 @@ public class BlockFluidClassic extends BlockFluidBase
         {
             int y2 = y - densityDir;
 
-            if (world.getBlockId(x,     y2, z    ) == blockID || 
-                world.getBlockId(x - 1, y2, z    ) == blockID || 
+            if (world.getBlockId(x,     y2, z    ) == blockID ||
+                world.getBlockId(x - 1, y2, z    ) == blockID ||
                 world.getBlockId(x + 1, y2, z    ) == blockID ||
                 world.getBlockId(x,     y2, z - 1) == blockID ||
                 world.getBlockId(x,     y2, z + 1) == blockID)
@@ -226,7 +226,7 @@ public class BlockFluidClassic extends BlockFluidBase
         int cost = 1000;
         for (int adjSide = 0; adjSide < 4; adjSide++)
         {
-            if ((adjSide == 0 && side == 1) || 
+            if ((adjSide == 0 && side == 1) ||
                 (adjSide == 1 && side == 0) ||
                 (adjSide == 2 && side == 3) ||
                 (adjSide == 3 && side == 2))
@@ -319,7 +319,7 @@ public class BlockFluidClassic extends BlockFluidBase
     @Override
     public FluidStack drain(World world, int x, int y, int z, boolean doDrain)
     {
-        if (!isSourceBlock(world, x, y, z))
+        if (!this.canDrain(world, x, y, z))
         {
             return null;
         }
@@ -336,5 +336,31 @@ public class BlockFluidClassic extends BlockFluidBase
     public boolean canDrain(World world, int x, int y, int z)
     {
         return isSourceBlock(world, x, y, z);
+    }
+
+    @Override
+    public int fill(World world, int x, int y, int z, FluidStack receivingStack, boolean doFill)
+    {
+        if(!this.canFill(world, x, y, z))
+        {
+            return 0;
+        }
+
+        if(receivingStack != null && receivingStack.amount >= FluidContainerRegistry.BUCKET_VOLUME)
+        {
+            if(doFill)
+            {
+                world.setBlockMetadataWithNotify(x, y, z, 0, 3);
+            }
+            return FluidContainerRegistry.BUCKET_VOLUME;
+        }
+
+        return 0;
+    }
+
+    @Override
+    public boolean canFill(World world, int x, int y, int z)
+    {
+        return !isSourceBlock(world, x, y, z);
     }
 }
