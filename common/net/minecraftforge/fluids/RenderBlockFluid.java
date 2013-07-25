@@ -1,4 +1,3 @@
-
 package net.minecraftforge.fluids;
 
 import net.minecraft.block.Block;
@@ -29,12 +28,14 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
     {
         float total = 0;
         int count = 0;
+        
+        float end = 0;
 
         for (int i = 0; i < flow.length; i++)
         {
-            if (flow[i] >= 0.875F)
+            if (flow[i] >= 0.875F && end != 1F)
             {
-                return flow[i];
+            	end = flow[i];
             }
 
             if (flow[i] >= 0)
@@ -43,7 +44,11 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                 count++;
             }
         }
-        return total / count;
+        
+        if (end == 0)
+        	end = total / count;
+        
+        return end;
     }
 
     public float getFluidHeightForRender(IBlockAccess world, int x, int y, int z, BlockFluidBase block)
