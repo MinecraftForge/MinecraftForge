@@ -43,7 +43,7 @@
      }
  
      protected boolean func_110813_b(EntityLivingBase par1EntityLivingBase)
-@@ -570,7 +578,9 @@
+@@ -570,6 +578,8 @@
      */
     public void doRender(Entity par1Entity, double par2, double par4, double par6, float par8, float par9)
     {
