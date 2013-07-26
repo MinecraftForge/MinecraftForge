@@ -17,6 +17,8 @@ import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
+import net.minecraftforge.event.entity.permissions.PermissionEvent;
+import net.minecraftforge.event.entity.permissions.LocatablePermissionEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
 @SuppressWarnings("deprecation")
@@ -74,5 +76,19 @@ public class ForgeEventFactory
         LivingPackSizeEvent maxCanSpawnEvent = new LivingPackSizeEvent(entity);
         MinecraftForge.EVENT_BUS.post(maxCanSpawnEvent);
         return maxCanSpawnEvent.getResult() == Result.ALLOW ? maxCanSpawnEvent.maxPackSize : entity.getMaxSpawnedInChunk();
+    }
+
+    public static Result checkPermission(EntityPlayer player, String permission)
+    {
+        PermissionEvent event = new PermissionEvent(player, permission);
+        MinecraftForge.PERMISSIONS_BUS.post(event);
+        return event.getResult();
+    }
+	
+    public static Result checkPermission(EntityPlayer player, String permission, float x, float y, float z)
+    {
+        LocatablePermissionEvent event = new LocatablePermissionEvent(player, permission, x, y, z);
+        MinecraftForge.PERMISSIONS_BUS.post(event);
+        return event.getResult();
     }
 }
