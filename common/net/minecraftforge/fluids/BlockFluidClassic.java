@@ -302,7 +302,15 @@ public class BlockFluidClassic extends BlockFluidBase
         {
             return false;
         }
-        return true;
+        
+        if (this.density > getDensity(world, x, y, z))
+        {
+        	return true;
+        }
+        else
+        {
+        	return false;
+        }
     }
 
     protected int getLargerQuanta(IBlockAccess world, int x, int y, int z, int compare)
