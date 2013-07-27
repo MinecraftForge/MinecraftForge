@@ -63,7 +63,9 @@ public class FluidStack
         if (fluidName == null)
         {
             fluidName = nbt.hasKey("LiquidName") ? nbt.getString("LiquidName").toLowerCase(Locale.ENGLISH) : null;
+            fluidName = Fluid.convertLegacyName(fluidName);
         }
+
         if (fluidName ==null || FluidRegistry.getFluid(fluidName) == null)
         {
             return null;
