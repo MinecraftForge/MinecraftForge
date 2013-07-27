@@ -85,7 +85,7 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
      }
-@@ -740,4 +758,514 @@
+@@ -740,4 +758,533 @@
      {
          StatList.initStats();
      }
@@ -460,9 +460,28 @@
 +     * @param layer The render layer, either 1 or 2, 2 is only used for CLOTH armor by default
 +     * @return Path of texture to bind, or null to use default
 +     */
++    @Deprecated //Replaced with more useful version below
 +    public String getArmorTexture(ItemStack stack, Entity entity, int slot, int layer)
 +    {
 +        return null;
++    }
++    
++    /**
++     * Called by RenderBiped and RenderPlayer to determine the armor texture that 
++     * should be use for the currently equiped item.
++     * This will only be called on instances of ItemArmor. 
++     * 
++     * Returning null from this function will use the default value.
++     * 
++     * @param stack ItemStack for the equpt armor
++     * @param entity The entity wearing the armor
++     * @param slot The slot the armor is in
++     * @param type The subtype, can be null or "overlay"
++     * @return Path of texture to bind, or null to use default
++     */
++    public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type)
++    {
++        return getArmorTexture(stack, entity, slot, (slot == 2 ? 2 : 1));
 +    }
 +
 +

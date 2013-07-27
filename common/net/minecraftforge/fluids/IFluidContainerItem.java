@@ -1,4 +1,3 @@
-
 package net.minecraftforge.fluids;
 
 import net.minecraft.item.ItemStack;
@@ -14,8 +13,8 @@ import net.minecraft.item.ItemStack;
  * @author King Lemming
  * 
  */
-public interface IFluidContainerItem {
-
+public interface IFluidContainerItem
+{
     /**
      * 
      * @param container
@@ -57,5 +56,4 @@ public interface IFluidContainerItem {
      *         container.
      */
     FluidStack drain(ItemStack container, int maxDrain, boolean doDrain);
-
 }

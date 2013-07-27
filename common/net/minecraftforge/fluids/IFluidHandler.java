@@ -1,4 +1,3 @@
-
 package net.minecraftforge.fluids;
 
 import net.minecraftforge.common.ForgeDirection;
@@ -12,8 +11,8 @@ import net.minecraftforge.common.ForgeDirection;
  * @author King Lemming
  * 
  */
-public interface IFluidHandler {
-
+public interface IFluidHandler
+{
     /**
      * Fills fluid into internal tanks, distribution is left entirely to the IFluidHandler.
      * 
@@ -80,5 +79,4 @@ public interface IFluidHandler {
      * @return Info for the relevant internal tanks.
      */
     FluidTankInfo[] getTankInfo(ForgeDirection from);
-
 }

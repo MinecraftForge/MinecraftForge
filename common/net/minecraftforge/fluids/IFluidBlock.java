@@ -1,4 +1,3 @@
-
 package net.minecraftforge.fluids;
 
 import net.minecraft.world.World;
@@ -11,8 +10,8 @@ import net.minecraft.world.World;
  * @author King Lemming
  * 
  */
-public interface IFluidBlock {
-
+public interface IFluidBlock
+{
     /**
      * Returns the Fluid associated with this Block.
      */

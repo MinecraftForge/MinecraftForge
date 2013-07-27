@@ -22,8 +22,8 @@ import net.minecraftforge.event.Event;
  * @author King Lemming
  * 
  */
-public abstract class FluidContainerRegistry {
-
+public abstract class FluidContainerRegistry
+{
     private static Map<List, FluidContainerData> containerFluidMap = new HashMap();
     private static Map<List, FluidContainerData> filledContainerMap = new HashMap();
     private static Set<List> emptyContainers = new HashSet();
@@ -32,15 +32,14 @@ public abstract class FluidContainerRegistry {
     public static final ItemStack EMPTY_BUCKET = new ItemStack(Item.bucketEmpty);
     public static final ItemStack EMPTY_BOTTLE = new ItemStack(Item.glassBottle);
 
-    static {
+    static
+    {
         registerFluidContainer(FluidRegistry.WATER, new ItemStack(Item.bucketWater), EMPTY_BUCKET);
-        registerFluidContainer(FluidRegistry.LAVA, new ItemStack(Item.bucketLava), EMPTY_BUCKET);
-        registerFluidContainer(FluidRegistry.WATER, new ItemStack(Item.potion), EMPTY_BOTTLE);
+        registerFluidContainer(FluidRegistry.LAVA,  new ItemStack(Item.bucketLava),  EMPTY_BUCKET);
+        registerFluidContainer(FluidRegistry.WATER, new ItemStack(Item.potion),      EMPTY_BOTTLE);
     }
 
-    private FluidContainerRegistry() {
-
-    }
+    private FluidContainerRegistry(){}
 
     /**
      * Register a new fluid containing item.
@@ -53,8 +52,8 @@ public abstract class FluidContainerRegistry {
      *            ItemStack representing the container when it is empty.
      * @return True if container was successfully registered; false if it already is.
      */
-    public static boolean registerFluidContainer(FluidStack stack, ItemStack filledContainer, ItemStack emptyContainer) {
-
+    public static boolean registerFluidContainer(FluidStack stack, ItemStack filledContainer, ItemStack emptyContainer)
+    {
         return registerFluidContainer(new FluidContainerData(stack, filledContainer, emptyContainer));
     }
 
@@ -70,9 +69,10 @@ public abstract class FluidContainerRegistry {
      *            ItemStack representing the container when it is empty.
      * @return True if container was successfully registered; false if it already is.
      */
-    public static boolean registerFluidContainer(Fluid fluid, ItemStack filledContainer, ItemStack emptyContainer) {
-
-        if (!FluidRegistry.isFluidRegistered(fluid)) {
+    public static boolean registerFluidContainer(Fluid fluid, ItemStack filledContainer, ItemStack emptyContainer)
+    {
+        if (!FluidRegistry.isFluidRegistered(fluid))
+        {
             FluidRegistry.registerFluid(fluid);
         }
         return registerFluidContainer(new FluidStack(fluid, BUCKET_VOLUME), filledContainer, emptyContainer);
@@ -87,8 +87,8 @@ public abstract class FluidContainerRegistry {
      *            ItemStack representing the container when it is full.
      * @return True if container was successfully registered; false if it already is.
      */
-    public static boolean registerFluidContainer(FluidStack stack, ItemStack filledContainer) {
-
+    public static boolean registerFluidContainer(FluidStack stack, ItemStack filledContainer)
+    {
         return registerFluidContainer(new FluidContainerData(stack, filledContainer, null, true));
     }
 
@@ -102,9 +102,10 @@ public abstract class FluidContainerRegistry {
      *            ItemStack representing the container when it is full.
      * @return True if container was successfully registered; false if it already is.
      */
-    public static boolean registerFluidContainer(Fluid fluid, ItemStack filledContainer) {
-
-        if (!FluidRegistry.isFluidRegistered(fluid)) {
+    public static boolean registerFluidContainer(Fluid fluid, ItemStack filledContainer)
+    {
+        if (!FluidRegistry.isFluidRegistered(fluid))
+        {
             FluidRegistry.registerFluid(fluid);
         }
         return registerFluidContainer(new FluidStack(fluid, BUCKET_VOLUME), filledContainer);
@@ -117,17 +118,20 @@ public abstract class FluidContainerRegistry {
      *            See {@link FluidContainerData}.
      * @return True if container was successfully registered; false if it already is.
      */
-    public static boolean registerFluidContainer(FluidContainerData data) {
-
-        if (isFilledContainer(data.filledContainer)) {
+    public static boolean registerFluidContainer(FluidContainerData data)
+    {
+        if (isFilledContainer(data.filledContainer))
+        {
             return false;
         }
         containerFluidMap.put(Arrays.asList(data.filledContainer.itemID, data.filledContainer.getItemDamage()), data);
 
-        if (data.emptyContainer != null) {
+        if (data.emptyContainer != null)
+        {
             filledContainerMap.put(Arrays.asList(data.emptyContainer.itemID, data.emptyContainer.getItemDamage(), data.fluid.fluidID), data);
             emptyContainers.add(Arrays.asList(data.emptyContainer.itemID, data.emptyContainer.getItemDamage()));
         }
+
         MinecraftForge.EVENT_BUS.post(new FluidContainerRegisterEvent(data));
         return true;
     }
@@ -139,11 +143,13 @@ public abstract class FluidContainerRegistry {
      *            The fluid container.
      * @return FluidStack representing stored fluid.
      */
-    public static FluidStack getFluidForFilledItem(ItemStack container) {
-
-        if (container == null) {
+    public static FluidStack getFluidForFilledItem(ItemStack container)
+    {
+        if (container == null)
+        {
             return null;
         }
+
         FluidContainerData data = containerFluidMap.get(Arrays.asList(container.itemID, container.getItemDamage()));
         return data == null ? null : data.fluid.copy();
     }
@@ -159,13 +165,16 @@ public abstract class FluidContainerRegistry {
      *            ItemStack representing the empty container.
      * @return Filled container if successful, otherwise null.
      */
-    public static ItemStack fillFluidContainer(FluidStack fluid, ItemStack container) {
-
-        if (container == null || fluid == null) {
+    public static ItemStack fillFluidContainer(FluidStack fluid, ItemStack container)
+    {
+        if (container == null || fluid == null)
+        {
             return null;
         }
+
         FluidContainerData data = filledContainerMap.get(Arrays.asList(container.itemID, container.getItemDamage(), fluid.fluidID));
-        if (data != null && fluid.amount >= data.fluid.amount) {
+        if (data != null && fluid.amount >= data.fluid.amount)
+        {
             return data.filledContainer.copy();
         }
         return null;
@@ -174,43 +183,50 @@ public abstract class FluidContainerRegistry {
     /**
      * Determines if a container holds a specific fluid.
      */
-    public static boolean containsFluid(ItemStack container, FluidStack fluid) {
-
-        if (container == null || fluid == null) {
+    public static boolean containsFluid(ItemStack container, FluidStack fluid)
+    {
+        if (container == null || fluid == null)
+        {
             return false;
         }
+
         FluidContainerData data = filledContainerMap.get(Arrays.asList(container.itemID, container.getItemDamage(), fluid.fluidID));
         return data == null ? false : data.fluid.isFluidEqual(fluid);
     }
 
-    public static boolean isBucket(ItemStack container) {
-
-        if (container == null) {
+    public static boolean isBucket(ItemStack container)
+    {
+        if (container == null)
+        {
             return false;
         }
-        if (container.isItemEqual(EMPTY_BUCKET)) {
+
+        if (container.isItemEqual(EMPTY_BUCKET))
+        {
             return true;
         }
+
         FluidContainerData data = containerFluidMap.get(Arrays.asList(container.itemID, container.getItemDamage()));
         return data != null && data.emptyContainer.isItemEqual(EMPTY_BUCKET);
     }
 
-    public static boolean isContainer(ItemStack container) {
-
+    public static boolean isContainer(ItemStack container)
+    {
         return isEmptyContainer(container) || isFilledContainer(container);
     }
 
-    public static boolean isEmptyContainer(ItemStack container) {
-
+    public static boolean isEmptyContainer(ItemStack container)
+    {
         return container != null && emptyContainers.contains(Arrays.asList(container.itemID, container.getItemDamage()));
     }
 
-    public static boolean isFilledContainer(ItemStack container) {
-
+    public static boolean isFilledContainer(ItemStack container)
+    {
         return container != null && getFluidForFilledItem(container) != null;
     }
 
-    public static FluidContainerData[] getRegisteredFluidContainerData() {
+    public static FluidContainerData[] getRegisteredFluidContainerData()
+    {
         return containerFluidMap.values().toArray(new FluidContainerData[containerFluidMap.size()]);
     }
 
@@ -218,40 +234,41 @@ public abstract class FluidContainerRegistry {
      * Wrapper class for the registry entries. Ensures that none of the attempted registrations
      * contain null references unless permitted.
      */
-    public static class FluidContainerData {
-
+    public static class FluidContainerData
+    {
         public final FluidStack fluid;
         public final ItemStack filledContainer;
         public final ItemStack emptyContainer;
 
-        public FluidContainerData(FluidStack stack, ItemStack filledContainer, ItemStack emptyContainer) {
-
+        public FluidContainerData(FluidStack stack, ItemStack filledContainer, ItemStack emptyContainer)
+        {
             this(stack, filledContainer, emptyContainer, false);
         }
 
-        public FluidContainerData(FluidStack stack, ItemStack filledContainer, ItemStack emptyContainer, boolean nullEmpty) {
-
+        public FluidContainerData(FluidStack stack, ItemStack filledContainer, ItemStack emptyContainer, boolean nullEmpty)
+        {
             this.fluid = stack;
             this.filledContainer = filledContainer;
             this.emptyContainer = emptyContainer;
 
-            if (stack == null || filledContainer == null || emptyContainer == null && !nullEmpty) {
+            if (stack == null || filledContainer == null || emptyContainer == null && !nullEmpty)
+            {
                 throw new RuntimeException("Invalid FluidContainerData - a parameter was null.");
             }
         }
 
-        public FluidContainerData copy() {
-
+        public FluidContainerData copy()
+        {
             return new FluidContainerData(fluid, filledContainer, emptyContainer, true);
         }
     }
 
-    public static class FluidContainerRegisterEvent extends Event {
-
+    public static class FluidContainerRegisterEvent extends Event
+    {
         public final FluidContainerData data;
 
-        public FluidContainerRegisterEvent(FluidContainerData data) {
-
+        public FluidContainerRegisterEvent(FluidContainerData data)
+        {
             this.data = data.copy();
         }
     }

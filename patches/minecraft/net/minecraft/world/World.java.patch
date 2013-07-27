@@ -2096,7 +2096,6 @@
  
          return MathHelper.clamp_float(f, 0.0F, flag ? 1.5F : 1.0F);
      }
--}
 +
 +    public boolean func_72916_c_CodeFix_Public(int a, int b){
 +        return chunkExists(a, b);
@@ -2211,4 +2210,4 @@
 +        }
 +        return count;
 +    }
-+}
+ }

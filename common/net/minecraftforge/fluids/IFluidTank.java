@@ -1,4 +1,3 @@
-
 package net.minecraftforge.fluids;
 
 /**
@@ -9,8 +8,8 @@ package net.minecraftforge.fluids;
  * @author King Lemming, cpw (ILiquidTank)
  * 
  */
-public interface IFluidTank {
-
+public interface IFluidTank
+{
     /**
      * @return FluidStack representing the fluid in the tank, null if the tank is empty.
      */
@@ -55,5 +54,4 @@ public interface IFluidTank {
      * @return Amount of fluid that was removed from the tank.
      */
     FluidStack drain(int maxDrain, boolean doDrain);
-
 }
