@@ -1,18 +1,20 @@
 
 package net.minecraftforge.fluids;
 
+import java.util.Locale;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * ItemStack substitute for Fluids.
- * 
+ *
  * NOTE: Equality is based on the Fluid, not the amount. Use
  * {@link #isFluidStackIdentical(FluidStack)} to determine if FluidID, Amount and NBT Tag are all
  * equal.
- * 
+ *
  * @author King Lemming, SirSengir (LiquidStack)
- * 
+ *
  */
 public class FluidStack
 {
@@ -53,15 +55,28 @@ public class FluidStack
      */
     public static FluidStack loadFluidStackFromNBT(NBTTagCompound nbt)
     {
-        if (nbt == null || FluidRegistry.getFluid(nbt.getString("FluidName")) == null)
+        if (nbt == null)
         {
             return null;
         }
-        FluidStack stack = new FluidStack(FluidRegistry.getFluidID(nbt.getString("FluidName")), nbt.getInteger("Amount"));
+        String fluidName = nbt.getString("FluidName");
+        if (fluidName == null)
+        {
+            fluidName = nbt.hasKey("LiquidName") ? nbt.getString("LiquidName").toLowerCase(Locale.ENGLISH) : null;
+        }
+        if (fluidName ==null || FluidRegistry.getFluid(fluidName) == null)
+        {
+            return null;
+        }
+        FluidStack stack = new FluidStack(FluidRegistry.getFluidID(fluidName), nbt.getInteger("Amount"));
 
         if (nbt.hasKey("Tag"))
         {
             stack.tag = nbt.getCompoundTag("Tag");
+        }
+        else if (nbt.hasKey("extra"))
+        {
+            stack.tag = nbt.getCompoundTag("extra");
         }
         return stack;
     }
@@ -93,7 +108,7 @@ public class FluidStack
 
     /**
      * Determines if the FluidIDs and NBT Tags are equal. This does not check amounts.
-     * 
+     *
      * @param other
      *            The FluidStack for comparison
      * @return true if the Fluids (IDs and NBT Tags) are the same
@@ -118,7 +133,7 @@ public class FluidStack
 
     /**
      * Determines if the Fluids are equal and this stack is larger.
-     * 
+     *
      * @param other
      * @return true if this FluidStack contains the other FluidStack (same fluid and >= amount)
      */
@@ -129,7 +144,7 @@ public class FluidStack
 
     /**
      * Determines if the FluidIDs, Amounts, and NBT Tags are all equal.
-     * 
+     *
      * @param other
      *            - the FluidStack for comparison
      * @return true if the two FluidStacks are exactly the same
@@ -142,7 +157,7 @@ public class FluidStack
     /**
      * Determines if the FluidIDs and NBT Tags are equal compared to a registered container
      * ItemStack. This does not check amounts.
-     * 
+     *
      * @param other
      *            The ItemStack for comparison
      * @return true if the Fluids (IDs and NBT Tags) are the same
@@ -170,7 +185,7 @@ public class FluidStack
 
     /**
      * Default equality comparison for a FluidStack. Same functionality as isFluidEqual().
-     * 
+     *
      * This is included for use in data structures.
      */
     @Override
