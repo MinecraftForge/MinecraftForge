@@ -121,7 +121,15 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         {
             return false;
         }
-        return true;
+        
+         if (this.density > getDensity(world, x, y, z))
+        {
+        	return true;
+        }
+        else
+        {
+        	return false;
+        }
     }
 
     /**
@@ -156,7 +164,15 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             return false;
         }
         Block.blocksList[bId].dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
-        return true;
+        
+         if (this.density > getDensity(world, x, y, z))
+        {
+        	return true;
+        }
+        else
+        {
+        	return false;
+        }
     }
 
     public abstract int getQuantaValue(IBlockAccess world, int x, int y, int z);
@@ -307,7 +323,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     public static double getFlowDirection(IBlockAccess world, int x, int y, int z)
     {
         Block block = Block.blocksList[world.getBlockId(x, y, z)];
-        if (!(block instanceof BlockFluidBase))
+        if (world.getBlockMaterial(x, y, z).isLiquid())
         {
             return -1000.0;
         }
