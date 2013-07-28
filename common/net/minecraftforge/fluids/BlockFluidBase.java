@@ -15,11 +15,11 @@ import net.minecraft.world.World;
 
 /**
  * This is a base implementation for Fluid blocks.
- * 
+ *
  * It is highly recommended that you extend this class or one of the Forge-provided child classes.
- * 
+ *
  * @author King Lemming, OvermindDL1
- * 
+ *
  */
 public abstract class BlockFluidBase extends Block implements IFluidBlock
 {
@@ -121,8 +121,8 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         {
             return false;
         }
-        
-         if (this.density > getDensity(world, x, y, z))
+
+        if (this.density > getDensity(world, x, y, z))
         {
         	return true;
         }
@@ -164,7 +164,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             return false;
         }
         Block.blocksList[bId].dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
-        
+
          if (this.density > getDensity(world, x, y, z))
         {
         	return true;
@@ -288,7 +288,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         int lightUpBase   = lightUp & 255;
         int lightThisExt  = lightThis >> 16 & 255;
         int lightUpExt    = lightUp >> 16 & 255;
-        return (lightThisBase > lightUpBase ? lightThisBase : lightUpBase) | 
+        return (lightThisBase > lightUpBase ? lightThisBase : lightUpBase) |
                ((lightThisExt > lightUpExt ? lightThisExt : lightUpExt) << 16);
     }
 
@@ -397,7 +397,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
         if (world.getBlockId(x, y + 1, z) == blockID)
         {
-            boolean flag = 
+            boolean flag =
                 isBlockSolid(world, x,     y,     z - 1, 2) ||
                 isBlockSolid(world, x,     y,     z + 1, 3) ||
                 isBlockSolid(world, x - 1, y,     z,     4) ||
@@ -406,7 +406,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
                 isBlockSolid(world, x,     y + 1, z + 1, 3) ||
                 isBlockSolid(world, x - 1, y + 1, z,     4) ||
                 isBlockSolid(world, x + 1, y + 1, z,     5);
-            
+
             if (flag)
             {
                 vec = vec.normalize().addVector(0.0D, -6.0D, 0.0D);
