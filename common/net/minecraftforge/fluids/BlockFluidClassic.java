@@ -10,11 +10,11 @@ import net.minecraft.world.World;
 
 /**
  * This is a fluid block implementation which emulates vanilla Minecraft fluid behavior.
- * 
+ *
  * It is highly recommended that you use/extend this class for "classic" fluid blocks.
- * 
+ *
  * @author King Lemming
- * 
+ *
  */
 public class BlockFluidClassic extends BlockFluidBase
 {
@@ -92,8 +92,8 @@ public class BlockFluidClassic extends BlockFluidBase
         {
             int y2 = y - densityDir;
 
-            if (world.getBlockId(x,     y2, z    ) == blockID || 
-                world.getBlockId(x - 1, y2, z    ) == blockID || 
+            if (world.getBlockId(x,     y2, z    ) == blockID ||
+                world.getBlockId(x - 1, y2, z    ) == blockID ||
                 world.getBlockId(x + 1, y2, z    ) == blockID ||
                 world.getBlockId(x,     y2, z - 1) == blockID ||
                 world.getBlockId(x,     y2, z + 1) == blockID)
@@ -128,9 +128,10 @@ public class BlockFluidClassic extends BlockFluidBase
                 }
             }
         }
-        else if (quantaRemaining > quantaPerBlock)
+        // This is a "source" block, set meta to zero, and send a server only update
+        else if (quantaRemaining >= quantaPerBlock)
         {
-            world.setBlockMetadataWithNotify(x, y, z, 0, 3);
+            world.setBlockMetadataWithNotify(x, y, z, 0, 2);
         }
 
         // Flow vertically if possible
@@ -226,7 +227,7 @@ public class BlockFluidClassic extends BlockFluidBase
         int cost = 1000;
         for (int adjSide = 0; adjSide < 4; adjSide++)
         {
-            if ((adjSide == 0 && side == 1) || 
+            if ((adjSide == 0 && side == 1) ||
                 (adjSide == 1 && side == 0) ||
                 (adjSide == 2 && side == 3) ||
                 (adjSide == 3 && side == 2))
@@ -302,7 +303,7 @@ public class BlockFluidClassic extends BlockFluidBase
         {
             return false;
         }
-        
+
         if (this.density > getDensity(world, x, y, z))
         {
         	return true;
