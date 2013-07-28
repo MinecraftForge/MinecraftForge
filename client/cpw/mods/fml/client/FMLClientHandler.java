@@ -124,7 +124,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private ModSortingException modSorting;
 
-    private boolean loading;
+    private boolean loading = true;
 
     private WrongMinecraftVersionException wrongMC;
 
@@ -160,7 +160,6 @@ public class FMLClientHandler implements IFMLSidedHandler
             return;
         }
 
-        loading = true;
 //        TextureFXManager.instance().setClient(client);
         FMLCommonHandler.instance().beginLoading(this);
         new ModLoaderClientHelper(client);
