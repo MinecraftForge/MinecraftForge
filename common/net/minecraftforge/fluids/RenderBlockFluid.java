@@ -55,7 +55,7 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
     {
         if (world.getBlockId(x, y, z) == block.blockID)
         {
-            if (world.getBlockId(x, y - block.densityDir, z) == block.blockID)
+            if (world.getBlockMaterial(x, y - block.densityDir, z).isLiquid())
             {
                 return 1;
             }
