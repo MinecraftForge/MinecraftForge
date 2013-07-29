@@ -430,4 +430,46 @@ public class GameRegistry
 	    }
 	    return null;
 	}
+
+	public static class UniqueIdentifier
+	{
+	    public final String modId;
+	    public final String name;
+        UniqueIdentifier(String modId, String name)
+        {
+            this.modId = modId;
+            this.name = name;
+        }
+	}
+
+	/**
+	 * Look up the mod identifier data for a block.
+	 * Returns null if there is no mod specified mod identifier data, or it is part of a
+	 * custom itemstack definition {@link #registerCustomItemStack}
+	 *
+	 * Note: uniqueness and persistence is only guaranteed by mods using the game registry
+	 * correctly.
+	 *
+	 * @param block to lookup
+     * @return a {@link UniqueIdentifier} for the block or null
+	 */
+	public static UniqueIdentifier findUniqueIdentifierFor(net.minecraft.block.Block block)
+	{
+	    return GameData.getUniqueName(block);
+	}
+    /**
+     * Look up the mod identifier data for an item.
+     * Returns null if there is no mod specified mod identifier data, or it is part of a
+     * custom itemstack definition {@link #registerCustomItemStack}
+     *
+     * Note: uniqueness and persistence is only guaranteed by mods using the game registry
+     * correctly.
+     *
+     * @param item to lookup
+     * @return a {@link UniqueIdentifier} for the item or null
+     */
+    public static UniqueIdentifier findUniqueIdentifierFor(net.minecraft.item.Item item)
+    {
+        return GameData.getUniqueName(item);
+    }
 }
