@@ -52,6 +52,7 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
 public class GameData {
     private static Map<Integer, ItemData> idMap = Maps.newHashMap();
@@ -361,5 +362,29 @@ public class GameData {
                 FMLLog.log(Level.SEVERE, e, "Failed to write registry data to %s", f.getAbsolutePath());
             }
         }
+    }
+
+    static UniqueIdentifier getUniqueName(Block block)
+    {
+        if (block == null) return null;
+        ItemData itemData = idMap.get(block.field_71990_ca);
+        if (itemData == null || !itemData.isOveridden() || customItemStacks.contains(itemData.getModId(), itemData.getItemType()))
+        {
+            return null;
+        }
+
+        return new UniqueIdentifier(itemData.getModId(), itemData.getItemType());
+    }
+
+    static UniqueIdentifier getUniqueName(Item item)
+    {
+        if (item == null) return null;
+        ItemData itemData = idMap.get(item.field_77779_bT);
+        if (itemData == null || !itemData.isOveridden() || customItemStacks.contains(itemData.getModId(), itemData.getItemType()))
+        {
+            return null;
+        }
+
+        return new UniqueIdentifier(itemData.getModId(), itemData.getItemType());
     }
 }
