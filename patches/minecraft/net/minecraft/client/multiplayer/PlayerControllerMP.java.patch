@@ -1,17 +1,21 @@
 --- ../src_base/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
 +++ ../src_work/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
-@@ -22,6 +22,10 @@
+@@ -22,6 +22,14 @@
  import net.minecraft.world.EnumGameType;
  import net.minecraft.world.World;
  
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.Event;
++import net.minecraftforge.event.ForgeEventFactory;
 +import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
++import net.minecraftforge.event.entity.player.PlayerInteractEvent;
++import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 +
  @SideOnly(Side.CLIENT)
  public class PlayerControllerMP
  {
-@@ -125,6 +129,12 @@
+@@ -125,6 +133,12 @@
       */
      public boolean onPlayerDestroyBlock(int par1, int par2, int par3, int par4)
      {
@@ -24,7 +28,7 @@
          if (this.currentGameType.isAdventure() && !this.mc.thePlayer.isCurrentToolAdventureModeExempt(par1, par2, par3))
          {
              return false;
-@@ -146,7 +156,7 @@
+@@ -146,7 +160,7 @@
              {
                  worldclient.playAuxSFX(2001, par1, par2, par3, block.blockID + (worldclient.getBlockMetadata(par1, par2, par3) << 12));
                  int i1 = worldclient.getBlockMetadata(par1, par2, par3);
@@ -33,7 +37,94 @@
  
                  if (flag)
                  {
-@@ -347,6 +357,12 @@
+@@ -180,9 +194,20 @@
+      */
+     public void clickBlock(int par1, int par2, int par3, int par4)
+     {
+-        if (!this.currentGameType.isAdventure() || this.mc.thePlayer.isCurrentToolAdventureModeExempt(par1, par2, par3))
+-        {
+-            if (this.currentGameType.isCreative())
++        PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(this.mc.thePlayer, Action.LEFT_CLICK_BLOCK, par1, par2, par3, par4);
++        if (!event.isCanceled() && (!this.currentGameType.isAdventure() || this.mc.thePlayer.isCurrentToolAdventureModeExempt(par1, par2, par3)))
++        {
++            if (event.useItem == Event.Result.DENY)
++            {
++                this.netClientHandler.addToSendQueue(new Packet14BlockDig(0, par1, par2, par3, par4));
++                int blockId = this.mc.theWorld.getBlockId(par1, par2, par3);
++                if (blockId > 0 && event.useBlock != Event.Result.DENY)
++                {
++                    Block.blocksList[blockId].onBlockClicked(this.mc.theWorld, par1, par2, par3, this.mc.thePlayer);
++                }
++                resetBlockRemoving();
++            }
++            else if (this.currentGameType.isCreative())
+             {
+                 this.netClientHandler.addToSendQueue(new Packet14BlockDig(0, par1, par2, par3, par4));
+                 clickBlockCreative(this.mc, this, par1, par2, par3, par4);
+@@ -198,7 +223,7 @@
+                 this.netClientHandler.addToSendQueue(new Packet14BlockDig(0, par1, par2, par3, par4));
+                 int i1 = this.mc.theWorld.getBlockId(par1, par2, par3);
+ 
+-                if (i1 > 0 && this.curBlockDamageMP == 0.0F)
++                if (i1 > 0 && this.curBlockDamageMP == 0.0F && event.useBlock != Event.Result.DENY)
+                 {
+                     Block.blocksList[i1].onBlockClicked(this.mc.theWorld, par1, par2, par3, this.mc.thePlayer);
+                 }
+@@ -233,6 +258,9 @@
+         }
+ 
+         this.isHittingBlock = false;
++        this.currentBlockX = -1;
++        this.currentBlockY = -1;
++        this.currentblockZ = -1;
+         this.curBlockDamageMP = 0.0F;
+         this.mc.theWorld.destroyBlockInWorldPartially(this.mc.thePlayer.entityId, this.currentBlockX, this.currentBlockY, this.currentblockZ, -1);
+     }
+@@ -247,6 +275,10 @@
+         if (this.blockHitDelay > 0)
+         {
+             --this.blockHitDelay;
++        }
++        else if (this.currentBlockX == -1 || this.currentBlockY == -1 || this.currentblockZ == -1)
++        {
++            return;
+         }
+         else if (this.currentGameType.isCreative())
+         {
+@@ -263,6 +295,9 @@
+                 if (i1 == 0)
+                 {
+                     this.isHittingBlock = false;
++                    this.currentBlockX = -1;
++                    this.currentBlockY = -1;
++                    this.currentblockZ = -1;
+                     return;
+                 }
+ 
+@@ -279,6 +314,9 @@
+                 if (this.curBlockDamageMP >= 1.0F)
+                 {
+                     this.isHittingBlock = false;
++                    this.currentBlockX = -1;
++                    this.currentBlockY = -1;
++                    this.currentblockZ = -1;
+                     this.netClientHandler.addToSendQueue(new Packet14BlockDig(2, par1, par2, par3, par4));
+                     this.onPlayerDestroyBlock(par1, par2, par3, par4);
+                     this.curBlockDamageMP = 0.0F;
+@@ -293,6 +331,12 @@
+                 this.clickBlock(par1, par2, par3, par4);
+             }
+         }
++
++        if (this.mc.thePlayer.isCurrentToolAdventureModeExempt(par1, par2, par3))
++        {
++            this.mc.effectRenderer.addBlockHitEffects(par1, par2, par3, this.mc.objectMouseOver);
++            this.mc.thePlayer.swingItem();
++        }
+     }
+ 
+     /**
+@@ -347,6 +391,12 @@
          float f2 = (float)par8Vec3.zCoord - (float)par6;
          boolean flag = false;
          int i1;
@@ -46,7 +137,7 @@
  
          if (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null)
          {
-@@ -389,7 +405,15 @@
+@@ -389,7 +439,15 @@
          }
          else
          {
@@ -63,7 +154,7 @@
          }
      }
  
-@@ -411,9 +435,10 @@
+@@ -411,9 +469,10 @@
          {
              par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = itemstack1;
  
