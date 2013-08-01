@@ -39,6 +39,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     protected float quantaPerBlockFloat = 8F;
     protected int density = 1;
     protected int densityDir = -1;
+	protected int temperature = 295;
 
     protected int tickRate = 20;
     protected int renderPass = 1;
@@ -55,6 +56,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
         this.fluidName = fluid.getName();
         this.density = fluid.density;
+        this.temperature = fluid.temperature;
         this.maxScaledLight = fluid.luminosity;
         this.tickRate = fluid.viscosity / 200;
         fluid.setBlockID(id);
@@ -75,6 +77,12 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         if (density == 0) density = 1;
         this.density = density;
         this.densityDir = density > 0 ? -1 : 1;
+        return this;
+    }
+
+    public BlockFluidBase setTemperature(int temperature)
+    {
+        this.temperature = temperature;
         return this;
     }
 
@@ -302,6 +310,16 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             return Integer.MAX_VALUE;
         }
         return ((BlockFluidBase)block).density;
+    }
+	
+    public static final int getTemperature(IBlockAccess world, int x, int y, int z)
+    {
+        Block block = Block.blocksList[world.getBlockId(x, y, z)];
+        if (!(block instanceof BlockFluidBase))
+        {
+            return Integer.MAX_VALUE;
+        }
+        return ((BlockFluidBase)block).temperature;
     }
 
     public static double getFlowDirection(IBlockAccess world, int x, int y, int z)
