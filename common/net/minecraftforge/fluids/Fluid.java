@@ -62,6 +62,14 @@ public class Fluid
     protected int density = 1000;
 
     /**
+     * Temperature of the fluid - completely arbitrary; higher temperature indicates that the fluid is
+     * hotter than air.
+     * 
+     * Default value is approximately the real-life room temperature of water in degrees Kelvin.
+     */
+    protected int temperature = 295;
+
+    /**
      * Viscosity ("thickness") of the fluid - completely arbitrary; negative values are not
      * permissible.
      *
@@ -135,6 +143,12 @@ public class Fluid
         return this;
     }
 
+    public Fluid setTemperature(int temperature)
+    {
+        this.temperature = temperature;
+        return this;
+    }
+
     public Fluid setViscosity(int viscosity)
     {
         this.viscosity = viscosity;
@@ -203,6 +217,11 @@ public class Fluid
         return this.density;
     }
 
+    public final int getTemperature()
+    {
+        return this.temperature;
+    }
+
     public final int getViscosity()
     {
         return this.viscosity;
@@ -255,6 +274,7 @@ public class Fluid
     /* Stack-based Accessors */
     public int getLuminosity(FluidStack stack){ return getLuminosity(); }
     public int getDensity(FluidStack stack){ return getDensity(); }
+    public int getTemperature(FluidStack stack){ return getTemperature(); }
     public int getViscosity(FluidStack stack){ return getViscosity(); }
     public boolean isGaseous(FluidStack stack){ return isGaseous(); }
     public int getColor(FluidStack stack){ return getColor(); }
@@ -262,6 +282,7 @@ public class Fluid
     /* World-based Accessors */
     public int getLuminosity(World world, int x, int y, int z){ return getLuminosity(); }
     public int getDensity(World world, int x, int y, int z){ return getDensity(); }
+    public int getTemperature(World world, int x, int y, int z){ return getTemperature(); }
     public int getViscosity(World world, int x, int y, int z){ return getViscosity(); }
     public boolean isGaseous(World world, int x, int y, int z){ return isGaseous(); }
     public int getColor(World world, int x, int y, int z){ return getColor(); }
