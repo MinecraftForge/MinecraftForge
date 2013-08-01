@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemInWorldManager.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemInWorldManager.java
-@@ -1,15 +1,33 @@
+@@ -1,15 +1,34 @@
  package net.minecraft.item;
  
  import net.minecraft.block.Block;
@@ -25,6 +25,7 @@
 +import org.bukkit.event.block.Action;
 +import org.bukkit.event.player.PlayerInteractEvent;
 +// CraftBukkit end
++import cpw.mods.fml.common.registry.GameRegistry; // MCPC+
 +
  public class ItemInWorldManager
  {
@@ -34,7 +35,7 @@
      /** The world object that this object is connected to. */
      public World theWorld;
  
-@@ -78,7 +96,7 @@
+@@ -78,7 +97,7 @@
  
      public void updateBlockRemoving()
      {
@@ -43,7 +44,7 @@
          int i;
          float f;
          int j;
-@@ -141,10 +159,33 @@
+@@ -141,10 +160,33 @@
       * if not creative, it calls destroyBlockInWorldPartially untill the block is broken first. par4 is the specific
       * side. tryHarvestBlock can also be the result of this call
       */
@@ -60,7 +61,7 @@
 +            net.minecraftforge.event.entity.player.PlayerInteractEvent playerinteractevent1 = ForgeEventFactory.onPlayerInteract(this.thisPlayerMP, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, par1, par2, par3, par4); // Forge
 +
 +            // CraftBukkit start
-+            if (playerinteractevent.isCancelled() || playerinteractevent1.isCanceled()) // Forge
++            if (playerinteractevent.isCancelled() || playerinteractevent1.isCanceled() || GameRegistry.isItemBanned(this.thisPlayerMP.inventory.getCurrentItem())) // MCPC+
 +            {
 +                // Let the client know the block still exists
 +                ((EntityPlayerMP) this.thisPlayerMP).playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, this.theWorld));
@@ -79,7 +80,7 @@
              if (this.isCreative())
              {
                  if (!this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4))
-@@ -154,16 +195,66 @@
+@@ -154,16 +196,66 @@
              }
              else
              {
@@ -153,7 +154,7 @@
  
                  if (i1 > 0 && f >= 1.0F)
                  {
-@@ -187,6 +278,7 @@
+@@ -187,6 +279,7 @@
      {
          if (par1 == this.partiallyDestroyedBlockX && par2 == this.partiallyDestroyedBlockY && par3 == this.partiallyDestroyedBlockZ)
          {
@@ -161,7 +162,7 @@
              int l = this.curblockDamage - this.initialDamage;
              int i1 = this.theWorld.getBlockId(par1, par2, par3);
  
-@@ -211,6 +303,13 @@
+@@ -211,6 +304,13 @@
                      this.field_73093_n = this.initialDamage;
                  }
              }
@@ -175,7 +176,7 @@
          }
      }
  
-@@ -236,7 +335,7 @@
+@@ -236,7 +336,7 @@
              block.onBlockHarvested(this.theWorld, par1, par2, par3, l, this.thisPlayerMP);
          }
  
@@ -184,7 +185,7 @@
  
          if (block != null && flag)
          {
-@@ -251,29 +350,115 @@
+@@ -251,29 +351,115 @@
       */
      public boolean tryHarvestBlock(int par1, int par2, int par3)
      {
@@ -305,7 +306,7 @@
  
                  if (itemstack != null)
                  {
-@@ -285,12 +470,20 @@
+@@ -285,12 +471,20 @@
                      }
                  }
  
@@ -326,7 +327,7 @@
              return flag;
          }
      }
-@@ -325,6 +518,7 @@
+@@ -325,6 +519,7 @@
              if (itemstack1.stackSize == 0)
              {
                  par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
@@ -334,7 +335,7 @@
              }
  
              if (!par1EntityPlayer.isUsingItem())
-@@ -340,38 +534,94 @@
+@@ -340,38 +535,94 @@
       * Activate the clicked on block, otherwise use the held item. Args: player, world, itemStack, x, y, z, side,
       * xOffset, yOffset, zOffset
       */
@@ -383,7 +384,7 @@
 +            net.minecraftforge.event.entity.player.PlayerInteractEvent forgeEvent = ForgeEventFactory.onPlayerInteract(par1EntityPlayer, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7);
 +            // MCPC+ start
 +            // if forge event is explicitly cancelled, return
-+            if (forgeEvent.isCanceled())
++            if (forgeEvent.isCanceled() || GameRegistry.isItemBanned(par3ItemStack))
 +            {
 +                thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par4, par5, par6, theWorld));
 +                return false;
@@ -461,7 +462,7 @@
  
      /**
       * Sets the world instance.
-@@ -380,4 +630,13 @@
+@@ -380,4 +631,13 @@
      {
          this.theWorld = par1WorldServer;
      }

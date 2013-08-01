@@ -74,14 +74,19 @@ public class Spigot {
         bungeeIPs = configuration.getStringList("settings.bungee-proxies");
         textureResolution = configuration.getInt("settings.texture-resolution", textureResolution);
 
-        if (metrics == null) {
-            try {
-                metrics = new Metrics();
-                metrics.start();
-            } catch (IOException ex) {
-                Bukkit.getServer().getLogger().log(Level.SEVERE, "Could not start metrics service", ex);
+        // MCPC+ start - add config option to disable metrics
+        if (configuration.getBoolean("settings.metrics-enable", true))
+        {
+            if (metrics == null) {
+                try {
+                    metrics = new Metrics();
+                    metrics.start();
+                } catch (IOException ex) {
+                    Bukkit.getServer().getLogger().log(Level.SEVERE, "Could not start metrics service", ex);
+                }
             }
         }
+        // MCPC+ end
     }
 
     /**

@@ -62,8 +62,14 @@ public class LongObjectHashMap<V> implements Cloneable, Serializable {
     }
 
     public V get(long key) {
-        V val = flat.get(key); // Spigot
-        if (val != null) return val; // Spigot
+        // Spigot start
+        if (size == 0)
+        {
+           return null;
+        }
+        V val = flat.get(key);
+        if (val != null) return val;
+        // Spigot end
         int index = (int) (keyIndex(key) & (BUCKET_SIZE - 1));
         long[] inner = keys[index];
         if (inner == null) return null;

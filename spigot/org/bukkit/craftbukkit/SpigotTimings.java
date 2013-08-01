@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit;
 
-import org.bukkit.CustomTimingsHandler;
+import org.spigotmc.CustomTimingsHandler;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
@@ -92,7 +92,14 @@ public class SpigotTimings {
      */
     public static class WorldTimingsHandler {
         public final CustomTimingsHandler mobSpawn;
-        public final CustomTimingsHandler doTickRest;
+        public final CustomTimingsHandler doChunkUnload;
+        public final CustomTimingsHandler doPortalForcer;
+        public final CustomTimingsHandler doTickPending;
+        public final CustomTimingsHandler doTickTiles;
+        public final CustomTimingsHandler doVillages;
+        public final CustomTimingsHandler doChunkMap;
+        public final CustomTimingsHandler doChunkGC;
+        public final CustomTimingsHandler doSounds;
         public final CustomTimingsHandler entityTick;
         public final CustomTimingsHandler tileEntityTick;
         public final CustomTimingsHandler tileEntityPending;
@@ -102,7 +109,14 @@ public class SpigotTimings {
             String name = server.worldInfo.getWorldName() +" - ";
 
             mobSpawn = new CustomTimingsHandler(name + "mobSpawn");
-            doTickRest = new CustomTimingsHandler(name + "doTickRest");
+            doChunkUnload = new CustomTimingsHandler(name + "doChunkUnload");
+            doTickPending = new CustomTimingsHandler(name + "doTickPending");
+            doTickTiles = new CustomTimingsHandler(name + "doTickTiles");
+            doVillages = new CustomTimingsHandler(name + "doVillages");
+            doChunkMap = new CustomTimingsHandler(name + "doChunkMap");
+            doSounds = new CustomTimingsHandler(name + "doSounds");
+            doChunkGC = new CustomTimingsHandler(name + "doChunkGC");
+            doPortalForcer = new CustomTimingsHandler(name + "doPortalForcer");
             entityTick = new CustomTimingsHandler(name + "entityTick");
             tileEntityTick = new CustomTimingsHandler(name + "tileEntityTick");
             tileEntityPending = new CustomTimingsHandler(name + "tileEntityPending");

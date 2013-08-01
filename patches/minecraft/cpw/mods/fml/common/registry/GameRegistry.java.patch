@@ -20,27 +20,72 @@
  import net.minecraft.world.chunk.IChunkProvider;
 +// MCPC+ start
 +import java.io.IOException;
-+
++import java.util.ArrayList;
++import java.util.HashMap;
 +import org.bukkit.Location;
 +import org.bukkit.configuration.file.YamlConfiguration;
 +import org.bukkit.craftbukkit.Main;
-+
 +import net.minecraft.entity.player.EntityPlayerMP;
 +// MCPC+ end
  
  import com.google.common.base.Function;
  import com.google.common.collect.ArrayListMultimap;
-@@ -68,7 +79,7 @@
+@@ -68,15 +79,82 @@
      private static List<ICraftingHandler> craftingHandlers = Lists.newArrayList();
      private static List<IPickupNotifier> pickupHandlers = Lists.newArrayList();
      private static List<IPlayerTracker> playerTrackers = Lists.newArrayList();
 -
-+    private static org.bukkit.configuration.file.YamlConfiguration configuration = MinecraftServer.configuration; // MCPC+
++    // MCPC+ start
++    private static org.bukkit.configuration.file.YamlConfiguration configuration = MinecraftServer.configuration;
++    private static Map<Integer, List<BannedItem>> bannedItemsCache = new HashMap();
++    // MCPC+ end
      /**
       * Register a world generator - something that inserts new block types into the world
       *
-@@ -76,7 +87,29 @@
+      * @param generator
       */
++    static 
++    {
++        // init banned items
++        if (configuration.getBoolean("mcpc.enable-banned-items"))
++        {
++            for (String bannedData : configuration.getStringList("mcpc.banned-item-IDs")) {
++                int seperator = bannedData.indexOf(':');
++                if (seperator > 0 && (bannedData.length() - 1) > seperator)
++                {
++                    int id = Integer.parseInt(bannedData.substring(0, seperator));
++                    int meta = Integer.parseInt(bannedData.substring(seperator + 1, bannedData.length()));
++                    if (bannedItemsCache.containsKey(id))
++                    {
++                        bannedItemsCache.get(id).add(new BannedItem(id, meta));
++                    }
++                    else
++                    {
++                        List bannedItems = new ArrayList();
++                        bannedItems.add(new BannedItem(id, meta));
++                        bannedItemsCache.put(id, bannedItems);
++                    }
++                    FMLLog.info("Banning" + " item ID " +id);
++                }
++                else
++                {
++                    int id = Integer.parseInt(bannedData);
++                    if (bannedItemsCache.containsKey(id))
++                    {
++                        bannedItemsCache.get(id).add(new BannedItem(id, -1));
++                    }
++                    else
++                    {
++                        List bannedItems = new ArrayList();
++                        bannedItems.add(new BannedItem(id, -1));
++                        bannedItemsCache.put(id, bannedItems);
++                    }
++                    FMLLog.info("Banning" + " item ID " +id);
++                }
++            }
++        }
++    }
++
      public static void registerWorldGenerator(IWorldGenerator generator)
      {
 -        worldGenerators.add(generator);
@@ -70,7 +115,7 @@
      }
  
      /**
-@@ -147,6 +180,7 @@
+@@ -147,6 +225,7 @@
       */
      public static void registerItem(net.minecraft.item.Item item, String name, String modId)
      {
@@ -78,7 +123,7 @@
          GameData.setName(item, name, modId);
      }
  
-@@ -234,6 +268,33 @@
+@@ -234,9 +313,37 @@
          blockRegistry.put(Loader.instance().activeModContainer(), (BlockProxy) block);
      }
  
@@ -107,12 +152,59 @@
 +            org.bukkit.Material.setMaterialName(item.itemID, materialName);
 +        }
 +    }
-+    // MCPC+ end
 +
++    // Check to see if the item ID is banned before registering it
      public static void addRecipe(ItemStack output, Object... params)
      {
-         addShapedRecipe(output, params);
-@@ -364,6 +425,11 @@
+-        addShapedRecipe(output, params);
++        if (output != null && !isItemBanned(output))
++            addShapedRecipe(output, params);
+     }
+ 
+     public static IRecipe addShapedRecipe(ItemStack output, Object... params)
+@@ -246,7 +353,8 @@
+ 
+     public static void addShapelessRecipe(ItemStack output, Object... params)
+     {
+-        CraftingManager.getInstance().addShapelessRecipe(output, params);
++        if (output != null && !isItemBanned(output))
++            CraftingManager.getInstance().addShapelessRecipe(output, params);
+     }
+ 
+     public static void addRecipe(IRecipe recipe)
+@@ -256,8 +364,29 @@
+ 
+     public static void addSmelting(int input, ItemStack output, float xp)
+     {
+-        FurnaceRecipes.smelting().addSmelting(input, output, xp);
+-    }
++        if (!isItemBanned(output))
++            FurnaceRecipes.smelting().addSmelting(input, output, xp);
++    }
++
++    public static boolean isItemBanned(ItemStack itemstack) {
++        if (configuration.getBoolean("mcpc.enable-banned-items") && itemstack != null)
++        {
++            if (bannedItemsCache.containsKey(itemstack.itemID))
++            {
++                List<BannedItem> bannedItems = bannedItemsCache.get(itemstack.itemID);
++                for (int i = 0; i < bannedItems.size(); i++)
++                {
++                    BannedItem block = bannedItems.get(i);
++                    if (block.blockID == itemstack.itemID && (block.meta == itemstack.getItemDamage() || block.meta == -1))
++                    {
++                        return true;
++                    }
++                }
++            }
++        }
++        return false;
++    }
++    // MCPC+ end
+ 
+     public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id)
+     {
+@@ -364,6 +493,11 @@
  	{
  		for(IPlayerTracker tracker : playerTrackers)
  			tracker.onPlayerChangedDimension(player);
@@ -124,3 +216,13 @@
  	}
  
  	public static void onPlayerRespawn(EntityPlayer player)
+@@ -403,7 +537,8 @@
+ 	 */
+ 	public static void registerCustomItemStack(String name, ItemStack itemStack)
+ 	{
+-	    GameData.registerCustomItemStack(name, itemStack);
++	    if (!isItemBanned(itemStack))
++	        GameData.registerCustomItemStack(name, itemStack);
+ 	}
+ 	/**
+ 	 * Lookup an itemstack based on mod and name. It will create "default" itemstacks from blocks and items if no

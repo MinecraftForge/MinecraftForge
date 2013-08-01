@@ -47,7 +47,7 @@
 +import org.bukkit.entity.LivingEntity;
 +import org.bukkit.entity.Painting;
 +import org.bukkit.entity.Vehicle;
-+import org.bukkit.CustomTimingsHandler; // Spigot
++import org.spigotmc.CustomTimingsHandler; // Spigot
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
 +import org.bukkit.event.painting.PaintingBreakByEntityEvent;
 +import org.bukkit.event.vehicle.VehicleBlockCollisionEvent;

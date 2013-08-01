@@ -2,7 +2,7 @@ package org.bukkit.craftbukkit.scheduler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.SpigotTimings; // Spigot
-import org.bukkit.CustomTimingsHandler; // Spigot
+import org.spigotmc.CustomTimingsHandler; // Spigot
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 

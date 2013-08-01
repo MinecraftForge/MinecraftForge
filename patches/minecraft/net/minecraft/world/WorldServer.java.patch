@@ -359,27 +359,54 @@
 +        }
 +
 +        // CraftBukkit end
-+        timings.doTickRest.startTiming(); // Spigot
++        timings.doChunkUnload.startTiming(); // Spigot
          this.theProfiler.endStartSection("chunkSource");
          this.chunkProvider.unloadQueuedChunks();
          int j = this.calculateSkylightSubtracted(1.0F);
-@@ -184,8 +427,15 @@
+@@ -173,19 +416,42 @@
+             this.worldInfo.setWorldTime(this.worldInfo.getWorldTime() + 1L);
+         }
+ 
++        timings.doChunkUnload.stopTiming(); // Spigot
+         this.theProfiler.endStartSection("tickPending");
++        timings.doTickPending.startTiming(); // Spigot
+         this.tickUpdates(false);
++        timings.doTickPending.stopTiming(); // Spigot
+         this.theProfiler.endStartSection("tickTiles");
++        timings.doTickTiles.startTiming(); // Spigot
+         this.tickBlocksAndAmbiance();
++        timings.doTickTiles.stopTiming(); // Spigot
+         this.theProfiler.endStartSection("chunkMap");
++        timings.doChunkMap.startTiming(); // Spigot
+         this.thePlayerManager.updatePlayerInstances();
++        timings.doChunkMap.stopTiming(); // Spigot
+         this.theProfiler.endStartSection("village");
++        timings.doVillages.startTiming(); // Spigot
+         this.villageCollectionObj.tick();
          this.villageSiegeObj.tick();
++        timings.doVillages.stopTiming(); // Spigot
          this.theProfiler.endStartSection("portalForcer");
++        timings.doPortalForcer.startTiming(); // Spigot
          this.field_85177_Q.removeStalePortalLocations(this.getTotalWorldTime());
 +        for (Teleporter tele : customTeleporters)
 +        {
 +            tele.removeStalePortalLocations(getTotalWorldTime());
 +        }
++        timings.doPortalForcer.stopTiming(); // Spigot
          this.theProfiler.endSection();
++        timings.doSounds.startTiming(); // Spigot
          this.sendAndApplyBlockEvents();
++        timings.doSounds.stopTiming(); // Spigot
 +        if (this.getWorld() != null) // MCPC+
++        {
++            timings.doChunkGC.startTiming(); // Spigot
 +            this.getWorld().processChunkGC(); // CraftBukkit
-+        timings.doTickRest.stopTiming(); // Spigot
++            timings.doChunkGC.stopTiming(); // Spigot
++        }
      }
  
      /**
-@@ -194,6 +444,7 @@
+@@ -194,6 +460,7 @@
      public SpawnListEntry spawnRandomCreature(EnumCreatureType par1EnumCreatureType, int par2, int par3, int par4)
      {
          List list = this.getChunkProvider().getPossibleCreatures(par1EnumCreatureType, par2, par3, par4);
@@ -387,7 +414,7 @@
          return list != null && !list.isEmpty() ? (SpawnListEntry)WeightedRandom.getRandomItem(this.rand, list) : null;
      }
  
-@@ -209,7 +460,7 @@
+@@ -209,7 +476,7 @@
          {
              EntityPlayer entityplayer = (EntityPlayer)iterator.next();
  
@@ -396,7 +423,7 @@
              {
                  this.allPlayersSleeping = false;
                  break;
-@@ -237,10 +488,26 @@
+@@ -237,10 +504,26 @@
  
      private void resetRainAndThunder()
      {
@@ -427,7 +454,7 @@
      }
  
      public boolean areAllPlayersAsleep()
-@@ -248,19 +515,28 @@
+@@ -248,19 +531,28 @@
          if (this.allPlayersSleeping && !this.isRemote)
          {
              Iterator iterator = this.playerEntities.iterator();
@@ -460,7 +487,7 @@
              return false;
          }
          else
-@@ -307,18 +583,46 @@
+@@ -307,18 +599,46 @@
       */
      protected void tickBlocksAndAmbiance()
      {
@@ -515,7 +542,7 @@
              this.moodSoundAndLightCheck(k, l, chunk);
              this.theProfiler.endStartSection("tickChunk");
              chunk.updateSkylight();
-@@ -328,7 +632,7 @@
+@@ -328,7 +648,7 @@
              int k1;
              int l1;
  
@@ -524,7 +551,7 @@
              {
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
                  i1 = this.updateLCG >> 2;
-@@ -345,7 +649,7 @@
+@@ -345,7 +665,7 @@
              this.theProfiler.endStartSection("iceandsnow");
              int i2;
  
@@ -533,7 +560,7 @@
              {
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
                  i1 = this.updateLCG >> 2;
-@@ -355,12 +659,34 @@
+@@ -355,12 +675,34 @@
  
                  if (this.isBlockFreezableNaturally(j1 + k, l1 - 1, k1 + l))
                  {
@@ -570,7 +597,7 @@
                  }
  
                  if (this.isRaining())
-@@ -403,7 +729,24 @@
+@@ -403,7 +745,24 @@
                          if (block != null && block.getTickRandomly())
                          {
                              ++i;
@@ -596,7 +623,7 @@
                          }
                      }
                  }
-@@ -418,8 +761,21 @@
+@@ -418,8 +777,21 @@
       */
      public boolean isBlockTickScheduledThisTick(int par1, int par2, int par3, int par4)
      {
@@ -620,7 +647,7 @@
      }
  
      /**
-@@ -465,11 +821,9 @@
+@@ -465,11 +837,9 @@
                  nextticklistentry.setPriority(par6);
              }
  
@@ -635,7 +662,7 @@
          }
      }
  
-@@ -486,11 +840,9 @@
+@@ -486,11 +856,9 @@
              nextticklistentry.setScheduledTime((long)par5 + this.worldInfo.getWorldTotalTime());
          }
  
@@ -650,7 +677,7 @@
      }
  
      /**
-@@ -498,7 +850,7 @@
+@@ -498,7 +866,7 @@
       */
      public void updateEntities()
      {
@@ -659,7 +686,7 @@
          {
              if (this.updateEntityTick++ >= 1200)
              {
-@@ -526,17 +878,24 @@
+@@ -526,17 +894,24 @@
       */
      public boolean tickUpdates(boolean par1)
      {
@@ -693,7 +720,7 @@
              }
  
              this.theProfiler.startSection("cleaning");
-@@ -544,26 +903,28 @@
+@@ -544,26 +919,28 @@
  
              for (int j = 0; j < i; ++j)
              {
@@ -732,7 +759,7 @@
                  byte b0 = 0;
  
                  if (this.checkChunksExist(nextticklistentry.xCoord - b0, nextticklistentry.yCoord - b0, nextticklistentry.zCoord - b0, nextticklistentry.xCoord + b0, nextticklistentry.yCoord + b0, nextticklistentry.zCoord + b0))
-@@ -603,61 +964,19 @@
+@@ -603,61 +980,19 @@
              }
  
              this.theProfiler.endSection();
@@ -802,7 +829,7 @@
      }
  
      /**
-@@ -666,17 +985,38 @@
+@@ -666,17 +1001,38 @@
       */
      public void updateEntityWithOptionalForce(Entity par1Entity, boolean par2)
      {
@@ -848,7 +875,7 @@
      }
  
      /**
-@@ -685,7 +1025,36 @@
+@@ -685,7 +1041,36 @@
      protected IChunkProvider createChunkProvider()
      {
          IChunkLoader ichunkloader = this.saveHandler.getChunkLoader(this.provider);
@@ -886,7 +913,7 @@
          return this.theChunkProviderServer;
      }
  
-@@ -696,16 +1065,31 @@
+@@ -696,16 +1081,31 @@
      {
          ArrayList arraylist = new ArrayList();
  
@@ -928,7 +955,7 @@
          return arraylist;
      }
  
-@@ -714,6 +1098,11 @@
+@@ -714,6 +1114,11 @@
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
      {
@@ -940,7 +967,7 @@
          return !this.mcServer.func_96290_a(this, par2, par3, par4, par1EntityPlayer);
      }
  
-@@ -724,16 +1113,19 @@
+@@ -724,16 +1129,19 @@
              this.entityIdMap = new IntHashMap();
          }
  
@@ -970,7 +997,7 @@
          this.createSpawnPosition(par1WorldSettings);
          super.initialize(par1WorldSettings);
      }
-@@ -758,6 +1150,29 @@
+@@ -758,6 +1166,29 @@
              int j = this.provider.getAverageGroundLevel();
              int k = 0;
  
@@ -1000,7 +1027,7 @@
              if (chunkposition != null)
              {
                  i = chunkposition.x;
-@@ -770,7 +1185,7 @@
+@@ -770,7 +1201,7 @@
  
              int l = 0;
  
@@ -1009,7 +1036,7 @@
              {
                  i += random.nextInt(64) - random.nextInt(64);
                  k += random.nextInt(64) - random.nextInt(64);
-@@ -797,7 +1212,7 @@
+@@ -797,7 +1228,7 @@
       */
      protected void createBonusChest()
      {
@@ -1018,7 +1045,7 @@
  
          for (int i = 0; i < 10; ++i)
          {
-@@ -840,6 +1255,7 @@
+@@ -840,6 +1271,7 @@
              }
  
              this.chunkProvider.saveChunks(par1, par2IProgressUpdate);
@@ -1026,7 +1053,7 @@
          }
      }
  
-@@ -859,6 +1275,7 @@
+@@ -859,6 +1291,7 @@
          this.checkSessionLock();
          this.saveHandler.saveWorldInfoWithPlayer(this.worldInfo, this.mcServer.getConfigurationManager().getHostPlayerData());
          this.mapStorage.saveAllData();
@@ -1034,7 +1061,7 @@
      }
  
      protected void onEntityAdded(Entity par1Entity)
-@@ -904,9 +1321,23 @@
+@@ -904,9 +1337,23 @@
       */
      public boolean addWeatherEffect(Entity par1Entity)
      {
@@ -1059,7 +1086,7 @@
              return true;
          }
          else
-@@ -929,11 +1360,21 @@
+@@ -929,11 +1376,21 @@
       */
      public Explosion newExplosion(Entity par1Entity, double par2, double par4, double par6, float par8, boolean par9, boolean par10)
      {
@@ -1086,7 +1113,7 @@
  
          if (!par10)
          {
-@@ -1030,14 +1471,16 @@
+@@ -1030,14 +1487,16 @@
  
          if (flag != this.isRaining())
          {
@@ -1111,7 +1138,7 @@
          }
      }
  
-@@ -1066,4 +1509,123 @@
+@@ -1066,4 +1525,123 @@
      {
          return this.field_85177_Q;
      }
