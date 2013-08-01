@@ -448,6 +448,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
         return null;
     }
 
+    @SideOnly(CLIENT)
     public void clientCustomPayload(NetClientHandler handler, Packet250CustomPayload packet)
     {
 
