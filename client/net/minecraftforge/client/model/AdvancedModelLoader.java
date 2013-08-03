@@ -1,10 +1,10 @@
 package net.minecraftforge.client.model;
 
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.obj.ObjModelLoader;
 import net.minecraftforge.client.model.techne.TechneModelLoader;
 
@@ -18,6 +18,7 @@ import cpw.mods.fml.relauncher.SideOnly;
  * Common interface for advanced model loading from files, based on file suffix
  * Model support can be queried through the {@link #getSupportedSuffixes()} method.
  * Instances can be created by calling {@link #loadModel(String)} with a class-loadable-path
+ * or by calling {@link #loadPackModel(String)} with a Resource Pack reference
  *
  * @author cpw
  *
@@ -37,7 +38,7 @@ public class AdvancedModelLoader {
             instances.put(suffix, modelHandler);
         }
     }
-
+    
     /**
      * Load the model from the supplied classpath resolvable resource name
      * @param resourceName The resource name
@@ -68,6 +69,33 @@ public class AdvancedModelLoader {
             throw new IllegalArgumentException("The resource name could not be found");
         }
         return loader.loadInstance(resourceName, resource);
+    }
+
+    /**
+     * Load the model from the supplied resource pack reference
+     * @param resourceName The resource name
+     * @return A model
+     * @throws IllegalArgumentException if the resource name cannot be understood
+     * @throws ModelFormatException if the underlying model handler cannot parse the model format
+     */
+    public static IModelCustom loadPackModel(String resourceName) throws IllegalArgumentException, ModelFormatException
+    {
+        int i = resourceName.lastIndexOf('.');
+        if (i == -1)
+        {
+            FMLLog.severe("The resource name %s is not valid", resourceName);
+            throw new IllegalArgumentException("The resource name is not valid");
+        }
+        String suffix = resourceName.substring(i+1);
+        IModelCustomLoader loader = instances.get(suffix);
+        if (loader == null)
+        {
+            FMLLog.severe("The resource name %s is not supported", resourceName);
+            throw new IllegalArgumentException("The resource name is not supported");
+        }
+
+        ResourceLocation resLoc = new ResourceLocation(resourceName);
+        return loader.loadInstance(resourceName, resLoc);
     }
 
     public static Collection<String> getSupportedSuffixes()

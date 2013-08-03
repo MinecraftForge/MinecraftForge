@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,23 +45,21 @@ public class WavefrontObject implements IModelCustom
     private GroupObject currentGroupObject;
     private String fileName;
 
-    public WavefrontObject(String fileName, URL resource) throws ModelFormatException
+    public WavefrontObject(String fileName, InputStream inputStream) throws ModelFormatException
     {
         this.fileName = fileName;
-        loadObjModel(resource);
+        loadObjModel(inputStream);
     }
 
-    private void loadObjModel(URL fileURL) throws ModelFormatException
+    private void loadObjModel(InputStream inputStream) throws ModelFormatException
     {
         BufferedReader reader = null;
-        InputStream inputStream = null;
 
         String currentLine = null;
         int lineCount = 0;
 
         try
         {
-            inputStream = fileURL.openStream();
             reader = new BufferedReader(new InputStreamReader(inputStream));
 
             while ((currentLine = reader.readLine()) != null)
