@@ -341,7 +341,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     public static double getFlowDirection(IBlockAccess world, int x, int y, int z)
     {
         Block block = Block.blocksList[world.getBlockId(x, y, z)];
-        if (world.getBlockMaterial(x, y, z).isLiquid())
+        if (!world.getBlockMaterial(x, y, z).isLiquid())
         {
             return -1000.0;
         }
