@@ -204,12 +204,12 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                 tessellator.setBrightness(block.getMixedBrightnessForBlock(world, x, y - 1, z));
                 if (!rises)
                 {
-                    tessellator.setColorOpaque_F(LIGHT_Y_NEG, LIGHT_Y_NEG, LIGHT_Y_NEG);
+                    tessellator.setColorOpaque_F(LIGHT_Y_NEG * red, LIGHT_Y_NEG * green, LIGHT_Y_NEG * blue);
                     renderer.renderFaceYNeg(block, x, y + RENDER_OFFSET, z, block.getIcon(0, bMeta));
                 }
                 else
                 {
-                    tessellator.setColorOpaque_F(LIGHT_Y_POS, LIGHT_Y_POS, LIGHT_Y_POS);
+                    tessellator.setColorOpaque_F(LIGHT_Y_POS * red, LIGHT_Y_POS * green, LIGHT_Y_POS * blue);
                     renderer.renderFaceYPos(block, x, y + RENDER_OFFSET, z, block.getIcon(1, bMeta));
                 }
             }
