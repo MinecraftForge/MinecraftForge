@@ -2,6 +2,9 @@
 package net.minecraftforge.fluids;
 
 import java.util.Locale;
+import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 import net.minecraft.block.Block;
 import net.minecraft.util.Icon;
@@ -15,21 +18,21 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Minecraft Forge Fluid Implementation
- * 
+ *
  * This class is a fluid (liquid or gas) equivalent to "Item." It describes the nature of a fluid
  * and contains its general properties.
- * 
+ *
  * These properties do not have inherent gameplay mechanics - they are provided so that mods may
  * choose to take advantage of them.
- * 
+ *
  * Fluid implementations are not required to actively use these properties, nor are objects
  * interfacing with fluids required to make use of them, but it is encouraged.
- * 
+ *
  * The default values can be used as a reference point for mods adding fluids such as oil or heavy
  * water.
- * 
+ *
  * @author King Lemming
- * 
+ *
  */
 public class Fluid
 {
@@ -45,7 +48,7 @@ public class Fluid
 
     /**
      * The light level emitted by this fluid.
-     * 
+     *
      * Default value is 0, as most fluids do not actively emit light.
      */
     protected int luminosity = 0;
@@ -53,31 +56,39 @@ public class Fluid
     /**
      * Density of the fluid - completely arbitrary; negative density indicates that the fluid is
      * lighter than air.
-     * 
+     *
      * Default value is approximately the real-life density of water in kg/m^3.
      */
     protected int density = 1000;
 
     /**
+     * Temperature of the fluid - completely arbitrary; higher temperature indicates that the fluid is
+     * hotter than air.
+     * 
+     * Default value is approximately the real-life room temperature of water in degrees Kelvin.
+     */
+    protected int temperature = 295;
+
+    /**
      * Viscosity ("thickness") of the fluid - completely arbitrary; negative values are not
      * permissible.
-     * 
+     *
      * Default value is approximately the real-life density of water in m/s^2 (x10^-3).
      */
     protected int viscosity = 1000;
 
     /**
      * This indicates if the fluid is gaseous.
-     * 
+     *
      * Useful for rendering the fluid in containers and the world.
-     * 
+     *
      * Generally this is associated with negative density fluids.
      */
     protected boolean isGaseous;
 
     /**
      * If there is a Block implementation of the Fluid, the BlockID is linked here.
-     * 
+     *
      * The default value of -1 should remain for any Fluid without a Block implementation.
      */
     protected int blockID = -1;
@@ -129,6 +140,12 @@ public class Fluid
     public Fluid setDensity(int density)
     {
         this.density = density;
+        return this;
+    }
+
+    public Fluid setTemperature(int temperature)
+    {
+        this.temperature = temperature;
         return this;
     }
 
@@ -200,6 +217,11 @@ public class Fluid
         return this.density;
     }
 
+    public final int getTemperature()
+    {
+        return this.temperature;
+    }
+
     public final int getViscosity()
     {
         return this.viscosity;
@@ -252,6 +274,7 @@ public class Fluid
     /* Stack-based Accessors */
     public int getLuminosity(FluidStack stack){ return getLuminosity(); }
     public int getDensity(FluidStack stack){ return getDensity(); }
+    public int getTemperature(FluidStack stack){ return getTemperature(); }
     public int getViscosity(FluidStack stack){ return getViscosity(); }
     public boolean isGaseous(FluidStack stack){ return isGaseous(); }
     public int getColor(FluidStack stack){ return getColor(); }
@@ -259,8 +282,25 @@ public class Fluid
     /* World-based Accessors */
     public int getLuminosity(World world, int x, int y, int z){ return getLuminosity(); }
     public int getDensity(World world, int x, int y, int z){ return getDensity(); }
+    public int getTemperature(World world, int x, int y, int z){ return getTemperature(); }
     public int getViscosity(World world, int x, int y, int z){ return getViscosity(); }
     public boolean isGaseous(World world, int x, int y, int z){ return isGaseous(); }
     public int getColor(World world, int x, int y, int z){ return getColor(); }
     public Icon getIcon(World world, int x, int y, int z){ return getIcon(); }
+
+    private static Map<String, String> legacyNames = Maps.newHashMap();
+    static String convertLegacyName(String fluidName)
+    {
+        return fluidName != null && legacyNames.containsKey(fluidName) ? legacyNames.get(fluidName) : fluidName;
+    }
+
+    /**
+     * Register a legacy liquid name with the Fluids system
+     * @param legacyName The legacy name to recognize
+     * @param canonicalName The canonical fluid name it will become
+     */
+    public static void registerLegacyName(String legacyName, String canonicalName)
+    {
+        legacyNames.put(legacyName.toLowerCase(Locale.ENGLISH), canonicalName);
+    }
 }

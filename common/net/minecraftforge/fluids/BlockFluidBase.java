@@ -15,11 +15,11 @@ import net.minecraft.world.World;
 
 /**
  * This is a base implementation for Fluid blocks.
- * 
+ *
  * It is highly recommended that you extend this class or one of the Forge-provided child classes.
- * 
+ *
  * @author King Lemming, OvermindDL1
- * 
+ *
  */
 public abstract class BlockFluidBase extends Block implements IFluidBlock
 {
@@ -39,6 +39,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     protected float quantaPerBlockFloat = 8F;
     protected int density = 1;
     protected int densityDir = -1;
+	protected int temperature = 295;
 
     protected int tickRate = 20;
     protected int renderPass = 1;
@@ -55,6 +56,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
         this.fluidName = fluid.getName();
         this.density = fluid.density;
+        this.temperature = fluid.temperature;
         this.maxScaledLight = fluid.luminosity;
         this.tickRate = fluid.viscosity / 200;
         fluid.setBlockID(id);
@@ -75,6 +77,12 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         if (density == 0) density = 1;
         this.density = density;
         this.densityDir = density > 0 ? -1 : 1;
+        return this;
+    }
+
+    public BlockFluidBase setTemperature(int temperature)
+    {
+        this.temperature = temperature;
         return this;
     }
 
@@ -121,7 +129,15 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         {
             return false;
         }
-        return true;
+
+        if (this.density > getDensity(world, x, y, z))
+        {
+        	return true;
+        }
+        else
+        {
+        	return false;
+        }
     }
 
     /**
@@ -156,7 +172,15 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             return false;
         }
         Block.blocksList[bId].dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
-        return true;
+
+         if (this.density > getDensity(world, x, y, z))
+        {
+        	return true;
+        }
+        else
+        {
+        	return false;
+        }
     }
 
     public abstract int getQuantaValue(IBlockAccess world, int x, int y, int z);
@@ -272,7 +296,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         int lightUpBase   = lightUp & 255;
         int lightThisExt  = lightThis >> 16 & 255;
         int lightUpExt    = lightUp >> 16 & 255;
-        return (lightThisBase > lightUpBase ? lightThisBase : lightUpBase) | 
+        return (lightThisBase > lightUpBase ? lightThisBase : lightUpBase) |
                ((lightThisExt > lightUpExt ? lightThisExt : lightUpExt) << 16);
     }
 
@@ -303,11 +327,21 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         }
         return ((BlockFluidBase)block).density;
     }
+	
+    public static final int getTemperature(IBlockAccess world, int x, int y, int z)
+    {
+        Block block = Block.blocksList[world.getBlockId(x, y, z)];
+        if (!(block instanceof BlockFluidBase))
+        {
+            return Integer.MAX_VALUE;
+        }
+        return ((BlockFluidBase)block).temperature;
+    }
 
     public static double getFlowDirection(IBlockAccess world, int x, int y, int z)
     {
         Block block = Block.blocksList[world.getBlockId(x, y, z)];
-        if (!(block instanceof BlockFluidBase))
+        if (!world.getBlockMaterial(x, y, z).isLiquid())
         {
             return -1000.0;
         }
@@ -381,7 +415,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
         if (world.getBlockId(x, y + 1, z) == blockID)
         {
-            boolean flag = 
+            boolean flag =
                 isBlockSolid(world, x,     y,     z - 1, 2) ||
                 isBlockSolid(world, x,     y,     z + 1, 3) ||
                 isBlockSolid(world, x - 1, y,     z,     4) ||
@@ -390,7 +424,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
                 isBlockSolid(world, x,     y + 1, z + 1, 3) ||
                 isBlockSolid(world, x - 1, y + 1, z,     4) ||
                 isBlockSolid(world, x + 1, y + 1, z,     5);
-            
+
             if (flag)
             {
                 vec = vec.normalize().addVector(0.0D, -6.0D, 0.0D);
