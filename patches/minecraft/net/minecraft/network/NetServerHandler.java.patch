@@ -103,20 +103,25 @@
                  {
                      return;
                  }
-@@ -502,7 +534,11 @@
-                 return;
-             }
+@@ -497,12 +529,11 @@
  
+         if (par1Packet15Place.getDirection() == 255)
+         {
+-            if (itemstack == null)
+-            {
+-                return;
+-            }
+-
 -            this.playerEntity.theItemInWorldManager.tryUseItem(this.playerEntity, worldserver, itemstack);
 +            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(playerEntity, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, 0, 0, 0, -1);
-+            if (event.useItem != Event.Result.DENY)
++            if (itemstack != null && event.useItem != Event.Result.DENY)
 +            {
 +                this.playerEntity.theItemInWorldManager.tryUseItem(this.playerEntity, worldserver, itemstack);
 +            }
          }
          else if (par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit() - 1 && (par1Packet15Place.getDirection() == 1 || par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit()))
          {
-@@ -511,7 +547,9 @@
+@@ -511,7 +542,9 @@
          }
          else
          {
@@ -127,7 +132,7 @@
              {
                  this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, worldserver, itemstack, i, j, k, l, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
              }
-@@ -691,6 +729,8 @@
+@@ -691,6 +724,8 @@
                      }
  
                      ChatMessageComponent chatmessagecomponent = ChatMessageComponent.func_111082_b("chat.type.text", new Object[] {this.playerEntity.getTranslatedEntityName(), s});
@@ -136,7 +141,7 @@
                      this.mcServer.getConfigurationManager().func_110459_a(chatmessagecomponent, false);
                  }
  
-@@ -838,7 +878,7 @@
+@@ -838,7 +873,7 @@
                      return;
                  }
  
