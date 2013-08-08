@@ -10,7 +10,7 @@
  import net.minecraft.world.*;
  import net.minecraft.world.gen.*;
  import net.minecraft.world.biome.*;
-@@ -224,4 +227,37 @@
+@@ -224,4 +227,47 @@
       * Called when 'Create New World' button is pressed before starting game
       */
      public void onGUICreateWorldPress() { }
@@ -46,5 +46,15 @@
 +    public boolean isCustomizable()
 +    {
 +        return this == FLAT;
++    }
++    
++    @SideOnly(Side.CLIENT)
++
++    /**
++     * the y level at which clouds are rendered.
++     */
++    public float getCloudHeight()
++    {
++        return 128.0F;
 +    }
  }

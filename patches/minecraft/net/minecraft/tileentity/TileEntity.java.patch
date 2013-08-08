@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src_work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -10,12 +10,20 @@
+@@ -10,9 +10,15 @@
  import net.minecraft.block.Block;
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.nbt.NBTTagCompound;
@@ -16,12 +16,16 @@
  
  public class TileEntity
  {
+@@ -42,7 +48,7 @@
+ 
+     /** the Block type that this TileEntity is contained within */
+     public Block blockType;
+-
 +    public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.SpigotTimings.getTileEntityTimings(this); // Spigot
-+
      /**
-      * A HashMap storing string names of classes mapping to the actual java.lang.Class type.
+      * Adds a new two-way mapping between the class and its string name in both hashmaps.
       */
-@@ -279,7 +287,7 @@
+@@ -279,7 +285,7 @@
      public void func_85027_a(CrashReportCategory par1CrashReportCategory)
      {
          par1CrashReportCategory.addCrashSectionCallable("Name", new CallableTileEntityName(this));
@@ -30,7 +34,7 @@
          par1CrashReportCategory.addCrashSectionCallable("Actual block type", new CallableTileEntityID(this));
          par1CrashReportCategory.addCrashSectionCallable("Actual block data value", new CallableTileEntityData(this));
      }
-@@ -311,4 +319,107 @@
+@@ -311,4 +317,107 @@
          addMapping(TileEntityHopper.class, "Hopper");
          addMapping(TileEntityComparator.class, "Comparator");
      }

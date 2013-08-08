@@ -14,9 +14,9 @@ import com.google.common.collect.ImmutableMap;
 
 /**
  * Handles Fluid registrations. Fluids MUST be registered in order to function.
- * 
+ *
  * @author King Lemming, CovertJaguar (LiquidDictionary)
- * 
+ *
  */
 public abstract class FluidRegistry
 {
@@ -25,8 +25,8 @@ public abstract class FluidRegistry
     static HashMap<String, Fluid> fluids = new HashMap();
     static BiMap<String, Integer> fluidIDs = HashBiMap.create();
 
-    public static final Fluid WATER = new Fluid("water").setBlockID(Block.waterStill.blockID);
-    public static final Fluid LAVA = new Fluid("lava").setBlockID(Block.lavaStill.blockID).setLuminosity(15).setDensity(3000).setViscosity(6000);
+    public static final Fluid WATER = new Fluid("water").setBlockID(Block.waterStill.blockID).setUnlocalizedName(Block.waterStill.getUnlocalizedName());
+    public static final Fluid LAVA = new Fluid("lava").setBlockID(Block.lavaStill.blockID).setLuminosity(15).setDensity(3000).setViscosity(6000).setUnlocalizedName(Block.lavaStill.getUnlocalizedName());
 
     public static int renderIdFluid = -1;
 
@@ -50,7 +50,7 @@ public abstract class FluidRegistry
 
     /**
      * Register a new Fluid. If a fluid with the same name already exists, registration is denied.
-     * 
+     *
      * @param fluid
      *            The fluid to register.
      * @return True if the fluid was successfully registered; false if there is a name clash.

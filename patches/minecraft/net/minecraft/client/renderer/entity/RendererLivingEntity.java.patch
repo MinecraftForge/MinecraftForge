@@ -10,17 +10,33 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
-@@ -28,6 +31,9 @@
- 
+@@ -29,6 +32,9 @@
      /** The model to be used during the render passes. */
      protected ModelBase renderPassModel;
-+
+ 
 +    public static float NAME_TAG_RANGE = 64.0f;
 +    public static float NAME_TAG_RANGE_SNEAK = 32.0f;
- 
++
      public RendererLivingEntity(ModelBase par1ModelBase, float par2)
      {
-@@ -442,12 +448,13 @@
+         this.mainModel = par1ModelBase;
+@@ -68,6 +74,7 @@
+ 
+     public void func_130000_a(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6, float par8, float par9)
+     {
++        if (MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Pre(par1EntityLivingBase, this))) return;
+         GL11.glPushMatrix();
+         GL11.glDisable(GL11.GL_CULL_FACE);
+         this.mainModel.onGround = this.renderSwingProgress(par1EntityLivingBase, par9);
+@@ -277,6 +284,7 @@
+         GL11.glEnable(GL11.GL_CULL_FACE);
+         GL11.glPopMatrix();
+         this.passSpecialRender(par1EntityLivingBase, par2, par4, par6);
++        MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Post(par1EntityLivingBase, this));
+     }
+ 
+     /**
+@@ -442,12 +450,13 @@
       */
      protected void passSpecialRender(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6)
      {
@@ -35,7 +51,7 @@
  
              if (d3 < (double)(f2 * f2))
              {
-@@ -491,6 +498,7 @@
+@@ -491,6 +500,7 @@
                  }
              }
          }

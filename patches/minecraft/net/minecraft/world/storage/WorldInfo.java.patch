@@ -24,15 +24,11 @@
  
          if (par2NBTTagCompound != null)
          {
-@@ -340,11 +343,17 @@
+@@ -339,6 +342,21 @@
+     {
          return this.playerTag;
      }
- 
--    /**
--     * Returns vanilla MC dimension (-1,0,1). For custom dimension compatibility, always prefer
--     * WorldProvider.dimensionID accessed from World.provider.dimensionID
--     */
--    public int getVanillaDimension()
++
 +    // MCPC+ start
 +    /**
 +     * Sets the Dimension.
@@ -41,9 +37,12 @@
 +    {
 +        this.dimension = dim;
 +    }
-+    // MCPC+ end
 +
 +    public int getDimension()
-     {
-         return this.dimension;
-     }
++    {
++        return this.dimension;
++    }
++    // MCPC+ end
+ 
+     /**
+      * Returns vanilla MC dimension (-1,0,1). For custom dimension compatibility, always prefer
