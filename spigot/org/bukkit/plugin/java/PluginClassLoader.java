@@ -440,7 +440,7 @@ public class PluginClassLoader extends URLClassLoader {
                     }
 
                     // Remap the classes
-                    byte[] remappedBytecode = remapper.remapClassFile(bytecode, null);
+                    byte[] remappedBytecode = remapper.remapClassFile(bytecode);
 
                     if (debug) {
                         File file = new File("remapped-plugin-classes/"+name+".class");
