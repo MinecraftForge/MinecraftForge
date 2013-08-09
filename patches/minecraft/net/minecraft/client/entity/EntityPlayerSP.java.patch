@@ -1,15 +1,34 @@
 --- ../src_base/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
 +++ ../src_work/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
-@@ -49,6 +49,8 @@
+@@ -49,6 +49,9 @@
  import net.minecraft.util.MovementInput;
  import net.minecraft.util.Session;
  import net.minecraft.world.World;
++import net.minecraftforge.client.event.PlayerPushOutOfBlocksEvent;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
  
  @SideOnly(Side.CLIENT)
  public class EntityPlayerSP extends AbstractClientPlayer
-@@ -685,6 +687,12 @@
+@@ -204,10 +207,13 @@
+                 this.ySize = 0.2F;
+             }
+ 
+-            this.pushOutOfBlocks(this.posX - (double)this.width * 0.35D, this.boundingBox.minY + 0.5D, this.posZ + (double)this.width * 0.35D);
+-            this.pushOutOfBlocks(this.posX - (double)this.width * 0.35D, this.boundingBox.minY + 0.5D, this.posZ - (double)this.width * 0.35D);
+-            this.pushOutOfBlocks(this.posX + (double)this.width * 0.35D, this.boundingBox.minY + 0.5D, this.posZ - (double)this.width * 0.35D);
+-            this.pushOutOfBlocks(this.posX + (double)this.width * 0.35D, this.boundingBox.minY + 0.5D, this.posZ + (double)this.width * 0.35D);
++            if(!MinecraftForge.EVENT_BUS.post(new PlayerPushOutOfBlocksEvent(this)))
++            {
++	            this.pushOutOfBlocks(this.posX - (double)this.width * 0.35D, this.boundingBox.minY + 0.5D, this.posZ + (double)this.width * 0.35D);
++	            this.pushOutOfBlocks(this.posX - (double)this.width * 0.35D, this.boundingBox.minY + 0.5D, this.posZ - (double)this.width * 0.35D);
++	            this.pushOutOfBlocks(this.posX + (double)this.width * 0.35D, this.boundingBox.minY + 0.5D, this.posZ - (double)this.width * 0.35D);
++	            this.pushOutOfBlocks(this.posX + (double)this.width * 0.35D, this.boundingBox.minY + 0.5D, this.posZ + (double)this.width * 0.35D);
++            }
+             boolean flag2 = (float)this.getFoodStats().getFoodLevel() > 6.0F || this.capabilities.allowFlying;
+ 
+             if (this.onGround && !flag1 && this.movementInput.moveForward >= f && !this.isSprinting() && flag2 && !this.isUsingItem() && !this.isPotionActive(Potion.blindness))
+@@ -685,6 +691,12 @@
  
      public void playSound(String par1Str, float par2, float par3)
      {
