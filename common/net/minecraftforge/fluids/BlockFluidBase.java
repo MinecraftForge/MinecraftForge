@@ -176,7 +176,6 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         {
             return false;
         }
-        Block.blocksList[bId].dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
 
         int density = getDensity(world, x, y, z);
         if (density == Integer.MAX_VALUE) 
