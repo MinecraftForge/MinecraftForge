@@ -1,4 +1,3 @@
-
 package net.minecraftforge.fluids;
 
 import java.util.Random;
@@ -303,7 +302,13 @@ public class BlockFluidClassic extends BlockFluidBase
             return false;
         }
         
-        if (this.density > getDensity(world, x, y, z))
+        int density = getDensity(world, x, y, z);
+        if (density == Integer.MAX_VALUE) 
+        {
+             return true;
+        }
+        
+        if (this.density > density)
         {
         	return true;
         }
