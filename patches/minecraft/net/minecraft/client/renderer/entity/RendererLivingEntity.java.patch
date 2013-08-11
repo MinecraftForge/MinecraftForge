@@ -28,7 +28,22 @@
          GL11.glPushMatrix();
          GL11.glDisable(GL11.GL_CULL_FACE);
          this.mainModel.onGround = this.renderSwingProgress(par1EntityLivingBase, par9);
-@@ -277,6 +284,7 @@
+@@ -154,9 +161,14 @@
+             for (int j = 0; j < 4; ++j)
+             {
+                 i = this.shouldRenderPass(par1EntityLivingBase, j, par9);
++                RenderLivingEvent.ShouldRenderPass event = new RenderLivingEvent.ShouldRenderPass(par1EntityLivingBase, this, j, i);
++                MinecraftForge.EVENT_BUS.post(event);
++                i = event.shouldRenderPass;
+ 
+                 if (i > 0)
+                 {
++                    MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.RenderPass(par1EntityLivingBase, this, j, i));
++                    
+                     this.renderPassModel.setLivingAnimations(par1EntityLivingBase, f8, f7, par9);
+                     this.renderPassModel.render(par1EntityLivingBase, f8, f7, f4, f3 - f2, f5, f6);
+ 
+@@ -277,6 +289,7 @@
          GL11.glEnable(GL11.GL_CULL_FACE);
          GL11.glPopMatrix();
          this.passSpecialRender(par1EntityLivingBase, par2, par4, par6);
@@ -36,7 +51,7 @@
      }
  
      /**
-@@ -442,12 +450,13 @@
+@@ -442,12 +455,13 @@
       */
      protected void passSpecialRender(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6)
      {
@@ -51,7 +66,7 @@
  
              if (d3 < (double)(f2 * f2))
              {
-@@ -491,6 +500,7 @@
+@@ -491,6 +505,7 @@
                  }
              }
          }

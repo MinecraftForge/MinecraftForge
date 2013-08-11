@@ -40,4 +40,30 @@ public abstract class RenderLivingEvent extends Event
             public Post(EntityLivingBase entity, RendererLivingEntity renderer){ super(entity, renderer); }
         }
     }
+    
+    public static class ShouldRenderPass extends RenderLivingEvent
+    {
+        public final int renderPass;
+        public int shouldRenderPass;
+        
+        public ShouldRenderPass(EntityLivingBase entity, RendererLivingEntity renderer, int renderPass, int shouldRenderPass)
+        {
+            super(entity, renderer);
+            this.renderPass = renderPass;
+            this.shouldRenderPass = shouldRenderPass;
+        }
+    }
+    
+    public static class RenderPass extends RenderLivingEvent
+    {
+        public final int renderPass;
+        public final int shouldRenderPass;
+
+        public RenderPass(EntityLivingBase entity, RendererLivingEntity renderer, int renderPass, int shouldRenderPass)
+        {
+            super(entity, renderer);
+            this.renderPass = renderPass;
+            this.shouldRenderPass = shouldRenderPass;
+        }
+    }
 }

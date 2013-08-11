@@ -94,7 +94,16 @@
              this.writeEntityToNBT(par1NBTTagCompound);
  
              if (this.ridingEntity != null)
-@@ -1593,6 +1636,26 @@
+@@ -1534,6 +1577,8 @@
+                     par1NBTTagCompound.setTag("Riding", nbttagcompound1);
+                 }
+             }
++            
++            MinecraftForge.EVENT_BUS.post(new EntityEvent.EntityWriteToNBT(this, par1NBTTagCompound));
+         }
+         catch (Throwable throwable)
+         {
+@@ -1593,12 +1638,34 @@
  
              this.setPosition(this.posX, this.posY, this.posZ);
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -121,7 +130,15 @@
              this.readEntityFromNBT(par1NBTTagCompound);
  
              if (this.func_142008_O())
-@@ -1705,7 +1768,14 @@
+             {
+                 this.setPosition(this.posX, this.posY, this.posZ);
+             }
++            
++            MinecraftForge.EVENT_BUS.post(new EntityEvent.EntityReadFromNBT(this, par1NBTTagCompound));
+         }
+         catch (Throwable throwable)
+         {
+@@ -1705,7 +1772,14 @@
          {
              EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
              entityitem.delayBeforeCanPickup = 10;
@@ -137,7 +154,7 @@
              return entityitem;
          }
      }
-@@ -2001,7 +2071,7 @@
+@@ -2001,7 +2075,7 @@
       */
      public boolean isRiding()
      {
@@ -146,7 +163,7 @@
      }
  
      /**
-@@ -2363,7 +2433,7 @@
+@@ -2363,7 +2437,7 @@
  
      public float func_82146_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
      {
@@ -155,7 +172,7 @@
      }
  
      public boolean func_96091_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
-@@ -2426,4 +2496,170 @@
+@@ -2426,4 +2500,170 @@
      {
          return this.getEntityName();
      }
