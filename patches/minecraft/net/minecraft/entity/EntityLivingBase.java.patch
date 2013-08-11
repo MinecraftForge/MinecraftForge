@@ -20,6 +20,15 @@
  
  public abstract class EntityLivingBase extends Entity
  {
+@@ -299,7 +302,7 @@
+ 
+             this.extinguish();
+ 
+-            if (!this.worldObj.isRemote && this.isRiding() && this.ridingEntity instanceof EntityLivingBase)
++            if (!this.worldObj.isRemote && this.isRiding() && ridingEntity!=null && ridingEntity.shouldDismountInWater(this))
+             {
+                 this.mountEntity((Entity)null);
+             }
 @@ -446,6 +449,7 @@
      {
          this.entityLivingToAttack = par1EntityLivingBase;
