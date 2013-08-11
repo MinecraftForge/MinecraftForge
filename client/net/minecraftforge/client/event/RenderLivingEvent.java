@@ -54,6 +54,7 @@ public abstract class RenderLivingEvent extends Event
         }
     }
     
+    @Cancelable
     public static class RenderPass extends RenderLivingEvent
     {
         public final int renderPass;
