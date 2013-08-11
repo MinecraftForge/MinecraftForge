@@ -32,11 +32,13 @@ public class MinecraftForge
      * This replaces every register*Handler() function in the old version of Forge.
      * TERRAIN_GEN_BUS for terrain gen events
      * ORE_GEN_BUS for ore gen events
+     * PERMISSIONS_BUS for permission events
      * EVENT_BUS for everything else
      */
     public static final EventBus EVENT_BUS = new EventBus();
     public static final EventBus TERRAIN_GEN_BUS = new EventBus();
     public static final EventBus ORE_GEN_BUS = new EventBus();
+    public static final EventBus PERMISSIONS_BUS = new EventBus();
 
     private static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();
 
