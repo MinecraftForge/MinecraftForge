@@ -35,14 +35,14 @@
 +        Iterator iterator = tagCompound.getTags().iterator();
 +        while (iterator.hasNext())
 +        {
-+            NBTBase childCompound = (NBTBase) iterator.next();
++            NBTBase childCompound = (NBTBase)iterator.next();
 +
 +            if (!(childCompound instanceof NBTTagCompound && tagCompound2.hasKey(childCompound.getName())))
 +            {
 +                return childCompound.equals(tagCompound2.getTag(childCompound.getName()));
 +            }
 +            else if (!tagCompound2.hasKey(childCompound.getName())
-+                    || !compareNBTTags((NBTTagCompound) childCompound, (NBTTagCompound) tagCompound2.getTag(childCompound.getName())))
++                    || !compareNBTTags((NBTTagCompound)childCompound, (NBTTagCompound)tagCompound2.getTag(childCompound.getName())))
 +            {
 +
 +                return false;
@@ -54,12 +54,3 @@
      }
  
      /**
-@@ -126,7 +160,7 @@
- 
-                 if (itemstack1 != null && itemstack1.hasTagCompound())
-                 {
--                    itemstack.setTagCompound((NBTTagCompound)itemstack1.stackTagCompound.copy());
-+                    itemstack.setTagCompound((NBTTagCompound) itemstack1.stackTagCompound.copy());
-                 }
-             }
-         }

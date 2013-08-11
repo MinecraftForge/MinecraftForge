@@ -12,12 +12,9 @@
  import net.minecraft.world.World;
  
  public class ShapelessRecipes implements IRecipe
-@@ -46,13 +49,27 @@
- 
-                     while (iterator.hasNext())
+@@ -48,11 +51,25 @@
                      {
--                        ItemStack itemstack1 = (ItemStack)iterator.next();
-+                        ItemStack itemstack1 = (ItemStack) iterator.next();
+                         ItemStack itemstack1 = (ItemStack)iterator.next();
  
 -                        if (itemstack.itemID == itemstack1.itemID && (itemstack1.getItemDamage() == 32767 || itemstack.getItemDamage() == itemstack1.getItemDamage()))
 +                        if (itemstack.itemID == itemstack1.itemID
@@ -56,14 +53,14 @@
 +        Iterator iterator = tagCompound.getTags().iterator();
 +        while (iterator.hasNext())
 +        {
-+            NBTBase childCompound = (NBTBase) iterator.next();
++            NBTBase childCompound = (NBTBase)iterator.next();
 +
 +            if (!(childCompound instanceof NBTTagCompound && tagCompound2.hasKey(childCompound.getName())))
 +            {
 +                return childCompound.equals(tagCompound2.getTag(childCompound.getName()));
 +            }
 +            else if (!tagCompound2.hasKey(childCompound.getName())
-+                    || !compareNBTTags((NBTTagCompound) childCompound, (NBTTagCompound) tagCompound2.getTag(childCompound.getName())))
++                    || !compareNBTTags((NBTTagCompound)childCompound, (NBTTagCompound)tagCompound2.getTag(childCompound.getName())))
 +            {
 +
 +                return false;
