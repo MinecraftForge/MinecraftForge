@@ -41,6 +41,17 @@ public abstract class RenderLivingEvent extends Event
         }
     }
     
+    public static class PreRenderPasses extends RenderLivingEvent
+    {
+        public int renderPasses;
+        
+        public PreRenderPasses(EntityLivingBase entity, RendererLivingEntity renderer)
+        {
+            super(entity, renderer);
+            renderPasses = 4;
+        }
+    }
+    
     public static class ShouldRenderPass extends RenderLivingEvent
     {
         public final int renderPass;

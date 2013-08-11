@@ -1,6 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/entity/RendererLivingEntity.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RendererLivingEntity.java
-@@ -17,6 +17,9 @@
+@@ -1,8 +1,7 @@
+ package net.minecraft.client.renderer.entity;
+ 
+-import cpw.mods.fml.relauncher.Side;
+-import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.Random;
++
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.gui.FontRenderer;
+ import net.minecraft.client.model.ModelBase;
+@@ -17,8 +16,14 @@
  import net.minecraft.entity.projectile.EntityArrow;
  import net.minecraft.util.MathHelper;
  import net.minecraft.util.ResourceLocation;
@@ -9,8 +19,13 @@
 +
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
++
++import cpw.mods.fml.relauncher.Side;
++import cpw.mods.fml.relauncher.SideOnly;
  
-@@ -29,6 +32,9 @@
+ @SideOnly(Side.CLIENT)
+ public abstract class RendererLivingEntity extends Render
+@@ -29,6 +34,9 @@
      /** The model to be used during the render passes. */
      protected ModelBase renderPassModel;
  
@@ -20,7 +35,7 @@
      public RendererLivingEntity(ModelBase par1ModelBase, float par2)
      {
          this.mainModel = par1ModelBase;
-@@ -68,6 +74,7 @@
+@@ -68,6 +76,7 @@
  
      public void func_130000_a(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6, float par8, float par9)
      {
@@ -28,13 +43,20 @@
          GL11.glPushMatrix();
          GL11.glDisable(GL11.GL_CULL_FACE);
          this.mainModel.onGround = this.renderSwingProgress(par1EntityLivingBase, par9);
-@@ -154,53 +161,58 @@
-             for (int j = 0; j < 4; ++j)
+@@ -151,56 +160,64 @@
+             float f10;
+             float f11;
+ 
+-            for (int j = 0; j < 4; ++j)
++            RenderLivingEvent.PreRenderPasses event = new RenderLivingEvent.PreRenderPasses(par1EntityLivingBase, this);
++            MinecraftForge.EVENT_BUS.post(event);
++            int renderPasses = event.renderPasses;
++            for (int j = 0; j < renderPasses; ++j)
              {
                  i = this.shouldRenderPass(par1EntityLivingBase, j, par9);
-+                RenderLivingEvent.ShouldRenderPass event = new RenderLivingEvent.ShouldRenderPass(par1EntityLivingBase, this, j, i);
-+                MinecraftForge.EVENT_BUS.post(event);
-+                i = event.shouldRenderPass;
++                RenderLivingEvent.ShouldRenderPass event1 = new RenderLivingEvent.ShouldRenderPass(par1EntityLivingBase, this, j, i);
++                MinecraftForge.EVENT_BUS.post(event1);
++                i = event1.shouldRenderPass;
  
                  if (i > 0)
                  {
@@ -44,7 +66,7 @@
 -                    if ((i & 240) == 16)
 -                    {
 -                        this.func_82408_c(par1EntityLivingBase, j, par9);
-+                    if(MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.RenderPass(par1EntityLivingBase, this, j, i))) {
++                    if(!MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.RenderPass(par1EntityLivingBase, this, j, i))) {
 +                        this.renderPassModel.setLivingAnimations(par1EntityLivingBase, f8, f7, par9);
                          this.renderPassModel.render(par1EntityLivingBase, f8, f7, f4, f3 - f2, f5, f6);
 -                    }
@@ -127,7 +149,7 @@
                      }
  
                      GL11.glDisable(GL11.GL_BLEND);
-@@ -277,6 +289,7 @@
+@@ -277,6 +294,7 @@
          GL11.glEnable(GL11.GL_CULL_FACE);
          GL11.glPopMatrix();
          this.passSpecialRender(par1EntityLivingBase, par2, par4, par6);
@@ -135,7 +157,7 @@
      }
  
      /**
-@@ -442,12 +455,13 @@
+@@ -442,12 +460,13 @@
       */
      protected void passSpecialRender(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6)
      {
@@ -150,7 +172,7 @@
  
              if (d3 < (double)(f2 * f2))
              {
-@@ -491,6 +505,7 @@
+@@ -491,6 +510,7 @@
                  }
              }
          }
