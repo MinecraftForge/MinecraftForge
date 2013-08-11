@@ -1214,7 +1214,7 @@
 +                    boolean triggerTagUpdate = itemInHand != null && itemInHand.itemID == Item.field_111212_ci.itemID && entity instanceof EntityLiving;
 +                    boolean triggerChestUpdate = itemInHand != null && itemInHand.itemID == Block.chest.blockID && entity instanceof EntityHorse;
 +                    boolean triggerLeashUpdate = itemInHand != null && itemInHand.itemID == Item.field_111214_ch.itemID && entity instanceof EntityLiving;
-+                    PlayerInteractEntityEvent event = new PlayerInteractEntityEvent((Player) this.getPlayer(), entity.getBukkitEntity());
++                    PlayerInteractEntityEvent event = new PlayerInteractEntityEvent((Player) this.getPlayerB(), entity.getBukkitEntity());
 +                    this.server.getPluginManager().callEvent(event);
 +
 +                    if (triggerLeashUpdate && (event.isCancelled() || this.playerEntity.inventory.getCurrentItem() == null || this.playerEntity.inventory.getCurrentItem().itemID != Item.field_111214_ch.itemID))
