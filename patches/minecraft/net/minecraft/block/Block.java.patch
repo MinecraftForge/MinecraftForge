@@ -167,7 +167,7 @@
      }
  
      /**
-@@ -1454,4 +1477,974 @@
+@@ -1454,4 +1477,975 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -349,6 +349,7 @@
 +     *
 +     * @param itemList The list of items to display on the creative inventory.
 +     */
++    @Deprecated
 +    public void addCreativeItems(ArrayList itemList)
 +    {
 +    }
