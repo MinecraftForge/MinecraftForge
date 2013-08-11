@@ -8,13 +8,9 @@
  import net.minecraft.inventory.InventoryCrafting;
  import net.minecraft.item.ItemStack;
  import net.minecraft.world.World;
-@@ -48,11 +49,25 @@
-                     {
-                         ItemStack itemstack1 = (ItemStack)iterator.next();
+@@ -50,9 +51,22 @@
  
--                        if (itemstack.itemID == itemstack1.itemID && (itemstack1.getItemDamage() == 32767 || itemstack.getItemDamage() == itemstack1.getItemDamage()))
-+                        if (itemstack.itemID == itemstack1.itemID
-+                                && (itemstack1.getItemDamage() == Short.MAX_VALUE || itemstack.getItemDamage() == itemstack1.getItemDamage()))
+                         if (itemstack.itemID == itemstack1.itemID && (itemstack1.getItemDamage() == 32767 || itemstack.getItemDamage() == itemstack1.getItemDamage()))
                          {
 -                            flag = true;
 -                            arraylist.remove(itemstack1);
