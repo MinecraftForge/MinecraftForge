@@ -32,7 +32,46 @@
          }
          else
          {
-@@ -413,7 +422,7 @@
+@@ -306,7 +315,7 @@
+      */
+     protected void keyTyped(char par1, int par2)
+     {
+-        if (selectedTabIndex != CreativeTabs.tabAllSearch.getTabIndex())
++        if (CreativeTabs.creativeTabArray[selectedTabIndex].hasSearchBar())
+         {
+             if (GameSettings.isKeyDown(this.mc.gameSettings.keyBindChat))
+             {
+@@ -343,6 +352,15 @@
+     {
+         ContainerCreative containercreative = (ContainerCreative)this.inventorySlots;
+         containercreative.itemList.clear();
++
++        CreativeTabs tab = CreativeTabs.creativeTabArray[selectedTabIndex];
++        if (tab.hasSearchBar() && tab != CreativeTabs.tabAllSearch)
++        {
++            tab.displayAllReleventItems(containercreative.itemList);
++            updateFilteredItems(containercreative);
++            return;
++        }
++
+         Item[] aitem = Item.itemsList;
+         int i = aitem.length;
+         int j;
+@@ -369,7 +387,12 @@
+                 Item.enchantedBook.func_92113_a(enchantment, containercreative.itemList);
+             }
+         }
+-
++        updateFilteredItems(containercreative);
++    }
++
++    //split from above for custom search tabs
++    private void updateFilteredItems(ContainerCreative containercreative)
++    {
+         Iterator iterator = containercreative.itemList.iterator();
+         String s = this.searchField.getText().toLowerCase();
+ 
+@@ -413,7 +436,7 @@
      {
          CreativeTabs creativetabs = CreativeTabs.creativeTabArray[selectedTabIndex];
  
@@ -41,7 +80,7 @@
          {
              this.fontRenderer.drawString(I18n.func_135053_a(creativetabs.getTranslatedTabLabel()), 8, 6, 4210752);
          }
-@@ -462,7 +471,7 @@
+@@ -462,7 +485,7 @@
              {
                  CreativeTabs creativetabs = acreativetabs[k1];
  
@@ -50,7 +89,7 @@
                  {
                      this.setCurrentCreativeTab(creativetabs);
                      return;
-@@ -478,11 +487,17 @@
+@@ -478,11 +501,17 @@
       */
      private boolean needsScrollBars()
      {
@@ -68,7 +107,16 @@
          int i = selectedTabIndex;
          selectedTabIndex = par1CreativeTabs.getTabIndex();
          ContainerCreative containercreative = (ContainerCreative)this.inventorySlots;
-@@ -653,21 +668,42 @@
+@@ -551,7 +580,7 @@
+ 
+         if (this.searchField != null)
+         {
+-            if (par1CreativeTabs == CreativeTabs.tabAllSearch)
++            if (par1CreativeTabs.hasSearchBar())
+             {
+                 this.searchField.setVisible(true);
+                 this.searchField.setCanLoseFocus(false);
+@@ -653,21 +682,42 @@
  
          super.drawScreen(par1, par2, par3);
          CreativeTabs[] acreativetabs = CreativeTabs.creativeTabArray;
@@ -116,7 +164,7 @@
          }
  
          GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-@@ -741,14 +777,32 @@
+@@ -741,14 +791,32 @@
          int k = acreativetabs.length;
          int l;
  
@@ -151,7 +199,7 @@
              }
          }
  
-@@ -766,6 +820,14 @@
+@@ -766,6 +834,14 @@
              this.drawTexturedModalRect(i1, k + (int)((float)(l - k - 17) * this.currentScroll), 232 + (this.needsScrollBars() ? 0 : 12), 0, 12, 15);
          }
  
@@ -166,7 +214,7 @@
          this.renderCreativeTab(creativetabs);
  
          if (creativetabs == CreativeTabs.tabInventory)
-@@ -776,6 +838,15 @@
+@@ -776,6 +852,15 @@
  
      protected boolean func_74232_a(CreativeTabs par1CreativeTabs, int par2, int par3)
      {
@@ -182,7 +230,7 @@
          int k = par1CreativeTabs.getTabColumn();
          int l = 28 * k;
          byte b0 = 0;
-@@ -883,6 +954,7 @@
+@@ -883,6 +968,7 @@
          }
  
          GL11.glDisable(GL11.GL_LIGHTING);
@@ -190,7 +238,7 @@
          this.drawTexturedModalRect(l, i1, j, k, 28, b0);
          this.zLevel = 100.0F;
          itemRenderer.zLevel = 100.0F;
-@@ -890,7 +962,7 @@
+@@ -890,7 +976,7 @@
          i1 += 8 + (flag1 ? 1 : -1);
          GL11.glEnable(GL11.GL_LIGHTING);
          GL11.glEnable(GL12.GL_RESCALE_NORMAL);
@@ -199,7 +247,7 @@
          itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.func_110434_K(), itemstack, l, i1);
          itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.func_110434_K(), itemstack, l, i1);
          GL11.glDisable(GL11.GL_LIGHTING);
-@@ -912,6 +984,15 @@
+@@ -912,6 +998,15 @@
          {
              this.mc.displayGuiScreen(new GuiStats(this, this.mc.statFileWriter));
          }

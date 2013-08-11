@@ -74,7 +74,7 @@
              }
          }
  
-@@ -232,4 +263,26 @@
+@@ -232,4 +263,36 @@
              }
          }
      }
@@ -99,5 +99,15 @@
 +    public ItemStack getIconItemStack()
 +    {
 +        return new ItemStack(getTabIconItem());
++    }
++
++    /**
++     * Determines if the search bar should be shown for this tab.
++     * 
++     * @return True to show the bar
++     */
++    public boolean hasSearchBar()
++    {
++        return tabIndex == CreativeTabs.tabAllSearch.tabIndex;
 +    }
  }
