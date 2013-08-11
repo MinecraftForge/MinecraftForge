@@ -37,7 +37,7 @@
      protected void keyTyped(char par1, int par2)
      {
 -        if (selectedTabIndex != CreativeTabs.tabAllSearch.getTabIndex())
-+        if (CreativeTabs.creativeTabArray[selectedTabIndex].hasSearchBar())
++        if (!CreativeTabs.creativeTabArray[selectedTabIndex].hasSearchBar())
          {
              if (GameSettings.isKeyDown(this.mc.gameSettings.keyBindChat))
              {
