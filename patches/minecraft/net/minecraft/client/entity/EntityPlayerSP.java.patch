@@ -9,7 +9,77 @@
  
  @SideOnly(Side.CLIENT)
  public class EntityPlayerSP extends AbstractClientPlayer
-@@ -685,6 +687,12 @@
+@@ -570,18 +572,63 @@
+      */
+     protected boolean pushOutOfBlocks(double par1, double par3, double par5)
+     {
++        if (this.noClip) { return false; }
+         int i = MathHelper.floor_double(par1);
+         int j = MathHelper.floor_double(par3);
+         int k = MathHelper.floor_double(par5);
+         double d3 = par1 - (double)i;
+         double d4 = par5 - (double)k;
+ 
+-        if (this.isBlockTranslucent(i, j, k) || this.isBlockTranslucent(i, j + 1, k))
+-        {
+-            boolean flag = !this.isBlockTranslucent(i - 1, j, k) && !this.isBlockTranslucent(i - 1, j + 1, k);
+-            boolean flag1 = !this.isBlockTranslucent(i + 1, j, k) && !this.isBlockTranslucent(i + 1, j + 1, k);
+-            boolean flag2 = !this.isBlockTranslucent(i, j, k - 1) && !this.isBlockTranslucent(i, j + 1, k - 1);
+-            boolean flag3 = !this.isBlockTranslucent(i, j, k + 1) && !this.isBlockTranslucent(i, j + 1, k + 1);
++        int entHeight = Math.max(Math.round(this.height), 1);
++        
++        boolean inTranslucentBlock = true;
++        
++        for (int i1 = 0; i1 < entHeight; i1++)
++        {
++        	if (!this.isBlockTranslucent(i, j + i1, k))
++        	{
++        		inTranslucentBlock = false;
++        	}
++        }
++        
++        if (inTranslucentBlock)
++        {
++            boolean flag = true;
++            boolean flag1 = true;
++            boolean flag2 = true;
++            boolean flag3 = true;
++            for (int i1 = 0; i1 < entHeight; i1++)
++            {
++            	if(this.isBlockTranslucent(i - 1, j + i1, k))
++            	{
++            		flag = false;
++            		break;
++            	}
++            }
++            for (int i1 = 0; i1 < entHeight; i1++)
++            {
++            	if(this.isBlockTranslucent(i + 1, j + i1, k))
++            	{
++            		flag1 = false;
++            		break;
++            	}
++            }
++            for (int i1 = 0; i1 < entHeight; i1++)
++            {
++            	if(this.isBlockTranslucent(i, j + i1, k - 1))
++            	{
++            		flag2 = false;
++            		break;
++            	}
++            }
++            for (int i1 = 0; i1 < entHeight; i1++)
++            {
++            	if(this.isBlockTranslucent(i, j + i1, k + 1))
++            	{
++            		flag3 = false;
++            		break;
++            	}
++            }
+             byte b0 = -1;
+             double d5 = 9999.0D;
+ 
+@@ -685,6 +732,12 @@
  
      public void playSound(String par1Str, float par2, float par3)
      {
