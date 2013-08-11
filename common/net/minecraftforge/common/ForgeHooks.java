@@ -18,9 +18,11 @@ import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.NetServerHandler;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumMovingObjectType;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.WeightedRandomItem;
@@ -353,7 +355,32 @@ public class ForgeHooks
 
     public static boolean isLivingOnLadder(Block block, World world, int x, int y, int z, EntityLivingBase entity)
     {
-        return block != null && block.isLadder(world, x, y, z, entity);
+        if (!ForgeDummyContainer.fullBoundingBoxLadders)
+        {
+            return block != null && block.isLadder(world, x, y, z, entity);
+        }
+        else
+        {
+            AxisAlignedBB bb = entity.boundingBox;
+            int mX = MathHelper.floor_double(bb.minX);
+            int mY = MathHelper.floor_double(bb.minY);
+            int mZ = MathHelper.floor_double(bb.minZ);
+            for (int y2 = mY; y < bb.maxY; y2++)
+            {
+                for (int x2 = mX; x2 < bb.maxX; x2++)
+                {
+                    for (int z2 = mZ; z2 < bb.maxZ; z2++)
+                    {
+                        block = Block.blocksList[world.getBlockId(x2, y2, z2)];                        
+                        if (block != null && block.isLadder(world, x2, y2, z2, entity))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
     }
 
     public static void onLivingJump(EntityLivingBase entity)

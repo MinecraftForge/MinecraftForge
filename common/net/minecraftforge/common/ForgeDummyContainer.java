@@ -45,6 +45,7 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     public static boolean removeErroringTileEntities = false;
     public static boolean disableStitchedFileSaving = false;
     public static boolean forceDuplicateFluidBlockCrash = true;
+    public static boolean fullBoundingBoxLadders = false;
 
     public ForgeDummyContainer()
     {
@@ -116,9 +117,13 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
             FMLLog.warning("Enabling removal of erroring Tile Entities - USE AT YOUR OWN RISK");
         }
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "disableStitchedFileSaving", true);
-        prop.comment = "Set this to just disable the texture stitcher from writing the 'debug.stitched_{name}.png file to disc. Just a small performance tweak. Default: true";
-        disableStitchedFileSaving = prop.getBoolean(true);
+        //prop = config.get(Configuration.CATEGORY_GENERAL, "disableStitchedFileSaving", true);
+        //prop.comment = "Set this to just disable the texture stitcher from writing the 'debug.stitched_{name}.png file to disc. Just a small performance tweak. Default: true";
+        //disableStitchedFileSaving = prop.getBoolean(true);
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "fullBoundingBoxLadders", false);
+        prop.comment = "Set this to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticable differences in mechanics so default is vanilla behavior. Default: false";
+        fullBoundingBoxLadders = prop.getBoolean(false);
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "forceDuplicateFluidBlockCrash", true);
         prop.comment = "Set this to force a crash if more than one block attempts to link back to the same Fluid. Enabled by default.";
