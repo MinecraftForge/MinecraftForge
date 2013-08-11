@@ -1,6 +1,23 @@
 --- ../src_base/minecraft/net/minecraft/item/crafting/CraftingManager.java
 +++ ../src_work/minecraft/net/minecraft/item/crafting/CraftingManager.java
-@@ -283,7 +283,7 @@
+@@ -9,6 +9,7 @@
+ import net.minecraft.item.Item;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.NBTShapelessRecipes;
+ 
+ public class CraftingManager
+ {
+@@ -253,7 +254,7 @@
+             }
+         }
+ 
+-        this.recipes.add(new ShapelessRecipes(par1ItemStack, arraylist));
++        this.recipes.add(new NBTShapelessRecipes(par1ItemStack, arraylist));
+     }
+ 
+     public ItemStack findMatchingRecipe(InventoryCrafting par1InventoryCrafting, World par2World)
+@@ -283,7 +284,7 @@
              }
          }
  
