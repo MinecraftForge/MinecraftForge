@@ -46,7 +46,7 @@
 +                    this.foodLevel = event.getFoodLevel();
 +                }
 +
-+                ((EntityPlayerMP) par1EntityPlayer).playerNetServerHandler.sendPacketToPlayer(new Packet8UpdateHealth(par1EntityPlayer.func_110143_aJ(), this.foodLevel, this.foodSaturationLevel));
++                ((EntityPlayerMP) par1EntityPlayer).playerNetServerHandler.sendPacketToPlayer(new Packet8UpdateHealth(((EntityPlayerMP) par1EntityPlayer).getBukkitEntity().getScaledHealth(), this.foodLevel, this.foodSaturationLevel));
 +                // CraftBukkit end
              }
          }

@@ -731,4 +731,16 @@ public class CraftEventFactory {
             player.playerNetServerHandler.sendPacketToPlayer(new net.minecraft.network.packet.Packet103SetSlot(player.openContainer.windowId, slot.slotNumber, itemInHand));
         }
     }
+
+    public static PlayerUnleashEntityEvent callPlayerUnleashEntityEvent(net.minecraft.entity.EntityLiving entity, net.minecraft.entity.player.EntityPlayer player) {
+        PlayerUnleashEntityEvent event = new PlayerUnleashEntityEvent(entity.getBukkitEntity(), (Player) player.getBukkitEntity());
+        entity.worldObj.getServer().getPluginManager().callEvent(event);
+        return event;
+    }
+
+    public static PlayerLeashEntityEvent callPlayerLeashEntityEvent(net.minecraft.entity.EntityLiving entity, net.minecraft.entity.Entity leashHolder, net.minecraft.entity.player.EntityPlayer player) {
+        PlayerLeashEntityEvent event = new PlayerLeashEntityEvent(entity.getBukkitEntity(), leashHolder.getBukkitEntity(), (Player) player.getBukkitEntity());
+        entity.worldObj.getServer().getPluginManager().callEvent(event);
+        return event;
+    }
 }

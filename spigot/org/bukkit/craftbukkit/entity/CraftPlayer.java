@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,10 +23,6 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.NotImplementedException;
 
 import org.bukkit.*;
-import org.bukkit.Achievement;
-import org.bukkit.Material;
-import org.bukkit.Statistic;
-import org.bukkit.World;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
@@ -62,7 +59,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     private final Set<String> channels = new HashSet<String>();
     private final Map<String, Player> hiddenPlayers = new MapMaker().softValues().makeMap();
     private int hash = 0;
-    private boolean scaledHealth;
+    private double health = 20;
+    private boolean scaledHealth = false;
+    private double healthScale = 20;
 
     public CraftPlayer(CraftServer server, net.minecraft.entity.player.EntityPlayerMP entity) {
         super(server, entity);
@@ -258,13 +257,20 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public void playSound(Location loc, Sound sound, float volume, float pitch) {
+        if (sound == null) {
+            return;
+        }
+        playSound(loc, CraftSound.getSound(sound), volume, pitch);
+    }
+
+    public void playSound(Location loc, String sound, float volume, float pitch) {
         if (loc == null || sound == null || getHandle().playerNetServerHandler == null) return;
 
         double x = loc.getBlockX() + 0.5;
         double y = loc.getBlockY() + 0.5;
         double z = loc.getBlockZ() + 0.5;
 
-        net.minecraft.network.packet.Packet62LevelSound packet = new net.minecraft.network.packet.Packet62LevelSound(CraftSound.getSound(sound), x, y, z, volume, pitch);
+        net.minecraft.network.packet.Packet62LevelSound packet = new net.minecraft.network.packet.Packet62LevelSound(sound, x, y, z, volume, pitch);
         getHandle().playerNetServerHandler.sendPacketToPlayer(packet);
     }
 
@@ -978,6 +984,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     @Override
     public void setMaxHealth(double amount) {
         super.setMaxHealth(amount);
+        this.health = Math.min(this.health, health);
         getHandle().setPlayerHealthUpdated();
     }
 
@@ -1004,16 +1011,67 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         this.server.getScoreboardManager().setPlayerBoard(this, scoreboard);
     }
 
+    public void setHealthScale(double value) {
+        Validate.isTrue((float) value > 0F, "Must be greater than 0");
+        healthScale = value;
+        scaledHealth = true;
+        updateScaledHealth();
+    }
+
+    public double getHealthScale() {
+        return healthScale;
+    }
+
+    public void setHealthScaled(boolean scale) {
+        if (scaledHealth != (scaledHealth = scale)) {
+            updateScaledHealth();
+        }
+    }
+
+    public boolean isHealthScaled() {
+        return scaledHealth;
+    }
+
     public float getScaledHealth() {
-        return (float) (this.scaledHealth ? getHealth() / getMaxHealth() * 20.0D : getHealth());
+        return (float) (isHealthScaled() ? getHealth() * getHealthScale() / getMaxHealth() : getHealth());
     }
 
-    public void setScaleHealth(boolean scale) {
-        this.scaledHealth = scale;
+    @Override
+    public double getHealth() {
+        return health;
     }
 
-    public boolean isScaledHealth() {
-        return this.scaledHealth;
+    public void setRealHealth(double health) {
+        this.health = health;
+    }
+
+    public void updateScaledHealth() {
+        net.minecraft.entity.ai.attributes.ServersideAttributeMap attributemapserver = (net.minecraft.entity.ai.attributes.ServersideAttributeMap) getHandle().func_110140_aT();
+        Set set = attributemapserver.func_111161_b();
+
+        injectScaledMaxHealth(set, true);
+
+        getHandle().getDataWatcher().updateObject(6, (float) getScaledHealth());
+        getHandle().playerNetServerHandler.sendPacketToPlayer(new net.minecraft.network.packet.Packet8UpdateHealth(getScaledHealth(), getHandle().getFoodStats().getFoodLevel(), getHandle().getFoodStats().getSaturationLevel()));
+        getHandle().playerNetServerHandler.sendPacketToPlayer(new net.minecraft.network.packet.Packet44UpdateAttributes(getHandle().entityId, set));
+
+        set.clear();
+        getHandle().maxHealthCache = getMaxHealth();
+    }
+
+    public void injectScaledMaxHealth(Collection collection, boolean force) {
+        if (!scaledHealth && !force) {
+            return;
+        }
+        for (Object genericInstance : collection) {
+            net.minecraft.entity.ai.attributes.Attribute attribute = ((net.minecraft.entity.ai.attributes.AttributeInstance) genericInstance).func_111123_a();
+            if (attribute.func_111108_a().equals("generic.maxHealth")) {
+                collection.remove(genericInstance);
+                break;
+            }
+            continue;
+        }
+        collection.add(new net.minecraft.entity.ai.attributes.ModifiableAttributeInstance(getHandle().func_110140_aT(), (new net.minecraft.entity.ai.attributes.RangedAttribute("generic.maxHealth", scaledHealth ? healthScale : getMaxHealth(), 0.0D, Float.MAX_VALUE)).func_111117_a("Max Health").func_111112_a(true)));
     }
 
     // Spigot start

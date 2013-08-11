@@ -1,0 +1,74 @@
+--- ../src_base/minecraft/net/minecraft/entity/EntityLeashKnot.java
++++ ../src_work/minecraft/net/minecraft/entity/EntityLeashKnot.java
+@@ -11,6 +11,11 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.world.World;
++ // CraftBukkit start
++import net.minecraft.entity.player.EntityPlayerMP;
++import net.minecraft.network.packet.Packet39AttachEntity;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++// CraftBukkit end
+ 
+ public class EntityLeashKnot extends EntityHanging
+ {
+@@ -97,6 +102,14 @@
+ 
+                     if (entityliving.func_110167_bD() && entityliving.func_110166_bE() == par1EntityPlayer)
+                     {
++                        // CraftBukkit start
++                        if (CraftEventFactory.callPlayerLeashEntityEvent(entityliving, this, par1EntityPlayer).isCancelled())
++                        {
++                            ((EntityPlayerMP) par1EntityPlayer).playerNetServerHandler.sendPacketToPlayer(new Packet39AttachEntity(1, entityliving, entityliving.func_110166_bE()));
++                            continue;
++                        }
++
++                        // CraftBukkit end
+                         entityliving.func_110162_b(this, true);
+                         flag = true;
+                     }
+@@ -106,9 +119,12 @@
+ 
+         if (!this.worldObj.isRemote && !flag)
+         {
+-            this.setDead();
+-
+-            if (par1EntityPlayer.capabilities.isCreativeMode)
++            // CraftBukkit start - Move below
++            // this.setDead();
++            boolean die = true;
++
++            // CraftBukkit end
++            if (true || par1EntityPlayer.capabilities.isCreativeMode)   // CraftBukkit - Process for non-creative as well
+             {
+                 d0 = 7.0D;
+                 list = this.worldObj.getEntitiesWithinAABB(EntityLiving.class, AxisAlignedBB.getAABBPool().getAABB(this.posX - d0, this.posY - d0, this.posZ - d0, this.posX + d0, this.posY + d0, this.posZ + d0));
+@@ -123,11 +139,27 @@
+ 
+                         if (entityliving.func_110167_bD() && entityliving.func_110166_bE() == this)
+                         {
+-                            entityliving.func_110160_i(true, false);
++                            // CraftBukkit start
++                            if (CraftEventFactory.callPlayerUnleashEntityEvent(entityliving, par1EntityPlayer).isCancelled())
++                            {
++                                die = false;
++                                continue;
++                            }
++
++                            entityliving.func_110160_i(true, !par1EntityPlayer.capabilities.isCreativeMode); // false -> survival mode boolean
++                            // CraftBukkit end
+                         }
+                     }
+                 }
+             }
++
++            // CraftBukkit start
++            if (die)
++            {
++                this.setDead();
++            }
++
++            // CraftBukkit end
+         }
+ 
+         return true;

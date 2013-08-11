@@ -1,12 +1,13 @@
 --- ../src_base/minecraft/net/minecraft/entity/EntityCreature.java
 +++ ../src_work/minecraft/net/minecraft/entity/EntityCreature.java
-@@ -11,15 +11,19 @@
+@@ -11,15 +11,20 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
 +// CraftBukkit start
 +import org.bukkit.craftbukkit.entity.CraftEntity;
 +import org.bukkit.event.entity.EntityTargetEvent;
++import org.bukkit.event.entity.EntityUnleashEvent;
 +// CraftBukkit end
  
  public abstract class EntityCreature extends EntityLiving
@@ -22,7 +23,12 @@
  
      /**
       * returns true if a creature has attacked recently only used for creepers and skeletons
-@@ -63,7 +67,28 @@
+@@ -59,15 +64,36 @@
+         }
+ 
+         this.hasAttacked = this.isMovementCeased();
+-        float f = 16.0F;
++        float f11 = 16.0F;
  
          if (this.entityToAttack == null)
          {
@@ -52,7 +58,12 @@
  
              if (this.entityToAttack != null)
              {
-@@ -81,7 +106,22 @@
+-                this.pathToEntity = this.worldObj.getPathEntityToEntity(this, this.entityToAttack, f, true, false, false, true);
++                this.pathToEntity = this.worldObj.getPathEntityToEntity(this, this.entityToAttack, f11, true, false, false, true);
+             }
+         }
+         else if (this.entityToAttack.isEntityAlive())
+@@ -81,14 +107,29 @@
          }
          else
          {
@@ -76,7 +87,15 @@
          }
  
          this.worldObj.theProfiler.endSection();
-@@ -128,7 +168,8 @@
+ 
+         if (!this.hasAttacked && this.entityToAttack != null && (this.pathToEntity == null || this.rand.nextInt(20) == 0))
+         {
+-            this.pathToEntity = this.worldObj.getPathEntityToEntity(this, this.entityToAttack, f, true, false, false, true);
++            this.pathToEntity = this.worldObj.getPathEntityToEntity(this, this.entityToAttack, f11, true, false, false, true);
+         }
+         else if (!this.hasAttacked && (this.pathToEntity == null && this.rand.nextInt(180) == 0 || this.rand.nextInt(120) == 0 || this.fleeingTick > 0) && this.entityAge < 100)
+         {
+@@ -128,7 +169,8 @@
                  double d1 = vec3.xCoord - this.posX;
                  double d2 = vec3.zCoord - this.posZ;
                  double d3 = vec3.yCoord - (double)i;
@@ -86,3 +105,19 @@
                  float f3 = MathHelper.wrapAngleTo180_float(f2 - this.rotationYaw);
                  this.moveForward = (float)this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111126_e();
  
+@@ -338,6 +380,7 @@
+             {
+                 if (f > 10.0F)
+                 {
++                    this.worldObj.getServer().getPluginManager().callEvent(new EntityUnleashEvent(this.getBukkitEntity(), EntityUnleashEvent.UnleashReason.DISTANCE)); // CraftBukkit
+                     this.func_110160_i(true, true);
+                 }
+ 
+@@ -370,6 +413,7 @@
+ 
+             if (f > 10.0F)
+             {
++                this.worldObj.getServer().getPluginManager().callEvent(new EntityUnleashEvent(this.getBukkitEntity(), EntityUnleashEvent.UnleashReason.DISTANCE)); // CraftBukkit
+                 this.func_110160_i(true, true);
+             }
+         }

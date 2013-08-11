@@ -1050,6 +1050,15 @@
          }
      }
  
+@@ -935,7 +1521,7 @@
+     public void syncPlayerInventory(EntityPlayerMP par1EntityPlayerMP)
+     {
+         par1EntityPlayerMP.sendContainerToPlayer(par1EntityPlayerMP.inventoryContainer);
+-        par1EntityPlayerMP.setPlayerHealthUpdated();
++        par1EntityPlayerMP.getBukkitEntity().updateScaledHealth(); // CraftBukkit - Update scaled health on respawn and worldchange
+         par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet16BlockItemSwitch(par1EntityPlayerMP.inventory.currentItem));
+     }
+ 
 @@ -960,7 +1546,10 @@
       */
      public String[] getAvailablePlayerDat()

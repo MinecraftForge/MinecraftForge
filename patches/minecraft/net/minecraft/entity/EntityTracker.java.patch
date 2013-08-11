@@ -27,55 +27,6 @@
      private int entityViewDistance;
  
      public EntityTracker(WorldServer par1WorldServer)
-@@ -132,28 +135,28 @@
-         }
-         else if (par1Entity instanceof EntityMinecart)
-         {
-+            this.addEntityToTracker(par1Entity, 80, 2, true); // CraftBukkit - Send updates at same rate as players
-+        }
-+        else if (par1Entity instanceof EntityBoat)
-+        {
-+            this.addEntityToTracker(par1Entity, 80, 2, true); // CraftBukkit - Send updates at same rate as players
-+        }
-+        else if (par1Entity instanceof EntitySquid)
-+        {
-+            this.addEntityToTracker(par1Entity, 64, 3, true);
-+        }
-+        else if (par1Entity instanceof EntityWither)
-+        {
-+            this.addEntityToTracker(par1Entity, 80, 3, false);
-+        }
-+        else if (par1Entity instanceof EntityBat)
-+        {
-+            this.addEntityToTracker(par1Entity, 80, 3, false);
-+        }
-+        else if (par1Entity instanceof IAnimals)
-+        {
-             this.addEntityToTracker(par1Entity, 80, 3, true);
-         }
--        else if (par1Entity instanceof EntityBoat)
--        {
--            this.addEntityToTracker(par1Entity, 80, 3, true);
--        }
--        else if (par1Entity instanceof EntitySquid)
--        {
--            this.addEntityToTracker(par1Entity, 64, 3, true);
--        }
--        else if (par1Entity instanceof EntityWither)
--        {
--            this.addEntityToTracker(par1Entity, 80, 3, false);
--        }
--        else if (par1Entity instanceof EntityBat)
--        {
--            this.addEntityToTracker(par1Entity, 80, 3, false);
--        }
--        else if (par1Entity instanceof IAnimals)
--        {
--            this.addEntityToTracker(par1Entity, 80, 3, true);
--        }
-         else if (par1Entity instanceof EntityDragon)
-         {
-             this.addEntityToTracker(par1Entity, 160, 3, true);
 @@ -187,6 +190,13 @@
  
      public void addEntityToTracker(Entity par1Entity, int par2, int par3, boolean par4)

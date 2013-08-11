@@ -1,0 +1,82 @@
+--- ../src_base/minecraft/net/minecraft/inventory/AnimalChest.java
++++ ../src_work/minecraft/net/minecraft/inventory/AnimalChest.java
+@@ -2,6 +2,13 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++// CraftBukkit start
++import java.util.List;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++import net.minecraft.entity.passive.EntityHorse;
++import net.minecraft.item.ItemStack;
++// CraftBukkit end
+ 
+ public class AnimalChest extends InventoryBasic
+ {
+@@ -10,6 +17,65 @@
+         super(par1Str, false, par2);
+     }
+ 
++    // CraftBukkit start
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    private EntityHorse horse;
++    private int maxStack = MAX_STACK;
++
++    public AnimalChest(String s, int i, EntityHorse horse)
++    {
++        this(s, i);
++        this.horse = horse;
++    }
++
++    @Override
++    public ItemStack[] getContents()
++    {
++        return this.inventoryContents;
++    }
++
++    @Override
++    public void onOpen(CraftHumanEntity who)
++    {
++        transaction.add(who);
++    }
++
++    @Override
++    public void onClose(CraftHumanEntity who)
++    {
++        transaction.remove(who);
++    }
++
++    @Override
++    public List<HumanEntity> getViewers()
++    {
++        return transaction;
++    }
++
++    @Override
++    public org.bukkit.inventory.InventoryHolder getOwner()
++    {
++        return (org.bukkit.entity.Horse) this.horse.getBukkitEntity();
++    }
++
++    @Override
++    public void setMaxStackSize(int size)
++    {
++        maxStack = size;
++    }
++
++    @Override
++
++    /**
++     * Returns the maximum stack size for a inventory slot. Seems to always be 64, possibly will be extended. *Isn't
++     * this more of a set than a get?*
++     */
++    public int getInventoryStackLimit()
++    {
++        return maxStack;
++    }
++    // CraftBukkit end
++
+     @SideOnly(Side.CLIENT)
+     public AnimalChest(String par1Str, boolean par2, int par3)
+     {

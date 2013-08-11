@@ -18,11 +18,11 @@ import org.bukkit.craftbukkit.inventory.CraftEntityEquipment;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;
+import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Fireball;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -388,6 +388,46 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
     public boolean isCustomNameVisible() {
         return getHandle() instanceof net.minecraft.entity.EntityLiving && ((net.minecraft.entity.EntityLiving) getHandle()).getAlwaysRenderNameTag();
+    }
+
+    public boolean isLeashed() {
+        if (!(getHandle() instanceof net.minecraft.entity.EntityLiving)) {
+            return false;
+        }
+        return ((net.minecraft.entity.EntityLiving) getHandle()).func_110166_bE() != null;
+    }
+
+    public Entity getLeashHolder() throws IllegalStateException {
+        if (!isLeashed()) {
+            throw new IllegalStateException("Entity not leashed");
+        }
+        return ((net.minecraft.entity.EntityLiving) getHandle()).func_110166_bE().getBukkitEntity();
+    }
+
+    private boolean unleash() {
+        if (!isLeashed()) {
+            return false;
+        }
+        ((net.minecraft.entity.EntityLiving) getHandle()).func_110160_i(true, false);
+        return true;
+    }
+
+    public boolean setLeashHolder(Entity holder) {
+        if ((getHandle() instanceof net.minecraft.entity.boss.EntityWither) || !(getHandle() instanceof net.minecraft.entity.EntityLiving)) {
+            return false;
+        }
+
+        if (holder == null) {
+            return unleash();
+        }
+
+        if (holder.isDead()) {
+            return false;
+        }
+
+        unleash();
+        ((net.minecraft.entity.EntityLiving) getHandle()).func_110162_b(((CraftEntity) holder).getHandle(), true);
+        return true;
     }
 
     @Deprecated

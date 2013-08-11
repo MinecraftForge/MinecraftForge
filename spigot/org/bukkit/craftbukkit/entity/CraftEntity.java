@@ -164,6 +164,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         } else if (entity instanceof net.minecraft.entity.EntityHanging) {
             if (entity instanceof net.minecraft.entity.item.EntityPainting) { return new CraftPainting(server, (net.minecraft.entity.item.EntityPainting) entity); }
             else if (entity instanceof net.minecraft.entity.item.EntityItemFrame) { return new CraftItemFrame(server, (net.minecraft.entity.item.EntityItemFrame) entity); }
+            else if (entity instanceof net.minecraft.entity.EntityLeashKnot) { return new CraftLeash(server, (net.minecraft.entity.EntityLeashKnot) entity); }
             else { return new CraftHanging(server, (net.minecraft.entity.EntityHanging) entity); }
         }
         else if (entity instanceof net.minecraft.entity.item.EntityTNTPrimed) { return new CraftTNTPrimed(server, (net.minecraft.entity.item.EntityTNTPrimed) entity); }
@@ -309,6 +310,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         } else if (net.minecraft.entity.EntityHanging.class.isAssignableFrom(nmsClass)) {
             if (net.minecraft.entity.item.EntityPainting.class.isAssignableFrom(nmsClass)) { return CraftPainting.class; }
             else if (net.minecraft.entity.item.EntityItemFrame.class.isAssignableFrom(nmsClass)) { return CraftItemFrame.class; }
+            else if (net.minecraft.entity.EntityLeashKnot.class.isAssignableFrom(nmsClass)) { return CraftLeash.class; }
             else { return CraftHanging.class; }
         }
         else if (net.minecraft.entity.item.EntityTNTPrimed.class.isAssignableFrom(nmsClass)) { return CraftTNTPrimed.class; }

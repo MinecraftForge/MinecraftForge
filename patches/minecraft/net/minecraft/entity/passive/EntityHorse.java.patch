@@ -73,7 +73,7 @@
              }
  
              int j = this.worldObj.getBlockId(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY - 0.2D - (double)this.prevRotationYaw), MathHelper.floor_double(this.posZ));
-@@ -400,10 +431,10 @@
+@@ -400,13 +431,13 @@
      private int func_110225_cC()
      {
          int i = this.func_110265_bP();
@@ -87,7 +87,11 @@
 +    public void func_110226_cD()   // CraftBukkit - private -> public
      {
          AnimalChest animalchest = this.field_110296_bG;
-         this.field_110296_bG = new AnimalChest("HorseChest", this.func_110225_cC());
+-        this.field_110296_bG = new AnimalChest("HorseChest", this.func_110225_cC());
++        this.field_110296_bG = new AnimalChest("HorseChest", this.func_110225_cC(), this); // CraftBukkit - add this horse
+         this.field_110296_bG.func_110133_a(this.getEntityName());
+ 
+         if (animalchest != null)
 @@ -631,7 +662,7 @@
  
      public int func_110218_cm()

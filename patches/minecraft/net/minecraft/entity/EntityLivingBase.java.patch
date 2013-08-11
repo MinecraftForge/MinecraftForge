@@ -75,7 +75,7 @@
      private int revengeTimer;
      private EntityLivingBase field_110150_bn;
      private int field_142016_bo;
-@@ -177,6 +189,11 @@
+@@ -177,12 +189,18 @@
      /** Number of ticks since last jump */
      private int jumpTicks;
      private float field_110151_bq;
@@ -87,7 +87,15 @@
  
      public EntityLivingBase(World par1World)
      {
-@@ -306,7 +323,13 @@
+         super(par1World);
+         this.func_110147_ax();
+-        this.setEntityHealth(this.func_110138_aP());
++        // CraftBukkit - setHealth(getMaxHealth()) inlined and simplified to skip the instanceof check for EntityPlayer, as getBukkitEntity() is not initialized in constructor
++        this.dataWatcher.updateObject(6, (float) this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111126_e());
+         this.preventEntitySpawning = true;
+         this.field_70770_ap = (float)(Math.random() + 1.0D) * 0.01F;
+         this.setPosition(this.posX, this.posY, this.posZ);
+@@ -306,7 +324,13 @@
          }
          else
          {
@@ -102,7 +110,7 @@
          }
  
          this.prevCameraPitch = this.cameraPitch;
-@@ -359,6 +382,22 @@
+@@ -359,6 +383,22 @@
          this.worldObj.theProfiler.endSection();
      }
  
@@ -125,7 +133,7 @@
      /**
       * If Animal, checks if the age timer is negative
       */
-@@ -374,22 +413,21 @@
+@@ -374,22 +414,21 @@
      {
          ++this.deathTime;
  
@@ -161,7 +169,7 @@
              this.setDead();
  
              for (i = 0; i < 20; ++i)
-@@ -446,6 +484,7 @@
+@@ -446,6 +485,7 @@
      {
          this.entityLivingToAttack = par1EntityLivingBase;
          this.revengeTimer = this.ticksExisted;
@@ -169,7 +177,7 @@
      }
  
      public EntityLivingBase func_110144_aD()
-@@ -556,6 +595,23 @@
+@@ -556,6 +596,23 @@
              }
          }
  
@@ -193,7 +201,7 @@
          if (par1NBTTagCompound.hasKey("HealF"))
          {
              this.setEntityHealth(par1NBTTagCompound.getFloat("HealF"));
-@@ -685,12 +741,14 @@
+@@ -685,12 +742,14 @@
  
      public boolean isPotionActive(int par1)
      {
@@ -210,7 +218,7 @@
      }
  
      /**
-@@ -744,10 +802,8 @@
+@@ -744,10 +803,8 @@
          return this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
      }
  
@@ -223,7 +231,7 @@
       */
      public void removePotionEffectClient(int par1)
      {
-@@ -798,16 +854,28 @@
+@@ -798,26 +855,69 @@
          }
      }
  
@@ -253,7 +261,48 @@
          }
      }
  
-@@ -826,6 +894,7 @@
+     public final float func_110143_aJ()
+     {
++        // CraftBukkit start - Use unscaled health
++        if (this instanceof EntityPlayerMP)
++        {
++            return (float)((EntityPlayerMP) this).getBukkitEntity().getHealth();
++        }
++
++        // CraftBukkit end
+         return this.dataWatcher.func_111145_d(6);
+     }
+ 
+     public void setEntityHealth(float par1)
+     {
++        // CraftBukkit start - Handle scaled health
++        if (this instanceof EntityPlayerMP)
++        {
++            org.bukkit.craftbukkit.entity.CraftPlayer player = ((EntityPlayerMP) this).getBukkitEntity();
++
++            // Squeeze
++            if (par1 < 0.0F)
++            {
++                player.setRealHealth(0.0D);
++            }
++            else if (par1 > player.getMaxHealth())
++            {
++                player.setRealHealth(player.getMaxHealth());
++            }
++            else
++            {
++                player.setRealHealth(par1);
++            }
++
++            this.dataWatcher.updateObject(6, Float.valueOf(player.getScaledHealth()));
++            return;
++        }
++
++        // CraftBukkit end
+         this.dataWatcher.updateObject(6, Float.valueOf(MathHelper.clamp_float(par1, 0.0F, this.func_110138_aP())));
+     }
+ 
+@@ -826,6 +926,7 @@
       */
      public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
      {
@@ -261,7 +310,7 @@
          if (this.isEntityInvulnerable())
          {
              return false;
-@@ -856,6 +925,20 @@
+@@ -856,6 +957,20 @@
  
                  this.limbYaw = 1.5F;
                  boolean flag = true;
@@ -282,7 +331,7 @@
  
                  if ((float)this.hurtResistantTime > (float)this.maxHurtResistantTime / 2.0F)
                  {
-@@ -976,6 +1059,7 @@
+@@ -976,6 +1091,7 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -290,7 +339,7 @@
          Entity entity = par1DamageSource.getEntity();
          EntityLivingBase entitylivingbase = this.func_94060_bK();
  
-@@ -1000,24 +1084,54 @@
+@@ -1000,24 +1116,54 @@
                  i = EnchantmentHelper.getLootingModifier((EntityLivingBase)entity);
              }
  
@@ -348,7 +397,7 @@
      }
  
      /**
-@@ -1065,7 +1179,12 @@
+@@ -1065,7 +1211,12 @@
          return "damage.hit";
      }
  
@@ -362,7 +411,7 @@
  
      /**
       * Drop 0-2 items of this living's type. @param par1 - Whether this entity has recently been hit by a player. @param
-@@ -1082,7 +1201,7 @@
+@@ -1082,7 +1233,7 @@
          int j = MathHelper.floor_double(this.boundingBox.minY);
          int k = MathHelper.floor_double(this.posZ);
          int l = this.worldObj.getBlockId(i, j, k);
@@ -371,7 +420,7 @@
      }
  
      /**
-@@ -1098,10 +1217,32 @@
+@@ -1098,10 +1249,32 @@
       */
      protected void fall(float par1)
      {
@@ -405,7 +454,7 @@
  
          if (i > 0)
          {
-@@ -1231,6 +1372,8 @@
+@@ -1231,6 +1404,8 @@
      {
          if (!this.isEntityInvulnerable())
          {
@@ -414,7 +463,7 @@
              par2 = this.applyArmorCalculations(par1DamageSource, par2);
              par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
              float f1 = par2;
-@@ -1292,6 +1435,17 @@
+@@ -1292,6 +1467,17 @@
       */
      public void swingItem()
      {
@@ -432,7 +481,22 @@
          if (!this.isSwingInProgress || this.field_110158_av >= this.getArmSwingAnimationEnd() / 2 || this.field_110158_av < 0)
          {
              this.field_110158_av = -1;
-@@ -1526,6 +1680,7 @@
+@@ -1392,12 +1578,12 @@
+     /**
+      * 0 = item, 1-n is armor
+      */
+-    public abstract ItemStack getCurrentItemOrArmor(int i);
++    public abstract ItemStack getCurrentItemOrArmor(int par1);
+ 
+     /**
+      * Sets the held item, or an armor slot. Slot 0 is held item. Slot 1-4 is armor. Params: Item, slot
+      */
+-    public abstract void setCurrentItemOrArmor(int i, ItemStack itemstack);
++    public abstract void setCurrentItemOrArmor(int par1, ItemStack par2ItemStack);
+ 
+     /**
+      * Set sprinting switch for Entity.
+@@ -1526,6 +1712,7 @@
          }
  
          this.isAirBorne = true;
@@ -440,7 +504,7 @@
      }
  
      /**
-@@ -1730,6 +1885,11 @@
+@@ -1730,6 +1917,11 @@
       */
      public void onUpdate()
      {
@@ -452,7 +516,7 @@
          super.onUpdate();
  
          if (!this.worldObj.isRemote)
-@@ -1788,7 +1948,7 @@
+@@ -1788,7 +1980,7 @@
          {
              f3 = 1.0F;
              f2 = (float)Math.sqrt((double)f) * 3.0F;
@@ -461,7 +525,7 @@
          }
  
          if (this.swingProgress > 0.0F)
-@@ -2006,6 +2166,15 @@
+@@ -2006,6 +2198,15 @@
              {
                  Entity entity = (Entity)list.get(i);
  
@@ -477,7 +541,7 @@
                  if (entity.canBePushed())
                  {
                      this.collideWithEntity(entity);
-@@ -2265,4 +2434,42 @@
+@@ -2265,4 +2466,42 @@
      {
          return this.getTeam() != null ? this.getTeam().func_142054_a(par1Team) : false;
      }

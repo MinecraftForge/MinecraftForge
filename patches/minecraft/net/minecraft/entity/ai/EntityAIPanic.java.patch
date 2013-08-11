@@ -1,0 +1,25 @@
+--- ../src_base/minecraft/net/minecraft/entity/ai/EntityAIPanic.java
++++ ../src_work/minecraft/net/minecraft/entity/ai/EntityAIPanic.java
+@@ -2,6 +2,7 @@
+ 
+ import net.minecraft.entity.EntityCreature;
+ import net.minecraft.util.Vec3;
++import net.minecraft.entity.EntityLivingBase; // CraftBukkit
+ 
+ public class EntityAIPanic extends EntityAIBase
+ {
+@@ -58,6 +59,14 @@
+      */
+     public boolean continueExecuting()
+     {
++        // CraftBukkit start - introduce a temporary timeout hack until this is fixed properly
++        if ((this.theEntityCreature.ticksExisted - this.theEntityCreature.func_142015_aE()) > 100)
++        {
++            this.theEntityCreature.setRevengeTarget((EntityLivingBase) null);
++            return false;
++        }
++
++        // CraftBukkit end
+         return !this.theEntityCreature.getNavigator().noPath();
+     }
+ }

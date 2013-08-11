@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -1110,6 +1109,9 @@ public class CraftWorld implements World {
                 entity = new net.minecraft.entity.item.EntityPainting(world, (int) x, (int) y, (int) z, dir);
             } else if (ItemFrame.class.isAssignableFrom(clazz)) {
                 entity = new net.minecraft.entity.item.EntityItemFrame(world, (int) x, (int) y, (int) z, dir);
+            } else if (LeashHitch.class.isAssignableFrom(clazz)) {
+                entity = new net.minecraft.entity.EntityLeashKnot(world, (int) x, (int) y, (int) z);
+                entity.field_98038_p = true;
             }
 
             if (entity != null && !((net.minecraft.entity.EntityHanging) entity).onValidSurface()) {

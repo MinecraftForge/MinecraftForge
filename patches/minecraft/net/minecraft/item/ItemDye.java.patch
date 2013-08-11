@@ -27,7 +27,7 @@
              if (par1ItemStack.getItemDamage() == 15)
              {
 -                if (func_96604_a(par1ItemStack, par3World, par4, par5, par6))
-+                if (a(par1ItemStack, par3World, par4, par5, par6, par2EntityPlayer))
++                if (a(par1ItemStack, par3World, par4, par5, par6, par2EntityPlayer))   // CraftBukkit - pass entity for StructureGrowEvent
                  {
                      if (!par3World.isRemote)
                      {

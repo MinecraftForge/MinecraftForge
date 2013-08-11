@@ -4,7 +4,7 @@ package org.bukkit.craftbukkit.block;
 import org.bukkit.block.Block;
 import org.bukkit.block.Beacon;
 import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.inventory.CraftInventory;
+import org.bukkit.craftbukkit.inventory.CraftInventoryBeacon;
 import org.bukkit.inventory.Inventory;
 
 public class CraftBeacon extends CraftBlockState implements Beacon {
@@ -19,7 +19,7 @@ public class CraftBeacon extends CraftBlockState implements Beacon {
     }
 
     public Inventory getInventory() {
-        return new CraftInventory(beacon);
+        return new CraftInventoryBeacon(beacon);
     }
 
     @Override

@@ -15,14 +15,7 @@
  
  public class EntityTrackerEntry
  {
-@@ -138,21 +144,21 @@
-             this.sendEventsToPlayers(par1List);
-         }
- 
--        if (this.field_85178_v != this.myEntity.ridingEntity || this.myEntity.ridingEntity != null && this.ticks % 60 == 0)
-+        if (this.field_85178_v != this.myEntity.ridingEntity /* || this.tracker.vehicle != null && this.m % 60 == 0 */)   // CraftBukkit - Revert to 1.4 logic, this packet is a toggle
-         {
-             this.field_85178_v = this.myEntity.ridingEntity;
+@@ -144,15 +150,15 @@
              this.sendPacketToAllTrackingPlayers(new Packet39AttachEntity(0, this.myEntity, this.myEntity.ridingEntity));
          }
  
@@ -138,7 +131,21 @@
              this.myEntity.velocityChanged = false;
          }
      }
-@@ -372,6 +425,11 @@
+@@ -313,6 +366,13 @@
+ 
+             if (!set.isEmpty())
+             {
++                // CraftBukkit start - Send scaled max health
++                if (this.myEntity instanceof EntityPlayerMP)
++                {
++                    ((EntityPlayerMP) this.myEntity).getBukkitEntity().injectScaledMaxHealth(set, false);
++                }
++
++                // CraftBukkit end
+                 this.sendPacketToAllAssociatedPlayers(new Packet44UpdateAttributes(this.myEntity.entityId, set));
+             }
+ 
+@@ -372,6 +432,11 @@
       */
      public void tryStartWachingThis(EntityPlayerMP par1EntityPlayerMP)
      {
@@ -150,7 +157,7 @@
          if (par1EntityPlayerMP != this.myEntity)
          {
              double d0 = par1EntityPlayerMP.posX - (double)(this.lastScaledXPosition / 32);
-@@ -381,6 +439,19 @@
+@@ -381,6 +446,19 @@
              {
                  if (!this.trackingPlayers.contains(par1EntityPlayerMP) && (this.isPlayerWatchingThisChunk(par1EntityPlayerMP) || this.myEntity.field_98038_p))
                  {
@@ -170,7 +177,21 @@
                      this.trackingPlayers.add(par1EntityPlayerMP);
                      Packet packet = this.getPacketForThisEntity();
                      par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(packet);
-@@ -413,20 +484,22 @@
+@@ -395,6 +473,13 @@
+                         ServersideAttributeMap serversideattributemap = (ServersideAttributeMap)((EntityLivingBase)this.myEntity).func_110140_aT();
+                         Collection collection = serversideattributemap.func_111160_c();
+ 
++                        // CraftBukkit start - If sending own attributes send scaled health instead of current maximum health
++                        if (this.myEntity.entityId == par1EntityPlayerMP.entityId)
++                        {
++                            ((EntityPlayerMP) this.myEntity).getBukkitEntity().injectScaledMaxHealth(collection, false);
++                        }
++
++                        // CraftBukkit end
+                         if (!collection.isEmpty())
+                         {
+                             par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet44UpdateAttributes(this.myEntity.entityId, collection));
+@@ -413,15 +498,18 @@
                          FMLNetworkHandler.makeEntitySpawnAdjustment(this.myEntity.entityId, par1EntityPlayerMP, this.lastScaledXPosition, this.lastScaledYPosition, this.lastScaledZPosition);
                      }
  
@@ -179,27 +200,22 @@
 -                        par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet28EntityVelocity(this.myEntity.entityId, this.myEntity.motionX, this.myEntity.motionY, this.myEntity.motionZ));
 -                    }
 -
--                    if (this.myEntity.ridingEntity != null)
-+                    // CraftBukkit start
-+                    if (this.myEntity.ridingEntity != null && this.myEntity.entityId > this.myEntity.ridingEntity.entityId)
+                     if (this.myEntity.ridingEntity != null)
                      {
                          par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet39AttachEntity(0, this.myEntity, this.myEntity.ridingEntity));
                      }
-+                    else if (this.myEntity.riddenByEntity != null && this.myEntity.entityId > this.myEntity.riddenByEntity.entityId)
++
++                    // CraftBukkit start
++                    if (this.myEntity.riddenByEntity != null)
 +                    {
 +                        par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet39AttachEntity(0, this.myEntity.riddenByEntity, this.myEntity));
 +                    }
- 
-                     if (this.myEntity instanceof EntityLiving && ((EntityLiving)this.myEntity).func_110166_bE() != null)
-                     {
-                         par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet39AttachEntity(1, this.myEntity, ((EntityLiving)this.myEntity).func_110166_bE()));
-                     }
 +
 +                    // CraftBukkit end
  
-                     if (this.myEntity instanceof EntityLivingBase)
+                     if (this.myEntity instanceof EntityLiving && ((EntityLiving)this.myEntity).func_110166_bE() != null)
                      {
-@@ -451,6 +524,11 @@
+@@ -451,6 +539,11 @@
                          }
                      }
  
@@ -211,7 +227,7 @@
                      if (this.myEntity instanceof EntityLivingBase)
                      {
                          EntityLivingBase entitylivingbase = (EntityLivingBase)this.myEntity;
-@@ -489,9 +567,12 @@
+@@ -489,9 +582,12 @@
      {
          if (this.myEntity.isDead)
          {
@@ -227,7 +243,7 @@
          Packet pkt = FMLNetworkHandler.getEntitySpawningPacket(this.myEntity);
  
          if (pkt != null)
-@@ -643,6 +724,11 @@
+@@ -643,6 +739,11 @@
  
      public void removePlayerFromTracker(EntityPlayerMP par1EntityPlayerMP)
      {
