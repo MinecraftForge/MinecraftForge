@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/item/crafting/ShapelessRecipes.java
 +++ ../src_work/minecraft/net/minecraft/item/crafting/ShapelessRecipes.java
-@@ -3,12 +3,14 @@
+@@ -3,8 +3,11 @@
  import java.util.ArrayList;
  import java.util.Iterator;
  import java.util.List;
@@ -11,13 +11,8 @@
 +import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.world.World;
  
--public class ShapelessRecipes implements IRecipe
--{
-+public class ShapelessRecipes implements IRecipe {
-     /** Is the ItemStack that you get when craft the recipe. */
-     private final ItemStack recipeOutput;
- 
-@@ -46,13 +48,27 @@
+ public class ShapelessRecipes implements IRecipe
+@@ -46,13 +49,27 @@
  
                      while (iterator.hasNext())
                      {
@@ -50,7 +45,7 @@
                          }
                      }
  
-@@ -65,6 +81,29 @@
+@@ -65,6 +82,29 @@
          }
  
          return arraylist.isEmpty();

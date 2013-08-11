@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/item/crafting/ShapedRecipes.java
 +++ ../src_work/minecraft/net/minecraft/item/crafting/ShapedRecipes.java
-@@ -1,12 +1,14 @@
+@@ -1,7 +1,10 @@
  package net.minecraft.item.crafting;
 +
 +import java.util.Iterator;
@@ -11,13 +11,7 @@
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.world.World;
  
--public class ShapedRecipes implements IRecipe
--{
-+public class ShapedRecipes implements IRecipe {
-     /** How many horizontal slots this recipe is wide. */
-     public final int recipeWidth;
- 
-@@ -104,11 +106,42 @@
+@@ -104,11 +107,42 @@
                      {
                          return false;
                      }
@@ -60,7 +54,7 @@
      }
  
      /**
-@@ -126,7 +159,7 @@
+@@ -126,7 +160,7 @@
  
                  if (itemstack1 != null && itemstack1.hasTagCompound())
                  {
