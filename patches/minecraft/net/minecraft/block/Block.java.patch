@@ -36,7 +36,7 @@
  import net.minecraft.util.Icon;
  import net.minecraft.util.MovingObjectPosition;
  import net.minecraft.util.StatCollector;
-@@ -35,9 +44,19 @@
+@@ -35,9 +44,21 @@
  import net.minecraft.world.Explosion;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
@@ -53,10 +53,86 @@
  {
 +    protected static int[] blockFireSpreadSpeed = new int[4096];
 +    protected static int[] blockFlammability = new int[4096];
++    protected static final boolean[] canGrief=new boolean[4096];
++    
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
-@@ -460,9 +479,10 @@
+@@ -78,8 +99,8 @@
+      */
+     public static boolean[] useNeighborBrightness = new boolean[4096];
+     public static final Block stone = (new BlockStone(1)).setHardness(1.5F).setResistance(10.0F).setStepSound(soundStoneFootstep).setUnlocalizedName("stone").func_111022_d("stone");
+-    public static final BlockGrass grass = (BlockGrass)(new BlockGrass(2)).setHardness(0.6F).setStepSound(soundGrassFootstep).setUnlocalizedName("grass").func_111022_d("grass");
+-    public static final Block dirt = (new BlockDirt(3)).setHardness(0.5F).setStepSound(soundGravelFootstep).setUnlocalizedName("dirt").func_111022_d("dirt");
++    public static final BlockGrass grass = (BlockGrass)(new BlockGrass(2)).setHardness(0.6F).setStepSound(soundGrassFootstep).setUnlocalizedName("grass").func_111022_d("grass").setMobGrief(true);
++    public static final Block dirt = (new BlockDirt(3)).setHardness(0.5F).setStepSound(soundGravelFootstep).setUnlocalizedName("dirt").func_111022_d("dirt").setMobGrief(true);
+     public static final Block cobblestone = (new Block(4, Material.rock)).setHardness(2.0F).setResistance(10.0F).setStepSound(soundStoneFootstep).setUnlocalizedName("stonebrick").setCreativeTab(CreativeTabs.tabBlock).func_111022_d("cobblestone");
+     public static final Block planks = (new BlockWood(5)).setHardness(2.0F).setResistance(5.0F).setStepSound(soundWoodFootstep).setUnlocalizedName("wood").func_111022_d("planks");
+     public static final Block sapling = (new BlockSapling(6)).setHardness(0.0F).setStepSound(soundGrassFootstep).setUnlocalizedName("sapling").func_111022_d("sapling");
+@@ -90,8 +111,8 @@
+ 
+     /** Stationary lava source block */
+     public static final Block lavaStill = (new BlockStationary(11, Material.lava)).setHardness(100.0F).setLightValue(1.0F).setUnlocalizedName("lava").disableStats().func_111022_d("lava_still");
+-    public static final Block sand = (new BlockSand(12)).setHardness(0.5F).setStepSound(soundSandFootstep).setUnlocalizedName("sand").func_111022_d("sand");
+-    public static final Block gravel = (new BlockGravel(13)).setHardness(0.6F).setStepSound(soundGravelFootstep).setUnlocalizedName("gravel").func_111022_d("gravel");
++    public static final Block sand = (new BlockSand(12)).setHardness(0.5F).setStepSound(soundSandFootstep).setUnlocalizedName("sand").func_111022_d("sand").setMobGrief(true);
++    public static final Block gravel = (new BlockGravel(13)).setHardness(0.6F).setStepSound(soundGravelFootstep).setUnlocalizedName("gravel").func_111022_d("gravel").setMobGrief(true);
+     public static final Block oreGold = (new BlockOre(14)).setHardness(3.0F).setResistance(5.0F).setStepSound(soundStoneFootstep).setUnlocalizedName("oreGold").func_111022_d("gold_ore");
+     public static final Block oreIron = (new BlockOre(15)).setHardness(3.0F).setResistance(5.0F).setStepSound(soundStoneFootstep).setUnlocalizedName("oreIron").func_111022_d("iron_ore");
+     public static final Block oreCoal = (new BlockOre(16)).setHardness(3.0F).setResistance(5.0F).setStepSound(soundStoneFootstep).setUnlocalizedName("oreCoal").func_111022_d("coal_ore");
+@@ -115,10 +136,10 @@
+     public static final BlockPistonExtension pistonExtension = new BlockPistonExtension(34);
+     public static final Block cloth = (new BlockColored(35, Material.cloth)).setHardness(0.8F).setStepSound(soundClothFootstep).setUnlocalizedName("cloth").func_111022_d("wool_colored");
+     public static final BlockPistonMoving pistonMoving = new BlockPistonMoving(36);
+-    public static final BlockFlower plantYellow = (BlockFlower)(new BlockFlower(37)).setHardness(0.0F).setStepSound(soundGrassFootstep).setUnlocalizedName("flower").func_111022_d("flower_dandelion");
+-    public static final BlockFlower plantRed = (BlockFlower)(new BlockFlower(38)).setHardness(0.0F).setStepSound(soundGrassFootstep).setUnlocalizedName("rose").func_111022_d("flower_rose");
+-    public static final BlockFlower mushroomBrown = (BlockFlower)(new BlockMushroom(39)).setHardness(0.0F).setStepSound(soundGrassFootstep).setLightValue(0.125F).setUnlocalizedName("mushroom").func_111022_d("mushroom_brown");
+-    public static final BlockFlower mushroomRed = (BlockFlower)(new BlockMushroom(40)).setHardness(0.0F).setStepSound(soundGrassFootstep).setUnlocalizedName("mushroom").func_111022_d("mushroom_red");
++    public static final BlockFlower plantYellow = (BlockFlower)(new BlockFlower(37)).setHardness(0.0F).setStepSound(soundGrassFootstep).setUnlocalizedName("flower").func_111022_d("flower_dandelion").setMobGrief(true);
++    public static final BlockFlower plantRed = (BlockFlower)(new BlockFlower(38)).setHardness(0.0F).setStepSound(soundGrassFootstep).setUnlocalizedName("rose").func_111022_d("flower_rose").setMobGrief(true);
++    public static final BlockFlower mushroomBrown = (BlockFlower)(new BlockMushroom(39)).setHardness(0.0F).setStepSound(soundGrassFootstep).setLightValue(0.125F).setUnlocalizedName("mushroom").func_111022_d("mushroom_brown").setMobGrief(true);
++    public static final BlockFlower mushroomRed = (BlockFlower)(new BlockMushroom(40)).setHardness(0.0F).setStepSound(soundGrassFootstep).setUnlocalizedName("mushroom").func_111022_d("mushroom_red").setMobGrief(true);
+     public static final Block blockGold = (new BlockOreStorage(41)).setHardness(3.0F).setResistance(10.0F).setStepSound(soundMetalFootstep).setUnlocalizedName("blockGold").func_111022_d("gold_block");
+     public static final Block blockIron = (new BlockOreStorage(42)).setHardness(5.0F).setResistance(10.0F).setStepSound(soundMetalFootstep).setUnlocalizedName("blockIron").func_111022_d("iron_block");
+ 
+@@ -128,7 +149,7 @@
+     /** stoneSingleSlab */
+     public static final BlockHalfSlab stoneSingleSlab = (BlockHalfSlab)(new BlockStep(44, false)).setHardness(2.0F).setResistance(10.0F).setStepSound(soundStoneFootstep).setUnlocalizedName("stoneSlab");
+     public static final Block brick = (new Block(45, Material.rock)).setHardness(2.0F).setResistance(10.0F).setStepSound(soundStoneFootstep).setUnlocalizedName("brick").setCreativeTab(CreativeTabs.tabBlock).func_111022_d("brick");
+-    public static final Block tnt = (new BlockTNT(46)).setHardness(0.0F).setStepSound(soundGrassFootstep).setUnlocalizedName("tnt").func_111022_d("tnt");
++    public static final Block tnt = (new BlockTNT(46)).setHardness(0.0F).setStepSound(soundGrassFootstep).setUnlocalizedName("tnt").func_111022_d("tnt").setMobGrief(true);
+     public static final Block bookShelf = (new BlockBookshelf(47)).setHardness(1.5F).setStepSound(soundWoodFootstep).setUnlocalizedName("bookshelf").func_111022_d("bookshelf");
+     public static final Block cobblestoneMossy = (new Block(48, Material.rock)).setHardness(2.0F).setResistance(10.0F).setStepSound(soundStoneFootstep).setUnlocalizedName("stoneMoss").setCreativeTab(CreativeTabs.tabBlock).func_111022_d("cobblestone_mossy");
+     public static final Block obsidian = (new BlockObsidian(49)).setHardness(50.0F).setResistance(2000.0F).setStepSound(soundStoneFootstep).setUnlocalizedName("obsidian").func_111022_d("obsidian");
+@@ -163,8 +184,8 @@
+     public static final Block snow = (new BlockSnow(78)).setHardness(0.1F).setStepSound(soundSnowFootstep).setUnlocalizedName("snow").setLightOpacity(0).func_111022_d("snow");
+     public static final Block ice = (new BlockIce(79)).setHardness(0.5F).setLightOpacity(3).setStepSound(soundGlassFootstep).setUnlocalizedName("ice").func_111022_d("ice");
+     public static final Block blockSnow = (new BlockSnowBlock(80)).setHardness(0.2F).setStepSound(soundSnowFootstep).setUnlocalizedName("snow").func_111022_d("snow");
+-    public static final Block cactus = (new BlockCactus(81)).setHardness(0.4F).setStepSound(soundClothFootstep).setUnlocalizedName("cactus").func_111022_d("cactus");
+-    public static final Block blockClay = (new BlockClay(82)).setHardness(0.6F).setStepSound(soundGravelFootstep).setUnlocalizedName("clay").func_111022_d("clay");
++    public static final Block cactus = (new BlockCactus(81)).setHardness(0.4F).setStepSound(soundClothFootstep).setUnlocalizedName("cactus").func_111022_d("cactus").setMobGrief(true);
++    public static final Block blockClay = (new BlockClay(82)).setHardness(0.6F).setStepSound(soundGravelFootstep).setUnlocalizedName("clay").func_111022_d("clay").setMobGrief(true);
+     public static final Block reed = (new BlockReed(83)).setHardness(0.0F).setStepSound(soundGrassFootstep).setUnlocalizedName("reeds").disableStats().func_111022_d("reeds");
+     public static final Block jukebox = (new BlockJukeBox(84)).setHardness(2.0F).setResistance(10.0F).setStepSound(soundStoneFootstep).setUnlocalizedName("jukebox").func_111022_d("jukebox");
+     public static final Block fence = (new BlockFence(85, "planks_oak", Material.wood)).setHardness(2.0F).setResistance(5.0F).setStepSound(soundWoodFootstep).setUnlocalizedName("fence");
+@@ -191,14 +212,14 @@
+     public static final Block mushroomCapRed = (new BlockMushroomCap(100, Material.wood, 1)).setHardness(0.2F).setStepSound(soundWoodFootstep).setUnlocalizedName("mushroom").func_111022_d("mushroom_block");
+     public static final Block fenceIron = (new BlockPane(101, "iron_bars", "iron_bars", Material.iron, true)).setHardness(5.0F).setResistance(10.0F).setStepSound(soundMetalFootstep).setUnlocalizedName("fenceIron");
+     public static final Block thinGlass = (new BlockPane(102, "glass", "glass_pane_top", Material.glass, false)).setHardness(0.3F).setStepSound(soundGlassFootstep).setUnlocalizedName("thinGlass");
+-    public static final Block melon = (new BlockMelon(103)).setHardness(1.0F).setStepSound(soundWoodFootstep).setUnlocalizedName("melon").func_111022_d("melon");
++    public static final Block melon = (new BlockMelon(103)).setHardness(1.0F).setStepSound(soundWoodFootstep).setUnlocalizedName("melon").func_111022_d("melon").setMobGrief(true);
+     public static final Block pumpkinStem = (new BlockStem(104, pumpkin)).setHardness(0.0F).setStepSound(soundWoodFootstep).setUnlocalizedName("pumpkinStem").func_111022_d("pumpkin_stem");
+     public static final Block melonStem = (new BlockStem(105, melon)).setHardness(0.0F).setStepSound(soundWoodFootstep).setUnlocalizedName("pumpkinStem").func_111022_d("melon_stem");
+     public static final Block vine = (new BlockVine(106)).setHardness(0.2F).setStepSound(soundGrassFootstep).setUnlocalizedName("vine").func_111022_d("vine");
+     public static final Block fenceGate = (new BlockFenceGate(107)).setHardness(2.0F).setResistance(5.0F).setStepSound(soundWoodFootstep).setUnlocalizedName("fenceGate");
+     public static final Block stairsBrick = (new BlockStairs(108, brick, 0)).setUnlocalizedName("stairsBrick");
+     public static final Block stairsStoneBrick = (new BlockStairs(109, stoneBrick, 0)).setUnlocalizedName("stairsStoneBrickSmooth");
+-    public static final BlockMycelium mycelium = (BlockMycelium)(new BlockMycelium(110)).setHardness(0.6F).setStepSound(soundGrassFootstep).setUnlocalizedName("mycel").func_111022_d("mycelium");
++    public static final BlockMycelium mycelium = (BlockMycelium)(new BlockMycelium(110)).setHardness(0.6F).setStepSound(soundGrassFootstep).setUnlocalizedName("mycel").func_111022_d("mycelium").setMobGrief(true);
+     public static final Block waterlily = (new BlockLilyPad(111)).setHardness(0.0F).setStepSound(soundGrassFootstep).setUnlocalizedName("waterlily").func_111022_d("waterlily");
+     public static final Block netherBrick = (new Block(112, Material.rock)).setHardness(2.0F).setResistance(10.0F).setStepSound(soundStoneFootstep).setUnlocalizedName("netherBrick").setCreativeTab(CreativeTabs.tabBlock).func_111022_d("nether_brick");
+     public static final Block netherFence = (new BlockFence(113, "nether_brick", Material.rock)).setHardness(2.0F).setResistance(10.0F).setStepSound(soundStoneFootstep).setUnlocalizedName("netherFence");
+@@ -460,9 +481,10 @@
          return this.needsRandomTick;
      }
  
@@ -68,7 +144,7 @@
      }
  
      /**
-@@ -485,7 +505,7 @@
+@@ -485,7 +507,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -77,7 +153,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -495,7 +515,7 @@
+@@ -495,7 +517,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -86,7 +162,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -646,7 +666,13 @@
+@@ -646,7 +668,13 @@
      /**
       * ejects contained items into the world, and notifies neighbours of an update, as appropriate
       */
@@ -101,7 +177,7 @@
  
      /**
       * Returns the quantity of items to drop on block destruction.
-@@ -671,7 +697,7 @@
+@@ -671,7 +699,7 @@
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
          float f = this.getBlockHardness(par2World, par3, par4, par5);
@@ -110,7 +186,7 @@
      }
  
      /**
-@@ -689,18 +715,13 @@
+@@ -689,18 +717,13 @@
      {
          if (!par1World.isRemote)
          {
@@ -133,7 +209,7 @@
                  }
              }
          }
-@@ -933,7 +954,8 @@
+@@ -933,7 +956,8 @@
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
          int l = par1World.getBlockId(par2, par3, par4);
@@ -143,7 +219,7 @@
      }
  
      /**
-@@ -1093,7 +1115,7 @@
+@@ -1093,7 +1117,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -152,7 +228,7 @@
          {
              ItemStack itemstack = this.createStackedBlock(par6);
  
-@@ -1109,12 +1131,13 @@
+@@ -1109,12 +1133,13 @@
          }
      }
  
@@ -167,7 +243,7 @@
      }
  
      /**
-@@ -1454,4 +1477,952 @@
+@@ -1454,4 +1479,976 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -1118,5 +1194,29 @@
 +            }
 +        }
 +        return false;
++    }
++    /**
++     * Common way to say whether a block may be picked up by mobs with that ability
++     * @param world The world
++     * @param x X
++     * @param y Y
++     * @param z Z
++     * @param entity Entity trying to pick the block up
++     * @return If the block may be picked up
++     */
++    public boolean canMobGrief(World world,int x,int y,int z,Entity entity)
++    {
++        return canGrief[blockID];
++    }
++    
++    /**
++     * Sets if a mob can grief this block
++     * @param pickUp true if a mob can grief (pick up or place)
++     * @return the block
++     */
++    public Block setMobGrief(boolean pickUp)
++    {
++        canGrief[blockID]=pickUp;
++        return this;
 +    }
  }

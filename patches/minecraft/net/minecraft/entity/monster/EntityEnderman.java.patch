@@ -1,15 +1,55 @@
 --- ../src_base/minecraft/net/minecraft/entity/monster/EntityEnderman.java
 +++ ../src_work/minecraft/net/minecraft/entity/monster/EntityEnderman.java
-@@ -16,6 +16,8 @@
+@@ -16,12 +16,14 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.living.EnderTeleportEvent;
++import net.minecraftforge.event.entity.living.LivingGriefEvent;
  
  public class EntityEnderman extends EntityMob
  {
-@@ -291,12 +293,17 @@
+     private static final UUID field_110192_bp = UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0");
+     private static final AttributeModifier field_110193_bq = (new AttributeModifier(field_110192_bp, "Attacking speed boost", 6.199999809265137D, 0)).func_111168_a(false);
+-    public static boolean[] carriableBlocks = new boolean[256];
+ 
+     /**
+      * Counter to delay the teleportation of an enderman towards the currently attacked target
+@@ -171,11 +173,14 @@
+                     k = MathHelper.floor_double(this.posZ - 2.0D + this.rand.nextDouble() * 4.0D);
+                     l = this.worldObj.getBlockId(i, j, k);
+ 
+-                    if (carriableBlocks[l])
++                    if (Block.blocksList[l]!=null && Block.blocksList[l].canMobGrief(worldObj, i, j, k, this))
+                     {
+-                        this.setCarried(this.worldObj.getBlockId(i, j, k));
+-                        this.setCarryingData(this.worldObj.getBlockMetadata(i, j, k));
+-                        this.worldObj.setBlock(i, j, k, 0);
++                        LivingGriefEvent event=new LivingGriefEvent(this, i, j, k, false, l, worldObj.getBlockMetadata(i, j, k));
++                        if (!MinecraftForge.EVENT_BUS.post(event)){
++                            this.setCarried(this.worldObj.getBlockId(i, j, k));
++                            this.setCarryingData(this.worldObj.getBlockMetadata(i, j, k));
++                            this.worldObj.setBlock(i, j, k, 0);
++                        }
+                     }
+                 }
+             }
+@@ -189,8 +194,11 @@
+ 
+                 if (l == 0 && i1 > 0 && Block.blocksList[i1].renderAsNormalBlock())
+                 {
+-                    this.worldObj.setBlock(i, j, k, this.getCarried(), this.getCarryingData(), 3);
+-                    this.setCarried(0);
++                    LivingGriefEvent event=new LivingGriefEvent(this, i, j, k, true, l, worldObj.getBlockMetadata(i, j, k));
++                    if (!MinecraftForge.EVENT_BUS.post(event)){
++                        this.worldObj.setBlock(i, j, k, this.getCarried(), this.getCarryingData(), 3);
++                        this.setCarried(0);
++                    }
+                 }
+             }
+         }
+@@ -291,12 +299,17 @@
       */
      protected boolean teleportTo(double par1, double par3, double par5)
      {
@@ -30,7 +70,7 @@
          boolean flag = false;
          int i = MathHelper.floor_double(this.posX);
          int j = MathHelper.floor_double(this.posY);
-@@ -473,7 +480,7 @@
+@@ -473,7 +486,7 @@
                      }
                  }
  
@@ -39,3 +79,25 @@
              }
              else
              {
+@@ -492,21 +505,4 @@
+         this.dataWatcher.updateObject(18, Byte.valueOf((byte)(par1 ? 1 : 0)));
+     }
+ 
+-    static
+-    {
+-        carriableBlocks[Block.grass.blockID] = true;
+-        carriableBlocks[Block.dirt.blockID] = true;
+-        carriableBlocks[Block.sand.blockID] = true;
+-        carriableBlocks[Block.gravel.blockID] = true;
+-        carriableBlocks[Block.plantYellow.blockID] = true;
+-        carriableBlocks[Block.plantRed.blockID] = true;
+-        carriableBlocks[Block.mushroomBrown.blockID] = true;
+-        carriableBlocks[Block.mushroomRed.blockID] = true;
+-        carriableBlocks[Block.tnt.blockID] = true;
+-        carriableBlocks[Block.cactus.blockID] = true;
+-        carriableBlocks[Block.blockClay.blockID] = true;
+-        carriableBlocks[Block.pumpkin.blockID] = true;
+-        carriableBlocks[Block.melon.blockID] = true;
+-        carriableBlocks[Block.mycelium.blockID] = true;
+-    }
+ }

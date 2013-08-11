@@ -18,3 +18,8 @@
                      {
                          par1World.setBlock(i1, j1, k1, Block.grass.blockID);
                      }
+@@ -158,5 +158,5 @@
+     public static Icon getIconSideOverlay()
+     {
+         return Block.grass.iconGrassSideOverlay; 
+ }
