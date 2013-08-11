@@ -181,13 +181,17 @@ public class WavefrontObject implements IModelCustom
         {
             tessellator.startDrawing(GL11.GL_TRIANGLES);
         }
+        tessellateAll(tessellator);
 
+        tessellator.draw();
+    }
+
+    public void tessellateAll(Tessellator tessellator)
+    {
         for (GroupObject groupObject : groupObjects)
         {
             groupObject.render(tessellator);
         }
-
-        tessellator.draw();
     }
 
     public void renderOnly(String... groupNames)
@@ -204,6 +208,19 @@ public class WavefrontObject implements IModelCustom
         }
     }
 
+    public void tessellateOnly(Tessellator tessellator, String... groupNames) {
+        for (GroupObject groupObject : groupObjects)
+        {
+            for (String groupName : groupNames)
+            {
+                if (groupName.equalsIgnoreCase(groupObject.name))
+                {
+                    groupObject.render(tessellator);
+                }
+            }
+        }
+    }
+
     public void renderPart(String partName)
     {
         for (GroupObject groupObject : groupObjects)
@@ -215,16 +232,52 @@ public class WavefrontObject implements IModelCustom
         }
     }
 
-    public void renderAllExcept(String... excludedGroupNames)
-    {
+    public void tessellatePart(Tessellator tessellator, String partName) {
         for (GroupObject groupObject : groupObjects)
         {
+            if (partName.equalsIgnoreCase(groupObject.name))
+            {
+                groupObject.render(tessellator);
+            }
+        }
+    }
+
+    public void renderAllExcept(String... excludedGroupNames)
+    {
+        boolean exclude;
+        for (GroupObject groupObject : groupObjects)
+        {
+            exclude=false;
             for (String excludedGroupName : excludedGroupNames)
             {
-                if (!excludedGroupName.equalsIgnoreCase(groupObject.name))
+                if (excludedGroupName.equalsIgnoreCase(groupObject.name))
                 {
-                    groupObject.render();
+                    exclude=true;
                 }
+            }
+            if(!exclude)
+            {
+                groupObject.render();
+            }
+        }
+    }
+
+    public void tessellateAllExcept(Tessellator tessellator, String... excludedGroupNames)
+    {
+        boolean exclude;
+        for (GroupObject groupObject : groupObjects)
+        {
+            exclude=false;
+            for (String excludedGroupName : excludedGroupNames)
+            {
+                if (excludedGroupName.equalsIgnoreCase(groupObject.name))
+                {
+                    exclude=true;
+                }
+            }
+            if(!exclude)
+            {
+                groupObject.render(tessellator);
             }
         }
     }
@@ -359,7 +412,7 @@ public class WavefrontObject implements IModelCustom
                 face.vertices = new Vertex[tokens.length];
                 face.textureCoordinates = new TextureCoordinate[tokens.length];
                 face.vertexNormals = new Vertex[tokens.length];
-                
+
                 for (int i = 0; i < tokens.length; ++i)
                 {
                     subTokens = tokens[i].split("/");
@@ -376,7 +429,7 @@ public class WavefrontObject implements IModelCustom
             {
                 face.vertices = new Vertex[tokens.length];
                 face.textureCoordinates = new TextureCoordinate[tokens.length];
-                
+
                 for (int i = 0; i < tokens.length; ++i)
                 {
                     subTokens = tokens[i].split("/");
@@ -392,7 +445,7 @@ public class WavefrontObject implements IModelCustom
             {
                 face.vertices = new Vertex[tokens.length];
                 face.vertexNormals = new Vertex[tokens.length];
-                
+
                 for (int i = 0; i < tokens.length; ++i)
                 {
                     subTokens = tokens[i].split("//");
@@ -407,7 +460,7 @@ public class WavefrontObject implements IModelCustom
             else if (isValidFace_V_Line(line))
             {
                 face.vertices = new Vertex[tokens.length];
-                
+
                 for (int i = 0; i < tokens.length; ++i)
                 {
                     face.vertices[i] = vertices.get(Integer.parseInt(tokens[i]) - 1);
