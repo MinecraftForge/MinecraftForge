@@ -1,7 +1,7 @@
 package net.minecraftforge.event.entity;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.Event;
 
 public class EntityEvent extends Event
@@ -44,6 +44,28 @@ public class EntityEvent extends Event
             this.newChunkZ = newChunkZ;
             this.oldChunkX = oldChunkX;
             this.oldChunkZ = oldChunkZ;
+        }
+    }
+    
+    public static class EntityWriteToNBT extends EntityEvent
+    {
+        public NBTTagCompound nbt;
+        
+        public EntityWriteToNBT(Entity entity, NBTTagCompound nbt)
+        {
+            super(entity);
+            this.nbt = nbt;
+        }
+    }
+    
+    public static class EntityReadFromNBT extends EntityEvent
+    {
+        public NBTTagCompound nbt;
+        
+        public EntityReadFromNBT(Entity entity, NBTTagCompound nbt)
+        {
+            super(entity);
+            this.nbt = nbt;
         }
     }
 }
