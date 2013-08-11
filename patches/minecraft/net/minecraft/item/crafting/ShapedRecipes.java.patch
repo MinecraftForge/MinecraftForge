@@ -1,24 +1,13 @@
 --- ../src_base/minecraft/net/minecraft/item/crafting/ShapedRecipes.java
 +++ ../src_work/minecraft/net/minecraft/item/crafting/ShapedRecipes.java
-@@ -1,7 +1,10 @@
- package net.minecraft.item.crafting;
-+
-+import java.util.Iterator;
- 
- import net.minecraft.inventory.InventoryCrafting;
- import net.minecraft.item.ItemStack;
-+import net.minecraft.nbt.NBTBase;
- import net.minecraft.nbt.NBTTagCompound;
- import net.minecraft.world.World;
- 
-@@ -104,11 +107,42 @@
+@@ -104,6 +104,14 @@
                      {
                          return false;
                      }
 +
 +                    if (itemstack.getTagCompound() != null)
 +                    {
-+                        if (itemstack1.getTagCompound() == null || !compareNBTTags(itemstack.getTagCompound(), itemstack1.getTagCompound()))
++                        if (itemstack1.getTagCompound() == null || !itemstack.getTagCompound().equals(itemstack1.getTagCompound()))
 +                        {
 +                            return false;
 +                        }
@@ -26,31 +15,3 @@
                  }
              }
          }
- 
-         return true;
-+    }
-+
-+    private boolean compareNBTTags(NBTTagCompound tagCompound, NBTTagCompound tagCompound2)
-+    {
-+        Iterator iterator = tagCompound.getTags().iterator();
-+        while (iterator.hasNext())
-+        {
-+            NBTBase childCompound = (NBTBase)iterator.next();
-+
-+            if (!(childCompound instanceof NBTTagCompound && tagCompound2.hasKey(childCompound.getName())))
-+            {
-+                return childCompound.equals(tagCompound2.getTag(childCompound.getName()));
-+            }
-+            else if (!tagCompound2.hasKey(childCompound.getName())
-+                    || !compareNBTTags((NBTTagCompound)childCompound, (NBTTagCompound)tagCompound2.getTag(childCompound.getName())))
-+            {
-+
-+                return false;
-+            }
-+        }
-+
-+        return true;
-+
-     }
- 
-     /**
