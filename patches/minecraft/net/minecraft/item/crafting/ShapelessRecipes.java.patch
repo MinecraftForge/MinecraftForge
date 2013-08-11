@@ -1,0 +1,82 @@
+--- ../src_base/minecraft/net/minecraft/item/crafting/ShapelessRecipes.java
++++ ../src_work/minecraft/net/minecraft/item/crafting/ShapelessRecipes.java
+@@ -3,12 +3,14 @@
+ import java.util.ArrayList;
+ import java.util.Iterator;
+ import java.util.List;
++
+ import net.minecraft.inventory.InventoryCrafting;
+ import net.minecraft.item.ItemStack;
++import net.minecraft.nbt.NBTBase;
++import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.world.World;
+ 
+-public class ShapelessRecipes implements IRecipe
+-{
++public class ShapelessRecipes implements IRecipe {
+     /** Is the ItemStack that you get when craft the recipe. */
+     private final ItemStack recipeOutput;
+ 
+@@ -46,13 +48,27 @@
+ 
+                     while (iterator.hasNext())
+                     {
+-                        ItemStack itemstack1 = (ItemStack)iterator.next();
++                        ItemStack itemstack1 = (ItemStack) iterator.next();
+ 
+-                        if (itemstack.itemID == itemstack1.itemID && (itemstack1.getItemDamage() == 32767 || itemstack.getItemDamage() == itemstack1.getItemDamage()))
++                        if (itemstack.itemID == itemstack1.itemID
++                                && (itemstack1.getItemDamage() == Short.MAX_VALUE || itemstack.getItemDamage() == itemstack1.getItemDamage()))
+                         {
+-                            flag = true;
+-                            arraylist.remove(itemstack1);
+-                            break;
++                            if (itemstack1.getTagCompound() != null)
++                            {
++                                if (itemstack.getTagCompound() != null && compareNBTTags(itemstack1.getTagCompound(), itemstack.getTagCompound()))
++                                {
++                                    flag = true;
++                                    arraylist.remove(itemstack1);
++                                    break;
++                                }
++                            }
++                            else
++                            {
++                                // Vanilla
++                                flag = true;
++                                arraylist.remove(itemstack1);
++                                break;
++                            }
+                         }
+                     }
+ 
+@@ -65,6 +81,29 @@
+         }
+ 
+         return arraylist.isEmpty();
++    }
++
++    private boolean compareNBTTags(NBTTagCompound tagCompound, NBTTagCompound tagCompound2)
++    {
++        Iterator iterator = tagCompound.getTags().iterator();
++        while (iterator.hasNext())
++        {
++            NBTBase childCompound = (NBTBase) iterator.next();
++
++            if (!(childCompound instanceof NBTTagCompound && tagCompound2.hasKey(childCompound.getName())))
++            {
++                return childCompound.equals(tagCompound2.getTag(childCompound.getName()));
++            }
++            else if (!tagCompound2.hasKey(childCompound.getName())
++                    || !compareNBTTags((NBTTagCompound) childCompound, (NBTTagCompound) tagCompound2.getTag(childCompound.getName())))
++            {
++
++                return false;
++            }
++        }
++
++        return true;
++
+     }
+ 
+     /**
