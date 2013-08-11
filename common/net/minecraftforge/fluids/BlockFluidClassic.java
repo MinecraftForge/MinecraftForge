@@ -333,7 +333,7 @@ public class BlockFluidClassic extends BlockFluidBase
     @Override
     public FluidStack drain(World world, int x, int y, int z, boolean doDrain)
     {
-        if (!isSourceBlock(world, x, y, z))
+        if (!this.canDrain(world, x, y, z))
         {
             return null;
         }
@@ -350,5 +350,31 @@ public class BlockFluidClassic extends BlockFluidBase
     public boolean canDrain(World world, int x, int y, int z)
     {
         return isSourceBlock(world, x, y, z);
+    }
+
+    @Override
+    public int fill(World world, int x, int y, int z, FluidStack receivingStack, boolean doFill)
+    {
+        if(!this.canFill(world, x, y, z))
+        {
+            return 0;
+        }
+
+        if(receivingStack != null && receivingStack.amount >= FluidContainerRegistry.BUCKET_VOLUME)
+        {
+            if(doFill)
+            {
+                world.setBlockMetadataWithNotify(x, y, z, 0, 3);
+            }
+            return FluidContainerRegistry.BUCKET_VOLUME;
+        }
+
+        return 0;
+    }
+
+    @Override
+    public boolean canFill(World world, int x, int y, int z)
+    {
+        return !isSourceBlock(world, x, y, z);
     }
 }
