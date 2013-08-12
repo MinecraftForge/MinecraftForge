@@ -5,23 +5,18 @@
 
 package net.minecraftforge.client;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 
-import org.lwjgl.opengl.Display;
-
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.world.World;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
-import net.minecraftforge.common.MinecraftForge;
 
 public class MinecraftForgeClient
 {
     private static IItemRenderer[] customItemRenderers = new IItemRenderer[Item.itemsList.length];
-
+    public static ArrayList<IRenderPassHandler> renderPassHandlers = new ArrayList<IRenderPassHandler>();
+    
     /**
      * Register a custom renderer for a specific item. This can be used to
      * render the item in-world as an EntityItem, when the item is equipped, or
@@ -43,6 +38,16 @@ public class MinecraftForgeClient
             return customItemRenderers[item.itemID];
         }
         return null;
+    }
+    
+    public static void registerRenderPassHandler(IRenderPassHandler handler) 
+    {
+        renderPassHandlers.add(handler);
+    }
+    
+    public static void unregisterRenderPassHandler(IRenderPassHandler handler)
+    {
+        renderPassHandlers.remove(handler);
     }
 
     public static int getRenderPass()

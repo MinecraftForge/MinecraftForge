@@ -1,10 +1,44 @@
 package net.minecraftforge.client;
 
-import java.util.HashMap;
+import static net.minecraftforge.client.IItemRenderer.ItemRenderType.ENTITY;
+import static net.minecraftforge.client.IItemRenderer.ItemRenderType.INVENTORY;
+import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.BLOCK_3D;
+import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.ENTITY_BOBBING;
+import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.ENTITY_ROTATION;
+import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.EQUIPPED_BLOCK;
+import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.INVENTORY_BLOCK;
+
 import java.util.Random;
-import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockFluid;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.entity.RendererLivingEntity;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.IItemRenderer.ItemRenderType;
+import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.RenderBlockFluid;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
@@ -14,37 +48,6 @@ import org.lwjgl.opengl.PixelFormat;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockFluid;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraftforge.client.IItemRenderer.ItemRenderType;
-import net.minecraftforge.client.event.DrawBlockHighlightEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.RenderBlockFluid;
-import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
-import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
 
 public class ForgeHooksClient
 {
@@ -284,6 +287,44 @@ public class ForgeHooksClient
     {
         ModelBiped modelbiped = itemStack.getItem().getArmorModel(entityLiving, itemStack, slotID);
         return modelbiped == null ? _default : modelbiped;
+    }
+    
+    public static int getRenderPassCount(EntityLivingBase entity, RendererLivingEntity renderer)
+    {
+        int renderPassCount = 4;
+        for(IRenderPassHandler handler : MinecraftForgeClient.renderPassHandlers) {
+            if(handler != null) {
+                int count = handler.getRenderPassCount(entity, renderer);
+                if(count > renderPassCount) {
+                    renderPassCount = count;
+                }
+            }
+        }
+        return renderPassCount;
+    }
+    
+    public static int shouldRenderPass(EntityLivingBase entity, RendererLivingEntity renderer, int renderPass, int shouldRenderPass)
+    {
+        for(IRenderPassHandler handler : MinecraftForgeClient.renderPassHandlers) {
+            if(handler != null) {
+                shouldRenderPass = handler.shouldRenderPass(entity, renderer, renderPass, shouldRenderPass);
+            }
+        }
+        return shouldRenderPass;
+    }
+    
+    public static boolean renderPass(EntityLivingBase entity, RendererLivingEntity renderer, int renderPass, int shouldRenderPass)
+    {
+        boolean canceled = false;
+        for(IRenderPassHandler handler : MinecraftForgeClient.renderPassHandlers) {
+            if(handler != null) {
+                boolean c = handler.renderPass(entity, renderer, renderPass, shouldRenderPass);
+                if(!canceled) {
+                    canceled = c;
+                }
+            }
+        }
+        return canceled;
     }
 
     static int stencilBits = 0;
