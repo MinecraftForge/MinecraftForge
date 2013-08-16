@@ -181,6 +181,7 @@ public class CoreModManager
             String cascadedTweaker = mfAttributes.getValue("TweakClass");
             if (cascadedTweaker != null)
             {
+                FMLRelaunchLog.info("Loading tweaker %s from %s", cascadedTweaker, coreMod.getName());
                 handleCascadingTweak(coreMod, jar, cascadedTweaker, classLoader);
                 loadedCoremods.add(coreMod.getName());
                 continue;
@@ -214,7 +215,7 @@ public class CoreModManager
             classLoader.addURL(coreMod.toURI().toURL());
             Class<? extends ITweaker> newTweakClass = (Class<? extends ITweaker>) Class.forName(cascadedTweaker, true, classLoader);
             ITweaker newTweak = newTweakClass.newInstance();
-            CoreModManager.tweaker.injectCascadingTweak(tweaker);
+            CoreModManager.tweaker.injectCascadingTweak(newTweak);
         }
         catch (Exception e)
         {
