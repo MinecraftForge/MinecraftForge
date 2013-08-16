@@ -3,6 +3,7 @@ package cpw.mods.fml.common.launcher;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,6 +15,7 @@ import joptsimple.OptionSet;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.ObjectArrays;
 
@@ -121,30 +123,31 @@ public class FMLTweaker implements ITweaker {
     {
         String[] array = args.toArray(new String[args.size()]);
 
-        if (gameDir != null)
+        for (ITweaker tweak: cascadedTweaks)
+        {
+            array = ObjectArrays.concat(tweak.getLaunchArguments(), array, String.class);
+        }
+
+        if (gameDir != null && !Arrays.asList(array).contains("--gameDir"))
         {
             array = ObjectArrays.concat(gameDir.getAbsolutePath(),array);
             array = ObjectArrays.concat("--gameDir",array);
         }
 
-        if (assetsDir != null)
+        if (assetsDir != null && !Arrays.asList(array).contains("--assetsDir"))
         {
             array = ObjectArrays.concat(assetsDir.getAbsolutePath(),array);
             array = ObjectArrays.concat("--assetsDir",array);
         }
-        if (profile != null)
+        if (profile != null && !Arrays.asList(array).contains("--version"))
         {
             array = ObjectArrays.concat(profile,array);
             array = ObjectArrays.concat("--version",array);
         }
-        else
+        else if (!Arrays.asList(array).contains("--version"))
         {
             array = ObjectArrays.concat("UnknownFMLProfile",array);
             array = ObjectArrays.concat("--version",array);
-        }
-        for (ITweaker tweak: cascadedTweaks)
-        {
-            array = ObjectArrays.concat(tweak.getLaunchArguments(), array, String.class);
         }
         return array;
     }
