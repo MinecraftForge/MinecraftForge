@@ -160,7 +160,7 @@ public class CoreModManager
         for (File coreMod : coreModList)
         {
             FMLRelaunchLog.fine("Examining for coremod candidacy %s", coreMod.getName());
-            JarFile jar;
+            JarFile jar = null;
             Attributes mfAttributes;
             try
             {
@@ -177,7 +177,20 @@ public class CoreModManager
                 FMLRelaunchLog.log(Level.SEVERE, ioe, "Unable to read the jar file %s - ignoring", coreMod.getName());
                 continue;
             }
-
+            finally
+            {
+                if (jar!=null)
+                {
+                    try
+                    {
+                        jar.close();
+                    }
+                    catch (IOException e)
+                    {
+                        // Noise
+                    }
+                }
+            }
             String cascadedTweaker = mfAttributes.getValue("TweakClass");
             if (cascadedTweaker != null)
             {
