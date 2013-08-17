@@ -51,6 +51,7 @@ public class CoreModManager
     private static boolean deobfuscatedEnvironment;
     private static FMLTweaker tweaker;
     private static File mcDir;
+    private static List<String> reparsedCoremods;
 
     private static class FMLPluginWrapper
     {
@@ -210,7 +211,14 @@ public class CoreModManager
             try
             {
                 classLoader.addURL(coreMod.toURI().toURL());
-                loadedCoremods.add(coreMod.getName());
+                if (!mfAttributes.containsValue("FMLCorePluginContainsFMLMod"))
+                {
+                    loadedCoremods.add(coreMod.getName());
+                }
+                else
+                {
+                    reparsedCoremods.add(coreMod.getName());
+                }
             }
             catch (MalformedURLException e)
             {
@@ -267,6 +275,11 @@ public class CoreModManager
         return loadedCoremods;
     }
 
+    public static List<String> getReparseableCoremods()
+    {
+        return reparsedCoremods;
+    }
+    
     private static FMLPluginWrapper loadCoreMod(LaunchClassLoader classLoader, String coreModClass, File location)
     {
         String coreModName = coreModClass.substring(coreModClass.lastIndexOf('.')+1);

@@ -42,8 +42,12 @@ public class ModDiscoverer
     public void findClasspathMods(ModClassLoader modClassLoader)
     {
         List<String> knownLibraries = ImmutableList.<String>builder()
+                // skip default libs
                 .addAll(modClassLoader.getDefaultLibraries())
+                // skip loaded coremods
                 .addAll(CoreModManager.getLoadedCoremods())
+                // skip reparse coremods here
+                .addAll(CoreModManager.getReparseableCoremods())
                 .build();
         File[] minecraftSources = modClassLoader.getParentSources();
         if (minecraftSources.length == 1 && minecraftSources[0].isFile())
@@ -85,6 +89,7 @@ public class ModDiscoverer
 
         for (File modFile : modList)
         {
+            // skip loaded coremods
             if (CoreModManager.getLoadedCoremods().contains(modFile.getName()))
             {
                 FMLLog.finer("Skipping already parsed coremod or tweaker %s", modFile.getName());
