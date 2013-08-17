@@ -85,7 +85,11 @@ public class ModDiscoverer
 
         for (File modFile : modList)
         {
-            if (modFile.isDirectory())
+            if (CoreModManager.getLoadedCoremods().contains(modFile.getName()))
+            {
+                FMLLog.finer("Skipping already parsed coremod or tweaker %s", modFile.getName());
+            }
+            else if (modFile.isDirectory())
             {
                 FMLLog.fine("Found a candidate mod directory %s", modFile.getName());
                 candidates.add(new ModCandidate(modFile, modFile, ContainerType.DIR));

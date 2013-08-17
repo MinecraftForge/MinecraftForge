@@ -14,6 +14,7 @@ package cpw.mods.fml.common.asm;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream.GetField;
 import java.io.StringReader;
@@ -135,6 +136,7 @@ public class FMLSanityChecker implements IFMLCallHook
             // Probably a development environment, or the server (the server is not signed)
             goodMC = true;
         }
+        JarFile mcJarFile = null;
         if (fmlIsJar && !goodMC && codeSource.getLocation().getProtocol().equals("jar"))
         {
             try
@@ -142,7 +144,7 @@ public class FMLSanityChecker implements IFMLCallHook
                 String mcPath = codeSource.getLocation().getPath().substring(5);
                 mcPath = mcPath.substring(0, mcPath.lastIndexOf('!'));
                 mcPath = URLDecoder.decode(mcPath, Charsets.UTF_8.name());
-                JarFile mcJarFile = new JarFile(mcPath,true);
+                mcJarFile = new JarFile(mcPath,true);
                 mcJarFile.getManifest();
                 JarEntry cbrEntry = mcJarFile.getJarEntry("net/minecraft/client/ClientBrandRetriever.class");
                 ByteStreams.toByteArray(mcJarFile.getInputStream(cbrEntry));
@@ -165,6 +167,20 @@ public class FMLSanityChecker implements IFMLCallHook
             catch (Throwable e)
             {
                 FMLRelaunchLog.log(Level.SEVERE, e, "A critical error occurred trying to read the minecraft jar file");
+            }
+            finally
+            {
+                if (mcJarFile != null)
+                {
+                    try 
+                    {
+                        mcJarFile.close();
+                    }
+                    catch (IOException ioe)
+                    {
+                        // Noise
+                    }
+                }
             }
         }
         else
