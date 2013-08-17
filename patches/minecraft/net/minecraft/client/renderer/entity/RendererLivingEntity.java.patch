@@ -1,16 +1,17 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/entity/RendererLivingEntity.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RendererLivingEntity.java
-@@ -17,6 +17,9 @@
+@@ -17,6 +17,10 @@
  import net.minecraft.entity.projectile.EntityArrow;
  import net.minecraft.util.MathHelper;
  import net.minecraft.util.ResourceLocation;
++import net.minecraftforge.client.ForgeHooksClient;
 +import net.minecraftforge.client.event.RenderLivingEvent;
 +import net.minecraftforge.common.MinecraftForge;
 +
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
-@@ -29,6 +32,9 @@
+@@ -29,6 +33,9 @@
      /** The model to be used during the render passes. */
      protected ModelBase renderPassModel;
  
@@ -20,7 +21,7 @@
      public RendererLivingEntity(ModelBase par1ModelBase, float par2)
      {
          this.mainModel = par1ModelBase;
-@@ -68,6 +74,7 @@
+@@ -68,6 +75,7 @@
  
      public void func_130000_a(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6, float par8, float par9)
      {
@@ -28,7 +29,111 @@
          GL11.glPushMatrix();
          GL11.glDisable(GL11.GL_CULL_FACE);
          this.mainModel.onGround = this.renderSwingProgress(par1EntityLivingBase, par9);
-@@ -277,6 +284,7 @@
+@@ -151,58 +159,61 @@
+             float f10;
+             float f11;
+ 
+-            for (int j = 0; j < 4; ++j)
++            int renderPassCount = ForgeHooksClient.getRenderPassCount(par1EntityLivingBase, this);
++            for (int j = 0; j < renderPassCount; ++j)
+             {
+                 i = this.shouldRenderPass(par1EntityLivingBase, j, par9);
++                i = ForgeHooksClient.shouldRenderPass(par1EntityLivingBase, this, j, i);
+ 
+                 if (i > 0)
+                 {
+-                    this.renderPassModel.setLivingAnimations(par1EntityLivingBase, f8, f7, par9);
+-                    this.renderPassModel.render(par1EntityLivingBase, f8, f7, f4, f3 - f2, f5, f6);
+-
+-                    if ((i & 240) == 16)
+-                    {
+-                        this.func_82408_c(par1EntityLivingBase, j, par9);
++                    if(!ForgeHooksClient.renderPass(par1EntityLivingBase, this, j, i)) {
++                        this.renderPassModel.setLivingAnimations(par1EntityLivingBase, f8, f7, par9);
+                         this.renderPassModel.render(par1EntityLivingBase, f8, f7, f4, f3 - f2, f5, f6);
+-                    }
+-
+-                    if ((i & 15) == 15)
+-                    {
+-                        f9 = (float)par1EntityLivingBase.ticksExisted + par9;
+-                        this.func_110776_a(field_110814_a);
+-                        GL11.glEnable(GL11.GL_BLEND);
+-                        f10 = 0.5F;
+-                        GL11.glColor4f(f10, f10, f10, 1.0F);
+-                        GL11.glDepthFunc(GL11.GL_EQUAL);
+-                        GL11.glDepthMask(false);
+-
+-                        for (int k = 0; k < 2; ++k)
++    
++                        if ((i & 240) == 16)
+                         {
+-                            GL11.glDisable(GL11.GL_LIGHTING);
+-                            f11 = 0.76F;
+-                            GL11.glColor4f(0.5F * f11, 0.25F * f11, 0.8F * f11, 1.0F);
+-                            GL11.glBlendFunc(GL11.GL_SRC_COLOR, GL11.GL_ONE);
+-                            GL11.glMatrixMode(GL11.GL_TEXTURE);
+-                            GL11.glLoadIdentity();
+-                            float f12 = f9 * (0.001F + (float)k * 0.003F) * 20.0F;
+-                            float f13 = 0.33333334F;
+-                            GL11.glScalef(f13, f13, f13);
+-                            GL11.glRotatef(30.0F - (float)k * 60.0F, 0.0F, 0.0F, 1.0F);
+-                            GL11.glTranslatef(0.0F, f12, 0.0F);
+-                            GL11.glMatrixMode(GL11.GL_MODELVIEW);
++                            this.func_82408_c(par1EntityLivingBase, j, par9);
+                             this.renderPassModel.render(par1EntityLivingBase, f8, f7, f4, f3 - f2, f5, f6);
+                         }
+-
+-                        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+-                        GL11.glMatrixMode(GL11.GL_TEXTURE);
+-                        GL11.glDepthMask(true);
+-                        GL11.glLoadIdentity();
+-                        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+-                        GL11.glEnable(GL11.GL_LIGHTING);
+-                        GL11.glDisable(GL11.GL_BLEND);
+-                        GL11.glDepthFunc(GL11.GL_LEQUAL);
++    
++                        if ((i & 15) == 15)
++                        {
++                            f9 = (float)par1EntityLivingBase.ticksExisted + par9;
++                            this.func_110776_a(field_110814_a);
++                            GL11.glEnable(GL11.GL_BLEND);
++                            f10 = 0.5F;
++                            GL11.glColor4f(f10, f10, f10, 1.0F);
++                            GL11.glDepthFunc(GL11.GL_EQUAL);
++                            GL11.glDepthMask(false);
++    
++                            for (int k = 0; k < 2; ++k)
++                            {
++                                GL11.glDisable(GL11.GL_LIGHTING);
++                                f11 = 0.76F;
++                                GL11.glColor4f(0.5F * f11, 0.25F * f11, 0.8F * f11, 1.0F);
++                                GL11.glBlendFunc(GL11.GL_SRC_COLOR, GL11.GL_ONE);
++                                GL11.glMatrixMode(GL11.GL_TEXTURE);
++                                GL11.glLoadIdentity();
++                                float f12 = f9 * (0.001F + (float)k * 0.003F) * 20.0F;
++                                float f13 = 0.33333334F;
++                                GL11.glScalef(f13, f13, f13);
++                                GL11.glRotatef(30.0F - (float)k * 60.0F, 0.0F, 0.0F, 1.0F);
++                                GL11.glTranslatef(0.0F, f12, 0.0F);
++                                GL11.glMatrixMode(GL11.GL_MODELVIEW);
++                                this.renderPassModel.render(par1EntityLivingBase, f8, f7, f4, f3 - f2, f5, f6);
++                            }
++    
++                            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
++                            GL11.glMatrixMode(GL11.GL_TEXTURE);
++                            GL11.glDepthMask(true);
++                            GL11.glLoadIdentity();
++                            GL11.glMatrixMode(GL11.GL_MODELVIEW);
++                            GL11.glEnable(GL11.GL_LIGHTING);
++                            GL11.glDisable(GL11.GL_BLEND);
++                            GL11.glDepthFunc(GL11.GL_LEQUAL);
++                        }
+                     }
+-
+                     GL11.glDisable(GL11.GL_BLEND);
+                     GL11.glEnable(GL11.GL_ALPHA_TEST);
+                 }
+@@ -277,6 +288,7 @@
          GL11.glEnable(GL11.GL_CULL_FACE);
          GL11.glPopMatrix();
          this.passSpecialRender(par1EntityLivingBase, par2, par4, par6);
@@ -36,7 +141,7 @@
      }
  
      /**
-@@ -442,12 +450,13 @@
+@@ -442,12 +454,13 @@
       */
      protected void passSpecialRender(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6)
      {
@@ -51,7 +156,7 @@
  
              if (d3 < (double)(f2 * f2))
              {
-@@ -491,6 +500,7 @@
+@@ -491,6 +504,7 @@
                  }
              }
          }
