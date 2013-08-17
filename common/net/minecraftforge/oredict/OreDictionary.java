@@ -58,6 +58,18 @@ public class OreDictionary
             registerOre("oreQuartz", Block.oreNetherQuartz);
             registerOre("stone", Block.stone);
             registerOre("cobblestone", Block.cobblestone);
+            registerOre("itemRecord", Item.record13);
+            registerOre("itemRecord", Item.recordCat);
+            registerOre("itemRecord", Item.recordBlocks);
+            registerOre("itemRecord", Item.recordChirp);
+            registerOre("itemRecord", Item.recordFar);
+            registerOre("itemRecord", Item.recordMall);
+            registerOre("itemRecord", Item.recordMellohi);
+            registerOre("itemRecord", Item.recordStal);
+            registerOre("itemRecord", Item.recordStrad);
+            registerOre("itemRecord", Item.recordWard);
+            registerOre("itemRecord", Item.record11);
+            registerOre("itemRecord", Item.recordWait);
         }
 
         // Build our list of items to replace with ore tags
