@@ -46,12 +46,12 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 public class CoreModManager
 {
     private static String[] rootPlugins =  { "cpw.mods.fml.relauncher.FMLCorePlugin" , "net.minecraftforge.classloading.FMLForgePlugin" };
-    private static List<String> loadedCoremods = new ArrayList<String>();
+    private static List<String> loadedCoremods = Lists.newArrayList();
     private static List<FMLPluginWrapper> loadPlugins;
     private static boolean deobfuscatedEnvironment;
     private static FMLTweaker tweaker;
     private static File mcDir;
-    private static List<String> reparsedCoremods;
+    private static List<String> reparsedCoremods = Lists.newArrayList();
 
     private static class FMLPluginWrapper
     {
