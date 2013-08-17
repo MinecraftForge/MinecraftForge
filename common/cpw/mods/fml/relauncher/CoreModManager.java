@@ -213,10 +213,12 @@ public class CoreModManager
                 classLoader.addURL(coreMod.toURI().toURL());
                 if (!mfAttributes.containsValue("FMLCorePluginContainsFMLMod"))
                 {
+                    FMLRelaunchLog.finest("Adding %s to the list of known coremods, it will not be examined again", coreMod.getName());
                     loadedCoremods.add(coreMod.getName());
                 }
                 else
                 {
+                    FMLRelaunchLog.finest("Found FMLCorePluginContainsFMLMod marker in %s, it will be examined later for regular @Mod instances", coreMod.getName());
                     reparsedCoremods.add(coreMod.getName());
                 }
             }
