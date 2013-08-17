@@ -45,6 +45,7 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 
 public class CoreModManager
 {
+    private static final Attributes.Name COREMODCONTAINSFMLMOD = new Attributes.Name("FMLCorePluginContainsFMLMod");
     private static String[] rootPlugins =  { "cpw.mods.fml.relauncher.FMLCorePlugin" , "net.minecraftforge.classloading.FMLForgePlugin" };
     private static List<String> loadedCoremods = Lists.newArrayList();
     private static List<FMLPluginWrapper> loadPlugins;
@@ -212,7 +213,7 @@ public class CoreModManager
             try
             {
                 classLoader.addURL(coreMod.toURI().toURL());
-                if (!mfAttributes.containsValue("FMLCorePluginContainsFMLMod"))
+                if (!mfAttributes.containsKey(COREMODCONTAINSFMLMOD))
                 {
                     FMLRelaunchLog.finest("Adding %s to the list of known coremods, it will not be examined again", coreMod.getName());
                     loadedCoremods.add(coreMod.getName());
