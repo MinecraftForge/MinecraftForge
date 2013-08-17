@@ -205,6 +205,7 @@ public class CoreModManager
             if (fmlCorePlugin == null)
             {
                 // Not a coremod
+                FMLRelaunchLog.fine("Not found coremod data in %s", coreMod.getName());
                 continue;
             }
 
