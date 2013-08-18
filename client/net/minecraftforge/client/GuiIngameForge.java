@@ -74,6 +74,7 @@ public class GuiIngameForge extends GuiIngame
 
     public static int left_height = 39;
     public static int right_height = 39;
+    public static int chat_bottom = 48;
 
     private ScaledResolution res = null;
     private FontRenderer fontrenderer = null;
@@ -724,7 +725,7 @@ public class GuiIngameForge extends GuiIngame
     protected void renderChat(int width, int height)
     {
         GL11.glPushMatrix();
-        GL11.glTranslatef(0.0F, (float)(height - 48), 0.0F);
+        GL11.glTranslatef(0.0F, (float)(height - chat_bottom), 0.0F);
         mc.mcProfiler.startSection("chat");
         persistantChatGUI.drawChat(updateCounter);
         mc.mcProfiler.endSection();
