@@ -31,6 +31,20 @@
         "serverreq":true
       },
       {
+        "name": "org.scala-lang:scala-library:2.10.2",
+        "url" : "http://files.minecraftforge.net/maven/",
+        "comment" : "Important for FML, we add this",
+        "serverreq":true,
+        "clientreq":true
+      },
+      {
+        "name": "org.scala-lang:scala-compiler:2.10.2",
+        "url" : "http://files.minecraftforge.net/maven/",
+        "comment" : "Important for FML, we add this",
+        "serverreq":true,
+        "clientreq":true
+      },
+      {
         "name": "net.sf.jopt-simple:jopt-simple:4.5",
         "serverreq":true
       },
