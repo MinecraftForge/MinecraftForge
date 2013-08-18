@@ -151,6 +151,8 @@
       <pathelement path="${mcp.home}/jars/libraries/org/ow2/asm/asm-all/4.1/asm-all-4.1.jar"/>
       <pathelement path="${mcp.home}/jars/libraries/lzma/lzma/0.0.1/lzma-0.0.1.jar"/>
       <pathelement path="${mcp.home}/jars/libraries/net/sf/jopt-simple/jopt-simple/4.5/jopt-simple-4.5.jar"/>
+      <pathelement path="${mcp.home}/jars/libraries/org/scala-lang/scala-library/2.10.2/scala-library-2.10.2.jar"/>
+      <pathelement path="${mcp.home}/jars/libraries/org/scala-lang/scala-compiler/2.10.2/scala-compiler-2.10.2.jar"/>
       <pathelement path="${mcp.home}/jars/minecraft_server.${version.minecraft}.jar"/>
     </path>
     <manifestclasspath property="server.jar.classpath" jarfile="${mcp.home}/jars/minecraft_server.jar">
