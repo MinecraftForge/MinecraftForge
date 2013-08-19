@@ -95,10 +95,11 @@ public class GameRegistry
         Random fmlRandom = new Random(worldSeed);
         long xSeed = fmlRandom.nextLong() >> 2 + 1L;
         long zSeed = fmlRandom.nextLong() >> 2 + 1L;
-        fmlRandom.setSeed((xSeed * chunkX + zSeed * chunkZ) ^ worldSeed);
+        long chunkSeed = (xSeed * chunkX + zSeed * chunkZ) ^ worldSeed;
 
         for (IWorldGenerator generator : worldGenerators)
         {
+            fmlRandom.setSeed(chunkSeed);
             generator.generate(fmlRandom, chunkX, chunkZ, world, chunkGenerator, chunkProvider);
         }
     }
