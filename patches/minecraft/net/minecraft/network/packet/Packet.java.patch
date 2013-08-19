@@ -67,22 +67,23 @@
      }
  
      public String toString()
-@@ -301,6 +327,14 @@
+@@ -301,6 +327,15 @@
              short short2 = par0DataInput.readShort();
              itemstack = new ItemStack(short1, b0, short2);
              itemstack.stackTagCompound = readNBTTagCompound(par0DataInput);
 +
++            // MCPC+ start - disabled for itemstacks until I can add support for modded items.
 +            // CraftBukkit start
-+            if (itemstack.stackTagCompound != null)
++            /*if (itemstack.stackTagCompound != null)
 +            {
 +                CraftItemStack.setItemMeta(itemstack, CraftItemStack.getItemMeta(itemstack));
-+            }
-+
++            }*/
 +            // CraftBukkit end
++            // MCPC+ end
          }
  
          return itemstack;
-@@ -311,7 +345,7 @@
+@@ -311,7 +346,7 @@
       */
      public static void writeItemStack(ItemStack par0ItemStack, DataOutput par1DataOutput) throws IOException
      {
