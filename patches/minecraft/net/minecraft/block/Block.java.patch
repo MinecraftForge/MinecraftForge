@@ -217,7 +217,7 @@
  
          for (int i = 0; i < 256; ++i)
          {
-@@ -1454,4 +1490,983 @@
+@@ -1454,4 +1490,1006 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -429,6 +429,7 @@
 +     *
 +     * @param itemList The list of items to display on the creative inventory.
 +     */
++    @Deprecated
 +    public void addCreativeItems(ArrayList itemList)
 +    {
 +    }
@@ -1198,6 +1199,28 @@
 +                return true;
 +            }
 +        }
++        return false;
++    }
++    
++    /**
++     * Called when a tile entity on a side of this block changes is created or is destroyed.
++     * @param world The world
++     * @param x The x position of this block instance
++     * @param y The y position of this block instance
++     * @param z The z position of this block instance
++     * @param tileX The x position of the tile that changed
++     * @param tileY The y position of the tile that changed
++     * @param tileZ The z position of the tile that changed
++     */
++    public void onNeighborTileChange(World world, int x, int y, int z, int tileX, int tileY, int tileZ)
++    {
++    }
++    
++    /**
++     * @return true if this block is to be notified of TileEntity changes directly through one solid block like comparators
++     */
++    public boolean weakTileChanges()
++    {
 +        return false;
 +    }
  }

@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/cpw/mods/fml/common/asm/FMLSanityChecker.java
 +++ ../src_work/minecraft/cpw/mods/fml/common/asm/FMLSanityChecker.java
-@@ -189,10 +189,12 @@
+@@ -205,10 +205,12 @@
                  FMLRelaunchLog.severe("Technical information: ClientBrandRetriever was at %s, there were %d certificates for it", codeSource.getLocation(), certCount);
              }
          }
@@ -15,7 +15,7 @@
          byte[] mlClass = cl.getClassBytes("ModLoader");
          // Only care in obfuscated env
          if (mlClass == null)
-@@ -224,7 +226,7 @@
+@@ -240,7 +242,7 @@
          cl = (LaunchClassLoader) data.get("classLoader");
          File mcDir = (File)data.get("mcLocation");
          FMLDeobfuscatingRemapper.INSTANCE.setup(mcDir, cl, (String) data.get("deobfuscationFileName"));

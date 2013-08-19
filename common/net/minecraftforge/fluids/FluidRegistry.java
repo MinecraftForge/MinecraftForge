@@ -26,7 +26,7 @@ public abstract class FluidRegistry
     static BiMap<String, Integer> fluidIDs = HashBiMap.create();
 
     public static final Fluid WATER = new Fluid("water").setBlockID(Block.waterStill.blockID).setUnlocalizedName(Block.waterStill.getUnlocalizedName());
-    public static final Fluid LAVA = new Fluid("lava").setBlockID(Block.lavaStill.blockID).setLuminosity(15).setDensity(3000).setViscosity(6000).setUnlocalizedName(Block.lavaStill.getUnlocalizedName());
+    public static final Fluid LAVA = new Fluid("lava").setBlockID(Block.lavaStill.blockID).setLuminosity(15).setDensity(3000).setViscosity(6000).setTemperature(1300).setUnlocalizedName(Block.lavaStill.getUnlocalizedName());
 
     public static int renderIdFluid = -1;
 

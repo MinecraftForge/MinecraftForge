@@ -10,15 +10,7 @@
  import net.minecraft.entity.EntityLivingBase;
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.DamageSource;
-@@ -8,6 +11,7 @@
- 
- public abstract class Enchantment
- {
-+    // CraftBukkit - update CraftEnchant.getName(i) if this changes
-     public static final Enchantment[] enchantmentsList = new Enchantment[256];
- 
-     /** The list of enchantments applicable by the anvil from a book */
-@@ -113,6 +117,8 @@
+@@ -113,6 +116,8 @@
          {
              enchantmentsList[par1] = this;
          }
@@ -27,7 +19,7 @@
      }
  
      public int getWeight()
-@@ -205,6 +211,27 @@
+@@ -205,6 +210,36 @@
      public boolean canApply(ItemStack par1ItemStack)
      {
          return this.type.canEnchantItem(par1ItemStack.getItem());
@@ -52,6 +44,15 @@
 +    public static void addToBookList(Enchantment enchantment)
 +    {
 +        ObjectArrays.concat(enchantmentsBookList, enchantment);
++    }
++
++    /**
++     * Is this enchantment allowed to be enchanted on books via Enchantment Table
++     * @return false to disable the vanilla feature
++     */
++    public boolean isAllowedOnBooks()
++    {
++        return true;
      }
  
      static

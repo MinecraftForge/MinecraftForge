@@ -95,7 +95,15 @@
          this.preventEntitySpawning = true;
          this.field_70770_ap = (float)(Math.random() + 1.0D) * 0.01F;
          this.setPosition(this.posX, this.posY, this.posZ);
-@@ -306,7 +324,13 @@
+@@ -299,14 +317,20 @@
+ 
+             this.extinguish();
+ 
+-            if (!this.worldObj.isRemote && this.isRiding() && this.ridingEntity instanceof EntityLivingBase)
++            if (!this.worldObj.isRemote && this.isRiding() && ridingEntity!=null && ridingEntity.shouldDismountInWater(this))
+             {
+                 this.mountEntity((Entity)null);
+             }
          }
          else
          {

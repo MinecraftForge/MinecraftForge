@@ -1,4 +1,3 @@
-
 package net.minecraftforge.fluids;
 
 import java.util.HashMap;
@@ -130,7 +129,13 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             return false;
         }
 
-        if (this.density > getDensity(world, x, y, z))
+        int density = getDensity(world, x, y, z);
+        if (density == Integer.MAX_VALUE) 
+        {
+        	 return true;
+        }
+        
+        if (this.density > density)
         {
         	return true;
         }
@@ -171,9 +176,15 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         {
             return false;
         }
-        Block.blocksList[bId].dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
 
-         if (this.density > getDensity(world, x, y, z))
+        int density = getDensity(world, x, y, z);
+        if (density == Integer.MAX_VALUE) 
+        {
+        	 Block.blocksList[bId].dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
+        	 return true;
+        }
+        
+        if (this.density > density)
         {
         	return true;
         }
