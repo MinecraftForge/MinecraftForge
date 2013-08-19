@@ -37,4 +37,15 @@ public interface IFluidBlock
      * @return
      */
     boolean canDrain(World world, int x, int y, int z);
+
+    /**
+     * Returns the amount of a single block is filled. Value between 0 and 1.
+     * 1 meaning the entire 1x1x1 cube is full, 0 meaning completely empty.
+     * 
+     * If the return value is negative. It will be treated as filling the block 
+     * from the top down instead of bottom up.
+     * 
+     * @return
+     */
+    float getFilledPercentage(World world, int x, int y, int z);
 }

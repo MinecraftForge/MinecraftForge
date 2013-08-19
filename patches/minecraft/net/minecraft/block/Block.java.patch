@@ -167,7 +167,7 @@
      }
  
      /**
-@@ -1454,4 +1477,975 @@
+@@ -1454,4 +1477,979 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -1142,4 +1142,8 @@
 +    {
 +        return false;
 +    }
++
++    @Deprecated //Implemented here as we changed the IFluidBlock interface, and this allows us to do so without breaking exisitng mods.
++    // To be removed next MC version {1.6.3+}
++    public float getFilledPercentage(World world, int x, int y, int z){ return 1; }
  }

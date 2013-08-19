@@ -1,17 +1,22 @@
 --- ../src_base/minecraft/net/minecraft/entity/Entity.java
 +++ ../src_work/minecraft/net/minecraft/entity/Entity.java
-@@ -1,7 +1,10 @@
+@@ -1,10 +1,15 @@
  package net.minecraft.entity;
  
 +import cpw.mods.fml.common.FMLLog;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
++
 +import java.util.ArrayList;
 +import java.util.HashMap;
  import java.util.List;
  import java.util.Random;
  import java.util.UUID;
-@@ -13,8 +16,13 @@
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockFluid;
+ import net.minecraft.block.StepSound;
+@@ -13,8 +18,13 @@
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.enchantment.EnchantmentProtection;
  import net.minecraft.entity.effect.EntityLightningBolt;
@@ -25,7 +30,7 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.nbt.NBTTagDouble;
-@@ -26,12 +34,16 @@
+@@ -26,12 +36,18 @@
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.Direction;
  import net.minecraft.util.MathHelper;
@@ -39,10 +44,12 @@
 +import net.minecraftforge.common.IExtendedEntityProperties;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.EntityEvent;
++import net.minecraftforge.fluids.Fluid;
++import net.minecraftforge.fluids.IFluidBlock;
  
  public abstract class Entity
  {
-@@ -218,6 +230,13 @@
+@@ -218,6 +234,13 @@
      private boolean invulnerable;
      private UUID entityUniqueID;
      public EnumEntitySize myEntitySize;
@@ -56,7 +63,7 @@
  
      public Entity(World par1World)
      {
-@@ -245,6 +264,15 @@
+@@ -245,6 +268,15 @@
          this.dataWatcher.addObject(0, Byte.valueOf((byte)0));
          this.dataWatcher.addObject(1, Short.valueOf((short)300));
          this.entityInit();
@@ -72,7 +79,33 @@
      }
  
      protected abstract void entityInit();
-@@ -1523,6 +1551,21 @@
+@@ -1164,11 +1196,20 @@
+         int k = MathHelper.floor_double(this.posZ);
+         int l = this.worldObj.getBlockId(i, j, k);
+ 
+-        if (l != 0 && Block.blocksList[l].blockMaterial == par1Material)
+-        {
+-            float f = BlockFluid.getFluidHeightPercent(this.worldObj.getBlockMetadata(i, j, k)) - 0.11111111F;
+-            float f1 = (float)(j + 1) - f;
+-            return d0 < (double)f1;
++        Block block = Block.blocksList[l];
++        if (block != null && block.blockMaterial == par1Material)
++        {
++            double filled = block.getFilledPercentage(worldObj, i, j, k);
++            if (filled < 0)
++            {
++                filled *= -1;
++                //filled -= 0.11111111F; //Why this is needed.. not sure...
++                return d0 > (double)(j + (1 - filled));
++            }
++            else
++            {
++                return d0 < (double)(j + filled);
++            }
+         }
+         else
+         {
+@@ -1523,6 +1564,21 @@
              par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
              par1NBTTagCompound.setLong("UUIDMost", this.entityUniqueID.getMostSignificantBits());
              par1NBTTagCompound.setLong("UUIDLeast", this.entityUniqueID.getLeastSignificantBits());
@@ -94,7 +127,7 @@
              this.writeEntityToNBT(par1NBTTagCompound);
  
              if (this.ridingEntity != null)
-@@ -1593,6 +1636,26 @@
+@@ -1593,6 +1649,26 @@
  
              this.setPosition(this.posX, this.posY, this.posZ);
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -121,7 +154,7 @@
              this.readEntityFromNBT(par1NBTTagCompound);
  
              if (this.func_142008_O())
-@@ -1705,7 +1768,14 @@
+@@ -1705,7 +1781,14 @@
          {
              EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
              entityitem.delayBeforeCanPickup = 10;
@@ -137,7 +170,7 @@
              return entityitem;
          }
      }
-@@ -2001,7 +2071,7 @@
+@@ -2001,7 +2084,7 @@
       */
      public boolean isRiding()
      {
@@ -146,7 +179,7 @@
      }
  
      /**
-@@ -2363,7 +2433,7 @@
+@@ -2363,7 +2446,7 @@
  
      public float func_82146_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
      {
@@ -155,7 +188,7 @@
      }
  
      public boolean func_96091_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
-@@ -2426,4 +2496,170 @@
+@@ -2426,4 +2509,170 @@
      {
          return this.getEntityName();
      }

@@ -451,4 +451,13 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     {
         return FluidRegistry.getFluid(fluidName);
     }
+
+    @Override
+    public float getFilledPercentage(World world, int x, int y, int z)
+    {
+        int quantaRemaining = getQuantaValue(world, x, y, z) + 1;
+        float remaining = quantaRemaining / quantaPerBlockFloat;
+        if (remaining > 1) remaining = 1.0f;
+        return remaining * (density > 0 ? 1 : -1);
+    }
 }
