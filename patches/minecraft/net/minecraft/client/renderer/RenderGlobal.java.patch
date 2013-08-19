@@ -10,7 +10,7 @@
  @SideOnly(Side.CLIENT)
  public class RenderGlobal implements IWorldAccess
  {
-@@ -447,35 +450,47 @@
+@@ -447,8 +450,13 @@
       */
      public void renderEntities(Vec3 par1Vec3, ICamera par2ICamera, float par3)
      {
@@ -24,10 +24,10 @@
              --this.renderEntitiesStartupCounter;
          }
          else
-         {
+@@ -456,26 +464,33 @@
              this.theWorld.theProfiler.startSection("prepare");
--            TileEntityRenderer.instance.cacheActiveRenderInfo(this.theWorld, this.mc.func_110434_K(), this.mc.fontRenderer, this.mc.renderViewEntity, par3);
--            RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.mc.func_110434_K(), this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.pointedEntityLiving, this.mc.gameSettings, par3);
+             TileEntityRenderer.instance.cacheActiveRenderInfo(this.theWorld, this.mc.func_110434_K(), this.mc.fontRenderer, this.mc.renderViewEntity, par3);
+             RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.mc.func_110434_K(), this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.pointedEntityLiving, this.mc.gameSettings, par3);
 -            this.countEntitiesTotal = 0;
 -            this.countEntitiesRendered = 0;
 -            this.countEntitiesHidden = 0;
@@ -40,8 +40,6 @@
 -            TileEntityRenderer.staticPlayerZ = entitylivingbase.lastTickPosZ + (entitylivingbase.posZ - entitylivingbase.lastTickPosZ) * (double)par3;
 +            if (pass == 0)
 +            {
-+                TileEntityRenderer.instance.cacheActiveRenderInfo(this.theWorld, this.mc.func_110434_K(), this.mc.fontRenderer, this.mc.renderViewEntity, par3);
-+                RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.mc.func_110434_K(), this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.pointedEntityLiving, this.mc.gameSettings, par3);
 +                this.countEntitiesTotal = 0;
 +                this.countEntitiesRendered = 0;
 +                this.countEntitiesHidden = 0;
