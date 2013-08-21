@@ -38,6 +38,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import net.minecraftforge.event.entity.player.PlayerPickBlockEvent;
 
 public class ForgeHooks
 {
@@ -255,6 +256,12 @@ public class ForgeHooks
      */
     public static boolean onPickBlock(MovingObjectPosition target, EntityPlayer player, World world)
     {
+        PlayerPickBlockEvent event = new PlayerPickBlockEvent(player, target);
+        if (MinecraftForge.EVENT_BUS.post(event))
+        {
+            return false;
+        }
+
         ItemStack result = null;
         boolean isCreative = player.capabilities.isCreativeMode;
 
