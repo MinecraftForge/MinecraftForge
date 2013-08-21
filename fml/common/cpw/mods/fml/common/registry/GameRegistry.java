@@ -351,26 +351,55 @@ public class GameRegistry
 
 	public static void onPlayerLogin(EntityPlayer player)
 	{
-		for(IPlayerTracker tracker : playerTrackers)
-			tracker.onPlayerLogin(player);
+        for (IPlayerTracker tracker : playerTrackers)
+            try
+            {
+                tracker.onPlayerLogin(player);
+            }
+            catch (Exception e)
+            {
+                FMLLog.log(Level.SEVERE, e, "A critical error occured handling the onPlayerLogin event with player tracker %s", tracker.getClass().getName());
+            }
 	}
 
 	public static void onPlayerLogout(EntityPlayer player)
 	{
-		for(IPlayerTracker tracker : playerTrackers)
-			tracker.onPlayerLogout(player);
+        for (IPlayerTracker tracker : playerTrackers)
+            try
+            {
+                tracker.onPlayerLogout(player);
+            }
+            catch (Exception e)
+            {
+                FMLLog.log(Level.SEVERE, e, "A critical error occured handling the onPlayerLogout event with player tracker %s", tracker.getClass().getName());
+            }
 	}
 
 	public static void onPlayerChangedDimension(EntityPlayer player)
 	{
-		for(IPlayerTracker tracker : playerTrackers)
-			tracker.onPlayerChangedDimension(player);
+        for (IPlayerTracker tracker : playerTrackers)
+            try
+            {
+                tracker.onPlayerChangedDimension(player);
+            }
+            catch (Exception e)
+            {
+                FMLLog.log(Level.SEVERE, e, "A critical error occured handling the onPlayerChangedDimension event with player tracker %s", tracker.getClass()
+                        .getName());
+            }
 	}
 
 	public static void onPlayerRespawn(EntityPlayer player)
 	{
-		for(IPlayerTracker tracker : playerTrackers)
-			tracker.onPlayerRespawn(player);
+        for (IPlayerTracker tracker : playerTrackers)
+            try
+            {
+                tracker.onPlayerRespawn(player);
+            }
+            catch (Exception e)
+            {
+                FMLLog.log(Level.SEVERE, e, "A critical error occured handling the onPlayerRespawn event with player tracker %s", tracker.getClass().getName());
+            }
 	}
 
 
