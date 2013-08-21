@@ -92,9 +92,9 @@ public class GuiIngameForge extends GuiIngame
         eventParent = new RenderGameOverlayEvent(partialTicks, res, mouseX, mouseY);
         int width = res.getScaledWidth();
         int height = res.getScaledHeight();
-        renderHealthMount = mc.thePlayer.ridingEntity instanceof EntityLivingBase;
-        renderFood = mc.thePlayer.ridingEntity == null;
-        renderJumpBar = mc.thePlayer.func_110317_t();
+        if (renderHealthMount) renderHealthMount = mc.thePlayer.ridingEntity instanceof EntityLivingBase;
+        if (renderFood) renderFood = mc.thePlayer.ridingEntity == null;
+        if (renderJumpBar) renderJumpBar = mc.thePlayer.func_110317_t();
 
         right_height = 39;
         left_height = 39;
