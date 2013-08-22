@@ -92,9 +92,6 @@ public class GuiIngameForge extends GuiIngame
         eventParent = new RenderGameOverlayEvent(partialTicks, res, mouseX, mouseY);
         int width = res.getScaledWidth();
         int height = res.getScaledHeight();
-        if (renderHealthMount) renderHealthMount = mc.thePlayer.ridingEntity instanceof EntityLivingBase;
-        if (renderFood) renderFood = mc.thePlayer.ridingEntity == null;
-        if (renderJumpBar) renderJumpBar = mc.thePlayer.func_110317_t();
 
         right_height = 39;
         left_height = 39;
@@ -408,6 +405,7 @@ public class GuiIngameForge extends GuiIngame
 
     public void renderFood(int width, int height)
     {
+        if (mc.thePlayer.ridingEntity != null) return;
         if (pre(FOOD)) return;
         mc.mcProfiler.startSection("food");
 
@@ -533,6 +531,7 @@ public class GuiIngameForge extends GuiIngame
 
     protected void renderJumpBar(int width, int height)
     {
+        if (!mc.thePlayer.func_110317_t()) return;
         bind(field_110324_m);
         if (pre(JUMPBAR)) return;
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
