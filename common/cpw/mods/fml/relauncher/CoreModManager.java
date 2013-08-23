@@ -238,9 +238,7 @@ public class CoreModManager
         try
         {
             classLoader.addURL(coreMod.toURI().toURL());
-            Class<? extends ITweaker> newTweakClass = (Class<? extends ITweaker>) Class.forName(cascadedTweaker, true, classLoader);
-            ITweaker newTweak = newTweakClass.newInstance();
-            CoreModManager.tweaker.injectCascadingTweak(newTweak);
+            CoreModManager.tweaker.injectCascadingTweak(cascadedTweaker);
         }
         catch (Exception e)
         {

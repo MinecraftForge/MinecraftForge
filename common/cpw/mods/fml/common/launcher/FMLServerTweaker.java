@@ -13,13 +13,11 @@ public class FMLServerTweaker extends FMLTweaker {
     @Override
     public void injectIntoClassLoader(LaunchClassLoader classLoader)
     {
-        computeCascadedTweaks(classLoader);
         classLoader.addTransformerExclusion("cpw.mods.fml.repackage.");
         classLoader.addTransformerExclusion("cpw.mods.fml.relauncher.");
         classLoader.addTransformerExclusion("cpw.mods.fml.common.asm.transformers.");
         classLoader.addClassLoaderExclusion("LZMA.");
         FMLLaunchHandler.configureForServerLaunch(classLoader, this);
-        runAdditionalTweaks(classLoader);
         FMLLaunchHandler.appendCoreMods();
     }
 }
