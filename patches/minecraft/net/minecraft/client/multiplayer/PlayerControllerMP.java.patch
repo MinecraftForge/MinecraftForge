@@ -33,7 +33,19 @@
  
                  if (flag)
                  {
-@@ -347,8 +357,14 @@
+@@ -300,6 +310,11 @@
+      */
+     public float getBlockReachDistance()
+     {
++        ItemStack itemstack = this.mc.thePlayer.getHeldItem();
++        if (itemstack != null)
++        {
++            return itemstack.getBlockReachDistance();
++        }
+         return this.currentGameType.isCreative() ? 5.0F : 4.5F;
+     }
+ 
+@@ -347,8 +362,14 @@
          float f2 = (float)par8Vec3.zCoord - (float)par6;
          boolean flag = false;
          int i1;
@@ -50,7 +62,7 @@
          {
              i1 = par2World.getBlockId(par4, par5, par6);
  
-@@ -389,7 +405,15 @@
+@@ -389,7 +410,15 @@
          }
          else
          {
@@ -67,7 +79,7 @@
          }
      }
  
-@@ -411,9 +435,10 @@
+@@ -411,9 +440,10 @@
          {
              par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = itemstack1;
  

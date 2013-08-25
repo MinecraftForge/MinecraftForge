@@ -1,9 +1,10 @@
 --- ../src_base/minecraft/net/minecraft/item/Item.java
 +++ ../src_work/minecraft/net/minecraft/item/Item.java
-@@ -11,13 +11,18 @@
+@@ -11,13 +11,19 @@
  import java.util.UUID;
  import net.minecraft.block.Block;
  import net.minecraft.block.material.Material;
++import net.minecraft.client.Minecraft;
 +import net.minecraft.client.gui.FontRenderer;
 +import net.minecraft.client.gui.ScaledResolution;
 +import net.minecraft.client.model.ModelBiped;
@@ -19,7 +20,7 @@
  import net.minecraft.potion.Potion;
  import net.minecraft.potion.PotionHelper;
  import net.minecraft.stats.StatList;
-@@ -26,7 +31,9 @@
+@@ -26,7 +32,9 @@
  import net.minecraft.util.MovingObjectPosition;
  import net.minecraft.util.StatCollector;
  import net.minecraft.util.Vec3;
@@ -29,7 +30,7 @@
  
  public class Item
  {
-@@ -248,13 +255,16 @@
+@@ -248,13 +256,16 @@
      protected Icon itemIcon;
      protected String field_111218_cA;
  
@@ -47,7 +48,7 @@
          }
  
          itemsList[256 + par1] = this;
-@@ -600,6 +610,7 @@
+@@ -600,6 +611,7 @@
      }
  
      @SideOnly(Side.CLIENT)
@@ -55,7 +56,7 @@
      public boolean hasEffect(ItemStack par1ItemStack)
      {
          return par1ItemStack.isItemEnchanted();
-@@ -639,6 +650,10 @@
+@@ -639,6 +651,10 @@
          float f7 = f4 * f5;
          float f8 = f3 * f5;
          double d3 = 5.0D;
@@ -66,7 +67,7 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
      }
-@@ -740,4 +755,534 @@
+@@ -740,4 +756,545 @@
      {
          StatList.initStats();
      }
@@ -599,5 +600,16 @@
 +    public boolean hasEffect(ItemStack par1ItemStack, int pass)
 +    {
 +        return hasEffect(par1ItemStack) && (pass == 0 || itemID != Item.potion.itemID);
++    }
++    
++    /**
++     * Return the block reach distance for this ItemStack.
++     * @param stack the stack
++     * @return the block reach distance
++     */
++    @SideOnly(Side.CLIENT)
++    public float getBlockReachDistance(ItemStack stack)
++    {
++        return Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode ? 5.0F : 4.5F;        
 +    }
  }

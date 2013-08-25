@@ -93,3 +93,14 @@
      }
  
      @SideOnly(Side.CLIENT)
+@@ -874,4 +896,10 @@
+ 
+         return (Multimap)object;
+     }
++    
++    @SideOnly(Side.CLIENT)
++    public float getBlockReachDistance()
++    {
++        return this.getItem().getBlockReachDistance(this);
++    }
+ }
