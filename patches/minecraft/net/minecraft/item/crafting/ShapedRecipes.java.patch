@@ -1,0 +1,17 @@
+--- ../src_base/minecraft/net/minecraft/item/crafting/ShapedRecipes.java
++++ ../src_work/minecraft/net/minecraft/item/crafting/ShapedRecipes.java
+@@ -104,6 +104,14 @@
+                     {
+                         return false;
+                     }
++
++                    if (itemstack.getTagCompound() != null)
++                    {
++                        if (itemstack1.getTagCompound() == null || !itemstack.getTagCompound().equals(itemstack1.getTagCompound()))
++                        {
++                            return false;
++                        }
++                    }
+                 }
+             }
+         }

@@ -1,0 +1,36 @@
+--- ../src_base/minecraft/net/minecraft/item/crafting/ShapelessRecipes.java
++++ ../src_work/minecraft/net/minecraft/item/crafting/ShapelessRecipes.java
+@@ -3,6 +3,7 @@
+ import java.util.ArrayList;
+ import java.util.Iterator;
+ import java.util.List;
++
+ import net.minecraft.inventory.InventoryCrafting;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.world.World;
+@@ -50,9 +51,22 @@
+ 
+                         if (itemstack.itemID == itemstack1.itemID && (itemstack1.getItemDamage() == 32767 || itemstack.getItemDamage() == itemstack1.getItemDamage()))
+                         {
+-                            flag = true;
+-                            arraylist.remove(itemstack1);
+-                            break;
++                            if (itemstack1.getTagCompound() != null)
++                            {
++                                if (itemstack.getTagCompound() != null && itemstack1.getTagCompound().equals(itemstack.getTagCompound()))
++                                {
++                                    flag = true;
++                                    arraylist.remove(itemstack1);
++                                    break;
++                                }
++                            }
++                            else
++                            {
++                                // Vanilla
++                                flag = true;
++                                arraylist.remove(itemstack1);
++                                break;
++                            }
+                         }
+                     }
+ 
