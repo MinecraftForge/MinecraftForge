@@ -5,7 +5,7 @@
          {
              int i = this.field_75228_b;
 -            float f = FurnaceRecipes.smelting().getExperience(par1ItemStack.itemID);
-+            float f = FurnaceRecipes.smelting().getExperience(par1ItemStack);
++            float f = FurnaceRecipes.smelting().getExperience(par1ItemStack, thePlayer);
              int j;
  
              if (f == 0.0F)
