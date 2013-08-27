@@ -322,7 +322,6 @@ public class Loader
         FMLLog.fine("Building injected Mod Containers %s", injectedContainers);
         // Add in the MCP mod container
         mods.add(new InjectedModContainer(mcp,new File("minecraft.jar")));
-        File coremod = new File(minecraftDir,"coremods");
         for (String cont : injectedContainers)
         {
             ModContainer mc;
@@ -335,7 +334,7 @@ public class Loader
                 FMLLog.log(Level.SEVERE, e, "A problem occured instantiating the injected mod container %s", cont);
                 throw new LoaderException(e);
             }
-            mods.add(new InjectedModContainer(mc,coremod));
+            mods.add(new InjectedModContainer(mc,mc.getSource()));
         }
         ModDiscoverer discoverer = new ModDiscoverer();
         FMLLog.fine("Attempting to load mods contained in the minecraft jar file and associated classes");

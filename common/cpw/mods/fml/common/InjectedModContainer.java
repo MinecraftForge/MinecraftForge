@@ -30,7 +30,7 @@ public class InjectedModContainer implements ModContainer
 
     public InjectedModContainer(ModContainer mc, File source)
     {
-        this.source = source;
+        this.source = source != null ? source : new File("minecraft.jar");
         this.wrappedContainer = mc;
     }
 
