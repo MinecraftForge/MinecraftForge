@@ -12,6 +12,7 @@
 
 package cpw.mods.fml.common;
 
+import java.io.File;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Map;
@@ -26,6 +27,9 @@ import net.minecraft.world.storage.WorldInfo;
 
 import com.google.common.eventbus.EventBus;
 
+import cpw.mods.fml.client.FMLFileResourcePack;
+import cpw.mods.fml.client.FMLFolderResourcePack;
+import cpw.mods.fml.common.asm.FMLSanityChecker;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.ItemData;
@@ -125,8 +129,13 @@ public class FMLDummyContainer extends DummyModContainer implements WorldAccessC
     }
 
     @Override
+    public File getSource()
+    {
+        return FMLSanityChecker.fmlLocation;
+    }
+    @Override
     public Class<?> getCustomResourcePackClass()
     {
-        return super.getCustomResourcePackClass();
+        return getSource().isDirectory() ? FMLFolderResourcePack.class : FMLFileResourcePack.class;
     }
 }
