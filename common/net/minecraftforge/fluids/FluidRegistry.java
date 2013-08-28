@@ -145,9 +145,7 @@ public abstract class FluidRegistry
      * @return If the block exists as a Fluid in the Fluid Registry, return the Fluid ID. Else, return -1.
      */
     public static int isBlockRegisteredAsFluid(int BlockID){
-    	
     	for (Map.Entry<String,Fluid> fluid : getRegisteredFluids().entrySet()){
-    		
     		int ID = (fluid.getValue().getBlockID() == BlockID) ? fluid.getValue().getID() : -1;
     		if (ID > 0) return ID; 
     	}
