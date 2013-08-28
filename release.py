@@ -145,6 +145,7 @@ def main():
     zip_add('install/Paulscode IBXM Library License.txt')
     zip_add('install/Paulscode SoundSystem CodecIBXM License.txt')
     zip_add('common/forge_at.cfg')
+    zip_add('common/assets','assets')
     zip_add(version_file)
     if not options.skip_changelog:
         zip_add(changelog_file, 'MinecraftForge-Changelog.txt')
