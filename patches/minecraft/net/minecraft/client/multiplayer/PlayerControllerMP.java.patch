@@ -38,9 +38,9 @@
      public float getBlockReachDistance()
      {
 +        ItemStack itemstack = this.mc.thePlayer.getHeldItem();
-+        if (itemstack != null)
++        if (itemstack != null && itemstack.getItem() != null)
 +        {
-+            return itemstack.getBlockReachDistance();
++            return itemstack.getItem().getBlockReachDistance(itemstack);
 +        }
          return this.currentGameType.isCreative() ? 5.0F : 4.5F;
      }
