@@ -31,6 +31,7 @@ public abstract class FluidContainerRegistry
     public static final int BUCKET_VOLUME = 1000;
     public static final ItemStack EMPTY_BUCKET = new ItemStack(Item.bucketEmpty);
     public static final ItemStack EMPTY_BOTTLE = new ItemStack(Item.glassBottle);
+    private static final ItemStack NULL_EMPTYCONTAINER = new ItemStack(Item.bucketEmpty);
 
     static
     {
@@ -126,7 +127,7 @@ public abstract class FluidContainerRegistry
         }
         containerFluidMap.put(Arrays.asList(data.filledContainer.itemID, data.filledContainer.getItemDamage()), data);
 
-        if (data.emptyContainer != null)
+        if (data.emptyContainer != null && data.emptyContainer != NULL_EMPTYCONTAINER)
         {
             filledContainerMap.put(Arrays.asList(data.emptyContainer.itemID, data.emptyContainer.getItemDamage(), data.fluid.fluidID), data);
             emptyContainers.add(Arrays.asList(data.emptyContainer.itemID, data.emptyContainer.getItemDamage()));
@@ -240,6 +241,7 @@ public abstract class FluidContainerRegistry
         public final ItemStack filledContainer;
         public final ItemStack emptyContainer;
 
+        
         public FluidContainerData(FluidStack stack, ItemStack filledContainer, ItemStack emptyContainer)
         {
             this(stack, filledContainer, emptyContainer, false);
@@ -249,7 +251,7 @@ public abstract class FluidContainerRegistry
         {
             this.fluid = stack;
             this.filledContainer = filledContainer;
-            this.emptyContainer = emptyContainer;
+            this.emptyContainer = emptyContainer == null ? NULL_EMPTYCONTAINER : emptyContainer;
 
             if (stack == null || filledContainer == null || emptyContainer == null && !nullEmpty)
             {
