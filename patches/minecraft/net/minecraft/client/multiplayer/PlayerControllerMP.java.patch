@@ -40,7 +40,7 @@
 +        ItemStack itemstack = this.mc.thePlayer.getHeldItem();
 +        if (itemstack != null && itemstack.getItem() != null)
 +        {
-+            return itemstack.getItem().getBlockReachDistance(itemstack);
++            return itemstack.getItem().getBlockReachDistance(itemstack, this.mc.thePlayer);
 +        }
          return this.currentGameType.isCreative() ? 5.0F : 4.5F;
      }
