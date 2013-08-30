@@ -2,7 +2,6 @@ package net.minecraftforge.fluids;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import net.minecraft.block.Block;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
@@ -144,13 +143,14 @@ public abstract class FluidRegistry
      * @param BlockID The ID of the block.
      * @return If the block exists as a Fluid in the Fluid Registry, return the Fluid ID. Else, return -1.
      */
-    public static int isBlockRegisteredAsFluid(int BlockID)
+    public static int isBlockRegisteredAsFluid(int blockID)
     {
-    	for (Map.Entry<String,Fluid> fluid : getRegisteredFluids().entrySet())
+    	int fluidID = -1;
+    	for (Fluid fluid : getRegisteredFluids().values())
     	{
-    		int ID = (fluid.getValue().getBlockID() == BlockID) ? fluid.getValue().getID() : -1;
-    		if (ID > 0) return ID; 
+    		fluidID = (fluid.getBlockID() == blockID) ? fluid.getID() : -1;
+    		if (fluidID > 0) return fluidID; 
     	}
-    	return -1;
+    	return fluidID;
     }
 }
