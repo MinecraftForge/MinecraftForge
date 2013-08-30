@@ -66,7 +66,7 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
      }
-@@ -740,4 +755,534 @@
+@@ -740,4 +755,545 @@
      {
          StatList.initStats();
      }
@@ -599,5 +599,16 @@
 +    public boolean hasEffect(ItemStack par1ItemStack, int pass)
 +    {
 +        return hasEffect(par1ItemStack) && (pass == 0 || itemID != Item.potion.itemID);
++    }
++    
++    /**
++     * Return the block reach distance for this ItemStack.
++     * @param stack the stack
++     * @param player the player
++     * @return the block reach distance
++     */
++    public float getBlockReachDistance(ItemStack stack, EntityPlayer player)
++    {
++        return player.capabilities.isCreativeMode ? 5.0F : 4.5F;        
 +    }
  }
