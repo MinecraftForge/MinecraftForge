@@ -63,6 +63,15 @@
                  GL11.glRotatef(f3, 0.0F, 1.0F, 0.0F);
  
                  if (renderInFrame)
+@@ -127,7 +118,7 @@
+             {
+                 float f8;
+ 
+-                if (itemstack.getItemSpriteNumber() == 1 && itemstack.getItem().requiresMultipleRenderPasses())
++                if (itemstack.getItem().requiresMultipleRenderPasses())
+                 {
+                     if (renderInFrame)
+                     {
 @@ -139,10 +130,10 @@
                          GL11.glScalef(0.5F, 0.5F, 0.5F);
                      }

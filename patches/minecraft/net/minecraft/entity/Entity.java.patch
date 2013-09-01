@@ -33,7 +33,7 @@
  import net.minecraft.util.ReportedException;
  import net.minecraft.util.StatCollector;
  import net.minecraft.util.Vec3;
-@@ -33,8 +42,52 @@
+@@ -33,8 +42,54 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
  
@@ -72,6 +72,8 @@
 +import net.minecraftforge.common.IExtendedEntityProperties;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.EntityEvent;
++import net.minecraftforge.fluids.Fluid;
++import net.minecraftforge.fluids.IFluidBlock;
 +
  public abstract class Entity
  {
@@ -86,7 +88,7 @@
      private static int nextEntityID;
      public int entityId;
      public double renderDistanceWeight;
-@@ -171,12 +224,12 @@
+@@ -171,12 +226,12 @@
       * The amount of ticks you have to stand inside of fire before be set on fire
       */
      public int fireResistance;
@@ -101,7 +103,7 @@
  
      /**
       * Remaining time an entity will be "immune" to further damage after being hurt.
-@@ -184,7 +237,7 @@
+@@ -184,7 +239,7 @@
      public int hurtResistantTime;
      private boolean firstUpdate;
      protected boolean isImmuneToFire;
@@ -110,7 +112,7 @@
      private double entityRiderPitchDelta;
      private double entityRiderYawDelta;
  
-@@ -216,8 +269,24 @@
+@@ -216,8 +271,24 @@
      public int dimension;
      protected int teleportDirection;
      private boolean invulnerable;
@@ -136,7 +138,7 @@
  
      public Entity(World par1World)
      {
-@@ -232,19 +301,35 @@
+@@ -232,19 +303,35 @@
          this.fireResistance = 1;
          this.firstUpdate = true;
          this.dataWatcher = new DataWatcher();
@@ -176,7 +178,7 @@
      }
  
      protected abstract void entityInit();
-@@ -354,6 +439,41 @@
+@@ -354,6 +441,41 @@
       */
      protected void setRotation(float par1, float par2)
      {
@@ -218,7 +220,7 @@
          this.rotationYaw = par1 % 360.0F;
          this.rotationPitch = par2 % 360.0F;
      }
-@@ -434,7 +554,7 @@
+@@ -434,7 +556,7 @@
  
              if (this.inPortal)
              {
@@ -227,7 +229,7 @@
                  {
                      if (this.ridingEntity == null && this.timeInPortal++ >= i)
                      {
-@@ -554,7 +674,44 @@
+@@ -554,7 +676,44 @@
      {
          if (!this.isImmuneToFire)
          {
@@ -273,7 +275,7 @@
              this.setFire(15);
          }
      }
-@@ -604,6 +761,14 @@
+@@ -604,6 +763,14 @@
       */
      public void moveEntity(double par1, double par3, double par5)
      {
@@ -288,7 +290,7 @@
          if (this.noClip)
          {
              this.boundingBox.offset(par1, par3, par5);
-@@ -868,6 +1033,33 @@
+@@ -868,6 +1035,33 @@
              d10 = this.posY - d4;
              d11 = this.posZ - d5;
  
@@ -322,7 +324,7 @@
              if (this.canTriggerWalking() && !flag && this.ridingEntity == null)
              {
                  int l = MathHelper.floor_double(this.posX);
-@@ -930,14 +1122,26 @@
+@@ -930,14 +1124,26 @@
  
              if (this.worldObj.isBoundingBoxBurning(this.boundingBox.contract(0.001D, 0.001D, 0.001D)))
              {
@@ -351,7 +353,7 @@
                          this.setFire(8);
                      }
                  }
-@@ -955,6 +1159,8 @@
+@@ -955,6 +1161,8 @@
  
              this.worldObj.theProfiler.endSection();
          }
@@ -360,7 +362,7 @@
      }
  
      /**
-@@ -1059,15 +1265,22 @@
+@@ -1059,15 +1267,22 @@
          return null;
      }
  
@@ -384,7 +386,33 @@
          }
      }
  
-@@ -1258,6 +1471,15 @@
+@@ -1164,11 +1379,20 @@
+         int k = MathHelper.floor_double(this.posZ);
+         int l = this.worldObj.getBlockId(i, j, k);
+ 
+-        if (l != 0 && Block.blocksList[l].blockMaterial == par1Material)
+-        {
+-            float f = BlockFluid.getFluidHeightPercent(this.worldObj.getBlockMetadata(i, j, k)) - 0.11111111F;
+-            float f1 = (float)(j + 1) - f;
+-            return d0 < (double)f1;
++        Block block = Block.blocksList[l];
++        if (block != null && block.blockMaterial == par1Material)
++        {
++            double filled = block.getFilledPercentage(worldObj, i, j, k);
++            if (filled < 0)
++            {
++                filled *= -1;
++                //filled -= 0.11111111F; //Why this is needed.. not sure...
++                return d0 > (double)(j + (1 - filled));
++            }
++            else
++            {
++                return d0 < (double)(j + filled);
++            }
+         }
+         else
+         {
+@@ -1258,6 +1482,15 @@
       */
      public void setWorld(World par1World)
      {
@@ -400,7 +428,7 @@
          this.worldObj = par1World;
      }
  
-@@ -1513,6 +1735,20 @@
+@@ -1513,6 +1746,20 @@
          {
              par1NBTTagCompound.setTag("Pos", this.newDoubleNBTList(new double[] {this.posX, this.posY + (double)this.ySize, this.posZ}));
              par1NBTTagCompound.setTag("Motion", this.newDoubleNBTList(new double[] {this.motionX, this.motionY, this.motionZ}));
@@ -421,7 +449,7 @@
              par1NBTTagCompound.setTag("Rotation", this.newFloatNBTList(new float[] {this.rotationYaw, this.rotationPitch}));
              par1NBTTagCompound.setFloat("FallDistance", this.fallDistance);
              par1NBTTagCompound.setShort("Fire", (short)this.fire);
-@@ -1523,6 +1759,26 @@
+@@ -1523,6 +1770,26 @@
              par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
              par1NBTTagCompound.setLong("UUIDMost", this.entityUniqueID.getMostSignificantBits());
              par1NBTTagCompound.setLong("UUIDLeast", this.entityUniqueID.getLeastSignificantBits());
@@ -448,7 +476,7 @@
              this.writeEntityToNBT(par1NBTTagCompound);
  
              if (this.ridingEntity != null)
-@@ -1557,7 +1813,7 @@
+@@ -1557,7 +1824,7 @@
              this.motionX = ((NBTTagDouble)nbttaglist1.tagAt(0)).data;
              this.motionY = ((NBTTagDouble)nbttaglist1.tagAt(1)).data;
              this.motionZ = ((NBTTagDouble)nbttaglist1.tagAt(2)).data;
@@ -457,7 +485,7 @@
              if (Math.abs(this.motionX) > 10.0D)
              {
                  this.motionX = 0.0D;
-@@ -1572,7 +1828,7 @@
+@@ -1572,7 +1839,7 @@
              {
                  this.motionZ = 0.0D;
              }
@@ -466,7 +494,7 @@
              this.prevPosX = this.lastTickPosX = this.posX = ((NBTTagDouble)nbttaglist.tagAt(0)).data;
              this.prevPosY = this.lastTickPosY = this.posY = ((NBTTagDouble)nbttaglist.tagAt(1)).data;
              this.prevPosZ = this.lastTickPosZ = this.posZ = ((NBTTagDouble)nbttaglist.tagAt(2)).data;
-@@ -1593,12 +1849,92 @@
+@@ -1593,12 +1860,92 @@
  
              this.setPosition(this.posX, this.posY, this.posZ);
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -563,7 +591,7 @@
          }
          catch (Throwable throwable)
          {
-@@ -1705,7 +2041,14 @@
+@@ -1705,7 +2052,14 @@
          {
              EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
              entityitem.delayBeforeCanPickup = 10;
@@ -579,7 +607,7 @@
              return entityitem;
          }
      }
-@@ -1741,6 +2084,9 @@
+@@ -1741,6 +2095,9 @@
          return false;
      }
  
@@ -589,7 +617,7 @@
      public boolean func_130002_c(EntityPlayer par1EntityPlayer)
      {
          return false;
-@@ -1855,13 +2201,50 @@
+@@ -1855,13 +2212,50 @@
       */
      public void mountEntity(Entity par1Entity)
      {
@@ -641,7 +669,7 @@
                  this.setLocationAndAngles(this.ridingEntity.posX, this.ridingEntity.boundingBox.minY + (double)this.ridingEntity.height, this.ridingEntity.posZ, this.rotationYaw, this.rotationPitch);
                  this.ridingEntity.riddenByEntity = null;
              }
-@@ -1870,13 +2253,48 @@
+@@ -1870,13 +2264,48 @@
          }
          else
          {
@@ -692,7 +720,7 @@
          }
      }
  
-@@ -2001,7 +2419,7 @@
+@@ -2001,7 +2430,7 @@
       */
      public boolean isRiding()
      {
@@ -701,7 +729,7 @@
      }
  
      /**
-@@ -2104,12 +2522,48 @@
+@@ -2104,12 +2533,48 @@
       */
      public void onStruckByLightning(EntityLightningBolt par1EntityLightningBolt)
      {
@@ -752,7 +780,7 @@
          }
      }
  
-@@ -2321,36 +2775,71 @@
+@@ -2321,36 +2786,71 @@
          {
              this.worldObj.theProfiler.startSection("changeDimension");
              MinecraftServer minecraftserver = MinecraftServer.getServer();
@@ -844,7 +872,7 @@
              }
  
              this.isDead = true;
-@@ -2363,7 +2852,7 @@
+@@ -2363,7 +2863,7 @@
  
      public float func_82146_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
      {
@@ -853,7 +881,7 @@
      }
  
      public boolean func_96091_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
-@@ -2426,4 +2915,170 @@
+@@ -2426,4 +2926,170 @@
      {
          return this.getEntityName();
      }

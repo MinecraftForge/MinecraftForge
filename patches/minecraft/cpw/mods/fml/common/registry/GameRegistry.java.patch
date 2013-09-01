@@ -115,7 +115,7 @@
      }
  
      /**
-@@ -147,6 +225,7 @@
+@@ -148,6 +226,7 @@
       */
      public static void registerItem(net.minecraft.item.Item item, String name, String modId)
      {
@@ -123,7 +123,7 @@
          GameData.setName(item, name, modId);
      }
  
-@@ -234,9 +313,37 @@
+@@ -235,9 +314,37 @@
          blockRegistry.put(Loader.instance().activeModContainer(), (BlockProxy) block);
      }
  
@@ -162,7 +162,7 @@
      }
  
      public static IRecipe addShapedRecipe(ItemStack output, Object... params)
-@@ -246,7 +353,8 @@
+@@ -247,7 +354,8 @@
  
      public static void addShapelessRecipe(ItemStack output, Object... params)
      {
@@ -172,7 +172,7 @@
      }
  
      public static void addRecipe(IRecipe recipe)
-@@ -256,8 +364,29 @@
+@@ -257,8 +365,29 @@
  
      public static void addSmelting(int input, ItemStack output, float xp)
      {
@@ -204,19 +204,19 @@
  
      public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id)
      {
-@@ -364,6 +493,11 @@
- 	{
- 		for(IPlayerTracker tracker : playerTrackers)
- 			tracker.onPlayerChangedDimension(player);
-+        // MCPC+ start - update compassTarget to new world when changing dimensions or it will leave a reference to the last world object causing a memory leak
-+        // This is required for mods that implement their own dimension transfer methods which bypass ServerConfigurationManager
-+        EntityPlayerMP playermp = (EntityPlayerMP)player;
-+        playermp.compassTarget = new Location(playermp.worldObj.getWorld(), playermp.posX, playermp.posY, playermp.posZ);
-+        // MCPC+ end
- 	}
- 
- 	public static void onPlayerRespawn(EntityPlayer player)
-@@ -403,7 +537,8 @@
+@@ -381,6 +510,11 @@
+             try
+             {
+                 tracker.onPlayerChangedDimension(player);
++                // MCPC+ start - update compassTarget to new world when changing dimensions or it will leave a reference to the last world object causing a memory leak
++                // This is required for mods that implement their own dimension transfer methods which bypass ServerConfigurationManager
++                EntityPlayerMP playermp = (EntityPlayerMP)player;
++                playermp.compassTarget = new Location(playermp.worldObj.getWorld(), playermp.posX, playermp.posY, playermp.posZ);
++                // MCPC+ end
+             }
+             catch (Exception e)
+             {
+@@ -433,7 +567,8 @@
  	 */
  	public static void registerCustomItemStack(String name, ItemStack itemStack)
  	{

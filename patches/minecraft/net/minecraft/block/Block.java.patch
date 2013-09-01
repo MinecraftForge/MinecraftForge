@@ -217,7 +217,7 @@
  
          for (int i = 0; i < 256; ++i)
          {
-@@ -1454,4 +1490,1006 @@
+@@ -1454,4 +1490,1010 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -1223,4 +1223,8 @@
 +    {
 +        return false;
 +    }
++
++    @Deprecated //Implemented here as we changed the IFluidBlock interface, and this allows us to do so without breaking exisitng mods.
++    // To be removed next MC version {1.6.3+}
++    public float getFilledPercentage(World world, int x, int y, int z){ return 1; }
  }

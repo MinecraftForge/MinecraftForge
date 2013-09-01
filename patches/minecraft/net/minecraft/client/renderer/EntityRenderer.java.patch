@@ -95,21 +95,25 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1222,6 +1233,13 @@
+@@ -1222,6 +1233,17 @@
                  renderglobal.sortAndRender(entitylivingbase, 1, (double)par1);
              }
  
-+            RenderHelper.enableStandardItemLighting();
-+            this.mc.mcProfiler.endStartSection("entities");
-+            ForgeHooksClient.setRenderPass(1);
-+            renderglobal.renderEntities(entitylivingbase.getPosition(par1), frustrum, par1);
-+            ForgeHooksClient.setRenderPass(-1);
-+            RenderHelper.disableStandardItemLighting();
++
++            if (this.debugViewDirection == 0) //Only render if render pass 0 happens as well.
++            {
++                RenderHelper.enableStandardItemLighting();
++                this.mc.mcProfiler.endStartSection("entities");
++                ForgeHooksClient.setRenderPass(1);
++                renderglobal.renderEntities(entitylivingbase.getPosition(par1), frustrum, par1);
++                ForgeHooksClient.setRenderPass(-1);
++                RenderHelper.disableStandardItemLighting();
++            }
 +
              GL11.glDepthMask(true);
              GL11.glEnable(GL11.GL_CULL_FACE);
              GL11.glDisable(GL11.GL_BLEND);
-@@ -1231,14 +1249,17 @@
+@@ -1231,14 +1253,17 @@
                  entityplayer = (EntityPlayer)entitylivingbase;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
                  this.mc.mcProfiler.endStartSection("outline");
@@ -129,7 +133,7 @@
              GL11.glDisable(GL11.GL_BLEND);
              this.mc.mcProfiler.endStartSection("weather");
              this.renderRainSnow(par1);
-@@ -1248,6 +1269,20 @@
+@@ -1248,6 +1273,20 @@
              {
                  this.renderCloudsCheck(renderglobal, par1);
              }

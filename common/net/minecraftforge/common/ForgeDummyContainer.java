@@ -10,14 +10,18 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.management.PlayerInstance;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.network.ForgeConnectionHandler;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
 import net.minecraftforge.common.network.ForgePacketHandler;
 import net.minecraftforge.common.network.ForgeTinyPacketHandler;
+import net.minecraftforge.server.command.ForgeCommand;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import cpw.mods.fml.client.FMLFileResourcePack;
+import cpw.mods.fml.client.FMLFolderResourcePack;
 import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.LoadController;
@@ -27,6 +31,7 @@ import cpw.mods.fml.common.WorldAccessContainer;
 import cpw.mods.fml.common.event.FMLConstructionEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.FMLNetworkHandler;
 import cpw.mods.fml.common.network.NetworkMod;
 
@@ -174,6 +179,11 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     	ForgeChunkManager.loadConfiguration();
     }
 
+    @Subscribe
+    public void serverStarting(FMLServerStartingEvent evt)
+    {
+        evt.registerServerCommand(new ForgeCommand(evt.getServer()));
+    }
     @Override
     public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info)
     {
@@ -189,6 +199,24 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
         if (tag.hasKey("DimensionData"))
         {
             DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
+        }
+    }
+    
+    @Override
+    public File getSource()
+    {
+        return FMLForgePlugin.forgeLocation;
+    }
+    @Override
+    public Class<?> getCustomResourcePackClass()
+    {
+        if (getSource().isDirectory())
+        {
+            return FMLFolderResourcePack.class;
+        }
+        else
+        {
+            return FMLFileResourcePack.class;
         }
     }
 }
