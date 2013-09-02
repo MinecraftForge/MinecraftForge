@@ -236,7 +236,7 @@ public class FMLServerHandler implements IFMLSidedHandler
                 StringTranslate.inject(zf.getInputStream(ze));
             }
         }
-        IOUtils.closeQuietly(zf);
+        zf.close();
     }
     private void searchDirForENUSLanguage(File source, String path) throws IOException
     {
