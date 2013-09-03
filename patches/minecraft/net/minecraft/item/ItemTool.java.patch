@@ -8,8 +8,8 @@
  
  public class ItemTool extends Item
  {
-@@ -111,4 +112,15 @@
-         multimap.put(SharedMonsterAttributes.field_111264_e.func_111108_a(), new AttributeModifier(field_111210_e, "Tool modifier", (double)this.damageVsEntity, 0));
+@@ -114,4 +115,15 @@
+         multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Tool modifier", (double)this.damageVsEntity, 0));
          return multimap;
      }
 +

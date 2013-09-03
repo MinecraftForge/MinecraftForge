@@ -84,7 +84,7 @@ public class ForgeHooksClient
         }
         boolean is3D = customRenderer.shouldUseRenderHelper(ENTITY, item, BLOCK_3D);
 
-        engine.func_110577_a(item.getItemSpriteNumber() == 0 ? TextureMap.field_110575_b : TextureMap.field_110576_c);
+        engine.bindTexture(item.getItemSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
         Block block = (item.itemID < Block.blocksList.length ? Block.blocksList[item.itemID] : null);
         if (is3D || (block != null && RenderBlocks.renderItemIn3d(block.getRenderType())))
         {
@@ -133,7 +133,7 @@ public class ForgeHooksClient
             return false;
         }
 
-        engine.func_110577_a(item.getItemSpriteNumber() == 0 ? TextureMap.field_110575_b : TextureMap.field_110576_c);
+        engine.bindTexture(item.getItemSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
         if (customRenderer.shouldUseRenderHelper(INVENTORY, item, INVENTORY_BLOCK))
         {
             GL11.glPushMatrix();
@@ -246,8 +246,8 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Post(map));
 
-        FluidRegistry.WATER.setIcons(BlockFluid.func_94424_b("water_still"), BlockFluid.func_94424_b("water_flow"));
-        FluidRegistry.LAVA.setIcons(BlockFluid.func_94424_b("lava_still"), BlockFluid.func_94424_b("lava_flow"));
+        FluidRegistry.WATER.setIcons(BlockFluid.getFluidIcon("water_still"), BlockFluid.getFluidIcon("water_flow"));
+        FluidRegistry.LAVA.setIcons(BlockFluid.getFluidIcon("lava_still"), BlockFluid.getFluidIcon("lava_flow"));
     }
 
     /**

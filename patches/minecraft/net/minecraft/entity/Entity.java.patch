@@ -105,7 +105,7 @@
          }
          else
          {
-@@ -1523,6 +1564,21 @@
+@@ -1529,6 +1570,21 @@
              par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
              par1NBTTagCompound.setLong("UUIDMost", this.entityUniqueID.getMostSignificantBits());
              par1NBTTagCompound.setLong("UUIDLeast", this.entityUniqueID.getLeastSignificantBits());
@@ -127,7 +127,7 @@
              this.writeEntityToNBT(par1NBTTagCompound);
  
              if (this.ridingEntity != null)
-@@ -1593,6 +1649,26 @@
+@@ -1599,6 +1655,26 @@
  
              this.setPosition(this.posX, this.posY, this.posZ);
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -153,8 +153,8 @@
 +            }
              this.readEntityFromNBT(par1NBTTagCompound);
  
-             if (this.func_142008_O())
-@@ -1705,7 +1781,14 @@
+             if (this.shouldSetPosAfterLoading())
+@@ -1711,7 +1787,14 @@
          {
              EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
              entityitem.delayBeforeCanPickup = 10;
@@ -170,7 +170,7 @@
              return entityitem;
          }
      }
-@@ -2001,7 +2084,7 @@
+@@ -2010,7 +2093,7 @@
       */
      public boolean isRiding()
      {
@@ -179,16 +179,16 @@
      }
  
      /**
-@@ -2363,7 +2446,7 @@
- 
-     public float func_82146_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
+@@ -2385,7 +2468,7 @@
+      */
+     public float getBlockExplosionResistance(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
      {
 -        return par6Block.getExplosionResistance(this);
 +        return par6Block.getExplosionResistance(this, par2World, par3, par4, par5, posX, posY + (double)getEyeHeight(), posZ);
      }
  
-     public boolean func_96091_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
-@@ -2426,4 +2509,170 @@
+     public boolean shouldExplodeBlock(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
+@@ -2451,4 +2534,170 @@
      {
          return this.getEntityName();
      }
@@ -251,7 +251,7 @@
 +        }
 +        else if (this instanceof EntityLeashKnot)
 +        {
-+            return new ItemStack(Item.field_111214_ch);
++            return new ItemStack(Item.leash);
 +        }
 +        else
 +        {
@@ -348,7 +348,7 @@
 +    {
 +        return false;
 +    }
-+    
++
 +    /**
 +     * If the rider should be dismounted from the entity when the entity goes under water
 +     *

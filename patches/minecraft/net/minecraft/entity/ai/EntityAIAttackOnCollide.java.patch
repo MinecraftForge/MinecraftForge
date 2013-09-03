@@ -8,16 +8,16 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
  
-@@ -22,6 +23,8 @@
+@@ -28,6 +29,8 @@
      PathEntity entityPathEntity;
      Class classTarget;
      private int field_75445_i;
-+    
++
 +    private int failedPathFindingPenalty;
  
      public EntityAIAttackOnCollide(EntityCreature par1EntityCreature, Class par2Class, double par3, boolean par5)
      {
-@@ -59,8 +62,16 @@
+@@ -65,8 +68,16 @@
          }
          else
          {
@@ -36,13 +36,13 @@
          }
      }
  
-@@ -100,8 +111,24 @@
+@@ -106,8 +117,24 @@
  
-         if ((this.field_75437_f || this.attacker.getEntitySenses().canSee(entitylivingbase)) && --this.field_75445_i <= 0)
+         if ((this.longMemory || this.attacker.getEntitySenses().canSee(entitylivingbase)) && --this.field_75445_i <= 0)
          {
 -            this.field_75445_i = 4 + this.attacker.getRNG().nextInt(7);
 +            this.field_75445_i = failedPathFindingPenalty + 4 + this.attacker.getRNG().nextInt(7);
-             this.attacker.getNavigator().tryMoveToEntityLiving(entitylivingbase, this.field_75440_e);
+             this.attacker.getNavigator().tryMoveToEntityLiving(entitylivingbase, this.speedTowardsTarget);
 +            if (this.attacker.getNavigator().getPath() != null)
 +            {
 +                PathPoint finalPathPoint = this.attacker.getNavigator().getPath().getFinalPathPoint();

@@ -86,9 +86,9 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -646,7 +666,13 @@
-     /**
-      * ejects contained items into the world, and notifies neighbours of an update, as appropriate
+@@ -648,7 +668,13 @@
+      * different metadata value, but before the new metadata value is set. Args: World, x, y, z, old block ID, old
+      * metadata
       */
 -    public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6) {}
 +    public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
@@ -101,7 +101,7 @@
  
      /**
       * Returns the quantity of items to drop on block destruction.
-@@ -671,7 +697,7 @@
+@@ -673,7 +699,7 @@
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
          float f = this.getBlockHardness(par2World, par3, par4, par5);
@@ -110,7 +110,7 @@
      }
  
      /**
-@@ -689,18 +715,13 @@
+@@ -691,18 +717,13 @@
      {
          if (!par1World.isRemote)
          {
@@ -133,7 +133,7 @@
                  }
              }
          }
-@@ -933,7 +954,8 @@
+@@ -935,7 +956,8 @@
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
          int l = par1World.getBlockId(par2, par3, par4);
@@ -143,7 +143,7 @@
      }
  
      /**
-@@ -1093,7 +1115,7 @@
+@@ -1095,7 +1117,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -152,7 +152,7 @@
          {
              ItemStack itemstack = this.createStackedBlock(par6);
  
-@@ -1109,12 +1131,13 @@
+@@ -1111,12 +1133,13 @@
          }
      }
  
@@ -167,7 +167,7 @@
      }
  
      /**
-@@ -1454,4 +1477,979 @@
+@@ -1457,4 +1480,979 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }

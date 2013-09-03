@@ -9,9 +9,9 @@
  
  public class EntityMinecartFurnace extends EntityMinecart
  {
-@@ -123,6 +125,10 @@
- 
-     public boolean func_130002_c(EntityPlayer par1EntityPlayer)
+@@ -126,6 +128,10 @@
+      */
+     public boolean interactFirst(EntityPlayer par1EntityPlayer)
      {
 +        if(MinecraftForge.EVENT_BUS.post(new MinecartInteractEvent(this, par1EntityPlayer))) 
 +        {

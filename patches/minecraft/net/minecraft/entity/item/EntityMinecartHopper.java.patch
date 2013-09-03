@@ -9,9 +9,9 @@
  
  public class EntityMinecartHopper extends EntityMinecartContainer implements Hopper
  {
-@@ -51,6 +53,10 @@
- 
-     public boolean func_130002_c(EntityPlayer par1EntityPlayer)
+@@ -54,6 +56,10 @@
+      */
+     public boolean interactFirst(EntityPlayer par1EntityPlayer)
      {
 +        if(MinecraftForge.EVENT_BUS.post(new MinecartInteractEvent(this, par1EntityPlayer))) 
 +        {

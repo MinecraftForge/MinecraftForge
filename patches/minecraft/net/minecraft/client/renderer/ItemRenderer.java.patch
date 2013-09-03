@@ -24,7 +24,7 @@
  public class ItemRenderer
  {
 @@ -54,15 +63,32 @@
-         this.mapItemRenderer = new MapItemRenderer(par1Minecraft.gameSettings, par1Minecraft.func_110434_K());
+         this.mapItemRenderer = new MapItemRenderer(par1Minecraft.gameSettings, par1Minecraft.getTextureManager());
      }
  
 +    public void renderItem(EntityLivingBase par1EntityLivingBase, ItemStack par2ItemStack, int par3)
@@ -39,7 +39,7 @@
 +    public void renderItem(EntityLivingBase par1EntityLivingBase, ItemStack par2ItemStack, int par3, ItemRenderType type)
      {
          GL11.glPushMatrix();
-         TextureManager texturemanager = this.mc.func_110434_K();
+         TextureManager texturemanager = this.mc.getTextureManager();
  
 -        if (par2ItemStack.getItemSpriteNumber() == 0 && par2ItemStack.itemID < Block.blocksList.length && Block.blocksList[par2ItemStack.itemID] != null && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
 +        Block block = null;
@@ -51,16 +51,16 @@
 +        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(par2ItemStack, type);
 +        if (customRenderer != null)
 +        {
-+            texturemanager.func_110577_a(texturemanager.func_130087_a(par2ItemStack.getItemSpriteNumber()));
++            texturemanager.bindTexture(texturemanager.getResourceLocation(par2ItemStack.getItemSpriteNumber()));
 +            ForgeHooksClient.renderEquippedItem(type, customRenderer, renderBlocksInstance, par1EntityLivingBase, par2ItemStack);
 +        }
 +        else if (block != null && par2ItemStack.getItemSpriteNumber() == 0 && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
          {
-             texturemanager.func_110577_a(texturemanager.func_130087_a(0));
+             texturemanager.bindTexture(texturemanager.getResourceLocation(0));
              this.renderBlocksInstance.renderBlockAsItem(Block.blocksList[par2ItemStack.itemID], par2ItemStack.getItemDamage(), 1.0F);
 @@ -94,7 +120,7 @@
              GL11.glTranslatef(-0.9375F, -0.0625F, 0.0F);
-             renderItemIn2D(tessellator, f1, f2, f, f3, icon.getOriginX(), icon.getOriginY(), 0.0625F);
+             renderItemIn2D(tessellator, f1, f2, f, f3, icon.getIconWidth(), icon.getIconHeight(), 0.0625F);
  
 -            if (par2ItemStack.hasEffect() && par3 == 0)
 +            if (par2ItemStack.hasEffect(par3))
@@ -84,7 +84,7 @@
 -
 -            if (mapdata != null)
 -            {
--                this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.func_110434_K(), mapdata);
+-                this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.getTextureManager(), mapdata);
 +
 +            IItemRenderer custom = MinecraftForgeClient.getItemRenderer(itemstack, FIRST_PERSON_MAP);
 +            MapData mapdata = ((ItemMap)itemstack.getItem()).getMapData(itemstack, this.mc.theWorld);
@@ -93,12 +93,12 @@
 +            {
 +                if (mapdata != null)
 +                {
-+                    this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.func_110434_K(), mapdata);
++                    this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.getTextureManager(), mapdata);
 +                }
 +            }
 +            else
 +            {
-+                custom.renderItem(FIRST_PERSON_MAP, itemstack, mc.thePlayer, mc.func_110434_K(), mapdata);
++                custom.renderItem(FIRST_PERSON_MAP, itemstack, mc.thePlayer, mc.getTextureManager(), mapdata);
              }
  
              GL11.glPopMatrix();

@@ -22,7 +22,7 @@
          this.mainModel = par1ModelBase;
 @@ -68,6 +74,7 @@
  
-     public void func_130000_a(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6, float par8, float par9)
+     public void doRenderLiving(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6, float par8, float par9)
      {
 +        if (MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Pre(par1EntityLivingBase, this))) return;
          GL11.glPushMatrix();

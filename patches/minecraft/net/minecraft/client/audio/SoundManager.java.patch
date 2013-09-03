@@ -21,7 +21,7 @@
 -        this.ticksBeforeMusic = this.rand.nextInt(12000);
 +        this.ticksBeforeMusic = this.rand.nextInt(MUSIC_INTERVAL);
          this.options = par2GameSettings;
-         this.field_130085_i = par3File;
+         this.fileAssets = par3File;
          this.soundPoolSounds = new SoundPool(par1ResourceManager, "sound", true);
 @@ -75,6 +81,7 @@
              SoundSystemConfig.addLibrary(LibraryLWJGLOpenAL.class);
@@ -33,12 +33,12 @@
          {
 @@ -90,6 +97,7 @@
          this.stopAllSounds();
-         this.closeMinecraft();
+         this.cleanup();
          this.tryToSetLibraryAndCodecs();
 +        MinecraftForge.EVENT_BUS.post(new SoundLoadEvent(this));
      }
  
-     private void func_130083_h()
+     private void loadSounds()
 @@ -236,10 +244,11 @@
                  else
                  {
@@ -49,7 +49,7 @@
                      {
 -                        this.ticksBeforeMusic = this.rand.nextInt(12000) + 12000;
 +                        this.ticksBeforeMusic = this.rand.nextInt(MUSIC_INTERVAL) + MUSIC_INTERVAL;
-                         this.sndSystem.backgroundMusic("BgMusic", soundpoolentry.func_110457_b(), soundpoolentry.func_110458_a(), false);
+                         this.sndSystem.backgroundMusic("BgMusic", soundpoolentry.getSoundUrl(), soundpoolentry.getSoundName(), false);
                          this.sndSystem.setVolume("BgMusic", this.options.musicVolume);
                          this.sndSystem.play("BgMusic");
 @@ -307,6 +316,7 @@
@@ -62,7 +62,7 @@
                  {
 @@ -317,6 +327,7 @@
  
-                     this.sndSystem.newStreamingSource(true, s1, soundpoolentry.func_110457_b(), soundpoolentry.func_110458_a(), false, par2, par3, par4, 2, 64.0F);
+                     this.sndSystem.newStreamingSource(true, s1, soundpoolentry.getSoundUrl(), soundpoolentry.getSoundName(), false, par2, par3, par4, 2, 64.0F);
                      this.sndSystem.setVolume(s1, 0.5F * this.options.soundVolume);
 +                    MinecraftForge.EVENT_BUS.post(new PlayStreamingSourceEvent(this, s1, par2, par3, par4));
                      this.sndSystem.play(s1);

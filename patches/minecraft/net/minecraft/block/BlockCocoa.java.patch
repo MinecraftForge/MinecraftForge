@@ -38,7 +38,7 @@
  
      @SideOnly(Side.CLIENT)
 @@ -248,4 +258,10 @@
-             this.iconArray[i] = par1IconRegister.registerIcon(this.func_111023_E() + "_stage_" + i);
+             this.iconArray[i] = par1IconRegister.registerIcon(this.getTextureName() + "_stage_" + i);
          }
      }
 +

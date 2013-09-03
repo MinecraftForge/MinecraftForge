@@ -253,7 +253,7 @@
          if (this.isEntityInvulnerable())
          {
              return false;
-@@ -1088,12 +1178,15 @@
+@@ -1092,12 +1182,15 @@
      {
          if (!this.isEntityInvulnerable())
          {
@@ -269,8 +269,8 @@
 +            if (par2 <= 0) return;
              par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
              float f1 = par2;
-             par2 = Math.max(par2 - this.func_110139_bj(), 0.0F);
-@@ -1143,6 +1236,7 @@
+             par2 = Math.max(par2 - this.getAbsorptionAmount(), 0.0F);
+@@ -1147,6 +1240,7 @@
  
      public boolean interactWith(Entity par1Entity)
      {
@@ -278,7 +278,7 @@
          ItemStack itemstack = this.getCurrentEquippedItem();
          ItemStack itemstack1 = itemstack != null ? itemstack.copy() : null;
  
-@@ -1199,7 +1293,9 @@
+@@ -1203,7 +1297,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -288,7 +288,7 @@
      }
  
      /**
-@@ -1216,6 +1312,15 @@
+@@ -1220,6 +1316,15 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -303,8 +303,8 @@
 +        }
          if (par1Entity.canAttackWithItem())
          {
-             if (!par1Entity.func_85031_j(this))
-@@ -1369,6 +1474,12 @@
+             if (!par1Entity.hitByEntity(this))
+@@ -1373,6 +1478,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -317,7 +317,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1413,6 +1524,11 @@
+@@ -1417,6 +1528,11 @@
          {
              int l = this.worldObj.getBlockMetadata(par1, par2, par3);
              int i1 = BlockBed.getDirection(l);
@@ -329,7 +329,7 @@
              float f = 0.5F;
              float f1 = 0.5F;
  
-@@ -1483,10 +1599,12 @@
+@@ -1487,10 +1603,12 @@
          ChunkCoordinates chunkcoordinates = this.playerLocation;
          ChunkCoordinates chunkcoordinates1 = this.playerLocation;
  
@@ -346,7 +346,7 @@
  
              if (chunkcoordinates1 == null)
              {
-@@ -1523,7 +1641,9 @@
+@@ -1527,7 +1645,9 @@
       */
      private boolean isInBed()
      {
@@ -357,7 +357,7 @@
      }
  
      /**
-@@ -1538,9 +1658,12 @@
+@@ -1542,9 +1662,12 @@
          ichunkprovider.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          ichunkprovider.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -373,7 +373,7 @@
              return chunkcoordinates1;
          }
          else
-@@ -1562,10 +1685,13 @@
+@@ -1566,10 +1689,13 @@
      {
          if (this.playerLocation != null)
          {
@@ -391,7 +391,7 @@
              {
                  case 0:
                      return 90.0F;
-@@ -1631,14 +1757,40 @@
+@@ -1635,14 +1761,40 @@
      /**
       * Returns the location of the bed the player will respawn at, or null if the player has not slept in a bed.
       */
@@ -436,7 +436,7 @@
      }
  
      /**
-@@ -1646,6 +1798,10 @@
+@@ -1650,6 +1802,10 @@
       */
      public void setSpawnChunk(ChunkCoordinates par1ChunkCoordinates, boolean par2)
      {
@@ -447,7 +447,7 @@
          if (par1ChunkCoordinates != null)
          {
              this.spawnChunk = new ChunkCoordinates(par1ChunkCoordinates);
-@@ -1657,7 +1813,32 @@
+@@ -1661,7 +1817,32 @@
              this.spawnForced = false;
          }
      }
@@ -481,7 +481,7 @@
      /**
       * Will trigger the specified trigger.
       */
-@@ -1839,6 +2020,10 @@
+@@ -1843,6 +2024,10 @@
  
              super.fall(par1);
          }
@@ -492,7 +492,7 @@
      }
  
      /**
-@@ -1880,7 +2065,7 @@
+@@ -1884,7 +2069,7 @@
          {
              if (par1ItemStack.getItem().requiresMultipleRenderPasses())
              {
@@ -501,7 +501,7 @@
              }
  
              if (this.itemInUse != null && par1ItemStack.itemID == Item.bow.itemID)
-@@ -1902,6 +2087,7 @@
+@@ -1906,6 +2091,7 @@
                      return Item.bow.getItemIconForUseDuration(0);
                  }
              }
@@ -509,7 +509,7 @@
          }
  
          return icon;
-@@ -2123,7 +2309,17 @@
+@@ -2127,7 +2313,17 @@
              this.setScore(par1EntityPlayer.getScore());
          }
  
@@ -527,7 +527,7 @@
      }
  
      /**
-@@ -2187,7 +2383,14 @@
+@@ -2191,7 +2387,14 @@
       */
      public void setCurrentItemOrArmor(int par1, ItemStack par2ItemStack)
      {

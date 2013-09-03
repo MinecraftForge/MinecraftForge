@@ -138,7 +138,7 @@
 -                }
 -                else if (this.objectMouseOver.entityHit instanceof EntityLeashKnot)
 -                {
--                    j = Item.field_111214_ch.itemID;
+-                    j = Item.leash.itemID;
 -                }
 -                else if (this.objectMouseOver.entityHit instanceof EntityItemFrame)
 -                {

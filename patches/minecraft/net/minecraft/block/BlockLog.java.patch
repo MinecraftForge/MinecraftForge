@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockLog.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockLog.java
-@@ -60,14 +60,9 @@
+@@ -62,14 +62,9 @@
                      {
                          int j2 = par1World.getBlockId(par2 + k1, par3 + l1, par4 + i2);
  
@@ -17,8 +17,8 @@
                          }
                      }
                  }
-@@ -125,4 +120,16 @@
-             this.tree_top[i] = par1IconRegister.registerIcon(this.func_111023_E() + "_" + woodType[i] + "_top");
+@@ -135,4 +130,16 @@
+             this.tree_top[i] = par1IconRegister.registerIcon(this.getTextureName() + "_" + woodType[i] + "_top");
          }
      }
 +

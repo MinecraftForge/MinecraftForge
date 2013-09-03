@@ -78,7 +78,7 @@
 -        if (creativetabs.drawInForegroundOfTab())
 +        if (creativetabs != null && creativetabs.drawInForegroundOfTab())
          {
-             this.fontRenderer.drawString(I18n.func_135053_a(creativetabs.getTranslatedTabLabel()), 8, 6, 4210752);
+             this.fontRenderer.drawString(I18n.getString(creativetabs.getTranslatedTabLabel()), 8, 6, 4210752);
          }
 @@ -462,7 +485,7 @@
              {
@@ -148,7 +148,7 @@
 +
          if (this.field_74235_v != null && selectedTabIndex == CreativeTabs.tabInventory.getTabIndex() && this.isPointInRegion(this.field_74235_v.xDisplayPosition, this.field_74235_v.yDisplayPosition, 16, 16, par1, par2))
          {
-             this.drawCreativeTabHoveringText(I18n.func_135053_a("inventory.binSlot"), par1, par2);
+             this.drawCreativeTabHoveringText(I18n.getString("inventory.binSlot"), par1, par2);
 +        }
 +
 +        if (maxPages != 0)
@@ -176,7 +176,7 @@
 +        for (l = start; l < k; ++l)
          {
              CreativeTabs creativetabs1 = acreativetabs[l];
-             this.mc.func_110434_K().func_110577_a(field_110424_t);
+             this.mc.getTextureManager().bindTexture(field_110424_t);
  
 -            if (creativetabs1.getTabIndex() != selectedTabIndex)
 +            if (creativetabs1 != null && creativetabs1.getTabIndex() != selectedTabIndex)
@@ -189,12 +189,12 @@
 +        {
 +            if (creativetabs != CreativeTabs.tabAllSearch)
 +            {
-+                this.mc.func_110434_K().func_110577_a(field_110424_t);
++                this.mc.getTextureManager().bindTexture(field_110424_t);
 +                renderCreativeTab(CreativeTabs.tabAllSearch);
 +            }
 +            if (creativetabs != CreativeTabs.tabInventory)
 +            {
-+                this.mc.func_110434_K().func_110577_a(field_110424_t);
++                this.mc.getTextureManager().bindTexture(field_110424_t);
 +                renderCreativeTab(CreativeTabs.tabInventory);
              }
          }
@@ -244,8 +244,8 @@
          GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 -        ItemStack itemstack = new ItemStack(par1CreativeTabs.getTabIconItem());
 +        ItemStack itemstack = par1CreativeTabs.getIconItemStack();
-         itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.func_110434_K(), itemstack, l, i1);
-         itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.func_110434_K(), itemstack, l, i1);
+         itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.getTextureManager(), itemstack, l, i1);
+         itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.getTextureManager(), itemstack, l, i1);
          GL11.glDisable(GL11.GL_LIGHTING);
 @@ -912,6 +998,15 @@
          {

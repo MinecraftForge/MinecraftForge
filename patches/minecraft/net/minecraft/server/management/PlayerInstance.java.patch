@@ -18,7 +18,7 @@
  
  public class PlayerInstance
  {
-@@ -60,6 +64,8 @@
+@@ -66,6 +70,8 @@
              this.playersInChunk.remove(par1EntityPlayerMP);
              par1EntityPlayerMP.loadedChunks.remove(this.chunkLocation);
  
@@ -27,16 +27,16 @@
              if (this.playersInChunk.isEmpty())
              {
                  long i = (long)this.chunkLocation.chunkXPos + 2147483647L | (long)this.chunkLocation.chunkZPos + 2147483647L << 32;
-@@ -97,7 +103,7 @@
+@@ -109,7 +115,7 @@
  
-         this.field_73260_f |= 1 << (par2 >> 4);
+         this.flagsYAreasToUpdate |= 1 << (par2 >> 4);
  
 -        if (this.numberOfTilesToUpdate < 64)
 +        //if (this.numberOfTilesToUpdate < 64) //Forge; Cache everything, so always run
          {
              short short1 = (short)(par1 << 12 | par3 << 8 | par2);
  
-@@ -109,6 +115,10 @@
+@@ -121,6 +127,10 @@
                  }
              }
  
@@ -47,7 +47,7 @@
              this.locationOfBlockChange[this.numberOfTilesToUpdate++] = short1;
          }
      }
-@@ -150,12 +160,13 @@
+@@ -162,12 +172,13 @@
              {
                  int l;
  
@@ -56,13 +56,13 @@
                  {
                      i = this.chunkLocation.chunkXPos * 16;
                      j = this.chunkLocation.chunkZPos * 16;
-                     this.sendToAllPlayersWatchingChunk(new Packet51MapChunk(PlayerManager.getWorldServer(this.thePlayerManager).getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos), false, this.field_73260_f));
+                     this.sendToAllPlayersWatchingChunk(new Packet51MapChunk(PlayerManager.getWorldServer(this.thePlayerManager).getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos), false, this.flagsYAreasToUpdate));
  
 +                    /* Forge: Grabs ALL tile entities is costly on a modded server, only send needed ones
                      for (k = 0; k < 16; ++k)
                      {
-                         if ((this.field_73260_f & 1 << k) != 0)
-@@ -169,11 +180,14 @@
+                         if ((this.flagsYAreasToUpdate & 1 << k) != 0)
+@@ -181,11 +192,14 @@
                              }
                          }
                      }

@@ -24,40 +24,26 @@
              --this.renderEntitiesStartupCounter;
          }
          else
-@@ -456,26 +464,33 @@
+@@ -456,6 +464,8 @@
              this.theWorld.theProfiler.startSection("prepare");
-             TileEntityRenderer.instance.cacheActiveRenderInfo(this.theWorld, this.mc.func_110434_K(), this.mc.fontRenderer, this.mc.renderViewEntity, par3);
-             RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.mc.func_110434_K(), this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.pointedEntityLiving, this.mc.gameSettings, par3);
--            this.countEntitiesTotal = 0;
--            this.countEntitiesRendered = 0;
--            this.countEntitiesHidden = 0;
--            EntityLivingBase entitylivingbase = this.mc.renderViewEntity;
--            RenderManager.renderPosX = entitylivingbase.lastTickPosX + (entitylivingbase.posX - entitylivingbase.lastTickPosX) * (double)par3;
--            RenderManager.renderPosY = entitylivingbase.lastTickPosY + (entitylivingbase.posY - entitylivingbase.lastTickPosY) * (double)par3;
--            RenderManager.renderPosZ = entitylivingbase.lastTickPosZ + (entitylivingbase.posZ - entitylivingbase.lastTickPosZ) * (double)par3;
--            TileEntityRenderer.staticPlayerX = entitylivingbase.lastTickPosX + (entitylivingbase.posX - entitylivingbase.lastTickPosX) * (double)par3;
--            TileEntityRenderer.staticPlayerY = entitylivingbase.lastTickPosY + (entitylivingbase.posY - entitylivingbase.lastTickPosY) * (double)par3;
--            TileEntityRenderer.staticPlayerZ = entitylivingbase.lastTickPosZ + (entitylivingbase.posZ - entitylivingbase.lastTickPosZ) * (double)par3;
-+            if (pass == 0)
+             TileEntityRenderer.instance.cacheActiveRenderInfo(this.theWorld, this.mc.getTextureManager(), this.mc.fontRenderer, this.mc.renderViewEntity, par3);
+             RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.mc.getTextureManager(), this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.pointedEntityLiving, this.mc.gameSettings, par3);
++            if (pass == 0) // no indentation to shrink patch
 +            {
-+                this.countEntitiesTotal = 0;
-+                this.countEntitiesRendered = 0;
-+                this.countEntitiesHidden = 0;
-+                EntityLivingBase entitylivingbase = this.mc.renderViewEntity;
-+                RenderManager.renderPosX = entitylivingbase.lastTickPosX + (entitylivingbase.posX - entitylivingbase.lastTickPosX) * (double)par3;
-+                RenderManager.renderPosY = entitylivingbase.lastTickPosY + (entitylivingbase.posY - entitylivingbase.lastTickPosY) * (double)par3;
-+                RenderManager.renderPosZ = entitylivingbase.lastTickPosZ + (entitylivingbase.posZ - entitylivingbase.lastTickPosZ) * (double)par3;
-+                TileEntityRenderer.staticPlayerX = entitylivingbase.lastTickPosX + (entitylivingbase.posX - entitylivingbase.lastTickPosX) * (double)par3;
-+                TileEntityRenderer.staticPlayerY = entitylivingbase.lastTickPosY + (entitylivingbase.posY - entitylivingbase.lastTickPosY) * (double)par3;
-+                TileEntityRenderer.staticPlayerZ = entitylivingbase.lastTickPosZ + (entitylivingbase.posZ - entitylivingbase.lastTickPosZ) * (double)par3;
+             this.countEntitiesTotal = 0;
+             this.countEntitiesRendered = 0;
+             this.countEntitiesHidden = 0;
+@@ -466,16 +476,21 @@
+             TileEntityRenderer.staticPlayerX = entitylivingbase.lastTickPosX + (entitylivingbase.posX - entitylivingbase.lastTickPosX) * (double)par3;
+             TileEntityRenderer.staticPlayerY = entitylivingbase.lastTickPosY + (entitylivingbase.posY - entitylivingbase.lastTickPosY) * (double)par3;
+             TileEntityRenderer.staticPlayerZ = entitylivingbase.lastTickPosZ + (entitylivingbase.posZ - entitylivingbase.lastTickPosZ) * (double)par3;
 +            }
              this.mc.entityRenderer.enableLightmap((double)par3);
              this.theWorld.theProfiler.endStartSection("global");
              List list = this.theWorld.getLoadedEntityList();
--            this.countEntitiesTotal = list.size();
-+            if (pass == 0)
++            if (pass == 0) // no indentation for smaller patch size
 +            {
-+                this.countEntitiesTotal = list.size();
+             this.countEntitiesTotal = list.size();
 +            }
              int i;
              Entity entity;

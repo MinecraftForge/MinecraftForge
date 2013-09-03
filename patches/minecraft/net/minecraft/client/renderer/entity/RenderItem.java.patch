@@ -156,11 +156,11 @@
 +
 +                if (itemstack.getItemSpriteNumber() == 0)
                  {
-                     this.func_110776_a(TextureMap.field_110575_b);
+                     this.bindTexture(TextureMap.locationBlocksTexture);
                  }
 @@ -277,7 +266,7 @@
                  GL11.glColor4f(par5, par6, par7, 1.0F);
-                 ItemRenderer.renderItemIn2D(tessellator, f5, f6, f4, f7, ((Icon)par2Icon).getOriginX(), ((Icon)par2Icon).getOriginY(), f12);
+                 ItemRenderer.renderItemIn2D(tessellator, f5, f6, f4, f7, ((Icon)par2Icon).getIconWidth(), ((Icon)par2Icon).getIconHeight(), f12);
  
 -                if (itemstack.hasEffect())
 +                if (itemstack.hasEffect(pass))
@@ -186,7 +186,7 @@
 +        Block block = (k < Block.blocksList.length ? Block.blocksList[k] : null);
 +        if (par3ItemStack.getItemSpriteNumber() == 0 && block != null && RenderBlocks.renderItemIn3d(Block.blocksList[k].getRenderType()))
          {
-             par2TextureManager.func_110577_a(TextureMap.field_110575_b);
+             par2TextureManager.bindTexture(TextureMap.locationBlocksTexture);
 -            Block block = Block.blocksList[k];
              GL11.glPushMatrix();
              GL11.glTranslatef((float)(par4 - 2), (float)(par5 + 3), -3.0F + this.zLevel);
@@ -195,7 +195,7 @@
          else if (Item.itemsList[k].requiresMultipleRenderPasses())
          {
              GL11.glDisable(GL11.GL_LIGHTING);
--            par2TextureManager.func_110577_a(TextureMap.field_110576_c);
+-            par2TextureManager.bindTexture(TextureMap.locationItemsTexture);
 -
 -            for (int j1 = 0; j1 <= 1; ++j1)
 -            {
@@ -203,7 +203,7 @@
 +
 +            for (int j1 = 0; j1 < Item.itemsList[k].getRenderPasses(l); ++j1)
 +            {
-+                par2TextureManager.func_110577_a(par3ItemStack.getItemSpriteNumber() == 0 ? TextureMap.field_110575_b : TextureMap.field_110576_c);
++                par2TextureManager.bindTexture(par3ItemStack.getItemSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
 +                Icon icon = Item.itemsList[k].getIcon(par3ItemStack, j1);
                  int k1 = Item.itemsList[k].getColorFromItemStack(par3ItemStack, j1);
                  f1 = (float)(k1 >> 16 & 255) / 255.0F;
@@ -220,7 +220,7 @@
              }
  
              GL11.glEnable(GL11.GL_LIGHTING);
-@@ -429,10 +427,33 @@
+@@ -429,11 +427,34 @@
  
              this.renderIcon(par4, par5, (Icon)object, 16, 16);
              GL11.glEnable(GL11.GL_LIGHTING);
@@ -233,13 +233,13 @@
  
          GL11.glEnable(GL11.GL_CULL_FACE);
      }
-+    
+ 
 +    private void renderEffect(TextureManager manager, int x, int y)
 +    {
 +        GL11.glDepthFunc(GL11.GL_GREATER);
 +        GL11.glDisable(GL11.GL_LIGHTING);
 +        GL11.glDepthMask(false);
-+        manager.func_110577_a(field_110798_h);
++        manager.bindTexture(RES_ITEM_GLINT);
 +        this.zLevel -= 50.0F;
 +        GL11.glEnable(GL11.GL_BLEND);
 +        GL11.glBlendFunc(GL11.GL_DST_COLOR, GL11.GL_DST_COLOR);
@@ -251,9 +251,10 @@
 +        GL11.glEnable(GL11.GL_LIGHTING);
 +        GL11.glDepthFunc(GL11.GL_LEQUAL);
 +    }
- 
++
      /**
       * Render the item's icon or block into the GUI, including the glint effect.
+      */
 @@ -441,8 +462,12 @@
      {
          if (par3ItemStack != null)
@@ -277,7 +278,7 @@
          }
      }
  
-@@ -583,4 +609,47 @@
+@@ -586,4 +612,47 @@
      {
          this.doRenderItem((EntityItem)par1Entity, par2, par4, par6, par8, par9);
      }

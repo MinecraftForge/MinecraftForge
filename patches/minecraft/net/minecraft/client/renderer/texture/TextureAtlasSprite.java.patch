@@ -12,10 +12,11 @@
  
  @SideOnly(Side.CLIENT)
  public class TextureAtlasSprite implements Icon
-@@ -184,6 +186,20 @@
-         this.field_130224_d = par1;
+@@ -297,4 +299,18 @@
+     {
+         return "TextureAtlasSprite{name=\'" + this.iconName + '\'' + ", frameCount=" + this.framesTextureData.size() + ", rotated=" + this.rotated + ", x=" + this.originX + ", y=" + this.originY + ", height=" + this.height + ", width=" + this.width + ", u0=" + this.minU + ", u1=" + this.maxU + ", v0=" + this.minV + ", v1=" + this.maxV + '}';
      }
- 
++
 +    /**
 +     * Load the specified resource as this sprite's data.
 +     * Returning false from this function will prevent this icon from being stitched onto the master texture.
@@ -26,10 +27,7 @@
 +     */
 +    public boolean load(ResourceManager manager, ResourceLocation location) throws IOException
 +    {
-+        func_130100_a(manager.func_110536_a(location));
++        loadSprite(manager.getResource(location));
 +        return true;
 +    }
-+
-     public void func_130100_a(Resource par1Resource) throws IOException
-     {
-         this.func_130102_n();
+ }

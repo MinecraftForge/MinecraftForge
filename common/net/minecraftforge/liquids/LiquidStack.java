@@ -203,11 +203,11 @@ public class LiquidStack
     {
         if (itemID == Block.waterStill.blockID)
         {
-            return BlockFluid.func_94424_b("water");
+            return BlockFluid.getFluidIcon("water");
         }
         else if (itemID == Block.lavaStill.blockID)
         {
-            return BlockFluid.func_94424_b("lava");
+            return BlockFluid.getFluidIcon("lava");
         }
         return renderingIcon;
     }

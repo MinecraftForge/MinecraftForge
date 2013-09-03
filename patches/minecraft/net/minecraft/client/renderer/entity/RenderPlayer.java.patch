@@ -41,8 +41,8 @@
              if (item instanceof ItemArmor)
              {
                  ItemArmor itemarmor = (ItemArmor)item;
--                this.func_110776_a(RenderBiped.func_110857_a(itemarmor, par2));
-+                this.func_110776_a(RenderBiped.getArmorResource(par1AbstractClientPlayer, itemstack, par2, null));
+-                this.bindTexture(RenderBiped.func_110857_a(itemarmor, par2));
++                this.bindTexture(RenderBiped.getArmorResource(par1AbstractClientPlayer, itemstack, par2, null));
                  ModelBiped modelbiped = par2 == 2 ? this.modelArmor : this.modelArmorChestplate;
                  modelbiped.bipedHead.showModel = par2 == 0;
                  modelbiped.bipedHeadwear.showModel = par2 == 0;
@@ -71,8 +71,8 @@
  
              if (item instanceof ItemArmor)
              {
--                this.func_110776_a(RenderBiped.func_110858_a((ItemArmor)item, par2, "overlay"));
-+                this.func_110776_a(RenderBiped.getArmorResource(par1AbstractClientPlayer, itemstack, par2, "overlay"));
+-                this.bindTexture(RenderBiped.func_110858_a((ItemArmor)item, par2, "overlay"));
++                this.bindTexture(RenderBiped.getArmorResource(par1AbstractClientPlayer, itemstack, par2, "overlay"));
                  float f1 = 1.0F;
                  GL11.glColor3f(f1, f1, f1);
              }
@@ -128,7 +128,7 @@
                      f2 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
 @@ -226,6 +255,7 @@
-         boolean flag = par1AbstractClientPlayer.func_110310_o().func_110557_a();
+         boolean flag = par1AbstractClientPlayer.getTextureCape().isTextureUploaded();
          boolean flag1 = !par1AbstractClientPlayer.isInvisible();
          boolean flag2 = !par1AbstractClientPlayer.getHideCape();
 +        flag = event.renderCape && flag;

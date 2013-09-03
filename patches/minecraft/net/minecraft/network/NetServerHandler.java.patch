@@ -120,17 +120,17 @@
          }
          else
          {
--            if (this.hasMoved && this.playerEntity.getDistanceSq((double)i + 0.5D, (double)j + 0.5D, (double)k + 0.5D) < 64.0D && !this.mcServer.func_96290_a(worldserver, i, j, k, this.playerEntity))
+-            if (this.hasMoved && this.playerEntity.getDistanceSq((double)i + 0.5D, (double)j + 0.5D, (double)k + 0.5D) < 64.0D && !this.mcServer.isBlockProtected(worldserver, i, j, k, this.playerEntity))
 +            double dist = playerEntity.theItemInWorldManager.getBlockReachDistance() + 1;
 +            dist *= dist;
-+            if (this.hasMoved && this.playerEntity.getDistanceSq((double)i + 0.5D, (double)j + 0.5D, (double)k + 0.5D) < dist && !this.mcServer.func_96290_a(worldserver, i, j, k, this.playerEntity))
++            if (this.hasMoved && this.playerEntity.getDistanceSq((double)i + 0.5D, (double)j + 0.5D, (double)k + 0.5D) < dist && !this.mcServer.isBlockProtected(worldserver, i, j, k, this.playerEntity))
              {
                  this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, worldserver, itemstack, i, j, k, l, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
              }
 @@ -691,6 +729,8 @@
                      }
  
-                     ChatMessageComponent chatmessagecomponent = ChatMessageComponent.func_111082_b("chat.type.text", new Object[] {this.playerEntity.getTranslatedEntityName(), s});
+                     ChatMessageComponent chatmessagecomponent = ChatMessageComponent.createFromTranslationWithSubstitutions("chat.type.text", new Object[] {this.playerEntity.getTranslatedEntityName(), s});
 +                    chatmessagecomponent = ForgeHooks.onServerChatEvent(this, s, chatmessagecomponent);
 +                    if (chatmessagecomponent == null) return;
                      this.mcServer.getConfigurationManager().func_110459_a(chatmessagecomponent, false);

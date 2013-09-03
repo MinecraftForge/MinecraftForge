@@ -20,7 +20,7 @@
  
  public abstract class EntityLivingBase extends Entity
  {
-@@ -299,7 +302,7 @@
+@@ -305,7 +308,7 @@
  
              this.extinguish();
  
@@ -29,15 +29,15 @@
              {
                  this.mountEntity((Entity)null);
              }
-@@ -446,6 +449,7 @@
+@@ -452,6 +455,7 @@
      {
          this.entityLivingToAttack = par1EntityLivingBase;
          this.revengeTimer = this.ticksExisted;
 +        ForgeHooks.onLivingSetAttackTarget(this, par1EntityLivingBase);
      }
  
-     public EntityLivingBase func_110144_aD()
-@@ -744,8 +748,6 @@
+     public EntityLivingBase getLastAttacker()
+@@ -750,8 +754,6 @@
          return this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
      }
  
@@ -46,7 +46,7 @@
      /**
       * Remove the speified potion effect from this entity.
       */
-@@ -826,6 +828,7 @@
+@@ -832,6 +834,7 @@
       */
      public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
      {
@@ -54,7 +54,7 @@
          if (this.isEntityInvulnerable())
          {
              return false;
-@@ -976,6 +979,7 @@
+@@ -982,6 +985,7 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -62,7 +62,7 @@
          Entity entity = par1DamageSource.getEntity();
          EntityLivingBase entitylivingbase = this.func_94060_bK();
  
-@@ -1000,6 +1004,10 @@
+@@ -1006,6 +1010,10 @@
                  i = EnchantmentHelper.getLootingModifier((EntityLivingBase)entity);
              }
  
@@ -73,7 +73,7 @@
              if (!this.isChild() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
              {
                  this.dropFewItems(this.recentlyHit > 0, i);
-@@ -1007,12 +1015,22 @@
+@@ -1013,12 +1021,22 @@
  
                  if (this.recentlyHit > 0)
                  {
@@ -97,7 +97,7 @@
                  }
              }
          }
-@@ -1082,7 +1100,7 @@
+@@ -1088,7 +1106,7 @@
          int j = MathHelper.floor_double(this.boundingBox.minY);
          int k = MathHelper.floor_double(this.posZ);
          int l = this.worldObj.getBlockId(i, j, k);
@@ -106,7 +106,7 @@
      }
  
      /**
-@@ -1098,6 +1116,8 @@
+@@ -1104,6 +1122,8 @@
       */
      protected void fall(float par1)
      {
@@ -115,7 +115,7 @@
          super.fall(par1);
          PotionEffect potioneffect = this.getActivePotionEffect(Potion.jump);
          float f1 = potioneffect != null ? (float)(potioneffect.getAmplifier() + 1) : 0.0F;
-@@ -1231,6 +1251,8 @@
+@@ -1237,6 +1257,8 @@
      {
          if (!this.isEntityInvulnerable())
          {
@@ -124,7 +124,7 @@
              par2 = this.applyArmorCalculations(par1DamageSource, par2);
              par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
              float f1 = par2;
-@@ -1292,6 +1314,17 @@
+@@ -1298,6 +1320,17 @@
       */
      public void swingItem()
      {
@@ -139,10 +139,10 @@
 +            }
 +        }
 +
-         if (!this.isSwingInProgress || this.field_110158_av >= this.getArmSwingAnimationEnd() / 2 || this.field_110158_av < 0)
+         if (!this.isSwingInProgress || this.swingProgressInt >= this.getArmSwingAnimationEnd() / 2 || this.swingProgressInt < 0)
          {
-             this.field_110158_av = -1;
-@@ -1526,6 +1559,7 @@
+             this.swingProgressInt = -1;
+@@ -1535,6 +1568,7 @@
          }
  
          this.isAirBorne = true;
@@ -150,7 +150,7 @@
      }
  
      /**
-@@ -1730,6 +1764,11 @@
+@@ -1739,6 +1773,11 @@
       */
      public void onUpdate()
      {
@@ -162,9 +162,9 @@
          super.onUpdate();
  
          if (!this.worldObj.isRemote)
-@@ -2265,4 +2304,42 @@
+@@ -2277,4 +2316,42 @@
      {
-         return this.getTeam() != null ? this.getTeam().func_142054_a(par1Team) : false;
+         return this.getTeam() != null ? this.getTeam().isSameTeam(par1Team) : false;
      }
 +
 +    /***

@@ -26,7 +26,7 @@
      }
  
      /**
-@@ -242,4 +243,107 @@
+@@ -244,4 +245,107 @@
              par1World.notifyBlocksOfNeighborChange(par2, par3 - 1, par4, par5);
          }
      }

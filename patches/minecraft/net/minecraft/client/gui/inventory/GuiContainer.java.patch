@@ -12,7 +12,7 @@
              }
          }
  
-+        //Forge: Force lighting to be disabled as there are some issue where lighting would 
++        //Forge: Force lighting to be disabled as there are some issue where lighting would
 +        //incorrectly be applied based on items that are in the inventory.
 +        GL11.glDisable(GL11.GL_LIGHTING);
          this.drawGuiContainerForegroundLayer(par1, par2);
@@ -24,13 +24,13 @@
          GL11.glTranslatef(0.0F, 0.0F, 32.0F);
          this.zLevel = 200.0F;
          itemRenderer.zLevel = 200.0F;
--        itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.func_110434_K(), par1ItemStack, par2, par3);
--        itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.func_110434_K(), par1ItemStack, par2, par3 - (this.draggedStack == null ? 0 : 8), par4Str);
+-        itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.getTextureManager(), par1ItemStack, par2, par3);
+-        itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.getTextureManager(), par1ItemStack, par2, par3 - (this.draggedStack == null ? 0 : 8), par4Str);
 +        FontRenderer font = null;
 +        if (par1ItemStack != null) font = par1ItemStack.getItem().getFontRenderer(par1ItemStack);
 +        if (font == null) font = fontRenderer;
-+        itemRenderer.renderItemAndEffectIntoGUI(font, this.mc.func_110434_K(), par1ItemStack, par2, par3);
-+        itemRenderer.renderItemOverlayIntoGUI(font, this.mc.func_110434_K(), par1ItemStack, par2, par3 - (this.draggedStack == null ? 0 : 8), par4Str);
++        itemRenderer.renderItemAndEffectIntoGUI(font, this.mc.getTextureManager(), par1ItemStack, par2, par3);
++        itemRenderer.renderItemOverlayIntoGUI(font, this.mc.getTextureManager(), par1ItemStack, par2, par3 - (this.draggedStack == null ? 0 : 8), par4Str);
          this.zLevel = 0.0F;
          itemRenderer.zLevel = 0.0F;
      }

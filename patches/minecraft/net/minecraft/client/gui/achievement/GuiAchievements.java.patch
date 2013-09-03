@@ -48,7 +48,7 @@
 @@ -76,6 +93,7 @@
      {
          this.buttonList.clear();
-         this.buttonList.add(new GuiSmallButton(1, this.width / 2 + 24, this.height / 2 + 74, 80, 20, I18n.func_135053_a("gui.done")));
+         this.buttonList.add(new GuiSmallButton(1, this.width / 2 + 24, this.height / 2 + 74, 80, 20, I18n.getString("gui.done")));
 +        this.buttonList.add(button = new GuiSmallButton(2, (width - achievementsPaneWidth) / 2 + 24, height / 2 + 74, 125, 20, AchievementPage.getTitle(currentPage)));
      }
  
@@ -59,7 +59,7 @@
              this.mc.setIngameFocus();
 +        }
 +
-+        if (par1GuiButton.id == 2) 
++        if (par1GuiButton.id == 2)
 +        {
 +            currentPage++;
 +            if (currentPage >= AchievementPage.getAchievementPages().size())

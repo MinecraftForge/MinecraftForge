@@ -94,7 +94,7 @@ public class GuiIngameForge extends GuiIngame
         int height = res.getScaledHeight();
         renderHealthMount = mc.thePlayer.ridingEntity instanceof EntityLivingBase;
         renderFood = mc.thePlayer.ridingEntity == null;
-        renderJumpBar = mc.thePlayer.func_110317_t();
+        renderJumpBar = mc.thePlayer.isRidingHorse();
 
         right_height = 39;
         left_height = 39;
@@ -189,7 +189,7 @@ public class GuiIngameForge extends GuiIngame
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.func_110577_a(WIDGITS);
+        mc.renderEngine.bindTexture(WIDGITS);
 
         InventoryPlayer inv = mc.thePlayer.inventory;
         drawTexturedModalRect(width / 2 - 91, height - 22, 0, 0, 182, 22);
@@ -215,7 +215,7 @@ public class GuiIngameForge extends GuiIngame
     protected void renderCrosshairs(int width, int height)
     {
         if (pre(CROSSHAIRS)) return;
-        bind(Gui.field_110324_m);
+        bind(Gui.icons);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ONE_MINUS_SRC_COLOR);
         drawTexturedModalRect(width / 2 - 7, height / 2 - 7, 0, 0, 16, 16);
@@ -325,7 +325,7 @@ public class GuiIngameForge extends GuiIngame
 
     public void renderHealth(int width, int height)
     {
-        bind(field_110324_m);
+        bind(icons);
         if (pre(HEALTH)) return;
         mc.mcProfiler.startSection("health");
 
@@ -336,11 +336,11 @@ public class GuiIngameForge extends GuiIngame
             highlight = false;
         }
 
-        AttributeInstance attrMaxHealth = this.mc.thePlayer.func_110148_a(SharedMonsterAttributes.field_111267_a);
-        int health = MathHelper.ceiling_float_int(mc.thePlayer.func_110143_aJ());
+        AttributeInstance attrMaxHealth = this.mc.thePlayer.getEntityAttribute(SharedMonsterAttributes.maxHealth);
+        int health = MathHelper.ceiling_float_int(mc.thePlayer.getHealth());
         int healthLast = MathHelper.ceiling_float_int(mc.thePlayer.prevHealth);
-        float healthMax = (float)attrMaxHealth.func_111126_e();
-        float absorb = this.mc.thePlayer.func_110139_bj();
+        float healthMax = (float)attrMaxHealth.getAttributeValue();
+        float absorb = this.mc.thePlayer.getAbsorptionAmount();
 
         int healthRows = MathHelper.ceiling_float_int((healthMax + absorb) / 2.0F / 10.0F);
         int rowHeight = Math.max(10 - (healthRows - 2), 3);
@@ -484,7 +484,7 @@ public class GuiIngameForge extends GuiIngame
 
     protected void renderExperience(int width, int height)
     {
-        bind(field_110324_m);
+        bind(icons);
         if (pre(EXPERIENCE)) return;
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
@@ -533,12 +533,12 @@ public class GuiIngameForge extends GuiIngame
 
     protected void renderJumpBar(int width, int height)
     {
-        bind(field_110324_m);
+        bind(icons);
         if (pre(JUMPBAR)) return;
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         mc.mcProfiler.startSection("jumpBar");
-        float charge = mc.thePlayer.func_110319_bJ();
+        float charge = mc.thePlayer.getHorseJumpPower();
         final int barWidth = 182;
         int x = (width / 2) - (barWidth / 2);
         int filled = (int)(charge * (float)(barWidth + 1));
@@ -790,7 +790,7 @@ public class GuiIngameForge extends GuiIngame
 
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-                    mc.func_110434_K().func_110577_a(Gui.field_110324_m);
+                    mc.getTextureManager().bindTexture(Gui.icons);
                     int pingIndex = 4;
                     int ping = player.responseTime;
                     if (ping < 0) pingIndex = 5;
@@ -812,7 +812,7 @@ public class GuiIngameForge extends GuiIngame
         Entity tmp = mc.thePlayer.ridingEntity;
         if (!(tmp instanceof EntityLivingBase)) return;
 
-        bind(field_110324_m);
+        bind(icons);
 
         if (pre(HEALTHMOUNT)) return;
 
@@ -821,8 +821,8 @@ public class GuiIngameForge extends GuiIngame
 
         mc.mcProfiler.endStartSection("mountHealth");
         EntityLivingBase mount = (EntityLivingBase)tmp;
-        int health = (int)Math.ceil((double)mount.func_110143_aJ());
-        float healthMax = mount.func_110138_aP();
+        int health = (int)Math.ceil((double)mount.getHealth());
+        float healthMax = mount.getMaxHealth();
         int hearts = (int)(healthMax + 0.5F) / 2;
 
         if (hearts > 30) hearts = 30;
@@ -866,6 +866,6 @@ public class GuiIngameForge extends GuiIngame
     }
     private void bind(ResourceLocation res)
     {
-        mc.func_110434_K().func_110577_a(res);
+        mc.getTextureManager().bindTexture(res);
     }
 }

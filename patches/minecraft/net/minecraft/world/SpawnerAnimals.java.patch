@@ -43,12 +43,12 @@
                                                              {
                                                                  ++j2;
                                                                  par1WorldServer.spawnEntityInWorld(entityliving);
--                                                                entitylivingdata = entityliving.func_110161_a(entitylivingdata);
+-                                                                entitylivingdata = entityliving.onSpawnWithEgg(entitylivingdata);
 -
 -                                                                if (j2 >= entityliving.getMaxSpawnedInChunk())
 +                                                                if (!ForgeEventFactory.doSpecialSpawn(entityliving, par1WorldServer, f, f1, f2))
 +                                                                {
-+                                                                    entitylivingdata = entityliving.func_110161_a(entitylivingdata);
++                                                                    entitylivingdata = entityliving.onSpawnWithEgg(entitylivingdata);
 +                                                                }
 +
 +                                                                if (j2 >= ForgeEventFactory.getMaxSpawnPackSize(entityliving))

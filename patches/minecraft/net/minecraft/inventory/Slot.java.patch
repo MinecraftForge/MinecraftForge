@@ -47,7 +47,7 @@
 +    @SideOnly(Side.CLIENT)
 +    public ResourceLocation getBackgroundIconTexture()
 +    {
-+        return (texture == null ? TextureMap.field_110576_c : texture);
++        return (texture == null ? TextureMap.locationItemsTexture : texture);
 +    }
 +
 +    /**

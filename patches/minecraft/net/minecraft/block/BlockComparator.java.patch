@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockComparator.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockComparator.java
-@@ -266,4 +266,17 @@
+@@ -268,4 +268,17 @@
      {
          return new TileEntityComparator();
      }

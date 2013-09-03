@@ -13,7 +13,7 @@
  {
      public EntityMooshroom(World par1World)
      {
-@@ -38,31 +42,7 @@
+@@ -38,28 +42,6 @@
              }
          }
  
@@ -26,7 +26,7 @@
 -            {
 -                EntityCow entitycow = new EntityCow(this.worldObj);
 -                entitycow.setLocationAndAngles(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
--                entitycow.setEntityHealth(this.func_110143_aJ());
+-                entitycow.setHealth(this.getHealth());
 -                entitycow.renderYawOffset = this.renderYawOffset;
 -                this.worldObj.spawnEntityInWorld(entitycow);
 -
@@ -39,14 +39,10 @@
 -            return true;
 -        }
 -        else
--        {
--            return super.interact(par1EntityPlayer);
--        }
-+        return super.interact(par1EntityPlayer);
-     }
- 
-     public EntityMooshroom func_94900_c(EntityAgeable par1EntityAgeable)
-@@ -82,4 +62,29 @@
+         {
+             return super.interact(par1EntityPlayer);
+         }
+@@ -82,4 +64,29 @@
      {
          return this.func_94900_c(par1EntityAgeable);
      }
@@ -63,7 +59,7 @@
 +        setDead();
 +        EntityCow entitycow = new EntityCow(worldObj);
 +        entitycow.setLocationAndAngles(posX, posY, posZ, rotationYaw, rotationPitch);
-+        entitycow.setEntityHealth(func_110143_aJ());
++        entitycow.setHealth(this.getHealth());
 +        entitycow.renderYawOffset = renderYawOffset;
 +        worldObj.spawnEntityInWorld(entitycow);
 +        worldObj.spawnParticle("largeexplode", posX, posY + (double)(height / 2.0F), posZ, 0.0D, 0.0D, 0.0D);

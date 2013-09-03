@@ -25,18 +25,18 @@
      public void handleChat(Packet3Chat par1Packet3Chat)
      {
          par1Packet3Chat = FMLNetworkHandler.handleChatMessage(this, par1Packet3Chat);
--        this.mc.ingameGUI.getChatGUI().printChatMessage(ChatMessageComponent.func_111078_c(par1Packet3Chat.message).func_111068_a(true));
+-        this.mc.ingameGUI.getChatGUI().printChatMessage(ChatMessageComponent.createFromJson(par1Packet3Chat.message).toStringWithFormatting(true));
 +        ClientChatReceivedEvent event = new ClientChatReceivedEvent(par1Packet3Chat.message);
 +        if (!MinecraftForge.EVENT_BUS.post(event) && event.message != null)
 +        {
-+            this.mc.ingameGUI.getChatGUI().printChatMessage(ChatMessageComponent.func_111078_c(event.message).func_111068_a(true));
++            this.mc.ingameGUI.getChatGUI().printChatMessage(ChatMessageComponent.createFromJson(event.message).toStringWithFormatting(true));
 +        }
      }
  
      public void handleAnimation(Packet18Animation par1Packet18Animation)
 @@ -1354,6 +1363,10 @@
                  {
-                     tileentity.readFromNBT(par1Packet132TileEntityData.customParam1);
+                     tileentity.readFromNBT(par1Packet132TileEntityData.data);
                  }
 +                else
 +                {

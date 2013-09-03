@@ -55,7 +55,7 @@
  
      /**
 @@ -142,4 +128,23 @@
-             this.iconArray[i] = par1IconRegister.registerIcon(this.func_111023_E() + "_stage_" + i);
+             this.iconArray[i] = par1IconRegister.registerIcon(this.getTextureName() + "_stage_" + i);
          }
      }
 +
