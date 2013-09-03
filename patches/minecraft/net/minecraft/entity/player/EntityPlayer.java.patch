@@ -543,3 +543,12 @@
      }
  
      @SideOnly(Side.CLIENT)
+@@ -2235,7 +2438,7 @@
+      */
+     public String getTranslatedEntityName()
+     {
+-        return ScorePlayerTeam.formatPlayerName(this.getTeam(), this.username);
++        return ScorePlayerTeam.formatPlayerName(this.getTeam(), ForgeEventFactory.getPlayerDisplayName(this, this.username));
+     }
+ 
+     public void func_110149_m(float par1)
