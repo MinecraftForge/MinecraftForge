@@ -1,10 +1,9 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemInWorldManager.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemInWorldManager.java
-@@ -8,8 +8,19 @@
+@@ -8,8 +8,18 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
  
-+import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.Event;
 +import net.minecraftforge.event.ForgeEventFactory;
@@ -20,60 +19,113 @@
      /** The world object that this object is connected to. */
      public World theWorld;
  
-@@ -145,6 +156,13 @@
+@@ -143,43 +153,71 @@
+      */
+     public void onBlockClicked(int par1, int par2, int par3, int par4)
      {
-         if (!this.gameType.isAdventure() || this.thisPlayerMP.isCurrentToolAdventureModeExempt(par1, par2, par3))
-         {
-+            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(thisPlayerMP, Action.LEFT_CLICK_BLOCK, par1, par2, par3, par4);
-+            if (event.isCanceled())
+-        if (!this.gameType.isAdventure() || this.thisPlayerMP.isCurrentToolAdventureModeExempt(par1, par2, par3))
+-        {
+-            if (this.isCreative())
+-            {
+-                if (!this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4))
+-                {
+-                    this.tryHarvestBlock(par1, par2, par3);
+-                }
++        PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(thisPlayerMP, Action.LEFT_CLICK_BLOCK, par1, par2, par3, par4);
++
++        boolean canBreak = !this.gameType.isAdventure() || this.thisPlayerMP.isCurrentToolAdventureModeExempt(par1, par2, par3);
++        canBreak = event.useItem == Event.Result.DEFAULT ? canBreak : event.useItem == Event.Result.ALLOW;
++
++        if (event.isCanceled())
++        {
++            thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, theWorld));
++        }
++        else
++        {
++            this.initialDamage = this.curblockDamage;
++            float f = 1.0F;
++            int i1 = this.theWorld.getBlockId(par1, par2, par3);
++
++            Block block = Block.blocksList[i1];
++
++            if (block != null)
 +            {
-+                thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, theWorld));
-+                return;
++                if (!this.isCreative() || !canBreak)
++                {
++                    f = block.getPlayerRelativeBlockHardness(thisPlayerMP, thisPlayerMP.worldObj, par1, par2, par3);
++                }
++                if (f < 1.0F && event.useBlock != Event.Result.DENY)
++                {
++                    block.onBlockClicked(theWorld, par1, par2, par3, thisPlayerMP);
++                }
++                if (event.useItem != Event.Result.DENY)
++                {
++                    theWorld.extinguishFire(thisPlayerMP, par1, par2, par3, par4);
++                }
++                else
++                {
++                    thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, theWorld));
++                }
 +            }
 +
-             if (this.isCreative())
-             {
-                 if (!this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4))
-@@ -154,15 +172,33 @@
++            if (!canBreak)
++            {
++                if (f >= 1.0f)
++                {
++                    thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, theWorld));
++                }
++            }
++            else if (i1 > 0 && f >= 1.0F)
++            {
++                this.tryHarvestBlock(par1, par2, par3);
              }
              else
              {
 -                this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4);
-                 this.initialDamage = this.curblockDamage;
-                 float f = 1.0F;
-                 int i1 = this.theWorld.getBlockId(par1, par2, par3);
- 
+-                this.initialDamage = this.curblockDamage;
+-                float f = 1.0F;
+-                int i1 = this.theWorld.getBlockId(par1, par2, par3);
+-
 -                if (i1 > 0)
 -                {
 -                    Block.blocksList[i1].onBlockClicked(this.theWorld, par1, par2, par3, this.thisPlayerMP);
 -                    f = Block.blocksList[i1].getPlayerRelativeBlockHardness(this.thisPlayerMP, this.thisPlayerMP.worldObj, par1, par2, par3);
-+                Block block = Block.blocksList[i1];
+-                }
+-
+-                if (i1 > 0 && f >= 1.0F)
+-                {
+-                    this.tryHarvestBlock(par1, par2, par3);
+-                }
+-                else
+-                {
+-                    this.isDestroyingBlock = true;
+-                    this.partiallyDestroyedBlockX = par1;
+-                    this.partiallyDestroyedBlockY = par2;
+-                    this.partiallyDestroyedBlockZ = par3;
+-                    int j1 = (int)(f * 10.0F);
+-                    this.theWorld.destroyBlockInWorldPartially(this.thisPlayerMP.entityId, par1, par2, par3, j1);
+-                    this.durabilityRemainingOnBlock = j1;
+-                }
+-            }
++                this.isDestroyingBlock = true;
++                this.partiallyDestroyedBlockX = par1;
++                this.partiallyDestroyedBlockY = par2;
++                this.partiallyDestroyedBlockZ = par3;
++                int j1 = (int)(f * 10.0F);
++                this.theWorld.destroyBlockInWorldPartially(this.thisPlayerMP.entityId, par1, par2, par3, j1);
++                this.durabilityRemainingOnBlock = j1;
++            }
++        }
 +
-+                if (block != null)
-+                {
-+                    if (event.useBlock != Event.Result.DENY)
-+                    {
-+                        block.onBlockClicked(theWorld, par1, par2, par3, thisPlayerMP);
-+                        theWorld.extinguishFire(thisPlayerMP, par1, par2, par3, par4);
-+                    }
-+                    else
-+                    {
-+                        thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, theWorld));
-+                    }
-+                    f = block.getPlayerRelativeBlockHardness(thisPlayerMP, thisPlayerMP.worldObj, par1, par2, par3);
-+                }
-+
-+                if (event.useItem == Event.Result.DENY)
-+                {
-+                    if (f >= 1.0f)
-+                    {
-+                        thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, theWorld));
-+                    }
-+                    return;
-                 }
++        if (!canBreak)
++        {
++            this.partiallyDestroyedBlockX = -1;
++            this.partiallyDestroyedBlockY = -1;
++            this.partiallyDestroyedBlockZ = -1;
+         }
+     }
  
-                 if (i1 > 0 && f >= 1.0F)
-@@ -236,7 +272,7 @@
+@@ -236,7 +274,7 @@
              block.onBlockHarvested(this.theWorld, par1, par2, par3, l, this.thisPlayerMP);
          }
  
@@ -82,8 +134,19 @@
  
          if (block != null && flag)
          {
-@@ -261,19 +297,30 @@
+@@ -251,29 +289,36 @@
+      */
+     public boolean tryHarvestBlock(int par1, int par2, int par3)
+     {
+-        if (this.gameType.isAdventure() && !this.thisPlayerMP.isCurrentToolAdventureModeExempt(par1, par2, par3))
++        if (this.gameType.isCreative() && this.thisPlayerMP.getHeldItem() != null && this.thisPlayerMP.getHeldItem().getItem() instanceof ItemSword)
+         {
+             return false;
          }
+-        else if (this.gameType.isCreative() && this.thisPlayerMP.getHeldItem() != null && this.thisPlayerMP.getHeldItem().getItem() instanceof ItemSword)
+-        {
+-            return false;
+-        }
          else
          {
 +            ItemStack stack = thisPlayerMP.getCurrentEquippedItem();
@@ -115,7 +178,7 @@
  
                  if (itemstack != null)
                  {
-@@ -285,6 +332,7 @@
+@@ -285,6 +330,7 @@
                      }
                  }
  
@@ -123,7 +186,7 @@
                  if (flag && flag1)
                  {
                      Block.blocksList[l].harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, i1);
-@@ -325,6 +373,7 @@
+@@ -325,6 +371,7 @@
              if (itemstack1.stackSize == 0)
              {
                  par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
@@ -131,7 +194,7 @@
              }
  
              if (!par1EntityPlayer.isUsingItem())
-@@ -342,35 +391,56 @@
+@@ -342,35 +389,56 @@
       */
      public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
      {
@@ -215,7 +278,7 @@
      }
  
      /**
-@@ -380,4 +450,13 @@
+@@ -380,4 +448,13 @@
      {
          this.theWorld = par1WorldServer;
      }

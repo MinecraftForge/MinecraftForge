@@ -1,30 +1,30 @@
 --- ../src_base/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
 +++ ../src_work/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
-@@ -22,6 +22,10 @@
+@@ -22,6 +22,13 @@
  import net.minecraft.world.EnumGameType;
  import net.minecraft.world.World;
  
-+import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.Event;
++import net.minecraftforge.event.ForgeEventFactory;
 +import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
++import net.minecraftforge.event.entity.player.PlayerInteractEvent;
++import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 +
  @SideOnly(Side.CLIENT)
  public class PlayerControllerMP
  {
-@@ -125,6 +129,12 @@
+@@ -125,7 +132,8 @@
       */
      public boolean onPlayerDestroyBlock(int par1, int par2, int par3, int par4)
      {
+-        if (this.currentGameType.isAdventure() && !this.mc.thePlayer.isCurrentToolAdventureModeExempt(par1, par2, par3))
 +        ItemStack stack = mc.thePlayer.getCurrentEquippedItem();
 +        if (stack != null && stack.getItem() != null && stack.getItem().onBlockStartBreak(stack, par1, par2, par3, mc.thePlayer))
-+        {
-+            return false;
-+        }
-+
-         if (this.currentGameType.isAdventure() && !this.mc.thePlayer.isCurrentToolAdventureModeExempt(par1, par2, par3))
          {
              return false;
-@@ -146,7 +156,7 @@
+         }
+@@ -146,14 +154,12 @@
              {
                  worldclient.playAuxSFX(2001, par1, par2, par3, block.blockID + (worldclient.getBlockMetadata(par1, par2, par3) << 12));
                  int i1 = worldclient.getBlockMetadata(par1, par2, par3);
@@ -33,24 +33,169 @@
  
                  if (flag)
                  {
-@@ -347,8 +357,14 @@
+                     block.onBlockDestroyedByPlayer(worldclient, par1, par2, par3, i1);
+                 }
+-
+-                this.currentBlockY = -1;
+ 
+                 if (!this.currentGameType.isCreative())
+                 {
+@@ -180,39 +186,47 @@
+      */
+     public void clickBlock(int par1, int par2, int par3, int par4)
+     {
+-        if (!this.currentGameType.isAdventure() || this.mc.thePlayer.isCurrentToolAdventureModeExempt(par1, par2, par3))
+-        {
+-            if (this.currentGameType.isCreative())
+-            {
+-                this.netClientHandler.addToSendQueue(new Packet14BlockDig(0, par1, par2, par3, par4));
+-                clickBlockCreative(this.mc, this, par1, par2, par3, par4);
+-                this.blockHitDelay = 5;
+-            }
+-            else if (!this.isHittingBlock || !this.sameToolAndBlock(par1, par2, par3))
+-            {
+-                if (this.isHittingBlock)
+-                {
+-                    this.netClientHandler.addToSendQueue(new Packet14BlockDig(1, this.currentBlockX, this.currentBlockY, this.currentblockZ, par4));
+-                }
+-
+-                this.netClientHandler.addToSendQueue(new Packet14BlockDig(0, par1, par2, par3, par4));
+-                int i1 = this.mc.theWorld.getBlockId(par1, par2, par3);
+-
+-                if (i1 > 0 && this.curBlockDamageMP == 0.0F)
+-                {
+-                    Block.blocksList[i1].onBlockClicked(this.mc.theWorld, par1, par2, par3, this.mc.thePlayer);
+-                }
+-
+-                if (i1 > 0 && Block.blocksList[i1].getPlayerRelativeBlockHardness(this.mc.thePlayer, this.mc.thePlayer.worldObj, par1, par2, par3) >= 1.0F)
++        PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(this.mc.thePlayer, Action.LEFT_CLICK_BLOCK, par1, par2, par3, par4);
++
++        boolean canBreak = !this.currentGameType.isAdventure() || this.mc.thePlayer.isCurrentToolAdventureModeExempt(par1, par2, par3);
++        canBreak = event.useItem == Event.Result.DEFAULT ? canBreak : event.useItem == Event.Result.ALLOW;
++
++        if (!event.isCanceled() && (!this.isHittingBlock || !this.sameToolAndBlock(par1, par2, par3)))
++        {
++            if (this.isHittingBlock)
++            {
++                this.netClientHandler.addToSendQueue(new Packet14BlockDig(1, this.currentBlockX, this.currentBlockY, this.currentblockZ, par4));
++            }
++
++            this.netClientHandler.addToSendQueue(new Packet14BlockDig(0, par1, par2, par3, par4));
++            int i1 = this.mc.theWorld.getBlockId(par1, par2, par3);
++
++            boolean breakInstantly = i1 > 0 && Block.blocksList[i1].getPlayerRelativeBlockHardness(this.mc.thePlayer, this.mc.thePlayer.worldObj, par1, par2, par3) >= 1.0F;
++            breakInstantly = canBreak && (breakInstantly || this.currentGameType.isCreative());
++
++            if (!breakInstantly && i1 > 0 && this.curBlockDamageMP == 0.0F && event.useBlock != Event.Result.DENY)
++            {
++                Block.blocksList[i1].onBlockClicked(this.mc.theWorld, par1, par2, par3, this.mc.thePlayer);
++            }
++
++            if (canBreak)
++            {
++                this.currentBlockX = par1;
++                this.currentBlockY = par2;
++                this.currentblockZ = par3;
++
++                if (this.currentGameType.isCreative())
++                {
++                    clickBlockCreative(this.mc, this, par1, par2, par3, par4);
++                    this.blockHitDelay = 5;
++                }
++                else if (breakInstantly)
+                 {
+                     this.onPlayerDestroyBlock(par1, par2, par3, par4);
+                 }
+                 else
+                 {
+                     this.isHittingBlock = true;
+-                    this.currentBlockX = par1;
+-                    this.currentBlockY = par2;
+-                    this.currentblockZ = par3;
+                     this.field_85183_f = this.mc.thePlayer.getHeldItem();
+                     this.curBlockDamageMP = 0.0F;
+                     this.stepSoundTickCounter = 0.0F;
+@@ -220,6 +234,14 @@
+                 }
+             }
+         }
++
++        if (!canBreak)
++        {
++            this.resetBlockRemoving();
++            this.currentBlockX = -1;
++            this.currentBlockY = -1;
++            this.currentblockZ = -1;
++        }
+     }
+ 
+     /**
+@@ -247,6 +269,11 @@
+         if (this.blockHitDelay > 0)
+         {
+             --this.blockHitDelay;
++            return;
++        }
++        else if (this.currentBlockX == -1 || this.currentBlockY == -1 || this.currentblockZ == -1)
++        {
++            return;
+         }
+         else if (this.currentGameType.isCreative())
+         {
+@@ -293,6 +320,9 @@
+                 this.clickBlock(par1, par2, par3, par4);
+             }
+         }
++
++        this.mc.effectRenderer.addBlockHitEffects(par1, par2, par3, this.mc.objectMouseOver);
++        this.mc.thePlayer.swingItem();
+     }
+ 
+     /**
+@@ -341,14 +371,29 @@
+      */
+     public boolean onPlayerRightClick(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, Vec3 par8Vec3)
+     {
++        PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(this.mc.thePlayer, Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7);
++        if (event.isCanceled())
++        {
++            return false;
++        }
++        
+         this.syncCurrentPlayItem();
+         float f = (float)par8Vec3.xCoord - (float)par4;
+         float f1 = (float)par8Vec3.yCoord - (float)par5;
          float f2 = (float)par8Vec3.zCoord - (float)par6;
          boolean flag = false;
          int i1;
 -
 -        if (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null)
-+        if (par3ItemStack != null &&
++        if (event.useItem != Event.Result.DENY &&
++            par3ItemStack != null &&
 +            par3ItemStack.getItem() != null &&
 +            par3ItemStack.getItem().onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, f, f1, f2))
 +        {
 +                return true;
 +        }
 +
-+        if (!par1EntityPlayer.isSneaking() || (par1EntityPlayer.getHeldItem() == null || par1EntityPlayer.getHeldItem().getItem().shouldPassSneakingClickToBlock(par2World, par4, par5, par6)))
++        if (event.useBlock != Event.Result.DENY &&
++            !par1EntityPlayer.isSneaking() || (par1EntityPlayer.getHeldItem() == null ||
++            par1EntityPlayer.getHeldItem().getItem().shouldPassSneakingClickToBlock(par2World, par4, par5, par6)))
          {
              i1 = par2World.getBlockId(par4, par5, par6);
  
-@@ -389,7 +405,15 @@
+@@ -375,6 +420,10 @@
+             return true;
+         }
+         else if (par3ItemStack == null)
++        {
++            return false;
++        }
++        else if (event.useItem == Event.Result.DENY)
+         {
+             return false;
+         }
+@@ -389,7 +438,15 @@
          }
          else
          {
@@ -67,7 +212,28 @@
          }
      }
  
-@@ -411,9 +435,10 @@
+@@ -398,8 +455,20 @@
+      */
+     public boolean sendUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack)
+     {
++        PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(this.mc.thePlayer, Action.RIGHT_CLICK_AIR, 0, 0, 0, -1);
++        if (event.isCanceled())
++        {
++            return false;
++        }
++        
+         this.syncCurrentPlayItem();
+         this.netClientHandler.addToSendQueue(new Packet15Place(-1, -1, -1, 255, par1EntityPlayer.inventory.getCurrentItem(), 0.0F, 0.0F, 0.0F));
++        
++        if (par3ItemStack == null || event.useItem == Event.Result.DENY)
++        {
++            return false;
++        }
++        
+         int i = par3ItemStack.stackSize;
+         ItemStack itemstack1 = par3ItemStack.useItemRightClick(par2World, par1EntityPlayer);
+ 
+@@ -411,9 +480,10 @@
          {
              par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = itemstack1;
  
