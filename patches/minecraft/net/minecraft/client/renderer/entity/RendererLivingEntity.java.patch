@@ -1,0 +1,61 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/entity/RendererLivingEntity.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RendererLivingEntity.java
+@@ -17,6 +17,9 @@
+ import net.minecraft.entity.projectile.EntityArrow;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.util.ResourceLocation;
++import net.minecraftforge.client.event.RenderLivingEvent;
++import net.minecraftforge.common.MinecraftForge;
++
+ import org.lwjgl.opengl.GL11;
+ import org.lwjgl.opengl.GL12;
+ 
+@@ -29,6 +32,9 @@
+     /** The model to be used during the render passes. */
+     protected ModelBase renderPassModel;
+ 
++    public static float NAME_TAG_RANGE = 64.0f;
++    public static float NAME_TAG_RANGE_SNEAK = 32.0f;
++
+     public RendererLivingEntity(ModelBase par1ModelBase, float par2)
+     {
+         this.mainModel = par1ModelBase;
+@@ -68,6 +74,7 @@
+ 
+     public void func_130000_a(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6, float par8, float par9)
+     {
++        if (MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Pre(par1EntityLivingBase, this))) return;
+         GL11.glPushMatrix();
+         GL11.glDisable(GL11.GL_CULL_FACE);
+         this.mainModel.onGround = this.renderSwingProgress(par1EntityLivingBase, par9);
+@@ -277,6 +284,7 @@
+         GL11.glEnable(GL11.GL_CULL_FACE);
+         GL11.glPopMatrix();
+         this.passSpecialRender(par1EntityLivingBase, par2, par4, par6);
++        MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Post(par1EntityLivingBase, this));
+     }
+ 
+     /**
+@@ -442,12 +450,13 @@
+      */
+     protected void passSpecialRender(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6)
+     {
++        if (MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Specials.Pre(par1EntityLivingBase, this))) return;
+         if (this.func_110813_b(par1EntityLivingBase))
+         {
+             float f = 1.6F;
+             float f1 = 0.016666668F * f;
+             double d3 = par1EntityLivingBase.getDistanceSqToEntity(this.renderManager.livingPlayer);
+-            float f2 = par1EntityLivingBase.isSneaking() ? 32.0F : 64.0F;
++            float f2 = par1EntityLivingBase.isSneaking() ? NAME_TAG_RANGE_SNEAK : NAME_TAG_RANGE;
+ 
+             if (d3 < (double)(f2 * f2))
+             {
+@@ -491,6 +500,7 @@
+                 }
+             }
+         }
++        MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Specials.Post(par1EntityLivingBase, this));
+     }
+ 
+     protected boolean func_110813_b(EntityLivingBase par1EntityLivingBase)

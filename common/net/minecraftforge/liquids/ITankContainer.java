@@ -1,7 +1,7 @@
 package net.minecraftforge.liquids;
 
 import net.minecraftforge.common.ForgeDirection;
-
+@Deprecated //See new net.minecraftforge.fluids
 public interface ITankContainer {
 
     /**

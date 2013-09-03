@@ -10,7 +10,7 @@
  
  public class ComponentMineshaftCorridor extends StructureComponent
  {
-@@ -260,14 +263,16 @@
+@@ -264,14 +267,16 @@
                  this.randomlyPlaceBlock(par1World, par3StructureBoundingBox, par2Random, 0.05F, 1, 2, k - 1, Block.torchWood.blockID, 0);
                  this.randomlyPlaceBlock(par1World, par3StructureBoundingBox, par2Random, 0.05F, 1, 2, k + 1, Block.torchWood.blockID, 0);
  

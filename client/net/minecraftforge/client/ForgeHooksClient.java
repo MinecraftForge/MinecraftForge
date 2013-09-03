@@ -13,62 +13,60 @@ import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.PixelFormat;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFluid;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.client.texturepacks.ITexturePack;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.client.event.TextureLoadEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.IArmorTextureProvider;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.RenderBlockFluid;
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
 
 public class ForgeHooksClient
 {
-    static RenderEngine engine()
+    private static final ResourceLocation ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
+    static TextureManager engine()
     {
         return FMLClientHandler.instance().getClient().renderEngine;
     }
 
-    @Deprecated //Deprecated in 1.5.1, move to the more detailed one below.
-    @SuppressWarnings("deprecation")
-    public static String getArmorTexture(ItemStack armor, String _default)
+    @Deprecated
+    public static String getArmorTexture(Entity entity, ItemStack armor, String _default, int slot, int layer, String type)
     {
-        String result = null;
-        if (armor.getItem() instanceof IArmorTextureProvider)
-        {
-            result = ((IArmorTextureProvider)armor.getItem()).getArmorTextureFile(armor);
-        }
+        return getArmorTexture(entity, armor, _default, slot, type);
+    }
+
+    public static String getArmorTexture(Entity entity, ItemStack armor, String _default, int slot, String type)
+    {
+        String result = armor.getItem().getArmorTexture(armor, entity, slot, type);
         return result != null ? result : _default;
     }
 
-    public static String getArmorTexture(Entity entity, ItemStack armor, String _default, int slot, int layer)
-    {
-        String result = armor.getItem().getArmorTexture(armor, entity, slot, layer);
-        return result != null ? result : _default;
-    }
-
-    public static boolean renderEntityItem(EntityItem entity, ItemStack item, float bobing, float rotation, Random random, RenderEngine engine, RenderBlocks renderBlocks)
+    public static boolean renderEntityItem(EntityItem entity, ItemStack item, float bobing, float rotation, Random random, TextureManager engine, RenderBlocks renderBlocks)
     {
         IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(item, ENTITY);
         if (customRenderer == null)
@@ -86,7 +84,7 @@ public class ForgeHooksClient
         }
         boolean is3D = customRenderer.shouldUseRenderHelper(ENTITY, item, BLOCK_3D);
 
-        engine.bindTexture(item.getItemSpriteNumber() == 0 ? "/terrain.png" : "/gui/items.png");
+        engine.func_110577_a(item.getItemSpriteNumber() == 0 ? TextureMap.field_110575_b : TextureMap.field_110576_c);
         Block block = (item.itemID < Block.blocksList.length ? Block.blocksList[item.itemID] : null);
         if (is3D || (block != null && RenderBlocks.renderItemIn3d(block.getRenderType())))
         {
@@ -101,7 +99,7 @@ public class ForgeHooksClient
             }
 
             GL11.glScalef(scale, scale, scale);
-            
+
             int size = item.stackSize;
             int count = (size > 40 ? 5 : (size > 20 ? 4 : (size > 5 ? 3 : (size > 1 ? 2 : 1))));
 
@@ -127,7 +125,7 @@ public class ForgeHooksClient
         return true;
     }
 
-    public static boolean renderInventoryItem(RenderBlocks renderBlocks, RenderEngine engine, ItemStack item, boolean inColor, float zLevel, float x, float y)
+    public static boolean renderInventoryItem(RenderBlocks renderBlocks, TextureManager engine, ItemStack item, boolean inColor, float zLevel, float x, float y)
     {
         IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(item, INVENTORY);
         if (customRenderer == null)
@@ -135,7 +133,7 @@ public class ForgeHooksClient
             return false;
         }
 
-        engine.bindTexture(item.getItemSpriteNumber() == 0 ? "/terrain.png" : "/gui/items.png");
+        engine.func_110577_a(item.getItemSpriteNumber() == 0 ? TextureMap.field_110575_b : TextureMap.field_110576_c);
         if (customRenderer.shouldUseRenderHelper(INVENTORY, item, INVENTORY_BLOCK))
         {
             GL11.glPushMatrix();
@@ -180,16 +178,15 @@ public class ForgeHooksClient
             GL11.glPopMatrix();
             GL11.glEnable(GL11.GL_LIGHTING);
         }
+
         return true;
     }
-    
-    @Deprecated
-    public static void renderEquippedItem(IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLiving entity, ItemStack item)
+
+    public static void renderEffectOverlay(TextureManager manager, RenderItem render)
     {
-        renderEquippedItem(ItemRenderType.EQUIPPED, customRenderer, renderBlocks, entity, item);
     }
 
-    public static void renderEquippedItem(ItemRenderType type, IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLiving entity, ItemStack item)
+    public static void renderEquippedItem(ItemRenderType type, IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLivingBase entity, ItemStack item)
     {
         if (customRenderer.shouldUseRenderHelper(type, item, EQUIPPED_BLOCK))
         {
@@ -216,7 +213,7 @@ public class ForgeHooksClient
     //Optifine Helper Functions u.u, these are here specifically for Optifine
     //Note: When using Optfine, these methods are invoked using reflection, which
     //incurs a major performance penalty.
-    public static void orientBedCamera(Minecraft mc, EntityLiving entity)
+    public static void orientBedCamera(Minecraft mc, EntityLivingBase entity)
     {
         int x = MathHelper.floor_double(entity.posX);
         int y = MathHelper.floor_double(entity.posY);
@@ -240,11 +237,6 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, partialTicks));
     }
 
-    public static void onTextureLoad(String texture, ITexturePack pack)
-    {
-        MinecraftForge.EVENT_BUS.post(new TextureLoadEvent(texture, pack));
-    }
-
     public static void onTextureStitchedPre(TextureMap map)
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Pre(map));
@@ -253,6 +245,9 @@ public class ForgeHooksClient
     public static void onTextureStitchedPost(TextureMap map)
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Post(map));
+
+        FluidRegistry.WATER.setIcons(BlockFluid.func_94424_b("water_still"), BlockFluid.func_94424_b("water_flow"));
+        FluidRegistry.LAVA.setIcons(BlockFluid.func_94424_b("lava_still"), BlockFluid.func_94424_b("lava_flow"));
     }
 
     /**
@@ -285,7 +280,7 @@ public class ForgeHooksClient
         renderPass = pass;
     }
 
-    public static ModelBiped getArmorModel(EntityLiving entityLiving, ItemStack itemStack, int slotID, ModelBiped _default)
+    public static ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int slotID, ModelBiped _default)
     {
         ModelBiped modelbiped = itemStack.getItem().getArmorModel(entityLiving, itemStack, slotID);
         return modelbiped == null ? _default : modelbiped;
@@ -307,5 +302,34 @@ public class ForgeHooksClient
             Display.create(format);
             stencilBits = 0;
         }
+    }
+
+    //This properly moves the domain, if provided, to the front of the string before concatenating
+    public static String fixDomain(String base, String complex)
+    {
+        int idx = complex.indexOf(':');
+        if (idx == -1)
+        {
+            return base + complex;
+        }
+
+        String name = complex.substring(idx + 1, complex.length());
+        if (idx > 1)
+        {
+            String domain = complex.substring(0, idx);
+            return domain + ':' + base + name;
+        }
+        else
+        {
+            return base + name;
+        }
+    }
+
+    /**
+     * Initialization of Forge Renderers.
+     */
+    static {
+        FluidRegistry.renderIdFluid = RenderingRegistry.getNextAvailableRenderId();
+        RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
     }
 }

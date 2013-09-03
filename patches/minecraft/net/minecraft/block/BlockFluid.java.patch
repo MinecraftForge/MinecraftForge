@@ -9,3 +9,17 @@
                      l += (i2 & 16711680) >> 16;
                      i1 += (i2 & 65280) >> 8;
                      j1 += i2 & 255;
+@@ -81,6 +81,13 @@
+         }
+ 
+         return (float)(par0 + 1) / 9.0F;
++    }
++
++
++    @Deprecated //Implemented here for compatibility, need to change this when we make vanilla fluids use our fluid methods.
++    public float getFilledPercentage(IBlockAccess world, int x, int y, int z)
++    {
++        return 1 - BlockFluid.getFluidHeightPercent(world.getBlockMetadata(x, y, z));
+     }
+ 
+     @SideOnly(Side.CLIENT)

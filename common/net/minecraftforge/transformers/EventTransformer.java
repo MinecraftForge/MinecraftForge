@@ -2,6 +2,7 @@ package net.minecraftforge.transformers;
 
 import java.util.List;
 
+import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.event.Event;
 import net.minecraftforge.event.ListenerList;
 
@@ -10,8 +11,6 @@ import org.objectweb.asm.tree.*;
 import static org.objectweb.asm.Opcodes.*;
 import static org.objectweb.asm.Type.*;
 import static org.objectweb.asm.ClassWriter.*;
-
-import cpw.mods.fml.relauncher.IClassTransformer;
 
 public class EventTransformer implements IClassTransformer
 {

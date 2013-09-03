@@ -81,9 +81,9 @@
          int l1;
          int i2;
  
--        if (!flag && this.rand.nextInt(4) == 0)
-+        if (TerrainGen.populate(par1IChunkProvider, worldObj, rand, par2, par3, flag, LAKE) && 
-+                !flag && this.rand.nextInt(4) == 0)
+-        if (biomegenbase != BiomeGenBase.desert && biomegenbase != BiomeGenBase.desertHills && !flag && this.rand.nextInt(4) == 0)
++        if (biomegenbase != BiomeGenBase.desert && biomegenbase != BiomeGenBase.desertHills && !flag && this.rand.nextInt(4) == 0
++            && TerrainGen.populate(par1IChunkProvider, worldObj, rand, par2, par3, flag, LAKE))
          {
              k1 = k + this.rand.nextInt(16) + 8;
              l1 = this.rand.nextInt(128);
@@ -107,7 +107,7 @@
          {
              l1 = k + this.rand.nextInt(16) + 8;
              i2 = this.rand.nextInt(128);
-@@ -541,7 +579,8 @@
+@@ -537,7 +575,8 @@
          k += 8;
          l += 8;
  
@@ -117,7 +117,7 @@
          {
              for (l1 = 0; l1 < 16; ++l1)
              {
-@@ -558,6 +597,8 @@
+@@ -554,6 +593,8 @@
                  }
              }
          }

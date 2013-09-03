@@ -1,18 +1,5 @@
 --- ../src_base/minecraft/net/minecraft/village/VillageCollection.java
 +++ ../src_work/minecraft/net/minecraft/village/VillageCollection.java
-@@ -128,9 +128,9 @@
- 
-             if (f1 < f)
-             {
--                int i1 = par4 + village1.getVillageRadius();
--
--                if (f1 <= (float)(i1 * i1))
-+                float i1 = par4 + village1.getVillageRadius();
-+
-+                if (f1 <= i1 * i1)
-                 {
-                     village = village1;
-                     f = f1;
 @@ -165,7 +165,7 @@
                  {
                      Village village = (Village)iterator.next();

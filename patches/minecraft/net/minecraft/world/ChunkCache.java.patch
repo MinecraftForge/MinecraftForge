@@ -49,7 +49,25 @@
      }
  
      /**
-@@ -449,4 +462,22 @@
+@@ -318,15 +331,13 @@
+         return this.worldObj.getWorldVec3Pool();
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+-
+     /**
+      * Returns true if the block at the specified coordinates is empty
+      */
+     public boolean isAirBlock(int par1, int par2, int par3)
+     {
+-        Block block = Block.blocksList[this.getBlockId(par1, par2, par3)];
+-        return block == null;
++        int id = getBlockId(par1, par2, par3);
++        return id == 0 || Block.blocksList[id] == null || Block.blocksList[id].isAirBlock(this.worldObj, par1, par2, par3);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -449,4 +460,22 @@
          int i1 = this.getBlockId(par1, par2, par3);
          return i1 == 0 ? 0 : Block.blocksList[i1].isProvidingStrongPower(this, par1, par2, par3, par4);
      }

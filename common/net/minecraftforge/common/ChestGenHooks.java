@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.gen.feature.WorldGenDungeons;
 import net.minecraft.world.gen.structure.*;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -49,6 +50,7 @@ public class ChestGenHooks
         addInfo(STRONGHOLD_CROSSING,      ComponentStrongholdRoomCrossing.strongholdRoomCrossingChestContents,     1,  5);
         addInfo(VILLAGE_BLACKSMITH,       ComponentVillageHouse2.villageBlacksmithChestContents,                   3,  9);
         addInfo(BONUS_CHEST,              WorldServer.bonusChestContent,                                          10, 10);
+        addInfo(DUNGEON_CHEST,            WorldGenDungeons.field_111189_a,                                         8,  8);
 
         ItemStack book = new ItemStack(Item.enchantedBook, 1, 0);
         WeightedRandomChestContent tmp = new WeightedRandomChestContent(book, 1, 1, 1);
@@ -58,25 +60,7 @@ public class ChestGenHooks
         getInfo(STRONGHOLD_CORRIDOR ).addItem(tmp);
         getInfo(STRONGHOLD_LIBRARY  ).addItem(new WeightedRandomChestContent(book, 1, 5, 2));
         getInfo(STRONGHOLD_CROSSING ).addItem(tmp);
-
-        //Wish Dungeons would get on the same wave length as other world gen...
-        ChestGenHooks d = new ChestGenHooks(DUNGEON_CHEST);
-        d.countMin = 8;
-        d.countMax = 8;
-        chestInfo.put(DUNGEON_CHEST, d);
-        addDungeonLoot(d, new ItemStack(Item.saddle),          100, 1, 1);
-        addDungeonLoot(d, new ItemStack(Item.ingotIron),       100, 1, 4);
-        addDungeonLoot(d, new ItemStack(Item.bread),           100, 1, 1);
-        addDungeonLoot(d, new ItemStack(Item.wheat),           100, 1, 4);
-        addDungeonLoot(d, new ItemStack(Item.gunpowder),       100, 1, 4);
-        addDungeonLoot(d, new ItemStack(Item.silk),            100, 1, 4);
-        addDungeonLoot(d, new ItemStack(Item.bucketEmpty),     100, 1, 1);
-        addDungeonLoot(d, new ItemStack(Item.appleGold),         1, 1, 1);
-        addDungeonLoot(d, new ItemStack(Item.redstone),         50, 1, 4);
-        addDungeonLoot(d, new ItemStack(Item.record13),          5, 1, 1);
-        addDungeonLoot(d, new ItemStack(Item.recordCat),         5, 1, 1);
-        addDungeonLoot(d, new ItemStack(Item.dyePowder, 1, 3), 100, 1, 1);
-        addDungeonLoot(d, book,                                100, 1, 1);
+        getInfo(DUNGEON_CHEST       ).addItem(tmp);
     }
 
     static void addDungeonLoot(ChestGenHooks dungeon, ItemStack item, int weight, int min, int max)

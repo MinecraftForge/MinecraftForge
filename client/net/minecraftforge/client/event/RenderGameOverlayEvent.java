@@ -22,7 +22,9 @@ public class RenderGameOverlayEvent extends Event
         AIR,
         HOTBAR,
         EXPERIENCE,
-        TEXT
+        TEXT,
+        HEALTHMOUNT,
+        JUMPBAR
     }
 
     public final float partialTicks;

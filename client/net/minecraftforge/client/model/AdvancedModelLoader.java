@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import net.minecraftforge.client.model.obj.ObjModelLoader;
+import net.minecraftforge.client.model.techne.TechneModelLoader;
 
 import com.google.common.collect.Maps;
 
@@ -78,5 +79,6 @@ public class AdvancedModelLoader {
     static
     {
         registerModelHandler(new ObjModelLoader());
+        registerModelHandler(new TechneModelLoader());
     }
 }

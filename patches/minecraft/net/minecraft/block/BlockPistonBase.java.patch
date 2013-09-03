@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockPistonBase.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockPistonBase.java
-@@ -437,7 +437,7 @@
+@@ -439,7 +439,7 @@
                  return false;
              }
  
@@ -9,7 +9,7 @@
          }
      }
  
-@@ -455,14 +455,14 @@
+@@ -457,14 +457,14 @@
          {
              if (l1 < 13)
              {
@@ -26,7 +26,7 @@
                  {
                      if (!canPushBlock(i2, par0World, i1, j1, k1, true))
                      {
-@@ -505,14 +505,14 @@
+@@ -507,14 +507,14 @@
  
              if (l1 < 13)
              {
@@ -43,7 +43,7 @@
                  {
                      if (!canPushBlock(i2, par1World, i1, j1, k1, true))
                      {
-@@ -533,7 +533,9 @@
+@@ -535,7 +535,9 @@
                          continue;
                      }
  

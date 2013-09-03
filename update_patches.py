@@ -49,7 +49,9 @@ def main():
         for cur_file in fnmatch.filter(filelist, '*.java'):
             file_base = os.path.normpath(os.path.join(base, path[len(work)+1:], cur_file)).replace(os.path.sep, '/')
             file_work = os.path.normpath(os.path.join(work, path[len(work)+1:], cur_file)).replace(os.path.sep, '/')
-            
+            if not os.path.isfile(file_base):
+            	print("Missing base file %s"%(file_base))
+            	continue
             fromlines = open(file_base, 'U').readlines()
             tolines = open(file_work, 'U').readlines()
             

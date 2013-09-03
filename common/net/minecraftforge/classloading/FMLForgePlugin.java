@@ -1,5 +1,6 @@
 package net.minecraftforge.classloading;
 
+import java.io.File;
 import java.util.Map;
 
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
@@ -7,6 +8,7 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 public class FMLForgePlugin implements IFMLLoadingPlugin
 {
     public static boolean RUNTIME_DEOBF = false;
+    public static File forgeLocation;
 
     @Override
     public String[] getLibraryRequestClass()
@@ -39,5 +41,6 @@ public class FMLForgePlugin implements IFMLLoadingPlugin
     public void injectData(Map<String, Object> data)
     {
         RUNTIME_DEOBF = (Boolean)data.get("runtimeDeobfuscationEnabled");
+        forgeLocation = (File)data.get("coremodLocation");
     }
 }
