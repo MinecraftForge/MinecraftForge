@@ -120,7 +120,7 @@ import net.minecraftforge.event.world.WorldEvent.Unload;
 import jline.console.ConsoleReader;
 
 public final class CraftServer implements Server {
-    private final String serverName = "CraftBukkit";
+    private final String serverName = "MCPC+";
     private final String serverVersion;
     private final String bukkitVersion = Versioning.getBukkitVersion();
     private final ServicesManager servicesManager = new SimpleServicesManager();
