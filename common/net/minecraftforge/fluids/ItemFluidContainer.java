@@ -106,7 +106,7 @@ public class ItemFluidContainer extends Item implements IFluidContainerItem
             return 0;
         }
 
-        int filled = capacity - resource.amount;
+        int filled = capacity - stack.amount;
         if (resource.amount < filled)
         {
             stack.amount += resource.amount;
