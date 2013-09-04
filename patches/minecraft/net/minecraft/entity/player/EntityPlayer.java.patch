@@ -548,7 +548,30 @@
      public String getTranslatedEntityName()
      {
 -        return ScorePlayerTeam.formatPlayerName(this.getTeam(), this.username);
-+        return ScorePlayerTeam.formatPlayerName(this.getTeam(), ForgeEventFactory.getPlayerDisplayName(this, this.username));
++        return ScorePlayerTeam.formatPlayerName(this.getTeam(), this.getDisplayName());
      }
  
      public void func_110149_m(float par1)
+@@ -2257,4 +2460,22 @@
+     {
+         FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
+     }
++    /**
++     * Forge-added fields
++     */
++    private String displayname;
++
++    public String getDisplayName()
++    {
++        if(this.displayname == null)
++        {
++            this.displayname = ForgeEventFactory.getPlayerDisplayName(this, this.username);
++        }
++        return this.displayname;
++    }
++
++    public void refreshDisplayName()
++    {
++        this.displayname = ForgeEventFactory.getPlayerDisplayName(this, this.username);
++    }
+ }
