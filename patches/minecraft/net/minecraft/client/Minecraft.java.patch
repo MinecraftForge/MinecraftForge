@@ -67,7 +67,7 @@
              {
                  i = Mouse.getEventButton();
 -
-+                if (!ForgeHooksClient.postMouseEvent()) continue;
++                if (ForgeHooksClient.postMouseEvent()) continue;
                  if (field_142025_a && i == 0 && (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)))
                  {
                      i = 1;
