@@ -24,7 +24,8 @@ public abstract class FluidRegistry
 
     static HashMap<String, Fluid> fluids = new HashMap();
     static BiMap<String, Integer> fluidIDs = HashBiMap.create();
-
+    static BiMap<Block, Fluid> fluidBlocks;
+    
     public static final Fluid WATER = new Fluid("water").setBlockID(Block.waterStill.blockID).setUnlocalizedName(Block.waterStill.getUnlocalizedName());
     public static final Fluid LAVA = new Fluid("lava").setBlockID(Block.lavaStill.blockID).setLuminosity(15).setDensity(3000).setViscosity(6000).setTemperature(1300).setUnlocalizedName(Block.lavaStill.getUnlocalizedName());
 
@@ -128,6 +129,21 @@ public abstract class FluidRegistry
         return ImmutableMap.copyOf(fluidIDs);
     }
 
+    public static Fluid lookupFluidForBlock(Block block)
+    {
+        if (fluidBlocks == null)
+        {
+            for (Fluid fluid : fluids.values())
+            {
+                if (fluid.canBePlacedInWorld() && Block.blocksList[fluid.getBlockID()] != null)
+                {
+                    fluidBlocks.put(Block.blocksList[fluid.getBlockID()], fluid);
+                }
+            }
+        }
+        return fluidBlocks.get(block);
+    }
+    
     public static class FluidRegisterEvent extends Event
     {
         public final String fluidName;
