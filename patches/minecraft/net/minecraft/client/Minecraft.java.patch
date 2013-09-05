@@ -62,16 +62,16 @@
                  {
                      this.entityRenderer.itemRenderer.resetEquippedProgress2();
                  }
-@@ -1575,7 +1585,7 @@
+@@ -1574,6 +1584,8 @@
+ 
              while (Mouse.next())
              {
-                 i = Mouse.getEventButton();
--
 +                if (ForgeHooksClient.postMouseEvent()) continue;
-                 if (field_142025_a && i == 0 && (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)))
-                 {
-                     i = 1;
-@@ -2046,6 +2056,11 @@
++
+                 i = Mouse.getEventButton();
+ 
+                 if (isRunningOnMac && i == 0 && (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)))
+@@ -2046,6 +2058,11 @@
      {
          this.statFileWriter.syncStats();
  
@@ -83,7 +83,7 @@
          if (par1WorldClient == null)
          {
              NetClientHandler netclienthandler = this.getNetHandler();
-@@ -2063,6 +2078,18 @@
+@@ -2063,6 +2080,18 @@
              if (this.theIntegratedServer != null)
              {
                  this.theIntegratedServer.initiateShutdown();
@@ -102,7 +102,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2236,107 +2263,12 @@
+@@ -2236,107 +2265,12 @@
          if (this.objectMouseOver != null)
          {
              boolean flag = this.thePlayer.capabilities.isCreativeMode;
@@ -214,7 +214,7 @@
  
              if (flag)
              {
-@@ -2419,11 +2351,18 @@
+@@ -2419,11 +2353,18 @@
          par1PlayerUsageSnooper.addData("gl_max_texture_size", Integer.valueOf(getGLMaximumTextureSize()));
      }
  
@@ -233,7 +233,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
-@@ -2431,6 +2370,7 @@
+@@ -2431,6 +2372,7 @@
  
              if (j != 0)
              {
