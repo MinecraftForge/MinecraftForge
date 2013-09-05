@@ -62,6 +62,15 @@
                  {
                      this.entityRenderer.itemRenderer.resetEquippedProgress2();
                  }
+@@ -1575,7 +1585,7 @@
+             while (Mouse.next())
+             {
+                 i = Mouse.getEventButton();
+-
++                if (ForgeHooksClient.postMouseEvent()) continue;
+                 if (field_142025_a && i == 0 && (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)))
+                 {
+                     i = 1;
 @@ -2046,6 +2056,11 @@
      {
          this.statFileWriter.syncStats();
