@@ -31,7 +31,8 @@ public class BlockFluidFinite extends BlockFluidBase
             return 0;
         }
 
-        if (world.getBlockId(x, y, z) != blockID) {
+        if (world.getBlockId(x, y, z) != blockID)
+        {
             return -1;
         }
 
@@ -110,7 +111,8 @@ public class BlockFluidFinite extends BlockFluidBase
             total += west;
         }
 
-        if (east >= 0) {
+        if (east >= 0)
+        {
             ++count;
             total += east;
         }
@@ -182,10 +184,14 @@ public class BlockFluidFinite extends BlockFluidBase
                 ++newwest;
                 --rem;
             }
-            if (newwest != west) {
-                if (newwest == 0) {
+            if (newwest != west)
+            {
+                if (newwest == 0)
+                {
                     world.setBlock(x - 1, y, z, 0);
-                } else {
+                }
+                else
+                {
                     world.setBlock(x - 1, y, z, blockID, newwest - 1, 2);
                 }
                 world.scheduleBlockUpdate(x - 1, y, z, blockID, tickRate);

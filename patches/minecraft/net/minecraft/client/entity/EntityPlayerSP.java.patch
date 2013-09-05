@@ -9,11 +9,14 @@
  
  @SideOnly(Side.CLIENT)
  public class EntityPlayerSP extends AbstractClientPlayer
-@@ -570,18 +572,63 @@
+@@ -570,18 +572,66 @@
       */
      protected boolean pushOutOfBlocks(double par1, double par3, double par5)
      {
-+        if (this.noClip) { return false; }
++        if (this.noClip)
++        {
++            return false;
++        }
          int i = MathHelper.floor_double(par1);
          int j = MathHelper.floor_double(par3);
          int k = MathHelper.floor_double(par5);
@@ -79,7 +82,7 @@
              byte b0 = -1;
              double d5 = 9999.0D;
  
-@@ -685,6 +732,12 @@
+@@ -685,6 +735,12 @@
  
      public void playSound(String par1Str, float par2, float par3)
      {

@@ -453,18 +453,19 @@
      }
  
      /**
-@@ -1650,6 +1803,10 @@
+@@ -1650,6 +1803,11 @@
       */
      public void setSpawnChunk(ChunkCoordinates par1ChunkCoordinates, boolean par2)
      {
-+        if (this.dimension != 0) {
++        if (this.dimension != 0)
++        {
 +            setSpawnChunk(par1ChunkCoordinates, par2, this.dimension);
 +            return;
 +        }
          if (par1ChunkCoordinates != null)
          {
              this.spawnChunk = new ChunkCoordinates(par1ChunkCoordinates);
-@@ -1661,7 +1818,32 @@
+@@ -1661,7 +1819,39 @@
              this.spawnForced = false;
          }
      }
@@ -477,20 +478,27 @@
 +     * @param dimension Which dimension to apply the player-specific respawn point to
 +     */
 +    public void setSpawnChunk(ChunkCoordinates chunkCoordinates, boolean forced, int dimension) {
-+        if (dimension == 0) {
-+            if (chunkCoordinates != null) {
++        if (dimension == 0)
++        {
++            if (chunkCoordinates != null)
++            {
 +                this.spawnChunk = new ChunkCoordinates(chunkCoordinates);
 +                this.spawnForced = forced;
-+            } else {
++            }
++            else
++            {
 +                this.spawnChunk = null;
 +                this.spawnForced = false;
 +            }
 +            return;
 +        }
-+        if (chunkCoordinates != null) {
++        if (chunkCoordinates != null)
++        {
 +            this.spawnChunkMap.put(dimension, new ChunkCoordinates(chunkCoordinates));
 +            this.spawnForcedMap.put(dimension, forced);
-+        } else {
++        }
++        else
++        {
 +            this.spawnChunkMap.remove(dimension);
 +            this.spawnForcedMap.remove(dimension);
 +        }
@@ -498,7 +506,7 @@
      /**
       * Will trigger the specified trigger.
       */
-@@ -1843,6 +2025,10 @@
+@@ -1843,6 +2033,10 @@
  
              super.fall(par1);
          }
@@ -509,7 +517,7 @@
      }
  
      /**
-@@ -1884,7 +2070,7 @@
+@@ -1884,7 +2078,7 @@
          {
              if (par1ItemStack.getItem().requiresMultipleRenderPasses())
              {
@@ -518,7 +526,7 @@
              }
  
              if (this.itemInUse != null && par1ItemStack.itemID == Item.bow.itemID)
-@@ -1906,6 +2092,7 @@
+@@ -1906,6 +2100,7 @@
                      return Item.bow.getItemIconForUseDuration(0);
                  }
              }
@@ -526,7 +534,7 @@
          }
  
          return icon;
-@@ -2127,7 +2314,17 @@
+@@ -2127,7 +2322,17 @@
              this.setScore(par1EntityPlayer.getScore());
          }
  
@@ -544,7 +552,7 @@
      }
  
      /**
-@@ -2191,7 +2388,14 @@
+@@ -2191,7 +2396,14 @@
       */
      public void setCurrentItemOrArmor(int par1, ItemStack par2ItemStack)
      {
@@ -560,7 +568,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -2245,7 +2449,7 @@
+@@ -2245,7 +2457,7 @@
       */
      public String getTranslatedEntityName()
      {
@@ -569,7 +577,7 @@
      }
  
      public void setAbsorptionAmount(float par1)
-@@ -2267,4 +2471,39 @@
+@@ -2267,4 +2479,39 @@
      {
          FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
      }

@@ -816,7 +816,10 @@ public class ForgeChunkManager
     static void saveWorld(World world)
     {
         // only persist persistent worlds
-        if (!(world instanceof WorldServer)) { return; }
+        if (!(world instanceof WorldServer))
+        {
+            return;
+        }
         WorldServer worldServer = (WorldServer) world;
         File chunkDir = worldServer.getChunkSaveLocation();
         File chunkLoaderData = new File(chunkDir, "forcedchunks.dat");
