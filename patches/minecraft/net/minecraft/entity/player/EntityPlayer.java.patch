@@ -560,7 +560,16 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -2267,4 +2471,17 @@
+@@ -2245,7 +2449,7 @@
+      */
+     public String getTranslatedEntityName()
+     {
+-        return ScorePlayerTeam.formatPlayerName(this.getTeam(), this.username);
++        return ScorePlayerTeam.formatPlayerName(this.getTeam(), this.getDisplayName());
+     }
+ 
+     public void setAbsorptionAmount(float par1)
+@@ -2267,4 +2471,32 @@
      {
          FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
      }
@@ -568,6 +577,7 @@
 +    /* ===================================== FORGE START =====================================*/
 +    
 +    public float eyeHeight;
++    private String displayname;
 +    
 +    /**
 +     * Returns the default eye height of the player
@@ -576,5 +586,19 @@
 +    public float getDefaultEyeHeight()
 +    {
 +        return 0.12F;
++    }
++
++    public String getDisplayName()
++    {
++        if(this.displayname == null)
++        {
++            this.displayname = ForgeEventFactory.getPlayerDisplayName(this, this.username);
++        }
++        return this.displayname;
++    }
++
++    public void refreshDisplayName()
++    {
++        this.displayname = ForgeEventFactory.getPlayerDisplayName(this, this.username);
 +    }
  }
