@@ -25,6 +25,17 @@ public class BlockEvent extends Event {
         this.blockMetadata = blockMetadata;
     }
     
+    /**
+     * Fired when a block is about to drop it's harvested items. The {@link #drops} array can be amended, as can the {@link #dropChance}.
+     * <strong>Note well:</strong> the {@link #harvester} player field is null in a variety of scenarios. Code expecting null.
+     * 
+     * The {@link #dropChance} is used to determine which items in this array will actually drop, compared to a random number. If you wish, you 
+     * can pre-filter yourself, and set {@link #dropChance} to 1.0f to always drop the contents of the {@link #drops} array.
+     * 
+     * {@link #isSilkTouching} is set if this is considered a silk touch harvesting operation, vs a normal harvesting operation. Act accordingly.
+     * 
+     * @author cpw
+     */
     public static class HarvestDropsEvent extends BlockEvent {
         public final int fortuneLevel;
         public final ArrayList<ItemStack> drops;
