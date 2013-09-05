@@ -204,7 +204,7 @@
      }
  
      /**
-@@ -1457,4 +1480,1000 @@
+@@ -1457,4 +1480,1001 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -583,10 +583,11 @@
 +        if (!world.isRemote)
 +        {
 +            ArrayList<ItemStack> items = getBlockDropped(world, x, y, z, metadata, fortune);
-+            MinecraftForge.EVENT_BUS.post(new BlockEvent.HarvestDropsEvent(x, y, z, world, this, metadata, fortune, dropChance, items, player, false));
++            BlockEvent.HarvestDropsEvent dropsEvent = new BlockEvent.HarvestDropsEvent(x, y, z, world, this, metadata, fortune, dropChance, items, player, false);
++            MinecraftForge.EVENT_BUS.post(dropsEvent);
 +            for (ItemStack item : items)
 +            {
-+                if (world.rand.nextFloat() <= dropChance)
++                if (world.rand.nextFloat() <= dropsEvent.dropChance)
 +                {
 +                    this.dropBlockAsItem_do(world, x, y, z, item);
 +                }
