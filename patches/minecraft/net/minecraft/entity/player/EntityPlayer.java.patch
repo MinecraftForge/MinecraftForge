@@ -569,7 +569,7 @@
      }
  
      public void setAbsorptionAmount(float par1)
-@@ -2267,4 +2471,32 @@
+@@ -2267,4 +2471,39 @@
      {
          FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
      }
@@ -588,6 +588,10 @@
 +        return 0.12F;
 +    }
 +
++    /**
++     * Get the currently computed display name, cached for efficiency.
++     * @return the current display name
++     */
 +    public String getDisplayName()
 +    {
 +        if(this.displayname == null)
@@ -597,6 +601,9 @@
 +        return this.displayname;
 +    }
 +
++    /**
++     * Force the displayed name to refresh
++     */
 +    public void refreshDisplayName()
 +    {
 +        this.displayname = ForgeEventFactory.getPlayerDisplayName(this, this.username);
