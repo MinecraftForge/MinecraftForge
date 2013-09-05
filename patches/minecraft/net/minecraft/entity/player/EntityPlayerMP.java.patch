@@ -33,7 +33,19 @@
  
          this.mcServer = par1MinecraftServer;
          this.stepHeight = 0.0F;
-@@ -289,7 +287,10 @@
+@@ -239,11 +237,6 @@
+         this.yOffset = 0.0F;
+     }
+ 
+-    public float getEyeHeight()
+-    {
+-        return 1.62F;
+-    }
+-
+     /**
+      * Called to update the entity's position/logic.
+      */
+@@ -289,7 +282,10 @@
                  if (chunkcoordintpair != null && this.worldObj.blockExists(chunkcoordintpair.chunkXPos << 4, 0, chunkcoordintpair.chunkZPos << 4))
                  {
                      arraylist.add(this.worldObj.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos));
@@ -45,7 +57,7 @@
                  }
              }
  
-@@ -310,6 +311,7 @@
+@@ -310,6 +306,7 @@
                  {
                      Chunk chunk = (Chunk)iterator2.next();
                      this.getServerForPlayer().getEntityTracker().func_85172_a(this, chunk);
@@ -53,7 +65,7 @@
                  }
              }
          }
-@@ -377,11 +379,25 @@
+@@ -377,11 +374,25 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -79,3 +91,20 @@
          }
  
          Collection collection = this.worldObj.getScoreboard().func_96520_a(ScoreObjectiveCriteria.deathCount);
+@@ -1043,4 +1054,16 @@
+     {
+         return new ChunkCoordinates(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY + 0.5D), MathHelper.floor_double(this.posZ));
+     }
++    
++    /* ===================================== FORGE START =====================================*/
++    
++    /**
++     * Returns the default eye height of the player
++     * @return player default eye height
++     */
++    @Override
++    public float getDefaultEyeHeight()
++    {
++        return 1.62F;
++    }
+ }
