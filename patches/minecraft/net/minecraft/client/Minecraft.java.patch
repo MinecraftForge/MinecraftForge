@@ -1,11 +1,12 @@
 --- ../src_base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src_work/minecraft/net/minecraft/client/Minecraft.java
-@@ -137,6 +137,14 @@
+@@ -137,6 +137,15 @@
  
  import com.google.common.collect.MapDifference;
  
 +import net.minecraftforge.client.ForgeHooksClient;
 +import net.minecraftforge.client.GuiIngameForge;
++import net.minecraftforge.client.event.GuiOpenEvent;
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.ForgeEventFactory;
@@ -15,7 +16,7 @@
  @SideOnly(Side.CLIENT)
  public class Minecraft implements IPlayerUsage
  {
-@@ -416,7 +424,7 @@
+@@ -416,7 +425,7 @@
  
          try
          {
@@ -24,7 +25,7 @@
          }
          catch (LWJGLException lwjglexception)
          {
-@@ -497,7 +505,7 @@
+@@ -497,7 +506,7 @@
          this.effectRenderer = new EffectRenderer(this.theWorld, this.renderEngine);
          FMLClientHandler.instance().finishMinecraftLoading();
          this.checkGLError("Post startup");
@@ -33,7 +34,47 @@
  
          if (this.serverName != null)
          {
-@@ -1300,7 +1308,7 @@
+@@ -679,21 +688,28 @@
+      */
+     public void displayGuiScreen(GuiScreen par1GuiScreen)
+     {
+-        if (this.currentScreen != null)
++        this.statFileWriter.syncStats();
++
++        if (par1GuiScreen == null && this.theWorld == null)
++        {
++            par1GuiScreen = new GuiMainMenu();
++        }
++        else if (par1GuiScreen == null && this.thePlayer.getHealth() <= 0.0F)
++        {
++            par1GuiScreen = new GuiGameOver();
++        }
++
++        GuiScreen old = this.currentScreen;
++        GuiOpenEvent event = new GuiOpenEvent(par1GuiScreen);
++        boolean canceled = MinecraftForge.EVENT_BUS.post(event);
++        
++        if (old != null && old != this.currentScreen)
+         {
+             this.currentScreen.onGuiClosed();
+         }
+ 
+-        this.statFileWriter.syncStats();
+-
+-        if (par1GuiScreen == null && this.theWorld == null)
+-        {
+-            par1GuiScreen = new GuiMainMenu();
+-        }
+-        else if (par1GuiScreen == null && this.thePlayer.getHealth() <= 0.0F)
+-        {
+-            par1GuiScreen = new GuiGameOver();
+-        }
++        if (canceled) return;
++        par1GuiScreen = event.gui;
+ 
+         if (par1GuiScreen instanceof GuiMainMenu)
+         {
+@@ -1300,7 +1316,7 @@
  
                  if (this.thePlayer.isCurrentToolAdventureModeExempt(j, k, l))
                  {
@@ -42,7 +83,7 @@
                      this.thePlayer.swingItem();
                  }
              }
-@@ -1366,7 +1374,8 @@
+@@ -1366,7 +1382,8 @@
                  {
                      int j1 = itemstack != null ? itemstack.stackSize : 0;
  
@@ -52,7 +93,7 @@
                      {
                          flag = false;
                          this.thePlayer.swingItem();
-@@ -1392,7 +1401,8 @@
+@@ -1392,7 +1409,8 @@
              {
                  ItemStack itemstack1 = this.thePlayer.inventory.getCurrentItem();
  
@@ -62,7 +103,16 @@
                  {
                      this.entityRenderer.itemRenderer.resetEquippedProgress2();
                  }
-@@ -2046,6 +2056,11 @@
+@@ -1574,6 +1592,8 @@
+ 
+             while (Mouse.next())
+             {
++                if (ForgeHooksClient.postMouseEvent()) continue;
++
+                 i = Mouse.getEventButton();
+ 
+                 if (isRunningOnMac && i == 0 && (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)))
+@@ -2046,6 +2066,11 @@
      {
          this.statFileWriter.syncStats();
  
@@ -74,7 +124,7 @@
          if (par1WorldClient == null)
          {
              NetClientHandler netclienthandler = this.getNetHandler();
-@@ -2063,6 +2078,18 @@
+@@ -2063,6 +2088,18 @@
              if (this.theIntegratedServer != null)
              {
                  this.theIntegratedServer.initiateShutdown();
@@ -93,7 +143,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2236,107 +2263,12 @@
+@@ -2236,107 +2273,12 @@
          if (this.objectMouseOver != null)
          {
              boolean flag = this.thePlayer.capabilities.isCreativeMode;
@@ -205,7 +255,7 @@
  
              if (flag)
              {
-@@ -2419,11 +2351,18 @@
+@@ -2419,11 +2361,18 @@
          par1PlayerUsageSnooper.addData("gl_max_texture_size", Integer.valueOf(getGLMaximumTextureSize()));
      }
  
@@ -224,7 +274,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
-@@ -2431,6 +2370,7 @@
+@@ -2431,6 +2380,7 @@
  
              if (j != 0)
              {

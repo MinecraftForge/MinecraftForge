@@ -6,6 +6,7 @@ import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
 
+import net.minecraftforge.client.event.MouseEvent;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -323,6 +324,10 @@ public class ForgeHooksClient
         {
             return base + name;
         }
+    }
+
+    public static boolean postMouseEvent() {
+        return MinecraftForge.EVENT_BUS.post(new MouseEvent());
     }
 
     /**

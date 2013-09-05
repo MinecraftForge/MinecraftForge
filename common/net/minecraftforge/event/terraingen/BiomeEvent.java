@@ -1,5 +1,6 @@
 package net.minecraftforge.event.terraingen;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.world.biome.BiomeDecorator;

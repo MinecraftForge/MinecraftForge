@@ -148,7 +148,7 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     @Override
     public boolean registerBus(EventBus bus, LoadController controller)
     {
-    	bus.register(this);
+        bus.register(this);
         return true;
     }
 
@@ -176,7 +176,8 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     @Subscribe
     public void postInit(FMLPostInitializationEvent evt)
     {
-    	ForgeChunkManager.loadConfiguration();
+        BiomeDictionary.registerAllBiomesAndGenerateEvents();
+        ForgeChunkManager.loadConfiguration();
     }
 
     @Subscribe
@@ -201,7 +202,7 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
             DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
         }
     }
-    
+
     @Override
     public File getSource()
     {
