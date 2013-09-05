@@ -37,6 +37,7 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.client.model.ModelFormatException;
+import net.minecraftforge.client.model.obj.GroupObject;
 
 /**
  * Techne model importer, based on iChun's Hats importer
@@ -296,6 +297,42 @@ public class TechneModel extends ModelBase implements IModelCustom {
             bindTexture();
             
             part.renderWithRotation(1.0F);
+        }
+    }
+
+    @Override
+    public void renderOnly(String... groupNames)
+    {
+        bindTexture();
+        for (ModelRenderer part : parts.values())
+        {
+            for (String groupName : groupNames)
+            {
+                if (groupName.equalsIgnoreCase(part.boxName))
+                {
+                    part.render(1.0f);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void renderAllExcept(String... excludedGroupNames)
+    {
+        for (ModelRenderer part : parts.values())
+        {
+            boolean skipPart=false;
+            for (String excludedGroupName : excludedGroupNames)
+            {
+                if (excludedGroupName.equalsIgnoreCase(part.boxName))
+                {
+                    skipPart=true;
+                }
+            }
+            if(!skipPart)
+            {
+                part.render(1.0f);
+            }
         }
     }
 }

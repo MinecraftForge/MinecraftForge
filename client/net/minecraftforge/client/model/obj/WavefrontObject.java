@@ -169,6 +169,7 @@ public class WavefrontObject implements IModelCustom
         }
     }
 
+    @Override
     public void renderAll()
     {
         Tessellator tessellator = Tessellator.instance;
@@ -194,6 +195,7 @@ public class WavefrontObject implements IModelCustom
         }
     }
 
+    @Override
     public void renderOnly(String... groupNames)
     {
         for (GroupObject groupObject : groupObjects)
@@ -221,6 +223,7 @@ public class WavefrontObject implements IModelCustom
         }
     }
 
+    @Override
     public void renderPart(String partName)
     {
         for (GroupObject groupObject : groupObjects)
@@ -244,18 +247,17 @@ public class WavefrontObject implements IModelCustom
 
     public void renderAllExcept(String... excludedGroupNames)
     {
-        boolean exclude;
         for (GroupObject groupObject : groupObjects)
         {
-            exclude=false;
+            boolean skipPart=false;
             for (String excludedGroupName : excludedGroupNames)
             {
                 if (excludedGroupName.equalsIgnoreCase(groupObject.name))
                 {
-                    exclude=true;
+                    skipPart=true;
                 }
             }
-            if(!exclude)
+            if(!skipPart)
             {
                 groupObject.render();
             }
