@@ -1,61 +1,12 @@
 --- ../src_base/minecraft/net/minecraft/client/entity/EntityOtherPlayerMP.java
 +++ ../src_work/minecraft/net/minecraft/client/entity/EntityOtherPlayerMP.java
-@@ -170,29 +170,36 @@
+@@ -170,7 +170,8 @@
          }
      }
  
 -    public float getEyeHeight()
-+    public void sendChatToPlayer(ChatMessageComponent par1ChatMessageComponent)
-+    {
-+        Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(par1ChatMessageComponent.toStringWithFormatting(true));
-+    }
-+
-+    /**
-+     * Returns true if the command sender is allowed to use the given command.
-+     */
-+    public boolean canCommandSenderUseCommand(int par1, String par2Str)
-+    {
-+        return false;
-+    }
-+
-+    /**
-+     * Return the position for this command sender.
-+     */
-+    public ChunkCoordinates getPlayerCoordinates()
-+    {
-+        return new ChunkCoordinates(MathHelper.floor_double(this.posX + 0.5D), MathHelper.floor_double(this.posY + 0.5D), MathHelper.floor_double(this.posZ + 0.5D));
-+    }
-+    
-+    /* ===================================== FORGE START =====================================*/
-+    
-+    /**
-+     * Returns the default eye height of the player
-+     * @return player default eye height
-+     */
 +    @Override
 +    public float getDefaultEyeHeight()
      {
          return 1.82F;
      }
--
--    public void sendChatToPlayer(ChatMessageComponent par1ChatMessageComponent)
--    {
--        Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(par1ChatMessageComponent.toStringWithFormatting(true));
--    }
--
--    /**
--     * Returns true if the command sender is allowed to use the given command.
--     */
--    public boolean canCommandSenderUseCommand(int par1, String par2Str)
--    {
--        return false;
--    }
--
--    /**
--     * Return the position for this command sender.
--     */
--    public ChunkCoordinates getPlayerCoordinates()
--    {
--        return new ChunkCoordinates(MathHelper.floor_double(this.posX + 0.5D), MathHelper.floor_double(this.posY + 0.5D), MathHelper.floor_double(this.posZ + 0.5D));
--    }
- }
