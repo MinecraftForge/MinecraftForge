@@ -1208,5 +1208,6 @@
 +    // To be removed next MC version {1.6.3+}
 +    public float getFilledPercentage(World world, int x, int y, int z){ return 1; }
 +
-+    public int getID(){return this.blockID;}
++    public int getID(){return getBlockID();}
++    public int getBlockID() {return this.blockID;}
  }

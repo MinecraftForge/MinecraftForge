@@ -7,5 +7,8 @@ package net.minecraftforge.object;
   */
 public interface IPhysicalObject extends IInventoryObject
 {
-  // TODO: Add some properties here.
+  /**
+    @return The ID of the object when placed as a block.
+    */
+  public int getBlockID();
 }
