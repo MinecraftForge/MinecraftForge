@@ -6,13 +6,9 @@ import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
 
-<<<<<<< HEAD
 import net.minecraftforge.client.event.MouseEvent;
-=======
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraftforge.client.event.FOVUpdateEvent;
->>>>>>> 96e716f... Added field of view hook
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -27,11 +23,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
