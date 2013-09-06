@@ -47,4 +47,25 @@ public class LivingSpawnEvent extends LivingEvent
             super(entity, world, x, y, z);
         }
     }
+    
+    /**
+     * Fired if the mob may be allowed to despawn. Cancellation will prevent possible despawning. This is fired every tick for 
+     * every despawnable entity. Be efficient in your handlers.
+     * 
+     * Note: this is not fired <em>if</em> the mob is definitely going to otherwise despawn. It is fired to check if
+     * the mob can be allowed to despawn according to standard mob spawning rules. See {@link EntityLiving#despawnEntity}
+     * 
+     * @author cpw
+     *
+     */
+    @Cancelable
+    public static class AllowDespawn extends LivingSpawnEvent
+    {
+
+        public AllowDespawn(EntityLiving entity)
+        {
+            super(entity, entity.worldObj, (float)entity.posX, (float)entity.posY, (float)entity.posZ);
+        }
+        
+    }
 }

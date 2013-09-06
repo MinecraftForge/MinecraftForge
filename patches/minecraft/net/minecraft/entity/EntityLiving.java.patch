@@ -1,14 +1,17 @@
 --- ../src_base/minecraft/net/minecraft/entity/EntityLiving.java
 +++ ../src_work/minecraft/net/minecraft/entity/EntityLiving.java
-@@ -31,6 +31,7 @@
+@@ -31,6 +31,10 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
 +import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.ForgeEventFactory;
++import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
  
  public abstract class EntityLiving extends EntityLivingBase
  {
-@@ -141,6 +142,7 @@
+@@ -141,6 +145,7 @@
      public void setAttackTarget(EntityLivingBase par1EntityLivingBase)
      {
          this.attackTarget = par1EntityLivingBase;
@@ -16,7 +19,18 @@
      }
  
      /**
-@@ -726,8 +728,6 @@
+@@ -548,6 +553,10 @@
+     protected void despawnEntity()
+     {
+         if (this.persistenceRequired)
++        {
++            this.entityAge = 0;
++        }
++        else if (this.canDespawn() && !ForgeEventFactory.canEntityDespawn(this))
+         {
+             this.entityAge = 0;
+         }
+@@ -726,8 +735,6 @@
          return this.worldObj.checkNoEntityCollision(this.boundingBox) && this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(this.boundingBox);
      }
  
