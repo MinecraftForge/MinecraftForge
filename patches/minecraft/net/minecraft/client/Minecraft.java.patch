@@ -34,47 +34,40 @@
  
          if (this.serverName != null)
          {
-@@ -679,21 +688,28 @@
+@@ -679,11 +688,6 @@
       */
      public void displayGuiScreen(GuiScreen par1GuiScreen)
      {
 -        if (this.currentScreen != null)
-+        this.statFileWriter.syncStats();
-+
-+        if (par1GuiScreen == null && this.theWorld == null)
-+        {
-+            par1GuiScreen = new GuiMainMenu();
-+        }
-+        else if (par1GuiScreen == null && this.thePlayer.getHealth() <= 0.0F)
-+        {
-+            par1GuiScreen = new GuiGameOver();
+-        {
+-            this.currentScreen.onGuiClosed();
+-        }
+-
+         this.statFileWriter.syncStats();
+ 
+         if (par1GuiScreen == null && this.theWorld == null)
+@@ -693,6 +697,20 @@
+         else if (par1GuiScreen == null && this.thePlayer.getHealth() <= 0.0F)
+         {
+             par1GuiScreen = new GuiGameOver();
 +        }
 +
 +        GuiScreen old = this.currentScreen;
 +        GuiOpenEvent event = new GuiOpenEvent(par1GuiScreen);
-+        boolean canceled = MinecraftForge.EVENT_BUS.post(event);
 +        
-+        if (old != null && old != this.currentScreen)
-         {
-             this.currentScreen.onGuiClosed();
++        if (MinecraftForge.EVENT_BUS.post(event))
++        {
++            return;
++        }
++
++        par1GuiScreen = event.gui;
++        if (old != null && par1GuiScreen != old)
++        {
++            old.onGuiClosed();
          }
  
--        this.statFileWriter.syncStats();
--
--        if (par1GuiScreen == null && this.theWorld == null)
--        {
--            par1GuiScreen = new GuiMainMenu();
--        }
--        else if (par1GuiScreen == null && this.thePlayer.getHealth() <= 0.0F)
--        {
--            par1GuiScreen = new GuiGameOver();
--        }
-+        if (canceled) return;
-+        par1GuiScreen = event.gui;
- 
          if (par1GuiScreen instanceof GuiMainMenu)
-         {
-@@ -1300,7 +1316,7 @@
+@@ -1300,7 +1318,7 @@
  
                  if (this.thePlayer.isCurrentToolAdventureModeExempt(j, k, l))
                  {
@@ -83,7 +76,7 @@
                      this.thePlayer.swingItem();
                  }
              }
-@@ -1366,7 +1382,8 @@
+@@ -1366,7 +1384,8 @@
                  {
                      int j1 = itemstack != null ? itemstack.stackSize : 0;
  
@@ -93,7 +86,7 @@
                      {
                          flag = false;
                          this.thePlayer.swingItem();
-@@ -1392,7 +1409,8 @@
+@@ -1392,7 +1411,8 @@
              {
                  ItemStack itemstack1 = this.thePlayer.inventory.getCurrentItem();
  
@@ -103,7 +96,7 @@
                  {
                      this.entityRenderer.itemRenderer.resetEquippedProgress2();
                  }
-@@ -1574,6 +1592,8 @@
+@@ -1574,6 +1594,8 @@
  
              while (Mouse.next())
              {
@@ -112,7 +105,7 @@
                  i = Mouse.getEventButton();
  
                  if (isRunningOnMac && i == 0 && (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)))
-@@ -2046,6 +2066,11 @@
+@@ -2046,6 +2068,11 @@
      {
          this.statFileWriter.syncStats();
  
@@ -124,7 +117,7 @@
          if (par1WorldClient == null)
          {
              NetClientHandler netclienthandler = this.getNetHandler();
-@@ -2063,6 +2088,18 @@
+@@ -2063,6 +2090,18 @@
              if (this.theIntegratedServer != null)
              {
                  this.theIntegratedServer.initiateShutdown();
@@ -143,7 +136,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2236,107 +2273,12 @@
+@@ -2236,107 +2275,12 @@
          if (this.objectMouseOver != null)
          {
              boolean flag = this.thePlayer.capabilities.isCreativeMode;
@@ -255,7 +248,7 @@
  
              if (flag)
              {
-@@ -2419,11 +2361,18 @@
+@@ -2419,11 +2363,18 @@
          par1PlayerUsageSnooper.addData("gl_max_texture_size", Integer.valueOf(getGLMaximumTextureSize()));
      }
  
@@ -274,7 +267,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
-@@ -2431,6 +2380,7 @@
+@@ -2431,6 +2382,7 @@
  
              if (j != 0)
              {
