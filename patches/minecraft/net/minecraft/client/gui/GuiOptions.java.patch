@@ -1,0 +1,31 @@
+--- ../src_base/minecraft/net/minecraft/client/gui/GuiOptions.java
++++ ../src_work/minecraft/net/minecraft/client/gui/GuiOptions.java
+@@ -6,6 +6,7 @@
+ import net.minecraft.client.resources.I18n;
+ import net.minecraft.client.settings.EnumOptions;
+ import net.minecraft.client.settings.GameSettings;
++import net.minecraftforge.client.GuiModOptions;
+ 
+ @SideOnly(Side.CLIENT)
+ public class GuiOptions extends GuiScreen
+@@ -73,6 +74,7 @@
+         this.buttonList.add(new GuiButton(105, this.width / 2 - 152, this.height / 6 + 144 - 6, 150, 20, I18n.func_135053_a("options.resourcepack")));
+         this.buttonList.add(new GuiButton(104, this.width / 2 + 2, this.height / 6 + 144 - 6, 150, 20, I18n.func_135053_a("options.snooper.view")));
+         this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, I18n.func_135053_a("gui.done")));
++        this.buttonList.add(new GuiButton(999, this.width/2-155+160, this.height / 6 -12 + 24*3, 150, 20, "Mod options"));
+     }
+ 
+     /**
+@@ -129,6 +131,12 @@
+                 this.mc.gameSettings.saveOptions();
+                 this.mc.displayGuiScreen(new GuiScreenTemporaryResourcePackSelect(this, this.options));
+             }
++            if (par1GuiButton.id == 999)
++            {
++                this.mc.gameSettings.saveOptions();
++                GuiModOptions.getInstance().setParent(this);
++                this.mc.displayGuiScreen(GuiModOptions.getInstance());
++            }
+         }
+     }
+ 
