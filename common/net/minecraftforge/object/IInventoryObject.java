@@ -5,10 +5,6 @@ package net.minecraftforge.object;
   This includes blocks, items and fluids.
   @author gjgfuj
   */
-public interface IInventoryObject
+public interface IInventoryObject extends IID
 {
-  /**
-    @return The block or item id which represents the part
-    */
-  public int getID();
 }

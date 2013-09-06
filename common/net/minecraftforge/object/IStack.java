@@ -9,5 +9,5 @@ public interface IStack
   /**
     @return The amount of units in the stack.
     */
-  public int getAmount()
+  public int getAmount();
 }
