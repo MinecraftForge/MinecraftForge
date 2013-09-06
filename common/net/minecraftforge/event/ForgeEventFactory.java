@@ -60,9 +60,11 @@ public class ForgeEventFactory
         return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world, x, y, z));
     }
 
-    public static boolean canEntityDespawn(EntityLiving entity)
+    public static Result canEntityDespawn(EntityLiving entity)
     {
-        return !MinecraftForge.EVENT_BUS.post(new AllowDespawn(entity));
+        AllowDespawn event = new AllowDespawn(entity);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult();
     }
     
     public static List getPotentialSpawns(WorldServer world, EnumCreatureType type, int x, int y, int z, List oldList)
