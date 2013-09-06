@@ -6,7 +6,7 @@ import java.util.Locale;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import net.minecraftforge.inventory.IStack;
+import net.minecraftforge.object.IStack;
 
 /**
  * ItemStack substitute for Fluids.
