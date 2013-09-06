@@ -6,6 +6,8 @@ import java.util.Locale;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import net.minecraftforge.inventory.IStack;
+
 /**
  * ItemStack substitute for Fluids.
  *
@@ -13,10 +15,10 @@ import net.minecraft.nbt.NBTTagCompound;
  * {@link #isFluidStackIdentical(FluidStack)} to determine if FluidID, Amount and NBT Tag are all
  * equal.
  *
- * @author King Lemming, SirSengir (LiquidStack)
+ * @author King Lemming, SirSengir (LiquidStack), gjgfuj (IStack)
  *
  */
-public class FluidStack
+public class FluidStack implements IStack
 {
     public int fluidID;
     public int amount;
@@ -199,5 +201,12 @@ public class FluidStack
         }
 
         return isFluidEqual((FluidStack) o);
+    }
+    /**
+      @return The amount of fluid in the stack.
+      */
+    public int getAmount()
+    {
+      return amount;
     }
 }
