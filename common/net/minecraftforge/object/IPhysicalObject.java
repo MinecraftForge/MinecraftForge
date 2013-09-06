@@ -1,4 +1,4 @@
-package net.minecraftforge.inventory;
+package net.minecraftforge.object;
 
 /**
   A interface which appears on anything that can be placed in the world.

@@ -1,4 +1,4 @@
-package net.minecraftforge.inventory;
+package net.minecraftforge.object;
 
 /**
   A interface that appears on any type of stack, be that fluid or item.
