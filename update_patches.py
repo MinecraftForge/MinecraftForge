@@ -31,6 +31,7 @@ def main():
     
     parser = OptionParser()
     parser.add_option('-m', '--mcp-dir', action='store', dest='mcp_dir', help='Path to MCP', default=None)
+    parser.add_option('-p', '--patch-dir', action='store', dest='patch_dir', help='Folder to place patches in', default=None)
     options, _ = parser.parse_args()
     
     forge_dir = os.path.dirname(os.path.abspath(__file__))
@@ -42,6 +43,9 @@ def main():
         mcp = os.path.abspath('..')
     
     patchd = os.path.normpath(os.path.join(forge_dir, 'patches'))
+    if not options.patch_dir is None:
+        patchd = os.path.normpath(options.patch_dir)
+    print "Patch folder set to '%s'" % patchd
     base = os.path.normpath(os.path.join(mcp, 'src_base'))
     work = os.path.normpath(os.path.join(mcp, 'src_work'))
     
