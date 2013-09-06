@@ -29,7 +29,7 @@
          {
              this.entityAge = 0;
 +        }
-+        else if (this.entityAge % 20 == 1 && (result = ForgeEventFactory.canEntityDespawn(this)) != Result.DEFAULT)
++        else if ((this.entityAge & 0x1F) == 0x1F && (result = ForgeEventFactory.canEntityDespawn(this)) != Result.DEFAULT)
 +        {
 +            if (result == Result.DENY)
 +            {
