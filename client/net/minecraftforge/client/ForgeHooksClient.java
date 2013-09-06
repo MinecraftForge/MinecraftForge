@@ -6,7 +6,13 @@ import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
 
+<<<<<<< HEAD
 import net.minecraftforge.client.event.MouseEvent;
+=======
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraftforge.client.event.FOVUpdateEvent;
+>>>>>>> 96e716f... Added field of view hook
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -330,6 +336,12 @@ public class ForgeHooksClient
         return MinecraftForge.EVENT_BUS.post(new MouseEvent());
     }
 
+    public static float getOffsetFOV(EntityPlayerSP entity, float fov) {
+        FOVUpdateEvent fovUpdateEvent = new FOVUpdateEvent(entity, fov);
+        MinecraftForge.EVENT_BUS.post(fovUpdateEvent);
+        return fovUpdateEvent.newfov;
+    }
+
     /**
      * Initialization of Forge Renderers.
      */
@@ -337,4 +349,5 @@ public class ForgeHooksClient
         FluidRegistry.renderIdFluid = RenderingRegistry.getNextAvailableRenderId();
         RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
     }
+
 }
