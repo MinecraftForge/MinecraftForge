@@ -48,10 +48,12 @@
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.common.RotationHelper;
 +import net.minecraftforge.event.world.BlockEvent;
++import net.minecraftforge.object.IPhysicalObject;
 +import cpw.mods.fml.relauncher.Side;
 +import cpw.mods.fml.relauncher.SideOnly;
  
- public class Block
+-public class Block
++public class Block implements IPhysicalObject
  {
 +    protected static int[] blockFireSpreadSpeed = new int[4096];
 +    protected static int[] blockFlammability = new int[4096];
@@ -1205,4 +1207,7 @@
 +    @Deprecated //Implemented here as we changed the IFluidBlock interface, and this allows us to do so without breaking exisitng mods.
 +    // To be removed next MC version {1.6.3+}
 +    public float getFilledPercentage(World world, int x, int y, int z){ return 1; }
++
++    public int getID(){return getBlockID();}
++    public int getBlockID() {return this.blockID;}
  }

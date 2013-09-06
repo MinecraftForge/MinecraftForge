@@ -16,6 +16,8 @@ import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import net.minecraftforge.object.IPhysicalObject
+
 /**
  * Minecraft Forge Fluid Implementation
  *
@@ -31,10 +33,10 @@ import cpw.mods.fml.relauncher.SideOnly;
  * The default values can be used as a reference point for mods adding fluids such as oil or heavy
  * water.
  *
- * @author King Lemming
+ * @author King Lemming, gjgfuj (IPhysicalObject)
  *
  */
-public class Fluid
+public class Fluid implements IPhysicalObject
 {
     /** The unique identification name for this fluid. */
     protected final String fluidName;
