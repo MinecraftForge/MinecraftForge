@@ -1,7 +1,7 @@
 --- ../src_base/minecraft/net/minecraft/command/CommandHandler.java
 +++ ../src_work/minecraft/net/minecraft/command/CommandHandler.java
-@@ -11,6 +11,9 @@
- import net.minecraft.entity.player.EntityPlayerMP;
+@@ -12,6 +12,9 @@
+ import net.minecraft.util.ChatMessageComponent;
  import net.minecraft.util.EnumChatFormatting;
  
 +import net.minecraftforge.common.MinecraftForge;
@@ -10,7 +10,7 @@
  public class CommandHandler implements ICommandManager
  {
      /** Map of Strings to the ICommand objects they represent */
-@@ -44,6 +47,16 @@
+@@ -45,6 +48,16 @@
  
              if (icommand.canCommandSenderUseCommand(par1ICommandSender))
              {

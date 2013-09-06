@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/entity/player/InventoryPlayer.java
 +++ ../src_work/minecraft/net/minecraft/entity/player/InventoryPlayer.java
-@@ -338,6 +338,14 @@
+@@ -357,6 +357,14 @@
              if (this.mainInventory[i] != null)
              {
                  this.mainInventory[i].updateAnimation(this.player.worldObj, this.player, i, this.currentItem == i);

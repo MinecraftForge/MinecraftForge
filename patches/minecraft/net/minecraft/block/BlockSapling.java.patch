@@ -9,7 +9,7 @@
  public class BlockSapling extends BlockFlower
  {
      public static final String[] WOOD_TYPES = new String[] {"oak", "spruce", "birch", "jungle"};
-@@ -77,6 +79,8 @@
+@@ -76,6 +78,8 @@
       */
      public void growTree(World par1World, int par2, int par3, int par4, Random par5Random)
      {

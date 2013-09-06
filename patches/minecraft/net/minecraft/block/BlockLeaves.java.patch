@@ -19,8 +19,8 @@
 +public class BlockLeaves extends BlockLeavesBase implements IShearable
  {
      public static final String[] LEAF_TYPES = new String[] {"oak", "spruce", "birch", "jungle"};
-     public static final String[][] field_94396_b = new String[][] {{"leaves", "leaves_spruce", "leaves", "leaves_jungle"}, {"leaves_opaque", "leaves_spruce_opaque", "leaves_opaque", "leaves_jungle_opaque"}};
-@@ -107,10 +111,9 @@
+     public static final String[][] field_94396_b = new String[][] {{"leaves_oak", "leaves_spruce", "leaves_birch", "leaves_jungle"}, {"leaves_oak_opaque", "leaves_spruce_opaque", "leaves_birch_opaque", "leaves_jungle_opaque"}};
+@@ -111,10 +115,9 @@
                      {
                          int j2 = par1World.getBlockId(par2 + k1, par3 + l1, par4 + i2);
  
@@ -33,7 +33,7 @@
                          }
                      }
                  }
-@@ -156,11 +159,13 @@
+@@ -160,11 +163,13 @@
                              {
                                  k2 = par1World.getBlockId(par2 + l1, par3 + i2, par4 + j2);
  
@@ -49,7 +49,7 @@
                                  {
                                      this.adjacentTreeBlocks[(l1 + k1) * j1 + (i2 + k1) * b1 + j2 + k1] = -2;
                                  }
-@@ -325,15 +330,7 @@
+@@ -329,15 +334,7 @@
       */
      public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {
@@ -66,7 +66,7 @@
      }
  
      /**
-@@ -414,4 +411,30 @@
+@@ -418,4 +415,30 @@
              }
          }
      }

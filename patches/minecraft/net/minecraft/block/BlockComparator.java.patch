@@ -1,0 +1,20 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockComparator.java
++++ ../src_work/minecraft/net/minecraft/block/BlockComparator.java
+@@ -268,4 +268,17 @@
+     {
+         return new TileEntityComparator();
+     }
++    
++    @Override
++    public void onNeighborTileChange(World world, int x, int y, int z, int tileX, int tileY, int tileZ)
++    {
++        if(y == tileY)
++            onNeighborBlockChange(world, x, y, z, world.getBlockId(tileX, tileY, tileZ));
++    }
++    
++    @Override
++    public boolean weakTileChanges()
++    {
++        return true;
++    }
+ }

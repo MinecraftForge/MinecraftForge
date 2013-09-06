@@ -49,4 +49,16 @@ public class PlayerEvent extends LivingEvent
             this.z = z;
         }
     }
+
+    public static class NameFormat extends PlayerEvent
+    {
+        public final String username;
+        public String displayname;
+
+        public NameFormat(EntityPlayer player, String username) {
+            super(player);
+            this.username = username;
+            this.displayname = username;
+        }
+    }
 }

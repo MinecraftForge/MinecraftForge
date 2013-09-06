@@ -1,7 +1,10 @@
 package net.minecraftforge.common;
 
 import java.util.*;
+
+import cpw.mods.fml.common.FMLLog;
 import net.minecraft.world.biome.*;
+import net.minecraftforge.event.terraingen.DeferredBiomeDecorator;
 import static net.minecraft.world.biome.BiomeGenBase.*;
 import static net.minecraftforge.common.BiomeDictionary.Type.*;
 
@@ -185,19 +188,30 @@ public class BiomeDictionary
         return biomeList[biomeID] != null;
     }
 
+    public static void registerAllBiomes()
+    {
+        FMLLog.warning("Redundant call to BiomeDictionary.registerAllBiomes ignored");
+    }
     /**
      * Loops through the biome list and automatically adds tags to any biome that does not have any
-     * This should be called in postInit to make sure all biomes have been registered
+     * This is called by Forge at postinit time. It will additionally dispatch any deferred decorator
+     * creation events.
      * 
      * DO NOT call this during world generation
      */
-    public static void registerAllBiomes()
+    public static void registerAllBiomesAndGenerateEvents()
     {
         for(int i = 0; i < BIOME_LIST_SIZE; i++)
         {
-            if(BiomeGenBase.biomeList[i] != null)
+            BiomeGenBase biome = BiomeGenBase.biomeList[i];
+            if (biome.theBiomeDecorator instanceof DeferredBiomeDecorator)
             {
-                checkRegistration(BiomeGenBase.biomeList[i]);
+                DeferredBiomeDecorator decorator = (DeferredBiomeDecorator) biome.theBiomeDecorator;
+                decorator.fireCreateEventAndReplace();
+            }
+            if(biome != null)
+            {
+                checkRegistration(biome);
             }
         }
     }

@@ -10,28 +10,28 @@
  import net.minecraft.creativetab.CreativeTabs;
 +import net.minecraft.enchantment.Enchantment;
 +import net.minecraft.enchantment.EnchantmentHelper;
- import net.minecraft.entity.EntityLiving;
++import net.minecraft.entity.EntityLiving;
+ import net.minecraft.entity.EntityLivingBase;
 +import net.minecraft.entity.item.EntityItem;
 +import net.minecraft.entity.player.EntityPlayer;
 +import net.minecraft.stats.StatList;
  import net.minecraft.world.World;
-+
 +import net.minecraftforge.common.IShearable;
  
  public class ItemShears extends Item
  {
 @@ -17,13 +27,12 @@
  
-     public boolean onBlockDestroyed(ItemStack par1ItemStack, World par2World, int par3, int par4, int par5, int par6, EntityLiving par7EntityLiving)
+     public boolean onBlockDestroyed(ItemStack par1ItemStack, World par2World, int par3, int par4, int par5, int par6, EntityLivingBase par7EntityLivingBase)
      {
 -        if (par3 != Block.leaves.blockID && par3 != Block.web.blockID && par3 != Block.tallGrass.blockID && par3 != Block.vine.blockID && par3 != Block.tripWire.blockID)
 +        if (par3 != Block.leaves.blockID && par3 != Block.web.blockID && par3 != Block.tallGrass.blockID && par3 != Block.vine.blockID && par3 != Block.tripWire.blockID && !(Block.blocksList[par3] instanceof IShearable))
          {
-             return super.onBlockDestroyed(par1ItemStack, par2World, par3, par4, par5, par6, par7EntityLiving);
+             return super.onBlockDestroyed(par1ItemStack, par2World, par3, par4, par5, par6, par7EntityLivingBase);
          }
          else
          {
--            par1ItemStack.damageItem(1, par7EntityLiving);
+-            par1ItemStack.damageItem(1, par7EntityLivingBase);
              return true;
          }
      }
@@ -39,9 +39,9 @@
      {
          return par2Block.blockID != Block.web.blockID && par2Block.blockID != Block.leaves.blockID ? (par2Block.blockID == Block.cloth.blockID ? 5.0F : super.getStrVsBlock(par1ItemStack, par2Block)) : 15.0F;
      }
-+    
++
 +    @Override
-+    public boolean itemInteractionForEntity(ItemStack itemstack, EntityLiving entity)
++    public boolean itemInteractionForEntity(ItemStack itemstack, EntityPlayer player, EntityLivingBase entity)
 +    {
 +        if (entity.worldObj.isRemote)
 +        {
@@ -69,9 +69,9 @@
 +        }
 +        return false;
 +    }
-+    
++
 +    @Override
-+    public boolean onBlockStartBreak(ItemStack itemstack, int x, int y, int z, EntityPlayer player) 
++    public boolean onBlockStartBreak(ItemStack itemstack, int x, int y, int z, EntityPlayer player)
 +    {
 +        if (player.worldObj.isRemote)
 +        {

@@ -32,7 +32,7 @@
      public EntityMinecart(World par1World)
      {
          super(par1World);
-@@ -105,6 +123,10 @@
+@@ -104,6 +122,10 @@
       */
      public AxisAlignedBB getCollisionBox(Entity par1Entity)
      {
@@ -43,7 +43,7 @@
          return par1Entity.canBePushed() ? par1Entity.boundingBox : null;
      }
  
-@@ -113,6 +135,10 @@
+@@ -112,6 +134,10 @@
       */
      public AxisAlignedBB getBoundingBox()
      {
@@ -54,7 +54,7 @@
          return null;
      }
  
-@@ -121,7 +147,7 @@
+@@ -120,7 +146,7 @@
       */
      public boolean canBePushed()
      {
@@ -63,7 +63,7 @@
      }
  
      public EntityMinecart(World par1World, double par2, double par4, double par6)
-@@ -353,19 +379,21 @@
+@@ -352,19 +378,21 @@
              double d5 = 0.0078125D;
              int l = this.worldObj.getBlockId(j, i, k);
  
@@ -92,7 +92,7 @@
              }
  
              this.doBlockCollisions();
-@@ -392,7 +420,18 @@
+@@ -391,7 +419,18 @@
              }
  
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -112,7 +112,7 @@
  
              if (list != null && !list.isEmpty())
              {
-@@ -416,6 +455,8 @@
+@@ -415,6 +454,8 @@
  
                  this.riddenByEntity = null;
              }
@@ -121,7 +121,7 @@
          }
      }
  
-@@ -444,6 +485,17 @@
+@@ -443,6 +484,17 @@
          if (this.motionZ > par1)
          {
              this.motionZ = par1;
@@ -139,7 +139,7 @@
          }
  
          if (this.onGround)
-@@ -453,13 +505,13 @@
+@@ -452,13 +504,13 @@
              this.motionZ *= 0.5D;
          }
  
@@ -157,7 +157,7 @@
          }
      }
  
-@@ -473,7 +525,7 @@
+@@ -472,7 +524,7 @@
  
          if (par8 == Block.railPowered.blockID)
          {
@@ -166,7 +166,7 @@
              flag1 = !flag;
          }
  
-@@ -544,7 +596,7 @@
+@@ -551,7 +603,7 @@
              }
          }
  
@@ -175,7 +175,7 @@
          {
              d7 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
  
-@@ -592,36 +644,8 @@
+@@ -599,36 +651,8 @@
          this.posX = d8 + d2 * d7;
          this.posZ = d9 + d3 * d7;
          this.setPosition(this.posX, this.posY + (double)this.yOffset, this.posZ);
@@ -214,7 +214,7 @@
  
          if (aint[0][1] != 0 && MathHelper.floor_double(this.posX) - par1 == aint[0][0] && MathHelper.floor_double(this.posZ) - par3 == aint[0][2])
          {
-@@ -659,7 +683,12 @@
+@@ -666,7 +690,12 @@
              this.motionZ = d6 * (double)(k1 - par3);
          }
  
@@ -228,7 +228,7 @@
          {
              double d15 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
  
-@@ -730,12 +759,7 @@
+@@ -737,12 +766,7 @@
          }
          else
          {
@@ -242,7 +242,7 @@
  
              par3 = (double)j;
  
-@@ -781,13 +805,8 @@
+@@ -788,13 +812,8 @@
  
          if (BlockRailBase.isRailBlock(l))
          {
@@ -257,7 +257,7 @@
  
              if (i1 >= 2 && i1 <= 5)
              {
-@@ -893,11 +912,17 @@
+@@ -900,11 +919,17 @@
       */
      public void applyEntityCollision(Entity par1Entity)
      {
@@ -271,12 +271,12 @@
          {
              if (par1Entity != this.riddenByEntity)
              {
--                if (par1Entity instanceof EntityLiving && !(par1Entity instanceof EntityPlayer) && !(par1Entity instanceof EntityIronGolem) && this.getMinecartType() == 0 && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.01D && this.riddenByEntity == null && par1Entity.ridingEntity == null)
-+                if (par1Entity instanceof EntityLiving && !(par1Entity instanceof EntityPlayer) && !(par1Entity instanceof EntityIronGolem) && canBeRidden() && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.01D && this.riddenByEntity == null && par1Entity.ridingEntity == null)
+-                if (par1Entity instanceof EntityLivingBase && !(par1Entity instanceof EntityPlayer) && !(par1Entity instanceof EntityIronGolem) && this.getMinecartType() == 0 && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.01D && this.riddenByEntity == null && par1Entity.ridingEntity == null)
++                if (par1Entity instanceof EntityLivingBase && !(par1Entity instanceof EntityPlayer) && !(par1Entity instanceof EntityIronGolem) && canBeRidden()               && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.01D && this.riddenByEntity == null && par1Entity.ridingEntity == null)
                  {
                      par1Entity.mountEntity(this);
                  }
-@@ -943,7 +968,7 @@
+@@ -950,7 +975,7 @@
                          double d7 = par1Entity.motionX + this.motionX;
                          double d8 = par1Entity.motionZ + this.motionZ;
  
@@ -285,7 +285,7 @@
                          {
                              this.motionX *= 0.20000000298023224D;
                              this.motionZ *= 0.20000000298023224D;
-@@ -951,7 +976,7 @@
+@@ -958,7 +983,7 @@
                              par1Entity.motionX *= 0.949999988079071D;
                              par1Entity.motionZ *= 0.949999988079071D;
                          }
@@ -294,7 +294,7 @@
                          {
                              par1Entity.motionX *= 0.20000000298023224D;
                              par1Entity.motionZ *= 0.20000000298023224D;
-@@ -1158,4 +1183,211 @@
+@@ -1168,4 +1193,211 @@
      {
          return this.entityName;
      }

@@ -10,7 +10,7 @@
  
  public class ComponentStrongholdLibrary extends ComponentStronghold
  {
-@@ -145,12 +148,14 @@
+@@ -147,12 +150,14 @@
                  this.placeBlockAtCurrentPosition(par1World, Block.torchWood.blockID, 0, b1, 8, b2 + 1, par3StructureBoundingBox);
              }
  

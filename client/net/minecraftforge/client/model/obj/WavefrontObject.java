@@ -49,20 +49,32 @@ public class WavefrontObject implements IModelCustom
     public WavefrontObject(String fileName, URL resource) throws ModelFormatException
     {
         this.fileName = fileName;
-        loadObjModel(resource);
+        
+        try
+        {
+            loadObjModel(resource.openStream());
+        }
+        catch (IOException e)
+        {
+            throw new ModelFormatException("IO Exception reading model format", e);
+        }
+    }
+    
+    public WavefrontObject(String filename, InputStream inputStream) throws ModelFormatException
+    {
+        this.fileName = filename;
+        loadObjModel(inputStream);
     }
 
-    private void loadObjModel(URL fileURL) throws ModelFormatException
+    private void loadObjModel(InputStream inputStream) throws ModelFormatException
     {
         BufferedReader reader = null;
-        InputStream inputStream = null;
 
         String currentLine = null;
         int lineCount = 0;
 
         try
         {
-            inputStream = fileURL.openStream();
             reader = new BufferedReader(new InputStreamReader(inputStream));
 
             while ((currentLine = reader.readLine()) != null)
@@ -157,6 +169,7 @@ public class WavefrontObject implements IModelCustom
         }
     }
 
+    @Override
     public void renderAll()
     {
         Tessellator tessellator = Tessellator.instance;
@@ -169,15 +182,20 @@ public class WavefrontObject implements IModelCustom
         {
             tessellator.startDrawing(GL11.GL_TRIANGLES);
         }
-
-        for (GroupObject groupObject : groupObjects)
-        {
-            groupObject.render(tessellator);
-        }
+        tessellateAll(tessellator);
 
         tessellator.draw();
     }
 
+    public void tessellateAll(Tessellator tessellator)
+    {
+        for (GroupObject groupObject : groupObjects)
+        {
+            groupObject.render(tessellator);
+        }
+    }
+
+    @Override
     public void renderOnly(String... groupNames)
     {
         for (GroupObject groupObject : groupObjects)
@@ -192,6 +210,20 @@ public class WavefrontObject implements IModelCustom
         }
     }
 
+    public void tessellateOnly(Tessellator tessellator, String... groupNames) {
+        for (GroupObject groupObject : groupObjects)
+        {
+            for (String groupName : groupNames)
+            {
+                if (groupName.equalsIgnoreCase(groupObject.name))
+                {
+                    groupObject.render(tessellator);
+                }
+            }
+        }
+    }
+
+    @Override
     public void renderPart(String partName)
     {
         for (GroupObject groupObject : groupObjects)
@@ -203,16 +235,51 @@ public class WavefrontObject implements IModelCustom
         }
     }
 
+    public void tessellatePart(Tessellator tessellator, String partName) {
+        for (GroupObject groupObject : groupObjects)
+        {
+            if (partName.equalsIgnoreCase(groupObject.name))
+            {
+                groupObject.render(tessellator);
+            }
+        }
+    }
+
     public void renderAllExcept(String... excludedGroupNames)
     {
         for (GroupObject groupObject : groupObjects)
         {
+            boolean skipPart=false;
             for (String excludedGroupName : excludedGroupNames)
             {
-                if (!excludedGroupName.equalsIgnoreCase(groupObject.name))
+                if (excludedGroupName.equalsIgnoreCase(groupObject.name))
                 {
-                    groupObject.render();
+                    skipPart=true;
                 }
+            }
+            if(!skipPart)
+            {
+                groupObject.render();
+            }
+        }
+    }
+
+    public void tessellateAllExcept(Tessellator tessellator, String... excludedGroupNames)
+    {
+        boolean exclude;
+        for (GroupObject groupObject : groupObjects)
+        {
+            exclude=false;
+            for (String excludedGroupName : excludedGroupNames)
+            {
+                if (excludedGroupName.equalsIgnoreCase(groupObject.name))
+                {
+                    exclude=true;
+                }
+            }
+            if(!exclude)
+            {
+                groupObject.render(tessellator);
             }
         }
     }
@@ -347,7 +414,7 @@ public class WavefrontObject implements IModelCustom
                 face.vertices = new Vertex[tokens.length];
                 face.textureCoordinates = new TextureCoordinate[tokens.length];
                 face.vertexNormals = new Vertex[tokens.length];
-                
+
                 for (int i = 0; i < tokens.length; ++i)
                 {
                     subTokens = tokens[i].split("/");
@@ -364,7 +431,7 @@ public class WavefrontObject implements IModelCustom
             {
                 face.vertices = new Vertex[tokens.length];
                 face.textureCoordinates = new TextureCoordinate[tokens.length];
-                
+
                 for (int i = 0; i < tokens.length; ++i)
                 {
                     subTokens = tokens[i].split("/");
@@ -380,7 +447,7 @@ public class WavefrontObject implements IModelCustom
             {
                 face.vertices = new Vertex[tokens.length];
                 face.vertexNormals = new Vertex[tokens.length];
-                
+
                 for (int i = 0; i < tokens.length; ++i)
                 {
                     subTokens = tokens[i].split("//");
@@ -395,7 +462,7 @@ public class WavefrontObject implements IModelCustom
             else if (isValidFace_V_Line(line))
             {
                 face.vertices = new Vertex[tokens.length];
-                
+
                 for (int i = 0; i < tokens.length; ++i)
                 {
                     face.vertices[i] = vertices.get(Integer.parseInt(tokens[i]) - 1);

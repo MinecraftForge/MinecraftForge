@@ -1,0 +1,33 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
+@@ -11,9 +11,11 @@
+ import java.util.List;
+ import javax.imageio.ImageIO;
+ import net.minecraft.client.resources.Resource;
++import net.minecraft.client.resources.ResourceManager;
+ import net.minecraft.client.resources.data.AnimationFrame;
+ import net.minecraft.client.resources.data.AnimationMetadataSection;
+ import net.minecraft.util.Icon;
++import net.minecraft.util.ResourceLocation;
+ 
+ @SideOnly(Side.CLIENT)
+ public class TextureAtlasSprite implements Icon
+@@ -297,4 +299,18 @@
+     {
+         return "TextureAtlasSprite{name=\'" + this.iconName + '\'' + ", frameCount=" + this.framesTextureData.size() + ", rotated=" + this.rotated + ", x=" + this.originX + ", y=" + this.originY + ", height=" + this.height + ", width=" + this.width + ", u0=" + this.minU + ", u1=" + this.maxU + ", v0=" + this.minV + ", v1=" + this.maxV + '}';
+     }
++
++    /**
++     * Load the specified resource as this sprite's data.
++     * Returning false from this function will prevent this icon from being stitched onto the master texture.
++     * @param manager Main resource manager
++     * @param location File resource location
++     * @return False to prevent this Icon from being stitched
++     * @throws IOException
++     */
++    public boolean load(ResourceManager manager, ResourceLocation location) throws IOException
++    {
++        loadSprite(manager.getResource(location));
++        return true;
++    }
+ }

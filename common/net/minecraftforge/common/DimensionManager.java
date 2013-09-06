@@ -197,12 +197,15 @@ public class DimensionManager
 
     public static void setWorld(int id, WorldServer world)
     {
-        if (world != null) {
+        if (world != null)
+        {
             worlds.put(id, world);
             weakWorldMap.put(world, world);
             MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
             FMLLog.info("Loading dimension %d (%s) (%s)", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
-        } else {
+        }
+        else
+        {
             worlds.remove(id);
             MinecraftServer.getServer().worldTickTimes.remove(id);
             FMLLog.info("Unloading dimension %d", id);
@@ -231,14 +234,18 @@ public class DimensionManager
 
     public static void initDimension(int dim) {
         WorldServer overworld = getWorld(0);
-        if (overworld == null) {
+        if (overworld == null)
+        {
             throw new RuntimeException("Cannot Hotload Dim: Overworld is not Loaded!");
         }
-        try {
+        try
+        {
             DimensionManager.getProviderType(dim);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             System.err.println("Cannot Hotload Dim: " + e.getMessage());
-            return; //If a provider hasn't been registered then we can't hotload the dim
+            return; // If a provider hasn't been registered then we can't hotload the dim
         }
         MinecraftServer mcServer = overworld.getMinecraftServer();
         ISaveHandler savehandler = overworld.getSaveHandler();

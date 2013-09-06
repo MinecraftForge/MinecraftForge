@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/inventory/ContainerRepair.java
 +++ ../src_work/minecraft/net/minecraft/inventory/ContainerRepair.java
-@@ -305,6 +305,11 @@
+@@ -315,6 +315,11 @@
                  k = Math.max(1, k / 2);
              }
  
@@ -12,7 +12,7 @@
              this.maximumCost = k + i;
  
              if (i <= 0)
-@@ -322,6 +327,7 @@
+@@ -331,6 +336,7 @@
              {
                  itemstack1 = null;
              }

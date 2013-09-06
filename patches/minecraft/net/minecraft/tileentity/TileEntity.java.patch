@@ -12,7 +12,7 @@
  import net.minecraft.world.World;
  
  public class TileEntity
-@@ -308,4 +311,93 @@
+@@ -309,4 +312,94 @@
          addMapping(TileEntityHopper.class, "Hopper");
          addMapping(TileEntityComparator.class, "Comparator");
      }
@@ -47,6 +47,7 @@
 +    {
 +    }
 +
++    private boolean isVanilla = getClass().getName().startsWith("net.minecraft.tileentity");
 +    /**
 +     * Called from Chunk.setBlockIDWithMetadata, determines if this tile entity should be re-created when the ID, or Metadata changes.
 +     * Use with caution as this will leave straggler TileEntities, or create conflicts with other TileEntities if not used properly.
@@ -63,7 +64,7 @@
 +     */
 +    public boolean shouldRefresh(int oldID, int newID, int oldMeta, int newMeta, World world, int x, int y, int z)
 +    {
-+        return true;
++        return !isVanilla || (oldID != newID);
 +    }
 +
 +    public boolean shouldRenderInPass(int pass)

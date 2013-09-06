@@ -1,17 +1,17 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemBucket.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemBucket.java
 @@ -8,6 +8,10 @@
- import net.minecraft.util.EnumMovingObjectType;
  import net.minecraft.util.MovingObjectPosition;
  import net.minecraft.world.World;
-+
+ 
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.Event;
 +import net.minecraftforge.event.entity.player.FillBucketEvent;
- 
++
  public class ItemBucket extends Item
  {
-@@ -40,6 +44,32 @@
+     /** field for checking if the bucket has been filled. */
+@@ -35,6 +39,32 @@
          }
          else
          {

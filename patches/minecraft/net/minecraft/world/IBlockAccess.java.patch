@@ -8,7 +8,16 @@
  
  public interface IBlockAccess
  {
-@@ -103,4 +104,16 @@
+@@ -59,8 +60,6 @@
+      */
+     boolean isBlockNormalCube(int i, int j, int k);
+ 
+-    @SideOnly(Side.CLIENT)
+-
+     /**
+      * Returns true if the block at the specified coordinates is empty
+      */
+@@ -103,4 +102,16 @@
       * Is this block powering in the specified direction Args: x, y, z, direction
       */
      int isBlockProvidingPowerTo(int i, int j, int k, int l);

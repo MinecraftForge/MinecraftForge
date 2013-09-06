@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableMap;
  *
  * @author CovertJaguar <railcraft.wikispaces.com>
  */
+@Deprecated //See new net.minecraftforge.fluids
 public abstract class LiquidDictionary
 {
 

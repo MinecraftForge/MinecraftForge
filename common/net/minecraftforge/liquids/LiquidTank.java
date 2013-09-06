@@ -6,6 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 /**
  * Reference implementation of ILiquidTank. Use this or implement your own.
  */
+@Deprecated //See new net.minecraftforge.fluids
 public class LiquidTank implements ILiquidTank {
     private LiquidStack liquid;
     private int capacity;

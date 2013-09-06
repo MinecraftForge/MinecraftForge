@@ -1,17 +1,22 @@
 --- ../src_base/minecraft/net/minecraft/entity/Entity.java
 +++ ../src_work/minecraft/net/minecraft/entity/Entity.java
-@@ -1,7 +1,10 @@
+@@ -1,10 +1,15 @@
  package net.minecraft.entity;
  
 +import cpw.mods.fml.common.FMLLog;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
++
 +import java.util.ArrayList;
 +import java.util.HashMap;
  import java.util.List;
  import java.util.Random;
  import java.util.UUID;
-@@ -13,8 +16,13 @@
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockFluid;
+ import net.minecraft.block.StepSound;
+@@ -13,8 +18,13 @@
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.enchantment.EnchantmentProtection;
  import net.minecraft.entity.effect.EntityLightningBolt;
@@ -25,7 +30,7 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.nbt.NBTTagDouble;
-@@ -25,12 +33,16 @@
+@@ -26,12 +36,18 @@
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.Direction;
  import net.minecraft.util.MathHelper;
@@ -39,10 +44,12 @@
 +import net.minecraftforge.common.IExtendedEntityProperties;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.EntityEvent;
++import net.minecraftforge.fluids.Fluid;
++import net.minecraftforge.fluids.IFluidBlock;
  
  public abstract class Entity
  {
-@@ -225,6 +237,13 @@
+@@ -218,6 +234,13 @@
      private boolean invulnerable;
      private UUID entityUniqueID;
      public EnumEntitySize myEntitySize;
@@ -56,7 +63,7 @@
  
      public Entity(World par1World)
      {
-@@ -274,6 +293,15 @@
+@@ -245,6 +268,15 @@
          this.dataWatcher.addObject(0, Byte.valueOf((byte)0));
          this.dataWatcher.addObject(1, Short.valueOf((short)300));
          this.entityInit();
@@ -72,16 +79,33 @@
      }
  
      protected abstract void entityInit();
-@@ -554,7 +582,7 @@
-         if (!this.worldObj.isRemote)
-         {
-             this.setFlag(0, this.fire > 0);
--            this.setFlag(2, this.ridingEntity != null);
-+            this.setFlag(2, this.ridingEntity != null && ridingEntity.shouldRiderSit());
-         }
+@@ -1164,11 +1196,20 @@
+         int k = MathHelper.floor_double(this.posZ);
+         int l = this.worldObj.getBlockId(i, j, k);
  
-         this.firstUpdate = false;
-@@ -1534,6 +1562,21 @@
+-        if (l != 0 && Block.blocksList[l].blockMaterial == par1Material)
+-        {
+-            float f = BlockFluid.getFluidHeightPercent(this.worldObj.getBlockMetadata(i, j, k)) - 0.11111111F;
+-            float f1 = (float)(j + 1) - f;
+-            return d0 < (double)f1;
++        Block block = Block.blocksList[l];
++        if (block != null && block.blockMaterial == par1Material)
++        {
++            double filled = block.getFilledPercentage(worldObj, i, j, k);
++            if (filled < 0)
++            {
++                filled *= -1;
++                //filled -= 0.11111111F; //Why this is needed.. not sure...
++                return d0 > (double)(j + (1 - filled));
++            }
++            else
++            {
++                return d0 < (double)(j + filled);
++            }
+         }
+         else
+         {
+@@ -1529,6 +1570,21 @@
              par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
              par1NBTTagCompound.setLong("UUIDMost", this.entityUniqueID.getMostSignificantBits());
              par1NBTTagCompound.setLong("UUIDLeast", this.entityUniqueID.getLeastSignificantBits());
@@ -103,7 +127,7 @@
              this.writeEntityToNBT(par1NBTTagCompound);
  
              if (this.ridingEntity != null)
-@@ -1604,6 +1647,26 @@
+@@ -1599,6 +1655,26 @@
  
              this.setPosition(this.posX, this.posY, this.posZ);
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -128,43 +152,43 @@
 +                this.entityUniqueID = new UUID(par1NBTTagCompound.getLong("PersistentIDMSB"), par1NBTTagCompound.getLong("PersistentIDLSB"));
 +            }
              this.readEntityFromNBT(par1NBTTagCompound);
-         }
-         catch (Throwable throwable)
-@@ -1698,7 +1761,14 @@
-     {
-         EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
-         entityitem.delayBeforeCanPickup = 10;
--        this.worldObj.spawnEntityInWorld(entityitem);
-+        if (captureDrops)
-+        {
-+            capturedDrops.add(entityitem);
-+        }
-+        else
-+        {
-+            this.worldObj.spawnEntityInWorld(entityitem);
-+        }
-         return entityitem;
-     }
  
-@@ -2056,7 +2126,7 @@
+             if (this.shouldSetPosAfterLoading())
+@@ -1711,7 +1787,14 @@
+         {
+             EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
+             entityitem.delayBeforeCanPickup = 10;
+-            this.worldObj.spawnEntityInWorld(entityitem);
++            if (captureDrops)
++            {
++                capturedDrops.add(entityitem);
++            }
++            else
++            {
++                this.worldObj.spawnEntityInWorld(entityitem);
++            }
+             return entityitem;
+         }
+     }
+@@ -2010,7 +2093,7 @@
       */
      public boolean isRiding()
      {
--        return this.ridingEntity != null || this.getFlag(2);
-+        return (this.ridingEntity != null && ridingEntity.shouldRiderSit()) || this.getFlag(2);
+-        return this.ridingEntity != null;
++        return this.ridingEntity != null && ridingEntity.shouldRiderSit();
      }
  
      /**
-@@ -2400,7 +2470,7 @@
- 
-     public float func_82146_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
+@@ -2385,7 +2468,7 @@
+      */
+     public float getBlockExplosionResistance(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
      {
 -        return par6Block.getExplosionResistance(this);
 +        return par6Block.getExplosionResistance(this, par2World, par3, par4, par5, posX, posY + (double)getEyeHeight(), posZ);
      }
  
-     public boolean func_96091_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
-@@ -2458,4 +2528,145 @@
+     public boolean shouldExplodeBlock(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
+@@ -2451,4 +2534,170 @@
      {
          return this.getEntityName();
      }
@@ -224,6 +248,10 @@
 +            {
 +                return held.copy();
 +            }
++        }
++        else if (this instanceof EntityLeashKnot)
++        {
++            return new ItemStack(Item.leash);
 +        }
 +        else
 +        {
@@ -308,5 +336,26 @@
 +    public IExtendedEntityProperties getExtendedProperties(String identifier)
 +    {
 +        return this.extendedProperties.get(identifier);
++    }
++
++    /**
++     * If a rider of this entity can interact with this entity. Should return true on the
++     * ridden entity if so.
++     *
++     * @return if the entity can be interacted with from a rider
++     */
++    public boolean canRiderInteract()
++    {
++        return false;
++    }
++
++    /**
++     * If the rider should be dismounted from the entity when the entity goes under water
++     *
++     * @param rider The entity that is riding
++     * @return if the entity should be dismounted when under water
++     */
++    public boolean shouldDismountInWater(Entity rider){
++        return this instanceof EntityLivingBase;
 +    }
  }

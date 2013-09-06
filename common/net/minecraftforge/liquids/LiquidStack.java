@@ -22,6 +22,7 @@ import net.minecraft.util.Icon;
  *
  * @author SirSengir
  */
+@Deprecated //See new net.minecraftforge.fluids
 public class LiquidStack
 {
     public final int itemID;
@@ -64,17 +65,6 @@ public class LiquidStack
             nbt.setTag("extra", extra);
         }
         return nbt;
-    }
-
-
-    /**
-     * NO-OP now. Use {@link #loadLiquidStackFromNBT(NBTTagCompound)} to get a new instance
-     *
-     * @param nbt
-     */
-    @Deprecated
-    public void readFromNBT(NBTTagCompound nbt)
-    {
     }
 
     /**
@@ -213,11 +203,11 @@ public class LiquidStack
     {
         if (itemID == Block.waterStill.blockID)
         {
-            return BlockFluid.func_94424_b("water");
+            return BlockFluid.getFluidIcon("water");
         }
         else if (itemID == Block.lavaStill.blockID)
         {
-            return BlockFluid.func_94424_b("lava");
+            return BlockFluid.getFluidIcon("lava");
         }
         return renderingIcon;
     }

@@ -22,8 +22,10 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ForwardingSet;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.LinkedHashMultimap;
@@ -34,6 +36,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Multiset;
+import com.google.common.collect.Multisets;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.collect.TreeMultiset;
@@ -813,7 +816,10 @@ public class ForgeChunkManager
     static void saveWorld(World world)
     {
         // only persist persistent worlds
-        if (!(world instanceof WorldServer)) { return; }
+        if (!(world instanceof WorldServer))
+        {
+            return;
+        }
         WorldServer worldServer = (WorldServer) world;
         File chunkDir = worldServer.getChunkSaveLocation();
         File chunkLoaderData = new File(chunkDir, "forcedchunks.dat");
@@ -846,7 +852,7 @@ public class ForgeChunkManager
                 {
                     ticket.setCompoundTag("ModData", tick.modData);
                 }
-                if (tick.ticketType == Type.ENTITY && tick.entity != null && tick.entity.addEntityID(new NBTTagCompound()))
+                if (tick.ticketType == Type.ENTITY && tick.entity != null && tick.entity.writeToNBTOptional(new NBTTagCompound()))
                 {
                     ticket.setInteger("chunkX", MathHelper.floor_double(tick.entity.chunkCoordX));
                     ticket.setInteger("chunkZ", MathHelper.floor_double(tick.entity.chunkCoordZ));

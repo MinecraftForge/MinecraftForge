@@ -1,15 +1,98 @@
 --- ../src_base/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
 +++ ../src_work/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
-@@ -46,6 +46,8 @@
+@@ -49,6 +49,9 @@
+ import net.minecraft.util.MovementInput;
  import net.minecraft.util.Session;
- import net.minecraft.util.StringUtils;
  import net.minecraft.world.World;
++import net.minecraftforge.client.ForgeHooksClient;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
  
  @SideOnly(Side.CLIENT)
- public class EntityPlayerSP extends EntityPlayer
-@@ -661,6 +663,12 @@
+ public class EntityPlayerSP extends AbstractClientPlayer
+@@ -343,7 +346,7 @@
+             f *= 1.0F - f1 * 0.15F;
+         }
+ 
+-        return f;
++        return ForgeHooksClient.getOffsetFOV(this, f);
+     }
+ 
+     /**
+@@ -570,18 +573,66 @@
+      */
+     protected boolean pushOutOfBlocks(double par1, double par3, double par5)
+     {
++        if (this.noClip)
++        {
++            return false;
++        }
+         int i = MathHelper.floor_double(par1);
+         int j = MathHelper.floor_double(par3);
+         int k = MathHelper.floor_double(par5);
+         double d3 = par1 - (double)i;
+         double d4 = par5 - (double)k;
+ 
+-        if (this.isBlockTranslucent(i, j, k) || this.isBlockTranslucent(i, j + 1, k))
+-        {
+-            boolean flag = !this.isBlockTranslucent(i - 1, j, k) && !this.isBlockTranslucent(i - 1, j + 1, k);
+-            boolean flag1 = !this.isBlockTranslucent(i + 1, j, k) && !this.isBlockTranslucent(i + 1, j + 1, k);
+-            boolean flag2 = !this.isBlockTranslucent(i, j, k - 1) && !this.isBlockTranslucent(i, j + 1, k - 1);
+-            boolean flag3 = !this.isBlockTranslucent(i, j, k + 1) && !this.isBlockTranslucent(i, j + 1, k + 1);
++        int entHeight = Math.max(Math.round(this.height), 1);
++        
++        boolean inTranslucentBlock = true;
++        
++        for (int i1 = 0; i1 < entHeight; i1++)
++        {
++            if (!this.isBlockTranslucent(i, j + i1, k))
++            {
++                inTranslucentBlock = false;
++            }
++        }
++        
++        if (inTranslucentBlock)
++        {
++            boolean flag = true;
++            boolean flag1 = true;
++            boolean flag2 = true;
++            boolean flag3 = true;
++            for (int i1 = 0; i1 < entHeight; i1++)
++            {
++                if(this.isBlockTranslucent(i - 1, j + i1, k))
++                {
++            	    flag = false;
++            	    break;
++                }
++            }
++            for (int i1 = 0; i1 < entHeight; i1++)
++            {
++                if(this.isBlockTranslucent(i + 1, j + i1, k))
++                {
++            	    flag1 = false;
++            	    break;
++                }
++            }
++            for (int i1 = 0; i1 < entHeight; i1++)
++            {
++                if(this.isBlockTranslucent(i, j + i1, k - 1))
++                {
++            	    flag2 = false;
++            	    break;
++                }
++            }
++            for (int i1 = 0; i1 < entHeight; i1++)
++            {
++                if(this.isBlockTranslucent(i, j + i1, k + 1))
++                {
++            	    flag3 = false;
++            	    break;
++                }
++            }
+             byte b0 = -1;
+             double d5 = 9999.0D;
+ 
+@@ -685,6 +736,12 @@
  
      public void playSound(String par1Str, float par2, float par3)
      {
@@ -21,4 +104,4 @@
 +        par1Str = event.name;
          this.worldObj.playSound(this.posX, this.posY - (double)this.yOffset, this.posZ, par1Str, par2, par3, false);
      }
- }
+ 

@@ -2,7 +2,7 @@ import os, os.path, sys, zipfile
 import shutil, glob, fnmatch, subprocess
 from pprint import pformat
 from optparse import OptionParser
-
+sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
 forge_dir = os.path.dirname(os.path.abspath(__file__))
 
 from forge import apply_forge_patches
@@ -53,7 +53,7 @@ def main():
     
 def setup_fml(mcp_dir, fml_dir, build_num=0):
     print 'Setting up Forge ModLoader'
-    os.environ['WORKSPACE'] = os.path.join(mcp_dir, '..')
+    os.environ['WORKSPACE'] = os.path.abspath(os.path.join(mcp_dir, '..'))
     os.environ['BUILD_NUMBER'] = str(build_num)
 
     BUILD = ['ant', 'jenkinsbuild']

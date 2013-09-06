@@ -32,7 +32,7 @@
  
              if (chunk == null)
              {
-@@ -303,6 +310,11 @@
+@@ -307,6 +314,11 @@
      {
          if (!this.worldObj.canNotSave)
          {
@@ -44,7 +44,7 @@
              for (int i = 0; i < 100; ++i)
              {
                  if (!this.chunksToUnload.isEmpty())
-@@ -315,6 +327,11 @@
+@@ -319,6 +331,11 @@
                      this.chunksToUnload.remove(olong);
                      this.loadedChunkHashMap.remove(olong.longValue());
                      this.loadedChunks.remove(chunk);

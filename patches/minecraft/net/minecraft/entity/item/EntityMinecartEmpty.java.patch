@@ -11,7 +11,7 @@
  {
 @@ -20,6 +22,10 @@
       */
-     public boolean interact(EntityPlayer par1EntityPlayer)
+     public boolean interactFirst(EntityPlayer par1EntityPlayer)
      {
 +        if(MinecraftForge.EVENT_BUS.post(new MinecartInteractEvent(this, par1EntityPlayer))) 
 +        {

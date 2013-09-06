@@ -8,7 +8,7 @@
  import java.util.HashMap;
  import java.util.Iterator;
  import java.util.List;
-@@ -19,6 +21,10 @@
+@@ -17,6 +19,10 @@
  import net.minecraft.world.biome.SpawnListEntry;
  import net.minecraft.world.chunk.Chunk;
  
@@ -19,38 +19,43 @@
  public final class SpawnerAnimals
  {
      /** The 17x17 area around the player where mobs can spawn */
-@@ -90,9 +96,12 @@
+@@ -85,9 +91,12 @@
              {
                  EnumCreatureType enumcreaturetype = aenumcreaturetype[j1];
  
--                if ((!enumcreaturetype.getPeacefulCreature() || par2) && (enumcreaturetype.getPeacefulCreature() || par1) && (!enumcreaturetype.getAnimal() || par3) && par0WorldServer.countEntities(enumcreaturetype.getCreatureClass()) <= enumcreaturetype.getMaxNumberOfCreature() * eligibleChunksForSpawning.size() / 256)
-+                if ((!enumcreaturetype.getPeacefulCreature() || par2) && (enumcreaturetype.getPeacefulCreature() || par1) && (!enumcreaturetype.getAnimal() || par3) && par0WorldServer.countEntities(enumcreaturetype, true) <= enumcreaturetype.getMaxNumberOfCreature() * eligibleChunksForSpawning.size() / 256)
+-                if ((!enumcreaturetype.getPeacefulCreature() || par3) && (enumcreaturetype.getPeacefulCreature() || par2) && (!enumcreaturetype.getAnimal() || par4) && par1WorldServer.countEntities(enumcreaturetype.getCreatureClass()) <= enumcreaturetype.getMaxNumberOfCreature() * this.eligibleChunksForSpawning.size() / 256)
++                if ((!enumcreaturetype.getPeacefulCreature() || par3) && (enumcreaturetype.getPeacefulCreature() || par2) && (!enumcreaturetype.getAnimal() || par4) && par1WorldServer.countEntities(enumcreaturetype, true) <= enumcreaturetype.getMaxNumberOfCreature() * this.eligibleChunksForSpawning.size() / 256)
                  {
-                     Iterator iterator = eligibleChunksForSpawning.keySet().iterator();
+                     Iterator iterator = this.eligibleChunksForSpawning.keySet().iterator();
 +                    ArrayList<ChunkCoordIntPair> tmp = new ArrayList(eligibleChunksForSpawning.keySet());
 +                    Collections.shuffle(tmp);
 +                    iterator = tmp.iterator();
                      label110:
  
                      while (iterator.hasNext())
-@@ -169,13 +178,14 @@
+@@ -165,13 +174,17 @@
  
-                                                             entityliving.setLocationAndAngles((double)f, (double)f1, (double)f2, par0WorldServer.rand.nextFloat() * 360.0F, 0.0F);
+                                                             entityliving.setLocationAndAngles((double)f, (double)f1, (double)f2, par1WorldServer.rand.nextFloat() * 360.0F, 0.0F);
  
 -                                                            if (entityliving.getCanSpawnHere())
-+                                                            Result canSpawn = ForgeEventFactory.canEntitySpawn(entityliving, par0WorldServer, f, f1, f2);
++                                                            Result canSpawn = ForgeEventFactory.canEntitySpawn(entityliving, par1WorldServer, f, f1, f2);
 +                                                            if (canSpawn == Result.ALLOW || (canSpawn == Result.DEFAULT && entityliving.getCanSpawnHere()))
                                                              {
                                                                  ++j2;
-                                                                 par0WorldServer.spawnEntityInWorld(entityliving);
-                                                                 creatureSpecificInit(entityliving, par0WorldServer, f, f1, f2);
- 
+                                                                 par1WorldServer.spawnEntityInWorld(entityliving);
+-                                                                entitylivingdata = entityliving.onSpawnWithEgg(entitylivingdata);
+-
 -                                                                if (j2 >= entityliving.getMaxSpawnedInChunk())
++                                                                if (!ForgeEventFactory.doSpecialSpawn(entityliving, par1WorldServer, f, f1, f2))
++                                                                {
++                                                                    entitylivingdata = entityliving.onSpawnWithEgg(entitylivingdata);
++                                                                }
++
 +                                                                if (j2 >= ForgeEventFactory.getMaxSpawnPackSize(entityliving))
                                                                  {
                                                                      continue label110;
                                                                  }
-@@ -221,7 +231,8 @@
+@@ -217,7 +230,8 @@
          else
          {
              int l = par1World.getBlockId(par2, par3 - 1, par4);
@@ -58,17 +63,5 @@
 +            boolean spawnBlock = (Block.blocksList[l] != null && Block.blocksList[l].canCreatureSpawn(par0EnumCreatureType, par1World, par2, par3 - 1, par4));
 +            return spawnBlock && l != Block.bedrock.blockID && !par1World.isBlockNormalCube(par2, par3, par4) && !par1World.getBlockMaterial(par2, par3, par4).isLiquid() && !par1World.isBlockNormalCube(par2, par3 + 1, par4);
          }
-     }
- 
-@@ -230,6 +241,11 @@
-      */
-     private static void creatureSpecificInit(EntityLiving par0EntityLiving, World par1World, float par2, float par3, float par4)
-     {
-+        if (ForgeEventFactory.doSpecialSpawn(par0EntityLiving, par1World, par2, par3, par4))
-+        {
-+            return;
-+        }
-+
-         par0EntityLiving.initCreature();
      }
  

@@ -10,14 +10,18 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.management.PlayerInstance;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.network.ForgeConnectionHandler;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
 import net.minecraftforge.common.network.ForgePacketHandler;
 import net.minecraftforge.common.network.ForgeTinyPacketHandler;
+import net.minecraftforge.server.command.ForgeCommand;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import cpw.mods.fml.client.FMLFileResourcePack;
+import cpw.mods.fml.client.FMLFolderResourcePack;
 import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.LoadController;
@@ -27,6 +31,7 @@ import cpw.mods.fml.common.WorldAccessContainer;
 import cpw.mods.fml.common.event.FMLConstructionEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.FMLNetworkHandler;
 import cpw.mods.fml.common.network.NetworkMod;
 
@@ -41,10 +46,11 @@ import static net.minecraftforge.common.ForgeVersion.*;
 public class ForgeDummyContainer extends DummyModContainer implements WorldAccessContainer
 {
     public static int clumpingThreshold = 64;
-    public static boolean legacyFurnaceSides = false;
     public static boolean removeErroringEntities = false;
     public static boolean removeErroringTileEntities = false;
     public static boolean disableStitchedFileSaving = false;
+    public static boolean forceDuplicateFluidBlockCrash = true;
+    public static boolean fullBoundingBoxLadders = false;
 
     public ForgeDummyContainer()
     {
@@ -98,17 +104,13 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
             prop.set(64);
         }
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "legacyFurnaceOutput", false);
-        prop.comment = "Controls the sides of vanilla furnaces for Forge's ISidedInventroy, Vanilla defines the output as the bottom, but mods/Forge define it as the sides. Settings this to true will restore the old side relations.";
-        legacyFurnaceSides = prop.getBoolean(false);
-
         prop = config.get(Configuration.CATEGORY_GENERAL, "removeErroringEntities", false);
         prop.comment = "Set this to just remove any TileEntity that throws a error in there update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.";
         removeErroringEntities = prop.getBoolean(false);
 
         if (removeErroringEntities)
         {
-            FMLLog.warning("Enableing removal of erroring Entities USE AT YOUR OWN RISK");
+            FMLLog.warning("Enabling removal of erroring Entities - USE AT YOUR OWN RISK");
         }
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "removeErroringTileEntities", false);
@@ -117,12 +119,25 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
 
         if (removeErroringTileEntities)
         {
-            FMLLog.warning("Enableing removal of erroring Tile Entities USE AT YOUR OWN RISK");
+            FMLLog.warning("Enabling removal of erroring Tile Entities - USE AT YOUR OWN RISK");
         }
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "disableStitchedFileSaving", true);
-        prop.comment = "Set this to just disable the texture stitcher from writing the 'debug.stitched_{name}.png file to disc. Just a small performance tweak. Default: true";
-        disableStitchedFileSaving = prop.getBoolean(true);
+        //prop = config.get(Configuration.CATEGORY_GENERAL, "disableStitchedFileSaving", true);
+        //prop.comment = "Set this to just disable the texture stitcher from writing the 'debug.stitched_{name}.png file to disc. Just a small performance tweak. Default: true";
+        //disableStitchedFileSaving = prop.getBoolean(true);
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "fullBoundingBoxLadders", false);
+        prop.comment = "Set this to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticable differences in mechanics so default is vanilla behavior. Default: false";
+        fullBoundingBoxLadders = prop.getBoolean(false);
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "forceDuplicateFluidBlockCrash", true);
+        prop.comment = "Set this to force a crash if more than one block attempts to link back to the same Fluid. Enabled by default.";
+        forceDuplicateFluidBlockCrash = prop.getBoolean(true);
+
+        if (!forceDuplicateFluidBlockCrash)
+        {
+            FMLLog.warning("Disabling forced crashes on duplicate Fluid Blocks - USE AT YOUR OWN RISK");
+        }
 
         if (config.hasChanged())
         {
@@ -133,7 +148,7 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     @Override
     public boolean registerBus(EventBus bus, LoadController controller)
     {
-    	bus.register(this);
+        bus.register(this);
         return true;
     }
 
@@ -161,9 +176,15 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     @Subscribe
     public void postInit(FMLPostInitializationEvent evt)
     {
-    	ForgeChunkManager.loadConfiguration();
+        BiomeDictionary.registerAllBiomesAndGenerateEvents();
+        ForgeChunkManager.loadConfiguration();
     }
 
+    @Subscribe
+    public void serverStarting(FMLServerStartingEvent evt)
+    {
+        evt.registerServerCommand(new ForgeCommand(evt.getServer()));
+    }
     @Override
     public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info)
     {
@@ -179,6 +200,24 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
         if (tag.hasKey("DimensionData"))
         {
             DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
+        }
+    }
+
+    @Override
+    public File getSource()
+    {
+        return FMLForgePlugin.forgeLocation;
+    }
+    @Override
+    public Class<?> getCustomResourcePackClass()
+    {
+        if (getSource().isDirectory())
+        {
+            return FMLFolderResourcePack.class;
+        }
+        else
+        {
+            return FMLFileResourcePack.class;
         }
     }
 }

@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/block/Block.java
 +++ ../src_work/minecraft/net/minecraft/block/Block.java
-@@ -1,15 +1,20 @@
+@@ -1,15 +1,22 @@
  package net.minecraft.block;
  
 -import cpw.mods.fml.relauncher.Side;
@@ -18,12 +18,14 @@
  import net.minecraft.creativetab.CreativeTabs;
  import net.minecraft.enchantment.EnchantmentHelper;
  import net.minecraft.entity.Entity;
- import net.minecraft.entity.EntityLiving;
+ import net.minecraft.entity.EntityLivingBase;
 +import net.minecraft.entity.EnumCreatureType;
++import net.minecraft.entity.boss.EntityDragon;
++import net.minecraft.entity.boss.EntityWither;
  import net.minecraft.entity.item.EntityItem;
  import net.minecraft.entity.item.EntityXPOrb;
  import net.minecraft.entity.player.EntityPlayer;
-@@ -26,8 +31,10 @@
+@@ -26,8 +33,10 @@
  import net.minecraft.item.ItemSnow;
  import net.minecraft.item.ItemStack;
  import net.minecraft.stats.StatList;
@@ -34,7 +36,7 @@
  import net.minecraft.util.Icon;
  import net.minecraft.util.MovingObjectPosition;
  import net.minecraft.util.StatCollector;
-@@ -35,9 +42,19 @@
+@@ -35,9 +44,21 @@
  import net.minecraft.world.Explosion;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
@@ -43,7 +45,9 @@
 +import net.minecraftforge.common.ForgeDirection;
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.IPlantable;
++import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.common.RotationHelper;
++import net.minecraftforge.event.world.BlockEvent;
 +import cpw.mods.fml.relauncher.Side;
 +import cpw.mods.fml.relauncher.SideOnly;
  
@@ -54,7 +58,7 @@
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
-@@ -454,9 +471,10 @@
+@@ -460,9 +481,10 @@
          return this.needsRandomTick;
      }
  
@@ -66,7 +70,7 @@
      }
  
      /**
-@@ -479,7 +497,7 @@
+@@ -485,7 +507,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -75,7 +79,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -489,7 +507,7 @@
+@@ -495,7 +517,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -84,9 +88,9 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -639,7 +657,13 @@
-     /**
-      * ejects contained items into the world, and notifies neighbours of an update, as appropriate
+@@ -648,7 +670,13 @@
+      * different metadata value, but before the new metadata value is set. Args: World, x, y, z, old block ID, old
+      * metadata
       */
 -    public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6) {}
 +    public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
@@ -99,7 +103,7 @@
  
      /**
       * Returns the quantity of items to drop on block destruction.
-@@ -664,7 +688,7 @@
+@@ -673,7 +701,7 @@
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
          float f = this.getBlockHardness(par2World, par3, par4, par5);
@@ -108,30 +112,41 @@
      }
  
      /**
-@@ -682,18 +706,13 @@
+@@ -681,7 +709,7 @@
+      */
+     public final void dropBlockAsItem(World par1World, int par2, int par3, int par4, int par5, int par6)
      {
-         if (!par1World.isRemote)
-         {
+-        this.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, 1.0F, par6);
++        dropBlockAsItem(par1World, par2, par3, par4, par5, par6, null);
+     }
+ 
+     /**
+@@ -689,23 +717,7 @@
+      */
+     public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
+     {
+-        if (!par1World.isRemote)
+-        {
 -            int j1 = this.quantityDroppedWithBonus(par7, par1World.rand);
 -
 -            for (int k1 = 0; k1 < j1; ++k1)
-+            ArrayList<ItemStack> items = getBlockDropped(par1World, par2, par3, par4, par5, par7);
-+
-+            for (ItemStack item : items)
-             {
-                 if (par1World.rand.nextFloat() <= par6)
-                 {
+-            {
+-                if (par1World.rand.nextFloat() <= par6)
+-                {
 -                    int l1 = this.idDropped(par5, par1World.rand, par7);
 -
 -                    if (l1 > 0)
 -                    {
 -                        this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(l1, 1, this.damageDropped(par5)));
 -                    }
-+                    this.dropBlockAsItem_do(par1World, par2, par3, par4, item);
-                 }
-             }
-         }
-@@ -926,7 +945,8 @@
+-                }
+-            }
+-        }
++        dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, par7, null);
+     }
+ 
+     /**
+@@ -935,7 +947,8 @@
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
          int l = par1World.getBlockId(par2, par3, par4);
@@ -141,7 +156,7 @@
      }
  
      /**
-@@ -1086,7 +1106,7 @@
+@@ -1095,28 +1108,38 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -149,11 +164,35 @@
 +        if (this.canSilkHarvest(par1World, par2EntityPlayer, par3, par4, par5, par6) && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer))
          {
              ItemStack itemstack = this.createStackedBlock(par6);
- 
-@@ -1102,12 +1122,13 @@
+-
+-            if (itemstack != null)
++            ArrayList<ItemStack> results = new ArrayList<ItemStack>();
++            if (itemstack!=null)
+             {
+-                this.dropBlockAsItem_do(par1World, par3, par4, par5, itemstack);
++                results.add(itemstack);
+             }
++
++            MinecraftForge.EVENT_BUS.post(new BlockEvent.HarvestDropsEvent(par3, par4, par5, par1World, this, par6, 0, 1.0f, results, par2EntityPlayer, true));
++            if (itemstack != null && !results.isEmpty())
++            {
++                for (ItemStack is : results)
++                {
++                    this.dropBlockAsItem_do(par1World, par3, par4, par5, is);
++                }
++            }
          }
-     }
- 
+         else
+         {
+             int i1 = EnchantmentHelper.getFortuneModifier(par2EntityPlayer);
+-            this.dropBlockAsItem(par1World, par3, par4, par5, par6, i1);
+-        }
+-    }
+-
++            this.dropBlockAsItem(par1World, par3, par4, par5, par6, i1, par2EntityPlayer);
++        }
++    }
++
 +    private int silk_check_meta = -1; //Dirty hack to stop us from needing to special case the silk check hook.
      /**
       * Return true if a player with Silk Touch can harvest this block directly, and not its normal drops.
@@ -165,7 +204,7 @@
      }
  
      /**
-@@ -1443,4 +1464,950 @@
+@@ -1457,4 +1480,1001 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -200,12 +239,7 @@
 +     * @param entity The entity trying to use the ladder, CAN be null.
 +     * @return True if the block should act like a ladder
 +     */
-+    public boolean isLadder(World world, int x, int y, int z, EntityLiving entity)
-+    {
-+        return isLadder(world, x, y, z);
-+    }
-+    @Deprecated //See EntityLiving sensitive version above
-+    public boolean isLadder(World world, int x, int y, int z)
++    public boolean isLadder(World world, int x, int y, int z, EntityLivingBase entity)
 +    {
 +        return false;
 +    }
@@ -352,6 +386,7 @@
 +     *
 +     * @param itemList The list of items to display on the creative inventory.
 +     */
++    @Deprecated
 +    public void addCreativeItems(ArrayList itemList)
 +    {
 +    }
@@ -538,6 +573,28 @@
 +        return ret;
 +    }
 +
++    public final void dropBlockAsItem(World par1World, int par2, int par3, int par4, int par5, int par6, EntityPlayer player)
++    {
++        this.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, 1.0F, par6, player);
++    }
++
++    public void dropBlockAsItemWithChance(World world, int x, int y, int z, int metadata, float dropChance, int fortune, EntityPlayer player)
++    {
++        if (!world.isRemote)
++        {
++            ArrayList<ItemStack> items = getBlockDropped(world, x, y, z, metadata, fortune);
++            BlockEvent.HarvestDropsEvent dropsEvent = new BlockEvent.HarvestDropsEvent(x, y, z, world, this, metadata, fortune, dropChance, items, player, false);
++            MinecraftForge.EVENT_BUS.post(dropsEvent);
++            for (ItemStack item : items)
++            {
++                if (world.rand.nextFloat() <= dropsEvent.dropChance)
++                {
++                    this.dropBlockAsItem_do(world, x, y, z, item);
++                }
++            }
++        }
++    }
++
 +    /**
 +     * Determines if a specified mob type can spawn on this block, returning false will
 +     * prevent any mob from spawning on the block.
@@ -575,7 +632,7 @@
 +     * @param player The player or camera entity, null in some cases.
 +     * @return True to treat this as a bed
 +     */
-+    public boolean isBed(World world, int x, int y, int z, EntityLiving player)
++    public boolean isBed(World world, int x, int y, int z, EntityLivingBase player)
 +    {
 +        return blockID == Block.bed.blockID;
 +    }
@@ -1011,8 +1068,7 @@
 +    }
 +
 +    /**
-+     * Determines if this block is destroyed when a ender dragon tries to fly through it.
-+     * The block will be set to 0, nothing will drop.
++     * Determines if this block is can be destroyed by the specified entities normal behavior.
 +     *
 +     * @param world The current world
 +     * @param x X Position
@@ -1020,6 +1076,20 @@
 +     * @param z Z position
 +     * @return True to allow the ender dragon to destroy this block
 +     */
++    public boolean canEntityDestroy(World world, int x, int y, int z, Entity entity)
++    {
++        if (entity instanceof EntityWither)
++        {
++            return blockID != Block.bedrock.blockID && blockID != Block.endPortal.blockID && blockID != Block.endPortalFrame.blockID;
++        }
++        else if (entity instanceof EntityDragon)
++        {
++            return canDragonDestroy(world, x, y, z);
++        }
++
++        return true;
++    }
++    @Deprecated
 +    public boolean canDragonDestroy(World world, int x, int y, int z)
 +    {
 +        return blockID != obsidian.blockID && blockID != whiteStone.blockID && blockID != bedrock.blockID;
@@ -1084,12 +1154,6 @@
 +     */
 +    public float getEnchantPowerBonus(World world, int x, int y, int z)
 +    {
-+        return getEnchantPower(world, x, y, z);
-+    }
-+
-+    @Deprecated //Changed return to float, see above.
-+    public int getEnchantPower(World world, int x, int y, int z)
-+    {
 +        return blockID == bookShelf.blockID ? 1 : 0;
 +    }
 +    /**
@@ -1115,4 +1179,30 @@
 +        }
 +        return false;
 +    }
++    
++    /**
++     * Called when a tile entity on a side of this block changes is created or is destroyed.
++     * @param world The world
++     * @param x The x position of this block instance
++     * @param y The y position of this block instance
++     * @param z The z position of this block instance
++     * @param tileX The x position of the tile that changed
++     * @param tileY The y position of the tile that changed
++     * @param tileZ The z position of the tile that changed
++     */
++    public void onNeighborTileChange(World world, int x, int y, int z, int tileX, int tileY, int tileZ)
++    {
++    }
++    
++    /**
++     * @return true if this block is to be notified of TileEntity changes directly through one solid block like comparators
++     */
++    public boolean weakTileChanges()
++    {
++        return false;
++    }
++
++    @Deprecated //Implemented here as we changed the IFluidBlock interface, and this allows us to do so without breaking exisitng mods.
++    // To be removed next MC version {1.6.3+}
++    public float getFilledPercentage(World world, int x, int y, int z){ return 1; }
  }
