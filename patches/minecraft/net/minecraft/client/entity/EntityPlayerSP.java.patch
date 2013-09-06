@@ -1,15 +1,25 @@
 --- ../src_base/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
 +++ ../src_work/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
-@@ -49,6 +49,8 @@
+@@ -49,6 +49,9 @@
  import net.minecraft.util.MovementInput;
  import net.minecraft.util.Session;
  import net.minecraft.world.World;
++import net.minecraftforge.client.ForgeHooksClient;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
  
  @SideOnly(Side.CLIENT)
  public class EntityPlayerSP extends AbstractClientPlayer
-@@ -570,18 +572,66 @@
+@@ -343,7 +346,7 @@
+             f *= 1.0F - f1 * 0.15F;
+         }
+ 
+-        return f;
++        return ForgeHooksClient.getOffsetFOV(this, f);
+     }
+ 
+     /**
+@@ -570,18 +573,66 @@
       */
      protected boolean pushOutOfBlocks(double par1, double par3, double par5)
      {
@@ -82,7 +92,7 @@
              byte b0 = -1;
              double d5 = 9999.0D;
  
-@@ -685,6 +735,12 @@
+@@ -685,6 +736,12 @@
  
      public void playSound(String par1Str, float par2, float par3)
      {

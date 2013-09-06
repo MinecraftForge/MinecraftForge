@@ -7,6 +7,8 @@ import java.util.TreeSet;
 import javax.imageio.ImageIO;
 
 import net.minecraftforge.client.event.MouseEvent;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraftforge.client.event.FOVUpdateEvent;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -21,11 +23,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
@@ -326,14 +326,23 @@ public class ForgeHooksClient
         }
     }
 
-    public static boolean postMouseEvent() {
+    public static boolean postMouseEvent()
+    {
         return MinecraftForge.EVENT_BUS.post(new MouseEvent());
+    }
+
+    public static float getOffsetFOV(EntityPlayerSP entity, float fov)
+    {
+        FOVUpdateEvent fovUpdateEvent = new FOVUpdateEvent(entity, fov);
+        MinecraftForge.EVENT_BUS.post(fovUpdateEvent);
+        return fovUpdateEvent.newfov;
     }
 
     /**
      * Initialization of Forge Renderers.
      */
-    static {
+    static
+    {
         FluidRegistry.renderIdFluid = RenderingRegistry.getNextAvailableRenderId();
         RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
     }
