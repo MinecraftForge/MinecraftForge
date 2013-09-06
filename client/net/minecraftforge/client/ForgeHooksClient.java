@@ -326,11 +326,13 @@ public class ForgeHooksClient
         }
     }
 
-    public static boolean postMouseEvent() {
+    public static boolean postMouseEvent()
+    {
         return MinecraftForge.EVENT_BUS.post(new MouseEvent());
     }
 
-    public static float getOffsetFOV(EntityPlayerSP entity, float fov) {
+    public static float getOffsetFOV(EntityPlayerSP entity, float fov)
+    {
         FOVUpdateEvent fovUpdateEvent = new FOVUpdateEvent(entity, fov);
         MinecraftForge.EVENT_BUS.post(fovUpdateEvent);
         return fovUpdateEvent.newfov;
@@ -339,9 +341,9 @@ public class ForgeHooksClient
     /**
      * Initialization of Forge Renderers.
      */
-    static {
+    static
+    {
         FluidRegistry.renderIdFluid = RenderingRegistry.getNextAvailableRenderId();
         RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
     }
-
 }

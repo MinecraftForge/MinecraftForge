@@ -9,7 +9,8 @@ import org.lwjgl.input.Mouse;
  * Created: 2:46 PM, 9/4/13
  */
 @Cancelable
-public class MouseEvent extends Event {
+public class MouseEvent extends Event
+{
     public final int x;
     public final int y;
     public final int dx;
@@ -19,7 +20,8 @@ public class MouseEvent extends Event {
     public final boolean buttonstate;
     public final long nanoseconds;
 
-    public MouseEvent() {
+    public MouseEvent()
+    {
         this.x = Mouse.getEventX();
         this.y = Mouse.getEventY();
         this.dx = Mouse.getEventDX();
