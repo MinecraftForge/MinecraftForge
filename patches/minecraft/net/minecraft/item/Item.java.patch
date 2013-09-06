@@ -26,8 +26,10 @@
 +import net.minecraft.util.WeightedRandomChestContent;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.ChestGenHooks;
++import net.minecraftforge.object.IInventoryObject;
  
- public class Item
+-public class Item
++public class Item implements IInventoryObject
  {
 @@ -250,13 +257,16 @@
      /** The string associated with this Item's Icon. */
@@ -600,4 +602,5 @@
 +    {
 +        return hasEffect(par1ItemStack) && (pass == 0 || itemID != Item.potion.itemID);
 +    }
++    public int getID() {return this.itemID;}
  }
