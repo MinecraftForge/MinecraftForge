@@ -36,7 +36,7 @@
  import net.minecraft.util.Icon;
  import net.minecraft.util.MovingObjectPosition;
  import net.minecraft.util.StatCollector;
-@@ -35,9 +44,19 @@
+@@ -35,9 +44,20 @@
  import net.minecraft.world.Explosion;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
@@ -46,6 +46,7 @@
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.IPlantable;
 +import net.minecraftforge.common.RotationHelper;
++import net.minecraftforge.event.ForgeEventFactory;
 +import cpw.mods.fml.relauncher.Side;
 +import cpw.mods.fml.relauncher.SideOnly;
  
@@ -56,7 +57,7 @@
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
-@@ -460,9 +479,10 @@
+@@ -460,9 +480,10 @@
          return this.needsRandomTick;
      }
  
@@ -68,7 +69,7 @@
      }
  
      /**
-@@ -485,7 +505,7 @@
+@@ -485,7 +506,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -77,7 +78,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -495,7 +515,7 @@
+@@ -495,7 +516,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -86,7 +87,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -648,7 +668,13 @@
+@@ -648,7 +669,13 @@
       * different metadata value, but before the new metadata value is set. Args: World, x, y, z, old block ID, old
       * metadata
       */
@@ -101,7 +102,7 @@
  
      /**
       * Returns the quantity of items to drop on block destruction.
-@@ -673,7 +699,7 @@
+@@ -673,7 +700,7 @@
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
          float f = this.getBlockHardness(par2World, par3, par4, par5);
@@ -110,7 +111,7 @@
      }
  
      /**
-@@ -691,18 +717,13 @@
+@@ -691,18 +718,14 @@
      {
          if (!par1World.isRemote)
          {
@@ -118,7 +119,8 @@
 -
 -            for (int k1 = 0; k1 < j1; ++k1)
 +            ArrayList<ItemStack> items = getBlockDropped(par1World, par2, par3, par4, par5, par7);
-+
++            par6 = ForgeEventFactory.fireBlockHarvesting(items, par1World, this, par2, par3, par4, par5, par7, par6, false, harvesters.get());
++            
 +            for (ItemStack item : items)
              {
                  if (par1World.rand.nextFloat() <= par6)
@@ -133,7 +135,7 @@
                  }
              }
          }
-@@ -935,7 +956,8 @@
+@@ -935,7 +958,8 @@
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
          int l = par1World.getBlockId(par2, par3, par4);
@@ -143,19 +145,48 @@
      }
  
      /**
-@@ -1095,7 +1117,7 @@
+@@ -1086,6 +1110,7 @@
+      */
+     public void setBlockBoundsForItemRender() {}
+ 
++    private ThreadLocal<EntityPlayer> harvesters = new ThreadLocal();
+     /**
+      * Called when the player destroys a block with an item that can harvest it. (i, j, k) are the coordinates of the
+      * block and l is the block's subtype/damage.
+@@ -1095,28 +1120,37 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
 -        if (this.canSilkHarvest() && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer))
+-        {
 +        if (this.canSilkHarvest(par1World, par2EntityPlayer, par3, par4, par5, par6) && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer))
-         {
++        {
++            ArrayList<ItemStack> items = new ArrayList<ItemStack>();
              ItemStack itemstack = this.createStackedBlock(par6);
  
-@@ -1111,12 +1133,13 @@
+             if (itemstack != null)
+             {
+-                this.dropBlockAsItem_do(par1World, par3, par4, par5, itemstack);
++                items.add(itemstack);
+             }
++            ForgeEventFactory.fireBlockHarvesting(items, par1World, this, par3, par4, par5, par6, 0, 1.0f, true, par2EntityPlayer);
++            for (ItemStack is : items)
++            {
++                this.dropBlockAsItem_do(par1World, par3, par4, par5, is);
++            }
          }
-     }
- 
+         else
+         {
++            harvesters.set(par2EntityPlayer);
+             int i1 = EnchantmentHelper.getFortuneModifier(par2EntityPlayer);
+             this.dropBlockAsItem(par1World, par3, par4, par5, par6, i1);
+-        }
+-    }
+-
++            harvesters.set(null);
++        }
++    }
++
 +    private int silk_check_meta = -1; //Dirty hack to stop us from needing to special case the silk check hook.
      /**
       * Return true if a player with Silk Touch can harvest this block directly, and not its normal drops.
@@ -167,7 +198,7 @@
      }
  
      /**
-@@ -1457,4 +1480,979 @@
+@@ -1457,4 +1491,979 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
