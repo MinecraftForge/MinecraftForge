@@ -155,7 +155,7 @@
      }
  
      /**
-@@ -812,15 +863,28 @@
+@@ -812,15 +863,48 @@
       */
      public void joinEntityItemWithWorld(EntityItem par1EntityItem)
      {
@@ -166,7 +166,8 @@
 +        }
          this.worldObj.spawnEntityInWorld(par1EntityItem);
      }
- 
+-
++    
      /**
       * Returns how strong the player is against the specified block at this moment
 -     */
@@ -176,10 +177,30 @@
      public float getCurrentPlayerStrVsBlock(Block par1Block, boolean par2)
      {
 -        float f = this.inventory.getStrVsBlock(par1Block);
-+        return getCurrentPlayerStrVsBlock(par1Block, par2, 0);
++        return getCurrentPlayerStrVsBlock(par1Block, par2, 0, 0, 0, 0);
++    }
++    
++    /**
++     * Returns how strong the player is against the specified block at this moment
++     * Deprecated in favor of the more sensitive version
++     */
++    @Deprecated
++    public float getCurrentPlayerStrVsBlock(Block par1Block, boolean par2, int meta)
++    {
++        return getCurrentPlayerStrVsBlock(par1Block, par2, meta, 0, 0, 0);
 +    }
 +
-+    public float getCurrentPlayerStrVsBlock(Block par1Block, boolean par2, int meta)
++    /**
++     * Returns how strong the player is against the specified block at this moment
++     * Deprecated in favor of the more sensitive version
++     */
++    @Deprecated
++    public float getCurrentPlayerStrVsBlock(Block par1Block, boolean par2, int x, int y, int z)
++    {
++        return getCurrentPlayerStrVsBlock(par1Block, par2, 0, x, y, z);
++    }
++
++    public float getCurrentPlayerStrVsBlock(Block par1Block, boolean par2, int meta, int x, int y, int z)
 +    {
 +        ItemStack stack = inventory.getCurrentItem();
 +        float f = (stack == null ? 1.0F : stack.getItem().getStrVsBlock(stack, par1Block, meta));
@@ -202,7 +223,7 @@
          }
  
 -        return f;
-+        f = ForgeEventFactory.getBreakSpeed(this, par1Block, meta, f);
++        f = ForgeEventFactory.getBreakSpeed(this, par1Block, meta, f, x, y, z);
 +        return (f < 0 ? 0 : f);
      }
  
@@ -552,7 +573,7 @@
      }
  
      /**
-@@ -2191,7 +2396,14 @@
+@@ -2191,0 +2396,0 @@
       */
      public void setCurrentItemOrArmor(int par1, ItemStack par2ItemStack)
      {
