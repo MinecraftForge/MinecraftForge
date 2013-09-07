@@ -67,16 +67,48 @@
              {
                  GL11.glDepthFunc(GL11.GL_EQUAL);
                  GL11.glDisable(GL11.GL_LIGHTING);
-@@ -266,7 +292,7 @@
+@@ -266,8 +292,10 @@
          Render render;
          RenderPlayer renderplayer;
  
 -        if (itemstack != null && itemstack.itemID == Item.map.itemID)
-+        if (itemstack != null && itemstack.getItem() instanceof ItemMap)
-         {
+-        {
++        IItemRenderer custom = null;
++        if (itemstack != null && (itemstack.getItem() instanceof ItemMap || (custom=MinecraftForgeClient.getItemRenderer(itemstack, FIRST_PERSON_HOLDING))!=null))
++        {
++            boolean isMap = itemstack.getItem() instanceof ItemMap;
              GL11.glPushMatrix();
              f12 = 0.8F;
-@@ -333,11 +359,20 @@
+             f7 = entityclientplayermp.getSwingProgress(par1);
+@@ -291,6 +319,9 @@
+             GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
+             GL11.glRotatef(f7 * -85.0F, 0.0F, 0.0F, 1.0F);
+             GL11.glEnable(GL12.GL_RESCALE_NORMAL);
++            
++            if (isMap || custom.shouldUseRenderHelper(FIRST_PERSON_HOLDING, itemstack, HOLD_HANDS))
++            {
+             this.mc.getTextureManager().bindTexture(entityclientplayermp.getLocationSkin());
+ 
+             for (k = 0; k < 2; ++k)
+@@ -309,6 +340,7 @@
+                 renderplayer.renderFirstPersonArm(this.mc.thePlayer);
+                 GL11.glPopMatrix();
+             }
++            }
+ 
+             f8 = entityclientplayermp.getSwingProgress(par1);
+             f6 = MathHelper.sin(f8 * f8 * (float)Math.PI);
+@@ -323,6 +355,9 @@
+             GL11.glTranslatef(-1.0F, -1.0F, 0.0F);
+             f11 = 0.015625F;
+             GL11.glScalef(f11, f11, f11);
++            
++            if (isMap || custom.shouldUseRenderHelper(FIRST_PERSON_HOLDING, itemstack, HOLD_BACKGROUND))
++            {
+             this.mc.getTextureManager().bindTexture(RES_MAP_BACKGROUND);
+             Tessellator tessellator = Tessellator.instance;
+             GL11.glNormal3f(0.0F, 0.0F, -1.0F);
+@@ -333,11 +368,28 @@
              tessellator.addVertexWithUV((double)(128 + b0), (double)(0 - b0), 0.0D, 1.0D, 0.0D);
              tessellator.addVertexWithUV((double)(0 - b0), (double)(0 - b0), 0.0D, 0.0D, 0.0D);
              tessellator.draw();
@@ -85,24 +117,32 @@
 -            if (mapdata != null)
 -            {
 -                this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.getTextureManager(), mapdata);
++            }
 +
-+            IItemRenderer custom = MinecraftForgeClient.getItemRenderer(itemstack, FIRST_PERSON_MAP);
-+            MapData mapdata = ((ItemMap)itemstack.getItem()).getMapData(itemstack, this.mc.theWorld);
-+
-+            if (custom == null)
++            if (isMap)
 +            {
-+                if (mapdata != null)
++                custom = MinecraftForgeClient.getItemRenderer(itemstack, FIRST_PERSON_MAP);
++                MapData mapdata = ((ItemMap)itemstack.getItem()).getMapData(itemstack, this.mc.theWorld);
++
++                if (custom == null)
 +                {
-+                    this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.getTextureManager(), mapdata);
++                    if (mapdata != null)
++                    {
++                        this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.getTextureManager(), mapdata);
++                    }
++                }
++                else
++                {
++                    custom.renderItem(FIRST_PERSON_MAP, itemstack, mc.thePlayer, mc.getTextureManager(), mapdata);
 +                }
 +            }
 +            else
 +            {
-+                custom.renderItem(FIRST_PERSON_MAP, itemstack, mc.thePlayer, mc.getTextureManager(), mapdata);
++                custom.renderItem(FIRST_PERSON_HOLDING, itemstack, mc.thePlayer, mc.renderEngine);
              }
  
              GL11.glPopMatrix();
-@@ -439,17 +474,20 @@
+@@ -439,17 +491,20 @@
  
              if (itemstack.getItem().requiresMultipleRenderPasses())
              {
