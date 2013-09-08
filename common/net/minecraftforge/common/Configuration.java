@@ -183,9 +183,12 @@ public class Configuration
     public Property getItem(String key, int defaultID) { return getItem(CATEGORY_ITEM, key, defaultID, null); }
     public Property getItem(String key, int defaultID, String comment) { return getItem(CATEGORY_ITEM, key, defaultID, comment); }
     public Property getItem(String category, String key, int defaultID) { return getItem(category, key, defaultID, null); }
-
-    public Property getItem(String category, String key, int defaultID, String comment)
+    public Property getItem(String category, String key, int defaultID, String comment) { return getItem(category, key, defaultID, comment, false); }
+    
+    public Property getItem(String category, String key, int defaultID, String comment, boolean useShift)
     {
+        final int ITEM_SHIFT = (useShift ? Configuration.ITEM_SHIFT : 0);
+        
         Property prop = get(category, key, -1, comment);
         int defaultShift = defaultID + ITEM_SHIFT;
 
