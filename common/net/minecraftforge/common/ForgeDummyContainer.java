@@ -15,6 +15,7 @@ import net.minecraftforge.common.network.ForgeConnectionHandler;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
 import net.minecraftforge.common.network.ForgePacketHandler;
 import net.minecraftforge.common.network.ForgeTinyPacketHandler;
+import net.minecraftforge.itemdict.ItemDictionary;
 import net.minecraftforge.server.command.ForgeCommand;
 
 import com.google.common.eventbus.EventBus;
@@ -29,6 +30,7 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.WorldAccessContainer;
 import cpw.mods.fml.common.event.FMLConstructionEvent;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
@@ -51,6 +53,8 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     public static boolean disableStitchedFileSaving = false;
     public static boolean forceDuplicateFluidBlockCrash = true;
     public static boolean fullBoundingBoxLadders = false;
+    
+    private LoadController loadController;
 
     public ForgeDummyContainer()
     {
@@ -149,6 +153,7 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     public boolean registerBus(EventBus bus, LoadController controller)
     {
         bus.register(this);
+        this.loadController = controller;
         return true;
     }
 
@@ -171,6 +176,16 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     public void preInit(FMLPreInitializationEvent evt)
     {
         ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
+    }
+    
+    @Subscribe
+    public void init(FMLInitializationEvent evt)
+    {
+        try {
+            ItemDictionary.createItems();
+        } catch(Throwable t) {
+            loadController.errorOccurred(this, t);
+        }
     }
 
     @Subscribe
