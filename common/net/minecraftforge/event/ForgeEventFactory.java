@@ -15,6 +15,8 @@ import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
+import net.minecraftforge.event.entity.player.PlayerBlockEvent;
+import net.minecraftforge.event.entity.player.PlayerBlockEvent.Stage;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -98,5 +100,32 @@ public class ForgeEventFactory
         BlockEvent.HarvestDropsEvent event = new BlockEvent.HarvestDropsEvent(x, y, z, world, block, meta, fortune, dropChance, drops, player, silkTouch);
         MinecraftForge.EVENT_BUS.post(event);
         return event.dropChance;
+    }
+    
+    public static boolean onBlockPlacePre(World world, int x, int y, int z, int oldId, int oldMeta, int newId, int newMeta)
+    {
+        if (world.blockEventPlayer == null)
+        {
+            return false;
+        }
+        return MinecraftForge.EVENT_BUS.post(new PlayerBlockEvent.Place(world.blockEventPlayer, world, x, y, z, oldId, oldMeta, newId, newMeta, Stage.PRE));
+    }
+    
+    public static void onBlockPlacePost(World world, int x, int y, int z, int oldId, int oldMeta, int newId, int newMeta)
+    {
+        if (world.blockEventPlayer != null)
+        {
+            MinecraftForge.EVENT_BUS.post(new PlayerBlockEvent.Place(world.blockEventPlayer, world, x, y, z, oldId, oldMeta, newId, newMeta, Stage.POST));
+        }
+    }
+    
+    public static boolean onBlockBreakPre(EntityPlayer player, World world, int x, int y, int z, Block block, int oldMeta)
+    {
+        return MinecraftForge.EVENT_BUS.post(new PlayerBlockEvent.Break(player, world, x, y, z, block == null ? 0 : block.blockID, oldMeta, Stage.PRE));
+    }
+    
+    public static void onBlockBreakPost(EntityPlayer player, World world, int x, int y, int z, Block block, int oldMeta)
+    {
+        MinecraftForge.EVENT_BUS.post(new PlayerBlockEvent.Break(player, world, x, y, z, block == null ? 0 : block.blockID, oldMeta, Stage.POST));
     }
 }
