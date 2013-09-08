@@ -1,16 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
 +++ ../src_work/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
-@@ -22,6 +22,10 @@
+@@ -21,6 +21,10 @@
+ import net.minecraft.util.Vec3;
  import net.minecraft.world.EnumGameType;
  import net.minecraft.world.World;
- 
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.ForgeEventFactory;
 +import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
-+
+ 
  @SideOnly(Side.CLIENT)
  public class PlayerControllerMP
- {
 @@ -125,6 +129,12 @@
       */
      public boolean onPlayerDestroyBlock(int par1, int par2, int par3, int par4)
@@ -24,16 +24,25 @@
          if (this.currentGameType.isAdventure() && !this.mc.thePlayer.isCurrentToolAdventureModeExempt(par1, par2, par3))
          {
              return false;
-@@ -146,7 +156,7 @@
+@@ -144,13 +154,15 @@
+             }
+             else
              {
-                 worldclient.playAuxSFX(2001, par1, par2, par3, block.blockID + (worldclient.getBlockMetadata(par1, par2, par3) << 12));
+-                worldclient.playAuxSFX(2001, par1, par2, par3, block.blockID + (worldclient.getBlockMetadata(par1, par2, par3) << 12));
                  int i1 = worldclient.getBlockMetadata(par1, par2, par3);
 -                boolean flag = worldclient.setBlockToAir(par1, par2, par3);
++                if (ForgeEventFactory.onBlockBreakPre(mc.thePlayer, mc.theWorld, par1, par2, par3, block, i1)) return false;
++                worldclient.playAuxSFX(2001, par1, par2, par3, block.blockID + (i1 << 12));
 +                boolean flag = block.removeBlockByPlayer(worldclient, mc.thePlayer, par1, par2, par3);
  
                  if (flag)
                  {
-@@ -347,8 +357,14 @@
+                     block.onBlockDestroyedByPlayer(worldclient, par1, par2, par3, i1);
++                    ForgeEventFactory.onBlockBreakPost(mc.thePlayer, mc.theWorld, par1, par2, par3, block, i1);
+                 }
+ 
+                 this.currentBlockY = -1;
+@@ -347,8 +359,14 @@
          float f2 = (float)par8Vec3.zCoord - (float)par6;
          boolean flag = false;
          int i1;
@@ -50,7 +59,7 @@
          {
              i1 = par2World.getBlockId(par4, par5, par6);
  
-@@ -389,7 +405,15 @@
+@@ -389,7 +407,15 @@
          }
          else
          {
@@ -67,7 +76,7 @@
          }
      }
  
-@@ -411,9 +435,10 @@
+@@ -411,9 +437,10 @@
          {
              par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = itemstack1;
  

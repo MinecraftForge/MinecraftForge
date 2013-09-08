@@ -73,7 +73,14 @@
                  }
  
                  if (i1 > 0 && f >= 1.0F)
-@@ -236,7 +272,7 @@
+@@ -231,16 +267,19 @@
+         Block block = Block.blocksList[this.theWorld.getBlockId(par1, par2, par3)];
+         int l = this.theWorld.getBlockMetadata(par1, par2, par3);
+ 
++        if (ForgeEventFactory.onBlockBreakPre(thisPlayerMP, theWorld, par1, par2, par3, block, l)) return false;
++        
+         if (block != null)
+         {
              block.onBlockHarvested(this.theWorld, par1, par2, par3, l, this.thisPlayerMP);
          }
  
@@ -82,7 +89,12 @@
  
          if (block != null && flag)
          {
-@@ -261,19 +297,30 @@
+             block.onBlockDestroyedByPlayer(this.theWorld, par1, par2, par3, l);
++            ForgeEventFactory.onBlockBreakPost(thisPlayerMP, theWorld, par1, par2, par3, block, l);
+         }
+ 
+         return flag;
+@@ -261,19 +300,30 @@
          }
          else
          {
@@ -115,7 +127,7 @@
  
                  if (itemstack != null)
                  {
-@@ -285,6 +332,7 @@
+@@ -285,6 +335,7 @@
                      }
                  }
  
@@ -123,7 +135,7 @@
                  if (flag && flag1)
                  {
                      Block.blocksList[l].harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, i1);
-@@ -325,6 +373,7 @@
+@@ -325,6 +376,7 @@
              if (itemstack1.stackSize == 0)
              {
                  par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
@@ -131,7 +143,7 @@
              }
  
              if (!par1EntityPlayer.isUsingItem())
-@@ -342,35 +391,56 @@
+@@ -342,35 +394,56 @@
       */
      public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
      {
@@ -215,7 +227,7 @@
      }
  
      /**
-@@ -380,4 +450,13 @@
+@@ -380,4 +453,13 @@
      {
          this.theWorld = par1WorldServer;
      }
