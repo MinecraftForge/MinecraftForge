@@ -600,4 +600,10 @@
 +    {
 +        return hasEffect(par1ItemStack) && (pass == 0 || itemID != Item.potion.itemID);
 +    }
+
++    /** ItemStack sensitive version for having different maxStackSize for each item subtype (it can be overridden for this) */
++    public int getItemStackLimit(ItemStack par1ItemStack)
++    {
++    	return this.getItemStackLimit();
++    }
  }
