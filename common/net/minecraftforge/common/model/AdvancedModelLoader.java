@@ -1,12 +1,12 @@
-package net.minecraftforge.client.model;
+package net.minecraftforge.common.model;
 
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 
-import net.minecraftforge.client.model.obj.ObjModelLoader;
-import net.minecraftforge.client.model.techne.TechneModelLoader;
+import net.minecraftforge.common.model.obj.ObjModelLoader;
+import net.minecraftforge.common.model.techne.TechneModelLoader;
 
 import com.google.common.collect.Maps;
 
@@ -22,7 +22,6 @@ import cpw.mods.fml.relauncher.SideOnly;
  * @author cpw
  *
  */
-@SideOnly(Side.CLIENT)
 public class AdvancedModelLoader {
     private static Map<String, IModelCustomLoader> instances = Maps.newHashMap();
 

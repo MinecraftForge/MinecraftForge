@@ -1,4 +1,4 @@
-package net.minecraftforge.client.model.obj;
+package net.minecraftforge.common.model.obj;
 
 import java.util.ArrayList;
 
@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.Tessellator;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@SideOnly(Side.CLIENT)
 public class GroupObject
 {
 
@@ -30,6 +29,7 @@ public class GroupObject
         this.glDrawingMode = glDrawingMode;
     }
 
+    @SideOnly(Side.CLIENT)
     public void render()
     {
         if (faces.size() > 0)
@@ -41,6 +41,7 @@ public class GroupObject
         }
     }
 
+    @SideOnly(Side.CLIENT)
     public void render(Tessellator tessellator)
     {
         if (faces.size() > 0)

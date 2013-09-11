@@ -1,11 +1,10 @@
-package net.minecraftforge.client.model.obj;
+package net.minecraftforge.common.model.obj;
 
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.Vec3;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@SideOnly(Side.CLIENT)
 public class Face
 {
 
@@ -14,11 +13,13 @@ public class Face
     public Vertex faceNormal;
     public TextureCoordinate[] textureCoordinates;
 
+    @SideOnly(Side.CLIENT)
     public void addFaceForRender(Tessellator tessellator)
     {
         addFaceForRender(tessellator, 0.0005F);
     }
 
+    @SideOnly(Side.CLIENT)
     public void addFaceForRender(Tessellator tessellator, float textureOffset)
     {
         if (faceNormal == null)

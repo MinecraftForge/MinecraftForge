@@ -1,13 +1,13 @@
-package net.minecraftforge.client.model.techne;
+package net.minecraftforge.common.model.techne;
 
 import java.net.URL;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import net.minecraftforge.client.model.IModelCustom;
-import net.minecraftforge.client.model.IModelCustomLoader;
-import net.minecraftforge.client.model.ModelFormatException;
+import net.minecraftforge.common.model.IModelCustom;
+import net.minecraftforge.common.model.IModelCustomLoader;
+import net.minecraftforge.common.model.ModelFormatException;
 
 public class TechneModelLoader implements IModelCustomLoader {
     

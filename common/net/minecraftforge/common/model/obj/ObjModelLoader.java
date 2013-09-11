@@ -1,11 +1,11 @@
-package net.minecraftforge.client.model.obj;
+package net.minecraftforge.common.model.obj;
 
 import java.io.InputStream;
 import java.net.URL;
 
-import net.minecraftforge.client.model.IModelCustom;
-import net.minecraftforge.client.model.IModelCustomLoader;
-import net.minecraftforge.client.model.ModelFormatException;
+import net.minecraftforge.common.model.IModelCustom;
+import net.minecraftforge.common.model.IModelCustomLoader;
+import net.minecraftforge.common.model.ModelFormatException;
 
 public class ObjModelLoader implements IModelCustomLoader {
 

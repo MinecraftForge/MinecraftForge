@@ -1,4 +1,4 @@
-package net.minecraftforge.client.model;
+package net.minecraftforge.common.model;
 
 /**
  * Thrown if there is a problem parsing the model

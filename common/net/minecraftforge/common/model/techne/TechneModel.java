@@ -1,4 +1,4 @@
-package net.minecraftforge.client.model.techne;
+package net.minecraftforge.common.model.techne;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -35,9 +35,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraftforge.client.model.IModelCustom;
-import net.minecraftforge.client.model.ModelFormatException;
-import net.minecraftforge.client.model.obj.GroupObject;
+import net.minecraftforge.common.model.IModelCustom;
+import net.minecraftforge.common.model.ModelFormatException;
+import net.minecraftforge.common.model.obj.GroupObject;
 
 /**
  * Techne model importer, based on iChun's Hats importer
