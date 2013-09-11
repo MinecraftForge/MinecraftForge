@@ -91,5 +91,10 @@
 +    {
 +        return this.getItem().hasEffect(this, pass);
      }
+     
+    public int getMaxStackSize()
+    {
++        return this.getItem().getItemStackLimit(this);
+    }
  
      @SideOnly(Side.CLIENT)
