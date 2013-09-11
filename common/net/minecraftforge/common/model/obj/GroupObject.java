@@ -3,6 +3,10 @@ package net.minecraftforge.common.model.obj;
 import java.util.ArrayList;
 
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraftforge.common.model.ModelFormatException;
+
+import org.lwjgl.opengl.GL11;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -11,7 +15,7 @@ public class GroupObject
 
     public String name;
     public ArrayList<Face> faces = new ArrayList<Face>();
-    public int glDrawingMode;
+    public int faceArity;
 
     public GroupObject()
     {
@@ -23,10 +27,24 @@ public class GroupObject
         this(name, -1);
     }
 
-    public GroupObject(String name, int glDrawingMode)
+    public GroupObject(String name, int faceArity)
     {
         this.name = name;
-        this.glDrawingMode = glDrawingMode;
+        this.faceArity = faceArity;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public int glDrawingMode()
+    {
+        switch(faceArity)
+        {
+            case 3:
+                return GL11.GL_TRIANGLES;
+            case 4:
+                return GL11.GL_QUADS;
+            default:
+                throw new ModelFormatException("Unsupported number of vertices: " + faceArity);
+        }
     }
 
     @SideOnly(Side.CLIENT)
@@ -35,7 +53,7 @@ public class GroupObject
         if (faces.size() > 0)
         {
             Tessellator tessellator = Tessellator.instance;
-            tessellator.startDrawing(glDrawingMode);
+            tessellator.startDrawing(glDrawingMode());
             render(tessellator);
             tessellator.draw();
         }

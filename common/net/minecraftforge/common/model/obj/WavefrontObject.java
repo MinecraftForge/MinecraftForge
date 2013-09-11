@@ -176,7 +176,7 @@ public class WavefrontObject implements IModelCustom
 
         if (currentGroupObject != null)
         {
-            tessellator.startDrawing(currentGroupObject.glDrawingMode);
+            tessellator.startDrawing(currentGroupObject.glDrawingMode());
         }
         else
         {
@@ -394,22 +394,22 @@ public class WavefrontObject implements IModelCustom
 
             if (tokens.length == 3)
             {
-                if (currentGroupObject.glDrawingMode == -1)
+                if (currentGroupObject.faceArity == -1)
                 {
-                    currentGroupObject.glDrawingMode = GL11.GL_TRIANGLES;
+                    currentGroupObject.faceArity = 3;
                 }
-                else if (currentGroupObject.glDrawingMode != GL11.GL_TRIANGLES)
+                else if (currentGroupObject.faceArity != 3)
                 {
                     throw new ModelFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Invalid number of points for face (expected 4, found " + tokens.length + ")");
                 }
             }
             else if (tokens.length == 4)
             {
-                if (currentGroupObject.glDrawingMode == -1)
+                if (currentGroupObject.faceArity == -1)
                 {
-                    currentGroupObject.glDrawingMode = GL11.GL_QUADS;
+                    currentGroupObject.faceArity = 4;
                 }
-                else if (currentGroupObject.glDrawingMode != GL11.GL_QUADS)
+                else if (currentGroupObject.faceArity != 4)
                 {
                     throw new ModelFormatException("Error parsing entry ('" + line + "'" + ", line " + lineCount + ") in file '" + fileName + "' - Invalid number of points for face (expected 3, found " + tokens.length + ")");
                 }
