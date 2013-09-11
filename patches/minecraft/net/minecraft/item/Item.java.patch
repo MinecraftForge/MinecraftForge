@@ -60,7 +60,7 @@
          float f2 = par2EntityPlayer.prevRotationYaw + (par2EntityPlayer.rotationYaw - par2EntityPlayer.prevRotationYaw) * f;
          double d0 = par2EntityPlayer.prevPosX + (par2EntityPlayer.posX - par2EntityPlayer.prevPosX) * (double)f;
 -        double d1 = par2EntityPlayer.prevPosY + (par2EntityPlayer.posY - par2EntityPlayer.prevPosY) * (double)f + 1.62D - (double)par2EntityPlayer.yOffset;
-+        double d1 = par2EntityPlayer.prevPosY + (par2EntityPlayer.posY - par2EntityPlayer.prevPosY) * (double)f + (double)par2EntityPlayer.getEyeHeight() + (double)(!(par2EntityPlayer instanceof EntityPlayerMP) ? -par2EntityPlayer.getDefaultEyeHeight() : 0.0D);
++        double d1 = par2EntityPlayer.prevPosY + (par2EntityPlayer.posY - par2EntityPlayer.prevPosY) * (double)f + (double)par2EntityPlayer.getEyeHeight() + (double)(par1World.isRemote ? -par2EntityPlayer.getDefaultEyeHeight() : 0.0D);
          double d2 = par2EntityPlayer.prevPosZ + (par2EntityPlayer.posZ - par2EntityPlayer.prevPosZ) * (double)f;
          Vec3 vec3 = par1World.getWorldVec3Pool().getVecFromPool(d0, d1, d2);
          float f3 = MathHelper.cos(-f2 * 0.017453292F - (float)Math.PI);
