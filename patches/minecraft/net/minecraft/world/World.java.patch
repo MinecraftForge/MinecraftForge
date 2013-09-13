@@ -224,6 +224,45 @@
      {
          float f1 = this.getCelestialAngle(par2);
          float f2 = MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
+@@ -1831,15 +1831,31 @@
+         {
+             f2 = 1.0F;
+         }
+-
++        
+         int i = MathHelper.floor_double(par1Entity.posX);
+         int j = MathHelper.floor_double(par1Entity.posZ);
+-        BiomeGenBase biomegenbase = this.getBiomeGenForCoords(i, j);
+-        float f3 = biomegenbase.getFloatTemperature();
+-        int k = biomegenbase.getSkyColorByTemp(f3);
+-        float f4 = (float)(k >> 16 & 255) / 255.0F;
+-        float f5 = (float)(k >> 8 & 255) / 255.0F;
+-        float f6 = (float)(k & 255) / 255.0F;
++        
++        int r = 0;
++        int g = 0;
++        int b = 0;
++
++        for (int x = -20; x <= 20; ++x)
++        {
++            for (int z = -20; z <= 20; ++z)
++            {
++                BiomeGenBase biome = this.getBiomeGenForCoords(i + x, j + z);
++                int colour = biome.getSkyColorByTemp(biome.getFloatTemperature());
++                r += (colour & 16711680) >> 16;
++                g += (colour & 65280) >> 8;
++                b += colour & 255;
++            }
++        }
++
++        int multiplier = (r / 1681 & 255) << 16 | (g / 1681 & 255) << 8 | b / 1681 & 255;
++
++        float f4 = (float)(multiplier >> 16 & 255) / 255.0F;
++        float f5 = (float)(multiplier >> 8 & 255) / 255.0F;
++        float f6 = (float)(multiplier & 255) / 255.0F;
+         f4 *= f2;
+         f5 *= f2;
+         f6 *= f2;
 @@ -1833,6 +1919,12 @@
      @SideOnly(Side.CLIENT)
      public Vec3 getCloudColour(float par1)
