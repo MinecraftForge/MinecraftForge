@@ -24,7 +24,6 @@ public class ItemInventory implements IInventory {
      *Example Inventory 
      */
     public ItemInventory (ItemStack stack, int stackLimit, String inventoryName, boolean isInvNameLocalized, int inventoryStackLimit, boolean useableByPlayer) {
-
         this.stack = stack;
         this.stackLimit = stackLimit;
         this.inventoryName = inventoryName;
@@ -34,37 +33,29 @@ public class ItemInventory implements IInventory {
     }
 
     public ItemStack getInventoryContainerItem() {
-
         return stack;
     }
 
     @Override
     public int getSizeInventory() {
-
         return this.getTAGfromItemstack(stack).getInteger(INVENTORY_SIZE_TAG);
     }
 
     @Override
     public ItemStack getStackInSlot(int slot) {
-
         return this.getNBTTagInventory(stack, INVENTORY_SLOT_TAG).get(slot);
     }
 
     @Override
     public ItemStack decrStackSize(int slot, int amount) {
-
         ItemStack stack = this.getStackInSlot(slot);
 
         if (stack != null) {
-
             int toLeave = stack.stackSize - amount;
-
             ItemStack temp = stack.copy();
             temp.stackSize = amount;
-
             ItemStack stackLeft = stack.copy();
             stackLeft.stackSize = toLeave;
-
             this.setInventorySlotContents(slot, stackLeft);
 
             if(stackLeft.stackSize <= 0)
@@ -77,13 +68,11 @@ public class ItemInventory implements IInventory {
 
     @Override
     public ItemStack getStackInSlotOnClosing(int slot) {
-
         return this.getStackInSlot(slot);
     }
 
     @Override
     public void setInventorySlotContents(int slot, ItemStack itemStack) {
-
         ArrayList<ItemStack> list = this.getNBTTagInventory(itemStack, INVENTORY_SLOT_TAG);
         list.set(slot, itemStack);
         this.setNBTTagInventory(itemStack, INVENTORY_SLOT_TAG, list);
@@ -91,59 +80,48 @@ public class ItemInventory implements IInventory {
 
     @Override
     public String getInvName() {
-
         return inventoryName;
     }
 
     @Override
     public boolean isInvNameLocalized() {
-
         return isInvNameLocalized;
     }
 
     @Override
     public int getInventoryStackLimit() {
-
         return inventoryStackLimit;
     }
 
     @Override
     public void onInventoryChanged() {
-
     }
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-
         return useableByPlayer;
     }
 
     @Override
     public void openChest() {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void closeChest() {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-
         return true;
     }
 
     private NBTTagCompound getTAGfromItemstack(ItemStack itemStack) {
-
         if (itemStack != null) {
-
             NBTTagCompound tag = itemStack.getTagCompound();
 
             if (tag == null) {
-
                 tag = new NBTTagCompound();
                 itemStack.setTagCompound(tag);
             }
@@ -153,14 +131,11 @@ public class ItemInventory implements IInventory {
     }
 
     public void setNBTTagInventory(ItemStack itemStack, String tag, ArrayList<ItemStack> inventory) {
-
         NBTTagCompound compound = getTAGfromItemstack(itemStack);
         NBTTagList nbttaglist = new NBTTagList();
 
         for (int i = 0; i < inventory.size(); i++) {
-
             if (inventory.get(i) != null) {
-
                 NBTTagCompound nbttagcompound = new NBTTagCompound();
                 inventory.get(i).writeToNBT(nbttagcompound);
                 nbttaglist.appendTag(nbttagcompound);
@@ -170,19 +145,12 @@ public class ItemInventory implements IInventory {
     }
 
     public ArrayList<ItemStack> getNBTTagInventory(ItemStack itemStack, String tag) {
-
         ArrayList<ItemStack> itemList = new ArrayList<ItemStack>();
-
         NBTTagCompound compound = getTAGfromItemstack(itemStack);
-
         if (compound != null) {
-
             NBTTagList nbttaglist = compound.getTagList(tag);
-
             for(int pos = 0; pos < nbttaglist.tagCount(); pos++) {
-
                 NBTTagCompound nbttagcompound = (NBTTagCompound) nbttaglist.tagAt(pos);
-
                 itemList.add(ItemStack.loadItemStackFromNBT(nbttagcompound));
             }
         }
