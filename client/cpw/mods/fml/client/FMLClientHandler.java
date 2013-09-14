@@ -606,4 +606,10 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         return resourcePackMap.get(modId);
     }
+
+    @Override
+    public String getCurrentLanguage()
+    {
+        return client.func_135016_M().func_135041_c().func_135034_a();
+    }
 }

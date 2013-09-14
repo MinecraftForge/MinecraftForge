@@ -496,4 +496,10 @@ public class FMLCommonHandler
     {
         sidedDelegate.updateResourcePackList();
     }
+
+    public String getCurrentLanguage()
+    {
+        
+        return sidedDelegate.getCurrentLanguage();
+    }
 }
