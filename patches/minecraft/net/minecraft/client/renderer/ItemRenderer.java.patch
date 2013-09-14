@@ -85,7 +85,7 @@
              GL11.glRotatef(f7 * -85.0F, 0.0F, 0.0F, 1.0F);
              GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 +            
-+            if (isMap || custom.shouldUseRenderHelper(FIRST_PERSON_HOLDING, itemstack, HOLD_HANDS))
++            if (isMap || custom.shouldUseRenderHelper(FIRST_PERSON_HOLDING, itemstack, HOLD_HANDS)) // No indent for less patching
 +            {
              this.mc.getTextureManager().bindTexture(entityclientplayermp.getLocationSkin());
  
