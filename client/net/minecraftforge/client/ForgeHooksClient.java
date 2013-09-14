@@ -30,6 +30,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderGlobal;
@@ -41,6 +43,7 @@ import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.ForgeDummyContainer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.RenderBlockFluid;
@@ -50,6 +53,7 @@ import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
 public class ForgeHooksClient
 {
     private static final ResourceLocation ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
+    
     static TextureManager engine()
     {
         return FMLClientHandler.instance().getClient().renderEngine;
@@ -338,6 +342,44 @@ public class ForgeHooksClient
         return fovUpdateEvent.newfov;
     }
 
+    private static int skyX, skyZ;
+
+    private static boolean skyInit;
+    private static int skyRGBMultiplier;
+    
+    public static int getSkyBlendColour(World world, int playerX, int playerZ)
+    {
+        if (playerX == skyX && playerZ == skyZ && skyInit)
+        {
+            return skyRGBMultiplier;
+        }
+        skyInit = true;
+        
+        int distance = Minecraft.getMinecraft().gameSettings.fancyGraphics ? ForgeDummyContainer.blendRanges[Minecraft.getMinecraft().gameSettings.renderDistance] : 0;
+        
+        int r = 0;
+        int g = 0;
+        int b = 0;
+
+        for (int x = -distance; x <= distance; ++x)
+        {
+            for (int z = -distance; z <= distance; ++z)
+            {
+                BiomeGenBase biome = world.getBiomeGenForCoords(playerX + x, playerZ + z);
+                int colour = biome.getSkyColorByTemp(biome.getFloatTemperature());
+                r += (colour & 0xFF0000) >> 16;
+                g += (colour & 0x00FF00) >> 8;
+                b += colour & 0x0000FF;
+            }
+        }
+
+        int multiplier = (r / 1681 & 255) << 16 | (g / 1681 & 255) << 8 | b / 1681 & 255;
+
+        skyX = playerX;
+        skyZ = playerZ;
+        skyRGBMultiplier = multiplier;
+        return skyRGBMultiplier;
+    }
     /**
      * Initialization of Forge Renderers.
      */
