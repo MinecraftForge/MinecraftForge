@@ -361,6 +361,7 @@ public class ForgeHooksClient
         int g = 0;
         int b = 0;
 
+        int divider = 0;
         for (int x = -distance; x <= distance; ++x)
         {
             for (int z = -distance; z <= distance; ++z)
@@ -370,10 +371,11 @@ public class ForgeHooksClient
                 r += (colour & 0xFF0000) >> 16;
                 g += (colour & 0x00FF00) >> 8;
                 b += colour & 0x0000FF;
+                divider++;
             }
         }
 
-        int multiplier = (r / 1681 & 255) << 16 | (g / 1681 & 255) << 8 | b / 1681 & 255;
+        int multiplier = (r / divider & 255) << 16 | (g / divider & 255) << 8 | b / divider & 255;
 
         skyX = playerX;
         skyZ = playerZ;
