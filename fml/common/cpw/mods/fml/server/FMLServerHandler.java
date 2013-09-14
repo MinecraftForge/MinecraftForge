@@ -260,4 +260,9 @@ public class FMLServerHandler implements IFMLSidedHandler
     {
         
     }
+    @Override
+    public String getCurrentLanguage()
+    {
+        return "en_US";
+    }
 }
