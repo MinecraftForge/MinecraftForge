@@ -13,8 +13,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDummyContainer;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.LoaderException;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.item.EnumRarity;
 
 /**
  * Minecraft Forge Fluid Implementation
@@ -85,6 +84,13 @@ public class Fluid
      * Generally this is associated with negative density fluids.
      */
     protected boolean isGaseous;
+
+    /**
+     * The rarity of the fluid.
+     *
+     * Used primarily in tool tips.
+     */
+    protected EnumRarity rarity;
 
     /**
      * If there is a Block implementation of the Fluid, the BlockID is linked here.
@@ -161,6 +167,12 @@ public class Fluid
         return this;
     }
 
+    public Fluid setRarity(EnumRarity rarity)
+    {
+        this.rarity = rarity;
+        return this;
+    }
+
     public final String getName()
     {
         return this.fluidName;
@@ -231,6 +243,11 @@ public class Fluid
     {
         return this.isGaseous;
     }
+    
+    public EnumRarity getRarity()
+    {
+        return rarity;
+    }
 
     public int getColor()
     {
@@ -277,6 +294,7 @@ public class Fluid
     public int getTemperature(FluidStack stack){ return getTemperature(); }
     public int getViscosity(FluidStack stack){ return getViscosity(); }
     public boolean isGaseous(FluidStack stack){ return isGaseous(); }
+    public EnumRarity getRarity(FluidStack stack){ return getRarity(); }
     public int getColor(FluidStack stack){ return getColor(); }
     public Icon getIcon(FluidStack stack){ return getIcon(); }
     /* World-based Accessors */
@@ -285,6 +303,7 @@ public class Fluid
     public int getTemperature(World world, int x, int y, int z){ return getTemperature(); }
     public int getViscosity(World world, int x, int y, int z){ return getViscosity(); }
     public boolean isGaseous(World world, int x, int y, int z){ return isGaseous(); }
+    public EnumRarity getRarity(World world, int x, int y, int z){ return getRarity(); }
     public int getColor(World world, int x, int y, int z){ return getColor(); }
     public Icon getIcon(World world, int x, int y, int z){ return getIcon(); }
 
