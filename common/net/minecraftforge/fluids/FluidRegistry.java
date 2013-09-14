@@ -1,4 +1,3 @@
-
 package net.minecraftforge.fluids;
 
 import java.util.HashMap;
@@ -133,6 +132,7 @@ public abstract class FluidRegistry
     {
         if (fluidBlocks == null)
         {
+            fluidBlocks = new BiMap<Block, Fluid>();
             for (Fluid fluid : fluids.values())
             {
                 if (fluid.canBePlacedInWorld() && Block.blocksList[fluid.getBlockID()] != null)
