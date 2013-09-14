@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.command.ICommand;
+import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -27,6 +29,8 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.WeightedRandomItem;
 import net.minecraft.world.World;
+import net.minecraftforge.event.CommandPermissionEvent;
+import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
@@ -429,5 +433,22 @@ public class ForgeHooks
             return null;
         }
         return event.component;
+    }
+    
+    public static boolean onCommandPermissionEvent(ICommand command, ICommandSender sender, String[] parameters)
+    {
+        CommandPermissionEvent event = new CommandPermissionEvent(command, sender, parameters);
+        if (event.getResult() == Result.DEFAULT)
+        {
+            return command.canCommandSenderUseCommand(sender);
+        }
+        else if (event.getResult() == Result.ALLOW)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
