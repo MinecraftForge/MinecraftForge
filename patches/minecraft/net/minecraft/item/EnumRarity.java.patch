@@ -1,0 +1,12 @@
+--- ../src_base/minecraft/net/minecraft/item/EnumRarity.java
++++ ../src_work/minecraft/net/minecraft/item/EnumRarity.java
+@@ -1,9 +1,5 @@
+ package net.minecraft.item;
+ 
+-import cpw.mods.fml.relauncher.Side;
+-import cpw.mods.fml.relauncher.SideOnly;
+-
+-@SideOnly(Side.CLIENT)
+ public enum EnumRarity
+ {
+     common(15, "Common"),
