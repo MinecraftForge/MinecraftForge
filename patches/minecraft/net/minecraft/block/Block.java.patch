@@ -198,7 +198,7 @@
      }
  
      /**
-@@ -1457,4 +1491,979 @@
+@@ -1457,4 +1491,1204 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -1177,4 +1177,229 @@
 +    @Deprecated //Implemented here as we changed the IFluidBlock interface, and this allows us to do so without breaking exisitng mods.
 +    // To be removed next MC version {1.6.3+}
 +    public float getFilledPercentage(World world, int x, int y, int z){ return 1; }
++    
++
++    /**
++     * Return the item ordinarily used to create this block.
++     * 
++     * Similar to idPicked and getPickBlock, but actually usable on server, and
++     * with less vanilla derpiness. If a single item can create multiple blocks
++     * (such as beds) then this function should either return an appropriate
++     * value for a key block and null for the other blocks, or it should return
++     * null for all blocks. If a block has state that can't be represented in
++     * item form, such as half-eaten cake and potted plants, then the return
++     * value should be something that does not allow for the creation of
++     * infinite mass.
++     * 
++     * @param target
++     *            Multi-part blocks must gracefully handle target.subHit == -1.
++     * @param world
++     * @param x
++     * @param y
++     * @param z
++     * @return
++     */
++    public ItemStack getPlacingItem(MovingObjectPosition target, World world, int x, int y, int z)
++    {
++        final int md = world.getBlockMetadata(x, y, z);
++        if (this == Block.redstoneLampIdle || this == Block.redstoneLampActive)
++        {
++            return new ItemStack(Block.redstoneLampIdle);
++        }
++        if (this == Block.pumpkinStem)
++        {
++            return new ItemStack(Item.pumpkinSeeds);
++        }
++        if (this == Block.melonStem)
++        {
++            return new ItemStack(Item.melonSeeds);
++        }
++        if (this == Block.stoneDoubleSlab)
++        {
++            return new ItemStack(Block.stoneSingleSlab.blockID, 2, md);
++        }
++        if (this == Block.woodDoubleSlab)
++        {
++            return new ItemStack(Block.woodSingleSlab.blockID, 2, md);
++        }
++        if (this == Block.cocoaPlant)
++        {
++            return new ItemStack(Item.dyePowder, 1, 3);
++        }
++        if (this == Block.signPost || this == Block.signWall)
++        {
++            return new ItemStack(Item.sign);
++        }
++        if (this == Block.flowerPot)
++        {
++            return new ItemStack(Item.flowerPot);
++        }
++        if (this == Block.redstoneWire)
++        {
++            return new ItemStack(Item.redstone);
++        }
++        if (this == Block.brewingStand)
++        {
++            return new ItemStack(Item.brewingStand);
++        }
++        if (this == Block.reed)
++        {
++            return new ItemStack(Item.reed);
++        }
++        if (this == Block.tripWire)
++        {
++            return new ItemStack(Item.silk);
++        }
++        if (this == Block.cauldron)
++        {
++            return new ItemStack(Item.cauldron);
++        }
++        if (this == Block.redstoneRepeaterActive || this == Block.redstoneRepeaterIdle)
++        {
++            return new ItemStack(Item.redstoneRepeater);
++        }
++        if (this == Block.cake)
++        {
++            if (md == 0)
++            {
++                return new ItemStack(Item.cake);
++            }
++            return null;
++        }
++        if (this == Block.redstoneComparatorActive || this == Block.redstoneComparatorIdle)
++        {
++            return new ItemStack(Item.comparator);
++        }
++        if (this == Block.netherStalk)
++        {
++            return new ItemStack(Item.netherStalkSeeds);
++        }
++        if (this == Block.skull)
++        {
++            ArrayList<ItemStack> drops = this.getBlockDropped(world, x, y, z, md, 0);
++            if (drops.isEmpty())
++            {
++                return null;
++            }
++            return drops.get(0);
++        }
++        if (this == Block.torchRedstoneActive || this == Block.torchRedstoneIdle)
++        {
++            return new ItemStack(Block.torchRedstoneActive);
++        }
++        if (this == Block.pistonExtension)
++        {
++            return null;
++        }
++        if (this == Block.tilledField)
++        {
++            return new ItemStack(Block.dirt);
++        }
++        if (this == Block.crops)
++        {
++            return new ItemStack(Item.seeds);
++        }
++        if (this == Block.carrot)
++        {
++            return new ItemStack(Item.carrot);
++        }
++        if (this == Block.potato)
++        {
++            return new ItemStack(Item.potato);
++        }
++        if (this == Block.pistonMoving)
++        {
++            return null;
++        }
++        if (this == Block.portal)
++        {
++            return null;
++        }
++        if (this == Block.endPortal)
++        {
++            return null;
++        }
++        if (this == Block.mobSpawner)
++        {
++            return null;
++        }
++        if (this == Block.furnaceBurning || this == Block.furnaceIdle)
++        {
++            return new ItemStack(Block.furnaceIdle);
++        }
++        if (this == Block.oreLapis)
++        {
++            return new ItemStack(Block.oreLapis);
++        }
++        if (this == Block.oreRedstoneGlowing)
++        {
++            return new ItemStack(Block.oreRedstone);
++        }
++        // These blocks have extensions
++        if (this == Block.bed)
++        {
++            if (!BlockBed.isBlockHeadOfBed(md))
++            {
++                return new ItemStack(Item.bed);
++            }
++            return null;
++        }
++        if (this == Block.doorIron || this == Block.doorWood)
++        {
++            if ((md & 8) != 0)
++            {
++                return new ItemStack(this == Block.doorIron ? Item.doorIron : Item.doorWood);
++            }
++            return null;
++        }
++        return new ItemStack(blockID, 1, getDamageValue(world, x, y, z));
++    }
++
++    /**
++     * Like getPlacingItem, except bed-like blocks should return a value for all
++     * blocks. While the other method respects conservation of mass, this one
++     * does not.
++     * 
++     * @param target
++     * @param world
++     * @param x
++     * @param y
++     * @param z
++     * @return
++     */
++    public ItemStack getDescribingItem(MovingObjectPosition target, World world, int x, int y, int z)
++    {
++        if (this == Block.doorIron)
++        {
++            return new ItemStack(Item.doorIron);
++        }
++        if (this == Block.doorWood)
++        {
++            return new ItemStack(Item.doorWood);
++        }
++        if (this == Block.bed)
++        {
++            return new ItemStack(Block.bed);
++        }
++        if (this == Block.pistonExtension)
++        {
++            int md = world.getBlockMetadata(x, y, z);
++            ForgeDirection dir = ForgeDirection.getOrientation(BlockPistonExtension.getDirectionMeta(md));
++            int parentId = world.getBlockId(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
++            if (parentId == Block.pistonBase.blockID || parentId == Block.pistonStickyBase.blockID)
++            {
++                return new ItemStack(parentId, 1, 0);
++            }
++            return null;
++        }
++        if (this == Block.cake)
++        {
++            return new ItemStack(Item.cake);
++        }
++        if (this == Block.mobSpawner)
++        {
++            return new ItemStack(this);
++        }
++        return getPlacingItem(target, world, x, y, z);
++    }
  }
