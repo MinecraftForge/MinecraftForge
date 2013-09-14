@@ -132,7 +132,7 @@ public abstract class FluidRegistry
     {
         if (fluidBlocks == null)
         {
-            fluidBlocks = new BiMap<Block, Fluid>();
+            fluidBlocks = HashBiMap.create();
             for (Fluid fluid : fluids.values())
             {
                 if (fluid.canBePlacedInWorld() && Block.blocksList[fluid.getBlockID()] != null)
