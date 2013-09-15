@@ -64,7 +64,7 @@
 +            if (this.attacker.getNavigator().getPath() != null)
 +            {
 +                PathPoint finalPathPoint = this.attacker.getNavigator().getPath().getFinalPathPoint();
-+                if (entitylivingbase.getDistanceSq(finalPathPoint.xCoord, finalPathPoint.yCoord, finalPathPoint.zCoord) < 1)
++                if (finalPathPoint != null && entitylivingbase.getDistanceSq(finalPathPoint.xCoord, finalPathPoint.yCoord, finalPathPoint.zCoord) < 1)
 +                {
 +                    failedPathFindingPenalty = 0;
 +                }
