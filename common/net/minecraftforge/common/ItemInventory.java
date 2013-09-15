@@ -117,7 +117,7 @@ public class ItemInventory implements IInventory {
         return true;
     }
 
-    private NBTTagCompound getTAGfromItemstack(ItemStack itemStack) {
+    private NBTTagCompound getTagfromItemstack(ItemStack itemStack) {
         if (itemStack != null) {
             NBTTagCompound tag = itemStack.getTagCompound();
 
