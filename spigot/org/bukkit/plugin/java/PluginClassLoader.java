@@ -4,6 +4,7 @@ import net.md_5.specialsource.provider.ClassLoaderProvider;
 import net.md_5.specialsource.transformer.MavenShade;
 import org.bouncycastle.util.io.Streams;
 import net.md_5.specialsource.*;
+import net.md_5.specialsource.repo.*;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.CraftServer;
@@ -440,7 +441,7 @@ public class PluginClassLoader extends URLClassLoader {
                     }
 
                     // Remap the classes
-                    byte[] remappedBytecode = remapper.remapClassFile(bytecode);
+                    byte[] remappedBytecode = remapper.remapClassFile(bytecode, RuntimeRepo.getInstance());
 
                     if (debug) {
                         File file = new File("remapped-plugin-classes/"+name+".class");

@@ -17,20 +17,3 @@
      /**
       * Removes a tag at the given index.
       */
-@@ -108,6 +104,16 @@
-     {
-         return (NBTBase)this.tagList.remove(par1);
-     }
-+
-+    // MCPC+ start- workaround for MoCreatures crash
-+    /**
-+     * Removes a tag at the given index.
-+     */
-+    public NBTBase func_74744_a(int par1)
-+    {
-+        return (NBTBase)this.tagList.remove(par1);
-+    }
-+    // MCPC+ end
- 
-     /**
-      * Retrieves the tag at the specified index from the list.
