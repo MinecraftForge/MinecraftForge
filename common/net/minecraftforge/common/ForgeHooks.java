@@ -11,6 +11,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
@@ -38,6 +39,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 
 public class ForgeHooks
 {
@@ -429,5 +431,11 @@ public class ForgeHooks
             return null;
         }
         return event.component;
+    }
+    
+    public static boolean canInteractWith(EntityPlayer player, Container openContainer)
+    {
+        PlayerOpenContainerEvent event = new PlayerOpenContainerEvent(player);
+        return MinecraftForge.EVENT_BUS.post(event) ? false : event.canInteractWith() ? true : openContainer.canInteractWith(player);
     }
 }
