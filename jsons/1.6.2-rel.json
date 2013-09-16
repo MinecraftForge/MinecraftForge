@@ -7,6 +7,7 @@
     "filePath":"@universal_jar@",
     "welcome":"Welcome to the simple FML installer.",
     "minecraft":"@minecraft_version@",
+    "mirrorList" : "http://files.minecraftforge.net/mirror.list",
     "logo":"/big_logo.png"
   },
   "versionInfo": {
@@ -33,6 +34,7 @@
       {
         "name": "org.scala-lang:scala-library:2.10.2",
         "url" : "http://files.minecraftforge.net/maven/",
+        "checksums" : [ "6ba65d12cd09d441083262d6f73d2257fec7c663", "dffc88e804861c9eaba39283757000b6558ea573" ],
         "comment" : "Important for FML, we add this",
         "serverreq":true,
         "clientreq":true
@@ -40,6 +42,7 @@
       {
         "name": "org.scala-lang:scala-compiler:2.10.2",
         "url" : "http://files.minecraftforge.net/maven/",
+        "checksums" : [ "64c8b1380cc53d6850823d6e4e7ae984aa44ef9c", "40281b3ffc69fb385953522c843363ccaf71ba89" ],
         "comment" : "Important for FML, we add this",
         "serverreq":true,
         "clientreq":true
