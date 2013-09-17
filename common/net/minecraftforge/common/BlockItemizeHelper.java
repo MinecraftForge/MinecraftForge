@@ -1,6 +1,6 @@
 package net.minecraftforge.common;
 
-import static net.minecraftforge.common.Block2ItemHelper.BlockStyle.*;
+import static net.minecraftforge.common.BlockItemizeHelper.BlockStyle.*;
 
 import java.util.ArrayList;
 
@@ -37,7 +37,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
-public class Block2ItemHelper {
+public class BlockItemizeHelper {
     public static enum BlockStyle {
         UNDECIDED, NOTHING, USE_GET_DAMAGE_VALUE, USE_ID_DROPPED, USE_GET_BLOCK_DROPPED, CLONE_MD, CLONE_ID,
 

@@ -41,8 +41,8 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
 +import net.minecraft.world.WorldProviderEnd;
-+import net.minecraftforge.common.Block2ItemHelper;
-+import net.minecraftforge.common.Block2ItemHelper.BlockStyle;
++import net.minecraftforge.common.BlockItemizeHelper;
++import net.minecraftforge.common.BlockItemizeHelper.BlockStyle;
 +import net.minecraftforge.common.EnumPlantType;
 +import net.minecraftforge.common.ForgeDirection;
 +import net.minecraftforge.common.ForgeHooks;
@@ -1180,7 +1180,7 @@
 +    // To be removed next MC version {1.6.3+}
 +    public float getFilledPercentage(World world, int x, int y, int z){ return 1; }
 +
-+    public Block2ItemHelper.BlockStyle placingItemStyle = BlockStyle.UNDECIDED;
++    public BlockItemizeHelper.BlockStyle placingItemStyle = BlockStyle.UNDECIDED;
 +
 +    /**
 +     * Return the item ordinarily used to create this block.
@@ -1204,7 +1204,7 @@
 +     */
 +    public ItemStack getPlacingItem(MovingObjectPosition target, World world, int x, int y, int z)
 +    {
-+        return Block2ItemHelper.getPlacingItem(this, target, world, x, y, z);
++        return BlockItemizeHelper.getPlacingItem(this, target, world, x, y, z);
 +    }
 +
 +    /**
@@ -1221,6 +1221,6 @@
 +     */
 +    public ItemStack getDescribingItem(MovingObjectPosition target, World world, int x, int y, int z)
 +    {
-+        return Block2ItemHelper.getDescribingItem(this, target, world, x, y, z);
++        return BlockItemizeHelper.getDescribingItem(this, target, world, x, y, z);
 +    }
  }
