@@ -67,16 +67,20 @@
          }
  
          if (par1GuiScreen instanceof GuiMainMenu)
-@@ -1300,7 +1318,7 @@
- 
-                 if (this.thePlayer.isCurrentToolAdventureModeExempt(j, k, l))
-                 {
+@@ -1297,12 +1315,6 @@
+                 int k = this.objectMouseOver.blockY;
+                 int l = this.objectMouseOver.blockZ;
+                 this.playerController.onPlayerDamageBlock(j, k, l, this.objectMouseOver.sideHit);
+-
+-                if (this.thePlayer.isCurrentToolAdventureModeExempt(j, k, l))
+-                {
 -                    this.effectRenderer.addBlockHitEffects(j, k, l, this.objectMouseOver.sideHit);
-+                    this.effectRenderer.addBlockHitEffects(j, k, l, this.objectMouseOver);
-                     this.thePlayer.swingItem();
-                 }
+-                    this.thePlayer.swingItem();
+-                }
              }
-@@ -1366,7 +1384,8 @@
+             else
+             {
+@@ -1366,7 +1378,8 @@
                  {
                      int j1 = itemstack != null ? itemstack.stackSize : 0;
  
@@ -86,17 +90,17 @@
                      {
                          flag = false;
                          this.thePlayer.swingItem();
-@@ -1392,7 +1411,8 @@
+@@ -1392,7 +1405,8 @@
              {
                  ItemStack itemstack1 = this.thePlayer.inventory.getCurrentItem();
  
 -                if (itemstack1 != null && this.playerController.sendUseItem(this.thePlayer, this.theWorld, itemstack1))
 +                boolean result = !ForgeEventFactory.onPlayerInteract(thePlayer, Action.RIGHT_CLICK_AIR, 0, 0, 0, -1).isCanceled();
-+                if (result && itemstack1 != null && this.playerController.sendUseItem(this.thePlayer, this.theWorld, itemstack1))
++                if (this.playerController.sendUseItem(this.thePlayer, this.theWorld, itemstack1))
                  {
                      this.entityRenderer.itemRenderer.resetEquippedProgress2();
                  }
-@@ -1574,6 +1594,8 @@
+@@ -1574,6 +1588,8 @@
  
              while (Mouse.next())
              {
@@ -105,7 +109,7 @@
                  i = Mouse.getEventButton();
  
                  if (isRunningOnMac && i == 0 && (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)))
-@@ -2046,6 +2068,11 @@
+@@ -2046,6 +2062,11 @@
      {
          this.statFileWriter.syncStats();
  
@@ -117,7 +121,7 @@
          if (par1WorldClient == null)
          {
              NetClientHandler netclienthandler = this.getNetHandler();
-@@ -2063,6 +2090,18 @@
+@@ -2063,6 +2084,18 @@
              if (this.theIntegratedServer != null)
              {
                  this.theIntegratedServer.initiateShutdown();
@@ -136,7 +140,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2236,107 +2275,12 @@
+@@ -2236,107 +2269,12 @@
          if (this.objectMouseOver != null)
          {
              boolean flag = this.thePlayer.capabilities.isCreativeMode;
@@ -248,7 +252,7 @@
  
              if (flag)
              {
-@@ -2419,11 +2363,18 @@
+@@ -2419,11 +2357,18 @@
          par1PlayerUsageSnooper.addData("gl_max_texture_size", Integer.valueOf(getGLMaximumTextureSize()));
      }
  
@@ -267,7 +271,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
-@@ -2431,6 +2382,7 @@
+@@ -2431,6 +2376,7 @@
  
              if (j != 0)
              {
