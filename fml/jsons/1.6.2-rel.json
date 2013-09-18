@@ -7,7 +7,7 @@
     "filePath":"@universal_jar@",
     "welcome":"Welcome to the simple FML installer.",
     "minecraft":"@minecraft_version@",
-    "mirrorList" : "http://files.minecraftforge.net/mirror.list",
+    "mirrorList" : "http://files.minecraftforge.net/mirror-brand.list",
     "logo":"/big_logo.png"
   },
   "versionInfo": {
