@@ -23,6 +23,7 @@ import java.util.logging.Level;
 
 import com.google.common.base.Charsets;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
@@ -46,7 +47,7 @@ public class LanguageRegistry
 
     public String getStringLocalization(String key)
     {
-        return getStringLocalization(key, Minecraft.func_71410_x().func_135016_M().func_135041_c().func_135034_a());
+        return getStringLocalization(key, FMLCommonHandler.instance().getCurrentLanguage());
     }
 
     public String getStringLocalization(String key, String lang)
