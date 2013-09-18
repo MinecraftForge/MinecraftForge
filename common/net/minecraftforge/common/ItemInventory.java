@@ -38,7 +38,7 @@ public class ItemInventory implements IInventory {
 
     @Override
     public int getSizeInventory() {
-        return this.getTAGfromItemstack(stack).getInteger(INVENTORY_SIZE_TAG);
+        return this.getTagfromItemstack(stack).getInteger(INVENTORY_SIZE_TAG);
     }
 
     @Override
@@ -131,7 +131,7 @@ public class ItemInventory implements IInventory {
     }
 
     public void setNBTTagInventory(ItemStack itemStack, String tag, ArrayList<ItemStack> inventory) {
-        NBTTagCompound compound = getTAGfromItemstack(itemStack);
+        NBTTagCompound compound = getTagfromItemstack(itemStack);
         NBTTagList nbttaglist = new NBTTagList();
 
         for (int i = 0; i < inventory.size(); i++) {
@@ -146,7 +146,7 @@ public class ItemInventory implements IInventory {
 
     public ArrayList<ItemStack> getNBTTagInventory(ItemStack itemStack, String tag) {
         ArrayList<ItemStack> itemList = new ArrayList<ItemStack>();
-        NBTTagCompound compound = getTAGfromItemstack(itemStack);
+        NBTTagCompound compound = getTagfromItemstack(itemStack);
         if (compound != null) {
             NBTTagList nbttaglist = compound.getTagList(tag);
             for(int pos = 0; pos < nbttaglist.tagCount(); pos++) {
