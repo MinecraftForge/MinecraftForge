@@ -203,7 +203,7 @@
 
     <delete file="${basedir}/installer_base.jar" />
     <delete file="${basedir}/install_profile.json" />
-    <get src="http://files.minecraftforge.net/installer/forge-installer-1.2-shrunk.jar" dest="${basedir}/installer_base.jar" />
+    <get src="http://files.minecraftforge.net/installer/forge-installer-1.3-shrunk.jar" dest="${basedir}/installer_base.jar" />
     <copy file="${basedir}/jsons/${version.minecraft}-rel.json" tofile="${basedir}/install_profile.json" />
     <copy file="${basedir}/installer_base.jar" tofile="${basedir}/target/${modname}-installer-${version.fullname}.jar" />
     <replace file="${basedir}/install_profile.json">
