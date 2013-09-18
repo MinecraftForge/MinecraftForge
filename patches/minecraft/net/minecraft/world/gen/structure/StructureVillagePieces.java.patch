@@ -9,7 +9,7 @@
  import net.minecraft.util.MathHelper;
  
  public class StructureVillagePieces
-@@ -20,6 +22,8 @@
+@@ -37,6 +39,8 @@
          arraylist.add(new StructureVillagePieceWeight(ComponentVillageField2.class, 3, MathHelper.func_76136_a(p_75084_0_, 2 + p_75084_1_, 4 + p_75084_1_ * 2)));
          arraylist.add(new StructureVillagePieceWeight(ComponentVillageHouse2.class, 15, MathHelper.func_76136_a(p_75084_0_, 0, 1 + p_75084_1_)));
          arraylist.add(new StructureVillagePieceWeight(ComponentVillageHouse3.class, 8, MathHelper.func_76136_a(p_75084_0_, 0 + p_75084_1_, 3 + p_75084_1_ * 2)));
@@ -18,7 +18,7 @@
          Iterator iterator = arraylist.iterator();
  
          while (iterator.hasNext())
-@@ -92,6 +96,10 @@
+@@ -109,6 +113,10 @@
          else if (oclass == ComponentVillageHouse3.class)
          {
              object = ComponentVillageHouse3.func_74921_a(p_75083_0_, p_75083_2_, p_75083_3_, p_75083_4_, p_75083_5_, p_75083_6_, p_75083_7_, p_75083_8_);

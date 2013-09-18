@@ -604,6 +604,7 @@ CommandServerSay,net/minecraft/command
 CommandServerStop,net/minecraft/command
 CommandServerTp,net/minecraft/command
 CommandServerWhitelist,net/minecraft/command
+CommandSetPlayerTimeout,net/minecraft/command
 CommandSetSpawnpoint,net/minecraft/command
 CommandShowSeed,net/minecraft/command
 CommandSpreadPlayers,net/minecraft/command
@@ -1482,6 +1483,7 @@ ComponentNetherBridgeThrone,net/minecraft/world/gen/structure
 ComponentScatteredFeature,net/minecraft/world/gen/structure
 ComponentScatteredFeatureDesertPyramid,net/minecraft/world/gen/structure
 ComponentScatteredFeatureJunglePyramid,net/minecraft/world/gen/structure
+ComponentScatteredFeaturePieces,net/minecraft/world/gen/structure
 ComponentScatteredFeaturePieces2,net/minecraft/world/gen/structure
 ComponentScatteredFeatureSwampHut,net/minecraft/world/gen/structure
 ComponentStronghold,net/minecraft/world/gen/structure
@@ -1519,6 +1521,8 @@ MapGenMineshaft,net/minecraft/world/gen/structure
 MapGenNetherBridge,net/minecraft/world/gen/structure
 MapGenStronghold,net/minecraft/world/gen/structure
 MapGenStructure,net/minecraft/world/gen/structure
+MapGenStructureData,net/minecraft/world/gen/structure
+MapGenStructureIO,net/minecraft/world/gen/structure
 MapGenVillage,net/minecraft/world/gen/structure
 StructureBoundingBox,net/minecraft/world/gen/structure
 StructureComponent,net/minecraft/world/gen/structure

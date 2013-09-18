@@ -7,7 +7,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.awt.GraphicsEnvironment;
-@@ -366,7 +367,11 @@
+@@ -368,7 +369,11 @@
          {
              if (this.func_71197_b())
              {
@@ -19,7 +19,7 @@
  
                  for (long j = 0L; this.field_71317_u; this.field_71296_Q = true)
                  {
-@@ -405,6 +410,7 @@
+@@ -407,6 +412,7 @@
  
                      Thread.sleep(1L);
                  }
@@ -27,7 +27,7 @@
              }
              else
              {
-@@ -413,6 +419,10 @@
+@@ -415,6 +421,10 @@
          }
          catch (Throwable throwable)
          {
@@ -38,7 +38,7 @@
              throwable.printStackTrace();
              this.func_98033_al().func_98234_c("Encountered an unexpected exception " + throwable.getClass().getSimpleName(), throwable);
              CrashReport crashreport = null;
-@@ -443,6 +453,10 @@
+@@ -445,6 +455,10 @@
          {
              try
              {
@@ -49,7 +49,7 @@
                  this.func_71260_j();
                  this.field_71316_v = true;
              }
-@@ -452,6 +466,8 @@
+@@ -454,6 +468,8 @@
              }
              finally
              {
@@ -58,7 +58,7 @@
                  this.func_71240_o();
              }
          }
-@@ -468,8 +484,10 @@
+@@ -470,8 +486,10 @@
  
      public void func_71217_p()
      {
@@ -69,7 +69,7 @@
          ++this.field_71315_w;
  
          if (this.field_71295_T)
-@@ -515,6 +533,7 @@
+@@ -517,6 +535,7 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -77,7 +77,7 @@
      }
  
      public void func_71190_q()
-@@ -542,6 +561,7 @@
+@@ -544,6 +563,7 @@
                  }
  
                  this.field_71304_b.func_76320_a("tick");
@@ -85,7 +85,7 @@
                  CrashReport crashreport;
  
                  try
-@@ -566,6 +586,7 @@
+@@ -568,6 +588,7 @@
                      throw new ReportedException(crashreport);
                  }
  
@@ -93,7 +93,7 @@
                  this.field_71304_b.func_76319_b();
                  this.field_71304_b.func_76320_a("tracker");
                  worldserver.func_73039_n().func_72788_a();
-@@ -693,7 +714,7 @@
+@@ -695,7 +716,7 @@
  
      public String getServerModName()
      {
