@@ -113,7 +113,7 @@ public class CoreModManager
         loadPlugins = new ArrayList<FMLPluginWrapper>();
         for (String rootPluginName : rootPlugins)
         {
-            loadCoreMod(classLoader, rootPluginName, null);
+            loadCoreMod(classLoader, rootPluginName, new File(FMLTweaker.getJarLocation()));
         }
 
         if (loadPlugins.isEmpty())

@@ -9,7 +9,28 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.io.IOException;
-@@ -45,7 +47,7 @@
+@@ -23,9 +25,19 @@
+ 
+     public StringTranslate()
+     {
++        InputStream inputstream = StringTranslate.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang");
++        localInject(inputstream);
++    }
++    
++    public static void inject(InputStream inputstream)
++    {
++        field_74817_a.localInject(inputstream);
++    }
++    
++    private void localInject(InputStream inputstream)
++    {
+         try
+         {
+-            InputStream inputstream = StringTranslate.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang");
+             Iterator iterator = IOUtils.readLines(inputstream, Charsets.UTF_8).iterator();
+ 
+             while (iterator.hasNext())
+@@ -45,7 +57,7 @@
                  }
              }
          }

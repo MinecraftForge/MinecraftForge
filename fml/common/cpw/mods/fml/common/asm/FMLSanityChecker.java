@@ -85,6 +85,7 @@ public class FMLSanityChecker implements IFMLCallHook
     }
 
     private LaunchClassLoader cl;
+    public static File fmlLocation;
 
     @Override
     public Void call() throws Exception
@@ -239,6 +240,7 @@ public class FMLSanityChecker implements IFMLCallHook
     {
         cl = (LaunchClassLoader) data.get("classLoader");
         File mcDir = (File)data.get("mcLocation");
+        fmlLocation = (File)data.get("coremodLocation");
         FMLDeobfuscatingRemapper.INSTANCE.setup(mcDir, cl, (String) data.get("deobfuscationFileName"));
         ClassPatchManager.INSTANCE.setup(FMLLaunchHandler.side());
     }
