@@ -1,7 +1,7 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/structure/ComponentStrongholdChestCorridor.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/structure/ComponentStrongholdChestCorridor.java
-@@ -6,6 +6,9 @@
- import net.minecraft.item.Item;
+@@ -7,6 +7,9 @@
+ import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.util.WeightedRandomChestContent;
  import net.minecraft.world.World;
 +
@@ -10,7 +10,7 @@
  
  public class ComponentStrongholdChestCorridor extends ComponentStronghold
  {
-@@ -72,7 +75,7 @@
+@@ -86,7 +89,7 @@
                  if (par3StructureBoundingBox.isVecInside(j, i, k))
                  {
                      this.hasMadeChest = true;

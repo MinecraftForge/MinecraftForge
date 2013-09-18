@@ -91,7 +91,7 @@
                  this.playerEntity.onGround = par1Packet10Flying.onGround;
                  this.mcServer.getConfigurationManager().serverUpdateMountedMovingPlayer(this.playerEntity);
                  this.playerEntity.updateFlyingState(this.playerEntity.posY - d0, par1Packet10Flying.onGround);
-@@ -442,7 +471,10 @@
+@@ -443,7 +472,10 @@
                  double d2 = this.playerEntity.posZ - ((double)k + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
@@ -103,7 +103,7 @@
                  {
                      return;
                  }
-@@ -502,7 +534,11 @@
+@@ -504,7 +536,11 @@
                  return;
              }
  
@@ -116,7 +116,7 @@
          }
          else if (par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit() - 1 && (par1Packet15Place.getDirection() == 1 || par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit()))
          {
-@@ -511,7 +547,9 @@
+@@ -513,7 +549,9 @@
          }
          else
          {
@@ -127,7 +127,7 @@
              {
                  this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, worldserver, itemstack, i, j, k, l, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
              }
-@@ -691,6 +729,8 @@
+@@ -695,6 +733,8 @@
                      }
  
                      ChatMessageComponent chatmessagecomponent = ChatMessageComponent.createFromTranslationWithSubstitutions("chat.type.text", new Object[] {this.playerEntity.getTranslatedEntityName(), s});
@@ -136,7 +136,7 @@
                      this.mcServer.getConfigurationManager().func_110459_a(chatmessagecomponent, false);
                  }
  
-@@ -838,7 +878,7 @@
+@@ -849,7 +889,7 @@
                      return;
                  }
  
