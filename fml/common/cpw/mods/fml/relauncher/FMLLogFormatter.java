@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -37,7 +37,7 @@ final class FMLLogFormatter extends Formatter
         String name = lvl.getLocalizedName();
         if ( name == null )
         {
-            name = lvl.getName();        	
+            name = lvl.getName();
         }
 
         if ( ( name != null ) && ( name.length() > 0 ) )
@@ -57,7 +57,7 @@ final class FMLLogFormatter extends Formatter
         {
             msg.append("[] ");
         }
-        msg.append(record.getMessage());
+        msg.append(formatMessage(record));
         msg.append(LINE_SEPARATOR);
         Throwable thr = record.getThrown();
 
