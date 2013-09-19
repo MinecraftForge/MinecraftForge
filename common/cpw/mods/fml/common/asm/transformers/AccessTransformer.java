@@ -284,7 +284,7 @@ public class AccessTransformer implements IClassTransformer
         }
 
         // Clear the "final" marker on fields only if specified in control field
-        if (target.changeFinal && target.desc == "")
+        if (target.changeFinal)
         {
             if (target.markFinal)
             {
