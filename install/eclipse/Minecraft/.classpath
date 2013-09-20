@@ -5,9 +5,9 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="jars/libraries/org/ow2/asm/asm-debug-all/4.1/asm-debug-all-4.1.jar" sourcepath="jars/libraries/org/ow2/asm/asm-debug-all/4.1/asm-debug-all-4.1-sources.jar"/>
 	<classpathentry kind="lib" path="jars/libraries/net/minecraft/launchwrapper/1.7/launchwrapper-1.7.jar"/>
-	<classpathentry kind="lib" path="jars/versions/1.6.3/1.6.3.jar">
+	<classpathentry kind="lib" path="jars/versions/1.6.4/1.6.4.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Minecraft/jars/versions/1.6.3/1.6.3-natives"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Minecraft/jars/versions/1.6.4/1.6.4-natives"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="jars/libraries/lzma/lzma/0.0.1/lzma-0.0.1.jar"/>
