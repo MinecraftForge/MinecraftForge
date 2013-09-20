@@ -68,4 +68,6 @@ public interface IFMLSidedHandler
     void updateResourcePackList();
 
     String getCurrentLanguage();
+
+    void serverStopped();
 }

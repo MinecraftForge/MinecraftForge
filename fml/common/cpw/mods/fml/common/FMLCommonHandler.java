@@ -465,10 +465,11 @@ public class FMLCommonHandler
 
     public void handleServerStopped()
     {
+        sidedDelegate.serverStopped();
         MinecraftServer server = getMinecraftServerInstance();
         Loader.instance().serverStopped();
         // FORCE the internal server to stop: hello optifine workaround!
-        if (server!=null) ObfuscationReflectionHelper.setPrivateValue(MinecraftServer.class, server, false, "field_71316_v", "u", "serverStopped");
+        if (server!=null) ObfuscationReflectionHelper.setPrivateValue(MinecraftServer.class, server, false, "field_71316"+"_v", "u", "serverStopped");
     }
 
     public String getModName()
@@ -499,7 +500,7 @@ public class FMLCommonHandler
 
     public String getCurrentLanguage()
     {
-        
+
         return sidedDelegate.getCurrentLanguage();
     }
 }

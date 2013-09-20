@@ -207,7 +207,7 @@ public class FMLServerHandler implements IFMLSidedHandler
     public void addModAsResource(ModContainer container)
     {
         File source = container.getSource();
-        try 
+        try
         {
             if (source.isDirectory())
             {
@@ -218,9 +218,9 @@ public class FMLServerHandler implements IFMLSidedHandler
                 searchZipForENUSLanguage(source);
             }
         }
-        catch (IOException ioe) 
+        catch (IOException ioe)
         {
-            
+
         }
     }
     private static final Pattern assetENUSLang = Pattern.compile("assets/(.*)/lang/en_US.lang");
@@ -258,11 +258,17 @@ public class FMLServerHandler implements IFMLSidedHandler
     @Override
     public void updateResourcePackList()
     {
-        
+
     }
     @Override
     public String getCurrentLanguage()
     {
         return "en_US";
+    }
+
+    @Override
+    public void serverStopped()
+    {
+        // NOOP
     }
 }
