@@ -612,4 +612,14 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         return client.func_135016_M().func_135041_c().func_135034_a();
     }
+
+    @Override
+    public void serverStopped()
+    {
+        // If the server crashes during startup, it might hang the client- reset the client so it can abend properly.
+        if (!getServer().func_71200_ad())
+        {
+            ObfuscationReflectionHelper.setPrivateValue(MinecraftServer.class, getServer(), true, "field_71296"+"_Q","serverIs"+"Running");
+        }
+    }
 }
