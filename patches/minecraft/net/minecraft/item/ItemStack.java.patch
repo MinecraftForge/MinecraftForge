@@ -1,6 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemStack.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemStack.java
-@@ -252,7 +252,9 @@
+@@ -29,6 +29,7 @@
+ import net.minecraft.util.Icon;
+ import net.minecraft.util.StatCollector;
+ import net.minecraft.world.World;
++import net.minecraftforge.event.ForgeEventFactory;
+ 
+ public final class ItemStack
+ {
+@@ -252,7 +253,9 @@
       */
      public boolean isItemDamaged()
      {
@@ -11,7 +19,7 @@
      }
  
      /**
-@@ -260,6 +262,10 @@
+@@ -260,6 +263,10 @@
       */
      public int getItemDamageForDisplay()
      {
@@ -22,7 +30,7 @@
          return this.itemDamage;
      }
  
-@@ -268,6 +274,10 @@
+@@ -268,6 +275,10 @@
       */
      public int getItemDamage()
      {
@@ -33,7 +41,7 @@
          return this.itemDamage;
      }
  
-@@ -276,6 +286,12 @@
+@@ -276,6 +287,12 @@
       */
      public void setItemDamage(int par1)
      {
@@ -46,7 +54,7 @@
          this.itemDamage = par1;
  
          if (this.itemDamage < 0)
-@@ -289,7 +305,7 @@
+@@ -289,7 +306,7 @@
       */
      public int getMaxDamage()
      {
@@ -55,7 +63,7 @@
      }
  
      /**
-@@ -327,8 +343,8 @@
+@@ -327,8 +344,8 @@
                  }
              }
  
@@ -66,7 +74,7 @@
          }
      }
  
-@@ -396,7 +412,7 @@
+@@ -396,7 +413,7 @@
       */
      public boolean canHarvestBlock(Block par1Block)
      {
@@ -75,7 +83,12 @@
      }
  
      public boolean func_111282_a(EntityPlayer par1EntityPlayer, EntityLivingBase par2EntityLivingBase)
-@@ -737,10 +753,16 @@
+@@ -733,14 +750,21 @@
+         {
+             arraylist.add("Durability: " + (this.getMaxDamage() - this.getItemDamageForDisplay()) + " / " + this.getMaxDamage());
+         }
++        ForgeEventFactory.onItemTooltip(this, par1EntityPlayer, arraylist, par2);
+ 
          return arraylist;
      }
  
