@@ -17,6 +17,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -233,11 +235,17 @@ public class CoreModManager
         }
     }
 
+    private static Method ADDURL;
     private static void handleCascadingTweak(File coreMod, JarFile jar, String cascadedTweaker, LaunchClassLoader classLoader)
     {
         try
         {
-            classLoader.addURL(coreMod.toURI().toURL());
+            // Have to manually stuff the tweaker into the parent classloader
+            if (ADDURL == null)
+            {
+                ADDURL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+            }
+            ADDURL.invoke(classLoader.getParent(), coreMod.toURI().toURL());
             CoreModManager.tweaker.injectCascadingTweak(cascadedTweaker);
         }
         catch (Exception e)
@@ -281,7 +289,7 @@ public class CoreModManager
     {
         return reparsedCoremods;
     }
-    
+
     private static FMLPluginWrapper loadCoreMod(LaunchClassLoader classLoader, String coreModClass, File location)
     {
         String coreModName = coreModClass.substring(coreModClass.lastIndexOf('.')+1);
