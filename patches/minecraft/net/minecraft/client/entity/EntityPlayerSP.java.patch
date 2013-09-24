@@ -1,15 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
 +++ ../src_work/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
-@@ -49,6 +49,8 @@
+@@ -49,6 +49,9 @@
  import net.minecraft.util.MovementInput;
  import net.minecraft.util.Session;
  import net.minecraft.world.World;
++import net.minecraftforge.client.ForgeHooksClient;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
  
  @SideOnly(Side.CLIENT)
  public class EntityPlayerSP extends AbstractClientPlayer
-@@ -69,8 +71,8 @@
+@@ -69,8 +72,8 @@
      public float renderArmPitch;
      public float prevRenderArmYaw;
      public float prevRenderArmPitch;
@@ -20,7 +21,7 @@
      private MouseFilter field_71162_ch = new MouseFilter();
      private MouseFilter field_71160_ci = new MouseFilter();
      private MouseFilter field_71161_cj = new MouseFilter();
-@@ -83,7 +85,7 @@
+@@ -83,7 +86,7 @@
  
      public EntityPlayerSP(Minecraft par1Minecraft, World par2World, Session par3Session, int par4)
      {
@@ -29,7 +30,7 @@
          this.mc = par1Minecraft;
          this.dimension = par4;
      }
-@@ -260,45 +262,45 @@
+@@ -260,45 +263,45 @@
                  }
              }
  
@@ -92,7 +93,7 @@
              }
  
              super.onLivingUpdate();
-@@ -323,8 +325,8 @@
+@@ -323,8 +326,8 @@
              f *= 1.1F;
          }
  
@@ -103,7 +104,16 @@
  
          if (this.isUsingItem() && this.getItemInUse().itemID == Item.bow.itemID)
          {
-@@ -405,7 +407,7 @@
+@@ -343,7 +346,7 @@
+             f *= 1.0F - f1 * 0.15F;
+         }
+ 
+-        return f;
++        return ForgeHooksClient.getOffsetFOV(this, f);
+     }
+ 
+     /**
+@@ -405,7 +408,7 @@
          this.mc.displayGuiScreen(new GuiHopper(this.inventory, par1EntityMinecartHopper));
      }
  
@@ -112,7 +122,7 @@
      {
          this.mc.displayGuiScreen(new GuiScreenHorseInventory(this.inventory, par2IInventory, par1EntityHorse));
      }
-@@ -501,13 +503,13 @@
+@@ -501,13 +504,13 @@
      /**
       * Updates health locally.
       */
@@ -130,7 +140,7 @@
  
              if (f1 < 0.0F)
              {
-@@ -516,8 +518,8 @@
+@@ -516,8 +519,8 @@
          }
          else
          {
@@ -141,7 +151,80 @@
              this.hurtResistantTime = this.maxHurtResistantTime;
              this.damageEntity(DamageSource.generic, f1);
              this.hurtTime = this.maxHurtTime = 10;
-@@ -656,7 +658,7 @@
+@@ -570,18 +573,66 @@
+      */
+     protected boolean pushOutOfBlocks(double par1, double par3, double par5)
+     {
++        if (this.noClip)
++        {
++            return false;
++        }
+         int i = MathHelper.floor_double(par1);
+         int j = MathHelper.floor_double(par3);
+         int k = MathHelper.floor_double(par5);
+         double d3 = par1 - (double)i;
+         double d4 = par5 - (double)k;
+ 
+-        if (this.isBlockTranslucent(i, j, k) || this.isBlockTranslucent(i, j + 1, k))
+-        {
+-            boolean flag = !this.isBlockTranslucent(i - 1, j, k) && !this.isBlockTranslucent(i - 1, j + 1, k);
+-            boolean flag1 = !this.isBlockTranslucent(i + 1, j, k) && !this.isBlockTranslucent(i + 1, j + 1, k);
+-            boolean flag2 = !this.isBlockTranslucent(i, j, k - 1) && !this.isBlockTranslucent(i, j + 1, k - 1);
+-            boolean flag3 = !this.isBlockTranslucent(i, j, k + 1) && !this.isBlockTranslucent(i, j + 1, k + 1);
++        int entHeight = Math.max(Math.round(this.height), 1);
++        
++        boolean inTranslucentBlock = true;
++        
++        for (int i1 = 0; i1 < entHeight; i1++)
++        {
++            if (!this.isBlockTranslucent(i, j + i1, k))
++            {
++                inTranslucentBlock = false;
++            }
++        }
++        
++        if (inTranslucentBlock)
++        {
++            boolean flag = true;
++            boolean flag1 = true;
++            boolean flag2 = true;
++            boolean flag3 = true;
++            for (int i1 = 0; i1 < entHeight; i1++)
++            {
++                if(this.isBlockTranslucent(i - 1, j + i1, k))
++                {
++            	    flag = false;
++            	    break;
++                }
++            }
++            for (int i1 = 0; i1 < entHeight; i1++)
++            {
++                if(this.isBlockTranslucent(i + 1, j + i1, k))
++                {
++            	    flag1 = false;
++            	    break;
++                }
++            }
++            for (int i1 = 0; i1 < entHeight; i1++)
++            {
++                if(this.isBlockTranslucent(i, j + i1, k - 1))
++                {
++            	    flag2 = false;
++            	    break;
++                }
++            }
++            for (int i1 = 0; i1 < entHeight; i1++)
++            {
++                if(this.isBlockTranslucent(i, j + i1, k + 1))
++                {
++            	    flag3 = false;
++            	    break;
++                }
++            }
+             byte b0 = -1;
+             double d5 = 9999.0D;
+ 
+@@ -656,7 +707,7 @@
  
      public void sendChatToPlayer(ChatMessageComponent par1ChatMessageComponent)
      {
@@ -150,7 +233,7 @@
      }
  
      /**
-@@ -685,6 +687,12 @@
+@@ -685,6 +736,12 @@
  
      public void playSound(String par1Str, float par2, float par3)
      {
@@ -163,7 +246,7 @@
          this.worldObj.playSound(this.posX, this.posY - (double)this.yOffset, this.posZ, par1Str, par2, par3, false);
      }
  
-@@ -696,14 +704,14 @@
+@@ -696,14 +753,14 @@
          return true;
      }
  

@@ -8,12 +8,13 @@
  import net.minecraft.world.WorldSettings;
  import net.minecraft.world.chunk.storage.AnvilSaveConverter;
  import net.minecraft.world.storage.ISaveFormat;
-@@ -137,17 +138,25 @@
+@@ -137,17 +138,26 @@
  
  import com.google.common.collect.MapDifference;
  
 +import net.minecraftforge.client.ForgeHooksClient;
 +import net.minecraftforge.client.GuiIngameForge;
++import net.minecraftforge.client.event.GuiOpenEvent;
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.ForgeEventFactory;
@@ -39,7 +40,7 @@
      private ServerData currentServerData;
  
      /** The RenderEngine instance used by Minecraft */
-@@ -168,7 +177,7 @@
+@@ -168,7 +178,7 @@
      private Timer timer = new Timer(20.0F);
  
      /** Instance of PlayerUsageSnooper. */
@@ -48,7 +49,7 @@
      public WorldClient theWorld;
      public RenderGlobal renderGlobal;
      public EntityClientPlayerMP thePlayer;
-@@ -223,9 +232,9 @@
+@@ -223,9 +233,9 @@
      /** Mouse helper instance. */
      public MouseHelper mouseHelper;
      public final File mcDataDir;
@@ -61,7 +62,7 @@
      private ISaveFormat saveLoader;
  
      /**
-@@ -269,12 +278,12 @@
+@@ -269,12 +279,12 @@
      /** The profiler instance */
      public final Profiler mcProfiler = new Profiler();
      private long field_83002_am = -1L;
@@ -80,7 +81,7 @@
  
      /**
       * Set to true to keep the game loop running. Set to false by shutdown() to allow the game loop to exit cleanly.
-@@ -297,18 +306,18 @@
+@@ -297,18 +307,18 @@
      public Minecraft(Session par1Session, int par2, int par3, boolean par4, boolean par5, File par6File, File par7File, File par8File, Proxy par9Proxy, String par10Str)
      {
          theMinecraft = this;
@@ -108,7 +109,7 @@
          this.isDemo = par5;
          this.displayWidth = par2;
          this.displayHeight = par3;
-@@ -402,11 +411,11 @@
+@@ -402,11 +412,11 @@
          Display.setTitle("Minecraft 1.6.2");
          this.getLogAgent().logInfo("LWJGL Version: " + Sys.getVersion());
  
@@ -122,7 +123,7 @@
              }
              catch (IOException ioexception)
              {
-@@ -416,7 +425,7 @@
+@@ -416,7 +426,7 @@
  
          try
          {
@@ -131,7 +132,7 @@
          }
          catch (LWJGLException lwjglexception)
          {
-@@ -433,7 +442,7 @@
+@@ -433,7 +443,7 @@
  
              if (this.fullscreen)
              {
@@ -140,7 +141,7 @@
              }
  
              Display.create();
-@@ -441,37 +450,37 @@
+@@ -441,37 +451,37 @@
  
          OpenGlHelper.initializeTextures();
          this.guiAchievement = new GuiAchievement(this);
@@ -199,7 +200,7 @@
          RenderManager.instance.itemRenderer = new ItemRenderer(this);
          this.entityRenderer = new EntityRenderer(this);
          this.statFileWriter = new StatFileWriter(this.session, this.mcDataDir);
-@@ -491,13 +500,13 @@
+@@ -491,13 +501,13 @@
          GL11.glMatrixMode(GL11.GL_MODELVIEW);
          this.checkGLError("Startup");
          this.renderGlobal = new RenderGlobal(this);
@@ -216,7 +217,7 @@
  
          if (this.serverName != null)
          {
-@@ -517,19 +526,19 @@
+@@ -517,19 +527,19 @@
          FMLClientHandler.instance().onInitializationComplete();
      }
  
@@ -245,7 +246,7 @@
  
          if (this.renderGlobal != null)
          {
-@@ -537,12 +546,12 @@
+@@ -537,12 +547,12 @@
          }
      }
  
@@ -264,7 +265,7 @@
      {
          BufferedImage bufferedimage = ImageIO.read(par1File);
          int[] aint = bufferedimage.getRGB(0, 0, bufferedimage.getWidth(), bufferedimage.getHeight(), (int[])null, 0, bufferedimage.getWidth());
-@@ -560,15 +569,15 @@
+@@ -560,15 +570,15 @@
          return bytebuffer;
      }
  
@@ -284,7 +285,7 @@
  
              while (iterator.hasNext())
              {
-@@ -629,7 +638,7 @@
+@@ -629,7 +639,7 @@
          GL11.glDisable(GL11.GL_LIGHTING);
          GL11.glEnable(GL11.GL_TEXTURE_2D);
          GL11.glDisable(GL11.GL_FOG);
@@ -293,7 +294,18 @@
          Tessellator tessellator = Tessellator.instance;
          tessellator.startDrawingQuads();
          tessellator.setColorOpaque_I(16777215);
-@@ -690,7 +699,7 @@
+@@ -679,20 +689,29 @@
+      */
+     public void displayGuiScreen(GuiScreen par1GuiScreen)
+     {
+-        if (this.currentScreen != null)
+-        {
+-            this.currentScreen.onGuiClosed();
+-        }
+-
+         this.statFileWriter.syncStats();
+ 
+         if (par1GuiScreen == null && this.theWorld == null)
          {
              par1GuiScreen = new GuiMainMenu();
          }
@@ -301,8 +313,24 @@
 +        else if (par1GuiScreen == null && this.thePlayer.getHealth() <= 0.0F)
          {
              par1GuiScreen = new GuiGameOver();
++        }
++
++        GuiScreen old = this.currentScreen;
++        GuiOpenEvent event = new GuiOpenEvent(par1GuiScreen);
++        
++        if (MinecraftForge.EVENT_BUS.post(event))
++        {
++            return;
++        }
++
++        par1GuiScreen = event.gui;
++        if (old != null && par1GuiScreen != old)
++        {
++            old.onGuiClosed();
          }
-@@ -763,7 +772,7 @@
+ 
+         if (par1GuiScreen instanceof GuiMainMenu)
+@@ -763,7 +782,7 @@
                  ;
              }
  
@@ -311,7 +339,7 @@
          }
          finally
          {
-@@ -778,7 +787,7 @@
+@@ -778,7 +797,7 @@
          System.gc();
      }
  
@@ -320,7 +348,7 @@
      {
          this.running = true;
          CrashReport crashreport;
-@@ -810,7 +819,7 @@
+@@ -810,7 +829,7 @@
                      if (this.refreshTexturePacksScheduled)
                      {
                          this.refreshTexturePacksScheduled = false;
@@ -329,7 +357,7 @@
                      }
  
                      try
-@@ -1008,13 +1017,13 @@
+@@ -1008,13 +1027,13 @@
  
          this.mcProfiler.endSection();
  
@@ -350,7 +378,7 @@
      {
          return this.currentScreen != null && this.currentScreen instanceof GuiMainMenu ? 2 : this.gameSettings.limitFramerate;
      }
-@@ -1300,7 +1309,7 @@
+@@ -1300,7 +1319,7 @@
  
                  if (this.thePlayer.isCurrentToolAdventureModeExempt(j, k, l))
                  {
@@ -359,7 +387,7 @@
                      this.thePlayer.swingItem();
                  }
              }
-@@ -1366,7 +1375,8 @@
+@@ -1366,7 +1385,8 @@
                  {
                      int j1 = itemstack != null ? itemstack.stackSize : 0;
  
@@ -369,7 +397,7 @@
                      {
                          flag = false;
                          this.thePlayer.swingItem();
-@@ -1392,7 +1402,8 @@
+@@ -1392,7 +1412,8 @@
              {
                  ItemStack itemstack1 = this.thePlayer.inventory.getCurrentItem();
  
@@ -379,7 +407,7 @@
                  {
                      this.entityRenderer.itemRenderer.resetEquippedProgress2();
                  }
-@@ -1411,7 +1422,7 @@
+@@ -1411,7 +1432,7 @@
  
              if (this.fullscreen)
              {
@@ -388,7 +416,7 @@
                  this.displayWidth = Display.getDisplayMode().getWidth();
                  this.displayHeight = Display.getDisplayMode().getHeight();
  
-@@ -1510,12 +1521,12 @@
+@@ -1510,12 +1531,12 @@
  
          if (!this.isGamePaused)
          {
@@ -403,8 +431,12 @@
              {
                  this.displayGuiScreen((GuiScreen)null);
              }
-@@ -1576,7 +1587,7 @@
+@@ -1574,9 +1595,11 @@
+ 
+             while (Mouse.next())
              {
++                if (ForgeHooksClient.postMouseEvent()) continue;
++
                  i = Mouse.getEventButton();
  
 -                if (field_142025_a && i == 0 && (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)))
@@ -412,7 +444,7 @@
                  {
                      i = 1;
                  }
-@@ -1683,12 +1694,12 @@
+@@ -1683,12 +1706,12 @@
  
                              if (Keyboard.getEventKey() == 31 && Keyboard.isKeyDown(61))
                              {
@@ -427,7 +459,7 @@
                              }
  
                              if (Keyboard.getEventKey() == 33 && Keyboard.isKeyDown(61))
-@@ -1993,7 +2004,7 @@
+@@ -1993,7 +2016,7 @@
      public void continueWorldLoading()
      {
          this.integratedServerIsRunning = true;
@@ -436,7 +468,7 @@
  
          while (!this.theIntegratedServer.serverIsInRunLoop())
          {
-@@ -2001,7 +2012,7 @@
+@@ -2001,7 +2024,7 @@
  
              if (s2 != null)
              {
@@ -445,7 +477,7 @@
              }
              else
              {
-@@ -2046,6 +2057,11 @@
+@@ -2046,6 +2069,11 @@
      {
          this.statFileWriter.syncStats();
  
@@ -457,7 +489,7 @@
          if (par1WorldClient == null)
          {
              NetClientHandler netclienthandler = this.getNetHandler();
-@@ -2063,6 +2079,18 @@
+@@ -2063,6 +2091,18 @@
              if (this.theIntegratedServer != null)
              {
                  this.theIntegratedServer.initiateShutdown();
@@ -476,7 +508,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2236,107 +2264,12 @@
+@@ -2236,107 +2276,12 @@
          if (this.objectMouseOver != null)
          {
              boolean flag = this.thePlayer.capabilities.isCreativeMode;
@@ -588,7 +620,7 @@
  
              if (flag)
              {
-@@ -2351,15 +2284,15 @@
+@@ -2351,15 +2296,15 @@
       */
      public CrashReport addGraphicsAndWorldToCrashReport(CrashReport par1CrashReport)
      {
@@ -613,7 +645,7 @@
  
          if (this.theWorld != null)
          {
-@@ -2380,11 +2313,11 @@
+@@ -2380,11 +2325,11 @@
      public void addServerStatsToSnooper(PlayerUsageSnooper par1PlayerUsageSnooper)
      {
          par1PlayerUsageSnooper.addData("fps", Integer.valueOf(debugFPS));
@@ -627,7 +659,7 @@
  
          if (this.theIntegratedServer != null && this.theIntegratedServer.getPlayerUsageSnooper() != null)
          {
-@@ -2397,7 +2330,7 @@
+@@ -2397,7 +2342,7 @@
          par1PlayerUsageSnooper.addData("opengl_version", GL11.glGetString(GL11.GL_VERSION));
          par1PlayerUsageSnooper.addData("opengl_vendor", GL11.glGetString(GL11.GL_VENDOR));
          par1PlayerUsageSnooper.addData("client_brand", ClientBrandRetriever.getClientModName());
@@ -636,7 +668,7 @@
          ContextCapabilities contextcapabilities = GLContext.getCapabilities();
          par1PlayerUsageSnooper.addData("gl_caps[ARB_multitexture]", Boolean.valueOf(contextcapabilities.GL_ARB_multitexture));
          par1PlayerUsageSnooper.addData("gl_caps[ARB_multisample]", Boolean.valueOf(contextcapabilities.GL_ARB_multisample));
-@@ -2419,11 +2352,18 @@
+@@ -2419,11 +2364,18 @@
          par1PlayerUsageSnooper.addData("gl_max_texture_size", Integer.valueOf(getGLMaximumTextureSize()));
      }
  
@@ -655,7 +687,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
-@@ -2431,6 +2371,7 @@
+@@ -2431,6 +2383,7 @@
  
              if (j != 0)
              {
@@ -663,7 +695,7 @@
                  return i;
              }
          }
-@@ -2483,7 +2424,15 @@
+@@ -2483,7 +2436,15 @@
  
              if (integratedserver != null)
              {
@@ -680,7 +712,7 @@
              }
          }
      }
-@@ -2514,46 +2463,46 @@
+@@ -2514,46 +2475,46 @@
  
      public ILogAgent getLogAgent()
      {

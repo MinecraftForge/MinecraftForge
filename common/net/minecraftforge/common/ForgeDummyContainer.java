@@ -51,6 +51,8 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     public static boolean disableStitchedFileSaving = false;
     public static boolean forceDuplicateFluidBlockCrash = true;
     public static boolean fullBoundingBoxLadders = false;
+    
+    public static int[] blendRanges = { 20, 15, 10, 5 };
 
     public ForgeDummyContainer()
     {
@@ -139,6 +141,10 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
             FMLLog.warning("Disabling forced crashes on duplicate Fluid Blocks - USE AT YOUR OWN RISK");
         }
 
+        prop = config.get(Configuration.CATEGORY_GENERAL, "biomeSkyBlendRange", new int[] { 20, 15, 10, 5 });
+        prop.comment = "Control the range of sky blending for colored skies in biomes.";
+        blendRanges = prop.getIntList();
+        
         if (config.hasChanged())
         {
             config.save();
@@ -148,7 +154,7 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     @Override
     public boolean registerBus(EventBus bus, LoadController controller)
     {
-    	bus.register(this);
+        bus.register(this);
         return true;
     }
 
@@ -176,7 +182,8 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     @Subscribe
     public void postInit(FMLPostInitializationEvent evt)
     {
-    	ForgeChunkManager.loadConfiguration();
+        BiomeDictionary.registerAllBiomesAndGenerateEvents();
+        ForgeChunkManager.loadConfiguration();
     }
 
     @Subscribe
@@ -201,7 +208,7 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
             DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
         }
     }
-    
+
     @Override
     public File getSource()
     {

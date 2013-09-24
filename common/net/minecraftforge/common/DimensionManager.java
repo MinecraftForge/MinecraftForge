@@ -249,7 +249,8 @@ public class DimensionManager
 
     public static void setWorld(int id, WorldServer world)
     {
-        if (world != null) {
+        if (world != null)
+        {
             worlds.put(id, world);
             // MCPC+ start - check config option and only log world leak messages if enabled
             if (MinecraftServer.getServer().server.getWorldLeakDebug())
@@ -264,7 +265,9 @@ public class DimensionManager
             // MCPC+ end
             MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
             FMLLog.info("Loading dimension %d (%s) (%s)", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
-        } else {
+        }
+        else
+        {
             MinecraftServer.getServer().worlds.remove(getWorld(id)); // MCPC+ - remove world from our new world arraylist
             worlds.remove(id);
             MinecraftServer.getServer().worldTickTimes.remove(id);
@@ -295,10 +298,12 @@ public class DimensionManager
     public static void initDimension(int dim) {
         if (dim == 0) return; // MCPC+ - overworld
         WorldServer overworld = getWorld(0);
-        if (overworld == null) {
+        if (overworld == null)
+        {
             throw new RuntimeException("Cannot Hotload Dim: Overworld is not Loaded!");
         }
-        try {
+        try
+        {
             // MCPC+ start - Fixes MultiVerse issue when mods such as Twilight Forest try to hotload their dimension when using its WorldProvider
             if(overworld.getMinecraftServer().server.craftWorldLoading)
             {
@@ -306,9 +311,11 @@ public class DimensionManager
             }
             // MCPC+ end
             DimensionManager.getProviderType(dim);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             System.err.println("Cannot Hotload Dim: " + e.getMessage());
-            return; //If a provider hasn't been registered then we can't hotload the dim
+            return; // If a provider hasn't been registered then we can't hotload the dim
         }
 
         MinecraftServer mcServer = overworld.getMinecraftServer();

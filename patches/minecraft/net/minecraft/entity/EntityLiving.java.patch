@@ -8,13 +8,15 @@
  import net.minecraft.item.Item;
  import net.minecraft.item.ItemArmor;
  import net.minecraft.item.ItemStack;
-@@ -31,6 +32,14 @@
+@@ -31,6 +32,16 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
 +import net.minecraftforge.common.ForgeHooks;
-+import net.minecraft.entity.passive.EntityHorse;
-+import net.minecraft.entity.passive.EntityOcelot;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.Event.Result;
++import net.minecraftforge.event.ForgeEventFactory;
++import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
 +// CraftBukkit start
 +import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityUnleashEvent;
@@ -23,7 +25,7 @@
  
  public abstract class EntityLiving extends EntityLivingBase
  {
-@@ -57,13 +66,13 @@
+@@ -57,13 +68,13 @@
      private ItemStack[] equipment = new ItemStack[5];
  
      /** Chances for each equipment piece from dropping when this entity dies. */
@@ -40,7 +42,7 @@
      protected float defaultPitch;
  
      /** This entity's current target. */
-@@ -71,8 +80,8 @@
+@@ -71,8 +82,8 @@
  
      /** How long to keep a specific target entity */
      protected int numTicksToChaseTarget;
@@ -51,7 +53,7 @@
      private NBTTagCompound field_110170_bx;
  
      public EntityLiving(World par1World)
-@@ -93,10 +102,10 @@
+@@ -93,10 +104,10 @@
          }
      }
  
@@ -66,7 +68,7 @@
      }
  
      public EntityLookHelper getLookHelper()
-@@ -141,6 +150,7 @@
+@@ -141,6 +152,7 @@
      public void setAttackTarget(EntityLivingBase par1EntityLivingBase)
      {
          this.attackTarget = par1EntityLivingBase;
@@ -74,7 +76,7 @@
      }
  
      /**
-@@ -291,6 +301,8 @@
+@@ -291,6 +303,8 @@
       */
      protected void dropFewItems(boolean par1, int par2)
      {
@@ -83,7 +85,7 @@
          int j = this.getDropItemId();
  
          if (j > 0)
-@@ -302,11 +314,30 @@
+@@ -302,11 +316,30 @@
                  k += this.rand.nextInt(par2 + 1);
              }
  
@@ -119,7 +121,7 @@
      }
  
      /**
-@@ -343,20 +374,20 @@
+@@ -343,20 +376,20 @@
          par1NBTTagCompound.setTag("DropChances", nbttaglist1);
          par1NBTTagCompound.setString("CustomName", this.getCustomNameTag());
          par1NBTTagCompound.setBoolean("CustomNameVisible", this.getAlwaysRenderNameTag());
@@ -151,7 +153,7 @@
                  nbttagcompound1.setInteger("X", entityhanging.xPosition);
                  nbttagcompound1.setInteger("Y", entityhanging.yPosition);
                  nbttagcompound1.setInteger("Z", entityhanging.zPosition);
-@@ -374,6 +405,22 @@
+@@ -374,6 +407,22 @@
          super.readEntityFromNBT(par1NBTTagCompound);
          this.setCanPickUpLoot(par1NBTTagCompound.getBoolean("CanPickUpLoot"));
          this.persistenceRequired = par1NBTTagCompound.getBoolean("PersistenceRequired");
@@ -174,7 +176,7 @@
  
          if (par1NBTTagCompound.hasKey("CustomName") && par1NBTTagCompound.getString("CustomName").length() > 0)
          {
-@@ -404,9 +451,9 @@
+@@ -404,9 +453,9 @@
              }
          }
  
@@ -187,7 +189,29 @@
          {
              this.field_110170_bx = par1NBTTagCompound.getCompoundTag("Leash");
          }
-@@ -562,12 +609,12 @@
+@@ -547,9 +596,21 @@
+      */
+     protected void despawnEntity()
+     {
++        Result result = null;
+         if (this.persistenceRequired)
+         {
+             this.entityAge = 0;
++        }
++        else if ((this.entityAge & 0x1F) == 0x1F && (result = ForgeEventFactory.canEntityDespawn(this)) != Result.DEFAULT)
++        {
++            if (result == Result.DENY)
++            {
++                this.entityAge = 0;
++            }
++            else
++            {
++                this.setDead();
++            }
+         }
+         else
+         {
+@@ -562,12 +623,12 @@
                  double d2 = entityplayer.posZ - this.posZ;
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
@@ -202,7 +226,7 @@
                  {
                      this.setDead();
                  }
-@@ -726,8 +773,6 @@
+@@ -726,8 +787,6 @@
          return this.worldObj.checkNoEntityCollision(this.boundingBox) && this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(this.boundingBox);
      }
  
@@ -211,7 +235,7 @@
      /**
       * Returns render size modifier
       */
-@@ -744,7 +789,10 @@
+@@ -744,7 +803,10 @@
          return 4;
      }
  
@@ -223,7 +247,7 @@
      {
          if (this.getAttackTarget() == null)
          {
-@@ -752,7 +800,7 @@
+@@ -752,7 +814,7 @@
          }
          else
          {
@@ -232,7 +256,7 @@
              i -= (3 - this.worldObj.difficultySetting) * 4;
  
              if (i < 0)
-@@ -838,7 +886,7 @@
+@@ -838,7 +900,7 @@
       */
      protected void addRandomArmor()
      {
@@ -241,7 +265,7 @@
          {
              int i = this.rand.nextInt(2);
              float f = this.worldObj.difficultySetting == 3 ? 0.1F : 0.25F;
-@@ -1008,7 +1056,7 @@
+@@ -1008,7 +1070,7 @@
       */
      protected void enchantEquipment()
      {
@@ -250,7 +274,7 @@
  
          if (this.getHeldItem() != null && this.rand.nextFloat() < 0.25F * f)
          {
-@@ -1026,9 +1074,9 @@
+@@ -1026,9 +1088,9 @@
          }
      }
  
@@ -263,7 +287,7 @@
          return par1EntityLivingData;
      }
  
-@@ -1100,40 +1148,67 @@
+@@ -1100,40 +1162,67 @@
          this.canPickUpLoot = par1;
      }
  
@@ -341,7 +365,7 @@
          }
      }
  
-@@ -1149,28 +1224,31 @@
+@@ -1149,28 +1238,31 @@
      {
          if (this.field_110170_bx != null)
          {
@@ -392,7 +416,7 @@
              }
  
              if (!this.worldObj.isRemote && par1 && this.worldObj instanceof WorldServer)
-@@ -1180,35 +1258,39 @@
+@@ -1180,35 +1272,39 @@
          }
      }
  
@@ -458,7 +482,7 @@
          {
              if (this.field_110170_bx.hasKey("UUIDMost") && this.field_110170_bx.hasKey("UUIDLeast"))
              {
-@@ -1220,9 +1302,9 @@
+@@ -1220,9 +1316,9 @@
                  {
                      EntityLivingBase entitylivingbase = (EntityLivingBase)iterator.next();
  
@@ -470,7 +494,7 @@
                          break;
                      }
                  }
-@@ -1232,21 +1314,25 @@
+@@ -1232,21 +1328,25 @@
                  int i = this.field_110170_bx.getInteger("X");
                  int j = this.field_110170_bx.getInteger("Y");
                  int k = this.field_110170_bx.getInteger("Z");
