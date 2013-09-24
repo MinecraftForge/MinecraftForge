@@ -53,6 +53,7 @@ import com.google.common.io.CharStreams;
 import com.google.common.io.InputSupplier;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.patcher.ClassPatchManager;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
@@ -70,6 +71,11 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     private Map<String,Map<String,String>> methodNameMaps;
 
     private LaunchClassLoader classLoader;
+
+
+    private static final boolean DEBUG_REMAPPING = Boolean.parseBoolean(System.getProperty("fml.remappingDebug", "false"));
+    private static final boolean DUMP_FIELD_MAPS = Boolean.parseBoolean(System.getProperty("fml.remappingDebug.dumpFieldMaps", "false")) && DEBUG_REMAPPING;
+    private static final boolean DUMP_METHOD_MAPS = Boolean.parseBoolean(System.getProperty("fml.remappingDebug.dumpMethodMaps", "false")) && DEBUG_REMAPPING;
 
     private FMLDeobfuscatingRemapper()
     {
@@ -202,6 +208,10 @@ public class FMLDeobfuscatingRemapper extends Remapper {
      */
     private Map<String,Map<String,String>> fieldDescriptions = Maps.newHashMap();
 
+    // Cache null values so we don't waste time trying to recompute classes with no field or method maps
+    private Set<String> negativeCacheMethods = Sets.newHashSet();
+    private Set<String> negativeCacheFields = Sets.newHashSet();
+
     private String getFieldType(String owner, String name)
     {
         if (fieldDescriptions.containsKey(owner))
@@ -212,7 +222,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         {
             try
             {
-                byte[] classBytes = classLoader.getClassBytes(owner);
+                byte[] classBytes = ClassPatchManager.INSTANCE.getPatchedResource(owner, map(owner).replace('/', '.'), classLoader);
                 if (classBytes == null)
                 {
                     return null;
@@ -288,7 +298,6 @@ public class FMLDeobfuscatingRemapper extends Remapper {
 
         String result = classNameBiMap.containsKey(realType) ? classNameBiMap.get(realType) : mcpNameBiMap.containsKey(realType) ? mcpNameBiMap.get(realType) : realType;
         result = dollarIdx > -1 ? result+"$"+subType : result;
-//        System.out.printf("Mapping %s=>%s\n",typeName,result);
         return result;
     }
 
@@ -305,7 +314,6 @@ public class FMLDeobfuscatingRemapper extends Remapper {
 
         String result = classNameBiMap.containsValue(realType) ? classNameBiMap.inverse().get(realType) : mcpNameBiMap.containsValue(realType) ? mcpNameBiMap.inverse().get(realType) : realType;
         result = dollarIdx > -1 ? result+"$"+subType : result;
-//        System.out.printf("Unmapping %s=>%s\n",typeName,result);
         return result;
     }
 
@@ -324,18 +332,36 @@ public class FMLDeobfuscatingRemapper extends Remapper {
 
     private Map<String,String> getFieldMap(String className)
     {
-        if (!fieldNameMaps.containsKey(className))
+        if (!fieldNameMaps.containsKey(className) && !negativeCacheFields.contains(className))
         {
             findAndMergeSuperMaps(className);
+            if (!fieldNameMaps.containsKey(className))
+            {
+                negativeCacheFields.add(className);
+            }
+
+            if (DUMP_FIELD_MAPS)
+            {
+                FMLRelaunchLog.finest("Field map for %s : %s", className, fieldNameMaps.get(className));
+            }
         }
         return fieldNameMaps.get(className);
     }
 
     private Map<String,String> getMethodMap(String className)
     {
-        if (!methodNameMaps.containsKey(className))
+        if (!methodNameMaps.containsKey(className) && !negativeCacheMethods.contains(className))
         {
             findAndMergeSuperMaps(className);
+            if (!methodNameMaps.containsKey(className))
+            {
+                negativeCacheMethods.add(className);
+            }
+            if (DUMP_METHOD_MAPS)
+            {
+                FMLRelaunchLog.finest("Method map for %s : %s", className, methodNameMaps.get(className));
+            }
+
         }
         return methodNameMaps.get(className);
     }
@@ -344,17 +370,14 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     {
         try
         {
-            byte[] classBytes = classLoader.getClassBytes(name);
-            if (classBytes == null)
+            String superName = null;
+            String[] interfaces = new String[0];
+            byte[] classBytes = ClassPatchManager.INSTANCE.getPatchedResource(name, map(name), classLoader);
+            if (classBytes != null)
             {
-                return;
-            }
-            ClassReader cr = new ClassReader(classBytes);
-            String superName = cr.getSuperName();
-            String[] interfaces = cr.getInterfaces();
-            if (interfaces == null)
-            {
-                interfaces = new String[0];
+                ClassReader cr = new ClassReader(classBytes);
+                superName = cr.getSuperName();
+                interfaces = cr.getInterfaces();
             }
             mergeSuperMaps(name, superName, interfaces);
         }
