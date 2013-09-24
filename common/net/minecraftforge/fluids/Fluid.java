@@ -1,4 +1,3 @@
-
 package net.minecraftforge.fluids;
 
 import java.util.Locale;
@@ -90,7 +89,7 @@ public class Fluid
      *
      * Used primarily in tool tips.
      */
-    protected EnumRarity rarity;
+    protected EnumRarity rarity = EnumRarity.common;
 
     /**
      * If there is a Block implementation of the Fluid, the BlockID is linked here.
