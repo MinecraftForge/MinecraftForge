@@ -130,11 +130,25 @@
          this.playerLoggedIn(par2EntityPlayerMP);
          netserverhandler.setPlayerLocation(par2EntityPlayerMP.posX, par2EntityPlayerMP.posY, par2EntityPlayerMP.posZ, par2EntityPlayerMP.rotationYaw, par2EntityPlayerMP.rotationPitch);
          this.mcServer.getNetworkThread().addPlayer(netserverhandler);
-@@ -165,7 +215,7 @@
-         }
-     }
+@@ -157,15 +207,15 @@
  
+             if (entity != null)
+             {
+-                entity.field_98038_p = true;
++                entity.forceSpawn = true;
+                 worldserver.spawnEntityInWorld(entity);
+                 par2EntityPlayerMP.mountEntity(entity);
+-                entity.field_98038_p = false;
+-            }
+-        }
+-    }
+-
 -    protected void func_96456_a(ServerScoreboard par1ServerScoreboard, EntityPlayerMP par2EntityPlayerMP)
++                entity.forceSpawn = false;
++            }
++        }
++    }
++
 +    public void func_96456_a(ServerScoreboard par1ServerScoreboard, EntityPlayerMP par2EntityPlayerMP)   // CraftBukkit - protected -> public
      {
          HashSet hashset = new HashSet();
@@ -178,7 +192,7 @@
 +
 +        if ((joinMessage != null) && (joinMessage.length() > 0))
 +        {
-+            this.mcServer.getConfigurationManager().sendPacketToAllPlayers(new Packet3Chat(ChatMessageComponent.func_111066_d(joinMessage)));
++            this.mcServer.getConfigurationManager().sendPacketToAllPlayers(new Packet3Chat(ChatMessageComponent.createFromText(joinMessage)));
 +        }
 +
 +        this.cserver.onPlayerJoin(playerJoinEvent.getPlayer());
@@ -223,13 +237,10 @@
          }
      }
  
-@@ -278,25 +375,56 @@
-         par1EntityPlayerMP.getServerForPlayer().getPlayerManager().updateMountedMovingPlayer(par1EntityPlayerMP);
-     }
- 
--    /**
--     * Called when a player disconnects from the game. Writes player data to disk and removes them from the world.
--     */
+@@ -281,22 +378,56 @@
+     /**
+      * Called when a player disconnects from the game. Writes player data to disk and removes them from the world.
+      */
 -    public void playerLoggedOut(EntityPlayerMP par1EntityPlayerMP)
 -    {
 -        GameRegistry.onPlayerLogout(par1EntityPlayerMP);
@@ -296,7 +307,7 @@
      }
  
      /**
-@@ -345,9 +473,75 @@
+@@ -345,9 +476,75 @@
          }
      }
  
@@ -375,7 +386,7 @@
      public EntityPlayerMP createPlayerForUser(String par1Str)
      {
          ArrayList arraylist = new ArrayList();
-@@ -382,8 +576,50 @@
+@@ -382,8 +579,50 @@
              object = new ItemInWorldManager(this.mcServer.worldServerForDimension(0));
          }
  
@@ -428,7 +439,7 @@
  
      /**
       * creates and returns a respawned player based on the provided PlayerEntity. Args are the PlayerEntityMP to
-@@ -392,80 +628,178 @@
+@@ -392,80 +631,178 @@
       */
      public EntityPlayerMP respawnPlayer(EntityPlayerMP par1EntityPlayerMP, int par2, boolean par3)
      {
@@ -599,6 +610,8 @@
          worldserver.spawnEntityInWorld(entityplayermp1);
          this.playerEntityList.add(entityplayermp1);
 -        entityplayermp1.addSelfToInternalCraftingInventory();
+-        entityplayermp1.setEntityHealth(entityplayermp1.func_110143_aJ());
+-        GameRegistry.onPlayerRespawn(entityplayermp1);
 +        // CraftBukkit start - Added from changeDimension
 +        this.syncPlayerInventory(entityplayermp1); // CraftBukkit
 +        entityplayermp1.sendPlayerAbilities();
@@ -612,8 +625,7 @@
 +
 +        // entityplayermp1.syncInventory();
 +        // CraftBukkit end
-         entityplayermp1.setEntityHealth(entityplayermp1.func_110143_aJ());
--        GameRegistry.onPlayerRespawn(entityplayermp1);
++        entityplayermp1.setHealth(entityplayermp1.getHealth());
 +
 +        // CraftBukkit start - Don't fire on respawn
 +        if (fromWorld != location.getWorld())
@@ -652,7 +664,7 @@
          this.func_72375_a(par1EntityPlayerMP, worldserver);
          par1EntityPlayerMP.playerNetServerHandler.setPlayerLocation(par1EntityPlayerMP.posX, par1EntityPlayerMP.posY, par1EntityPlayerMP.posZ, par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
          par1EntityPlayerMP.theItemInWorldManager.setWorld(worldserver1);
-@@ -480,6 +814,107 @@
+@@ -480,6 +817,107 @@
          }
  
          GameRegistry.onPlayerChangedDimension(par1EntityPlayerMP);
@@ -760,7 +772,7 @@
      }
  
      /**
-@@ -487,38 +922,25 @@
+@@ -487,38 +925,25 @@
       */
      public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer)
      {
@@ -812,7 +824,7 @@
          {
              ChunkCoordinates chunkcoordinates;
  
-@@ -555,7 +977,7 @@
+@@ -555,7 +980,7 @@
                  par4WorldServer.spawnEntityInWorld(par1Entity);
                  par1Entity.setLocationAndAngles(d0, par1Entity.posY, d1, par1Entity.rotationYaw, par1Entity.rotationPitch);
                  par4WorldServer.updateEntityWithOptionalForce(par1Entity, false);
@@ -821,7 +833,7 @@
              }
  
              par3WorldServer.theProfiler.endSection();
-@@ -564,6 +986,118 @@
+@@ -564,6 +989,118 @@
          par1Entity.setWorld(par4WorldServer);
      }
  
@@ -940,7 +952,7 @@
      /**
       * sends 1 player per tick, but only sends a player once every 600 ticks
       */
-@@ -574,12 +1108,38 @@
+@@ -574,12 +1111,38 @@
              this.playerPingIndex = 0;
          }
  
@@ -985,7 +997,7 @@
  
      /**
       * sends a packet to all players
-@@ -659,6 +1219,15 @@
+@@ -659,6 +1222,15 @@
      public void addOp(String par1Str)
      {
          this.ops.add(par1Str.toLowerCase());
@@ -1001,7 +1013,7 @@
      }
  
      /**
-@@ -667,6 +1236,15 @@
+@@ -667,6 +1239,15 @@
      public void removeOp(String par1Str)
      {
          this.ops.remove(par1Str.toLowerCase());
@@ -1017,17 +1029,25 @@
      }
  
      /**
-@@ -683,7 +1261,8 @@
-      */
-     public boolean areCommandsAllowed(String par1Str)
-     {
+@@ -679,11 +1260,12 @@
+     }
+ 
+     /**
+-     * Returns true if the specific player is allowed to use commands.
+-     */
+-    public boolean areCommandsAllowed(String par1Str)
+-    {
 -        return this.ops.contains(par1Str.trim().toLowerCase()) || this.mcServer.isSinglePlayer() && this.mcServer.worldServers[0].getWorldInfo().areCommandsAllowed() && this.mcServer.getServerOwner().equalsIgnoreCase(par1Str) || this.commandsAllowedForAll;
++     * Returns true if the specified player is opped, even if they're currently offline.
++     */
++    public boolean isPlayerOpped(String par1Str)
++    {
 +        if (par1Str == null) return false; // MCPC+ - fixes Aether ServerPlayerAPI initialization which passes a null username
 +        return this.ops.contains(par1Str.trim().toLowerCase()) || (this.mcServer.isSinglePlayer() && this.mcServer.worldServers[0].getWorldInfo().areCommandsAllowed() && this.mcServer.getServerOwner().equalsIgnoreCase(par1Str)) || this.commandsAllowedForAll;
      }
  
      public EntityPlayerMP getPlayerForUsername(String par1Str)
-@@ -857,6 +1436,13 @@
+@@ -857,6 +1439,13 @@
          {
              EntityPlayerMP entityplayermp = (EntityPlayerMP)this.playerEntityList.get(j);
  
@@ -1041,7 +1061,7 @@
              if (entityplayermp != par1EntityPlayer && entityplayermp.dimension == par10)
              {
                  double d4 = par2 - entityplayermp.posX;
-@@ -925,7 +1511,7 @@
+@@ -925,7 +1514,7 @@
  
          if (par2WorldServer.isRaining())
          {
@@ -1050,7 +1070,7 @@
          }
      }
  
-@@ -935,7 +1521,7 @@
+@@ -935,7 +1524,7 @@
      public void syncPlayerInventory(EntityPlayerMP par1EntityPlayerMP)
      {
          par1EntityPlayerMP.sendContainerToPlayer(par1EntityPlayerMP.inventoryContainer);
@@ -1059,7 +1079,7 @@
          par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet16BlockItemSwitch(par1EntityPlayerMP.inventory.currentItem));
      }
  
-@@ -960,7 +1546,10 @@
+@@ -960,7 +1549,10 @@
       */
      public String[] getAvailablePlayerDat()
      {
@@ -1071,7 +1091,7 @@
      }
  
      public boolean isWhiteListEnabled()
-@@ -1049,7 +1638,16 @@
+@@ -1049,7 +1641,16 @@
      {
          while (!this.playerEntityList.isEmpty())
          {

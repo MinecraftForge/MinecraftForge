@@ -8,6 +8,17 @@
  
      protected BlockDispenser(int par1)
      {
+@@ -120,8 +121,8 @@
+     {
+         this.blockIcon = par1IconRegister.registerIcon("furnace_side");
+         this.furnaceTopIcon = par1IconRegister.registerIcon("furnace_top");
+-        this.furnaceFrontIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_front_horizontal");
+-        this.field_96473_e = par1IconRegister.registerIcon(this.func_111023_E() + "_front_vertical");
++        this.furnaceFrontIcon = par1IconRegister.registerIcon(this.getTextureName() + "_front_horizontal");
++        this.field_96473_e = par1IconRegister.registerIcon(this.getTextureName() + "_front_vertical");
+     }
+ 
+     /**
 @@ -146,7 +147,8 @@
          }
      }
@@ -26,3 +37,14 @@
                      tileentitydispenser.setInventorySlotContents(l, itemstack1.stackSize == 0 ? null : itemstack1);
                  }
              }
+@@ -236,7 +239,9 @@
+     }
+ 
+     /**
+-     * ejects contained items into the world, and notifies neighbours of an update, as appropriate
++     * Called on server worlds only when the block has been replaced by a different block ID, or the same block with a
++     * different metadata value, but before the new metadata value is set. Args: World, x, y, z, old block ID, old
++     * metadata
+      */
+     public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
+     {

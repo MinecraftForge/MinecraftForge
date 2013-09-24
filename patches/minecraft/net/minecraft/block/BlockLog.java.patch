@@ -1,6 +1,17 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockLog.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockLog.java
-@@ -60,14 +60,9 @@
+@@ -43,7 +43,9 @@
+     }
+ 
+     /**
+-     * ejects contained items into the world, and notifies neighbours of an update, as appropriate
++     * Called on server worlds only when the block has been replaced by a different block ID, or the same block with a
++     * different metadata value, but before the new metadata value is set. Args: World, x, y, z, old block ID, old
++     * metadata
+      */
+     public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
+     {
+@@ -60,14 +62,9 @@
                      {
                          int j2 = par1World.getBlockId(par2 + k1, par3 + l1, par4 + i2);
  
@@ -17,8 +28,38 @@
                          }
                      }
                  }
-@@ -125,4 +120,16 @@
-             this.tree_top[i] = par1IconRegister.registerIcon(this.func_111023_E() + "_" + woodType[i] + "_top");
+@@ -76,13 +73,21 @@
+     }
+ 
+     @SideOnly(Side.CLIENT)
+-    protected Icon func_111048_c(int par1)
++
++    /**
++     * The icon for the side of the block.
++     */
++    protected Icon getSideIcon(int par1)
+     {
+         return this.field_111052_c[par1];
+     }
+ 
+     @SideOnly(Side.CLIENT)
+-    protected Icon func_111049_d(int par1)
++
++    /**
++     * The icon for the tops and bottoms of the block.
++     */
++    protected Icon getEndIcon(int par1)
+     {
+         return this.tree_top[par1];
+     }
+@@ -121,8 +126,20 @@
+ 
+         for (int i = 0; i < this.field_111052_c.length; ++i)
+         {
+-            this.field_111052_c[i] = par1IconRegister.registerIcon(this.func_111023_E() + "_" + woodType[i]);
+-            this.tree_top[i] = par1IconRegister.registerIcon(this.func_111023_E() + "_" + woodType[i] + "_top");
++            this.field_111052_c[i] = par1IconRegister.registerIcon(this.getTextureName() + "_" + woodType[i]);
++            this.tree_top[i] = par1IconRegister.registerIcon(this.getTextureName() + "_" + woodType[i] + "_top");
          }
      }
 +

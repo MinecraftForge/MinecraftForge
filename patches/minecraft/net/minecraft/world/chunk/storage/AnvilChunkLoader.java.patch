@@ -312,6 +312,15 @@
          dataoutputstream.close();
      }
  
+@@ -229,7 +338,7 @@
+         par3NBTTagCompound.setLong("LastUpdate", par2World.getTotalWorldTime());
+         par3NBTTagCompound.setIntArray("HeightMap", par1Chunk.heightMap);
+         par3NBTTagCompound.setBoolean("TerrainPopulated", par1Chunk.isTerrainPopulated);
+-        par3NBTTagCompound.setLong("InhabitedTime", par1Chunk.field_111204_q);
++        par3NBTTagCompound.setLong("InhabitedTime", par1Chunk.inhabitedTime);
+         ExtendedBlockStorage[] aextendedblockstorage = par1Chunk.getBlockStorageArray();
+         NBTTagList nbttaglist = new NBTTagList("Sections");
+         boolean flag = !par2World.provider.hasNoSky;
 @@ -249,19 +358,19 @@
  
                  if (extendedblockstorage.getBlockMSBArray() != null)
@@ -339,6 +348,15 @@
                  }
  
                  nbttaglist.appendTag(nbttagcompound1);
+@@ -285,7 +394,7 @@
+ 
+                 try
+                 {
+-                    if (entity.addEntityID(nbttagcompound1))
++                    if (entity.writeToNBTOptional(nbttagcompound1))
+                     {
+                         par1Chunk.hasEntities = true;
+                         nbttaglist1.appendTag(nbttagcompound1);
 @@ -294,8 +403,10 @@
                  catch (Exception e)
                  {
@@ -365,6 +383,15 @@
              }
          }
  
+@@ -358,7 +471,7 @@
+         Chunk chunk = new Chunk(par1World, i, j);
+         chunk.heightMap = par2NBTTagCompound.getIntArray("HeightMap");
+         chunk.isTerrainPopulated = par2NBTTagCompound.getBoolean("TerrainPopulated");
+-        chunk.field_111204_q = par2NBTTagCompound.getLong("InhabitedTime");
++        chunk.inhabitedTime = par2NBTTagCompound.getLong("InhabitedTime");
+         NBTTagList nbttaglist = par2NBTTagCompound.getTagList("Sections");
+         byte b0 = 16;
+         ExtendedBlockStorage[] aextendedblockstorage = new ExtendedBlockStorage[b0];
 @@ -395,14 +508,21 @@
              chunk.setBiomeArray(par2NBTTagCompound.getByteArray("Biomes"));
          }

@@ -77,8 +77,9 @@
 +    public ISaveFormat anvilConverterForAnvilFile; // CraftBukkit - private final -> public
  
      /** The PlayerUsageSnooper instance. */
-     private final PlayerUsageSnooper usageSnooper = new PlayerUsageSnooper("server", this, func_130071_aq());
+-    private final PlayerUsageSnooper usageSnooper = new PlayerUsageSnooper("server", this, func_130071_aq());
 -    private final File anvilFile;
++    private final PlayerUsageSnooper usageSnooper = new PlayerUsageSnooper("server", this, getSystemTimeMillis());
 +    public File anvilFile; // CraftBukkit - private final -> public
  
      /**
@@ -92,6 +93,15 @@
  
      /** The ServerConfigurationManager instance. */
      private ServerConfigurationManager serverConfigManager;
+@@ -93,7 +119,7 @@
+ 
+     /** Incremented every tick. */
+     private int tickCounter;
+-    protected Proxy field_110456_c;
++    protected Proxy serverProxy;
+ 
+     /**
+      * The task the server is currently working on(and will output on outputPercentRemaining).
 @@ -132,7 +158,8 @@
      public final long[] tickTimeArray;
  
@@ -102,10 +112,14 @@
      private KeyPair serverKeyPair;
  
      /** Username of the server owner (for integrated servers) */
-@@ -158,7 +185,50 @@
+@@ -156,11 +183,54 @@
+     private long timeOfLastWarning;
+     private String userMessage;
      private boolean startProfiling;
-     private boolean field_104057_T;
- 
+-    private boolean field_104057_T;
+-
++    private boolean isGamemodeForced;
++
 +    // CraftBukkit start
 +    public List<WorldServer> worlds = new ArrayList<WorldServer>();
 +    public org.bukkit.craftbukkit.CraftServer server;
@@ -133,14 +147,15 @@
 +
 +    // MCPC+ start - vanilla compatibility
      public MinecraftServer(File par1File)
-+    {
+     {
+-        this.field_110456_c = Proxy.NO_PROXY;
 +        mcServer = this;
 +        this.anvilFile = par1File;
 +        this.commandManager = new ServerCommandManager();
 +        this.anvilConverterForAnvilFile = new AnvilSaveConverter(par1File);
 +        this.registerDispenseBehaviors();
 +        primaryThread = null;
-+        this.field_110456_c = Proxy.NO_PROXY;
++        this.serverProxy = Proxy.NO_PROXY;
 +        this.sentPacketCountArray = new long[100];
 +        this.sentPacketSizeArray = new long[100];
 +        this.receivedPacketCountArray = new long[100];
@@ -150,9 +165,11 @@
 +    // MCPC+ end
 +
 +    public MinecraftServer(OptionSet options)   // CraftBukkit - signature file -> OptionSet
-     {
-         this.field_110456_c = Proxy.NO_PROXY;
++    {
++        this.serverProxy = Proxy.NO_PROXY;
          this.sentPacketCountArray = new long[100];
+         this.sentPacketSizeArray = new long[100];
+         this.receivedPacketCountArray = new long[100];
 @@ -168,11 +238,46 @@
          this.tickTimeArray = new long[100];
          this.texturePack = "";
@@ -385,7 +402,7 @@
 +            }
 +
 +            ChunkCoordinates chunkcoordinates = worldserver.getSpawnPoint();
-+            long j = func_130071_aq();
++            long j = getSystemTimeMillis();
 +            i = 0;
 +
 +            for (int k = -192; k <= 192 && this.isServerRunning(); k += 16)
@@ -401,7 +418,7 @@
 -            }
 -        }
 -
-+                    long i1 = func_130071_aq();
++                    long i1 = getSystemTimeMillis();
 +
 +                    if (i1 - j > 1000L)
 +                    {
@@ -508,13 +525,17 @@
              }
  
              if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
-@@ -457,45 +599,36 @@
+@@ -455,47 +597,38 @@
+             {
+                 FMLCommonHandler.instance().handleServerStarted();
  
-                 long i = func_130071_aq();
- 
+-                long i = func_130071_aq();
+-
 -                FMLCommonHandler.instance().onWorldLoadTick(worldServers);
 -
 -                for (long j = 0L; this.serverRunning; this.serverIsRunning = true)
++                long i = getSystemTimeMillis();
++
 +                FMLCommonHandler.instance().onWorldLoadTick(this.worlds.toArray(new WorldServer[this.worlds.size()]));
 +
 +                // Spigot start
@@ -907,15 +928,29 @@
      }
  
      /**
-@@ -864,7 +1116,7 @@
+@@ -862,16 +1114,16 @@
+      */
+     public CrashReport addServerInfoToCrashReport(CrashReport par1CrashReport)
      {
-         par1CrashReport.func_85056_g().addCrashSectionCallable("Profiler Position", new CallableIsServerModded(this));
- 
+-        par1CrashReport.func_85056_g().addCrashSectionCallable("Profiler Position", new CallableIsServerModded(this));
+-
 -        if (this.worldServers != null && this.worldServers.length > 0 && this.worldServers[0] != null)
+-        {
+-            par1CrashReport.func_85056_g().addCrashSectionCallable("Vec3 Pool Size", new CallableServerProfiler(this));
++        par1CrashReport.getCategory().addCrashSectionCallable("Profiler Position", new CallableIsServerModded(this));
++
 +        if (this.worlds != null && this.worlds.size() > 0 && this.worlds.get(0) != null)
-         {
-             par1CrashReport.func_85056_g().addCrashSectionCallable("Vec3 Pool Size", new CallableServerProfiler(this));
++        {
++            par1CrashReport.getCategory().addCrashSectionCallable("Vec3 Pool Size", new CallableServerProfiler(this));
          }
+ 
+         if (this.serverConfigManager != null)
+         {
+-            par1CrashReport.func_85056_g().addCrashSectionCallable("Player Count", new CallableServerMemoryStats(this));
++            par1CrashReport.getCategory().addCrashSectionCallable("Player Count", new CallableServerMemoryStats(this));
+         }
+ 
+         return par1CrashReport;
 @@ -882,6 +1134,8 @@
       */
      public List getPossibleCompletions(ICommandSender par1ICommandSender, String par2Str)
@@ -973,6 +1008,15 @@
          this.initiateShutdown();
      }
  
+@@ -1135,7 +1395,7 @@
+         par1PlayerUsageSnooper.addData("players_seen", Integer.valueOf(this.serverConfigManager.getAvailablePlayerDat().length));
+         par1PlayerUsageSnooper.addData("uses_auth", Boolean.valueOf(this.onlineMode));
+         par1PlayerUsageSnooper.addData("gui_state", this.getGuiEnabled() ? "enabled" : "disabled");
+-        par1PlayerUsageSnooper.addData("run_time", Long.valueOf((func_130071_aq() - par1PlayerUsageSnooper.func_130105_g()) / 60L * 1000L));
++        par1PlayerUsageSnooper.addData("run_time", Long.valueOf((getSystemTimeMillis() - par1PlayerUsageSnooper.func_130105_g()) / 60L * 1000L));
+         par1PlayerUsageSnooper.addData("avg_tick_ms", Integer.valueOf((int)(MathHelper.average(this.tickTimeArray) * 1.0E-6D)));
+         par1PlayerUsageSnooper.addData("avg_sent_packet_count", Integer.valueOf((int)MathHelper.average(this.sentPacketCountArray)));
+         par1PlayerUsageSnooper.addData("avg_sent_packet_size", Integer.valueOf((int)MathHelper.average(this.sentPacketSizeArray)));
 @@ -1143,22 +1403,23 @@
          par1PlayerUsageSnooper.addData("avg_rec_packet_size", Integer.valueOf((int)MathHelper.average(this.receivedPacketSizeArray)));
          int i = 0;
@@ -1045,16 +1089,74 @@
          }
      }
  
-@@ -1335,7 +1598,7 @@
+@@ -1333,9 +1596,9 @@
+         return new ChunkCoordinates(0, 0, 0);
+     }
  
-     public World func_130014_f_()
-     {
+-    public World func_130014_f_()
+-    {
 -        return this.worldServers[0];
++    public World getEntityWorld()
++    {
 +        return this.worlds.get(0); // CraftBukkit
      }
  
      /**
-@@ -1384,121 +1647,251 @@
+@@ -1346,29 +1609,36 @@
+         return 16;
+     }
+ 
+-    public boolean func_96290_a(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer)
++    /**
++     * Returns true if a player does not have permission to edit the block at the given coordinates.
++     */
++    public boolean isBlockProtected(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer)
+     {
+         return false;
+     }
+ 
+     public abstract ILogAgent getLogAgent();
+ 
+-    public void func_104055_i(boolean par1)
+-    {
+-        this.field_104057_T = par1;
+-    }
+-
+-    public boolean func_104056_am()
+-    {
+-        return this.field_104057_T;
+-    }
+-
+-    public Proxy func_110454_ao()
+-    {
+-        return this.field_110456_c;
+-    }
+-
+-    public static long func_130071_aq()
++    public void setForceGamemode(boolean par1)
++    {
++        this.isGamemodeForced = par1;
++    }
++
++    public boolean getForceGamemode()
++    {
++        return this.isGamemodeForced;
++    }
++
++    public Proxy getServerProxy()
++    {
++        return this.serverProxy;
++    }
++
++    /**
++     * returns the difference, measured in milliseconds, between the current system time and midnight, January 1, 1970
++     * UTC.
++     */
++    public static long getSystemTimeMillis()
+     {
+         return System.currentTimeMillis();
+     }
+@@ -1384,121 +1654,251 @@
      @SideOnly(Side.SERVER)
      public static void main(String[] par0ArrayOfStr)
      {

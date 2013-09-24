@@ -93,7 +93,7 @@ public class GuiControlsScrollPanel extends GuiSlot
         boolean flag = _mouseX >= xPosition && _mouseY >= yPosition && _mouseX < xPosition + width && _mouseY < yPosition + height;
         int k = (flag ? 2 : 1);
 
-        mc.renderEngine.func_110577_a(WIDGITS);
+        mc.renderEngine.bindTexture(WIDGITS);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         controls.drawTexturedModalRect(xPosition, yPosition, 0, 46 + k * 20, width / 2, height);
         controls.drawTexturedModalRect(xPosition + width / 2, yPosition, 200 - width / 2, 46 + k * 20, width / 2, height);

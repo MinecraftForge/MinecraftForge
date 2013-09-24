@@ -281,10 +281,11 @@
                                                              {
                                                                  ++j2;
 -                                                                par1WorldServer.spawnEntityInWorld(entityliving);
-+                                                                // CraftBukkit start - Added a reason for spawning this creature, moved entityliving.a(entitylivingdata) up
-                                                                 entitylivingdata = entityliving.func_110161_a(entitylivingdata);
+-                                                                entitylivingdata = entityliving.func_110161_a(entitylivingdata);
 -
 -                                                                if (j2 >= entityliving.getMaxSpawnedInChunk())
++                                                                // CraftBukkit start - Added a reason for spawning this creature, moved entityliving.a(entitylivingdata) up
++                                                                entitylivingdata = entityliving.onSpawnWithEgg(entitylivingdata);
 +                                                                par0WorldServer.addEntity(entityliving, SpawnReason.NATURAL);
 +
 +                                                                // CraftBukkit end
@@ -316,8 +317,9 @@
  
                              entityliving.setLocationAndAngles((double)f, (double)f1, (double)f2, par6Random.nextFloat() * 360.0F, 0.0F);
 -                            par0World.spawnEntityInWorld(entityliving);
+-                            entitylivingdata = entityliving.func_110161_a(entitylivingdata);
 +                            // CraftBukkit start - Added a reason for spawning this creature, moved entityliving.a(entitylivingdata) up
-                             entitylivingdata = entityliving.func_110161_a(entitylivingdata);
++                            entitylivingdata = entityliving.onSpawnWithEgg(entitylivingdata);
 +                            par0World.addEntity(entityliving, SpawnReason.CHUNK_GEN);
 +                            // CraftBukkit end
                              flag = true;

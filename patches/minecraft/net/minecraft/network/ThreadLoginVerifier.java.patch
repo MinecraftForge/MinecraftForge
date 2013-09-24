@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/network/ThreadLoginVerifier.java
 +++ ../src_work/minecraft/net/minecraft/network/ThreadLoginVerifier.java
-@@ -7,20 +7,45 @@
+@@ -7,23 +7,48 @@
  import java.net.URLEncoder;
  import net.minecraft.util.CryptManager;
  
@@ -47,7 +47,11 @@
 +
              String s = (new BigInteger(CryptManager.getServerIdHash(NetLoginHandler.getServerId(this.loginHandler), NetLoginHandler.getLoginMinecraftServer(this.loginHandler).getKeyPair().getPublic(), NetLoginHandler.getSharedKey(this.loginHandler)))).toString(16);
              URL url = new URL("http://session.minecraft.net/game/checkserver.jsp?user=" + URLEncoder.encode(NetLoginHandler.getClientUsername(this.loginHandler), "UTF-8") + "&serverId=" + URLEncoder.encode(s, "UTF-8"));
-             BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(url.openConnection(NetLoginHandler.getLoginMinecraftServer(this.loginHandler).func_110454_ao()).getInputStream()));
+-            BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(url.openConnection(NetLoginHandler.getLoginMinecraftServer(this.loginHandler).func_110454_ao()).getInputStream()));
++            BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(url.openConnection(NetLoginHandler.getLoginMinecraftServer(this.loginHandler).getServerProxy()).getInputStream()));
+             String s1 = bufferedreader.readLine();
+             bufferedreader.close();
+ 
 @@ -33,12 +58,63 @@
                  return;
              }

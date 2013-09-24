@@ -9,10 +9,17 @@
  
  public class EntityMinecartHopper extends EntityMinecartContainer implements Hopper
  {
-@@ -51,6 +53,10 @@
+@@ -49,8 +51,15 @@
+         return 5;
+     }
  
-     public boolean func_130002_c(EntityPlayer par1EntityPlayer)
-     {
+-    public boolean func_130002_c(EntityPlayer par1EntityPlayer)
+-    {
++    /**
++     * First layer of player interaction
++     */
++    public boolean interactFirst(EntityPlayer par1EntityPlayer)
++    {
 +        if(MinecraftForge.EVENT_BUS.post(new MinecartInteractEvent(this, par1EntityPlayer))) 
 +        {
 +            return true;
@@ -20,3 +27,12 @@
          if (!this.worldObj.isRemote)
          {
              par1EntityPlayer.displayGUIHopperMinecart(this);
+@@ -156,7 +165,7 @@
+ 
+             if (list.size() > 0)
+             {
+-                TileEntityHopper.func_96114_a(this, (EntityItem)list.get(0));
++                TileEntityHopper.insertStackFromEntity(this, (EntityItem)list.get(0));
+             }
+ 
+             return false;

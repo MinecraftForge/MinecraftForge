@@ -131,7 +131,13 @@
              this.myEntity.velocityChanged = false;
          }
      }
-@@ -313,6 +366,13 @@
+@@ -308,11 +361,18 @@
+ 
+         if (this.myEntity instanceof EntityLivingBase)
+         {
+-            ServersideAttributeMap serversideattributemap = (ServersideAttributeMap)((EntityLivingBase)this.myEntity).func_110140_aT();
++            ServersideAttributeMap serversideattributemap = (ServersideAttributeMap)((EntityLivingBase)this.myEntity).getAttributeMap();
+             Set set = serversideattributemap.func_111161_b();
  
              if (!set.isEmpty())
              {
@@ -157,10 +163,14 @@
          if (par1EntityPlayerMP != this.myEntity)
          {
              double d0 = par1EntityPlayerMP.posX - (double)(this.lastScaledXPosition / 32);
-@@ -381,6 +446,19 @@
+@@ -379,8 +444,21 @@
+ 
+             if (d0 >= (double)(-this.blocksDistanceThreshold) && d0 <= (double)this.blocksDistanceThreshold && d1 >= (double)(-this.blocksDistanceThreshold) && d1 <= (double)this.blocksDistanceThreshold)
              {
-                 if (!this.trackingPlayers.contains(par1EntityPlayerMP) && (this.isPlayerWatchingThisChunk(par1EntityPlayerMP) || this.myEntity.field_98038_p))
-                 {
+-                if (!this.trackingPlayers.contains(par1EntityPlayerMP) && (this.isPlayerWatchingThisChunk(par1EntityPlayerMP) || this.myEntity.field_98038_p))
+-                {
++                if (!this.trackingPlayers.contains(par1EntityPlayerMP) && (this.isPlayerWatchingThisChunk(par1EntityPlayerMP) || this.myEntity.forceSpawn))
++                {
 +                    // CraftBukkit start
 +                    if (this.myEntity instanceof EntityPlayerMP)
 +                    {
@@ -177,8 +187,12 @@
                      this.trackingPlayers.add(par1EntityPlayerMP);
                      Packet packet = this.getPacketForThisEntity();
                      par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(packet);
-@@ -395,6 +473,13 @@
-                         ServersideAttributeMap serversideattributemap = (ServersideAttributeMap)((EntityLivingBase)this.myEntity).func_110140_aT();
+@@ -392,9 +470,16 @@
+ 
+                     if (this.myEntity instanceof EntityLivingBase)
+                     {
+-                        ServersideAttributeMap serversideattributemap = (ServersideAttributeMap)((EntityLivingBase)this.myEntity).func_110140_aT();
++                        ServersideAttributeMap serversideattributemap = (ServersideAttributeMap)((EntityLivingBase)this.myEntity).getAttributeMap();
                          Collection collection = serversideattributemap.func_111160_c();
  
 +                        // CraftBukkit start - If sending own attributes send scaled health instead of current maximum health
@@ -191,7 +205,7 @@
                          if (!collection.isEmpty())
                          {
                              par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet44UpdateAttributes(this.myEntity.entityId, collection));
-@@ -413,15 +498,18 @@
+@@ -413,19 +498,22 @@
                          FMLNetworkHandler.makeEntitySpawnAdjustment(this.myEntity.entityId, par1EntityPlayerMP, this.lastScaledXPosition, this.lastScaledYPosition, this.lastScaledZPosition);
                      }
  
@@ -204,7 +218,10 @@
                      {
                          par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet39AttachEntity(0, this.myEntity, this.myEntity.ridingEntity));
                      }
-+
+ 
+-                    if (this.myEntity instanceof EntityLiving && ((EntityLiving)this.myEntity).func_110166_bE() != null)
+-                    {
+-                        par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet39AttachEntity(1, this.myEntity, ((EntityLiving)this.myEntity).func_110166_bE()));
 +                    // CraftBukkit start
 +                    if (this.myEntity.riddenByEntity != null)
 +                    {
@@ -212,9 +229,13 @@
 +                    }
 +
 +                    // CraftBukkit end
++
++                    if (this.myEntity instanceof EntityLiving && ((EntityLiving)this.myEntity).getLeashedToEntity() != null)
++                    {
++                        par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet39AttachEntity(1, this.myEntity, ((EntityLiving)this.myEntity).getLeashedToEntity()));
+                     }
  
-                     if (this.myEntity instanceof EntityLiving && ((EntityLiving)this.myEntity).func_110166_bE() != null)
-                     {
+                     if (this.myEntity instanceof EntityLivingBase)
 @@ -451,6 +539,11 @@
                          }
                      }

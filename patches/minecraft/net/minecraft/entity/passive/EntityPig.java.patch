@@ -8,6 +8,23 @@
  
  public class EntityPig extends EntityAnimal
  {
+@@ -50,11 +51,11 @@
+         return true;
+     }
+ 
+-    protected void func_110147_ax()
+-    {
+-        super.func_110147_ax();
+-        this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111128_a(10.0D);
+-        this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.25D);
++    protected void applyEntityAttributes()
++    {
++        super.applyEntityAttributes();
++        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute(10.0D);
++        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.25D);
+     }
+ 
+     protected void updateAITasks()
 @@ -162,24 +163,29 @@
       */
      protected void dropFewItems(boolean par1, int par2)

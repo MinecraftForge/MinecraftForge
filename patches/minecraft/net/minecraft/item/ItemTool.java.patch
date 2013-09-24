@@ -8,8 +8,20 @@
  
  public class ItemTool extends Item
  {
-@@ -111,4 +112,15 @@
-         multimap.put(SharedMonsterAttributes.field_111264_e.func_111108_a(), new AttributeModifier(field_111210_e, "Tool modifier", (double)this.damageVsEntity, 0));
+@@ -105,10 +106,24 @@
+         return this.toolMaterial.getToolCraftingMaterial() == par2ItemStack.itemID ? true : super.getIsRepairable(par1ItemStack, par2ItemStack);
+     }
+ 
+-    public Multimap func_111205_h()
++    /**
++     * Gets a map of item attribute modifiers, used by ItemSword to increase hit damage.
++     */
++    public Multimap getItemAttributeModifiers()
+     {
+-        Multimap multimap = super.func_111205_h();
+-        multimap.put(SharedMonsterAttributes.field_111264_e.func_111108_a(), new AttributeModifier(field_111210_e, "Tool modifier", (double)this.damageVsEntity, 0));
++        Multimap multimap = super.getItemAttributeModifiers();
++        multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Tool modifier", (double)this.damageVsEntity, 0));
          return multimap;
      }
 +

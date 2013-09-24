@@ -152,7 +152,7 @@
                      this.itemDamage = 0;
                  }
              }
-@@ -396,7 +444,7 @@
+@@ -396,12 +444,12 @@
       */
      public boolean canHarvestBlock(Block par1Block)
      {
@@ -161,6 +161,21 @@
      }
  
      public boolean func_111282_a(EntityPlayer par1EntityPlayer, EntityLivingBase par2EntityLivingBase)
+     {
+-        return Item.itemsList[this.itemID].func_111207_a(this, par1EntityPlayer, par2EntityLivingBase);
++        return Item.itemsList[this.itemID].itemInteractionForEntity(this, par1EntityPlayer, par2EntityLivingBase);
+     }
+ 
+     /**
+@@ -449,7 +497,7 @@
+         return this.itemID == par1ItemStack.itemID && this.itemDamage == par1ItemStack.itemDamage;
+     }
+ 
+-    public String getItemName()
++    public String getUnlocalizedName()
+     {
+         return Item.itemsList[this.itemID].getUnlocalizedName(this);
+     }
 @@ -478,7 +526,15 @@
              --this.animationsToGo;
          }
@@ -178,6 +193,49 @@
      }
  
      public void onCrafting(World par1World, EntityPlayer par2EntityPlayer, int par3)
+@@ -694,7 +750,7 @@
+             }
+         }
+ 
+-        Multimap multimap = this.func_111283_C();
++        Multimap multimap = this.getAttributeModifiers();
+ 
+         if (!multimap.isEmpty())
+         {
+@@ -705,26 +761,26 @@
+             {
+                 Entry entry = (Entry)iterator.next();
+                 AttributeModifier attributemodifier = (AttributeModifier)entry.getValue();
+-                double d0 = attributemodifier.func_111164_d();
++                double d0 = attributemodifier.getAmount();
+                 double d1;
+ 
+-                if (attributemodifier.func_111169_c() != 1 && attributemodifier.func_111169_c() != 2)
+-                {
+-                    d1 = attributemodifier.func_111164_d();
++                if (attributemodifier.getOperation() != 1 && attributemodifier.getOperation() != 2)
++                {
++                    d1 = attributemodifier.getAmount();
+                 }
+                 else
+                 {
+-                    d1 = attributemodifier.func_111164_d() * 100.0D;
++                    d1 = attributemodifier.getAmount() * 100.0D;
+                 }
+ 
+                 if (d0 > 0.0D)
+                 {
+-                    arraylist.add(EnumChatFormatting.BLUE + StatCollector.translateToLocalFormatted("attribute.modifier.plus." + attributemodifier.func_111169_c(), new Object[] {field_111284_a.format(d1), StatCollector.translateToLocal("attribute.name." + (String)entry.getKey())}));
++                    arraylist.add(EnumChatFormatting.BLUE + StatCollector.translateToLocalFormatted("attribute.modifier.plus." + attributemodifier.getOperation(), new Object[] {field_111284_a.format(d1), StatCollector.translateToLocal("attribute.name." + (String)entry.getKey())}));
+                 }
+                 else if (d0 < 0.0D)
+                 {
+                     d1 *= -1.0D;
+-                    arraylist.add(EnumChatFormatting.RED + StatCollector.translateToLocalFormatted("attribute.modifier.take." + attributemodifier.func_111169_c(), new Object[] {field_111284_a.format(d1), StatCollector.translateToLocal("attribute.name." + (String)entry.getKey())}));
++                    arraylist.add(EnumChatFormatting.RED + StatCollector.translateToLocalFormatted("attribute.modifier.take." + attributemodifier.getOperation(), new Object[] {field_111284_a.format(d1), StatCollector.translateToLocal("attribute.name." + (String)entry.getKey())}));
+                 }
+             }
+         }
 @@ -737,10 +793,16 @@
          return arraylist;
      }
@@ -196,3 +254,34 @@
      }
  
      @SideOnly(Side.CLIENT)
+@@ -847,7 +909,11 @@
+         this.stackTagCompound.setInteger("RepairCost", par1);
+     }
+ 
+-    public Multimap func_111283_C()
++    /**
++     * Gets the attribute modifiers for this ItemStack.\nWill check for an NBT tag list containing modifiers for the
++     * stack.
++     */
++    public Multimap getAttributeModifiers()
+     {
+         Object object;
+ 
+@@ -861,7 +927,7 @@
+                 NBTTagCompound nbttagcompound = (NBTTagCompound)nbttaglist.tagAt(i);
+                 AttributeModifier attributemodifier = SharedMonsterAttributes.func_111259_a(nbttagcompound);
+ 
+-                if (attributemodifier.func_111167_a().getLeastSignificantBits() != 0L && attributemodifier.func_111167_a().getMostSignificantBits() != 0L)
++                if (attributemodifier.getID().getLeastSignificantBits() != 0L && attributemodifier.getID().getMostSignificantBits() != 0L)
+                 {
+                     ((Multimap)object).put(nbttagcompound.getString("AttributeName"), attributemodifier);
+                 }
+@@ -869,7 +935,7 @@
+         }
+         else
+         {
+-            object = this.getItem().func_111205_h();
++            object = this.getItem().getItemAttributeModifiers();
+         }
+ 
+         return (Multimap)object;

@@ -23,7 +23,18 @@
          if (k1 != l1)
          {
              par1World.setBlockMetadataWithNotify(par2, par3, par4, l1, 2);
-@@ -335,7 +344,7 @@
+@@ -273,7 +282,9 @@
+     }
+ 
+     /**
+-     * ejects contained items into the world, and notifies neighbours of an update, as appropriate
++     * Called on server worlds only when the block has been replaced by a different block ID, or the same block with a
++     * different metadata value, but before the new metadata value is set. Args: World, x, y, z, old block ID, old
++     * metadata
+      */
+     public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
+     {
+@@ -335,7 +346,7 @@
       * Returns the current strength at the specified block if it is greater than the passed value, or the passed value
       * otherwise. Signature: (world, x, y, z, strength)
       */
@@ -32,7 +43,7 @@
      {
          if (par1World.getBlockId(par2, par3, par4) != this.blockID)
          {
-@@ -473,7 +482,7 @@
+@@ -473,7 +484,7 @@
          }
          else if (!Block.redstoneRepeaterIdle.func_94487_f(i1))
          {
@@ -41,3 +52,24 @@
          }
          else
          {
+@@ -565,15 +576,15 @@
+      */
+     public void registerIcons(IconRegister par1IconRegister)
+     {
+-        this.field_94413_c = par1IconRegister.registerIcon(this.func_111023_E() + "_" + "cross");
+-        this.field_94410_cO = par1IconRegister.registerIcon(this.func_111023_E() + "_" + "line");
+-        this.field_94411_cP = par1IconRegister.registerIcon(this.func_111023_E() + "_" + "cross_overlay");
+-        this.field_94412_cQ = par1IconRegister.registerIcon(this.func_111023_E() + "_" + "line_overlay");
++        this.field_94413_c = par1IconRegister.registerIcon(this.getTextureName() + "_" + "cross");
++        this.field_94410_cO = par1IconRegister.registerIcon(this.getTextureName() + "_" + "line");
++        this.field_94411_cP = par1IconRegister.registerIcon(this.getTextureName() + "_" + "cross_overlay");
++        this.field_94412_cQ = par1IconRegister.registerIcon(this.getTextureName() + "_" + "line_overlay");
+         this.blockIcon = this.field_94413_c;
+     }
+ 
+     @SideOnly(Side.CLIENT)
+-    public static Icon func_94409_b(String par0Str)
++    public static Icon getRedstoneWireIcon(String par0Str)
+     {
+         return par0Str.equals("cross") ? Block.redstoneWire.field_94413_c : (par0Str.equals("line") ? Block.redstoneWire.field_94410_cO : (par0Str.equals("cross_overlay") ? Block.redstoneWire.field_94411_cP : (par0Str.equals("line_overlay") ? Block.redstoneWire.field_94412_cQ : null)));
+     }

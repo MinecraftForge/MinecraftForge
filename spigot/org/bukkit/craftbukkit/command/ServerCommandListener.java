@@ -3,6 +3,9 @@ package org.bukkit.craftbukkit.command;
 import java.lang.reflect.Method;
 
 
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
+
 import org.bukkit.command.CommandSender;
 
 public class ServerCommandListener implements net.minecraft.command.ICommandSender {
@@ -52,5 +55,10 @@ public class ServerCommandListener implements net.minecraft.command.ICommandSend
 
     public net.minecraft.world.World func_130014_f_() {
         return null;
+    }
+
+    public World getEntityWorld()
+    {
+        return MinecraftServer.getServer().getEntityWorld();
     }
 }

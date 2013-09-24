@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/RenderGlobal.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/RenderGlobal.java
-@@ -68,6 +68,9 @@
+@@ -68,13 +68,16 @@
  import org.lwjgl.opengl.ARBOcclusionQuery;
  import org.lwjgl.opengl.GL11;
  
@@ -10,7 +10,27 @@
  @SideOnly(Side.CLIENT)
  public class RenderGlobal implements IWorldAccess
  {
-@@ -447,35 +450,47 @@
+-    private static final ResourceLocation field_110927_h = new ResourceLocation("textures/environment/moon_phases.png");
+-    private static final ResourceLocation field_110928_i = new ResourceLocation("textures/environment/sun.png");
+-    private static final ResourceLocation field_110925_j = new ResourceLocation("textures/environment/clouds.png");
+-    private static final ResourceLocation field_110926_k = new ResourceLocation("textures/environment/end_sky.png");
++    private static final ResourceLocation locationMoonPhasesPng = new ResourceLocation("textures/environment/moon_phases.png");
++    private static final ResourceLocation locationSunPng = new ResourceLocation("textures/environment/sun.png");
++    private static final ResourceLocation locationCloudsPng = new ResourceLocation("textures/environment/clouds.png");
++    private static final ResourceLocation locationEndSkyPng = new ResourceLocation("textures/environment/end_sky.png");
+     public List tileEntities = new ArrayList();
+     public WorldClient theWorld;
+ 
+@@ -212,7 +215,7 @@
+     public RenderGlobal(Minecraft par1Minecraft)
+     {
+         this.mc = par1Minecraft;
+-        this.renderEngine = par1Minecraft.func_110434_K();
++        this.renderEngine = par1Minecraft.getTextureManager();
+         byte b0 = 34;
+         byte b1 = 32;
+         this.glRenderListBase = GLAllocation.generateDisplayLists(b0 * b0 * b1 * 3);
+@@ -447,15 +450,22 @@
       */
      public void renderEntities(Vec3 par1Vec3, ICamera par2ICamera, float par3)
      {
@@ -28,38 +48,24 @@
              this.theWorld.theProfiler.startSection("prepare");
 -            TileEntityRenderer.instance.cacheActiveRenderInfo(this.theWorld, this.mc.func_110434_K(), this.mc.fontRenderer, this.mc.renderViewEntity, par3);
 -            RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.mc.func_110434_K(), this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.pointedEntityLiving, this.mc.gameSettings, par3);
--            this.countEntitiesTotal = 0;
--            this.countEntitiesRendered = 0;
--            this.countEntitiesHidden = 0;
--            EntityLivingBase entitylivingbase = this.mc.renderViewEntity;
--            RenderManager.renderPosX = entitylivingbase.lastTickPosX + (entitylivingbase.posX - entitylivingbase.lastTickPosX) * (double)par3;
--            RenderManager.renderPosY = entitylivingbase.lastTickPosY + (entitylivingbase.posY - entitylivingbase.lastTickPosY) * (double)par3;
--            RenderManager.renderPosZ = entitylivingbase.lastTickPosZ + (entitylivingbase.posZ - entitylivingbase.lastTickPosZ) * (double)par3;
--            TileEntityRenderer.staticPlayerX = entitylivingbase.lastTickPosX + (entitylivingbase.posX - entitylivingbase.lastTickPosX) * (double)par3;
--            TileEntityRenderer.staticPlayerY = entitylivingbase.lastTickPosY + (entitylivingbase.posY - entitylivingbase.lastTickPosY) * (double)par3;
--            TileEntityRenderer.staticPlayerZ = entitylivingbase.lastTickPosZ + (entitylivingbase.posZ - entitylivingbase.lastTickPosZ) * (double)par3;
-+            if (pass == 0)
++            TileEntityRenderer.instance.cacheActiveRenderInfo(this.theWorld, this.mc.getTextureManager(), this.mc.fontRenderer, this.mc.renderViewEntity, par3);
++            RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.mc.getTextureManager(), this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.pointedEntityLiving, this.mc.gameSettings, par3);
++            if (pass == 0) // no indentation to shrink patch
 +            {
-+                TileEntityRenderer.instance.cacheActiveRenderInfo(this.theWorld, this.mc.func_110434_K(), this.mc.fontRenderer, this.mc.renderViewEntity, par3);
-+                RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.mc.func_110434_K(), this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.pointedEntityLiving, this.mc.gameSettings, par3);
-+                this.countEntitiesTotal = 0;
-+                this.countEntitiesRendered = 0;
-+                this.countEntitiesHidden = 0;
-+                EntityLivingBase entitylivingbase = this.mc.renderViewEntity;
-+                RenderManager.renderPosX = entitylivingbase.lastTickPosX + (entitylivingbase.posX - entitylivingbase.lastTickPosX) * (double)par3;
-+                RenderManager.renderPosY = entitylivingbase.lastTickPosY + (entitylivingbase.posY - entitylivingbase.lastTickPosY) * (double)par3;
-+                RenderManager.renderPosZ = entitylivingbase.lastTickPosZ + (entitylivingbase.posZ - entitylivingbase.lastTickPosZ) * (double)par3;
-+                TileEntityRenderer.staticPlayerX = entitylivingbase.lastTickPosX + (entitylivingbase.posX - entitylivingbase.lastTickPosX) * (double)par3;
-+                TileEntityRenderer.staticPlayerY = entitylivingbase.lastTickPosY + (entitylivingbase.posY - entitylivingbase.lastTickPosY) * (double)par3;
-+                TileEntityRenderer.staticPlayerZ = entitylivingbase.lastTickPosZ + (entitylivingbase.posZ - entitylivingbase.lastTickPosZ) * (double)par3;
+             this.countEntitiesTotal = 0;
+             this.countEntitiesRendered = 0;
+             this.countEntitiesHidden = 0;
+@@ -466,16 +476,21 @@
+             TileEntityRenderer.staticPlayerX = entitylivingbase.lastTickPosX + (entitylivingbase.posX - entitylivingbase.lastTickPosX) * (double)par3;
+             TileEntityRenderer.staticPlayerY = entitylivingbase.lastTickPosY + (entitylivingbase.posY - entitylivingbase.lastTickPosY) * (double)par3;
+             TileEntityRenderer.staticPlayerZ = entitylivingbase.lastTickPosZ + (entitylivingbase.posZ - entitylivingbase.lastTickPosZ) * (double)par3;
 +            }
              this.mc.entityRenderer.enableLightmap((double)par3);
              this.theWorld.theProfiler.endStartSection("global");
              List list = this.theWorld.getLoadedEntityList();
--            this.countEntitiesTotal = list.size();
-+            if (pass == 0)
++            if (pass == 0) // no indentation for smaller patch size
 +            {
-+                this.countEntitiesTotal = list.size();
+             this.countEntitiesTotal = list.size();
 +            }
              int i;
              Entity entity;
@@ -71,7 +77,7 @@
                  ++this.countEntitiesRendered;
  
                  if (entity.isInRangeToRenderVec3D(par1Vec3))
-@@ -489,6 +504,7 @@
+@@ -489,15 +504,16 @@
              for (i = 0; i < list.size(); ++i)
              {
                  entity = (Entity)list.get(i);
@@ -79,6 +85,18 @@
                  boolean flag = entity.isInRangeToRenderVec3D(par1Vec3) && (entity.ignoreFrustumCheck || par2ICamera.isBoundingBoxInFrustum(entity.boundingBox) || entity.riddenByEntity == this.mc.thePlayer);
  
                  if (!flag && entity instanceof EntityLiving)
+                 {
+                     EntityLiving entityliving = (EntityLiving)entity;
+ 
+-                    if (entityliving.func_110167_bD() && entityliving.func_110166_bE() != null)
+-                    {
+-                        Entity entity1 = entityliving.func_110166_bE();
++                    if (entityliving.getLeashed() && entityliving.getLeashedToEntity() != null)
++                    {
++                        Entity entity1 = entityliving.getLeashedToEntity();
+                         flag = par2ICamera.isBoundingBoxInFrustum(entity1.boundingBox);
+                     }
+                 }
 @@ -514,7 +530,11 @@
  
              for (i = 0; i < this.tileEntities.size(); ++i)
@@ -105,6 +123,33 @@
          if (this.mc.theWorld.provider.dimensionId == 1)
          {
              GL11.glDisable(GL11.GL_FOG);
+@@ -957,7 +983,7 @@
+             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+             RenderHelper.disableStandardItemLighting();
+             GL11.glDepthMask(false);
+-            this.renderEngine.func_110577_a(field_110926_k);
++            this.renderEngine.bindTexture(locationEndSkyPng);
+             Tessellator tessellator = Tessellator.instance;
+ 
+             for (int i = 0; i < 6; ++i)
+@@ -1093,7 +1119,7 @@
+             GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
+             GL11.glRotatef(this.theWorld.getCelestialAngle(par1) * 360.0F, 1.0F, 0.0F, 0.0F);
+             f10 = 30.0F;
+-            this.renderEngine.func_110577_a(field_110928_i);
++            this.renderEngine.bindTexture(locationSunPng);
+             tessellator1.startDrawingQuads();
+             tessellator1.addVertexWithUV((double)(-f10), 100.0D, (double)(-f10), 0.0D, 0.0D);
+             tessellator1.addVertexWithUV((double)f10, 100.0D, (double)(-f10), 1.0D, 0.0D);
+@@ -1101,7 +1127,7 @@
+             tessellator1.addVertexWithUV((double)(-f10), 100.0D, (double)f10, 0.0D, 1.0D);
+             tessellator1.draw();
+             f10 = 20.0F;
+-            this.renderEngine.func_110577_a(field_110927_h);
++            this.renderEngine.bindTexture(locationMoonPhasesPng);
+             int k = this.theWorld.getMoonPhase();
+             int l = k % 4;
+             int i1 = k / 4 % 2;
 @@ -1187,6 +1213,13 @@
  
      public void renderClouds(float par1)
@@ -119,15 +164,42 @@
          if (this.mc.theWorld.provider.isSurfaceWorld())
          {
              if (this.mc.gameSettings.fancyGraphics)
-@@ -1595,6 +1628,11 @@
-     }
+@@ -1200,7 +1233,7 @@
+                 byte b0 = 32;
+                 int i = 256 / b0;
+                 Tessellator tessellator = Tessellator.instance;
+-                this.renderEngine.func_110577_a(field_110925_j);
++                this.renderEngine.bindTexture(locationCloudsPng);
+                 GL11.glEnable(GL11.GL_BLEND);
+                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                 Vec3 vec3 = this.theWorld.getCloudColour(par1);
+@@ -1278,7 +1311,7 @@
+         int j = MathHelper.floor_double(d2 / 2048.0D);
+         d1 -= (double)(i * 2048);
+         d2 -= (double)(j * 2048);
+-        this.renderEngine.func_110577_a(field_110925_j);
++        this.renderEngine.bindTexture(locationCloudsPng);
+         GL11.glEnable(GL11.GL_BLEND);
+         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+         Vec3 vec3 = this.theWorld.getCloudColour(par1);
+@@ -1596,6 +1629,11 @@
  
      public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityPlayer par2EntityPlayer, float par3)
-+    {
+     {
 +        drawBlockDamageTexture(par1Tessellator, (EntityLivingBase)par2EntityPlayer, par3);
 +    }
 +
 +    public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityLivingBase par2EntityPlayer, float par3)
-     {
++    {
          double d0 = par2EntityPlayer.lastTickPosX + (par2EntityPlayer.posX - par2EntityPlayer.lastTickPosX) * (double)par3;
          double d1 = par2EntityPlayer.lastTickPosY + (par2EntityPlayer.posY - par2EntityPlayer.lastTickPosY) * (double)par3;
+         double d2 = par2EntityPlayer.lastTickPosZ + (par2EntityPlayer.posZ - par2EntityPlayer.lastTickPosZ) * (double)par3;
+@@ -1603,7 +1641,7 @@
+         if (!this.damagedBlocks.isEmpty())
+         {
+             GL11.glBlendFunc(GL11.GL_DST_COLOR, GL11.GL_SRC_COLOR);
+-            this.renderEngine.func_110577_a(TextureMap.field_110575_b);
++            this.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+             GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
+             GL11.glPushMatrix();
+             GL11.glDisable(GL11.GL_ALPHA_TEST);

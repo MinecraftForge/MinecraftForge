@@ -18,8 +18,14 @@
  public class TcpConnection implements INetworkManager
  {
      public static AtomicInteger field_74471_a = new AtomicInteger();
-@@ -37,10 +37,10 @@
-     private final ILogAgent field_98215_i;
+@@ -34,13 +34,15 @@
+ 
+     /** The object used for synchronization on the send queue. */
+     private final Object sendQueueLock;
+-    private final ILogAgent field_98215_i;
++
++    /** Log agent for TCP connection */
++    private final ILogAgent tcpConLogAgent;
  
      /** The socket used by this network manager. */
 -    private Socket networkSocket;
@@ -31,7 +37,7 @@
  
      /** The input stream connected to the socket. */
      private volatile DataInputStream socketInputStream;
-@@ -59,13 +59,13 @@
+@@ -59,13 +61,13 @@
      /**
       * Linked list of packets that have been read and are awaiting processing.
       */
@@ -48,7 +54,18 @@
  
      /** A reference to the NetHandler object. */
      private NetHandler theNetHandler;
-@@ -113,7 +113,7 @@
+@@ -83,7 +85,9 @@
+ 
+     /** A String indicating why the network has shutdown. */
+     private String terminationReason;
+-    private Object[] field_74480_w;
++
++    /** Contains shutdown description (internal error, etc.) as string array */
++    private Object[] shutdownDescription;
+     private int field_74490_x;
+ 
+     /**
+@@ -113,14 +117,14 @@
      {
          this.sendQueueLock = new Object();
          this.isRunning = true;
@@ -57,7 +74,24 @@
          this.dataPackets = Collections.synchronizedList(new ArrayList());
          this.chunkDataPackets = Collections.synchronizedList(new ArrayList());
          this.terminationReason = "";
-@@ -214,7 +214,8 @@
+         this.chunkDataPacketsDelay = 50;
+         this.field_74463_A = par5PrivateKey;
+         this.networkSocket = par2Socket;
+-        this.field_98215_i = par1ILogAgent;
++        this.tcpConLogAgent = par1ILogAgent;
+         this.remoteSocketAddress = par2Socket.getRemoteSocketAddress();
+         this.theNetHandler = par4NetHandler;
+ 
+@@ -189,7 +193,7 @@
+             int i;
+             int[] aint;
+ 
+-            if (this.field_74468_e == 0 || !this.dataPackets.isEmpty() && MinecraftServer.func_130071_aq() - ((Packet)this.dataPackets.get(0)).creationTimeMillis >= (long)this.field_74468_e)
++            if (this.field_74468_e == 0 || !this.dataPackets.isEmpty() && MinecraftServer.getSystemTimeMillis() - ((Packet)this.dataPackets.get(0)).creationTimeMillis >= (long)this.field_74468_e)
+             {
+                 packet = this.func_74460_a(false);
+ 
+@@ -214,7 +218,8 @@
                  }
              }
  
@@ -67,7 +101,16 @@
              {
                  packet = this.func_74460_a(true);
  
-@@ -374,7 +375,7 @@
+@@ -318,7 +323,7 @@
+ 
+         try
+         {
+-            Packet packet = Packet.readPacket(this.field_98215_i, this.socketInputStream, this.theNetHandler.isServerHandler(), this.networkSocket);
++            Packet packet = Packet.readPacket(this.tcpConLogAgent, this.socketInputStream, this.theNetHandler.isServerHandler(), this.networkSocket);
+ 
+             if (packet != null)
+             {
+@@ -374,7 +379,7 @@
       */
      private void onNetworkError(Exception par1Exception)
      {
@@ -76,7 +119,16 @@
          this.networkShutdown("disconnect.genericReason", new Object[] {"Internal exception: " + par1Exception.toString()});
      }
  
-@@ -449,14 +450,18 @@
+@@ -388,7 +393,7 @@
+         {
+             this.isTerminating = true;
+             this.terminationReason = par1Str;
+-            this.field_74480_w = par2ArrayOfObj;
++            this.shutdownDescription = par2ArrayOfObj;
+             this.isRunning = false;
+             (new TcpMasterThread(this)).start();
+ 
+@@ -449,21 +454,25 @@
  
          int i = 1000;
  
@@ -103,7 +155,15 @@
          }
  
          this.wakeThreads();
-@@ -589,4 +594,9 @@
+ 
+         if (this.isTerminating && this.readPackets.isEmpty())
+         {
+-            this.theNetHandler.handleErrorMessage(this.terminationReason, this.field_74480_w);
++            this.theNetHandler.handleErrorMessage(this.terminationReason, this.shutdownDescription);
+             FMLNetworkHandler.onConnectionClosed(this, this.theNetHandler.getPlayer());
+         }
+     }
+@@ -589,4 +598,9 @@
      {
          return par0TcpConnection.writeThread;
      }

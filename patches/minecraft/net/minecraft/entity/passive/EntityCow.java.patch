@@ -11,6 +11,22 @@
  
  public class EntityCow extends EntityAnimal
  {
+@@ -40,11 +44,11 @@
+         return true;
+     }
+ 
+-    protected void func_110147_ax()
++    protected void applyEntityAttributes()
+     {
+-        super.func_110147_ax();
+-        this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111128_a(10.0D);
+-        this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.20000000298023224D);
++        super.applyEntityAttributes();
++        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute(10.0D);
++        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.20000000298023224D);
+     }
+ 
+     /**
 @@ -101,27 +105,25 @@
       */
      protected void dropFewItems(boolean par1, int par2)

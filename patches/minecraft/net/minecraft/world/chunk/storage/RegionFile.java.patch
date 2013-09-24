@@ -62,3 +62,12 @@
  
      /**
       * args: x, y - get uncompressed chunk stream from the region file
+@@ -276,7 +331,7 @@
+                 }
+             }
+ 
+-            this.setChunkTimestamp(par1, par2, (int)(MinecraftServer.func_130071_aq() / 1000L));
++            this.setChunkTimestamp(par1, par2, (int)(MinecraftServer.getSystemTimeMillis() / 1000L));
+         }
+         catch (IOException ioexception)
+         {

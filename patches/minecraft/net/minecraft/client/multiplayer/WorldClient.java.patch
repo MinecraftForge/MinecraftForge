@@ -23,42 +23,16 @@
      }
  
      /**
-@@ -117,7 +123,7 @@
-      * plays random cave ambient sounds and runs updateTick on random blocks within each chunk in the vacinity of a
-      * player
-      */
--    protected void tickBlocksAndAmbiance()
-+    /*protected void tickBlocksAndAmbiance()
-     {
-         super.tickBlocksAndAmbiance();
-         this.previousActiveChunkSet.retainAll(this.activeChunkSet);
-@@ -151,7 +157,24 @@
-                 }
-             }
-         }
--    }
-+    }*/
-+    // MCPC+ start
-+    /**
-+     * plays random cave ambient sounds and runs updateTick on random blocks within each chunk in the vacinity of a
-+     * player
-+     */
-+    protected void tickBlocksAndAmbiance()
-+    {
-+        try
-+        {
-+            this.setActivePlayerChunksAndCheckLight();
-+        }
-+        catch (Exception e)
-+        {
-+            org.bukkit.craftbukkit.util.ExceptionReporter.handle(e, "Spigot has detected an unexpected exception while ticking chunks");
-+        }
-+    }
-+    // MCPC+ end
+@@ -280,7 +286,7 @@
+         this.sendQueue.quitWithPacket(new Packet255KickDisconnect("Quitting"));
+     }
  
-     public void doPreChunk(int par1, int par2, boolean par3)
+-    public IUpdatePlayerListBox func_82735_a(EntityMinecart par1EntityMinecart)
++    public IUpdatePlayerListBox getMinecartSoundUpdater(EntityMinecart par1EntityMinecart)
      {
-@@ -289,6 +312,12 @@
+         return new SoundUpdaterMinecart(this.mc.sndManager, par1EntityMinecart, this.mc.thePlayer);
+     }
+@@ -289,6 +295,12 @@
       * Updates all weather states.
       */
      protected void updateWeather()

@@ -108,3 +108,22 @@
      }
  
      /**
+@@ -304,12 +302,12 @@
+      */
+     public void registerIcons(IconRegister par1IconRegister)
+     {
+-        this.blockIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_disconnected");
+-        this.theIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_connected");
+-    }
+-
+-    @SideOnly(Side.CLIENT)
+-    public Icon func_94368_p()
++        this.blockIcon = par1IconRegister.registerIcon(this.getTextureName() + "_disconnected");
++        this.theIcon = par1IconRegister.registerIcon(this.getTextureName() + "_connected");
++    }
++
++    @SideOnly(Side.CLIENT)
++    public Icon getStemIcon()
+     {
+         return this.theIcon;
+     }

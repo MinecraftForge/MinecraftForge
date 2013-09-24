@@ -67,3 +67,14 @@
                      }
                  }
              }
+@@ -101,8 +133,8 @@
+      */
+     public void registerIcons(IconRegister par1IconRegister)
+     {
+-        this.blockIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_side");
+-        this.field_94422_a = par1IconRegister.registerIcon(this.func_111023_E() + "_top");
++        this.blockIcon = par1IconRegister.registerIcon(this.getTextureName() + "_side");
++        this.field_94422_a = par1IconRegister.registerIcon(this.getTextureName() + "_top");
+         this.field_94421_b = par1IconRegister.registerIcon("grass_side_snowed");
+     }
+ 

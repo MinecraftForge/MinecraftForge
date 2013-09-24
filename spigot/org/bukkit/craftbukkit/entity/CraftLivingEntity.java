@@ -51,7 +51,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     }
 
     public double getHealth() {
-        return Math.min(Math.max(0, getHandle().func_110143_aJ()), getMaxHealth());
+        return Math.min(Math.max(0, getHandle().getHealth()), getMaxHealth());
     }
 
     public void setHealth(double health) {
@@ -63,17 +63,17 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
             ((net.minecraft.entity.player.EntityPlayerMP) entity).onDeath(net.minecraft.util.DamageSource.generic);
         }
 
-        getHandle().setEntityHealth((float) health);
+        getHandle().setHealth((float) health);
     }
 
     public double getMaxHealth() {
-        return getHandle().func_110138_aP();
+        return getHandle().getMaxHealth();
     }
 
     public void setMaxHealth(double amount) {
         Validate.isTrue(amount > 0, "Max health must be greater than 0");
 
-        getHandle().func_110148_a(net.minecraft.entity.SharedMonsterAttributes.field_111267_a).func_111128_a(amount);
+        getHandle().getEntityAttribute(net.minecraft.entity.SharedMonsterAttributes.maxHealth).setAttribute(amount);
 
         if (getHealth() > amount) {
             setHealth(amount);
@@ -81,7 +81,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     }
 
     public void resetMaxHealth() {
-        setMaxHealth(getHandle().func_110138_aP());
+        setMaxHealth(getHandle().getMaxHealth());
     }
 
     @Deprecated
@@ -197,11 +197,11 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     }
 
     public double getLastDamage() {
-        return getHandle().field_110153_bc;
+        return getHandle().lastDamage;
     }
 
     public void setLastDamage(double damage) {
-        getHandle().field_110153_bc = (float) damage;
+        getHandle().lastDamage = (float) damage;
     }
 
     public int getNoDamageTicks() {
@@ -394,21 +394,21 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         if (!(getHandle() instanceof net.minecraft.entity.EntityLiving)) {
             return false;
         }
-        return ((net.minecraft.entity.EntityLiving) getHandle()).func_110166_bE() != null;
+        return ((net.minecraft.entity.EntityLiving) getHandle()).getLeashedToEntity() != null;
     }
 
     public Entity getLeashHolder() throws IllegalStateException {
         if (!isLeashed()) {
             throw new IllegalStateException("Entity not leashed");
         }
-        return ((net.minecraft.entity.EntityLiving) getHandle()).func_110166_bE().getBukkitEntity();
+        return ((net.minecraft.entity.EntityLiving) getHandle()).getLeashedToEntity().getBukkitEntity();
     }
 
     private boolean unleash() {
         if (!isLeashed()) {
             return false;
         }
-        ((net.minecraft.entity.EntityLiving) getHandle()).func_110160_i(true, false);
+        ((net.minecraft.entity.EntityLiving) getHandle()).clearLeashed(true, false);
         return true;
     }
 
@@ -426,7 +426,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         }
 
         unleash();
-        ((net.minecraft.entity.EntityLiving) getHandle()).func_110162_b(((CraftEntity) holder).getHandle(), true);
+        ((net.minecraft.entity.EntityLiving) getHandle()).setLeashedToEntity(((CraftEntity) holder).getHandle(), true);
         return true;
     }
 

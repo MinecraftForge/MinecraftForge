@@ -19,7 +19,7 @@ import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.server.ForgeTimeTracker;
 
 public class ForgeCommand extends CommandBase {
-    
+
     private MinecraftServer server;
 
     public ForgeCommand(MinecraftServer server)
@@ -27,7 +27,7 @@ public class ForgeCommand extends CommandBase {
         this.server = server;
     }
     private static final DecimalFormat timeFormatter = new DecimalFormat("########0.000");
-    
+
     @Override
     public String getCommandName()
     {
@@ -82,7 +82,7 @@ public class ForgeCommand extends CommandBase {
         }
         String type = args[1];
         int duration = parseIntBounded(sender, args[2], 1, 60);
-        
+
         if ("te".equals(type))
         {
             doTurnOnTileEntityTracking(sender, duration);
@@ -97,12 +97,12 @@ public class ForgeCommand extends CommandBase {
     {
         ForgeTimeTracker.tileEntityTrackingDuration = duration;
         ForgeTimeTracker.tileEntityTracking = true;
-        sender.sendChatToPlayer(ChatMessageComponent.func_111082_b("commands.forge.tracking.te.enabled", duration));
+        sender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("commands.forge.tracking.te.enabled", duration));
     }
 
     private void doTPSLog(ICommandSender sender, String[] args)
     {
-        
+
     }
 
     private void displayTPS(ICommandSender sender, String[] args)
@@ -120,17 +120,17 @@ public class ForgeCommand extends CommandBase {
             {
                 double worldTickTime = ForgeCommand.mean(this.server.worldTickTimes.get(dimId)) * 1.0E-6D;
                 double worldTPS = Math.min(1000.0/worldTickTime, 20);
-                sender.sendChatToPlayer(ChatMessageComponent.func_111082_b("commands.forge.tps.summary",String.format("Dim %d", dimId), timeFormatter.format(worldTickTime), timeFormatter.format(worldTPS)));
+                sender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("commands.forge.tps.summary",String.format("Dim %d", dimId), timeFormatter.format(worldTickTime), timeFormatter.format(worldTPS)));
             }
             double meanTickTime = ForgeCommand.mean(this.server.tickTimeArray) * 1.0E-6D;
             double meanTPS = Math.min(1000.0/meanTickTime, 20);
-            sender.sendChatToPlayer(ChatMessageComponent.func_111082_b("commands.forge.tps.summary","Overall", timeFormatter.format(meanTickTime), timeFormatter.format(meanTPS)));
+            sender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("commands.forge.tps.summary","Overall", timeFormatter.format(meanTickTime), timeFormatter.format(meanTPS)));
         }
         else
         {
             double worldTickTime = ForgeCommand.mean(this.server.worldTickTimes.get(dim)) * 1.0E-6D;
             double worldTPS = Math.min(1000.0/worldTickTime, 20);
-            sender.sendChatToPlayer(ChatMessageComponent.func_111082_b("commands.forge.tps.summary",String.format("Dim %d", dim), timeFormatter.format(worldTickTime), timeFormatter.format(worldTPS)));
+            sender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("commands.forge.tps.summary",String.format("Dim %d", dim), timeFormatter.format(worldTickTime), timeFormatter.format(worldTPS)));
         }
     }
 
@@ -141,7 +141,7 @@ public class ForgeCommand extends CommandBase {
         {
             sum+=v;
         }
-        
+
         return sum / values.length;
     }
 }

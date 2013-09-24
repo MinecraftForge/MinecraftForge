@@ -19,7 +19,7 @@
  
  public abstract class EntityMinecart extends Entity
  {
-@@ -45,6 +57,30 @@
+@@ -45,13 +57,37 @@
      @SideOnly(Side.CLIENT)
      protected double velocityZ;
  
@@ -50,6 +50,14 @@
      public EntityMinecart(World par1World)
      {
          super(par1World);
+         this.preventEntitySpawning = true;
+         this.setSize(0.98F, 0.7F);
+         this.yOffset = this.height / 2.0F;
+-        this.field_82344_g = par1World != null ? par1World.func_82735_a(this) : null;
++        this.field_82344_g = par1World != null ? par1World.getMinecartSoundUpdater(this) : null;
+     }
+ 
+     /**
 @@ -104,6 +140,10 @@
       */
      public AxisAlignedBB getCollisionBox(Entity par1Entity)
@@ -433,6 +441,15 @@
                          {
                              par1Entity.motionX *= 0.20000000298023224D;
                              par1Entity.motionZ *= 0.20000000298023224D;
+@@ -1034,7 +1138,7 @@
+      */
+     public float getDamage()
+     {
+-        return this.dataWatcher.func_111145_d(19);
++        return this.dataWatcher.getWatchableObjectFloat(19);
+     }
+ 
+     /**
 @@ -1168,4 +1272,237 @@
      {
          return this.entityName;

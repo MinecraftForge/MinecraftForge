@@ -41,7 +41,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
     }
 
     public boolean isOp() {
-        return server.getHandle().areCommandsAllowed(getName().toLowerCase());
+        return server.getHandle().isPlayerOpped(getName().toLowerCase());
     }
 
     public void setOp(boolean value) {

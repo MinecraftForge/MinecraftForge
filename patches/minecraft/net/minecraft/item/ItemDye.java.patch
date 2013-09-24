@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemDye.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemDye.java
-@@ -17,9 +17,21 @@
+@@ -17,18 +17,30 @@
  import net.minecraft.entity.EntityLivingBase;
  import net.minecraft.entity.passive.EntitySheep;
  import net.minecraft.entity.player.EntityPlayer;
@@ -22,6 +22,26 @@
  
  public class ItemDye extends Item
  {
+     /** List of dye color names */
+     public static final String[] dyeColorNames = new String[] {"black", "red", "green", "brown", "blue", "purple", "cyan", "silver", "gray", "pink", "lime", "yellow", "lightBlue", "magenta", "orange", "white"};
+-    public static final String[] field_94595_b = new String[] {"black", "red", "green", "brown", "blue", "purple", "cyan", "silver", "gray", "pink", "lime", "yellow", "light_blue", "magenta", "orange", "white"};
++    public static final String[] dyeItemNames = new String[] {"black", "red", "green", "brown", "blue", "purple", "cyan", "silver", "gray", "pink", "lime", "yellow", "light_blue", "magenta", "orange", "white"};
+     public static final int[] dyeColors = new int[] {1973019, 11743532, 3887386, 5320730, 2437522, 8073150, 2651799, 11250603, 4408131, 14188952, 4312372, 14602026, 6719955, 12801229, 15435844, 15790320};
+     @SideOnly(Side.CLIENT)
+-    private Icon[] field_94594_d;
++    private Icon[] dyeIcons;
+ 
+     public ItemDye(int par1)
+     {
+@@ -46,7 +58,7 @@
+     public Icon getIconFromDamage(int par1)
+     {
+         int j = MathHelper.clamp_int(par1, 0, 15);
+-        return this.field_94594_d[j];
++        return this.dyeIcons[j];
+     }
+ 
+     /**
 @@ -73,7 +85,7 @@
          {
              if (par1ItemStack.getItemDamage() == 15)
@@ -118,10 +138,13 @@
              }
  
              return true;
-@@ -318,6 +357,16 @@
+@@ -318,9 +357,22 @@
                  par0World.spawnParticle("happyVillager", (double)((float)par1 + itemRand.nextFloat()), (double)par2 + (double)itemRand.nextFloat() * block.getBlockBoundsMaxY(), (double)((float)par3 + itemRand.nextFloat()), d0, d1, d2);
              }
          }
+-    }
+-
+-    public boolean func_111207_a(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, EntityLivingBase par3EntityLivingBase)
 +        else
 +        {
 +            for (int j1 = 0; j1 < par4; ++j1)
@@ -132,10 +155,16 @@
 +                par0World.spawnParticle("happyVillager", (double)((float)par1 + itemRand.nextFloat()), (double)par2 + (double)itemRand.nextFloat() * 1.0f, (double)((float)par3 + itemRand.nextFloat()), d0, d1, d2);
 +            }
 +        }
-     }
- 
-     public boolean func_111207_a(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, EntityLivingBase par3EntityLivingBase)
-@@ -329,6 +378,18 @@
++    }
++
++    /**
++     * Returns true if the item can be used on the given entity, e.g. shears on sheep.
++     */
++    public boolean itemInteractionForEntity(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, EntityLivingBase par3EntityLivingBase)
+     {
+         if (par3EntityLivingBase instanceof EntitySheep)
+         {
+@@ -329,6 +381,18 @@
  
              if (!entitysheep.getSheared() && entitysheep.getFleeceColor() != i)
              {
@@ -154,3 +183,20 @@
                  entitysheep.setFleeceColor(i);
                  --par1ItemStack.stackSize;
              }
+@@ -357,11 +421,11 @@
+     @SideOnly(Side.CLIENT)
+     public void registerIcons(IconRegister par1IconRegister)
+     {
+-        this.field_94594_d = new Icon[field_94595_b.length];
+-
+-        for (int i = 0; i < field_94595_b.length; ++i)
+-        {
+-            this.field_94594_d[i] = par1IconRegister.registerIcon(this.func_111208_A() + "_" + field_94595_b[i]);
++        this.dyeIcons = new Icon[dyeItemNames.length];
++
++        for (int i = 0; i < dyeItemNames.length; ++i)
++        {
++            this.dyeIcons[i] = par1IconRegister.registerIcon(this.getIconString() + "_" + dyeItemNames[i]);
+         }
+     }
+ }

@@ -23,3 +23,12 @@
      }
  
      @SideOnly(Side.CLIENT)
+@@ -649,7 +656,7 @@
+     }
+ 
+     @SideOnly(Side.CLIENT)
+-    public static Icon func_94424_b(String par0Str)
++    public static Icon getFluidIcon(String par0Str)
+     {
+         return par0Str == "water_still" ? Block.waterMoving.theIcon[0] : (par0Str == "water_flow" ? Block.waterMoving.theIcon[1] : (par0Str == "lava_still" ? Block.lavaMoving.theIcon[0] : (par0Str == "lava_flow" ? Block.lavaMoving.theIcon[1] : null)));
+     }

@@ -220,3 +220,12 @@
  
      @SideOnly(Side.CLIENT)
  
+@@ -196,7 +370,7 @@
+ 
+         for (int i = 0; i < this.saplingIcon.length; ++i)
+         {
+-            this.saplingIcon[i] = par1IconRegister.registerIcon(this.func_111023_E() + "_" + WOOD_TYPES[i]);
++            this.saplingIcon[i] = par1IconRegister.registerIcon(this.getTextureName() + "_" + WOOD_TYPES[i]);
+         }
+     }
+ }

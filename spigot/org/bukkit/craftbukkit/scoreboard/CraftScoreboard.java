@@ -109,7 +109,7 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
         Validate.isTrue(name.length() <= 16, "Team name '" + name + "' is longer than the limit of 16 characters");
         Validate.isTrue(board.func_96508_e(name) == null, "Team name '" + name + "' is already in use");
 
-        return new CraftTeam(this, board.func_96527_f(name));
+        return new CraftTeam(this, board.createTeam(name));
     }
 
     public ImmutableSet<OfflinePlayer> getPlayers() {

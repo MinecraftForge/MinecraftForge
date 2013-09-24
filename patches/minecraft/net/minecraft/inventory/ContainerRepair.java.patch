@@ -36,7 +36,15 @@
              this.maximumCost = k + i;
  
              if (i <= 0)
-@@ -399,6 +411,11 @@
+@@ -331,6 +343,7 @@
+             {
+                 itemstack1 = null;
+             }
++
+ 
+             if (itemstack1 != null)
+             {
+@@ -399,6 +412,11 @@
  
      public boolean canInteractWith(EntityPlayer par1EntityPlayer)
      {
@@ -48,7 +56,7 @@
          return this.theWorld.getBlockId(this.field_82861_i, this.field_82858_j, this.field_82859_k) != Block.anvil.blockID ? false : par1EntityPlayer.getDistanceSq((double)this.field_82861_i + 0.5D, (double)this.field_82858_j + 0.5D, (double)this.field_82859_k + 0.5D) <= 64.0D;
      }
  
-@@ -489,4 +506,18 @@
+@@ -489,4 +507,18 @@
      {
          return par0ContainerRepair.stackSizeToBeUsedInRepair;
      }

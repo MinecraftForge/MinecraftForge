@@ -194,7 +194,7 @@
  
          if (this.creativeItemCreationSpamThresholdTally > 0)
          {
-@@ -159,11 +262,37 @@
+@@ -159,18 +262,44 @@
      {
          if (!this.connectionClosed)
          {
@@ -226,7 +226,7 @@
 +
 +            if (leaveMessage != null && leaveMessage.length() > 0)
 +            {
-+                this.mcServer.getConfigurationManager().sendChatMsg(ChatMessageComponent.func_111066_d(leaveMessage));
++                this.mcServer.getConfigurationManager().sendChatMsg(ChatMessageComponent.createFromText(leaveMessage));
 +            }
 +
 +            // CraftBukkit end
@@ -234,6 +234,14 @@
              this.connectionClosed = true;
          }
      }
+ 
+     public void func_110774_a(Packet27PlayerInput par1Packet27PlayerInput)
+     {
+-        this.playerEntity.func_110430_a(par1Packet27PlayerInput.func_111010_d(), par1Packet27PlayerInput.func_111012_f(), par1Packet27PlayerInput.func_111013_g(), par1Packet27PlayerInput.func_111011_h());
++        this.playerEntity.setEntityActionState(par1Packet27PlayerInput.func_111010_d(), par1Packet27PlayerInput.func_111012_f(), par1Packet27PlayerInput.func_111013_g(), par1Packet27PlayerInput.func_111011_h());
+     }
+ 
+     public void handleFlying(Packet10Flying par1Packet10Flying)
 @@ -192,11 +321,85 @@
                  }
              }
@@ -538,8 +546,9 @@
  
              if (par1Packet14BlockDig.status == 0)
              {
+-                if (!this.mcServer.func_96290_a(worldserver, i, j, k, this.playerEntity))
 +                // CraftBukkit start
-                 if (!this.mcServer.func_96290_a(worldserver, i, j, k, this.playerEntity))
++                if (!this.mcServer.isBlockProtected(worldserver, i, j, k, this.playerEntity))
                  {
                      this.playerEntity.theItemInWorldManager.onBlockClicked(i, j, k, par1Packet14BlockDig.face);
                  }
@@ -600,7 +609,7 @@
          ItemStack itemstack = this.playerEntity.inventory.getCurrentItem();
          boolean flag = false;
          int i = par1Packet15Place.getXPosition();
-@@ -502,7 +846,23 @@
+@@ -502,20 +846,41 @@
                  return;
              }
  
@@ -625,7 +634,9 @@
          }
          else if (par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit() - 1 && (par1Packet15Place.getDirection() == 1 || par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit()))
          {
-@@ -511,11 +871,16 @@
+-            this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet3Chat(ChatMessageComponent.func_111082_b("build.tooHigh", new Object[] {Integer.valueOf(this.mcServer.getBuildLimit())}).func_111059_a(EnumChatFormatting.RED)));
++            this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet3Chat(ChatMessageComponent.createFromTranslationWithSubstitutions("build.tooHigh", new Object[] {Integer.valueOf(this.mcServer.getBuildLimit())}).setColor(EnumChatFormatting.RED)));
+             flag = true;
          }
          else
          {
@@ -686,7 +697,7 @@
 +
 +        if ((quitMessage != null) && (quitMessage.length() > 0))
 +        {
-+            this.mcServer.getConfigurationManager().sendChatMsg(ChatMessageComponent.func_111066_d(quitMessage));
++            this.mcServer.getConfigurationManager().sendChatMsg(ChatMessageComponent.createFromText(quitMessage));
 +        }
 +
 +        // CraftBukkit end
@@ -756,6 +767,15 @@
          }
      }
  
+@@ -655,7 +1075,7 @@
+         par1Packet3Chat = FMLNetworkHandler.handleChatMessage(this, par1Packet3Chat);
+         if (this.playerEntity.getChatVisibility() == 2)
+         {
+-            this.sendPacketToPlayer(new Packet3Chat(ChatMessageComponent.func_111077_e("chat.cannotSend").func_111059_a(EnumChatFormatting.RED)));
++            this.sendPacketToPlayer(new Packet3Chat(ChatMessageComponent.createFromTranslationKey("chat.cannotSend").setColor(EnumChatFormatting.RED)));
+         }
+         else
+         {
 @@ -663,7 +1083,39 @@
  
              if (s.length() > 100)
@@ -866,7 +886,7 @@
 +                }
 +
 +                // This section stays because it is only applicable to packets
-+                if (isCounted && chatSpamField.addAndGet(this, 20) > 200 && !this.mcServer.getConfigurationManager().areCommandsAllowed(this.playerEntity.getCommandSenderName()))   // CraftBukkit use thread-safe spam
++                if (isCounted && chatSpamField.addAndGet(this, 20) > 200 && !this.mcServer.getConfigurationManager().isPlayerOpped(this.playerEntity.getCommandSenderName()))   // CraftBukkit use thread-safe spam
 +                {
 +                    // Spigot end
 +                    // CraftBukkit start
@@ -932,7 +952,7 @@
 +                AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, s, new LazyPlayerSet());
 +                this.server.getPluginManager().callEvent(event);
 +                // MCPC+ start - call Forge event
-+                ChatMessageComponent chatmessagecomponent = ChatMessageComponent.func_111082_b("chat.type.text", new Object[] {this.playerEntity.getTranslatedEntityName(), s});
++                ChatMessageComponent chatmessagecomponent = ChatMessageComponent.createFromTranslationWithSubstitutions("chat.type.text", new Object[] {this.playerEntity.getTranslatedEntityName(), s});
 +                chatmessagecomponent = ForgeHooks.onServerChatEvent(this, s, chatmessagecomponent);              
 +                // MCPC+ end
 +
@@ -960,7 +980,7 @@
 +                            {
 +                                for (Object player : NetServerHandler.this.mcServer.getConfigurationManager().playerEntityList)
 +                                {
-+                                    ((EntityPlayerMP) player).sendChatToPlayer(ChatMessageComponent.func_111066_d(message));
++                                    ((EntityPlayerMP) player).sendChatToPlayer(ChatMessageComponent.createFromText(message));
 +                                }
 +                            }
 +                            else
@@ -1027,7 +1047,7 @@
 +                    {
 +                        for (Object recipient : mcServer.getConfigurationManager().playerEntityList)
 +                        {
-+                            ((EntityPlayerMP) recipient).sendChatToPlayer(ChatMessageComponent.func_111066_d(s));
++                            ((EntityPlayerMP) recipient).sendChatToPlayer(ChatMessageComponent.createFromText(s));
 +                        }
 +                    }
 +                    else
@@ -1144,19 +1164,20 @@
              this.playerEntity.swingItem();
          }
      }
-@@ -725,6 +1453,36 @@
+@@ -725,37 +1453,67 @@
       */
      public void handleEntityAction(Packet19EntityAction par1Packet19EntityAction)
      {
+-        if (par1Packet19EntityAction.state == 1)
 +        // CraftBukkit start
 +        if (this.playerEntity.isDead)
 +        {
 +            return;
 +        }
 +
-+        if (par1Packet19EntityAction.state == 1 || par1Packet19EntityAction.state == 2)
++        if (par1Packet19EntityAction.action == 1 || par1Packet19EntityAction.action == 2)
 +        {
-+            PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(this.getPlayerB(), par1Packet19EntityAction.state == 1);
++            PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(this.getPlayerB(), par1Packet19EntityAction.action == 1);
 +            this.server.getPluginManager().callEvent(event);
 +
 +            if (event.isCancelled())
@@ -1165,9 +1186,9 @@
 +            }
 +        }
 +
-+        if (par1Packet19EntityAction.state == 4 || par1Packet19EntityAction.state == 5)
++        if (par1Packet19EntityAction.action == 4 || par1Packet19EntityAction.action == 5)
 +        {
-+            PlayerToggleSprintEvent event = new PlayerToggleSprintEvent(this.getPlayerB(), par1Packet19EntityAction.state == 4);
++            PlayerToggleSprintEvent event = new PlayerToggleSprintEvent(this.getPlayerB(), par1Packet19EntityAction.action == 4);
 +            this.server.getPluginManager().callEvent(event);
 +
 +            if (event.isCancelled())
@@ -1178,18 +1199,51 @@
 +
 +        // CraftBukkit end
 +
-         if (par1Packet19EntityAction.state == 1)
++        if (par1Packet19EntityAction.action == 1)
          {
              this.playerEntity.setSneaking(true);
-@@ -744,7 +1502,7 @@
-         else if (par1Packet19EntityAction.state == 3)
+         }
+-        else if (par1Packet19EntityAction.state == 2)
++        else if (par1Packet19EntityAction.action == 2)
+         {
+             this.playerEntity.setSneaking(false);
+         }
+-        else if (par1Packet19EntityAction.state == 4)
++        else if (par1Packet19EntityAction.action == 4)
+         {
+             this.playerEntity.setSprinting(true);
+         }
+-        else if (par1Packet19EntityAction.state == 5)
++        else if (par1Packet19EntityAction.action == 5)
+         {
+             this.playerEntity.setSprinting(false);
+         }
+-        else if (par1Packet19EntityAction.state == 3)
++        else if (par1Packet19EntityAction.action == 3)
          {
              this.playerEntity.wakeUpPlayer(false, true, true);
--            this.hasMoved = false;
-+            // this.checkMovement = false; // CraftBukkit - this is handled in teleport
+             this.hasMoved = false;
          }
-         else if (par1Packet19EntityAction.state == 6)
+-        else if (par1Packet19EntityAction.state == 6)
++        else if (par1Packet19EntityAction.action == 6)
          {
+             if (this.playerEntity.ridingEntity != null && this.playerEntity.ridingEntity instanceof EntityHorse)
+             {
+-                ((EntityHorse)this.playerEntity.ridingEntity).func_110206_u(par1Packet19EntityAction.field_111009_c);
+-            }
+-        }
+-        else if (par1Packet19EntityAction.state == 7 && this.playerEntity.ridingEntity != null && this.playerEntity.ridingEntity instanceof EntityHorse)
+-        {
+-            ((EntityHorse)this.playerEntity.ridingEntity).func_110199_f(this.playerEntity);
++                ((EntityHorse)this.playerEntity.ridingEntity).setJumpPower(par1Packet19EntityAction.auxData);
++            }
++        }
++        else if (par1Packet19EntityAction.action == 7 && this.playerEntity.ridingEntity != null && this.playerEntity.ridingEntity instanceof EntityHorse)
++        {
++            ((EntityHorse)this.playerEntity.ridingEntity).openGUI(this.playerEntity);
+         }
+     }
+ 
 @@ -774,6 +1532,11 @@
  
      public void handleUseEntity(Packet7UseEntity par1Packet7UseEntity)
@@ -1211,19 +1265,19 @@
                  if (par1Packet7UseEntity.isLeftClick == 0)
                  {
 +                    // CraftBukkit start
-+                    boolean triggerTagUpdate = itemInHand != null && itemInHand.itemID == Item.field_111212_ci.itemID && entity instanceof EntityLiving;
++                    boolean triggerTagUpdate = itemInHand != null && itemInHand.itemID == Item.nameTag.itemID && entity instanceof EntityLiving;
 +                    boolean triggerChestUpdate = itemInHand != null && itemInHand.itemID == Block.chest.blockID && entity instanceof EntityHorse;
-+                    boolean triggerLeashUpdate = itemInHand != null && itemInHand.itemID == Item.field_111214_ch.itemID && entity instanceof EntityLiving;
++                    boolean triggerLeashUpdate = itemInHand != null && itemInHand.itemID == Item.leash.itemID && entity instanceof EntityLiving;
 +                    PlayerInteractEntityEvent event = new PlayerInteractEntityEvent((Player) this.getPlayerB(), entity.getBukkitEntity());
 +                    this.server.getPluginManager().callEvent(event);
 +
-+                    if (triggerLeashUpdate && (event.isCancelled() || this.playerEntity.inventory.getCurrentItem() == null || this.playerEntity.inventory.getCurrentItem().itemID != Item.field_111214_ch.itemID))
++                    if (triggerLeashUpdate && (event.isCancelled() || this.playerEntity.inventory.getCurrentItem() == null || this.playerEntity.inventory.getCurrentItem().itemID != Item.leash.itemID))
 +                        {
 +                            // Refresh the current leash state
-+                            this.sendPacketToPlayer(new Packet39AttachEntity(1, entity, ((EntityLiving) entity).func_110166_bE()));
++                            this.sendPacketToPlayer(new Packet39AttachEntity(1, entity, ((EntityLiving) entity).getLeashedToEntity()));
 +                        }
 +
-+                    if (triggerTagUpdate && (event.isCancelled() || this.playerEntity.inventory.getCurrentItem() == null || this.playerEntity.inventory.getCurrentItem().itemID != Item.field_111212_ci.itemID))
++                    if (triggerTagUpdate && (event.isCancelled() || this.playerEntity.inventory.getCurrentItem() == null || this.playerEntity.inventory.getCurrentItem().itemID != Item.nameTag.itemID))
 +                        {
 +                            // Refresh the current entity metadata
 +                            this.sendPacketToPlayer(new Packet40EntityMetadata(entity.entityId, entity.dataWatcher, true));
@@ -1283,7 +1337,13 @@
              }
              else if (this.playerEntity.getServerForPlayer().getWorldInfo().isHardcoreModeEnabled())
              {
-@@ -838,7 +1648,7 @@
+@@ -833,12 +1643,12 @@
+             }
+             else
+             {
+-                if (this.playerEntity.func_110143_aJ() > 0.0F)
++                if (this.playerEntity.getHealth() > 0.0F)
+                 {
                      return;
                  }
  
@@ -1999,7 +2059,22 @@
                  }
              }
              else
-@@ -1180,7 +2547,10 @@
+@@ -1158,7 +2525,7 @@
+                 {
+                     if (!this.mcServer.isCommandBlockEnabled())
+                     {
+-                        this.playerEntity.sendChatToPlayer(ChatMessageComponent.func_111077_e("advMode.notEnabled"));
++                        this.playerEntity.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("advMode.notEnabled"));
+                     }
+                     else if (this.playerEntity.canCommandSenderUseCommand(2, "") && this.playerEntity.capabilities.isCreativeMode)
+                     {
+@@ -1175,17 +2542,20 @@
+                             {
+                                 ((TileEntityCommandBlock)tileentity).setCommand(s);
+                                 this.playerEntity.worldObj.markBlockForUpdate(i, j, k);
+-                                this.playerEntity.sendChatToPlayer(ChatMessageComponent.func_111082_b("advMode.setCommand.success", new Object[] {s}));
++                                this.playerEntity.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("advMode.setCommand.success", new Object[] {s}));
+                             }
                          }
                          catch (Exception exception3)
                          {
@@ -2011,6 +2086,12 @@
                          }
                      }
                      else
+                     {
+-                        this.playerEntity.sendChatToPlayer(ChatMessageComponent.func_111077_e("advMode.notAllowed"));
++                        this.playerEntity.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("advMode.notAllowed"));
+                     }
+                 }
+                 else if ("MC|Beacon".equals(par1Packet250CustomPayload.channel))
 @@ -1211,7 +2581,10 @@
                          }
                          catch (Exception exception4)
@@ -2023,10 +2104,15 @@
                          }
                      }
                  }
-@@ -1233,6 +2606,13 @@
+@@ -1233,11 +2606,18 @@
                          containerrepair.updateItemName("");
                      }
                  }
+-            }
+-        }
+-    }
+-
+-    public boolean func_142032_c()
 +                // CraftBukkit start // MCPC+ - move REGISTER/UNREGISTER handling to FML
 +                else
 +                {
@@ -2034,6 +2120,11 @@
 +                }
 +
 +                // CraftBukkit end
-             }
-         }
++            }
++        }
++    }
++
++    public boolean isConnectionClosed()
+     {
+         return this.connectionClosed;
      }

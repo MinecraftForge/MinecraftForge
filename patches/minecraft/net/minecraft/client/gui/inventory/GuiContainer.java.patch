@@ -12,7 +12,7 @@
              }
          }
  
-+        //Forge: Force lighting to be disabled as there are some issue where lighting would 
++        //Forge: Force lighting to be disabled as there are some issue where lighting would
 +        //incorrectly be applied based on items that are in the inventory.
 +        GL11.glDisable(GL11.GL_LIGHTING);
          this.drawGuiContainerForegroundLayer(par1, par2);
@@ -29,8 +29,8 @@
 +        FontRenderer font = null;
 +        if (par1ItemStack != null) font = par1ItemStack.getItem().getFontRenderer(par1ItemStack);
 +        if (font == null) font = fontRenderer;
-+        itemRenderer.renderItemAndEffectIntoGUI(font, this.mc.func_110434_K(), par1ItemStack, par2, par3);
-+        itemRenderer.renderItemOverlayIntoGUI(font, this.mc.func_110434_K(), par1ItemStack, par2, par3 - (this.draggedStack == null ? 0 : 8), par4Str);
++        itemRenderer.renderItemAndEffectIntoGUI(font, this.mc.getTextureManager(), par1ItemStack, par2, par3);
++        itemRenderer.renderItemOverlayIntoGUI(font, this.mc.getTextureManager(), par1ItemStack, par2, par3 - (this.draggedStack == null ? 0 : 8), par4Str);
          this.zLevel = 0.0F;
          itemRenderer.zLevel = 0.0F;
      }
@@ -74,3 +74,23 @@
  
                  if (k2 == 0)
                  {
+@@ -389,7 +403,7 @@
+             if (icon != null)
+             {
+                 GL11.glDisable(GL11.GL_LIGHTING);
+-                this.mc.func_110434_K().func_110577_a(TextureMap.field_110576_c);
++                this.mc.getTextureManager().bindTexture(TextureMap.locationItemsTexture);
+                 this.drawTexturedModelRectFromIcon(i, j, icon, 16, 16);
+                 GL11.glEnable(GL11.GL_LIGHTING);
+                 flag1 = true;
+@@ -404,8 +418,8 @@
+             }
+ 
+             GL11.glEnable(GL11.GL_DEPTH_TEST);
+-            itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.func_110434_K(), itemstack, i, j);
+-            itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.func_110434_K(), itemstack, i, j, s);
++            itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.getTextureManager(), itemstack, i, j);
++            itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.getTextureManager(), itemstack, i, j, s);
+         }
+ 
+         itemRenderer.zLevel = 0.0F;

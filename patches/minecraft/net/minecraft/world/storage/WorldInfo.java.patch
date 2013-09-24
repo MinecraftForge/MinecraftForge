@@ -16,6 +16,15 @@
      }
  
      /**
+@@ -263,7 +265,7 @@
+         par1NBTTagCompound.setLong("Time", this.totalTime);
+         par1NBTTagCompound.setLong("DayTime", this.worldTime);
+         par1NBTTagCompound.setLong("SizeOnDisk", this.sizeOnDisk);
+-        par1NBTTagCompound.setLong("LastPlayed", MinecraftServer.func_130071_aq());
++        par1NBTTagCompound.setLong("LastPlayed", MinecraftServer.getSystemTimeMillis());
+         par1NBTTagCompound.setString("LevelName", this.levelName);
+         par1NBTTagCompound.setInteger("version", this.saveVersion);
+         par1NBTTagCompound.setInteger("rainTime", this.rainTime);
 @@ -274,6 +276,7 @@
          par1NBTTagCompound.setBoolean("allowCommands", this.allowCommands);
          par1NBTTagCompound.setBoolean("initialized", this.initialized);

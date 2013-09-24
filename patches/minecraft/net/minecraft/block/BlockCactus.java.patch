@@ -66,10 +66,17 @@
          par5Entity.attackEntityFrom(DamageSource.cactus, 1.0F);
      }
  
-@@ -182,4 +206,22 @@
-         this.cactusTopIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_top");
-         this.cactusBottomIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_bottom");
-     }
+@@ -178,8 +202,26 @@
+      */
+     public void registerIcons(IconRegister par1IconRegister)
+     {
+-        this.blockIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_side");
+-        this.cactusTopIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_top");
+-        this.cactusBottomIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_bottom");
++        this.blockIcon = par1IconRegister.registerIcon(this.getTextureName() + "_side");
++        this.cactusTopIcon = par1IconRegister.registerIcon(this.getTextureName() + "_top");
++        this.cactusBottomIcon = par1IconRegister.registerIcon(this.getTextureName() + "_bottom");
++    }
 +
 +    @Override
 +    public EnumPlantType getPlantType(World world, int x, int y, int z)
@@ -87,5 +94,5 @@
 +    public int getPlantMetadata(World world, int x, int y, int z)
 +    {
 +        return -1;
-+    }
+     }
  }

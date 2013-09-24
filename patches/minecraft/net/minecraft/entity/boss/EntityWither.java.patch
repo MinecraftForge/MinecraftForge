@@ -11,6 +11,15 @@
  
  public class EntityWither extends EntityMob implements IBossDisplayData, IRangedAttackMob
  {
+@@ -45,7 +49,7 @@
+     public EntityWither(World par1World)
+     {
+         super(par1World);
+-        this.setEntityHealth(this.func_110138_aP());
++        this.setHealth(this.getMaxHealth());
+         this.setSize(0.9F, 4.0F);
+         this.isImmuneToFire = true;
+         this.getNavigator().setCanSwim(true);
 @@ -236,7 +240,16 @@
  
              if (i <= 0)
@@ -52,6 +61,15 @@
                                      flag = this.worldObj.destroyBlock(j2, k2, l2, true) || flag;
                                  }
                              }
+@@ -380,7 +400,7 @@
+     public void func_82206_m()
+     {
+         this.func_82215_s(220);
+-        this.setEntityHealth(this.func_110138_aP() / 3.0F);
++        this.setHealth(this.getMaxHealth() / 3.0F);
+     }
+ 
+     /**
 @@ -541,7 +561,11 @@
       */
      protected void dropFewItems(boolean par1, int par2)
@@ -62,6 +80,34 @@
 +        loot.add(new org.bukkit.inventory.ItemStack(Item.netherStar.itemID, 1));
 +        CraftEventFactory.callEntityDeathEvent(this, loot);
 +        // CraftBukkit end
+     }
+ 
+     /**
+@@ -584,12 +608,12 @@
+         return true;
+     }
+ 
+-    protected void func_110147_ax()
+-    {
+-        super.func_110147_ax();
+-        this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111128_a(300.0D);
+-        this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.6000000238418579D);
+-        this.func_110148_a(SharedMonsterAttributes.field_111265_b).func_111128_a(40.0D);
++    protected void applyEntityAttributes()
++    {
++        super.applyEntityAttributes();
++        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute(300.0D);
++        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.6000000238418579D);
++        this.getEntityAttribute(SharedMonsterAttributes.followRange).setAttribute(40.0D);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -633,7 +657,7 @@
+      */
+     public boolean isArmored()
+     {
+-        return this.func_110143_aJ() <= this.func_110138_aP() / 2.0F;
++        return this.getHealth() <= this.getMaxHealth() / 2.0F;
      }
  
      /**

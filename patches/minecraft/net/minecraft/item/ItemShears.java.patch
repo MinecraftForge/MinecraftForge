@@ -39,9 +39,9 @@
      {
          return par2Block.blockID != Block.web.blockID && par2Block.blockID != Block.leaves.blockID ? (par2Block.blockID == Block.cloth.blockID ? 5.0F : super.getStrVsBlock(par1ItemStack, par2Block)) : 15.0F;
      }
-+    
++
 +    @Override
-+    public boolean func_111207_a(ItemStack itemstack, EntityPlayer player, EntityLivingBase entity)
++    public boolean itemInteractionForEntity(ItemStack itemstack, EntityPlayer player, EntityLivingBase entity)
 +    {
 +        if (entity.worldObj.isRemote)
 +        {
@@ -69,9 +69,9 @@
 +        }
 +        return false;
 +    }
-+    
++
 +    @Override
-+    public boolean onBlockStartBreak(ItemStack itemstack, int x, int y, int z, EntityPlayer player) 
++    public boolean onBlockStartBreak(ItemStack itemstack, int x, int y, int z, EntityPlayer player)
 +    {
 +        if (player.worldObj.isRemote)
 +        {

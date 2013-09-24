@@ -1111,7 +1111,7 @@ public class CraftWorld implements World {
                 entity = new net.minecraft.entity.item.EntityItemFrame(world, (int) x, (int) y, (int) z, dir);
             } else if (LeashHitch.class.isAssignableFrom(clazz)) {
                 entity = new net.minecraft.entity.EntityLeashKnot(world, (int) x, (int) y, (int) z);
-                entity.field_98038_p = true;
+                entity.forceSpawn = true;
             }
 
             if (entity != null && !((net.minecraft.entity.EntityHanging) entity).onValidSurface()) {

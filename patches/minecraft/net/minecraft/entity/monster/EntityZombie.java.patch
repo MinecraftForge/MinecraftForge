@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/entity/monster/EntityZombie.java
 +++ ../src_work/minecraft/net/minecraft/entity/monster/EntityZombie.java
-@@ -31,9 +31,15 @@
+@@ -31,20 +31,27 @@
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.potion.Potion;
  import net.minecraft.potion.PotionEffect;
@@ -16,7 +16,13 @@
  
  public class EntityZombie extends EntityMob
  {
-@@ -45,6 +51,7 @@
+     protected static final Attribute field_110186_bp = (new RangedAttribute("zombie.spawnReinforcements", 0.0D, 0.0D, 1.0D)).func_111117_a("Spawn Reinforcements Chance");
+-    private static final UUID field_110187_bq = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
+-    private static final AttributeModifier field_110188_br = new AttributeModifier(field_110187_bq, "Baby speed boost", 0.5D, 1);
++    private static final UUID babySpeedBoostUUID = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
++    private static final AttributeModifier babySpeedBoostModifier = new AttributeModifier(babySpeedBoostUUID, "Baby speed boost", 0.5D, 1);
+ 
+     /**
       * Ticker used to determine the time remaining for this zombie to convert into a villager when cured.
       */
      private int conversionTime;
@@ -24,6 +30,43 @@
  
      public EntityZombie(World par1World)
      {
+@@ -64,13 +71,13 @@
+         this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityVillager.class, 0, false));
+     }
+ 
+-    protected void func_110147_ax()
+-    {
+-        super.func_110147_ax();
+-        this.func_110148_a(SharedMonsterAttributes.field_111265_b).func_111128_a(40.0D);
+-        this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.23000000417232513D);
+-        this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111128_a(3.0D);
+-        this.func_110140_aT().func_111150_b(field_110186_bp).func_111128_a(this.rand.nextDouble() * 0.10000000149011612D);
++    protected void applyEntityAttributes()
++    {
++        super.applyEntityAttributes();
++        this.getEntityAttribute(SharedMonsterAttributes.followRange).setAttribute(40.0D);
++        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.23000000417232513D);
++        this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setAttribute(3.0D);
++        this.getAttributeMap().func_111150_b(field_110186_bp).setAttribute(this.rand.nextDouble() * 0.10000000149011612D);
+     }
+ 
+     protected void entityInit()
+@@ -121,12 +128,12 @@
+ 
+         if (this.worldObj != null && !this.worldObj.isRemote)
+         {
+-            AttributeInstance attributeinstance = this.func_110148_a(SharedMonsterAttributes.field_111263_d);
+-            attributeinstance.func_111124_b(field_110188_br);
++            AttributeInstance attributeinstance = this.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
++            attributeinstance.removeModifier(babySpeedBoostModifier);
+ 
+             if (par1)
+             {
+-                attributeinstance.func_111121_a(field_110188_br);
++                attributeinstance.applyModifier(babySpeedBoostModifier);
+             }
+         }
+     }
 @@ -180,7 +187,15 @@
  
                  if (flag)
@@ -41,6 +84,28 @@
                  }
              }
          }
+@@ -211,7 +226,7 @@
+                 entitylivingbase = (EntityLivingBase)par1DamageSource.getEntity();
+             }
+ 
+-            if (entitylivingbase != null && this.worldObj.difficultySetting >= 3 && (double)this.rand.nextFloat() < this.func_110148_a(field_110186_bp).func_111126_e())
++            if (entitylivingbase != null && this.worldObj.difficultySetting >= 3 && (double)this.rand.nextFloat() < this.getEntityAttribute(field_110186_bp).getAttributeValue())
+             {
+                 int i = MathHelper.floor_double(this.posX);
+                 int j = MathHelper.floor_double(this.posY);
+@@ -232,9 +247,9 @@
+                         {
+                             this.worldObj.spawnEntityInWorld(entityzombie);
+                             entityzombie.setAttackTarget(entitylivingbase);
+-                            entityzombie.func_110161_a((EntityLivingData)null);
+-                            this.func_110148_a(field_110186_bp).func_111121_a(new AttributeModifier("Zombie reinforcement caller charge", -0.05000000074505806D, 0));
+-                            entityzombie.func_110148_a(field_110186_bp).func_111121_a(new AttributeModifier("Zombie reinforcement callee charge", -0.05000000074505806D, 0));
++                            entityzombie.onSpawnWithEgg((EntityLivingData)null);
++                            this.getEntityAttribute(field_110186_bp).applyModifier(new AttributeModifier("Zombie reinforcement caller charge", -0.05000000074505806D, 0));
++                            entityzombie.getEntityAttribute(field_110186_bp).applyModifier(new AttributeModifier("Zombie reinforcement callee charge", -0.05000000074505806D, 0));
+                             break;
+                         }
+                     }
 @@ -253,6 +268,11 @@
          if (!this.worldObj.isRemote && this.isConverting())
          {
@@ -101,3 +166,54 @@
  
      /**
       * Makes entity wear random armor based on difficulty
+@@ -421,7 +451,7 @@
+             EntityZombie entityzombie = new EntityZombie(this.worldObj);
+             entityzombie.copyLocationAndAnglesFrom(par1EntityLivingBase);
+             this.worldObj.removeEntity(par1EntityLivingBase);
+-            entityzombie.func_110161_a((EntityLivingData)null);
++            entityzombie.onSpawnWithEgg((EntityLivingData)null);
+             entityzombie.setVillager(true);
+ 
+             if (par1EntityLivingBase.isChild())
+@@ -434,10 +464,10 @@
+         }
+     }
+ 
+-    public EntityLivingData func_110161_a(EntityLivingData par1EntityLivingData)
+-    {
+-        Object par1EntityLivingData1 = super.func_110161_a(par1EntityLivingData);
+-        float f = this.worldObj.func_110746_b(this.posX, this.posY, this.posZ);
++    public EntityLivingData onSpawnWithEgg(EntityLivingData par1EntityLivingData)
++    {
++        Object par1EntityLivingData1 = super.onSpawnWithEgg(par1EntityLivingData);
++        float f = this.worldObj.getLocationTensionFactor(this.posX, this.posY, this.posZ);
+         this.setCanPickUpLoot(this.rand.nextFloat() < 0.55F * f);
+ 
+         if (par1EntityLivingData1 == null)
+@@ -474,13 +504,13 @@
+             }
+         }
+ 
+-        this.func_110148_a(SharedMonsterAttributes.field_111266_c).func_111121_a(new AttributeModifier("Random spawn bonus", this.rand.nextDouble() * 0.05000000074505806D, 0));
+-        this.func_110148_a(SharedMonsterAttributes.field_111265_b).func_111121_a(new AttributeModifier("Random zombie-spawn bonus", this.rand.nextDouble() * 1.5D, 2));
++        this.getEntityAttribute(SharedMonsterAttributes.knockbackResistance).applyModifier(new AttributeModifier("Random spawn bonus", this.rand.nextDouble() * 0.05000000074505806D, 0));
++        this.getEntityAttribute(SharedMonsterAttributes.followRange).applyModifier(new AttributeModifier("Random zombie-spawn bonus", this.rand.nextDouble() * 1.5D, 2));
+ 
+         if (this.rand.nextFloat() < f * 0.05F)
+         {
+-            this.func_110148_a(field_110186_bp).func_111121_a(new AttributeModifier("Leader zombie bonus", this.rand.nextDouble() * 0.25D + 0.5D, 0));
+-            this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111121_a(new AttributeModifier("Leader zombie bonus", this.rand.nextDouble() * 3.0D + 1.0D, 2));
++            this.getEntityAttribute(field_110186_bp).applyModifier(new AttributeModifier("Leader zombie bonus", this.rand.nextDouble() * 0.25D + 0.5D, 0));
++            this.getEntityAttribute(SharedMonsterAttributes.maxHealth).applyModifier(new AttributeModifier("Leader zombie bonus", this.rand.nextDouble() * 3.0D + 1.0D, 2));
+         }
+ 
+         return (EntityLivingData)par1EntityLivingData1;
+@@ -567,7 +597,7 @@
+     {
+         EntityVillager entityvillager = new EntityVillager(this.worldObj);
+         entityvillager.copyLocationAndAnglesFrom(this);
+-        entityvillager.func_110161_a((EntityLivingData)null);
++        entityvillager.onSpawnWithEgg((EntityLivingData)null);
+         entityvillager.func_82187_q();
+ 
+         if (this.isChild())

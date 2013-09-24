@@ -19,12 +19,20 @@
          {
              return true;
          }
-@@ -181,7 +184,7 @@
+@@ -180,7 +183,7 @@
+                     entity.setLocationAndAngles(par2, par4, par6, MathHelper.wrapAngleTo180_float(par0World.rand.nextFloat() * 360.0F), 0.0F);
                      entityliving.rotationYawHead = entityliving.rotationYaw;
                      entityliving.renderYawOffset = entityliving.rotationYaw;
-                     entityliving.func_110161_a((EntityLivingData)null);
--                    par0World.spawnEntityInWorld(entity);
-+                    par0World.addEntity(entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG); // CraftBukkit
+-                    entityliving.func_110161_a((EntityLivingData)null);
++                    entityliving.onSpawnWithEgg((EntityLivingData)null);
+                     par0World.spawnEntityInWorld(entity);
                      entityliving.playLivingSound();
                  }
-             }
+@@ -226,6 +229,6 @@
+     public void registerIcons(IconRegister par1IconRegister)
+     {
+         super.registerIcons(par1IconRegister);
+-        this.theIcon = par1IconRegister.registerIcon(this.func_111208_A() + "_overlay");
++        this.theIcon = par1IconRegister.registerIcon(this.getIconString() + "_overlay");
+     }
+ }

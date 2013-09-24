@@ -103,14 +103,14 @@
 +                                    int j3 = par1World.getTypeId(j2, j1, l2);
 +                                    Block block = Block.blocksList[j3];
 +
-+                                    if (j3 == 0 || j3 == Block.leaves.blockID || (forgeWorld != null && block.canBeReplacedByLeaves(forgeWorld, j2, j1, l2))) // MCPC+
++                                    if (block == null || block.canBeReplacedByLeaves(par1World, j2, j1, l2))
                                      {
 -                                        this.setBlockAndMetadata(par1World, j2, j1, l2, Block.leaves.blockID, this.metaLeaves);
 +                                        this.setTypeAndData(par1World, j2, j1, l2, Block.leaves.blockID, this.metaLeaves);
                                      }
                                  }
                              }
-@@ -125,32 +163,33 @@
+@@ -125,32 +163,34 @@
  
                      for (j1 = 0; j1 < l; ++j1)
                      {
@@ -120,6 +120,7 @@
 -                        {
 -                            this.setBlockAndMetadata(par1World, par3, par4 + j1, par5, Block.wood.blockID, this.metaWood);
 +                        k1 = par1World.getTypeId(par3, par4 + j1, par5);
++
 +                        Block block = Block.blocksList[k1];
 +
 +                        if (k1 == 0 || k1 == Block.leaves.blockID || (forgeWorld != null && block.isLeaves(forgeWorld, par3, par4 + j1, par5))) // MCPC+
@@ -167,7 +168,7 @@
                                  }
                              }
                          }
-@@ -167,28 +206,33 @@
+@@ -167,28 +207,33 @@
                              {
                                  for (k2 = par5 - i2; k2 <= par5 + i2; ++k2)
                                  {
@@ -206,7 +207,7 @@
                                  }
                              }
                          }
-@@ -202,7 +246,7 @@
+@@ -202,7 +247,7 @@
                                      if (par2Random.nextInt(4 - j1) == 0)
                                      {
                                          i2 = par2Random.nextInt(3);
@@ -215,7 +216,7 @@
                                      }
                                  }
                              }
-@@ -223,24 +267,27 @@
+@@ -223,24 +268,27 @@
          }
      }
  
@@ -230,7 +231,7 @@
 +    private void growVines(BlockChangeDelegate par1World, int par2, int par3, int par4, int par5)
 +    {
 +        World forgeWorld = par1World instanceof World ? (World)par1World : null;
-+        this.setTypeAndData(par1World, par2, par3, par4, Block.vine.blockID, par5);
++        this.setBlockAndMetadata(forgeWorld, par2, par3, par4, Block.vine.blockID, par5);
          int i1 = 4;
  
          while (true)
@@ -244,7 +245,7 @@
              }
  
 -            this.setBlockAndMetadata(par1World, par2, par3, par4, Block.vine.blockID, par5);
-+            this.setTypeAndData(par1World, par2, par3, par4, Block.vine.blockID, par5);
++            this.setBlockAndMetadata(forgeWorld, par2, par3, par4, Block.vine.blockID, par5);
              --i1;
          }
      }

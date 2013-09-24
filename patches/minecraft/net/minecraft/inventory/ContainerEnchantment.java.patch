@@ -212,7 +212,7 @@
 +                                }
 +
 +                                EnchantmentData enchantment = new EnchantmentData(enchantId, entry.getValue());
-+                                Item.enchantedBook.getEnchantedItemStack_do(itemstack, enchantment);
++                                Item.enchantedBook.addEnchantment(itemstack, enchantment);
 +                                applied = true;
 +                                itemstack.itemID = Item.enchantedBook.itemID;
 +                                break;

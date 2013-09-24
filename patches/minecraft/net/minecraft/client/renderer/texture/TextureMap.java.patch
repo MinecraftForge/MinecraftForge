@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
-@@ -21,6 +21,7 @@
+@@ -21,15 +21,16 @@
  import net.minecraft.util.Icon;
  import net.minecraft.util.ReportedException;
  import net.minecraft.util.ResourceLocation;
@@ -8,21 +8,79 @@
  
  @SideOnly(Side.CLIENT)
  public class TextureMap extends AbstractTexture implements TickableTextureObject, IconRegister
-@@ -58,10 +59,13 @@
+ {
+-    public static final ResourceLocation field_110575_b = new ResourceLocation("textures/atlas/blocks.png");
+-    public static final ResourceLocation field_110576_c = new ResourceLocation("textures/atlas/items.png");
+-    private final List listTextureStiched = Lists.newArrayList();
+-    private final Map field_110574_e = Maps.newHashMap();
+-    private final Map mapTexturesStiched = Maps.newHashMap();
++    public static final ResourceLocation locationBlocksTexture = new ResourceLocation("textures/atlas/blocks.png");
++    public static final ResourceLocation locationItemsTexture = new ResourceLocation("textures/atlas/items.png");
++    private final List listAnimatedSprites = Lists.newArrayList();
++    private final Map mapRegisteredSprites = Maps.newHashMap();
++    private final Map mapUploadedSprites = Maps.newHashMap();
  
-     public void func_110571_b(ResourceManager par1ResourceManager)
+     /** 0 = terrain.png, 1 = items.png */
+     public final int textureType;
+@@ -40,40 +41,43 @@
      {
-+        func_110573_f(); //Re-gather list of Icons, allows for addition/removal of blocks/items after this map was inital constrcuted.
+         this.textureType = par1;
+         this.basePath = par2Str;
+-        this.func_110573_f();
+-    }
+-
+-    private void func_110569_e()
+-    {
+-        this.missingImage.func_110968_a(Lists.newArrayList(new int[][] {TextureUtil.field_110999_b}));
+-        this.missingImage.func_110966_b(16);
+-        this.missingImage.func_110969_c(16);
+-    }
+-
+-    public void func_110551_a(ResourceManager par1ResourceManager) throws IOException
+-    {
+-        this.func_110569_e();
+-        this.func_110571_b(par1ResourceManager);
+-    }
+-
+-    public void func_110571_b(ResourceManager par1ResourceManager)
+-    {
++        this.registerIcons();
++    }
++
++    private void initMissingImage()
++    {
++        this.missingImage.setFramesTextureData(Lists.newArrayList(new int[][] {TextureUtil.missingTextureData}));
++        this.missingImage.setIconWidth(16);
++        this.missingImage.setIconHeight(16);
++    }
++
++    public void loadTexture(ResourceManager par1ResourceManager) throws IOException
++    {
++        this.initMissingImage();
++        this.loadTextureAtlas(par1ResourceManager);
++    }
++
++    public void loadTextureAtlas(ResourceManager par1ResourceManager)
++    {
++        registerIcons(); //Re-gather list of Icons, allows for addition/removal of blocks/items after this map was initially constructed.
 +
          int i = Minecraft.getGLMaximumTextureSize();
          Stitcher stitcher = new Stitcher(i, i, true);
-         this.mapTexturesStiched.clear();
-         this.listTextureStiched.clear();
+-        this.mapTexturesStiched.clear();
+-        this.listTextureStiched.clear();
+-        Iterator iterator = this.field_110574_e.entrySet().iterator();
++        this.mapUploadedSprites.clear();
++        this.listAnimatedSprites.clear();
 +        ForgeHooksClient.onTextureStitchedPre(this);
-         Iterator iterator = this.field_110574_e.entrySet().iterator();
++        Iterator iterator = this.mapRegisteredSprites.entrySet().iterator();
  
          while (iterator.hasNext())
-@@ -73,7 +77,7 @@
+         {
+             Entry entry = (Entry)iterator.next();
+             ResourceLocation resourcelocation = new ResourceLocation((String)entry.getKey());
+             TextureAtlasSprite textureatlassprite = (TextureAtlasSprite)entry.getValue();
+-            ResourceLocation resourcelocation1 = new ResourceLocation(resourcelocation.func_110624_b(), String.format("%s/%s%s", new Object[] {this.basePath, resourcelocation.func_110623_a(), ".png"}));
++            ResourceLocation resourcelocation1 = new ResourceLocation(resourcelocation.getResourceDomain(), String.format("%s/%s%s", new Object[] {this.basePath, resourcelocation.getResourcePath(), ".png"}));
  
              try
              {
@@ -31,23 +89,139 @@
              }
              catch (RuntimeException runtimeexception)
              {
-@@ -142,6 +146,7 @@
+@@ -86,10 +90,10 @@
+                 continue;
+             }
+ 
+-            stitcher.func_110934_a(textureatlassprite);
+-        }
+-
+-        stitcher.func_110934_a(this.missingImage);
++            stitcher.addSprite(textureatlassprite);
++        }
++
++        stitcher.addSprite(this.missingImage);
+ 
+         try
+         {
+@@ -100,8 +104,8 @@
+             throw stitcherexception;
+         }
+ 
+-        TextureUtil.func_110991_a(this.func_110552_b(), stitcher.func_110935_a(), stitcher.func_110936_b());
+-        HashMap hashmap = Maps.newHashMap(this.field_110574_e);
++        TextureUtil.allocateTexture(this.getGlTextureId(), stitcher.getCurrentWidth(), stitcher.getCurrentHeight());
++        HashMap hashmap = Maps.newHashMap(this.mapRegisteredSprites);
+         Iterator iterator1 = stitcher.getStichSlots().iterator();
+         TextureAtlasSprite textureatlassprite1;
+ 
+@@ -110,11 +114,11 @@
+             textureatlassprite1 = (TextureAtlasSprite)iterator1.next();
+             String s = textureatlassprite1.getIconName();
+             hashmap.remove(s);
+-            this.mapTexturesStiched.put(s, textureatlassprite1);
++            this.mapUploadedSprites.put(s, textureatlassprite1);
+ 
+             try
+             {
+-                TextureUtil.func_110998_a(textureatlassprite1.func_110965_a(0), textureatlassprite1.getOriginX(), textureatlassprite1.getOriginY(), textureatlassprite1.func_130010_a(), textureatlassprite1.func_110967_i(), false, false);
++                TextureUtil.uploadTextureSub(textureatlassprite1.getFrameTextureData(0), textureatlassprite1.getIconWidth(), textureatlassprite1.getIconHeight(), textureatlassprite1.getOriginX(), textureatlassprite1.getOriginY(), false, false);
+             }
+             catch (Throwable throwable)
+             {
+@@ -125,13 +129,13 @@
+                 throw new ReportedException(crashreport);
+             }
+ 
+-            if (textureatlassprite1.func_130098_m())
+-            {
+-                this.listTextureStiched.add(textureatlassprite1);
++            if (textureatlassprite1.hasAnimationMetadata())
++            {
++                this.listAnimatedSprites.add(textureatlassprite1);
+             }
+             else
+             {
+-                textureatlassprite1.func_130103_l();
++                textureatlassprite1.clearFramesTextureData();
+             }
+         }
+ 
+@@ -142,11 +146,12 @@
              textureatlassprite1 = (TextureAtlasSprite)iterator1.next();
              textureatlassprite1.copyFrom(this.missingImage);
          }
+-    }
+-
+-    private void func_110573_f()
+-    {
+-        this.field_110574_e.clear();
 +        ForgeHooksClient.onTextureStitchedPost(this);
++    }
++
++    private void registerIcons()
++    {
++        this.mapRegisteredSprites.clear();
+         int i;
+         int j;
+ 
+@@ -183,9 +188,9 @@
+         }
      }
  
-     private void func_110573_f()
-@@ -212,6 +217,7 @@
+-    public TextureAtlasSprite func_110572_b(String par1Str)
+-    {
+-        TextureAtlasSprite textureatlassprite = (TextureAtlasSprite)this.mapTexturesStiched.get(par1Str);
++    public TextureAtlasSprite getAtlasSprite(String par1Str)
++    {
++        TextureAtlasSprite textureatlassprite = (TextureAtlasSprite)this.mapUploadedSprites.get(par1Str);
+ 
+         if (textureatlassprite == null)
+         {
+@@ -197,8 +202,8 @@
+ 
+     public void updateAnimations()
+     {
+-        TextureUtil.bindTexture(this.func_110552_b());
+-        Iterator iterator = this.listTextureStiched.iterator();
++        TextureUtil.bindTexture(this.getGlTextureId());
++        Iterator iterator = this.listAnimatedSprites.iterator();
+ 
+         while (iterator.hasNext())
+         {
+@@ -212,9 +217,10 @@
          if (par1Str == null)
          {
              (new RuntimeException("Don\'t register null!")).printStackTrace();
+-        }
+-
+-        Object object = (TextureAtlasSprite)this.field_110574_e.get(par1Str);
 +            par1Str = "null"; //Don't allow things to actually register null..
++        }
++
++        Object object = (TextureAtlasSprite)this.mapRegisteredSprites.get(par1Str);
+ 
+         if (object == null)
+         {
+@@ -238,19 +244,52 @@
+                 object = new TextureAtlasSprite(par1Str);
+             }
+ 
+-            this.field_110574_e.put(par1Str, object);
++            this.mapRegisteredSprites.put(par1Str, object);
          }
  
-         Object object = (TextureAtlasSprite)this.field_110574_e.get(par1Str);
-@@ -253,4 +259,37 @@
+         return (Icon)object;
+     }
+ 
+-    public int func_130086_a()
++    public int getTextureType()
+     {
+         return this.textureType;
+     }
+ 
+-    public void func_110550_d()
++    public void tick()
      {
          this.updateAnimations();
      }
@@ -64,7 +238,7 @@
 +     */
 +    public TextureAtlasSprite getTextureExtry(String name)
 +    {
-+        return (TextureAtlasSprite)field_110574_e.get(name);
++        return (TextureAtlasSprite)mapRegisteredSprites.get(name);
 +    }
 +
 +    /**
@@ -77,9 +251,9 @@
 +     */
 +    public boolean setTextureEntry(String name, TextureAtlasSprite entry)
 +    {
-+        if (!field_110574_e.containsKey(name))
++        if (!mapRegisteredSprites.containsKey(name))
 +        {
-+            field_110574_e.put(name, entry);
++            mapRegisteredSprites.put(name, entry);
 +            return true;
 +        }
 +        return false;

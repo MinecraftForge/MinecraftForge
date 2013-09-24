@@ -19,7 +19,7 @@
  import net.minecraft.nbt.NBTTagList;
  import net.minecraft.nbt.NBTTagShort;
  import net.minecraft.network.packet.Packet18Animation;
-@@ -46,14 +50,22 @@
+@@ -46,21 +50,29 @@
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
@@ -34,16 +34,38 @@
  
  public abstract class EntityLivingBase extends Entity
  {
-     private static final UUID field_110156_b = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
-     private static final AttributeModifier field_110157_c = (new AttributeModifier(field_110156_b, "Sprinting speed boost", 0.30000001192092896D, 2)).func_111168_a(false);
-     private BaseAttributeMap field_110155_d;
+-    private static final UUID field_110156_b = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
+-    private static final AttributeModifier field_110157_c = (new AttributeModifier(field_110156_b, "Sprinting speed boost", 0.30000001192092896D, 2)).func_111168_a(false);
+-    private BaseAttributeMap field_110155_d;
 -    private final CombatTracker _combatTracker = new CombatTracker(this);
 -    private final HashMap activePotionsMap = new HashMap();
++    private static final UUID sprintingSpeedBoostModifierUUID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
++    private static final AttributeModifier sprintingSpeedBoostModifier = (new AttributeModifier(sprintingSpeedBoostModifierUUID, "Sprinting speed boost", 0.30000001192092896D, 2)).setSaved(false);
++    private BaseAttributeMap attributeMap;
 +    public CombatTracker _combatTracker = new CombatTracker(this); // CraftBukkit - private -> public, remove final
 +    public final HashMap activePotionsMap = new HashMap(); // CraftBukkit - protected -> public
  
      /** The equipment this mob was previously wearing, used for syncing. */
      private final ItemStack[] previousEquipment = new ItemStack[5];
+ 
+     /** Whether an arm swing is currently in progress. */
+     public boolean isSwingInProgress;
+-    public int field_110158_av;
++    public int swingProgressInt;
+     public int arrowHitTimer;
+     public float prevHealth;
+ 
+@@ -82,8 +94,8 @@
+     public int attackTime;
+     public float prevSwingProgress;
+     public float swingProgress;
+-    public float prevLimbYaw;
+-    public float limbYaw;
++    public float prevLimbSwingAmount;
++    public float limbSwingAmount;
+ 
+     /**
+      * Only relevant when limbYaw is not 0(the entity is moving). Influences where in its swing legs and arms currently
 @@ -110,7 +122,7 @@
      public float jumpMovementFactor = 0.02F;
  
@@ -53,16 +75,29 @@
  
      /**
       * Set to 60 when hit by the player or the player's wolf, then decrements. Used to determine whether the entity
-@@ -133,7 +145,7 @@
+@@ -133,7 +145,11 @@
  
      /** The score value of the Mob, the amount of points the mob is worth. */
      protected int scoreValue;
 -    protected float field_110153_bc;
-+    public float field_110153_bc; // CraftBukkit - protected -> public
++
++    /**
++     * Damage taken in the last hit. Mobs are resistant to damage less than this for a short time after taking damage.
++     */
++    public float lastDamage; // CraftBukkit - protected -> public
  
      /** used to check whether entity is jumping. */
      protected boolean isJumping;
-@@ -160,10 +172,10 @@
+@@ -151,7 +167,7 @@
+ 
+     /** The new Y position to be applied to the entity. */
+     protected double newPosY;
+-    protected double field_110152_bk;
++    protected double newPosZ;
+ 
+     /** The new yaw rotation to be applied to the entity. */
+     protected double newRotationYaw;
+@@ -160,13 +176,15 @@
      protected double newRotationPitch;
  
      /** Whether the DataWatcher needs to be updated with the active potions */
@@ -73,9 +108,16 @@
 -    private EntityLivingBase entityLivingToAttack;
 +    public EntityLivingBase entityLivingToAttack; // CraftBukkit - private -> public
      private int revengeTimer;
-     private EntityLivingBase field_110150_bn;
-     private int field_142016_bo;
-@@ -177,12 +189,18 @@
+-    private EntityLivingBase field_110150_bn;
+-    private int field_142016_bo;
++    private EntityLivingBase lastAttacker;
++
++    /** Holds the value of ticksExisted when setLastAttacker was last called. */
++    private int lastAttackerTime;
+ 
+     /**
+      * A factor used to determine how far this entity will move each tick if it is walking on land. Adjusted by speed,
+@@ -177,12 +195,18 @@
      /** Number of ticks since last jump */
      private int jumpTicks;
      private float field_110151_bq;
@@ -88,14 +130,37 @@
      public EntityLivingBase(World par1World)
      {
          super(par1World);
-         this.func_110147_ax();
+-        this.func_110147_ax();
 -        this.setEntityHealth(this.func_110138_aP());
++        this.applyEntityAttributes();
 +        // CraftBukkit - setHealth(getMaxHealth()) inlined and simplified to skip the instanceof check for EntityPlayer, as getBukkitEntity() is not initialized in constructor
-+        this.dataWatcher.updateObject(6, (float) this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111126_e());
++        this.dataWatcher.updateObject(6, (float) this.getEntityAttribute(SharedMonsterAttributes.maxHealth).getAttributeValue());
          this.preventEntitySpawning = true;
          this.field_70770_ap = (float)(Math.random() + 1.0D) * 0.01F;
          this.setPosition(this.posX, this.posY, this.posZ);
-@@ -299,14 +317,20 @@
+@@ -200,15 +224,15 @@
+         this.dataWatcher.addObject(6, Float.valueOf(1.0F));
+     }
+ 
+-    protected void func_110147_ax()
+-    {
+-        this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_111267_a);
+-        this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_111266_c);
+-        this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_111263_d);
++    protected void applyEntityAttributes()
++    {
++        this.getAttributeMap().func_111150_b(SharedMonsterAttributes.maxHealth);
++        this.getAttributeMap().func_111150_b(SharedMonsterAttributes.knockbackResistance);
++        this.getAttributeMap().func_111150_b(SharedMonsterAttributes.movementSpeed);
+ 
+         if (!this.isAIEnabled())
+         {
+-            this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.10000000149011612D);
++            this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.10000000149011612D);
+         }
+     }
+ 
+@@ -299,14 +323,20 @@
  
              this.extinguish();
  
@@ -118,7 +183,29 @@
          }
  
          this.prevCameraPitch = this.cameraPitch;
-@@ -359,6 +383,22 @@
+@@ -326,7 +356,7 @@
+             --this.hurtResistantTime;
+         }
+ 
+-        if (this.func_110143_aJ() <= 0.0F)
++        if (this.getHealth() <= 0.0F)
+         {
+             this.onDeathUpdate();
+         }
+@@ -340,9 +370,9 @@
+             this.attackingPlayer = null;
+         }
+ 
+-        if (this.field_110150_bn != null && !this.field_110150_bn.isEntityAlive())
+-        {
+-            this.field_110150_bn = null;
++        if (this.lastAttacker != null && !this.lastAttacker.isEntityAlive())
++        {
++            this.lastAttacker = null;
+         }
+ 
+         if (this.entityLivingToAttack != null && !this.entityLivingToAttack.isEntityAlive())
+@@ -359,6 +389,22 @@
          this.worldObj.theProfiler.endSection();
      }
  
@@ -141,7 +228,7 @@
      /**
       * If Animal, checks if the age timer is negative
       */
-@@ -374,22 +414,21 @@
+@@ -374,22 +420,21 @@
      {
          ++this.deathTime;
  
@@ -177,15 +264,113 @@
              this.setDead();
  
              for (i = 0; i < 20; ++i)
-@@ -446,6 +485,7 @@
+@@ -446,30 +491,31 @@
      {
          this.entityLivingToAttack = par1EntityLivingBase;
          this.revengeTimer = this.ticksExisted;
+-    }
+-
+-    public EntityLivingBase func_110144_aD()
+-    {
+-        return this.field_110150_bn;
+-    }
+-
+-    public int func_142013_aG()
+-    {
+-        return this.field_142016_bo;
+-    }
+-
+-    public void func_130011_c(Entity par1Entity)
 +        ForgeHooks.onLivingSetAttackTarget(this, par1EntityLivingBase);
++    }
++
++    public EntityLivingBase getLastAttacker()
++    {
++        return this.lastAttacker;
++    }
++
++    public int getLastAttackerTime()
++    {
++        return this.lastAttackerTime;
++    }
++
++    public void setLastAttacker(Entity par1Entity)
+     {
+         if (par1Entity instanceof EntityLivingBase)
+         {
+-            this.field_110150_bn = (EntityLivingBase)par1Entity;
++            this.lastAttacker = (EntityLivingBase)par1Entity;
+         }
+         else
+         {
+-            this.field_110150_bn = null;
+-        }
+-
+-        this.field_142016_bo = this.ticksExisted;
++            this.lastAttacker = null;
++        }
++
++        this.lastAttackerTime = this.ticksExisted;
      }
  
-     public EntityLivingBase func_110144_aD()
-@@ -556,6 +596,23 @@
+     public int getAge()
+@@ -482,12 +528,12 @@
+      */
+     public void writeEntityToNBT(NBTTagCompound par1NBTTagCompound)
+     {
+-        par1NBTTagCompound.setFloat("HealF", this.func_110143_aJ());
+-        par1NBTTagCompound.setShort("Health", (short)((int)Math.ceil((double)this.func_110143_aJ())));
++        par1NBTTagCompound.setFloat("HealF", this.getHealth());
++        par1NBTTagCompound.setShort("Health", (short)((int)Math.ceil((double)this.getHealth())));
+         par1NBTTagCompound.setShort("HurtTime", (short)this.hurtTime);
+         par1NBTTagCompound.setShort("DeathTime", (short)this.deathTime);
+         par1NBTTagCompound.setShort("AttackTime", (short)this.attackTime);
+-        par1NBTTagCompound.setFloat("AbsorptionAmount", this.func_110139_bj());
++        par1NBTTagCompound.setFloat("AbsorptionAmount", this.getAbsorptionAmount());
+         ItemStack[] aitemstack = this.getLastActiveItems();
+         int i = aitemstack.length;
+         int j;
+@@ -499,11 +545,11 @@
+ 
+             if (itemstack != null)
+             {
+-                this.field_110155_d.func_111148_a(itemstack.func_111283_C());
+-            }
+-        }
+-
+-        par1NBTTagCompound.setTag("Attributes", SharedMonsterAttributes.func_111257_a(this.func_110140_aT()));
++                this.attributeMap.removeAttributeModifiers(itemstack.getAttributeModifiers());
++            }
++        }
++
++        par1NBTTagCompound.setTag("Attributes", SharedMonsterAttributes.func_111257_a(this.getAttributeMap()));
+         aitemstack = this.getLastActiveItems();
+         i = aitemstack.length;
+ 
+@@ -513,7 +559,7 @@
+ 
+             if (itemstack != null)
+             {
+-                this.field_110155_d.func_111147_b(itemstack.func_111283_C());
++                this.attributeMap.applyAttributeModifiers(itemstack.getAttributeModifiers());
+             }
+         }
+ 
+@@ -537,11 +583,11 @@
+      */
+     public void readEntityFromNBT(NBTTagCompound par1NBTTagCompound)
+     {
+-        this.func_110149_m(par1NBTTagCompound.getFloat("AbsorptionAmount"));
++        this.setAbsorptionAmount(par1NBTTagCompound.getFloat("AbsorptionAmount"));
+ 
+         if (par1NBTTagCompound.hasKey("Attributes") && this.worldObj != null && !this.worldObj.isRemote)
+         {
+-            SharedMonsterAttributes.func_111260_a(this.func_110140_aT(), par1NBTTagCompound.getTagList("Attributes"), this.worldObj == null ? null : this.worldObj.getWorldLogAgent());
++            SharedMonsterAttributes.func_111260_a(this.getAttributeMap(), par1NBTTagCompound.getTagList("Attributes"), this.worldObj == null ? null : this.worldObj.getWorldLogAgent());
+         }
+ 
+         if (par1NBTTagCompound.hasKey("ActiveEffects"))
+@@ -556,9 +602,26 @@
              }
          }
  
@@ -196,11 +381,11 @@
 +
 +            if (nbtbase.getId() == 5)
 +            {
-+                this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111128_a((double)((NBTTagFloat) nbtbase).data);
++                this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute((double)((NBTTagFloat) nbtbase).data);
 +            }
 +            else if (nbtbase.getId() == 3)
 +            {
-+                this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111128_a((double)((NBTTagInt) nbtbase).data);
++                this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute((double)((NBTTagInt) nbtbase).data);
 +            }
 +        }
 +
@@ -208,8 +393,31 @@
 +
          if (par1NBTTagCompound.hasKey("HealF"))
          {
-             this.setEntityHealth(par1NBTTagCompound.getFloat("HealF"));
-@@ -685,12 +742,14 @@
+-            this.setEntityHealth(par1NBTTagCompound.getFloat("HealF"));
++            this.setHealth(par1NBTTagCompound.getFloat("HealF"));
+         }
+         else
+         {
+@@ -566,15 +629,15 @@
+ 
+             if (nbtbase == null)
+             {
+-                this.setEntityHealth(this.func_110138_aP());
++                this.setHealth(this.getMaxHealth());
+             }
+             else if (nbtbase.getId() == 5)
+             {
+-                this.setEntityHealth(((NBTTagFloat)nbtbase).data);
++                this.setHealth(((NBTTagFloat)nbtbase).data);
+             }
+             else if (nbtbase.getId() == 2)
+             {
+-                this.setEntityHealth((float)((NBTTagShort)nbtbase).data);
++                this.setHealth((float)((NBTTagShort)nbtbase).data);
+             }
+         }
+ 
+@@ -685,12 +748,14 @@
  
      public boolean isPotionActive(int par1)
      {
@@ -226,7 +434,7 @@
      }
  
      /**
-@@ -744,10 +803,8 @@
+@@ -744,10 +809,8 @@
          return this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
      }
  
@@ -239,38 +447,78 @@
       */
      public void removePotionEffectClient(int par1)
      {
-@@ -798,26 +855,69 @@
+@@ -773,7 +836,7 @@
+ 
+         if (!this.worldObj.isRemote)
+         {
+-            Potion.potionTypes[par1PotionEffect.getPotionID()].func_111185_a(this, this.func_110140_aT(), par1PotionEffect.getAmplifier());
++            Potion.potionTypes[par1PotionEffect.getPotionID()].applyAttributesModifiersToEntity(this, this.getAttributeMap(), par1PotionEffect.getAmplifier());
          }
      }
  
+@@ -783,8 +846,8 @@
+ 
+         if (par2 && !this.worldObj.isRemote)
+         {
+-            Potion.potionTypes[par1PotionEffect.getPotionID()].func_111187_a(this, this.func_110140_aT(), par1PotionEffect.getAmplifier());
+-            Potion.potionTypes[par1PotionEffect.getPotionID()].func_111185_a(this, this.func_110140_aT(), par1PotionEffect.getAmplifier());
++            Potion.potionTypes[par1PotionEffect.getPotionID()].removeAttributesModifiersFromEntity(this, this.getAttributeMap(), par1PotionEffect.getAmplifier());
++            Potion.potionTypes[par1PotionEffect.getPotionID()].applyAttributesModifiersToEntity(this, this.getAttributeMap(), par1PotionEffect.getAmplifier());
+         }
+     }
+ 
+@@ -794,31 +857,74 @@
+ 
+         if (!this.worldObj.isRemote)
+         {
+-            Potion.potionTypes[par1PotionEffect.getPotionID()].func_111187_a(this, this.func_110140_aT(), par1PotionEffect.getAmplifier());
+-        }
+-    }
+-
++            Potion.potionTypes[par1PotionEffect.getPotionID()].removeAttributesModifiersFromEntity(this, this.getAttributeMap(), par1PotionEffect.getAmplifier());
++        }
++    }
++
 +    // CraftBukkit start - Delegate so we can handle providing a reason for health being regained
      /**
       * Heal living entity (param: amount of half-hearts)
       */
      public void heal(float par1)
      {
+-        float f1 = this.func_110143_aJ();
 +        heal(par1, EntityRegainHealthEvent.RegainReason.CUSTOM);
 +    }
 +
 +    public void heal(float f, EntityRegainHealthEvent.RegainReason regainReason)
 +    {
-         float f1 = this.func_110143_aJ();
++        float f1 = this.getHealth();
  
          if (f1 > 0.0F)
          {
 -            this.setEntityHealth(f1 + par1);
+-        }
+-    }
+-
+-    public final float func_110143_aJ()
+-    {
+-        return this.dataWatcher.func_111145_d(6);
+-    }
+-
+-    public void setEntityHealth(float par1)
+-    {
+-        this.dataWatcher.updateObject(6, Float.valueOf(MathHelper.clamp_float(par1, 0.0F, this.func_110138_aP())));
 +            EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), f, regainReason);
 +            this.worldObj.getServer().getPluginManager().callEvent(event);
 +
 +            if (!event.isCancelled())
 +            {
-+                this.setEntityHealth((float)(this.func_110143_aJ() + event.getAmount()));
++                this.setHealth((float)(this.getHealth() + event.getAmount()));
 +            }
-         }
-     }
- 
-     public final float func_110143_aJ()
-     {
++        }
++    }
++
++    public final float getHealth()
++    {
 +        // CraftBukkit start - Use unscaled health
 +        if (this instanceof EntityPlayerMP)
 +        {
@@ -278,11 +526,11 @@
 +        }
 +
 +        // CraftBukkit end
-         return this.dataWatcher.func_111145_d(6);
-     }
- 
-     public void setEntityHealth(float par1)
-     {
++        return this.dataWatcher.getWatchableObjectFloat(6);
++    }
++
++    public void setHealth(float par1)
++    {
 +        // CraftBukkit start - Handle scaled health
 +        if (this instanceof EntityPlayerMP)
 +        {
@@ -307,10 +555,11 @@
 +        }
 +
 +        // CraftBukkit end
-         this.dataWatcher.updateObject(6, Float.valueOf(MathHelper.clamp_float(par1, 0.0F, this.func_110138_aP())));
++        this.dataWatcher.updateObject(6, Float.valueOf(MathHelper.clamp_float(par1, 0.0F, this.getMaxHealth())));
      }
  
-@@ -826,6 +926,7 @@
+     /**
+@@ -826,6 +932,7 @@
       */
      public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
      {
@@ -318,28 +567,73 @@
          if (this.isEntityInvulnerable())
          {
              return false;
-@@ -856,6 +957,20 @@
+@@ -838,7 +945,7 @@
+         {
+             this.entityAge = 0;
  
-                 this.limbYaw = 1.5F;
+-            if (this.func_110143_aJ() <= 0.0F)
++            if (this.getHealth() <= 0.0F)
+             {
+                 return false;
+             }
+@@ -854,24 +961,38 @@
+                     par2 *= 0.75F;
+                 }
+ 
+-                this.limbYaw = 1.5F;
++                this.limbSwingAmount = 1.5F;
                  boolean flag = true;
+-
+-                if ((float)this.hurtResistantTime > (float)this.maxHurtResistantTime / 2.0F)
+-                {
+-                    if (par2 <= this.field_110153_bc)
 +                // CraftBukkit start
 +                EntityDamageEvent event = CraftEventFactory.handleEntityDamageEvent(this, par1DamageSource, par2);
 +
 +                if (event != null)
 +                {
 +                    if (event.isCancelled())
-+                    {
-+                        return false;
-+                    }
-+
+                     {
+                         return false;
+                     }
+ 
+-                    this.damageEntity(par1DamageSource, par2 - this.field_110153_bc);
+-                    this.field_110153_bc = par2;
 +                    par2 = (float) event.getDamage();
 +                }
 +
 +                // CraftBukkit end
- 
-                 if ((float)this.hurtResistantTime > (float)this.maxHurtResistantTime / 2.0F)
++
++                if ((float)this.hurtResistantTime > (float)this.maxHurtResistantTime / 2.0F)
++                {
++                    if (par2 <= this.lastDamage)
++                    {
++                        return false;
++                    }
++
++                    this.damageEntity(par1DamageSource, par2 - this.lastDamage);
++                    this.lastDamage = par2;
+                     flag = false;
+                 }
+                 else
                  {
-@@ -976,6 +1091,7 @@
+-                    this.field_110153_bc = par2;
+-                    this.prevHealth = this.func_110143_aJ();
++                    this.lastDamage = par2;
++                    this.prevHealth = this.getHealth();
+                     this.hurtResistantTime = this.maxHurtResistantTime;
+                     this.damageEntity(par1DamageSource, par2);
+                     this.hurtTime = this.maxHurtTime = 10;
+@@ -932,7 +1053,7 @@
+                     }
+                 }
+ 
+-                if (this.func_110143_aJ() <= 0.0F)
++                if (this.getHealth() <= 0.0F)
+                 {
+                     if (flag)
+                     {
+@@ -976,6 +1097,7 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -347,7 +641,7 @@
          Entity entity = par1DamageSource.getEntity();
          EntityLivingBase entitylivingbase = this.func_94060_bK();
  
-@@ -1000,24 +1116,54 @@
+@@ -1000,24 +1122,54 @@
                  i = EnchantmentHelper.getLootingModifier((EntityLivingBase)entity);
              }
  
@@ -405,7 +699,16 @@
      }
  
      /**
-@@ -1065,7 +1211,12 @@
+@@ -1030,7 +1182,7 @@
+      */
+     public void knockBack(Entity par1Entity, float par2, double par3, double par5)
+     {
+-        if (this.rand.nextDouble() >= this.func_110148_a(SharedMonsterAttributes.field_111266_c).func_111126_e())
++        if (this.rand.nextDouble() >= this.getEntityAttribute(SharedMonsterAttributes.knockbackResistance).getAttributeValue())
+         {
+             this.isAirBorne = true;
+             float f1 = MathHelper.sqrt_double(par3 * par3 + par5 * par5);
+@@ -1065,7 +1217,12 @@
          return "damage.hit";
      }
  
@@ -419,7 +722,7 @@
  
      /**
       * Drop 0-2 items of this living's type. @param par1 - Whether this entity has recently been hit by a player. @param
-@@ -1082,7 +1233,7 @@
+@@ -1082,7 +1239,7 @@
          int j = MathHelper.floor_double(this.boundingBox.minY);
          int k = MathHelper.floor_double(this.posZ);
          int l = this.worldObj.getBlockId(i, j, k);
@@ -428,7 +731,16 @@
      }
  
      /**
-@@ -1098,10 +1249,32 @@
+@@ -1090,7 +1247,7 @@
+      */
+     public boolean isEntityAlive()
+     {
+-        return !this.isDead && this.func_110143_aJ() > 0.0F;
++        return !this.isDead && this.getHealth() > 0.0F;
+     }
+ 
+     /**
+@@ -1098,10 +1255,32 @@
       */
      protected void fall(float par1)
      {
@@ -462,7 +774,7 @@
  
          if (i > 0)
          {
-@@ -1231,6 +1404,8 @@
+@@ -1231,18 +1410,20 @@
      {
          if (!this.isEntityInvulnerable())
          {
@@ -471,10 +783,43 @@
              par2 = this.applyArmorCalculations(par1DamageSource, par2);
              par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
              float f1 = par2;
-@@ -1292,6 +1467,17 @@
+-            par2 = Math.max(par2 - this.func_110139_bj(), 0.0F);
+-            this.func_110149_m(this.func_110139_bj() - (f1 - par2));
++            par2 = Math.max(par2 - this.getAbsorptionAmount(), 0.0F);
++            this.setAbsorptionAmount(this.getAbsorptionAmount() - (f1 - par2));
+ 
+             if (par2 != 0.0F)
+             {
+-                float f2 = this.func_110143_aJ();
+-                this.setEntityHealth(f2 - par2);
++                float f2 = this.getHealth();
++                this.setHealth(f2 - par2);
+                 this.func_110142_aN().func_94547_a(par1DamageSource, f2, par2);
+-                this.func_110149_m(this.func_110139_bj() - par2);
++                this.setAbsorptionAmount(this.getAbsorptionAmount() - par2);
+             }
+         }
+     }
+@@ -1257,9 +1438,9 @@
+         return (EntityLivingBase)(this._combatTracker.func_94550_c() != null ? this._combatTracker.func_94550_c() : (this.attackingPlayer != null ? this.attackingPlayer : (this.entityLivingToAttack != null ? this.entityLivingToAttack : null)));
+     }
+ 
+-    public final float func_110138_aP()
+-    {
+-        return (float)this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111126_e();
++    public final float getMaxHealth()
++    {
++        return (float)this.getEntityAttribute(SharedMonsterAttributes.maxHealth).getAttributeValue();
+     }
+ 
+     /**
+@@ -1292,9 +1473,20 @@
       */
      public void swingItem()
      {
+-        if (!this.isSwingInProgress || this.field_110158_av >= this.getArmSwingAnimationEnd() / 2 || this.field_110158_av < 0)
+-        {
+-            this.field_110158_av = -1;
 +        ItemStack stack = this.getHeldItem();
 +
 +        if (stack != null && stack.getItem() != null)
@@ -486,25 +831,135 @@
 +            }
 +        }
 +
-         if (!this.isSwingInProgress || this.field_110158_av >= this.getArmSwingAnimationEnd() / 2 || this.field_110158_av < 0)
++        if (!this.isSwingInProgress || this.swingProgressInt >= this.getArmSwingAnimationEnd() / 2 || this.swingProgressInt < 0)
++        {
++            this.swingProgressInt = -1;
+             this.isSwingInProgress = true;
+ 
+             if (this.worldObj instanceof WorldServer)
+@@ -1309,7 +1501,7 @@
+     {
+         if (par1 == 2)
          {
-             this.field_110158_av = -1;
-@@ -1392,12 +1578,12 @@
-     /**
-      * 0 = item, 1-n is armor
-      */
--    public abstract ItemStack getCurrentItemOrArmor(int i);
-+    public abstract ItemStack getCurrentItemOrArmor(int par1);
+-            this.limbYaw = 1.5F;
++            this.limbSwingAmount = 1.5F;
+             this.hurtResistantTime = this.maxHurtResistantTime;
+             this.hurtTime = this.maxHurtTime = 10;
+             this.attackedAtYaw = 0.0F;
+@@ -1319,7 +1511,7 @@
+         else if (par1 == 3)
+         {
+             this.playSound(this.getDeathSound(), this.getSoundVolume(), (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
+-            this.setEntityHealth(0.0F);
++            this.setHealth(0.0F);
+             this.onDeath(DamageSource.generic);
+         }
+         else
+@@ -1345,35 +1537,35 @@
+ 
+         if (this.isSwingInProgress)
+         {
+-            ++this.field_110158_av;
+-
+-            if (this.field_110158_av >= i)
+-            {
+-                this.field_110158_av = 0;
++            ++this.swingProgressInt;
++
++            if (this.swingProgressInt >= i)
++            {
++                this.swingProgressInt = 0;
+                 this.isSwingInProgress = false;
+             }
+         }
+         else
+         {
+-            this.field_110158_av = 0;
+-        }
+-
+-        this.swingProgress = (float)this.field_110158_av / (float)i;
+-    }
+-
+-    public AttributeInstance func_110148_a(Attribute par1Attribute)
+-    {
+-        return this.func_110140_aT().func_111151_a(par1Attribute);
+-    }
+-
+-    public BaseAttributeMap func_110140_aT()
+-    {
+-        if (this.field_110155_d == null)
+-        {
+-            this.field_110155_d = new ServersideAttributeMap();
+-        }
+-
+-        return this.field_110155_d;
++            this.swingProgressInt = 0;
++        }
++
++        this.swingProgress = (float)this.swingProgressInt / (float)i;
++    }
++
++    public AttributeInstance getEntityAttribute(Attribute par1Attribute)
++    {
++        return this.getAttributeMap().getAttributeInstance(par1Attribute);
++    }
++
++    public BaseAttributeMap getAttributeMap()
++    {
++        if (this.attributeMap == null)
++        {
++            this.attributeMap = new ServersideAttributeMap();
++        }
++
++        return this.attributeMap;
+     }
  
      /**
-      * Sets the held item, or an armor slot. Slot 0 is held item. Slot 1-4 is armor. Params: Item, slot
+@@ -1405,16 +1597,16 @@
+     public void setSprinting(boolean par1)
+     {
+         super.setSprinting(par1);
+-        AttributeInstance attributeinstance = this.func_110148_a(SharedMonsterAttributes.field_111263_d);
+-
+-        if (attributeinstance.func_111127_a(field_110156_b) != null)
+-        {
+-            attributeinstance.func_111124_b(field_110157_c);
++        AttributeInstance attributeinstance = this.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
++
++        if (attributeinstance.getModifier(sprintingSpeedBoostModifierUUID) != null)
++        {
++            attributeinstance.removeModifier(sprintingSpeedBoostModifier);
+         }
+ 
+         if (par1)
+         {
+-            attributeinstance.func_111121_a(field_110157_c);
++            attributeinstance.applyModifier(sprintingSpeedBoostModifier);
+         }
+     }
+ 
+@@ -1441,7 +1633,7 @@
       */
--    public abstract void setCurrentItemOrArmor(int i, ItemStack itemstack);
-+    public abstract void setCurrentItemOrArmor(int par1, ItemStack par2ItemStack);
+     protected boolean isMovementBlocked()
+     {
+-        return this.func_110143_aJ() <= 0.0F;
++        return this.getHealth() <= 0.0F;
+     }
  
      /**
-      * Set sprinting switch for Entity.
-@@ -1526,6 +1712,7 @@
+@@ -1452,7 +1644,10 @@
+         this.setLocationAndAngles(par1, par3, par5, this.rotationYaw, this.rotationPitch);
+     }
+ 
+-    public void func_110145_l(Entity par1Entity)
++    /**
++     * Moves the entity to a position out of the way of its mount.
++     */
++    public void dismountEntity(Entity par1Entity)
+     {
+         double d0 = par1Entity.posX;
+         double d1 = par1Entity.boundingBox.minY + (double)par1Entity.height;
+@@ -1526,6 +1721,7 @@
          }
  
          this.isAirBorne = true;
@@ -512,7 +967,36 @@
      }
  
      /**
-@@ -1730,6 +1917,11 @@
+@@ -1673,7 +1869,7 @@
+             this.motionZ *= (double)f2;
+         }
+ 
+-        this.prevLimbYaw = this.limbYaw;
++        this.prevLimbSwingAmount = this.limbSwingAmount;
+         d0 = this.posX - this.prevPosX;
+         double d1 = this.posZ - this.prevPosZ;
+         float f6 = MathHelper.sqrt_double(d0 * d0 + d1 * d1) * 4.0F;
+@@ -1683,8 +1879,8 @@
+             f6 = 1.0F;
+         }
+ 
+-        this.limbYaw += (f6 - this.limbYaw) * 0.4F;
+-        this.limbSwing += this.limbYaw;
++        this.limbSwingAmount += (f6 - this.limbSwingAmount) * 0.4F;
++        this.limbSwing += this.limbSwingAmount;
+     }
+ 
+     /**
+@@ -1713,7 +1909,7 @@
+ 
+     public boolean attackEntityAsMob(Entity par1Entity)
+     {
+-        this.func_130011_c(par1Entity);
++        this.setLastAttacker(par1Entity);
+         return false;
+     }
+ 
+@@ -1730,6 +1926,11 @@
       */
      public void onUpdate()
      {
@@ -524,7 +1008,22 @@
          super.onUpdate();
  
          if (!this.worldObj.isRemote)
-@@ -1788,7 +1980,7 @@
+@@ -1762,12 +1963,12 @@
+ 
+                     if (itemstack != null)
+                     {
+-                        this.field_110155_d.func_111148_a(itemstack.func_111283_C());
++                        this.attributeMap.removeAttributeModifiers(itemstack.getAttributeModifiers());
+                     }
+ 
+                     if (itemstack1 != null)
+                     {
+-                        this.field_110155_d.func_111147_b(itemstack1.func_111283_C());
++                        this.attributeMap.applyAttributeModifiers(itemstack1.getAttributeModifiers());
+                     }
+ 
+                     this.previousEquipment[j] = itemstack1 == null ? null : itemstack1.copy();
+@@ -1788,7 +1989,7 @@
          {
              f3 = 1.0F;
              f2 = (float)Math.sqrt((double)f) * 3.0F;
@@ -533,7 +1032,16 @@
          }
  
          if (this.swingProgress > 0.0F)
-@@ -2006,6 +2198,15 @@
+@@ -1898,7 +2099,7 @@
+         {
+             double d0 = this.posX + (this.newPosX - this.posX) / (double)this.newPosRotationIncrements;
+             double d1 = this.posY + (this.newPosY - this.posY) / (double)this.newPosRotationIncrements;
+-            double d2 = this.posZ + (this.field_110152_bk - this.posZ) / (double)this.newPosRotationIncrements;
++            double d2 = this.posZ + (this.newPosZ - this.posZ) / (double)this.newPosRotationIncrements;
+             double d3 = MathHelper.wrapAngleTo180_double(this.newRotationYaw - (double)this.rotationYaw);
+             this.rotationYaw = (float)((double)this.rotationYaw + d3 / (double)this.newPosRotationIncrements);
+             this.rotationPitch = (float)((double)this.rotationPitch + (this.newRotationPitch - (double)this.rotationPitch) / (double)this.newPosRotationIncrements);
+@@ -2006,6 +2207,15 @@
              {
                  Entity entity = (Entity)list.get(i);
  
@@ -549,10 +1057,63 @@
                  if (entity.canBePushed())
                  {
                      this.collideWithEntity(entity);
-@@ -2265,4 +2466,42 @@
+@@ -2041,7 +2251,7 @@
+         this.yOffset = 0.0F;
+         this.newPosX = par1;
+         this.newPosY = par3;
+-        this.field_110152_bk = par5;
++        this.newPosZ = par5;
+         this.newRotationYaw = (double)par7;
+         this.newRotationPitch = (double)par8;
+         this.newPosRotationIncrements = par9;
+@@ -2218,7 +2428,7 @@
+      */
+     protected void setBeenAttacked()
      {
-         return this.getTeam() != null ? this.getTeam().func_142054_a(par1Team) : false;
+-        this.velocityChanged = this.rand.nextDouble() >= this.func_110148_a(SharedMonsterAttributes.field_111266_c).func_111126_e();
++        this.velocityChanged = this.rand.nextDouble() >= this.getEntityAttribute(SharedMonsterAttributes.knockbackResistance).getAttributeValue();
      }
+ 
+     public float getRotationYawHead()
+@@ -2236,12 +2446,12 @@
+         this.rotationYawHead = par1;
+     }
+ 
+-    public float func_110139_bj()
++    public float getAbsorptionAmount()
+     {
+         return this.field_110151_bq;
+     }
+ 
+-    public void func_110149_m(float par1)
++    public void setAbsorptionAmount(float par1)
+     {
+         if (par1 < 0.0F)
+         {
+@@ -2256,13 +2466,54 @@
+         return null;
+     }
+ 
+-    public boolean func_142014_c(EntityLivingBase par1EntityLivingBase)
+-    {
+-        return this.func_142012_a(par1EntityLivingBase.getTeam());
+-    }
+-
+-    public boolean func_142012_a(Team par1Team)
+-    {
+-        return this.getTeam() != null ? this.getTeam().func_142054_a(par1Team) : false;
++    public boolean isOnSameTeam(EntityLivingBase par1EntityLivingBase)
++    {
++        return this.isOnTeam(par1EntityLivingBase.getTeam());
++    }
++
++    /**
++     * Returns true if the entity is on a specific team.
++     */
++    public boolean isOnTeam(Team par1Team)
++    {
++        return this.getTeam() != null ? this.getTeam().isSameTeam(par1Team) : false;
++    }
 +
 +    /***
 +     * Removes all potion effects that have curativeItem as a curative item for its effect
@@ -590,5 +1151,5 @@
 +    public boolean shouldRiderFaceForward(EntityPlayer player)
 +    {
 +        return this instanceof EntityPig;
-+    }
+     }
  }

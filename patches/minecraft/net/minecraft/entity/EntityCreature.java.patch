@@ -13,8 +13,9 @@
  public abstract class EntityCreature extends EntityLiving
  {
      public static final UUID field_110179_h = UUID.fromString("E199AD21-BA8A-4C53-8D13-6182D5C69D3A");
-     public static final AttributeModifier field_110181_i = (new AttributeModifier(field_110179_h, "Fleeing speed bonus", 2.0D, 2)).func_111168_a(false);
+-    public static final AttributeModifier field_110181_i = (new AttributeModifier(field_110179_h, "Fleeing speed bonus", 2.0D, 2)).func_111168_a(false);
 -    private PathEntity pathToEntity;
++    public static final AttributeModifier field_110181_i = (new AttributeModifier(field_110179_h, "Fleeing speed bonus", 2.0D, 2)).setSaved(false);
 +    public PathEntity pathToEntity; // CraftBukkit - private -> public
  
      /** The Entity this EntityCreature is set to attack. */
@@ -23,7 +24,14 @@
  
      /**
       * returns true if a creature has attacked recently only used for creepers and skeletons
-@@ -59,15 +64,36 @@
+@@ -54,20 +59,41 @@
+ 
+         if (this.fleeingTick > 0 && --this.fleeingTick == 0)
+         {
+-            AttributeInstance attributeinstance = this.func_110148_a(SharedMonsterAttributes.field_111263_d);
+-            attributeinstance.func_111124_b(field_110181_i);
++            AttributeInstance attributeinstance = this.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
++            attributeinstance.removeModifier(field_110181_i);
          }
  
          this.hasAttacked = this.isMovementCeased();
@@ -95,7 +103,7 @@
          }
          else if (!this.hasAttacked && (this.pathToEntity == null && this.rand.nextInt(180) == 0 || this.rand.nextInt(120) == 0 || this.fleeingTick > 0) && this.entityAge < 100)
          {
-@@ -128,7 +169,8 @@
+@@ -128,9 +169,10 @@
                  double d1 = vec3.xCoord - this.posX;
                  double d2 = vec3.zCoord - this.posZ;
                  double d3 = vec3.yCoord - (double)i;
@@ -103,21 +111,91 @@
 +                // CraftBukkit - Math -> TrigMath
 +                float f2 = (float)(org.bukkit.craftbukkit.TrigMath.atan2(d2, d1) * 180.0D / Math.PI) - 90.0F;
                  float f3 = MathHelper.wrapAngleTo180_float(f2 - this.rotationYaw);
-                 this.moveForward = (float)this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111126_e();
+-                this.moveForward = (float)this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111126_e();
++                this.moveForward = (float)this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue();
  
-@@ -338,6 +380,7 @@
+                 if (f3 > 30.0F)
+                 {
+@@ -298,13 +340,16 @@
+         return this.maximumHomeDistance == -1.0F ? true : this.homePosition.getDistanceSquared(par1, par2, par3) < this.maximumHomeDistance * this.maximumHomeDistance;
+     }
+ 
+-    public void func_110171_b(int par1, int par2, int par3, int par4)
++    public void setHomeArea(int par1, int par2, int par3, int par4)
+     {
+         this.homePosition.set(par1, par2, par3);
+         this.maximumHomeDistance = (float)par4;
+     }
+ 
+-    public ChunkCoordinates func_110172_bL()
++    /**
++     * Returns the chunk coordinate object of the home position.
++     */
++    public ChunkCoordinates getHomePosition()
+     {
+         return this.homePosition;
+     }
+@@ -314,12 +359,15 @@
+         return this.maximumHomeDistance;
+     }
+ 
+-    public void func_110177_bN()
++    public void detachHome()
+     {
+         this.maximumHomeDistance = -1.0F;
+     }
+ 
+-    public boolean func_110175_bO()
++    /**
++     * Returns whether a home area is defined for this entity.
++     */
++    public boolean hasHome()
+     {
+         return this.maximumHomeDistance != -1.0F;
+     }
+@@ -328,17 +376,18 @@
+     {
+         super.func_110159_bB();
+ 
+-        if (this.func_110167_bD() && this.func_110166_bE() != null && this.func_110166_bE().worldObj == this.worldObj)
+-        {
+-            Entity entity = this.func_110166_bE();
+-            this.func_110171_b((int)entity.posX, (int)entity.posY, (int)entity.posZ, 5);
++        if (this.getLeashed() && this.getLeashedToEntity() != null && this.getLeashedToEntity().worldObj == this.worldObj)
++        {
++            Entity entity = this.getLeashedToEntity();
++            this.setHomeArea((int)entity.posX, (int)entity.posY, (int)entity.posZ, 5);
+             float f = this.getDistanceToEntity(entity);
+ 
+             if (this instanceof EntityTameable && ((EntityTameable)this).isSitting())
              {
                  if (f > 10.0F)
                  {
+-                    this.func_110160_i(true, true);
 +                    this.worldObj.getServer().getPluginManager().callEvent(new EntityUnleashEvent(this.getBukkitEntity(), EntityUnleashEvent.UnleashReason.DISTANCE)); // CraftBukkit
-                     this.func_110160_i(true, true);
++                    this.clearLeashed(true, true);
                  }
  
-@@ -370,6 +413,7 @@
+                 return;
+@@ -370,15 +419,16 @@
  
              if (f > 10.0F)
              {
+-                this.func_110160_i(true, true);
+-            }
+-        }
+-        else if (!this.func_110167_bD() && this.field_110180_bt)
 +                this.worldObj.getServer().getPluginManager().callEvent(new EntityUnleashEvent(this.getBukkitEntity(), EntityUnleashEvent.UnleashReason.DISTANCE)); // CraftBukkit
-                 this.func_110160_i(true, true);
-             }
++                this.clearLeashed(true, true);
++            }
++        }
++        else if (!this.getLeashed() && this.field_110180_bt)
+         {
+             this.field_110180_bt = false;
+             this.tasks.removeTask(this.field_110178_bs);
+             this.getNavigator().setAvoidsWater(true);
+-            this.func_110177_bN();
++            this.detachHome();
          }
+     }
+ 

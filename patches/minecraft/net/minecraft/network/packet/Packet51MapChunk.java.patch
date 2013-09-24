@@ -46,7 +46,24 @@
  
          try
          {
-@@ -204,8 +220,11 @@
+@@ -97,13 +113,16 @@
+         par1DataInput.readFully(temp, 0, this.tempLength);
+         int i = 0;
+         int j;
++        int msb = 0; //BugFix: MC does not read the MSB array from the packet properly, causing issues for servers that use blocks > 256
+ 
+         for (j = 0; j < 16; ++j)
+         {
+             i += this.yChMin >> j & 1;
++            msb  += this.yChMax >> j & 1;
+         }
+ 
+         j = 12288 * i;
++        j += 2048 * msb;
+ 
+         if (this.includeInitialize)
+         {
+@@ -204,8 +223,11 @@
              if (aextendedblockstorage[l] != null && (!par1 || !aextendedblockstorage[l].isEmpty()) && (par2 & 1 << l) != 0)
              {
                  nibblearray = aextendedblockstorage[l].getMetadataArray();
@@ -60,7 +77,7 @@
              }
          }
  
-@@ -214,8 +233,11 @@
+@@ -214,8 +236,11 @@
              if (aextendedblockstorage[l] != null && (!par1 || !aextendedblockstorage[l].isEmpty()) && (par2 & 1 << l) != 0)
              {
                  nibblearray = aextendedblockstorage[l].getBlocklightArray();
@@ -74,7 +91,7 @@
              }
          }
  
-@@ -226,8 +248,11 @@
+@@ -226,8 +251,11 @@
                  if (aextendedblockstorage[l] != null && (!par1 || !aextendedblockstorage[l].isEmpty()) && (par2 & 1 << l) != 0)
                  {
                      nibblearray = aextendedblockstorage[l].getSkylightArray();
@@ -88,7 +105,7 @@
                  }
              }
          }
-@@ -239,8 +264,11 @@
+@@ -239,8 +267,11 @@
                  if (aextendedblockstorage[l] != null && (!par1 || !aextendedblockstorage[l].isEmpty()) && aextendedblockstorage[l].getBlockMSBArray() != null && (par2 & 1 << l) != 0)
                  {
                      nibblearray = aextendedblockstorage[l].getBlockMSBArray();

@@ -24,6 +24,17 @@
          this.setBurnRate(Block.planks.blockID, 5, 20);
          this.setBurnRate(Block.woodDoubleSlab.blockID, 5, 20);
          this.setBurnRate(Block.woodSingleSlab.blockID, 5, 20);
+@@ -51,8 +61,8 @@
+         this.setBurnRate(Block.tallGrass.blockID, 60, 100);
+         this.setBurnRate(Block.cloth.blockID, 30, 60);
+         this.setBurnRate(Block.vine.blockID, 15, 100);
+-        this.setBurnRate(Block.field_111034_cE.blockID, 5, 5);
+-        this.setBurnRate(Block.field_111038_cB.blockID, 60, 20);
++        this.setBurnRate(Block.coalBlock.blockID, 5, 5);
++        this.setBurnRate(Block.hay.blockID, 60, 20);
+     }
+ 
+     /**
 @@ -62,8 +72,7 @@
       */
      private void setBurnRate(int par1, int par2, int par3)
@@ -291,6 +302,20 @@
              {
                  for (l = 0; l < 2; ++l)
                  {
+@@ -451,11 +508,11 @@
+      */
+     public void registerIcons(IconRegister par1IconRegister)
+     {
+-        this.iconArray = new Icon[] {par1IconRegister.registerIcon(this.func_111023_E() + "_layer_0"), par1IconRegister.registerIcon(this.func_111023_E() + "_layer_1")};
++        this.iconArray = new Icon[] {par1IconRegister.registerIcon(this.getTextureName() + "_layer_0"), par1IconRegister.registerIcon(this.getTextureName() + "_layer_1")};
+     }
+ 
+     @SideOnly(Side.CLIENT)
+-    public Icon func_94438_c(int par1)
++    public Icon getFireIcon(int par1)
+     {
+         return this.iconArray[par1];
+     }
 @@ -469,4 +526,56 @@
      {
          return this.iconArray[0];

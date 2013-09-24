@@ -9,10 +9,17 @@
  
  public class EntityMinecartFurnace extends EntityMinecart
  {
-@@ -123,6 +125,10 @@
+@@ -121,8 +123,15 @@
+         super.applyDrag();
+     }
  
-     public boolean func_130002_c(EntityPlayer par1EntityPlayer)
-     {
+-    public boolean func_130002_c(EntityPlayer par1EntityPlayer)
+-    {
++    /**
++     * First layer of player interaction
++     */
++    public boolean interactFirst(EntityPlayer par1EntityPlayer)
++    {
 +        if(MinecraftForge.EVENT_BUS.post(new MinecartInteractEvent(this, par1EntityPlayer))) 
 +        {
 +            return true;

@@ -66,3 +66,18 @@
                      }
                  }
              }
+@@ -104,10 +135,10 @@
+      */
+     public void registerIcons(IconRegister par1IconRegister)
+     {
+-        this.blockIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_side");
+-        this.iconGrassTop = par1IconRegister.registerIcon(this.func_111023_E() + "_top");
+-        this.iconSnowSide = par1IconRegister.registerIcon(this.func_111023_E() + "_side_snowed");
+-        this.iconGrassSideOverlay = par1IconRegister.registerIcon(this.func_111023_E() + "_side_overlay");
++        this.blockIcon = par1IconRegister.registerIcon(this.getTextureName() + "_side");
++        this.iconGrassTop = par1IconRegister.registerIcon(this.getTextureName() + "_top");
++        this.iconSnowSide = par1IconRegister.registerIcon(this.getTextureName() + "_side_snowed");
++        this.iconGrassSideOverlay = par1IconRegister.registerIcon(this.getTextureName() + "_side_overlay");
+     }
+ 
+     @SideOnly(Side.CLIENT)

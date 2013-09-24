@@ -17,12 +17,10 @@
  
  public class ContainerPlayer extends Container
  {
-@@ -14,12 +20,20 @@
- 
+@@ -15,11 +21,19 @@
      /** Determines if inventory manipulation should be handled. */
      public boolean isLocalWorld;
--    protected final EntityPlayer thePlayer;
-+    final EntityPlayer thePlayer;
+     protected final EntityPlayer thePlayer;
 +    // CraftBukkit start
 +    private CraftInventoryView bukkitEntity = null;
 +    private InventoryPlayer player;

@@ -9,6 +9,15 @@
  public abstract class Packet
  {
      /** Maps packet id to packet class */
+@@ -32,7 +34,7 @@
+     protected ILogAgent field_98193_m;
+ 
+     /** the system time in milliseconds when this packet was created. */
+-    public final long creationTimeMillis = MinecraftServer.func_130071_aq();
++    public final long creationTimeMillis = MinecraftServer.getSystemTimeMillis();
+     public static long receivedID;
+     public static long receivedSize;
+ 
 @@ -45,6 +47,18 @@
       * separate them into a different send queue.
       */

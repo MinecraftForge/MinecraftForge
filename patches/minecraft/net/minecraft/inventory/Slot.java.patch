@@ -48,17 +48,17 @@
 +
 +    /**
 +     * Gets the path of the texture file to use for the background image of this slot when drawing the GUI.
-+     * @return String: The texture file that will be used in GuiContainer.drawSlotInventory for the slot background.  
++     * @return String: The texture file that will be used in GuiContainer.drawSlotInventory for the slot background.
 +     */
 +    @SideOnly(Side.CLIENT)
 +    public ResourceLocation getBackgroundIconTexture()
 +    {
-+        return (texture == null ? TextureMap.field_110576_c : texture);
++        return (texture == null ? TextureMap.locationItemsTexture : texture);
 +    }
 +
 +    /**
 +     * Sets which icon index to use as the background image of the slot when it's empty.
-+     * @param icon The icon to use, null for none  
++     * @param icon The icon to use, null for none
 +     */
 +    public void setBackgroundIcon(Icon icon)
 +    {
@@ -76,9 +76,9 @@
 +    }
 +
 +    /**
-+     * Retrieves the index in the inventory for this slot, this value should typically not 
++     * Retrieves the index in the inventory for this slot, this value should typically not
 +     * be used, but can be useful for some occasions.
-+     * 
++     *
 +     * @return Index in associated inventory for this slot.
 +     */
 +    public int getSlotIndex()

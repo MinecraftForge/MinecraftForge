@@ -175,3 +175,27 @@
      @SideOnly(Side.CLIENT)
  
      /**
+@@ -126,7 +265,7 @@
+         return new ChunkCoordinates(this.xCoord, this.yCoord, this.zCoord);
+     }
+ 
+-    public World func_130014_f_()
++    public World getEntityWorld()
+     {
+         return this.getWorldObj();
+     }
+@@ -141,12 +280,12 @@
+         return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 2, nbttagcompound);
+     }
+ 
+-    public int func_96103_d()
++    public int getSignalStrength()
+     {
+         return this.succesCount;
+     }
+ 
+-    public void func_96102_a(int par1)
++    public void setSignalStrength(int par1)
+     {
+         this.succesCount = par1;
+     }

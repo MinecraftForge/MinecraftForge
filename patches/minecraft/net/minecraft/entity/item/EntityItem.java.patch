@@ -284,3 +284,12 @@
              {
                  if (itemstack.itemID == Block.wood.blockID)
                  {
+@@ -341,7 +481,7 @@
+      */
+     public String getEntityName()
+     {
+-        return StatCollector.translateToLocal("item." + this.getEntityItem().getItemName());
++        return StatCollector.translateToLocal("item." + this.getEntityItem().getDisplayName());
+     }
+ 
+     /**

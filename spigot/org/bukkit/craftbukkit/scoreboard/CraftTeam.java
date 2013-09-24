@@ -36,7 +36,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
         Validate.isTrue(displayName.length() <= 32, "Display name '" + displayName + "' is longer than the limit of 32 characters");
         CraftScoreboard scoreboard = checkState();
 
-        team.func_96664_a(displayName);
+        team.setTeamName(displayName);
     }
 
     public String getPrefix() throws IllegalStateException {
@@ -50,7 +50,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
         Validate.isTrue(prefix.length() <= 32, "Prefix '" + prefix + "' is longer than the limit of 32 characters");
         CraftScoreboard scoreboard = checkState();
 
-        team.func_96666_b(prefix);
+        team.setNamePrefix(prefix);
     }
 
     public String getSuffix() throws IllegalStateException {
@@ -64,19 +64,19 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
         Validate.isTrue(suffix.length() <= 32, "Suffix '" + suffix + "' is longer than the limit of 32 characters");
         CraftScoreboard scoreboard = checkState();
 
-        team.func_96662_c(suffix);
+        team.setNameSuffix(suffix);
     }
 
     public boolean allowFriendlyFire() throws IllegalStateException {
         CraftScoreboard scoreboard = checkState();
 
-        return team.func_96665_g();
+        return team.getAllowFriendlyFire();
     }
 
     public void setAllowFriendlyFire(boolean enabled) throws IllegalStateException {
         CraftScoreboard scoreboard = checkState();
 
-        team.func_96660_a(enabled);
+        team.setAllowFriendlyFire(enabled);
     }
 
     public boolean canSeeFriendlyInvisibles() throws IllegalStateException {
@@ -88,7 +88,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
     public void setCanSeeFriendlyInvisibles(boolean enabled) throws IllegalStateException {
         CraftScoreboard scoreboard = checkState();
 
-        team.func_98300_b(enabled);
+        team.setSeeFriendlyInvisiblesEnabled(enabled);
     }
 
     public Set<OfflinePlayer> getPlayers() throws IllegalStateException {
@@ -111,7 +111,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
         Validate.notNull(player, "OfflinePlayer cannot be null");
         CraftScoreboard scoreboard = checkState();
 
-        scoreboard.board.func_96521_a(player.getName(), team);
+        scoreboard.board.addPlayerToTeam(player.getName(), team);
     }
 
     public boolean removePlayer(OfflinePlayer player) throws IllegalStateException, IllegalArgumentException {

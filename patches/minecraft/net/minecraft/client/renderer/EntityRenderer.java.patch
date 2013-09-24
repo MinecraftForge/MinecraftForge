@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/EntityRenderer.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/EntityRenderer.java
-@@ -40,6 +40,11 @@
+@@ -40,11 +40,16 @@
  import org.lwjgl.opengl.GLContext;
  import org.lwjgl.util.glu.Project;
  
@@ -12,6 +12,33 @@
  @SideOnly(Side.CLIENT)
  public class EntityRenderer
  {
+-    private static final ResourceLocation field_110924_q = new ResourceLocation("textures/environment/rain.png");
+-    private static final ResourceLocation field_110923_r = new ResourceLocation("textures/environment/snow.png");
++    private static final ResourceLocation locationRainPng = new ResourceLocation("textures/environment/rain.png");
++    private static final ResourceLocation locationSnowPng = new ResourceLocation("textures/environment/snow.png");
+     public static boolean anaglyphEnable;
+ 
+     /** Anaglyph field (0=R, 1=GB) */
+@@ -111,7 +116,7 @@
+      * Colors computed in updateLightmap() and loaded into the lightmap emptyTexture
+      */
+     private final int[] lightmapColors;
+-    private final ResourceLocation field_110922_T;
++    private final ResourceLocation locationLightMap;
+ 
+     /** FOV modifier hand */
+     private float fovModifierHand;
+@@ -191,8 +196,8 @@
+         this.mc = par1Minecraft;
+         this.itemRenderer = new ItemRenderer(par1Minecraft);
+         this.lightmapTexture = new DynamicTexture(16, 16);
+-        this.field_110922_T = par1Minecraft.func_110434_K().func_110578_a("lightMap", this.lightmapTexture);
+-        this.lightmapColors = this.lightmapTexture.func_110565_c();
++        this.locationLightMap = par1Minecraft.getTextureManager().getDynamicTextureLocation("lightMap", this.lightmapTexture);
++        this.lightmapColors = this.lightmapTexture.getTextureData();
+     }
+ 
+     /**
 @@ -319,7 +324,7 @@
  
                              if (d3 < d2 || d2 == 0.0D)
@@ -48,6 +75,24 @@
              float f1 = 70.0F;
  
              if (par2)
+@@ -390,7 +402,7 @@
+                 f1 *= this.fovModifierHandPrev + (this.fovModifierHand - this.fovModifierHandPrev) * par1;
+             }
+ 
+-            if (entityplayer.func_110143_aJ() <= 0.0F)
++            if (entityplayer.getHealth() <= 0.0F)
+             {
+                 float f2 = (float)entityplayer.deathTime + par1;
+                 f1 /= (1.0F - 500.0F / (f2 + 500.0F)) * 2.0F + 1.0F;
+@@ -413,7 +425,7 @@
+         float f1 = (float)entitylivingbase.hurtTime - par1;
+         float f2;
+ 
+-        if (entitylivingbase.func_110143_aJ() <= 0.0F)
++        if (entitylivingbase.getHealth() <= 0.0F)
+         {
+             f2 = (float)entitylivingbase.deathTime + par1;
+             GL11.glRotatef(40.0F - 8000.0F / (f2 + 200.0F), 0.0F, 0.0F, 1.0F);
 @@ -468,15 +480,7 @@
  
              if (!this.mc.gameSettings.debugCamEnable)
@@ -65,6 +110,33 @@
                  GL11.glRotatef(entitylivingbase.prevRotationYaw + (entitylivingbase.rotationYaw - entitylivingbase.prevRotationYaw) * par1 + 180.0F, 0.0F, -1.0F, 0.0F);
                  GL11.glRotatef(entitylivingbase.prevRotationPitch + (entitylivingbase.rotationPitch - entitylivingbase.prevRotationPitch) * par1, -1.0F, 0.0F, 0.0F);
              }
+@@ -746,7 +750,7 @@
+         GL11.glScalef(f, f, f);
+         GL11.glTranslatef(8.0F, 8.0F, 8.0F);
+         GL11.glMatrixMode(GL11.GL_MODELVIEW);
+-        this.mc.func_110434_K().func_110577_a(this.field_110922_T);
++        this.mc.getTextureManager().bindTexture(this.locationLightMap);
+         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+@@ -904,7 +908,7 @@
+                 this.lightmapColors[i] = short1 << 24 | j << 16 | k << 8 | l;
+             }
+ 
+-            this.lightmapTexture.func_110564_a();
++            this.lightmapTexture.updateDynamicTexture();
+             this.lightmapUpdateNeeded = false;
+         }
+     }
+@@ -1141,7 +1145,7 @@
+             this.mc.mcProfiler.endStartSection("prepareterrain");
+             this.setupFog(0, par1);
+             GL11.glEnable(GL11.GL_FOG);
+-            this.mc.func_110434_K().func_110577_a(TextureMap.field_110575_b);
++            this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+             RenderHelper.disableStandardItemLighting();
+             this.mc.mcProfiler.endStartSection("terrain");
+             renderglobal.sortAndRender(entitylivingbase, 0, (double)par1);
 @@ -1152,7 +1156,10 @@
              {
                  RenderHelper.enableStandardItemLighting();
@@ -95,6 +167,15 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
+@@ -1179,7 +1190,7 @@
+             this.setupFog(0, par1);
+             GL11.glEnable(GL11.GL_BLEND);
+             GL11.glDisable(GL11.GL_CULL_FACE);
+-            this.mc.func_110434_K().func_110577_a(TextureMap.field_110575_b);
++            this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+ 
+             if (this.mc.gameSettings.fancyGraphics)
+             {
 @@ -1222,6 +1233,17 @@
                  renderglobal.sortAndRender(entitylivingbase, 1, (double)par1);
              }
@@ -153,4 +234,31 @@
 +            ForgeHooksClient.dispatchRenderLast(renderglobal, par1);
  
              this.mc.mcProfiler.endStartSection("hand");
+ 
+@@ -1411,7 +1450,7 @@
+             GL11.glEnable(GL11.GL_BLEND);
+             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+             GL11.glAlphaFunc(GL11.GL_GREATER, 0.01F);
+-            this.mc.func_110434_K().func_110577_a(field_110923_r);
++            this.mc.getTextureManager().bindTexture(locationSnowPng);
+             double d0 = entitylivingbase.lastTickPosX + (entitylivingbase.posX - entitylivingbase.lastTickPosX) * (double)par1;
+             double d1 = entitylivingbase.lastTickPosY + (entitylivingbase.posY - entitylivingbase.lastTickPosY) * (double)par1;
+             double d2 = entitylivingbase.lastTickPosZ + (entitylivingbase.posZ - entitylivingbase.lastTickPosZ) * (double)par1;
+@@ -1485,7 +1524,7 @@
+                                     }
+ 
+                                     b1 = 0;
+-                                    this.mc.func_110434_K().func_110577_a(field_110924_q);
++                                    this.mc.getTextureManager().bindTexture(locationRainPng);
+                                     tessellator.startDrawingQuads();
+                                 }
+ 
+@@ -1513,7 +1552,7 @@
+                                     }
+ 
+                                     b1 = 1;
+-                                    this.mc.func_110434_K().func_110577_a(new ResourceLocation("textures/environment/snow.png"));
++                                    this.mc.getTextureManager().bindTexture(new ResourceLocation("textures/environment/snow.png"));
+                                     tessellator.startDrawingQuads();
+                                 }
  

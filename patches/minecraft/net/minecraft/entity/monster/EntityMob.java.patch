@@ -41,3 +41,26 @@
                  }
  
                  return true;
+@@ -95,7 +120,7 @@
+ 
+     public boolean attackEntityAsMob(Entity par1Entity)
+     {
+-        float f = (float)this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111126_e();
++        float f = (float)this.getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue();
+         int i = 0;
+ 
+         if (par1Entity instanceof EntityLivingBase)
+@@ -189,9 +214,9 @@
+         return this.worldObj.difficultySetting > 0 && this.isValidLightLevel() && super.getCanSpawnHere();
+     }
+ 
+-    protected void func_110147_ax()
+-    {
+-        super.func_110147_ax();
+-        this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_111264_e);
++    protected void applyEntityAttributes()
++    {
++        super.applyEntityAttributes();
++        this.getAttributeMap().func_111150_b(SharedMonsterAttributes.attackDamage);
+     }
+ }

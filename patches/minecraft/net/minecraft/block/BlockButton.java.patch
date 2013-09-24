@@ -125,7 +125,18 @@
              par1World.setBlockMetadataWithNotify(par2, par3, par4, j1 + k1, 3);
              par1World.markBlockRangeForRenderUpdate(par2, par3, par4, par2, par3, par4);
              par1World.playSoundEffect((double)par2 + 0.5D, (double)par3 + 0.5D, (double)par4 + 0.5D, "random.click", 0.3F, 0.6F);
-@@ -306,6 +339,16 @@
+@@ -245,7 +278,9 @@
+     }
+ 
+     /**
+-     * ejects contained items into the world, and notifies neighbours of an update, as appropriate
++     * Called on server worlds only when the block has been replaced by a different block ID, or the same block with a
++     * different metadata value, but before the new metadata value is set. Args: World, x, y, z, old block ID, old
++     * metadata
+      */
+     public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
+     {
+@@ -306,6 +341,16 @@
  
              if ((l & 8) != 0)
              {
@@ -142,7 +153,7 @@
                  if (this.sensible)
                  {
                      this.func_82535_o(par1World, par2, par3, par4);
-@@ -359,6 +402,34 @@
+@@ -359,6 +404,34 @@
          List list = par1World.getEntitiesWithinAABB(EntityArrow.class, AxisAlignedBB.getAABBPool().getAABB((double)par2 + this.minX, (double)par3 + this.minY, (double)par4 + this.minZ, (double)par2 + this.maxX, (double)par3 + this.maxY, (double)par4 + this.maxZ));
          boolean flag1 = !list.isEmpty();
  

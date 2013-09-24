@@ -88,6 +88,15 @@
              if (this.playersInChunk.isEmpty())
              {
                  long i = (long)this.chunkLocation.chunkXPos + 2147483647L | (long)this.chunkLocation.chunkZPos + 2147483647L << 32;
+@@ -84,7 +120,7 @@
+ 
+     private void func_111196_a(Chunk par1Chunk)
+     {
+-        par1Chunk.field_111204_q += PlayerManager.getWorldServer(this.thePlayerManager).getTotalWorldTime() - this.field_111198_g;
++        par1Chunk.inhabitedTime += PlayerManager.getWorldServer(this.thePlayerManager).getTotalWorldTime() - this.field_111198_g;
+         this.field_111198_g = PlayerManager.getWorldServer(this.thePlayerManager).getTotalWorldTime();
+     }
+ 
 @@ -97,7 +133,7 @@
  
          this.field_73260_f |= 1 << (par2 >> 4);

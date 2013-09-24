@@ -32,3 +32,14 @@
              }
  
              par3EntityPlayer.swingItem();
+@@ -72,8 +84,8 @@
+     @SideOnly(Side.CLIENT)
+     public void registerIcons(IconRegister par1IconRegister)
+     {
+-        this.itemIcon = par1IconRegister.registerIcon(this.func_111208_A() + "_uncast");
+-        this.theIcon = par1IconRegister.registerIcon(this.func_111208_A() + "_cast");
++        this.itemIcon = par1IconRegister.registerIcon(this.getIconString() + "_uncast");
++        this.theIcon = par1IconRegister.registerIcon(this.getIconString() + "_cast");
+     }
+ 
+     @SideOnly(Side.CLIENT)

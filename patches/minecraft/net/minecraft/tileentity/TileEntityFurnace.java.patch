@@ -250,3 +250,12 @@
              {
                  Block block = Block.blocksList[i];
  
+@@ -387,7 +489,7 @@
+                     return 300;
+                 }
+ 
+-                if (block == Block.field_111034_cE)
++                if (block == Block.coalBlock)
+                 {
+                     return 16000;
+                 }

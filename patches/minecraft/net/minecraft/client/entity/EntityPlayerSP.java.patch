@@ -9,6 +9,147 @@
  
  @SideOnly(Side.CLIENT)
  public class EntityPlayerSP extends AbstractClientPlayer
+@@ -69,8 +71,8 @@
+     public float renderArmPitch;
+     public float prevRenderArmYaw;
+     public float prevRenderArmPitch;
+-    private int field_110320_a;
+-    private float field_110321_bQ;
++    private int horseJumpPowerCounter;
++    private float horseJumpPower;
+     private MouseFilter field_71162_ch = new MouseFilter();
+     private MouseFilter field_71160_ci = new MouseFilter();
+     private MouseFilter field_71161_cj = new MouseFilter();
+@@ -83,7 +85,7 @@
+ 
+     public EntityPlayerSP(Minecraft par1Minecraft, World par2World, Session par3Session, int par4)
+     {
+-        super(par2World, par3Session.func_111285_a());
++        super(par2World, par3Session.getUsername());
+         this.mc = par1Minecraft;
+         this.dimension = par4;
+     }
+@@ -260,45 +262,45 @@
+                 }
+             }
+ 
+-            if (this.func_110317_t())
+-            {
+-                if (this.field_110320_a < 0)
+-                {
+-                    ++this.field_110320_a;
+-
+-                    if (this.field_110320_a == 0)
++            if (this.isRidingHorse())
++            {
++                if (this.horseJumpPowerCounter < 0)
++                {
++                    ++this.horseJumpPowerCounter;
++
++                    if (this.horseJumpPowerCounter == 0)
+                     {
+-                        this.field_110321_bQ = 0.0F;
++                        this.horseJumpPower = 0.0F;
+                     }
+                 }
+ 
+                 if (flag && !this.movementInput.jump)
+                 {
+-                    this.field_110320_a = -10;
++                    this.horseJumpPowerCounter = -10;
+                     this.func_110318_g();
+                 }
+                 else if (!flag && this.movementInput.jump)
+                 {
+-                    this.field_110320_a = 0;
+-                    this.field_110321_bQ = 0.0F;
++                    this.horseJumpPowerCounter = 0;
++                    this.horseJumpPower = 0.0F;
+                 }
+                 else if (flag)
+                 {
+-                    ++this.field_110320_a;
+-
+-                    if (this.field_110320_a < 10)
++                    ++this.horseJumpPowerCounter;
++
++                    if (this.horseJumpPowerCounter < 10)
+                     {
+-                        this.field_110321_bQ = (float)this.field_110320_a * 0.1F;
++                        this.horseJumpPower = (float)this.horseJumpPowerCounter * 0.1F;
+                     }
+                     else
+                     {
+-                        this.field_110321_bQ = 0.8F + 2.0F / (float)(this.field_110320_a - 9) * 0.1F;
++                        this.horseJumpPower = 0.8F + 2.0F / (float)(this.horseJumpPowerCounter - 9) * 0.1F;
+                     }
+                 }
+             }
+             else
+             {
+-                this.field_110321_bQ = 0.0F;
++                this.horseJumpPower = 0.0F;
+             }
+ 
+             super.onLivingUpdate();
+@@ -323,8 +325,8 @@
+             f *= 1.1F;
+         }
+ 
+-        AttributeInstance attributeinstance = this.func_110148_a(SharedMonsterAttributes.field_111263_d);
+-        f = (float)((double)f * ((attributeinstance.func_111126_e() / (double)this.capabilities.getWalkSpeed() + 1.0D) / 2.0D));
++        AttributeInstance attributeinstance = this.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
++        f = (float)((double)f * ((attributeinstance.getAttributeValue() / (double)this.capabilities.getWalkSpeed() + 1.0D) / 2.0D));
+ 
+         if (this.isUsingItem() && this.getItemInUse().itemID == Item.bow.itemID)
+         {
+@@ -405,7 +407,7 @@
+         this.mc.displayGuiScreen(new GuiHopper(this.inventory, par1EntityMinecartHopper));
+     }
+ 
+-    public void func_110298_a(EntityHorse par1EntityHorse, IInventory par2IInventory)
++    public void displayGUIHorse(EntityHorse par1EntityHorse, IInventory par2IInventory)
+     {
+         this.mc.displayGuiScreen(new GuiScreenHorseInventory(this.inventory, par2IInventory, par1EntityHorse));
+     }
+@@ -501,13 +503,13 @@
+     /**
+      * Updates health locally.
+      */
+-    public void setHealth(float par1)
+-    {
+-        float f1 = this.func_110143_aJ() - par1;
++    public void setPlayerSPHealth(float par1)
++    {
++        float f1 = this.getHealth() - par1;
+ 
+         if (f1 <= 0.0F)
+         {
+-            this.setEntityHealth(par1);
++            this.setHealth(par1);
+ 
+             if (f1 < 0.0F)
+             {
+@@ -516,8 +518,8 @@
+         }
+         else
+         {
+-            this.field_110153_bc = f1;
+-            this.setEntityHealth(this.func_110143_aJ());
++            this.lastDamage = f1;
++            this.setHealth(this.getHealth());
+             this.hurtResistantTime = this.maxHurtResistantTime;
+             this.damageEntity(DamageSource.generic, f1);
+             this.hurtTime = this.maxHurtTime = 10;
+@@ -656,7 +658,7 @@
+ 
+     public void sendChatToPlayer(ChatMessageComponent par1ChatMessageComponent)
+     {
+-        this.mc.ingameGUI.getChatGUI().printChatMessage(par1ChatMessageComponent.func_111068_a(true));
++        this.mc.ingameGUI.getChatGUI().printChatMessage(par1ChatMessageComponent.toStringWithFormatting(true));
+     }
+ 
+     /**
 @@ -685,6 +687,12 @@
  
      public void playSound(String par1Str, float par2, float par3)
@@ -22,3 +163,22 @@
          this.worldObj.playSound(this.posX, this.posY - (double)this.yOffset, this.posZ, par1Str, par2, par3, false);
      }
  
+@@ -696,14 +704,14 @@
+         return true;
+     }
+ 
+-    public boolean func_110317_t()
++    public boolean isRidingHorse()
+     {
+         return this.ridingEntity != null && this.ridingEntity instanceof EntityHorse;
+     }
+ 
+-    public float func_110319_bJ()
+-    {
+-        return this.field_110321_bQ;
++    public float getHorseJumpPower()
++    {
++        return this.horseJumpPower;
+     }
+ 
+     protected void func_110318_g() {}

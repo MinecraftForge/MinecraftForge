@@ -50,12 +50,3 @@
              }
          }
  
-@@ -94,7 +121,7 @@
-     {
-         if (par1NetLoginHandler == null)
-         {
--            throw new IllegalArgumentException("Got null pendingconnection!");
-+            throw new IllegalArgumentException("Got null netloginhandler!");
-         }
-         else
-         {

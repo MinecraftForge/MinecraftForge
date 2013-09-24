@@ -27,19 +27,14 @@
  
          if (par5 != i1)
          {
-@@ -264,15 +277,4 @@
-      * Argument is weight (0-15). Return the metadata to be set because of it.
+@@ -184,7 +197,9 @@
+     }
+ 
+     /**
+-     * ejects contained items into the world, and notifies neighbours of an update, as appropriate
++     * Called on server worlds only when the block has been replaced by a different block ID, or the same block with a
++     * different metadata value, but before the new metadata value is set. Args: World, x, y, z, old block ID, old
++     * metadata
       */
-     protected abstract int getMetaFromWeight(int i);
--
--    @SideOnly(Side.CLIENT)
--
--    /**
--     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
--     * is the only chance you get to register icons.
--     */
--    public void registerIcons(IconRegister par1IconRegister)
--    {
--        this.blockIcon = par1IconRegister.registerIcon(this.pressurePlateIconName);
--    }
- }
+     public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
+     {

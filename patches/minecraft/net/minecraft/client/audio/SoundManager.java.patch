@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/audio/SoundManager.java 
-+++ ../src_work/minecraft/net/minecraft/client/audio/SoundManager.java 
+--- ../src_base/minecraft/net/minecraft/client/audio/SoundManager.java
++++ ../src_work/minecraft/net/minecraft/client/audio/SoundManager.java
 @@ -1,5 +1,9 @@
  package net.minecraft.client.audio;
  
@@ -10,7 +10,16 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.io.File;
-@@ -61,26 +65,21 @@
+@@ -51,7 +55,7 @@
+ 
+     /** A reference to the game settings. */
+     private final GameSettings options;
+-    private final File field_130085_i;
++    private final File fileAssets;
+ 
+     /** Identifiers of all currently playing sounds. Type: HashSet<String> */
+     private final Set playingSounds = new HashSet();
+@@ -61,11 +65,13 @@
      private Random rand = new Random();
      private int ticksBeforeMusic;
  
@@ -21,38 +30,89 @@
 -        this.ticksBeforeMusic = this.rand.nextInt(12000);
 +        this.ticksBeforeMusic = this.rand.nextInt(MUSIC_INTERVAL);
          this.options = par2GameSettings;
-         this.field_130085_i = par3File;
+-        this.field_130085_i = par3File;
++        this.fileAssets = par3File;
          this.soundPoolSounds = new SoundPool(par1ResourceManager, "sound", true);
          this.soundPoolStreaming = new SoundPool(par1ResourceManager, "records", false);
          this.soundPoolMusic = new SoundPool(par1ResourceManager, "music", true);
+@@ -75,6 +81,7 @@
+             SoundSystemConfig.addLibrary(LibraryLWJGLOpenAL.class);
+             SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
+             SoundSystemConfig.setCodec("wav", CodecWav.class);
++            MinecraftForge.EVENT_BUS.post(new SoundSetupEvent(this));
+         }
+         catch (SoundSystemException soundsystemexception)
+         {
+@@ -82,34 +89,35 @@
+             System.err.println("error linking with the LibraryJavaSound plug-in");
+         }
  
--        try
--        {
--            SoundSystemConfig.addLibrary(LibraryLWJGLOpenAL.class);
--            SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
--            SoundSystemConfig.setCodec("wav", CodecWav.class);
--        }
--        catch (SoundSystemException soundsystemexception)
--        {
--            soundsystemexception.printStackTrace();
--            System.err.println("error linking with the LibraryJavaSound plug-in");
--        }
-+        SoundSystemConfig.addLibrary(LibraryLWJGLOpenAL.class);
-+        SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
-+        SoundSystemConfig.setCodec("wav", CodecWav.class);
-+        MinecraftForge.EVENT_BUS.post(new SoundSetupEvent(this));
- 
-         this.func_130083_h();
-     }
-@@ -90,6 +89,7 @@
+-        this.func_130083_h();
+-    }
+-
+-    public void func_110549_a(ResourceManager par1ResourceManager)
++        this.loadSounds();
++    }
++
++    public void onResourceManagerReload(ResourceManager par1ResourceManager)
+     {
          this.stopAllSounds();
-         this.closeMinecraft();
+-        this.closeMinecraft();
++        this.cleanup();
          this.tryToSetLibraryAndCodecs();
+-    }
+-
+-    private void func_130083_h()
+-    {
+-        if (this.field_130085_i.isDirectory())
+-        {
+-            Collection collection = FileUtils.listFiles(this.field_130085_i, field_130084_a, true);
 +        MinecraftForge.EVENT_BUS.post(new SoundLoadEvent(this));
++    }
++
++    private void loadSounds()
++    {
++        if (this.fileAssets.isDirectory())
++        {
++            Collection collection = FileUtils.listFiles(this.fileAssets, field_130084_a, true);
+             Iterator iterator = collection.iterator();
+ 
+             while (iterator.hasNext())
+             {
+                 File file1 = (File)iterator.next();
+-                this.func_130081_a(file1);
+-            }
+-        }
+-    }
+-
+-    private void func_130081_a(File par1File)
+-    {
+-        String s = this.field_130085_i.toURI().relativize(par1File.toURI()).getPath();
++                this.loadSoundFile(file1);
++            }
++        }
++    }
++
++    private void loadSoundFile(File par1File)
++    {
++        String s = this.fileAssets.toURI().relativize(par1File.toURI()).getPath();
+         int i = s.indexOf("/");
+ 
+         if (i != -1)
+@@ -185,9 +193,9 @@
      }
  
-     private void func_130083_h()
-@@ -236,10 +236,11 @@
+     /**
+-     * Called when Minecraft is closing down.
+-     */
+-    public void closeMinecraft()
++     * Cleans up the Sound System
++     */
++    public void cleanup()
+     {
+         if (this.loaded)
+         {
+@@ -236,11 +244,12 @@
                  else
                  {
                      SoundPoolEntry soundpoolentry = this.soundPoolMusic.getRandomSound();
@@ -61,11 +121,13 @@
                      if (soundpoolentry != null)
                      {
 -                        this.ticksBeforeMusic = this.rand.nextInt(12000) + 12000;
+-                        this.sndSystem.backgroundMusic("BgMusic", soundpoolentry.func_110457_b(), soundpoolentry.func_110458_a(), false);
 +                        this.ticksBeforeMusic = this.rand.nextInt(MUSIC_INTERVAL) + MUSIC_INTERVAL;
-                         this.sndSystem.backgroundMusic("BgMusic", soundpoolentry.func_110457_b(), soundpoolentry.func_110458_a(), false);
++                        this.sndSystem.backgroundMusic("BgMusic", soundpoolentry.getSoundUrl(), soundpoolentry.getSoundName(), false);
                          this.sndSystem.setVolume("BgMusic", this.options.musicVolume);
                          this.sndSystem.play("BgMusic");
-@@ -307,6 +308,7 @@
+                     }
+@@ -307,6 +316,7 @@
              if (par1Str != null)
              {
                  SoundPoolEntry soundpoolentry = this.soundPoolStreaming.getRandomSoundFromSoundPool(par1Str);
@@ -73,15 +135,27 @@
  
                  if (soundpoolentry != null)
                  {
-@@ -317,6 +319,7 @@
+@@ -315,8 +325,9 @@
+                         this.sndSystem.stop("BgMusic");
+                     }
  
-                     this.sndSystem.newStreamingSource(true, s1, soundpoolentry.func_110457_b(), soundpoolentry.func_110458_a(), false, par2, par3, par4, 2, 64.0F);
+-                    this.sndSystem.newStreamingSource(true, s1, soundpoolentry.func_110457_b(), soundpoolentry.func_110458_a(), false, par2, par3, par4, 2, 64.0F);
++                    this.sndSystem.newStreamingSource(true, s1, soundpoolentry.getSoundUrl(), soundpoolentry.getSoundName(), false, par2, par3, par4, 2, 64.0F);
                      this.sndSystem.setVolume(s1, 0.5F * this.options.soundVolume);
 +                    MinecraftForge.EVENT_BUS.post(new PlayStreamingSourceEvent(this, s1, par2, par3, par4));
                      this.sndSystem.play(s1);
                  }
              }
-@@ -485,6 +488,7 @@
+@@ -458,7 +469,7 @@
+                             f2 *= par3;
+                         }
+ 
+-                        this.sndSystem.newSource(par5, s1, soundpoolentry.func_110457_b(), soundpoolentry.func_110458_a(), false, (float)par2Entity.posX, (float)par2Entity.posY, (float)par2Entity.posZ, 2, f2);
++                        this.sndSystem.newSource(par5, s1, soundpoolentry.getSoundUrl(), soundpoolentry.getSoundName(), false, (float)par2Entity.posX, (float)par2Entity.posY, (float)par2Entity.posZ, 2, f2);
+                         this.sndSystem.setLooping(s1, true);
+                         this.sndSystem.setPitch(s1, par4);
+ 
+@@ -485,6 +496,7 @@
          if (this.loaded && this.options.soundVolume != 0.0F)
          {
              SoundPoolEntry soundpoolentry = this.soundPoolSounds.getRandomSoundFromSoundPool(par1Str);
@@ -89,7 +163,16 @@
  
              if (soundpoolentry != null && par5 > 0.0F)
              {
-@@ -506,6 +510,7 @@
+@@ -497,7 +509,7 @@
+                     f5 *= par5;
+                 }
+ 
+-                this.sndSystem.newSource(par5 > 1.0F, s1, soundpoolentry.func_110457_b(), soundpoolentry.func_110458_a(), false, par2, par3, par4, 2, f5);
++                this.sndSystem.newSource(par5 > 1.0F, s1, soundpoolentry.getSoundUrl(), soundpoolentry.getSoundName(), false, par2, par3, par4, 2, f5);
+ 
+                 if (par5 > 1.0F)
+                 {
+@@ -506,6 +518,7 @@
  
                  this.sndSystem.setPitch(s1, par6);
                  this.sndSystem.setVolume(s1, par5 * this.options.soundVolume);
@@ -97,7 +180,7 @@
                  this.sndSystem.play(s1);
              }
          }
-@@ -520,6 +525,7 @@
+@@ -520,12 +533,13 @@
          if (this.loaded && this.options.soundVolume != 0.0F)
          {
              SoundPoolEntry soundpoolentry = this.soundPoolSounds.getRandomSoundFromSoundPool(par1Str);
@@ -105,7 +188,14 @@
  
              if (soundpoolentry != null && par2 > 0.0F)
              {
-@@ -535,6 +541,7 @@
+                 this.latestSoundID = (this.latestSoundID + 1) % 256;
+                 String s1 = "sound_" + this.latestSoundID;
+-                this.sndSystem.newSource(false, s1, soundpoolentry.func_110457_b(), soundpoolentry.func_110458_a(), false, 0.0F, 0.0F, 0.0F, 0, 0.0F);
++                this.sndSystem.newSource(false, s1, soundpoolentry.getSoundUrl(), soundpoolentry.getSoundName(), false, 0.0F, 0.0F, 0.0F, 0, 0.0F);
+ 
+                 if (par2 > 1.0F)
+                 {
+@@ -535,6 +549,7 @@
                  par2 *= 0.25F;
                  this.sndSystem.setPitch(s1, par3);
                  this.sndSystem.setVolume(s1, par2 * this.options.soundVolume);

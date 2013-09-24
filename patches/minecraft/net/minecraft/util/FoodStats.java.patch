@@ -62,3 +62,12 @@
                  this.foodTimer = 0;
              }
          }
+@@ -77,7 +94,7 @@
+ 
+             if (this.foodTimer >= 80)
+             {
+-                if (par1EntityPlayer.func_110143_aJ() > 10.0F || i >= 3 || par1EntityPlayer.func_110143_aJ() > 1.0F && i >= 2)
++                if (par1EntityPlayer.getHealth() > 10.0F || i >= 3 || par1EntityPlayer.getHealth() > 1.0F && i >= 2)
+                 {
+                     par1EntityPlayer.attackEntityFrom(DamageSource.starve, 1.0F);
+                 }

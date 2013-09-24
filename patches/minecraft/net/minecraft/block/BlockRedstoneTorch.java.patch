@@ -8,7 +8,18 @@
  
  public class BlockRedstoneTorch extends BlockTorch
  {
-@@ -146,10 +147,28 @@
+@@ -91,7 +92,9 @@
+     }
+ 
+     /**
+-     * ejects contained items into the world, and notifies neighbours of an update, as appropriate
++     * Called on server worlds only when the block has been replaced by a different block ID, or the same block with a
++     * different metadata value, but before the new metadata value is set. Args: World, x, y, z, old block ID, old
++     * metadata
+      */
+     public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
+     {
+@@ -146,10 +149,28 @@
              list.remove(0);
          }
  
@@ -37,7 +48,7 @@
                  par1World.setBlock(par2, par3, par4, Block.torchRedstoneIdle.blockID, par1World.getBlockMetadata(par2, par3, par4), 3);
  
                  if (this.checkForBurnout(par1World, par2, par3, par4, true))
-@@ -168,6 +187,18 @@
+@@ -168,6 +189,18 @@
          }
          else if (!flag && !this.checkForBurnout(par1World, par2, par3, par4, false))
          {

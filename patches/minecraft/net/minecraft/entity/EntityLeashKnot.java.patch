@@ -12,22 +12,87 @@
  
  public class EntityLeashKnot extends EntityHanging
  {
-@@ -97,6 +102,14 @@
+@@ -32,12 +37,12 @@
  
-                     if (entityliving.func_110167_bD() && entityliving.func_110166_bE() == par1EntityPlayer)
+     public void setDirection(int par1) {}
+ 
+-    public int func_82329_d()
++    public int getWidthPixels()
+     {
+         return 9;
+     }
+ 
+-    public int func_82330_g()
++    public int getHeightPixels()
+     {
+         return 9;
+     }
+@@ -53,12 +58,17 @@
+         return par1 < 1024.0D;
+     }
+ 
+-    public void func_110128_b(Entity par1Entity) {}
+-
+-    /**
+-     * adds the ID of this entity to the NBT given
+-     */
+-    public boolean addEntityID(NBTTagCompound par1NBTTagCompound)
++    /**
++     * Called when this entity is broken. Entity parameter may be null.
++     */
++    public void onBroken(Entity par1Entity) {}
++
++    /**
++     * Either write this entity to the NBT tag given and return true, or return false without doing anything. If this
++     * returns false the entity is not saved on disk. Ridden entities return false here as they are saved with their
++     * rider.
++     */
++    public boolean writeToNBTOptional(NBTTagCompound par1NBTTagCompound)
+     {
+         return false;
+     }
+@@ -73,7 +83,10 @@
+      */
+     public void readEntityFromNBT(NBTTagCompound par1NBTTagCompound) {}
+ 
+-    public boolean func_130002_c(EntityPlayer par1EntityPlayer)
++    /**
++     * First layer of player interaction
++     */
++    public boolean interactFirst(EntityPlayer par1EntityPlayer)
+     {
+         ItemStack itemstack = par1EntityPlayer.getHeldItem();
+         boolean flag = false;
+@@ -82,7 +95,7 @@
+         Iterator iterator;
+         EntityLiving entityliving;
+ 
+-        if (itemstack != null && itemstack.itemID == Item.field_111214_ch.itemID && !this.worldObj.isRemote)
++        if (itemstack != null && itemstack.itemID == Item.leash.itemID && !this.worldObj.isRemote)
+         {
+             d0 = 7.0D;
+             list = this.worldObj.getEntitiesWithinAABB(EntityLiving.class, AxisAlignedBB.getAABBPool().getAABB(this.posX - d0, this.posY - d0, this.posZ - d0, this.posX + d0, this.posY + d0, this.posZ + d0));
+@@ -95,9 +108,17 @@
+                 {
+                     entityliving = (EntityLiving)iterator.next();
+ 
+-                    if (entityliving.func_110167_bD() && entityliving.func_110166_bE() == par1EntityPlayer)
++                    if (entityliving.getLeashed() && entityliving.getLeashedToEntity() == par1EntityPlayer)
                      {
+-                        entityliving.func_110162_b(this, true);
 +                        // CraftBukkit start
 +                        if (CraftEventFactory.callPlayerLeashEntityEvent(entityliving, this, par1EntityPlayer).isCancelled())
 +                        {
-+                            ((EntityPlayerMP) par1EntityPlayer).playerNetServerHandler.sendPacketToPlayer(new Packet39AttachEntity(1, entityliving, entityliving.func_110166_bE()));
++                            ((EntityPlayerMP) par1EntityPlayer).playerNetServerHandler.sendPacketToPlayer(new Packet39AttachEntity(1, entityliving, entityliving.getLeashedToEntity()));
 +                            continue;
 +                        }
 +
 +                        // CraftBukkit end
-                         entityliving.func_110162_b(this, true);
++                        entityliving.setLeashedToEntity(this, true);
                          flag = true;
                      }
-@@ -106,9 +119,12 @@
+                 }
+@@ -106,9 +127,12 @@
  
          if (!this.worldObj.isRemote && !flag)
          {
@@ -43,9 +108,12 @@
              {
                  d0 = 7.0D;
                  list = this.worldObj.getEntitiesWithinAABB(EntityLiving.class, AxisAlignedBB.getAABBPool().getAABB(this.posX - d0, this.posY - d0, this.posZ - d0, this.posX + d0, this.posY + d0, this.posZ + d0));
-@@ -123,11 +139,27 @@
+@@ -121,13 +145,29 @@
+                     {
+                         entityliving = (EntityLiving)iterator.next();
  
-                         if (entityliving.func_110167_bD() && entityliving.func_110166_bE() == this)
+-                        if (entityliving.func_110167_bD() && entityliving.func_110166_bE() == this)
++                        if (entityliving.getLeashed() && entityliving.getLeashedToEntity() == this)
                          {
 -                            entityliving.func_110160_i(true, false);
 +                            // CraftBukkit start
@@ -55,7 +123,7 @@
 +                                continue;
 +                            }
 +
-+                            entityliving.func_110160_i(true, !par1EntityPlayer.capabilities.isCreativeMode); // false -> survival mode boolean
++                            entityliving.clearLeashed(true, !par1EntityPlayer.capabilities.isCreativeMode); // false -> survival mode boolean
 +                            // CraftBukkit end
                          }
                      }
@@ -72,3 +140,18 @@
          }
  
          return true;
+@@ -145,12 +185,12 @@
+     public static EntityLeashKnot func_110129_a(World par0World, int par1, int par2, int par3)
+     {
+         EntityLeashKnot entityleashknot = new EntityLeashKnot(par0World, par1, par2, par3);
+-        entityleashknot.field_98038_p = true;
++        entityleashknot.forceSpawn = true;
+         par0World.spawnEntityInWorld(entityleashknot);
+         return entityleashknot;
+     }
+ 
+-    public static EntityLeashKnot func_110130_b(World par0World, int par1, int par2, int par3)
++    public static EntityLeashKnot getKnotForBlock(World par0World, int par1, int par2, int par3)
+     {
+         List list = par0World.getEntitiesWithinAABB(EntityLeashKnot.class, AxisAlignedBB.getAABBPool().getAABB((double)par1 - 1.0D, (double)par2 - 1.0D, (double)par3 - 1.0D, (double)par1 + 1.0D, (double)par2 + 1.0D, (double)par3 + 1.0D));
+         Object object = null;

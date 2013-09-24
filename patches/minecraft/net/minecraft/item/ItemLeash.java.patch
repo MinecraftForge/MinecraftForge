@@ -9,7 +9,22 @@
  
  public class ItemLeash extends Item
  {
-@@ -64,8 +66,26 @@
+@@ -46,7 +48,7 @@
+ 
+     public static boolean func_135066_a(EntityPlayer par0EntityPlayer, World par1World, int par2, int par3, int par4)
+     {
+-        EntityLeashKnot entityleashknot = EntityLeashKnot.func_110130_b(par1World, par2, par3, par4);
++        EntityLeashKnot entityleashknot = EntityLeashKnot.getKnotForBlock(par1World, par2, par3, par4);
+         boolean flag = false;
+         double d0 = 7.0D;
+         List list = par1World.getEntitiesWithinAABB(EntityLiving.class, AxisAlignedBB.getAABBPool().getAABB((double)par2 - d0, (double)par3 - d0, (double)par4 - d0, (double)par2 + d0, (double)par3 + d0, (double)par4 + d0));
+@@ -59,14 +61,32 @@
+             {
+                 EntityLiving entityliving = (EntityLiving)iterator.next();
+ 
+-                if (entityliving.func_110167_bD() && entityliving.func_110166_bE() == par0EntityPlayer)
++                if (entityliving.getLeashed() && entityliving.getLeashedToEntity() == par0EntityPlayer)
+                 {
                      if (entityleashknot == null)
                      {
                          entityleashknot = EntityLeashKnot.func_110129_a(par1World, par2, par3, par4);
@@ -26,6 +41,7 @@
 +                        // CraftBukkit end
                      }
  
+-                    entityliving.func_110162_b(entityleashknot, true);
 +                    // CraftBukkit start
 +                    if (org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerLeashEntityEvent(entityliving, entityleashknot, par0EntityPlayer).isCancelled())
 +                    {
@@ -33,6 +49,7 @@
 +                    }
 +
 +                    // CraftBukkit end
-                     entityliving.func_110162_b(entityleashknot, true);
++                    entityliving.setLeashedToEntity(entityleashknot, true);
                      flag = true;
                  }
+             }

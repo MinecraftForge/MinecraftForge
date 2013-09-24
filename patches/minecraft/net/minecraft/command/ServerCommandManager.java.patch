@@ -63,3 +63,34 @@
  
      /**
       * Sends a message to the admins of the server from a given CommandSender with the given resource string and given
+@@ -77,9 +89,9 @@
+             flag = false;
+         }
+ 
+-        ChatMessageComponent chatmessagecomponent = ChatMessageComponent.func_111082_b("chat.type.admin", new Object[] {par1ICommandSender.getCommandSenderName(), ChatMessageComponent.func_111082_b(par3Str, par4ArrayOfObj)});
+-        chatmessagecomponent.func_111059_a(EnumChatFormatting.GRAY);
+-        chatmessagecomponent.func_111063_b(Boolean.valueOf(true));
++        ChatMessageComponent chatmessagecomponent = ChatMessageComponent.createFromTranslationWithSubstitutions("chat.type.admin", new Object[] {par1ICommandSender.getCommandSenderName(), ChatMessageComponent.createFromTranslationWithSubstitutions(par3Str, par4ArrayOfObj)});
++        chatmessagecomponent.setColor(EnumChatFormatting.GRAY);
++        chatmessagecomponent.setItalic(Boolean.valueOf(true));
+ 
+         if (flag)
+         {
+@@ -89,7 +101,7 @@
+             {
+                 EntityPlayerMP entityplayermp = (EntityPlayerMP)iterator.next();
+ 
+-                if (entityplayermp != par1ICommandSender && MinecraftServer.getServer().getConfigurationManager().areCommandsAllowed(entityplayermp.getCommandSenderName()))
++                if (entityplayermp != par1ICommandSender && MinecraftServer.getServer().getConfigurationManager().isPlayerOpped(entityplayermp.getCommandSenderName()))
+                 {
+                     entityplayermp.sendChatToPlayer(chatmessagecomponent);
+                 }
+@@ -103,7 +115,7 @@
+ 
+         if ((par2 & 1) != 1)
+         {
+-            par1ICommandSender.sendChatToPlayer(ChatMessageComponent.func_111082_b(par3Str, par4ArrayOfObj));
++            par1ICommandSender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions(par3Str, par4ArrayOfObj));
+         }
+     }
+ }

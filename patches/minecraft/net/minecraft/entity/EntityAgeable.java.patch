@@ -26,7 +26,29 @@
                              {
                                  par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, (ItemStack)null);
                              }
-@@ -113,6 +114,7 @@
+@@ -83,7 +84,11 @@
+         return this.dataWatcher.getWatchableObjectInt(12);
+     }
+ 
+-    public void func_110195_a(int par1)
++    /**
++     * "Adds the value of the parameter times 20 to the age of this entity. If the entity is an adult (if the entity's
++     * age is greater than 0), it will have no effect."
++     */
++    public void addGrowth(int par1)
+     {
+         int j = this.getGrowingAge();
+         j += par1 * 20;
+@@ -103,7 +108,7 @@
+     public void setGrowingAge(int par1)
+     {
+         this.dataWatcher.updateObject(12, Integer.valueOf(par1));
+-        this.func_98054_a(this.isChild());
++        this.setScaleForAge(this.isChild());
+     }
+ 
+     /**
+@@ -113,6 +118,7 @@
      {
          super.writeEntityToNBT(par1NBTTagCompound);
          par1NBTTagCompound.setInteger("Age", this.getGrowingAge());
@@ -34,7 +56,7 @@
      }
  
      /**
-@@ -122,6 +124,7 @@
+@@ -122,6 +128,7 @@
      {
          super.readEntityFromNBT(par1NBTTagCompound);
          this.setGrowingAge(par1NBTTagCompound.getInteger("Age"));
@@ -42,12 +64,44 @@
      }
  
      /**
-@@ -132,7 +135,7 @@
+@@ -132,9 +139,9 @@
      {
          super.onLivingUpdate();
  
 -        if (this.worldObj.isRemote)
 +        if (this.worldObj.isRemote || this.ageLocked)   // CraftBukkit
          {
-             this.func_98054_a(this.isChild());
+-            this.func_98054_a(this.isChild());
++            this.setScaleForAge(this.isChild());
          }
+         else
+         {
+@@ -161,9 +168,12 @@
+         return this.getGrowingAge() < 0;
+     }
+ 
+-    public void func_98054_a(boolean par1)
++    /**
++     * "Sets the scale for an ageable entity according to the boolean parameter, which says if it's a child."
++     */
++    public void setScaleForAge(boolean par1)
+     {
+-        this.func_98055_j(par1 ? 0.5F : 1.0F);
++        this.setScale(par1 ? 0.5F : 1.0F);
+     }
+ 
+     /**
+@@ -177,11 +187,11 @@
+ 
+         if (!flag)
+         {
+-            this.func_98055_j(1.0F);
++            this.setScale(1.0F);
+         }
+     }
+ 
+-    protected final void func_98055_j(float par1)
++    protected final void setScale(float par1)
+     {
+         super.setSize(this.field_98056_d * par1, this.field_98057_e * par1);
+     }

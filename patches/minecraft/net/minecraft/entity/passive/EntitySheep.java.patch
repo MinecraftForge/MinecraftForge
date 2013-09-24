@@ -33,6 +33,23 @@
      }
  
      /**
+@@ -90,11 +100,11 @@
+         super.onLivingUpdate();
+     }
+ 
+-    protected void func_110147_ax()
+-    {
+-        super.func_110147_ax();
+-        this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111128_a(8.0D);
+-        this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.23000000417232513D);
++    protected void applyEntityAttributes()
++    {
++        super.applyEntityAttributes();
++        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute(8.0D);
++        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.23000000417232513D);
+     }
+ 
+     protected void entityInit()
 @@ -109,10 +119,16 @@
       */
      protected void dropFewItems(boolean par1, int par2)
@@ -83,7 +100,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -298,7 +293,16 @@
+@@ -298,17 +293,26 @@
       */
      public void eatGrassBonus()
      {
@@ -101,6 +118,23 @@
  
          if (this.isChild())
          {
+-            this.func_110195_a(60);
+-        }
+-    }
+-
+-    public EntityLivingData func_110161_a(EntityLivingData par1EntityLivingData)
+-    {
+-        par1EntityLivingData = super.func_110161_a(par1EntityLivingData);
++            this.addGrowth(60);
++        }
++    }
++
++    public EntityLivingData onSpawnWithEgg(EntityLivingData par1EntityLivingData)
++    {
++        par1EntityLivingData = super.onSpawnWithEgg(par1EntityLivingData);
+         this.setFleeceColor(getRandomFleeceColor(this.worldObj.rand));
+         return par1EntityLivingData;
+     }
 @@ -343,4 +347,24 @@
      {
          return this.func_90015_b(par1EntityAgeable);

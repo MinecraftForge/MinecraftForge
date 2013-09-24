@@ -14,7 +14,53 @@
  
  public abstract class EntityHanging extends Entity
  {
-@@ -127,6 +134,38 @@
+@@ -39,9 +46,9 @@
+     {
+         this.hangingDirection = par1;
+         this.prevRotationYaw = this.rotationYaw = (float)(par1 * 90);
+-        float f = (float)this.func_82329_d();
+-        float f1 = (float)this.func_82330_g();
+-        float f2 = (float)this.func_82329_d();
++        float f = (float)this.getWidthPixels();
++        float f1 = (float)this.getHeightPixels();
++        float f2 = (float)this.getWidthPixels();
+ 
+         if (par1 != 2 && par1 != 0)
+         {
+@@ -83,25 +90,25 @@
+ 
+         if (par1 == 2)
+         {
+-            f3 -= this.func_70517_b(this.func_82329_d());
++            f3 -= this.func_70517_b(this.getWidthPixels());
+         }
+ 
+         if (par1 == 1)
+         {
+-            f5 += this.func_70517_b(this.func_82329_d());
++            f5 += this.func_70517_b(this.getWidthPixels());
+         }
+ 
+         if (par1 == 0)
+         {
+-            f3 += this.func_70517_b(this.func_82329_d());
++            f3 += this.func_70517_b(this.getWidthPixels());
+         }
+ 
+         if (par1 == 3)
+         {
+-            f5 -= this.func_70517_b(this.func_82329_d());
+-        }
+-
+-        f4 += this.func_70517_b(this.func_82330_g());
++            f5 -= this.func_70517_b(this.getWidthPixels());
++        }
++
++        f4 += this.func_70517_b(this.getHeightPixels());
+         this.setPosition((double)f3, (double)f4, (double)f5);
+         float f7 = -0.03125F;
+         this.boundingBox.setBounds((double)(f3 - f - f7), (double)(f4 - f1 - f7), (double)(f5 - f2 - f7), (double)(f3 + f + f7), (double)(f4 + f1 + f7), (double)(f5 + f2 + f7));
+@@ -127,8 +134,40 @@
  
              if (!this.isDead && !this.onValidSurface())
              {
@@ -51,9 +97,67 @@
 +
 +                // CraftBukkit end
                  this.setDead();
-                 this.func_110128_b((Entity)null);
+-                this.func_110128_b((Entity)null);
++                this.onBroken((Entity)null);
              }
-@@ -239,6 +278,39 @@
+         }
+     }
+@@ -144,33 +183,33 @@
+         }
+         else
+         {
+-            int i = Math.max(1, this.func_82329_d() / 16);
+-            int j = Math.max(1, this.func_82330_g() / 16);
++            int i = Math.max(1, this.getWidthPixels() / 16);
++            int j = Math.max(1, this.getHeightPixels() / 16);
+             int k = this.xPosition;
+             int l = this.yPosition;
+             int i1 = this.zPosition;
+ 
+             if (this.hangingDirection == 2)
+             {
+-                k = MathHelper.floor_double(this.posX - (double)((float)this.func_82329_d() / 32.0F));
++                k = MathHelper.floor_double(this.posX - (double)((float)this.getWidthPixels() / 32.0F));
+             }
+ 
+             if (this.hangingDirection == 1)
+             {
+-                i1 = MathHelper.floor_double(this.posZ - (double)((float)this.func_82329_d() / 32.0F));
++                i1 = MathHelper.floor_double(this.posZ - (double)((float)this.getWidthPixels() / 32.0F));
+             }
+ 
+             if (this.hangingDirection == 0)
+             {
+-                k = MathHelper.floor_double(this.posX - (double)((float)this.func_82329_d() / 32.0F));
++                k = MathHelper.floor_double(this.posX - (double)((float)this.getWidthPixels() / 32.0F));
+             }
+ 
+             if (this.hangingDirection == 3)
+             {
+-                i1 = MathHelper.floor_double(this.posZ - (double)((float)this.func_82329_d() / 32.0F));
+-            }
+-
+-            l = MathHelper.floor_double(this.posY - (double)((float)this.func_82330_g() / 32.0F));
++                i1 = MathHelper.floor_double(this.posZ - (double)((float)this.getWidthPixels() / 32.0F));
++            }
++
++            l = MathHelper.floor_double(this.posY - (double)((float)this.getHeightPixels() / 32.0F));
+ 
+             for (int j1 = 0; j1 < i; ++j1)
+             {
+@@ -221,7 +260,10 @@
+         return true;
+     }
+ 
+-    public boolean func_85031_j(Entity par1Entity)
++    /**
++     * Called when a player attacks an entity. If this returns true the attack will not happen.
++     */
++    public boolean hitByEntity(Entity par1Entity)
+     {
+         return par1Entity instanceof EntityPlayer ? this.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer)par1Entity), 0.0F) : false;
+     }
+@@ -239,9 +281,42 @@
          {
              if (!this.isDead && !this.worldObj.isRemote)
              {
@@ -92,8 +196,12 @@
 +                // CraftBukkit end
                  this.setDead();
                  this.setBeenAttacked();
-                 this.func_110128_b(par1DamageSource.getEntity());
-@@ -255,6 +327,30 @@
+-                this.func_110128_b(par1DamageSource.getEntity());
++                this.onBroken(par1DamageSource.getEntity());
+             }
+ 
+             return true;
+@@ -255,8 +330,32 @@
      {
          if (!this.worldObj.isRemote && !this.isDead && par1 * par1 + par3 * par3 + par5 * par5 > 0.0D)
          {
@@ -122,9 +230,12 @@
 +
 +            // CraftBukkit end
              this.setDead();
-             this.func_110128_b((Entity)null);
+-            this.func_110128_b((Entity)null);
++            this.onBroken((Entity)null);
          }
-@@ -265,7 +361,7 @@
+     }
+ 
+@@ -265,10 +364,10 @@
       */
      public void addVelocity(double par1, double par3, double par5)
      {
@@ -132,4 +243,32 @@
 +        if (false && !this.worldObj.isRemote && !this.isDead && par1 * par1 + par3 * par3 + par5 * par5 > 0.0D)   // CraftBukkit - not needed
          {
              this.setDead();
-             this.func_110128_b((Entity)null);
+-            this.func_110128_b((Entity)null);
++            this.onBroken((Entity)null);
+         }
+     }
+ 
+@@ -331,13 +430,16 @@
+         this.setDirection(this.hangingDirection);
+     }
+ 
+-    public abstract int func_82329_d();
+-
+-    public abstract int func_82330_g();
+-
+-    public abstract void func_110128_b(Entity entity);
+-
+-    protected boolean func_142008_O()
++    public abstract int getWidthPixels();
++
++    public abstract int getHeightPixels();
++
++    /**
++     * Called when this entity is broken. Entity parameter may be null.
++     */
++    public abstract void onBroken(Entity entity);
++
++    protected boolean shouldSetPosAfterLoading()
+     {
+         return false;
+     }

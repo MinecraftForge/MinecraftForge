@@ -17,6 +17,15 @@
  public abstract class MobSpawnerBaseLogic
  {
      /** The delay to spawn. */
+@@ -162,7 +165,7 @@
+         if (this.getRandomMinecart() != null)
+         {
+             NBTTagCompound nbttagcompound = new NBTTagCompound();
+-            par1Entity.addEntityID(nbttagcompound);
++            par1Entity.writeToNBTOptional(nbttagcompound);
+             Iterator iterator = this.getRandomMinecart().field_98222_b.getTags().iterator();
+ 
+             while (iterator.hasNext())
 @@ -175,7 +178,7 @@
  
              if (par1Entity.worldObj != null)
@@ -26,6 +35,15 @@
              }
  
              NBTTagCompound nbttagcompound1;
+@@ -188,7 +191,7 @@
+                 if (entity2 != null)
+                 {
+                     NBTTagCompound nbttagcompound2 = new NBTTagCompound();
+-                    entity2.addEntityID(nbttagcompound2);
++                    entity2.writeToNBTOptional(nbttagcompound2);
+                     Iterator iterator1 = nbttagcompound1.getTags().iterator();
+ 
+                     while (iterator1.hasNext())
 @@ -202,7 +205,7 @@
  
                      if (par1Entity.worldObj != null)
@@ -35,11 +53,13 @@
                      }
  
                      entity1.mountEntity(entity2);
-@@ -214,7 +217,7 @@
+@@ -213,8 +216,8 @@
+         }
          else if (par1Entity instanceof EntityLivingBase && par1Entity.worldObj != null)
          {
-             ((EntityLiving)par1Entity).func_110161_a((EntityLivingData)null);
+-            ((EntityLiving)par1Entity).func_110161_a((EntityLivingData)null);
 -            this.getSpawnerWorld().spawnEntityInWorld(par1Entity);
++            ((EntityLiving)par1Entity).onSpawnWithEgg((EntityLivingData)null);
 +            this.getSpawnerWorld().addEntity(par1Entity, CreatureSpawnEvent.SpawnReason.SPAWNER); // CraftBukkit
          }
  

@@ -64,10 +64,17 @@
  
      public EntityMinecartContainer(World par1World)
      {
-@@ -280,6 +330,10 @@
+@@ -278,8 +328,15 @@
+         }
+     }
  
-     public boolean func_130002_c(EntityPlayer par1EntityPlayer)
-     {
+-    public boolean func_130002_c(EntityPlayer par1EntityPlayer)
+-    {
++    /**
++     * First layer of player interaction
++     */
++    public boolean interactFirst(EntityPlayer par1EntityPlayer)
++    {
 +        if(MinecraftForge.EVENT_BUS.post(new MinecartInteractEvent(this, par1EntityPlayer))) 
 +        {
 +            return true;

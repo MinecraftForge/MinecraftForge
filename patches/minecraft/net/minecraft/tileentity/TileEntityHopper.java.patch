@@ -67,6 +67,25 @@
  
      /**
       * Reads a tile entity from NBT.
+@@ -235,12 +278,12 @@
+             if (!this.isCoolingDown())
+             {
+                 this.setTransferCooldown(0);
+-                this.func_98045_j();
+-            }
+-        }
+-    }
+-
+-    public boolean func_98045_j()
++                this.updateHopper();
++            }
++        }
++    }
++
++    public boolean updateHopper()
+     {
+         if (this.worldObj != null && !this.worldObj.isRemote)
+         {
 @@ -283,11 +326,51 @@
                  if (this.getStackInSlot(i) != null)
                  {
@@ -121,7 +140,46 @@
                          return true;
                      }
  
-@@ -356,11 +439,60 @@
+@@ -317,7 +400,7 @@
+ 
+                 for (int i = 0; i < aint.length; ++i)
+                 {
+-                    if (func_102012_a(par0Hopper, iinventory, aint[i], b0))
++                    if (insertStackFromInventory(par0Hopper, iinventory, aint[i], b0))
+                     {
+                         return true;
+                     }
+@@ -329,7 +412,7 @@
+ 
+                 for (int k = 0; k < j; ++k)
+                 {
+-                    if (func_102012_a(par0Hopper, iinventory, k, b0))
++                    if (insertStackFromInventory(par0Hopper, iinventory, k, b0))
+                     {
+                         return true;
+                     }
+@@ -338,29 +421,78 @@
+         }
+         else
+         {
+-            EntityItem entityitem = func_96119_a(par0Hopper.getWorldObj(), par0Hopper.getXPos(), par0Hopper.getYPos() + 1.0D, par0Hopper.getZPos());
++            EntityItem entityitem = getEntityAbove(par0Hopper.getWorldObj(), par0Hopper.getXPos(), par0Hopper.getYPos() + 1.0D, par0Hopper.getZPos());
+ 
+             if (entityitem != null)
+             {
+-                return func_96114_a(par0Hopper, entityitem);
++                return insertStackFromEntity(par0Hopper, entityitem);
+             }
+         }
+ 
+         return false;
+     }
+ 
+-    private static boolean func_102012_a(Hopper par0Hopper, IInventory par1IInventory, int par2, int par3)
++    private static boolean insertStackFromInventory(Hopper par0Hopper, IInventory par1IInventory, int par2, int par3)
+     {
+         ItemStack itemstack = par1IInventory.getStackInSlot(par2);
+ 
          if (itemstack != null && canExtractItemFromInventory(par1IInventory, itemstack, par2, par3))
          {
              ItemStack itemstack1 = itemstack.copy();
@@ -184,6 +242,15 @@
                  return true;
              }
  
+@@ -370,7 +502,7 @@
+         return false;
+     }
+ 
+-    public static boolean func_96114_a(IInventory par0IInventory, EntityItem par1EntityItem)
++    public static boolean insertStackFromEntity(IInventory par0IInventory, EntityItem par1EntityItem)
+     {
+         boolean flag = false;
+ 
 @@ -380,6 +512,20 @@
          }
          else
@@ -205,3 +272,12 @@
              ItemStack itemstack = par1EntityItem.getEntityItem().copy();
              ItemStack itemstack1 = insertStack(par0IInventory, itemstack, -1);
  
+@@ -498,7 +644,7 @@
+         return getInventoryAtLocation(par0Hopper.getWorldObj(), par0Hopper.getXPos(), par0Hopper.getYPos() + 1.0D, par0Hopper.getZPos());
+     }
+ 
+-    public static EntityItem func_96119_a(World par0World, double par1, double par3, double par5)
++    public static EntityItem getEntityAbove(World par0World, double par1, double par3, double par5)
+     {
+         List list = par0World.selectEntitiesWithinAABB(EntityItem.class, AxisAlignedBB.getAABBPool().getAABB(par1, par3, par5, par1 + 1.0D, par3 + 1.0D, par5 + 1.0D), IEntitySelector.selectAnything);
+         return list.size() > 0 ? (EntityItem)list.get(0) : null;

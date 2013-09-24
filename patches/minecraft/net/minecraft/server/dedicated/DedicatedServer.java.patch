@@ -69,6 +69,15 @@
  
          if (this.isSinglePlayer())
          {
+@@ -87,7 +110,7 @@
+         this.setAllowFlight(this.settings.getBooleanProperty("allow-flight", false));
+         this.setTexturePack(this.settings.getProperty("texture-pack", ""));
+         this.setMOTD(this.settings.getProperty("motd", "A Minecraft Server"));
+-        this.func_104055_i(this.settings.getBooleanProperty("force-gamemode", false));
++        this.setForceGamemode(this.settings.getBooleanProperty("force-gamemode", false));
+ 
+         if (this.settings.getIntProperty("difficulty", 1) < 0)
+         {
 @@ -122,7 +145,7 @@
          {
              this.networkThread = new DedicatedServerListenThread(this, inetaddress, this.getServerPort());
@@ -135,6 +144,17 @@
      }
  
      /**
+@@ -257,8 +300,8 @@
+     public CrashReport addServerInfoToCrashReport(CrashReport par1CrashReport)
+     {
+         par1CrashReport = super.addServerInfoToCrashReport(par1CrashReport);
+-        par1CrashReport.func_85056_g().addCrashSectionCallable("Is Modded", new CallableType(this));
+-        par1CrashReport.func_85056_g().addCrashSectionCallable("Type", new CallableServerType(this));
++        par1CrashReport.getCategory().addCrashSectionCallable("Is Modded", new CallableType(this));
++        par1CrashReport.getCategory().addCrashSectionCallable("Type", new CallableServerType(this));
+         return par1CrashReport;
+     }
+ 
 @@ -311,7 +354,13 @@
          while (!this.pendingCommandList.isEmpty())
          {
@@ -150,3 +170,24 @@
          }
      }
  
+@@ -408,7 +457,10 @@
+         return this.settings.getIntProperty("spawn-protection", super.getSpawnProtectionSize());
+     }
+ 
+-    public boolean func_96290_a(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer)
++    /**
++     * Returns true if a player does not have permission to edit the block at the given coordinates.
++     */
++    public boolean isBlockProtected(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer)
+     {
+         if (par1World.provider.dimensionId != 0)
+         {
+@@ -418,7 +470,7 @@
+         {
+             return false;
+         }
+-        else if (this.getDedicatedPlayerList().areCommandsAllowed(par5EntityPlayer.getCommandSenderName()))
++        else if (this.getDedicatedPlayerList().isPlayerOpped(par5EntityPlayer.getCommandSenderName()))
+         {
+             return false;
+         }

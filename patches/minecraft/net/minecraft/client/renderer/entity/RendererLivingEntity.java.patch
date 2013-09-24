@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/entity/RendererLivingEntity.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RendererLivingEntity.java
-@@ -17,6 +17,9 @@
+@@ -17,17 +17,23 @@
  import net.minecraft.entity.projectile.EntityArrow;
  import net.minecraft.util.MathHelper;
  import net.minecraft.util.ResourceLocation;
@@ -10,24 +10,53 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
-@@ -29,6 +32,9 @@
+ @SideOnly(Side.CLIENT)
+ public abstract class RendererLivingEntity extends Render
+ {
+-    private static final ResourceLocation field_110814_a = new ResourceLocation("textures/misc/enchanted_item_glint.png");
++    private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
+     protected ModelBase mainModel;
+ 
      /** The model to be used during the render passes. */
      protected ModelBase renderPassModel;
- 
++
 +    public static float NAME_TAG_RANGE = 64.0f;
 +    public static float NAME_TAG_RANGE_SNEAK = 32.0f;
-+
+ 
      public RendererLivingEntity(ModelBase par1ModelBase, float par2)
      {
-         this.mainModel = par1ModelBase;
-@@ -68,6 +74,7 @@
+@@ -66,8 +72,9 @@
+         return par1 + par3 * f3;
+     }
  
-     public void func_130000_a(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6, float par8, float par9)
-     {
+-    public void func_130000_a(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6, float par8, float par9)
+-    {
++    public void doRenderLiving(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6, float par8, float par9)
++    {
 +        if (MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Pre(par1EntityLivingBase, this))) return;
          GL11.glPushMatrix();
          GL11.glDisable(GL11.GL_CULL_FACE);
          this.mainModel.onGround = this.renderSwingProgress(par1EntityLivingBase, par9);
+@@ -130,8 +137,8 @@
+             GL11.glScalef(-1.0F, -1.0F, 1.0F);
+             this.preRenderCallback(par1EntityLivingBase, par9);
+             GL11.glTranslatef(0.0F, -24.0F * f6 - 0.0078125F, 0.0F);
+-            float f7 = par1EntityLivingBase.prevLimbYaw + (par1EntityLivingBase.limbYaw - par1EntityLivingBase.prevLimbYaw) * par9;
+-            float f8 = par1EntityLivingBase.limbSwing - par1EntityLivingBase.limbYaw * (1.0F - par9);
++            float f7 = par1EntityLivingBase.prevLimbSwingAmount + (par1EntityLivingBase.limbSwingAmount - par1EntityLivingBase.prevLimbSwingAmount) * par9;
++            float f8 = par1EntityLivingBase.limbSwing - par1EntityLivingBase.limbSwingAmount * (1.0F - par9);
+ 
+             if (par1EntityLivingBase.isChild())
+             {
+@@ -169,7 +176,7 @@
+                     if ((i & 15) == 15)
+                     {
+                         f9 = (float)par1EntityLivingBase.ticksExisted + par9;
+-                        this.func_110776_a(field_110814_a);
++                        this.bindTexture(RES_ITEM_GLINT);
+                         GL11.glEnable(GL11.GL_BLEND);
+                         f10 = 0.5F;
+                         GL11.glColor4f(f10, f10, f10, 1.0F);
 @@ -277,6 +284,7 @@
          GL11.glEnable(GL11.GL_CULL_FACE);
          GL11.glPopMatrix();
@@ -36,6 +65,22 @@
      }
  
      /**
+@@ -284,13 +292,13 @@
+      */
+     protected void renderModel(EntityLivingBase par1EntityLivingBase, float par2, float par3, float par4, float par5, float par6, float par7)
+     {
+-        this.func_110777_b(par1EntityLivingBase);
++        this.bindEntityTexture(par1EntityLivingBase);
+ 
+         if (!par1EntityLivingBase.isInvisible())
+         {
+             this.mainModel.render(par1EntityLivingBase, par2, par3, par4, par5, par6, par7);
+         }
+-        else if (!par1EntityLivingBase.func_98034_c(Minecraft.getMinecraft().thePlayer))
++        else if (!par1EntityLivingBase.isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer))
+         {
+             GL11.glPushMatrix();
+             GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.15F);
 @@ -442,12 +450,13 @@
       */
      protected void passSpecialRender(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6)
@@ -51,7 +96,7 @@
  
              if (d3 < (double)(f2 * f2))
              {
-@@ -491,6 +500,7 @@
+@@ -491,11 +500,12 @@
                  }
              }
          }
@@ -59,3 +104,17 @@
      }
  
      protected boolean func_110813_b(EntityLivingBase par1EntityLivingBase)
+     {
+-        return Minecraft.isGuiEnabled() && par1EntityLivingBase != this.renderManager.livingPlayer && !par1EntityLivingBase.func_98034_c(Minecraft.getMinecraft().thePlayer) && par1EntityLivingBase.riddenByEntity == null;
++        return Minecraft.isGuiEnabled() && par1EntityLivingBase != this.renderManager.livingPlayer && !par1EntityLivingBase.isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer) && par1EntityLivingBase.riddenByEntity == null;
+     }
+ 
+     protected void func_96449_a(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6, String par8Str, float par9, double par10)
+@@ -570,6 +580,6 @@
+      */
+     public void doRender(Entity par1Entity, double par2, double par4, double par6, float par8, float par9)
+     {
+-        this.func_130000_a((EntityLivingBase)par1Entity, par2, par4, par6, par8, par9);
++        this.doRenderLiving((EntityLivingBase)par1Entity, par2, par4, par6, par8, par9);
+     }
+ }

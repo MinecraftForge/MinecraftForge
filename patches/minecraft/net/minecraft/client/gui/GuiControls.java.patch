@@ -18,7 +18,7 @@
  
      public GuiControls(GuiScreen par1GuiScreen, GameSettings par2GameSettings)
      {
-@@ -43,14 +47,9 @@
+@@ -43,15 +47,10 @@
       */
      public void initGui()
      {
@@ -30,23 +30,23 @@
 -        }
 -
 -        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, I18n.func_135053_a("gui.done")));
+-        this.screenTitle = I18n.func_135053_a("controls.title");
 +        scrollPane = new GuiControlsScrollPanel(this, options, mc);
-+        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height - 28, I18n.func_135053_a("gui.done")));
++        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height - 28, I18n.getString("gui.done")));
 +        scrollPane.registerScrollButtons(7, 8);
-         this.screenTitle = I18n.func_135053_a("controls.title");
++        this.screenTitle = I18n.getString("controls.title");
      }
  
-@@ -58,20 +57,10 @@
-      * Fired when a control is clicked. This is the equivalent of ActionListener.actionPerformed(ActionEvent e).
+     /**
+@@ -59,19 +58,9 @@
       */
      protected void actionPerformed(GuiButton par1GuiButton)
--    {
+     {
 -        for (int i = 0; i < this.options.keyBindings.length; ++i)
 -        {
 -            ((GuiButton)this.buttonList.get(i)).displayString = this.options.getOptionDisplayString(i);
 -        }
 -
-+    {        
          if (par1GuiButton.id == 200)
          {
              this.mc.displayGuiScreen(this.parentScreen);

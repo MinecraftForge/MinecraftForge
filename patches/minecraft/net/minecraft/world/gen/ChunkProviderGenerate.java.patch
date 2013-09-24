@@ -117,12 +117,25 @@
          {
              for (l1 = 0; l1 < 16; ++l1)
              {
-@@ -554,6 +593,8 @@
-                 }
+@@ -555,6 +594,8 @@
              }
          }
-+
-+        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(par1IChunkProvider, worldObj, rand, par2, par3, flag));
  
++        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(par1IChunkProvider, worldObj, rand, par2, par3, flag));
++
          BlockSand.fallInstantly = false;
      }
+ 
+@@ -567,7 +608,11 @@
+         return true;
+     }
+ 
+-    public void func_104112_b() {}
++    /**
++     * Save extra data not associated with any Chunk.  Not saved during autosave, only during world unload.  Currently
++     * unimplemented.
++     */
++    public void saveExtraData() {}
+ 
+     /**
+      * Unloads chunks that are marked to be unloaded. This is not guaranteed to unload every such chunk.

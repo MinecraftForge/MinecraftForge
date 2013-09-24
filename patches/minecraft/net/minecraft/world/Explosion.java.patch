@@ -50,12 +50,12 @@
                              {
                                  Block block = Block.blocksList[k1];
 -                                float f3 = this.exploder != null ? this.exploder.func_82146_a(this, this.worldObj, l, i1, j1, block) : block.getExplosionResistance(this.exploder);
-+                                float f3 = this.exploder != null ? this.exploder.func_82146_a(this, this.worldObj, l, i1, j1, block) : block.getExplosionResistance(this.exploder, worldObj, l, i1, j1, explosionX, explosionY, explosionZ);
++                                float f3 = this.exploder != null ? this.exploder.getBlockExplosionResistance(this, this.worldObj, l, i1, j1, block) : block.getExplosionResistance(this.exploder, worldObj, l, i1, j1, explosionX, explosionY, explosionZ);
                                  f1 -= (f3 + 0.3F) * f2;
                              }
  
 -                            if (f1 > 0.0F && (this.exploder == null || this.exploder.func_96091_a(this, this.worldObj, l, i1, j1, k1, f1)))
-+                            if (f1 > 0.0F && (this.exploder == null || this.exploder.func_96091_a(this, this.worldObj, l, i1, j1, k1, f1)) && i1 < 256 && i1 >= 0)   // CraftBukkit - don't wrap explosions
++                            if (f1 > 0.0F && (this.exploder == null || this.exploder.shouldExplodeBlock(this, this.worldObj, l, i1, j1, k1, f1)) && i1 < 256 && i1 >= 0)   // CraftBukkit - don't wrap explosions
                              {
                                  hashset.add(new ChunkPosition(l, i1, j1));
                              }
@@ -218,3 +218,15 @@
                  }
              }
          }
+@@ -254,7 +363,10 @@
+         return this.field_77288_k;
+     }
+ 
+-    public EntityLivingBase func_94613_c()
++    /**
++     * Returns either the entity that placed the explosive block, the entity that caused the explosion or null.
++     */
++    public EntityLivingBase getExplosivePlacedBy()
+     {
+         return this.exploder == null ? null : (this.exploder instanceof EntityTNTPrimed ? ((EntityTNTPrimed)this.exploder).getTntPlacedBy() : (this.exploder instanceof EntityLivingBase ? (EntityLivingBase)this.exploder : null));
+     }

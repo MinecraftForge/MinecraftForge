@@ -112,6 +112,21 @@
  
      /** The current experience level the player is on. */
      public int experienceLevel;
+@@ -177,10 +223,10 @@
+         this.fireResistance = 20;
+     }
+ 
+-    protected void func_110147_ax()
+-    {
+-        super.func_110147_ax();
+-        this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_111264_e).func_111128_a(1.0D);
++    protected void applyEntityAttributes()
++    {
++        super.applyEntityAttributes();
++        this.getAttributeMap().func_111150_b(SharedMonsterAttributes.attackDamage).setAttribute(1.0D);
+     }
+ 
+     protected void entityInit()
 @@ -267,6 +313,7 @@
  
              if (itemstack == this.itemInUse)
@@ -120,6 +135,15 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(itemstack, 5);
+@@ -429,7 +476,7 @@
+                 vec31.rotateAroundX(-this.rotationPitch * (float)Math.PI / 180.0F);
+                 vec31.rotateAroundY(-this.rotationYaw * (float)Math.PI / 180.0F);
+                 vec31 = vec31.addVector(this.posX, this.posY + (double)this.getEyeHeight(), this.posZ);
+-                this.worldObj.spawnParticle("iconcrack_" + par1ItemStack.getItem().itemID, vec31.xCoord, vec31.yCoord, vec31.zCoord, vec3.xCoord, vec3.yCoord + 0.05D, vec3.zCoord);
++                this.worldObj.spawnParticle("iconcrack_" + par1ItemStack.getItem().itemID + "_" + par1ItemStack.getItemDamage(), vec31.xCoord, vec31.yCoord, vec31.zCoord, vec3.xCoord, vec3.yCoord + 0.05D, vec3.zCoord);
+             }
+ 
+             this.playSound("random.eat", 0.5F + 0.5F * (float)this.rand.nextInt(2), (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
 @@ -445,6 +492,36 @@
          {
              this.updateItemUse(this.itemInUse, 16);
@@ -157,6 +181,15 @@
              ItemStack itemstack = this.itemInUse.onFoodEaten(this.worldObj, this);
  
              if (itemstack != this.itemInUse || itemstack != null && itemstack.stackSize != i)
+@@ -479,7 +556,7 @@
+      */
+     protected boolean isMovementBlocked()
+     {
+-        return this.func_110143_aJ() <= 0.0F || this.isPlayerSleeping();
++        return this.getHealth() <= 0.0F || this.isPlayerSleeping();
+     }
+ 
+     /**
 @@ -495,8 +572,19 @@
       */
      public void mountEntity(Entity par1Entity)
@@ -188,7 +221,7 @@
 +
 +            if (!this.worldObj.isRemote && this.ridingEntity == null)
 +            {
-+                this.func_110145_l(originalVehicle);
++                this.dismountEntity(originalVehicle);
 +            }
 +
 +            // CraftBukkit end
@@ -214,25 +247,76 @@
              }
          }
      }
-@@ -580,7 +677,8 @@
+@@ -557,7 +654,7 @@
+         this.yOffset = 1.62F;
+         this.setSize(0.6F, 1.8F);
+         super.preparePlayerToSpawn();
+-        this.setEntityHealth(this.func_110138_aP());
++        this.setHealth(this.getMaxHealth());
+         this.deathTime = 0;
+     }
  
-         if (this.worldObj.difficultySetting == 0 && this.func_110143_aJ() < this.func_110138_aP() && this.worldObj.getGameRules().getGameRuleBooleanValue("naturalRegeneration") && this.ticksExisted % 20 * 12 == 0)
-         {
+@@ -578,19 +675,20 @@
+             --this.flyToggleTimer;
+         }
+ 
+-        if (this.worldObj.difficultySetting == 0 && this.func_110143_aJ() < this.func_110138_aP() && this.worldObj.getGameRules().getGameRuleBooleanValue("naturalRegeneration") && this.ticksExisted % 20 * 12 == 0)
+-        {
 -            this.heal(1.0F);
++        if (this.worldObj.difficultySetting == 0 && this.getHealth() < this.getMaxHealth() && this.worldObj.getGameRules().getGameRuleBooleanValue("naturalRegeneration") && this.ticksExisted % 20 * 12 == 0)
++        {
 +            // CraftBukkit - added regain reason of "REGEN" for filtering purposes.
 +            this.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.REGEN);
          }
  
          this.inventory.decrementAnimations();
-@@ -602,7 +700,7 @@
+         this.prevCameraYaw = this.cameraYaw;
+         super.onLivingUpdate();
+-        AttributeInstance attributeinstance = this.func_110148_a(SharedMonsterAttributes.field_111263_d);
++        AttributeInstance attributeinstance = this.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
  
-         this.setAIMoveSpeed((float)attributeinstance.func_111126_e());
+         if (!this.worldObj.isRemote)
+         {
+-            attributeinstance.func_111128_a((double)this.capabilities.getWalkSpeed());
++            attributeinstance.setAttribute((double)this.capabilities.getWalkSpeed());
+         }
+ 
+         this.jumpMovementFactor = this.speedInAir;
+@@ -600,21 +698,21 @@
+             this.jumpMovementFactor = (float)((double)this.jumpMovementFactor + (double)this.speedInAir * 0.3D);
+         }
+ 
+-        this.setAIMoveSpeed((float)attributeinstance.func_111126_e());
++        this.setAIMoveSpeed((float)attributeinstance.getAttributeValue());
          float f = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
 -        float f1 = (float)Math.atan(-this.motionY * 0.20000000298023224D) * 15.0F;
 +        float f1 = (float) org.bukkit.craftbukkit.TrigMath.atan(-this.motionY * 0.20000000298023224D) * 15.0F;  // CraftBukkit - Math -> TrigMath
  
          if (f > 0.1F)
          {
+             f = 0.1F;
+         }
+ 
+-        if (!this.onGround || this.func_110143_aJ() <= 0.0F)
++        if (!this.onGround || this.getHealth() <= 0.0F)
+         {
+             f = 0.0F;
+         }
+ 
+-        if (this.onGround || this.func_110143_aJ() <= 0.0F)
++        if (this.onGround || this.getHealth() <= 0.0F)
+         {
+             f1 = 0.0F;
+         }
+@@ -622,7 +720,7 @@
+         this.cameraYaw += (f - this.cameraYaw) * 0.4F;
+         this.cameraPitch += (f1 - this.cameraPitch) * 0.8F;
+ 
+-        if (this.func_110143_aJ() > 0.0F)
++        if (this.getHealth() > 0.0F)
+         {
+             AxisAlignedBB axisalignedbb = null;
+ 
 @@ -684,11 +782,15 @@
       */
      public void onDeath(DamageSource par1DamageSource)
@@ -276,14 +360,14 @@
          this.addScore(par2);
 -        Collection collection = this.getWorldScoreboard().func_96520_a(ScoreObjectiveCriteria.field_96640_e);
 +        // CraftBukkit - Get our scores instead
-+        Collection<Score> collection = this.worldObj.getServer().getScoreboardManager().getScoreboardScores(ScoreObjectiveCriteria.field_96640_e, this.getEntityName(), new java.util.ArrayList<Score>());
++        Collection<Score> collection = this.worldObj.getServer().getScoreboardManager().getScoreboardScores(ScoreObjectiveCriteria.totalKillCount, this.getEntityName(), new java.util.ArrayList<Score>());
  
          if (par1Entity instanceof EntityPlayer)
          {
              this.addStat(StatList.playerKillsStat, 1);
 -            collection.addAll(this.getWorldScoreboard().func_96520_a(ScoreObjectiveCriteria.field_96639_d));
 +            // CraftBukkit - Get our scores instead
-+            this.worldObj.getServer().getScoreboardManager().getScoreboardScores(ScoreObjectiveCriteria.field_96639_d, this.getEntityName(), collection);
++            this.worldObj.getServer().getScoreboardManager().getScoreboardScores(ScoreObjectiveCriteria.playerKillCount, this.getEntityName(), collection);
          }
          else
          {
@@ -460,6 +544,15 @@
  
          this.foodStats.writeNBT(par1NBTTagCompound);
          this.capabilities.writeCapabilitiesToNBT(par1NBTTagCompound);
+@@ -948,7 +1138,7 @@
+ 
+     public void displayGUIHopperMinecart(EntityMinecartHopper par1EntityMinecartHopper) {}
+ 
+-    public void func_110298_a(EntityHorse par1EntityHorse, IInventory par2IInventory) {}
++    public void displayGUIHorse(EntityHorse par1EntityHorse, IInventory par2IInventory) {}
+ 
+     public void displayGUIEnchantment(int par1, int par2, int par3, String par4Str) {}
+ 
 @@ -980,6 +1170,7 @@
       */
      public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
@@ -468,6 +561,15 @@
          if (this.isEntityInvulnerable())
          {
              return false;
+@@ -992,7 +1183,7 @@
+         {
+             this.entityAge = 0;
+ 
+-            if (this.func_110143_aJ() <= 0.0F)
++            if (this.getHealth() <= 0.0F)
+             {
+                 return false;
+             }
 @@ -1007,7 +1198,7 @@
                  {
                      if (this.worldObj.difficultySetting == 0)
@@ -486,13 +588,17 @@
                  {
                      return false;
                  }
-@@ -1043,9 +1234,79 @@
+@@ -1041,11 +1232,81 @@
+         }
+     }
  
-     public boolean func_96122_a(EntityPlayer par1EntityPlayer)
-     {
+-    public boolean func_96122_a(EntityPlayer par1EntityPlayer)
+-    {
 -        Team team = this.getTeam();
 -        Team team1 = par1EntityPlayer.getTeam();
 -        return team == null ? true : (!team.func_142054_a(team1) ? true : team.func_96665_g());
++    public boolean canAttackPlayer(EntityPlayer par1EntityPlayer)
++    {
 +        // CraftBukkit start - Change to check OTHER player's scoreboard team according to API
 +        // To summarize this method's logic, it's "Can parameter hurt this"
 +        org.bukkit.scoreboard.Team team;
@@ -546,9 +652,9 @@
 +                }
 +            }
 +
-+            if (!(par1EntityLivingBase instanceof EntityPlayer) || this.func_96122_a((EntityPlayer)par1EntityLivingBase))
++            if (!(par1EntityLivingBase instanceof EntityPlayer) || this.canAttackPlayer((EntityPlayer)par1EntityLivingBase))
 +            {
-+                if (!(par1EntityLivingBase instanceof EntityHorse) || !((EntityHorse)par1EntityLivingBase).func_110248_bS())
++                if (!(par1EntityLivingBase instanceof EntityHorse) || !((EntityHorse)par1EntityLivingBase).isTame())
 +                {
 +                    List list = this.worldObj.getEntitiesWithinAABB(EntityWolf.class, AxisAlignedBB.getAABBPool().getAABB(this.posX, this.posY, this.posZ, this.posX + 1.0D, this.posY + 1.0D, this.posZ + 1.0D).expand(16.0D, 4.0D, 16.0D));
 +                    Iterator iterator = list.iterator();
@@ -569,7 +675,20 @@
      }
  
      protected void damageArmor(float par1)
-@@ -1088,12 +1349,15 @@
+@@ -1061,7 +1322,11 @@
+         return this.inventory.getTotalArmorValue();
+     }
+ 
+-    public float func_82243_bO()
++    /**
++     * When searching for vulnerable players, if a player is invisible, the return value of this is the chance of seeing
++     * them anyway.
++     */
++    public float getArmorVisibility()
+     {
+         int i = 0;
+         ItemStack[] aitemstack = this.inventory.armorInventory;
+@@ -1088,22 +1353,25 @@
      {
          if (!this.isEntityInvulnerable())
          {
@@ -585,8 +704,22 @@
 +            if (par2 <= 0) return;
              par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
              float f1 = par2;
-             par2 = Math.max(par2 - this.func_110139_bj(), 0.0F);
-@@ -1143,6 +1407,7 @@
+-            par2 = Math.max(par2 - this.func_110139_bj(), 0.0F);
+-            this.func_110149_m(this.func_110139_bj() - (f1 - par2));
++            par2 = Math.max(par2 - this.getAbsorptionAmount(), 0.0F);
++            this.setAbsorptionAmount(this.getAbsorptionAmount() - (f1 - par2));
+ 
+             if (par2 != 0.0F)
+             {
+                 this.addExhaustion(par1DamageSource.getHungerDamage());
+-                float f2 = this.func_110143_aJ();
+-                this.setEntityHealth(this.func_110143_aJ() - par2);
++                float f2 = this.getHealth();
++                this.setHealth(this.getHealth() - par2);
+                 this.func_110142_aN().func_94547_a(par1DamageSource, f2, par2);
+             }
+         }
+@@ -1143,10 +1411,11 @@
  
      public boolean interactWith(Entity par1Entity)
      {
@@ -594,7 +727,12 @@
          ItemStack itemstack = this.getCurrentEquippedItem();
          ItemStack itemstack1 = itemstack != null ? itemstack.copy() : null;
  
-@@ -1157,7 +1422,8 @@
+-        if (!par1Entity.func_130002_c(this))
++        if (!par1Entity.interactFirst(this))
+         {
+             if (itemstack != null && par1Entity instanceof EntityLivingBase)
+             {
+@@ -1157,7 +1426,8 @@
  
                  if (itemstack.func_111282_a(this, (EntityLivingBase)par1Entity))
                  {
@@ -604,7 +742,7 @@
                      {
                          this.destroyCurrentEquippedItem();
                      }
-@@ -1199,7 +1465,9 @@
+@@ -1199,7 +1469,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -614,7 +752,7 @@
      }
  
      /**
-@@ -1216,6 +1484,15 @@
+@@ -1216,11 +1488,20 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -629,8 +767,16 @@
 +        }
          if (par1Entity.canAttackWithItem())
          {
-             if (!par1Entity.func_85031_j(this))
-@@ -1255,6 +1532,19 @@
+-            if (!par1Entity.func_85031_j(this))
+-            {
+-                float f = (float)this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111126_e();
++            if (!par1Entity.hitByEntity(this))
++            {
++                float f = (float)this.getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue();
+                 int i = 0;
+                 float f1 = 0.0F;
+ 
+@@ -1255,6 +1536,19 @@
                      }
  
                      boolean flag2 = par1Entity.attackEntityFrom(DamageSource.causePlayerDamage(this), f);
@@ -650,7 +796,16 @@
  
                      if (flag2)
                      {
-@@ -1306,7 +1596,8 @@
+@@ -1281,7 +1575,7 @@
+                             this.triggerAchievement(AchievementList.overkill);
+                         }
+ 
+-                        this.func_130011_c(par1Entity);
++                        this.setLastAttacker(par1Entity);
+ 
+                         if (par1Entity instanceof EntityLivingBase)
+                         {
+@@ -1306,7 +1600,8 @@
                      {
                          itemstack.hitEntity((EntityLivingBase)object, this);
  
@@ -660,7 +815,7 @@
                          {
                              this.destroyCurrentEquippedItem();
                          }
-@@ -1314,11 +1605,24 @@
+@@ -1314,11 +1609,24 @@
  
                      if (par1Entity instanceof EntityLivingBase)
                      {
@@ -686,7 +841,7 @@
                          }
                          else if (flag1)
                          {
-@@ -1352,6 +1656,10 @@
+@@ -1352,6 +1660,10 @@
  
          if (this.openContainer != null)
          {
@@ -697,7 +852,7 @@
              this.openContainer.onContainerClosed(this);
          }
      }
-@@ -1369,6 +1677,12 @@
+@@ -1369,6 +1681,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -710,7 +865,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1406,6 +1720,21 @@
+@@ -1406,6 +1724,21 @@
              this.mountEntity((Entity)null);
          }
  
@@ -732,7 +887,7 @@
          this.setSize(0.2F, 0.2F);
          this.yOffset = 0.2F;
  
-@@ -1413,6 +1742,11 @@
+@@ -1413,6 +1746,11 @@
          {
              int l = this.worldObj.getBlockMetadata(par1, par2, par3);
              int i1 = BlockBed.getDirection(l);
@@ -744,7 +899,7 @@
              float f = 0.5F;
              float f1 = 0.5F;
  
-@@ -1483,10 +1817,12 @@
+@@ -1483,10 +1821,12 @@
          ChunkCoordinates chunkcoordinates = this.playerLocation;
          ChunkCoordinates chunkcoordinates1 = this.playerLocation;
  
@@ -761,7 +916,7 @@
  
              if (chunkcoordinates1 == null)
              {
-@@ -1503,6 +1839,25 @@
+@@ -1503,6 +1843,25 @@
              this.worldObj.updateAllPlayersSleepingFlag();
          }
  
@@ -787,7 +942,7 @@
          if (par1)
          {
              this.sleepTimer = 0;
-@@ -1523,7 +1878,9 @@
+@@ -1523,7 +1882,9 @@
       */
      private boolean isInBed()
      {
@@ -798,7 +953,7 @@
      }
  
      /**
-@@ -1538,9 +1895,12 @@
+@@ -1538,9 +1899,12 @@
          ichunkprovider.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          ichunkprovider.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -814,7 +969,7 @@
              return chunkcoordinates1;
          }
          else
-@@ -1562,10 +1922,13 @@
+@@ -1562,10 +1926,13 @@
      {
          if (this.playerLocation != null)
          {
@@ -832,7 +987,7 @@
              {
                  case 0:
                      return 90.0F;
-@@ -1631,14 +1994,40 @@
+@@ -1631,14 +1998,40 @@
      /**
       * Returns the location of the bed the player will respawn at, or null if the player has not slept in a bed.
       */
@@ -877,7 +1032,7 @@
      }
  
      /**
-@@ -1646,18 +2035,49 @@
+@@ -1646,18 +2039,49 @@
       */
      public void setSpawnChunk(ChunkCoordinates par1ChunkCoordinates, boolean par2)
      {
@@ -930,7 +1085,16 @@
      /**
       * Will trigger the specified trigger.
       */
-@@ -1839,6 +2259,10 @@
+@@ -1720,7 +2144,7 @@
+      */
+     public float getAIMoveSpeed()
+     {
+-        return (float)this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111126_e();
++        return (float)this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue();
+     }
+ 
+     /**
+@@ -1839,6 +2263,10 @@
  
              super.fall(par1);
          }
@@ -941,7 +1105,7 @@
      }
  
      /**
-@@ -1880,7 +2304,7 @@
+@@ -1880,7 +2308,7 @@
          {
              if (par1ItemStack.getItem().requiresMultipleRenderPasses())
              {
@@ -950,7 +1114,7 @@
              }
  
              if (this.itemInUse != null && par1ItemStack.itemID == Item.bow.itemID)
-@@ -1902,6 +2326,7 @@
+@@ -1902,6 +2330,7 @@
                      return Item.bow.getItemIconForUseDuration(0);
                  }
              }
@@ -958,7 +1122,25 @@
          }
  
          return icon;
-@@ -2123,7 +2548,17 @@
+@@ -1997,7 +2426,7 @@
+      */
+     public boolean shouldHeal()
+     {
+-        return this.func_110143_aJ() > 0.0F && this.func_110143_aJ() < this.func_110138_aP();
++        return this.getHealth() > 0.0F && this.getHealth() < this.getMaxHealth();
+     }
+ 
+     /**
+@@ -2106,7 +2535,7 @@
+         if (par2)
+         {
+             this.inventory.copyInventory(par1EntityPlayer.inventory);
+-            this.setEntityHealth(par1EntityPlayer.func_110143_aJ());
++            this.setHealth(par1EntityPlayer.getHealth());
+             this.foodStats = par1EntityPlayer.foodStats;
+             this.experienceLevel = par1EntityPlayer.experienceLevel;
+             this.experienceTotal = par1EntityPlayer.experienceTotal;
+@@ -2123,7 +2552,17 @@
              this.setScore(par1EntityPlayer.getScore());
          }
  
@@ -976,7 +1158,16 @@
      }
  
      /**
-@@ -2187,7 +2622,14 @@
+@@ -2153,7 +2592,7 @@
+         return this.username;
+     }
+ 
+-    public World func_130014_f_()
++    public World getEntityWorld()
+     {
+         return this.worldObj;
+     }
+@@ -2187,11 +2626,24 @@
       */
      public void setCurrentItemOrArmor(int par1, ItemStack par2ItemStack)
      {
@@ -992,3 +1183,45 @@
      }
  
      @SideOnly(Side.CLIENT)
+-    public boolean func_98034_c(EntityPlayer par1EntityPlayer)
++
++    /**
++     * Only used by renderer in EntityLivingBase subclasses.\nDetermines if an entity is visible or not to a specfic
++     * player, if the entity is normally invisible.\nFor EntityLivingBase subclasses, returning false when invisible
++     * will render the entity semitransparent.
++     */
++    public boolean isInvisibleToPlayer(EntityPlayer par1EntityPlayer)
+     {
+         if (!this.isInvisible())
+         {
+@@ -2215,7 +2667,7 @@
+         return this.getHideCape(1);
+     }
+ 
+-    public boolean func_96092_aw()
++    public boolean isPushedByWater()
+     {
+         return !this.capabilities.isFlying;
+     }
+@@ -2238,7 +2690,7 @@
+         return ScorePlayerTeam.formatPlayerName(this.getTeam(), this.username);
+     }
+ 
+-    public void func_110149_m(float par1)
++    public void setAbsorptionAmount(float par1)
+     {
+         if (par1 < 0.0F)
+         {
+@@ -2248,9 +2700,9 @@
+         this.getDataWatcher().updateObject(17, Float.valueOf(par1));
+     }
+ 
+-    public float func_110139_bj()
+-    {
+-        return this.getDataWatcher().func_111145_d(17);
++    public float getAbsorptionAmount()
++    {
++        return this.getDataWatcher().getWatchableObjectFloat(17);
+     }
+ 
+     public void openGui(Object mod, int modGuiId, World world, int x, int y, int z)

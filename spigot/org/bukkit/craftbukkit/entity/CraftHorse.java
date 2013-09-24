@@ -20,54 +20,54 @@ public class CraftHorse extends CraftAnimals implements Horse {
     }
 
     public Variant getVariant() {
-        return Variant.values()[getHandle().func_110265_bP()];
+        return Variant.values()[getHandle().getHorseType()];
     }
 
     public void setVariant(Variant variant) {
         Validate.notNull(variant, "Variant cannot be null");
-        getHandle().func_110214_p(variant.ordinal());
+        getHandle().setHorseType(variant.ordinal());
     }
 
     public Color getColor() {
-        return Color.values()[getHandle().func_110202_bQ() & 0xFF];
+        return Color.values()[getHandle().getHorseVariant() & 0xFF];
     }
 
     public void setColor(Color color) {
         Validate.notNull(color, "Color cannot be null");
-        getHandle().func_110235_q(color.ordinal() & 0xFF | getStyle().ordinal() << 8);
+        getHandle().setHorseVariant(color.ordinal() & 0xFF | getStyle().ordinal() << 8);
     }
 
     public Style getStyle() {
-        return Style.values()[getHandle().func_110202_bQ() >>> 8];
+        return Style.values()[getHandle().getHorseVariant() >>> 8];
     }
 
     public void setStyle(Style style) {
         Validate.notNull(style, "Style cannot be null");
-        getHandle().func_110235_q(getColor().ordinal() & 0xFF | style.ordinal() << 8);
+        getHandle().setHorseVariant(getColor().ordinal() & 0xFF | style.ordinal() << 8);
     }
 
     public boolean isCarryingChest() {
-        return getHandle().func_110261_ca();
+        return getHandle().isChested();
     }
 
     public void setCarryingChest(boolean chest) {
         if (chest == isCarryingChest()) return;
-        getHandle().func_110207_m(chest);
+        getHandle().setChested(chest);
         getHandle().func_110226_cD(); // Should be loadChest
     }
 
     public int getDomestication() {
-        return getHandle().func_110252_cg();
+        return getHandle().getTemper();
     }
 
     public void setDomestication(int value) {
         Validate.isTrue(value >= 0, "Domestication cannot be less than zero");
         Validate.isTrue(value <= getMaxDomestication(), "Domestication cannot be greater than the max domestication");
-        getHandle().func_110238_s(value);
+        getHandle().setTemper(value);
     }
 
     public int getMaxDomestication() {
-        return getHandle().func_110218_cm(); // Should be getMaxDomestication
+        return getHandle().getMaxTemper(); // Should be getMaxDomestication
     }
 
     public void setMaxDomestication(int value) {
@@ -76,22 +76,22 @@ public class CraftHorse extends CraftAnimals implements Horse {
     }
 
     public double getJumpStrength() {
-        return getHandle().func_110215_cj();
+        return getHandle().getHorseJumpStrength();
     }
 
     public void setJumpStrength(double strength) {
         Validate.isTrue(strength >= 0, "Jump strength cannot be less than zero");
-        getHandle().func_110148_a(net.minecraft.entity.passive.EntityHorse.field_110271_bv).func_111128_a(strength);
+        getHandle().getEntityAttribute(net.minecraft.entity.passive.EntityHorse.horseJumpStrength).setAttribute(strength);
     }
 
     @Override
     public boolean isTamed() {
-        return getHandle().func_110248_bS();
+        return getHandle().isTame();
     }
 
     @Override
     public void setTamed(boolean tamed) {
-        getHandle().func_110234_j(tamed);
+        getHandle().setHorseTamed(tamed);
     }
 
     @Override
@@ -113,15 +113,15 @@ public class CraftHorse extends CraftAnimals implements Horse {
     }
 
     public String getOwnerName() {
-        return getHandle().func_142019_cb();
+        return getHandle().getOwnerName();
     }
 
     public void setOwnerName(String name) {
-        getHandle().func_110213_b(name);
+        getHandle().setOwnerName(name);
     }
 
     public HorseInventory getInventory() {
-        return new CraftInventoryHorse(getHandle().field_110296_bG);
+        return new CraftInventoryHorse(getHandle().horseChest);
     }
 
     @Override

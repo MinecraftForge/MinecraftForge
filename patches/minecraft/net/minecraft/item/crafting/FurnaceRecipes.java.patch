@@ -30,6 +30,15 @@
      {
          this.addSmelting(Block.oreIron.blockID, new ItemStack(Item.ingotIron), 0.7F);
          this.addSmelting(Block.oreGold.blockID, new ItemStack(Item.ingotGold), 1.0F);
+@@ -34,7 +38,7 @@
+         this.addSmelting(Item.fishRaw.itemID, new ItemStack(Item.fishCooked), 0.35F);
+         this.addSmelting(Block.cobblestone.blockID, new ItemStack(Block.stone), 0.1F);
+         this.addSmelting(Item.clay.itemID, new ItemStack(Item.brick), 0.3F);
+-        this.addSmelting(Block.blockClay.blockID, new ItemStack(Block.field_111032_cD), 0.35F);
++        this.addSmelting(Block.blockClay.blockID, new ItemStack(Block.hardenedClay), 0.35F);
+         this.addSmelting(Block.cactus.blockID, new ItemStack(Item.dyePowder, 1, 2), 0.2F);
+         this.addSmelting(Block.wood.blockID, new ItemStack(Item.coal, 1, 1), 0.15F);
+         this.addSmelting(Block.oreEmerald.blockID, new ItemStack(Item.emerald), 1.0F);
 @@ -57,7 +61,9 @@
  
      /**

@@ -71,7 +71,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public boolean isOp() {
-        return server.getHandle().areCommandsAllowed(getName());
+        return server.getHandle().isPlayerOpped(getName());
     }
 
     @Override
@@ -129,7 +129,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public void sendRawMessage(String message) {
         if (getHandle().playerNetServerHandler == null) return;
 
-        getHandle().playerNetServerHandler.sendPacketToPlayer(new net.minecraft.network.packet.Packet3Chat(net.minecraft.util.ChatMessageComponent.func_111066_d(message)));
+        getHandle().playerNetServerHandler.sendPacketToPlayer(new net.minecraft.network.packet.Packet3Chat(net.minecraft.util.ChatMessageComponent.createFromText(message)));
     }
 
     public void sendMessage(String message) {
@@ -1046,7 +1046,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public void updateScaledHealth() {
-        net.minecraft.entity.ai.attributes.ServersideAttributeMap attributemapserver = (net.minecraft.entity.ai.attributes.ServersideAttributeMap) getHandle().func_110140_aT();
+        net.minecraft.entity.ai.attributes.ServersideAttributeMap attributemapserver = (net.minecraft.entity.ai.attributes.ServersideAttributeMap) getHandle().getAttributeMap();
         Set set = attributemapserver.func_111161_b();
 
         injectScaledMaxHealth(set, true);
@@ -1065,13 +1065,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         }
         for (Object genericInstance : collection) {
             net.minecraft.entity.ai.attributes.Attribute attribute = ((net.minecraft.entity.ai.attributes.AttributeInstance) genericInstance).func_111123_a();
-            if (attribute.func_111108_a().equals("generic.maxHealth")) {
+            if (attribute.getAttributeUnlocalizedName().equals("generic.maxHealth")) {
                 collection.remove(genericInstance);
                 break;
             }
             continue;
         }
-        collection.add(new net.minecraft.entity.ai.attributes.ModifiableAttributeInstance(getHandle().func_110140_aT(), (new net.minecraft.entity.ai.attributes.RangedAttribute("generic.maxHealth", scaledHealth ? healthScale : getMaxHealth(), 0.0D, Float.MAX_VALUE)).func_111117_a("Max Health").func_111112_a(true)));
+        collection.add(new net.minecraft.entity.ai.attributes.ModifiableAttributeInstance(getHandle().getAttributeMap(), (new net.minecraft.entity.ai.attributes.RangedAttribute("generic.maxHealth", scaledHealth ? healthScale : getMaxHealth(), 0.0D, Float.MAX_VALUE)).func_111117_a("Max Health").setShouldWatch(true)));
     }
 
     // Spigot start

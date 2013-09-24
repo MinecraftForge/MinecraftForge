@@ -14,8 +14,7 @@
 +public class SlotEnchantmentTable extends InventoryBasic   // CraftBukkit -> public
  {
      /** The brewing stand this slot belongs to. */
--    final ContainerEnchantment container;
-+    private final ContainerEnchantment container;
+     final ContainerEnchantment container;
 +
 +    // CraftBukkit start
 +    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();

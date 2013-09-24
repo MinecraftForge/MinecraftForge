@@ -1,5 +1,19 @@
 --- ../src_base/minecraft/net/minecraft/entity/monster/EntityMagmaCube.java
 +++ ../src_work/minecraft/net/minecraft/entity/monster/EntityMagmaCube.java
+@@ -14,10 +14,10 @@
+         this.isImmuneToFire = true;
+     }
+ 
+-    protected void func_110147_ax()
++    protected void applyEntityAttributes()
+     {
+-        super.func_110147_ax();
+-        this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.20000000298023224D);
++        super.applyEntityAttributes();
++        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.20000000298023224D);
+     }
+ 
+     /**
 @@ -77,6 +77,8 @@
       */
      protected void dropFewItems(boolean par1, int par2)
@@ -23,6 +37,18 @@
 +
 +        org.bukkit.craftbukkit.event.CraftEventFactory.callEntityDeathEvent(this, loot);
 +        // CraftBukkit end
+     }
+ 
+     /**
+@@ -111,9 +116,9 @@
+         return super.getJumpDelay() * 4;
+     }
+ 
+-    protected void func_70808_l()
++    protected void alterSquishAmount()
+     {
+-        this.field_70813_a *= 0.9F;
++        this.squishAmount *= 0.9F;
      }
  
      /**
