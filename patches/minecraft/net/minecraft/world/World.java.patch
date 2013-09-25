@@ -163,6 +163,15 @@
      }
  
      /**
+@@ -531,7 +595,7 @@
+     public Material getBlockMaterial(int par1, int par2, int par3)
+     {
+         int l = this.getBlockId(par1, par2, par3);
+-        return l == 0 ? Material.air : Block.blocksList[l].blockMaterial;
++        return l == 0 ? Material.air : Block.blocksList[l].getBlockMaterial(this, par1, par2, par3);
+     }
+ 
+     /**
 @@ -1157,7 +1221,7 @@
       */
      public boolean isDaytime()
@@ -282,7 +291,7 @@
              int l = chunk.getBlockID(par1, k, par2);
  
 -            if (l != 0 && Block.blocksList[l].blockMaterial.blocksMovement() && Block.blocksList[l].blockMaterial != Material.leaves)
-+            if (l != 0 && Block.blocksList[l].blockMaterial.blocksMovement() && Block.blocksList[l].blockMaterial != Material.leaves && !Block.blocksList[l].isBlockFoliage(this, x, k, z))
++            if (l != 0 && this.getBlockMaterial(x, k, z).blocksMovement() && this.getBlockMaterial(x, k, z) != Material.leaves && !Block.blocksList[l].isBlockFoliage(this, x, k, z))
              {
                  return k + 1;
              }
@@ -437,6 +446,15 @@
          {
              par1Entity.lastTickPosX = par1Entity.posX;
              par1Entity.lastTickPosY = par1Entity.posY;
+@@ -2387,7 +2526,7 @@
+                 {
+                     Block block = Block.blocksList[this.getBlockId(k1, l1, i2)];
+ 
+-                    if (block != null && block.blockMaterial.isLiquid())
++                    if (block != null && this.getBlockMaterial(k1, l1, i2).isLiquid())
+                     {
+                         return true;
+                     }
 @@ -2424,6 +2563,14 @@
                          {
                              return true;
@@ -452,6 +470,33 @@
                      }
                  }
              }
+@@ -2461,7 +2608,7 @@
+                     {
+                         Block block = Block.blocksList[this.getBlockId(k1, l1, i2)];
+ 
+-                        if (block != null && block.blockMaterial == par2Material)
++                        if (block != null && this.getBlockMaterial(k1, l1, i2) == par2Material)
+                         {
+                             double d0 = (double)((float)(l1 + 1) - BlockFluid.getFluidHeightPercent(this.getBlockMetadata(k1, l1, i2)));
+ 
+@@ -2508,7 +2655,7 @@
+                 {
+                     Block block = Block.blocksList[this.getBlockId(k1, l1, i2)];
+ 
+-                    if (block != null && block.blockMaterial == par2Material)
++                    if (block != null && this.getBlockMaterial(k1, l1, i2) == par2Material)
+                     {
+                         return true;
+                     }
+@@ -2539,7 +2686,7 @@
+                 {
+                     Block block = Block.blocksList[this.getBlockId(k1, l1, i2)];
+ 
+-                    if (block != null && block.blockMaterial == par2Material)
++                    if (block != null && this.getBlockMaterial(k1, l1, i2) == par2Material)
+                     {
+                         int j2 = this.getBlockMetadata(k1, l1, i2);
+                         double d0 = (double)(l1 + 1);
 @@ -2746,15 +2893,16 @@
       */
      public void setBlockTileEntity(int par1, int par2, int par3, TileEntity par4TileEntity)
@@ -660,6 +705,15 @@
          BiomeGenBase biomegenbase = this.getBiomeGenForCoords(par1, par3);
          float f = biomegenbase.getFloatTemperature();
  
+@@ -3225,7 +3382,7 @@
+                 int l = this.getBlockId(par1, par2 - 1, par3);
+                 int i1 = this.getBlockId(par1, par2, par3);
+ 
+-                if (i1 == 0 && Block.snow.canPlaceBlockAt(this, par1, par2, par3) && l != 0 && l != Block.ice.blockID && Block.blocksList[l].blockMaterial.blocksMovement())
++                if (i1 == 0 && Block.snow.canPlaceBlockAt(this, par1, par2, par3) && l != 0 && l != Block.ice.blockID && this.getBlockMaterial(par1, par2 - 1, par3).blocksMovement())
+                 {
+                     return true;
+                 }
 @@ -3254,10 +3411,12 @@
          else
          {
@@ -736,18 +790,26 @@
          }
      }
  
-@@ -3620,6 +3784,11 @@
+@@ -3619,12 +3783,17 @@
+         }
          else
          {
-             if (block != null && (block == Block.waterMoving || block == Block.waterStill || block == Block.lavaMoving || block == Block.lavaStill || block == Block.fire || block.blockMaterial.isReplaceable()))
+-            if (block != null && (block == Block.waterMoving || block == Block.waterStill || block == Block.lavaMoving || block == Block.lavaStill || block == Block.fire || block.blockMaterial.isReplaceable()))
++            if (block != null && (block == Block.waterMoving || block == Block.waterStill || block == Block.lavaMoving || block == Block.lavaStill || block == Block.fire || this.getBlockMaterial(par2, par3, par4).isReplaceable()))
+             {
+                 block = null;
+             }
+ 
+-            return block != null && block.blockMaterial == Material.circuits && block1 == Block.anvil ? true : par1 > 0 && block == null && block1.canPlaceBlockOnSide(this, par2, par3, par4, par6, par8ItemStack);
++            if (block != null && block.isBlockReplaceable(this, par2, par3, par4))
 +            {
 +                block = null;
 +            }
 +
-+            if (block != null && block.isBlockReplaceable(this, par2, par3, par4))
-             {
-                 block = null;
-             }
++            return block != null && this.getBlockMaterial(par2, par3, par4) == Material.circuits && block1 == Block.anvil ? true : par1 > 0 && block == null && block1.canPlaceBlockOnSide(this, par2, par3, par4, par6, par8ItemStack);
+         }
+     }
+ 
 @@ -3914,7 +4083,7 @@
       */
      public long getSeed()

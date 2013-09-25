@@ -30,6 +30,15 @@
          boolean flag = false;
          int i = MathHelper.floor_double(this.posX);
          int j = MathHelper.floor_double(this.posY);
+@@ -315,7 +322,7 @@
+             {
+                 l = this.worldObj.getBlockId(i, j - 1, k);
+ 
+-                if (l != 0 && Block.blocksList[l].blockMaterial.blocksMovement())
++                if (l != 0 && this.worldObj.getBlockMaterial(i, j - 1, k).blocksMovement())
+                 {
+                     flag1 = true;
+                 }
 @@ -477,7 +484,7 @@
                      }
                  }

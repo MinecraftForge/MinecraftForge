@@ -123,7 +123,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             return displacementIds.get(bId);
         }
 
-        Material material = Block.blocksList[bId].blockMaterial;
+        Material material = world.getBlockMaterial(x, y, z);
         if (material.blocksMovement() || material == Material.portal)
         {
             return false;
@@ -171,7 +171,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             return false;
         }
 
-        Material material = Block.blocksList[bId].blockMaterial;
+        Material material = world.getBlockMaterial(x, y, z);
         if (material.blocksMovement() || material == Material.portal)
         {
             return false;

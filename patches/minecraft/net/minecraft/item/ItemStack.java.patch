@@ -1,6 +1,39 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemStack.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemStack.java
-@@ -252,7 +252,9 @@
+@@ -1,16 +1,14 @@
+ package net.minecraft.item;
+ 
+-import com.google.common.collect.HashMultimap;
+-import com.google.common.collect.Multimap;
+-import cpw.mods.fml.relauncher.Side;
+-import cpw.mods.fml.relauncher.SideOnly;
+ import java.text.DecimalFormat;
+ import java.util.ArrayList;
+ import java.util.Iterator;
+ import java.util.List;
++import java.util.Map.Entry;
+ import java.util.Random;
+-import java.util.Map.Entry;
++
+ import net.minecraft.block.Block;
++import net.minecraft.block.material.Material;
+ import net.minecraft.enchantment.Enchantment;
+ import net.minecraft.enchantment.EnchantmentDurability;
+ import net.minecraft.enchantment.EnchantmentHelper;
+@@ -30,6 +28,12 @@
+ import net.minecraft.util.StatCollector;
+ import net.minecraft.world.World;
+ 
++import com.google.common.collect.HashMultimap;
++import com.google.common.collect.Multimap;
++
++import cpw.mods.fml.relauncher.Side;
++import cpw.mods.fml.relauncher.SideOnly;
++
+ public final class ItemStack
+ {
+     public static final DecimalFormat field_111284_a = new DecimalFormat("#.###");
+@@ -252,7 +256,9 @@
       */
      public boolean isItemDamaged()
      {
@@ -11,7 +44,7 @@
      }
  
      /**
-@@ -260,6 +262,10 @@
+@@ -260,6 +266,10 @@
       */
      public int getItemDamageForDisplay()
      {
@@ -22,7 +55,7 @@
          return this.itemDamage;
      }
  
-@@ -268,6 +274,10 @@
+@@ -268,6 +278,10 @@
       */
      public int getItemDamage()
      {
@@ -33,7 +66,7 @@
          return this.itemDamage;
      }
  
-@@ -276,6 +286,12 @@
+@@ -276,6 +290,12 @@
       */
      public void setItemDamage(int par1)
      {
@@ -46,7 +79,7 @@
          this.itemDamage = par1;
  
          if (this.itemDamage < 0)
-@@ -289,7 +305,7 @@
+@@ -289,7 +309,7 @@
       */
      public int getMaxDamage()
      {
@@ -55,7 +88,7 @@
      }
  
      /**
-@@ -327,8 +343,8 @@
+@@ -327,8 +347,8 @@
                  }
              }
  
@@ -66,16 +99,24 @@
          }
      }
  
-@@ -396,7 +412,7 @@
+@@ -394,9 +414,15 @@
+     /**
+      * Checks if the itemStack object can harvest a specified block
       */
++    @Deprecated
      public boolean canHarvestBlock(Block par1Block)
      {
 -        return Item.itemsList[this.itemID].canHarvestBlock(par1Block);
 +        return Item.itemsList[this.itemID].canHarvestBlock(par1Block, this);
++    }
++    
++    public boolean canHarvestBlock(Block par1Block, Material par2Material)
++    {
++        return Item.itemsList[this.itemID].canHarvestBlock(par1Block, this, par2Material);
      }
  
      public boolean func_111282_a(EntityPlayer par1EntityPlayer, EntityLivingBase par2EntityLivingBase)
-@@ -737,10 +753,16 @@
+@@ -737,10 +763,16 @@
          return arraylist;
      }
  

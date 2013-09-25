@@ -1,0 +1,30 @@
+--- ../src_base/minecraft/net/minecraft/world/WorldProviderEnd.java
++++ ../src_work/minecraft/net/minecraft/world/WorldProviderEnd.java
+@@ -1,8 +1,5 @@
+ package net.minecraft.world;
+ 
+-import cpw.mods.fml.relauncher.Side;
+-import cpw.mods.fml.relauncher.SideOnly;
+-import net.minecraft.block.Block;
+ import net.minecraft.util.ChunkCoordinates;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.util.Vec3;
+@@ -10,6 +7,9 @@
+ import net.minecraft.world.biome.WorldChunkManagerHell;
+ import net.minecraft.world.chunk.IChunkProvider;
+ import net.minecraft.world.gen.ChunkProviderEnd;
++import net.minecraftforge.common.ForgeHooks;
++import cpw.mods.fml.relauncher.Side;
++import cpw.mods.fml.relauncher.SideOnly;
+ 
+ public class WorldProviderEnd extends WorldProvider
+ {
+@@ -116,7 +116,7 @@
+     public boolean canCoordinateBeSpawn(int par1, int par2)
+     {
+         int k = this.worldObj.getFirstUncoveredBlock(par1, par2);
+-        return k == 0 ? false : Block.blocksList[k].blockMaterial.blocksMovement();
++        return k == 0 ? false : ForgeHooks.getFirstUncoveredMaterial(worldObj, par1, par2).blocksMovement();
+     }
+ 
+     /**

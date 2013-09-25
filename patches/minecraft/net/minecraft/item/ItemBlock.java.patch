@@ -10,6 +10,15 @@
          {
              if (par7 == 0)
              {
+@@ -105,7 +106,7 @@
+         {
+             return false;
+         }
+-        else if (par5 == 255 && Block.blocksList[this.blockID].blockMaterial.isSolid())
++        else if (par5 == 255 && par3World.getBlockMaterial(par4, par5, par6).isSolid())
+         {
+             return false;
+         }
 @@ -115,14 +116,8 @@
              int j1 = this.getMetadata(par1ItemStack.getItemDamage());
              int k1 = Block.blocksList[this.blockID].onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, j1);

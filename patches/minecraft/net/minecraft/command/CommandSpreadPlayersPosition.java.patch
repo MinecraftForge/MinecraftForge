@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/command/CommandSpreadPlayersPosition.java
++++ ../src_work/minecraft/net/minecraft/command/CommandSpreadPlayersPosition.java
+@@ -102,7 +102,7 @@
+ 
+             if (l != 0)
+             {
+-                Material material = Block.blocksList[l].blockMaterial;
++                Material material = par1World.getBlockMaterial(i, k, j);
+                 return !material.isLiquid() && material != Material.fire;
+             }
+         }

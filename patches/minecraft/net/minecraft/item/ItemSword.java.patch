@@ -1,0 +1,31 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemSword.java
++++ ../src_work/minecraft/net/minecraft/item/ItemSword.java
+@@ -36,6 +36,7 @@
+      * Returns the strength of the stack against a given block. 1.0F base, (Quality+1)*2 if correct blocktype, 1.5F if
+      * sword
+      */
++    @Deprecated
+     public float getStrVsBlock(ItemStack par1ItemStack, Block par2Block)
+     {
+         if (par2Block.blockID == Block.web.blockID)
+@@ -45,6 +46,20 @@
+         else
+         {
+             Material material = par2Block.blockMaterial;
++            return material != Material.plants && material != Material.vine && material != Material.coral && material != Material.leaves && material != Material.pumpkin ? 1.0F : 1.5F;
++        }
++    }
++    
++    @Override
++    public float getStrVsBlock(ItemStack par1ItemStack, Block par2Block, Material par3Material)
++    {
++        if (par2Block.blockID == Block.web.blockID)
++        {
++            return 15.0F;
++        }
++        else
++        {
++            Material material = par3Material;
+             return material != Material.plants && material != Material.vine && material != Material.coral && material != Material.leaves && material != Material.pumpkin ? 1.0F : 1.5F;
+         }
+     }

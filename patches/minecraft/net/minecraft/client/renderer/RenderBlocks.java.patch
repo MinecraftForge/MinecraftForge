@@ -106,3 +106,12 @@
          boolean flag4 = par1BlockPane.shouldSideBeRendered(this.blockAccess, par2, par3 + 1, par4, 1);
          boolean flag5 = par1BlockPane.shouldSideBeRendered(this.blockAccess, par2, par3 - 1, par4, 0);
          double d20 = 0.01D;
+@@ -3851,7 +3854,7 @@
+             float f6 = 0.6F;
+             double d0 = 0.0D;
+             double d1 = 1.0D;
+-            Material material = par1Block.blockMaterial;
++            Material material = this.blockAccess.getBlockMaterial(par2, par3, par4);
+             int i1 = this.blockAccess.getBlockMetadata(par2, par3, par4);
+             double d2 = (double)this.getFluidHeight(par2, par3, par4, material);
+             double d3 = (double)this.getFluidHeight(par2, par3, par4 + 1, material);

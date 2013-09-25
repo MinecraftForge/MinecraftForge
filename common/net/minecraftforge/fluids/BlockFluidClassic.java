@@ -294,7 +294,7 @@ public class BlockFluidClassic extends BlockFluidBase
             return displacementIds.get(bId);
         }
 
-        Material material = Block.blocksList[bId].blockMaterial;
+        Material material = world.getBlockMaterial(x, y, z);
         if (material.blocksMovement()  ||
             material == Material.water ||
             material == Material.lava  ||

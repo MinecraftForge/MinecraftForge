@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraftforge.client.event.FOVUpdateEvent;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -17,10 +18,12 @@ import org.lwjgl.opengl.PixelFormat;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -30,9 +33,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
@@ -390,4 +397,14 @@ public class ForgeHooksClient
         FluidRegistry.renderIdFluid = RenderingRegistry.getNextAvailableRenderId();
         RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
     }
+    
+    @SideOnly(Side.CLIENT)
+    public static Material getBlockMaterialAtEntityViewPoint(WorldClient par0World, EntityLivingBase par1EntityLivingBase, float par2)
+    {
+        Vec3 vec3 = ActiveRenderInfo.projectViewFromEntity(par1EntityLivingBase, (double)par2);
+        ChunkPosition chunkposition = new ChunkPosition(vec3);         
+        Block block = Block.blocksList[par0World.getBlockId(chunkposition.x, chunkposition.y, chunkposition.z)];
+        return block.getBlockMaterial(par0World, vec3.xCoord, vec3.yCoord, vec3.zCoord);
+    }
+
 }
