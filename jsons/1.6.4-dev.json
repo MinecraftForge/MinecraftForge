@@ -8,7 +8,7 @@
   "minimumLauncherVersion": 4,
   "libraries": [
     {
-      "name": "net.minecraft:launchwrapper:1.7",
+      "name": "net.minecraft:launchwrapper:1.8",
       "comment" : "Important for FML, we add this"
     },
     {
