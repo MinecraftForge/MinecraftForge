@@ -41,9 +41,7 @@ public class BiomeEvent extends Event
             this.replacement = replacement;
         }
     }
-    
 
-    @SideOnly(Side.CLIENT)
     public static class BiomeColor extends BiomeEvent
     {
         public final int originalColor;
@@ -90,8 +88,6 @@ public class BiomeEvent extends Event
     /**
      * This event is fired when a biome is queried for its grass color. 
      */
-
-    @SideOnly(Side.CLIENT)
     public static class GetGrassColor extends BiomeColor
     {
         public GetGrassColor(BiomeGenBase biome, int original)
@@ -103,7 +99,6 @@ public class BiomeEvent extends Event
     /**
      * This event is fired when a biome is queried for its grass color. 
      */
-    @SideOnly(Side.CLIENT)
     public static class GetFoliageColor extends BiomeColor
     {
         public GetFoliageColor(BiomeGenBase biome, int original)
@@ -115,7 +110,6 @@ public class BiomeEvent extends Event
     /**
      * This event is fired when a biome is queried for its water color. 
      */
-    @SideOnly(Side.CLIENT)
     public static class GetWaterColor extends BiomeColor
     {
         public GetWaterColor(BiomeGenBase biome, int original)
