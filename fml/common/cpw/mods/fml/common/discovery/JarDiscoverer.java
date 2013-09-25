@@ -70,6 +70,7 @@ public class JarDiscoverer implements ITypeDiscoverer
                     try
                     {
                         modParser = new ASMModParser(jar.getInputStream(ze));
+                        candidate.addClassEntry(ze.getName());
                     }
                     catch (LoaderException e)
                     {

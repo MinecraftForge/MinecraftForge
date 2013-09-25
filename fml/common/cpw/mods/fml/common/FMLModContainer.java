@@ -54,6 +54,7 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.Metadata;
 import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
+import cpw.mods.fml.common.discovery.ModCandidate;
 import cpw.mods.fml.common.event.FMLConstructionEvent;
 import cpw.mods.fml.common.event.FMLEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -112,11 +113,13 @@ public class FMLModContainer implements ModContainer
     private ILanguageAdapter languageAdapter;
     private ListMultimap<Class<? extends FMLEvent>,Method> eventMethods;
     private Map<String, String> customModProperties;
+    private ModCandidate candidate;
 
-    public FMLModContainer(String className, File modSource, Map<String,Object> modDescriptor)
+    public FMLModContainer(String className, ModCandidate container, Map<String,Object> modDescriptor)
     {
         this.className = className;
-        this.source = modSource;
+        this.source = container.getModContainer();
+        this.candidate = container;
         this.descriptor = modDescriptor;
         this.modLanguage = (String) modDescriptor.get("modLanguage");
         this.languageAdapter = "scala".equals(modLanguage) ? new ILanguageAdapter.ScalaAdapter() : new ILanguageAdapter.JavaAdapter();
@@ -454,6 +457,7 @@ public class FMLModContainer implements ModContainer
         {
             ModClassLoader modClassLoader = event.getModClassLoader();
             modClassLoader.addFile(source);
+            modClassLoader.clearNegativeCacheFor(candidate.getClassList());
             Class<?> clazz = Class.forName(className, true, modClassLoader);
 
             Certificate[] certificates = clazz.getProtectionDomain().getCodeSource().getCertificates();
