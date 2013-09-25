@@ -1,8 +1,6 @@
 package net.minecraftforge.event.world;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
 import net.minecraftforge.event.Cancelable;
 import net.minecraftforge.event.Event;
 
