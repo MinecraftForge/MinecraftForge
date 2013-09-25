@@ -147,7 +147,7 @@
 
     <mkdir dir="${basedir}/target" />
     <path id="server.classpath">
-      <pathelement path="${mcp.home}/jars/libraries/net/minecraft/launchwrapper/1.7/launchwrapper-1.7.jar"/>
+      <pathelement path="${mcp.home}/jars/libraries/net/minecraft/launchwrapper/1.8/launchwrapper-1.8.jar"/>
       <pathelement path="${mcp.home}/jars/libraries/org/ow2/asm/asm-all/4.1/asm-all-4.1.jar"/>
       <pathelement path="${mcp.home}/jars/libraries/lzma/lzma/0.0.1/lzma-0.0.1.jar"/>
       <pathelement path="${mcp.home}/jars/libraries/net/sf/jopt-simple/jopt-simple/4.5/jopt-simple-4.5.jar"/>
