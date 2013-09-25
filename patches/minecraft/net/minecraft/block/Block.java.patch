@@ -57,7 +57,24 @@
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
-@@ -460,9 +480,10 @@
+@@ -441,7 +461,15 @@
+     {
+         return this.blockHardness;
+     }
+-
++    
++    /**
++     * Returns the block Material at a location higher Precision. Args: world, x, y, z
++     */
++    public Material getBlockMaterial(IBlockAccess par1World, double par2, double par3, double par4)
++    {
++        return this.blockMaterial;
++    }
++    
+     /**
+      * Sets whether this block type will receive random update ticks
+      */
+@@ -460,9 +488,10 @@
          return this.needsRandomTick;
      }
  
@@ -69,7 +86,7 @@
      }
  
      /**
-@@ -485,7 +506,7 @@
+@@ -485,7 +514,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -78,7 +95,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -495,7 +516,7 @@
+@@ -495,7 +524,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -87,7 +104,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -648,7 +669,13 @@
+@@ -648,7 +677,13 @@
       * different metadata value, but before the new metadata value is set. Args: World, x, y, z, old block ID, old
       * metadata
       */
@@ -102,7 +119,7 @@
  
      /**
       * Returns the quantity of items to drop on block destruction.
-@@ -673,7 +700,7 @@
+@@ -673,7 +708,7 @@
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
          float f = this.getBlockHardness(par2World, par3, par4, par5);
@@ -111,7 +128,7 @@
      }
  
      /**
-@@ -691,18 +718,14 @@
+@@ -691,18 +726,14 @@
      {
          if (!par1World.isRemote)
          {
@@ -135,7 +152,7 @@
                  }
              }
          }
-@@ -935,7 +958,8 @@
+@@ -935,7 +966,8 @@
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
          int l = par1World.getBlockId(par2, par3, par4);
@@ -145,7 +162,7 @@
      }
  
      /**
-@@ -1086,6 +1110,7 @@
+@@ -1086,6 +1118,7 @@
       */
      public void setBlockBoundsForItemRender() {}
  
@@ -153,7 +170,7 @@
      /**
       * Called when the player destroys a block with an item that can harvest it. (i, j, k) are the coordinates of the
       * block and l is the block's subtype/damage.
-@@ -1095,28 +1120,37 @@
+@@ -1095,28 +1128,37 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -198,7 +215,7 @@
      }
  
      /**
-@@ -1457,4 +1491,979 @@
+@@ -1457,4 +1499,979 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }

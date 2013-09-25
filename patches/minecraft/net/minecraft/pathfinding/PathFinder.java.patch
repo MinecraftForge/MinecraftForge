@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/pathfinding/PathFinder.java
++++ ../src_work/minecraft/net/minecraft/pathfinding/PathFinder.java
+@@ -353,7 +353,7 @@
+                                 return -4;
+                             }
+ 
+-                            Material material = block.blockMaterial;
++                            Material material = par0Entity.worldObj.getBlockMaterial(l, i1, j1);
+ 
+                             if (material != Material.lava)
+                             {

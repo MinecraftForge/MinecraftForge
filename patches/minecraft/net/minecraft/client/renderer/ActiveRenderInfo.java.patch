@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/ActiveRenderInfo.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/ActiveRenderInfo.java
+@@ -106,7 +106,7 @@
+         ChunkPosition chunkposition = new ChunkPosition(vec3);
+         int i = par0World.getBlockId(chunkposition.x, chunkposition.y, chunkposition.z);
+ 
+-        if (i != 0 && Block.blocksList[i].blockMaterial.isLiquid())
++        if (i != 0 && Block.blocksList[i].getBlockMaterial(par0World, chunkposition.x, chunkposition.y, chunkposition.z).isLiquid())
+         {
+             float f1 = BlockFluid.getFluidHeightPercent(par0World.getBlockMetadata(chunkposition.x, chunkposition.y, chunkposition.z)) - 0.11111111F;
+             float f2 = (float)(chunkposition.y + 1) - f1;

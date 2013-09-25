@@ -75,7 +75,7 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
      }
-@@ -753,4 +768,534 @@
+@@ -753,4 +768,560 @@
      {
          StatList.initStats();
      }
@@ -118,7 +118,19 @@
 +     * @param metadata The items current metadata
 +     * @return The damage strength
 +     */
++    @Deprecated
 +    public float getStrVsBlock(ItemStack itemstack, Block block, int metadata)
++    {
++        return getStrVsBlock(itemstack, block);
++    }
++    
++    
++    public float getStrVsBlock(ItemStack itemstack, Block block, int metadata, Material blockMaterial)
++    {
++        return getStrVsBlock(itemstack, block, blockMaterial);
++    }
++    
++    public float getStrVsBlock(ItemStack itemstack, Block block, Material blockMaterial)
 +    {
 +        return getStrVsBlock(itemstack, block);
 +    }
@@ -595,9 +607,23 @@
 +     * @param itemStack The itemstack used to harvest the block
 +     * @return true if can harvest the block
 +     */
++    @Deprecated
 +    public boolean canHarvestBlock(Block par1Block, ItemStack itemStack)
 +    {
 +        return canHarvestBlock(par1Block);  
++    }
++    
++    public boolean canHarvestBlock(Block par1Block, ItemStack itemStack, Material blockMaterial)
++    {
++        return canHarvestBlock(par1Block, blockMaterial);  
++    }
++    
++    /**
++     * Returns if the item (tool) can harvest results from the block type.
++     */
++    public boolean canHarvestBlock(Block par1Block, Material blockMaterial)
++    {
++        return canHarvestBlock(par1Block);
 +    }
 +
 +

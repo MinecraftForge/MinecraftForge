@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/pathfinding/PathNavigate.java
++++ ../src_work/minecraft/net/minecraft/pathfinding/PathNavigate.java
+@@ -485,7 +485,7 @@
+                             return false;
+                         }
+ 
+-                        Material material = Block.blocksList[k2].blockMaterial;
++                        Material material = this.worldObj.getBlockMaterial(i2, par2 - 1, j2);
+ 
+                         if (material == Material.water && !this.theEntity.isInWater())
+                         {

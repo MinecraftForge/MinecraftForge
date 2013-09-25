@@ -6,7 +6,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -24,8 +29,10 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.WeightedRandomItem;
+import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ServerChatEvent;
@@ -156,7 +163,7 @@ public class ForgeHooks
         }
         else
         {
-             return player.getCurrentPlayerStrVsBlock(block, false, metadata) / hardness / 30F;
+             return player.getCurrentPlayerStrVsBlock(block, false, metadata, world.getBlockMaterial(x, y, z)) / hardness / 30F;
         }
     }
 
@@ -429,5 +436,17 @@ public class ForgeHooks
             return null;
         }
         return event.component;
+    }
+    
+    public static Material getFirstUncoveredMaterial(World worldObj, int par1, int par2)
+    {
+        int k;
+
+        for (k = 63; !worldObj.isAirBlock(par1, k + 1, par2); ++k)
+        {
+            ;
+        }
+
+        return worldObj.getBlockMaterial(par1, k, par2);
     }
 }

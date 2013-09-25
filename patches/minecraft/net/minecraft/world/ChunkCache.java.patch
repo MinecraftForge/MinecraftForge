@@ -39,6 +39,24 @@
          }
      }
  
+@@ -266,7 +280,7 @@
+     public Material getBlockMaterial(int par1, int par2, int par3)
+     {
+         int l = this.getBlockId(par1, par2, par3);
+-        return l == 0 ? Material.air : Block.blocksList[l].blockMaterial;
++        return l == 0 ? Material.air : Block.blocksList[l].getBlockMaterial(this, par1, par2, par3);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -296,7 +310,7 @@
+     public boolean isBlockNormalCube(int par1, int par2, int par3)
+     {
+         Block block = Block.blocksList[this.getBlockId(par1, par2, par3)];
+-        return block == null ? false : block.blockMaterial.blocksMovement() && block.renderAsNormalBlock();
++        return block == null ? false : block.getBlockMaterial(this, par1, par2, par3).blocksMovement() && block.renderAsNormalBlock();
+     }
+ 
+     @SideOnly(Side.CLIENT)
 @@ -306,8 +320,7 @@
       */
      public boolean doesBlockHaveSolidTopSurface(int par1, int par2, int par3)

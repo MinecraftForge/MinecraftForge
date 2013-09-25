@@ -1,0 +1,53 @@
+--- ../src_base/minecraft/net/minecraft/world/gen/structure/StructureComponent.java
++++ ../src_work/minecraft/net/minecraft/world/gen/structure/StructureComponent.java
+@@ -132,14 +132,14 @@
+             {
+                 i2 = par1World.getBlockId(k1, j, l1);
+ 
+-                if (i2 > 0 && Block.blocksList[i2].blockMaterial.isLiquid())
++                if (i2 > 0 && par1World.getBlockMaterial(k1, j, l1).isLiquid())
+                 {
+                     return true;
+                 }
+ 
+                 i2 = par1World.getBlockId(k1, i1, l1);
+ 
+-                if (i2 > 0 && Block.blocksList[i2].blockMaterial.isLiquid())
++                if (i2 > 0 && par1World.getBlockMaterial(k1, i1, l1).isLiquid())
+                 {
+                     return true;
+                 }
+@@ -152,14 +152,14 @@
+             {
+                 i2 = par1World.getBlockId(k1, l1, k);
+ 
+-                if (i2 > 0 && Block.blocksList[i2].blockMaterial.isLiquid())
++                if (i2 > 0 && par1World.getBlockMaterial(k1, l1, k).isLiquid())
+                 {
+                     return true;
+                 }
+ 
+                 i2 = par1World.getBlockId(k1, l1, j1);
+ 
+-                if (i2 > 0 && Block.blocksList[i2].blockMaterial.isLiquid())
++                if (i2 > 0 && par1World.getBlockMaterial(k1, l1, j1).isLiquid())
+                 {
+                     return true;
+                 }
+@@ -172,14 +172,14 @@
+             {
+                 i2 = par1World.getBlockId(i, l1, k1);
+ 
+-                if (i2 > 0 && Block.blocksList[i2].blockMaterial.isLiquid())
++                if (i2 > 0 && par1World.getBlockMaterial(i, l1, k1).isLiquid())
+                 {
+                     return true;
+                 }
+ 
+                 i2 = par1World.getBlockId(l, l1, k1);
+ 
+-                if (i2 > 0 && Block.blocksList[i2].blockMaterial.isLiquid())
++                if (i2 > 0 && par1World.getBlockMaterial(l, l1, k1).isLiquid())
+                 {
+                     return true;
+                 }

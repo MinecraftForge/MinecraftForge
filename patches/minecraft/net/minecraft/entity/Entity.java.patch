@@ -79,6 +79,15 @@
      }
  
      protected abstract void entityInit();
+@@ -1011,7 +1043,7 @@
+             stepsound = Block.snow.stepSound;
+             this.playSound(stepsound.getStepSound(), stepsound.getVolume() * 0.15F, stepsound.getPitch());
+         }
+-        else if (!Block.blocksList[par4].blockMaterial.isLiquid())
++        else if (!Block.blocksList[par4].getBlockMaterial(this.worldObj, par1, par2, par3).isLiquid())
+         {
+             this.playSound(stepsound.getStepSound(), stepsound.getVolume() * 0.15F, stepsound.getPitch());
+         }
 @@ -1164,11 +1196,20 @@
          int k = MathHelper.floor_double(this.posZ);
          int l = this.worldObj.getBlockId(i, j, k);
@@ -89,7 +98,7 @@
 -            float f1 = (float)(j + 1) - f;
 -            return d0 < (double)f1;
 +        Block block = Block.blocksList[l];
-+        if (block != null && block.blockMaterial == par1Material)
++        if (block != null && this.worldObj.getBlockMaterial(i, j, k) == par1Material)
 +        {
 +            double filled = block.getFilledPercentage(worldObj, i, j, k);
 +            if (filled < 0)

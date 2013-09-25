@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/entity/passive/EntityHorse.java
++++ ../src_work/minecraft/net/minecraft/entity/passive/EntityHorse.java
+@@ -593,7 +593,7 @@
+             stepsound = Block.snow.stepSound;
+         }
+ 
+-        if (!Block.blocksList[par4].blockMaterial.isLiquid())
++        if (!Block.blocksList[par4].getBlockMaterial(this.worldObj,par1, par2, par3).isLiquid())
+         {
+             int i1 = this.getHorseType();
+ 
