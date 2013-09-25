@@ -1,6 +1,23 @@
 --- ../src_base/minecraft/net/minecraft/world/Explosion.java
 +++ ../src_work/minecraft/net/minecraft/world/Explosion.java
-@@ -92,7 +92,7 @@
+@@ -17,6 +17,7 @@
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.util.Vec3;
++import net.minecraftforge.event.ForgeEventFactory;
+ 
+ public class Explosion
+ {
+@@ -33,6 +34,8 @@
+     public double explosionZ;
+     public Entity exploder;
+     public float explosionSize;
++    /** Set to true to stop the explosion progressing - EntityExplosionEvent */
++    public boolean stopExplosion;
+ 
+     /** A list of ChunkPositions of blocks affected by this explosion */
+     public List affectedBlockPositions = new ArrayList();
+@@ -92,7 +95,7 @@
                              if (k1 > 0)
                              {
                                  Block block = Block.blocksList[k1];
@@ -9,7 +26,24 @@
                                  f1 -= (f3 + 0.3F) * f2;
                              }
  
-@@ -222,8 +222,7 @@
+@@ -121,6 +124,8 @@
+         List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.exploder, AxisAlignedBB.getAABBPool().getAABB((double)i, (double)k, (double)i2, (double)j, (double)l1, (double)j2));
+         Vec3 vec3 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.explosionX, this.explosionY, this.explosionZ);
+ 
++        if (!ForgeEventFactory.canEntityExplode(this, list)) { return; }
++        
+         for (int k2 = 0; k2 < list.size(); ++k2)
+         {
+             Entity entity = (Entity)list.get(k2);
+@@ -162,6 +167,7 @@
+      */
+     public void doExplosionB(boolean par1)
+     {
++        if (stopExplosion) return; //Stops part B if the event has been canceled
+         this.worldObj.playSoundEffect(this.explosionX, this.explosionY, this.explosionZ, "random.explode", 4.0F, (1.0F + (this.worldObj.rand.nextFloat() - this.worldObj.rand.nextFloat()) * 0.2F) * 0.7F);
+ 
+         if (this.explosionSize >= 2.0F && this.isSmoking)
+@@ -222,8 +228,7 @@
                          block.dropBlockAsItemWithChance(this.worldObj, i, j, k, this.worldObj.getBlockMetadata(i, j, k), 1.0F / this.explosionSize, 0);
                      }
  

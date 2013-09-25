@@ -235,7 +235,16 @@
      }
  
      protected void onEntityAdded(Entity par1Entity)
-@@ -1073,4 +1130,9 @@
+@@ -947,6 +1004,8 @@
+             explosion.affectedBlockPositions.clear();
+         }
+ 
++        if (explosion.stopExplosion) return explosion; //Stops explosion on client - EntityExplosionEvent
++        
+         Iterator iterator = this.playerEntities.iterator();
+ 
+         while (iterator.hasNext())
+@@ -1073,4 +1132,9 @@
      {
          return this.worldTeleporter;
      }
