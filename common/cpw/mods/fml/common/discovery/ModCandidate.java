@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -14,8 +14,10 @@ package cpw.mods.fml.common.discovery;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ModContainer;
@@ -31,6 +33,7 @@ public class ModCandidate
     private List<String> baseModTypes = Lists.newArrayList();
     private boolean isMinecraft;
     private List<ASMModParser> baseModCandidateTypes = Lists.newArrayListWithCapacity(1);
+    private Set<String> foundClasses = Sets.newHashSet();
 
     public ModCandidate(File classPathRoot, File modContainer, ContainerType sourceType)
     {
@@ -73,6 +76,12 @@ public class ModCandidate
         }
     }
 
+    public void addClassEntry(String name)
+    {
+        String className = name.substring(0, name.lastIndexOf('.')).replace('.', '/'); // strip the .class and . -> /
+        foundClasses.add(className);
+    }
+
     public boolean isClasspath()
     {
         return classpath;
@@ -92,5 +101,9 @@ public class ModCandidate
     public void rememberModCandidateType(ASMModParser modParser)
     {
         baseModCandidateTypes.add(modParser);
+    }
+    public Set<String> getClassList()
+    {
+        return foundClasses;
     }
 }

@@ -18,6 +18,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 import net.minecraft.launchwrapper.IClassTransformer;
@@ -99,5 +100,10 @@ public class ModClassLoader extends URLClassLoader
         }
         accessTransformer.ensurePublicAccessFor(modClazzName);
         return (Class<? extends BaseModProxy>) Class.forName(modClazzName, true, this);
+    }
+
+    public void clearNegativeCacheFor(Set<String> classList)
+    {
+        mainClassLoader.clearNegativeEntries(classList);
     }
 }
