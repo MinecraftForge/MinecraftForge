@@ -365,7 +365,7 @@ public class ForgeHooks
             int mX = MathHelper.floor_double(bb.minX);
             int mY = MathHelper.floor_double(bb.minY);
             int mZ = MathHelper.floor_double(bb.minZ);
-            for (int y2 = mY; y < bb.maxY; y2++)
+            for (int y2 = mY; y2 < bb.maxY; y2++)
             {
                 for (int x2 = mX; x2 < bb.maxX; x2++)
                 {
