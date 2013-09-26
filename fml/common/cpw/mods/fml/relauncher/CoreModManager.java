@@ -248,6 +248,7 @@ public class CoreModManager
                 ADDURL.setAccessible(true);
             }
             ADDURL.invoke(classLoader.getClass().getClassLoader(), coreMod.toURI().toURL());
+            classLoader.addURL(coreMod.toURI().toURL());
             CoreModManager.tweaker.injectCascadingTweak(cascadedTweaker);
         }
         catch (Exception e)
