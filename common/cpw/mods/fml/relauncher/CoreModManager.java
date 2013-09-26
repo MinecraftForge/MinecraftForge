@@ -29,6 +29,7 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 
 import net.minecraft.launchwrapper.ITweaker;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 
 import com.google.common.base.Strings;
@@ -448,26 +449,8 @@ public class CoreModManager
                 FMLInjectionData.containers.add(modContainer);
             }
         }
-        // Deobfuscation transformer, always last
-        if (!deobfuscatedEnvironment)
-        {
-            classLoader.registerTransformer("cpw.mods.fml.common.asm.transformers.DeobfuscationTransformer");
-        }
-        try
-        {
-            FMLRelaunchLog.fine("Validating minecraft");
-            Class<?> loaderClazz = Class.forName("cpw.mods.fml.common.Loader", true, classLoader);
-            Method m = loaderClazz.getMethod("injectData", Object[].class);
-            m.invoke(null, (Object)FMLInjectionData.data());
-            m = loaderClazz.getMethod("instance");
-            m.invoke(null);
-            FMLRelaunchLog.fine("Minecraft validated, launching...");
-        }
-        catch (Exception e)
-        {
-            // Load in the Loader, make sure he's ready to roll - this will initialize most of the rest of minecraft here
-            System.out.println("A CRITICAL PROBLEM OCCURED INITIALIZING MINECRAFT - LIKELY YOU HAVE AN INCORRECT VERSION FOR THIS FML");
-            throw new RuntimeException(e);
-        }
+
+        Launch.blackboard.put("fml.deobfuscatedEnvironment", deobfuscatedEnvironment);
+        tweaker.injectCascadingTweak("cpw.mods.fml.launcher.FMLDeobfTweaker");
     }
 }
