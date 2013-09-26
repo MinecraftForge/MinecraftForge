@@ -451,6 +451,6 @@ public class CoreModManager
         }
 
         Launch.blackboard.put("fml.deobfuscatedEnvironment", deobfuscatedEnvironment);
-        tweaker.injectCascadingTweak("cpw.mods.fml.launcher.FMLDeobfTweaker");
+        tweaker.injectCascadingTweak("cpw.mods.fml.common.launcher.FMLDeobfTweaker");
     }
 }
