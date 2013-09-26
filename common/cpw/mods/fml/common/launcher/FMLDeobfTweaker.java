@@ -46,13 +46,13 @@ public class FMLDeobfTweaker implements ITweaker {
     @Override
     public String getLaunchTarget()
     {
-        return null;
+        throw new RuntimeException("Invalid for use as a primary tweaker");
     }
 
     @Override
     public String[] getLaunchArguments()
     {
-        return null;
+        return new String[0];
     }
 
 }
