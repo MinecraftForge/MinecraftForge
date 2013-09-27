@@ -24,11 +24,19 @@ def main():
     
     fml_dir = os.path.join(forge_dir, 'fml')
     mcp_dir = os.path.join(forge_dir, 'mcp')
-
+    mcpc_dir = os.path.join(forge_dir, 'eclipse/forge')
+    
     if not options.mcp_dir is None:
         mcp_dir = os.path.abspath(options.mcp_dir)
         
     src_dir = os.path.join(mcp_dir, 'src')
+
+    PURGE = ['mvn', 'dependency:purge-local-repository', '-DactTransitively=false', '-DreResolve=true', '-DsnapshotsOnly=true']
+    if sys.platform.startswith('win'):
+        PURGE = ['cmd', '/C'] + PURGE
+    if not run_command(PURGE, cwd=mcpc_dir):
+        print('Could not setup FML')
+        sys.exit(1)    
     
     setup_fml(mcp_dir, fml_dir, build_num)
     
