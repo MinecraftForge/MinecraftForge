@@ -10,7 +10,7 @@
 
     <groupId>net.md-5</groupId>
     <artifactId>SpecialSource</artifactId>
-    <version>1.6-SNAPSHOT</version>
+    <version>1.6R1</version>
     <packaging>jar</packaging>
 
     <name>SpecialSource</name>

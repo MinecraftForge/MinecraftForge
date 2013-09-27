@@ -4,14 +4,14 @@
 <groupId>mcpc</groupId>
 <artifactId>mcpc-plus</artifactId>
 <packaging>jar</packaging>
-<version>1.6.2-R0.2-SNAPSHOT</version>
+<version>1.6.2-R1.1-SNAPSHOT</version>
 <name>mcpc-plus</name>
 <url>http://www.mcportcentral.co.za/</url>
 <properties>
     <mcpc.basedir>${project.basedir}/../..</mcpc.basedir>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <bukkit.version>${project.version}</bukkit.version>
-    <filename.version>1.6.2-R0.2</filename.version>
+    <filename.version>1.6.2-R1.1</filename.version>
     <api.version>unknown</api.version>
     <minecraft.version>1.6.2</minecraft.version>
     <minecraft_version>1_6_R2</minecraft_version>
@@ -26,14 +26,9 @@
 </properties>
 <pluginRepositories>
     <pluginRepository>
-        <id>sonatype-oss-public</id>
-        <url>https://oss.sonatype.org/content/groups/public</url>
-        <releases>
-            <enabled>true</enabled>
-        </releases>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
+      <id>ProjectRepo</id>
+      <name>ProjectRepo</name>
+      <url>file://${mcpc.basedir}/libs</url>
     </pluginRepository>
 </pluginRepositories>
 <repositories>
@@ -50,16 +45,22 @@
     <repository>
         <id>md_5-snapshots</id>
         <url>http://repo.md-5.net/content/groups/public</url>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
     </repository>
     <repository>
         <id>sonatype-nexus-snapshots</id>
         <name>Sonatype Nexus Snapshots</name>
-        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        <url>https://oss.sonatype.org/content/repositories</url>
         <releases>
-            <enabled>false</enabled>
+            <enabled>true</enabled>
         </releases>
         <snapshots>
-            <enabled>true</enabled>
+            <enabled>false</enabled>
         </snapshots>
     </repository>
 </repositories>
@@ -217,7 +218,7 @@
     <dependency>
         <groupId>net.md-5</groupId>
         <artifactId>SpecialSource</artifactId>
-        <version>1.6-SNAPSHOT</version>
+        <version>1.6R1</version>
         <type>jar</type>
         <scope>compile</scope>
     </dependency>
@@ -441,7 +442,7 @@
         <plugin>
             <groupId>net.md-5</groupId>
             <artifactId>specialsource-maven-plugin</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>1.1R1</version>
             <executions>
                 <execution>
                     <id>install-launchwrapper</id>
@@ -536,7 +537,7 @@
                                 <pluginExecutionFilter>
                                     <groupId>net.md-5</groupId>
                                     <artifactId>specialsource-maven-plugin</artifactId>
-                                    <versionRange>[1.1-SNAPSHOT,)</versionRange>
+                                    <versionRange>1.1R1</versionRange>
                                     <goals>
                                         <goal>install-remapped-file</goal>
                                     </goals>
