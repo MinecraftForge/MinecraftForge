@@ -7,6 +7,10 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemInWorldManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -98,5 +102,24 @@ public class ForgeEventFactory
         BlockEvent.HarvestDropsEvent event = new BlockEvent.HarvestDropsEvent(x, y, z, world, block, meta, fortune, dropChance, drops, player, silkTouch);
         MinecraftForge.EVENT_BUS.post(event);
         return event.dropChance;
+    }
+    
+    public static boolean stopBlockBreak(World theWorld, EntityPlayerMP thisPlayerMP, Block block, int x, int y, int z)
+    {
+        BlockEvent.BlockBreakEvent event = new BlockEvent.BlockBreakEvent(theWorld, thisPlayerMP, block, x, y, z);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.isCanceled();
+    }
+    
+    public static boolean stopBlockPlace(World world, EntityPlayer player, Item item, int x, int y, int z, int side, float hitX, float hitY, float hitZ)
+    {
+        if (!(item instanceof ItemBlock))
+        {
+           return true; 
+        }
+        Block block = Block.blocksList[((ItemBlock)item).getBlockID()];
+        BlockEvent.BlockPlaceEvent event = new BlockEvent.BlockPlaceEvent(world, player, block, x, y, z, side, hitX, hitY, hitZ);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.isCanceled();
     }
 }

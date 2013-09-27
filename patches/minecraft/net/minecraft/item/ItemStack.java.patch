@@ -1,6 +1,22 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemStack.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemStack.java
-@@ -252,7 +252,9 @@
+@@ -29,6 +29,7 @@
+ import net.minecraft.util.Icon;
+ import net.minecraft.util.StatCollector;
+ import net.minecraft.world.World;
++import net.minecraftforge.event.ForgeEventFactory;
+ 
+ public final class ItemStack
+ {
+@@ -149,6 +150,7 @@
+ 
+     public boolean tryPlaceItemIntoWorld(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5, int par6, float par7, float par8, float par9)
+     {
++        if (ForgeEventFactory.stopBlockPlace(par2World, par1EntityPlayer, getItem(), par3, par4, par5, par6, par7, par8, par9)) { return false; }
+         boolean flag = this.getItem().onItemUse(this, par1EntityPlayer, par2World, par3, par4, par5, par6, par7, par8, par9);
+ 
+         if (flag)
+@@ -252,7 +254,9 @@
       */
      public boolean isItemDamaged()
      {
@@ -11,7 +27,7 @@
      }
  
      /**
-@@ -260,6 +262,10 @@
+@@ -260,6 +264,10 @@
       */
      public int getItemDamageForDisplay()
      {
@@ -22,7 +38,7 @@
          return this.itemDamage;
      }
  
-@@ -268,6 +274,10 @@
+@@ -268,6 +276,10 @@
       */
      public int getItemDamage()
      {
@@ -33,7 +49,7 @@
          return this.itemDamage;
      }
  
-@@ -276,6 +286,12 @@
+@@ -276,6 +288,12 @@
       */
      public void setItemDamage(int par1)
      {
@@ -46,7 +62,7 @@
          this.itemDamage = par1;
  
          if (this.itemDamage < 0)
-@@ -289,7 +305,7 @@
+@@ -289,7 +307,7 @@
       */
      public int getMaxDamage()
      {
@@ -55,7 +71,7 @@
      }
  
      /**
-@@ -327,8 +343,8 @@
+@@ -327,8 +345,8 @@
                  }
              }
  
@@ -66,7 +82,7 @@
          }
      }
  
-@@ -396,7 +412,7 @@
+@@ -396,7 +414,7 @@
       */
      public boolean canHarvestBlock(Block par1Block)
      {
@@ -75,7 +91,7 @@
      }
  
      public boolean func_111282_a(EntityPlayer par1EntityPlayer, EntityLivingBase par2EntityLivingBase)
-@@ -737,10 +753,16 @@
+@@ -737,10 +755,16 @@
          return arraylist;
      }
  

@@ -82,7 +82,19 @@
  
          if (block != null && flag)
          {
-@@ -261,19 +297,30 @@
+@@ -251,6 +287,11 @@
+      */
+     public boolean tryHarvestBlock(int par1, int par2, int par3)
+     {
++        if (ForgeEventFactory.stopBlockBreak(theWorld, thisPlayerMP, Block.blocksList[theWorld.getBlockId(par1, par2, par3)], par1, par2, par3))
++        {
++            thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, theWorld));
++            return false;
++        }
+         if (this.gameType.isAdventure() && !this.thisPlayerMP.isCurrentToolAdventureModeExempt(par1, par2, par3))
+         {
+             return false;
+@@ -261,19 +302,30 @@
          }
          else
          {
@@ -115,7 +127,7 @@
  
                  if (itemstack != null)
                  {
-@@ -285,6 +332,7 @@
+@@ -285,6 +337,7 @@
                      }
                  }
  
@@ -123,7 +135,7 @@
                  if (flag && flag1)
                  {
                      Block.blocksList[l].harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, i1);
-@@ -325,6 +373,7 @@
+@@ -325,6 +378,7 @@
              if (itemstack1.stackSize == 0)
              {
                  par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
@@ -131,7 +143,7 @@
              }
  
              if (!par1EntityPlayer.isUsingItem())
-@@ -342,35 +391,56 @@
+@@ -342,35 +396,56 @@
       */
      public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
      {
@@ -215,7 +227,7 @@
      }
  
      /**
-@@ -380,4 +450,13 @@
+@@ -380,4 +455,13 @@
      {
          this.theWorld = par1WorldServer;
      }
