@@ -1,19 +1,11 @@
 --- ../src_base/minecraft/net/minecraft/entity/passive/EntityOcelot.java
 +++ ../src_work/minecraft/net/minecraft/entity/passive/EntityOcelot.java
-@@ -104,11 +104,11 @@
-         return true;
-     }
- 
--    protected void func_110147_ax()
--    {
--        super.func_110147_ax();
--        this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111128_a(10.0D);
--        this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.30000001192092896D);
-+    protected void applyEntityAttributes()
-+    {
-+        super.applyEntityAttributes();
-+        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute(10.0D);
-+        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.30000001192092896D);
+@@ -93,7 +93,7 @@
+      */
+     protected boolean canDespawn()
+     {
+-        return !this.isTamed() && this.ticksExisted > 2400;
++        return !this.isTamed();
      }
  
      /**
@@ -29,15 +21,6 @@
  
      /**
       * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
-@@ -215,7 +218,7 @@
-                 this.aiSit.setSitting(!this.isSitting());
-             }
-         }
--        else if (this.aiTempt.func_75277_f() && itemstack != null && itemstack.itemID == Item.fishRaw.itemID && par1EntityPlayer.getDistanceSqToEntity(this) < 9.0D)
-+        else if (this.aiTempt.isRunning() && itemstack != null && itemstack.itemID == Item.fishRaw.itemID && par1EntityPlayer.getDistanceSqToEntity(this) < 9.0D)
-         {
-             if (!par1EntityPlayer.capabilities.isCreativeMode)
-             {
 @@ -229,7 +232,8 @@
  
              if (!this.worldObj.isRemote)
@@ -60,16 +43,3 @@
                  {
                      return true;
                  }
-@@ -353,9 +358,9 @@
-         return this.hasCustomNameTag() ? this.getCustomNameTag() : (this.isTamed() ? "entity.Cat.name" : super.getEntityName());
-     }
- 
--    public EntityLivingData func_110161_a(EntityLivingData par1EntityLivingData)
--    {
--        par1EntityLivingData = super.func_110161_a(par1EntityLivingData);
-+    public EntityLivingData onSpawnWithEgg(EntityLivingData par1EntityLivingData)
-+    {
-+        par1EntityLivingData = super.onSpawnWithEgg(par1EntityLivingData);
- 
-         if (this.worldObj.rand.nextInt(7) == 0)
-         {

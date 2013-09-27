@@ -17,35 +17,31 @@
  public abstract class MobSpawnerBaseLogic
  {
      /** The delay to spawn. */
-@@ -162,7 +165,7 @@
-         if (this.getRandomMinecart() != null)
-         {
-             NBTTagCompound nbttagcompound = new NBTTagCompound();
--            par1Entity.addEntityID(nbttagcompound);
-+            par1Entity.writeToNBTOptional(nbttagcompound);
-             Iterator iterator = this.getRandomMinecart().field_98222_b.getTags().iterator();
- 
-             while (iterator.hasNext())
-@@ -175,7 +178,7 @@
+@@ -175,7 +178,13 @@
  
              if (par1Entity.worldObj != null)
              {
 -                par1Entity.worldObj.spawnEntityInWorld(par1Entity);
-+                par1Entity.worldObj.addEntity(par1Entity, CreatureSpawnEvent.SpawnReason.SPAWNER); // CraftBukkit
++                // CraftBukkit start - call SpawnerSpawnEvent, abort if cancelled
++                org.bukkit.event.entity.SpawnerSpawnEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callSpawnerSpawnEvent(par1Entity, this.getSpawnerX(), this.getSpawnerY(), this.getSpawnerZ());
++                if (!event.isCancelled())
++                {
++                    par1Entity.worldObj.addEntity(par1Entity, CreatureSpawnEvent.SpawnReason.SPAWNER); // CraftBukkit
++                }
++                // CraftBukkit end
              }
  
              NBTTagCompound nbttagcompound1;
-@@ -188,7 +191,7 @@
-                 if (entity2 != null)
-                 {
-                     NBTTagCompound nbttagcompound2 = new NBTTagCompound();
--                    entity2.addEntityID(nbttagcompound2);
-+                    entity2.writeToNBTOptional(nbttagcompound2);
-                     Iterator iterator1 = nbttagcompound1.getTags().iterator();
+@@ -199,10 +208,14 @@
  
-                     while (iterator1.hasNext())
-@@ -202,7 +205,7 @@
- 
+                     entity2.readFromNBT(nbttagcompound2);
+                     entity2.setLocationAndAngles(entity1.posX, entity1.posY, entity1.posZ, entity1.rotationYaw, entity1.rotationPitch);
+-
++                    // CraftBukkit start - call SpawnerSpawnEvent, skip if cancelled
++                    org.bukkit.event.entity.SpawnerSpawnEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callSpawnerSpawnEvent(entity2, this.getSpawnerX(), this.getSpawnerY(), this.getSpawnerZ());
++                    if (event.isCancelled()) {
++                        continue;
++                    }
                      if (par1Entity.worldObj != null)
                      {
 -                        par1Entity.worldObj.spawnEntityInWorld(entity2);
@@ -53,14 +49,17 @@
                      }
  
                      entity1.mountEntity(entity2);
-@@ -213,8 +216,8 @@
-         }
+@@ -214,7 +227,12 @@
          else if (par1Entity instanceof EntityLivingBase && par1Entity.worldObj != null)
          {
--            ((EntityLiving)par1Entity).func_110161_a((EntityLivingData)null);
+             ((EntityLiving)par1Entity).onSpawnWithEgg((EntityLivingData)null);
 -            this.getSpawnerWorld().spawnEntityInWorld(par1Entity);
-+            ((EntityLiving)par1Entity).onSpawnWithEgg((EntityLivingData)null);
-+            this.getSpawnerWorld().addEntity(par1Entity, CreatureSpawnEvent.SpawnReason.SPAWNER); // CraftBukkit
++            // CraftBukkit start - call SpawnerSpawnEvent, abort if cancelled
++            org.bukkit.event.entity.SpawnerSpawnEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callSpawnerSpawnEvent(par1Entity, this.getSpawnerX(), this.getSpawnerY(), this.getSpawnerZ());
++            if (!event.isCancelled()) {
++                this.getSpawnerWorld().addEntity(par1Entity, CreatureSpawnEvent.SpawnReason.SPAWNER); // CraftBukkit
++            }
++            // CraftBukkit end
          }
  
          return par1Entity;

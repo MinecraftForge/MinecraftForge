@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenMinable.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenMinable.java
-@@ -9,10 +9,13 @@
+@@ -9,6 +9,7 @@
  {
      /** The block ID of the ore to be placed using this generator. */
      private int minableBlockId;
@@ -8,19 +8,10 @@
  
      /** The number of blocks to generate. */
      private int numberOfBlocks;
--    private int field_94523_c;
-+
-+    /** The block ID of the block to be replaced with the ore (usually stone) */
-+    private int blockToReplace;
- 
-     public WorldGenMinable(int par1, int par2)
-     {
-@@ -23,7 +26,13 @@
-     {
+@@ -26,6 +27,12 @@
          this.minableBlockId = par1;
          this.numberOfBlocks = par2;
--        this.field_94523_c = par3;
-+        this.blockToReplace = par3;
+         this.blockToReplace = par3;
 +    }
 +
 +    public WorldGenMinable(int id, int meta, int number, int target)
@@ -30,11 +21,11 @@
      }
  
      public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
-@@ -67,9 +76,10 @@
+@@ -69,9 +76,10 @@
                              {
                                  double d14 = ((double)i3 + 0.5D - d8) / (d10 / 2.0D);
  
--                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && par1World.getBlockId(k2, l2, i3) == this.field_94523_c)
+-                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && par1World.getBlockId(k2, l2, i3) == this.blockToReplace)
 +                                Block block = Block.blocksList[par1World.getBlockId(k2, l2, i3)];
 +                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && (block != null && block.isGenMineableReplaceable(par1World, k2, l2, i3, this.blockToReplace)))
                                  {

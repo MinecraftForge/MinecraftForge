@@ -17,7 +17,6 @@ import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
-import org.spigotmc.OrebfuscatorManager; // MCPC+
 
 public class OreDictionary
 {

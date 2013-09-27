@@ -1,14 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockPistonExtension.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockPistonExtension.java
-@@ -54,11 +54,19 @@
-     }
- 
-     /**
--     * ejects contained items into the world, and notifies neighbours of an update, as appropriate
-+     * Called on server worlds only when the block has been replaced by a different block ID, or the same block with a
-+     * different metadata value, but before the new metadata value is set. Args: World, x, y, z, old block ID, old
-+     * metadata
-      */
+@@ -61,6 +61,12 @@
      public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
      {
          super.breakBlock(par1World, par2, par3, par4, par5, par6);
@@ -21,16 +13,7 @@
          int j1 = Facing.oppositeSide[getDirectionMeta(par6)];
          par2 += Facing.offsetsXForSide[j1];
          par3 += Facing.offsetsYForSide[j1];
-@@ -91,7 +99,7 @@
-     public Icon getIcon(int par1, int par2)
-     {
-         int k = getDirectionMeta(par2);
--        return par1 == k ? (this.headTexture != null ? this.headTexture : ((par2 & 8) != 0 ? BlockPistonBase.func_94496_b("piston_top_sticky") : BlockPistonBase.func_94496_b("piston_top_normal"))) : (k < 6 && par1 == Facing.oppositeSide[k] ? BlockPistonBase.func_94496_b("piston_top_normal") : BlockPistonBase.func_94496_b("piston_side"));
-+        return par1 == k ? (this.headTexture != null ? this.headTexture : ((par2 & 8) != 0 ? BlockPistonBase.getPistonBaseIcon("piston_top_sticky") : BlockPistonBase.getPistonBaseIcon("piston_top_normal"))) : (k < 6 && par1 == Facing.oppositeSide[k] ? BlockPistonBase.getPistonBaseIcon("piston_top_normal") : BlockPistonBase.getPistonBaseIcon("piston_side"));
-     }
- 
-     @SideOnly(Side.CLIENT)
-@@ -243,6 +251,12 @@
+@@ -245,6 +251,12 @@
      public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
      {
          int i1 = getDirectionMeta(par1World.getBlockMetadata(par2, par3, par4));

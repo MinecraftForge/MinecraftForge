@@ -36,17 +36,11 @@
              }
              else
              {
-@@ -76,10 +76,10 @@
-         this.func_96551_b();
-     }
- 
--    public void func_96521_a(String par1Str, ScorePlayerTeam par2ScorePlayerTeam)
--    {
--        super.func_96521_a(par1Str, par2ScorePlayerTeam);
+@@ -79,7 +79,7 @@
+     public void addPlayerToTeam(String par1Str, ScorePlayerTeam par2ScorePlayerTeam)
+     {
+         super.addPlayerToTeam(par1Str, par2ScorePlayerTeam);
 -        this.field_96555_a.getConfigurationManager().sendPacketToAllPlayers(new Packet209SetPlayerTeam(par2ScorePlayerTeam, Arrays.asList(new String[] {par1Str}), 3));
-+    public void addPlayerToTeam(String par1Str, ScorePlayerTeam par2ScorePlayerTeam)
-+    {
-+        super.addPlayerToTeam(par1Str, par2ScorePlayerTeam);
 +        this.sendAll(new Packet209SetPlayerTeam(par2ScorePlayerTeam, Arrays.asList(new String[] { par1Str}), 3)); // CraftBukkit - Internal packet method
          this.func_96551_b();
      }

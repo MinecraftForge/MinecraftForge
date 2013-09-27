@@ -1,0 +1,160 @@
+# This is the main configuration file for Bukkit.
+# As you can see, there's actually not that much to configure without any plugins.
+# For a reference for any variable inside this file, check out the bukkit wiki at
+# http://wiki.bukkit.org/Bukkit.yml
+#
+# If you need help on this file, feel free to join us on irc or leave a message
+# on the forums asking for advice.
+#
+# IRC: #bukkit @ esper.net
+#    (If this means nothing to you, just go to http://webchat.esper.net/?channels=bukkit )
+# Forums: http://forums.bukkit.org/forums/bukkit-help.6/
+# Twitter: http://twitter.com/Craftbukkit
+# Bug tracker: http://leaky.bukkit.org/
+
+
+settings:
+    allow-end: true
+    warn-on-overload: true
+    permissions-file: permissions.yml
+    update-folder: update
+    ping-packet-limit: 100
+    use-exact-login-location: false
+    plugin-profiling: false
+    connection-throttle: 4000
+    query-plugins: true
+    deprecated-verbose: default
+    shutdown-message: Server closed
+    filter-unsafe-ips: false
+    whitelist-message: You are not white-listed on this server!
+    fml-missing-message: You do not have FML installed, you cannot connect to this server
+    fml-missing-mods-message: The server requires mods that are absent or out of date on your client
+    fml-outdated-message: Your client is not running a new enough version of FML to connect to this server
+    fml-other-error-message: There was a problem during FML negotiation
+    log-commands: true
+    command-complete: true
+    restart-command: true
+    tps-command: true
+    spam-exclusions:
+       - /skill
+    tab-ping: false
+    timeout-time: 300
+    restart-on-crash: false
+    restart-script-location: /path/to/server/start.sh
+    bungee-proxies:
+      - 127.0.0.1
+    texture-resolution: 16
+    metrics-enable: true
+mcpc:
+    connection-logging: false
+    dump-materials: false
+    world-leak-debug: false
+    infinite-water-source: true
+    flowing-lava-decay: false
+    load-chunk-on-request: true
+    warn-place-no-tile-entity: true
+    banned-item-IDs: []
+    enable-banned-items: false
+    fake-players:
+      com/eloraam/redpower/machine/EntityPlayerFake:
+        username: '[RedPower]'
+        do-login: false
+      dan200/turtle/shared/TurtlePlayer:
+        username: '[ComputerCraft]'
+        do-login: false
+    plugin-settings:
+        default:
+            debug: false
+            custom-class-loader: true
+            use-guava10: true
+            remap-nms-v1_6_R2: true
+            remap-nms-v1_6_R1: true
+            remap-nms-v1_5_R3: true
+            remap-nms-v1_5_R2: true
+            remap-nms-v1_5_R1: true
+            remap-nms-v1_4_R1: true
+            remap-nms-v1_4_6: true
+            remap-obc-v1_6_R2: false
+            remap-obc-v1_6_R1: false
+            remap-obc-v1_5_R3: true
+            remap-obc-v1_5_R2: true
+            remap-obc-v1_5_R1: true
+            remap-obc-v1_4_R1: false
+            remap-obc-v1_4_6: false
+            remap-obc-pre: false
+            remap-nms-pre: 'false'
+            global-inheritance: true
+            plugin-inheritance: true
+            remap-reflect-field: true
+            remap-reflect-class: true
+            remap-allow-future: false
+    bukkit-to-forge-mappings:
+        world_nether : dim-1
+        world_the_end : dim1
+        world_twilightforest : dim7
+world-settings:
+    default:
+        growth-chunks-per-tick: 650
+        mob-spawn-range: 4
+        random-light-updates: false
+        aggregate-chunkticks: 0
+        item-merge-radius: 3.5
+        exp-merge-radius: 3.5
+        wheat-growth-modifier: 100
+        cactus-growth-modifier: 100
+        melon-growth-modifier: 100
+        pumpkin-growth-modifier: 100
+        sugar-growth-modifier: 100
+        tree-growth-modifier: 100
+        mushroom-growth-modifier: 100
+        entity-activation-range-animals: 0
+        entity-activation-range-monsters: 0
+        entity-activation-range-misc: 0
+        entity-tracking-range-players: 48
+        entity-tracking-range-animals: 48
+        entity-tracking-range-monsters: 48
+        entity-tracking-range-misc: 32
+        entity-tracking-range-max: 64
+        info: false
+    world:
+        growth-chunks-per-tick: 1000
+    world_nether:
+        view-distance: 5
+        growth-chunks-per-tick: 0
+        random-light-updates: true
+        water-creatures-per-chunk: 0
+spawn-limits:
+    monsters: 70
+    animals: 15
+    water-animals: 5
+    ambient: 15
+chunk-gc:
+    period-in-ticks: 600
+    load-threshold: 0
+ticks-per:
+    animal-spawns: 400
+    monster-spawns: 1
+    autosave: 0
+auto-updater:
+    enabled: true
+    on-broken: [warn-console, warn-ops]
+    on-update: [warn-console, warn-ops]
+    preferred-channel: rb
+    host: dl.bukkit.org
+    suggest-channels: true
+aliases:
+#    icanhasbukkit:
+#    - version
+database:
+    username: bukkit
+    isolation: SERIALIZABLE
+    driver: org.sqlite.JDBC
+    password: walrus
+    url: jdbc:sqlite:{DIR}{NAME}.db
+orebfuscator:
+    enable: false
+    engine-mode: 1
+    update-radius: 2
+    disabled-worlds:
+       - world_the_end
+    blocks: [1, 5, 14, 15, 16, 21, 48, 49, 54, 56, 73, 74, 82, 129, 130]

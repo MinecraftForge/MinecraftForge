@@ -13,8 +13,7 @@
 -class ContainerRepairINNER1 extends InventoryBasic
 +public class ContainerRepairINNER1 extends InventoryBasic   // CraftBukkit - public
  {
--    final ContainerRepair field_135010_a;
-+    final ContainerRepair repairContainer;
+     final ContainerRepair repairContainer;
 +
 +    // CraftBukkit start
 +    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
@@ -55,18 +54,8 @@
      ContainerRepairINNER1(ContainerRepair par1ContainerRepair, String par2Str, boolean par3, int par4)
      {
          super(par2Str, par3, par4);
--        this.field_135010_a = par1ContainerRepair;
-+        this.repairContainer = par1ContainerRepair;
+         this.repairContainer = par1ContainerRepair;
 +        this.setMaxStackSize(1); // CraftBukkit
-     }
- 
-     /**
-@@ -18,7 +60,7 @@
-     public void onInventoryChanged()
-     {
-         super.onInventoryChanged();
--        this.field_135010_a.onCraftMatrixChanged(this);
-+        this.repairContainer.onCraftMatrixChanged(this);
      }
  
      /**

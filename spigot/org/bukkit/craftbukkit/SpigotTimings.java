@@ -4,6 +4,7 @@ import org.spigotmc.CustomTimingsHandler;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
+import org.bukkit.craftbukkit.scheduler.CraftTask;
 
 public class SpigotTimings {
 
@@ -43,7 +44,7 @@ public class SpigotTimings {
      */
     public static CustomTimingsHandler getPluginTaskTimings(BukkitTask task, long period) {
         String plugin = task.getOwner().getDescription().getFullName();
-        String name = "Task: " + plugin +" Id:";
+        String name = "Task: " + plugin + " Runnable: " + ( (CraftTask) task ).getTaskClass().getSimpleName();
         if (period > 0) {
             name += "(interval:" + period +")";
         } else {

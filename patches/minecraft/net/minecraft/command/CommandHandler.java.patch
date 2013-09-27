@@ -36,40 +36,6 @@
                  if (i > -1)
                  {
                      EntityPlayerMP[] aentityplayermp = PlayerSelector.matchPlayers(par1ICommandSender, astring[i]);
-@@ -64,7 +82,7 @@
-                         }
-                         catch (CommandException commandexception)
-                         {
--                            par1ICommandSender.sendChatToPlayer(ChatMessageComponent.func_111082_b(commandexception.getMessage(), commandexception.getErrorOjbects()).func_111059_a(EnumChatFormatting.RED));
-+                            par1ICommandSender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions(commandexception.getMessage(), commandexception.getErrorOjbects()).setColor(EnumChatFormatting.RED));
-                         }
-                     }
- 
-@@ -78,20 +96,20 @@
-             }
-             else
-             {
--                par1ICommandSender.sendChatToPlayer(ChatMessageComponent.func_111077_e("commands.generic.permission").func_111059_a(EnumChatFormatting.RED));
-+                par1ICommandSender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.generic.permission").setColor(EnumChatFormatting.RED));
-             }
-         }
-         catch (WrongUsageException wrongusageexception)
-         {
--            par1ICommandSender.sendChatToPlayer(ChatMessageComponent.func_111082_b("commands.generic.usage", new Object[] {ChatMessageComponent.func_111082_b(wrongusageexception.getMessage(), wrongusageexception.getErrorOjbects())}).func_111059_a(EnumChatFormatting.RED));
-+            par1ICommandSender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("commands.generic.usage", new Object[] {ChatMessageComponent.createFromTranslationWithSubstitutions(wrongusageexception.getMessage(), wrongusageexception.getErrorOjbects())}).setColor(EnumChatFormatting.RED));
-         }
-         catch (CommandException commandexception1)
-         {
--            par1ICommandSender.sendChatToPlayer(ChatMessageComponent.func_111082_b(commandexception1.getMessage(), commandexception1.getErrorOjbects()).func_111059_a(EnumChatFormatting.RED));
-+            par1ICommandSender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions(commandexception1.getMessage(), commandexception1.getErrorOjbects()).setColor(EnumChatFormatting.RED));
-         }
-         catch (Throwable throwable)
-         {
--            par1ICommandSender.sendChatToPlayer(ChatMessageComponent.func_111077_e("commands.generic.exception").func_111059_a(EnumChatFormatting.RED));
-+            par1ICommandSender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.generic.exception").setColor(EnumChatFormatting.RED));
-             throwable.printStackTrace();
-         }
- 
 @@ -103,9 +121,30 @@
       */
      public ICommand registerCommand(ICommand par1ICommand)

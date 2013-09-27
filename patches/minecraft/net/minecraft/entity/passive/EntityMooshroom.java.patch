@@ -26,7 +26,7 @@
 -            {
 -                EntityCow entitycow = new EntityCow(this.worldObj);
 -                entitycow.setLocationAndAngles(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
--                entitycow.setEntityHealth(this.func_110143_aJ());
+-                entitycow.setHealth(this.getHealth());
 -                entitycow.renderYawOffset = this.renderYawOffset;
 -                this.worldObj.spawnEntityInWorld(entitycow);
 -

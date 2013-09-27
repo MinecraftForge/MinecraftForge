@@ -26,7 +26,18 @@
      }
  
      /**
-@@ -242,4 +243,107 @@
+@@ -218,9 +219,7 @@
+     }
+ 
+     /**
+-     * Called on server worlds only when the block has been replaced by a different block ID, or the same block with a
+-     * different metadata value, but before the new metadata value is set. Args: World, x, y, z, old block ID, old
+-     * metadata
++     * ejects contained items into the world, and notifies neighbours of an update, as appropriate
+      */
+     public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
+     {
+@@ -244,4 +243,107 @@
              par1World.notifyBlocksOfNeighborChange(par2, par3 - 1, par4, par5);
          }
      }

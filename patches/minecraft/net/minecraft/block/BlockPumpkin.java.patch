@@ -113,10 +113,11 @@
      }
  
      /**
-@@ -135,6 +138,23 @@
+@@ -134,6 +137,23 @@
+         int l = MathHelper.floor_double((double)(par5EntityLivingBase.rotationYaw * 4.0F / 360.0F) + 2.5D) & 3;
          par1World.setBlockMetadataWithNotify(par2, par3, par4, l, 2);
      }
- 
++
 +    // CraftBukkit start
 +    /**
 +     * Lets the block know when one of its neighbor changes. Doesn't know which neighbor changed (coordinates passed are
@@ -133,19 +134,6 @@
 +        }
 +    }
 +    // CraftBukkit end
-+
+ 
      @SideOnly(Side.CLIENT)
  
-     /**
-@@ -143,8 +163,8 @@
-      */
-     public void registerIcons(IconRegister par1IconRegister)
-     {
--        this.field_94475_c = par1IconRegister.registerIcon(this.func_111023_E() + "_face_" + (this.blockType ? "on" : "off"));
--        this.field_94474_b = par1IconRegister.registerIcon(this.func_111023_E() + "_top");
--        this.blockIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_side");
-+        this.field_94475_c = par1IconRegister.registerIcon(this.getTextureName() + "_face_" + (this.blockType ? "on" : "off"));
-+        this.field_94474_b = par1IconRegister.registerIcon(this.getTextureName() + "_top");
-+        this.blockIcon = par1IconRegister.registerIcon(this.getTextureName() + "_side");
-     }
- }

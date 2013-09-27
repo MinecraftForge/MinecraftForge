@@ -9,6 +9,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.CraftChunk;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.material.MaterialData;
+import org.bukkit.material.Attachable;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
@@ -128,6 +129,10 @@ public class CraftBlockState implements BlockState {
         }
 
         block.setData(getRawData(), applyPhysics);
+        if (applyPhysics && data instanceof Attachable) {
+            Block rel = block.getRelative(((Attachable) data).getFacing(), -1);
+            world.getHandle().notifyBlocksOfNeighborChange(rel.getX(), rel.getY(), rel.getZ(), block.getTypeId());
+        }
         world.getHandle().markBlockForUpdate(x, y, z);
 
         return true;

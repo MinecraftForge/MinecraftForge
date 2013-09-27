@@ -26,12 +26,3 @@
                  int i1 = 0;
  
                  if (par7 == 1)
-@@ -175,7 +185,7 @@
- 
-         for (int i = 0; i < field_94587_a.length; ++i)
-         {
--            this.field_94586_c[i] = par1IconRegister.registerIcon(this.func_111208_A() + "_" + field_94587_a[i]);
-+            this.field_94586_c[i] = par1IconRegister.registerIcon(this.getIconString() + "_" + field_94587_a[i]);
-         }
-     }
- }

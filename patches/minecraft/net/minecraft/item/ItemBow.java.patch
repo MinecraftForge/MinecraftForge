@@ -83,18 +83,3 @@
          if (par3EntityPlayer.capabilities.isCreativeMode || par3EntityPlayer.inventory.hasItem(Item.arrow.itemID))
          {
              par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));
-@@ -138,12 +172,12 @@
-     @SideOnly(Side.CLIENT)
-     public void registerIcons(IconRegister par1IconRegister)
-     {
--        this.itemIcon = par1IconRegister.registerIcon(this.func_111208_A() + "_standby");
-+        this.itemIcon = par1IconRegister.registerIcon(this.getIconString() + "_standby");
-         this.iconArray = new Icon[bowPullIconNameArray.length];
- 
-         for (int i = 0; i < this.iconArray.length; ++i)
-         {
--            this.iconArray[i] = par1IconRegister.registerIcon(this.func_111208_A() + "_" + bowPullIconNameArray[i]);
-+            this.iconArray[i] = par1IconRegister.registerIcon(this.getIconString() + "_" + bowPullIconNameArray[i]);
-         }
-     }
- 

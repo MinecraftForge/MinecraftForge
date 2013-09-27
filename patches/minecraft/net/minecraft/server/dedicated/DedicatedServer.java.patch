@@ -69,16 +69,19 @@
  
          if (this.isSinglePlayer())
          {
-@@ -87,7 +110,7 @@
-         this.setAllowFlight(this.settings.getBooleanProperty("allow-flight", false));
-         this.setTexturePack(this.settings.getProperty("texture-pack", ""));
-         this.setMOTD(this.settings.getProperty("motd", "A Minecraft Server"));
--        this.func_104055_i(this.settings.getBooleanProperty("force-gamemode", false));
-+        this.setForceGamemode(this.settings.getBooleanProperty("force-gamemode", false));
- 
-         if (this.settings.getIntProperty("difficulty", 1) < 0)
+@@ -113,6 +136,11 @@
          {
-@@ -122,7 +145,7 @@
+             this.setServerPort(this.settings.getIntProperty("server-port", 25565));
+         }
++        // Spigot start
++        this.setConfigurationManager(new DedicatedPlayerList(this));
++        org.spigotmc.SpigotConfig.init();
++        org.spigotmc.SpigotConfig.registerCommands();
++        // Spigot end
+ 
+         this.getLogAgent().logInfo("Generating keypair");
+         this.setKeyPair(CryptManager.createNewKeyPair());
+@@ -122,7 +150,7 @@
          {
              this.networkThread = new DedicatedServerListenThread(this, inetaddress, this.getServerPort());
          }
@@ -87,16 +90,20 @@
          {
              this.getLogAgent().logWarning("**** FAILED TO BIND TO PORT!");
              this.getLogAgent().logWarningFormatted("The exception was: {0}", new Object[] {ioexception.toString()});
-@@ -130,6 +153,8 @@
+@@ -130,6 +158,12 @@
              return false;
          }
  
-+        this.setConfigurationManager((ServerConfigurationManager)(new DedicatedPlayerList(this)));  // CraftBukkit
++        // Spigot Start - Move DedicatedPlayerList up and bring plugin loading from CraftServer to here
++        // this.setConfigurationManager((ServerConfigurationManager)(new DedicatedPlayerList(this)));
++        server.loadPlugins();
++        server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
++        // Spigot End
 +
          if (!this.isServerInOnlineMode())
          {
              this.getLogAgent().logWarning("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
-@@ -140,7 +165,8 @@
+@@ -140,7 +174,8 @@
  
          FMLCommonHandler.instance().onServerStarted();
  
@@ -106,7 +113,7 @@
          long j = System.nanoTime();
  
          if (this.getFolderName() == null)
-@@ -200,11 +226,28 @@
+@@ -200,11 +235,28 @@
              this.getLogAgent().logInfo("Starting remote control listener");
              this.theRConThreadMain = new RConThreadMain(this);
              this.theRConThreadMain.startThread();
@@ -135,7 +142,7 @@
      public boolean canStructuresSpawn()
      {
          return this.canSpawnStructures;
-@@ -220,7 +263,7 @@
+@@ -220,7 +272,7 @@
       */
      public int getDifficulty()
      {
@@ -144,18 +151,7 @@
      }
  
      /**
-@@ -257,8 +300,8 @@
-     public CrashReport addServerInfoToCrashReport(CrashReport par1CrashReport)
-     {
-         par1CrashReport = super.addServerInfoToCrashReport(par1CrashReport);
--        par1CrashReport.func_85056_g().addCrashSectionCallable("Is Modded", new CallableType(this));
--        par1CrashReport.func_85056_g().addCrashSectionCallable("Type", new CallableServerType(this));
-+        par1CrashReport.getCategory().addCrashSectionCallable("Is Modded", new CallableType(this));
-+        par1CrashReport.getCategory().addCrashSectionCallable("Type", new CallableServerType(this));
-         return par1CrashReport;
-     }
- 
-@@ -311,7 +354,13 @@
+@@ -311,7 +363,13 @@
          while (!this.pendingCommandList.isEmpty())
          {
              ServerCommand servercommand = (ServerCommand)this.pendingCommandList.remove(0);
@@ -170,24 +166,29 @@
          }
      }
  
-@@ -408,7 +457,10 @@
-         return this.settings.getIntProperty("spawn-protection", super.getSpawnProtectionSize());
+@@ -377,6 +435,13 @@
+     {
+         File file1 = this.settings.getPropertiesFile();
+         return file1 != null ? file1.getAbsolutePath() : "No settings file";
++    }
++
++    @SideOnly(Side.SERVER)
++    public void func_120011_ar()
++    {
++        MinecraftServerGui.func_120016_a(this);
++        this.guiIsEnabled = true;
      }
  
--    public boolean func_96290_a(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer)
-+    /**
-+     * Returns true if a player does not have permission to edit the block at the given coordinates.
-+     */
-+    public boolean isBlockProtected(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer)
+     public boolean getGuiEnabled()
+@@ -453,11 +518,4 @@
      {
-         if (par1World.provider.dimensionId != 0)
-         {
-@@ -418,7 +470,7 @@
-         {
-             return false;
-         }
--        else if (this.getDedicatedPlayerList().areCommandsAllowed(par5EntityPlayer.getCommandSenderName()))
-+        else if (this.getDedicatedPlayerList().isPlayerOpped(par5EntityPlayer.getCommandSenderName()))
-         {
-             return false;
-         }
+         return this.getDedicatedPlayerList();
+     }
+-
+-    @SideOnly(Side.SERVER)
+-    public void func_120011_ar()
+-    {
+-        MinecraftServerGui.func_120016_a(this);
+-        this.guiIsEnabled = true;
+-    }
+ }

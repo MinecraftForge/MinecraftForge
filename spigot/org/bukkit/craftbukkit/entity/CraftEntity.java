@@ -599,4 +599,20 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
         return getHandle().ridingEntity.getBukkitEntity();
     }
+
+    // Spigot start
+    private final Spigot spigot = new Spigot()
+    {
+        @Override
+        public boolean isInvulnerable()
+        {
+            return getHandle().isEntityInvulnerable();
+        }
+    };
+
+    public Spigot spigot()
+    {
+        return spigot;
+    }
+    // Spigot end
 }

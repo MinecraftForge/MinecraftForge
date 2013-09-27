@@ -18,7 +18,7 @@
  
      public GuiControls(GuiScreen par1GuiScreen, GameSettings par2GameSettings)
      {
-@@ -43,15 +47,10 @@
+@@ -43,14 +47,9 @@
       */
      public void initGui()
      {
@@ -29,15 +29,13 @@
 -            this.buttonList.add(new GuiSmallButton(j, i + j % 2 * 160, this.height / 6 + 24 * (j >> 1), 70, 20, this.options.getOptionDisplayString(j)));
 -        }
 -
--        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, I18n.func_135053_a("gui.done")));
--        this.screenTitle = I18n.func_135053_a("controls.title");
+-        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, I18n.getString("gui.done")));
 +        scrollPane = new GuiControlsScrollPanel(this, options, mc);
 +        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height - 28, I18n.getString("gui.done")));
 +        scrollPane.registerScrollButtons(7, 8);
-+        this.screenTitle = I18n.getString("controls.title");
+         this.screenTitle = I18n.getString("controls.title");
      }
  
-     /**
 @@ -59,19 +58,9 @@
       */
      protected void actionPerformed(GuiButton par1GuiButton)

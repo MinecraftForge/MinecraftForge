@@ -12,33 +12,6 @@
  @SideOnly(Side.CLIENT)
  public class NetClientHandler extends NetHandler
  {
-@@ -248,7 +253,7 @@
-     {
-         this.mc = par1Minecraft;
-         this.netManager = new MemoryConnection(par1Minecraft.getLogAgent(), this);
--        par2IntegratedServer.getServerListeningThread().func_71754_a((MemoryConnection)this.netManager, par1Minecraft.func_110432_I().func_111285_a());
-+        par2IntegratedServer.getServerListeningThread().func_71754_a((MemoryConnection)this.netManager, par1Minecraft.getSession().getUsername());
-         FMLNetworkHandler.onClientConnectionToIntegratedServer(this, par2IntegratedServer, this.netManager);
-     }
- 
-@@ -291,7 +296,7 @@
-         if (!"-".equals(s))
-         {
-             String s1 = (new BigInteger(CryptManager.getServerIdHash(s, publickey, secretkey))).toString(16);
--            String s2 = this.sendSessionRequest(this.mc.func_110432_I().func_111285_a(), this.mc.func_110432_I().func_111286_b(), s1);
-+            String s2 = this.sendSessionRequest(this.mc.getSession().getUsername(), this.mc.getSession().getSessionID(), s1);
- 
-             if (!"ok".equalsIgnoreCase(s2))
-             {
-@@ -311,7 +316,7 @@
-         try
-         {
-             URL url = new URL("http://session.minecraft.net/game/joinserver.jsp?user=" + urlEncode(par1Str) + "&sessionId=" + urlEncode(par2Str) + "&serverId=" + urlEncode(par3Str));
--            InputStream inputstream = url.openConnection(this.mc.func_110437_J()).getInputStream();
-+            InputStream inputstream = url.openConnection(this.mc.getProxy()).getInputStream();
-             BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(inputstream));
-             String s3 = bufferedreader.readLine();
-             bufferedreader.close();
 @@ -784,7 +789,7 @@
  
      public void handleKickDisconnect(Packet255KickDisconnect par1Packet255KickDisconnect)
@@ -52,7 +25,7 @@
      public void handleChat(Packet3Chat par1Packet3Chat)
      {
          par1Packet3Chat = FMLNetworkHandler.handleChatMessage(this, par1Packet3Chat);
--        this.mc.ingameGUI.getChatGUI().printChatMessage(ChatMessageComponent.func_111078_c(par1Packet3Chat.message).func_111068_a(true));
+-        this.mc.ingameGUI.getChatGUI().printChatMessage(ChatMessageComponent.createFromJson(par1Packet3Chat.message).toStringWithFormatting(true));
 +        ClientChatReceivedEvent event = new ClientChatReceivedEvent(par1Packet3Chat.message);
 +        if (!MinecraftForge.EVENT_BUS.post(event) && event.message != null)
 +        {
@@ -61,164 +34,14 @@
      }
  
      public void handleAnimation(Packet18Animation par1Packet18Animation)
-@@ -987,14 +996,14 @@
-      */
-     public void handleAttachEntity(Packet39AttachEntity par1Packet39AttachEntity)
-     {
--        Object object = this.getEntityByID(par1Packet39AttachEntity.field_111006_b);
-+        Object object = this.getEntityByID(par1Packet39AttachEntity.ridingEntityId);
-         Entity entity = this.getEntityByID(par1Packet39AttachEntity.vehicleEntityId);
- 
--        if (par1Packet39AttachEntity.field_111007_a == 0)
-+        if (par1Packet39AttachEntity.attachState == 0)
-         {
-             boolean flag = false;
- 
--            if (par1Packet39AttachEntity.field_111006_b == this.mc.thePlayer.entityId)
-+            if (par1Packet39AttachEntity.ridingEntityId == this.mc.thePlayer.entityId)
-             {
-                 object = this.mc.thePlayer;
- 
-@@ -1020,18 +1029,18 @@
-             if (flag)
-             {
-                 GameSettings gamesettings = this.mc.gameSettings;
--                this.mc.ingameGUI.func_110326_a(I18n.func_135052_a("mount.onboard", new Object[] {GameSettings.getKeyDisplayString(gamesettings.keyBindSneak.keyCode)}), false);
--            }
--        }
--        else if (par1Packet39AttachEntity.field_111007_a == 1 && object != null && object instanceof EntityLiving)
-+                this.mc.ingameGUI.func_110326_a(I18n.getStringParams("mount.onboard", new Object[] {GameSettings.getKeyDisplayString(gamesettings.keyBindSneak.keyCode)}), false);
-+            }
-+        }
-+        else if (par1Packet39AttachEntity.attachState == 1 && object != null && object instanceof EntityLiving)
-         {
-             if (entity != null)
-             {
--                ((EntityLiving)object).func_110162_b(entity, false);
-+                ((EntityLiving)object).setLeashedToEntity(entity, false);
-             }
-             else
-             {
--                ((EntityLiving)object).func_110160_i(false, false);
-+                ((EntityLiving)object).clearLeashed(false, false);
-             }
-         }
-     }
-@@ -1059,7 +1068,7 @@
-      */
-     public void handleUpdateHealth(Packet8UpdateHealth par1Packet8UpdateHealth)
-     {
--        this.mc.thePlayer.setHealth(par1Packet8UpdateHealth.healthMP);
-+        this.mc.thePlayer.setPlayerSPHealth(par1Packet8UpdateHealth.healthMP);
-         this.mc.thePlayer.getFoodStats().setFoodLevel(par1Packet8UpdateHealth.food);
-         this.mc.thePlayer.getFoodStats().setFoodSaturationLevel(par1Packet8UpdateHealth.foodSaturation);
-     }
-@@ -1200,7 +1209,7 @@
- 
-                 if (entity != null && entity instanceof EntityHorse)
+@@ -1354,6 +1363,10 @@
                  {
--                    entityclientplayermp.func_110298_a((EntityHorse)entity, new AnimalChest(par1Packet100OpenWindow.windowTitle, par1Packet100OpenWindow.useProvidedWindowTitle, par1Packet100OpenWindow.slotsCount));
-+                    entityclientplayermp.displayGUIHorse((EntityHorse)entity, new AnimalChest(par1Packet100OpenWindow.windowTitle, par1Packet100OpenWindow.useProvidedWindowTitle, par1Packet100OpenWindow.slotsCount));
-                     entityclientplayermp.openContainer.windowId = par1Packet100OpenWindow.windowId;
+                     tileentity.readFromNBT(par1Packet132TileEntityData.data);
                  }
-         }
-@@ -1326,7 +1335,7 @@
- 
-         if (!flag && this.mc.thePlayer != null)
-         {
--            this.mc.thePlayer.sendChatToPlayer(ChatMessageComponent.func_111066_d("Unable to locate sign at " + par1Packet130UpdateSign.xPosition + ", " + par1Packet130UpdateSign.yPosition + ", " + par1Packet130UpdateSign.zPosition));
-+            this.mc.thePlayer.sendChatToPlayer(ChatMessageComponent.createFromText("Unable to locate sign at " + par1Packet130UpdateSign.xPosition + ", " + par1Packet130UpdateSign.yPosition + ", " + par1Packet130UpdateSign.zPosition));
-         }
-     }
- 
-@@ -1340,19 +1349,23 @@
-             {
-                 if (par1Packet132TileEntityData.actionType == 1 && tileentity instanceof TileEntityMobSpawner)
-                 {
--                    tileentity.readFromNBT(par1Packet132TileEntityData.customParam1);
-+                    tileentity.readFromNBT(par1Packet132TileEntityData.data);
-                 }
-                 else if (par1Packet132TileEntityData.actionType == 2 && tileentity instanceof TileEntityCommandBlock)
-                 {
--                    tileentity.readFromNBT(par1Packet132TileEntityData.customParam1);
-+                    tileentity.readFromNBT(par1Packet132TileEntityData.data);
-                 }
-                 else if (par1Packet132TileEntityData.actionType == 3 && tileentity instanceof TileEntityBeacon)
-                 {
--                    tileentity.readFromNBT(par1Packet132TileEntityData.customParam1);
-+                    tileentity.readFromNBT(par1Packet132TileEntityData.data);
-                 }
-                 else if (par1Packet132TileEntityData.actionType == 4 && tileentity instanceof TileEntitySkull)
-                 {
--                    tileentity.readFromNBT(par1Packet132TileEntityData.customParam1);
-+                    tileentity.readFromNBT(par1Packet132TileEntityData.data);
-+                }
 +                else
 +                {
 +                    tileentity.onDataPacket(netManager,  par1Packet132TileEntityData);
-                 }
++                }
              }
          }
-@@ -1738,7 +1751,7 @@
- 
-         if (par1Packet209SetPlayerTeam.mode == 0)
-         {
--            scoreplayerteam = scoreboard.func_96527_f(par1Packet209SetPlayerTeam.teamName);
-+            scoreplayerteam = scoreboard.createTeam(par1Packet209SetPlayerTeam.teamName);
-         }
-         else
-         {
-@@ -1747,9 +1760,9 @@
- 
-         if (par1Packet209SetPlayerTeam.mode == 0 || par1Packet209SetPlayerTeam.mode == 2)
-         {
--            scoreplayerteam.func_96664_a(par1Packet209SetPlayerTeam.teamDisplayName);
--            scoreplayerteam.func_96666_b(par1Packet209SetPlayerTeam.teamPrefix);
--            scoreplayerteam.func_96662_c(par1Packet209SetPlayerTeam.teamSuffix);
-+            scoreplayerteam.setTeamName(par1Packet209SetPlayerTeam.teamDisplayName);
-+            scoreplayerteam.setNamePrefix(par1Packet209SetPlayerTeam.teamPrefix);
-+            scoreplayerteam.setNameSuffix(par1Packet209SetPlayerTeam.teamSuffix);
-             scoreplayerteam.func_98298_a(par1Packet209SetPlayerTeam.friendlyFire);
-         }
- 
-@@ -1763,7 +1776,7 @@
-             while (iterator.hasNext())
-             {
-                 s = (String)iterator.next();
--                scoreboard.func_96521_a(s, scoreplayerteam);
-+                scoreboard.addPlayerToTeam(s, scoreplayerteam);
-             }
-         }
- 
-@@ -1813,27 +1826,27 @@
-             }
-             else
-             {
--                BaseAttributeMap baseattributemap = ((EntityLivingBase)entity).func_110140_aT();
-+                BaseAttributeMap baseattributemap = ((EntityLivingBase)entity).getAttributeMap();
-                 Iterator iterator = par1Packet44UpdateAttributes.func_111003_f().iterator();
- 
-                 while (iterator.hasNext())
-                 {
-                     Packet44UpdateAttributesSnapshot packet44updateattributessnapshot = (Packet44UpdateAttributesSnapshot)iterator.next();
--                    AttributeInstance attributeinstance = baseattributemap.func_111152_a(packet44updateattributessnapshot.func_142040_a());
-+                    AttributeInstance attributeinstance = baseattributemap.getAttributeInstanceByName(packet44updateattributessnapshot.func_142040_a());
- 
-                     if (attributeinstance == null)
-                     {
-                         attributeinstance = baseattributemap.func_111150_b(new RangedAttribute(packet44updateattributessnapshot.func_142040_a(), 0.0D, 2.2250738585072014E-308D, Double.MAX_VALUE));
-                     }
- 
--                    attributeinstance.func_111128_a(packet44updateattributessnapshot.func_142041_b());
-+                    attributeinstance.setAttribute(packet44updateattributessnapshot.func_142041_b());
-                     attributeinstance.func_142049_d();
-                     Iterator iterator1 = packet44updateattributessnapshot.func_142039_c().iterator();
- 
-                     while (iterator1.hasNext())
-                     {
-                         AttributeModifier attributemodifier = (AttributeModifier)iterator1.next();
--                        attributeinstance.func_111121_a(attributemodifier);
-+                        attributeinstance.applyModifier(attributemodifier);
-                     }
-                 }
-             }
+     }

@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/gui/GuiIngame.java
 +++ ../src_work/minecraft/net/minecraft/client/gui/GuiIngame.java
-@@ -40,12 +40,14 @@
+@@ -40,6 +40,8 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
@@ -9,15 +9,6 @@
  @SideOnly(Side.CLIENT)
  public class GuiIngame extends Gui
  {
--    protected static final ResourceLocation field_110329_b = new ResourceLocation("textures/misc/vignette.png");
--    protected static final ResourceLocation field_110330_c = new ResourceLocation("textures/gui/widgets.png");
--    protected static final ResourceLocation field_110328_d = new ResourceLocation("textures/misc/pumpkinblur.png");
-+    protected static final ResourceLocation vignetteTexPath = new ResourceLocation("textures/misc/vignette.png");
-+    protected static final ResourceLocation widgetsTexPath = new ResourceLocation("textures/gui/widgets.png");
-+    protected static final ResourceLocation pumpkinBlurTexPath = new ResourceLocation("textures/misc/pumpkinblur.png");
-     protected static final RenderItem itemRenderer = new RenderItem();
-     protected final Random rand = new Random();
-     protected final Minecraft mc;
 @@ -99,9 +101,16 @@
  
          ItemStack itemstack = this.mc.thePlayer.inventory.armorItemInSlot(3);
@@ -38,45 +29,6 @@
          }
  
          if (!this.mc.thePlayer.isPotionActive(Potion.confusion))
-@@ -121,12 +130,12 @@
-         if (!this.mc.playerController.enableEverythingIsScrewedUpMode())
-         {
-             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
--            this.mc.func_110434_K().func_110577_a(field_110330_c);
-+            this.mc.getTextureManager().bindTexture(widgetsTexPath);
-             InventoryPlayer inventoryplayer = this.mc.thePlayer.inventory;
-             this.zLevel = -90.0F;
-             this.drawTexturedModalRect(k / 2 - 91, l - 22, 0, 0, 182, 22);
-             this.drawTexturedModalRect(k / 2 - 91 - 1 + inventoryplayer.currentItem * 20, l - 22 - 1, 0, 22, 24, 22);
--            this.mc.func_110434_K().func_110577_a(field_110324_m);
-+            this.mc.getTextureManager().bindTexture(icons);
-             GL11.glEnable(GL11.GL_BLEND);
-             GL11.glBlendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ONE_MINUS_SRC_COLOR);
-             this.drawTexturedModalRect(k / 2 - 7, l / 2 - 7, 0, 0, 16, 16);
-@@ -189,11 +198,11 @@
-         float f3;
-         short short1;
- 
--        if (this.mc.thePlayer.func_110317_t())
-+        if (this.mc.thePlayer.isRidingHorse())
-         {
-             this.mc.mcProfiler.startSection("jumpBar");
--            this.mc.func_110434_K().func_110577_a(Gui.field_110324_m);
--            f3 = this.mc.thePlayer.func_110319_bJ();
-+            this.mc.getTextureManager().bindTexture(Gui.icons);
-+            f3 = this.mc.thePlayer.getHorseJumpPower();
-             short1 = 182;
-             i2 = (int)(f3 * (float)(short1 + 1));
-             j2 = l - 32 + 3;
-@@ -209,7 +218,7 @@
-         else if (this.mc.playerController.func_78763_f())
-         {
-             this.mc.mcProfiler.startSection("expBar");
--            this.mc.func_110434_K().func_110577_a(Gui.field_110324_m);
-+            this.mc.getTextureManager().bindTexture(Gui.icons);
-             j1 = this.mc.thePlayer.xpBarCap();
- 
-             if (j1 > 0)
 @@ -275,6 +284,16 @@
                      GL11.glEnable(GL11.GL_BLEND);
                      GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -94,51 +46,7 @@
                      GL11.glDisable(GL11.GL_BLEND);
                      GL11.glPopMatrix();
                  }
-@@ -290,11 +309,11 @@
- 
-             if (this.mc.theWorld.getTotalWorldTime() >= 120500L)
-             {
--                s1 = I18n.func_135053_a("demo.demoExpired");
-+                s1 = I18n.getString("demo.demoExpired");
-             }
-             else
-             {
--                s1 = I18n.func_135052_a("demo.remainingTime", new Object[] {StringUtils.ticksToElapsedTime((int)(120500L - this.mc.theWorld.getTotalWorldTime()))});
-+                s1 = I18n.getStringParams("demo.remainingTime", new Object[] {StringUtils.ticksToElapsedTime((int)(120500L - this.mc.theWorld.getTotalWorldTime()))});
-             }
- 
-             k1 = fontrenderer.getStringWidth(s1);
-@@ -447,7 +466,7 @@
-                     }
- 
-                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
--                    this.mc.func_110434_K().func_110577_a(field_110324_m);
-+                    this.mc.getTextureManager().bindTexture(icons);
-                     byte b1 = 0;
-                     boolean flag3 = false;
-                     byte b2;
-@@ -546,24 +565,24 @@
-             flag = false;
-         }
- 
--        int k = MathHelper.ceiling_float_int(this.mc.thePlayer.func_110143_aJ());
-+        int k = MathHelper.ceiling_float_int(this.mc.thePlayer.getHealth());
-         int l = MathHelper.ceiling_float_int(this.mc.thePlayer.prevHealth);
-         this.rand.setSeed((long)(this.updateCounter * 312871));
-         boolean flag1 = false;
-         FoodStats foodstats = this.mc.thePlayer.getFoodStats();
-         int i1 = foodstats.getFoodLevel();
-         int j1 = foodstats.getPrevFoodLevel();
--        AttributeInstance attributeinstance = this.mc.thePlayer.func_110148_a(SharedMonsterAttributes.field_111267_a);
-+        AttributeInstance attributeinstance = this.mc.thePlayer.getEntityAttribute(SharedMonsterAttributes.maxHealth);
-         int k1 = par1 / 2 - 91;
-         int l1 = par1 / 2 + 91;
-         int i2 = par2 - 39;
--        float f = (float)attributeinstance.func_111126_e();
--        float f1 = this.mc.thePlayer.func_110139_bj();
-+        float f = (float)attributeinstance.getAttributeValue();
-+        float f1 = this.mc.thePlayer.getAbsorptionAmount();
-         int j2 = MathHelper.ceiling_float_int((f + f1) / 2.0F / 10.0F);
+@@ -563,7 +582,7 @@
          int k2 = Math.max(10 - (j2 - 2), 3);
          int l2 = i2 - (j2 - 1) * k2 - 10;
          float f2 = f1;
@@ -147,67 +55,3 @@
          int j3 = -1;
  
          if (this.mc.thePlayer.isPotionActive(Potion.regeneration))
-@@ -746,8 +765,8 @@
-         {
-             this.mc.mcProfiler.endStartSection("mountHealth");
-             EntityLivingBase entitylivingbase = (EntityLivingBase)entity;
--            l4 = (int)Math.ceil((double)entitylivingbase.func_110143_aJ());
--            float f3 = entitylivingbase.func_110138_aP();
-+            l4 = (int)Math.ceil((double)entitylivingbase.getHealth());
-+            float f3 = entitylivingbase.getMaxHealth();
-             k4 = (int)(f3 + 0.5F) / 2;
- 
-             if (k4 > 30)
-@@ -840,7 +859,7 @@
-             String s = BossStatus.bossName;
-             fontrenderer.drawStringWithShadow(s, i / 2 - fontrenderer.getStringWidth(s) / 2, b0 - 10, 16777215);
-             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
--            this.mc.func_110434_K().func_110577_a(field_110324_m);
-+            this.mc.getTextureManager().bindTexture(icons);
-         }
-     }
- 
-@@ -851,7 +870,7 @@
-         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-         GL11.glDisable(GL11.GL_ALPHA_TEST);
--        this.mc.func_110434_K().func_110577_a(field_110328_d);
-+        this.mc.getTextureManager().bindTexture(pumpkinBlurTexPath);
-         Tessellator tessellator = Tessellator.instance;
-         tessellator.startDrawingQuads();
-         tessellator.addVertexWithUV(0.0D, (double)par2, -90.0D, 0.0D, 1.0D);
-@@ -887,7 +906,7 @@
-         GL11.glDepthMask(false);
-         GL11.glBlendFunc(GL11.GL_ZERO, GL11.GL_ONE_MINUS_SRC_COLOR);
-         GL11.glColor4f(this.prevVignetteBrightness, this.prevVignetteBrightness, this.prevVignetteBrightness, 1.0F);
--        this.mc.func_110434_K().func_110577_a(field_110329_b);
-+        this.mc.getTextureManager().bindTexture(vignetteTexPath);
-         Tessellator tessellator = Tessellator.instance;
-         tessellator.startDrawingQuads();
-         tessellator.addVertexWithUV(0.0D, (double)par3, -90.0D, 0.0D, 1.0D);
-@@ -916,7 +935,7 @@
-         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-         GL11.glColor4f(1.0F, 1.0F, 1.0F, par1);
-         Icon icon = Block.portal.getBlockTextureFromSide(1);
--        this.mc.func_110434_K().func_110577_a(TextureMap.field_110575_b);
-+        this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
-         float f1 = icon.getMinU();
-         float f2 = icon.getMinV();
-         float f3 = icon.getMaxU();
-@@ -954,14 +973,14 @@
-                 GL11.glTranslatef((float)(-(par2 + 8)), (float)(-(par3 + 12)), 0.0F);
-             }
- 
--            itemRenderer.renderItemAndEffectIntoGUI(this.mc.fontRenderer, this.mc.func_110434_K(), itemstack, par2, par3);
-+            itemRenderer.renderItemAndEffectIntoGUI(this.mc.fontRenderer, this.mc.getTextureManager(), itemstack, par2, par3);
- 
-             if (f1 > 0.0F)
-             {
-                 GL11.glPopMatrix();
-             }
- 
--            itemRenderer.renderItemOverlayIntoGUI(this.mc.fontRenderer, this.mc.func_110434_K(), itemstack, par2, par3);
-+            itemRenderer.renderItemOverlayIntoGUI(this.mc.fontRenderer, this.mc.getTextureManager(), itemstack, par2, par3);
-         }
-     }
- 

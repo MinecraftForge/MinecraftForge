@@ -1,0 +1,21 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockCake.java
++++ ../src_work/minecraft/net/minecraft/block/BlockCake.java
+@@ -141,7 +141,17 @@
+     {
+         if (par5EntityPlayer.canEat(false))
+         {
+-            par5EntityPlayer.getFoodStats().addStats(2, 0.1F);
++            // CraftBukkit start
++            int oldFoodLevel = par5EntityPlayer.getFoodStats().foodLevel;
++            org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callFoodLevelChangeEvent(par5EntityPlayer, 2 + oldFoodLevel);
++
++            if (!event.isCancelled())
++            {
++                par5EntityPlayer.getFoodStats().addStats(event.getFoodLevel() - oldFoodLevel, 0.1F);
++            }
++
++            ((net.minecraft.entity.player.EntityPlayerMP)par5EntityPlayer).playerNetServerHandler.sendPacketToPlayer(new net.minecraft.network.packet.Packet8UpdateHealth(((net.minecraft.entity.player.EntityPlayerMP)par5EntityPlayer).getBukkitEntity().getScaledHealth(), par5EntityPlayer.getFoodStats().foodLevel, par5EntityPlayer.getFoodStats().foodSaturationLevel));
++            // CraftBukkit end
+             int l = par1World.getBlockMetadata(par2, par3, par4) + 1;
+ 
+             if (l >= 6)

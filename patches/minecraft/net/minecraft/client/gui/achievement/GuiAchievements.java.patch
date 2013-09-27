@@ -19,26 +19,17 @@
  @SideOnly(Side.CLIENT)
  public class GuiAchievements extends GuiScreen
  {
-@@ -36,7 +41,7 @@
- 
-     /** The right y coordinate of the achievement map */
-     private static final int guiMapRight = AchievementList.maxDisplayRow * 24 - 77;
--    private static final ResourceLocation field_110406_y = new ResourceLocation("textures/gui/achievement/achievement_background.png");
-+    private static final ResourceLocation achievementTextures = new ResourceLocation("textures/gui/achievement/achievement_background.png");
-     protected int achievementsPaneWidth = 256;
-     protected int achievementsPaneHeight = 202;
- 
-@@ -59,6 +64,10 @@
-     /** Whether the Mouse Button is down or not */
+@@ -60,6 +65,10 @@
      private int isMouseButtonDown;
      private StatFileWriter statFileWriter;
-+
+ 
 +    private int currentPage = -1;
 +    private GuiSmallButton button;
 +    private LinkedList<Achievement> minecraftAchievements = new LinkedList<Achievement>();
- 
++
      public GuiAchievements(StatFileWriter par1StatFileWriter)
      {
+         this.statFileWriter = par1StatFileWriter;
 @@ -67,6 +76,14 @@
          short short2 = 141;
          this.field_74117_m = this.guiMapX = this.field_74124_q = (double)(AchievementList.openInventory.displayColumn * 24 - short1 / 2 - 12);
@@ -54,12 +45,10 @@
      }
  
      /**
-@@ -75,7 +92,8 @@
-     public void initGui()
+@@ -76,6 +93,7 @@
      {
          this.buttonList.clear();
--        this.buttonList.add(new GuiSmallButton(1, this.width / 2 + 24, this.height / 2 + 74, 80, 20, I18n.func_135053_a("gui.done")));
-+        this.buttonList.add(new GuiSmallButton(1, this.width / 2 + 24, this.height / 2 + 74, 80, 20, I18n.getString("gui.done")));
+         this.buttonList.add(new GuiSmallButton(1, this.width / 2 + 24, this.height / 2 + 74, 80, 20, I18n.getString("gui.done")));
 +        this.buttonList.add(button = new GuiSmallButton(2, (width - achievementsPaneWidth) / 2 + 24, height / 2 + 74, 125, 20, AchievementPage.getTitle(currentPage)));
      }
  
@@ -81,15 +70,6 @@
          }
  
          super.actionPerformed(par1GuiButton);
-@@ -302,7 +330,7 @@
-                     icon = Block.bedrock.getIcon(0, 0);
-                 }
- 
--                this.mc.func_110434_K().func_110577_a(TextureMap.field_110575_b);
-+                this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
-                 this.drawTexturedModelRectFromIcon(k1 + k3 * 16 - k2, l1 + i3 * 16 - l2, icon, 16, 16);
-             }
-         }
 @@ -314,11 +342,12 @@
          int i4;
          int j4;
@@ -121,55 +101,3 @@
              j4 = achievement2.displayColumn * 24 - k;
              l3 = achievement2.displayRow * 24 - l;
  
-@@ -378,7 +407,7 @@
-                     GL11.glColor4f(f2, f2, f2, 1.0F);
-                 }
- 
--                this.mc.func_110434_K().func_110577_a(field_110406_y);
-+                this.mc.getTextureManager().bindTexture(achievementTextures);
-                 i5 = k1 + j4;
-                 l4 = l1 + l3;
- 
-@@ -400,7 +429,7 @@
- 
-                 GL11.glEnable(GL11.GL_LIGHTING);
-                 GL11.glEnable(GL11.GL_CULL_FACE);
--                renderitem.renderItemAndEffectIntoGUI(this.mc.fontRenderer, this.mc.func_110434_K(), achievement2.theItemStack, i5 + 3, l4 + 3);
-+                renderitem.renderItemAndEffectIntoGUI(this.mc.fontRenderer, this.mc.getTextureManager(), achievement2.theItemStack, i5 + 3, l4 + 3);
-                 GL11.glDisable(GL11.GL_LIGHTING);
- 
-                 if (!this.statFileWriter.canUnlockAchievement(achievement2))
-@@ -420,7 +449,7 @@
-         GL11.glDisable(GL11.GL_DEPTH_TEST);
-         GL11.glEnable(GL11.GL_BLEND);
-         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
--        this.mc.func_110434_K().func_110577_a(field_110406_y);
-+        this.mc.getTextureManager().bindTexture(achievementTextures);
-         this.drawTexturedModalRect(i1, j1, 0, 0, this.achievementsPaneWidth, this.achievementsPaneHeight);
-         GL11.glPopMatrix();
-         this.zLevel = 0.0F;
-@@ -431,7 +460,7 @@
- 
-         if (achievement1 != null)
-         {
--            String s = I18n.func_135053_a(achievement1.getName());
-+            String s = I18n.getString(achievement1.getName());
-             String s1 = achievement1.getDescription();
-             j4 = par1 + 12;
-             l3 = par2 - 4;
-@@ -451,13 +480,13 @@
- 
-                 if (this.statFileWriter.hasAchievementUnlocked(achievement1))
-                 {
--                    this.fontRenderer.drawStringWithShadow(I18n.func_135053_a("achievement.taken"), j4, l3 + l4 + 4, -7302913);
-+                    this.fontRenderer.drawStringWithShadow(I18n.getString("achievement.taken"), j4, l3 + l4 + 4, -7302913);
-                 }
-             }
-             else
-             {
-                 i5 = Math.max(this.fontRenderer.getStringWidth(s), 120);
--                String s2 = I18n.func_135052_a("achievement.requires", new Object[] {I18n.func_135053_a(achievement1.parentAchievement.getName())});
-+                String s2 = I18n.getStringParams("achievement.requires", new Object[] {I18n.getString(achievement1.parentAchievement.getName())});
-                 i4 = this.fontRenderer.splitStringWidth(s2, i5);
-                 this.drawGradientRect(j4 - 3, l3 - 3, j4 + i5 + 3, l3 + i4 + 12 + 3, -1073741824, -1073741824);
-                 this.fontRenderer.drawSplitString(s2, j4, l3 + 12, i5, -9416624);

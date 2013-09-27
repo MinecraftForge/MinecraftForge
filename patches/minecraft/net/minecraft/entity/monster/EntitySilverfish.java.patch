@@ -8,25 +8,6 @@
  
  public class EntitySilverfish extends EntityMob
  {
-@@ -25,12 +26,12 @@
-         this.setSize(0.3F, 0.7F);
-     }
- 
--    protected void func_110147_ax()
--    {
--        super.func_110147_ax();
--        this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111128_a(8.0D);
--        this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.6000000238418579D);
--        this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111128_a(1.0D);
-+    protected void applyEntityAttributes()
-+    {
-+        super.applyEntityAttributes();
-+        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute(8.0D);
-+        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.6000000238418579D);
-+        this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setAttribute(1.0D);
-     }
- 
-     /**
 @@ -165,28 +166,14 @@
  
                                  if (k1 == Block.silverfish.blockID)

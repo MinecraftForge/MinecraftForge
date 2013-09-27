@@ -7,25 +7,6 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.util.Calendar;
-@@ -16,12 +17,12 @@
- @SideOnly(Side.CLIENT)
- public class TileEntityChestRenderer extends TileEntitySpecialRenderer
- {
--    private static final ResourceLocation field_110635_a = new ResourceLocation("textures/entity/chest/trapped_double.png");
--    private static final ResourceLocation field_110634_c = new ResourceLocation("textures/entity/chest/christmas_double.png");
--    private static final ResourceLocation field_110632_d = new ResourceLocation("textures/entity/chest/normal_double.png");
--    private static final ResourceLocation field_110633_e = new ResourceLocation("textures/entity/chest/trapped.png");
--    private static final ResourceLocation field_110630_f = new ResourceLocation("textures/entity/chest/christmas.png");
--    private static final ResourceLocation field_110631_g = new ResourceLocation("textures/entity/chest/normal.png");
-+    private static final ResourceLocation RES_TRAPPED_DOUBLE = new ResourceLocation("textures/entity/chest/trapped_double.png");
-+    private static final ResourceLocation RES_CHRISTMAS_DOUBLE = new ResourceLocation("textures/entity/chest/christmas_double.png");
-+    private static final ResourceLocation RES_NORMAL_DOUBLE = new ResourceLocation("textures/entity/chest/normal_double.png");
-+    private static final ResourceLocation RES_TRAPPED_SINGLE = new ResourceLocation("textures/entity/chest/trapped.png");
-+    private static final ResourceLocation RES_CHRISTMAS_SINGLE = new ResourceLocation("textures/entity/chest/christmas.png");
-+    private static final ResourceLocation RES_NORMAL_SINGLE = new ResourceLocation("textures/entity/chest/normal.png");
- 
-     /** The normal small chest model. */
-     private ModelChest chestModel = new ModelChest();
 @@ -60,7 +61,15 @@
  
              if (block instanceof BlockChest && i == 0)
@@ -41,48 +22,5 @@
 +                            par1TileEntityChest.xCoord, par1TileEntityChest.yCoord, par1TileEntityChest.zCoord);
 +                }
                  i = par1TileEntityChest.getBlockMetadata();
-             }
- 
-@@ -75,34 +84,34 @@
-             {
-                 modelchest = this.chestModel;
- 
--                if (par1TileEntityChest.func_98041_l() == 1)
-+                if (par1TileEntityChest.getChestType() == 1)
-                 {
--                    this.func_110628_a(field_110633_e);
-+                    this.bindTexture(RES_TRAPPED_SINGLE);
-                 }
-                 else if (this.isChristmas)
-                 {
--                    this.func_110628_a(field_110630_f);
-+                    this.bindTexture(RES_CHRISTMAS_SINGLE);
-                 }
-                 else
-                 {
--                    this.func_110628_a(field_110631_g);
-+                    this.bindTexture(RES_NORMAL_SINGLE);
-                 }
-             }
-             else
-             {
-                 modelchest = this.largeChestModel;
- 
--                if (par1TileEntityChest.func_98041_l() == 1)
-+                if (par1TileEntityChest.getChestType() == 1)
-                 {
--                    this.func_110628_a(field_110635_a);
-+                    this.bindTexture(RES_TRAPPED_DOUBLE);
-                 }
-                 else if (this.isChristmas)
-                 {
--                    this.func_110628_a(field_110634_c);
-+                    this.bindTexture(RES_CHRISTMAS_DOUBLE);
-                 }
-                 else
-                 {
--                    this.func_110628_a(field_110632_d);
-+                    this.bindTexture(RES_NORMAL_DOUBLE);
-                 }
              }
  

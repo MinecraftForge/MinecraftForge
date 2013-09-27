@@ -54,6 +54,7 @@ import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import net.minecraft.server.MinecraftServer;
 
 /**
  * <p> The metrics class obtains data about a plugin and submits statistics about it to the metrics backend. </p> <p>
@@ -335,7 +336,7 @@ public class Metrics {
         // File pluginsFolder = plugin.getDataFolder().getParentFile();
 
         // return => base/plugins/PluginMetrics/config.yml
-        return new File(new File((File) net.minecraft.server.MinecraftServer.getServer().options.valueOf("plugins"), "PluginMetrics"), "config.yml");
+        return new File(new File((File) MinecraftServer.getServer().options.valueOf("plugins"), "PluginMetrics"), "config.yml");
     }
 
     /**

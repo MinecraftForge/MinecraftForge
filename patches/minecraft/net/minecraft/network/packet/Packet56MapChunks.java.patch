@@ -60,7 +60,7 @@
              j += packet51mapchunkdata.compressedData.length;
              this.chunkPostX[k] = chunk.xPosition;
              this.chunkPosZ[k] = chunk.zPosition;
-@@ -66,25 +84,62 @@
+@@ -66,25 +84,63 @@
              this.field_73584_f[k] = packet51mapchunkdata.compressedData;
          }
  
@@ -101,7 +101,7 @@
 +        // Obfuscate all sections
 +        for (int i = 0; i < field_73590_a.length; i++)
 +        {
-+            org.spigotmc.OrebfuscatorManager.obfuscate(chunkPostX[i], chunkPosZ[i], field_73590_a[i], field_73584_f[i], world);
++            world.spigotConfig.antiXrayInstance.obfuscate(chunkPostX[i], chunkPosZ[i], field_73590_a[i], field_73584_f[i], world);
 +            finalBufferSize += field_73584_f[i].length;
 +        }
 +
@@ -114,12 +114,13 @@
 +            System.arraycopy(field_73584_f[i], 0, chunkDataNotCompressed, bufferLocation, field_73584_f[i].length);
 +            bufferLocation += field_73584_f[i].length;
 +        }
-+
 +        // Spigot end
++
 +        Deflater deflater = localDeflater.get();
 +        deflater.reset();
 +        deflater.setInput(this.chunkDataNotCompressed);
 +        deflater.finish();
++
 +        this.chunkDataBuffer = new byte[this.chunkDataNotCompressed.length + 100];
 +        this.dataLength = deflater.deflate(this.chunkDataBuffer);
 +    }
@@ -133,7 +134,7 @@
      {
          short short1 = par1DataInput.readShort();
          this.dataLength = par1DataInput.readInt();
-@@ -153,8 +208,9 @@
+@@ -153,8 +209,9 @@
      /**
       * Abstract. Writes the raw packet data to the data stream.
       */

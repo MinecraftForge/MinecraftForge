@@ -1,8 +1,8 @@
 package org.bukkit.craftbukkit.entity;
 
 // MCPC+ start - guava10
-import guava10.com.google.common.collect.ImmutableSet;
-import guava10.com.google.common.collect.MapMaker;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.MapMaker;
 // MCPC+ end
 
 import java.io.ByteArrayOutputStream;
@@ -23,6 +23,10 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.NotImplementedException;
 
 import org.bukkit.*;
+import org.bukkit.Achievement;
+import org.bukkit.Material;
+import org.bukkit.Statistic;
+import org.bukkit.World;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
@@ -823,7 +827,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public void setTexturePack(String url) {
         Validate.notNull(url, "Texture pack URL cannot be null");
 
-        byte[] message = (url + "\0" + org.bukkit.craftbukkit.Spigot.textureResolution).getBytes(); // Spigot
+        byte[] message = (url + "\0" + "16").getBytes();
         Validate.isTrue(message.length <= Messenger.MAX_MESSAGE_SIZE, "Texture pack URL is too long");
 
         getHandle().playerNetServerHandler.sendPacketToPlayer(new net.minecraft.network.packet.Packet250CustomPayload("MC|TPack", message));
@@ -949,7 +953,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public void setFlySpeed(float value) {
         validateSpeed(value);
         net.minecraft.entity.player.EntityPlayerMP player = getHandle();
-        player.capabilities.flySpeed = value / 2f;
+        player.capabilities.flySpeed = Math.max( value, 0.0001f ) / 2f; // Spigot
         player.sendPlayerAbilities();
 
     }
@@ -957,7 +961,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public void setWalkSpeed(float value) {
         validateSpeed(value);
         net.minecraft.entity.player.EntityPlayerMP player = getHandle();
-        player.capabilities.walkSpeed = value / 2f;
+        player.capabilities.walkSpeed = Math.max( value, 0.0001f ) / 2f; // Spigot
         player.sendPlayerAbilities();
     }
 
@@ -1075,13 +1079,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     // Spigot start
-    private final Spigot spigot = new Spigot()
+    private final Player.Spigot spigot = new Player.Spigot()
     {
         /* MCPC+ - remove
         @Override
         public InetSocketAddress getRawAddress()
         {
-            return ( getHandle().playerNetServerHandler == null ) ? null : (InetSocketAddress) getHandle().playerNetServerHandler.netManager.getSocket().getRemoteSocketAddress();
+            return ( getHandle().playerConnection == null ) ? null : (InetSocketAddress) getHandle().playerConnection.networkManager.getSocket().getRemoteSocketAddress();
         }
         */
 
@@ -1121,9 +1125,22 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
             getHandle().playerNetServerHandler.sendPacketToPlayer( packet );
         }
+
+        @Override
+        public boolean getCollidesWithEntities()
+        {
+            return getHandle().collidesWithEntities;
+        }
+
+        @Override
+        public void setCollidesWithEntities(boolean collides)
+        {
+            getHandle().collidesWithEntities = collides;
+            getHandle().preventEntitySpawning = collides; // First boolean of Entity
+        }
     };
 
-    public Spigot spigot()
+    public Player.Spigot spigot()
     {
         return spigot;
     }

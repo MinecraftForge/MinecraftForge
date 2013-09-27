@@ -88,15 +88,6 @@
      private static int nextEntityID;
      public int entityId;
      public double renderDistanceWeight;
-@@ -50,7 +105,7 @@
- 
-     /** The entity we are currently riding */
-     public Entity ridingEntity;
--    public boolean field_98038_p;
-+    public boolean forceSpawn;
- 
-     /** Reference to the World object. */
-     public World worldObj;
 @@ -171,12 +226,12 @@
       * The amount of ticks you have to stand inside of fire before be set on fire
       */
@@ -121,7 +112,14 @@
      private double entityRiderPitchDelta;
      private double entityRiderYawDelta;
  
-@@ -216,8 +271,24 @@
+@@ -210,14 +265,31 @@
+ 
+     /** Whether the entity is inside a Portal */
+     protected boolean inPortal;
+-    protected int portalCounter;
++    protected int timeInPortal;
+ 
+     /** Which dimension the player is in (-1 = the Nether, 0 = normal world) */
      public int dimension;
      protected int teleportDirection;
      private boolean invulnerable;
@@ -132,10 +130,11 @@
 +    
 +    // Spigot start
 +    public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.SpigotTimings.getEntityTimings(this); // Spigot
-+        
-+    public final byte activationType = org.bukkit.craftbukkit.Spigot.initializeEntityActivationType(this);
++
++    public final byte activationType = org.spigotmc.ActivationRange.initializeEntityActivationType(this);
 +    public final boolean defaultActivationState;
 +    public long activatedTick = 0;
++    public void inactiveTick() { }
 +    // Spigot end
 +            
 +    /** Forge: Used to store custom data for each entity. */
@@ -147,7 +146,7 @@
  
      public Entity(World par1World)
      {
-@@ -232,19 +303,35 @@
+@@ -232,19 +304,35 @@
          this.fireResistance = 1;
          this.firstUpdate = true;
          this.dataWatcher = new DataWatcher();
@@ -164,7 +163,7 @@
 -        }
 -
 +            // Spigot start
-+            this.defaultActivationState = org.bukkit.craftbukkit.Spigot.initializeEntityActivationState(this, par1World.getWorld());
++            this.defaultActivationState = org.spigotmc.ActivationRange.initializeEntityActivationState(this, par1World.spigotConfig);
 +        }
 +        else
 +        {
@@ -187,7 +186,7 @@
      }
  
      protected abstract void entityInit();
-@@ -354,6 +441,41 @@
+@@ -354,6 +442,41 @@
       */
      protected void setRotation(float par1, float par2)
      {
@@ -229,16 +228,46 @@
          this.rotationYaw = par1 % 360.0F;
          this.rotationPitch = par2 % 360.0F;
      }
-@@ -434,7 +556,7 @@
+@@ -434,11 +557,11 @@
  
              if (this.inPortal)
              {
 -                if (minecraftserver.getAllowNether())
+-                {
+-                    if (this.ridingEntity == null && this.portalCounter++ >= i)
 +                if (true || minecraftserver.getAllowNether())   // CraftBukkit
-                 {
-                     if (this.ridingEntity == null && this.timeInPortal++ >= i)
++                {
++                    if (this.ridingEntity == null && this.timeInPortal++ >= i)
                      {
-@@ -554,6 +676,43 @@
+-                        this.portalCounter = i;
++                        this.timeInPortal = i;
+                         this.timeUntilPortal = this.getPortalCooldown();
+                         byte b0;
+ 
+@@ -459,14 +582,14 @@
+             }
+             else
+             {
+-                if (this.portalCounter > 0)
+-                {
+-                    this.portalCounter -= 4;
+-                }
+-
+-                if (this.portalCounter < 0)
+-                {
+-                    this.portalCounter = 0;
++                if (this.timeInPortal > 0)
++                {
++                    this.timeInPortal -= 4;
++                }
++
++                if (this.timeInPortal < 0)
++                {
++                    this.timeInPortal = 0;
+                 }
+             }
+ 
+@@ -554,6 +677,43 @@
      {
          if (!this.isImmuneToFire)
          {
@@ -282,16 +311,7 @@
              this.attackEntityFrom(DamageSource.lava, 4.0F);
              this.setFire(15);
          }
-@@ -565,7 +724,7 @@
-     public void setFire(int par1)
-     {
-         int j = par1 * 20;
--        j = EnchantmentProtection.func_92093_a(this, j);
-+        j = EnchantmentProtection.getFireTimeForEntity(this, j);
- 
-         if (this.fire < j)
-         {
-@@ -604,6 +763,14 @@
+@@ -604,6 +764,14 @@
       */
      public void moveEntity(double par1, double par3, double par5)
      {
@@ -306,7 +326,7 @@
          if (this.noClip)
          {
              this.boundingBox.offset(par1, par3, par5);
-@@ -868,6 +1035,33 @@
+@@ -868,6 +1036,33 @@
              d10 = this.posY - d4;
              d11 = this.posZ - d5;
  
@@ -340,16 +360,7 @@
              if (this.canTriggerWalking() && !flag && this.ridingEntity == null)
              {
                  int l = MathHelper.floor_double(this.posX);
-@@ -922,7 +1116,7 @@
-             {
-                 CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Checking entity tile collision");
-                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Entity being checked for collision");
--                this.func_85029_a(crashreportcategory);
-+                this.addEntityCrashInfo(crashreportcategory);
-                 throw new ReportedException(crashreport);
-             }
- 
-@@ -930,14 +1124,26 @@
+@@ -930,14 +1125,26 @@
  
              if (this.worldObj.isBoundingBoxBurning(this.boundingBox.contract(0.001D, 0.001D, 0.001D)))
              {
@@ -378,7 +389,7 @@
                          this.setFire(8);
                      }
                  }
-@@ -955,6 +1161,8 @@
+@@ -955,6 +1162,8 @@
  
              this.worldObj.theProfiler.endSection();
          }
@@ -387,16 +398,7 @@
      }
  
      /**
-@@ -989,7 +1197,7 @@
-                             {
-                                 CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Colliding entity with tile");
-                                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Tile being collided with");
--                                CrashReportCategory.func_85068_a(crashreportcategory, k1, l1, i2, j2, this.worldObj.getBlockMetadata(k1, l1, i2));
-+                                CrashReportCategory.addBlockCrashInfo(crashreportcategory, k1, l1, i2, j2, this.worldObj.getBlockMetadata(k1, l1, i2));
-                                 throw new ReportedException(crashreport);
-                             }
-                         }
-@@ -1059,15 +1267,22 @@
+@@ -1059,15 +1268,22 @@
          return null;
      }
  
@@ -420,7 +422,7 @@
          }
      }
  
-@@ -1164,11 +1379,20 @@
+@@ -1164,11 +1380,20 @@
          int k = MathHelper.floor_double(this.posZ);
          int l = this.worldObj.getBlockId(i, j, k);
  
@@ -446,7 +448,7 @@
          }
          else
          {
-@@ -1258,6 +1482,15 @@
+@@ -1258,6 +1483,15 @@
       */
      public void setWorld(World par1World)
      {
@@ -462,35 +464,7 @@
          this.worldObj = par1World;
      }
  
-@@ -1469,7 +1702,11 @@
-         return par1 < d1 * d1;
-     }
- 
--    public boolean addNotRiddenEntityID(NBTTagCompound par1NBTTagCompound)
-+    /**
-+     * Like writeToNBTOptional but does not check if the entity is ridden. Used for saving ridden entities with their
-+     * riders.
-+     */
-+    public boolean writeMountToNBT(NBTTagCompound par1NBTTagCompound)
-     {
-         String s = this.getEntityString();
- 
-@@ -1486,9 +1723,11 @@
-     }
- 
-     /**
--     * adds the ID of this entity to the NBT given
--     */
--    public boolean addEntityID(NBTTagCompound par1NBTTagCompound)
-+     * Either write this entity to the NBT tag given and return true, or return false without doing anything. If this
-+     * returns false the entity is not saved on disk. Ridden entities return false here as they are saved with their
-+     * rider.
-+     */
-+    public boolean writeToNBTOptional(NBTTagCompound par1NBTTagCompound)
-     {
-         String s = this.getEntityString();
- 
-@@ -1513,6 +1752,20 @@
+@@ -1519,6 +1753,20 @@
          {
              par1NBTTagCompound.setTag("Pos", this.newDoubleNBTList(new double[] {this.posX, this.posY + (double)this.ySize, this.posZ}));
              par1NBTTagCompound.setTag("Motion", this.newDoubleNBTList(new double[] {this.motionX, this.motionY, this.motionZ}));
@@ -511,7 +485,7 @@
              par1NBTTagCompound.setTag("Rotation", this.newFloatNBTList(new float[] {this.rotationYaw, this.rotationPitch}));
              par1NBTTagCompound.setFloat("FallDistance", this.fallDistance);
              par1NBTTagCompound.setShort("Fire", (short)this.fire);
-@@ -1523,13 +1776,33 @@
+@@ -1529,6 +1777,26 @@
              par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
              par1NBTTagCompound.setLong("UUIDMost", this.entityUniqueID.getMostSignificantBits());
              par1NBTTagCompound.setLong("UUIDLeast", this.entityUniqueID.getLeastSignificantBits());
@@ -538,24 +512,7 @@
              this.writeEntityToNBT(par1NBTTagCompound);
  
              if (this.ridingEntity != null)
-             {
-                 NBTTagCompound nbttagcompound1 = new NBTTagCompound("Riding");
- 
--                if (this.ridingEntity.addNotRiddenEntityID(nbttagcompound1))
-+                if (this.ridingEntity.writeMountToNBT(nbttagcompound1))
-                 {
-                     par1NBTTagCompound.setTag("Riding", nbttagcompound1);
-                 }
-@@ -1539,7 +1812,7 @@
-         {
-             CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Saving entity NBT");
-             CrashReportCategory crashreportcategory = crashreport.makeCategory("Entity being saved");
--            this.func_85029_a(crashreportcategory);
-+            this.addEntityCrashInfo(crashreportcategory);
-             throw new ReportedException(crashreport);
-         }
-     }
-@@ -1557,7 +1830,7 @@
+@@ -1563,7 +1831,7 @@
              this.motionX = ((NBTTagDouble)nbttaglist1.tagAt(0)).data;
              this.motionY = ((NBTTagDouble)nbttaglist1.tagAt(1)).data;
              this.motionZ = ((NBTTagDouble)nbttaglist1.tagAt(2)).data;
@@ -564,7 +521,7 @@
              if (Math.abs(this.motionX) > 10.0D)
              {
                  this.motionX = 0.0D;
-@@ -1572,7 +1845,7 @@
+@@ -1578,7 +1846,7 @@
              {
                  this.motionZ = 0.0D;
              }
@@ -573,7 +530,7 @@
              this.prevPosX = this.lastTickPosX = this.posX = ((NBTTagDouble)nbttaglist.tagAt(0)).data;
              this.prevPosY = this.lastTickPosY = this.posY = ((NBTTagDouble)nbttaglist.tagAt(1)).data;
              this.prevPosZ = this.lastTickPosZ = this.posZ = ((NBTTagDouble)nbttaglist.tagAt(2)).data;
-@@ -1593,23 +1866,103 @@
+@@ -1599,12 +1867,92 @@
  
              this.setPosition(this.posX, this.posY, this.posZ);
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -599,7 +556,7 @@
 +            }
              this.readEntityFromNBT(par1NBTTagCompound);
  
--            if (this.func_142008_O())
+-            if (this.shouldSetPosAfterLoading())
 -            {
 -                this.setPosition(this.posX, this.posY, this.posZ);
 -            }
@@ -670,29 +627,7 @@
          }
          catch (Throwable throwable)
          {
-             CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Loading entity NBT");
-             CrashReportCategory crashreportcategory = crashreport.makeCategory("Entity being loaded");
--            this.func_85029_a(crashreportcategory);
-+            this.addEntityCrashInfo(crashreportcategory);
-             throw new ReportedException(crashreport);
-         }
-     }
- 
--    protected boolean func_142008_O()
-+    protected boolean shouldSetPosAfterLoading()
-     {
-         return true;
-     }
-@@ -1632,7 +1985,7 @@
-      */
-     protected abstract void writeEntityToNBT(NBTTagCompound nbttagcompound);
- 
--    public void func_110123_P() {}
-+    public void onChunkLoad() {}
- 
-     /**
-      * creates a NBT list from the array of doubles passed to this function
-@@ -1705,7 +2058,14 @@
+@@ -1711,7 +2059,14 @@
          {
              EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
              entityitem.delayBeforeCanPickup = 10;
@@ -708,19 +643,7 @@
              return entityitem;
          }
      }
-@@ -1741,7 +2101,10 @@
-         return false;
-     }
- 
--    public boolean func_130002_c(EntityPlayer par1EntityPlayer)
-+    /**
-+     * First layer of player interaction
-+     */
-+    public boolean interactFirst(EntityPlayer par1EntityPlayer)
-     {
-         return false;
-     }
-@@ -1855,13 +2218,50 @@
+@@ -1864,13 +2219,52 @@
       */
      public void mountEntity(Entity par1Entity)
      {
@@ -769,10 +692,12 @@
 +                    }
 +                }
 +                // CraftBukkit end
++                pluginManager.callEvent(new org.spigotmc.event.entity.EntityDismountEvent(this.getBukkitEntity(), this.ridingEntity.getBukkitEntity())); // Spigot
++
                  this.setLocationAndAngles(this.ridingEntity.posX, this.ridingEntity.boundingBox.minY + (double)this.ridingEntity.height, this.ridingEntity.posZ, this.rotationYaw, this.rotationPitch);
                  this.ridingEntity.riddenByEntity = null;
              }
-@@ -1870,13 +2270,48 @@
+@@ -1879,13 +2273,58 @@
          }
          else
          {
@@ -781,8 +706,7 @@
 +            {
 +                // It's possible to move from one vehicle to another.  We need to check if they're already in a vehicle, and fire an exit event if they are.
 +                VehicleExitEvent exitEvent = null;
-+
-+                if (this.ridingEntity != null)
++                if (this.ridingEntity != null && this.ridingEntity.getBukkitEntity() instanceof Vehicle)
 +                {
 +                    exitEvent = new VehicleExitEvent((Vehicle) this.ridingEntity.getBukkitEntity(), (LivingEntity) this.bukkitEntity);
 +                    pluginManager.callEvent(exitEvent);
@@ -811,6 +735,17 @@
 +                }
 +            }
 +            // CraftBukkit end
++            // Spigot Start
++            if ( entity.worldObj.chunkExists( (int) entity.posX >> 4, (int) entity.posZ >> 4 ) )
++            {
++                org.spigotmc.event.entity.EntityMountEvent event = new org.spigotmc.event.entity.EntityMountEvent( this.getBukkitEntity(), entity.getBukkitEntity() );
++                pluginManager.callEvent( event );
++                if ( event.isCancelled() )
++                {
++                    return;
++                }
++            }
++            // Spigot End
              if (this.ridingEntity != null)
              {
                  this.ridingEntity.riddenByEntity = null;
@@ -823,7 +758,7 @@
          }
      }
  
-@@ -2001,7 +2436,7 @@
+@@ -2010,7 +2449,7 @@
       */
      public boolean isRiding()
      {
@@ -832,22 +767,7 @@
      }
  
      /**
-@@ -2042,7 +2477,13 @@
-     }
- 
-     @SideOnly(Side.CLIENT)
--    public boolean func_98034_c(EntityPlayer par1EntityPlayer)
-+
-+    /**
-+     * Only used by renderer in EntityLivingBase subclasses.\nDetermines if an entity is visible or not to a specfic
-+     * player, if the entity is normally invisible.\nFor EntityLivingBase subclasses, returning false when invisible
-+     * will render the entity semitransparent.
-+     */
-+    public boolean isInvisibleToPlayer(EntityPlayer par1EntityPlayer)
-     {
-         return this.isInvisible();
-     }
-@@ -2104,12 +2545,48 @@
+@@ -2119,12 +2558,48 @@
       */
      public void onStruckByLightning(EntityLightningBolt par1EntityLightningBolt)
      {
@@ -898,19 +818,7 @@
          }
      }
  
-@@ -2272,7 +2749,10 @@
-         return true;
-     }
- 
--    public boolean func_85031_j(Entity par1Entity)
-+    /**
-+     * Called when a player attacks an entity. If this returns true the attack will not happen.
-+     */
-+    public boolean hitByEntity(Entity par1Entity)
-     {
-         return false;
-     }
-@@ -2321,36 +2801,71 @@
+@@ -2339,36 +2814,71 @@
          {
              this.worldObj.theProfiler.startSection("changeDimension");
              MinecraftServer minecraftserver = MinecraftServer.getServer();
@@ -1002,63 +910,16 @@
              }
  
              this.isDead = true;
-@@ -2361,17 +2876,24 @@
-         }
-     }
- 
--    public float func_82146_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
--    {
+@@ -2385,7 +2895,7 @@
+      */
+     public float getBlockExplosionResistance(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
+     {
 -        return par6Block.getExplosionResistance(this);
--    }
--
--    public boolean func_96091_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
-+    /**
-+     * Gets a block's resistance to this entity's explosion. Used to make rails immune to TNT minecarts' explosions and
-+     * Wither skulls more destructive.
-+     */
-+    public float getBlockExplosionResistance(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
-+    {
 +        return par6Block.getExplosionResistance(this, par2World, par3, par4, par5, posX, posY + (double)getEyeHeight(), posZ);
-+    }
-+
-+    public boolean shouldExplodeBlock(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
-     {
-         return true;
      }
  
--    public int func_82143_as()
-+    /**
-+     * The number of iterations PathFinder.getSafePoint will execute before giving up.
-+     */
-+    public int getMaxSafePointTries()
-     {
-         return 3;
-     }
-@@ -2389,7 +2911,7 @@
-         return false;
-     }
- 
--    public void func_85029_a(CrashReportCategory par1CrashReportCategory)
-+    public void addEntityCrashInfo(CrashReportCategory par1CrashReportCategory)
-     {
-         par1CrashReportCategory.addCrashSectionCallable("Entity Type", new CallableEntityType(this));
-         par1CrashReportCategory.addCrashSection("Entity ID", Integer.valueOf(this.entityId));
-@@ -2409,12 +2931,12 @@
-         return this.isBurning();
-     }
- 
--    public UUID func_110124_au()
-+    public UUID getUniqueID()
-     {
-         return this.entityUniqueID;
-     }
- 
--    public boolean func_96092_aw()
-+    public boolean isPushedByWater()
-     {
-         return true;
-     }
-@@ -2426,4 +2948,170 @@
+     public boolean shouldExplodeBlock(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
+@@ -2451,4 +2961,170 @@
      {
          return this.getEntityName();
      }

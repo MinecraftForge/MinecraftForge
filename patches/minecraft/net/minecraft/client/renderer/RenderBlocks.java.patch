@@ -37,61 +37,6 @@
          d0 = (double)icon.getMinU();
          d1 = (double)icon.getMaxU();
          d2 = (double)icon.getMinV();
-@@ -776,14 +779,14 @@
-         this.renderFaceXNeg(par1BlockCauldron, (double)((float)par2 + 1.0F - f4), (double)par3, (double)par4, icon);
-         this.renderFaceZPos(par1BlockCauldron, (double)par2, (double)par3, (double)((float)par4 - 1.0F + f4), icon);
-         this.renderFaceZNeg(par1BlockCauldron, (double)par2, (double)par3, (double)((float)par4 + 1.0F - f4), icon);
--        Icon icon1 = BlockCauldron.func_94375_b("inner");
-+        Icon icon1 = BlockCauldron.getCauldronIcon("inner");
-         this.renderFaceYPos(par1BlockCauldron, (double)par2, (double)((float)par3 - 1.0F + 0.25F), (double)par4, icon1);
-         this.renderFaceYNeg(par1BlockCauldron, (double)par2, (double)((float)par3 + 1.0F - 0.75F), (double)par4, icon1);
-         int i1 = this.blockAccess.getBlockMetadata(par2, par3, par4);
- 
-         if (i1 > 0)
-         {
--            Icon icon2 = BlockFluid.func_94424_b("water_still");
-+            Icon icon2 = BlockFluid.getFluidIcon("water_still");
- 
-             if (i1 > 3)
-             {
-@@ -1406,7 +1409,7 @@
-      */
-     public void renderPistonRodUD(double par1, double par3, double par5, double par7, double par9, double par11, float par13, double par14)
-     {
--        Icon icon = BlockPistonBase.func_94496_b("piston_side");
-+        Icon icon = BlockPistonBase.getPistonBaseIcon("piston_side");
- 
-         if (this.hasOverrideBlockTexture())
-         {
-@@ -1430,7 +1433,7 @@
-      */
-     public void renderPistonRodSN(double par1, double par3, double par5, double par7, double par9, double par11, float par13, double par14)
-     {
--        Icon icon = BlockPistonBase.func_94496_b("piston_side");
-+        Icon icon = BlockPistonBase.getPistonBaseIcon("piston_side");
- 
-         if (this.hasOverrideBlockTexture())
-         {
-@@ -1454,7 +1457,7 @@
-      */
-     public void renderPistonRodEW(double par1, double par3, double par5, double par7, double par9, double par11, float par13, double par14)
-     {
--        Icon icon = BlockPistonBase.func_94496_b("piston_side");
-+        Icon icon = BlockPistonBase.getPistonBaseIcon("piston_side");
- 
-         if (this.hasOverrideBlockTexture())
-         {
-@@ -2334,8 +2337,8 @@
-     public boolean renderBlockFire(BlockFire par1BlockFire, int par2, int par3, int par4)
-     {
-         Tessellator tessellator = Tessellator.instance;
--        Icon icon = par1BlockFire.func_94438_c(0);
--        Icon icon1 = par1BlockFire.func_94438_c(1);
-+        Icon icon = par1BlockFire.getFireIcon(0);
-+        Icon icon1 = par1BlockFire.getFireIcon(1);
-         Icon icon2 = icon;
- 
-         if (this.hasOverrideBlockTexture())
 @@ -2358,7 +2361,7 @@
          double d9;
          double d10;
@@ -146,21 +91,6 @@
              {
                  d5 = (double)par2 + 0.5D + 0.5D;
                  d6 = (double)par2 + 0.5D - 0.5D;
-@@ -2545,10 +2548,10 @@
-     {
-         Tessellator tessellator = Tessellator.instance;
-         int l = this.blockAccess.getBlockMetadata(par2, par3, par4);
--        Icon icon = BlockRedstoneWire.func_94409_b("cross");
--        Icon icon1 = BlockRedstoneWire.func_94409_b("line");
--        Icon icon2 = BlockRedstoneWire.func_94409_b("cross_overlay");
--        Icon icon3 = BlockRedstoneWire.func_94409_b("line_overlay");
-+        Icon icon = BlockRedstoneWire.getRedstoneWireIcon("cross");
-+        Icon icon1 = BlockRedstoneWire.getRedstoneWireIcon("line");
-+        Icon icon2 = BlockRedstoneWire.getRedstoneWireIcon("cross_overlay");
-+        Icon icon3 = BlockRedstoneWire.getRedstoneWireIcon("line_overlay");
-         tessellator.setBrightness(par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4));
-         float f = 1.0F;
-         float f1 = (float)l / 15.0F;
 @@ -3057,10 +3060,10 @@
          double d17 = (double)par2 + 0.5D + 0.0625D;
          double d18 = (double)par4 + 0.5D - 0.0625D;
@@ -176,48 +106,3 @@
          boolean flag4 = par1BlockPane.shouldSideBeRendered(this.blockAccess, par2, par3 + 1, par4, 1);
          boolean flag5 = par1BlockPane.shouldSideBeRendered(this.blockAccess, par2, par3 - 1, par4, 0);
          double d20 = 0.01D;
-@@ -3716,7 +3719,7 @@
-     public void renderBlockStemBig(BlockStem par1BlockStem, int par2, int par3, double par4, double par6, double par8, double par10)
-     {
-         Tessellator tessellator = Tessellator.instance;
--        Icon icon = par1BlockStem.func_94368_p();
-+        Icon icon = par1BlockStem.getStemIcon();
- 
-         if (this.hasOverrideBlockTexture())
-         {
-@@ -4168,7 +4171,7 @@
-             f2 = f5;
-         }
- 
--        return Minecraft.isAmbientOcclusionEnabled() && Block.lightValue[par1Block.blockID] == 0 ? (this.partialRenderBounds ? this.renderBlockWithAmbientOcclusion(par1Block, par2, par3, par4, f, f1, f2) : this.renderStandardBlockWithAmbientOcclusion(par1Block, par2, par3, par4, f, f1, f2)) : this.renderStandardBlockWithColorMultiplier(par1Block, par2, par3, par4, f, f1, f2);
-+        return Minecraft.isAmbientOcclusionEnabled() && Block.lightValue[par1Block.blockID] == 0 ? (this.partialRenderBounds ? this.renderStandardBlockWithAmbientOcclusionPartial(par1Block, par2, par3, par4, f, f1, f2) : this.renderStandardBlockWithAmbientOcclusion(par1Block, par2, par3, par4, f, f1, f2)) : this.renderStandardBlockWithColorMultiplier(par1Block, par2, par3, par4, f, f1, f2);
-     }
- 
-     /**
-@@ -5022,7 +5025,7 @@
-     /**
-      * Renders non-full-cube block with ambient occusion.  Args: block, x, y, z, red, green, blue (lighting)
-      */
--    public boolean renderBlockWithAmbientOcclusion(Block par1Block, int par2, int par3, int par4, float par5, float par6, float par7)
-+    public boolean renderStandardBlockWithAmbientOcclusionPartial(Block par1Block, int par2, int par3, int par4, float par5, float par6, float par7)
-     {
-         this.enableAO = true;
-         boolean flag = false;
-@@ -6018,7 +6021,7 @@
-         int l = this.blockAccess.getBlockMetadata(par2, par3, par4);
-         int i1 = BlockDirectional.getDirection(l);
-         int j1 = BlockCocoa.func_72219_c(l);
--        Icon icon = par1BlockCocoa.func_94468_i_(j1);
-+        Icon icon = par1BlockCocoa.getCocoaIcon(j1);
-         int k1 = 4 + j1 * 2;
-         int l1 = 5 + j1 * 2;
-         double d0 = 15.0D - (double)k1;
-@@ -8178,7 +8181,7 @@
-     {
-         if (par1Icon == null)
-         {
--            par1Icon = ((TextureMap)Minecraft.getMinecraft().func_110434_K().func_110581_b(TextureMap.field_110575_b)).func_110572_b("missingno");
-+            par1Icon = ((TextureMap)Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
-         }
- 
-         return (Icon)par1Icon;

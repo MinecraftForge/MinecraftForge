@@ -8,27 +8,3 @@
      }
  
      public EntityPainting(World par1World, int par2, int par3, int par4, int par5)
-@@ -105,17 +106,20 @@
-         super.readEntityFromNBT(par1NBTTagCompound);
-     }
- 
--    public int func_82329_d()
-+    public int getWidthPixels()
-     {
-         return this.art.sizeX;
-     }
- 
--    public int func_82330_g()
-+    public int getHeightPixels()
-     {
-         return this.art.sizeY;
-     }
- 
--    public void func_110128_b(Entity par1Entity)
-+    /**
-+     * Called when this entity is broken. Entity parameter may be null.
-+     */
-+    public void onBroken(Entity par1Entity)
-     {
-         if (par1Entity instanceof EntityPlayer)
-         {

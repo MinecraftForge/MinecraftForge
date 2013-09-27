@@ -9,17 +9,6 @@
  public class BlockDoor extends Block
  {
      @SideOnly(Side.CLIENT)
-@@ -117,8 +119,8 @@
-     {
-         this.field_111044_a = new Icon[2];
-         this.field_111043_b = new Icon[2];
--        this.field_111044_a[0] = par1IconRegister.registerIcon(this.func_111023_E() + "_upper");
--        this.field_111043_b[0] = par1IconRegister.registerIcon(this.func_111023_E() + "_lower");
-+        this.field_111044_a[0] = par1IconRegister.registerIcon(this.getTextureName() + "_upper");
-+        this.field_111043_b[0] = par1IconRegister.registerIcon(this.getTextureName() + "_lower");
-         this.field_111044_a[1] = new IconFlipped(this.field_111044_a[0], true, false);
-         this.field_111043_b[1] = new IconFlipped(this.field_111043_b[0], true, false);
-     }
 @@ -290,7 +292,7 @@
      {
          if (this.blockMaterial == Material.iron)

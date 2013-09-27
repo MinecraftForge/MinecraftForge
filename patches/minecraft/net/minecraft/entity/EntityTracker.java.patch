@@ -36,23 +36,11 @@
 +            throw new IllegalStateException("Asynchronous entity track!");    // Spigot
 +        }    
 +
-+        par2 = org.bukkit.craftbukkit.Spigot.getEntityTrackingRange(par1Entity, par2); // Spigot
++        par2 = org.spigotmc.TrackingRange.getEntityTrackingRange(par1Entity, par2); // Spigot
 +
          if (par2 > this.entityViewDistance)
          {
              par2 = this.entityViewDistance;
-@@ -210,9 +220,9 @@
-             CrashReportCategory crashreportcategory = crashreport.makeCategory("Entity To Track");
-             crashreportcategory.addCrashSection("Tracking range", par2 + " blocks");
-             crashreportcategory.addCrashSectionCallable("Update interval", new CallableEntityTracker(this, par3));
--            par1Entity.func_85029_a(crashreportcategory);
-+            par1Entity.addEntityCrashInfo(crashreportcategory);
-             CrashReportCategory crashreportcategory1 = crashreport.makeCategory("Entity That Is Already Tracked");
--            ((EntityTrackerEntry)this.trackedEntityIDs.lookup(par1Entity.entityId)).myEntity.func_85029_a(crashreportcategory1);
-+            ((EntityTrackerEntry)this.trackedEntityIDs.lookup(par1Entity.entityId)).myEntity.addEntityCrashInfo(crashreportcategory1);
- 
-             try
-             {
 @@ -228,6 +238,11 @@
  
      public void removeEntityFromAllTrackingPlayers(Entity par1Entity)

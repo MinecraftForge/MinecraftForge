@@ -20,12 +20,3 @@
                  this.playerViewY = (float)(k * 90 + 180);
                  this.playerViewX = 0.0F;
              }
-@@ -328,7 +330,7 @@
-         {
-             CrashReport crashreport = CrashReport.makeCrashReport(throwable3, "Rendering entity in world");
-             CrashReportCategory crashreportcategory = crashreport.makeCategory("Entity being rendered");
--            par1Entity.func_85029_a(crashreportcategory);
-+            par1Entity.addEntityCrashInfo(crashreportcategory);
-             CrashReportCategory crashreportcategory1 = crashreport.makeCategory("Renderer details");
-             crashreportcategory1.addCrashSection("Assigned renderer", render);
-             crashreportcategory1.addCrashSection("Location", CrashReportCategory.func_85074_a(par2, par4, par6));

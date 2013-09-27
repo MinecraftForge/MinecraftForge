@@ -45,7 +45,7 @@
  
      /** must be between 3>x>15 (strictly between) */
      private int renderDistance;
-@@ -157,6 +175,18 @@
+@@ -157,6 +175,25 @@
       * and XP
       */
      public boolean playerConqueredTheEnd;
@@ -58,13 +58,20 @@
 +    public int newTotalExp = 0;
 +    public boolean keepLevel = false;
 +    public double maxHealthCache;
-+    // CraftBukkit end
 +    public int lastPing = -1; // Spigot
-+    public java.util.Set<java.util.UUID> sentFrames = new java.util.HashSet<java.util.UUID>(); // Spigot
++    // CraftBukkit end
++    // Spigot start
++    public boolean collidesWithEntities = true;
++    @Override
++    public boolean canBeCollidedWith()
++    {
++        return this.collidesWithEntities && super.canBeCollidedWith();
++    }
++    // Spigot end
  
      public EntityPlayerMP(MinecraftServer par1MinecraftServer, World par2World, String par3Str, ItemInWorldManager par4ItemInWorldManager)
      {
-@@ -164,18 +194,10 @@
+@@ -164,16 +201,16 @@
          par4ItemInWorldManager.thisPlayerMP = this;
          this.theItemInWorldManager = par4ItemInWorldManager;
          this.renderDistance = par1MinecraftServer.getConfigurationManager().getViewDistance();
@@ -73,18 +80,19 @@
          int i = chunkcoordinates.posX;
          int j = chunkcoordinates.posZ;
          int k = chunkcoordinates.posY;
--
--        if (!par2World.provider.hasNoSky && par2World.getWorldInfo().getGameType() != EnumGameType.ADVENTURE)
--        {
+ 
+         if (!par2World.provider.hasNoSky && par2World.getWorldInfo().getGameType() != EnumGameType.ADVENTURE)
+         {
 -            int l = Math.max(5, par1MinecraftServer.getSpawnProtectionSize() - 6);
 -            i += this.rand.nextInt(l * 2) - l;
 -            j += this.rand.nextInt(l * 2) - l;
--            k = par2World.getTopSolidOrLiquidBlock(i, j);
--        }
++            int var9 = Math.max(5, par1MinecraftServer.getSpawnProtectionSize() - 6);
++            i += this.rand.nextInt(var9 * 2) - var9;
++            j += this.rand.nextInt(var9 * 2) - var9;
+             k = par2World.getTopSolidOrLiquidBlock(i, j);
+         }
  
-         this.mcServer = par1MinecraftServer;
-         this.stepHeight = 0.0F;
-@@ -186,6 +208,12 @@
+@@ -186,6 +223,12 @@
          {
              this.setPosition(this.posX, this.posY + 1.0D, this.posZ);
          }
@@ -97,16 +105,7 @@
      }
  
      /**
-@@ -197,7 +225,7 @@
- 
-         if (par1NBTTagCompound.hasKey("playerGameType"))
-         {
--            if (MinecraftServer.getServer().func_104056_am())
-+            if (MinecraftServer.getServer().getForceGamemode())
-             {
-                 this.theItemInWorldManager.setGameType(MinecraftServer.getServer().getGameType());
-             }
-@@ -206,6 +234,7 @@
+@@ -206,6 +249,7 @@
                  this.theItemInWorldManager.setGameType(EnumGameType.getByID(par1NBTTagCompound.getInteger("playerGameType")));
              }
          }
@@ -114,7 +113,7 @@
      }
  
      /**
-@@ -215,7 +244,48 @@
+@@ -215,7 +259,48 @@
      {
          super.writeEntityToNBT(par1NBTTagCompound);
          par1NBTTagCompound.setInteger("playerGameType", this.theItemInWorldManager.getGameType().getID());
@@ -164,19 +163,7 @@
  
      /**
       * Add experience levels to this player.
-@@ -237,11 +307,6 @@
-     protected void resetHeight()
-     {
-         this.yOffset = 0.0F;
--    }
--
--    public float getEyeHeight()
--    {
--        return 1.62F;
-     }
- 
-     /**
-@@ -253,11 +318,13 @@
+@@ -253,11 +338,13 @@
          --this.initialInvulnerability;
          this.openContainer.detectAndSendChanges();
  
@@ -191,7 +178,7 @@
  
          while (!this.destroyedItemsNetCache.isEmpty())
          {
-@@ -288,8 +355,11 @@
+@@ -288,8 +375,11 @@
  
                  if (chunkcoordintpair != null && this.worldObj.blockExists(chunkcoordintpair.chunkXPos << 4, 0, chunkcoordintpair.chunkZPos << 4))
                  {
@@ -205,7 +192,7 @@
                  }
              }
  
-@@ -310,6 +380,7 @@
+@@ -310,6 +400,7 @@
                  {
                      Chunk chunk = (Chunk)iterator2.next();
                      this.getServerForPlayer().getEntityTracker().func_85172_a(this, chunk);
@@ -213,27 +200,21 @@
                  }
              }
          }
-@@ -336,38 +407,55 @@
-                 }
-             }
+@@ -338,7 +429,8 @@
  
--            if (this.func_110143_aJ() != this.lastHealth || this.lastFoodLevel != this.foodStats.getFoodLevel() || this.foodStats.getSaturationLevel() == 0.0F != this.wasHungry)
--            {
--                this.playerNetServerHandler.sendPacketToPlayer(new Packet8UpdateHealth(this.func_110143_aJ(), this.foodStats.getFoodLevel(), this.foodStats.getSaturationLevel()));
--                this.lastHealth = this.func_110143_aJ();
-+            if (this.getHealth() != this.lastHealth || this.lastFoodLevel != this.foodStats.getFoodLevel() || this.foodStats.getSaturationLevel() == 0.0F != this.wasHungry)
-+            {
+             if (this.getHealth() != this.lastHealth || this.lastFoodLevel != this.foodStats.getFoodLevel() || this.foodStats.getSaturationLevel() == 0.0F != this.wasHungry)
+             {
+-                this.playerNetServerHandler.sendPacketToPlayer(new Packet8UpdateHealth(this.getHealth(), this.foodStats.getFoodLevel(), this.foodStats.getSaturationLevel()));
 +                // CraftBukkit - Optionally scale health
 +                this.playerNetServerHandler.sendPacketToPlayer(new Packet8UpdateHealth(this.getBukkitEntity().getScaledHealth(), this.foodStats.getFoodLevel(), this.foodStats.getSaturationLevel()));
-+                this.lastHealth = this.getHealth();
+                 this.lastHealth = this.getHealth();
                  this.lastFoodLevel = this.foodStats.getFoodLevel();
                  this.wasHungry = this.foodStats.getSaturationLevel() == 0.0F;
-             }
- 
--            if (this.func_110143_aJ() + this.func_110139_bj() != this.field_130068_bO)
--            {
--                this.field_130068_bO = this.func_110143_aJ() + this.func_110139_bj();
--                Collection collection = this.getWorldScoreboard().func_96520_a(ScoreObjectiveCriteria.field_96638_f);
+@@ -347,21 +439,36 @@
+             if (this.getHealth() + this.getAbsorptionAmount() != this.field_130068_bO)
+             {
+                 this.field_130068_bO = this.getHealth() + this.getAbsorptionAmount();
+-                Collection collection = this.getWorldScoreboard().func_96520_a(ScoreObjectiveCriteria.health);
 -                Iterator iterator = collection.iterator();
 -
 -                while (iterator.hasNext())
@@ -242,9 +223,6 @@
 -                    this.getWorldScoreboard().func_96529_a(this.getEntityName(), scoreobjective).func_96651_a(Arrays.asList(new EntityPlayer[] {this}));
 -                }
 -            }
-+            if (this.getHealth() + this.getAbsorptionAmount() != this.field_130068_bO)
-+            {
-+                this.field_130068_bO = this.getHealth() + this.getAbsorptionAmount();
 +                // CraftBukkit - Update ALL the scores!
 +                this.worldObj.getServer().getScoreboardManager().updateAllScoresForList(ScoreObjectiveCriteria.health, this.getEntityName(), com.google.common.collect.ImmutableList.of(this));
 +            }
@@ -254,7 +232,6 @@
 +            {
 +                this.getBukkitEntity().updateScaledHealth();
 +            }
-+
 +            // CraftBukkit end
  
              if (this.experienceTotal != this.lastExperience)
@@ -279,14 +256,7 @@
          }
          catch (Throwable throwable)
          {
-             CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Ticking player");
-             CrashReportCategory crashreportcategory = crashreport.makeCategory("Player being ticked");
--            this.func_85029_a(crashreportcategory);
-+            this.addEntityCrashInfo(crashreportcategory);
-             throw new ReportedException(crashreport);
-         }
-     }
-@@ -377,20 +465,88 @@
+@@ -377,20 +484,88 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -297,7 +267,7 @@
 -            this.inventory.dropAllItems();
 -        }
 -
--        Collection collection = this.worldObj.getScoreboard().func_96520_a(ScoreObjectiveCriteria.field_96642_c);
+-        Collection collection = this.worldObj.getScoreboard().func_96520_a(ScoreObjectiveCriteria.deathCount);
 +        // CraftBukkit start
 +        if (this.isDead || ForgeHooks.onLivingDeath(this, par1DamageSource)) // MCPC+ - call Forge hook
 +        {
@@ -385,7 +355,7 @@
              score.func_96648_a();
          }
  
-@@ -415,7 +571,8 @@
+@@ -415,7 +590,8 @@
          }
          else
          {
@@ -395,39 +365,17 @@
  
              if (!flag && this.initialInvulnerability > 0 && par1DamageSource != DamageSource.outOfWorld)
              {
-@@ -427,7 +584,7 @@
-                 {
-                     Entity entity = par1DamageSource.getEntity();
+@@ -450,7 +626,8 @@
  
--                    if (entity instanceof EntityPlayer && !this.func_96122_a((EntityPlayer)entity))
-+                    if (entity instanceof EntityPlayer && !this.canAttackPlayer((EntityPlayer)entity))
-                     {
-                         return false;
-                     }
-@@ -436,7 +593,7 @@
-                     {
-                         EntityArrow entityarrow = (EntityArrow)entity;
- 
--                        if (entityarrow.shootingEntity instanceof EntityPlayer && !this.func_96122_a((EntityPlayer)entityarrow.shootingEntity))
-+                        if (entityarrow.shootingEntity instanceof EntityPlayer && !this.canAttackPlayer((EntityPlayer)entityarrow.shootingEntity))
-                         {
-                             return false;
-                         }
-@@ -448,9 +605,10 @@
-         }
-     }
- 
--    public boolean func_96122_a(EntityPlayer par1EntityPlayer)
--    {
--        return !this.mcServer.isPVPEnabled() ? false : super.func_96122_a(par1EntityPlayer);
-+    public boolean canAttackPlayer(EntityPlayer par1EntityPlayer)
-+    {
+     public boolean canAttackPlayer(EntityPlayer par1EntityPlayer)
+     {
+-        return !this.mcServer.isPVPEnabled() ? false : super.canAttackPlayer(par1EntityPlayer);
 +        // CraftBukkit - this.server.getPvP() -> this.world.pvpMode
 +        return !this.worldObj.pvpMode ? false : super.canAttackPlayer(par1EntityPlayer);
      }
  
      /**
-@@ -470,21 +628,27 @@
+@@ -470,21 +647,27 @@
              if (this.dimension == 0 && par1 == 1)
              {
                  this.triggerAchievement(AchievementList.theEnd);
@@ -462,7 +410,7 @@
              this.lastExperience = -1;
              this.lastHealth = -1.0F;
              this.lastFoodLevel = -1;
-@@ -539,6 +703,11 @@
+@@ -539,6 +722,11 @@
       */
      public void wakeUpPlayer(boolean par1, boolean par2, boolean par3)
      {
@@ -474,7 +422,7 @@
          if (this.isPlayerSleeping())
          {
              this.getServerForPlayer().getEntityTracker().sendPacketToAllAssociatedPlayers(this, new Packet18Animation(this, 3));
-@@ -557,9 +726,24 @@
+@@ -557,9 +745,24 @@
       */
      public void mountEntity(Entity par1Entity)
      {
@@ -502,7 +450,7 @@
      }
  
      /**
-@@ -588,28 +772,54 @@
+@@ -588,28 +791,54 @@
          }
      }
  
@@ -561,7 +509,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -619,9 +829,18 @@
+@@ -619,9 +848,18 @@
       */
      public void displayGUIAnvil(int par1, int par2, int par3)
      {
@@ -582,7 +530,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -636,27 +855,54 @@
+@@ -636,27 +874,54 @@
              this.closeScreen();
          }
  
@@ -643,7 +591,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -666,9 +912,18 @@
+@@ -666,9 +931,18 @@
       */
      public void displayGUIFurnace(TileEntityFurnace par1TileEntityFurnace)
      {
@@ -664,7 +612,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -678,9 +933,18 @@
+@@ -678,9 +952,18 @@
       */
      public void displayGUIDispenser(TileEntityDispenser par1TileEntityDispenser)
      {
@@ -685,7 +633,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -690,9 +954,18 @@
+@@ -690,9 +973,18 @@
       */
      public void displayGUIBrewingStand(TileEntityBrewingStand par1TileEntityBrewingStand)
      {
@@ -706,7 +654,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -702,17 +975,35 @@
+@@ -702,17 +994,35 @@
       */
      public void displayGUIBeacon(TileEntityBeacon par1TileEntityBeacon)
      {
@@ -746,14 +694,10 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
          InventoryMerchant inventorymerchant = ((ContainerMerchant)this.openContainer).getMerchantInventory();
-@@ -736,8 +1027,18 @@
-         }
-     }
+@@ -738,6 +1048,16 @@
  
--    public void func_110298_a(EntityHorse par1EntityHorse, IInventory par2IInventory)
--    {
-+    public void displayGUIHorse(EntityHorse par1EntityHorse, IInventory par2IInventory)
-+    {
+     public void displayGUIHorse(EntityHorse par1EntityHorse, IInventory par2IInventory)
+     {
 +        // CraftBukkit start - Inventory open hook
 +        Container container = CraftEventFactory.callInventoryOpenEvent(this, new ContainerHorseInventory(this.inventory, par2IInventory, par1EntityHorse));
 +
@@ -767,7 +711,7 @@
          if (this.openContainer != this.inventoryContainer)
          {
              this.closeScreen();
-@@ -745,7 +1046,7 @@
+@@ -745,7 +1065,7 @@
  
          this.incrementWindowID();
          this.playerNetServerHandler.sendPacketToPlayer(new Packet100OpenWindow(this.currentWindowId, 11, par2IInventory.getInvName(), par2IInventory.getSizeInventory(), par2IInventory.isInvNameLocalized(), par1EntityHorse.entityId));
@@ -776,7 +720,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -774,6 +1075,15 @@
+@@ -774,6 +1094,15 @@
      {
          this.playerNetServerHandler.sendPacketToPlayer(new Packet104WindowItems(par1Container.windowId, par2List));
          this.playerNetServerHandler.sendPacketToPlayer(new Packet103SetSlot(-1, -1, this.inventory.getItemStack()));
@@ -792,7 +736,7 @@
      }
  
      /**
-@@ -791,6 +1101,7 @@
+@@ -791,6 +1120,7 @@
       */
      public void closeScreen()
      {
@@ -800,16 +744,7 @@
          this.playerNetServerHandler.sendPacketToPlayer(new Packet101CloseWindow(this.openContainer.windowId));
          this.closeContainer();
      }
-@@ -815,7 +1126,7 @@
-         this.openContainer = this.inventoryContainer;
-     }
- 
--    public void func_110430_a(float par1, float par2, boolean par3, boolean par4)
-+    public void setEntityActionState(float par1, float par2, boolean par3, boolean par4)
-     {
-         if (this.ridingEntity != null)
-         {
-@@ -868,6 +1179,7 @@
+@@ -868,6 +1198,7 @@
      public void setPlayerHealthUpdated()
      {
          this.lastHealth = -1.0E8F;
@@ -817,25 +752,7 @@
      }
  
      /**
-@@ -875,7 +1187,7 @@
-      */
-     public void addChatMessage(String par1Str)
-     {
--        this.playerNetServerHandler.sendPacketToPlayer(new Packet3Chat(ChatMessageComponent.func_111077_e(par1Str)));
-+        this.playerNetServerHandler.sendPacketToPlayer(new Packet3Chat(ChatMessageComponent.createFromTranslationKey(par1Str)));
-     }
- 
-     /**
-@@ -987,7 +1299,7 @@
-      */
-     public boolean canCommandSenderUseCommand(int par1, String par2Str)
-     {
--        return "seed".equals(par2Str) && !this.mcServer.isDedicatedServer() ? true : (!"tell".equals(par2Str) && !"help".equals(par2Str) && !"me".equals(par2Str) ? (this.mcServer.getConfigurationManager().areCommandsAllowed(this.username) ? this.mcServer.func_110455_j() >= par1 : false) : true);
-+        return "seed".equals(par2Str) && !this.mcServer.isDedicatedServer() ? true : (!"tell".equals(par2Str) && !"help".equals(par2Str) && !"me".equals(par2Str) ? (this.mcServer.getConfigurationManager().isPlayerOpped(this.username) ? this.mcServer.func_110455_j() >= par1 : false) : true);
-     }
- 
-     /**
-@@ -1032,7 +1344,7 @@
+@@ -1032,7 +1363,7 @@
       */
      public void requestTexturePackLoad(String par1Str, int par2)
      {
@@ -844,7 +761,7 @@
          this.playerNetServerHandler.sendPacketToPlayer(new Packet250CustomPayload("MC|TPack", s1.getBytes()));
      }
  
-@@ -1043,4 +1355,115 @@
+@@ -1043,4 +1374,115 @@
      {
          return new ChunkCoordinates(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY + 0.5D), MathHelper.floor_double(this.posZ));
      }

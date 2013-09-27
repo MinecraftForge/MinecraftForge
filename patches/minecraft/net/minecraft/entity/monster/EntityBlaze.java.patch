@@ -1,20 +1,5 @@
 --- ../src_base/minecraft/net/minecraft/entity/monster/EntityBlaze.java
 +++ ../src_work/minecraft/net/minecraft/entity/monster/EntityBlaze.java
-@@ -27,10 +27,10 @@
-         this.experienceValue = 10;
-     }
- 
--    protected void func_110147_ax()
--    {
--        super.func_110147_ax();
--        this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111128_a(6.0D);
-+    protected void applyEntityAttributes()
-+    {
-+        super.applyEntityAttributes();
-+        this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setAttribute(6.0D);
-     }
- 
-     protected void entityInit()
 @@ -206,12 +206,17 @@
      {
          if (par1)

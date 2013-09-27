@@ -1,0 +1,15 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockTNT.java
++++ ../src_work/minecraft/net/minecraft/block/BlockTNT.java
+@@ -140,6 +140,12 @@
+ 
+             if (entityarrow.isBurning())
+             {
++                // CraftBukkit start
++                if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(entityarrow, par2, par3, par4, 0, 0).isCancelled())
++                {
++                    return;
++                }
++                // CreaftBukkit end
+                 this.primeTnt(par1World, par2, par3, par4, 1, entityarrow.shootingEntity instanceof EntityLivingBase ? (EntityLivingBase)entityarrow.shootingEntity : null);
+                 par1World.setBlockToAir(par2, par3, par4);
+             }

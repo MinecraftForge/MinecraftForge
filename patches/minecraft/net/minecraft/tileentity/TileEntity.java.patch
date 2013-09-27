@@ -25,34 +25,16 @@
      /**
       * Adds a new two-way mapping between the class and its string name in both hashmaps.
       */
-@@ -185,7 +191,7 @@
-         if (this.worldObj != null)
-         {
-             this.blockMetadata = this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord);
--            this.worldObj.updateTileEntityChunkAndDoNothing(this.xCoord, this.yCoord, this.zCoord, this);
-+            this.worldObj.markTileEntityChunkModified(this.xCoord, this.yCoord, this.zCoord, this);
- 
-             if (this.getBlockType() != null)
-             {
-@@ -194,8 +200,6 @@
-         }
-     }
- 
--    @SideOnly(Side.CLIENT)
--
-     /**
-      * Returns the square of the distance between this entity and the passed in coordinates.
-      */
-@@ -279,7 +283,7 @@
+@@ -277,7 +283,7 @@
      public void func_85027_a(CrashReportCategory par1CrashReportCategory)
      {
          par1CrashReportCategory.addCrashSectionCallable("Name", new CallableTileEntityName(this));
--        CrashReportCategory.func_85068_a(par1CrashReportCategory, this.xCoord, this.yCoord, this.zCoord, this.getBlockType().blockID, this.getBlockMetadata());
+-        CrashReportCategory.addBlockCrashInfo(par1CrashReportCategory, this.xCoord, this.yCoord, this.zCoord, this.getBlockType().blockID, this.getBlockMetadata());
 +        CrashReportCategory.addBlockCrashInfo(par1CrashReportCategory, this.xCoord, this.yCoord, this.zCoord, this.getBlockType() == null ? 0 : this.getBlockType().blockID, this.getBlockMetadata()); // MCPC+ - dont pass blocktype if null
          par1CrashReportCategory.addCrashSectionCallable("Actual block type", new CallableTileEntityID(this));
          par1CrashReportCategory.addCrashSectionCallable("Actual block data value", new CallableTileEntityData(this));
      }
-@@ -311,4 +315,108 @@
+@@ -309,4 +315,108 @@
          addMapping(TileEntityHopper.class, "Hopper");
          addMapping(TileEntityComparator.class, "Comparator");
      }

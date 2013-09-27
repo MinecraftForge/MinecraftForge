@@ -25,7 +25,7 @@
                  int i1 = par1World.getBlockMetadata(par2, par3, par4);
  
 -                if (i1 == 15)
-+                if (i1 >= (byte) range(3, (par1World.growthOdds / par1World.getWorld().cactusGrowthModifier * 15) + 0.5F, 15))   // Spigot
++                if (i1 >= (byte) range(3, (par1World.growthOdds / par1World.spigotConfig.cactusModifier * 15) + 0.5F, 15)) // Spigot
                  {
 -                    par1World.setBlock(par2, par3 + 1, par4, this.blockID);
 +                    org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(par1World, par2, par3 + 1, par4, this.blockID, 0); // CraftBukkit
@@ -66,17 +66,10 @@
          par5Entity.attackEntityFrom(DamageSource.cactus, 1.0F);
      }
  
-@@ -178,8 +202,26 @@
-      */
-     public void registerIcons(IconRegister par1IconRegister)
-     {
--        this.blockIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_side");
--        this.cactusTopIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_top");
--        this.cactusBottomIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_bottom");
-+        this.blockIcon = par1IconRegister.registerIcon(this.getTextureName() + "_side");
-+        this.cactusTopIcon = par1IconRegister.registerIcon(this.getTextureName() + "_top");
-+        this.cactusBottomIcon = par1IconRegister.registerIcon(this.getTextureName() + "_bottom");
-+    }
+@@ -182,4 +206,22 @@
+         this.cactusTopIcon = par1IconRegister.registerIcon(this.getTextureName() + "_top");
+         this.cactusBottomIcon = par1IconRegister.registerIcon(this.getTextureName() + "_bottom");
+     }
 +
 +    @Override
 +    public EnumPlantType getPlantType(World world, int x, int y, int z)
@@ -94,5 +87,5 @@
 +    public int getPlantMetadata(World world, int x, int y, int z)
 +    {
 +        return -1;
-     }
++    }
  }

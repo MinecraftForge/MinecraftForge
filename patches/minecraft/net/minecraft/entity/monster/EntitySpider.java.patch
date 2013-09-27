@@ -8,23 +8,6 @@
  
  public class EntitySpider extends EntityMob
  {
-@@ -38,11 +39,11 @@
-         }
-     }
- 
--    protected void func_110147_ax()
--    {
--        super.func_110147_ax();
--        this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111128_a(16.0D);
--        this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.800000011920929D);
-+    protected void applyEntityAttributes()
-+    {
-+        super.applyEntityAttributes();
-+        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute(16.0D);
-+        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.800000011920929D);
-     }
- 
-     /**
 @@ -105,7 +106,24 @@
  
          if (f1 > 0.5F && this.rand.nextInt(100) == 0)
@@ -82,32 +65,3 @@
      }
  
      /**
-@@ -205,15 +238,15 @@
-         this.dataWatcher.updateObject(16, Byte.valueOf(b0));
-     }
- 
--    public EntityLivingData func_110161_a(EntityLivingData par1EntityLivingData)
--    {
--        Object par1EntityLivingData1 = super.func_110161_a(par1EntityLivingData);
-+    public EntityLivingData onSpawnWithEgg(EntityLivingData par1EntityLivingData)
-+    {
-+        Object par1EntityLivingData1 = super.onSpawnWithEgg(par1EntityLivingData);
- 
-         if (this.worldObj.rand.nextInt(100) == 0)
-         {
-             EntitySkeleton entityskeleton = new EntitySkeleton(this.worldObj);
-             entityskeleton.setLocationAndAngles(this.posX, this.posY, this.posZ, this.rotationYaw, 0.0F);
--            entityskeleton.func_110161_a((EntityLivingData)null);
-+            entityskeleton.onSpawnWithEgg((EntityLivingData)null);
-             this.worldObj.spawnEntityInWorld(entityskeleton);
-             entityskeleton.mountEntity(this);
-         }
-@@ -222,7 +255,7 @@
-         {
-             par1EntityLivingData1 = new SpiderEffectsGroupData();
- 
--            if (this.worldObj.difficultySetting > 2 && this.worldObj.rand.nextFloat() < 0.1F * this.worldObj.func_110746_b(this.posX, this.posY, this.posZ))
-+            if (this.worldObj.difficultySetting > 2 && this.worldObj.rand.nextFloat() < 0.1F * this.worldObj.getLocationTensionFactor(this.posX, this.posY, this.posZ))
-             {
-                 ((SpiderEffectsGroupData)par1EntityLivingData1).func_111104_a(this.worldObj.rand);
-             }

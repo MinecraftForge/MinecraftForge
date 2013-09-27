@@ -9,7 +9,7 @@
  import java.util.List;
  import java.util.Random;
  import net.minecraft.block.material.Material;
-@@ -16,12 +18,17 @@
+@@ -16,7 +18,10 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
@@ -21,26 +21,7 @@
  {
      public static final String[] LEAF_TYPES = new String[] {"oak", "spruce", "birch", "jungle"};
      public static final String[][] field_94396_b = new String[][] {{"leaves_oak", "leaves_spruce", "leaves_birch", "leaves_jungle"}, {"leaves_oak_opaque", "leaves_spruce_opaque", "leaves_birch_opaque", "leaves_jungle_opaque"}};
-     @SideOnly(Side.CLIENT)
--    private int field_94394_cP;
-+
-+    /** 1 for fast graphic. 0 for fancy graphics. used in iconArray. */
-+    private int iconType;
-     private Icon[][] iconArray = new Icon[2][];
-     int[] adjacentTreeBlocks;
- 
-@@ -90,7 +97,9 @@
-     }
- 
-     /**
--     * ejects contained items into the world, and notifies neighbours of an update, as appropriate
-+     * Called on server worlds only when the block has been replaced by a different block ID, or the same block with a
-+     * different metadata value, but before the new metadata value is set. Args: World, x, y, z, old block ID, old
-+     * metadata
-      */
-     public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
-     {
-@@ -107,10 +116,9 @@
+@@ -111,10 +116,9 @@
                      {
                          int j2 = par1World.getBlockId(par2 + k1, par3 + l1, par4 + i2);
  
@@ -53,7 +34,7 @@
                          }
                      }
                  }
-@@ -156,11 +164,13 @@
+@@ -160,11 +164,13 @@
                              {
                                  k2 = par1World.getBlockId(par2 + l1, par3 + i2, par4 + j2);
  
@@ -69,7 +50,7 @@
                                  {
                                      this.adjacentTreeBlocks[(l1 + k1) * j1 + (i2 + k1) * b1 + j2 + k1] = -2;
                                  }
-@@ -250,6 +260,15 @@
+@@ -254,6 +260,15 @@
  
      private void removeLeaves(World par1World, int par2, int par3, int par4)
      {
@@ -85,7 +66,7 @@
          this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
          par1World.setBlockToAir(par2, par3, par4);
      }
-@@ -325,15 +344,7 @@
+@@ -329,15 +344,7 @@
       */
      public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {
@@ -102,25 +83,7 @@
      }
  
      /**
-@@ -360,7 +371,7 @@
-      */
-     public Icon getIcon(int par1, int par2)
-     {
--        return (par2 & 3) == 1 ? this.iconArray[this.field_94394_cP][1] : ((par2 & 3) == 3 ? this.iconArray[this.field_94394_cP][3] : ((par2 & 3) == 2 ? this.iconArray[this.field_94394_cP][2] : this.iconArray[this.field_94394_cP][0]));
-+        return (par2 & 3) == 1 ? this.iconArray[this.iconType][1] : ((par2 & 3) == 3 ? this.iconArray[this.iconType][3] : ((par2 & 3) == 2 ? this.iconArray[this.iconType][2] : this.iconArray[this.iconType][0]));
-     }
- 
-     @SideOnly(Side.CLIENT)
-@@ -371,7 +382,7 @@
-     public void setGraphicsLevel(boolean par1)
-     {
-         this.graphicsLevel = par1;
--        this.field_94394_cP = par1 ? 0 : 1;
-+        this.iconType = par1 ? 0 : 1;
-     }
- 
-     @SideOnly(Side.CLIENT)
-@@ -414,4 +425,30 @@
+@@ -418,4 +425,30 @@
              }
          }
      }

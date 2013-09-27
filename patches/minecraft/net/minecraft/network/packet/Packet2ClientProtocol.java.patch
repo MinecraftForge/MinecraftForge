@@ -1,13 +1,12 @@
 --- ../src_base/minecraft/net/minecraft/network/packet/Packet2ClientProtocol.java
 +++ ../src_work/minecraft/net/minecraft/network/packet/Packet2ClientProtocol.java
-@@ -4,14 +4,16 @@
+@@ -4,14 +4,15 @@
  import cpw.mods.fml.relauncher.SideOnly;
  import java.io.DataInput;
  import java.io.DataOutput;
 -import java.io.IOException;
 +
 +import java.io.IOException; // CraftBukkit
-+import org.bukkit.craftbukkit.Spigot;
  
  public class Packet2ClientProtocol extends Packet
  {
@@ -20,15 +19,3 @@
  
      public Packet2ClientProtocol() {}
  
-@@ -33,6 +35,11 @@
-         this.username = readString(par1DataInput, 16);
-         this.serverHost = readString(par1DataInput, 255);
-         this.serverPort = par1DataInput.readInt();
-+
-+        if (!Spigot.validName.matcher(this.username).matches())
-+        {
-+            throw new IOException("Invalid name!");    // Spigot
-+        }
-     }
- 
-     /**

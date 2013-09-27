@@ -1,20 +1,5 @@
 --- ../src_base/minecraft/net/minecraft/network/packet/Packet3Chat.java
 +++ ../src_work/minecraft/net/minecraft/network/packet/Packet3Chat.java
-@@ -18,12 +18,12 @@
- 
-     public Packet3Chat(ChatMessageComponent par1ChatMessageComponent)
-     {
--        this(par1ChatMessageComponent.func_111062_i());
-+        this(par1ChatMessageComponent.toJson());
-     }
- 
-     public Packet3Chat(ChatMessageComponent par1ChatMessageComponent, boolean par2)
-     {
--        this(par1ChatMessageComponent.func_111062_i(), par2);
-+        this(par1ChatMessageComponent.toJson(), par2);
-     }
- 
-     public Packet3Chat(String par1Str)
 @@ -83,4 +83,13 @@
      {
          return this.isServer;

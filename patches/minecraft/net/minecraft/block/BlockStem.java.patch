@@ -24,7 +24,7 @@
              float f = this.getGrowthModifier(par1World, par2, par3, par4);
  
 -            if (par5Random.nextInt((int)(25.0F / f) + 1) == 0)
-+            if (par5Random.nextInt((int)(par1World.growthOdds / (this.blockID == Block.pumpkinStem.blockID ? par1World.getWorld().pumpkinGrowthModifier : par1World.getWorld().melonGrowthModifier) * (25.0F / f)) + 1) == 0)    // Spigot
++            if (par5Random.nextInt((int)(par1World.growthOdds / (this.blockID == Block.pumpkinStem.blockID ? par1World.spigotConfig.pumpkinModifier : par1World.spigotConfig.melonModifier) * (25.0F / f)) + 1) == 0) // Spigot
              {
                  int l = par1World.getBlockMetadata(par2, par3, par4);
  
@@ -108,22 +108,3 @@
      }
  
      /**
-@@ -304,12 +302,12 @@
-      */
-     public void registerIcons(IconRegister par1IconRegister)
-     {
--        this.blockIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_disconnected");
--        this.theIcon = par1IconRegister.registerIcon(this.func_111023_E() + "_connected");
--    }
--
--    @SideOnly(Side.CLIENT)
--    public Icon func_94368_p()
-+        this.blockIcon = par1IconRegister.registerIcon(this.getTextureName() + "_disconnected");
-+        this.theIcon = par1IconRegister.registerIcon(this.getTextureName() + "_connected");
-+    }
-+
-+    @SideOnly(Side.CLIENT)
-+    public Icon getStemIcon()
-     {
-         return this.theIcon;
-     }

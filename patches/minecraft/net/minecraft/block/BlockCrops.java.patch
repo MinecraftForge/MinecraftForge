@@ -24,7 +24,7 @@
 -                {
 -                    ++l;
 -                    par1World.setBlockMetadataWithNotify(par2, par3, par4, l, 2);
-+                if (par5Random.nextInt((int)(par1World.growthOdds / par1World.getWorld().wheatGrowthModifier * (25.0F / f)) + 1) == 0)    // Spigot
++                if (par5Random.nextInt((int)(par1World.growthOdds / par1World.spigotConfig.wheatModifier * (25.0F / f)) + 1) == 0) // Spigot
 +                {
 +                    org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(par1World, par2, par3, par4, this.blockID, ++l); // CraftBukkit
                  }
@@ -82,12 +82,3 @@
      }
  
      /**
-@@ -231,7 +235,7 @@
- 
-         for (int i = 0; i < this.iconArray.length; ++i)
-         {
--            this.iconArray[i] = par1IconRegister.registerIcon(this.func_111023_E() + "_stage_" + i);
-+            this.iconArray[i] = par1IconRegister.registerIcon(this.getTextureName() + "_stage_" + i);
-         }
-     }
- }

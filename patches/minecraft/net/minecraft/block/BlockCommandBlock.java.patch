@@ -31,21 +31,3 @@
              {
                  par1World.setBlockMetadataWithNotify(par2, par3, par4, i1 & -2, 4);
              }
-@@ -58,7 +66,7 @@
-         if (tileentity != null && tileentity instanceof TileEntityCommandBlock)
-         {
-             TileEntityCommandBlock tileentitycommandblock = (TileEntityCommandBlock)tileentity;
--            tileentitycommandblock.func_96102_a(tileentitycommandblock.executeCommandOnPowered(par1World));
-+            tileentitycommandblock.setSignalStrength(tileentitycommandblock.executeCommandOnPowered(par1World));
-             par1World.func_96440_m(par2, par3, par4, this.blockID);
-         }
-     }
-@@ -102,7 +110,7 @@
-     public int getComparatorInputOverride(World par1World, int par2, int par3, int par4, int par5)
-     {
-         TileEntity tileentity = par1World.getBlockTileEntity(par2, par3, par4);
--        return tileentity != null && tileentity instanceof TileEntityCommandBlock ? ((TileEntityCommandBlock)tileentity).func_96103_d() : 0;
-+        return tileentity != null && tileentity instanceof TileEntityCommandBlock ? ((TileEntityCommandBlock)tileentity).getSignalStrength() : 0;
-     }
- 
-     /**

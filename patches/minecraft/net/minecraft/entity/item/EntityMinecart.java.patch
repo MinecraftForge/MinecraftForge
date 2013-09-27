@@ -19,7 +19,7 @@
  
  public abstract class EntityMinecart extends Entity
  {
-@@ -45,13 +57,37 @@
+@@ -45,6 +57,30 @@
      @SideOnly(Side.CLIENT)
      protected double velocityZ;
  
@@ -50,14 +50,6 @@
      public EntityMinecart(World par1World)
      {
          super(par1World);
-         this.preventEntitySpawning = true;
-         this.setSize(0.98F, 0.7F);
-         this.yOffset = this.height / 2.0F;
--        this.field_82344_g = par1World != null ? par1World.func_82735_a(this) : null;
-+        this.field_82344_g = par1World != null ? par1World.getMinecartSoundUpdater(this) : null;
-     }
- 
-     /**
 @@ -104,6 +140,10 @@
       */
      public AxisAlignedBB getCollisionBox(Entity par1Entity)
@@ -148,15 +140,45 @@
          if (this.field_82344_g != null)
          {
              this.field_82344_g.update();
-@@ -269,7 +344,7 @@
+@@ -269,11 +344,11 @@
  
              if (this.inPortal)
              {
 -                if (minecraftserver.getAllowNether())
+-                {
+-                    if (this.ridingEntity == null && this.portalCounter++ >= i)
 +                if (true || minecraftserver.getAllowNether())   // CraftBukkit - multi-world should still allow teleport even if default vanilla nether disabled
-                 {
-                     if (this.ridingEntity == null && this.timeInPortal++ >= i)
++                {
++                    if (this.ridingEntity == null && this.timeInPortal++ >= i)
                      {
+-                        this.portalCounter = i;
++                        this.timeInPortal = i;
+                         this.timeUntilPortal = this.getPortalCooldown();
+                         byte b0;
+ 
+@@ -294,14 +369,14 @@
+             }
+             else
+             {
+-                if (this.portalCounter > 0)
+-                {
+-                    this.portalCounter -= 4;
+-                }
+-
+-                if (this.portalCounter < 0)
+-                {
+-                    this.portalCounter = 0;
++                if (this.timeInPortal > 0)
++                {
++                    this.timeInPortal -= 4;
++                }
++
++                if (this.timeInPortal < 0)
++                {
++                    this.timeInPortal = 0;
+                 }
+             }
+ 
 @@ -348,23 +423,25 @@
                  --i;
              }
@@ -441,15 +463,6 @@
                          {
                              par1Entity.motionX *= 0.20000000298023224D;
                              par1Entity.motionZ *= 0.20000000298023224D;
-@@ -1034,7 +1138,7 @@
-      */
-     public float getDamage()
-     {
--        return this.dataWatcher.func_111145_d(19);
-+        return this.dataWatcher.getWatchableObjectFloat(19);
-     }
- 
-     /**
 @@ -1168,4 +1272,237 @@
      {
          return this.entityName;

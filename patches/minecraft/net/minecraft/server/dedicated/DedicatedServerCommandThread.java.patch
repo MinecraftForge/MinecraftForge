@@ -9,7 +9,13 @@
  
  class DedicatedServerCommandThread extends Thread
  {
-@@ -15,19 +17,42 @@
+@@ -10,24 +12,48 @@
+ 
+     DedicatedServerCommandThread(DedicatedServer par1DedicatedServer)
+     {
++        super("Command Reader");
+         this.server = par1DedicatedServer;
+     }
  
      public void run()
      {

@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/entity/monster/EntityPigZombie.java
 +++ ../src_work/minecraft/net/minecraft/entity/monster/EntityPigZombie.java
-@@ -13,14 +13,18 @@
+@@ -13,6 +13,10 @@
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.util.DamageSource;
  import net.minecraft.world.World;
@@ -11,9 +11,8 @@
  
  public class EntityPigZombie extends EntityZombie
  {
-     private static final UUID field_110189_bq = UUID.fromString("49455A49-7EC5-45BA-B886-3B90B23A1718");
--    private static final AttributeModifier field_110190_br = (new AttributeModifier(field_110189_bq, "Attacking speed boost", 0.45D, 0)).func_111168_a(false);
-+    private static final AttributeModifier field_110190_br = (new AttributeModifier(field_110189_bq, "Attacking speed boost", 0.45D, 0)).setSaved(false);
+@@ -20,7 +24,7 @@
+     private static final AttributeModifier field_110190_br = (new AttributeModifier(field_110189_bq, "Attacking speed boost", 0.45D, 0)).setSaved(false);
  
      /** Above zero if this PigZombie is Angry. */
 -    private int angerLevel;
@@ -21,41 +20,6 @@
  
      /** A random delay until this PigZombie next makes a sound. */
      private int randomSoundDelay;
-@@ -32,12 +36,12 @@
-         this.isImmuneToFire = true;
-     }
- 
--    protected void func_110147_ax()
--    {
--        super.func_110147_ax();
--        this.func_110148_a(field_110186_bp).func_111128_a(0.0D);
--        this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.5D);
--        this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111128_a(5.0D);
-+    protected void applyEntityAttributes()
-+    {
-+        super.applyEntityAttributes();
-+        this.getEntityAttribute(field_110186_bp).setAttribute(0.0D);
-+        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.5D);
-+        this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setAttribute(5.0D);
-     }
- 
-     /**
-@@ -55,12 +59,12 @@
-     {
-         if (this.field_110191_bu != this.entityToAttack && !this.worldObj.isRemote)
-         {
--            AttributeInstance attributeinstance = this.func_110148_a(SharedMonsterAttributes.field_111263_d);
--            attributeinstance.func_111124_b(field_110190_br);
-+            AttributeInstance attributeinstance = this.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
-+            attributeinstance.removeModifier(field_110190_br);
- 
-             if (this.entityToAttack != null)
-             {
--                attributeinstance.func_111121_a(field_110190_br);
-+                attributeinstance.applyModifier(field_110190_br);
-             }
-         }
- 
 @@ -149,6 +153,24 @@
       */
      private void becomeAngryAt(Entity par1Entity)
@@ -149,16 +113,3 @@
  
      /**
       * Returns the item ID for the item the mob drops on death.
-@@ -229,9 +274,9 @@
-         this.setCurrentItemOrArmor(0, new ItemStack(Item.swordGold));
-     }
- 
--    public EntityLivingData func_110161_a(EntityLivingData par1EntityLivingData)
--    {
--        super.func_110161_a(par1EntityLivingData);
-+    public EntityLivingData onSpawnWithEgg(EntityLivingData par1EntityLivingData)
-+    {
-+        super.onSpawnWithEgg(par1EntityLivingData);
-         this.setVillager(false);
-         return par1EntityLivingData;
-     }

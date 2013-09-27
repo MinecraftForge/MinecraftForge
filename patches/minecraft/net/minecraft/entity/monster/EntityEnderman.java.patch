@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/entity/monster/EntityEnderman.java
 +++ ../src_work/minecraft/net/minecraft/entity/monster/EntityEnderman.java
-@@ -16,20 +16,31 @@
+@@ -16,6 +16,13 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
@@ -14,108 +14,7 @@
  
  public class EntityEnderman extends EntityMob
  {
--    private static final UUID field_110192_bp = UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0");
--    private static final AttributeModifier field_110193_bq = (new AttributeModifier(field_110192_bp, "Attacking speed boost", 6.199999809265137D, 0)).func_111168_a(false);
-+    private static final UUID attackingSpeedBoostModifierUUID = UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0");
-+    private static final AttributeModifier attackingSpeedBoostModifier = (new AttributeModifier(attackingSpeedBoostModifierUUID, "Attacking speed boost", 6.199999809265137D, 0)).setSaved(false);
-     public static boolean[] carriableBlocks = new boolean[256];
- 
-     /**
-      * Counter to delay the teleportation of an enderman towards the currently attacked target
-      */
-     private int teleportDelay;
--    private int field_70826_g;
--    private Entity field_110194_bu;
--    private boolean field_104003_g;
-+
-+    /**
-+     * A player must stare at an enderman for 5 ticks before it becomes aggressive. This field counts those ticks.
-+     */
-+    private int stareTimer;
-+    private Entity lastEntityToAttack;
-+    private boolean isAggressive;
- 
-     public EntityEnderman(World par1World)
-     {
-@@ -38,12 +49,12 @@
-         this.stepHeight = 1.0F;
-     }
- 
--    protected void func_110147_ax()
--    {
--        super.func_110147_ax();
--        this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111128_a(40.0D);
--        this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.30000001192092896D);
--        this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111128_a(7.0D);
-+    protected void applyEntityAttributes()
-+    {
-+        super.applyEntityAttributes();
-+        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute(40.0D);
-+        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.30000001192092896D);
-+        this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setAttribute(7.0D);
-     }
- 
-     protected void entityInit()
-@@ -86,23 +97,23 @@
-         {
-             if (this.shouldAttackPlayer(entityplayer))
-             {
--                this.field_104003_g = true;
--
--                if (this.field_70826_g == 0)
-+                this.isAggressive = true;
-+
-+                if (this.stareTimer == 0)
-                 {
-                     this.worldObj.playSoundAtEntity(entityplayer, "mob.endermen.stare", 1.0F, 1.0F);
-                 }
- 
--                if (this.field_70826_g++ == 5)
--                {
--                    this.field_70826_g = 0;
-+                if (this.stareTimer++ == 5)
-+                {
-+                    this.stareTimer = 0;
-                     this.setScreaming(true);
-                     return entityplayer;
-                 }
-             }
-             else
-             {
--                this.field_70826_g = 0;
-+                this.stareTimer = 0;
-             }
-         }
- 
-@@ -142,18 +153,18 @@
-             this.attackEntityFrom(DamageSource.drown, 1.0F);
-         }
- 
--        if (this.field_110194_bu != this.entityToAttack)
--        {
--            AttributeInstance attributeinstance = this.func_110148_a(SharedMonsterAttributes.field_111263_d);
--            attributeinstance.func_111124_b(field_110193_bq);
-+        if (this.lastEntityToAttack != this.entityToAttack)
-+        {
-+            AttributeInstance attributeinstance = this.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
-+            attributeinstance.removeModifier(attackingSpeedBoostModifier);
- 
-             if (this.entityToAttack != null)
-             {
--                attributeinstance.func_111121_a(field_110193_bq);
--            }
--        }
--
--        this.field_110194_bu = this.entityToAttack;
-+                attributeinstance.applyModifier(attackingSpeedBoostModifier);
-+            }
-+        }
-+
-+        this.lastEntityToAttack = this.entityToAttack;
-         int i;
- 
-         if (!this.worldObj.isRemote && this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"))
-@@ -173,9 +184,15 @@
+@@ -177,9 +184,15 @@
  
                      if (carriableBlocks[l])
                      {
@@ -134,7 +33,7 @@
                      }
                  }
              }
-@@ -189,8 +206,14 @@
+@@ -193,8 +206,14 @@
  
                  if (l == 0 && i1 > 0 && Block.blocksList[i1].renderAsNormalBlock())
                  {
@@ -151,30 +50,7 @@
                  }
              }
          }
-@@ -208,7 +231,7 @@
-             {
-                 this.entityToAttack = null;
-                 this.setScreaming(false);
--                this.field_104003_g = false;
-+                this.isAggressive = false;
-                 this.teleportRandomly();
-             }
-         }
-@@ -217,11 +240,11 @@
-         {
-             this.entityToAttack = null;
-             this.setScreaming(false);
--            this.field_104003_g = false;
-+            this.isAggressive = false;
-             this.teleportRandomly();
-         }
- 
--        if (this.isScreaming() && !this.field_104003_g && this.rand.nextInt(100) == 0)
-+        if (this.isScreaming() && !this.isAggressive && this.rand.nextInt(100) == 0)
-         {
-             this.setScreaming(false);
-         }
-@@ -291,12 +314,17 @@
+@@ -295,12 +314,17 @@
       */
      protected boolean teleportTo(double par1, double par3, double par5)
      {
@@ -195,7 +71,7 @@
          boolean flag = false;
          int i = MathHelper.floor_double(this.posX);
          int j = MathHelper.floor_double(this.posY);
-@@ -324,7 +352,18 @@
+@@ -328,7 +352,18 @@
  
              if (flag1)
              {
@@ -215,7 +91,7 @@
  
                  if (this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(this.boundingBox))
                  {
-@@ -402,12 +441,17 @@
+@@ -406,12 +441,17 @@
  
          if (j > 0)
          {
@@ -239,22 +115,7 @@
          }
      }
  
-@@ -458,12 +502,12 @@
- 
-             if (par1DamageSource instanceof EntityDamageSource && par1DamageSource.getEntity() instanceof EntityPlayer)
-             {
--                this.field_104003_g = true;
-+                this.isAggressive = true;
-             }
- 
-             if (par1DamageSource instanceof EntityDamageSourceIndirect)
-             {
--                this.field_104003_g = false;
-+                this.isAggressive = false;
- 
-                 for (int i = 0; i < 64; ++i)
-                 {
-@@ -473,7 +517,7 @@
+@@ -477,7 +517,7 @@
                      }
                  }
  

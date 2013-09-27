@@ -8,56 +8,7 @@
  
  public class EntitySquid extends EntityWaterMob
  {
-@@ -13,8 +14,14 @@
-     public float prevSquidPitch;
-     public float squidYaw;
-     public float prevSquidYaw;
--    public float field_70867_h;
--    public float field_70868_i;
-+
-+    /**
-+     * appears to be rotation in radians; we already have pitch & yaw, so this completes the triumvirate.
-+     */
-+    public float squidRotation;
-+
-+    /** previous squidRotation in radians. */
-+    public float prevSquidRotation;
- 
-     /** angle of the tentacles in radians */
-     public float tentacleAngle;
-@@ -22,7 +29,9 @@
-     /** the last calculated angle of the tentacles in radians */
-     public float prevTentacleAngle;
-     private float randomMotionSpeed;
--    private float field_70864_bA;
-+
-+    /** change in squidRotation in radians. */
-+    private float rotationVelocity;
-     private float field_70871_bB;
-     private float randomMotionVecX;
-     private float randomMotionVecY;
-@@ -32,13 +41,13 @@
-     {
-         super(par1World);
-         this.setSize(0.95F, 0.95F);
--        this.field_70864_bA = 1.0F / (this.rand.nextFloat() + 1.0F) * 0.2F;
--    }
--
--    protected void func_110147_ax()
--    {
--        super.func_110147_ax();
--        this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111128_a(10.0D);
-+        this.rotationVelocity = 1.0F / (this.rand.nextFloat() + 1.0F) * 0.2F;
-+    }
-+
-+    protected void applyEntityAttributes()
-+    {
-+        super.applyEntityAttributes();
-+        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute(10.0D);
-     }
- 
-     /**
-@@ -96,22 +105,29 @@
+@@ -104,22 +105,29 @@
       */
      protected void dropFewItems(boolean par1, int par2)
      {
@@ -95,45 +46,7 @@
  
      /**
       * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
-@@ -122,17 +138,17 @@
-         super.onLivingUpdate();
-         this.prevSquidPitch = this.squidPitch;
-         this.prevSquidYaw = this.squidYaw;
--        this.field_70868_i = this.field_70867_h;
-+        this.prevSquidRotation = this.squidRotation;
-         this.prevTentacleAngle = this.tentacleAngle;
--        this.field_70867_h += this.field_70864_bA;
--
--        if (this.field_70867_h > ((float)Math.PI * 2F))
--        {
--            this.field_70867_h -= ((float)Math.PI * 2F);
-+        this.squidRotation += this.rotationVelocity;
-+
-+        if (this.squidRotation > ((float)Math.PI * 2F))
-+        {
-+            this.squidRotation -= ((float)Math.PI * 2F);
- 
-             if (this.rand.nextInt(10) == 0)
-             {
--                this.field_70864_bA = 1.0F / (this.rand.nextFloat() + 1.0F) * 0.2F;
-+                this.rotationVelocity = 1.0F / (this.rand.nextFloat() + 1.0F) * 0.2F;
-             }
-         }
- 
-@@ -140,9 +156,9 @@
-         {
-             float f;
- 
--            if (this.field_70867_h < (float)Math.PI)
--            {
--                f = this.field_70867_h / (float)Math.PI;
-+            if (this.squidRotation < (float)Math.PI)
-+            {
-+                f = this.squidRotation / (float)Math.PI;
-                 this.tentacleAngle = MathHelper.sin(f * f * (float)Math.PI) * (float)Math.PI * 0.25F;
- 
-                 if ((double)f > 0.75D)
-@@ -170,14 +186,16 @@
+@@ -178,10 +186,12 @@
              }
  
              f = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
@@ -148,8 +61,3 @@
          }
          else
          {
--            this.tentacleAngle = MathHelper.abs(MathHelper.sin(this.field_70867_h)) * (float)Math.PI * 0.25F;
-+            this.tentacleAngle = MathHelper.abs(MathHelper.sin(this.squidRotation)) * (float)Math.PI * 0.25F;
- 
-             if (!this.worldObj.isRemote)
-             {

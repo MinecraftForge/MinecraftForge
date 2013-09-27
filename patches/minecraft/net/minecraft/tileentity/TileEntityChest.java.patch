@@ -12,29 +12,10 @@
  public class TileEntityChest extends TileEntity implements IInventory
  {
      private ItemStack[] chestContents = new ItemStack[36];
-@@ -45,19 +50,49 @@
- 
-     /** Server sync counter (once per 20 ticks) */
-     private int ticksSinceSync;
--    private int field_94046_i;
--    private String field_94045_s;
-+    private int cachedChestType;
-+    private String customName;
- 
-     public TileEntityChest()
-     {
--        this.field_94046_i = -1;
-+        this.cachedChestType = -1;
+@@ -59,6 +64,36 @@
+         this.cachedChestType = par1;
      }
  
-     @SideOnly(Side.CLIENT)
-     public TileEntityChest(int par1)
-     {
--        this.field_94046_i = par1;
--    }
-+        this.cachedChestType = par1;
-+    }
-+
 +    // CraftBukkit start
 +    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +    private int maxStack = MAX_STACK;
@@ -64,54 +45,10 @@
 +        maxStack = size;
 +    }
 +    // CraftBukkit end
- 
++
      /**
       * Returns the number of slots in the inventory.
-@@ -149,7 +184,7 @@
       */
-     public String getInvName()
-     {
--        return this.isInvNameLocalized() ? this.field_94045_s : "container.chest";
-+        return this.isInvNameLocalized() ? this.customName : "container.chest";
-     }
- 
-     /**
-@@ -158,7 +193,7 @@
-      */
-     public boolean isInvNameLocalized()
-     {
--        return this.field_94045_s != null && this.field_94045_s.length() > 0;
-+        return this.customName != null && this.customName.length() > 0;
-     }
- 
-     /**
-@@ -166,7 +201,7 @@
-      */
-     public void setChestGuiName(String par1Str)
-     {
--        this.field_94045_s = par1Str;
-+        this.customName = par1Str;
-     }
- 
-     /**
-@@ -180,7 +215,7 @@
- 
-         if (par1NBTTagCompound.hasKey("CustomName"))
-         {
--            this.field_94045_s = par1NBTTagCompound.getString("CustomName");
-+            this.customName = par1NBTTagCompound.getString("CustomName");
-         }
- 
-         for (int i = 0; i < nbttaglist.tagCount(); ++i)
-@@ -218,7 +253,7 @@
- 
-         if (this.isInvNameLocalized())
-         {
--            par1NBTTagCompound.setString("CustomName", this.field_94045_s);
-+            par1NBTTagCompound.setString("CustomName", this.customName);
-         }
-     }
- 
 @@ -228,7 +263,7 @@
       */
      public int getInventoryStackLimit()
@@ -133,15 +70,6 @@
          return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ? false : par1EntityPlayer.getDistanceSq((double)this.xCoord + 0.5D, (double)this.yCoord + 0.5D, (double)this.zCoord + 0.5D) <= 64.0D;
      }
  
-@@ -347,7 +387,7 @@
-     private boolean func_94044_a(int par1, int par2, int par3)
-     {
-         Block block = Block.blocksList[this.worldObj.getBlockId(par1, par2, par3)];
--        return block != null && block instanceof BlockChest ? ((BlockChest)block).isTrapped == this.func_98041_l() : false;
-+        return block != null && block instanceof BlockChest ? ((BlockChest)block).chestType == this.getChestType() : false;
-     }
- 
-     /**
 @@ -357,6 +397,12 @@
      public void updateEntity()
      {
@@ -213,29 +141,3 @@
              this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord, this.zCoord, this.getBlockType().blockID);
              this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord - 1, this.zCoord, this.getBlockType().blockID);
          }
-@@ -509,18 +595,18 @@
-         this.checkForAdjacentChests();
-     }
- 
--    public int func_98041_l()
--    {
--        if (this.field_94046_i == -1)
-+    public int getChestType()
-+    {
-+        if (this.cachedChestType == -1)
-         {
-             if (this.worldObj == null || !(this.getBlockType() instanceof BlockChest))
-             {
-                 return 0;
-             }
- 
--            this.field_94046_i = ((BlockChest)this.getBlockType()).isTrapped;
--        }
--
--        return this.field_94046_i;
-+            this.cachedChestType = ((BlockChest)this.getBlockType()).chestType;
-+        }
-+
-+        return this.cachedChestType;
-     }
- }

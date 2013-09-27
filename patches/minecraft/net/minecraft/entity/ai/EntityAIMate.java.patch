@@ -1,6 +1,18 @@
 --- ../src_base/minecraft/net/minecraft/entity/ai/EntityAIMate.java
 +++ ../src_work/minecraft/net/minecraft/entity/ai/EntityAIMate.java
-@@ -119,7 +119,7 @@
+@@ -113,13 +113,19 @@
+ 
+         if (entityageable != null)
+         {
++            // CraftBukkit start - set persistence for tame animals
++            if (entityageable instanceof net.minecraft.entity.passive.EntityTameable && ((net.minecraft.entity.passive.EntityTameable)entityageable).isTamed())
++            {
++                entityageable.persistenceRequired = true;
++            }
++            // CraftBukkit end
+             this.theAnimal.setGrowingAge(6000);
+             this.targetMate.setGrowingAge(6000);
+             this.theAnimal.resetInLove();
              this.targetMate.resetInLove();
              entityageable.setGrowingAge(-24000);
              entityageable.setLocationAndAngles(this.theAnimal.posX, this.theAnimal.posY, this.theAnimal.posZ, 0.0F, 0.0F);

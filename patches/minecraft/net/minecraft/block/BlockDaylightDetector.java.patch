@@ -8,13 +8,3 @@
                  par1World.setBlockMetadataWithNotify(par2, par3, par4, i1, 3);
              }
          }
-@@ -146,7 +147,7 @@
-      */
-     public void registerIcons(IconRegister par1IconRegister)
-     {
--        this.iconArray[0] = par1IconRegister.registerIcon(this.func_111023_E() + "_top");
--        this.iconArray[1] = par1IconRegister.registerIcon(this.func_111023_E() + "_side");
-+        this.iconArray[0] = par1IconRegister.registerIcon(this.getTextureName() + "_top");
-+        this.iconArray[1] = par1IconRegister.registerIcon(this.getTextureName() + "_side");
-     }
- }

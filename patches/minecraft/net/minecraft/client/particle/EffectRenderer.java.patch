@@ -8,15 +8,6 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.world.World;
  import org.lwjgl.opengl.GL11;
-@@ -19,7 +20,7 @@
- @SideOnly(Side.CLIENT)
- public class EffectRenderer
- {
--    private static final ResourceLocation field_110737_b = new ResourceLocation("textures/particle/particles.png");
-+    private static final ResourceLocation particleTextures = new ResourceLocation("textures/particle/particles.png");
- 
-     /** Reference to the World object. */
-     protected World worldObj;
 @@ -63,9 +64,13 @@
              for (int j = 0; j < this.fxLayers[i].size(); ++j)
              {
@@ -34,23 +25,6 @@
                  {
                      this.fxLayers[i].remove(j--);
                  }
-@@ -95,13 +100,13 @@
-                 {
-                     case 0:
-                     default:
--                        this.renderer.func_110577_a(field_110737_b);
-+                        this.renderer.bindTexture(particleTextures);
-                         break;
-                     case 1:
--                        this.renderer.func_110577_a(TextureMap.field_110575_b);
-+                        this.renderer.bindTexture(TextureMap.locationBlocksTexture);
-                         break;
-                     case 2:
--                        this.renderer.func_110577_a(TextureMap.field_110576_c);
-+                        this.renderer.bindTexture(TextureMap.locationItemsTexture);
-                 }
- 
-                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 @@ -115,6 +120,7 @@
                  for (int j = 0; j < this.fxLayers[i].size(); ++j)
                  {

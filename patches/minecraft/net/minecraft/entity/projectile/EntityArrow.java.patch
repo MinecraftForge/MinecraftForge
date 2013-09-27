@@ -30,15 +30,6 @@
  
                          if (d1 < d0 || d0 == 0.0D)
                          {
-@@ -288,7 +293,7 @@
-             {
-                 EntityPlayer entityplayer = (EntityPlayer)movingobjectposition.entityHit;
- 
--                if (entityplayer.capabilities.disableDamage || this.shootingEntity instanceof EntityPlayer && !((EntityPlayer)this.shootingEntity).func_96122_a(entityplayer))
-+                if (entityplayer.capabilities.disableDamage || this.shootingEntity instanceof EntityPlayer && !((EntityPlayer)this.shootingEntity).canAttackPlayer(entityplayer))
-                 {
-                     movingobjectposition = null;
-                 }
 @@ -299,6 +304,8 @@
  
              if (movingobjectposition != null)

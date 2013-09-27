@@ -1,11 +1,8 @@
 --- ../src_base/minecraft/net/minecraft/util/EntityDamageSourceIndirect.java
 +++ ../src_work/minecraft/net/minecraft/util/EntityDamageSourceIndirect.java
-@@ -33,6 +33,13 @@
-         ItemStack itemstack = this.indirectEntity instanceof EntityLivingBase ? ((EntityLivingBase)this.indirectEntity).getHeldItem() : null;
-         String s1 = "death.attack." + this.damageType;
+@@ -35,4 +35,11 @@
          String s2 = s1 + ".item";
--        return itemstack != null && itemstack.hasDisplayName() && StatCollector.func_94522_b(s2) ? ChatMessageComponent.func_111082_b(s2, new Object[] {par1EntityLivingBase.getTranslatedEntityName(), s, itemstack.getDisplayName()}): ChatMessageComponent.func_111082_b(s1, new Object[] {par1EntityLivingBase.getTranslatedEntityName(), s});
-+        return itemstack != null && itemstack.hasDisplayName() && StatCollector.func_94522_b(s2) ? ChatMessageComponent.createFromTranslationWithSubstitutions(s2, new Object[] {par1EntityLivingBase.getTranslatedEntityName(), s, itemstack.getDisplayName()}): ChatMessageComponent.createFromTranslationWithSubstitutions(s1, new Object[] {par1EntityLivingBase.getTranslatedEntityName(), s});
+         return itemstack != null && itemstack.hasDisplayName() && StatCollector.func_94522_b(s2) ? ChatMessageComponent.createFromTranslationWithSubstitutions(s2, new Object[] {par1EntityLivingBase.getTranslatedEntityName(), s, itemstack.getDisplayName()}): ChatMessageComponent.createFromTranslationWithSubstitutions(s1, new Object[] {par1EntityLivingBase.getTranslatedEntityName(), s});
      }
 +
 +    // CraftBukkit start

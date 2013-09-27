@@ -9,15 +9,9 @@
  
  public class EntityMinecartEmpty extends EntityMinecart
  {
-@@ -15,8 +17,15 @@
-         super(par1World, par2, par4, par6);
-     }
- 
--    public boolean func_130002_c(EntityPlayer par1EntityPlayer)
-+    /**
-+     * First layer of player interaction
-+     */
-+    public boolean interactFirst(EntityPlayer par1EntityPlayer)
+@@ -20,6 +22,10 @@
+      */
+     public boolean interactFirst(EntityPlayer par1EntityPlayer)
      {
 +        if(MinecraftForge.EVENT_BUS.post(new MinecartInteractEvent(this, par1EntityPlayer))) 
 +        {

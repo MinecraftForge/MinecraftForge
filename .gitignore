@@ -1,9 +1,15 @@
+!.gitignore
+.metadata
+.settings/
+dependency-reduced-pom.xml
+target
 *.DS_Store
 /logs/
 /*.pyc
 /forge-*/
 /patches-old/
 /mcp/
-/eclipse/
-/target/
 /temp/
+/FML/*
+
+

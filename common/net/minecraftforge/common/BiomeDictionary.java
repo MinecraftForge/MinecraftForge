@@ -204,13 +204,13 @@ public class BiomeDictionary
         for(int i = 0; i < BIOME_LIST_SIZE; i++)
         {
             BiomeGenBase biome = BiomeGenBase.biomeList[i];
-            if (biome.theBiomeDecorator instanceof DeferredBiomeDecorator)
+            if(biome != null) // MCPC+ Add check to fix NPE
             {
-                DeferredBiomeDecorator decorator = (DeferredBiomeDecorator) biome.theBiomeDecorator;
-                decorator.fireCreateEventAndReplace();
-            }
-            if(biome != null)
-            {
+                if (biome.theBiomeDecorator instanceof DeferredBiomeDecorator)
+                {
+                    DeferredBiomeDecorator decorator = (DeferredBiomeDecorator) biome.theBiomeDecorator;
+                    decorator.fireCreateEventAndReplace();
+                }
                 checkRegistration(biome);
             }
         }

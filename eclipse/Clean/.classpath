@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="jars/libraries/com/paulscode/codecjorbis/20101023/codecjorbis-20101023.jar"/>
+	<classpathentry kind="lib" path="jars/libraries/com/paulscode/codecwav/20101023/codecwav-20101023.jar"/>
+	<classpathentry kind="lib" path="jars/libraries/com/paulscode/libraryjavasound/20101123/libraryjavasound-20101123.jar"/>
+	<classpathentry kind="lib" path="jars/libraries/com/paulscode/librarylwjglopenal/20100824/librarylwjglopenal-20100824.jar"/>
+	<classpathentry kind="lib" path="jars/libraries/com/paulscode/soundsystem/20120107/soundsystem-20120107.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

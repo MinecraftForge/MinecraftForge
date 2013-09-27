@@ -24,7 +24,7 @@
                      }
  
                      this.worldObj.setBlockToAir(i, j, k);
-+                    org.spigotmc.OrebfuscatorManager.updateNearbyBlocks(worldObj, i, j, k); // Spigot (Orebfuscator)
++                    worldObj.spigotConfig.antiXrayInstance.updateNearbyBlocks(worldObj, i, j, k); // Spigot (Orebfuscator)
                  }
  
                  if (this.onGround)
@@ -78,16 +78,3 @@
          if (this.blockID == 0)
          {
              this.blockID = Block.sand.blockID;
-@@ -295,9 +325,9 @@
-         this.isAnvil = par1;
-     }
- 
--    public void func_85029_a(CrashReportCategory par1CrashReportCategory)
--    {
--        super.func_85029_a(par1CrashReportCategory);
-+    public void addEntityCrashInfo(CrashReportCategory par1CrashReportCategory)
-+    {
-+        super.addEntityCrashInfo(par1CrashReportCategory);
-         par1CrashReportCategory.addCrashSection("Immitating block ID", Integer.valueOf(this.blockID));
-         par1CrashReportCategory.addCrashSection("Immitating block data", Integer.valueOf(this.metadata));
-     }

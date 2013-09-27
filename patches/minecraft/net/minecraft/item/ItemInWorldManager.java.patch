@@ -154,7 +154,15 @@
  
                  if (i1 > 0 && f >= 1.0F)
                  {
-@@ -187,6 +279,7 @@
+@@ -180,6 +272,7 @@
+                     this.durabilityRemainingOnBlock = j1;
+                 }
+             }
++            theWorld.spigotConfig.antiXrayInstance.updateNearbyBlocks(theWorld, par1, par2, par3); // Spigot
+         }
+     }
+ 
+@@ -187,6 +280,7 @@
      {
          if (par1 == this.partiallyDestroyedBlockX && par2 == this.partiallyDestroyedBlockY && par3 == this.partiallyDestroyedBlockZ)
          {
@@ -162,7 +170,7 @@
              int l = this.curblockDamage - this.initialDamage;
              int i1 = this.theWorld.getBlockId(par1, par2, par3);
  
-@@ -211,6 +304,13 @@
+@@ -211,6 +305,13 @@
                      this.field_73093_n = this.initialDamage;
                  }
              }
@@ -176,7 +184,7 @@
          }
      }
  
-@@ -236,7 +336,7 @@
+@@ -236,7 +337,7 @@
              block.onBlockHarvested(this.theWorld, par1, par2, par3, l, this.thisPlayerMP);
          }
  
@@ -185,7 +193,7 @@
  
          if (block != null && flag)
          {
-@@ -251,29 +351,115 @@
+@@ -251,29 +352,108 @@
       */
      public boolean tryHarvestBlock(int par1, int par2, int par3)
      {
@@ -241,13 +249,6 @@
 +
 +                return false;
 +            }
-+            // Spigot (Orebfuscator) start
-+            else
-+            {
-+                org.spigotmc.OrebfuscatorManager.updateNearbyBlocks(theWorld, par1, par2, par3);
-+            }
-+
-+            // Spigot (Orebfuscator) end            
 +        }
 +        
 +        // Forge start
@@ -306,7 +307,7 @@
  
                  if (itemstack != null)
                  {
-@@ -285,12 +471,20 @@
+@@ -285,12 +465,20 @@
                      }
                  }
  
@@ -327,7 +328,7 @@
              return flag;
          }
      }
-@@ -325,6 +519,7 @@
+@@ -325,6 +513,7 @@
              if (itemstack1.stackSize == 0)
              {
                  par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
@@ -335,7 +336,7 @@
              }
  
              if (!par1EntityPlayer.isUsingItem())
-@@ -340,38 +535,94 @@
+@@ -340,38 +529,94 @@
       * Activate the clicked on block, otherwise use the held item. Args: player, world, itemStack, x, y, z, side,
       * xOffset, yOffset, zOffset
       */
@@ -462,7 +463,7 @@
  
      /**
       * Sets the world instance.
-@@ -380,4 +631,13 @@
+@@ -380,4 +625,13 @@
      {
          this.theWorld = par1WorldServer;
      }

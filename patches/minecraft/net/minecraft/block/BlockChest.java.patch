@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockChest.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockChest.java
-@@ -23,17 +23,19 @@
+@@ -23,6 +23,8 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
@@ -9,32 +9,7 @@
  public class BlockChest extends BlockContainer
  {
      private final Random random = new Random();
- 
--    /** Determines whether of not the chest is trapped. */
--    public final int isTrapped;
-+    /** 1 for trapped chests, 0 for normal chests. */
-+    public final int chestType;
- 
-     protected BlockChest(int par1, int par2)
-     {
-         super(par1, Material.wood);
--        this.isTrapped = par2;
-+        this.chestType = par2;
-         this.setCreativeTab(CreativeTabs.tabDecorations);
-         this.setBlockBounds(0.0625F, 0.0F, 0.0625F, 0.9375F, 0.875F, 0.9375F);
-     }
-@@ -362,7 +364,9 @@
-     }
- 
-     /**
--     * ejects contained items into the world, and notifies neighbours of an update, as appropriate
-+     * Called on server worlds only when the block has been replaced by a different block ID, or the same block with a
-+     * different metadata value, but before the new metadata value is set. Args: World, x, y, z, old block ID, old
-+     * metadata
-      */
-     public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
-     {
-@@ -444,7 +448,7 @@
+@@ -446,7 +448,7 @@
          {
              return null;
          }
@@ -43,7 +18,7 @@
          {
              return null;
          }
-@@ -452,19 +456,19 @@
+@@ -454,19 +456,19 @@
          {
              return null;
          }
@@ -76,12 +51,3 @@
          {
              return null;
          }
-@@ -508,7 +512,7 @@
-      */
-     public boolean canProvidePower()
-     {
--        return this.isTrapped == 1;
-+        return this.chestType == 1;
-     }
- 
-     /**

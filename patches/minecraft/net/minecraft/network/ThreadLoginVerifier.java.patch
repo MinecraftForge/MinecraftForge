@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/network/ThreadLoginVerifier.java
 +++ ../src_work/minecraft/net/minecraft/network/ThreadLoginVerifier.java
-@@ -7,23 +7,48 @@
+@@ -7,38 +7,115 @@
  import java.net.URLEncoder;
  import net.minecraft.util.CryptManager;
  
@@ -31,42 +31,54 @@
 +
 +    ThreadLoginVerifier(NetLoginHandler pendingconnection, CraftServer server)
 +    {
++        super("Login Verifier - " + pendingconnection.getUsernameAndAddress());
 +        this.server = server;
 +        // CraftBukkit end
 +        this.loginHandler = pendingconnection;
      }
  
-     public void run()
+-    public void run()
++    private boolean auth() throws java.io.IOException
      {
-         try
-         {
-+            if (org.bukkit.craftbukkit.Spigot.filterIp(loginHandler))
-+            {
-+                return;// Spigot
-+            }
+-        try
++        String s = (new BigInteger(CryptManager.getServerIdHash(NetLoginHandler.getServerId(this.loginHandler), NetLoginHandler.getLoginMinecraftServer(this.loginHandler).getKeyPair().getPublic(), NetLoginHandler.getSharedKey(this.loginHandler)))).toString(16);
++        URL url = new URL("http://session.minecraft.net/game/checkserver.jsp?user=" + URLEncoder.encode(NetLoginHandler.getClientUsername(this.loginHandler), "UTF-8") + "&serverId=" + URLEncoder.encode(s, "UTF-8"));
++        BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(url.openConnection(NetLoginHandler.getLoginMinecraftServer(this.loginHandler).getServerProxy()).getInputStream()));
++        String s1 = bufferedreader.readLine();
++        bufferedreader.close();
 +
-             String s = (new BigInteger(CryptManager.getServerIdHash(NetLoginHandler.getServerId(this.loginHandler), NetLoginHandler.getLoginMinecraftServer(this.loginHandler).getKeyPair().getPublic(), NetLoginHandler.getSharedKey(this.loginHandler)))).toString(16);
-             URL url = new URL("http://session.minecraft.net/game/checkserver.jsp?user=" + URLEncoder.encode(NetLoginHandler.getClientUsername(this.loginHandler), "UTF-8") + "&serverId=" + URLEncoder.encode(s, "UTF-8"));
--            BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(url.openConnection(NetLoginHandler.getLoginMinecraftServer(this.loginHandler).func_110454_ao()).getInputStream()));
-+            BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(url.openConnection(NetLoginHandler.getLoginMinecraftServer(this.loginHandler).getServerProxy()).getInputStream()));
-             String s1 = bufferedreader.readLine();
-             bufferedreader.close();
++        if (!"YES".equals(s1))
+         {
+-            String s = (new BigInteger(CryptManager.getServerIdHash(NetLoginHandler.getServerId(this.loginHandler), NetLoginHandler.getLoginMinecraftServer(this.loginHandler).getKeyPair().getPublic(), NetLoginHandler.getSharedKey(this.loginHandler)))).toString(16);
+-            URL url = new URL("http://session.minecraft.net/game/checkserver.jsp?user=" + URLEncoder.encode(NetLoginHandler.getClientUsername(this.loginHandler), "UTF-8") + "&serverId=" + URLEncoder.encode(s, "UTF-8"));
+-            BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(url.openConnection(NetLoginHandler.getLoginMinecraftServer(this.loginHandler).getServerProxy()).getInputStream()));
+-            String s1 = bufferedreader.readLine();
+-            bufferedreader.close();
++            this.loginHandler.raiseErrorAndDisconnect("Failed to verify username!");
++            return false;
++        }
  
-@@ -33,12 +58,63 @@
-                 return;
-             }
- 
-+            // CraftBukkit start
-+            if (this.loginHandler.getSocket() == null)
-+            {
-+                return;
-+            }
+-            if (!"YES".equals(s1))
++        // CraftBukkit start
++        if (this.loginHandler.getSocket() == null)
++        {
++            return false;
++        }
++        return true;
++    }
++
++    public void run() {
++        try {
++            if (org.spigotmc.SpamHaus.filterIp(loginHandler)) return; // Spigot
++            if (server.getOnlineMode() && !auth()) return; // Spigot
 +
 +            AsyncPlayerPreLoginEvent asyncEvent = new AsyncPlayerPreLoginEvent(NetLoginHandler.getClientUsername(this.loginHandler), this.loginHandler.getSocket().getInetAddress());
 +            this.server.getPluginManager().callEvent(asyncEvent);
 +
 +            if (PlayerPreLoginEvent.getHandlerList().getRegisteredListeners().length != 0)
-+            {
+             {
+-                this.loginHandler.raiseErrorAndDisconnect("Failed to verify username!");
+-                return;
 +                final PlayerPreLoginEvent event = new PlayerPreLoginEvent(NetLoginHandler.getClientUsername(this.loginHandler), this.loginHandler.getSocket().getInetAddress());
 +
 +                if (asyncEvent.getResult() != PlayerPreLoginEvent.Result.ALLOWED)
@@ -98,8 +110,8 @@
 +                    this.loginHandler.raiseErrorAndDisconnect(asyncEvent.getKickMessage());
 +                    return;
 +                }
-+            }
-+
+             }
+ 
 +            // CraftBukkit end
              NetLoginHandler.func_72531_a(this.loginHandler, true);
 +            // CraftBukkit start

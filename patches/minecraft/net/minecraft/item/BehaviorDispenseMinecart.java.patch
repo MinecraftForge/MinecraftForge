@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/item/BehaviorDispenseMinecart.java
 +++ ../src_work/minecraft/net/minecraft/item/BehaviorDispenseMinecart.java
-@@ -1,16 +1,21 @@
+@@ -1,12 +1,17 @@
  package net.minecraft.item;
  
 +// CraftBukkit start
@@ -18,19 +18,7 @@
  
  final class BehaviorDispenseMinecart extends BehaviorDefaultDispenseItem
  {
--    private final BehaviorDefaultDispenseItem field_96465_b = new BehaviorDefaultDispenseItem();
-+    private final BehaviorDefaultDispenseItem behaviourDefaultDispenseItem = new BehaviorDefaultDispenseItem();
- 
-     /**
-      * Dispense the specified stack, play the dispense sound and spawn particles.
-@@ -36,13 +41,46 @@
-         {
-             if (l != 0 || !BlockRailBase.isRailBlock(world.getBlockId(i, j - 1, k)))
-             {
--                return this.field_96465_b.dispense(par1IBlockSource, par2ItemStack);
-+                return this.behaviourDefaultDispenseItem.dispense(par1IBlockSource, par2ItemStack);
-             }
- 
+@@ -42,7 +47,40 @@
              d3 = -1.0D;
          }
  

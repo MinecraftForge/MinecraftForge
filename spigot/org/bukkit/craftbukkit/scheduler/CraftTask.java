@@ -7,7 +7,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
 
-class CraftTask implements BukkitTask, Runnable {
+public class CraftTask implements BukkitTask, Runnable { // Spigot
 
     private volatile CraftTask next = null;
     /**
@@ -95,7 +95,7 @@ class CraftTask implements BukkitTask, Runnable {
         this.next = next;
     }
 
-    Class<? extends Runnable> getTaskClass() {
+    public Class<? extends Runnable> getTaskClass() { // Spigot
         return task.getClass();
     }
 

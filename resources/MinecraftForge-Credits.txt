@@ -1,0 +1,26 @@
+* Eloraam *
+
+* FlowerChild *
+
+* Hawkye *
+
+* MALfunction84 *
+
+Submitted the sleep handler code for his mod (Somnia) and others to use.
+
+* Scokeev9 *
+
+Gave permission for ScotTools API to be integrated into MCF, and also supported the Forge by converting his mods to use it.
+
+ScotTools Background: ScotTools was an API that enabled modders to add blocks to harvesting levels (and many other ease-of-use features to create new tools), and the first tool API that used block material for block breaking efficiency which allowed blocks from mods that didn't use ScotTools API to break with the correct speed.
+
+* SpaceToad *
+
+* LexManos *
+
+* cpw *
+
+* Minecraft Coder Pack (MCP) *
+Forge Mod Loader and Minecraft Forge have permission to distribute and automatically download components of MCP and distribute MCP data files.
+This permission is not transitive and others wishing to redistribute the Minecraft Forge source independently should seek permission of MCP or
+remove the MCP data files and request their users to download MCP separately.

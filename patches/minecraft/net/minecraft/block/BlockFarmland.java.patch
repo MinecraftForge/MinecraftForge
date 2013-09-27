@@ -65,13 +65,3 @@
                  {
                      return true;
                  }
-@@ -188,7 +223,7 @@
-      */
-     public void registerIcons(IconRegister par1IconRegister)
-     {
--        this.field_94441_a = par1IconRegister.registerIcon(this.func_111023_E() + "_wet");
--        this.field_94440_b = par1IconRegister.registerIcon(this.func_111023_E() + "_dry");
-+        this.field_94441_a = par1IconRegister.registerIcon(this.getTextureName() + "_wet");
-+        this.field_94440_b = par1IconRegister.registerIcon(this.getTextureName() + "_dry");
-     }
- }

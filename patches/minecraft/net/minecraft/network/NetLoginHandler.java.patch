@@ -36,17 +36,43 @@
  
      /**
       * Logs the user in if a login packet is found, otherwise keeps processing network packets unless the timeout has
-@@ -98,6 +107,9 @@
+@@ -96,12 +105,19 @@
+         }
+     }
  
++    private static final java.util.regex.Pattern validName = java.util.regex.Pattern.compile("^[a-zA-Z0-9_-]{2,16}$"); // Spigot
      public void handleClientProtocol(Packet2ClientProtocol par1Packet2ClientProtocol)
      {
 +        // CraftBukkit start
++        if (this.clientUsername != null)
++        {
++            this.raiseErrorAndDisconnect("Invalid username " + this.clientUsername);
++        }
 +        this.hostname = par1Packet2ClientProtocol.serverHost == null ? "" : par1Packet2ClientProtocol.serverHost + ':' + par1Packet2ClientProtocol.serverPort;
 +        // CraftBukkit end
          this.clientUsername = par1Packet2ClientProtocol.getUsername();
  
-         if (!this.clientUsername.equals(StringUtils.stripControlCodes(this.clientUsername)))
-@@ -156,7 +168,7 @@
+-        if (!this.clientUsername.equals(StringUtils.stripControlCodes(this.clientUsername)))
+-        {
++        if (!this.clientUsername.equals(StringUtils.stripControlCodes(this.clientUsername)) || !validName.matcher( this.clientUsername ).matches() ) { // Spigot
+             this.raiseErrorAndDisconnect("Invalid username!");
+         }
+         else
+@@ -112,11 +128,11 @@
+             {
+                 if (par1Packet2ClientProtocol.getProtocolVersion() > 74)
+                 {
+-                    this.raiseErrorAndDisconnect("Outdated server!");
++                    this.raiseErrorAndDisconnect(org.spigotmc.SpigotConfig.outdatedServerMessage); // Spigot
+                 }
+                 else
+                 {
+-                    this.raiseErrorAndDisconnect("Outdated client!");
++                    this.raiseErrorAndDisconnect(org.spigotmc.SpigotConfig.outdatedClientMessage); // Spigot
+                 }
+             }
+             else
+@@ -156,7 +172,7 @@
  
              if (this.mcServer.isServerInOnlineMode())
              {
@@ -55,7 +81,7 @@
              }
              else
              {
-@@ -180,18 +192,26 @@
+@@ -180,18 +196,26 @@
  
      public void completeConnection(String s)
      {
@@ -85,7 +111,7 @@
              }
          }
  
-@@ -209,40 +229,52 @@
+@@ -209,40 +233,52 @@
       */
      public void handleServerPing(Packet254ServerPing par1Packet254ServerPing)
      {
@@ -151,16 +177,7 @@
              }
  
              this.myTCPConnection.addToSendQueue(new Packet255KickDisconnect(s));
-@@ -283,7 +315,7 @@
-         return true;
-     }
- 
--    public boolean func_142032_c()
-+    public boolean isConnectionClosed()
-     {
-         return this.connectionComplete;
-     }
-@@ -325,11 +357,24 @@
+@@ -325,11 +361,24 @@
          return par0NetLoginHandler.field_72544_i = par1;
      }
      
@@ -171,7 +188,7 @@
      {
 -        FMLNetworkHandler.handlePacket250Packet(par1Packet250CustomPayload, myTCPConnection, this);
 -    }
-+        if (par1Packet250CustomPayload.channel.equals("BungeeCord") && org.bukkit.craftbukkit.Spigot.bungeeIPs.contains(getSocket().getInetAddress().getHostAddress()))
++        if (par1Packet250CustomPayload.channel.equals("BungeeCord") && org.spigotmc.SpigotConfig.bungee && org.spigotmc.SpigotConfig.bungeeAddresses.contains(getSocket().getInetAddress().getHostAddress()))
 +        {
 +            com.google.common.io.ByteArrayDataInput in = com.google.common.io.ByteStreams.newDataInput(par1Packet250CustomPayload.data);
 +            String subTag = in.readUTF();

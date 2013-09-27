@@ -203,7 +203,7 @@
                          {
                              if (flag)
                              {
--                                Item.enchantedBook.getEnchantedItemStack_do(itemstack, enchantmentdata);
+-                                Item.enchantedBook.addEnchantment(itemstack, enchantmentdata);
 +                                int enchantId = entry.getKey().getId();
 +
 +                                if (Enchantment.enchantmentsList[enchantId] == null)

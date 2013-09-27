@@ -49,20 +49,16 @@
  
      /**
       * Called when the block is attempted to be harvested
-@@ -150,32 +173,42 @@
+@@ -149,6 +172,8 @@
+             par5 |= 8;
              par1World.setBlockMetadataWithNotify(par2, par3, par4, par5, 4);
          }
- 
-+        //dropBlockAsItem(par1World, par2, par3, par4, par5, 0); // MCPC+ - disable Forge's drops for now, use CB drop instead
 +
++        //dropBlockAsItem(par1World, par2, par3, par4, par5, 0); // MCPC+ - disable Forge's drops for now, use CB drop instead
+ 
          super.onBlockHarvested(par1World, par2, par3, par4, par5, par6EntityPlayer);
      }
- 
-     /**
--     * ejects contained items into the world, and notifies neighbours of an update, as appropriate
-+     * Called on server worlds only when the block has been replaced by a different block ID, or the same block with a
-+     * different metadata value, but before the new metadata value is set. Args: World, x, y, z, old block ID, old
-+     * metadata
+@@ -160,24 +185,30 @@
       */
      public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
      {
@@ -111,7 +107,7 @@
      }
  
      /**
-@@ -202,16 +235,18 @@
+@@ -204,16 +235,18 @@
              {
                  if (par1World.getBlockId(par2, par3 - 1, par4 + i1) == l && par1World.getBlockId(par2, par3 - 1, par4 + i1 + 1) == l && par1World.getBlockId(par2, par3 - 2, par4 + i1 + 1) == l && par1World.getBlockId(par2, par3 - 1, par4 + i1 + 2) == l && this.func_82528_d(par1World, par2, par3, par4 + i1, 1) && this.func_82528_d(par1World, par2, par3, par4 + i1 + 1, 1) && this.func_82528_d(par1World, par2, par3, par4 + i1 + 2, 1))
                  {
@@ -137,7 +133,7 @@
  
                      if (!par1World.isRemote)
                      {
-@@ -219,7 +254,11 @@
+@@ -221,7 +254,11 @@
                          entitywither.setLocationAndAngles((double)par2 + 0.5D, (double)par3 - 1.45D, (double)(par4 + i1) + 1.5D, 90.0F, 0.0F);
                          entitywither.renderYawOffset = 90.0F;
                          entitywither.func_82206_m();
@@ -150,7 +146,7 @@
                      }
  
                      for (j1 = 0; j1 < 120; ++j1)
-@@ -227,13 +266,7 @@
+@@ -229,13 +266,7 @@
                          par1World.spawnParticle("snowballpoof", (double)par2 + par1World.rand.nextDouble(), (double)(par3 - 2) + par1World.rand.nextDouble() * 3.9D, (double)(par4 + i1 + 1) + par1World.rand.nextDouble(), 0.0D, 0.0D, 0.0D);
                      }
  
@@ -165,7 +161,7 @@
                      return;
                  }
              }
-@@ -242,37 +275,36 @@
+@@ -244,37 +275,36 @@
              {
                  if (par1World.getBlockId(par2 + i1, par3 - 1, par4) == l && par1World.getBlockId(par2 + i1 + 1, par3 - 1, par4) == l && par1World.getBlockId(par2 + i1 + 1, par3 - 2, par4) == l && par1World.getBlockId(par2 + i1 + 2, par3 - 1, par4) == l && this.func_82528_d(par1World, par2 + i1, par3, par4, 1) && this.func_82528_d(par1World, par2 + i1 + 1, par3, par4, 1) && this.func_82528_d(par1World, par2 + i1 + 2, par3, par4, 1))
                  {
@@ -218,11 +214,3 @@
                      return;
                  }
              }
-@@ -317,6 +349,6 @@
-      */
-     public String getItemIconName()
-     {
--        return this.func_111023_E() + "_" + ItemSkull.field_94587_a[0];
-+        return this.getTextureName() + "_" + ItemSkull.field_94587_a[0];
-     }
- }

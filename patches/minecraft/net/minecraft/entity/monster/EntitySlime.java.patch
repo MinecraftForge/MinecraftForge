@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/entity/monster/EntitySlime.java
 +++ ../src_work/minecraft/net/minecraft/entity/monster/EntitySlime.java
-@@ -11,15 +11,23 @@
+@@ -11,6 +11,13 @@
  import net.minecraft.world.WorldType;
  import net.minecraft.world.biome.BiomeGenBase;
  import net.minecraft.world.chunk.Chunk;
@@ -14,12 +14,7 @@
  
  public class EntitySlime extends EntityLiving implements IMob
  {
--    public float field_70813_a;
--    public float field_70811_b;
--    public float field_70812_c;
-+    public float squishAmount;
-+    public float squishFactor;
-+    public float prevSquishFactor;
+@@ -20,6 +27,7 @@
  
      /** the time between each jump of the slime */
      private int slimeJumpDelay;
@@ -27,7 +22,7 @@
  
      public EntitySlime(World par1World)
      {
-@@ -36,13 +44,14 @@
+@@ -36,7 +44,8 @@
          this.dataWatcher.addObject(16, new Byte((byte)1));
      }
  
@@ -37,45 +32,6 @@
      {
          this.dataWatcher.updateObject(16, new Byte((byte)par1));
          this.setSize(0.6F * (float)par1, 0.6F * (float)par1);
-         this.setPosition(this.posX, this.posY, this.posZ);
--        this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111128_a((double)(par1 * par1));
--        this.setEntityHealth(this.func_110138_aP());
-+        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute((double)(par1 * par1));
-+        this.setHealth(this.getMaxHealth());
-         this.experienceValue = par1;
-     }
- 
-@@ -98,8 +107,8 @@
-             this.isDead = true;
-         }
- 
--        this.field_70811_b += (this.field_70813_a - this.field_70811_b) * 0.5F;
--        this.field_70812_c = this.field_70811_b;
-+        this.squishFactor += (this.squishAmount - this.squishFactor) * 0.5F;
-+        this.prevSquishFactor = this.squishFactor;
-         boolean flag = this.onGround;
-         super.onUpdate();
-         int i;
-@@ -122,14 +131,14 @@
-                 this.playSound(this.getJumpSound(), this.getSoundVolume(), ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F) / 0.8F);
-             }
- 
--            this.field_70813_a = -0.5F;
-+            this.squishAmount = -0.5F;
-         }
-         else if (!this.onGround && flag)
-         {
--            this.field_70813_a = 1.0F;
--        }
--
--        this.func_70808_l();
-+            this.squishAmount = 1.0F;
-+        }
-+
-+        this.alterSquishAmount();
- 
-         if (this.worldObj.isRemote)
-         {
 @@ -141,18 +150,37 @@
      protected void updateEntityActionState()
      {
@@ -120,25 +76,8 @@
              {
                  this.slimeJumpDelay /= 3;
              }
-@@ -178,9 +206,9 @@
-         }
-     }
- 
--    protected void func_70808_l()
--    {
--        this.field_70813_a *= 0.6F;
-+    protected void alterSquishAmount()
-+    {
-+        this.squishAmount *= 0.6F;
-     }
- 
-     /**
-@@ -203,9 +231,23 @@
-     {
-         int i = this.getSlimeSize();
- 
--        if (!this.worldObj.isRemote && i > 1 && this.func_110143_aJ() <= 0.0F)
-+        if (!this.worldObj.isRemote && i > 1 && this.getHealth() <= 0.0F)
+@@ -206,6 +234,20 @@
+         if (!this.worldObj.isRemote && i > 1 && this.getHealth() <= 0.0F)
          {
              int j = 2 + this.rand.nextInt(3);
 +            // CraftBukkit start
@@ -167,12 +106,3 @@
              }
          }
  
-@@ -294,7 +336,7 @@
-             {
-                 BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posZ));
- 
--                if (biomegenbase == BiomeGenBase.swampland && this.posY > 50.0D && this.posY < 70.0D && this.rand.nextFloat() < 0.5F && this.rand.nextFloat() < this.worldObj.func_130001_d() && this.worldObj.getBlockLightValue(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)) <= this.rand.nextInt(8))
-+                if (biomegenbase == BiomeGenBase.swampland && this.posY > 50.0D && this.posY < 70.0D && this.rand.nextFloat() < 0.5F && this.rand.nextFloat() < this.worldObj.getCurrentMoonPhaseFactor() && this.worldObj.getBlockLightValue(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)) <= this.rand.nextInt(8))
-                 {
-                     return super.getCanSpawnHere();
-                 }

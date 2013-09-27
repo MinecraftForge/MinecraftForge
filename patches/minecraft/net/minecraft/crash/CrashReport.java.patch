@@ -8,15 +8,6 @@
          FMLCommonHandler.instance().enhanceCrashReport(this, this.field_85061_c);
      }
  
-@@ -218,7 +219,7 @@
-         }
-     }
- 
--    public CrashReportCategory func_85056_g()
-+    public CrashReportCategory getCategory()
-     {
-         return this.field_85061_c;
-     }
 @@ -245,7 +246,8 @@
              StackTraceElement stacktraceelement = null;
              StackTraceElement stacktraceelement1 = null;

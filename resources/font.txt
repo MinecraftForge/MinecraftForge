@@ -1,0 +1,10 @@
+# This file NEEDS to be in UTF-8 format!
+ !"#$%&'()*+,-./
+0123456789:;<=>?
+@ABCDEFGHIJKLMNO
+PQRSTUVWXYZ[\]^_
+'abcdefghijklmno
+pqrstuvwxyz{|}~⌂
+ÇüéâäàåçêëèïîìÄÅ
+ÉæÆôöòûùÿÖÜø£Ø×ƒ
+áíóúñÑªº¿®¬½¼¡«»

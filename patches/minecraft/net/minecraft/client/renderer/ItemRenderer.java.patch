@@ -9,7 +9,7 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.Icon;
  import net.minecraft.util.MathHelper;
-@@ -24,12 +26,19 @@
+@@ -24,6 +26,13 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
@@ -23,28 +23,15 @@
  @SideOnly(Side.CLIENT)
  public class ItemRenderer
  {
--    private static final ResourceLocation field_110930_b = new ResourceLocation("textures/misc/enchanted_item_glint.png");
--    private static final ResourceLocation field_110931_c = new ResourceLocation("textures/map/map_background.png");
--    private static final ResourceLocation field_110929_d = new ResourceLocation("textures/misc/underwater.png");
-+    private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
-+    private static final ResourceLocation RES_MAP_BACKGROUND = new ResourceLocation("textures/map/map_background.png");
-+    private static final ResourceLocation RES_UNDERWATER_OVERLAY = new ResourceLocation("textures/misc/underwater.png");
+@@ -54,15 +63,32 @@
+         this.mapItemRenderer = new MapItemRenderer(par1Minecraft.gameSettings, par1Minecraft.getTextureManager());
+     }
  
-     /** A reference to the Minecraft object. */
-     private Minecraft mc;
-@@ -51,20 +60,37 @@
-     public ItemRenderer(Minecraft par1Minecraft)
-     {
-         this.mc = par1Minecraft;
--        this.mapItemRenderer = new MapItemRenderer(par1Minecraft.gameSettings, par1Minecraft.func_110434_K());
-+        this.mapItemRenderer = new MapItemRenderer(par1Minecraft.gameSettings, par1Minecraft.getTextureManager());
-+    }
-+
 +    public void renderItem(EntityLivingBase par1EntityLivingBase, ItemStack par2ItemStack, int par3)
 +    {
 +        this.renderItem(par1EntityLivingBase, par2ItemStack, par3, ItemRenderType.EQUIPPED);
-     }
- 
++    }
++
      /**
       * Renders the item stack for being in an entity's hand Args: itemStack
       */
@@ -52,13 +39,9 @@
 +    public void renderItem(EntityLivingBase par1EntityLivingBase, ItemStack par2ItemStack, int par3, ItemRenderType type)
      {
          GL11.glPushMatrix();
--        TextureManager texturemanager = this.mc.func_110434_K();
--
+         TextureManager texturemanager = this.mc.getTextureManager();
+ 
 -        if (par2ItemStack.getItemSpriteNumber() == 0 && par2ItemStack.itemID < Block.blocksList.length && Block.blocksList[par2ItemStack.itemID] != null && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
--        {
--            texturemanager.func_110577_a(texturemanager.func_130087_a(0));
-+        TextureManager texturemanager = this.mc.getTextureManager();
-+
 +        Block block = null;
 +        if (par2ItemStack.getItem() instanceof ItemBlock && par2ItemStack.itemID < Block.blocksList.length)
 +        {
@@ -72,38 +55,18 @@
 +            ForgeHooksClient.renderEquippedItem(type, customRenderer, renderBlocksInstance, par1EntityLivingBase, par2ItemStack);
 +        }
 +        else if (block != null && par2ItemStack.getItemSpriteNumber() == 0 && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
-+        {
-+            texturemanager.bindTexture(texturemanager.getResourceLocation(0));
+         {
+             texturemanager.bindTexture(texturemanager.getResourceLocation(0));
              this.renderBlocksInstance.renderBlockAsItem(Block.blocksList[par2ItemStack.itemID], par2ItemStack.getItemDamage(), 1.0F);
-         }
-         else
-@@ -77,7 +103,7 @@
-                 return;
-             }
- 
--            texturemanager.func_110577_a(texturemanager.func_130087_a(par2ItemStack.getItemSpriteNumber()));
-+            texturemanager.bindTexture(texturemanager.getResourceLocation(par2ItemStack.getItemSpriteNumber()));
-             Tessellator tessellator = Tessellator.instance;
-             float f = icon.getMinU();
-             float f1 = icon.getMaxU();
-@@ -92,13 +118,13 @@
-             GL11.glRotatef(50.0F, 0.0F, 1.0F, 0.0F);
-             GL11.glRotatef(335.0F, 0.0F, 0.0F, 1.0F);
+@@ -94,7 +120,7 @@
              GL11.glTranslatef(-0.9375F, -0.0625F, 0.0F);
--            renderItemIn2D(tessellator, f1, f2, f, f3, icon.getOriginX(), icon.getOriginY(), 0.0625F);
--
+             renderItemIn2D(tessellator, f1, f2, f, f3, icon.getIconWidth(), icon.getIconHeight(), 0.0625F);
+ 
 -            if (par2ItemStack.hasEffect() && par3 == 0)
-+            renderItemIn2D(tessellator, f1, f2, f, f3, icon.getIconWidth(), icon.getIconHeight(), 0.0625F);
-+
 +            if (par2ItemStack.hasEffect(par3))
              {
                  GL11.glDepthFunc(GL11.GL_EQUAL);
                  GL11.glDisable(GL11.GL_LIGHTING);
--                texturemanager.func_110577_a(field_110930_b);
-+                texturemanager.bindTexture(RES_ITEM_GLINT);
-                 GL11.glEnable(GL11.GL_BLEND);
-                 GL11.glBlendFunc(GL11.GL_SRC_COLOR, GL11.GL_ONE);
-                 float f7 = 0.76F;
 @@ -266,7 +292,7 @@
          Render render;
          RenderPlayer renderplayer;
@@ -113,24 +76,6 @@
          {
              GL11.glPushMatrix();
              f12 = 0.8F;
-@@ -291,7 +317,7 @@
-             GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
-             GL11.glRotatef(f7 * -85.0F, 0.0F, 0.0F, 1.0F);
-             GL11.glEnable(GL12.GL_RESCALE_NORMAL);
--            this.mc.func_110434_K().func_110577_a(entityclientplayermp.func_110306_p());
-+            this.mc.getTextureManager().bindTexture(entityclientplayermp.getLocationSkin());
- 
-             for (k = 0; k < 2; ++k)
-             {
-@@ -323,7 +349,7 @@
-             GL11.glTranslatef(-1.0F, -1.0F, 0.0F);
-             f11 = 0.015625F;
-             GL11.glScalef(f11, f11, f11);
--            this.mc.func_110434_K().func_110577_a(field_110931_c);
-+            this.mc.getTextureManager().bindTexture(RES_MAP_BACKGROUND);
-             Tessellator tessellator = Tessellator.instance;
-             GL11.glNormal3f(0.0F, 0.0F, -1.0F);
-             tessellator.startDrawingQuads();
 @@ -333,11 +359,20 @@
              tessellator.addVertexWithUV((double)(128 + b0), (double)(0 - b0), 0.0D, 1.0D, 0.0D);
              tessellator.addVertexWithUV((double)(0 - b0), (double)(0 - b0), 0.0D, 0.0D, 0.0D);
@@ -139,7 +84,7 @@
 -
 -            if (mapdata != null)
 -            {
--                this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.func_110434_K(), mapdata);
+-                this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.getTextureManager(), mapdata);
 +
 +            IItemRenderer custom = MinecraftForgeClient.getItemRenderer(itemstack, FIRST_PERSON_MAP);
 +            MapData mapdata = ((ItemMap)itemstack.getItem()).getMapData(itemstack, this.mc.theWorld);
@@ -186,41 +131,3 @@
              }
  
              GL11.glPopMatrix();
-@@ -470,7 +508,7 @@
-             f6 = MathHelper.sin(MathHelper.sqrt_float(f7) * (float)Math.PI);
-             GL11.glRotatef(f6 * 70.0F, 0.0F, 1.0F, 0.0F);
-             GL11.glRotatef(-f8 * 20.0F, 0.0F, 0.0F, 1.0F);
--            this.mc.func_110434_K().func_110577_a(entityclientplayermp.func_110306_p());
-+            this.mc.getTextureManager().bindTexture(entityclientplayermp.getLocationSkin());
-             GL11.glTranslatef(-1.0F, 3.6F, 3.5F);
-             GL11.glRotatef(120.0F, 0.0F, 0.0F, 1.0F);
-             GL11.glRotatef(200.0F, 1.0F, 0.0F, 0.0F);
-@@ -549,7 +587,7 @@
-      */
-     private void renderInsideOfBlock(float par1, Icon par2Icon)
-     {
--        this.mc.func_110434_K().func_110577_a(TextureMap.field_110575_b);
-+        this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
-         Tessellator tessellator = Tessellator.instance;
-         float f1 = 0.1F;
-         GL11.glColor4f(f1, f1, f1, 0.5F);
-@@ -579,7 +617,7 @@
-      */
-     private void renderWarpedTextureOverlay(float par1)
-     {
--        this.mc.func_110434_K().func_110577_a(field_110929_d);
-+        this.mc.getTextureManager().bindTexture(RES_UNDERWATER_OVERLAY);
-         Tessellator tessellator = Tessellator.instance;
-         float f1 = this.mc.thePlayer.getBrightness(par1);
-         GL11.glColor4f(f1, f1, f1, 0.5F);
-@@ -619,8 +657,8 @@
-         for (int i = 0; i < 2; ++i)
-         {
-             GL11.glPushMatrix();
--            Icon icon = Block.fire.func_94438_c(1);
--            this.mc.func_110434_K().func_110577_a(TextureMap.field_110575_b);
-+            Icon icon = Block.fire.getFireIcon(1);
-+            this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
-             float f2 = icon.getMinU();
-             float f3 = icon.getMaxU();
-             float f4 = icon.getMinV();

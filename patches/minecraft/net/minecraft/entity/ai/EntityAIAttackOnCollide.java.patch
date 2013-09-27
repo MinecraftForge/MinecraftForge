@@ -11,42 +11,21 @@
  
  public class EntityAIAttackOnCollide extends EntityAIBase
  {
-@@ -15,13 +17,21 @@
-      * An amount of decrementing ticks that allows the entity to attack once the tick reaches 0.
-      */
-     int attackTick;
--    double field_75440_e;
--    boolean field_75437_f;
-+
-+    /** The speed with which the mob will approach the target */
-+    double speedTowardsTarget;
-+
-+    /**
-+     * When true, the mob will continue chasing its target, even if it can't find a path to them right now.
-+     */
-+    boolean longMemory;
- 
-     /** The PathEntity of our entity. */
+@@ -28,6 +30,13 @@
      PathEntity entityPathEntity;
      Class classTarget;
      private int field_75445_i;
-+
++    // Spigot start
++    private double pathX;
++    private double pathY;
++    private double pathZ;
++    private boolean prevPathOK;
++    // Spigot end
 +    private int failedPathFindingPenalty;
  
      public EntityAIAttackOnCollide(EntityCreature par1EntityCreature, Class par2Class, double par3, boolean par5)
      {
-@@ -33,8 +43,8 @@
-     {
-         this.attacker = par1EntityCreature;
-         this.worldObj = par1EntityCreature.worldObj;
--        this.field_75440_e = par2;
--        this.field_75437_f = par4;
-+        this.speedTowardsTarget = par2;
-+        this.longMemory = par4;
-         this.setMutexBits(3);
-     }
- 
-@@ -59,8 +69,16 @@
+@@ -65,8 +74,16 @@
          }
          else
          {
@@ -65,11 +44,10 @@
          }
      }
  
-@@ -70,7 +88,16 @@
+@@ -76,6 +93,15 @@
      public boolean continueExecuting()
      {
          EntityLivingBase entitylivingbase = this.attacker.getAttackTarget();
--        return entitylivingbase == null ? false : (!entitylivingbase.isEntityAlive() ? false : (!this.field_75437_f ? !this.attacker.getNavigator().noPath() : this.attacker.func_110176_b(MathHelper.floor_double(entitylivingbase.posX), MathHelper.floor_double(entitylivingbase.posY), MathHelper.floor_double(entitylivingbase.posZ))));
 +        // CraftBukkit start
 +        EntityTargetEvent.TargetReason reason = this.attacker.getAttackTarget() == null ? EntityTargetEvent.TargetReason.FORGOT_TARGET : EntityTargetEvent.TargetReason.TARGET_DIED;
 +
@@ -79,46 +57,114 @@
 +        }
 +
 +        // CraftBukkit end
-+        return entitylivingbase == null ? false : (!entitylivingbase.isEntityAlive() ? false : (!this.longMemory ? !this.attacker.getNavigator().noPath() : this.attacker.func_110176_b(MathHelper.floor_double(entitylivingbase.posX), MathHelper.floor_double(entitylivingbase.posY), MathHelper.floor_double(entitylivingbase.posZ))));
+         return entitylivingbase == null ? false : (!entitylivingbase.isEntityAlive() ? false : (!this.longMemory ? !this.attacker.getNavigator().noPath() : this.attacker.func_110176_b(MathHelper.floor_double(entitylivingbase.posX), MathHelper.floor_double(entitylivingbase.posY), MathHelper.floor_double(entitylivingbase.posZ))));
      }
  
-     /**
-@@ -78,7 +105,7 @@
-      */
-     public void startExecuting()
+@@ -103,29 +129,90 @@
      {
--        this.attacker.getNavigator().setPath(this.entityPathEntity, this.field_75440_e);
-+        this.attacker.getNavigator().setPath(this.entityPathEntity, this.speedTowardsTarget);
-         this.field_75445_i = 0;
-     }
- 
-@@ -98,10 +125,26 @@
          EntityLivingBase entitylivingbase = this.attacker.getAttackTarget();
          this.attacker.getLookHelper().setLookPositionWithEntity(entitylivingbase, 30.0F, 30.0F);
++        double goalDistanceSq = this.attacker.getDistanceSq(entitylivingbase.posX, entitylivingbase.boundingBox.minY, entitylivingbase.posZ); // Spigot
  
--        if ((this.field_75437_f || this.attacker.getEntitySenses().canSee(entitylivingbase)) && --this.field_75445_i <= 0)
-+        if ((this.longMemory || this.attacker.getEntitySenses().canSee(entitylivingbase)) && --this.field_75445_i <= 0)
+         if ((this.longMemory || this.attacker.getEntitySenses().canSee(entitylivingbase)) && --this.field_75445_i <= 0)
          {
 -            this.field_75445_i = 4 + this.attacker.getRNG().nextInt(7);
--            this.attacker.getNavigator().tryMoveToEntityLiving(entitylivingbase, this.field_75440_e);
-+            this.field_75445_i = failedPathFindingPenalty + 4 + this.attacker.getRNG().nextInt(7);
-+            this.attacker.getNavigator().tryMoveToEntityLiving(entitylivingbase, this.speedTowardsTarget);
-+            if (this.attacker.getNavigator().getPath() != null)
+-            this.attacker.getNavigator().tryMoveToEntityLiving(entitylivingbase, this.speedTowardsTarget);
+-        }
+-
++            // Spigot start
++            double targetMovement = entitylivingbase.getDistanceSq(this.pathX, this.pathY, this.pathZ);
++            // If this is true, then we are re-pathing
++            if (this.field_75445_i <= 0 && targetMovement >= 1.0D || this.field_75445_i <= 0 && this.attacker.getRNG().nextInt(200) == 0) /* EntityCreature random instance */
 +            {
-+                PathPoint finalPathPoint = this.attacker.getNavigator().getPath().getFinalPathPoint();
-+                if (finalPathPoint != null && entitylivingbase.getDistanceSq(finalPathPoint.xCoord, finalPathPoint.yCoord, finalPathPoint.zCoord) < 1)
++                net.minecraft.entity.ai.attributes.AttributeInstance rangeAttr = this.attacker.getEntityAttribute(net.minecraft.entity.SharedMonsterAttributes.followRange);
++                double origRange = rangeAttr.getAttributeValue();
++
++                if (this.failedPathFindingPenalty > 0)
 +                {
-+                    failedPathFindingPenalty = 0;
++                    double dist = Math.sqrt(goalDistanceSq);
++
++                    if (dist <= 8.0D)
++                    {
++                        dist = 8.0D;
++                    }
++
++                    if (dist > origRange)
++                    {
++                        dist = origRange;
++                    }
++
++                    rangeAttr.setAttribute(dist);
 +                }
-+                else
++
++                this.prevPathOK = this.attacker.getNavigator().tryMoveToEntityLiving(entitylivingbase, this.speedTowardsTarget);
++
++                if (this.failedPathFindingPenalty > 0)
 +                {
-+                    failedPathFindingPenalty += 10;
++                    --this.failedPathFindingPenalty;
++
++                    if (origRange > 40.0D)
++                    {
++                        origRange = 40.0D;
++                    }
++
++                    rangeAttr.setAttribute(origRange);
++                }
++
++                this.pathX = entitylivingbase.posX;
++                this.pathY = entitylivingbase.boundingBox.minY;
++                this.pathZ = entitylivingbase.posZ;
++                this.field_75445_i = 4 + this.attacker.getRNG().nextInt(7); /* EntityCreature random instance */
++
++                if (goalDistanceSq > 256.0D)
++                {
++                    if (goalDistanceSq > 1024.0D)
++                    {
++                        this.field_75445_i += 8;
++                    }
++                    else
++                    {
++                        this.field_75445_i += 16;
++                    }
++                }
++                else if (!this.prevPathOK)
++                {
++                    this.field_75445_i += 24;
++                }
++
++                if ((!this.prevPathOK || goalDistanceSq <= 256.0D) && this.failedPathFindingPenalty <= 0)
++                {
++                    this.failedPathFindingPenalty = 4 + this.attacker.getRNG().nextInt(4); /* EntityCreature random instance */
 +                }
 +            }
-+            else
-+            {
-+                failedPathFindingPenalty += 10;
-+            }
-         }
- 
++        }
++        // Spigot end
          this.attackTick = Math.max(this.attackTick - 1, 0);
+         double d0 = (double)(this.attacker.width * 2.0F * this.attacker.width * 2.0F + entitylivingbase.width);
+ 
+-        if (this.attacker.getDistanceSq(entitylivingbase.posX, entitylivingbase.boundingBox.minY, entitylivingbase.posZ) <= d0)
+-        {
+-            if (this.attackTick <= 0)
+-            {
+-                this.attackTick = 20;
+-
+-                if (this.attacker.getHeldItem() != null)
+-                {
+-                    this.attacker.swingItem();
+-                }
+-
+-                this.attacker.attackEntityAsMob(entitylivingbase);
+-            }
++        if (goalDistanceSq <= d0 && this.attackTick <= 0) // Spigot
++        {
++            this.attackTick = 20;
++
++            if (this.attacker.getHeldItem() != null)
++            {
++                this.attacker.swingItem();
++            }
++
++            this.attacker.attackEntityAsMob(entitylivingbase);
+         }
+     }
+ }

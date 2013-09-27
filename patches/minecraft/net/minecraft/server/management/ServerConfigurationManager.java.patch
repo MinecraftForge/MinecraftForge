@@ -125,30 +125,16 @@
          netserverhandler.sendPacketToPlayer(new Packet16BlockItemSwitch(par2EntityPlayerMP.inventory.currentItem));
          this.func_96456_a((ServerScoreboard)worldserver.getScoreboard(), par2EntityPlayerMP);
          this.updateTimeAndWeatherForPlayer(par2EntityPlayerMP, worldserver);
--        this.sendChatMsg(ChatMessageComponent.func_111082_b("multiplayer.player.joined", new Object[] {par2EntityPlayerMP.getTranslatedEntityName()}).func_111059_a(EnumChatFormatting.YELLOW));
+-        this.sendChatMsg(ChatMessageComponent.createFromTranslationWithSubstitutions("multiplayer.player.joined", new Object[] {par2EntityPlayerMP.getTranslatedEntityName()}).setColor(EnumChatFormatting.YELLOW));
 +        // this.sendAll(new Packet3Chat(EnumChatFormat.YELLOW + entityplayermp.getScoreboardDisplayName() + EnumChatFormat.YELLOW + " joined the game.")); // CraftBukkit - handled in event
          this.playerLoggedIn(par2EntityPlayerMP);
          netserverhandler.setPlayerLocation(par2EntityPlayerMP.posX, par2EntityPlayerMP.posY, par2EntityPlayerMP.posZ, par2EntityPlayerMP.rotationYaw, par2EntityPlayerMP.rotationPitch);
          this.mcServer.getNetworkThread().addPlayer(netserverhandler);
-@@ -157,15 +207,15 @@
+@@ -165,7 +215,7 @@
+         }
+     }
  
-             if (entity != null)
-             {
--                entity.field_98038_p = true;
-+                entity.forceSpawn = true;
-                 worldserver.spawnEntityInWorld(entity);
-                 par2EntityPlayerMP.mountEntity(entity);
--                entity.field_98038_p = false;
--            }
--        }
--    }
--
 -    protected void func_96456_a(ServerScoreboard par1ServerScoreboard, EntityPlayerMP par2EntityPlayerMP)
-+                entity.forceSpawn = false;
-+            }
-+        }
-+    }
-+
 +    public void func_96456_a(ServerScoreboard par1ServerScoreboard, EntityPlayerMP par2EntityPlayerMP)   // CraftBukkit - protected -> public
      {
          HashSet hashset = new HashSet();
@@ -250,6 +236,13 @@
 -        if (par1EntityPlayerMP.ridingEntity != null)
 -        {
 -            worldserver.removePlayerEntityDangerously(par1EntityPlayerMP.ridingEntity);
+-            System.out.println("removing player mount");
+-        }
+-
+-        worldserver.removeEntity(par1EntityPlayerMP);
+-        worldserver.getPlayerManager().removePlayer(par1EntityPlayerMP);
+-        this.playerEntityList.remove(par1EntityPlayerMP);
+-        this.sendPacketToAllPlayers(new Packet201PlayerInfo(par1EntityPlayerMP.getCommandSenderName(), false, 9999));
 +    public String disconnect(EntityPlayerMP entityplayermp)   // CraftBukkit - return string
 +    {
 +        if (entityplayermp.playerNetServerHandler.connectionClosed)
@@ -267,16 +260,12 @@
 +        this.writePlayerData(entityplayermp);
 +        WorldServer worldserver = entityplayermp.getServerForPlayer();
 +
-+        if (entityplayermp.ridingEntity != null)
++        if (entityplayermp.ridingEntity != null && !(entityplayermp.ridingEntity instanceof EntityPlayer)) // CraftBukkit - Don't remove players
 +        {
 +            worldserver.removePlayerEntityDangerously(entityplayermp.ridingEntity);
-             System.out.println("removing player mount");
-         }
- 
--        worldserver.removeEntity(par1EntityPlayerMP);
--        worldserver.getPlayerManager().removePlayer(par1EntityPlayerMP);
--        this.playerEntityList.remove(par1EntityPlayerMP);
--        this.sendPacketToAllPlayers(new Packet201PlayerInfo(par1EntityPlayerMP.getCommandSenderName(), false, 9999));
++            // System.out.println("removing player mount"); // CraftBukkit - Removed debug message
++        }
++
 +        worldserver.removeEntity(entityplayermp);
 +        worldserver.getPlayerManager().removePlayer(entityplayermp);
 +        this.playerEntityList.remove(entityplayermp);
@@ -339,7 +328,7 @@
 +        }
 +        else if (!this.isAllowedToLogin(s))
 +        {
-+            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, cserver.whitelistMessage); // Spigot
++            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, org.spigotmc.SpigotConfig.whitelistMessage); // Spigot
 +        }
 +        // MCPC+ start - if login event is allowed, execute remaining login code
 +        else if (allowLoginEvent)
@@ -610,8 +599,6 @@
          worldserver.spawnEntityInWorld(entityplayermp1);
          this.playerEntityList.add(entityplayermp1);
 -        entityplayermp1.addSelfToInternalCraftingInventory();
--        entityplayermp1.setEntityHealth(entityplayermp1.func_110143_aJ());
--        GameRegistry.onPlayerRespawn(entityplayermp1);
 +        // CraftBukkit start - Added from changeDimension
 +        this.syncPlayerInventory(entityplayermp1); // CraftBukkit
 +        entityplayermp1.sendPlayerAbilities();
@@ -625,7 +612,8 @@
 +
 +        // entityplayermp1.syncInventory();
 +        // CraftBukkit end
-+        entityplayermp1.setHealth(entityplayermp1.getHealth());
+         entityplayermp1.setHealth(entityplayermp1.getHealth());
+-        GameRegistry.onPlayerRespawn(entityplayermp1);
 +
 +        // CraftBukkit start - Don't fire on respawn
 +        if (fromWorld != location.getWorld())
@@ -952,7 +940,7 @@
      /**
       * sends 1 player per tick, but only sends a player once every 600 ticks
       */
-@@ -574,12 +1111,38 @@
+@@ -574,12 +1111,33 @@
              this.playerPingIndex = 0;
          }
  
@@ -970,34 +958,29 @@
 +        }
 +        // CraftBukkit end */
 +        // Spigot start
-+        if (this.playerEntityList.size() == 0 || !org.bukkit.craftbukkit.Spigot.tabPing)
++        if (!this.playerEntityList.isEmpty())
 +        {
-+            return;
-+        }
-+
-+        int index = MinecraftServer.currentTick % this.playerEntityList.size();
-+        EntityPlayerMP player = (EntityPlayerMP) this.playerEntityList.get(index);
-+
-+        if (player.lastPing == -1 || Math.abs(player.ping - player.lastPing) > 20)
-+        {
-+            Packet packet = new Packet201PlayerInfo(player.listName, true, player.ping);
-+
-+            for (EntityPlayerMP splayer : (List<EntityPlayerMP>) this.playerEntityList)
++            int index = MinecraftServer.currentTick % this.playerEntityList.size();
++            EntityPlayerMP player = (EntityPlayerMP) this.playerEntityList.get(index);
++            if (player.lastPing == -1 || Math.abs(player.ping - player.lastPing) > 20)
 +            {
-+                if (splayer.getBukkitEntity().canSee(player.getBukkitEntity()))
++                Packet packet = new Packet201PlayerInfo(player.listName, true, player.ping);
++                for (EntityPlayerMP splayer : (List<EntityPlayerMP>) this.playerEntityList)
 +                {
-+                    splayer.playerNetServerHandler.sendPacketToPlayer(packet);
++                    if (splayer.getBukkitEntity().canSee(player.getBukkitEntity()))
++                    {
++                        splayer.playerNetServerHandler.sendPacketToPlayer(packet);
++                    }
 +                }
++                player.lastPing = player.ping;
 +            }
-+
-+            player.lastPing = player.ping;
 +        }
 +    }
 +    // Spigot end
  
      /**
       * sends a packet to all players
-@@ -659,6 +1222,15 @@
+@@ -659,6 +1217,15 @@
      public void addOp(String par1Str)
      {
          this.ops.add(par1Str.toLowerCase());
@@ -1013,7 +996,7 @@
      }
  
      /**
-@@ -667,6 +1239,15 @@
+@@ -667,6 +1234,15 @@
      public void removeOp(String par1Str)
      {
          this.ops.remove(par1Str.toLowerCase());
@@ -1029,25 +1012,17 @@
      }
  
      /**
-@@ -679,11 +1260,12 @@
-     }
- 
-     /**
--     * Returns true if the specific player is allowed to use commands.
--     */
--    public boolean areCommandsAllowed(String par1Str)
--    {
+@@ -683,7 +1259,8 @@
+      */
+     public boolean isPlayerOpped(String par1Str)
+     {
 -        return this.ops.contains(par1Str.trim().toLowerCase()) || this.mcServer.isSinglePlayer() && this.mcServer.worldServers[0].getWorldInfo().areCommandsAllowed() && this.mcServer.getServerOwner().equalsIgnoreCase(par1Str) || this.commandsAllowedForAll;
-+     * Returns true if the specified player is opped, even if they're currently offline.
-+     */
-+    public boolean isPlayerOpped(String par1Str)
-+    {
 +        if (par1Str == null) return false; // MCPC+ - fixes Aether ServerPlayerAPI initialization which passes a null username
 +        return this.ops.contains(par1Str.trim().toLowerCase()) || (this.mcServer.isSinglePlayer() && this.mcServer.worldServers[0].getWorldInfo().areCommandsAllowed() && this.mcServer.getServerOwner().equalsIgnoreCase(par1Str)) || this.commandsAllowedForAll;
      }
  
      public EntityPlayerMP getPlayerForUsername(String par1Str)
-@@ -857,6 +1439,13 @@
+@@ -857,6 +1434,13 @@
          {
              EntityPlayerMP entityplayermp = (EntityPlayerMP)this.playerEntityList.get(j);
  
@@ -1061,7 +1036,7 @@
              if (entityplayermp != par1EntityPlayer && entityplayermp.dimension == par10)
              {
                  double d4 = par2 - entityplayermp.posX;
-@@ -925,7 +1514,7 @@
+@@ -925,7 +1509,7 @@
  
          if (par2WorldServer.isRaining())
          {
@@ -1070,7 +1045,7 @@
          }
      }
  
-@@ -935,7 +1524,7 @@
+@@ -935,7 +1519,7 @@
      public void syncPlayerInventory(EntityPlayerMP par1EntityPlayerMP)
      {
          par1EntityPlayerMP.sendContainerToPlayer(par1EntityPlayerMP.inventoryContainer);
@@ -1079,7 +1054,7 @@
          par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet16BlockItemSwitch(par1EntityPlayerMP.inventory.currentItem));
      }
  
-@@ -960,7 +1549,10 @@
+@@ -960,7 +1544,10 @@
       */
      public String[] getAvailablePlayerDat()
      {
@@ -1091,7 +1066,7 @@
      }
  
      public boolean isWhiteListEnabled()
-@@ -1049,7 +1641,16 @@
+@@ -1049,7 +1636,16 @@
      {
          while (!this.playerEntityList.isEmpty())
          {

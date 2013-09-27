@@ -27,12 +27,7 @@
  public class SaveHandler implements ISaveHandler, IPlayerFileData
  {
      /** The directory in which to save world data. */
-@@ -28,10 +38,11 @@
-     /**
-      * The time in milliseconds when this field was initialized. Stored in the session lock file.
-      */
--    private final long initializationTime = MinecraftServer.func_130071_aq();
-+    private final long initializationTime = MinecraftServer.getSystemTimeMillis();
+@@ -32,6 +42,7 @@
  
      /** The directory name of the world */
      private final String saveDirectoryName;

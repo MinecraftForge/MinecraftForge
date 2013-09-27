@@ -60,7 +60,7 @@
 +                    // CraftBukkit start
 +                    if (!CraftEventFactory.callBlockIgniteEvent(par1World, j, k, l, this).isCancelled())
 +                    {
-+                        par1World.setBlock(i, j, k, Block.fire.blockID);
++                        par1World.setBlock(j, k, l, Block.fire.blockID);
 +                    }
 +                    // CraftBukkit end
                  }

@@ -114,6 +114,9 @@ public class CraftContainer extends net.minecraft.inventory.Container {
         case ANVIL:
             typeID = 8;
             break;
+        case HOPPER:
+            typeID = 9;
+            break;
         default:
             typeID = 0;
             break;
@@ -144,6 +147,9 @@ public class CraftContainer extends net.minecraft.inventory.Container {
             break;
         case BREWING:
             setupBrewing(top, bottom);
+            break;
+        case HOPPER:
+            setupHopper(top, bottom);
             break;
         }
     }
@@ -278,6 +284,28 @@ public class CraftContainer extends net.minecraft.inventory.Container {
             this.addSlotToContainer(new net.minecraft.inventory.Slot(bottom, i, 8 + i * 18, 142));
         }
         // End copy from ContainerBrewingStand
+    }
+
+    private void setupHopper(net.minecraft.inventory.IInventory top, net.minecraft.inventory.IInventory bottom) {
+        // This code copied from ContainerHopper
+        byte b0 = 51;
+
+        int i;
+
+        for (i = 0; i < top.getSizeInventory(); ++i) {
+            this.addSlotToContainer(new net.minecraft.inventory.Slot(top, i, 44 + i * 18, 20));
+        }
+
+        for (i = 0; i < 3; ++i) {
+            for (int j = 0; j < 9; ++j) {
+                this.addSlotToContainer(new net.minecraft.inventory.Slot(bottom, j + i * 9 + 9, 8 + j * 18, i * 18 + b0));
+            }
+        }
+
+        for (i = 0; i < 9; ++i) {
+            this.addSlotToContainer(new net.minecraft.inventory.Slot(bottom, i, 8 + i * 18, 58 + b0));
+        }
+        // End copy from ContainerHopper
     }
 
     public boolean canInteractWith(net.minecraft.entity.player.EntityPlayer entity) {

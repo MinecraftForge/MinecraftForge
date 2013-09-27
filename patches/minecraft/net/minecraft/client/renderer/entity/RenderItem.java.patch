@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/entity/RenderItem.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RenderItem.java
-@@ -21,10 +21,12 @@
+@@ -21,6 +21,8 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
@@ -9,20 +9,7 @@
  @SideOnly(Side.CLIENT)
  public class RenderItem extends Render
  {
--    private static final ResourceLocation field_110798_h = new ResourceLocation("textures/misc/enchanted_item_glint.png");
-+    private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
-     private RenderBlocks itemRenderBlocks = new RenderBlocks();
- 
-     /** The RNG used in RenderItem (for bobbing itemstacks on the ground) */
-@@ -46,36 +48,16 @@
-      */
-     public void doRenderItem(EntityItem par1EntityItem, double par2, double par4, double par6, float par8, float par9)
-     {
--        this.func_110777_b(par1EntityItem);
-+        this.bindEntityTexture(par1EntityItem);
-         this.random.setSeed(187L);
-         ItemStack itemstack = par1EntityItem.getEntityItem();
- 
+@@ -53,29 +55,9 @@
          if (itemstack.getItem() != null)
          {
              GL11.glPushMatrix();
@@ -112,37 +99,18 @@
                          }
                      }
                  }
-@@ -197,7 +188,7 @@
- 
-     protected ResourceLocation func_110796_a(EntityItem par1EntityItem)
-     {
--        return this.renderManager.renderEngine.func_130087_a(par1EntityItem.getEntityItem().getItemSpriteNumber());
-+        return this.renderManager.renderEngine.getResourceLocation(par1EntityItem.getEntityItem().getItemSpriteNumber());
-     }
- 
-     /**
-@@ -205,13 +196,17 @@
+@@ -204,6 +195,10 @@
+      * Renders a dropped item
       */
      private void renderDroppedItem(EntityItem par1EntityItem, Icon par2Icon, int par3, float par4, float par5, float par6, float par7)
-     {
++    {
 +        renderDroppedItem(par1EntityItem, par2Icon, par3, par4, par5, par6, par7, 0);
 +    }
 +    private void renderDroppedItem(EntityItem par1EntityItem, Icon par2Icon, int par3, float par4, float par5, float par6, float par7, int pass)
-+    {
+     {
          Tessellator tessellator = Tessellator.instance;
  
-         if (par2Icon == null)
-         {
--            TextureManager texturemanager = Minecraft.getMinecraft().func_110434_K();
--            ResourceLocation resourcelocation = texturemanager.func_130087_a(par1EntityItem.getEntityItem().getItemSpriteNumber());
--            par2Icon = ((TextureMap)texturemanager.func_110581_b(resourcelocation)).func_110572_b("missingno");
-+            TextureManager texturemanager = Minecraft.getMinecraft().getTextureManager();
-+            ResourceLocation resourcelocation = texturemanager.getResourceLocation(par1EntityItem.getEntityItem().getItemSpriteNumber());
-+            par2Icon = ((TextureMap)texturemanager.getTexture(resourcelocation)).getAtlasSprite("missingno");
-         }
- 
-         float f4 = ((Icon)par2Icon).getMinU();
-@@ -240,48 +235,42 @@
+@@ -240,32 +235,26 @@
              f11 = 0.021875F;
              ItemStack itemstack = par1EntityItem.getEntityItem();
              int j = itemstack.stackSize;
@@ -173,8 +141,6 @@
 -                GL11.glTranslatef(0.0F, 0.0F, f12 + f11);
 -
 -                if (itemstack.getItemSpriteNumber() == 0 && Block.blocksList[itemstack.itemID] != null)
--                {
--                    this.func_110776_a(TextureMap.field_110575_b);
 +                // Makes items offset when in 3D, like when in 2D, looks much better. Considered a vanilla bug...
 +                if (k > 0 && shouldSpreadItems())
 +                {
@@ -182,37 +148,25 @@
 +                    float y = (random.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
 +                    float z = (random.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
 +                    GL11.glTranslatef(x, y, f12 + f11);
-                 }
-                 else
-                 {
--                    this.func_110776_a(TextureMap.field_110576_c);
++                }
++                else
++                {
 +                    GL11.glTranslatef(0f, 0f, f12 + f11);
 +                }
 +
 +                if (itemstack.getItemSpriteNumber() == 0)
-+                {
-+                    this.bindTexture(TextureMap.locationBlocksTexture);
-+                }
-+                else
-+                {
-+                    this.bindTexture(TextureMap.locationItemsTexture);
+                 {
+                     this.bindTexture(TextureMap.locationBlocksTexture);
                  }
- 
+@@ -277,7 +266,7 @@
                  GL11.glColor4f(par5, par6, par7, 1.0F);
--                ItemRenderer.renderItemIn2D(tessellator, f5, f6, f4, f7, ((Icon)par2Icon).getOriginX(), ((Icon)par2Icon).getOriginY(), f12);
--
+                 ItemRenderer.renderItemIn2D(tessellator, f5, f6, f4, f7, ((Icon)par2Icon).getIconWidth(), ((Icon)par2Icon).getIconHeight(), f12);
+ 
 -                if (itemstack.hasEffect())
-+                ItemRenderer.renderItemIn2D(tessellator, f5, f6, f4, f7, ((Icon)par2Icon).getIconWidth(), ((Icon)par2Icon).getIconHeight(), f12);
-+
 +                if (itemstack.hasEffect(pass))
                  {
                      GL11.glDepthFunc(GL11.GL_EQUAL);
                      GL11.glDisable(GL11.GL_LIGHTING);
--                    this.renderManager.renderEngine.func_110577_a(field_110798_h);
-+                    this.renderManager.renderEngine.bindTexture(RES_ITEM_GLINT);
-                     GL11.glEnable(GL11.GL_BLEND);
-                     GL11.glBlendFunc(GL11.GL_SRC_COLOR, GL11.GL_ONE);
-                     float f13 = 0.76F;
 @@ -348,6 +337,10 @@
       */
      public void renderItemIntoGUI(FontRenderer par1FontRenderer, TextureManager par2TextureManager, ItemStack par3ItemStack, int par4, int par5)
@@ -229,13 +183,11 @@
          float f2;
  
 -        if (par3ItemStack.getItemSpriteNumber() == 0 && RenderBlocks.renderItemIn3d(Block.blocksList[k].getRenderType()))
--        {
--            par2TextureManager.func_110577_a(TextureMap.field_110575_b);
--            Block block = Block.blocksList[k];
 +        Block block = (k < Block.blocksList.length ? Block.blocksList[k] : null);
 +        if (par3ItemStack.getItemSpriteNumber() == 0 && block != null && RenderBlocks.renderItemIn3d(Block.blocksList[k].getRenderType()))
-+        {
-+            par2TextureManager.bindTexture(TextureMap.locationBlocksTexture);
+         {
+             par2TextureManager.bindTexture(TextureMap.locationBlocksTexture);
+-            Block block = Block.blocksList[k];
              GL11.glPushMatrix();
              GL11.glTranslatef((float)(par4 - 2), (float)(par5 + 3), -3.0F + this.zLevel);
              GL11.glScalef(10.0F, 10.0F, 10.0F);
@@ -243,7 +195,7 @@
          else if (Item.itemsList[k].requiresMultipleRenderPasses())
          {
              GL11.glDisable(GL11.GL_LIGHTING);
--            par2TextureManager.func_110577_a(TextureMap.field_110576_c);
+-            par2TextureManager.bindTexture(TextureMap.locationItemsTexture);
 -
 -            for (int j1 = 0; j1 <= 1; ++j1)
 -            {
@@ -268,22 +220,6 @@
              }
  
              GL11.glEnable(GL11.GL_LIGHTING);
-@@ -409,12 +407,12 @@
-         else
-         {
-             GL11.glDisable(GL11.GL_LIGHTING);
--            ResourceLocation resourcelocation = par2TextureManager.func_130087_a(par3ItemStack.getItemSpriteNumber());
--            par2TextureManager.func_110577_a(resourcelocation);
-+            ResourceLocation resourcelocation = par2TextureManager.getResourceLocation(par3ItemStack.getItemSpriteNumber());
-+            par2TextureManager.bindTexture(resourcelocation);
- 
-             if (object == null)
-             {
--                object = ((TextureMap)Minecraft.getMinecraft().func_110434_K().func_110581_b(resourcelocation)).func_110572_b("missingno");
-+                object = ((TextureMap)Minecraft.getMinecraft().getTextureManager().getTexture(resourcelocation)).getAtlasSprite("missingno");
-             }
- 
-             i1 = Item.itemsList[k].getColorFromItemStack(par3ItemStack, 0);
 @@ -429,11 +427,34 @@
  
              this.renderIcon(par4, par5, (Icon)object, 16, 16);
@@ -319,7 +255,7 @@
      /**
       * Render the item's icon or block into the GUI, including the glint effect.
       */
-@@ -441,14 +462,18 @@
+@@ -441,8 +462,12 @@
      {
          if (par3ItemStack != null)
          {
@@ -334,13 +270,6 @@
              if (par3ItemStack.hasEffect())
              {
                  GL11.glDepthFunc(GL11.GL_GREATER);
-                 GL11.glDisable(GL11.GL_LIGHTING);
-                 GL11.glDepthMask(false);
--                par2TextureManager.func_110577_a(field_110798_h);
-+                par2TextureManager.bindTexture(RES_ITEM_GLINT);
-                 this.zLevel -= 50.0F;
-                 GL11.glEnable(GL11.GL_BLEND);
-                 GL11.glBlendFunc(GL11.GL_DST_COLOR, GL11.GL_DST_COLOR);
 @@ -460,6 +485,7 @@
                  GL11.glEnable(GL11.GL_LIGHTING);
                  GL11.glDepthFunc(GL11.GL_LEQUAL);
@@ -349,19 +278,7 @@
          }
      }
  
-@@ -568,7 +594,10 @@
-         tessellator.draw();
-     }
- 
--    protected ResourceLocation func_110775_a(Entity par1Entity)
-+    /**
-+     * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
-+     */
-+    protected ResourceLocation getEntityTexture(Entity par1Entity)
-     {
-         return this.func_110796_a((EntityItem)par1Entity);
-     }
-@@ -583,4 +612,47 @@
+@@ -586,4 +612,47 @@
      {
          this.doRenderItem((EntityItem)par1Entity, par2, par4, par6, par8, par9);
      }

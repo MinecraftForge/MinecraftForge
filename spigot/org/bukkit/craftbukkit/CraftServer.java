@@ -100,8 +100,8 @@ import com.avaje.ebean.config.ServerConfig;
 import com.avaje.ebean.config.dbplatform.SQLitePlatform;
 import com.avaje.ebeaninternal.server.lib.sql.TransactionIsolation;
 // MCPC+ start
-import guava10.com.google.common.collect.ImmutableList;
-import guava10.com.google.common.collect.MapMaker;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.MapMaker;
 import org.bukkit.craftbukkit.command.CraftSimpleCommandMap;
 
 import cpw.mods.fml.common.FMLLog;
@@ -159,24 +159,9 @@ public final class CraftServer implements Server {
     public boolean craftWorldLoading = false;
     // MCPC+ end
 
-    // Orebfuscator use
-    public boolean orebfuscatorEnabled = false;
-    public int orebfuscatorEngineMode = 1;
-    public int orebfuscatorUpdateRadius = 2;
-    public List<String> orebfuscatorDisabledWorlds;
-    public List<Short> orebfuscatorBlocks;
-    public boolean orebfuscatorForgeOredictBlocks = true; // MCPC+
-
     private final class BooleanWrapper {
         private boolean value = true;
     }
-    // Spigot start
-    public String whitelistMessage = "You are not white-listed on this server!";
-    public String stopMessage = "Server restarting. Brb";
-    public boolean logCommands = true;
-    public boolean commandComplete = true;
-    public List<String> spamGuardExclusions;
-    // Spigot end
 
     static {
         ConfigurationSerialization.registerClass(CraftOfflinePlayer.class);
@@ -232,23 +217,17 @@ public final class CraftServer implements Server {
         updater.getOnUpdate().addAll(configuration.getStringList("auto-updater.on-update"));
         updater.check(serverVersion);
 
-        // Spigot start
-        Spigot.initialize(this, commandMap, configuration);
-
-        try {
-            configuration.save(getConfigFile());
-        } catch (IOException e) {
-        }
-        // Spigot end
-        loadPlugins();
-        enablePlugins(PluginLoadOrder.STARTUP);
+        // Spigot Start - Moved to old location of new DedicatedPlayerList in DedicatedServer
+        // loadPlugins();
+        // enablePlugins(PluginLoadOrder.STARTUP);
+        // Spigot End
     }
 
     private File getConfigFile() {
         return (File) console.options.valueOf("bukkit-settings");
     }
 
-    public void saveConfig() { // Spigot private -> public
+    private void saveConfig() {
         try {
             configuration.save(getConfigFile());
         } catch (IOException ex) {
@@ -650,6 +629,7 @@ public final class CraftServer implements Server {
         playerList.getBannedIPs().loadBanList();
         playerList.getBannedPlayers().loadBanList();
 
+        org.spigotmc.SpigotConfig.init(); // Spigot
         for (net.minecraft.world.WorldServer world : console.worlds) {
             world.difficultySetting = difficulty;
             world.setAllowedSpawnTypes(monsters, animals);
@@ -664,11 +644,13 @@ public final class CraftServer implements Server {
             } else {
                 world.ticksPerMonsterSpawns = this.getTicksPerMonsterSpawns();
             }
+            world.spigotConfig.init(); // Spigot
         }
 
         pluginManager.clearPlugins();
         commandMap.clearCommands();
         resetRecipes();
+        org.spigotmc.SpigotConfig.registerCommands(); // Spigot
 
         int pollCount = 0;
 
@@ -694,7 +676,6 @@ public final class CraftServer implements Server {
                 "This plugin is not properly shutting down its async tasks when it is being reloaded.  This may cause conflicts with the newly loaded version of the plugin"
             ));
         }
-        Spigot.initialize(this, commandMap, configuration); // Spigot
         loadPlugins();
         enablePlugins(PluginLoadOrder.STARTUP);
         enablePlugins(PluginLoadOrder.POSTWORLD);
@@ -1069,10 +1050,10 @@ public final class CraftServer implements Server {
                         getLogger().severe("Could not set generator for default world '" + world + "': Plugin '" + plugin.getDescription().getFullName() + "' is not enabled yet (is it load:STARTUP?)");
                     } else {
                         try {
-                        result = plugin.getDefaultWorldGenerator(world, id);
-                        if (result == null) {
-                            getLogger().severe("Could not set generator for default world '" + world + "': Plugin '" + plugin.getDescription().getFullName() + "' lacks a default world generator");
-                        }
+                            result = plugin.getDefaultWorldGenerator(world, id);
+                            if (result == null) {
+                                getLogger().severe("Could not set generator for default world '" + world + "': Plugin '" + plugin.getDescription().getFullName() + "' lacks a default world generator");
+                            }
                         } catch (Throwable t) {
                             plugin.getLogger().log(Level.SEVERE, "Could not set generator for default world '" + world + "': Plugin '" + plugin.getDescription().getFullName(), t);
                         }
@@ -1120,8 +1101,13 @@ public final class CraftServer implements Server {
         return count;
     }
 
-    // Spigot start
     public OfflinePlayer getOfflinePlayer(String name) {
+        return getOfflinePlayer(name, false); // Spigot
+    }
+
+    public OfflinePlayer getOfflinePlayer(String name, boolean search) {
+        Validate.notNull(name, "Name cannot be null");
+
         OfflinePlayer result = getPlayerExact(name);
         String lname = name.toLowerCase();
 
@@ -1129,7 +1115,17 @@ public final class CraftServer implements Server {
             result = offlinePlayers.get(lname);
 
             if (result == null) {
-                // Spigot end
+                if (search) {
+                    net.minecraft.world.storage.SaveHandler storage = (net.minecraft.world.storage.SaveHandler) console.worlds.get(0).getSaveHandler();
+                    for (String dat : storage.getPlayerDir().list(new DatFileFilter())) {
+                        String datName = dat.substring(0, dat.length() - 4);
+                        if (datName.equalsIgnoreCase(name)) {
+                            name = datName;
+                            break;
+                        }
+                    }
+                }
+
                 result = new CraftOfflinePlayer(this, name);
                 offlinePlayers.put(lname, result);
             }
@@ -1381,7 +1377,7 @@ public final class CraftServer implements Server {
     public List<String> tabCompleteCommand(Player player, String message) {
         List<String> completions = null;
         try {
-            completions = (commandComplete) ? getCommandMap().tabComplete(player, message.substring(1)) : null; // Spigot
+            completions = (org.spigotmc.SpigotConfig.tabComplete) ? getCommandMap().tabComplete(player, message.substring(1)) : null;
         } catch (CommandException ex) {
             player.sendMessage(ChatColor.RED + "An internal error occurred while attempting to tab-complete this command");
             getLogger().log(Level.SEVERE, "Exception when " + player.getName() + " attempted to tab complete " + message, ex);
@@ -1421,20 +1417,4 @@ public final class CraftServer implements Server {
     public CraftScoreboardManager getScoreboardManager() {
         return scoreboardManager;
     }
-
-    // Spigot start
-    @SuppressWarnings("unchecked")
-    public java.util.Collection<java.net.InetSocketAddress> getSecondaryHosts() {
-        java.util.Collection<java.net.InetSocketAddress> ret = new java.util.HashSet<java.net.InetSocketAddress>();
-        List<?> listeners = configuration.getList("listeners");
-        if (listeners != null) {
-            for (Object o : listeners) {
-
-                Map<String, Object> sect = (Map<String, Object>) o;
-                ret.add(new java.net.InetSocketAddress((String) sect.get("address"), (Integer) sect.get("port")));
-            }
-        }
-        return ret;
-    }
-    // Spigot end
 }

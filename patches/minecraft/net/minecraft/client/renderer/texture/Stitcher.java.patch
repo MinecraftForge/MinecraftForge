@@ -1,63 +1,5 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/texture/Stitcher.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/texture/Stitcher.java
-@@ -40,17 +40,17 @@
-         this.maxTileDimension = par4;
-     }
- 
--    public int func_110935_a()
-+    public int getCurrentWidth()
-     {
-         return this.currentWidth;
-     }
- 
--    public int func_110936_b()
-+    public int getCurrentHeight()
-     {
-         return this.currentHeight;
-     }
- 
--    public void func_110934_a(TextureAtlasSprite par1TextureAtlasSprite)
-+    public void addSprite(TextureAtlasSprite par1TextureAtlasSprite)
-     {
-         StitchHolder stitchholder = new StitchHolder(par1TextureAtlasSprite);
- 
-@@ -75,7 +75,7 @@
- 
-             if (!this.allocateSlot(stitchholder))
-             {
--                String s = String.format("Unable to fit: %s - size: %dx%d - Maybe try a lowerresolution texturepack?", new Object[] {stitchholder.func_98150_a().getIconName(), Integer.valueOf(stitchholder.func_98150_a().getOriginX()), Integer.valueOf(stitchholder.func_98150_a().getOriginY())});
-+                String s = String.format("Unable to fit: %s - size: %dx%d - Maybe try a lowerresolution texturepack?", new Object[] {stitchholder.getAtlasSprite().getIconName(), Integer.valueOf(stitchholder.getAtlasSprite().getIconWidth()), Integer.valueOf(stitchholder.getAtlasSprite().getIconHeight())});
-                 throw new StitcherException(stitchholder, s);
-             }
-         }
-@@ -105,8 +105,8 @@
-         {
-             StitchSlot stitchslot1 = (StitchSlot)iterator1.next();
-             StitchHolder stitchholder = stitchslot1.getStitchHolder();
--            TextureAtlasSprite textureatlassprite = stitchholder.func_98150_a();
--            textureatlassprite.func_110971_a(this.currentWidth, this.currentHeight, stitchslot1.getOriginX(), stitchslot1.getOriginY(), stitchholder.isRotated());
-+            TextureAtlasSprite textureatlassprite = stitchholder.getAtlasSprite();
-+            textureatlassprite.initSprite(this.currentWidth, this.currentHeight, stitchslot1.getOriginX(), stitchslot1.getOriginY(), stitchholder.isRotated());
-             arraylist1.add(textureatlassprite);
-         }
- 
-@@ -134,14 +134,14 @@
-     {
-         for (int i = 0; i < this.stitchSlots.size(); ++i)
-         {
--            if (((StitchSlot)this.stitchSlots.get(i)).func_94182_a(par1StitchHolder))
-+            if (((StitchSlot)this.stitchSlots.get(i)).addSlot(par1StitchHolder))
-             {
-                 return true;
-             }
- 
-             par1StitchHolder.rotate();
- 
--            if (((StitchSlot)this.stitchSlots.get(i)).func_94182_a(par1StitchHolder))
-+            if (((StitchSlot)this.stitchSlots.get(i)).addSlot(par1StitchHolder))
-             {
-                 return true;
-             }
 @@ -187,7 +187,7 @@
  
              if (flag4 ^ flag5)
@@ -67,12 +9,3 @@
              }
              else
              {
-@@ -230,7 +230,7 @@
-             this.currentHeight += par1StitchHolder.getHeight();
-         }
- 
--        stitchslot.func_94182_a(par1StitchHolder);
-+        stitchslot.addSlot(par1StitchHolder);
-         this.stitchSlots.add(stitchslot);
-         return true;
-     }

@@ -24,14 +24,3 @@
          if (flag1 && !flag)
          {
              par1World.setBlockMetadataWithNotify(par2, par3, par4, par5 | 8, 3);
-@@ -179,8 +189,8 @@
-     public void registerIcons(IconRegister par1IconRegister)
-     {
-         this.iconArray = new Icon[2];
--        this.iconArray[0] = par1IconRegister.registerIcon(this.func_111023_E());
--        this.iconArray[1] = par1IconRegister.registerIcon(this.func_111023_E() + "_powered");
-+        this.iconArray[0] = par1IconRegister.registerIcon(this.getTextureName());
-+        this.iconArray[1] = par1IconRegister.registerIcon(this.getTextureName() + "_powered");
-     }
- 
-     @SideOnly(Side.CLIENT)

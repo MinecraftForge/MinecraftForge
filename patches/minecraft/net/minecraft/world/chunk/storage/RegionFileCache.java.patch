@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/world/chunk/storage/RegionFileCache.java
++++ ../src_work/minecraft/net/minecraft/world/chunk/storage/RegionFileCache.java
+@@ -11,7 +11,7 @@
+ public class RegionFileCache
+ {
+     /** A map containing Files as keys and RegionFiles as values */
+-    private static final Map regionsByFilename = new HashMap();
++    public static final Map regionsByFilename = new HashMap(); // CraftBukkit - private -> public
+ 
+     public static synchronized RegionFile createOrLoadRegionFile(File par0File, int par1, int par2)
+     {

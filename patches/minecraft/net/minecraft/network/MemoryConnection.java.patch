@@ -1,14 +1,29 @@
 --- ../src_base/minecraft/net/minecraft/network/MemoryConnection.java
 +++ ../src_work/minecraft/net/minecraft/network/MemoryConnection.java
-@@ -175,4 +175,11 @@
+@@ -4,6 +4,7 @@
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.net.InetSocketAddress;
++import java.net.Socket;
+ import java.net.SocketAddress;
+ import java.util.ArrayList;
+ import java.util.Collections;
+@@ -175,4 +176,18 @@
              this.readPacketCache.add(par1Packet);
          }
      }
-+
++    
 +    @Override
 +    public void setSocketAddress(SocketAddress address)
 +    {
 +        // TODO Auto-generated method stub
 +        
++    }
++
++    @Override
++    public Socket getSocket()
++    {
++        // TODO Auto-generated method stub
++        return null;
 +    }
  }

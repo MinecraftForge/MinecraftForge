@@ -371,20 +371,7 @@
  
              if (par1)
              {
-@@ -288,7 +423,11 @@
-         return true;
-     }
- 
--    public void func_104112_b()
-+    /**
-+     * Save extra data not associated with any Chunk.  Not saved during autosave, only during world unload.  Currently
-+     * unimplemented.
-+     */
-+    public void saveExtraData()
-     {
-         if (this.currentChunkLoader != null)
-         {
-@@ -303,20 +442,50 @@
+@@ -307,20 +442,50 @@
      {
          if (!this.worldObj.canNotSave)
          {
@@ -446,7 +433,7 @@
  
              if (this.currentChunkLoader != null)
              {
-@@ -340,7 +509,7 @@
+@@ -344,7 +509,7 @@
       */
      public String makeString()
      {
@@ -455,7 +442,7 @@
      }
  
      /**
-@@ -361,7 +530,7 @@
+@@ -365,7 +530,7 @@
  
      public int getLoadedChunkCount()
      {

@@ -158,7 +158,7 @@
 -        Iterator iterator = this.worldObj.getEntitiesWithinAABB(EntityItem.class, this.boundingBox.expand(0.5D, 0.0D, 0.5D)).iterator();
 -
 +        // Spigot start
-+        double radius = worldObj.getWorld().itemMergeRadius;
++        double radius = worldObj.spigotConfig.itemMerge;
 +        Iterator iterator = this.worldObj.getEntitiesWithinAABB(EntityItem.class, this.boundingBox.expand(radius, radius, radius)).iterator();
 +        // Spigot end
 +        
@@ -288,7 +288,7 @@
       */
      public String getEntityName()
      {
--        return StatCollector.translateToLocal("item." + this.getEntityItem().getItemName());
+-        return StatCollector.translateToLocal("item." + this.getEntityItem().getUnlocalizedName());
 +        return StatCollector.translateToLocal("item." + this.getEntityItem().getDisplayName());
      }
  

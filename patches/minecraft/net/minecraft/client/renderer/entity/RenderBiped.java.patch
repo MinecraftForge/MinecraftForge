@@ -68,7 +68,7 @@
              if (item instanceof ItemArmor)
              {
                  ItemArmor itemarmor = (ItemArmor)item;
--                this.func_110776_a(func_110857_a(itemarmor, par2));
+-                this.bindTexture(func_110857_a(itemarmor, par2));
 +                this.bindTexture(getArmorResource(par1EntityLiving, itemstack, par2, null));
                  ModelBiped modelbiped = par2 == 2 ? this.field_82425_h : this.field_82423_g;
                  modelbiped.bipedHead.showModel = par2 == 0;
@@ -98,7 +98,7 @@
  
              if (item instanceof ItemArmor)
              {
--                this.func_110776_a(func_110858_a((ItemArmor)item, par2, "overlay"));
+-                this.bindTexture(func_110858_a((ItemArmor)item, par2, "overlay"));
 +                this.bindTexture(getArmorResource(par1EntityLiving, itemstack, par2, "overlay"));
                  float f1 = 1.0F;
                  GL11.glColor3f(f1, f1, f1);
@@ -143,15 +143,3 @@
              }
  
              GL11.glPopMatrix();
-@@ -311,7 +357,10 @@
-         this.doRenderLiving((EntityLiving)par1EntityLivingBase, par2, par4, par6, par8, par9);
-     }
- 
--    protected ResourceLocation func_110775_a(Entity par1Entity)
-+    /**
-+     * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
-+     */
-+    protected ResourceLocation getEntityTexture(Entity par1Entity)
-     {
-         return this.func_110856_a((EntityLiving)par1Entity);
-     }

@@ -23,25 +23,16 @@
      }
  
      /**
-@@ -280,7 +286,7 @@
-         this.sendQueue.quitWithPacket(new Packet255KickDisconnect("Quitting"));
-     }
- 
--    public IUpdatePlayerListBox func_82735_a(EntityMinecart par1EntityMinecart)
-+    public IUpdatePlayerListBox getMinecartSoundUpdater(EntityMinecart par1EntityMinecart)
-     {
-         return new SoundUpdaterMinecart(this.mc.sndManager, par1EntityMinecart, this.mc.thePlayer);
-     }
-@@ -289,6 +295,12 @@
-      * Updates all weather states.
+@@ -290,6 +296,12 @@
       */
      protected void updateWeather()
-+    {
+     {
 +        super.updateWeather();
 +    }
 +
 +    @Override
 +    public void updateWeatherBody()
-     {
++    {
          if (!this.provider.hasNoSky)
          {
+             this.prevRainingStrength = this.rainingStrength;

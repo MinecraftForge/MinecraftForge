@@ -1,26 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/village/VillageSiege.java
 +++ ../src_work/minecraft/net/minecraft/village/VillageSiege.java
-@@ -190,7 +190,7 @@
-             try
-             {
-                 entityzombie = new EntityZombie(this.worldObj);
--                entityzombie.func_110161_a((EntityLivingData)null);
-+                entityzombie.onSpawnWithEgg((EntityLivingData)null);
-                 entityzombie.setVillager(false);
-             }
-             catch (Exception exception)
-@@ -200,9 +200,9 @@
+@@ -200,7 +200,7 @@
              }
  
              entityzombie.setLocationAndAngles(vec3.xCoord, vec3.yCoord, vec3.zCoord, this.worldObj.rand.nextFloat() * 360.0F, 0.0F);
 -            this.worldObj.spawnEntityInWorld(entityzombie);
 +            this.worldObj.addEntity(entityzombie, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_INVASION); // CraftBukkit
              ChunkCoordinates chunkcoordinates = this.theVillage.getCenter();
--            entityzombie.func_110171_b(chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, this.theVillage.getVillageRadius());
-+            entityzombie.setHomeArea(chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, this.theVillage.getVillageRadius());
+             entityzombie.setHomeArea(chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, this.theVillage.getVillageRadius());
              return true;
-         }
-     }
 @@ -217,7 +217,8 @@
  
              if (this.theVillage.isInRange(i1, j1, k1) && SpawnerAnimals.canCreatureTypeSpawnAtLocation(EnumCreatureType.monster, this.worldObj, i1, j1, k1))

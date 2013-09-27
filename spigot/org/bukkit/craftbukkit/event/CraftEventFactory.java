@@ -7,8 +7,8 @@ import java.util.Map;
 
 
 import org.bukkit.Bukkit;
-import org.bukkit.Server;
 import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -21,10 +21,8 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftDamageSource;
-import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.LivingEntity;
@@ -70,7 +68,7 @@ public class CraftEventFactory {
         net.minecraft.util.ChunkCoordinates chunkcoordinates = worldServer.getSpawnPoint();
 
         int distanceFromSpawn = Math.max(Math.abs(x - chunkcoordinates.posX), Math.abs(z - chunkcoordinates.posZ));
-        return distanceFromSpawn >= spawnSize;
+        return distanceFromSpawn > spawnSize;
     }
 
     public static <T extends Event> T callEvent(T event) {

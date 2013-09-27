@@ -1,9 +1,11 @@
 --- ../src_base/minecraft/net/minecraft/network/INetworkManager.java
 +++ ../src_work/minecraft/net/minecraft/network/INetworkManager.java
-@@ -49,6 +49,8 @@
+@@ -49,6 +49,10 @@
       */
      void networkShutdown(String s, Object ... var2);
  
++    java.net.Socket getSocket(); // Spigot
++
 +    void setSocketAddress(java.net.SocketAddress address); // Spigot
 +
      @SideOnly(Side.CLIENT)

@@ -1,62 +1,5 @@
 --- ../src_base/minecraft/net/minecraft/entity/monster/EntityWitch.java
 +++ ../src_work/minecraft/net/minecraft/entity/monster/EntityWitch.java
-@@ -30,7 +30,7 @@
- public class EntityWitch extends EntityMob implements IRangedAttackMob
- {
-     private static final UUID field_110184_bp = UUID.fromString("5CD17E52-A79A-43D3-A529-90FDE04B181E");
--    private static final AttributeModifier field_110185_bq = (new AttributeModifier(field_110184_bp, "Drinking speed penalty", -0.25D, 0)).func_111168_a(false);
-+    private static final AttributeModifier field_110185_bq = (new AttributeModifier(field_110184_bp, "Drinking speed penalty", -0.25D, 0)).setSaved(false);
- 
-     /** List of items a witch should drop on death. */
-     private static final int[] witchDrops = new int[] {Item.glowstone.itemID, Item.sugar.itemID, Item.redstone.itemID, Item.spiderEye.itemID, Item.glassBottle.itemID, Item.gunpowder.itemID, Item.stick.itemID, Item.stick.itemID};
-@@ -99,11 +99,11 @@
-         return this.getDataWatcher().getWatchableObjectByte(21) == 1;
-     }
- 
--    protected void func_110147_ax()
--    {
--        super.func_110147_ax();
--        this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111128_a(26.0D);
--        this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.25D);
-+    protected void applyEntityAttributes()
-+    {
-+        super.applyEntityAttributes();
-+        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute(26.0D);
-+        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.25D);
-     }
- 
-     /**
-@@ -146,7 +146,7 @@
-                         }
-                     }
- 
--                    this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111124_b(field_110185_bq);
-+                    this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).removeModifier(field_110185_bq);
-                 }
-             }
-             else
-@@ -157,7 +157,7 @@
-                 {
-                     short1 = 16307;
-                 }
--                else if (this.rand.nextFloat() < 0.05F && this.func_110143_aJ() < this.func_110138_aP())
-+                else if (this.rand.nextFloat() < 0.05F && this.getHealth() < this.getMaxHealth())
-                 {
-                     short1 = 16341;
-                 }
-@@ -175,9 +175,9 @@
-                     this.setCurrentItemOrArmor(0, new ItemStack(Item.potion, 1, short1));
-                     this.witchAttackTimer = this.getHeldItem().getMaxItemUseDuration();
-                     this.setAggressive(true);
--                    AttributeInstance attributeinstance = this.func_110148_a(SharedMonsterAttributes.field_111263_d);
--                    attributeinstance.func_111124_b(field_110185_bq);
--                    attributeinstance.func_111121_a(field_110185_bq);
-+                    AttributeInstance attributeinstance = this.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
-+                    attributeinstance.removeModifier(field_110185_bq);
-+                    attributeinstance.applyModifier(field_110185_bq);
-                 }
-             }
- 
 @@ -232,6 +232,8 @@
       */
      protected void dropFewItems(boolean par1, int par2)
@@ -83,12 +26,3 @@
      }
  
      /**
-@@ -269,7 +271,7 @@
-             {
-                 entitypotion.setPotionDamage(32698);
-             }
--            else if (par1EntityLivingBase.func_110143_aJ() >= 8.0F && !par1EntityLivingBase.isPotionActive(Potion.poison))
-+            else if (par1EntityLivingBase.getHealth() >= 8.0F && !par1EntityLivingBase.isPotionActive(Potion.poison))
-             {
-                 entitypotion.setPotionDamage(32660);
-             }

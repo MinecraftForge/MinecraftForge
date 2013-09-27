@@ -42,32 +42,6 @@
      protected float defaultPitch;
  
      /** This entity's current target. */
-@@ -71,8 +82,8 @@
- 
-     /** How long to keep a specific target entity */
-     protected int numTicksToChaseTarget;
--    private boolean field_110169_bv;
--    private Entity field_110168_bw;
-+    private boolean isLeashed;
-+    private Entity leashedToEntity;
-     private NBTTagCompound field_110170_bx;
- 
-     public EntityLiving(World par1World)
-@@ -93,10 +104,10 @@
-         }
-     }
- 
--    protected void func_110147_ax()
--    {
--        super.func_110147_ax();
--        this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_111265_b).func_111128_a(16.0D);
-+    protected void applyEntityAttributes()
-+    {
-+        super.applyEntityAttributes();
-+        this.getAttributeMap().func_111150_b(SharedMonsterAttributes.followRange).setAttribute(16.0D);
-     }
- 
-     public EntityLookHelper getLookHelper()
 @@ -141,6 +152,7 @@
      public void setAttackTarget(EntityLivingBase par1EntityLivingBase)
      {
@@ -121,38 +95,6 @@
      }
  
      /**
-@@ -343,20 +376,20 @@
-         par1NBTTagCompound.setTag("DropChances", nbttaglist1);
-         par1NBTTagCompound.setString("CustomName", this.getCustomNameTag());
-         par1NBTTagCompound.setBoolean("CustomNameVisible", this.getAlwaysRenderNameTag());
--        par1NBTTagCompound.setBoolean("Leashed", this.field_110169_bv);
--
--        if (this.field_110168_bw != null)
-+        par1NBTTagCompound.setBoolean("Leashed", this.isLeashed);
-+
-+        if (this.leashedToEntity != null)
-         {
-             nbttagcompound1 = new NBTTagCompound("Leash");
- 
--            if (this.field_110168_bw instanceof EntityLivingBase)
--            {
--                nbttagcompound1.setLong("UUIDMost", this.field_110168_bw.func_110124_au().getMostSignificantBits());
--                nbttagcompound1.setLong("UUIDLeast", this.field_110168_bw.func_110124_au().getLeastSignificantBits());
--            }
--            else if (this.field_110168_bw instanceof EntityHanging)
--            {
--                EntityHanging entityhanging = (EntityHanging)this.field_110168_bw;
-+            if (this.leashedToEntity instanceof EntityLivingBase)
-+            {
-+                nbttagcompound1.setLong("UUIDMost", this.leashedToEntity.getUniqueID().getMostSignificantBits());
-+                nbttagcompound1.setLong("UUIDLeast", this.leashedToEntity.getUniqueID().getLeastSignificantBits());
-+            }
-+            else if (this.leashedToEntity instanceof EntityHanging)
-+            {
-+                EntityHanging entityhanging = (EntityHanging)this.leashedToEntity;
-                 nbttagcompound1.setInteger("X", entityhanging.xPosition);
-                 nbttagcompound1.setInteger("Y", entityhanging.yPosition);
-                 nbttagcompound1.setInteger("Z", entityhanging.zPosition);
 @@ -374,6 +407,22 @@
          super.readEntityFromNBT(par1NBTTagCompound);
          this.setCanPickUpLoot(par1NBTTagCompound.getBoolean("CanPickUpLoot"));
@@ -176,19 +118,6 @@
  
          if (par1NBTTagCompound.hasKey("CustomName") && par1NBTTagCompound.getString("CustomName").length() > 0)
          {
-@@ -404,9 +453,9 @@
-             }
-         }
- 
--        this.field_110169_bv = par1NBTTagCompound.getBoolean("Leashed");
--
--        if (this.field_110169_bv && par1NBTTagCompound.hasKey("Leash"))
-+        this.isLeashed = par1NBTTagCompound.getBoolean("Leashed");
-+
-+        if (this.isLeashed && par1NBTTagCompound.hasKey("Leash"))
-         {
-             this.field_110170_bx = par1NBTTagCompound.getCompoundTag("Leash");
-         }
 @@ -547,9 +596,21 @@
       */
      protected void despawnEntity()
@@ -235,80 +164,10 @@
      /**
       * Returns render size modifier
       */
-@@ -744,7 +803,10 @@
-         return 4;
-     }
- 
--    public int func_82143_as()
-+    /**
-+     * The number of iterations PathFinder.getSafePoint will execute before giving up.
-+     */
-+    public int getMaxSafePointTries()
+@@ -1115,6 +1174,14 @@
      {
-         if (this.getAttackTarget() == null)
+         if (this.getLeashed() && this.getLeashedToEntity() == par1EntityPlayer)
          {
-@@ -752,7 +814,7 @@
-         }
-         else
-         {
--            int i = (int)(this.func_110143_aJ() - this.func_110138_aP() * 0.33F);
-+            int i = (int)(this.getHealth() - this.getMaxHealth() * 0.33F);
-             i -= (3 - this.worldObj.difficultySetting) * 4;
- 
-             if (i < 0)
-@@ -838,7 +900,7 @@
-      */
-     protected void addRandomArmor()
-     {
--        if (this.rand.nextFloat() < 0.15F * this.worldObj.func_110746_b(this.posX, this.posY, this.posZ))
-+        if (this.rand.nextFloat() < 0.15F * this.worldObj.getLocationTensionFactor(this.posX, this.posY, this.posZ))
-         {
-             int i = this.rand.nextInt(2);
-             float f = this.worldObj.difficultySetting == 3 ? 0.1F : 0.25F;
-@@ -1008,7 +1070,7 @@
-      */
-     protected void enchantEquipment()
-     {
--        float f = this.worldObj.func_110746_b(this.posX, this.posY, this.posZ);
-+        float f = this.worldObj.getLocationTensionFactor(this.posX, this.posY, this.posZ);
- 
-         if (this.getHeldItem() != null && this.rand.nextFloat() < 0.25F * f)
-         {
-@@ -1026,9 +1088,9 @@
-         }
-     }
- 
--    public EntityLivingData func_110161_a(EntityLivingData par1EntityLivingData)
--    {
--        this.func_110148_a(SharedMonsterAttributes.field_111265_b).func_111121_a(new AttributeModifier("Random spawn bonus", this.rand.nextGaussian() * 0.05D, 1));
-+    public EntityLivingData onSpawnWithEgg(EntityLivingData par1EntityLivingData)
-+    {
-+        this.getEntityAttribute(SharedMonsterAttributes.followRange).applyModifier(new AttributeModifier("Random spawn bonus", this.rand.nextGaussian() * 0.05D, 1));
-         return par1EntityLivingData;
-     }
- 
-@@ -1100,40 +1162,67 @@
-         this.canPickUpLoot = par1;
-     }
- 
--    public boolean func_104002_bU()
-+    public boolean isNoDespawnRequired()
-     {
-         return this.persistenceRequired;
-     }
- 
--    public final boolean func_130002_c(EntityPlayer par1EntityPlayer)
--    {
--        if (this.func_110167_bD() && this.func_110166_bE() == par1EntityPlayer)
--        {
--            this.func_110160_i(true, !par1EntityPlayer.capabilities.isCreativeMode);
-+    /**
-+     * First layer of player interaction
-+     */
-+    public final boolean interactFirst(EntityPlayer par1EntityPlayer)
-+    {
-+        if (this.getLeashed() && this.getLeashedToEntity() == par1EntityPlayer)
-+        {
 +            // CraftBukkit start
 +            if (CraftEventFactory.callPlayerUnleashEntityEvent(this, par1EntityPlayer).isCancelled())
 +            {
@@ -317,19 +176,13 @@
 +            }
 +
 +            // CraftBukkit end
-+            this.clearLeashed(true, !par1EntityPlayer.capabilities.isCreativeMode);
+             this.clearLeashed(true, !par1EntityPlayer.capabilities.isCreativeMode);
              return true;
          }
-         else
-         {
-             ItemStack itemstack = par1EntityPlayer.inventory.getCurrentItem();
- 
--            if (itemstack != null && itemstack.itemID == Item.field_111214_ch.itemID && this.func_110164_bC())
-+            if (itemstack != null && itemstack.itemID == Item.leash.itemID && this.allowLeashing())
+@@ -1126,6 +1193,14 @@
              {
                  if (!(this instanceof EntityTameable) || !((EntityTameable)this).isTamed())
                  {
--                    this.func_110162_b(par1EntityPlayer, true);
 +                    // CraftBukkit start
 +                    if (CraftEventFactory.callPlayerLeashEntityEvent(this, par1EntityPlayer, par1EntityPlayer).isCancelled())
 +                    {
@@ -338,14 +191,13 @@
 +                    }
 +
 +                    // CraftBukkit end
-+                    this.setLeashedToEntity(par1EntityPlayer, true);
+                     this.setLeashedToEntity(par1EntityPlayer, true);
                      --itemstack.stackSize;
                      return true;
-                 }
+@@ -1133,6 +1208,14 @@
  
                  if (par1EntityPlayer.getCommandSenderName().equalsIgnoreCase(((EntityTameable)this).getOwnerName()))
                  {
--                    this.func_110162_b(par1EntityPlayer, true);
 +                    // CraftBukkit start
 +                    if (CraftEventFactory.callPlayerLeashEntityEvent(this, par1EntityPlayer, par1EntityPlayer).isCancelled())
 +                    {
@@ -354,166 +206,23 @@
 +                    }
 +
 +                    // CraftBukkit end
-+                    this.setLeashedToEntity(par1EntityPlayer, true);
+                     this.setLeashedToEntity(par1EntityPlayer, true);
                      --itemstack.stackSize;
                      return true;
-                 }
-             }
- 
--            return this.interact(par1EntityPlayer) ? true : super.func_130002_c(par1EntityPlayer);
-+            return this.interact(par1EntityPlayer) ? true : super.interactFirst(par1EntityPlayer);
-         }
-     }
- 
-@@ -1149,28 +1238,31 @@
-     {
-         if (this.field_110170_bx != null)
+@@ -1162,6 +1245,7 @@
          {
--            this.func_110165_bF();
--        }
--
--        if (this.field_110169_bv)
--        {
--            if (this.field_110168_bw == null || this.field_110168_bw.isDead)
--            {
--                this.func_110160_i(true, true);
--            }
--        }
--    }
--
--    public void func_110160_i(boolean par1, boolean par2)
--    {
--        if (this.field_110169_bv)
--        {
--            this.field_110169_bv = false;
--            this.field_110168_bw = null;
-+            this.recreateLeash();
-+        }
-+
-+        if (this.isLeashed)
-+        {
-+            if (this.leashedToEntity == null || this.leashedToEntity.isDead)
-+            {
-+                this.clearLeashed(true, true);
-+            }
-+        }
-+    }
-+
-+    /**
-+     * Removes the leash from this entity. Second parameter tells whether to send a packet to surrounding players.
-+     */
-+    public void clearLeashed(boolean par1, boolean par2)
-+    {
-+        if (this.isLeashed)
-+        {
-+            this.isLeashed = false;
-+            this.leashedToEntity = null;
- 
-             if (!this.worldObj.isRemote && par2)
+             if (this.leashedToEntity == null || this.leashedToEntity.isDead)
              {
--                this.dropItem(Item.field_111214_ch.itemID, 1);
-+                this.dropItem(Item.leash.itemID, 1);
++                this.worldObj.getServer().getPluginManager().callEvent(new EntityUnleashEvent(this.getBukkitEntity(), UnleashReason.HOLDER_GONE)); // CraftBukkit
+                 this.clearLeashed(true, true);
              }
- 
-             if (!this.worldObj.isRemote && par1 && this.worldObj instanceof WorldServer)
-@@ -1180,35 +1272,39 @@
          }
-     }
- 
--    public boolean func_110164_bC()
--    {
--        return !this.func_110167_bD() && !(this instanceof IMob);
--    }
--
--    public boolean func_110167_bD()
--    {
--        return this.field_110169_bv;
--    }
--
--    public Entity func_110166_bE()
--    {
--        return this.field_110168_bw;
--    }
--
--    public void func_110162_b(Entity par1Entity, boolean par2)
--    {
--        this.field_110169_bv = true;
--        this.field_110168_bw = par1Entity;
-+    public boolean allowLeashing()
-+    {
-+        return !this.getLeashed() && !(this instanceof IMob);
-+    }
-+
-+    public boolean getLeashed()
-+    {
-+        return this.isLeashed;
-+    }
-+
-+    public Entity getLeashedToEntity()
-+    {
-+        return this.leashedToEntity;
-+    }
-+
-+    /**
-+     * Sets the entity to be leashed to.\nArgs:\n@param par1Entity: The entity to be tethered to.\n@param par2: Whether
-+     * to send an attaching notification packet to surrounding players.
-+     */
-+    public void setLeashedToEntity(Entity par1Entity, boolean par2)
-+    {
-+        this.isLeashed = true;
-+        this.leashedToEntity = par1Entity;
- 
-         if (!this.worldObj.isRemote && par2 && this.worldObj instanceof WorldServer)
-         {
--            ((WorldServer)this.worldObj).getEntityTracker().sendPacketToAllPlayersTrackingEntity(this, new Packet39AttachEntity(1, this, this.field_110168_bw));
--        }
--    }
--
--    private void func_110165_bF()
--    {
--        if (this.field_110169_bv && this.field_110170_bx != null)
-+            ((WorldServer)this.worldObj).getEntityTracker().sendPacketToAllPlayersTrackingEntity(this, new Packet39AttachEntity(1, this, this.leashedToEntity));
-+        }
-+    }
-+
-+    private void recreateLeash()
-+    {
-+        if (this.isLeashed && this.field_110170_bx != null)
-         {
-             if (this.field_110170_bx.hasKey("UUIDMost") && this.field_110170_bx.hasKey("UUIDLeast"))
-             {
-@@ -1220,9 +1316,9 @@
-                 {
-                     EntityLivingBase entitylivingbase = (EntityLivingBase)iterator.next();
- 
--                    if (entitylivingbase.func_110124_au().equals(uuid))
-+                    if (entitylivingbase.getUniqueID().equals(uuid))
-                     {
--                        this.field_110168_bw = entitylivingbase;
-+                        this.leashedToEntity = entitylivingbase;
-                         break;
-                     }
-                 }
-@@ -1232,21 +1328,25 @@
-                 int i = this.field_110170_bx.getInteger("X");
-                 int j = this.field_110170_bx.getInteger("Y");
-                 int k = this.field_110170_bx.getInteger("Z");
--                EntityLeashKnot entityleashknot = EntityLeashKnot.func_110130_b(this.worldObj, i, j, k);
-+                EntityLeashKnot entityleashknot = EntityLeashKnot.getKnotForBlock(this.worldObj, i, j, k);
- 
-                 if (entityleashknot == null)
-                 {
-                     entityleashknot = EntityLeashKnot.func_110129_a(this.worldObj, i, j, k);
-                 }
- 
--                this.field_110168_bw = entityleashknot;
-+                this.leashedToEntity = entityleashknot;
+@@ -1256,10 +1340,14 @@
              }
              else
              {
--                this.func_110160_i(false, true);
 +                this.worldObj.getServer().getPluginManager().callEvent(new EntityUnleashEvent(this.getBukkitEntity(), UnleashReason.UNKNOWN)); // CraftBukkit
-+                this.clearLeashed(false, true);
+                 this.clearLeashed(false, true);
              }
          }
  

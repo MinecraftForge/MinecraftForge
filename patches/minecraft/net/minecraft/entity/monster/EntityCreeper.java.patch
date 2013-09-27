@@ -19,38 +19,7 @@
  
      public EntityCreeper(World par1World)
      {
-@@ -52,10 +57,10 @@
-         this.targetTasks.addTask(2, new EntityAIHurtByTarget(this, false));
-     }
- 
--    protected void func_110147_ax()
--    {
--        super.func_110147_ax();
--        this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.25D);
-+    protected void applyEntityAttributes()
-+    {
-+        super.applyEntityAttributes();
-+        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.25D);
-     }
- 
-     /**
-@@ -66,9 +71,12 @@
-         return true;
-     }
- 
--    public int func_82143_as()
--    {
--        return this.getAttackTarget() == null ? 3 : 3 + (int)(this.func_110143_aJ() - 1.0F);
-+    /**
-+     * The number of iterations PathFinder.getSafePoint will execute before giving up.
-+     */
-+    public int getMaxSafePointTries()
-+    {
-+        return this.getAttackTarget() == null ? 3 : 3 + (int)(this.getHealth() - 1.0F);
-     }
- 
-     /**
-@@ -156,17 +164,22 @@
+@@ -159,17 +164,22 @@
                  if (!this.worldObj.isRemote)
                  {
                      boolean flag = this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing");
@@ -78,7 +47,7 @@
                  }
              }
          }
-@@ -195,14 +208,54 @@
+@@ -198,14 +208,54 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -140,7 +109,7 @@
  
      public boolean attackEntityAsMob(Entity par1Entity)
      {
-@@ -257,6 +310,32 @@
+@@ -260,6 +310,32 @@
      public void onStruckByLightning(EntityLightningBolt par1EntityLightningBolt)
      {
          super.onStruckByLightning(par1EntityLightningBolt);

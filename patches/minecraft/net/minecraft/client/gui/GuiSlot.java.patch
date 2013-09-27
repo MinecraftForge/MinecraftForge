@@ -4,7 +4,7 @@
          GL11.glDisable(GL11.GL_LIGHTING);
          GL11.glDisable(GL11.GL_FOG);
          Tessellator tessellator = Tessellator.instance;
--        this.mc.func_110434_K().func_110577_a(Gui.field_110325_k);
+-        this.mc.getTextureManager().bindTexture(Gui.optionsBackground);
 -        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 -        float f1 = 32.0F;
 -        tessellator.startDrawingQuads();
@@ -18,15 +18,6 @@
          j1 = this.width / 2 - 92 - 16;
          k1 = this.top + 4 - (int)this.amountScrolled;
  
-@@ -472,7 +463,7 @@
-     protected void overlayBackground(int par1, int par2, int par3, int par4)
-     {
-         Tessellator tessellator = Tessellator.instance;
--        this.mc.func_110434_K().func_110577_a(Gui.field_110325_k);
-+        this.mc.getTextureManager().bindTexture(Gui.optionsBackground);
-         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-         float f = 32.0F;
-         tessellator.startDrawingQuads();
 @@ -484,4 +475,18 @@
          tessellator.addVertexWithUV(0.0D, (double)par1, 0.0D, 0.0D, (double)((float)par1 / f));
          tessellator.draw();

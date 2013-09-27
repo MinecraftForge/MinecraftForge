@@ -11,35 +11,17 @@
  import net.minecraft.world.WorldManager;
  import net.minecraft.world.WorldServer;
  import net.minecraft.world.WorldServerMulti;
-@@ -23,6 +25,10 @@
+@@ -22,6 +24,10 @@
+ import net.minecraft.world.WorldType;
  import net.minecraft.world.demo.DemoWorldServer;
  import net.minecraft.world.storage.ISaveHandler;
- 
++
 +import net.minecraftforge.common.DimensionManager;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.world.WorldEvent;
-+
+ 
  @SideOnly(Side.CLIENT)
  public class IntegratedServer extends MinecraftServer
- {
-@@ -41,7 +47,7 @@
-     {
-         super(new File(par1Minecraft.mcDataDir, "saves"));
-         this.serverLogAgent = new LogAgent("Minecraft-Server", " [SERVER]", (new File(par1Minecraft.mcDataDir, "output-server.log")).getAbsolutePath());
--        this.setServerOwner(par1Minecraft.func_110432_I().func_111285_a());
-+        this.setServerOwner(par1Minecraft.getSession().getUsername());
-         this.setFolderName(par2Str);
-         this.setWorldName(par3Str);
-         this.setDemo(par1Minecraft.isDemo());
-@@ -49,7 +55,7 @@
-         this.setBuildLimit(256);
-         this.setConfigurationManager(new IntegratedPlayerList(this));
-         this.mc = par1Minecraft;
--        this.field_110456_c = par1Minecraft.func_110437_J();
-+        this.serverProxy = par1Minecraft.getProxy();
-         this.theWorldSettings = par4WorldSettings;
- 
-         try
 @@ -65,44 +71,23 @@
      protected void loadAllWorlds(String par1Str, String par2Str, long par3, WorldType par5WorldType, String par6Str)
      {
@@ -115,17 +97,6 @@
      {
          boolean flag = this.isGamePaused;
          this.isGamePaused = this.theServerListeningThread.isGamePaused();
-@@ -205,8 +190,8 @@
-     public CrashReport addServerInfoToCrashReport(CrashReport par1CrashReport)
-     {
-         par1CrashReport = super.addServerInfoToCrashReport(par1CrashReport);
--        par1CrashReport.func_85056_g().addCrashSectionCallable("Type", new CallableType3(this));
--        par1CrashReport.func_85056_g().addCrashSectionCallable("Is Modded", new CallableIsModded(this));
-+        par1CrashReport.getCategory().addCrashSectionCallable("Type", new CallableType3(this));
-+        par1CrashReport.getCategory().addCrashSectionCallable("Is Modded", new CallableIsModded(this));
-         return par1CrashReport;
-     }
- 
 @@ -254,7 +239,7 @@
      /**
       * Saves all necessary data as preparation for stopping the server.

@@ -10,15 +10,15 @@
 +    // Spigot start - Added constructor
 +    public Packet63WorldParticles(String particleName, float x, float y, float z, float offsetX, float offsetY, float offsetZ, float speed, int count)
 +    {
-+        particleName = particleName;
-+        posX = x;
-+        posY = y;
-+        posZ = z;
-+        offsetX = offsetX;
-+        offsetY = offsetY;
-+        offsetZ = offsetZ;
-+        speed = speed;
-+        quantity = count;
++        this.particleName = particleName;
++        this.posX = x;
++        this.posY = y;
++        this.posZ = z;
++        this.offsetX = offsetX;
++        this.offsetY = offsetY;
++        this.offsetZ = offsetZ;
++        this.speed = speed;
++        this.quantity = count;
 +    }
 +    // Spigot end
  

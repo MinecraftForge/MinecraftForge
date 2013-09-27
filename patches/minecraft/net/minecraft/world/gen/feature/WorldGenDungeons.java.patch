@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
-@@ -8,10 +8,12 @@
+@@ -8,6 +8,8 @@
  import net.minecraft.tileentity.TileEntityMobSpawner;
  import net.minecraft.util.WeightedRandomChestContent;
  import net.minecraft.world.World;
@@ -9,11 +9,6 @@
  
  public class WorldGenDungeons extends WorldGenerator
  {
--    public static final WeightedRandomChestContent[] field_111189_a = new WeightedRandomChestContent[] {new WeightedRandomChestContent(Item.saddle.itemID, 0, 1, 1, 10), new WeightedRandomChestContent(Item.ingotIron.itemID, 0, 1, 4, 10), new WeightedRandomChestContent(Item.bread.itemID, 0, 1, 1, 10), new WeightedRandomChestContent(Item.wheat.itemID, 0, 1, 4, 10), new WeightedRandomChestContent(Item.gunpowder.itemID, 0, 1, 4, 10), new WeightedRandomChestContent(Item.silk.itemID, 0, 1, 4, 10), new WeightedRandomChestContent(Item.bucketEmpty.itemID, 0, 1, 1, 10), new WeightedRandomChestContent(Item.appleGold.itemID, 0, 1, 1, 1), new WeightedRandomChestContent(Item.redstone.itemID, 0, 1, 4, 10), new WeightedRandomChestContent(Item.record13.itemID, 0, 1, 1, 10), new WeightedRandomChestContent(Item.recordCat.itemID, 0, 1, 1, 10), new WeightedRandomChestContent(Item.field_111212_ci.itemID, 0, 1, 1, 10), new WeightedRandomChestContent(Item.field_111216_cf.itemID, 0, 1, 1, 2), new WeightedRandomChestContent(Item.field_111215_ce.itemID, 0, 1, 1, 5), new WeightedRandomChestContent(Item.field_111213_cg.itemID, 0, 1, 1, 1)};
-+    public static final WeightedRandomChestContent[] field_111189_a = new WeightedRandomChestContent[] {new WeightedRandomChestContent(Item.saddle.itemID, 0, 1, 1, 10), new WeightedRandomChestContent(Item.ingotIron.itemID, 0, 1, 4, 10), new WeightedRandomChestContent(Item.bread.itemID, 0, 1, 1, 10), new WeightedRandomChestContent(Item.wheat.itemID, 0, 1, 4, 10), new WeightedRandomChestContent(Item.gunpowder.itemID, 0, 1, 4, 10), new WeightedRandomChestContent(Item.silk.itemID, 0, 1, 4, 10), new WeightedRandomChestContent(Item.bucketEmpty.itemID, 0, 1, 1, 10), new WeightedRandomChestContent(Item.appleGold.itemID, 0, 1, 1, 1), new WeightedRandomChestContent(Item.redstone.itemID, 0, 1, 4, 10), new WeightedRandomChestContent(Item.record13.itemID, 0, 1, 1, 10), new WeightedRandomChestContent(Item.recordCat.itemID, 0, 1, 1, 10), new WeightedRandomChestContent(Item.nameTag.itemID, 0, 1, 1, 10), new WeightedRandomChestContent(Item.horseArmorGold.itemID, 0, 1, 1, 2), new WeightedRandomChestContent(Item.horseArmorIron.itemID, 0, 1, 1, 5), new WeightedRandomChestContent(Item.horseArmorDiamond.itemID, 0, 1, 1, 1)};
- 
-     public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
-     {
 @@ -122,12 +124,12 @@
                                  if (k2 == 1)
                                  {

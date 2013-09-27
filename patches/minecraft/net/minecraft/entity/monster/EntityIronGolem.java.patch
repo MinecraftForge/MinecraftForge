@@ -8,37 +8,6 @@
  
  public class EntityIronGolem extends EntityGolem
  {
-@@ -79,23 +80,23 @@
- 
-             if (this.villageObj == null)
-             {
--                this.func_110177_bN();
-+                this.detachHome();
-             }
-             else
-             {
-                 ChunkCoordinates chunkcoordinates = this.villageObj.getCenter();
--                this.func_110171_b(chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, (int)((float)this.villageObj.getVillageRadius() * 0.6F));
-+                this.setHomeArea(chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, (int)((float)this.villageObj.getVillageRadius() * 0.6F));
-             }
-         }
- 
-         super.updateAITick();
-     }
- 
--    protected void func_110147_ax()
--    {
--        super.func_110147_ax();
--        this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111128_a(100.0D);
--        this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.25D);
-+    protected void applyEntityAttributes()
-+    {
-+        super.applyEntityAttributes();
-+        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute(100.0D);
-+        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.25D);
-     }
- 
-     /**
 @@ -262,20 +263,25 @@
       */
      protected void dropFewItems(boolean par1, int par2)

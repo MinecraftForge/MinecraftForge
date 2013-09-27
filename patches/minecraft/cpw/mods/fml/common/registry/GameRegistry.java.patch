@@ -8,7 +8,7 @@
  import java.lang.reflect.Constructor;
  import java.util.List;
  import java.util.Map;
-@@ -31,11 +32,21 @@
+@@ -31,11 +32,22 @@
  import net.minecraft.item.crafting.IRecipe;
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.nbt.NBTTagList;
@@ -26,11 +26,12 @@
 +import org.bukkit.configuration.file.YamlConfiguration;
 +import org.bukkit.craftbukkit.Main;
 +import net.minecraft.entity.player.EntityPlayerMP;
++import za.co.mcportcentral.BannedItem;
 +// MCPC+ end
  
  import com.google.common.base.Function;
  import com.google.common.collect.ArrayListMultimap;
-@@ -68,15 +79,82 @@
+@@ -68,15 +80,82 @@
      private static List<ICraftingHandler> craftingHandlers = Lists.newArrayList();
      private static List<IPickupNotifier> pickupHandlers = Lists.newArrayList();
      private static List<IPlayerTracker> playerTrackers = Lists.newArrayList();
@@ -115,7 +116,7 @@
      }
  
      /**
-@@ -148,6 +226,7 @@
+@@ -148,6 +227,7 @@
       */
      public static void registerItem(net.minecraft.item.Item item, String name, String modId)
      {
@@ -123,7 +124,7 @@
          GameData.setName(item, name, modId);
      }
  
-@@ -235,9 +314,37 @@
+@@ -235,9 +315,37 @@
          blockRegistry.put(Loader.instance().activeModContainer(), (BlockProxy) block);
      }
  
@@ -162,7 +163,7 @@
      }
  
      public static IRecipe addShapedRecipe(ItemStack output, Object... params)
-@@ -247,7 +354,8 @@
+@@ -247,7 +355,8 @@
  
      public static void addShapelessRecipe(ItemStack output, Object... params)
      {
@@ -172,7 +173,7 @@
      }
  
      public static void addRecipe(IRecipe recipe)
-@@ -257,8 +365,29 @@
+@@ -257,8 +366,29 @@
  
      public static void addSmelting(int input, ItemStack output, float xp)
      {
@@ -204,7 +205,7 @@
  
      public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id)
      {
-@@ -381,6 +510,11 @@
+@@ -381,6 +511,11 @@
              try
              {
                  tracker.onPlayerChangedDimension(player);
@@ -216,7 +217,7 @@
              }
              catch (Exception e)
              {
-@@ -433,7 +567,8 @@
+@@ -433,7 +568,8 @@
  	 */
  	public static void registerCustomItemStack(String name, ItemStack itemStack)
  	{

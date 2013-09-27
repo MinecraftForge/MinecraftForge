@@ -24,7 +24,7 @@
 -            if (par1World.getBlockLightValue(par2, par3 + 1, par4) >= 9 && par5Random.nextInt(7) == 0)
 -            {
 -                this.markOrGrowMarked(par1World, par2, par3, par4, par5Random);
-+            if (par1World.getBlockLightValue(par2, par3 + 1, par4) >= 9 && (par5Random.nextInt(Math.max(2, (int)((par1World.growthOdds / par1World.getWorld().aggregateTicks / par1World.getWorld().treeGrowthModifier * 7) + 0.5F))) == 0))    // Spigot
++            if (par1World.getBlockLightValue(par2, par3 + 1, par4) >= 9 && (par5Random.nextInt(Math.max(2, (int)((par1World.growthOdds / par1World.spigotConfig.saplingModifier * 7) + 0.5F))) == 0))    // Spigot
 +            {
 +                this.growTree(par1World, par2, par3, par4, par5Random, false, null, null); // CraftBukkit - added bonemeal, player and itemstack
              }
@@ -220,12 +220,3 @@
  
      @SideOnly(Side.CLIENT)
  
-@@ -196,7 +370,7 @@
- 
-         for (int i = 0; i < this.saplingIcon.length; ++i)
-         {
--            this.saplingIcon[i] = par1IconRegister.registerIcon(this.func_111023_E() + "_" + WOOD_TYPES[i]);
-+            this.saplingIcon[i] = par1IconRegister.registerIcon(this.getTextureName() + "_" + WOOD_TYPES[i]);
-         }
-     }
- }
