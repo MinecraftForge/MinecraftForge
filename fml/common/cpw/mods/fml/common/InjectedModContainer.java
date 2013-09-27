@@ -167,4 +167,10 @@ public class InjectedModContainer implements ModContainer
     {
         return wrappedContainer.getCustomResourcePackClass();
     }
+
+    @Override
+    public Map<String, String> getSharedModDescriptor()
+    {
+        return wrappedContainer.getSharedModDescriptor();
+    }
 }

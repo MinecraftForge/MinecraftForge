@@ -43,6 +43,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
@@ -612,5 +613,18 @@ public class FMLModContainer implements ModContainer
         {
             return null;
         }
+    }
+    @Override
+    public Map<String, String> getSharedModDescriptor()
+    {
+        Map<String,String> descriptor = Maps.newHashMap();
+        descriptor.put("modsystem", "FML");
+        descriptor.put("id", getModId());
+        descriptor.put("version",getDisplayVersion());
+        descriptor.put("name", getName());
+        descriptor.put("url", modMetadata.url);
+        descriptor.put("authors", modMetadata.getAuthorList());
+        descriptor.put("description", modMetadata.description);
+        return descriptor;
     }
 }
