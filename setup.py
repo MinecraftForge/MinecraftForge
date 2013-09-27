@@ -24,7 +24,7 @@ def main():
     
     fml_dir = os.path.join(forge_dir, 'fml')
     mcp_dir = os.path.join(forge_dir, 'mcp')
-    mcpc_dir = os.path.join(forge_dir, 'eclipse/forge')
+    mcpc_dir = os.path.join(forge_dir, 'eclipse/Forge')
     
     if not options.mcp_dir is None:
         mcp_dir = os.path.abspath(options.mcp_dir)
