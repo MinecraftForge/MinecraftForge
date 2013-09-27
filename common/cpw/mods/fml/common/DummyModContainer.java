@@ -180,4 +180,10 @@ public class DummyModContainer implements ModContainer
     {
         return null;
     }
+
+    @Override
+    public Map<String, String> getSharedModDescriptor()
+    {
+        return null;
+    }
 }

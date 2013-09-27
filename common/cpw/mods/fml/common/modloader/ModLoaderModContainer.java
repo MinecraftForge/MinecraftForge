@@ -34,6 +34,7 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -626,5 +627,18 @@ public class ModLoaderModContainer implements ModContainer
     public Class<?> getCustomResourcePackClass()
     {
         return null;
+    }
+    @Override
+    public Map<String, String> getSharedModDescriptor()
+    {
+        Map<String,String> descriptor = Maps.newHashMap();
+        descriptor.put("modsystem", "ModLoader");
+        descriptor.put("id", getModId());
+        descriptor.put("version",getDisplayVersion());
+        descriptor.put("name", getName());
+        descriptor.put("url", metadata.url);
+        descriptor.put("authors", metadata.getAuthorList());
+        descriptor.put("description", metadata.description);
+        return descriptor;
     }
 }

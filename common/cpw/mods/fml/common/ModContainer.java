@@ -138,4 +138,6 @@ public interface ModContainer
     Map<String,String> getCustomModProperties();
 
     public Class<?> getCustomResourcePackClass();
+
+    Map<String, String> getSharedModDescriptor();
 }
