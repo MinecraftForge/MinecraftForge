@@ -52,17 +52,6 @@
             <enabled>false</enabled>
         </snapshots>
     </repository>
-    <repository>
-        <id>sonatype-nexus-snapshots</id>
-        <name>Sonatype Nexus Snapshots</name>
-        <url>https://oss.sonatype.org/content/repositories</url>
-        <releases>
-            <enabled>true</enabled>
-        </releases>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </repository>
 </repositories>
 <!-- Deployment -->
 <distributionManagement>
@@ -218,7 +207,7 @@
     <dependency>
         <groupId>net.md-5</groupId>
         <artifactId>SpecialSource</artifactId>
-        <version>1.6R1</version>
+        <version>1.6R1-SNAPSHOT</version>
         <type>jar</type>
         <scope>compile</scope>
     </dependency>
@@ -442,7 +431,7 @@
         <plugin>
             <groupId>net.md-5</groupId>
             <artifactId>specialsource-maven-plugin</artifactId>
-            <version>1.1R1</version>
+            <version>1.1R1-SNAPSHOT</version>
             <executions>
                 <execution>
                     <id>install-launchwrapper</id>
@@ -537,7 +526,7 @@
                                 <pluginExecutionFilter>
                                     <groupId>net.md-5</groupId>
                                     <artifactId>specialsource-maven-plugin</artifactId>
-                                    <versionRange>1.1R1</versionRange>
+                                    <versionRange>1.1R1-SNAPSHOT</versionRange>
                                     <goals>
                                         <goal>install-remapped-file</goal>
                                     </goals>
