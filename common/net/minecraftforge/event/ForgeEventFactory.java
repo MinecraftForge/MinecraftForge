@@ -4,14 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event.Result;
+import net.minecraftforge.event.entity.EntityExplodeEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
@@ -98,5 +101,17 @@ public class ForgeEventFactory
         BlockEvent.HarvestDropsEvent event = new BlockEvent.HarvestDropsEvent(x, y, z, world, block, meta, fortune, dropChance, drops, player, silkTouch);
         MinecraftForge.EVENT_BUS.post(event);
         return event.dropChance;
+    }
+    
+    public static boolean canEntityExplode(Explosion explosion, List list)
+    {
+        EntityExplodeEvent event = new EntityExplodeEvent(explosion, list);
+        MinecraftForge.EVENT_BUS.post(event);
+        if (event.isCanceled())
+        {
+            explosion.stopExplosion = true;
+            return false;
+        }
+        return true;
     }
 }
