@@ -300,6 +300,27 @@
     <!-- builds a jar for extracting into minecraft_server.jar -->
     <build>
         <plugins>
+            <!-- Purge dependencies -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.8</version>
+                <executions>
+                    <execution>
+                        <id>purge-local-dependencies</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>purge-local-repository</goal>
+                        </goals>
+                        <configuration>
+                            <actTransitively>true</actTransitively>
+                            <reResolve>true</reResolve>
+                            <snapshotsOnly>true</snapshotsOnly>
+                            <verbose>true</verbose>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Get git description -->
             <plugin>
                 <groupId>com.lukegb.mojo</groupId>
