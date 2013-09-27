@@ -4,17 +4,29 @@ import java.util.ArrayList;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemInWorldManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.event.Cancelable;
 import net.minecraftforge.event.Event;
+import net.minecraftforge.event.Event.HasResult;
 
-public class BlockEvent extends Event {
+public class BlockEvent extends Event 
+{
+    /** x coordinate of the block */
     public final int x;
+    /** y coordinate of the block */
     public final int y;
+    /** z coordinate of the block */
     public final int z;
+    /** World containing the block */
     public final World world;
+    /** The block */
     public final Block block;
+    /** The block's metadata */
     public final int blockMetadata;
+    
     public BlockEvent(int x, int y, int z, World world, Block block, int blockMetadata)
     {
         this.x = x;
@@ -36,7 +48,8 @@ public class BlockEvent extends Event {
      * 
      * @author cpw
      */
-    public static class HarvestDropsEvent extends BlockEvent {
+    public static class HarvestDropsEvent extends BlockEvent 
+    {
         public final int fortuneLevel;
         public final ArrayList<ItemStack> drops;
         public final boolean isSilkTouching;
@@ -53,5 +66,57 @@ public class BlockEvent extends Event {
             this.harvester = harvester;
         }
     }
+    
+    /**
+     * Fired when an block is about to be placed.
+     * @author HoBoS_TaCo
+     */
+    @Cancelable
+    public static class BlockPlaceEvent extends BlockEvent 
+    {
+        /** The player placing the block. */
+        public final EntityPlayer entityplayer;
+        /**
+         * The side of another block the player has clicked to place this block.<br>
+         * eg placing a block on a wall will require the wall to be right clicked.
+         */
+        public final int side;
+        /** x coordinate of the player's right click */
+        public final float hitX;
+        /** y coordinate of the player's right click */
+        public final float hitY;
+        /** z coordinate of the player's right click */
+        public final float hitZ;
 
+        /**
+         * Fired when an block is about to be placed.
+         */
+        public BlockPlaceEvent(World world, EntityPlayer entityplayer, Block block, int x, int y, int z, int side, float hitX, float hitY, float hitZ)
+        {
+            super(x, y, z, world, block, world.getBlockMetadata(x, y, z));
+            this.entityplayer = entityplayer;
+            this.side = side;
+            this.hitX = hitX;
+            this.hitY = hitY;
+            this.hitZ = hitZ;
+        }
+    }
+    
+    /**
+     * Fired when an block is about to be broken.
+     * @author HoBoS_TaCo
+     */
+    @Cancelable
+    public static class BlockBreakEvent extends BlockEvent 
+    {
+        /** The player breaking the block. */
+        public final EntityPlayerMP entityplayermp;
+
+        /** Fired when an block is about to be broken. */
+        public BlockBreakEvent(World world, EntityPlayerMP entityplayermp, Block block, int x, int y, int z)
+        {
+            super(x, y, z, world, block, world.getBlockMetadata(x, y, z));
+            this.entityplayermp = entityplayermp;
+        }
+    }
 }
