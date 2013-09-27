@@ -3,8 +3,11 @@ package cpw.mods.fml.common.launcher;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,6 +20,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.ObjectArrays;
 
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
@@ -30,6 +34,8 @@ public class FMLTweaker implements ITweaker {
     private File gameDir;
     private File assetsDir;
     private String profile;
+    private Map<String, String> launchArgs;
+    private List<String> standaloneArgs;
     private static URI jarLocation;
 
     @Override
@@ -39,6 +45,63 @@ public class FMLTweaker implements ITweaker {
         this.assetsDir = assetsDir;
         this.profile = profile;
         this.args = args;
+
+        this.launchArgs = (Map<String, String>)Launch.blackboard.get("launchArgs");
+
+        this.standaloneArgs = Lists.newArrayList();
+        if (this.launchArgs == null)
+        {
+            this.launchArgs = Maps.newHashMap();
+            Launch.blackboard.put("launchArgs", this.launchArgs);
+        }
+
+        String classifier = null;
+
+        for (String arg : args)
+        {
+            if (arg.startsWith("-"))
+            {
+                if (classifier != null)
+                {
+                    classifier = launchArgs.put(classifier, "");
+                }
+                else if (arg.contains("="))
+                {
+                    classifier = launchArgs.put(arg.substring(0, arg.indexOf('=')), arg.substring(arg.indexOf('=') + 1));
+                }
+                else
+                {
+                    classifier = arg;
+                }
+            }
+            else
+            {
+                if (classifier != null)
+                {
+                    classifier = launchArgs.put(classifier, arg);
+                }
+                else
+                {
+                    this.standaloneArgs.add(arg);
+                }
+            }
+        }
+
+        if (!this.launchArgs.containsKey("--version"))
+        {
+            launchArgs.put("--version", profile);
+        }
+
+        if (!this.launchArgs.containsKey("--gameDir") && gameDir != null)
+        {
+            launchArgs.put("--gameDir", gameDir.getAbsolutePath());
+        }
+
+        if (!this.launchArgs.containsKey("--assetsDir") && assetsDir != null)
+        {
+            launchArgs.put("--assetsDir", assetsDir.getAbsolutePath());
+        }
+
         try
         {
             jarLocation = getClass().getProtectionDomain().getCodeSource().getLocation().toURI();
@@ -70,27 +133,17 @@ public class FMLTweaker implements ITweaker {
     @Override
     public String[] getLaunchArguments()
     {
-        List<String> blackboardArgs = (List<String>) Launch.blackboard.get("ArgumentList");
+        List<String> args = Lists.newArrayList();
+        args.addAll(standaloneArgs);
 
-        String[] launchArgsArray = args.toArray(new String[args.size()]);
-        
-        if (gameDir != null && !blackboardArgs.contains("--gameDir"))
+        for (Entry<String, String> arg : launchArgs.entrySet())
         {
-            launchArgsArray = ObjectArrays.concat(gameDir.getAbsolutePath(),launchArgsArray);
-            launchArgsArray = ObjectArrays.concat("--gameDir",launchArgsArray);
+            args.add(arg.getKey());
+            args.add(arg.getValue());
         }
+        launchArgs.clear();
 
-        if (assetsDir != null && !blackboardArgs.contains("--assetsDir"))
-        {
-            launchArgsArray = ObjectArrays.concat(assetsDir.getAbsolutePath(),launchArgsArray);
-            launchArgsArray = ObjectArrays.concat("--assetsDir",launchArgsArray);
-        }
-        if (!blackboardArgs.contains("--version"))
-        {
-            launchArgsArray = ObjectArrays.concat(profile != null ? profile : "UnknownFMLProfile",launchArgsArray);
-            launchArgsArray = ObjectArrays.concat("--version",launchArgsArray);
-        }
-        return launchArgsArray;
+        return args.toArray(new String[args.size()]);
     }
 
     public File getGameDir()
