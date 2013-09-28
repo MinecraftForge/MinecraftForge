@@ -26,22 +26,29 @@
     </properties>
     <pluginRepositories>
         <pluginRepository>
-            <id>ProjectRepo</id>
-            <name>ProjectRepo</name>
-            <url>file://${mcpc.basedir}/libs</url>
+            <id>sonatype-oss-public</id>
+            <url>https://oss.sonatype.org/content/groups/public</url>
             <releases>
                 <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-                <checksumPolicy>ignore</checksumPolicy>
             </releases>
             <snapshots>
                 <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-                <checksumPolicy>ignore</checksumPolicy>
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
     <repositories>
+        <repository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
         <repository>
             <id>ProjectRepo</id>
             <name>ProjectRepo</name>
@@ -237,7 +244,7 @@
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>SpecialSource</artifactId>
-            <version>1.6R1-SNAPSHOT</version>
+            <version>1.6-SNAPSHOT</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
@@ -300,27 +307,6 @@
     <!-- builds a jar for extracting into minecraft_server.jar -->
     <build>
         <plugins>
-            <!-- Purge dependencies -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.8</version>
-                <executions>
-                    <execution>
-                        <id>purge-local-dependencies</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>purge-local-repository</goal>
-                        </goals>
-                        <configuration>
-                            <actTransitively>true</actTransitively>
-                            <reResolve>true</reResolve>
-                            <snapshotsOnly>true</snapshotsOnly>
-                            <verbose>true</verbose>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <!-- Get git description -->
             <plugin>
                 <groupId>com.lukegb.mojo</groupId>
@@ -482,7 +468,7 @@
             <plugin>
                 <groupId>net.md-5</groupId>
                 <artifactId>specialsource-maven-plugin</artifactId>
-                <version>1.1R1-SNAPSHOT</version>
+                <version>1.1-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <id>install-launchwrapper</id>
@@ -577,7 +563,7 @@
                                     <pluginExecutionFilter>
                                         <groupId>net.md-5</groupId>
                                         <artifactId>specialsource-maven-plugin</artifactId>
-                                        <versionRange>1.1R1-SNAPSHOT</versionRange>
+                                        <versionRange>1.1-SNAPSHOT</versionRange>
                                         <goals>
                                             <goal>install-remapped-file</goal>
                                         </goals>
