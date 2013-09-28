@@ -9,3 +9,4 @@
 *.zip binary
 *.pyd binary
 *.jar binary
+*.lzma binary
