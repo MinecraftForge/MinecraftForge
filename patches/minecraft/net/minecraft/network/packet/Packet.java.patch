@@ -37,8 +37,12 @@
      }
  
      /**
-@@ -172,7 +186,19 @@
-             par0ILogAgent.logSevere("Reached end of stream for " + par3Socket.getInetAddress());
+@@ -169,10 +183,22 @@
+         }
+         catch (EOFException eofexception)
+         {
+-            par0ILogAgent.logSevere("Reached end of stream for " + par3Socket.getInetAddress());
++            //par0ILogAgent.logSevere("Reached end of stream for " + par3Socket.getInetAddress()); // CraftBukkit - remove unnecessary logging
              return null;
          }
 -
