@@ -1,0 +1,43 @@
+--- ../src_base/minecraft/cpw/mods/fml/common/launcher/FMLServerTweaker.java
++++ ../src_work/minecraft/cpw/mods/fml/common/launcher/FMLServerTweaker.java
+@@ -18,6 +18,40 @@
+         classLoader.addTransformerExclusion("cpw.mods.fml.relauncher.");
+         classLoader.addTransformerExclusion("cpw.mods.fml.common.asm.transformers.");
+         classLoader.addClassLoaderExclusion("LZMA.");
++
++        // MCPC+ start - exclude dependencies from transformation
++
++        // (Modified) Bukkit API classes
++        classLoader.addTransformerExclusion("com.avaje."); // org.avaje:ebean
++        classLoader.addTransformerExclusion("guava10."); // com.google.guava:guava [relocated]
++        classLoader.addTransformerExclusion("javax."); // javax.persistence:persistence-api
++        classLoader.addTransformerExclusion("org.apache.commons.lang."); // commons-lang:commons-lang
++        classLoader.addTransformerExclusion("org.bukkit."); // za.co.mcportcentral:mcpc-api
++        classLoader.addTransformerExclusion("org.json.simple."); // com.googlecode.json-simple:json-simple
++        classLoader.addTransformerExclusion("org.yaml.snakeyaml."); // org.yaml:snakeyaml
++
++        // CraftBukkit libraries
++        classLoader.addTransformerExclusion("org.ibex.nestedvm."); // org.xerial:sqlite-jdbc
++        classLoader.addTransformerExclusion("org.sqlite."); // org.xerial:sqlite-jdbc
++        classLoader.addTransformerExclusion("org.fusesource."); // org.fusesource.jansi:jansi
++        classLoader.addTransformerExclusion("joptsimple."); // net.sf.jopt-simple:jopt-simple
++        classLoader.addTransformerExclusion("org.gjt.mm.mysql."); // mysql:mysql-connector-java
++        classLoader.addTransformerExclusion("com.mysql."); // mysql:mysql-connector-java
++
++        // Spigot libraries
++        classLoader.addTransformerExclusion("gnu.trove."); // net.sf.trove4j:trove4j
++
++        // Special libraries
++        classLoader.addTransformerExclusion("net.md-5.specialsource."); // net.md-5:SpecialSource
++
++        // Minecraft / Forge
++        classLoader.addTransformerExclusion("org.bouncycastle."); // org.bouncycastle:bcprov-jdk15on
++        classLoader.addTransformerExclusion("argo."); // net.sourceforge.argo:argo
++        classLoader.addTransformerExclusion("paulscode.sound."); // paulscode:sound
++        classLoader.addTransformerExclusion("net.java."); // net.java.jutils and jinput
++
++        // MCPC+ end
++        
+         FMLLaunchHandler.configureForServerLaunch(classLoader, this);
+         runAdditionalTweaks(classLoader);
+         FMLLaunchHandler.appendCoreMods();
