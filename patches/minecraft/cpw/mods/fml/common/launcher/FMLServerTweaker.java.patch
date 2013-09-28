@@ -12,7 +12,7 @@
 +        classLoader.addTransformerExclusion("guava10."); // com.google.guava:guava [relocated]
 +        classLoader.addTransformerExclusion("javax."); // javax.persistence:persistence-api
 +        classLoader.addTransformerExclusion("org.apache.commons.lang."); // commons-lang:commons-lang
-+        classLoader.addTransformerExclusion("org.bukkit."); // za.co.mcportcentral:mcpc-api
++        //classLoader.addTransformerExclusion("org.bukkit."); // za.co.mcportcentral:mcpc-api // eenabled for runtime deobfuscation of NMS references in OBC
 +        classLoader.addTransformerExclusion("org.json.simple."); // com.googlecode.json-simple:json-simple
 +        classLoader.addTransformerExclusion("org.yaml.snakeyaml."); // org.yaml:snakeyaml
 +

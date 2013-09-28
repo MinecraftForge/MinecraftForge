@@ -13,7 +13,7 @@ We use Maven to handle our dependencies.
 2. Check out and install [MCPC API](https://github.com/MinecraftPortCentral/Bukkit/tree/mcpc-api-162) 
  * Note: this is not needed as the repository we use has MCPC-API too, but you might have a newer one (with your own changes :D)
  * Check out this repo and run: 
-3. Init a the [FML] module : git submodule update --init
+3. Init a the [FML] module : `git submodule update --init
 4. Copy entire contents of FML to root folder in fml
 5. `python setup.py`
 6. extract eclipse-resources.zip to eclipse/Forge folder
