@@ -31,7 +31,7 @@ def main():
         
     src_dir = os.path.join(mcp_dir, 'src')
 
-    PURGE = ['mvn', 'dependency:purge-local-repository', '-DactTransitively=false']
+    PURGE = ['mvn', 'dependency:purge-local-repository', '-DactTransitively=false', '-DsnapshotsOnly=true']
     if sys.platform.startswith('win'):
         PURGE = ['cmd', '/C'] + PURGE
     run_command(PURGE, cwd=mcpc_dir)
