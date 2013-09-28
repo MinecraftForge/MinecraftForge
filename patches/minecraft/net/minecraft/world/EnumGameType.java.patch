@@ -1,0 +1,27 @@
+--- ../src_base/minecraft/net/minecraft/world/EnumGameType.java
++++ ../src_work/minecraft/net/minecraft/world/EnumGameType.java
+@@ -3,6 +3,7 @@
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import net.minecraft.entity.player.PlayerCapabilities;
++import net.minecraftforge.common.GameTypeManager;
+ 
+ public enum EnumGameType
+ {
+@@ -101,7 +102,7 @@
+             }
+         }
+ 
+-        return SURVIVAL;
++        return GameTypeManager.getCustomByID(par0);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -124,6 +125,6 @@
+             }
+         }
+ 
+-        return SURVIVAL;
++        return GameTypeManager.getCustomByName(par0Str);
+     }
+ }

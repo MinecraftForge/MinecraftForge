@@ -1,6 +1,63 @@
 --- ../src_base/minecraft/net/minecraft/client/gui/GuiCreateWorld.java
 +++ ../src_work/minecraft/net/minecraft/client/gui/GuiCreateWorld.java
-@@ -376,7 +376,7 @@
+@@ -12,6 +12,7 @@
+ import net.minecraft.world.WorldType;
+ import net.minecraft.world.storage.ISaveFormat;
+ import net.minecraft.world.storage.WorldInfo;
++import net.minecraftforge.common.GameTypeManager;
+ import org.lwjgl.input.Keyboard;
+ 
+ @SideOnly(Side.CLIENT)
+@@ -76,6 +77,8 @@
+ 
+     /** Generator options to use when creating the world. */
+     public String generatorOptionsToUse = "";
++
++    public int customGameTypeIndex = 0;
+ 
+     /**
+      * If the world name is one of these, it'll be surrounded with underscores.
+@@ -321,16 +324,29 @@
+                 }
+                 else
+                 {
+-                    if (!this.commandsToggled)
+-                    {
+-                        this.commandsAllowed = false;
+-                    }
+-
+-                    this.gameMode = "survival";
+-                    this.updateButtonText();
+-                    this.buttonAllowCommands.enabled = true;
+-                    this.buttonBonusItems.enabled = true;
+-                    this.isHardcore = false;
++                    if (this.customGameTypeIndex == GameTypeManager.customGameTypes.size() || GameTypeManager.customGameTypes.size() == 0)
++                    {
++                        if (!this.commandsToggled)
++                        {
++                            this.commandsAllowed = false;
++                        }
++
++                        this.gameMode = "survival";
++                        this.updateButtonText();
++                        this.buttonAllowCommands.enabled = true;
++                        this.buttonBonusItems.enabled = true;
++                        this.isHardcore = false;
++                        customGameTypeIndex = 0;
++                    }
++                    else
++                    {
++                        this.gameMode = GameTypeManager.customGameTypes.get(customGameTypeIndex).getName();
++                        this.updateButtonText();
++                        this.buttonAllowCommands.enabled = true;
++                        this.buttonBonusItems.enabled = true;
++                        this.isHardcore = false;
++                        customGameTypeIndex++;
++                    }
+                 }
+ 
+                 this.updateButtonText();
+@@ -376,7 +392,7 @@
              }
              else if (par1GuiButton.id == 8)
              {
@@ -9,7 +66,7 @@
              }
          }
      }
-@@ -394,7 +394,7 @@
+@@ -394,7 +410,7 @@
          this.buttonBonusItems.drawButton = this.moreOptions;
          this.buttonWorldType.drawButton = this.moreOptions;
          this.buttonAllowCommands.drawButton = this.moreOptions;

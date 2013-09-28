@@ -1,0 +1,19 @@
+--- ../src_base/minecraft/net/minecraft/client/gui/GuiSelectWorld.java
++++ ../src_work/minecraft/net/minecraft/client/gui/GuiSelectWorld.java
+@@ -16,6 +16,7 @@
+ import net.minecraft.world.storage.ISaveHandler;
+ import net.minecraft.world.storage.SaveFormatComparator;
+ import net.minecraft.world.storage.WorldInfo;
++import net.minecraftforge.common.GameTypeManager;
+ 
+ @SideOnly(Side.CLIENT)
+ public class GuiSelectWorld extends GuiScreen
+@@ -48,7 +49,7 @@
+     /**
+      * The game mode text that is displayed with each world on the world selection list.
+      */
+-    private String[] localizedGameModeText = new String[3];
++    private String[] localizedGameModeText = new String[3 + GameTypeManager.customGameTypes.size()];
+ 
+     /** set to true if you arein the process of deleteing a world/save */
+     private boolean deleting;
