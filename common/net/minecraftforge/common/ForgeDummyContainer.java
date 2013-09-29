@@ -178,6 +178,12 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     {
         ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
     }
+    
+    @Subscribe
+    public void init(FMLInitializationEvent evt)
+    {
+        OreDictionary.initVanillaEntries();
+    }
 
     @Subscribe
     public void postInit(FMLPostInitializationEvent evt)

@@ -31,10 +31,6 @@ public class OreDictionary
      */
     public static final int WILDCARD_VALUE = Short.MAX_VALUE;
 
-    static {
-        initVanillaEntries();
-    }
-
     public static void initVanillaEntries()
     {
         if (!hasInit)
@@ -58,6 +54,8 @@ public class OreDictionary
             registerOre("oreQuartz", Block.oreNetherQuartz);
             registerOre("stone", Block.stone);
             registerOre("cobblestone", Block.cobblestone);
+            registerOre("glass", Block.glass);
+            registerOre("slimeball", Item.slimeBall);
         }
 
         // Build our list of items to replace with ore tags
