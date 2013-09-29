@@ -733,6 +733,7 @@ public class GuiIngameForge extends GuiIngame
 
     protected void renderPlayerList(int width, int height)
     {
+        if (pre(PLAYER_LIST)) return;
         ScoreObjective scoreobjective = this.mc.theWorld.getScoreboard().func_96539_a(0);
         NetClientHandler handler = mc.thePlayer.sendQueue;
 
@@ -805,6 +806,7 @@ public class GuiIngameForge extends GuiIngame
                 }
             }
         }
+        post(PLAYER_LIST);
     }
 
     protected void renderHealthMount(int width, int height)
