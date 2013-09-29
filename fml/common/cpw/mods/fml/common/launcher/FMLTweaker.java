@@ -89,7 +89,7 @@ public class FMLTweaker implements ITweaker {
 
         if (!this.launchArgs.containsKey("--version"))
         {
-            launchArgs.put("--version", profile);
+            launchArgs.put("--version", profile != null ? profile : "UnknownFMLProfile");
         }
 
         if (!this.launchArgs.containsKey("--gameDir") && gameDir != null)
