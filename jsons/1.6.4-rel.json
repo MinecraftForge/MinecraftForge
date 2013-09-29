@@ -34,7 +34,7 @@
       {
         "name": "org.scala-lang:scala-library:2.10.2",
         "url" : "http://files.minecraftforge.net/maven/",
-        "checksums" : [ "6ba65d12cd09d441083262d6f73d2257fec7c663", "dffc88e804861c9eaba39283757000b6558ea573" ],
+        "checksums" : [ "6ba65d12cd09d441083262d6f73d2257fec7c663", "65de4339eaed1c3675485fb03a3532fecfd8e8cd" ],
         "comment" : "Important for FML, we add this",
         "serverreq":true,
         "clientreq":true
@@ -42,7 +42,7 @@
       {
         "name": "org.scala-lang:scala-compiler:2.10.2",
         "url" : "http://files.minecraftforge.net/maven/",
-        "checksums" : [ "64c8b1380cc53d6850823d6e4e7ae984aa44ef9c", "40281b3ffc69fb385953522c843363ccaf71ba89" ],
+        "checksums" : [ "64c8b1380cc53d6850823d6e4e7ae984aa44ef9c", "99fd0ffb66f3088b0cd1071315fd5eb2b2b070ff" ],
         "comment" : "Important for FML, we add this",
         "serverreq":true,
         "clientreq":true
