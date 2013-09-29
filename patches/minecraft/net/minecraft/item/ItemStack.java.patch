@@ -1,5 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemStack.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemStack.java
+@@ -239,7 +239,7 @@
+      */
+     public boolean isItemStackDamageable()
+     {
+-        return Item.itemsList[this.itemID].getMaxDamage() > 0;
++        return Item.itemsList[this.itemID].getMaxDamage(this) > 0;
+     }
+ 
+     public boolean getHasSubtypes()
 @@ -252,7 +252,9 @@
       */
      public boolean isItemDamaged()
