@@ -24,7 +24,8 @@ public class RenderGameOverlayEvent extends Event
         EXPERIENCE,
         TEXT,
         HEALTHMOUNT,
-        JUMPBAR
+        JUMPBAR,
+        CHAT
     }
 
     public final float partialTicks;
@@ -32,6 +33,8 @@ public class RenderGameOverlayEvent extends Event
     public final int mouseX;
     public final int mouseY;
     public final ElementType type;
+    public int chatX;
+    public int chatY;
 
     public RenderGameOverlayEvent(float partialTicks, ScaledResolution resolution, int mouseX, int mouseY)
     {
@@ -77,6 +80,16 @@ public class RenderGameOverlayEvent extends Event
             super(parent, ElementType.TEXT);
             this.left = left;
             this.right = right;
+        }
+    }
+
+    public static class Chat extends Pre
+    {
+        public Chat(RenderGameOverlayEvent parent, int chatX, int chatY)
+        {
+            super(parent, ElementType.TEXT);
+            this.chatX = chatX;
+            this.chatY = chatY;
         }
     }
 }
