@@ -8,6 +8,15 @@
  
  public final class ItemStack
  {
+@@ -223,7 +224,7 @@
+      */
+     public int getMaxStackSize()
+     {
+-        return this.getItem().getItemStackLimit();
++        return this.getItem().getItemStackLimit(this);
+     }
+ 
+     /**
 @@ -252,7 +253,9 @@
       */
      public boolean isItemDamaged()
