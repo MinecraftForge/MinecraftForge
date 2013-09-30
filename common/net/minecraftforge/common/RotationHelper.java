@@ -18,7 +18,6 @@ import net.minecraft.block.BlockFenceGate;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.BlockHopper;
 import net.minecraft.block.BlockLadder;
-import net.minecraft.block.BlockLever;
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.BlockMushroomCap;
 import net.minecraft.block.BlockPistonBase;
@@ -59,7 +58,6 @@ public class RotationHelper {
         CHEST,
         SIGNPOST,
         DOOR,
-        LEVER,
         BUTTON,
         REDSTONE_REPEATER,
         TRAPDOOR,
@@ -158,10 +156,6 @@ public class RotationHelper {
         {
             return rotateBlock(worldObj, x, y, z, axis, 0xF, BlockType.TORCH);
         }
-        if (block instanceof BlockLever)
-        {
-            return rotateBlock(worldObj, x, y, z, axis, 0x7, BlockType.LEVER);
-        }
 
         return false;
     }
@@ -204,20 +198,6 @@ public class RotationHelper {
         {
             return (axis == UP) ? (meta + 0x4) % 0x10 : (meta + 0xC) % 0x10;
         }
-        if (blockType == BlockType.LEVER && (axis == UP || axis == DOWN))
-        {
-            switch (meta)
-            {
-            case 0x5:
-                return 0x6;
-            case 0x6:
-                return 0x5;
-            case 0x7:
-                return 0x0;
-            case 0x0:
-                return 0x7;
-            }
-        }
         if (blockType == BlockType.MUSHROOM_CAP)
         {
             if (meta % 0x2 == 0)
@@ -241,18 +221,6 @@ public class RotationHelper {
 
     private static ForgeDirection metadataToDirection(BlockType blockType, int meta)
     {
-        if (blockType == BlockType.LEVER)
-        {
-            if (meta == 0x6)
-            {
-                meta = 0x5;
-            }
-            else if (meta == 0x0)
-            {
-                meta = 0x7;
-            }
-        }
-
         if (MAPPINGS.containsKey(blockType))
         {
             BiMap<Integer, ForgeDirection> biMap = MAPPINGS.get(blockType);
@@ -362,15 +330,6 @@ public class RotationHelper {
         biMap.put(0x8, EAST);
         biMap.put(0x9, SOUTH);
         MAPPINGS.put(BlockType.RAIL_CORNER, biMap);
-
-        biMap = HashBiMap.create(6);
-        biMap.put(0x1, EAST);
-        biMap.put(0x2, WEST);
-        biMap.put(0x3, SOUTH);
-        biMap.put(0x4, NORTH);
-        biMap.put(0x5, UP);
-        biMap.put(0x7, DOWN);
-        MAPPINGS.put(BlockType.LEVER, biMap);
 
         biMap = HashBiMap.create(4);
         biMap.put(0x0, WEST);
