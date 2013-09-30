@@ -257,6 +257,14 @@
         </dependency>
         <!-- CraftBukkit -->
         <dependency>
+            <groupId>za.co.mcportcentral</groupId>
+            <artifactId>mcpc-api</artifactId>
+            <!-- Bukkit API -->
+            <version>${bukkit.version}</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>net.sf.trove4j</groupId>
             <artifactId>trove4j</artifactId>
             <version>3.0.2</version>
@@ -368,7 +376,6 @@
                                 <source>${mcpc.basedir}/client/</source>
                                 <source>${mcpc.basedir}/mcp/src_work/minecraft/</source>
                                 <source>${mcpc.basedir}/spigot/</source>
-                                <source>${mcpc.basedir}/mcpc-api/</source>
                             </sources>
                             <resources>
                                 <resource>
@@ -457,6 +464,12 @@
                             </excludes>
                         </relocation>
                     </relocations>
+                    <artifactSet>
+                        <!-- Downloaded by FML -->
+                        <excludes>
+                            <exclude>com.google.guava:guava</exclude>
+                        </excludes>
+                    </artifactSet>
                     <filters>
                         <!-- Exclude signed manifests -->
                         <filter>
@@ -590,7 +603,7 @@
                                     <pluginExecutionFilter>
                                         <groupId>net.md-5</groupId>
                                         <artifactId>specialsource-maven-plugin</artifactId>
-                                        <versionRange>1.1-SNAPSHOT</versionRange>
+                                        <versionRange>[1.1-SNAPSHOT,)</versionRange>
                                         <goals>
                                             <goal>install-remapped-file</goal>
                                         </goals>

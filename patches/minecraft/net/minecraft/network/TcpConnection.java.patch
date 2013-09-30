@@ -72,7 +72,7 @@
      private void onNetworkError(Exception par1Exception)
      {
 -        par1Exception.printStackTrace();
-+        // exception.printStackTrace(); // CraftBukkit - Remove console spam
++        par1Exception.printStackTrace(); // CraftBukkit - Remove console spam
          this.networkShutdown("disconnect.genericReason", new Object[] {"Internal exception: " + par1Exception.toString()});
      }
  

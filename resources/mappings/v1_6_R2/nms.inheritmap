@@ -472,9 +472,9 @@ net/minecraft/item/ItemSpade net/minecraft/item/ItemTool
 net/minecraft/item/ItemSword net/minecraft/item/Item
 net/minecraft/item/ItemTool net/minecraft/item/Item
 net/minecraft/item/ItemWritableBook net/minecraft/item/Item
-net/minecraft/item/crafting/RecipeFireworks net/minecraft/item/crafting/IRecipe
-net/minecraft/item/crafting/RecipesArmorDyes net/minecraft/item/crafting/IRecipe
-net/minecraft/item/crafting/RecipesMapCloning net/minecraft/item/crafting/IRecipe
+net/minecraft/item/crafting/RecipeFireworks net/minecraft/item/crafting/IRecipe net/minecraft/item/crafting/ShapelessRecipes
+net/minecraft/item/crafting/RecipesArmorDyes net/minecraft/item/crafting/IRecipe net/minecraft/item/crafting/ShapelessRecipes
+net/minecraft/item/crafting/RecipesMapCloning net/minecraft/item/crafting/IRecipe net/minecraft/item/crafting/ShapelessRecipes
 net/minecraft/item/crafting/RecipesMapExtending net/minecraft/item/crafting/ShapedRecipes
 net/minecraft/item/crafting/ShapedRecipes net/minecraft/item/crafting/IRecipe
 net/minecraft/item/crafting/ShapelessRecipes net/minecraft/item/crafting/IRecipe
@@ -662,7 +662,7 @@ net/minecraft/world/biome/BiomeGenTaiga net/minecraft/world/biome/BiomeGenBase
 net/minecraft/world/biome/SpawnListEntry net/minecraft/util/WeightedRandomItem
 net/minecraft/world/biome/WorldChunkManagerHell net/minecraft/world/biome/WorldChunkManager
 net/minecraft/world/chunk/EmptyChunk net/minecraft/world/chunk/Chunk
-net/minecraft/world/chunk/storage/AnvilChunkLoader net/minecraft/world/chunk/storage/IChunkLoader net/minecraft/world/storage/IThreadedFileIO
+net/minecraft/world/chunk/storage/AnvilChunkLoader net/minecraft/world/storage/IThreadedFileIO net/minecraft/world/chunk/storage/IChunkLoader
 net/minecraft/world/chunk/storage/AnvilSaveConverter net/minecraft/world/storage/SaveFormatOld
 net/minecraft/world/chunk/storage/AnvilSaveHandler net/minecraft/world/storage/SaveHandler
 net/minecraft/world/demo/DemoWorldManager net/minecraft/item/ItemInWorldManager

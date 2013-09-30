@@ -52,11 +52,6 @@
 			<locationURI>MCP_LOC/lib</locationURI>
 		</link>
 		<link>
-			<name>mcpc-api</name>
-			<type>2</type>
-			<locationURI>FORGE_LOC/mcpc-api</locationURI>
-		</link>
-		<link>
 			<name>natives</name>
 			<type>2</type>
 			<locationURI>MCP_LOC/jars/libraries/natives</locationURI>

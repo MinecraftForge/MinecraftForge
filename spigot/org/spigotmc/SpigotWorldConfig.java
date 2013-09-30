@@ -16,7 +16,13 @@ public class SpigotWorldConfig
     {
         this.worldName = worldName;
         this.config = SpigotConfig.config;
-        init();
+        if (worldName.toLowerCase().contains("dummy")) return;
+        try {
+            init();
+        } catch (Throwable t) {
+            log( "Something bad happened while trying init the spigot config for [" + worldName + "]");
+            t.printStackTrace();
+        }
     }
 
     public void init()
@@ -139,7 +145,7 @@ public class SpigotWorldConfig
     public AntiXray antiXrayInstance;
     private void antiXray()
     {
-        antiXray = getBoolean( "anti-xray.enabled", antiXray );
+        antiXray = false; // MCPC+ disable this for now getBoolean( "anti-xray.enabled", antiXray );
         log( "Anti X-Ray: " + antiXray );
 
         engineMode = getInt( "anti-xray.engine-mode", engineMode );

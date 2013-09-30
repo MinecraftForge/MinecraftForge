@@ -1,8 +1,8 @@
 package org.bukkit.craftbukkit.entity;
 
 // MCPC+ start - guava10
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.MapMaker;
+import guava10.com.google.common.collect.ImmutableSet;
+import guava10.com.google.common.collect.MapMaker;
 // MCPC+ end
 
 import java.io.ByteArrayOutputStream;
