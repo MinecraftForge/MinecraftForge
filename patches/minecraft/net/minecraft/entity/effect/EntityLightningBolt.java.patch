@@ -1,0 +1,23 @@
+--- ../src_base/minecraft/net/minecraft/entity/effect/EntityLightningBolt.java
++++ ../src_work/minecraft/net/minecraft/entity/effect/EntityLightningBolt.java
+@@ -10,6 +10,8 @@
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.util.Vec3;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
+ 
+ public class EntityLightningBolt extends EntityWeatherEffect
+ {
+@@ -116,7 +118,10 @@
+                 for (int l = 0; l < list.size(); ++l)
+                 {
+                     Entity entity = (Entity)list.get(l);
+-                    entity.onStruckByLightning(this);
++                    if (!MinecraftForge.EVENT_BUS.post(new EntityStruckByLightningEvent(entity, this)))
++                    {
++                        entity.onStruckByLightning(this);
++                    }
+                 }
+             }
+         }
