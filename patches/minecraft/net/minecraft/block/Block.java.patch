@@ -145,28 +145,7 @@
      }
  
      /**
-@@ -1036,6 +1060,20 @@
-     public int getRenderColor(int par1)
-     {
-         return 16777215;
-+    }
-+
-+    /**
-+     * Called to determine whether to allow the a block to handle its own indirect power rather than using the default rules.
-+     * @param world The world
-+     * @param x The x position of this block instance
-+     * @param y The y position of this block instance
-+     * @param z The z position of this block instance
-+     * @param side The INPUT side of the block to be powered - ie the opposite of this block's output side
-+     * @return Whether Block#isProvidingWeakPower should be called when determining indirect power
-+     */
-+    public boolean shouldCheckWeakPower(World world, int x, int y, int z, int side)
-+    {
-+        return !this.isNormalCube(world.getBlockId(x, y, z));
-     }
- 
-     /**
-@@ -1086,6 +1124,7 @@
+@@ -1086,6 +1110,7 @@
       */
      public void setBlockBoundsForItemRender() {}
  
@@ -174,7 +153,7 @@
      /**
       * Called when the player destroys a block with an item that can harvest it. (i, j, k) are the coordinates of the
       * block and l is the block's subtype/damage.
-@@ -1095,28 +1134,37 @@
+@@ -1095,28 +1120,37 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -219,7 +198,7 @@
      }
  
      /**
-@@ -1457,4 +1505,979 @@
+@@ -1457,4 +1491,993 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -1193,6 +1172,20 @@
 +    public boolean weakTileChanges()
 +    {
 +        return false;
++    }
++
++    /**
++     * Called to determine whether to allow the a block to handle its own indirect power rather than using the default rules.
++     * @param world The world
++     * @param x The x position of this block instance
++     * @param y The y position of this block instance
++     * @param z The z position of this block instance
++     * @param side The INPUT side of the block to be powered - ie the opposite of this block's output side
++     * @return Whether Block#isProvidingWeakPower should be called when determining indirect power
++     */
++    public boolean shouldCheckWeakPower(World world, int x, int y, int z, int side)
++    {
++        return !this.isNormalCube(world.getBlockId(x, y, z));
 +    }
 +
 +    @Deprecated //Implemented here as we changed the IFluidBlock interface, and this allows us to do so without breaking exisitng mods.
