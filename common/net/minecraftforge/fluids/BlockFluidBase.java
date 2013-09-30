@@ -58,6 +58,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         this.temperature = fluid.temperature;
         this.maxScaledLight = fluid.luminosity;
         this.tickRate = fluid.viscosity / 200;
+        this.densityDir = fluid.density > 0 ? -1 : 1;
         fluid.setBlockID(id);
 
         displacementIds.putAll(defaultDisplacementIds);
