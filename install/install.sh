@@ -1,2 +1,2 @@
 #!/bin/bash
-python install.py
+python install.py "$@"

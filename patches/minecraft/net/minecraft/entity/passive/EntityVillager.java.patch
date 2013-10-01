@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/entity/passive/EntityVillager.java
++++ ../src_work/minecraft/net/minecraft/entity/passive/EntityVillager.java
+@@ -205,7 +205,7 @@
+         ItemStack itemstack = par1EntityPlayer.inventory.getCurrentItem();
+         boolean flag = itemstack != null && itemstack.itemID == Item.monsterPlacer.itemID;
+ 
+-        if (!flag && this.isEntityAlive() && !this.isTrading() && !this.isChild())
++        if (!flag && this.isEntityAlive() && !this.isTrading() && !this.isChild() && !par1EntityPlayer.isSneaking())
+         {
+             if (!this.worldObj.isRemote)
+             {

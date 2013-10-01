@@ -748,7 +748,31 @@
              {
                  block = null;
              }
-@@ -3914,7 +4083,7 @@
+@@ -3744,14 +3913,20 @@
+      */
+     public int getIndirectPowerLevelTo(int par1, int par2, int par3, int par4)
+     {
+-        if (this.isBlockNormalCube(par1, par2, par3))
++        Block block = Block.blocksList[this.getBlockId(par1, par2, par3)];
++
++        if (block == null)
++        {
++            return 0;
++        }
++
++        if (!block.shouldCheckWeakPower(this, par1, par2, par3, par4))
+         {
+             return this.getBlockPowerInput(par1, par2, par3);
+         }
+         else
+         {
+-            int i1 = this.getBlockId(par1, par2, par3);
+-            return i1 == 0 ? 0 : Block.blocksList[i1].isProvidingWeakPower(this, par1, par2, par3, par4);
++            return block.isProvidingWeakPower(this, par1, par2, par3, par4);
+         }
+     }
+ 
+@@ -3914,7 +4089,7 @@
       */
      public long getSeed()
      {
@@ -757,7 +781,7 @@
      }
  
      public long getTotalWorldTime()
-@@ -3924,7 +4093,7 @@
+@@ -3924,7 +4099,7 @@
  
      public long getWorldTime()
      {
@@ -766,7 +790,7 @@
      }
  
      /**
-@@ -3932,7 +4101,7 @@
+@@ -3932,7 +4107,7 @@
       */
      public void setWorldTime(long par1)
      {
@@ -775,7 +799,7 @@
      }
  
      /**
-@@ -3940,13 +4109,13 @@
+@@ -3940,13 +4115,13 @@
       */
      public ChunkCoordinates getSpawnPoint()
      {
@@ -791,7 +815,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -3970,7 +4139,10 @@
+@@ -3970,7 +4145,10 @@
  
          if (!this.loadedEntityList.contains(par1Entity))
          {
@@ -803,7 +827,7 @@
          }
      }
  
-@@ -3978,6 +4150,11 @@
+@@ -3978,6 +4156,11 @@
       * Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
@@ -815,7 +839,7 @@
      {
          return true;
      }
-@@ -4098,8 +4275,7 @@
+@@ -4098,8 +4281,7 @@
       */
      public boolean isBlockHighHumidity(int par1, int par2, int par3)
      {
@@ -825,7 +849,7 @@
      }
  
      /**
-@@ -4174,7 +4350,7 @@
+@@ -4174,7 +4356,7 @@
       */
      public int getHeight()
      {
@@ -834,7 +858,7 @@
      }
  
      /**
-@@ -4182,7 +4358,7 @@
+@@ -4182,7 +4364,7 @@
       */
      public int getActualHeight()
      {
@@ -843,7 +867,7 @@
      }
  
      public IUpdatePlayerListBox getMinecartSoundUpdater(EntityMinecart par1EntityMinecart)
-@@ -4225,7 +4401,7 @@
+@@ -4225,7 +4407,7 @@
       */
      public double getHorizon()
      {
@@ -852,7 +876,7 @@
      }
  
      /**
-@@ -4294,30 +4470,28 @@
+@@ -4294,30 +4476,28 @@
  
      public void func_96440_m(int par1, int par2, int par3, int par4)
      {
@@ -904,7 +928,7 @@
                      }
                  }
              }
-@@ -4363,4 +4537,115 @@
+@@ -4363,4 +4543,115 @@
  
          return MathHelper.clamp_float(f, 0.0F, flag ? 1.5F : 1.0F);
      }

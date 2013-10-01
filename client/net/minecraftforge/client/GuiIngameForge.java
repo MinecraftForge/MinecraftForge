@@ -723,12 +723,19 @@ public class GuiIngameForge extends GuiIngame
 
     protected void renderChat(int width, int height)
     {
-        GL11.glPushMatrix();
-        GL11.glTranslatef(0.0F, (float)(height - 48), 0.0F);
         mc.mcProfiler.startSection("chat");
+
+        RenderGameOverlayEvent.Chat event = new RenderGameOverlayEvent.Chat(eventParent, 0, height - 48);
+        if (MinecraftForge.EVENT_BUS.post(event)) return;
+
+        GL11.glPushMatrix();
+        GL11.glTranslatef((float)event.posX, (float)event.posY, 0.0F);
         persistantChatGUI.drawChat(updateCounter);
-        mc.mcProfiler.endSection();
         GL11.glPopMatrix();
+
+        post(CHAT);
+
+        mc.mcProfiler.endSection();
     }
 
     protected void renderPlayerList(int width, int height)

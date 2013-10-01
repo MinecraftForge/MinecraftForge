@@ -25,6 +25,7 @@ public class RenderGameOverlayEvent extends Event
         TEXT,
         HEALTHMOUNT,
         JUMPBAR,
+        CHAT,
         PLAYER_LIST
     }
 
@@ -78,6 +79,19 @@ public class RenderGameOverlayEvent extends Event
             super(parent, ElementType.TEXT);
             this.left = left;
             this.right = right;
+        }
+    }
+
+    public static class Chat extends Pre
+    {
+        public int posX;
+        public int posY;
+
+        public Chat(RenderGameOverlayEvent parent, int posX, int posY)
+        {
+            super(parent, ElementType.CHAT);
+            this.posX = posX;
+            this.posY = posY;
         }
     }
 }
