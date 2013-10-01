@@ -4,6 +4,7 @@ import java.util.Random;
 
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraftforge.event.Cancelable;
 import net.minecraftforge.event.world.*;
 
 public class PopulateChunkEvent extends ChunkProviderEvent
@@ -59,6 +60,20 @@ public class PopulateChunkEvent extends ChunkProviderEvent
         {
             super(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated);
             this.type = type;
+        }
+    }
+    
+    /**
+     * This event is fired when a chunk is called to determine Entities to spawn
+     * during its generation.
+     * 
+     * You can set the result to DENY to prevent the default Entity spawning.
+     */
+    @Cancelable
+    public static class EntityPopulate extends PopulateChunkEvent {
+        public EntityPopulate(World world, Random rand, int chunkX, int chunkZ)
+        {
+            super(null, world, rand, chunkX, chunkZ, false);
         }
     }
 }

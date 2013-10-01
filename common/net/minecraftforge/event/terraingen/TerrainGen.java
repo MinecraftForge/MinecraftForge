@@ -37,6 +37,12 @@ public abstract class TerrainGen
         return event.getResult() != Result.DENY;
     }
     
+    public static boolean entityPopulate(World world, Random rand, int chunkX, int chunkZ)
+    {
+        PopulateChunkEvent.EntityPopulate event = new PopulateChunkEvent.EntityPopulate(world, rand, chunkX, chunkZ);
+        return MinecraftForge.TERRAIN_GEN_BUS.post(event);
+    }  
+    
     public static boolean decorate(World world, Random rand, int chunkX, int chunkZ, Decorate.EventType type)
     {
         Decorate event = new Decorate(world, rand, chunkX, chunkZ, type);

@@ -8,18 +8,19 @@
  import java.util.HashMap;
  import java.util.Iterator;
  import java.util.List;
-@@ -17,6 +19,10 @@
+@@ -17,6 +19,11 @@
  import net.minecraft.world.biome.SpawnListEntry;
  import net.minecraft.world.chunk.Chunk;
  
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.Event.Result;
 +import net.minecraftforge.event.ForgeEventFactory;
++import net.minecraftforge.event.terraingen.TerrainGen;
 +
  public final class SpawnerAnimals
  {
      /** The 17x17 area around the player where mobs can spawn */
-@@ -85,9 +91,12 @@
+@@ -85,9 +92,12 @@
              {
                  EnumCreatureType enumcreaturetype = aenumcreaturetype[j1];
  
@@ -33,7 +34,7 @@
                      label110:
  
                      while (iterator.hasNext())
-@@ -165,13 +174,17 @@
+@@ -165,13 +175,17 @@
  
                                                              entityliving.setLocationAndAngles((double)f, (double)f1, (double)f2, par1WorldServer.rand.nextFloat() * 360.0F, 0.0F);
  
@@ -55,7 +56,7 @@
                                                                  {
                                                                      continue label110;
                                                                  }
-@@ -217,7 +230,8 @@
+@@ -217,7 +231,8 @@
          else
          {
              int l = par1World.getBlockId(par2, par3 - 1, par4);
@@ -65,3 +66,14 @@
          }
      }
  
+@@ -226,6 +241,10 @@
+      */
+     public static void performWorldGenSpawning(World par0World, BiomeGenBase par1BiomeGenBase, int par2, int par3, int par4, int par5, Random par6Random)
+     {
++        if (TerrainGen.entityPopulate(par0World, par6Random, MathHelper.floor_float(par2 / 16f), MathHelper.floor_float(par3 / 16f)))
++        {
++            return;
++        }
+         List list = par1BiomeGenBase.getSpawnableList(EnumCreatureType.creature);
+ 
+         if (!list.isEmpty())
