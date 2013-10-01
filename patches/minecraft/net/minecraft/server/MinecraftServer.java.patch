@@ -153,7 +153,7 @@
      {
          this.serverProxy = Proxy.NO_PROXY;
          this.sentPacketCountArray = new long[100];
-@@ -168,24 +238,59 @@
+@@ -168,11 +238,46 @@
          this.tickTimeArray = new long[100];
          this.texturePack = "";
          mcServer = this;
@@ -203,13 +203,7 @@
  
      /**
       * Register all dispense behaviors.
-      */
-     private void registerDispenseBehaviors()
-     {
--        DispenserBehaviors.registerDispenserBehaviours();
-+        DispenserBehaviors.registerVanillaDispenserBehaviors();
-     }
- 
+@@ -185,7 +290,7 @@
      /**
       * Initialises the server and starts it.
       */

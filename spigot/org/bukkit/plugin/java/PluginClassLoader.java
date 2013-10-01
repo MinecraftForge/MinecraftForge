@@ -455,8 +455,6 @@ public class PluginClassLoader extends URLClassLoader {
                             loader.setClass0(name, result);
                         }
                     }
-
-                    classes.put(name, result);
                 }
                 if (result != null) {
                     Class<?> old = classes.putIfAbsent(name, result);

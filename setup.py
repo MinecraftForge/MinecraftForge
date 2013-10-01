@@ -30,11 +30,6 @@ def main():
         mcp_dir = os.path.abspath(options.mcp_dir)
         
     src_dir = os.path.join(mcp_dir, 'src')
-
-    PURGE = ['mvn', 'dependency:purge-local-repository', '-DactTransitively=false']
-    if sys.platform.startswith('win'):
-        PURGE = ['cmd', '/C'] + PURGE
-    run_command(PURGE, cwd=mcpc_dir)
     
     setup_fml(mcp_dir, fml_dir, build_num)
     

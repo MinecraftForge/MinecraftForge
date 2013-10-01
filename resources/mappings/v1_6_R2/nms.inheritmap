@@ -240,7 +240,6 @@ net/minecraft/entity/EntityLiving net/minecraft/entity/EntityLivingBase
 net/minecraft/entity/EntityLivingBase net/minecraft/entity/Entity
 net/minecraft/entity/EntitySelectorArmoredMob net/minecraft/command/IEntitySelector
 net/minecraft/entity/INpc net/minecraft/entity/passive/IAnimals
-net/minecraft/entity/NpcMerchant net/minecraft/entity/IMerchant
 net/minecraft/entity/SpiderEffectsGroupData net/minecraft/entity/EntityLivingData
 net/minecraft/entity/ai/EntityAIArrowAttack net/minecraft/entity/ai/EntityAIBase
 net/minecraft/entity/ai/EntityAIAttackOnCollide net/minecraft/entity/ai/EntityAIBase
@@ -295,9 +294,9 @@ net/minecraft/entity/ai/attributes/BaseAttribute net/minecraft/entity/ai/attribu
 net/minecraft/entity/ai/attributes/ModifiableAttributeInstance net/minecraft/entity/ai/attributes/AttributeInstance
 net/minecraft/entity/ai/attributes/RangedAttribute net/minecraft/entity/ai/attributes/BaseAttribute
 net/minecraft/entity/ai/attributes/ServersideAttributeMap net/minecraft/entity/ai/attributes/BaseAttributeMap
-net/minecraft/entity/boss/EntityDragon net/minecraft/entity/boss/IBossDisplayData net/minecraft/entity/IEntityMultiPart net/minecraft/entity/monster/IMob net/minecraft/entity/EntityLiving
+net/minecraft/entity/boss/EntityDragon net/minecraft/entity/IEntityMultiPart net/minecraft/entity/monster/IMob net/minecraft/entity/EntityLiving
 net/minecraft/entity/boss/EntityDragonPart net/minecraft/entity/Entity
-net/minecraft/entity/boss/EntityWither net/minecraft/entity/boss/IBossDisplayData net/minecraft/entity/IRangedAttackMob net/minecraft/entity/monster/EntityMob
+net/minecraft/entity/boss/EntityWither net/minecraft/entity/IRangedAttackMob net/minecraft/entity/monster/EntityMob
 net/minecraft/entity/boss/EntityWitherAttackFilter net/minecraft/command/IEntitySelector
 net/minecraft/entity/effect/EntityLightningBolt net/minecraft/entity/effect/EntityWeatherEffect
 net/minecraft/entity/effect/EntityWeatherEffect net/minecraft/entity/Entity
@@ -320,7 +319,6 @@ net/minecraft/entity/item/EntityMinecartTNT net/minecraft/entity/item/EntityMine
 net/minecraft/entity/item/EntityPainting net/minecraft/entity/EntityHanging
 net/minecraft/entity/item/EntityTNTPrimed net/minecraft/entity/Entity
 net/minecraft/entity/item/EntityXPOrb net/minecraft/entity/Entity
-net/minecraft/entity/item/SoundUpdaterMinecart net/minecraft/server/gui/IUpdatePlayerListBox
 net/minecraft/entity/monster/EntityBlaze net/minecraft/entity/monster/EntityMob
 net/minecraft/entity/monster/EntityCaveSpider net/minecraft/entity/monster/EntitySpider
 net/minecraft/entity/monster/EntityCreeper net/minecraft/entity/monster/EntityMob
@@ -472,9 +470,9 @@ net/minecraft/item/ItemSpade net/minecraft/item/ItemTool
 net/minecraft/item/ItemSword net/minecraft/item/Item
 net/minecraft/item/ItemTool net/minecraft/item/Item
 net/minecraft/item/ItemWritableBook net/minecraft/item/Item
-net/minecraft/item/crafting/RecipeFireworks net/minecraft/item/crafting/IRecipe net/minecraft/item/crafting/ShapelessRecipes
-net/minecraft/item/crafting/RecipesArmorDyes net/minecraft/item/crafting/IRecipe net/minecraft/item/crafting/ShapelessRecipes
-net/minecraft/item/crafting/RecipesMapCloning net/minecraft/item/crafting/IRecipe net/minecraft/item/crafting/ShapelessRecipes
+net/minecraft/item/crafting/RecipeFireworks net/minecraft/item/crafting/IRecipe
+net/minecraft/item/crafting/RecipesArmorDyes net/minecraft/item/crafting/IRecipe
+net/minecraft/item/crafting/RecipesMapCloning net/minecraft/item/crafting/IRecipe
 net/minecraft/item/crafting/RecipesMapExtending net/minecraft/item/crafting/ShapedRecipes
 net/minecraft/item/crafting/ShapedRecipes net/minecraft/item/crafting/IRecipe
 net/minecraft/item/crafting/ShapelessRecipes net/minecraft/item/crafting/IRecipe
@@ -598,9 +596,6 @@ net/minecraft/server/dedicated/DedicatedPlayerList net/minecraft/server/manageme
 net/minecraft/server/dedicated/DedicatedServer net/minecraft/network/rcon/IServer net/minecraft/server/MinecraftServer
 net/minecraft/server/dedicated/DedicatedServerListenThread net/minecraft/network/NetworkListenThread
 net/minecraft/server/gui/PlayerListComponent net/minecraft/server/gui/IUpdatePlayerListBox
-net/minecraft/server/integrated/IntegratedPlayerList net/minecraft/server/management/ServerConfigurationManager
-net/minecraft/server/integrated/IntegratedServer net/minecraft/server/MinecraftServer
-net/minecraft/server/integrated/IntegratedServerListenThread net/minecraft/network/NetworkListenThread
 net/minecraft/stats/Achievement net/minecraft/stats/StatBase
 net/minecraft/stats/StatBasic net/minecraft/stats/StatBase
 net/minecraft/stats/StatCrafting net/minecraft/stats/StatBase
@@ -632,7 +627,6 @@ net/minecraft/tileentity/TileEntitySkull net/minecraft/tileentity/TileEntity
 net/minecraft/tileentity/WeightedRandomMinecart net/minecraft/util/WeightedRandomItem
 net/minecraft/util/EntityDamageSource net/minecraft/util/DamageSource
 net/minecraft/util/EntityDamageSourceIndirect net/minecraft/util/EntityDamageSource
-net/minecraft/util/MovementInputFromOptions net/minecraft/util/MovementInput
 net/minecraft/util/WeightedRandomChestContent net/minecraft/util/WeightedRandomItem
 net/minecraft/village/VillageCollection net/minecraft/world/WorldSavedData
 net/minecraft/world/ChunkCache net/minecraft/world/IBlockAccess
@@ -662,7 +656,7 @@ net/minecraft/world/biome/BiomeGenTaiga net/minecraft/world/biome/BiomeGenBase
 net/minecraft/world/biome/SpawnListEntry net/minecraft/util/WeightedRandomItem
 net/minecraft/world/biome/WorldChunkManagerHell net/minecraft/world/biome/WorldChunkManager
 net/minecraft/world/chunk/EmptyChunk net/minecraft/world/chunk/Chunk
-net/minecraft/world/chunk/storage/AnvilChunkLoader net/minecraft/world/storage/IThreadedFileIO net/minecraft/world/chunk/storage/IChunkLoader
+net/minecraft/world/chunk/storage/AnvilChunkLoader net/minecraft/world/chunk/storage/IChunkLoader net/minecraft/world/storage/IThreadedFileIO
 net/minecraft/world/chunk/storage/AnvilSaveConverter net/minecraft/world/storage/SaveFormatOld
 net/minecraft/world/chunk/storage/AnvilSaveHandler net/minecraft/world/storage/SaveHandler
 net/minecraft/world/demo/DemoWorldManager net/minecraft/item/ItemInWorldManager
@@ -794,4 +788,3 @@ net/minecraft/world/storage/DerivedWorldInfo net/minecraft/world/storage/WorldIn
 net/minecraft/world/storage/MapData net/minecraft/world/WorldSavedData
 net/minecraft/world/storage/SaveFormatOld net/minecraft/world/storage/ISaveFormat
 net/minecraft/world/storage/SaveHandler net/minecraft/world/storage/ISaveHandler net/minecraft/world/storage/IPlayerFileData
-net/minecraft/world/storage/SaveHandlerMP net/minecraft/world/storage/ISaveHandler
