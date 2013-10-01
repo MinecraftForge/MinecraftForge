@@ -25,7 +25,8 @@ public class RenderGameOverlayEvent extends Event
         TEXT,
         HEALTHMOUNT,
         JUMPBAR,
-        CHAT
+        CHAT,
+        PLAYER_LIST
     }
 
     public final float partialTicks;

@@ -745,6 +745,7 @@ public class GuiIngameForge extends GuiIngame
 
         if (mc.gameSettings.keyBindPlayerList.pressed && (!mc.isIntegratedServerRunning() || handler.playerInfoList.size() > 1 || scoreobjective != null))
         {
+            if (pre(PLAYER_LIST)) return;
             this.mc.mcProfiler.startSection("playerList");
             List players = handler.playerInfoList;
             int maxPlayers = handler.currentServerMaxPlayers;
@@ -811,6 +812,7 @@ public class GuiIngameForge extends GuiIngame
                     zLevel -= 100.0F;
                 }
             }
+            post(PLAYER_LIST);
         }
     }
 
