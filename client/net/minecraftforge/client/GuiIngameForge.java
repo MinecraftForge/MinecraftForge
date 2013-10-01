@@ -733,12 +733,12 @@ public class GuiIngameForge extends GuiIngame
 
     protected void renderPlayerList(int width, int height)
     {
-        if (pre(PLAYER_LIST)) return;
         ScoreObjective scoreobjective = this.mc.theWorld.getScoreboard().func_96539_a(0);
         NetClientHandler handler = mc.thePlayer.sendQueue;
 
         if (mc.gameSettings.keyBindPlayerList.pressed && (!mc.isIntegratedServerRunning() || handler.playerInfoList.size() > 1 || scoreobjective != null))
         {
+            if (pre(PLAYER_LIST)) return;
             this.mc.mcProfiler.startSection("playerList");
             List players = handler.playerInfoList;
             int maxPlayers = handler.currentServerMaxPlayers;
@@ -805,8 +805,8 @@ public class GuiIngameForge extends GuiIngame
                     zLevel -= 100.0F;
                 }
             }
+            post(PLAYER_LIST);
         }
-        post(PLAYER_LIST);
     }
 
     protected void renderHealthMount(int width, int height)
