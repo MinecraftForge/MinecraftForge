@@ -21,7 +21,7 @@
      {
          BlockSourceImpl blocksourceimpl = new BlockSourceImpl(par1World, par2, par3, par4);
          TileEntityDispenser tileentitydispenser = (TileEntityDispenser)blocksourceimpl.getBlockTileEntity();
-@@ -75,10 +80,38 @@
+@@ -75,10 +80,37 @@
  
                  if (iinventory != null)
                  {
@@ -51,10 +51,9 @@
 +                        {
 +                            return;
 +                        }
++                        itemstack1 = TileEntityHopper.insertStack(iinventory, CraftItemStack.asNMSCopy(event.getItem()), Facing.oppositeSide[i1]);
 +                    }
 +                    // MCPC+ end
-+
-+                    itemstack1 = TileEntityHopper.insertStack(iinventory, CraftItemStack.asNMSCopy(event.getItem()), Facing.oppositeSide[i1]);
 +
 +                    if (((event != null && event.getItem().equals(oitemstack) && itemstack1 == null)) || (event == null && itemstack1 == null)) // MCPC+
                      {
