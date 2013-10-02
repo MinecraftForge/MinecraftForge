@@ -21,7 +21,12 @@
      {
          BlockSourceImpl blocksourceimpl = new BlockSourceImpl(par1World, par2, par3, par4);
          TileEntityDispenser tileentitydispenser = (TileEntityDispenser)blocksourceimpl.getBlockTileEntity();
-@@ -75,10 +80,37 @@
+@@ -71,14 +76,41 @@
+                 ItemStack itemstack = tileentitydispenser.getStackInSlot(l);
+                 int i1 = par1World.getBlockMetadata(par2, par3, par4) & 7;
+                 IInventory iinventory = TileEntityHopper.getInventoryAtLocation(par1World, (double)(par2 + Facing.offsetsXForSide[i1]), (double)(par3 + Facing.offsetsYForSide[i1]), (double)(par4 + Facing.offsetsZForSide[i1]));
+-                ItemStack itemstack1;
++                ItemStack itemstack1=null;
  
                  if (iinventory != null)
                  {
