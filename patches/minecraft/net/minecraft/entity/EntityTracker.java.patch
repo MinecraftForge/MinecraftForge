@@ -1,24 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/entity/EntityTracker.java
 +++ ../src_work/minecraft/net/minecraft/entity/EntityTracker.java
-@@ -18,7 +18,9 @@
- import net.minecraft.entity.item.EntityFallingSand;
- import net.minecraft.entity.item.EntityFireworkRocket;
- import net.minecraft.entity.item.EntityItem;
-+import net.minecraft.entity.item.EntityItemFrame;
- import net.minecraft.entity.item.EntityMinecart;
-+import net.minecraft.entity.item.EntityPainting;
- import net.minecraft.entity.item.EntityTNTPrimed;
- import net.minecraft.entity.item.EntityXPOrb;
- import net.minecraft.entity.passive.EntityBat;
-@@ -33,6 +35,7 @@
- import net.minecraft.entity.projectile.EntitySmallFireball;
- import net.minecraft.entity.projectile.EntitySnowball;
- import net.minecraft.network.packet.Packet;
-+import net.minecraft.server.MinecraftServer;
- import net.minecraft.util.IntHashMap;
- import net.minecraft.util.ReportedException;
- import net.minecraft.world.WorldServer;
-@@ -46,7 +49,7 @@
+@@ -46,7 +46,7 @@
       * List of tracked entities, used for iteration operations on tracked entities.
       */
      private Set trackedEntities = new HashSet();
@@ -27,11 +9,11 @@
      private int entityViewDistance;
  
      public EntityTracker(WorldServer par1WorldServer)
-@@ -187,6 +190,13 @@
+@@ -187,6 +187,13 @@
  
      public void addEntityToTracker(Entity par1Entity, int par2, int par3, boolean par4)
      {
-+        if (Thread.currentThread() != MinecraftServer.getServer().primaryThread)
++        if (Thread.currentThread() != net.minecraft.server.MinecraftServer.getServer().primaryThread)
 +        {
 +            throw new IllegalStateException("Asynchronous entity track!");    // Spigot
 +        }    
@@ -41,11 +23,11 @@
          if (par2 > this.entityViewDistance)
          {
              par2 = this.entityViewDistance;
-@@ -228,6 +238,11 @@
+@@ -228,6 +235,11 @@
  
      public void removeEntityFromAllTrackingPlayers(Entity par1Entity)
      {
-+        if (Thread.currentThread() != MinecraftServer.getServer().primaryThread)
++        if (Thread.currentThread() != net.minecraft.server.MinecraftServer.getServer().primaryThread)
 +        {
 +            throw new IllegalStateException("Asynchronous entity untrack!");    // Spigot
 +        }

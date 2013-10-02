@@ -39,6 +39,12 @@ public class TrackingRange
         {
             range = config.miscTrackingRange;
         }
+        // MCPC+ start - allow for 0 to disable tracking ranges
+        if (range == 0)
+        {
+            return defaultRange;
+        }
+        // MCPC+ end
 
         return Math.min( config.maxTrackingRange, range );
     }

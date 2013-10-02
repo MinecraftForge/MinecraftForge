@@ -1,21 +1,18 @@
 --- ../src_base/minecraft/net/minecraft/entity/EntityTrackerEntry.java
 +++ ../src_work/minecraft/net/minecraft/entity/EntityTrackerEntry.java
-@@ -55,8 +55,14 @@
- import net.minecraft.network.packet.Packet44UpdateAttributes;
- import net.minecraft.network.packet.Packet5PlayerInventory;
+@@ -57,6 +57,11 @@
  import net.minecraft.potion.PotionEffect;
-+import net.minecraft.server.MinecraftServer;
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.storage.MapData;
-+
 +// CraftBukkit start
++import net.minecraft.server.MinecraftServer;
 +import org.bukkit.entity.Player;
 +import org.bukkit.event.player.PlayerVelocityEvent;
 +// CraftBukkit end
  
  public class EntityTrackerEntry
  {
-@@ -144,15 +150,15 @@
+@@ -144,15 +149,15 @@
              this.sendPacketToAllTrackingPlayers(new Packet39AttachEntity(0, this.myEntity, this.myEntity.ridingEntity));
          }
  
@@ -34,7 +31,7 @@
  
                  while (iterator.hasNext())
                  {
-@@ -194,6 +200,22 @@
+@@ -194,6 +199,20 @@
                  boolean flag = Math.abs(j1) >= 4 || Math.abs(k1) >= 4 || Math.abs(l1) >= 4 || this.ticks % 60 == 0;
                  boolean flag1 = Math.abs(l - this.lastYaw) >= 4 || Math.abs(i1 - this.lastPitch) >= 4;
  
@@ -51,13 +48,11 @@
 +                    this.lastYaw = l;
 +                    this.lastPitch = i1;
 +                }
-+
 +                // CraftBukkit end
-+
                  if (this.ticks > 0 || this.myEntity instanceof EntityArrow)
                  {
                      if (j1 >= -128 && j1 < 128 && k1 >= -128 && k1 < 128 && l1 >= -128 && l1 < 128 && this.ticksSinceLastForcedTeleport <= 400 && !this.ridingEntity)
-@@ -214,6 +236,14 @@
+@@ -214,6 +233,13 @@
                      else
                      {
                          this.ticksSinceLastForcedTeleport = 0;
@@ -67,28 +62,20 @@
 +                        {
 +                            this.sendEventsToPlayers(new java.util.ArrayList(this.trackingPlayers));
 +                        }
-+
 +                        // CraftBukkit end
                          object = new Packet34EntityTeleport(this.myEntity.entityId, i, j, k, (byte)l, (byte)i1);
                      }
                  }
-@@ -241,20 +271,18 @@
+@@ -241,7 +267,7 @@
                  }
  
                  this.func_111190_b();
 -
--                if (flag)
--                {
 +                /* CraftBukkit start - Code moved up
-+                if (flag) {
+                 if (flag)
+                 {
                      this.lastScaledXPosition = i;
-                     this.lastScaledYPosition = j;
-                     this.lastScaledZPosition = k;
-                 }
- 
--                if (flag1)
--                {
-+                if (flag1) {
+@@ -254,7 +280,7 @@
                      this.lastYaw = l;
                      this.lastPitch = i1;
                  }
@@ -97,7 +84,7 @@
                  this.ridingEntity = false;
              }
              else
-@@ -292,7 +320,32 @@
+@@ -292,7 +318,31 @@
  
          if (this.myEntity.velocityChanged)
          {
@@ -124,14 +111,13 @@
 +
 +            if (!cancelled)
 +            {
-+                this.sendPacketToAllAssociatedPlayers((Packet)(new Packet28EntityVelocity(this.myEntity)));
++                this.sendPacketToAllAssociatedPlayers(new Packet28EntityVelocity(this.myEntity));
 +            }
-+
 +            // CraftBukkit end
              this.myEntity.velocityChanged = false;
          }
      }
-@@ -313,6 +366,13 @@
+@@ -313,6 +363,12 @@
  
              if (!set.isEmpty())
              {
@@ -140,12 +126,11 @@
 +                {
 +                    ((EntityPlayerMP) this.myEntity).getBukkitEntity().injectScaledMaxHealth(set, false);
 +                }
-+
 +                // CraftBukkit end
                  this.sendPacketToAllAssociatedPlayers(new Packet44UpdateAttributes(this.myEntity.entityId, set));
              }
  
-@@ -372,6 +432,11 @@
+@@ -372,6 +428,11 @@
       */
      public void tryStartWachingThis(EntityPlayerMP par1EntityPlayerMP)
      {
@@ -157,7 +142,7 @@
          if (par1EntityPlayerMP != this.myEntity)
          {
              double d0 = par1EntityPlayerMP.posX - (double)(this.lastScaledXPosition / 32);
-@@ -381,6 +446,19 @@
+@@ -381,6 +442,18 @@
              {
                  if (!this.trackingPlayers.contains(par1EntityPlayerMP) && (this.isPlayerWatchingThisChunk(par1EntityPlayerMP) || this.myEntity.forceSpawn))
                  {
@@ -171,13 +156,12 @@
 +                            return;
 +                        }
 +                    }
-+
 +                    par1EntityPlayerMP.destroyedItemsNetCache.remove(Integer.valueOf(this.myEntity.entityId));
 +                    // CraftBukkit end
                      this.trackingPlayers.add(par1EntityPlayerMP);
                      Packet packet = this.getPacketForThisEntity();
                      par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(packet);
-@@ -395,6 +473,13 @@
+@@ -395,6 +468,12 @@
                          ServersideAttributeMap serversideattributemap = (ServersideAttributeMap)((EntityLivingBase)this.myEntity).getAttributeMap();
                          Collection collection = serversideattributemap.func_111160_c();
  
@@ -186,36 +170,28 @@
 +                        {
 +                            ((EntityPlayerMP) this.myEntity).getBukkitEntity().injectScaledMaxHealth(collection, false);
 +                        }
-+
 +                        // CraftBukkit end
                          if (!collection.isEmpty())
                          {
                              par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet44UpdateAttributes(this.myEntity.entityId, collection));
-@@ -413,15 +498,18 @@
-                         FMLNetworkHandler.makeEntitySpawnAdjustment(this.myEntity.entityId, par1EntityPlayerMP, this.lastScaledXPosition, this.lastScaledYPosition, this.lastScaledZPosition);
+@@ -418,10 +497,12 @@
+                         par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet28EntityVelocity(this.myEntity.entityId, this.myEntity.motionX, this.myEntity.motionY, this.myEntity.motionZ));
                      }
  
--                    if (this.sendVelocityUpdates && !(packet instanceof Packet24MobSpawn))
+-                    if (this.myEntity.ridingEntity != null)
 -                    {
--                        par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet28EntityVelocity(this.myEntity.entityId, this.myEntity.motionX, this.myEntity.motionY, this.myEntity.motionZ));
+-                        par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet39AttachEntity(0, this.myEntity, this.myEntity.ridingEntity));
 -                    }
--
-                     if (this.myEntity.ridingEntity != null)
-                     {
-                         par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet39AttachEntity(0, this.myEntity, this.myEntity.ridingEntity));
-                     }
-+
 +                    // CraftBukkit start
 +                    if (this.myEntity.riddenByEntity != null)
 +                    {
 +                        par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet39AttachEntity(0, this.myEntity.riddenByEntity, this.myEntity));
 +                    }
-+
 +                    // CraftBukkit end
  
                      if (this.myEntity instanceof EntityLiving && ((EntityLiving)this.myEntity).getLeashedToEntity() != null)
                      {
-@@ -451,6 +539,11 @@
+@@ -451,6 +532,11 @@
                          }
                      }
  
@@ -227,7 +203,7 @@
                      if (this.myEntity instanceof EntityLivingBase)
                      {
                          EntityLivingBase entitylivingbase = (EntityLivingBase)this.myEntity;
-@@ -489,9 +582,12 @@
+@@ -489,9 +575,12 @@
      {
          if (this.myEntity.isDead)
          {
@@ -243,7 +219,7 @@
          Packet pkt = FMLNetworkHandler.getEntitySpawningPacket(this.myEntity);
  
          if (pkt != null)
-@@ -643,6 +739,11 @@
+@@ -643,6 +732,11 @@
  
      public void removePlayerFromTracker(EntityPlayerMP par1EntityPlayerMP)
      {

@@ -12,7 +12,7 @@
  
  import cpw.mods.fml.common.registry.GameRegistry;
  import net.minecraft.block.Block;
-@@ -10,12 +15,16 @@
+@@ -10,11 +15,14 @@
  import net.minecraft.item.Item;
  import net.minecraft.item.ItemStack;
  import net.minecraft.nbt.NBTTagCompound;
@@ -23,13 +23,11 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.util.StatCollector;
  import net.minecraft.world.World;
- 
 +import org.bukkit.event.player.PlayerPickupItemEvent; // CraftBukkit
-+
+ 
  public class EntityItem extends Entity
  {
-     /**
-@@ -29,10 +38,17 @@
+@@ -29,10 +37,17 @@
  
      /** The EntityItem's random initial float height. */
      public float hoverStart;
@@ -47,24 +45,22 @@
          this.health = 5;
          this.hoverStart = (float)(Math.random() * Math.PI * 2.0D);
          this.setSize(0.25F, 0.25F);
-@@ -47,7 +63,16 @@
+@@ -47,7 +62,14 @@
      public EntityItem(World par1World, double par2, double par4, double par6, ItemStack par8ItemStack)
      {
          this(par1World, par2, par4, par6);
-+
 +        // CraftBukkit start - Can't set null items in the datawatcher
 +        if (par8ItemStack == null || par8ItemStack.getItem() == null)
 +        {
 +            return;
 +        }
-+
 +        // CraftBukkit end
          this.setEntityItemStack(par8ItemStack);
 +        this.lifespan = (par8ItemStack.getItem() == null ? 6000 : par8ItemStack.getItem().getEntityLifespan(par8ItemStack, par1World));
      }
  
      /**
-@@ -62,6 +87,7 @@
+@@ -62,6 +84,7 @@
      public EntityItem(World par1World)
      {
          super(par1World);
@@ -72,7 +68,7 @@
          this.health = 5;
          this.hoverStart = (float)(Math.random() * Math.PI * 2.0D);
          this.setSize(0.25F, 0.25F);
-@@ -78,6 +104,15 @@
+@@ -78,22 +101,37 @@
       */
      public void onUpdate()
      {
@@ -86,13 +82,20 @@
 +        }
 +
          super.onUpdate();
- 
-         if (this.delayBeforeCanPickup > 0)
-@@ -85,15 +120,20 @@
-             --this.delayBeforeCanPickup;
-         }
- 
-+        boolean forceUpdate = this.ticksExisted % 75 == 1; // MCPC+ - optimize item tick updates
+-
+-        if (this.delayBeforeCanPickup > 0)
+-        {
+-            --this.delayBeforeCanPickup;
+-        }
+-
++        // CraftBukkit start - Use wall time for pickup and despawn timers
++        int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++        this.delayBeforeCanPickup -= elapsedTicks;
++        this.age += elapsedTicks;
++        this.lastTick = MinecraftServer.currentTick;
++        // CraftBukkit end
++
++        boolean forceUpdate = this.ticksExisted > 0 && this.ticksExisted % 25 == 0; // MCPC+ - optimize item tick updates
          this.prevPosX = this.posX;
          this.prevPosY = this.posY;
          this.prevPosZ = this.posZ;
@@ -111,7 +114,7 @@
          {
              if (this.worldObj.getBlockMaterial(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)) == Material.lava)
              {
-@@ -103,7 +143,7 @@
+@@ -103,7 +141,7 @@
                  this.playSound("random.fizz", 0.4F, 2.0F + this.rand.nextFloat() * 0.4F);
              }
  
@@ -120,11 +123,15 @@
              {
                  this.searchForOtherItemsNearby();
              }
-@@ -133,7 +173,36 @@
+@@ -131,9 +169,38 @@
+             this.motionY *= -0.5D;
+         }
  
-         ++this.age;
- 
+-        ++this.age;
+-
 -        if (!this.worldObj.isRemote && this.age >= 6000)
++        // ++this.age; // CraftBukkit - Moved up (base age on wall time)
++
 +        ItemStack item = getDataWatcher().getWatchableObjectItemStack(10);
 +        
 +        if (!this.worldObj.isRemote && this.age >= lifespan)
@@ -158,7 +165,7 @@
          {
              this.setDead();
          }
-@@ -144,8 +213,11 @@
+@@ -144,8 +211,11 @@
       */
      private void searchForOtherItemsNearby()
      {
@@ -172,7 +179,7 @@
          while (iterator.hasNext())
          {
              EntityItem entityitem = (EntityItem)iterator.next();
-@@ -268,6 +340,7 @@
+@@ -268,6 +338,7 @@
      {
          par1NBTTagCompound.setShort("Health", (short)((byte)this.health));
          par1NBTTagCompound.setShort("Age", (short)this.age);
@@ -180,19 +187,17 @@
  
          if (this.getEntityItem() != null)
          {
-@@ -283,12 +356,39 @@
+@@ -283,12 +354,36 @@
          this.health = par1NBTTagCompound.getShort("Health") & 255;
          this.age = par1NBTTagCompound.getShort("Age");
          NBTTagCompound nbttagcompound1 = par1NBTTagCompound.getCompoundTag("Item");
 -        this.setEntityItemStack(ItemStack.loadItemStackFromNBT(nbttagcompound1));
 -
 -        if (this.getEntityItem() == null)
-+
 +        // CraftBukkit start
 +        if (nbttagcompound1 != null)
 +        {
 +            ItemStack itemstack = ItemStack.loadItemStackFromNBT(nbttagcompound1);
-+
 +            if (itemstack != null)
 +            {
 +                this.setEntityItemStack(itemstack);
@@ -206,9 +211,8 @@
          {
              this.setDead();
          }
-+
 +        // CraftBukkit end
-+        
++
 +        ItemStack item = getDataWatcher().getWatchableObjectItemStack(10);
 +
 +        if (item == null || item.stackSize <= 0)
@@ -223,7 +227,7 @@
      }
  
      /**
-@@ -298,10 +398,47 @@
+@@ -298,10 +393,47 @@
      {
          if (!this.worldObj.isRemote)
          {
