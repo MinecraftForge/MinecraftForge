@@ -94,35 +94,15 @@ mcpc:
         world_twilightforest : dim7
 world-settings:
     default:
-        growth-chunks-per-tick: 650
-        mob-spawn-range: 4
-        random-light-updates: false
-        aggregate-chunkticks: 0
-        item-merge-radius: 3.5
-        exp-merge-radius: 3.5
-        wheat-growth-modifier: 100
-        cactus-growth-modifier: 100
-        melon-growth-modifier: 100
-        pumpkin-growth-modifier: 100
-        sugar-growth-modifier: 100
-        tree-growth-modifier: 100
-        mushroom-growth-modifier: 100
-        entity-activation-range-animals: 0
-        entity-activation-range-monsters: 0
-        entity-activation-range-misc: 0
-        entity-tracking-range-players: 48
-        entity-tracking-range-animals: 48
-        entity-tracking-range-monsters: 48
-        entity-tracking-range-misc: 32
-        entity-tracking-range-max: 64
-        info: false
+        keep-spawn-loaded: true
     world:
-        growth-chunks-per-tick: 1000
-    world_nether:
-        view-distance: 5
-        growth-chunks-per-tick: 0
-        random-light-updates: true
-        water-creatures-per-chunk: 0
+        keep-world-loaded: true
+    nether:
+        keep-spawn-loaded: false
+        keep-world-loaded: true
+    the_end:
+        keep-spawn-loaded: false
+        keep-world-loaded: false
 spawn-limits:
     monsters: 70
     animals: 15

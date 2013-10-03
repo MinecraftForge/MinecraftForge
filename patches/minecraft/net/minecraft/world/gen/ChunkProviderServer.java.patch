@@ -75,25 +75,23 @@
      }
  
      /**
-@@ -66,21 +88,39 @@
+@@ -66,21 +88,37 @@
       */
      public void unloadChunksIfNotNearSpawn(int par1, int par2)
      {
 -        if (this.worldObj.provider.canRespawnHere())
-+        if (this.worldObj.provider.canRespawnHere() && DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId))
++        if ((this.worldObj.provider.canRespawnHere() && DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId)) || !(this.worldObj.keepSpawnInMemory)) // MCPC+ Moved 'this.world.keepSpawnInMemory'
          {
              ChunkCoordinates chunkcoordinates = this.worldObj.getSpawnPoint();
              int k = par1 * 16 + 8 - chunkcoordinates.posX;
              int l = par2 * 16 + 8 - chunkcoordinates.posZ;
              short short1 = 128;
  
--            if (k < -short1 || k > short1 || l < -short1 || l > short1)
--            {
++            // CraftBukkit start
+             if (k < -short1 || k > short1 || l < -short1 || l > short1)
+             {
 -                this.chunksToUnload.add(Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(par1, par2)));
 -            }
-+            // CraftBukkit start
-+            if (k < -short1 || k > short1 || l < -short1 || l > short1 || !(this.worldObj.keepSpawnInMemory))   // Added 'this.world.keepSpawnInMemory'
-+            {
 +                this.chunksToUnload.add(par1, par2);
 +                Chunk c = this.loadedChunkHashMap.get(LongHash.toLong(par1, par2));
 +
@@ -102,7 +100,6 @@
 +                    c.mustSave = true;
 +                }
 +            }
-+
 +            // CraftBukkit end
          }
          else
@@ -116,12 +113,11 @@
 +            {
 +                c.mustSave = true;
 +            }
-+
 +            // CraftBukkit end
          }
      }
  
-@@ -89,7 +129,7 @@
+@@ -89,7 +127,7 @@
       */
      public void unloadAllChunks()
      {
@@ -130,7 +126,7 @@
  
          while (iterator.hasNext())
          {
-@@ -98,18 +138,46 @@
+@@ -98,18 +136,46 @@
          }
      }
  
@@ -181,7 +177,7 @@
  
              if (chunk == null)
              {
-@@ -121,31 +189,55 @@
+@@ -121,31 +187,55 @@
                  {
                      try
                      {
@@ -247,7 +243,7 @@
          return chunk;
      }
  
-@@ -155,14 +247,32 @@
+@@ -155,14 +245,32 @@
       */
      public Chunk provideChunk(int par1, int par2)
      {
@@ -283,7 +279,7 @@
      {
          if (this.currentChunkLoader == null)
          {
-@@ -197,7 +307,7 @@
+@@ -197,7 +305,7 @@
      /**
       * used by saveChunks, but catches any exceptions if the save fails.
       */
@@ -292,7 +288,7 @@
      {
          if (this.currentChunkLoader != null)
          {
-@@ -215,7 +325,7 @@
+@@ -215,7 +323,7 @@
      /**
       * used by saveChunks, but catches any exceptions if the save fails.
       */
@@ -301,7 +297,7 @@
      {
          if (this.currentChunkLoader != null)
          {
-@@ -224,14 +334,16 @@
+@@ -224,14 +332,16 @@
                  par1Chunk.lastSaveTime = this.worldObj.getTotalWorldTime();
                  this.currentChunkLoader.saveChunk(this.worldObj, par1Chunk);
              }
@@ -324,7 +320,7 @@
          }
      }
  
-@@ -249,7 +361,27 @@
+@@ -249,7 +359,27 @@
              if (this.currentChunkProvider != null)
              {
                  this.currentChunkProvider.populate(par1IChunkProvider, par2, par3);
@@ -353,7 +349,7 @@
                  chunk.setChunkModified();
              }
          }
-@@ -262,10 +394,13 @@
+@@ -262,10 +392,13 @@
      public boolean saveChunks(boolean par1, IProgressUpdate par2IProgressUpdate)
      {
          int i = 0;
@@ -371,7 +367,7 @@
  
              if (par1)
              {
-@@ -307,20 +442,50 @@
+@@ -307,20 +440,50 @@
      {
          if (!this.worldObj.canNotSave)
          {
@@ -433,7 +429,7 @@
  
              if (this.currentChunkLoader != null)
              {
-@@ -344,7 +509,7 @@
+@@ -344,7 +507,7 @@
       */
      public String makeString()
      {
@@ -442,7 +438,7 @@
      }
  
      /**
-@@ -365,7 +530,7 @@
+@@ -365,7 +528,7 @@
  
      public int getLoadedChunkCount()
      {

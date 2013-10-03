@@ -94,9 +94,10 @@ public class DimensionManager
         {
             worldType = Environment.getEnvironment(id).name().toLowerCase();
         }
-        if (!configuration.isBoolean("world-settings.default.keeploaded-environment-" + worldType))
-            configuration.set("world-settings.default.keeploaded-environment-" + worldType, keepLoaded);
-        keepLoaded = configuration.getBoolean("world-settings.default.keeploaded-environment-" + worldType);
+
+        if (!configuration.isBoolean("world-settings." + worldType + ".keep-world-loaded"))
+            configuration.set("world-settings." + worldType + ".keep-world-loaded", keepLoaded);
+        keepLoaded = configuration.getBoolean("world-settings." + worldType + ".keep-world-loaded");
         try {
             configuration.save(MinecraftServer.configFile);
         } catch (IOException e) {
@@ -346,6 +347,19 @@ public class DimensionManager
 
             name = provider.getSaveFolder();
         }
+        // MCPC+ start - add ability to disable dimensions
+        if (!configuration.isBoolean("world-settings." + worldType + ".enabled")) {
+            configuration.set("world-settings." + worldType + ".enabled", true);
+        }
+        boolean enabled = configuration.getBoolean("world-settings." + worldType + ".enabled");
+        try {
+            configuration.save(MinecraftServer.configFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (!enabled)
+            return;
+        // MCPC+ end
 
         mcServer.migrateWorlds(worldType, oldName, overworld.getWorldInfo().getWorldName(), name); // MCPC+
         ChunkGenerator gen = mcServer.server.getGenerator(name);
