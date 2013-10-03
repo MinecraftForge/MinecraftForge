@@ -1,6 +1,31 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemArmor.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemArmor.java
-@@ -218,7 +218,7 @@
+@@ -11,8 +11,9 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.util.Icon;
+ import net.minecraft.world.World;
+-
+-public class ItemArmor extends Item
++import net.minecraftforge.common.IArmor;
++
++public class ItemArmor extends Item implements IArmor
+ {
+     /** Holds the 'base' maxDamage that each armorType have. */
+     private static final int[] maxDamageArray = new int[] {11, 16, 15, 13};
+@@ -53,6 +54,12 @@
+         this.setCreativeTab(CreativeTabs.tabCombat);
+         BlockDispenser.dispenseBehaviorRegistry.putObject(this, field_96605_cw);
+     }
++    
++    @Override
++    public int getDamageReduceAmount(ItemStack stack)
++    {
++        return damageReduceAmount;
++    }
+ 
+     @SideOnly(Side.CLIENT)
+     public int getColorFromItemStack(ItemStack par1ItemStack, int par2)
+@@ -218,7 +225,7 @@
  
          if (itemstack1 == null)
          {

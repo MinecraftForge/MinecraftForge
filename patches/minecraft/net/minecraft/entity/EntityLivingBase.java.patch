@@ -12,15 +12,16 @@
  import net.minecraft.item.ItemArmor;
  import net.minecraft.item.ItemStack;
  import net.minecraft.nbt.NBTBase;
-@@ -46,6 +48,7 @@
+@@ -46,6 +48,8 @@
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
 +import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.common.IArmor;
  
  public abstract class EntityLivingBase extends Entity
  {
-@@ -305,7 +308,7 @@
+@@ -305,7 +309,7 @@
  
              this.extinguish();
  
@@ -29,7 +30,7 @@
              {
                  this.mountEntity((Entity)null);
              }
-@@ -452,6 +455,7 @@
+@@ -452,6 +456,7 @@
      {
          this.entityLivingToAttack = par1EntityLivingBase;
          this.revengeTimer = this.ticksExisted;
@@ -37,7 +38,7 @@
      }
  
      public EntityLivingBase getLastAttacker()
-@@ -750,8 +754,6 @@
+@@ -750,8 +755,6 @@
          return this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
      }
  
@@ -46,7 +47,7 @@
      /**
       * Remove the speified potion effect from this entity.
       */
-@@ -832,6 +834,7 @@
+@@ -832,6 +835,7 @@
       */
      public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
      {
@@ -54,7 +55,7 @@
          if (this.isEntityInvulnerable())
          {
              return false;
-@@ -982,6 +985,7 @@
+@@ -982,6 +986,7 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -62,7 +63,7 @@
          Entity entity = par1DamageSource.getEntity();
          EntityLivingBase entitylivingbase = this.func_94060_bK();
  
-@@ -1006,6 +1010,10 @@
+@@ -1006,6 +1011,10 @@
                  i = EnchantmentHelper.getLootingModifier((EntityLivingBase)entity);
              }
  
@@ -73,7 +74,7 @@
              if (!this.isChild() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
              {
                  this.dropFewItems(this.recentlyHit > 0, i);
-@@ -1013,12 +1021,22 @@
+@@ -1013,12 +1022,22 @@
  
                  if (this.recentlyHit > 0)
                  {
@@ -97,7 +98,7 @@
                  }
              }
          }
-@@ -1088,7 +1106,7 @@
+@@ -1088,7 +1107,7 @@
          int j = MathHelper.floor_double(this.boundingBox.minY);
          int k = MathHelper.floor_double(this.posZ);
          int l = this.worldObj.getBlockId(i, j, k);
@@ -106,7 +107,7 @@
      }
  
      /**
-@@ -1104,6 +1122,8 @@
+@@ -1104,6 +1123,8 @@
       */
      protected void fall(float par1)
      {
@@ -115,7 +116,20 @@
          super.fall(par1);
          PotionEffect potioneffect = this.getActivePotionEffect(Potion.jump);
          float f1 = potioneffect != null ? (float)(potioneffect.getAmplifier() + 1) : 0.0F;
-@@ -1237,6 +1257,8 @@
+@@ -1155,9 +1176,9 @@
+         {
+             ItemStack itemstack = aitemstack[k];
+ 
+-            if (itemstack != null && itemstack.getItem() instanceof ItemArmor)
+-            {
+-                int l = ((ItemArmor)itemstack.getItem()).damageReduceAmount;
++            if (itemstack != null && itemstack.getItem() instanceof IArmor)
++            {
++                int l = ((IArmor)itemstack.getItem()).getDamageReduceAmount(itemstack);
+                 i += l;
+             }
+         }
+@@ -1237,6 +1258,8 @@
      {
          if (!this.isEntityInvulnerable())
          {
@@ -124,7 +138,7 @@
              par2 = this.applyArmorCalculations(par1DamageSource, par2);
              par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
              float f1 = par2;
-@@ -1298,6 +1320,17 @@
+@@ -1298,6 +1321,17 @@
       */
      public void swingItem()
      {
@@ -142,7 +156,7 @@
          if (!this.isSwingInProgress || this.swingProgressInt >= this.getArmSwingAnimationEnd() / 2 || this.swingProgressInt < 0)
          {
              this.swingProgressInt = -1;
-@@ -1535,6 +1568,7 @@
+@@ -1535,6 +1569,7 @@
          }
  
          this.isAirBorne = true;
@@ -150,7 +164,7 @@
      }
  
      /**
-@@ -1739,6 +1773,11 @@
+@@ -1739,6 +1774,11 @@
       */
      public void onUpdate()
      {
@@ -162,7 +176,7 @@
          super.onUpdate();
  
          if (!this.worldObj.isRemote)
-@@ -2277,4 +2316,42 @@
+@@ -2277,4 +2317,42 @@
      {
          return this.getTeam() != null ? this.getTeam().isSameTeam(par1Team) : false;
      }

@@ -1,6 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/entity/player/InventoryPlayer.java
 +++ ../src_work/minecraft/net/minecraft/entity/player/InventoryPlayer.java
-@@ -357,6 +357,14 @@
+@@ -12,6 +12,7 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.util.ReportedException;
++import net.minecraftforge.common.IArmor;
+ 
+ public class InventoryPlayer implements IInventory
+ {
+@@ -357,6 +358,14 @@
              if (this.mainInventory[i] != null)
              {
                  this.mainInventory[i].updateAnimation(this.player.worldObj, this.player, i, this.currentItem == i);
@@ -15,3 +23,16 @@
              }
          }
      }
+@@ -709,9 +718,9 @@
+ 
+         for (int j = 0; j < this.armorInventory.length; ++j)
+         {
+-            if (this.armorInventory[j] != null && this.armorInventory[j].getItem() instanceof ItemArmor)
+-            {
+-                int k = ((ItemArmor)this.armorInventory[j].getItem()).damageReduceAmount;
++            if (this.armorInventory[j] != null && this.armorInventory[j].getItem() instanceof IArmor)
++            {
++                int k = ((IArmor)this.armorInventory[j].getItem()).getDamageReduceAmount(armorInventory[j]);
+                 i += k;
+             }
+         }
