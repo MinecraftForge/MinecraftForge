@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.event.Cancelable;
 import net.minecraftforge.event.Event;
 
 public class BlockEvent extends Event {
@@ -53,5 +54,59 @@ public class BlockEvent extends Event {
             this.harvester = harvester;
         }
     }
+    
+    /**
+     * Fired when a block is broken and about to drop experience
+     * The amount of experience that is dropped can be retrieved or set
+     */
+    public static class ExperienceDropsEvent extends BlockEvent
+    {
+        private int exp;
 
+        public ExperienceDropsEvent(int x, int y, int z, World world, Block block, int blockMetadata, int exp)
+        {
+            super(x, y, z, world, block, blockMetadata);
+            this.exp = exp;
+        }
+
+        /**
+         * Get the experience dropped by the block after the event has processed
+         *
+         * @return The experience to drop
+         */
+        public int getExpToDrop()
+        {
+            return exp;
+        }
+
+        /**
+         * Set the amount of experience dropped by the block after the event has processed
+         *
+         * @param exp 1 or higher to drop experience, else nothing will drop
+         */
+        public void setExpToDrop(int exp)
+        {
+            this.exp = exp;
+        }
+    }
+
+    /**
+     * Event that is fired when an Block is about to be broken by a player
+     * Canceling this event will prevent the Block from being broken.
+     */
+    @Cancelable
+    public static class BreakEvent extends BlockEvent 
+    {
+        /** Reference to the Player who broke the block. If no player is available, use a EntityFakePlayer */
+        private final EntityPlayer player;
+        public BreakEvent(int x, int y, int z, World world, Block block, int blockMetadata, EntityPlayer player) {
+            super(x, y, z, world, block, blockMetadata);
+            this.player = player;
+        }
+
+        public EntityPlayer getPlayer()
+        {
+            return player;
+        }
+    }
 }
