@@ -505,6 +505,7 @@ public class Loader
                 }
             }
         }
+        ModAPIManager.INSTANCE.buildAPITransformer(modClassLoader, disc);
         modController.transition(LoaderState.CONSTRUCTING, false);
         modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader, disc.getASMTable());
         FMLLog.fine("Mod signature data");
