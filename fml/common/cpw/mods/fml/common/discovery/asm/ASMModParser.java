@@ -179,4 +179,10 @@ public class ASMModParser
         ModAnnotation child = annotations.removeFirst();
         annotations.addLast(child);
     }
+
+    public void startMethodAnnotation(String methodName, String methodDescriptor, String annotationName)
+    {
+        ModAnnotation ann = new ModAnnotation(AnnotationType.METHOD, Type.getType(annotationName), methodName+methodDescriptor);
+        annotations.addFirst(ann);
+    }
 }

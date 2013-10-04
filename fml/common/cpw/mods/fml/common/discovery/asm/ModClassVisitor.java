@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -57,8 +57,11 @@ public class ModClassVisitor extends ClassVisitor
     {
         if (discoverer.isBaseMod(Collections.<String>emptyList()) && name.equals("getPriorities") && desc.equals(Type.getMethodDescriptor(Type.getType(String.class))))
         {
-            return new ModMethodVisitor(name, discoverer);
+            return new ModLoaderPropertiesMethodVisitor(name, discoverer);
         }
-        return null;
+        else
+        {
+            return new ModMethodVisitor(name, desc, discoverer);
+        }
     }
 }
