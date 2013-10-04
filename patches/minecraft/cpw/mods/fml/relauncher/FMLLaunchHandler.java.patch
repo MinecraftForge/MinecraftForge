@@ -1,0 +1,27 @@
+--- ../src_base/minecraft/cpw/mods/fml/relauncher/FMLLaunchHandler.java
++++ ../src_work/minecraft/cpw/mods/fml/relauncher/FMLLaunchHandler.java
+@@ -14,6 +14,8 @@
+ 
+ import java.io.File;
+ import java.util.logging.Level;
++
++import org.bukkit.Bukkit;
+ 
+ import net.minecraft.launchwrapper.LaunchClassLoader;
+ 
+@@ -85,6 +87,15 @@
+         FMLRelaunchLog.fine("Java classpath at launch is %s", System.getProperty("java.class.path"));
+         FMLRelaunchLog.fine("Java library path at launch is %s", System.getProperty("java.library.path"));
+ 
++        // MCPC+ start - block Java 8 since ASM 4.1 doesn't support it in this version, see #892
++        if (System.getProperty("java.version").startsWith("1.8")) {
++            String msg = "Java 8 is not supported on MCPC+" + FMLInjectionData.mcpversion + "! Please run MCPC+ using Java 7.";
++            FMLRelaunchLog.severe(msg);
++            System.out.println(msg);
++            System.err.println(msg);
++            System.exit(-1);
++        }
++        // MCPC+ end
+         try
+         {
+             CoreModManager.handleLaunch(minecraftHome, classLoader, tweaker);
