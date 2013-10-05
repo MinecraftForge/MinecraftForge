@@ -1,0 +1,38 @@
+--- ../src_base/minecraft/net/minecraft/tileentity/TileEntityHopper.java
++++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityHopper.java
+@@ -453,17 +453,28 @@
+ 
+             if (itemstack1 == null)
+             {
+-                par0IInventory.setInventorySlotContents(par2, par1ItemStack);
+-                par1ItemStack = null;
++                int max = Math.min(par1ItemStack.getMaxStackSize(), par0IInventory.getInventoryStackLimit());
++                if (max >= par1ItemStack.stackSize)
++                {
++                    par0IInventory.setInventorySlotContents(par2, par1ItemStack);
++                    par1ItemStack = null;
++                }
++                else
++                {
++                    par0IInventory.setInventorySlotContents(par2, par1ItemStack.splitStack(max));
++                }
+                 flag = true;
+             }
+             else if (areItemStacksEqualItem(itemstack1, par1ItemStack))
+             {
+-                int k = par1ItemStack.getMaxStackSize() - itemstack1.stackSize;
+-                int l = Math.min(par1ItemStack.stackSize, k);
+-                par1ItemStack.stackSize -= l;
+-                itemstack1.stackSize += l;
+-                flag = l > 0;
++                int max = Math.min(par1ItemStack.getMaxStackSize(), par0IInventory.getInventoryStackLimit());
++                if (max > itemstack1.stackSize)
++                {
++                    int l = Math.min(par1ItemStack.stackSize, max - itemstack1.stackSize);
++                    par1ItemStack.stackSize -= l;
++                    itemstack1.stackSize += l;
++                    flag = l > 0;
++                }
+             }
+ 
+             if (flag)

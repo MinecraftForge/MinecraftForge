@@ -13,7 +13,7 @@
  public class EntityPlayerMP extends EntityPlayer implements ICrafting
  {
      private String translator = "en_US";
-@@ -164,18 +170,10 @@
+@@ -165,18 +171,10 @@
          par4ItemInWorldManager.thisPlayerMP = this;
          this.theItemInWorldManager = par4ItemInWorldManager;
          this.renderDistance = par1MinecraftServer.getConfigurationManager().getViewDistance();
@@ -33,7 +33,7 @@
  
          this.mcServer = par1MinecraftServer;
          this.stepHeight = 0.0F;
-@@ -239,11 +237,6 @@
+@@ -240,11 +238,6 @@
          this.yOffset = 0.0F;
      }
  
@@ -45,7 +45,7 @@
      /**
       * Called to update the entity's position/logic.
       */
-@@ -289,7 +282,10 @@
+@@ -290,7 +283,10 @@
                  if (chunkcoordintpair != null && this.worldObj.blockExists(chunkcoordintpair.chunkXPos << 4, 0, chunkcoordintpair.chunkZPos << 4))
                  {
                      arraylist.add(this.worldObj.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos));
@@ -57,7 +57,7 @@
                  }
              }
  
-@@ -310,6 +306,7 @@
+@@ -311,6 +307,7 @@
                  {
                      Chunk chunk = (Chunk)iterator2.next();
                      this.getServerForPlayer().getEntityTracker().func_85172_a(this, chunk);
@@ -65,7 +65,7 @@
                  }
              }
          }
-@@ -377,11 +374,25 @@
+@@ -383,11 +380,25 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -91,9 +91,9 @@
          }
  
          Collection collection = this.worldObj.getScoreboard().func_96520_a(ScoreObjectiveCriteria.deathCount);
-@@ -1043,4 +1054,16 @@
+@@ -1054,4 +1065,16 @@
      {
-         return new ChunkCoordinates(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY + 0.5D), MathHelper.floor_double(this.posZ));
+         this.field_143005_bX = MinecraftServer.getSystemTimeMillis();
      }
 +    
 +    /* ===================================== FORGE START =====================================*/

@@ -108,7 +108,7 @@ public class ChestGenHooks
         {
             ret = new ItemStack[0];
         }
-        else if (count > source.getItem().getItemStackLimit())
+        else if (count > source.getMaxStackSize())
         {
             ret = new ItemStack[count];
             for (int x = 0; x < count; x++)

@@ -15,14 +15,14 @@
      }
  
 +    /**
-+     * This applies specifically to applying at the enchanting table. The other method {@link #func_92037_a(ItemStack)}
++     * This applies specifically to applying at the enchanting table. The other method {@link #canApply(ItemStack)}
 +     * applies for <i>all possible</i> enchantments.
 +     * @param stack
 +     * @return
 +     */
 +    public boolean canApplyAtEnchantingTable(ItemStack stack)
 +    {
-+        return this.type.canEnchantItem(stack.getItem());
++        return canApply(stack);
 +    }
 +
 +    /**
