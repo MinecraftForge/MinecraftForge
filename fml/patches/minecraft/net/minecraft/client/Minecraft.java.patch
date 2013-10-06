@@ -21,16 +21,20 @@
  @SideOnly(Side.CLIENT)
  public class Minecraft implements IPlayerUsage
  {
-@@ -366,6 +373,8 @@
+@@ -362,9 +369,12 @@
+         this.field_71446_o = new TextureManager(this.field_110451_am);
+         this.field_110451_am.func_110542_a(this.field_71446_o);
+         this.field_71416_A = new SoundManager(this.field_110451_am, this.field_71474_y, this.field_110446_Y);
++        this.field_71416_A.LOAD_SOUND_SYSTEM = false;
+         this.field_110451_am.func_110542_a(this.field_71416_A);
          this.func_71357_I();
          this.field_71466_p = new FontRenderer(this.field_71474_y, new ResourceLocation("textures/font/ascii.png"), this.field_71446_o, false);
- 
-+        FMLClientHandler.instance().beginMinecraftLoading(this, this.field_110449_ao, this.field_110451_am);
 +
++        FMLClientHandler.instance().beginMinecraftLoading(this, this.field_110449_ao, this.field_110451_am);
+ 
          if (this.field_71474_y.field_74363_ab != null)
          {
-             this.field_71466_p.func_78264_a(this.field_135017_as.func_135042_a());
-@@ -400,6 +409,7 @@
+@@ -400,6 +410,7 @@
          this.field_71446_o.func_130088_a(TextureMap.field_110576_c, new TextureMap(1, "textures/items"));
          GL11.glViewport(0, 0, this.field_71443_c, this.field_71440_d);
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
@@ -38,7 +42,7 @@
          this.func_71361_d("Post startup");
          this.field_71456_v = new GuiIngame(this);
  
-@@ -418,6 +428,7 @@
+@@ -418,6 +429,7 @@
          {
              this.func_71352_k();
          }
@@ -46,7 +50,7 @@
      }
  
      public void func_110436_a()
-@@ -733,6 +744,7 @@
+@@ -733,6 +745,7 @@
          {
              this.func_71405_e();
          }
@@ -54,7 +58,7 @@
      }
  
      private void func_71411_J()
-@@ -801,9 +813,11 @@
+@@ -801,9 +814,11 @@
  
          if (!this.field_71454_w)
          {
@@ -66,7 +70,7 @@
          }
  
          GL11.glFlush();
-@@ -1325,10 +1339,14 @@
+@@ -1325,10 +1340,14 @@
  
      public void func_71407_l()
      {
@@ -81,7 +85,7 @@
  
          this.field_71424_I.func_76320_a("stats");
          this.field_71413_E.func_77449_e();
-@@ -1785,6 +1803,8 @@
+@@ -1785,6 +1804,8 @@
              this.field_71453_ak.func_74428_b();
          }
  
@@ -90,7 +94,7 @@
          this.field_71424_I.func_76319_b();
          this.field_71423_H = func_71386_F();
      }
-@@ -1808,8 +1828,27 @@
+@@ -1808,8 +1829,27 @@
          }
  
          this.field_71413_E.func_77450_a(StatList.field_75936_f, 1);
