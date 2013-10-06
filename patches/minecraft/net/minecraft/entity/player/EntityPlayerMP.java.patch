@@ -45,6 +45,15 @@
      /**
       * Called to update the entity's position/logic.
       */
+@@ -254,7 +247,7 @@
+         --this.initialInvulnerability;
+         this.openContainer.detectAndSendChanges();
+ 
+-        if (!this.worldObj.isRemote && !this.openContainer.canInteractWith(this))
++        if (!this.worldObj.isRemote && !ForgeHooks.canInteractWith(this, this.openContainer))
+         {
+             this.closeScreen();
+             this.openContainer = this.inventoryContainer;
 @@ -290,7 +283,10 @@
                  if (chunkcoordintpair != null && this.worldObj.blockExists(chunkcoordintpair.chunkXPos << 4, 0, chunkcoordintpair.chunkZPos << 4))
                  {
