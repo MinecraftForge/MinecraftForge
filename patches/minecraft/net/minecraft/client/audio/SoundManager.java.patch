@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/client/audio/SoundManager.java
++++ ../src-work/minecraft/net/minecraft/client/audio/SoundManager.java
+@@ -27,6 +27,7 @@
+ @SideOnly(Side.CLIENT)
+ public class SoundManager implements ResourceManagerReloadListener
+ {
++    public boolean LOAD_SOUND_SYSTEM = true;
+     private static final String[] field_130084_a = new String[] {"ogg"};
+     private SoundSystem field_77381_a;
+     private boolean field_77376_g;
+@@ -67,6 +68,7 @@
+ 
+     public void func_110549_a(ResourceManager p_110549_1_)
+     {
++        if (!this.LOAD_SOUND_SYSTEM) return; //Stop the sound system from initializing three times at startup. Causing race conditions on some machines.
+         this.func_82464_d();
+         this.func_77370_b();
+         this.func_77363_d();

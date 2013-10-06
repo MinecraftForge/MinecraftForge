@@ -259,6 +259,8 @@ public class FMLClientHandler implements IFMLSidedHandler
             haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
             return;
         }
+        
+        client.field_71416_A.LOAD_SOUND_SYSTEM = true;
         // Reload resources
         client.func_110436_a();
         RenderingRegistry.instance().loadEntityRenderers((Map<Class<? extends Entity>, Render>)RenderManager.field_78727_a.field_78729_o);
