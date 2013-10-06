@@ -18,8 +18,8 @@ patch files to work together.
 
 
 Requirements:
-  You must ahve a JDK installed and accessible, there is a big in java 1.6_21 that 
-  causes compile errors, just update your jdk to fix them.
+  You must have a JDK installed and accessible, there is a big in java 1.6_21 that 
+  causes compile errors, just update your JDK to fix them.
 
 For Mac users: 
   It should automatically set the execution bits on mcp/runtime/bin/astyle-osx, 
