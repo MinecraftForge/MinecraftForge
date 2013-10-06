@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -18,14 +18,21 @@ package net.minecraft.src;
  * @author cpw
  *
  */
+@Deprecated
 public class TradeEntry
 {
+    @Deprecated
     public final int id;
+    @Deprecated
     public float chance;
+    @Deprecated
     public boolean buying;
+    @Deprecated
     public int min = 0;
+    @Deprecated
     public int max = 0;
 
+    @Deprecated
     public TradeEntry(int id, float chance, boolean buying, int min, int max)
     {
         this.id = id;
@@ -35,6 +42,7 @@ public class TradeEntry
         this.max = max;
     }
 
+    @Deprecated
     public TradeEntry(int id, float chance, boolean buying)
     {
         this(id, chance, buying, 0, 0);

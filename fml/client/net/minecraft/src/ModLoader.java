@@ -75,10 +75,15 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.SideOnly;
 import cpw.mods.fml.server.FMLServerHandler;
 
+/**
+ * ModLoader support is officially deprecated, to be removed with 1.7.
+ * @author cpw
+ *
+ */
+@Deprecated
 public class ModLoader
 {
     public static final String fmlMarker = "This is an FML marker";
-    // TODO dirty workaround for millinaire
     @Deprecated
     public static final Map<String,Map<String,String>> localizedStrings=Collections.emptyMap();
 
@@ -89,6 +94,7 @@ public class ModLoader
      * @param name The name
      * @param description The description
      */
+    @Deprecated
     public static void addAchievementDesc(Achievement achievement, String name, String description)
     {
         String achName=achievement.func_75970_i();
@@ -125,6 +131,7 @@ public class ModLoader
      * @param armor The new armor prefix
      * @return The new armor index
      */
+    @Deprecated
     @SideOnly(CLIENT)
     public static int addArmor(String armor)
     {
@@ -136,16 +143,19 @@ public class ModLoader
      *
      * @param biome The biome to add
      */
+    @Deprecated
     public static void addBiome(BiomeGenBase biome)
     {
         GameRegistry.addBiome(biome);
     }
 
+    @Deprecated
     public static void addEntityTracker(BaseMod mod, Class<? extends Entity> entityClass, int entityTypeId, int updateRange, int updateInterval, boolean sendVelocityInfo)
     {
         ModLoaderHelper.buildEntityTracker(mod, entityClass, entityTypeId, updateRange, updateInterval, sendVelocityInfo);
     }
 
+    @Deprecated
     public static void addCommand(ICommand command)
     {
         ModLoaderHelper.addCommand(command);
@@ -157,6 +167,7 @@ public class ModLoader
      * @param item
      * @param behavior
      */
+    @Deprecated
     public static void addDispenserBehavior(Item item, IBehaviorDispenseItem behavior)
     {
     	BlockDispenser.field_82527_a.func_82595_a(item, behavior);
@@ -167,6 +178,7 @@ public class ModLoader
      * @param key Key
      * @param value Value
      */
+    @Deprecated
     public static void addLocalization(String key, String value)
     {
         addLocalization(key, "en_US", value);
@@ -179,6 +191,7 @@ public class ModLoader
      * @param lang Language identifier
      * @param value Value
      */
+    @Deprecated
     public static void addLocalization(String key, String lang, String value)
     {
         LanguageRegistry.instance().addStringLocalization(key, lang, value);
@@ -190,6 +203,7 @@ public class ModLoader
      * @param instance Item to name
      * @param name The name to give it
      */
+    @Deprecated
     public static void addName(Object instance, String name)
     {
         addName(instance,"en_US",name);
@@ -202,6 +216,7 @@ public class ModLoader
      * @param lang Languge identifier
      * @param name Name to give it
      */
+    @Deprecated
     public static void addName(Object instance, String lang, String name)
     {
         LanguageRegistry.instance().addNameForObject(instance, lang, name);
@@ -240,6 +255,7 @@ public class ModLoader
      * @param overlayPath The new image
      * @param index Where on the texture to apply it
      */
+    @Deprecated
     @SideOnly(CLIENT)
     public static void addOverride(String path, String overlayPath, int index)
     {
@@ -252,6 +268,7 @@ public class ModLoader
      * @param output The result
      * @param params The input
      */
+    @Deprecated
     public static void addRecipe(ItemStack output, Object... params)
     {
         GameRegistry.addRecipe(output, params);
@@ -263,6 +280,7 @@ public class ModLoader
      * @param output The result
      * @param params The input
      */
+    @Deprecated
     public static void addShapelessRecipe(ItemStack output, Object... params)
     {
         GameRegistry.addShapelessRecipe(output, params);
@@ -274,6 +292,7 @@ public class ModLoader
      * @param input
      * @param output
      */
+    @Deprecated
     public static void addSmelting(int input, ItemStack output)
     {
         GameRegistry.addSmelting(input, output, 1.0f);
@@ -285,6 +304,7 @@ public class ModLoader
      * @param input
      * @param output
      */
+    @Deprecated
     public static void addSmelting(int input, ItemStack output, float experience)
     {
         GameRegistry.addSmelting(input, output, experience);
@@ -298,6 +318,7 @@ public class ModLoader
      * @param max
      * @param spawnList
      */
+    @Deprecated
     public static void addSpawn(Class<? extends EntityLiving> entityClass, int weightedProb, int min, int max, EnumCreatureType spawnList)
     {
         EntityRegistry.addSpawn(entityClass, weightedProb, min, max, spawnList, WorldType.base12Biomes);
@@ -313,6 +334,7 @@ public class ModLoader
      * @param spawnList
      * @param biomes
      */
+    @Deprecated
     public static void addSpawn(Class<? extends EntityLiving> entityClass, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
         EntityRegistry.addSpawn(entityClass, weightedProb, min, max, spawnList, biomes);
@@ -327,6 +349,7 @@ public class ModLoader
      * @param max
      * @param spawnList
      */
+    @Deprecated
     public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList)
     {
         EntityRegistry.addSpawn(entityName, weightedProb, min, max, spawnList, WorldType.base12Biomes);
@@ -342,11 +365,13 @@ public class ModLoader
      * @param spawnList
      * @param biomes
      */
+    @Deprecated
     public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
         EntityRegistry.addSpawn(entityName, weightedProb, min, max, spawnList, biomes);
     }
 
+    @Deprecated
     public static void addTrade(int profession, TradeEntry entry)
     {
         ModLoaderHelper.registerTrade(profession, entry);
@@ -355,6 +380,7 @@ public class ModLoader
      * Send a packet from the client
      * @param packet
      */
+    @Deprecated
     public static void clientSendPacket(Packet packet)
     {
         PacketDispatcher.sendPacketToServer(packet);
@@ -386,6 +412,7 @@ public class ModLoader
      * @param y
      * @param z
      */
+    @Deprecated
     public static void genericContainerRemoval(World world, int x, int y, int z)
     {
 /*        TileEntity te = world.func_603_b(x, y, z);
@@ -442,6 +469,7 @@ public class ModLoader
      *
      * @return A list containing all loaded ModLoader mods
      */
+    @Deprecated
     public static List<BaseMod> getLoadedMods()
     {
         return ModLoaderModContainer.findAll(BaseMod.class);
@@ -452,17 +480,20 @@ public class ModLoader
      *
      * @return The current logger
      */
+    @Deprecated
     public static Logger getLogger()
     {
         return FMLLog.getLogger();
     }
 
     @SideOnly(CLIENT)
+    @Deprecated
     public static Minecraft getMinecraftInstance()
     {
         return FMLClientHandler.instance().getClient();
     }
 
+    @Deprecated
     public static MinecraftServer getMinecraftServerInstance()
     {
         return FMLCommonHandler.instance().getMinecraftServerInstance();
@@ -477,6 +508,7 @@ public class ModLoader
      * @param fieldindex
      * @return The value in the specified field.
      */
+    @Deprecated
     public static <T, E> T getPrivateValue(Class<? super E> instanceclass, E instance, int fieldindex)
     {
         return ObfuscationReflectionHelper.getPrivateValue(instanceclass, instance, fieldindex);
@@ -491,6 +523,7 @@ public class ModLoader
      * @param field
      * @return The value in the specified field.
      */
+    @Deprecated
     public static <T, E> T getPrivateValue(Class<? super E> instanceclass, E instance, String field)
     {
         return ObfuscationReflectionHelper.getPrivateValue(instanceclass, instance, field);
@@ -501,6 +534,7 @@ public class ModLoader
      *
      */
     @SideOnly(CLIENT)
+    @Deprecated
     public static int getUniqueBlockModelID(BaseMod mod, boolean inventoryRenderer)
     {
         return ModLoaderClientHelper.obtainBlockModelIdFor(mod, inventoryRenderer);
@@ -512,6 +546,7 @@ public class ModLoader
      *
      * @return A unique entity ID
      */
+    @Deprecated
     public static int getUniqueEntityId()
     {
         return EntityRegistry.findGlobalUniqueEntityId();
@@ -532,12 +567,14 @@ public class ModLoader
      * @param channel
      * @return If the channel is registered to the current connection.
      */
+    @Deprecated
     public static boolean isChannelActive(EntityPlayer player, String channel)
     {
         return NetworkRegistry.instance().isChannelActive(channel, (Player)player);
     }
 
     @SideOnly(CLIENT)
+    @Deprecated
     public static boolean isGUIOpen(Class<? extends GuiScreen> gui)
     {
         return FMLClientHandler.instance().isGUIOpen(gui);
@@ -550,6 +587,7 @@ public class ModLoader
      * @param modname
      * @return If the specified mod is loaded
      */
+    @Deprecated
     public static boolean isModLoaded(String modname)
     {
         return Loader.isModLoaded(modname);
@@ -587,6 +625,7 @@ public class ModLoader
     {
     }
 
+    @Deprecated
     @SideOnly(CLIENT)
     public static void openGUI(EntityPlayer player, GuiScreen gui)
     {
@@ -627,6 +666,7 @@ public class ModLoader
      * @param block
      */
     @SuppressWarnings("deprecation")
+    @Deprecated
     public static void registerBlock(Block block)
     {
         GameRegistry.registerBlock(block);
@@ -639,11 +679,13 @@ public class ModLoader
      * @param itemclass
      */
     @SuppressWarnings("deprecation")
+    @Deprecated
     public static void registerBlock(Block block, Class<? extends ItemBlock> itemclass)
     {
         GameRegistry.registerBlock(block, itemclass);
     }
 
+    @Deprecated
     public static void registerContainerID(BaseMod mod, int id)
     {
         ModLoaderHelper.buildGuiHelper(mod, id);
@@ -655,6 +697,7 @@ public class ModLoader
      * @param entityName
      * @param id
      */
+    @Deprecated
     public static void registerEntityID(Class<? extends Entity> entityClass, String entityName, int id)
     {
         EntityRegistry.registerGlobalEntityID(entityClass, entityName, id);
@@ -669,12 +712,14 @@ public class ModLoader
      * @param background
      * @param foreground
      */
+    @Deprecated
     public static void registerEntityID(Class<? extends Entity> entityClass, String entityName, int id, int background, int foreground)
     {
         EntityRegistry.registerGlobalEntityID(entityClass, entityName, id, background, foreground);
     }
 
     @SideOnly(CLIENT)
+    @Deprecated
     public static void registerKey(BaseMod mod, KeyBinding keyHandler, boolean allowRepeat)
     {
         ModLoaderClientHelper.registerKeyBinding(mod, keyHandler, allowRepeat);
@@ -687,6 +732,7 @@ public class ModLoader
      * @param mod
      * @param channel
      */
+    @Deprecated
     public static void registerPacketChannel(BaseMod mod, String channel)
     {
         NetworkRegistry.instance().registerChannel(ModLoaderHelper.buildPacketHandlerFor(mod), channel);
@@ -698,12 +744,14 @@ public class ModLoader
      * @param tileEntityClass
      * @param id
      */
+    @Deprecated
     public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id)
     {
         GameRegistry.registerTileEntity(tileEntityClass, id);
     }
 
     @SideOnly(CLIENT)
+    @Deprecated
     public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id, TileEntitySpecialRenderer renderer)
     {
         ClientRegistry.registerTileEntity(tileEntityClass, id, renderer);
@@ -714,6 +762,7 @@ public class ModLoader
      *
      * @param biome
      */
+    @Deprecated
     public static void removeBiome(BiomeGenBase biome)
     {
         GameRegistry.removeBiome(biome);
@@ -725,6 +774,7 @@ public class ModLoader
      * @param entityClass
      * @param spawnList
      */
+    @Deprecated
     public static void removeSpawn(Class<? extends EntityLiving> entityClass, EnumCreatureType spawnList)
     {
         EntityRegistry.removeSpawn(entityClass, spawnList, WorldType.base12Biomes);
@@ -737,6 +787,7 @@ public class ModLoader
      * @param spawnList
      * @param biomes
      */
+    @Deprecated
     public static void removeSpawn(Class<? extends EntityLiving> entityClass, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
         EntityRegistry.removeSpawn(entityClass, spawnList, biomes);
@@ -748,6 +799,7 @@ public class ModLoader
      * @param entityName
      * @param spawnList
      */
+    @Deprecated
     public static void removeSpawn(String entityName, EnumCreatureType spawnList)
     {
         EntityRegistry.removeSpawn(entityName, spawnList, WorldType.base12Biomes);
@@ -760,6 +812,7 @@ public class ModLoader
      * @param spawnList
      * @param biomes
      */
+    @Deprecated
     public static void removeSpawn(String entityName, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
         EntityRegistry.removeSpawn(entityName, spawnList, biomes);
@@ -800,6 +853,7 @@ public class ModLoader
      *
      * @param packet
      */
+    @Deprecated
     public static void sendPacket(Packet packet) {
         PacketDispatcher.sendPacketToServer(packet);
     }
@@ -819,6 +873,7 @@ public class ModLoader
     {
     }
 
+    @Deprecated
     public static void serverSendPacket(NetServerHandler handler, Packet packet)
     {
         if (handler != null)
@@ -826,6 +881,7 @@ public class ModLoader
             PacketDispatcher.sendPacketToPlayer(packet, (Player)handler.getPlayer());
         }
     }
+    @Deprecated
     public static void serverOpenWindow(EntityPlayerMP player, Container container, int ID, int x, int y, int z)
     {
         ModLoaderHelper.openGui(ID, player, container, x, y, z);
@@ -838,12 +894,14 @@ public class ModLoader
      * @param enable indicates whether you want to recieve them or not
      * @param useClock don't receive render subticks, just world ticks
      */
+    @Deprecated
     public static void setInGameHook(BaseMod mod, boolean enable, boolean useClock)
     {
         ModLoaderHelper.updateStandardTicks(mod, enable, useClock);
     }
 
 
+    @Deprecated
     public static void setInGUIHook(BaseMod mod, boolean enable, boolean useClock)
     {
         ModLoaderHelper.updateGUITicks(mod, enable, useClock);
@@ -858,6 +916,7 @@ public class ModLoader
      * @param fieldindex
      * @param value
      */
+    @Deprecated
     public static <T, E> void setPrivateValue(Class<? super T> instanceclass, T instance, int fieldindex, E value)
     {
         ObfuscationReflectionHelper.setPrivateValue(instanceclass, instance, value, fieldindex);
@@ -872,6 +931,7 @@ public class ModLoader
      * @param field
      * @param value
      */
+    @Deprecated
     public static <T, E> void setPrivateValue(Class<? super T> instanceclass, T instance, String field, E value)
     {
         ObfuscationReflectionHelper.setPrivateValue(instanceclass, instance, value, field);
@@ -906,11 +966,13 @@ public class ModLoader
      * @param message
      * @param e
      */
+    @Deprecated
     public static void throwException(String message, Throwable e)
     {
         FMLCommonHandler.instance().raiseException(e, message, true);
     }
 
+    @Deprecated
     public static void throwException(Throwable e)
     {
         throwException("Exception in ModLoader", e);
