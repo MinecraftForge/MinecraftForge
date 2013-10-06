@@ -12,7 +12,11 @@ import java.lang.annotation.Target;
  * @author cpw
  *
  */
-public interface Optional {
+public final class Optional {
+    /**
+     * Not constructable
+     */
+    private Optional() {}
     /**
      * Used to remove optional interfaces
      * @author cpw
