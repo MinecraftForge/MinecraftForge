@@ -51,14 +51,13 @@
              }
          }
  
-@@ -66,8 +83,8 @@
+@@ -66,7 +83,8 @@
  
              if (this.foodTimer >= 80)
              {
 -                par1EntityPlayer.heal(1.0F);
--                this.addExhaustion(3.0F);
 +                // CraftBukkit - added RegainReason
 +                par1EntityPlayer.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.SATIATED);
+                 this.addExhaustion(3.0F);
                  this.foodTimer = 0;
              }
-         }

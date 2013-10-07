@@ -9,10 +9,11 @@
  import net.minecraft.potion.PotionEffect;
  import net.minecraft.world.World;
  
-@@ -54,6 +56,17 @@
+@@ -54,7 +56,17 @@
      public ItemStack onEaten(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
      {
          --par1ItemStack.stackSize;
+-        par3EntityPlayer.getFoodStats().addStats(this);
 +        // CraftBukkit start
 +        int oldFoodLevel = par3EntityPlayer.getFoodStats().foodLevel;
 +        org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callFoodLevelChangeEvent(par3EntityPlayer, this.getHealAmount() + oldFoodLevel);
@@ -24,6 +25,6 @@
 +
 +        ((EntityPlayerMP) par3EntityPlayer).playerNetServerHandler.sendPacketToPlayer(new Packet8UpdateHealth(((EntityPlayerMP) par3EntityPlayer).getBukkitEntity().getScaledHealth(), par3EntityPlayer.getFoodStats().foodLevel, par3EntityPlayer.getFoodStats().foodSaturationLevel));
 +        // CraftBukkit end
-         par3EntityPlayer.getFoodStats().addStats(this);
          par2World.playSoundAtEntity(par3EntityPlayer, "random.burp", 0.5F, par2World.rand.nextFloat() * 0.1F + 0.9F);
          this.onFoodEaten(par1ItemStack, par2World, par3EntityPlayer);
+         return par1ItemStack;

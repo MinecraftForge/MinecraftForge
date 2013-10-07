@@ -10,6 +10,6 @@
 +                    this.running = false;
 +                }
 +                // MCPC+ end
-                 if (10 <= i)
+                 if (10 > i)
                  {
-                     byte b0 = 0;
+                     return;
