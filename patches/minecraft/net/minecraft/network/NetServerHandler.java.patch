@@ -9,6 +9,7 @@
 +import net.minecraftforge.event.Event;
 +import net.minecraftforge.event.ForgeEventFactory;
 +import net.minecraftforge.event.ServerChatEvent;
++import net.minecraftforge.event.entity.player.EventBlockDig;
 +import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 +import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 +
@@ -91,6 +92,18 @@
                  this.playerEntity.onGround = par1Packet10Flying.onGround;
                  this.mcServer.getConfigurationManager().serverUpdateMountedMovingPlayer(this.playerEntity);
                  this.playerEntity.updateFlyingState(this.playerEntity.posY - d0, par1Packet10Flying.onGround);
+@@ -429,6 + 396,11 @@
+       public void handleBlockDig(Packet14BlockDig par1Packet14BlockDig)
+	      {
+-     	     WorldServer worldserver = this.mcServer.worldServerForDimension(this.playerEntity.dimension);
++          	MinecraftForge.EVENT_BUS.post(new EventBlockDig(par1Packet14BlockDig.xPosition, par1Packet14BlockDig.yPosition, par1Packet14BlockDig.zPosition, par1Packet14BlockDig.face, par1Packet14BlockDig.status, playerEntity));	
++     	
++           WorldServer worldserver = this.mcServer.worldServerForDimension(this.playerEntity.dimension);
+	  
+	           if (par1Packet14BlockDig.status == 4)
+	           {
+	                this.playerEntity.dropOneItem(false);
+	           }
 @@ -443,7 +472,10 @@
                  double d2 = this.playerEntity.posZ - ((double)k + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
