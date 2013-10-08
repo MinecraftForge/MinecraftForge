@@ -101,7 +101,7 @@ public class Fluid
     public Fluid(String fluidName)
     {
         this.fluidName = fluidName.toLowerCase(Locale.ENGLISH);
-        this.unlocalizedName = fluidName;
+        this.unlocalizedName = "fluid." + fluidName;
     }
 
     public Fluid setUnlocalizedName(String unlocalizedName)
@@ -206,7 +206,7 @@ public class Fluid
      */
     public String getUnlocalizedName()
     {
-        return "fluid." + this.unlocalizedName;
+        return this.unlocalizedName;
     }
 
     /**
