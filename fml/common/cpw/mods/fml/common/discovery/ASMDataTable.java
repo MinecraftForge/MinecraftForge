@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -29,7 +29,7 @@ import cpw.mods.fml.common.ModContainer;
 
 public class ASMDataTable
 {
-    public static class ASMData
+    public final static class ASMData implements Cloneable
     {
         private ModCandidate candidate;
         private String annotationName;
@@ -63,6 +63,20 @@ public class ASMDataTable
         public Map<String, Object> getAnnotationInfo()
         {
             return annotationInfo;
+        }
+
+        public ASMData copy(Map<String,Object> newAnnotationInfo)
+        {
+            try
+            {
+                ASMData clone = (ASMData) this.clone();
+                clone.annotationInfo = newAnnotationInfo;
+                return clone;
+            }
+            catch (CloneNotSupportedException e)
+            {
+                throw new RuntimeException("Unpossible", e);
+            }
         }
     }
 

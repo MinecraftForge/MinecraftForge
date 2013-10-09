@@ -17,6 +17,21 @@ public final class Optional {
      * Not constructable
      */
     private Optional() {}
+
+    /**
+     * Mark a list of interfaces as removable
+     * @author cpw
+     *
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    public @interface InterfaceList {
+        /**
+         * Mark a list of interfaces for optional removal.
+         * @return
+         */
+        public Interface[] value();
+    }
     /**
      * Used to remove optional interfaces
      * @author cpw

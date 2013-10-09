@@ -1,6 +1,8 @@
 package cpw.mods.fml.common.asm.transformers;
 
+import java.lang.annotation.Annotation;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
@@ -14,6 +16,7 @@ import org.objectweb.asm.tree.MethodNode;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
@@ -52,7 +55,7 @@ public class ModAPITransformer implements IClassTransformer {
             }
             if (logDebugInfo) FMLRelaunchLog.finest("Optional on %s triggered - mod missing %s", name, modId);
 
-            if ("cpw.mods.fml.common.Optional$Interface".equals(optional.getAnnotationName()))
+            if (optional.getAnnotationInfo().containsKey("iface"))
             {
                 stripInterface(classNode,(String)optional.getAnnotationInfo().get("iface"));
             }
@@ -95,12 +98,29 @@ public class ModAPITransformer implements IClassTransformer {
     public void initTable(ASMDataTable dataTable)
     {
         optionals = ArrayListMultimap.create();
+        Set<ASMData> interfaceLists = dataTable.getAll("cpw.mods.fml.common.Optional$InterfaceList");
+        addData(unpackInterfaces(interfaceLists));
         Set<ASMData> interfaces = dataTable.getAll("cpw.mods.fml.common.Optional$Interface");
         addData(interfaces);
         Set<ASMData> methods = dataTable.getAll("cpw.mods.fml.common.Optional$Method");
         addData(methods);
     }
 
+    private Set<ASMData> unpackInterfaces(Set<ASMData> packedInterfaces)
+    {
+        Set<ASMData> result = Sets.newHashSet();
+        for (ASMData data : packedInterfaces)
+        {
+            List<Map<String,Object>> packedList = (List<Map<String,Object>>) data.getAnnotationInfo().get("value");
+            for (Map<String,Object> packed : packedList)
+            {
+                ASMData newData = data.copy(packed);
+                result.add(newData);
+            }
+        }
+
+        return result;
+    }
     private void addData(Set<ASMData> interfaces)
     {
         for (ASMData data : interfaces)
