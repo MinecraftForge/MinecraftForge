@@ -18,20 +18,16 @@
  
  public class EntityEnderman extends EntityMob
  {
-@@ -118,6 +122,12 @@
+@@ -118,6 +122,8 @@
       */
      private boolean shouldAttackPlayer(EntityPlayer par1EntityPlayer)
      {
-+        EnderStareEvent event = new EnderStareEvent(this);
-+        if(MinecraftForge.EVENT_BUS.post(event))
-+        {
-+            return false;
-+        }
-+        
++        if(MinecraftForge.EVENT_BUS.post(new EnderStareEvent(this))) return false;
++               
          ItemStack itemstack = par1EntityPlayer.inventory.armorInventory[3];
  
          if (itemstack != null && itemstack.itemID == Block.pumpkin.blockID)
-@@ -295,12 +305,17 @@
+@@ -295,12 +301,17 @@
       */
      protected boolean teleportTo(double par1, double par3, double par5)
      {
@@ -52,7 +48,7 @@
          boolean flag = false;
          int i = MathHelper.floor_double(this.posX);
          int j = MathHelper.floor_double(this.posY);
-@@ -477,7 +492,7 @@
+@@ -477,7 +488,7 @@
                      }
                  }
  
