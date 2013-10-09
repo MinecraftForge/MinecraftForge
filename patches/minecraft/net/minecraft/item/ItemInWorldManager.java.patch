@@ -93,7 +93,7 @@
      public boolean tryHarvestBlock(int par1, int par2, int par3)
      {
 -        if (this.gameType.isAdventure() && !this.thisPlayerMP.isCurrentToolAdventureModeExempt(par1, par2, par3))
-+        BlockEvent.BreakEvent event = triggerBlockBreakEvent(par1, par2, par3);
++        BlockEvent.BreakEvent event = ForgeHooks.onBlockBreakEvent(theWorld, gameType, thisPlayerMP, par1, par2, par3);
 +        if (event.isCanceled())
          {
              return false;
@@ -133,7 +133,7 @@
  
                  if (itemstack != null)
                  {
-@@ -285,6 +331,7 @@
+@@ -285,11 +331,18 @@
                      }
                  }
  
@@ -141,57 +141,18 @@
                  if (flag && flag1)
                  {
                      Block.blocksList[l].harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, i1);
-@@ -293,6 +340,49 @@
+                 }
+             }
++
++            // Drop experience
++	        if (!this.isCreative() && flag && event != null)
++	        {
++	            Block.blocksList[l].dropXpOnBlockBreak(this.theWorld, par1, par2, par3, event.getExpToDrop());
++	        }
  
              return flag;
          }
-+    }
-+
-+    private BlockEvent.BreakEvent triggerBlockBreakEvent(int par1, int par2, int par3)
-+    {
-+        // Logic from tryHarvestBlock for pre-canceling the event
-+        boolean preCancelEvent = false;
-+        if (this.gameType.isAdventure() && !this.thisPlayerMP.isCurrentToolAdventureModeExempt(par1, par2, par3))
-+        {
-+            preCancelEvent = true;
-+        }
-+        else if (this.gameType.isCreative() && this.thisPlayerMP.getHeldItem() != null && this.thisPlayerMP.getHeldItem().getItem() instanceof ItemSword)
-+        {
-+            preCancelEvent = true;
-+        }
-+
-+        // Tell client the block is gone immediately then process events
-+        if (theWorld.getBlockTileEntity(par1, par2, par3) == null)
-+        {
-+            Packet53BlockChange packet = new Packet53BlockChange(par1, par2, par3, this.theWorld);
-+            packet.type = 0;
-+            packet.metadata = 0;
-+            ((EntityPlayerMP) this.thisPlayerMP).playerNetServerHandler.sendPacketToPlayer(packet);
-+        }
-+
-+        // Post the block break event
-+        Block block = Block.blocksList[this.theWorld.getBlockId(par1, par2, par3)];
-+        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(par1, par2, par3, this.theWorld, block, this.theWorld.getBlockMetadata(par1, par2, par3), this.thisPlayerMP);
-+        event.setCanceled(preCancelEvent);
-+        MinecraftForge.EVENT_BUS.post(event);
-+
-+        // Handle if the event is canceled
-+        if (event.isCanceled())
-+        {
-+            // Let the client know the block still exists
-+            ((EntityPlayerMP) this.thisPlayerMP).playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, this.theWorld));
-+            // Update any tile entity data for this block
-+            TileEntity tileentity = this.theWorld.getBlockTileEntity(par1, par2, par3);
-+            if (tileentity != null)
-+            {
-+                this.thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(tileentity.getDescriptionPacket());
-+            }
-+        }
-+        return event;
-     }
- 
-     /**
-@@ -325,6 +415,7 @@
+@@ -325,6 +378,7 @@
              if (itemstack1.stackSize == 0)
              {
                  par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
@@ -199,7 +160,7 @@
              }
  
              if (!par1EntityPlayer.isUsingItem())
-@@ -342,35 +433,56 @@
+@@ -342,35 +396,56 @@
       */
      public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
      {
@@ -283,7 +244,7 @@
      }
  
      /**
-@@ -380,4 +492,13 @@
+@@ -380,4 +455,13 @@
      {
          this.theWorld = par1WorldServer;
      }
