@@ -64,6 +64,15 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(itemstack, 5);
+@@ -321,7 +341,7 @@
+ 
+         super.onUpdate();
+ 
+-        if (!this.worldObj.isRemote && this.openContainer != null && !this.openContainer.canInteractWith(this))
++        if (!this.worldObj.isRemote && this.openContainer != null && !ForgeHooks.canInteractWith(this, this.openContainer))
+         {
+             this.closeScreen();
+             this.openContainer = this.inventoryContainer;
 @@ -429,7 +449,7 @@
                  vec31.rotateAroundX(-this.rotationPitch * (float)Math.PI / 180.0F);
                  vec31.rotateAroundY(-this.rotationYaw * (float)Math.PI / 180.0F);

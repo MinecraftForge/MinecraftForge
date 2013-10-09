@@ -46,6 +46,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 
 public class ForgeHooks
@@ -438,6 +439,13 @@ public class ForgeHooks
             return null;
         }
         return event.component;
+    }
+    
+    public static boolean canInteractWith(EntityPlayer player, Container openContainer)
+    {
+        PlayerOpenContainerEvent event = new PlayerOpenContainerEvent(player, openContainer);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult() == Event.Result.DEFAULT ? event.canInteractWith : event.getResult() == Event.Result.ALLOW ? true : false;
     }
     
     public static BlockEvent.BreakEvent onBlockBreakEvent(World world, EnumGameType gameType, EntityPlayerMP entityPlayer, int x, int y, int z)

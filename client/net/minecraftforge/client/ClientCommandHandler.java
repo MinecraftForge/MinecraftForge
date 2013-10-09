@@ -43,9 +43,10 @@ public class ClientCommandHandler extends CommandHandler
             message = message.substring(1);
         }
 
-        String[] args = message.split(" ");
-        String commandName = args[0];
-        System.arraycopy(args, 1, args, 0, args.length - 1);
+        String[] temp = message.split(" ");
+        String[] args = new String[temp.length - 1];
+        String commandName = temp[0];
+        System.arraycopy(temp, 1, args, 0, args.length);
         ICommand icommand = (ICommand) getCommands().get(commandName);
 
         try
