@@ -956,17 +956,56 @@
          ArrayList arraylist = new ArrayList();
  
          if (par2Str.startsWith("/"))
-@@ -930,6 +1200,9 @@
+@@ -930,6 +1200,48 @@
  
              return arraylist;
          }
 +        */
-+        return this.server.tabComplete(par1ICommandSender, par2Str);
++        //return this.server.tabComplete(par1ICommandSender, par2Str);
 +        // CraftBukkit end
++
++        // MCPC+ start -- allow vanilla and bukkit command completion
++        java.util.HashSet arraylist = new java.util.HashSet(); // use a set here to avoid duplicates
++
++        if (par2Str.startsWith("/")) {
++            par2Str = par2Str.substring(1);
++            boolean flag = !par2Str.contains(" ");
++            List list = this.commandManager.getPossibleCommands(par1ICommandSender, par2Str);
++
++            if (list != null) {
++                java.util.Iterator iterator = list.iterator();
++
++                while (iterator.hasNext()) {
++                    String s1 = (String) iterator.next();
++
++                    if (flag) {
++                        arraylist.add("/" + s1);
++                    } else {
++                        arraylist.add(s1);
++                    }
++                }
++            }
++        } else {
++            String[] astring = par2Str.split(" ", -1);
++            String s2 = astring[astring.length - 1];
++            String[] astring1 = this.serverConfigManager.getAllUsernames();
++            int i = astring1.length;
++
++            for (int j = 0; j < i; ++j) {
++                String s3 = astring1[j];
++
++                if (net.minecraft.command.CommandBase.doesStringStartWith(s2, s3)) {
++                    arraylist.add(s3);
++                }
++            }
++        }
++        arraylist.addAll(this.server.tabComplete(par1ICommandSender, par2Str)); // Add craftbukkit commands
++        return new ArrayList(arraylist);
++        // MCPC+ end
      }
  
      /**
-@@ -1037,9 +1310,11 @@
+@@ -1037,9 +1349,11 @@
  
      public void setDifficultyForAllWorlds(int par1)
      {
@@ -981,7 +1020,7 @@
  
              if (worldserver != null)
              {
-@@ -1102,17 +1377,18 @@
+@@ -1102,17 +1416,18 @@
          this.worldIsBeingDeleted = true;
          this.getActiveAnvilConverter().flushCache();
  
@@ -1004,7 +1043,7 @@
          this.initiateShutdown();
      }
  
-@@ -1143,22 +1419,23 @@
+@@ -1143,22 +1458,23 @@
          par1PlayerUsageSnooper.addData("avg_rec_packet_size", Integer.valueOf((int)MathHelper.average(this.receivedPacketSizeArray)));
          int i = 0;
  
@@ -1044,7 +1083,7 @@
          }
  
          par1PlayerUsageSnooper.addData("worlds", Integer.valueOf(i));
-@@ -1192,7 +1469,7 @@
+@@ -1192,7 +1508,7 @@
  
      public boolean isServerInOnlineMode()
      {
@@ -1053,7 +1092,7 @@
      }
  
      public void setOnlineMode(boolean par1)
-@@ -1285,9 +1562,11 @@
+@@ -1285,9 +1601,11 @@
       */
      public void setGameType(EnumGameType par1EnumGameType)
      {
@@ -1068,7 +1107,7 @@
          }
      }
  
-@@ -1335,7 +1614,7 @@
+@@ -1335,7 +1653,7 @@
  
      public World getEntityWorld()
      {
@@ -1077,7 +1116,7 @@
      }
  
      /**
-@@ -1391,121 +1670,250 @@
+@@ -1391,121 +1709,250 @@
      @SideOnly(Side.SERVER)
      public static void main(String[] par0ArrayOfStr)
      {
