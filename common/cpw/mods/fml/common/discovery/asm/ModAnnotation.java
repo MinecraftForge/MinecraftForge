@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -52,7 +52,7 @@ public class ModAnnotation
         this.asmType = asmType;
         this.member = member;
     }
-    
+
     public ModAnnotation(AnnotationType type, Type asmType, ModAnnotation parent)
     {
         this.type = type;
@@ -101,12 +101,12 @@ public class ModAnnotation
             values.put(key, value);
         }
     }
-    
+
     public void addEnumProperty(String key, String enumName, String value)
     {
         values.put(key, new EnumHolder(enumName, value));
     }
-    
+
     public void endArray()
     {
         values.put(arrayName, arrayList);
@@ -114,6 +114,11 @@ public class ModAnnotation
     }
     public ModAnnotation addChildAnnotation(String name, String desc)
     {
-        return new ModAnnotation(AnnotationType.SUBTYPE, Type.getType(desc), this);
+        ModAnnotation child = new ModAnnotation(AnnotationType.SUBTYPE, Type.getType(desc), this);
+        if (arrayList != null)
+        {
+            arrayList.add(child.getValues());
+        }
+        return child;
     }
 }
