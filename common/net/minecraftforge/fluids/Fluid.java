@@ -106,6 +106,12 @@ public class Fluid
 
     public Fluid setUnlocalizedName(String unlocalizedName)
     {
+        this.unlocalizedName = "fluid." + unlocalizedName;
+        return this;
+    }
+
+    public Fluid setUnlocalizedNameWithoutPrefix(String unlocalizedName)
+    {
         this.unlocalizedName = unlocalizedName;
         return this;
     }
