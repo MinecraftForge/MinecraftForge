@@ -22,13 +22,13 @@ public class FakePlayerFactory
      * Get a fake player with a given username
      */
     public static FakePlayer get(World world, String username)
-     {
+    {
         if (!fakePlayers.containsKey(username))
         {
             FakePlayer fakePlayer = new FakePlayer(world, username);
             fakePlayers.put(username, fakePlayer);
         }
-
+        
         return fakePlayers.get(username);
-     }
+    }
 }
