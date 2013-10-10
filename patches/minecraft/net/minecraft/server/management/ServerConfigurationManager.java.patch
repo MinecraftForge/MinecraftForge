@@ -428,7 +428,7 @@
  
      /**
       * creates and returns a respawned player based on the provided PlayerEntity. Args are the PlayerEntityMP to
-@@ -392,80 +631,178 @@
+@@ -392,80 +631,176 @@
       */
      public EntityPlayerMP respawnPlayer(EntityPlayerMP par1EntityPlayerMP, int par2, boolean par3)
      {
@@ -639,10 +639,8 @@
          par1EntityPlayerMP.dimension = par2;
          WorldServer worldserver1 = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
 +        // MCPC+ start - handle chunk requests for mods that call this method directly such as Twilight Forest.
-+        if (!worldserver1.getServer().getLoadChunkOnRequest())
-+        {
-+            worldserver1.theChunkProviderServer.loadChunkOnProvideRequest = true;
-+        }
++        boolean before = worldserver1.theChunkProviderServer.loadChunkOnProvideRequest;
++        worldserver1.theChunkProviderServer.loadChunkOnProvideRequest = true;
 +        // MCPC+ end
          par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(par1EntityPlayerMP.dimension, (byte)par1EntityPlayerMP.worldObj.difficultySetting, worldserver1.getWorldInfo().getTerrainType(), worldserver1.getHeight(), par1EntityPlayerMP.theItemInWorldManager.getGameType()));
          worldserver.removePlayerEntityDangerously(par1EntityPlayerMP);
@@ -652,15 +650,12 @@
          this.func_72375_a(par1EntityPlayerMP, worldserver);
          par1EntityPlayerMP.playerNetServerHandler.setPlayerLocation(par1EntityPlayerMP.posX, par1EntityPlayerMP.posY, par1EntityPlayerMP.posZ, par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
          par1EntityPlayerMP.theItemInWorldManager.setWorld(worldserver1);
-@@ -480,6 +817,107 @@
+@@ -480,6 +815,95 @@
          }
  
          GameRegistry.onPlayerChangedDimension(par1EntityPlayerMP);
 +        // MCPC+ start - handle chunk requests for mods that call this method directly such as Twilight Forest.
-+        if (!worldserver1.getServer().getLoadChunkOnRequest())
-+        {
-+            worldserver1.theChunkProviderServer.loadChunkOnProvideRequest = false;
-+        }
++        worldserver1.theChunkProviderServer.loadChunkOnProvideRequest = before;
 +        // MCPC+ end
 +    }
 +
@@ -736,19 +731,10 @@
 +
 +        exitWorld = ((CraftWorld) exit.getWorld()).getHandle();
 +        Vector velocity = entityplayermp.getBukkitEntity().getVelocity();
-+        // MCPC+ start - if we are force allowing all chunk requests, avoid access to loadChunkOnProvideRequest
-+        if (exitWorld.getServer().getLoadChunkOnRequest())
-+        {
-+            exitWorld.getDefaultTeleporter().adjustExit(entityplayermp, exit, velocity);
-+        }
-+        else 
-+        {
-+            boolean before = exitWorld.theChunkProviderServer.loadChunkOnProvideRequest;
-+            exitWorld.theChunkProviderServer.loadChunkOnProvideRequest = true;
-+            exitWorld.getDefaultTeleporter().adjustExit(entityplayermp, exit, velocity); // Should be getTravelAgent
-+            exitWorld.theChunkProviderServer.loadChunkOnProvideRequest = before;
-+        }
-+        // MCPC+ end
++        boolean before = exitWorld.theChunkProviderServer.loadChunkOnProvideRequest;
++        exitWorld.theChunkProviderServer.loadChunkOnProvideRequest = true;
++        exitWorld.getDefaultTeleporter().adjustExit(entityplayermp, exit, velocity); // Should be getTravelAgent
++        exitWorld.theChunkProviderServer.loadChunkOnProvideRequest = before;
 +        this.moveToWorld(entityplayermp, exitWorld.provider.dimensionId, true, exit, false); // Vanilla doesn't check for suffocation when handling portals, so neither should we
 +
 +        if (entityplayermp.motionX != velocity.getX() || entityplayermp.motionY != velocity.getY() || entityplayermp.motionZ != velocity.getZ())
@@ -760,7 +746,7 @@
      }
  
      /**
-@@ -487,38 +925,25 @@
+@@ -487,38 +911,25 @@
       */
      public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer)
      {
@@ -812,7 +798,7 @@
          {
              ChunkCoordinates chunkcoordinates;
  
-@@ -555,7 +980,7 @@
+@@ -555,7 +966,7 @@
                  par4WorldServer.spawnEntityInWorld(par1Entity);
                  par1Entity.setLocationAndAngles(d0, par1Entity.posY, d1, par1Entity.rotationYaw, par1Entity.rotationPitch);
                  par4WorldServer.updateEntityWithOptionalForce(par1Entity, false);
@@ -821,7 +807,7 @@
              }
  
              par3WorldServer.theProfiler.endSection();
-@@ -564,6 +989,118 @@
+@@ -564,6 +975,118 @@
          par1Entity.setWorld(par4WorldServer);
      }
  
@@ -940,7 +926,7 @@
      /**
       * sends 1 player per tick, but only sends a player once every 600 ticks
       */
-@@ -574,12 +1111,33 @@
+@@ -574,12 +1097,33 @@
              this.playerPingIndex = 0;
          }
  
@@ -980,7 +966,7 @@
  
      /**
       * sends a packet to all players
-@@ -659,6 +1217,15 @@
+@@ -659,6 +1203,15 @@
      public void addOp(String par1Str)
      {
          this.ops.add(par1Str.toLowerCase());
@@ -996,7 +982,7 @@
      }
  
      /**
-@@ -667,6 +1234,15 @@
+@@ -667,6 +1220,15 @@
      public void removeOp(String par1Str)
      {
          this.ops.remove(par1Str.toLowerCase());
@@ -1012,7 +998,7 @@
      }
  
      /**
-@@ -683,7 +1259,8 @@
+@@ -683,7 +1245,8 @@
       */
      public boolean isPlayerOpped(String par1Str)
      {
@@ -1022,7 +1008,7 @@
      }
  
      public EntityPlayerMP getPlayerForUsername(String par1Str)
-@@ -857,6 +1434,13 @@
+@@ -857,6 +1420,13 @@
          {
              EntityPlayerMP entityplayermp = (EntityPlayerMP)this.playerEntityList.get(j);
  
@@ -1036,7 +1022,7 @@
              if (entityplayermp != par1EntityPlayer && entityplayermp.dimension == par10)
              {
                  double d4 = par2 - entityplayermp.posX;
-@@ -925,7 +1509,7 @@
+@@ -925,7 +1495,7 @@
  
          if (par2WorldServer.isRaining())
          {
@@ -1045,7 +1031,7 @@
          }
      }
  
-@@ -935,7 +1519,7 @@
+@@ -935,7 +1505,7 @@
      public void syncPlayerInventory(EntityPlayerMP par1EntityPlayerMP)
      {
          par1EntityPlayerMP.sendContainerToPlayer(par1EntityPlayerMP.inventoryContainer);
@@ -1054,7 +1040,7 @@
          par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet16BlockItemSwitch(par1EntityPlayerMP.inventory.currentItem));
      }
  
-@@ -960,7 +1544,10 @@
+@@ -960,7 +1530,10 @@
       */
      public String[] getAvailablePlayerDat()
      {
@@ -1066,7 +1052,7 @@
      }
  
      public boolean isWhiteListEnabled()
-@@ -1049,7 +1636,16 @@
+@@ -1049,7 +1622,16 @@
      {
          while (!this.playerEntityList.isEmpty())
          {

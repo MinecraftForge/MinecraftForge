@@ -818,7 +818,7 @@
          }
      }
  
-@@ -2339,36 +2814,71 @@
+@@ -2339,36 +2814,62 @@
          {
              this.worldObj.theProfiler.startSection("changeDimension");
              MinecraftServer minecraftserver = MinecraftServer.getServer();
@@ -874,19 +874,10 @@
 -            minecraftserver.getConfigurationManager().transferEntityToWorld(this, j, worldserver, worldserver1);
 +            // CraftBukkit start - Ensure chunks are loaded in case TravelAgent is not used which would initially cause chunks to load during find/create
 +            // minecraftserver.getPlayerList().a(this, j, worldserver, worldserver1);
-+            // MCPC+ start - if we are force allowing all chunk requests, avoid access to loadChunkOnProvideRequest
-+            if (worldserver1.getServer().getLoadChunkOnRequest())
-+            {
-+                worldserver1.getMinecraftServer().getConfigurationManager().repositionEntity(this, exit, portal);
-+            }
-+            else 
-+            {
-+                boolean before = worldserver1.theChunkProviderServer.loadChunkOnProvideRequest;
-+                worldserver1.theChunkProviderServer.loadChunkOnProvideRequest = true;
-+                worldserver1.getMinecraftServer().getConfigurationManager().repositionEntity(this, exit, portal);
-+                worldserver1.theChunkProviderServer.loadChunkOnProvideRequest = before;
-+            }
-+            // MCPC+ end
++            boolean before = worldserver1.theChunkProviderServer.loadChunkOnProvideRequest;  // MCPC+ start - load chunks on provide request
++            worldserver1.theChunkProviderServer.loadChunkOnProvideRequest = true;
++            worldserver1.getMinecraftServer().getConfigurationManager().repositionEntity(this, exit, portal);
++            worldserver1.theChunkProviderServer.loadChunkOnProvideRequest = before; // MCPC+ end
 +            // CraftBukkit end
              this.worldObj.theProfiler.endStartSection("reloading");
              Entity entity = EntityList.createEntityByName(EntityList.getEntityString(this), worldserver1);
@@ -910,7 +901,7 @@
              }
  
              this.isDead = true;
-@@ -2385,7 +2895,7 @@
+@@ -2385,7 +2886,7 @@
       */
      public float getBlockExplosionResistance(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
      {
@@ -919,7 +910,7 @@
      }
  
      public boolean shouldExplodeBlock(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
-@@ -2451,4 +2961,170 @@
+@@ -2451,4 +2952,170 @@
      {
          return this.getEntityName();
      }

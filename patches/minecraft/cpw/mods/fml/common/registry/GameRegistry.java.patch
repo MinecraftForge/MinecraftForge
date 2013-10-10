@@ -116,7 +116,22 @@
      }
  
      /**
-@@ -148,6 +227,7 @@
+@@ -97,11 +176,14 @@
+         long zSeed = fmlRandom.nextLong() >> 2 + 1L;
+         long chunkSeed = (xSeed * chunkX + zSeed * chunkZ) ^ worldSeed;
+ 
++        boolean before = ((net.minecraft.world.WorldServer)world).theChunkProviderServer.loadChunkOnProvideRequest; // MCPC+ store value
++        ((net.minecraft.world.WorldServer)world).theChunkProviderServer.loadChunkOnProvideRequest = true; // MCPC+ load chunks on provide requests
+         for (IWorldGenerator generator : worldGenerators)
+         {
+             fmlRandom.setSeed(chunkSeed);
+             generator.generate(fmlRandom, chunkX, chunkZ, world, chunkGenerator, chunkProvider);
+         }
++        ((net.minecraft.world.WorldServer)world).theChunkProviderServer.loadChunkOnProvideRequest = before; // MCPC+ reset
+     }
+ 
+     /**
+@@ -148,6 +230,7 @@
       */
      public static void registerItem(net.minecraft.item.Item item, String name, String modId)
      {
@@ -124,7 +139,7 @@
          GameData.setName(item, name, modId);
      }
  
-@@ -235,9 +315,37 @@
+@@ -235,9 +318,37 @@
          blockRegistry.put(Loader.instance().activeModContainer(), (BlockProxy) block);
      }
  
@@ -163,7 +178,7 @@
      }
  
      public static IRecipe addShapedRecipe(ItemStack output, Object... params)
-@@ -247,7 +355,8 @@
+@@ -247,7 +358,8 @@
  
      public static void addShapelessRecipe(ItemStack output, Object... params)
      {
@@ -173,7 +188,7 @@
      }
  
      public static void addRecipe(IRecipe recipe)
-@@ -257,8 +366,29 @@
+@@ -257,8 +369,29 @@
  
      public static void addSmelting(int input, ItemStack output, float xp)
      {
@@ -205,7 +220,7 @@
  
      public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id)
      {
-@@ -381,6 +511,11 @@
+@@ -381,6 +514,11 @@
              try
              {
                  tracker.onPlayerChangedDimension(player);
@@ -217,7 +232,7 @@
              }
              catch (Exception e)
              {
-@@ -433,7 +568,8 @@
+@@ -433,7 +571,8 @@
  	 */
  	public static void registerCustomItemStack(String name, ItemStack itemStack)
  	{

@@ -99,7 +99,6 @@ public class ForgeChunkManager
     private static int dormantChunkCacheSize;
 
     private static Set<String> warnedMods = Sets.newHashSet();
-    private static boolean isForceLoadingChunk = false; // MCPC+ - prevents forceChunk from getting stuck in loop
     /**
      * All mods requiring chunkloading need to implement this to handle the
      * re-registration of chunk tickets at world loading time
@@ -409,12 +408,6 @@ public class ForgeChunkManager
 
         if (chunkLoaderData.exists() && chunkLoaderData.isFile())
         {
-            // MCPC+ start
-            if (!worldServer.getServer().getLoadChunkOnRequest())
-            {
-                worldServer.theChunkProviderServer.loadChunkOnProvideRequest = true;
-            }
-            // MCPC+ end
             ArrayListMultimap<String, Ticket> loadedTickets = ArrayListMultimap.<String, Ticket>create();
             Map<String,ListMultimap<String,Ticket>> playerLoadedTickets = Maps.newHashMap();
             NBTTagCompound forcedChunkData;
@@ -502,7 +495,7 @@ public class ForgeChunkManager
             }
             pendingEntities.clear();
             // send callbacks
-            /*for (String modId : loadedTickets.keySet())
+            for (String modId : loadedTickets.keySet())
             {
                 LoadingCallback loadingCallback = callbacks.get(modId);
                 if (loadingCallback == null)
@@ -523,7 +516,7 @@ public class ForgeChunkManager
                 }
                 ForgeChunkManager.tickets.get(world).putAll(modId, tickets);
                 loadingCallback.ticketsLoaded(ImmutableList.copyOf(tickets), world);
-            }*/
+            }
             for (String modId : playerLoadedTickets.keySet())
             {
                 LoadingCallback loadingCallback = callbacks.get(modId);
@@ -541,12 +534,6 @@ public class ForgeChunkManager
                 ForgeChunkManager.tickets.get(world).putAll("Forge", tickets.values());
                 loadingCallback.ticketsLoaded(ImmutableList.copyOf(tickets.values()), world);
             }
-            // MCPC+ start
-            if (!worldServer.getServer().getLoadChunkOnRequest())
-            {
-                worldServer.theChunkProviderServer.loadChunkOnProvideRequest = false;
-            }
-            // MCPC+ end
         }
     }
 
@@ -732,7 +719,7 @@ public class ForgeChunkManager
      */
     public static void forceChunk(Ticket ticket, ChunkCoordIntPair chunk)
     {
-        if (ticket == null || chunk == null || isForceLoadingChunk)
+        if (ticket == null || chunk == null)
         {
             return;
         }
@@ -745,17 +732,7 @@ public class ForgeChunkManager
             FMLLog.severe("The mod %s attempted to force load a chunk with an invalid ticket. This is not permitted.", ticket.modId);
             return;
         }
-
-        // MCPC+ start - guarantee forced chunks are loaded
-        if (!getPersistentChunksFor(ticket.world).containsKey(chunk) && !ticket.world.getChunkProvider().chunkExists(chunk.chunkXPos, chunk.chunkZPos))
-        {
-            System.out.println("Chunk @ " + chunk.chunkXPos + ", " + chunk.chunkZPos + " was NOT loaded, forcing load...");
-            isForceLoadingChunk = true;
-            Chunk loadedChunk = ticket.world.getChunkProvider().loadChunk(chunk.chunkXPos, chunk.chunkZPos);
-            isForceLoadingChunk = false;
-        }
         ticket.requestedChunks.add(chunk);
-        // MCPC+ end
         MinecraftForge.EVENT_BUS.post(new ForceChunkEvent(ticket, chunk));
 
         ImmutableSetMultimap<ChunkCoordIntPair, Ticket> newMap = ImmutableSetMultimap.<ChunkCoordIntPair,Ticket>builder().putAll(forcedChunks.get(ticket.world)).put(chunk, ticket).build();

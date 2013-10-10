@@ -14,7 +14,7 @@
  import cpw.mods.fml.common.registry.GameRegistry;
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
-@@ -23,26 +28,43 @@
+@@ -23,29 +28,48 @@
  import net.minecraft.world.chunk.Chunk;
  import net.minecraft.world.chunk.EmptyChunk;
  import net.minecraft.world.chunk.IChunkProvider;
@@ -59,6 +59,7 @@
 -    private List loadedChunks = new ArrayList();
 -    private WorldServer worldObj;
 +    public boolean loadChunkOnProvideRequest = FMLCommonHandler.instance().getMinecraftServerInstance().server.getLoadChunkOnRequest(); // MCPC+ - if true, allows mods to force load chunks. to disable, set load-chunk-on-request in bukkit.yml to false
++    public int initialTick; // MCPC+ counter to keep track of when this loader was created
 +    public LongObjectHashMap<Chunk> loadedChunkHashMap = new LongObjectHashMap<Chunk>();
 +    public List loadedChunks = new ArrayList(); // MCPC+  vanilla compatibility
 +    public WorldServer worldObj;
@@ -66,7 +67,11 @@
  
      public ChunkProviderServer(WorldServer par1WorldServer, IChunkLoader par2IChunkLoader, IChunkProvider par3IChunkProvider)
      {
-@@ -57,7 +79,7 @@
++        this.initialTick = MinecraftServer.currentTick; // MCPC+ keep track of when the loader was created
+         this.defaultEmptyChunk = new EmptyChunk(par1WorldServer, 0, 0);
+         this.worldObj = par1WorldServer;
+         this.currentChunkLoader = par2IChunkLoader;
+@@ -57,7 +81,7 @@
       */
      public boolean chunkExists(int par1, int par2)
      {
@@ -75,11 +80,12 @@
      }
  
      /**
-@@ -66,21 +88,37 @@
+@@ -66,21 +90,38 @@
       */
      public void unloadChunksIfNotNearSpawn(int par1, int par2)
      {
 -        if (this.worldObj.provider.canRespawnHere())
++        if (this.worldObj.getPersistentChunks().containsKey(new ChunkCoordIntPair(par1, par2))) return; // MCPC+ don't unload persistent chunks (keeps from saving chunks that don't need it yet)
 +        if ((this.worldObj.provider.canRespawnHere() && DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId)) || !(this.worldObj.keepSpawnInMemory)) // MCPC+ Moved 'this.world.keepSpawnInMemory'
          {
              ChunkCoordinates chunkcoordinates = this.worldObj.getSpawnPoint();
@@ -117,7 +123,7 @@
          }
      }
  
-@@ -89,7 +127,7 @@
+@@ -89,7 +130,7 @@
       */
      public void unloadAllChunks()
      {
@@ -126,7 +132,7 @@
  
          while (iterator.hasNext())
          {
-@@ -98,18 +136,46 @@
+@@ -98,18 +139,46 @@
          }
      }
  
@@ -177,7 +183,7 @@
  
              if (chunk == null)
              {
-@@ -121,31 +187,55 @@
+@@ -121,31 +190,55 @@
                  {
                      try
                      {
@@ -243,7 +249,7 @@
          return chunk;
      }
  
-@@ -155,14 +245,32 @@
+@@ -155,14 +248,32 @@
       */
      public Chunk provideChunk(int par1, int par2)
      {
@@ -251,7 +257,7 @@
 -        return chunk == null ? (!this.worldObj.findingSpawnPoint && !this.loadChunkOnProvideRequest ? this.defaultEmptyChunk : this.loadChunk(par1, par2)) : chunk;
 +        // CraftBukkit start
 +        Chunk chunk = (Chunk) this.loadedChunkHashMap.get(LongHash.toLong(par1, par2));
-+        chunk = chunk == null ? (!this.worldObj.findingSpawnPoint && !this.loadChunkOnProvideRequest ? this.defaultEmptyChunk : this.loadChunk(par1, par2)) : chunk;
++        chunk = chunk == null ? (!this.worldObj.findingSpawnPoint && !this.loadChunkOnProvideRequest && !MinecraftServer.callingForgeTick && (MinecraftServer.currentTick - initialTick > 100) ? this.defaultEmptyChunk : this.loadChunk(par1, par2)) : chunk; //MCPC+ handle forge server tick events and load the chunk within 5 seconds of the world being loaded (for chunk loaders)
 +
 +        if (chunk == this.defaultEmptyChunk)
 +        {
@@ -279,7 +285,7 @@
      {
          if (this.currentChunkLoader == null)
          {
-@@ -197,7 +305,7 @@
+@@ -197,7 +308,7 @@
      /**
       * used by saveChunks, but catches any exceptions if the save fails.
       */
@@ -288,7 +294,7 @@
      {
          if (this.currentChunkLoader != null)
          {
-@@ -215,7 +323,7 @@
+@@ -215,7 +326,7 @@
      /**
       * used by saveChunks, but catches any exceptions if the save fails.
       */
@@ -297,7 +303,7 @@
      {
          if (this.currentChunkLoader != null)
          {
-@@ -224,14 +332,16 @@
+@@ -224,14 +335,16 @@
                  par1Chunk.lastSaveTime = this.worldObj.getTotalWorldTime();
                  this.currentChunkLoader.saveChunk(this.worldObj, par1Chunk);
              }
@@ -320,7 +326,7 @@
          }
      }
  
-@@ -249,7 +359,27 @@
+@@ -249,7 +362,27 @@
              if (this.currentChunkProvider != null)
              {
                  this.currentChunkProvider.populate(par1IChunkProvider, par2, par3);
@@ -349,7 +355,7 @@
                  chunk.setChunkModified();
              }
          }
-@@ -262,10 +392,13 @@
+@@ -262,10 +395,13 @@
      public boolean saveChunks(boolean par1, IProgressUpdate par2IProgressUpdate)
      {
          int i = 0;
@@ -367,7 +373,7 @@
  
              if (par1)
              {
-@@ -307,20 +440,50 @@
+@@ -307,20 +443,50 @@
      {
          if (!this.worldObj.canNotSave)
          {
@@ -429,7 +435,7 @@
  
              if (this.currentChunkLoader != null)
              {
-@@ -344,7 +507,7 @@
+@@ -344,7 +510,7 @@
       */
      public String makeString()
      {
@@ -438,7 +444,7 @@
      }
  
      /**
-@@ -365,7 +528,7 @@
+@@ -365,7 +531,7 @@
  
      public int getLoadedChunkCount()
      {
