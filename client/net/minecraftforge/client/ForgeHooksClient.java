@@ -7,6 +7,7 @@ import java.util.TreeSet;
 import javax.imageio.ImageIO;
 
 import net.minecraftforge.client.event.MouseEvent;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import org.lwjgl.LWJGLException;
@@ -33,6 +34,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
@@ -45,6 +47,8 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.ForgeDummyContainer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.RenderBlockFluid;
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
@@ -389,5 +393,21 @@ public class ForgeHooksClient
     {
         FluidRegistry.renderIdFluid = RenderingRegistry.getNextAvailableRenderId();
         RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
+    }
+    
+    public static void onPlayerDamageBlock(EntityPlayer player, PlayerControllerMP playerController, int x, int y, int z, int side)
+    {
+        if (!ForgeEventFactory.onPlayerInteract(player, Action.LEFT_CLICK_BLOCK, x, y, z, side).isCanceled())
+        {
+            playerController.onPlayerDamageBlock(x, y, z, side);
+        }
+    }
+
+    public static void clickBlock(EntityClientPlayerMP thePlayer, PlayerControllerMP playerController, int x, int y, int z, int side)
+    {
+        if (!ForgeEventFactory.onPlayerInteract(thePlayer, Action.LEFT_CLICK_BLOCK, x, y, z, side).isCanceled())
+        {
+            playerController.clickBlock(x, y, z, side);
+        }
     }
 }

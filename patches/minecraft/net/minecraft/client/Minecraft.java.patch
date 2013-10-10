@@ -68,7 +68,12 @@
          }
  
          if (par1GuiScreen instanceof GuiMainMenu)
-@@ -1301,7 +1320,7 @@
+@@ -1297,11 +1316,11 @@
+                 int j = this.objectMouseOver.blockX;
+                 int k = this.objectMouseOver.blockY;
+                 int l = this.objectMouseOver.blockZ;
+-                this.playerController.onPlayerDamageBlock(j, k, l, this.objectMouseOver.sideHit);
++                ForgeHooksClient.onPlayerDamageBlock(this.thePlayer, this.playerController, j, k, l, this.objectMouseOver.sideHit);
  
                  if (this.thePlayer.isCurrentToolAdventureModeExempt(j, k, l))
                  {
@@ -77,7 +82,14 @@
                      this.thePlayer.swingItem();
                  }
              }
-@@ -1367,7 +1386,8 @@
+@@ -1361,13 +1380,14 @@
+ 
+                 if (par1 == 0)
+                 {
+-                    this.playerController.clickBlock(j, k, l, this.objectMouseOver.sideHit);
++                    ForgeHooksClient.clickBlock(this.thePlayer, this.playerController, j, k, l, i1);
+                 }
+                 else
                  {
                      int j1 = itemstack != null ? itemstack.stackSize : 0;
  
