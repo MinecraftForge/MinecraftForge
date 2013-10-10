@@ -1,13 +1,28 @@
 --- ../src_base/minecraft/cpw/mods/fml/relauncher/FMLRelaunchLog.java
 +++ ../src_work/minecraft/cpw/mods/fml/relauncher/FMLRelaunchLog.java
-@@ -35,6 +35,7 @@
+@@ -35,7 +35,8 @@
  public class FMLRelaunchLog
  {
  
+-    private static class ConsoleLogWrapper extends Handler
 +    public static boolean useOnlyThisLogger = false; // MCPC+ - FML logger vs. CB logger
-     private static class ConsoleLogWrapper extends Handler
++    public static class ConsoleLogWrapper extends Handler // MCPC+ private -> public
      {
          @Override
+         public void publish(LogRecord record)
+@@ -67,9 +68,9 @@
+         }
+ 
+     }
+-    private static class ConsoleLogThread implements Runnable
+-    {
+-        static ConsoleHandler wrappedHandler = new ConsoleHandler();
++    public static class ConsoleLogThread implements Runnable // MCPC+ private -> public
++    {
++        public static ConsoleHandler wrappedHandler = new ConsoleHandler(); // MCPC+ private -> public
+         static LinkedBlockingQueue<LogRecord> recordQueue = new LinkedBlockingQueue<LogRecord>();
+         @Override
+         public void run()
 @@ -167,10 +168,15 @@
          log.myLog = Logger.getLogger("ForgeModLoader");
          LogWrapper.retarget(log.myLog);

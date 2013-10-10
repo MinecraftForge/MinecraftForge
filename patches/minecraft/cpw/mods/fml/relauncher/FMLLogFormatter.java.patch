@@ -23,3 +23,12 @@
  
      public String format(LogRecord record)
      {
+@@ -57,7 +67,7 @@
+         {
+             msg.append("[] ");
+         }
+-        msg.append(record.getMessage());
++        msg.append(formatMessage(record)); // MCPC+ use the message format;
+         msg.append(LINE_SEPARATOR);
+         Throwable thr = record.getThrown();
+ 

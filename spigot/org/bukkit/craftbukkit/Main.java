@@ -18,6 +18,7 @@ public class Main {
     public static YamlConfiguration configuration;
     public static File configFile;
     public static void main(String[] args) {
+        loadOptions(args);
         net.minecraft.server.MinecraftServer.main(args);
     }
 
