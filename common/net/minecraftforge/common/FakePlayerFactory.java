@@ -28,7 +28,7 @@ public class FakePlayerFactory
             FakePlayer fakePlayer = new FakePlayer(world, username);
             fakePlayers.put(username, fakePlayer);
         }
-        
+
         return fakePlayers.get(username);
     }
 }
