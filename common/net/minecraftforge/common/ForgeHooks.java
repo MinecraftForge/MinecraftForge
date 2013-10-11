@@ -401,6 +401,11 @@ public class ForgeHooks
         player.capturedDrops.clear();
         player.captureDrops = false;
 
+        if (ret == null)
+        {
+            return null;
+        }
+
         ItemTossEvent event = new ItemTossEvent(ret, player);
         if (MinecraftForge.EVENT_BUS.post(event))
         {
