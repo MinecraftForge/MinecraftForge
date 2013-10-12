@@ -1,0 +1,15 @@
+--- ../src_base/minecraft/net/minecraft/network/MemoryConnection.java
++++ ../src_work/minecraft/net/minecraft/network/MemoryConnection.java
+@@ -176,4 +176,12 @@
+             this.readPacketCache.add(par1Packet);
+         }
+     }
++    
++    /**
++     * Returns the socket for this paired connection.
++     */
++    public Socket getSocket() 
++	{
++		return this.pairedConnection.getSocket();
++	}
+ }

@@ -1,0 +1,9 @@
+--- ../src_base/minecraft/net/minecraft/network/INetworkManager.java
++++ ../src_work/minecraft/net/minecraft/network/INetworkManager.java
+@@ -53,4 +53,6 @@
+ 
+     @SideOnly(Side.CLIENT)
+     void closeConnections();
++
++	Socket getSocket();
+ }
