@@ -1,10 +1,164 @@
 --- ../src_base/minecraft/net/minecraft/client/model/ModelBase.java
 +++ ../src_work/minecraft/net/minecraft/client/model/ModelBase.java
-@@ -10,7 +10,6 @@
+@@ -1,23 +1,31 @@
+ package net.minecraft.client.model;
+ 
+-import cpw.mods.fml.relauncher.Side;
+-import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.ArrayList;
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Random;
++
++import net.minecraft.client.renderer.entity.Render;
++import net.minecraft.client.renderer.entity.RenderHorse;
++import net.minecraft.client.renderer.entity.RendererLivingEntity;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityLivingBase;
++import net.minecraft.entity.passive.EntityHorse;
++import net.minecraft.util.MathHelper;
  
 -@SideOnly(Side.CLIENT)
++/**
++ * Base class for a textured model. Most of its methods will be overridden by
++ * child classes.
++ */
  public abstract class ModelBase
  {
      public float onGround;
+     public boolean isRiding;
+ 
+     /**
+-     * This is a list of all the boxes (ModelRenderer.class) in the current model.
++     * This is a list of all the boxes (ModelRenderer.class) in the current
++     * model.
+      */
+     public List boxList = new ArrayList();
+     public boolean isChild = true;
+@@ -28,26 +36,115 @@
+     public int textureHeight = 32;
+ 
+     /**
+-     * Sets the models various rotation angles then renders the model.
++     * Sets the various rotation angles and other parameters of the model and
++     * its sub-parts, then renders it.
++     * <p>
++     * This method typically gets called from a corresponding {@link Render}'s
++     * doRender() method.
++     * 
++     * @param entity
++     *            The entity to be rendered. Only relevant if your rendering
++     *            depends on the state of the entity, for example what it is
++     *            holding or how hurt it is.
++     * 
++     * @param limbSwingPos
++     *            How much the limbs (arms and legs for humanoids, tentacles for
++     *            squids and so on) are to swing back and forth. This is
++     *            typically passed through the {@link MathHelper#cos(float)
++     *            MathHelper.cos()} or {@link MathHelper#sin(float)
++     *            MathHelper.sin()} methods to achieve "smooth" motion, though
++     *            any periodic function would do.
++     * 
++     * @param limbSwingAmount
++     *            How much the limbs can swing out at most. If your model
++     *            doesn't support variable swing distance, you can ignore this
++     *            argument, else it's typically used as a straight multiplier to
++     *            the relevant rotation angles of the "limbs".
++     * 
++     * @param age
++     *            The age of the entity, in ticks, at the point of rendering.
++     *            This is typically the (integer) age of the entity plus the
++     *            partial tick time, for smooth animation.
++     *            <p>
++     *            <i>Warning:</i> Don't rely on this argument to have any useful
++     *            or even roughly correct value for long-living entities. A
++     *            float has just 24 bits of precision; at 20 ticks per second,
++     *            that means that this value is only precise to a single tick in
++     *            just 9.7 days (2^24 / 20 seconds), at which point you're
++     *            better off using {@link Entity#ticksExisted
++     *            entity.ticksExisted} (this will run over and become negative
++     *            after 3.4 <i>years</i>). If you rely on this value for
++     *            animations, they can become "jerky" and problematic way
++     *            earlier than that, especially on high-end machines with good
++     *            frames per second.
++     * 
++     * @param headRotY
++     *            Rotation of the head along the model-local Y axis
++     *            (left-right), in degrees
++     * 
++     * @param headRotX
++     *            Rotation of the head along the model-local X axis (up-down),
++     *            in degrees
++     * 
++     * @param scale
++     *            Scale of the model. Most Minecraft models are designed to be
++     *            significantly bigger than they appear in the game and have to
++     *            be scaled down. A typical value for humanoid models is 1/16f.
++     * 
++     * @see Render#doRender(Entity, double, double, double, float, float)
+      */
+-    public void render(Entity par1Entity, float par2, float par3, float par4, float par5, float par6, float par7) {}
++    public void render(Entity entity, float limbSwingPos, float limbSwingAmount, float age, float headRotY, float headRotX, float scale) {}
+ 
+     /**
+-     * Sets the model's various rotation angles. For bipeds, par1 and par2 are used for animating the movement of arms
+-     * and legs, where par1 represents the time(so that arms and legs swing back and forth) and par2 represents how
+-     * "far" arms and legs can swing at most.
++     * Sets the model's various rotation angles and assorted animation
++     * parameters.. For bipeds, limbSwingPos and limbSwingAmount are used for
++     * animating the movement of arms and legs, where limbSwingPos represents
++     * the time(so that arms and legs swing back and forth) and limbSwingAmount
++     * represents how "far" arms and legs can swing at most.
++     * <p>
++     * This method is usually called locally from
++     * {@link #render(Entity, float, float, float, float, float, float)
++     * render()} and its arguments the same, just in different order; see there
++     * for details. There are two exceptions to that rule:
++     * <ul>
++     * <li>{@link RendererLivingEntity}'s
++     * {@link RendererLivingEntity#renderModel(EntityLivingBase, float, float, float, float, float, float)
++     * renderModel()} method calls this method directly by-passing the render()
++     * call if the living is invisible, thus making sure items held in hand or
++     * armor worn still gets shown in the right place in respect to the model.
++     * <li>{@link RenderHorse} does the same in
++     * {@link RenderHorse#func_110846_a(EntityHorse, float, float, float, float, float, float)
++     * func_110846()} for invisible horses.
++     * </ul>
++     * 
++     * @see #render(Entity, float, float, float, float, float, float)
+      */
+-    public void setRotationAngles(float par1, float par2, float par3, float par4, float par5, float par6, Entity par7Entity) {}
++    public void setRotationAngles(float limbSwingPos, float limbSwingAmount, float age, float headRotY, float headRotX, float scale, Entity entity) {}
+ 
+     /**
+-     * Used for easily adding entity-dependent animations. The second and third float params here are the same second
+-     * and third as in the setRotationAngles method.
++     * Used for easily adding entity-dependent animations. The second and third
++     * float params here are the same second and third as in the
++     * setRotationAngles method.
+      */
+     public void setLivingAnimations(EntityLivingBase par1EntityLivingBase, float par2, float par3, float par4) {}
+ 
+-    public ModelRenderer getRandomModelBox(Random par1Random)
++    /**
++     * Get an unweighted random part of the model. Used by
++     * {@link RenderLivingEntity#renderArrowsStuckInEntity(EntityLivingBase, float)
++     * RenderLivingEntity.renderArrowsStuckInEntity()}, which then picks one of
++     * the ModelRenderer's cubes at random using the same algorithm to pick a
++     * part at random in which an arrow will be "stuck". Since the random choice
++     * is unweighted, the tiniest cube will have on average as many arrows in it
++     * as the biggest one.
++     * 
++     * @param rnd
++     *            A random number generator
++     * @return A {@link ModelRenderer} representing one of the sub-parts this
++     *         model is made out of.
++     */
++    public ModelRenderer getRandomModelBox(Random rnd)
+     {
+-        return (ModelRenderer)this.boxList.get(par1Random.nextInt(this.boxList.size()));
++        return (ModelRenderer)this.boxList.get(rnd.nextInt(this.boxList.size()));
+     }
+ 
+     protected void setTextureOffset(String par1Str, int par2, int par3)
