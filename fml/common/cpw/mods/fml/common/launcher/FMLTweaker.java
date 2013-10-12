@@ -22,6 +22,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.ObjectArrays;
+import com.google.common.primitives.Ints;
 
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
 
@@ -37,6 +38,7 @@ public class FMLTweaker implements ITweaker {
     private Map<String, String> launchArgs;
     private List<String> standaloneArgs;
     private static URI jarLocation;
+    private List<Integer> sortOrderValues = Lists.newArrayList();
 
     @Override
     public void acceptOptions(List<String> args, File gameDir, File assetsDir, String profile)
@@ -156,10 +158,24 @@ public class FMLTweaker implements ITweaker {
         return jarLocation;
     }
 
-    public void injectCascadingTweak(String tweakClassName)
+    public void injectCascadingTweak(String tweakClassName, Integer sortingOrder)
     {
         List<String> tweakClasses = (List<String>) Launch.blackboard.get("TweakClasses");
-        tweakClasses.add(tweakClassName);
+        if (tweakClasses.size() != sortOrderValues.size())
+        {
+            throw new RuntimeException("Sort ordering mismatch!");
+        }
+        int i = 0;
+        for (i = 0; i < sortOrderValues.size(); i++)
+        {
+            Integer sort = sortOrderValues.get(i);
+            if (sort.compareTo(sortingOrder) > 0)
+            {
+                break;
+            }
+        }
+        tweakClasses.add(i, tweakClassName);
+        sortOrderValues.add(i, sortingOrder);
     }
 
 }

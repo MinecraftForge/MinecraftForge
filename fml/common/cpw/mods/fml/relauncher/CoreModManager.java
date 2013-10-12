@@ -37,6 +37,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.ObjectArrays;
+import com.google.common.primitives.Ints;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.launcher.FMLTweaker;
@@ -200,7 +201,9 @@ public class CoreModManager
             if (cascadedTweaker != null)
             {
                 FMLRelaunchLog.info("Loading tweaker %s from %s", cascadedTweaker, coreMod.getName());
-                handleCascadingTweak(coreMod, jar, cascadedTweaker, classLoader);
+                Integer sortOrder = Ints.tryParse(mfAttributes.getValue("TweakOrder"));
+                sortOrder = (sortOrder == null ? Integer.valueOf(0) : sortOrder);
+                handleCascadingTweak(coreMod, jar, cascadedTweaker, classLoader, sortOrder);
                 loadedCoremods.add(coreMod.getName());
                 continue;
             }
@@ -237,7 +240,7 @@ public class CoreModManager
     }
 
     private static Method ADDURL;
-    private static void handleCascadingTweak(File coreMod, JarFile jar, String cascadedTweaker, LaunchClassLoader classLoader)
+    private static void handleCascadingTweak(File coreMod, JarFile jar, String cascadedTweaker, LaunchClassLoader classLoader, Integer sortingOrder)
     {
         try
         {
@@ -249,7 +252,7 @@ public class CoreModManager
             }
             ADDURL.invoke(classLoader.getClass().getClassLoader(), coreMod.toURI().toURL());
             classLoader.addURL(coreMod.toURI().toURL());
-            CoreModManager.tweaker.injectCascadingTweak(cascadedTweaker);
+            CoreModManager.tweaker.injectCascadingTweak(cascadedTweaker, sortingOrder);
         }
         catch (Exception e)
         {
@@ -452,6 +455,6 @@ public class CoreModManager
         }
 
         Launch.blackboard.put("fml.deobfuscatedEnvironment", deobfuscatedEnvironment);
-        tweaker.injectCascadingTweak("cpw.mods.fml.common.launcher.FMLDeobfTweaker");
+        tweaker.injectCascadingTweak("cpw.mods.fml.common.launcher.FMLDeobfTweaker", Integer.valueOf(1000));
     }
 }
