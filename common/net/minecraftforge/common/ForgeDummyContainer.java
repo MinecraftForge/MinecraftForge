@@ -53,6 +53,7 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     public static boolean fullBoundingBoxLadders = false;
     public static double zombieSummonBaseChance = 0.1;
     public static int[] blendRanges = { 20, 15, 10, 5 };
+    public static float zombieBabyChance = 0.05f;
 
     public ForgeDummyContainer()
     {
@@ -148,6 +149,10 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
         prop = config.get(Configuration.CATEGORY_GENERAL, "zombieBaseSummonChance", 0.1);
         prop.comment = "Base zombie summoning spawn chance. Allows changing the bonus zombie summoning mechanic.";
         zombieSummonBaseChance = prop.getDouble(0.1);
+        
+        prop = config.get(Configuration.CATEGORY_GENERAL, "zombieBabyChance", 0.05);
+        prop.comment = "Chance that a zombie (or subclass) is a baby. Allows changing the zombie spawning mechanic.";
+        zombieBabyChance = (float) prop.getDouble(0.05);
         
         if (config.hasChanged())
         {
