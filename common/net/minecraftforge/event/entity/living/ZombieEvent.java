@@ -20,7 +20,7 @@ public class ZombieEvent extends EntityEvent {
     }
 
     @HasResult
-    public class SummonAidEvent extends ZombieEvent {
+    public static class SummonAidEvent extends ZombieEvent {
         /**
          * Populate this field to have a custom zombie instead of a normal zombie summoned
          */
