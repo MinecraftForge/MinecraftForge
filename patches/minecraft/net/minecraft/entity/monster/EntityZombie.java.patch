@@ -22,7 +22,7 @@
          if (par1EntityLivingData1 == null)
          {
 -            par1EntityLivingData1 = new EntityZombieGroupData(this, this.worldObj.rand.nextFloat() < 0.05F, this.worldObj.rand.nextFloat() < 0.05F, (EntityZombieINNER1)null);
-+            par1EntityLivingData1 = new EntityZombieGroupData(this, this.worldObj.rand.nextFloat() < 0.05F, this.worldObj.rand.nextFloat() < ForgeDummyContainer.zombieBabyChance, (EntityZombieINNER1)null);
++            par1EntityLivingData1 = new EntityZombieGroupData(this, this.worldObj.rand.nextFloat() < ForgeDummyContainer.zombieBabyChance, this.worldObj.rand.nextFloat() < 0.05F, (EntityZombieINNER1)null);
          }
  
          if (par1EntityLivingData1 instanceof EntityZombieGroupData)
