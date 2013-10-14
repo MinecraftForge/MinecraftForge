@@ -201,7 +201,7 @@ public class CoreModManager
             if (cascadedTweaker != null)
             {
                 FMLRelaunchLog.info("Loading tweaker %s from %s", cascadedTweaker, coreMod.getName());
-                Integer sortOrder = Ints.tryParse(mfAttributes.getValue("TweakOrder"));
+                Integer sortOrder = Ints.tryParse(Strings.nullToEmpty(mfAttributes.getValue("TweakOrder")));
                 sortOrder = (sortOrder == null ? Integer.valueOf(0) : sortOrder);
                 handleCascadingTweak(coreMod, jar, cascadedTweaker, classLoader, sortOrder);
                 loadedCoremods.add(coreMod.getName());
