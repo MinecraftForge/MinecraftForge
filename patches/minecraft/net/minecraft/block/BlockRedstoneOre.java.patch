@@ -1,0 +1,22 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockRedstoneOre.java
++++ ../src_work/minecraft/net/minecraft/block/BlockRedstoneOre.java
+@@ -116,11 +116,17 @@
+     {
+         super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, par7);
+ 
++    }
++    
++    @Override
++    public int getExpDrop(World par1World, int par5, int par7)
++    {
+         if (this.idDropped(par5, par1World.rand, par7) != this.blockID)
+         {
+             int j1 = 1 + par1World.rand.nextInt(5);
+-            this.dropXpOnBlockBreak(par1World, par2, par3, par4, j1);
+-        }
++            return j1;
++        }
++        return 0;
+     }
+ 
+     @SideOnly(Side.CLIENT)

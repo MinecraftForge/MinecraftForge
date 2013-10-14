@@ -3,9 +3,11 @@ package net.minecraftforge.event.world;
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.event.Cancelable;
 import net.minecraftforge.event.Event;
 
 public class BlockEvent extends Event {
@@ -53,5 +55,59 @@ public class BlockEvent extends Event {
             this.harvester = harvester;
         }
     }
+    
+    /**
+     * Event that is fired when an Block is about to be broken by a player
+     * Canceling this event will prevent the Block from being broken.
+     */
+    @Cancelable
+    public static class BreakEvent extends BlockEvent 
+    {
+        /** Reference to the Player who broke the block. If no player is available, use a EntityFakePlayer */
+        private final EntityPlayer player;
+        private int exp;
 
+        public BreakEvent(int x, int y, int z, World world, Block block, int blockMetadata, EntityPlayer player)
+        {
+            super(x, y, z, world, block, blockMetadata);
+            this.player = player;
+
+            if (block == null || !player.canHarvestBlock(block) || // Handle empty block or player unable to break block scenario
+                block.canSilkHarvest(world, player, x, y, z, blockMetadata) && EnchantmentHelper.getSilkTouchModifier(player)) // If the block is being silk harvested, the exp dropped is 0
+            {
+                this.exp = 0;
+            }
+            else
+            {
+                int meta = block.getDamageValue(world, x, y, z);
+                int bonusLevel = EnchantmentHelper.getFortuneModifier(player);
+                this.exp = block.getExpDrop(world, meta, bonusLevel);
+            }
+        }
+
+        public EntityPlayer getPlayer()
+        {
+            return player;
+        }
+        
+        /**
+         * Get the experience dropped by the block after the event has processed
+         *
+         * @return The experience to drop or 0 if the event was canceled
+         */
+        public int getExpToDrop()
+        {
+            return this.isCanceled() ? 0 : exp;
+        }
+
+        /**
+         * Set the amount of experience dropped by the block after the event has processed
+         *
+         * @param exp 1 or higher to drop experience, else nothing will drop
+         */
+        public void setExpToDrop(int exp)
+        {
+            this.exp = exp;
+        }
+    }
 }

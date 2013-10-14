@@ -1,16 +1,19 @@
 package net.minecraftforge.common;
 
-import net.minecraft.entity.player.EntityPlayer;
+import cpw.mods.fml.common.FMLCommonHandler;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemInWorldManager;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
 //Preliminary, simple Fake Player class 
-public class FakePlayer extends EntityPlayer
+public class FakePlayer extends EntityPlayerMP
 {
     public FakePlayer(World world, String name)
     {
-        super(world, name);
+        super(FMLCommonHandler.instance().getMinecraftServerInstance(), world, name, new ItemInWorldManager(world));
     }
 
     public void sendChatToPlayer(String s){}
