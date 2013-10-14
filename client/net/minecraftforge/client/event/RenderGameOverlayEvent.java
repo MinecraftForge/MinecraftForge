@@ -52,6 +52,11 @@ public class RenderGameOverlayEvent extends Event
         this.mouseY = parent.mouseY;
         this.type = type;
     }
+    
+    public ElementType getType()
+    {
+    	return type;
+    }
 
     public static class Pre extends RenderGameOverlayEvent
     {
