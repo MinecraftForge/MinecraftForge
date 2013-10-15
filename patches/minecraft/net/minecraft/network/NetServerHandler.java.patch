@@ -419,7 +419,7 @@
                  this.playerEntity.updateFlyingState(this.playerEntity.posY - d0, par1Packet10Flying.onGround);
              }
              else if (this.currentTicks % 20 == 0)
-@@ -388,20 +607,85 @@
+@@ -388,21 +607,86 @@
       */
      public void setPlayerLocation(double par1, double par3, double par5, float par7, float par8)
      {
@@ -483,6 +483,7 @@
 +        }
 +
          WorldServer worldserver = this.mcServer.worldServerForDimension(this.playerEntity.dimension);
+         this.playerEntity.func_143004_u();
  
          if (par1Packet14BlockDig.status == 4)
          {
@@ -510,7 +511,7 @@
              this.playerEntity.dropOneItem(false);
          }
          else if (par1Packet14BlockDig.status == 3)
-@@ -442,7 +726,10 @@
+@@ -443,7 +727,10 @@
                  double d2 = this.playerEntity.posZ - ((double)k + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
@@ -522,7 +523,7 @@
                  {
                      return;
                  }
-@@ -455,13 +742,24 @@
+@@ -456,13 +743,24 @@
  
              if (par1Packet14BlockDig.status == 0)
              {
@@ -547,7 +548,7 @@
                  }
              }
              else if (par1Packet14BlockDig.status == 2)
-@@ -488,6 +786,40 @@
+@@ -489,6 +787,40 @@
      public void handlePlace(Packet15Place par1Packet15Place)
      {
          WorldServer worldserver = this.mcServer.worldServerForDimension(this.playerEntity.dimension);
@@ -588,7 +589,7 @@
          ItemStack itemstack = this.playerEntity.inventory.getCurrentItem();
          boolean flag = false;
          int i = par1Packet15Place.getXPosition();
-@@ -502,7 +834,23 @@
+@@ -504,7 +836,23 @@
                  return;
              }
  
@@ -613,7 +614,7 @@
          }
          else if (par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit() - 1 && (par1Packet15Place.getDirection() == 1 || par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit()))
          {
-@@ -511,11 +859,16 @@
+@@ -513,11 +861,16 @@
          }
          else
          {
@@ -635,7 +636,7 @@
              flag = true;
          }
  
-@@ -568,11 +921,19 @@
+@@ -570,11 +923,19 @@
          {
              this.playerEntity.playerInventoryBeingManipulated = true;
              this.playerEntity.inventory.mainInventory[this.playerEntity.inventory.currentItem] = ItemStack.copyItemStack(this.playerEntity.inventory.mainInventory[this.playerEntity.inventory.currentItem]);
@@ -657,7 +658,7 @@
              {
                  this.sendPacketToPlayer(new Packet103SetSlot(this.playerEntity.openContainer.windowId, slot.slotNumber, this.playerEntity.inventory.getCurrentItem()));
              }
-@@ -581,9 +942,21 @@
+@@ -583,9 +944,21 @@
  
      public void handleErrorMessage(String par1Str, Object[] par2ArrayOfObj)
      {
@@ -681,7 +682,7 @@
          this.connectionClosed = true;
  
          if (this.mcServer.isSinglePlayer() && this.playerEntity.getCommandSenderName().equals(this.mcServer.getServerOwner()))
-@@ -599,6 +972,11 @@
+@@ -601,6 +974,11 @@
       */
      public void unexpectedPacket(Packet par1Packet)
      {
@@ -693,7 +694,7 @@
          this.mcServer.getLogAgent().logWarning(this.getClass() + " wasn\'t prepared to deal with a " + par1Packet.getClass());
          this.kickPlayerFromServer("Protocol error, unexpected packet");
      }
-@@ -623,6 +1001,19 @@
+@@ -625,6 +1003,19 @@
                  return;
              }
          }
@@ -713,7 +714,7 @@
  
          try
          {
-@@ -640,13 +1031,30 @@
+@@ -642,14 +1033,31 @@
  
      public void handleBlockItemSwitch(Packet16BlockItemSwitch par1Packet16BlockItemSwitch)
      {
@@ -736,6 +737,7 @@
 +
 +            // CraftBukkit end
              this.playerEntity.inventory.currentItem = par1Packet16BlockItemSwitch.id;
+             this.playerEntity.func_143004_u();
          }
          else
          {
@@ -744,7 +746,7 @@
          }
      }
  
-@@ -663,7 +1071,39 @@
+@@ -667,7 +1075,39 @@
  
              if (s.length() > 100)
              {
@@ -785,7 +787,7 @@
              }
              else
              {
-@@ -673,49 +1113,308 @@
+@@ -677,51 +1117,309 @@
                  {
                      if (!ChatAllowedCharacters.isAllowedCharacter(s.charAt(i)))
                      {
@@ -1076,7 +1078,8 @@
 +        {
 +            return;    // CraftBukkit
 +        }
-+
+         this.playerEntity.func_143004_u();
+ 
          if (par1Packet18Animation.animate == 1)
          {
 +            // CraftBukkit start - Raytrace to look for 'rogue armswings'
@@ -1115,7 +1118,7 @@
              this.playerEntity.swingItem();
          }
      }
-@@ -725,6 +1424,36 @@
+@@ -731,7 +1429,35 @@
       */
      public void handleEntityAction(Packet19EntityAction par1Packet19EntityAction)
      {
@@ -1124,7 +1127,7 @@
 +        {
 +            return;
 +        }
-+
+         this.playerEntity.func_143004_u();
 +        if (par1Packet19EntityAction.action == 1 || par1Packet19EntityAction.action == 2)
 +        {
 +            PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(this.getPlayerB(), par1Packet19EntityAction.action == 1);
@@ -1148,11 +1151,10 @@
 +        }
 +
 +        // CraftBukkit end
-+
+ 
          if (par1Packet19EntityAction.action == 1)
          {
-             this.playerEntity.setSneaking(true);
-@@ -774,35 +1503,93 @@
+@@ -782,36 +1508,94 @@
  
      public void handleUseEntity(Packet7UseEntity par1Packet7UseEntity)
      {
@@ -1163,6 +1165,7 @@
 +
          WorldServer worldserver = this.mcServer.worldServerForDimension(this.playerEntity.dimension);
          Entity entity = worldserver.getEntityByID(par1Packet7UseEntity.targetEntity);
+         this.playerEntity.func_143004_u();
  
 -        if (entity != null)
 -        {
@@ -1272,7 +1275,7 @@
                  }
              }
          }
-@@ -814,7 +1601,7 @@
+@@ -825,7 +1609,7 @@
          {
              if (this.playerEntity.playerConqueredTheEnd)
              {
@@ -1281,7 +1284,7 @@
              }
              else if (this.playerEntity.getServerForPlayer().getWorldInfo().isHardcoreModeEnabled())
              {
-@@ -838,7 +1625,7 @@
+@@ -849,7 +1633,7 @@
                      return;
                  }
  
@@ -1290,7 +1293,7 @@
              }
          }
      }
-@@ -860,14 +1647,449 @@
+@@ -871,16 +1655,449 @@
  
      public void handleCloseWindow(Packet101CloseWindow par1Packet101CloseWindow)
      {
@@ -1321,7 +1324,8 @@
 +        {
 +            return; // CraftBukkit
 +        }
-+
+         this.playerEntity.func_143004_u();
+-
          if (this.playerEntity.openContainer.windowId == par1Packet102WindowClick.window_Id && this.playerEntity.openContainer.isPlayerNotUsingContainer(this.playerEntity))
          {
 -            ItemStack itemstack = this.playerEntity.openContainer.slotClick(par1Packet102WindowClick.inventorySlot, par1Packet102WindowClick.mouseClick, par1Packet102WindowClick.holdingShift, this.playerEntity);
@@ -1741,7 +1745,7 @@
  
              if (ItemStack.areItemStacksEqual(par1Packet102WindowClick.itemStack, itemstack))
              {
-@@ -890,6 +2112,14 @@
+@@ -903,6 +2120,14 @@
                  }
  
                  this.playerEntity.sendContainerAndContentsToPlayer(this.playerEntity.openContainer, arraylist);
@@ -1756,7 +1760,7 @@
              }
          }
      }
-@@ -913,8 +2143,59 @@
+@@ -928,8 +2153,59 @@
              boolean flag = par1Packet107CreativeSetSlot.slot < 0;
              ItemStack itemstack = par1Packet107CreativeSetSlot.itemStack;
              boolean flag1 = par1Packet107CreativeSetSlot.slot >= 1 && par1Packet107CreativeSetSlot.slot < 36 + InventoryPlayer.getHotbarSize();
@@ -1817,7 +1821,7 @@
  
              if (flag1 && flag2 && flag3)
              {
-@@ -944,6 +2225,11 @@
+@@ -959,6 +2235,11 @@
  
      public void handleTransaction(Packet106Transaction par1Packet106Transaction)
      {
@@ -1829,7 +1833,7 @@
          Short oshort = (Short)this.field_72586_s.lookup(this.playerEntity.openContainer.windowId);
  
          if (oshort != null && par1Packet106Transaction.shortWindowId == oshort.shortValue() && this.playerEntity.openContainer.windowId == par1Packet106Transaction.windowId && !this.playerEntity.openContainer.isPlayerNotUsingContainer(this.playerEntity))
-@@ -957,6 +2243,11 @@
+@@ -972,6 +2253,10 @@
       */
      public void handleUpdateSign(Packet130UpdateSign par1Packet130UpdateSign)
      {
@@ -1837,11 +1841,10 @@
 +        {
 +            return;    // CraftBukkit
 +        }
-+
+         this.playerEntity.func_143004_u();
          WorldServer worldserver = this.mcServer.worldServerForDimension(this.playerEntity.dimension);
  
-         if (worldserver.blockExists(par1Packet130UpdateSign.xPosition, par1Packet130UpdateSign.yPosition, par1Packet130UpdateSign.zPosition))
-@@ -970,6 +2261,7 @@
+@@ -986,6 +2271,7 @@
                  if (!tileentitysign.isEditable() || tileentitysign.func_142009_b() != this.playerEntity)
                  {
                      this.mcServer.logWarning("Player " + this.playerEntity.getCommandSenderName() + " just tried to change non-editable sign");
@@ -1849,7 +1852,7 @@
                      return;
                  }
              }
-@@ -989,7 +2281,7 @@
+@@ -1005,7 +2291,7 @@
                  {
                      for (i = 0; i < par1Packet130UpdateSign.signLines[j].length(); ++i)
                      {
@@ -1858,7 +1861,7 @@
                          {
                              flag = false;
                          }
-@@ -1008,7 +2300,27 @@
+@@ -1024,7 +2310,27 @@
                  int k = par1Packet130UpdateSign.yPosition;
                  i = par1Packet130UpdateSign.zPosition;
                  TileEntitySign tileentitysign1 = (TileEntitySign)tileentity;
@@ -1887,7 +1890,7 @@
                  tileentitysign1.onInventoryChanged();
                  worldserver.markBlockForUpdate(j, k, i);
              }
-@@ -1040,7 +2352,23 @@
+@@ -1056,7 +2362,23 @@
       */
      public void handlePlayerAbilities(Packet202PlayerAbilities par1Packet202PlayerAbilities)
      {
@@ -1912,7 +1915,7 @@
      }
  
      public void handleAutoComplete(Packet203AutoComplete par1Packet203AutoComplete)
-@@ -1054,7 +2382,7 @@
+@@ -1070,7 +2392,7 @@
  
              if (stringbuilder.length() > 0)
              {
@@ -1921,7 +1924,7 @@
              }
          }
  
-@@ -1077,6 +2405,14 @@
+@@ -1093,6 +2415,14 @@
          ItemStack itemstack;
          ItemStack itemstack1;
  
@@ -1936,7 +1939,7 @@
          if ("MC|BEdit".equals(par1Packet250CustomPayload.channel))
          {
              try
-@@ -1093,12 +2429,16 @@
+@@ -1109,12 +2439,16 @@
  
                  if (itemstack != null && itemstack.itemID == Item.writableBook.itemID && itemstack.itemID == itemstack1.itemID)
                  {
@@ -1959,7 +1962,7 @@
              }
          }
          else if ("MC|BSign".equals(par1Packet250CustomPayload.channel))
-@@ -1117,15 +2457,16 @@
+@@ -1133,15 +2467,16 @@
  
                  if (itemstack != null && itemstack.itemID == Item.writtenBook.itemID && itemstack1.itemID == Item.writableBook.itemID)
                  {
@@ -1985,7 +1988,7 @@
              }
          }
          else
-@@ -1147,7 +2488,10 @@
+@@ -1163,7 +2498,10 @@
                  }
                  catch (Exception exception2)
                  {
@@ -1997,7 +2000,7 @@
                  }
              }
              else
-@@ -1180,7 +2524,10 @@
+@@ -1196,7 +2534,10 @@
                          }
                          catch (Exception exception3)
                          {
@@ -2009,7 +2012,7 @@
                          }
                      }
                      else
-@@ -1211,7 +2558,10 @@
+@@ -1227,7 +2568,10 @@
                          }
                          catch (Exception exception4)
                          {
@@ -2021,7 +2024,7 @@
                          }
                      }
                  }
-@@ -1233,6 +2583,13 @@
+@@ -1249,6 +2593,13 @@
                          containerrepair.updateItemName("");
                      }
                  }

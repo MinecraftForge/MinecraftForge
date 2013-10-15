@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/world/WorldServerMulti.java
 +++ ../src_work/minecraft/net/minecraft/world/WorldServerMulti.java
-@@ -8,16 +8,29 @@
+@@ -8,16 +8,31 @@
  
  public class WorldServerMulti extends WorldServer
  {
@@ -33,6 +33,8 @@
       * Saves the chunks to disk.
       */
 -    protected void saveLevel() throws MinecraftException {}
-+    // MCPC+ - disable this so level.dat is created correctly in newly created worlds
-+    //protected void saveLevel() throws MinecraftException {}
++    protected void saveLevel() throws MinecraftException
++    {
++        this.perWorldStorage.saveAllData();
++    }
  }

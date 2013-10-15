@@ -57,7 +57,7 @@
 +        System.setOut(new PrintStream(new LoggerOutputStream(this.getLogAgent().func_120013_a(), Level.INFO), true));
 +        System.setErr(new PrintStream(new LoggerOutputStream(this.getLogAgent().func_120013_a(), Level.SEVERE), true));
 +        // CraftBukkit end
-         this.getLogAgent().logInfo("Starting minecraft server version 1.6.2");
+         this.getLogAgent().logInfo("Starting minecraft server version 1.6.4");
  
          if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L)
 @@ -69,7 +92,7 @@
@@ -69,7 +69,7 @@
  
          if (this.isSinglePlayer())
          {
-@@ -113,6 +136,11 @@
+@@ -114,6 +137,11 @@
          {
              this.setServerPort(this.settings.getIntProperty("server-port", 25565));
          }
@@ -81,7 +81,7 @@
  
          this.getLogAgent().logInfo("Generating keypair");
          this.setKeyPair(CryptManager.createNewKeyPair());
-@@ -122,7 +150,7 @@
+@@ -123,7 +151,7 @@
          {
              this.networkThread = new DedicatedServerListenThread(this, inetaddress, this.getServerPort());
          }
@@ -90,7 +90,7 @@
          {
              this.getLogAgent().logWarning("**** FAILED TO BIND TO PORT!");
              this.getLogAgent().logWarningFormatted("The exception was: {0}", new Object[] {ioexception.toString()});
-@@ -130,6 +158,12 @@
+@@ -131,6 +159,12 @@
              return false;
          }
  
@@ -103,7 +103,7 @@
          if (!this.isServerInOnlineMode())
          {
              this.getLogAgent().logWarning("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
-@@ -140,7 +174,8 @@
+@@ -141,7 +175,8 @@
  
          FMLCommonHandler.instance().onServerStarted();
  
@@ -113,7 +113,7 @@
          long j = System.nanoTime();
  
          if (this.getFolderName() == null)
-@@ -200,11 +235,28 @@
+@@ -201,11 +236,28 @@
              this.getLogAgent().logInfo("Starting remote control listener");
              this.theRConThreadMain = new RConThreadMain(this);
              this.theRConThreadMain.startThread();
@@ -142,7 +142,7 @@
      public boolean canStructuresSpawn()
      {
          return this.canSpawnStructures;
-@@ -220,7 +272,7 @@
+@@ -221,7 +273,7 @@
       */
      public int getDifficulty()
      {
@@ -151,7 +151,7 @@
      }
  
      /**
-@@ -311,7 +363,13 @@
+@@ -312,7 +364,13 @@
          while (!this.pendingCommandList.isEmpty())
          {
              ServerCommand servercommand = (ServerCommand)this.pendingCommandList.remove(0);
@@ -166,7 +166,7 @@
          }
      }
  
-@@ -377,6 +435,13 @@
+@@ -378,6 +436,13 @@
      {
          File file1 = this.settings.getPropertiesFile();
          return file1 != null ? file1.getAbsolutePath() : "No settings file";
@@ -180,7 +180,7 @@
      }
  
      public boolean getGuiEnabled()
-@@ -453,11 +518,4 @@
+@@ -461,11 +526,4 @@
      {
          return this.getDedicatedPlayerList();
      }

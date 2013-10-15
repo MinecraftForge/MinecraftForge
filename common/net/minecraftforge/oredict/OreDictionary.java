@@ -50,15 +50,27 @@ public class OreDictionary
             registerOre("stickWood",   Item.stick);
             registerOre("treeSapling", new ItemStack(Block.sapling, 1, WILDCARD_VALUE));
             registerOre("treeLeaves",  new ItemStack(Block.leaves, 1, WILDCARD_VALUE));
-            registerOre("oreGold", Block.oreGold);
-            registerOre("oreIron", Block.oreIron);
-            registerOre("oreLapis", Block.oreLapis);
-            registerOre("oreDiamond", Block.oreDiamond);
+            registerOre("oreGold",     Block.oreGold);
+            registerOre("oreIron",     Block.oreIron);
+            registerOre("oreLapis",    Block.oreLapis);
+            registerOre("oreDiamond",  Block.oreDiamond);
             registerOre("oreRedstone", Block.oreRedstone);
-            registerOre("oreEmerald", Block.oreEmerald);
-            registerOre("oreQuartz", Block.oreNetherQuartz);
-            registerOre("stone", Block.stone);
+            registerOre("oreEmerald",  Block.oreEmerald);
+            registerOre("oreQuartz",   Block.oreNetherQuartz);
+            registerOre("stone",       Block.stone);
             registerOre("cobblestone", Block.cobblestone);
+            registerOre("record",      Item.record13);
+            registerOre("record",      Item.recordCat);
+            registerOre("record",      Item.recordBlocks);
+            registerOre("record",      Item.recordChirp);
+            registerOre("record",      Item.recordFar);
+            registerOre("record",      Item.recordMall);
+            registerOre("record",      Item.recordMellohi);
+            registerOre("record",      Item.recordStal);
+            registerOre("record",      Item.recordStrad);
+            registerOre("record",      Item.recordWard);
+            registerOre("record",      Item.record11);
+            registerOre("record",      Item.recordWait);
         }
 
         // Build our list of items to replace with ore tags

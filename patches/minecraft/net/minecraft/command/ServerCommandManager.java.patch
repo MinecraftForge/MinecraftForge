@@ -45,10 +45,10 @@
              this.registerCommand(new CommandServerOp());
              this.registerCommand(new CommandServerDeop());
              this.registerCommand(new CommandServerStop());
-@@ -55,14 +67,14 @@
-             this.registerCommand(new CommandServerKick());
+@@ -56,14 +68,14 @@
              this.registerCommand(new CommandServerList());
              this.registerCommand(new CommandServerWhitelist());
+             this.registerCommand(new CommandSetPlayerTimeout());
 +            */
          }
          else

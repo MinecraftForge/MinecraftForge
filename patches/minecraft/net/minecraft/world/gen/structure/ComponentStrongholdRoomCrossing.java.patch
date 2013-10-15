@@ -1,7 +1,7 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/structure/ComponentStrongholdRoomCrossing.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/structure/ComponentStrongholdRoomCrossing.java
-@@ -6,6 +6,9 @@
- import net.minecraft.item.Item;
+@@ -7,6 +7,9 @@
+ import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.util.WeightedRandomChestContent;
  import net.minecraft.world.World;
 +
@@ -10,7 +10,7 @@
  
  public class ComponentStrongholdRoomCrossing extends ComponentStronghold
  {
-@@ -144,7 +147,7 @@
+@@ -158,7 +161,7 @@
                      this.placeBlockAtCurrentPosition(par1World, Block.ladder.blockID, this.getMetadataWithOffset(Block.ladder.blockID, 4), 9, 1, 3, par3StructureBoundingBox);
                      this.placeBlockAtCurrentPosition(par1World, Block.ladder.blockID, this.getMetadataWithOffset(Block.ladder.blockID, 4), 9, 2, 3, par3StructureBoundingBox);
                      this.placeBlockAtCurrentPosition(par1World, Block.ladder.blockID, this.getMetadataWithOffset(Block.ladder.blockID, 4), 9, 3, 3, par3StructureBoundingBox);

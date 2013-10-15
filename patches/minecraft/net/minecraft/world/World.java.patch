@@ -1950,7 +1950,31 @@
      }
  
      public PathEntity getPathEntityToEntity(Entity par1Entity, Entity par2Entity, float par3, boolean par4, boolean par5, boolean par6, boolean par7)
-@@ -3807,6 +4678,12 @@
+@@ -3744,14 +4615,20 @@
+      */
+     public int getIndirectPowerLevelTo(int par1, int par2, int par3, int par4)
+     {
+-        if (this.isBlockNormalCube(par1, par2, par3))
++        Block block = Block.blocksList[this.getBlockId(par1, par2, par3)];
++
++        if (block == null)
++        {
++            return 0;
++        }
++
++        if (!block.shouldCheckWeakPower(this, par1, par2, par3, par4))
+         {
+             return this.getBlockPowerInput(par1, par2, par3);
+         }
+         else
+         {
+-            int i1 = this.getBlockId(par1, par2, par3);
+-            return i1 == 0 ? 0 : Block.blocksList[i1].isProvidingWeakPower(this, par1, par2, par3, par4);
++            return block.isProvidingWeakPower(this, par1, par2, par3, par4);
+         }
+     }
+ 
+@@ -3807,6 +4684,12 @@
          for (int i = 0; i < this.playerEntities.size(); ++i)
          {
              EntityPlayer entityplayer1 = (EntityPlayer)this.playerEntities.get(i);
@@ -1963,7 +1987,7 @@
              double d5 = entityplayer1.getDistanceSq(par1, par3, par5);
  
              if ((par7 < 0.0D || d5 < par7 * par7) && (d4 == -1.0D || d5 < d4))
-@@ -3838,6 +4715,12 @@
+@@ -3838,6 +4721,12 @@
          for (int i = 0; i < this.playerEntities.size(); ++i)
          {
              EntityPlayer entityplayer1 = (EntityPlayer)this.playerEntities.get(i);
@@ -1976,7 +2000,7 @@
  
              if (!entityplayer1.capabilities.disableDamage && entityplayer1.isEntityAlive())
              {
-@@ -3914,7 +4797,7 @@
+@@ -3914,7 +4803,7 @@
       */
      public long getSeed()
      {
@@ -1985,7 +2009,7 @@
      }
  
      public long getTotalWorldTime()
-@@ -3924,7 +4807,7 @@
+@@ -3924,7 +4813,7 @@
  
      public long getWorldTime()
      {
@@ -1994,7 +2018,7 @@
      }
  
      /**
-@@ -3932,7 +4815,7 @@
+@@ -3932,7 +4821,7 @@
       */
      public void setWorldTime(long par1)
      {
@@ -2003,7 +2027,7 @@
      }
  
      /**
-@@ -3940,13 +4823,13 @@
+@@ -3940,13 +4829,13 @@
       */
      public ChunkCoordinates getSpawnPoint()
      {
@@ -2019,7 +2043,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -3970,7 +4853,10 @@
+@@ -3970,7 +4859,10 @@
  
          if (!this.loadedEntityList.contains(par1Entity))
          {
@@ -2031,7 +2055,7 @@
          }
      }
  
-@@ -3978,6 +4864,11 @@
+@@ -3978,6 +4870,11 @@
       * Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
@@ -2043,7 +2067,7 @@
      {
          return true;
      }
-@@ -4036,6 +4927,18 @@
+@@ -4036,6 +4933,18 @@
       */
      public void updateAllPlayersSleepingFlag() {}
  
@@ -2062,7 +2086,7 @@
      public float getWeightedThunderStrength(float par1)
      {
          return (this.prevThunderingStrength + (this.thunderingStrength - this.prevThunderingStrength) * par1) * this.getRainStrength(par1);
-@@ -4098,8 +5001,7 @@
+@@ -4098,8 +5007,7 @@
       */
      public boolean isBlockHighHumidity(int par1, int par2, int par3)
      {
@@ -2072,7 +2096,7 @@
      }
  
      /**
-@@ -4174,7 +5076,7 @@
+@@ -4174,7 +5082,7 @@
       */
      public int getHeight()
      {
@@ -2081,7 +2105,7 @@
      }
  
      /**
-@@ -4182,7 +5084,7 @@
+@@ -4182,7 +5090,7 @@
       */
      public int getActualHeight()
      {
@@ -2090,7 +2114,7 @@
      }
  
      public IUpdatePlayerListBox getMinecartSoundUpdater(EntityMinecart par1EntityMinecart)
-@@ -4225,7 +5127,7 @@
+@@ -4225,7 +5133,7 @@
       */
      public double getHorizon()
      {
@@ -2099,7 +2123,7 @@
      }
  
      /**
-@@ -4294,30 +5196,28 @@
+@@ -4294,30 +5202,28 @@
  
      public void func_96440_m(int par1, int par2, int par3, int par4)
      {
@@ -2151,7 +2175,7 @@
                      }
                  }
              }
-@@ -4363,4 +5263,119 @@
+@@ -4363,4 +5269,119 @@
  
          return MathHelper.clamp_float(f, 0.0F, flag ? 1.5F : 1.0F);
      }

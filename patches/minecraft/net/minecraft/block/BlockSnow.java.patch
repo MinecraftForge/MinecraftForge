@@ -1,10 +1,12 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockSnow.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockSnow.java
-@@ -97,7 +97,11 @@
+@@ -96,8 +96,12 @@
+      */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
-         int l = par1World.getBlockId(par2, par3 - 1, par4);
+-        int l = par1World.getBlockId(par2, par3 - 1, par4);
 -        return l == 0 ? false : (l == this.blockID && (par1World.getBlockMetadata(par2, par3 - 1, par4) & 7) == 7 ? true : (l != Block.leaves.blockID && !Block.blocksList[l].isOpaqueCube() ? false : par1World.getBlockMaterial(par2, par3 - 1, par4).blocksMovement()));
++        int l = par1World.getBlockId(par2, par3 - 1, par4);        
 +        Block block = Block.blocksList[l];
 +        if (block == null) return false;
 +        if (block == this && (par1World.getBlockMetadata(par2, par3 - 1, par4) & 7) == 7) return true;
@@ -43,21 +45,21 @@
      }
  
      /**
-@@ -162,6 +162,13 @@
+@@ -162,7 +162,12 @@
      {
          if (par1World.getSavedLightValue(EnumSkyBlock.Block, par2, par3, par4) > 11)
          {
+-            this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
 +            // CraftBukkit start
 +            if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockFadeEvent(par1World.getWorld().getBlockAt(par2, par3, par4), 0).isCancelled())
 +            {
 +                return;
 +            }
-+
 +            // CraftBukkit end
-             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
              par1World.setBlockToAir(par2, par3, par4);
          }
-@@ -177,4 +184,10 @@
+     }
+@@ -177,4 +182,27 @@
      {
          return par5 == 1 ? true : super.shouldSideBeRendered(par1IBlockAccess, par2, par3, par4, par5);
      }
@@ -66,5 +68,22 @@
 +    public int quantityDropped(int meta, int fortune, Random random)
 +    {
 +        return (meta & 7) + 1;
++    }
++
++    /**
++     * Determines if a new block can be replace the space occupied by this one,
++     * Used in the player's placement code to make the block act like water, and lava.
++     *
++     * @param world The current world
++     * @param x X Position
++     * @param y Y position
++     * @param z Z position
++     * @return True if the block is replaceable by another block
++     */
++    @Override
++    public boolean isBlockReplaceable(World world, int x, int y, int z)
++    {
++        int meta = world.getBlockMetadata(x, y, z);
++        return (meta >= 7 ? false : blockMaterial.isReplaceable());
 +    }
  }

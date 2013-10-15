@@ -36,43 +36,41 @@
  
      /**
       * Logs the user in if a login packet is found, otherwise keeps processing network packets unless the timeout has
-@@ -96,12 +105,19 @@
+@@ -96,6 +105,7 @@
          }
      }
  
 +    private static final java.util.regex.Pattern validName = java.util.regex.Pattern.compile("^[a-zA-Z0-9_-]{2,16}$"); // Spigot
      public void handleClientProtocol(Packet2ClientProtocol par1Packet2ClientProtocol)
      {
-+        // CraftBukkit start
-+        if (this.clientUsername != null)
-+        {
-+            this.raiseErrorAndDisconnect("Invalid username " + this.clientUsername);
-+        }
-+        this.hostname = par1Packet2ClientProtocol.serverHost == null ? "" : par1Packet2ClientProtocol.serverHost + ':' + par1Packet2ClientProtocol.serverPort;
-+        // CraftBukkit end
-         this.clientUsername = par1Packet2ClientProtocol.getUsername();
- 
--        if (!this.clientUsername.equals(StringUtils.stripControlCodes(this.clientUsername)))
--        {
-+        if (!this.clientUsername.equals(StringUtils.stripControlCodes(this.clientUsername)) || !validName.matcher( this.clientUsername ).matches() ) { // Spigot
-             this.raiseErrorAndDisconnect("Invalid username!");
+         if (this.clientUsername != null)
+@@ -104,9 +114,10 @@
          }
          else
-@@ -112,11 +128,11 @@
+         {
++            this.hostname = par1Packet2ClientProtocol.serverHost == null ? "" : par1Packet2ClientProtocol.serverHost + ':' + par1Packet2ClientProtocol.serverPort;
+             this.clientUsername = par1Packet2ClientProtocol.getUsername();
+ 
+-            if (!this.clientUsername.equals(StringUtils.stripControlCodes(this.clientUsername)))
++            if (!this.clientUsername.equals(StringUtils.stripControlCodes(this.clientUsername)) || !validName.matcher( this.clientUsername ).matches() ) // Spigot
              {
-                 if (par1Packet2ClientProtocol.getProtocolVersion() > 74)
+                 this.raiseErrorAndDisconnect("Invalid username!");
+             }
+@@ -118,11 +129,11 @@
                  {
--                    this.raiseErrorAndDisconnect("Outdated server!");
-+                    this.raiseErrorAndDisconnect(org.spigotmc.SpigotConfig.outdatedServerMessage); // Spigot
+                     if (par1Packet2ClientProtocol.getProtocolVersion() > 78)
+                     {
+-                        this.raiseErrorAndDisconnect("Outdated server!");
++                        this.raiseErrorAndDisconnect(org.spigotmc.SpigotConfig.outdatedServerMessage); // Spigot
+                     }
+                     else
+                     {
+-                        this.raiseErrorAndDisconnect("Outdated client!");
++                        this.raiseErrorAndDisconnect(org.spigotmc.SpigotConfig.outdatedClientMessage); // Spigot
+                     }
                  }
                  else
-                 {
--                    this.raiseErrorAndDisconnect("Outdated client!");
-+                    this.raiseErrorAndDisconnect(org.spigotmc.SpigotConfig.outdatedClientMessage); // Spigot
-                 }
-             }
-             else
-@@ -156,7 +172,7 @@
+@@ -163,7 +174,7 @@
  
              if (this.mcServer.isServerInOnlineMode())
              {
@@ -81,7 +79,7 @@
              }
              else
              {
-@@ -180,18 +196,26 @@
+@@ -187,18 +198,26 @@
  
      public void completeConnection(String s)
      {
@@ -111,7 +109,7 @@
              }
          }
  
-@@ -209,40 +233,52 @@
+@@ -216,40 +235,52 @@
       */
      public void handleServerPing(Packet254ServerPing par1Packet254ServerPing)
      {
@@ -135,7 +133,7 @@
              }
              else
              {
--                List list = Arrays.asList(new Serializable[] {Integer.valueOf(1), Integer.valueOf(74), this.mcServer.getMinecraftVersion(), this.mcServer.getMOTD(), Integer.valueOf(serverconfigurationmanager.getCurrentPlayerCount()), Integer.valueOf(serverconfigurationmanager.getMaxPlayers())});
+-                List list = Arrays.asList(new Serializable[] {Integer.valueOf(1), Integer.valueOf(78), this.mcServer.getMinecraftVersion(), this.mcServer.getMOTD(), Integer.valueOf(serverconfigurationmanager.getCurrentPlayerCount()), Integer.valueOf(serverconfigurationmanager.getMaxPlayers())});
 -                Object object;
 -
 -                for (Iterator iterator = list.iterator(); iterator.hasNext(); s = s + object.toString().replaceAll("\u0000", ""))
@@ -177,7 +175,7 @@
              }
  
              this.myTCPConnection.addToSendQueue(new Packet255KickDisconnect(s));
-@@ -325,11 +361,24 @@
+@@ -332,11 +363,24 @@
          return par0NetLoginHandler.field_72544_i = par1;
      }
      

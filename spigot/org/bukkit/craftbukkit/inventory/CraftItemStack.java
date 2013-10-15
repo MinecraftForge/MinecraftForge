@@ -195,10 +195,11 @@ public final class CraftItemStack extends ItemStack {
         if (item == null) {
             return false;
         }
-        if (item.stackTagCompound != null) {
-            return true;
+
+        if (item.stackTagCompound == null) {
+            item.setTagCompound(new net.minecraft.nbt.NBTTagCompound("tag"));
         }
-        item.stackTagCompound = new net.minecraft.nbt.NBTTagCompound();
+
         return true;
     }
 
@@ -354,7 +355,7 @@ public final class CraftItemStack extends ItemStack {
             return false;
         }
 
-        net.minecraft.nbt.NBTTagCompound tag = new net.minecraft.nbt.NBTTagCompound();
+        net.minecraft.nbt.NBTTagCompound tag = new net.minecraft.nbt.NBTTagCompound("tag");
         item.setTagCompound(tag);
 
         ((CraftMetaItem) itemMeta).applyToItem(tag);
