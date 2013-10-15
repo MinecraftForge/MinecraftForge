@@ -213,4 +213,23 @@ public class SpigotWorldConfig
         randomLightUpdates = getBoolean( "random-light-updates", false );
         log( "Random Lighting Updates: " + randomLightUpdates );
     }
+
+    public boolean saveStructureInfo;
+    private void structureInfo()
+    {
+        saveStructureInfo = getBoolean( "save-structure-info", true );
+        log( "Structure Info Saving: " + saveStructureInfo );
+        if ( !saveStructureInfo )
+        {
+            log( "*** WARNING *** You have selected to NOT save structure info. This may cause structures such as fortresses to not spawn mobs when updating to 1.7!" );
+            log( "*** WARNING *** Please use this option with caution, SpigotMC is not responsible for any issues this option may cause in the future!" );
+        }
+    }
+
+    public int itemDespawnRate;
+    private void itemDespawnRate()
+    {
+        itemDespawnRate = getInt( "item-despawn-rate", 6000 );
+        log( "Item Despawn Rate: " + itemDespawnRate );
+    }
 }

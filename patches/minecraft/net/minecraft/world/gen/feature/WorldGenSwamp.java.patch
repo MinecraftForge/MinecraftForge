@@ -1,17 +1,13 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenSwamp.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenSwamp.java
-@@ -2,16 +2,28 @@
- 
- import java.util.Random;
- import net.minecraft.block.Block;
-+import net.minecraft.block.BlockSapling.TreeGenerator;
+@@ -5,13 +5,24 @@
  import net.minecraft.block.material.Material;
  import net.minecraft.world.World;
  
 -public class WorldGenSwamp extends WorldGenerator
 +import org.bukkit.BlockChangeDelegate; // CraftBukkit
 +
-+public class WorldGenSwamp extends WorldGenerator implements TreeGenerator   // CraftBukkit add interface
++public class WorldGenSwamp extends WorldGenerator implements net.minecraft.block.BlockSapling.TreeGenerator   // CraftBukkit add interface
  {
 +    public WorldGenSwamp() {}
 +
@@ -31,7 +27,7 @@
          {
              ;
          }
-@@ -45,9 +57,9 @@
+@@ -45,9 +56,9 @@
                      {
                          if (i1 >= 0 && i1 < 128)
                          {
@@ -44,7 +40,7 @@
                              {
                                  if (l1 != Block.waterStill.blockID && l1 != Block.waterMoving.blockID)
                                  {
-@@ -73,11 +85,11 @@
+@@ -73,11 +84,11 @@
              }
              else
              {
@@ -58,7 +54,7 @@
                      int i2;
                      int j2;
  
-@@ -94,9 +106,12 @@
+@@ -94,9 +105,12 @@
                              {
                                  int l2 = k2 - par5;
  
@@ -74,7 +70,7 @@
                                  }
                              }
                          }
-@@ -104,11 +119,13 @@
+@@ -104,11 +118,13 @@
  
                      for (j2 = 0; j2 < l; ++j2)
                      {
@@ -93,7 +89,7 @@
                          }
                      }
  
-@@ -121,24 +138,25 @@
+@@ -121,24 +137,25 @@
                          {
                              for (i2 = par5 - k1; i2 <= par5 + k1; ++i2)
                              {
@@ -125,7 +121,7 @@
                                      {
                                          this.generateVines(par1World, l1, j2, i2 + 1, 4);
                                      }
-@@ -164,21 +182,22 @@
+@@ -164,21 +181,22 @@
      /**
       * Generates vines at the given position until it hits a block.
       */

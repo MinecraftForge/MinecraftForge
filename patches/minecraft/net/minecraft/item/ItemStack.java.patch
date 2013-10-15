@@ -30,8 +30,8 @@
          if (par1NBTTagCompound.hasKey("tag"))
          {
 -            this.stackTagCompound = par1NBTTagCompound.getCompoundTag("tag");
-+            // CraftBukkit - clear name from compound and make defensive copy as this data may be coming from the save thread
-+            this.stackTagCompound = (NBTTagCompound) par1NBTTagCompound.getCompoundTag("tag").copy(); // MCPC+ - remove setName("")
++            // CraftBukkit - make defensive copy as this data may be coming from the save thread
++            this.stackTagCompound = (NBTTagCompound) par1NBTTagCompound.getCompoundTag("tag").copy();
          }
      }
  
@@ -178,7 +178,21 @@
      }
  
      public void onCrafting(World par1World, EntityPlayer par2EntityPlayer, int par3)
-@@ -737,10 +793,16 @@
+@@ -531,6 +587,13 @@
+      */
+     public void setTagCompound(NBTTagCompound par1NBTTagCompound)
+     {
++        // CraftBukkit start - Set compound name to "tag," remove discrepancy
++        if (par1NBTTagCompound != null)
++        {
++            par1NBTTagCompound.setName("tag");
++        }
++
++        // CraftBukkit end
+         this.stackTagCompound = par1NBTTagCompound;
+     }
+ 
+@@ -737,10 +800,16 @@
          return arraylist;
      }
  

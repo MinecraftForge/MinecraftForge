@@ -128,6 +128,15 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(itemstack, 5);
+@@ -321,7 +369,7 @@
+ 
+         super.onUpdate();
+ 
+-        if (!this.worldObj.isRemote && this.openContainer != null && !this.openContainer.canInteractWith(this))
++        if (!this.worldObj.isRemote && this.openContainer != null && !ForgeHooks.canInteractWith(this, this.openContainer))
+         {
+             this.closeScreen();
+             this.openContainer = this.inventoryContainer;
 @@ -429,7 +477,7 @@
                  vec31.rotateAroundX(-this.rotationPitch * (float)Math.PI / 180.0F);
                  vec31.rotateAroundY(-this.rotationYaw * (float)Math.PI / 180.0F);
@@ -674,11 +683,10 @@
          if (par1Entity.canAttackWithItem())
          {
              if (!par1Entity.hitByEntity(this))
-@@ -1259,6 +1542,19 @@
-                     }
+@@ -1260,6 +1543,16 @@
  
                      boolean flag2 = par1Entity.attackEntityFrom(DamageSource.causePlayerDamage(this), f);
-+
+ 
 +                    // CraftBukkit start - Return when the damage fails so that the item will not lose durability
 +                    if (!flag2)
 +                    {
@@ -686,15 +694,13 @@
 +                        {
 +                            par1Entity.extinguish();
 +                        }
-+
 +                        return;
 +                    }
-+
 +                    // CraftBukkit end
- 
                      if (flag2)
                      {
-@@ -1310,7 +1606,8 @@
+                         if (i > 0)
+@@ -1310,7 +1603,8 @@
                      {
                          itemstack.hitEntity((EntityLivingBase)object, this);
  
@@ -704,7 +710,7 @@
                          {
                              this.destroyCurrentEquippedItem();
                          }
-@@ -1318,11 +1615,24 @@
+@@ -1318,11 +1612,22 @@
  
                      if (par1Entity instanceof EntityLivingBase)
                      {
@@ -712,7 +718,6 @@
 +                        {
 +                            this.alertWolves((EntityLivingBase)par1Entity, true);
 +                        }
-+
                          this.addStat(StatList.damageDealtStat, Math.round(f * 10.0F));
  
                          if (j > 0 && flag2)
@@ -721,7 +726,6 @@
 +                            // CraftBukkit start - Call a combust event when somebody hits with a fire enchanted item
 +                            EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), par1Entity.getBukkitEntity(), j * 4);
 +                            org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
-+
 +                            if (!combustEvent.isCancelled())
 +                            {
 +                                par1Entity.setFire(combustEvent.getDuration());
@@ -730,7 +734,7 @@
                          }
                          else if (flag1)
                          {
-@@ -1356,6 +1666,10 @@
+@@ -1356,6 +1661,10 @@
  
          if (this.openContainer != null)
          {
@@ -741,7 +745,7 @@
              this.openContainer.onContainerClosed(this);
          }
      }
-@@ -1373,6 +1687,12 @@
+@@ -1373,6 +1682,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -754,7 +758,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1410,6 +1730,21 @@
+@@ -1410,6 +1725,21 @@
              this.mountEntity((Entity)null);
          }
  
@@ -776,7 +780,7 @@
          this.setSize(0.2F, 0.2F);
          this.yOffset = 0.2F;
  
-@@ -1417,6 +1752,11 @@
+@@ -1417,6 +1747,11 @@
          {
              int l = this.worldObj.getBlockMetadata(par1, par2, par3);
              int i1 = BlockBed.getDirection(l);
@@ -788,7 +792,7 @@
              float f = 0.5F;
              float f1 = 0.5F;
  
-@@ -1487,10 +1827,12 @@
+@@ -1487,10 +1822,12 @@
          ChunkCoordinates chunkcoordinates = this.playerLocation;
          ChunkCoordinates chunkcoordinates1 = this.playerLocation;
  
@@ -805,7 +809,7 @@
  
              if (chunkcoordinates1 == null)
              {
-@@ -1507,6 +1849,25 @@
+@@ -1507,6 +1844,25 @@
              this.worldObj.updateAllPlayersSleepingFlag();
          }
  
@@ -831,7 +835,7 @@
          if (par1)
          {
              this.sleepTimer = 0;
-@@ -1527,7 +1888,9 @@
+@@ -1527,7 +1883,9 @@
       */
      private boolean isInBed()
      {
@@ -842,7 +846,7 @@
      }
  
      /**
-@@ -1542,9 +1905,12 @@
+@@ -1542,9 +1900,12 @@
          ichunkprovider.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          ichunkprovider.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -858,7 +862,7 @@
              return chunkcoordinates1;
          }
          else
-@@ -1566,10 +1932,13 @@
+@@ -1566,10 +1927,13 @@
      {
          if (this.playerLocation != null)
          {
@@ -876,7 +880,7 @@
              {
                  case 0:
                      return 90.0F;
-@@ -1635,14 +2004,40 @@
+@@ -1635,14 +1999,40 @@
      /**
       * Returns the location of the bed the player will respawn at, or null if the player has not slept in a bed.
       */
@@ -921,7 +925,7 @@
      }
  
      /**
-@@ -1650,18 +2045,57 @@
+@@ -1650,18 +2040,57 @@
       */
      public void setSpawnChunk(ChunkCoordinates par1ChunkCoordinates, boolean par2)
      {
@@ -982,7 +986,7 @@
      /**
       * Will trigger the specified trigger.
       */
-@@ -1843,6 +2277,10 @@
+@@ -1843,6 +2272,10 @@
  
              super.fall(par1);
          }
@@ -993,7 +997,7 @@
      }
  
      /**
-@@ -1884,7 +2322,7 @@
+@@ -1884,7 +2317,7 @@
          {
              if (par1ItemStack.getItem().requiresMultipleRenderPasses())
              {
@@ -1002,7 +1006,7 @@
              }
  
              if (this.itemInUse != null && par1ItemStack.itemID == Item.bow.itemID)
-@@ -1906,6 +2344,7 @@
+@@ -1906,6 +2339,7 @@
                      return Item.bow.getItemIconForUseDuration(0);
                  }
              }
@@ -1010,7 +1014,7 @@
          }
  
          return icon;
-@@ -2127,7 +2566,17 @@
+@@ -2127,7 +2561,17 @@
              this.setScore(par1EntityPlayer.getScore());
          }
  
@@ -1028,7 +1032,7 @@
      }
  
      /**
-@@ -2191,7 +2640,14 @@
+@@ -2191,7 +2635,14 @@
       */
      public void setCurrentItemOrArmor(int par1, ItemStack par2ItemStack)
      {
@@ -1044,7 +1048,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -2267,4 +2723,39 @@
+@@ -2267,4 +2718,39 @@
      {
          FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
      }

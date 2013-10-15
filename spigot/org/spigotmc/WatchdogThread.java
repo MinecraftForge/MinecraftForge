@@ -66,7 +66,6 @@ public class WatchdogThread extends Thread
                 log.log( Level.SEVERE, "------------------------------" );
                 //
                 log.log( Level.SEVERE, "Entire Thread Dump:" );
-                log.log( Level.SEVERE, "------------------------------" );
                 ThreadInfo[] threads = ManagementFactory.getThreadMXBean().dumpAllThreads( true, true );
                 for ( ThreadInfo thread : threads )
                 {

@@ -50,7 +50,7 @@
              par1EntityPlayer.readFromNBT(nbttagcompound);
          }
  
-@@ -367,4 +386,45 @@
+@@ -367,4 +386,80 @@
      {
          return this.saveDirectoryName;
      }
@@ -63,31 +63,66 @@
 +            return uuid;
 +        }
 +
++        File file1 = new File(this.worldDirectory, "uid.dat");
++
++        if (file1.exists())
++        {
++            DataInputStream dis = null;
++
++            try
++            {
++                dis = new DataInputStream(new FileInputStream(file1));
++                return uuid = new UUID(dis.readLong(), dis.readLong());
++            }
++            catch (IOException ex)
++            {
++                MinecraftServer.getServer().getLogAgent().logSevereException("Failed to read " + file1 + ", generating new random UUID", ex);
++            }
++            finally
++            {
++                if (dis != null)
++                {
++                    try
++                    {
++                        dis.close();
++                    }
++                    catch (IOException ex)
++                    {
++                        // NOOP
++                    }
++                }
++            }
++        }
++
++        uuid = UUID.randomUUID();
++        DataOutputStream dos = null;
++
 +        try
 +        {
-+            File file1 = new File(this.worldDirectory, "uid.dat");
-+
-+            if (!file1.exists())
-+            {
-+                DataOutputStream dos = new DataOutputStream(new FileOutputStream(file1));
-+                uuid = UUID.randomUUID();
-+                dos.writeLong(uuid.getMostSignificantBits());
-+                dos.writeLong(uuid.getLeastSignificantBits());
-+                dos.close();
-+            }
-+            else
-+            {
-+                DataInputStream dis = new DataInputStream(new FileInputStream(file1));
-+                uuid = new UUID(dis.readLong(), dis.readLong());
-+                dis.close();
-+            }
-+
-+            return uuid;
++            dos = new DataOutputStream(new FileOutputStream(file1));
++            dos.writeLong(uuid.getMostSignificantBits());
++            dos.writeLong(uuid.getLeastSignificantBits());
 +        }
 +        catch (IOException ex)
 +        {
-+            return null;
++            MinecraftServer.getServer().getLogAgent().logSevereException("Failed to write " + file1, ex);
 +        }
++        finally
++        {
++            if (dos != null)
++            {
++                try
++                {
++                    dos.close();
++                }
++                catch (IOException ex)
++                {
++                    // NOOP
++                }
++            }
++        }
++
++        return uuid;
 +    }
 +
 +    public File getPlayerDir()

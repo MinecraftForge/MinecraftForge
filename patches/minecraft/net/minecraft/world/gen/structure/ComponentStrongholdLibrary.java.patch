@@ -1,7 +1,7 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/structure/ComponentStrongholdLibrary.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/structure/ComponentStrongholdLibrary.java
-@@ -6,6 +6,9 @@
- import net.minecraft.item.Item;
+@@ -7,6 +7,9 @@
+ import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.util.WeightedRandomChestContent;
  import net.minecraft.world.World;
 +
@@ -10,7 +10,7 @@
  
  public class ComponentStrongholdLibrary extends ComponentStronghold
  {
-@@ -147,12 +150,14 @@
+@@ -161,12 +164,14 @@
                  this.placeBlockAtCurrentPosition(par1World, Block.torchWood.blockID, 0, b1, 8, b2 + 1, par3StructureBoundingBox);
              }
  

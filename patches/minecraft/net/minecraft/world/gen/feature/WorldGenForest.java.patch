@@ -1,22 +1,21 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenForest.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenForest.java
-@@ -2,9 +2,14 @@
+@@ -2,9 +2,13 @@
  
  import java.util.Random;
  import net.minecraft.block.Block;
 +import net.minecraft.block.BlockSapling;
-+import net.minecraft.block.BlockSapling.TreeGenerator;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.ForgeDirection;
  
 -public class WorldGenForest extends WorldGenerator
 +import org.bukkit.BlockChangeDelegate; // CraftBukkit
 +
-+public class WorldGenForest extends WorldGenerator implements TreeGenerator   // CraftBukkit add interface
++public class WorldGenForest extends WorldGenerator implements net.minecraft.block.BlockSapling.TreeGenerator   // CraftBukkit add interface
  {
      public WorldGenForest(boolean par1)
      {
-@@ -13,6 +18,14 @@
+@@ -13,6 +17,14 @@
  
      public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
      {
@@ -31,7 +30,7 @@
          int l = par2Random.nextInt(3) + 5;
          boolean flag = true;
  
-@@ -43,10 +56,14 @@
+@@ -43,10 +55,14 @@
                      {
                          if (i1 >= 0 && i1 < 256)
                          {
@@ -48,7 +47,7 @@
                                  flag = false;
                              }
                          }
-@@ -64,11 +81,17 @@
+@@ -64,11 +80,17 @@
              }
              else
              {
@@ -69,7 +68,7 @@
                      int i2;
  
                      for (i2 = par4 - 3 + l; i2 <= par4 + l; ++i2)
-@@ -86,11 +109,11 @@
+@@ -86,11 +108,11 @@
  
                                  if (Math.abs(j2) != k1 || Math.abs(l2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0)
                                  {
@@ -83,7 +82,7 @@
                                      }
                                  }
                              }
-@@ -99,11 +122,16 @@
+@@ -99,11 +121,16 @@
  
                      for (i2 = 0; i2 < l; ++i2)
                      {

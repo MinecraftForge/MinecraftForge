@@ -1,14 +1,17 @@
 --- ../src_base/minecraft/net/minecraft/entity/effect/EntityLightningBolt.java
 +++ ../src_work/minecraft/net/minecraft/entity/effect/EntityLightningBolt.java
-@@ -10,6 +10,7 @@
+@@ -10,6 +10,10 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
++
 +import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
  
  public class EntityLightningBolt extends EntityWeatherEffect
  {
-@@ -28,15 +29,28 @@
+@@ -28,15 +32,28 @@
       */
      private int boltLivingTime;
  
@@ -38,7 +41,7 @@
          {
              int i = MathHelper.floor_double(par2);
              int j = MathHelper.floor_double(par4);
-@@ -44,7 +58,12 @@
+@@ -44,7 +61,12 @@
  
              if (par1World.getBlockId(i, j, k) == 0 && Block.fire.canPlaceBlockAt(par1World, i, j, k))
              {
@@ -52,7 +55,7 @@
              }
  
              for (i = 0; i < 4; ++i)
-@@ -55,7 +74,12 @@
+@@ -55,7 +77,12 @@
  
                  if (par1World.getBlockId(j, k, l) == 0 && Block.fire.canPlaceBlockAt(par1World, j, k, l))
                  {
@@ -66,7 +69,7 @@
                  }
              }
          }
-@@ -88,7 +112,8 @@
+@@ -88,7 +115,8 @@
                  this.lightningState = 1;
                  this.boltVertex = this.rand.nextLong();
  
@@ -76,7 +79,7 @@
                  {
                      int i = MathHelper.floor_double(this.posX);
                      int j = MathHelper.floor_double(this.posY);
-@@ -96,13 +121,18 @@
+@@ -96,13 +124,18 @@
  
                      if (this.worldObj.getBlockId(i, j, k) == 0 && Block.fire.canPlaceBlockAt(this.worldObj, i, j, k))
                      {
@@ -97,3 +100,15 @@
          {
              if (this.worldObj.isRemote)
              {
+@@ -116,7 +149,10 @@
+                 for (int l = 0; l < list.size(); ++l)
+                 {
+                     Entity entity = (Entity)list.get(l);
+-                    entity.onStruckByLightning(this);
++                    if (!MinecraftForge.EVENT_BUS.post(new EntityStruckByLightningEvent(entity, this)))
++                    {
++                        entity.onStruckByLightning(this);
++                    }
+                 }
+             }
+         }

@@ -1,0 +1,44 @@
+--- ../src_base/minecraft/net/minecraft/client/gui/GuiChat.java
++++ ../src_work/minecraft/net/minecraft/client/gui/GuiChat.java
+@@ -7,8 +7,11 @@
+ import java.util.Iterator;
+ import java.util.List;
+ import net.minecraft.network.packet.Packet203AutoComplete;
++import net.minecraft.util.EnumChatFormatting;
++import net.minecraftforge.client.ClientCommandHandler;
+ import org.lwjgl.input.Keyboard;
+ import org.lwjgl.input.Mouse;
++import com.google.common.collect.ObjectArrays;
+ 
+ @SideOnly(Side.CLIENT)
+ public class GuiChat extends GuiScreen
+@@ -278,13 +281,14 @@
+             this.mc.ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(stringbuilder.toString(), 1);
+         }
+ 
+-        this.inputField.writeText((String)this.field_73904_o.get(this.field_73903_n++));
++        this.inputField.writeText(EnumChatFormatting.func_110646_a((String)this.field_73904_o.get(this.field_73903_n++)));
+     }
+ 
+     private void func_73893_a(String par1Str, String par2Str)
+     {
+         if (par1Str.length() >= 1)
+         {
++            ClientCommandHandler.instance.autoComplete(par1Str, par2Str);
+             this.mc.thePlayer.sendQueue.addToSendQueue(new Packet203AutoComplete(par1Str));
+             this.field_73905_m = true;
+         }
+@@ -347,6 +351,13 @@
+             String[] astring1 = par1ArrayOfStr;
+             int i = par1ArrayOfStr.length;
+ 
++            String[] complete = ClientCommandHandler.instance.latestAutoComplete;
++            if (complete != null)
++            {
++                astring1 = ObjectArrays.concat(complete, astring1, String.class);
++                i = astring1.length;
++            }
++
+             for (int j = 0; j < i; ++j)
+             {
+                 String s = astring1[j];

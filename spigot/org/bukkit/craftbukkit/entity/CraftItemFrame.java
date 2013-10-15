@@ -43,7 +43,7 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
         case 3:
             return Rotation.COUNTER_CLOCKWISE;
         default:
-            throw new AssertionError("Unknown rotation " + getHandle().getRotation() + " for " + getHandle());
+            throw new AssertionError("Unknown rotation " + value + " for " + getHandle());
         }
     }
 

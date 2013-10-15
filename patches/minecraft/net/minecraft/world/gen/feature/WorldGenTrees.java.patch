@@ -1,11 +1,10 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
-@@ -2,10 +2,15 @@
+@@ -2,10 +2,14 @@
  
  import java.util.Random;
  import net.minecraft.block.Block;
 +import net.minecraft.block.BlockSapling;
-+import net.minecraft.block.BlockSapling.TreeGenerator;
  import net.minecraft.util.Direction;
  import net.minecraft.world.World;
 -
@@ -14,11 +13,11 @@
 +
 +import org.bukkit.BlockChangeDelegate; // CraftBukkit
 +
-+public class WorldGenTrees extends WorldGenerator implements TreeGenerator   // CraftBukkit add interface
++public class WorldGenTrees extends WorldGenerator implements net.minecraft.block.BlockSapling.TreeGenerator   // CraftBukkit add interface
  {
      /** The minimum height of a generated tree. */
      private final int minTreeHeight;
-@@ -35,6 +40,14 @@
+@@ -35,6 +39,14 @@
  
      public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
      {
@@ -33,7 +32,7 @@
          int l = par2Random.nextInt(3) + this.minTreeHeight;
          boolean flag = true;
  
-@@ -65,12 +78,30 @@
+@@ -65,12 +77,30 @@
                      {
                          if (i1 >= 0 && i1 < 256)
                          {
@@ -70,7 +69,7 @@
                          }
                          else
                          {
-@@ -86,11 +117,17 @@
+@@ -86,11 +116,17 @@
              }
              else
              {
@@ -93,7 +92,7 @@
                      b0 = 3;
                      byte b1 = 0;
                      int i2;
-@@ -112,11 +149,12 @@
+@@ -112,11 +148,12 @@
  
                                  if (Math.abs(k2) != i2 || Math.abs(i3) != i2 || par2Random.nextInt(2) != 0 && k1 != 0)
                                  {
@@ -110,7 +109,7 @@
                                      }
                                  }
                              }
-@@ -125,32 +163,34 @@
+@@ -125,32 +162,34 @@
  
                      for (j1 = 0; j1 < l; ++j1)
                      {
@@ -168,7 +167,7 @@
                                  }
                              }
                          }
-@@ -167,28 +207,33 @@
+@@ -167,28 +206,33 @@
                              {
                                  for (k2 = par5 - i2; k2 <= par5 + i2; ++k2)
                                  {
@@ -207,7 +206,7 @@
                                  }
                              }
                          }
-@@ -202,7 +247,7 @@
+@@ -202,7 +246,7 @@
                                      if (par2Random.nextInt(4 - j1) == 0)
                                      {
                                          i2 = par2Random.nextInt(3);
@@ -216,7 +215,7 @@
                                      }
                                  }
                              }
-@@ -223,24 +268,27 @@
+@@ -223,24 +267,27 @@
          }
      }
  

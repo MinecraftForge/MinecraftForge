@@ -118,7 +118,17 @@
          }
  
          this.prevCameraPitch = this.cameraPitch;
-@@ -365,6 +389,22 @@
+@@ -327,7 +351,8 @@
+             --this.hurtTime;
+         }
+ 
+-        if (this.hurtResistantTime > 0)
++        // CraftBukkit
++        if (this.hurtResistantTime > 0 && !(this instanceof EntityPlayerMP))
+         {
+             --this.hurtResistantTime;
+         }
+@@ -365,6 +390,22 @@
          this.worldObj.theProfiler.endSection();
      }
  
@@ -141,7 +151,7 @@
      /**
       * If Animal, checks if the age timer is negative
       */
-@@ -380,22 +420,21 @@
+@@ -380,22 +421,21 @@
      {
          ++this.deathTime;
  
@@ -177,7 +187,7 @@
              this.setDead();
  
              for (i = 0; i < 20; ++i)
-@@ -452,6 +491,7 @@
+@@ -452,6 +492,7 @@
      {
          this.entityLivingToAttack = par1EntityLivingBase;
          this.revengeTimer = this.ticksExisted;
@@ -185,7 +195,7 @@
      }
  
      public EntityLivingBase getLastAttacker()
-@@ -562,6 +602,23 @@
+@@ -562,6 +603,23 @@
              }
          }
  
@@ -209,7 +219,7 @@
          if (par1NBTTagCompound.hasKey("HealF"))
          {
              this.setHealth(par1NBTTagCompound.getFloat("HealF"));
-@@ -691,12 +748,14 @@
+@@ -691,12 +749,14 @@
  
      public boolean isPotionActive(int par1)
      {
@@ -226,7 +236,7 @@
      }
  
      /**
-@@ -750,10 +809,8 @@
+@@ -750,10 +810,8 @@
          return this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
      }
  
@@ -239,7 +249,7 @@
       */
      public void removePotionEffectClient(int par1)
      {
-@@ -804,26 +861,69 @@
+@@ -804,26 +862,69 @@
          }
      }
  
@@ -310,7 +320,7 @@
          this.dataWatcher.updateObject(6, Float.valueOf(MathHelper.clamp_float(par1, 0.0F, this.getMaxHealth())));
      }
  
-@@ -832,6 +932,7 @@
+@@ -832,6 +933,7 @@
       */
      public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
      {
@@ -318,7 +328,7 @@
          if (this.isEntityInvulnerable())
          {
              return false;
-@@ -862,6 +963,20 @@
+@@ -862,6 +964,20 @@
  
                  this.limbSwingAmount = 1.5F;
                  boolean flag = true;
@@ -339,7 +349,7 @@
  
                  if ((float)this.hurtResistantTime > (float)this.maxHurtResistantTime / 2.0F)
                  {
-@@ -982,6 +1097,7 @@
+@@ -982,6 +1098,7 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -347,7 +357,7 @@
          Entity entity = par1DamageSource.getEntity();
          EntityLivingBase entitylivingbase = this.func_94060_bK();
  
-@@ -1006,24 +1122,54 @@
+@@ -1006,24 +1123,54 @@
                  i = EnchantmentHelper.getLootingModifier((EntityLivingBase)entity);
              }
  
@@ -405,7 +415,7 @@
      }
  
      /**
-@@ -1071,7 +1217,12 @@
+@@ -1071,7 +1218,12 @@
          return "damage.hit";
      }
  
@@ -419,7 +429,7 @@
  
      /**
       * Drop 0-2 items of this living's type. @param par1 - Whether this entity has recently been hit by a player. @param
-@@ -1088,7 +1239,7 @@
+@@ -1088,7 +1240,7 @@
          int j = MathHelper.floor_double(this.boundingBox.minY);
          int k = MathHelper.floor_double(this.posZ);
          int l = this.worldObj.getBlockId(i, j, k);
@@ -428,7 +438,7 @@
      }
  
      /**
-@@ -1104,10 +1255,32 @@
+@@ -1104,10 +1256,32 @@
       */
      protected void fall(float par1)
      {
@@ -462,7 +472,7 @@
  
          if (i > 0)
          {
-@@ -1237,6 +1410,8 @@
+@@ -1237,6 +1411,8 @@
      {
          if (!this.isEntityInvulnerable())
          {
@@ -471,7 +481,7 @@
              par2 = this.applyArmorCalculations(par1DamageSource, par2);
              par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
              float f1 = par2;
-@@ -1298,6 +1473,17 @@
+@@ -1298,6 +1474,17 @@
       */
      public void swingItem()
      {
@@ -489,7 +499,7 @@
          if (!this.isSwingInProgress || this.swingProgressInt >= this.getArmSwingAnimationEnd() / 2 || this.swingProgressInt < 0)
          {
              this.swingProgressInt = -1;
-@@ -1535,6 +1721,7 @@
+@@ -1535,6 +1722,7 @@
          }
  
          this.isAirBorne = true;
@@ -497,7 +507,7 @@
      }
  
      /**
-@@ -1739,6 +1926,11 @@
+@@ -1739,6 +1927,11 @@
       */
      public void onUpdate()
      {
@@ -509,7 +519,7 @@
          super.onUpdate();
  
          if (!this.worldObj.isRemote)
-@@ -1797,7 +1989,7 @@
+@@ -1797,7 +1990,7 @@
          {
              f3 = 1.0F;
              f2 = (float)Math.sqrt((double)f) * 3.0F;
@@ -518,7 +528,7 @@
          }
  
          if (this.swingProgress > 0.0F)
-@@ -2009,11 +2201,20 @@
+@@ -2009,11 +2202,20 @@
      {
          List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
  
@@ -540,7 +550,7 @@
  
                  if (entity.canBePushed())
                  {
-@@ -2277,4 +2478,42 @@
+@@ -2277,4 +2479,42 @@
      {
          return this.getTeam() != null ? this.getTeam().isSameTeam(par1Team) : false;
      }

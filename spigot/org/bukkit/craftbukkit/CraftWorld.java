@@ -994,7 +994,7 @@ public class CraftWorld implements World {
             }
 
             if (entity != null && !((net.minecraft.entity.EntityHanging) entity).onValidSurface()) {
-                entity = null;
+                throw new IllegalArgumentException("Cannot spawn hanging entity for " + clazz.getName() + " at " + location);
             }
         } else if (TNTPrimed.class.isAssignableFrom(clazz)) {
             entity = new net.minecraft.entity.item.EntityTNTPrimed(world, x, y, z, null);

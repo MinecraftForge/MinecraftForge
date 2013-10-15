@@ -86,7 +86,7 @@
 -    protected boolean startServer() throws IOException
 +    protected boolean startServer()
      {
-         this.serverLogAgent.logInfo("Starting integrated minecraft server version 1.6.2");
+         this.serverLogAgent.logInfo("Starting integrated minecraft server version 1.6.4");
          this.setOnlineMode(false);
 @@ -129,7 +114,7 @@
      /**

@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeatureDesertPyramid.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeatureDesertPyramid.java
-@@ -6,6 +6,9 @@
+@@ -7,6 +7,9 @@
  import net.minecraft.util.Direction;
  import net.minecraft.util.WeightedRandomChestContent;
  import net.minecraft.world.World;
@@ -10,7 +10,7 @@
  
  public class ComponentScatteredFeatureDesertPyramid extends ComponentScatteredFeature
  {
-@@ -215,13 +218,14 @@
+@@ -236,13 +239,14 @@
          this.placeBlockAtCurrentPosition(par1World, Block.sandStone.blockID, 1, 10, -10, 13, par3StructureBoundingBox);
          this.placeBlockAtCurrentPosition(par1World, Block.sandStone.blockID, 2, 10, -11, 13, par3StructureBoundingBox);
  

@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/cpw/mods/fml/common/FMLCommonHandler.java
 +++ ../src_work/minecraft/cpw/mods/fml/common/FMLCommonHandler.java
-@@ -473,7 +473,11 @@
+@@ -474,7 +474,11 @@
  
      public String getModName()
      {

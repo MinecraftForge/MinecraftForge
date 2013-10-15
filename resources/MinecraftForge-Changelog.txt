@@ -1,5 +1,255 @@
 Changelog:
 
+Build 1.6.4-9.11.1.933
+	cpw
+		Updated FML:
+		MinecraftForge/FML@da4337efbfa07b35f5883107768f9ba2f1b24b9b Fix up handling the new method signature data for NetworkCheckHandlers
+
+Build 1.6.4-9.11.1.931
+	cpw
+		Updated FML:
+		MinecraftForge/FML@f92962bbbbb90c19788a5dc2eafdc2eeefdd77ce Use null to empty, so missing values work. *sigh*
+
+Build 1.6.4-9.11.1.930
+	cpw: Add in an event for zombie summoning. Allows for mods to control summoning behaviour, as well as custom summoned mob.
+	cpw: And remember to make the event class static *sigh*
+
+Build 1.6.4-9.11.1.928
+	cpw: And allow for tweaking baby chance as well.
+	cpw: And set the RIGHT variable *sigh*
+
+Build 1.6.4-9.11.1.926
+	cpw: Allow configuration of the zombie additional summoning mechanic. The vanilla mechanic is a little borked at times.
+
+Build 1.6.4-9.11.1.925
+	cpw
+		Updated FML:
+		MinecraftForge/FML@58577775d277a4408bda510534eb36841b08ced4 Very minor style fixes
+		MinecraftForge/FML@96be82343c25b83dd842ada8d6e8b66eb4e4ee00 Merge pull request #280 from mc10/patch-1
+		MinecraftForge/FML@2714da10228020a6f2321f6c9a703f0d24fe1370 Primitive capability for tweakers to order. Add a "TweakOrder" integer property to your manifest, or accept the default of zero.
+
+Build 1.6.4-9.11.1.924
+	LexManos: Prevent session from being printed to the console, also make sure the username is not empty. Causes a lot of bugs further down the line.
+
+Build 1.6.4-9.11.1.923
+	cpw
+		Updated FML:
+		MinecraftForge/FML@fc3e7647d2aff01146b1f5bd2ab6b57ef8e833e5 Support, and fix up, interface lists for Optional
+
+Build 1.6.4-9.11.1.922
+	LexManos: Added some missing air checks to world gen features.
+
+Build 1.6.4-9.11.1.921
+	LexManos: Fix repeated argument in CleintCommands.
+
+Build 1.6.4-9.11.1.920
+	LexManos: MinecraftForge/FML@a381874bb9c3bdeeb508bb81719b4d210eb29696 Delay sound system backend initalization to speed up startup and prevent race condition on some computers.
+
+Build 1.6.4-9.11.1.919
+	reflex_ion
+		Added PlayerOpenContainerEvent and added ForgeHooks.canInteractWith
+		- Used to override the canInteractWith during player tick
+		- setResult to ALLOW/DENY as required
+		- Defaults to Vanilla behaviour in any other instance.
+		Required for LittleBlocks Mod and to Assist Gullivers Mod
+
+Build 1.6.4-9.11.1.918
+	cpw
+		Updated FML:
+		MinecraftForge/FML@bc64ceabef76b1f4667b22ca8241b72351b44338 Optional shouldn't be constructable itself. It's purely a wrapper thing.
+		MinecraftForge/FML@55525f6d2eb24f42c26a291b8ce98feb4d4498c9 ModLoader is officially deprecated. It will all cease to be with 1.7.
+
+Build 1.6.4-9.11.1.917
+	cpw
+		Updated FML:
+		MinecraftForge/FML@63ba3aa0099f43183315fb4e16f9e8e8007362f8 Add in support for Optional interfaces and methods. Be gone coremods!
+
+Build 1.6.4-9.11.1.916
+	LexManos: Fix missing patch which caused per-world storage to not be saved.
+
+Build 1.6.4-9.11.1.915
+	rhilenova: Added pre/post to player list rendering in GuiIngameForge.
+	rhilenova: Moved PLAYER_LIST event inside display check.
+
+Build 1.6.4-9.11.1.914
+	LexManos
+		Make isItemStackDamageable() pass the stack to getMaxDamage() to use the Forge version of getMaxDamage().
+		Fixes display issues with mods using getMaxDamage(ItemStack) instead of the vanilla one. Closes #805
+	LexManos: Bump version number for todays changes.
+
+Build 1.6.4-9.11.0.913
+	ben.blank: allow blocks to choose how they handle indirect power
+	ben.blank: move `shouldCheckWeakPower` to Forge section
+
+Build 1.6.4-9.11.0.912
+	jrtc27: Pass arguments to install.sh and install.cmd to install.py
+
+Build 1.6.4-9.11.0.911
+	LexManos: Add cancelable EntityStructByLightningEvent, Closes #789
+
+Build 1.6.4-9.11.0.910
+	LexManos: Stack sensitive version of Item.getItemStackLimit. Closes #771
+
+Build 1.6.4-9.11.0.909
+	anthonylomeli11: Villager Trading GUI will not open if Player is sneaking.
+
+Build 1.6.4-9.11.0.908
+	LexManos: Added all the vanilla records to the ore dictionary. Closes #731
+
+Build 1.6.4-9.11.0.907
+	LexManos: Direct canApplyAtEnchantingTable through canApply Closes #740
+
+Build 1.6.4-9.11.0.906
+	LexManos: Add pre and post event to rendering Chat, allowing for placement of the chat box. Closes #733
+
+Build 1.6.4-9.11.0.905
+	LexManos: Set densityDir in BlockFluidBase's constructor, closes #737
+
+Build 1.6.4-9.11.0.904
+	LexManos: Fix placement of snow cover over metadata 6. Closes #724
+
+Build 1.6.4-9.11.0.903
+	LexManos
+		Add the ability to register chat commands that only execute on the client. Works with autocomplete.
+		Client commands are gray when shown in the autocomplete list (when you press tab)
+		Closes #640
+
+Build 1.6.4-9.11.0.902
+	LexManos: Update workspace to point at launchwrapper 1.8
+	LexManos: Vanilla hopper should obey the IInventory contract, TileEntityHopper now takes into account IInventory.getInventoryStackLimit() when inserting items Closes #597.
+
+Build 1.6.4-9.11.0.901
+	hobos_taco
+		Added ItemTooltipEvent
+		This event is fired at the end of ItemStack.getTooltip(EntityPlayer, boolean), which in turn is called from it's respective GUIContainer. It allows an itemstack's tooltip to be changed depending on the player, itemstack or whether the advanced information on item tooltips is being shown, toggled by F3+H.
+
+Build 1.6.4-9.11.0.900
+	cpw
+		Updated FML:
+		MinecraftForge/FML@5265e34a350adbb762264379f0134bfa40d33eaa Fix null killing the server
+
+Build 1.6.4-9.11.0.899
+	LexManos: MinecraftForge/FML@35ab9f52b02d84592e4c7607feb6009710b2f7d9 Fix md5s for new checksums.sha1 in scala libraries.
+
+Build 1.6.4-9.11.0.898
+	cpw
+		Updated FML:
+		MinecraftForge/FML@e356f4d713b1269825839954fe86f5312ede0fc6 Cross-modsystem compatibility fix with thanks to Mumfrey @ liteloader
+		MinecraftForge/FML@9b55f1f48f89a5348ac1d58622b71946f310316a Attempt at a shared modlist implementation - should allow visibility between liteloader and fml for "mod list display"
+
+Build 1.6.4-9.11.0.897
+	cpw
+		Updated FML:
+		MinecraftForge/FML@bfc25bc5da1ff0f6fd0faf817b32a8f6d35dedc2 Add to both the classloader and the parent
+
+Build 1.6.4-9.11.0.896
+	cpw
+		Updated FML:
+		MinecraftForge/FML@9f0f9e7288afc6cce9a425ad770a208af9e28648 Fix deobf tweaker
+
+Build 1.6.4-9.11.0.895
+	cpw
+		Updated FML:
+		MinecraftForge/FML@ce6404fd5bb5e8e425af3bcafeaa285575bf39a3 TYPOS!!!
+
+Build 1.6.4-9.11.0.894
+	cpw
+		Updated FML:
+		MinecraftForge/FML@8f18a3de9a02b003762dace891829ef64dfedf49 Separate deobf tweaker so it runs last. Should fix problems with cascaded tweakers expecting an obf environment.
+
+Build 1.6.4-9.11.0.893
+	cpw
+		Updated FML:
+		MinecraftForge/FML@8e26c99de3b44d272d2fdc398e0687db17bce3b7 Add debugging for deobfuscation
+		MinecraftForge/FML@1d902df5814b815959165e4aa69272003f002d25 Use the negative cache in latest legacylauncher.
+		MinecraftForge/FML@9815d8c3793182a08fcdbd29376a3f70bff464d0 Update for launchwrapper 1.8
+
+Build 1.6.4-9.11.0.892
+	LexManos: Add wrapper exception to the new Structure ID system to point to the correct Structure.
+
+Build 1.6.4-9.11.0.891
+	LexManos: Update dev workspace for 1.6.4 ..
+	LexManos: Remove some side onlys on BiomeEvents that don't need them.
+	LexManos: Fixed typo in bounding box based ladder checks that caused potential infinite loops with entities in certian positions. Thanks Overmind for reporting it.
+	LexManos
+		Updated FML:
+		MinecraftForge/FML@fc8c3bef0380d59c0842a252e4f0bd29127ee78b Update to new installer that uses xz compression and better support for non-standard jvms
+
+Build 1.6.4-9.11.0.886
+	cpw
+		Updated FML:
+		MinecraftForge/FML@a4de22c1addf0a6b95d38e467a96f2af417c86d5 And use the parent that's actually going to be valid. *sigh*
+
+Build 1.6.4-9.11.0.885
+	CovertJaguar
+		Fluid Rarity should have a default
+		Oops.
+	cpw
+		Updated FML:
+		MinecraftForge/FML@70cffe6982b27df0ea7d8d4d8851a0c0043bb2cb Herpaderp. Make addURL accessible. *sigh*
+
+Build 1.6.4-9.11.0.884
+	cpw
+		Updated FML:
+		MinecraftForge/FML@4a94c2c71bb4cc9644caeb06011a189989b22f87 Fix NPE when loading second single-player world
+		MinecraftForge/FML@0e80fcb8f716cfef5b016a73ca32ff0e2f3c3c05 Merge pull request #284 from smcv/uninit
+		MinecraftForge/FML@39620f1e41464f53482277dc3bcb0b9eed8ca25c Fix injection of tweaker into system
+
+Build 1.6.4-9.11.0.883
+	cpw
+		Updated FML:
+		MinecraftForge/FML@79c39f8b7c711377f7919abd1ee6a56a339d1062 Fix classpath for launchwrapper 1.7
+
+Build 1.6.4-9.11.0.882
+	traincrazyb: Correcting SoundManager Transformer
+
+Build 1.6.4-9.11.0.881
+	cpw: Clean patch fuzz
+
+Build 1.6.4-9.11.0.880
+	cpw
+		Updated FML:
+		MinecraftForge/FML@f6190e8752013c0d6857090ffd42559cf83809ae Update workspaces for 1.6.4
+
+Build 1.6.4-9.11.0.879
+	cpw
+		Updated FML:
+		MinecraftForge/FML@25981706ef12654b6c2baccc80fa2298bb5afb4a Update for MC 1.6.4
+		MinecraftForge/FML@0950b9fc8441a2d3b022ed876f17ee5ac0c47b9c Fix up a deep crash in the early server init hanging the client
+
+Build 1.6.3-9.11.0.878
+	LexManos: Remove duplicate access transformer
+	LexManos: Move have handler creation up, to prevent NPE.
+
+Build 1.6.3-9.11.0.877
+	LexManos
+		Updated FML:
+		MinecraftForge/FML@e7dd728f955aa4713fef45fea770b1f91246d712 Format the log messages through MessageFormat. Thanks CovertJaguar for the pointer.
+		MinecraftForge/FML@82d896a35e08be5712bdc15bdb93e5d4fc0ddd46 Make final transformers actually work on methods as well.
+
+Build 1.6.3-9.11.0.876
+	LexManos: Move the Structure data save files to per-world data folders. Vanilla saves them to the global folder which will potentially cause conflicts if two worlds generate 'Villages'. Which in the modded world is highly likely. Refer back to the long standing vanilla issue where nether 'villages' would override the overworlds villages, it's the same situation.
+
+Build 1.6.3-9.11.0.875
+	LexManos: Make MapGenStructureIO name registration functions public, Any mod that has anything extending StructureStart or StructureComponent must register there classes and create a default (no parameter) constructor.
+
+Build 1.6.3-9.11.0.874
+	LexManos: Unfinalized Item.getIconIndex(ItemStack)
+
+Build 1.6.3-9.11.0.873
+	LexManos
+		Updated FML:
+		MinecraftForge/FML@da70cdd35a378d02db47d2aa31fb9aac87beaedc Update tweaker for new Launcher API
+		MinecraftForge/FML@352117fd78eec745da6c80b8d354947c4dbbbb48 Update for new installer and thank you.
+		MinecraftForge/FML@40a34af43105ebcb5a63ce2351ca119da5a8158e Merge branch 'master' into newtweak
+		MinecraftForge/FML@e77d2547ad447025729ae7f3cccaaf343c4c86f9 Update for pre-ninja 1.6.3 update
+		MinecraftForge/FML@34493b0d99e2cf2bdca080ff226f2dfeedb1cf51 Update for real 1.6.3 update
+		MinecraftForge/FML@95afc95b248ecc69bc6ffcc5a95912820d8f4066 Update mcp mod info
+		MinecraftForge/FML@ff75416a325717770a5cf457c859bfb0abcbe281 Update mc_versions data and commands patch and eclipse workspace
+		MinecraftForge/FML@8f2e67558127f16d92399ea97cbcb0df46d52e19 Update the src distro's eclipse workspace.
+	LexManos: Bump version for new MC version.
+	LexManos: Actually push the submodule update -.-
+
 Build 1.6.2-9.10.1.871
 	cpw
 		Updated FML:
@@ -25,7 +275,7 @@ Build 1.6.2-9.10.1.866
 	cpw: Fix the divider
 
 Build 1.6.2-9.10.1.865
-	a.dubbz
+	Adubbz
 		Sky colours now smoothly transition
 		Made transitions even smoother
 		Sky colours now smoothly transition
@@ -398,7 +648,7 @@ Build 1.6.2-9.10.0.791
 		MinecraftForge/FML@9947ba85036542a3231e25328d3300f2a5337370 Fix logo handling. no more NPE if the logo can't be found. Also, fix location of mcp logo now.
 
 Build 1.6.2-9.10.0.790
-	a.dubbz
+	Adubbz
 		Made eating particles compatible with metadata
 		Removed extra spaces
 		Made eating particles compatible with metadata

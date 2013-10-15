@@ -1,12 +1,12 @@
 {
     "install": {
         "profileName": "Forge",
-        "target": "1.6.2-Forge9.10.1.871",
-        "path": "net.minecraftforge:minecraftforge:9.10.1.871",
-        "version": "Forge 9.10.1.871",
-        "filePath":"minecraftforge-universal-1.6.2-9.10.1.871.jar",
+        "target": "1.6.4-Forge9.11.1.933",
+        "path": "net.minecraftforge:minecraftforge:9.11.1.933",
+        "version": "Forge 9.11.1.933",
+        "filePath":"minecraftforge-universal-1.6.4-9.11.1.933.jar",
         "welcome": "Welcome to the simple Forge installer.",
-        "minecraft": "1.6.2",
+        "minecraft": "1.6.4",
         "logo": "/big_logo.png"
     },
     "versionInfo" : {
@@ -14,11 +14,11 @@
         "libraries": [
             {
                 "url": "http://files.minecraftforge.net/maven/",
-                "name": "net.minecraftforge:minecraftforge:9.10.1.871"
+                "name": "net.minecraftforge:minecraftforge:9.11.1.933"
             },
             {
                 "serverreq": true,
-                "name": "net.minecraft:launchwrapper:1.3"
+                "name": "net.minecraft:launchwrapper:1.8"
             },
             {
                 "serverreq": true,
@@ -216,8 +216,8 @@
         ],
         "mainClass": "net.minecraft.launchwrapper.Launch",
         "minimumLauncherVersion": 4,
-        "time": "2013-09-15T23:04:53-0500",
-        "id": "1.6.2-Forge9.10.1.871",
+    	"time": "2013-10-14T21:34:35-0500",
+        "id": "1.6.4-Forge9.11.1.944",
         "type": "release",
         "processArguments": "username_session_version",
         "releaseTime": "1960-01-01T00:00:00-0700"

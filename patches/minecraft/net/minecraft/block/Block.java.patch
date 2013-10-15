@@ -64,7 +64,7 @@
      private String unlocalizedName;
      @SideOnly(Side.CLIENT)
      protected Icon blockIcon;
-+    public boolean isForgeBlock; // MCPC+    
++    public boolean isForgeBlock; // MCPC+
  
      public Block(int par1, Material par2Material)
      {
@@ -172,7 +172,17 @@
          {
              float f = 0.7F;
              double d0 = (double)(par1World.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-@@ -1086,6 +1116,7 @@
+@@ -935,7 +965,8 @@
+     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
+     {
+         int l = par1World.getBlockId(par2, par3, par4);
+-        return l == 0 || blocksList[l].blockMaterial.isReplaceable();
++        Block block = Block.blocksList[l];
++        return block == null || block.isBlockReplaceable(par1World, par2, par3, par4);
+     }
+ 
+     /**
+@@ -1086,6 +1117,7 @@
       */
      public void setBlockBoundsForItemRender() {}
  
@@ -180,7 +190,7 @@
      /**
       * Called when the player destroys a block with an item that can harvest it. (i, j, k) are the coordinates of the
       * block and l is the block's subtype/damage.
-@@ -1095,28 +1126,37 @@
+@@ -1095,28 +1127,37 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -225,7 +235,7 @@
      }
  
      /**
-@@ -1412,6 +1452,12 @@
+@@ -1412,6 +1453,12 @@
          Item.itemsList[pistonStickyBase.blockID] = new ItemPiston(pistonStickyBase.blockID - 256);
          Item.itemsList[cobblestoneWall.blockID] = (new ItemMultiTextureTile(cobblestoneWall.blockID - 256, cobblestoneWall, BlockWall.types)).setUnlocalizedName("cobbleWall");
          Item.itemsList[anvil.blockID] = (new ItemAnvilBlock(anvil)).setUnlocalizedName("anvil");
@@ -238,7 +248,7 @@
  
          for (int i = 0; i < 256; ++i)
          {
-@@ -1457,4 +1503,1043 @@
+@@ -1457,4 +1504,1057 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -1245,10 +1255,24 @@
 +        return false;
 +    }
 +
++    /**
++     * Called to determine whether to allow the a block to handle its own indirect power rather than using the default rules.
++     * @param world The world
++     * @param x The x position of this block instance
++     * @param y The y position of this block instance
++     * @param z The z position of this block instance
++     * @param side The INPUT side of the block to be powered - ie the opposite of this block's output side
++     * @return Whether Block#isProvidingWeakPower should be called when determining indirect power
++     */
++    public boolean shouldCheckWeakPower(World world, int x, int y, int z, int side)
++    {
++        return !this.isNormalCube(world.getBlockId(x, y, z));
++    }
++
 +    @Deprecated //Implemented here as we changed the IFluidBlock interface, and this allows us to do so without breaking exisitng mods.
 +    // To be removed next MC version {1.6.3+}
 +    public float getFilledPercentage(World world, int x, int y, int z){ return 1; }
-+    
++
 +    //MCPC+ Start - Bukkit Compat
 +    public boolean canBeReplacedByLeaves(org.bukkit.BlockChangeDelegate world, int x, int y, int z)
 +    {

@@ -1,7 +1,7 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeatureJunglePyramid.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeatureJunglePyramid.java
-@@ -6,6 +6,9 @@
- import net.minecraft.item.Item;
+@@ -7,6 +7,9 @@
+ import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.util.WeightedRandomChestContent;
  import net.minecraft.world.World;
 +
@@ -10,7 +10,7 @@
  
  public class ComponentScatteredFeatureJunglePyramid extends ComponentScatteredFeature
  {
-@@ -164,9 +167,12 @@
+@@ -185,9 +188,12 @@
              this.placeBlockAtCurrentPosition(par1World, Block.redstoneWire.blockID, 0, 4, -3, 1, par3StructureBoundingBox);
              this.placeBlockAtCurrentPosition(par1World, Block.cobblestoneMossy.blockID, 0, 3, -3, 1, par3StructureBoundingBox);
  
@@ -24,7 +24,7 @@
              }
  
              this.placeBlockAtCurrentPosition(par1World, Block.vine.blockID, 15, 3, -2, 2, par3StructureBoundingBox);
-@@ -183,7 +189,7 @@
+@@ -204,7 +210,7 @@
  
              if (!this.field_74946_k)
              {
@@ -33,7 +33,7 @@
              }
  
              this.placeBlockAtCurrentPosition(par1World, Block.vine.blockID, 15, 8, -1, 3, par3StructureBoundingBox);
-@@ -191,7 +197,7 @@
+@@ -212,7 +218,7 @@
  
              if (!this.field_74947_h)
              {
@@ -42,7 +42,7 @@
              }
  
              this.placeBlockAtCurrentPosition(par1World, Block.cobblestoneMossy.blockID, 0, 9, -3, 2, par3StructureBoundingBox);
-@@ -224,7 +230,7 @@
+@@ -245,7 +251,7 @@
  
              if (!this.field_74948_i)
              {

@@ -1,7 +1,7 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/structure/ComponentVillageHouse2.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/structure/ComponentVillageHouse2.java
-@@ -6,6 +6,9 @@
- import net.minecraft.item.Item;
+@@ -7,6 +7,9 @@
+ import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.util.WeightedRandomChestContent;
  import net.minecraft.world.World;
 +
@@ -10,7 +10,7 @@
  
  public class ComponentVillageHouse2 extends ComponentVillage
  {
-@@ -92,7 +95,7 @@
+@@ -106,7 +109,7 @@
              if (par3StructureBoundingBox.isVecInside(j, i, k))
              {
                  this.hasMadeChest = true;
