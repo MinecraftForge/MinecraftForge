@@ -17,6 +17,15 @@
  @SideOnly(Side.CLIENT)
  public class Minecraft implements IPlayerUsage
  {
+@@ -308,7 +318,7 @@
+         this.startTimerHackThread();
+         this.session = par1Session;
+         this.mcLogAgent.logInfo("Setting user: " + par1Session.getUsername());
+-        this.mcLogAgent.logInfo("(Session ID is " + par1Session.getSessionID() + ")");
++        //this.mcLogAgent.logInfo("(Session ID is " + par1Session.getSessionID() + ")"); //don't print the session to the console.. that's stupid...
+         this.isDemo = par5;
+         this.displayWidth = par2;
+         this.displayHeight = par3;
 @@ -416,7 +426,7 @@
  
          try

@@ -11,7 +11,7 @@
 -            ;
 -        }
 +            block = Block.blocksList[par1World.getBlockId(par3,  par4, par5)];
-+            if (block != null && !block.isLeaves(par1World, par3, par4, par5))
++            if (block != null && !block.isAirBlock(par1World, par3, par4, par5) && !block.isLeaves(par1World, par3, par4, par5))
 +            {
 +                break;
 +            }

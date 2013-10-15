@@ -1,0 +1,76 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntityZombie.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntityZombie.java
+@@ -34,6 +34,10 @@
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeDummyContainer;
++import net.minecraftforge.event.Event.Result;
++import net.minecraftforge.event.ForgeEventFactory;
++import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
+ 
+ public class EntityZombie extends EntityMob
+ {
+@@ -70,7 +74,7 @@
+         this.getEntityAttribute(SharedMonsterAttributes.followRange).setAttribute(40.0D);
+         this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.23000000417232513D);
+         this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setAttribute(3.0D);
+-        this.getAttributeMap().func_111150_b(field_110186_bp).setAttribute(this.rand.nextDouble() * 0.10000000149011612D);
++        this.getAttributeMap().func_111150_b(field_110186_bp).setAttribute(this.rand.nextDouble() * ForgeDummyContainer.zombieSummonBaseChance);
+     }
+ 
+     protected void entityInit()
+@@ -211,13 +215,28 @@
+                 entitylivingbase = (EntityLivingBase)par1DamageSource.getEntity();
+             }
+ 
+-            if (entitylivingbase != null && this.worldObj.difficultySetting >= 3 && (double)this.rand.nextFloat() < this.getEntityAttribute(field_110186_bp).getAttributeValue())
+-            {
+-                int i = MathHelper.floor_double(this.posX);
+-                int j = MathHelper.floor_double(this.posY);
+-                int k = MathHelper.floor_double(this.posZ);
+-                EntityZombie entityzombie = new EntityZombie(this.worldObj);
+-
++            int i = MathHelper.floor_double(this.posX);
++            int j = MathHelper.floor_double(this.posY);
++            int k = MathHelper.floor_double(this.posZ);
++
++            SummonAidEvent summonAid = ForgeEventFactory.fireZombieSummonAid(this, worldObj, i, j, k, entitylivingbase, this.getEntityAttribute(field_110186_bp).getAttributeValue());
++            
++            if (summonAid.getResult() == Result.DENY)
++            {
++                return true;
++            }
++            else if (summonAid.getResult() == Result.ALLOW || entitylivingbase != null && this.worldObj.difficultySetting >= 3 && (double)this.rand.nextFloat() < this.getEntityAttribute(field_110186_bp).getAttributeValue())
++            {
++                EntityZombie entityzombie;
++                if (summonAid.customSummonedAid != null && summonAid.getResult() == Result.ALLOW)
++                {
++                    entityzombie = summonAid.customSummonedAid;
++                }
++                else
++                {
++                    entityzombie = new EntityZombie(this.worldObj);
++                }
++                
+                 for (int l = 0; l < 50; ++l)
+                 {
+                     int i1 = i + MathHelper.getRandomIntegerInRange(this.rand, 7, 40) * MathHelper.getRandomIntegerInRange(this.rand, -1, 1);
+@@ -231,7 +250,7 @@
+                         if (this.worldObj.checkNoEntityCollision(entityzombie.boundingBox) && this.worldObj.getCollidingBoundingBoxes(entityzombie, entityzombie.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(entityzombie.boundingBox))
+                         {
+                             this.worldObj.spawnEntityInWorld(entityzombie);
+-                            entityzombie.setAttackTarget(entitylivingbase);
++                            if (entitylivingbase != null) entityzombie.setAttackTarget(entitylivingbase);
+                             entityzombie.onSpawnWithEgg((EntityLivingData)null);
+                             this.getEntityAttribute(field_110186_bp).applyModifier(new AttributeModifier("Zombie reinforcement caller charge", -0.05000000074505806D, 0));
+                             entityzombie.getEntityAttribute(field_110186_bp).applyModifier(new AttributeModifier("Zombie reinforcement callee charge", -0.05000000074505806D, 0));
+@@ -442,7 +461,7 @@
+ 
+         if (par1EntityLivingData1 == null)
+         {
+-            par1EntityLivingData1 = new EntityZombieGroupData(this, this.worldObj.rand.nextFloat() < 0.05F, this.worldObj.rand.nextFloat() < 0.05F, (EntityZombieINNER1)null);
++            par1EntityLivingData1 = new EntityZombieGroupData(this, this.worldObj.rand.nextFloat() < ForgeDummyContainer.zombieBabyChance, this.worldObj.rand.nextFloat() < 0.05F, (EntityZombieINNER1)null);
+         }
+ 
+         if (par1EntityLivingData1 instanceof EntityZombieGroupData)
