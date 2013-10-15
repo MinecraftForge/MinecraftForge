@@ -60,7 +60,7 @@ public class PluginClassLoader extends URLClassLoader {
     private static final int F_REMAP_OBC161     = 1 << 17;
     private static final int F_REMAP_OBC162     = 1 << 18;
     private static final int F_REMAP_OBC164     = 1 << 19;
-    private static final int F_REMAP_NMSPRE_MASK= 0x0fff0000;  // "unversioned" NMS plugin version
+    private static final int F_REMAP_NMSPRE_MASK= 0xfff00000;  // "unversioned" NMS plugin version
 
     // This trick bypasses Maven Shade's package rewriting when using String literals [same trick in jline]
     private static final String org_bukkit_craftbukkit = new String(new char[] {'o','r','g','/','b','u','k','k','i','t','/','c','r','a','f','t','b','u','k','k','i','t'});
@@ -177,21 +177,21 @@ public class PluginClassLoader extends URLClassLoader {
         if (remapNMS147) flags |= F_REMAP_NMS147;
         if (remapNMS146) flags |= F_REMAP_NMS146;
         if (!remapNMSPre.equals("false")) {
-            if      (remapNMSPre.equals("1.6.4")) flags |= 0x01640000;
-            else if (remapNMSPre.equals("1.6.2")) flags |= 0x01620000;
-            else if (remapNMSPre.equals("1.6.1")) flags |= 0x01610000;
-            else if (remapNMSPre.equals("1.5.2")) flags |= 0x01520000;
-            else if (remapNMSPre.equals("1.5.1")) flags |= 0x01510000;
-            else if (remapNMSPre.equals("1.5.0")) flags |= 0x01500000;
-            else if (remapNMSPre.equals("1.5"))   flags |= 0x01500000;
-            else if (remapNMSPre.equals("1.4.7")) flags |= 0x01470000;
-            else if (remapNMSPre.equals("1.4.6")) flags |= 0x01460000;
-            else if (remapNMSPre.equals("1.4.5")) flags |= 0x01450000;
-            else if (remapNMSPre.equals("1.4.4")) flags |= 0x01440000;
-            else if (remapNMSPre.equals("1.4.2")) flags |= 0x01420000;
-            else if (remapNMSPre.equals("1.3.2")) flags |= 0x01320000;
-            else if (remapNMSPre.equals("1.3.1")) flags |= 0x01310000;
-            else if (remapNMSPre.equals("1.2.5")) flags |= 0x01250000;
+            if      (remapNMSPre.equals("1.6.4")) flags |= 0x16400000;
+            else if (remapNMSPre.equals("1.6.2")) flags |= 0x16200000;
+            else if (remapNMSPre.equals("1.6.1")) flags |= 0x16100000;
+            else if (remapNMSPre.equals("1.5.2")) flags |= 0x15200000;
+            else if (remapNMSPre.equals("1.5.1")) flags |= 0x15100000;
+            else if (remapNMSPre.equals("1.5.0")) flags |= 0x15000000;
+            else if (remapNMSPre.equals("1.5"))   flags |= 0x15000000;
+            else if (remapNMSPre.equals("1.4.7")) flags |= 0x14700000;
+            else if (remapNMSPre.equals("1.4.6")) flags |= 0x14600000;
+            else if (remapNMSPre.equals("1.4.5")) flags |= 0x14500000;
+            else if (remapNMSPre.equals("1.4.4")) flags |= 0x14400000;
+            else if (remapNMSPre.equals("1.4.2")) flags |= 0x14200000;
+            else if (remapNMSPre.equals("1.3.2")) flags |= 0x13200000;
+            else if (remapNMSPre.equals("1.3.1")) flags |= 0x13100000;
+            else if (remapNMSPre.equals("1.2.5")) flags |= 0x12500000;
             else {
                 System.out.println("Unsupported nms-remap-pre version '"+remapNMSPre+"', disabling");
             }
