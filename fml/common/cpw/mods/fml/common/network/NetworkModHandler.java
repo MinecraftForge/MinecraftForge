@@ -16,6 +16,8 @@ import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.logging.Level;
 
+import org.objectweb.asm.Type;
+
 import net.minecraft.item.Item;
 
 import com.google.common.base.Strings;
@@ -77,6 +79,7 @@ public class NetworkModHandler
             if (vch.getClassName().equals(networkModClass.getName()))
             {
                 versionCheckHandlerMethod = vch.getObjectName();
+                versionCheckHandlerMethod = versionCheckHandlerMethod.substring(0,versionCheckHandlerMethod.indexOf('('));
                 break;
             }
         }
