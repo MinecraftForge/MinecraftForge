@@ -4,20 +4,20 @@
     <groupId>mcpc</groupId>
     <artifactId>mcpc-plus</artifactId>
     <packaging>jar</packaging>
-    <version>1.6.2-R1.1-SNAPSHOT</version>
+    <version>1.6.4-R0.1-SNAPSHOT</version>
     <name>mcpc-plus</name>
     <url>http://www.mcportcentral.co.za/</url>
     <properties>
         <mcpc.basedir>${project.basedir}/../..</mcpc.basedir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <bukkit.version>${project.version}</bukkit.version>
-        <filename.version>1.6.2-R1.1</filename.version>
+        <filename.version>1.6.4-R0.1</filename.version>
         <api.version>unknown</api.version>
-        <minecraft.version>1.6.2</minecraft.version>
-        <minecraft_version>1_6_R2</minecraft_version>
-        <minecraft_server_url_download>http://s3.amazonaws.com/Minecraft.Download/versions/1.6.2/minecraft_server.1.6.2.jar</minecraft_server_url_download>
-        <forge.build>871</forge.build>
-        <forge.version>9.10.0.${forge.build}</forge.version>
+        <minecraft.version>1.6.4</minecraft.version>
+        <minecraft_version>1_6_R4</minecraft_version>
+        <minecraft_server_url_download>http://s3.amazonaws.com/Minecraft.Download/versions/1.6.4/minecraft_server.1.6.4.jar</minecraft_server_url_download>
+        <forge.build>933</forge.build>
+        <forge.version>9.11.1.${forge.build}</forge.version>
         <forge.remapped.revision>R1-MCPC</forge.remapped.revision>
         <fml.at>${mcpc.basedir}/resources/fml_at.cfg</fml.at>
         <forge.at>${mcpc.basedir}/resources/forge_at.cfg</forge.at>
@@ -519,9 +519,9 @@
                         <configuration>
                             <groupId>net.minecraft.libraries</groupId>
                             <artifactId>launchwrapper</artifactId>
-                            <version>1.3</version>
+                            <version>1.8</version>
                             <inJars>
-                                <param>http://s3.amazonaws.com/Minecraft.Download/libraries/net/minecraft/launchwrapper/1.3/launchwrapper-1.3.jar</param>
+                                <param>http://s3.amazonaws.com/Minecraft.Download/libraries/net/minecraft/launchwrapper/1.8/launchwrapper-1.8.jar</param>
                             </inJars>
                             <srgIn>${mcp.mappings}</srgIn>
                         </configuration>

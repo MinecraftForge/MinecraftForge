@@ -24,11 +24,11 @@
                      }
  
                      this.worldObj.setBlockToAir(i, j, k);
-+                    worldObj.spigotConfig.antiXrayInstance.updateNearbyBlocks(worldObj, i, j, k); // Spigot (Orebfuscator)
++                    worldObj.spigotConfig.antiXrayInstance.updateNearbyBlocks(worldObj, i, j, k); // Spigot
                  }
  
                  if (this.onGround)
-@@ -135,8 +141,16 @@
+@@ -135,8 +141,18 @@
                      {
                          this.setDead();
  
@@ -43,10 +43,12 @@
 +
 +                            this.worldObj.setBlock(i, j, k, this.blockID, this.metadata, 3);
 +                            // CraftBukkit end
++                            worldObj.spigotConfig.antiXrayInstance.updateNearbyBlocks(worldObj, i, j, k); // Spigot
++
                              if (Block.blocksList[this.blockID] instanceof BlockSand)
                              {
                                  ((BlockSand)Block.blocksList[this.blockID]).onFinishFalling(this.worldObj, i, j, k, this.metadata);
-@@ -204,7 +218,17 @@
+@@ -204,7 +220,17 @@
                  while (iterator.hasNext())
                  {
                      Entity entity = (Entity)iterator.next();
@@ -65,7 +67,7 @@
                  }
  
                  if (this.blockID == Block.anvil.blockID && (double)this.rand.nextFloat() < 0.05000000074505806D + (double)i * 0.05D)
-@@ -284,6 +308,12 @@
+@@ -284,6 +310,12 @@
              this.fallingBlockTileEntityData = par1NBTTagCompound.getCompoundTag("TileEntityData");
          }
  

@@ -1,16 +1,13 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga1.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga1.java
-@@ -2,12 +2,24 @@
- 
- import java.util.Random;
+@@ -4,10 +4,21 @@
  import net.minecraft.block.Block;
-+import net.minecraft.block.BlockSapling.TreeGenerator;
  import net.minecraft.world.World;
  
 -public class WorldGenTaiga1 extends WorldGenerator
 +import org.bukkit.BlockChangeDelegate; // CraftBukkit
 +
-+public class WorldGenTaiga1 extends WorldGenerator implements TreeGenerator   // CraftBukkit add interface
++public class WorldGenTaiga1 extends WorldGenerator implements net.minecraft.block.BlockSapling.TreeGenerator   // CraftBukkit add interface
  {
 +    public WorldGenTaiga1() {}
 +
@@ -26,7 +23,7 @@
          int l = par2Random.nextInt(5) + 7;
          int i1 = l - par2Random.nextInt(2) - 3;
          int j1 = l - i1;
-@@ -41,9 +53,11 @@
+@@ -41,9 +52,11 @@
                      {
                          if (l1 >= 0 && l1 < 128)
                          {
@@ -40,7 +37,7 @@
                              {
                                  flag = false;
                              }
-@@ -62,11 +76,11 @@
+@@ -62,11 +75,11 @@
              }
              else
              {
@@ -54,7 +51,7 @@
                      l2 = 0;
  
                      for (i2 = par4 + l; i2 >= par4 + i1; --i2)
-@@ -79,9 +93,12 @@
+@@ -79,9 +92,12 @@
                              {
                                  int j3 = i3 - par5;
  
@@ -69,7 +66,7 @@
                                  }
                              }
                          }
-@@ -98,11 +115,13 @@
+@@ -98,11 +114,13 @@
  
                      for (i2 = 0; i2 < l - 1; ++i2)
                      {

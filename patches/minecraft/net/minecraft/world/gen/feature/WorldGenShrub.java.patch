@@ -1,20 +1,17 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenShrub.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenShrub.java
-@@ -2,9 +2,12 @@
- 
- import java.util.Random;
+@@ -4,7 +4,9 @@
  import net.minecraft.block.Block;
-+import net.minecraft.block.BlockSapling.TreeGenerator;
  import net.minecraft.world.World;
  
 -public class WorldGenShrub extends WorldGenerator
 +import org.bukkit.BlockChangeDelegate; // CraftBukkit
 +
-+public class WorldGenShrub extends WorldGenerator implements TreeGenerator   // CraftBukkit add interface
++public class WorldGenShrub extends WorldGenerator implements net.minecraft.block.BlockSapling.TreeGenerator   // CraftBukkit add interface
  {
      private int field_76527_a;
      private int field_76526_b;
-@@ -17,19 +20,33 @@
+@@ -17,19 +19,33 @@
  
      public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
      {
@@ -53,7 +50,7 @@
  
              for (int j1 = par4; j1 <= par4 + 2; ++j1)
              {
-@@ -44,15 +61,25 @@
+@@ -44,15 +60,25 @@
                      {
                          int l2 = k2 - par5;
  

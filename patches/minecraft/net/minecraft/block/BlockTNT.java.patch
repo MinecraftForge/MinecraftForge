@@ -1,5 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockTNT.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockTNT.java
+@@ -118,7 +118,7 @@
+     {
+         if (par5EntityPlayer.getCurrentEquippedItem() != null && par5EntityPlayer.getCurrentEquippedItem().itemID == Item.flintAndSteel.itemID)
+         {
+-            this.primeTnt(par1World, par2, par3, par4, 1, par5EntityPlayer);
++            this.primeTnt(par1World, par2, par3, par4, 1, (EntityLivingBase)par5EntityPlayer); // Spigot - Fix decompile error!
+             par1World.setBlockToAir(par2, par3, par4);
+             par5EntityPlayer.getCurrentEquippedItem().damageItem(1, par5EntityPlayer);
+             return true;
 @@ -140,6 +140,12 @@
  
              if (entityarrow.isBurning())

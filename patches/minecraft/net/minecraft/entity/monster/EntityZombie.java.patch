@@ -1,14 +1,15 @@
 --- ../src_base/minecraft/net/minecraft/entity/monster/EntityZombie.java
 +++ ../src_work/minecraft/net/minecraft/entity/monster/EntityZombie.java
-@@ -31,9 +31,15 @@
- import net.minecraft.nbt.NBTTagCompound;
- import net.minecraft.potion.Potion;
- import net.minecraft.potion.PotionEffect;
-+import net.minecraft.server.MinecraftServer;
+@@ -34,6 +34,16 @@
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeDummyContainer;
++import net.minecraftforge.event.Event.Result;
++import net.minecraftforge.event.ForgeEventFactory;
++import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
 +//CraftBukkit start
++import net.minecraft.server.MinecraftServer;
 +import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
 +import org.bukkit.event.entity.EntityCombustEvent;
@@ -16,7 +17,7 @@
  
  public class EntityZombie extends EntityMob
  {
-@@ -45,6 +51,7 @@
+@@ -45,6 +55,7 @@
       * Ticker used to determine the time remaining for this zombie to convert into a villager when cured.
       */
      private int conversionTime;
@@ -24,7 +25,16 @@
  
      public EntityZombie(World par1World)
      {
-@@ -180,7 +187,15 @@
+@@ -70,7 +81,7 @@
+         this.getEntityAttribute(SharedMonsterAttributes.followRange).setAttribute(40.0D);
+         this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.23000000417232513D);
+         this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setAttribute(3.0D);
+-        this.getAttributeMap().func_111150_b(field_110186_bp).setAttribute(this.rand.nextDouble() * 0.10000000149011612D);
++        this.getAttributeMap().func_111150_b(field_110186_bp).setAttribute(this.rand.nextDouble() * ForgeDummyContainer.zombieSummonBaseChance);
+     }
+ 
+     protected void entityInit()
+@@ -180,7 +191,15 @@
  
                  if (flag)
                  {
@@ -41,18 +51,54 @@
                  }
              }
          }
-@@ -230,8 +245,8 @@
+@@ -211,13 +230,28 @@
+                 entitylivingbase = (EntityLivingBase)par1DamageSource.getEntity();
+             }
+ 
+-            if (entitylivingbase != null && this.worldObj.difficultySetting >= 3 && (double)this.rand.nextFloat() < this.getEntityAttribute(field_110186_bp).getAttributeValue())
+-            {
+-                int i = MathHelper.floor_double(this.posX);
+-                int j = MathHelper.floor_double(this.posY);
+-                int k = MathHelper.floor_double(this.posZ);
+-                EntityZombie entityzombie = new EntityZombie(this.worldObj);
+-
++            int i = MathHelper.floor_double(this.posX);
++            int j = MathHelper.floor_double(this.posY);
++            int k = MathHelper.floor_double(this.posZ);
++
++            SummonAidEvent summonAid = ForgeEventFactory.fireZombieSummonAid(this, worldObj, i, j, k, entitylivingbase, this.getEntityAttribute(field_110186_bp).getAttributeValue());
++            
++            if (summonAid.getResult() == Result.DENY)
++            {
++                return true;
++            }
++            else if (summonAid.getResult() == Result.ALLOW || entitylivingbase != null && this.worldObj.difficultySetting >= 3 && (double)this.rand.nextFloat() < this.getEntityAttribute(field_110186_bp).getAttributeValue())
++            {
++                EntityZombie entityzombie;
++                if (summonAid.customSummonedAid != null && summonAid.getResult() == Result.ALLOW)
++                {
++                    entityzombie = summonAid.customSummonedAid;
++                }
++                else
++                {
++                    entityzombie = new EntityZombie(this.worldObj);
++                }
++                
+                 for (int l = 0; l < 50; ++l)
+                 {
+                     int i1 = i + MathHelper.getRandomIntegerInRange(this.rand, 7, 40) * MathHelper.getRandomIntegerInRange(this.rand, -1, 1);
+@@ -230,8 +264,8 @@
  
                          if (this.worldObj.checkNoEntityCollision(entityzombie.boundingBox) && this.worldObj.getCollidingBoundingBoxes(entityzombie, entityzombie.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(entityzombie.boundingBox))
                          {
 -                            this.worldObj.spawnEntityInWorld(entityzombie);
 -                            entityzombie.setAttackTarget(entitylivingbase);
 +                            this.worldObj.addEntity(entityzombie, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.REINFORCEMENTS);
-+                            entityzombie.setAttackTarget(entitylivingbase); // CraftBukkit - added SpawnReason
++                            if (entitylivingbase != null) entityzombie.setAttackTarget(entitylivingbase); // CraftBukkit - added SpawnReason
                              entityzombie.onSpawnWithEgg((EntityLivingData)null);
                              this.getEntityAttribute(field_110186_bp).applyModifier(new AttributeModifier("Zombie reinforcement caller charge", -0.05000000074505806D, 0));
                              entityzombie.getEntityAttribute(field_110186_bp).applyModifier(new AttributeModifier("Zombie reinforcement callee charge", -0.05000000074505806D, 0));
-@@ -253,6 +268,11 @@
+@@ -253,6 +287,11 @@
          if (!this.worldObj.isRemote && this.isConverting())
          {
              int i = this.getConversionTimeBoost();
@@ -64,7 +110,7 @@
              this.conversionTime -= i;
  
              if (this.conversionTime <= 0)
-@@ -270,7 +290,15 @@
+@@ -270,7 +309,15 @@
  
          if (flag && this.getHeldItem() == null && this.isBurning() && this.rand.nextFloat() < (float)this.worldObj.difficultySetting * 0.3F)
          {
@@ -81,7 +127,7 @@
          }
  
          return flag;
-@@ -324,20 +352,22 @@
+@@ -324,20 +371,22 @@
          return EnumCreatureAttribute.UNDEAD;
      }
  
@@ -112,3 +158,12 @@
  
      /**
       * Makes entity wear random armor based on difficulty
+@@ -442,7 +491,7 @@
+ 
+         if (par1EntityLivingData1 == null)
+         {
+-            par1EntityLivingData1 = new EntityZombieGroupData(this, this.worldObj.rand.nextFloat() < 0.05F, this.worldObj.rand.nextFloat() < 0.05F, (EntityZombieINNER1)null);
++            par1EntityLivingData1 = new EntityZombieGroupData(this, this.worldObj.rand.nextFloat() < ForgeDummyContainer.zombieBabyChance, this.worldObj.rand.nextFloat() < 0.05F, (EntityZombieINNER1)null);
+         }
+ 
+         if (par1EntityLivingData1 instanceof EntityZombieGroupData)

@@ -45,7 +45,13 @@
          this.health = 5;
          this.hoverStart = (float)(Math.random() * Math.PI * 2.0D);
          this.setSize(0.25F, 0.25F);
-@@ -47,7 +62,14 @@
+@@ -42,12 +57,20 @@
+         this.motionX = (double)((float)(Math.random() * 0.20000000298023224D - 0.10000000149011612D));
+         this.motionY = 0.20000000298023224D;
+         this.motionZ = (double)((float)(Math.random() * 0.20000000298023224D - 0.10000000149011612D));
++        this.lifespan = par1World.spigotConfig.itemDespawnRate;
+     }
+ 
      public EntityItem(World par1World, double par2, double par4, double par6, ItemStack par8ItemStack)
      {
          this(par1World, par2, par4, par6);
@@ -60,7 +66,7 @@
      }
  
      /**
-@@ -62,6 +84,7 @@
+@@ -62,6 +85,7 @@
      public EntityItem(World par1World)
      {
          super(par1World);
@@ -68,7 +74,7 @@
          this.health = 5;
          this.hoverStart = (float)(Math.random() * Math.PI * 2.0D);
          this.setSize(0.25F, 0.25F);
-@@ -78,22 +101,37 @@
+@@ -78,22 +102,37 @@
       */
      public void onUpdate()
      {
@@ -114,7 +120,7 @@
          {
              if (this.worldObj.getBlockMaterial(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)) == Material.lava)
              {
-@@ -103,7 +141,7 @@
+@@ -103,7 +142,7 @@
                  this.playSound("random.fizz", 0.4F, 2.0F + this.rand.nextFloat() * 0.4F);
              }
  
@@ -123,7 +129,7 @@
              {
                  this.searchForOtherItemsNearby();
              }
-@@ -131,9 +169,38 @@
+@@ -131,9 +170,38 @@
              this.motionY *= -0.5D;
          }
  
@@ -165,7 +171,7 @@
          {
              this.setDead();
          }
-@@ -144,8 +211,11 @@
+@@ -144,8 +212,11 @@
       */
      private void searchForOtherItemsNearby()
      {
@@ -179,7 +185,7 @@
          while (iterator.hasNext())
          {
              EntityItem entityitem = (EntityItem)iterator.next();
-@@ -268,6 +338,7 @@
+@@ -268,6 +339,7 @@
      {
          par1NBTTagCompound.setShort("Health", (short)((byte)this.health));
          par1NBTTagCompound.setShort("Age", (short)this.age);
@@ -187,7 +193,7 @@
  
          if (this.getEntityItem() != null)
          {
-@@ -283,12 +354,36 @@
+@@ -283,12 +355,36 @@
          this.health = par1NBTTagCompound.getShort("Health") & 255;
          this.age = par1NBTTagCompound.getShort("Age");
          NBTTagCompound nbttagcompound1 = par1NBTTagCompound.getCompoundTag("Item");
@@ -227,7 +233,7 @@
      }
  
      /**
-@@ -298,10 +393,47 @@
+@@ -298,10 +394,47 @@
      {
          if (!this.worldObj.isRemote)
          {

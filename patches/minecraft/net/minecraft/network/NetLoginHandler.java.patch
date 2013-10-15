@@ -48,7 +48,7 @@
          }
          else
          {
-+            this.hostname = par1Packet2ClientProtocol.serverHost == null ? "" : par1Packet2ClientProtocol.serverHost + ':' + par1Packet2ClientProtocol.serverPort;
++            this.hostname = par1Packet2ClientProtocol.serverHost + ':' + par1Packet2ClientProtocol.serverPort; // CraftBukkit - initialize field
              this.clientUsername = par1Packet2ClientProtocol.getUsername();
  
 -            if (!this.clientUsername.equals(StringUtils.stripControlCodes(this.clientUsername)))
@@ -138,7 +138,7 @@
 -
 -                for (Iterator iterator = list.iterator(); iterator.hasNext(); s = s + object.toString().replaceAll("\u0000", ""))
 +                // CraftBukkit start - Don't create a list from an array
-+                Object[] list = new Object[] { 1, 74, this.mcServer.getMinecraftVersion(), pingEvent.getMotd(), serverconfigurationmanager.getCurrentPlayerCount(), pingEvent.getMaxPlayers() };
++                Object[] list = new Object[] { 1, 78, this.mcServer.getMinecraftVersion(), pingEvent.getMotd(), serverconfigurationmanager.getCurrentPlayerCount(), pingEvent.getMaxPlayers() };
 +                StringBuilder builder = new StringBuilder();
 +
 +                for (Object object : list)

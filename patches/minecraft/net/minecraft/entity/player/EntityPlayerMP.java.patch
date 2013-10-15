@@ -156,7 +156,7 @@
  
      /**
       * Add experience levels to this player.
-@@ -254,7 +339,7 @@
+@@ -254,11 +339,19 @@
          --this.initialInvulnerability;
          this.openContainer.detectAndSendChanges();
  
@@ -165,7 +165,19 @@
          {
              this.closeScreen();
              this.openContainer = this.inventoryContainer;
-@@ -289,8 +374,11 @@
+         }
++
++        // CraftBukkit start
++        if (this.hurtResistantTime > 0)
++        {
++            --this.hurtResistantTime;
++        }
++
++        // CraftBukkit end
+ 
+         while (!this.destroyedItemsNetCache.isEmpty())
+         {
+@@ -289,8 +382,11 @@
  
                  if (chunkcoordintpair != null && this.worldObj.blockExists(chunkcoordintpair.chunkXPos << 4, 0, chunkcoordintpair.chunkZPos << 4))
                  {
@@ -179,7 +191,7 @@
                  }
              }
  
-@@ -311,6 +399,7 @@
+@@ -311,6 +407,7 @@
                  {
                      Chunk chunk = (Chunk)iterator2.next();
                      this.getServerForPlayer().getEntityTracker().func_85172_a(this, chunk);
@@ -187,7 +199,7 @@
                  }
              }
          }
-@@ -344,7 +433,8 @@
+@@ -344,7 +441,8 @@
  
              if (this.getHealth() != this.lastHealth || this.lastFoodLevel != this.foodStats.getFoodLevel() || this.foodStats.getSaturationLevel() == 0.0F != this.wasHungry)
              {
@@ -197,7 +209,7 @@
                  this.lastHealth = this.getHealth();
                  this.lastFoodLevel = this.foodStats.getFoodLevel();
                  this.wasHungry = this.foodStats.getSaturationLevel() == 0.0F;
-@@ -353,21 +443,36 @@
+@@ -353,21 +451,36 @@
              if (this.getHealth() + this.getAbsorptionAmount() != this.field_130068_bO)
              {
                  this.field_130068_bO = this.getHealth() + this.getAbsorptionAmount();
@@ -243,7 +255,7 @@
          }
          catch (Throwable throwable)
          {
-@@ -383,20 +488,88 @@
+@@ -383,20 +496,88 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -342,7 +354,7 @@
              score.func_96648_a();
          }
  
-@@ -421,7 +594,8 @@
+@@ -421,7 +602,8 @@
          }
          else
          {
@@ -352,7 +364,7 @@
  
              if (!flag && this.initialInvulnerability > 0 && par1DamageSource != DamageSource.outOfWorld)
              {
-@@ -456,7 +630,8 @@
+@@ -456,7 +638,8 @@
  
      public boolean canAttackPlayer(EntityPlayer par1EntityPlayer)
      {
@@ -362,7 +374,7 @@
      }
  
      /**
-@@ -476,21 +651,27 @@
+@@ -476,21 +659,27 @@
              if (this.dimension == 0 && par1 == 1)
              {
                  this.triggerAchievement(AchievementList.theEnd);
@@ -397,7 +409,7 @@
              this.lastExperience = -1;
              this.lastHealth = -1.0F;
              this.lastFoodLevel = -1;
-@@ -545,6 +726,11 @@
+@@ -545,6 +734,11 @@
       */
      public void wakeUpPlayer(boolean par1, boolean par2, boolean par3)
      {
@@ -409,7 +421,7 @@
          if (this.isPlayerSleeping())
          {
              this.getServerForPlayer().getEntityTracker().sendPacketToAllAssociatedPlayers(this, new Packet18Animation(this, 3));
-@@ -563,9 +749,24 @@
+@@ -563,9 +757,24 @@
       */
      public void mountEntity(Entity par1Entity)
      {
@@ -437,7 +449,7 @@
      }
  
      /**
-@@ -594,28 +795,54 @@
+@@ -594,28 +803,54 @@
          }
      }
  
@@ -496,7 +508,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -625,9 +852,18 @@
+@@ -625,9 +860,18 @@
       */
      public void displayGUIAnvil(int par1, int par2, int par3)
      {
@@ -517,7 +529,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -642,27 +878,54 @@
+@@ -642,27 +886,54 @@
              this.closeScreen();
          }
  
@@ -578,7 +590,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -672,9 +935,18 @@
+@@ -672,9 +943,18 @@
       */
      public void displayGUIFurnace(TileEntityFurnace par1TileEntityFurnace)
      {
@@ -599,7 +611,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -684,9 +956,18 @@
+@@ -684,9 +964,18 @@
       */
      public void displayGUIDispenser(TileEntityDispenser par1TileEntityDispenser)
      {
@@ -620,7 +632,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -696,9 +977,18 @@
+@@ -696,9 +985,18 @@
       */
      public void displayGUIBrewingStand(TileEntityBrewingStand par1TileEntityBrewingStand)
      {
@@ -641,7 +653,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -708,17 +998,35 @@
+@@ -708,17 +1006,35 @@
       */
      public void displayGUIBeacon(TileEntityBeacon par1TileEntityBeacon)
      {
@@ -681,7 +693,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
          InventoryMerchant inventorymerchant = ((ContainerMerchant)this.openContainer).getMerchantInventory();
-@@ -744,6 +1052,16 @@
+@@ -744,6 +1060,16 @@
  
      public void displayGUIHorse(EntityHorse par1EntityHorse, IInventory par2IInventory)
      {
@@ -698,7 +710,7 @@
          if (this.openContainer != this.inventoryContainer)
          {
              this.closeScreen();
-@@ -751,7 +1069,7 @@
+@@ -751,7 +1077,7 @@
  
          this.incrementWindowID();
          this.playerNetServerHandler.sendPacketToPlayer(new Packet100OpenWindow(this.currentWindowId, 11, par2IInventory.getInvName(), par2IInventory.getSizeInventory(), par2IInventory.isInvNameLocalized(), par1EntityHorse.entityId));
@@ -707,7 +719,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -780,6 +1098,15 @@
+@@ -780,6 +1106,15 @@
      {
          this.playerNetServerHandler.sendPacketToPlayer(new Packet104WindowItems(par1Container.windowId, par2List));
          this.playerNetServerHandler.sendPacketToPlayer(new Packet103SetSlot(-1, -1, this.inventory.getItemStack()));
@@ -723,7 +735,7 @@
      }
  
      /**
-@@ -797,6 +1124,7 @@
+@@ -797,6 +1132,7 @@
       */
      public void closeScreen()
      {
@@ -731,7 +743,7 @@
          this.playerNetServerHandler.sendPacketToPlayer(new Packet101CloseWindow(this.openContainer.windowId));
          this.closeContainer();
      }
-@@ -874,6 +1202,7 @@
+@@ -874,6 +1210,7 @@
      public void setPlayerHealthUpdated()
      {
          this.lastHealth = -1.0E8F;
@@ -739,7 +751,7 @@
      }
  
      /**
-@@ -1038,7 +1367,7 @@
+@@ -1038,7 +1375,7 @@
       */
      public void requestTexturePackLoad(String par1Str, int par2)
      {
@@ -748,7 +760,7 @@
          this.playerNetServerHandler.sendPacketToPlayer(new Packet250CustomPayload("MC|TPack", s1.getBytes()));
      }
  
-@@ -1054,4 +1383,115 @@
+@@ -1054,4 +1391,115 @@
      {
          this.field_143005_bX = MinecraftServer.getSystemTimeMillis();
      }

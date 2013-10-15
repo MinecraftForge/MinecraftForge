@@ -60,8 +60,12 @@
              }
              else
              {
-@@ -157,9 +162,9 @@
-                         par1World.setBlockToAir(par2, par3, par4);
+@@ -154,12 +159,12 @@
+                 {
+                     if (!par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) || l > 3)
+                     {
+-                        par1World.setBlockToAir(par2, par3, par4);
++                        fireExtinguished(par1World, par2, par3, par4); // CraftBukkit - burn out of inflammable block
                      }
                  }
 -                else if (!flag && !this.canBlockCatchFire(par1World, par2, par3 - 1, par4) && l == 15 && par5Random.nextInt(4) == 0)
