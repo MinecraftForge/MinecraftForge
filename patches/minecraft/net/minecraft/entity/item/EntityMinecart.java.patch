@@ -140,45 +140,15 @@
          if (this.field_82344_g != null)
          {
              this.field_82344_g.update();
-@@ -269,11 +344,11 @@
+@@ -269,7 +344,7 @@
  
              if (this.inPortal)
              {
 -                if (minecraftserver.getAllowNether())
--                {
--                    if (this.ridingEntity == null && this.portalCounter++ >= i)
 +                if (true || minecraftserver.getAllowNether())   // CraftBukkit - multi-world should still allow teleport even if default vanilla nether disabled
-+                {
-+                    if (this.ridingEntity == null && this.timeInPortal++ >= i)
+                 {
+                     if (this.ridingEntity == null && this.portalCounter++ >= i)
                      {
--                        this.portalCounter = i;
-+                        this.timeInPortal = i;
-                         this.timeUntilPortal = this.getPortalCooldown();
-                         byte b0;
- 
-@@ -294,14 +369,14 @@
-             }
-             else
-             {
--                if (this.portalCounter > 0)
--                {
--                    this.portalCounter -= 4;
--                }
--
--                if (this.portalCounter < 0)
--                {
--                    this.portalCounter = 0;
-+                if (this.timeInPortal > 0)
-+                {
-+                    this.timeInPortal -= 4;
-+                }
-+
-+                if (this.timeInPortal < 0)
-+                {
-+                    this.timeInPortal = 0;
-                 }
-             }
- 
 @@ -348,23 +423,25 @@
                  --i;
              }

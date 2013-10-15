@@ -112,14 +112,7 @@
      private double entityRiderPitchDelta;
      private double entityRiderYawDelta;
  
-@@ -210,14 +265,31 @@
- 
-     /** Whether the entity is inside a Portal */
-     protected boolean inPortal;
--    protected int portalCounter;
-+    protected int timeInPortal;
- 
-     /** Which dimension the player is in (-1 = the Nether, 0 = normal world) */
+@@ -216,8 +271,25 @@
      public int dimension;
      protected int teleportDirection;
      private boolean invulnerable;
@@ -228,45 +221,15 @@
          this.rotationYaw = par1 % 360.0F;
          this.rotationPitch = par2 % 360.0F;
      }
-@@ -434,11 +557,11 @@
+@@ -434,7 +557,7 @@
  
              if (this.inPortal)
              {
 -                if (minecraftserver.getAllowNether())
--                {
--                    if (this.ridingEntity == null && this.portalCounter++ >= i)
 +                if (true || minecraftserver.getAllowNether())   // CraftBukkit
-+                {
-+                    if (this.ridingEntity == null && this.timeInPortal++ >= i)
+                 {
+                     if (this.ridingEntity == null && this.portalCounter++ >= i)
                      {
--                        this.portalCounter = i;
-+                        this.timeInPortal = i;
-                         this.timeUntilPortal = this.getPortalCooldown();
-                         byte b0;
- 
-@@ -459,14 +582,14 @@
-             }
-             else
-             {
--                if (this.portalCounter > 0)
--                {
--                    this.portalCounter -= 4;
--                }
--
--                if (this.portalCounter < 0)
--                {
--                    this.portalCounter = 0;
-+                if (this.timeInPortal > 0)
-+                {
-+                    this.timeInPortal -= 4;
-+                }
-+
-+                if (this.timeInPortal < 0)
-+                {
-+                    this.timeInPortal = 0;
-                 }
-             }
- 
 @@ -554,6 +677,43 @@
      {
          if (!this.isImmuneToFire)
