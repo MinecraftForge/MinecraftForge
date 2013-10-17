@@ -18,25 +18,16 @@
  
  public class PlayerInstance
  {
-@@ -19,14 +23,9 @@
-     private final ChunkCoordIntPair chunkLocation;
-     private short[] locationOfBlockChange;
-     private int numberOfTilesToUpdate;
--
--    /**
--     * Integer field where each bit means to make update 16x16x16 division of chunk (from bottom).
--     */
--    private int flagsYAreasToUpdate;
--
--    /** time what is using when chunk InhabitedTime is being calculated */
--    private long previousWorldTime;
-+    private int field_73260_f;
-+    private long field_111198_g;
-+    private boolean loaded = false; // CraftBukkit
+@@ -28,6 +32,8 @@
+     /** time what is using when chunk InhabitedTime is being calculated */
+     private long previousWorldTime;
  
++    private boolean loaded = false; // CraftBukkit
++
      final PlayerManager thePlayerManager;
  
-@@ -36,10 +35,21 @@
+     public PlayerInstance(PlayerManager par1PlayerManager, int par2, int par3)
+@@ -36,10 +42,18 @@
          this.playersInChunk = new ArrayList();
          this.locationOfBlockChange = new short[64];
          this.chunkLocation = new ChunkCoordIntPair(par2, par3);
@@ -55,19 +46,11 @@
 +        // CraftBukkit end
 +    }
 +
-+    /**
-+     * called for all chunks within the visible radius of the player
-+     */
 +    public void addPlayer(final EntityPlayerMP par1EntityPlayerMP)   // CraftBukkit - added final to argument
      {
          if (this.playersInChunk.contains(par1EntityPlayerMP))
          {
-@@ -49,11 +59,29 @@
-         {
-             if (this.playersInChunk.isEmpty())
-             {
--                this.previousWorldTime = PlayerManager.getWorldServer(this.thePlayerManager).getTotalWorldTime();
-+                this.field_111198_g = PlayerManager.getWorldServer(this.thePlayerManager).getTotalWorldTime();
+@@ -53,7 +67,25 @@
              }
  
              this.playersInChunk.add(par1EntityPlayerMP);
@@ -94,7 +77,7 @@
          }
      }
  
-@@ -66,12 +94,14 @@
+@@ -66,6 +98,8 @@
              this.playersInChunk.remove(par1EntityPlayerMP);
              par1EntityPlayerMP.loadedChunks.remove(this.chunkLocation);
  
@@ -103,59 +86,16 @@
              if (this.playersInChunk.isEmpty())
              {
                  long i = (long)this.chunkLocation.chunkXPos + 2147483647L | (long)this.chunkLocation.chunkZPos + 2147483647L << 32;
--                this.increaseInhabitedTime(chunk);
-+                this.func_111196_a(chunk);
-                 PlayerManager.getChunkWatchers(this.thePlayerManager).remove(i);
--                PlayerManager.getChunkWatcherList(this.thePlayerManager).remove(this);
-+                PlayerManager.func_111191_d(this.thePlayerManager).remove(this);
+@@ -109,7 +143,7 @@
  
-                 if (this.numberOfTilesToUpdate > 0)
-                 {
-@@ -83,21 +113,15 @@
-         }
-     }
+         this.flagsYAreasToUpdate |= 1 << (par2 >> 4);
  
--    /**
--     * This method currently only increases chunk inhabited time. Extension is possible in next versions
--     */
--    public void processChunk()
--    {
--        this.increaseInhabitedTime(PlayerManager.getWorldServer(this.thePlayerManager).getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos));
--    }
--
--    /**
--     * Increases chunk inhabited time every 8000 ticks
--     */
--    private void increaseInhabitedTime(Chunk par1Chunk)
--    {
--        par1Chunk.inhabitedTime += PlayerManager.getWorldServer(this.thePlayerManager).getTotalWorldTime() - this.previousWorldTime;
--        this.previousWorldTime = PlayerManager.getWorldServer(this.thePlayerManager).getTotalWorldTime();
-+    public void func_111194_a()
-+    {
-+        this.func_111196_a(PlayerManager.getWorldServer(this.thePlayerManager).getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos));
-+    }
-+
-+    private void func_111196_a(Chunk par1Chunk)
-+    {
-+        par1Chunk.inhabitedTime += PlayerManager.getWorldServer(this.thePlayerManager).getTotalWorldTime() - this.field_111198_g;
-+        this.field_111198_g = PlayerManager.getWorldServer(this.thePlayerManager).getTotalWorldTime();
-     }
- 
-     public void flagChunkForUpdate(int par1, int par2, int par3)
-@@ -107,9 +131,9 @@
-             PlayerManager.getChunkWatchersWithPlayers(this.thePlayerManager).add(this);
-         }
- 
--        this.flagsYAreasToUpdate |= 1 << (par2 >> 4);
--
 -        if (this.numberOfTilesToUpdate < 64)
-+        this.field_73260_f |= 1 << (par2 >> 4);
-+
 +        //if (this.numberOfTilesToUpdate < 64) //Forge; Cache everything, so always run
          {
              short short1 = (short)(par1 << 12 | par3 << 8 | par2);
  
-@@ -121,6 +145,10 @@
+@@ -121,6 +155,10 @@
                  }
              }
  
@@ -166,16 +106,7 @@
              this.locationOfBlockChange[this.numberOfTilesToUpdate++] = short1;
          }
      }
-@@ -151,7 +179,7 @@
-                 i = this.chunkLocation.chunkXPos * 16 + (this.locationOfBlockChange[0] >> 12 & 15);
-                 j = this.locationOfBlockChange[0] & 255;
-                 k = this.chunkLocation.chunkZPos * 16 + (this.locationOfBlockChange[0] >> 8 & 15);
--                this.sendToAllPlayersWatchingChunk(new Packet53BlockChange(i, j, k, PlayerManager.getWorldServer(this.thePlayerManager)));
-+                this.sendToAllPlayersWatchingChunk(new Packet51MapChunk(PlayerManager.getWorldServer(this.thePlayerManager).getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos), (this.field_73260_f == 0xFFFF), this.field_73260_f)); // CraftBukkit - send everything (including biome) if all sections flagged
- 
-                 if (PlayerManager.getWorldServer(this.thePlayerManager).blockHasTileEntity(i, j, k))
-                 {
-@@ -162,15 +190,16 @@
+@@ -162,12 +200,13 @@
              {
                  int l;
  
@@ -184,19 +115,13 @@
                  {
                      i = this.chunkLocation.chunkXPos * 16;
                      j = this.chunkLocation.chunkZPos * 16;
--                    this.sendToAllPlayersWatchingChunk(new Packet51MapChunk(PlayerManager.getWorldServer(this.thePlayerManager).getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos), false, this.flagsYAreasToUpdate));
--
-+                    this.sendToAllPlayersWatchingChunk(new Packet51MapChunk(PlayerManager.getWorldServer(this.thePlayerManager).getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos), false, this.field_73260_f));
-+
+                     this.sendToAllPlayersWatchingChunk(new Packet51MapChunk(PlayerManager.getWorldServer(this.thePlayerManager).getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos), false, this.flagsYAreasToUpdate));
+ 
 +                    /* Forge: Grabs ALL tile entities is costly on a modded server, only send needed ones
                      for (k = 0; k < 16; ++k)
                      {
--                        if ((this.flagsYAreasToUpdate & 1 << k) != 0)
-+                        if ((this.field_73260_f & 1 << k) != 0)
-                         {
-                             l = k << 4;
-                             List list = PlayerManager.getWorldServer(this.thePlayerManager).getAllTileEntityInBox(i, l, j, i + 16, l + 16, j + 16);
-@@ -181,11 +210,14 @@
+                         if ((this.flagsYAreasToUpdate & 1 << k) != 0)
+@@ -181,11 +220,14 @@
                              }
                          }
                      }
@@ -212,12 +137,3 @@
                      for (i = 0; i < this.numberOfTilesToUpdate; ++i)
                      {
                          j = this.chunkLocation.chunkXPos * 16 + (this.locationOfBlockChange[i] >> 12 & 15);
-@@ -201,7 +233,7 @@
-             }
- 
-             this.numberOfTilesToUpdate = 0;
--            this.flagsYAreasToUpdate = 0;
-+            this.field_73260_f = 0;
-         }
-     }
- 

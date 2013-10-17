@@ -51,7 +51,7 @@ mcpc:
     world-leak-debug: false
     infinite-water-source: true
     flowing-lava-decay: false
-    load-chunk-on-request: true
+    load-chunk-on-request: false
     warn-place-no-tile-entity: true
     banned-item-IDs: []
     enable-banned-items: false

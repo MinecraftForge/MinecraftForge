@@ -1,21 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
 +++ ../src_work/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
-@@ -1,6 +1,4 @@
- package net.minecraft.server.management;
--
--import com.google.common.base.Charsets;
- 
- import cpw.mods.fml.common.network.FMLNetworkHandler;
- import cpw.mods.fml.common.registry.GameRegistry;
-@@ -24,6 +22,7 @@
- import net.minecraft.item.ItemInWorldManager;
- import net.minecraft.nbt.NBTTagCompound;
- import net.minecraft.network.INetworkManager;
-+import net.minecraft.network.NetLoginHandler;
- import net.minecraft.network.NetServerHandler;
- import net.minecraft.network.packet.Packet;
- import net.minecraft.network.packet.Packet16BlockItemSwitch;
-@@ -52,10 +51,36 @@
+@@ -52,11 +52,39 @@
  import net.minecraft.util.EnumChatFormatting;
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.EnumGameType;
@@ -25,13 +10,10 @@
  import net.minecraft.world.WorldServer;
  import net.minecraft.world.demo.DemoWorldManager;
  import net.minecraft.world.storage.IPlayerFileData;
-+import net.minecraft.network.NetLoginHandler;
-+
-+import cpw.mods.fml.common.FMLLog;
+ 
 +import net.minecraftforge.common.DimensionManager;
-+import net.minecraftforge.common.network.packet.DimensionRegisterPacket;
-+import net.minecraftforge.common.network.ForgePacket;
 +// CraftBukkit start
++import net.minecraft.network.NetLoginHandler;
 +import org.bukkit.craftbukkit.CraftServer;
 +import org.bukkit.craftbukkit.CraftWorld;
 +import org.bukkit.craftbukkit.chunkio.ChunkIOExecutor;
@@ -49,10 +31,25 @@
 +import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 +import org.bukkit.util.Vector;
 +// CraftBukkit end
- 
++
++// MCPC+ start
++import net.minecraftforge.common.network.packet.DimensionRegisterPacket;
++import net.minecraftforge.common.network.ForgePacket;
++// MCPC+ end
++
  public abstract class ServerConfigurationManager
  {
-@@ -73,15 +98,15 @@
+     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd \'at\' HH:mm:ss z");
+@@ -65,7 +93,7 @@
+     private final MinecraftServer mcServer;
+ 
+     /** A list of player entities that exist on this server. */
+-    public final List playerEntityList = new ArrayList();
++    public final List playerEntityList = new java.util.concurrent.CopyOnWriteArrayList(); // CraftBukkit - ArrayList -> CopyOnWriteArrayList: Iterator safety
+     private final BanList bannedPlayers = new BanList(new File("banned-players.txt"));
+     private final BanList bannedIPs = new BanList(new File("banned-ips.txt"));
+ 
+@@ -73,15 +101,15 @@
      private Set ops = new HashSet();
  
      /** The Set of all whitelisted players. */
@@ -71,7 +68,7 @@
  
      /** The maximum number of players that can be connected at a time. */
      protected int maxPlayers;
-@@ -95,9 +120,17 @@
+@@ -95,9 +123,18 @@
       * index into playerEntities of player to ping, updated every tick; currently hardcoded to max at 200 players
       */
      private int playerPingIndex;
@@ -84,12 +81,13 @@
      {
 +        par1MinecraftServer.server = new CraftServer(par1MinecraftServer, this);
 +        par1MinecraftServer.console = org.bukkit.craftbukkit.command.ColouredConsoleSender.getInstance();
++        par1MinecraftServer.reader.addCompleter(new org.bukkit.craftbukkit.command.ConsoleCommandCompleter(par1MinecraftServer.server));
 +        this.cserver = par1MinecraftServer.server;
 +        // CraftBukkit end
          this.mcServer = par1MinecraftServer;
          this.bannedPlayers.setListActive(false);
          this.bannedIPs.setListActive(false);
-@@ -116,19 +149,36 @@
+@@ -116,19 +153,37 @@
              s = par1INetworkManager.getSocketAddress().toString();
          }
  
@@ -101,7 +99,6 @@
          this.func_72381_a(par2EntityPlayerMP, (EntityPlayerMP)null, worldserver);
          NetServerHandler netserverhandler = new NetServerHandler(this.mcServer, par1INetworkManager, par2EntityPlayerMP);
 -        netserverhandler.sendPacketToPlayer(new Packet1Login(par2EntityPlayerMP.entityId, worldserver.getWorldInfo().getTerrainType(), par2EntityPlayerMP.theItemInWorldManager.getGameType(), worldserver.getWorldInfo().isHardcoreModeEnabled(), worldserver.provider.dimensionId, worldserver.difficultySetting, worldserver.getHeight(), this.getMaxPlayers()));
--        netserverhandler.sendPacketToPlayer(new Packet250CustomPayload("MC|Brand", this.getServerInstance().getServerModName().getBytes(Charsets.UTF_8)));
 +        // CraftBukkit start -- Don't send a higher than 60 MaxPlayer size, otherwise the PlayerInfo window won't render correctly.
 +        int maxPlayers = this.getMaxPlayers();
 +
@@ -120,6 +117,7 @@
 +        netserverhandler.sendPacketToPlayer(new Packet1Login(par2EntityPlayerMP.entityId, worldserver.getWorldInfo().getTerrainType(), par2EntityPlayerMP.theItemInWorldManager.getGameType(), worldserver.getWorldInfo().isHardcoreModeEnabled(), worldserver.provider.dimensionId, worldserver.difficultySetting, worldserver.getHeight(), maxPlayers));
 +        par2EntityPlayerMP.getBukkitEntity().sendSupportedChannels();
 +        // CraftBukkit end
+         netserverhandler.sendPacketToPlayer(new Packet250CustomPayload("MC|Brand", this.getServerInstance().getServerModName().getBytes(Charsets.UTF_8)));
          netserverhandler.sendPacketToPlayer(new Packet6SpawnPosition(chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ));
          netserverhandler.sendPacketToPlayer(new Packet202PlayerAbilities(par2EntityPlayerMP.capabilities));
          netserverhandler.sendPacketToPlayer(new Packet16BlockItemSwitch(par2EntityPlayerMP.inventory.currentItem));
@@ -130,7 +128,7 @@
          this.playerLoggedIn(par2EntityPlayerMP);
          netserverhandler.setPlayerLocation(par2EntityPlayerMP.posX, par2EntityPlayerMP.posY, par2EntityPlayerMP.posZ, par2EntityPlayerMP.rotationYaw, par2EntityPlayerMP.rotationPitch);
          this.mcServer.getNetworkThread().addPlayer(netserverhandler);
-@@ -165,7 +215,7 @@
+@@ -165,7 +220,7 @@
          }
      }
  
@@ -139,7 +137,7 @@
      {
          HashSet hashset = new HashSet();
          Iterator iterator = par1ServerScoreboard.func_96525_g().iterator();
-@@ -201,6 +251,11 @@
+@@ -201,6 +256,11 @@
       */
      public void setPlayerManager(WorldServer[] par1ArrayOfWorldServer)
      {
@@ -151,7 +149,7 @@
          this.playerNBTManagerObj = par1ArrayOfWorldServer[0].getSaveHandler().getSaveHandler();
      }
  
-@@ -227,7 +282,7 @@
+@@ -227,7 +287,7 @@
       */
      public NBTTagCompound readPlayerDataFromFile(EntityPlayerMP par1EntityPlayerMP)
      {
@@ -160,7 +158,7 @@
          NBTTagCompound nbttagcompound1;
  
          if (par1EntityPlayerMP.getCommandSenderName().equals(this.mcServer.getServerOwner()) && nbttagcompound != null)
-@@ -257,16 +312,58 @@
+@@ -257,16 +317,58 @@
       */
      public void playerLoggedIn(EntityPlayerMP par1EntityPlayerMP)
      {
@@ -223,7 +221,7 @@
          }
      }
  
-@@ -281,22 +378,56 @@
+@@ -281,22 +383,56 @@
      /**
       * Called when a player disconnects from the game. Writes player data to disk and removes them from the world.
       */
@@ -296,7 +294,7 @@
      }
  
      /**
-@@ -345,9 +476,75 @@
+@@ -345,9 +481,75 @@
          }
      }
  
@@ -375,7 +373,7 @@
      public EntityPlayerMP createPlayerForUser(String par1Str)
      {
          ArrayList arraylist = new ArrayList();
-@@ -382,8 +579,50 @@
+@@ -382,8 +584,50 @@
              object = new ItemInWorldManager(this.mcServer.worldServerForDimension(0));
          }
  
@@ -428,7 +426,7 @@
  
      /**
       * creates and returns a respawned player based on the provided PlayerEntity. Args are the PlayerEntityMP to
-@@ -392,80 +631,176 @@
+@@ -392,80 +636,176 @@
       */
      public EntityPlayerMP respawnPlayer(EntityPlayerMP par1EntityPlayerMP, int par2, boolean par3)
      {
@@ -650,7 +648,7 @@
          this.func_72375_a(par1EntityPlayerMP, worldserver);
          par1EntityPlayerMP.playerNetServerHandler.setPlayerLocation(par1EntityPlayerMP.posX, par1EntityPlayerMP.posY, par1EntityPlayerMP.posZ, par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
          par1EntityPlayerMP.theItemInWorldManager.setWorld(worldserver1);
-@@ -480,6 +815,95 @@
+@@ -480,6 +820,84 @@
          }
  
          GameRegistry.onPlayerChangedDimension(par1EntityPlayerMP);
@@ -674,20 +672,9 @@
 +            if ((cause == TeleportCause.END_PORTAL) && (i == 0))
 +            {
 +                // THE_END -> NORMAL; use bed if available, otherwise default spawn
-+                ChunkCoordinates chunkcoordinates = entityplayermp.getBedLocation();
-+                CraftWorld spawnWorld = (CraftWorld) this.mcServer.server.getWorld(entityplayermp.spawnWorld);
++                exit = ((org.bukkit.craftbukkit.entity.CraftPlayer) entityplayermp.getBukkitEntity()).getBedSpawnLocation();
 +
-+                if (spawnWorld != null && chunkcoordinates != null)
-+                {
-+                    ChunkCoordinates chunkcoordinates1 = EntityPlayer.verifyRespawnCoordinates(spawnWorld.getHandle(), chunkcoordinates, entityplayermp.isSpawnForced());
-+
-+                    if (chunkcoordinates1 != null)
-+                    {
-+                        exit = new Location(spawnWorld, chunkcoordinates1.posX + 0.5, chunkcoordinates1.posY, chunkcoordinates1.posZ + 0.5);
-+                    }
-+                }
-+
-+                if (exit == null || ((CraftWorld) exit.getWorld()).getHandle().provider.dimensionId != 0)
++                if (exit == null || ((CraftWorld) exit.getWorld()).getHandle().dimension != 0)
 +                {
 +                    exit = exitWorld.getWorld().getSpawnLocation();
 +                }
@@ -746,7 +733,7 @@
      }
  
      /**
-@@ -487,38 +911,25 @@
+@@ -487,38 +905,25 @@
       */
      public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer)
      {
@@ -798,7 +785,7 @@
          {
              ChunkCoordinates chunkcoordinates;
  
-@@ -555,7 +966,7 @@
+@@ -555,7 +960,7 @@
                  par4WorldServer.spawnEntityInWorld(par1Entity);
                  par1Entity.setLocationAndAngles(d0, par1Entity.posY, d1, par1Entity.rotationYaw, par1Entity.rotationPitch);
                  par4WorldServer.updateEntityWithOptionalForce(par1Entity, false);
@@ -807,7 +794,7 @@
              }
  
              par3WorldServer.theProfiler.endSection();
-@@ -564,6 +975,118 @@
+@@ -564,6 +969,118 @@
          par1Entity.setWorld(par4WorldServer);
      }
  
@@ -926,7 +913,7 @@
      /**
       * sends 1 player per tick, but only sends a player once every 600 ticks
       */
-@@ -574,12 +1097,33 @@
+@@ -574,12 +1091,33 @@
              this.playerPingIndex = 0;
          }
  
@@ -966,7 +953,7 @@
  
      /**
       * sends a packet to all players
-@@ -659,6 +1203,15 @@
+@@ -659,6 +1197,15 @@
      public void addOp(String par1Str)
      {
          this.ops.add(par1Str.toLowerCase());
@@ -982,7 +969,7 @@
      }
  
      /**
-@@ -667,6 +1220,15 @@
+@@ -667,6 +1214,15 @@
      public void removeOp(String par1Str)
      {
          this.ops.remove(par1Str.toLowerCase());
@@ -998,7 +985,7 @@
      }
  
      /**
-@@ -683,7 +1245,8 @@
+@@ -683,7 +1239,8 @@
       */
      public boolean isPlayerOpped(String par1Str)
      {
@@ -1008,7 +995,7 @@
      }
  
      public EntityPlayerMP getPlayerForUsername(String par1Str)
-@@ -857,6 +1420,13 @@
+@@ -857,6 +1414,13 @@
          {
              EntityPlayerMP entityplayermp = (EntityPlayerMP)this.playerEntityList.get(j);
  
@@ -1022,7 +1009,7 @@
              if (entityplayermp != par1EntityPlayer && entityplayermp.dimension == par10)
              {
                  double d4 = par2 - entityplayermp.posX;
-@@ -925,7 +1495,7 @@
+@@ -925,7 +1489,7 @@
  
          if (par2WorldServer.isRaining())
          {
@@ -1031,7 +1018,7 @@
          }
      }
  
-@@ -935,7 +1505,7 @@
+@@ -935,7 +1499,7 @@
      public void syncPlayerInventory(EntityPlayerMP par1EntityPlayerMP)
      {
          par1EntityPlayerMP.sendContainerToPlayer(par1EntityPlayerMP.inventoryContainer);
@@ -1040,7 +1027,7 @@
          par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet16BlockItemSwitch(par1EntityPlayerMP.inventory.currentItem));
      }
  
-@@ -960,7 +1530,10 @@
+@@ -960,7 +1524,10 @@
       */
      public String[] getAvailablePlayerDat()
      {
@@ -1052,7 +1039,7 @@
      }
  
      public boolean isWhiteListEnabled()
-@@ -1049,7 +1622,16 @@
+@@ -1049,7 +1616,16 @@
      {
          while (!this.playerEntityList.isEmpty())
          {

@@ -1,6 +1,7 @@
 package za.co.mcportcentral.entity;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
@@ -13,7 +14,7 @@ public class CraftCustomLivingEntity extends CraftLivingEntity {
     public Class<? extends Entity> entityClass;
     public String entityName;
 
-    public CraftCustomLivingEntity(CraftServer server, net.minecraft.entity.EntityLiving entity) {
+    public CraftCustomLivingEntity(CraftServer server, EntityLivingBase entity) {
         super(server, entity);
         this.entityClass = entity.getClass();
         this.entityName = EntityRegistry.getCustomEntityTypeName(entityClass);
@@ -22,8 +23,8 @@ public class CraftCustomLivingEntity extends CraftLivingEntity {
     }
 
     @Override
-    public net.minecraft.entity.EntityLiving getHandle() {
-        return (net.minecraft.entity.EntityLiving) entity;
+    public EntityLivingBase getHandle() {
+        return (EntityLivingBase) entity;
     }
 
     @Override

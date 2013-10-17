@@ -97,7 +97,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                 else if (entity instanceof net.minecraft.entity.monster.EntityGolem) {
                     if (entity instanceof net.minecraft.entity.monster.EntitySnowman) { return new CraftSnowman(server, (net.minecraft.entity.monster.EntitySnowman) entity); }
                     else if (entity instanceof net.minecraft.entity.monster.EntityIronGolem) { return new CraftIronGolem(server, (net.minecraft.entity.monster.EntityIronGolem) entity); }
-                    else { return new CraftCustomLivingEntity(server, (net.minecraft.entity.EntityLiving) entity); } // MCPC+
+                    else { return new CraftCustomLivingEntity(server, (net.minecraft.entity.EntityLivingBase) entity); } // MCPC+
                 }
                 else if (entity instanceof net.minecraft.entity.passive.EntityVillager) { return new CraftVillager(server, (net.minecraft.entity.passive.EntityVillager) entity); }
                 else { return new CraftCustomCreature(server, (net.minecraft.entity.EntityCreature) entity); } // MCPC+
@@ -120,7 +120,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                 if (entity instanceof net.minecraft.entity.passive.EntityBat) { return new CraftBat(server, (net.minecraft.entity.passive.EntityBat) entity); }
                 else { return new CraftCustomAmbient(server, (net.minecraft.entity.passive.EntityAmbientCreature) entity); } // MCPC+
             }
-            else  { return new CraftCustomLivingEntity(server, (net.minecraft.entity.EntityLiving) entity); } // MCPC+
+            else  { return new CraftCustomLivingEntity(server, (net.minecraft.entity.EntityLivingBase) entity); } // MCPC+
         }
         else if (entity instanceof net.minecraft.entity.boss.EntityDragonPart) {
             net.minecraft.entity.boss.EntityDragonPart part = (net.minecraft.entity.boss.EntityDragonPart) entity;
@@ -181,7 +181,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
          * Order is *EXTREMELY* important -- keep it right! =D
          */
         // pbpaste|perl -pe's/entity instanceof ([\w.]+)/$1.class.isAssignableFrom(nmsClass)/g'|perl -pe's/return new (\w+)([^;\n]+)/return $1.class/g'
-        if (net.minecraft.entity.EntityLiving.class.isAssignableFrom(nmsClass)) {
+        if (net.minecraft.entity.EntityLivingBase.class.isAssignableFrom(nmsClass)) {
             // Players
             if (net.minecraft.entity.player.EntityPlayer.class.isAssignableFrom(nmsClass)) {
                 if (net.minecraft.entity.player.EntityPlayerMP.class.isAssignableFrom(nmsClass)) { return CraftPlayer.class; }

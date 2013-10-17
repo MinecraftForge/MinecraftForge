@@ -13,25 +13,20 @@
  public class PlayerManager
  {
      private final WorldServer theWorldServer;
-@@ -24,21 +30,18 @@
+@@ -24,10 +30,10 @@
       * contains a PlayerInstance for every chunk they can see. the "player instance" cotains a list of all players who
       * can also that chunk
       */
 -    private final List chunkWatcherWithPlayers = new ArrayList();
--
--    /** This field is using when chunk should be processed (every 8000 ticks) */
--    private final List playerInstanceList = new ArrayList();
 +    private final Queue chunkWatcherWithPlayers = new java.util.concurrent.ConcurrentLinkedQueue(); // CraftBukkit ArrayList -> ConcurrentLinkedQueue
-+    private final Queue field_111193_e = new java.util.concurrent.ConcurrentLinkedQueue(); // CraftBukkit ArrayList -> ConcurrentLinkedQueue
+ 
+     /** This field is using when chunk should be processed (every 8000 ticks) */
+-    private final List playerInstanceList = new ArrayList();
++    private final Queue playerInstanceList = new java.util.concurrent.ConcurrentLinkedQueue(); // CraftBukkit ArrayList -> ConcurrentLinkedQueue
  
      /**
       * Number of chunks the server sends to the client. Valid 3<=x<=15. In server.properties.
-      */
-     private final int playerViewRadius;
--
--    /** time what is using to check if InhabitedTime should be calculated */
--    private long previousTotalWorldTime;
-+    private long field_111192_g;
+@@ -39,6 +45,7 @@
  
      /** x, z direction vectors: east, south, west, north */
      private final int[][] xzDirectionsConst = new int[][] {{1, 0}, {0, 1}, { -1, 0}, {0, -1}};
@@ -39,7 +34,7 @@
  
      public PlayerManager(WorldServer par1WorldServer, int par2)
      {
-@@ -46,7 +49,7 @@
+@@ -46,7 +53,7 @@
          {
              throw new IllegalArgumentException("Too big view radius!");
          }
@@ -48,29 +43,22 @@
          {
              throw new IllegalArgumentException("Too small view radius!");
          }
-@@ -71,37 +74,56 @@
-         int j;
-         PlayerInstance playerinstance;
- 
--        if (i - this.previousTotalWorldTime > 8000L)
--        {
--            this.previousTotalWorldTime = i;
+@@ -74,34 +81,53 @@
+         if (i - this.previousTotalWorldTime > 8000L)
+         {
+             this.previousTotalWorldTime = i;
 -
 -            for (j = 0; j < this.playerInstanceList.size(); ++j)
 -            {
 -                playerinstance = (PlayerInstance)this.playerInstanceList.get(j);
-+        if (i - this.field_111192_g > 8000L)
-+        {
-+            this.field_111192_g = i;
 +            // CraftBukkit start - Use iterator
-+            java.util.Iterator iterator = this.field_111193_e.iterator();
++            java.util.Iterator iterator = this.playerInstanceList.iterator();
 +
 +            while (iterator.hasNext())
 +            {
 +                playerinstance = (PlayerInstance) iterator.next();
                  playerinstance.sendChunkUpdate();
--                playerinstance.processChunk();
-+                playerinstance.func_111194_a();
+                 playerinstance.processChunk();
              }
          }
          else
@@ -122,13 +110,7 @@
      }
  
      public PlayerInstance getOrCreateChunkWatcher(int par1, int par2, boolean par3)
-@@ -113,11 +135,24 @@
-         {
-             playerinstance = new PlayerInstance(this, par1, par2);
-             this.playerInstances.add(k, playerinstance);
--            this.playerInstanceList.add(playerinstance);
-+            this.field_111193_e.add(playerinstance);
-         }
+@@ -118,6 +144,19 @@
  
          return playerinstance;
      }
@@ -148,7 +130,7 @@
  
      /**
       * Called by WorldManager.markBlockForUpdate; marks a block to be resent to clients.
-@@ -143,15 +178,25 @@
+@@ -143,15 +182,25 @@
          int j = (int)par1EntityPlayerMP.posZ >> 4;
          par1EntityPlayerMP.managedPosX = par1EntityPlayerMP.posX;
          par1EntityPlayerMP.managedPosZ = par1EntityPlayerMP.posZ;
@@ -178,7 +160,7 @@
          this.players.add(par1EntityPlayerMP);
          this.filterChunkLoadQueue(par1EntityPlayerMP);
      }
-@@ -266,6 +311,7 @@
+@@ -266,6 +315,7 @@
              int i1 = this.playerViewRadius;
              int j1 = i - k;
              int k1 = j - l;
@@ -186,7 +168,7 @@
  
              if (j1 != 0 || k1 != 0)
              {
-@@ -275,7 +321,7 @@
+@@ -275,7 +325,7 @@
                      {
                          if (!this.overlaps(l1, i2, k, l, i1))
                          {
@@ -195,7 +177,7 @@
                          }
  
                          if (!this.overlaps(l1 - j1, i2 - k1, i, j, i1))
-@@ -293,6 +339,20 @@
+@@ -293,6 +343,20 @@
                  this.filterChunkLoadQueue(par1EntityPlayerMP);
                  par1EntityPlayerMP.managedPosX = par1EntityPlayerMP.posX;
                  par1EntityPlayerMP.managedPosZ = par1EntityPlayerMP.posZ;
@@ -216,31 +198,21 @@
              }
          }
      }
-@@ -321,16 +381,70 @@
-         return par0PlayerManager.playerInstances;
+@@ -324,13 +388,70 @@
+     /**
+      * Returns player instances as list
+      */
+-    static List getChunkWatcherList(PlayerManager par0PlayerManager)
++    static Queue getChunkWatcherList(PlayerManager par0PlayerManager)   // CraftBukkit List -> Queue
+     {
+         return par0PlayerManager.playerInstanceList;
      }
  
--    /**
--     * Returns player instances as list
--     */
--    static List getChunkWatcherList(PlayerManager par0PlayerManager)
--    {
--        return par0PlayerManager.playerInstanceList;
--    }
--
 -    static List getChunkWatchersWithPlayers(PlayerManager par0PlayerManager)
--    {
--        return par0PlayerManager.chunkWatcherWithPlayers;
--    }
-+    static Queue func_111191_d(PlayerManager playermanager)   // CraftBukkit List -> Queue
-+    {
-+        return playermanager.field_111193_e;
-+    }
-+
-+    static Queue getChunkWatchersWithPlayers(PlayerManager playermanager)   // CraftBukkit List -> Queue
-+    {
-+        return playermanager.chunkWatcherWithPlayers;
-+    }
++    static Queue getChunkWatchersWithPlayers(PlayerManager par0PlayerManager)   // CraftBukkit List -> Queue
+     {
+         return par0PlayerManager.chunkWatcherWithPlayers;
+     }
 +
 +    // CraftBukkit start - Sorter to load nearby chunks first
 +    private static class ChunkCoordComparator implements java.util.Comparator<ChunkCoordIntPair>
