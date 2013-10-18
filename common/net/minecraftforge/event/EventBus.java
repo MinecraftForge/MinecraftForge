@@ -106,6 +106,8 @@ public class EventBus
         for (IEventListener listener : listeners)
         {
             listener.invoke(event);
+            if (event.isCancelable() && event.isCanceled())
+                return true;
         }
         return (event.isCancelable() ? event.isCanceled() : false);
     }
