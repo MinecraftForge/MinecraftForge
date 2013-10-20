@@ -75,8 +75,9 @@ public @interface NetworkMod
     /**
      * A marker for a method that will be offered the client's version string
      * if more sophisticated version rejection handling is required:
-     * The method should accept a "String", a "NetworkManager" and return a boolean true
+     * The method should accept a "String" (the version) and return a boolean true
      * if the version can be accepted.
+     * It can only be applied to the {@link NetworkMod} annotated class.
      * @author cpw
      *
      */
