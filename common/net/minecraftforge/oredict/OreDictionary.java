@@ -75,10 +75,13 @@ public class OreDictionary
 
         // Build our list of items to replace with ore tags
         Map<ItemStack, String> replacements = new HashMap<ItemStack, String>();
-        replacements.put(new ItemStack(Block.planks, 1, WILDCARD_VALUE), "plankWood");
         replacements.put(new ItemStack(Item.stick), "stickWood");
+        replacements.put(new ItemStack(Block.planks), "plankWood");
+        replacements.put(new ItemStack(Block.planks, 1, WILDCARD_VALUE), "plankWood");
         replacements.put(new ItemStack(Block.stone), "stone");
+        replacements.put(new ItemStack(Block.stone, 1, WILDCARD_VALUE), "stone");
         replacements.put(new ItemStack(Block.cobblestone), "cobblestone");
+        replacements.put(new ItemStack(Block.cobblestone, 1, WILDCARD_VALUE), "cobblestone");
 
         // Register dyes
         String[] dyes =

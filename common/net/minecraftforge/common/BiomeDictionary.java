@@ -201,18 +201,22 @@ public class BiomeDictionary
      */
     public static void registerAllBiomesAndGenerateEvents()
     {
-        for(int i = 0; i < BIOME_LIST_SIZE; i++)
+        for(int i = 0; i < BiomeGenBase.biomeList.length; i++)
         {
             BiomeGenBase biome = BiomeGenBase.biomeList[i];
-            if(biome != null) // MCPC+ Add check to fix NPE
+
+            if(biome == null)
             {
-                if (biome.theBiomeDecorator instanceof DeferredBiomeDecorator)
-                {
-                    DeferredBiomeDecorator decorator = (DeferredBiomeDecorator) biome.theBiomeDecorator;
-                    decorator.fireCreateEventAndReplace();
-                }
-                checkRegistration(biome);
+                continue;
             }
+
+            if (biome.theBiomeDecorator instanceof DeferredBiomeDecorator)
+            {
+                DeferredBiomeDecorator decorator = (DeferredBiomeDecorator) biome.theBiomeDecorator;
+                decorator.fireCreateEventAndReplace();
+            }
+
+            checkRegistration(biome);
         }
     }
 
