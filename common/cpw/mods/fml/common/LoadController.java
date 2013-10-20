@@ -41,6 +41,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLStateEvent;
 import cpw.mods.fml.common.functions.ArtifactVersionNameFunction;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
+import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
 public class LoadController
 {
@@ -74,6 +75,12 @@ public class LoadController
 
         for (ModContainer mod : loader.getModList())
         {
+            //Create mod logger, and make the EventBus logger a child of it.
+            FMLRelaunchLog.makeLog(mod.getModId());
+            Logger modLogger = Logger.getLogger(mod.getModId());
+            Logger eventLog = Logger.getLogger(EventBus.class.getName() + "." + mod.getModId());
+            eventLog.setParent(modLogger);
+            
             EventBus bus = new EventBus(mod.getModId());
             boolean isActive = mod.registerBus(bus, this);
             if (isActive)
