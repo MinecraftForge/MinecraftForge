@@ -515,8 +515,8 @@ public class FMLModContainer implements ModContainer
 
 
             Method factoryMethod = gatherAnnotations(clazz);
-            isNetworkMod = FMLNetworkHandler.instance().registerNetworkMod(this, clazz, event.getASMHarvestedData());
             modInstance = getLanguageAdapter().getNewInstance(this,clazz, modClassLoader, factoryMethod);
+            isNetworkMod = FMLNetworkHandler.instance().registerNetworkMod(this, clazz, event.getASMHarvestedData());
             if (fingerprintNotPresent)
             {
                 eventBus.post(new FMLFingerprintViolationEvent(source.isDirectory(), source, ImmutableSet.copyOf(this.sourceFingerprints), expectedFingerprint));
