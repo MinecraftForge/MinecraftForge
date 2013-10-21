@@ -47,7 +47,7 @@
              float f1 = 0.2F;
              float f2 = 0.0625F;
 @@ -2378,7 +2381,7 @@
-                 d0 = d5;
+                 d0 = d4;
              }
  
 -            if (Block.fire.canBlockCatchFire(this.blockAccess, par2 - 1, par3, par4))
@@ -89,8 +89,8 @@
 -            if (Block.fire.canBlockCatchFire(this.blockAccess, par2, par3 + 1, par4))
 +            if (Block.fire.canBlockCatchFire(this.blockAccess, par2, par3 + 1, par4, DOWN))
              {
-                 d5 = (double)par2 + 0.5D + 0.5D;
-                 d6 = (double)par2 + 0.5D - 0.5D;
+                 d4 = (double)par2 + 0.5D + 0.5D;
+                 d5 = (double)par2 + 0.5D - 0.5D;
 @@ -3057,10 +3060,10 @@
          double d17 = (double)par2 + 0.5D + 0.0625D;
          double d18 = (double)par4 + 0.5D - 0.0625D;

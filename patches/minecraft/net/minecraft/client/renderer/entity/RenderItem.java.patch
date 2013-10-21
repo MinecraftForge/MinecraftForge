@@ -179,8 +179,8 @@
          int l = par3ItemStack.getItemDamage();
          Object object = par3ItemStack.getIconIndex();
 @@ -356,10 +349,10 @@
-         float f1;
          float f2;
+         int i1;
  
 -        if (par3ItemStack.getItemSpriteNumber() == 0 && RenderBlocks.renderItemIn3d(Block.blocksList[k].getRenderType()))
 +        Block block = (k < Block.blocksList.length ? Block.blocksList[k] : null);
@@ -206,8 +206,8 @@
 +                par2TextureManager.bindTexture(par3ItemStack.getItemSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
 +                Icon icon = Item.itemsList[k].getIcon(par3ItemStack, j1);
                  int k1 = Item.itemsList[k].getColorFromItemStack(par3ItemStack, j1);
-                 f1 = (float)(k1 >> 16 & 255) / 255.0F;
-                 f2 = (float)(k1 >> 8 & 255) / 255.0F;
+                 f = (float)(k1 >> 16 & 255) / 255.0F;
+                 f1 = (float)(k1 >> 8 & 255) / 255.0F;
 @@ -402,6 +395,11 @@
                  }
  
