@@ -57,6 +57,8 @@ def main():
     
     print 'Applying forge patches'
     apply_forge_patches(fml_dir, mcp_dir, forge_dir, work_dir, False)
+
+    setup_eclipse(forge_dir)
     
     print '=================================== Setup Finished ================================='
     
@@ -106,7 +108,17 @@ def run_command(command, cwd='.', verbose=True):
     if process.returncode:
         print "failed: {0}".format(process.returncode)
         return False
-    return True    
+    return True
+    
+def setup_eclipse(forge_dir):
+    eclipse_dir = os.path.join(forge_dir, 'eclipse')
+    eclipse_zip = os.path.join(forge_dir, 'eclipse-workspace-dev.zip')
+    
+    if not os.path.isdir(eclipse_dir) and os.path.isfile(eclipse_zip):
+        print 'Extracting Dev Workspace'
+        zf = zipfile.ZipFile(eclipse_zip)
+        zf.extractall(forge_dir)
+        zf.close()
 
 if __name__ == '__main__':
     main()

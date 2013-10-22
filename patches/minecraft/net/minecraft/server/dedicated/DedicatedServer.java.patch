@@ -90,20 +90,19 @@
          {
              this.getLogAgent().logWarning("**** FAILED TO BIND TO PORT!");
              this.getLogAgent().logWarningFormatted("The exception was: {0}", new Object[] {ioexception.toString()});
-@@ -131,6 +159,12 @@
+@@ -131,6 +159,11 @@
              return false;
          }
  
-+        // Spigot Start - Move DedicatedPlayerList up and bring plugin loading from CraftServer to here
-+        // this.setConfigurationManager((ServerConfigurationManager)(new DedicatedPlayerList(this)));
-+        server.loadPlugins();
-+        server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
-+        // Spigot End
++        // MCPC+ start - moved to FMLServerAboutToStart
++        // server.loadPlugins();
++        // server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
++        // MCPC+ End
 +
          if (!this.isServerInOnlineMode())
          {
              this.getLogAgent().logWarning("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
-@@ -141,7 +175,8 @@
+@@ -141,7 +174,8 @@
  
          FMLCommonHandler.instance().onServerStarted();
  
@@ -113,7 +112,7 @@
          long j = System.nanoTime();
  
          if (this.getFolderName() == null)
-@@ -201,11 +236,28 @@
+@@ -201,11 +235,28 @@
              this.getLogAgent().logInfo("Starting remote control listener");
              this.theRConThreadMain = new RConThreadMain(this);
              this.theRConThreadMain.startThread();
@@ -142,7 +141,7 @@
      public boolean canStructuresSpawn()
      {
          return this.canSpawnStructures;
-@@ -221,7 +273,7 @@
+@@ -221,7 +272,7 @@
       */
      public int getDifficulty()
      {
@@ -151,7 +150,7 @@
      }
  
      /**
-@@ -312,7 +364,13 @@
+@@ -312,7 +363,13 @@
          while (!this.pendingCommandList.isEmpty())
          {
              ServerCommand servercommand = (ServerCommand)this.pendingCommandList.remove(0);
@@ -166,7 +165,7 @@
          }
      }
  
-@@ -378,6 +436,13 @@
+@@ -378,6 +435,13 @@
      {
          File file1 = this.settings.getPropertiesFile();
          return file1 != null ? file1.getAbsolutePath() : "No settings file";
@@ -180,7 +179,7 @@
      }
  
      public boolean getGuiEnabled()
-@@ -461,11 +526,4 @@
+@@ -461,11 +525,4 @@
      {
          return this.getDedicatedPlayerList();
      }

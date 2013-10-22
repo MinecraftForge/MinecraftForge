@@ -45,11 +45,13 @@
          this.health = 5;
          this.hoverStart = (float)(Math.random() * Math.PI * 2.0D);
          this.setSize(0.25F, 0.25F);
-@@ -42,12 +57,20 @@
+@@ -42,12 +57,22 @@
          this.motionX = (double)((float)(Math.random() * 0.20000000298023224D - 0.10000000149011612D));
          this.motionY = 0.20000000298023224D;
          this.motionZ = (double)((float)(Math.random() * 0.20000000298023224D - 0.10000000149011612D));
-+        this.lifespan = par1World == null ? lifespan : par1World.spigotConfig.itemDespawnRate; // MCPC+ - add null check
++        if (par1World != null && par1World.spigotConfig != null) { // MCPC+ - add null check
++        this.lifespan = par1World.spigotConfig.itemDespawnRate; // Spigot
++        }
      }
  
      public EntityItem(World par1World, double par2, double par4, double par6, ItemStack par8ItemStack)
@@ -66,7 +68,7 @@
      }
  
      /**
-@@ -62,6 +85,7 @@
+@@ -62,6 +87,7 @@
      public EntityItem(World par1World)
      {
          super(par1World);
@@ -74,7 +76,7 @@
          this.health = 5;
          this.hoverStart = (float)(Math.random() * Math.PI * 2.0D);
          this.setSize(0.25F, 0.25F);
-@@ -78,22 +102,37 @@
+@@ -78,22 +104,37 @@
       */
      public void onUpdate()
      {
@@ -120,7 +122,7 @@
          {
              if (this.worldObj.getBlockMaterial(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)) == Material.lava)
              {
-@@ -103,7 +142,7 @@
+@@ -103,7 +144,7 @@
                  this.playSound("random.fizz", 0.4F, 2.0F + this.rand.nextFloat() * 0.4F);
              }
  
@@ -129,7 +131,7 @@
              {
                  this.searchForOtherItemsNearby();
              }
-@@ -131,9 +170,38 @@
+@@ -131,9 +172,38 @@
              this.motionY *= -0.5D;
          }
  
@@ -171,7 +173,7 @@
          {
              this.setDead();
          }
-@@ -144,8 +212,11 @@
+@@ -144,8 +214,11 @@
       */
      private void searchForOtherItemsNearby()
      {
@@ -185,7 +187,7 @@
          while (iterator.hasNext())
          {
              EntityItem entityitem = (EntityItem)iterator.next();
-@@ -268,6 +339,7 @@
+@@ -268,6 +341,7 @@
      {
          par1NBTTagCompound.setShort("Health", (short)((byte)this.health));
          par1NBTTagCompound.setShort("Age", (short)this.age);
@@ -193,7 +195,7 @@
  
          if (this.getEntityItem() != null)
          {
-@@ -283,12 +355,36 @@
+@@ -283,12 +357,36 @@
          this.health = par1NBTTagCompound.getShort("Health") & 255;
          this.age = par1NBTTagCompound.getShort("Age");
          NBTTagCompound nbttagcompound1 = par1NBTTagCompound.getCompoundTag("Item");
@@ -233,7 +235,7 @@
      }
  
      /**
-@@ -298,10 +394,47 @@
+@@ -298,10 +396,47 @@
      {
          if (!this.worldObj.isRemote)
          {

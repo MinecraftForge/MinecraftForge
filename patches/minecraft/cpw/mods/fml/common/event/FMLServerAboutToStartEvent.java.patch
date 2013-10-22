@@ -1,0 +1,15 @@
+--- ../src_base/minecraft/cpw/mods/fml/common/event/FMLServerAboutToStartEvent.java
++++ ../src_work/minecraft/cpw/mods/fml/common/event/FMLServerAboutToStartEvent.java
+@@ -23,6 +23,12 @@
+     {
+         super(data);
+         this.server = (MinecraftServer) data[0];
++        // MCPC+ start
++        // since we modify bukkit enums, we need to guarantee that plugins are
++        // loaded after all mods have been loaded by FML to avoid race conditions.
++        MinecraftServer.getServer().server.loadPlugins();
++        MinecraftServer.getServer().server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
++        // MCPC+ end        
+     }
+     @Override
+     public ModState getModState()
