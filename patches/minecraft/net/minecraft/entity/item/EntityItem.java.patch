@@ -49,7 +49,7 @@
          this.motionX = (double)((float)(Math.random() * 0.20000000298023224D - 0.10000000149011612D));
          this.motionY = 0.20000000298023224D;
          this.motionZ = (double)((float)(Math.random() * 0.20000000298023224D - 0.10000000149011612D));
-+        this.lifespan = par1World.spigotConfig.itemDespawnRate;
++        this.lifespan = par1World == null ? lifespan : par1World.spigotConfig.itemDespawnRate; // MCPC+ - add null check
      }
  
      public EntityItem(World par1World, double par2, double par4, double par6, ItemStack par8ItemStack)
