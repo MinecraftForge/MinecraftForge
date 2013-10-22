@@ -7,7 +7,7 @@
 -                            if (i2 != 0 && i2 != Block.leaves.blockID)
 +                            Block block = Block.blocksList[i2];
 +                            
-+                            if (i2 != 0 && block != null && !block.isLeaves(par1World, k1, j1, l1))
++                            if (block != null && !block.isAirBlock(par1World, k1, j1, l1) && !block.isLeaves(par1World, k1, j1, l1))
                              {
                                  flag = false;
                              }

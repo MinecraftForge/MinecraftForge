@@ -1,0 +1,12 @@
+--- ../src_base/minecraft/net/minecraft/world/WorldServerMulti.java
++++ ../src_work/minecraft/net/minecraft/world/WorldServerMulti.java
+@@ -19,5 +19,8 @@
+     /**
+      * Saves the chunks to disk.
+      */
+-    protected void saveLevel() throws MinecraftException {}
++    protected void saveLevel() throws MinecraftException
++    {
++        this.perWorldStorage.saveAllData();
++    }
+ }

@@ -1,0 +1,22 @@
+--- ../src_base/minecraft/net/minecraft/util/Session.java
++++ ../src_work/minecraft/net/minecraft/util/Session.java
+@@ -11,6 +11,19 @@
+ 
+     public Session(String par1Str, String par2Str)
+     {
++        if (par1Str == null || par1Str.isEmpty())
++        {
++            par1Str = "MissingName";
++            par2Str = "NotValid";
++            System.out.println("=========================================================");
++            System.out.println("Warning the username was not set for this session, typically");
++            System.out.println("this means you installed Forge incorrectly. We have set your");
++            System.out.println("name to \"MissingName\" and your session to nothing. Please");
++            System.out.println("check your instation and post a console log from the launcher");
++            System.out.println("when asking for help!");
++            System.out.println("=========================================================");
++            
++        }
+         this.username = par1Str;
+         this.sessionId = par2Str;
+     }
