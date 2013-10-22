@@ -237,9 +237,9 @@ public class ForgeHooks
             {
                 ret += ((ISpecialArmor)stack.getItem()).getArmorDisplay(player, stack, x);
             }
-            else if (stack != null && stack.getItem() instanceof ItemArmor)
+            else if (stack != null && stack.getItem() instanceof IArmor)
             {
-                ret += ((ItemArmor)stack.getItem()).damageReduceAmount;
+                ret += ((IArmor)stack.getItem()).getDamageReduceAmount(stack);
             }
         }
         return ret;
