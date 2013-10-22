@@ -36,11 +36,13 @@
  import net.minecraft.util.Icon;
  import net.minecraft.util.MovingObjectPosition;
  import net.minecraft.util.StatCollector;
-@@ -35,9 +44,20 @@
+@@ -35,9 +44,22 @@
  import net.minecraft.world.Explosion;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
 +import net.minecraft.world.WorldProviderEnd;
++import net.minecraftforge.common.BlockItemizeHelper;
++import net.minecraftforge.common.BlockItemizeHelper.BlockStyle;
 +import net.minecraftforge.common.EnumPlantType;
 +import net.minecraftforge.common.ForgeDirection;
 +import net.minecraftforge.common.ForgeHooks;
@@ -57,7 +59,7 @@
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
-@@ -460,9 +480,10 @@
+@@ -460,9 +482,10 @@
          return this.needsRandomTick;
      }
  
@@ -69,7 +71,7 @@
      }
  
      /**
-@@ -485,7 +506,7 @@
+@@ -485,7 +508,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -78,7 +80,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -495,7 +516,7 @@
+@@ -495,7 +518,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -87,7 +89,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -648,7 +669,13 @@
+@@ -648,7 +671,13 @@
       * different metadata value, but before the new metadata value is set. Args: World, x, y, z, old block ID, old
       * metadata
       */
@@ -102,7 +104,7 @@
  
      /**
       * Returns the quantity of items to drop on block destruction.
-@@ -673,7 +700,7 @@
+@@ -673,7 +702,7 @@
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
          float f = this.getBlockHardness(par2World, par3, par4, par5);
@@ -111,7 +113,7 @@
      }
  
      /**
-@@ -691,18 +718,14 @@
+@@ -691,18 +720,14 @@
      {
          if (!par1World.isRemote)
          {
@@ -135,7 +137,7 @@
                  }
              }
          }
-@@ -935,7 +958,8 @@
+@@ -935,7 +960,8 @@
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
          int l = par1World.getBlockId(par2, par3, par4);
@@ -145,7 +147,7 @@
      }
  
      /**
-@@ -1086,6 +1110,7 @@
+@@ -1086,6 +1112,7 @@
       */
      public void setBlockBoundsForItemRender() {}
  
@@ -153,7 +155,7 @@
      /**
       * Called when the player destroys a block with an item that can harvest it. (i, j, k) are the coordinates of the
       * block and l is the block's subtype/damage.
-@@ -1095,28 +1120,37 @@
+@@ -1095,28 +1122,37 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -198,7 +200,7 @@
      }
  
      /**
-@@ -1457,4 +1491,993 @@
+@@ -1457,4 +1493,1037 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -1191,4 +1193,48 @@
 +    @Deprecated //Implemented here as we changed the IFluidBlock interface, and this allows us to do so without breaking exisitng mods.
 +    // To be removed next MC version {1.6.3+}
 +    public float getFilledPercentage(World world, int x, int y, int z){ return 1; }
++
++    public BlockItemizeHelper.BlockStyle placingItemStyle = BlockStyle.UNDECIDED;
++
++    /**
++     * Return the item ordinarily used to create this block.
++     * 
++     * Similar to idPicked and getPickBlock, but actually usable on server, and
++     * with less vanilla derpiness. If a single item can create multiple blocks
++     * (such as beds) then this function should either return an appropriate
++     * value for a key block and null for the other blocks, or it should return
++     * null for all blocks. If a block has state that can't be represented in
++     * item form, such as half-eaten cake and potted plants, then the return
++     * value should be something that does not allow for the creation of
++     * infinite mass.
++     * 
++     * @param target
++     *            Multi-part blocks must gracefully handle target.subHit == -1.
++     * @param world
++     * @param x
++     * @param y
++     * @param z
++     * @return
++     */
++    public ItemStack getPlacingItem(MovingObjectPosition target, World world, int x, int y, int z)
++    {
++        return BlockItemizeHelper.getPlacingItem(this, target, world, x, y, z);
++    }
++
++    /**
++     * Like getPlacingItem, except bed-like blocks should return a value for all
++     * blocks. While the other method respects conservation of mass, this one
++     * does not.
++     * 
++     * @param target
++     * @param world
++     * @param x
++     * @param y
++     * @param z
++     * @return
++     */
++    public ItemStack getDescribingItem(MovingObjectPosition target, World world, int x, int y, int z)
++    {
++        return BlockItemizeHelper.getDescribingItem(this, target, world, x, y, z);
++    }
  }
