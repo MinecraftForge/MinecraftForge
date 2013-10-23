@@ -10,11 +10,11 @@ import net.minecraft.world.World;
 
 /**
  * This is a cellular-automata based finite fluid block implementation.
- * 
+ *
  * It is highly recommended that you use/extend this class for finite fluid blocks.
- * 
+ *
  * @author OvermindDL1, KingLemming
- * 
+ *
  */
 public class BlockFluidFinite extends BlockFluidBase
 {
@@ -317,6 +317,18 @@ public class BlockFluidFinite extends BlockFluidBase
 
     @Override
     public boolean canDrain(World world, int x, int y, int z)
+    {
+        return false;
+    }
+
+    @Override
+    public FluidStack fill(World world, int x, int y, int z, boolean doFill)
+    {
+        return null;
+    }
+
+    @Override
+    public boolean canFill(World world, int x, int y, int z)
     {
         return false;
     }
