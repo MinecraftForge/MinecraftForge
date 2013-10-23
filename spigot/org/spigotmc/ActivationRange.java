@@ -286,11 +286,12 @@ public class ActivationRange
         }
         int x = MathHelper.floor_double( entity.posX );
         int z = MathHelper.floor_double( entity.posZ );
+        // MCPC+ start - disabled, this breaks moving chunkloaders such as AnchorCarts when entering new chunks that are not yet loaded
         // Make sure not on edge of unloaded chunk
-        if ( isActive && !entity.worldObj.doChunksNearChunkExist( x, 0, z, 16 ) )
-        {
+        /*if (isActive && !entity.worldObj.doChunksNearChunkExist(x, 0, z, 16)) {
             isActive = false;
-        }
+        }*/
+        // MCPC+ end
         SpigotTimings.checkIfActiveTimer.stopTiming();
         return isActive;
     }
