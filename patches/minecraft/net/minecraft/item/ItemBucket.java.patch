@@ -44,3 +44,10 @@
              if (movingobjectposition.typeOfHit == EnumMovingObjectType.TILE)
              {
                  int i = movingobjectposition.blockX;
+                 
+@@ -0,0 +225,5 @@
+
+public boolean doesContainerItemLeaveCraftingGrid(ItemStack par1ItemStack)
+    {
+        return false;
+    }
