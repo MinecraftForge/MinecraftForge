@@ -16,8 +16,8 @@
         <minecraft.version>1.6.4</minecraft.version>
         <minecraft_version>1_6_R3</minecraft_version>
         <minecraft_server_url_download>http://s3.amazonaws.com/Minecraft.Download/versions/1.6.4/minecraft_server.1.6.4.jar</minecraft_server_url_download>
-        <forge.build>933</forge.build>
-        <forge.version>9.11.1.${forge.build}</forge.version>
+        <forge.build>935</forge.build>
+        <forge.version>9.11.1.933</forge.version>
         <forge.remapped.revision>R1-MCPC</forge.remapped.revision>
         <fml.at>${mcpc.basedir}/resources/fml_at.cfg</fml.at>
         <forge.at>${mcpc.basedir}/resources/forge_at.cfg</forge.at>
