@@ -8,26 +8,27 @@
  import net.minecraft.block.Block;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.SharedMonsterAttributes;
-@@ -16,6 +17,9 @@
+@@ -16,6 +17,10 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.entity.living.EnderStareEvent;
++import net.minecraftforge.event.Event.Result;
++import net.minecraftforge.event.ForgeEventFactory;
 +import net.minecraftforge.event.entity.living.EnderTeleportEvent;
  
  public class EntityEnderman extends EntityMob
  {
-@@ -118,6 +122,8 @@
+@@ -118,6 +123,8 @@
       */
      private boolean shouldAttackPlayer(EntityPlayer par1EntityPlayer)
      {
-+        if(MinecraftForge.EVENT_BUS.post(new EnderStareEvent(this))) return false;
-+               
++        if(ForgeEventFactory.fireEnderStare(this).getResult() == Result.DENY) return false;
++        
          ItemStack itemstack = par1EntityPlayer.inventory.armorInventory[3];
  
          if (itemstack != null && itemstack.itemID == Block.pumpkin.blockID)
-@@ -295,12 +301,17 @@
+@@ -295,12 +302,17 @@
       */
      protected boolean teleportTo(double par1, double par3, double par5)
      {
@@ -48,7 +49,7 @@
          boolean flag = false;
          int i = MathHelper.floor_double(this.posX);
          int j = MathHelper.floor_double(this.posY);
-@@ -477,7 +488,7 @@
+@@ -477,7 +489,7 @@
                      }
                  }
  
