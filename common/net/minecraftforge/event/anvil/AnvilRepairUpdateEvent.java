@@ -22,12 +22,12 @@ public class AnvilRepairUpdateEvent extends Event
      *  Be sure to set result to allow if you are updating the item,
      *  or cancel the event if you want no output.
      */
-    public AnvilRepairUpdateEvent(ItemStack inputStack1, ItemStack inputStack2, ItemStack outputStack, int defaultCost) {
+    public AnvilRepairUpdateEvent(ItemStack inputStack1, ItemStack inputStack2, ItemStack outputStack, int baseCost) {
     	this.inputStack1 = inputStack1;
         this.inputStack2 = inputStack2;
 
         this.outputStack = outputStack;
-        this.maximumCost = defaultCost;
+        this.maximumCost = baseCost;
     }
 
 }
