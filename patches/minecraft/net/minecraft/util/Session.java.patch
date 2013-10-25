@@ -12,7 +12,7 @@
 +            System.out.println("Warning the username was not set for this session, typically");
 +            System.out.println("this means you installed Forge incorrectly. We have set your");
 +            System.out.println("name to \"MissingName\" and your session to nothing. Please");
-+            System.out.println("check your instation and post a console log from the launcher");
++            System.out.println("check your installation and post a console log from the launcher");
 +            System.out.println("when asking for help!");
 +            System.out.println("=========================================================");
 +            
