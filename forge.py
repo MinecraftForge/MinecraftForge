@@ -64,7 +64,7 @@ def zip_folder(path, key, zip):
             zip_folder(file_path, file_key, zip)
         else:
             if not file_key.replace(os.sep, '/') in zip.NameToInfo:
-                print '    ' + file_key
+                print('    ' + file_key)
                 zip.write(file_path, file_key)
             
 def zip_create(path, key, zip_name):
@@ -81,7 +81,7 @@ def apply_forge_patches(fml_dir, mcp_dir, forge_dir, src_dir, copy_files=True):
     from fml import copytree, apply_patches
     
     #patch files
-    print 'Applying Minecraft Forge patches'
+    print('Applying Minecraft Forge patches')
     sys.stdout.flush()
 
     if os.path.isdir(os.path.join(forge_dir, 'patches', 'minecraft')):
@@ -94,7 +94,7 @@ def apply_forge_patches(fml_dir, mcp_dir, forge_dir, src_dir, copy_files=True):
 
 def build_forge_dev(mcp_dir, forge_dir, fml_dir, build_num=0):
     version = load_version(build_num)
-    print '=================================== Build %d.%d.%d.%d Start =================================' % (version['major'], version['minor'], version['revision'], version['build'])
+    print('=================================== Build %d.%d.%d.%d Start =================================' % (version['major'], version['minor'], version['revision'], version['build']))
     
     src_dir = os.path.join(mcp_dir, 'src')
     if os.path.isdir(src_dir):
@@ -104,13 +104,13 @@ def build_forge_dev(mcp_dir, forge_dir, fml_dir, build_num=0):
     sys.path.append(os.path.join(fml_dir, 'install'))
     from fml import copytree
         
-    print 'src_work -> src'
+    print('src_work -> src')
     copytree(os.path.join(mcp_dir, 'src_work'), src_dir)
-    print '\nCopying Client Code'
+    print('\nCopying Client Code')
     copytree(os.path.join(forge_dir, 'client'), os.path.join(src_dir, 'minecraft'), -1)
-    print '\nCopying Common Code'
+    print('\nCopying Common Code')
     copytree(os.path.join(forge_dir, 'common'), os.path.join(src_dir, 'minecraft'), -1)
-    print
+    print()
     inject_version(os.path.join(src_dir, 'minecraft/net/minecraftforge/common/ForgeVersion.java'.replace('/', os.sep)), build_num)
     
     error_level = 0
@@ -130,10 +130,10 @@ def build_forge_dev(mcp_dir, forge_dir, fml_dir, build_num=0):
             pass
         reset_logger()
         os.chdir(forge_dir)
-    except SystemExit, e:
+    except SystemExit as e:
         if not e.code == 0:
-            print 'Recompile Exception: %d ' % e.code
+            print('Recompile Exception: %d ' % e.code)
             error_level = e.code
         
-    print '=================================== Build Finished %d =================================' % error_level
+    print('=================================== Build Finished %d =================================' % error_level)
     return error_level

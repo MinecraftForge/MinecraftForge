@@ -45,7 +45,7 @@ def main():
     patchd = os.path.normpath(os.path.join(forge_dir, 'patches'))
     if not options.patch_dir is None:
         patchd = os.path.normpath(options.patch_dir)
-    print "Patch folder set to '%s'" % patchd
+    print("Patch folder set to '%s'" % patchd)
     base = os.path.normpath(os.path.join(mcp, 'src_base'))
     work = os.path.normpath(os.path.join(mcp, 'src_work'))
     
@@ -64,7 +64,7 @@ def main():
             patch_file = os.path.join(patch_dir, cur_file + '.patch')
             
             if len(patch) > 0:
-                print patch_file[len(patchd)+1:]
+                print(patch_file[len(patchd)+1:])
                 patch = patch.replace('\r\n', '\n')
                 
                 if not os.path.exists(patch_dir):

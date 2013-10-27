@@ -21,16 +21,16 @@ def main():
     options, _ = parser.parse_args()
         
     if options.mcp_dir is None:
-        print 'Must supply MCP directory with --mcp-dir'
+        print('Must supply MCP directory with --mcp-dir')
         return
     elif options.patch_dir is None:
-        print 'Must supply patches directory with --patch-dir'
+        print('Must supply patches directory with --patch-dir')
         return
     elif options.target_dir is None:
-        print 'Must supplt target directory with --target-dir'
+        print('Must supplt target directory with --target-dir')
         return
         
-    print "Applying patches from '%s' to '%s'" % (options.patch_dir, options.target_dir)
+    print("Applying patches from '%s' to '%s'" % (options.patch_dir, options.target_dir))
     apply_patches(options.mcp_dir, options.patch_dir, options.target_dir)
         
 def apply_patches(mcp_dir, patch_dir, target_dir, find=None, rep=None):
