@@ -122,4 +122,16 @@ public interface IFMLLoadingPlugin
         public String[] value() default {};
     }
 
+    /**
+     * A simple sorting index, interleaved with other tweakers from other sources, as well as FML
+     * @author cpw
+     *
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    public @interface SortingIndex
+    {
+        public int value() default 0;
+    }
+
 }
