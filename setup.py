@@ -8,7 +8,7 @@ forge_dir = os.path.dirname(os.path.abspath(__file__))
 from forge import apply_forge_patches
 
 def main():
-    print '=================================== Setup Start ================================='
+    print('=================================== Setup Start =================================')
     
     parser = OptionParser()
     parser.add_option('-m', '--mcp-dir', action='store', dest='mcp_dir', help='Path to download/extract MCP to', default=None)
@@ -40,19 +40,19 @@ def main():
     if os.path.isdir(work_dir):
         shutil.rmtree(work_dir)
         
-    print 'Setting up source directories'    
+    print('Setting up source directories')
     shutil.copytree(src_dir, base_dir)
     shutil.copytree(src_dir, work_dir)
     
-    print 'Applying forge patches'
+    print('Applying forge patches')
     apply_forge_patches(fml_dir, mcp_dir, forge_dir, work_dir, False)
     
     setup_eclipse(forge_dir)
     
-    print '=================================== Setup Finished ================================='
+    print('=================================== Setup Finished =================================')
     
 def setup_fml(mcp_dir, fml_dir, build_num=0):
-    print 'Setting up Forge ModLoader'
+    print('Setting up Forge ModLoader')
     os.environ['WORKSPACE'] = os.path.abspath(os.path.join(mcp_dir, '..'))
     os.environ['BUILD_NUMBER'] = str(build_num)
 
@@ -74,14 +74,14 @@ def setup_fml(mcp_dir, fml_dir, build_num=0):
     copy_files(os.path.join(fml_dir, 'common'), os.path.join(mcp_dir, 'src', 'minecraft'))
 
     name = 'fmlversion.properties'
-    print('    ' + name)
+    print('    %s' % name)
     shutil.copy(os.path.join(fml_dir, name), os.path.join(mcp_dir, 'src', 'minecraft', name))
     
 def copy_files(src_dir, dest_dir):
     for file in glob.glob(os.path.join(src_dir, '*')):
         if not os.path.isfile(file) or file.lower().endswith('.java'):
             continue
-        print('    ' + file)
+        print('    %s' % file)
         shutil.copy(file, os.path.join(dest_dir, os.path.basename(file)))
             
 def run_command(command, cwd='.', verbose=True):
@@ -95,7 +95,7 @@ def run_command(command, cwd='.', verbose=True):
             line = line.rstrip()
             print(line)
     if process.returncode:
-        print "failed: {0}".format(process.returncode)
+        print("failed: %d" % (process.returncode))
         return False
     return True    
 
@@ -104,7 +104,7 @@ def setup_eclipse(forge_dir):
     eclipse_zip = os.path.join(forge_dir, 'eclipse-workspace-dev.zip')
     
     if not os.path.isdir(eclipse_dir) and os.path.isfile(eclipse_zip):
-        print 'Extracting Dev Workspace'
+        print('Extracting Dev Workspace')
         zf = zipfile.ZipFile(eclipse_zip)
         zf.extractall(forge_dir)
         zf.close()

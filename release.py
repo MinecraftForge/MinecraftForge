@@ -3,13 +3,17 @@ import shutil, fnmatch, time, json
 import logging, zipfile, re, subprocess
 from pprint import pformat, pprint
 from optparse import OptionParser
-from urllib2 import HTTPError
 from contextlib import closing
 from datetime import datetime
 sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
 forge_dir = os.path.dirname(os.path.abspath(__file__))
 from forge import reset_logger, load_version, zip_folder, zip_create, inject_version, build_forge_dev
 from changelog import make_changelog
+# urllib changed from python2 to python3
+if sys.version_info[0] < 3:
+    from urllib2 import HTTPError
+else:
+    from urllib.error import HTTPError
 
 zip = None
 zip_name = None
@@ -52,20 +56,20 @@ def main():
     client_dir = os.path.join(reobf_dir, 'minecraft')
     fml_dir = os.path.join(temp_dir, 'fml')
 
-    print '=================================== Release Start ================================='
+    print('=================================== Release Start =================================')
     
     fml = glob.glob(os.path.join(forge_dir, 'fml', 'target', 'fml-src-*.%d-*.zip' % build_num))
     if not len(fml) == 1:
         if len(fml) == 0:
-            print 'Missing FML source zip, should be named fml-src-*.zip inside ./fml/target/ created when running setup'
+            print('Missing FML source zip, should be named fml-src-*.zip inside ./fml/target/ created when running setup')
         else:
-            print 'To many FML source zips found, we should only have one. Check the Forge Git for the latest FML version supported'
+            print('To many FML source zips found, we should only have one. Check the Forge Git for the latest FML version supported')
         sys.exit(1)
     
     if os.path.isdir(fml_dir):
         shutil.rmtree(fml_dir)
         
-    print 'Extracting: %s' % os.path.basename(fml[0])
+    print('Extracting: %s' % os.path.basename(fml[0]))
     zf = zipfile.ZipFile(fml[0])
     zf.extractall(temp_dir)
     zf.close()
@@ -88,8 +92,8 @@ def main():
         reobfuscate(None, False, True, True, True, False, False)
         reset_logger()
         os.chdir(forge_dir)
-    except SystemExit, e:
-        print 'Reobfusicate Exception: %d ' % e.code
+    except SystemExit as e:
+        print('Reobfusicate Exception: %d ' % e.code)
         error_level = e.code
     
     extract_fml_obfed(fml_dir, mcp_dir, reobf_dir, client_dir)
@@ -117,8 +121,8 @@ def main():
         changelog_file = 'target/minecraftforge-changelog-%s.txt' % (version_str)
         try:
             make_changelog("http://ci.jenkins.minecraftforge.net/job/minecraftforge/", build_num, changelog_file, version_str)
-        except HTTPError, e:
-            print 'Changelog failed to generate: %s' % e
+        except HTTPError as e:
+            print('Changelog failed to generate: %s' % e)
             options.skip_changelog = True
     
     version_file = 'forgeversion.properties'
@@ -191,7 +195,7 @@ def main():
     if os.path.isfile('MANIFEST.MF'):
         os.remove('MANIFEST.MF')
     
-    print '=================================== Release Finished %d =================================' % error_level
+    print('=================================== Release Finished %d =================================' % error_level)
     sys.exit(error_level)
 
 def gather_json(forge_dir, version_mc, version_forge, version_str):
@@ -225,7 +229,7 @@ def gather_json(forge_dir, version_mc, version_forge, version_str):
 def build_installer(forge_dir, version_str, version_forge, version_minecraft, out_folder, json_data):
     file_name = 'minecraftforge-installer-%s.jar' % version_str
     universal_name = 'minecraftforge-universal-%s.jar' % version_str
-    print '================== %s Start ==================' % file_name
+    print('================== %s Start ==================' % file_name)
     with closing(zipfile.ZipFile(os.path.join(forge_dir, 'fml', 'installer_base.jar'), mode='a')) as zip_in:
         with closing(zipfile.ZipFile(os.path.join(out_folder, file_name), 'w', zipfile.ZIP_DEFLATED)) as zip_out:
             # Copy everything over
@@ -240,7 +244,7 @@ def build_installer(forge_dir, version_str, version_forge, version_minecraft, ou
             print('    install_profile.json')
             zip_out.writestr('install_profile.json', json_data)
             
-    print '================== %s Finished ==================' % file_name
+    print('================== %s Finished ==================' % file_name)
     
 def zip_add(file, key=None):
     if key == None:
@@ -254,14 +258,14 @@ def zip_add(file, key=None):
         zip_folder(file, key, zip)
     else:
         if os.path.isfile(file):
-            print '    ' + key
+            print('    ' + key)
             zip.write(file, key)
     
 def zip_start(name, base=None):
     global zip, zip_name, zip_base
     zip_name = name
     
-    print '================== %s Start ==================' % zip_name
+    print('================== %s Start ==================' % zip_name)
     zip_file = os.path.join(forge_dir, 'target', name)
     zip = zipfile.ZipFile(zip_file, 'w', zipfile.ZIP_DEFLATED)
     zip_base = base
@@ -269,7 +273,7 @@ def zip_start(name, base=None):
 def zip_end():
     global zip, zip_name, zip_base
     zip.close()
-    print '================== %s Finished ==================' % zip_name
+    print('================== %s Finished ==================' % zip_name)
     zip_name = None
     zip_base = None
     
@@ -277,7 +281,7 @@ def load_mc_version(fml_dir):
     props = os.path.join(fml_dir, 'common', 'fmlversion.properties')
     
     if not os.path.isfile(props):
-        print 'Could not load fmlversion.properties, build failed'
+        print('Could not load fmlversion.properties, build failed')
         sys.exit(1)
     
     with open(props, 'r') as fh:
@@ -286,13 +290,13 @@ def load_mc_version(fml_dir):
             if line.startswith('fmlbuild.mcversion'):
                 return line.split('=')[1].strip()
     
-    print 'Could not load fmlversion.properties, build failed'
+    print('Could not load fmlversion.properties, build failed')
     sys.exit(1)
 
 def extract_fml_obfed(fml_dir, mcp_dir, reobf_dir, client_dir):
     fml_file = os.path.join(fml_dir, 'difflist.txt')
     if not os.path.isfile(fml_file):
-        print 'Could not find Forge ModLoader\'s DiffList, looking for it at: %s' % fml_file
+        print('Could not find Forge ModLoader\'s DiffList, looking for it at: %s' % fml_file)
         sys.exit(1)
         
     with open(fml_file, 'r') as fh:
@@ -300,12 +304,12 @@ def extract_fml_obfed(fml_dir, mcp_dir, reobf_dir, client_dir):
         
     client = zipfile.ZipFile(os.path.join(mcp_dir, 'temp', 'client_reobf.jar'))
     
-    print 'Extracting Reobfed Forge ModLoader classes'
+    print('Extracting Reobfed Forge ModLoader classes')
     
     for line in lines:
         line = line.replace('\n', '').replace('\r', '').replace('/', os.sep)
         if not os.path.isfile(os.path.join(reobf_dir, line)):
-            print '    %s' % line
+            print('    %s' % line)
             side = line.split(os.sep)[0]
             if side == 'minecraft':
                 client.extract(line[10:].replace(os.sep, '/'), client_dir)
@@ -321,12 +325,12 @@ def get_branch_name():
             branch, _ = process.communicate()
             branch = branch.rstrip('\r\n')
         except OSError:
-            print "Git not found"
+            print("Git not found")
     else:
         branch = os.getenv("GIT_BRANCH").rpartition('/')[2]
     branch = branch.replace('master', '')
     branch = branch.replace('HEAD', '')
-    print 'Detected Branch as \'%s\'' % branch
+    print('Detected Branch as \'%s\'' % branch)
     return branch
 
 def sign_jar(forge_dir, command, files, dest_zip):
@@ -337,20 +341,20 @@ def sign_jar(forge_dir, command, files, dest_zip):
     if os.path.isfile(zip_file):
         os.remove(zip_file)
     
-    print '============== Creating tmp zip to sign ====================='
+    print('============== Creating tmp zip to sign =====================')
     zf = zipfile.ZipFile(zip_file, 'w', zipfile.ZIP_DEFLATED)
     zf.write(os.path.join(forge_dir, 'MANIFEST.MF'), 'META-INF/MANIFEST.MF')
     zip_folder_filter(files, '', zf, 'cpw/mods/'.replace('/', os.sep))
     zip_folder_filter(files, '', zf, 'net/minecraftforge/'.replace('/', os.sep))
     zf.close()
-    print '================ End tmp zip to sign ========================'
+    print('================ End tmp zip to sign ========================')
     
     try:
         process = Popen([command, zip_file, "forge"], stdout=PIPE, stderr=STDOUT, bufsize=-1)
         out, _ = process.communicate()
-        print out
+        print(out)
     except OSError as e:
-        print "Error creating signed tmp jar: %s" % e.strerror
+        print("Error creating signed tmp jar: %s" % e.strerror)
         sys.exit(1)
     
     tmp_dir = os.path.join(forge_dir, 'tmp')
@@ -378,7 +382,7 @@ def zip_folder_filter(path, key, zip, filter):
             zip_folder_filter(file_path, file_key, zip, filter)
         else:
             if file_key.startswith(filter):
-                print file_key
+                print(file_key)
                 zip.write(file_path, file_key)
 
 def gen_bin_patches(mcp_dir, fml_dir, build_num, client_dir):
@@ -409,7 +413,7 @@ def run_command(command, cwd='.', verbose=True):
             line = line.rstrip()
             print(line)
     if process.returncode:
-        print "failed: {0}".format(process.returncode)
+        print("failed: %d" % process.returncode)
         return False
     return True   
         

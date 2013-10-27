@@ -1,5 +1,4 @@
 import os, os.path, sys
-import urllib, zipfile
 import shutil, glob, fnmatch
 import subprocess, logging
 from optparse import OptionParser
@@ -8,7 +7,7 @@ def fml_main(fml_dir, mcp_dir, gen_conf=True, disable_patches=False, disable_at=
             disable_client=False, disable_rename=False, disable_assets=False, decompile=False):
     sys.path.append(fml_dir)
     from fml import download_mcp, setup_mcp, decompile_minecraft, apply_fml_patches, finish_setup_fml
-    print '================ Forge ModLoader Setup Start ==================='
+    print('================ Forge ModLoader Setup Start ===================')
     download_mcp(fml_dir, mcp_dir)
     setup_mcp(fml_dir, mcp_dir, gen_conf)
     if decompile:
@@ -16,13 +15,13 @@ def fml_main(fml_dir, mcp_dir, gen_conf=True, disable_patches=False, disable_at=
               enable_server=enable_server, disable_client=disable_client,
               disable_assets=disable_assets)
         if disable_patches:
-            print 'Patching disabled'
+            print('Patching disabled')
         else:
             apply_fml_patches(fml_dir, mcp_dir, os.path.join(mcp_dir, 'src'))
         finish_setup_fml(fml_dir, mcp_dir, enable_server=enable_server, disable_client=disable_client, disable_rename=disable_rename)
     else:
-        print 'Decompile free install is on the to-do!'
-    print '================  Forge ModLoader Setup End  ==================='
+        print('Decompile free install is on the to-do!')
+    print('================  Forge ModLoader Setup End  ===================')
     
 def forge_main(forge_dir, fml_dir, mcp_dir):
     sys.path.append(mcp_dir)
@@ -32,8 +31,8 @@ def forge_main(forge_dir, fml_dir, mcp_dir):
     from forge import apply_forge_patches
     from fml import reset_logger
     
-    print '=============================== Minecraft Forge Setup Start ====================================='
-    print 'Applying forge patches'
+    print('=============================== Minecraft Forge Setup Start =====================================')
+    print('Applying forge patches')
     apply_forge_patches(fml_dir, mcp_dir, forge_dir, os.path.join(mcp_dir, 'src'), True)
     os.chdir(mcp_dir)
     updatenames(None, True, True, False)
@@ -41,7 +40,7 @@ def forge_main(forge_dir, fml_dir, mcp_dir):
     updatemd5(None, True, True, False)
     reset_logger()
     os.chdir(forge_dir)    
-    print '=============================== Minecraft Forge Setup Finished ================================='
+    print('=============================== Minecraft Forge Setup Finished =================================')
 
 if __name__ == '__main__':
     parser = OptionParser()
