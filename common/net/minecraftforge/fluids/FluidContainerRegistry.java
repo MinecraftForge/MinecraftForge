@@ -1,4 +1,3 @@
-
 package net.minecraftforge.fluids;
 
 import java.util.Arrays;
@@ -191,8 +190,8 @@ public abstract class FluidContainerRegistry
             return false;
         }
 
-        FluidContainerData data = filledContainerMap.get(Arrays.asList(container.itemID, container.getItemDamage(), fluid.fluidID));
-        return data == null ? false : data.fluid.isFluidEqual(fluid);
+        FluidContainerData data = containerFluidMap.get(Arrays.asList(container.itemID, container.getItemDamage()));
+        return data == null ? false : data.fluid.containsFluid(fluid);
     }
 
     public static boolean isBucket(ItemStack container)
