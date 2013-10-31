@@ -177,6 +177,19 @@ public class ModAPIManager {
                     }
                 }
             }
+            if (apiContainers.containsKey(container.ownerMod.getLabel()))
+            {
+                ArtifactVersion owner = container.ownerMod;
+                do
+                {
+                    APIContainer parent = apiContainers.get(owner.getLabel());
+                    FMLLog.finest("Removing upstream parent %s from %s", parent.ownerMod.getLabel(), container);
+                    container.currentReferents.remove(parent.ownerMod.getLabel());
+                    container.referredMods.remove(parent.ownerMod);
+                    owner = parent.ownerMod;
+                }
+                while (apiContainers.containsKey(owner.getLabel()));
+            }
             FMLLog.fine("Creating API container dummy for API %s: owner: %s, dependents: %s", container.providedAPI, container.ownerMod, container.referredMods);
         }
     }
