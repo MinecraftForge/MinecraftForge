@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSetMultimap;
@@ -96,6 +97,7 @@ public class ASMDataTable
     private Map<ModContainer, SetMultimap<String,ASMData>> containerAnnotationData;
 
     private List<ModContainer> containers = Lists.newArrayList();
+    private SetMultimap<String,ModCandidate> packageMap = HashMultimap.create();
 
     public SetMultimap<String,ASMData> getAnnotationsFor(ModContainer container)
     {
@@ -125,5 +127,15 @@ public class ASMDataTable
     public void addContainer(ModContainer container)
     {
         this.containers.add(container);
+    }
+
+    public void registerPackage(ModCandidate modCandidate, String pkg)
+    {
+        this.packageMap.put(pkg,modCandidate);
+    }
+
+    public Set<ModCandidate> getCandidatesFor(String pkg)
+    {
+        return this.packageMap.get(pkg);
     }
 }

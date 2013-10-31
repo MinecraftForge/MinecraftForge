@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModAPIManager;
 import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
@@ -29,7 +30,7 @@ import net.minecraft.launchwrapper.IClassTransformer;
 
 public class ModAPITransformer implements IClassTransformer {
 
-    private static final boolean logDebugInfo = Boolean.valueOf(System.getProperty("fml.debugAPITransformer", "false"));
+    private static final boolean logDebugInfo = Boolean.valueOf(System.getProperty("fml.debugAPITransformer", "true"));
     private ListMultimap<String, ASMData> optionals;
 
     @Override
@@ -48,7 +49,7 @@ public class ModAPITransformer implements IClassTransformer {
         {
             String modId = (String) optional.getAnnotationInfo().get("modid");
 
-            if (Loader.isModLoaded(modId))
+            if (Loader.isModLoaded(modId) || ModAPIManager.INSTANCE.hasAPI(modId))
             {
                 if (logDebugInfo) FMLRelaunchLog.finest("Optional removal skipped - mod present %s", modId);
                 continue;

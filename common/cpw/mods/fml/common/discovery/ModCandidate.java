@@ -34,6 +34,9 @@ public class ModCandidate
     private boolean isMinecraft;
     private List<ASMModParser> baseModCandidateTypes = Lists.newArrayListWithCapacity(1);
     private Set<String> foundClasses = Sets.newHashSet();
+    private List<ModContainer> mods;
+    private List<String> packages = Lists.newArrayList();
+    private ASMDataTable table;
 
     public ModCandidate(File classPathRoot, File modContainer, ContainerType sourceType)
     {
@@ -64,22 +67,28 @@ public class ModCandidate
     }
     public List<ModContainer> explore(ASMDataTable table)
     {
-        List<ModContainer> mods = sourceType.findMods(this, table);
+        this.table = table;
+        this.mods = sourceType.findMods(this, table);
         if (!baseModCandidateTypes.isEmpty())
         {
             FMLLog.info("Attempting to reparse the mod container %s", getModContainer().getName());
-            return sourceType.findMods(this, table);
+            this.mods = sourceType.findMods(this, table);
         }
-        else
-        {
-            return mods;
-        }
+        return this.mods;
     }
 
     public void addClassEntry(String name)
     {
-        String className = name.substring(0, name.lastIndexOf('.')).replace('.', '/'); // strip the .class and . -> /
-        foundClasses.add(className);
+        String className = name.substring(0, name.lastIndexOf('.')); // strip the .class
+        foundClasses.add(className.replace('.', '/'));
+        className = className.replace('/','.');
+        int pkgIdx = className.lastIndexOf('.');
+        if (pkgIdx > -1)
+        {
+            String pkg = className.substring(0,pkgIdx);
+            packages.add(pkg);
+            this.table.registerPackage(this,pkg);
+        }
     }
 
     public boolean isClasspath()
@@ -105,5 +114,13 @@ public class ModCandidate
     public Set<String> getClassList()
     {
         return foundClasses;
+    }
+    public List<ModContainer> getContainedMods()
+    {
+        return mods;
+    }
+    public List<String> getContainedPackages()
+    {
+        return packages;
     }
 }

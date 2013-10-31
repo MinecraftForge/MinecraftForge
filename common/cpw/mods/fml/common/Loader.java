@@ -482,12 +482,15 @@ public class Loader
         modController = new LoadController(this);
         modController.transition(LoaderState.LOADING, false);
         ModDiscoverer disc = identifyMods();
+        ModAPIManager.INSTANCE.manageAPI(modClassLoader, disc);
         disableRequestedMods();
         FMLLog.fine("Reloading logging properties from %s", loggingProperties.getPath());
         FMLRelaunchLog.loadLogConfiguration(loggingProperties);
         FMLLog.fine("Reloaded logging properties");
         modController.distributeStateMessage(FMLLoadEvent.class);
         sortModList();
+        ModAPIManager.INSTANCE.cleanupAPIContainers(modController.getActiveModList());
+        ModAPIManager.INSTANCE.cleanupAPIContainers(mods);
         mods = ImmutableList.copyOf(mods);
         for (File nonMod : disc.getNonModLibs())
         {
@@ -504,7 +507,6 @@ public class Loader
                 }
             }
         }
-        ModAPIManager.INSTANCE.buildAPITransformer(modClassLoader, disc);
         modController.transition(LoaderState.CONSTRUCTING, false);
         modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader, disc.getASMTable());
         FMLLog.fine("Mod signature data");
