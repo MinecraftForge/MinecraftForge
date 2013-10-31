@@ -13,13 +13,16 @@
 package cpw.mods.fml.common.toposort;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModAPIManager;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.toposort.TopologicalSort.DirectedGraph;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
@@ -39,7 +42,9 @@ public class ModSorter
 
     public ModSorter(List<ModContainer> modList, Map<String, ModContainer> nameLookup)
     {
-        buildGraph(modList, nameLookup);
+        HashMap<String, ModContainer> sortingNameLookup = Maps.newHashMap(nameLookup);
+        ModAPIManager.INSTANCE.injectAPIModContainers(modList, sortingNameLookup);
+        buildGraph(modList, sortingNameLookup);
     }
 
     private void buildGraph(List<ModContainer> modList, Map<String, ModContainer> nameLookup)
@@ -85,7 +90,7 @@ public class ModSorter
                 else
                 {
                     modGraph.addEdge(before, mod);
-                    if (Loader.isModLoaded(modid)) {
+                    if (nameLookup.containsKey(modid) || Loader.isModLoaded(modid)) {
                         modGraph.addEdge(nameLookup.get(modid), mod);
                     }
                 }
