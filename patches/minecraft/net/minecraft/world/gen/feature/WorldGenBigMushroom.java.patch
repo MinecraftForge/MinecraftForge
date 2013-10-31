@@ -1,14 +1,12 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenBigMushroom.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenBigMushroom.java
-@@ -2,9 +2,16 @@
- 
- import java.util.Random;
+@@ -4,7 +4,14 @@
  import net.minecraft.block.Block;
-+import net.minecraft.item.ItemStack;
  import net.minecraft.world.World;
  
 -public class WorldGenBigMushroom extends WorldGenerator
 +// CraftBukkit start
++import net.minecraft.item.ItemStack;
 +import org.bukkit.BlockChangeDelegate;
 +import org.bukkit.block.BlockState;
 +import org.bukkit.material.MaterialData;
@@ -18,7 +16,7 @@
  {
      /** The mushroom type. 0 for brown, 1 for red. */
      private int mushroomType = -1;
-@@ -22,41 +29,57 @@
+@@ -22,41 +29,55 @@
  
      public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
      {
@@ -35,7 +33,6 @@
 +    public boolean grow(BlockChangeDelegate world, Random random, int i, int j, int k, org.bukkit.event.world.StructureGrowEvent event, ItemStack itemstack, org.bukkit.craftbukkit.CraftWorld bukkitWorld)
 +    {
 +        // CraftBukkit end
-+        World forgeWorld = world instanceof World ? (World)world : null; // MCPC+
 +        int l = random.nextInt(2);
  
          if (this.mushroomType >= 0)
@@ -81,13 +78,12 @@
 +                            i2 = world.getTypeId(k1, j1, l1);
 +
 +                            Block block = Block.blocksList[i2];
-+                            // MCPC+ - refactor forge patch to work with CB
-+                            boolean isLeaves = forgeWorld != null && block != null ? block.isLeaves(forgeWorld, k1, j1, l1) : (i2 == Block.leaves.blockID);
-+                            if (i2 != 0 && !isLeaves)
++                            
++                            if (block != null && !block.isAirBlock(world, k1, j1, l1) && !block.isLeaves(world, k1, j1, l1))
                              {
                                  flag = false;
                              }
-@@ -75,7 +98,7 @@
+@@ -75,7 +96,7 @@
              }
              else
              {
@@ -96,7 +92,7 @@
  
                  if (j1 != Block.dirt.blockID && j1 != Block.grass.blockID && j1 != Block.mycelium.blockID)
                  {
-@@ -83,18 +106,31 @@
+@@ -83,18 +104,31 @@
                  }
                  else
                  {
@@ -134,7 +130,7 @@
                          {
                              ++l1;
                          }
-@@ -104,88 +140,104 @@
+@@ -104,88 +138,103 @@
                              l1 = 3;
                          }
  
@@ -235,16 +231,14 @@
                                  {
                                      l2 = 0;
                                  }
--
+ 
 -                                if ((l2 != 0 || par4 >= par4 + i1 - 1) && !Block.opaqueCubeLookup[par1World.getBlockId(i2, k1, k2)])
 -                                {
 -                                    this.setBlockAndMetadata(par1World, i2, k1, k2, Block.mushroomCapBrown.blockID + l, l2);
-+                                // MCPC+ start - refactor forge patch to be compatible with CB patch
-+                                Block block = forgeWorld != null ? Block.blocksList[forgeWorld.getBlockId(i2, k1, k2)] : null;
-+                                boolean canBeReplacedByLeaves = forgeWorld != null && block != null ? block.canBeReplacedByLeaves(forgeWorld, i2, k1, k2) : !Block.opaqueCubeLookup[world.getTypeId(i2, k1, k2)];
-+                                if ((l2 != 0 || j >= j + i1 - 1) && canBeReplacedByLeaves)
++                                Block block = Block.blocksList[world.getTypeId(i2, k1, k2)];
++
++                                if ((l2 != 0 || j >= j + i1 - 1) && (block == null || block.canBeReplacedByLeaves(world, i2, k1, k2)))
 +                                {
-+                                // MCPC+ end
 +                                    // CraftBukkit start
 +                                    if (event == null)
 +                                    {
@@ -262,7 +256,7 @@
                                  }
                              }
                          }
-@@ -193,14 +245,45 @@
+@@ -193,14 +242,43 @@
  
                      for (k1 = 0; k1 < i1; ++k1)
                      {
@@ -277,9 +271,7 @@
 +                        l1 = world.getTypeId(i, j + k1, k);
 +
 +                        Block block = Block.blocksList[l1];
-+                        // MCPC+ - refactor forge patch to be compatible with CB patch
-+                        boolean canBeReplacedByLeaves = forgeWorld != null && block != null ? block.canBeReplacedByLeaves(forgeWorld, i, j + k1, k) : !Block.opaqueCubeLookup[l1];
-+                        if (canBeReplacedByLeaves)
++                        if (block == null || block.canBeReplacedByLeaves(world, i, j + k1, k))
 +                        {
 +                            // CraftBukkit start
 +                            if (event == null)

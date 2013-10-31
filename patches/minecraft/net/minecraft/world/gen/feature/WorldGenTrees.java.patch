@@ -17,7 +17,7 @@
  {
      /** The minimum height of a generated tree. */
      private final int minTreeHeight;
-@@ -35,6 +39,14 @@
+@@ -35,6 +39,13 @@
  
      public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
      {
@@ -28,48 +28,29 @@
 +    public boolean generate(BlockChangeDelegate par1World, Random par2Random, int par3, int par4, int par5)
 +    {
 +        // CraftBukkit end
-+        World forgeWorld = par1World instanceof World ? (World)par1World : null;
          int l = par2Random.nextInt(3) + this.minTreeHeight;
          boolean flag = true;
  
-@@ -65,12 +77,30 @@
+@@ -65,9 +76,15 @@
                      {
                          if (i1 >= 0 && i1 < 256)
                          {
 -                            k1 = par1World.getBlockId(l1, i1, j1);
 -
 -                            if (k1 != 0 && k1 != Block.leaves.blockID && k1 != Block.grass.blockID && k1 != Block.dirt.blockID && k1 != Block.wood.blockID)
--                            {
--                                flag = false;
--                            }
 +                            k1 = par1World.getTypeId(l1, i1, j1);
 +
-+                            // MCPC+ start
-+                            if (forgeWorld != null)
-+                            {
-+                                Block block = Block.blocksList[k1];
-+                                boolean isAir = forgeWorld.isAirBlock(l1, i1, j1);
++                            Block block = Block.blocksList[k1];
 +
-+                                if (!isAir &&
-+                                   !block.isLeaves(forgeWorld, l1, i1, j1) &&
-+                                    k1 != Block.grass.blockID &&
-+                                    k1 != Block.dirt.blockID &&
-+                                   !block.isWood(forgeWorld, l1, i1, j1))
-+                                {
-+                                    flag = false;
-+                                }
-+                            }
-+                            else {
-+                                if (k1 != 0 && k1 != Block.leaves.blockID && k1 != Block.grass.blockID && k1 != Block.dirt.blockID && k1 != Block.wood.blockID)
-+                                {
-+                                    flag = false;
-+                                }
-+                            }
-+                            // MCPC+ end
-                         }
-                         else
-                         {
-@@ -86,11 +116,17 @@
++                            if (!par1World.isEmpty(l1, i1, j1) &&
++                                !block.isLeaves(par1World, l1, i1, j1) &&
++                                 k1 != Block.grass.blockID &&
++                                 k1 != Block.dirt.blockID &&
++                                !block.isWood(par1World, l1, i1, j1))
+                             {
+                                 flag = false;
+                             }
+@@ -86,11 +103,13 @@
              }
              else
              {
@@ -80,19 +61,15 @@
 -                    this.setBlock(par1World, par3, par4 - 1, par5, Block.dirt.blockID);
 +                i1 = par1World.getTypeId(par3, par4 - 1, par5);
 +                Block soil = Block.blocksList[i1];
-+                boolean isSoil = false;
-+                if (forgeWorld != null)
-+                    isSoil = (soil != null && soil.canSustainPlant(forgeWorld, par3, par4 - 1, par5, ForgeDirection.UP, (BlockSapling)Block.sapling));
++                boolean isSoil = (soil != null && soil.canSustainPlant(par1World, par3, par4 - 1, par5, ForgeDirection.UP, (BlockSapling)Block.sapling));
 +
-+                if (((i1 == Block.grass.blockID || i1 == Block.dirt.blockID) || isSoil) && par4 < 256 - l - 1)
++                if (isSoil && par4 < 256 - l - 1)
 +                {
-+                    if (forgeWorld != null)
-+                        soil.onPlantGrow(forgeWorld, par3, par4 - 1, par5, par3, par4, par5);
-+                    else this.setType(par1World, par3, par4 - 1, par5, Block.dirt.blockID);
++                    soil.onPlantGrow(par1World, par3, par4 - 1, par5, par3, par4, par5);
                      b0 = 3;
                      byte b1 = 0;
                      int i2;
-@@ -112,11 +148,12 @@
+@@ -112,11 +131,12 @@
  
                                  if (Math.abs(k2) != i2 || Math.abs(i3) != i2 || par2Random.nextInt(2) != 0 && k1 != 0)
                                  {
@@ -109,7 +86,7 @@
                                      }
                                  }
                              }
-@@ -125,32 +162,34 @@
+@@ -125,32 +145,34 @@
  
                      for (j1 = 0; j1 < l; ++j1)
                      {
@@ -122,7 +99,7 @@
 +
 +                        Block block = Block.blocksList[k1];
 +
-+                        if (k1 == 0 || k1 == Block.leaves.blockID || (forgeWorld != null && block.isLeaves(forgeWorld, par3, par4 + j1, par5))) // MCPC+
++                        if (block == null || block.isAirBlock(par1World, par3, par4 + j1, par5) || block.isLeaves(par1World, par3, par4 + j1, par5))
 +                        {
 +                            this.setTypeAndData(par1World, par3, par4 + j1, par5, Block.wood.blockID, this.metaWood);
  
@@ -167,46 +144,38 @@
                                  }
                              }
                          }
-@@ -167,28 +206,33 @@
+@@ -167,24 +189,25 @@
                              {
                                  for (k2 = par5 - i2; k2 <= par5 + i2; ++k2)
                                  {
 -                                    if (par1World.getBlockId(j2, j1, k2) == Block.leaves.blockID)
-+                                    // MCPC+ start
-+                                    Block block = null;
-+                                    if (forgeWorld != null)
-+                                        block = Block.blocksList[forgeWorld.getBlockId(j2, j1, k2)];
-+                                    if (block != null && (par1World.getTypeId(j2, j1, k2) == Block.leaves.blockID || forgeWorld != null && block.isLeaves(forgeWorld,  j2,  j1,  k2)))
++                                    Block block = Block.blocksList[par1World.getTypeId(j2, j1, k2)];
++                                    if (block != null && block.isLeaves(par1World, j2, j1, k2))
                                      {
 -                                        if (par2Random.nextInt(4) == 0 && par1World.getBlockId(j2 - 1, j1, k2) == 0)
-+                                        if (par2Random.nextInt(4) == 0 && (par1World.getTypeId(j2 - 1, j1, k2) == 0 || (forgeWorld != null && !forgeWorld.isAirBlock(j2 - 1, j1, k2))))
++                                        if (par2Random.nextInt(4) == 0 && par1World.isEmpty(j2 - 1, j1, k2))
                                          {
                                              this.growVines(par1World, j2 - 1, j1, k2, 8);
                                          }
  
 -                                        if (par2Random.nextInt(4) == 0 && par1World.getBlockId(j2 + 1, j1, k2) == 0)
-+                                        if (par2Random.nextInt(4) == 0 && (par1World.getTypeId(j2 + 1, j1, k2) == 0 || (forgeWorld != null && !forgeWorld.isAirBlock(j2 + 1, j1, k2))))
++                                        if (par2Random.nextInt(4) == 0 && par1World.isEmpty(j2 + 1, j1, k2))
                                          {
                                              this.growVines(par1World, j2 + 1, j1, k2, 2);
                                          }
  
 -                                        if (par2Random.nextInt(4) == 0 && par1World.getBlockId(j2, j1, k2 - 1) == 0)
-+                                        if (par2Random.nextInt(4) == 0 && (par1World.getTypeId(j2, j1, k2 - 1) == 0 || (forgeWorld != null && !forgeWorld.isAirBlock(j2, j1, k2 - 1))))
++                                        if (par2Random.nextInt(4) == 0 && par1World.isEmpty(j2, j1, k2 - 1))
                                          {
                                              this.growVines(par1World, j2, j1, k2 - 1, 1);
                                          }
  
 -                                        if (par2Random.nextInt(4) == 0 && par1World.getBlockId(j2, j1, k2 + 1) == 0)
-+                                        if (par2Random.nextInt(4) == 0 && (par1World.getTypeId(j2, j1, k2 + 1) == 0 || (forgeWorld != null && !forgeWorld.isAirBlock(j2, j1, k2 + 1))))
++                                        if (par2Random.nextInt(4) == 0 && par1World.isEmpty(j2, j1, k2 + 1))
                                          {
                                              this.growVines(par1World, j2, j1, k2 + 1, 4);
                                          }
-                                     }
-+                                    // MCPC+ end
-                                 }
-                             }
-                         }
-@@ -202,7 +246,7 @@
+@@ -202,7 +225,7 @@
                                      if (par2Random.nextInt(4 - j1) == 0)
                                      {
                                          i2 = par2Random.nextInt(3);
@@ -215,7 +184,7 @@
                                      }
                                  }
                              }
-@@ -223,24 +267,27 @@
+@@ -223,24 +246,26 @@
          }
      }
  
@@ -229,8 +198,7 @@
 -        this.setBlockAndMetadata(par1World, par2, par3, par4, Block.vine.blockID, par5);
 +    private void growVines(BlockChangeDelegate par1World, int par2, int par3, int par4, int par5)
 +    {
-+        World forgeWorld = par1World instanceof World ? (World)par1World : null;
-+        this.setBlockAndMetadata(forgeWorld, par2, par3, par4, Block.vine.blockID, par5);
++        this.setTypeAndData(par1World, par2, par3, par4, Block.vine.blockID, par5);
          int i1 = 4;
  
          while (true)
@@ -238,13 +206,13 @@
              --par3;
  
 -            if (par1World.getBlockId(par2, par3, par4) != 0 || i1 <= 0)
-+            if (par1World.getTypeId(par2, par3, par4) != 0 || i1 <= 0 || (forgeWorld != null && !forgeWorld.isAirBlock(par2, par3, par4)))
++            if (!par1World.isEmpty(par2, par3, par4) || i1 <= 0)
              {
                  return;
              }
  
 -            this.setBlockAndMetadata(par1World, par2, par3, par4, Block.vine.blockID, par5);
-+            this.setBlockAndMetadata(forgeWorld, par2, par3, par4, Block.vine.blockID, par5);
++            this.setTypeAndData(par1World, par2, par3, par4, Block.vine.blockID, par5);
              --i1;
          }
      }

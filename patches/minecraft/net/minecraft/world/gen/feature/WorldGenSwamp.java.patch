@@ -121,7 +121,7 @@
                                      {
                                          this.generateVines(par1World, l1, j2, i2 + 1, 4);
                                      }
-@@ -164,21 +181,22 @@
+@@ -164,21 +181,21 @@
      /**
       * Generates vines at the given position until it hits a block.
       */
@@ -129,8 +129,7 @@
 +    private void generateVines(BlockChangeDelegate par1World, int par2, int par3, int par4, int par5)
      {
 -        this.setBlockAndMetadata(par1World, par2, par3, par4, Block.vine.blockID, par5);
-+        World forgeWorld = par1World instanceof World ? (World)par1World : null;
-+        this.setBlockAndMetadata(forgeWorld, par2, par3, par4, Block.vine.blockID, par5);
++        this.setTypeAndData(par1World, par2, par3, par4, Block.vine.blockID, par5);
          int i1 = 4;
  
          while (true)
@@ -138,13 +137,13 @@
              --par3;
  
 -            if (par1World.getBlockId(par2, par3, par4) != 0 || i1 <= 0)
-+            if (par1World.getTypeId(par2, par3, par4) != 0 || i1 <= 0 || (forgeWorld != null && !forgeWorld.isAirBlock(par2, par3, par4)))
++            if (par1World.getTypeId(par2, par3, par4) != 0 || i1 <= 0)
              {
                  return;
              }
  
 -            this.setBlockAndMetadata(par1World, par2, par3, par4, Block.vine.blockID, par5);
-+            this.setBlockAndMetadata(forgeWorld, par2, par3, par4, Block.vine.blockID, par5);
++            this.setTypeAndData(par1World, par2, par3, par4, Block.vine.blockID, par5);
              --i1;
          }
      }

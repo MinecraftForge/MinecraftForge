@@ -248,7 +248,7 @@
  
          for (int i = 0; i < 256; ++i)
          {
-@@ -1457,4 +1504,1057 @@
+@@ -1457,4 +1504,1076 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -1288,21 +1288,40 @@
 +        try {
 +            return isLeaves(forgeWorld, x, y, z);
 +        } catch (Throwable t) { }
-+        return false;
++        return world.getTypeId(x, y, z) == Block.leaves.blockID;
++    }
++    public boolean isWood(org.bukkit.BlockChangeDelegate world, int x, int y, int z)
++    {
++        World forgeWorld = world instanceof World ? (World)world : null;
++        try {
++            return isWood(forgeWorld, x, y, z);
++        } catch (Throwable t) { }
++        return world.getTypeId(x, y, z) == Block.wood.blockID;
++    }
++    public boolean isAirBlock(org.bukkit.BlockChangeDelegate world, int x, int y, int z)
++    {
++        World forgeWorld = world instanceof World ? (World)world : null;
++        try {
++            return isAirBlock(forgeWorld, x, y, z);
++        } catch (Throwable t) { }
++        return world.getTypeId(x, y, z) == 0;
 +    }
 +    public boolean canSustainPlant(org.bukkit.BlockChangeDelegate world, int x, int y, int z, ForgeDirection direction, IPlantable plant){
 +        World forgeWorld = world instanceof World ? (World)world : null;
 +        try {
 +            return canSustainPlant(forgeWorld, x, y, z, direction, plant);
 +        } catch (Throwable t) { }
-+        return false;
++        int i1 = world.getTypeId(x,y,z);
++        return i1 == Block.grass.blockID || i1 == Block.dirt.blockID;
 +    }
 +    public void onPlantGrow(org.bukkit.BlockChangeDelegate world, int x, int y, int z, int sourceX, int sourceY, int sourceZ)
 +    {
 +        World forgeWorld = world instanceof World ? (World)world : null;
 +        try {
 +            onPlantGrow(forgeWorld, x, y, z, sourceX, sourceY, sourceZ);
++            return;
 +        } catch (Throwable t) { }
++        world.setTypeId(x, y, z, Block.dirt.blockID);
 +    }
 +    //MCPC+ end
  }

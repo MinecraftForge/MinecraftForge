@@ -26,16 +26,21 @@
      int[] basePos = new int[] {0, 0, 0};
      int heightLimit;
      int height;
-@@ -162,7 +166,7 @@
+@@ -162,15 +166,18 @@
                  else
                  {
                      aint1[b2] = aint[b2] + k1;
 -                    int l1 = this.worldObj.getBlockId(aint1[0], aint1[1], aint1[2]);
+-
+-                    if (l1 != 0 && l1 != Block.leaves.blockID)
 +                    int l1 = this.worldObj.getTypeId(aint1[0], aint1[1], aint1[2]);
- 
-                     if (l1 != 0 && l1 != Block.leaves.blockID)
++                    Block block = Block.blocksList[l1];
++
++                    if (block != null &&
++                       !block.isAirBlock(worldObj, aint1[0], aint1[1], aint1[2]) &&
++                       !block.isLeaves(worldObj, aint1[0], aint1[1], aint1[2]))
                      {
-@@ -170,7 +174,7 @@
+                         ++k1;
                      }
                      else
                      {
@@ -44,7 +49,7 @@
                          ++k1;
                      }
                  }
-@@ -291,7 +295,7 @@
+@@ -291,7 +298,7 @@
                      }
                  }
  
@@ -53,7 +58,7 @@
              }
          }
      }
-@@ -420,9 +424,9 @@
+@@ -420,9 +427,13 @@
                  aint3[b1] = par1ArrayOfInteger[b1] + i;
                  aint3[b2] = MathHelper.floor_double((double)par1ArrayOfInteger[b2] + (double)i * d0);
                  aint3[b3] = MathHelper.floor_double((double)par1ArrayOfInteger[b3] + (double)i * d1);
@@ -61,16 +66,17 @@
 -
 -                if (k != 0 && k != Block.leaves.blockID)
 +                int k = this.worldObj.getTypeId(aint3[0], aint3[1], aint3[2]);
++                Block block = Block.blocksList[k];
 +
-+                if ((k != 0 && k != Block.leaves.blockID) || aint3[1] >= 256)   // CraftBukkit - fix trees wrapping around
++                if ((block != null &&
++                   !block.isAirBlock(worldObj, aint3[0], aint3[1], aint3[2]) && 
++                   !block.isLeaves(worldObj, aint3[0], aint3[1], aint3[2]))
++                   || aint3[1] >= 256)   // CraftBukkit - fix trees wrapping around
                  {
                      break;
                  }
-@@ -438,11 +442,14 @@
-      */
-     boolean validTreeLocation()
+@@ -440,9 +451,11 @@
      {
-+        World forgeWorld = this.worldObj instanceof World ? (World)this.worldObj : null;
          int[] aint = new int[] {this.basePos[0], this.basePos[1], this.basePos[2]};
          int[] aint1 = new int[] {this.basePos[0], this.basePos[1] + this.heightLimit - 1, this.basePos[2]};
 -        int i = this.worldObj.getBlockId(this.basePos[0], this.basePos[1] - 1, this.basePos[2]);
@@ -79,12 +85,12 @@
 +        int i = this.worldObj.getTypeId(this.basePos[0], this.basePos[1] - 1, this.basePos[2]);
 +
 +        Block soil = Block.blocksList[i];
-+        boolean isValidSoil = forgeWorld != null ? (soil != null && soil.canSustainPlant(forgeWorld, basePos[0], basePos[1] - 1, basePos[2], ForgeDirection.UP, (BlockSapling)Block.sapling)) : (i == 2 && i == 3);
++        boolean isValidSoil = (soil != null && soil.canSustainPlant(worldObj, basePos[0], basePos[1] - 1, basePos[2], ForgeDirection.UP, (BlockSapling)Block.sapling));
 +        if (!isValidSoil)
          {
              return false;
          }
-@@ -484,6 +491,17 @@
+@@ -484,6 +497,17 @@
  
      public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
      {
