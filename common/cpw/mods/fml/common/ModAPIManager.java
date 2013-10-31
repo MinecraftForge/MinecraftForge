@@ -102,8 +102,10 @@ public class ModAPIManager {
 
         public void addAPIReference(String embedded)
         {
-            currentReferents.add(embedded);
-            referredMods.add(VersionParser.parseVersionReference(embedded));
+            if (currentReferents.add(embedded))
+            {
+                referredMods.add(VersionParser.parseVersionReference(embedded));
+            }
         }
 
         public void addOwnedPackage(String apiPackage)
@@ -148,6 +150,10 @@ public class ModAPIManager {
             for (ModContainer mc : data.getCandidate().getContainedMods())
             {
                 String embeddedIn = mc.getModId();
+                if (container.currentReferents.contains(embeddedIn))
+                {
+                    continue;
+                }
                 FMLLog.fine("Found API %s (owned by %s providing %s) embedded in %s",apiPackage, apiOwner, providedAPI, embeddedIn);
                 if (!embeddedIn.equals(apiOwner))
                 {
