@@ -2,6 +2,8 @@ package net.minecraftforge.common;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
@@ -27,6 +29,10 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.event.inventory.InventoryType;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
 // MCPC+ end
 
 public class EnumHelper
@@ -84,7 +90,25 @@ public class EnumHelper
 
         return bukkitType;
     }
-    // MCPC end
+
+    // MCPC+ start -- add  modded inventory types
+    public static InventoryType addInventoryType(Class<? extends TileEntity> tileEntityClass, String id)
+    {
+        if (!IInventory.class.isAssignableFrom(tileEntityClass)) return null;
+
+        try {
+            Constructor<? extends TileEntity> ctor = tileEntityClass.getConstructor(); // Use a constructor here so instantiation throws a checked exception
+            TileEntity te = ctor.newInstance();
+            IInventory teInv = (IInventory)te;
+            int size = teInv.getSizeInventory();
+            return addEnum(org.bukkit.event.inventory.InventoryType.class, id, new Class[]{Integer.TYPE, String.class}, new Object[]{size, id});
+        } catch (Throwable e) {
+        	Logger.getLogger(MinecraftServer.class.getName()).log(Level.SEVERE, "Could not create inventory type " + tileEntityClass.getName() + " Exception: " + e.toString());
+        	Logger.getLogger(MinecraftServer.class.getName()).log(Level.SEVERE, "Could not determine default inventory size for type " + tileEntityClass.getName() + " using size of 9");
+            return addEnum(org.bukkit.event.inventory.InventoryType.class, id, new Class[]{Integer.TYPE, String.class}, new Object[]{9, id});
+        }
+    }
+    // MCPC+ end
 
     public static EnumAction addAction(String name)
     {

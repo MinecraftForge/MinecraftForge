@@ -31,7 +31,7 @@
  import net.minecraft.server.gui.IUpdatePlayerListBox;
  import net.minecraft.server.management.ServerConfigurationManager;
  import net.minecraft.stats.StatList;
-@@ -44,25 +46,49 @@
+@@ -44,25 +46,54 @@
  import net.minecraft.world.MinecraftException;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldManager;
@@ -68,6 +68,11 @@
 +import org.bukkit.event.server.RemoteServerCommandEvent;
 +import org.bukkit.event.world.WorldSaveEvent;
 +// CraftBukkit end
++// MCPC+ start
++import java.util.Map;
++import net.minecraft.tileentity.TileEntity;
++import net.minecraftforge.common.EnumHelper;
++// MCPC+ end
 +
  public abstract class MinecraftServer implements ICommandSender, Runnable, IPlayerUsage
  {
@@ -83,7 +88,7 @@
  
      /**
       * Collection of objects to update every tick. Type: List<IUpdatePlayerListBox>
-@@ -78,7 +104,7 @@
+@@ -78,7 +109,7 @@
      private int serverPort = -1;
  
      /** The server world instances. */
@@ -92,7 +97,7 @@
  
      /** The ServerConfigurationManager instance. */
      private ServerConfigurationManager serverConfigManager;
-@@ -133,7 +159,8 @@
+@@ -133,7 +164,8 @@
      public final long[] tickTimeArray;
  
      /** Stats are [dimension][tick%100] system.nanoTime is stored. */
@@ -102,7 +107,7 @@
      private KeyPair serverKeyPair;
  
      /** Username of the server owner (for integrated servers) */
-@@ -159,7 +186,51 @@
+@@ -159,7 +191,51 @@
      private boolean startProfiling;
      private boolean isGamemodeForced;
  
@@ -154,7 +159,7 @@
      {
          this.serverProxy = Proxy.NO_PROXY;
          this.field_143008_E = 0;
-@@ -170,11 +241,46 @@
+@@ -170,11 +246,46 @@
          this.tickTimeArray = new long[100];
          this.texturePack = "";
          mcServer = this;
@@ -204,7 +209,7 @@
  
      /**
       * Register all dispense behaviors.
-@@ -187,7 +293,7 @@
+@@ -187,7 +298,7 @@
      /**
       * Initialises the server and starts it.
       */
@@ -213,7 +218,7 @@
  
      protected void convertMapIfNeeded(String par1Str)
      {
-@@ -216,71 +322,105 @@
+@@ -216,71 +327,114 @@
  
      protected void loadAllWorlds(String par1Str, String par2Str, long par3, WorldType par5WorldType, String par6Str)
      {
@@ -370,10 +375,19 @@
          this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();
 +        CraftBlock.dumpMaterials(); // MCPC+
++        // MCPC+ start - register TE's for inventory events
++        for (Object obj : TileEntity.classToNameMap.entrySet())
++        {
++            Map.Entry<Class<? extends TileEntity>, String> tileEntry = (Map.Entry<Class<? extends TileEntity>, String>)obj;
++            if (tileEntry.getKey() == null)
++                continue;
++            EnumHelper.addInventoryType(tileEntry.getKey(), tileEntry.getValue());
++        }
++        // MCPC+ end
      }
  
      protected void initialWorldChunkLoad()
-@@ -292,28 +432,44 @@
+@@ -292,28 +446,44 @@
          int i = 0;
          this.setUserMessage("menu.generatingTerrain");
          byte b0 = 0;
@@ -439,7 +453,7 @@
          this.clearCurrentTask();
      }
  
-@@ -350,21 +506,20 @@
+@@ -350,21 +520,20 @@
      {
          this.currentTask = null;
          this.percentDone = 0;
@@ -467,7 +481,7 @@
  
                  if (worldserver != null)
                  {
-@@ -373,27 +528,33 @@
+@@ -373,27 +542,33 @@
                          this.getLogAgent().logInfo("Saving chunks for level \'" + worldserver.getWorldInfo().getWorldName() + "\'/" + worldserver.provider.getDimensionName());
                      }
  
@@ -512,7 +526,7 @@
  
              if (this.getNetworkThread() != null)
              {
-@@ -410,10 +571,11 @@
+@@ -410,10 +585,11 @@
              this.getLogAgent().logInfo("Saving worlds");
              this.saveAllWorlds(false);
  
@@ -528,7 +542,7 @@
              }
  
              if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
-@@ -459,45 +621,36 @@
+@@ -459,45 +635,36 @@
  
                  long i = getSystemTimeMillis();
  
@@ -597,7 +611,7 @@
                  FMLCommonHandler.instance().handleServerStopping();
              }
              else
-@@ -539,6 +692,8 @@
+@@ -539,6 +706,8 @@
          }
          finally
          {
@@ -606,7 +620,7 @@
              try
              {
                  if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
-@@ -554,6 +709,16 @@
+@@ -554,6 +723,16 @@
              }
              finally
              {
@@ -623,7 +637,7 @@
                  FMLCommonHandler.instance().handleServerStopped();
                  this.serverStopped = true;
                  this.systemExitNow();
-@@ -579,12 +744,14 @@
+@@ -579,12 +758,14 @@
      /**
       * Main function called by run() every loop.
       */
@@ -642,7 +656,7 @@
          ++this.tickCounter;
  
          if (this.startProfiling)
-@@ -597,7 +764,7 @@
+@@ -597,7 +778,7 @@
          this.theProfiler.startSection("root");
          this.updateTimeLightAndEntities();
  
@@ -651,7 +665,7 @@
          {
              this.theProfiler.startSection("save");
              this.serverConfigManager.saveAllPlayerData();
-@@ -618,93 +785,131 @@
+@@ -618,93 +799,131 @@
          this.theProfiler.endSection();
          this.theProfiler.startSection("snooper");
  
@@ -839,7 +853,7 @@
          this.theProfiler.endSection();
      }
  
-@@ -747,7 +952,22 @@
+@@ -747,7 +966,22 @@
       */
      public WorldServer worldServerForDimension(int par1)
      {
@@ -863,7 +877,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -817,14 +1037,70 @@
+@@ -817,14 +1051,70 @@
       */
      public String getPlugins()
      {
@@ -942,7 +956,7 @@
      }
  
      /**
-@@ -832,7 +1108,7 @@
+@@ -832,7 +1122,7 @@
       */
      public boolean isDebuggingEnabled()
      {
@@ -951,7 +965,7 @@
      }
  
      /**
-@@ -866,7 +1142,7 @@
+@@ -866,7 +1156,7 @@
      {
          par1CrashReport.getCategory().addCrashSectionCallable("Profiler Position", new CallableIsServerModded(this));
  
@@ -960,7 +974,7 @@
          {
              par1CrashReport.getCategory().addCrashSectionCallable("Vec3 Pool Size", new CallableServerProfiler(this));
          }
-@@ -884,6 +1160,8 @@
+@@ -884,6 +1174,8 @@
       */
      public List getPossibleCompletions(ICommandSender par1ICommandSender, String par2Str)
      {
@@ -969,7 +983,7 @@
          ArrayList arraylist = new ArrayList();
  
          if (par2Str.startsWith("/"))
-@@ -932,6 +1210,48 @@
+@@ -932,6 +1224,48 @@
  
              return arraylist;
          }
@@ -1018,7 +1032,7 @@
      }
  
      /**
-@@ -1039,9 +1359,11 @@
+@@ -1039,9 +1373,11 @@
  
      public void setDifficultyForAllWorlds(int par1)
      {
@@ -1033,7 +1047,7 @@
  
              if (worldserver != null)
              {
-@@ -1104,17 +1426,18 @@
+@@ -1104,17 +1440,18 @@
          this.worldIsBeingDeleted = true;
          this.getActiveAnvilConverter().flushCache();
  
@@ -1056,7 +1070,7 @@
          this.initiateShutdown();
      }
  
-@@ -1145,22 +1468,23 @@
+@@ -1145,22 +1482,23 @@
          par1PlayerUsageSnooper.addData("avg_rec_packet_size", Integer.valueOf((int)MathHelper.average(this.receivedPacketSizeArray)));
          int i = 0;
  
@@ -1096,7 +1110,7 @@
          }
  
          par1PlayerUsageSnooper.addData("worlds", Integer.valueOf(i));
-@@ -1194,7 +1518,7 @@
+@@ -1194,7 +1532,7 @@
  
      public boolean isServerInOnlineMode()
      {
@@ -1105,7 +1119,7 @@
      }
  
      public void setOnlineMode(boolean par1)
-@@ -1287,9 +1611,11 @@
+@@ -1287,9 +1625,11 @@
       */
      public void setGameType(EnumGameType par1EnumGameType)
      {
@@ -1120,7 +1134,7 @@
          }
      }
  
-@@ -1337,7 +1663,7 @@
+@@ -1337,7 +1677,7 @@
  
      public World getEntityWorld()
      {
@@ -1129,7 +1143,7 @@
      }
  
      /**
-@@ -1403,121 +1729,250 @@
+@@ -1403,121 +1743,250 @@
      @SideOnly(Side.SERVER)
      public static void main(String[] par0ArrayOfStr)
      {

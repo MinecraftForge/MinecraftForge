@@ -1,8 +1,11 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemInWorldManager.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemInWorldManager.java
-@@ -1,15 +1,34 @@
+@@ -1,15 +1,39 @@
  package net.minecraft.item;
  
++// CraftBukkit start
++import org.bukkit.event.block.BlockBreakEvent;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
  import net.minecraft.block.Block;
 +import net.minecraft.enchantment.EnchantmentHelper;
  import net.minecraft.entity.player.EntityPlayer;
@@ -13,20 +16,22 @@
  import net.minecraft.world.EnumGameType;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
- 
++// CraftBukkit end
++
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.ForgeEventFactory;
 +import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
-+// CraftBukkit start
-+import org.bukkit.event.block.BlockBreakEvent;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.event.Event;
-+import org.bukkit.event.block.Action;
-+import org.bukkit.event.player.PlayerInteractEvent;
-+// CraftBukkit end
-+import cpw.mods.fml.common.registry.GameRegistry; // MCPC+
-+
++// MCPC+ start
++import cpw.mods.fml.common.registry.GameRegistry;
++import net.minecraft.inventory.Container;
++import net.minecraft.inventory.ContainerPlayer;
++import net.minecraft.inventory.IInventory;
++import org.bukkit.craftbukkit.inventory.CraftInventory;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.event.inventory.InventoryType;
++// MCPC+ end
+ 
  public class ItemInWorldManager
  {
 +    /** Forge reach distance */
@@ -35,7 +40,7 @@
      /** The world object that this object is connected to. */
      public World theWorld;
  
-@@ -78,7 +97,7 @@
+@@ -78,7 +102,7 @@
  
      public void updateBlockRemoving()
      {
@@ -44,7 +49,7 @@
          int i;
          float f;
          int j;
-@@ -141,10 +160,33 @@
+@@ -141,10 +165,33 @@
       * if not creative, it calls destroyBlockInWorldPartially untill the block is broken first. par4 is the specific
       * side. tryHarvestBlock can also be the result of this call
       */
@@ -80,7 +85,7 @@
              if (this.isCreative())
              {
                  if (!this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4))
-@@ -154,16 +196,66 @@
+@@ -154,16 +201,66 @@
              }
              else
              {
@@ -154,7 +159,7 @@
  
                  if (i1 > 0 && f >= 1.0F)
                  {
-@@ -180,6 +272,7 @@
+@@ -180,6 +277,7 @@
                      this.durabilityRemainingOnBlock = j1;
                  }
              }
@@ -162,7 +167,7 @@
          }
      }
  
-@@ -187,6 +280,7 @@
+@@ -187,6 +285,7 @@
      {
          if (par1 == this.partiallyDestroyedBlockX && par2 == this.partiallyDestroyedBlockY && par3 == this.partiallyDestroyedBlockZ)
          {
@@ -170,7 +175,7 @@
              int l = this.curblockDamage - this.initialDamage;
              int i1 = this.theWorld.getBlockId(par1, par2, par3);
  
-@@ -211,6 +305,13 @@
+@@ -211,6 +310,13 @@
                      this.field_73093_n = this.initialDamage;
                  }
              }
@@ -184,7 +189,7 @@
          }
      }
  
-@@ -236,7 +337,7 @@
+@@ -236,7 +342,7 @@
              block.onBlockHarvested(this.theWorld, par1, par2, par3, l, this.thisPlayerMP);
          }
  
@@ -193,7 +198,7 @@
  
          if (block != null && flag)
          {
-@@ -251,29 +352,108 @@
+@@ -251,29 +357,108 @@
       */
      public boolean tryHarvestBlock(int par1, int par2, int par3)
      {
@@ -307,7 +312,7 @@
  
                  if (itemstack != null)
                  {
-@@ -285,12 +465,20 @@
+@@ -285,12 +470,20 @@
                      }
                  }
  
@@ -328,7 +333,7 @@
              return flag;
          }
      }
-@@ -325,6 +513,7 @@
+@@ -325,6 +518,7 @@
              if (itemstack1.stackSize == 0)
              {
                  par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
@@ -336,7 +341,7 @@
              }
  
              if (!par1EntityPlayer.isUsingItem())
-@@ -340,38 +529,94 @@
+@@ -340,38 +534,120 @@
       * Activate the clicked on block, otherwise use the held item. Args: player, world, itemStack, x, y, z, side,
       * xOffset, yOffset, zOffset
       */
@@ -416,6 +421,32 @@
 +            else if (!par1EntityPlayer.isSneaking() || par3ItemStack == null || par1EntityPlayer.getHeldItem().getItem().shouldPassSneakingClickToBlock(par2World, par4, par5, par6))
 +            {
 +                result = Block.blocksList[i1].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10);
++                // MCPC+ start - if bukkitView is null, create one. Required for Ender Chests since they do not use NetworkRegistry.openRemoteGUI
++                if (!(thisPlayerMP.openContainer instanceof ContainerPlayer))
++                {
++                    if (thisPlayerMP.openContainer.getBukkitView() == null)
++                    {
++                        TileEntity te = thisPlayerMP.worldObj.getBlockTileEntity(par4, par5, par6);
++                        if (te != null && te instanceof IInventory)
++                        {
++                            IInventory teInv = (IInventory)te;
++                            CraftInventory inventory = new CraftInventory(teInv);
++                            thisPlayerMP.openContainer.bukkitView = new CraftInventoryView(thisPlayerMP.getBukkitEntity(), inventory, thisPlayerMP.openContainer);
++                        }
++                        else
++                        {
++                            thisPlayerMP.openContainer.bukkitView = new CraftInventoryView(thisPlayerMP.getBukkitEntity(), MinecraftServer.getServer().server.createInventory(thisPlayerMP.getBukkitEntity(), InventoryType.CHEST), thisPlayerMP.openContainer);
++                        }
++
++                        thisPlayerMP.openContainer = CraftEventFactory.callInventoryOpenEvent(thisPlayerMP, thisPlayerMP.openContainer, false);
++                        if (thisPlayerMP.openContainer == null)
++                        {
++                            thisPlayerMP.openContainer = thisPlayerMP.inventoryContainer;
++                            return false;
++                        }
++                    }
++                }
++                // MCPC+ end
 +            }
 +
 +            if (par3ItemStack != null && !result)
@@ -463,7 +494,7 @@
  
      /**
       * Sets the world instance.
-@@ -380,4 +625,13 @@
+@@ -380,4 +656,13 @@
      {
          this.theWorld = par1WorldServer;
      }

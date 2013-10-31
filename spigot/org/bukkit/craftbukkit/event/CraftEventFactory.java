@@ -565,8 +565,14 @@ public class CraftEventFactory {
         return event;
     }
 
+    // MCPC+ start - allow inventory force close to be toggled
     public static net.minecraft.inventory.Container callInventoryOpenEvent(net.minecraft.entity.player.EntityPlayerMP player, net.minecraft.inventory.Container container) {
-        if (player.openContainer != player.inventoryContainer) { // fire INVENTORY_CLOSE if one already open
+        return callInventoryOpenEvent(player, container, true);
+    }
+
+    public static net.minecraft.inventory.Container callInventoryOpenEvent(net.minecraft.entity.player.EntityPlayerMP player, net.minecraft.inventory.Container container, boolean closeInv) {
+        if (player.openContainer != player.inventoryContainer && closeInv) { // fire INVENTORY_CLOSE if one already open
+    // MCPC+ end
             player.playerNetServerHandler.handleCloseWindow(new net.minecraft.network.packet.Packet101CloseWindow(player.openContainer.windowId));
         }
 
@@ -585,6 +591,13 @@ public class CraftEventFactory {
 
         if (event.isCancelled()) {
             container.transferTo(player.openContainer, craftPlayer);
+            // MCPC+ start - handle close for modded containers
+            if (player.openContainer != player.inventoryContainer && !closeInv) { // fire INVENTORY_CLOSE if one already open
+                player.playerNetServerHandler.handleCloseWindow(new net.minecraft.network.packet.Packet101CloseWindow(player.openContainer.windowId));
+                player.closeScreen();
+                player.openContainer = player.inventoryContainer;
+            }
+            // MCPC+ end
             return null;
         }
 
