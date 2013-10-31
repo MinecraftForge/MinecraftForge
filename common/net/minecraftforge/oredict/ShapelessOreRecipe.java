@@ -23,6 +23,7 @@ public class ShapelessOreRecipe implements IRecipe
 {
     private ItemStack output = null;
     private ArrayList input = new ArrayList();
+    private ShapelessRecipes vanillaRecipe = null; // MCPC+ - bukkit compatibility
 
     public ShapelessOreRecipe(Block result, Object... recipe){ this(new ItemStack(result), recipe); }
     public ShapelessOreRecipe(Item  result, Object... recipe){ this(new ItemStack(result), recipe); }
@@ -63,6 +64,7 @@ public class ShapelessOreRecipe implements IRecipe
 
     ShapelessOreRecipe(ShapelessRecipes recipe, Map<ItemStack, String> replacements)
     {
+        vanillaRecipe = recipe; // MCPC+ - bukkit compatibility
         output = recipe.getRecipeOutput();
 
         for(ItemStack ingred : ((List<ItemStack>)recipe.recipeItems))
@@ -157,6 +159,8 @@ public class ShapelessOreRecipe implements IRecipe
     // MCPC+ start - required for Bukkit API
     @Override
     public Recipe toBukkitRecipe() {
+        if (vanillaRecipe != null)
+            return vanillaRecipe.toBukkitRecipe();
         return new CustomModRecipe(this);
     }
 

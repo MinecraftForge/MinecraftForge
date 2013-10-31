@@ -30,6 +30,7 @@ public class ShapedOreRecipe implements IRecipe
     private int width = 0;
     private int height = 0;
     private boolean mirrored = true;
+    private ShapedRecipes vanillaRecipe = null; // MCPC+ - bukkit compatibility
 
     public ShapedOreRecipe(Block     result, Object... recipe){ this(new ItemStack(result), recipe); }
     public ShapedOreRecipe(Item      result, Object... recipe){ this(new ItemStack(result), recipe); }
@@ -132,6 +133,7 @@ public class ShapedOreRecipe implements IRecipe
 
     ShapedOreRecipe(ShapedRecipes recipe, Map<ItemStack, String> replacements)
     {
+        vanillaRecipe = recipe; // MCPC+ - bukkit compatibility
         output = recipe.getRecipeOutput();
         width = recipe.recipeWidth;
         height = recipe.recipeHeight;
@@ -271,6 +273,8 @@ public class ShapedOreRecipe implements IRecipe
     // MCPC+ start - required for Bukkit API
     @Override
     public Recipe toBukkitRecipe() {
+        if (vanillaRecipe != null)
+            return vanillaRecipe.toBukkitRecipe();
         return new CustomModRecipe(this);
     }
 
