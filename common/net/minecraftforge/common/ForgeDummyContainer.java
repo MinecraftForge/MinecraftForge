@@ -15,6 +15,7 @@ import net.minecraftforge.common.network.ForgeConnectionHandler;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
 import net.minecraftforge.common.network.ForgePacketHandler;
 import net.minecraftforge.common.network.ForgeTinyPacketHandler;
+import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.server.command.ForgeCommand;
 
 import com.google.common.eventbus.EventBus;
@@ -29,13 +30,14 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.WorldAccessContainer;
 import cpw.mods.fml.common.event.FMLConstructionEvent;
+import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.FMLNetworkHandler;
 import cpw.mods.fml.common.network.NetworkMod;
-
 import static net.minecraftforge.common.ForgeVersion.*;
+import static net.minecraftforge.common.Configuration.*;
 
 @NetworkMod(
         channels = "FORGE",
@@ -54,6 +56,7 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     public static double zombieSummonBaseChance = 0.1;
     public static int[] blendRanges = { 20, 15, 10, 5 };
     public static float zombieBabyChance = 0.05f;
+    public static boolean shouldSortRecipies = false;
 
     public ForgeDummyContainer()
     {
@@ -153,7 +156,11 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
         prop = config.get(Configuration.CATEGORY_GENERAL, "zombieBabyChance", 0.05);
         prop.comment = "Chance that a zombie (or subclass) is a baby. Allows changing the zombie spawning mechanic.";
         zombieBabyChance = (float) prop.getDouble(0.05);
-        
+
+        prop = config.get(CATEGORY_GENERAL, "sortRecipies", shouldSortRecipies);
+        prop.comment = "Set to true to enable the post initlization sorting of crafting recipes using Froge's sorter. May cause desyncing on conflicting recipies. ToDo: Set to true by default in 1.7";
+        shouldSortRecipies = prop.getBoolean(shouldSortRecipies);
+
         if (config.hasChanged())
         {
             config.save();
@@ -193,6 +200,15 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     {
         BiomeDictionary.registerAllBiomesAndGenerateEvents();
         ForgeChunkManager.loadConfiguration();
+    }
+
+    @Subscribe
+    public void onAvalible(FMLLoadCompleteEvent evt)
+    {
+        if (shouldSortRecipies)
+        {
+            RecipeSorter.sortCraftManager();
+        }
     }
 
     @Subscribe

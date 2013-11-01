@@ -1,16 +1,35 @@
 --- ../src_base/minecraft/net/minecraft/world/biome/BiomeGenBase.java
 +++ ../src_work/minecraft/net/minecraft/world/biome/BiomeGenBase.java
-@@ -30,6 +30,9 @@
- import net.minecraft.world.gen.feature.WorldGenTallGrass;
+@@ -31,6 +31,9 @@
  import net.minecraft.world.gen.feature.WorldGenTrees;
  import net.minecraft.world.gen.feature.WorldGenerator;
-+
+ 
 +import net.minecraftforge.common.*;
 +import net.minecraftforge.event.terraingen.*;
- 
++
  public abstract class BiomeGenBase
  {
-@@ -179,8 +182,8 @@
+     /** An array of all the biomes, indexed by biome id. */
+@@ -140,6 +143,10 @@
+     protected WorldGenSwamp worldGeneratorSwamp;
+ 
+     public BiomeGenBase(int par1)
++    {
++        this(par1, true);
++    }
++    public BiomeGenBase(int par1, boolean register)
+     {
+         this.topBlock = (byte)Block.grass.blockID;
+         this.fillerBlock = (byte)Block.dirt.blockID;
+@@ -159,6 +166,7 @@
+         this.worldGeneratorForest = new WorldGenForest(false);
+         this.worldGeneratorSwamp = new WorldGenSwamp();
+         this.biomeID = par1;
++        if (register)
+         biomeList[par1] = this;
+         this.theBiomeDecorator = this.createBiomeDecorator();
+         this.spawnableCreatureList.add(new SpawnListEntry(EntitySheep.class, 12, 4, 4));
+@@ -179,8 +187,8 @@
       * Allocate a new BiomeDecorator for this BiomeGenBase
       */
      public BiomeDecorator createBiomeDecorator()
@@ -21,7 +40,7 @@
      }
  
      /**
-@@ -372,7 +375,7 @@
+@@ -372,7 +380,7 @@
      {
          double d0 = (double)MathHelper.clamp_float(this.getFloatTemperature(), 0.0F, 1.0F);
          double d1 = (double)MathHelper.clamp_float(this.getFloatRainfall(), 0.0F, 1.0F);
@@ -30,7 +49,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -384,6 +387,32 @@
+@@ -384,6 +392,32 @@
      {
          double d0 = (double)MathHelper.clamp_float(this.getFloatTemperature(), 0.0F, 1.0F);
          double d1 = (double)MathHelper.clamp_float(this.getFloatRainfall(), 0.0F, 1.0F);

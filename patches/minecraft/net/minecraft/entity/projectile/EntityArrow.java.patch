@@ -21,6 +21,15 @@
  
      /** 1 if the player can pick up the arrow */
      public int canBePickedUp;
+@@ -221,7 +226,7 @@
+             {
+                 ++this.ticksInGround;
+ 
+-                if (this.ticksInGround == 1200)
++                if (this.ticksInGround == worldObj.spigotConfig.arrowDespawnRate) // Spigot
+                 {
+                     this.setDead();
+                 }
 @@ -268,7 +273,7 @@
  
                      if (movingobjectposition1 != null)

@@ -232,4 +232,11 @@ public class SpigotWorldConfig
         itemDespawnRate = getInt( "item-despawn-rate", 6000 );
         log( "Item Despawn Rate: " + itemDespawnRate );
     }
-}
+
+    public int arrowDespawnRate;
+    private void arrowDespawnRate()
+    {
+        arrowDespawnRate = getInt( "arrow-despawn-rate", 1200  );
+        log( "Arrow Despawn Rate: " + arrowDespawnRate );
+    }
+ }

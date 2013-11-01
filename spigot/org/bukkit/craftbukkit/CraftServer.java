@@ -150,6 +150,8 @@ public final class CraftServer implements Server {
     private WarningState warningState = WarningState.DEFAULT;
     private final BooleanWrapper online = new BooleanWrapper();
     public CraftScoreboardManager scoreboardManager;
+    public boolean playerCommandState;
+    private boolean printSaveWarning;
 
     // MCPC+ start
     private boolean dumpMaterials = false;
@@ -523,6 +525,7 @@ public final class CraftServer implements Server {
             }
         }
         try {
+            this.playerCommandState = true;
             // MCPC+ start - handle bukkit/vanilla console commands
             int space = serverCommand.command.indexOf(" ");
             // if bukkit command exists then execute it over vanilla
@@ -538,6 +541,8 @@ public final class CraftServer implements Server {
         } catch (Exception ex) {
             getLogger().log(Level.WARNING, "Unexpected exception while parsing console command \"" + serverCommand.command + '"', ex);
             return false;
+        } finally {
+            this.playerCommandState = false;
         }
     }
 
@@ -627,6 +632,7 @@ public final class CraftServer implements Server {
         waterAnimalSpawn = configuration.getInt("spawn-limits.water-animals");
         ambientSpawn = configuration.getInt("spawn-limits.ambient");
         warningState = WarningState.value(configuration.getString("settings.deprecated-verbose"));
+        printSaveWarning = false;
         console.autosavePeriod = configuration.getInt("ticks-per.autosave");
         chunkGCPeriod = configuration.getInt("chunk-gc.period-in-ticks");
         chunkGCLoadThresh = configuration.getInt("chunk-gc.load-threshold");
@@ -902,6 +908,7 @@ public final class CraftServer implements Server {
     }
 
     public void savePlayers() {
+        checkSaveState();
         playerList.saveAllPlayerData();
     }
 
@@ -1424,5 +1431,13 @@ public final class CraftServer implements Server {
 
     public CraftScoreboardManager getScoreboardManager() {
         return scoreboardManager;
+    }
+
+    public void checkSaveState() {
+        if (this.playerCommandState || this.printSaveWarning || this.console.autosavePeriod <= 0) {
+            return;
+        }
+        this.printSaveWarning = true;
+        getLogger().log(Level.WARNING, "A manual (plugin-induced) save has been detected while server is configured to auto-save. This may affect performance.", warningState == WarningState.ON ? new Throwable() : null);
     }
 }

@@ -646,6 +646,7 @@ public class CraftWorld implements World {
     }
 
     public void save() {
+        this.server.checkSaveState();
         try {
             boolean oldSave = world.canNotSave;
 

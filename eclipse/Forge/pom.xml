@@ -4,20 +4,20 @@
     <groupId>mcpc</groupId>
     <artifactId>mcpc-plus</artifactId>
     <packaging>jar</packaging>
-    <version>1.6.4-R0.1-SNAPSHOT</version>
+    <version>1.6.4-R2.0-SNAPSHOT</version>
     <name>mcpc-plus</name>
     <url>http://www.mcportcentral.co.za/</url>
     <properties>
         <mcpc.basedir>${project.basedir}/../..</mcpc.basedir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <bukkit.version>${project.version}</bukkit.version>
-        <filename.version>1.6.4-R0.1</filename.version>
+        <filename.version>1.6.4-R2.0</filename.version>
         <api.version>unknown</api.version>
         <minecraft.version>1.6.4</minecraft.version>
         <minecraft_version>1_6_R3</minecraft_version>
         <minecraft_server_url_download>http://s3.amazonaws.com/Minecraft.Download/versions/1.6.4/minecraft_server.1.6.4.jar</minecraft_server_url_download>
-        <forge.build>935</forge.build>
-        <forge.version>9.11.1.933</forge.version>
+        <forge.build>942</forge.build>
+        <forge.version>9.11.1.942</forge.version>
         <forge.remapped.revision>R1-MCPC</forge.remapped.revision>
         <fml.at>${mcpc.basedir}/resources/fml_at.cfg</fml.at>
         <forge.at>${mcpc.basedir}/resources/forge_at.cfg</forge.at>
@@ -34,6 +34,10 @@
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>bukkit-plugins</id>
+            <url>http://repo.bukkit.org/content/groups/public</url>
         </pluginRepository>
     </pluginRepositories>
     <repositories>
@@ -407,7 +411,7 @@
                     <classesDirectory>${project.basedir}/target/classes</classesDirectory>
                     <archive>
                         <manifestEntries>
-                            <Class-Path>libraries/net/minecraft/launchwrapper/1.3/launchwrapper-1.3.jar libraries/org/ow2/asm/asm-all/4.1/asm-all-4.1.jar libraries/lzma/lzma/0.0.1/lzma-0.0.1.jar libraries/net/sf/jopt-simple/jopt-simple/4.5/jopt-simple-4.5.jar libraries/org/scala-lang/scala-library/2.10.2/scala-library-2.10.2.jar libraries/org/scala-lang/scala-compiler/2.10.2/scala-compiler-2.10.2.jar</Class-Path>
+                            <Class-Path>libraries/net/minecraft/launchwrapper/1.8/launchwrapper-1.8.jar libraries/org/ow2/asm/asm-all/4.1/asm-all-4.1.jar libraries/lzma/lzma/0.0.1/lzma-0.0.1.jar libraries/net/sf/jopt-simple/jopt-simple/4.5/jopt-simple-4.5.jar libraries/org/scala-lang/scala-library/2.10.2/scala-library-2.10.2.jar libraries/org/scala-lang/scala-compiler/2.10.2/scala-compiler-2.10.2.jar</Class-Path>
                             <Main-Class>cpw.mods.fml.relauncher.ServerLaunchWrapper</Main-Class>
                             <Implementation-Title>MCPC Plus</Implementation-Title>
                             <Implementation-Version>${describe}</Implementation-Version>
@@ -560,6 +564,49 @@
                             <finalName>mcpc-plus-${filename.version}-forge${forge.build}-B${buildNumber}</finalName>
                         </configuration>
                     </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.4.3</version>
+                <executions>
+                <execution>
+                    <id>maps-file</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>copy-resources</goal>
+                    </goals>
+                    <configuration>
+                        <outputDirectory>${basedir}/target</outputDirectory>
+                        <resources>
+                        <resource>
+                            <directory>${mcpc.basedir}/resources</directory>
+                            <filtering>true</filtering>
+                            <includes>
+                                <include>maps.yml</include>
+                            </includes>
+                        </resource>
+                        </resources>
+                    </configuration>
+                </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.wolvereness</groupId>
+                <artifactId>overmapped</artifactId>
+                <version>0.0.2</version>
+                <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                    <goal>map</goal>
+                    </goals>
+                    <configuration>
+                    <maps>${basedir}/target/maps.yml</maps>
+                    <input>${basedir}/target/mcpc-plus-${filename.version}-forge${forge.build}-B${buildNumber}.jar</input>
+                    <original>${basedir}/target/unmapped-mcpc-plus-${filename.version}-forge${forge.build}-B${buildNumber}.jar</original>
+                    </configuration>
+                </execution>
                 </executions>
             </plugin>
         </plugins>
