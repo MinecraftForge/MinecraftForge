@@ -799,7 +799,7 @@
              }
              else
              {
-@@ -677,51 +1129,310 @@
+@@ -677,51 +1129,326 @@
                  {
                      if (!ChatAllowedCharacters.isAllowedCharacter(s.charAt(i)))
                      {
@@ -851,7 +851,26 @@
 +                    return;
 +                }
 +
-+                this.chat(s, par1Packet3Chat.canProcessAsync());
++                if (!par1Packet3Chat.canProcessAsync())
++                {
++                    try
++                    {
++                        this.mcServer.server.playerCommandState = true;
++                        this.chat(s, par1Packet3Chat.canProcessAsync());
++                    }
++                    finally
++                    {
++                        this.mcServer.server.playerCommandState = false;
++                    }
+                 }
+                 else
+                 {
+-                    if (this.playerEntity.getChatVisibility() == 1)
+-                    {
+-                        this.sendPacketToPlayer(new Packet3Chat(ChatMessageComponent.createFromTranslationKey("chat.cannotSend").setColor(EnumChatFormatting.RED)));
++                    this.chat(s, par1Packet3Chat.canProcessAsync());
++                }
++
 +                // This section stays because it is only applicable to packets
 +                // Spigot - spam exclusions
 +                boolean counted = true;
@@ -981,12 +1000,9 @@
 +                    {
 +                        throw new RuntimeException("Exception processing chat event", e.getCause());
 +                    }
-                 }
-                 else
-                 {
--                    if (this.playerEntity.getChatVisibility() == 1)
--                    {
--                        this.sendPacketToPlayer(new Packet3Chat(ChatMessageComponent.createFromTranslationKey("chat.cannotSend").setColor(EnumChatFormatting.RED)));
++                }
++                else
++                {
 +                    if (event.isCancelled())
 +                    {
                          return;
@@ -1131,7 +1147,7 @@
              this.playerEntity.swingItem();
          }
      }
-@@ -731,7 +1442,37 @@
+@@ -731,7 +1458,37 @@
       */
      public void handleEntityAction(Packet19EntityAction par1Packet19EntityAction)
      {
@@ -1169,7 +1185,7 @@
  
          if (par1Packet19EntityAction.action == 1)
          {
-@@ -782,36 +1523,94 @@
+@@ -782,36 +1539,94 @@
  
      public void handleUseEntity(Packet7UseEntity par1Packet7UseEntity)
      {
@@ -1290,7 +1306,7 @@
                  }
              }
          }
-@@ -825,7 +1624,7 @@
+@@ -825,7 +1640,7 @@
          {
              if (this.playerEntity.playerConqueredTheEnd)
              {
@@ -1299,7 +1315,7 @@
              }
              else if (this.playerEntity.getServerForPlayer().getWorldInfo().isHardcoreModeEnabled())
              {
-@@ -849,7 +1648,7 @@
+@@ -849,7 +1664,7 @@
                      return;
                  }
  
@@ -1308,7 +1324,7 @@
              }
          }
      }
-@@ -871,16 +1670,451 @@
+@@ -871,16 +1686,451 @@
  
      public void handleCloseWindow(Packet101CloseWindow par1Packet101CloseWindow)
      {
@@ -1761,7 +1777,7 @@
  
              if (ItemStack.areItemStacksEqual(par1Packet102WindowClick.itemStack, itemstack))
              {
-@@ -903,6 +2137,14 @@
+@@ -903,6 +2153,14 @@
                  }
  
                  this.playerEntity.sendContainerAndContentsToPlayer(this.playerEntity.openContainer, arraylist);
@@ -1776,7 +1792,7 @@
              }
          }
      }
-@@ -928,8 +2170,59 @@
+@@ -928,8 +2186,59 @@
              boolean flag = par1Packet107CreativeSetSlot.slot < 0;
              ItemStack itemstack = par1Packet107CreativeSetSlot.itemStack;
              boolean flag1 = par1Packet107CreativeSetSlot.slot >= 1 && par1Packet107CreativeSetSlot.slot < 36 + InventoryPlayer.getHotbarSize();
@@ -1837,7 +1853,7 @@
  
              if (flag1 && flag2 && flag3)
              {
-@@ -959,6 +2252,11 @@
+@@ -959,6 +2268,11 @@
  
      public void handleTransaction(Packet106Transaction par1Packet106Transaction)
      {
@@ -1849,7 +1865,7 @@
          Short oshort = (Short)this.field_72586_s.lookup(this.playerEntity.openContainer.windowId);
  
          if (oshort != null && par1Packet106Transaction.shortWindowId == oshort.shortValue() && this.playerEntity.openContainer.windowId == par1Packet106Transaction.windowId && !this.playerEntity.openContainer.isPlayerNotUsingContainer(this.playerEntity))
-@@ -972,6 +2270,11 @@
+@@ -972,6 +2286,11 @@
       */
      public void handleUpdateSign(Packet130UpdateSign par1Packet130UpdateSign)
      {
@@ -1861,7 +1877,7 @@
          this.playerEntity.func_143004_u();
          WorldServer worldserver = this.mcServer.worldServerForDimension(this.playerEntity.dimension);
  
-@@ -986,6 +2289,7 @@
+@@ -986,6 +2305,7 @@
                  if (!tileentitysign.isEditable() || tileentitysign.func_142009_b() != this.playerEntity)
                  {
                      this.mcServer.logWarning("Player " + this.playerEntity.getCommandSenderName() + " just tried to change non-editable sign");
@@ -1869,7 +1885,7 @@
                      return;
                  }
              }
-@@ -1005,7 +2309,7 @@
+@@ -1005,7 +2325,7 @@
                  {
                      for (i = 0; i < par1Packet130UpdateSign.signLines[j].length(); ++i)
                      {
@@ -1878,7 +1894,7 @@
                          {
                              flag = false;
                          }
-@@ -1024,7 +2328,27 @@
+@@ -1024,7 +2344,27 @@
                  int k = par1Packet130UpdateSign.yPosition;
                  i = par1Packet130UpdateSign.zPosition;
                  TileEntitySign tileentitysign1 = (TileEntitySign)tileentity;
@@ -1907,7 +1923,7 @@
                  tileentitysign1.onInventoryChanged();
                  worldserver.markBlockForUpdate(j, k, i);
              }
-@@ -1056,7 +2380,23 @@
+@@ -1056,7 +2396,23 @@
       */
      public void handlePlayerAbilities(Packet202PlayerAbilities par1Packet202PlayerAbilities)
      {
@@ -1932,7 +1948,7 @@
      }
  
      public void handleAutoComplete(Packet203AutoComplete par1Packet203AutoComplete)
-@@ -1070,7 +2410,7 @@
+@@ -1070,7 +2426,7 @@
  
              if (stringbuilder.length() > 0)
              {
@@ -1941,7 +1957,7 @@
              }
          }
  
-@@ -1093,6 +2433,14 @@
+@@ -1093,6 +2449,14 @@
          ItemStack itemstack;
          ItemStack itemstack1;
  
@@ -1956,7 +1972,7 @@
          if ("MC|BEdit".equals(par1Packet250CustomPayload.channel))
          {
              try
-@@ -1109,12 +2457,16 @@
+@@ -1109,12 +2473,16 @@
  
                  if (itemstack != null && itemstack.itemID == Item.writableBook.itemID && itemstack.itemID == itemstack1.itemID)
                  {
@@ -1979,7 +1995,7 @@
              }
          }
          else if ("MC|BSign".equals(par1Packet250CustomPayload.channel))
-@@ -1133,15 +2485,16 @@
+@@ -1133,15 +2501,16 @@
  
                  if (itemstack != null && itemstack.itemID == Item.writtenBook.itemID && itemstack1.itemID == Item.writableBook.itemID)
                  {
@@ -2005,7 +2021,7 @@
              }
          }
          else
-@@ -1163,7 +2516,10 @@
+@@ -1163,7 +2532,10 @@
                  }
                  catch (Exception exception2)
                  {
@@ -2017,7 +2033,7 @@
                  }
              }
              else
-@@ -1196,7 +2552,10 @@
+@@ -1196,7 +2568,10 @@
                          }
                          catch (Exception exception3)
                          {
@@ -2029,7 +2045,7 @@
                          }
                      }
                      else
-@@ -1227,7 +2586,10 @@
+@@ -1227,7 +2602,10 @@
                          }
                          catch (Exception exception4)
                          {
@@ -2041,7 +2057,7 @@
                          }
                      }
                  }
-@@ -1249,6 +2611,13 @@
+@@ -1249,6 +2627,13 @@
                          containerrepair.updateItemName("");
                      }
                  }
@@ -2055,9 +2071,3 @@
              }
          }
      }
-@@ -1275,4 +2644,4 @@
-     {
-         return playerEntity;
-     }
--}
-+}
