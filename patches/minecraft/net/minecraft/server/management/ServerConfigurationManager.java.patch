@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
 +++ ../src_work/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
-@@ -52,11 +52,39 @@
+@@ -52,10 +52,38 @@
  import net.minecraft.util.EnumChatFormatting;
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.EnumGameType;
@@ -10,7 +10,7 @@
  import net.minecraft.world.WorldServer;
  import net.minecraft.world.demo.DemoWorldManager;
  import net.minecraft.world.storage.IPlayerFileData;
- 
++
 +import net.minecraftforge.common.DimensionManager;
 +// CraftBukkit start
 +import net.minecraft.network.NetLoginHandler;
@@ -36,19 +36,9 @@
 +import net.minecraftforge.common.network.packet.DimensionRegisterPacket;
 +import net.minecraftforge.common.network.ForgePacket;
 +// MCPC+ end
-+
+ 
  public abstract class ServerConfigurationManager
  {
-     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd \'at\' HH:mm:ss z");
-@@ -65,7 +93,7 @@
-     private final MinecraftServer mcServer;
- 
-     /** A list of player entities that exist on this server. */
--    public final List playerEntityList = new ArrayList();
-+    public final List playerEntityList = new java.util.concurrent.CopyOnWriteArrayList(); // CraftBukkit - ArrayList -> CopyOnWriteArrayList: Iterator safety
-     private final BanList bannedPlayers = new BanList(new File("banned-players.txt"));
-     private final BanList bannedIPs = new BanList(new File("banned-ips.txt"));
- 
 @@ -73,15 +101,15 @@
      private Set ops = new HashSet();
  
