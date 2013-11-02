@@ -1,94 +1,111 @@
 --- ../src_base/minecraft/net/minecraft/item/crafting/FurnaceRecipes.java
 +++ ../src_work/minecraft/net/minecraft/item/crafting/FurnaceRecipes.java
-@@ -1,6 +1,8 @@
+@@ -1,18 +1,24 @@
  package net.minecraft.item.crafting;
  
-+import java.util.Arrays;
++import java.util.Collections;
  import java.util.HashMap;
 +import java.util.List;
  import java.util.Map;
++
++import com.google.common.collect.Lists;
++
  import net.minecraft.block.Block;
++import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.item.Item;
-@@ -13,6 +15,8 @@
-     /** The list of smelting results. */
-     private Map smeltingList = new HashMap();
-     private Map experienceList = new HashMap();
-+    private HashMap<List<Integer>, ItemStack> metaSmeltingList = new HashMap<List<Integer>, ItemStack>();
-+    private HashMap<List<Integer>, Float> metaExperience = new HashMap<List<Integer>, Float>();
+ import net.minecraft.item.ItemStack;
++import net.minecraftforge.StandardFurnaceRecipe;
++import net.minecraftforge.common.IFurnaceRecipe;
+ 
+ public class FurnaceRecipes
+ {
+     private static final FurnaceRecipes smeltingBase = new FurnaceRecipes();
+ 
+-    /** The list of smelting results. */
+-    private Map smeltingList = new HashMap();
+-    private Map experienceList = new HashMap();
++    private List<IFurnaceRecipe> recipes = Lists.newLinkedList();
  
      /**
       * Used to call methods addSmelting and getSmeltingResult.
-@@ -57,7 +61,9 @@
+@@ -51,25 +57,75 @@
+      */
+     public void addSmelting(int par1, ItemStack par2ItemStack, float par3)
+     {
+-        this.smeltingList.put(Integer.valueOf(par1), par2ItemStack);
+-        this.experienceList.put(Integer.valueOf(par2ItemStack.itemID), Float.valueOf(par3));
++        addSmelting(new StandardFurnaceRecipe(par1, par3, par2ItemStack));
+     }
  
      /**
       * Returns the smelting result of an item.
-+     * Deprecated in favor of a metadata sensitive version
       */
-+    @Deprecated
++    @Deprecated // use getSmeltingResult(ItemStack)
      public ItemStack getSmeltingResult(int par1)
      {
-         return (ItemStack)this.smeltingList.get(Integer.valueOf(par1));
-@@ -68,8 +74,63 @@
-         return this.smeltingList;
-     }
- 
-+    @Deprecated //In favor of ItemStack sensitive version
-     public float getExperience(int par1)
-     {
-         return this.experienceList.containsKey(Integer.valueOf(par1)) ? ((Float)this.experienceList.get(Integer.valueOf(par1))).floatValue() : 0.0F;
-     }
-+
-+    /**
-+     * A metadata sensitive version of adding a furnace recipe.
-+     */
-+    public void addSmelting(int itemID, int metadata, ItemStack itemstack, float experience)
-+    {
-+        metaSmeltingList.put(Arrays.asList(itemID, metadata), itemstack);
-+        metaExperience.put(Arrays.asList(itemstack.itemID, itemstack.getItemDamage()), experience);
+-        return (ItemStack)this.smeltingList.get(Integer.valueOf(par1));
++        return getSmeltingResult(new ItemStack(par1, 1, 0));
 +    }
-+
-+    /**
-+     * Used to get the resulting ItemStack form a source ItemStack
-+     * @param item The Source ItemStack
-+     * @return The result ItemStack
-+     */
-+    public ItemStack getSmeltingResult(ItemStack item) 
++    
++    public ItemStack getSmeltingResult(ItemStack smeltingItem)
 +    {
-+        if (item == null)
-+        {
++        IFurnaceRecipe r = getRecipe(smeltingItem);
++        return r == null ? null : r.getResult(smeltingItem);
++    }
++    
++    private IFurnaceRecipe getRecipe(ItemStack smeltingItem)
++    {
++        if (smeltingItem == null) {
 +            return null;
 +        }
-+        ItemStack ret = (ItemStack)metaSmeltingList.get(Arrays.asList(item.itemID, item.getItemDamage()));
-+        if (ret != null) 
++        for (IFurnaceRecipe recipe : recipes)
 +        {
-+            return ret;
++            if (recipe.matches(smeltingItem))
++            {
++                return recipe;
++            }
 +        }
-+        return (ItemStack)smeltingList.get(Integer.valueOf(item.itemID));
++        return null;
 +    }
-+
-+    /**
-+     * Grabs the amount of base experience for this item to give when pulled from the furnace slot.
-+     */
-+    public float getExperience(ItemStack item)
++    
++    public float getExperience(ItemStack item, EntityPlayer player)
 +    {
-+        if (item == null || item.getItem() == null)
-+        {
-+            return 0;
-+        }
-+        float ret = item.getItem().getSmeltingExperience(item);
-+        if (ret < 0 && metaExperience.containsKey(Arrays.asList(item.itemID, item.getItemDamage())))
-+        {
-+            ret = metaExperience.get(Arrays.asList(item.itemID, item.getItemDamage()));
-+        }
-+        if (ret < 0 && experienceList.containsKey(item.itemID))
-+        {
-+            ret = ((Float)experienceList.get(item.itemID)).floatValue();
-+        }
-+        return (ret < 0 ? 0 : ret);
++        IFurnaceRecipe r = getRecipe(item);
++        return r == null ? 0 : r.getExperience(item, player);
 +    }
-+
-+    public Map<List<Integer>, ItemStack> getMetaSmeltingList()
++    
++    public void addSmelting(int itemID, int metadata, ItemStack itemstack, float experience)
 +    {
-+        return metaSmeltingList;
++        addSmelting(new StandardFurnaceRecipe.WithMeta(itemID, metadata, experience, itemstack));
 +    }
++    
++    public void addSmelting(IFurnaceRecipe recipe)
++    {
++        recipes.add(recipe);
++    }
++    
++    public List<IFurnaceRecipe> getRecipes()
++    {
++        return recipes;
++    }
++    
++    public int getSmeltTime(ItemStack smeltingItem)
++    {
++        IFurnaceRecipe r = getRecipe(smeltingItem);
++        return r == null ? 200 : r.getSmeltTime(smeltingItem);
+     }
+ 
++    @Deprecated // use getRecipes()
+     public Map getSmeltingList()
+     {
+-        return this.smeltingList;
++        return Collections.emptyMap();
+     }
+ 
++    @Deprecated // use getExperience(ItemStack)
+     public float getExperience(int par1)
+     {
+-        return this.experienceList.containsKey(Integer.valueOf(par1)) ? ((Float)this.experienceList.get(Integer.valueOf(par1))).floatValue() : 0.0F;
++        return 0;
+     }
  }

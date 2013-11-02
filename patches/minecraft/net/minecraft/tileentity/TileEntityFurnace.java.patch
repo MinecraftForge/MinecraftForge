@@ -17,7 +17,52 @@
  
  public class TileEntityFurnace extends TileEntity implements ISidedInventory
  {
-@@ -279,8 +282,7 @@
+@@ -30,6 +33,9 @@
+ 
+     /** The number of ticks that the furnace will keep burning */
+     public int furnaceBurnTime;
++    
++    private int currentItemSmeltTime = 200;
++    private ItemStack currentSmeltResult = null;
+ 
+     /**
+      * The number of ticks that a fresh copy of the currently-burning item would keep the furnace burning for
+@@ -119,6 +125,17 @@
+         {
+             par2ItemStack.stackSize = this.getInventoryStackLimit();
+         }
++        
++        if (par1 == 0)
++        {
++            updateSmeltingResults();
++        }
++    }
++    
++    private void updateSmeltingResults()
++    {
++        currentItemSmeltTime = FurnaceRecipes.smelting().getSmeltTime(furnaceItemStacks[0]);
++        currentSmeltResult = FurnaceRecipes.smelting().getSmeltingResult(furnaceItemStacks[0]);
+     }
+ 
+     /**
+@@ -174,6 +191,7 @@
+         {
+             this.field_94130_e = par1NBTTagCompound.getString("CustomName");
+         }
++        updateSmeltingResults();
+     }
+ 
+     /**
+@@ -222,7 +240,7 @@
+      */
+     public int getCookProgressScaled(int par1)
+     {
+-        return this.furnaceCookTime * par1 / 200;
++        return this.furnaceCookTime * par1 / currentItemSmeltTime;
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -279,8 +297,7 @@
  
                          if (this.furnaceItemStacks[1].stackSize == 0)
                          {
@@ -27,13 +72,22 @@
                          }
                      }
                  }
-@@ -326,8 +328,12 @@
+@@ -290,7 +307,7 @@
+             {
+                 ++this.furnaceCookTime;
+ 
+-                if (this.furnaceCookTime == 200)
++                if (this.furnaceCookTime == currentItemSmeltTime)
+                 {
+                     this.furnaceCookTime = 0;
+                     this.smeltItem();
+@@ -326,8 +343,12 @@
          }
          else
          {
 -            ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0].getItem().itemID);
 -            return itemstack == null ? false : (this.furnaceItemStacks[2] == null ? true : (!this.furnaceItemStacks[2].isItemEqual(itemstack) ? false : (this.furnaceItemStacks[2].stackSize < this.getInventoryStackLimit() && this.furnaceItemStacks[2].stackSize < this.furnaceItemStacks[2].getMaxStackSize() ? true : this.furnaceItemStacks[2].stackSize < itemstack.getMaxStackSize())));
-+            ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0]);
++            ItemStack itemstack = currentSmeltResult;
 +            if (itemstack == null) return false;
 +            if (this.furnaceItemStacks[2] == null) return true;
 +            if (!this.furnaceItemStacks[2].isItemEqual(itemstack)) return false;
@@ -42,12 +96,12 @@
          }
      }
  
-@@ -338,15 +344,15 @@
+@@ -338,15 +359,15 @@
      {
          if (this.canSmelt())
          {
 -            ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0].getItem().itemID);
-+            ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0]);
++            ItemStack itemstack = currentSmeltResult;
  
              if (this.furnaceItemStacks[2] == null)
              {
@@ -62,7 +116,15 @@
              }
  
              --this.furnaceItemStacks[0].stackSize;
-@@ -373,7 +379,7 @@
+@@ -355,6 +376,7 @@
+             {
+                 this.furnaceItemStacks[0] = null;
+             }
++            updateSmeltingResults();
+         }
+     }
+ 
+@@ -373,7 +395,7 @@
              int i = par0ItemStack.getItem().itemID;
              Item item = par0ItemStack.getItem();
  
