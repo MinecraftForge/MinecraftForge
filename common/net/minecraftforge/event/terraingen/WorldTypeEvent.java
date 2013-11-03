@@ -3,7 +3,6 @@ package net.minecraftforge.event.terraingen;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.WorldType;
 import net.minecraftforge.event.Event;
-import net.minecraftforge.common.EnumHelper; // MCPC+
 
 public class WorldTypeEvent extends Event
 {
@@ -11,12 +10,6 @@ public class WorldTypeEvent extends Event
 
     public WorldTypeEvent(WorldType worldType)
     {
-        // MCPC+ start - add worldtype for bukkit if it does not exist
-        if (org.bukkit.WorldType.getByName(worldType.getWorldTypeName()) == null)
-        {
-            EnumHelper.addBukkitWorldType(worldType.getWorldTypeName());
-        }
-        // MCPC+ end
         this.worldType = worldType;
     }
 

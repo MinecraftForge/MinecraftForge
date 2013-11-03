@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/world/WorldType.java
 +++ ../src_work/minecraft/net/minecraft/world/WorldType.java
-@@ -10,6 +10,9 @@
+@@ -10,10 +10,14 @@
  import com.google.common.collect.ObjectArrays;
  import com.google.common.collect.Sets;
  
@@ -10,7 +10,25 @@
  import net.minecraft.world.*;
  import net.minecraft.world.gen.*;
  import net.minecraft.world.biome.*;
-@@ -224,4 +227,47 @@
+ import net.minecraft.world.chunk.IChunkProvider;
++import net.minecraftforge.common.EnumHelper; // MCPC+
+ 
+ public class WorldType
+ {
+@@ -75,6 +79,12 @@
+             default:
+                 biomesForWorldType = base12Biomes;
+         }
++        // MCPC+ start - add worldtype for bukkit if it does not already exist
++        if (org.bukkit.WorldType.getByName(par2Str) == null)
++        {
++            EnumHelper.addBukkitWorldType(par2Str);
++        }
++        // MCPC+ end
+     }
+ 
+     public String getWorldTypeName()
+@@ -224,4 +234,47 @@
       * Called when 'Create New World' button is pressed before starting game
       */
      public void onGUICreateWorldPress() { }
