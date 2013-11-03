@@ -26,6 +26,7 @@ import net.minecraft.world.gen.structure.EnumDoor;
 import net.minecraftforge.classloading.FMLForgePlugin;
 // MCPC+ start
 import org.bukkit.World;
+import org.bukkit.WorldType;
 import org.bukkit.block.Biome;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.EntityType;
@@ -62,7 +63,7 @@ public class EnumHelper
         {EnumToolMaterial.class, int.class, int.class, float.class, float.class, int.class}
     }; 
 
-    // MCPC start
+    // MCPC+ start
     public static Biome addBukkitBiome(String name) 
     {
         return (Biome)addEnum(Biome.class, name, new Class[0], new Object[0]);
@@ -78,10 +79,24 @@ public class EnumHelper
         return (World.Environment)addEnum(World.Environment.class, name, new Class[] { Integer.TYPE }, new Object[] { Integer.valueOf(id) });
     }
 
+    public static WorldType addBukkitWorldType(String name)
+    {
+        if (!isSetup)
+        {
+            setup();
+        }
+
+        WorldType worldType = addEnum(WorldType.class, name, new Class [] { String.class }, new Object[] { name });
+        Map<String, WorldType> BY_NAME = ReflectionHelper.getPrivateValue(WorldType.class, null, "BY_NAME");
+        BY_NAME.put(name.toUpperCase(), worldType);
+
+        return worldType;
+    }
+
     public static EntityType addBukkitEntityType(String name, Class <? extends org.bukkit.entity.Entity> clazz, int typeId, boolean independent) {
         EntityType bukkitType = addEnum(EntityType.class, name, new Class[] { String.class, Class.class, Integer.TYPE, Boolean.TYPE }, new Object[] { name, clazz, typeId, independent });
 
-        Map<String, EntityType> NAME_MAP = ReflectionHelper.getPrivateValue(EntityType.class, null, "NAME_MAP"); // TODO: access
+        Map<String, EntityType> NAME_MAP = ReflectionHelper.getPrivateValue(EntityType.class, null, "NAME_MAP");
         Map<Short, EntityType> ID_MAP = ReflectionHelper.getPrivateValue(EntityType.class, null, "ID_MAP");
 
         NAME_MAP.put(name.toLowerCase(), bukkitType);
@@ -91,7 +106,6 @@ public class EnumHelper
         return bukkitType;
     }
 
-    // MCPC+ start -- add  modded inventory types
     public static InventoryType addInventoryType(Class<? extends TileEntity> tileEntityClass, String id)
     {
         if (!IInventory.class.isAssignableFrom(tileEntityClass)) return null;
