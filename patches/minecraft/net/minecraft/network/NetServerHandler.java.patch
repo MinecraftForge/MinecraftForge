@@ -800,7 +800,7 @@
              }
              else
              {
-@@ -677,51 +1130,326 @@
+@@ -677,51 +1130,328 @@
                  {
                      if (!ChatAllowedCharacters.isAllowedCharacter(s.charAt(i)))
                      {
@@ -933,13 +933,15 @@
 +            }
 +            else
 +            {
-+                Player player = this.getPlayerB();
-+                AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, s, new LazyPlayerSet());
-+                this.server.getPluginManager().callEvent(event);
 +                // MCPC+ start - call Forge event
 +                ChatMessageComponent chatmessagecomponent = ChatMessageComponent.createFromTranslationWithSubstitutions("chat.type.text", new Object[] {this.playerEntity.getTranslatedEntityName(), s});
-+                chatmessagecomponent = ForgeHooks.onServerChatEvent(this, s, chatmessagecomponent);              
++                chatmessagecomponent = ForgeHooks.onServerChatEvent(this, s, chatmessagecomponent);
 +                // MCPC+ end
++
++                Player player = this.getPlayerB();
++                AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, s, new LazyPlayerSet());
++                event.setCancelled(chatmessagecomponent == null); // MCPC+ pre-cancel event if forge event was cancelled
++                this.server.getPluginManager().callEvent(event);
 +
 +                if (PlayerChatEvent.getHandlerList().getRegisteredListeners().length != 0)
 +                {
@@ -1004,7 +1006,7 @@
 +                }
 +                else
 +                {
-+                    if (event.isCancelled())
++                    if (event.isCancelled() || chatmessagecomponent == null)
 +                    {
                          return;
                      }
@@ -1148,7 +1150,7 @@
              this.playerEntity.swingItem();
          }
      }
-@@ -731,7 +1459,37 @@
+@@ -731,7 +1461,37 @@
       */
      public void handleEntityAction(Packet19EntityAction par1Packet19EntityAction)
      {
@@ -1186,7 +1188,7 @@
  
          if (par1Packet19EntityAction.action == 1)
          {
-@@ -782,36 +1540,94 @@
+@@ -782,36 +1542,94 @@
  
      public void handleUseEntity(Packet7UseEntity par1Packet7UseEntity)
      {
@@ -1307,7 +1309,7 @@
                  }
              }
          }
-@@ -825,7 +1641,7 @@
+@@ -825,7 +1643,7 @@
          {
              if (this.playerEntity.playerConqueredTheEnd)
              {
@@ -1316,7 +1318,7 @@
              }
              else if (this.playerEntity.getServerForPlayer().getWorldInfo().isHardcoreModeEnabled())
              {
-@@ -849,7 +1665,7 @@
+@@ -849,7 +1667,7 @@
                      return;
                  }
  
@@ -1325,7 +1327,7 @@
              }
          }
      }
-@@ -871,16 +1687,449 @@
+@@ -871,16 +1689,449 @@
  
      public void handleCloseWindow(Packet101CloseWindow par1Packet101CloseWindow)
      {
@@ -1776,7 +1778,7 @@
  
              if (ItemStack.areItemStacksEqual(par1Packet102WindowClick.itemStack, itemstack))
              {
-@@ -903,6 +2152,14 @@
+@@ -903,6 +2154,14 @@
                  }
  
                  this.playerEntity.sendContainerAndContentsToPlayer(this.playerEntity.openContainer, arraylist);
@@ -1791,7 +1793,7 @@
              }
          }
      }
-@@ -928,8 +2185,59 @@
+@@ -928,8 +2187,59 @@
              boolean flag = par1Packet107CreativeSetSlot.slot < 0;
              ItemStack itemstack = par1Packet107CreativeSetSlot.itemStack;
              boolean flag1 = par1Packet107CreativeSetSlot.slot >= 1 && par1Packet107CreativeSetSlot.slot < 36 + InventoryPlayer.getHotbarSize();
@@ -1852,7 +1854,7 @@
  
              if (flag1 && flag2 && flag3)
              {
-@@ -959,6 +2267,11 @@
+@@ -959,6 +2269,11 @@
  
      public void handleTransaction(Packet106Transaction par1Packet106Transaction)
      {
@@ -1864,7 +1866,7 @@
          Short oshort = (Short)this.field_72586_s.lookup(this.playerEntity.openContainer.windowId);
  
          if (oshort != null && par1Packet106Transaction.shortWindowId == oshort.shortValue() && this.playerEntity.openContainer.windowId == par1Packet106Transaction.windowId && !this.playerEntity.openContainer.isPlayerNotUsingContainer(this.playerEntity))
-@@ -972,6 +2285,11 @@
+@@ -972,6 +2287,11 @@
       */
      public void handleUpdateSign(Packet130UpdateSign par1Packet130UpdateSign)
      {
@@ -1876,7 +1878,7 @@
          this.playerEntity.func_143004_u();
          WorldServer worldserver = this.mcServer.worldServerForDimension(this.playerEntity.dimension);
  
-@@ -986,6 +2304,7 @@
+@@ -986,6 +2306,7 @@
                  if (!tileentitysign.isEditable() || tileentitysign.func_142009_b() != this.playerEntity)
                  {
                      this.mcServer.logWarning("Player " + this.playerEntity.getCommandSenderName() + " just tried to change non-editable sign");
@@ -1884,7 +1886,7 @@
                      return;
                  }
              }
-@@ -1005,7 +2324,7 @@
+@@ -1005,7 +2326,7 @@
                  {
                      for (i = 0; i < par1Packet130UpdateSign.signLines[j].length(); ++i)
                      {
@@ -1893,7 +1895,7 @@
                          {
                              flag = false;
                          }
-@@ -1024,7 +2343,27 @@
+@@ -1024,7 +2345,27 @@
                  int k = par1Packet130UpdateSign.yPosition;
                  i = par1Packet130UpdateSign.zPosition;
                  TileEntitySign tileentitysign1 = (TileEntitySign)tileentity;
@@ -1922,7 +1924,7 @@
                  tileentitysign1.onInventoryChanged();
                  worldserver.markBlockForUpdate(j, k, i);
              }
-@@ -1056,7 +2395,23 @@
+@@ -1056,7 +2397,23 @@
       */
      public void handlePlayerAbilities(Packet202PlayerAbilities par1Packet202PlayerAbilities)
      {
@@ -1947,7 +1949,7 @@
      }
  
      public void handleAutoComplete(Packet203AutoComplete par1Packet203AutoComplete)
-@@ -1070,7 +2425,7 @@
+@@ -1070,7 +2427,7 @@
  
              if (stringbuilder.length() > 0)
              {
@@ -1956,7 +1958,7 @@
              }
          }
  
-@@ -1093,6 +2448,14 @@
+@@ -1093,6 +2450,14 @@
          ItemStack itemstack;
          ItemStack itemstack1;
  
@@ -1971,7 +1973,7 @@
          if ("MC|BEdit".equals(par1Packet250CustomPayload.channel))
          {
              try
-@@ -1109,12 +2472,16 @@
+@@ -1109,12 +2474,16 @@
  
                  if (itemstack != null && itemstack.itemID == Item.writableBook.itemID && itemstack.itemID == itemstack1.itemID)
                  {
@@ -1994,7 +1996,7 @@
              }
          }
          else if ("MC|BSign".equals(par1Packet250CustomPayload.channel))
-@@ -1133,15 +2500,16 @@
+@@ -1133,15 +2502,16 @@
  
                  if (itemstack != null && itemstack.itemID == Item.writtenBook.itemID && itemstack1.itemID == Item.writableBook.itemID)
                  {
@@ -2020,7 +2022,7 @@
              }
          }
          else
-@@ -1163,7 +2531,10 @@
+@@ -1163,7 +2533,10 @@
                  }
                  catch (Exception exception2)
                  {
@@ -2032,7 +2034,7 @@
                  }
              }
              else
-@@ -1196,7 +2567,10 @@
+@@ -1196,7 +2569,10 @@
                          }
                          catch (Exception exception3)
                          {
@@ -2044,7 +2046,7 @@
                          }
                      }
                      else
-@@ -1227,7 +2601,10 @@
+@@ -1227,7 +2603,10 @@
                          }
                          catch (Exception exception4)
                          {
@@ -2056,7 +2058,7 @@
                          }
                      }
                  }
-@@ -1249,6 +2626,13 @@
+@@ -1249,6 +2628,13 @@
                          containerrepair.updateItemName("");
                      }
                  }
