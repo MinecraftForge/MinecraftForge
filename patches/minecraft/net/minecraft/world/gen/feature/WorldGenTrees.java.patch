@@ -42,7 +42,7 @@
 +                            k1 = par1World.getTypeId(l1, i1, j1);
 +
 +                            Block block = Block.blocksList[k1];
-+                            if (block == null) MinecraftServer.getServer().logInfo("Could not find block matching id: " + k1 + " during tree generation");
++                            if (block == null && k1 != 0) MinecraftServer.getServer().logInfo("Could not find block matching id: " + k1 + " during tree generation");
 +                            if (!par1World.isEmpty(l1, i1, j1) &&
 +                                block != null &&
 +                                !block.isLeaves(par1World, l1, i1, j1) &&
