@@ -498,13 +498,13 @@ public class FMLModContainer implements ModContainer
                 }
             }
 
-            CustomProperty[] props = (CustomProperty[]) descriptor.get("customProperties");
-            if (props!=null && props.length > 0)
+            List<Map<String,Object>> props = (List<Map<String, Object>>) descriptor.get("customProperties");
+            if (props != null)
             {
                 com.google.common.collect.ImmutableMap.Builder<String, String> builder = ImmutableMap.<String,String>builder();
-                for (CustomProperty p : props)
+                for (Map<String, Object> p : props)
                 {
-                    builder.put(p.k(),p.v());
+                    builder.put((String)p.get("k"),(String)p.get("v"));
                 }
                 customModProperties = builder.build();
             }
