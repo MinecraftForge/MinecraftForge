@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/cpw/mods/fml/common/network/NetworkRegistry.java
 +++ ../src_work/minecraft/cpw/mods/fml/common/network/NetworkRegistry.java
-@@ -43,7 +43,14 @@
+@@ -43,7 +43,11 @@
  import cpw.mods.fml.common.ModContainer;
  import cpw.mods.fml.common.network.FMLPacket.Type;
  import cpw.mods.fml.relauncher.Side;
@@ -8,15 +8,12 @@
 +// MCPC+ start
 +import java.io.UnsupportedEncodingException;
 +import java.util.logging.Logger;
-+
-+import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.CraftServer;
 +import org.bukkit.craftbukkit.entity.CraftPlayer;
 +// MCPC+ end
  /**
   * @author cpw
   *
-@@ -235,14 +242,17 @@
+@@ -235,14 +239,17 @@
          if ("REGISTER".equals(packet.channel))
          {
              handleRegistrationPacket(packet, (Player)handler.getPlayer());
@@ -34,7 +31,7 @@
          }
      }
  
-@@ -272,6 +282,45 @@
+@@ -272,6 +279,45 @@
              deactivateChannel(player, channel);
          }
      }
@@ -48,7 +45,7 @@
 +
 +            for (String channel : channels.split("\0"))
 +            {
-+                if (((CraftServer)(Bukkit.getServer())).getConnectionLoggingEnabled()) {
++                if (za.co.mcportcentral.MCPCConfig.connectionLogging) {
 +                    System.out.println("adding plugin channel " + channel);
 +                }
 +                player.addChannel(channel);

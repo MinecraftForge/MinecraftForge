@@ -1,37 +1,30 @@
 --- ../src_base/minecraft/cpw/mods/fml/common/network/ModListResponsePacket.java
 +++ ../src_work/minecraft/cpw/mods/fml/common/network/ModListResponsePacket.java
-@@ -37,6 +37,10 @@
- import cpw.mods.fml.common.ModContainer;
- import cpw.mods.fml.common.registry.GameData;
- import cpw.mods.fml.common.registry.GameRegistry;
-+// MCPC+ start
-+import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.CraftServer;
-+// MCPC+ end
- 
- public class ModListResponsePacket extends FMLPacket
- {
-@@ -123,8 +127,12 @@
+@@ -123,8 +123,12 @@
          if (missingClientMods.size()>0 || versionIncorrectMods.size() > 0)
          {
              pkt.data = FMLPacket.makePacket(MOD_MISSING, missingClientMods, versionIncorrectMods);
+-            Logger.getLogger("Minecraft").info(String.format("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods));
+-            FMLLog.info("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods);
 +            // MCPC+ start - disable unneeded console spam
-+            if (((CraftServer)(Bukkit.getServer())).getConnectionLoggingEnabled()) {
-             Logger.getLogger("Minecraft").info(String.format("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods));
-             FMLLog.info("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods);
++            if (za.co.mcportcentral.MCPCConfig.connectionLogging) {
++                Logger.getLogger("Minecraft").info(String.format("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods));
++                FMLLog.info("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods);
 +            }
 +            // MCPC+ end
              // Mark this as bad
              FMLNetworkHandler.setHandlerState((NetLoginHandler) netHandler, FMLNetworkHandler.MISSING_MODS_OR_VERSIONS);
              pkt.length = pkt.data.length;
-@@ -133,8 +141,12 @@
+@@ -133,8 +137,12 @@
          else
          {
              pkt.data = FMLPacket.makePacket(MOD_IDENTIFIERS, netHandler);
+-            Logger.getLogger("Minecraft").info(String.format("User %s connecting with mods %s", userName, modVersions.keySet()));
+-            FMLLog.info("User %s connecting with mods %s", userName, modVersions.keySet());
 +            // MCPC+ start - disable unneeded console spam
-+            if (((CraftServer)(Bukkit.getServer())).getConnectionLoggingEnabled()) {
-             Logger.getLogger("Minecraft").info(String.format("User %s connecting with mods %s", userName, modVersions.keySet()));
-             FMLLog.info("User %s connecting with mods %s", userName, modVersions.keySet());
++            if (za.co.mcportcentral.MCPCConfig.connectionLogging) {
++                Logger.getLogger("Minecraft").info(String.format("User %s connecting with mods %s", userName, modVersions.keySet()));
++                FMLLog.info("User %s connecting with mods %s", userName, modVersions.keySet());
 +            }
 +            // MCPC+ end
              pkt.length = pkt.data.length;

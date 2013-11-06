@@ -23,8 +23,10 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BlockVector;
 // MCPC+ start
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.inventory.IInventory;
+import za.co.mcportcentral.block.CraftCustomContainer;
 // MCPC+ end
 
 public class CraftBlock implements Block {
@@ -236,9 +238,19 @@ public class CraftBlock implements Block {
 
     public BlockState getState() {
         Material material = getType();
-        // MCPC+ start - if null, just pass the default state
+        // MCPC+ start - if null, check for TE that implements IInventory
         if (material == null)
+        {
+            TileEntity te = ((CraftWorld)this.getWorld()).getHandle().getBlockTileEntity(this.getX(), this.getY(), this.getZ());
+            if (te != null && te instanceof IInventory)
+            {
+                // In order to allow plugins to properly grab the container location, we must pass a class that extends CraftBlockState and implements InventoryHolder.
+                // Note: This will be returned when TileEntity.getOwner() is called
+                return new CraftCustomContainer(this);
+            }
+            // pass default state
             return new CraftBlockState(this);
+        }
         // MCPC+ end
         switch (material) {
         case SIGN:
@@ -272,6 +284,16 @@ public class CraftBlock implements Block {
         case BEACON:
             return new CraftBeacon(this);
         default:
+            // MCPC+ start
+            TileEntity te = ((CraftWorld)this.getWorld()).getHandle().getBlockTileEntity(this.getX(), this.getY(), this.getZ());
+            if (te != null && te instanceof IInventory)
+            {
+                // In order to allow plugins to properly grab the container location, we must pass a class that extends CraftBlockState and implements InventoryHolder.
+                // Note: This will be returned when TileEntity.getOwner() is called
+                return new CraftCustomContainer(this);
+            }
+            // pass default state
+            // MCPC+ end
             return new CraftBlockState(this);
         }
     }
@@ -495,7 +517,7 @@ public class CraftBlock implements Block {
 
     // MCPC+ start - if mcpc.dump-materials is true, dump all materials with their corresponding id's
     public static void dumpMaterials() {
-        if (FMLCommonHandler.instance().getMinecraftServerInstance().server.getDumpMaterials())
+        if (za.co.mcportcentral.MCPCConfig.dumpMaterials)
         {
             FMLLog.info("MCPC Dump Materials is ENABLED. Starting dump...");
             for (int i = 0; i < 32000; i++)

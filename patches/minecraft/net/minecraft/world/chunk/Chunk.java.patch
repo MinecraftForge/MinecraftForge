@@ -397,7 +397,7 @@
 +        }
 +        else
 +        {
-+            if (!((CraftServer)Bukkit.getServer()).configuration.getBoolean("mcpc.warn-place-no-tile-entity", true)) return; // MCPC+
++            if (!za.co.mcportcentral.MCPCConfig.tileEntityPlaceLogging) return; // MCPC+
 +
 +            System.out.println("Attempted to place a tile entity (" + par4TileEntity + ") at " + par4TileEntity.xCoord + "," + par4TileEntity.yCoord + "," + par4TileEntity.zCoord
 +                               + " (" + org.bukkit.Material.getMaterial(getBlockID(par1, par2, par3)) + ") where there was no entity tile!");

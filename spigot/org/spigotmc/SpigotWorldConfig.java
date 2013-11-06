@@ -27,9 +27,10 @@ public class SpigotWorldConfig
 
     public void init()
     {
-        this.verbose = getBoolean( "verbose", true );
+        this.verbose = getBoolean( "verbose", false );
 
-        log( "-------- World Settings For [" + worldName + "] --------" );
+        if ( verbose )
+            log( "-------- World Settings For [" + worldName + "] --------" );
         SpigotConfig.readConfig( SpigotWorldConfig.class, this );
     }
 

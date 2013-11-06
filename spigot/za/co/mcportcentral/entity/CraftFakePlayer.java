@@ -17,6 +17,8 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 
+import za.co.mcportcentral.MCPCConfig;
+
 public class CraftFakePlayer extends CraftPlayer
 {
     public CraftFakePlayer(CraftServer server, EntityPlayerMP entity)
@@ -72,14 +74,12 @@ public class CraftFakePlayer extends CraftPlayer
             }
 
             // Use custom name defined by administrator, if any
-            String username = ((CraftServer)Bukkit.getServer()).configuration.getString("mcpc.fake-players." + className + ".username", defaultName);
+            String username = MCPCConfig.getFakePlayer(className, defaultName);
 
             System.out.println("[FakePlayer] Initializing fake player for " + className + ": " + username);
 
-            boolean doLogin = ((CraftServer)Bukkit.getServer()).configuration.getBoolean("mcpc.fake-players." + className + ".do-login", false);
-
             fakePlayersUsername.put(className, username);
-            fakePlayersDoLogin.put(className, doLogin);
+            fakePlayersDoLogin.put(className, MCPCConfig.fakePlayerLogin);
         }
 
         return get(world, fakePlayersUsername.get(className), fakePlayersDoLogin.get(className));

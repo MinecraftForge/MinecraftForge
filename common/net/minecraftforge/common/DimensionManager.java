@@ -9,26 +9,19 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultiset;
-import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
-import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.MinecraftException;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldManager;
 import net.minecraft.world.WorldProvider;
@@ -41,19 +34,11 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.event.world.WorldEvent;
 // MCPC+ start
-import java.io.IOException;
-
-import cpw.mods.fml.common.Loader;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.world.chunk.storage.AnvilSaveHandler;
 
-import org.bukkit.Bukkit;
 import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.Main;
-import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.generator.ChunkGenerator;
 // MCPC+ end
 
@@ -72,7 +57,6 @@ public class DimensionManager
     private static Hashtable<Class<? extends WorldProvider>, Integer> classToProviders = new Hashtable<Class<? extends WorldProvider>, Integer>();
     private static ArrayList<Integer> bukkitDims = new ArrayList<Integer>(); // used to keep track of Bukkit dimensions
     private static final String FILE_SEPARATOR = System.getProperty("file.separator");
-    private static org.bukkit.configuration.file.YamlConfiguration configuration = MinecraftServer.configuration;
     // MCPC+ end
 
     public static boolean registerProviderType(int id, Class<? extends WorldProvider> provider, boolean keepLoaded)
@@ -95,14 +79,8 @@ public class DimensionManager
             worldType = Environment.getEnvironment(id).name().toLowerCase();
         }
 
-        if (!configuration.isBoolean("world-settings." + worldType + ".keep-world-loaded"))
-            configuration.set("world-settings." + worldType + ".keep-world-loaded", keepLoaded);
-        keepLoaded = configuration.getBoolean("world-settings." + worldType + ".keep-world-loaded");
-        try {
-            configuration.save(MinecraftServer.configFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        keepLoaded = za.co.mcportcentral.MCPCConfig.getBoolean("world-environment-settings." + worldType + ".keep-world-loaded", keepLoaded);
+        za.co.mcportcentral.MCPCConfig.save();
         // MCPC+ end
         providers.put(id, provider);
         classToProviders.put(provider, id);
@@ -215,7 +193,7 @@ public class DimensionManager
     public static Integer[] getIDs(boolean check)
     {
         // MCPC+ start - check config option and only log world leak messages if enabled
-        if (MinecraftServer.getServer().server.getWorldLeakDebug())
+        if (za.co.mcportcentral.MCPCConfig.worldLeakDebug)
         {
             if (check)
             {
@@ -254,7 +232,7 @@ public class DimensionManager
         {
             worlds.put(id, world);
             // MCPC+ start - check config option and only log world leak messages if enabled
-            if (MinecraftServer.getServer().server.getWorldLeakDebug())
+            if (za.co.mcportcentral.MCPCConfig.worldLeakDebug)
             {
                 weakWorldMap.put(world, world);
             }
@@ -306,7 +284,7 @@ public class DimensionManager
         try
         {
             // MCPC+ start - Fixes MultiVerse issue when mods such as Twilight Forest try to hotload their dimension when using its WorldProvider
-            if(overworld.getMinecraftServer().server.craftWorldLoading)
+            if(za.co.mcportcentral.MCPCConfig.craftWorldLoading)
             {
                 return;
             }
@@ -348,15 +326,8 @@ public class DimensionManager
             name = provider.getSaveFolder();
         }
         // MCPC+ start - add ability to disable dimensions
-        if (!configuration.isBoolean("world-settings." + worldType + ".enabled")) {
-            configuration.set("world-settings." + worldType + ".enabled", true);
-        }
-        boolean enabled = configuration.getBoolean("world-settings." + worldType + ".enabled");
-        try {
-            configuration.save(MinecraftServer.configFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        boolean enabled = za.co.mcportcentral.MCPCConfig.getBoolean("world-environment-settings." + worldType + ".enabled", true);
+        za.co.mcportcentral.MCPCConfig.save();
         if (!enabled)
             return;
         // MCPC+ end

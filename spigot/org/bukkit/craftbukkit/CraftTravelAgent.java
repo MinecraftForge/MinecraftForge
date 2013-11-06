@@ -23,7 +23,7 @@ public class CraftTravelAgent extends net.minecraft.world.Teleporter implements 
         net.minecraft.world.WorldServer worldServer = ((CraftWorld) target.getWorld()).getHandle();
         // MCPC+ start
         boolean before = true;
-        if (!worldServer.getServer().getLoadChunkOnRequest())
+        if (!za.co.mcportcentral.MCPCConfig.loadChunkOnRequest)
         {
             before = worldServer.theChunkProviderServer.loadChunkOnProvideRequest;
             worldServer.theChunkProviderServer.loadChunkOnProvideRequest = true;

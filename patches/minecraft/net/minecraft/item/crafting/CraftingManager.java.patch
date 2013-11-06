@@ -33,7 +33,7 @@
      {
          (new RecipesTools()).addRecipes(this);
          (new RecipesWeapons()).addRecipes(this);
-@@ -147,11 +155,24 @@
+@@ -147,9 +155,18 @@
          this.addShapelessRecipe(new ItemStack(Item.fireballCharge, 3), new Object[] {Item.gunpowder, Item.blazePowder, new ItemStack(Item.coal, 1, 1)});
          this.addRecipe(new ItemStack(Block.daylightSensor), new Object[] {"GGG", "QQQ", "WWW", 'G', Block.glass, 'Q', Item.netherQuartz, 'W', Block.woodSingleSlab});
          this.addRecipe(new ItemStack(Block.hopperBlock), new Object[] {"I I", "ICI", " I ", 'I', Item.ingotIron, 'C', Block.chest});
@@ -52,25 +52,8 @@
 +    // CraftBukkit - default -> public
      public ShapedRecipes addRecipe(ItemStack par1ItemStack, Object ... par2ArrayOfObj)
      {
-+        // MCPC+ check if item is banned and if so disable recipe
-+        if (GameRegistry.isItemBanned(par1ItemStack))
-+            return null;
-+        // MCPC+ end
          String s = "";
-         int i = 0;
-         int j = 0;
-@@ -226,6 +247,10 @@
- 
-     public void addShapelessRecipe(ItemStack par1ItemStack, Object ... par2ArrayOfObj)
-     {
-+        // MCPC+ check if item is banned and if so disable recipe
-+        if (GameRegistry.isItemBanned(par1ItemStack))
-+            return;
-+        // MCPC+ end
-         ArrayList arraylist = new ArrayList();
-         Object[] aobject = par2ArrayOfObj;
-         int i = par2ArrayOfObj.length;
-@@ -283,7 +308,7 @@
+@@ -283,7 +300,7 @@
              }
          }
  
@@ -79,7 +62,7 @@
          {
              Item item = Item.itemsList[itemstack.itemID];
              int k = item.getMaxDamage() - itemstack.getItemDamageForDisplay();
-@@ -296,7 +321,22 @@
+@@ -296,7 +313,22 @@
                  j1 = 0;
              }
  
@@ -103,7 +86,7 @@
          }
          else
          {
-@@ -304,12 +344,23 @@
+@@ -304,12 +336,23 @@
              {
                  IRecipe irecipe = (IRecipe)this.recipes.get(j);
  

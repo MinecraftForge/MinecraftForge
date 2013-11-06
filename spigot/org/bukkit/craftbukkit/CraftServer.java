@@ -105,16 +105,12 @@ import com.google.common.collect.MapMaker;
 import org.bukkit.craftbukkit.command.CraftSimpleCommandMap;
 
 import cpw.mods.fml.common.FMLLog;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.event.world.WorldEvent.Load;
-import net.minecraftforge.event.world.WorldEvent.Unload;
+import za.co.mcportcentral.MCPCConfig;
 // MCPC+ end
 
 import jline.console.ConsoleReader;
@@ -152,15 +148,6 @@ public final class CraftServer implements Server {
     public CraftScoreboardManager scoreboardManager;
     public boolean playerCommandState;
     private boolean printSaveWarning;
-
-    // MCPC+ start
-    private boolean dumpMaterials = false;
-    private boolean loadChunkOnRequest = false;
-    private boolean disableWarnings = false;
-    private boolean worldLeakDebug = false;
-    // Some mods such as Twilight Forest listen for specific events as their WorldProvider loads to hotload its dimension. This prevents this from happening so MV can create worlds using the same provider without issue.
-    public boolean craftWorldLoading = false;
-    // MCPC+ end
 
     private final class BooleanWrapper {
         private boolean value = true;
@@ -207,15 +194,7 @@ public final class CraftServer implements Server {
         warningState = WarningState.value(configuration.getString("settings.deprecated-verbose"));
         chunkGCPeriod = configuration.getInt("chunk-gc.period-in-ticks");
         chunkGCLoadThresh = configuration.getInt("chunk-gc.load-threshold");
-        // MCPC+ start
-        dumpMaterials = configuration.getBoolean("mcpc.dump-materials"); // dumps all materials with their corresponding id's
-        loadChunkOnRequest = configuration.getBoolean("mcpc.load-chunk-on-request"); // sets ChunkProvideServer.loadChunkProvideOnRequest
-        disableWarnings = configuration.getBoolean("mcpc.disabled-warnings", false); // disable warning messages to server admins
-        worldLeakDebug = configuration.getBoolean("mcpc.world-leak-debug");
-        if (loadChunkOnRequest && !disableWarnings) {
-            getLogger().severe("This version of MCPC+ handles chunk loading better if load-chunk-on-request is set to false. Please consider changing this value in your bukkit.yml");
-        }
-        // MCPC+ end
+        za.co.mcportcentral.MCPCConfig.init();
 
         updater = new AutoUpdater(new BukkitDLUpdaterService(configuration.getString("auto-updater.host")), getLogger(), configuration.getString("auto-updater.preferred-channel"));
         updater.setEnabled(false); // Spigot
@@ -579,34 +558,9 @@ public final class CraftServer implements Server {
         return false;
     }
 
-    public boolean getConnectionLoggingEnabled() {
-        return this.configuration.getBoolean("mcpc.connection-logging", false);
-    }
-    
-    public boolean getInfiniteWaterSource() {
-        return this.configuration.getBoolean("mcpc.infinite-water-source", true);
-    }
-
-    public boolean getFlowingLavaDecay() {
-        return this.configuration.getBoolean("mcpc.flowing-lava-decay", false);
-    }
-
-    public boolean getDumpMaterials() {
-        return this.configuration.getBoolean("mcpc.dump-materials", false);
-    }
-
-    public boolean getLoadChunkOnRequest() {
-        return this.configuration.getBoolean("mcpc.load-chunk-on-request", false);
-    }
-
-    public boolean getWorldLeakDebug()
-    {
-        return this.configuration.getBoolean("mcpc.world-leak-debug", false);
-    }
-
     public String getBukkitToForgeMapping(String name)
     {
-        String result = this.configuration.getString("mcpc.bukkit-to-forge-mappings." + name);
+        String result = MCPCConfig.getString("bukkit-to-forge-mappings." + name, name, false);
         return result;
     }
     // MCPC+ end    
@@ -641,6 +595,7 @@ public final class CraftServer implements Server {
         playerList.getBannedPlayers().loadBanList();
 
         org.spigotmc.SpigotConfig.init(); // Spigot
+        za.co.mcportcentral.MCPCConfig.init(); // MCPC+
         for (net.minecraft.world.WorldServer world : console.worlds) {
             world.difficultySetting = difficulty;
             world.setAllowedSpawnTypes(monsters, animals);
@@ -783,7 +738,7 @@ public final class CraftServer implements Server {
         net.minecraft.world.WorldServer worldserver = DimensionManager.initDimension(creator, worldSettings);
 
         pluginManager.callEvent(new WorldInitEvent(worldserver.getWorld()));
-        this.craftWorldLoading = true;
+        za.co.mcportcentral.MCPCConfig.craftWorldLoading = true;
         System.out.print("Preparing start region for level " + (console.worlds.size() - 1) + " (Dimension: " + worldserver.provider.dimensionId + ", Seed: " + worldserver.getSeed() + ")"); // MCPC+ - log dimension
 
         if (worldserver.getWorld().getKeepSpawnInMemory()) {
@@ -811,7 +766,7 @@ public final class CraftServer implements Server {
             }
         }
         pluginManager.callEvent(new WorldLoadEvent(worldserver.getWorld()));
-        this.craftWorldLoading = false;
+        za.co.mcportcentral.MCPCConfig.craftWorldLoading = false;
         return worldserver.getWorld();
     }
 
@@ -1314,7 +1269,7 @@ public final class CraftServer implements Server {
                 player.sendMessage(ChatColor.DARK_PURPLE + "The version of CraftBukkit that this server is running is out of date. Please consider updating to the latest version at dl.bukkit.org.");
             }
         }
-        if (player.hasPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE) && this.loadChunkOnRequest && !this.disableWarnings) { // MCPC+ add message about loadchunkonrequest
+        if (player.hasPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE) && za.co.mcportcentral.MCPCConfig.loadChunkOnRequest && !za.co.mcportcentral.MCPCConfig.disableWarnings) { // MCPC+ add message about loadchunkonrequest
             player.sendMessage(ChatColor.DARK_PURPLE + "This version of MCPC+ handles chunk loading better if load-chunk-on-request is set to false. Please consider changing this value in your bukkit.yml");
         }
     }

@@ -1,19 +1,17 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockFlowing.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockFlowing.java
-@@ -4,6 +4,12 @@
+@@ -4,6 +4,10 @@
  import net.minecraft.block.material.Material;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
 +// CraftBukkit start
-+import org.bukkit.Bukkit;
 +import org.bukkit.block.BlockFace;
-+import org.bukkit.craftbukkit.CraftServer;
 +import org.bukkit.event.block.BlockFromToEvent;
 +// CraftBukkit end
  
  public class BlockFlowing extends BlockFluid
  {
-@@ -61,6 +67,12 @@
+@@ -61,6 +65,12 @@
          int i1 = this.tickRate(par1World);
          int j1;
  
@@ -26,7 +24,7 @@
          if (l > 0)
          {
              byte b1 = -100;
-@@ -90,17 +102,22 @@
+@@ -90,17 +100,22 @@
                  }
              }
  
@@ -42,7 +40,7 @@
 -                }
 -            }
 +            // MCPC+ start - allow disabling infinite water sources
-+            if(((CraftServer)(Bukkit.getServer())).getInfiniteWaterSource())
++            if(za.co.mcportcentral.MCPCConfig.infiniteWaterSource)
 +            {
 +                if (this.numAdjacentSources >= 2 && this.blockMaterial == Material.water)
 +                {
@@ -60,12 +58,12 @@
  
              if (this.blockMaterial == Material.lava && l < 8 && j1 < 8 && j1 > l && par5Random.nextInt(4) != 0)
              {
-@@ -113,6 +130,13 @@
+@@ -113,6 +128,13 @@
                  {
                      this.updateFlow(par1World, par2, par3, par4);
                  }
 +                // MCPC+ start - allow lava decaying at a 'natural' rate - see https://mojang.atlassian.net/browse/MC-4631 Lava decay fails to schedule block update
-+                else if (((CraftServer)(Bukkit.getServer())).getFlowingLavaDecay())
++                else if (za.co.mcportcentral.MCPCConfig.flowingLavaDecay)
 +                {
 +                    // Ensure that even if the flow decay was skipped, it will retry at the material's natural flow period.
 +                    par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));
@@ -74,7 +72,7 @@
              }
              else
              {
-@@ -137,21 +161,33 @@
+@@ -137,21 +159,33 @@
  
          if (this.liquidCanDisplaceBlock(par1World, par2, par3 - 1, par4))
          {
@@ -123,7 +121,7 @@
          }
          else if (l >= 0 && (l == 0 || this.blockBlocksFlow(par1World, par2, par3 - 1, par4)))
          {
-@@ -168,25 +204,30 @@
+@@ -168,25 +202,30 @@
                  return;
              }
  
@@ -173,7 +171,7 @@
          }
      }
  
-@@ -206,7 +247,7 @@
+@@ -206,7 +245,7 @@
                  {
                      this.triggerLavaMixEffects(par1World, par2, par3, par4);
                  }
