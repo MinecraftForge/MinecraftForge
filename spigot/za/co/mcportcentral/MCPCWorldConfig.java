@@ -19,7 +19,7 @@ public class MCPCWorldConfig
         try {
             init();
         } catch (Throwable t) {
-            log( "Something bad happened while trying init the spigot config for [" + worldName + "]");
+            log( "Something bad happened while trying init the mcpc config for [" + worldName + "]");
             t.printStackTrace();
         }
     }

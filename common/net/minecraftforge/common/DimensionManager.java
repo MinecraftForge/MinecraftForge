@@ -78,7 +78,7 @@ public class DimensionManager
         {
             worldType = Environment.getEnvironment(id).name().toLowerCase();
         }
-
+        za.co.mcportcentral.MCPCConfig.init();
         keepLoaded = za.co.mcportcentral.MCPCConfig.getBoolean("world-environment-settings." + worldType + ".keep-world-loaded", keepLoaded);
         za.co.mcportcentral.MCPCConfig.save();
         // MCPC+ end

@@ -25,86 +25,6 @@ settings:
     query-plugins: true
     deprecated-verbose: default
     shutdown-message: Server closed
-    filter-unsafe-ips: false
-    whitelist-message: You are not white-listed on this server!
-    fml-missing-message: You do not have FML installed, you cannot connect to this server
-    fml-missing-mods-message: The server requires mods that are absent or out of date on your client
-    fml-outdated-message: Your client is not running a new enough version of FML to connect to this server
-    fml-other-error-message: There was a problem during FML negotiation
-    log-commands: true
-    command-complete: true
-    restart-command: true
-    tps-command: true
-    spam-exclusions:
-       - /skill
-    tab-ping: false
-    timeout-time: 300
-    restart-on-crash: false
-    restart-script-location: /path/to/server/start.sh
-    bungee-proxies:
-      - 127.0.0.1
-    texture-resolution: 16
-    metrics-enable: true
-mcpc:
-    connection-logging: false
-    dump-materials: false
-    world-leak-debug: false
-    infinite-water-source: true
-    flowing-lava-decay: false
-    load-chunk-on-request: false
-    warn-place-no-tile-entity: true
-    banned-item-IDs: []
-    enable-banned-items: false
-    fake-players:
-      com/eloraam/redpower/machine/EntityPlayerFake:
-        username: '[RedPower]'
-        do-login: false
-      dan200/turtle/shared/TurtlePlayer:
-        username: '[ComputerCraft]'
-        do-login: false
-    plugin-settings:
-        default:
-            debug: false
-            custom-class-loader: true
-            use-guava10: true
-            remap-nms-v1_6_R3: true
-            remap-nms-v1_6_R2: true
-            remap-nms-v1_6_R1: true
-            remap-nms-v1_5_R3: true
-            remap-nms-v1_5_R2: true
-            remap-nms-v1_5_R1: true
-            remap-nms-v1_4_R1: true
-            remap-nms-v1_4_6: true
-            remap-obc-v1_6_R3: false
-            remap-obc-v1_6_R2: false
-            remap-obc-v1_6_R1: false
-            remap-obc-v1_5_R3: true
-            remap-obc-v1_5_R2: true
-            remap-obc-v1_5_R1: true
-            remap-obc-v1_4_R1: false
-            remap-obc-v1_4_6: false
-            remap-obc-pre: false
-            remap-nms-pre: 'false'
-            global-inheritance: true
-            plugin-inheritance: true
-            remap-reflect-field: true
-            remap-reflect-class: true
-            remap-allow-future: false
-    bukkit-to-forge-mappings:
-        world_nether : dim-1
-        world_the_end : dim1
-        world_twilightforest : dim7
-world-settings:
-    default:
-        keep-spawn-loaded: true
-    world:
-        keep-world-loaded: true
-    nether:
-        keep-spawn-loaded: false
-        keep-world-loaded: true
-    the_end:
-        keep-spawn-loaded: false
-        keep-world-loaded: false
 spawn-limits:
     monsters: 70
     animals: 15
@@ -118,7 +38,7 @@ ticks-per:
     monster-spawns: 1
     autosave: 6000
 auto-updater:
-    enabled: true
+    enabled: false
     on-broken: [warn-console, warn-ops]
     on-update: [warn-console, warn-ops]
     preferred-channel: rb
@@ -133,4 +53,3 @@ database:
     driver: org.sqlite.JDBC
     password: walrus
     url: jdbc:sqlite:{DIR}{NAME}.db
-

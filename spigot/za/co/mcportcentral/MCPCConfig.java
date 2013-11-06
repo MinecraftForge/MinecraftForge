@@ -52,32 +52,29 @@ public class MCPCConfig
 
     public static void init()
     {
-        config = YamlConfiguration.loadConfiguration( CONFIG_FILE );
-        config.options().header( HEADER );
-        config.options().copyDefaults( true );
-
-        // config
-
-
-        commands = new HashMap<String, Command>();
-
-        version = getInt( "config-version", 1 );
-        set( "config-version", 1 );
-        dumpMaterials = getBoolean( "settings.dump-materials", false); // dumps all materials with their corresponding id's
-        loadChunkOnRequest = getBoolean( "settings.load-chunk-on-request", false); // sets ChunkProvideServer.loadChunkProvideOnRequest
-        disableWarnings = getBoolean( "logging.disabled-warnings", false); // disable warning messages to server admins
-        worldLeakDebug = getBoolean( "logging.world-leak-debug", false);
-        connectionLogging = getBoolean( "logging.connection", false);
-        infiniteWaterSource = getBoolean( "world-settings.default.infinite-water-source", true);
-        flowingLavaDecay = getBoolean("world-settings.default.flowing-lava-decay", false);
-        tileEntityPlaceLogging = getBoolean("logging.warn-place-no-tileentity", true);
-        fakePlayerLogin = getBoolean("fake-players.do-login", false);
-        // plugin
-        remapPluginFile = getBoolean("plugin-settings.default.remap-plugin-file", false);
-        if (loadChunkOnRequest && !disableWarnings) {
-            Bukkit.getLogger().severe("This version of MCPC+ handles chunk loading better if load-chunk-on-request is set to false. Please consider changing this value in your bukkit.yml");
+        if (config == null)
+        {
+            config = YamlConfiguration.loadConfiguration( CONFIG_FILE );
+            config.options().header( HEADER );
+            config.options().copyDefaults( true );
+            commands = new HashMap<String, Command>();
+            version = getInt( "config-version", 1 );
+            set( "config-version", 1 );
+            dumpMaterials = getBoolean( "settings.dump-materials", false); // dumps all materials with their corresponding id's
+            loadChunkOnRequest = getBoolean( "settings.load-chunk-on-request", false); // sets ChunkProvideServer.loadChunkProvideOnRequest
+            disableWarnings = getBoolean( "logging.disabled-warnings", false); // disable warning messages to server admins
+            worldLeakDebug = getBoolean( "logging.world-leak-debug", false);
+            connectionLogging = getBoolean( "logging.connection", false);
+            infiniteWaterSource = getBoolean( "world-settings.default.infinite-water-source", true);
+            flowingLavaDecay = getBoolean("world-settings.default.flowing-lava-decay", false);
+            tileEntityPlaceLogging = getBoolean("logging.warn-place-no-tileentity", true);
+            fakePlayerLogin = getBoolean("fake-players.do-login", false);
+            remapPluginFile = getBoolean("plugin-settings.default.remap-plugin-file", false);
+            if (loadChunkOnRequest && !disableWarnings) {
+                Bukkit.getLogger().severe("This version of MCPC+ handles chunk loading better if load-chunk-on-request is set to false. Please consider changing this value in your bukkit.yml");
+            }
+            readConfig( MCPCConfig.class, null );
         }
-        readConfig( MCPCConfig.class, null );
     }
 
     public static void save()
@@ -93,6 +90,7 @@ public class MCPCConfig
 
     static void readConfig(Class<?> clazz, Object instance)
     {
+        init();
         for ( Method method : clazz.getDeclaredMethods() )
         {
             if ( Modifier.isPrivate( method.getModifiers() ) )
