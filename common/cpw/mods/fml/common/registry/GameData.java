@@ -64,6 +64,7 @@ public class GameData {
     private static ImmutableTable<String, String, Integer> modObjectTable;
     private static Table<String, String, ItemStack> customItemStacks = HashBasedTable.create();
     private static Map<String,String> ignoredMods;
+    private static boolean validated;
 
     private static boolean isModIgnoredForIdValidation(String modId)
     {
@@ -103,9 +104,9 @@ public class GameData {
         if (mc == null)
         {
             mc = Loader.instance().getMinecraftModContainer();
-            if (Loader.instance().hasReachedState(LoaderState.AVAILABLE))
+            if (Loader.instance().hasReachedState(LoaderState.INITIALIZATION) || validated)
             {
-                FMLLog.severe("It appears something has tried to allocate an Item outside of the initialization phase of Minecraft, this could be very bad for your network connectivity.");
+                FMLLog.severe("It appears something has tried to allocate an Item or Block outside of the preinitialization phase for mods. This will NOT work in 1.7 and beyond!");
             }
         }
         String itemType = item.getClass().getName();
@@ -386,5 +387,25 @@ public class GameData {
         }
 
         return new UniqueIdentifier(itemData.getModId(), itemData.getItemType());
+    }
+
+    public static void validateRegistry()
+    {
+        for (int i = 0; i < Item.field_77698_e.length; i++)
+        {
+            if (Item.field_77698_e[i] != null)
+            {
+                ItemData itemData = idMap.get(i);
+                if (itemData == null)
+                {
+                    FMLLog.severe("Found completely unknown item of class %s with ID %d, this will NOT work for a 1.7 upgrade", Item.field_77698_e[i].getClass().getName(), i);
+                }
+                else if (!itemData.isOveridden() && !"Minecraft".equals(itemData.getModId()))
+                {
+                    FMLLog.severe("Found anonymous item of class %s with ID %d owned by mod %s, this item will NOT survive a 1.7 upgrade!", Item.field_77698_e[i].getClass().getName(), i, itemData.getModId());
+                }
+            }
+        }
+        validated = true;
     }
 }

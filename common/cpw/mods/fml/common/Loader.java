@@ -521,6 +521,7 @@ public class Loader
         modController.transition(LoaderState.PREINITIALIZATION, false);
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, disc.getASMTable(), canonicalConfigDir);
         modController.transition(LoaderState.INITIALIZATION, false);
+        GameData.validateRegistry();
     }
 
     private void disableRequestedMods()
