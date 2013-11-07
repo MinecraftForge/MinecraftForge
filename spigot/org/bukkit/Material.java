@@ -428,11 +428,19 @@ public enum Material {
     private static Method newFieldAccessor;
     private static Method fieldAccessorSet;
     private static boolean isSetup;
+    private boolean isForgeBlock = false;
     // MCPC+ end
 
     private Material(final int id) {
         this(id, 64);
     }
+
+    // MCPC+ start - constructor used to set if the Material is a block or not
+    private Material(final int id, boolean flag) {
+        this(id, 64);
+        this.isForgeBlock = flag;
+    }
+    // MCPC+ end
 
     private Material(final int id, final int stack) {
         this(id, stack, MaterialData.class);
@@ -534,7 +542,7 @@ public enum Material {
      * @return true if this material is a block
      */
     public boolean isBlock() {
-        return id < 256;
+        return id < 256 || isForgeBlock; // MCPC+
     }
 
     /**
@@ -630,14 +638,14 @@ public enum Material {
     }
 
     /* ===============================  MCPC+ START ============================= */
-    public static void addMaterial(int id)
+    public static void addMaterial(int id, boolean isBlock)
     {
-      addMaterial(id, "X" + String.valueOf(id));
+        addMaterial(id, "X" + String.valueOf(id), isBlock);
     }
 
-    public static void addMaterial(int id, String name) {
+    public static void addMaterial(int id, String name, boolean isBlock) {
       if (byId[id] == null) {
-        Material material = (Material) EnumHelper.addEnum(Material.class, name, new Class[]{Integer.TYPE}, new Object[]{Integer.valueOf(id)});
+        Material material = (Material) EnumHelper.addEnum(Material.class, name, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{Integer.valueOf(id), isBlock});
         String material_name = name.toUpperCase().trim();
         material_name = material_name.replaceAll("[^A-Za-z0-9]", "_");
 
@@ -646,13 +654,13 @@ public enum Material {
       }
     }
 
-    public static void setMaterialName(int id, String name) {
+    public static void setMaterialName(int id, String name, boolean flag) {
       String material_name = name.toUpperCase().trim();
       material_name = material_name.replaceAll("[^A-Za-z0-9]", "_");
 
       if (byId[id] == null)
       {
-        addMaterial(id, material_name);
+        addMaterial(id, material_name, flag);
       } 
       else // replace existing enum
       {
@@ -669,7 +677,7 @@ public enum Material {
           */
       }
     }
-    
+
     private static void setup()
     {
       if (isSetup)
