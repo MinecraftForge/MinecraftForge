@@ -95,6 +95,12 @@ uploadArchives {
                     }
                 }
             }
+        } else {
+            logger.info('Publishing to repo folder')
+            
+            mavenDeployer {
+                repository(url: 'file://localhost/' + project.file('repo').getAbsolutePath())
+            }
         }
     }
 }
