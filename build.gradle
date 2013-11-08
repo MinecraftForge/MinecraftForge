@@ -72,23 +72,23 @@ uploadArchives {
 
                         licenses {
                             license {
-                                name 'GNU Lesser Public License (LGPL), Version 3'
-                                url 'http://www.gnu.org/licenses/lgpl-3.0.txt'
+                                name 'GNU Lesser Public License (LGPL), Version 2.1'
+                                url 'http://www.gnu.org/licenses/lgpl-2.1.txt'
                                 distribution 'repo'
                             }
                         }
 
                         developers {
                             developer {
-                                id 'LexManos'
-                                name 'Lex Manos'
+                                id 'cpw'
+                                name 'cpw'
                                 roles { role 'developer' }
                             }
                         }
                         developers {
                             developer {
-                                id 'cpw'
-                                name 'Christian Weeks'
+                                id 'LexManos'
+                                name 'Lex Manos'
                                 roles { role 'developer' }
                             }
                         }
