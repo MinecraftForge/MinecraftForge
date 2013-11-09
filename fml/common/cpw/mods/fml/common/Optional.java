@@ -51,6 +51,13 @@ public final class Optional {
          * @return the modid
          */
         public String modid();
+
+        /**
+         * Strip references to this interface in method declarations? (Useful to kill synthetic methods from scala f.e.)
+         *
+         * @return if references should be stripped
+         */
+        public boolean striprefs() default false;
     }
     /**
      * Used to remove optional methods
