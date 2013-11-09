@@ -1,6 +1,11 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemInWorldManager.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemInWorldManager.java
-@@ -8,8 +8,19 @@
+@@ -4,12 +4,25 @@
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.network.packet.Packet53BlockChange;
++import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.world.EnumGameType;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
  
@@ -11,6 +16,7 @@
 +import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 +import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 +import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
++import net.minecraftforge.event.world.BlockEvent;
 +
  public class ItemInWorldManager
  {
@@ -20,7 +26,7 @@
      /** The world object that this object is connected to. */
      public World theWorld;
  
-@@ -145,6 +156,13 @@
+@@ -145,6 +158,13 @@
      {
          if (!this.gameType.isAdventure() || this.thisPlayerMP.isCurrentToolAdventureModeExempt(par1, par2, par3))
          {
@@ -34,7 +40,7 @@
              if (this.isCreative())
              {
                  if (!this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4))
-@@ -154,15 +172,33 @@
+@@ -154,15 +174,33 @@
              }
              else
              {
@@ -73,7 +79,7 @@
                  }
  
                  if (i1 > 0 && f >= 1.0F)
-@@ -236,7 +272,7 @@
+@@ -236,7 +274,7 @@
              block.onBlockHarvested(this.theWorld, par1, par2, par3, l, this.thisPlayerMP);
          }
  
@@ -82,8 +88,20 @@
  
          if (block != null && flag)
          {
-@@ -261,19 +297,30 @@
+@@ -251,29 +289,37 @@
+      */
+     public boolean tryHarvestBlock(int par1, int par2, int par3)
+     {
+-        if (this.gameType.isAdventure() && !this.thisPlayerMP.isCurrentToolAdventureModeExempt(par1, par2, par3))
++        BlockEvent.BreakEvent event = ForgeHooks.onBlockBreakEvent(theWorld, gameType, thisPlayerMP, par1, par2, par3);
++        if (event.isCanceled())
+         {
+             return false;
          }
+-        else if (this.gameType.isCreative() && this.thisPlayerMP.getHeldItem() != null && this.thisPlayerMP.getHeldItem().getItem() instanceof ItemSword)
+-        {
+-            return false;
+-        }
          else
          {
 +            ItemStack stack = thisPlayerMP.getCurrentEquippedItem();
@@ -115,7 +133,7 @@
  
                  if (itemstack != null)
                  {
-@@ -285,6 +332,7 @@
+@@ -285,11 +331,18 @@
                      }
                  }
  
@@ -123,7 +141,18 @@
                  if (flag && flag1)
                  {
                      Block.blocksList[l].harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, i1);
-@@ -325,6 +373,7 @@
+                 }
+             }
++
++            // Drop experience
++	        if (!this.isCreative() && flag && event != null)
++	        {
++	            Block.blocksList[l].dropXpOnBlockBreak(this.theWorld, par1, par2, par3, event.getExpToDrop());
++	        }
+ 
+             return flag;
+         }
+@@ -325,6 +378,7 @@
              if (itemstack1.stackSize == 0)
              {
                  par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
@@ -131,7 +160,7 @@
              }
  
              if (!par1EntityPlayer.isUsingItem())
-@@ -342,35 +391,56 @@
+@@ -342,35 +396,56 @@
       */
      public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
      {
@@ -215,7 +244,7 @@
      }
  
      /**
-@@ -380,4 +450,13 @@
+@@ -380,4 +455,13 @@
      {
          this.theWorld = par1WorldServer;
      }

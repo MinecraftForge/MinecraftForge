@@ -198,7 +198,7 @@
      }
  
      /**
-@@ -1457,4 +1491,993 @@
+@@ -1457,4 +1491,1001 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -1150,6 +1150,14 @@
 +            }
 +        }
 +        return false;
++    }
++
++    /**
++     * @return the amount of XP that this block should drop when it is broken
++     */
++    public int getExpDrop(World world, int data, int enchantmentLevel)
++    {
++        return 0;
 +    }
 +    
 +    /**
