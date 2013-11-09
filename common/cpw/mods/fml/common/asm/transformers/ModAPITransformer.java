@@ -58,7 +58,9 @@ public class ModAPITransformer implements IClassTransformer {
 
             if (optional.getAnnotationInfo().containsKey("iface"))
             {
-                stripInterface(classNode,(String)optional.getAnnotationInfo().get("iface"));
+                Boolean stripRefs = (Boolean)optional.getAnnotationInfo().get("striprefs");
+                if (stripRefs == null) stripRefs = Boolean.FALSE;
+                stripInterface(classNode,(String)optional.getAnnotationInfo().get("iface"), stripRefs);
             }
             else
             {
@@ -88,12 +90,31 @@ public class ModAPITransformer implements IClassTransformer {
         if (logDebugInfo) FMLRelaunchLog.finest("Optional removal - method %s NOT removed - not found", methodDescriptor);
     }
 
-    private void stripInterface(ClassNode classNode, String interfaceName)
+    private void stripInterface(ClassNode classNode, String interfaceName, boolean stripRefs)
     {
         String ifaceName = interfaceName.replace('.', '/');
         boolean found = classNode.interfaces.remove(ifaceName);
         if (found && logDebugInfo) FMLRelaunchLog.finest("Optional removal - interface %s removed", interfaceName);
         if (!found && logDebugInfo) FMLRelaunchLog.finest("Optional removal - interface %s NOT removed - not found", interfaceName);
+
+        if (found && stripRefs)
+        {
+            if (logDebugInfo) FMLRelaunchLog.finest("Optional removal - interface %s - stripping method signature references", interfaceName);
+            for (Iterator<MethodNode> iterator = classNode.methods.iterator(); iterator.hasNext();)
+            {
+                MethodNode node = iterator.next();
+                if (node.desc.contains(ifaceName))
+                {
+                    if (logDebugInfo) FMLRelaunchLog.finest("Optional removal - interface %s - stripping method containing reference %s", interfaceName, node.name);
+                    iterator.remove();
+                }
+            }
+            if (logDebugInfo) FMLRelaunchLog.finest("Optional removal - interface %s - all method signature references stripped", interfaceName);
+        }
+        else if (found)
+        {
+            if (logDebugInfo) FMLRelaunchLog.finest("Optional removal - interface %s - NOT stripping method signature references", interfaceName);
+        }
     }
 
     public void initTable(ASMDataTable dataTable)
