@@ -9,6 +9,7 @@ public class PlayerOpenContainerEvent extends PlayerEvent
 {
 
     public final boolean canInteractWith;
+    public final Container openContainer;
 
     /**
      * This event is fired when a player attempts to view a container during
@@ -25,5 +26,6 @@ public class PlayerOpenContainerEvent extends PlayerEvent
     {
         super(player);
         this.canInteractWith = openContainer.canInteractWith(player);
+        this.openContainer = openContainer;
     }
 }
