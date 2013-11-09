@@ -1,9 +1,16 @@
-*.DS_Store
-/logs/
-/*.pyc
-/forge-*/
-/patches-old/
-/mcp/
+#eclipse
+/bin
+/.settings
+/.classpath
+
+#idea
+/.idea
+*.iml
+
+#gradle
+/build
+/.gradle
+
+#occupational hazards
 /eclipse/
-/target/
-/temp/
+/repo/
