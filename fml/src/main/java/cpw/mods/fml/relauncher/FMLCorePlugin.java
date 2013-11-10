@@ -16,13 +16,6 @@ import java.util.Map;
 
 public class FMLCorePlugin implements IFMLLoadingPlugin
 {
-    @SuppressWarnings("deprecation")
-    @Override
-    public String[] getLibraryRequestClass()
-    {
-        return null;
-    }
-
     @Override
     public String[] getASMTransformerClass()
     {

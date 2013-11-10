@@ -3,42 +3,35 @@ package cpw.mods.fml.common.launcher;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import joptsimple.ArgumentAcceptingOptionSpec;
-import joptsimple.NonOptionArgumentSpec;
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Throwables;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.ObjectArrays;
-import com.google.common.primitives.Ints;
-
-import cpw.mods.fml.relauncher.FMLLaunchHandler;
-
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 
+import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+import cpw.mods.fml.relauncher.FMLLaunchHandler;
+
 public class FMLTweaker implements ITweaker {
+    @SuppressWarnings("unused")
     private List<String> args;
-    private File gameDir;
+    @SuppressWarnings("unused")
     private File assetsDir;
+    @SuppressWarnings("unused")
     private String profile;
+    private File gameDir;
     private Map<String, String> launchArgs;
     private List<String> standaloneArgs;
     private static URI jarLocation;
 
+    @SuppressWarnings("unchecked")
     @Override
     public void acceptOptions(List<String> args, File gameDir, File assetsDir, String profile)
     {
@@ -159,6 +152,7 @@ public class FMLTweaker implements ITweaker {
 
     public void injectCascadingTweak(String tweakClassName)
     {
+        @SuppressWarnings("unchecked")
         List<String> tweakClasses = (List<String>) Launch.blackboard.get("TweakClasses");
         tweakClasses.add(tweakClassName);
     }

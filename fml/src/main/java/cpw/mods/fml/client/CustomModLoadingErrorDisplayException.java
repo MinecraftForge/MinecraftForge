@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -31,6 +31,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public abstract class CustomModLoadingErrorDisplayException extends RuntimeException implements IFMLHandledException
 {
+    private static final long serialVersionUID = 1L;
+
     /**
      * Called after the GUI is inited by the parent code. You can do extra stuff here, maybe?
      *

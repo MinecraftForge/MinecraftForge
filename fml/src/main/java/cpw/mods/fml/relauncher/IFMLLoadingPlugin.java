@@ -28,13 +28,6 @@ import java.util.Map;
 public interface IFMLLoadingPlugin
 {
     /**
-     * Return a list of classes that implement the ILibrarySet interface
-     *
-     * @return a list of classes that implement the ILibrarySet interface
-     */
-    @Deprecated
-    String[] getLibraryRequestClass();
-    /**
      * Return a list of classes that implements the IClassTransformer interface
      * @return a list of classes that implements the IClassTransformer interface
      */

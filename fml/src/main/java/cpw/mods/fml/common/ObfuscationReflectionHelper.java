@@ -28,7 +28,6 @@ import cpw.mods.fml.relauncher.ReflectionHelper.UnableToFindFieldException;
  */
 public class ObfuscationReflectionHelper
 {
-    @SuppressWarnings("unchecked")
     public static <T, E> T getPrivateValue(Class<? super E> classToAccess, E instance, int fieldIndex)
     {
         try
@@ -53,7 +52,7 @@ public class ObfuscationReflectionHelper
         }
         return mappedNames;
     }
-    @SuppressWarnings("unchecked")
+
     public static <T, E> T getPrivateValue(Class<? super E> classToAccess, E instance, String... fieldNames)
     {
         try

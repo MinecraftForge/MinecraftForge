@@ -1,16 +1,15 @@
 package cpw.mods.fml.common.asm.transformers;
 
-import java.lang.annotation.Annotation;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
+
+import net.minecraft.launchwrapper.IClassTransformer;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
@@ -18,15 +17,11 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModAPIManager;
-import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
-
-import net.minecraft.launchwrapper.IClassTransformer;
 
 public class ModAPITransformer implements IClassTransformer {
 
@@ -133,6 +128,7 @@ public class ModAPITransformer implements IClassTransformer {
         Set<ASMData> result = Sets.newHashSet();
         for (ASMData data : packedInterfaces)
         {
+            @SuppressWarnings("unchecked")
             List<Map<String,Object>> packedList = (List<Map<String,Object>>) data.getAnnotationInfo().get("value");
             for (Map<String,Object> packed : packedList)
             {

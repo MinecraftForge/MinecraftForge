@@ -12,21 +12,11 @@
 
 package cpw.mods.fml.common.event;
 
-import java.util.List;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimaps;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
@@ -34,8 +24,6 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.Mod.Init;
-import cpw.mods.fml.common.Mod.PostInit;
 
 /**
  * Simple intermod communications to receive simple messages directed at you

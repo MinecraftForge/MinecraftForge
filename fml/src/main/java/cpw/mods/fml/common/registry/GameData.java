@@ -14,7 +14,6 @@ package cpw.mods.fml.common.registry;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
@@ -23,7 +22,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockSand;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,20 +30,20 @@ import net.minecraft.nbt.NBTTagList;
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.base.Throwables;
 import com.google.common.base.Joiner.MapJoiner;
+import com.google.common.base.Throwables;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.ImmutableTable.Builder;
 import com.google.common.collect.MapDifference;
-import com.google.common.collect.Tables;
 import com.google.common.collect.MapDifference.ValueDifference;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
+import com.google.common.collect.Tables;
 import com.google.common.io.Files;
 
 import cpw.mods.fml.common.FMLLog;

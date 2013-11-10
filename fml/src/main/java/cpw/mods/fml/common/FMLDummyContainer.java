@@ -31,7 +31,6 @@ import cpw.mods.fml.client.FMLFileResourcePack;
 import cpw.mods.fml.client.FMLFolderResourcePack;
 import cpw.mods.fml.common.asm.FMLSanityChecker;
 import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.ItemData;
 
 /**

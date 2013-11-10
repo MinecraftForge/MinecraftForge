@@ -3,17 +3,12 @@ package cpw.mods.fml.common.patcher;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.security.CodeSource;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Pack200;
@@ -21,11 +16,9 @@ import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 import net.minecraft.launchwrapper.LaunchClassLoader;
-
 import LZMA.LzmaInputStream;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -35,7 +28,6 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
-import cpw.mods.fml.common.launcher.FMLTweaker;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.repackage.com.nothome.delta.GDiffPatcher;

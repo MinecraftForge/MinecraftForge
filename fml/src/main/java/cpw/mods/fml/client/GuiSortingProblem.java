@@ -1,19 +1,15 @@
 package cpw.mods.fml.client;
 
+import net.minecraft.client.gui.GuiScreen;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.toposort.ModSortingException;
 import cpw.mods.fml.common.toposort.ModSortingException.SortingExceptionData;
-import cpw.mods.fml.common.versioning.ArtifactVersion;
-import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
-import net.minecraft.client.gui.GuiScreen;
 
 public class GuiSortingProblem extends GuiScreen {
-    private ModSortingException modSorting;
     private SortingExceptionData<ModContainer> failedList;
 
     public GuiSortingProblem(ModSortingException modSorting)
     {
-        this.modSorting = modSorting;
         this.failedList = modSorting.getExceptionData();
     }
 

@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSetMultimap;

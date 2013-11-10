@@ -29,13 +29,10 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSmallButton;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.texture.TextureObject;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.ResourcePack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StringTranslate;
 
 import org.lwjgl.opengl.GL11;
 
@@ -84,6 +81,7 @@ public class GuiModList extends GuiScreen
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void func_73866_w_()
     {

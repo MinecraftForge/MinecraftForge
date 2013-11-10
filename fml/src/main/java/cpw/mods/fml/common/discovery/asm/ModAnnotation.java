@@ -27,8 +27,9 @@ public class ModAnnotation
 {
     public class EnumHolder
     {
-
+        @SuppressWarnings("unused")
         private String desc;
+        @SuppressWarnings("unused")
         private String value;
 
         public EnumHolder(String desc, String value)
@@ -43,9 +44,7 @@ public class ModAnnotation
     String member;
     Map<String,Object> values = Maps.newHashMap();
     private ArrayList<Object> arrayList;
-    private Object array;
     private String arrayName;
-    private ModAnnotation parent;
     public ModAnnotation(AnnotationType type, Type asmType, String member)
     {
         this.type = type;
@@ -57,7 +56,6 @@ public class ModAnnotation
     {
         this.type = type;
         this.asmType = asmType;
-        this.parent = parent;
     }
     @Override
     public String toString()

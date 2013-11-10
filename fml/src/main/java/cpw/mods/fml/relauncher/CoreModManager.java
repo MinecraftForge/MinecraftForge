@@ -334,11 +334,6 @@ public class CoreModManager {
         }
     }
 
-    private static void injectTweakWrapper(FMLPluginWrapper wrapper)
-    {
-        loadPlugins.add(wrapper);
-    }
-
     /**
      * @param mcDir
      *            the minecraft home directory
@@ -452,6 +447,7 @@ public class CoreModManager {
         return null;
     }
 
+    @SuppressWarnings("unused")
     private static void sortCoreMods()
     {
         TopologicalSort.DirectedGraph<FMLPluginWrapper> sortGraph = new TopologicalSort.DirectedGraph<FMLPluginWrapper>();
@@ -496,6 +492,7 @@ public class CoreModManager {
 
     public static void injectCoreModTweaks(FMLInjectionAndSortingTweaker fmlInjectionAndSortingTweaker)
     {
+        @SuppressWarnings("unchecked")
         List<ITweaker> tweakers = (List<ITweaker>) Launch.blackboard.get("Tweaks");
         // Add the sorting tweaker first- it'll appear twice in the list
         tweakers.add(0, fmlInjectionAndSortingTweaker);
@@ -509,6 +506,7 @@ public class CoreModManager {
 
     public static void sortTweakList()
     {
+        @SuppressWarnings("unchecked")
         List<ITweaker> tweakers = (List<ITweaker>) Launch.blackboard.get("Tweaks");
         Collections.sort(tweakers, new Comparator<ITweaker>() {
             @Override

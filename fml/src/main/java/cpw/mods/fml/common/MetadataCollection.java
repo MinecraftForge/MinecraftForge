@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -29,6 +29,7 @@ public class MetadataCollection
 {
     private static JdomParser parser = new JdomParser();
     private Map<String, ModMetadata> metadatas = Maps.newHashMap();
+    @SuppressWarnings("unused")
     private int metadataVersion = 1;
 
     public static MetadataCollection from(InputStream inputStream, String sourceName)

@@ -16,7 +16,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSmallButton;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.StringTranslate;
 import cpw.mods.fml.common.network.ModMissingPacket;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 
@@ -29,6 +28,7 @@ public class GuiModsMissingForServer extends GuiScreen
         this.modsMissing = modsMissing;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void func_73866_w_()
     {

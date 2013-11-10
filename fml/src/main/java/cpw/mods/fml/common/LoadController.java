@@ -15,12 +15,10 @@ package cpw.mods.fml.common;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.google.common.base.Functions;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
@@ -51,7 +49,6 @@ public class LoadController
     private LoaderState state;
     private Multimap<String, ModState> modStates = ArrayListMultimap.create();
     private Multimap<String, Throwable> errors = ArrayListMultimap.create();
-    private Map<String, ModContainer> modList;
     private List<ModContainer> activeModList = Lists.newArrayList();
     private ModContainer activeContainer;
     private BiMap<ModContainer, Object> modObjectList;
@@ -70,7 +67,6 @@ public class LoadController
     @Subscribe
     public void buildModList(FMLLoadEvent event)
     {
-        this.modList = loader.getIndexedModList();
         Builder<String, EventBus> eventBus = ImmutableMap.builder();
 
         for (ModContainer mod : loader.getModList())
@@ -80,7 +76,7 @@ public class LoadController
             Logger modLogger = Logger.getLogger(mod.getModId());
             Logger eventLog = Logger.getLogger(EventBus.class.getName() + "." + mod.getModId());
             eventLog.setParent(modLogger);
-            
+
             EventBus bus = new EventBus(mod.getModId());
             boolean isActive = mod.registerBus(bus, this);
             if (isActive)

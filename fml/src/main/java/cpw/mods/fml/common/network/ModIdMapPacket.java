@@ -5,19 +5,22 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
 
 package cpw.mods.fml.common.network;
 
+import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_IDMAP;
+
 import java.io.IOException;
-import java.util.BitSet;
 import java.util.Set;
 import java.util.logging.Level;
 
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.NetHandler;
 
@@ -25,16 +28,12 @@ import com.google.common.collect.MapDifference;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Ints;
 import com.google.common.primitives.UnsignedBytes;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.ItemData;
-import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_IDMAP;
 
 public class ModIdMapPacket extends FMLPacket {
     private byte[][] partials;

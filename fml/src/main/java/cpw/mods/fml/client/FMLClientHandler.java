@@ -12,11 +12,8 @@
  */
 package cpw.mods.fml.client;
 
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -30,11 +27,8 @@ import net.minecraft.client.multiplayer.NetClientHandler;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.resources.FileResourcePack;
-import net.minecraft.client.resources.FolderResourcePack;
 import net.minecraft.client.resources.ReloadableResourceManager;
 import net.minecraft.client.resources.ResourcePack;
-import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -50,12 +44,10 @@ import net.minecraft.world.World;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.MapDifference.ValueDifference;
 import com.google.common.collect.Maps;
 
-import cpw.mods.fml.client.modloader.ModLoaderClientHelper;
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.DummyModContainer;
@@ -76,11 +68,9 @@ import cpw.mods.fml.common.network.EntitySpawnPacket;
 import cpw.mods.fml.common.network.ModMissingPacket;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.common.registry.IThrowableEntity;
 import cpw.mods.fml.common.registry.ItemData;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.toposort.ModSortingException;
 import cpw.mods.fml.relauncher.Side;
 
@@ -118,8 +108,10 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private DummyModContainer optifineContainer;
 
+    @SuppressWarnings("unused")
     private boolean guiLoaded;
 
+    @SuppressWarnings("unused")
     private boolean serverIsRunning;
 
     private MissingModsException modsMissing;
@@ -138,6 +130,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private List<ResourcePack> resourcePackList;
 
+    @SuppressWarnings("unused")
     private ReloadableResourceManager resourceManager;
 
     private Map<String, ResourcePack> resourcePackMap;
@@ -149,7 +142,8 @@ public class FMLClientHandler implements IFMLSidedHandler
      * @param resourcePackList The resource pack list we will populate with mods
      * @param resourceManager The resource manager
      */
-    public void beginMinecraftLoading(Minecraft minecraft, List resourcePackList, ReloadableResourceManager resourceManager)
+    @SuppressWarnings("unchecked")
+    public void beginMinecraftLoading(Minecraft minecraft, @SuppressWarnings("rawtypes") List resourcePackList, ReloadableResourceManager resourceManager)
     {
         client = minecraft;
         this.resourcePackList = resourcePackList;
@@ -162,9 +156,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             return;
         }
 
-//        TextureFXManager.instance().setClient(client);
         FMLCommonHandler.instance().beginLoading(this);
-        new ModLoaderClientHelper(client);
         try
         {
             Class<?> optifineConfig = Class.forName("Config", false, Loader.instance().getModClassLoader());
@@ -237,7 +229,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      * Also initializes key bindings
      *
      */
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({ "deprecation", "unchecked" })
     public void finishMinecraftLoading()
     {
         if (modsMissing != null || wrongMC != null || customError!=null || dupesFound!=null || modSorting!=null)
@@ -259,7 +251,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
             return;
         }
-        
+
         client.field_71416_A.LOAD_SOUND_SYSTEM = true;
         // Reload resources
         client.func_110436_a();
@@ -269,8 +261,10 @@ public class FMLClientHandler implements IFMLSidedHandler
         KeyBindingRegistry.instance().uploadKeyBindingsToGame(client.field_71474_y);
     }
 
+    @SuppressWarnings("unused")
     public void extendModList()
     {
+        @SuppressWarnings("unchecked")
         Map<String,Map<String,String>> modList = (Map<String, Map<String, String>>) Launch.blackboard.get("modList");
         if (modList != null)
         {
@@ -398,6 +392,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         client.func_71373_a(gui);
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public Entity spawnEntityIntoClientWorld(EntityRegistration er, EntitySpawnPacket packet)
     {

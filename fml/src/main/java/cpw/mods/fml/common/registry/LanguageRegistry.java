@@ -21,18 +21,16 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+
 import com.google.common.base.Charsets;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.StringTranslate;
 
 public class LanguageRegistry
 {
@@ -122,7 +120,8 @@ public class LanguageRegistry
         instance().addNameForObject(objectToName, "en_US", name);
     }
 
-    public void loadLanguageTable(Map field_135032_a, String lang)
+    @SuppressWarnings("unchecked")
+    public void loadLanguageTable(@SuppressWarnings("rawtypes") Map field_135032_a, String lang)
     {
         Properties usPack=modLanguageData.get("en_US");
         if (usPack!=null) {

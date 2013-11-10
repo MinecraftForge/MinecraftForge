@@ -5,7 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
 
-import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.relauncher.Side;
 
 public interface ILanguageAdapter {

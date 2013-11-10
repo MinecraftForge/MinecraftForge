@@ -15,7 +15,6 @@ package cpw.mods.fml.common;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -232,7 +231,7 @@ public class FMLCommonHandler
     {
         if (brandings == null)
         {
-            Builder brd = ImmutableList.<String>builder();
+            Builder<String> brd = ImmutableList.<String>builder();
             brd.add(Loader.instance().getMCVersionString());
             brd.add(Loader.instance().getMCPVersionString());
             brd.add("FML v"+Loader.instance().getFMLVersionString());

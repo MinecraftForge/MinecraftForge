@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -16,7 +16,6 @@ import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
 import net.minecraft.entity.Entity;
@@ -34,14 +33,12 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.UnsignedBytes;
-import com.google.common.primitives.UnsignedInteger;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.network.EntitySpawnPacket;
-import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 
 public class EntityRegistry
 {
@@ -151,6 +148,7 @@ public class EntityRegistry
         instance().doModEntityRegistration(entityClass, entityName, id, mod, trackingRange, updateFrequency, sendsVelocityUpdates);
     }
 
+    @SuppressWarnings("unchecked")
     private void doModEntityRegistration(Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
     {
         ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
@@ -275,6 +273,7 @@ public class EntityRegistry
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
         Class <? extends Entity > entityClazz = (Class<? extends Entity>) EntityList.field_75625_b.get(entityName);
@@ -303,13 +302,14 @@ public class EntityRegistry
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static void removeSpawn(String entityName, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
         Class <? extends Entity > entityClazz = (Class<? extends Entity>) EntityList.field_75625_b.get(entityName);
 
         if (EntityLiving.class.isAssignableFrom(entityClazz))
         {
-            removeSpawn((Class <? extends EntityLiving >) entityClazz, spawnList, biomes);
+            removeSpawn((Class <? extends EntityLiving>) entityClazz, spawnList, biomes);
         }
     }
 

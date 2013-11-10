@@ -12,16 +12,12 @@
 
 package net.minecraft.src;
 
-import java.awt.Dimension;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.world.IBlockAccess;
-
-import cpw.mods.fml.client.TextureFXManager;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLLog;
 

@@ -18,14 +18,12 @@ import java.util.Map.Entry;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.StringTranslate;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.MapDifference.ValueDifference;
 
 import cpw.mods.fml.common.registry.ItemData;
-import cpw.mods.fml.common.versioning.ArtifactVersion;
 
 public class GuiIdMismatchScreen extends GuiYesNo {
     private List<String> missingIds = Lists.newArrayList();
@@ -43,7 +41,7 @@ public class GuiIdMismatchScreen extends GuiYesNo {
         for (Entry<Integer, ValueDifference<ItemData>> entry : idDifferences.entriesDiffering().entrySet())
         {
             ItemData world = entry.getValue().leftValue();
-            ItemData game = entry.getValue().rightValue();
+//            ItemData game = entry.getValue().rightValue();
             mismatchedIds.add(String.format("ID %d is mismatched between world and game", world.getItemId()));
         }
         this.allowContinue = allowContinue;

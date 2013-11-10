@@ -14,8 +14,6 @@ package cpw.mods.fml.common.asm.transformers.deobf;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import LZMA.LzmaInputStream;
 

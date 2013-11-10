@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -13,9 +13,9 @@
 package cpw.mods.fml.common.network;
 
 import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_IDENTIFIERS;
+import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_IDMAP;
 import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_LIST_RESPONSE;
 import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_MISSING;
-import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_IDMAP;
 
 import java.util.List;
 import java.util.Map;
@@ -23,8 +23,10 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.*;
-import net.minecraft.network.packet.*;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.NetLoginHandler;
+import net.minecraft.network.packet.NetHandler;
+import net.minecraft.network.packet.Packet250CustomPayload;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -36,7 +38,6 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ModListResponsePacket extends FMLPacket
 {
@@ -51,7 +52,9 @@ public class ModListResponsePacket extends FMLPacket
     @Override
     public byte[] generatePacket(Object... data)
     {
+        @SuppressWarnings("unchecked")
         Map<String,String> modVersions = (Map<String, String>) data[0];
+        @SuppressWarnings("unchecked")
         List<String> missingMods = (List<String>) data[1];
         ByteArrayDataOutput dat = ByteStreams.newDataOutput();
         dat.writeInt(modVersions.size());
