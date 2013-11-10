@@ -1,0 +1,111 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.0-SNAPSHOT'
+    }
+}
+
+import static net.minecraftforge.gradle.dev.FmlDevPlugin.*
+
+apply plugin: 'maven'
+apply plugin: 'forgedev'
+
+repositories {
+    flatDir {
+        name "fileRepo"
+        dirs "repo"
+    }
+}
+
+minecraft {
+    version = '1.6.4'
+    mcpVersion = '8.11'
+    fmlDir = projectDir.getAbsolutePath() + "/fml";
+    mainClass = 'cpw.mods.fml.relauncher.ServerLaunchWrapper'
+    installerVersion = "1.4"
+}
+
+group = 'net.minecraftforge'
+version = "1.0.0.1"
+
+jenkins {
+    job = 'minecraftforge'
+}
+
+uploadArchives {
+    repositories {
+        if (project.hasProperty("filesmaven")) {
+            logger.info('Publishing to files server')
+            
+            mavenDeployer {
+                configuration = configurations.deployerJars
+
+                repository(url: project.filesmaven.url) {
+                    authentication(userName: project.filesmaven.username, privateKey: project.filesmaven.key)
+                }
+
+                pom {
+                    groupId = project.group
+                    version = project.version
+                    artifactId = project.archivesBaseName
+                    project {
+                        name project.archivesBaseName
+                        packaging 'jar'
+                        description 'Minecraft Forge API'
+                        url 'https://github.com/MinecraftForge/MinecraftForge'
+
+                        scm {
+                            url 'https://github.com/MinecraftForge/MinecraftForge'
+                            connection 'scm:git:git://github.com/MinecraftForge/MinecraftForge.git'
+                            developerConnection 'scm:git:git@github.com:MinecraftForge/MinecraftForge.git'
+                        }
+
+                        issueManagement {
+                            system 'github'
+                            url 'https://github.com/MinecraftForge/MinecraftForge/issues'
+                        }
+
+                        licenses {
+                            license {
+                                name 'Forge Public License'
+                                url 'https://raw.github.com/MinecraftForge/MinecraftForge/master/MinecraftForge-License.txt'
+                                distribution 'repo'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id 'cpw'
+                                name 'cpw'
+                                roles { role 'developer' }
+                            }
+                            developer {
+                                id 'LexManos'
+                                name 'Lex Manos'
+                                roles { role 'developer' }
+                            }
+                            developer {
+                                id 'AbrarSyed'
+                                name 'Abrar Syed'
+                                roles { role 'contributor' }
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            logger.info('Publishing to repo folder')
+            
+            mavenDeployer {
+                repository(url: 'file://localhost/' + project.file('repo').getAbsolutePath())
+            }
+        }
+    }
+}
