@@ -94,40 +94,6 @@ public class RenderingRegistry
         return instance().nextRenderId++;
     }
 
-    /**
-     * Add a texture override for the given path and return the used index
-     *
-     * @param fileToOverride
-     * @param fileToAdd
-     */
-    @Deprecated
-    public static int addTextureOverride(String fileToOverride, String fileToAdd)
-    {
-        return -1;
-    }
-
-    /**
-     * Add a texture override for the given path and index
-     *
-     * @param path
-     * @param overlayPath
-     * @param index
-     */
-    public static void addTextureOverride(String path, String overlayPath, int index)
-    {
-//        TextureFXManager.instance().addNewTextureOverride(path, overlayPath, index);
-    }
-
-    /**
-     * Get and reserve a unique texture index for the supplied path
-     *
-     * @param path
-     */
-    @Deprecated
-    public static int getUniqueTextureIndex(String path)
-    {
-        return -1;
-    }
 
     @Deprecated public static RenderingRegistry instance()
     {

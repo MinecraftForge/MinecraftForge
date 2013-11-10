@@ -119,17 +119,6 @@ public class GameRegistry
     }
 
     /**
-     * Register a block with the world
-     *
-     */
-    @Deprecated
-    public static void registerBlock(net.minecraft.block.Block block)
-    {
-        registerBlock(block, ItemBlock.class);
-    }
-
-
-    /**
      * Register a block with the specified mod specific name : overrides the standard type based name
      * @param block The block to register
      * @param name The mod-unique name to register it as
@@ -137,20 +126,6 @@ public class GameRegistry
     public static void registerBlock(net.minecraft.block.Block block, String name)
     {
         registerBlock(block, ItemBlock.class, name);
-    }
-
-    /**
-     * Register a block with the world, with the specified item class
-     *
-     * Deprecated in favour of named versions
-     *
-     * @param block The block to register
-     * @param itemclass The item type to register with it
-     */
-    @Deprecated
-    public static void registerBlock(net.minecraft.block.Block block, Class<? extends ItemBlock> itemclass)
-    {
-        registerBlock(block, itemclass, null);
     }
     /**
      * Register a block with the world, with the specified item class and block name
