@@ -49,7 +49,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.io.LineProcessor;
 import com.google.common.io.Resources;
 
-import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
 public class AccessTransformer implements IClassTransformer
@@ -161,41 +160,16 @@ public class AccessTransformer implements IClassTransformer
     public byte[] transform(String name, String transformedName, byte[] bytes)
     {
         if (bytes == null) { return null; }
-        boolean makeAllPublic = FMLDeobfuscatingRemapper.INSTANCE.isRemappedClass(name);
 
         if (DEBUG)
         {
-            FMLRelaunchLog.fine("Considering all methods and fields on %s (%s): %b\n", name, transformedName, makeAllPublic);
+            FMLRelaunchLog.fine("Considering all methods and fields on %s (%s)\n", name, transformedName);
         }
-        if (!makeAllPublic && !modifiers.containsKey(name)) { return bytes; }
+        if (!modifiers.containsKey(name)) { return bytes; }
 
         ClassNode classNode = new ClassNode();
         ClassReader classReader = new ClassReader(bytes);
         classReader.accept(classNode, 0);
-
-        if (makeAllPublic)
-        {
-            // class
-            Modifier m = new Modifier();
-            m.targetAccess = ACC_PUBLIC;
-            m.modifyClassVisibility = true;
-            modifiers.put(name,m);
-            // fields
-            m = new Modifier();
-            m.targetAccess = ACC_PUBLIC;
-            m.name = "*";
-            modifiers.put(name,m);
-            // methods
-            m = new Modifier();
-            m.targetAccess = ACC_PUBLIC;
-            m.name = "*";
-            m.desc = "<dummy>";
-            modifiers.put(name,m);
-            if (DEBUG)
-            {
-                System.out.printf("Injected all public modifiers for %s (%s)\n", name, transformedName);
-            }
-        }
 
         Collection<Modifier> mods = modifiers.get(name);
         for (Modifier m : mods)
@@ -453,12 +427,5 @@ public class AccessTransformer implements IClassTransformer
                 }
             }
         }
-    }
-    public void ensurePublicAccessFor(String modClazzName)
-    {
-        Modifier m = new Modifier();
-        m.setTargetAccess("public");
-        m.modifyClassVisibility = true;
-        modifiers.put(modClazzName, m);
     }
 }
