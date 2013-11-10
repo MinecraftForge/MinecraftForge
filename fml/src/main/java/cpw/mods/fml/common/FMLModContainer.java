@@ -32,8 +32,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableMap;
@@ -84,20 +82,6 @@ public class FMLModContainer implements ModContainer
     private DefaultArtifactVersion processedVersion;
     private boolean isNetworkMod;
 
-    @SuppressWarnings("deprecation")
-    private static final BiMap<Class<? extends FMLEvent>, Class<? extends Annotation>> modAnnotationTypes = ImmutableBiMap.<Class<? extends FMLEvent>, Class<? extends Annotation>>builder()
-        .put(FMLPreInitializationEvent.class, Mod.PreInit.class)
-        .put(FMLInitializationEvent.class, Mod.Init.class)
-        .put(FMLPostInitializationEvent.class, Mod.PostInit.class)
-        .put(FMLServerAboutToStartEvent.class, Mod.ServerAboutToStart.class)
-        .put(FMLServerStartingEvent.class, Mod.ServerStarting.class)
-        .put(FMLServerStartedEvent.class, Mod.ServerStarted.class)
-        .put(FMLServerStoppingEvent.class, Mod.ServerStopping.class)
-        .put(FMLServerStoppedEvent.class, Mod.ServerStopped.class)
-        .put(IMCEvent.class,Mod.IMCCallback.class)
-        .put(FMLFingerprintViolationEvent.class, Mod.FingerprintWarning.class)
-        .build();
-    private static final BiMap<Class<? extends Annotation>, Class<? extends FMLEvent>> modTypeAnnotations = modAnnotationTypes.inverse();
     private String annotationDependencies;
     private VersionRange minecraftAccepted;
     private boolean fingerprintNotPresent;
@@ -108,6 +92,18 @@ public class FMLModContainer implements ModContainer
     private ListMultimap<Class<? extends FMLEvent>,Method> eventMethods;
     private Map<String, String> customModProperties;
     private ModCandidate candidate;
+    private static final Set<Class<? extends FMLEvent>> modEventTypes = ImmutableSet.<Class<? extends FMLEvent>>builder()
+        .add(FMLPreInitializationEvent.class)
+        .add(FMLInitializationEvent.class)
+        .add(FMLPostInitializationEvent.class)
+        .add(FMLServerAboutToStartEvent.class)
+        .add(FMLServerStartingEvent.class)
+        .add(FMLServerStartedEvent.class)
+        .add(FMLServerStoppingEvent.class)
+        .add(FMLServerStoppedEvent.class)
+        .add(IMCEvent.class)
+        .add(FMLFingerprintViolationEvent.class)
+        .build();
 
     public FMLModContainer(String className, ModCandidate container, Map<String,Object> modDescriptor)
     {
@@ -323,22 +319,9 @@ public class FMLModContainer implements ModContainer
         {
             for (Annotation a : m.getAnnotations())
             {
-                if (modTypeAnnotations.containsKey(a.annotationType()))
+                if (a.annotationType().equals(Mod.EventHandler.class))
                 {
-                    Class<?>[] paramTypes = new Class[] { modTypeAnnotations.get(a.annotationType()) };
-                    if (Arrays.equals(m.getParameterTypes(), paramTypes))
-                    {
-                        m.setAccessible(true);
-                        eventMethods.put(modTypeAnnotations.get(a.annotationType()), m);
-                    }
-                    else
-                    {
-                        FMLLog.log(getModId(), Level.SEVERE,"The mod %s appears to have an invalid method annotation %s. This annotation can only apply to methods with argument types %s -it will not be called", getModId(), a.annotationType().getSimpleName(), Arrays.toString(paramTypes));
-                    }
-                }
-                else if (a.annotationType().equals(Mod.EventHandler.class))
-                {
-                    if (m.getParameterTypes().length == 1 && modAnnotationTypes.containsKey(m.getParameterTypes()[0]))
+                    if (m.getParameterTypes().length == 1 && modEventTypes.contains(m.getParameterTypes()[0]))
                     {
                         m.setAccessible(true);
                         eventMethods.put((Class<? extends FMLEvent>) m.getParameterTypes()[0],m);

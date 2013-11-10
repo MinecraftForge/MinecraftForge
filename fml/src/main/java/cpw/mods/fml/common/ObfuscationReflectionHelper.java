@@ -71,12 +71,6 @@ public class ObfuscationReflectionHelper
         }
     }
 
-    @Deprecated
-    public static <T, E> void setPrivateValue(Class<? super T> classToAccess, T instance, int fieldIndex, E value)
-    {
-        setPrivateValue(classToAccess, instance, value, fieldIndex);
-    }
-
     public static <T, E> void setPrivateValue(Class<? super T> classToAccess, T instance, E value, int fieldIndex)
     {
         try
@@ -88,12 +82,6 @@ public class ObfuscationReflectionHelper
             FMLLog.log(Level.SEVERE, e, "There was a problem setting field index %d on type %s", fieldIndex, classToAccess.getName());
             throw e;
         }
-    }
-
-    @Deprecated
-    public static <T, E> void setPrivateValue(Class<? super T> classToAccess, T instance, String fieldName, E value)
-    {
-        setPrivateValue(classToAccess, instance, value, fieldName);
     }
 
     public static <T, E> void setPrivateValue(Class<? super T> classToAccess, T instance, E value, String... fieldNames)

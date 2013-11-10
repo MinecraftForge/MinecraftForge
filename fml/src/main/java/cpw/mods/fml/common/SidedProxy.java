@@ -59,13 +59,6 @@ public @interface SidedProxy
      */
     String serverSide() default "";
 
-    @Deprecated
-    /**
-     * Not implemented
-     * The name of a special bukkit plugin class to load and populate
-     */
-    String bukkitSide() default "";
-
     /**
      * The (optional) name of a mod to load this proxy for. This will help ensure correct behaviour when loading a combined
      * scala/java mod package. It is almost never going to be required, unless you ship both Scala and Java {@link Mod} content

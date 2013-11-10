@@ -365,28 +365,4 @@ public class EntityRegistry
         }
         return false;
     }
-
-    /**
-     *
-     * DO NOT USE THIS METHOD
-     *
-     * @param entityClass
-     * @param entityTypeId
-     * @param updateRange
-     * @param updateInterval
-     * @param sendVelocityInfo
-     */
-    @Deprecated
-    public static EntityRegistration registerModLoaderEntity(Object mod, Class<? extends Entity> entityClass, int entityTypeId, int updateRange, int updateInterval,
-            boolean sendVelocityInfo)
-    {
-        String entityName = (String) EntityList.field_75626_c.get(entityClass);
-        if (entityName == null)
-        {
-            throw new IllegalArgumentException(String.format("The ModLoader mod %s has tried to register an entity tracker for a non-existent entity type %s", Loader.instance().activeModContainer().getModId(), entityClass.getCanonicalName()));
-        }
-        instance().doModEntityRegistration(entityClass, entityName, entityTypeId, mod, updateRange, updateInterval, sendVelocityInfo);
-        return instance().entityClassRegistrations.get(entityClass);
-    }
-
 }
