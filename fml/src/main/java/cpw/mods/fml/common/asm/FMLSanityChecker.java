@@ -47,25 +47,6 @@ public class FMLSanityChecker implements IFMLCallHook
     private static final String FMLFINGERPRINT =   "51:0A:FB:4C:AF:A4:A0:F2:F5:CF:C5:0E:B4:CC:3C:30:24:4A:E3:8E".toLowerCase().replace(":", "");
     private static final String FORGEFINGERPRINT = "E3:C3:D5:0C:7C:98:6D:F7:4C:64:5C:0A:C5:46:39:74:1C:90:A5:57".toLowerCase().replace(":", "");
     private static final String MCFINGERPRINT =    "CD:99:95:96:56:F7:53:DC:28:D8:63:B4:67:69:F7:F8:FB:AE:FC:FC".toLowerCase().replace(":", "");
-    static class MLDetectorClassVisitor extends ClassVisitor
-    {
-        private boolean foundMarker = false;
-        private MLDetectorClassVisitor()
-        {
-            super(Opcodes.ASM4);
-        }
-
-        @Override
-        public FieldVisitor visitField(int arg0, String arg1, String arg2, String arg3, Object arg4)
-        {
-            if ("fmlMarker".equals(arg1))
-            {
-                foundMarker = true;
-            }
-            return null;
-        }
-    }
-
     private LaunchClassLoader cl;
     public static File fmlLocation;
 
@@ -191,28 +172,6 @@ public class FMLSanityChecker implements IFMLCallHook
         if (!goodFML)
         {
             FMLRelaunchLog.severe("FML appears to be missing any signature data. This is not a good thing");
-        }
-        byte[] mlClass = cl.getClassBytes("ModLoader");
-        // Only care in obfuscated env
-        if (mlClass == null)
-        {
-            return null;
-        }
-        MLDetectorClassVisitor mlTester = new MLDetectorClassVisitor();
-        ClassReader cr = new ClassReader(mlClass);
-        cr.accept(mlTester, ClassReader.SKIP_CODE);
-        if (!mlTester.foundMarker)
-        {
-            JOptionPane.showMessageDialog(null, "<html>CRITICAL ERROR<br/>" +
-            		"ModLoader was detected in this environment<br/>" +
-                        "ForgeModLoader cannot be installed alongside ModLoader<br/>" +
-                        "All mods should work without ModLoader being installed<br/>" +
-                        "Because ForgeModLoader is 100% compatible with ModLoader<br/>" +
-                        "Re-install Minecraft Forge or Forge ModLoader into a clean<br/>" +
-                        "jar and try again.",
-                        "ForgeModLoader critical error",
-                        JOptionPane.ERROR_MESSAGE);
-            throw new RuntimeException("Invalid ModLoader class detected");
         }
         return null;
     }
