@@ -1,11 +1,6 @@
 package cpw.mods.fml.relauncher;
 
-import java.io.File;
 import java.lang.reflect.Method;
-import java.net.URLClassLoader;
-import java.util.logging.Level;
-
-import com.google.common.base.Throwables;
 
 public class ServerLaunchWrapper {
 

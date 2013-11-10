@@ -16,8 +16,6 @@ import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.objectweb.asm.Type;
-
 import net.minecraft.item.Item;
 
 import com.google.common.base.Strings;

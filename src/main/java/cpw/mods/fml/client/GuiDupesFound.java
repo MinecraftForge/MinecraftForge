@@ -16,11 +16,8 @@ import java.io.File;
 import java.util.Map.Entry;
 
 import net.minecraft.client.gui.GuiErrorScreen;
-
 import cpw.mods.fml.common.DuplicateModsFoundException;
-import cpw.mods.fml.common.MissingModsException;
 import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.versioning.ArtifactVersion;
 
 public class GuiDupesFound extends GuiErrorScreen
 {

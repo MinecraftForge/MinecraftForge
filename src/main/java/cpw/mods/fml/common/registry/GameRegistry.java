@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 
 import net.minecraft.entity.item.EntityItem;
@@ -29,23 +28,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.MapDifference;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
-import com.google.common.collect.Sets.SetView;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ICraftingHandler;
@@ -56,9 +48,8 @@ import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.LoaderState;
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
-import cpw.mods.fml.common.Mod.Block;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
 
 public class GameRegistry
 {
@@ -102,30 +93,6 @@ public class GameRegistry
             fmlRandom.setSeed(chunkSeed);
             generator.generate(fmlRandom, chunkX, chunkZ, world, chunkGenerator, chunkProvider);
         }
-    }
-
-    /**
-     * Internal method for creating an @Block instance
-     * @param container
-     * @param type
-     * @param annotation
-     * @throws Exception
-     */
-    public static Object buildBlock(ModContainer container, Class<?> type, Block annotation) throws Exception
-    {
-        Object o = type.getConstructor(int.class).newInstance(findSpareBlockId());
-        registerBlock((net.minecraft.block.Block) o);
-        return o;
-    }
-
-    /**
-     * Private and not yet working properly
-     *
-     * @return a block id
-     */
-    private static int findSpareBlockId()
-    {
-        return BlockTracker.nextBlockId();
     }
 
     /**
@@ -250,6 +217,7 @@ public class GameRegistry
         CraftingManager.func_77594_a().func_77596_b(output, params);
     }
 
+    @SuppressWarnings("unchecked")
     public static void addRecipe(IRecipe recipe)
     {
         CraftingManager.func_77594_a().func_77592_b().add(recipe);
@@ -276,7 +244,7 @@ public class GameRegistry
     public static void registerTileEntityWithAlternatives(Class<? extends TileEntity> tileEntityClass, String id, String... alternatives)
     {
         TileEntity.func_70306_a(tileEntityClass, id);
-        Map<String,Class> teMappings = ObfuscationReflectionHelper.getPrivateValue(TileEntity.class, null, "field_" + "70326_a", "field_70326_a", "a");
+        Map<String,Class<?>> teMappings = ObfuscationReflectionHelper.getPrivateValue(TileEntity.class, null, "field_" + "70326_a", "field_70326_a", "a");
         for (String s: alternatives)
         {
             if (!teMappings.containsKey(s))

@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -19,6 +19,7 @@ public class ModAnnotationVisitor extends AnnotationVisitor
 {
     private ASMModParser discoverer;
     private boolean array;
+    @SuppressWarnings("unused")
     private String name;
     private boolean isSubAnnotation;
 
@@ -27,7 +28,7 @@ public class ModAnnotationVisitor extends AnnotationVisitor
         super(Opcodes.ASM4);
         this.discoverer = discoverer;
     }
-    
+
     public ModAnnotationVisitor(ASMModParser discoverer, String name)
     {
         this(discoverer);
@@ -47,13 +48,13 @@ public class ModAnnotationVisitor extends AnnotationVisitor
     {
         discoverer.addAnnotationProperty(key, value);
     }
-    
+
     @Override
     public void visitEnum(String name, String desc, String value)
     {
         discoverer.addAnnotationEnumProperty(name, desc, value);
     }
-    
+
     @Override
     public AnnotationVisitor visitArray(String name)
     {
@@ -72,7 +73,7 @@ public class ModAnnotationVisitor extends AnnotationVisitor
         {
             discoverer.endArray();
         }
-        
+
         if (isSubAnnotation)
         {
             discoverer.endSubAnnotation();

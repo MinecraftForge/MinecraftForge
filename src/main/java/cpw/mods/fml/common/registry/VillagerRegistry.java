@@ -87,7 +87,7 @@ public class VillagerRegistry
          * @param p4
          * @param p5
          */
-        Object buildComponent(StructureVillagePieceWeight villagePiece, ComponentVillageStartPiece startPiece, List pieces, Random random, int p1,
+        Object buildComponent(StructureVillagePieceWeight villagePiece, ComponentVillageStartPiece startPiece, @SuppressWarnings("rawtypes") List pieces, Random random, int p1,
                 int p2, int p3, int p4, int p5);
     }
 
@@ -205,8 +205,9 @@ public class VillagerRegistry
         }
     }
 
-    public static void addExtraVillageComponents(ArrayList components, Random random, int i)
+    public static void addExtraVillageComponents(@SuppressWarnings("rawtypes") ArrayList components, Random random, int i)
     {
+        @SuppressWarnings("unchecked")
         List<StructureVillagePieceWeight> parts = components;
         for (IVillageCreationHandler handler : instance().villageCreationHandlers.values())
         {
@@ -214,29 +215,31 @@ public class VillagerRegistry
         }
     }
 
-    public static Object getVillageComponent(StructureVillagePieceWeight villagePiece, ComponentVillageStartPiece startPiece, List pieces, Random random,
+    public static Object getVillageComponent(StructureVillagePieceWeight villagePiece, ComponentVillageStartPiece startPiece, @SuppressWarnings("rawtypes") List pieces, Random random,
             int p1, int p2, int p3, int p4, int p5)
     {
         return instance().villageCreationHandlers.get(villagePiece.field_75090_a).buildComponent(villagePiece, startPiece, pieces, random, p1, p2, p3, p4, p5);
     }
 
 
+    @SuppressWarnings("unchecked")
     public static void addEmeraldBuyRecipe(EntityVillager villager, MerchantRecipeList list, Random random, Item item, float chance, int min, int max)
     {
         if (min > 0 && max > 0)
         {
             EntityVillager.field_70958_bB.put(item.field_77779_bT, new Tuple(min, max));
         }
-        villager.func_70948_a(list, item.func_77612_l(), random, chance);
+        EntityVillager.func_70948_a(list, item.func_77612_l(), random, chance);
     }
 
+    @SuppressWarnings("unchecked")
     public static void addEmeraldSellRecipe(EntityVillager villager, MerchantRecipeList list, Random random, Item item, float chance, int min, int max)
     {
         if (min > 0 && max > 0)
         {
             EntityVillager.field_70960_bC.put(item.field_77779_bT, new Tuple(min, max));
         }
-        villager.func_70949_b(list, item.func_77612_l(), random, chance);
+        EntityVillager.func_70949_b(list, item.func_77612_l(), random, chance);
     }
 
     public static void applyRandomTrade(EntityVillager villager, Random rand)

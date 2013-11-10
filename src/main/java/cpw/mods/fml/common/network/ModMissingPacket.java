@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -47,7 +47,9 @@ public class ModMissingPacket extends FMLPacket
     {
         ByteArrayDataOutput dat = ByteStreams.newDataOutput();
 
+        @SuppressWarnings("unchecked")
         List<String> missing = (List<String>) data[0];
+        @SuppressWarnings("unchecked")
         List<String> badVersion = (List<String>) data[1];
 
         dat.writeInt(missing.size());

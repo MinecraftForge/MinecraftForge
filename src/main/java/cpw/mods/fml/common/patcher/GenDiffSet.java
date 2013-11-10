@@ -3,7 +3,6 @@ package cpw.mods.fml.common.patcher;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.jar.JarEntry;
@@ -11,8 +10,6 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;

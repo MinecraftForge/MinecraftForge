@@ -19,8 +19,6 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.minecraft.launchwrapper.LaunchClassLoader;
-
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -29,7 +27,6 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.ModClassLoader;
 import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.asm.transformers.ModAPITransformer;
 import cpw.mods.fml.relauncher.CoreModManager;
 
 public class ModDiscoverer

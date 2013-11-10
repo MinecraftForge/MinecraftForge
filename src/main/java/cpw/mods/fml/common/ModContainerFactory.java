@@ -20,7 +20,6 @@ import org.objectweb.asm.Type;
 import cpw.mods.fml.common.discovery.ModCandidate;
 import cpw.mods.fml.common.discovery.asm.ASMModParser;
 import cpw.mods.fml.common.discovery.asm.ModAnnotation;
-import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 
 public class ModContainerFactory
 {
@@ -34,8 +33,8 @@ public class ModContainerFactory
         String className = modParser.getASMType().getClassName();
         if (modParser.isBaseMod(container.getRememberedBaseMods()) && modClass.matcher(className).find())
         {
-            FMLLog.fine("Identified a BaseMod type mod %s", className);
-            return new ModLoaderModContainer(className, modSource, modParser.getBaseModProperties());
+            FMLLog.severe("Found a BaseMod type mod %s", className);
+            FMLLog.severe("This will not be loaded and will be ignored. ModLoader mechanisms are no longer available.");
         }
         else if (modClass.matcher(className).find())
         {

@@ -26,11 +26,8 @@ import net.minecraft.launchwrapper.LaunchClassLoader;
 
 import com.google.common.collect.ImmutableList;
 
-import cpw.mods.fml.common.asm.ASMTransformer;
-import cpw.mods.fml.common.asm.transformers.AccessTransformer;
 import cpw.mods.fml.common.asm.transformers.ModAPITransformer;
 import cpw.mods.fml.common.discovery.ASMDataTable;
-import cpw.mods.fml.common.modloader.BaseModProxy;
 
 /**
  * A simple delegating class loader used to load mods into the system
@@ -82,26 +79,6 @@ public class ModClassLoader extends URLClassLoader
     public List<String> getDefaultLibraries()
     {
         return STANDARD_LIBRARIES;
-    }
-
-    public Class<? extends BaseModProxy> loadBaseModClass(String modClazzName) throws Exception
-    {
-        AccessTransformer accessTransformer = null;
-        for (IClassTransformer transformer : mainClassLoader.getTransformers())
-        {
-            if (transformer instanceof AccessTransformer)
-            {
-                accessTransformer = (AccessTransformer) transformer;
-                break;
-            }
-        }
-        if (accessTransformer == null)
-        {
-            FMLLog.log(Level.SEVERE, "No access transformer found");
-            throw new LoaderException();
-        }
-        accessTransformer.ensurePublicAccessFor(modClazzName);
-        return (Class<? extends BaseModProxy>) Class.forName(modClazzName, true, this);
     }
 
     public void clearNegativeCacheFor(Set<String> classList)

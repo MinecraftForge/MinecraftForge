@@ -19,8 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 
-import net.minecraft.src.BaseMod;
-
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
 

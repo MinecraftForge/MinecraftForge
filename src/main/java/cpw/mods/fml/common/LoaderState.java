@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -15,7 +15,6 @@ package cpw.mods.fml.common;
 import com.google.common.base.Throwables;
 
 import cpw.mods.fml.common.event.FMLConstructionEvent;
-import cpw.mods.fml.common.event.FMLEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -50,6 +49,7 @@ public enum LoaderState
 
 
     private Class<? extends FMLStateEvent> eventClass;
+    @SuppressWarnings("unused")
     private String name;
 
     private LoaderState(String name, Class<? extends FMLStateEvent> event)

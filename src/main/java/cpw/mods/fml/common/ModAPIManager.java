@@ -1,9 +1,6 @@
 package cpw.mods.fml.common;
 
 import java.io.File;
-import java.security.acl.Owner;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +22,7 @@ import cpw.mods.fml.common.versioning.VersionParser;
 
 public class ModAPIManager {
     public static final ModAPIManager INSTANCE = new ModAPIManager();
+    @SuppressWarnings("unused")
     private ModAPITransformer transformer;
     private ASMDataTable dataTable;
     private Map<String,APIContainer> apiContainers;

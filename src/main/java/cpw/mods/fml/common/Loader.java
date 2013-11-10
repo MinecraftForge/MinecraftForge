@@ -13,49 +13,36 @@
 package cpw.mods.fml.common;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
 import net.minecraft.crash.CallableMinecraftVersion;
-import net.minecraft.item.ItemStack;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.base.Joiner.MapJoiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.ImmutableListMultimap.Builder;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultiset;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.SetMultimap;
-import com.google.common.collect.Sets;
 import com.google.common.collect.Multiset.Entry;
 import com.google.common.collect.Multisets;
 import com.google.common.collect.Ordering;
-import com.google.common.collect.Sets.SetView;
-import com.google.common.collect.Table;
+import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
 import com.google.common.collect.TreeMultimap;
-import com.google.common.io.Files;
 
 import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.discovery.ModDiscoverer;
@@ -63,7 +50,6 @@ import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLLoadEvent;
 import cpw.mods.fml.common.functions.ArtifactVersionNameFunction;
 import cpw.mods.fml.common.functions.ModIdFunction;
-import cpw.mods.fml.common.modloader.BaseModProxy;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.toposort.ModSorter;
 import cpw.mods.fml.common.toposort.ModSortingException;
@@ -138,14 +124,6 @@ public class Loader
      * The canonical configuration directory
      */
     private File canonicalConfigDir;
-    /**
-     * The canonical minecraft directory
-     */
-    private File canonicalMinecraftDir;
-    /**
-     * The captured error
-     */
-    private Exception capturedError;
     private File canonicalModsDir;
     private LoadController modController;
     private MinecraftDummyContainer minecraft;
@@ -166,6 +144,7 @@ public class Loader
         return instance;
     }
 
+    @SuppressWarnings("unchecked")
     public static void injectData(Object... data)
     {
         major = (String) data[0];
@@ -409,7 +388,6 @@ public class Loader
 
         try
         {
-            canonicalMinecraftDir = minecraftDir.getCanonicalFile();
             canonicalModsPath = modsDir.getCanonicalPath();
             canonicalConfigPath = configDir.getCanonicalPath();
             canonicalConfigDir = configDir.getCanonicalFile();

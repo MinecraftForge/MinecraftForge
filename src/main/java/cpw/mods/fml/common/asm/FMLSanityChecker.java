@@ -12,33 +12,15 @@
 
 package cpw.mods.fml.common.asm;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream.GetField;
-import java.io.StringReader;
-import java.net.JarURLConnection;
-import java.net.URL;
 import java.net.URLDecoder;
-import java.nio.charset.Charset;
 import java.security.CodeSource;
-import java.security.cert.CertPath;
-import java.security.cert.CertPathValidator;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
-import java.security.cert.PKIXCertPathValidatorResult;
-import java.security.cert.PKIXParameters;
-import java.security.cert.TrustAnchor;
-import java.security.cert.X509Certificate;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Locale;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
-import java.util.zip.ZipEntry;
 
 import javax.swing.JOptionPane;
 
@@ -129,7 +111,7 @@ public class FMLSanityChecker implements IFMLCallHook
         int certCount = 0;
         try
         {
-            Class cbr = Class.forName("net.minecraft.client.ClientBrandRetriever",false, cl);
+            Class<?> cbr = Class.forName("net.minecraft.client.ClientBrandRetriever",false, cl);
             codeSource = cbr.getProtectionDomain().getCodeSource();
         }
         catch (Exception e)
@@ -173,7 +155,7 @@ public class FMLSanityChecker implements IFMLCallHook
             {
                 if (mcJarFile != null)
                 {
-                    try 
+                    try
                     {
                         mcJarFile.close();
                     }
