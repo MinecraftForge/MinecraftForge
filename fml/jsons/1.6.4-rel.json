@@ -1,17 +1,17 @@
 {
   "install": {
-    "profileName": "FML",
-    "target":"@minecraft_version@-FML@version@",
-    "path":"cpw.mods:fml:@version@",
-    "version":"FML @version@",
+    "profileName": "@project@",
+    "target":"@minecraft_version@-@project@@version@",
+    "path":"@artifact@",
+    "version":"@project@ @version@",
     "filePath":"@universal_jar@",
-    "welcome":"Welcome to the simple FML installer.",
+    "welcome":"Welcome to the simple @project@ installer.",
     "minecraft":"@minecraft_version@",
     "mirrorList" : "http://files.minecraftforge.net/mirror-brand.list",
     "logo":"/big_logo.png"
   },
   "versionInfo": {
-    "id": "@minecraft_version@-FML@version@",
+    "id": "@minecraft_version@-@project@@version@",
     "time": "@timestamp@",
     "releaseTime": "1960-01-01T00:00:00-0700",
     "type": "release",
@@ -20,7 +20,7 @@
     "minimumLauncherVersion": 4,
     "libraries": [
       {
-        "name": "cpw.mods:fml:@version@",
+        "name": "@artifact@",
         "url": "http://files.minecraftforge.net/maven/"
       },
       {
