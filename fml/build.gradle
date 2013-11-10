@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         mavenCentral()
+        mavenLocal()
         maven {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
@@ -25,6 +26,7 @@ repositories {
 
 minecraft {
     version = '1.6.4'
+    mcpVersion = '8.11'
     fmlDir = projectDir.getAbsolutePath();
     mainClass = 'cpw.mods.fml.relauncher.ServerLaunchWrapper'
     installerVersion = "1.4"
