@@ -108,12 +108,6 @@ public class FMLDeobfuscatingRemapper extends Remapper {
                 }
             }
             classNameBiMap = builder.build();
-            // Special case some mappings for modloader mods
-            mcpBuilder.put("BaseMod","net/minecraft/src/BaseMod");
-            mcpBuilder.put("ModLoader","net/minecraft/src/ModLoader");
-            mcpBuilder.put("EntityRendererProxy","net/minecraft/src/EntityRendererProxy");
-            mcpBuilder.put("MLProp","net/minecraft/src/MLProp");
-            mcpBuilder.put("TradeEntry","net/minecraft/src/TradeEntry");
             mcpNameBiMap = mcpBuilder.build();
         }
         catch (IOException ioe)

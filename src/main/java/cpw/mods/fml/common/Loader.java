@@ -278,20 +278,13 @@ public class Loader
     /**
      * The primary loading code
      *
-     * This is visited during first initialization by Minecraft to scan and load
-     * the mods from all sources 1. The minecraft jar itself (for loading of in
-     * jar mods- I would like to remove this if possible but forge depends on it
-     * at present) 2. The mods directory with expanded subdirs, searching for
-     * mods named mod_*.class 3. The mods directory for zip and jar files,
-     * searching for mod classes named mod_*.class again
      *
      * The found resources are first loaded into the {@link #modClassLoader}
      * (always) then scanned for class resources matching the specification
      * above.
      *
      * If they provide the {@link Mod} annotation, they will be loaded as
-     * "FML mods", which currently is effectively a NO-OP. If they are
-     * determined to be {@link BaseModProxy} subclasses they are loaded as such.
+     * "FML mods"
      *
      * Finally, if they are successfully loaded as classes, they are then added
      * to the available mod list.
