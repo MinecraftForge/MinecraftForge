@@ -12,7 +12,7 @@ buildscript {
     }
 }
 
-import static net.minecraftforge.gradle.dev.FmlDevPlugin.*
+import static net.minecraftforge.gradle.dev.ForgeDevPlugin.*
 
 apply plugin: 'maven'
 apply plugin: 'forgedev'
@@ -33,7 +33,7 @@ minecraft {
 }
 
 group = 'net.minecraftforge'
-version = "1.0.0.1"
+version = getVersionFromJava(getProject(), 'src/main/java/net/minecraftforge/common/ForgeVersion.java')
 
 jenkins {
     job = 'minecraftforge'
