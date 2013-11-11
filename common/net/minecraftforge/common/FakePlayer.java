@@ -4,6 +4,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemInWorldManager;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.stats.StatBase;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
@@ -25,4 +26,6 @@ public class FakePlayer extends EntityPlayerMP
 
     @Override
     public void sendChatToPlayer(ChatMessageComponent chatmessagecomponent){}
+    @Override
+    public void addStat(StatBase par1StatBase, int par2){}
 }
