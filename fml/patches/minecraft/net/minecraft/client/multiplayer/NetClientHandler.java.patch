@@ -64,15 +64,19 @@
          }
      }
  
-@@ -804,6 +814,7 @@
+@@ -804,7 +814,11 @@
  
      public void func_72481_a(Packet3Chat p_72481_1_)
      {
 +        p_72481_1_ = FMLNetworkHandler.handleChatMessage(this, p_72481_1_);
++        if (p_72481_1_ != null)
++        {
          this.field_72563_h.field_71456_v.func_73827_b().func_73765_a(ChatMessageComponent.func_111078_c(p_72481_1_.field_73476_b).func_111068_a(true));
++        }
      }
  
-@@ -1403,6 +1414,11 @@
+     public void func_72524_a(Packet18Animation p_72524_1_)
+@@ -1403,6 +1417,11 @@
  
      public void func_72494_a(Packet131MapData p_72494_1_)
      {
@@ -84,7 +88,7 @@
          if (p_72494_1_.field_73438_a == Item.field_77744_bd.field_77779_bT)
          {
              ItemMap.func_77874_a(p_72494_1_.field_73436_b, this.field_72563_h.field_71441_e).func_76192_a(p_72494_1_.field_73437_c);
-@@ -1514,6 +1530,11 @@
+@@ -1514,6 +1533,11 @@
  
      public void func_72501_a(Packet250CustomPayload p_72501_1_)
      {
@@ -96,7 +100,7 @@
          if ("MC|TrList".equals(p_72501_1_.field_73630_a))
          {
              DataInputStream datainputstream = new DataInputStream(new ByteArrayInputStream(p_72501_1_.field_73629_c));
-@@ -1707,4 +1728,20 @@
+@@ -1707,4 +1731,20 @@
      {
          return this.field_72555_g;
      }
