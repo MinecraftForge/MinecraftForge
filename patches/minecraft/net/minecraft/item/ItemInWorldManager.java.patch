@@ -422,7 +422,7 @@
 +            {
 +                result = Block.blocksList[i1].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10);
 +                // MCPC+ start - if bukkitView is null, create one. Required for Ender Chests since they do not use NetworkRegistry.openRemoteGUI
-+                if (!(thisPlayerMP.openContainer instanceof ContainerPlayer))
++                if (thisPlayerMP != null && !(thisPlayerMP.openContainer instanceof ContainerPlayer))
 +                {
 +                    if (thisPlayerMP.openContainer.getBukkitView() == null)
 +                    {
