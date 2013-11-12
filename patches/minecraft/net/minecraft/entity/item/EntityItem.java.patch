@@ -64,7 +64,7 @@
 +        }
 +        // CraftBukkit end
          this.setEntityItemStack(par8ItemStack);
-+        this.lifespan = (par8ItemStack.getItem() == null ? 6000 : par8ItemStack.getItem().getEntityLifespan(par8ItemStack, par1World));
++        this.lifespan = (par8ItemStack.getItem() == null ? par1World.spigotConfig.itemDespawnRate : par8ItemStack.getItem().getEntityLifespan(par8ItemStack, par1World)); // Spigot
      }
  
      /**
@@ -142,7 +142,7 @@
 +
 +        ItemStack item = getDataWatcher().getWatchableObjectItemStack(10);
 +        
-+        if (!this.worldObj.isRemote && this.age >= lifespan)
++        if (!this.worldObj.isRemote && this.age >= lifespan - 1) // MCPC+ adjust for age being off by one when it is first dropped
 +        {
 +            // CraftBukkit start
 +            if (org.bukkit.craftbukkit.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled())
@@ -153,7 +153,7 @@
 +            // CraftBukkit end
 +            if (item != null)
 +            {   
-+                ItemExpireEvent event = new ItemExpireEvent(this, (item.getItem() == null ? 6000 : item.getItem().getEntityLifespan(item, worldObj)));
++                ItemExpireEvent event = new ItemExpireEvent(this, (item.getItem() == null ? this.worldObj.spigotConfig.itemDespawnRate : item.getItem().getEntityLifespan(item, worldObj))); // Spigot
 +                if (MinecraftForge.EVENT_BUS.post(event))
 +                {
 +                    lifespan += event.extraLife;
