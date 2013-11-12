@@ -324,6 +324,7 @@ public class DimensionManager
                     env = DimensionManager.registerBukkitEnvironment(DimensionManager.getProviderType(provider.getClass()), worldType);
 
             name = provider.getSaveFolder();
+            if (name == null) name = "DIM0";
         }
         // MCPC+ start - add ability to disable dimensions
         boolean enabled = za.co.mcportcentral.MCPCConfig.getBoolean("world-environment-settings." + worldType + ".enabled", true);

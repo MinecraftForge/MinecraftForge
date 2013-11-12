@@ -69,7 +69,7 @@
 +     */
 +    public String getSaveFolder()
 +    {
-+        return (/*dimensionId == 0 ? null : */"DIM" + dimensionId); // MCPC+
++        return (dimensionId == 0 ? null : "DIM" + dimensionId);
 +    }
 +
 +    /**
