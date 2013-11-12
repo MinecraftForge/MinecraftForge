@@ -1,10 +1,10 @@
 {
     "install": {
         "profileName": "Forge",
-        "target": "1.6.4-Forge9.11.1.933",
-        "path": "net.minecraftforge:minecraftforge:9.11.1.933",
-        "version": "Forge 9.11.1.933",
-        "filePath":"minecraftforge-universal-1.6.4-9.11.1.933.jar",
+        "target": "1.6.4-Forge9.11.1.942",
+        "path": "net.minecraftforge:minecraftforge:9.11.1.942",
+        "version": "Forge 9.11.1.942",
+        "filePath":"minecraftforge-universal-1.6.4-9.11.1.942.jar",
         "welcome": "Welcome to the simple Forge installer.",
         "minecraft": "1.6.4",
         "logo": "/big_logo.png"
@@ -14,7 +14,7 @@
         "libraries": [
             {
                 "url": "http://files.minecraftforge.net/maven/",
-                "name": "net.minecraftforge:minecraftforge:9.11.1.933"
+                "name": "net.minecraftforge:minecraftforge:9.11.1.942"
             },
             {
                 "serverreq": true,
