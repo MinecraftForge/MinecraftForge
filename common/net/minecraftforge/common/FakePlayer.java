@@ -28,4 +28,6 @@ public class FakePlayer extends EntityPlayerMP
     public void sendChatToPlayer(ChatMessageComponent chatmessagecomponent){}
     @Override
     public void addStat(StatBase par1StatBase, int par2){}
+    @Override
+    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z){}
 }
