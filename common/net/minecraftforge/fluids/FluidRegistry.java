@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.block.Block;
+import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
 
@@ -25,8 +26,19 @@ public abstract class FluidRegistry
     static BiMap<String, Integer> fluidIDs = HashBiMap.create();
     static BiMap<Block, Fluid> fluidBlocks;
     
-    public static final Fluid WATER = new Fluid("water").setBlockID(Block.waterStill.blockID).setUnlocalizedName(Block.waterStill.getUnlocalizedName());
-    public static final Fluid LAVA = new Fluid("lava").setBlockID(Block.lavaStill.blockID).setLuminosity(15).setDensity(3000).setViscosity(6000).setTemperature(1300).setUnlocalizedName(Block.lavaStill.getUnlocalizedName());
+    public static final Fluid WATER = new Fluid("water") {
+        @Override
+        public String getLocalizedName() {
+            return StatCollector.translateToLocal("tile.water.name");
+        }
+    }.setBlockID(Block.waterStill.blockID).setUnlocalizedName(Block.waterStill.getUnlocalizedName());
+    
+    public static final Fluid LAVA = new Fluid("lava") {
+        @Override
+        public String getLocalizedName() {
+            return StatCollector.translateToLocal("tile.lava.name");
+        }
+    }.setBlockID(Block.lavaStill.blockID).setLuminosity(15).setDensity(3000).setViscosity(6000).setTemperature(1300).setUnlocalizedName(Block.lavaStill.getUnlocalizedName());
 
     public static int renderIdFluid = -1;
 
