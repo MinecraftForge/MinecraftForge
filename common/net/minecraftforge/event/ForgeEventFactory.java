@@ -14,6 +14,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event.Result;
+import net.minecraftforge.event.anvil.AnvilRepairUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
@@ -117,4 +118,11 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(summonEvent);
         return summonEvent;
     }
+
+    public static AnvilRepairUpdateEvent anvilRepairUpdate(ItemStack itemstack1, ItemStack itemstack2, ItemStack outputstack, int baseCost) {
+        AnvilRepairUpdateEvent event = new AnvilRepairUpdateEvent(itemstack1, itemstack2, outputstack, baseCost);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
 }

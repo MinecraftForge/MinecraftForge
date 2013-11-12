@@ -1,6 +1,54 @@
 --- ../src_base/minecraft/net/minecraft/inventory/ContainerRepair.java
 +++ ../src_work/minecraft/net/minecraft/inventory/ContainerRepair.java
-@@ -315,6 +315,11 @@
+@@ -1,9 +1,8 @@
+ package net.minecraft.inventory;
+ 
+-import cpw.mods.fml.relauncher.Side;
+-import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.Iterator;
+ import java.util.Map;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.enchantment.Enchantment;
+ import net.minecraft.enchantment.EnchantmentHelper;
+@@ -13,7 +12,14 @@
+ import net.minecraft.item.ItemEnchantedBook;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.world.World;
++import net.minecraftforge.event.Event.Result;
++import net.minecraftforge.event.ForgeEventFactory;
++import net.minecraftforge.event.anvil.AnvilRepairUpdateEvent;
++
+ import org.apache.commons.lang3.StringUtils;
++
++import cpw.mods.fml.relauncher.Side;
++import cpw.mods.fml.relauncher.SideOnly;
+ 
+ public class ContainerRepair extends Container
+ {
+@@ -112,6 +118,21 @@
+ 
+             if (itemstack2 != null)
+             {
++                AnvilRepairUpdateEvent event = ForgeEventFactory.anvilRepairUpdate(itemstack, itemstack1, itemstack2, k);
++                Result result = event.getResult();
++                if ( result == Result.DENY || event.outputStack == null )
++                {
++                    this.outputSlot.setInventorySlotContents(0, (ItemStack)null);
++                    this.maximumCost = 0;
++                    return;
++                }
++                else if ( result == Result.ALLOW )
++                {
++                    this.outputSlot.setInventorySlotContents(0, (ItemStack)event.outputStack);
++                    this.maximumCost = event.maximumCost;
++                    return;
++                }
++
+                 flag = itemstack2.itemID == Item.enchantedBook.itemID && Item.enchantedBook.func_92110_g(itemstack2).tagCount() > 0;
+ 
+                 if (itemstack1.isItemStackDamageable() && Item.itemsList[itemstack1.itemID].getIsRepairable(itemstack, itemstack2))
+@@ -315,6 +336,11 @@
                  k = Math.max(1, k / 2);
              }
  
@@ -12,7 +60,7 @@
              this.maximumCost = k + i;
  
              if (i <= 0)
-@@ -331,6 +336,7 @@
+@@ -331,6 +357,7 @@
              {
                  itemstack1 = null;
              }
