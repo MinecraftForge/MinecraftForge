@@ -18,6 +18,7 @@ import net.minecraft.item.EnumArmorMaterial;
 import net.minecraft.item.EnumToolMaterial;
 import net.minecraft.util.EnumArt;
 import net.minecraft.util.EnumMovingObjectType;
+import net.minecraft.world.EnumGameType;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.gen.structure.EnumDoor;
 import net.minecraftforge.classloading.FMLForgePlugin;
@@ -42,6 +43,7 @@ public class EnumHelper
         {EnumDoor.class},
         {EnumEnchantmentType.class},
         {EnumEntitySize.class},
+        {EnumGameType.class, int.class, String.class},
         {EnumMobType.class},
         {EnumMovingObjectType.class},
         {EnumSkyBlock.class, int.class},
@@ -80,6 +82,10 @@ public class EnumHelper
     public static EnumEntitySize addEntitySize(String name)
     {
         return addEnum(EnumEntitySize.class, name);
+    }
+    public static EnumGameType addGameType(String name, int id, String displayName)
+    {
+        return addEnum(EnumGameType.class, name, id, displayName);
     }
     public static EnumMobType addMobType(String name)
     {

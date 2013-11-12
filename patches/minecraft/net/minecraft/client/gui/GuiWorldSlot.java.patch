@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/client/gui/GuiWorldSlot.java
++++ ../src_work/minecraft/net/minecraft/client/gui/GuiWorldSlot.java
+@@ -90,6 +90,8 @@
+         {
+             s2 = GuiSelectWorld.func_82314_j(this.parentWorldGui)[saveformatcomparator.getEnumGameType().getID()];
+ 
++            if (s2 == null) { s2 = I18n.getString("selectWorld.gameMode." + saveformatcomparator.getEnumGameType().getName()); }
++            
+             if (saveformatcomparator.isHardcoreModeEnabled())
+             {
+                 s2 = EnumChatFormatting.DARK_RED + I18n.getString("gameMode.hardcore") + EnumChatFormatting.RESET;

@@ -11,6 +11,15 @@
  @SideOnly(Side.CLIENT)
  public class PlayerControllerMP
  {
+@@ -117,7 +121,7 @@
+ 
+     public boolean shouldDrawHUD()
+     {
+-        return this.currentGameType.isSurvivalOrAdventure();
++        return isNotCreative();
+     }
+ 
+     /**
 @@ -125,6 +129,12 @@
       */
      public boolean onPlayerDestroyBlock(int par1, int par2, int par3, int par4)
@@ -79,3 +88,12 @@
              }
  
              return true;
+@@ -487,7 +512,7 @@
+ 
+     public boolean func_78763_f()
+     {
+-        return this.currentGameType.isSurvivalOrAdventure();
++        return isNotCreative();
+     }
+ 
+     /**

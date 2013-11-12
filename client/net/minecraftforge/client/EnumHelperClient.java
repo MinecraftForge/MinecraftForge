@@ -17,9 +17,14 @@ public class EnumHelperClient extends EnumHelper
         {EnumRarity.class, int.class, String.class}
     };
     
+    /**
+     * To be removed in 1.7
+     * @see EnumHelper#addGameType(String, int, String)
+     */
+    @Deprecated
     public static EnumGameType addGameType(String name, int id, String displayName)
     {
-        return addEnum(EnumGameType.class, name, id, displayName);
+        return EnumHelper.addGameType(name, id, displayName);
     }
     
     public static EnumOptions addOptions(String name, String langName, boolean isSlider, boolean isToggle)
