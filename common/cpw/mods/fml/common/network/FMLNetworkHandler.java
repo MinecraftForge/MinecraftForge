@@ -351,9 +351,13 @@ public class FMLNetworkHandler
         {
             NetworkRegistry.instance().openRemoteGui(mc, (EntityPlayerMP) player, modGuiId, world, x, y, z);
         }
-        else
+        else if (FMLCommonHandler.instance().getSide().equals(Side.CLIENT))
         {
             NetworkRegistry.instance().openLocalGui(mc, player, modGuiId, world, x, y, z);
+        }
+        else
+        {
+            FMLLog.fine("Invalid attempt to open a local GUI on a dedicated server. This is likely a bug. GUIID: %s,%d", mc.getModId(), modGuiId);
         }
     }
 
