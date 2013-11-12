@@ -42,7 +42,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -268,4 +275,277 @@
+@@ -268,4 +275,290 @@
       * Returns the dimension's name, e.g. "The End", "Nether", or "Overworld".
       */
      public abstract String getDimensionName();
@@ -50,6 +50,7 @@
 +    /*======================================= Forge Start =========================================*/
 +    private IRenderHandler skyRenderer = null;
 +    private IRenderHandler cloudRenderer = null;
++    private IRenderHandler weatherRenderer = null;
 +    
 +    /**
 +     * Sets the providers current dimension ID, used in default getSaveFolder()
@@ -145,6 +146,18 @@
 +    public void setCloudRenderer(IRenderHandler renderer)
 +    {
 +        cloudRenderer = renderer;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public IRenderHandler getWeatherRenderer()
++    {
++        return weatherRenderer;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public void setWeatherRenderer(IRenderHandler renderer)
++    {
++    	weatherRenderer = renderer;
 +    }
 +
 +    public ChunkCoordinates getRandomizedSpawnPoint()
