@@ -49,6 +49,7 @@ import cpw.mods.fml.common.network.FMLPacket.Type;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
+import cpw.mods.fml.relauncher.Side;
 
 public class FMLNetworkHandler
 {
