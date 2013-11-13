@@ -49,6 +49,7 @@ import cpw.mods.fml.common.network.FMLPacket.Type;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
+import cpw.mods.fml.relauncher.Side;
 
 public class FMLNetworkHandler
 {
@@ -351,9 +352,13 @@ public class FMLNetworkHandler
         {
             NetworkRegistry.instance().openRemoteGui(mc, (EntityPlayerMP) player, modGuiId, world, x, y, z);
         }
-        else
+        else if (FMLCommonHandler.instance().getSide().equals(Side.CLIENT))
         {
             NetworkRegistry.instance().openLocalGui(mc, player, modGuiId, world, x, y, z);
+        }
+        else
+        {
+            FMLLog.fine("Invalid attempt to open a local GUI on a dedicated server. This is likely a bug. GUIID: %s,%d", mc.getModId(), modGuiId);
         }
     }
 
