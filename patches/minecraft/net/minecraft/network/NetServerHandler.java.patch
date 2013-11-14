@@ -127,7 +127,7 @@
              {
                  this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, worldserver, itemstack, i, j, k, l, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
              }
-@@ -695,6 +733,8 @@
+@@ -698,6 +736,8 @@
                      }
  
                      ChatMessageComponent chatmessagecomponent = ChatMessageComponent.createFromTranslationWithSubstitutions("chat.type.text", new Object[] {this.playerEntity.getTranslatedEntityName(), s});
@@ -136,7 +136,7 @@
                      this.mcServer.getConfigurationManager().func_110459_a(chatmessagecomponent, false);
                  }
  
-@@ -849,7 +889,7 @@
+@@ -852,7 +892,7 @@
                      return;
                  }
  
