@@ -183,6 +183,11 @@ public class ConfigCategory implements Map<String, Property>
             }
         }
 
+        if (properties.size() > 0 && children.size() > 0)
+        {
+            out.write(NEW_LINE);
+        }
+
         for (ConfigCategory child : children)
         {
             child.write(out, indent + 1);
