@@ -46,8 +46,8 @@ decompiled version or the original source code, and to modify it.
 The user has the rights to derive code from Minecraft Forge, that is to say to
 write code that either extends Minecraft Forge class and interfaces, 
 instantiate the objects declared or calls the functions. This code is known as
-"derived" code, and can be licensed with conditions different from Minecraft
-Forge.
+"derived" code or "Mods", and can be licensed with conditions different from Minecraft
+Forge. 
 
 
 5. Distribution rights
