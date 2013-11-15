@@ -200,7 +200,7 @@ public abstract class PotionEffectType {
         return "PotionEffectType[" + id + ", " + getName() + "]";
     }
 
-    private static final PotionEffectType[] byId = new PotionEffectType[128]; // MCPC - change byId size to 128 to make room for custom potions
+    private static final Map<Integer, PotionEffectType> byId = new HashMap<Integer, PotionEffectType>(); // MCPC+ change underlying storage to map
     private static final Map<String, PotionEffectType> byName = new HashMap<String, PotionEffectType>();
     // will break on updates.
     private static boolean acceptingNew = true;
@@ -214,9 +214,9 @@ public abstract class PotionEffectType {
      */
     @Deprecated
     public static PotionEffectType getById(int id) {
-        if (id >= byId.length || id < 0)
+        if (id >= byId.size() || id < 0)
             return null;
-        return byId[id];
+        return byId.get(id);
     }
 
     /**
@@ -246,7 +246,7 @@ public abstract class PotionEffectType {
                     "No longer accepting new potion effect types (can only be done by the server implementation)");
         }
         MCPC+ end */
-        byId[type.id] = type;
+        byId.put(type.id, type); // MCPC+ change underlying storage to map
         byName.put(type.getName().toLowerCase(), type);
     }
 
@@ -263,6 +263,7 @@ public abstract class PotionEffectType {
      * @return Array of types.
      */
     public static PotionEffectType[] values() {
-        return byId.clone();
+        PotionEffectType[] result = new PotionEffectType[byId.size()]; // MCPC+ change underlying storage to map
+        return byId.values().toArray(result); // MCPC+ change underlying storage to map
     }
 }
