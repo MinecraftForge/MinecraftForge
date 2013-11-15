@@ -461,6 +461,7 @@
                             <shadedPattern>org.bukkit.craftbukkit.v${minecraft_version}</shadedPattern>
                             <excludes>
                                 <exclude>org.bukkit.craftbukkit.Main*</exclude>
+                                <exclude>org.bukkit.craftbukkit.lib*</exclude>
                             </excludes>
                         </relocation>
                     </relocations>
