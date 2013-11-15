@@ -4,14 +4,14 @@
     <groupId>mcpc</groupId>
     <artifactId>mcpc-plus</artifactId>
     <packaging>jar</packaging>
-    <version>1.6.4-R2.0-SNAPSHOT</version>
+    <version>1.6.4-R2.1-SNAPSHOT</version>
     <name>mcpc-plus</name>
     <url>http://www.mcportcentral.co.za/</url>
     <properties>
         <mcpc.basedir>${project.basedir}/../..</mcpc.basedir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <bukkit.version>${project.version}</bukkit.version>
-        <filename.version>1.6.4-R2.0</filename.version>
+        <filename.version>1.6.4-R2.1</filename.version>
         <api.version>unknown</api.version>
         <minecraft.version>1.6.4</minecraft.version>
         <minecraft_version>1_6_R3</minecraft_version>
@@ -271,7 +271,7 @@
         <dependency>
             <groupId>net.sf.trove4j</groupId>
             <artifactId>trove4j</artifactId>
-            <version>3.0.2</version>
+            <version>3.0.3</version>
             <scope>compile</scope>
         </dependency>
         <!-- jline and jansi versions must be kept in sync -->
@@ -455,10 +455,6 @@
                         <relocation>
                             <pattern>org.gjt</pattern>
                             <shadedPattern>org.bukkit.craftbukkit.libs.org.gjt</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>com.google.gson</pattern>
-                            <shadedPattern>org.bukkit.craftbukkit.libs.com.google.gson</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>org.bukkit.craftbukkit</pattern>
