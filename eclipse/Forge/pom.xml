@@ -16,8 +16,8 @@
         <minecraft.version>1.6.4</minecraft.version>
         <minecraft_version>1_6_R3</minecraft_version>
         <minecraft_server_url_download>http://s3.amazonaws.com/Minecraft.Download/versions/1.6.4/minecraft_server.1.6.4.jar</minecraft_server_url_download>
-        <forge.build>942</forge.build>
-        <forge.version>9.11.1.942</forge.version>
+        <forge.build>952</forge.build>
+        <forge.version>9.11.1.952</forge.version>
         <forge.remapped.revision>R1-MCPC</forge.remapped.revision>
         <fml.at>${mcpc.basedir}/resources/fml_at.cfg</fml.at>
         <forge.at>${mcpc.basedir}/resources/forge_at.cfg</forge.at>
@@ -461,7 +461,7 @@
                             <shadedPattern>org.bukkit.craftbukkit.v${minecraft_version}</shadedPattern>
                             <excludes>
                                 <exclude>org.bukkit.craftbukkit.Main*</exclude>
-                                <exclude>org.bukkit.craftbukkit.lib*</exclude>
+                                <exclude>org.bukkit.craftbukkit.libs.*</exclude>
                             </excludes>
                         </relocation>
                     </relocations>
@@ -511,6 +511,30 @@
                 <artifactId>specialsource-maven-plugin</artifactId>
                 <version>1.1-SNAPSHOT</version>
                 <executions>
+                <execution>
+                    <id>install-remapped-forge</id>
+                    <phase>initialize</phase>
+                    <goals>
+                        <goal>install-remapped-file</goal>
+                    </goals>
+                    <configuration>
+                        <groupId>net.minecraftforge</groupId>
+                        <artifactId>minecraft-forge</artifactId>
+                        <version>${forge.version}-${forge.remapped.revision}</version>
+                        <inJars>
+                            <param>${minecraft_server_url_download}</param>
+                            <!-- <param>http://assets.minecraft.net/${minecraft_version}/minecraft.jar</param> -->
+                            <param>http://files.minecraftforge.net/minecraftforge/minecraftforge-universal-${minecraft.version}-${forge.version}.jar</param>
+                        </inJars>
+                        <srgIn>${mcp.mappings}</srgIn>
+                        <accessTransformers>
+                            <param>${fml.at}</param>
+                            <param>${forge.at}</param>
+                            <!-- magic -->
+                            <param>pattern:*-synthetic **</param>
+                        </accessTransformers>
+                    </configuration>
+                </execution>
                     <execution>
                         <id>install-launchwrapper</id>
                         <phase>initialize</phase>

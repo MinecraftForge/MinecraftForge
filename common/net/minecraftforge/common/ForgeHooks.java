@@ -7,10 +7,12 @@ import java.util.HashSet;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
@@ -18,7 +20,10 @@ import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.network.NetServerHandler;
+import net.minecraft.network.packet.Packet53BlockChange;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.DamageSource;
@@ -27,6 +32,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.WeightedRandomItem;
+import net.minecraft.world.EnumGameType;
 import net.minecraft.world.World;
 import net.minecraftforge.event.Event;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -41,6 +47,7 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
+import net.minecraftforge.event.world.BlockEvent;
 
 public class ForgeHooks
 {
@@ -445,5 +452,50 @@ public class ForgeHooks
         PlayerOpenContainerEvent event = new PlayerOpenContainerEvent(player, openContainer);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult() == Event.Result.DEFAULT ? event.canInteractWith : event.getResult() == Event.Result.ALLOW ? true : false;
+    }
+    
+    public static BlockEvent.BreakEvent onBlockBreakEvent(World world, EnumGameType gameType, EntityPlayerMP entityPlayer, int x, int y, int z)
+    {
+        // Logic from tryHarvestBlock for pre-canceling the event
+        boolean preCancelEvent = false;
+        if (gameType.isAdventure() && !entityPlayer.isCurrentToolAdventureModeExempt(x, y, z))
+        {
+            preCancelEvent = true;
+        }
+        else if (gameType.isCreative() && entityPlayer.getHeldItem() != null && entityPlayer.getHeldItem().getItem() instanceof ItemSword)
+        {
+            preCancelEvent = true;
+        }
+
+        // Tell client the block is gone immediately then process events
+        if (world.getBlockTileEntity(x, y, z) == null)
+        {
+            Packet53BlockChange packet = new Packet53BlockChange(x, y, z, world);
+            packet.type = 0;
+            packet.metadata = 0;
+            entityPlayer.playerNetServerHandler.sendPacketToPlayer(packet);
+        }
+
+        // Post the block break event
+        Block block = Block.blocksList[world.getBlockId(x, y, z)];
+        int blockMetadata = world.getBlockMetadata(x, y, z);
+        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(x, y, z, world, block, blockMetadata, entityPlayer);
+        event.setCanceled(preCancelEvent);
+        MinecraftForge.EVENT_BUS.post(event);
+
+        // Handle if the event is canceled
+        if (event.isCanceled())
+        {
+            // Let the client know the block still exists
+            entityPlayer.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(x, y, z, world));
+            
+            // Update any tile entity data for this block
+            TileEntity tileentity = world.getBlockTileEntity(x, y, z);
+            if (tileentity != null)
+            {
+                entityPlayer.playerNetServerHandler.sendPacketToPlayer(tileentity.getDescriptionPacket());
+            }
+        }
+        return event;
     }
 }

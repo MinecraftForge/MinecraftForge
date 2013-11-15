@@ -1,5 +1,96 @@
 Changelog:
 
+Build 1.6.4-9.11.1.952
+	cpw
+		    Updated FML:
+		    MinecraftForge/FML@23baf3a8ce58cb8306189401a60647957ccbb4c2 Actually fix the nethandler code
+		Update patches
+
+Build 1.6.4-9.11.1.951
+	cpw
+		Updated FML:
+		MinecraftForge/FML@b7f34629c3c47b92ee89d72b0dc935b4997cb009 Don't try and open GUIs on the server.
+	cpw
+		Updated FML:
+		MinecraftForge/FML@da72640c7ef1f44c49f7f592fbdd193622a30b40 Way to go, missing import. *sigh*
+
+Build 1.6.4-9.11.1.949
+	cpw
+		Updated FML:
+		MinecraftForge/FML@6af42bc656dfb98972d034363352affc9e777805 Add in null protection for client/server sides of handleChat
+	cpw: Don't send openGui commands from the fakeplayer. Fixes thaumcraft and probably others.
+
+Build 1.6.4-9.11.1.948
+	CovertJaguar: Fix Water/Lava Fluid Localization
+
+Build 1.6.4-9.11.1.947
+	LexManos: Noop out FakePlayer.addStat.
+
+Build 1.6.4-9.11.1.946
+	cpw
+		Updated FML:
+		MinecraftForge/FML@3d25b4e793c59a9131a441d6c7a2d80cac9cd701 Add in the ability to strip interface references for specific interfaces - this is probably mostly useful for scala scenarios where sythetic methods are generated and is not a substitute for using Optional.Method where appropriate. Closes #300
+
+Build 1.6.4-9.11.1.945
+	onibait: Add block break events based on @bloodmc's initial 1.5.2 Pull Request
+	onibait: Add block break events based on @bloodmc's initial 1.5.2 Pull Request
+	onibait: Fixed formatting
+	onibait
+		Cleaned up patches to BlockOre and BlockRedstoneOre
+		Fixed trailing whitespace (it bugs me too)
+
+Build 1.6.4-9.11.1.944
+	cpw
+		Updated FML:
+		MinecraftForge/FML@f4532410ec1dbf43ce15dfa78d07e5f7be408b08 Change a couple of warnings, as a prelude to 1.7- preinit is now required for all GameRegistry activity, and every item and block REQUIRES registration.
+
+Build 1.6.4-9.11.1.943
+	cpw
+		Updated FML:
+		MinecraftForge/FML@8f87021b0f1ae5b277ad4d1891761b7a7ae1ab71 Fix derp with custom properties. They work now!
+
+Build 1.6.4-9.11.1.942
+	cpw
+		Updated FML:
+		MinecraftForge/FML@bc57ff9e83803d804e9d5374d76273fcd68611f4 Fix recursive API dependency resolution. Allows nested APIs, such as BuildCraft's
+
+Build 1.6.4-9.11.1.941
+	cpw
+		Updated FML:
+		MinecraftForge/FML@de8ab934d8ae960ebc0dede16218ca1e9e488ebc Fix up duplicate entries
+
+Build 1.6.4-9.11.1.940
+	cpw
+		Updated FML:
+		MinecraftForge/FML@81fe1c9682234297443402a54e4b852ef49d0ba8 Add in an API marker for API type packages. This does several things: 1. Packages marked as API will generate a new "modid" (the provides) that can be depended on. 2. Packages marked as API will be searched systemwide, and anything declaring that package (even without the API marker) will get an implicit dependency on the API package. 3. The API package itself will get a soft dependency on the "owner" package.
+
+Build 1.6.4-9.11.1.939
+	LexManos: Add new recipe sorter that is called after all mods are initalized. This is disabled by default in 1.6 to not break current worlds as it may change machine's recipy outputs. Will enable by default in 1.7. Players may enable it in the forge config.
+
+Build 1.6.4-9.11.1.938
+	xcompwiz
+		Adds a Check to prevent Biome Replacement
+		Splits the BiomeGenBase constructor to create one which takes a flag
+		that indicates whether to insert the biome object into the biomeList
+		array.  The standard constructor calls the new one with the default of
+		true.  This allows biome wrapper-objects to exist.
+
+Build 1.6.4-9.11.1.937
+	cpw
+		Updated FML:
+		MinecraftForge/FML@dac7f590eabb326c4467dbc829b4aae1e4be2779 Modify ordering of networkmod registration and mod instantiation. This fixes VersionCheckHandler logging an incorrect failure message due to NPE.
+		MinecraftForge/FML@f0dc530b2833a1c89673208fe296dba5520671c1 Fix up documentation of VersionCheckHandler - it only ever accepted a String and only works on the NetworkMod annotated class
+		MinecraftForge/FML@243a21a353e6b7717f64008776928c7132110ddf Wrapping coremods as tweakers. Part 1.
+		MinecraftForge/FML@58a299aabcfadb4139f126a2d46b5247bede4185 Attempt to inject coremods as tweakers, so both can share a dependency ordering
+	LexManos: Format strings properly in MC's internal logger. Fixes resource pack case warnings.
+
+Build 1.6.4-9.11.1.935
+	LexManos: Updated FML: MinecraftForge/FML@bf54d4d66799f2e58944095826d0722ed0120b1f Make each mod's EventBus log a child of it's main logger.
+	LexManos: Fix null pointer exception in BiomeDictionary causing the ChunkManager's config to not load/save.
+
+Build 1.6.4-9.11.1.934
+	LexManos: Add wildcard versions of OreDict replacements, Closes #827
+
 Build 1.6.4-9.11.1.933
 	cpw
 		Updated FML:

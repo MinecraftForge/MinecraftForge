@@ -20,7 +20,7 @@
          File mcDir = (File)data.get("mcLocation");
          fmlLocation = (File)data.get("coremodLocation");
 -        ClassPatchManager.INSTANCE.setup(FMLLaunchHandler.side());
-+        //ClassPatchManager.INSTANCE.setup(FMLLaunchHandler.side());
++        //ClassPatchManager.INSTANCE.setup(FMLLaunchHandler.side()); // MCPC+ - disabled since we do not use binpatches
          FMLDeobfuscatingRemapper.INSTANCE.setup(mcDir, cl, (String) data.get("deobfuscationFileName"));
      }
  

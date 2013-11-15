@@ -27,21 +27,19 @@
  
  import com.google.common.base.Function;
  import com.google.common.collect.ArrayListMultimap;
-@@ -68,15 +75,20 @@
+@@ -68,6 +75,10 @@
      private static List<ICraftingHandler> craftingHandlers = Lists.newArrayList();
      private static List<IPickupNotifier> pickupHandlers = Lists.newArrayList();
      private static List<IPlayerTracker> playerTrackers = Lists.newArrayList();
--
--    /**
--     * Register a world generator - something that inserts new block types into the world
--     *
--     * @param generator
--     */
 +    // MCPC+ start
 +    private static Map<String, Boolean> configWorldGenCache = new HashMap<String, Boolean>();
 +    private static Map<String, String> worldGenMap = new HashMap<String, String>();
 +    // MCPC+ end
-+
+ 
+     /**
+      * Register a world generator - something that inserts new block types into the world
+@@ -76,7 +87,13 @@
+      */
      public static void registerWorldGenerator(IWorldGenerator generator)
      {
 +        // MCPC+ start - mod id's are not available during generateWorld so we must capture them here
@@ -54,7 +52,7 @@
      }
  
      /**
-@@ -97,11 +109,28 @@
+@@ -97,11 +114,28 @@
          long zSeed = fmlRandom.nextLong() >> 2 + 1L;
          long chunkSeed = (xSeed * chunkX + zSeed * chunkZ) ^ worldSeed;
  
@@ -86,7 +84,7 @@
      }
  
      /**
-@@ -148,6 +177,7 @@
+@@ -148,6 +182,7 @@
       */
      public static void registerItem(net.minecraft.item.Item item, String name, String modId)
      {
@@ -94,7 +92,7 @@
          GameData.setName(item, name, modId);
      }
  
-@@ -235,6 +265,33 @@
+@@ -235,6 +270,33 @@
          blockRegistry.put(Loader.instance().activeModContainer(), (BlockProxy) block);
      }
  
@@ -128,7 +126,7 @@
      public static void addRecipe(ItemStack output, Object... params)
      {
          addShapedRecipe(output, params);
-@@ -381,6 +438,11 @@
+@@ -381,6 +443,11 @@
              try
              {
                  tracker.onPlayerChangedDimension(player);

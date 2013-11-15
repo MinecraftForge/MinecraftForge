@@ -498,8 +498,9 @@ public class ForgeChunkManager
             }
             pendingEntities.clear();
             // send callbacks
-            for (String modId : loadedTickets.keySet())
+            for (Object key : loadedTickets.keySet()) // MCPC+ - temp fix for compile issue
             {
+            	String modId = (String)key;
                 LoadingCallback loadingCallback = callbacks.get(modId);
                 if (loadingCallback == null)
                 {
