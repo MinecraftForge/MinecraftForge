@@ -17,38 +17,29 @@
  import net.minecraft.network.packet.Packet13PlayerLookMove;
  import net.minecraft.network.packet.Packet14BlockDig;
  import net.minecraft.network.packet.Packet15Place;
-@@ -618,6 +621,10 @@
+@@ -618,6 +621,12 @@
  
      public void func_72481_a(Packet3Chat p_72481_1_)
      {
 +        p_72481_1_ = FMLNetworkHandler.handleChatMessage(this, p_72481_1_);
-+        
-+        if (p_72481_1_ != null)
++
++        if (p_72481_1_ == null || p_72481_1_.field_73476_b == null)
 +        {
++            return;
++        }
          if (this.field_72574_e.func_71126_v() == 2)
          {
              this.func_72567_b(new Packet3Chat(ChatMessageComponent.func_111077_e("chat.cannotSend").func_111059_a(EnumChatFormatting.RED)));
-@@ -635,6 +642,8 @@
+@@ -633,8 +642,6 @@
+             }
+             else
              {
-                 s = StringUtils.normalizeSpace(s);
- 
-+                if (s != null)
-+                {
+-                s = StringUtils.normalizeSpace(s);
+-
                  for (int i = 0; i < s.length(); ++i)
                  {
                      if (!ChatAllowedCharacters.func_71566_a(s.charAt(i)))
-@@ -666,7 +675,9 @@
-                 {
-                     this.func_72565_c("disconnect.spam");
-                 }
--            }
-+                }
-+            }
-+        }
-         }
-     }
- 
-@@ -1013,6 +1024,11 @@
+@@ -1013,6 +1020,11 @@
      }
  
      public void func_72501_a(Packet250CustomPayload p_72501_1_)
@@ -60,11 +51,11 @@
      {
          DataInputStream datainputstream;
          ItemStack itemstack;
-@@ -1182,4 +1198,18 @@
+@@ -1182,4 +1194,18 @@
      {
          return this.field_72576_c;
      }
-+    
++
 +
 +    @Override
 +    public void func_72494_a(Packet131MapData p_72494_1_)
