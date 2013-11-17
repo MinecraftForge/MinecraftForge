@@ -18,6 +18,7 @@ apply plugin: 'maven'
 apply plugin: 'forgedev'
 
 repositories {
+    mavenLocal()
     flatDir {
         name "fileRepo"
         dirs "repo"
@@ -103,6 +104,7 @@ uploadArchives {
         } else {
             logger.info('Publishing to repo folder')
             
+            add project.repositories.mavenLocal()
             mavenDeployer {
                 repository(url: 'file://localhost/' + project.file('repo').getAbsolutePath())
             }
