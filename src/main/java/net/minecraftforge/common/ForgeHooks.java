@@ -22,6 +22,7 @@ import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.network.NetServerHandler;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet53BlockChange;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -487,7 +488,11 @@ public class ForgeHooks
             TileEntity tileentity = world.getBlockTileEntity(x, y, z);
             if (tileentity != null)
             {
-                entityPlayer.playerNetServerHandler.sendPacketToPlayer(tileentity.getDescriptionPacket());
+                Packet pkt = tileentity.getDescriptionPacket();
+                if (pkt != null)
+                {
+                    entityPlayer.playerNetServerHandler.sendPacketToPlayer(pkt);
+                }
             }
         }
         return event;

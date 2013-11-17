@@ -13,11 +13,16 @@
  public class EntityPlayerMP extends EntityPlayer implements ICrafting
  {
      private String translator = "en_US";
-@@ -165,18 +171,10 @@
+@@ -164,19 +170,14 @@
+         super(par2World, par3Str);
          par4ItemInWorldManager.thisPlayerMP = this;
          this.theItemInWorldManager = par4ItemInWorldManager;
-         this.renderDistance = par1MinecraftServer.getConfigurationManager().getViewDistance();
+-        this.renderDistance = par1MinecraftServer.getConfigurationManager().getViewDistance();
 -        ChunkCoordinates chunkcoordinates = par2World.getSpawnPoint();
++        if (par1MinecraftServer == null) //ToDo: Remove this in 1.7, Fake players shouldn't be used purely client side.
++            this.renderDistance = 0;
++        else
++            this.renderDistance = par1MinecraftServer.getConfigurationManager().getViewDistance();
 +        ChunkCoordinates chunkcoordinates = par2World.provider.getRandomizedSpawnPoint();
          int i = chunkcoordinates.posX;
          int j = chunkcoordinates.posZ;
@@ -33,7 +38,7 @@
  
          this.mcServer = par1MinecraftServer;
          this.stepHeight = 0.0F;
-@@ -240,11 +238,6 @@
+@@ -240,11 +241,6 @@
          this.yOffset = 0.0F;
      }
  
@@ -45,7 +50,7 @@
      /**
       * Called to update the entity's position/logic.
       */
-@@ -254,7 +247,7 @@
+@@ -254,7 +250,7 @@
          --this.initialInvulnerability;
          this.openContainer.detectAndSendChanges();
  
@@ -54,7 +59,7 @@
          {
              this.closeScreen();
              this.openContainer = this.inventoryContainer;
-@@ -290,7 +283,10 @@
+@@ -290,7 +286,10 @@
                  if (chunkcoordintpair != null && this.worldObj.blockExists(chunkcoordintpair.chunkXPos << 4, 0, chunkcoordintpair.chunkZPos << 4))
                  {
                      arraylist.add(this.worldObj.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos));
@@ -66,7 +71,7 @@
                  }
              }
  
-@@ -311,6 +307,7 @@
+@@ -311,6 +310,7 @@
                  {
                      Chunk chunk = (Chunk)iterator2.next();
                      this.getServerForPlayer().getEntityTracker().func_85172_a(this, chunk);
@@ -74,7 +79,7 @@
                  }
              }
          }
-@@ -383,11 +380,25 @@
+@@ -383,11 +383,25 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -100,7 +105,7 @@
          }
  
          Collection collection = this.worldObj.getScoreboard().func_96520_a(ScoreObjectiveCriteria.deathCount);
-@@ -1054,4 +1065,16 @@
+@@ -1054,4 +1068,16 @@
      {
          this.field_143005_bX = MinecraftServer.getSystemTimeMillis();
      }
