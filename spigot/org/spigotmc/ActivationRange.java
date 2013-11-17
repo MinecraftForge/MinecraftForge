@@ -2,6 +2,7 @@ package org.spigotmc;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.entity.Entity;
@@ -27,8 +28,10 @@ import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.util.MathHelper;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
+
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.SpigotTimings;
+import net.minecraft.world.ChunkCoordIntPair; // MCPC+
 
 public class ActivationRange
 {
@@ -264,7 +267,12 @@ public class ActivationRange
     public static boolean checkIfActive(Entity entity)
     {
         SpigotTimings.checkIfActiveTimer.startTiming();
-        boolean isActive = entity.activatedTick >= MinecraftServer.currentTick || entity.defaultActivationState;
+        // MCPC+ start - check if entity is in forced chunk and if so, set to active
+        int i = MathHelper.floor_double(entity.posX);
+        int j = MathHelper.floor_double(entity.posZ);
+        boolean isForced = entity.worldObj.getPersistentChunks().containsKey(new ChunkCoordIntPair(i >> 4, j >> 4));
+        boolean isActive = entity.activatedTick >= MinecraftServer.currentTick || entity.defaultActivationState || isForced;
+        // MCPC+ end
 
         // Should this entity tick?
         if ( !isActive )
