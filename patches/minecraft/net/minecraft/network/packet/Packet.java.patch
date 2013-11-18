@@ -37,7 +37,30 @@
      }
  
      /**
-@@ -169,10 +183,22 @@
+@@ -146,14 +160,20 @@
+ 
+             if (par2 && !serverPacketIdList.contains(Integer.valueOf(j)) || !par2 && !clientPacketIdList.contains(Integer.valueOf(j)))
+             {
+-                throw new IOException("Bad packet id " + j);
++            	// MCPC+ start - remove unneeded console spam
++                //throw new IOException("Bad packet id " + j);
++            	return null;
++            	// MCPC+ end
+             }
+ 
+             packet = getNewPacket(par0ILogAgent, j);
+ 
+             if (packet == null)
+             {
+-                throw new IOException("Bad packet id " + j);
++            	// MCPC+ start - remove unneeded console spam
++                //throw new IOException("Bad packet id " + j);
++            	return null;
++            	// MCPC+ end
+             }
+ 
+             packet.field_98193_m = par0ILogAgent;
+@@ -169,10 +189,22 @@
          }
          catch (EOFException eofexception)
          {
@@ -62,7 +85,7 @@
          PacketCount.countPacket(j, (long)packet.getPacketSize());
          ++receivedID;
          receivedSize += (long)packet.getPacketSize();
-@@ -278,7 +304,7 @@
+@@ -278,7 +310,7 @@
       */
      public boolean canProcessAsync()
      {
@@ -71,7 +94,7 @@
      }
  
      public String toString()
-@@ -301,6 +327,15 @@
+@@ -301,6 +333,15 @@
              short short2 = par0DataInput.readShort();
              itemstack = new ItemStack(short1, b0, short2);
              itemstack.stackTagCompound = readNBTTagCompound(par0DataInput);
@@ -87,7 +110,7 @@
          }
  
          return itemstack;
-@@ -311,7 +346,7 @@
+@@ -311,7 +352,7 @@
       */
      public static void writeItemStack(ItemStack par0ItemStack, DataOutput par1DataOutput) throws IOException
      {
