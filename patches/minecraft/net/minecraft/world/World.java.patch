@@ -1897,7 +1897,7 @@
          }
          else
          {
-@@ -3624,8 +4450,64 @@
+@@ -3624,8 +4450,65 @@
                  block = null;
              }
  
@@ -1920,7 +1920,8 @@
 +                EntityPlayer player = (EntityPlayer)par7Entity;
 +                ItemStack itemstack = (player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem() : null);
 +                NBTTagCompound savedCompound = null;
-+                if (itemstack != null && itemstack.getTagCompound() != null)
++                // workaround for MFR DSU's
++                if (itemstack != null && itemstack.getTagCompound() != null && (itemstack.getUnlocalizedName()).contains("deepstorageunit"))
 +                {
 +                    savedCompound = itemstack.getTagCompound(); // save current itemstack NBT
 +                    itemstack.setTagCompound(new NBTTagCompound()); // dont use any itemstack NBT in our simulation, fixes MFR DSU dupe
@@ -1964,7 +1965,7 @@
      }
  
      public PathEntity getPathEntityToEntity(Entity par1Entity, Entity par2Entity, float par3, boolean par4, boolean par5, boolean par6, boolean par7)
-@@ -3744,14 +4626,20 @@
+@@ -3744,14 +4627,20 @@
       */
      public int getIndirectPowerLevelTo(int par1, int par2, int par3, int par4)
      {
@@ -1988,7 +1989,7 @@
          }
      }
  
-@@ -3807,6 +4695,12 @@
+@@ -3807,6 +4696,12 @@
          for (int i = 0; i < this.playerEntities.size(); ++i)
          {
              EntityPlayer entityplayer1 = (EntityPlayer)this.playerEntities.get(i);
@@ -2001,7 +2002,7 @@
              double d5 = entityplayer1.getDistanceSq(par1, par3, par5);
  
              if ((par7 < 0.0D || d5 < par7 * par7) && (d4 == -1.0D || d5 < d4))
-@@ -3838,6 +4732,12 @@
+@@ -3838,6 +4733,12 @@
          for (int i = 0; i < this.playerEntities.size(); ++i)
          {
              EntityPlayer entityplayer1 = (EntityPlayer)this.playerEntities.get(i);
@@ -2014,7 +2015,7 @@
  
              if (!entityplayer1.capabilities.disableDamage && entityplayer1.isEntityAlive())
              {
-@@ -3914,7 +4814,7 @@
+@@ -3914,7 +4815,7 @@
       */
      public long getSeed()
      {
@@ -2023,7 +2024,7 @@
      }
  
      public long getTotalWorldTime()
-@@ -3924,7 +4824,7 @@
+@@ -3924,7 +4825,7 @@
  
      public long getWorldTime()
      {
@@ -2032,7 +2033,7 @@
      }
  
      /**
-@@ -3932,7 +4832,7 @@
+@@ -3932,7 +4833,7 @@
       */
      public void setWorldTime(long par1)
      {
@@ -2041,7 +2042,7 @@
      }
  
      /**
-@@ -3940,13 +4840,13 @@
+@@ -3940,13 +4841,13 @@
       */
      public ChunkCoordinates getSpawnPoint()
      {
@@ -2057,7 +2058,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -3970,7 +4870,10 @@
+@@ -3970,7 +4871,10 @@
  
          if (!this.loadedEntityList.contains(par1Entity))
          {
@@ -2069,7 +2070,7 @@
          }
      }
  
-@@ -3978,6 +4881,11 @@
+@@ -3978,6 +4882,11 @@
       * Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
@@ -2081,7 +2082,7 @@
      {
          return true;
      }
-@@ -4036,6 +4944,18 @@
+@@ -4036,6 +4945,18 @@
       */
      public void updateAllPlayersSleepingFlag() {}
  
@@ -2100,7 +2101,7 @@
      public float getWeightedThunderStrength(float par1)
      {
          return (this.prevThunderingStrength + (this.thunderingStrength - this.prevThunderingStrength) * par1) * this.getRainStrength(par1);
-@@ -4098,8 +5018,7 @@
+@@ -4098,8 +5019,7 @@
       */
      public boolean isBlockHighHumidity(int par1, int par2, int par3)
      {
@@ -2110,7 +2111,7 @@
      }
  
      /**
-@@ -4174,7 +5093,7 @@
+@@ -4174,7 +5094,7 @@
       */
      public int getHeight()
      {
@@ -2119,7 +2120,7 @@
      }
  
      /**
-@@ -4182,7 +5101,7 @@
+@@ -4182,7 +5102,7 @@
       */
      public int getActualHeight()
      {
@@ -2128,7 +2129,7 @@
      }
  
      public IUpdatePlayerListBox getMinecartSoundUpdater(EntityMinecart par1EntityMinecart)
-@@ -4225,7 +5144,7 @@
+@@ -4225,7 +5145,7 @@
       */
      public double getHorizon()
      {
@@ -2137,7 +2138,7 @@
      }
  
      /**
-@@ -4294,30 +5213,28 @@
+@@ -4294,30 +5214,28 @@
  
      public void func_96440_m(int par1, int par2, int par3, int par4)
      {
@@ -2189,7 +2190,7 @@
                      }
                  }
              }
-@@ -4363,4 +5280,119 @@
+@@ -4363,4 +5281,119 @@
  
          return MathHelper.clamp_float(f, 0.0F, flag ? 1.5F : 1.0F);
      }
