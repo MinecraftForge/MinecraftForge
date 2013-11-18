@@ -145,13 +145,13 @@
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
 -                if (this.canDespawn() && d3 > 16384.0D)
-+                if (d3 > 16384.0D)   // CraftBukkit - remove isTypeNotPersistent() check
++                if (this.canDespawn() && d3 > 16384.0D) // MCPC+ keep logic for despawn check
                  {
                      this.setDead();
                  }
  
 -                if (this.entityAge > 600 && this.rand.nextInt(800) == 0 && d3 > 1024.0D && this.canDespawn())
-+                if (this.entityAge > 600 && this.rand.nextInt(800) == 0 && d3 > 1024.0D)   // CraftBukkit - remove isTypeNotPersistent() check
++                if (this.entityAge > 600 && this.rand.nextInt(800) == 0 && d3 > 1024.0D && this.canDespawn()) // MCPC+ keep logic for despawn check
                  {
                      this.setDead();
                  }
