@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemInWorldManager;
 import net.minecraft.network.packet.Packet204ClientInfo;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.StatBase;
 import net.minecraft.util.ChatMessageComponent;
@@ -45,4 +46,6 @@ public class FakePlayer extends EntityPlayerMP
     public void travelToDimension(int dim){ return; }
     @Override
     public void updateClientInfo(Packet204ClientInfo pkt){ return; }
+    @Override
+    protected void onNewPotionEffect(PotionEffect potionEffect){ return; }
 }
