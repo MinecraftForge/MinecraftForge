@@ -79,7 +79,7 @@
              }
              else
              {
-@@ -187,18 +198,26 @@
+@@ -187,19 +198,29 @@
  
      public void completeConnection(String s)
      {
@@ -88,28 +88,37 @@
          {
              this.raiseErrorAndDisconnect(s);
          }
-+
-+        // CraftBukkit start
-+        EntityPlayerMP entityplayermp = this.mcServer.getConfigurationManager().attemptLogin(this, this.clientUsername, this.hostname);
-+
-+        if (entityplayermp == null)
-+        {
-+            return;
-+            // CraftBukkit end
-+        }
-         else
-         {
+-        else
+-        {
 -            EntityPlayerMP entityplayermp = this.mcServer.getConfigurationManager().createPlayerForUser(this.clientUsername);
-+            entityplayermp = this.mcServer.getConfigurationManager().processLogin(entityplayermp); // CraftBukkit - this.h -> s // MCPC+ - reuse variable
- 
-             if (entityplayermp != null)
-             {
+-
+-            if (entityplayermp != null)
+-            {
 -                this.mcServer.getConfigurationManager().initializeConnectionToPlayer(this.myTCPConnection, entityplayermp);
-+                this.mcServer.getConfigurationManager().initializeConnectionToPlayer((INetworkManager) this.myTCPConnection, entityplayermp);
-             }
+-            }
++        else 
++        {
++	        // CraftBukkit start
++	        EntityPlayerMP entityplayermp = this.mcServer.getConfigurationManager().attemptLogin(this, this.clientUsername, this.hostname);
++	
++	        if (entityplayermp == null)
++	        {
++	            return;
++	            // CraftBukkit end
++	        }
++	        else
++	        {
++	            entityplayermp = this.mcServer.getConfigurationManager().processLogin(entityplayermp); // CraftBukkit - this.h -> s // MCPC+ - reuse variable
++	
++	            if (entityplayermp != null)
++	            {
++	                this.mcServer.getConfigurationManager().initializeConnectionToPlayer((INetworkManager) this.myTCPConnection, entityplayermp);
++	            }
++	        }
          }
  
-@@ -216,40 +235,52 @@
+         this.connectionComplete = true;
+@@ -216,40 +237,52 @@
       */
      public void handleServerPing(Packet254ServerPing par1Packet254ServerPing)
      {
@@ -175,7 +184,7 @@
              }
  
              this.myTCPConnection.addToSendQueue(new Packet255KickDisconnect(s));
-@@ -332,11 +363,24 @@
+@@ -332,11 +365,24 @@
          return par0NetLoginHandler.field_72544_i = par1;
      }
      
