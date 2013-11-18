@@ -9,5 +9,5 @@
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="cpw.mods.fml.relauncher.ServerLaunchWrapper"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="Minecraft"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xincgc -Xmx1024M -Xms1024M"/>
-<stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:Minecraft/jars}"/>
+<stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc}"/>
 </launchConfiguration>
