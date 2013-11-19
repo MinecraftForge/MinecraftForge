@@ -71,21 +71,20 @@
      private boolean readPacket()
      {
          boolean flag = false;
-+        if (!isRunning) return false; // MCPC+ sanity check
++        //if (!isRunning) return false; // MCPC+ sanity check
  
          try
          {
-@@ -378,7 +380,8 @@
+@@ -378,7 +380,7 @@
       */
      private void onNetworkError(Exception par1Exception)
      {
 -        par1Exception.printStackTrace();
-+        MinecraftServer.getServer().logInfo("Network error from " + this.networkSocket.getInetAddress()); // MCPC+ add IP info
-+        par1Exception.printStackTrace(); // CraftBukkit - Remove console spam
++        //par1Exception.printStackTrace(); // CraftBukkit - Remove console spam
          this.networkShutdown("disconnect.genericReason", new Object[] {"Internal exception: " + par1Exception.toString()});
      }
  
-@@ -436,6 +439,7 @@
+@@ -436,6 +438,7 @@
      {
          if (this.sendQueueByteLength > 2097152)
          {
@@ -93,7 +92,7 @@
              this.networkShutdown("disconnect.overflow", new Object[0]);
          }
  
-@@ -453,14 +457,18 @@
+@@ -453,14 +456,18 @@
  
          int i = 1000;
  
@@ -120,7 +119,7 @@
          }
  
          this.wakeThreads();
-@@ -593,4 +601,9 @@
+@@ -593,4 +600,9 @@
      {
          return par0TcpConnection.writeThread;
      }
