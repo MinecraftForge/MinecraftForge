@@ -70,9 +70,6 @@ public class MCPCConfig
             tileEntityPlaceLogging = getBoolean("logging.warn-place-no-tileentity", true);
             fakePlayerLogin = getBoolean("fake-players.do-login", false);
             remapPluginFile = getBoolean("plugin-settings.default.remap-plugin-file", false);
-            if (loadChunkOnRequest && !disableWarnings) {
-                Bukkit.getLogger().severe("This version of MCPC+ handles chunk loading better if load-chunk-on-request is set to false. Please consider changing this value in your bukkit.yml");
-            }
             readConfig( MCPCConfig.class, null );
         }
     }
