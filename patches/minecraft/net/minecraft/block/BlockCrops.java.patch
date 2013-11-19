@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/BlockCrops.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockCrops.java
+--- ../src-base/minecraft/net/minecraft/block/BlockCrops.java
++++ ../src-work/minecraft/net/minecraft/block/BlockCrops.java
 @@ -2,6 +2,7 @@
  
  import cpw.mods.fml.relauncher.Side;
@@ -34,31 +34,28 @@
      public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
      {
          super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, 0);
--
--        if (!par1World.isRemote)
--        {
--            if (par5 >= 7)
 +    }
-+
+ 
+-        if (!par1World.isRemote)
 +    @Override 
 +    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
 +    {
 +        ArrayList<ItemStack> ret = super.getBlockDropped(world, x, y, z, metadata, fortune);
 +
 +        if (metadata >= 7)
-+        {
+         {
+-            if (par5 >= 7)
 +            for (int n = 0; n < 3 + fortune; n++)
              {
 -                int j1 = 3 + par7;
 -
 -                for (int k1 = 0; k1 < j1; ++k1)
--                {
++                if (world.rand.nextInt(15) <= metadata)
+                 {
 -                    if (par1World.rand.nextInt(15) <= par5)
 -                    {
 -                        this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(this.getSeedItem(), 1, 0));
 -                    }
-+                if (world.rand.nextInt(15) <= metadata)
-+                {
 +                    ret.add(new ItemStack(this.getSeedItem(), 1, 0));
                  }
              }

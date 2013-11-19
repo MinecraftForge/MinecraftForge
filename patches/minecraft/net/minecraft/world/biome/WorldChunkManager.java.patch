@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/biome/WorldChunkManager.java
-+++ ../src_work/minecraft/net/minecraft/world/biome/WorldChunkManager.java
+--- ../src-base/minecraft/net/minecraft/world/biome/WorldChunkManager.java
++++ ../src-work/minecraft/net/minecraft/world/biome/WorldChunkManager.java
 @@ -3,6 +3,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;

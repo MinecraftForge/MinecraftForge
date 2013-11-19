@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/Minecraft.java
-+++ ../src_work/minecraft/net/minecraft/client/Minecraft.java
+--- ../src-base/minecraft/net/minecraft/client/Minecraft.java
++++ ../src-work/minecraft/net/minecraft/client/Minecraft.java
 @@ -137,6 +137,16 @@
  
  import com.google.common.collect.MapDifference;
@@ -56,12 +56,10 @@
          this.statFileWriter.syncStats();
  
          if (par1GuiScreen == null && this.theWorld == null)
-@@ -694,6 +699,20 @@
-         else if (par1GuiScreen == null && this.thePlayer.getHealth() <= 0.0F)
-         {
+@@ -696,6 +701,20 @@
              par1GuiScreen = new GuiGameOver();
-+        }
-+
+         }
+ 
 +        GuiScreen old = this.currentScreen;
 +        GuiOpenEvent event = new GuiOpenEvent(par1GuiScreen);
 +        
@@ -74,9 +72,11 @@
 +        if (old != null && par1GuiScreen != old)
 +        {
 +            old.onGuiClosed();
-         }
- 
++        }
++
          if (par1GuiScreen instanceof GuiMainMenu)
+         {
+             this.gameSettings.showDebugInfo = false;
 @@ -1301,7 +1320,7 @@
  
                  if (this.thePlayer.isCurrentToolAdventureModeExempt(j, k, l))
@@ -155,7 +155,7 @@
      }
  
      /**
-@@ -2237,107 +2277,12 @@
+@@ -2237,108 +2277,13 @@
          if (this.objectMouseOver != null)
          {
              boolean flag = this.thePlayer.capabilities.isCreativeMode;
@@ -165,7 +165,8 @@
              int k;
  
 -            if (this.objectMouseOver.typeOfHit == EnumMovingObjectType.TILE)
--            {
++            if (!ForgeHooks.onPickBlock(this.objectMouseOver, this.thePlayer, this.theWorld))
+             {
 -                k = this.objectMouseOver.blockX;
 -                int l = this.objectMouseOver.blockY;
 -                int i1 = this.objectMouseOver.blockZ;
@@ -186,14 +187,15 @@
 -                flag1 = Item.itemsList[j].getHasSubtypes();
 -                int j1 = j < 256 && !Block.blocksList[block.blockID].isFlowerPot() ? j : block.blockID;
 -                i = Block.blocksList[j1].getDamageValue(this.theWorld, k, l, i1);
--            }
++                return;
+             }
 -            else
 -            {
 -                if (this.objectMouseOver.typeOfHit != EnumMovingObjectType.ENTITY || this.objectMouseOver.entityHit == null || !flag)
 -                {
 -                    return;
 -                }
--
+ 
 -                if (this.objectMouseOver.entityHit instanceof EntityPainting)
 -                {
 -                    j = Item.painting.itemID;
@@ -260,13 +262,10 @@
 -            }
 -
 -            this.thePlayer.inventory.setCurrentItem(j, i, flag1, flag);
-+            if (!ForgeHooks.onPickBlock(this.objectMouseOver, this.thePlayer, this.theWorld))
-+            {
-+                return;
-+            }
- 
+-
              if (flag)
              {
+                 k = this.thePlayer.inventoryContainer.inventorySlots.size() - 9 + this.thePlayer.inventory.currentItem;
 @@ -2420,11 +2365,18 @@
          par1PlayerUsageSnooper.addData("gl_max_texture_size", Integer.valueOf(getGLMaximumTextureSize()));
      }

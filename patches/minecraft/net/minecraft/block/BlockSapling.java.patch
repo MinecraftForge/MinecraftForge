@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/BlockSapling.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockSapling.java
+--- ../src-base/minecraft/net/minecraft/block/BlockSapling.java
++++ ../src-work/minecraft/net/minecraft/block/BlockSapling.java
 @@ -16,6 +16,8 @@
  import net.minecraft.world.gen.feature.WorldGenTrees;
  import net.minecraft.world.gen.feature.WorldGenerator;

@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/item/ItemSeeds.java
-+++ ../src_work/minecraft/net/minecraft/item/ItemSeeds.java
+--- ../src-base/minecraft/net/minecraft/item/ItemSeeds.java
++++ ../src-work/minecraft/net/minecraft/item/ItemSeeds.java
 @@ -1,10 +1,15 @@
  package net.minecraft.item;
  

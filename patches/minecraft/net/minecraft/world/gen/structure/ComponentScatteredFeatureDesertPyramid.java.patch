@@ -1,15 +1,15 @@
---- ../src_base/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeatureDesertPyramid.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeatureDesertPyramid.java
-@@ -7,6 +7,9 @@
- import net.minecraft.util.Direction;
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeatureDesertPyramid.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeatureDesertPyramid.java
+@@ -8,6 +8,9 @@
  import net.minecraft.util.WeightedRandomChestContent;
  import net.minecraft.world.World;
-+
+ 
 +import net.minecraftforge.common.ChestGenHooks;
 +import static net.minecraftforge.common.ChestGenHooks.*;
- 
++
  public class ComponentScatteredFeatureDesertPyramid extends ComponentScatteredFeature
  {
+     private boolean[] field_74940_h = new boolean[4];
 @@ -236,13 +239,14 @@
          this.placeBlockAtCurrentPosition(par1World, Block.sandStone.blockID, 1, 10, -10, 13, par3StructureBoundingBox);
          this.placeBlockAtCurrentPosition(par1World, Block.sandStone.blockID, 2, 10, -11, 13, par3StructureBoundingBox);

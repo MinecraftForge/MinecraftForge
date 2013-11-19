@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/BlockLeaves.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockLeaves.java
+--- ../src-base/minecraft/net/minecraft/block/BlockLeaves.java
++++ ../src-work/minecraft/net/minecraft/block/BlockLeaves.java
 @@ -2,6 +2,8 @@
  
  import cpw.mods.fml.relauncher.Side;

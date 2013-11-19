@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/renderer/entity/RenderSnowMan.java
-+++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RenderSnowMan.java
+--- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderSnowMan.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderSnowMan.java
 @@ -8,9 +8,14 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityLivingBase;

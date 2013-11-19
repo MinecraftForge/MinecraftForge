@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/particle/EntityDiggingFX.java
-+++ ../src_work/minecraft/net/minecraft/client/particle/EntityDiggingFX.java
+--- ../src-base/minecraft/net/minecraft/client/particle/EntityDiggingFX.java
++++ ../src-work/minecraft/net/minecraft/client/particle/EntityDiggingFX.java
 @@ -10,15 +10,22 @@
  public class EntityDiggingFX extends EntityFX
  {

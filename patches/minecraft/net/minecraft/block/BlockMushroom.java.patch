@@ -1,14 +1,14 @@
---- ../src_base/minecraft/net/minecraft/block/BlockMushroom.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockMushroom.java
-@@ -3,6 +3,8 @@
- import java.util.Random;
+--- ../src-base/minecraft/net/minecraft/block/BlockMushroom.java
++++ ../src-work/minecraft/net/minecraft/block/BlockMushroom.java
+@@ -4,6 +4,8 @@
  import net.minecraft.world.World;
  import net.minecraft.world.gen.feature.WorldGenBigMushroom;
-+
-+import net.minecraftforge.common.ForgeDirection;
  
++import net.minecraftforge.common.ForgeDirection;
++
  public class BlockMushroom extends BlockFlower
  {
+     protected BlockMushroom(int par1)
 @@ -96,7 +98,9 @@
          if (par3 >= 0 && par3 < 256)
          {

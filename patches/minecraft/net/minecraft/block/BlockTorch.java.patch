@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/BlockTorch.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockTorch.java
+--- ../src-base/minecraft/net/minecraft/block/BlockTorch.java
++++ ../src-work/minecraft/net/minecraft/block/BlockTorch.java
 @@ -10,6 +10,9 @@
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
@@ -88,36 +88,24 @@
              boolean flag = false;
  
 -            if (!par1World.isBlockNormalCubeDefault(par2 - 1, par3, par4, true) && i1 == 1)
--            {
--                flag = true;
--            }
--
--            if (!par1World.isBlockNormalCubeDefault(par2 + 1, par3, par4, true) && i1 == 2)
--            {
--                flag = true;
--            }
--
--            if (!par1World.isBlockNormalCubeDefault(par2, par3, par4 - 1, true) && i1 == 3)
--            {
--                flag = true;
--            }
--
--            if (!par1World.isBlockNormalCubeDefault(par2, par3, par4 + 1, true) && i1 == 4)
 +            if (!par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST, true) && i1 == 1)
-+            {
-+                flag = true;
-+            }
-+
+             {
+                 flag = true;
+             }
+ 
+-            if (!par1World.isBlockNormalCubeDefault(par2 + 1, par3, par4, true) && i1 == 2)
 +            if (!par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST, true) && i1 == 2)
-+            {
-+                flag = true;
-+            }
-+
+             {
+                 flag = true;
+             }
+ 
+-            if (!par1World.isBlockNormalCubeDefault(par2, par3, par4 - 1, true) && i1 == 3)
 +            if (!par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH, true) && i1 == 3)
-+            {
-+                flag = true;
-+            }
-+
+             {
+                 flag = true;
+             }
+ 
+-            if (!par1World.isBlockNormalCubeDefault(par2, par3, par4 + 1, true) && i1 == 4)
 +            if (!par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH, true) && i1 == 4)
              {
                  flag = true;

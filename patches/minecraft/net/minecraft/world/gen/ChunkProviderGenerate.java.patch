@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/gen/ChunkProviderGenerate.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/ChunkProviderGenerate.java
+--- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderGenerate.java
++++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderGenerate.java
 @@ -20,6 +20,12 @@
  import net.minecraft.world.gen.structure.MapGenStronghold;
  import net.minecraft.world.gen.structure.MapGenVillage;
@@ -13,11 +13,10 @@
  public class ChunkProviderGenerate implements IChunkProvider
  {
      /** RNG. */
-@@ -91,6 +97,15 @@
-      */
+@@ -92,6 +98,15 @@
      float[] parabolicField;
      int[][] field_73219_j = new int[32][32];
-+
+ 
 +    {
 +        caveGenerator = TerrainGen.getModdedMapGen(caveGenerator, CAVE);
 +        strongholdGenerator = (MapGenStronghold) TerrainGen.getModdedMapGen(strongholdGenerator, STRONGHOLD);
@@ -26,9 +25,10 @@
 +        scatteredFeatureGenerator = (MapGenScatteredFeature) TerrainGen.getModdedMapGen(scatteredFeatureGenerator, SCATTERED_FEATURE);
 +        ravineGenerator = TerrainGen.getModdedMapGen(ravineGenerator, RAVINE);
 +    }
- 
++
      public ChunkProviderGenerate(World par1World, long par2, boolean par4)
      {
+         this.worldObj = par1World;
 @@ -104,6 +119,16 @@
          this.noiseGen5 = new NoiseGeneratorOctaves(this.rand, 10);
          this.noiseGen6 = new NoiseGeneratorOctaves(this.rand, 16);
@@ -117,12 +117,12 @@
          {
              for (l1 = 0; l1 < 16; ++l1)
              {
-@@ -554,6 +593,8 @@
-                 }
+@@ -555,6 +594,8 @@
              }
          }
-+
-+        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(par1IChunkProvider, worldObj, rand, par2, par3, flag));
  
++        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(par1IChunkProvider, worldObj, rand, par2, par3, flag));
++
          BlockSand.fallInstantly = false;
      }
+ 

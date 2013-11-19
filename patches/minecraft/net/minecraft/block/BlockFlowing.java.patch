@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/BlockFlowing.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockFlowing.java
+--- ../src-base/minecraft/net/minecraft/block/BlockFlowing.java
++++ ../src-work/minecraft/net/minecraft/block/BlockFlowing.java
 @@ -206,7 +206,7 @@
                  {
                      this.triggerLavaMixEffects(par1World, par2, par3, par4);

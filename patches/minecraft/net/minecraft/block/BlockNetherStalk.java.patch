@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/BlockNetherStalk.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockNetherStalk.java
+--- ../src-base/minecraft/net/minecraft/block/BlockNetherStalk.java
++++ ../src-work/minecraft/net/minecraft/block/BlockNetherStalk.java
 @@ -2,6 +2,8 @@
  
  import cpw.mods.fml.relauncher.Side;

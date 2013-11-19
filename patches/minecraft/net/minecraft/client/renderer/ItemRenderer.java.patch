@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/renderer/ItemRenderer.java
-+++ ../src_work/minecraft/net/minecraft/client/renderer/ItemRenderer.java
+--- ../src-base/minecraft/net/minecraft/client/renderer/ItemRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/ItemRenderer.java
 @@ -16,6 +16,8 @@
  import net.minecraft.entity.EntityLivingBase;
  import net.minecraft.item.EnumAction;
@@ -23,7 +23,7 @@
  @SideOnly(Side.CLIENT)
  public class ItemRenderer
  {
-@@ -54,15 +63,32 @@
+@@ -54,16 +63,33 @@
          this.mapItemRenderer = new MapItemRenderer(par1Minecraft.gameSettings, par1Minecraft.getTextureManager());
      }
  
@@ -44,7 +44,7 @@
 -        if (par2ItemStack.getItemSpriteNumber() == 0 && par2ItemStack.itemID < Block.blocksList.length && Block.blocksList[par2ItemStack.itemID] != null && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
 +        Block block = null;
 +        if (par2ItemStack.getItem() instanceof ItemBlock && par2ItemStack.itemID < Block.blocksList.length)
-+        {
+         {
 +            block = Block.blocksList[par2ItemStack.itemID];
 +        }
 +
@@ -55,9 +55,10 @@
 +            ForgeHooksClient.renderEquippedItem(type, customRenderer, renderBlocksInstance, par1EntityLivingBase, par2ItemStack);
 +        }
 +        else if (block != null && par2ItemStack.getItemSpriteNumber() == 0 && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
-         {
++        {
              texturemanager.bindTexture(texturemanager.getResourceLocation(0));
              this.renderBlocksInstance.renderBlockAsItem(Block.blocksList[par2ItemStack.itemID], par2ItemStack.getItemDamage(), 1.0F);
+         }
 @@ -94,7 +120,7 @@
              GL11.glTranslatef(-0.9375F, -0.0625F, 0.0F);
              renderItemIn2D(tessellator, f1, f2, f, f3, icon.getIconWidth(), icon.getIconHeight(), 0.0625F);
@@ -76,32 +77,31 @@
          {
              GL11.glPushMatrix();
              f12 = 0.8F;
-@@ -333,11 +359,20 @@
+@@ -333,12 +359,21 @@
              tessellator.addVertexWithUV((double)(128 + b0), (double)(0 - b0), 0.0D, 1.0D, 0.0D);
              tessellator.addVertexWithUV((double)(0 - b0), (double)(0 - b0), 0.0D, 0.0D, 0.0D);
              tessellator.draw();
 -            MapData mapdata = Item.map.getMapData(itemstack, this.mc.theWorld);
--
+ 
 -            if (mapdata != null)
--            {
--                this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.getTextureManager(), mapdata);
-+
 +            IItemRenderer custom = MinecraftForgeClient.getItemRenderer(itemstack, FIRST_PERSON_MAP);
 +            MapData mapdata = ((ItemMap)itemstack.getItem()).getMapData(itemstack, this.mc.theWorld);
 +
 +            if (custom == null)
-+            {
+             {
+-                this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.getTextureManager(), mapdata);
 +                if (mapdata != null)
 +                {
 +                    this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.getTextureManager(), mapdata);
 +                }
-+            }
+             }
 +            else
 +            {
 +                custom.renderItem(FIRST_PERSON_MAP, itemstack, mc.thePlayer, mc.getTextureManager(), mapdata);
-             }
++            }
  
              GL11.glPopMatrix();
+         }
 @@ -439,17 +474,20 @@
  
              if (itemstack.getItem().requiresMultipleRenderPasses())

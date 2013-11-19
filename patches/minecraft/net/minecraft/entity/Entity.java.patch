@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/entity/Entity.java
-+++ ../src_work/minecraft/net/minecraft/entity/Entity.java
+--- ../src-base/minecraft/net/minecraft/entity/Entity.java
++++ ../src-work/minecraft/net/minecraft/entity/Entity.java
 @@ -1,10 +1,15 @@
  package net.minecraft.entity;
  
@@ -49,7 +49,7 @@
  
  public abstract class Entity
  {
-@@ -218,6 +234,13 @@
+@@ -218,7 +234,14 @@
      private boolean invulnerable;
      private UUID entityUniqueID;
      public EnumEntitySize myEntitySize;
@@ -58,11 +58,12 @@
 +    public boolean captureDrops = false;
 +    public ArrayList<EntityItem> capturedDrops = new ArrayList<EntityItem>();
 +    private UUID persistentID;
-+
-+    private HashMap<String, IExtendedEntityProperties> extendedProperties;
  
++    private HashMap<String, IExtendedEntityProperties> extendedProperties;
++
      public Entity(World par1World)
      {
+         this.entityId = nextEntityID++;
 @@ -245,6 +268,15 @@
          this.dataWatcher.addObject(0, Byte.valueOf((byte)0));
          this.dataWatcher.addObject(1, Short.valueOf((short)300));
@@ -84,13 +85,12 @@
          int l = this.worldObj.getBlockId(i, j, k);
  
 -        if (l != 0 && Block.blocksList[l].blockMaterial == par1Material)
--        {
++        Block block = Block.blocksList[l];
++        if (block != null && block.blockMaterial == par1Material)
+         {
 -            float f = BlockFluid.getFluidHeightPercent(this.worldObj.getBlockMetadata(i, j, k)) - 0.11111111F;
 -            float f1 = (float)(j + 1) - f;
 -            return d0 < (double)f1;
-+        Block block = Block.blocksList[l];
-+        if (block != null && block.blockMaterial == par1Material)
-+        {
 +            double filled = block.getFilledPercentage(worldObj, i, j, k);
 +            if (filled < 0)
 +            {

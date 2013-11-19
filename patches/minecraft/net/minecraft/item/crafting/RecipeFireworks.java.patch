@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/item/crafting/RecipeFireworks.java
-+++ ../src_work/minecraft/net/minecraft/item/crafting/RecipeFireworks.java
+--- ../src-base/minecraft/net/minecraft/item/crafting/RecipeFireworks.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/RecipeFireworks.java
 @@ -91,9 +91,9 @@
              {
                  this.field_92102_a = new ItemStack(Item.firework);
@@ -16,10 +16,8 @@
                      nbttagcompound1.setByte("Flight", (byte)j);
                      nbttagcompound.setTag("Fireworks", nbttagcompound1);
 -                    this.field_92102_a.setTagCompound(nbttagcompound);
--                }
--
-+                }
-+
+                 }
+ 
 +                this.field_92102_a.setTagCompound(nbttagcompound);
                  return true;
              }

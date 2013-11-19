@@ -1,15 +1,15 @@
---- ../src_base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -6,6 +6,9 @@
- import java.util.Iterator;
+--- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
++++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
+@@ -7,6 +7,9 @@
  import java.util.List;
  import java.util.Set;
-+
+ 
 +import net.minecraftforge.common.DimensionManager;
 +import net.minecraftforge.common.ForgeChunkManager;
- 
++
  import cpw.mods.fml.common.registry.GameRegistry;
  import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
 @@ -66,7 +69,7 @@
       */
      public void unloadChunksIfNotNearSpawn(int par1, int par2)

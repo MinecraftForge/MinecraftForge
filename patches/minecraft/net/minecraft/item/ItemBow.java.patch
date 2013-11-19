@@ -1,16 +1,16 @@
---- ../src_base/minecraft/net/minecraft/item/ItemBow.java
-+++ ../src_work/minecraft/net/minecraft/item/ItemBow.java
-@@ -10,6 +10,10 @@
- import net.minecraft.entity.projectile.EntityArrow;
+--- ../src-base/minecraft/net/minecraft/item/ItemBow.java
++++ ../src-work/minecraft/net/minecraft/item/ItemBow.java
+@@ -11,6 +11,10 @@
  import net.minecraft.util.Icon;
  import net.minecraft.world.World;
-+
+ 
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 +import net.minecraftforge.event.entity.player.ArrowNockEvent;
- 
++
  public class ItemBow extends Item
  {
+     public static final String[] bowPullIconNameArray = new String[] {"pulling_0", "pulling_1", "pulling_2"};
 @@ -30,11 +34,20 @@
       */
      public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, int par4)

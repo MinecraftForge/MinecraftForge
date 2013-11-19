@@ -1,15 +1,15 @@
---- ../src_base/minecraft/net/minecraft/world/gen/layer/GenLayer.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/layer/GenLayer.java
-@@ -1,6 +1,9 @@
- package net.minecraft.world.gen.layer;
+--- ../src-base/minecraft/net/minecraft/world/gen/layer/GenLayer.java
++++ ../src-work/minecraft/net/minecraft/world/gen/layer/GenLayer.java
+@@ -2,6 +2,9 @@
  
  import net.minecraft.world.WorldType;
-+
+ 
 +import net.minecraftforge.common.*;
 +import net.minecraftforge.event.terraingen.*;
- 
++
  public abstract class GenLayer
  {
+     /** seed from World#getWorldSeed that is used in the LCG prng */
 @@ -42,6 +45,7 @@
          {
              b0 = 6;

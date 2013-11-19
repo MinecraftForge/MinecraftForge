@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/nbt/NBTTagList.java
-+++ ../src_work/minecraft/net/minecraft/nbt/NBTTagList.java
+--- ../src-base/minecraft/net/minecraft/nbt/NBTTagList.java
++++ ../src-work/minecraft/net/minecraft/nbt/NBTTagList.java
 @@ -1,7 +1,5 @@
  package net.minecraft.nbt;
  

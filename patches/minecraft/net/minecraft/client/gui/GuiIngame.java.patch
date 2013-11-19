@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/gui/GuiIngame.java
-+++ ../src_work/minecraft/net/minecraft/client/gui/GuiIngame.java
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiIngame.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiIngame.java
 @@ -40,6 +40,8 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
@@ -14,10 +14,9 @@
          ItemStack itemstack = this.mc.thePlayer.inventory.armorItemInSlot(3);
  
 -        if (this.mc.gameSettings.thirdPersonView == 0 && itemstack != null && itemstack.itemID == Block.pumpkin.blockID)
--        {
--            this.renderPumpkinBlur(k, l);
 +        if (this.mc.gameSettings.thirdPersonView == 0 && itemstack != null && itemstack.getItem() != null)
-+        {
+         {
+-            this.renderPumpkinBlur(k, l);
 +            if (itemstack.itemID == Block.pumpkin.blockID)
 +            {
 +                this.renderPumpkinBlur(k, l);

@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/server/integrated/IntegratedServer.java
-+++ ../src_work/minecraft/net/minecraft/server/integrated/IntegratedServer.java
+--- ../src-base/minecraft/net/minecraft/server/integrated/IntegratedServer.java
++++ ../src-work/minecraft/net/minecraft/server/integrated/IntegratedServer.java
 @@ -23,6 +23,10 @@
  import net.minecraft.world.demo.DemoWorldServer;
  import net.minecraft.world.storage.ISaveHandler;
@@ -20,16 +20,14 @@
          ISaveHandler isavehandler = this.getActiveAnvilConverter().getSaveLoader(par1Str, true);
  
 -        for (int j = 0; j < this.worldServers.length; ++j)
--        {
--            byte b0 = 0;
--
--            if (j == 1)
 +        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, isavehandler, par2Str, 0, theProfiler, getLogAgent()) : new WorldServer(this, isavehandler, par2Str, 0, theWorldSettings, theProfiler, getLogAgent()));
 +        for (int dim : DimensionManager.getStaticDimensionIDs())
-+        {
+         {
+-            byte b0 = 0;
 +            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, isavehandler, par2Str, dim, theWorldSettings, overWorld, theProfiler, getLogAgent()));
 +            world.addWorldAccess(new WorldManager(this, world));
-+
+ 
+-            if (j == 1)
 +            if (!this.isSinglePlayer())
              {
 -                b0 = -1;
@@ -59,11 +57,9 @@
 -
 -            this.worldServers[j].addWorldAccess(new WorldManager(this, this.worldServers[j]));
 -            this.getConfigurationManager().setPlayerManager(this.worldServers);
--        }
--
 +            MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
-+        }
-+
+         }
+ 
 +        this.getConfigurationManager().setPlayerManager(new WorldServer[]{ overWorld });
          this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();

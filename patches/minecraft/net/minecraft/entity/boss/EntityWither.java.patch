@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/entity/boss/EntityWither.java
-+++ ../src_work/minecraft/net/minecraft/entity/boss/EntityWither.java
+--- ../src-base/minecraft/net/minecraft/entity/boss/EntityWither.java
++++ ../src-work/minecraft/net/minecraft/entity/boss/EntityWither.java
 @@ -355,7 +355,8 @@
                                  int l2 = j1 + l1;
                                  int i3 = this.worldObj.getBlockId(j2, k2, l2);

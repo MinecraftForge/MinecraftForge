@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/WorldServerMulti.java
-+++ ../src_work/minecraft/net/minecraft/world/WorldServerMulti.java
+--- ../src-base/minecraft/net/minecraft/world/WorldServerMulti.java
++++ ../src-work/minecraft/net/minecraft/world/WorldServerMulti.java
 @@ -19,5 +19,8 @@
      /**
       * Saves the chunks to disk.

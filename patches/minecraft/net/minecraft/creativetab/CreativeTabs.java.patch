@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/creativetab/CreativeTabs.java
-+++ ../src_work/minecraft/net/minecraft/creativetab/CreativeTabs.java
+--- ../src-base/minecraft/net/minecraft/creativetab/CreativeTabs.java
++++ ../src-work/minecraft/net/minecraft/creativetab/CreativeTabs.java
 @@ -7,6 +7,7 @@
  import net.minecraft.enchantment.EnchantmentData;
  import net.minecraft.enchantment.EnumEnchantmentType;
@@ -53,17 +53,16 @@
          return this.tabIndex < 6;
      }
  
-@@ -187,9 +210,17 @@
+@@ -187,10 +210,18 @@
          {
              Item item = aitem[j];
  
 -            if (item != null && item.getCreativeTab() == this)
--            {
--                item.getSubItems(item.itemID, this, par1List);
 +            if (item == null)
-+            {
+             {
+-                item.getSubItems(item.itemID, this, par1List);
 +                continue;
-+            }
+             }
 +
 +            for (CreativeTabs tab : item.getCreativeTabs())
 +            {
@@ -71,9 +70,10 @@
 +                {
 +                    item.getSubItems(item.itemID, this, par1List);
 +                }
-             }
++            }
          }
  
+         if (this.func_111225_m() != null)
 @@ -232,4 +263,36 @@
              }
          }

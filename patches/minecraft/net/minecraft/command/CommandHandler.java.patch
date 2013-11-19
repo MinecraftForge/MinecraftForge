@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/command/CommandHandler.java
-+++ ../src_work/minecraft/net/minecraft/command/CommandHandler.java
+--- ../src-base/minecraft/net/minecraft/command/CommandHandler.java
++++ ../src-work/minecraft/net/minecraft/command/CommandHandler.java
 @@ -12,6 +12,9 @@
  import net.minecraft.util.ChatMessageComponent;
  import net.minecraft.util.EnumChatFormatting;

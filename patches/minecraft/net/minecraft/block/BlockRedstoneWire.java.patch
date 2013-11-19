@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/BlockRedstoneWire.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockRedstoneWire.java
+--- ../src-base/minecraft/net/minecraft/block/BlockRedstoneWire.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneWire.java
 @@ -475,7 +475,7 @@
          }
          else if (!Block.redstoneRepeaterIdle.func_94487_f(i1))

@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
-+++ ../src_work/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
+--- ../src-base/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
++++ ../src-work/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
 @@ -22,6 +22,10 @@
  import net.minecraft.world.EnumGameType;
  import net.minecraft.world.World;
@@ -37,15 +37,14 @@
          float f2 = (float)par8Vec3.zCoord - (float)par6;
          boolean flag = false;
          int i1;
--
--        if (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null)
 +        if (par3ItemStack != null &&
 +            par3ItemStack.getItem() != null &&
 +            par3ItemStack.getItem().onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, f, f1, f2))
 +        {
 +                return true;
 +        }
-+
+ 
+-        if (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null)
 +        if (!par1EntityPlayer.isSneaking() || (par1EntityPlayer.getHeldItem() == null || par1EntityPlayer.getHeldItem().getItem().shouldPassSneakingClickToBlock(par2World, par4, par5, par6)))
          {
              i1 = par2World.getBlockId(par4, par5, par6);

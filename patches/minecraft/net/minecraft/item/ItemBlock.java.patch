@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/item/ItemBlock.java
-+++ ../src_work/minecraft/net/minecraft/item/ItemBlock.java
+--- ../src-base/minecraft/net/minecraft/item/ItemBlock.java
++++ ../src-work/minecraft/net/minecraft/item/ItemBlock.java
 @@ -64,7 +64,8 @@
          {
              par7 = 1;
@@ -15,15 +15,14 @@
              int k1 = Block.blocksList[this.blockID].onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, j1);
  
 -            if (par3World.setBlock(par4, par5, par6, this.blockID, k1, 3))
--            {
++            if (placeBlockAt(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10, k1))
+             {
 -                if (par3World.getBlockId(par4, par5, par6) == this.blockID)
 -                {
 -                    Block.blocksList[this.blockID].onBlockPlacedBy(par3World, par4, par5, par6, par2EntityPlayer, par1ItemStack);
 -                    Block.blocksList[this.blockID].onPostBlockPlaced(par3World, par4, par5, par6, k1);
 -                }
 -
-+            if (placeBlockAt(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10, k1))
-+            {
                  par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
                  --par1ItemStack.stackSize;
              }

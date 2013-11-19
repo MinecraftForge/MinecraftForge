@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/gui/GuiChat.java
-+++ ../src_work/minecraft/net/minecraft/client/gui/GuiChat.java
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiChat.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiChat.java
 @@ -7,8 +7,11 @@
  import java.util.Iterator;
  import java.util.List;

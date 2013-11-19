@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenMinable.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenMinable.java
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenMinable.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenMinable.java
 @@ -9,6 +9,7 @@
  {
      /** The block ID of the ore to be placed using this generator. */
@@ -8,19 +8,19 @@
  
      /** The number of blocks to generate. */
      private int numberOfBlocks;
-@@ -26,6 +27,12 @@
-         this.minableBlockId = par1;
-         this.numberOfBlocks = par2;
+@@ -28,6 +29,12 @@
          this.blockToReplace = par3;
-+    }
-+
+     }
+ 
 +    public WorldGenMinable(int id, int meta, int number, int target)
 +    {
 +        this(id, number, target);
 +        this.minableBlockMeta = meta;
-     }
- 
++    }
++
      public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
+     {
+         float f = par2Random.nextFloat() * (float)Math.PI;
 @@ -69,9 +76,10 @@
                              {
                                  double d14 = ((double)i3 + 0.5D - d8) / (d10 / 2.0D);

@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/BlockBaseRailLogic.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockBaseRailLogic.java
+--- ../src-base/minecraft/net/minecraft/block/BlockBaseRailLogic.java
++++ ../src-work/minecraft/net/minecraft/block/BlockBaseRailLogic.java
 @@ -16,6 +16,8 @@
      /** The chunk position the rail is at. */
      private List railChunkPosition;
@@ -14,7 +14,7 @@
          this.railZ = par5;
          int l = par2World.getBlockId(par3, par4, par5);
 -        int i1 = par2World.getBlockMetadata(par3, par4, par5);
--
+ 
 -        if (((BlockRailBase)Block.blocksList[l]).isPowered)
 -        {
 -            this.isStraightRail = true;
@@ -24,7 +24,6 @@
 -        {
 -            this.isStraightRail = false;
 -        }
-+
 +        BlockRailBase target = (BlockRailBase)Block.blocksList[l];
 +        int i1 = target.getBasicRailMetadata(par2World, null, par3, par4, par5);
 +        isStraightRail = !target.isFlexibleRail(par2World, par3, par4, par5);

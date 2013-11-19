@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/BlockMycelium.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockMycelium.java
+--- ../src-base/minecraft/net/minecraft/block/BlockMycelium.java
++++ ../src-work/minecraft/net/minecraft/block/BlockMycelium.java
 @@ -41,7 +41,7 @@
      {
          if (!par1World.isRemote)

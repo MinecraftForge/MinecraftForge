@@ -1,26 +1,26 @@
---- ../src_base/minecraft/net/minecraft/world/biome/BiomeGenBase.java
-+++ ../src_work/minecraft/net/minecraft/world/biome/BiomeGenBase.java
-@@ -30,6 +30,9 @@
- import net.minecraft.world.gen.feature.WorldGenTallGrass;
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenBase.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenBase.java
+@@ -31,6 +31,9 @@
  import net.minecraft.world.gen.feature.WorldGenTrees;
  import net.minecraft.world.gen.feature.WorldGenerator;
-+
+ 
 +import net.minecraftforge.common.*;
 +import net.minecraftforge.event.terraingen.*;
- 
++
  public abstract class BiomeGenBase
  {
-@@ -140,6 +143,10 @@
-     protected WorldGenSwamp worldGeneratorSwamp;
+     /** An array of all the biomes, indexed by biome id. */
+@@ -141,6 +144,10 @@
  
      public BiomeGenBase(int par1)
-+    {
+     {
 +        this(par1, true);
 +    }
 +    public BiomeGenBase(int par1, boolean register)
-     {
++    {
          this.topBlock = (byte)Block.grass.blockID;
          this.fillerBlock = (byte)Block.dirt.blockID;
+         this.field_76754_C = 5169201;
 @@ -159,6 +166,7 @@
          this.worldGeneratorForest = new WorldGenForest(false);
          this.worldGeneratorSwamp = new WorldGenSwamp();
@@ -55,7 +55,7 @@
          double d1 = (double)MathHelper.clamp_float(this.getFloatRainfall(), 0.0F, 1.0F);
 -        return ColorizerFoliage.getFoliageColor(d0, d1);
 +        return getModdedBiomeFoliageColor(ColorizerFoliage.getFoliageColor(d0, d1));
-+    }
+     }
 +
 +    public BiomeDecorator getModdedBiomeDecorator(BiomeDecorator original)
 +    {
@@ -81,5 +81,5 @@
 +        BiomeEvent.GetFoliageColor event = new BiomeEvent.GetFoliageColor(this, original);
 +        MinecraftForge.EVENT_BUS.post(event);
 +        return event.newColor;
-     }
++    }
  }

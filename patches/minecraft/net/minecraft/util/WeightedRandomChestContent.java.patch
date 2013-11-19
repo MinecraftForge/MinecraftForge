@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/util/WeightedRandomChestContent.java
-+++ ../src_work/minecraft/net/minecraft/util/WeightedRandomChestContent.java
+--- ../src-base/minecraft/net/minecraft/util/WeightedRandomChestContent.java
++++ ../src-work/minecraft/net/minecraft/util/WeightedRandomChestContent.java
 @@ -4,6 +4,9 @@
  import net.minecraft.inventory.IInventory;
  import net.minecraft.item.ItemStack;
@@ -10,7 +10,7 @@
  
  public class WeightedRandomChestContent extends WeightedRandomItem
  {
-@@ -40,22 +43,11 @@
+@@ -40,23 +43,12 @@
          for (int j = 0; j < par3; ++j)
          {
              WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
@@ -23,7 +23,8 @@
 -                ItemStack itemstack = weightedrandomchestcontent.theItemId.copy();
 -                itemstack.stackSize = k;
 -                par2IInventory.setInventorySlotContents(par0Random.nextInt(par2IInventory.getSizeInventory()), itemstack);
--            }
++                par2IInventory.setInventorySlotContents(par0Random.nextInt(par2IInventory.getSizeInventory()), item);
+             }
 -            else
 -            {
 -                for (int l = 0; l < k; ++l)
@@ -32,11 +33,11 @@
 -                    itemstack1.stackSize = 1;
 -                    par2IInventory.setInventorySlotContents(par0Random.nextInt(par2IInventory.getSizeInventory()), itemstack1);
 -                }
-+                par2IInventory.setInventorySlotContents(par0Random.nextInt(par2IInventory.getSizeInventory()), item);
-             }
+-            }
          }
      }
-@@ -68,22 +60,11 @@
+ 
+@@ -68,23 +60,12 @@
          for (int j = 0; j < par3; ++j)
          {
              WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
@@ -49,7 +50,8 @@
 -                ItemStack itemstack = weightedrandomchestcontent.theItemId.copy();
 -                itemstack.stackSize = k;
 -                par2TileEntityDispenser.setInventorySlotContents(par0Random.nextInt(par2TileEntityDispenser.getSizeInventory()), itemstack);
--            }
++                par2TileEntityDispenser.setInventorySlotContents(par0Random.nextInt(par2TileEntityDispenser.getSizeInventory()), item);
+             }
 -            else
 -            {
 -                for (int l = 0; l < k; ++l)
@@ -58,10 +60,10 @@
 -                    itemstack1.stackSize = 1;
 -                    par2TileEntityDispenser.setInventorySlotContents(par0Random.nextInt(par2TileEntityDispenser.getSizeInventory()), itemstack1);
 -                }
-+                par2TileEntityDispenser.setInventorySlotContents(par0Random.nextInt(par2TileEntityDispenser.getSizeInventory()), item);
-             }
+-            }
          }
      }
+ 
 @@ -109,4 +90,18 @@
  
          return aweightedrandomchestcontent1;

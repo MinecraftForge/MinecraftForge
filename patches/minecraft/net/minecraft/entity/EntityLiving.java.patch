@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/entity/EntityLiving.java
-+++ ../src_work/minecraft/net/minecraft/entity/EntityLiving.java
+--- ../src-base/minecraft/net/minecraft/entity/EntityLiving.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityLiving.java
 @@ -31,6 +31,11 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
@@ -20,7 +20,7 @@
      }
  
      /**
-@@ -547,9 +553,21 @@
+@@ -547,10 +553,22 @@
       */
      protected void despawnEntity()
      {
@@ -28,7 +28,7 @@
          if (this.persistenceRequired)
          {
              this.entityAge = 0;
-+        }
+         }
 +        else if ((this.entityAge & 0x1F) == 0x1F && (result = ForgeEventFactory.canEntityDespawn(this)) != Result.DEFAULT)
 +        {
 +            if (result == Result.DENY)
@@ -39,9 +39,10 @@
 +            {
 +                this.setDead();
 +            }
-         }
++        }
          else
          {
+             EntityPlayer entityplayer = this.worldObj.getClosestPlayerToEntity(this, -1.0D);
 @@ -726,8 +744,6 @@
          return this.worldObj.checkNoEntityCollision(this.boundingBox) && this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(this.boundingBox);
      }

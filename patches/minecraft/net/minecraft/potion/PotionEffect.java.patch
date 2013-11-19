@@ -1,11 +1,11 @@
---- ../src_base/minecraft/net/minecraft/potion/PotionEffect.java
-+++ ../src_work/minecraft/net/minecraft/potion/PotionEffect.java
+--- ../src-base/minecraft/net/minecraft/potion/PotionEffect.java
++++ ../src-work/minecraft/net/minecraft/potion/PotionEffect.java
 @@ -1,8 +1,13 @@
  package net.minecraft.potion;
-+
+ 
 +import java.util.ArrayList;
 +import java.util.List;
- 
++
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import net.minecraft.entity.EntityLivingBase;
@@ -41,12 +41,10 @@
      }
  
      /**
-@@ -93,6 +104,63 @@
-     public int getAmplifier()
-     {
+@@ -95,6 +106,63 @@
          return this.amplifier;
-+    }
-+
+     }
+ 
 +    /***
 +     * Returns a list of curative items for the potion effect
 +     * @return The list (ItemStack) of curative items for the potion effect
@@ -102,6 +100,8 @@
 +        {
 +            this.curativeItems.add(stack);
 +        }
-     }
- 
++    }
++
      /**
+      * Set whether this potion is a splash potion.
+      */

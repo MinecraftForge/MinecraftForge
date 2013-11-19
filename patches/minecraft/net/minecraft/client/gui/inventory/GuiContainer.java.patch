@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
-+++ ../src_work/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
+--- ../src-base/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
++++ ../src-work/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
 @@ -8,6 +8,7 @@
  import java.util.List;
  import java.util.Set;
@@ -44,18 +44,18 @@
      }
  
      /**
-@@ -242,6 +251,11 @@
-     }
+@@ -243,6 +252,11 @@
  
      protected void func_102021_a(List par1List, int par2, int par3)
-+    {
+     {
 +        drawHoveringText(par1List, par2, par3, fontRenderer);
 +    }
 +
 +    protected void drawHoveringText(List par1List, int par2, int par3, FontRenderer font)
-     {
++    {
          if (!par1List.isEmpty())
          {
+             GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 @@ -255,7 +269,7 @@
              while (iterator.hasNext())
              {

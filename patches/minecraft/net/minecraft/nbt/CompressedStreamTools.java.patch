@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/nbt/CompressedStreamTools.java
-+++ ../src_work/minecraft/net/minecraft/nbt/CompressedStreamTools.java
+--- ../src-base/minecraft/net/minecraft/nbt/CompressedStreamTools.java
++++ ../src-work/minecraft/net/minecraft/nbt/CompressedStreamTools.java
 @@ -140,7 +140,6 @@
          NBTBase.writeNamedTag(par0NBTTagCompound, par1DataOutput);
      }

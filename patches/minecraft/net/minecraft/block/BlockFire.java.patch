@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/BlockFire.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockFire.java
+--- ../src-base/minecraft/net/minecraft/block/BlockFire.java
++++ ../src-work/minecraft/net/minecraft/block/BlockFire.java
 @@ -11,6 +11,9 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldProviderEnd;
@@ -29,21 +29,22 @@
      }
  
      /**
-@@ -123,12 +127,8 @@
+@@ -123,13 +127,9 @@
      {
          if (par1World.getGameRules().getGameRuleBooleanValue("doFireTick"))
          {
 -            boolean flag = par1World.getBlockId(par2, par3 - 1, par4) == Block.netherrack.blockID;
--
++            Block base = Block.blocksList[par1World.getBlockId(par2, par3 - 1, par4)];
++            boolean flag = (base != null && base.isFireSource(par1World, par2, par3 - 1, par4, par1World.getBlockMetadata(par2, par3 - 1, par4), UP));
+ 
 -            if (par1World.provider instanceof WorldProviderEnd && par1World.getBlockId(par2, par3 - 1, par4) == Block.bedrock.blockID)
 -            {
 -                flag = true;
 -            }
-+            Block base = Block.blocksList[par1World.getBlockId(par2, par3 - 1, par4)];
-+            boolean flag = (base != null && base.isFireSource(par1World, par2, par3 - 1, par4, par1World.getBlockMetadata(par2, par3 - 1, par4), UP));
- 
+-
              if (!this.canPlaceBlockAt(par1World, par2, par3, par4))
              {
+                 par1World.setBlockToAir(par2, par3, par4);
 @@ -157,7 +157,7 @@
                          par1World.setBlockToAir(par2, par3, par4);
                      }
@@ -72,7 +73,7 @@
  
                      for (int i1 = par2 - 1; i1 <= par2 + 1; ++i1)
                      {
-@@ -230,9 +230,20 @@
+@@ -230,10 +230,21 @@
          return false;
      }
  
@@ -82,7 +83,7 @@
 -        int j1 = this.abilityToCatchFire[par1World.getBlockId(par2, par3, par4)];
 +        tryToCatchBlockOnFire(par1World, par2, par3, par4, par5, par6Random, par7, UP);
 +    }
-+
+ 
 +    private void tryToCatchBlockOnFire(World par1World, int par2, int par3, int par4, int par5, Random par6Random, int par7, ForgeDirection face)
 +    {
 +        int j1 = 0;
@@ -91,9 +92,10 @@
 +        {
 +            j1 = block.getFlammability(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), face);
 +        }
- 
++
          if (par6Random.nextInt(par5) < j1)
          {
+             boolean flag = par1World.getBlockId(par2, par3, par4) == Block.tnt.blockID;
 @@ -266,7 +277,12 @@
       */
      private boolean canNeighborBurn(World par1World, int par2, int par3, int par4)
@@ -131,9 +133,8 @@
  
      /**
       * Checks the specified block coordinate to see if it can catch fire.  Args: blockAccess, x, y, z
--     */
 +     * Deprecated for a side-sensitive version
-+     */
+      */
 +    @Deprecated
      public boolean canBlockCatchFire(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -145,9 +146,8 @@
       * Retrieves a specified block's chance to encourage their neighbors to burn and if the number is greater than the
       * current number passed in it will return its number instead of the passed in one.  Args: world, x, y, z,
       * curChanceToEncourageFire
--     */
 +     * Deprecated for a side-sensitive version
-+     */
+      */
 +    @Deprecated
      public int getChanceToEncourageFire(World par1World, int par2, int par3, int par4, int par5)
      {
@@ -162,10 +162,9 @@
          float f2;
  
 -        if (!par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) && !Block.fire.canBlockCatchFire(par1World, par2, par3 - 1, par4))
--        {
--            if (Block.fire.canBlockCatchFire(par1World, par2 - 1, par3, par4))
 +        if (!par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) && !Block.fire.canBlockCatchFire(par1World, par2, par3 - 1, par4, UP))
-+        {
+         {
+-            if (Block.fire.canBlockCatchFire(par1World, par2 - 1, par3, par4))
 +            if (Block.fire.canBlockCatchFire(par1World, par2 - 1, par3, par4, EAST))
              {
                  for (l = 0; l < 2; ++l)

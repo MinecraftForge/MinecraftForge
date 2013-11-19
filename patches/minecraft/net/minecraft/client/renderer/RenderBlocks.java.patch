@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/renderer/RenderBlocks.java
-+++ ../src_work/minecraft/net/minecraft/client/renderer/RenderBlocks.java
+--- ../src-base/minecraft/net/minecraft/client/renderer/RenderBlocks.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/RenderBlocks.java
 @@ -45,6 +45,8 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;

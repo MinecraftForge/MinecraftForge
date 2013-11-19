@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/audio/SoundManager.java
-+++ ../src_work/minecraft/net/minecraft/client/audio/SoundManager.java
+--- ../src-base/minecraft/net/minecraft/client/audio/SoundManager.java
++++ ../src-work/minecraft/net/minecraft/client/audio/SoundManager.java
 @@ -1,5 +1,9 @@
  package net.minecraft.client.audio;
  

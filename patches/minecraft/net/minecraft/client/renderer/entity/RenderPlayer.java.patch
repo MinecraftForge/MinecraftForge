@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/renderer/entity/RenderPlayer.java
-+++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RenderPlayer.java
+--- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderPlayer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderPlayer.java
 @@ -15,13 +15,22 @@
  import net.minecraft.item.EnumArmorMaterial;
  import net.minecraft.item.Item;
@@ -58,12 +58,11 @@
                  float f1 = 1.0F;
  
 -                if (itemarmor.getArmorMaterial() == EnumArmorMaterial.CLOTH)
--                {
--                    int j = itemarmor.getColor(itemstack);
 +                //Move outside if to allow for more then just CLOTH
 +                int j = itemarmor.getColor(itemstack);
 +                if (j != -1)
-+                {
+                 {
+-                    int j = itemarmor.getColor(itemstack);
                      float f2 = (float)(j >> 16 & 255) / 255.0F;
                      float f3 = (float)(j >> 8 & 255) / 255.0F;
                      float f4 = (float)(j & 255) / 255.0F;
@@ -116,10 +115,9 @@
              float f2;
  
 -            if (itemstack.getItem().itemID < 256)
--            {
--                if (RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
 +            if (itemstack != null && itemstack.getItem() instanceof ItemBlock)
-+            {
+             {
+-                if (RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
 +                IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack, EQUIPPED);
 +                boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, itemstack, BLOCK_3D));
 +

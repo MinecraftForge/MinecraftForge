@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/entity/EntityOtherPlayerMP.java
-+++ ../src_work/minecraft/net/minecraft/client/entity/EntityOtherPlayerMP.java
+--- ../src-base/minecraft/net/minecraft/client/entity/EntityOtherPlayerMP.java
++++ ../src-work/minecraft/net/minecraft/client/entity/EntityOtherPlayerMP.java
 @@ -170,7 +170,8 @@
          }
      }

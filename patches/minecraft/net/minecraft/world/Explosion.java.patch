@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/Explosion.java
-+++ ../src_work/minecraft/net/minecraft/world/Explosion.java
+--- ../src-base/minecraft/net/minecraft/world/Explosion.java
++++ ../src-work/minecraft/net/minecraft/world/Explosion.java
 @@ -92,7 +92,7 @@
                              if (k1 > 0)
                              {

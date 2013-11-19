@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/item/Item.java
-+++ ../src_work/minecraft/net/minecraft/item/Item.java
+--- ../src-base/minecraft/net/minecraft/item/Item.java
++++ ../src-work/minecraft/net/minecraft/item/Item.java
 @@ -11,13 +11,18 @@
  import java.util.UUID;
  import net.minecraft.block.Block;

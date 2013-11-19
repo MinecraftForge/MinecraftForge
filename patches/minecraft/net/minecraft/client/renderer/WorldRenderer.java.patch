@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/renderer/WorldRenderer.java
-+++ ../src_work/minecraft/net/minecraft/client/renderer/WorldRenderer.java
+--- ../src-base/minecraft/net/minecraft/client/renderer/WorldRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/WorldRenderer.java
 @@ -23,7 +23,7 @@
      /** Reference to the World object. */
      public World worldObj;

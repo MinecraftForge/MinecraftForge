@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/BlockGrass.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockGrass.java
+--- ../src-base/minecraft/net/minecraft/block/BlockGrass.java
++++ ../src-work/minecraft/net/minecraft/block/BlockGrass.java
 @@ -44,7 +44,7 @@
      {
          if (!par1World.isRemote)

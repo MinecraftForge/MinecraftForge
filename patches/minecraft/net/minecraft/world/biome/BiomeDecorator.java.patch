@@ -1,17 +1,17 @@
---- ../src_base/minecraft/net/minecraft/world/biome/BiomeDecorator.java
-+++ ../src_work/minecraft/net/minecraft/world/biome/BiomeDecorator.java
-@@ -15,6 +15,11 @@
- import net.minecraft.world.gen.feature.WorldGenSand;
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeDecorator.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeDecorator.java
+@@ -16,6 +16,11 @@
  import net.minecraft.world.gen.feature.WorldGenWaterlily;
  import net.minecraft.world.gen.feature.WorldGenerator;
-+
+ 
 +import static net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.*;
 +import static net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.*;
 +import net.minecraftforge.common.*;
 +import net.minecraftforge.event.terraingen.*;
- 
++
  public class BiomeDecorator
  {
+     /** The world the BiomeDecorator is currently decorating */
 @@ -199,26 +204,31 @@
       */
      protected void decorate()

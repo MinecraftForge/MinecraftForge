@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/logging/LogAgent.java
-+++ ../src_work/minecraft/net/minecraft/logging/LogAgent.java
+--- ../src-base/minecraft/net/minecraft/logging/LogAgent.java
++++ ../src-work/minecraft/net/minecraft/logging/LogAgent.java
 @@ -72,7 +72,7 @@
  
      public void logWarningFormatted(String par1Str, Object ... par2ArrayOfObj)

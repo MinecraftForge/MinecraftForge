@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/entity/item/EntityMinecartHopper.java
-+++ ../src_work/minecraft/net/minecraft/entity/item/EntityMinecartHopper.java
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityMinecartHopper.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecartHopper.java
 @@ -9,6 +9,8 @@
  import net.minecraft.tileentity.TileEntityHopper;
  import net.minecraft.util.DamageSource;

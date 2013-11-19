@@ -1,17 +1,16 @@
---- ../src_base/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
-+++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
+--- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
 @@ -223,12 +223,14 @@
  
          if (par4EntityLivingBase.isPlayerSleeping())
          {
 -            int i = par1World.getBlockId(MathHelper.floor_double(par4EntityLivingBase.posX), MathHelper.floor_double(par4EntityLivingBase.posY), MathHelper.floor_double(par4EntityLivingBase.posZ));
--
--            if (i == Block.bed.blockID)
 +            int x = MathHelper.floor_double(par4EntityLivingBase.posX);
 +            int y = MathHelper.floor_double(par4EntityLivingBase.posY);
 +            int z = MathHelper.floor_double(par4EntityLivingBase.posZ);
 +            Block block = Block.blocksList[par1World.getBlockId(x, y, z)];
-+
+ 
+-            if (i == Block.bed.blockID)
 +            if (block != null && block.isBed(par1World, x, y, z, par4EntityLivingBase))
              {
 -                int j = par1World.getBlockMetadata(MathHelper.floor_double(par4EntityLivingBase.posX), MathHelper.floor_double(par4EntityLivingBase.posY), MathHelper.floor_double(par4EntityLivingBase.posZ));

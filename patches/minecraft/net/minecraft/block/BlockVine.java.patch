@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/BlockVine.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockVine.java
+--- ../src-base/minecraft/net/minecraft/block/BlockVine.java
++++ ../src-work/minecraft/net/minecraft/block/BlockVine.java
 @@ -2,9 +2,12 @@
  
  import cpw.mods.fml.relauncher.Side;
@@ -38,7 +38,7 @@
 -            super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
 -        }
 +        super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
-+    }
+     }
 +
 +    @Override
 +    public boolean isShearable(ItemStack item, World world, int x, int y, int z)
@@ -58,5 +58,5 @@
 +    public boolean isLadder(World world, int x, int y, int z, EntityLivingBase entity)
 +    {
 +        return true;
-     }
++    }
  }

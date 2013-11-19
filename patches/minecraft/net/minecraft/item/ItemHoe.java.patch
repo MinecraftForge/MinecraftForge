@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/item/ItemHoe.java
-+++ ../src_work/minecraft/net/minecraft/item/ItemHoe.java
+--- ../src-base/minecraft/net/minecraft/item/ItemHoe.java
++++ ../src-work/minecraft/net/minecraft/item/ItemHoe.java
 @@ -6,6 +6,9 @@
  import net.minecraft.creativetab.CreativeTabs;
  import net.minecraft.entity.player.EntityPlayer;

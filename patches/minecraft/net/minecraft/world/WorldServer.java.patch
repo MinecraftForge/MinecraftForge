@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/WorldServer.java
-+++ ../src_work/minecraft/net/minecraft/world/WorldServer.java
+--- ../src-base/minecraft/net/minecraft/world/WorldServer.java
++++ ../src-work/minecraft/net/minecraft/world/WorldServer.java
 @@ -2,6 +2,7 @@
  
  import cpw.mods.fml.relauncher.Side;
@@ -83,11 +83,10 @@
      }
  
      public boolean areAllPlayersAsleep()
-@@ -315,6 +333,14 @@
-         int i = 0;
+@@ -316,6 +334,14 @@
          int j = 0;
          Iterator iterator = this.activeChunkSet.iterator();
-+
+ 
 +        doneChunks.retainAll(activeChunkSet);
 +        if (doneChunks.size() == activeChunkSet.size())
 +        {
@@ -95,9 +94,10 @@
 +        }
 +
 +        final long startTime = System.nanoTime();
- 
++
          while (iterator.hasNext())
          {
+             ChunkCoordIntPair chunkcoordintpair = (ChunkCoordIntPair)iterator.next();
 @@ -325,14 +351,18 @@
              Chunk chunk = this.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos);
              this.moodSoundAndLightCheck(k, l, chunk);
@@ -162,19 +162,14 @@
          ArrayList arraylist = new ArrayList();
  
 -        for (int k1 = 0; k1 < this.loadedTileEntityList.size(); ++k1)
--        {
++        for(int x = (par1 >> 4); x <= (par4 >> 4); x++)
+         {
 -            TileEntity tileentity = (TileEntity)this.loadedTileEntityList.get(k1);
 -
 -            if (tileentity.xCoord >= par1 && tileentity.yCoord >= par2 && tileentity.zCoord >= par3 && tileentity.xCoord < par4 && tileentity.yCoord < par5 && tileentity.zCoord < par6)
--            {
--                arraylist.add(tileentity);
--            }
--        }
--
-+        for(int x = (par1 >> 4); x <= (par4 >> 4); x++)
-+        {
 +            for(int z = (par3 >> 4); z <= (par6 >> 4); z++)
-+            {
+             {
+-                arraylist.add(tileentity);
 +                Chunk chunk = getChunkFromChunkCoords(x, z);
 +                if (chunk != null)
 +                {
@@ -191,23 +186,24 @@
 +                        }
 +                    }
 +                }
-+            }
-+        }
+             }
+         }
+-
          return arraylist;
      }
  
-@@ -717,6 +765,11 @@
-      * Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
+@@ -718,6 +766,11 @@
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
-+    {
+     {
 +        return super.canMineBlock(par1EntityPlayer, par2, par3, par4);
 +    }
 +
 +    public boolean canMineBlockBody(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
-     {
++    {
          return !this.mcServer.isBlockProtected(this, par2, par3, par4, par1EntityPlayer);
      }
+ 
 @@ -801,7 +854,7 @@
       */
      protected void createBonusChest()

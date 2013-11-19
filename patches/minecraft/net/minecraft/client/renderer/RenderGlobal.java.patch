@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/renderer/RenderGlobal.java
-+++ ../src_work/minecraft/net/minecraft/client/renderer/RenderGlobal.java
+--- ../src-base/minecraft/net/minecraft/client/renderer/RenderGlobal.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/RenderGlobal.java
 @@ -68,6 +68,9 @@
  import org.lwjgl.opengl.ARBOcclusionQuery;
  import org.lwjgl.opengl.GL11;
@@ -103,15 +103,15 @@
          if (this.mc.theWorld.provider.isSurfaceWorld())
          {
              if (this.mc.gameSettings.fancyGraphics)
-@@ -1595,6 +1628,11 @@
-     }
+@@ -1596,6 +1629,11 @@
  
      public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityPlayer par2EntityPlayer, float par3)
-+    {
+     {
 +        drawBlockDamageTexture(par1Tessellator, (EntityLivingBase)par2EntityPlayer, par3);
 +    }
 +
 +    public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityLivingBase par2EntityPlayer, float par3)
-     {
++    {
          double d0 = par2EntityPlayer.lastTickPosX + (par2EntityPlayer.posX - par2EntityPlayer.lastTickPosX) * (double)par3;
          double d1 = par2EntityPlayer.lastTickPosY + (par2EntityPlayer.posY - par2EntityPlayer.lastTickPosY) * (double)par3;
+         double d2 = par2EntityPlayer.lastTickPosZ + (par2EntityPlayer.posZ - par2EntityPlayer.lastTickPosZ) * (double)par3;

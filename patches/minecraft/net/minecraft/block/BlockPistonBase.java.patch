@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/BlockPistonBase.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockPistonBase.java
+--- ../src-base/minecraft/net/minecraft/block/BlockPistonBase.java
++++ ../src-work/minecraft/net/minecraft/block/BlockPistonBase.java
 @@ -439,7 +439,7 @@
                  return false;
              }

@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/entity/player/EntityPlayer.java
-+++ ../src_work/minecraft/net/minecraft/entity/player/EntityPlayer.java
+--- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayer.java
++++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayer.java
 @@ -5,8 +5,11 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
@@ -112,12 +112,10 @@
          if (this.username.equals("Notch"))
          {
              this.dropPlayerItemWithRandomChoice(new ItemStack(Item.appleRed, 1), true);
-@@ -697,6 +721,20 @@
-         if (!this.worldObj.getGameRules().getGameRuleBooleanValue("keepInventory"))
-         {
+@@ -699,6 +723,20 @@
              this.inventory.dropAllItems();
-+        }
-+
+         }
+ 
 +        captureDrops = false;
 +
 +        if (!worldObj.isRemote)
@@ -130,9 +128,11 @@
 +                    joinEntityItemWithWorld(item);
 +                }
 +            }
-         }
- 
++        }
++
          if (par1DamageSource != null)
+         {
+             this.motionX = (double)(-MathHelper.cos((this.attackedAtYaw + this.rotationYaw) * (float)Math.PI / 180.0F) * 0.1F);
 @@ -747,7 +785,20 @@
       */
      public EntityItem dropOneItem(boolean par1)
@@ -164,7 +164,7 @@
      }
  
      /**
-@@ -812,15 +863,28 @@
+@@ -812,16 +863,29 @@
       */
      public void joinEntityItemWithWorld(EntityItem par1EntityItem)
      {
@@ -178,23 +178,23 @@
  
      /**
       * Returns how strong the player is against the specified block at this moment
--     */
 +     * Deprecated in favor of the more sensitive version
-+     */
+      */
 +    @Deprecated
      public float getCurrentPlayerStrVsBlock(Block par1Block, boolean par2)
      {
 -        float f = this.inventory.getStrVsBlock(par1Block);
 +        return getCurrentPlayerStrVsBlock(par1Block, par2, 0);
 +    }
-+
+ 
 +    public float getCurrentPlayerStrVsBlock(Block par1Block, boolean par2, int meta)
 +    {
 +        ItemStack stack = inventory.getCurrentItem();
 +        float f = (stack == null ? 1.0F : stack.getItem().getStrVsBlock(stack, par1Block, meta));
- 
++
          if (f > 1.0F)
          {
+             int i = EnchantmentHelper.getEfficiencyModifier(this);
 @@ -831,7 +895,9 @@
              {
                  float f1 = (float)(i * i + 1);
@@ -360,13 +360,12 @@
          ChunkCoordinates chunkcoordinates1 = this.playerLocation;
  
 -        if (chunkcoordinates != null && this.worldObj.getBlockId(chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ) == Block.bed.blockID)
--        {
--            BlockBed.setBedOccupied(this.worldObj, chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, false);
--            chunkcoordinates1 = BlockBed.getNearestEmptyChunkCoordinates(this.worldObj, chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, 0);
 +        Block block = (chunkcoordinates == null ? null : Block.blocksList[worldObj.getBlockId(chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ)]);
 +
 +        if (chunkcoordinates != null && block != null && block.isBed(worldObj, chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, this))
-+        {
+         {
+-            BlockBed.setBedOccupied(this.worldObj, chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, false);
+-            chunkcoordinates1 = BlockBed.getNearestEmptyChunkCoordinates(this.worldObj, chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, 0);
 +            block.setBedOccupied(this.worldObj, chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, this, false);
 +            chunkcoordinates1 = block.getBedSpawnPosition(worldObj, chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, this);
  
@@ -388,13 +387,12 @@
          ichunkprovider.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
 -        if (par0World.getBlockId(par1ChunkCoordinates.posX, par1ChunkCoordinates.posY, par1ChunkCoordinates.posZ) == Block.bed.blockID)
--        {
--            ChunkCoordinates chunkcoordinates1 = BlockBed.getNearestEmptyChunkCoordinates(par0World, par1ChunkCoordinates.posX, par1ChunkCoordinates.posY, par1ChunkCoordinates.posZ, 0);
 +        ChunkCoordinates c = par1ChunkCoordinates;
 +        Block block = Block.blocksList[par0World.getBlockId(c.posX, c.posY, c.posZ)];
 +
 +        if (block != null && block.isBed(par0World, c.posX, c.posY, c.posZ, null))
-+        {
+         {
+-            ChunkCoordinates chunkcoordinates1 = BlockBed.getNearestEmptyChunkCoordinates(par0World, par1ChunkCoordinates.posX, par1ChunkCoordinates.posY, par1ChunkCoordinates.posZ, 0);
 +            ChunkCoordinates chunkcoordinates1 = block.getBedSpawnPosition(par0World, c.posX, c.posY, c.posZ, null);
              return chunkcoordinates1;
          }
@@ -405,19 +403,18 @@
          {
 -            int i = this.worldObj.getBlockMetadata(this.playerLocation.posX, this.playerLocation.posY, this.playerLocation.posZ);
 -            int j = BlockBed.getDirection(i);
--
--            switch (j)
 +            int x = playerLocation.posX;
 +            int y = playerLocation.posY;
 +            int z = playerLocation.posZ;
 +            Block block = Block.blocksList[worldObj.getBlockId(x, y, z)];
 +            int i = (block == null ? 0 : block.getBedDirection(worldObj, x, y, z));
-+
+ 
+-            switch (j)
 +            switch (i)
              {
                  case 0:
                      return 90.0F;
-@@ -1635,14 +1762,40 @@
+@@ -1635,21 +1762,52 @@
      /**
       * Returns the location of the bed the player will respawn at, or null if the player has not slept in a bed.
       */
@@ -425,19 +422,17 @@
      public ChunkCoordinates getBedLocation()
      {
 -        return this.spawnChunk;
--    }
--
 +        return getBedLocation(this.dimension);
-+    }
-+
+     }
+ 
 +    @Deprecated
      public boolean isSpawnForced()
      {
 -        return this.spawnForced;
 +        return isSpawnForced(this.dimension);
-+    }
-+
-+    /**
+     }
+ 
+     /**
 +     * A dimension aware version of getBedLocation.
 +     * @param dimension The dimension to get the bed spawn for
 +     * @return The player specific spawn location for the dimension.  May be null.
@@ -459,10 +454,10 @@
 +        Boolean forced = this.spawnForcedMap.get(dimension);
 +        if (forced == null) return false;
 +        return forced;
-     }
- 
-     /**
-@@ -1650,6 +1803,11 @@
++    }
++
++    /**
+      * Defines a spawn coordinate to player spawn. Used by bed after the player sleep on it.
       */
      public void setSpawnChunk(ChunkCoordinates par1ChunkCoordinates, boolean par2)
      {
@@ -474,12 +469,12 @@
          if (par1ChunkCoordinates != null)
          {
              this.spawnChunk = new ChunkCoordinates(par1ChunkCoordinates);
-@@ -1661,7 +1819,39 @@
+@@ -1661,8 +1819,40 @@
              this.spawnForced = false;
          }
      }
 -
-+    /**
+     /**
 +     * A dimension aware version of setSpawnChunk.
 +     * This functions identically, but allows you to specify which dimension to affect, rather than affecting the player's current dimension.
 +     * @param chunkCoordinates The spawn point to set as the player-specific spawn point for the dimension
@@ -512,9 +507,10 @@
 +            this.spawnForcedMap.remove(dimension);
 +        }
 +    }
-     /**
++    /**
       * Will trigger the specified trigger.
       */
+     public void triggerAchievement(StatBase par1StatBase)
 @@ -1843,6 +2033,10 @@
  
              super.fall(par1);

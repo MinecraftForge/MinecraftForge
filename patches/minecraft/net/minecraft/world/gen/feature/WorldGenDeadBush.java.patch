@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenDeadBush.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenDeadBush.java
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenDeadBush.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenDeadBush.java
 @@ -18,10 +18,16 @@
      {
          int l;

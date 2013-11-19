@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/inventory/SlotArmor.java
-+++ ../src_work/minecraft/net/minecraft/inventory/SlotArmor.java
+--- ../src-base/minecraft/net/minecraft/inventory/SlotArmor.java
++++ ../src-work/minecraft/net/minecraft/inventory/SlotArmor.java
 @@ -41,7 +41,8 @@
       */
      public boolean isItemValid(ItemStack par1ItemStack)

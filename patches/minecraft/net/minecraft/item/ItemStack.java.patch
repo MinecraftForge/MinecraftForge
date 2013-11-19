@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/item/ItemStack.java
-+++ ../src_work/minecraft/net/minecraft/item/ItemStack.java
+--- ../src-base/minecraft/net/minecraft/item/ItemStack.java
++++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
 @@ -29,6 +29,7 @@
  import net.minecraft.util.Icon;
  import net.minecraft.util.StatCollector;
@@ -101,7 +101,7 @@
      }
  
      public boolean func_111282_a(EntityPlayer par1EntityPlayer, EntityLivingBase par2EntityLivingBase)
-@@ -733,14 +750,21 @@
+@@ -733,15 +750,22 @@
          {
              arraylist.add("Durability: " + (this.getMaxDamage() - this.getItemDamageForDisplay()) + " / " + this.getMaxDamage());
          }
@@ -116,11 +116,12 @@
      {
 -        return this.getItem().hasEffect(this);
 +        return hasEffect(0);
-+    }
+     }
 +    @SideOnly(Side.CLIENT)
 +    public boolean hasEffect(int pass)
 +    {
 +        return this.getItem().hasEffect(this, pass);
-     }
++    }
  
      @SideOnly(Side.CLIENT)
+     public EnumRarity getRarity()
