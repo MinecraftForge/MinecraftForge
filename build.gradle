@@ -50,7 +50,7 @@ uploadArchives {
             logger.info('Publishing to files server')
             
             mavenDeployer {
-                configuration = configurations.deployerJars
+                configuration = configurations.deployJars
 
                 repository(url: project.filesmaven.url) {
                     authentication(userName: project.filesmaven.username, privateKey: project.filesmaven.key)
