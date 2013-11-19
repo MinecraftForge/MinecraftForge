@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/entity/item/EntityEnderPearl.java
-+++ ../src_work/minecraft/net/minecraft/entity/item/EntityEnderPearl.java
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityEnderPearl.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityEnderPearl.java
 @@ -9,6 +9,8 @@
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.MovingObjectPosition;

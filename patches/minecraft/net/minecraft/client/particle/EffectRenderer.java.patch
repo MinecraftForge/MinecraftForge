@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/particle/EffectRenderer.java
-+++ ../src_work/minecraft/net/minecraft/client/particle/EffectRenderer.java
+--- ../src-base/minecraft/net/minecraft/client/particle/EffectRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/particle/EffectRenderer.java
 @@ -12,6 +12,7 @@
  import net.minecraft.client.renderer.texture.TextureMap;
  import net.minecraft.entity.Entity;
@@ -8,23 +8,23 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.world.World;
  import org.lwjgl.opengl.GL11;
-@@ -63,9 +64,13 @@
+@@ -63,10 +64,14 @@
              for (int j = 0; j < this.fxLayers[i].size(); ++j)
              {
                  EntityFX entityfx = (EntityFX)this.fxLayers[i].get(j);
 -                entityfx.onUpdate();
--
+ 
 -                if (entityfx.isDead)
-+
 +                if (entityfx != null)
-+                {
+                 {
 +                    entityfx.onUpdate();
 +                }
 +
 +                if (entityfx == null || entityfx.isDead)
-                 {
++                {
                      this.fxLayers[i].remove(j--);
                  }
+             }
 @@ -115,6 +120,7 @@
                  for (int j = 0; j < this.fxLayers[i].size(); ++j)
                  {
@@ -46,11 +46,10 @@
      public void addBlockDestroyEffects(int par1, int par2, int par3, int par4, int par5)
      {
 -        if (par4 != 0)
--        {
--            Block block = Block.blocksList[par4];
 +        Block block = Block.blocksList[par4];
 +        if (block != null && !block.addBlockDestroyEffects(worldObj, par1, par2, par3, par5, this))
-+        {
+         {
+-            Block block = Block.blocksList[par4];
              byte b0 = 4;
  
              for (int j1 = 0; j1 < b0; ++j1)

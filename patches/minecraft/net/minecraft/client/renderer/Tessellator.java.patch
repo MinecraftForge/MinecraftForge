@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/renderer/Tessellator.java
-+++ ../src_work/minecraft/net/minecraft/client/renderer/Tessellator.java
+--- ../src-base/minecraft/net/minecraft/client/renderer/Tessellator.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/Tessellator.java
 @@ -7,6 +7,8 @@
  import java.nio.FloatBuffer;
  import java.nio.IntBuffer;
@@ -75,11 +75,6 @@
 -        this.shortBuffer = this.byteBuffer.asShortBuffer();
 -        this.rawBuffer = new int[par1];
 -        this.useVBO = tryVBO && GLContext.getCapabilities().GL_ARB_vertex_buffer_object;
--
--        if (this.useVBO)
--        {
--            this.vertexBuffers = GLAllocation.createDirectIntBuffer(this.vboCount);
--            ARBVertexBufferObject.glGenBuffersARB(this.vertexBuffers);
 +    }
 +    
 +    public Tessellator()
@@ -90,9 +85,12 @@
 +    {
 +        instance.defaultTexture = true;
 +        useVBO = tryVBO && GLContext.getCapabilities().GL_ARB_vertex_buffer_object;
-+
+ 
+-        if (this.useVBO)
 +        if (useVBO)
-+        {
+         {
+-            this.vertexBuffers = GLAllocation.createDirectIntBuffer(this.vboCount);
+-            ARBVertexBufferObject.glGenBuffersARB(this.vertexBuffers);
 +            vertexBuffers = GLAllocation.createDirectIntBuffer(vboCount);
 +            ARBVertexBufferObject.glGenBuffersARB(vertexBuffers);
          }
@@ -103,10 +101,9 @@
              this.isDrawing = false;
  
 -            if (this.vertexCount > 0)
--            {
 +            int offs = 0;
 +            while (offs < vertexCount)
-+            {
+             {
 +                int vtc = 0;
 +                if (drawMode == 7 && convertQuadsToTriangles)
 +                {
@@ -140,19 +137,19 @@
                  }
  
                  GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-@@ -278,6 +300,12 @@
-                 {
-                     GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
+@@ -280,6 +302,12 @@
                  }
-+            }
-+
+             }
+ 
 +            if (rawBufferSize > 0x20000 && rawBufferIndex < (rawBufferSize << 3))
 +            {
 +                rawBufferSize = 0;
 +                rawBuffer = null;
-             }
- 
++            }
++
              int i = this.rawBufferIndex * 4;
+             this.reset();
+             return i;
 @@ -442,6 +470,19 @@
       */
      public void addVertex(double par1, double par3, double par5)

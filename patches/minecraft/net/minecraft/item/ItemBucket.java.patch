@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/item/ItemBucket.java
-+++ ../src_work/minecraft/net/minecraft/item/ItemBucket.java
+--- ../src-base/minecraft/net/minecraft/item/ItemBucket.java
++++ ../src-work/minecraft/net/minecraft/item/ItemBucket.java
 @@ -8,6 +8,10 @@
  import net.minecraft.util.MovingObjectPosition;
  import net.minecraft.world.World;

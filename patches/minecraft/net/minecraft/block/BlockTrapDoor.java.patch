@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/BlockTrapDoor.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockTrapDoor.java
+--- ../src-base/minecraft/net/minecraft/block/BlockTrapDoor.java
++++ ../src-work/minecraft/net/minecraft/block/BlockTrapDoor.java
 @@ -11,8 +11,13 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;

@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/entity/item/EntityMinecartEmpty.java
-+++ ../src_work/minecraft/net/minecraft/entity/item/EntityMinecartEmpty.java
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityMinecartEmpty.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecartEmpty.java
 @@ -2,6 +2,8 @@
  
  import net.minecraft.entity.player.EntityPlayer;

@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/server/MinecraftServer.java
-+++ ../src_work/minecraft/net/minecraft/server/MinecraftServer.java
+--- ../src-base/minecraft/net/minecraft/server/MinecraftServer.java
++++ ../src-work/minecraft/net/minecraft/server/MinecraftServer.java
 @@ -11,6 +11,7 @@
  import java.text.SimpleDateFormat;
  import java.util.ArrayList;
@@ -52,9 +52,13 @@
          }
  
 -        for (int j = 0; j < this.worldServers.length; ++j)
--        {
++        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, isavehandler, par2Str, 0, theProfiler, getLogAgent()) : new WorldServer(this, isavehandler, par2Str, 0, worldsettings, theProfiler, getLogAgent()));
++        for (int dim : DimensionManager.getStaticDimensionIDs())
+         {
 -            byte b0 = 0;
--
++            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, isavehandler, par2Str, dim, worldsettings, overWorld, theProfiler, getLogAgent()));
++            world.addWorldAccess(new WorldManager(this, world));
+ 
 -            if (j == 1)
 -            {
 -                b0 = -1;
@@ -82,12 +86,7 @@
 -            }
 -
 -            this.worldServers[j].addWorldAccess(new WorldManager(this, this.worldServers[j]));
-+        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, isavehandler, par2Str, 0, theProfiler, getLogAgent()) : new WorldServer(this, isavehandler, par2Str, 0, worldsettings, theProfiler, getLogAgent()));
-+        for (int dim : DimensionManager.getStaticDimensionIDs())
-+        {
-+            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, isavehandler, par2Str, dim, worldsettings, overWorld, theProfiler, getLogAgent()));
-+            world.addWorldAccess(new WorldManager(this, world));
- 
+-
              if (!this.isSinglePlayer())
              {
 -                this.worldServers[j].getWorldInfo().setGameType(this.getGameType());
@@ -95,12 +94,10 @@
              }
  
              this.serverConfigManager.setPlayerManager(this.worldServers);
--        }
--
 +
 +            MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
-+        }
-+
+         }
+ 
 +        this.serverConfigManager.setPlayerManager(new WorldServer[]{ overWorld });
          this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();
@@ -113,38 +110,38 @@
              int i = aworldserver.length;
  
              for (int j = 0; j < i; ++j)
-@@ -413,7 +395,14 @@
+@@ -413,9 +395,16 @@
              for (int i = 0; i < this.worldServers.length; ++i)
              {
                  WorldServer worldserver = this.worldServers[i];
 +                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(worldserver));
                  worldserver.flush();
-+            }
-+
+             }
+ 
 +            WorldServer[] tmp = worldServers;
 +            for (WorldServer world : tmp)
 +            {
 +                DimensionManager.setWorld(world.provider.dimensionId, null);
-             }
- 
++            }
++
              if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
+             {
+                 this.usageSnooper.stopSnooper();
 @@ -638,13 +627,15 @@
          this.theProfiler.startSection("levels");
          int i;
  
 -        for (i = 0; i < this.worldServers.length; ++i)
--        {
 +        Integer[] ids = DimensionManager.getIDs(this.tickCounter % 200 == 0);
 +        for (int x = 0; x < ids.length; x++)
-+        {
+         {
 +            int id = ids[x];
              long j = System.nanoTime();
  
 -            if (i == 0 || this.getAllowNether())
--            {
--                WorldServer worldserver = this.worldServers[i];
 +            if (id == 0 || this.getAllowNether())
-+            {
+             {
+-                WorldServer worldserver = this.worldServers[i];
 +                WorldServer worldserver = DimensionManager.getWorld(id);
                  this.theProfiler.startSection(worldserver.getWorldInfo().getWorldName());
                  this.theProfiler.startSection("pools");
@@ -154,11 +151,9 @@
              }
  
 -            this.timeOfLastDimensionTick[i][this.tickCounter % 100] = System.nanoTime() - j;
--        }
--
 +            worldTickTimes.get(id)[this.tickCounter % 100] = System.nanoTime() - j;
-+        }
-+
+         }
+ 
 +        this.theProfiler.endStartSection("dim_unloading");
 +        DimensionManager.unloadWorlds(worldTickTimes);
          this.theProfiler.endStartSection("connection");

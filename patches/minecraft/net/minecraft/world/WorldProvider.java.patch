@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/WorldProvider.java
-+++ ../src_work/minecraft/net/minecraft/world/WorldProvider.java
+--- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
++++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
 @@ -3,16 +3,23 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;

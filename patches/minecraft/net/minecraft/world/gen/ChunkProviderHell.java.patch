@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/gen/ChunkProviderHell.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/ChunkProviderHell.java
+--- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderHell.java
++++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderHell.java
 @@ -19,6 +19,13 @@
  import net.minecraft.world.gen.feature.WorldGenMinable;
  import net.minecraft.world.gen.structure.MapGenNetherBridge;
@@ -14,18 +14,18 @@
  public class ChunkProviderHell implements IChunkProvider
  {
      private Random hellRNG;
-@@ -59,6 +66,11 @@
-     double[] noiseData3;
+@@ -60,6 +67,11 @@
      double[] noiseData4;
      double[] noiseData5;
-+
+ 
 +    {
 +        genNetherBridge = (MapGenNetherBridge) TerrainGen.getModdedMapGen(genNetherBridge, NETHER_BRIDGE);
 +        netherCaveGenerator = TerrainGen.getModdedMapGen(netherCaveGenerator, NETHER_CAVE);
 +    }
- 
++
      public ChunkProviderHell(World par1World, long par2)
      {
+         this.worldObj = par1World;
 @@ -71,6 +83,16 @@
          this.netherrackExculsivityNoiseGen = new NoiseGeneratorOctaves(this.hellRNG, 4);
          this.netherNoiseGen6 = new NoiseGeneratorOctaves(this.hellRNG, 10);

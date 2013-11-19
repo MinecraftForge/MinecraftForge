@@ -1,23 +1,23 @@
---- ../src_base/minecraft/net/minecraft/client/gui/GuiControls.java
-+++ ../src_work/minecraft/net/minecraft/client/gui/GuiControls.java
-@@ -6,6 +6,8 @@
- import net.minecraft.client.settings.GameSettings;
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiControls.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiControls.java
+@@ -7,6 +7,8 @@
  import net.minecraft.client.settings.KeyBinding;
  import net.minecraft.util.EnumChatFormatting;
-+
-+import net.minecraftforge.client.GuiControlsScrollPanel;
  
++import net.minecraftforge.client.GuiControlsScrollPanel;
++
  @SideOnly(Side.CLIENT)
  public class GuiControls extends GuiScreen
-@@ -23,6 +25,8 @@
- 
+ {
+@@ -24,6 +26,8 @@
      /** The ID of the  button that has been pressed. */
      private int buttonId = -1;
-+
-+    private GuiControlsScrollPanel scrollPane;
  
++    private GuiControlsScrollPanel scrollPane;
++
      public GuiControls(GuiScreen par1GuiScreen, GameSettings par2GameSettings)
      {
+         this.parentScreen = par1GuiScreen;
 @@ -43,14 +47,9 @@
       */
      public void initGui()
@@ -36,7 +36,7 @@
          this.screenTitle = I18n.getString("controls.title");
      }
  
-@@ -59,19 +58,9 @@
+@@ -59,20 +58,10 @@
       */
      protected void actionPerformed(GuiButton par1GuiButton)
      {
@@ -48,14 +48,15 @@
          if (par1GuiButton.id == 200)
          {
              this.mc.displayGuiScreen(this.parentScreen);
--        }
+         }
 -        else
 -        {
 -            this.buttonId = par1GuiButton.id;
 -            par1GuiButton.displayString = "> " + this.options.getOptionDisplayString(par1GuiButton.id) + " <";
-         }
+-        }
      }
  
+     /**
 @@ -80,17 +69,7 @@
       */
      protected void mouseClicked(int par1, int par2, int par3)
@@ -75,22 +76,23 @@
      }
  
      /**
-@@ -98,14 +77,7 @@
+@@ -98,15 +77,8 @@
       */
      protected void keyTyped(char par1, int par2)
      {
 -        if (this.buttonId >= 0)
--        {
++        if (scrollPane.keyTyped(par1, par2))
+         {
 -            this.options.setKeyBinding(this.buttonId, par2);
 -            ((GuiButton)this.buttonList.get(this.buttonId)).displayString = this.options.getOptionDisplayString(this.buttonId);
 -            this.buttonId = -1;
 -            KeyBinding.resetKeyBindingArrayAndHash();
 -        }
 -        else
-+        if (scrollPane.keyTyped(par1, par2))
-         {
+-        {
              super.keyTyped(par1, par2);
          }
+     }
 @@ -117,6 +89,7 @@
      public void drawScreen(int par1, int par2, float par3)
      {

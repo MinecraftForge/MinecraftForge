@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenTallGrass.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenTallGrass.java
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTallGrass.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTallGrass.java
 @@ -20,10 +20,16 @@
      {
          int l;

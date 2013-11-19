@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
-+++ ../src_work/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
+--- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
 @@ -21,6 +21,7 @@
  import net.minecraft.util.Icon;
  import net.minecraft.util.ReportedException;

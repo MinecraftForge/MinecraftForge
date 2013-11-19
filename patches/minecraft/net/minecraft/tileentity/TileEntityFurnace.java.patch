@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
-+++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
 @@ -9,6 +9,7 @@
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.inventory.ISidedInventory;
@@ -54,10 +54,9 @@
                  this.furnaceItemStacks[2] = itemstack.copy();
              }
 -            else if (this.furnaceItemStacks[2].itemID == itemstack.itemID)
--            {
--                ++this.furnaceItemStacks[2].stackSize;
 +            else if (this.furnaceItemStacks[2].isItemEqual(itemstack))
-+            {
+             {
+-                ++this.furnaceItemStacks[2].stackSize;
 +                furnaceItemStacks[2].stackSize += itemstack.stackSize;
              }
  

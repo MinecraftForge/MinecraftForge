@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/entity/passive/EntitySheep.java
-+++ ../src_work/minecraft/net/minecraft/entity/passive/EntitySheep.java
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntitySheep.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntitySheep.java
 @@ -2,6 +2,8 @@
  
  import cpw.mods.fml.relauncher.Side;

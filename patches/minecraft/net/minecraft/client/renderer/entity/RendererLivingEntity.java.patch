@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/renderer/entity/RendererLivingEntity.java
-+++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RendererLivingEntity.java
+--- ../src-base/minecraft/net/minecraft/client/renderer/entity/RendererLivingEntity.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RendererLivingEntity.java
 @@ -18,6 +18,9 @@
  import net.minecraft.util.EnumChatFormatting;
  import net.minecraft.util.MathHelper;

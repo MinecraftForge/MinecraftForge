@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
-+++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
 @@ -11,6 +11,8 @@
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.nbt.NBTTagList;

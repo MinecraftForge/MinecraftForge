@@ -1,15 +1,15 @@
---- ../src_base/minecraft/net/minecraft/world/gen/structure/ComponentStrongholdChestCorridor.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/structure/ComponentStrongholdChestCorridor.java
-@@ -7,6 +7,9 @@
- import net.minecraft.nbt.NBTTagCompound;
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/ComponentStrongholdChestCorridor.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/ComponentStrongholdChestCorridor.java
+@@ -8,6 +8,9 @@
  import net.minecraft.util.WeightedRandomChestContent;
  import net.minecraft.world.World;
-+
+ 
 +import net.minecraftforge.common.ChestGenHooks;
 +import static net.minecraftforge.common.ChestGenHooks.*;
- 
++
  public class ComponentStrongholdChestCorridor extends ComponentStronghold
  {
+     /** List of items that Stronghold chests can contain. */
 @@ -86,7 +89,7 @@
                  if (par3StructureBoundingBox.isVecInside(j, i, k))
                  {

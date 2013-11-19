@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/crash/CrashReportCategory.java
-+++ ../src_work/minecraft/net/minecraft/crash/CrashReportCategory.java
+--- ../src-base/minecraft/net/minecraft/crash/CrashReportCategory.java
++++ ../src-work/minecraft/net/minecraft/crash/CrashReportCategory.java
 @@ -130,8 +130,11 @@
      public int func_85073_a(int par1)
      {

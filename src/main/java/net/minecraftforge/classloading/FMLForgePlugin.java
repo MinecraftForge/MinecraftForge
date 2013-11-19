@@ -11,12 +11,6 @@ public class FMLForgePlugin implements IFMLLoadingPlugin
     public static File forgeLocation;
 
     @Override
-    public String[] getLibraryRequestClass()
-    {
-        return null;
-    }
-
-    @Override
     public String[] getASMTransformerClass()
     {
         return new String[]{ 

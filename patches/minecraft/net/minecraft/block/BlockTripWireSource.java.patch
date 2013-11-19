@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/BlockTripWireSource.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockTripWireSource.java
+--- ../src-base/minecraft/net/minecraft/block/BlockTripWireSource.java
++++ ../src-work/minecraft/net/minecraft/block/BlockTripWireSource.java
 @@ -8,6 +8,9 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;

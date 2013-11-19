@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/gen/structure/ComponentVillageStartPiece.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/structure/ComponentVillageStartPiece.java
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/ComponentVillageStartPiece.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/ComponentVillageStartPiece.java
 @@ -12,6 +12,7 @@
  
      /** Boolean that determines if the village is in a desert or not. */

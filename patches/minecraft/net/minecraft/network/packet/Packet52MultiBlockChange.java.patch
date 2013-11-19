@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/network/packet/Packet52MultiBlockChange.java
-+++ ../src_work/minecraft/net/minecraft/network/packet/Packet52MultiBlockChange.java
+--- ../src-base/minecraft/net/minecraft/network/packet/Packet52MultiBlockChange.java
++++ ../src-work/minecraft/net/minecraft/network/packet/Packet52MultiBlockChange.java
 @@ -7,6 +7,8 @@
  import java.io.IOException;
  import net.minecraft.world.World;

@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
-+++ ../src_work/minecraft/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
+--- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
 @@ -11,9 +11,11 @@
  import java.util.List;
  import javax.imageio.ImageIO;

@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/gui/achievement/GuiAchievements.java
-+++ ../src_work/minecraft/net/minecraft/client/gui/achievement/GuiAchievements.java
+--- ../src-base/minecraft/net/minecraft/client/gui/achievement/GuiAchievements.java
++++ ../src-work/minecraft/net/minecraft/client/gui/achievement/GuiAchievements.java
 @@ -2,6 +2,9 @@
  
  import cpw.mods.fml.relauncher.Side;
@@ -53,12 +53,10 @@
      }
  
      /**
-@@ -87,6 +105,16 @@
-         {
-             this.mc.displayGuiScreen((GuiScreen)null);
+@@ -89,6 +107,16 @@
              this.mc.setIngameFocus();
-+        }
-+
+         }
+ 
 +        if (par1GuiButton.id == 2)
 +        {
 +            currentPage++;
@@ -67,23 +65,23 @@
 +                currentPage = -1;
 +            }
 +            button.displayString = AchievementPage.getTitle(currentPage);
-         }
- 
++        }
++
          super.actionPerformed(par1GuiButton);
+     }
+ 
 @@ -314,11 +342,12 @@
          int i4;
          int j4;
  
 -        for (i3 = 0; i3 < AchievementList.achievementList.size(); ++i3)
--        {
--            Achievement achievement = (Achievement)AchievementList.achievementList.get(i3);
--
--            if (achievement.parentAchievement != null)
 +        List<Achievement> achievementList = (currentPage == -1 ? minecraftAchievements : AchievementPage.getAchievementPage(currentPage).getAchievements());
 +        for (i3 = 0; i3 < achievementList.size(); ++i3)
-+        {
+         {
+-            Achievement achievement = (Achievement)AchievementList.achievementList.get(i3);
 +            Achievement achievement = achievementList.get(i3);
-+
+ 
+-            if (achievement.parentAchievement != null)
 +            if (achievement.parentAchievement != null && achievementList.contains(achievement.parentAchievement))
              {
                  k3 = achievement.displayColumn * 24 - k + 11 + k1;
@@ -93,10 +91,9 @@
          int i5;
  
 -        for (k3 = 0; k3 < AchievementList.achievementList.size(); ++k3)
--        {
--            Achievement achievement2 = (Achievement)AchievementList.achievementList.get(k3);
 +        for (k3 = 0; k3 < achievementList.size(); ++k3)
-+        {
+         {
+-            Achievement achievement2 = (Achievement)AchievementList.achievementList.get(k3);
 +            Achievement achievement2 = (Achievement)achievementList.get(k3);
              j4 = achievement2.displayColumn * 24 - k;
              l3 = achievement2.displayRow * 24 - l;

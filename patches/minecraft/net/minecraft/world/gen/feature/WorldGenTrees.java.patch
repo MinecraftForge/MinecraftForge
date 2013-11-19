@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
 @@ -2,8 +2,10 @@
  
  import java.util.Random;
@@ -30,15 +30,13 @@
              else
              {
                  i1 = par1World.getBlockId(par3, par4 - 1, par5);
--
--                if ((i1 == Block.grass.blockID || i1 == Block.dirt.blockID) && par4 < 256 - l - 1)
--                {
--                    this.setBlock(par1World, par3, par4 - 1, par5, Block.dirt.blockID);
 +                Block soil = Block.blocksList[i1];
 +                boolean isSoil = (soil != null && soil.canSustainPlant(par1World, par3, par4 - 1, par5, ForgeDirection.UP, (BlockSapling)Block.sapling));
-+
+ 
+-                if ((i1 == Block.grass.blockID || i1 == Block.dirt.blockID) && par4 < 256 - l - 1)
 +                if (isSoil && par4 < 256 - l - 1)
-+                {
+                 {
+-                    this.setBlock(par1World, par3, par4 - 1, par5, Block.dirt.blockID);
 +                    soil.onPlantGrow(par1World, par3, par4 - 1, par5, par3, par4, par5);
                      b0 = 3;
                      byte b1 = 0;
@@ -47,10 +45,9 @@
                                  if (Math.abs(k2) != i2 || Math.abs(i3) != i2 || par2Random.nextInt(2) != 0 && k1 != 0)
                                  {
                                      int j3 = par1World.getBlockId(j2, j1, l2);
--
--                                    if (j3 == 0 || j3 == Block.leaves.blockID)
 +                                    Block block = Block.blocksList[j3];
-+
+ 
+-                                    if (j3 == 0 || j3 == Block.leaves.blockID)
 +                                    if (block == null || block.canBeReplacedByLeaves(par1World, j2, j1, l2))
                                      {
                                          this.setBlockAndMetadata(par1World, j2, j1, l2, Block.leaves.blockID, this.metaLeaves);

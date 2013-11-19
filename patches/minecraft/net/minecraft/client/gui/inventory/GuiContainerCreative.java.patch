@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/gui/inventory/GuiContainerCreative.java
-+++ ../src_work/minecraft/net/minecraft/client/gui/inventory/GuiContainerCreative.java
+--- ../src-base/minecraft/net/minecraft/client/gui/inventory/GuiContainerCreative.java
++++ ../src-work/minecraft/net/minecraft/client/gui/inventory/GuiContainerCreative.java
 @@ -61,6 +61,8 @@
      private Slot field_74235_v;
      private boolean field_74234_w;
@@ -61,10 +61,9 @@
                  Item.enchantedBook.func_92113_a(enchantment, containercreative.itemList);
              }
          }
--
 +        updateFilteredItems(containercreative);
 +    }
-+
+ 
 +    //split from above for custom search tabs
 +    private void updateFilteredItems(ContainerCreative containercreative)
 +    {
@@ -116,26 +115,24 @@
              {
                  this.searchField.setVisible(true);
                  this.searchField.setCanLoseFocus(false);
-@@ -653,21 +682,42 @@
+@@ -653,23 +682,44 @@
  
          super.drawScreen(par1, par2, par3);
          CreativeTabs[] acreativetabs = CreativeTabs.creativeTabArray;
 -        int i2 = acreativetabs.length;
--
--        for (int j2 = 0; j2 < i2; ++j2)
 +        int start = tabPage * 10;
 +        int i2 = Math.min(acreativetabs.length, ((tabPage + 1) * 10) + 2);
 +        if (tabPage != 0) start += 2;
 +        boolean rendered = false;
-+
+ 
+-        for (int j2 = 0; j2 < i2; ++j2)
 +        for (int j2 = start; j2 < i2; ++j2)
          {
              CreativeTabs creativetabs = acreativetabs[j2];
  
 -            if (this.renderCreativeInventoryHoveringText(creativetabs, par1, par2))
--            {
 +            if (creativetabs != null && this.renderCreativeInventoryHoveringText(creativetabs, par1, par2))
-+            {
+             {
 +                rendered = true;
                  break;
              }
@@ -149,8 +146,8 @@
          if (this.field_74235_v != null && selectedTabIndex == CreativeTabs.tabInventory.getTabIndex() && this.isPointInRegion(this.field_74235_v.xDisplayPosition, this.field_74235_v.yDisplayPosition, 16, 16, par1, par2))
          {
              this.drawCreativeTabHoveringText(I18n.getString("inventory.binSlot"), par1, par2);
-+        }
-+
+         }
+ 
 +        if (maxPages != 0)
 +        {
 +            String page = String.format("%d / %d", tabPage + 1, maxPages + 1);
@@ -161,10 +158,12 @@
 +            fontRenderer.drawString(page, guiLeft + (xSize / 2) - (width / 2), guiTop - 44, -1);
 +            this.zLevel = 0.0F;
 +            itemRenderer.zLevel = 0.0F;
-         }
- 
++        }
++
          GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-@@ -741,14 +791,32 @@
+         GL11.glDisable(GL11.GL_LIGHTING);
+     }
+@@ -741,17 +791,35 @@
          int k = acreativetabs.length;
          int l;
  
@@ -182,9 +181,9 @@
 +            if (creativetabs1 != null && creativetabs1.getTabIndex() != selectedTabIndex)
              {
                  this.renderCreativeTab(creativetabs1);
-+            }
-+        }
-+
+             }
+         }
+ 
 +        if (tabPage != 0)
 +        {
 +            if (creativetabs != CreativeTabs.tabAllSearch)
@@ -196,9 +195,12 @@
 +            {
 +                this.mc.getTextureManager().bindTexture(field_110424_t);
 +                renderCreativeTab(CreativeTabs.tabInventory);
-             }
-         }
- 
++            }
++        }
++
+         this.mc.getTextureManager().bindTexture(new ResourceLocation("textures/gui/container/creative_inventory/tab_" + creativetabs.getBackgroundImageName()));
+         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+         this.searchField.drawTextBox();
 @@ -766,6 +834,14 @@
              this.drawTexturedModalRect(i1, k + (int)((float)(l - k - 17) * this.currentScroll), 232 + (this.needsScrollBars() ? 0 : 12), 0, 12, 15);
          }

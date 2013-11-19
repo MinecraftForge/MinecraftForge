@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/Block.java
-+++ ../src_work/minecraft/net/minecraft/block/Block.java
+--- ../src-base/minecraft/net/minecraft/block/Block.java
++++ ../src-work/minecraft/net/minecraft/block/Block.java
 @@ -1,15 +1,22 @@
  package net.minecraft.block;
  
@@ -158,9 +158,8 @@
          par2EntityPlayer.addExhaustion(0.025F);
  
 -        if (this.canSilkHarvest() && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer))
--        {
 +        if (this.canSilkHarvest(par1World, par2EntityPlayer, par3, par4, par5, par6) && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer))
-+        {
+         {
 +            ArrayList<ItemStack> items = new ArrayList<ItemStack>();
              ItemStack itemstack = this.createStackedBlock(par6);
  
@@ -180,13 +179,10 @@
 +            harvesters.set(par2EntityPlayer);
              int i1 = EnchantmentHelper.getFortuneModifier(par2EntityPlayer);
              this.dropBlockAsItem(par1World, par3, par4, par5, par6, i1);
--        }
--    }
--
 +            harvesters.set(null);
-+        }
-+    }
-+
+         }
+     }
+ 
 +    private int silk_check_meta = -1; //Dirty hack to stop us from needing to special case the silk check hook.
      /**
       * Return true if a player with Silk Touch can harvest this block directly, and not its normal drops.

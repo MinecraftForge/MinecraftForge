@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/tileentity/TileEntity.java
-+++ ../src_work/minecraft/net/minecraft/tileentity/TileEntity.java
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
 @@ -10,8 +10,11 @@
  import net.minecraft.block.Block;
  import net.minecraft.crash.CrashReportCategory;

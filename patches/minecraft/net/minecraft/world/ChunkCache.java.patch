@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/ChunkCache.java
-+++ ../src_work/minecraft/net/minecraft/world/ChunkCache.java
+--- ../src-base/minecraft/net/minecraft/world/ChunkCache.java
++++ ../src-work/minecraft/net/minecraft/world/ChunkCache.java
 @@ -8,6 +8,7 @@
  import net.minecraft.util.Vec3Pool;
  import net.minecraft.world.biome.BiomeGenBase;

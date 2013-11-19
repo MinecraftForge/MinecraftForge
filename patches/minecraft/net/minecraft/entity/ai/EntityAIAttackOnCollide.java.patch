@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/entity/ai/EntityAIAttackOnCollide.java
-+++ ../src_work/minecraft/net/minecraft/entity/ai/EntityAIAttackOnCollide.java
+--- ../src-base/minecraft/net/minecraft/entity/ai/EntityAIAttackOnCollide.java
++++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAIAttackOnCollide.java
 @@ -3,6 +3,7 @@
  import net.minecraft.entity.EntityCreature;
  import net.minecraft.entity.EntityLivingBase;
@@ -8,15 +8,15 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
  
-@@ -28,6 +29,8 @@
-     PathEntity entityPathEntity;
+@@ -29,6 +30,8 @@
      Class classTarget;
      private int field_75445_i;
-+
-+    private int failedPathFindingPenalty;
  
++    private int failedPathFindingPenalty;
++
      public EntityAIAttackOnCollide(EntityCreature par1EntityCreature, Class par2Class, double par3, boolean par5)
      {
+         this(par1EntityCreature, par3, par5);
 @@ -65,8 +68,16 @@
          }
          else

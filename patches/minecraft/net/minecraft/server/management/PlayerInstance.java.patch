@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/server/management/PlayerInstance.java
-+++ ../src_work/minecraft/net/minecraft/server/management/PlayerInstance.java
+--- ../src-base/minecraft/net/minecraft/server/management/PlayerInstance.java
++++ ../src-work/minecraft/net/minecraft/server/management/PlayerInstance.java
 @@ -1,6 +1,7 @@
  package net.minecraft.server.management;
  
@@ -71,9 +71,8 @@
                  else
                  {
                      this.sendToAllPlayersWatchingChunk(new Packet52MultiBlockChange(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos, this.locationOfBlockChange, this.numberOfTilesToUpdate, PlayerManager.getWorldServer(this.thePlayerManager)));
--
 +                }
-+
+ 
 +                { //Forge: Send only the tile entities that are updated, Adding this brace lets us keep the indent and the patch small
                      for (i = 0; i < this.numberOfTilesToUpdate; ++i)
                      {

@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/model/PositionTextureVertex.java
-+++ ../src_work/minecraft/net/minecraft/client/model/PositionTextureVertex.java
+--- ../src-base/minecraft/net/minecraft/client/model/PositionTextureVertex.java
++++ ../src-work/minecraft/net/minecraft/client/model/PositionTextureVertex.java
 @@ -4,7 +4,6 @@
  import cpw.mods.fml.relauncher.SideOnly;
  import net.minecraft.util.Vec3;

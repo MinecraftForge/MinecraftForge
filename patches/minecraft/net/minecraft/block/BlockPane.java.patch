@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/BlockPane.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockPane.java
+--- ../src-base/minecraft/net/minecraft/block/BlockPane.java
++++ ../src-work/minecraft/net/minecraft/block/BlockPane.java
 @@ -13,6 +13,7 @@
  import net.minecraft.util.Icon;
  import net.minecraft.world.IBlockAccess;

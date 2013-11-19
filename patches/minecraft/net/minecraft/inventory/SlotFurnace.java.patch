@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/inventory/SlotFurnace.java
-+++ ../src_work/minecraft/net/minecraft/inventory/SlotFurnace.java
+--- ../src-base/minecraft/net/minecraft/inventory/SlotFurnace.java
++++ ../src-work/minecraft/net/minecraft/inventory/SlotFurnace.java
 @@ -69,7 +69,7 @@
          if (!this.thePlayer.worldObj.isRemote)
          {

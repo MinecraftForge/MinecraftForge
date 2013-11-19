@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/gen/ChunkProviderEnd.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/ChunkProviderEnd.java
+--- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderEnd.java
++++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderEnd.java
 @@ -13,6 +13,10 @@
  import net.minecraft.world.chunk.Chunk;
  import net.minecraft.world.chunk.IChunkProvider;
@@ -11,12 +11,12 @@
  public class ChunkProviderEnd implements IChunkProvider
  {
      private Random endRNG;
-@@ -42,7 +46,15 @@
+@@ -42,8 +46,16 @@
          this.noiseGen3 = new NoiseGeneratorOctaves(this.endRNG, 8);
          this.noiseGen4 = new NoiseGeneratorOctaves(this.endRNG, 10);
          this.noiseGen5 = new NoiseGeneratorOctaves(this.endRNG, 16);
 -    }
-+
+ 
 +        NoiseGeneratorOctaves[] noiseGens = {noiseGen1, noiseGen2, noiseGen3, noiseGen4, noiseGen5};
 +        noiseGens = TerrainGen.getModdedNoiseGenerators(par1World, this.endRNG, noiseGens);
 +        this.noiseGen1 = noiseGens[0];
@@ -25,9 +25,10 @@
 +        this.noiseGen4 = noiseGens[3];
 +        this.noiseGen5 = noiseGens[4];
 +   }
- 
++
      public void generateTerrain(int par1, int par2, byte[] par3ArrayOfByte, BiomeGenBase[] par4ArrayOfBiomeGenBase)
      {
+         byte b0 = 2;
 @@ -114,6 +126,10 @@
  
      public void replaceBlocksForBiome(int par1, int par2, byte[] par3ArrayOfByte, BiomeGenBase[] par4ArrayOfBiomeGenBase)

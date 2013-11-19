@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/BlockLog.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockLog.java
+--- ../src-base/minecraft/net/minecraft/block/BlockLog.java
++++ ../src-work/minecraft/net/minecraft/block/BlockLog.java
 @@ -62,14 +62,9 @@
                      {
                          int j2 = par1World.getBlockId(par2 + k1, par3 + l1, par4 + i2);

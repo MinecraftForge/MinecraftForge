@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/gen/MapGenRavine.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/MapGenRavine.java
+--- ../src-base/minecraft/net/minecraft/world/gen/MapGenRavine.java
++++ ../src-work/minecraft/net/minecraft/world/gen/MapGenRavine.java
 @@ -4,6 +4,7 @@
  import net.minecraft.block.Block;
  import net.minecraft.util.MathHelper;

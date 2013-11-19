@@ -1,15 +1,15 @@
---- ../src_base/minecraft/net/minecraft/item/EnumArmorMaterial.java
-+++ ../src_work/minecraft/net/minecraft/item/EnumArmorMaterial.java
-@@ -22,6 +22,9 @@
- 
+--- ../src-base/minecraft/net/minecraft/item/EnumArmorMaterial.java
++++ ../src-work/minecraft/net/minecraft/item/EnumArmorMaterial.java
+@@ -23,6 +23,9 @@
      /** Return the enchantability factor of the material */
      private int enchantability;
-+
+ 
 +    //Added by forge for custom Armor materials.
 +    public Item customCraftingMaterial = null;
- 
++
      private EnumArmorMaterial(int par3, int[] par4ArrayOfInteger, int par5)
      {
+         this.maxDamageFactor = par3;
 @@ -61,6 +64,14 @@
       */
      public int getArmorCraftingMaterial()

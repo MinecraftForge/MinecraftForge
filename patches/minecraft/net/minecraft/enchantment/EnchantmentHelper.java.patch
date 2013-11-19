@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
-+++ ../src_work/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
+--- ../src-base/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
++++ ../src-work/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
 @@ -463,7 +463,10 @@
          {
              Enchantment enchantment = aenchantment[k];

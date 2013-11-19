@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/util/MovingObjectPosition.java
-+++ ../src_work/minecraft/net/minecraft/util/MovingObjectPosition.java
+--- ../src-base/minecraft/net/minecraft/util/MovingObjectPosition.java
++++ ../src-work/minecraft/net/minecraft/util/MovingObjectPosition.java
 @@ -27,7 +27,13 @@
  
      /** The hit entity */

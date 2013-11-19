@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/gui/GuiCreateWorld.java
-+++ ../src_work/minecraft/net/minecraft/client/gui/GuiCreateWorld.java
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiCreateWorld.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiCreateWorld.java
 @@ -376,7 +376,7 @@
              }
              else if (par1GuiButton.id == 8)

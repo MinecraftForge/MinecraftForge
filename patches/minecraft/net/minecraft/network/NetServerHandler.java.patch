@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/network/NetServerHandler.java
-+++ ../src_work/minecraft/net/minecraft/network/NetServerHandler.java
+--- ../src-base/minecraft/net/minecraft/network/NetServerHandler.java
++++ ../src-work/minecraft/net/minecraft/network/NetServerHandler.java
 @@ -71,6 +71,14 @@
  import net.minecraft.world.WorldServer;
  import org.apache.commons.lang3.StringUtils;
@@ -15,18 +15,18 @@
  public class NetServerHandler extends NetHandler
  {
      /** The underlying network manager for this server handler. */
-@@ -221,6 +229,11 @@
-                     if (this.playerEntity.ridingEntity != null)
-                     {
+@@ -223,6 +231,11 @@
                          this.playerEntity.ridingEntity.updateRiderPosition();
-+                    }
-+
+                     }
+ 
 +                    if (!this.hasMoved) //Fixes teleportation kick while riding entities
 +                    {
 +                        return;
-                     }
- 
++                    }
++
                      this.mcServer.getConfigurationManager().serverUpdateMountedMovingPlayer(this.playerEntity);
+ 
+                     if (this.hasMoved)
 @@ -300,9 +313,10 @@
                  d4 = d1 - this.playerEntity.posX;
                  double d5 = d2 - this.playerEntity.posY;
@@ -41,18 +41,18 @@
                  double d10 = d7 * d7 + d8 * d8 + d9 * d9;
  
                  if (d10 > 100.0D && (!this.mcServer.isSinglePlayer() || !this.mcServer.getServerOwner().equals(this.playerEntity.getCommandSenderName())))
-@@ -318,6 +332,11 @@
-                 if (this.playerEntity.onGround && !par1Packet10Flying.onGround && d5 > 0.0D)
-                 {
+@@ -320,6 +334,11 @@
                      this.playerEntity.addExhaustion(0.2F);
-+                }
-+
+                 }
+ 
 +                if (!this.hasMoved) //Fixes "Moved Too Fast" kick when being teleported while moving
 +                {
 +                    return;
-                 }
- 
++                }
++
                  this.playerEntity.moveEntity(d4, d5, d6);
+                 this.playerEntity.onGround = par1Packet10Flying.onGround;
+                 this.playerEntity.addMovementStat(d4, d5, d6);
 @@ -342,10 +361,15 @@
                      this.mcServer.getLogAgent().logWarning(this.playerEntity.getCommandSenderName() + " moved wrongly!");
                  }

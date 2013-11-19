@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/BlockFlower.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockFlower.java
+--- ../src-base/minecraft/net/minecraft/block/BlockFlower.java
++++ ../src-work/minecraft/net/minecraft/block/BlockFlower.java
 @@ -6,7 +6,12 @@
  import net.minecraft.util.AxisAlignedBB;
  import net.minecraft.world.World;

@@ -1,15 +1,15 @@
---- ../src_base/minecraft/net/minecraft/world/gen/structure/ComponentMineshaftCorridor.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/structure/ComponentMineshaftCorridor.java
-@@ -9,6 +9,9 @@
- import net.minecraft.tileentity.TileEntityMobSpawner;
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/ComponentMineshaftCorridor.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/ComponentMineshaftCorridor.java
+@@ -10,6 +10,9 @@
  import net.minecraft.util.WeightedRandomChestContent;
  import net.minecraft.world.World;
-+
+ 
 +import net.minecraftforge.common.ChestGenHooks;
 +import static net.minecraftforge.common.ChestGenHooks.*;
- 
++
  public class ComponentMineshaftCorridor extends StructureComponent
  {
+     private boolean hasRails;
 @@ -283,14 +286,16 @@
                  this.randomlyPlaceBlock(par1World, par3StructureBoundingBox, par2Random, 0.05F, 1, 2, k - 1, Block.torchWood.blockID, 0);
                  this.randomlyPlaceBlock(par1World, par3StructureBoundingBox, par2Random, 0.05F, 1, 2, k + 1, Block.torchWood.blockID, 0);

@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/village/VillageCollection.java
-+++ ../src_work/minecraft/net/minecraft/village/VillageCollection.java
+--- ../src-base/minecraft/net/minecraft/village/VillageCollection.java
++++ ../src-work/minecraft/net/minecraft/village/VillageCollection.java
 @@ -165,7 +165,7 @@
                  {
                      Village village = (Village)iterator.next();

@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/model/ModelRenderer.java
-+++ ../src_work/minecraft/net/minecraft/client/model/ModelRenderer.java
+--- ../src-base/minecraft/net/minecraft/client/model/ModelRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/model/ModelRenderer.java
 @@ -8,7 +8,6 @@
  import net.minecraft.client.renderer.Tessellator;
  import org.lwjgl.opengl.GL11;

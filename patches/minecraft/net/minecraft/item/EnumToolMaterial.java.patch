@@ -1,15 +1,15 @@
---- ../src_base/minecraft/net/minecraft/item/EnumToolMaterial.java
-+++ ../src_work/minecraft/net/minecraft/item/EnumToolMaterial.java
-@@ -30,6 +30,9 @@
- 
+--- ../src-base/minecraft/net/minecraft/item/EnumToolMaterial.java
++++ ../src-work/minecraft/net/minecraft/item/EnumToolMaterial.java
+@@ -31,6 +31,9 @@
      /** Defines the natural enchantability factor of the material. */
      private final int enchantability;
-+
+ 
 +    //Added by forge for custom Armor materials.
 +    public Item customCraftingMaterial = null;
- 
++
      private EnumToolMaterial(int par3, int par4, float par5, float par6, int par7)
      {
+         this.harvestLevel = par3;
 @@ -86,6 +89,14 @@
       */
      public int getToolCraftingMaterial()

@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/multiplayer/NetClientHandler.java
-+++ ../src_work/minecraft/net/minecraft/client/multiplayer/NetClientHandler.java
+--- ../src-base/minecraft/net/minecraft/client/multiplayer/NetClientHandler.java
++++ ../src-work/minecraft/net/minecraft/client/multiplayer/NetClientHandler.java
 @@ -191,6 +191,11 @@
  import net.minecraft.world.storage.MapStorage;
  import org.lwjgl.input.Keyboard;

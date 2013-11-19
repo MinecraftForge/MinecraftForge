@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/IBlockAccess.java
-+++ ../src_work/minecraft/net/minecraft/world/IBlockAccess.java
+--- ../src-base/minecraft/net/minecraft/world/IBlockAccess.java
++++ ../src-work/minecraft/net/minecraft/world/IBlockAccess.java
 @@ -6,6 +6,7 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.util.Vec3Pool;

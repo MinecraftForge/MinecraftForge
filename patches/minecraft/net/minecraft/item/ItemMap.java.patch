@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/item/ItemMap.java
-+++ ../src_work/minecraft/net/minecraft/item/ItemMap.java
+--- ../src-base/minecraft/net/minecraft/item/ItemMap.java
++++ ../src-work/minecraft/net/minecraft/item/ItemMap.java
 @@ -98,7 +98,7 @@
                              boolean flag = k2 * k2 + l2 * l2 > (j1 - 2) * (j1 - 2);
                              int i3 = (j / i + k1 - short1 / 2) * i;

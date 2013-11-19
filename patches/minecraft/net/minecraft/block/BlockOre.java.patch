@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/BlockOre.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockOre.java
+--- ../src-base/minecraft/net/minecraft/block/BlockOre.java
++++ ../src-work/minecraft/net/minecraft/block/BlockOre.java
 @@ -60,6 +60,11 @@
      {
          super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, par7);
@@ -16,11 +16,11 @@
              {
                  j1 = MathHelper.getRandomIntegerInRange(par1World.rand, 2, 5);
              }
-+            return j1;
-+        }
- 
+-
 -            this.dropXpOnBlockBreak(par1World, par2, par3, par4, j1);
--        }
++            return j1;
+         }
++
 +        return 0;
      }
  

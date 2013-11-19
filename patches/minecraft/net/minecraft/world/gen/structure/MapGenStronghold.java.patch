@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/gen/structure/MapGenStronghold.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/structure/MapGenStronghold.java
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/MapGenStronghold.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/MapGenStronghold.java
 @@ -1,6 +1,7 @@
  package net.minecraft.world.gen.structure;
  

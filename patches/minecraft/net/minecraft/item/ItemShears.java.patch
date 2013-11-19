@@ -1,11 +1,11 @@
---- ../src_base/minecraft/net/minecraft/item/ItemShears.java
-+++ ../src_work/minecraft/net/minecraft/item/ItemShears.java
+--- ../src-base/minecraft/net/minecraft/item/ItemShears.java
++++ ../src-work/minecraft/net/minecraft/item/ItemShears.java
 @@ -1,9 +1,19 @@
  package net.minecraft.item;
-+
+ 
 +import java.util.ArrayList;
 +import java.util.Random;
- 
++
  import net.minecraft.block.Block;
  import net.minecraft.creativetab.CreativeTabs;
 +import net.minecraft.enchantment.Enchantment;

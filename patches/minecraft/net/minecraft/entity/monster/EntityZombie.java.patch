@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/entity/monster/EntityZombie.java
-+++ ../src_work/minecraft/net/minecraft/entity/monster/EntityZombie.java
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityZombie.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityZombie.java
 @@ -34,6 +34,10 @@
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.MathHelper;
@@ -30,11 +30,10 @@
 -                int j = MathHelper.floor_double(this.posY);
 -                int k = MathHelper.floor_double(this.posZ);
 -                EntityZombie entityzombie = new EntityZombie(this.worldObj);
--
 +            int i = MathHelper.floor_double(this.posX);
 +            int j = MathHelper.floor_double(this.posY);
 +            int k = MathHelper.floor_double(this.posZ);
-+
+ 
 +            SummonAidEvent summonAid = ForgeEventFactory.fireZombieSummonAid(this, worldObj, i, j, k, entitylivingbase, this.getEntityAttribute(field_110186_bp).getAttributeValue());
 +            
 +            if (summonAid.getResult() == Result.DENY)

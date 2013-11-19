@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/item/ItemArmor.java
-+++ ../src_work/minecraft/net/minecraft/item/ItemArmor.java
+--- ../src-base/minecraft/net/minecraft/item/ItemArmor.java
++++ ../src-work/minecraft/net/minecraft/item/ItemArmor.java
 @@ -218,7 +218,7 @@
  
          if (itemstack1 == null)

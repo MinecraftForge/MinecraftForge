@@ -1,15 +1,15 @@
---- ../src_base/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeatureJunglePyramid.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeatureJunglePyramid.java
-@@ -7,6 +7,9 @@
- import net.minecraft.nbt.NBTTagCompound;
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeatureJunglePyramid.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeatureJunglePyramid.java
+@@ -8,6 +8,9 @@
  import net.minecraft.util.WeightedRandomChestContent;
  import net.minecraft.world.World;
-+
+ 
 +import net.minecraftforge.common.ChestGenHooks;
 +import static net.minecraftforge.common.ChestGenHooks.*;
- 
++
  public class ComponentScatteredFeatureJunglePyramid extends ComponentScatteredFeature
  {
+     private boolean field_74947_h;
 @@ -185,9 +188,12 @@
              this.placeBlockAtCurrentPosition(par1World, Block.redstoneWire.blockID, 0, 4, -3, 1, par3StructureBoundingBox);
              this.placeBlockAtCurrentPosition(par1World, Block.cobblestoneMossy.blockID, 0, 3, -3, 1, par3StructureBoundingBox);

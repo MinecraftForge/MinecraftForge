@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/gen/structure/MapGenStructure.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/structure/MapGenStructure.java
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/MapGenStructure.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/MapGenStructure.java
 @@ -234,12 +234,12 @@
      {
          if (this.field_143029_e == null)

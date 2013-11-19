@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/entity/EntityLivingBase.java
-+++ ../src_work/minecraft/net/minecraft/entity/EntityLivingBase.java
+--- ../src-base/minecraft/net/minecraft/entity/EntityLivingBase.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityLivingBase.java
 @@ -20,9 +20,11 @@
  import net.minecraft.entity.item.EntityItem;
  import net.minecraft.entity.item.EntityXPOrb;
@@ -73,7 +73,7 @@
              if (!this.isChild() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
              {
                  this.dropFewItems(this.recentlyHit > 0, i);
-@@ -1013,12 +1021,22 @@
+@@ -1013,7 +1021,7 @@
  
                  if (this.recentlyHit > 0)
                  {
@@ -82,10 +82,10 @@
  
                      if (j < 5)
                      {
-                         this.dropRareDrop(j <= 0 ? 1 : 0);
+@@ -1021,6 +1029,16 @@
                      }
-+                }
-+            }
+                 }
+             }
 +
 +            captureDrops = false;
 +
@@ -94,9 +94,11 @@
 +                for (EntityItem item : capturedDrops)
 +                {
 +                    worldObj.spawnEntityInWorld(item);
-                 }
-             }
++                }
++            }
          }
+ 
+         this.worldObj.setEntityState(this, (byte)3);
 @@ -1088,7 +1106,7 @@
          int j = MathHelper.floor_double(this.boundingBox.minY);
          int k = MathHelper.floor_double(this.posZ);

@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/item/ItemBucketMilk.java
-+++ ../src_work/minecraft/net/minecraft/item/ItemBucketMilk.java
+--- ../src-base/minecraft/net/minecraft/item/ItemBucketMilk.java
++++ ../src-work/minecraft/net/minecraft/item/ItemBucketMilk.java
 @@ -22,7 +22,7 @@
  
          if (!par2World.isRemote)

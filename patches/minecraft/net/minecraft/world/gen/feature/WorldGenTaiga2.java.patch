@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga2.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga2.java
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga2.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga2.java
 @@ -2,7 +2,9 @@
  
  import java.util.Random;

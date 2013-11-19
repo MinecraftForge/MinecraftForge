@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/item/BehaviorDispenseArmor.java
-+++ ../src_work/minecraft/net/minecraft/item/BehaviorDispenseArmor.java
+--- ../src-base/minecraft/net/minecraft/item/BehaviorDispenseArmor.java
++++ ../src-work/minecraft/net/minecraft/item/BehaviorDispenseArmor.java
 @@ -32,7 +32,7 @@
              int i1 = EntityLiving.getArmorPosition(par2ItemStack);
              ItemStack itemstack1 = par2ItemStack.copy();

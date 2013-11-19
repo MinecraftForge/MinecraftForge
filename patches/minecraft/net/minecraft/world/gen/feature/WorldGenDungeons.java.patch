@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
 @@ -8,6 +8,8 @@
  import net.minecraft.tileentity.TileEntityMobSpawner;
  import net.minecraft.util.WeightedRandomChestContent;

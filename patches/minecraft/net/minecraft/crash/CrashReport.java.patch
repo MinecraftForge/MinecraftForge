@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/crash/CrashReport.java
-+++ ../src_work/minecraft/net/minecraft/crash/CrashReport.java
+--- ../src-base/minecraft/net/minecraft/crash/CrashReport.java
++++ ../src-work/minecraft/net/minecraft/crash/CrashReport.java
 @@ -245,7 +245,8 @@
              StackTraceElement stacktraceelement = null;
              StackTraceElement stacktraceelement1 = null;

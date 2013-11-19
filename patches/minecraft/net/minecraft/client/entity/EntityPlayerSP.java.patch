@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
-+++ ../src_work/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
+--- ../src-base/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
++++ ../src-work/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
 @@ -49,6 +49,9 @@
  import net.minecraft.util.MovementInput;
  import net.minecraft.util.Session;
@@ -34,17 +34,16 @@
          double d4 = par5 - (double)k;
  
 -        if (this.isBlockTranslucent(i, j, k) || this.isBlockTranslucent(i, j + 1, k))
--        {
--            boolean flag = !this.isBlockTranslucent(i - 1, j, k) && !this.isBlockTranslucent(i - 1, j + 1, k);
--            boolean flag1 = !this.isBlockTranslucent(i + 1, j, k) && !this.isBlockTranslucent(i + 1, j + 1, k);
--            boolean flag2 = !this.isBlockTranslucent(i, j, k - 1) && !this.isBlockTranslucent(i, j + 1, k - 1);
--            boolean flag3 = !this.isBlockTranslucent(i, j, k + 1) && !this.isBlockTranslucent(i, j + 1, k + 1);
 +        int entHeight = Math.max(Math.round(this.height), 1);
 +        
 +        boolean inTranslucentBlock = true;
 +        
 +        for (int i1 = 0; i1 < entHeight; i1++)
-+        {
+         {
+-            boolean flag = !this.isBlockTranslucent(i - 1, j, k) && !this.isBlockTranslucent(i - 1, j + 1, k);
+-            boolean flag1 = !this.isBlockTranslucent(i + 1, j, k) && !this.isBlockTranslucent(i + 1, j + 1, k);
+-            boolean flag2 = !this.isBlockTranslucent(i, j, k - 1) && !this.isBlockTranslucent(i, j + 1, k - 1);
+-            boolean flag3 = !this.isBlockTranslucent(i, j, k + 1) && !this.isBlockTranslucent(i, j + 1, k + 1);
 +            if (!this.isBlockTranslucent(i, j + i1, k))
 +            {
 +                inTranslucentBlock = false;

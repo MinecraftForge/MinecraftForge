@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/gen/structure/StructureStart.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/structure/StructureStart.java
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureStart.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureStart.java
 @@ -68,6 +68,11 @@
  
      public NBTTagCompound func_143021_a(int par1, int par2)

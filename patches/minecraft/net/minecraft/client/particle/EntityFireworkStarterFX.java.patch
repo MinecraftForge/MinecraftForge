@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/particle/EntityFireworkStarterFX.java
-+++ ../src_work/minecraft/net/minecraft/client/particle/EntityFireworkStarterFX.java
+--- ../src-base/minecraft/net/minecraft/client/particle/EntityFireworkStarterFX.java
++++ ../src-work/minecraft/net/minecraft/client/particle/EntityFireworkStarterFX.java
 @@ -30,11 +30,11 @@
          {
              this.fireworkExplosions = par15NBTTagCompound.getTagList("Explosions");

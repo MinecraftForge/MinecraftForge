@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/gen/structure/ComponentVillage.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/structure/ComponentVillage.java
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/ComponentVillage.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/ComponentVillage.java
 @@ -7,6 +7,10 @@
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.world.World;

@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/chunk/Chunk.java
-+++ ../src_work/minecraft/net/minecraft/world/chunk/Chunk.java
+--- ../src-base/minecraft/net/minecraft/world/chunk/Chunk.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/Chunk.java
 @@ -25,6 +25,10 @@
  import net.minecraft.world.biome.WorldChunkManager;
  import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
@@ -141,10 +141,9 @@
                      Block.blocksList[l1].breakBlock(this.worldObj, j2, par2, k2, l1, i2);
                  }
 -                else if (Block.blocksList[l1] instanceof ITileEntityProvider && l1 != par4)
--                {
--                    this.worldObj.removeBlockTileEntity(j2, par2, k2);
 +                else if (Block.blocksList[l1] != null && Block.blocksList[l1].hasTileEntity(i2))
-+                {
+                 {
+-                    this.worldObj.removeBlockTileEntity(j2, par2, k2);
 +                    TileEntity te = worldObj.getBlockTileEntity(j2, par2, k2);
 +                    if (te != null && te.shouldRefresh(l1, par4, i2, par5, worldObj, j2, par2, k2))
 +                    {
@@ -162,7 +161,7 @@
                      {
                          if (par2 >= k1)
                          {
-@@ -659,29 +758,21 @@
+@@ -659,32 +758,24 @@
                          Block.blocksList[par4].onBlockAdded(this.worldObj, j2, par2, k2);
                      }
  
@@ -183,18 +182,21 @@
                              tileentity.updateContainingBlockInfo();
 +                            tileentity.blockMetadata = par5;
                          }
--                    }
--                }
+                     }
+                 }
 -                else if (l1 > 0 && Block.blocksList[l1] instanceof ITileEntityProvider)
 -                {
 -                    tileentity = this.getChunkBlockTileEntity(par1, par2, par3);
--
+ 
 -                    if (tileentity != null)
 -                    {
 -                        tileentity.updateContainingBlockInfo();
-                     }
-                 }
- 
+-                    }
+-                }
+-
+                 this.isModified = true;
+                 return true;
+             }
 @@ -716,7 +807,7 @@
                  extendedblockstorage.setExtBlockMetadata(par1, par2 & 15, par3, par4);
                  int j1 = extendedblockstorage.getExtBlockID(par1, par2 & 15, par3);
@@ -225,10 +227,9 @@
          if (tileentity == null)
          {
              int l = this.getBlockID(par1, par2, par3);
--
--            if (l <= 0 || !Block.blocksList[l].hasTileEntity())
 +            int meta = this.getBlockMetadata(par1, par2, par3);
-+
+ 
+-            if (l <= 0 || !Block.blocksList[l].hasTileEntity())
 +            if (l <= 0 || !Block.blocksList[l].hasTileEntity(meta))
              {
                  return null;
@@ -330,13 +331,12 @@
          int k = 0;
          boolean flag1 = !this.worldObj.provider.hasNoSky;
          int l;
-@@ -1354,12 +1457,26 @@
+@@ -1354,13 +1457,27 @@
          }
  
          this.generateHeightMap();
 -        Iterator iterator = this.chunkTileEntityMap.values().iterator();
--
-+
+ 
 +        List<TileEntity> invalidList = new ArrayList<TileEntity>();
 +        iterator = chunkTileEntityMap.values().iterator();
          while (iterator.hasNext())
@@ -353,14 +353,15 @@
 +                invalidList.add(tileEntity);
 +            }
 +            tileEntity.updateContainingBlockInfo();
-+        }
+         }
 +
 +        for (TileEntity tileEntity : invalidList)
 +        {
 +            tileEntity.invalidate();
-         }
++        }
      }
  
+     /**
 @@ -1468,4 +1585,18 @@
              }
          }

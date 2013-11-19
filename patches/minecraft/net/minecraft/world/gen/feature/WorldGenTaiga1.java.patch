@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga1.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga1.java
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga1.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga1.java
 @@ -43,7 +43,9 @@
                          {
                              k2 = par1World.getBlockId(i2, l1, j2);

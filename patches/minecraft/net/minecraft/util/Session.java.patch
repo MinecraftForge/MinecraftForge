@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/util/Session.java
-+++ ../src_work/minecraft/net/minecraft/util/Session.java
+--- ../src-base/minecraft/net/minecraft/util/Session.java
++++ ../src-work/minecraft/net/minecraft/util/Session.java
 @@ -11,6 +11,19 @@
  
      public Session(String par1Str, String par2Str)

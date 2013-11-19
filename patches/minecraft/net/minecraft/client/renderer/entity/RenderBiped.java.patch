@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/client/renderer/entity/RenderBiped.java
-+++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RenderBiped.java
+--- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderBiped.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderBiped.java
 @@ -14,9 +14,15 @@
  import net.minecraft.item.EnumArmorMaterial;
  import net.minecraft.item.Item;
@@ -85,12 +85,11 @@
                  float f1 = 1.0F;
  
 -                if (itemarmor.getArmorMaterial() == EnumArmorMaterial.CLOTH)
--                {
--                    int j = itemarmor.getColor(itemstack);
 +                //Move out of if to allow for more then just CLOTH to have color
 +                int j = itemarmor.getColor(itemstack);
 +                if (j != -1)
-+                {
+                 {
+-                    int j = itemarmor.getColor(itemstack);
                      float f2 = (float)(j >> 16 & 255) / 255.0F;
                      float f3 = (float)(j >> 8 & 255) / 255.0F;
                      float f4 = (float)(j & 255) / 255.0F;
@@ -108,13 +107,12 @@
              this.modelBipedMain.bipedHead.postRender(0.0625F);
  
 -            if (itemstack1.getItem().itemID < 256)
--            {
--                if (RenderBlocks.renderItemIn3d(Block.blocksList[itemstack1.itemID].getRenderType()))
 +            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack1, EQUIPPED);
 +            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, itemstack1, BLOCK_3D));
 +
 +            if (itemstack1.getItem() instanceof ItemBlock)
-+            {
+             {
+-                if (RenderBlocks.renderItemIn3d(Block.blocksList[itemstack1.itemID].getRenderType()))
 +                if (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[itemstack1.itemID].getRenderType()))
                  {
                      f2 = 0.625F;

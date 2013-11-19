@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenSwamp.java
-+++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenSwamp.java
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenSwamp.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenSwamp.java
 @@ -47,7 +47,7 @@
                          {
                              l1 = par1World.getBlockId(j1, i1, k1);

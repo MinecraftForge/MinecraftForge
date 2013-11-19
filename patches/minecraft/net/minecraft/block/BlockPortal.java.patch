@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/BlockPortal.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockPortal.java
+--- ../src-base/minecraft/net/minecraft/block/BlockPortal.java
++++ ../src-work/minecraft/net/minecraft/block/BlockPortal.java
 @@ -118,7 +118,7 @@
          }
          else

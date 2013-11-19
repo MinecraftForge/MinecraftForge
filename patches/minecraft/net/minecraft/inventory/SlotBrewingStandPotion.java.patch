@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/inventory/SlotBrewingStandPotion.java
-+++ ../src_work/minecraft/net/minecraft/inventory/SlotBrewingStandPotion.java
+--- ../src-base/minecraft/net/minecraft/inventory/SlotBrewingStandPotion.java
++++ ../src-work/minecraft/net/minecraft/inventory/SlotBrewingStandPotion.java
 @@ -2,6 +2,7 @@
  
  import net.minecraft.entity.player.EntityPlayer;

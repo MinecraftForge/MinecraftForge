@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/inventory/SlotBrewingStandIngredient.java
-+++ ../src_work/minecraft/net/minecraft/inventory/SlotBrewingStandIngredient.java
+--- ../src-base/minecraft/net/minecraft/inventory/SlotBrewingStandIngredient.java
++++ ../src-work/minecraft/net/minecraft/inventory/SlotBrewingStandIngredient.java
 @@ -19,7 +19,7 @@
       */
      public boolean isItemValid(ItemStack par1ItemStack)

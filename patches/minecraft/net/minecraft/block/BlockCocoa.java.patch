@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/block/BlockCocoa.java
-+++ ../src_work/minecraft/net/minecraft/block/BlockCocoa.java
+--- ../src-base/minecraft/net/minecraft/block/BlockCocoa.java
++++ ../src-work/minecraft/net/minecraft/block/BlockCocoa.java
 @@ -2,6 +2,8 @@
  
  import cpw.mods.fml.relauncher.Side;
@@ -30,9 +30,8 @@
          for (int k1 = 0; k1 < b0; ++k1)
          {
 -            this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(Item.dyePowder, 1, 3));
--        }
 +            dropped.add(new ItemStack(Item.dyePowder, 1, 3));
-+        }
+         }
 +        return dropped;
      }
  
