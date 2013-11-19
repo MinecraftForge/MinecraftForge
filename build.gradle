@@ -40,6 +40,10 @@ jenkins {
     job = 'minecraftforge'
 }
 
+launch4j {
+    jreMinVersion = '1.6.0'
+}
+
 uploadArchives {
     repositories {
         if (project.hasProperty("filesmaven")) {
