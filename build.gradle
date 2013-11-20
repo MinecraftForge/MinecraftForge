@@ -12,6 +12,10 @@ buildscript {
     }
 }
 
+configurations {
+    deployJars
+}
+
 import static net.minecraftforge.gradle.dev.ForgeDevPlugin.*
 
 apply plugin: 'maven'
@@ -46,71 +50,67 @@ launch4j {
 
 uploadArchives {
     repositories {
+        add project.repositories.mavenLocal()
+    }
+    repositories.mavenDeployer {
+        configuration = configurations.deployJars
+
         if (project.hasProperty("filesmaven")) {
             logger.info('Publishing to files server')
-            
-            mavenDeployer {
-                configuration = configurations.deployJars
-
-                repository(url: project.filesmaven.url) {
-                    authentication(userName: project.filesmaven.username, privateKey: project.filesmaven.key)
-                }
-
-                pom {
-                    groupId = project.group
-                    version = project.version
-                    artifactId = project.archivesBaseName
-                    project {
-                        name project.archivesBaseName
-                        packaging 'jar'
-                        description 'Minecraft Forge API'
-                        url 'https://github.com/MinecraftForge/MinecraftForge'
-
-                        scm {
-                            url 'https://github.com/MinecraftForge/MinecraftForge'
-                            connection 'scm:git:git://github.com/MinecraftForge/MinecraftForge.git'
-                            developerConnection 'scm:git:git@github.com:MinecraftForge/MinecraftForge.git'
-                        }
-
-                        issueManagement {
-                            system 'github'
-                            url 'https://github.com/MinecraftForge/MinecraftForge/issues'
-                        }
-
-                        licenses {
-                            license {
-                                name 'Forge Public License'
-                                url 'https://raw.github.com/MinecraftForge/MinecraftForge/master/MinecraftForge-License.txt'
-                                distribution 'repo'
-                            }
-                        }
-
-                        developers {
-                            developer {
-                                id 'cpw'
-                                name 'cpw'
-                                roles { role 'developer' }
-                            }
-                            developer {
-                                id 'LexManos'
-                                name 'Lex Manos'
-                                roles { role 'developer' }
-                            }
-                            developer {
-                                id 'AbrarSyed'
-                                name 'Abrar Syed'
-                                roles { role 'contributor' }
-                            }
-                        }
-                    }
-                }
+            repository(url: project.filesmaven.url) {
+                authentication(userName: project.filesmaven.username, privateKey: project.filesmaven.key)
             }
         } else {
             logger.info('Publishing to repo folder')
-            
-            add project.repositories.mavenLocal()
-            mavenDeployer {
-                repository(url: 'file://localhost/' + project.file('repo').getAbsolutePath())
+            repository(url: 'file://localhost/' + project.file('repo').getAbsolutePath())
+        }
+
+        pom {
+            groupId = project.group
+            version = project.version
+            artifactId = project.archivesBaseName
+        }
+        pom.project {
+            name project.archivesBaseName
+            packaging 'jar'
+            description 'Minecraft Forge API'
+            url 'https://github.com/MinecraftForge/MinecraftForge'
+
+            scm {
+                url 'https://github.com/MinecraftForge/MinecraftForge'
+                connection 'scm:git:git://github.com/MinecraftForge/MinecraftForge.git'
+                developerConnection 'scm:git:git@github.com:MinecraftForge/MinecraftForge.git'
+            }
+
+            issueManagement {
+                system 'github'
+                url 'https://github.com/MinecraftForge/MinecraftForge/issues'
+            }
+
+            licenses {
+                license {
+                    name 'Forge Public License'
+                    url 'https://raw.github.com/MinecraftForge/MinecraftForge/master/MinecraftForge-License.txt'
+                    distribution 'repo'
+                }
+            }
+
+            developers {
+                developer {
+                    id 'cpw'
+                    name 'cpw'
+                    roles { role 'developer' }
+                }
+                developer {
+                    id 'LexManos'
+                    name 'Lex Manos'
+                    roles { role 'developer' }
+                }
+                developer {
+                    id 'AbrarSyed'
+                    name 'Abrar Syed'
+                    roles { role 'contributor' }
+                }
             }
         }
     }
