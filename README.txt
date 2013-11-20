@@ -3,6 +3,7 @@ For Mod Users:
 
 Download the latest installer from http://files.minecraftforge.net and follow instructions given by the installer.
 
+
 For Mod Devs:
 
 Download the latest Forge source distribution from http://files.minecraftforge.net and unzip it to a folder.
@@ -12,7 +13,18 @@ If you DO NOT have Gradle installed:
 Windows: gradlew.bat setupDevWorkspace
 MacOS/Linux: gradlew setupDevWorkspace
 
-Requirements:
+If you wish to use the Eclipse IDE, run gradle eclipse instead of gradle setupDevWorkspace.
+
+
+For Contributors: (Note: This assumes you have Gradle installed. If you don't, use gradlew(.bat) instead of gradle.
+
+Clone this repository to a folder. 
+Open a command prompt and navigate to the folder where you cloned this repo.
+Run gradle setupForge to setup your development environment.
+
+
+Requirements (for both mod devs and contributors):
   You must have a JDK installed and accessible, there is a big in java 1.6_21 that 
   causes compile errors, just update your jdk to fix them.
-  Optionally, you can install Gradle from http://www.gradle.org/ .
+  If you do not wish to use the gradle wrapper, you can install Gradle from http://www.gradle.org/ .
+
