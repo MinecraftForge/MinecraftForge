@@ -1,30 +1,31 @@
 *** HOW TO INSTALL ***
 For Mod Users:
 
-Copy all files from this zip to your minecraft.jar, thats it.
-Thats it, you're done, during first run FML will download all needed libraries for you.
+Download the latest installer from http://files.minecraftforge.net and follow instructions given by the installer.
+
 
 For Mod Devs:
 
-The install scripts should take care of everything for you, you do NOT need to 
-have MCP installed before running install.cmd/sh as Forge will download it for you.
+Download the latest Forge source distribution from http://files.minecraftforge.net and unzip it to a folder.
+Open a command prompt, navigate to the directory where you unzipped the Forge sources, and run:
+If you have Gradle: gradle setupDevWorkspace
+If you DO NOT have Gradle installed:
+Windows: ./gradlew.bat setupDevWorkspace
+MacOS/Linux: ./gradlew setupDevWorkspace
 
-Just start the install.cmd/.sh, MCForge will install itself into the proper
-locations and copy all needed files, as well as modifying the needed baseclasses.
-
-Forge also includes a snapshot of the MCP mapings, this may not be the current 
-version of the mapings. But you must use the provided mapings in order for the 
-patch files to work together.
+If you wish to use the Eclipse IDE, run gradle eclipse instead of gradle setupDevWorkspace, or install the Gradle plugin for Eclipse and import the Forge source folder as a Gradle project.
 
 
-Requirements:
-  You must ahve a JDK installed and accessible, there is a big in java 1.6_21 that 
-  causes compile errors, just update your jdk to fix them.
+For Contributors: (Note: This assumes you have Gradle installed. If you don't, use ./gradlew(.bat) instead of gradle.
 
-For Mac users: 
-  It should automatically set the execution bits on mcp/runtime/bin/astyle-osx, 
-  if it does not, please do so manually: chmod +x mcp/runtime/bin/astyle-osx
-  
-For Linux users:
-  Astyle is required for the patches to apply properly, so either install wine, or astyle
-  Instalation instructions are distro specific, so I can not give them here.
+Clone this repository to a folder. 
+Open a command prompt and navigate to the folder where you cloned this repo.
+Run gradle setupForge to setup your development environment.
+
+To use Eclipse, point your Eclipse workspace at the eclipse folder inside the repo.
+
+
+Requirements (for both mod devs and contributors):
+  You must have a JDK installed and accessible.
+  If you do not wish to use the gradle wrapper, you can install Gradle from http://www.gradle.org/ .
+
