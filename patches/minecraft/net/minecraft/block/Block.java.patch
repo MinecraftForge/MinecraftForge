@@ -248,7 +248,7 @@
  
          for (int i = 0; i < 256; ++i)
          {
-@@ -1457,4 +1504,1076 @@
+@@ -1457,4 +1504,1073 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -261,9 +261,6 @@
 +    // CraftBukkit end
 +    public boolean func_71906_q_CodeFix_Public(){
 +        return canSilkHarvest();
-+    }
-+    public void func_71923_g_CodeFix_Public(net.minecraft.world.World a, int b, int c, int d, int e){
-+        dropXpOnBlockBreak(a, b, c, d, e);
 +    }
 +    
 +    // Spigot start

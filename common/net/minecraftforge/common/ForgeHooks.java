@@ -479,12 +479,32 @@ public class ForgeHooks
         // Post the block break event
         Block block = Block.blocksList[world.getBlockId(x, y, z)];
         int blockMetadata = world.getBlockMetadata(x, y, z);
-        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(x, y, z, world, block, blockMetadata, entityPlayer);
-        event.setCanceled(preCancelEvent);
-        MinecraftForge.EVENT_BUS.post(event);
+        BlockEvent.BreakEvent forgeEvent = new BlockEvent.BreakEvent(x, y, z, world, block, blockMetadata, entityPlayer);
+        forgeEvent.setCanceled(preCancelEvent);
+        MinecraftForge.EVENT_BUS.post(forgeEvent);
 
+        // MCPC+ start - handle bukkit side
+        org.bukkit.block.Block bukkitBlock = world.getWorld().getBlockAt(x, y, z);
+        org.bukkit.event.block.BlockBreakEvent bukkitEvent = new org.bukkit.event.block.BlockBreakEvent(bukkitBlock, entityPlayer.getBukkitEntity());
+        Block nmsBlock = Block.blocksList[bukkitBlock.getTypeId()];
+
+        if (nmsBlock != null && !forgeEvent.isCanceled() && !entityPlayer.theItemInWorldManager.isCreative() && entityPlayer.canHarvestBlock(nmsBlock))
+        {
+            // Copied from Block.a(world, entityhuman, int, int, int, int)
+            if (!(nmsBlock.func_71906_q_CodeFix_Public() && EnchantmentHelper.getSilkTouchModifier(entityPlayer)))
+            {
+                int data = bukkitBlock.getData();
+                int bonusLevel = EnchantmentHelper.getFortuneModifier(entityPlayer);
+                bukkitEvent.setExpToDrop(nmsBlock.getExpDrop(world, data, bonusLevel));
+            }
+        }
+
+        world.getServer().getPluginManager().callEvent(bukkitEvent);
+        if (bukkitEvent.isCancelled())
+        	forgeEvent.setCanceled(true);
+        // MCPC+ end
         // Handle if the event is canceled
-        if (event.isCanceled())
+        if (forgeEvent.isCanceled())
         {
             // Let the client know the block still exists
             entityPlayer.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(x, y, z, world));
@@ -496,6 +516,6 @@ public class ForgeHooks
                 entityPlayer.playerNetServerHandler.sendPacketToPlayer(tileentity.getDescriptionPacket());
             }
         }
-        return event;
+        return forgeEvent;
     }
 }

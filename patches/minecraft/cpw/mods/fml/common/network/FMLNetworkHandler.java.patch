@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/cpw/mods/fml/common/network/FMLNetworkHandler.java
 +++ ../src_work/minecraft/cpw/mods/fml/common/network/FMLNetworkHandler.java
-@@ -128,7 +128,7 @@
+@@ -129,7 +129,7 @@
              {
                  // No FML on the client
                  FMLLog.fine("Connection from %s rejected - no FML packet received from client", userName);
@@ -9,7 +9,7 @@
                  return;
              }
              else
-@@ -163,19 +163,21 @@
+@@ -164,19 +164,21 @@
              loginStates.put(netLoginHandler, CONNECTION_VALID);
              break;
          case CONNECTION_VALID:
@@ -34,7 +34,7 @@
              loginStates.remove(netLoginHandler);
              break;
          }
-@@ -191,14 +193,11 @@
+@@ -192,14 +194,11 @@
      private boolean handleVanillaLoginKick(NetLoginHandler netLoginHandler, MinecraftServer server, SocketAddress address, String userName)
      {
          // Vanilla reasons first

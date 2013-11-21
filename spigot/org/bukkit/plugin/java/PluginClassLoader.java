@@ -318,7 +318,7 @@ public class PluginClassLoader extends URLClassLoader {
                 // Most plugins should keep this enabled, unless they want a newer Guava
                 jarMapping.packages.put("com/google/common", "guava10/com/google/common");
             }
-            jarMapping.packages.put("org/bukkit/craftbukkit/libs/com/google/gson", "com/google/gson"); // Handle Gson being in a "normal" place
+            jarMapping.packages.put(org_bukkit_craftbukkit + "/libs/com/google/gson", "com/google/gson"); // Handle Gson being in a "normal" place
 
             if ((flags & F_REMAP_NMS164) != 0) {
                 loadNmsMappings(jarMapping, "v1_6_R3");

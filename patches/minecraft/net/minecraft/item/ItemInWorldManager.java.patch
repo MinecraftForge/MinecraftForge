@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemInWorldManager.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemInWorldManager.java
-@@ -1,15 +1,39 @@
+@@ -1,15 +1,40 @@
  package net.minecraft.item;
  
 +// CraftBukkit start
@@ -22,6 +22,7 @@
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.ForgeEventFactory;
 +import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
++import net.minecraftforge.event.world.BlockEvent;
 +// MCPC+ start
 +import cpw.mods.fml.common.registry.GameRegistry;
 +import net.minecraft.inventory.Container;
@@ -40,7 +41,7 @@
      /** The world object that this object is connected to. */
      public World theWorld;
  
-@@ -78,7 +102,7 @@
+@@ -78,7 +103,7 @@
  
      public void updateBlockRemoving()
      {
@@ -49,7 +50,7 @@
          int i;
          float f;
          int j;
-@@ -141,10 +165,33 @@
+@@ -141,10 +166,33 @@
       * if not creative, it calls destroyBlockInWorldPartially untill the block is broken first. par4 is the specific
       * side. tryHarvestBlock can also be the result of this call
       */
@@ -85,7 +86,7 @@
              if (this.isCreative())
              {
                  if (!this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4))
-@@ -154,16 +201,66 @@
+@@ -154,16 +202,66 @@
              }
              else
              {
@@ -159,7 +160,7 @@
  
                  if (i1 > 0 && f >= 1.0F)
                  {
-@@ -180,6 +277,7 @@
+@@ -180,6 +278,7 @@
                      this.durabilityRemainingOnBlock = j1;
                  }
              }
@@ -167,7 +168,7 @@
          }
      }
  
-@@ -187,6 +285,7 @@
+@@ -187,6 +286,7 @@
      {
          if (par1 == this.partiallyDestroyedBlockX && par2 == this.partiallyDestroyedBlockY && par3 == this.partiallyDestroyedBlockZ)
          {
@@ -175,7 +176,7 @@
              int l = this.curblockDamage - this.initialDamage;
              int i1 = this.theWorld.getBlockId(par1, par2, par3);
  
-@@ -211,6 +310,13 @@
+@@ -211,6 +311,13 @@
                      this.field_73093_n = this.initialDamage;
                  }
              }
@@ -189,7 +190,7 @@
          }
      }
  
-@@ -236,7 +342,7 @@
+@@ -236,7 +343,7 @@
              block.onBlockHarvested(this.theWorld, par1, par2, par3, l, this.thisPlayerMP);
          }
  
@@ -198,65 +199,18 @@
  
          if (block != null && flag)
          {
-@@ -251,29 +357,108 @@
+@@ -251,29 +358,52 @@
       */
      public boolean tryHarvestBlock(int par1, int par2, int par3)
      {
 -        if (this.gameType.isAdventure() && !this.thisPlayerMP.isCurrentToolAdventureModeExempt(par1, par2, par3))
-+        // CraftBukkit start
-+        BlockBreakEvent event = null;
-+
-+        if (this.thisPlayerMP instanceof EntityPlayerMP)
-+        {
-+            org.bukkit.block.Block block = this.theWorld.getWorld().getBlockAt(par1, par2, par3);
-+
-+            // Tell client the block is gone immediately then process events
-+            if (theWorld.getBlockTileEntity(par1, par2, par3) == null)
-+            {
-+                Packet53BlockChange packet = new Packet53BlockChange(par1, par2, par3, this.theWorld);
-+                packet.type = 0;
-+                packet.metadata = 0;
-+                ((EntityPlayerMP) this.thisPlayerMP).playerNetServerHandler.sendPacketToPlayer(packet);
-+            }
-+
-+            event = new BlockBreakEvent(block, this.thisPlayerMP.getBukkitEntity());
-+            // Adventure mode pre-cancel
-+            event.setCancelled(this.gameType.isAdventure() && !this.thisPlayerMP.isCurrentToolAdventureModeExempt(par1, par2, par3));
-+            // Sword + Creative mode pre-cancel
-+            event.setCancelled(event.isCancelled() || (this.gameType.isCreative() && this.thisPlayerMP.getHeldItem() != null && this.thisPlayerMP.getHeldItem().getItem() instanceof ItemSword));
-+            // Calculate default block experience
-+            Block nmsBlock = Block.blocksList[block.getTypeId()];
-+
-+            if (nmsBlock != null && !event.isCancelled() && !this.isCreative() && this.thisPlayerMP.canHarvestBlock(nmsBlock))
-+            {
-+                // Copied from Block.a(world, entityhuman, int, int, int, int)
-+                if (!(nmsBlock.func_71906_q_CodeFix_Public() && EnchantmentHelper.getSilkTouchModifier(this.thisPlayerMP)))
++        BlockEvent.BreakEvent event = ForgeHooks.onBlockBreakEvent(theWorld, gameType, thisPlayerMP, par1, par2, par3);
++        if (event.isCanceled())
 +                {
-+                    int data = block.getData();
-+                    int bonusLevel = EnchantmentHelper.getFortuneModifier(this.thisPlayerMP);
-+                    event.setExpToDrop(nmsBlock.getExpDrop(this.theWorld, data, bonusLevel));
-+                }
-+            }
-+
-+            this.theWorld.getServer().getPluginManager().callEvent(event);
-+
-+            if (event.isCancelled())
-+            {
-+                // Let the client know the block still exists
-+                ((EntityPlayerMP) this.thisPlayerMP).playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, this.theWorld));
-+                // Update any tile entity data for this block
-+                TileEntity tileentity = this.theWorld.getBlockTileEntity(par1, par2, par3);
-+
-+                if (tileentity != null)
-+                {
-+                    this.thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(tileentity.getDescriptionPacket());
-+                }
-+
 +                return false;
 +            }
-+        }
-+        
-+        // Forge start
++        else
++        {
 +        ItemStack stack = thisPlayerMP.getCurrentEquippedItem();
 +        if (stack != null && stack.getItem().onBlockStartBreak(stack, par1, par2, par3, thisPlayerMP))
          {
@@ -264,15 +218,10 @@
          }
 -        else if (this.gameType.isCreative() && this.thisPlayerMP.getHeldItem() != null && this.thisPlayerMP.getHeldItem().getItem() instanceof ItemSword)
 -        {
-+        // Forge end
-+
-+        if (false)   // Never trigger
-+        {
-+            // CraftBukkit end
-             return false;
-         }
-         else
-         {
+-            return false;
+-        }
+-        else
+-        {
              int l = this.theWorld.getBlockId(par1, par2, par3);
 +
 +            if (Block.blocksList[l] == null)
@@ -312,7 +261,7 @@
  
                  if (itemstack != null)
                  {
-@@ -285,12 +470,20 @@
+@@ -285,10 +415,17 @@
                      }
                  }
  
@@ -321,19 +270,16 @@
                  {
                      Block.blocksList[l].harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, i1);
                  }
-             }
- 
-+            // CraftBukkit start - Drop event experience
-+            if (flag && event != null)
-+            {
-+                Block.blocksList[l].func_71923_g_CodeFix_Public(this.theWorld, par1, par2, par3, event.getExpToDrop());
 +            }
 +
-+            // CraftBukkit end
++            // Drop experience
++            if (!this.isCreative() && flag && event != null)
++            {
++                Block.blocksList[l].dropXpOnBlockBreak(this.theWorld, par1, par2, par3, event.getExpToDrop());
+             }
+ 
              return flag;
-         }
-     }
-@@ -325,6 +518,7 @@
+@@ -325,6 +462,7 @@
              if (itemstack1.stackSize == 0)
              {
                  par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
@@ -341,7 +287,7 @@
              }
  
              if (!par1EntityPlayer.isUsingItem())
-@@ -340,38 +534,120 @@
+@@ -340,38 +478,120 @@
       * Activate the clicked on block, otherwise use the held item. Args: player, world, itemStack, x, y, z, side,
       * xOffset, yOffset, zOffset
       */
@@ -494,7 +440,7 @@
  
      /**
       * Sets the world instance.
-@@ -380,4 +656,13 @@
+@@ -380,4 +600,13 @@
      {
          this.theWorld = par1WorldServer;
      }
