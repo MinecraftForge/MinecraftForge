@@ -586,6 +586,27 @@
      {
          FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
      }
++
++    @SideOnly(Side.CLIENT)
++    @Override
++    
++    /**
++     * interpolated position vector
++     */
++    public Vec3 getPosition(float par1)
++    {
++        if (par1 == 1.0F)
++        {
++            return this.worldObj.getWorldVec3Pool().getVecFromPool(this.posX, this.posY + (this.getEyeHeight() - this.getDefaultEyeHeight()), this.posZ);
++        }
++        else
++        {
++            double d0 = this.prevPosX + (this.posX - this.prevPosX) * (double)par1;
++            double d1 = this.prevPosY + (this.posY - this.prevPosY) * (double)par1 + (this.getEyeHeight() - this.getDefaultEyeHeight());
++            double d2 = this.prevPosZ + (this.posZ - this.prevPosZ) * (double)par1;
++            return this.worldObj.getWorldVec3Pool().getVecFromPool(d0, d1, d2);
++        }
++    }
 +    
 +    /* ===================================== FORGE START =====================================*/
 +    
