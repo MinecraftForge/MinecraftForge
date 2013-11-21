@@ -586,13 +586,13 @@
      {
          FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
      }
-+
-+    @SideOnly(Side.CLIENT)
-+    @Override
 +    
 +    /**
 +     * interpolated position vector
 +     */
++
++    @SideOnly(Side.CLIENT)
++    @Override
 +    public Vec3 getPosition(float par1)
 +    {
 +        if (par1 == 1.0F)
