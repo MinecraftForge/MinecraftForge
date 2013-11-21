@@ -28,4 +28,4 @@ To use Eclipse, point your Eclipse workspace at the eclipse folder inside the re
 Requirements (for both mod devs and contributors):
   You must have a JDK installed and accessible.
   If you do not wish to use the gradle wrapper, you can install Gradle from http://www.gradle.org/ .
-
+ 
