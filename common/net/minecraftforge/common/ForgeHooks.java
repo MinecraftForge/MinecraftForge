@@ -456,19 +456,9 @@ public class ForgeHooks
     
     public static BlockEvent.BreakEvent onBlockBreakEvent(World world, EnumGameType gameType, EntityPlayerMP entityPlayer, int x, int y, int z)
     {
-        // Logic from tryHarvestBlock for pre-canceling the event
-        boolean preCancelEvent = false;
-        if (gameType.isAdventure() && !entityPlayer.isCurrentToolAdventureModeExempt(x, y, z))
-        {
-            preCancelEvent = true;
-        }
-        else if (gameType.isCreative() && entityPlayer.getHeldItem() != null && entityPlayer.getHeldItem().getItem() instanceof ItemSword)
-        {
-            preCancelEvent = true;
-        }
-
+        // MCPC+ - pre-cancel handled in BreakEvent
         // Tell client the block is gone immediately then process events
-        if (world.getBlockTileEntity(x, y, z) == null)
+        if (world.getBlockTileEntity(x, y, z) == null && !(entityPlayer instanceof FakePlayer)) // MCPC+ - don't send packets to fakeplayers
         {
             Packet53BlockChange packet = new Packet53BlockChange(x, y, z, world);
             packet.type = 0;
@@ -479,32 +469,11 @@ public class ForgeHooks
         // Post the block break event
         Block block = Block.blocksList[world.getBlockId(x, y, z)];
         int blockMetadata = world.getBlockMetadata(x, y, z);
-        BlockEvent.BreakEvent forgeEvent = new BlockEvent.BreakEvent(x, y, z, world, block, blockMetadata, entityPlayer);
-        forgeEvent.setCanceled(preCancelEvent);
-        MinecraftForge.EVENT_BUS.post(forgeEvent);
+        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(x, y, z, world, block, blockMetadata, entityPlayer);
+        MinecraftForge.EVENT_BUS.post(event);
 
-        // MCPC+ start - handle bukkit side
-        org.bukkit.block.Block bukkitBlock = world.getWorld().getBlockAt(x, y, z);
-        org.bukkit.event.block.BlockBreakEvent bukkitEvent = new org.bukkit.event.block.BlockBreakEvent(bukkitBlock, entityPlayer.getBukkitEntity());
-        Block nmsBlock = Block.blocksList[bukkitBlock.getTypeId()];
-
-        if (nmsBlock != null && !forgeEvent.isCanceled() && !entityPlayer.theItemInWorldManager.isCreative() && entityPlayer.canHarvestBlock(nmsBlock))
-        {
-            // Copied from Block.a(world, entityhuman, int, int, int, int)
-            if (!(nmsBlock.func_71906_q_CodeFix_Public() && EnchantmentHelper.getSilkTouchModifier(entityPlayer)))
-            {
-                int data = bukkitBlock.getData();
-                int bonusLevel = EnchantmentHelper.getFortuneModifier(entityPlayer);
-                bukkitEvent.setExpToDrop(nmsBlock.getExpDrop(world, data, bonusLevel));
-            }
-        }
-
-        world.getServer().getPluginManager().callEvent(bukkitEvent);
-        if (bukkitEvent.isCancelled())
-        	forgeEvent.setCanceled(true);
-        // MCPC+ end
         // Handle if the event is canceled
-        if (forgeEvent.isCanceled())
+        if (event.isCanceled() && !(entityPlayer instanceof FakePlayer)) // MCPC+ - don't send packets to fakeplayers
         {
             // Let the client know the block still exists
             entityPlayer.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(x, y, z, world));
@@ -516,6 +485,6 @@ public class ForgeHooks
                 entityPlayer.playerNetServerHandler.sendPacketToPlayer(tileentity.getDescriptionPacket());
             }
         }
-        return forgeEvent;
+        return event;
     }
 }

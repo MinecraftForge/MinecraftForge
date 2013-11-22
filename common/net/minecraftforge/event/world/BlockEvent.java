@@ -9,6 +9,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.event.Cancelable;
 import net.minecraftforge.event.Event;
+// MCPC+ start
+import org.bukkit.craftbukkit.event.CraftEventFactory;
+import net.minecraft.entity.player.EntityPlayerMP;
+// MCPC+ end
 
 public class BlockEvent extends Event {
     public final int x;
@@ -72,17 +76,17 @@ public class BlockEvent extends Event {
             super(x, y, z, world, block, blockMetadata);
             this.player = player;
 
-            if (block == null || !player.canHarvestBlock(block) || // Handle empty block or player unable to break block scenario
-                block.canSilkHarvest(world, player, x, y, z, blockMetadata) && EnchantmentHelper.getSilkTouchModifier(player)) // If the block is being silk harvested, the exp dropped is 0
+            // MCPC+ start - handle event on bukkit side
+            org.bukkit.event.block.BlockBreakEvent bukkitEvent = CraftEventFactory.callBlockBreakEvent(world, x, y, z, block, blockMetadata, (EntityPlayerMP)player);
+            if (bukkitEvent.isCancelled())
             {
-                this.exp = 0;
+                this.setCanceled(true);
             }
             else
             {
-                int meta = block.getDamageValue(world, x, y, z);
-                int bonusLevel = EnchantmentHelper.getFortuneModifier(player);
-                this.exp = block.getExpDrop(world, meta, bonusLevel);
+                this.exp = bukkitEvent.getExpToDrop();
             }
+            // MCPC+ end
         }
 
         public EntityPlayer getPlayer()

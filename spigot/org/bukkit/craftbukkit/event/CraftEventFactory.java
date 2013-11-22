@@ -46,7 +46,12 @@ import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.BookMeta;
 // MCPC+ start
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemSword;
+import net.minecraftforge.common.FakePlayer;
 import org.bukkit.block.CreatureSpawner;
 // MCPC+ end
 
@@ -754,4 +759,32 @@ public class CraftEventFactory {
         entity.worldObj.getServer().getPluginManager().callEvent(event);
         return event;
     }
+
+    // MCPC+ start
+    public static BlockBreakEvent callBlockBreakEvent(net.minecraft.world.World world, int x, int y, int z, net.minecraft.block.Block block, int blockMetadata, net.minecraft.entity.player.EntityPlayerMP player)
+    {
+        org.bukkit.block.Block bukkitBlock = world.getWorld().getBlockAt(x, y, z);
+        org.bukkit.event.block.BlockBreakEvent blockBreakEvent = new org.bukkit.event.block.BlockBreakEvent(bukkitBlock, ((EntityPlayerMP)player).getBukkitEntity());
+        EntityPlayerMP playermp = (EntityPlayerMP)player;
+        if (!(playermp instanceof FakePlayer))
+        {
+            if (!(playermp.theItemInWorldManager.getGameType().isAdventure() && !playermp.isCurrentToolAdventureModeExempt(x, y, z)) && !(playermp.theItemInWorldManager.getGameType().isCreative() && playermp.getHeldItem() != null && playermp.getHeldItem().getItem() instanceof ItemSword))
+            {
+                int exp = 0;
+                if (block != null && player.canHarvestBlock(block) && // Handle empty block or player unable to break block scenario
+                   !block.canSilkHarvest(world, player, x, y, z, blockMetadata) && !EnchantmentHelper.getSilkTouchModifier(player)) // If the block is being silk harvested, the exp dropped is 0
+                {
+                    int meta = block.getDamageValue(world, x, y, z);
+                    int bonusLevel = EnchantmentHelper.getFortuneModifier(player);
+                    exp = block.getExpDrop(world, meta, bonusLevel);
+                }
+                blockBreakEvent.setExpToDrop(exp);
+            }
+            else blockBreakEvent.setCancelled(true);
+        }
+
+        world.getServer().getPluginManager().callEvent(blockBreakEvent);
+        return blockBreakEvent;
+    }
+    // MCPC+ end
 }
