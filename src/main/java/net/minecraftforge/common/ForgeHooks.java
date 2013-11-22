@@ -318,6 +318,9 @@ public class ForgeHooks
         {
             slot = player.inventory.currentItem;
         }
+        
+        if (MinecraftForge.EVENT_BUS.post(new PickBlockEvent(player, result, slot)))
+            return false;
 
         player.inventory.setInventorySlotContents(slot, result);
         player.inventory.currentItem = slot;
