@@ -1,52 +1,29 @@
 package net.minecraftforge.common;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import net.minecraft.block.Block;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemAxe;
-import net.minecraft.item.ItemPickaxe;
-import net.minecraft.item.ItemSpade;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
+import net.minecraft.item.*;
 import net.minecraft.network.NetServerHandler;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet53BlockChange;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChatMessageComponent;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumMovingObjectType;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.WeightedRandom;
-import net.minecraft.util.WeightedRandomItem;
+import net.minecraft.util.*;
 import net.minecraft.world.EnumGameType;
 import net.minecraft.world.World;
 import net.minecraftforge.event.Event;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
-import net.minecraftforge.event.entity.living.LivingFallEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import net.minecraftforge.event.entity.player.PickBlockEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 
@@ -319,8 +296,12 @@ public class ForgeHooks
             slot = player.inventory.currentItem;
         }
         
-        if (MinecraftForge.EVENT_BUS.post(new PickBlockEvent(player, result, slot)))
+        PickBlockEvent event = new PickBlockEvent(player, result, slot);
+        if (MinecraftForge.EVENT_BUS.post(event))
             return false;
+        
+        result = event.stack;
+        slot = event.slot;
 
         player.inventory.setInventorySlotContents(slot, result);
         player.inventory.currentItem = slot;
