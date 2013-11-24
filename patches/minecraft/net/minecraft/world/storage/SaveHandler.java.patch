@@ -35,7 +35,37 @@
  
      public SaveHandler(File par1File, String par2Str, boolean par3)
      {
-@@ -293,6 +304,14 @@
+@@ -72,7 +83,7 @@
+         catch (IOException ioexception)
+         {
+             ioexception.printStackTrace();
+-            throw new RuntimeException("Failed to check session lock, aborting");
++            throw new RuntimeException("Failed to check session lock for world " + this.worldDirectory + ", aborting"); // MCPC+
+         }
+     }
+ 
+@@ -98,7 +109,7 @@
+             {
+                 if (datainputstream.readLong() != this.initializationTime)
+                 {
+-                    throw new MinecraftException("The save is being accessed from another location, aborting");
++                    throw new MinecraftException("The save folder for world " + this.worldDirectory + " is being accessed from another location, aborting"); // MCPC+
+                 }
+             }
+             finally
+@@ -108,7 +119,10 @@
+         }
+         catch (IOException ioexception)
+         {
+-            throw new MinecraftException("Failed to check session lock, aborting");
++            // MCPC+ start
++            ioexception.printStackTrace();
++            throw new MinecraftException("Failed to check session lock for world " + this.worldDirectory + ", aborting");
++            // MCPC+ end
+         }
+     }
+ 
+@@ -293,6 +307,14 @@
  
          if (nbttagcompound != null)
          {
@@ -50,7 +80,7 @@
              par1EntityPlayer.readFromNBT(nbttagcompound);
          }
  
-@@ -367,4 +386,80 @@
+@@ -367,4 +389,80 @@
      {
          return this.saveDirectoryName;
      }
