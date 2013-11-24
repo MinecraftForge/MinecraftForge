@@ -248,7 +248,7 @@
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>SpecialSource</artifactId>
-            <version>1.6-SNAPSHOT</version>
+            <version>1.6</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
@@ -713,6 +713,7 @@
                                         <versionRange>[1.8,)</versionRange>
                                         <goals>
                                             <goal>add-source</goal>
+                                        <goal>add-resource</goal>
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
