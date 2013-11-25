@@ -16,7 +16,7 @@
         <minecraft.version>1.6.4</minecraft.version>
         <minecraft_version>1_6_R3</minecraft_version>
         <minecraft_server_url_download>http://s3.amazonaws.com/Minecraft.Download/versions/1.6.4/minecraft_server.1.6.4.jar</minecraft_server_url_download>
-        <forge.build>952</forge.build>
+        <forge.build>953</forge.build>
         <forge.version>9.11.1.${forge.build}</forge.version>
         <forge.remapped.revision>R1-MCPC</forge.remapped.revision>
         <fml.at>${mcpc.basedir}/resources/fml_at.cfg</fml.at>
@@ -524,7 +524,7 @@
                         <inJars>
                             <param>${minecraft_server_url_download}</param>
                             <!-- <param>http://assets.minecraft.net/${minecraft_version}/minecraft.jar</param> -->
-                            <param>http://files.minecraftforge.net/minecraftforge/minecraftforge-universal-${minecraft.version}-${forge.version}.jar</param>
+                            <param>http://files.minecraftforge.net/maven/net/minecraftforge/forge/${minecraft.version}-${forge.version}/forge-${minecraft.version}-${forge.version}-universal.jar</param>
                         </inJars>
                         <srgIn>${mcp.mappings}</srgIn>
                         <accessTransformers>

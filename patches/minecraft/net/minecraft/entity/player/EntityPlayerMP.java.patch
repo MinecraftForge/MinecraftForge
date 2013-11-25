@@ -64,12 +64,16 @@
  
      public EntityPlayerMP(MinecraftServer par1MinecraftServer, World par2World, String par3Str, ItemInWorldManager par4ItemInWorldManager)
      {
-@@ -165,16 +202,16 @@
+@@ -165,16 +202,20 @@
          par4ItemInWorldManager.thisPlayerMP = this;
          this.theItemInWorldManager = par4ItemInWorldManager;
          this.renderDistance = par1MinecraftServer.getConfigurationManager().getViewDistance();
 -        ChunkCoordinates chunkcoordinates = par2World.getSpawnPoint();
 +        ChunkCoordinates chunkcoordinates = par2World.provider.getRandomizedSpawnPoint();
++        if (par1MinecraftServer == null) //ToDo: Remove this in 1.7, Fake players shouldn't be used purely client side.
++            this.renderDistance = 0;
++        else
++            this.renderDistance = par1MinecraftServer.getConfigurationManager().getViewDistance();
          int i = chunkcoordinates.posX;
          int j = chunkcoordinates.posZ;
          int k = chunkcoordinates.posY;
@@ -85,7 +89,7 @@
              k = par2World.getTopSolidOrLiquidBlock(i, j);
          }
  
-@@ -187,6 +224,12 @@
+@@ -187,6 +228,12 @@
          {
              this.setPosition(this.posX, this.posY + 1.0D, this.posZ);
          }
@@ -98,7 +102,7 @@
      }
  
      /**
-@@ -207,6 +250,7 @@
+@@ -207,6 +254,7 @@
                  this.theItemInWorldManager.setGameType(EnumGameType.getByID(par1NBTTagCompound.getInteger("playerGameType")));
              }
          }
@@ -106,7 +110,7 @@
      }
  
      /**
-@@ -216,7 +260,48 @@
+@@ -216,7 +264,48 @@
      {
          super.writeEntityToNBT(par1NBTTagCompound);
          par1NBTTagCompound.setInteger("playerGameType", this.theItemInWorldManager.getGameType().getID());
@@ -156,7 +160,7 @@
  
      /**
       * Add experience levels to this player.
-@@ -238,11 +323,6 @@
+@@ -238,11 +327,6 @@
      protected void resetHeight()
      {
          this.yOffset = 0.0F;
@@ -168,7 +172,7 @@
      }
  
      /**
-@@ -254,11 +334,19 @@
+@@ -254,11 +338,19 @@
          --this.initialInvulnerability;
          this.openContainer.detectAndSendChanges();
  
@@ -189,7 +193,7 @@
  
          while (!this.destroyedItemsNetCache.isEmpty())
          {
-@@ -289,8 +377,11 @@
+@@ -289,8 +381,11 @@
  
                  if (chunkcoordintpair != null && this.worldObj.blockExists(chunkcoordintpair.chunkXPos << 4, 0, chunkcoordintpair.chunkZPos << 4))
                  {
@@ -203,7 +207,7 @@
                  }
              }
  
-@@ -311,6 +402,7 @@
+@@ -311,6 +406,7 @@
                  {
                      Chunk chunk = (Chunk)iterator2.next();
                      this.getServerForPlayer().getEntityTracker().func_85172_a(this, chunk);
@@ -211,7 +215,7 @@
                  }
              }
          }
-@@ -344,7 +436,8 @@
+@@ -344,7 +440,8 @@
  
              if (this.getHealth() != this.lastHealth || this.lastFoodLevel != this.foodStats.getFoodLevel() || this.foodStats.getSaturationLevel() == 0.0F != this.wasHungry)
              {
@@ -221,7 +225,7 @@
                  this.lastHealth = this.getHealth();
                  this.lastFoodLevel = this.foodStats.getFoodLevel();
                  this.wasHungry = this.foodStats.getSaturationLevel() == 0.0F;
-@@ -353,21 +446,36 @@
+@@ -353,21 +450,36 @@
              if (this.getHealth() + this.getAbsorptionAmount() != this.field_130068_bO)
              {
                  this.field_130068_bO = this.getHealth() + this.getAbsorptionAmount();
@@ -267,7 +271,7 @@
          }
          catch (Throwable throwable)
          {
-@@ -383,20 +491,88 @@
+@@ -383,20 +495,88 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -366,7 +370,7 @@
              score.func_96648_a();
          }
  
-@@ -421,7 +597,8 @@
+@@ -421,7 +601,8 @@
          }
          else
          {
@@ -376,7 +380,7 @@
  
              if (!flag && this.initialInvulnerability > 0 && par1DamageSource != DamageSource.outOfWorld)
              {
-@@ -456,7 +633,8 @@
+@@ -456,7 +637,8 @@
  
      public boolean canAttackPlayer(EntityPlayer par1EntityPlayer)
      {
@@ -386,7 +390,7 @@
      }
  
      /**
-@@ -476,21 +654,27 @@
+@@ -476,21 +658,27 @@
              if (this.dimension == 0 && par1 == 1)
              {
                  this.triggerAchievement(AchievementList.theEnd);
@@ -421,7 +425,7 @@
              this.lastExperience = -1;
              this.lastHealth = -1.0F;
              this.lastFoodLevel = -1;
-@@ -545,6 +729,11 @@
+@@ -545,6 +733,11 @@
       */
      public void wakeUpPlayer(boolean par1, boolean par2, boolean par3)
      {
@@ -433,7 +437,7 @@
          if (this.isPlayerSleeping())
          {
              this.getServerForPlayer().getEntityTracker().sendPacketToAllAssociatedPlayers(this, new Packet18Animation(this, 3));
-@@ -563,9 +752,24 @@
+@@ -563,9 +756,24 @@
       */
      public void mountEntity(Entity par1Entity)
      {
@@ -461,7 +465,7 @@
      }
  
      /**
-@@ -594,28 +798,54 @@
+@@ -594,28 +802,54 @@
          }
      }
  
@@ -520,7 +524,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -625,9 +855,18 @@
+@@ -625,9 +859,18 @@
       */
      public void displayGUIAnvil(int par1, int par2, int par3)
      {
@@ -541,7 +545,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -642,27 +881,54 @@
+@@ -642,27 +885,54 @@
              this.closeScreen();
          }
  
@@ -602,7 +606,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -672,9 +938,18 @@
+@@ -672,9 +942,18 @@
       */
      public void displayGUIFurnace(TileEntityFurnace par1TileEntityFurnace)
      {
@@ -623,7 +627,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -684,9 +959,18 @@
+@@ -684,9 +963,18 @@
       */
      public void displayGUIDispenser(TileEntityDispenser par1TileEntityDispenser)
      {
@@ -644,7 +648,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -696,9 +980,18 @@
+@@ -696,9 +984,18 @@
       */
      public void displayGUIBrewingStand(TileEntityBrewingStand par1TileEntityBrewingStand)
      {
@@ -665,7 +669,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -708,17 +1001,35 @@
+@@ -708,17 +1005,35 @@
       */
      public void displayGUIBeacon(TileEntityBeacon par1TileEntityBeacon)
      {
@@ -705,7 +709,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
          InventoryMerchant inventorymerchant = ((ContainerMerchant)this.openContainer).getMerchantInventory();
-@@ -744,6 +1055,16 @@
+@@ -744,6 +1059,16 @@
  
      public void displayGUIHorse(EntityHorse par1EntityHorse, IInventory par2IInventory)
      {
@@ -722,7 +726,7 @@
          if (this.openContainer != this.inventoryContainer)
          {
              this.closeScreen();
-@@ -751,7 +1072,7 @@
+@@ -751,7 +1076,7 @@
  
          this.incrementWindowID();
          this.playerNetServerHandler.sendPacketToPlayer(new Packet100OpenWindow(this.currentWindowId, 11, par2IInventory.getInvName(), par2IInventory.getSizeInventory(), par2IInventory.isInvNameLocalized(), par1EntityHorse.entityId));
@@ -731,7 +735,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -780,6 +1101,15 @@
+@@ -780,6 +1105,15 @@
      {
          this.playerNetServerHandler.sendPacketToPlayer(new Packet104WindowItems(par1Container.windowId, par2List));
          this.playerNetServerHandler.sendPacketToPlayer(new Packet103SetSlot(-1, -1, this.inventory.getItemStack()));
@@ -747,7 +751,7 @@
      }
  
      /**
-@@ -797,6 +1127,7 @@
+@@ -797,6 +1131,7 @@
       */
      public void closeScreen()
      {
@@ -755,7 +759,7 @@
          this.playerNetServerHandler.sendPacketToPlayer(new Packet101CloseWindow(this.openContainer.windowId));
          this.closeContainer();
      }
-@@ -874,6 +1205,7 @@
+@@ -874,6 +1209,7 @@
      public void setPlayerHealthUpdated()
      {
          this.lastHealth = -1.0E8F;
@@ -763,7 +767,7 @@
      }
  
      /**
-@@ -1038,7 +1370,7 @@
+@@ -1038,7 +1374,7 @@
       */
      public void requestTexturePackLoad(String par1Str, int par2)
      {
@@ -772,7 +776,7 @@
          this.playerNetServerHandler.sendPacketToPlayer(new Packet250CustomPayload("MC|TPack", s1.getBytes()));
      }
  
-@@ -1054,4 +1386,115 @@
+@@ -1054,4 +1390,115 @@
      {
          this.field_143005_bX = MinecraftServer.getSystemTimeMillis();
      }

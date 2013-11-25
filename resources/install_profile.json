@@ -1,20 +1,21 @@
 {
     "install": {
-        "profileName": "Forge",
-        "target": "1.6.4-Forge9.11.1.942",
-        "path": "net.minecraftforge:minecraftforge:9.11.1.942",
-        "version": "Forge 9.11.1.942",
-        "filePath":"minecraftforge-universal-1.6.4-9.11.1.942.jar",
+        "mirrorList": "http://files.minecraftforge.net/mirror-brand.list",
+        "target": "1.6.4-Forge9.11.1.953",
+        "filePath": "minecraftforge-universal-1.6.4-9.11.1.953.jar",
+        "logo": "/big_logo.png",
         "welcome": "Welcome to the simple Forge installer.",
-        "minecraft": "1.6.4",
-        "logo": "/big_logo.png"
+        "version": "Forge 9.11.1.953",
+        "path": "net.minecraftforge:minecraftforge:9.11.1.953",
+        "profileName": "Forge",
+        "minecraft": "1.6.4"
     },
     "versionInfo" : {
         "minecraftArguments": "--username ${auth_player_name} --session ${auth_session} --version ${version_name} --gameDir ${game_directory} --assetsDir ${game_assets} --tweakClass cpw.mods.fml.common.launcher.FMLTweaker",
         "libraries": [
             {
                 "url": "http://files.minecraftforge.net/maven/",
-                "name": "net.minecraftforge:minecraftforge:9.11.1.942"
+                "name": "net.minecraftforge:minecraftforge:9.11.1.953"
             },
             {
                 "serverreq": true,
@@ -28,10 +29,10 @@
                 "comment": "Important for Forge, we add this",
                 "serverreq": true,
                 "name": "org.scala-lang:scala-library:2.10.2",
-                "url": "https://oss.sonatype.org/content/groups/public",
+                "url": "http://files.minecraftforge.net/maven/",
                 "checksums": [
                     "6ba65d12cd09d441083262d6f73d2257fec7c663",
-                    "dffc88e804861c9eaba39283757000b6558ea573"
+                    "65de4339eaed1c3675485fb03a3532fecfd8e8cd"
                 ],
                 "clientreq": true
             },
@@ -39,20 +40,20 @@
                 "comment": "Important for Forge, we add this",
                 "serverreq": true,
                 "name": "org.scala-lang:scala-compiler:2.10.2",
-                "url": "https://oss.sonatype.org/content/groups/public",
+                "url": "http://files.minecraftforge.net/maven/",
                 "checksums": [
                     "64c8b1380cc53d6850823d6e4e7ae984aa44ef9c",
-                    "40281b3ffc69fb385953522c843363ccaf71ba89"
+                    "99fd0ffb66f3088b0cd1071315fd5eb2b2b070ff"
                 ],
                 "clientreq": true
             },
             {
                 "serverreq": true,
-                "name": "net.sf.jopt-simple:jopt-simple:4.5"
+                "name": "lzma:lzma:0.0.1"
             },
             {
                 "serverreq": true,
-                "name": "lzma:lzma:0.0.1"
+                "name": "net.sf.jopt-simple:jopt-simple:4.5"
             },
             {
                 "name": "com.paulscode:codecjorbis:20101023"
@@ -216,8 +217,8 @@
         ],
         "mainClass": "net.minecraft.launchwrapper.Launch",
         "minimumLauncherVersion": 4,
-    	"time": "2013-10-14T21:34:35-0500",
-        "id": "1.6.4-Forge9.11.1.944",
+        "time": "2013-11-16T18:31:04-0500",
+        "id": "1.6.4-Forge9.11.1.953",
         "type": "release",
         "processArguments": "username_session_version",
         "releaseTime": "1960-01-01T00:00:00-0700"

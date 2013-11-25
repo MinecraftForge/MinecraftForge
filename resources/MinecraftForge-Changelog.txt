@@ -1,5 +1,9 @@
 Changelog:
 
+Build 1.6.4-9.11.1.953
+	LexManos: Fix NPE on specific tile entities when the block break event is canceled. Closes #863
+	LexManos: Fix NPE in FakePlayers when they are created in a purely client side environment. To remove in 1.7 as FakePlayers should be used for server side interaction with the world on a player's behalf, not for client rendering.
+
 Build 1.6.4-9.11.1.952
 	cpw
 		    Updated FML:
