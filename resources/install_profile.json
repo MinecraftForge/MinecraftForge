@@ -14,7 +14,7 @@
         "minecraftArguments": "--username ${auth_player_name} --session ${auth_session} --version ${version_name} --gameDir ${game_directory} --assetsDir ${game_assets} --tweakClass cpw.mods.fml.common.launcher.FMLTweaker",
         "libraries": [
             {
-                "url": "http://files.minecraftforge.net/maven/",
+                "url": "http://files.minecraftforge.net/maven",
                 "name": "net.minecraftforge:minecraftforge:9.11.1.953"
             },
             {
@@ -29,7 +29,7 @@
                 "comment": "Important for Forge, we add this",
                 "serverreq": true,
                 "name": "org.scala-lang:scala-library:2.10.2",
-                "url": "http://files.minecraftforge.net/maven/",
+                "url": "https://oss.sonatype.org/content/groups/public",
                 "checksums": [
                     "6ba65d12cd09d441083262d6f73d2257fec7c663",
                     "65de4339eaed1c3675485fb03a3532fecfd8e8cd"
@@ -40,7 +40,7 @@
                 "comment": "Important for Forge, we add this",
                 "serverreq": true,
                 "name": "org.scala-lang:scala-compiler:2.10.2",
-                "url": "http://files.minecraftforge.net/maven/",
+                "url": "https://oss.sonatype.org/content/groups/public",
                 "checksums": [
                     "64c8b1380cc53d6850823d6e4e7ae984aa44ef9c",
                     "99fd0ffb66f3088b0cd1071315fd5eb2b2b070ff"
