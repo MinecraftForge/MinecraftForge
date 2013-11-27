@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityPigZombie.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityPigZombie.java
+@@ -153,16 +153,6 @@
+         this.angerLevel = 400 + this.rand.nextInt(400);
+         this.randomSoundDelay = this.rand.nextInt(40);
+     }
+-    /**
+-     * Calms this PigZombie to calm down, and sets its anger level to 0.
+-     *
+-     */
+-    public void calmDown()
+-    {
+-        this.entityToAttack = null;
+-        this.angerLevel = 0;
+-    }
+-        
+ 
+     /**
+      * Returns the sound this mob makes while it's alive.

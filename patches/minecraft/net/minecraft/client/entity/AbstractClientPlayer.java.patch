@@ -1,0 +1,29 @@
+--- ../src_base/minecraft/net/minecraft/client/entity/AbstractClientPlayer.java
++++ ../src_work/minecraft/net/minecraft/client/entity/AbstractClientPlayer.java
+@@ -35,9 +35,9 @@
+         if (this.username != null && !this.username.isEmpty())
+         {
+             this.locationSkin = getLocationSkin(this.username);
+-            setLocationCape(getLocationCape(this.username));
++            this.locationCape = getLocationCape(this.username);
+             this.downloadImageSkin = getDownloadImageSkin(this.locationSkin, this.username);
+-            setDownloadImageCape(getDownloadImageCape(this.locationCape, this.username));
++            this.downloadImageCape = getDownloadImageCape(this.locationCape, this.username);
+         }
+     }
+ 
+@@ -109,14 +109,4 @@
+     {
+         return new ResourceLocation("skull/" + StringUtils.stripControlCodes(par0Str));
+     }
+-    
+-    public static void setDownloadImageCape(ThreadDownloadImageData image)
+-    {
+-        this.downloadImageCape = image;
+-    }
+-    
+-    public static void setLocationCape(ResourceLocation capeLocation)
+-    {
+-        this.locationCape = capeLocation;
+-    }
+ }
