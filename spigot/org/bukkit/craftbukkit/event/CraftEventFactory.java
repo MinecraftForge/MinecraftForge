@@ -597,8 +597,8 @@ public class CraftEventFactory {
         if (event.isCancelled()) {
             container.transferTo(player.openContainer, craftPlayer);
             // MCPC+ start - handle close for modded containers
-            if (player.openContainer != player.inventoryContainer && !closeInv) { // fire INVENTORY_CLOSE if one already open
-                player.playerNetServerHandler.handleCloseWindow(new net.minecraft.network.packet.Packet101CloseWindow(player.openContainer.windowId));
+            if (!closeInv) { // fire INVENTORY_CLOSE if one already open
+                player.openContainer = container; // make sure the right container is processed
                 player.closeScreen();
                 player.openContainer = player.inventoryContainer;
             }

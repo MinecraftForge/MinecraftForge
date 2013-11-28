@@ -93,7 +93,7 @@
  
      private List<String> extractChannelList(Packet250CustomPayload packet)
      {
-@@ -308,6 +362,34 @@
+@@ -308,6 +362,31 @@
              Container container = (Container)handler.getServerGuiElement(modGuiId, player, world, x, y, z);
              if (container != null)
              {
@@ -114,12 +114,9 @@
 +                            container.bukkitView = new CraftInventoryView(player.getBukkitEntity(), MinecraftServer.getServer().server.createInventory(player.getBukkitEntity(), InventoryType.CHEST), container);
 +                        }
 +
-+                        player.openContainer = container; // required to cancel event properly
-+                        player.openContainer = CraftEventFactory.callInventoryOpenEvent(player, container, false);
-+
-+                        if (player.openContainer == null)
++                        container = CraftEventFactory.callInventoryOpenEvent(player, container, false);
++                        if (container == null)
 +                        {
-+                            player.openContainer = player.inventoryContainer;
 +                            return;
 +                        }
 +                    }
