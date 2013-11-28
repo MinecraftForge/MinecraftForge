@@ -545,7 +545,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -642,27 +885,54 @@
+@@ -642,27 +885,57 @@
              this.closeScreen();
          }
  
@@ -555,6 +555,7 @@
 +
 +        if (container == null)
 +        {
++            par1IInventory.closeChest(); // MCPC+ - prevent chest from being stuck in open state on clients
 +            return;
 +        }
 +
@@ -575,6 +576,7 @@
 +
 +        if (container == null)
 +        {
++            par1TileEntityHopper.closeChest(); // MCPC+ - prevent chest from being stuck in open state on clients
 +            return;
 +        }
 +
@@ -595,6 +597,7 @@
 +
 +        if (container == null)
 +        {
++            par1EntityMinecartHopper.closeChest(); // MCPC+ - prevent chest from being stuck in open state on clients
 +            return;
 +        }
 +
@@ -606,7 +609,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -672,9 +942,18 @@
+@@ -672,9 +945,19 @@
       */
      public void displayGUIFurnace(TileEntityFurnace par1TileEntityFurnace)
      {
@@ -616,6 +619,7 @@
 +
 +        if (container == null)
 +        {
++            par1TileEntityFurnace.closeChest(); // MCPC+ - prevent chests from being stuck in open state on clients
 +            return;
 +        }
 +
@@ -627,7 +631,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -684,9 +963,18 @@
+@@ -684,9 +967,19 @@
       */
      public void displayGUIDispenser(TileEntityDispenser par1TileEntityDispenser)
      {
@@ -637,6 +641,7 @@
 +
 +        if (container == null)
 +        {
++            par1TileEntityDispenser.closeChest(); // MCPC+ - prevent chests from being stuck in open state on clients
 +            return;
 +        }
 +
@@ -648,7 +653,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -696,9 +984,18 @@
+@@ -696,9 +989,19 @@
       */
      public void displayGUIBrewingStand(TileEntityBrewingStand par1TileEntityBrewingStand)
      {
@@ -658,6 +663,7 @@
 +
 +        if (container == null)
 +        {
++            par1TileEntityBrewingStand.closeChest(); // MCPC+ - prevent chests from being stuck in open state on clients
 +            return;
 +        }
 +
@@ -669,7 +675,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -708,17 +1005,35 @@
+@@ -708,17 +1011,36 @@
       */
      public void displayGUIBeacon(TileEntityBeacon par1TileEntityBeacon)
      {
@@ -679,6 +685,7 @@
 +
 +        if (container == null)
 +        {
++            par1TileEntityBeacon.closeChest(); // MCPC+ - prevent chests from being stuck in open state on clients
 +            return;
 +        }
 +
@@ -709,7 +716,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
          InventoryMerchant inventorymerchant = ((ContainerMerchant)this.openContainer).getMerchantInventory();
-@@ -744,6 +1059,16 @@
+@@ -744,6 +1066,17 @@
  
      public void displayGUIHorse(EntityHorse par1EntityHorse, IInventory par2IInventory)
      {
@@ -718,6 +725,7 @@
 +
 +        if (container == null)
 +        {
++            par2IInventory.closeChest(); // MCPC+ - prevent chests from being stuck in open state on clients
 +            return;
 +        }
 +
@@ -726,7 +734,7 @@
          if (this.openContainer != this.inventoryContainer)
          {
              this.closeScreen();
-@@ -751,7 +1076,7 @@
+@@ -751,7 +1084,7 @@
  
          this.incrementWindowID();
          this.playerNetServerHandler.sendPacketToPlayer(new Packet100OpenWindow(this.currentWindowId, 11, par2IInventory.getInvName(), par2IInventory.getSizeInventory(), par2IInventory.isInvNameLocalized(), par1EntityHorse.entityId));
@@ -735,7 +743,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -780,6 +1105,15 @@
+@@ -780,6 +1113,15 @@
      {
          this.playerNetServerHandler.sendPacketToPlayer(new Packet104WindowItems(par1Container.windowId, par2List));
          this.playerNetServerHandler.sendPacketToPlayer(new Packet103SetSlot(-1, -1, this.inventory.getItemStack()));
@@ -751,7 +759,7 @@
      }
  
      /**
-@@ -797,6 +1131,7 @@
+@@ -797,6 +1139,7 @@
       */
      public void closeScreen()
      {
@@ -759,7 +767,7 @@
          this.playerNetServerHandler.sendPacketToPlayer(new Packet101CloseWindow(this.openContainer.windowId));
          this.closeContainer();
      }
-@@ -874,6 +1209,7 @@
+@@ -874,6 +1217,7 @@
      public void setPlayerHealthUpdated()
      {
          this.lastHealth = -1.0E8F;
@@ -767,7 +775,7 @@
      }
  
      /**
-@@ -1038,7 +1374,7 @@
+@@ -1038,7 +1382,7 @@
       */
      public void requestTexturePackLoad(String par1Str, int par2)
      {
@@ -776,7 +784,7 @@
          this.playerNetServerHandler.sendPacketToPlayer(new Packet250CustomPayload("MC|TPack", s1.getBytes()));
      }
  
-@@ -1054,4 +1390,115 @@
+@@ -1054,4 +1398,115 @@
      {
          this.field_143005_bX = MinecraftServer.getSystemTimeMillis();
      }

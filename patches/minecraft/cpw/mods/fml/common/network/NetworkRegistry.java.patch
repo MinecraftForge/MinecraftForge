@@ -1,19 +1,35 @@
 --- ../src_base/minecraft/cpw/mods/fml/common/network/NetworkRegistry.java
 +++ ../src_work/minecraft/cpw/mods/fml/common/network/NetworkRegistry.java
-@@ -43,7 +43,11 @@
- import cpw.mods.fml.common.ModContainer;
+@@ -21,9 +21,11 @@
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.inventory.Container;
++import net.minecraft.inventory.IInventory;
+ import net.minecraft.network.*;
+ import net.minecraft.network.packet.*;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.world.World;
+ 
+ import com.google.common.base.Charsets;
+@@ -44,6 +46,16 @@
  import cpw.mods.fml.common.network.FMLPacket.Type;
  import cpw.mods.fml.relauncher.Side;
--
+ 
++
 +// MCPC+ start
 +import java.io.UnsupportedEncodingException;
-+import java.util.logging.Logger;
++
 +import org.bukkit.craftbukkit.entity.CraftPlayer;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.inventory.CraftInventory;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.event.inventory.InventoryType;
 +// MCPC+ end
  /**
   * @author cpw
   *
-@@ -235,14 +239,17 @@
+@@ -235,14 +247,17 @@
          if ("REGISTER".equals(packet.channel))
          {
              handleRegistrationPacket(packet, (Player)handler.getPlayer());
@@ -31,7 +47,7 @@
          }
      }
  
-@@ -272,6 +279,45 @@
+@@ -272,6 +287,45 @@
              deactivateChannel(player, channel);
          }
      }
@@ -77,3 +93,38 @@
  
      private List<String> extractChannelList(Packet250CustomPayload packet)
      {
+@@ -308,6 +362,34 @@
+             Container container = (Container)handler.getServerGuiElement(modGuiId, player, world, x, y, z);
+             if (container != null)
+             {
++                // MCPC+ start - create bukkitView for passed container then fire open event.
++                if (player != null)
++                {
++                    if (container.getBukkitView() == null)
++                    {
++                        TileEntity te = player.worldObj.getBlockTileEntity(x, y, z);
++                        if (te != null && te instanceof IInventory)
++                        {
++                            IInventory teInv = (IInventory)te;
++                            CraftInventory inventory = new CraftInventory(teInv);
++                            container.bukkitView = new CraftInventoryView(player.getBukkitEntity(), inventory, container);
++                        }
++                        else
++                        {
++                            container.bukkitView = new CraftInventoryView(player.getBukkitEntity(), MinecraftServer.getServer().server.createInventory(player.getBukkitEntity(), InventoryType.CHEST), container);
++                        }
++
++                        player.openContainer = container; // required to cancel event properly
++                        player.openContainer = CraftEventFactory.callInventoryOpenEvent(player, container, false);
++
++                        if (player.openContainer == null)
++                        {
++                            player.openContainer = player.inventoryContainer;
++                            return;
++                        }
++                    }
++                }
++                // MCPC+ end
+                 player.incrementWindowID();
+                 player.closeContainer();
+                 int windowId = player.currentWindowId;
