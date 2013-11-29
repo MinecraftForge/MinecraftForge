@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemInWorldManager;
 import net.minecraft.network.packet.Packet204ClientInfo;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.StatBase;
 import net.minecraft.util.ChatMessageComponent;
@@ -33,6 +34,8 @@ public class FakePlayer extends EntityPlayerMP
     public void addStat(StatBase par1StatBase, int par2){}
     @Override
     public void openGui(Object mod, int modGuiId, World world, int x, int y, int z){}
+    @Override
+    public void addPotionEffect(PotionEffect par1PotionEffect){}
     @Override 
     public boolean isEntityInvulnerable(){ return true; }
     @Override
