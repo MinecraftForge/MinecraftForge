@@ -24,10 +24,12 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.network.NetServerHandler;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet53BlockChange;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
@@ -47,6 +49,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import net.minecraftforge.event.entity.player.PlayerMessageEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 
@@ -496,5 +499,21 @@ public class ForgeHooks
             }
         }
         return event;
+    }
+    
+    public static void sendJoinMessage(EntityPlayer player)
+    {
+        ChatMessageComponent message = ChatMessageComponent.createFromTranslationWithSubstitutions("multiplayer.player.joined", player.getTranslatedEntityName()).setColor(EnumChatFormatting.YELLOW);
+        PlayerMessageEvent event = new PlayerMessageEvent.JoinServer(player, message);
+        if(MinecraftForge.EVENT_BUS.post(event)) return;
+        MinecraftServer.getServer().getConfigurationManager().sendChatMsg(event.message);
+    }
+    
+    public static void sendLeaveMessage(EntityPlayer player)
+    {
+        ChatMessageComponent message = ChatMessageComponent.createFromTranslationWithSubstitutions("multiplayer.player.left", player.getTranslatedEntityName()).setColor(EnumChatFormatting.YELLOW);
+        PlayerMessageEvent event = new PlayerMessageEvent.LeaveServer(player, message);
+        if(MinecraftForge.EVENT_BUS.post(event)) return;
+        MinecraftServer.getServer().getConfigurationManager().sendChatMsg(event.message);
     }
 }

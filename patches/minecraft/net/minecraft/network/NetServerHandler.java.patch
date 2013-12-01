@@ -15,6 +15,15 @@
  public class NetServerHandler extends NetHandler
  {
      /** The underlying network manager for this server handler. */
+@@ -162,7 +170,7 @@
+             this.playerEntity.mountEntityAndWakeUp();
+             this.sendPacketToPlayer(new Packet255KickDisconnect(par1Str));
+             this.netManager.serverShutdown();
+-            this.mcServer.getConfigurationManager().sendChatMsg(ChatMessageComponent.createFromTranslationWithSubstitutions("multiplayer.player.left", new Object[] {this.playerEntity.getTranslatedEntityName()}).setColor(EnumChatFormatting.YELLOW));
++            ForgeHooks.sendLeaveMessage(this.playerEntity);
+             this.mcServer.getConfigurationManager().playerLoggedOut(this.playerEntity);
+             this.connectionClosed = true;
+         }
 @@ -223,6 +231,11 @@
                          this.playerEntity.ridingEntity.updateRiderPosition();
                      }
@@ -127,6 +136,15 @@
              {
                  this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, worldserver, itemstack, i, j, k, l, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
              }
+@@ -584,7 +622,7 @@
+     public void handleErrorMessage(String par1Str, Object[] par2ArrayOfObj)
+     {
+         this.mcServer.getLogAgent().logInfo(this.playerEntity.getCommandSenderName() + " lost connection: " + par1Str);
+-        this.mcServer.getConfigurationManager().sendChatMsg(ChatMessageComponent.createFromTranslationWithSubstitutions("multiplayer.player.left", new Object[] {this.playerEntity.getTranslatedEntityName()}).setColor(EnumChatFormatting.YELLOW));
++        ForgeHooks.sendLeaveMessage(this.playerEntity);
+         this.mcServer.getConfigurationManager().playerLoggedOut(this.playerEntity);
+         this.connectionClosed = true;
+ 
 @@ -698,6 +736,8 @@
                      }
  
