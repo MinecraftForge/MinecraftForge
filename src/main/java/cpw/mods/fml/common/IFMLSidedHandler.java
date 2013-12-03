@@ -14,18 +14,11 @@ package cpw.mods.fml.common;
 
 import java.util.List;
 
-import com.google.common.collect.MapDifference;
-
 import net.minecraft.entity.Entity;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.NetHandler;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet131MapData;
 import net.minecraft.server.MinecraftServer;
-import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
-import cpw.mods.fml.common.network.EntitySpawnPacket;
-import cpw.mods.fml.common.network.ModMissingPacket;
-import cpw.mods.fml.common.registry.ItemData;
+import cpw.mods.fml.common.network.packet.EntitySpawnAdjustmentPacket;
+import cpw.mods.fml.common.network.packet.EntitySpawnPacket;
+import cpw.mods.fml.common.network.packet.ModMissingPacket;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.relauncher.Side;
 
@@ -49,19 +42,9 @@ public interface IFMLSidedHandler
 
     MinecraftServer getServer();
 
-    void sendPacket(Packet packet);
-
     void displayMissingMods(ModMissingPacket modMissingPacket);
 
-    void handleTinyPacket(NetHandler handler, Packet131MapData mapData);
-
-    void setClientCompatibilityLevel(byte compatibilityLevel);
-
-    byte getClientCompatibilityLevel();
-
     boolean shouldServerShouldBeKilledQuietly();
-
-    void disconnectIDMismatch(MapDifference<Integer, ItemData> s, NetHandler toKill, INetworkManager mgr);
 
     void addModAsResource(ModContainer container);
 

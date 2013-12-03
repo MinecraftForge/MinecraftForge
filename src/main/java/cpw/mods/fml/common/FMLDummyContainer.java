@@ -87,10 +87,10 @@ public class FMLDummyContainer extends DummyModContainer implements WorldAccessC
     {
         if (tag.func_74764_b("ModList"))
         {
-            NBTTagList modList = tag.func_74761_m("ModList");
+            NBTTagList modList = tag.func_150295_c("ModList", (byte)10);
             for (int i = 0; i < modList.func_74745_c(); i++)
             {
-                NBTTagCompound mod = (NBTTagCompound) modList.func_74743_b(i);
+                NBTTagCompound mod = modList.func_150305_b(i);
                 String modId = mod.func_74779_i("ModId");
                 String modVersion = mod.func_74779_i("ModVersion");
                 ModContainer container = Loader.instance().getIndexedModList().get(modId);
@@ -107,9 +107,9 @@ public class FMLDummyContainer extends DummyModContainer implements WorldAccessC
         }
         if (tag.func_74764_b("ModItemData"))
         {
-            NBTTagList modList = tag.func_74761_m("ModItemData");
-            Set<ItemData> worldSaveItems = GameData.buildWorldItemData(modList);
-            GameData.validateWorldSave(worldSaveItems);
+            NBTTagList modList = tag.func_150295_c("ModItemData", (byte)10);
+//            Set<ItemData> worldSaveItems = GameData.buildWorldItemData(modList);
+//            GameData.validateWorldSave(worldSaveItems);
         }
         else
         {

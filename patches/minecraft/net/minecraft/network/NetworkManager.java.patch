@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/network/NetworkManager.java
++++ ../src-work/minecraft/net/minecraft/network/NetworkManager.java
+@@ -299,6 +299,11 @@
+         this.channelRead0(p_channelRead0_1_, (Packet)p_channelRead0_2_);
+     }
+ 
++    public Channel channel()
++    {
++        return field_150746_k;
++    }
++
+     static class InboundHandlerTuplePacketListener
+         {
+             private final Packet field_150774_a;

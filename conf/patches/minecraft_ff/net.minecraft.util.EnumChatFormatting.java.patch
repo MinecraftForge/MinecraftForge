@@ -1,0 +1,12 @@
+diff -r -U 3 minecraft\net\minecraft\util\EnumChatFormatting.java minecraft_patched\net\minecraft\util\EnumChatFormatting.java
+--- minecraft\net\minecraft\util\EnumChatFormatting.java
++++ minecraft_patched\net\minecraft\util\EnumChatFormatting.java
+@@ -39,7 +39,7 @@
+    private static final String __OBFID = "CL_00000342";
+ 
+    private EnumChatFormatting(char p_i1336_3_) {
+-      this(p_i1336_1_, p_i1336_2_, p_i1336_3_, false);
++      this(p_i1336_3_, false);
+    }
+ 
+    private EnumChatFormatting(char p_i1337_3_, boolean p_i1337_4_) {

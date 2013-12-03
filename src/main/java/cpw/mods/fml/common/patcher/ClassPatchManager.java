@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 import net.minecraft.launchwrapper.LaunchClassLoader;
+
 import LZMA.LzmaInputStream;
 
 import com.google.common.base.Joiner;

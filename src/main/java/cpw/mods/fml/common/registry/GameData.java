@@ -389,7 +389,7 @@ public class GameData {
 
     public static void validateRegistry()
     {
-        for (int i = 0; i < Item.field_77698_e.length; i++)
+/*        for (int i = 0; i < Item.field_77698_e.length; i++)
         {
             if (Item.field_77698_e[i] != null)
             {
@@ -404,6 +404,6 @@ public class GameData {
                 }
             }
         }
-        validated = true;
+*/        validated = true;
     }
 }

@@ -1,13 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/server/MinecraftServer.java
 +++ ../src-work/minecraft/net/minecraft/server/MinecraftServer.java
-@@ -1,5 +1,6 @@
- package net.minecraft.server;
- 
+@@ -4,6 +4,8 @@
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.authlib.minecraft.MinecraftSessionService;
+ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
++
 +import cpw.mods.fml.common.FMLCommonHandler;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
- import java.awt.GraphicsEnvironment;
-@@ -368,7 +369,11 @@
+ import io.netty.buffer.ByteBuf;
+@@ -381,7 +383,11 @@
          {
              if (this.func_71197_b())
              {
@@ -16,29 +18,18 @@
                  long i = func_130071_aq();
 +
 +                FMLCommonHandler.instance().onWorldLoadTick(field_71305_c);
- 
-                 for (long j = 0L; this.field_71317_u; this.field_71296_Q = true)
-                 {
-@@ -407,6 +412,7 @@
- 
+                 long j = 0L;
+                 this.field_147147_p.func_151315_a(new ChatComponentText(this.field_71286_C));
+                 this.field_147147_p.func_151321_a(new ServerStatusResponse.MinecraftProtocolVersionIdentifier("1.7.2", 4));
+@@ -425,6 +431,7 @@
                      Thread.sleep(1L);
+                     this.field_71296_Q = true;
                  }
 +                FMLCommonHandler.instance().handleServerStopping();
              }
              else
              {
-@@ -415,6 +421,10 @@
-         }
-         catch (Throwable throwable)
-         {
-+            if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
-+            {
-+                return;
-+            }
-             throwable.printStackTrace();
-             this.func_98033_al().func_98234_c("Encountered an unexpected exception " + throwable.getClass().getSimpleName(), throwable);
-             CrashReport crashreport = null;
-@@ -445,6 +455,10 @@
+@@ -462,6 +469,10 @@
          {
              try
              {
@@ -49,7 +40,7 @@
                  this.func_71260_j();
                  this.field_71316_v = true;
              }
-@@ -454,6 +468,8 @@
+@@ -471,6 +482,8 @@
              }
              finally
              {
@@ -58,7 +49,7 @@
                  this.func_71240_o();
              }
          }
-@@ -470,8 +486,10 @@
+@@ -511,8 +524,10 @@
  
      public void func_71217_p()
      {
@@ -69,7 +60,7 @@
          ++this.field_71315_w;
  
          if (this.field_71295_T)
-@@ -517,6 +535,7 @@
+@@ -566,6 +581,7 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -77,7 +68,7 @@
      }
  
      public void func_71190_q()
-@@ -544,6 +563,7 @@
+@@ -593,6 +609,7 @@
                  }
  
                  this.field_71304_b.func_76320_a("tick");
@@ -85,7 +76,7 @@
                  CrashReport crashreport;
  
                  try
-@@ -568,6 +588,7 @@
+@@ -617,6 +634,7 @@
                      throw new ReportedException(crashreport);
                  }
  
@@ -93,7 +84,7 @@
                  this.field_71304_b.func_76319_b();
                  this.field_71304_b.func_76320_a("tracker");
                  worldserver.func_73039_n().func_72788_a();
-@@ -695,7 +716,7 @@
+@@ -695,7 +713,7 @@
  
      public String getServerModName()
      {

@@ -19,6 +19,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -154,20 +155,9 @@ public class GameRegistry
         {
             assert block != null : "registerBlock: block cannot be null";
             assert itemclass != null : "registerBlock: itemclass cannot be null";
-            int blockItemId = block.field_71990_ca - 256;
-            Constructor<? extends ItemBlock> itemCtor;
-            Item i;
-            try
-            {
-                itemCtor = itemclass.getConstructor(int.class);
-                i = itemCtor.newInstance(blockItemId);
-            }
-            catch (NoSuchMethodException e)
-            {
-                itemCtor = itemclass.getConstructor(int.class, net.minecraft.block.Block.class);
-                i = itemCtor.newInstance(blockItemId, block);
-            }
-            GameRegistry.registerItem(i,name, modId);
+            Constructor<? extends ItemBlock> itemCtor = itemclass.getConstructor(net.minecraft.block.Block.class);
+            Item i = itemCtor.newInstance(block);
+            GameRegistry.registerItem(i, name, modId);
         }
         catch (Exception e)
         {
@@ -198,14 +188,19 @@ public class GameRegistry
         CraftingManager.func_77594_a().func_77592_b().add(recipe);
     }
 
-    public static void addSmelting(int input, ItemStack output, float xp)
+    public static void addSmelting(Block input, ItemStack output, float xp)
     {
-        FurnaceRecipes.func_77602_a().func_77600_a(input, output, xp);
+        FurnaceRecipes.func_77602_a().func_151393_a(input, output, xp);
+    }
+
+    public static void addSmelting(Item input, ItemStack output, float xp)
+    {
+        FurnaceRecipes.func_77602_a().func_151396_a(input, output, xp);
     }
 
     public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id)
     {
-        TileEntity.func_70306_a(tileEntityClass, id);
+        TileEntity.func_145826_a(tileEntityClass, id);
     }
 
     /**
@@ -218,8 +213,8 @@ public class GameRegistry
      */
     public static void registerTileEntityWithAlternatives(Class<? extends TileEntity> tileEntityClass, String id, String... alternatives)
     {
-        TileEntity.func_70306_a(tileEntityClass, id);
-        Map<String,Class<?>> teMappings = ObfuscationReflectionHelper.getPrivateValue(TileEntity.class, null, "field_" + "70326_a", "field_70326_a", "a");
+        TileEntity.func_145826_a(tileEntityClass, id);
+        Map<String,Class<?>> teMappings = ObfuscationReflectionHelper.getPrivateValue(TileEntity.class, null, "field_" + "145855_i", "field_145855_i");
         for (String s: alternatives)
         {
             if (!teMappings.containsKey(s))

@@ -1,0 +1,23 @@
+diff -r -U 3 minecraft\net\minecraft\client\particle\EffectRenderer.java minecraft_patched\net\minecraft\client\particle\EffectRenderer.java
+--- minecraft\net\minecraft\client\particle\EffectRenderer.java
++++ minecraft_patched\net\minecraft\client\particle\EffectRenderer.java
+@@ -53,7 +53,8 @@
+    }
+ 
+    public void func_78868_a() {
+-      for(final int var1 = 0; var1 < 4; ++var1) {
++      for(int var11 = 0; var11 < 4; ++var11) {
++         final int var1 = var11;
+          for(int var2 = 0; var2 < this.field_78876_b[var1].size(); ++var2) {
+             final EntityFX var3 = (EntityFX)this.field_78876_b[var1].get(var2);
+ 
+@@ -99,7 +100,8 @@
+       EntityFX.field_70554_ao = p_78874_1_.field_70137_T + (p_78874_1_.field_70163_u - p_78874_1_.field_70137_T) * (double)p_78874_2_;
+       EntityFX.field_70555_ap = p_78874_1_.field_70136_U + (p_78874_1_.field_70161_v - p_78874_1_.field_70136_U) * (double)p_78874_2_;
+ 
+-      for(final int var8 = 0; var8 < 3; ++var8) {
++      for(int var88 = 0; var88 < 3; ++var88) {
++         final int var8 = var88;
+          if(!this.field_78876_b[var8].isEmpty()) {
+             switch(var8) {
+             case 0:

@@ -1,13 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/client/settings/GameSettings.java
 +++ ../src-work/minecraft/net/minecraft/client/settings/GameSettings.java
-@@ -1,5 +1,6 @@
- package net.minecraft.client.settings;
+@@ -2,6 +2,8 @@
  
+ import com.google.common.collect.Maps;
+ import com.google.gson.Gson;
++
 +import cpw.mods.fml.client.FMLClientHandler;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.io.BufferedReader;
-@@ -705,6 +706,7 @@
+@@ -879,6 +881,7 @@
  
      public void func_74303_b()
      {

@@ -1,46 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
 +++ ../src-work/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
-@@ -1,6 +1,9 @@
- package net.minecraft.server.management;
+@@ -88,7 +88,7 @@
+         this.field_72405_c = 8;
+     }
  
- import com.google.common.base.Charsets;
-+
-+import cpw.mods.fml.common.network.FMLNetworkHandler;
-+import cpw.mods.fml.common.registry.GameRegistry;
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
- import java.io.File;
-@@ -124,6 +127,8 @@
- 
-         p_72355_2_.func_71116_b();
- 
-+        FMLNetworkHandler.handlePlayerLogin(p_72355_2_, netserverhandler, p_72355_1_);
-+
-         if (nbttagcompound != null && nbttagcompound.func_74764_b("Riding"))
-         {
-             Entity entity = EntityList.func_75615_a(nbttagcompound.func_74775_l("Riding"), worldserver);
-@@ -238,6 +243,7 @@
- 
-     public void func_72367_e(EntityPlayerMP p_72367_1_)
+-    public void func_72355_a(NetworkManager p_72355_1_, EntityPlayerMP p_72355_2_)
++    public void func_72355_a(NetworkManager p_72355_1_, EntityPlayerMP p_72355_2_, NetHandlerPlayServer nethandlerplayserver)
      {
-+        GameRegistry.onPlayerLogout(p_72367_1_);
-         this.func_72391_b(p_72367_1_);
-         WorldServer worldserver = p_72367_1_.func_71121_q();
- 
-@@ -395,6 +401,7 @@
-         this.field_72404_b.add(entityplayermp1);
-         entityplayermp1.func_71116_b();
-         entityplayermp1.func_70606_j(entityplayermp1.func_110143_aJ());
-+        GameRegistry.onPlayerRespawn(entityplayermp1);
-         return entityplayermp1;
-     }
- 
-@@ -420,6 +427,8 @@
-             PotionEffect potioneffect = (PotionEffect)iterator.next();
-             p_72356_1_.field_71135_a.func_72567_b(new Packet41EntityEffect(p_72356_1_.field_70157_k, potioneffect));
-         }
-+
-+        GameRegistry.onPlayerChangedDimension(p_72356_1_);
-     }
- 
-     public void func_82448_a(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_)
+         NBTTagCompound nbttagcompound = this.func_72380_a(p_72355_2_);
+         p_72355_2_.func_70029_a(this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK));
+@@ -104,7 +104,7 @@
+         WorldServer worldserver = this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK);
+         ChunkCoordinates chunkcoordinates = worldserver.func_72861_E();
+         this.func_72381_a(p_72355_2_, (EntityPlayerMP)null, worldserver);
+-        NetHandlerPlayServer nethandlerplayserver = new NetHandlerPlayServer(this.field_72400_f, p_72355_1_, p_72355_2_);
++        p_72355_2_.field_71135_a = nethandlerplayserver;
+         nethandlerplayserver.func_147359_a(new S01PacketJoinGame(p_72355_2_.func_145782_y(), p_72355_2_.field_71134_c.func_73081_b(), worldserver.func_72912_H().func_76093_s(), worldserver.field_73011_w.field_76574_g, worldserver.field_73013_u, this.func_72352_l(), worldserver.func_72912_H().func_76067_t()));
+         nethandlerplayserver.func_147359_a(new S3FPacketCustomPayload("MC|Brand", this.func_72365_p().getServerModName().getBytes(Charsets.UTF_8)));
+         nethandlerplayserver.func_147359_a(new S05PacketSpawnPosition(chunkcoordinates.field_71574_a, chunkcoordinates.field_71572_b, chunkcoordinates.field_71573_c));

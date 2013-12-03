@@ -7,8 +7,8 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  
-@@ -8,6 +9,6 @@
- {
+@@ -10,6 +11,6 @@
+ 
      public static String getClientModName()
      {
 -        return "vanilla";

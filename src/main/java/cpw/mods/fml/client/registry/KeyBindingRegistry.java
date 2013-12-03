@@ -116,7 +116,7 @@ public class KeyBindingRegistry
             for (int i = 0; i < keyBindings.length; i++)
             {
                 KeyBinding keyBinding = keyBindings[i];
-                int keyCode = keyBinding.field_74512_d;
+                int keyCode = keyBinding.func_151463_i();
                 boolean state = (keyCode < 0 ? Mouse.isButtonDown(keyCode + 100) : Keyboard.isKeyDown(keyCode));
                 if (state != keyDown[i] || (state && repeatings[i]))
                 {

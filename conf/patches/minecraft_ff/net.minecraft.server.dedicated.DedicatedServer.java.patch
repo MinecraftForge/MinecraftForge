@@ -1,0 +1,13 @@
+diff -r -U 3 minecraft_server\net\minecraft\server\dedicated\DedicatedServer.java minecraft_server_patched\net\minecraft\server\dedicated\DedicatedServer.java
+--- minecraft_server\net\minecraft\server\dedicated\DedicatedServer.java
++++ minecraft_server_patched\net\minecraft\server\dedicated\DedicatedServer.java
+@@ -261,7 +261,7 @@
+       System.exit(0);
+    }
+ 
+-   protected void func_71190_q() {
++   public void func_71190_q() {
+       super.func_71190_q();
+       this.func_71333_ah();
+    }
+

@@ -1,18 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src-work/minecraft/net/minecraft/client/Minecraft.java
-@@ -1,6 +1,11 @@
+@@ -1,6 +1,9 @@
  package net.minecraft.client;
  
  import com.google.common.collect.Lists;
 +
 +import cpw.mods.fml.client.FMLClientHandler;
 +import cpw.mods.fml.common.FMLCommonHandler;
-+import cpw.mods.fml.common.registry.GameData;
-+import cpw.mods.fml.common.registry.ItemData;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
- import java.awt.image.BufferedImage;
-@@ -130,6 +135,8 @@
+ import io.netty.util.concurrent.GenericFutureListener;
+@@ -146,6 +149,8 @@
  import org.lwjgl.opengl.PixelFormat;
  import org.lwjgl.util.glu.GLU;
  
@@ -21,20 +19,16 @@
  @SideOnly(Side.CLIENT)
  public class Minecraft implements IPlayerUsage
  {
-@@ -362,9 +369,12 @@
-         this.field_71446_o = new TextureManager(this.field_110451_am);
-         this.field_110451_am.func_110542_a(this.field_71446_o);
-         this.field_71416_A = new SoundManager(this.field_110451_am, this.field_71474_y, this.field_110446_Y);
-+        this.field_71416_A.LOAD_SOUND_SYSTEM = false;
-         this.field_110451_am.func_110542_a(this.field_71416_A);
+@@ -457,6 +462,8 @@
          this.func_71357_I();
          this.field_71466_p = new FontRenderer(this.field_71474_y, new ResourceLocation("textures/font/ascii.png"), this.field_71446_o, false);
-+
-+        FMLClientHandler.instance().beginMinecraftLoading(this, this.field_110449_ao, this.field_110451_am);
  
++        FMLClientHandler.instance().beginMinecraftLoading(this, this.field_110449_ao, this.field_110451_am);
++
          if (this.field_71474_y.field_74363_ab != null)
          {
-@@ -400,6 +410,7 @@
+             this.field_71466_p.func_78264_a(this.field_135017_as.func_135042_a() || this.field_71474_y.field_151455_aw);
+@@ -508,6 +515,7 @@
          this.field_71446_o.func_130088_a(TextureMap.field_110576_c, new TextureMap(1, "textures/items"));
          GL11.glViewport(0, 0, this.field_71443_c, this.field_71440_d);
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
@@ -42,35 +36,27 @@
          this.func_71361_d("Post startup");
          this.field_71456_v = new GuiIngame(this);
  
-@@ -418,6 +429,7 @@
-         {
+@@ -527,6 +535,7 @@
              this.func_71352_k();
          }
+ 
 +        FMLClientHandler.instance().onInitializationComplete();
+         Display.setVSyncEnabled(this.field_71474_y.field_74352_v);
      }
  
-     public void func_110436_a()
-@@ -733,6 +745,7 @@
-         {
-             this.func_71405_e();
-         }
-+
-     }
- 
-     private void func_71411_J()
-@@ -801,9 +814,11 @@
+@@ -916,9 +925,11 @@
  
          if (!this.field_71454_w)
          {
-+                FMLCommonHandler.instance().onRenderTickStart(this.field_71428_T.field_74281_c);
++            FMLCommonHandler.instance().onRenderTickStart(this.field_71428_T.field_74281_c);
              this.field_71424_I.func_76318_c("gameRenderer");
              this.field_71460_t.func_78480_b(this.field_71428_T.field_74281_c);
              this.field_71424_I.func_76319_b();
-+                FMLCommonHandler.instance().onRenderTickEnd(this.field_71428_T.field_74281_c);
++            FMLCommonHandler.instance().onRenderTickEnd(this.field_71428_T.field_74281_c);
          }
  
          GL11.glFlush();
-@@ -1325,10 +1340,14 @@
+@@ -1491,11 +1502,15 @@
  
      public void func_71407_l()
      {
@@ -80,12 +66,13 @@
          {
              --this.field_71467_ac;
          }
-+
-+        FMLCommonHandler.instance().onPreClientTick();
  
-         this.field_71424_I.func_76320_a("stats");
-         this.field_71413_E.func_77449_e();
-@@ -1785,6 +1804,8 @@
++        FMLCommonHandler.instance().onPreClientTick();
++
+         this.field_71424_I.func_76320_a("gui");
+ 
+         if (!this.field_71445_n)
+@@ -1978,6 +1993,8 @@
              this.field_71453_ak.func_74428_b();
          }
  
@@ -94,31 +81,3 @@
          this.field_71424_I.func_76319_b();
          this.field_71423_H = func_71386_F();
      }
-@@ -1808,8 +1829,27 @@
-         }
- 
-         this.field_71413_E.func_77450_a(StatList.field_75936_f, 1);
-+
-+        GameData.initializeServerGate(2);
-+
-         this.field_71437_Z = new IntegratedServer(this, p_71371_1_, p_71371_2_, p_71371_3_);
-         this.field_71437_Z.func_71256_s();
-+
-+        MapDifference<Integer, ItemData> idDifferences = GameData.gateWorldLoadingForValidation();
-+        if (idDifferences!=null)
-+        {
-+            FMLClientHandler.instance().warnIDMismatch(idDifferences, true);
-+        }
-+        else
-+        {
-+            GameData.releaseGate(true);
-+            continueWorldLoading();
-+        }
-+
-+    }
-+
-+    public void continueWorldLoading()
-+    {
-         this.field_71455_al = true;
-         this.field_71461_s.func_73720_a(I18n.func_135053_a("menu.loadingLevel"));
- 

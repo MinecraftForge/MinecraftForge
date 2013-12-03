@@ -23,8 +23,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 
-import net.minecraft.crash.CallableMinecraftVersion;
-
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -160,7 +158,7 @@ public class Loader
     private Loader()
     {
         modClassLoader = new ModClassLoader(getClass().getClassLoader());
-        String actualMCVersion = new CallableMinecraftVersion(null).func_71493_a();
+        String actualMCVersion = "1.7.2";
         if (!mccversion.equals(actualMCVersion))
         {
             FMLLog.severe("This version of FML is built for Minecraft %s, we have detected Minecraft %s in your minecraft jar file", mccversion, actualMCVersion);

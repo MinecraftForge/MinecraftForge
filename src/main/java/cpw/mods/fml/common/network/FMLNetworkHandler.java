@@ -12,48 +12,18 @@
 
 package cpw.mods.fml.common.network;
 
-import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_LIST_REQUEST;
-
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketAddress;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
-import net.minecraft.network.*;
-import net.minecraft.network.packet.*;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
 import net.minecraft.server.management.ServerConfigurationManager;
-import net.minecraft.world.EnumGameType;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldType;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.hash.Hashing;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.InjectedModContainer;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.discovery.ASMDataTable;
-import cpw.mods.fml.common.network.FMLPacket.Type;
-import cpw.mods.fml.common.registry.EntityRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
-import cpw.mods.fml.relauncher.Side;
 
 public class FMLNetworkHandler
 {
-    private static final int FML_HASH = Hashing.murmur3_32().hashString("FML").asInt();
+/*    private static final int FML_HASH = Hashing.murmur3_32().hashString("FML").asInt();
     private static final int PROTOCOL_VERSION = 0x2;
     private static final FMLNetworkHandler INSTANCE = new FMLNetworkHandler();
 
@@ -182,13 +152,13 @@ public class FMLNetworkHandler
         }
     }
 
-    /**
+    *//**
      * @param netLoginHandler
      * @param server
      * @param address
      * @param userName
      * @return if the user can carry on
-     */
+     *//*
     private boolean handleVanillaLoginKick(NetLoginHandler netLoginHandler, MinecraftServer server, SocketAddress address, String userName)
     {
         // Vanilla reasons first
@@ -435,14 +405,29 @@ public class FMLNetworkHandler
             FMLCommonHandler.instance().handleTinyPacket(handler, mapData);
         }
     }
-
-    public static int getCompatibilityLevel()
+*/
+    public static void fmlHandshake(ServerConfigurationManager scm, NetworkManager manager, EntityPlayerMP player)
     {
-        return PROTOCOL_VERSION;
+        NetHandlerPlayServer nethandler = new NetHandlerPlayServer(scm.func_72365_p(), manager, player);
+        player.field_71135_a = null;
+        scm.func_72355_a(manager, player, nethandler);
     }
 
-    public static boolean vanillaLoginPacketCompatibility()
+    public static void openGui(EntityPlayer entityPlayer, Object mod, int modGuiId, World world, int x, int y, int z)
     {
-        return FMLCommonHandler.instance().getSidedDelegate().getClientCompatibilityLevel() == 0;
+        // TODO Auto-generated method stub
+
+    }
+
+    public static void makeEntitySpawnAdjustment(int func_145782_y, EntityPlayerMP p_73117_1_, int field_73128_d, int field_73129_e, int field_73126_f)
+    {
+        // TODO Auto-generated method stub
+
+    }
+
+    public static Packet getEntitySpawningPacket(Entity field_73132_a)
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

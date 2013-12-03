@@ -26,12 +26,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiSmallButton;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.resources.ResourcePack;
+import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
@@ -90,28 +89,28 @@ public class GuiModList extends GuiScreen
             listWidth=Math.max(listWidth,getFontRenderer().func_78256_a(mod.getVersion()) + 10);
         }
         listWidth=Math.min(listWidth, 150);
-        this.field_73887_h.add(new GuiSmallButton(6, this.field_73880_f / 2 - 75, this.field_73881_g - 38, I18n.func_135053_a("gui.done")));
+        this.field_146292_n.add(new GuiButton(6, this.field_146294_l / 2 - 75, this.field_146295_m - 38, I18n.func_135052_a("gui.done")));
         this.modList=new GuiSlotModList(this, mods, listWidth);
-        this.modList.registerScrollButtons(this.field_73887_h, 7, 8);
+        this.modList.registerScrollButtons(this.field_146292_n, 7, 8);
     }
 
     @Override
-    protected void func_73875_a(GuiButton button) {
-        if (button.field_73742_g)
+    protected void func_146284_a(GuiButton button) {
+        if (button.field_146124_l)
         {
-            switch (button.field_73741_f)
+            switch (button.field_146127_k)
             {
                 case 6:
-                    this.field_73882_e.func_71373_a(this.mainMenu);
+                    this.field_146297_k.func_147108_a(this.mainMenu);
                     return;
             }
         }
-        super.func_73875_a(button);
+        super.func_146284_a(button);
     }
 
     public int drawLine(String line, int offset, int shifty)
     {
-        int r = this.field_73886_k.func_78276_b(line, offset, shifty, 0xd7edea);
+        this.field_146289_q.func_78276_b(line, offset, shifty, 0xd7edea);
         return shifty + 10;
     }
 
@@ -119,7 +118,7 @@ public class GuiModList extends GuiScreen
     public void func_73863_a(int p_571_1_, int p_571_2_, float p_571_3_)
     {
         this.modList.drawScreen(p_571_1_, p_571_2_, p_571_3_);
-        this.func_73732_a(this.field_73886_k, "Mod List", this.field_73880_f / 2, 16, 0xFFFFFF);
+        this.func_73732_a(this.field_146289_q, "Mod List", this.field_146294_l / 2, 16, 0xFFFFFF);
         int offset = this.listWidth  + 20;
         if (selectedMod != null) {
             GL11.glEnable(GL11.GL_BLEND);
@@ -129,8 +128,8 @@ public class GuiModList extends GuiScreen
                 if (!logoFile.isEmpty())
                 {
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    TextureManager tm = field_73882_e.func_110434_K();
-                    ResourcePack pack = FMLClientHandler.instance().getResourcePackFor(selectedMod.getModId());
+                    TextureManager tm = field_146297_k.func_110434_K();
+                    IResourcePack pack = FMLClientHandler.instance().getResourcePackFor(selectedMod.getModId());
                     try
                     {
                         BufferedImage logo = null;
@@ -149,7 +148,7 @@ public class GuiModList extends GuiScreen
                         if (logo != null)
                         {
                             ResourceLocation rl = tm.func_110578_a("modlogo", new DynamicTexture(logo));
-                            this.field_73882_e.field_71446_o.func_110577_a(rl);
+                            this.field_146297_k.field_71446_o.func_110577_a(rl);
                             Dimension dim = new Dimension(logo.getWidth(), logo.getHeight());
                             double scaleX = dim.width / 200.0;
                             double scaleY = dim.height / 65.0;
@@ -177,7 +176,7 @@ public class GuiModList extends GuiScreen
                         ;
                     }
                 }
-                this.field_73886_k.func_78261_a(selectedMod.getMetadata().name, offset, shifty, 0xFFFFFF);
+                this.field_146289_q.func_78261_a(selectedMod.getMetadata().name, offset, shifty, 0xFFFFFF);
                 shifty += 12;
 
                 shifty = drawLine(String.format("Version: %s (%s)", selectedMod.getDisplayVersion(), selectedMod.getVersion()), offset, shifty);
@@ -188,18 +187,18 @@ public class GuiModList extends GuiScreen
                 shifty = drawLine(String.format("Authors: %s", selectedMod.getMetadata().getAuthorList()), offset, shifty);
                 shifty = drawLine(String.format("URL: %s", selectedMod.getMetadata().url), offset, shifty);
                 shifty = drawLine(selectedMod.getMetadata().childMods.isEmpty() ? "No child mods for this mod" : String.format("Child mods: %s", selectedMod.getMetadata().getChildModList()), offset, shifty);
-                int rightSide = this.field_73880_f - offset - 20;
+                int rightSide = this.field_146294_l - offset - 20;
                 if (rightSide > 20)
                 {
                     this.getFontRenderer().func_78279_b(selectedMod.getMetadata().description, offset, shifty + 10, rightSide, 0xDDDDDD);
                 }
             } else {
-                offset = ( this.listWidth + this.field_73880_f ) / 2;
-                this.func_73732_a(this.field_73886_k, selectedMod.getName(), offset, 35, 0xFFFFFF);
-                this.func_73732_a(this.field_73886_k, String.format("Version: %s",selectedMod.getVersion()), offset, 45, 0xFFFFFF);
-                this.func_73732_a(this.field_73886_k, String.format("Mod State: %s",Loader.instance().getModState(selectedMod)), offset, 55, 0xFFFFFF);
-                this.func_73732_a(this.field_73886_k, "No mod information found", offset, 65, 0xDDDDDD);
-                this.func_73732_a(this.field_73886_k, "Ask your mod author to provide a mod mcmod.info file", offset, 75, 0xDDDDDD);
+                offset = ( this.listWidth + this.field_146294_l ) / 2;
+                this.func_73732_a(this.field_146289_q, selectedMod.getName(), offset, 35, 0xFFFFFF);
+                this.func_73732_a(this.field_146289_q, String.format("Version: %s",selectedMod.getVersion()), offset, 45, 0xFFFFFF);
+                this.func_73732_a(this.field_146289_q, String.format("Mod State: %s",Loader.instance().getModState(selectedMod)), offset, 55, 0xFFFFFF);
+                this.func_73732_a(this.field_146289_q, "No mod information found", offset, 65, 0xDDDDDD);
+                this.func_73732_a(this.field_146289_q, "Ask your mod author to provide a mod mcmod.info file", offset, 75, 0xDDDDDD);
             }
             GL11.glDisable(GL11.GL_BLEND);
         }
@@ -207,11 +206,11 @@ public class GuiModList extends GuiScreen
     }
 
     Minecraft getMinecraftInstance() {
-        return field_73882_e;
+        return field_146297_k;
     }
 
     FontRenderer getFontRenderer() {
-        return field_73886_k;
+        return field_146289_q;
     }
 
     /**

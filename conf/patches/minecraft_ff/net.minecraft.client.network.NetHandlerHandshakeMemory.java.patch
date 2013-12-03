@@ -1,0 +1,11 @@
+diff -r -U 3 minecraft\net\minecraft\client\network\NetHandlerHandshakeMemory.java minecraft_patched\net\minecraft\client\network\NetHandlerHandshakeMemory.java
+--- minecraft\net\minecraft\client\network\NetHandlerHandshakeMemory.java
++++ minecraft_patched\net\minecraft\client\network\NetHandlerHandshakeMemory.java
+@@ -31,6 +31,7 @@
+       switch(NetHandlerHandshakeMemory.SwitchEnumConnectionState.field_151263_a[p_147232_2_.ordinal()]) {
+       case 1:
+          this.field_147384_b.func_150719_a(new NetHandlerLoginServer(this.field_147385_a, this.field_147384_b));
++         break;
+       case 2:
+          throw new UnsupportedOperationException("NYI");
+       default:

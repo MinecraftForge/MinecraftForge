@@ -1,0 +1,12 @@
+diff -r -U 3 minecraft\net\minecraft\client\resources\FolderResourcePack.java minecraft_patched\net\minecraft\client\resources\FolderResourcePack.java
+--- minecraft\net\minecraft\client\resources\FolderResourcePack.java
++++ minecraft_patched\net\minecraft\client\resources\FolderResourcePack.java
+@@ -31,7 +31,7 @@
+       HashSet var1 = Sets.newHashSet();
+       File var2 = new File(this.field_110597_b, "assets/");
+       if(var2.isDirectory()) {
+-         File[] var3 = var2.listFiles(DirectoryFileFilter.DIRECTORY);
++         File[] var3 = var2.listFiles((java.io.FileFilter)DirectoryFileFilter.DIRECTORY);
+          int var4 = var3.length;
+ 
+          for(int var5 = 0; var5 < var4; ++var5) {
