@@ -1,0 +1,14 @@
+diff -r -U 3 minecraft\net\minecraft\network\EnumConnectionState.java minecraft_patched\net\minecraft\network\EnumConnectionState.java
+--- minecraft\net\minecraft\network\EnumConnectionState.java
++++ minecraft_patched\net\minecraft\network\EnumConnectionState.java
+@@ -307,8 +307,8 @@
+    }
+ 
+    // $FF: synthetic method
+-   EnumConnectionState(int var3, Object var4) {
+-      this(var1, var2, var3);
++   EnumConnectionState(String ignore1, int ignore2, int var3, Object var4) {
++      this(var3);
+    }
+ 
+    static {

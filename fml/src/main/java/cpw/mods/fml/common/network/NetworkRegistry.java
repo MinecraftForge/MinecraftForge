@@ -41,7 +41,8 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.network.FMLPacket.Type;
+import cpw.mods.fml.common.network.packet.FMLPacket;
+import cpw.mods.fml.common.network.packet.FMLPacket.Type;
 import cpw.mods.fml.relauncher.Side;
 
 /**

@@ -9,7 +9,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.io.IOException;
-@@ -80,6 +82,7 @@
+@@ -83,6 +85,7 @@
          }
  
          field_135049_a.func_135022_a(p_110549_1_, arraylist);

@@ -1,0 +1,12 @@
+diff -r -U 3 minecraft\net\minecraft\server\integrated\IntegratedServer.java minecraft_patched\net\minecraft\server\integrated\IntegratedServer.java
+--- minecraft\net\minecraft\server\integrated\IntegratedServer.java
++++ minecraft_patched\net\minecraft\server\integrated\IntegratedServer.java
+@@ -95,7 +95,7 @@
+       return true;
+    }
+ 
+-   protected void func_71217_p() {
++   public void func_71217_p() {
+       boolean var1 = this.field_71348_o;
+       this.field_71348_o = Minecraft.func_71410_x().func_147114_u() != null && Minecraft.func_71410_x().func_147113_T();
+       if(!var1 && this.field_71348_o) {

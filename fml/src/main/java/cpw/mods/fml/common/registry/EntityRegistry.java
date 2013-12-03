@@ -24,7 +24,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityTracker;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.SpawnListEntry;
+import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ArrayListMultimap;
@@ -38,7 +38,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.network.EntitySpawnPacket;
+import cpw.mods.fml.common.network.packet.EntitySpawnPacket;
 
 public class EntityRegistry
 {

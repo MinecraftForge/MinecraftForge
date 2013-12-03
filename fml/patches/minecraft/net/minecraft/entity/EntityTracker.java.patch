@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityTracker.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityTracker.java
-@@ -4,6 +4,8 @@
- import java.util.HashSet;
- import java.util.Iterator;
- import java.util.Set;
-+
+@@ -39,6 +39,8 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
 +import cpw.mods.fml.common.registry.EntityRegistry;
- import net.minecraft.crash.CrashReport;
- import net.minecraft.crash.CrashReportCategory;
- import net.minecraft.entity.boss.EntityDragon;
-@@ -51,6 +53,11 @@
++
+ public class EntityTracker
+ {
+     private static final Logger field_151249_a = LogManager.getLogger();
+@@ -56,6 +58,11 @@
  
      public void func_72786_a(Entity p_72786_1_)
      {

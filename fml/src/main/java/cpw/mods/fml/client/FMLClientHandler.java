@@ -22,34 +22,23 @@ import java.util.logging.Logger;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.multiplayer.GuiConnecting;
-import net.minecraft.client.multiplayer.NetClientHandler;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.resources.ReloadableResourceManager;
-import net.minecraft.client.resources.ResourcePack;
+import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.launchwrapper.Launch;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.NetHandler;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet131MapData;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.MapDifference;
-import com.google.common.collect.MapDifference.ValueDifference;
 import com.google.common.collect.Maps;
 
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
-import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.DuplicateModsFoundException;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -63,14 +52,12 @@ import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.WrongMinecraftVersionException;
-import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
-import cpw.mods.fml.common.network.EntitySpawnPacket;
-import cpw.mods.fml.common.network.ModMissingPacket;
+import cpw.mods.fml.common.network.packet.EntitySpawnAdjustmentPacket;
+import cpw.mods.fml.common.network.packet.EntitySpawnPacket;
+import cpw.mods.fml.common.network.packet.ModMissingPacket;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
-import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.common.registry.IThrowableEntity;
-import cpw.mods.fml.common.registry.ItemData;
 import cpw.mods.fml.common.toposort.ModSortingException;
 import cpw.mods.fml.relauncher.Side;
 
@@ -128,12 +115,12 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private boolean serverShouldBeKilledQuietly;
 
-    private List<ResourcePack> resourcePackList;
+    private List<IResourcePack> resourcePackList;
 
     @SuppressWarnings("unused")
-    private ReloadableResourceManager resourceManager;
+    private IReloadableResourceManager resourceManager;
 
-    private Map<String, ResourcePack> resourcePackMap;
+    private Map<String, IResourcePack> resourcePackMap;
 
     /**
      * Called to start the whole game off
@@ -143,7 +130,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      * @param resourceManager The resource manager
      */
     @SuppressWarnings("unchecked")
-    public void beginMinecraftLoading(Minecraft minecraft, @SuppressWarnings("rawtypes") List resourcePackList, ReloadableResourceManager resourceManager)
+    public void beginMinecraftLoading(Minecraft minecraft, @SuppressWarnings("rawtypes") List resourcePackList, IReloadableResourceManager resourceManager)
     {
         client = minecraft;
         this.resourcePackList = resourcePackList;
@@ -229,7 +216,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      * Also initializes key bindings
      *
      */
-    @SuppressWarnings({ "deprecation", "unchecked" })
+    @SuppressWarnings({ "deprecation" })
     public void finishMinecraftLoading()
     {
         if (modsMissing != null || wrongMC != null || customError!=null || dupesFound!=null || modSorting!=null)
@@ -252,11 +239,8 @@ public class FMLClientHandler implements IFMLSidedHandler
             return;
         }
 
-        client.field_71416_A.LOAD_SOUND_SYSTEM = true;
         // Reload resources
         client.func_110436_a();
-        RenderingRegistry.instance().loadEntityRenderers((Map<Class<? extends Entity>, Render>)RenderManager.field_78727_a.field_78729_o);
-
         loading = false;
         KeyBindingRegistry.instance().uploadKeyBindingsToGame(client.field_71474_y);
     }
@@ -292,29 +276,26 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         if (wrongMC != null)
         {
-            client.func_71373_a(new GuiWrongMinecraft(wrongMC));
+            showGuiScreen(new GuiWrongMinecraft(wrongMC));
         }
         else if (modsMissing != null)
         {
-            client.func_71373_a(new GuiModsMissing(modsMissing));
+            showGuiScreen(new GuiModsMissing(modsMissing));
         }
         else if (dupesFound != null)
         {
-        	client.func_71373_a(new GuiDupesFound(dupesFound));
+            showGuiScreen(new GuiDupesFound(dupesFound));
         }
         else if (modSorting != null)
         {
-            client.func_71373_a(new GuiSortingProblem(modSorting));
+            showGuiScreen(new GuiSortingProblem(modSorting));
         }
 		else if (customError != null)
         {
-            client.func_71373_a(new GuiCustomModLoadingErrorScreen(customError));
+		    showGuiScreen(new GuiCustomModLoadingErrorScreen(customError));
         }
         else
         {
-            // Force renderengine to reload and re-initialize all textures
-//            client.field_71446_o.func_78352_b();
-//            TextureFXManager.instance().loadTextures(client.field_71418_C.func_77292_e());
         }
     }
     /**
@@ -349,7 +330,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void displayGuiScreen(EntityPlayer player, GuiScreen gui)
     {
         if (client.field_71439_g==player && gui != null) {
-            client.func_71373_a(gui);
+            client.func_147108_a(gui);
         }
     }
 
@@ -389,7 +370,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void showGuiScreen(Object clientGuiElement)
     {
         GuiScreen gui = (GuiScreen) clientGuiElement;
-        client.func_71373_a(gui);
+        client.func_147108_a(gui);
     }
 
     @SuppressWarnings("rawtypes")
@@ -410,8 +391,8 @@ public class FMLClientHandler implements IFMLSidedHandler
             else
             {
                 entity = (Entity)(cls.getConstructor(World.class).newInstance(wc));
-                int offset = packet.entityId - entity.field_70157_k;
-                entity.field_70157_k = packet.entityId;
+                int offset = packet.entityId - entity.func_145782_y();
+                entity.func_145769_d(packet.entityId);
                 entity.func_70012_b(packet.scaledX, packet.scaledY, packet.scaledZ, packet.scaledYaw, packet.scaledPitch);
                 if (entity instanceof EntityLiving)
                 {
@@ -423,7 +404,7 @@ public class FMLClientHandler implements IFMLSidedHandler
                 {
                     for (int j = 0; j < parts.length; j++)
                     {
-                        parts[j].field_70157_k += offset;
+                        parts[j].func_145769_d(parts[j].func_145782_y() + offset);
                     }
                 }
             }
@@ -434,7 +415,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
             if (entity instanceof IThrowableEntity)
             {
-                Entity thrower = client.field_71439_g.field_70157_k == packet.throwerId ? client.field_71439_g : wc.func_73045_a(packet.throwerId);
+                Entity thrower = client.field_71439_g.func_145782_y() == packet.throwerId ? client.field_71439_g : wc.func_73045_a(packet.throwerId);
                 ((IThrowableEntity)entity).setThrower(thrower);
             }
 
@@ -499,18 +480,9 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
 
     @Override
-    public void sendPacket(Packet packet)
-    {
-        if(client.field_71439_g != null)
-        {
-            client.field_71439_g.field_71174_a.func_72552_c(packet);
-        }
-    }
-
-    @Override
     public void displayMissingMods(ModMissingPacket modMissingPacket)
     {
-        client.func_71373_a(new GuiModsMissingForServer(modMissingPacket));
+        showGuiScreen(new GuiModsMissingForServer(modMissingPacket));
     }
 
     /**
@@ -522,81 +494,9 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
 
     @Override
-    public void handleTinyPacket(NetHandler handler, Packet131MapData mapData)
-    {
-        ((NetClientHandler)handler).fmlPacket131Callback(mapData);
-    }
-
-    @Override
-    public void setClientCompatibilityLevel(byte compatibilityLevel)
-    {
-        NetClientHandler.setConnectionCompatibilityLevel(compatibilityLevel);
-    }
-
-    @Override
-    public byte getClientCompatibilityLevel()
-    {
-        return NetClientHandler.getConnectionCompatibilityLevel();
-    }
-
-    public void warnIDMismatch(MapDifference<Integer, ItemData> idDifferences, boolean mayContinue)
-    {
-        GuiIdMismatchScreen mismatch = new GuiIdMismatchScreen(idDifferences, mayContinue);
-        client.func_71373_a(mismatch);
-    }
-
-    public void callbackIdDifferenceResponse(boolean response)
-    {
-        if (response)
-        {
-            serverShouldBeKilledQuietly = false;
-            GameData.releaseGate(true);
-            client.continueWorldLoading();
-        }
-        else
-        {
-            serverShouldBeKilledQuietly = true;
-            GameData.releaseGate(false);
-            // Reset and clear the client state
-            client.func_71403_a((WorldClient)null);
-            client.func_71373_a(null);
-        }
-    }
-
-    @Override
     public boolean shouldServerShouldBeKilledQuietly()
     {
         return serverShouldBeKilledQuietly;
-    }
-
-    @Override
-    public void disconnectIDMismatch(MapDifference<Integer, ItemData> s, NetHandler toKill, INetworkManager mgr)
-    {
-        boolean criticalMismatch = !s.entriesOnlyOnLeft().isEmpty();
-        for (Entry<Integer, ValueDifference<ItemData>> mismatch : s.entriesDiffering().entrySet())
-        {
-            ValueDifference<ItemData> vd = mismatch.getValue();
-            if (!vd.leftValue().mayDifferByOrdinal(vd.rightValue()))
-            {
-                criticalMismatch = true;
-            }
-        }
-
-        if (!criticalMismatch)
-        {
-            // We'll carry on with this connection, and just log a message instead
-            return;
-        }
-        // Nuke the connection
-        ((NetClientHandler)toKill).func_72553_e();
-        // Stop GuiConnecting
-        GuiConnecting.forceTermination((GuiConnecting)client.field_71462_r);
-        // pulse the network manager queue to clear cruft
-        mgr.func_74428_b();
-        // Nuke the world client
-        client.func_71403_a((WorldClient)null);
-        // Show error screen
-        warnIDMismatch(s, false);
     }
 
     /**
@@ -619,7 +519,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             try
             {
-                ResourcePack pack = (ResourcePack) resourcePackType.getConstructor(ModContainer.class).newInstance(container);
+                IResourcePack pack = (IResourcePack) resourcePackType.getConstructor(ModContainer.class).newInstance(container);
                 resourcePackList.add(pack);
                 resourcePackMap.put(container.getModId(), pack);
             }
@@ -642,7 +542,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         client.func_110436_a();
     }
 
-    public ResourcePack getResourcePackFor(String modId)
+    public IResourcePack getResourcePackFor(String modId)
     {
         return resourcePackMap.get(modId);
     }

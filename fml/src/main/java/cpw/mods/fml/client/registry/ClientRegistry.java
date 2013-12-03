@@ -13,7 +13,7 @@
 package cpw.mods.fml.client.registry;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 
@@ -36,7 +36,7 @@ public class ClientRegistry
     @SuppressWarnings("unchecked")
     public static void bindTileEntitySpecialRenderer(Class <? extends TileEntity> tileEntityClass, TileEntitySpecialRenderer specialRenderer)
     {
-        TileEntityRenderer.field_76963_a.field_76966_m.put(tileEntityClass, specialRenderer);
-        specialRenderer.func_76893_a(TileEntityRenderer.field_76963_a);
+        TileEntityRendererDispatcher.field_147556_a.field_147559_m.put(tileEntityClass, specialRenderer);
+        specialRenderer.func_147497_a(TileEntityRendererDispatcher.field_147556_a);
     }
 }

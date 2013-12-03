@@ -7,7 +7,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.util.Collections;
-@@ -420,6 +421,7 @@
+@@ -422,6 +423,7 @@
  
          MerchantRecipeList merchantrecipelist;
          merchantrecipelist = new MerchantRecipeList();
@@ -15,8 +15,8 @@
          int j;
          label50:
  
-@@ -624,7 +626,7 @@
-     public EntityLivingData func_110161_a(EntityLivingData p_110161_1_)
+@@ -626,7 +628,7 @@
+     public IEntityLivingData func_110161_a(IEntityLivingData p_110161_1_)
      {
          p_110161_1_ = super.func_110161_a(p_110161_1_);
 -        this.func_70938_b(this.field_70170_p.field_73012_v.nextInt(5));

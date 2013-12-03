@@ -1,0 +1,34 @@
+diff -r -U 3 minecraft\net\minecraft\inventory\ContainerPlayer.java minecraft_patched\net\minecraft\inventory\ContainerPlayer.java
+--- minecraft\net\minecraft\inventory\ContainerPlayer.java
++++ minecraft_patched\net\minecraft\inventory\ContainerPlayer.java
+@@ -29,7 +29,7 @@
+       this.field_82862_h = p_i1819_3_;
+       this.func_75146_a(new SlotCrafting(p_i1819_1_.field_70458_d, this.field_75181_e, this.field_75179_f, 0, 144, 36));
+ 
+-      final int var4;
++      int var4;
+       int var5;
+       for(var4 = 0; var4 < 2; ++var4) {
+          for(var5 = 0; var5 < 2; ++var5) {
+@@ -38,6 +38,7 @@
+       }
+ 
+       for(var4 = 0; var4 < 4; ++var4) {
++         final int var44 = var4;
+          this.func_75146_a(new Slot(p_i1819_1_, p_i1819_1_.func_70302_i_() - 1 - var4, 8, 8 + var4 * 18) {
+ 
+             private static final String __OBFID = "CL_00001755";
+@@ -46,11 +47,11 @@
+                return 1;
+             }
+             public boolean func_75214_a(ItemStack p_75214_1_) {
+-               return p_75214_1_ == null?false:(p_75214_1_.func_77973_b() instanceof ItemArmor?((ItemArmor)p_75214_1_.func_77973_b()).field_77881_a == var4:(p_75214_1_.func_77973_b() != Item.func_150898_a(Blocks.field_150423_aK) && p_75214_1_.func_77973_b() != Items.field_151144_bL?false:var4 == 0));
++               return p_75214_1_ == null?false:(p_75214_1_.func_77973_b() instanceof ItemArmor?((ItemArmor)p_75214_1_.func_77973_b()).field_77881_a == var44:(p_75214_1_.func_77973_b() != Item.func_150898_a(Blocks.field_150423_aK) && p_75214_1_.func_77973_b() != Items.field_151144_bL?false:var44 == 0));
+             }
+             @SideOnly(Side.CLIENT)
+             public IIcon func_75212_b() {
+-               return ItemArmor.func_94602_b(var4);
++               return ItemArmor.func_94602_b(var44);
+             }
+          });
+       }

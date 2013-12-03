@@ -1,19 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
-@@ -49,20 +49,12 @@
+@@ -50,20 +50,12 @@
  
      protected void func_76572_b()
      {
 -        if (this.field_76579_a.func_72912_H().func_76067_t() == WorldType.field_77138_c)
 -        {
 -            FlatGeneratorInfo flatgeneratorinfo = FlatGeneratorInfo.func_82651_a(this.field_76579_a.func_72912_H().func_82571_y());
--            this.field_76578_c = new WorldChunkManagerHell(BiomeGenBase.field_76773_a[flatgeneratorinfo.func_82648_a()], 0.5F, 0.5F);
+-            this.field_76578_c = new WorldChunkManagerHell(BiomeGenBase.func_150568_d(flatgeneratorinfo.func_82648_a()), 0.5F);
 -        }
 -        else
 -        {
 -            this.field_76578_c = new WorldChunkManager(this.field_76579_a);
 -        }
-+        field_76578_c = field_76577_b.getChunkManager(field_76579_a);
++        this.field_76578_c = field_76577_b.getChunkManager(field_76579_a);
      }
  
      public IChunkProvider func_76555_c()

@@ -17,20 +17,20 @@ import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.logging.Level;
 
-import argo.jdom.JdomParser;
-import argo.jdom.JsonNode;
-import argo.jdom.JsonRootNode;
-import argo.saj.InvalidSyntaxException;
-
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 
 public class MetadataCollection
 {
-    private static JdomParser parser = new JdomParser();
+    private String modListVersion;
+    private ModMetadata[] modList;
     private Map<String, ModMetadata> metadatas = Maps.newHashMap();
-    @SuppressWarnings("unused")
-    private int metadataVersion = 1;
 
     public static MetadataCollection from(InputStream inputStream, String sourceName)
     {
@@ -42,17 +42,29 @@ public class MetadataCollection
         InputStreamReader reader = new InputStreamReader(inputStream);
         try
         {
-            JsonRootNode root = parser.parse(reader);
-            if (root.hasElements())
+            MetadataCollection collection;
+            Gson gson = new GsonBuilder().create();
+            JsonParser parser = new JsonParser();
+            JsonElement rootElement = parser.parse(reader);
+            if (rootElement.isJsonArray())
             {
-                return parse10ModInfo(root);
+                collection = new MetadataCollection();
+                JsonArray jsonList = rootElement.getAsJsonArray();
+                collection.modList = new ModMetadata[jsonList.size()];
+                int i = 0;
+                for (JsonElement mod : jsonList)
+                {
+                    collection.modList[i++]=gson.fromJson(mod, ModMetadata.class);
+                }
             }
             else
             {
-                return parseModInfo(root);
+                collection = gson.fromJson(rootElement, MetadataCollection.class);
             }
+            collection.parseModMetadataList();
+            return collection;
         }
-        catch (InvalidSyntaxException e)
+        catch (JsonParseException e)
         {
             FMLLog.log(Level.SEVERE, e, "The mcmod.info file in %s cannot be parsed as valid JSON. It will be ignored", sourceName);
             return new MetadataCollection();
@@ -63,27 +75,12 @@ public class MetadataCollection
         }
     }
 
-    private static MetadataCollection parseModInfo(JsonRootNode root)
-    {
-        MetadataCollection mc = new MetadataCollection();
-        mc.metadataVersion = Integer.parseInt(root.getNumberValue("modinfoversion"));
-        mc.parseModMetadataList(root.getNode("modlist"));
-        return mc;
-    }
 
-    private static MetadataCollection parse10ModInfo(JsonRootNode root)
+    private void parseModMetadataList()
     {
-        MetadataCollection mc = new MetadataCollection();
-        mc.parseModMetadataList(root);
-        return mc;
-    }
-
-    private void parseModMetadataList(JsonNode metadataList)
-    {
-        for (JsonNode node : metadataList.getElements())
+        for (ModMetadata modMetadata : modList)
         {
-            ModMetadata mmd = new ModMetadata(node);
-            metadatas.put(mmd.modId, mmd);
+            metadatas.put(modMetadata.modId, modMetadata);
         }
     }
 

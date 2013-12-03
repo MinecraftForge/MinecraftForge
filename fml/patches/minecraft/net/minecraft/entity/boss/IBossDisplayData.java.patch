@@ -1,11 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/entity/boss/IBossDisplayData.java
 +++ ../src-work/minecraft/net/minecraft/entity/boss/IBossDisplayData.java
-@@ -1,9 +1,5 @@
- package net.minecraft.entity.boss;
+@@ -4,7 +4,6 @@
+ import cpw.mods.fml.relauncher.SideOnly;
+ import net.minecraft.util.IChatComponent;
  
--import cpw.mods.fml.relauncher.Side;
--import cpw.mods.fml.relauncher.SideOnly;
--
 -@SideOnly(Side.CLIENT)
  public interface IBossDisplayData
  {

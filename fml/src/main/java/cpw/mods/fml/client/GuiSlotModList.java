@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -31,7 +31,7 @@ public class GuiSlotModList extends GuiScrollingList
 
     public GuiSlotModList(GuiModList parent, ArrayList<ModContainer> mods, int listWidth)
     {
-        super(parent.getMinecraftInstance(), listWidth, parent.field_73881_g, 32, parent.field_73881_g - 65 + 4, 10, 35);
+        super(parent.getMinecraftInstance(), listWidth, parent.field_146295_m, 32, parent.field_146295_m - 65 + 4, 10, 35);
         this.parent=parent;
         this.mods=mods;
     }
@@ -57,7 +57,7 @@ public class GuiSlotModList extends GuiScrollingList
     @Override
     protected void drawBackground()
     {
-        this.parent.func_73873_v_();
+        this.parent.func_146276_q_();
     }
 
     @Override

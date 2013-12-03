@@ -24,8 +24,7 @@ import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.village.MerchantRecipeList;
-import net.minecraft.world.gen.structure.ComponentVillageStartPiece;
-import net.minecraft.world.gen.structure.StructureVillagePieceWeight;
+import net.minecraft.world.gen.structure.StructureVillagePieces;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
@@ -67,7 +66,7 @@ public class VillagerRegistry
          * @param random
          * @param i
          */
-        StructureVillagePieceWeight getVillagePieceWeight(Random random, int i);
+        StructureVillagePieces.PieceWeight getVillagePieceWeight(Random random, int i);
 
         /**
          * The class of the root structure component to add to the village
@@ -87,7 +86,7 @@ public class VillagerRegistry
          * @param p4
          * @param p5
          */
-        Object buildComponent(StructureVillagePieceWeight villagePiece, ComponentVillageStartPiece startPiece, @SuppressWarnings("rawtypes") List pieces, Random random, int p1,
+        Object buildComponent(StructureVillagePieces.PieceWeight villagePiece, StructureVillagePieces.Start startPiece, @SuppressWarnings("rawtypes") List pieces, Random random, int p1,
                 int p2, int p3, int p4, int p5);
     }
 
@@ -208,14 +207,14 @@ public class VillagerRegistry
     public static void addExtraVillageComponents(@SuppressWarnings("rawtypes") ArrayList components, Random random, int i)
     {
         @SuppressWarnings("unchecked")
-        List<StructureVillagePieceWeight> parts = components;
+        List<StructureVillagePieces.PieceWeight> parts = components;
         for (IVillageCreationHandler handler : instance().villageCreationHandlers.values())
         {
             parts.add(handler.getVillagePieceWeight(random, i));
         }
     }
 
-    public static Object getVillageComponent(StructureVillagePieceWeight villagePiece, ComponentVillageStartPiece startPiece, @SuppressWarnings("rawtypes") List pieces, Random random,
+    public static Object getVillageComponent(StructureVillagePieces.PieceWeight villagePiece, StructureVillagePieces.Start startPiece, @SuppressWarnings("rawtypes") List pieces, Random random,
             int p1, int p2, int p3, int p4, int p5)
     {
         return instance().villageCreationHandlers.get(villagePiece.field_75090_a).buildComponent(villagePiece, startPiece, pieces, random, p1, p2, p3, p4, p5);
@@ -227,9 +226,9 @@ public class VillagerRegistry
     {
         if (min > 0 && max > 0)
         {
-            EntityVillager.field_70958_bB.put(item.field_77779_bT, new Tuple(min, max));
+            EntityVillager.field_70958_bB.put(item, new Tuple(min, max));
         }
-        EntityVillager.func_70948_a(list, item.func_77612_l(), random, chance);
+        EntityVillager.func_146091_a(list, item, random, chance);
     }
 
     @SuppressWarnings("unchecked")
@@ -237,9 +236,9 @@ public class VillagerRegistry
     {
         if (min > 0 && max > 0)
         {
-            EntityVillager.field_70960_bC.put(item.field_77779_bT, new Tuple(min, max));
+            EntityVillager.field_70960_bC.put(item, new Tuple(min, max));
         }
-        EntityVillager.func_70949_b(list, item.func_77612_l(), random, chance);
+        EntityVillager.func_146089_b(list, item.func_77612_l(), random, chance);
     }
 
     public static void applyRandomTrade(EntityVillager villager, Random rand)

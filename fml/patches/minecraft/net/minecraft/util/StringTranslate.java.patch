@@ -9,7 +9,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.io.IOException;
-@@ -23,9 +25,19 @@
+@@ -25,9 +27,19 @@
  
      public StringTranslate()
      {
@@ -30,12 +30,3 @@
              Iterator iterator = IOUtils.readLines(inputstream, Charsets.UTF_8).iterator();
  
              while (iterator.hasNext())
-@@ -45,7 +57,7 @@
-                 }
-             }
-         }
--        catch (IOException ioexception)
-+        catch (Exception ioexception)
-         {
-             ;
-         }

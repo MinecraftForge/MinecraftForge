@@ -9,7 +9,7 @@
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.entity.EnumCreatureType;
-@@ -210,6 +212,7 @@
+@@ -209,6 +211,7 @@
              if (this.field_73246_d != null)
              {
                  this.field_73246_d.func_73153_a(p_73153_1_, p_73153_2_, p_73153_3_);

@@ -132,15 +132,15 @@ public abstract class GuiScrollingList
 
     public void actionPerformed(GuiButton button)
     {
-        if (button.field_73742_g)
+        if (button.field_146124_l)
         {
-            if (button.field_73741_f == this.scrollUpActionId)
+            if (button.field_146127_k == this.scrollUpActionId)
             {
                 this.scrollDistance -= (float)(this.slotHeight * 2 / 3);
                 this.initialMouseClickY = -2.0F;
                 this.applyScrollLimits();
             }
-            else if (button.field_73741_f == this.scrollDownActionId)
+            else if (button.field_146127_k == this.scrollDownActionId)
             {
                 this.scrollDistance += (float)(this.slotHeight * 2 / 3);
                 this.initialMouseClickY = -2.0F;

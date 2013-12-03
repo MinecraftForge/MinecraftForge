@@ -6,34 +6,34 @@
 +import cpw.mods.fml.common.FMLCommonHandler;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
- import java.io.File;
-@@ -62,6 +63,8 @@
-             this.func_98033_al().func_98236_b("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
+ import java.io.BufferedReader;
+@@ -109,6 +110,8 @@
+             field_155771_h.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
          }
  
 +        FMLCommonHandler.instance().onServerStart(this);
 +
-         this.func_98033_al().func_98233_a("Loading properties");
-         this.field_71340_o = new PropertyManager(new File("server.properties"), this.func_98033_al());
+         field_155771_h.info("Loading properties");
+         this.field_71340_o = new PropertyManager(new File("server.properties"));
  
-@@ -132,6 +135,8 @@
-             this.func_98033_al().func_98236_b("While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.");
-             this.func_98033_al().func_98236_b("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
+@@ -180,6 +183,8 @@
+             field_155771_h.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
          }
-+
-+        FMLCommonHandler.instance().onServerStarted();
  
++        FMLCommonHandler.instance().onServerStarted();
++
          this.func_71210_a(new DedicatedPlayerList(this));
          long j = System.nanoTime();
-@@ -174,6 +179,7 @@
+ 
+@@ -225,6 +230,7 @@
          this.func_71191_d((this.func_71207_Z() + 8) / 16 * 16);
          this.func_71191_d(MathHelper.func_76125_a(this.func_71207_Z(), 64, 256));
          this.field_71340_o.func_73667_a("max-build-height", Integer.valueOf(this.func_71207_Z()));
 +        if (!FMLCommonHandler.instance().handleServerAboutToStart(this)) { return false; }
-         this.func_98033_al().func_98233_a("Preparing level \"" + this.func_71270_I() + "\"");
-         this.func_71247_a(this.func_71270_I(), this.func_71270_I(), k, worldtype, s2);
+         field_155771_h.info("Preparing level \"" + this.func_71270_I() + "\"");
+         this.func_71247_a(this.func_71270_I(), this.func_71270_I(), k, worldtype, s3);
          long i1 = System.nanoTime() - j;
-@@ -194,7 +200,7 @@
+@@ -245,7 +251,7 @@
              this.field_71339_n.func_72602_a();
          }
  

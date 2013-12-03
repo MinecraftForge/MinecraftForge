@@ -26,13 +26,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.NetHandler;
-import net.minecraft.network.packet.Packet131MapData;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.ServerListenThread;
-import net.minecraft.server.ThreadMinecraftServer;
-import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
@@ -43,15 +37,13 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
-import com.google.common.collect.MapDifference;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
-import cpw.mods.fml.common.network.EntitySpawnPacket;
+import cpw.mods.fml.common.network.packet.EntitySpawnAdjustmentPacket;
+import cpw.mods.fml.common.network.packet.EntitySpawnPacket;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
-import cpw.mods.fml.common.registry.ItemData;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.server.FMLServerHandler;
@@ -179,7 +171,7 @@ public class FMLCommonHandler
     public Side getEffectiveSide()
     {
         Thread thr = Thread.currentThread();
-        if ((thr instanceof ThreadMinecraftServer) || (thr instanceof ServerListenThread))
+        if ((thr.getName().equals("Server thread")))
         {
             return Side.SERVER;
         }
@@ -343,7 +335,7 @@ public class FMLCommonHandler
         sidedDelegate.adjustEntityLocationOnClient(entitySpawnAdjustmentPacket);
     }
 
-    public void onServerStart(DedicatedServer dedicatedServer)
+    public void onServerStart(MinecraftServer dedicatedServer)
     {
         FMLServerHandler.instance();
         sidedDelegate.beginServerLoading(dedicatedServer);
@@ -401,11 +393,6 @@ public class FMLCommonHandler
         }
     }
 
-    public void handleTinyPacket(NetHandler handler, Packet131MapData mapData)
-    {
-        sidedDelegate.handleTinyPacket(handler, mapData);
-    }
-
     public void handleWorldDataSave(SaveHandler handler, WorldInfo worldInfo, NBTTagCompound tagCompound)
     {
         for (ModContainer mc : Loader.instance().getModList())
@@ -416,7 +403,7 @@ public class FMLCommonHandler
                 if (wac != null)
                 {
                     NBTTagCompound dataForWriting = wac.getDataForWriting(handler, worldInfo);
-                    tagCompound.func_74766_a(mc.getModId(), dataForWriting);
+                    tagCompound.func_74782_a(mc.getModId(), dataForWriting);
                 }
             }
         }
@@ -434,7 +421,7 @@ public class FMLCommonHandler
         }
         handlerSet.add(handler);
         Map<String,NBTBase> additionalProperties = Maps.newHashMap();
-        worldInfo.setAdditionalProperties(additionalProperties);
+//        worldInfo.setAdditionalProperties(additionalProperties);
         for (ModContainer mc : Loader.instance().getModList())
         {
             if (mc instanceof InjectedModContainer)
@@ -455,11 +442,6 @@ public class FMLCommonHandler
             return false;
         }
         return sidedDelegate.shouldServerShouldBeKilledQuietly();
-    }
-
-    public void disconnectIDMismatch(MapDifference<Integer, ItemData> serverDifference, NetHandler toKill, INetworkManager network)
-    {
-        sidedDelegate.disconnectIDMismatch(serverDifference, toKill, network);
     }
 
     public void handleServerStopped()
@@ -501,5 +483,9 @@ public class FMLCommonHandler
     {
 
         return sidedDelegate.getCurrentLanguage();
+    }
+
+    public void bootstrap()
+    {
     }
 }
