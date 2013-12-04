@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -40,41 +40,22 @@ import com.google.common.collect.Sets;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.network.packet.FMLPacket;
 import cpw.mods.fml.common.network.packet.FMLPacket.Type;
+import cpw.mods.fml.common.network.packet.PacketManager;
 import cpw.mods.fml.relauncher.Side;
 
 /**
  * @author cpw
  *
  */
-public class NetworkRegistry
+public enum NetworkRegistry
 {
-
-    private static final NetworkRegistry INSTANCE = new NetworkRegistry();
-    /**
-     * A map of active channels per player
-     */
-    private Multimap<Player, String> activeChannels = ArrayListMultimap.create();
-    /**
-     * A map of the packet handlers for packets
-     */
-    private Multimap<String, IPacketHandler> universalPacketHandlers = ArrayListMultimap.create();
-    private Multimap<String, IPacketHandler> clientPacketHandlers = ArrayListMultimap.create();
-    private Multimap<String, IPacketHandler> serverPacketHandlers = ArrayListMultimap.create();
-    /**
-     * A linked set of registered connection handlers
-     */
-    private Set<IConnectionHandler> connectionHandlers = Sets.newLinkedHashSet();
+    INSTANCE;
     private Map<ModContainer, IGuiHandler> serverGuiHandlers = Maps.newHashMap();
     private Map<ModContainer, IGuiHandler> clientGuiHandlers = Maps.newHashMap();
-    private List<IChatListener> chatListeners = Lists.newArrayList();
-
-    public static NetworkRegistry instance()
-    {
-        return INSTANCE;
-    }
     /**
      * Get the packet 250 channel registration string
      * @return the {@link Packet250CustomPayload} channel registration string
@@ -286,10 +267,10 @@ public class NetworkRegistry
         ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
         if (mc == null)
         {
-            mc = Loader.instance().activeModContainer();
-            FMLLog.log(Level.WARNING, "Mod %s attempted to register a gui network handler during a construction phase", mc.getModId());
+            FMLLog.log(Level.SEVERE, "Mod %s attempted to register a gui network handler during a construction phase", mc.getModId());
+            throw new RuntimeException("Invalid attempt to create a GUI during mod construction. Use an EventHandler instead");
         }
-        NetworkModHandler nmh = FMLNetworkHandler.instance().findNetworkModHandler(mc);
+        NetworkModHolder nmh = mc.getNetworkModHolder();
         if (nmh == null)
         {
             FMLLog.log(Level.FINE, "The mod %s needs to be a @NetworkMod to register a Networked Gui Handler", mc.getModId());
@@ -303,7 +284,7 @@ public class NetworkRegistry
     void openRemoteGui(ModContainer mc, EntityPlayerMP player, int modGuiId, World world, int x, int y, int z)
     {
         IGuiHandler handler = serverGuiHandlers.get(mc);
-        NetworkModHandler nmh = FMLNetworkHandler.instance().findNetworkModHandler(mc);
+        NetworkModHolder nmh = mc.getNetworkModHolder();
         if (handler != null && nmh != null)
         {
             Container container = (Container)handler.getServerGuiElement(modGuiId, player, world, x, y, z);
@@ -312,10 +293,7 @@ public class NetworkRegistry
                 player.func_71117_bO();
                 player.func_71128_l();
                 int windowId = player.field_71139_cq;
-                Packet250CustomPayload pkt = new Packet250CustomPayload();
-                pkt.field_73630_a = "FML";
-                pkt.field_73629_c = FMLPacket.makePacket(Type.GUIOPEN, windowId, nmh.getNetworkId(), modGuiId, x, y, z);
-                pkt.field_73628_b = pkt.field_73629_c.length;
+                Packet pkt = PacketManager.INSTANCE.makeGuiPacket(windowId, nmh.getNetworkId(), modGuiId, x, y, z);
                 player.field_71135_a.func_72567_b(pkt);
                 player.field_71070_bA = container;
                 player.field_71070_bA.field_75152_c = windowId;
@@ -327,36 +305,5 @@ public class NetworkRegistry
     {
         IGuiHandler handler = clientGuiHandlers.get(mc);
         FMLCommonHandler.instance().showGuiScreen(handler.getClientGuiElement(modGuiId, player, world, x, y, z));
-    }
-    public Packet3Chat handleChat(NetHandler handler, Packet3Chat chat)
-    {
-        Side s = Side.CLIENT;
-        if (handler instanceof NetServerHandler)
-        {
-            s = Side.SERVER;
-        }
-        for (IChatListener listener : chatListeners)
-        {
-            chat = s.isClient() ? listener.clientChat(handler, chat) : listener.serverChat(handler, chat);
-        }
-
-        return chat;
-    }
-    public void handleTinyPacket(NetHandler handler, Packet131MapData mapData)
-    {
-        NetworkModHandler nmh = FMLNetworkHandler.instance().findNetworkModHandler((int)mapData.field_73438_a);
-        if (nmh == null)
-        {
-            FMLLog.info("Received a tiny packet for network id %d that is not recognised here", mapData.field_73438_a);
-            return;
-        }
-        if (nmh.hasTinyPacketHandler())
-        {
-            nmh.getTinyPacketHandler().handle(handler, mapData);
-        }
-        else
-        {
-            FMLLog.info("Received a tiny packet for a network mod that does not accept tiny packets %s", nmh.getContainer().getModId());
-        }
     }
 }

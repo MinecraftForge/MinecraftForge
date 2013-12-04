@@ -238,7 +238,7 @@ public class VillagerRegistry
         {
             EntityVillager.field_70960_bC.put(item, new Tuple(min, max));
         }
-        EntityVillager.func_146089_b(list, item.func_77612_l(), random, chance);
+        EntityVillager.func_146089_b(list, item, random, chance);
     }
 
     public static void applyRandomTrade(EntityVillager villager, Random rand)

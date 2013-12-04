@@ -34,7 +34,7 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.network.FMLNetworkHandler;
-import cpw.mods.fml.common.network.NetworkModHandler;
+import cpw.mods.fml.common.network.NetworkModHolder;
 import cpw.mods.fml.common.network.PacketDispatcher;
 
 public class ModListRequestPacket extends FMLPacket
@@ -48,7 +48,7 @@ public class ModListRequestPacket extends FMLPacket
     }
 
     @Override
-    public byte[] generatePacket(Object... data)
+    public byte[] generatePacketData(Object... data)
     {
         ByteArrayDataOutput dat = ByteStreams.newDataOutput();
         Set<ModContainer> activeMods = FMLNetworkHandler.instance().getNetworkModList();
@@ -62,7 +62,7 @@ public class ModListRequestPacket extends FMLPacket
     }
 
     @Override
-    public FMLPacket consumePacket(byte[] data)
+    public FMLPacket consumePacketData(byte[] data)
     {
         sentModList = Lists.newArrayList();
         ByteArrayDataInput in = ByteStreams.newDataInput(data);
@@ -114,7 +114,7 @@ public class ModListRequestPacket extends FMLPacket
             {
                 if (e.getValue().isNetworkMod())
                 {
-                    NetworkModHandler missingHandler = FMLNetworkHandler.instance().findNetworkModHandler(e.getValue());
+                    NetworkModHolder missingHandler = FMLNetworkHandler.instance().findNetworkModHandler(e.getValue());
                     if (missingHandler.requiresServerSide())
                     {
                         // TODO : what should we do if a mod is marked "serverSideRequired"? Stop the connection?

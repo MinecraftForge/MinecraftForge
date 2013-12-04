@@ -44,7 +44,7 @@ public class ModMissingPacket extends FMLPacket
     }
 
     @Override
-    public byte[] generatePacket(Object... data)
+    public byte[] generatePacketData(Object... data)
     {
         ByteArrayDataOutput dat = ByteStreams.newDataOutput();
 
@@ -76,7 +76,7 @@ public class ModMissingPacket extends FMLPacket
         String modVersion;
     }
     @Override
-    public FMLPacket consumePacket(byte[] data)
+    public FMLPacket consumePacketData(byte[] data)
     {
         ByteArrayDataInput dat = ByteStreams.newDataInput(data);
         int missingLen = dat.readInt();

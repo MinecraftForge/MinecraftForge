@@ -33,7 +33,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.network.FMLNetworkHandler;
-import cpw.mods.fml.common.network.NetworkModHandler;
+import cpw.mods.fml.common.network.NetworkModHolder;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
@@ -68,11 +68,11 @@ public class EntitySpawnPacket extends FMLPacket
     }
 
     @Override
-    public byte[] generatePacket(Object... data)
+    public byte[] generatePacketData(Object... data)
     {
         EntityRegistration er = (EntityRegistration) data[0];
         Entity ent = (Entity) data[1];
-        NetworkModHandler handler = (NetworkModHandler) data[2];
+        NetworkModHolder handler = (NetworkModHolder) data[2];
         ByteArrayDataOutput dat = ByteStreams.newDataOutput();
 
         dat.writeInt(handler.getNetworkId());
@@ -142,7 +142,7 @@ public class EntitySpawnPacket extends FMLPacket
     }
 
     @Override
-    public FMLPacket consumePacket(byte[] data)
+    public FMLPacket consumePacketData(byte[] data)
     {
         ByteArrayDataInput dat = ByteStreams.newDataInput(data);
         networkId = dat.readInt();
@@ -183,7 +183,7 @@ public class EntitySpawnPacket extends FMLPacket
     @Override
     public void execute(INetworkManager network, FMLNetworkHandler handler, NetHandler netHandler, String userName)
     {
-        NetworkModHandler nmh = handler.findNetworkModHandler(networkId);
+        NetworkModHolder nmh = handler.findNetworkModHandler(networkId);
         ModContainer mc = nmh.getContainer();
 
         EntityRegistration registration = EntityRegistry.instance().lookupModSpawn(mc, modEntityId);

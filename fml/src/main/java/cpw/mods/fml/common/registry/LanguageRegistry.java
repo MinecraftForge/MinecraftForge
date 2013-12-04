@@ -105,7 +105,7 @@ public class LanguageRegistry
         if (objectToName instanceof Item) {
             objectName=((Item)objectToName).func_77658_a();
         } else if (objectToName instanceof Block) {
-            objectName=((Block)objectToName).func_71917_a();
+            objectName=((Block)objectToName).func_149739_a();
         } else if (objectToName instanceof ItemStack) {
             objectName=((ItemStack)objectToName).func_77973_b().func_77667_c((ItemStack)objectToName);
         } else {

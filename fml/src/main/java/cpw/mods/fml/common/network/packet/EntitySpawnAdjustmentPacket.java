@@ -36,7 +36,7 @@ public class EntitySpawnAdjustmentPacket extends FMLPacket
     public int serverZ;
 
     @Override
-    public byte[] generatePacket(Object... data)
+    public byte[] generatePacketData(Object... data)
     {
         ByteArrayDataOutput dat = ByteStreams.newDataOutput();
         dat.writeInt((Integer) data[0]);
@@ -47,7 +47,7 @@ public class EntitySpawnAdjustmentPacket extends FMLPacket
     }
 
     @Override
-    public FMLPacket consumePacket(byte[] data)
+    public FMLPacket consumePacketData(byte[] data)
     {
         ByteArrayDataInput dat = ByteStreams.newDataInput(data);
         entityId = dat.readInt();

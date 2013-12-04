@@ -23,15 +23,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.NetHandler;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet131MapData;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.StringTranslate;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.MapDifference;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
@@ -43,7 +38,6 @@ import cpw.mods.fml.common.network.packet.EntitySpawnPacket;
 import cpw.mods.fml.common.network.packet.ModMissingPacket;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.common.registry.ItemData;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 
@@ -163,40 +157,14 @@ public class FMLServerHandler implements IFMLSidedHandler
         // NOOP
     }
     @Override
-    public void sendPacket(Packet packet)
-    {
-        throw new RuntimeException("You cannot send a bare packet without a target on the server!");
-    }
-    @Override
     public void displayMissingMods(ModMissingPacket modMissingPacket)
     {
         // NOOP on server
     }
     @Override
-    public void handleTinyPacket(NetHandler handler, Packet131MapData mapData)
-    {
-        // NOOP on server
-    }
-    @Override
-    public void setClientCompatibilityLevel(byte compatibilityLevel)
-    {
-        // NOOP on server
-    }
-    @Override
-    public byte getClientCompatibilityLevel()
-    {
-        return 0;
-    }
-
-    @Override
     public boolean shouldServerShouldBeKilledQuietly()
     {
         return false;
-    }
-    @Override
-    public void disconnectIDMismatch(MapDifference<Integer, ItemData> s, NetHandler handler, INetworkManager mgr)
-    {
-
     }
     @Override
     public void addModAsResource(ModContainer container)
