@@ -79,7 +79,7 @@ public class CraftFakePlayer extends CraftPlayer
             System.out.println("[FakePlayer] Initializing fake player for " + className + ": " + username);
 
             fakePlayersUsername.put(className, username);
-            fakePlayersDoLogin.put(className, MCPCConfig.fakePlayerLogin);
+            fakePlayersDoLogin.put(className, MCPCConfig.Toggle.fakePlayerLogin.value());
         }
 
         return get(world, fakePlayersUsername.get(className), fakePlayersDoLogin.get(className));

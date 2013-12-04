@@ -40,7 +40,7 @@
 -                }
 -            }
 +            // MCPC+ start - allow disabling infinite water sources
-+            if(za.co.mcportcentral.MCPCConfig.infiniteWaterSource)
++            if(za.co.mcportcentral.MCPCConfig.Toggle.infiniteWaterSource.value())
 +            {
 +                if (this.numAdjacentSources >= 2 && this.blockMaterial == Material.water)
 +                {
@@ -63,7 +63,7 @@
                      this.updateFlow(par1World, par2, par3, par4);
                  }
 +                // MCPC+ start - allow lava decaying at a 'natural' rate - see https://mojang.atlassian.net/browse/MC-4631 Lava decay fails to schedule block update
-+                else if (za.co.mcportcentral.MCPCConfig.flowingLavaDecay)
++                else if (za.co.mcportcentral.MCPCConfig.Toggle.flowingLavaDecay.value())
 +                {
 +                    // Ensure that even if the flow decay was skipped, it will retry at the material's natural flow period.
 +                    par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));

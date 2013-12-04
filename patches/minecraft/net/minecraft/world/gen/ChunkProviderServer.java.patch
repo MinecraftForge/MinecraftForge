@@ -14,7 +14,7 @@
  import cpw.mods.fml.common.registry.GameRegistry;
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
-@@ -23,29 +28,48 @@
+@@ -23,29 +28,51 @@
  import net.minecraft.world.chunk.Chunk;
  import net.minecraft.world.chunk.EmptyChunk;
  import net.minecraft.world.chunk.IChunkProvider;
@@ -33,6 +33,9 @@
 +import org.bukkit.craftbukkit.util.LongObjectHashMap;
 +import org.bukkit.event.world.ChunkUnloadEvent;
 +// CraftBukkit end
++
++import za.co.mcportcentral.MCPCConfig;
++import za.co.mcportcentral.MCPCHooks;
  
  public class ChunkProviderServer implements IChunkProvider
  {
@@ -58,7 +61,7 @@
 -    private LongHashMap loadedChunkHashMap = new LongHashMap();
 -    private List loadedChunks = new ArrayList();
 -    private WorldServer worldObj;
-+    public boolean loadChunkOnProvideRequest = za.co.mcportcentral.MCPCConfig.loadChunkOnRequest; // MCPC+ - if true, allows mods to force load chunks. to disable, set load-chunk-on-request in mcpc.yml to false
++    public boolean loadChunkOnProvideRequest = za.co.mcportcentral.MCPCConfig.Toggle.loadChunkOnRequest.value(); // MCPC+ - if true, allows mods to force load chunks. to disable, set load-chunk-on-request in mcpc.yml to false
 +    public int initialTick; // MCPC+ counter to keep track of when this loader was created
 +    public LongObjectHashMap<Chunk> loadedChunkHashMap = new LongObjectHashMap<Chunk>();
 +    public List loadedChunks = new ArrayList(); // MCPC+  vanilla compatibility
@@ -71,7 +74,7 @@
          this.defaultEmptyChunk = new EmptyChunk(par1WorldServer, 0, 0);
          this.worldObj = par1WorldServer;
          this.currentChunkLoader = par2IChunkLoader;
-@@ -57,7 +81,7 @@
+@@ -57,7 +84,7 @@
       */
      public boolean chunkExists(int par1, int par2)
      {
@@ -80,7 +83,7 @@
      }
  
      /**
-@@ -66,21 +90,38 @@
+@@ -66,21 +93,40 @@
       */
      public void unloadChunksIfNotNearSpawn(int par1, int par2)
      {
@@ -105,6 +108,7 @@
 +                {
 +                    c.mustSave = true;
 +                }
++                MCPCHooks.logChunkUnload(this, par1, par2, "Chunk added to unload queue");
 +            }
 +            // CraftBukkit end
          }
@@ -119,11 +123,12 @@
 +            {
 +                c.mustSave = true;
 +            }
++            MCPCHooks.logChunkUnload(this, par1, par2, "Chunk added to unload queue");
 +            // CraftBukkit end
          }
      }
  
-@@ -89,7 +130,7 @@
+@@ -89,7 +135,7 @@
       */
      public void unloadAllChunks()
      {
@@ -132,7 +137,7 @@
  
          while (iterator.hasNext())
          {
-@@ -98,18 +139,46 @@
+@@ -98,18 +144,48 @@
          }
      }
  
@@ -161,6 +166,8 @@
 +            loader = (AnvilChunkLoader) this.currentChunkLoader;
 +        }
 +
++        MCPCHooks.logChunkLoad(this, "Get", i, j, true);
++
 +        // If the chunk exists but isn't loaded do it async
 +        if (chunk == null && runnable != null && loader != null && loader.chunkExists(this.worldObj, i, j))
 +        {
@@ -183,7 +190,7 @@
  
              if (chunk == null)
              {
-@@ -121,31 +190,55 @@
+@@ -121,31 +197,55 @@
                  {
                      try
                      {
@@ -249,7 +256,7 @@
          return chunk;
      }
  
-@@ -155,14 +248,32 @@
+@@ -155,14 +255,40 @@
       */
      public Chunk provideChunk(int par1, int par2)
      {
@@ -257,7 +264,7 @@
 -        return chunk == null ? (!this.worldObj.findingSpawnPoint && !this.loadChunkOnProvideRequest ? this.defaultEmptyChunk : this.loadChunk(par1, par2)) : chunk;
 +        // CraftBukkit start
 +        Chunk chunk = (Chunk) this.loadedChunkHashMap.get(LongHash.toLong(par1, par2));
-+        chunk = chunk == null ? (!this.worldObj.findingSpawnPoint && !this.loadChunkOnProvideRequest && !MinecraftServer.callingForgeTick && (MinecraftServer.currentTick - initialTick > 100) ? this.defaultEmptyChunk : this.loadChunk(par1, par2)) : chunk; //MCPC+ handle forge server tick events and load the chunk within 5 seconds of the world being loaded (for chunk loaders)
++        chunk = chunk == null ? (shouldLoadChunk() ? this.loadChunk(par1, par2) : this.defaultEmptyChunk) : chunk; //MCPC+ handle forge server tick events and load the chunk within 5 seconds of the world being loaded (for chunk loaders)
 +
 +        if (chunk == this.defaultEmptyChunk)
 +        {
@@ -275,6 +282,14 @@
 +
 +        return chunk;
 +        // CraftBukkit end
++    }
++    
++    private boolean shouldLoadChunk()
++    {
++        return this.worldObj.findingSpawnPoint ||
++                this.loadChunkOnProvideRequest ||
++                (MinecraftServer.callingForgeTick && MCPCConfig.Toggle.loadChunkOnForgeTick.value()) ||
++                (MinecraftServer.currentTick - initialTick <= 100);
      }
  
      /**
@@ -285,7 +300,16 @@
      {
          if (this.currentChunkLoader == null)
          {
-@@ -197,7 +308,7 @@
+@@ -172,6 +298,8 @@
+         {
+             try
+             {
++                MCPCHooks.logChunkLoad(this, "Safe", par1, par2, false);
++
+                 Chunk chunk = this.currentChunkLoader.loadChunk(this.worldObj, par1, par2);
+ 
+                 if (chunk != null)
+@@ -197,7 +325,7 @@
      /**
       * used by saveChunks, but catches any exceptions if the save fails.
       */
@@ -294,7 +318,7 @@
      {
          if (this.currentChunkLoader != null)
          {
-@@ -215,7 +326,7 @@
+@@ -215,7 +343,7 @@
      /**
       * used by saveChunks, but catches any exceptions if the save fails.
       */
@@ -303,7 +327,7 @@
      {
          if (this.currentChunkLoader != null)
          {
-@@ -224,14 +335,16 @@
+@@ -224,14 +352,16 @@
                  par1Chunk.lastSaveTime = this.worldObj.getTotalWorldTime();
                  this.currentChunkLoader.saveChunk(this.worldObj, par1Chunk);
              }
@@ -326,7 +350,7 @@
          }
      }
  
-@@ -249,7 +362,27 @@
+@@ -249,7 +379,27 @@
              if (this.currentChunkProvider != null)
              {
                  this.currentChunkProvider.populate(par1IChunkProvider, par2, par3);
@@ -355,7 +379,7 @@
                  chunk.setChunkModified();
              }
          }
-@@ -262,10 +395,13 @@
+@@ -262,10 +412,13 @@
      public boolean saveChunks(boolean par1, IProgressUpdate par2IProgressUpdate)
      {
          int i = 0;
@@ -373,7 +397,7 @@
  
              if (par1)
              {
-@@ -307,20 +443,50 @@
+@@ -307,20 +460,52 @@
      {
          if (!this.worldObj.canNotSave)
          {
@@ -410,6 +434,8 @@
 +
 +                if (!event.isCancelled())
 +                {
++                    MCPCHooks.logChunkUnload(this, chunk.xPosition, chunk.zPosition, "Unloading Chunk at");
++
                      chunk.onChunkUnload();
                      this.safeSaveChunk(chunk);
                      this.safeSaveExtraChunkData(chunk);
@@ -435,7 +461,7 @@
  
              if (this.currentChunkLoader != null)
              {
-@@ -344,7 +510,7 @@
+@@ -344,7 +529,7 @@
       */
      public String makeString()
      {
@@ -444,7 +470,7 @@
      }
  
      /**
-@@ -365,7 +531,7 @@
+@@ -365,7 +550,7 @@
  
      public int getLoadedChunkCount()
      {

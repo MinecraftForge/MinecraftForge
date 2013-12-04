@@ -179,7 +179,15 @@
      }
  
      protected abstract void entityInit();
-@@ -354,6 +442,41 @@
+@@ -297,6 +385,7 @@
+     public void setDead()
+     {
+         this.isDead = true;
++        za.co.mcportcentral.MCPCHooks.logEntityDeath("Dim: " + worldObj.provider.dimensionId + " setDead(): " + this);
+     }
+ 
+     /**
+@@ -354,6 +443,41 @@
       */
      protected void setRotation(float par1, float par2)
      {
@@ -221,7 +229,7 @@
          this.rotationYaw = par1 % 360.0F;
          this.rotationPitch = par2 % 360.0F;
      }
-@@ -434,7 +557,7 @@
+@@ -434,7 +558,7 @@
  
              if (this.inPortal)
              {
@@ -230,7 +238,7 @@
                  {
                      if (this.ridingEntity == null && this.portalCounter++ >= i)
                      {
-@@ -554,6 +677,43 @@
+@@ -554,6 +678,43 @@
      {
          if (!this.isImmuneToFire)
          {
@@ -274,7 +282,7 @@
              this.attackEntityFrom(DamageSource.lava, 4.0F);
              this.setFire(15);
          }
-@@ -604,6 +764,14 @@
+@@ -604,6 +765,14 @@
       */
      public void moveEntity(double par1, double par3, double par5)
      {
@@ -289,7 +297,7 @@
          if (this.noClip)
          {
              this.boundingBox.offset(par1, par3, par5);
-@@ -868,6 +1036,33 @@
+@@ -868,6 +1037,33 @@
              d10 = this.posY - d4;
              d11 = this.posZ - d5;
  
@@ -323,7 +331,7 @@
              if (this.canTriggerWalking() && !flag && this.ridingEntity == null)
              {
                  int l = MathHelper.floor_double(this.posX);
-@@ -930,14 +1125,26 @@
+@@ -930,14 +1126,26 @@
  
              if (this.worldObj.isBoundingBoxBurning(this.boundingBox.contract(0.001D, 0.001D, 0.001D)))
              {
@@ -352,7 +360,7 @@
                          this.setFire(8);
                      }
                  }
-@@ -955,6 +1162,8 @@
+@@ -955,6 +1163,8 @@
  
              this.worldObj.theProfiler.endSection();
          }
@@ -361,7 +369,7 @@
      }
  
      /**
-@@ -1059,15 +1268,22 @@
+@@ -1059,15 +1269,22 @@
          return null;
      }
  
@@ -385,7 +393,7 @@
          }
      }
  
-@@ -1164,11 +1380,20 @@
+@@ -1164,11 +1381,20 @@
          int k = MathHelper.floor_double(this.posZ);
          int l = this.worldObj.getBlockId(i, j, k);
  
@@ -411,7 +419,7 @@
          }
          else
          {
-@@ -1258,6 +1483,15 @@
+@@ -1258,6 +1484,15 @@
       */
      public void setWorld(World par1World)
      {
@@ -427,7 +435,7 @@
          this.worldObj = par1World;
      }
  
-@@ -1519,6 +1753,20 @@
+@@ -1519,6 +1754,20 @@
          {
              par1NBTTagCompound.setTag("Pos", this.newDoubleNBTList(new double[] {this.posX, this.posY + (double)this.ySize, this.posZ}));
              par1NBTTagCompound.setTag("Motion", this.newDoubleNBTList(new double[] {this.motionX, this.motionY, this.motionZ}));
@@ -448,7 +456,7 @@
              par1NBTTagCompound.setTag("Rotation", this.newFloatNBTList(new float[] {this.rotationYaw, this.rotationPitch}));
              par1NBTTagCompound.setFloat("FallDistance", this.fallDistance);
              par1NBTTagCompound.setShort("Fire", (short)this.fire);
-@@ -1529,6 +1777,26 @@
+@@ -1529,6 +1778,26 @@
              par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
              par1NBTTagCompound.setLong("UUIDMost", this.entityUniqueID.getMostSignificantBits());
              par1NBTTagCompound.setLong("UUIDLeast", this.entityUniqueID.getLeastSignificantBits());
@@ -475,7 +483,7 @@
              this.writeEntityToNBT(par1NBTTagCompound);
  
              if (this.ridingEntity != null)
-@@ -1563,7 +1831,7 @@
+@@ -1563,7 +1832,7 @@
              this.motionX = ((NBTTagDouble)nbttaglist1.tagAt(0)).data;
              this.motionY = ((NBTTagDouble)nbttaglist1.tagAt(1)).data;
              this.motionZ = ((NBTTagDouble)nbttaglist1.tagAt(2)).data;
@@ -484,7 +492,7 @@
              if (Math.abs(this.motionX) > 10.0D)
              {
                  this.motionX = 0.0D;
-@@ -1578,7 +1846,7 @@
+@@ -1578,7 +1847,7 @@
              {
                  this.motionZ = 0.0D;
              }
@@ -493,7 +501,7 @@
              this.prevPosX = this.lastTickPosX = this.posX = ((NBTTagDouble)nbttaglist.tagAt(0)).data;
              this.prevPosY = this.lastTickPosY = this.posY = ((NBTTagDouble)nbttaglist.tagAt(1)).data;
              this.prevPosZ = this.lastTickPosZ = this.posZ = ((NBTTagDouble)nbttaglist.tagAt(2)).data;
-@@ -1599,12 +1867,92 @@
+@@ -1599,12 +1868,92 @@
  
              this.setPosition(this.posX, this.posY, this.posZ);
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -590,7 +598,7 @@
          }
          catch (Throwable throwable)
          {
-@@ -1711,7 +2059,14 @@
+@@ -1711,7 +2060,14 @@
          {
              EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
              entityitem.delayBeforeCanPickup = 10;
@@ -606,7 +614,7 @@
              return entityitem;
          }
      }
-@@ -1864,13 +2219,52 @@
+@@ -1864,13 +2220,52 @@
       */
      public void mountEntity(Entity par1Entity)
      {
@@ -660,7 +668,7 @@
                  this.setLocationAndAngles(this.ridingEntity.posX, this.ridingEntity.boundingBox.minY + (double)this.ridingEntity.height, this.ridingEntity.posZ, this.rotationYaw, this.rotationPitch);
                  this.ridingEntity.riddenByEntity = null;
              }
-@@ -1879,13 +2273,58 @@
+@@ -1879,13 +2274,58 @@
          }
          else
          {
@@ -721,7 +729,7 @@
          }
      }
  
-@@ -2010,7 +2449,7 @@
+@@ -2010,7 +2450,7 @@
       */
      public boolean isRiding()
      {
@@ -730,7 +738,7 @@
      }
  
      /**
-@@ -2119,12 +2558,48 @@
+@@ -2119,12 +2559,48 @@
       */
      public void onStruckByLightning(EntityLightningBolt par1EntityLightningBolt)
      {
@@ -781,7 +789,7 @@
          }
      }
  
-@@ -2339,36 +2814,62 @@
+@@ -2339,36 +2815,62 @@
          {
              this.worldObj.theProfiler.startSection("changeDimension");
              MinecraftServer minecraftserver = MinecraftServer.getServer();
@@ -864,7 +872,7 @@
              }
  
              this.isDead = true;
-@@ -2385,7 +2886,7 @@
+@@ -2385,7 +2887,7 @@
       */
      public float getBlockExplosionResistance(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
      {
@@ -873,7 +881,7 @@
      }
  
      public boolean shouldExplodeBlock(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
-@@ -2451,4 +2952,170 @@
+@@ -2451,4 +2953,170 @@
      {
          return this.getEntityName();
      }

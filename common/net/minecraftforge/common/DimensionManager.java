@@ -193,7 +193,7 @@ public class DimensionManager
     public static Integer[] getIDs(boolean check)
     {
         // MCPC+ start - check config option and only log world leak messages if enabled
-        if (za.co.mcportcentral.MCPCConfig.worldLeakDebug)
+        if (za.co.mcportcentral.MCPCConfig.Toggle.worldLeakDebug.value())
         {
             if (check)
             {
@@ -232,7 +232,7 @@ public class DimensionManager
         {
             worlds.put(id, world);
             // MCPC+ start - check config option and only log world leak messages if enabled
-            if (za.co.mcportcentral.MCPCConfig.worldLeakDebug)
+            if (za.co.mcportcentral.MCPCConfig.Toggle.worldLeakDebug.value())
             {
                 weakWorldMap.put(world, world);
             }

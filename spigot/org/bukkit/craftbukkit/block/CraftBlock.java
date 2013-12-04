@@ -517,7 +517,7 @@ public class CraftBlock implements Block {
 
     // MCPC+ start - if mcpc.dump-materials is true, dump all materials with their corresponding id's
     public static void dumpMaterials() {
-        if (za.co.mcportcentral.MCPCConfig.dumpMaterials)
+        if (za.co.mcportcentral.MCPCConfig.Toggle.dumpMaterials.value())
         {
             FMLLog.info("MCPC Dump Materials is ENABLED. Starting dump...");
             for (int i = 0; i < 32000; i++)

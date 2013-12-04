@@ -8,7 +8,11 @@
  import net.minecraft.item.Item;
  import net.minecraft.item.ItemArmor;
  import net.minecraft.item.ItemStack;
-@@ -31,6 +32,16 @@
+@@ -28,9 +29,20 @@
+ import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.network.packet.Packet39AttachEntity;
+ import net.minecraft.pathfinding.PathNavigate;
++import net.minecraft.server.MinecraftServer;
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
@@ -25,7 +29,7 @@
  
  public abstract class EntityLiving extends EntityLivingBase
  {
-@@ -57,13 +68,13 @@
+@@ -57,13 +69,13 @@
      private ItemStack[] equipment = new ItemStack[5];
  
      /** Chances for each equipment piece from dropping when this entity dies. */
@@ -42,7 +46,7 @@
      protected float defaultPitch;
  
      /** This entity's current target. */
-@@ -141,6 +152,7 @@
+@@ -141,6 +153,7 @@
      public void setAttackTarget(EntityLivingBase par1EntityLivingBase)
      {
          this.attackTarget = par1EntityLivingBase;
@@ -50,7 +54,7 @@
      }
  
      /**
-@@ -291,6 +303,8 @@
+@@ -291,6 +304,8 @@
       */
      protected void dropFewItems(boolean par1, int par2)
      {
@@ -59,7 +63,7 @@
          int j = this.getDropItemId();
  
          if (j > 0)
-@@ -302,11 +316,30 @@
+@@ -302,11 +317,30 @@
                  k += this.rand.nextInt(par2 + 1);
              }
  
@@ -95,7 +99,7 @@
      }
  
      /**
-@@ -374,6 +407,22 @@
+@@ -374,6 +408,22 @@
          super.readEntityFromNBT(par1NBTTagCompound);
          this.setCanPickUpLoot(par1NBTTagCompound.getBoolean("CanPickUpLoot"));
          this.persistenceRequired = par1NBTTagCompound.getBoolean("PersistenceRequired");
@@ -118,7 +122,7 @@
  
          if (par1NBTTagCompound.hasKey("CustomName") && par1NBTTagCompound.getString("CustomName").length() > 0)
          {
-@@ -547,9 +596,21 @@
+@@ -547,9 +597,21 @@
       */
      protected void despawnEntity()
      {
@@ -135,27 +139,60 @@
 +            }
 +            else
 +            {
-+                this.setDead();
++                this.despawn("Forge Age Limit");
 +            }
          }
          else
          {
-@@ -562,12 +623,12 @@
+@@ -562,21 +624,38 @@
                  double d2 = entityplayer.posZ - this.posZ;
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
 -                if (this.canDespawn() && d3 > 16384.0D)
-+                if (this.canDespawn() && d3 > 16384.0D) // MCPC+ keep logic for despawn check
-                 {
-                     this.setDead();
-                 }
- 
+-                {
+-                    this.setDead();
+-                }
+-
 -                if (this.entityAge > 600 && this.rand.nextInt(800) == 0 && d3 > 1024.0D && this.canDespawn())
+-                {
+-                    this.setDead();
++                if (this.canDespawn() && d3 > 16384.0D) // MCPC+ keep logic for despawn check
++                {
++                    this.despawn("Out of range");
++                }
++
 +                if (this.entityAge > 600 && this.rand.nextInt(800) == 0 && d3 > 1024.0D && this.canDespawn()) // MCPC+ keep logic for despawn check
-                 {
-                     this.setDead();
++                {
++                    this.despawn("Random Aged");
                  }
-@@ -726,8 +787,6 @@
+                 else if (d3 < 1024.0D)
+                 {
+                     this.entityAge = 0;
+                 }
+             }
+-        }
++            else // MCPC+ start - Despawn entities when a player isn't in the world
++            {
++                if (this.worldObj.mcpcConfig.getBoolean("despawn-immediate", true) && this.canDespawn()) // Use flag for the assumption that being in another dimension entirely means no player is anywhere near
++                {
++                    this.despawn("No Player : Immediate");
++                }
++                else if (this.entityAge > 600 && this.rand.nextInt(800) == 0 && this.canDespawn()) // Otherwise, use the same logic as above
++                {
++                    this.despawn("No Player : Random Aged");
++                }
++            } // MCPC+ end
++        }
++    }
++    
++    private void despawn(String reason) {
++        this.setDead();
++        za.co.mcportcentral.MCPCHooks.logEntityDespawn("Dim: " + worldObj.provider.dimensionId + " Despawning (" + reason + "): " + this);
++
+     }
+ 
+     protected void updateAITasks()
+@@ -726,8 +805,6 @@
          return this.worldObj.checkNoEntityCollision(this.boundingBox) && this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(this.boundingBox);
      }
  
@@ -164,7 +201,7 @@
      /**
       * Returns render size modifier
       */
-@@ -1115,6 +1174,14 @@
+@@ -1115,6 +1192,14 @@
      {
          if (this.getLeashed() && this.getLeashedToEntity() == par1EntityPlayer)
          {
@@ -179,7 +216,7 @@
              this.clearLeashed(true, !par1EntityPlayer.capabilities.isCreativeMode);
              return true;
          }
-@@ -1126,6 +1193,14 @@
+@@ -1126,6 +1211,14 @@
              {
                  if (!(this instanceof EntityTameable) || !((EntityTameable)this).isTamed())
                  {
@@ -194,7 +231,7 @@
                      this.setLeashedToEntity(par1EntityPlayer, true);
                      --itemstack.stackSize;
                      return true;
-@@ -1133,6 +1208,14 @@
+@@ -1133,6 +1226,14 @@
  
                  if (par1EntityPlayer.getCommandSenderName().equalsIgnoreCase(((EntityTameable)this).getOwnerName()))
                  {
@@ -209,7 +246,7 @@
                      this.setLeashedToEntity(par1EntityPlayer, true);
                      --itemstack.stackSize;
                      return true;
-@@ -1162,6 +1245,7 @@
+@@ -1162,6 +1263,7 @@
          {
              if (this.leashedToEntity == null || this.leashedToEntity.isDead)
              {
@@ -217,7 +254,7 @@
                  this.clearLeashed(true, true);
              }
          }
-@@ -1256,10 +1340,14 @@
+@@ -1256,10 +1358,14 @@
              }
              else
              {

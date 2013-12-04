@@ -1,5 +1,6 @@
 package za.co.mcportcentral;
 
+
 import com.google.common.base.Throwables;
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +21,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.command.TicksPerSecondCommand;
+import org.spigotmc.Metrics;
 
 public class MCPCConfig
 {
@@ -36,41 +39,83 @@ public class MCPCConfig
     static YamlConfiguration config;
     static int version;
     static Map<String, Command> commands;
-    public static boolean dumpMaterials = false;
-    public static boolean loadChunkOnRequest = false;
-    public static boolean disableWarnings = false;
-    public static boolean worldLeakDebug = false;
     // Some mods such as Twilight Forest listen for specific events as their WorldProvider loads to hotload its dimension. This prevents this from happening so MV can create worlds using the same provider without issue.
     public static boolean craftWorldLoading = false;
-    public static boolean connectionLogging = false;
-    public static boolean tileEntityPlaceLogging = true;
-    public static boolean infiniteWaterSource = true;
-    public static boolean flowingLavaDecay = false;
-    public static boolean fakePlayerLogin = false;
-    public static boolean remapPluginFile = false;
+
+    public enum Toggle
+    {
+        // Logging options
+        dumpMaterials("settings.dump-materials", false, "Dumps all materials with their corresponding id's"),
+        disableWarnings("logging.disabled-warnings", false, "Disable warning messages to server admins"),
+        worldLeakDebug("logging.world-leak-debug", false, "Log worlds that appear to be leaking (buggy)"),
+        connectionLogging("logging.connection", false, "Log connections"),
+        tileEntityPlaceLogging("logging.warn-place-no-tileentity", true, "Warn when a mod requests tile entity from a block that doesn't support one"),
+        chunkLoadLogging("logging.chunk-load", false, "Log when chunks are loaded (dev)"),
+        chunkUnloadLogging("logging.chunk-unload", false, "Log when chunks are unloaded (dev)"),
+        entitySpawnLogging("logging.entity-spawn", false, "Log when living entities are spawned (dev)"),
+        entityDespawnLogging("logging.entity-despawn", false, "Log when living entities are despawned (dev)"),
+        entityDeathLogging("logging.entity-death", false, "Log when an entity is destroyed (dev)"),
+        logWithStackTraces("logging.detailed-logging", false, "Add stack traces to dev logging"),
+        
+        // Chunk loading options
+        loadChunkOnRequest("settings.load-chunk-on-request", false, "Forces Chunk Loading on 'Provide' requests (speedup for mods that don't check if a chunk is loaded"),
+        loadChunkOnForgeTick("settings.load-chunk-on-forge-tick", false, "Forces Chunk Loading during Forge Server Tick events"),
+        
+        // Server options
+        infiniteWaterSource("world-settings.default.infinite-water-source", true, "Vanilla water source behavior - is infinite"),
+        flowingLavaDecay("world-settings.default.flowing-lava-decay", false, "Lava behaves like vanilla water when source block is removed"),
+        fakePlayerLogin("fake-players.do-login", false, "Raise login events for fake players"),
+        
+        // Plug-in options
+        remapPluginFile("plugin-settings.default.remap-plugin-file", false, "Remap the plugin file (dev)");
+        
+        public final String path;
+        public final boolean def;
+        public final String description;
+        private Toggle(String path, boolean def, String description)
+        {
+            this.path = path;
+            this.def = def;
+            this.description = description;
+        }
+        
+        public boolean value()
+        {
+            return getBoolean(path, def);
+        }
+    }
     /*========================================================================*/
 
+    
     public static void init()
     {
         if (config == null)
         {
-            config = YamlConfiguration.loadConfiguration( CONFIG_FILE );
-            config.options().header( HEADER );
-            config.options().copyDefaults( true );
             commands = new HashMap<String, Command>();
+            commands.put( "mcpc", new MCPCCommand());
+            
+            config = YamlConfiguration.loadConfiguration( CONFIG_FILE );
+            String header = HEADER + "\n";
+            for(Toggle toggle : Toggle.class.getEnumConstants())
+            {
+                header += "Setting: " + toggle.path + " Default: " + toggle.def + "   # " + toggle.description + "\n";
+                config.addDefault(toggle.path, toggle.def);
+            }
+            config.options().header( header );
+            config.options().copyDefaults( true );
+
             version = getInt( "config-version", 1 );
             set( "config-version", 1 );
-            dumpMaterials = getBoolean( "settings.dump-materials", false); // dumps all materials with their corresponding id's
-            loadChunkOnRequest = getBoolean( "settings.load-chunk-on-request", false); // sets ChunkProvideServer.loadChunkProvideOnRequest
-            disableWarnings = getBoolean( "logging.disabled-warnings", false); // disable warning messages to server admins
-            worldLeakDebug = getBoolean( "logging.world-leak-debug", false);
-            connectionLogging = getBoolean( "logging.connection", false);
-            infiniteWaterSource = getBoolean( "world-settings.default.infinite-water-source", true);
-            flowingLavaDecay = getBoolean("world-settings.default.flowing-lava-decay", false);
-            tileEntityPlaceLogging = getBoolean("logging.warn-place-no-tileentity", true);
-            fakePlayerLogin = getBoolean("fake-players.do-login", false);
-            remapPluginFile = getBoolean("plugin-settings.default.remap-plugin-file", false);
+            
             readConfig( MCPCConfig.class, null );
+        }
+    }
+    
+    public static void registerCommands()
+    {
+        for ( Map.Entry<String, Command> entry : commands.entrySet() )
+        {
+            MinecraftServer.getServer().server.getCommandMap().register( entry.getKey(), "mcpc", entry.getValue() );
         }
     }
 
@@ -123,6 +168,16 @@ public class MCPCConfig
         config.set( path, val );
     }
 
+    public static boolean getToggle(Toggle toggle)
+    {
+        return getBoolean(toggle.path, toggle.def);
+    }
+    
+    public static void setToggle(Toggle toggle, boolean value)
+    {
+        config.set(toggle.path, value);
+    }
+    
     public static boolean getBoolean(String path, boolean def)
     {
         return getBoolean(path, def, true);

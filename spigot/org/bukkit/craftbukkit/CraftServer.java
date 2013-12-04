@@ -1269,7 +1269,7 @@ public final class CraftServer implements Server {
                 player.sendMessage(ChatColor.DARK_PURPLE + "The version of CraftBukkit that this server is running is out of date. Please consider updating to the latest version at dl.bukkit.org.");
             }
         }
-        if (player.hasPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE) && za.co.mcportcentral.MCPCConfig.loadChunkOnRequest && !za.co.mcportcentral.MCPCConfig.disableWarnings) { // MCPC+ add message about loadchunkonrequest
+        if (player.hasPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE) && za.co.mcportcentral.MCPCConfig.Toggle.loadChunkOnRequest.value() && !za.co.mcportcentral.MCPCConfig.Toggle.disableWarnings.value()) { // MCPC+ add message about loadchunkonrequest
             player.sendMessage(ChatColor.DARK_PURPLE + "This version of MCPC+ handles chunk loading better if load-chunk-on-request is set to false. Please consider changing this value in your bukkit.yml");
         }
     }

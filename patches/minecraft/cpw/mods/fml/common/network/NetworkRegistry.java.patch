@@ -61,7 +61,7 @@
 +
 +            for (String channel : channels.split("\0"))
 +            {
-+                if (za.co.mcportcentral.MCPCConfig.connectionLogging) {
++                if (za.co.mcportcentral.MCPCConfig.Toggle.connectionLogging.value()) {
 +                    System.out.println("adding plugin channel " + channel);
 +                }
 +                player.addChannel(channel);
