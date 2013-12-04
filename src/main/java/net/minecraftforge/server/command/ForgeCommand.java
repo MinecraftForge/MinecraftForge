@@ -105,7 +105,7 @@ public class ForgeCommand extends CommandBase {
 
     }
 
-    private void displayTPS(ICommandSender sender, String[] args)
+    public void displayTPS(ICommandSender sender, String[] args)
     {
         int dim = 0;
         boolean summary = true;
