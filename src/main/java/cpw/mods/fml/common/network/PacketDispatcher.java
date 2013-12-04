@@ -87,7 +87,7 @@ public class PacketDispatcher
 
     public static Packet131MapData getTinyPacket(Object mod, short tag, byte[] data)
     {
-        NetworkModHandler nmh = FMLNetworkHandler.instance().findNetworkModHandler(mod);
+        NetworkModHolder nmh = FMLNetworkHandler.instance().findNetworkModHandler(mod);
         return new Packet131MapData((short) nmh.getNetworkId(), tag, data);
     }
 }

@@ -46,7 +46,7 @@ public class ModIdMapPacket extends FMLPacket {
     }
 
     @Override
-    public byte[] generatePacket(Object... data)
+    public byte[] generatePacketData(Object... data)
     {
         NBTTagList completeList = (NBTTagList) data[0];
         NBTTagCompound wrap = new NBTTagCompound();
@@ -63,7 +63,7 @@ public class ModIdMapPacket extends FMLPacket {
     }
 
     @Override
-    public FMLPacket consumePacket(byte[] data)
+    public FMLPacket consumePacketData(byte[] data)
     {
         ByteArrayDataInput bdi = ByteStreams.newDataInput(data);
         int chunkIdx = UnsignedBytes.toInt(bdi.readByte());

@@ -15,6 +15,7 @@ package cpw.mods.fml.common.network;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
@@ -406,16 +407,20 @@ public class FMLNetworkHandler
         }
     }
 */
-    public static void fmlHandshake(ServerConfigurationManager scm, NetworkManager manager, EntityPlayerMP player)
+    public static void fmlServerHandshake(ServerConfigurationManager scm, NetworkManager manager, EntityPlayerMP player)
     {
-        NetHandlerPlayServer nethandler = new NetHandlerPlayServer(scm.func_72365_p(), manager, player);
-        player.field_71135_a = null;
-        scm.func_72355_a(manager, player, nethandler);
+        NetworkDispatcher dispatcher = NetworkDispatcher.allocAndSet(manager, scm);
+        dispatcher.serverToClientHandshake(player);
+    }
+
+    public static void fmlClientHandshake(NetworkManager field_147393_d)
+    {
+        NetworkDispatcher dispatcher = NetworkDispatcher.allocAndSet(field_147393_d);
+        dispatcher.clientToServerHandshake();
     }
 
     public static void openGui(EntityPlayer entityPlayer, Object mod, int modGuiId, World world, int x, int y, int z)
     {
-        // TODO Auto-generated method stub
 
     }
 
@@ -430,4 +435,5 @@ public class FMLNetworkHandler
         // TODO Auto-generated method stub
         return null;
     }
+
 }

@@ -21,6 +21,7 @@ import java.util.Set;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.EventBus;
 
+import cpw.mods.fml.common.network.NetworkModHolder;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 import cpw.mods.fml.common.versioning.VersionRange;
 
@@ -140,4 +141,6 @@ public interface ModContainer
     public Class<?> getCustomResourcePackClass();
 
     Map<String, String> getSharedModDescriptor();
+
+    NetworkModHolder getNetworkModHolder();
 }

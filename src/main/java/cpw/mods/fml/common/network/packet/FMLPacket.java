@@ -13,6 +13,7 @@
 package cpw.mods.fml.common.network.packet;
 
 import java.util.Arrays;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 
@@ -52,7 +53,7 @@ public abstract class FMLPacket
         /**
          * Open a GUI on the client from the server
          */
-        GUIOPEN(OpenGuiPacket.class, false),
+        GUIOPEN(OpenGuiPacket.class, false, "OpenGuiHandler"),
         /**
          * Spawn an entity on the client from the server
          */
@@ -69,12 +70,15 @@ public abstract class FMLPacket
 
         private Class<? extends FMLPacket> packetType;
         private boolean isMultipart;
+        private String executorClass;
+
         private ConcurrentMap<INetworkManager, FMLPacket> partTracker;
 
-        private Type(Class<? extends FMLPacket> clazz, boolean isMultipart)
+        private Type(Class<? extends FMLPacket> clazz, boolean isMultipart, String executorClass)
         {
             this.packetType = clazz;
             this.isMultipart = isMultipart;
+            this.executorClass = executorClass;
         }
 
         FMLPacket make()
@@ -91,12 +95,12 @@ public abstract class FMLPacket
             }
         }
 
-        public boolean isMultipart()
+        boolean isMultipart()
         {
             return isMultipart;
         }
 
-        private FMLPacket findCurrentPart(INetworkManager network)
+        private FMLPacket findCurrentPart(NetworkManager network)
         {
             if (partTracker == null)
             {
@@ -110,16 +114,13 @@ public abstract class FMLPacket
         }
     }
 
-    @SuppressWarnings("unused")
-    private Type type;
-
     public static byte[][] makePacketSet(Type type, Object... data)
     {
         if (!type.isMultipart())
         {
             return new byte[0][];
         }
-        byte[] packetData = type.make().generatePacket(data);
+        byte[] packetData = type.make().generatePacketData(data);
 
         byte[][] chunks = new byte[packetData.length / 32000 + 1][];
         for (int i = 0; i < packetData.length / 32000 + 1; i++)
@@ -129,36 +130,13 @@ public abstract class FMLPacket
         }
         return chunks;
     }
-    public static byte[] makePacket(Type type, Object... data)
+    static byte[] makePacket(Type type, Object... data)
     {
-        byte[] packetData = type.make().generatePacket(data);
+        byte[] packetData = type.make().generatePacketData(data);
         return Bytes.concat(new byte[] { UnsignedBytes.checkedCast(type.ordinal()) }, packetData );
     }
 
-    public static FMLPacket readPacket(INetworkManager network, byte[] payload)
-    {
-        int type = UnsignedBytes.toInt(payload[0]);
-        Type eType = Type.values()[type];
-        FMLPacket pkt;
-        if (eType.isMultipart())
-        {
-            pkt = eType.findCurrentPart(network);
-        }
-        else
-        {
-            pkt = eType.make();
-        }
-        return pkt.consumePacket(Arrays.copyOfRange(payload, 1, payload.length));
-    }
+    abstract byte[] generatePacketData(Object... data);
 
-    public FMLPacket(Type type)
-    {
-        this.type = type;
-    }
-
-    public abstract byte[] generatePacket(Object... data);
-
-    public abstract FMLPacket consumePacket(byte[] data);
-
-    public abstract void execute(INetworkManager network, FMLNetworkHandler handler, NetHandler netHandler, String userName);
+    abstract FMLPacket consumePacketData(byte[] data);
 }

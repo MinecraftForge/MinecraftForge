@@ -38,7 +38,7 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.network.FMLNetworkHandler;
-import cpw.mods.fml.common.network.NetworkModHandler;
+import cpw.mods.fml.common.network.NetworkModHolder;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.registry.GameData;
 
@@ -53,7 +53,7 @@ public class ModListResponsePacket extends FMLPacket
     }
 
     @Override
-    public byte[] generatePacket(Object... data)
+    public byte[] generatePacketData(Object... data)
     {
         @SuppressWarnings("unchecked")
         Map<String,String> modVersions = (Map<String, String>) data[0];
@@ -75,7 +75,7 @@ public class ModListResponsePacket extends FMLPacket
     }
 
     @Override
-    public FMLPacket consumePacket(byte[] data)
+    public FMLPacket consumePacketData(byte[] data)
     {
         ByteArrayDataInput dat = ByteStreams.newDataInput(data);
         int versionListSize = dat.readInt();
@@ -107,7 +107,7 @@ public class ModListResponsePacket extends FMLPacket
         for (String m : missingMods)
         {
             ModContainer mc = indexedModList.get(m);
-            NetworkModHandler networkMod = handler.findNetworkModHandler(mc);
+            NetworkModHolder networkMod = handler.findNetworkModHandler(mc);
             if (networkMod.requiresClientSide())
             {
                 missingClientMods.add(m);
@@ -117,7 +117,7 @@ public class ModListResponsePacket extends FMLPacket
         for (Entry<String,String> modVersion : modVersions.entrySet())
         {
             ModContainer mc = indexedModList.get(modVersion.getKey());
-            NetworkModHandler networkMod = handler.findNetworkModHandler(mc);
+            NetworkModHolder networkMod = handler.findNetworkModHandler(mc);
             if (!networkMod.acceptVersion(modVersion.getValue()))
             {
                 versionIncorrectMods.add(modVersion.getKey());

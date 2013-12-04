@@ -27,7 +27,7 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
 import cpw.mods.fml.common.network.FMLNetworkHandler;
-import cpw.mods.fml.common.network.NetworkModHandler;
+import cpw.mods.fml.common.network.NetworkModHolder;
 
 public class ModIdentifiersPacket extends FMLPacket
 {
@@ -40,13 +40,13 @@ public class ModIdentifiersPacket extends FMLPacket
     }
 
     @Override
-    public byte[] generatePacket(Object... data)
+    public byte[] generatePacketData(Object... data)
     {
         ByteArrayDataOutput dat = ByteStreams.newDataOutput();
-        Collection<NetworkModHandler >networkMods = FMLNetworkHandler.instance().getNetworkIdMap().values();
+        Collection<NetworkModHolder >networkMods = FMLNetworkHandler.instance().getNetworkIdMap().values();
 
         dat.writeInt(networkMods.size());
-        for (NetworkModHandler handler : networkMods)
+        for (NetworkModHolder handler : networkMods)
         {
             dat.writeUTF(handler.getContainer().getModId());
             dat.writeInt(handler.getNetworkId());
@@ -57,7 +57,7 @@ public class ModIdentifiersPacket extends FMLPacket
     }
 
     @Override
-    public FMLPacket consumePacket(byte[] data)
+    public FMLPacket consumePacketData(byte[] data)
     {
         ByteArrayDataInput dat = ByteStreams.newDataInput(data);
         int listSize = dat.readInt();
