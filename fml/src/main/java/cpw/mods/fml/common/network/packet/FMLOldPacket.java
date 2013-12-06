@@ -30,7 +30,7 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.FMLNetworkException;
 import cpw.mods.fml.common.network.FMLNetworkHandler;
 
-public abstract class FMLPacket
+public abstract class FMLOldPacket
 {
     enum Type
     {
@@ -68,20 +68,20 @@ public abstract class FMLPacket
         MOD_IDMAP(ModIdMapPacket.class, true);
 
 
-        private Class<? extends FMLPacket> packetType;
+        private Class<? extends FMLOldPacket> packetType;
         private boolean isMultipart;
         private String executorClass;
 
-        private ConcurrentMap<INetworkManager, FMLPacket> partTracker;
+        private ConcurrentMap<INetworkManager, FMLOldPacket> partTracker;
 
-        private Type(Class<? extends FMLPacket> clazz, boolean isMultipart, String executorClass)
+        private Type(Class<? extends FMLOldPacket> clazz, boolean isMultipart, String executorClass)
         {
             this.packetType = clazz;
             this.isMultipart = isMultipart;
             this.executorClass = executorClass;
         }
 
-        FMLPacket make()
+        FMLOldPacket make()
         {
             try
             {
@@ -100,7 +100,7 @@ public abstract class FMLPacket
             return isMultipart;
         }
 
-        private FMLPacket findCurrentPart(NetworkManager network)
+        private FMLOldPacket findCurrentPart(NetworkManager network)
         {
             if (partTracker == null)
             {
@@ -138,5 +138,5 @@ public abstract class FMLPacket
 
     abstract byte[] generatePacketData(Object... data);
 
-    abstract FMLPacket consumePacketData(byte[] data);
+    abstract FMLOldPacket consumePacketData(byte[] data);
 }

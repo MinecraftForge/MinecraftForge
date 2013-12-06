@@ -12,7 +12,7 @@
 
 package cpw.mods.fml.common.network.packet;
 
-import static cpw.mods.fml.common.network.packet.FMLPacket.Type.MOD_IDMAP;
+import static cpw.mods.fml.common.network.packet.FMLOldPacket.Type.MOD_IDMAP;
 
 import java.io.IOException;
 import java.util.Set;
@@ -37,7 +37,7 @@ import cpw.mods.fml.common.network.FMLNetworkHandler;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.ItemData;
 
-public class ModIdMapPacket extends FMLPacket {
+public class ModIdMapPacket extends FMLOldPacket {
     private byte[][] partials;
 
     public ModIdMapPacket()
@@ -63,7 +63,7 @@ public class ModIdMapPacket extends FMLPacket {
     }
 
     @Override
-    public FMLPacket consumePacketData(byte[] data)
+    public FMLOldPacket consumePacketData(byte[] data)
     {
         ByteArrayDataInput bdi = ByteStreams.newDataInput(data);
         int chunkIdx = UnsignedBytes.toInt(bdi.readByte());

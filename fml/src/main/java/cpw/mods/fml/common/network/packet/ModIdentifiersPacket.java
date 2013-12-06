@@ -12,7 +12,7 @@
 
 package cpw.mods.fml.common.network.packet;
 
-import static cpw.mods.fml.common.network.packet.FMLPacket.Type.MOD_IDENTIFIERS;
+import static cpw.mods.fml.common.network.packet.FMLOldPacket.Type.MOD_IDENTIFIERS;
 
 import java.util.Collection;
 import java.util.Map;
@@ -29,7 +29,7 @@ import com.google.common.io.ByteStreams;
 import cpw.mods.fml.common.network.FMLNetworkHandler;
 import cpw.mods.fml.common.network.NetworkModHolder;
 
-public class ModIdentifiersPacket extends FMLPacket
+public class ModIdentifiersPacket extends FMLOldPacket
 {
 
     private Map<String, Integer> modIds = Maps.newHashMap();
@@ -57,7 +57,7 @@ public class ModIdentifiersPacket extends FMLPacket
     }
 
     @Override
-    public FMLPacket consumePacketData(byte[] data)
+    public FMLOldPacket consumePacketData(byte[] data)
     {
         ByteArrayDataInput dat = ByteStreams.newDataInput(data);
         int listSize = dat.readInt();

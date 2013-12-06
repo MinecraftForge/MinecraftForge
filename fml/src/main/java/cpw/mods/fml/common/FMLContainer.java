@@ -16,7 +16,6 @@ import java.io.File;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 
 import net.minecraft.nbt.NBTBase;
@@ -30,16 +29,17 @@ import com.google.common.eventbus.EventBus;
 import cpw.mods.fml.client.FMLFileResourcePack;
 import cpw.mods.fml.client.FMLFolderResourcePack;
 import cpw.mods.fml.common.asm.FMLSanityChecker;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.common.registry.ItemData;
+import cpw.mods.fml.relauncher.Side;
 
 /**
  * @author cpw
  *
  */
-public class FMLDummyContainer extends DummyModContainer implements WorldAccessContainer
+public class FMLContainer extends DummyModContainer implements WorldAccessContainer
 {
-    public FMLDummyContainer()
+    public FMLContainer()
     {
         super(new ModMetadata());
         ModMetadata meta = getMetadata();
@@ -130,6 +130,7 @@ public class FMLDummyContainer extends DummyModContainer implements WorldAccessC
     {
         return FMLSanityChecker.fmlLocation;
     }
+
     @Override
     public Class<?> getCustomResourcePackClass()
     {

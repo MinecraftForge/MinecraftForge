@@ -32,7 +32,7 @@ import cpw.mods.fml.common.versioning.VersionRange;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.NetHandler;
 
-public class ModMissingPacket extends FMLPacket
+public class ModMissingPacket extends FMLOldPacket
 {
 
     private List<ModData> missing;
@@ -76,7 +76,7 @@ public class ModMissingPacket extends FMLPacket
         String modVersion;
     }
     @Override
-    public FMLPacket consumePacketData(byte[] data)
+    public FMLOldPacket consumePacketData(byte[] data)
     {
         ByteArrayDataInput dat = ByteStreams.newDataInput(data);
         int missingLen = dat.readInt();

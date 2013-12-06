@@ -16,7 +16,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
-public class OpenGuiPacket extends FMLPacket
+public class OpenGuiPacket extends FMLOldPacket
 {
     int windowId;
     int networkId;
@@ -39,7 +39,7 @@ public class OpenGuiPacket extends FMLPacket
     }
 
     @Override
-    public FMLPacket consumePacketData(byte[] data)
+    public FMLOldPacket consumePacketData(byte[] data)
     {
         ByteArrayDataInput dat = ByteStreams.newDataInput(data);
         windowId = dat.readInt();

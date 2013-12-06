@@ -39,7 +39,7 @@ import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.common.registry.IThrowableEntity;
 
-public class EntitySpawnPacket extends FMLPacket
+public class EntitySpawnPacket extends FMLOldPacket
 {
 
     public int networkId;
@@ -142,7 +142,7 @@ public class EntitySpawnPacket extends FMLPacket
     }
 
     @Override
-    public FMLPacket consumePacketData(byte[] data)
+    public FMLOldPacket consumePacketData(byte[] data)
     {
         ByteArrayDataInput dat = ByteStreams.newDataInput(data);
         networkId = dat.readInt();

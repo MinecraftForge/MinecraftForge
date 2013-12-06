@@ -12,6 +12,7 @@
 
 package cpw.mods.fml.common.network;
 
+import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
