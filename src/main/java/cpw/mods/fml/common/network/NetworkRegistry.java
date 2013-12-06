@@ -12,39 +12,23 @@
 
 package cpw.mods.fml.common.network;
 
-import java.util.Arrays;
-import java.util.List;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.embedded.EmbeddedChannel;
+import io.netty.util.AttributeKey;
+
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.Container;
-import net.minecraft.network.*;
-import net.minecraft.network.packet.*;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.network.packet.FMLPacket;
-import cpw.mods.fml.common.network.packet.FMLPacket.Type;
-import cpw.mods.fml.common.network.packet.PacketManager;
 import cpw.mods.fml.relauncher.Side;
 
 /**
@@ -54,30 +38,74 @@ import cpw.mods.fml.relauncher.Side;
 public enum NetworkRegistry
 {
     INSTANCE;
+    private Map<String,FMLEmbeddedChannel> channels = Maps.newConcurrentMap();
     private Map<ModContainer, IGuiHandler> serverGuiHandlers = Maps.newHashMap();
     private Map<ModContainer, IGuiHandler> clientGuiHandlers = Maps.newHashMap();
+
     /**
+     * Set in the {@link ChannelHandlerContext}
+     */
+    public static final AttributeKey<String> FML_CHANNEL = new AttributeKey<String>("fml:channelName");
+    public static final AttributeKey<OutboundTarget> FML_MESSAGETARGET = new AttributeKey<OutboundTarget>("fml:outboundTarget");
+    public static final AttributeKey<Object> FML_MESSAGETARGETARGS = new AttributeKey<Object>("fml:outboundTargetArgs");
+
+    public static final byte FML_PROTOCOL = 1;
+
+    private NetworkRegistry()
+    {
+    }
+
+    public enum OutboundTarget {
+        PLAYER, ALL, DIMENSION, ALLAROUNDPOINT;
+    }
+
+    static class FMLEmbeddedChannel extends EmbeddedChannel {
+        private final String channelName;
+        public FMLEmbeddedChannel(String channelName)
+        {
+            super();
+            this.channelName = channelName;
+        }
+    }
+
+    public EmbeddedChannel newChannel(String name)
+    {
+        if (channels.containsKey(name) || name.startsWith("MC|") || name.startsWith("\u0001"))
+        {
+            throw new RuntimeException("That channel is already registered");
+        }
+        FMLEmbeddedChannel channel = new FMLEmbeddedChannel(name);
+        channels.put(name,channel);
+        return channel;
+    }
+
+    public EmbeddedChannel getChannel(String name)
+    {
+        return channels.get(name);
+    }
+/*
+    *//**
      * Get the packet 250 channel registration string
      * @return the {@link Packet250CustomPayload} channel registration string
-     */
+     *//*
     byte[] getPacketRegistry(Side side)
     {
         return Joiner.on('\0').join(Iterables.concat(Arrays.asList("FML"),universalPacketHandlers.keySet(), side.isClient() ? clientPacketHandlers.keySet() : serverPacketHandlers.keySet())).getBytes(Charsets.UTF_8);
     }
-    /**
+    *//**
      * Is the specified channel active for the player?
      * @param channel
      * @param player
-     */
+     *//*
     public boolean isChannelActive(String channel, Player player)
     {
         return activeChannels.containsEntry(player,channel);
     }
-    /**
+    *//**
      * register a channel to a mod
      * @param handler the packet handler
      * @param channelName the channel name to register it with
-     */
+     *//*
     public void registerChannel(IPacketHandler handler, String channelName)
     {
         if (Strings.isNullOrEmpty(channelName) || (channelName!=null && channelName.length()>16))
@@ -111,37 +139,37 @@ public enum NetworkRegistry
             serverPacketHandlers.put(channelName, handler);
         }
     }
-    /**
+    *//**
      * Activate the channel for the player
      * @param player
-     */
+     *//*
     void activateChannel(Player player, String channel)
     {
         activeChannels.put(player, channel);
     }
-    /**
+    *//**
      * Deactivate the channel for the player
      * @param player
      * @param channel
-     */
+     *//*
     void deactivateChannel(Player player, String channel)
     {
         activeChannels.remove(player, channel);
     }
-    /**
+    *//**
      * Register a connection handler
      *
      * @param handler
-     */
+     *//*
     public void registerConnectionHandler(IConnectionHandler handler)
     {
         connectionHandlers.add(handler);
     }
 
-    /**
+    *//**
      * Register a chat listener
      * @param listener
-     */
+     *//*
     public void registerChatListener(IChatListener listener)
     {
         chatListeners.add(listener);
@@ -261,7 +289,7 @@ public enum NetworkRegistry
         List<String> channels = Lists.newArrayList(Splitter.on('\0').split(request));
         return channels;
     }
-
+*/
     public void registerGuiHandler(Object mod, IGuiHandler handler)
     {
         ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
@@ -281,7 +309,7 @@ public enum NetworkRegistry
         }
         clientGuiHandlers.put(mc, handler);
     }
-    void openRemoteGui(ModContainer mc, EntityPlayerMP player, int modGuiId, World world, int x, int y, int z)
+/*    void openRemoteGui(ModContainer mc, EntityPlayerMP player, int modGuiId, World world, int x, int y, int z)
     {
         IGuiHandler handler = serverGuiHandlers.get(mc);
         NetworkModHolder nmh = mc.getNetworkModHolder();
@@ -301,9 +329,14 @@ public enum NetworkRegistry
             }
         }
     }
-    void openLocalGui(ModContainer mc, EntityPlayer player, int modGuiId, World world, int x, int y, int z)
+*/    void openLocalGui(ModContainer mc, EntityPlayer player, int modGuiId, World world, int x, int y, int z)
     {
         IGuiHandler handler = clientGuiHandlers.get(mc);
         FMLCommonHandler.instance().showGuiScreen(handler.getClientGuiElement(modGuiId, player, world, x, y, z));
+    }
+
+    public boolean hasChannel(String channelName)
+    {
+        return channels.containsKey(channelName);
     }
 }

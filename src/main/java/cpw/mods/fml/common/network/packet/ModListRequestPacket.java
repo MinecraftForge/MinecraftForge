@@ -12,8 +12,8 @@
 
 package cpw.mods.fml.common.network.packet;
 
-import static cpw.mods.fml.common.network.packet.FMLPacket.Type.MOD_LIST_REQUEST;
-import static cpw.mods.fml.common.network.packet.FMLPacket.Type.MOD_LIST_RESPONSE;
+import static cpw.mods.fml.common.network.packet.FMLOldPacket.Type.MOD_LIST_REQUEST;
+import static cpw.mods.fml.common.network.packet.FMLOldPacket.Type.MOD_LIST_RESPONSE;
 
 import java.util.List;
 import java.util.Map;
@@ -37,7 +37,7 @@ import cpw.mods.fml.common.network.FMLNetworkHandler;
 import cpw.mods.fml.common.network.NetworkModHolder;
 import cpw.mods.fml.common.network.PacketDispatcher;
 
-public class ModListRequestPacket extends FMLPacket
+public class ModListRequestPacket extends FMLOldPacket
 {
     private List<String> sentModList;
     private byte compatibilityLevel;
@@ -62,7 +62,7 @@ public class ModListRequestPacket extends FMLPacket
     }
 
     @Override
-    public FMLPacket consumePacketData(byte[] data)
+    public FMLOldPacket consumePacketData(byte[] data)
     {
         sentModList = Lists.newArrayList();
         ByteArrayDataInput in = ByteStreams.newDataInput(data);
@@ -87,7 +87,7 @@ public class ModListRequestPacket extends FMLPacket
      * This packet is executed on the client to evaluate the server's mod list against
      * the client
      *
-     * @see cpw.mods.fml.common.network.packet.FMLPacket#execute(INetworkManager, FMLNetworkHandler, NetHandler, String)
+     * @see cpw.mods.fml.common.network.packet.FMLOldPacket#execute(INetworkManager, FMLNetworkHandler, NetHandler, String)
      */
     @Override
     public void execute(INetworkManager mgr, FMLNetworkHandler handler, NetHandler netHandler, String userName)
@@ -127,6 +127,6 @@ public class ModListRequestPacket extends FMLPacket
         FMLLog.fine("The server has compatibility level %d", compatibilityLevel);
         FMLCommonHandler.instance().getSidedDelegate().setClientCompatibilityLevel(compatibilityLevel);
 
-        mgr.func_74429_a(PacketDispatcher.getPacket("FML", FMLPacket.makePacket(MOD_LIST_RESPONSE, modVersions, missingMods)));
+        mgr.func_74429_a(PacketDispatcher.getPacket("FML", FMLOldPacket.makePacket(MOD_LIST_RESPONSE, modVersions, missingMods)));
     }
 }

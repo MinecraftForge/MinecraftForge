@@ -12,6 +12,8 @@
 
 package cpw.mods.fml.common.network;
 
+import cpw.mods.fml.common.network.NetworkSide.ClientSide;
+import cpw.mods.fml.common.network.NetworkSide.ServerSide;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 
@@ -38,7 +40,7 @@ public interface IPacketHandlerFactory
      * @param channel
      * @return
      */
-    public IClientSidePacketHandler makeClientPacketHandler(NetworkMod mod, NetworkManager manager, INetHandler clientPlayHandler, String channel);
+    public IPacketHandler<ClientSide> makeClientPacketHandler(NetworkManager manager, INetHandler clientPlayHandler, String channel);
     /**
      * Return a server side packet handler for the specified channel or null if it is not handled on this side
      * @param mod
@@ -46,5 +48,5 @@ public interface IPacketHandlerFactory
      * @param serverPlayHandler
      * @return
      */
-    public IServerSidePacketHandler makeServerPacketHandler(NetworkMod mod, NetworkManager manager, INetHandler serverPlayHandler);
+    public IPacketHandler<ServerSide> makeServerPacketHandler(NetworkManager manager, INetHandler serverPlayHandler, String channel);
 }

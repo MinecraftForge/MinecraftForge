@@ -29,7 +29,7 @@ public class FMLCorePlugin implements IFMLLoadingPlugin
     @Override
     public String getModContainerClass()
     {
-        return "cpw.mods.fml.common.FMLDummyContainer";
+        return "cpw.mods.fml.common.FMLContainer";
     }
 
     @Override

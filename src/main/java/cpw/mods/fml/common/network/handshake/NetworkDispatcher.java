@@ -1,17 +1,17 @@
-package cpw.mods.fml.common.network;
+package cpw.mods.fml.common.network.handshake;
+
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.embedded.EmbeddedChannel;
+import io.netty.util.AttributeKey;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
+import io.netty.util.concurrent.ScheduledFuture;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-import sun.net.ProgressSource.State;
-
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.util.AttributeKey;
-import io.netty.util.ReferenceCountUtil;
-import io.netty.util.concurrent.ScheduledFuture;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.NetHandlerPlayServer;
@@ -19,12 +19,12 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C17PacketCustomPayload;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;
+import net.minecraft.network.play.server.S40PacketDisconnect;
 import net.minecraft.server.management.ServerConfigurationManager;
-
-import com.google.common.collect.ListMultimap;
-
+import net.minecraft.util.ChatComponentText;
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.network.packet.PacketManager;
+import cpw.mods.fml.common.network.FMLProxyPacket;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
@@ -55,14 +55,14 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
         return net;
     }
 
-    private static final AttributeKey<NetworkDispatcher> FML_DISPATCHER = new AttributeKey<NetworkDispatcher>("fml:dispatcher");
-    private static final AttributeKey<ListMultimap<String,NetworkModHolder>> FML_PACKET_HANDLERS = new AttributeKey<ListMultimap<String,NetworkModHolder>>("fml:packet_handlers");
+    public static final AttributeKey<NetworkDispatcher> FML_DISPATCHER = new AttributeKey<NetworkDispatcher>("fml:dispatcher");
     private final NetworkManager manager;
     private final ServerConfigurationManager scm;
     private EntityPlayerMP player;
     private ConnectionState state;
     private ConnectionType connectionType;
-    private Side side;
+    private final Side side;
+    private final EmbeddedChannel handshakeChannel;
 
     public NetworkDispatcher(NetworkManager manager)
     {
@@ -70,6 +70,9 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
         this.manager = manager;
         this.scm = null;
         this.side = Side.CLIENT;
+        this.handshakeChannel = new EmbeddedChannel(new HandshakeInjector(this), new FMLHandshakeCodec(), new HandshakeMessageHandler<FMLHandshakeClientState>(FMLHandshakeClientState.class));
+        this.handshakeChannel.attr(FML_DISPATCHER).set(this);
+        this.handshakeChannel.attr(NetworkRegistry.FML_CHANNEL).set("FML|HS");
     }
 
     public NetworkDispatcher(NetworkManager manager, ServerConfigurationManager scm)
@@ -78,6 +81,9 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
         this.manager = manager;
         this.scm = scm;
         this.side = Side.SERVER;
+        this.handshakeChannel = new EmbeddedChannel(new HandshakeInjector(this), new FMLHandshakeCodec(), new HandshakeMessageHandler<FMLHandshakeServerState>(FMLHandshakeServerState.class));
+        this.handshakeChannel.attr(FML_DISPATCHER).set(this);
+        this.handshakeChannel.attr(NetworkRegistry.FML_CHANNEL).set("FML|HS");
     }
 
     public void serverToClientHandshake(EntityPlayerMP player)
@@ -102,46 +108,37 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception
     {
         this.state = ConnectionState.OPENING;
-        if (side == Side.CLIENT)
-        {
-            clientListenForServerHandshake();
-        }
-        else
-        {
-            serverInitiateHandshake();
-        }
+        // send ourselves as a user event, to kick the pipeline active
+        this.handshakeChannel.pipeline().fireUserEventTriggered(this);
         this.manager.channel().config().setAutoRead(true);
     }
 
-    private void serverInitiateHandshake()
+    void serverInitiateHandshake()
     {
         // Send mod salutation to the client
         // This will be ignored by vanilla clients
         this.state = ConnectionState.AWAITING_HANDSHAKE;
         this.manager.channel().pipeline().addFirst("fml:vanilla_detector", new VanillaTimeoutWaiter());
-        this.manager.func_150725_a(new S3FPacketCustomPayload("FML", new byte[0]));
     }
 
-    private void clientListenForServerHandshake()
+    void clientListenForServerHandshake()
     {
         manager.func_150723_a(EnumConnectionState.PLAY);
         this.state = ConnectionState.AWAITING_HANDSHAKE;
     }
 
-    private void continueToClientPlayState()
+    void continueToClientPlayState()
     {
         this.state = ConnectionState.CONNECTED;
         this.connectionType = ConnectionType.MODDED;
         completeClientSideConnection();
-        // Send modded ack to server
-        this.manager.func_150725_a(new C17PacketCustomPayload("FML", new byte[0]));
     }
 
     private void completeClientSideConnection()
     {
     }
 
-    private void continueToServerPlayState()
+    void continueToServerPlayState()
     {
         this.state = ConnectionState.CONNECTED;
         this.connectionType = ConnectionType.MODDED;
@@ -161,16 +158,16 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
         boolean handled = false;
         if (msg instanceof C17PacketCustomPayload)
         {
-            handled = handleServerSideCustomPacket((C17PacketCustomPayload) msg);
+            handled = handleServerSideCustomPacket((C17PacketCustomPayload) msg, ctx);
         }
         else if (msg instanceof S3FPacketCustomPayload)
         {
-            handled = handleClientSideCustomPacket((S3FPacketCustomPayload)msg);
+            handled = handleClientSideCustomPacket((S3FPacketCustomPayload)msg, ctx);
         }
         else if (state != ConnectionState.CONNECTED)
         {
             FMLLog.info("Unexpected packet during modded negotiation - assuming vanilla");
-            handleVanillaConnection();
+            kickVanilla();
         }
         if (!handled)
         {
@@ -184,46 +181,59 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
         if (evt instanceof ConnectionType && side == Side.SERVER)
         {
             FMLLog.info("Timeout occurred, assuming a vanilla client");
-            handleVanillaConnection();
+            kickVanilla();
         }
     }
 
-    private void handleVanillaConnection()
+    private void kickVanilla()
     {
-        state = ConnectionState.CONNECTED;
-        connectionType = ConnectionType.VANILLA;
-        if (side == Side.CLIENT)
+        final ChatComponentText chatcomponenttext = new ChatComponentText("This is modded. No modded response received. Bye!");
+        manager.func_150725_a(new S40PacketDisconnect(chatcomponenttext), new GenericFutureListener<Future<?>>()
         {
-            completeClientSideConnection();
-        }
-        else
-        {
-            completeServerSideConnection();
-        }
+            public void operationComplete(Future<?> result)
+            {
+                manager.func_150718_a(chatcomponenttext);
+            }
+        });
+        manager.channel().config().setAutoRead(false);
     }
 
-    private boolean handleClientSideCustomPacket(S3FPacketCustomPayload msg)
+    private boolean handleClientSideCustomPacket(S3FPacketCustomPayload msg, ChannelHandlerContext context)
     {
-        if ("FML".equals(msg.func_149169_c()))
+        String channelName = msg.func_149169_c();
+        if ("FML|HS".equals(channelName))
         {
-            continueToClientPlayState();
-            FMLLog.info("Client side modded connection established");
+            FMLProxyPacket proxy = new FMLProxyPacket(msg);
+            handshakeChannel.writeInbound(proxy);
+            return true;
+        }
+        else if (NetworkRegistry.INSTANCE.hasChannel(channelName))
+        {
+            FMLProxyPacket proxy = new FMLProxyPacket(msg);
+            context.fireChannelRead(proxy);
             return true;
         }
         return false;
     }
 
-    private boolean handleServerSideCustomPacket(C17PacketCustomPayload msg)
+    private boolean handleServerSideCustomPacket(C17PacketCustomPayload msg, ChannelHandlerContext context)
     {
         if (state == ConnectionState.AWAITING_HANDSHAKE)
         {
             this.manager.channel().pipeline().remove("fml:vanilla_detector");
             state = ConnectionState.HANDSHAKING;
         }
-        if ("FML".equals(msg.func_149559_c()))
+        String channelName = msg.func_149559_c();
+        if ("FML|HS".equals(channelName))
         {
-            FMLLog.info("Server side modded connection established");
-            continueToServerPlayState();
+            FMLProxyPacket proxy = new FMLProxyPacket(msg);
+            handshakeChannel.writeInbound(proxy);
+            return true;
+        }
+        else if (NetworkRegistry.INSTANCE.hasChannel(channelName))
+        {
+            FMLProxyPacket proxy = new FMLProxyPacket(msg);
+            context.fireChannelRead(proxy);
             return true;
         }
         return false;
@@ -247,7 +257,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
                     }
                     return null;
                 }
-            }, 10, TimeUnit.SECONDS);
+            }, 10, TimeUnit.HOURS);
         }
 
         @Override
@@ -255,5 +265,21 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
         {
             future.cancel(true);
         }
+    }
+
+    /**
+     * Callback from the networkmanager
+     * @param fmlProxyPacket
+     */
+    public void dispatch(FMLProxyPacket fmlProxyPacket)
+    {
+    }
+
+    public void sendProxy(FMLProxyPacket msg)
+    {
+        if (side == Side.CLIENT)
+            manager.func_150725_a(msg.toC17Packet());
+        else
+            manager.func_150725_a(msg.toS3FPacket());
     }
 }

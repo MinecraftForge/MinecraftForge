@@ -22,7 +22,7 @@ import com.google.common.io.ByteStreams;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.FMLNetworkHandler;
 
-public class EntitySpawnAdjustmentPacket extends FMLPacket
+public class EntitySpawnAdjustmentPacket extends FMLOldPacket
 {
 
     public EntitySpawnAdjustmentPacket()
@@ -47,7 +47,7 @@ public class EntitySpawnAdjustmentPacket extends FMLPacket
     }
 
     @Override
-    public FMLPacket consumePacketData(byte[] data)
+    public FMLOldPacket consumePacketData(byte[] data)
     {
         ByteArrayDataInput dat = ByteStreams.newDataInput(data);
         entityId = dat.readInt();

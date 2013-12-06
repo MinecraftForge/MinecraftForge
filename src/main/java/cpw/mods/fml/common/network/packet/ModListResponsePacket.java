@@ -12,10 +12,10 @@
 
 package cpw.mods.fml.common.network.packet;
 
-import static cpw.mods.fml.common.network.packet.FMLPacket.Type.MOD_IDENTIFIERS;
-import static cpw.mods.fml.common.network.packet.FMLPacket.Type.MOD_IDMAP;
-import static cpw.mods.fml.common.network.packet.FMLPacket.Type.MOD_LIST_RESPONSE;
-import static cpw.mods.fml.common.network.packet.FMLPacket.Type.MOD_MISSING;
+import static cpw.mods.fml.common.network.packet.FMLOldPacket.Type.MOD_IDENTIFIERS;
+import static cpw.mods.fml.common.network.packet.FMLOldPacket.Type.MOD_IDMAP;
+import static cpw.mods.fml.common.network.packet.FMLOldPacket.Type.MOD_LIST_RESPONSE;
+import static cpw.mods.fml.common.network.packet.FMLOldPacket.Type.MOD_MISSING;
 
 import java.util.List;
 import java.util.Map;
@@ -42,7 +42,7 @@ import cpw.mods.fml.common.network.NetworkModHolder;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.registry.GameData;
 
-public class ModListResponsePacket extends FMLPacket
+public class ModListResponsePacket extends FMLOldPacket
 {
     private Map<String,String> modVersions;
     private List<String> missingMods;
@@ -75,7 +75,7 @@ public class ModListResponsePacket extends FMLPacket
     }
 
     @Override
-    public FMLPacket consumePacketData(byte[] data)
+    public FMLOldPacket consumePacketData(byte[] data)
     {
         ByteArrayDataInput dat = ByteStreams.newDataInput(data);
         int versionListSize = dat.readInt();
@@ -128,7 +128,7 @@ public class ModListResponsePacket extends FMLPacket
         pkt.field_73630_a = "FML";
         if (missingClientMods.size()>0 || versionIncorrectMods.size() > 0)
         {
-            pkt.field_73629_c = FMLPacket.makePacket(MOD_MISSING, missingClientMods, versionIncorrectMods);
+            pkt.field_73629_c = FMLOldPacket.makePacket(MOD_MISSING, missingClientMods, versionIncorrectMods);
             Logger.getLogger("Minecraft").info(String.format("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods));
             FMLLog.info("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods);
             // Mark this as bad
@@ -138,14 +138,14 @@ public class ModListResponsePacket extends FMLPacket
         }
         else
         {
-            pkt.field_73629_c = FMLPacket.makePacket(MOD_IDENTIFIERS, netHandler);
+            pkt.field_73629_c = FMLOldPacket.makePacket(MOD_IDENTIFIERS, netHandler);
             Logger.getLogger("Minecraft").info(String.format("User %s connecting with mods %s", userName, modVersions.keySet()));
             FMLLog.info("User %s connecting with mods %s", userName, modVersions.keySet());
             pkt.field_73628_b = pkt.field_73629_c.length;
             network.func_74429_a(pkt);
             NBTTagList itemList = new NBTTagList();
             GameData.writeItemData(itemList);
-            byte[][] registryPackets = FMLPacket.makePacketSet(MOD_IDMAP, itemList);
+            byte[][] registryPackets = FMLOldPacket.makePacketSet(MOD_IDMAP, itemList);
             for (int i = 0; i < registryPackets.length; i++)
             {
                 network.func_74429_a(PacketDispatcher.getPacket("FML", registryPackets[i]));
