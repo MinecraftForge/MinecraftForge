@@ -13,6 +13,7 @@
 package cpw.mods.fml.common.network;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -25,71 +26,87 @@ import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
 import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
 import cpw.mods.fml.common.versioning.InvalidVersionSpecificationException;
 import cpw.mods.fml.common.versioning.VersionRange;
+import cpw.mods.fml.relauncher.Side;
 
 public class NetworkModHolder
 {
+    private abstract class NetworkChecker {
+        public abstract boolean check(Map<String,String> remoteVersions, Side side);
+    }
+
+    private class DefaultNetworkChecker extends NetworkChecker {
+        @Override
+        public boolean check(Map<String,String> remoteVersions, Side side)
+        {
+            return acceptVersion(remoteVersions.get(container.getModId()));
+        }
+
+    }
+    private class MethodNetworkChecker extends NetworkChecker {
+        @Override
+        public boolean check(Map<String,String> remoteVersions, Side side)
+        {
+            try
+            {
+                return (Boolean) checkHandler.invoke(container, remoteVersions, side);
+            }
+            catch (Exception e)
+            {
+                FMLLog.log(Level.SEVERE, e, "Error occurred invoking NetworkCheckHandler %s at %s", checkHandler.getName(), container);
+                return false;
+            }
+        }
+    }
     private static int assignedIds = 1;
 
     private int localId;
     private int networkId;
 
     private ModContainer container;
-    private NetworkMod mod;
     private Method checkHandler;
 
     private VersionRange acceptableRange;
 
-    private IPacketHandlerFactory packetHandlerFactory;
+    private NetworkChecker checker;
 
-    public NetworkModHolder(ModContainer container, NetworkMod modAnnotation)
+    public NetworkModHolder(ModContainer container)
     {
         this.container = container;
-        this.mod = modAnnotation;
         this.localId = assignedIds++;
         this.networkId = this.localId;
     }
-    public NetworkModHolder(ModContainer container, Class<?> networkModClass, ASMDataTable table)
+    public NetworkModHolder(ModContainer container, Class<?> modClass, String acceptableVersionRange, ASMDataTable table)
     {
-        this(container, networkModClass.getAnnotation(NetworkMod.class));
-        if (this.mod == null)
-        {
-            return;
-        }
-
-        Set<ASMData> versionCheckHandlers = table.getAnnotationsFor(container).get(NetworkMod.VersionCheckHandler.class.getName());
-        String versionCheckHandlerMethod = null;
+        this(container);
+        Set<ASMData> versionCheckHandlers = table.getAnnotationsFor(container).get(NetworkCheckHandler.class.getName());
+        String networkCheckHandlerMethod = null;
         for (ASMData vch : versionCheckHandlers)
         {
-            if (vch.getClassName().equals(networkModClass.getName()))
+            if (vch.getClassName().equals(modClass.getName()))
             {
-                versionCheckHandlerMethod = vch.getObjectName();
-                versionCheckHandlerMethod = versionCheckHandlerMethod.substring(0,versionCheckHandlerMethod.indexOf('('));
+                networkCheckHandlerMethod = vch.getObjectName();
+                networkCheckHandlerMethod = networkCheckHandlerMethod.substring(0,networkCheckHandlerMethod.indexOf('('));
                 break;
             }
         }
-        if (versionCheckHandlerMethod != null)
+        if (networkCheckHandlerMethod != null)
         {
             try
             {
-                Method checkHandlerMethod = networkModClass.getDeclaredMethod(versionCheckHandlerMethod, String.class);
-                if (checkHandlerMethod.isAnnotationPresent(NetworkMod.VersionCheckHandler.class))
+                Method checkHandlerMethod = modClass.getDeclaredMethod(networkCheckHandlerMethod, Map.class, Side.class);
+                if (checkHandlerMethod.isAnnotationPresent(NetworkCheckHandler.class))
                 {
                     this.checkHandler = checkHandlerMethod;
                 }
             }
             catch (Exception e)
             {
-                FMLLog.log(Level.WARNING, e, "The declared version check handler method %s on network mod id %s is not accessible", versionCheckHandlerMethod, container.getModId());
+                FMLLog.log(Level.WARNING, e, "The declared version check handler method %s on network mod id %s is not accessible", networkCheckHandlerMethod, container.getModId());
             }
         }
-
-        configureNetworkMod(container);
-    }
-    protected void configureNetworkMod(ModContainer container)
-    {
         if (this.checkHandler == null)
         {
-            String versionBounds = mod.versionBounds();
+            String versionBounds = acceptableVersionRange;
             if (!Strings.isNullOrEmpty(versionBounds))
             {
                 try
@@ -113,29 +130,23 @@ public class NetworkModHolder
         {
             FMLLog.finest("The mod %s accepts its own version (%s)", container.getModId(), container.getVersion());
         }
+
+        this.checker = checkHandler == null ? new DefaultNetworkChecker() : new MethodNetworkChecker();
     }
 
     public boolean acceptVersion(String version)
     {
-        if (checkHandler != null)
-        {
-            try
-            {
-                return (Boolean)checkHandler.invoke(container.getMod(), version);
-            }
-            catch (Exception e)
-            {
-                FMLLog.log(Level.WARNING, e, "There was a problem invoking the checkhandler method %s for network mod id %s", checkHandler.getName(), container.getModId());
-                return false;
-            }
-        }
-
         if (acceptableRange!=null)
         {
             return acceptableRange.containsVersion(new DefaultArtifactVersion(version));
         }
 
         return container.getVersion().equals(version);
+    }
+
+    public boolean check(Map<String,String> data, Side side)
+    {
+        return checker.check(data, side);
     }
 
     public int getLocalId()
@@ -151,16 +162,6 @@ public class NetworkModHolder
     public ModContainer getContainer()
     {
         return container;
-    }
-
-    public NetworkMod getMod()
-    {
-        return mod;
-    }
-
-    public boolean isNetworkMod()
-    {
-        return mod != null;
     }
 
     public void setNetworkId(int value)

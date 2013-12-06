@@ -26,6 +26,7 @@ import java.util.logging.Level;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.world.World;
 
@@ -35,6 +36,7 @@ import com.google.common.collect.Maps;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
 import cpw.mods.fml.relauncher.Side;
 
@@ -46,6 +48,7 @@ public enum NetworkRegistry
 {
     INSTANCE;
     private EnumMap<Side,Map<String,FMLEmbeddedChannel>> channels = Maps.newEnumMap(Side.class);
+    private Map<ModContainer, NetworkModHolder> registry = Maps.newHashMap();
     private Map<ModContainer, IGuiHandler> serverGuiHandlers = Maps.newHashMap();
     private Map<ModContainer, IGuiHandler> clientGuiHandlers = Maps.newHashMap();
 
@@ -503,5 +506,16 @@ public enum NetworkRegistry
     public boolean hasChannel(String channelName, Side source)
     {
         return channels.get(source).containsKey(channelName);
+    }
+
+    public void register(ModContainer fmlModContainer, Class<?> clazz, String remoteVersionRange, ASMDataTable asmHarvestedData)
+    {
+        NetworkModHolder networkModHolder = new NetworkModHolder(fmlModContainer, clazz, remoteVersionRange, asmHarvestedData);
+        registry.put(fmlModContainer, networkModHolder);
+    }
+
+    Map<ModContainer,NetworkModHolder> registry()
+    {
+        return registry;
     }
 }

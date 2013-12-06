@@ -2,6 +2,7 @@ package cpw.mods.fml.common.network.handshake;
 
 import io.netty.channel.ChannelHandlerContext;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.network.FMLNetworkHandler;
 
 enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
 {
@@ -29,7 +30,14 @@ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
             }
 
             FMLHandshakeMessage.ClientModList client = (FMLHandshakeMessage.ClientModList)msg;
-            FMLLog.info("Client joining with %d mods : %s", client.modListSize(), client.modListAsString());
+            FMLLog.info("Client attempting to join with %d mods : %s", client.modListSize(), client.modListAsString());
+            String result = FMLNetworkHandler.checkClientModList(client);
+            if (result != null)
+            {
+                NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+                dispatcher.rejectHandshake(result);
+                return ERROR;
+            }
             ctx.writeAndFlush(new FMLHandshakeMessage.ServerModList());
             return COMPLETE;
         }
@@ -42,6 +50,14 @@ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
             NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
             FMLLog.info("Server side modded connection established");
             dispatcher.continueToServerPlayState();
+            return this;
+        }
+    },
+    ERROR
+    {
+        @Override
+        public FMLHandshakeServerState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
+        {
             return this;
         }
     };

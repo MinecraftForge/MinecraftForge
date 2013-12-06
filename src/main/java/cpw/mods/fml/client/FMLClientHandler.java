@@ -123,8 +123,6 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private Map<String, IResourcePack> resourcePackMap;
 
-    private NetworkManager networkConnection;
-
     /**
      * Called to start the whole game off
      *
@@ -571,11 +569,6 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public NetworkManager getClientToServerNetworkManager()
     {
-        return this.networkConnection;
-    }
-
-    public void currentConnection(NetworkManager networkManager, boolean shouldChange)
-    {
-        if (shouldChange) this.networkConnection = networkManager;
+        return this.client.func_147114_u()!=null ? this.client.func_147114_u().func_147298_b() : null;
     }
 }

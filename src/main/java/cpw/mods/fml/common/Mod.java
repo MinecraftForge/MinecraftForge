@@ -29,8 +29,7 @@ import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppedEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.network.NetworkCheckHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 /**
@@ -40,19 +39,12 @@ import cpw.mods.fml.common.registry.GameRegistry;
  * at pre-defined times during the loading of the game, based on where you have applied the {@link EventHandler}
  * annotation.
  *
- * This annotation is usually paired with a second annotation {@link NetworkMod}, which declares the
- * network related properties of this mod.
- *
  * <p>This is a simple example of a Mod. It has the modId of "MyModId", the name of "My example mod", it is
- * version 1.0, and depends on FML being loaded. It has the {@link NetworkMod} annotation as well, declaring it uses channel
- * "MyModChannel" and {@link IPacketHandler} class PacketHandler.
+ * version 1.0, and depends on FML being loaded.
  * <pre>{@code
  * package mymod;
  * // Declare that this is a mod with modId "MyModId", name "My example mod", version "1.0" and dependency on FML.
  * {@literal @}Mod(modId="MyModId",name="My example mod",version="1.0",dependencies="required-after:FML")
- * // Declare that this is a network mod using the {@link Packet250CustomPayload} channel "MyModChannel", required on the client if it's present
- * // on the server, with {@link IPacketHandler} class PacketHandler.
- * {@literal @}NetworkMod(channels = { "MyModChannel" }, clientSideRequired = true, serverSideRequired = false, packetHandler = PacketHandler.class)
  * public class MyMod {
  *      // Populate this field with the instance of the mod created by FML
  *      {@literal @}Instance("MyModId")
@@ -103,6 +95,16 @@ public @interface Mod
      * @return A version range as specified by the maven version range specification or the empty string
      */
     String acceptedMinecraftVersions() default "";
+    /**
+     * A replacement for the no-longer-existing "versionRange" of NetworkMod. Specify a remote version range
+     * that this mod will accept as valid. Defaults to nothing, which is interpreted as "only this version".
+     * Another special value is '*' which means accept all versions.
+     *
+     * This is ignored if there is a {@link NetworkCheckHandler} annotation on a method in this class.
+     *
+     * @return
+     */
+    String acceptableRemoteVersions() default "";
     /**
      * An optional bukkit plugin that will be injected into the bukkit plugin framework if
      * this mod is loaded into the FML framework and the bukkit coremod is present.
