@@ -9,12 +9,21 @@
  import io.netty.util.concurrent.GenericFutureListener;
  import java.math.BigInteger;
  import java.security.PrivateKey;
+@@ -58,7 +60,7 @@
+             this.func_147326_c();
+         }
+ 
+-        if (this.field_147336_h++ == 600)
++        if (this.field_147336_h++ == FMLNetworkHandler.LOGIN_TIMEOUT)
+         {
+             this.func_147322_a("Took too long to log in");
+         }
 @@ -97,7 +99,7 @@
          {
              this.field_147328_g = NetHandlerLoginServer.LoginState.ACCEPTED;
              this.field_147333_a.func_150725_a(new S02PacketLoginSuccess(this.field_147337_i), new GenericFutureListener[0]);
 -            this.field_147327_f.func_71203_ab().func_72355_a(this.field_147333_a, this.field_147327_f.func_71203_ab().func_148545_a(this.field_147337_i));
-+            FMLNetworkHandler.fmlHandshake(this.field_147327_f.func_71203_ab(), this.field_147333_a, this.field_147327_f.func_71203_ab().func_148545_a(this.field_147337_i));
++            FMLNetworkHandler.fmlServerHandshake(this.field_147327_f.func_71203_ab(), this.field_147333_a, this.field_147327_f.func_71203_ab().func_148545_a(this.field_147337_i));
          }
      }
  

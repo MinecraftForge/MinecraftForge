@@ -76,7 +76,7 @@
          }
  
 -        this.func_73731_b(this.field_146289_q, s, 2, this.field_146295_m - 10, -1);
-+        List<String> brandings = Lists.reverse(FMLCommonHandler.instance().getBrandings());
++        List<String> brandings = Lists.reverse(FMLCommonHandler.instance().getBrandings(true));
 +        for (int i = 0; i < brandings.size(); i++)
 +        {
 +            String brd = brandings.get(i);

@@ -78,6 +78,7 @@ public class FMLCommonHandler
     private Class<?> forge;
     private boolean noForge;
     private List<String> brandings;
+    private List<String> brandingsNoMC;
     private List<ICrashCallable> crashCallables = Lists.newArrayList(Loader.instance().getCallableCrashInformation());
     private Set<SaveHandler> handlerSet = Sets.newSetFromMap(new MapMaker().weakKeys().<SaveHandler,Boolean>makeMap());
 
@@ -244,15 +245,16 @@ public class FMLCommonHandler
             int aModCount = Loader.instance().getActiveModList().size();
             brd.add(String.format("%d mod%s loaded, %d mod%s active", tModCount, tModCount!=1 ? "s" :"", aModCount, aModCount!=1 ? "s" :"" ));
             brandings = brd.build();
+            brandingsNoMC = brandings.subList(1, brandings.size());
         }
     }
-    public List<String> getBrandings()
+    public List<String> getBrandings(boolean includeMC)
     {
         if (brandings == null)
         {
             computeBranding();
         }
-        return ImmutableList.copyOf(brandings);
+        return includeMC ? ImmutableList.copyOf(brandings) : ImmutableList.copyOf(brandingsNoMC);
     }
 
     public IFMLSidedHandler getSidedDelegate()
