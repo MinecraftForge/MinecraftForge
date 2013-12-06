@@ -12,6 +12,8 @@
 
 package cpw.mods.fml.common.network;
 
+import org.apache.logging.log4j.core.helpers.Integers;
+
 import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,7 +27,10 @@ import net.minecraft.world.World;
 
 public class FMLNetworkHandler
 {
-/*    private static final int FML_HASH = Hashing.murmur3_32().hashString("FML").asInt();
+    public static final int READ_TIMEOUT = Integers.parseInt(System.getProperty("fml.readTimeout","30"),30);
+    public static final int LOGIN_TIMEOUT = Integers.parseInt(System.getProperty("fml.loginTimeout","600"),600);
+
+    /*    private static final int FML_HASH = Hashing.murmur3_32().hashString("FML").asInt();
     private static final int PROTOCOL_VERSION = 0x2;
     private static final FMLNetworkHandler INSTANCE = new FMLNetworkHandler();
 
