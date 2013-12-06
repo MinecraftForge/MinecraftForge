@@ -12,23 +12,30 @@
 
 package cpw.mods.fml.common.network;
 
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.embedded.EmbeddedChannel;
+import io.netty.handler.codec.MessageToMessageCodec;
 import io.netty.util.AttributeKey;
 
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.world.World;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
 import cpw.mods.fml.relauncher.Side;
 
 /**
@@ -38,7 +45,7 @@ import cpw.mods.fml.relauncher.Side;
 public enum NetworkRegistry
 {
     INSTANCE;
-    private Map<String,FMLEmbeddedChannel> channels = Maps.newConcurrentMap();
+    private EnumMap<Side,Map<String,FMLEmbeddedChannel>> channels = Maps.newEnumMap(Side.class);
     private Map<ModContainer, IGuiHandler> serverGuiHandlers = Maps.newHashMap();
     private Map<ModContainer, IGuiHandler> clientGuiHandlers = Maps.newHashMap();
 
@@ -46,6 +53,7 @@ public enum NetworkRegistry
      * Set in the {@link ChannelHandlerContext}
      */
     public static final AttributeKey<String> FML_CHANNEL = new AttributeKey<String>("fml:channelName");
+    public static final AttributeKey<Side> CHANNEL_SOURCE = new AttributeKey<Side>("fml:channelSource");
     public static final AttributeKey<OutboundTarget> FML_MESSAGETARGET = new AttributeKey<OutboundTarget>("fml:outboundTarget");
     public static final AttributeKey<Object> FML_MESSAGETARGETARGS = new AttributeKey<Object>("fml:outboundTargetArgs");
 
@@ -53,35 +61,200 @@ public enum NetworkRegistry
 
     private NetworkRegistry()
     {
+        channels.put(Side.CLIENT, Maps.<String,FMLEmbeddedChannel>newConcurrentMap());
+        channels.put(Side.SERVER, Maps.<String,FMLEmbeddedChannel>newConcurrentMap());
     }
 
+    public class TargetPoint {
+        public TargetPoint(int dimension, double x, double y, double z, double range)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.range = range;
+            this.dimension = dimension;
+        }
+        public final double x;
+        public final double y;
+        public final double z;
+        public final double range;
+        public final int dimension;
+    }
     public enum OutboundTarget {
-        PLAYER, ALL, DIMENSION, ALLAROUNDPOINT;
+        PLAYER
+        {
+            @Override
+            public void validateArgs(Object args)
+            {
+                if (!(args instanceof EntityPlayerMP))
+                {
+                    throw new RuntimeException("PLAYER target expects a Player arg");
+                }
+            }
+            @Override
+            public List<NetworkDispatcher> selectNetworks(Object args)
+            {
+                EntityPlayerMP player = (EntityPlayerMP) args;
+                NetworkDispatcher dispatcher = player.field_71135_a.field_147371_a.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+                return ImmutableList.of(dispatcher);
+            }
+        },
+        ALL
+        {
+            @Override
+            public void validateArgs(Object args)
+            {
+            }
+            @SuppressWarnings("unchecked")
+            @Override
+            public List<NetworkDispatcher> selectNetworks(Object args)
+            {
+                ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.<NetworkDispatcher>builder();
+                for (EntityPlayerMP player : (List<EntityPlayerMP>)FMLCommonHandler.instance().getMinecraftServerInstance().func_71203_ab().field_72404_b)
+                {
+                    NetworkDispatcher dispatcher = player.field_71135_a.field_147371_a.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+                    builder.add(dispatcher);
+                }
+                return builder.build();
+            }
+        },
+        DIMENSION
+        {
+            @Override
+            public void validateArgs(Object args)
+            {
+                if (!(args instanceof Integer))
+                {
+                    throw new RuntimeException("DIMENSION expects an integer argument");
+                }
+            }
+            @SuppressWarnings("unchecked")
+            @Override
+            public List<NetworkDispatcher> selectNetworks(Object args)
+            {
+                int dimension = (Integer)args;
+                ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.<NetworkDispatcher>builder();
+                for (EntityPlayerMP player : (List<EntityPlayerMP>)FMLCommonHandler.instance().getMinecraftServerInstance().func_71203_ab().field_72404_b)
+                {
+                    if (dimension == player.field_71093_bK)
+                    {
+                        NetworkDispatcher dispatcher = player.field_71135_a.field_147371_a.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+                        builder.add(dispatcher);
+                    }
+                }
+                return builder.build();
+            }
+        },
+        ALLAROUNDPOINT
+        {
+            @Override
+            public void validateArgs(Object args)
+            {
+                if (!(args instanceof TargetPoint))
+                {
+                    throw new RuntimeException("ALLAROUNDPOINT expects a TargetPoint argument");
+                }
+            }
+
+            @SuppressWarnings("unchecked")
+            @Override
+            public List<NetworkDispatcher> selectNetworks(Object args)
+            {
+                TargetPoint tp = (TargetPoint)args;
+                ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.<NetworkDispatcher>builder();
+                for (EntityPlayerMP player : (List<EntityPlayerMP>)FMLCommonHandler.instance().getMinecraftServerInstance().func_71203_ab().field_72404_b)
+                {
+                    if (player.field_71093_bK == tp.dimension)
+                    {
+                        double d4 = tp.x - player.field_70165_t;
+                        double d5 = tp.y - player.field_70163_u;
+                        double d6 = tp.z - player.field_70161_v;
+
+                        if (d4 * d4 + d5 * d5 + d6 * d6 < tp.range * tp.range)
+                        {
+                            NetworkDispatcher dispatcher = player.field_71135_a.field_147371_a.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+                            builder.add(dispatcher);
+                        }
+                    }
+                }
+                return builder.build();
+            }
+        },
+        TOSERVER
+        {
+            @Override
+            public void validateArgs(Object args)
+            {
+                throw new RuntimeException("Cannot set TOSERVER as a target on the server");
+            }
+            @Override
+            public List<NetworkDispatcher> selectNetworks(Object args)
+            {
+                NetworkManager clientConnection = FMLCommonHandler.instance().getClientToServerNetworkManager();
+                return clientConnection == null ? ImmutableList.<NetworkDispatcher>of() : ImmutableList.of(clientConnection.channel().attr(NetworkDispatcher.FML_DISPATCHER).get());
+            }
+        };
+
+        public abstract void validateArgs(Object args);
+        public abstract List<NetworkDispatcher> selectNetworks(Object args);
     }
 
     static class FMLEmbeddedChannel extends EmbeddedChannel {
-        private final String channelName;
-        public FMLEmbeddedChannel(String channelName)
+        public FMLEmbeddedChannel(String channelName, Side source, ChannelHandler... handlers)
         {
-            super();
-            this.channelName = channelName;
+            super(handlers);
+            this.attr(FML_CHANNEL).set(channelName);
+            this.attr(CHANNEL_SOURCE).set(source);
+            this.pipeline().addFirst(new FMLOutboundHandler());
         }
     }
 
-    public EmbeddedChannel newChannel(String name)
+    /**
+     * Create a new synchronous message channel pair based on netty.
+     * There are two channels created : one for each logical side (considered as the source of an outbound message)
+     * The returned map will contain a value for each logical side, though both will only be working in the
+     * integrated server case.
+     *
+     * The channel expects to read and write using {@link FMLProxyPacket}. All operation is synchronous, as the
+     * asynchronous behaviour occurs at a lower level in netty.
+     *
+     * The first handler in the pipeline is special and should not be removed or moved from the head - it transforms
+     * packets from the outbound of this pipeline into custom packets, based on the current {@link AttributeKey} value
+     * {@link NetworkRegistry#FML_MESSAGETARGET} and {@link NetworkRegistry#FML_MESSAGETARGETARGS} set on the channel.
+     * For the client to server channel (source side : CLIENT) this is fixed as "TOSERVER". For SERVER to CLIENT packets,
+     * several possible values exist.
+     *
+     * Mod Messages should be transformed using a something akin to a {@link MessageToMessageCodec}. FML provides
+     * a utility codec, {@link FMLIndexedMessageToMessageCodec} that transforms from {@link FMLProxyPacket} to a mod
+     * message using a message discriminator byte. This is optional, but highly recommended for use.
+     *
+     * Note also that the handlers supplied need to be {@link ChannelHandler.Shareable} - they are injected into two
+     * channels.
+     *
+     * @param name
+     * @param handlers
+     * @return
+     */
+    public EnumMap<Side,EmbeddedChannel> newChannel(String name, ChannelHandler... handlers)
     {
-        if (channels.containsKey(name) || name.startsWith("MC|") || name.startsWith("\u0001"))
+        if (channels.containsKey(name) || name.startsWith("MC|") || name.startsWith("\u0001") || name.startsWith("FML"))
         {
             throw new RuntimeException("That channel is already registered");
         }
-        FMLEmbeddedChannel channel = new FMLEmbeddedChannel(name);
-        channels.put(name,channel);
-        return channel;
+        EnumMap<Side,EmbeddedChannel> result = Maps.newEnumMap(Side.class);
+
+        for (Side side : Side.values())
+        {
+            FMLEmbeddedChannel channel = new FMLEmbeddedChannel(name, side, handlers);
+            channels.get(side).put(name,channel);
+            result.put(side, channel);
+        }
+        return result;
     }
 
-    public EmbeddedChannel getChannel(String name)
+    public EmbeddedChannel getChannel(String name, Side source)
     {
-        return channels.get(name);
+        return channels.get(source).get(name);
     }
 /*
     *//**
@@ -295,18 +468,10 @@ public enum NetworkRegistry
         ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
         if (mc == null)
         {
-            FMLLog.log(Level.SEVERE, "Mod %s attempted to register a gui network handler during a construction phase", mc.getModId());
+            FMLLog.log(Level.SEVERE, "Mod of type %s attempted to register a gui network handler during a construction phase", mod.getClass().getName());
             throw new RuntimeException("Invalid attempt to create a GUI during mod construction. Use an EventHandler instead");
         }
-        NetworkModHolder nmh = mc.getNetworkModHolder();
-        if (nmh == null)
-        {
-            FMLLog.log(Level.FINE, "The mod %s needs to be a @NetworkMod to register a Networked Gui Handler", mc.getModId());
-        }
-        else
-        {
-            serverGuiHandlers.put(mc, handler);
-        }
+        serverGuiHandlers.put(mc, handler);
         clientGuiHandlers.put(mc, handler);
     }
 /*    void openRemoteGui(ModContainer mc, EntityPlayerMP player, int modGuiId, World world, int x, int y, int z)
@@ -335,8 +500,8 @@ public enum NetworkRegistry
         FMLCommonHandler.instance().showGuiScreen(handler.getClientGuiElement(modGuiId, player, world, x, y, z));
     }
 
-    public boolean hasChannel(String channelName)
+    public boolean hasChannel(String channelName, Side source)
     {
-        return channels.containsKey(channelName);
+        return channels.get(source).containsKey(channelName);
     }
 }

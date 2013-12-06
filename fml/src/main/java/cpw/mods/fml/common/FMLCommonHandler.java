@@ -26,6 +26,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.SaveHandler;
@@ -489,5 +490,10 @@ public class FMLCommonHandler
 
     public void bootstrap()
     {
+    }
+
+    public NetworkManager getClientToServerNetworkManager()
+    {
+        return sidedDelegate.getClientToServerNetworkManager();
     }
 }

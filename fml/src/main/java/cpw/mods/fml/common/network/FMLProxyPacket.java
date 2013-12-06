@@ -6,6 +6,8 @@ import io.netty.channel.embedded.EmbeddedChannel;
 
 import java.io.IOException;
 
+import cpw.mods.fml.relauncher.Side;
+
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
@@ -14,6 +16,7 @@ import net.minecraft.network.play.server.S3FPacketCustomPayload;
 
 public class FMLProxyPacket extends Packet {
     final String channel;
+    private Side target;
     private final ByteBuf payload;
     private INetHandler netHandler;
 
@@ -25,11 +28,13 @@ public class FMLProxyPacket extends Packet {
     public FMLProxyPacket(S3FPacketCustomPayload original)
     {
         this(original.func_149168_d(), original.func_149169_c());
+        this.target = Side.CLIENT;
     }
 
     public FMLProxyPacket(C17PacketCustomPayload original)
     {
         this(original.func_149558_e(), original.func_149559_c());
+        this.target = Side.SERVER;
     }
 
     public FMLProxyPacket(ByteBuf payload, String channel)
@@ -53,7 +58,7 @@ public class FMLProxyPacket extends Packet {
     public void func_148833_a(INetHandler inethandler)
     {
         this.netHandler = inethandler;
-        EmbeddedChannel internalChannel = NetworkRegistry.INSTANCE.getChannel(this.channel);
+        EmbeddedChannel internalChannel = NetworkRegistry.INSTANCE.getChannel(this.channel, this.target);
         if (internalChannel != null)
         {
             internalChannel.writeInbound(this);

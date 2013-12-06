@@ -23,6 +23,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.StringTranslate;
 
@@ -233,5 +234,10 @@ public class FMLServerHandler implements IFMLSidedHandler
     public void serverStopped()
     {
         // NOOP
+    }
+    @Override
+    public NetworkManager getClientToServerNetworkManager()
+    {
+        throw new RuntimeException("Missing");
     }
 }
