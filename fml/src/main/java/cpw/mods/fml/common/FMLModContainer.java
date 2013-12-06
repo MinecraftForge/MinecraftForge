@@ -61,7 +61,7 @@ import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppedEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
-import cpw.mods.fml.common.network.FMLNetworkHandler;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
 import cpw.mods.fml.common.versioning.VersionParser;
@@ -494,6 +494,7 @@ public class FMLModContainer implements ModContainer
 
             Method factoryMethod = gatherAnnotations(clazz);
             modInstance = getLanguageAdapter().getNewInstance(this,clazz, modClassLoader, factoryMethod);
+            NetworkRegistry.INSTANCE.register(this, clazz, (String)(descriptor.containsKey("acceptableRemoteVersions") ? descriptor.get("acceptableRemoteVersions") : null), event.getASMHarvestedData());
             if (fingerprintNotPresent)
             {
                 eventBus.post(new FMLFingerprintViolationEvent(source.isDirectory(), source, ImmutableSet.copyOf(this.sourceFingerprints), expectedFingerprint));

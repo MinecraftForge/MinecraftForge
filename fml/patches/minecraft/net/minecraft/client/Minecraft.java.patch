@@ -81,19 +81,3 @@
          this.field_71424_I.func_76319_b();
          this.field_71423_H = func_71386_F();
      }
-@@ -2046,6 +2063,7 @@
-         networkmanager.func_150725_a(new C00Handshake(4, socketaddress.toString(), 0, EnumConnectionState.LOGIN), new GenericFutureListener[0]);
-         networkmanager.func_150725_a(new C00PacketLoginStart(this.func_110432_I().func_148256_e()), new GenericFutureListener[0]);
-         this.field_71453_ak = networkmanager;
-+        FMLClientHandler.instance().currentConnection(networkmanager, true);
-     }
- 
-     public void func_71403_a(WorldClient p_71403_1_)
-@@ -2076,6 +2094,7 @@
- 
-         this.field_71451_h = null;
-         this.field_71453_ak = null;
-+        FMLClientHandler.instance().currentConnection(null, p_71353_1_ == null);
- 
-         if (this.field_71461_s != null)
-         {

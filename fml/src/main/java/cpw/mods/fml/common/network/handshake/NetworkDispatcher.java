@@ -164,6 +164,11 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
         {
             handled = handleClientSideCustomPacket((S3FPacketCustomPayload)msg, ctx);
         }
+        else if (msg instanceof S40PacketDisconnect && state != ConnectionState.CONNECTED)
+        {
+            // Switch to play state to handle the disconnect message
+            continueToClientPlayState();
+        }
         else if (state != ConnectionState.CONNECTED)
         {
             FMLLog.info("Unexpected packet during modded negotiation - assuming vanilla");
@@ -187,7 +192,11 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
 
     private void kickVanilla()
     {
-        final ChatComponentText chatcomponenttext = new ChatComponentText("This is modded. No modded response received. Bye!");
+        kickWithMessage("This is modded. No modded response received. Bye!");
+    }
+    private void kickWithMessage(String message)
+    {
+        final ChatComponentText chatcomponenttext = new ChatComponentText(message);
         manager.func_150725_a(new S40PacketDisconnect(chatcomponenttext), new GenericFutureListener<Future<?>>()
         {
             public void operationComplete(Future<?> result)
@@ -281,5 +290,10 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
             manager.func_150725_a(msg.toC17Packet());
         else
             manager.func_150725_a(msg.toS3FPacket());
+    }
+
+    public void rejectHandshake(String result)
+    {
+        kickWithMessage(result);
     }
 }

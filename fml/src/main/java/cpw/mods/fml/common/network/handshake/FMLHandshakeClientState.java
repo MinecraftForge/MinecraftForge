@@ -1,12 +1,8 @@
 package cpw.mods.fml.common.network.handshake;
 
-import java.util.List;
-
 import io.netty.channel.ChannelHandlerContext;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.network.NetworkRegistry;
 
 enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
 {

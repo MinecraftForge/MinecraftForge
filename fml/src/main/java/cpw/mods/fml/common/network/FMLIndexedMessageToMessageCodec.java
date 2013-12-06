@@ -32,7 +32,7 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
         byte discriminator = types.get(clazz);
         buffer.writeByte(discriminator);
         encodeInto(ctx, msg, buffer);
-        FMLProxyPacket proxy = new FMLProxyPacket(buffer, ctx.channel().attr(NetworkRegistry.FML_CHANNEL).get());
+        FMLProxyPacket proxy = new FMLProxyPacket(buffer.copy(), ctx.channel().attr(NetworkRegistry.FML_CHANNEL).get());
         out.add(proxy);
     }
 

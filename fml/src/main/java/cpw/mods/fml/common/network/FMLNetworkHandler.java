@@ -12,18 +12,27 @@
 
 package cpw.mods.fml.common.network;
 
-import org.apache.logging.log4j.core.helpers.Integers;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.EnumConnectionState;
-import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.world.World;
+
+import org.apache.logging.log4j.core.helpers.Integers;
+
+import com.google.common.collect.Lists;
+
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.network.handshake.FMLHandshakeMessage.ClientModList;
+import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
+import cpw.mods.fml.relauncher.Side;
 
 public class FMLNetworkHandler
 {
@@ -440,6 +449,29 @@ public class FMLNetworkHandler
     {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public static String checkClientModList(ClientModList clientModList)
+    {
+        Map<String,String> modList = clientModList.modList();
+        List<ModContainer> rejects = Lists.newArrayList();
+        for (Entry<ModContainer, NetworkModHolder> networkMod : NetworkRegistry.INSTANCE.registry().entrySet())
+        {
+            boolean result = networkMod.getValue().check(modList, Side.CLIENT);
+            if (!result)
+            {
+                rejects.add(networkMod.getKey());
+            }
+        }
+        if (rejects.isEmpty())
+        {
+            return null;
+        }
+        else
+        {
+            FMLLog.info("Rejecting client : %s", rejects);
+            return String.format("Mod rejections %s",rejects);
+        }
     }
 
 }

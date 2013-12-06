@@ -3,8 +3,11 @@ package cpw.mods.fml.common.network.handshake;
 import io.netty.buffer.ByteBuf;
 
 import java.util.List;
+import java.util.Map;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.network.ByteBufUtils;
@@ -80,20 +83,20 @@ public abstract class FMLHandshakeMessage {
         {
             for (ModContainer mod : modList)
             {
-                modTags.add(new String[] { mod.getModId(), mod.getVersion() });
+                modTags.put(mod.getModId(), mod.getVersion());
             }
         }
-        private List<String[]> modTags = Lists.newArrayList();
+        private Map<String,String> modTags = Maps.newHashMap();
 
         @Override
         public void toBytes(ByteBuf buffer)
         {
             super.toBytes(buffer);
             ByteBufUtils.writeVarInt(buffer, modTags.size(), 2);
-            for (String[] modTag: modTags)
+            for (Map.Entry<String,String> modTag: modTags.entrySet())
             {
-                ByteBufUtils.writeUTF8String(buffer, modTag[0]);
-                ByteBufUtils.writeUTF8String(buffer, modTag[1]);
+                ByteBufUtils.writeUTF8String(buffer, modTag.getKey());
+                ByteBufUtils.writeUTF8String(buffer, modTag.getValue());
             }
         }
 
@@ -104,27 +107,22 @@ public abstract class FMLHandshakeMessage {
             int modCount = ByteBufUtils.readVarInt(buffer, 2);
             for (int i = 0; i < modCount; i++)
             {
-                modTags.add(new String[] { ByteBufUtils.readUTF8String(buffer), ByteBufUtils.readUTF8String(buffer)});
+                modTags.put(ByteBufUtils.readUTF8String(buffer), ByteBufUtils.readUTF8String(buffer));
             }
         }
 
         public String modListAsString()
         {
-            StringBuffer sb = new StringBuffer();
-            sb.append("[ ");
-            for (int i = 0; i < modTags.size(); i++)
-            {
-                String[] mod = modTags.get(i);
-                sb.append(mod[0]).append("@").append(mod[1]);
-                if (i < modTags.size() - 1) sb.append(", ");
-            }
-            sb.append(" ]");
-            return sb.toString();
+            return Joiner.on(',').withKeyValueSeparator("@").join(modTags);
         }
 
         public int modListSize()
         {
             return modTags.size();
+        }
+        public Map<String, String> modList()
+        {
+            return modTags;
         }
     }
 
