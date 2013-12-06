@@ -207,7 +207,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
             handshakeChannel.writeInbound(proxy);
             return true;
         }
-        else if (NetworkRegistry.INSTANCE.hasChannel(channelName))
+        else if (NetworkRegistry.INSTANCE.hasChannel(channelName, Side.CLIENT))
         {
             FMLProxyPacket proxy = new FMLProxyPacket(msg);
             context.fireChannelRead(proxy);
@@ -230,7 +230,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
             handshakeChannel.writeInbound(proxy);
             return true;
         }
-        else if (NetworkRegistry.INSTANCE.hasChannel(channelName))
+        else if (NetworkRegistry.INSTANCE.hasChannel(channelName, Side.SERVER))
         {
             FMLProxyPacket proxy = new FMLProxyPacket(msg);
             context.fireChannelRead(proxy);

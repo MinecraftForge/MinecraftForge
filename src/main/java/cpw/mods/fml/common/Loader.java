@@ -564,9 +564,9 @@ public class Loader
             return "";
         }
         StringBuilder ret = new StringBuilder();
-        List<String> branding = FMLCommonHandler.instance().getBrandings();
+        List<String> branding = FMLCommonHandler.instance().getBrandings(false);
 
-        Joiner.on(' ').skipNulls().appendTo(ret, branding.subList(1, branding.size()));
+        Joiner.on(' ').skipNulls().appendTo(ret, branding);
         if (modController != null)
         {
             modController.printModStates(ret);

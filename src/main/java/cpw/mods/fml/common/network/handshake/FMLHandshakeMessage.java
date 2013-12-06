@@ -1,16 +1,14 @@
 package cpw.mods.fml.common.network.handshake;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.List;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
-import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.NetworkRegistry;
-
-import io.netty.buffer.ByteBuf;
 
 public abstract class FMLHandshakeMessage {
     public static class ServerHello extends FMLHandshakeMessage {

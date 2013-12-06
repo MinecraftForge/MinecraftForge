@@ -15,6 +15,7 @@ package cpw.mods.fml.common;
 import java.util.List;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import cpw.mods.fml.common.network.packet.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.packet.EntitySpawnPacket;
@@ -53,4 +54,6 @@ public interface IFMLSidedHandler
     String getCurrentLanguage();
 
     void serverStopped();
+
+    NetworkManager getClientToServerNetworkManager();
 }

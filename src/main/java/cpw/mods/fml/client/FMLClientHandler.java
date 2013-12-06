@@ -30,6 +30,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 
@@ -121,6 +122,8 @@ public class FMLClientHandler implements IFMLSidedHandler
     private IReloadableResourceManager resourceManager;
 
     private Map<String, IResourcePack> resourcePackMap;
+
+    private NetworkManager networkConnection;
 
     /**
      * Called to start the whole game off
@@ -563,5 +566,16 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             ObfuscationReflectionHelper.setPrivateValue(MinecraftServer.class, server, true, "field_71296"+"_Q","serverIs"+"Running");
         }
+    }
+
+    @Override
+    public NetworkManager getClientToServerNetworkManager()
+    {
+        return this.networkConnection;
+    }
+
+    public void currentConnection(NetworkManager networkManager, boolean shouldChange)
+    {
+        if (shouldChange) this.networkConnection = networkManager;
     }
 }

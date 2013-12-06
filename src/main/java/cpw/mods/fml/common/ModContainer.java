@@ -141,6 +141,4 @@ public interface ModContainer
     public Class<?> getCustomResourcePackClass();
 
     Map<String, String> getSharedModDescriptor();
-
-    NetworkModHolder getNetworkModHolder();
 }
