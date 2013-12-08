@@ -2,27 +2,25 @@ package za.co.mcportcentral;
 
 
 import com.google.common.base.Throwables;
+
+import gnu.trove.set.hash.THashSet;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 import net.minecraft.server.MinecraftServer;
+
+import org.apache.commons.lang.BooleanUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.command.TicksPerSecondCommand;
-import org.spigotmc.Metrics;
 
 public class MCPCConfig
 {
@@ -42,48 +40,93 @@ public class MCPCConfig
     // Some mods such as Twilight Forest listen for specific events as their WorldProvider loads to hotload its dimension. This prevents this from happening so MV can create worlds using the same provider without issue.
     public static boolean craftWorldLoading = false;
 
-    public enum Toggle
+    public static final Map<String, Setting> settings = new HashMap<String, Setting>();
+    public abstract static class Setting<T>
     {
         // Logging options
-        dumpMaterials("settings.dump-materials", false, "Dumps all materials with their corresponding id's"),
-        disableWarnings("logging.disabled-warnings", false, "Disable warning messages to server admins"),
-        worldLeakDebug("logging.world-leak-debug", false, "Log worlds that appear to be leaking (buggy)"),
-        connectionLogging("logging.connection", false, "Log connections"),
-        tileEntityPlaceLogging("logging.warn-place-no-tileentity", true, "Warn when a mod requests tile entity from a block that doesn't support one"),
-        chunkLoadLogging("logging.chunk-load", false, "Log when chunks are loaded (dev)"),
-        chunkUnloadLogging("logging.chunk-unload", false, "Log when chunks are unloaded (dev)"),
-        entitySpawnLogging("logging.entity-spawn", false, "Log when living entities are spawned (dev)"),
-        entityDespawnLogging("logging.entity-despawn", false, "Log when living entities are despawned (dev)"),
-        entityDeathLogging("logging.entity-death", false, "Log when an entity is destroyed (dev)"),
-        logWithStackTraces("logging.detailed-logging", false, "Add stack traces to dev logging"),
+        public static final BoolSetting dumpMaterials = new BoolSetting("settings.dump-materials", false, "Dumps all materials with their corresponding id's");
+        public static final BoolSetting disableWarnings = new BoolSetting("logging.disabled-warnings", false, "Disable warning messages to server admins");
+        public static final BoolSetting worldLeakDebug = new BoolSetting("logging.world-leak-debug", false, "Log worlds that appear to be leaking (buggy)");
+        public static final BoolSetting connectionLogging = new BoolSetting("logging.connection", false, "Log connections");
+        public static final BoolSetting tileEntityPlaceLogging = new BoolSetting("logging.warn-place-no-tileentity", true, "Warn when a mod requests tile entity from a block that doesn't support one");
+        public static final BoolSetting tickIntervalLogging = new BoolSetting("logging.tick-intervals", false, "Log when skip interval handlers are ticked");
+        public static final BoolSetting chunkLoadLogging = new BoolSetting("logging.chunk-load", false, "Log when chunks are loaded (dev)");
+        public static final BoolSetting chunkUnloadLogging = new BoolSetting("logging.chunk-unload", false, "Log when chunks are unloaded (dev)");
+        public static final BoolSetting entitySpawnLogging = new BoolSetting("logging.entity-spawn", false, "Log when living entities are spawned (dev)");
+        public static final BoolSetting entityDespawnLogging = new BoolSetting("logging.entity-despawn", false, "Log when living entities are despawned (dev)");
+        public static final BoolSetting entityDeathLogging = new BoolSetting("logging.entity-death", false, "Log when an entity is destroyed (dev)");
+        public static final BoolSetting logWithStackTraces = new BoolSetting("logging.detailed-logging", false, "Add stack traces to dev logging");
+        public static final BoolSetting dumpChunksOnDeadlock = new BoolSetting("logging.dump-chunks-on-deadlock", true, "Dump chunks in the event of a deadlock (helps to debug the deadlock)");
+        public static final BoolSetting dumpHeapOnDeadlock = new BoolSetting("logging.dump-heap-on-deadlock", false, "Dump the heap in the event of a deadlock (helps to debug the deadlock)");
+        public static final IntSetting largeCollisionLogSize = new IntSetting("logging.collision-warn-size", 200, "Number of colliding entities in one spot before logging a warning. Set to 0 to disable");
         
         // Chunk loading options
-        loadChunkOnRequest("settings.load-chunk-on-request", false, "Forces Chunk Loading on 'Provide' requests (speedup for mods that don't check if a chunk is loaded"),
-        loadChunkOnForgeTick("settings.load-chunk-on-forge-tick", false, "Forces Chunk Loading during Forge Server Tick events"),
+        public static final BoolSetting loadChunkOnRequest = new BoolSetting("settings.load-chunk-on-request", false, "Forces Chunk Loading on 'Provide' requests (speedup for mods that don't check if a chunk is loaded");
+        public static final BoolSetting loadChunkOnForgeTick = new BoolSetting("settings.load-chunk-on-forge-tick", false, "Forces Chunk Loading during Forge Server Tick events");
         
         // Server options
-        infiniteWaterSource("world-settings.default.infinite-water-source", true, "Vanilla water source behavior - is infinite"),
-        flowingLavaDecay("world-settings.default.flowing-lava-decay", false, "Lava behaves like vanilla water when source block is removed"),
-        fakePlayerLogin("fake-players.do-login", false, "Raise login events for fake players"),
+        public static final BoolSetting infiniteWaterSource = new BoolSetting("world-settings.default.infinite-water-source", true, "Vanilla water source behavior - is infinite");
+        public static final BoolSetting flowingLavaDecay = new BoolSetting("world-settings.default.flowing-lava-decay", false, "Lava behaves like vanilla water when source block is removed");
+        public static final BoolSetting fakePlayerLogin = new BoolSetting("fake-players.do-login", false, "Raise login events for fake players");
         
         // Plug-in options
-        remapPluginFile("plugin-settings.default.remap-plugin-file", false, "Remap the plugin file (dev)");
+        public static final BoolSetting remapPluginFile = new BoolSetting("plugin-settings.default.remap-plugin-file", false, "Remap the plugin file (dev)");
         
         public final String path;
-        public final boolean def;
+        public final T def;
         public final String description;
-        private Toggle(String path, boolean def, String description)
+        private Setting(String path, T def, String description)
         {
             this.path = path;
             this.def = def;
             this.description = description;
+            settings.put(path, this);
         }
         
-        public boolean value()
+        public abstract T getValue();
+        
+        public abstract void setValue(String value);
+        
+        public static class IntSetting extends Setting<Integer>
         {
-            return getBoolean(path, def);
+            private IntSetting(String path, Integer def, String description)
+            {
+                super(path, def, description);
+            }
+            
+            public Integer getValue()
+            {
+                config.addDefault(path, def);
+                return config.getInt(path);
+            }
+            
+            public void setValue(String value)
+            {
+                config.set(path, org.apache.commons.lang.math.NumberUtils.toInt(value, def));
+            }
+        }
+        
+        public static class BoolSetting extends Setting<Boolean>
+        {
+            private BoolSetting(String path, Boolean def, String description)
+            {
+                super(path, def, description);
+            }
+            
+            public Boolean getValue()
+            {
+                config.addDefault(path, def);
+                return config.getBoolean(path);
+            }
+            public void setValue(String value)
+            {
+                Boolean val = BooleanUtils.toBooleanObject(value);
+                val = val == null ? def : val;
+                config.set(path, val);
+            }
         }
     }
+
     /*========================================================================*/
 
     
@@ -96,7 +139,7 @@ public class MCPCConfig
             
             config = YamlConfiguration.loadConfiguration( CONFIG_FILE );
             String header = HEADER + "\n";
-            for(Toggle toggle : Toggle.class.getEnumConstants())
+            for(Setting toggle : settings.values())
             {
                 header += "Setting: " + toggle.path + " Default: " + toggle.def + "   # " + toggle.description + "\n";
                 config.addDefault(toggle.path, toggle.def);
@@ -163,21 +206,12 @@ public class MCPCConfig
         }
     }
 
-    private static void set(String path, Object val)
+    public static void set(String path, Object val)
     {
+        init();
         config.set( path, val );
     }
 
-    public static boolean getToggle(Toggle toggle)
-    {
-        return getBoolean(toggle.path, toggle.def);
-    }
-    
-    public static void setToggle(Toggle toggle, boolean value)
-    {
-        config.set(toggle.path, value);
-    }
-    
     public static boolean getBoolean(String path, boolean def)
     {
         return getBoolean(path, def, true);
@@ -185,21 +219,31 @@ public class MCPCConfig
 
     public static boolean getBoolean(String path, boolean def, boolean addDefault)
     {
+        init();
         if (addDefault)
+        {
             config.addDefault( path, def );
+        }
         return config.getBoolean( path, def );
     }
-
-    private static int getInt(String path, int def)
+    
+    public static int getInt(String path, int def)
     {
+        return getInt(path, def, true);
+    }
+
+    public static int getInt(String path, int def, boolean addDefault)
+    {
+        init();
         config.addDefault( path, def );
         return config.getInt( path, config.getInt( path ) );
     }
 
     private static <T> List getList(String path, T def)
     {
+        init();
         config.addDefault( path, def );
-        return (List<T>) config.getList( path, config.getList( path ) );
+        return config.getList( path, config.getList( path ) );
     }
 
     public static String getString(String path, String def)
@@ -209,8 +253,11 @@ public class MCPCConfig
 
     public static String getString(String path, String def, boolean addDefault)
     {
+        init();
         if (addDefault)
+        {
             config.addDefault( path, def );
+        }
         return config.getString( path, def );
     }
 

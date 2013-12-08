@@ -7,7 +7,7 @@
 -            Logger.getLogger("Minecraft").info(String.format("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods));
 -            FMLLog.info("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods);
 +            // MCPC+ start - disable unneeded console spam
-+            if (za.co.mcportcentral.MCPCConfig.Toggle.connectionLogging.value()) {
++            if (za.co.mcportcentral.MCPCConfig.Setting.connectionLogging.getValue()) {
 +                Logger.getLogger("Minecraft").info(String.format("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods));
 +                FMLLog.info("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods);
 +            }
@@ -22,7 +22,7 @@
 -            Logger.getLogger("Minecraft").info(String.format("User %s connecting with mods %s", userName, modVersions.keySet()));
 -            FMLLog.info("User %s connecting with mods %s", userName, modVersions.keySet());
 +            // MCPC+ start - disable unneeded console spam
-+            if (za.co.mcportcentral.MCPCConfig.Toggle.connectionLogging.value()) {
++            if (za.co.mcportcentral.MCPCConfig.Setting.connectionLogging.getValue()) {
 +                Logger.getLogger("Minecraft").info(String.format("User %s connecting with mods %s", userName, modVersions.keySet()));
 +                FMLLog.info("User %s connecting with mods %s", userName, modVersions.keySet());
 +            }

@@ -263,7 +263,9 @@ public abstract class PotionEffectType {
      * @return Array of types.
      */
     public static PotionEffectType[] values() {
-        PotionEffectType[] result = new PotionEffectType[byId.size()]; // MCPC+ change underlying storage to map
+        int maxId = 0;
+        for(int id : byId.keySet()) maxId = Math.max(maxId, id);
+        PotionEffectType[] result = new PotionEffectType[maxId + 1]; // MCPC+ change underlying storage to map
         return byId.values().toArray(result); // MCPC+ change underlying storage to map
     }
 }

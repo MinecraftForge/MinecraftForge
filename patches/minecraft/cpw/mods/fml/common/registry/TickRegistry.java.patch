@@ -1,0 +1,29 @@
+--- ../src_base/minecraft/cpw/mods/fml/common/registry/TickRegistry.java
++++ ../src_work/minecraft/cpw/mods/fml/common/registry/TickRegistry.java
+@@ -15,6 +15,8 @@
+ import java.util.List;
+ import java.util.PriorityQueue;
+ import java.util.concurrent.atomic.AtomicLong;
++
++import za.co.mcportcentral.SkipIntervalHandler;
+ 
+ import com.google.common.collect.Queues;
+ 
+@@ -84,7 +86,16 @@
+     }
+     public static void registerTickHandler(ITickHandler handler, Side side)
+     {
+-        registerScheduledTickHandler(new SingleIntervalHandler(handler), side);
++        Class clazz = handler.getClass();
++        //int handlerInterval = za.co.mcportcentral.MCPCConfig.getInt("tick-intervals." + clazz.getName(), 1, true);
++        //if (handlerInterval > 1)
++        //{
++            registerScheduledTickHandler(new SkipIntervalHandler(handler), side);
++        //}
++        //else
++        //{
++            //registerScheduledTickHandler(new SingleIntervalHandler(handler), side);
++        //}
+     }
+ 
+     public static void updateTickQueue(List<IScheduledTickHandler> ticks, Side side)

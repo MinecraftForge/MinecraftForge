@@ -528,8 +528,11 @@
          }
  
          if (this.swingProgress > 0.0F)
-@@ -2009,11 +2202,20 @@
+@@ -2007,13 +2200,23 @@
+ 
+     protected void collideWithNearbyEntities()
      {
++        if (!this.canBePushed()) return; // MCPC+ don't get the list if the entity can't be pushed
          List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
  
 -        if (list != null && !list.isEmpty())
@@ -550,7 +553,7 @@
  
                  if (entity.canBePushed())
                  {
-@@ -2277,4 +2479,42 @@
+@@ -2277,4 +2480,42 @@
      {
          return this.getTeam() != null ? this.getTeam().isSameTeam(par1Team) : false;
      }

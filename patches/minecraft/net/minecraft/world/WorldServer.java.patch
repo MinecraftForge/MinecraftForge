@@ -697,7 +697,7 @@
          }
      }
  
-@@ -490,11 +845,9 @@
+@@ -490,19 +845,18 @@
              nextticklistentry.setScheduledTime((long)par5 + this.worldInfo.getWorldTotalTime());
          }
  
@@ -712,8 +712,9 @@
      }
  
      /**
-@@ -502,7 +855,7 @@
+      * Updates (and cleans up) entities and tile entities
       */
++    /* MCPC+ tick entities even if nobody is on and no persistent chunks exist
      public void updateEntities()
      {
 -        if (this.playerEntities.isEmpty())
@@ -721,7 +722,15 @@
          {
              if (this.updateEntityTick++ >= 1200)
              {
-@@ -530,17 +883,24 @@
+@@ -516,6 +870,7 @@
+ 
+         super.updateEntities();
+     }
++    */
+ 
+     /**
+      * Resets the updateEntityTick field to 0
+@@ -530,17 +885,24 @@
       */
      public boolean tickUpdates(boolean par1)
      {
@@ -755,7 +764,7 @@
              }
  
              this.theProfiler.startSection("cleaning");
-@@ -548,26 +908,28 @@
+@@ -548,26 +910,28 @@
  
              for (int j = 0; j < i; ++j)
              {
@@ -794,7 +803,7 @@
                  byte b0 = 0;
  
                  if (this.checkChunksExist(nextticklistentry.xCoord - b0, nextticklistentry.yCoord - b0, nextticklistentry.zCoord - b0, nextticklistentry.xCoord + b0, nextticklistentry.yCoord + b0, nextticklistentry.zCoord + b0))
-@@ -607,61 +969,19 @@
+@@ -607,61 +971,19 @@
              }
  
              this.theProfiler.endSection();
@@ -864,7 +873,7 @@
      }
  
      /**
-@@ -670,17 +990,38 @@
+@@ -670,17 +992,38 @@
       */
      public void updateEntityWithOptionalForce(Entity par1Entity, boolean par2)
      {
@@ -910,7 +919,7 @@
      }
  
      /**
-@@ -689,7 +1030,36 @@
+@@ -689,7 +1032,36 @@
      protected IChunkProvider createChunkProvider()
      {
          IChunkLoader ichunkloader = this.saveHandler.getChunkLoader(this.provider);
@@ -948,7 +957,7 @@
          return this.theChunkProviderServer;
      }
  
-@@ -700,16 +1070,31 @@
+@@ -700,16 +1072,31 @@
      {
          ArrayList arraylist = new ArrayList();
  
@@ -990,7 +999,7 @@
          return arraylist;
      }
  
-@@ -718,6 +1103,11 @@
+@@ -718,6 +1105,11 @@
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
      {
@@ -1002,7 +1011,7 @@
          return !this.mcServer.isBlockProtected(this, par2, par3, par4, par1EntityPlayer);
      }
  
-@@ -728,16 +1118,19 @@
+@@ -728,16 +1120,19 @@
              this.entityIdMap = new IntHashMap();
          }
  
@@ -1032,7 +1041,7 @@
          this.createSpawnPosition(par1WorldSettings);
          super.initialize(par1WorldSettings);
      }
-@@ -762,6 +1155,29 @@
+@@ -762,6 +1157,29 @@
              int j = this.provider.getAverageGroundLevel();
              int k = 0;
  
@@ -1062,7 +1071,7 @@
              if (chunkposition != null)
              {
                  i = chunkposition.x;
-@@ -774,7 +1190,7 @@
+@@ -774,7 +1192,7 @@
  
              int l = 0;
  
@@ -1071,7 +1080,7 @@
              {
                  i += random.nextInt(64) - random.nextInt(64);
                  k += random.nextInt(64) - random.nextInt(64);
-@@ -801,7 +1217,7 @@
+@@ -801,7 +1219,7 @@
       */
      protected void createBonusChest()
      {
@@ -1080,7 +1089,7 @@
  
          for (int i = 0; i < 10; ++i)
          {
-@@ -844,6 +1260,7 @@
+@@ -844,6 +1262,7 @@
              }
  
              this.chunkProvider.saveChunks(par1, par2IProgressUpdate);
@@ -1088,7 +1097,7 @@
          }
      }
  
-@@ -866,6 +1283,7 @@
+@@ -866,6 +1285,7 @@
          this.checkSessionLock();
          this.saveHandler.saveWorldInfoWithPlayer(this.worldInfo, this.mcServer.getConfigurationManager().getHostPlayerData());
          this.mapStorage.saveAllData();
@@ -1096,7 +1105,7 @@
      }
  
      protected void onEntityAdded(Entity par1Entity)
-@@ -911,9 +1329,23 @@
+@@ -911,9 +1331,23 @@
       */
      public boolean addWeatherEffect(Entity par1Entity)
      {
@@ -1121,7 +1130,7 @@
              return true;
          }
          else
-@@ -936,11 +1368,21 @@
+@@ -936,11 +1370,21 @@
       */
      public Explosion newExplosion(Entity par1Entity, double par2, double par4, double par6, float par8, boolean par9, boolean par10)
      {
@@ -1148,7 +1157,7 @@
  
          if (!par10)
          {
-@@ -1037,14 +1479,16 @@
+@@ -1037,14 +1481,16 @@
  
          if (flag != this.isRaining())
          {
@@ -1173,7 +1182,7 @@
          }
      }
  
-@@ -1073,4 +1517,123 @@
+@@ -1073,4 +1519,123 @@
      {
          return this.worldTeleporter;
      }
