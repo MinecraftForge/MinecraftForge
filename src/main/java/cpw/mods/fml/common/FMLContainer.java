@@ -16,6 +16,7 @@ import java.io.File;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import net.minecraft.nbt.NBTBase;
@@ -25,10 +26,14 @@ import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
 import cpw.mods.fml.client.FMLFileResourcePack;
 import cpw.mods.fml.client.FMLFolderResourcePack;
 import cpw.mods.fml.common.asm.FMLSanityChecker;
+import cpw.mods.fml.common.event.FMLConstructionEvent;
+import cpw.mods.fml.common.network.NetworkCheckHandler;
+import cpw.mods.fml.common.network.NetworkModHolder;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
@@ -60,9 +65,21 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
     @Override
     public boolean registerBus(EventBus bus, LoadController controller)
     {
+        bus.register(this);
         return true;
     }
 
+    @Subscribe
+    public void modConstruction(FMLConstructionEvent evt)
+    {
+        NetworkRegistry.INSTANCE.register(this, this.getClass(), null, evt.getASMHarvestedData());
+    }
+
+    @NetworkCheckHandler
+    public boolean checkModLists(Map<String,String> modList, Side side)
+    {
+        return Loader.instance().checkRemoteModList(modList,side);
+    }
     @Override
     public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info)
     {
@@ -76,8 +93,7 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
             list.func_74742_a(mod);
         }
         fmlData.func_74782_a("ModList", list);
-        NBTTagList itemList = new NBTTagList();
-        GameData.writeItemData(itemList);
+        NBTTagCompound nbt = GameData.buildItemDataList();
         fmlData.func_74782_a("ModItemData", itemList);
         return fmlData;
     }

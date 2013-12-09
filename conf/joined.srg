@@ -1202,8 +1202,8 @@ CL: ch net/minecraft/command/WrongUsageException
 CL: cj net/minecraft/dispenser/IBlockSource
 CL: ck net/minecraft/block/BlockSourceImpl
 CL: cl net/minecraft/dispenser/BehaviorDefaultDispenseItem
-CL: cm net/minecraft/init/RegistryNamespacedDefaultedByKey
-CL: cn net/minecraft/dispenser/RegistryDefaulted
+CL: cm net/minecraft/util/RegistryNamespacedDefaultedByKey
+CL: cn net/minecraft/util/RegistryDefaulted
 CL: co net/minecraft/dispenser/IBehaviorDispenseItem
 CL: cp net/minecraft/dispenser/IBehaviorDispenseItem$1
 CL: cq net/minecraft/util/EnumFacing
@@ -1211,11 +1211,11 @@ CL: cr net/minecraft/util/IObjectIntIterable
 CL: cs net/minecraft/util/ObjectIntIdentityMap
 CL: ct net/minecraft/dispenser/ILocatableSource
 CL: cu net/minecraft/dispenser/ILocation
-CL: cv net/minecraft/init/RegistryNamespaced
+CL: cv net/minecraft/util/RegistryNamespaced
 CL: cw net/minecraft/dispenser/IPosition
 CL: cx net/minecraft/dispenser/PositionImpl
-CL: cy net/minecraft/dispenser/IRegistry
-CL: cz net/minecraft/dispenser/RegistrySimple
+CL: cy net/minecraft/util/IRegistry
+CL: cz net/minecraft/util/RegistrySimple
 CL: d net/minecraft/crash/CrashReport$2
 CL: dc net/minecraft/util/StatCollector
 CL: dd net/minecraft/util/StringTranslate
@@ -6302,9 +6302,9 @@ FD: ck/a net/minecraft/block/BlockSourceImpl/field_82627_a
 FD: ck/b net/minecraft/block/BlockSourceImpl/field_82625_b
 FD: ck/c net/minecraft/block/BlockSourceImpl/field_82626_c
 FD: ck/d net/minecraft/block/BlockSourceImpl/field_82624_d
-FD: cm/d net/minecraft/init/RegistryNamespacedDefaultedByKey/field_148760_d
-FD: cm/e net/minecraft/init/RegistryNamespacedDefaultedByKey/field_148761_e
-FD: cn/a net/minecraft/dispenser/RegistryDefaulted/field_82597_b
+FD: cm/d net/minecraft/util/RegistryNamespacedDefaultedByKey/field_148760_d
+FD: cm/e net/minecraft/util/RegistryNamespacedDefaultedByKey/field_148761_e
+FD: cn/a net/minecraft/util/RegistryDefaulted/field_82597_b
 FD: co/a net/minecraft/dispenser/IBehaviorDispenseItem/field_82483_a
 FD: cq/a net/minecraft/util/EnumFacing/DOWN
 FD: cq/b net/minecraft/util/EnumFacing/UP
@@ -6321,13 +6321,13 @@ FD: cq/l net/minecraft/util/EnumFacing/field_82609_l
 FD: cq/m net/minecraft/util/EnumFacing/$VALUES
 FD: cs/a net/minecraft/util/ObjectIntIdentityMap/field_148749_a
 FD: cs/b net/minecraft/util/ObjectIntIdentityMap/field_148748_b
-FD: cv/a net/minecraft/init/RegistryNamespaced/field_148759_a
-FD: cv/b net/minecraft/init/RegistryNamespaced/field_148758_b
+FD: cv/a net/minecraft/util/RegistryNamespaced/field_148759_a
+FD: cv/b net/minecraft/util/RegistryNamespaced/field_148758_b
 FD: cx/a net/minecraft/dispenser/PositionImpl/field_82630_a
 FD: cx/b net/minecraft/dispenser/PositionImpl/field_82628_b
 FD: cx/c net/minecraft/dispenser/PositionImpl/field_82629_c
-FD: cz/a net/minecraft/dispenser/RegistrySimple/field_148743_a
-FD: cz/c net/minecraft/dispenser/RegistrySimple/field_82596_a
+FD: cz/a net/minecraft/util/RegistrySimple/field_148743_a
+FD: cz/c net/minecraft/util/RegistrySimple/field_82596_a
 FD: d/a net/minecraft/crash/CrashReport$2/field_71496_a
 FD: dc/a net/minecraft/util/StatCollector/field_74839_a
 FD: dc/b net/minecraft/util/StatCollector/field_150828_b
@@ -16287,11 +16287,11 @@ MD: cl/a (Lcj;Labp;)Labp; net/minecraft/dispenser/BehaviorDefaultDispenseItem/fu
 MD: cl/a (Lcj;Lcq;)V net/minecraft/dispenser/BehaviorDefaultDispenseItem/func_82489_a (Lnet/minecraft/dispenser/IBlockSource;Lnet/minecraft/util/EnumFacing;)V
 MD: cl/a (Lcq;)I net/minecraft/dispenser/BehaviorDefaultDispenseItem/func_82488_a (Lnet/minecraft/util/EnumFacing;)I
 MD: cl/b (Lcj;Labp;)Labp; net/minecraft/dispenser/BehaviorDefaultDispenseItem/func_82487_b (Lnet/minecraft/dispenser/IBlockSource;Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;
-MD: cm/a (I)Ljava/lang/Object; net/minecraft/init/RegistryNamespacedDefaultedByKey/func_148754_a (I)Ljava/lang/Object;
-MD: cm/a (ILjava/lang/String;Ljava/lang/Object;)V net/minecraft/init/RegistryNamespacedDefaultedByKey/func_148756_a (ILjava/lang/String;Ljava/lang/Object;)V
-MD: cm/a (Ljava/lang/Object;)Ljava/lang/Object; net/minecraft/init/RegistryNamespacedDefaultedByKey/func_82594_a (Ljava/lang/Object;)Ljava/lang/Object;
-MD: cm/a (Ljava/lang/String;)Ljava/lang/Object; net/minecraft/init/RegistryNamespacedDefaultedByKey/func_82594_a (Ljava/lang/String;)Ljava/lang/Object;
-MD: cn/a (Ljava/lang/Object;)Ljava/lang/Object; net/minecraft/dispenser/RegistryDefaulted/func_82594_a (Ljava/lang/Object;)Ljava/lang/Object;
+MD: cm/a (I)Ljava/lang/Object; net/minecraft/util/RegistryNamespacedDefaultedByKey/func_148754_a (I)Ljava/lang/Object;
+MD: cm/a (ILjava/lang/String;Ljava/lang/Object;)V net/minecraft/util/RegistryNamespacedDefaultedByKey/func_148756_a (ILjava/lang/String;Ljava/lang/Object;)V
+MD: cm/a (Ljava/lang/Object;)Ljava/lang/Object; net/minecraft/util/RegistryNamespacedDefaultedByKey/func_82594_a (Ljava/lang/Object;)Ljava/lang/Object;
+MD: cm/a (Ljava/lang/String;)Ljava/lang/Object; net/minecraft/util/RegistryNamespacedDefaultedByKey/func_82594_a (Ljava/lang/String;)Ljava/lang/Object;
+MD: cn/a (Ljava/lang/Object;)Ljava/lang/Object; net/minecraft/util/RegistryDefaulted/func_82594_a (Ljava/lang/Object;)Ljava/lang/Object;
 MD: co/a (Lcj;Labp;)Labp; net/minecraft/dispenser/IBehaviorDispenseItem/func_82482_a (Lnet/minecraft/dispenser/IBlockSource;Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;
 MD: cp/a (Lcj;Labp;)Labp; net/minecraft/dispenser/IBehaviorDispenseItem$1/func_82482_a (Lnet/minecraft/dispenser/IBlockSource;Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;
 MD: cq/a (I)Lcq; net/minecraft/util/EnumFacing/func_82600_a (I)Lnet/minecraft/util/EnumFacing;
@@ -16305,31 +16305,31 @@ MD: cs/b (I)Z net/minecraft/util/ObjectIntIdentityMap/func_148744_b (I)Z
 MD: cs/b (Ljava/lang/Object;)I net/minecraft/util/ObjectIntIdentityMap/func_148747_b (Ljava/lang/Object;)I
 MD: cs/iterator ()Ljava/util/Iterator; net/minecraft/util/ObjectIntIdentityMap/iterator ()Ljava/util/Iterator;
 MD: cu/k ()Lafn; net/minecraft/dispenser/ILocation/func_82618_k ()Lnet/minecraft/world/World;
-MD: cv/a ()Ljava/util/Map; net/minecraft/init/RegistryNamespaced/func_148740_a ()Ljava/util/Map;
-MD: cv/a (I)Ljava/lang/Object; net/minecraft/init/RegistryNamespaced/func_148754_a (I)Ljava/lang/Object;
-MD: cv/a (ILjava/lang/String;Ljava/lang/Object;)V net/minecraft/init/RegistryNamespaced/func_148756_a (ILjava/lang/String;Ljava/lang/Object;)V
-MD: cv/a (Ljava/lang/Object;)Ljava/lang/Object; net/minecraft/init/RegistryNamespaced/func_82594_a (Ljava/lang/Object;)Ljava/lang/Object;
-MD: cv/a (Ljava/lang/String;)Ljava/lang/Object; net/minecraft/init/RegistryNamespaced/func_82594_a (Ljava/lang/String;)Ljava/lang/Object;
-MD: cv/b (I)Z net/minecraft/init/RegistryNamespaced/func_148753_b (I)Z
-MD: cv/b (Ljava/lang/Object;)I net/minecraft/init/RegistryNamespaced/func_148757_b (Ljava/lang/Object;)I
-MD: cv/b (Ljava/lang/String;)Z net/minecraft/init/RegistryNamespaced/func_148741_d (Ljava/lang/String;)Z
-MD: cv/c (Ljava/lang/Object;)Ljava/lang/String; net/minecraft/init/RegistryNamespaced/func_148750_c (Ljava/lang/Object;)Ljava/lang/String;
-MD: cv/c (Ljava/lang/String;)Ljava/lang/String; net/minecraft/init/RegistryNamespaced/func_148755_c (Ljava/lang/String;)Ljava/lang/String;
-MD: cv/d (Ljava/lang/Object;)Z net/minecraft/init/RegistryNamespaced/func_148741_d (Ljava/lang/Object;)Z
-MD: cv/iterator ()Ljava/util/Iterator; net/minecraft/init/RegistryNamespaced/iterator ()Ljava/util/Iterator;
+MD: cv/a ()Ljava/util/Map; net/minecraft/util/RegistryNamespaced/func_148740_a ()Ljava/util/Map;
+MD: cv/a (I)Ljava/lang/Object; net/minecraft/util/RegistryNamespaced/func_148754_a (I)Ljava/lang/Object;
+MD: cv/a (ILjava/lang/String;Ljava/lang/Object;)V net/minecraft/util/RegistryNamespaced/func_148756_a (ILjava/lang/String;Ljava/lang/Object;)V
+MD: cv/a (Ljava/lang/Object;)Ljava/lang/Object; net/minecraft/util/RegistryNamespaced/func_82594_a (Ljava/lang/Object;)Ljava/lang/Object;
+MD: cv/a (Ljava/lang/String;)Ljava/lang/Object; net/minecraft/util/RegistryNamespaced/func_82594_a (Ljava/lang/String;)Ljava/lang/Object;
+MD: cv/b (I)Z net/minecraft/util/RegistryNamespaced/func_148753_b (I)Z
+MD: cv/b (Ljava/lang/Object;)I net/minecraft/util/RegistryNamespaced/func_148757_b (Ljava/lang/Object;)I
+MD: cv/b (Ljava/lang/String;)Z net/minecraft/util/RegistryNamespaced/func_148741_d (Ljava/lang/String;)Z
+MD: cv/c (Ljava/lang/Object;)Ljava/lang/String; net/minecraft/util/RegistryNamespaced/func_148750_c (Ljava/lang/Object;)Ljava/lang/String;
+MD: cv/c (Ljava/lang/String;)Ljava/lang/String; net/minecraft/util/RegistryNamespaced/func_148755_c (Ljava/lang/String;)Ljava/lang/String;
+MD: cv/d (Ljava/lang/Object;)Z net/minecraft/util/RegistryNamespaced/func_148741_d (Ljava/lang/Object;)Z
+MD: cv/iterator ()Ljava/util/Iterator; net/minecraft/util/RegistryNamespaced/iterator ()Ljava/util/Iterator;
 MD: cw/a ()D net/minecraft/dispenser/IPosition/func_82615_a ()D
 MD: cw/b ()D net/minecraft/dispenser/IPosition/func_82617_b ()D
 MD: cw/c ()D net/minecraft/dispenser/IPosition/func_82616_c ()D
 MD: cx/a ()D net/minecraft/dispenser/PositionImpl/func_82615_a ()D
 MD: cx/b ()D net/minecraft/dispenser/PositionImpl/func_82617_b ()D
 MD: cx/c ()D net/minecraft/dispenser/PositionImpl/func_82616_c ()D
-MD: cy/a (Ljava/lang/Object;)Ljava/lang/Object; net/minecraft/dispenser/IRegistry/func_82594_a (Ljava/lang/Object;)Ljava/lang/Object;
-MD: cy/a (Ljava/lang/Object;Ljava/lang/Object;)V net/minecraft/dispenser/IRegistry/func_82595_a (Ljava/lang/Object;Ljava/lang/Object;)V
-MD: cz/a ()Ljava/util/Map; net/minecraft/dispenser/RegistrySimple/func_148740_a ()Ljava/util/Map;
-MD: cz/a (Ljava/lang/Object;)Ljava/lang/Object; net/minecraft/dispenser/RegistrySimple/func_82594_a (Ljava/lang/Object;)Ljava/lang/Object;
-MD: cz/a (Ljava/lang/Object;Ljava/lang/Object;)V net/minecraft/dispenser/RegistrySimple/func_82595_a (Ljava/lang/Object;Ljava/lang/Object;)V
-MD: cz/b ()Ljava/util/Set; net/minecraft/dispenser/RegistrySimple/func_148742_b ()Ljava/util/Set;
-MD: cz/d (Ljava/lang/Object;)Z net/minecraft/dispenser/RegistrySimple/func_148741_d (Ljava/lang/Object;)Z
+MD: cy/a (Ljava/lang/Object;)Ljava/lang/Object; net/minecraft/util/IRegistry/func_82594_a (Ljava/lang/Object;)Ljava/lang/Object;
+MD: cy/a (Ljava/lang/Object;Ljava/lang/Object;)V net/minecraft/util/IRegistry/func_82595_a (Ljava/lang/Object;Ljava/lang/Object;)V
+MD: cz/a ()Ljava/util/Map; net/minecraft/util/RegistrySimple/func_148740_a ()Ljava/util/Map;
+MD: cz/a (Ljava/lang/Object;)Ljava/lang/Object; net/minecraft/util/RegistrySimple/func_82594_a (Ljava/lang/Object;)Ljava/lang/Object;
+MD: cz/a (Ljava/lang/Object;Ljava/lang/Object;)V net/minecraft/util/RegistrySimple/func_82595_a (Ljava/lang/Object;Ljava/lang/Object;)V
+MD: cz/b ()Ljava/util/Set; net/minecraft/util/RegistrySimple/func_148742_b ()Ljava/util/Set;
+MD: cz/d (Ljava/lang/Object;)Z net/minecraft/util/RegistrySimple/func_148741_d (Ljava/lang/Object;)Z
 MD: d/a ()Ljava/lang/String; net/minecraft/crash/CrashReport$2/call ()Ljava/lang/String;
 MD: d/call ()Ljava/lang/Object; net/minecraft/crash/CrashReport$2/call ()Ljava/lang/Object;
 MD: dc/a ()J net/minecraft/util/StatCollector/func_150827_a ()J

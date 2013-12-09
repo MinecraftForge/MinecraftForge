@@ -35,6 +35,7 @@ import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
@@ -59,6 +60,7 @@ public enum NetworkRegistry
     public static final AttributeKey<Side> CHANNEL_SOURCE = new AttributeKey<Side>("fml:channelSource");
     public static final AttributeKey<OutboundTarget> FML_MESSAGETARGET = new AttributeKey<OutboundTarget>("fml:outboundTarget");
     public static final AttributeKey<Object> FML_MESSAGETARGETARGS = new AttributeKey<Object>("fml:outboundTargetArgs");
+    public static final AttributeKey<ModContainer> MOD_CONTAINER = new AttributeKey<ModContainer>("fml:modContainer");
 
     public static final byte FML_PROTOCOL = 1;
 
@@ -205,9 +207,14 @@ public enum NetworkRegistry
     static class FMLEmbeddedChannel extends EmbeddedChannel {
         public FMLEmbeddedChannel(String channelName, Side source, ChannelHandler... handlers)
         {
+            this(Loader.instance().activeModContainer(), channelName, source, handlers);
+        }
+        public FMLEmbeddedChannel(ModContainer container, String channelName, Side source, ChannelHandler... handlers)
+        {
             super(handlers);
             this.attr(FML_CHANNEL).set(channelName);
             this.attr(CHANNEL_SOURCE).set(source);
+            this.attr(MOD_CONTAINER).setIfAbsent(container);
             this.pipeline().addFirst(new FMLOutboundHandler());
         }
     }
@@ -249,6 +256,23 @@ public enum NetworkRegistry
         for (Side side : Side.values())
         {
             FMLEmbeddedChannel channel = new FMLEmbeddedChannel(name, side, handlers);
+            channels.get(side).put(name,channel);
+            result.put(side, channel);
+        }
+        return result;
+    }
+
+    public EnumMap<Side,EmbeddedChannel> newChannel(ModContainer container, String name, ChannelHandler... handlers)
+    {
+        if (channels.containsKey(name) || name.startsWith("MC|") || name.startsWith("\u0001") || (name.startsWith("FML") && !("FML".equals(container.getModId()))))
+        {
+            throw new RuntimeException("That channel is already registered");
+        }
+        EnumMap<Side,EmbeddedChannel> result = Maps.newEnumMap(Side.class);
+
+        for (Side side : Side.values())
+        {
+            FMLEmbeddedChannel channel = new FMLEmbeddedChannel(container, name, side, handlers);
             channels.get(side).put(name,channel);
             result.put(side, channel);
         }

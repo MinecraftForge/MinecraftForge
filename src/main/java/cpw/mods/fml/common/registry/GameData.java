@@ -53,48 +53,10 @@ import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
 public class GameData {
-    private static Map<Integer, ItemData> idMap = Maps.newHashMap();
-    private static CountDownLatch serverValidationLatch;
-    private static CountDownLatch clientValidationLatch;
-    private static MapDifference<Integer, ItemData> difference;
-    private static boolean shouldContinue = true;
-    private static boolean isSaveValid = true;
-    private static ImmutableTable<String, String, Integer> modObjectTable;
     private static Table<String, String, ItemStack> customItemStacks = HashBasedTable.create();
-    private static Map<String,String> ignoredMods;
     private static boolean validated;
-
-    private static boolean isModIgnoredForIdValidation(String modId)
-    {
-        if (ignoredMods == null)
-        {
-            File f = new File(Loader.instance().getConfigDir(),"fmlIDChecking.properties");
-            if (f.exists())
-            {
-                Properties p = new Properties();
-                try
-                {
-                    p.load(new FileInputStream(f));
-                    ignoredMods = Maps.fromProperties(p);
-                    if (ignoredMods.size()>0)
-                    {
-                        FMLLog.log("fml.ItemTracker", Level.WARNING, "Using non-empty ignored mods configuration file %s", ignoredMods.keySet());
-                    }
-                }
-                catch (Exception e)
-                {
-                    Throwables.propagateIfPossible(e);
-                    FMLLog.log("fml.ItemTracker", Level.SEVERE, e, "Failed to read ignored ID checker mods properties file");
-                    ignoredMods = ImmutableMap.<String, String>of();
-                }
-            }
-            else
-            {
-                ignoredMods = ImmutableMap.<String, String>of();
-            }
-        }
-        return ignoredMods.containsKey(modId);
-    }
+    public static final FMLControlledNamespacedRegistry<Block> blockRegistry = new FMLControlledNamespacedRegistry<Block>("air", 4095, 0, Block.class);
+    public static final FMLControlledNamespacedRegistry<Item> itemRegistry = new FMLControlledNamespacedRegistry<Item>(null, 32000, 4096, Item.class);
 
     public static void newItemAdded(Item item)
     {
@@ -193,47 +155,12 @@ public class GameData {
         }
     }
 
-    public static void writeItemData(NBTTagList itemList)
+    public static Map<String,Integer> buildItemDataList()
     {
-        for (ItemData dat : idMap.values())
-        {
-            itemList.func_74742_a(dat.toNBT());
-        }
-    }
-
-    /**
-     * Initialize the server gate
-     * @param gateCount the countdown amount. If it's 2 we're on the client and the client and server
-     * will wait at the latch. 1 is a server and the server will proceed
-     */
-    public static void initializeServerGate(int gateCount)
-    {
-        serverValidationLatch = new CountDownLatch(gateCount - 1);
-        clientValidationLatch = new CountDownLatch(gateCount - 1);
-    }
-
-    public static MapDifference<Integer, ItemData> gateWorldLoadingForValidation()
-    {
-        try
-        {
-            serverValidationLatch.await();
-            if (!isSaveValid)
-            {
-                return difference;
-            }
-        }
-        catch (InterruptedException e)
-        {
-        }
-        difference = null;
-        return null;
-    }
-
-
-    public static void releaseGate(boolean carryOn)
-    {
-        shouldContinue = carryOn;
-        clientValidationLatch.countDown();
+        Map<String,Integer> idMapping = Maps.newHashMap();
+        blockRegistry.serializeInto(idMapping);
+        itemRegistry.serializeInto(idMapping);
+        return idMapping;
     }
 
     public static Set<ItemData> buildWorldItemData(NBTTagList modList)
@@ -241,71 +168,21 @@ public class GameData {
         Set<ItemData> worldSaveItems = Sets.newHashSet();
         for (int i = 0; i < modList.func_74745_c(); i++)
         {
-            NBTTagCompound mod = (NBTTagCompound) modList.func_74743_b(i);
+            NBTTagCompound mod = modList.func_150305_b(i);
             ItemData dat = new ItemData(mod);
             worldSaveItems.add(dat);
         }
         return worldSaveItems;
     }
 
-    static void setName(Item item, String name, String modId)
-    {
-        int id = item.field_77779_bT;
-        ItemData itemData = idMap.get(id);
-        itemData.setName(name,modId);
-    }
-
-    public static void buildModObjectTable()
-    {
-        if (modObjectTable != null)
-        {
-            throw new IllegalStateException("Illegal call to buildModObjectTable!");
-        }
-
-        Map<Integer, Cell<String, String, Integer>> map = Maps.transformValues(idMap, new Function<ItemData,Cell<String,String,Integer>>() {
-            public Cell<String,String,Integer> apply(ItemData data)
-            {
-                if ("Minecraft".equals(data.getModId()) || !data.isOveridden())
-                {
-                    return null;
-                }
-                return Tables.immutableCell(data.getModId(), data.getItemType(), data.getItemId());
-            }
-        });
-
-        Builder<String, String, Integer> tBuilder = ImmutableTable.builder();
-        for (Cell<String, String, Integer> c : map.values())
-        {
-            if (c!=null)
-            {
-                tBuilder.put(c);
-            }
-        }
-        modObjectTable = tBuilder.build();
-    }
     static Item findItem(String modId, String name)
     {
-        if (modObjectTable == null || !modObjectTable.contains(modId, name))
-        {
-            return null;
-        }
-
-        return Item.field_77698_e[modObjectTable.get(modId, name)];
+        return (Item) itemRegistry.func_82594_a(modId + ":" + name);
     }
 
     static Block findBlock(String modId, String name)
     {
-        if (modObjectTable == null)
-        {
-            return null;
-        }
-
-        Integer blockId = modObjectTable.get(modId, name);
-        if (blockId == null || blockId >= Block.field_71973_m.length)
-        {
-            return null;
-        }
-        return Block.field_71973_m[blockId];
+        return (Block) blockRegistry.func_82594_a(modId+":"+name);
     }
 
     static ItemStack findItemStack(String modId, String name)
@@ -366,25 +243,27 @@ public class GameData {
     static UniqueIdentifier getUniqueName(Block block)
     {
         if (block == null) return null;
-        ItemData itemData = idMap.get(block.field_71990_ca);
-        if (itemData == null || !itemData.isOveridden() || customItemStacks.contains(itemData.getModId(), itemData.getItemType()))
+        String name = blockRegistry.func_148750_c(block);
+        UniqueIdentifier ui = new UniqueIdentifier(name);
+        if (customItemStacks.contains(ui.modId, ui.name))
         {
             return null;
         }
 
-        return new UniqueIdentifier(itemData.getModId(), itemData.getItemType());
+        return ui;
     }
 
     static UniqueIdentifier getUniqueName(Item item)
     {
         if (item == null) return null;
-        ItemData itemData = idMap.get(item.field_77779_bT);
-        if (itemData == null || !itemData.isOveridden() || customItemStacks.contains(itemData.getModId(), itemData.getItemType()))
+        String name = itemRegistry.func_148750_c(item);
+        UniqueIdentifier ui = new UniqueIdentifier(name);
+        if (customItemStacks.contains(ui.modId, ui.name))
         {
             return null;
         }
 
-        return new UniqueIdentifier(itemData.getModId(), itemData.getItemType());
+        return ui;
     }
 
     public static void validateRegistry()
@@ -405,5 +284,41 @@ public class GameData {
             }
         }
 */        validated = true;
+    }
+    private static Map<UniqueIdentifier, ModContainer> customOwners = Maps.newHashMap();
+    static Block registerBlockAndItem(Item item, Block block, String name, String modId)
+    {
+
+    }
+    static Item registerItem(Item item, String name, String modId)
+    {
+        ModContainer mc = Loader.instance().activeModContainer();
+        if (modId != null)
+        {
+            customOwners.put(new UniqueIdentifier(modId, name), mc);
+        }
+        itemRegistry.add(0, name, item);
+        int itemId = itemRegistry.getId(item);
+        blockRegistry.clearItem(itemId);
+        return item;
+    }
+    static Block registerBlock(Block block, String name, String modId)
+    {
+        ModContainer mc = Loader.instance().activeModContainer();
+        if (modId != null)
+        {
+            customOwners.put(new UniqueIdentifier(modId, name), mc);
+        }
+        blockRegistry.func_148756_a(0, name, block);
+        return block;
+    }
+    public static ModContainer findModOwner(String string)
+    {
+        UniqueIdentifier ui = new UniqueIdentifier(string);
+        if (customOwners.containsKey(ui))
+        {
+            return customOwners.get(ui);
+        }
+        return Loader.instance().getIndexedModList().get(ui.modId);
     }
 }

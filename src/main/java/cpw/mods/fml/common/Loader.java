@@ -17,6 +17,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -40,6 +41,7 @@ import com.google.common.collect.Multisets;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
+import com.google.common.collect.Sets.SetView;
 import com.google.common.collect.TreeMultimap;
 
 import cpw.mods.fml.common.LoaderState.ModState;
@@ -56,6 +58,7 @@ import cpw.mods.fml.common.toposort.TopologicalSort;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 import cpw.mods.fml.common.versioning.VersionParser;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
+import cpw.mods.fml.relauncher.Side;
 
 /**
  * The loader class performs the actual loading of the mod code from disk.
@@ -816,5 +819,25 @@ public class Loader
     public Map<String,String> getCustomModProperties(String modId)
     {
         return getIndexedModList().get(modId).getCustomModProperties();
+    }
+
+    boolean checkRemoteModList(Map<String, String> modList, Side side)
+    {
+        Set<String> remoteModIds = modList.keySet();
+        Set<String> localModIds = namedMods.keySet();
+
+        Set<String> difference = Sets.newLinkedHashSet(Sets.difference(localModIds, remoteModIds));
+        for (Iterator<String> iterator = difference.iterator(); iterator.hasNext();)
+        {
+            String missingRemotely = iterator.next();
+            ModState modState = modController.getModState(namedMods.get(missingRemotely));
+            if (modState == ModState.DISABLED)
+            {
+                iterator.remove();
+            }
+        }
+
+        FMLLog.info("Attempting connection with missing mods %s at %s", difference, side);
+        return true;
     }
 }
