@@ -276,14 +276,6 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
         }
     }
 
-    /**
-     * Callback from the networkmanager
-     * @param fmlProxyPacket
-     */
-    public void dispatch(FMLProxyPacket fmlProxyPacket)
-    {
-    }
-
     public void sendProxy(FMLProxyPacket msg)
     {
         if (side == Side.CLIENT)

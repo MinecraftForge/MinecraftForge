@@ -35,6 +35,7 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -54,12 +55,10 @@ import cpw.mods.fml.common.ObfuscationReflectionHelper;
 
 public class GameRegistry
 {
-    private static Multimap<ModContainer, BlockProxy> blockRegistry = ArrayListMultimap.create();
     private static Set<IWorldGenerator> worldGenerators = Sets.newHashSet();
     private static List<IFuelHandler> fuelHandlers = Lists.newArrayList();
     private static List<ICraftingHandler> craftingHandlers = Lists.newArrayList();
     private static List<IPickupNotifier> pickupHandlers = Lists.newArrayList();
-    private static List<IPlayerTracker> playerTrackers = Lists.newArrayList();
 
     /**
      * Register a world generator - something that inserts new block types into the world
@@ -114,19 +113,19 @@ public class GameRegistry
      * @param modId An optional modId that will "own" this block - generally used by multi-mod systems
      * where one mod should "own" all the blocks of all the mods, null defaults to the active mod
      */
-    public static void registerItem(net.minecraft.item.Item item, String name, String modId)
+    public static Item registerItem(Item item, String name, String modId)
     {
-        GameData.setName(item, name, modId);
+        return GameData.registerItem(item, name, modId);
     }
 
     /**
-     * Register a block with the specified mod specific name : overrides the standard type based name
+     * Register a block with the specified mod specific name
      * @param block The block to register
      * @param name The mod-unique name to register it as
      */
-    public static void registerBlock(net.minecraft.block.Block block, String name)
+    public static Block registerBlock(Block block, String name)
     {
-        registerBlock(block, ItemBlock.class, name);
+        return registerBlock(block, ItemBlock.class, name);
     }
     /**
      * Register a block with the world, with the specified item class and block name
@@ -134,9 +133,9 @@ public class GameRegistry
      * @param itemclass The item type to register with it
      * @param name The mod-unique name to register it with
      */
-    public static void registerBlock(net.minecraft.block.Block block, Class<? extends ItemBlock> itemclass, String name)
+    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name)
     {
-        registerBlock(block, itemclass, name, null);
+        return registerBlock(block, itemclass, name, null);
     }
     /**
      * Register a block with the world, with the specified item class, block name and owning modId
@@ -145,7 +144,7 @@ public class GameRegistry
      * @param name The mod-unique name to register it with
      * @param modId The modId that will own the block name. null defaults to the active modId
      */
-    public static void registerBlock(net.minecraft.block.Block block, Class<? extends ItemBlock> itemclass, String name, String modId)
+    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name, String modId)
     {
         if (Loader.instance().isInState(LoaderState.CONSTRUCTING))
         {
@@ -155,16 +154,17 @@ public class GameRegistry
         {
             assert block != null : "registerBlock: block cannot be null";
             assert itemclass != null : "registerBlock: itemclass cannot be null";
-            Constructor<? extends ItemBlock> itemCtor = itemclass.getConstructor(net.minecraft.block.Block.class);
+            Constructor<? extends ItemBlock> itemCtor = itemclass.getConstructor(Block.class);
             Item i = itemCtor.newInstance(block);
+            GameData.registerBlock(block, name, modId);
             GameRegistry.registerItem(i, name, modId);
+            return block;
         }
         catch (Exception e)
         {
             FMLLog.log(Level.SEVERE, e, "Caught an exception during block registration");
             throw new LoaderException(e);
         }
-        blockRegistry.put(Loader.instance().activeModContainer(), (BlockProxy) block);
     }
 
     public static void addRecipe(ItemStack output, Object... params)
@@ -347,7 +347,7 @@ public class GameRegistry
 	 * @param name The name of the block itself
 	 * @return The block or null if not found
 	 */
-	public static net.minecraft.block.Block findBlock(String modId, String name)
+	public static Block findBlock(String modId, String name)
 	{
 	    return GameData.findBlock(modId, name);
 	}
@@ -358,7 +358,7 @@ public class GameRegistry
 	 * @param name The name of the item itself
 	 * @return The item or null if not found
 	 */
-	public static net.minecraft.item.Item findItem(String modId, String name)
+	public static Item findItem(String modId, String name)
     {
         return GameData.findItem(modId, name);
     }
@@ -408,6 +408,22 @@ public class GameRegistry
             this.modId = modId;
             this.name = name;
         }
+
+        public UniqueIdentifier(String string)
+        {
+            String[] parts = string.split(":");
+            this.modId = parts[0];
+            this.name = parts[1];
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (obj == null) return false;
+            if (obj.getClass() != this.getClass()) return false;
+            final UniqueIdentifier other = (UniqueIdentifier) obj;
+            return Objects.equal(modId, other.modId) && Objects.equal(name, other.name);
+        }
 	}
 
 	/**
@@ -421,7 +437,7 @@ public class GameRegistry
 	 * @param block to lookup
      * @return a {@link UniqueIdentifier} for the block or null
 	 */
-	public static UniqueIdentifier findUniqueIdentifierFor(net.minecraft.block.Block block)
+	public static UniqueIdentifier findUniqueIdentifierFor(Block block)
 	{
 	    return GameData.getUniqueName(block);
 	}
@@ -436,7 +452,7 @@ public class GameRegistry
      * @param item to lookup
      * @return a {@link UniqueIdentifier} for the item or null
      */
-    public static UniqueIdentifier findUniqueIdentifierFor(net.minecraft.item.Item item)
+    public static UniqueIdentifier findUniqueIdentifierFor(Item item)
     {
         return GameData.getUniqueName(item);
     }
