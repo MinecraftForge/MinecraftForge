@@ -1208,8 +1208,9 @@
              {
                  try
                  {
+-                    tileentity.updateEntity();
 +                    tileentity.tickTimer.startTiming(); // Spigot
-                     tileentity.updateEntity();
++                    MCPCHooks.updateEntity(tileentity); // MCPC+
 +                    tileentity.tickTimer.stopTiming(); // Spigot
                  }
                  catch (Throwable throwable2)
@@ -1321,7 +1322,7 @@
 +        Collection dest = scanningTileEntities ? addedTileEntityList : loadedTileEntityList; // MCPC+ - List -> Collection for CB loadedTileEntityList type change
 +        for(Object entity : par1Collection)
 +        {
-+            if(((TileEntity)entity).canUpdate())
++            if(MCPCHooks.canUpdate((TileEntity)entity))
 +            {
 +                dest.add(entity);
 +            }
@@ -1434,7 +1435,7 @@
 +            return;
 +        }
 +
-+        if (par4TileEntity.canUpdate())
++        if (MCPCHooks.canUpdate(par4TileEntity))
 +        {
 +            if (scanningTileEntities)
 +            {
@@ -2189,7 +2190,7 @@
 +    public void addTileEntity(TileEntity entity)
 +    {
 +        Collection dest = scanningTileEntities ? addedTileEntityList : loadedTileEntityList; // MCPC+ - List -> Collection for CB loadedTileEntityList type change
-+        if(entity.canUpdate())
++        if(MCPCHooks.canUpdate(entity))
 +        {
 +            dest.add(entity);
 +        }

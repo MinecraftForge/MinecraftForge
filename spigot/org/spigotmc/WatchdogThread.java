@@ -107,7 +107,7 @@ public class WatchdogThread extends Thread
                             + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.txt");
                     log.log(Level.SEVERE, "------------------------------");
                     log.log(Level.SEVERE, "Writing watchdog detailed info to: " + file);
-                    MCPCHooks.writeChunks(file);
+                    MCPCHooks.writeChunks(file, false);
                     log.log(Level.SEVERE, "Writing complete");
                     log.log(Level.SEVERE, "------------------------------");
                 }

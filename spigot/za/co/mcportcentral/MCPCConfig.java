@@ -137,20 +137,7 @@ public class MCPCConfig
             commands = new HashMap<String, Command>();
             commands.put( "mcpc", new MCPCCommand());
             
-            config = YamlConfiguration.loadConfiguration( CONFIG_FILE );
-            String header = HEADER + "\n";
-            for(Setting toggle : settings.values())
-            {
-                header += "Setting: " + toggle.path + " Default: " + toggle.def + "   # " + toggle.description + "\n";
-                config.addDefault(toggle.path, toggle.def);
-            }
-            config.options().header( header );
-            config.options().copyDefaults( true );
-
-            version = getInt( "config-version", 1 );
-            set( "config-version", 1 );
-            
-            readConfig( MCPCConfig.class, null );
+            load();
         }
     }
     
@@ -170,6 +157,30 @@ public class MCPCConfig
         } catch ( IOException ex )
         {
             Bukkit.getLogger().log( Level.SEVERE, "Could not save " + CONFIG_FILE, ex );
+        }
+    }
+    
+    public static void load()
+    {
+        try
+        {
+            config = YamlConfiguration.loadConfiguration( CONFIG_FILE );
+            String header = HEADER + "\n";
+            for(Setting toggle : settings.values())
+            {
+                header += "Setting: " + toggle.path + " Default: " + toggle.def + "   # " + toggle.description + "\n";
+                config.addDefault(toggle.path, toggle.def);
+            }
+            config.options().header( header );
+            config.options().copyDefaults( true );
+
+            version = getInt( "config-version", 1 );
+            set( "config-version", 1 );
+            
+            readConfig( MCPCConfig.class, null );
+        } catch ( Exception ex )
+        {
+            Bukkit.getLogger().log( Level.SEVERE, "Could not load " + CONFIG_FILE, ex );
         }
     }
 
@@ -210,6 +221,11 @@ public class MCPCConfig
     {
         init();
         config.set( path, val );
+    }
+    
+    public static boolean isSet(String path)
+    {
+        return config.isSet(path);
     }
 
     public static boolean getBoolean(String path, boolean def)

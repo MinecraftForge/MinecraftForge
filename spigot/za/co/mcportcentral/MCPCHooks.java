@@ -107,7 +107,8 @@ public class MCPCHooks {
             return;
         }
         MinecraftServer.getServer();
-        if (MinecraftServer.currentTick % 10 == 0 && MCPCConfig.Setting.largeCollisionLogSize.getValue() > 0 && list.size() >= MCPCConfig.Setting.largeCollisionLogSize.getValue())
+        if (MinecraftServer.currentTick % 10 == 0 && MCPCConfig.Setting.largeCollisionLogSize.getValue() > 0
+                && list.size() >= MCPCConfig.Setting.largeCollisionLogSize.getValue())
         {
             MCPCHooks.CollisionWarning warning = new MCPCHooks.CollisionWarning(world, entity);
             if (recentWarnings.contains(warning))
@@ -153,7 +154,29 @@ public class MCPCHooks {
         }
     }
 
-    public static void writeChunks(File file)
+    private static int getTileTickInterval(TileEntity tileEntity)
+    {
+        String path = "tick-intervals.tiles.update." + tileEntity.getClass().getName().replace(".", "-");
+        //if (!MCPCConfig.isSet(path)) return tileEntity.canUpdate() ? 1 : 0;
+        return MCPCConfig.getInt(path, tileEntity.canUpdate() ? 1 : 0);
+    }
+    
+    public static boolean canUpdate(TileEntity tileEntity)
+    {
+        if (tileEntity == null || !tileEntity.canUpdate()) return false; // quick exit
+        return MCPCHooks.getTileTickInterval(tileEntity) != 0;
+    }
+    
+    public static void updateEntity(TileEntity tileEntity)
+    {
+        int interval = getTileTickInterval(tileEntity);
+        if (MinecraftServer.getServer().currentTick % interval == 0)
+        {
+            tileEntity.updateEntity();
+        }
+    }
+
+    public static void writeChunks(File file, boolean logAll)
     {
         try
         {
@@ -174,7 +197,7 @@ public class MCPCHooks {
                 writer.name("dimensionId").value(world.provider.dimensionId);
                 writer.name("players").value(world.playerEntities.size());
                 writer.name("lastBBTime").value(world.lastBoundingBoxTime);
-                writer.name("avgBBTime").value(String.format("%.2f", (1d * world.totalBoundingBoxTime)/world.totalBoundingBoxCalls));
+                writer.name("avgBBTime").value(String.format("%.2f", (1d * world.totalBoundingBoxTime) / world.totalBoundingBoxCalls));
                 writer.name("loadedChunks").value(world.theChunkProviderServer.loadedChunkHashMap.size());
                 writer.name("activeChunks").value(world.activeChunkSet.size());
                 writer.name("entities").value(world.loadedEntityList.size());
@@ -184,19 +207,19 @@ public class MCPCHooks {
                 TObjectIntHashMap<Class> classEntityCounts = new TObjectIntHashMap<Class>();
                 TObjectIntHashMap<Entity> entityCollisionCounts = new TObjectIntHashMap<Entity>();
                 Set<ChunkCoordinates> collidingCoords = new HashSet<ChunkCoordinates>();
-                for(int i=0; i < world.loadedEntityList.size(); i++)
+                for (int i = 0; i < world.loadedEntityList.size(); i++)
                 {
-                    Entity entity = (Entity)world.loadedEntityList.get(i);
-                    ChunkCoordIntPair chunkCoords = new ChunkCoordIntPair((int) entity.posX >> 4, (int) entity.posZ >> 4 );
-                    chunkEntityCounts.adjustOrPutValue(chunkCoords,  1, 1);
+                    Entity entity = (Entity) world.loadedEntityList.get(i);
+                    ChunkCoordIntPair chunkCoords = new ChunkCoordIntPair((int) entity.posX >> 4, (int) entity.posZ >> 4);
+                    chunkEntityCounts.adjustOrPutValue(chunkCoords, 1, 1);
                     classEntityCounts.adjustOrPutValue(entity.getClass(), 1, 1);
-                    if (entity.boundingBox != null)
+                    if (entity.boundingBox != null && logAll)
                     {
                         ChunkCoordinates coords = new ChunkCoordinates(entity.chunkCoordX, entity.chunkCoordY, entity.chunkCoordZ);
                         if (!collidingCoords.contains(coords))
                         {
                             collidingCoords.add(coords);
-                            int size = entity.worldObj.getEntitiesWithinAABBExcludingEntity(entity, entity.boundingBox.expand(1,1,1)).size();
+                            int size = entity.worldObj.getEntitiesWithinAABBExcludingEntity(entity, entity.boundingBox.expand(1, 1, 1)).size();
                             if (size < 5) continue;
                             entityCollisionCounts.put(entity, size);
                         }
@@ -206,25 +229,31 @@ public class MCPCHooks {
                 TObjectIntHashMap<ChunkCoordIntPair> chunkTileCounts = new TObjectIntHashMap<ChunkCoordIntPair>();
                 TObjectIntHashMap<Class> classTileCounts = new TObjectIntHashMap<Class>();
                 writer.name("tiles").beginArray();
-                for(int i=0; i < world.loadedTileEntityList.size(); i++)
+                for (int i = 0; i < world.loadedTileEntityList.size(); i++)
                 {
-                    TileEntity tile = (TileEntity)world.loadedTileEntityList.get(i);
-                    writer.beginObject();
-                    writer.name("type").value(tile.getClass().toString());
-                    writer.name("x").value(tile.xCoord);
-                    writer.name("y").value(tile.yCoord);
-                    writer.name("z").value(tile.zCoord);
-                    writer.name("isInvalid").value(tile.isInvalid());
-                    writer.name("canUpdate").value(tile.canUpdate());
-                    writer.name("blockId").value("" + tile.getBlockType());
-                    writer.endObject();
-                    ChunkCoordIntPair chunkCoords = new ChunkCoordIntPair(tile.xCoord >> 4, tile.zCoord >> 4 );
+                    TileEntity tile = (TileEntity) world.loadedTileEntityList.get(i);
+                    if (logAll)
+                    {
+                        writer.beginObject();
+                        writer.name("type").value(tile.getClass().toString());
+                        writer.name("x").value(tile.xCoord);
+                        writer.name("y").value(tile.yCoord);
+                        writer.name("z").value(tile.zCoord);
+                        writer.name("isInvalid").value(tile.isInvalid());
+                        writer.name("canUpdate").value(tile.canUpdate());
+                        writer.name("blockId").value("" + tile.getBlockType());
+                        writer.endObject();
+                    }
+                    ChunkCoordIntPair chunkCoords = new ChunkCoordIntPair(tile.xCoord >> 4, tile.zCoord >> 4);
                     chunkTileCounts.adjustOrPutValue(chunkCoords, 1, 1);
                     classTileCounts.adjustOrPutValue(tile.getClass(), 1, 1);
                 }
                 writer.endArray();
 
-                writeChunkCounts(writer, "topEntityColliders", entityCollisionCounts, 20);
+                if (logAll)
+                {
+                    writeChunkCounts(writer, "topEntityColliders", entityCollisionCounts, 20);
+                }
                 writeChunkCounts(writer, "entitiesByClass", classEntityCounts);
                 writeChunkCounts(writer, "entitiesByChunk", chunkEntityCounts);
 
@@ -247,20 +276,24 @@ public class MCPCHooks {
     {
         writeChunkCounts(writer, name, map, 0);
     }
+
     private static <T> void writeChunkCounts(JsonWriter writer, String name, final TObjectIntHashMap<T> map, int max) throws IOException
     {
         List<T> sortedCoords = new ArrayList<T>(map.keySet());
         Collections.sort(sortedCoords, new Comparator<T>() {
             @Override
-            public int compare(T s1, T s2){
+            public int compare(T s1, T s2)
+            {
                 return map.get(s2) - map.get(s1);
-          }});
+            }
+        });
 
         int i = 0;
         writer.name(name).beginArray();
-        for(T key : sortedCoords)
+        for (T key : sortedCoords)
         {
             if (max > 0 && i++ > max) break;
+            if (map.get(key) < 5) continue;
             writer.beginObject();
             writer.name("key").value(key.toString());
             writer.name("count").value(map.get(key));
@@ -271,38 +304,44 @@ public class MCPCHooks {
 
     public static class HeapDump {
         // This is the name of the HotSpot Diagnostic MBean
-        private static final String HOTSPOT_BEAN_NAME =
-             "com.sun.management:type=HotSpotDiagnostic";
+        private static final String HOTSPOT_BEAN_NAME = "com.sun.management:type=HotSpotDiagnostic";
 
-        // field to store the hotspot diagnostic MBean 
+        // field to store the hotspot diagnostic MBean
         private static volatile Object hotspotMBean;
 
         /**
-         * Call this method from your application whenever you 
-         * want to dump the heap snapshot into a file.
-         *
-         * @param fileName name of the heap dump file
-         * @param live flag that tells whether to dump
-         *             only the live objects
+         * Call this method from your application whenever you want to dump the
+         * heap snapshot into a file.
+         * 
+         * @param fileName
+         *            name of the heap dump file
+         * @param live
+         *            flag that tells whether to dump only the live objects
          */
-        public static void dumpHeap(File file, boolean live) {
+        public static void dumpHeap(File file, boolean live)
+        {
             try
             {
-            if (file.getParentFile() != null)
-            {
-                file.getParentFile().mkdirs();
-            }
-            // initialize hotspot diagnostic MBean
-            initHotspotMBean();
-            try {
-                Class clazz = Class.forName("com.sun.management.HotSpotDiagnosticMXBean");
-                Method m = clazz.getMethod("dumpHeap", String.class, boolean.class);
-                m.invoke( hotspotMBean , file.getPath(), live);
-            } catch (RuntimeException re) {
-                throw re;
-            } catch (Exception exp) {
-                throw new RuntimeException(exp);
-            }
+                if (file.getParentFile() != null)
+                {
+                    file.getParentFile().mkdirs();
+                }
+                // initialize hotspot diagnostic MBean
+                initHotspotMBean();
+                try
+                {
+                    Class clazz = Class.forName("com.sun.management.HotSpotDiagnosticMXBean");
+                    Method m = clazz.getMethod("dumpHeap", String.class, boolean.class);
+                    m.invoke(hotspotMBean, file.getPath(), live);
+                }
+                catch (RuntimeException re)
+                {
+                    throw re;
+                }
+                catch (Exception exp)
+                {
+                    throw new RuntimeException(exp);
+                }
             }
             catch (Throwable t)
             {
@@ -311,10 +350,14 @@ public class MCPCHooks {
         }
 
         // initialize the hotspot diagnostic MBean field
-        private static void initHotspotMBean() {
-            if (hotspotMBean == null) {
-                synchronized (HeapDump.class) {
-                    if (hotspotMBean == null) {
+        private static void initHotspotMBean()
+        {
+            if (hotspotMBean == null)
+            {
+                synchronized (HeapDump.class)
+                {
+                    if (hotspotMBean == null)
+                    {
                         hotspotMBean = getHotspotMBean();
                     }
                 }
@@ -323,17 +366,21 @@ public class MCPCHooks {
 
         // get the hotspot diagnostic MBean from the
         // platform MBean server
-        private static Object getHotspotMBean() {
-            try {
+        private static Object getHotspotMBean()
+        {
+            try
+            {
                 Class clazz = Class.forName("com.sun.management.HotSpotDiagnosticMXBean");
                 MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-                Object bean = 
-                    ManagementFactory.newPlatformMXBeanProxy(server,
-                    HOTSPOT_BEAN_NAME, clazz);
+                Object bean = ManagementFactory.newPlatformMXBeanProxy(server, HOTSPOT_BEAN_NAME, clazz);
                 return bean;
-            } catch (RuntimeException re) {
+            }
+            catch (RuntimeException re)
+            {
                 throw re;
-            } catch (Exception exp) {
+            }
+            catch (Exception exp)
+            {
                 throw new RuntimeException(exp);
             }
         }

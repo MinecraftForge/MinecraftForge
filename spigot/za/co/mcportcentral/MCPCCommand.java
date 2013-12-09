@@ -21,7 +21,7 @@ import org.bukkit.util.StringUtil;
 import com.google.common.collect.ImmutableList;
 
 public class MCPCCommand extends Command {
-    private static final List<String> COMMANDS = ImmutableList.of("get", "set", "tick-interval", "save", "chunks", "heap"); // TODO:, "chunks");
+    private static final List<String> COMMANDS = ImmutableList.of("get", "set", "tick-interval", "save", "reload", "chunks", "heap"); // TODO:, "chunks");
     private static final List<String> CHUNK_COMMANDS = ImmutableList.of("print", "dump");
     
     public MCPCCommand()
@@ -54,6 +54,12 @@ public class MCPCCommand extends Command {
         {
             MCPCConfig.save();
             sender.sendMessage(ChatColor.GREEN + "Config file saved");
+            return true;
+        }
+        if (args.length == 1 && "reload".equalsIgnoreCase(args[0]))
+        {
+            MCPCConfig.load();
+            sender.sendMessage(ChatColor.GREEN + "Config file reloaded");
             return true;
         }
         if (args.length < 2)
@@ -109,10 +115,11 @@ public class MCPCCommand extends Command {
         }
         
         if (args.length < 2 || !"dump".equalsIgnoreCase(args[1])) return;
+        boolean dumpAll = (args.length > 2 && "all".equalsIgnoreCase(args[2]));
         
         File file = new File(new File(new File("."), "chunk-dumps"), "chunk-info-" + new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date()) + "-server.txt");
         sender.sendMessage("Writing chunk info to: " + file);
-        MCPCHooks.writeChunks(file);
+        MCPCHooks.writeChunks(file, dumpAll);
         sender.sendMessage("Chunk info complete");
     }
     

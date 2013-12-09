@@ -771,8 +771,8 @@ public class CraftEventFactory {
             if (!(playermp.theItemInWorldManager.getGameType().isAdventure() && !playermp.isCurrentToolAdventureModeExempt(x, y, z)) && !(playermp.theItemInWorldManager.getGameType().isCreative() && playermp.getHeldItem() != null && playermp.getHeldItem().getItem() instanceof ItemSword))
             {
                 int exp = 0;
-                if (block != null && player.canHarvestBlock(block) && // Handle empty block or player unable to break block scenario
-                   !block.canSilkHarvest(world, player, x, y, z, blockMetadata) && !EnchantmentHelper.getSilkTouchModifier(player)) // If the block is being silk harvested, the exp dropped is 0
+                if (!(block == null || !player.canHarvestBlock(block) || // Handle empty block or player unable to break block scenario
+                        block.canSilkHarvest(world, player, x, y, z, blockMetadata) && EnchantmentHelper.getSilkTouchModifier(player))) // If the block is being silk harvested, the exp dropped is 0
                 {
                     int meta = block.getDamageValue(world, x, y, z);
                     int bonusLevel = EnchantmentHelper.getFortuneModifier(player);

@@ -33,3 +33,16 @@
          return new Packet130UpdateSign(this.xCoord, this.yCoord, this.zCoord, astring);
      }
  
+@@ -90,4 +104,12 @@
+     {
+         return this.field_142011_d;
+     }
++    
++    // MCPC+ start -- Signs don't need to be ticked
++    @Override
++    public boolean canUpdate()
++    {
++        return false;
++    }
++    // MCPC+ end
+ }
