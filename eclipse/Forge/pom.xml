@@ -546,7 +546,7 @@
                             <artifactId>launchwrapper</artifactId>
                             <version>1.8</version>
                             <inJars>
-                                <param>http://s3.amazonaws.com/Minecraft.Download/libraries/net/minecraft/launchwrapper/1.8/launchwrapper-1.8.jar</param>
+                                <param>https://libraries.minecraft.net/net/minecraft/launchwrapper/1.8/launchwrapper-1.8.jar</param>
                             </inJars>
                             <srgIn>${mcp.mappings}</srgIn>
                         </configuration>
@@ -562,7 +562,7 @@
                             <artifactId>lzma</artifactId>
                             <version>0.0.1</version>
                             <inJars>
-                                <param>http://s3.amazonaws.com/Minecraft.Download/libraries/lzma/lzma/0.0.1/lzma-0.0.1.jar</param>
+                                <param>https://libraries.minecraft.net/lzma/lzma/0.0.1/lzma-0.0.1.jar</param>
                             </inJars>
                             <srgIn>${mcp.mappings}</srgIn>
                         </configuration>
