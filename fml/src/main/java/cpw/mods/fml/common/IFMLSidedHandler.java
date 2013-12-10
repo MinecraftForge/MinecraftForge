@@ -19,7 +19,6 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import cpw.mods.fml.common.network.packet.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.packet.EntitySpawnPacket;
-import cpw.mods.fml.common.network.packet.ModMissingPacket;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.relauncher.Side;
 
@@ -42,8 +41,6 @@ public interface IFMLSidedHandler
     void finishServerLoading();
 
     MinecraftServer getServer();
-
-    void displayMissingMods(ModMissingPacket modMissingPacket);
 
     boolean shouldServerShouldBeKilledQuietly();
 

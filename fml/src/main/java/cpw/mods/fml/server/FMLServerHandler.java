@@ -36,7 +36,6 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.network.packet.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.packet.EntitySpawnPacket;
-import cpw.mods.fml.common.network.packet.ModMissingPacket;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -154,11 +153,6 @@ public class FMLServerHandler implements IFMLSidedHandler
     public void adjustEntityLocationOnClient(EntitySpawnAdjustmentPacket entitySpawnAdjustmentPacket)
     {
         // NOOP
-    }
-    @Override
-    public void displayMissingMods(ModMissingPacket modMissingPacket)
-    {
-        // NOOP on server
     }
     @Override
     public boolean shouldServerShouldBeKilledQuietly()
