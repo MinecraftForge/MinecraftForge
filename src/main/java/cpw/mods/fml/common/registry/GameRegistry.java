@@ -31,26 +31,20 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldType;
-import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IFuelHandler;
 import cpw.mods.fml.common.IPickupNotifier;
-import cpw.mods.fml.common.IPlayerTracker;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.LoaderState;
-import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 
 public class GameRegistry
@@ -115,7 +109,8 @@ public class GameRegistry
      */
     public static Item registerItem(Item item, String name, String modId)
     {
-        return GameData.registerItem(item, name, modId);
+        GameData.registerItem(item, name, modId);
+        return item;
     }
 
     /**
@@ -130,7 +125,7 @@ public class GameRegistry
     /**
      * Register a block with the world, with the specified item class and block name
      * @param block The block to register
-     * @param itemclass The item type to register with it
+     * @param itemclass The item type to register with it : null registers a block without associated item.
      * @param name The mod-unique name to register it with
      */
     public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name)
@@ -140,7 +135,7 @@ public class GameRegistry
     /**
      * Register a block with the world, with the specified item class, block name and owning modId
      * @param block The block to register
-     * @param itemclass The iterm type to register with it
+     * @param itemclass The item type to register with it : null registers a block without associated item.
      * @param name The mod-unique name to register it with
      * @param modId The modId that will own the block name. null defaults to the active modId
      */
@@ -153,11 +148,20 @@ public class GameRegistry
         try
         {
             assert block != null : "registerBlock: block cannot be null";
-            assert itemclass != null : "registerBlock: itemclass cannot be null";
-            Constructor<? extends ItemBlock> itemCtor = itemclass.getConstructor(Block.class);
-            Item i = itemCtor.newInstance(block);
-            GameData.registerBlock(block, name, modId);
-            GameRegistry.registerItem(i, name, modId);
+            ItemBlock i = null;
+            if (itemclass != null)
+            {
+                Constructor<? extends ItemBlock> itemCtor = itemclass.getConstructor(Block.class);
+                i = itemCtor.newInstance(block);
+            }
+            if (i != null)
+            {
+                GameData.registerBlockAndItem(i, block, name, modId);
+            }
+            else
+            {
+                GameData.registerBlock(block, name, modId);
+            }
             return block;
         }
         catch (Exception e)
@@ -224,16 +228,6 @@ public class GameRegistry
         }
     }
 
-    public static void addBiome(BiomeGenBase biome)
-    {
-        WorldType.field_77137_b.addNewBiome(biome);
-    }
-
-    public static void removeBiome(BiomeGenBase biome)
-    {
-        WorldType.field_77137_b.removeBiome(biome);
-    }
-
     public static void registerFuelHandler(IFuelHandler handler)
     {
         fuelHandlers.add(handler);
@@ -282,66 +276,7 @@ public class GameRegistry
         }
     }
 
-    public static void registerPlayerTracker(IPlayerTracker tracker)
-	{
-		playerTrackers.add(tracker);
-	}
-
-	public static void onPlayerLogin(EntityPlayer player)
-	{
-        for (IPlayerTracker tracker : playerTrackers)
-            try
-            {
-                tracker.onPlayerLogin(player);
-            }
-            catch (Exception e)
-            {
-                FMLLog.log(Level.SEVERE, e, "A critical error occured handling the onPlayerLogin event with player tracker %s", tracker.getClass().getName());
-            }
-	}
-
-	public static void onPlayerLogout(EntityPlayer player)
-	{
-        for (IPlayerTracker tracker : playerTrackers)
-            try
-            {
-                tracker.onPlayerLogout(player);
-            }
-            catch (Exception e)
-            {
-                FMLLog.log(Level.SEVERE, e, "A critical error occured handling the onPlayerLogout event with player tracker %s", tracker.getClass().getName());
-            }
-	}
-
-	public static void onPlayerChangedDimension(EntityPlayer player)
-	{
-        for (IPlayerTracker tracker : playerTrackers)
-            try
-            {
-                tracker.onPlayerChangedDimension(player);
-            }
-            catch (Exception e)
-            {
-                FMLLog.log(Level.SEVERE, e, "A critical error occured handling the onPlayerChangedDimension event with player tracker %s", tracker.getClass()
-                        .getName());
-            }
-	}
-
-	public static void onPlayerRespawn(EntityPlayer player)
-	{
-        for (IPlayerTracker tracker : playerTrackers)
-            try
-            {
-                tracker.onPlayerRespawn(player);
-            }
-            catch (Exception e)
-            {
-                FMLLog.log(Level.SEVERE, e, "A critical error occured handling the onPlayerRespawn event with player tracker %s", tracker.getClass().getName());
-            }
-	}
-
-
-	/**
+    /**
 	 * Look up a mod block in the global "named item list"
 	 * @param modId The modid owning the block
 	 * @param name The name of the block itself

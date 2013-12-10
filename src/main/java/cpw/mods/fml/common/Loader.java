@@ -41,7 +41,6 @@ import com.google.common.collect.Multisets;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
-import com.google.common.collect.Sets.SetView;
 import com.google.common.collect.TreeMultimap;
 
 import cpw.mods.fml.common.LoaderState.ModState;
@@ -450,6 +449,7 @@ public class Loader
     {
         initializeLoader();
         mods = Lists.newArrayList();
+        GameData.fixupRegistries();
         namedMods = Maps.newHashMap();
         modController = new LoadController(this);
         modController.transition(LoaderState.LOADING, false);
@@ -493,7 +493,6 @@ public class Loader
         modController.transition(LoaderState.PREINITIALIZATION, false);
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, disc.getASMTable(), canonicalConfigDir);
         modController.transition(LoaderState.INITIALIZATION, false);
-        GameData.validateRegistry();
     }
 
     private void disableRequestedMods()
@@ -670,8 +669,6 @@ public class Loader
         // Mod controller should be in the initialization state here
         modController.distributeStateMessage(LoaderState.INITIALIZATION);
         modController.transition(LoaderState.POSTINITIALIZATION, false);
-        // Construct the "mod object table" so mods can refer to it in IMC and postinit
-        GameData.buildModObjectTable();
         modController.distributeStateMessage(FMLInterModComms.IMCEvent.class);
         modController.distributeStateMessage(LoaderState.POSTINITIALIZATION);
         modController.transition(LoaderState.AVAILABLE, false);

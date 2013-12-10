@@ -13,18 +13,18 @@ CL: aac net/minecraft/item/ItemCoal
 CL: aad net/minecraft/item/ItemColored
 CL: aae net/minecraft/item/ItemMapBase
 CL: aaf net/minecraft/creativetab/CreativeTabs
-CL: aag net/minecraft/creativetab/CreativeTabs$1
-CL: aah net/minecraft/creativetab/CreativeTabs$10
-CL: aai net/minecraft/creativetab/CreativeTabs$11
-CL: aaj net/minecraft/creativetab/CreativeTabs$12
-CL: aak net/minecraft/creativetab/CreativeTabs$2
-CL: aal net/minecraft/creativetab/CreativeTabs$3
-CL: aam net/minecraft/creativetab/CreativeTabs$4
-CL: aan net/minecraft/creativetab/CreativeTabs$5
-CL: aao net/minecraft/creativetab/CreativeTabs$6
-CL: aap net/minecraft/creativetab/CreativeTabs$7
-CL: aaq net/minecraft/creativetab/CreativeTabs$8
-CL: aar net/minecraft/creativetab/CreativeTabs$9
+CL: aag net/minecraft/creativetab/CreativeTabs$2
+CL: aah net/minecraft/creativetab/CreativeTabs$11
+CL: aai net/minecraft/creativetab/CreativeTabs$12
+CL: aaj net/minecraft/creativetab/CreativeTabs$1
+CL: aak net/minecraft/creativetab/CreativeTabs$3
+CL: aal net/minecraft/creativetab/CreativeTabs$4
+CL: aam net/minecraft/creativetab/CreativeTabs$5
+CL: aan net/minecraft/creativetab/CreativeTabs$6
+CL: aao net/minecraft/creativetab/CreativeTabs$7
+CL: aap net/minecraft/creativetab/CreativeTabs$8
+CL: aaq net/minecraft/creativetab/CreativeTabs$9
+CL: aar net/minecraft/creativetab/CreativeTabs$10
 CL: aas net/minecraft/item/ItemTool
 CL: aat net/minecraft/item/ItemDoor
 CL: aau net/minecraft/item/ItemDoublePlant
@@ -8648,19 +8648,19 @@ MD: aaf/k ()Laaf; net/minecraft/creativetab/CreativeTabs/func_78022_j ()Lnet/min
 MD: aaf/l ()I net/minecraft/creativetab/CreativeTabs/func_78020_k ()I #C
 MD: aaf/m ()Z net/minecraft/creativetab/CreativeTabs/func_78023_l ()Z #C
 MD: aaf/n ()[Laeg; net/minecraft/creativetab/CreativeTabs/func_111225_m ()[Lnet/minecraft/enchantment/EnumEnchantmentType; #C
-MD: aag/e ()Labn; net/minecraft/creativetab/CreativeTabs$1/func_78016_d ()Lnet/minecraft/item/Item; #C
-MD: aah/e ()Labn; net/minecraft/creativetab/CreativeTabs$10/func_78016_d ()Lnet/minecraft/item/Item; #C
-MD: aai/e ()Labn; net/minecraft/creativetab/CreativeTabs$11/func_78016_d ()Lnet/minecraft/item/Item; #C
-MD: aaj/e ()Labn; net/minecraft/creativetab/CreativeTabs$12/func_78016_d ()Lnet/minecraft/item/Item; #C
-MD: aak/e ()Labn; net/minecraft/creativetab/CreativeTabs$2/func_78016_d ()Lnet/minecraft/item/Item; #C
-MD: aak/f ()I net/minecraft/creativetab/CreativeTabs$2/func_151243_f ()I #C
-MD: aal/e ()Labn; net/minecraft/creativetab/CreativeTabs$3/func_78016_d ()Lnet/minecraft/item/Item; #C
-MD: aam/e ()Labn; net/minecraft/creativetab/CreativeTabs$4/func_78016_d ()Lnet/minecraft/item/Item; #C
-MD: aan/e ()Labn; net/minecraft/creativetab/CreativeTabs$5/func_78016_d ()Lnet/minecraft/item/Item; #C
-MD: aao/e ()Labn; net/minecraft/creativetab/CreativeTabs$6/func_78016_d ()Lnet/minecraft/item/Item; #C
-MD: aap/e ()Labn; net/minecraft/creativetab/CreativeTabs$7/func_78016_d ()Lnet/minecraft/item/Item; #C
-MD: aaq/e ()Labn; net/minecraft/creativetab/CreativeTabs$8/func_78016_d ()Lnet/minecraft/item/Item; #C
-MD: aar/e ()Labn; net/minecraft/creativetab/CreativeTabs$9/func_78016_d ()Lnet/minecraft/item/Item; #C
+MD: aag/e ()Labn; net/minecraft/creativetab/CreativeTabs$2/func_78016_d ()Lnet/minecraft/item/Item; #C
+MD: aah/e ()Labn; net/minecraft/creativetab/CreativeTabs$11/func_78016_d ()Lnet/minecraft/item/Item; #C
+MD: aai/e ()Labn; net/minecraft/creativetab/CreativeTabs$12/func_78016_d ()Lnet/minecraft/item/Item; #C
+MD: aaj/e ()Labn; net/minecraft/creativetab/CreativeTabs$1/func_78016_d ()Lnet/minecraft/item/Item; #C
+MD: aak/e ()Labn; net/minecraft/creativetab/CreativeTabs$3/func_78016_d ()Lnet/minecraft/item/Item; #C
+MD: aak/f ()I net/minecraft/creativetab/CreativeTabs$4/func_151243_f ()I #C
+MD: aal/e ()Labn; net/minecraft/creativetab/CreativeTabs$4/func_78016_d ()Lnet/minecraft/item/Item; #C
+MD: aam/e ()Labn; net/minecraft/creativetab/CreativeTabs$5/func_78016_d ()Lnet/minecraft/item/Item; #C
+MD: aan/e ()Labn; net/minecraft/creativetab/CreativeTabs$6/func_78016_d ()Lnet/minecraft/item/Item; #C
+MD: aao/e ()Labn; net/minecraft/creativetab/CreativeTabs$7/func_78016_d ()Lnet/minecraft/item/Item; #C
+MD: aap/e ()Labn; net/minecraft/creativetab/CreativeTabs$8/func_78016_d ()Lnet/minecraft/item/Item; #C
+MD: aaq/e ()Labn; net/minecraft/creativetab/CreativeTabs$9/func_78016_d ()Lnet/minecraft/item/Item; #C
+MD: aar/e ()Labn; net/minecraft/creativetab/CreativeTabs$10/func_78016_d ()Lnet/minecraft/item/Item; #C
 MD: aas/a (Labp;Labp;)Z net/minecraft/item/ItemTool/func_82789_a (Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z
 MD: aas/a (Labp;Lafn;Lahu;IIILrh;)Z net/minecraft/item/ItemTool/func_150894_a (Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/block/Block;IIILnet/minecraft/entity/EntityLivingBase;)Z
 MD: aas/a (Labp;Lahu;)F net/minecraft/item/ItemTool/func_150893_a (Lnet/minecraft/item/ItemStack;Lnet/minecraft/block/Block;)F

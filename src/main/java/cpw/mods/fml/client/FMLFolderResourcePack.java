@@ -26,6 +26,11 @@ public class FMLFolderResourcePack extends FolderResourcePack {
     }
 
     @Override
+    protected boolean func_110593_b(String p_110593_1_)
+    {
+        return super.func_110593_b(p_110593_1_);
+    }
+    @Override
     public String func_130077_b()
     {
         return "FMLFileResourcePack:"+container.getName();
