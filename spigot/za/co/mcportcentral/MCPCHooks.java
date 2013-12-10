@@ -162,7 +162,7 @@ public class MCPCHooks {
         }
     }
 
-    private static int getTileTickInterval(TileEntity tileEntity)
+    public static int getTileTickInterval(TileEntity tileEntity)
     {
         String path = "tick-intervals.tiles.update." + tileEntity.getClass().getName().replace(".", "-");
         //if (!MCPCConfig.isSet(path)) return tileEntity.canUpdate() ? 1 : 0;
@@ -173,15 +173,6 @@ public class MCPCHooks {
     {
         if (tileEntity == null || !tileEntity.canUpdate()) return false; // quick exit
         return MCPCHooks.getTileTickInterval(tileEntity) != 0;
-    }
-    
-    public static void updateEntity(TileEntity tileEntity)
-    {
-        int interval = getTileTickInterval(tileEntity);
-        if (MinecraftServer.getServer().getTickCounter() % interval == 0)
-        {
-            tileEntity.updateEntity();
-        }
     }
 
     public static void writeChunks(File file, boolean logAll)
