@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/world/chunk/Chunk.java
 +++ ../src_work/minecraft/net/minecraft/world/chunk/Chunk.java
-@@ -10,10 +10,12 @@
+@@ -10,10 +10,13 @@
  import java.util.Map;
  import java.util.Random;
  import net.minecraft.block.Block;
@@ -10,10 +10,11 @@
  import net.minecraft.command.IEntitySelector;
  import net.minecraft.entity.Entity;
 +import net.minecraft.entity.player.EntityPlayerMP;
++import net.minecraft.server.MinecraftServer;
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.util.AxisAlignedBB;
  import net.minecraft.util.MathHelper;
-@@ -25,6 +27,13 @@
+@@ -25,6 +28,13 @@
  import net.minecraft.world.biome.WorldChunkManager;
  import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
  
@@ -27,15 +28,16 @@
  public class Chunk
  {
      /**
-@@ -105,6 +114,7 @@
+@@ -105,6 +115,8 @@
       * Contains the current round-robin relight check index, and is implied as the relight check location as well.
       */
      private int queuedLightChecks;
 +    public gnu.trove.map.hash.TObjectIntHashMap<Class> entityCount = new gnu.trove.map.hash.TObjectIntHashMap<Class>(); // Spigot (MCPC+ protected -> public)
++    public int lastAccessedTick; // MCPC+ track last time the chunk was accessed
  
      public Chunk(World par1World, int par2, int par3)
      {
-@@ -122,12 +132,22 @@
+@@ -122,12 +134,22 @@
  
          for (int k = 0; k < this.entityLists.length; ++k)
          {
@@ -60,7 +62,7 @@
  
      public Chunk(World par1World, byte[] par2ArrayOfByte, int par3, int par4)
      {
-@@ -140,7 +160,9 @@
+@@ -140,7 +162,9 @@
              {
                  for (int j1 = 0; j1 < k; ++j1)
                  {
@@ -71,7 +73,7 @@
  
                      if (b0 != 0)
                      {
-@@ -159,6 +181,92 @@
+@@ -159,6 +183,92 @@
      }
  
      /**
@@ -164,7 +166,7 @@
       * Checks whether the chunk is at the X/Z location specified
       */
      public boolean isAtLocation(int par1, int par2)
-@@ -222,7 +330,7 @@
+@@ -222,7 +332,7 @@
                      {
                          int i1 = this.getBlockID(j, l - 1, k);
  
@@ -173,7 +175,7 @@
                          {
                              --l;
                              continue;
-@@ -528,7 +636,10 @@
+@@ -528,7 +638,10 @@
  
      public int getBlockLightOpacity(int par1, int par2, int par3)
      {
@@ -185,7 +187,7 @@
      }
  
      /**
-@@ -615,9 +726,13 @@
+@@ -615,9 +728,13 @@
                  {
                      Block.blocksList[l1].breakBlock(this.worldObj, j2, par2, k2, l1, i2);
                  }
@@ -202,7 +204,7 @@
                  }
              }
  
-@@ -635,7 +750,7 @@
+@@ -635,7 +752,7 @@
                  }
                  else
                  {
@@ -211,7 +213,7 @@
                      {
                          if (par2 >= k1)
                          {
-@@ -654,24 +769,33 @@
+@@ -654,24 +771,33 @@
  
                  if (par4 != 0)
                  {
@@ -250,7 +252,7 @@
                          }
                      }
                  }
-@@ -716,7 +840,7 @@
+@@ -716,7 +842,7 @@
                  extendedblockstorage.setExtBlockMetadata(par1, par2 & 15, par3, par4);
                  int j1 = extendedblockstorage.getExtBlockID(par1, par2 & 15, par3);
  
@@ -259,7 +261,7 @@
                  {
                      TileEntity tileentity = this.getChunkBlockTileEntity(par1, par2, par3);
  
-@@ -813,8 +937,11 @@
+@@ -813,8 +939,11 @@
  
          if (i != this.xPosition || j != this.zPosition)
          {
@@ -273,7 +275,7 @@
          }
  
          int k = MathHelper.floor_double(par1Entity.posY / 16.0D);
-@@ -829,11 +956,28 @@
+@@ -829,11 +958,28 @@
              k = this.entityLists.length - 1;
          }
  
@@ -302,7 +304,7 @@
      }
  
      /**
-@@ -860,6 +1004,22 @@
+@@ -860,6 +1006,22 @@
          }
  
          this.entityLists[par2].remove(par1Entity);
@@ -325,7 +327,7 @@
      }
  
      /**
-@@ -878,33 +1038,32 @@
+@@ -878,33 +1040,32 @@
          ChunkPosition chunkposition = new ChunkPosition(par1, par2, par3);
          TileEntity tileentity = (TileEntity)this.chunkTileEntityMap.get(chunkposition);
  
@@ -370,7 +372,7 @@
      }
  
      /**
-@@ -919,7 +1078,7 @@
+@@ -919,7 +1080,7 @@
  
          if (this.isChunkLoaded)
          {
@@ -379,7 +381,7 @@
          }
      }
  
-@@ -934,7 +1093,8 @@
+@@ -934,7 +1095,8 @@
          par4TileEntity.yCoord = par2;
          par4TileEntity.zCoord = this.zPosition * 16 + par3;
  
@@ -389,7 +391,7 @@
          {
              if (this.chunkTileEntityMap.containsKey(chunkposition))
              {
-@@ -943,6 +1103,17 @@
+@@ -943,6 +1105,17 @@
  
              par4TileEntity.validate();
              this.chunkTileEntityMap.put(chunkposition, par4TileEntity);
@@ -407,7 +409,7 @@
          }
      }
  
-@@ -984,6 +1155,7 @@
+@@ -984,6 +1157,7 @@
  
              this.worldObj.addLoadedEntities(this.entityLists[i]);
          }
@@ -415,7 +417,7 @@
      }
  
      /**
-@@ -1002,8 +1174,25 @@
+@@ -1002,8 +1176,25 @@
  
          for (int i = 0; i < this.entityLists.length; ++i)
          {
@@ -441,7 +443,7 @@
      }
  
      /**
-@@ -1020,8 +1209,8 @@
+@@ -1020,8 +1211,8 @@
       */
      public void getEntitiesWithinAABBForEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, List par3List, IEntitySelector par4IEntitySelector)
      {
@@ -452,7 +454,7 @@
  
          if (i < 0)
          {
-@@ -1070,8 +1259,8 @@
+@@ -1070,8 +1261,8 @@
       */
      public void getEntitiesOfTypeWithinAAAB(Class par1Class, AxisAlignedBB par2AxisAlignedBB, List par3List, IEntitySelector par4IEntitySelector)
      {
@@ -463,7 +465,7 @@
  
          if (i < 0)
          {
-@@ -1176,7 +1365,7 @@
+@@ -1176,7 +1367,7 @@
              while (i1 > 0 && l == -1)
              {
                  int j1 = this.getBlockID(par1, i1, par2);
@@ -472,7 +474,7 @@
  
                  if (!material.blocksMovement() && !material.isLiquid())
                  {
-@@ -1254,6 +1443,15 @@
+@@ -1254,6 +1445,15 @@
       */
      public void fillChunk(byte[] par1ArrayOfByte, int par2, int par3, boolean par4)
      {
@@ -488,7 +490,7 @@
          int k = 0;
          boolean flag1 = !this.worldObj.provider.hasNoSky;
          int l;
-@@ -1354,12 +1552,26 @@
+@@ -1354,12 +1554,26 @@
          }
  
          this.generateHeightMap();
@@ -519,7 +521,7 @@
          }
      }
  
-@@ -1468,4 +1680,18 @@
+@@ -1468,4 +1682,18 @@
              }
          }
      }

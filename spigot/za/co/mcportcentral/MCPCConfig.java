@@ -63,7 +63,8 @@ public class MCPCConfig
         // Chunk loading options
         public static final BoolSetting loadChunkOnRequest = new BoolSetting("settings.load-chunk-on-request", false, "Forces Chunk Loading on 'Provide' requests (speedup for mods that don't check if a chunk is loaded");
         public static final BoolSetting loadChunkOnForgeTick = new BoolSetting("settings.load-chunk-on-forge-tick", false, "Forces Chunk Loading during Forge Server Tick events");
-        
+        public static final IntSetting chunkGCGracePeriod = new IntSetting("settings.chunk-gc-grace-period", 700, "Grace period on a loaded chunk before we try to unload it");
+
         // Server options
         public static final BoolSetting infiniteWaterSource = new BoolSetting("world-settings.default.infinite-water-source", true, "Vanilla water source behavior - is infinite");
         public static final BoolSetting flowingLavaDecay = new BoolSetting("world-settings.default.flowing-lava-decay", false, "Lava behaves like vanilla water when source block is removed");
