@@ -18,7 +18,7 @@ public class SkipIntervalHandler implements IScheduledTickHandler
     public SkipIntervalHandler(ITickHandler handler)
     {
         this.wrapped=handler;
-        configString = "tick-intervals." + handler.getClass().getName();
+        configString = "tick-intervals." + handler.getClass().getName().replace(".", "-");
         handlers.add(this);
     }
 

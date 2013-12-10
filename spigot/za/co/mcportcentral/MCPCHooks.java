@@ -77,26 +77,34 @@ public class MCPCHooks {
             MinecraftServer.getServer().getLogAgent().logInfo(msg + " Chunk At " + x + ", " + z + " Dim: " + provider.worldObj.provider.dimensionId);
             if (logLoadOnRequest)
             {
-                logLoadOnRequest(provider);
+                logLoadOnRequest(provider, x, z);
             }
             logStack();
         }
     }
 
-    private static void logLoadOnRequest(ChunkProviderServer provider)
+    private static void logLoadOnRequest(ChunkProviderServer provider, int x, int z)
     {
-        MinecraftServer.getServer().logInfo(
-                "Finding Spawn Point: " + provider.worldObj.findingSpawnPoint + " Load chunk on request: " + provider.loadChunkOnProvideRequest
-                        + " Calling Forge Tick: " + MinecraftServer.callingForgeTick + " Load chunk on forge tick: "
-                        + MCPCConfig.Setting.loadChunkOnForgeTick.getValue() + " Current Tick - Initial Tick: "
-                        + (MinecraftServer.currentTick - provider.initialTick));
+        long currentTick = MinecraftServer.getServer().getTickCounter();
+        long lastAccessed = provider.lastAccessed(x, z);
+        long diff = currentTick - lastAccessed;
+        MinecraftServer.getServer().logInfo(" Last accessed: " + lastAccessed + " Current Tick: " + currentTick + " Diff: " + diff + " Server tick: " + MinecraftServer.getServer().getTickCounter());
+        MinecraftServer.getServer().logInfo(" Finding Spawn Point: " + provider.worldObj.findingSpawnPoint);
+        MinecraftServer.getServer().logInfo(" Load chunk on request: " + provider.loadChunkOnProvideRequest);
+        MinecraftServer.getServer().logInfo(" Calling Forge Tick: " + MinecraftServer.callingForgeTick);
+        MinecraftServer.getServer().logInfo(" Load chunk on forge tick: " + MCPCConfig.Setting.loadChunkOnForgeTick.getValue());
+        MinecraftServer.getServer().logInfo(" Current Tick - Initial Tick: " + (MinecraftServer.currentTick - provider.initialTick));
     }
 
-    public static void logChunkUnload(ChunkProviderServer provider, int x, int y, String msg)
+    public static void logChunkUnload(ChunkProviderServer provider, int x, int z, String msg)
     {
         if (MCPCConfig.Setting.chunkUnloadLogging.getValue())
         {
-            MinecraftServer.getServer().getLogAgent().logInfo(msg + " " + x + ", " + y + " Dim: " + provider.worldObj.provider.dimensionId);
+            MinecraftServer.getServer().getLogAgent().logInfo(msg + " " + x + ", " + z + " Dim: " + provider.worldObj.provider.dimensionId);
+            long currentTick = MinecraftServer.getServer().getTickCounter();
+            long lastAccessed = provider.lastAccessed(x, z);
+            long diff = currentTick - lastAccessed;
+            MinecraftServer.getServer().logInfo("Last accessed: " + lastAccessed + " Current Tick: " + currentTick + " Diff: " + diff + " Server tick: " + MinecraftServer.getServer().getTickCounter());
         }
     }
 
@@ -154,7 +162,7 @@ public class MCPCHooks {
         }
     }
 
-    private static int getTileTickInterval(TileEntity tileEntity)
+    public static int getTileTickInterval(TileEntity tileEntity)
     {
         String path = "tick-intervals.tiles.update." + tileEntity.getClass().getName().replace(".", "-");
         //if (!MCPCConfig.isSet(path)) return tileEntity.canUpdate() ? 1 : 0;
@@ -165,15 +173,6 @@ public class MCPCHooks {
     {
         if (tileEntity == null || !tileEntity.canUpdate()) return false; // quick exit
         return MCPCHooks.getTileTickInterval(tileEntity) != 0;
-    }
-    
-    public static void updateEntity(TileEntity tileEntity)
-    {
-        int interval = getTileTickInterval(tileEntity);
-        if (MinecraftServer.getServer().currentTick % interval == 0)
-        {
-            tileEntity.updateEntity();
-        }
     }
 
     public static void writeChunks(File file, boolean logAll)

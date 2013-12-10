@@ -714,7 +714,7 @@
      /**
       * Updates (and cleans up) entities and tile entities
       */
-+    /* MCPC+ tick entities even if nobody is on and no persistent chunks exist
++    /* MCPC+ removed so we tick entities even if nobody is on and no persistent chunks exist
      public void updateEntities()
      {
 -        if (this.playerEntities.isEmpty())
@@ -1182,7 +1182,7 @@
          }
      }
  
-@@ -1073,4 +1519,123 @@
+@@ -1073,4 +1519,124 @@
      {
          return this.worldTeleporter;
      }
@@ -1217,6 +1217,7 @@
 +    private void addNextTickIfNeeded(NextTickListEntry ent)
 +    {
 +        long coord = LongHash.toLong(ent.xCoord >> 4, ent.zCoord >> 4);
++        if (!isActiveBlockCoord(ent.xCoord,  ent.zCoord)) return; // MCPC+ only update blocks in active chunks
 +        Set<NextTickListEntry> chunkset = this.tickEntriesByChunk.get(coord);
 +
 +        if (chunkset == null)

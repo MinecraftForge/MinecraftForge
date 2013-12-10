@@ -105,10 +105,8 @@ public class MCPCCommand extends Command {
                     ChatColor.GOLD + " Entities: " + ChatColor.GRAY + world.loadedEntityList.size() +
                     ChatColor.GOLD + " Tile Entities: " + ChatColor.GRAY + world.loadedTileEntityList.size()
                     );
-            HashSet entitySet = new HashSet(world.loadedEntityList);
-            HashSet tileSet = new HashSet(world.loadedTileEntityList);
-            sender.sendMessage(ChatColor.GOLD + " Entity Set: " + ChatColor.GRAY + entitySet.size() +
-                    ChatColor.GOLD + " Tile Entity Set: " + ChatColor.GRAY + tileSet.size() +
+            sender.sendMessage(ChatColor.GOLD + " Entities Last Tick: " + ChatColor.GRAY + world.entitiesTicked +
+                    ChatColor.GOLD + " Tiles Last Tick: " + ChatColor.GRAY + world.tilesTicked +
                     ChatColor.GOLD + " Removed Entities: " + ChatColor.GRAY + world.unloadedEntityList.size() +
                     ChatColor.GOLD + " Removed Tile Entities: " + ChatColor.GRAY + world.entityRemoval.size()
                     );
