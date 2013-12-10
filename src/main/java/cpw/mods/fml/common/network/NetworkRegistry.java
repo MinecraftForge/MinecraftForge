@@ -19,14 +19,13 @@ import io.netty.handler.codec.MessageToMessageCodec;
 import io.netty.util.AttributeKey;
 
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.world.World;
 
@@ -541,5 +540,10 @@ public enum NetworkRegistry
     Map<ModContainer,NetworkModHolder> registry()
     {
         return registry;
+    }
+
+    public Set<String> channelNamesFor(Side side)
+    {
+        return channels.get(side).keySet();
     }
 }

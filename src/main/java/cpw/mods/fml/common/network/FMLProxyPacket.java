@@ -6,13 +6,12 @@ import io.netty.channel.embedded.EmbeddedChannel;
 
 import java.io.IOException;
 
-import cpw.mods.fml.relauncher.Side;
-
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.C17PacketCustomPayload;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;
+import cpw.mods.fml.relauncher.Side;
 
 public class FMLProxyPacket extends Packet {
     final String channel;
@@ -65,11 +64,18 @@ public class FMLProxyPacket extends Packet {
         }
     }
 
+    public String channel()
+    {
+        return channel;
+    }
     public ByteBuf payload()
     {
         return payload;
     }
-
+    public INetHandler handler()
+    {
+        return netHandler;
+    }
     public Packet toC17Packet()
     {
         return new C17PacketCustomPayload(channel, payload.array());
