@@ -10,7 +10,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.WeightedRandomChestContent;
-import net.minecraft.util.WeightedRandomItem;
 
 import static net.minecraftforge.common.ChestGenHooks.DUNGEON_CHEST;
 
@@ -86,7 +85,7 @@ public class DungeonHooks
     }
 
 
-    public static class DungeonMob extends WeightedRandomItem
+    public static class DungeonMob extends WeightedRandom.Item
     {
         public String type;
         public DungeonMob(int weight, String type)

@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraftforge.client.event.FOVUpdateEvent;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -17,14 +18,15 @@ import org.lwjgl.opengl.PixelFormat;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
@@ -57,12 +59,6 @@ public class ForgeHooksClient
     static TextureManager engine()
     {
         return FMLClientHandler.instance().getClient().renderEngine;
-    }
-
-    @Deprecated
-    public static String getArmorTexture(Entity entity, ItemStack armor, String _default, int slot, int layer, String type)
-    {
-        return getArmorTexture(entity, armor, _default, slot, type);
     }
 
     public static String getArmorTexture(Entity entity, ItemStack armor, String _default, int slot, String type)
@@ -251,8 +247,8 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Post(map));
 
-        FluidRegistry.WATER.setIcons(BlockFluid.getFluidIcon("water_still"), BlockFluid.getFluidIcon("water_flow"));
-        FluidRegistry.LAVA.setIcons(BlockFluid.getFluidIcon("lava_still"), BlockFluid.getFluidIcon("lava_flow"));
+        FluidRegistry.WATER.setIcons(BlockLiquid.func_149803_e("water_still"), BlockLiquid.func_149803_e("water_flow"));
+        FluidRegistry.LAVA.setIcons(BlockLiquid.func_149803_e("lava_still"), BlockLiquid.func_149803_e("lava_flow"));
     }
 
     /**
@@ -347,7 +343,7 @@ public class ForgeHooksClient
     private static boolean skyInit;
     private static int skyRGBMultiplier;
     
-    public static int getSkyBlendColour(World world, int playerX, int playerZ)
+    public static int getSkyBlendColour(World world, int playerX, int playerY, int playerZ)
     {
         if (playerX == skyX && playerZ == skyZ && skyInit)
         {
@@ -367,7 +363,7 @@ public class ForgeHooksClient
             for (int z = -distance; z <= distance; ++z)
             {
                 BiomeGenBase biome = world.getBiomeGenForCoords(playerX + x, playerZ + z);
-                int colour = biome.getSkyColorByTemp(biome.getFloatTemperature());
+                int colour = biome.getSkyColorByTemp(biome.func_150564_a(playerX + x, playerY, playerZ + z));
                 r += (colour & 0xFF0000) >> 16;
                 g += (colour & 0x00FF00) >> 8;
                 b += colour & 0x0000FF;

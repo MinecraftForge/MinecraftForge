@@ -6,7 +6,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import net.minecraft.block.Block;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDummyContainer;
@@ -41,8 +41,8 @@ public class Fluid
     protected String unlocalizedName;
 
     /** The Icons for this fluid. */
-    protected Icon stillIcon;
-    protected Icon flowingIcon;
+    protected IIcon stillIcon;
+    protected IIcon flowingIcon;
 
     /**
      * The light level emitted by this fluid.
@@ -92,11 +92,11 @@ public class Fluid
     protected EnumRarity rarity = EnumRarity.common;
 
     /**
-     * If there is a Block implementation of the Fluid, the BlockID is linked here.
+     * If there is a Block implementation of the Fluid, the Block is linked here.
      *
-     * The default value of -1 should remain for any Fluid without a Block implementation.
+     * The default value of null should remain for any Fluid without a Block implementation.
      */
-    protected int blockID = -1;
+    protected Block block = null;
 
     public Fluid(String fluidName)
     {
@@ -110,30 +110,25 @@ public class Fluid
         return this;
     }
 
-    public Fluid setBlockID(int blockID)
+    public Fluid setBlock(Block block)
     {
-        if (this.blockID == -1 || this.blockID == blockID)
+        if (this.block == null || this.block == block)
         {
-            this.blockID = blockID;
+            this.block = block;
         }
         else if (!ForgeDummyContainer.forceDuplicateFluidBlockCrash)
         {
-            FMLLog.warning("A mod has attempted to assign BlockID " + blockID + " to the Fluid '" + fluidName + "' but this Fluid has already been linked to BlockID "
-                    + this.blockID + ". Configure your mods to prevent this from happening.");
+            FMLLog.warning("A mod has attempted to assign Block " + block + " to the Fluid '" + fluidName + "' but this Fluid has already been linked to BlockID "
+                    + this.block + ". Configure your mods to prevent this from happening.");
         }
         else
         {
-            FMLLog.severe("A mod has attempted to assign BlockID " + blockID + " to the Fluid '" + fluidName + "' but this Fluid has already been linked to BlockID "
-                    + this.blockID + ". Configure your mods to prevent this from happening.");
-            throw new LoaderException(new RuntimeException("A mod has attempted to assign BlockID " + blockID + " to the Fluid '" + fluidName
-                    + "' but this Fluid has already been linked to BlockID " + this.blockID + ". Configure your mods to prevent this from happening."));
+            FMLLog.severe("A mod has attempted to assign BlockID " + block + " to the Fluid '" + fluidName + "' but this Fluid has already been linked to BlockID "
+                    + this.block + ". Configure your mods to prevent this from happening.");
+            throw new LoaderException(new RuntimeException("A mod has attempted to assign BlockID " + block + " to the Fluid '" + fluidName
+                    + "' but this Fluid has already been linked to BlockID " + this.block + ". Configure your mods to prevent this from happening."));
         }
         return this;
-    }
-
-    public Fluid setBlockID(Block block)
-    {
-        return setBlockID(block.blockID);
     }
 
     public Fluid setLuminosity(int luminosity)
@@ -182,14 +177,14 @@ public class Fluid
         return FluidRegistry.getFluidID(this.fluidName);
     }
 
-    public final int getBlockID()
+    public final Block getBlock()
     {
-        return blockID;
+        return block;
     }
 
     public final boolean canBePlacedInWorld()
     {
-        return blockID != -1;
+        return block != null;
     }
 
     /**
@@ -253,36 +248,36 @@ public class Fluid
         return 0xFFFFFF;
     }
 
-    public final Fluid setStillIcon(Icon stillIcon)
+    public final Fluid setStillIcon(IIcon stillIcon)
     {
         this.stillIcon = stillIcon;
         return this;
     }
 
-    public final Fluid setFlowingIcon(Icon flowingIcon)
+    public final Fluid setFlowingIcon(IIcon flowingIcon)
     {
         this.flowingIcon = flowingIcon;
         return this;
     }
 
-    public final Fluid setIcons(Icon stillIcon, Icon flowingIcon)
+    public final Fluid setIcons(IIcon stillIcon, IIcon flowingIcon)
     {
         return this.setStillIcon(stillIcon).setFlowingIcon(flowingIcon);
     }
 
-    public final Fluid setIcons(Icon commonIcon)
+    public final Fluid setIcons(IIcon commonIcon)
     {
         return this.setStillIcon(commonIcon).setFlowingIcon(commonIcon);
     }
 
-    public Icon getIcon(){ return getStillIcon(); }
+    public IIcon getIcon(){ return getStillIcon(); }
 
-    public Icon getStillIcon()
+    public IIcon getStillIcon()
     {
         return this.stillIcon;
     }
 
-    public Icon getFlowingIcon()
+    public IIcon getFlowingIcon()
     {
         return this.flowingIcon;
     }
@@ -295,7 +290,7 @@ public class Fluid
     public boolean isGaseous(FluidStack stack){ return isGaseous(); }
     public EnumRarity getRarity(FluidStack stack){ return getRarity(); }
     public int getColor(FluidStack stack){ return getColor(); }
-    public Icon getIcon(FluidStack stack){ return getIcon(); }
+    public IIcon getIcon(FluidStack stack){ return getIcon(); }
     /* World-based Accessors */
     public int getLuminosity(World world, int x, int y, int z){ return getLuminosity(); }
     public int getDensity(World world, int x, int y, int z){ return getDensity(); }
@@ -304,7 +299,7 @@ public class Fluid
     public boolean isGaseous(World world, int x, int y, int z){ return isGaseous(); }
     public EnumRarity getRarity(World world, int x, int y, int z){ return getRarity(); }
     public int getColor(World world, int x, int y, int z){ return getColor(); }
-    public Icon getIcon(World world, int x, int y, int z){ return getIcon(); }
+    public IIcon getIcon(World world, int x, int y, int z){ return getIcon(); }
 
     private static Map<String, String> legacyNames = Maps.newHashMap();
     static String convertLegacyName(String fluidName)

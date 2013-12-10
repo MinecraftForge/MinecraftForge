@@ -31,12 +31,9 @@ public abstract class RenderPlayerEvent extends PlayerEvent
     
     public abstract static class Specials extends RenderPlayerEvent
     {
-        @Deprecated
-        public final float partialTicks;
         public Specials(EntityPlayer player, RenderPlayer renderer, float partialTicks)
         {
             super(player, renderer, partialTicks);
-            this.partialTicks = partialTicks;
         }
 
         @Cancelable
@@ -62,14 +59,11 @@ public abstract class RenderPlayerEvent extends PlayerEvent
          */
         public int result = -1;
         public final int slot;
-        @Deprecated
-        public final float partialTick;
         public final ItemStack stack;
         public SetArmorModel(EntityPlayer player, RenderPlayer renderer, int slot, float partialTick, ItemStack stack)
         {
             super(player, renderer, partialTick);
             this.slot = slot;
-            this.partialTick = partialTick;
             this.stack = stack;
         }
     }

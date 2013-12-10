@@ -14,15 +14,18 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.GuiPlayerInfo;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.multiplayer.NetClientHandler;
+import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.crash.CallableMinecraftVersion;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.AttributeInstance;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.scoreboard.Score;
@@ -78,7 +81,7 @@ public class GuiIngameForge extends GuiIngame
     private ScaledResolution res = null;
     private FontRenderer fontrenderer = null;
     private RenderGameOverlayEvent eventParent;
-    private static final String MC_VERSION = (new CallableMinecraftVersion(null)).minecraftVersion();
+    private static final String MC_VERSION = "1.7.2";
 
     public GuiIngameForge(Minecraft mc)
     {
@@ -111,7 +114,7 @@ public class GuiIngameForge extends GuiIngame
         }
         else
         {
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            OpenGlHelper.func_148821_a(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         }
 
         if (renderHelmet) renderHelmet(res, partialTicks, hasScreen, mouseX, mouseY);
@@ -162,7 +165,7 @@ public class GuiIngameForge extends GuiIngame
         }
 
         GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        OpenGlHelper.func_148821_a(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         GL11.glDisable(GL11.GL_ALPHA_TEST);
 
         renderChat(width, height);
@@ -217,8 +220,9 @@ public class GuiIngameForge extends GuiIngame
         if (pre(CROSSHAIRS)) return;
         bind(Gui.icons);
         GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ONE_MINUS_SRC_COLOR);
+        OpenGlHelper.func_148821_a(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ONE_MINUS_SRC_COLOR, 1, 0);
         drawTexturedModalRect(width / 2 - 7, height / 2 - 7, 0, 0, 16, 16);
+        OpenGlHelper.func_148821_a(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         GL11.glDisable(GL11.GL_BLEND);
         post(CROSSHAIRS);
     }
@@ -228,7 +232,9 @@ public class GuiIngameForge extends GuiIngame
     {
         if (pre(BOSSHEALTH)) return;
         mc.mcProfiler.startSection("bossHealth");
+        GL11.glEnable(GL11.GL_BLEND);
         super.renderBossHealth();
+        GL11.glDisable(GL11.GL_BLEND);
         mc.mcProfiler.endSection();
         post(BOSSHEALTH);
     }
@@ -241,7 +247,7 @@ public class GuiIngameForge extends GuiIngame
 
         if (this.mc.gameSettings.thirdPersonView == 0 && itemstack != null && itemstack.getItem() != null)
         {
-            if (itemstack.itemID == Block.pumpkin.blockID)
+            if (itemstack.getItem() == Item.func_150898_a(Blocks.pumpkin))
             {
                 renderPumpkinBlur(res.getScaledWidth(), res.getScaledHeight());
             }
@@ -259,6 +265,7 @@ public class GuiIngameForge extends GuiIngame
         if (pre(ARMOR)) return;
         mc.mcProfiler.startSection("armor");
 
+        GL11.glEnable(GL11.GL_BLEND);
         int left = width / 2 - 91;
         int top = height - left_height;
 
@@ -281,6 +288,7 @@ public class GuiIngameForge extends GuiIngame
         }
         left_height += 10;
 
+        GL11.glDisable(GL11.GL_BLEND);
         mc.mcProfiler.endSection();
         post(ARMOR);
     }
@@ -303,10 +311,11 @@ public class GuiIngameForge extends GuiIngame
     {
         if (pre(AIR)) return;
         mc.mcProfiler.startSection("air");
+        GL11.glEnable(GL11.GL_BLEND);
         int left = width / 2 + 91;
         int top = height - right_height;
 
-        if (mc.thePlayer.isInsideOfMaterial(Material.water))
+        if (mc.thePlayer.isInsideOfMaterial(Material.field_151586_h))
         {
             int air = mc.thePlayer.getAir();
             int full = MathHelper.ceiling_double_int((double)(air - 2) * 10.0D / 300.0D);
@@ -319,6 +328,7 @@ public class GuiIngameForge extends GuiIngame
             right_height += 10;
         }
 
+        GL11.glDisable(GL11.GL_BLEND);
         mc.mcProfiler.endSection();
         post(AIR);
     }
@@ -328,6 +338,7 @@ public class GuiIngameForge extends GuiIngame
         bind(icons);
         if (pre(HEALTH)) return;
         mc.mcProfiler.startSection("health");
+        GL11.glEnable(GL11.GL_BLEND);
 
         boolean highlight = mc.thePlayer.hurtResistantTime / 3 % 2 == 1;
 
@@ -336,7 +347,7 @@ public class GuiIngameForge extends GuiIngame
             highlight = false;
         }
 
-        AttributeInstance attrMaxHealth = this.mc.thePlayer.getEntityAttribute(SharedMonsterAttributes.maxHealth);
+        IAttributeInstance attrMaxHealth = this.mc.thePlayer.getEntityAttribute(SharedMonsterAttributes.maxHealth);
         int health = MathHelper.ceiling_float_int(mc.thePlayer.getHealth());
         int healthLast = MathHelper.ceiling_float_int(mc.thePlayer.prevHealth);
         float healthMax = (float)attrMaxHealth.getAttributeValue();
@@ -402,6 +413,7 @@ public class GuiIngameForge extends GuiIngame
             }
         }
 
+        GL11.glDisable(GL11.GL_BLEND);
         mc.mcProfiler.endSection();
         post(HEALTH);
     }
@@ -411,6 +423,7 @@ public class GuiIngameForge extends GuiIngame
         if (pre(FOOD)) return;
         mc.mcProfiler.startSection("food");
 
+        GL11.glEnable(GL11.GL_BLEND);
         int left = width / 2 + 91;
         int top = height - right_height;
         right_height += 10;
@@ -455,6 +468,7 @@ public class GuiIngameForge extends GuiIngame
             else if (idx == level)
                 drawTexturedModalRect(x, y, icon + 45, 27, 9, 9);
         }
+        GL11.glDisable(GL11.GL_BLEND);
         mc.mcProfiler.endSection();
         post(FOOD);
     }
@@ -577,7 +591,7 @@ public class GuiIngameForge extends GuiIngame
 
                     GL11.glPushMatrix();
                     GL11.glEnable(GL11.GL_BLEND);
-                    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                    OpenGlHelper.func_148821_a(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
                     FontRenderer font = highlightingItemStack.getItem().getFontRenderer(highlightingItemStack);
                     if (font != null)
                     {
@@ -609,11 +623,11 @@ public class GuiIngameForge extends GuiIngame
             long time = mc.theWorld.getTotalWorldTime();
             if (time >= 120500L)
             {
-                right.add(StatCollector.translateToLocal("demo.demoExpired"));
+                right.add(I18n.getStringParams("demo.demoExpired"));
             }
             else
             {
-                right.add(String.format(StatCollector.translateToLocal("demo.remainingTime"), StringUtils.ticksToElapsedTime((int)(120500L - time))));
+                right.add(I18n.getStringParams("demo.remainingTime", StringUtils.ticksToElapsedTime((int)(120500L - time))));
             }
         }
 
@@ -664,10 +678,15 @@ public class GuiIngameForge extends GuiIngame
             }
 
             left.add(String.format("ws: %.3f, fs: %.3f, g: %b, fl: %d", mc.thePlayer.capabilities.getWalkSpeed(), mc.thePlayer.capabilities.getFlySpeed(), mc.thePlayer.onGround, mc.theWorld.getHeightValue(x, z)));
-            right.add(null);
-            for (String s : FMLCommonHandler.instance().getBrandings().subList(1, FMLCommonHandler.instance().getBrandings().size()))
+            if (mc.entityRenderer != null && mc.entityRenderer.func_147702_a())
             {
-                right.add(s);
+                left.add(String.format("shader: %s", mc.entityRenderer.func_147706_e().func_148022_b()));
+            }
+
+            right.add(null);
+            for (String brand : FMLCommonHandler.instance().getBrandings(false))
+            {
+                right.add(brand);
             }
             GL11.glPopMatrix();
             mc.mcProfiler.endSection();
@@ -710,7 +729,7 @@ public class GuiIngameForge extends GuiIngame
                 GL11.glPushMatrix();
                 GL11.glTranslatef((float)(width / 2), (float)(height - 48), 0.0F);
                 GL11.glEnable(GL11.GL_BLEND);
-                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                OpenGlHelper.func_148821_a(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
                 int color = (recordIsPlaying ? Color.HSBtoRGB(hue / 50.0F, 0.7F, 0.6F) & WHITE : WHITE);
                 fontrenderer.drawString(recordPlaying, -fontrenderer.getStringWidth(recordPlaying) / 2, -4, color | (opacity << 24));
                 GL11.glDisable(GL11.GL_BLEND);
@@ -730,7 +749,7 @@ public class GuiIngameForge extends GuiIngame
 
         GL11.glPushMatrix();
         GL11.glTranslatef((float)event.posX, (float)event.posY, 0.0F);
-        persistantChatGUI.drawChat(updateCounter);
+        persistantChatGUI.func_146230_a(updateCounter);
         GL11.glPopMatrix();
 
         post(CHAT);
@@ -741,14 +760,14 @@ public class GuiIngameForge extends GuiIngame
     protected void renderPlayerList(int width, int height)
     {
         ScoreObjective scoreobjective = this.mc.theWorld.getScoreboard().func_96539_a(0);
-        NetClientHandler handler = mc.thePlayer.sendQueue;
+        NetHandlerPlayClient handler = mc.thePlayer.sendQueue;
 
-        if (mc.gameSettings.keyBindPlayerList.pressed && (!mc.isIntegratedServerRunning() || handler.playerInfoList.size() > 1 || scoreobjective != null))
+        if (mc.gameSettings.keyBindPlayerList.func_151470_d() && (!mc.isIntegratedServerRunning() || handler.field_147303_b.size() > 1 || scoreobjective != null))
         {
             if (pre(PLAYER_LIST)) return;
             this.mc.mcProfiler.startSection("playerList");
-            List players = handler.playerInfoList;
-            int maxPlayers = handler.currentServerMaxPlayers;
+            List players = handler.field_147303_b;
+            int maxPlayers = handler.field_147304_c;
             int rows = maxPlayers;
             int columns = 1;
 
@@ -829,6 +848,7 @@ public class GuiIngameForge extends GuiIngame
         int left_align = width / 2 + 91;
 
         mc.mcProfiler.endStartSection("mountHealth");
+        GL11.glEnable(GL11.GL_BLEND);
         EntityLivingBase mount = (EntityLivingBase)tmp;
         int health = (int)Math.ceil((double)mount.getHealth());
         float healthMax = mount.getMaxHealth();
@@ -861,6 +881,7 @@ public class GuiIngameForge extends GuiIngame
 
             right_height += 10;
         }
+        GL11.glDisable(GL11.GL_BLEND);
         post(HEALTHMOUNT);
     }
 

@@ -243,7 +243,7 @@ public class ShapedOreRecipe implements IRecipe
         {
             return false;
         }
-        return (target.itemID == input.itemID && (target.getItemDamage() == OreDictionary.WILDCARD_VALUE|| target.getItemDamage() == input.getItemDamage()));
+        return (target.getItem() == input.getItem() && (target.getItemDamage() == OreDictionary.WILDCARD_VALUE|| target.getItemDamage() == input.getItemDamage()));
     }
 
     public ShapedOreRecipe setMirrored(boolean mirror)

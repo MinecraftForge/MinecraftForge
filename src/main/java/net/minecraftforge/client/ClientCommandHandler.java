@@ -9,10 +9,11 @@ import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
-import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CommandEvent;
 import cpw.mods.fml.client.FMLClientHandler;
+import net.minecraft.util.EnumChatFormatting;
 import static net.minecraft.util.EnumChatFormatting.*;
 
 /**
@@ -73,20 +74,20 @@ public class ClientCommandHandler extends CommandHandler
             }
             else
             {
-                sender.sendChatToPlayer(format("commands.generic.permission").setColor(RED));
+                sender.func_145747_a(format(RED, "commands.generic.permission"));
             }
         }
         catch (WrongUsageException wue)
         {
-            sender.sendChatToPlayer(format("commands.generic.usage", format(wue.getMessage(), wue.getErrorOjbects())).setColor(RED));
+            sender.func_145747_a(format(RED, "commands.generic.usage", format(RED, wue.getMessage(), wue.getErrorOjbects())));
         }
         catch (CommandException ce)
         {
-            sender.sendChatToPlayer(format(ce.getMessage(), ce.getErrorOjbects()).setColor(RED));
+            sender.func_145747_a(format(RED, ce.getMessage(), ce.getErrorOjbects()));
         }
         catch (Throwable t)
         {
-            sender.sendChatToPlayer(format("commands.generic.exception").setColor(RED));
+            sender.func_145747_a(format(RED, "commands.generic.exception"));
             t.printStackTrace();
         }
 
@@ -94,14 +95,11 @@ public class ClientCommandHandler extends CommandHandler
     }
 
     //Couple of helpers because the mcp names are stupid and long...
-    private ChatMessageComponent format(String str, Object... args)
+    private ChatComponentTranslation format(EnumChatFormatting color, String str, Object... args)
     {
-        return ChatMessageComponent.createFromTranslationWithSubstitutions(str, args);
-    }
-
-    private ChatMessageComponent format(String str)
-    {
-        return ChatMessageComponent.createFromTranslationKey(str);
+        ChatComponentTranslation ret = new ChatComponentTranslation(str, args);
+        ret.func_150256_b().func_150238_a(color);
+        return ret;
     }
 
     public void autoComplete(String leftOfCursor, String full)

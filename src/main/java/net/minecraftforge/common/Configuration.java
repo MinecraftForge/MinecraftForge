@@ -46,13 +46,7 @@ import cpw.mods.fml.relauncher.FMLInjectionData;
  */
 public class Configuration
 {
-    private static boolean[] configMarkers = new boolean[Item.itemsList.length];
-    private static final int ITEM_SHIFT = 256;
-    private static final int MAX_BLOCKS = 4096;
-
     public static final String CATEGORY_GENERAL = "general";
-    public static final String CATEGORY_BLOCK   = "block";
-    public static final String CATEGORY_ITEM    = "item";
     public static final String ALLOWED_CHARS = "._-";
     public static final String DEFAULT_ENCODING = "UTF-8";
     public static final String CATEGORY_SPLITTER = ".";
@@ -75,7 +69,6 @@ public class Configuration
 
     static
     {
-        Arrays.fill(configMarkers, false);
         NEW_LINE = System.getProperty("line.separator");
     }
 
@@ -105,127 +98,6 @@ public class Configuration
     {
         this(file);
         this.caseSensitiveCustomCategories = caseSensitiveCustomCategories;
-    }
-
-    /**
-     * Gets or create a block id property. If the block id property key is
-     * already in the configuration, then it will be used. Otherwise,
-     * defaultId will be used, except if already taken, in which case this
-     * will try to determine a free default id.
-     */
-    public Property getBlock(String key, int defaultID) { return getBlock(CATEGORY_BLOCK, key, defaultID, null); }
-    public Property getBlock(String key, int defaultID, String comment) { return getBlock(CATEGORY_BLOCK, key, defaultID, comment); }
-    public Property getBlock(String category, String key, int defaultID) { return getBlockInternal(category, key, defaultID, null, 256, Block.blocksList.length); }
-    public Property getBlock(String category, String key, int defaultID, String comment) { return getBlockInternal(category, key, defaultID, comment, 256, Block.blocksList.length); }
-
-    /**
-     * Special version of getBlock to be used when you want to garentee the ID you get is below 256
-     * This should ONLY be used by mods who do low level terrain generation, or ones that add new
-     * biomes.
-     * EXA: ExtraBiomesXL
-     * 
-     * Specifically, if your block is used BEFORE the Chunk is created, and placed in the terrain byte array directly.
-     * If you add a new biome and you set the top/filler block, they need to be <256, nothing else.
-     * 
-     * If you're adding a new ore, DON'T call this function.
-     * 
-     * Normal mods such as '50 new ores' do not need to be below 256 so should use the normal getBlock
-     */
-    public Property getTerrainBlock(String category, String key, int defaultID, String comment)
-    {
-        return getBlockInternal(category, key, defaultID, comment, 0, 256); 
-    }
-
-    private Property getBlockInternal(String category, String key, int defaultID, String comment, int lower, int upper)
-    {
-        Property prop = get(category, key, -1, comment);
-
-        if (prop.getInt() != -1)
-        {
-            configMarkers[prop.getInt()] = true;
-            return prop;
-        }
-        else
-        {
-            if (defaultID < lower)
-            {
-                FMLLog.warning(
-                    "Mod attempted to get a block ID with a default in the Terrain Generation section, " +
-                    "mod authors should make sure there defaults are above 256 unless explicitly needed " +
-                    "for terrain generation. Most ores do not need to be below 256.");
-                FMLLog.warning("Config \"%s\" Category: \"%s\" Key: \"%s\" Default: %d", fileName, category, key, defaultID);
-                defaultID = upper - 1;
-            }
-
-            if (Block.blocksList[defaultID] == null && !configMarkers[defaultID])
-            {
-                prop.set(defaultID);
-                configMarkers[defaultID] = true;
-                return prop;
-            }
-            else
-            {
-                for (int j = upper - 1; j > 0; j--)
-                {
-                    if (Block.blocksList[j] == null && !configMarkers[j])
-                    {
-                        prop.set(j);
-                        configMarkers[j] = true;
-                        return prop;
-                    }
-                }
-
-                throw new RuntimeException("No more block ids available for " + key);
-            }
-        }
-    }
-
-    public Property getItem(String key, int defaultID) { return getItem(CATEGORY_ITEM, key, defaultID, null); }
-    public Property getItem(String key, int defaultID, String comment) { return getItem(CATEGORY_ITEM, key, defaultID, comment); }
-    public Property getItem(String category, String key, int defaultID) { return getItem(category, key, defaultID, null); }
-
-    public Property getItem(String category, String key, int defaultID, String comment)
-    {
-        Property prop = get(category, key, -1, comment);
-        int defaultShift = defaultID + ITEM_SHIFT;
-
-        if (prop.getInt() != -1)
-        {
-            configMarkers[prop.getInt() + ITEM_SHIFT] = true;
-            return prop;
-        }
-        else
-        {
-            if (defaultID < MAX_BLOCKS - ITEM_SHIFT)
-            {
-                FMLLog.warning(
-                    "Mod attempted to get a item ID with a default value in the block ID section, " +
-                    "mod authors should make sure there defaults are above %d unless explicitly needed " +
-                    "so that all block ids are free to store blocks.", MAX_BLOCKS - ITEM_SHIFT);
-                FMLLog.warning("Config \"%s\" Category: \"%s\" Key: \"%s\" Default: %d", fileName, category, key, defaultID);
-            }
-
-            if (Item.itemsList[defaultShift] == null && !configMarkers[defaultShift] && defaultShift >= Block.blocksList.length)
-            {
-                prop.set(defaultID);
-                configMarkers[defaultShift] = true;
-                return prop;
-            }
-            else
-            {
-                for (int x = Item.itemsList.length - 1; x >= ITEM_SHIFT; x--)
-                {
-                    if (Item.itemsList[x] == null && !configMarkers[x])
-                    {
-                        prop.set(x - ITEM_SHIFT);
-                        configMarkers[x] = true;
-                        return prop;
-                    }
-                }
-
-                throw new RuntimeException("No more item ids available for " + key);
-            }
-        }
     }
 
     public Property get(String category, String key, int defaultValue)

@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -24,7 +26,6 @@ public class OreDictionary
     private static HashMap<String, Integer> oreIDs = new HashMap<String, Integer>();
     private static HashMap<Integer, ArrayList<ItemStack>> oreStacks = new HashMap<Integer, ArrayList<ItemStack>>();
 
-
     /**
      * Minecraft changed from -1 to Short.MAX_VALUE in 1.5 release for the "block wildcard". Use this in case it
      * changes again.
@@ -39,48 +40,53 @@ public class OreDictionary
     {
         if (!hasInit)
         {
-            registerOre("logWood",     new ItemStack(Block.wood, 1, WILDCARD_VALUE));
-            registerOre("plankWood",   new ItemStack(Block.planks, 1, WILDCARD_VALUE));
-            registerOre("slabWood",    new ItemStack(Block.woodSingleSlab, 1, WILDCARD_VALUE));
-            registerOre("stairWood",   Block.stairsWoodOak);
-            registerOre("stairWood",   Block.stairsWoodBirch);
-            registerOre("stairWood",   Block.stairsWoodJungle);
-            registerOre("stairWood",   Block.stairsWoodSpruce);
-            registerOre("stickWood",   Item.stick);
-            registerOre("treeSapling", new ItemStack(Block.sapling, 1, WILDCARD_VALUE));
-            registerOre("treeLeaves",  new ItemStack(Block.leaves, 1, WILDCARD_VALUE));
-            registerOre("oreGold",     Block.oreGold);
-            registerOre("oreIron",     Block.oreIron);
-            registerOre("oreLapis",    Block.oreLapis);
-            registerOre("oreDiamond",  Block.oreDiamond);
-            registerOre("oreRedstone", Block.oreRedstone);
-            registerOre("oreEmerald",  Block.oreEmerald);
-            registerOre("oreQuartz",   Block.oreNetherQuartz);
-            registerOre("stone",       Block.stone);
-            registerOre("cobblestone", Block.cobblestone);
-            registerOre("record",      Item.record13);
-            registerOre("record",      Item.recordCat);
-            registerOre("record",      Item.recordBlocks);
-            registerOre("record",      Item.recordChirp);
-            registerOre("record",      Item.recordFar);
-            registerOre("record",      Item.recordMall);
-            registerOre("record",      Item.recordMellohi);
-            registerOre("record",      Item.recordStal);
-            registerOre("record",      Item.recordStrad);
-            registerOre("record",      Item.recordWard);
-            registerOre("record",      Item.record11);
-            registerOre("record",      Item.recordWait);
+            registerOre("logWood",     new ItemStack(Blocks.log, 1, WILDCARD_VALUE));
+            registerOre("logWood",     new ItemStack(Blocks.log2, 1, WILDCARD_VALUE));
+            registerOre("plankWood",   new ItemStack(Blocks.planks, 1, WILDCARD_VALUE));
+            registerOre("slabWood",    new ItemStack(Blocks.wooden_slab, 1, WILDCARD_VALUE));
+            registerOre("stairWood",   Blocks.oak_stairs);
+            registerOre("stairWood",   Blocks.spruce_stairs);
+            registerOre("stairWood",   Blocks.birch_stairs);
+            registerOre("stairWood",   Blocks.jungle_stairs);
+            registerOre("stairWood",   Blocks.acacia_stairs);
+            registerOre("stairWood",   Blocks.dark_oak_stairs);
+            registerOre("stickWood",   Items.stick);
+            registerOre("treeSapling", new ItemStack(Blocks.sapling, 1, WILDCARD_VALUE));
+            registerOre("treeLeaves",  new ItemStack(Blocks.leaves, 1, WILDCARD_VALUE));
+            registerOre("treeLeaves",  new ItemStack(Blocks.leaves2, 1, WILDCARD_VALUE));
+            registerOre("oreGold",     Blocks.gold_ore);
+            registerOre("oreIron",     Blocks.iron_ore);
+            registerOre("oreLapis",    Blocks.lapis_ore);
+            registerOre("oreDiamond",  Blocks.diamond_ore);
+            registerOre("oreRedstone", Blocks.redstone_ore);
+            registerOre("oreEmerald",  Blocks.emerald_ore);
+            registerOre("oreQuartz",   Blocks.quartz_ore);
+            registerOre("oreCoal",     Blocks.coal_ore);
+            registerOre("stone",       Blocks.stone);
+            registerOre("cobblestone", Blocks.cobblestone);
+            registerOre("record",      Items.record_13);
+            registerOre("record",      Items.record_cat);
+            registerOre("record",      Items.record_blocks);
+            registerOre("record",      Items.record_chirp);
+            registerOre("record",      Items.record_far);
+            registerOre("record",      Items.record_mall);
+            registerOre("record",      Items.record_mellohi);
+            registerOre("record",      Items.record_stal);
+            registerOre("record",      Items.record_strad);
+            registerOre("record",      Items.record_ward);
+            registerOre("record",      Items.record_11);
+            registerOre("record",      Items.record_wait);
         }
 
         // Build our list of items to replace with ore tags
         Map<ItemStack, String> replacements = new HashMap<ItemStack, String>();
-        replacements.put(new ItemStack(Item.stick), "stickWood");
-        replacements.put(new ItemStack(Block.planks), "plankWood");
-        replacements.put(new ItemStack(Block.planks, 1, WILDCARD_VALUE), "plankWood");
-        replacements.put(new ItemStack(Block.stone), "stone");
-        replacements.put(new ItemStack(Block.stone, 1, WILDCARD_VALUE), "stone");
-        replacements.put(new ItemStack(Block.cobblestone), "cobblestone");
-        replacements.put(new ItemStack(Block.cobblestone, 1, WILDCARD_VALUE), "cobblestone");
+        replacements.put(new ItemStack(Items.stick), "stickWood");
+        replacements.put(new ItemStack(Blocks.planks), "plankWood");
+        replacements.put(new ItemStack(Blocks.planks, 1, WILDCARD_VALUE), "plankWood");
+        replacements.put(new ItemStack(Blocks.stone), "stone");
+        replacements.put(new ItemStack(Blocks.stone, 1, WILDCARD_VALUE), "stone");
+        replacements.put(new ItemStack(Blocks.cobblestone), "cobblestone");
+        replacements.put(new ItemStack(Blocks.cobblestone, 1, WILDCARD_VALUE), "cobblestone");
 
         // Register dyes
         String[] dyes =
@@ -105,7 +111,7 @@ public class OreDictionary
 
         for(int i = 0; i < 16; i++)
         {
-            ItemStack dye = new ItemStack(Item.dyePowder, 1, i);
+            ItemStack dye = new ItemStack(Items.dye, 1, i);
             if (!hasInit)
             {
                 registerOre(dyes[i], dye);
@@ -119,12 +125,12 @@ public class OreDictionary
         // Ignore recipes for the following items
         ItemStack[] exclusions = new ItemStack[]
         {
-            new ItemStack(Block.blockLapis),
-            new ItemStack(Item.cookie),
-            new ItemStack(Block.stoneBrick),
-            new ItemStack(Block.stoneSingleSlab),
-            new ItemStack(Block.stairsCobblestone),
-            new ItemStack(Block.cobblestoneWall)
+            new ItemStack(Blocks.lapis_block),
+            new ItemStack(Items.cookie),
+            new ItemStack(Blocks.stonebrick),
+            new ItemStack(Blocks.stone_slab),
+            new ItemStack(Blocks.stone_stairs),
+            new ItemStack(Blocks.cobblestone_wall)
         };
 
         List recipes = CraftingManager.getInstance().getRecipeList();
@@ -230,7 +236,7 @@ public class OreDictionary
         {
             for(ItemStack target : ore.getValue())
             {
-                if(itemStack.itemID == target.itemID && (target.getItemDamage() == WILDCARD_VALUE || itemStack.getItemDamage() == target.getItemDamage()))
+                if(itemStack.getItem() == target.getItem() && (target.getItemDamage() == WILDCARD_VALUE || itemStack.getItemDamage() == target.getItemDamage()))
                 {
                     return ore.getKey();
                 }
@@ -300,7 +306,7 @@ public class OreDictionary
         {
             return false;
         }
-        return (target.itemID == input.itemID && ((target.getItemDamage() == WILDCARD_VALUE && !strict) || target.getItemDamage() == input.getItemDamage()));
+        return (target.getItem() == input.getItem() && ((target.getItemDamage() == WILDCARD_VALUE && !strict) || target.getItemDamage() == input.getItemDamage()));
     }
 
     //Convenience functions that make for cleaner code mod side. They all drill down to registerOre(String, int, ItemStack)
