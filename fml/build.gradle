@@ -6,6 +6,10 @@ buildscript {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.1-SNAPSHOT'
@@ -33,7 +37,7 @@ minecraft {
 }
 
 group = 'cpw.mods'
-version = getVersionFromGit(project)
+version = getVersionFromGit(getProject())
 
 jenkins {
     job = 'fml'
