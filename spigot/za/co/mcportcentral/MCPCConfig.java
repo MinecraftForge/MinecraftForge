@@ -56,12 +56,13 @@ public class MCPCConfig
         public static final BoolSetting entityDespawnLogging = new BoolSetting("logging.entity-despawn", false, "Log when living entities are despawned (dev)");
         public static final BoolSetting entityDeathLogging = new BoolSetting("logging.entity-death", false, "Log when an entity is destroyed (dev)");
         public static final BoolSetting logWithStackTraces = new BoolSetting("logging.detailed-logging", false, "Add stack traces to dev logging");
-        public static final BoolSetting dumpChunksOnDeadlock = new BoolSetting("logging.dump-chunks-on-deadlock", true, "Dump chunks in the event of a deadlock (helps to debug the deadlock)");
+        public static final BoolSetting dumpChunksOnDeadlock = new BoolSetting("logging.dump-chunks-on-deadlock", false, "Dump chunks in the event of a deadlock (helps to debug the deadlock)");
         public static final BoolSetting dumpHeapOnDeadlock = new BoolSetting("logging.dump-heap-on-deadlock", false, "Dump the heap in the event of a deadlock (helps to debug the deadlock)");
+        public static final BoolSetting dumpThreadsOnWarn = new BoolSetting("logging.dump-threads-on-warn", false, "Dump the the server thread on deadlock warning (delps to debug the deadlock)");
         public static final IntSetting largeCollisionLogSize = new IntSetting("logging.collision-warn-size", 200, "Number of colliding entities in one spot before logging a warning. Set to 0 to disable");
         
         // Chunk loading options
-        public static final BoolSetting loadChunkOnRequest = new BoolSetting("settings.load-chunk-on-request", false, "Forces Chunk Loading on 'Provide' requests (speedup for mods that don't check if a chunk is loaded");
+        public static final BoolSetting loadChunkOnRequest = new BoolSetting("settings.load-chunk-on-request", true, "Forces Chunk Loading on 'Provide' requests (speedup for mods that don't check if a chunk is loaded");
         public static final BoolSetting loadChunkOnForgeTick = new BoolSetting("settings.load-chunk-on-forge-tick", false, "Forces Chunk Loading during Forge Server Tick events");
         public static final IntSetting chunkGCGracePeriod = new IntSetting("settings.chunk-gc-grace-period", 700, "Grace period on a loaded chunk before we try to unload it");
 

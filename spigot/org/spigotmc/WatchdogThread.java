@@ -153,6 +153,12 @@ public class WatchdogThread extends Thread
                 double tps = Math.min(20, Math.round(net.minecraft.server.MinecraftServer.currentTPS * 10) / 10.0);
                 log.log(Level.WARNING, "Last Tick: " + lastTick + " Current Time: " + currentTime + " Warning: " + warningTime + " Timeout: " + timeoutTime);
                 log.log(Level.WARNING, "[TPS]: " + tps + " Server Tick #" + net.minecraft.server.MinecraftServer.currentTick);
+                if (MCPCConfig.Setting.dumpThreadsOnWarn.getValue())
+                {
+                    log.log(Level.WARNING, "Server thread dump (Look for mods or plugins here before reporting to MCPC+!):");
+                    dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(MinecraftServer.getServer().primaryThread.getId(), Integer.MAX_VALUE), log,
+                            Level.WARNING);
+                }
             }
             // MCPC+ end
 
@@ -166,15 +172,20 @@ public class WatchdogThread extends Thread
             }
         }
     }
-
     private static void dumpThread(ThreadInfo thread, Logger log)
     {
+        dumpThread(thread, log, Level.SEVERE);
+    }
+
+    private static void dumpThread(ThreadInfo thread, Logger log, Level level)
+    {
+        if (thread == null) return;
         if ( thread.getThreadState() != State.WAITING )
         {
-            log.log( Level.SEVERE, "------------------------------" );
+            log.log( level, "------------------------------" );
             //
-            log.log( Level.SEVERE, "Current Thread: " + thread.getThreadName() );
-            log.log( Level.SEVERE, "\tPID: " + thread.getThreadId()
+            log.log( level, "Current Thread: " + thread.getThreadName() );
+            log.log( level, "\tPID: " + thread.getThreadId()
                     + " | Suspended: " + thread.isSuspended()
                     + " | Native: " + thread.isInNative()
                     + " | State: " + thread.getThreadState() 
@@ -183,19 +194,19 @@ public class WatchdogThread extends Thread
             
             if ( thread.getLockedMonitors().length != 0 )
             {
-                log.log( Level.SEVERE, "\tThread is waiting on monitor(s):" );
+                log.log( level, "\tThread is waiting on monitor(s):" );
                 for ( MonitorInfo monitor : thread.getLockedMonitors() )
                 {
-                    log.log( Level.SEVERE, "\t\tLocked on:" + monitor.getLockedStackFrame() );
+                    log.log( level, "\t\tLocked on:" + monitor.getLockedStackFrame() );
                 }
             }
-            if ( thread.getLockOwnerId() != -1 ) log.log( Level.SEVERE, "\tLock Owner Id: " + thread.getLockOwnerId()); // MCPC + add info about lock owner thread id
-            log.log( Level.SEVERE, "\tStack:" );
+            if ( thread.getLockOwnerId() != -1 ) log.log( level, "\tLock Owner Id: " + thread.getLockOwnerId()); // MCPC + add info about lock owner thread id
+            log.log( level, "\tStack:" );
             //
             StackTraceElement[] stack = thread.getStackTrace();
             for ( int line = 0; line < stack.length; line++ )
             {
-                log.log( Level.SEVERE, "\t\t" + stack[line].toString() );
+                log.log( level, "\t\t" + stack[line].toString() );
             }
         }
     }
