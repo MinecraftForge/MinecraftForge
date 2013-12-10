@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
 +++ ../src-work/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
-@@ -52,11 +52,15 @@
+@@ -52,11 +52,16 @@
  import net.minecraft.util.EnumChatFormatting;
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.EnumGameType;
@@ -12,11 +12,21 @@
  import net.minecraft.world.storage.IPlayerFileData;
  
 +import net.minecraftforge.common.DimensionManager;
++import net.minecraftforge.common.ForgeHooks;
 +
  public abstract class ServerConfigurationManager
  {
      private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd \'at\' HH:mm:ss z");
-@@ -392,13 +396,23 @@
+@@ -128,7 +133,7 @@
+         netserverhandler.sendPacketToPlayer(new Packet16BlockItemSwitch(par2EntityPlayerMP.inventory.currentItem));
+         this.func_96456_a((ServerScoreboard)worldserver.getScoreboard(), par2EntityPlayerMP);
+         this.updateTimeAndWeatherForPlayer(par2EntityPlayerMP, worldserver);
+-        this.sendChatMsg(ChatMessageComponent.createFromTranslationWithSubstitutions("multiplayer.player.joined", new Object[] {par2EntityPlayerMP.getTranslatedEntityName()}).setColor(EnumChatFormatting.YELLOW));
++        ForgeHooks.sendJoinMessage(par2EntityPlayerMP);
+         this.playerLoggedIn(par2EntityPlayerMP);
+         netserverhandler.setPlayerLocation(par2EntityPlayerMP.posX, par2EntityPlayerMP.posY, par2EntityPlayerMP.posZ, par2EntityPlayerMP.rotationYaw, par2EntityPlayerMP.rotationPitch);
+         this.mcServer.getNetworkThread().addPlayer(netserverhandler);
+@@ -392,13 +397,23 @@
       */
      public EntityPlayerMP respawnPlayer(EntityPlayerMP par1EntityPlayerMP, int par2, boolean par3)
      {
@@ -42,7 +52,7 @@
          par1EntityPlayerMP.dimension = par2;
          Object object;
  
-@@ -414,6 +428,7 @@
+@@ -414,6 +429,7 @@
          EntityPlayerMP entityplayermp1 = new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension), par1EntityPlayerMP.getCommandSenderName(), (ItemInWorldManager)object);
          entityplayermp1.playerNetServerHandler = par1EntityPlayerMP.playerNetServerHandler;
          entityplayermp1.clonePlayer(par1EntityPlayerMP, par3);
@@ -50,7 +60,7 @@
          entityplayermp1.entityId = par1EntityPlayerMP.entityId;
          WorldServer worldserver = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
          this.func_72381_a(entityplayermp1, par1EntityPlayerMP, worldserver);
-@@ -458,6 +473,11 @@
+@@ -458,6 +474,11 @@
  
      public void transferPlayerToDimension(EntityPlayerMP par1EntityPlayerMP, int par2)
      {
@@ -62,7 +72,7 @@
          int j = par1EntityPlayerMP.dimension;
          WorldServer worldserver = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
          par1EntityPlayerMP.dimension = par2;
-@@ -465,7 +485,7 @@
+@@ -465,7 +486,7 @@
          par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(par1EntityPlayerMP.dimension, (byte)par1EntityPlayerMP.worldObj.difficultySetting, worldserver1.getWorldInfo().getTerrainType(), worldserver1.getHeight(), par1EntityPlayerMP.theItemInWorldManager.getGameType()));
          worldserver.removePlayerEntityDangerously(par1EntityPlayerMP);
          par1EntityPlayerMP.isDead = false;
@@ -71,7 +81,7 @@
          this.func_72375_a(par1EntityPlayerMP, worldserver);
          par1EntityPlayerMP.playerNetServerHandler.setPlayerLocation(par1EntityPlayerMP.posX, par1EntityPlayerMP.posY, par1EntityPlayerMP.posZ, par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
          par1EntityPlayerMP.theItemInWorldManager.setWorld(worldserver1);
-@@ -487,39 +507,24 @@
+@@ -487,39 +508,24 @@
       */
      public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer)
      {
@@ -122,7 +132,7 @@
              ChunkCoordinates chunkcoordinates;
  
              if (par2 == 1)
-@@ -555,7 +560,7 @@
+@@ -555,7 +561,7 @@
                  par4WorldServer.spawnEntityInWorld(par1Entity);
                  par1Entity.setLocationAndAngles(d0, par1Entity.posY, d1, par1Entity.rotationYaw, par1Entity.rotationPitch);
                  par4WorldServer.updateEntityWithOptionalForce(par1Entity, false);
