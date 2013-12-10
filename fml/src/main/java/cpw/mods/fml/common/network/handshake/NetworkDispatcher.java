@@ -56,6 +56,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
     }
 
     public static final AttributeKey<NetworkDispatcher> FML_DISPATCHER = new AttributeKey<NetworkDispatcher>("fml:dispatcher");
+    public static final AttributeKey<Boolean> IS_LOCAL = new AttributeKey<Boolean>("fml:isLocal");
     private final NetworkManager manager;
     private final ServerConfigurationManager scm;
     private EntityPlayerMP player;
@@ -70,9 +71,11 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
         this.manager = manager;
         this.scm = null;
         this.side = Side.CLIENT;
-        this.handshakeChannel = new EmbeddedChannel(new HandshakeInjector(this), new FMLHandshakeCodec(), new HandshakeMessageHandler<FMLHandshakeClientState>(FMLHandshakeClientState.class));
+        this.handshakeChannel = new EmbeddedChannel(new HandshakeInjector(this), new ChannelRegistrationHandler(), new FMLHandshakeCodec(), new HandshakeMessageHandler<FMLHandshakeClientState>(FMLHandshakeClientState.class));
         this.handshakeChannel.attr(FML_DISPATCHER).set(this);
+        this.handshakeChannel.attr(NetworkRegistry.CHANNEL_SOURCE).set(Side.SERVER);
         this.handshakeChannel.attr(NetworkRegistry.FML_CHANNEL).set("FML|HS");
+        this.handshakeChannel.attr(IS_LOCAL).set(manager.func_150731_c());
     }
 
     public NetworkDispatcher(NetworkManager manager, ServerConfigurationManager scm)
@@ -81,9 +84,11 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
         this.manager = manager;
         this.scm = scm;
         this.side = Side.SERVER;
-        this.handshakeChannel = new EmbeddedChannel(new HandshakeInjector(this), new FMLHandshakeCodec(), new HandshakeMessageHandler<FMLHandshakeServerState>(FMLHandshakeServerState.class));
+        this.handshakeChannel = new EmbeddedChannel(new HandshakeInjector(this), new ChannelRegistrationHandler(), new FMLHandshakeCodec(), new HandshakeMessageHandler<FMLHandshakeServerState>(FMLHandshakeServerState.class));
         this.handshakeChannel.attr(FML_DISPATCHER).set(this);
+        this.handshakeChannel.attr(NetworkRegistry.CHANNEL_SOURCE).set(Side.CLIENT);
         this.handshakeChannel.attr(NetworkRegistry.FML_CHANNEL).set("FML|HS");
+        this.handshakeChannel.attr(IS_LOCAL).set(manager.func_150731_c());
     }
 
     public void serverToClientHandshake(EntityPlayerMP player)
@@ -210,7 +215,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
     private boolean handleClientSideCustomPacket(S3FPacketCustomPayload msg, ChannelHandlerContext context)
     {
         String channelName = msg.func_149169_c();
-        if ("FML|HS".equals(channelName))
+        if ("FML|HS".equals(channelName) || "REGISTER".equals(channelName) || "UNREGISTER".equals(channelName))
         {
             FMLProxyPacket proxy = new FMLProxyPacket(msg);
             handshakeChannel.writeInbound(proxy);
@@ -233,7 +238,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
             state = ConnectionState.HANDSHAKING;
         }
         String channelName = msg.func_149559_c();
-        if ("FML|HS".equals(channelName))
+        if ("FML|HS".equals(channelName) || "REGISTER".equals(channelName) || "UNREGISTER".equals(channelName))
         {
             FMLProxyPacket proxy = new FMLProxyPacket(msg);
             handshakeChannel.writeInbound(proxy);

@@ -30,7 +30,7 @@ import com.google.common.collect.Lists;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.network.handshake.FMLHandshakeMessage.ClientModList;
+import cpw.mods.fml.common.network.handshake.FMLHandshakeMessage;
 import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
 import cpw.mods.fml.relauncher.Side;
 
@@ -451,13 +451,13 @@ public class FMLNetworkHandler
         return null;
     }
 
-    public static String checkClientModList(ClientModList clientModList)
+    public static String checkModList(FMLHandshakeMessage.ModList modListPacket, Side side)
     {
-        Map<String,String> modList = clientModList.modList();
+        Map<String,String> modList = modListPacket.modList();
         List<ModContainer> rejects = Lists.newArrayList();
         for (Entry<ModContainer, NetworkModHolder> networkMod : NetworkRegistry.INSTANCE.registry().entrySet())
         {
-            boolean result = networkMod.getValue().check(modList, Side.CLIENT);
+            boolean result = networkMod.getValue().check(modList, side);
             if (!result)
             {
                 rejects.add(networkMod.getKey());
@@ -469,7 +469,7 @@ public class FMLNetworkHandler
         }
         else
         {
-            FMLLog.info("Rejecting client : %s", rejects);
+            FMLLog.info("Rejecting connection %s: %s", side, rejects);
             return String.format("Mod rejections %s",rejects);
         }
     }

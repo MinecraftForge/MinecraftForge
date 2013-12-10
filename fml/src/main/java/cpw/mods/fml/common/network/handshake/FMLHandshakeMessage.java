@@ -1,19 +1,31 @@
 package cpw.mods.fml.common.network.handshake;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.network.ByteBufUtils;
+import cpw.mods.fml.common.network.FMLProxyPacket;
 import cpw.mods.fml.common.network.NetworkRegistry;
 
 public abstract class FMLHandshakeMessage {
+    public static FMLProxyPacket makeCustomChannelRegistration(Set<String> channels)
+    {
+        String salutation = Joiner.on('\0').join(Iterables.concat(Arrays.asList("FML|HS","FML"),channels));
+        FMLProxyPacket proxy = new FMLProxyPacket(Unpooled.wrappedBuffer(salutation.getBytes(Charsets.UTF_8)), "REGISTER");
+        return proxy;
+    }
     public static class ServerHello extends FMLHandshakeMessage {
         private byte serverProtocolVersion;
         public void toBytes(ByteBuf buffer)
@@ -48,38 +60,12 @@ public abstract class FMLHandshakeMessage {
             return serverProtocolVersion;
         }
     }
-    public static class ServerModList extends FMLHandshakeMessage {
-        private List<String> modTags = Lists.newArrayList();
-
-        @Override
-        public void toBytes(ByteBuf buffer)
-        {
-            super.toBytes(buffer);
-            ByteBufUtils.writeVarInt(buffer, modTags.size(), 2);
-            for (String modTag: modTags)
-            {
-                ByteBufUtils.writeUTF8String(buffer, modTag);
-            }
-        }
-
-        @Override
-        public void fromBytes(ByteBuf buffer)
-        {
-            super.fromBytes(buffer);
-            int modCount = ByteBufUtils.readVarInt(buffer, 2);
-            for (int i = 0; i < modCount; i++)
-            {
-                modTags.add(ByteBufUtils.readUTF8String(buffer));
-            }
-        }
-    }
-
-    public static class ClientModList extends FMLHandshakeMessage {
-        public ClientModList()
+    public static class ModList extends FMLHandshakeMessage {
+        public ModList()
         {
 
         }
-        public ClientModList(List<ModContainer> modList)
+        public ModList(List<ModContainer> modList)
         {
             for (ModContainer mod : modList)
             {
@@ -126,6 +112,45 @@ public abstract class FMLHandshakeMessage {
         }
     }
 
+    public static class ModIdData extends FMLHandshakeMessage {
+        public ModIdData()
+        {
+
+        }
+
+        public ModIdData(Map<String,Integer> modIds)
+        {
+            this.modIds = modIds;
+        }
+
+        private Map<String,Integer> modIds;
+        public void fromBytes(ByteBuf buffer)
+        {
+            int length = ByteBufUtils.readVarInt(buffer, 3);
+            modIds = Maps.newHashMap();
+
+            for (int i = 0; i < length; i++)
+            {
+                modIds.put(ByteBufUtils.readUTF8String(buffer),ByteBufUtils.readVarInt(buffer, 3));
+            }
+        }
+
+        @Override
+        public void toBytes(ByteBuf buffer)
+        {
+            ByteBufUtils.writeVarInt(buffer, modIds.size(), 3);
+            for (Entry<String, Integer> entry: modIds.entrySet())
+            {
+                ByteBufUtils.writeUTF8String(buffer, entry.getKey());
+                ByteBufUtils.writeVarInt(buffer, entry.getValue(), 3);
+            }
+        }
+
+        public Map<String,Integer> dataList()
+        {
+            return modIds;
+        }
+    }
     public static class ClientAck extends FMLHandshakeMessage {
 
     }
