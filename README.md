@@ -74,3 +74,11 @@ Making sure you follow the above conventions is important, but just the beginnin
 * Provide a test plugin/mod binary and source for us to test your code with.
 * Your pull request should link to accompanying pull requests.
 * The description of your pull request should provide detailed information on the pull along with justification of the changes where applicable.
+* 
+
+Donating
+--------
+Click here to [Donate to BloodMC](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YNCKCALNQKFAS)
+
+Click here to [Donate to Onibait](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=B29U8Y8AF7A2Q)
+
