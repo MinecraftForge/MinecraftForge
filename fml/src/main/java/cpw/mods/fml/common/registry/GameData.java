@@ -13,147 +13,39 @@
 package cpw.mods.fml.common.registry;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Properties;
+import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Joiner.MapJoiner;
-import com.google.common.base.Throwables;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableTable;
-import com.google.common.collect.ImmutableTable.Builder;
-import com.google.common.collect.MapDifference;
-import com.google.common.collect.MapDifference.ValueDifference;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
-import com.google.common.collect.Table.Cell;
-import com.google.common.collect.Tables;
 import com.google.common.io.Files;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.LoaderState;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
 public class GameData {
     private static Table<String, String, ItemStack> customItemStacks = HashBasedTable.create();
-    private static boolean validated;
-    public static final FMLControlledNamespacedRegistry<Block> blockRegistry = new FMLControlledNamespacedRegistry<Block>("air", 4095, 0, Block.class);
-    public static final FMLControlledNamespacedRegistry<Item> itemRegistry = new FMLControlledNamespacedRegistry<Item>(null, 32000, 4096, Item.class);
 
-    public static void newItemAdded(Item item)
-    {
-        ModContainer mc = Loader.instance().activeModContainer();
-        if (mc == null)
-        {
-            mc = Loader.instance().getMinecraftModContainer();
-            if (Loader.instance().hasReachedState(LoaderState.INITIALIZATION) || validated)
-            {
-                FMLLog.severe("It appears something has tried to allocate an Item or Block outside of the preinitialization phase for mods. This will NOT work in 1.7 and beyond!");
-            }
-        }
-        String itemType = item.getClass().getName();
-        ItemData itemData = new ItemData(item, mc);
-        if (idMap.containsKey(item.field_77779_bT))
-        {
-            ItemData id = idMap.get(item.field_77779_bT);
-            FMLLog.log("fml.ItemTracker", Level.INFO, "The mod %s is overwriting existing item at %d (%s from %s) with %s", mc.getModId(), id.getItemId(), id.getItemType(), id.getModId(), itemType);
-        }
-        idMap.put(item.field_77779_bT, itemData);
-        if (!"Minecraft".equals(mc.getModId()))
-        {
-            FMLLog.log("fml.ItemTracker",Level.FINE, "Adding item %s(%d) owned by %s", item.getClass().getName(), item.field_77779_bT, mc.getModId());
-        }
-    }
-
-    public static void validateWorldSave(Set<ItemData> worldSaveItems)
-    {
-        isSaveValid = true;
-        shouldContinue = true;
-        // allow ourselves to continue if there's no saved data
-        if (worldSaveItems == null)
-        {
-            serverValidationLatch.countDown();
-            try
-            {
-                clientValidationLatch.await();
-            }
-            catch (InterruptedException e)
-            {
-            }
-            return;
-        }
-
-        Function<? super ItemData, Integer> idMapFunction = new Function<ItemData, Integer>() {
-            public Integer apply(ItemData input) {
-                return input.getItemId();
-            };
-        };
-
-        Map<Integer,ItemData> worldMap = Maps.uniqueIndex(worldSaveItems,idMapFunction);
-        difference = Maps.difference(worldMap, idMap);
-        FMLLog.log("fml.ItemTracker", Level.FINE, "The difference set is %s", difference);
-        if (!difference.entriesDiffering().isEmpty() || !difference.entriesOnlyOnLeft().isEmpty())
-        {
-            FMLLog.log("fml.ItemTracker", Level.SEVERE, "FML has detected item discrepancies");
-            FMLLog.log("fml.ItemTracker", Level.SEVERE, "Missing items : %s", difference.entriesOnlyOnLeft());
-            FMLLog.log("fml.ItemTracker", Level.SEVERE, "Mismatched items : %s", difference.entriesDiffering());
-            boolean foundNonIgnored = false;
-            for (ItemData diff : difference.entriesOnlyOnLeft().values())
-            {
-                if (!isModIgnoredForIdValidation(diff.getModId()))
-                {
-                    foundNonIgnored = true;
-                }
-            }
-            for (ValueDifference<ItemData> diff : difference.entriesDiffering().values())
-            {
-                if (! ( isModIgnoredForIdValidation(diff.leftValue().getModId()) || isModIgnoredForIdValidation(diff.rightValue().getModId()) ) )
-                {
-                    foundNonIgnored = true;
-                }
-            }
-            if (!foundNonIgnored)
-            {
-                FMLLog.log("fml.ItemTracker", Level.SEVERE, "FML is ignoring these ID discrepancies because of configuration. YOUR GAME WILL NOW PROBABLY CRASH. HOPEFULLY YOU WON'T HAVE CORRUPTED YOUR WORLD. BLAME %s", ignoredMods.keySet());
-            }
-            isSaveValid = !foundNonIgnored;
-            serverValidationLatch.countDown();
-        }
-        else
-        {
-            isSaveValid = true;
-            serverValidationLatch.countDown();
-        }
-        try
-        {
-            clientValidationLatch.await();
-            if (!shouldContinue)
-            {
-                throw new RuntimeException("This server instance is going to stop abnormally because of a fatal ID mismatch");
-            }
-        }
-        catch (InterruptedException e)
-        {
-        }
-    }
+    public static final FMLControlledNamespacedRegistry<Block> blockRegistry = new FMLControlledNamespacedRegistry<Block>("air", 4095, 0, Block.class,'\u0001');
+    public static final FMLControlledNamespacedRegistry<Item> itemRegistry = new FMLControlledNamespacedRegistry<Item>(null, 32000, 4096, Item.class,'\u0002');
 
     public static Map<String,Integer> buildItemDataList()
     {
@@ -182,7 +74,7 @@ public class GameData {
 
     static Block findBlock(String modId, String name)
     {
-        return (Block) blockRegistry.func_82594_a(modId+":"+name);
+        return (Block) blockRegistry.func_82594_a(modId + ":" + name);
     }
 
     static ItemStack findItemStack(String modId, String name)
@@ -266,52 +158,49 @@ public class GameData {
         return ui;
     }
 
-    public static void validateRegistry()
-    {
-/*        for (int i = 0; i < Item.field_77698_e.length; i++)
-        {
-            if (Item.field_77698_e[i] != null)
-            {
-                ItemData itemData = idMap.get(i);
-                if (itemData == null)
-                {
-                    FMLLog.severe("Found completely unknown item of class %s with ID %d, this will NOT work for a 1.7 upgrade", Item.field_77698_e[i].getClass().getName(), i);
-                }
-                else if (!itemData.isOveridden() && !"Minecraft".equals(itemData.getModId()))
-                {
-                    FMLLog.severe("Found anonymous item of class %s with ID %d owned by mod %s, this item will NOT survive a 1.7 upgrade!", Item.field_77698_e[i].getClass().getName(), i, itemData.getModId());
-                }
-            }
-        }
-*/        validated = true;
-    }
     private static Map<UniqueIdentifier, ModContainer> customOwners = Maps.newHashMap();
-    static Block registerBlockAndItem(Item item, Block block, String name, String modId)
+
+    static void registerBlockAndItem(ItemBlock item, Block block, String name, String modId)
     {
+        ModContainer mc = Loader.instance().activeModContainer();
+        if (modId != null)
+        {
+            customOwners.put(new UniqueIdentifier(modId, name), mc);
+        }
+        int blockId = blockRegistry.add(0, name, block);
+        int itemId = itemRegistry.add(blockId, name, item);
+        if (itemId != blockId)
+        {
+            throw new RuntimeException();
+        }
 
     }
-    static Item registerItem(Item item, String name, String modId)
+    static void registerItem(Item item, String name, String modId)
     {
         ModContainer mc = Loader.instance().activeModContainer();
         if (modId != null)
         {
             customOwners.put(new UniqueIdentifier(modId, name), mc);
         }
-        itemRegistry.add(0, name, item);
-        int itemId = itemRegistry.getId(item);
-        blockRegistry.clearItem(itemId);
-        return item;
+        if (item instanceof ItemBlock)
+        {
+            throw new RuntimeException("Cannot register an itemblock separately from it's block");
+        }
+        int itemId = itemRegistry.add(0, name, item);
+        blockRegistry.useSlot(itemId);
     }
-    static Block registerBlock(Block block, String name, String modId)
+
+    static void registerBlock(Block block, String name, String modId)
     {
         ModContainer mc = Loader.instance().activeModContainer();
         if (modId != null)
         {
             customOwners.put(new UniqueIdentifier(modId, name), mc);
         }
-        blockRegistry.func_148756_a(0, name, block);
-        return block;
+        int blockId = blockRegistry.add(0, name, block);
+        itemRegistry.useSlot(blockId);
     }
+
     public static ModContainer findModOwner(String string)
     {
         UniqueIdentifier ui = new UniqueIdentifier(string);
@@ -320,5 +209,59 @@ public class GameData {
             return customOwners.get(ui);
         }
         return Loader.instance().getIndexedModList().get(ui.modId);
+    }
+
+
+    public static void fixupRegistries()
+    {
+        for (Integer id : blockRegistry.usedIds())
+        {
+            itemRegistry.useSlot(id);
+        }
+
+        for (Integer id : itemRegistry.usedIds())
+        {
+            blockRegistry.useSlot(id);
+        }
+    }
+
+    public static void injectWorldIDMap(Map<String, Integer> dataList)
+    {
+        blockRegistry.beginIdSwap();
+        itemRegistry.beginIdSwap();
+        for (Entry<String, Integer> entry : dataList.entrySet())
+        {
+            String itemName = entry.getKey();
+            char discriminator = itemName.charAt(0);
+            itemName = itemName.substring(1);
+            Integer newId = entry.getValue();
+            int currId;
+            boolean isBlock = discriminator == '\u0001';
+            if (isBlock)
+            {
+                currId = blockRegistry.getId(itemName);
+            }
+            else
+            {
+                currId = itemRegistry.getId(itemName);
+            }
+
+            if (currId != newId)
+            {
+                FMLLog.info("Found %s id mismatch %s : %d %d", isBlock ? "block" : "item", itemName, currId, newId);
+            }
+
+            if (isBlock)
+            {
+                blockRegistry.reassignMapping(itemName, newId);
+            }
+            else
+            {
+                itemRegistry.reassignMapping(itemName, newId);
+            }
+        }
+
+        blockRegistry.completeIdSwap();
+        itemRegistry.completeIdSwap();
     }
 }

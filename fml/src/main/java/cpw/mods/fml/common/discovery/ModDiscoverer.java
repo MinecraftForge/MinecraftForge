@@ -14,6 +14,7 @@ package cpw.mods.fml.common.discovery;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
@@ -85,7 +86,13 @@ public class ModDiscoverer
     {
         File[] modList = modsDir.listFiles();
         // Sort the files into alphabetical order first
-        Arrays.sort(modList);
+        Arrays.sort(modList, new Comparator<File>() {
+            @Override
+            public int compare(File o1, File o2)
+            {
+                return o1.getName().compareToIgnoreCase(o2.getName());
+            }
+        });
 
         for (File modFile : modList)
         {

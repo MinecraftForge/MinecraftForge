@@ -25,6 +25,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 
+import com.google.common.collect.Maps;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -93,8 +94,16 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
             list.func_74742_a(mod);
         }
         fmlData.func_74782_a("ModList", list);
-        NBTTagCompound nbt = GameData.buildItemDataList();
-        fmlData.func_74782_a("ModItemData", itemList);
+        NBTTagList dataList = new NBTTagList();
+        Map<String,Integer> itemList = GameData.buildItemDataList();
+        for (Entry<String, Integer> item : itemList.entrySet())
+        {
+            NBTTagCompound tag = new NBTTagCompound();
+            tag.func_74778_a("K",item.getKey());
+            tag.func_74768_a("V",item.getValue());
+            dataList.func_74742_a(tag);
+        }
+        fmlData.func_74782_a("ItemData", dataList);
         return fmlData;
     }
 
@@ -127,9 +136,16 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
 //            Set<ItemData> worldSaveItems = GameData.buildWorldItemData(modList);
 //            GameData.validateWorldSave(worldSaveItems);
         }
-        else
+        else if (tag.func_74764_b("ItemData"))
         {
-            GameData.validateWorldSave(null);
+            NBTTagList list = tag.func_150295_c("ItemData", (byte)10);
+            Map<String,Integer> dataList = Maps.newLinkedHashMap();
+            for (int i = 0; i < list.func_74745_c(); i++)
+            {
+                NBTTagCompound dataTag = list.func_150305_b(i);
+                dataList.put(dataTag.func_74779_i("K"), dataTag.func_74762_e("V"));
+            }
+            GameData.injectWorldIDMap(dataList);
         }
     }
 
