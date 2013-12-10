@@ -6,9 +6,13 @@ buildscript {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.0-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.1-SNAPSHOT'
     }
 }
 
@@ -30,8 +34,8 @@ repositories {
 }
 
 minecraft {
-    version = '1.6.4'
-    mcpVersion = '8.11'
+    version = '1.7.2'
+    mcpVersion = '9.01-pre'
     fmlDir = projectDir.getAbsolutePath() + "/fml";
     mainClass = 'cpw.mods.fml.relauncher.ServerLaunchWrapper'
     installerVersion = "1.4"

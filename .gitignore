@@ -15,3 +15,6 @@
 /eclipse/
 /repo/
 /buildSrc
+
+#Patch rejects
+*.rej
