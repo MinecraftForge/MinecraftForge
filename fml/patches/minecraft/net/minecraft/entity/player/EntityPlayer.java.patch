@@ -37,4 +37,4 @@
 +
      public static enum EnumStatus
      {
-         OK("OK", 0),
+         OK,

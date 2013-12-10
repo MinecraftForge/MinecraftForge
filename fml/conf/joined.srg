@@ -1813,7 +1813,7 @@ CL: zy net/minecraft/item/ItemBow
 CL: zz net/minecraft/item/ItemSoup
 FD: a/A net/minecraft/util/EnumChatFormatting/field_96303_A
 FD: a/B net/minecraft/util/EnumChatFormatting/field_96304_B
-FD: a/C net/minecraft/util/EnumChatFormatting/field_96305_C
+FD: a/C net/minecraft/util/EnumChatFormatting/$VALUES
 FD: a/a net/minecraft/util/EnumChatFormatting/BLACK
 FD: a/b net/minecraft/util/EnumChatFormatting/DARK_BLUE
 FD: a/c net/minecraft/util/EnumChatFormatting/DARK_GREEN
@@ -1889,7 +1889,7 @@ FD: abg/k net/minecraft/item/ItemFishFood$FishType/field_150992_k
 FD: abg/l net/minecraft/item/ItemFishFood$FishType/field_150989_l
 FD: abg/m net/minecraft/item/ItemFishFood$FishType/field_150990_m
 FD: abg/n net/minecraft/item/ItemFishFood$FishType/field_150987_n
-FD: abg/o net/minecraft/item/ItemFishFood$FishType/field_150988_o
+FD: abg/o net/minecraft/item/ItemFishFood$FishType/$VALUES
 FD: abh/a net/minecraft/item/ItemFishingRod/field_94598_a #C
 FD: abj/a net/minecraft/item/ItemFood/field_77855_a
 FD: abj/b net/minecraft/item/ItemFood/field_77853_b
@@ -2497,7 +2497,7 @@ FD: agi/a net/minecraft/world/biome/BiomeGenBase$TempCategory/OCEAN
 FD: agi/b net/minecraft/world/biome/BiomeGenBase$TempCategory/COLD
 FD: agi/c net/minecraft/world/biome/BiomeGenBase$TempCategory/MEDIUM
 FD: agi/d net/minecraft/world/biome/BiomeGenBase$TempCategory/WARM
-FD: agi/e net/minecraft/world/biome/BiomeGenBase$TempCategory/field_150781_e
+FD: agi/e net/minecraft/world/biome/BiomeGenBase$TempCategory/$VALUES
 FD: agj/b net/minecraft/world/biome/BiomeGenBase$SpawnListEntry/field_76300_b
 FD: agj/c net/minecraft/world/biome/BiomeGenBase$SpawnListEntry/field_76301_c
 FD: agj/d net/minecraft/world/biome/BiomeGenBase$SpawnListEntry/field_76299_d
@@ -2930,7 +2930,7 @@ FD: alg/a net/minecraft/block/BlockPressurePlate/field_150069_a
 FD: alh/a net/minecraft/block/BlockPressurePlate$Sensitivity/everything
 FD: alh/b net/minecraft/block/BlockPressurePlate$Sensitivity/mobs
 FD: alh/c net/minecraft/block/BlockPressurePlate$Sensitivity/players
-FD: alh/d net/minecraft/block/BlockPressurePlate$Sensitivity/field_150849_d
+FD: alh/d net/minecraft/block/BlockPressurePlate$Sensitivity/$VALUES
 FD: ali/M net/minecraft/block/BlockPumpkin/field_149986_M #C
 FD: ali/a net/minecraft/block/BlockPumpkin/field_149985_a
 FD: ali/b net/minecraft/block/BlockPumpkin/field_149984_b #C
@@ -3564,7 +3564,7 @@ FD: avl/a net/minecraft/world/gen/layer/GenLayerEdge$SwitchMode/field_151642_a
 FD: avm/a net/minecraft/world/gen/layer/GenLayerEdge$Mode/COOL_WARM
 FD: avm/b net/minecraft/world/gen/layer/GenLayerEdge$Mode/HEAT_ICE
 FD: avm/c net/minecraft/world/gen/layer/GenLayerEdge$Mode/SPECIAL
-FD: avm/d net/minecraft/world/gen/layer/GenLayerEdge$Mode/field_151638_d
+FD: avm/d net/minecraft/world/gen/layer/GenLayerEdge$Mode/$VALUES
 FD: avr/c net/minecraft/world/gen/layer/GenLayerBiome/field_151623_c
 FD: avr/d net/minecraft/world/gen/layer/GenLayerBiome/field_151621_d
 FD: avr/e net/minecraft/world/gen/layer/GenLayerBiome/field_151622_e
@@ -4672,7 +4672,7 @@ FD: bew/a net/minecraft/client/gui/GuiScreenConfirmation$ConfirmationType/Warnin
 FD: bew/b net/minecraft/client/gui/GuiScreenConfirmation$ConfirmationType/Info #C
 FD: bew/c net/minecraft/client/gui/GuiScreenConfirmation$ConfirmationType/field_148518_c #C
 FD: bew/d net/minecraft/client/gui/GuiScreenConfirmation$ConfirmationType/field_148515_d #C
-FD: bew/e net/minecraft/client/gui/GuiScreenConfirmation$ConfirmationType/field_148516_e #C
+FD: bew/e net/minecraft/client/gui/GuiScreenConfirmation$ConfirmationType/$VALUES #C
 FD: bex/a net/minecraft/client/gui/GuiScreenLongRunningTask/field_146915_a #C
 FD: bex/f net/minecraft/client/gui/GuiScreenLongRunningTask/field_146908_f #C
 FD: bex/g net/minecraft/client/gui/GuiScreenLongRunningTask/field_146910_g #C
@@ -5911,7 +5911,7 @@ FD: bpe/c net/minecraft/client/shader/ShaderLoader$ShaderType/field_148072_c #C
 FD: bpe/d net/minecraft/client/shader/ShaderLoader$ShaderType/field_148069_d #C
 FD: bpe/e net/minecraft/client/shader/ShaderLoader$ShaderType/field_148070_e #C
 FD: bpe/f net/minecraft/client/shader/ShaderLoader$ShaderType/field_148067_f #C
-FD: bpe/g net/minecraft/client/shader/ShaderLoader$ShaderType/field_148068_g #C
+FD: bpe/g net/minecraft/client/shader/ShaderLoader$ShaderType/$VALUES #C
 FD: bpf/a net/minecraft/client/shader/ShaderLinkHelper/field_148080_a #C
 FD: bpf/b net/minecraft/client/shader/ShaderLinkHelper/field_148079_b #C
 FD: bpg/a net/minecraft/client/shader/ShaderUniform/field_148104_a #C
@@ -6120,11 +6120,11 @@ FD: bsd/f net/minecraft/client/audio/SoundList$SoundEntry/field_148564_f #C
 FD: bse/a net/minecraft/client/audio/SoundList$SoundEntry$Type/FILE #C
 FD: bse/b net/minecraft/client/audio/SoundList$SoundEntry$Type/SOUND_EVENT #C
 FD: bse/c net/minecraft/client/audio/SoundList$SoundEntry$Type/field_148583_c #C
-FD: bse/d net/minecraft/client/audio/SoundList$SoundEntry$Type/field_148581_d #C
+FD: bse/d net/minecraft/client/audio/SoundList$SoundEntry$Type/$VALUES #C
 FD: bsh/a net/minecraft/client/audio/ISound$AttenuationType/NONE #C
 FD: bsh/b net/minecraft/client/audio/ISound$AttenuationType/LINEAR #C
 FD: bsh/c net/minecraft/client/audio/ISound$AttenuationType/field_148589_c #C
-FD: bsh/d net/minecraft/client/audio/ISound$AttenuationType/field_148587_d #C
+FD: bsh/d net/minecraft/client/audio/ISound$AttenuationType/$VALUES #C
 FD: bsj/d net/minecraft/server/integrated/IntegratedPlayerList/field_72416_e #C
 FD: bsk/h net/minecraft/server/integrated/IntegratedServer/field_147148_h #C
 FD: bsk/i net/minecraft/server/integrated/IntegratedServer/field_71349_l #C
@@ -6164,7 +6164,7 @@ FD: bsu/g net/minecraft/client/audio/MusicTicker$MusicType/END #C
 FD: bsu/h net/minecraft/client/audio/MusicTicker$MusicType/field_148645_h #C
 FD: bsu/i net/minecraft/client/audio/MusicTicker$MusicType/field_148646_i #C
 FD: bsu/j net/minecraft/client/audio/MusicTicker$MusicType/field_148643_j #C
-FD: bsu/k net/minecraft/client/audio/MusicTicker$MusicType/field_148644_k #C
+FD: bsu/k net/minecraft/client/audio/MusicTicker$MusicType/$VALUES #C
 FD: bsv/a net/minecraft/client/audio/SoundPoolEntry/field_148656_a #C
 FD: bsv/b net/minecraft/client/audio/SoundPoolEntry/field_148654_b #C
 FD: bsv/c net/minecraft/client/audio/SoundPoolEntry/field_148655_c #C
@@ -6269,7 +6269,7 @@ FD: btu/o net/minecraft/client/mco/McoServer/field_148814_o #C
 FD: btv/a net/minecraft/client/mco/McoServer$State/CLOSED #C
 FD: btv/b net/minecraft/client/mco/McoServer$State/OPEN #C
 FD: btv/c net/minecraft/client/mco/McoServer$State/ADMIN_LOCK #C
-FD: btv/d net/minecraft/client/mco/McoServer$State/field_148792_d #C
+FD: btv/d net/minecraft/client/mco/McoServer$State/$VALUES #C
 FD: btw/a net/minecraft/client/mco/McoServerAddress/field_148770_a #C
 FD: btx/a net/minecraft/client/mco/ValueObjectList/field_148772_a #C
 FD: bty/a net/minecraft/client/mco/PendingInvite/field_148776_a #C
@@ -6398,7 +6398,7 @@ FD: ek/f net/minecraft/network/EnumConnectionState/field_150761_f
 FD: ek/g net/minecraft/network/EnumConnectionState/field_150762_g
 FD: ek/h net/minecraft/network/EnumConnectionState/field_150769_h
 FD: ek/i net/minecraft/network/EnumConnectionState/field_150770_i
-FD: ek/j net/minecraft/network/EnumConnectionState/field_150768_j
+FD: ek/j net/minecraft/network/EnumConnectionState/$VALUES
 FD: ep/a net/minecraft/network/PacketBuffer/field_150794_a
 FD: eq/a net/minecraft/util/MessageDeserializer/field_150800_a
 FD: eq/b net/minecraft/util/MessageDeserializer/field_150799_b
@@ -6415,7 +6415,7 @@ FD: ez/d net/minecraft/event/ClickEvent$Action/SUGGEST_COMMAND
 FD: ez/e net/minecraft/event/ClickEvent$Action/field_150679_e
 FD: ez/f net/minecraft/event/ClickEvent$Action/field_150676_f
 FD: ez/g net/minecraft/event/ClickEvent$Action/field_150677_g
-FD: ez/h net/minecraft/event/ClickEvent$Action/field_150683_h
+FD: ez/h net/minecraft/event/ClickEvent$Action/$VALUES
 FD: f/a net/minecraft/crash/CrashReport$4/field_71492_a
 FD: fb/a net/minecraft/util/IChatComponent$Serializer/field_150700_a
 FD: fc/a net/minecraft/event/HoverEvent/field_150704_a
@@ -6426,7 +6426,7 @@ FD: fd/c net/minecraft/event/HoverEvent$Action/SHOW_ITEM
 FD: fd/d net/minecraft/event/HoverEvent$Action/field_150690_d
 FD: fd/e net/minecraft/event/HoverEvent$Action/field_150691_e
 FD: fd/f net/minecraft/event/HoverEvent$Action/field_150688_f
-FD: fd/g net/minecraft/event/HoverEvent$Action/field_150689_g
+FD: fd/g net/minecraft/event/HoverEvent$Action/$VALUES
 FD: fe/a net/minecraft/util/ChatStyle/field_150249_a
 FD: fe/b net/minecraft/util/ChatStyle/field_150247_b
 FD: fe/c net/minecraft/util/ChatStyle/field_150248_c
@@ -6725,7 +6725,7 @@ FD: ih/b net/minecraft/network/play/client/C16PacketClientStatus$EnumState/REQUE
 FD: ih/c net/minecraft/network/play/client/C16PacketClientStatus$EnumState/OPEN_INVENTORY_ACHIEVEMENT
 FD: ih/d net/minecraft/network/play/client/C16PacketClientStatus$EnumState/field_151403_d
 FD: ih/e net/minecraft/network/play/client/C16PacketClientStatus$EnumState/field_151404_e
-FD: ih/f net/minecraft/network/play/client/C16PacketClientStatus$EnumState/field_151402_f
+FD: ih/f net/minecraft/network/play/client/C16PacketClientStatus$EnumState/$VALUES
 FD: ii/a net/minecraft/network/play/client/C15PacketClientSettings/field_149530_a
 FD: ii/b net/minecraft/network/play/client/C15PacketClientSettings/field_149528_b
 FD: ii/c net/minecraft/network/play/client/C15PacketClientSettings/field_149529_c
@@ -6753,7 +6753,7 @@ FD: ip/a net/minecraft/network/play/client/C02PacketUseEntity$Action/INTERACT
 FD: ip/b net/minecraft/network/play/client/C02PacketUseEntity$Action/ATTACK
 FD: ip/c net/minecraft/network/play/client/C02PacketUseEntity$Action/field_151421_c
 FD: ip/d net/minecraft/network/play/client/C02PacketUseEntity$Action/field_151418_d
-FD: ip/e net/minecraft/network/play/client/C02PacketUseEntity$Action/field_151419_e
+FD: ip/e net/minecraft/network/play/client/C02PacketUseEntity$Action/$VALUES
 FD: iq/a net/minecraft/network/play/client/C00PacketKeepAlive/field_149461_a
 FD: ir/a net/minecraft/network/play/client/C03PacketPlayer/field_149479_a
 FD: ir/b net/minecraft/network/play/client/C03PacketPlayer/field_149477_b
@@ -7158,7 +7158,7 @@ FD: nf/b net/minecraft/server/network/NetHandlerLoginServer$LoginState/KEY
 FD: nf/c net/minecraft/server/network/NetHandlerLoginServer$LoginState/AUTHENTICATING
 FD: nf/d net/minecraft/server/network/NetHandlerLoginServer$LoginState/READY_TO_ACCEPT
 FD: nf/e net/minecraft/server/network/NetHandlerLoginServer$LoginState/ACCEPTED
-FD: nf/f net/minecraft/server/network/NetHandlerLoginServer$LoginState/field_151294_f
+FD: nf/f net/minecraft/server/network/NetHandlerLoginServer$LoginState/$VALUES
 FD: ng/a net/minecraft/server/network/NetHandlerStatusServer/field_147314_a
 FD: ng/b net/minecraft/server/network/NetHandlerStatusServer/field_147313_b
 FD: nh/a net/minecraft/network/rcon/RConOutputStream/field_72674_a #S
@@ -7380,7 +7380,7 @@ FD: pq/d net/minecraft/world/EnumDifficulty/HARD
 FD: pq/e net/minecraft/world/EnumDifficulty/field_151530_e
 FD: pq/f net/minecraft/world/EnumDifficulty/field_151527_f
 FD: pq/g net/minecraft/world/EnumDifficulty/field_151528_g
-FD: pq/h net/minecraft/world/EnumDifficulty/field_151534_h
+FD: pq/h net/minecraft/world/EnumDifficulty/$VALUES
 FD: pr/a net/minecraft/client/renderer/IconFlipped/field_96454_a #C
 FD: pr/b net/minecraft/client/renderer/IconFlipped/field_96452_b #C
 FD: pr/c net/minecraft/client/renderer/IconFlipped/field_96453_c #C
@@ -8116,7 +8116,7 @@ FD: v/b net/minecraft/util/Util$EnumOS/SOLARIS #C
 FD: v/c net/minecraft/util/Util$EnumOS/WINDOWS #C
 FD: v/d net/minecraft/util/Util$EnumOS/MACOS #C
 FD: v/e net/minecraft/util/Util$EnumOS/UNKNOWN #C
-FD: v/f net/minecraft/util/Util$EnumOS/field_110676_f #C
+FD: v/f net/minecraft/util/Util$EnumOS/$VALUES #C
 FD: va/bp net/minecraft/entity/passive/EntityPig/field_82184_d
 FD: vb/bp net/minecraft/entity/passive/EntitySheep/field_70898_d
 FD: vb/bq net/minecraft/entity/passive/EntitySheep/field_90016_e
@@ -8265,7 +8265,7 @@ FD: w/j net/minecraft/client/audio/SoundCategory/field_147168_j #C
 FD: w/k net/minecraft/client/audio/SoundCategory/field_147169_k #C
 FD: w/l net/minecraft/client/audio/SoundCategory/field_147166_l #C
 FD: w/m net/minecraft/client/audio/SoundCategory/field_147167_m #C
-FD: w/n net/minecraft/client/audio/SoundCategory/field_147165_n #C
+FD: w/n net/minecraft/client/audio/SoundCategory/$VALUES #C
 FD: wa/a net/minecraft/entity/EntityMinecartCommandBlock$1/field_145768_a
 FD: wb/a net/minecraft/entity/item/EntityMinecartContainer/field_94113_a
 FD: wb/b net/minecraft/entity/item/EntityMinecartContainer/field_94112_b
@@ -8418,7 +8418,7 @@ FD: xn/c net/minecraft/entity/player/EntityPlayer$EnumChatVisibility/HIDDEN
 FD: xn/d net/minecraft/entity/player/EntityPlayer$EnumChatVisibility/field_151432_d
 FD: xn/e net/minecraft/entity/player/EntityPlayer$EnumChatVisibility/field_151433_e
 FD: xn/f net/minecraft/entity/player/EntityPlayer$EnumChatVisibility/field_151430_f
-FD: xn/g net/minecraft/entity/player/EntityPlayer$EnumChatVisibility/field_151431_g
+FD: xn/g net/minecraft/entity/player/EntityPlayer$EnumChatVisibility/$VALUES
 FD: xo/a net/minecraft/entity/projectile/EntityArrow/field_70251_a
 FD: xo/au net/minecraft/entity/projectile/EntityArrow/field_70257_an
 FD: xo/av net/minecraft/entity/projectile/EntityArrow/field_70255_ao
