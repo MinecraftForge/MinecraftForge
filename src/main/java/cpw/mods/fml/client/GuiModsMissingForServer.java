@@ -15,14 +15,14 @@ package cpw.mods.fml.client;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
-import cpw.mods.fml.common.network.packet.ModMissingPacket;
+import cpw.mods.fml.common.MissingModsException;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 
 public class GuiModsMissingForServer extends GuiScreen
 {
-    private ModMissingPacket modsMissing;
+    private MissingModsException modsMissing;
 
-    public GuiModsMissingForServer(ModMissingPacket modsMissing)
+    public GuiModsMissingForServer(MissingModsException modsMissing)
     {
         this.modsMissing = modsMissing;
     }
@@ -46,14 +46,14 @@ public class GuiModsMissingForServer extends GuiScreen
     public void func_73863_a(int p_73863_1_, int p_73863_2_, float p_73863_3_)
     {
         this.func_146276_q_();
-        int offset = Math.max(85 - modsMissing.getModList().size() * 10, 10);
+        int offset = Math.max(85 - modsMissing.missingMods.size() * 10, 10);
         this.func_73732_a(this.field_146289_q, "Forge Mod Loader could not connect to this server", this.field_146294_l / 2, offset, 0xFFFFFF);
         offset += 10;
         this.func_73732_a(this.field_146289_q, "The mods and versions listed below could not be found", this.field_146294_l / 2, offset, 0xFFFFFF);
         offset += 10;
         this.func_73732_a(this.field_146289_q, "They are required to play on this server", this.field_146294_l / 2, offset, 0xFFFFFF);
         offset += 5;
-        for (ArtifactVersion v : modsMissing.getModList())
+        for (ArtifactVersion v : modsMissing.missingMods)
         {
             offset += 10;
             this.func_73732_a(this.field_146289_q, String.format("%s : %s", v.getLabel(), v.getRangeString()), this.field_146294_l / 2, offset, 0xEEEEEE);

@@ -55,7 +55,6 @@ import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.WrongMinecraftVersionException;
 import cpw.mods.fml.common.network.packet.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.packet.EntitySpawnPacket;
-import cpw.mods.fml.common.network.packet.ModMissingPacket;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.common.registry.IThrowableEntity;
@@ -480,10 +479,9 @@ public class FMLClientHandler implements IFMLSidedHandler
         return client.func_71401_C();
     }
 
-    @Override
-    public void displayMissingMods(ModMissingPacket modMissingPacket)
+    public void displayMissingMods(Object modMissingPacket)
     {
-        showGuiScreen(new GuiModsMissingForServer(modMissingPacket));
+//        showGuiScreen(new GuiModsMissingForServer(modMissingPacket));
     }
 
     /**

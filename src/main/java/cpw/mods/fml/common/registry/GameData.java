@@ -55,18 +55,6 @@ public class GameData {
         return idMapping;
     }
 
-    public static Set<ItemData> buildWorldItemData(NBTTagList modList)
-    {
-        Set<ItemData> worldSaveItems = Sets.newHashSet();
-        for (int i = 0; i < modList.func_74745_c(); i++)
-        {
-            NBTTagCompound mod = modList.func_150305_b(i);
-            ItemData dat = new ItemData(mod);
-            worldSaveItems.add(dat);
-        }
-        return worldSaveItems;
-    }
-
     static Item findItem(String modId, String name)
     {
         return (Item) itemRegistry.func_82594_a(modId + ":" + name);

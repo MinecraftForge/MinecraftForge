@@ -19,7 +19,7 @@ import cpw.mods.fml.common.versioning.ArtifactVersion;
 public class MissingModsException extends RuntimeException
 {
     private static final long serialVersionUID = 1L;
-    public Set<ArtifactVersion> missingMods;
+    public final Set<ArtifactVersion> missingMods;
 
     public MissingModsException(Set<ArtifactVersion> missingMods)
     {
