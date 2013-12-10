@@ -93,7 +93,7 @@
 +                String jarName = nameparts[1]+'-'+nameparts[2]+".jar";
 +                String pathName = nameparts[0]+'/'+nameparts[1]+'/'+nameparts[2]+'/'+jarName;
 +                File libPath = new File(librariesDir,pathName.replace('/', File.separatorChar));
-+                String libURL = library.isStringValue("url") ? library.getStringValue("url")+"/" : "https://s3.amazonaws.com/Minecraft.Download/libraries/";
++                String libURL = library.isStringValue("url") ? library.getStringValue("url")+"/" : "https://libraries.minecraft.net/";
 +                if (libPath.exists())
 +                {
 +                    continue;
