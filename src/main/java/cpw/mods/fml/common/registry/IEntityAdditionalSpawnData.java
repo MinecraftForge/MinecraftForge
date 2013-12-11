@@ -5,15 +5,14 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
 
 package cpw.mods.fml.common.registry;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
+import io.netty.buffer.ByteBuf;
 
 /**
  * A interface for Entities that need extra information to be communicated
@@ -25,9 +24,9 @@ public interface IEntityAdditionalSpawnData
      * Called by the server when constructing the spawn packet.
      * Data should be added to the provided stream.
      *
-     * @param data The packet data stream
+     * @param buffer The packet data stream
      */
-    public void writeSpawnData(ByteArrayDataOutput data);
+    public void writeSpawnData(ByteBuf buffer);
 
     /**
      * Called by the client when it receives a Entity spawn packet.
@@ -35,5 +34,5 @@ public interface IEntityAdditionalSpawnData
      *
      * @param data The packet data stream
      */
-    public void readSpawnData(ByteArrayDataInput data);
+    public void readSpawnData(ByteBuf additionalData);
 }

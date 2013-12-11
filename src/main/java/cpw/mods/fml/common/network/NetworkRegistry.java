@@ -19,17 +19,13 @@ import io.netty.handler.codec.MessageToMessageCodec;
 import io.netty.util.AttributeKey;
 
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.NetworkManager;
 import net.minecraft.world.World;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -37,7 +33,6 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.discovery.ASMDataTable;
-import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
 import cpw.mods.fml.relauncher.Side;
 
 /**
@@ -57,8 +52,6 @@ public enum NetworkRegistry
      */
     public static final AttributeKey<String> FML_CHANNEL = new AttributeKey<String>("fml:channelName");
     public static final AttributeKey<Side> CHANNEL_SOURCE = new AttributeKey<Side>("fml:channelSource");
-    public static final AttributeKey<OutboundTarget> FML_MESSAGETARGET = new AttributeKey<OutboundTarget>("fml:outboundTarget");
-    public static final AttributeKey<Object> FML_MESSAGETARGETARGS = new AttributeKey<Object>("fml:outboundTargetArgs");
     public static final AttributeKey<ModContainer> MOD_CONTAINER = new AttributeKey<ModContainer>("fml:modContainer");
 
     public static final byte FML_PROTOCOL = 1;
@@ -84,125 +77,6 @@ public enum NetworkRegistry
         public final double range;
         public final int dimension;
     }
-    public enum OutboundTarget {
-        PLAYER
-        {
-            @Override
-            public void validateArgs(Object args)
-            {
-                if (!(args instanceof EntityPlayerMP))
-                {
-                    throw new RuntimeException("PLAYER target expects a Player arg");
-                }
-            }
-            @Override
-            public List<NetworkDispatcher> selectNetworks(Object args)
-            {
-                EntityPlayerMP player = (EntityPlayerMP) args;
-                NetworkDispatcher dispatcher = player.field_71135_a.field_147371_a.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
-                return ImmutableList.of(dispatcher);
-            }
-        },
-        ALL
-        {
-            @Override
-            public void validateArgs(Object args)
-            {
-            }
-            @SuppressWarnings("unchecked")
-            @Override
-            public List<NetworkDispatcher> selectNetworks(Object args)
-            {
-                ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.<NetworkDispatcher>builder();
-                for (EntityPlayerMP player : (List<EntityPlayerMP>)FMLCommonHandler.instance().getMinecraftServerInstance().func_71203_ab().field_72404_b)
-                {
-                    NetworkDispatcher dispatcher = player.field_71135_a.field_147371_a.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
-                    builder.add(dispatcher);
-                }
-                return builder.build();
-            }
-        },
-        DIMENSION
-        {
-            @Override
-            public void validateArgs(Object args)
-            {
-                if (!(args instanceof Integer))
-                {
-                    throw new RuntimeException("DIMENSION expects an integer argument");
-                }
-            }
-            @SuppressWarnings("unchecked")
-            @Override
-            public List<NetworkDispatcher> selectNetworks(Object args)
-            {
-                int dimension = (Integer)args;
-                ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.<NetworkDispatcher>builder();
-                for (EntityPlayerMP player : (List<EntityPlayerMP>)FMLCommonHandler.instance().getMinecraftServerInstance().func_71203_ab().field_72404_b)
-                {
-                    if (dimension == player.field_71093_bK)
-                    {
-                        NetworkDispatcher dispatcher = player.field_71135_a.field_147371_a.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
-                        builder.add(dispatcher);
-                    }
-                }
-                return builder.build();
-            }
-        },
-        ALLAROUNDPOINT
-        {
-            @Override
-            public void validateArgs(Object args)
-            {
-                if (!(args instanceof TargetPoint))
-                {
-                    throw new RuntimeException("ALLAROUNDPOINT expects a TargetPoint argument");
-                }
-            }
-
-            @SuppressWarnings("unchecked")
-            @Override
-            public List<NetworkDispatcher> selectNetworks(Object args)
-            {
-                TargetPoint tp = (TargetPoint)args;
-                ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.<NetworkDispatcher>builder();
-                for (EntityPlayerMP player : (List<EntityPlayerMP>)FMLCommonHandler.instance().getMinecraftServerInstance().func_71203_ab().field_72404_b)
-                {
-                    if (player.field_71093_bK == tp.dimension)
-                    {
-                        double d4 = tp.x - player.field_70165_t;
-                        double d5 = tp.y - player.field_70163_u;
-                        double d6 = tp.z - player.field_70161_v;
-
-                        if (d4 * d4 + d5 * d5 + d6 * d6 < tp.range * tp.range)
-                        {
-                            NetworkDispatcher dispatcher = player.field_71135_a.field_147371_a.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
-                            builder.add(dispatcher);
-                        }
-                    }
-                }
-                return builder.build();
-            }
-        },
-        TOSERVER
-        {
-            @Override
-            public void validateArgs(Object args)
-            {
-                throw new RuntimeException("Cannot set TOSERVER as a target on the server");
-            }
-            @Override
-            public List<NetworkDispatcher> selectNetworks(Object args)
-            {
-                NetworkManager clientConnection = FMLCommonHandler.instance().getClientToServerNetworkManager();
-                return clientConnection == null ? ImmutableList.<NetworkDispatcher>of() : ImmutableList.of(clientConnection.channel().attr(NetworkDispatcher.FML_DISPATCHER).get());
-            }
-        };
-
-        public abstract void validateArgs(Object args);
-        public abstract List<NetworkDispatcher> selectNetworks(Object args);
-    }
-
     static class FMLEmbeddedChannel extends EmbeddedChannel {
         public FMLEmbeddedChannel(String channelName, Side source, ChannelHandler... handlers)
         {
@@ -214,7 +88,7 @@ public enum NetworkRegistry
             this.attr(FML_CHANNEL).set(channelName);
             this.attr(CHANNEL_SOURCE).set(source);
             this.attr(MOD_CONTAINER).setIfAbsent(container);
-            this.pipeline().addFirst(new FMLOutboundHandler());
+            this.pipeline().addFirst("fml:outbound",new FMLOutboundHandler());
         }
     }
 

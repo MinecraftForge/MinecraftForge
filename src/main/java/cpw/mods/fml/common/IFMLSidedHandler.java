@@ -32,8 +32,6 @@ public interface IFMLSidedHandler
 
     void showGuiScreen(Object clientGuiElement);
 
-    Entity spawnEntityIntoClientWorld(EntityRegistration registration, EntitySpawnPacket packet);
-
     void adjustEntityLocationOnClient(EntitySpawnAdjustmentPacket entitySpawnAdjustmentPacket);
 
     void beginServerLoading(MinecraftServer server);

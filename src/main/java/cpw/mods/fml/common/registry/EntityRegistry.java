@@ -38,7 +38,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.network.packet.EntitySpawnPacket;
+import cpw.mods.fml.common.network.FMLMessage.EntitySpawnMessage;
 
 public class EntityRegistry
 {
@@ -51,7 +51,7 @@ public class EntityRegistry
         private int trackingRange;
         private int updateFrequency;
         private boolean sendsVelocityUpdates;
-        private Function<EntitySpawnPacket, Entity> customSpawnCallback;
+        private Function<EntitySpawnMessage, Entity> customSpawnCallback;
         private boolean usesVanillaSpawning;
         public EntityRegistration(ModContainer mc, Class<? extends Entity> entityClass, String entityName, int id, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
         {
@@ -100,11 +100,11 @@ public class EntityRegistry
         {
             return customSpawnCallback != null;
         }
-        public Entity doCustomSpawning(EntitySpawnPacket packet) throws Exception
+        public Entity doCustomSpawning(EntitySpawnMessage spawnMsg) throws Exception
         {
-            return customSpawnCallback.apply(packet);
+            return customSpawnCallback.apply(spawnMsg);
         }
-        public void setCustomSpawning(Function<EntitySpawnPacket, Entity> callable, boolean usesVanillaSpawning)
+        public void setCustomSpawning(Function<EntitySpawnMessage, Entity> callable, boolean usesVanillaSpawning)
         {
             this.customSpawnCallback = callable;
             this.usesVanillaSpawning = usesVanillaSpawning;
