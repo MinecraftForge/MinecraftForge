@@ -65,13 +65,14 @@ public class MCPCConfig
         public static final BoolSetting logEntityCollisionChecks = new BoolSetting("logging.entity-collision-checks", false, "Whether to log entity collision/count checks");
         public static final IntSetting largeCollisionLogSize = new IntSetting("logging.collision-warn-size", 200, "Number of colliding entities in one spot before logging a warning. Set to 0 to disable");
         public static final IntSetting largeEntityCountLogSize = new IntSetting("logging.entity-count-warn-size", 0, "Number of entities in one dimension logging a warning. Set to 0 to disable");
-        public static final IntSetting largeBoundingBoxLogSize = new IntSetting("logging.bounding-box-max-size", 200, "Size of bounding box to log the entity of");
+        public static final IntSetting entitySpeedWarnSize = new IntSetting("logging.entity-speed-warn-size", 0, "Speed of an entity to emit a warning on. Set to 0 to disable");
 
-        // Chunk loading options
+        // General settings
         public static final BoolSetting loadChunkOnRequest = new BoolSetting("settings.load-chunk-on-request", true, "Forces Chunk Loading on 'Provide' requests (speedup for mods that don't check if a chunk is loaded");
         public static final BoolSetting loadChunkOnForgeTick = new BoolSetting("settings.load-chunk-on-forge-tick", false, "Forces Chunk Loading during Forge Server Tick events");
         public static final BoolSetting overrideTileTicks = new BoolSetting("settings.override-tile-ticks", false, "Global setting to override tile entity tick intervals");
         public static final IntSetting chunkGCGracePeriod = new IntSetting("settings.chunk-gc-grace-period", 700, "Grace period on a loaded chunk before we try to unload it");
+        public static final IntSetting largeBoundingBoxLogSize = new IntSetting("settings.entity-bounding-box-max-size", 1000, "Max size of an entity's bounding box before removing it (either being too large or bugged and 'moving' too fast)");
 
         // Server options
         public static final BoolSetting infiniteWaterSource = new BoolSetting("world-settings.default.infinite-water-source", true, "Vanilla water source behavior - is infinite");
