@@ -960,7 +960,7 @@
          int i1 = MathHelper.floor_double(par2AxisAlignedBB.minZ);
          int j1 = MathHelper.floor_double(par2AxisAlignedBB.maxZ + 1.0D);
  
-+        MCPCHooks.logBoundingBoxSize(par1Entity, par2AxisAlignedBB);
++        if (MCPCHooks.checkBoundingBoxSize(par1Entity, par2AxisAlignedBB)) return new ArrayList(); // Removing misbehaved entities
 +        
          for (int k1 = i; k1 < j; ++k1)
          {

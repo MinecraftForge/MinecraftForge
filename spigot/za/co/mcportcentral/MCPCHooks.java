@@ -21,6 +21,7 @@ import javax.management.MBeanServer;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.logging.ILogAgent;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -149,10 +150,10 @@ public class MCPCHooks
         }
     }
 
-    public static void logBoundingBoxSize(Entity entity, AxisAlignedBB aabb)
+    public static boolean checkBoundingBoxSize(Entity entity, AxisAlignedBB aabb)
     {
         int logSize = MCPCConfig.Setting.largeBoundingBoxLogSize.getValue();
-        if (logSize <= 0) return;
+        if (logSize <= 0) return false;
         int x = MathHelper.floor_double(aabb.minX);
         int x1 = MathHelper.floor_double(aabb.maxX + 1.0D);
         int y = MathHelper.floor_double(aabb.minY);
@@ -163,18 +164,36 @@ public class MCPCHooks
         int size = Math.abs(x1-x) * Math.abs(y1-y) * Math.abs(z1-z);
         if (size > MCPCConfig.Setting.largeBoundingBoxLogSize.getValue())
         {
-            logInfo("BB Size: {0} > {1} avg edge: {2}", size, logSize, aabb.getAverageEdgeLength());
-            logInfo("{0}", aabb);
-            logInfo("{0}", entity.getBoundingBox());
-            logInfo("{0}", entity);
+            logWarning("Entity being removed for bounding box restrictions");
+            logWarning("BB Size: {0} > {1} avg edge: {2}", size, logSize, aabb.getAverageEdgeLength());
+            logWarning("Motion: ({0}, {1}, {2})", entity.motionX, entity.motionY, entity.motionZ);
+            logWarning("Calculated bounding box: {0}", aabb);
+            logWarning("Entity bounding box: {0}", entity.getBoundingBox());
+            logWarning("Entity: {0}", entity);
+            NBTTagCompound tag = new NBTTagCompound();
+            entity.writeToNBT(tag);
+            logWarning("Entity NBT: {0}", tag);
             logStack();
-            
-            if (size > 200)
+            entity.setDead();
+            return true;
+        }
+        return false;
+    }
+    
+    public static void logEntitySpeed(Entity entity, double x, double y, double z)
+    {
+        if (MCPCConfig.Setting.entitySpeedWarnSize.getValue() > 0)
+        {
+            double length = Math.sqrt(x*x + y*y + z*z);
+            if (length > 5)
             {
-                logWarning("Please report this stack trace to MCPC devs");
-                Throwable ex = new Throwable();
-                ex.fillInStackTrace();
-                ex.printStackTrace();
+                za.co.mcportcentral.MCPCHooks.logInfo("Fast moving entity - Distance: {0}", length);
+                za.co.mcportcentral.MCPCHooks.logInfo("Move offset: ({0}, {1}, {2})", x, y, z);
+                za.co.mcportcentral.MCPCHooks.logInfo("Motion: ({0}, {1}, {2})", entity.motionX, entity.motionY, entity.motionZ);
+                za.co.mcportcentral.MCPCHooks.logInfo("Entity: {0}", entity);
+                NBTTagCompound tag = new NBTTagCompound();
+                entity.writeToNBT(tag);
+                za.co.mcportcentral.MCPCHooks.logInfo("Entity NBT: {0}", tag);
             }
         }
     }
