@@ -31,7 +31,7 @@
  import net.minecraft.server.gui.IUpdatePlayerListBox;
  import net.minecraft.server.management.ServerConfigurationManager;
  import net.minecraft.stats.StatList;
-@@ -44,25 +46,54 @@
+@@ -44,25 +46,57 @@
  import net.minecraft.world.MinecraftException;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldManager;
@@ -70,8 +70,11 @@
 +// CraftBukkit end
 +// MCPC+ start
 +import java.util.Map;
++import java.lang.reflect.Constructor;
++import cpw.mods.fml.common.asm.transformers.SideTransformer;
 +import net.minecraft.tileentity.TileEntity;
 +import net.minecraftforge.common.EnumHelper;
++import za.co.mcportcentral.MCPCUtils;
 +// MCPC+ end
 +
  public abstract class MinecraftServer implements ICommandSender, Runnable, IPlayerUsage
@@ -88,7 +91,7 @@
  
      /**
       * Collection of objects to update every tick. Type: List<IUpdatePlayerListBox>
-@@ -78,7 +109,7 @@
+@@ -78,7 +112,7 @@
      private int serverPort = -1;
  
      /** The server world instances. */
@@ -97,7 +100,7 @@
  
      /** The ServerConfigurationManager instance. */
      private ServerConfigurationManager serverConfigManager;
-@@ -133,7 +164,8 @@
+@@ -133,7 +167,8 @@
      public final long[] tickTimeArray;
  
      /** Stats are [dimension][tick%100] system.nanoTime is stored. */
@@ -107,7 +110,7 @@
      private KeyPair serverKeyPair;
  
      /** Username of the server owner (for integrated servers) */
-@@ -159,7 +191,51 @@
+@@ -159,7 +194,52 @@
      private boolean startProfiling;
      private boolean isGamemodeForced;
  
@@ -135,6 +138,7 @@
 +    public static boolean useJline = true;
 +    public static boolean useConsole = true;
 +    public static boolean callingForgeTick = false;
++    public static List<Class<? extends TileEntity>> bannedTileEntityUpdates = new ArrayList<Class<? extends TileEntity>>();
 +    // MCPC+ end
 +
 +    // MCPC+ start - vanilla compatibility
@@ -159,7 +163,7 @@
      {
          this.serverProxy = Proxy.NO_PROXY;
          this.field_143008_E = 0;
-@@ -170,11 +246,46 @@
+@@ -170,11 +250,46 @@
          this.tickTimeArray = new long[100];
          this.texturePack = "";
          mcServer = this;
@@ -209,7 +213,7 @@
  
      /**
       * Register all dispense behaviors.
-@@ -187,7 +298,7 @@
+@@ -187,7 +302,7 @@
      /**
       * Initialises the server and starts it.
       */
@@ -218,7 +222,7 @@
  
      protected void convertMapIfNeeded(String par1Str)
      {
-@@ -216,71 +327,115 @@
+@@ -216,71 +331,124 @@
  
      protected void loadAllWorlds(String par1Str, String par2Str, long par3, WorldType par5WorldType, String par6Str)
      {
@@ -342,7 +346,7 @@
 +                worldsettings = new WorldSettings(par3, this.getGameType(), this.canStructuresSpawn(), this.isHardcore(), par5WorldType);
 +                worldsettings.func_82750_a(par6Str);
 +
-+                migrateWorlds(worldType, oldName, par1Str, name);
++                MCPCUtils.migrateWorlds(worldType, oldName, par1Str, name);
 +
 +                this.setUserMessage(name);
 +            }
@@ -376,19 +380,28 @@
          this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();
 +        CraftBlock.dumpMaterials(); // MCPC+
-+        // MCPC+ start - register TE's for inventory events
++        // MCPC+ start
++        SideTransformer.allowInvalidSide = true;
 +        for (Object obj : TileEntity.classToNameMap.entrySet())
 +        {
 +            Map.Entry<Class<? extends TileEntity>, String> tileEntry = (Map.Entry<Class<? extends TileEntity>, String>)obj;
 +            if (tileEntry.getKey() == null)
 +                continue;
++            // verify if TE's should tick
++            if (!MCPCUtils.isOverridingUpdateEntity(tileEntry.getKey()) && MCPCUtils.canTileEntityUpdate(tileEntry.getKey()))
++            {
++                bannedTileEntityUpdates.add(tileEntry.getKey());
++            }
++            //  register TE's for inventory events
 +            EnumHelper.addInventoryType(tileEntry.getKey(), tileEntry.getValue());
 +        }
++        MCPCUtils.dumpAndSortClassList(bannedTileEntityUpdates);
++        SideTransformer.allowInvalidSide = false;
 +        // MCPC+ end
      }
  
      protected void initialWorldChunkLoad()
-@@ -292,28 +447,44 @@
+@@ -292,28 +460,44 @@
          int i = 0;
          this.setUserMessage("menu.generatingTerrain");
          byte b0 = 0;
@@ -454,7 +467,7 @@
          this.clearCurrentTask();
      }
  
-@@ -350,21 +521,20 @@
+@@ -350,21 +534,20 @@
      {
          this.currentTask = null;
          this.percentDone = 0;
@@ -482,7 +495,7 @@
  
                  if (worldserver != null)
                  {
-@@ -373,27 +543,33 @@
+@@ -373,27 +556,33 @@
                          this.getLogAgent().logInfo("Saving chunks for level \'" + worldserver.getWorldInfo().getWorldName() + "\'/" + worldserver.provider.getDimensionName());
                      }
  
@@ -527,7 +540,7 @@
  
              if (this.getNetworkThread() != null)
              {
-@@ -410,10 +586,11 @@
+@@ -410,10 +599,11 @@
              this.getLogAgent().logInfo("Saving worlds");
              this.saveAllWorlds(false);
  
@@ -543,7 +556,7 @@
              }
  
              if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
-@@ -459,45 +636,36 @@
+@@ -459,45 +649,36 @@
  
                  long i = getSystemTimeMillis();
  
@@ -612,7 +625,7 @@
                  FMLCommonHandler.instance().handleServerStopping();
              }
              else
-@@ -539,6 +707,8 @@
+@@ -539,6 +720,8 @@
          }
          finally
          {
@@ -621,7 +634,7 @@
              try
              {
                  if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
-@@ -554,6 +724,16 @@
+@@ -554,6 +737,16 @@
              }
              finally
              {
@@ -638,7 +651,7 @@
                  FMLCommonHandler.instance().handleServerStopped();
                  this.serverStopped = true;
                  this.systemExitNow();
-@@ -579,12 +759,14 @@
+@@ -579,12 +772,14 @@
      /**
       * Main function called by run() every loop.
       */
@@ -657,7 +670,7 @@
          ++this.tickCounter;
  
          if (this.startProfiling)
-@@ -597,7 +779,7 @@
+@@ -597,7 +792,7 @@
          this.theProfiler.startSection("root");
          this.updateTimeLightAndEntities();
  
@@ -666,7 +679,7 @@
          {
              this.theProfiler.startSection("save");
              this.serverConfigManager.saveAllPlayerData();
-@@ -618,93 +800,131 @@
+@@ -618,93 +813,131 @@
          this.theProfiler.endSection();
          this.theProfiler.startSection("snooper");
  
@@ -854,7 +867,7 @@
          this.theProfiler.endSection();
      }
  
-@@ -747,7 +967,22 @@
+@@ -747,7 +980,22 @@
       */
      public WorldServer worldServerForDimension(int par1)
      {
@@ -878,7 +891,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -817,14 +1052,70 @@
+@@ -817,14 +1065,70 @@
       */
      public String getPlugins()
      {
@@ -957,7 +970,7 @@
      }
  
      /**
-@@ -832,7 +1123,7 @@
+@@ -832,7 +1136,7 @@
       */
      public boolean isDebuggingEnabled()
      {
@@ -966,7 +979,7 @@
      }
  
      /**
-@@ -866,7 +1157,7 @@
+@@ -866,7 +1170,7 @@
      {
          par1CrashReport.getCategory().addCrashSectionCallable("Profiler Position", new CallableIsServerModded(this));
  
@@ -975,7 +988,7 @@
          {
              par1CrashReport.getCategory().addCrashSectionCallable("Vec3 Pool Size", new CallableServerProfiler(this));
          }
-@@ -884,6 +1175,8 @@
+@@ -884,6 +1188,8 @@
       */
      public List getPossibleCompletions(ICommandSender par1ICommandSender, String par2Str)
      {
@@ -984,7 +997,7 @@
          ArrayList arraylist = new ArrayList();
  
          if (par2Str.startsWith("/"))
-@@ -932,6 +1225,48 @@
+@@ -932,6 +1238,48 @@
  
              return arraylist;
          }
@@ -1033,7 +1046,7 @@
      }
  
      /**
-@@ -1039,9 +1374,11 @@
+@@ -1039,9 +1387,11 @@
  
      public void setDifficultyForAllWorlds(int par1)
      {
@@ -1048,7 +1061,7 @@
  
              if (worldserver != null)
              {
-@@ -1104,17 +1441,18 @@
+@@ -1104,17 +1454,18 @@
          this.worldIsBeingDeleted = true;
          this.getActiveAnvilConverter().flushCache();
  
@@ -1071,7 +1084,7 @@
          this.initiateShutdown();
      }
  
-@@ -1145,22 +1483,23 @@
+@@ -1145,22 +1496,23 @@
          par1PlayerUsageSnooper.addData("avg_rec_packet_size", Integer.valueOf((int)MathHelper.average(this.receivedPacketSizeArray)));
          int i = 0;
  
@@ -1111,7 +1124,7 @@
          }
  
          par1PlayerUsageSnooper.addData("worlds", Integer.valueOf(i));
-@@ -1194,7 +1533,7 @@
+@@ -1194,7 +1546,7 @@
  
      public boolean isServerInOnlineMode()
      {
@@ -1120,7 +1133,7 @@
      }
  
      public void setOnlineMode(boolean par1)
-@@ -1287,9 +1626,11 @@
+@@ -1287,9 +1639,11 @@
       */
      public void setGameType(EnumGameType par1EnumGameType)
      {
@@ -1135,7 +1148,7 @@
          }
      }
  
-@@ -1337,7 +1678,7 @@
+@@ -1337,7 +1691,7 @@
  
      public World getEntityWorld()
      {
@@ -1144,7 +1157,7 @@
      }
  
      /**
-@@ -1403,121 +1744,250 @@
+@@ -1403,121 +1757,197 @@
      @SideOnly(Side.SERVER)
      public static void main(String[] par0ArrayOfStr)
      {
@@ -1222,65 +1235,12 @@
 -                    }
 -                }
 -                else
-+                    dedicatedserver.setServerPort(port);
-+                }
-+            }
-+
-+            if (options.has("universe"))
-+            {
-+                dedicatedserver.anvilFile = (File) options.valueOf("universe");
-+            }
-+
-+            if (options.has("world"))
-+            {
-+                dedicatedserver.setFolderName((String) options.valueOf("world"));
-+            }
-+
-+            dedicatedserver.primaryThread.start();
-+            // CraftBukkit end
-+        }
-+        catch (Exception exception)
-+        {
-+            Logger.getAnonymousLogger().log(Level.SEVERE, "Failed to start the minecraft server", exception);
-+        }
-+    }
-+
-+    // MCPC+ start - moved world migrations to its own method
-+    public boolean migrateWorlds(String worldType, String oldWorldContainer, String newWorldContainer, String worldName)
-+    {
-+        boolean result = true;
-+        File newWorld = new File(new File(newWorldContainer), worldName);
-+        File oldWorld = new File(new File(oldWorldContainer), worldName);
-+
-+        if ((!newWorld.isDirectory()) && (oldWorld.isDirectory()))
-+        {
-+            final ILogAgent log = this.getLogAgent();
-+            log.logInfo("---- Migration of old " + worldType + " folder required ----");
-+            log.logInfo("MCPC has moved back to using the Forge World structure, your " + worldType + " folder will be moved to a new location in order to operate correctly.");
-+            log.logInfo("We will move this folder for you, but it will mean that you need to move it back should you wish to stop using MCPC in the future.");
-+            log.logInfo("Attempting to move " + oldWorld + " to " + newWorld + "...");
-+
-+            if (newWorld.exists())
-+            {
-+                log.logSevere("A file or folder already exists at " + newWorld + "!");
-+                log.logInfo("---- Migration of old " + worldType + " folder failed ----");
-+                result = false;
-+            }
-+            else if (newWorld.getParentFile().mkdirs() || newWorld.getParentFile().exists())
-+            {
-+                log.logInfo("Success! To restore " + worldType + " in the future, simply move " + newWorld + " to " + oldWorld);
-+
-+                // Migrate world data
-+                try
-                 {
+-                {
 -                    flag = false;
 -                }
 -
 -                if (flag3)
-+                    com.google.common.io.Files.move(oldWorld, newWorld);
-+                }
-+                catch (IOException exception)
-                 {
+-                {
 -                    ++j;
 -                }
 -            }
@@ -1320,9 +1280,25 @@
 -
 -            dedicatedserver.startServerThread();
 -            Runtime.getRuntime().addShutdownHook(new ThreadDedicatedServer(dedicatedserver));
--        }
--        catch (Exception exception)
--        {
++                    dedicatedserver.setServerPort(port);
++                }
++            }
++
++            if (options.has("universe"))
++            {
++                dedicatedserver.anvilFile = (File) options.valueOf("universe");
++            }
++
++            if (options.has("world"))
++            {
++                dedicatedserver.setFolderName((String) options.valueOf("world"));
++            }
++
++            dedicatedserver.primaryThread.start();
++            // CraftBukkit end
+         }
+         catch (Exception exception)
+         {
 -            if (ilogagent != null)
 -            {
 -                ilogagent.logSevereException("Failed to start the minecraft server", exception);
@@ -1332,26 +1308,9 @@
 -                Logger.getAnonymousLogger().log(Level.SEVERE, "Failed to start the minecraft server", exception);
 -            }
 -        }
-+                    log.logSevere("Unable to move world data.");
-+                    exception.printStackTrace();
-+                    result = false;
-+                }
-+                try
-+                {
-+                    com.google.common.io.Files.copy(new File(oldWorld.getParent(), "level.dat"), new File(newWorld, "level.dat"));
-+                }
-+                catch (IOException exception)
-+                {
-+                    log.logSevere("Unable to migrate world level.dat.");
-+                }
-+
-+                log.logInfo("---- Migration of old " + worldType + " folder complete ----");
-+            }
-+            else result = false;
++            Logger.getAnonymousLogger().log(Level.SEVERE, "Failed to start the minecraft server", exception);
 +        }
-+        return result;
 +    }
-+    // MCPC+ end
 +
 +    public static OptionSet loadOptions(String[] args) {
 +        OptionParser parser = new OptionParser() {

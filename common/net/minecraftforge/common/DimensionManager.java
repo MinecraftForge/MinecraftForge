@@ -36,10 +36,10 @@ import net.minecraftforge.event.world.WorldEvent;
 // MCPC+ start
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.world.chunk.storage.AnvilSaveHandler;
-
 import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
 import org.bukkit.generator.ChunkGenerator;
+import za.co.mcportcentral.MCPCUtils;
 // MCPC+ end
 
 public class DimensionManager
@@ -333,7 +333,7 @@ public class DimensionManager
             return;
         // MCPC+ end
 
-        mcServer.migrateWorlds(worldType, oldName, overworld.getWorldInfo().getWorldName(), name); // MCPC+
+        MCPCUtils.migrateWorlds(worldType, oldName, overworld.getWorldInfo().getWorldName(), name); // MCPC+
         ChunkGenerator gen = mcServer.server.getGenerator(name);
         if (mcServer instanceof DedicatedServer) {
             worldSettings.func_82750_a(((DedicatedServer) mcServer).getStringProperty("generator-settings", ""));

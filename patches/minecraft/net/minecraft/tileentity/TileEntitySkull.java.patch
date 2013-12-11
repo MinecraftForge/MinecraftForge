@@ -14,3 +14,16 @@
      @SideOnly(Side.CLIENT)
      public int func_82119_b()
      {
+@@ -91,4 +98,12 @@
+     {
+         return this.extraType;
+     }
++
++    // MCPC+ start
++    @Override
++    public boolean canUpdate()
++    {
++        return false;
++    }
++    // MCPC+ end
+ }

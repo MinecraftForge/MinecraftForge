@@ -1,0 +1,15 @@
+--- ../src_base/minecraft/net/minecraft/tileentity/TileEntityDropper.java
++++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityDropper.java
+@@ -9,4 +9,12 @@
+     {
+         return this.isInvNameLocalized() ? this.customName : "container.dropper";
+     }
++
++    // MCPC+ start
++    @Override
++    public boolean canUpdate()
++    {
++        return false;
++    }
++    // MCPC+ end
+ }

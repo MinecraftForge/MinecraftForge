@@ -1,0 +1,19 @@
+--- ../src_base/minecraft/cpw/mods/fml/common/asm/transformers/SideTransformer.java
++++ ../src_work/minecraft/cpw/mods/fml/common/asm/transformers/SideTransformer.java
+@@ -32,6 +32,7 @@
+ {
+     private static String SIDE = FMLLaunchHandler.side().name();
+     private static final boolean DEBUG = false;
++    public static boolean allowInvalidSide = false; // MCPC+
+     @Override
+     public byte[] transform(String name, String transformedName, byte[] bytes)
+     {
+@@ -41,7 +42,7 @@
+         ClassReader classReader = new ClassReader(bytes);
+         classReader.accept(classNode, 0);
+ 
+-        if (remove((List<AnnotationNode>)classNode.visibleAnnotations, SIDE))
++        if (remove((List<AnnotationNode>)classNode.visibleAnnotations, SIDE) && !allowInvalidSide) // MCPC+
+         {
+             if (DEBUG)
+             {

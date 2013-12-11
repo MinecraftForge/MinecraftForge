@@ -1,0 +1,15 @@
+--- ../src_base/minecraft/net/minecraft/tileentity/TileEntityComparator.java
++++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityComparator.java
+@@ -33,4 +33,12 @@
+     {
+         this.outputSignal = par1;
+     }
++
++    // MCPC+ start
++    @Override
++    public boolean canUpdate()
++    {
++        return false;
++    }
++    // MCPC+ end
+ }

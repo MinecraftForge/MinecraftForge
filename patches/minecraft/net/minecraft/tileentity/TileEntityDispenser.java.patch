@@ -74,3 +74,16 @@
      }
  
      /**
+@@ -238,4 +282,12 @@
+     {
+         return true;
+     }
++
++    // MCPC+ start
++    @Override
++    public boolean canUpdate()
++    {
++        return false;
++    }
++    // MCPC+ end
+ }

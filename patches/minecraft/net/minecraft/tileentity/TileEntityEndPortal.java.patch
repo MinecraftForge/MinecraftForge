@@ -1,0 +1,14 @@
+--- ../src_base/minecraft/net/minecraft/tileentity/TileEntityEndPortal.java
++++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityEndPortal.java
+@@ -2,4 +2,11 @@
+ 
+ public class TileEntityEndPortal extends TileEntity
+ {
++    // MCPC+ start
++    @Override
++    public boolean canUpdate()
++    {
++        return false;
++    }
++    // MCPC+ end
+ }

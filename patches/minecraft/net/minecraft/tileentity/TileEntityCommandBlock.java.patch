@@ -178,3 +178,16 @@
      @SideOnly(Side.CLIENT)
  
      /**
+@@ -150,4 +292,12 @@
+     {
+         this.succesCount = par1;
+     }
++
++    // MCPC+ start
++    @Override
++    public boolean canUpdate()
++    {
++        return false;
++    }
++    // MCPC+ end
+ }

@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/tileentity/TileEntityNote.java
 +++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityNote.java
-@@ -80,7 +80,15 @@
+@@ -80,7 +80,23 @@
                  b0 = 4;
              }
  
@@ -16,4 +16,12 @@
 +            // CraftBukkit end
          }
      }
++
++    // MCPC+ start
++    @Override
++    public boolean canUpdate()
++    {
++        return false;
++    }
++    // MCPC+ end
  }

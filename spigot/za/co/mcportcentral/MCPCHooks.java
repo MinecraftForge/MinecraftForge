@@ -239,7 +239,7 @@ public class MCPCHooks
 
     public static boolean canUpdate(TileEntity tileEntity)
     {
-        if (tileEntity == null || !tileEntity.canUpdate()) return false; // quick exit
+        if (tileEntity == null || !tileEntity.canUpdate() || MinecraftServer.bannedTileEntityUpdates.contains(tileEntity.getClass())) return false; // quick exit
         return MCPCHooks.getTileTickInterval(tileEntity) != 0;
     }
 

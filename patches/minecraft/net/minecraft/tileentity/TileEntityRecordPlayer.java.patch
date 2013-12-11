@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/tileentity/TileEntityRecordPlayer.java
 +++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityRecordPlayer.java
-@@ -46,6 +46,13 @@
+@@ -46,7 +46,22 @@
  
      public void func_96098_a(ItemStack par1ItemStack)
      {
@@ -14,3 +14,12 @@
          this.record = par1ItemStack;
          this.onInventoryChanged();
      }
++
++    // MCPC+ start
++    @Override
++    public boolean canUpdate()
++    {
++        return false;
++    }
++    // MCPC+ end
+ }
