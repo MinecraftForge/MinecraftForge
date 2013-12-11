@@ -56,7 +56,25 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
                 dispatcher.rejectHandshake(result);
                 return ERROR;
             }
-            ctx.writeAndFlush(new FMLHandshakeMessage.ClientAck());
+            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck());
+            if (!ctx.channel().attr(NetworkDispatcher.IS_LOCAL).get())
+            {
+                return WAITINGSERVERCOMPLETE;
+            }
+            else
+            {
+                return COMPLETE;
+            }
+        }
+    },
+    WAITINGSERVERCOMPLETE
+    {
+        @Override
+        public FMLHandshakeClientState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
+        {
+            FMLHandshakeMessage.ModIdData modIds = (FMLHandshakeMessage.ModIdData)msg;
+            GameData.injectWorldIDMap(modIds.dataList());
+            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck());
             return COMPLETE;
         }
     },
@@ -67,13 +85,16 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
         {
             NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
             dispatcher.continueToClientPlayState();
-            if (!ctx.channel().attr(NetworkDispatcher.IS_LOCAL).get())
-            {
-                FMLHandshakeMessage.ModIdData modIds = (FMLHandshakeMessage.ModIdData)msg;
-                GameData.injectWorldIDMap(modIds.dataList());
-            }
             FMLLog.info("Client side modded connection established");
-            ctx.writeAndFlush(new FMLHandshakeMessage.ClientAck());
+            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck());
+            return DONE;
+        }
+    },
+    DONE
+    {
+        @Override
+        public FMLHandshakeClientState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
+        {
             return this;
         }
     },
