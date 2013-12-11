@@ -284,7 +284,7 @@ public class DimensionManager
         try
         {
             // MCPC+ start - Fixes MultiVerse issue when mods such as Twilight Forest try to hotload their dimension when using its WorldProvider
-            if(za.co.mcportcentral.MCPCConfig.craftWorldLoading)
+            if(za.co.mcportcentral.MCPCHooks.craftWorldLoading)
             {
                 return;
             }

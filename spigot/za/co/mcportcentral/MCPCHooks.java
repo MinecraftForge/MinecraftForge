@@ -6,8 +6,10 @@ import gnu.trove.map.hash.TObjectLongHashMap;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.reflect.Method;
+import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -15,23 +17,54 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import com.google.gson.stream.JsonWriter;
+import javax.management.MBeanServer;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.logging.ILogAgent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.ChunkProviderServer;
-import javax.management.MBeanServer;
-import java.lang.management.ManagementFactory;
-import java.lang.reflect.Method;
 
-public class MCPCHooks {
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.spigotmc.SpigotConfig;
+
+import com.google.gson.stream.JsonWriter;
+
+public class MCPCHooks
+{
+    // Some mods such as Twilight Forest listen for specific events as their WorldProvider loads to hotload its dimension. This prevents this from happening so MV can create worlds using the same provider without issue.
+    public static boolean craftWorldLoading = false;
+    public static boolean overrideTileTicks = false;
     public static int tickingDimension = 0;
     public static ChunkCoordIntPair tickingChunk = null;
+    public static ILogAgent logAgent = MinecraftServer.getServer().getLogAgent();
+
+    private static TObjectLongHashMap<CollisionWarning> recentWarnings = new TObjectLongHashMap<CollisionWarning>();
+
+    public static void logInfo(String msg, Object... args)
+    {
+        logAgent.logInfo(MessageFormat.format(msg, args));
+    }
+
+    public static void logWarning(String msg, Object... args)
+    {
+        logAgent.logWarning(MessageFormat.format(msg, args));
+    }
+
+    public static void logSevere(String msg, Object... args)
+    {
+        logAgent.logSevere(MessageFormat.format(msg, args));
+    }
+
+    public static void logSevereException(Throwable throwable, String msg, Object... args)
+    {
+        logAgent.logSevereException(MessageFormat.format(msg, args), throwable);
+    }
 
     public static void logStack()
     {
@@ -43,20 +76,21 @@ public class MCPCHooks {
         }
     }
 
-    public static void logEntityDeath(String msg)
+    public static void logEntityDeath(Entity entity)
     {
         if (MCPCConfig.Setting.entityDeathLogging.getValue())
         {
-            MinecraftServer.getServer().logInfo(msg);
+            logInfo("Dim: {0} setDead(): {1}", entity.worldObj.provider.dimensionId, entity);
             logStack();
         }
     }
 
-    public static void logEntityDespawn(String msg)
+    public static void logEntityDespawn(Entity entity, String reason)
     {
         if (MCPCConfig.Setting.entityDespawnLogging.getValue())
         {
-            MinecraftServer.getServer().getLogAgent().logInfo(msg);
+            logInfo("Dim: {0} Despawning ({1}): {2}", entity.worldObj.provider.dimensionId, reason, entity);
+            logInfo("Chunk Is Active: {0}", entity.worldObj.inActiveChunk(entity));
             logStack();
         }
     }
@@ -65,7 +99,10 @@ public class MCPCHooks {
     {
         if (MCPCConfig.Setting.entitySpawnLogging.getValue())
         {
-            MinecraftServer.getServer().getLogAgent().logInfo("Dim: " + world.provider.dimensionId + " Spawning (" + spawnReason + "): " + entity);
+            logInfo("Dim: {0} Spawning ({1}): {2}", world.provider.dimensionId, spawnReason, entity);
+            logInfo("Dim: {0} Entities Last Tick: {1}", world.provider.dimensionId, world.entitiesTicked);
+            logInfo("Dim: {0} Tiles Last Tick: {1}", world.provider.dimensionId, world.tilesTicked);
+            logInfo("Chunk Is Active: {0}", world.inActiveChunk(entity));
             logStack();
         }
     }
@@ -74,7 +111,7 @@ public class MCPCHooks {
     {
         if (MCPCConfig.Setting.chunkLoadLogging.getValue())
         {
-            MinecraftServer.getServer().getLogAgent().logInfo(msg + " Chunk At " + x + ", " + z + " Dim: " + provider.worldObj.provider.dimensionId);
+            logInfo("{0} Chunk At [{1}] ({2}, {3})", msg, provider.worldObj.provider.dimensionId, x, z);
             if (logLoadOnRequest)
             {
                 logLoadOnRequest(provider, x, z);
@@ -83,58 +120,92 @@ public class MCPCHooks {
         }
     }
 
+    public static void logChunkUnload(ChunkProviderServer provider, int x, int z, String msg)
+    {
+        if (MCPCConfig.Setting.chunkUnloadLogging.getValue())
+        {
+            logInfo("{0} [{1}] ({2}, {3})", msg, provider.worldObj.provider.dimensionId, x, z);
+            long currentTick = MinecraftServer.getServer().getTickCounter();
+            long lastAccessed = provider.lastAccessed(x, z);
+            long diff = currentTick - lastAccessed;
+            logInfo(" Last accessed: {0, number} Current Tick: {1, number} [{2, number}]", lastAccessed, currentTick, diff);
+        }
+    }
+
     private static void logLoadOnRequest(ChunkProviderServer provider, int x, int z)
     {
         long currentTick = MinecraftServer.getServer().getTickCounter();
         long lastAccessed = provider.lastAccessed(x, z);
         long diff = currentTick - lastAccessed;
-        MinecraftServer.getServer().logInfo(" Last accessed: " + lastAccessed + " Current Tick: " + currentTick + " Diff: " + diff + " Server tick: " + MinecraftServer.getServer().getTickCounter());
-        MinecraftServer.getServer().logInfo(" Finding Spawn Point: " + provider.worldObj.findingSpawnPoint);
-        MinecraftServer.getServer().logInfo(" Load chunk on request: " + provider.loadChunkOnProvideRequest);
-        MinecraftServer.getServer().logInfo(" Calling Forge Tick: " + MinecraftServer.callingForgeTick);
-        MinecraftServer.getServer().logInfo(" Load chunk on forge tick: " + MCPCConfig.Setting.loadChunkOnForgeTick.getValue());
-        MinecraftServer.getServer().logInfo(" Current Tick - Initial Tick: " + (MinecraftServer.currentTick - provider.initialTick));
-    }
-
-    public static void logChunkUnload(ChunkProviderServer provider, int x, int z, String msg)
-    {
-        if (MCPCConfig.Setting.chunkUnloadLogging.getValue())
+        logInfo(" Last accessed: {0, number} Current Tick: {1, number} [{2, number}]", lastAccessed, currentTick, diff);
+        logInfo(" Finding Spawn Point: {0}", provider.worldObj.findingSpawnPoint);
+        logInfo(" Load chunk on request: {0}", provider.loadChunkOnProvideRequest);
+        logInfo(" Calling Forge Tick: {0}", MinecraftServer.callingForgeTick);
+        logInfo(" Load chunk on forge tick: {0}", MCPCConfig.Setting.loadChunkOnForgeTick.getValue());
+        long providerTickDiff = currentTick - provider.initialTick;
+        if (providerTickDiff <= 100)
         {
-            MinecraftServer.getServer().getLogAgent().logInfo(msg + " " + x + ", " + z + " Dim: " + provider.worldObj.provider.dimensionId);
-            long currentTick = MinecraftServer.getServer().getTickCounter();
-            long lastAccessed = provider.lastAccessed(x, z);
-            long diff = currentTick - lastAccessed;
-            MinecraftServer.getServer().logInfo("Last accessed: " + lastAccessed + " Current Tick: " + currentTick + " Diff: " + diff + " Server tick: " + MinecraftServer.getServer().getTickCounter());
+            logInfo(" Current Tick - Initial Tick: {0, number}", providerTickDiff);
         }
     }
 
+    public static void logBoundingBoxSize(Entity entity, AxisAlignedBB aabb)
+    {
+        int logSize = MCPCConfig.Setting.largeBoundingBoxLogSize.getValue();
+        if (logSize <= 0) return;
+        int x = MathHelper.floor_double(aabb.minX);
+        int x1 = MathHelper.floor_double(aabb.maxX + 1.0D);
+        int y = MathHelper.floor_double(aabb.minY);
+        int y1 = MathHelper.floor_double(aabb.maxY + 1.0D);
+        int z = MathHelper.floor_double(aabb.minZ);
+        int z1 = MathHelper.floor_double(aabb.maxZ + 1.0D);
+        
+        int size = Math.abs(x1-x) * Math.abs(y1-y) * Math.abs(z1-z);
+        if (size > MCPCConfig.Setting.largeBoundingBoxLogSize.getValue())
+        {
+            logInfo("BB Size: {0} > {1} avg edge: {2}", size, logSize, aabb.getAverageEdgeLength());
+            logInfo("{0}", aabb);
+            logInfo("{0}", entity.getBoundingBox());
+            logInfo("{0}", entity);
+            logStack();
+            
+            if (size > 200)
+            {
+                logWarning("Please report this stack trace to MCPC devs");
+                Throwable ex = new Throwable();
+                ex.fillInStackTrace();
+                ex.printStackTrace();
+            }
+        }
+    }
+    
     public static void logEntitySize(World world, Entity entity, List list)
     {
-        if (list == null)
+        if (!MCPCConfig.Setting.logEntityCollisionChecks.getValue()) return;
+        long largeCountLogSize = MCPCConfig.Setting.largeCollisionLogSize.getValue();
+        if (largeCountLogSize > 0 && world.entitiesTicked > largeCountLogSize)
         {
-            return;
+            logWarning("Entity size > {0, number} at: {1}", largeCountLogSize, entity);
         }
-        MinecraftServer.getServer();
-        if (MinecraftServer.currentTick % 10 == 0 && MCPCConfig.Setting.largeCollisionLogSize.getValue() > 0
-                && list.size() >= MCPCConfig.Setting.largeCollisionLogSize.getValue())
+        if (list == null) return;
+        long largeCollisionLogSize = MCPCConfig.Setting.largeCollisionLogSize.getValue();
+        if (largeCollisionLogSize > 0 &&
+                (MinecraftServer.getServer().getTickCounter() % 10) == 0 &&
+                list.size() >= largeCollisionLogSize)
         {
             MCPCHooks.CollisionWarning warning = new MCPCHooks.CollisionWarning(world, entity);
             if (recentWarnings.contains(warning))
             {
                 long lastWarned = recentWarnings.get(warning);
-                if (System.currentTimeMillis() - lastWarned < 30000)
-                {
-                    return;
-                }
+                if ((MinecraftServer.getSystemTimeMillis() - lastWarned) < 30000) return;
             }
             recentWarnings.put(warning, System.currentTimeMillis());
-            MinecraftServer.getServer().logWarning("Entity collision > " + MCPCConfig.Setting.largeCollisionLogSize.getValue() + " at: " + entity);
+            logWarning("Entity collision > {0, number} at: {1}", largeCollisionLogSize, entity);
         }
     }
 
-    private static TObjectLongHashMap<CollisionWarning> recentWarnings = new TObjectLongHashMap<CollisionWarning>();
-
-    private static class CollisionWarning {
+    private static class CollisionWarning
+    {
         public ChunkCoordinates chunkCoords;
         public int dimensionId;
 
@@ -147,12 +218,9 @@ public class MCPCHooks {
         @Override
         public boolean equals(Object otherObj)
         {
-            if (!(otherObj instanceof CollisionWarning) || otherObj == null)
-            {
-                return false;
-            }
+            if (!(otherObj instanceof CollisionWarning) || (otherObj == null)) return false;
             CollisionWarning other = (CollisionWarning) otherObj;
-            return other.dimensionId == this.dimensionId && other.chunkCoords.equals(this.chunkCoords);
+            return (other.dimensionId == this.dimensionId) && other.chunkCoords.equals(this.chunkCoords);
         }
 
         @Override
@@ -165,10 +233,10 @@ public class MCPCHooks {
     public static int getTileTickInterval(TileEntity tileEntity)
     {
         String path = "tick-intervals.tiles.update." + tileEntity.getClass().getName().replace(".", "-");
-        //if (!MCPCConfig.isSet(path)) return tileEntity.canUpdate() ? 1 : 0;
+        // if (!MCPCConfig.isSet(path)) return tileEntity.canUpdate() ? 1 : 0;
         return MCPCConfig.getInt(path, tileEntity.canUpdate() ? 1 : 0);
     }
-    
+
     public static boolean canUpdate(TileEntity tileEntity)
     {
         if (tileEntity == null || !tileEntity.canUpdate()) return false; // quick exit
@@ -212,14 +280,17 @@ public class MCPCHooks {
                     ChunkCoordIntPair chunkCoords = new ChunkCoordIntPair((int) entity.posX >> 4, (int) entity.posZ >> 4);
                     chunkEntityCounts.adjustOrPutValue(chunkCoords, 1, 1);
                     classEntityCounts.adjustOrPutValue(entity.getClass(), 1, 1);
-                    if (entity.boundingBox != null && logAll)
+                    if ((entity.boundingBox != null) && logAll)
                     {
-                        ChunkCoordinates coords = new ChunkCoordinates(entity.chunkCoordX, entity.chunkCoordY, entity.chunkCoordZ);
+                        ChunkCoordinates coords = new ChunkCoordinates((int)Math.floor(entity.posX), (int)Math.floor(entity.posY), (int)Math.floor(entity.posZ));
                         if (!collidingCoords.contains(coords))
                         {
                             collidingCoords.add(coords);
                             int size = entity.worldObj.getEntitiesWithinAABBExcludingEntity(entity, entity.boundingBox.expand(1, 1, 1)).size();
-                            if (size < 5) continue;
+                            if (size < 5)
+                            {
+                                continue;
+                            }
                             entityCollisionCounts.put(entity, size);
                         }
                     }
@@ -279,7 +350,8 @@ public class MCPCHooks {
     private static <T> void writeChunkCounts(JsonWriter writer, String name, final TObjectIntHashMap<T> map, int max) throws IOException
     {
         List<T> sortedCoords = new ArrayList<T>(map.keySet());
-        Collections.sort(sortedCoords, new Comparator<T>() {
+        Collections.sort(sortedCoords, new Comparator<T>()
+        {
             @Override
             public int compare(T s1, T s2)
             {
@@ -291,8 +363,14 @@ public class MCPCHooks {
         writer.name(name).beginArray();
         for (T key : sortedCoords)
         {
-            if (max > 0 && i++ > max) break;
-            if (map.get(key) < 5) continue;
+            if ((max > 0) && (i++ > max))
+            {
+                break;
+            }
+            if (map.get(key) < 5)
+            {
+                continue;
+            }
             writer.beginObject();
             writer.name("key").value(key.toString());
             writer.name("count").value(map.get(key));
@@ -301,87 +379,23 @@ public class MCPCHooks {
         writer.endArray();
     }
 
-    public static class HeapDump {
-        // This is the name of the HotSpot Diagnostic MBean
-        private static final String HOTSPOT_BEAN_NAME = "com.sun.management:type=HotSpotDiagnostic";
-
-        // field to store the hotspot diagnostic MBean
-        private static volatile Object hotspotMBean;
-
-        /**
-         * Call this method from your application whenever you want to dump the
-         * heap snapshot into a file.
-         * 
-         * @param fileName
-         *            name of the heap dump file
-         * @param live
-         *            flag that tells whether to dump only the live objects
-         */
-        public static void dumpHeap(File file, boolean live)
+    public static void dumpHeap(File file, boolean live)
+    {
+        try
         {
-            try
+            if (file.getParentFile() != null)
             {
-                if (file.getParentFile() != null)
-                {
-                    file.getParentFile().mkdirs();
-                }
-                // initialize hotspot diagnostic MBean
-                initHotspotMBean();
-                try
-                {
-                    Class clazz = Class.forName("com.sun.management.HotSpotDiagnosticMXBean");
-                    Method m = clazz.getMethod("dumpHeap", String.class, boolean.class);
-                    m.invoke(hotspotMBean, file.getPath(), live);
-                }
-                catch (RuntimeException re)
-                {
-                    throw re;
-                }
-                catch (Exception exp)
-                {
-                    throw new RuntimeException(exp);
-                }
+                file.getParentFile().mkdirs();
             }
-            catch (Throwable t)
-            {
-                MinecraftServer.getServer().getLogAgent().logSevereException("Could not write heap to " + file, t);
-            }
+            Class clazz = Class.forName("com.sun.management.HotSpotDiagnosticMXBean");
+            MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+            Object hotspotMBean = ManagementFactory.newPlatformMXBeanProxy(server, "com.sun.management:type=HotSpotDiagnostic", clazz);
+            Method m = clazz.getMethod("dumpHeap", String.class, boolean.class);
+            m.invoke(hotspotMBean, file.getPath(), live);
         }
-
-        // initialize the hotspot diagnostic MBean field
-        private static void initHotspotMBean()
+        catch (Throwable t)
         {
-            if (hotspotMBean == null)
-            {
-                synchronized (HeapDump.class)
-                {
-                    if (hotspotMBean == null)
-                    {
-                        hotspotMBean = getHotspotMBean();
-                    }
-                }
-            }
-        }
-
-        // get the hotspot diagnostic MBean from the
-        // platform MBean server
-        private static Object getHotspotMBean()
-        {
-            try
-            {
-                Class clazz = Class.forName("com.sun.management.HotSpotDiagnosticMXBean");
-                MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-                Object bean = ManagementFactory.newPlatformMXBeanProxy(server, HOTSPOT_BEAN_NAME, clazz);
-                return bean;
-            }
-            catch (RuntimeException re)
-            {
-                throw re;
-            }
-            catch (Exception exp)
-            {
-                throw new RuntimeException(exp);
-            }
+            logSevereException(t, "Could not write heap to {0}", file);
         }
     }
 }

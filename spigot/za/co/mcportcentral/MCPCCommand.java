@@ -4,11 +4,9 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
+
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -18,17 +16,20 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
+import za.co.mcportcentral.MCPCConfig.Setting;
+
 import com.google.common.collect.ImmutableList;
 
-public class MCPCCommand extends Command {
-    private static final List<String> COMMANDS = ImmutableList.of("get", "set", "tick-interval", "save", "reload", "chunks", "heap"); // TODO:, "chunks");
+public class MCPCCommand extends Command
+{
+    private static final List<String> COMMANDS = ImmutableList.of("get", "set", "tick-interval", "save", "reload", "chunks", "heap");
     private static final List<String> CHUNK_COMMANDS = ImmutableList.of("print", "dump");
-    
+
     public MCPCCommand()
     {
         super("mcpc");
         this.description = "Toggle certain MCPC options";
-        
+
         this.usageMessage = "/mcpc [" + StringUtils.join(COMMANDS, '|') + "] <option> [value]";
         this.setPermission("mcpc.command.mcpc");
     }
@@ -40,23 +41,23 @@ public class MCPCCommand extends Command {
         {
             return true;
         }
-        if (args.length >0 && "heap".equalsIgnoreCase(args[0]))
+        if ((args.length > 0) && "heap".equalsIgnoreCase(args[0]))
         {
             processHeap(sender, args);
             return true;
         }
-        if (args.length >0 && "chunks".equalsIgnoreCase(args[0]))
+        if ((args.length > 0) && "chunks".equalsIgnoreCase(args[0]))
         {
             processChunks(sender, args);
             return true;
         }
-        if (args.length == 1 && "save".equalsIgnoreCase(args[0]))
+        if ((args.length == 1) && "save".equalsIgnoreCase(args[0]))
         {
             MCPCConfig.save();
             sender.sendMessage(ChatColor.GREEN + "Config file saved");
             return true;
         }
-        if (args.length == 1 && "reload".equalsIgnoreCase(args[0]))
+        if ((args.length == 1) && "reload".equalsIgnoreCase(args[0]))
         {
             MCPCConfig.load();
             sender.sendMessage(ChatColor.GREEN + "Config file reloaded");
@@ -67,7 +68,7 @@ public class MCPCCommand extends Command {
             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
             return false;
         }
-        
+
         if ("tick-interval".equalsIgnoreCase(args[0]))
         {
             return intervalSet(sender, args);
@@ -84,22 +85,24 @@ public class MCPCCommand extends Command {
         {
             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
         }
-        
+
         return false;
     }
-    
-    private void processHeap(CommandSender sender, String[] args) {
+
+    private void processHeap(CommandSender sender, String[] args)
+    {
         File file = new File(new File(new File("."), "dumps"), "heap-dump-" + new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date()) + "-server.bin");
         sender.sendMessage("Writing chunk info to: " + file);
-        MCPCHooks.HeapDump.dumpHeap(file, true);
+        MCPCHooks.dumpHeap(file, true);
         sender.sendMessage("Chunk info complete");
     }
-    
-    private void processChunks(CommandSender sender, String[] args) {
+
+    private void processChunks(CommandSender sender, String[] args)
+    {
         sender.sendMessage(ChatColor.GOLD + "Dimension stats: ");
-        for(net.minecraft.world.WorldServer world : MinecraftServer.getServer().worlds)
+        for (net.minecraft.world.WorldServer world : MinecraftServer.getServer().worlds)
         {
-            sender.sendMessage(ChatColor.GOLD + "Dimension: " + ChatColor.GRAY + world.provider.dimensionId + 
+            sender.sendMessage(ChatColor.GOLD + "Dimension: " + ChatColor.GRAY + world.provider.dimensionId +
                     ChatColor.GOLD + " Loaded Chunks: " + ChatColor.GRAY + world.theChunkProviderServer.loadedChunkHashMap.size() +
                     ChatColor.GOLD + " Active Chunks: " + ChatColor.GRAY + world.activeChunkSet.size() +
                     ChatColor.GOLD + " Entities: " + ChatColor.GRAY + world.loadedEntityList.size() +
@@ -111,19 +114,23 @@ public class MCPCCommand extends Command {
                     ChatColor.GOLD + " Removed Tile Entities: " + ChatColor.GRAY + world.entityRemoval.size()
                     );
         }
-        
-        if (args.length < 2 || !"dump".equalsIgnoreCase(args[1])) return;
-        boolean dumpAll = (args.length > 2 && "all".equalsIgnoreCase(args[2]));
-        
+
+        if ((args.length < 2) || !"dump".equalsIgnoreCase(args[1]))
+        {
+            return;
+        }
+        boolean dumpAll = ((args.length > 2) && "all".equalsIgnoreCase(args[2]));
+
         File file = new File(new File(new File("."), "chunk-dumps"), "chunk-info-" + new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date()) + "-server.txt");
         sender.sendMessage("Writing chunk info to: " + file);
         MCPCHooks.writeChunks(file, dumpAll);
         sender.sendMessage("Chunk info complete");
     }
-    
+
     private boolean getToggle(CommandSender sender, String[] args)
     {
-        try {
+        try
+        {
             MCPCConfig.Setting toggle = MCPCConfig.settings.get(args[1]);
             if (toggle == null)
             {
@@ -134,28 +141,33 @@ public class MCPCCommand extends Command {
             String option = (Boolean.TRUE.equals(value) ? ChatColor.GREEN : ChatColor.RED) + " " + value;
             sender.sendMessage(ChatColor.GOLD + args[1] + " " + option);
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
             ex.printStackTrace();
         }
         return true;
     }
-    
+
     private boolean intervalSet(CommandSender sender, String[] args)
     {
-        try {
+        try
+        {
             int setting = NumberUtils.toInt(args[2], 1);
             MCPCConfig.set(args[1], setting);
-        } catch (Exception ex) {
+        }
+        catch (Exception ex)
+        {
             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
             return false;
         }
         return true;
     }
-    
+
     private boolean setToggle(CommandSender sender, String[] args)
     {
-        try {
+        try
+        {
             MCPCConfig.Setting toggle = MCPCConfig.settings.get(args[1]);
             if (toggle == null)
             {
@@ -179,16 +191,22 @@ public class MCPCCommand extends Command {
                     world.theChunkProviderServer.loadChunkOnProvideRequest = za.co.mcportcentral.MCPCConfig.Setting.loadChunkOnRequest.getValue();
                 }
             }
+            if (toggle == MCPCConfig.Setting.overrideTileTicks)
+            {
+                MCPCHooks.overrideTileTicks = MCPCConfig.Setting.overrideTileTicks.getValue();
+            }
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
             ex.printStackTrace();
         }
         return true;
     }
-    
+
     @Override
-    public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
+    public List<String> tabComplete(CommandSender sender, String alias, String[] args)
+    {
         Validate.notNull(sender, "Sender cannot be null");
         Validate.notNull(args, "Arguments cannot be null");
         Validate.notNull(alias, "Alias cannot be null");
@@ -197,18 +215,21 @@ public class MCPCCommand extends Command {
         {
             return StringUtil.copyPartialMatches(args[0], COMMANDS, new ArrayList<String>(COMMANDS.size()));
         }
-        if (args.length == 2 && "get".equalsIgnoreCase(args[0]) || "set".equalsIgnoreCase(args[0]))
+        if (((args.length == 2) && "get".equalsIgnoreCase(args[0])) || "set".equalsIgnoreCase(args[0]))
         {
             return StringUtil.copyPartialMatches(args[1], MCPCConfig.settings.keySet(), new ArrayList<String>(MCPCConfig.settings.size()));
         }
-        else if (args.length == 2 && "chunks".equalsIgnoreCase(args[0]))
+        else if ((args.length == 2) && "chunks".equalsIgnoreCase(args[0]))
         {
             return StringUtil.copyPartialMatches(args[1], CHUNK_COMMANDS, new ArrayList<String>(CHUNK_COMMANDS.size()));
         }
-        else if (args.length == 2 && "tick-interval".equalsIgnoreCase(args[0]))
+        else if ((args.length == 2) && "tick-interval".equalsIgnoreCase(args[0]))
         {
             ArrayList<String> handlers = new ArrayList<String>();
-            for(SkipIntervalHandler h : SkipIntervalHandler.handlers) handlers.add(h.configString);
+            for (SkipIntervalHandler h : SkipIntervalHandler.handlers)
+            {
+                handlers.add(h.configString);
+            }
             return StringUtil.copyPartialMatches(args[1], handlers, new ArrayList<String>(CHUNK_COMMANDS.size()));
         }
 

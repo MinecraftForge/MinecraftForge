@@ -1,0 +1,13 @@
+--- ../src_base/minecraft/net/minecraft/util/AxisAlignedBB.java
++++ ../src_work/minecraft/net/minecraft/util/AxisAlignedBB.java
+@@ -484,6 +484,9 @@
+ 
+     public String toString()
+     {
+-        return "box[" + this.minX + ", " + this.minY + ", " + this.minZ + " -> " + this.maxX + ", " + this.maxY + ", " + this.maxZ + "]";
++        double d0 = this.maxX - this.minX;
++        double d1 = this.maxY - this.minY;
++        double d2 = this.maxZ - this.minZ;
++        return "box (" + d0 + ", " + d2 + ", " + d1 + ") [" + this.minX + ", " + this.minY + ", " + this.minZ + " -> " + this.maxX + ", " + this.maxY + ", " + this.maxZ + "]";
+     }
+ }

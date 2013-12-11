@@ -76,10 +76,10 @@ public class WatchdogThread extends Thread
                 log.log(Level.SEVERE, "MCPC+ version: " + Bukkit.getServer().getVersion());
                 
                 // MCPC+ start - add more logging info
-                log.log(Level.SEVERE, "The server is going slow. Last server tick was " + ((System.currentTimeMillis() - lastTick)) + "ms ago");
+                log.log(Level.SEVERE, "The server is going slow. Last server tick was " + (currentTime - lastTick) + "ms ago");
                 double tps = Math.min(20, Math.round(net.minecraft.server.MinecraftServer.currentTPS * 10) / 10.0);
                 log.log(Level.SEVERE, "Last Tick: " + lastTick + " Current Time: " + currentTime + " Warning: " + warningTime + " Timeout: " + timeoutTime);
-                log.log(Level.SEVERE, "[TPS]: " + tps + " Server Tick #" + net.minecraft.server.MinecraftServer.currentTick);
+                log.log(Level.SEVERE, "[TPS]: " + tps + " Server Tick #" + net.minecraft.server.MinecraftServer.getServer().getTickCounter());
                 log.log(Level.SEVERE, "Last recorded TPS: " + tps);
 
                 // Dump world info
@@ -91,6 +91,8 @@ public class WatchdogThread extends Thread
                     log.log(Level.SEVERE,
                             "  Loaded Chunks: " + world.theChunkProviderServer.loadedChunkHashMap.size() + " Active Chunks: " + world.activeChunkSet.size()
                                     + " Entities: " + world.loadedEntityList.size() + " Tile Entities: " + world.loadedTileEntityList.size());
+                    log.log(Level.SEVERE, "  Entities Last Tick: " + world.entitiesTicked);
+                    log.log(Level.SEVERE, "  Tiles Last Tick: " + world.tilesTicked);
                     log.log(Level.SEVERE, "Last Bounding Box Entity: " + world.lastBoundingBoxEntity);
                     log.log(Level.SEVERE, "Last Bounding Box Coords: " + world.lastBoundingBoxCoords);
                     log.log(Level.SEVERE, "Last Bounding Box Count:  " + world.lastBoundingBoxEntityCount);
@@ -118,7 +120,7 @@ public class WatchdogThread extends Thread
                             + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.bin");
                     log.log(Level.SEVERE, "------------------------------");
                     log.log(Level.SEVERE, "Writing heap dump to: " + file);
-                    MCPCHooks.HeapDump.dumpHeap(file, true);
+                    MCPCHooks.dumpHeap(file, true);
                     log.log(Level.SEVERE, "Writing complete");
                     log.log(Level.SEVERE, "------------------------------");
                 }
@@ -152,7 +154,17 @@ public class WatchdogThread extends Thread
                 log.log(Level.WARNING, "The server is going slow. Last server tick was " + ((System.currentTimeMillis() - lastTick)) + "ms ago");
                 double tps = Math.min(20, Math.round(net.minecraft.server.MinecraftServer.currentTPS * 10) / 10.0);
                 log.log(Level.WARNING, "Last Tick: " + lastTick + " Current Time: " + currentTime + " Warning: " + warningTime + " Timeout: " + timeoutTime);
-                log.log(Level.WARNING, "[TPS]: " + tps + " Server Tick #" + net.minecraft.server.MinecraftServer.currentTick);
+                log.log(Level.WARNING, "[TPS]: " + tps + " Server Tick #" + net.minecraft.server.MinecraftServer.getServer().getTickCounter());
+                for (net.minecraft.world.WorldServer world : MinecraftServer.getServer().worlds)
+                {
+                    log.log(Level.WARNING, "  Dimension:" + world.provider.dimensionId);
+                    log.log(Level.WARNING, "  Loaded Chunks: " + world.theChunkProviderServer.loadedChunkHashMap.size() +
+                            " Active Chunks: " + world.activeChunkSet.size() +
+                            " Entities: " + world.loadedEntityList.size() +
+                            " Tile Entities: " + world.loadedTileEntityList.size());
+                    log.log(Level.WARNING, "  Entities Last Tick: " + world.entitiesTicked);
+                    log.log(Level.WARNING, "  Tiles Last Tick: " + world.tilesTicked);
+                }
                 if (MCPCConfig.Setting.dumpThreadsOnWarn.getValue())
                 {
                     log.log(Level.WARNING, "Server thread dump (Look for mods or plugins here before reporting to MCPC+!):");

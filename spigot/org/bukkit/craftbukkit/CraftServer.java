@@ -738,7 +738,7 @@ public final class CraftServer implements Server {
         net.minecraft.world.WorldServer worldserver = DimensionManager.initDimension(creator, worldSettings);
 
         pluginManager.callEvent(new WorldInitEvent(worldserver.getWorld()));
-        za.co.mcportcentral.MCPCConfig.craftWorldLoading = true;
+        za.co.mcportcentral.MCPCHooks.craftWorldLoading = true;
         System.out.print("Preparing start region for level " + (console.worlds.size() - 1) + " (Dimension: " + worldserver.provider.dimensionId + ", Seed: " + worldserver.getSeed() + ")"); // MCPC+ - log dimension
 
         if (worldserver.getWorld().getKeepSpawnInMemory()) {
@@ -766,7 +766,7 @@ public final class CraftServer implements Server {
             }
         }
         pluginManager.callEvent(new WorldLoadEvent(worldserver.getWorld()));
-        za.co.mcportcentral.MCPCConfig.craftWorldLoading = false;
+        za.co.mcportcentral.MCPCHooks.craftWorldLoading = false;
         return worldserver.getWorld();
     }
 

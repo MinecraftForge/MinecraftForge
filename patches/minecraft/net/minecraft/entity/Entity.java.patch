@@ -186,7 +186,7 @@
 +        // MCPC+ start
 +        if (worldObj != null)
 +        {
-+            za.co.mcportcentral.MCPCHooks.logEntityDeath("Dim: " + worldObj.provider.dimensionId + " setDead(): " + this);
++            za.co.mcportcentral.MCPCHooks.logEntityDeath(this);
 +        }
 +        // MCPC+ end
      }

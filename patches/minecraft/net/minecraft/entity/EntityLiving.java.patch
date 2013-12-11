@@ -187,7 +187,7 @@
 +    
 +    private void despawn(String reason) {
 +        this.setDead();
-+        za.co.mcportcentral.MCPCHooks.logEntityDespawn("Dim: " + worldObj.provider.dimensionId + " Despawning (" + reason + "): " + this);
++        za.co.mcportcentral.MCPCHooks.logEntityDespawn(this, reason);
 +
      }
  
