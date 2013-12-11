@@ -151,7 +151,7 @@ public abstract class FMLHandshakeMessage {
             return modIds;
         }
     }
-    public static class ClientAck extends FMLHandshakeMessage {
+    public static class HandshakeAck extends FMLHandshakeMessage {
 
     }
     public void fromBytes(ByteBuf buffer)

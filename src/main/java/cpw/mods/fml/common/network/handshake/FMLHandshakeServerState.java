@@ -44,10 +44,6 @@ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
                 return ERROR;
             }
             ctx.writeAndFlush(new FMLHandshakeMessage.ModList(Loader.instance().getActiveModList()));
-            if (ctx.channel().attr(NetworkDispatcher.IS_LOCAL).get())
-            {
-                return COMPLETE;
-            }
             return WAITINGCACK;
         }
     },
@@ -56,7 +52,11 @@ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
         @Override
         public FMLHandshakeServerState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
         {
-            ctx.writeAndFlush(new FMLHandshakeMessage.ModIdData(GameData.buildItemDataList()));
+            if (!ctx.channel().attr(NetworkDispatcher.IS_LOCAL).get())
+            {
+                ctx.writeAndFlush(new FMLHandshakeMessage.ModIdData(GameData.buildItemDataList()));
+            }
+            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck());
             return COMPLETE;
         }
     },
@@ -68,6 +68,14 @@ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
             NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
             FMLLog.info("Server side modded connection established");
             dispatcher.continueToServerPlayState();
+            return DONE;
+        }
+    },
+    DONE
+    {
+        @Override
+        public FMLHandshakeServerState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
+        {
             return this;
         }
     },

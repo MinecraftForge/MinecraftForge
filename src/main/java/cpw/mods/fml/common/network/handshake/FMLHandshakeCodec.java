@@ -11,7 +11,7 @@ public class FMLHandshakeCodec extends FMLIndexedMessageToMessageCodec<FMLHandsh
         addDiscriminator((byte)1, FMLHandshakeMessage.ClientHello.class);
         addDiscriminator((byte)2, FMLHandshakeMessage.ModList.class);
         addDiscriminator((byte)3, FMLHandshakeMessage.ModIdData.class);
-        addDiscriminator((byte)-1, FMLHandshakeMessage.ClientAck.class);
+        addDiscriminator((byte)-1, FMLHandshakeMessage.HandshakeAck.class);
     }
     @Override
     public void encodeInto(ChannelHandlerContext ctx, FMLHandshakeMessage msg, ByteBuf target) throws Exception
