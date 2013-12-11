@@ -2,6 +2,8 @@ package cpw.mods.fml.common.network.handshake;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelOutboundHandler;
+import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.util.AttributeKey;
@@ -9,6 +11,7 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.ScheduledFuture;
 
+import java.net.SocketAddress;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -27,7 +30,7 @@ import cpw.mods.fml.common.network.FMLProxyPacket;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 
-public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
+public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> implements ChannelOutboundHandler {
     private static enum ConnectionState {
         OPENING, AWAITING_HANDSHAKE, HANDSHAKING, CONNECTED;
     }
@@ -283,14 +286,70 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> {
 
     public void sendProxy(FMLProxyPacket msg)
     {
-        if (side == Side.CLIENT)
-            manager.func_150725_a(msg.toC17Packet());
-        else
-            manager.func_150725_a(msg.toS3FPacket());
+        manager.func_150725_a(msg);
     }
 
     public void rejectHandshake(String result)
     {
         kickWithMessage(result);
+    }
+
+    @Override
+    public void bind(ChannelHandlerContext ctx, SocketAddress localAddress, ChannelPromise promise) throws Exception
+    {
+        ctx.bind(localAddress, promise);
+    }
+
+    @Override
+    public void connect(ChannelHandlerContext ctx, SocketAddress remoteAddress, SocketAddress localAddress, ChannelPromise promise) throws Exception
+    {
+        ctx.connect(remoteAddress, localAddress, promise);
+    }
+
+    @Override
+    public void disconnect(ChannelHandlerContext ctx, ChannelPromise promise) throws Exception
+    {
+        ctx.disconnect(promise);
+    }
+
+    @Override
+    public void close(ChannelHandlerContext ctx, ChannelPromise promise) throws Exception
+    {
+        ctx.close(promise);
+    }
+
+    @Override
+    @Deprecated
+    public void deregister(ChannelHandlerContext ctx, ChannelPromise promise) throws Exception
+    {
+        ctx.deregister(promise);
+    }
+
+    @Override
+    public void read(ChannelHandlerContext ctx) throws Exception
+    {
+        ctx.read();
+    }
+
+    @Override
+    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception
+    {
+        if (msg instanceof FMLProxyPacket)
+        {
+            if (side == Side.CLIENT)
+                ctx.write(((FMLProxyPacket) msg).toC17Packet(), promise);
+            else
+                ctx.write(((FMLProxyPacket) msg).toS3FPacket(), promise);
+        }
+        else
+        {
+            ctx.write(msg, promise);
+        }
+    }
+
+    @Override
+    public void flush(ChannelHandlerContext ctx) throws Exception
+    {
+        ctx.flush();
     }
 }

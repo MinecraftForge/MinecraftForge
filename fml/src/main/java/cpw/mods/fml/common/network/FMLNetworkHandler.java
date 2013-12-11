@@ -12,6 +12,9 @@
 
 package cpw.mods.fml.common.network;
 
+import io.netty.channel.embedded.EmbeddedChannel;
+
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,16 +31,22 @@ import org.apache.logging.log4j.core.helpers.Integers;
 
 import com.google.common.collect.Lists;
 
+import cpw.mods.fml.common.FMLContainer;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget;
 import cpw.mods.fml.common.network.handshake.FMLHandshakeMessage;
 import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
+import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class FMLNetworkHandler
 {
     public static final int READ_TIMEOUT = Integers.parseInt(System.getProperty("fml.readTimeout","30"),30);
     public static final int LOGIN_TIMEOUT = Integers.parseInt(System.getProperty("fml.loginTimeout","600"),600);
+    private static EnumMap<Side, EmbeddedChannel> channelPair;
 
     /*    private static final int FML_HASH = Hashing.murmur3_32().hashString("FML").asInt();
     private static final int PROTOCOL_VERSION = 0x2;
@@ -445,10 +454,22 @@ public class FMLNetworkHandler
 
     }
 
-    public static Packet getEntitySpawningPacket(Entity field_73132_a)
+    public static Packet getEntitySpawningPacket(Entity entity)
     {
-        // TODO Auto-generated method stub
-        return null;
+        EntityRegistration er = EntityRegistry.instance().lookupModSpawn(entity.getClass(), false);
+        if (er == null)
+        {
+            return null;
+        }
+        if (er.usesVanillaSpawning())
+        {
+            return null;
+        }
+
+        EmbeddedChannel embeddedChannel = channelPair.get(Side.SERVER);
+        embeddedChannel.writeOutbound(new FMLMessage.EntitySpawnMessage(er, entity, er.getContainer()));
+        FMLProxyPacket result = (FMLProxyPacket) embeddedChannel.outboundMessages().poll();
+        return result;
     }
 
     public static String checkModList(FMLHandshakeMessage.ModList modListPacket, Side side)
@@ -471,6 +492,24 @@ public class FMLNetworkHandler
         {
             FMLLog.info("Rejecting connection %s: %s", side, rejects);
             return String.format("Mod rejections %s",rejects);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private static void addClientHandlers()
+    {
+        channelPair.get(Side.CLIENT).pipeline().addAfter("FMLRuntimeCodec#0", "GuiHandler", new OpenGuiHandler());
+        channelPair.get(Side.CLIENT).pipeline().addAfter("FMLRuntimeCodec#0", "EntitySpawnHandler", new EntitySpawnHandler());
+    }
+    public static void registerChannel(FMLContainer container, Side side)
+    {
+        channelPair = NetworkRegistry.INSTANCE.newChannel(container, "FML", new FMLRuntimeCodec());
+        EmbeddedChannel embeddedChannel = channelPair.get(Side.SERVER);
+        embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.NOWHERE);
+
+        if (side == Side.CLIENT)
+        {
+            addClientHandlers();
         }
     }
 

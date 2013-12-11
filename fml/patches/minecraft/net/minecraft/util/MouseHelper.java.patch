@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/util/MouseHelper.java
++++ ../src-work/minecraft/net/minecraft/util/MouseHelper.java
+@@ -14,6 +14,7 @@
+ 
+     public void func_74372_a()
+     {
++        if (Boolean.parseBoolean(System.getProperty("fml.noGrab","false"))) return;
+         Mouse.setGrabbed(true);
+         this.field_74377_a = 0;
+         this.field_74375_b = 0;

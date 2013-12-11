@@ -143,13 +143,6 @@ public class FMLServerHandler implements IFMLSidedHandler
     }
 
     @Override
-    public Entity spawnEntityIntoClientWorld(EntityRegistration er, EntitySpawnPacket packet)
-    {
-        // NOOP
-        return null;
-    }
-
-    @Override
     public void adjustEntityLocationOnClient(EntitySpawnAdjustmentPacket entitySpawnAdjustmentPacket)
     {
         // NOOP

@@ -12,9 +12,12 @@
 
 package cpw.mods.fml.common;
 
+import io.netty.channel.embedded.EmbeddedChannel;
+
 import java.io.File;
 import java.security.cert.Certificate;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -33,9 +36,13 @@ import cpw.mods.fml.client.FMLFileResourcePack;
 import cpw.mods.fml.client.FMLFolderResourcePack;
 import cpw.mods.fml.common.asm.FMLSanityChecker;
 import cpw.mods.fml.common.event.FMLConstructionEvent;
+import cpw.mods.fml.common.network.EntitySpawnHandler;
+import cpw.mods.fml.common.network.FMLNetworkHandler;
+import cpw.mods.fml.common.network.FMLRuntimeCodec;
 import cpw.mods.fml.common.network.NetworkCheckHandler;
 import cpw.mods.fml.common.network.NetworkModHolder;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.OpenGuiHandler;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
 
@@ -45,6 +52,8 @@ import cpw.mods.fml.relauncher.Side;
  */
 public class FMLContainer extends DummyModContainer implements WorldAccessContainer
 {
+    private EnumMap<Side, EmbeddedChannel> channelPair;
+
     public FMLContainer()
     {
         super(new ModMetadata());
@@ -74,6 +83,7 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
     public void modConstruction(FMLConstructionEvent evt)
     {
         NetworkRegistry.INSTANCE.register(this, this.getClass(), null, evt.getASMHarvestedData());
+        FMLNetworkHandler.registerChannel(this, evt.getSide());
     }
 
     @NetworkCheckHandler

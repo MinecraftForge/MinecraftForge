@@ -21,8 +21,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.crash.CrashReport;
@@ -40,6 +43,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.DuplicateModsFoundException;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -53,6 +57,7 @@ import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.WrongMinecraftVersionException;
+import cpw.mods.fml.common.network.FMLMessage.EntitySpawnMessage;
 import cpw.mods.fml.common.network.packet.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.packet.EntitySpawnPacket;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
@@ -216,7 +221,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      * Also initializes key bindings
      *
      */
-    @SuppressWarnings({ "deprecation" })
+    @SuppressWarnings({ "deprecation", "unchecked" })
     public void finishMinecraftLoading()
     {
         if (modsMissing != null || wrongMC != null || customError!=null || dupesFound!=null || modSorting!=null)
@@ -241,6 +246,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
         // Reload resources
         client.func_110436_a();
+        RenderingRegistry.instance().loadEntityRenderers((Map<Class<? extends Entity>, Render>)RenderManager.field_78727_a.field_78729_o);
         loading = false;
         KeyBindingRegistry.instance().uploadKeyBindingsToGame(client.field_71474_y);
     }
@@ -373,75 +379,14 @@ public class FMLClientHandler implements IFMLSidedHandler
         client.func_147108_a(gui);
     }
 
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Entity spawnEntityIntoClientWorld(EntityRegistration er, EntitySpawnPacket packet)
+    public WorldClient getWorldClient()
     {
-        WorldClient wc = client.field_71441_e;
+        return client.field_71441_e;
+    }
 
-        Class<? extends Entity> cls = er.getEntityClass();
-
-        try
-        {
-            Entity entity;
-            if (er.hasCustomSpawning())
-            {
-                entity = er.doCustomSpawning(packet);
-            }
-            else
-            {
-                entity = (Entity)(cls.getConstructor(World.class).newInstance(wc));
-                int offset = packet.entityId - entity.func_145782_y();
-                entity.func_145769_d(packet.entityId);
-                entity.func_70012_b(packet.scaledX, packet.scaledY, packet.scaledZ, packet.scaledYaw, packet.scaledPitch);
-                if (entity instanceof EntityLiving)
-                {
-                    ((EntityLiving)entity).field_70759_as = packet.scaledHeadYaw;
-                }
-
-                Entity parts[] = entity.func_70021_al();
-                if (parts != null)
-                {
-                    for (int j = 0; j < parts.length; j++)
-                    {
-                        parts[j].func_145769_d(parts[j].func_145782_y() + offset);
-                    }
-                }
-            }
-
-            entity.field_70118_ct = packet.rawX;
-            entity.field_70117_cu = packet.rawY;
-            entity.field_70116_cv = packet.rawZ;
-
-            if (entity instanceof IThrowableEntity)
-            {
-                Entity thrower = client.field_71439_g.func_145782_y() == packet.throwerId ? client.field_71439_g : wc.func_73045_a(packet.throwerId);
-                ((IThrowableEntity)entity).setThrower(thrower);
-            }
-
-            if (packet.metadata != null)
-            {
-                entity.func_70096_w().func_75687_a((List)packet.metadata);
-            }
-
-            if (packet.throwerId > 0)
-            {
-                entity.func_70016_h(packet.speedScaledX, packet.speedScaledY, packet.speedScaledZ);
-            }
-
-            if (entity instanceof IEntityAdditionalSpawnData)
-            {
-                ((IEntityAdditionalSpawnData)entity).readSpawnData(packet.dataStream);
-            }
-
-            wc.func_73027_a(packet.entityId, entity);
-            return entity;
-        }
-        catch (Exception e)
-        {
-            FMLLog.log(Level.SEVERE, e, "A severe problem occurred during the spawning of an entity");
-            throw Throwables.propagate(e);
-        }
+    public EntityClientPlayerMP getClientPlayerEntity()
+    {
+        return client.field_71439_g;
     }
 
     @Override

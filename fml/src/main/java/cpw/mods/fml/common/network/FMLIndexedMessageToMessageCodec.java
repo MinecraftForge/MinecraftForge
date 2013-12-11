@@ -15,10 +15,10 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
     private TByteObjectHashMap<Class<? extends A>> discriminators = new TByteObjectHashMap<Class<? extends A>>();
     private TObjectByteHashMap<Class<? extends A>> types = new TObjectByteHashMap<Class<? extends A>>();
 
-    public FMLIndexedMessageToMessageCodec<A> addDiscriminator(byte discriminator, Class<? extends A> type)
+    public FMLIndexedMessageToMessageCodec<A> addDiscriminator(int discriminator, Class<? extends A> type)
     {
-        discriminators.put(discriminator, type);
-        types.put(type, discriminator);
+        discriminators.put((byte)discriminator, type);
+        types.put(type, (byte)discriminator);
         return this;
     }
 
