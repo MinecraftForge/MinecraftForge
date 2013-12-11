@@ -16,15 +16,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.logging.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
@@ -32,7 +29,6 @@ import com.google.common.base.Joiner.MapJoiner;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 import com.google.common.io.Files;
 
@@ -215,6 +211,7 @@ public class GameData {
 
     public static void injectWorldIDMap(Map<String, Integer> dataList)
     {
+        Map<String, Integer[]> remaps = Maps.newHashMap();
         blockRegistry.beginIdSwap();
         itemRegistry.beginIdSwap();
         for (Entry<String, Integer> entry : dataList.entrySet())
@@ -237,6 +234,7 @@ public class GameData {
             if (currId != newId)
             {
                 FMLLog.info("Found %s id mismatch %s : %d %d", isBlock ? "block" : "item", itemName, currId, newId);
+                remaps.put(itemName, new Integer[] { currId, newId });
             }
 
             if (isBlock)
@@ -251,5 +249,6 @@ public class GameData {
 
         blockRegistry.completeIdSwap();
         itemRegistry.completeIdSwap();
+        Loader.instance().fireRemapEvent(remaps);
     }
 }

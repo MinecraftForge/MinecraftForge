@@ -47,6 +47,7 @@ import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.discovery.ModDiscoverer;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLLoadEvent;
+import cpw.mods.fml.common.event.FMLModIdMappingEvent;
 import cpw.mods.fml.common.functions.ArtifactVersionNameFunction;
 import cpw.mods.fml.common.functions.ModIdFunction;
 import cpw.mods.fml.common.registry.GameData;
@@ -836,5 +837,17 @@ public class Loader
 
         FMLLog.info("Attempting connection with missing mods %s at %s", difference, side);
         return true;
+    }
+
+    public void fireRemapEvent(Map<String, Integer[]> remaps)
+    {
+        if (remaps.isEmpty())
+        {
+            FMLLog.finest("Skipping remap event - no remaps occured");
+        }
+        else
+        {
+            modController.propogateStateMessage(new FMLModIdMappingEvent(remaps));
+        }
     }
 }
