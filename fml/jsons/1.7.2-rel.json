@@ -58,6 +58,9 @@
       "name": "net.sf.jopt-simple:jopt-simple:4.5"
     },
     {
+      "name": "lzma:lzma:0.0.1"
+    },
+    {
       "name": "com.paulscode:codecjorbis:20101023"
     },
     {
