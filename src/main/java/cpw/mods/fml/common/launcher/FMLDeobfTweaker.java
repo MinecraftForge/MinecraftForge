@@ -20,11 +20,12 @@ public class FMLDeobfTweaker implements ITweaker {
     @Override
     public void injectIntoClassLoader(LaunchClassLoader classLoader)
     {
-        // Deobfuscation transformer, always last
+        // Deobfuscation transformer, always last, and the access transformer tweaker as well
         if (!(Boolean)Launch.blackboard.get("fml.deobfuscatedEnvironment"))
         {
             classLoader.registerTransformer("cpw.mods.fml.common.asm.transformers.DeobfuscationTransformer");
         }
+        classLoader.registerTransformer("cpw.mods.fml.common.asm.transformers.AccessTransformer");
         try
         {
             FMLRelaunchLog.fine("Validating minecraft");

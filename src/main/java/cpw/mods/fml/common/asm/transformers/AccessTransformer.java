@@ -53,7 +53,7 @@ import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
 public class AccessTransformer implements IClassTransformer
 {
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("fml.debugAccessTransformer", "false"));
     private class Modifier
     {
         public String name = "";
@@ -124,20 +124,20 @@ public class AccessTransformer implements IClassTransformer
                     return true;
                 }
                 List<String> parts = Lists.newArrayList(Splitter.on(" ").trimResults().split(line));
-                if (parts.size()>2)
+                if (parts.size()>3)
                 {
                     throw new RuntimeException("Invalid config file line "+ input);
                 }
                 Modifier m = new Modifier();
                 m.setTargetAccess(parts.get(0));
-                List<String> descriptor = Lists.newArrayList(Splitter.on(".").trimResults().split(parts.get(1)));
-                if (descriptor.size() == 1)
+
+                if (parts.size() == 2)
                 {
                     m.modifyClassVisibility = true;
                 }
                 else
                 {
-                    String nameReference = descriptor.get(1);
+                    String nameReference = parts.get(2);
                     int parenIdx = nameReference.indexOf('(');
                     if (parenIdx>0)
                     {
@@ -149,7 +149,9 @@ public class AccessTransformer implements IClassTransformer
                         m.name = nameReference;
                     }
                 }
-                modifiers.put(descriptor.get(0).replace('/', '.'), m);
+                String className = parts.get(1).replace('/', '.');
+                modifiers.put(className, m);
+                if (DEBUG) System.out.printf("AT RULE: %s %s %s (type %s)\n", toBinary(m.targetAccess), m.name, m.desc, className);
                 return true;
             }
         });
@@ -163,15 +165,15 @@ public class AccessTransformer implements IClassTransformer
 
         if (DEBUG)
         {
-            FMLRelaunchLog.fine("Considering all methods and fields on %s (%s)\n", name, transformedName);
+            FMLRelaunchLog.fine("Considering all methods and fields on %s (%s)\n", transformedName, name);
         }
-        if (!modifiers.containsKey(name)) { return bytes; }
+        if (!modifiers.containsKey(transformedName)) { return bytes; }
 
         ClassNode classNode = new ClassNode();
         ClassReader classReader = new ClassReader(bytes);
         classReader.accept(classNode, 0);
 
-        Collection<Modifier> mods = modifiers.get(name);
+        Collection<Modifier> mods = modifiers.get(transformedName);
         for (Modifier m : mods)
         {
             if (m.modifyClassVisibility)
