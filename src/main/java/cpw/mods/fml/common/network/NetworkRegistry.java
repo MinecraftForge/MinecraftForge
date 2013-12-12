@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -33,6 +34,8 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.discovery.ASMDataTable;
+import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+import cpw.mods.fml.common.network.internal.NetworkModHolder;
 import cpw.mods.fml.relauncher.Side;
 
 /**
@@ -411,9 +414,9 @@ public enum NetworkRegistry
         registry.put(fmlModContainer, networkModHolder);
     }
 
-    Map<ModContainer,NetworkModHolder> registry()
+    public Map<ModContainer,NetworkModHolder> registry()
     {
-        return registry;
+        return ImmutableMap.copyOf(registry);
     }
 
     public Set<String> channelNamesFor(Side side)

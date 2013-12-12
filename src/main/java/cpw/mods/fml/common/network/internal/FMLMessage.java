@@ -1,4 +1,4 @@
-package cpw.mods.fml.common.network;
+package cpw.mods.fml.common.network.internal;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -12,6 +12,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.MathHelper;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.common.registry.IThrowableEntity;
@@ -71,6 +72,38 @@ public abstract class FMLMessage {
         }
     }
 
+    public static class EntityAdjustMessage extends EntityMessage {
+        int serverX;
+        int serverY;
+        int serverZ;
+
+        public EntityAdjustMessage() {}
+        public EntityAdjustMessage(Entity entity, int serverX, int serverY, int serverZ)
+        {
+            super(entity);
+            this.serverX = serverX;
+            this.serverY = serverY;
+            this.serverZ = serverZ;
+        }
+
+        @Override
+        void toBytes(ByteBuf buf)
+        {
+            super.toBytes(buf);
+            buf.writeInt(serverX);
+            buf.writeInt(serverY);
+            buf.writeInt(serverZ);
+        }
+
+        @Override
+        void fromBytes(ByteBuf buf)
+        {
+            super.fromBytes(buf);
+            serverX = buf.readInt();
+            serverY = buf.readInt();
+            serverZ = buf.readInt();
+        }
+    }
     public static class EntitySpawnMessage extends EntityMessage {
         String modId;
         int modEntityTypeId;

@@ -10,7 +10,7 @@
  *     cpw - implementation
  */
 
-package cpw.mods.fml.common.network;
+package cpw.mods.fml.common.network.internal;
 
 import io.netty.channel.embedded.EmbeddedChannel;
 
@@ -34,6 +34,8 @@ import com.google.common.collect.Lists;
 import cpw.mods.fml.common.FMLContainer;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.network.FMLOutboundHandler;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget;
 import cpw.mods.fml.common.network.handshake.FMLHandshakeMessage;
 import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
@@ -448,10 +450,12 @@ public class FMLNetworkHandler
 
     }
 
-    public static void makeEntitySpawnAdjustment(int func_145782_y, EntityPlayerMP p_73117_1_, int field_73128_d, int field_73129_e, int field_73126_f)
+    public static void makeEntitySpawnAdjustment(Entity entity, EntityPlayerMP player, int serverX, int serverY, int serverZ)
     {
-        // TODO Auto-generated method stub
-
+        EmbeddedChannel embeddedChannel = channelPair.get(Side.SERVER);
+        embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.PLAYER);
+        embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player);
+        embeddedChannel.writeOutbound(new FMLMessage.EntityAdjustMessage(entity, serverX, serverY, serverZ));
     }
 
     public static Packet getEntitySpawningPacket(Entity entity)
@@ -467,6 +471,7 @@ public class FMLNetworkHandler
         }
 
         EmbeddedChannel embeddedChannel = channelPair.get(Side.SERVER);
+        embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.NOWHERE);
         embeddedChannel.writeOutbound(new FMLMessage.EntitySpawnMessage(er, entity, er.getContainer()));
         FMLProxyPacket result = (FMLProxyPacket) embeddedChannel.outboundMessages().poll();
         return result;

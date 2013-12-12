@@ -1,5 +1,6 @@
-package cpw.mods.fml.common.network;
+package cpw.mods.fml.common.network.internal;
 
+import cpw.mods.fml.common.network.FMLIndexedMessageToMessageCodec;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -8,6 +9,7 @@ public class FMLRuntimeCodec extends FMLIndexedMessageToMessageCodec<FMLMessage>
     {
         addDiscriminator(1,FMLMessage.OpenGui.class);
         addDiscriminator(2,FMLMessage.EntitySpawnMessage.class);
+        addDiscriminator(3,FMLMessage.EntityAdjustMessage.class);
     }
     @Override
     public void encodeInto(ChannelHandlerContext ctx, FMLMessage msg, ByteBuf target) throws Exception

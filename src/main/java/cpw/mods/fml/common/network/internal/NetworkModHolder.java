@@ -10,7 +10,7 @@
  *     cpw - implementation
  */
 
-package cpw.mods.fml.common.network;
+package cpw.mods.fml.common.network.internal;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -25,6 +25,7 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
+import cpw.mods.fml.common.network.NetworkCheckHandler;
 import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
 import cpw.mods.fml.common.versioning.InvalidVersionSpecificationException;
 import cpw.mods.fml.common.versioning.VersionRange;

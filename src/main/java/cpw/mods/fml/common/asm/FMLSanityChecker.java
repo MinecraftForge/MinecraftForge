@@ -22,14 +22,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
-import javax.swing.JOptionPane;
-
 import net.minecraft.launchwrapper.LaunchClassLoader;
-
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.Opcodes;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;

@@ -16,8 +16,8 @@ import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.common.network.FMLProxyPacket;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 
 public abstract class FMLHandshakeMessage {
     public static FMLProxyPacket makeCustomChannelRegistration(Set<String> channels)

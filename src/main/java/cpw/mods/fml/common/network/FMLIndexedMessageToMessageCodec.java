@@ -2,6 +2,8 @@ package cpw.mods.fml.common.network;
 
 import java.util.List;
 
+import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+
 import gnu.trove.map.hash.TByteObjectHashMap;
 import gnu.trove.map.hash.TObjectByteHashMap;
 import io.netty.buffer.ByteBuf;

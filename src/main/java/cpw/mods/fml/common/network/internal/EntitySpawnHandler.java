@@ -1,27 +1,29 @@
-package cpw.mods.fml.common.network;
+package cpw.mods.fml.common.network.internal;
+
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.util.List;
 import java.util.logging.Level;
-
-import com.google.common.base.Throwables;
 
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.World;
+
+import com.google.common.base.Throwables;
+
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.network.FMLMessage.EntityMessage;
-import cpw.mods.fml.common.network.FMLMessage.EntitySpawnMessage;
+import cpw.mods.fml.common.network.internal.FMLMessage.EntityAdjustMessage;
+import cpw.mods.fml.common.network.internal.FMLMessage.EntityMessage;
 import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.common.registry.IThrowableEntity;
-import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 
 public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.EntityMessage> {
     @Override
@@ -29,14 +31,33 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
     {
         if (msg.getClass().equals(FMLMessage.EntitySpawnMessage.class))
         {
-            spawnEntity(msg);
+            spawnEntity((FMLMessage.EntitySpawnMessage)msg);
+        }
+        else if (msg.getClass().equals(FMLMessage.EntityAdjustMessage.class))
+        {
+            adjustEntity((FMLMessage.EntityAdjustMessage)msg);
         }
     }
 
-    private void spawnEntity(EntityMessage msg)
+    private void adjustEntity(EntityAdjustMessage msg)
+    {
+        Entity ent = FMLClientHandler.instance().getWorldClient().func_73045_a(msg.entityId);
+        if (ent != null)
+        {
+            ent.field_70118_ct = msg.serverX;
+            ent.field_70117_cu = msg.serverY;
+            ent.field_70116_cv = msg.serverZ;
+        }
+        else
+        {
+            FMLLog.fine("Attempted to adjust the position of entity %d which is not present on the client", msg.entityId);
+        }
+
+    }
+
+    private void spawnEntity(FMLMessage.EntitySpawnMessage spawnMsg)
     {
         System.out.println("Spawning entity on client");
-        FMLMessage.EntitySpawnMessage spawnMsg = (EntitySpawnMessage) msg;
         ModContainer mc = Loader.instance().getIndexedModList().get(spawnMsg.modId);
         EntityRegistration er = EntityRegistry.instance().lookupModSpawn(mc, spawnMsg.modEntityTypeId);
         WorldClient wc = FMLClientHandler.instance().getWorldClient();

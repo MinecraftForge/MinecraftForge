@@ -40,7 +40,7 @@ public class FMLModIdMappingEvent extends FMLEvent {
             @Override
             public int compare(ModRemapping o1, ModRemapping o2)
             {
-                return Integer.compare(o1.newId,o2.newId);
+                return (o1.newId < o2.newId) ? -1 : ((o1.newId == o2.newId) ? 0 : 1);
             }
         });
         remappedIds = ImmutableList.copyOf(remappings);

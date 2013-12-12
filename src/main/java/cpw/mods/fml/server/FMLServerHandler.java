@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.StringTranslate;
@@ -34,9 +33,6 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.network.packet.EntitySpawnAdjustmentPacket;
-import cpw.mods.fml.common.network.packet.EntitySpawnPacket;
-import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 
@@ -140,12 +136,6 @@ public class FMLServerHandler implements IFMLSidedHandler
     public void showGuiScreen(Object clientGuiElement)
     {
 
-    }
-
-    @Override
-    public void adjustEntityLocationOnClient(EntitySpawnAdjustmentPacket entitySpawnAdjustmentPacket)
-    {
-        // NOOP
     }
     @Override
     public boolean shouldServerShouldBeKilledQuietly()

@@ -1,10 +1,10 @@
-package cpw.mods.fml.common.network;
+package cpw.mods.fml.common.network.internal;
 
 import net.minecraft.entity.player.EntityPlayer;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.network.FMLMessage.OpenGui;
+import cpw.mods.fml.common.network.internal.FMLMessage.OpenGui;
 
 public class OpenGuiHandler extends SimpleChannelInboundHandler<FMLMessage.OpenGui> {
     @Override

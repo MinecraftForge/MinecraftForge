@@ -14,12 +14,8 @@ package cpw.mods.fml.common;
 
 import java.util.List;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
-import cpw.mods.fml.common.network.packet.EntitySpawnAdjustmentPacket;
-import cpw.mods.fml.common.network.packet.EntitySpawnPacket;
-import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.relauncher.Side;
 
 public interface IFMLSidedHandler
@@ -31,8 +27,6 @@ public interface IFMLSidedHandler
     void haltGame(String message, Throwable exception);
 
     void showGuiScreen(Object clientGuiElement);
-
-    void adjustEntityLocationOnClient(EntitySpawnAdjustmentPacket entitySpawnAdjustmentPacket);
 
     void beginServerLoading(MinecraftServer server);
 
