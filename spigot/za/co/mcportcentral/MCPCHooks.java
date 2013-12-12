@@ -20,6 +20,8 @@ import java.util.logging.Level;
 import javax.management.MBeanServer;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.logging.ILogAgent;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -180,22 +182,47 @@ public class MCPCHooks
         return false;
     }
     
-    public static void logEntitySpeed(Entity entity, double x, double y, double z)
+    public static boolean checkEntitySpeed(Entity entity, double x, double y, double z)
     {
-        if (MCPCConfig.Setting.entitySpeedWarnSize.getValue() > 0)
+        int maxSpeed = MCPCConfig.Setting.entityMaxSpeed.getValue();
+        if (maxSpeed > 0)
         {
-            double length = Math.sqrt(x*x + y*y + z*z);
-            if (length > 5)
+            double distance = x * x + y * y + z * z;
+            if (distance > maxSpeed)
             {
-                za.co.mcportcentral.MCPCHooks.logInfo("Fast moving entity - Distance: {0}", length);
-                za.co.mcportcentral.MCPCHooks.logInfo("Move offset: ({0}, {1}, {2})", x, y, z);
-                za.co.mcportcentral.MCPCHooks.logInfo("Motion: ({0}, {1}, {2})", entity.motionX, entity.motionY, entity.motionZ);
-                za.co.mcportcentral.MCPCHooks.logInfo("Entity: {0}", entity);
-                NBTTagCompound tag = new NBTTagCompound();
-                entity.writeToNBT(tag);
-                za.co.mcportcentral.MCPCHooks.logInfo("Entity NBT: {0}", tag);
+                if (MCPCConfig.Setting.logEntitySpeedRemoval.getValue())
+                {
+                    logInfo("Speed violation: {0} was over {1} - Removing Entity: {2}", distance, maxSpeed, entity);
+                    if (entity instanceof EntityLivingBase)
+                    {
+                        EntityLivingBase livingBase = (EntityLivingBase)entity;
+                        logInfo("Entity Motion: ({0}, {1}, {2}) Move Strafing: {3} Move Forward: {4}", entity.motionX, entity.motionY, entity.motionZ, livingBase.moveStrafing, livingBase.moveForward);
+                    }
+
+                    if (MCPCConfig.Setting.logWithStackTraces.getValue())
+                    {
+                        logInfo("Move offset: ({0}, {1}, {2})", x, y, z);
+                        logInfo("Motion: ({0}, {1}, {2})", entity.motionX, entity.motionY, entity.motionZ);
+                        logInfo("Entity: {0}", entity);
+                        NBTTagCompound tag = new NBTTagCompound();
+                        entity.writeToNBT(tag);
+                        logInfo("Entity NBT: {0}", tag);
+                        logStack();
+                    }
+                }
+                if (entity instanceof EntityPlayer) // Skip killing players
+                {
+                    entity.motionX = 0;
+                    entity.motionY = 0;
+                    entity.motionZ = 0;
+                    return false;
+                }
+                // Remove the entity;
+                entity.isDead = true;
+                return false;
             }
         }
+        return true;
     }
     
     public static void logEntitySize(World world, Entity entity, List list)

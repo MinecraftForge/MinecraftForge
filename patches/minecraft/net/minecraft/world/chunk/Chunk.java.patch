@@ -14,7 +14,7 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.util.AxisAlignedBB;
  import net.minecraft.util.MathHelper;
-@@ -25,6 +28,13 @@
+@@ -25,6 +28,16 @@
  import net.minecraft.world.biome.WorldChunkManager;
  import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
  
@@ -25,10 +25,13 @@
 +import org.bukkit.Bukkit; // CraftBukkit
 +import org.bukkit.craftbukkit.CraftServer;
 +
++import com.google.common.collect.ImmutableList;
++import com.google.common.collect.ImmutableSet;
++
  public class Chunk
  {
      /**
-@@ -105,6 +115,8 @@
+@@ -105,6 +118,8 @@
       * Contains the current round-robin relight check index, and is implied as the relight check location as well.
       */
      private int queuedLightChecks;
@@ -37,7 +40,7 @@
  
      public Chunk(World par1World, int par2, int par3)
      {
-@@ -122,12 +134,22 @@
+@@ -122,12 +137,22 @@
  
          for (int k = 0; k < this.entityLists.length; ++k)
          {
@@ -62,7 +65,7 @@
  
      public Chunk(World par1World, byte[] par2ArrayOfByte, int par3, int par4)
      {
-@@ -140,7 +162,9 @@
+@@ -140,7 +165,9 @@
              {
                  for (int j1 = 0; j1 < k; ++j1)
                  {
@@ -73,7 +76,7 @@
  
                      if (b0 != 0)
                      {
-@@ -159,6 +183,92 @@
+@@ -159,6 +186,92 @@
      }
  
      /**
@@ -166,7 +169,7 @@
       * Checks whether the chunk is at the X/Z location specified
       */
      public boolean isAtLocation(int par1, int par2)
-@@ -222,7 +332,7 @@
+@@ -222,7 +335,7 @@
                      {
                          int i1 = this.getBlockID(j, l - 1, k);
  
@@ -175,7 +178,7 @@
                          {
                              --l;
                              continue;
-@@ -528,7 +638,10 @@
+@@ -528,7 +641,10 @@
  
      public int getBlockLightOpacity(int par1, int par2, int par3)
      {
@@ -187,7 +190,7 @@
      }
  
      /**
-@@ -615,9 +728,13 @@
+@@ -615,9 +731,13 @@
                  {
                      Block.blocksList[l1].breakBlock(this.worldObj, j2, par2, k2, l1, i2);
                  }
@@ -204,7 +207,7 @@
                  }
              }
  
-@@ -635,7 +752,7 @@
+@@ -635,7 +755,7 @@
                  }
                  else
                  {
@@ -213,7 +216,7 @@
                      {
                          if (par2 >= k1)
                          {
-@@ -654,24 +771,33 @@
+@@ -654,24 +774,33 @@
  
                  if (par4 != 0)
                  {
@@ -252,7 +255,7 @@
                          }
                      }
                  }
-@@ -716,7 +842,7 @@
+@@ -716,7 +845,7 @@
                  extendedblockstorage.setExtBlockMetadata(par1, par2 & 15, par3, par4);
                  int j1 = extendedblockstorage.getExtBlockID(par1, par2 & 15, par3);
  
@@ -261,7 +264,7 @@
                  {
                      TileEntity tileentity = this.getChunkBlockTileEntity(par1, par2, par3);
  
-@@ -813,8 +939,11 @@
+@@ -813,8 +942,11 @@
  
          if (i != this.xPosition || j != this.zPosition)
          {
@@ -275,7 +278,7 @@
          }
  
          int k = MathHelper.floor_double(par1Entity.posY / 16.0D);
-@@ -829,11 +958,28 @@
+@@ -829,11 +961,28 @@
              k = this.entityLists.length - 1;
          }
  
@@ -304,7 +307,7 @@
      }
  
      /**
-@@ -860,6 +1006,22 @@
+@@ -860,6 +1009,22 @@
          }
  
          this.entityLists[par2].remove(par1Entity);
@@ -327,7 +330,7 @@
      }
  
      /**
-@@ -878,33 +1040,32 @@
+@@ -878,33 +1043,32 @@
          ChunkPosition chunkposition = new ChunkPosition(par1, par2, par3);
          TileEntity tileentity = (TileEntity)this.chunkTileEntityMap.get(chunkposition);
  
@@ -372,7 +375,7 @@
      }
  
      /**
-@@ -919,7 +1080,7 @@
+@@ -919,7 +1083,7 @@
  
          if (this.isChunkLoaded)
          {
@@ -381,7 +384,7 @@
          }
      }
  
-@@ -934,7 +1095,8 @@
+@@ -934,7 +1098,8 @@
          par4TileEntity.yCoord = par2;
          par4TileEntity.zCoord = this.zPosition * 16 + par3;
  
@@ -391,7 +394,7 @@
          {
              if (this.chunkTileEntityMap.containsKey(chunkposition))
              {
-@@ -943,6 +1105,17 @@
+@@ -943,6 +1108,17 @@
  
              par4TileEntity.validate();
              this.chunkTileEntityMap.put(chunkposition, par4TileEntity);
@@ -409,7 +412,7 @@
          }
      }
  
-@@ -984,6 +1157,7 @@
+@@ -984,6 +1160,7 @@
  
              this.worldObj.addLoadedEntities(this.entityLists[i]);
          }
@@ -417,7 +420,7 @@
      }
  
      /**
-@@ -1002,8 +1176,25 @@
+@@ -1002,8 +1179,25 @@
  
          for (int i = 0; i < this.entityLists.length; ++i)
          {
@@ -443,7 +446,7 @@
      }
  
      /**
-@@ -1020,8 +1211,8 @@
+@@ -1020,8 +1214,8 @@
       */
      public void getEntitiesWithinAABBForEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, List par3List, IEntitySelector par4IEntitySelector)
      {
@@ -454,7 +457,7 @@
  
          if (i < 0)
          {
-@@ -1070,8 +1261,8 @@
+@@ -1070,8 +1264,8 @@
       */
      public void getEntitiesOfTypeWithinAAAB(Class par1Class, AxisAlignedBB par2AxisAlignedBB, List par3List, IEntitySelector par4IEntitySelector)
      {
@@ -465,7 +468,7 @@
  
          if (i < 0)
          {
-@@ -1176,7 +1367,7 @@
+@@ -1176,7 +1370,7 @@
              while (i1 > 0 && l == -1)
              {
                  int j1 = this.getBlockID(par1, i1, par2);
@@ -474,11 +477,11 @@
  
                  if (!material.blocksMovement() && !material.isLiquid())
                  {
-@@ -1254,6 +1445,15 @@
+@@ -1254,6 +1448,15 @@
       */
      public void fillChunk(byte[] par1ArrayOfByte, int par2, int par3, boolean par4)
      {
-+        Iterator iterator = chunkTileEntityMap.values().iterator();
++        Iterator iterator = ImmutableList.copyOf(chunkTileEntityMap.values()).iterator(); // MCPC+ use an immutable list to iterate here
 +        while(iterator.hasNext())
 +        {
 +            TileEntity tileEntity = (TileEntity)iterator.next();
@@ -490,7 +493,7 @@
          int k = 0;
          boolean flag1 = !this.worldObj.provider.hasNoSky;
          int l;
-@@ -1354,12 +1554,26 @@
+@@ -1354,12 +1557,26 @@
          }
  
          this.generateHeightMap();
@@ -498,7 +501,7 @@
 -
 +
 +        List<TileEntity> invalidList = new ArrayList<TileEntity>();
-+        iterator = chunkTileEntityMap.values().iterator();
++        iterator = ImmutableList.copyOf(chunkTileEntityMap.values()).iterator(); // MCPC+ use an immutable list to iterate here
          while (iterator.hasNext())
          {
 -            TileEntity tileentity = (TileEntity)iterator.next();
@@ -521,7 +524,7 @@
          }
      }
  
-@@ -1468,4 +1682,18 @@
+@@ -1468,4 +1685,18 @@
              }
          }
      }

@@ -298,10 +298,10 @@
 +        {
 +            return;
 +        }
++        if (!MCPCHooks.checkEntitySpeed(this, par1, par3, par5)) return; // Check for entities violating the speed limit
++
 +        // CraftBukkit end
 +        org.bukkit.craftbukkit.SpigotTimings.entityMoveTimer.startTiming(); // Spigot
-+
-+        MCPCHooks.logEntitySpeed(this, par1, par3, par5);
 +
          if (this.noClip)
          {
