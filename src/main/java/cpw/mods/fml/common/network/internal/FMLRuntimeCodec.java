@@ -7,6 +7,7 @@ import io.netty.channel.ChannelHandlerContext;
 public class FMLRuntimeCodec extends FMLIndexedMessageToMessageCodec<FMLMessage> {
     public FMLRuntimeCodec()
     {
+        addDiscriminator(0,FMLMessage.CompleteHandshake.class);
         addDiscriminator(1,FMLMessage.OpenGui.class);
         addDiscriminator(2,FMLMessage.EntitySpawnMessage.class);
         addDiscriminator(3,FMLMessage.EntityAdjustMessage.class);

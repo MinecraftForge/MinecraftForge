@@ -12,6 +12,7 @@ import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.ScheduledFuture;
 
 import java.net.SocketAddress;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -26,7 +27,10 @@ import net.minecraft.network.play.server.S40PacketDisconnect;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.util.ChatComponentText;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.network.FMLNetworkException;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.internal.FMLMessage;
+import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 
@@ -67,6 +71,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     private ConnectionType connectionType;
     private final Side side;
     private final EmbeddedChannel handshakeChannel;
+    private NetHandlerPlayServer serverHandler;
 
     public NetworkDispatcher(NetworkManager manager)
     {
@@ -127,6 +132,12 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         // This will be ignored by vanilla clients
         this.state = ConnectionState.AWAITING_HANDSHAKE;
         this.manager.channel().pipeline().addFirst("fml:vanilla_detector", new VanillaTimeoutWaiter());
+        // Need to start the handler here, so we can send custompayload packets
+        serverHandler = new NetHandlerPlayServer(scm.func_72365_p(), manager, player);
+        // NULL the play server here - we restore it further on. If not, there are packets sent before the login
+        player.field_71135_a = null;
+        // manually for the manager into the PLAY state, so we can send packets later
+        this.manager.func_150723_a(EnumConnectionState.PLAY);
     }
 
     void clientListenForServerHandshake()
@@ -135,30 +146,19 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         this.state = ConnectionState.AWAITING_HANDSHAKE;
     }
 
-    void continueToClientPlayState()
-    {
-        this.state = ConnectionState.CONNECTED;
-        this.connectionType = ConnectionType.MODDED;
-        completeClientSideConnection();
-    }
-
     private void completeClientSideConnection()
     {
-    }
-
-    void continueToServerPlayState()
-    {
+        FMLLog.info("[%s] Client side modded connection established", Thread.currentThread().getName());
         this.state = ConnectionState.CONNECTED;
         this.connectionType = ConnectionType.MODDED;
-        completeServerSideConnection();
     }
 
     private void completeServerSideConnection()
     {
-        NetHandlerPlayServer nethandler = new NetHandlerPlayServer(scm.func_72365_p(), manager, player);
-        // NULL the play server here - we restore it further on. If not, there are packets sent before the login
-        player.field_71135_a = null;
-        scm.func_72355_a(manager, player, nethandler);
+        FMLLog.info("[%s] Server side modded connection established", Thread.currentThread().getName());
+        this.state = ConnectionState.CONNECTED;
+        this.connectionType = ConnectionType.MODDED;
+        scm.func_72355_a(manager, player, serverHandler);
     }
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Packet msg) throws Exception
@@ -175,12 +175,11 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         else if (msg instanceof S40PacketDisconnect && state != ConnectionState.CONNECTED)
         {
             // Switch to play state to handle the disconnect message
-            continueToClientPlayState();
+            completeClientSideConnection();
         }
         else if (state != ConnectionState.CONNECTED)
         {
-            FMLLog.info("Unexpected packet during modded negotiation - assuming vanilla");
-            kickVanilla();
+            FMLLog.info("Unexpected packet during modded negotiation - assuming vanilla or keepalives : %s", msg.getClass().getName());
         }
         if (!handled)
         {
@@ -222,6 +221,18 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         {
             FMLProxyPacket proxy = new FMLProxyPacket(msg);
             handshakeChannel.writeInbound(proxy);
+            // forward any messages into the regular channel
+            for (Object push : handshakeChannel.inboundMessages())
+            {
+                List<FMLProxyPacket> messageResult = FMLNetworkHandler.forwardHandshake((FMLMessage.CompleteHandshake)push, this, Side.CLIENT);
+                for (FMLProxyPacket result: messageResult)
+                {
+                    result.setTarget(Side.CLIENT);
+                    result.payload().resetReaderIndex();
+                    context.fireChannelRead(result);
+                }
+            }
+            handshakeChannel.inboundMessages().clear();
             return true;
         }
         else if (NetworkRegistry.INSTANCE.hasChannel(channelName, Side.CLIENT))
@@ -245,6 +256,17 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         {
             FMLProxyPacket proxy = new FMLProxyPacket(msg);
             handshakeChannel.writeInbound(proxy);
+            for (Object push : handshakeChannel.inboundMessages())
+            {
+                List<FMLProxyPacket> messageResult = FMLNetworkHandler.forwardHandshake((FMLMessage.CompleteHandshake)push, this, Side.SERVER);
+                for (FMLProxyPacket result: messageResult)
+                {
+                    result.setTarget(Side.SERVER);
+                    result.payload().resetReaderIndex();
+                    context.fireChannelRead(result);
+                }
+            }
+            handshakeChannel.inboundMessages().clear();
             return true;
         }
         else if (NetworkRegistry.INSTANCE.hasChannel(channelName, Side.SERVER))
@@ -351,5 +373,21 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     public void flush(ChannelHandlerContext ctx) throws Exception
     {
         ctx.flush();
+    }
+
+    public void completeHandshake(Side target)
+    {
+        if (state == ConnectionState.CONNECTED)
+        {
+            throw new FMLNetworkException("Attempt to double complete!");
+        }
+        if (side == Side.CLIENT)
+        {
+            completeClientSideConnection();
+        }
+        else
+        {
+            completeServerSideConnection();
+        }
     }
 }

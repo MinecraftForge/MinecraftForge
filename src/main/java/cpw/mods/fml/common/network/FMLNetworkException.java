@@ -24,4 +24,9 @@ public class FMLNetworkException extends RuntimeException
     public FMLNetworkException()
     {
     }
+
+    public FMLNetworkException(String string)
+    {
+        super(string);
+    }
 }

@@ -86,4 +86,9 @@ public class FMLProxyPacket extends Packet {
     {
         return new S3FPacketCustomPayload(channel, payload.array());
     }
+
+    public void setTarget(Side target)
+    {
+        this.target = target;
+    }
 }
