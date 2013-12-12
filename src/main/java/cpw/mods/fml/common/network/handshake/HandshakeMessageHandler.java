@@ -12,7 +12,7 @@ public class HandshakeMessageHandler<S extends Enum<S> & IHandshakeState<S>> ext
     @SuppressWarnings("unchecked")
     public HandshakeMessageHandler(Class<S> stateType)
     {
-        fmlHandshakeState = (AttributeKey<S>) STATE;
+        fmlHandshakeState = (AttributeKey<S>) ((Object)STATE);
         initialState = Enum.valueOf(stateType, "START");
     }
     @Override
