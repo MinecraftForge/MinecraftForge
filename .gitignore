@@ -15,3 +15,7 @@
 #occupational hazards
 /eclipse/
 /repo/
+
+
+#Patch reject
+*.rej
