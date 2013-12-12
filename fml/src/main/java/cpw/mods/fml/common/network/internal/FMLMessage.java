@@ -16,8 +16,27 @@ import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.common.registry.IThrowableEntity;
+import cpw.mods.fml.relauncher.Side;
 
 public abstract class FMLMessage {
+    public static class CompleteHandshake extends FMLMessage {
+        Side target;
+        public CompleteHandshake() {}
+        public CompleteHandshake(Side target)
+        {
+            this.target = target;
+        }
+        @Override
+        void fromBytes(ByteBuf buf)
+        {
+            target = Side.values()[buf.readByte()];
+        }
+        @Override
+        void toBytes(ByteBuf buf)
+        {
+            buf.writeByte(target.ordinal());
+        }
+    }
     public static class OpenGui extends FMLMessage {
         int windowId;
         int networkId;

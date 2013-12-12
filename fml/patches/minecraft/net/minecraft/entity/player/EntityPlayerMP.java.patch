@@ -10,12 +10,3 @@
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.entity.Entity;
-@@ -108,7 +111,7 @@
-     public final ItemInWorldManager field_71134_c;
-     public double field_71131_d;
-     public double field_71132_e;
--    public final List field_71129_f = new LinkedList();
-+    public final Queue field_71129_f = new ConcurrentLinkedQueue();
-     public final List field_71130_g = new LinkedList();
-     private final StatisticsFile field_147103_bO;
-     private float field_130068_bO = Float.MIN_VALUE;

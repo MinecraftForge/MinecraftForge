@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.internal.FMLMessage;
 import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
@@ -65,9 +66,8 @@ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
         @Override
         public FMLHandshakeServerState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
         {
-            NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
-            FMLLog.info("Server side modded connection established");
-            dispatcher.continueToServerPlayState();
+            FMLMessage.CompleteHandshake complete = new FMLMessage.CompleteHandshake(Side.SERVER);
+            ctx.fireChannelRead(complete);
             return DONE;
         }
     },

@@ -164,6 +164,13 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
         }
         OutboundTarget outboundTarget;
         Object args = null;
+        NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+        // INTERNAL message callback - let it pass out
+        if (dispatcher != null)
+        {
+            ctx.write(msg, promise);
+            return;
+        }
         if (ctx.channel().attr(NetworkRegistry.CHANNEL_SOURCE).get() == Side.CLIENT)
         {
             outboundTarget = OutboundTarget.TOSERVER;
@@ -183,9 +190,9 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
             ctx.write(msg, promise);
             return;
         }
-        for (NetworkDispatcher dispatcher : dispatchers)
+        for (NetworkDispatcher targetDispatcher : dispatchers)
         {
-            dispatcher.sendProxy((FMLProxyPacket) msg);
+            targetDispatcher.sendProxy((FMLProxyPacket) msg);
         }
 
     }

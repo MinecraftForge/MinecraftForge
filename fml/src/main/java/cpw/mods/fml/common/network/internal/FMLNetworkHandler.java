@@ -14,6 +14,7 @@ package cpw.mods.fml.common.network.internal;
 
 import io.netty.channel.embedded.EmbeddedChannel;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -35,10 +36,11 @@ import cpw.mods.fml.common.FMLContainer;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
-import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.handshake.FMLHandshakeMessage;
 import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
+import cpw.mods.fml.common.network.internal.FMLMessage.CompleteHandshake;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.relauncher.Side;
@@ -508,7 +510,7 @@ public class FMLNetworkHandler
     }
     public static void registerChannel(FMLContainer container, Side side)
     {
-        channelPair = NetworkRegistry.INSTANCE.newChannel(container, "FML", new FMLRuntimeCodec());
+        channelPair = NetworkRegistry.INSTANCE.newChannel(container, "FML", new FMLRuntimeCodec(), new HandshakeCompletionHandler());
         EmbeddedChannel embeddedChannel = channelPair.get(Side.SERVER);
         embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.NOWHERE);
 
@@ -516,6 +518,20 @@ public class FMLNetworkHandler
         {
             addClientHandlers();
         }
+    }
+
+    public static List<FMLProxyPacket> forwardHandshake(CompleteHandshake push, NetworkDispatcher target, Side side)
+    {
+        channelPair.get(side).attr(NetworkDispatcher.FML_DISPATCHER).set(target);
+        channelPair.get(side).writeOutbound(push);
+
+        ArrayList<FMLProxyPacket> list = new ArrayList<FMLProxyPacket>();
+        for (Object o: channelPair.get(side).outboundMessages())
+        {
+            list.add((FMLProxyPacket)o);
+        }
+        channelPair.get(side).outboundMessages().clear();
+        return list;
     }
 
 }
