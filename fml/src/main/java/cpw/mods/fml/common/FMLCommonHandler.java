@@ -41,7 +41,6 @@ import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import cpw.mods.fml.common.network.packet.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.server.FMLServerHandler;
@@ -323,11 +322,6 @@ public class FMLCommonHandler
     public void showGuiScreen(Object clientGuiElement)
     {
         sidedDelegate.showGuiScreen(clientGuiElement);
-    }
-
-    public void adjustEntityLocationOnClient(EntitySpawnAdjustmentPacket entitySpawnAdjustmentPacket)
-    {
-        sidedDelegate.adjustEntityLocationOnClient(entitySpawnAdjustmentPacket);
     }
 
     public void onServerStart(MinecraftServer dedicatedServer)

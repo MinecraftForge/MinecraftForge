@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableList;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
 import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
+import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 
 public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {

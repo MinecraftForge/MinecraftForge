@@ -1,6 +1,6 @@
 package cpw.mods.fml.common.network.handshake;
 
-import cpw.mods.fml.common.network.FMLProxyPacket;
+import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;

@@ -38,7 +38,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.network.FMLMessage.EntitySpawnMessage;
+import cpw.mods.fml.common.network.internal.FMLMessage.EntitySpawnMessage;
 
 public class EntityRegistry
 {

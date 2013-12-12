@@ -30,12 +30,10 @@ import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.World;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
@@ -57,12 +55,6 @@ import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.WrongMinecraftVersionException;
-import cpw.mods.fml.common.network.FMLMessage.EntitySpawnMessage;
-import cpw.mods.fml.common.network.packet.EntitySpawnAdjustmentPacket;
-import cpw.mods.fml.common.network.packet.EntitySpawnPacket;
-import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
-import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
-import cpw.mods.fml.common.registry.IThrowableEntity;
 import cpw.mods.fml.common.toposort.ModSortingException;
 import cpw.mods.fml.relauncher.Side;
 
@@ -387,22 +379,6 @@ public class FMLClientHandler implements IFMLSidedHandler
     public EntityClientPlayerMP getClientPlayerEntity()
     {
         return client.field_71439_g;
-    }
-
-    @Override
-    public void adjustEntityLocationOnClient(EntitySpawnAdjustmentPacket packet)
-    {
-        Entity ent = client.field_71441_e.func_73045_a(packet.entityId);
-        if (ent != null)
-        {
-            ent.field_70118_ct = packet.serverX;
-            ent.field_70117_cu = packet.serverY;
-            ent.field_70116_cv = packet.serverZ;
-        }
-        else
-        {
-            FMLLog.fine("Attempted to adjust the position of entity %d which is not present on the client", packet.entityId);
-        }
     }
 
     @Override
