@@ -278,7 +278,10 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         {
             return typeName;
         }
-
+        if (classNameBiMap.containsKey(typeName))
+        {
+            return classNameBiMap.get(typeName);
+        }
         int dollarIdx = typeName.indexOf('$');
         String realType = dollarIdx > -1 ? typeName.substring(0, dollarIdx) : typeName;
         String subType = dollarIdx > -1 ? typeName.substring(dollarIdx+1) : "";
@@ -293,6 +296,11 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         if (classNameBiMap == null || classNameBiMap.isEmpty())
         {
             return typeName;
+        }
+
+        if (classNameBiMap.containsValue(typeName))
+        {
+            return classNameBiMap.inverse().get(typeName);
         }
         int dollarIdx = typeName.indexOf('$');
         String realType = dollarIdx > -1 ? typeName.substring(0, dollarIdx) : typeName;
