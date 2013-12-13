@@ -1,7 +1,7 @@
-package net.minecraftforge.common;
+package net.minecraftforge.common.config;
 
-import static net.minecraftforge.common.Configuration.NEW_LINE;
-import static net.minecraftforge.common.Configuration.allowedProperties;
+import static net.minecraftforge.common.config.Configuration.NEW_LINE;
+import static net.minecraftforge.common.config.Configuration.allowedProperties;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.base.Splitter;

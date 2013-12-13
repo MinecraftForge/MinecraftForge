@@ -14,7 +14,7 @@ public class ServerChatEvent extends Event
         super();
         this.message = message;
         this.player = player;
-        this.username = player.username;
+        this.username = player.func_146103_bH().getName();
         this.component = component;
     }
 }

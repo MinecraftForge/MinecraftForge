@@ -1,4 +1,4 @@
-package net.minecraftforge.common;
+package net.minecraftforge.common.util;
 
 import java.lang.reflect.*;
 import java.util.*;

@@ -1,15 +1,14 @@
-package net.minecraftforge.common;
+package net.minecraftforge.common.util;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAnvil;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockButton;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.BlockCocoa;
-import net.minecraft.block.BlockComparator;
-import net.minecraft.block.BlockDetectorRail;
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockEndPortalFrame;
@@ -17,28 +16,31 @@ import net.minecraft.block.BlockEnderChest;
 import net.minecraft.block.BlockFenceGate;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.BlockHopper;
+import net.minecraft.block.BlockHugeMushroom;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.block.BlockLever;
 import net.minecraft.block.BlockLog;
-import net.minecraft.block.BlockMushroomCap;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.BlockPistonExtension;
 import net.minecraft.block.BlockPumpkin;
 import net.minecraft.block.BlockRail;
+import net.minecraft.block.BlockRailDetector;
 import net.minecraft.block.BlockRailPowered;
+import net.minecraft.block.BlockRedstoneComparator;
 import net.minecraft.block.BlockRedstoneRepeater;
 import net.minecraft.block.BlockSkull;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.BlockTorch;
 import net.minecraft.block.BlockTrapDoor;
-import net.minecraft.block.BlockTripWireSource;
+import net.minecraft.block.BlockTripWireHook;
 import net.minecraft.block.BlockVine;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static net.minecraftforge.common.ForgeDirection.*;
+import static net.minecraftforge.common.util.ForgeDirection.*;
 
 public class RotationHelper {
     /**
@@ -76,7 +78,31 @@ public class RotationHelper {
 
     public static ForgeDirection[] getValidVanillaBlockRotations(Block block)
     {
-        return (block instanceof BlockBed || block instanceof BlockPumpkin || block instanceof BlockFenceGate || block instanceof BlockEndPortalFrame || block instanceof BlockTripWireSource || block instanceof BlockCocoa || block instanceof BlockRailPowered || block instanceof BlockDetectorRail || block instanceof BlockStairs || block instanceof BlockChest || block instanceof BlockEnderChest || block instanceof BlockFurnace || block instanceof BlockLadder || block.blockID == Block.signWall.blockID || block.blockID == Block.signPost.blockID || block instanceof BlockDoor || block instanceof BlockRail || block instanceof BlockButton || block instanceof BlockRedstoneRepeater || block instanceof BlockComparator || block instanceof BlockTrapDoor || block instanceof BlockMushroomCap || block instanceof BlockVine || block instanceof BlockSkull || block instanceof BlockAnvil) ? UP_DOWN_AXES : VALID_DIRECTIONS;
+        return (block instanceof BlockBed || 
+                block instanceof BlockPumpkin ||
+                block instanceof BlockFenceGate || 
+                block instanceof BlockEndPortalFrame || 
+                block instanceof BlockTripWireHook || 
+                block instanceof BlockCocoa || 
+                block instanceof BlockRailPowered || 
+                block instanceof BlockRailDetector || 
+                block instanceof BlockStairs || 
+                block instanceof BlockChest || 
+                block instanceof BlockEnderChest || 
+                block instanceof BlockFurnace || 
+                block instanceof BlockLadder || 
+                block == Blocks.wall_sign || 
+                block == Blocks.standing_sign || 
+                block instanceof BlockDoor || 
+                block instanceof BlockRail ||
+                block instanceof BlockButton || 
+                block instanceof BlockRedstoneRepeater || 
+                block instanceof BlockRedstoneComparator || 
+                block instanceof BlockTrapDoor || 
+                block instanceof BlockHugeMushroom || 
+                block instanceof BlockVine || 
+                block instanceof BlockSkull || 
+                block instanceof BlockAnvil) ? UP_DOWN_AXES : VALID_DIRECTIONS;
     }
 
     public static boolean rotateVanillaBlock(Block block, World worldObj, int x, int y, int z, ForgeDirection axis)
@@ -88,7 +114,7 @@ public class RotationHelper {
 
         if (axis == UP || axis == DOWN)
         {
-            if (block instanceof BlockBed || block instanceof BlockPumpkin || block instanceof BlockFenceGate || block instanceof BlockEndPortalFrame || block instanceof BlockTripWireSource || block instanceof BlockCocoa)
+            if (block instanceof BlockBed || block instanceof BlockPumpkin || block instanceof BlockFenceGate || block instanceof BlockEndPortalFrame || block instanceof BlockTripWireHook || block instanceof BlockCocoa)
             {
                 return rotateBlock(worldObj, x, y, z, axis, 0x3, BlockType.BED);
             }
@@ -96,7 +122,7 @@ public class RotationHelper {
             {
                 return rotateBlock(worldObj, x, y, z, axis, 0xF, BlockType.RAIL);
             }
-            if (block instanceof BlockRailPowered || block instanceof BlockDetectorRail)
+            if (block instanceof BlockRailPowered || block instanceof BlockRailDetector)
             {
                 return rotateBlock(worldObj, x, y, z, axis, 0x7, BlockType.RAIL_POWERED);
             }
@@ -104,11 +130,11 @@ public class RotationHelper {
             {
                 return rotateBlock(worldObj, x, y, z, axis, 0x3, BlockType.STAIR);
             }
-            if (block instanceof BlockChest || block instanceof BlockEnderChest || block instanceof BlockFurnace || block instanceof BlockLadder || block.blockID == Block.signWall.blockID)
+            if (block instanceof BlockChest || block instanceof BlockEnderChest || block instanceof BlockFurnace || block instanceof BlockLadder || block == Blocks.wall_sign)
             {
                 return rotateBlock(worldObj, x, y, z, axis, 0x7, BlockType.CHEST);
             }
-            if (block.blockID == Block.signPost.blockID)
+            if (block == Blocks.standing_sign)
             {
                 return rotateBlock(worldObj, x, y, z, axis, 0xF, BlockType.SIGNPOST);
             }
@@ -120,7 +146,7 @@ public class RotationHelper {
             {
                 return rotateBlock(worldObj, x, y, z, axis, 0x7, BlockType.BUTTON);
             }
-            if (block instanceof BlockRedstoneRepeater || block instanceof BlockComparator)
+            if (block instanceof BlockRedstoneRepeater || block instanceof BlockRedstoneComparator)
             {
                 return rotateBlock(worldObj, x, y, z, axis, 0x3, BlockType.REDSTONE_REPEATER);
             }
@@ -128,7 +154,7 @@ public class RotationHelper {
             {
                 return rotateBlock(worldObj, x, y, z, axis, 0x3, BlockType.TRAPDOOR);
             }
-            if (block instanceof BlockMushroomCap)
+            if (block instanceof BlockHugeMushroom)
             {
                 return rotateBlock(worldObj, x, y, z, axis, 0xF, BlockType.MUSHROOM_CAP);
             }

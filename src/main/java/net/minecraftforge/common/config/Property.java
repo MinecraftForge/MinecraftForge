@@ -3,11 +3,11 @@
  * License v1.0.
  */
 
-package net.minecraftforge.common;
+package net.minecraftforge.common.config;
 
 import java.util.ArrayList;
 
-import net.minecraftforge.common.Property.Type;
+import net.minecraftforge.common.config.Property.Type;
 
 public class Property
 {

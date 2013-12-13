@@ -5,9 +5,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.NetHandler;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraftforge.common.network.packet.DimensionRegisterPacket;
 import net.minecraftforge.fluids.FluidIdMapPacket;
 

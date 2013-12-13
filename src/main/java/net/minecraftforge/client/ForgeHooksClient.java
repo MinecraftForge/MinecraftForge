@@ -45,7 +45,7 @@ import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.ForgeDummyContainer;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.RenderBlockFluid;
@@ -219,7 +219,7 @@ public class ForgeHooksClient
         int x = MathHelper.floor_double(entity.posX);
         int y = MathHelper.floor_double(entity.posY);
         int z = MathHelper.floor_double(entity.posZ);
-        Block block = Block.blocksList[mc.theWorld.getBlockId(x, y, z)];
+        Block block = mc.theWorld.func_147439_a(x, y, z);
 
         if (block != null && block.isBed(mc.theWorld, x, y, z, entity))
         {
@@ -247,8 +247,8 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Post(map));
 
-        FluidRegistry.WATER.setIcons(BlockLiquid.func_149803_e("water_still"), BlockLiquid.func_149803_e("water_flow"));
-        FluidRegistry.LAVA.setIcons(BlockLiquid.func_149803_e("lava_still"), BlockLiquid.func_149803_e("lava_flow"));
+        //FluidRegistry.WATER.setIcons(BlockLiquid.func_149803_e("water_still"), BlockLiquid.func_149803_e("water_flow"));
+        //FluidRegistry.LAVA.setIcons(BlockLiquid.func_149803_e("lava_still"), BlockLiquid.func_149803_e("lava_flow"));
     }
 
     /**
@@ -351,7 +351,7 @@ public class ForgeHooksClient
         }
         skyInit = true;
         
-        int distance = Minecraft.getMinecraft().gameSettings.fancyGraphics ? ForgeDummyContainer.blendRanges[Minecraft.getMinecraft().gameSettings.renderDistance] : 0;
+        int distance = Minecraft.getMinecraft().gameSettings.fancyGraphics ? ForgeModContainer.blendRanges[Minecraft.getMinecraft().gameSettings.renderDistance] : 0;
         
         int r = 0;
         int g = 0;

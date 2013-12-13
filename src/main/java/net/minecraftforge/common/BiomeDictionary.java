@@ -61,7 +61,7 @@ public class BiomeDictionary
      */
     public static boolean registerBiomeType(BiomeGenBase biome, Type ... types)
     {   
-        if(BiomeGenBase.biomeList[biome.biomeID] != null)
+        if(BiomeGenBase.func_150565_n()[biome.biomeID] != null)
         {
             for(Type type : types)
             {
@@ -201,9 +201,9 @@ public class BiomeDictionary
      */
     public static void registerAllBiomesAndGenerateEvents()
     {
-        for(int i = 0; i < BiomeGenBase.biomeList.length; i++)
+        for(int i = 0; i < BiomeGenBase.func_150565_n().length; i++)
         {
-            BiomeGenBase biome = BiomeGenBase.biomeList[i];
+            BiomeGenBase biome = BiomeGenBase.func_150565_n()[i];
 
             if(biome == null)
             {

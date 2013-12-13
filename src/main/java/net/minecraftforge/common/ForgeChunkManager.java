@@ -44,7 +44,6 @@ import com.google.common.collect.TreeMultiset;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
-
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -58,6 +57,9 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
+import net.minecraftforge.common.config.ConfigCategory;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.Event;
 
 /**
@@ -383,7 +385,7 @@ public class ForgeChunkManager
             try
             {
                 NBTTagCompound forcedChunkData = CompressedStreamTools.read(chunkLoaderData);
-                return forcedChunkData.getTagList("TicketList").tagCount() > 0;
+                return forcedChunkData.func_150295_c("TicketList", 9).tagCount() > 0;
             }
             catch (IOException e)
             {
@@ -423,10 +425,10 @@ public class ForgeChunkManager
                 FMLLog.log(Level.WARNING, e, "Unable to read forced chunk data at %s - it will be ignored", chunkLoaderData.getAbsolutePath());
                 return;
             }
-            NBTTagList ticketList = forcedChunkData.getTagList("TicketList");
+            NBTTagList ticketList = forcedChunkData.func_150295_c("TicketList", 9);
             for (int i = 0; i < ticketList.tagCount(); i++)
             {
-                NBTTagCompound ticketHolder = (NBTTagCompound) ticketList.tagAt(i);
+                NBTTagCompound ticketHolder = (NBTTagCompound)ticketList.func_150305_b(i);
                 String modId = ticketHolder.getString("Owner");
                 boolean isPlayer = "Forge".equals(modId);
 
@@ -442,10 +444,10 @@ public class ForgeChunkManager
                     continue;
                 }
 
-                NBTTagList tickets = ticketHolder.getTagList("Tickets");
+                NBTTagList tickets = ticketHolder.func_150295_c("Tickets", 9);
                 for (int j = 0; j < tickets.tagCount(); j++)
                 {
-                    NBTTagCompound ticket = (NBTTagCompound) tickets.tagAt(j);
+                    NBTTagCompound ticket = (NBTTagCompound) tickets.func_150305_b(j);
                     modId = ticket.hasKey("ModId") ? ticket.getString("ModId") : modId;
                     Type type = Type.values()[ticket.getByte("Type")];
                     byte ticketChunkDepth = ticket.getByte("ChunkListDepth");
@@ -850,7 +852,7 @@ public class ForgeChunkManager
                 }
                 if (tick.modData != null)
                 {
-                    ticket.setCompoundTag("ModData", tick.modData);
+                    ticket.setTag("ModData", tick.modData);
                 }
                 if (tick.ticketType == Type.ENTITY && tick.entity != null && tick.entity.writeToNBTOptional(new NBTTagCompound()))
                 {

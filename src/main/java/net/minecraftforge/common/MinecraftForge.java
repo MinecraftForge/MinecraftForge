@@ -9,23 +9,22 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeHooks.GrassEntry;
 import net.minecraftforge.common.ForgeHooks.SeedEntry;
+import net.minecraftforge.common.util.IdentityMap;
 import net.minecraftforge.event.EventBus;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class MinecraftForge
-{
+{   
     /**
      * The core Forge EventBusses, all events for Forge will be fired on these,
      * you should use this to register all your listeners.
@@ -39,6 +38,8 @@ public class MinecraftForge
     public static final EventBus ORE_GEN_BUS = new EventBus();
 
     private static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();
+    
+    private static final IdentityMap<Block, BlockExtension> EXTENSION_BLOCK = new IdentityMap<Block, BlockExtension>(4096, 1.0f);
 
 
     /** Register a new plant to be planted when bonemeal is used on grass.
@@ -178,35 +179,34 @@ public class MinecraftForge
    }
 
    /**
+    * Gets the associated Extension object for the specified block,
+    * if guarantee is true, and there is no extension associated, it will
+    * create a new one and register it.
+    * 
+    * May return null, unless guarantee is set to true
+    * 
+    * @param block The block instance
+    * @param guarantee Wither to create a new extension if one does not exist.
+    * @return The extension object or null if none is registered and guarantee is false
+    */
+   public static BlockExtension getBlockExtension(Block block, boolean guarantee)
+   {
+       BlockExtension ret = EXTENSION_BLOCK.get(block);
+       if (ret == null && guarantee)
+       {
+           ret = new BlockExtension(block);
+           EXTENSION_BLOCK.put(block, ret);
+       }
+       return ret;
+   }
+
+   /**
     * Method invoked by FML before any other mods are loaded.
     */
    public static void initialize()
    {
        System.out.printf("MinecraftForge v%s Initialized\n", ForgeVersion.getVersion());
        FMLLog.info("MinecraftForge v%s Initialized", ForgeVersion.getVersion());
-
-       Block filler = new Block(0, Material.air)
-       {
-           @SideOnly(Side.CLIENT)
-           @Override
-           public void registerIcons(IconRegister register){}
-       };
-       Block.blocksList[0] = null;
-       Block.opaqueCubeLookup[0] = false;
-       Block.lightOpacity[0] = 0;
-       filler.setUnlocalizedName("ForgeFiller");
-
-       for (int x = 256; x < 4096; x++)
-       {
-           if (Item.itemsList[x] != null)
-           {
-               Block.blocksList[x] = filler;
-           }
-       }
-
-       boolean[] temp = new boolean[4096];
-       System.arraycopy(EntityEnderman.carriableBlocks, 0, temp, 0, EntityEnderman.carriableBlocks.length);
-       EntityEnderman.carriableBlocks = temp;
 
        EVENT_BUS.register(INTERNAL_HANDLER);
        OreDictionary.getOreName(0);

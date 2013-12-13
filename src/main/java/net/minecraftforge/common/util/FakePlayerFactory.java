@@ -1,4 +1,4 @@
-package net.minecraftforge.common;
+package net.minecraftforge.common.util;
 
 import java.util.Map;
 import java.util.UUID;

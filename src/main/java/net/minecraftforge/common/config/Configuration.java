@@ -3,12 +3,12 @@
  * License v1.0.
  */
 
-package net.minecraftforge.common;
+package net.minecraftforge.common.config;
 
-import static net.minecraftforge.common.Property.Type.BOOLEAN;
-import static net.minecraftforge.common.Property.Type.DOUBLE;
-import static net.minecraftforge.common.Property.Type.INTEGER;
-import static net.minecraftforge.common.Property.Type.STRING;
+import static net.minecraftforge.common.config.Property.Type.BOOLEAN;
+import static net.minecraftforge.common.config.Property.Type.DOUBLE;
+import static net.minecraftforge.common.config.Property.Type.INTEGER;
+import static net.minecraftforge.common.config.Property.Type.STRING;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

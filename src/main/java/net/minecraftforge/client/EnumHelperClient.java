@@ -4,7 +4,7 @@ import net.minecraft.util.Util.EnumOS;
 import net.minecraft.world.WorldSettings.GameType;
 import net.minecraft.client.settings.GameSettings.Options;
 import net.minecraft.item.EnumRarity;
-import net.minecraftforge.common.EnumHelper;
+import net.minecraftforge.common.util.EnumHelper;
 
 public class EnumHelperClient extends EnumHelper
 {

@@ -11,6 +11,8 @@ import net.minecraft.server.management.PlayerInstance;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.classloading.FMLForgePlugin;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.network.ForgeConnectionHandler;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
 import net.minecraftforge.common.network.ForgePacketHandler;
@@ -37,7 +39,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.FMLNetworkHandler;
 import cpw.mods.fml.common.network.NetworkMod;
 import static net.minecraftforge.common.ForgeVersion.*;
-import static net.minecraftforge.common.Configuration.*;
+import static net.minecraftforge.common.config.Configuration.*;
 
 @NetworkMod(
         channels = "FORGE",
@@ -45,7 +47,7 @@ import static net.minecraftforge.common.Configuration.*;
         packetHandler     = ForgePacketHandler.class,
         tinyPacketHandler = ForgeTinyPacketHandler.class
     )
-public class ForgeDummyContainer extends DummyModContainer implements WorldAccessContainer
+public class ForgeModContainer extends DummyModContainer implements WorldAccessContainer
 {
     public static int clumpingThreshold = 64;
     public static boolean removeErroringEntities = false;
@@ -58,7 +60,7 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     public static float zombieBabyChance = 0.05f;
     public static boolean shouldSortRecipies = false;
 
-    public ForgeDummyContainer()
+    public ForgeModContainer()
     {
         super(new ModMetadata());
         ModMetadata meta = getMetadata();
@@ -221,7 +223,7 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     {
         NBTTagCompound forgeData = new NBTTagCompound();
         NBTTagCompound dimData = DimensionManager.saveDimensionDataMap();
-        forgeData.setCompoundTag("DimensionData", dimData);
+        forgeData.setTag("DimensionData", dimData);
         return forgeData;
     }
 

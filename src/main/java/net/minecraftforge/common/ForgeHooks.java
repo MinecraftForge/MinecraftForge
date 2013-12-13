@@ -5,7 +5,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLiving;
@@ -13,6 +15,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
@@ -21,19 +25,13 @@ import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
-import net.minecraft.network.NetServerHandler;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet53BlockChange;
+import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.WeightedRandom;
-import net.minecraft.util.WeightedRandomItem;
-import net.minecraft.world.EnumGameType;
 import net.minecraft.world.World;
 import net.minecraftforge.event.Event;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -52,7 +50,7 @@ import net.minecraftforge.event.world.BlockEvent;
 
 public class ForgeHooks
 {
-    static class GrassEntry extends WeightedRandomItem
+    static class GrassEntry extends WeightedRandom.Item
     {
         public final Block block;
         public final int metadata;
@@ -64,7 +62,7 @@ public class ForgeHooks
         }
     }
 
-    static class SeedEntry extends WeightedRandomItem
+    static class SeedEntry extends WeightedRandom.Item
     {
         public final ItemStack seed;
         public SeedEntry(ItemStack seed, int weight)
@@ -83,7 +81,7 @@ public class ForgeHooks
         {
             return;
         }
-        world.setBlock(x, y, z, grass.block.blockID, grass.metadata, 3);
+        world.setBlock(x, y, z, grass.block, grass.metadata, 3);
     }
 
     public static ItemStack getGrassSeed(World world)
@@ -185,54 +183,58 @@ public class ForgeHooks
         }
         toolInit = true;
 
-        MinecraftForge.setToolClass(Item.pickaxeWood,    "pickaxe", 0);
-        MinecraftForge.setToolClass(Item.pickaxeStone,   "pickaxe", 1);
-        MinecraftForge.setToolClass(Item.pickaxeIron,   "pickaxe", 2);
-        MinecraftForge.setToolClass(Item.pickaxeGold,    "pickaxe", 0);
-        MinecraftForge.setToolClass(Item.pickaxeDiamond, "pickaxe", 3);
+        MinecraftForge.setToolClass(Items.wooden_pickaxe,  "pickaxe", 0);
+        MinecraftForge.setToolClass(Items.stone_pickaxe,   "pickaxe", 1);
+        MinecraftForge.setToolClass(Items.iron_pickaxe,    "pickaxe", 2);
+        MinecraftForge.setToolClass(Items.golden_pickaxe,  "pickaxe", 0);
+        MinecraftForge.setToolClass(Items.diamond_pickaxe, "pickaxe", 3);
 
-        MinecraftForge.setToolClass(Item.axeWood,    "axe", 0);
-        MinecraftForge.setToolClass(Item.axeStone,   "axe", 1);
-        MinecraftForge.setToolClass(Item.axeIron,   "axe", 2);
-        MinecraftForge.setToolClass(Item.axeGold,    "axe", 0);
-        MinecraftForge.setToolClass(Item.axeDiamond, "axe", 3);
+        MinecraftForge.setToolClass(Items.wooden_axe,  "axe", 0);
+        MinecraftForge.setToolClass(Items.stone_axe,   "axe", 1);
+        MinecraftForge.setToolClass(Items.iron_axe,    "axe", 2);
+        MinecraftForge.setToolClass(Items.golden_axe,  "axe", 0);
+        MinecraftForge.setToolClass(Items.diamond_axe, "axe", 3);
 
-        MinecraftForge.setToolClass(Item.shovelWood,    "shovel", 0);
-        MinecraftForge.setToolClass(Item.shovelStone,   "shovel", 1);
-        MinecraftForge.setToolClass(Item.shovelIron,   "shovel", 2);
-        MinecraftForge.setToolClass(Item.shovelGold,    "shovel", 0);
-        MinecraftForge.setToolClass(Item.shovelDiamond, "shovel", 3);
+        MinecraftForge.setToolClass(Items.wooden_shovel,  "shovel", 0);
+        MinecraftForge.setToolClass(Items.stone_shovel,   "shovel", 1);
+        MinecraftForge.setToolClass(Items.iron_shovel,    "shovel", 2);
+        MinecraftForge.setToolClass(Items.golden_shovel,  "shovel", 0);
+        MinecraftForge.setToolClass(Items.diamond_shovel, "shovel", 3);
 
-        for (Block block : ItemPickaxe.blocksEffectiveAgainst)
+        Set<Block> blocks = ReflectionHelper.getPrivateValue(ItemPickaxe.class, null, 0);
+        for (Block block : blocks)
         {
             MinecraftForge.setBlockHarvestLevel(block, "pickaxe", 0);
         }
 
-        for (Block block : ItemSpade.blocksEffectiveAgainst)
+        blocks = ReflectionHelper.getPrivateValue(ItemSpade.class, null, 0);
+        for (Block block : blocks)
         {
             MinecraftForge.setBlockHarvestLevel(block, "shovel", 0);
         }
 
-        for (Block block : ItemAxe.blocksEffectiveAgainst)
+        blocks = ReflectionHelper.getPrivateValue(ItemAxe.class, null, 0);
+        for (Block block : blocks)
         {
             MinecraftForge.setBlockHarvestLevel(block, "axe", 0);
         }
 
-        MinecraftForge.setBlockHarvestLevel(Block.obsidian,     "pickaxe", 3);
-        MinecraftForge.setBlockHarvestLevel(Block.oreEmerald,   "pickaxe", 2);
-        MinecraftForge.setBlockHarvestLevel(Block.oreDiamond,   "pickaxe", 2);
-        MinecraftForge.setBlockHarvestLevel(Block.blockDiamond, "pickaxe", 2);
-        MinecraftForge.setBlockHarvestLevel(Block.oreGold,      "pickaxe", 2);
-        MinecraftForge.setBlockHarvestLevel(Block.blockGold,    "pickaxe", 2);
-        MinecraftForge.setBlockHarvestLevel(Block.oreIron,      "pickaxe", 1);
-        MinecraftForge.setBlockHarvestLevel(Block.blockIron,   "pickaxe", 1);
-        MinecraftForge.setBlockHarvestLevel(Block.oreLapis,     "pickaxe", 1);
-        MinecraftForge.setBlockHarvestLevel(Block.blockLapis,   "pickaxe", 1);
-        MinecraftForge.setBlockHarvestLevel(Block.oreRedstone,  "pickaxe", 2);
-        MinecraftForge.setBlockHarvestLevel(Block.oreRedstoneGlowing, "pickaxe", 2);
-        MinecraftForge.removeBlockEffectiveness(Block.oreRedstone, "pickaxe");
-        MinecraftForge.removeBlockEffectiveness(Block.obsidian,    "pickaxe");
-        MinecraftForge.removeBlockEffectiveness(Block.oreRedstoneGlowing, "pickaxe");
+        MinecraftForge.setBlockHarvestLevel(Blocks.obsidian,         "pickaxe", 3);
+        MinecraftForge.setBlockHarvestLevel(Blocks.emerald_ore,      "pickaxe", 2);
+        MinecraftForge.setBlockHarvestLevel(Blocks.emerald_block,    "pickaxe", 2);
+        MinecraftForge.setBlockHarvestLevel(Blocks.diamond_ore,      "pickaxe", 2);
+        MinecraftForge.setBlockHarvestLevel(Blocks.diamond_block,    "pickaxe", 2);
+        MinecraftForge.setBlockHarvestLevel(Blocks.gold_ore,         "pickaxe", 2);
+        MinecraftForge.setBlockHarvestLevel(Blocks.gold_block,       "pickaxe", 2);
+        MinecraftForge.setBlockHarvestLevel(Blocks.iron_ore,         "pickaxe", 1);
+        MinecraftForge.setBlockHarvestLevel(Blocks.iron_block,       "pickaxe", 1);
+        MinecraftForge.setBlockHarvestLevel(Blocks.lapis_ore,        "pickaxe", 1);
+        MinecraftForge.setBlockHarvestLevel(Blocks.lapis_block,      "pickaxe", 1);
+        MinecraftForge.setBlockHarvestLevel(Blocks.redstone_ore,     "pickaxe", 2);
+        MinecraftForge.setBlockHarvestLevel(Blocks.lit_redstone_ore, "pickaxe", 2);
+        MinecraftForge.removeBlockEffectiveness(Blocks.redstone_ore, "pickaxe");
+        MinecraftForge.removeBlockEffectiveness(Blocks.obsidian,     "pickaxe");
+        MinecraftForge.removeBlockEffectiveness(Blocks.lit_redstone_ore, "pickaxe");
     }
 
     public static int getTotalArmorValue(EntityPlayer player)
@@ -255,9 +257,9 @@ public class ForgeHooks
 
     static
     {
-        grassList.add(new GrassEntry(Block.plantYellow, 0, 20));
-        grassList.add(new GrassEntry(Block.plantRed,    0, 10));
-        seedList.add(new SeedEntry(new ItemStack(Item.seeds), 10));
+        grassList.add(new GrassEntry(Blocks.yellow_flower, 0, 20));
+        grassList.add(new GrassEntry(Blocks.red_flower,    0, 10));
+        seedList.add(new SeedEntry(new ItemStack(Items.wheat_seeds), 10));
         initTools();
     }
 
@@ -274,7 +276,7 @@ public class ForgeHooks
             int x = target.blockX;
             int y = target.blockY;
             int z = target.blockZ;
-            Block var8 = Block.blocksList[world.getBlockId(x, y, z)];
+            Block var8 = world.func_147439_a(x, y, z);
 
             if (var8 == null)
             {
@@ -366,7 +368,7 @@ public class ForgeHooks
 
     public static boolean isLivingOnLadder(Block block, World world, int x, int y, int z, EntityLivingBase entity)
     {
-        if (!ForgeDummyContainer.fullBoundingBoxLadders)
+        if (!ForgeModContainer.fullBoundingBoxLadders)
         {
             return block != null && block.isLadder(world, x, y, z, entity);
         }
@@ -382,7 +384,7 @@ public class ForgeHooks
                 {
                     for (int z2 = mZ; z2 < bb.maxZ; z2++)
                     {
-                        block = Block.blocksList[world.getBlockId(x2, y2, z2)];                        
+                        block = world.func_147439_a(x2, y2, z2);                        
                         if (block != null && block.isLadder(world, x2, y2, z2, entity))
                         {
                             return true;
@@ -428,7 +430,7 @@ public class ForgeHooks
             return 0;
         }
 
-        Block block = Block.blocksList[world.getBlockId(x, y, z)];
+        Block block = world.func_147439_a(x, y, z);
         return (block == null ? 0 : block.getEnchantPowerBonus(world, x, y, z));
     }
 
@@ -472,7 +474,7 @@ public class ForgeHooks
         }
 
         // Post the block break event
-        Block block = Block.blocksList[world.getBlockId(x, y, z)];
+        Block block = world.func_147439_a(x, y, z);
         int blockMetadata = world.getBlockMetadata(x, y, z);
         BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(x, y, z, world, block, blockMetadata, entityPlayer);
         event.setCanceled(preCancelEvent);
@@ -488,7 +490,7 @@ public class ForgeHooks
             TileEntity tileentity = world.getBlockTileEntity(x, y, z);
             if (tileentity != null)
             {
-                Packet pkt = tileentity.getDescriptionPacket();
+                Packet pkt = tileentity.func_145844_m();
                 if (pkt != null)
                 {
                     entityPlayer.playerNetServerHandler.sendPacketToPlayer(pkt);
