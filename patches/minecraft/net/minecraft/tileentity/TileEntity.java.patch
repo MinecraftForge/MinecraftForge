@@ -44,3 +44,11 @@
          }
          else
          {
+@@ -137,7 +151,6 @@
+         }
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_)
+     {
+         double d3 = (double)this.field_145851_c + 0.5D - p_145835_1_;

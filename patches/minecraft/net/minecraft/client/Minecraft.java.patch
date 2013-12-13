@@ -44,7 +44,7 @@
          Display.setVSyncEnabled(this.field_71474_y.field_74352_v);
      }
  
-@@ -915,9 +924,11 @@
+@@ -916,9 +925,11 @@
  
          if (!this.field_71454_w)
          {
@@ -56,7 +56,7 @@
          }
  
          GL11.glFlush();
-@@ -1490,11 +1501,15 @@
+@@ -1491,11 +1502,15 @@
  
      public void func_71407_l()
      {
@@ -72,7 +72,7 @@
          this.field_71424_I.func_76320_a("gui");
  
          if (!this.field_71445_n)
-@@ -1977,6 +1992,8 @@
+@@ -1978,6 +1993,8 @@
              this.field_71453_ak.func_74428_b();
          }
  
