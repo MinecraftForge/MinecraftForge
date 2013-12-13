@@ -18,3 +18,4 @@
 
 #Patch rejects
 *.rej
+/patches-/
