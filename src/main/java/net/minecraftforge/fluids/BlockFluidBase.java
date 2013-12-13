@@ -22,6 +22,7 @@ import net.minecraft.world.World;
  */
 public abstract class BlockFluidBase extends Block implements IFluidBlock
 {
+    /*
     protected final static Map<Integer, Boolean> defaultDisplacementIds = new HashMap<Integer, Boolean>();
 
     static
@@ -45,10 +46,11 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     protected int maxScaledLight = 0;
 
     protected final String fluidName;
-
+    */
     public BlockFluidBase(int id, Fluid fluid, Material material)
     {
-        super(id, material);
+        super(material);
+        /*
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
         this.setTickRandomly(true);
         this.disableStats();
@@ -62,8 +64,9 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         fluid.setBlockID(id);
 
         displacementIds.putAll(defaultDisplacementIds);
+        */
     }
-
+    /*
     public BlockFluidBase setQuantaPerBlock(int quantaPerBlock)
     {
         if (quantaPerBlock > 16 || quantaPerBlock < 1) quantaPerBlock = 8;
@@ -107,7 +110,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     /**
      * Returns true if the block at (x, y, z) is displaceable. Does not displace the block.
-     */
+     * /
     public boolean canDisplace(IBlockAccess world, int x, int y, int z)
     {
         if (world.isAirBlock(x, y, z)) return true;
@@ -148,7 +151,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     /**
      * Attempt to displace the block at (x, y, z), return true if it was displaced.
-     */
+     * /
     public boolean displaceIfPossible(World world, int x, int y, int z)
     {
         if (world.isAirBlock(x, y, z))
@@ -202,7 +205,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     public abstract int getMaxRenderHeightMeta();
 
-    /* BLOCK FUNCTIONS */
+    /* BLOCK FUNCTIONS * /
     @Override
     public void onBlockAdded(World world, int x, int y, int z)
     {
@@ -329,7 +332,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         return mat == this.blockMaterial ? false : super.shouldSideBeRendered(world, x, y, z, side);
     }
 
-    /* FLUID FUNCTIONS */
+    /* FLUID FUNCTIONS * /
     public static final int getDensity(IBlockAccess world, int x, int y, int z)
     {
         Block block = Block.blocksList[world.getBlockId(x, y, z)];
@@ -446,7 +449,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         return vec;
     }
 
-    /* IFluidBlock */
+    /* IFluidBlock * /
     @Override
     public Fluid getFluid()
     {
@@ -461,4 +464,5 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         if (remaining > 1) remaining = 1.0f;
         return remaining * (density > 0 ? 1 : -1);
     }
+    */
 }

@@ -3,7 +3,7 @@ package net.minecraftforge.fluids;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
@@ -16,6 +16,11 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
  */
 public class RenderBlockFluid implements ISimpleBlockRenderingHandler
 {
+    @Override public void renderInventoryBlock(Block block, int metadata, int modelID, RenderBlocks renderer) {}
+    @Override public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) { return false; }
+    @Override public boolean shouldRender3DInInventory() { return false; }
+    @Override public int getRenderId() { return 0; }
+    /*
     public static RenderBlockFluid instance = new RenderBlockFluid();
 
     static final float LIGHT_Y_NEG = 0.5F;
@@ -68,7 +73,7 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
         return !world.getBlockMaterial(x, y, z).isSolid() && world.getBlockId(x, y - block.densityDir, z) == block.blockID ? 1 : block.getQuantaPercentage(world, x, y, z) * 0.875F;
     }
 
-    /* ISimpleBlockRenderingHandler */
+    /* ISimpleBlockRenderingHandler * /
     @Override
     public void renderInventoryBlock(Block block, int metadata, int modelID, RenderBlocks renderer){}
 
@@ -324,4 +329,5 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
     {
         return FluidRegistry.renderIdFluid;
     }
+    */
 }

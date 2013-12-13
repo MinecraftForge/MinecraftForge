@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableMap;
  */
 public abstract class FluidRegistry
 {
+    /*
     static int maxID = 0;
 
     static HashMap<String, Fluid> fluids = new HashMap();
@@ -52,7 +53,7 @@ public abstract class FluidRegistry
 
     /**
      * Called by Forge to prepare the ID map for server -> client sync.
-     */
+     * /
     static void initFluidIDs(BiMap<String, Integer> newfluidIDs)
     {
         maxID = newfluidIDs.size();
@@ -66,7 +67,7 @@ public abstract class FluidRegistry
      * @param fluid
      *            The fluid to register.
      * @return True if the fluid was successfully registered; false if there is a name clash.
-     */
+     * /
     public static boolean registerFluid(Fluid fluid)
     {
         if (fluidIDs.containsKey(fluid.getName()))
@@ -126,7 +127,7 @@ public abstract class FluidRegistry
 
     /**
      * Returns a read-only map containing Fluid Names and their associated Fluids.
-     */
+     * /
     public static Map<String, Fluid> getRegisteredFluids()
     {
         return ImmutableMap.copyOf(fluids);
@@ -134,7 +135,7 @@ public abstract class FluidRegistry
 
     /**
      * Returns a read-only map containing Fluid Names and their associated IDs.
-     */
+     * /
     public static Map<String, Integer> getRegisteredFluidIDs()
     {
         return ImmutableMap.copyOf(fluidIDs);
@@ -167,4 +168,5 @@ public abstract class FluidRegistry
             this.fluidID = fluidID;
         }
     }
+    */
 }

@@ -17,17 +17,18 @@ import net.minecraft.world.World;
  */
 public class BlockFluidClassic extends BlockFluidBase
 {
+    /*
     protected boolean[] isOptimalFlowDirection = new boolean[4];
     protected int[] flowCost = new int[4];
 
     protected FluidStack stack;
-
+    */
     public BlockFluidClassic(int id, Fluid fluid, Material material)
     {
         super(id, fluid, material);
-        stack = new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME);
+        //stack = new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME);
     }
-
+    /*
     public BlockFluidClassic setFluidStack(FluidStack stack)
     {
         this.stack = stack;
@@ -328,11 +329,12 @@ public class BlockFluidClassic extends BlockFluidBase
         }
         return quantaRemaining >= compare ? quantaRemaining : compare;
     }
-
+    */
     /* IFluidBlock */
     @Override
     public FluidStack drain(World world, int x, int y, int z, boolean doDrain)
     {
+        /*
         if (!isSourceBlock(world, x, y, z))
         {
             return null;
@@ -344,11 +346,15 @@ public class BlockFluidClassic extends BlockFluidBase
         }
 
         return stack.copy();
+        */
+        return null;
     }
 
     @Override
     public boolean canDrain(World world, int x, int y, int z)
     {
-        return isSourceBlock(world, x, y, z);
+        return false; //isSourceBlock(world, x, y, z);
     }
+    @Override public Fluid getFluid(){ return null; }
+    @Override public float getFilledPercentage(World world, int x, int y, int z) { return 0; }
 }

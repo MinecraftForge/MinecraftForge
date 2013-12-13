@@ -1,6 +1,6 @@
 package net.minecraftforge.fluids;
 
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 /**
  * Implement this interface on TileEntities which should handle fluids, generally storing them in

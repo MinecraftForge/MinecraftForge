@@ -9,7 +9,7 @@ import net.minecraft.block.Block;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDummyContainer;
+import net.minecraftforge.common.ForgeModContainer;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.LoaderException;
 import net.minecraft.item.EnumRarity;
@@ -116,7 +116,7 @@ public class Fluid
         {
             this.block = block;
         }
-        else if (!ForgeDummyContainer.forceDuplicateFluidBlockCrash)
+        else if (!ForgeModContainer.forceDuplicateFluidBlockCrash)
         {
             FMLLog.warning("A mod has attempted to assign Block " + block + " to the Fluid '" + fluidName + "' but this Fluid has already been linked to BlockID "
                     + this.block + ". Configure your mods to prevent this from happening.");
@@ -172,10 +172,12 @@ public class Fluid
         return this.fluidName;
     }
 
+    /*
     public final int getID()
     {
         return FluidRegistry.getFluidID(this.fluidName);
     }
+    */
 
     public final Block getBlock()
     {

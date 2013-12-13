@@ -22,7 +22,7 @@ public class BlockFluidFinite extends BlockFluidBase
     {
         super(id, fluid, material);
     }
-
+    /*
     @Override
     public int getQuantaValue(IBlockAccess world, int x, int y, int z)
     {
@@ -320,4 +320,6 @@ public class BlockFluidFinite extends BlockFluidBase
     {
         return false;
     }
+    @Override public Fluid getFluid() { return null; }
+    @Override public float getFilledPercentage(World world, int x, int y, int z) { return 0; }
 }
