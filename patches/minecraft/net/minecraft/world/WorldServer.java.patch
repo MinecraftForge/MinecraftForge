@@ -764,7 +764,7 @@
              }
  
              this.theProfiler.startSection("cleaning");
-@@ -548,26 +910,28 @@
+@@ -548,29 +910,31 @@
  
              for (int j = 0; j < i; ++j)
              {
@@ -802,7 +802,11 @@
 +                // Spigot end
                  byte b0 = 0;
  
-                 if (this.checkChunksExist(nextticklistentry.xCoord - b0, nextticklistentry.yCoord - b0, nextticklistentry.zCoord - b0, nextticklistentry.xCoord + b0, nextticklistentry.yCoord + b0, nextticklistentry.zCoord + b0))
+-                if (this.checkChunksExist(nextticklistentry.xCoord - b0, nextticklistentry.yCoord - b0, nextticklistentry.zCoord - b0, nextticklistentry.xCoord + b0, nextticklistentry.yCoord + b0, nextticklistentry.zCoord + b0))
++                if (isActiveBlockCoord(nextticklistentry.xCoord,  nextticklistentry.zCoord)) // MCPC+ - use isActive this.checkChunksExist(nextticklistentry.xCoord - b0, nextticklistentry.yCoord - b0, nextticklistentry.zCoord - b0, nextticklistentry.xCoord + b0, nextticklistentry.yCoord + b0, nextticklistentry.zCoord + b0) )
+                 {
+                     int k = this.getBlockId(nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord);
+ 
 @@ -607,61 +971,19 @@
              }
  
@@ -1182,7 +1186,7 @@
          }
      }
  
-@@ -1073,4 +1519,124 @@
+@@ -1073,4 +1519,123 @@
      {
          return this.worldTeleporter;
      }
@@ -1217,7 +1221,6 @@
 +    private void addNextTickIfNeeded(NextTickListEntry ent)
 +    {
 +        long coord = LongHash.toLong(ent.xCoord >> 4, ent.zCoord >> 4);
-+        if (!isActiveBlockCoord(ent.xCoord,  ent.zCoord)) return; // MCPC+ only update blocks in active chunks
 +        Set<NextTickListEntry> chunkset = this.tickEntriesByChunk.get(coord);
 +
 +        if (chunkset == null)
