@@ -71,6 +71,7 @@ public class MCPCConfig
         public static final BoolSetting loadChunkOnRequest = new BoolSetting("settings.load-chunk-on-request", true, "Forces Chunk Loading on 'Provide' requests (speedup for mods that don't check if a chunk is loaded");
         public static final BoolSetting loadChunkOnForgeTick = new BoolSetting("settings.load-chunk-on-forge-tick", false, "Forces Chunk Loading during Forge Server Tick events");
         public static final BoolSetting overrideTileTicks = new BoolSetting("settings.override-tile-ticks", false, "Global setting to override tile entity tick intervals");
+        public static final IntSetting chunkGCGracePeriod = new IntSetting("settings.chunk-gc-grace-period", 700, "Grace period on a loaded chunk before we try to unload it");
         public static final IntSetting largeBoundingBoxLogSize = new IntSetting("settings.entity-bounding-box-max-size", 1000, "Max size of an entity's bounding box before removing it (either being too large or bugged and 'moving' too fast)");
         public static final IntSetting entityMaxSpeed = new IntSetting("settings.entity-max-speed", 100, "Square of the max speed of an entity before removing it");
 

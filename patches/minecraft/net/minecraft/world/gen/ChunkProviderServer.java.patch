@@ -408,7 +408,7 @@
  
              if (par1)
              {
-@@ -307,20 +459,52 @@
+@@ -307,20 +459,61 @@
      {
          if (!this.worldObj.canNotSave)
          {
@@ -439,6 +439,15 @@
 +                {
 +                    continue;
 +                }
++
++                // MCPC+ static - check if the chunk was accessed recently and keep it loaded
++                if (!shouldUnloadChunk(chunk))
++                {
++                    MCPCHooks.logChunkUnload(this, chunk.xPosition, chunk.zPosition, "** Chunk kept from unloading due to recent activity");
++                    continue;
++                }
++                // MCPC+ end
++
 +
 +                ChunkUnloadEvent event = new ChunkUnloadEvent(chunk.bukkitChunk);
 +                server.getPluginManager().callEvent(event);
@@ -472,7 +481,7 @@
  
              if (this.currentChunkLoader != null)
              {
-@@ -344,7 +528,7 @@
+@@ -344,7 +537,7 @@
       */
      public String makeString()
      {
@@ -481,7 +490,7 @@
      }
  
      /**
-@@ -365,8 +549,25 @@
+@@ -365,8 +558,31 @@
  
      public int getLoadedChunkCount()
      {
@@ -505,6 +514,12 @@
 +        long chunkHash = LongHash.toLong(x, z); 
 +        if (!loadedChunkHashMap.containsKey(chunkHash)) return 0;
 +        return loadedChunkHashMap.get(chunkHash).lastAccessedTick;
++    }
++
++    private boolean shouldUnloadChunk(Chunk chunk)
++    {
++        if (chunk == null) return false;
++        return MinecraftServer.getServer().getTickCounter() - chunk.lastAccessedTick > MCPCConfig.Setting.chunkGCGracePeriod.getValue();
 +    }
 +    // MCPC+ end
  }
