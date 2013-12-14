@@ -10,13 +10,13 @@ Download the latest Forge source distribution from http://files.minecraftforge.n
 Open a command prompt, navigate to the directory where you unzipped the Forge sources, and run:
 If you have Gradle: gradle setupDevWorkspace
 If you DO NOT have Gradle installed:
-Windows: ./gradlew.bat setupDevWorkspace
-MacOS/Linux: ./gradlew setupDevWorkspace
+Windows: `./gradlew.bat setupDevWorkspace`
+MacOS/Linux: `./gradlew setupDevWorkspace`
 
 If you wish to use the Eclipse IDE, run gradle eclipse instead of gradle setupDevWorkspace, or install the Gradle plugin for Eclipse and import the Forge source folder as a Gradle project.
 
 
-For Contributors: (Note: This assumes you have Gradle installed. If you don't, use ./gradlew(.bat) instead of gradle.
+For Contributors: (Note: This assumes you have Gradle installed. If you don't, use `./gradlew(.bat)` instead of gradle.
 
 Clone this repository to a folder. 
 Open a command prompt and navigate to the folder where you cloned this repo.
