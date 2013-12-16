@@ -1,0 +1,24 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiButton.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiButton.java
+@@ -23,6 +23,7 @@
+     public boolean field_146125_m;
+     protected boolean field_146123_n;
+     private static final String __OBFID = "CL_00000668";
++    public int packedFGColour;
+ 
+     public GuiButton(int p_i1020_1_, int p_i1020_2_, int p_i1020_3_, String p_i1020_4_)
+     {
+@@ -76,8 +77,12 @@
+             this.func_146119_b(p_146112_1_, p_146112_2_, p_146112_3_);
+             int l = 14737632;
+ 
+-            if (!this.field_146124_l)
++            if (packedFGColour != 0)
+             {
++                l = packedFGColour;
++            }
++            else if (!this.field_146124_l)
++            {
+                 l = 10526880;
+             }
+             else if (this.field_146123_n)
