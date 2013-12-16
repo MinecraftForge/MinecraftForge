@@ -17,8 +17,9 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
+
+import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -84,7 +85,7 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
         {
             if (file.isDirectory())
             {
-                FMLLog.finest("Recursing into package %s", path + file.getName());
+                FMLLog.finer("Recursing into package %s", path + file.getName());
                 exploreFileSystem(path + file.getName() + ".", file, harvestedMods, candidate, mc);
                 continue;
             }
@@ -102,7 +103,7 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
                 }
                 catch (LoaderException e)
                 {
-                    FMLLog.log(Level.SEVERE, e, "There was a problem reading the file %s - probably this is a corrupt file", file.getPath());
+                    FMLLog.log(Level.ERROR, e, "There was a problem reading the file %s - probably this is a corrupt file", file.getPath());
                     throw e;
                 }
                 catch (Exception e)

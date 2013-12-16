@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import cpw.mods.fml.relauncher.CoreModManager;
 import cpw.mods.fml.relauncher.FMLInjectionData;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
@@ -25,7 +26,11 @@ public class FMLDeobfTweaker implements ITweaker {
         {
             classLoader.registerTransformer("cpw.mods.fml.common.asm.transformers.DeobfuscationTransformer");
         }
-        classLoader.registerTransformer("cpw.mods.fml.common.asm.transformers.AccessTransformer");
+        // Add all the access transformers now as well
+        for (String transformer : CoreModManager.getAccessTransformers())
+        {
+            classLoader.registerTransformer(transformer);
+        }
         try
         {
             FMLRelaunchLog.fine("Validating minecraft");

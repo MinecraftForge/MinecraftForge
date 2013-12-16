@@ -19,7 +19,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -146,11 +146,11 @@ public class LanguageRegistry
             ModContainer activeModContainer = Loader.instance().activeModContainer();
             if (activeModContainer!=null)
             {
-                FMLLog.log(activeModContainer.getModId(), Level.SEVERE, "The language resource %s cannot be located on the classpath. This is a programming error.", localizationFile);
+                FMLLog.log(activeModContainer.getModId(), Level.ERROR, "The language resource %s cannot be located on the classpath. This is a programming error.", localizationFile);
             }
             else
             {
-                FMLLog.log(Level.SEVERE, "The language resource %s cannot be located on the classpath. This is a programming error.", localizationFile);
+                FMLLog.log(Level.ERROR, "The language resource %s cannot be located on the classpath. This is a programming error.", localizationFile);
             }
         }
     }
@@ -173,7 +173,7 @@ public class LanguageRegistry
             addStringLocalization(langPack, lang);
         }
         catch (IOException e) {
-            FMLLog.log(Level.SEVERE, e, "Unable to load localization from file %s", localizationFile);
+            FMLLog.log(Level.ERROR, e, "Unable to load localization from file %s", localizationFile);
         }
         finally    {
             try    {

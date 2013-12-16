@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
@@ -166,7 +166,7 @@ public class GameRegistry
         }
         catch (Exception e)
         {
-            FMLLog.log(Level.SEVERE, e, "Caught an exception during block registration");
+            FMLLog.log(Level.ERROR, e, "Caught an exception during block registration");
             throw new LoaderException(e);
         }
     }

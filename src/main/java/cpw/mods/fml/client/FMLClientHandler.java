@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 import java.util.logging.Logger;
 
 import net.minecraft.client.Minecraft;
@@ -176,7 +176,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         catch (CustomModLoadingErrorDisplayException custom)
         {
-            FMLLog.log(Level.SEVERE, custom, "A custom exception was thrown by a mod, the game will now halt");
+            FMLLog.log(Level.ERROR, custom, "A custom exception was thrown by a mod, the game will now halt");
             customError = custom;
         }
         catch (LoaderException le)
@@ -226,7 +226,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         catch (CustomModLoadingErrorDisplayException custom)
         {
-            FMLLog.log(Level.SEVERE, custom, "A custom exception was thrown by a mod, the game will now halt");
+            FMLLog.log(Level.ERROR, custom, "A custom exception was thrown by a mod, the game will now halt");
             customError = custom;
             return;
         }
@@ -237,7 +237,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
 
         // Reload resources
-        client.func_110436_a();
+//        client.func_110436_a();
         RenderingRegistry.instance().loadEntityRenderers((Map<Class<? extends Entity>, Render>)RenderManager.field_78727_a.field_78729_o);
         loading = false;
         KeyBindingRegistry.instance().uploadKeyBindingsToGame(client.field_71474_y);
@@ -445,12 +445,12 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
             catch (NoSuchMethodException e)
             {
-                FMLLog.log(Level.SEVERE, "The container %s (type %s) returned an invalid class for it's resource pack.", container.getName(), container.getClass().getName());
+                FMLLog.log(Level.ERROR, "The container %s (type %s) returned an invalid class for it's resource pack.", container.getName(), container.getClass().getName());
                 return;
             }
             catch (Exception e)
             {
-                FMLLog.log(Level.SEVERE, e, "An unexpected exception occurred constructing the custom resource pack for %s", container.getName());
+                FMLLog.log(Level.ERROR, e, "An unexpected exception occurred constructing the custom resource pack for %s", container.getName());
                 throw Throwables.propagate(e);
             }
         }

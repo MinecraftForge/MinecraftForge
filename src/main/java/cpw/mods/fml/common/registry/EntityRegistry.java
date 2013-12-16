@@ -16,7 +16,8 @@ import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
+
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -162,7 +163,7 @@ public class EntityRegistry
                 String entityModName = String.format("%s.%s", mc.getModId(), entityName);
                 EntityList.field_75626_c.put(entityClass, entityModName);
                 EntityList.field_75625_b.put(entityModName, entityClass);
-                FMLLog.finest("Automatically registered mod %s entity %s as %s", mc.getModId(), entityName, entityModName);
+                FMLLog.finer("Automatically registered mod %s entity %s as %s", mc.getModId(), entityName, entityModName);
             }
             else
             {
@@ -171,7 +172,7 @@ public class EntityRegistry
         }
         catch (IllegalArgumentException e)
         {
-            FMLLog.log(Level.WARNING, e, "The mod %s tried to register the entity (name,class) (%s,%s) one or both of which are already registered", mc.getModId(), entityName, entityClass.getName());
+            FMLLog.log(Level.WARN, e, "The mod %s tried to register the entity (name,class) (%s,%s) one or both of which are already registered", mc.getModId(), entityName, entityClass.getName());
             return;
         }
         entityRegistrations.put(mc, er);
@@ -218,7 +219,7 @@ public class EntityRegistry
         }
         catch (IllegalArgumentException e)
         {
-            FMLLog.log(Level.SEVERE, "The entity ID %d for mod %s is not an unsigned byte and may not work", id, Loader.instance().activeModContainer().getModId());
+            FMLLog.log(Level.ERROR, "The entity ID %d for mod %s is not an unsigned byte and may not work", id, Loader.instance().activeModContainer().getModId());
         }
 
         if (!availableIndicies.get(realId))

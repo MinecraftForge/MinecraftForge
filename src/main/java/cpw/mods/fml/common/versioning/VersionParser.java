@@ -13,7 +13,7 @@
 package cpw.mods.fml.common.versioning;
 
 import java.util.List;
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -68,7 +68,7 @@ public class VersionParser
         }
         catch (InvalidVersionSpecificationException e)
         {
-            FMLLog.log(Level.SEVERE, e, "Unable to parse a version range specification successfully %s", range);
+            FMLLog.log(Level.ERROR, e, "Unable to parse a version range specification successfully %s", range);
             throw new LoaderException(e);
         }
     }

@@ -19,16 +19,24 @@
  @SideOnly(Side.CLIENT)
  public class Minecraft implements IPlayerUsage
  {
-@@ -457,6 +462,8 @@
+@@ -448,7 +453,7 @@
+         this.field_110451_am = new SimpleReloadableResourceManager(this.field_110452_an);
+         this.field_135017_as = new LanguageManager(this.field_110452_an, this.field_71474_y.field_74363_ab);
+         this.field_110451_am.func_110542_a(this.field_135017_as);
+-        this.func_110436_a();
++        FMLClientHandler.instance().beginMinecraftLoading(this, this.field_110449_ao, this.field_110451_am);
+         this.field_71446_o = new TextureManager(this.field_110451_am);
+         this.field_110451_am.func_110542_a(this.field_71446_o);
+         this.field_147127_av = new SoundHandler(this.field_110451_am, this.field_71474_y);
+@@ -457,6 +462,7 @@
          this.func_71357_I();
          this.field_71466_p = new FontRenderer(this.field_71474_y, new ResourceLocation("textures/font/ascii.png"), this.field_71446_o, false);
  
-+        FMLClientHandler.instance().beginMinecraftLoading(this, this.field_110449_ao, this.field_110451_am);
 +
          if (this.field_71474_y.field_74363_ab != null)
          {
              this.field_71466_p.func_78264_a(this.field_135017_as.func_135042_a() || this.field_71474_y.field_151455_aw);
-@@ -508,6 +515,7 @@
+@@ -508,6 +514,7 @@
          this.field_71446_o.func_130088_a(TextureMap.field_110576_c, new TextureMap(1, "textures/items"));
          GL11.glViewport(0, 0, this.field_71443_c, this.field_71440_d);
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
@@ -36,7 +44,7 @@
          this.func_71361_d("Post startup");
          this.field_71456_v = new GuiIngame(this);
  
-@@ -527,6 +535,7 @@
+@@ -527,6 +534,7 @@
              this.func_71352_k();
          }
  
@@ -44,7 +52,7 @@
          Display.setVSyncEnabled(this.field_71474_y.field_74352_v);
      }
  
-@@ -916,9 +925,11 @@
+@@ -915,9 +923,11 @@
  
          if (!this.field_71454_w)
          {
@@ -56,7 +64,7 @@
          }
  
          GL11.glFlush();
-@@ -1491,11 +1502,15 @@
+@@ -1490,11 +1500,15 @@
  
      public void func_71407_l()
      {
@@ -72,7 +80,7 @@
          this.field_71424_I.func_76320_a("gui");
  
          if (!this.field_71445_n)
-@@ -1978,6 +1993,8 @@
+@@ -1977,6 +1991,8 @@
              this.field_71453_ak.func_74428_b();
          }
  

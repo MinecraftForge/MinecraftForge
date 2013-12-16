@@ -16,7 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -111,7 +111,7 @@ public class GameData {
             }
             catch (IOException e)
             {
-                FMLLog.log(Level.SEVERE, e, "Failed to write registry data to %s", f.getAbsolutePath());
+                FMLLog.log(Level.ERROR, e, "Failed to write registry data to %s", f.getAbsolutePath());
             }
         }
     }

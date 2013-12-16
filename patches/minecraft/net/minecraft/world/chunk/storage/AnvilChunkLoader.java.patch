@@ -1,15 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
-@@ -9,6 +9,8 @@
+@@ -9,6 +9,7 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.Set;
-+import java.util.logging.Level;
 +
  import net.minecraft.block.Block;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityList;
-@@ -27,6 +29,8 @@
+@@ -24,9 +25,13 @@
+ import net.minecraft.world.chunk.NibbleArray;
+ import net.minecraft.world.storage.IThreadedFileIO;
+ import net.minecraft.world.storage.ThreadedFileIOBase;
++
++import org.apache.logging.log4j.Level;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -18,7 +22,7 @@
  public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO
  {
      private static final Logger field_151505_a = LogManager.getLogger();
-@@ -260,11 +264,20 @@
+@@ -260,11 +265,20 @@
                  Entity entity = (Entity)iterator.next();
                  nbttagcompound1 = new NBTTagCompound();
  
@@ -35,14 +39,14 @@
                  }
 +                catch (Exception e)
 +                {
-+                    FMLLog.log(Level.SEVERE, e,
++                    FMLLog.log(Level.ERROR, e,
 +                            "An Entity type %s has thrown an exception trying to write state. It will not persist. Report this to the mod author",
 +                            entity.getClass().getName());
 +                }
              }
          }
  
-@@ -276,8 +289,16 @@
+@@ -276,8 +290,16 @@
          {
              TileEntity tileentity = (TileEntity)iterator.next();
              nbttagcompound1 = new NBTTagCompound();
@@ -52,7 +56,7 @@
 +            }
 +            catch (Exception e)
 +            {
-+                FMLLog.log(Level.SEVERE, e,
++                FMLLog.log(Level.ERROR, e,
 +                        "A TileEntity type %s has throw an exception trying to write state. It will not persist. Report this to the mod author",
 +                        tileentity.getClass().getName());
 +            }

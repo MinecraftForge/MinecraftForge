@@ -20,7 +20,7 @@ import java.security.cert.Certificate;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.launchwrapper.LaunchClassLoader;
 
@@ -123,7 +123,7 @@ public class FMLSanityChecker implements IFMLCallHook
             }
             catch (Throwable e)
             {
-                FMLRelaunchLog.log(Level.SEVERE, e, "A critical error occurred trying to read the minecraft jar file");
+                FMLRelaunchLog.log(Level.ERROR, e, "A critical error occurred trying to read the minecraft jar file");
             }
             finally
             {

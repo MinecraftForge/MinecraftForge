@@ -12,8 +12,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Pack200;
-import java.util.logging.Level;
 import java.util.regex.Pattern;
+
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.launchwrapper.LaunchClassLoader;
 
@@ -116,7 +117,7 @@ public class ClassPatchManager {
                 }
                 catch (IOException e)
                 {
-                    FMLRelaunchLog.log(Level.SEVERE, e, "Encountered problem runtime patching class %s", name);
+                    FMLRelaunchLog.log(Level.ERROR, e, "Encountered problem runtime patching class %s", name);
                     continue;
                 }
             }
@@ -133,7 +134,7 @@ public class ClassPatchManager {
             }
             catch (IOException e)
             {
-                FMLRelaunchLog.log(Level.SEVERE, e, "Failed to write %s to %s", mappedName, tempDir.getAbsolutePath());
+                FMLRelaunchLog.log(Level.ERROR, e, "Failed to write %s to %s", mappedName, tempDir.getAbsolutePath());
             }
         }
         patchedClasses.put(name,inputData);
@@ -149,7 +150,7 @@ public class ClassPatchManager {
             InputStream binpatchesCompressed = getClass().getResourceAsStream("/binpatches.pack.lzma");
             if (binpatchesCompressed==null)
             {
-                FMLRelaunchLog.log(Level.SEVERE, "The binary patch set is missing. Either you are in a development environment, or things are not going to work!");
+                FMLRelaunchLog.log(Level.ERROR, "The binary patch set is missing. Either you are in a development environment, or things are not going to work!");
                 return;
             }
             LzmaInputStream binpatchesDecompressed = new LzmaInputStream(binpatchesCompressed);
@@ -160,7 +161,7 @@ public class ClassPatchManager {
         }
         catch (Exception e)
         {
-            FMLRelaunchLog.log(Level.SEVERE, e, "Error occurred reading binary patches. Expect severe problems!");
+            FMLRelaunchLog.log(Level.ERROR, e, "Error occurred reading binary patches. Expect severe problems!");
             throw Throwables.propagate(e);
         }
 
@@ -199,7 +200,7 @@ public class ClassPatchManager {
 
     private ClassPatch readPatch(JarEntry patchEntry, JarInputStream jis)
     {
-        FMLRelaunchLog.finest("Reading patch data from %s", patchEntry.getName());
+        FMLRelaunchLog.finer("Reading patch data from %s", patchEntry.getName());
         ByteArrayDataInput input;
         try
         {
@@ -207,7 +208,7 @@ public class ClassPatchManager {
         }
         catch (IOException e)
         {
-            FMLRelaunchLog.log(Level.WARNING, e, "Unable to read binpatch file %s - ignoring", patchEntry.getName());
+            FMLRelaunchLog.log(Level.WARN, e, "Unable to read binpatch file %s - ignoring", patchEntry.getName());
             return null;
         }
         String name = input.readUTF();

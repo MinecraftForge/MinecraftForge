@@ -21,11 +21,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.minecraft.launchwrapper.LaunchClassLoader;
 
+import org.apache.logging.log4j.Level;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.tree.ClassNode;
@@ -47,7 +46,6 @@ import com.google.common.collect.Sets;
 import com.google.common.io.CharStreams;
 import com.google.common.io.InputSupplier;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.patcher.ClassPatchManager;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
@@ -112,7 +110,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         }
         catch (IOException ioe)
         {
-            Logger.getLogger("FML").log(Level.SEVERE, "An error occurred loading the deobfuscation map data", ioe);
+            FMLRelaunchLog.log(Level.ERROR, "An error occurred loading the deobfuscation map data", ioe);
         }
         methodNameMaps = Maps.newHashMapWithExpectedSize(rawMethodMaps.size());
         fieldNameMaps = Maps.newHashMapWithExpectedSize(rawFieldMaps.size());
@@ -161,7 +159,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         }
         catch (IOException ioe)
         {
-            FMLRelaunchLog.log(Level.SEVERE, ioe, "An error occurred loading the deobfuscation map data");
+            FMLRelaunchLog.log(Level.ERROR, ioe, "An error occurred loading the deobfuscation map data");
         }
         methodNameMaps = Maps.newHashMapWithExpectedSize(rawMethodMaps.size());
         fieldNameMaps = Maps.newHashMapWithExpectedSize(rawFieldMaps.size());
@@ -226,7 +224,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             }
             catch (IOException e)
             {
-                FMLLog.log(Level.SEVERE,e, "A critical exception occured reading a class file %s", owner);
+                FMLRelaunchLog.log(Level.ERROR,e, "A critical exception occured reading a class file %s", owner);
             }
             return null;
         }
@@ -337,7 +335,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
 
             if (DUMP_FIELD_MAPS)
             {
-                FMLRelaunchLog.finest("Field map for %s : %s", className, fieldNameMaps.get(className));
+                FMLRelaunchLog.finer("Field map for %s : %s", className, fieldNameMaps.get(className));
             }
         }
         return fieldNameMaps.get(className);
@@ -354,7 +352,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             }
             if (DUMP_METHOD_MAPS)
             {
-                FMLRelaunchLog.finest("Method map for %s : %s", className, methodNameMaps.get(className));
+                FMLRelaunchLog.finer("Method map for %s : %s", className, methodNameMaps.get(className));
             }
 
         }

@@ -51,7 +51,7 @@ public class FMLInterModComms {
         {
             this.activeContainer = activeContainer;
             this.currentList = null;
-            FMLLog.finest("Attempting to deliver %d IMC messages to mod %s", modMessages.get(activeContainer.getModId()).size(), activeContainer.getModId());
+            FMLLog.finer("Attempting to deliver %d IMC messages to mod %s", modMessages.get(activeContainer.getModId()).size(), activeContainer.getModId());
         }
 
         private ImmutableList<IMCMessage> currentList;

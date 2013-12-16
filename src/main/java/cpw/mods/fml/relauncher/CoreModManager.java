@@ -28,7 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
+
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.Launch;
@@ -60,6 +61,7 @@ public class CoreModManager {
     private static FMLTweaker tweaker;
     private static File mcDir;
     private static List<String> reparsedCoremods = Lists.newArrayList();
+    private static List<String> accessTransformers = Lists.newArrayList();
 
     private static class FMLPluginWrapper implements ITweaker {
         public final String name;
@@ -96,7 +98,7 @@ public class CoreModManager {
             FMLRelaunchLog.fine("Injecting coremod %s {%s} class transformers", name, coreModInstance.getClass().getName());
             if (coreModInstance.getASMTransformerClass() != null) for (String transformer : coreModInstance.getASMTransformerClass())
             {
-                FMLRelaunchLog.finest("Registering transformer %s", transformer);
+                FMLRelaunchLog.finer("Registering transformer %s", transformer);
                 classLoader.registerTransformer(transformer);
             }
             FMLRelaunchLog.fine("Injection complete");
@@ -181,7 +183,7 @@ public class CoreModManager {
         }
         catch (Exception e)
         {
-            FMLRelaunchLog.log(Level.SEVERE, e, "The patch transformer failed to load! This is critical, loading cannot continue!");
+            FMLRelaunchLog.log(Level.ERROR, e, "The patch transformer failed to load! This is critical, loading cannot continue!");
             throw Throwables.propagate(e);
         }
 
@@ -251,7 +253,7 @@ public class CoreModManager {
             }
             catch (IOException ioe)
             {
-                FMLRelaunchLog.log(Level.SEVERE, ioe, "Unable to read the jar file %s - ignoring", coreMod.getName());
+                FMLRelaunchLog.log(Level.ERROR, ioe, "Unable to read the jar file %s - ignoring", coreMod.getName());
                 continue;
             }
             finally
@@ -292,19 +294,19 @@ public class CoreModManager {
                 classLoader.addURL(coreMod.toURI().toURL());
                 if (!mfAttributes.containsKey(COREMODCONTAINSFMLMOD))
                 {
-                    FMLRelaunchLog.finest("Adding %s to the list of known coremods, it will not be examined again", coreMod.getName());
+                    FMLRelaunchLog.finer("Adding %s to the list of known coremods, it will not be examined again", coreMod.getName());
                     loadedCoremods.add(coreMod.getName());
                 }
                 else
                 {
-                    FMLRelaunchLog.finest("Found FMLCorePluginContainsFMLMod marker in %s, it will be examined later for regular @Mod instances",
+                    FMLRelaunchLog.finer("Found FMLCorePluginContainsFMLMod marker in %s, it will be examined later for regular @Mod instances",
                             coreMod.getName());
                     reparsedCoremods.add(coreMod.getName());
                 }
             }
             catch (MalformedURLException e)
             {
-                FMLRelaunchLog.log(Level.SEVERE, e, "Unable to convert file into a URL. weird");
+                FMLRelaunchLog.log(Level.ERROR, e, "Unable to convert file into a URL. weird");
                 continue;
             }
             loadCoreMod(classLoader, fmlCorePlugin, coreMod);
@@ -383,23 +385,23 @@ public class CoreModManager {
             if (coreModNameAnn != null && !Strings.isNullOrEmpty(coreModNameAnn.value()))
             {
                 coreModName = coreModNameAnn.value();
-                FMLRelaunchLog.finest("coremod named %s is loading", coreModName);
+                FMLRelaunchLog.finer("coremod named %s is loading", coreModName);
             }
             MCVersion requiredMCVersion = coreModClazz.getAnnotation(IFMLLoadingPlugin.MCVersion.class);
             if (!Arrays.asList(rootPlugins).contains(coreModClass) && (requiredMCVersion == null || Strings.isNullOrEmpty(requiredMCVersion.value())))
             {
-                FMLRelaunchLog.log(Level.WARNING, "The coremod %s does not have a MCVersion annotation, it may cause issues with this version of Minecraft",
+                FMLRelaunchLog.log(Level.WARN, "The coremod %s does not have a MCVersion annotation, it may cause issues with this version of Minecraft",
                         coreModClass);
             }
             else if (requiredMCVersion != null && !FMLInjectionData.mccversion.equals(requiredMCVersion.value()))
             {
-                FMLRelaunchLog.log(Level.SEVERE, "The coremod %s is requesting minecraft version %s and minecraft is %s. It will be ignored.", coreModClass,
+                FMLRelaunchLog.log(Level.ERROR, "The coremod %s is requesting minecraft version %s and minecraft is %s. It will be ignored.", coreModClass,
                         requiredMCVersion.value(), FMLInjectionData.mccversion);
                 return null;
             }
             else if (requiredMCVersion != null)
             {
-                FMLRelaunchLog.log(Level.FINE, "The coremod %s requested minecraft version %s and minecraft is %s. It will be loaded.", coreModClass,
+                FMLRelaunchLog.log(Level.DEBUG, "The coremod %s requested minecraft version %s and minecraft is %s. It will be loaded.", coreModClass,
                         requiredMCVersion.value(), FMLInjectionData.mccversion);
             }
             TransformerExclusions trExclusions = coreModClazz.getAnnotation(IFMLLoadingPlugin.TransformerExclusions.class);
@@ -420,6 +422,12 @@ public class CoreModManager {
             int sortIndex = index != null ? index.value() : 0;
 
             IFMLLoadingPlugin plugin = (IFMLLoadingPlugin) coreModClazz.newInstance();
+            String accessTransformerClass = plugin.getAccessTransformerClass();
+            if (accessTransformerClass != null)
+            {
+                FMLRelaunchLog.log(Level.DEBUG, "Added access transformer class %s to enqueued access transformers", accessTransformerClass);
+                accessTransformers.add(accessTransformerClass);
+            }
             FMLPluginWrapper wrap = new FMLPluginWrapper(coreModName, plugin, location, sortIndex, dependencies);
             loadPlugins.add(wrap);
             FMLRelaunchLog.fine("Enqueued coremod %s", coreModName);
@@ -428,21 +436,21 @@ public class CoreModManager {
         catch (ClassNotFoundException cnfe)
         {
             if (!Lists.newArrayList(rootPlugins).contains(coreModClass))
-                FMLRelaunchLog.log(Level.SEVERE, cnfe, "Coremod %s: Unable to class load the plugin %s", coreModName, coreModClass);
+                FMLRelaunchLog.log(Level.ERROR, cnfe, "Coremod %s: Unable to class load the plugin %s", coreModName, coreModClass);
             else
                 FMLRelaunchLog.fine("Skipping root plugin %s", coreModClass);
         }
         catch (ClassCastException cce)
         {
-            FMLRelaunchLog.log(Level.SEVERE, cce, "Coremod %s: The plugin %s is not an implementor of IFMLLoadingPlugin", coreModName, coreModClass);
+            FMLRelaunchLog.log(Level.ERROR, cce, "Coremod %s: The plugin %s is not an implementor of IFMLLoadingPlugin", coreModName, coreModClass);
         }
         catch (InstantiationException ie)
         {
-            FMLRelaunchLog.log(Level.SEVERE, ie, "Coremod %s: The plugin class %s was not instantiable", coreModName, coreModClass);
+            FMLRelaunchLog.log(Level.ERROR, ie, "Coremod %s: The plugin class %s was not instantiable", coreModName, coreModClass);
         }
         catch (IllegalAccessException iae)
         {
-            FMLRelaunchLog.log(Level.SEVERE, iae, "Coremod %s: The plugin class %s was not accessible", coreModName, coreModClass);
+            FMLRelaunchLog.log(Level.ERROR, iae, "Coremod %s: The plugin class %s was not accessible", coreModName, coreModClass);
         }
         return null;
     }
@@ -464,7 +472,7 @@ public class CoreModManager {
             {
                 if (!pluginMap.containsKey(dep))
                 {
-                    FMLRelaunchLog.log(Level.SEVERE, "Missing coremod dependency - the coremod %s depends on coremod %s which isn't present.", plug.name, dep);
+                    FMLRelaunchLog.log(Level.ERROR, "Missing coremod dependency - the coremod %s depends on coremod %s which isn't present.", plug.name, dep);
                     throw new RuntimeException();
                 }
                 sortGraph.addEdge(plug, pluginMap.get(dep));
@@ -477,7 +485,7 @@ public class CoreModManager {
         }
         catch (Exception e)
         {
-            FMLLog.log(Level.SEVERE, e, "There was a problem performing the coremod sort");
+            FMLLog.log(Level.ERROR, e, "There was a problem performing the coremod sort");
             throw Throwables.propagate(e);
         }
     }
@@ -551,5 +559,10 @@ public class CoreModManager {
                 return Ints.saturatedCast((long)first - (long)second);
             }
         });
+    }
+
+    public static List<String> getAccessTransformers()
+    {
+        return accessTransformers;
     }
 }

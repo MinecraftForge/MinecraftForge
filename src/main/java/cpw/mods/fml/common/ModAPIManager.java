@@ -181,7 +181,7 @@ public class ModAPIManager {
                 do
                 {
                     APIContainer parent = apiContainers.get(owner.getLabel());
-                    FMLLog.finest("Removing upstream parent %s from %s", parent.ownerMod.getLabel(), container);
+                    FMLLog.finer("Removing upstream parent %s from %s", parent.ownerMod.getLabel(), container);
                     container.currentReferents.remove(parent.ownerMod.getLabel());
                     container.referredMods.remove(parent.ownerMod);
                     owner = parent.ownerMod;

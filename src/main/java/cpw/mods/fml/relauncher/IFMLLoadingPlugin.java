@@ -63,6 +63,12 @@ public interface IFMLLoadingPlugin
      */
     void injectData(Map<String, Object> data);
 
+    /**
+     * Return an optional access transformer class for this coremod. It will be injected post-deobf
+     * so ensure your ATs conform to the new srgnames scheme.
+     * @return the name of an access transformer class or null if none is provided
+     */
+    String getAccessTransformerClass();
 
     /**
      * Annotate your load plugin with a list of package prefixes that will *not* be

@@ -16,8 +16,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ArrayListMultimap;
@@ -39,7 +39,6 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLStateEvent;
 import cpw.mods.fml.common.functions.ArtifactVersionNameFunction;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
-import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
 public class LoadController
 {
@@ -72,18 +71,10 @@ public class LoadController
         for (ModContainer mod : loader.getModList())
         {
             //Create mod logger, and make the EventBus logger a child of it.
-            FMLRelaunchLog.makeLog(mod.getModId());
-            Logger modLogger = Logger.getLogger(mod.getModId());
-            Logger eventLog = Logger.getLogger(EventBus.class.getName() + "." + mod.getModId());
-            eventLog.setParent(modLogger);
-
             EventBus bus = new EventBus(mod.getModId());
             boolean isActive = mod.registerBus(bus, this);
             if (isActive)
             {
-                Level level = Logger.getLogger(mod.getModId()).getLevel();
-                FMLLog.log(mod.getModId(), Level.FINE, "Mod Logging channel %s configured at %s level.", mod.getModId(), level == null ? "default" : level);
-                FMLLog.log(mod.getModId(), Level.INFO, "Activating mod %s", mod.getModId());
                 activeModList.add(mod);
                 modStates.put(mod.getModId(), ModState.UNLOADED);
                 eventBus.put(mod.getModId(), bus);
@@ -91,7 +82,7 @@ public class LoadController
             }
             else
             {
-                FMLLog.log(mod.getModId(), Level.WARNING, "Mod %s has been disabled through configuration", mod.getModId());
+                FMLLog.log(mod.getModId(), Level.WARN, "Mod %s has been disabled through configuration", mod.getModId());
                 modStates.put(mod.getModId(), ModState.UNLOADED);
                 modStates.put(mod.getModId(), ModState.DISABLED);
             }
@@ -119,13 +110,13 @@ public class LoadController
             FMLLog.severe("Fatal errors were detected during the transition from %s to %s. Loading cannot continue", oldState, desiredState);
             StringBuilder sb = new StringBuilder();
             printModStates(sb);
-            FMLLog.getLogger().severe(sb.toString());
+            FMLLog.severe(sb.toString());
             if (errors.size()>0)
             {
                 FMLLog.severe("The following problems were captured during this phase");
                 for (Entry<String, Throwable> error : errors.entries())
                 {
-                    FMLLog.log(Level.SEVERE, error.getValue(), "Caught exception from %s", error.getKey());
+                    FMLLog.log(Level.ERROR, error.getValue(), "Caught exception from %s", error.getKey());
                     if (error.getValue() instanceof IFMLHandledException)
                     {
                         toThrow = error.getValue();
@@ -186,16 +177,16 @@ public class LoadController
         {
             if (av.getLabel()!= null && requirements.contains(av.getLabel()) && modStates.containsEntry(av.getLabel(),ModState.ERRORED))
             {
-                FMLLog.log(modId, Level.SEVERE, "Skipping event %s and marking errored mod %s since required dependency %s has errored", stateEvent.getEventType(), modId, av.getLabel());
+                FMLLog.log(modId, Level.ERROR, "Skipping event %s and marking errored mod %s since required dependency %s has errored", stateEvent.getEventType(), modId, av.getLabel());
                 modStates.put(modId, ModState.ERRORED);
                 return;
             }
         }
         activeContainer = mc;
         stateEvent.applyModContainer(activeContainer());
-        FMLLog.log(modId, Level.FINEST, "Sending event %s to mod %s", stateEvent.getEventType(), modId);
+        FMLLog.log(modId, Level.TRACE, "Sending event %s to mod %s", stateEvent.getEventType(), modId);
         eventChannels.get(modId).post(stateEvent);
-        FMLLog.log(modId, Level.FINEST, "Sent event %s to mod %s", stateEvent.getEventType(), modId);
+        FMLLog.log(modId, Level.TRACE, "Sent event %s to mod %s", stateEvent.getEventType(), modId);
         activeContainer = null;
         if (stateEvent instanceof FMLStateEvent)
         {
@@ -270,7 +261,7 @@ public class LoadController
         }
         catch (Exception e)
         {
-            FMLLog.log(Level.SEVERE, e, "An unexpected exception");
+            FMLLog.log(Level.ERROR, e, "An unexpected exception");
             throw new LoaderException(e);
         }
     }

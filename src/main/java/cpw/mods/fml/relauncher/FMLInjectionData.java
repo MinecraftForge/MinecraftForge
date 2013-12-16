@@ -18,7 +18,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.launchwrapper.LaunchClassLoader;
 
@@ -49,7 +49,7 @@ public class FMLInjectionData
             }
             catch (IOException ex)
             {
-                FMLRelaunchLog.log(Level.SEVERE, ex, "Could not get FML version information - corrupted installation detected!");
+                FMLRelaunchLog.log(Level.ERROR, ex, "Could not get FML version information - corrupted installation detected!");
             }
         }
 

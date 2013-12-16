@@ -17,8 +17,8 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
 
+import org.apache.logging.log4j.Level;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
 
@@ -54,7 +54,7 @@ public class ASMModParser
         }
         catch (Exception ex)
         {
-            FMLLog.log(Level.SEVERE, ex, "Unable to read a class file correctly");
+            FMLLog.log(Level.ERROR, ex, "Unable to read a class file correctly");
             throw new LoaderException(ex);
         }
     }
