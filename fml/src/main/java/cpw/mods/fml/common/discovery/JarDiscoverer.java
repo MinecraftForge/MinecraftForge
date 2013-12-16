@@ -15,7 +15,7 @@ package cpw.mods.fml.common.discovery;
 import java.util.Collections;
 import java.util.List;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 import java.util.regex.Matcher;
 import java.util.zip.ZipEntry;
 
@@ -42,7 +42,7 @@ public class JarDiscoverer implements ITypeDiscoverer
 
             if (jar.getManifest()!=null && (jar.getManifest().getMainAttributes().get("FMLCorePlugin") != null || jar.getManifest().getMainAttributes().get("TweakClass") != null))
             {
-                FMLLog.finest("Ignoring coremod or tweak system %s", candidate.getModContainer());
+                FMLLog.finer("Ignoring coremod or tweak system %s", candidate.getModContainer());
                 return foundMods;
             }
             ZipEntry modInfo = jar.getEntry("mcmod.info");
@@ -74,7 +74,7 @@ public class JarDiscoverer implements ITypeDiscoverer
                     }
                     catch (LoaderException e)
                     {
-                        FMLLog.log(Level.SEVERE, e, "There was a problem reading the entry %s in the jar %s - probably a corrupt zip", ze.getName(), candidate.getModContainer().getPath());
+                        FMLLog.log(Level.ERROR, e, "There was a problem reading the entry %s in the jar %s - probably a corrupt zip", ze.getName(), candidate.getModContainer().getPath());
                         jar.close();
                         throw e;
                     }
@@ -92,7 +92,7 @@ public class JarDiscoverer implements ITypeDiscoverer
         }
         catch (Exception e)
         {
-            FMLLog.log(Level.WARNING, e, "Zip file %s failed to read properly, it will be ignored", candidate.getModContainer().getName());
+            FMLLog.log(Level.WARN, e, "Zip file %s failed to read properly, it will be ignored", candidate.getModContainer().getName());
         }
         finally
         {

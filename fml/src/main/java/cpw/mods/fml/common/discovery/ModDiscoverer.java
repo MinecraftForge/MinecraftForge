@@ -16,7 +16,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -143,7 +143,7 @@ public class ModDiscoverer
             }
             catch (LoaderException le)
             {
-                FMLLog.log(Level.WARNING, le, "Identified a problem with the mod candidate %s, ignoring this source", candidate.getModContainer());
+                FMLLog.log(Level.WARN, le, "Identified a problem with the mod candidate %s, ignoring this source", candidate.getModContainer());
             }
             catch (Throwable t)
             {

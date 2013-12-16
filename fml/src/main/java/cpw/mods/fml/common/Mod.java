@@ -145,6 +145,15 @@ public @interface Mod
     String asmHookClass() default "";
 
     /**
+     * If your mod doesn't have a runtime persistent effect on the state of the game, and can be disabled without side effects
+     * (minimap mods, graphical tweak mods) then you can set true here and receive the FMLDeactivationEvent to perform deactivation
+     * tasks.
+     * This does not affect administrative disabling through the system property fml.modStates or the config file fmlModState.properties.
+     *
+     * @return if I can be deactivated whilst the game is running.
+     */
+    boolean canBeDeactivated() default false;
+    /**
      * A list of custom properties for this mod. Completely up to the mod author if/when they
      * want to put anything in here.
      * @return an optional list of custom properties

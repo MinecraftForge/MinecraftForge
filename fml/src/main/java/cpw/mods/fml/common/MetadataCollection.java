@@ -15,7 +15,7 @@ package cpw.mods.fml.common;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
@@ -66,7 +66,7 @@ public class MetadataCollection
         }
         catch (JsonParseException e)
         {
-            FMLLog.log(Level.SEVERE, e, "The mcmod.info file in %s cannot be parsed as valid JSON. It will be ignored", sourceName);
+            FMLLog.log(Level.ERROR, e, "The mcmod.info file in %s cannot be parsed as valid JSON. It will be ignored", sourceName);
             return new MetadataCollection();
         }
         catch (Exception e)

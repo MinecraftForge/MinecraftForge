@@ -15,7 +15,7 @@ package cpw.mods.fml.common.network.internal;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
@@ -62,7 +62,7 @@ public class NetworkModHolder
             }
             catch (Exception e)
             {
-                FMLLog.log(Level.SEVERE, e, "Error occurred invoking NetworkCheckHandler %s at %s", checkHandler.getName(), container);
+                FMLLog.log(Level.ERROR, e, "Error occurred invoking NetworkCheckHandler %s at %s", checkHandler.getName(), container);
                 return false;
             }
         }
@@ -138,7 +138,7 @@ public class NetworkModHolder
             }
             catch (Exception e)
             {
-                FMLLog.log(Level.WARNING, e, "The declared version check handler method %s on network mod id %s is not accessible", networkCheckHandlerMethod, container.getModId());
+                FMLLog.log(Level.WARN, e, "The declared version check handler method %s on network mod id %s is not accessible", networkCheckHandlerMethod, container.getModId());
             }
         }
         if (this.checkHandler != null)
@@ -152,13 +152,13 @@ public class NetworkModHolder
             }
             catch (InvalidVersionSpecificationException e)
             {
-                FMLLog.log(Level.WARNING, e, "Invalid bounded range %s specified for network mod id %s", acceptableVersionRange, container.getModId());
+                FMLLog.log(Level.WARN, e, "Invalid bounded range %s specified for network mod id %s", acceptableVersionRange, container.getModId());
             }
             this.checker = new DefaultNetworkChecker();
         } else {
             this.checker = new IgnoredChecker();
         }
-        FMLLog.finest("Testing mod %s to verify it accepts its own version in a remote connection", container.getModId());
+        FMLLog.finer("Testing mod %s to verify it accepts its own version in a remote connection", container.getModId());
         boolean acceptsSelf = acceptVersion(container.getVersion());
         if (!acceptsSelf)
         {
@@ -166,7 +166,7 @@ public class NetworkModHolder
         }
         else
         {
-            FMLLog.finest("The mod %s accepts its own version (%s)", container.getModId(), container.getVersion());
+            FMLLog.finer("The mod %s accepts its own version (%s)", container.getModId(), container.getVersion());
         }
     }
 

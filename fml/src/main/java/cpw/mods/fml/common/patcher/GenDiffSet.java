@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+
 import java.util.logging.Logger;
 
 import com.google.common.hash.Hashing;
@@ -30,7 +32,7 @@ public class GenDiffSet {
         String outputDir = args[3]; //Path to place generated .binpatch
         String killTarget = args[4]; //"true" if we should destroy the target file if it generated a successful .binpatch
 
-        Logger.getLogger("GENDIFF").log(Level.INFO, String.format("Creating patches at %s for %s from %s", outputDir, sourceJar, targetDir));
+        LogManager.getLogger("GENDIFF").log(Level.INFO, String.format("Creating patches at %s for %s from %s", outputDir, sourceJar, targetDir));
         Delta delta = new Delta();
         FMLDeobfuscatingRemapper remapper = FMLDeobfuscatingRemapper.INSTANCE;
         remapper.setupLoadOnly(deobfData, false);

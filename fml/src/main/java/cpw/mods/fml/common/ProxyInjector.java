@@ -15,7 +15,7 @@ package cpw.mods.fml.common;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Set;
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Strings;
 
@@ -71,7 +71,7 @@ public class ProxyInjector
             }
             catch (Exception e)
             {
-                FMLLog.log(Level.SEVERE, e, "An error occured trying to load a proxy into %s.%s", targ.getAnnotationInfo(), targ.getClassName(), targ.getObjectName());
+                FMLLog.log(Level.ERROR, e, "An error occured trying to load a proxy into %s.%s", targ.getAnnotationInfo(), targ.getClassName(), targ.getObjectName());
                 throw new LoaderException(e);
             }
         }

@@ -12,17 +12,17 @@
 
 package cpw.mods.fml.common;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
 
 @SuppressWarnings("static-access")
 public class FMLLog
 {
     private static cpw.mods.fml.relauncher.FMLRelaunchLog coreLog = cpw.mods.fml.relauncher.FMLRelaunchLog.log;
 
-    public static void log(String logChannel, Level level, String format, Object... data)
+    public static void log(String targetLog, Level level, String format, Object... data)
     {
-        coreLog.log(logChannel, level, format, data);
+        coreLog.log(targetLog, level, format, data);
     }
 
     public static void log(Level level, String format, Object... data)
@@ -30,9 +30,9 @@ public class FMLLog
         coreLog.log(level, format, data);
     }
 
-    public static void log(String logChannel, Level level, Throwable ex, String format, Object... data)
+    public static void log(String targetLog, Level level, Throwable ex, String format, Object... data)
     {
-        coreLog.log(logChannel, level, ex, format, data);
+        coreLog.log(targetLog, level, ex, format, data);
     }
 
     public static void log(Level level, Throwable ex, String format, Object... data)
@@ -42,12 +42,12 @@ public class FMLLog
 
     public static void severe(String format, Object... data)
     {
-        log(Level.SEVERE, format, data);
+        log(Level.ERROR, format, data);
     }
 
     public static void warning(String format, Object... data)
     {
-        log(Level.WARNING, format, data);
+        log(Level.WARN, format, data);
     }
 
     public static void info(String format, Object... data)
@@ -57,25 +57,16 @@ public class FMLLog
 
     public static void fine(String format, Object... data)
     {
-        log(Level.FINE, format, data);
+        log(Level.DEBUG, format, data);
     }
 
     public static void finer(String format, Object... data)
     {
-        log(Level.FINER, format, data);
+        log(Level.TRACE, format, data);
     }
 
-    public static void finest(String format, Object... data)
-    {
-        log(Level.FINEST, format, data);
-    }
     public static Logger getLogger()
     {
         return coreLog.getLogger();
-    }
-
-    public static void makeLog(String logChannel)
-    {
-        coreLog.makeLog(logChannel);
     }
 }

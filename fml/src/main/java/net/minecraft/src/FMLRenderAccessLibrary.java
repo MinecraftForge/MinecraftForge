@@ -12,8 +12,9 @@
 
 package net.minecraft.src;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -32,8 +33,7 @@ public class FMLRenderAccessLibrary
 {
     public static Logger getLogger()
     {
-        Logger l = Logger.getLogger("FMLRenderAccessLibrary");
-        l.setParent(FMLLog.getLogger());
+        Logger l = LogManager.getLogger("FMLRenderAccessLibrary");
         return l;
     }
 

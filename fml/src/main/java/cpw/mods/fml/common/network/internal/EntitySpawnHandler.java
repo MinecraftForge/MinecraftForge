@@ -4,7 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.util.List;
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -119,7 +119,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
             System.out.println("Entity spawned on client");
         } catch (Exception e)
         {
-            FMLLog.log(Level.SEVERE, e, "A severe problem occurred during the spawning of an entity");
+            FMLLog.log(Level.ERROR, e, "A severe problem occurred during the spawning of an entity");
             throw Throwables.propagate(e);
         }
     }

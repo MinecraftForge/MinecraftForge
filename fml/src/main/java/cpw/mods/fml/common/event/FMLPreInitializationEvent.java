@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -16,9 +16,10 @@ import java.io.File;
 import java.security.CodeSource;
 import java.security.cert.Certificate;
 import java.util.Properties;
-import java.util.logging.Logger;
 
-import cpw.mods.fml.common.FMLLog;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.FMLModContainer;
 import cpw.mods.fml.common.ModContainer;
@@ -100,8 +101,7 @@ public class FMLPreInitializationEvent extends FMLStateEvent
      */
     public Logger getModLog()
     {
-        Logger log = Logger.getLogger(modContainer.getModId());
-        log.setParent(FMLLog.getLogger());
+        Logger log = LogManager.getLogger(modContainer.getModId());
         return log;
     }
 

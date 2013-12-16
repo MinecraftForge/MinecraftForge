@@ -22,7 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Level;
+
+import org.apache.logging.log4j.Level;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
@@ -57,7 +58,6 @@ import cpw.mods.fml.common.toposort.ModSortingException.SortingExceptionData;
 import cpw.mods.fml.common.toposort.TopologicalSort;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 import cpw.mods.fml.common.versioning.VersionParser;
-import cpw.mods.fml.relauncher.FMLRelaunchLog;
 import cpw.mods.fml.relauncher.Side;
 
 /**
@@ -132,7 +132,6 @@ public class Loader
 
     private static File minecraftDir;
     private static List<String> injectedContainers;
-    private File loggingProperties;
     private ImmutableMap<String, String> fmlBrandingProperties;
 
     public static Loader instance()
@@ -252,7 +251,7 @@ public class Loader
                 {
                     FMLLog.severe("%s : before: %s, after: %s", mc.toString(), mc.getDependants(), mc.getDependencies());
                 }
-                FMLLog.log(Level.SEVERE, sortException, "The full error");
+                FMLLog.log(Level.ERROR, sortException, "The full error");
                 throw sortException;
             }
         }
@@ -304,7 +303,7 @@ public class Loader
             }
             catch (Exception e)
             {
-                FMLLog.log(Level.SEVERE, e, "A problem occured instantiating the injected mod container %s", cont);
+                FMLLog.log(Level.ERROR, e, "A problem occured instantiating the injected mod container %s", cont);
                 throw new LoaderException(e);
             }
             mods.add(new InjectedModContainer(mc,mc.getSource()));
@@ -327,10 +326,6 @@ public class Loader
         identifyDuplicates(mods);
         namedMods = Maps.uniqueIndex(mods, new ModIdFunction());
         FMLLog.info("Forge Mod Loader has identified %d mod%s to load", mods.size(), mods.size() != 1 ? "s" : "");
-        for (String modId: namedMods.keySet())
-        {
-            FMLLog.makeLog(modId);
-        }
         return discoverer;
     }
 
@@ -389,7 +384,7 @@ public class Loader
         }
         catch (IOException ioe)
         {
-            FMLLog.log(Level.SEVERE, ioe, "Failed to resolve loader directories: mods : %s ; config %s", canonicalModsDir.getAbsolutePath(),
+            FMLLog.log(Level.ERROR, ioe, "Failed to resolve loader directories: mods : %s ; config %s", canonicalModsDir.getAbsolutePath(),
                             configDir.getAbsolutePath());
             throw new LoaderException(ioe);
         }
@@ -429,11 +424,6 @@ public class Loader
             FMLLog.severe("Attempting to load configuration from %s, which is not a directory", canonicalConfigPath);
             throw new LoaderException();
         }
-
-        loggingProperties = new File(canonicalConfigDir, "logging.properties");
-        FMLLog.info("Reading custom logging properties from %s", loggingProperties.getPath());
-        FMLRelaunchLog.loadLogConfiguration(loggingProperties);
-        FMLLog.log(Level.OFF,"Logging level for ForgeModLoader logging is set to %s", FMLRelaunchLog.log.getLogger().getLevel());
     }
 
     public List<ModContainer> getModList()
@@ -457,9 +447,6 @@ public class Loader
         ModDiscoverer disc = identifyMods();
         ModAPIManager.INSTANCE.manageAPI(modClassLoader, disc);
         disableRequestedMods();
-        FMLLog.fine("Reloading logging properties from %s", loggingProperties.getPath());
-        FMLRelaunchLog.loadLogConfiguration(loggingProperties);
-        FMLLog.fine("Reloaded logging properties");
         modController.distributeStateMessage(FMLLoadEvent.class);
         sortModList();
         ModAPIManager.INSTANCE.cleanupAPIContainers(modController.getActiveModList());
@@ -476,7 +463,7 @@ public class Loader
                 }
                 catch (MalformedURLException e)
                 {
-                    FMLLog.log(Level.SEVERE, e, "Encountered a weird problem with non-mod file injection : %s", nonMod.getName());
+                    FMLLog.log(Level.ERROR, e, "Encountered a weird problem with non-mod file injection : %s", nonMod.getName());
                 }
             }
         }
@@ -655,7 +642,7 @@ public class Loader
 
         if (parseFailure)
         {
-            FMLLog.log(Level.WARNING, "Unable to parse dependency string %s", dependencyString);
+            FMLLog.log(Level.WARN, "Unable to parse dependency string %s", dependencyString);
             throw new LoaderException();
         }
     }
@@ -720,7 +707,7 @@ public class Loader
         }
         catch (Throwable t)
         {
-            FMLLog.log(Level.SEVERE, t, "A fatal exception occurred during the server starting event");
+            FMLLog.log(Level.ERROR, t, "A fatal exception occurred during the server starting event");
             return false;
         }
         return true;
@@ -789,7 +776,7 @@ public class Loader
         }
         catch (Throwable t)
         {
-            FMLLog.log(Level.SEVERE, t, "A fatal exception occurred during the server about to start event");
+            FMLLog.log(Level.ERROR, t, "A fatal exception occurred during the server about to start event");
             return false;
         }
         return true;
@@ -843,7 +830,7 @@ public class Loader
     {
         if (remaps.isEmpty())
         {
-            FMLLog.finest("Skipping remap event - no remaps occured");
+            FMLLog.finer("Skipping remap event - no remaps occured");
         }
         else
         {
