@@ -1,9 +1,9 @@
 package net.minecraftforge.event.entity.living;
 
+import cpw.mods.fml.common.eventhandler.Cancelable;
+import cpw.mods.fml.common.eventhandler.Event.HasResult;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.World;
-import net.minecraftforge.event.Cancelable;
-import net.minecraftforge.event.Event.HasResult;
 
 public class LivingSpawnEvent extends LivingEvent
 {

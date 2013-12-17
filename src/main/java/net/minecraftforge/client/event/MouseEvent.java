@@ -1,8 +1,9 @@
 package net.minecraftforge.client.event;
 
-import net.minecraftforge.event.Cancelable;
-import net.minecraftforge.event.Event;
 import org.lwjgl.input.Mouse;
+
+import cpw.mods.fml.common.eventhandler.Cancelable;
+import cpw.mods.fml.common.eventhandler.Event;
 
 /**
  * Author: MachineMuse (Claire Semple)

@@ -44,6 +44,7 @@ import com.google.common.collect.TreeMultiset;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -60,7 +61,6 @@ import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.event.Event;
 
 /**
  * Manages chunkloading for mods.

@@ -1,7 +1,7 @@
 package net.minecraftforge.event.entity;
 
+import cpw.mods.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.Entity;
-import net.minecraftforge.event.Cancelable;
 
 @Cancelable
 public class PlaySoundAtEntityEvent extends EntityEvent

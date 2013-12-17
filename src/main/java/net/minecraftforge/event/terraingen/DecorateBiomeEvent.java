@@ -2,6 +2,8 @@ package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
 
+import cpw.mods.fml.common.eventhandler.Event;
+
 import net.minecraft.world.World;
 import net.minecraftforge.event.*;
 

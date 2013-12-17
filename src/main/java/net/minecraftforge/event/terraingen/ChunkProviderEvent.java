@@ -1,5 +1,6 @@
 package net.minecraftforge.event.terraingen;
 
+import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.event.*;

@@ -3,6 +3,8 @@ package net.minecraftforge.common;
 import java.util.UUID;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.eventhandler.EventPriority;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -14,7 +16,7 @@ import net.minecraftforge.event.world.WorldEvent;
 
 public class ForgeInternalHandler
 {
-    @ForgeSubscribe(priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onEntityJoinWorld(EntityJoinWorldEvent event)
     {
         if (!event.world.isRemote)
@@ -58,19 +60,19 @@ public class ForgeInternalHandler
         }
     }
 
-    @ForgeSubscribe(priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onDimensionLoad(WorldEvent.Load event)
     {
         ForgeChunkManager.loadWorld(event.world);
     }
 
-    @ForgeSubscribe(priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onDimensionSave(WorldEvent.Save event)
     {
     	ForgeChunkManager.saveWorld(event.world);
     }
 
-    @ForgeSubscribe(priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onDimensionUnload(WorldEvent.Unload event)
     {
         ForgeChunkManager.unloadWorld(event.world);

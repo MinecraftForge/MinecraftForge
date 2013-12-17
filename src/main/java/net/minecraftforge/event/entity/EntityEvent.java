@@ -1,8 +1,8 @@
 package net.minecraftforge.event.entity;
 
+import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
-import net.minecraftforge.event.Event;
 
 public class EntityEvent extends Event
 {

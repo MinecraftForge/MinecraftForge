@@ -1,8 +1,8 @@
 package net.minecraftforge.event.entity.living;
 
+import cpw.mods.fml.common.eventhandler.Cancelable;
 import net.minecraft.util.DamageSource;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraftforge.event.Cancelable;
 
 @Cancelable
 public class LivingDeathEvent extends LivingEvent

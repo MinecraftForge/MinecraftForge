@@ -1,5 +1,11 @@
 package net.minecraftforge.common;
 
+import static net.minecraftforge.common.ForgeVersion.buildVersion;
+import static net.minecraftforge.common.ForgeVersion.majorVersion;
+import static net.minecraftforge.common.ForgeVersion.minorVersion;
+import static net.minecraftforge.common.ForgeVersion.revisionVersion;
+import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.Map;
@@ -7,16 +13,12 @@ import java.util.logging.Level;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.management.PlayerInstance;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.common.network.ForgeConnectionHandler;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
-import net.minecraftforge.common.network.ForgePacketHandler;
-import net.minecraftforge.common.network.ForgeTinyPacketHandler;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.server.command.ForgeCommand;
 
@@ -36,17 +38,9 @@ import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.network.FMLNetworkHandler;
-import cpw.mods.fml.common.network.NetworkMod;
-import static net.minecraftforge.common.ForgeVersion.*;
-import static net.minecraftforge.common.config.Configuration.*;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
 
-@NetworkMod(
-        channels = "FORGE",
-        connectionHandler = ForgeConnectionHandler.class,
-        packetHandler     = ForgePacketHandler.class,
-        tinyPacketHandler = ForgeTinyPacketHandler.class
-    )
 public class ForgeModContainer extends DummyModContainer implements WorldAccessContainer
 {
     public static int clumpingThreshold = 64;
@@ -150,11 +144,11 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         prop = config.get(Configuration.CATEGORY_GENERAL, "biomeSkyBlendRange", new int[] { 20, 15, 10, 5 });
         prop.comment = "Control the range of sky blending for colored skies in biomes.";
         blendRanges = prop.getIntList();
-        
+
         prop = config.get(Configuration.CATEGORY_GENERAL, "zombieBaseSummonChance", 0.1);
         prop.comment = "Base zombie summoning spawn chance. Allows changing the bonus zombie summoning mechanic.";
         zombieSummonBaseChance = prop.getDouble(0.1);
-        
+
         prop = config.get(Configuration.CATEGORY_GENERAL, "zombieBabyChance", 0.05);
         prop.comment = "Chance that a zombie (or subclass) is a baby. Allows changing the zombie spawning mechanic.";
         zombieBabyChance = (float) prop.getDouble(0.05);
@@ -179,16 +173,8 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     @Subscribe
     public void modConstruction(FMLConstructionEvent evt)
     {
-        FMLLog.info("Registering Forge Packet Handler");
-        try
-        {
-            FMLNetworkHandler.instance().registerNetworkMod(new ForgeNetworkHandler(this));
-            FMLLog.info("Succeeded registering Forge Packet Handler");
-        }
-        catch (Exception e)
-        {
-            FMLLog.log(Level.SEVERE, e, "Failed to register packet handler for Forge");
-        }
+        NetworkRegistry.INSTANCE.register(this, this.getClass(), null, evt.getASMHarvestedData());
+        ForgeNetworkHandler.registerChannel(this, evt.getSide());
     }
 
     @Subscribe

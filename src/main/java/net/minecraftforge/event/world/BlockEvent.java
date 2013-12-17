@@ -2,13 +2,14 @@ package net.minecraftforge.event.world;
 
 import java.util.ArrayList;
 
+import cpw.mods.fml.common.eventhandler.Cancelable;
+import cpw.mods.fml.common.eventhandler.Event;
+
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.event.Cancelable;
-import net.minecraftforge.event.Event;
 
 public class BlockEvent extends Event {
     public final int x;

@@ -1,10 +1,10 @@
 package net.minecraftforge.event.entity.living;
 
+import cpw.mods.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.world.World;
-import net.minecraftforge.event.Cancelable;
 import net.minecraftforge.event.entity.EntityEvent;
 
 public class ZombieEvent extends EntityEvent {

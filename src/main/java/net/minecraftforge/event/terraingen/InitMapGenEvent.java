@@ -1,5 +1,6 @@
 package net.minecraftforge.event.terraingen;
 
+import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.world.gen.MapGenBase;
 import net.minecraftforge.event.*;
 

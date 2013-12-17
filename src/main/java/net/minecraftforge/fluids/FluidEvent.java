@@ -1,9 +1,9 @@
 
 package net.minecraftforge.fluids;
 
+import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.Event;
 
 public class FluidEvent extends Event
 {

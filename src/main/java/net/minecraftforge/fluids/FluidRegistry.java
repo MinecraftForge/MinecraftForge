@@ -6,11 +6,12 @@ import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.Event;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
+
+import cpw.mods.fml.common.eventhandler.Event;
 
 /**
  * Handles Fluid registrations. Fluids MUST be registered in order to function.

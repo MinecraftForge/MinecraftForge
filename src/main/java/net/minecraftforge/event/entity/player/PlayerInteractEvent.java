@@ -1,11 +1,11 @@
 package net.minecraftforge.event.entity.player;
 
+import cpw.mods.fml.common.eventhandler.Cancelable;
+import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import net.minecraftforge.event.Cancelable;
-import net.minecraftforge.event.Event;
-import static net.minecraftforge.event.Event.Result;
-import static net.minecraftforge.event.Event.Result.*;
+import static cpw.mods.fml.common.eventhandler.Event.Result;
+import static cpw.mods.fml.common.eventhandler.Event.Result.*;
 
 @Cancelable
 public class PlayerInteractEvent extends PlayerEvent

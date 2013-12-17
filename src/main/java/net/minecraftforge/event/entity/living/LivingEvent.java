@@ -1,7 +1,7 @@
 package net.minecraftforge.event.entity.living;
 
+import cpw.mods.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraftforge.event.Cancelable;
 import net.minecraftforge.event.entity.EntityEvent;
 
 public class LivingEvent extends EntityEvent

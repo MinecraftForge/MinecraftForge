@@ -2,11 +2,12 @@ package net.minecraftforge.event.entity.player;
 
 import java.util.ArrayList;
 
+import cpw.mods.fml.common.eventhandler.Cancelable;
+
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
-import net.minecraftforge.event.Cancelable;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 
 /**

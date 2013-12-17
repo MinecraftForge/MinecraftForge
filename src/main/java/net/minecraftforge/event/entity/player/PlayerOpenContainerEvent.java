@@ -1,8 +1,8 @@
 package net.minecraftforge.event.entity.player;
 
+import cpw.mods.fml.common.eventhandler.Event.HasResult;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraftforge.event.Event.HasResult;
 
 @HasResult
 public class PlayerOpenContainerEvent extends PlayerEvent

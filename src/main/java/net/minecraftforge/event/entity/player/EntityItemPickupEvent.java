@@ -1,10 +1,10 @@
 package net.minecraftforge.event.entity.player;
 
+import cpw.mods.fml.common.eventhandler.Cancelable;
+import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.event.Cancelable;
-import net.minecraftforge.event.Event;
 
 @Cancelable
 @Event.HasResult
