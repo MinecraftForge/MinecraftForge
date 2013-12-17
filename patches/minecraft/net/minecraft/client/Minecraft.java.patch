@@ -64,14 +64,7 @@
          }
  
          GL11.glFlush();
-@@ -1490,11 +1500,15 @@
- 
-     public void func_71407_l()
-     {
-+        FMLCommonHandler.instance().rescheduleTicks(Side.CLIENT);
-+
-         if (this.field_71467_ac > 0)
-         {
+@@ -1495,6 +1505,8 @@
              --this.field_71467_ac;
          }
  
@@ -80,6 +73,22 @@
          this.field_71424_I.func_76320_a("gui");
  
          if (!this.field_71445_n)
+@@ -1645,6 +1657,7 @@
+                         this.field_71462_r.func_146274_d();
+                     }
+                 }
++                FMLCommonHandler.instance().fireMouseInput();
+             }
+ 
+             if (this.field_71429_W > 0)
+@@ -1786,6 +1799,7 @@
+                             }
+                         }
+                     }
++                    FMLCommonHandler.instance().fireKeyInput();
+                 }
+             }
+ 
 @@ -1977,6 +1991,8 @@
              this.field_71453_ak.func_74428_b();
          }
