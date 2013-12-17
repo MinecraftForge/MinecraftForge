@@ -14,6 +14,7 @@ package cpw.mods.fml.common;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Comparator;
@@ -29,14 +30,17 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimaps;
 import com.google.common.collect.Multiset.Entry;
 import com.google.common.collect.Multisets;
 import com.google.common.collect.Ordering;
@@ -45,6 +49,7 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.TreeMultimap;
 
 import cpw.mods.fml.common.LoaderState.ModState;
+import cpw.mods.fml.common.ModContainer.Disableable;
 import cpw.mods.fml.common.discovery.ModDiscoverer;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLLoadEvent;
@@ -122,6 +127,10 @@ public class Loader
      */
     private Map<String, ModContainer> namedMods;
     /**
+     * A reverse dependency graph for mods
+     */
+    private ListMultimap<String, String> reverseDependencies;
+    /**
      * The canonical configuration directory
      */
     private File canonicalConfigDir;
@@ -133,6 +142,7 @@ public class Loader
     private static File minecraftDir;
     private static List<String> injectedContainers;
     private ImmutableMap<String, String> fmlBrandingProperties;
+    private File forcedModFile;
 
     public static Loader instance()
     {
@@ -187,6 +197,7 @@ public class Loader
                 modVersions.put(mod.getModId(), mod.getProcessedVersion());
             }
 
+            ArrayListMultimap<String, String> reqList = ArrayListMultimap.create();
             for (ModContainer mod : getActiveModList())
             {
                 if (!mod.acceptableMinecraftVersionRange().containsVersion(minecraft.getProcessedVersion()))
@@ -196,6 +207,7 @@ public class Loader
                 }
                 Map<String,ArtifactVersion> names = Maps.uniqueIndex(mod.getRequirements(), new ArtifactVersionNameFunction());
                 Set<ArtifactVersion> versionMissingMods = Sets.newHashSet();
+
                 Set<String> missingMods = Sets.difference(names.keySet(), modVersions.keySet());
                 if (!missingMods.isEmpty())
                 {
@@ -206,6 +218,7 @@ public class Loader
                     }
                     throw new MissingModsException(versionMissingMods);
                 }
+                reqList.putAll(mod.getModId(), names.keySet());
                 ImmutableList<ArtifactVersion> allDeps = ImmutableList.<ArtifactVersion>builder().addAll(mod.getDependants()).addAll(mod.getDependencies()).build();
                 for (ArtifactVersion v : allDeps)
                 {
@@ -226,6 +239,7 @@ public class Loader
 
             FMLLog.finer("All mod requirements are satisfied");
 
+            reverseDependencies = Multimaps.invertFrom(reqList, ArrayListMultimap.<String,String>create());
             ModSorter sorter = new ModSorter(getActiveModList(), namedMods);
 
             try
@@ -468,7 +482,7 @@ public class Loader
             }
         }
         modController.transition(LoaderState.CONSTRUCTING, false);
-        modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader, disc.getASMTable());
+        modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader, disc.getASMTable(), reverseDependencies);
         FMLLog.fine("Mod signature data");
         for (ModContainer mod : getActiveModList())
         {
@@ -493,7 +507,7 @@ public class Loader
         FMLLog.finer("System property request managing the state of %d mods", sysPropertyStateList.size());
         Map<String, String> modStates = Maps.newHashMap();
 
-        File forcedModFile = new File(canonicalConfigDir, "fmlModState.properties");
+        forcedModFile = new File(canonicalConfigDir, "fmlModState.properties");
         Properties forcedModListProperties = new Properties();
         if (forcedModFile.exists() && forcedModFile.isFile())
         {
@@ -835,6 +849,42 @@ public class Loader
         else
         {
             modController.propogateStateMessage(new FMLModIdMappingEvent(remaps));
+        }
+    }
+
+    public void runtimeDisableMod(String modId)
+    {
+        ModContainer mc = namedMods.get(modId);
+        Disableable disableable = mc.canBeDisabled();
+        if (disableable == Disableable.NEVER)
+        {
+            FMLLog.info("Cannot disable mod %s - it is never allowed to be disabled", modId);
+            return;
+        }
+        if (disableable == Disableable.DEPENDENCIES)
+        {
+            FMLLog.info("Cannot disable mod %s - there are dependent mods that require its presence", modId);
+            return;
+        }
+        if (disableable == Disableable.YES)
+        {
+            FMLLog.info("Runtime disabling mod %s", modId);
+            modController.disableMod(mc);
+            List<ModContainer> localmods = Lists.newArrayList(mods);
+            localmods.remove(mc);
+            mods = ImmutableList.copyOf(localmods);
+        }
+
+        try
+        {
+            Properties props = new Properties();
+            props.load(new FileReader(forcedModFile));
+            props.put(modId, "false");
+            props.store(new FileWriter(forcedModFile), null);
+        }
+        catch (Exception e)
+        {
+            FMLLog.log(Level.INFO, e, "An error occurred writing the fml mod states file, your disabled change won't persist");
         }
     }
 }

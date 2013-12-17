@@ -110,11 +110,6 @@ public class InjectedModContainer implements ModContainer
     }
 
     @Override
-    public boolean isNetworkMod()
-    {
-        return wrappedContainer.isNetworkMod();
-    }
-    @Override
     public boolean isImmutable()
     {
         return true;
@@ -172,5 +167,11 @@ public class InjectedModContainer implements ModContainer
     public Map<String, String> getSharedModDescriptor()
     {
         return wrappedContainer.getSharedModDescriptor();
+    }
+
+    @Override
+    public Disableable canBeDisabled()
+    {
+        return wrappedContainer.canBeDisabled();
     }
 }
