@@ -4,7 +4,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-+import cpw.mods.fml.common.registry.GameRegistry;
++import cpw.mods.fml.common.FMLCommonHandler;
 +
  public class EntityItem extends Entity
  {
@@ -13,7 +13,7 @@
                      }
                  }
  
-+                GameRegistry.onPickupNotification(p_70100_1_, this);
++                FMLCommonHandler.instance().firePlayerItemPickupEvent(p_70100_1_, this);
 +
                  this.field_70170_p.func_72956_a(p_70100_1_, "random.pop", 0.2F, ((this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.7F + 1.0F) * 2.0F);
                  p_70100_1_.func_71001_a(this, i);

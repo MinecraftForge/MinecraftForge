@@ -18,7 +18,10 @@ import java.util.Set;
 
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -466,5 +469,20 @@ public class FMLCommonHandler
     public void firePlayerRespawnEvent(EntityPlayer player)
     {
         bus().post(new PlayerEvent.PlayerRespawnEvent(player));
+    }
+
+    public void firePlayerItemPickupEvent(EntityPlayer player, EntityItem item)
+    {
+        bus().post(new PlayerEvent.ItemPickupEvent(player, item));
+    }
+
+    public void firePlayerCraftingEvent(EntityPlayer player, ItemStack crafted, IInventory craftMatrix)
+    {
+        bus().post(new PlayerEvent.ItemCraftedEvent(player, crafted, craftMatrix));
+    }
+
+    public void firePlayerSmeltedEvent(EntityPlayer player, ItemStack smelted)
+    {
+        bus().post(new PlayerEvent.ItemSmeltedEvent(player, smelted));
     }
 }
