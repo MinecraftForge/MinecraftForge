@@ -13,6 +13,9 @@
 package cpw.mods.fml.common.registry;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -32,8 +35,11 @@ import net.minecraft.world.chunk.IChunkProvider;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.primitives.Ints;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.IFuelHandler;
@@ -46,16 +52,25 @@ import cpw.mods.fml.common.ObfuscationReflectionHelper;
 public class GameRegistry
 {
     private static Set<IWorldGenerator> worldGenerators = Sets.newHashSet();
+    private static Map<IWorldGenerator, Integer> worldGeneratorIndex = Maps.newHashMap();
     private static List<IFuelHandler> fuelHandlers = Lists.newArrayList();
+    private static List<IWorldGenerator> sortedGeneratorList;
 
     /**
      * Register a world generator - something that inserts new block types into the world
      *
-     * @param generator
+     * @param generator the generator
+     * @param weight a weight to assign to this generator. Heavy weights tend to sink to the bottom of
+     * list of world generators (i.e. they run later)
      */
-    public static void registerWorldGenerator(IWorldGenerator generator)
+    public static void registerWorldGenerator(IWorldGenerator generator, int modGenerationWeight)
     {
         worldGenerators.add(generator);
+        worldGeneratorIndex.put(generator, modGenerationWeight);
+        if (sortedGeneratorList != null)
+        {
+            sortedGeneratorList = null;
+        }
     }
 
     /**
@@ -70,17 +85,34 @@ public class GameRegistry
      */
     public static void generateWorld(int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider)
     {
+        if (sortedGeneratorList == null)
+        {
+            computeSortedGeneratorList();
+        }
         long worldSeed = world.func_72905_C();
         Random fmlRandom = new Random(worldSeed);
         long xSeed = fmlRandom.nextLong() >> 2 + 1L;
         long zSeed = fmlRandom.nextLong() >> 2 + 1L;
         long chunkSeed = (xSeed * chunkX + zSeed * chunkZ) ^ worldSeed;
 
-        for (IWorldGenerator generator : worldGenerators)
+        for (IWorldGenerator generator : sortedGeneratorList)
         {
             fmlRandom.setSeed(chunkSeed);
             generator.generate(fmlRandom, chunkX, chunkZ, world, chunkGenerator, chunkProvider);
         }
+    }
+
+    private static void computeSortedGeneratorList()
+    {
+        ArrayList<IWorldGenerator> list = Lists.newArrayList(worldGenerators);
+        Collections.sort(list, new Comparator<IWorldGenerator>() {
+            @Override
+            public int compare(IWorldGenerator o1, IWorldGenerator o2)
+            {
+                return Ints.compare(worldGeneratorIndex.get(o1), worldGeneratorIndex.get(o2));
+            }
+        });
+        sortedGeneratorList = ImmutableList.copyOf(list);
     }
 
     /**
