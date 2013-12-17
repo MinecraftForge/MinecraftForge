@@ -12,17 +12,13 @@
 
 package cpw.mods.fml.common;
 
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Logger;
 
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -31,8 +27,10 @@ import net.minecraft.world.World;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
+
 import com.google.common.base.Joiner;
-import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
@@ -41,7 +39,11 @@ import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.common.eventhandler.EventBus;
+import cpw.mods.fml.common.gameevent.InputEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.server.FMLServerHandler;
 
@@ -70,16 +72,23 @@ public class FMLCommonHandler
      */
     private IFMLSidedHandler sidedDelegate;
 
-    private List<IScheduledTickHandler> scheduledClientTicks = Lists.newArrayList();
-    private List<IScheduledTickHandler> scheduledServerTicks = Lists.newArrayList();
     private Class<?> forge;
     private boolean noForge;
     private List<String> brandings;
     private List<String> brandingsNoMC;
     private List<ICrashCallable> crashCallables = Lists.newArrayList(Loader.instance().getCallableCrashInformation());
     private Set<SaveHandler> handlerSet = Sets.newSetFromMap(new MapMaker().weakKeys().<SaveHandler,Boolean>makeMap());
+    private EventBus eventBus = new EventBus();
 
-
+    /**
+     * The FML event bus. Subscribe here for FML related events
+     *
+     * @return the event bus
+     */
+    public EventBus bus()
+    {
+        return eventBus;
+    }
 
     public void beginLoading(IFMLSidedHandler handler)
     {
@@ -88,48 +97,6 @@ public class FMLCommonHandler
         callForgeMethod("initialize");
         callForgeMethod("registerCrashCallable");
         FMLLog.log("MinecraftForge", Level.INFO, "Completed early MinecraftForge initialization");
-    }
-
-    public void rescheduleTicks(Side side)
-    {
-        TickRegistry.updateTickQueue(side.isClient() ? scheduledClientTicks : scheduledServerTicks, side);
-    }
-    public void tickStart(EnumSet<TickType> ticks, Side side, Object ... data)
-    {
-        List<IScheduledTickHandler> scheduledTicks = side.isClient() ? scheduledClientTicks : scheduledServerTicks;
-
-        if (scheduledTicks.size()==0)
-        {
-            return;
-        }
-        for (IScheduledTickHandler ticker : scheduledTicks)
-        {
-            EnumSet<TickType> ticksToRun = EnumSet.copyOf(Objects.firstNonNull(ticker.ticks(), EnumSet.noneOf(TickType.class)));
-            ticksToRun.retainAll(ticks);
-            if (!ticksToRun.isEmpty())
-            {
-                ticker.tickStart(ticksToRun, data);
-            }
-        }
-    }
-
-    public void tickEnd(EnumSet<TickType> ticks, Side side, Object ... data)
-    {
-        List<IScheduledTickHandler> scheduledTicks = side.isClient() ? scheduledClientTicks : scheduledServerTicks;
-
-        if (scheduledTicks.size()==0)
-        {
-            return;
-        }
-        for (IScheduledTickHandler ticker : scheduledTicks)
-        {
-            EnumSet<TickType> ticksToRun = EnumSet.copyOf(Objects.firstNonNull(ticker.ticks(), EnumSet.noneOf(TickType.class)));
-            ticksToRun.retainAll(ticks);
-            if (!ticksToRun.isEmpty())
-            {
-                ticker.tickEnd(ticksToRun, data);
-            }
-        }
     }
 
     /**
@@ -261,37 +228,28 @@ public class FMLCommonHandler
 
     public void onPostServerTick()
     {
-        tickEnd(EnumSet.of(TickType.SERVER), Side.SERVER);
+        bus().post(new TickEvent.ServerTickEvent(Phase.END));
     }
 
     /**
      * Every tick just after world and other ticks occur
      */
-    public void onPostWorldTick(Object world)
+    public void onPostWorldTick(World world)
     {
-        tickEnd(EnumSet.of(TickType.WORLD), Side.SERVER, world);
+        bus().post(new TickEvent.WorldTickEvent(Side.SERVER, Phase.END, world));
     }
 
     public void onPreServerTick()
     {
-        tickStart(EnumSet.of(TickType.SERVER), Side.SERVER);
+        bus().post(new TickEvent.ServerTickEvent(Phase.START));
     }
 
     /**
      * Every tick just before world and other ticks occur
      */
-    public void onPreWorldTick(Object world)
+    public void onPreWorldTick(World world)
     {
-        tickStart(EnumSet.of(TickType.WORLD), Side.SERVER, world);
-    }
-
-    public void onWorldLoadTick(World[] worlds)
-    {
-        rescheduleTicks(Side.SERVER);
-        for (World w : worlds)
-        {
-            tickStart(EnumSet.of(TickType.WORLDLOAD), Side.SERVER, w);
-        }
+        bus().post(new TickEvent.WorldTickEvent(Side.SERVER, Phase.START, world));
     }
 
     public boolean handleServerAboutToStart(MinecraftServer server)
@@ -338,35 +296,32 @@ public class FMLCommonHandler
 
     public void onPreClientTick()
     {
-        tickStart(EnumSet.of(TickType.CLIENT), Side.CLIENT);
-
+        bus().post(new TickEvent.ClientTickEvent(Phase.START));
     }
 
     public void onPostClientTick()
     {
-        tickEnd(EnumSet.of(TickType.CLIENT), Side.CLIENT);
+        bus().post(new TickEvent.ClientTickEvent(Phase.END));
     }
 
     public void onRenderTickStart(float timer)
     {
-        tickStart(EnumSet.of(TickType.RENDER), Side.CLIENT, timer);
+        bus().post(new TickEvent.RenderTickEvent(Phase.START, timer));
     }
 
     public void onRenderTickEnd(float timer)
     {
-        tickEnd(EnumSet.of(TickType.RENDER), Side.CLIENT, timer);
+        bus().post(new TickEvent.RenderTickEvent(Phase.END, timer));
     }
 
     public void onPlayerPreTick(EntityPlayer player)
     {
-        Side side = player instanceof EntityPlayerMP ? Side.SERVER : Side.CLIENT;
-        tickStart(EnumSet.of(TickType.PLAYER), side, player);
+        bus().post(new TickEvent.PlayerTickEvent(Phase.START, player));
     }
 
     public void onPlayerPostTick(EntityPlayer player)
     {
-        Side side = player instanceof EntityPlayerMP ? Side.SERVER : Side.CLIENT;
-        tickEnd(EnumSet.of(TickType.PLAYER), side, player);
+        bus().post(new TickEvent.PlayerTickEvent(Phase.START, player));
     }
 
     public void registerCrashCallable(ICrashCallable callable)
@@ -481,5 +436,35 @@ public class FMLCommonHandler
     public NetworkManager getClientToServerNetworkManager()
     {
         return sidedDelegate.getClientToServerNetworkManager();
+    }
+
+    public void fireMouseInput()
+    {
+        bus().post(new InputEvent.MouseInputEvent());
+    }
+
+    public void fireKeyInput()
+    {
+        bus().post(new InputEvent.KeyInputEvent());
+    }
+
+    public void firePlayerChangedDimensionEvent(EntityPlayer player, int fromDim, int toDim)
+    {
+        bus().post(new PlayerEvent.PlayerChangedDimensionEvent(player, fromDim, toDim));
+    }
+
+    public void firePlayerLoggedIn(EntityPlayer player)
+    {
+        bus().post(new PlayerEvent.PlayerLoggedInEvent(player));
+    }
+
+    public void firePlayerLoggedOut(EntityPlayer player)
+    {
+        bus().post(new PlayerEvent.PlayerLoggedOutEvent(player));
+    }
+
+    public void firePlayerRespawnEvent(EntityPlayer player)
+    {
+        bus().post(new PlayerEvent.PlayerRespawnEvent(player));
     }
 }

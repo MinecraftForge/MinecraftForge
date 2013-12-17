@@ -128,7 +128,7 @@ public class RenderingRegistry
     public boolean renderItemAsFull3DBlock(int modelId)
     {
         ISimpleBlockRenderingHandler bri = blockRenderers.get(modelId);
-        return bri != null && bri.shouldRender3DInInventory();
+        return bri != null && bri.shouldRender3DInInventory(modelId);
     }
 
     public void loadEntityRenderers(Map<Class<? extends Entity>, Render> rendererMap)

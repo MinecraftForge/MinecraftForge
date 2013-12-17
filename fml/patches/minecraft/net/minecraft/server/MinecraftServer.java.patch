@@ -9,7 +9,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import io.netty.buffer.ByteBuf;
-@@ -381,7 +383,11 @@
+@@ -381,7 +383,10 @@
          {
              if (this.func_71197_b())
              {
@@ -17,11 +17,10 @@
 +
                  long i = func_130071_aq();
 +
-+                FMLCommonHandler.instance().onWorldLoadTick(field_71305_c);
                  long j = 0L;
                  this.field_147147_p.func_151315_a(new ChatComponentText(this.field_71286_C));
                  this.field_147147_p.func_151321_a(new ServerStatusResponse.MinecraftProtocolVersionIdentifier("1.7.2", 4));
-@@ -425,6 +431,7 @@
+@@ -425,6 +430,7 @@
                      Thread.sleep(1L);
                      this.field_71296_Q = true;
                  }
@@ -29,7 +28,7 @@
              }
              else
              {
-@@ -462,6 +469,10 @@
+@@ -462,6 +468,10 @@
          {
              try
              {
@@ -40,7 +39,7 @@
                  this.func_71260_j();
                  this.field_71316_v = true;
              }
-@@ -471,6 +482,8 @@
+@@ -471,6 +481,8 @@
              }
              finally
              {
@@ -49,18 +48,15 @@
                  this.func_71240_o();
              }
          }
-@@ -511,8 +524,10 @@
- 
-     public void func_71217_p()
+@@ -513,6 +525,7 @@
      {
-+        FMLCommonHandler.instance().rescheduleTicks(Side.SERVER);
          long i = System.nanoTime();
          AxisAlignedBB.func_72332_a().func_72298_a();
 +        FMLCommonHandler.instance().onPreServerTick();
          ++this.field_71315_w;
  
          if (this.field_71295_T)
-@@ -566,6 +581,7 @@
+@@ -566,6 +579,7 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -68,7 +64,7 @@
      }
  
      public void func_71190_q()
-@@ -593,6 +609,7 @@
+@@ -593,6 +607,7 @@
                  }
  
                  this.field_71304_b.func_76320_a("tick");
@@ -76,7 +72,7 @@
                  CrashReport crashreport;
  
                  try
-@@ -617,6 +634,7 @@
+@@ -617,6 +632,7 @@
                      throw new ReportedException(crashreport);
                  }
  
@@ -84,7 +80,7 @@
                  this.field_71304_b.func_76319_b();
                  this.field_71304_b.func_76320_a("tracker");
                  worldserver.func_73039_n().func_72788_a();
-@@ -695,7 +713,7 @@
+@@ -695,7 +711,7 @@
  
      public String getServerModName()
      {

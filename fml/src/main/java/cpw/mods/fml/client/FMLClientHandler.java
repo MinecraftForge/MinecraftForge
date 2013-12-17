@@ -40,7 +40,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.DuplicateModsFoundException;
@@ -240,7 +239,6 @@ public class FMLClientHandler implements IFMLSidedHandler
 //        client.func_110436_a();
         RenderingRegistry.instance().loadEntityRenderers((Map<Class<? extends Entity>, Render>)RenderManager.field_78727_a.field_78729_o);
         loading = false;
-        KeyBindingRegistry.instance().uploadKeyBindingsToGame(client.field_71474_y);
     }
 
     @SuppressWarnings("unused")

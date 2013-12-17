@@ -12,9 +12,13 @@
 
 package cpw.mods.fml.client.registry;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.tileentity.TileEntity;
 
 public class ClientRegistry
@@ -38,5 +42,10 @@ public class ClientRegistry
     {
         TileEntityRendererDispatcher.field_147556_a.field_147559_m.put(tileEntityClass, specialRenderer);
         specialRenderer.func_147497_a(TileEntityRendererDispatcher.field_147556_a);
+    }
+
+    public static void registerKeyBinding(KeyBinding key)
+    {
+        Minecraft.func_71410_x().field_71474_y.field_151456_ac = ArrayUtils.add(Minecraft.func_71410_x().field_71474_y.field_151456_ac, key);
     }
 }
