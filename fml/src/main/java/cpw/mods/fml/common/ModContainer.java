@@ -39,6 +39,9 @@ import cpw.mods.fml.common.versioning.VersionRange;
 
 public interface ModContainer
 {
+    public static enum Disableable {
+        YES, RESTART, NEVER, DEPENDENCIES;
+    }
     /**
      * The globally unique modid for this mod
      */
@@ -126,8 +129,6 @@ public interface ModContainer
 
     boolean isImmutable();
 
-    boolean isNetworkMod();
-
     String getDisplayVersion();
 
     VersionRange acceptableMinecraftVersionRange();
@@ -140,4 +141,6 @@ public interface ModContainer
     public Class<?> getCustomResourcePackClass();
 
     Map<String, String> getSharedModDescriptor();
+
+    Disableable canBeDisabled();
 }

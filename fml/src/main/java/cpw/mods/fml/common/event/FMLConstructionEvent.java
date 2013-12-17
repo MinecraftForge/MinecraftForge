@@ -5,12 +5,14 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
 
 package cpw.mods.fml.common.event;
+
+import com.google.common.collect.ListMultimap;
 
 import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.ModClassLoader;
@@ -20,11 +22,14 @@ public class FMLConstructionEvent extends FMLStateEvent
 {
     private ModClassLoader modClassLoader;
     private ASMDataTable asmData;
+    private ListMultimap<String,String> reverseDependencies;
 
+    @SuppressWarnings("unchecked")
     public FMLConstructionEvent(Object... eventData)
     {
         this.modClassLoader = (ModClassLoader)eventData[0];
         this.asmData = (ASMDataTable) eventData[1];
+        this.reverseDependencies = (ListMultimap<String, String>) eventData[2];
     }
 
     public ModClassLoader getModClassLoader()
@@ -41,5 +46,10 @@ public class FMLConstructionEvent extends FMLStateEvent
     public ASMDataTable getASMHarvestedData()
     {
         return asmData;
+    }
+
+    public ListMultimap<String, String> getReverseDependencies()
+    {
+        return reverseDependencies;
     }
 }

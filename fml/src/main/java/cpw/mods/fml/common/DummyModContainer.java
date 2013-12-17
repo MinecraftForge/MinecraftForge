@@ -142,12 +142,6 @@ public class DummyModContainer implements ModContainer
     }
 
     @Override
-    public boolean isNetworkMod()
-    {
-        return false;
-    }
-
-    @Override
     public String getDisplayVersion()
     {
         return md.version;
@@ -185,5 +179,11 @@ public class DummyModContainer implements ModContainer
     public Map<String, String> getSharedModDescriptor()
     {
         return null;
+    }
+
+    @Override
+    public Disableable canBeDisabled()
+    {
+        return Disableable.NEVER;
     }
 }

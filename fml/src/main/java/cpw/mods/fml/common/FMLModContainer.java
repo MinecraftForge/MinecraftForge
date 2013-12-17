@@ -54,6 +54,7 @@ import cpw.mods.fml.common.event.FMLEvent;
 import cpw.mods.fml.common.event.FMLFingerprintViolationEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
+import cpw.mods.fml.common.event.FMLModDisabledEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
@@ -80,7 +81,6 @@ public class FMLModContainer implements ModContainer
     private EventBus eventBus;
     private LoadController controller;
     private DefaultArtifactVersion processedVersion;
-    private boolean isNetworkMod;
 
     private String annotationDependencies;
     private VersionRange minecraftAccepted;
@@ -89,6 +89,7 @@ public class FMLModContainer implements ModContainer
     private Certificate certificate;
     private String modLanguage;
     private ILanguageAdapter languageAdapter;
+    private Disableable disableability;
     private ListMultimap<Class<? extends FMLEvent>,Method> eventMethods;
     private Map<String, String> customModProperties;
     private ModCandidate candidate;
@@ -103,6 +104,7 @@ public class FMLModContainer implements ModContainer
         .add(FMLServerStoppedEvent.class)
         .add(IMCEvent.class)
         .add(FMLFingerprintViolationEvent.class)
+        .add(FMLModDisabledEvent.class)
         .build();
 
     public FMLModContainer(String className, ModCandidate container, Map<String,Object> modDescriptor)
@@ -491,7 +493,16 @@ public class FMLModContainer implements ModContainer
                 customModProperties = EMPTY_PROPERTIES;
             }
 
-
+            Boolean hasDisableableFlag = (Boolean) descriptor.get("canBeDeactivated");
+            boolean hasReverseDepends = !event.getReverseDependencies().get(getModId()).isEmpty();
+            if (hasDisableableFlag != null && hasDisableableFlag)
+            {
+                disableability = hasReverseDepends ? Disableable.DEPENDENCIES : Disableable.YES;
+            }
+            else
+            {
+                disableability = hasReverseDepends ? Disableable.DEPENDENCIES : Disableable.RESTART;
+            }
             Method factoryMethod = gatherAnnotations(clazz);
             modInstance = getLanguageAdapter().getNewInstance(this,clazz, modClassLoader, factoryMethod);
             NetworkRegistry.INSTANCE.register(this, clazz, (String)(descriptor.containsKey("acceptableRemoteVersions") ? descriptor.get("acceptableRemoteVersions") : null), event.getASMHarvestedData());
@@ -542,12 +553,6 @@ public class FMLModContainer implements ModContainer
     public boolean isImmutable()
     {
         return false;
-    }
-
-    @Override
-    public boolean isNetworkMod()
-    {
-        return isNetworkMod;
     }
 
     @Override
@@ -604,5 +609,11 @@ public class FMLModContainer implements ModContainer
         descriptor.put("authors", modMetadata.getAuthorList());
         descriptor.put("description", modMetadata.description);
         return descriptor;
+    }
+
+    @Override
+    public Disableable canBeDisabled()
+    {
+        return disableability;
     }
 }

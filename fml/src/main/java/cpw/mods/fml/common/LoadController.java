@@ -14,6 +14,7 @@ package cpw.mods.fml.common;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -28,6 +29,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -35,6 +37,7 @@ import com.google.common.eventbus.Subscribe;
 import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.event.FMLEvent;
 import cpw.mods.fml.common.event.FMLLoadEvent;
+import cpw.mods.fml.common.event.FMLModDisabledEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLStateEvent;
 import cpw.mods.fml.common.functions.ArtifactVersionNameFunction;
@@ -63,6 +66,20 @@ public class LoadController
 
     }
 
+    void disableMod(ModContainer mod)
+    {
+        HashMap<String, EventBus> temporary = Maps.newHashMap(eventChannels);
+        String modId = mod.getModId();
+        EventBus bus = temporary.remove(modId);
+        bus.post(new FMLModDisabledEvent());
+        if (errors.get(modId).isEmpty())
+        {
+            eventChannels = ImmutableMap.copyOf(temporary);
+            modStates.put(modId, ModState.DISABLED);
+            modObjectList.remove(mod);
+            activeModList.remove(mod);
+        }
+    }
     @Subscribe
     public void buildModList(FMLLoadEvent event)
     {
