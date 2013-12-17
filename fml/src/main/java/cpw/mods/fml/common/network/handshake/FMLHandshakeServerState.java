@@ -58,6 +58,7 @@ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
                 ctx.writeAndFlush(new FMLHandshakeMessage.ModIdData(GameData.buildItemDataList()));
             }
             ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck());
+            NetworkRegistry.INSTANCE.fireNetworkHandshake(ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get(), Side.SERVER);
             return COMPLETE;
         }
     },

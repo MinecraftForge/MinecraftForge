@@ -20,6 +20,7 @@ import io.netty.util.AttributeKey;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import org.apache.logging.log4j.Level;
 
@@ -34,6 +35,7 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.discovery.ASMDataTable;
+import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.common.network.internal.NetworkModHolder;
 import cpw.mods.fml.relauncher.Side;
@@ -422,5 +424,14 @@ public enum NetworkRegistry
     public Set<String> channelNamesFor(Side side)
     {
         return channels.get(side).keySet();
+    }
+
+    public void fireNetworkHandshake(NetworkDispatcher networkDispatcher, Side origin)
+    {
+        NetworkHandshakeEstablished handshake = new NetworkHandshakeEstablished(networkDispatcher, origin);
+        for (Entry<String, FMLEmbeddedChannel> channel : channels.get(origin).entrySet())
+        {
+            channel.getValue().pipeline().fireUserEventTriggered(handshake);
+        }
     }
 }
