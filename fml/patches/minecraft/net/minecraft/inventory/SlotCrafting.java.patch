@@ -3,7 +3,7 @@
 @@ -1,5 +1,6 @@
  package net.minecraft.inventory;
  
-+import cpw.mods.fml.common.registry.GameRegistry;
++import cpw.mods.fml.common.FMLCommonHandler;
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.init.Blocks;
  import net.minecraft.init.Items;
@@ -11,7 +11,7 @@
  
      public void func_82870_a(EntityPlayer p_82870_1_, ItemStack p_82870_2_)
      {
-+        GameRegistry.onItemCrafted(p_82870_1_, p_82870_2_, field_75239_a);
++        FMLCommonHandler.instance().firePlayerCraftingEvent(p_82870_1_, p_82870_2_, field_75239_a);
          this.func_75208_c(p_82870_2_);
  
          for (int i = 0; i < this.field_75239_a.func_70302_i_(); ++i)

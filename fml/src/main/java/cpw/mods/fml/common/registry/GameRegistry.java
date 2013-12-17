@@ -17,12 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -33,14 +29,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 
+import org.apache.logging.log4j.Level;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IFuelHandler;
-import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
@@ -51,8 +47,6 @@ public class GameRegistry
 {
     private static Set<IWorldGenerator> worldGenerators = Sets.newHashSet();
     private static List<IFuelHandler> fuelHandlers = Lists.newArrayList();
-    private static List<ICraftingHandler> craftingHandlers = Lists.newArrayList();
-    private static List<IPickupNotifier> pickupHandlers = Lists.newArrayList();
 
     /**
      * Register a world generator - something that inserts new block types into the world
@@ -240,40 +234,6 @@ public class GameRegistry
             fuelValue = Math.max(fuelValue, handler.getBurnTime(itemStack));
         }
         return fuelValue;
-    }
-
-    public static void registerCraftingHandler(ICraftingHandler handler)
-    {
-        craftingHandlers.add(handler);
-    }
-
-    public static void onItemCrafted(EntityPlayer player, ItemStack item, IInventory craftMatrix)
-    {
-        for (ICraftingHandler handler : craftingHandlers)
-        {
-            handler.onCrafting(player, item, craftMatrix);
-        }
-    }
-
-    public static void onItemSmelted(EntityPlayer player, ItemStack item)
-    {
-        for (ICraftingHandler handler : craftingHandlers)
-        {
-            handler.onSmelting(player, item);
-        }
-    }
-
-    public static void registerPickupHandler(IPickupNotifier handler)
-    {
-        pickupHandlers.add(handler);
-    }
-
-    public static void onPickupNotification(EntityPlayer player, EntityItem item)
-    {
-        for (IPickupNotifier notify : pickupHandlers)
-        {
-            notify.notifyPickup(item, player);
-        }
     }
 
     /**
