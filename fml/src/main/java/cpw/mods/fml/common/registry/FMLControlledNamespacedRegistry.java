@@ -62,6 +62,14 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
             oldMap = newMap = null;
         }
 
+        void revertSwap()
+        {
+            field_148749_a = oldMap;
+            field_148748_b = oldIndex;
+            oldIndex = newIndex = null;
+            oldMap = newMap = null;
+        }
+
         void putNew(int id, Object item)
         {
             field_148749_a = newMap;
@@ -75,6 +83,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         {
             return Ints.asList(field_148749_a.keys());
         }
+
     }
 
     private final Class<I> superType;
@@ -178,6 +187,12 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         idMap().completeSwap();
         namedIds.clear();
         namedIds.putAll(transactionalNamedIds);
+        transactionalNamedIds = null;
+    }
+
+    void revertSwap()
+    {
+        idMap().revertSwap();
         transactionalNamedIds = null;
     }
 

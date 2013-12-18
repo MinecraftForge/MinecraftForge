@@ -74,7 +74,12 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
         public FMLHandshakeClientState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
         {
             FMLHandshakeMessage.ModIdData modIds = (FMLHandshakeMessage.ModIdData)msg;
-            GameData.injectWorldIDMap(modIds.dataList());
+            if (!GameData.injectWorldIDMap(modIds.dataList()))
+            {
+                NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+                dispatcher.rejectHandshake("Fatally missing blocks and items");
+                return ERROR;
+            }
             ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck());
             return COMPLETE;
         }
