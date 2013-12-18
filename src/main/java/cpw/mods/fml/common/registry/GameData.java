@@ -27,8 +27,10 @@ import net.minecraft.item.ItemStack;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.base.Joiner.MapJoiner;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
 import com.google.common.io.Files;
@@ -36,6 +38,7 @@ import com.google.common.io.Files;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent.MissingMapping;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
@@ -211,10 +214,10 @@ public class GameData {
         }
     }
 
-    public static void injectWorldIDMap(Map<String, Integer> dataList)
+    public static boolean injectWorldIDMap(Map<String, Integer> dataList)
     {
         Map<String, Integer[]> remaps = Maps.newHashMap();
-        Map<String,String> missing = Maps.newHashMap();
+        ArrayListMultimap<String,String> missing = ArrayListMultimap.create();
         blockRegistry.beginIdSwap();
         itemRegistry.beginIdSwap();
         for (Entry<String, Integer> entry : dataList.entrySet())
@@ -254,17 +257,45 @@ public class GameData {
                 itemRegistry.reassignMapping(itemName, newId);
             }
         }
+        boolean successfullyLoaded = Loader.instance().fireMissingMappingEvent(missing);
+        if (!successfullyLoaded)
+        {
+            blockRegistry.revertSwap();
+            itemRegistry.revertSwap();
+            return false;
+        }
 
         blockRegistry.completeIdSwap();
         itemRegistry.completeIdSwap();
         Loader.instance().fireRemapEvent(remaps);
+        return true;
     }
-    public static void processIdRematches(List<MissingMapping> remaps)
+    public static boolean processIdRematches(List<MissingMapping> remaps)
     {
+        List<String> ignored = Lists.newArrayList();
+        List<String> warned = Lists.newArrayList();
+
         for (MissingMapping remap : remaps)
         {
-            // what to do here
-            remap.getRemapTarget();
+            FMLMissingMappingsEvent.Action action = remap.getAction();
+            if (action == FMLMissingMappingsEvent.Action.IGNORE)
+            {
+                ignored.add(remap.name);
+            }
+            else
+            {
+                warned.add(remap.name);
+            }
         }
+        if (!warned.isEmpty())
+        {
+            FMLLog.severe("This world contains block and item mappings that may cause world breakage");
+            return false;
+        }
+        else if (!ignored.isEmpty())
+        {
+            FMLLog.fine("There were %d missing mappings that have been ignored", ignored.size());
+        }
+        return true;
     }
 }

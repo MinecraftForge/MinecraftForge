@@ -17,26 +17,38 @@ import cpw.mods.fml.common.ModContainer;
  */
 public class FMLMissingMappingsEvent extends FMLEvent {
     public static enum Type { BLOCK, ITEM }
+
+    /**
+     * Actions you can take with this missing mapping.
+     * <ul>
+     * <li>{@link #IGNORE} means this missing mapping will be ignored.
+     * <li>{@link #WARN} means this missing mapping will generate a warning.
+     * </ul>
+     * @author cpw
+     *
+     */
+    public static enum Action { IGNORE, WARN }
     public static class MissingMapping {
         public final Type type;
         public final String name;
-        private String remapTarget;
+        private Action action;
         private List<MissingMapping> remaps;
         public MissingMapping(String name, List<MissingMapping> remaps)
         {
             this.type = name.charAt(0) == '\u0001' ? Type.BLOCK : Type.ITEM;
             this.name = name;
             this.remaps = remaps;
+            this.action = Action.WARN;
         }
-        public void remapTo(String target)
+        public void setAction(Action target)
         {
-            this.remapTarget = target;
+            this.action = target;
             remaps.add(this);
         }
 
-        public String getRemapTarget()
+        public Action getAction()
         {
-            return this.remapTarget;
+            return this.action;
         }
     }
     private ListMultimap<String,MissingMapping> missing;

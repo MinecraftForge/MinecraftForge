@@ -842,7 +842,7 @@ public class Loader
         return true;
     }
 
-    public void fireMissingMappingEvent(ArrayListMultimap<String,String> missing)
+    public boolean fireMissingMappingEvent(ArrayListMultimap<String,String> missing)
     {
         if (!missing.isEmpty())
         {
@@ -861,8 +861,9 @@ public class Loader
                 FMLLog.severe("There are unidentified mappings in this world - it cannot be loaded");
                 throw new RuntimeException("Mod IDs are missing");
             }
-            GameData.processIdRematches(remaps);
+            return GameData.processIdRematches(remaps);
         }
+        return true;
     }
     public void fireRemapEvent(Map<String, Integer[]> remaps)
     {
