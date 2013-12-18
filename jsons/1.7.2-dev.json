@@ -6,7 +6,7 @@
   "minecraftArguments": "--version FML_DEV --tweakClass cpw.mods.fml.common.launcher.FMLTweaker",
   "libraries": [
     {
-      "name": "net.minecraft:launchwrapper:1.8",
+      "name": "net.minecraft:launchwrapper:1.9",
       "comment" : "Important for FML, we add this"
     },
     {

@@ -22,7 +22,7 @@
       "url": "http://files.minecraftforge.net/maven/"
     },
     {
-      "name": "net.minecraft:launchwrapper:1.8",
+      "name": "net.minecraft:launchwrapper:1.9",
       "serverreq":true
     },
     {
