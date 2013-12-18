@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * Reference implementation of {@link IFluidContainerItem}. Use/extend this or implement your own.
- * 
+ *
  * @author King Lemming
- * 
+ *
  */
 public class ItemFluidContainer extends Item implements IFluidContainerItem
 {
@@ -124,7 +124,7 @@ public class ItemFluidContainer extends Item implements IFluidContainerItem
     @Override
     public FluidStack drain(ItemStack container, int maxDrain, boolean doDrain)
     {
-        if (container.stackTagCompound == null || !container.stackTagCompound.hasKey("Fluid"))
+        if (container.stackTagCompound == null || !container.stackTagCompound.hasKey("Fluid") || maxDrain == 0)
         {
             return null;
         }
@@ -135,10 +135,10 @@ public class ItemFluidContainer extends Item implements IFluidContainerItem
             return null;
         }
 
-        stack.amount = Math.min(stack.amount, maxDrain);
+        int drained = Math.min(stack.amount, maxDrain);
         if (doDrain)
         {
-            if (maxDrain >= capacity)
+            if (maxDrain >= stack.amount)
             {
                 container.stackTagCompound.removeTag("Fluid");
 
@@ -153,6 +153,7 @@ public class ItemFluidContainer extends Item implements IFluidContainerItem
             fluidTag.setInteger("Amount", fluidTag.getInteger("Amount") - maxDrain);
             container.stackTagCompound.setTag("Fluid", fluidTag);
         }
+        stack.amount = drained;
         return stack;
     }
 }

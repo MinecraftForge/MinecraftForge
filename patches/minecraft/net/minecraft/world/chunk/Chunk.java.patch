@@ -145,7 +145,7 @@
 -                    this.worldObj.removeBlockTileEntity(j2, par2, k2);
 +                else if (Block.blocksList[l1] != null && Block.blocksList[l1].hasTileEntity(i2))
 +                {
-+                    TileEntity te = worldObj.getBlockTileEntity(j2, par2, k2);
++                    TileEntity te = getChunkBlockTileEntityUnsafe(j2 & 0xf, par2, k2 & 0xf);
 +                    if (te != null && te.shouldRefresh(l1, par4, i2, par5, worldObj, j2, par2, k2))
 +                    {
 +                        this.worldObj.removeBlockTileEntity(j2, par2, k2);
@@ -361,7 +361,7 @@
          }
      }
  
-@@ -1468,4 +1585,18 @@
+@@ -1468,4 +1585,44 @@
              }
          }
      }
@@ -378,5 +378,31 @@
 +                chunkTileEntityMap.remove(position);
 +            }
 +        }
++    }
++
++    /** FORGE: backport TE false creation fix */
++    /**
++     *
++     * Retrieves the tile entity, WITHOUT creating it. Good for checking if it
++     * exists.
++     *
++     * @param x
++     * @param y
++     * @param z
++     * @return The tile entity at the specified location, if it exists and is
++     *         valid.
++     */
++    public TileEntity getChunkBlockTileEntityUnsafe(int x, int y, int z)
++    {
++        ChunkPosition chunkposition = new ChunkPosition(x, y, z);
++        TileEntity tileentity = (TileEntity) this.chunkTileEntityMap.get(chunkposition);
++
++        if (tileentity != null && tileentity.isInvalid())
++        {
++            chunkTileEntityMap.remove(chunkposition);
++            tileentity = null;
++        }
++
++        return tileentity;
 +    }
  }

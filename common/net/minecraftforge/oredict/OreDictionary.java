@@ -124,7 +124,11 @@ public class OreDictionary
             new ItemStack(Block.stoneBrick),
             new ItemStack(Block.stoneSingleSlab),
             new ItemStack(Block.stairsCobblestone),
-            new ItemStack(Block.cobblestoneWall)
+            new ItemStack(Block.cobblestoneWall),
+            new ItemStack(Block.stairsWoodOak),
+            new ItemStack(Block.stairsWoodBirch),
+            new ItemStack(Block.stairsWoodJungle),
+            new ItemStack(Block.stairsWoodSpruce)
         };
 
         List recipes = CraftingManager.getInstance().getRecipeList();
