@@ -14,6 +14,7 @@ package cpw.mods.fml.common.registry;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.logging.log4j.Level;
@@ -35,6 +36,7 @@ import com.google.common.io.Files;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.event.FMLMissingMappingsEvent.MissingMapping;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
 public class GameData {
@@ -212,6 +214,7 @@ public class GameData {
     public static void injectWorldIDMap(Map<String, Integer> dataList)
     {
         Map<String, Integer[]> remaps = Maps.newHashMap();
+        Map<String,String> missing = Maps.newHashMap();
         blockRegistry.beginIdSwap();
         itemRegistry.beginIdSwap();
         for (Entry<String, Integer> entry : dataList.entrySet())
@@ -231,7 +234,12 @@ public class GameData {
                 currId = itemRegistry.getId(itemName);
             }
 
-            if (currId != newId)
+            if (currId == -1)
+            {
+                FMLLog.info("Found a missing id from the world %s", itemName);
+                missing.put(itemName.substring(0, itemName.indexOf(':')), itemName);
+            }
+            else if (currId != newId)
             {
                 FMLLog.info("Found %s id mismatch %s : %d %d", isBlock ? "block" : "item", itemName, currId, newId);
                 remaps.put(itemName, new Integer[] { currId, newId });
@@ -250,5 +258,13 @@ public class GameData {
         blockRegistry.completeIdSwap();
         itemRegistry.completeIdSwap();
         Loader.instance().fireRemapEvent(remaps);
+    }
+    public static void processIdRematches(List<MissingMapping> remaps)
+    {
+        for (MissingMapping remap : remaps)
+        {
+            // what to do here
+            remap.getRemapTarget();
+        }
     }
 }

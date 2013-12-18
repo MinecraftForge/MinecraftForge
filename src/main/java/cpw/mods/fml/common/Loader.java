@@ -53,6 +53,8 @@ import cpw.mods.fml.common.ModContainer.Disableable;
 import cpw.mods.fml.common.discovery.ModDiscoverer;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLLoadEvent;
+import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
+import cpw.mods.fml.common.event.FMLMissingMappingsEvent.MissingMapping;
 import cpw.mods.fml.common.event.FMLModIdMappingEvent;
 import cpw.mods.fml.common.functions.ArtifactVersionNameFunction;
 import cpw.mods.fml.common.functions.ModIdFunction;
@@ -840,6 +842,28 @@ public class Loader
         return true;
     }
 
+    public void fireMissingMappingEvent(ArrayListMultimap<String,String> missing)
+    {
+        if (!missing.isEmpty())
+        {
+            FMLLog.fine("There are %d mappings missing - attempting a mod remap", missing.size());
+            ArrayListMultimap<String,MissingMapping> missingMappings = ArrayListMultimap.create();
+            List<MissingMapping> remaps = Lists.newArrayList();
+            for (Map.Entry<String, String> mapping : missing.entries())
+            {
+                MissingMapping m = new MissingMapping(mapping.getValue(), remaps);
+                missingMappings.put(mapping.getKey(), m);
+            }
+            FMLMissingMappingsEvent missingEvent = new FMLMissingMappingsEvent(missingMappings);
+            modController.propogateStateMessage(missingEvent);
+            if (!missingMappings.isEmpty())
+            {
+                FMLLog.severe("There are unidentified mappings in this world - it cannot be loaded");
+                throw new RuntimeException("Mod IDs are missing");
+            }
+            GameData.processIdRematches(remaps);
+        }
+    }
     public void fireRemapEvent(Map<String, Integer[]> remaps)
     {
         if (remaps.isEmpty())
