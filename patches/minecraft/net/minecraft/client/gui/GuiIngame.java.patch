@@ -8,14 +8,14 @@
  import cpw.mods.fml.relauncher.SideOnly;
  import java.awt.Color;
 @@ -312,6 +313,11 @@
-             this.func_73731_b(fontrenderer, s2, k - fontrenderer.func_78256_a(s2) - 2, 2, 14737632);
-             s2 = "Allocated memory: " + i4 * 100L / l3 + "% (" + i4 / 1024L / 1024L + "MB)";
-             this.func_73731_b(fontrenderer, s2, k - fontrenderer.func_78256_a(s2) - 2, 12, 14737632);
+             this.func_73731_b(fontrenderer, s, k - fontrenderer.func_78256_a(s) - 2, 2, 14737632);
+             s = "Allocated memory: " + k5 * 100L / i5 + "% (" + k5 / 1024L / 1024L + "MB)";
+             this.func_73731_b(fontrenderer, s, k - fontrenderer.func_78256_a(s) - 2, 12, 14737632);
 +            int offset = 22;
 +            for (String brd : FMLCommonHandler.instance().getBrandings(false))
 +            {
 +                this.func_73731_b(fontrenderer, brd, k - fontrenderer.func_78256_a(brd) - 2, offset+=10, 14737632);
 +            }
-             k3 = MathHelper.func_76128_c(this.field_73839_d.field_71439_g.field_70165_t);
-             j3 = MathHelper.func_76128_c(this.field_73839_d.field_71439_g.field_70163_u);
-             int l4 = MathHelper.func_76128_c(this.field_73839_d.field_71439_g.field_70161_v);
+             j3 = MathHelper.func_76128_c(this.field_73839_d.field_71439_g.field_70165_t);
+             k3 = MathHelper.func_76128_c(this.field_73839_d.field_71439_g.field_70163_u);
+             int l3 = MathHelper.func_76128_c(this.field_73839_d.field_71439_g.field_70161_v);

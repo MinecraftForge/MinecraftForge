@@ -9,18 +9,15 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import io.netty.buffer.ByteBuf;
-@@ -381,7 +383,10 @@
+@@ -385,6 +387,7 @@
          {
              if (this.func_71197_b())
              {
 +                FMLCommonHandler.instance().handleServerStarted();
-+
                  long i = func_130071_aq();
-+
-                 long j = 0L;
+                 long l = 0L;
                  this.field_147147_p.func_151315_a(new ChatComponentText(this.field_71286_C));
-                 this.field_147147_p.func_151321_a(new ServerStatusResponse.MinecraftProtocolVersionIdentifier("1.7.2", 4));
-@@ -425,6 +430,7 @@
+@@ -429,6 +432,7 @@
                      Thread.sleep(1L);
                      this.field_71296_Q = true;
                  }
@@ -28,7 +25,7 @@
              }
              else
              {
-@@ -462,6 +468,10 @@
+@@ -466,6 +470,10 @@
          {
              try
              {
@@ -39,7 +36,7 @@
                  this.func_71260_j();
                  this.field_71316_v = true;
              }
-@@ -471,6 +481,8 @@
+@@ -475,6 +483,8 @@
              }
              finally
              {
@@ -48,7 +45,7 @@
                  this.func_71240_o();
              }
          }
-@@ -513,6 +525,7 @@
+@@ -517,6 +527,7 @@
      {
          long i = System.nanoTime();
          AxisAlignedBB.func_72332_a().func_72298_a();
@@ -56,7 +53,7 @@
          ++this.field_71315_w;
  
          if (this.field_71295_T)
-@@ -566,6 +579,7 @@
+@@ -570,6 +581,7 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -64,7 +61,7 @@
      }
  
      public void func_71190_q()
-@@ -593,6 +607,7 @@
+@@ -597,6 +609,7 @@
                  }
  
                  this.field_71304_b.func_76320_a("tick");
@@ -72,7 +69,7 @@
                  CrashReport crashreport;
  
                  try
-@@ -617,6 +632,7 @@
+@@ -621,6 +634,7 @@
                      throw new ReportedException(crashreport);
                  }
  
@@ -80,7 +77,7 @@
                  this.field_71304_b.func_76319_b();
                  this.field_71304_b.func_76320_a("tracker");
                  worldserver.func_73039_n().func_72788_a();
-@@ -695,7 +711,7 @@
+@@ -699,7 +713,7 @@
  
      public String getServerModName()
      {

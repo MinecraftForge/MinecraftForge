@@ -12,7 +12,7 @@
          MerchantRecipeList merchantrecipelist;
          merchantrecipelist = new MerchantRecipeList();
 +        VillagerRegistry.manageVillagerTrades(merchantrecipelist, this, this.func_70946_n(), this.field_70146_Z);
-         int j;
+         int k;
          label50:
  
 @@ -626,7 +628,7 @@
