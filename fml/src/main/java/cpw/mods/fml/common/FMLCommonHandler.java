@@ -324,7 +324,7 @@ public class FMLCommonHandler
 
     public void onPlayerPostTick(EntityPlayer player)
     {
-        bus().post(new TickEvent.PlayerTickEvent(Phase.START, player));
+        bus().post(new TickEvent.PlayerTickEvent(Phase.END, player));
     }
 
     public void registerCrashCallable(ICrashCallable callable)
