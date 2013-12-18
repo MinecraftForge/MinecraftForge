@@ -31,7 +31,7 @@
          this.field_71340_o.func_73667_a("max-build-height", Integer.valueOf(this.func_71207_Z()));
 +        if (!FMLCommonHandler.instance().handleServerAboutToStart(this)) { return false; }
          field_155771_h.info("Preparing level \"" + this.func_71270_I() + "\"");
-         this.func_71247_a(this.func_71270_I(), this.func_71270_I(), k, worldtype, s3);
+         this.func_71247_a(this.func_71270_I(), this.func_71270_I(), k, worldtype, s2);
          long i1 = System.nanoTime() - j;
 @@ -245,7 +251,7 @@
              this.field_71339_n.func_72602_a();

@@ -28,15 +28,7 @@
          this.field_71446_o = new TextureManager(this.field_110451_am);
          this.field_110451_am.func_110542_a(this.field_71446_o);
          this.field_147127_av = new SoundHandler(this.field_110451_am, this.field_71474_y);
-@@ -457,6 +462,7 @@
-         this.func_71357_I();
-         this.field_71466_p = new FontRenderer(this.field_71474_y, new ResourceLocation("textures/font/ascii.png"), this.field_71446_o, false);
- 
-+
-         if (this.field_71474_y.field_74363_ab != null)
-         {
-             this.field_71466_p.func_78264_a(this.field_135017_as.func_135042_a() || this.field_71474_y.field_151455_aw);
-@@ -508,6 +514,7 @@
+@@ -508,6 +513,7 @@
          this.field_71446_o.func_130088_a(TextureMap.field_110576_c, new TextureMap(1, "textures/items"));
          GL11.glViewport(0, 0, this.field_71443_c, this.field_71440_d);
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
@@ -44,7 +36,7 @@
          this.func_71361_d("Post startup");
          this.field_71456_v = new GuiIngame(this);
  
-@@ -527,6 +534,7 @@
+@@ -527,6 +533,7 @@
              this.func_71352_k();
          }
  
@@ -52,7 +44,7 @@
          Display.setVSyncEnabled(this.field_71474_y.field_74352_v);
      }
  
-@@ -915,9 +923,11 @@
+@@ -916,9 +923,11 @@
  
          if (!this.field_71454_w)
          {
@@ -64,7 +56,7 @@
          }
  
          GL11.glFlush();
-@@ -1495,6 +1505,8 @@
+@@ -1496,6 +1505,8 @@
              --this.field_71467_ac;
          }
  
@@ -73,7 +65,7 @@
          this.field_71424_I.func_76320_a("gui");
  
          if (!this.field_71445_n)
-@@ -1645,6 +1657,7 @@
+@@ -1646,6 +1657,7 @@
                          this.field_71462_r.func_146274_d();
                      }
                  }
@@ -81,7 +73,7 @@
              }
  
              if (this.field_71429_W > 0)
-@@ -1786,6 +1799,7 @@
+@@ -1787,6 +1799,7 @@
                              }
                          }
                      }
@@ -89,7 +81,7 @@
                  }
              }
  
-@@ -1977,6 +1991,8 @@
+@@ -1978,6 +1991,8 @@
              this.field_71453_ak.func_74428_b();
          }
  

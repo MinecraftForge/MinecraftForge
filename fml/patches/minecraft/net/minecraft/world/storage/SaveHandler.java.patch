@@ -26,6 +26,24 @@
 +                FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
 +                return worldInfo;
              }
+             catch (Exception exception1)
+             {
++                if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
++                {
++                    throw (RuntimeException)exception1;
++                }
+                 exception1.printStackTrace();
+             }
+         }
+@@ -129,10 +139,16 @@
+             {
+                 nbttagcompound = CompressedStreamTools.func_74796_a(new FileInputStream(file1));
+                 nbttagcompound1 = nbttagcompound.func_74775_l("Data");
+-                return new WorldInfo(nbttagcompound1);
++                worldInfo = new WorldInfo(nbttagcompound1);
++                FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
++                return worldInfo;
+             }
              catch (Exception exception)
              {
 +                if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
@@ -35,18 +53,7 @@
                  exception.printStackTrace();
              }
          }
-@@ -129,7 +139,9 @@
-             {
-                 nbttagcompound = CompressedStreamTools.func_74796_a(new FileInputStream(file1));
-                 nbttagcompound1 = nbttagcompound.func_74775_l("Data");
--                return new WorldInfo(nbttagcompound1);
-+                worldInfo = new WorldInfo(nbttagcompound1);
-+                FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
-+                return worldInfo;
-             }
-             catch (Exception exception1)
-             {
-@@ -146,6 +158,8 @@
+@@ -146,6 +162,8 @@
          NBTTagCompound nbttagcompound2 = new NBTTagCompound();
          nbttagcompound2.func_74782_a("Data", nbttagcompound1);
  
@@ -55,7 +62,7 @@
          try
          {
              File file1 = new File(this.field_75770_b, "level.dat_new");
-@@ -184,6 +198,8 @@
+@@ -184,6 +202,8 @@
          NBTTagCompound nbttagcompound1 = new NBTTagCompound();
          nbttagcompound1.func_74782_a("Data", nbttagcompound);
  
