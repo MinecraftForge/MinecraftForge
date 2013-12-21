@@ -7,20 +7,18 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.util.Calendar;
-@@ -60,7 +61,15 @@
+@@ -52,7 +53,14 @@
  
              if (block instanceof BlockChest && i == 0)
              {
--                ((BlockChest)block).unifyAdjacentChests(par1TileEntityChest.getWorldObj(), par1TileEntityChest.xCoord, par1TileEntityChest.yCoord, par1TileEntityChest.zCoord);
 +                try
 +                {
-+                    ((BlockChest)block).unifyAdjacentChests(par1TileEntityChest.getWorldObj(), par1TileEntityChest.xCoord, par1TileEntityChest.yCoord, par1TileEntityChest.zCoord);
+                 ((BlockChest)block).func_149954_e(p_147502_1_.func_145831_w(), p_147502_1_.field_145851_c, p_147502_1_.field_145848_d, p_147502_1_.field_145849_e);
 +                }
 +                catch (ClassCastException e)
 +                {
-+                    FMLLog.severe("Attempted to render a chest at %d,  %d, %d that was not a chest",
-+                            par1TileEntityChest.xCoord, par1TileEntityChest.yCoord, par1TileEntityChest.zCoord);
++                    FMLLog.severe("Attempted to render a chest at %d,  %d, %d that was not a chest", p_147502_1_.field_145851_c, p_147502_1_.field_145848_d, p_147502_1_.field_145849_e);
 +                }
-                 i = par1TileEntityChest.getBlockMetadata();
+                 i = p_147502_1_.func_145832_p();
              }
  

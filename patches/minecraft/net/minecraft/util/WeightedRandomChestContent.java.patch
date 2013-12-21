@@ -1,16 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/util/WeightedRandomChestContent.java
 +++ ../src-work/minecraft/net/minecraft/util/WeightedRandomChestContent.java
-@@ -4,6 +4,9 @@
- import net.minecraft.inventory.IInventory;
+@@ -5,6 +5,7 @@
+ import net.minecraft.item.Item;
  import net.minecraft.item.ItemStack;
  import net.minecraft.tileentity.TileEntityDispenser;
 +import net.minecraftforge.common.ChestGenHooks;
-+import net.minecraftforge.common.DungeonHooks;
-+import cpw.mods.fml.common.FMLLog;
  
- public class WeightedRandomChestContent extends WeightedRandomItem
+ public class WeightedRandomChestContent extends WeightedRandom.Item
  {
-@@ -40,23 +43,12 @@
+@@ -38,23 +39,12 @@
          for (int j = 0; j < par3; ++j)
          {
              WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
@@ -37,20 +35,19 @@
          }
      }
  
-@@ -68,23 +60,12 @@
-         for (int j = 0; j < par3; ++j)
+@@ -64,22 +54,11 @@
          {
-             WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
--            int k = weightedrandomchestcontent.theMinimumChanceToGenerateItem + par0Random.nextInt(weightedrandomchestcontent.theMaximumChanceToGenerateItem - weightedrandomchestcontent.theMinimumChanceToGenerateItem + 1);
-+            ItemStack[] stacks = weightedrandomchestcontent.generateChestContent(par0Random, par2TileEntityDispenser);
- 
+             WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(p_150706_0_, p_150706_1_);
+             int k = weightedrandomchestcontent.theMinimumChanceToGenerateItem + p_150706_0_.nextInt(weightedrandomchestcontent.theMaximumChanceToGenerateItem - weightedrandomchestcontent.theMinimumChanceToGenerateItem + 1);
+-
 -            if (weightedrandomchestcontent.theItemId.getMaxStackSize() >= k)
++            ItemStack[] stacks = weightedrandomchestcontent.generateChestContent(p_150706_0_, p_150706_2_);
 +            for (ItemStack item : stacks)
              {
 -                ItemStack itemstack = weightedrandomchestcontent.theItemId.copy();
 -                itemstack.stackSize = k;
--                par2TileEntityDispenser.setInventorySlotContents(par0Random.nextInt(par2TileEntityDispenser.getSizeInventory()), itemstack);
-+                par2TileEntityDispenser.setInventorySlotContents(par0Random.nextInt(par2TileEntityDispenser.getSizeInventory()), item);
+-                p_150706_2_.setInventorySlotContents(p_150706_0_.nextInt(p_150706_2_.getSizeInventory()), itemstack);
++                p_150706_2_.setInventorySlotContents(p_150706_0_.nextInt(p_150706_2_.getSizeInventory()), item);
              }
 -            else
 -            {
@@ -58,13 +55,13 @@
 -                {
 -                    ItemStack itemstack1 = weightedrandomchestcontent.theItemId.copy();
 -                    itemstack1.stackSize = 1;
--                    par2TileEntityDispenser.setInventorySlotContents(par0Random.nextInt(par2TileEntityDispenser.getSizeInventory()), itemstack1);
+-                    p_150706_2_.setInventorySlotContents(p_150706_0_.nextInt(p_150706_2_.getSizeInventory()), itemstack1);
 -                }
 -            }
          }
      }
  
-@@ -109,4 +90,18 @@
+@@ -104,4 +83,17 @@
  
          return aweightedrandomchestcontent1;
      }
@@ -81,5 +78,4 @@
 +    {
 +        return ChestGenHooks.generateStacks(random, theItemId, theMinimumChanceToGenerateItem, theMaximumChanceToGenerateItem);
 +    }
-+
  }

@@ -1,9 +1,11 @@
 package net.minecraftforge.event.terraingen;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.eventhandler.Cancelable;
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.event.*;
@@ -30,19 +32,6 @@ public class BiomeEvent extends Event
         }
     }
 
-    public static class BlockReplacement extends BiomeEvent
-    {
-        public final int original;
-        public int replacement;
-
-        public BlockReplacement(BiomeGenBase biome, int original, int replacement)
-        {
-            super(biome);
-            this.original = original;
-            this.replacement = replacement;
-        }
-    }
-
     public static class BiomeColor extends BiomeEvent
     {
         public final int originalColor;
@@ -60,14 +49,20 @@ public class BiomeEvent extends Event
      * This event is fired when the village generator attempts to choose a block ID
      * based on the village's biome.
      * 
-     * You can set the result to DENY to prevent the default block ID selection.
+     * You can cancel the event to override default values
      */
     @HasResult
-    public static class GetVillageBlockID extends BlockReplacement
+    public static class GetVillageBlockID extends BiomeEvent
     {
-        public GetVillageBlockID(BiomeGenBase biome, int original, int replacement)
+        public final Block original;
+        public final int type;
+        public Block replacement;
+
+        public GetVillageBlockID(BiomeGenBase biome, Block original, int type)
         {
-            super(biome, original, replacement);
+            super(biome);
+            this.original = original;
+            this.type = type;
         }
     }
     
@@ -78,11 +73,17 @@ public class BiomeEvent extends Event
      * You can set the result to DENY to prevent the default block metadata selection.
      */
     @HasResult
-    public static class GetVillageBlockMeta extends BlockReplacement
+    public static class GetVillageBlockMeta extends BiomeEvent
     {
-        public GetVillageBlockMeta(BiomeGenBase biome, int original, int replacement)
+        public final Block original;
+        public final int type;
+        public int replacement;
+
+        public GetVillageBlockMeta(BiomeGenBase biome, Block original, int type)
         {
-            super(biome, original, replacement);
+            super(biome);
+            this.original = original;
+            this.type = type;
         }
     }
     

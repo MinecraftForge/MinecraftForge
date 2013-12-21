@@ -1,82 +1,71 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockTallGrass.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockTallGrass.java
-@@ -2,6 +2,8 @@
+@@ -2,6 +2,7 @@
  
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
-+
 +import java.util.ArrayList;
  import java.util.List;
  import java.util.Random;
  import net.minecraft.block.material.Material;
-@@ -17,7 +19,10 @@
+@@ -17,8 +18,10 @@
+ import net.minecraft.world.ColorizerGrass;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
- 
--public class BlockTallGrass extends BlockFlower
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.IShearable;
-+
-+public class BlockTallGrass extends BlockFlower implements IShearable
+ 
+-public class BlockTallGrass extends BlockBush implements IGrowable
++public class BlockTallGrass extends BlockBush implements IGrowable, IShearable
  {
-     private static final String[] grassTypes = new String[] {"deadbush", "tallgrass", "fern"};
+     private static final String[] field_149871_a = new String[] {"deadbush", "tallgrass", "fern"};
      @SideOnly(Side.CLIENT)
-@@ -50,7 +55,7 @@
-      */
-     public int idDropped(int par1, Random par2Random, int par3)
+@@ -71,7 +74,7 @@
+ 
+     public Item func_149650_a(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
      {
--        return par2Random.nextInt(8) == 0 ? Item.seeds.itemID : -1;
-+        return -1;
+-        return p_149650_2_.nextInt(8) == 0 ? Items.wheat_seeds : null;
++        return null;
      }
  
-     /**
-@@ -67,15 +72,7 @@
-      */
-     public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
+     public int func_149679_a(int p_149679_1_, Random p_149679_2_)
+@@ -81,13 +84,7 @@
+ 
+     public void func_149636_a(World p_149636_1_, EntityPlayer p_149636_2_, int p_149636_3_, int p_149636_4_, int p_149636_5_, int p_149636_6_)
      {
--        if (!par1World.isRemote && par2EntityPlayer.getCurrentEquippedItem() != null && par2EntityPlayer.getCurrentEquippedItem().itemID == Item.shears.itemID)
--        {
--            par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
--            this.dropBlockAsItem_do(par1World, par3, par4, par5, new ItemStack(Block.tallGrass, 1, par6));
+-        if (!p_149636_1_.isRemote && p_149636_2_.getCurrentEquippedItem() != null && p_149636_2_.getCurrentEquippedItem().getItem() == Items.shears)
+         {
+-            p_149636_2_.addStat(StatList.mineBlockStatArray[Block.func_149682_b(this)], 1);
+-            this.func_149642_a(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, new ItemStack(Blocks.tallgrass, 1, p_149636_6_));
 -        }
 -        else
 -        {
--            super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
--        }
-+        super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
+             super.func_149636_a(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_);
+         }
      }
- 
-     @SideOnly(Side.CLIENT)
-@@ -144,4 +141,35 @@
-             this.iconArray[i] = par1IconRegister.registerIcon(grassTypes[i]);
+@@ -143,4 +140,28 @@
+             Blocks.double_plant.func_149889_c(p_149853_1_, p_149853_3_, p_149853_4_, p_149853_5_, b0, 2);
          }
      }
 +
 +    @Override
-+    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int meta, int fortune)
++    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int meta, int fortune)
 +    {
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-+        if (world.rand.nextInt(8) != 0)
-+        {
-+            return ret;
-+        }
-+
-+        ItemStack item = ForgeHooks.getGrassSeed(world);
-+        if (item != null)
-+        {
-+            ret.add(item);
-+        }
++        if (world.rand.nextInt(8) != 0) return ret;
++        ItemStack seed = ForgeHooks.getGrassSeed(world);
++        if (seed != null) ret.add(seed);
 +        return ret;
 +    }
 +
 +    @Override
-+    public boolean isShearable(ItemStack item, World world, int x, int y, int z)
++    public boolean isShearable(ItemStack item, IBlockAccess world, int x, int y, int z)
 +    {
 +        return true;
 +    }
 +
 +    @Override
-+    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int x, int y, int z, int fortune)
++    public ArrayList<ItemStack> onSheared(ItemStack item, IBlockAccess world, int x, int y, int z, int fortune)
 +    {
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
 +        ret.add(new ItemStack(this, 1, world.getBlockMetadata(x, y, z)));

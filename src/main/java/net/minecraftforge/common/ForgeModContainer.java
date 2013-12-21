@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.logging.Level;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.storage.SaveHandler;
@@ -35,6 +36,7 @@ import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.WorldAccessContainer;
 import cpw.mods.fml.common.event.FMLConstructionEvent;
 import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
+import cpw.mods.fml.common.event.FMLModIdMappingEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
@@ -50,7 +52,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean forceDuplicateFluidBlockCrash = true;
     public static boolean fullBoundingBoxLadders = false;
     public static double zombieSummonBaseChance = 0.1;
-    public static int[] blendRanges = { 20, 15, 10, 5 };
+    public static int[] blendRanges = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32 };
     public static float zombieBabyChance = 0.05f;
     public static boolean shouldSortRecipies = false;
 
@@ -141,7 +143,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             FMLLog.warning("Disabling forced crashes on duplicate Fluid Blocks - USE AT YOUR OWN RISK");
         }
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "biomeSkyBlendRange", new int[] { 20, 15, 10, 5 });
+        prop = config.get(Configuration.CATEGORY_GENERAL, "biomeSkyBlendRange", new int[] { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32 });
         prop.comment = "Control the range of sky blending for colored skies in biomes.";
         blendRanges = prop.getIntList();
 
@@ -221,6 +223,13 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
         }
     }
+
+    @Subscribe
+    public void mappingChanged(FMLModIdMappingEvent evt)
+    {
+        Blocks.fire.rebuildFireInfo();
+    }
+    
 
     @Override
     public File getSource()

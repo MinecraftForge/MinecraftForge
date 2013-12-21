@@ -9,42 +9,43 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import net.minecraft.entity.EntityLivingBase;
-+import net.minecraft.item.Item;
++import net.minecraft.init.Items;
 +import net.minecraft.item.ItemStack;
  import net.minecraft.nbt.NBTTagCompound;
  
  public class PotionEffect
-@@ -26,6 +31,9 @@
-     /** True if potion effect duration is at maximum, false otherwise. */
+@@ -21,6 +26,8 @@
+     @SideOnly(Side.CLIENT)
      private boolean isPotionDurationMax;
- 
+     private static final String __OBFID = "CL_00001529";
 +    /** List of ItemStack that can cure the potion effect **/
 +    private List<ItemStack> curativeItems;
-+
+ 
      public PotionEffect(int par1, int par2)
      {
-         this(par1, par2, 0);
-@@ -42,6 +50,8 @@
+@@ -38,6 +45,8 @@
          this.duration = par2;
          this.amplifier = par3;
          this.isAmbient = par4;
 +        this.curativeItems = new ArrayList<ItemStack>();
-+        this.curativeItems.add(new ItemStack(Item.bucketMilk));
++        this.curativeItems.add(new ItemStack(Items.milk_bucket));
      }
  
      public PotionEffect(PotionEffect par1PotionEffect)
-@@ -49,6 +59,7 @@
+@@ -45,6 +54,7 @@
          this.potionID = par1PotionEffect.potionID;
          this.duration = par1PotionEffect.duration;
          this.amplifier = par1PotionEffect.amplifier;
-+        this.curativeItems = par1PotionEffect.getCurativeItems();
++        this.curativeItems = par1PotionEffect.curativeItems;
      }
  
-     /**
-@@ -95,6 +106,63 @@
-         return this.amplifier;
+     // JAVADOC METHOD $$ func_76452_a
+@@ -210,4 +220,62 @@
+     {
+         return this.isPotionDurationMax;
      }
- 
++
++    /* ======================================== FORGE START =====================================*/
 +    /***
 +     * Returns a list of curative items for the potion effect
 +     * @return The list (ItemStack) of curative items for the potion effect
@@ -101,7 +102,4 @@
 +            this.curativeItems.add(stack);
 +        }
 +    }
-+
-     /**
-      * Set whether this potion is a splash potion.
-      */
+ }

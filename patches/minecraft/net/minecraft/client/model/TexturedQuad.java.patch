@@ -1,6 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/client/model/TexturedQuad.java
 +++ ../src-work/minecraft/net/minecraft/client/model/TexturedQuad.java
-@@ -5,7 +5,6 @@
+@@ -1,11 +1,8 @@
+ package net.minecraft.client.model;
+ 
+-import cpw.mods.fml.relauncher.Side;
+-import cpw.mods.fml.relauncher.SideOnly;
  import net.minecraft.client.renderer.Tessellator;
  import net.minecraft.util.Vec3;
  

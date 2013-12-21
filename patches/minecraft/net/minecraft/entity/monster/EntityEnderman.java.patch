@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityEnderman.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityEnderman.java
-@@ -16,6 +16,8 @@
+@@ -19,6 +19,8 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
@@ -9,15 +9,14 @@
  
  public class EntityEnderman extends EntityMob
  {
-@@ -295,12 +297,17 @@
-      */
+@@ -275,12 +277,16 @@
+     // JAVADOC METHOD $$ func_70825_j
      protected boolean teleportTo(double par1, double par3, double par5)
      {
 +        EnderTeleportEvent event = new EnderTeleportEvent(this, par1, par3, par5, 0);
 +        if (MinecraftForge.EVENT_BUS.post(event)){
 +            return false;
 +        }
-+
          double d3 = this.posX;
          double d4 = this.posY;
          double d5 = this.posZ;
@@ -30,7 +29,7 @@
          boolean flag = false;
          int i = MathHelper.floor_double(this.posX);
          int j = MathHelper.floor_double(this.posY);
-@@ -477,7 +484,7 @@
+@@ -432,7 +438,7 @@
                      }
                  }
  

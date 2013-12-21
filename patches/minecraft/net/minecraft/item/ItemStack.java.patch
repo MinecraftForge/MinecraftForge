@@ -1,87 +1,74 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemStack.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
-@@ -29,6 +29,7 @@
- import net.minecraft.util.Icon;
+@@ -32,6 +32,7 @@
+ import net.minecraft.util.IIcon;
  import net.minecraft.util.StatCollector;
  import net.minecraft.world.World;
 +import net.minecraftforge.event.ForgeEventFactory;
  
  public final class ItemStack
  {
-@@ -223,7 +224,7 @@
-      */
+@@ -192,7 +193,7 @@
+     // JAVADOC METHOD $$ func_77976_d
      public int getMaxStackSize()
      {
 -        return this.getItem().getItemStackLimit();
 +        return this.getItem().getItemStackLimit(this);
      }
  
-     /**
-@@ -239,7 +240,7 @@
-      */
+     // JAVADOC METHOD $$ func_77985_e
+@@ -204,7 +205,7 @@
+     // JAVADOC METHOD $$ func_77984_f
      public boolean isItemStackDamageable()
      {
--        return Item.itemsList[this.itemID].getMaxDamage() > 0;
-+        return Item.itemsList[this.itemID].getMaxDamage(this) > 0;
+-        return this.field_151002_e.getMaxDamage() <= 0 ? false : !this.hasTagCompound() || !this.getTagCompound().getBoolean("Unbreakable");
++        return this.field_151002_e.getMaxDamage(this) <= 0 ? false : !this.hasTagCompound() || !this.getTagCompound().getBoolean("Unbreakable");
      }
  
      public boolean getHasSubtypes()
-@@ -252,7 +253,9 @@
-      */
+@@ -215,36 +216,31 @@
+     // JAVADOC METHOD $$ func_77951_h
      public boolean isItemDamaged()
      {
 -        return this.isItemStackDamageable() && this.itemDamage > 0;
-+        boolean damaged = itemDamage > 0;
-+        if (getItem() != null) damaged = getItem().isDamaged(this);
-+        return this.isItemStackDamageable() && damaged;
++        return this.isItemStackDamageable() && getItem().isDamaged(this);
      }
  
-     /**
-@@ -260,6 +263,10 @@
-      */
+     // JAVADOC METHOD $$ func_77952_i
      public int getItemDamageForDisplay()
      {
-+        if (getItem() != null)
-+        {
-+            return getItem().getDisplayDamage(this);
-+        }
-         return this.itemDamage;
+-        return this.itemDamage;
++        return getItem().getDisplayDamage(this);
      }
  
-@@ -268,6 +275,10 @@
-      */
+     // JAVADOC METHOD $$ func_77960_j
      public int getItemDamage()
      {
-+        if (getItem() != null)
-+        {
-+            return getItem().getDamage(this);
-+        }
-         return this.itemDamage;
+-        return this.itemDamage;
++        return getItem().getDamage(this);
      }
  
-@@ -276,6 +287,12 @@
-      */
+     // JAVADOC METHOD $$ func_77964_b
      public void setItemDamage(int par1)
      {
-+        if (getItem() != null)
-+        {
-+            getItem().setDamage(this, par1);
-+            return;
-+        }
-+
-         this.itemDamage = par1;
- 
-         if (this.itemDamage < 0)
-@@ -289,7 +306,7 @@
-      */
-     public int getMaxDamage()
-     {
--        return Item.itemsList[this.itemID].getMaxDamage();
-+        return this.getItem().getMaxDamage(this);
+-        this.itemDamage = par1;
+-
+-        if (this.itemDamage < 0)
+-        {
+-            this.itemDamage = 0;
+-        }
++        getItem().setDamage(this, par1);
      }
  
-     /**
-@@ -327,8 +344,8 @@
+     // JAVADOC METHOD $$ func_77958_k
+     public int getMaxDamage()
+     {
+-        return this.field_151002_e.getMaxDamage();
++        return getItem().getMaxDamage(this);
+     }
+ 
+     // JAVADOC METHOD $$ func_96631_a
+@@ -277,8 +273,8 @@
                  }
              }
  
@@ -92,16 +79,16 @@
          }
      }
  
-@@ -396,7 +413,7 @@
-      */
-     public boolean canHarvestBlock(Block par1Block)
+@@ -339,7 +335,7 @@
+ 
+     public boolean func_150998_b(Block p_150998_1_)
      {
--        return Item.itemsList[this.itemID].canHarvestBlock(par1Block);
-+        return Item.itemsList[this.itemID].canHarvestBlock(par1Block, this);
+-        return this.field_151002_e.func_150897_b(p_150998_1_);
++        return getItem().canHarvestBlock(p_150998_1_, this);
      }
  
      public boolean func_111282_a(EntityPlayer par1EntityPlayer, EntityLivingBase par2EntityLivingBase)
-@@ -733,15 +750,22 @@
+@@ -653,16 +649,24 @@
          {
              arraylist.add("Durability: " + (this.getMaxDamage() - this.getItemDamageForDisplay()) + " / " + this.getMaxDamage());
          }
@@ -117,11 +104,13 @@
 -        return this.getItem().hasEffect(this);
 +        return hasEffect(0);
      }
+ 
 +    @SideOnly(Side.CLIENT)
 +    public boolean hasEffect(int pass)
 +    {
 +        return this.getItem().hasEffect(this, pass);
 +    }
- 
-     @SideOnly(Side.CLIENT)
++
      public EnumRarity getRarity()
+     {
+         return this.getItem().getRarity(this);

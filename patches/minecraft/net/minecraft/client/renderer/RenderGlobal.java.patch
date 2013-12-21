@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/RenderGlobal.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/RenderGlobal.java
-@@ -68,6 +68,9 @@
+@@ -79,6 +79,9 @@
  import org.lwjgl.opengl.ARBOcclusionQuery;
  import org.lwjgl.opengl.GL11;
  
@@ -10,43 +10,40 @@
  @SideOnly(Side.CLIENT)
  public class RenderGlobal implements IWorldAccess
  {
-@@ -447,8 +450,13 @@
-      */
-     public void renderEntities(Vec3 par1Vec3, ICamera par2ICamera, float par3)
+@@ -411,8 +414,10 @@
+ 
+     public void func_147589_a(EntityLivingBase p_147589_1_, ICamera p_147589_2_, float p_147589_3_)
      {
 +        int pass = MinecraftForgeClient.getRenderPass();
          if (this.renderEntitiesStartupCounter > 0)
          {
-+            if (pass > 0)
-+            {
-+                return;
-+            }
++            if (pass > 0) return;
              --this.renderEntitiesStartupCounter;
          }
          else
-@@ -456,6 +464,8 @@
+@@ -423,9 +428,12 @@
              this.theWorld.theProfiler.startSection("prepare");
-             TileEntityRenderer.instance.cacheActiveRenderInfo(this.theWorld, this.mc.getTextureManager(), this.mc.fontRenderer, this.mc.renderViewEntity, par3);
-             RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.mc.getTextureManager(), this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.pointedEntityLiving, this.mc.gameSettings, par3);
+             TileEntityRendererDispatcher.field_147556_a.func_147542_a(this.theWorld, this.mc.getTextureManager(), this.mc.fontRenderer, this.mc.renderViewEntity, p_147589_3_);
+             RenderManager.instance.func_147938_a(this.theWorld, this.mc.getTextureManager(), this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.field_147125_j, this.mc.gameSettings, p_147589_3_);
 +            if (pass == 0) // no indentation to shrink patch
 +            {
              this.countEntitiesTotal = 0;
              this.countEntitiesRendered = 0;
              this.countEntitiesHidden = 0;
-@@ -466,16 +476,21 @@
-             TileEntityRenderer.staticPlayerX = entitylivingbase.lastTickPosX + (entitylivingbase.posX - entitylivingbase.lastTickPosX) * (double)par3;
-             TileEntityRenderer.staticPlayerY = entitylivingbase.lastTickPosY + (entitylivingbase.posY - entitylivingbase.lastTickPosY) * (double)par3;
-             TileEntityRenderer.staticPlayerZ = entitylivingbase.lastTickPosZ + (entitylivingbase.posZ - entitylivingbase.lastTickPosZ) * (double)par3;
 +            }
-             this.mc.entityRenderer.enableLightmap((double)par3);
+             EntityLivingBase entitylivingbase1 = this.mc.renderViewEntity;
+             double d3 = entitylivingbase1.lastTickPosX + (entitylivingbase1.posX - entitylivingbase1.lastTickPosX) * (double)p_147589_3_;
+             double d4 = entitylivingbase1.lastTickPosY + (entitylivingbase1.posY - entitylivingbase1.lastTickPosY) * (double)p_147589_3_;
+@@ -454,13 +462,17 @@
+             this.mc.entityRenderer.enableLightmap((double)p_147589_3_);
              this.theWorld.theProfiler.endStartSection("global");
              List list = this.theWorld.getLoadedEntityList();
 +            if (pass == 0) // no indentation for smaller patch size
 +            {
              this.countEntitiesTotal = list.size();
 +            }
-             int i;
              Entity entity;
+             int i;
  
              for (i = 0; i < this.theWorld.weatherEffects.size(); ++i)
              {
@@ -54,30 +51,30 @@
 +                if (!entity.shouldRenderInPass(pass)) continue;
                  ++this.countEntitiesRendered;
  
-                 if (entity.isInRangeToRenderVec3D(par1Vec3))
-@@ -489,6 +504,7 @@
+                 if (entity.func_145770_h(d0, d1, d2))
+@@ -474,6 +486,7 @@
              for (i = 0; i < list.size(); ++i)
              {
                  entity = (Entity)list.get(i);
 +                if (!entity.shouldRenderInPass(pass)) continue;
-                 boolean flag = entity.isInRangeToRenderVec3D(par1Vec3) && (entity.ignoreFrustumCheck || par2ICamera.isBoundingBoxInFrustum(entity.boundingBox) || entity.riddenByEntity == this.mc.thePlayer);
+                 boolean flag = entity.func_145770_h(d0, d1, d2) && (entity.ignoreFrustumCheck || p_147589_2_.isBoundingBoxInFrustum(entity.boundingBox) || entity.riddenByEntity == this.mc.thePlayer);
  
                  if (!flag && entity instanceof EntityLiving)
-@@ -514,7 +530,11 @@
+@@ -499,7 +512,11 @@
  
-             for (i = 0; i < this.tileEntities.size(); ++i)
+             for (i = 0; i < this.field_147598_a.size(); ++i)
              {
--                TileEntityRenderer.instance.renderTileEntity((TileEntity)this.tileEntities.get(i), par3);
-+                TileEntity tile = (TileEntity)tileEntities.get(i);
-+                if (tile.shouldRenderInPass(pass) && par2ICamera.isBoundingBoxInFrustum(tile.getRenderBoundingBox()))
+-                TileEntityRendererDispatcher.field_147556_a.func_147544_a((TileEntity)this.field_147598_a.get(i), p_147589_3_);
++                TileEntity tile = (TileEntity)this.field_147598_a.get(i);
++                if (tile.shouldRenderInPass(pass) && p_147589_2_.isBoundingBoxInFrustum(tile.getRenderBoundingBox()))
 +                {
-+                    TileEntityRenderer.instance.renderTileEntity(tile, par3);
++                    TileEntityRendererDispatcher.field_147556_a.func_147544_a(tile, p_147589_3_);
 +                }
              }
  
-             this.mc.entityRenderer.disableLightmap((double)par3);
-@@ -949,6 +969,12 @@
-      */
+             this.mc.entityRenderer.disableLightmap((double)p_147589_3_);
+@@ -976,6 +993,12 @@
+     // JAVADOC METHOD $$ func_72714_a
      public void renderSky(float par1)
      {
 +        IRenderHandler skyProvider = null;
@@ -89,7 +86,7 @@
          if (this.mc.theWorld.provider.dimensionId == 1)
          {
              GL11.glDisable(GL11.GL_FOG);
-@@ -1187,6 +1213,13 @@
+@@ -1214,6 +1237,12 @@
  
      public void renderClouds(float par1)
      {
@@ -99,11 +96,10 @@
 +            renderer.render(par1, theWorld, mc);
 +            return;
 +        }
-+
          if (this.mc.theWorld.provider.isSurfaceWorld())
          {
              if (this.mc.gameSettings.fancyGraphics)
-@@ -1596,6 +1629,11 @@
+@@ -1617,6 +1646,11 @@
  
      public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityPlayer par2EntityPlayer, float par3)
      {

@@ -1,112 +1,108 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockTorch.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockTorch.java
-@@ -10,6 +10,9 @@
+@@ -10,6 +10,7 @@
+ import net.minecraft.util.MovingObjectPosition;
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
++import static net.minecraftforge.common.util.ForgeDirection.*;
  
-+import net.minecraftforge.common.ForgeDirection;
-+import static net.minecraftforge.common.ForgeDirection.*;
-+
  public class BlockTorch extends Block
  {
-     protected BlockTorch(int par1)
-@@ -65,7 +68,7 @@
+@@ -51,13 +52,17 @@
          else
          {
-             int l = par1World.getBlockId(par2, par3, par4);
--            return l == Block.fence.blockID || l == Block.netherFence.blockID || l == Block.glass.blockID || l == Block.cobblestoneWall.blockID;
-+            return (Block.blocksList[l] != null && Block.blocksList[l].canPlaceTorchOnTop(par1World, par2, par3, par4));
+             Block block = p_150107_1_.func_147439_a(p_150107_2_, p_150107_3_, p_150107_4_);
+-            return block == Blocks.fence || block == Blocks.nether_brick_fence || block == Blocks.glass || block == Blocks.cobblestone_wall;
++            return block.canPlaceTorchOnTop(p_150107_1_, p_150107_2_, p_150107_3_, p_150107_4_);
          }
      }
  
-@@ -74,7 +77,11 @@
-      */
-     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
+     public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
      {
--        return par1World.isBlockNormalCubeDefault(par2 - 1, par3, par4, true) ? true : (par1World.isBlockNormalCubeDefault(par2 + 1, par3, par4, true) ? true : (par1World.isBlockNormalCubeDefault(par2, par3, par4 - 1, true) ? true : (par1World.isBlockNormalCubeDefault(par2, par3, par4 + 1, true) ? true : this.canPlaceTorchOn(par1World, par2, par3 - 1, par4))));
-+        return par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST,  true) ||
-+               par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST,  true) ||
-+               par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH, true) ||
-+               par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH, true) ||
-+               canPlaceTorchOn(par1World, par2, par3 - 1, par4);
+-        return p_149742_1_.func_147445_c(p_149742_2_ - 1, p_149742_3_, p_149742_4_, true) ? true : (p_149742_1_.func_147445_c(p_149742_2_ + 1, p_149742_3_, p_149742_4_, true) ? true : (p_149742_1_.func_147445_c(p_149742_2_, p_149742_3_, p_149742_4_ - 1, true) ? true : (p_149742_1_.func_147445_c(p_149742_2_, p_149742_3_, p_149742_4_ + 1, true) ? true : this.func_150107_m(p_149742_1_, p_149742_2_, p_149742_3_ - 1, p_149742_4_))));
++        return p_149742_1_.isSideSolid(p_149742_2_ - 1, p_149742_3_, p_149742_4_, EAST,  true) ||
++               p_149742_1_.isSideSolid(p_149742_2_ + 1, p_149742_3_, p_149742_4_, WEST,  true) ||
++               p_149742_1_.isSideSolid(p_149742_2_, p_149742_3_, p_149742_4_ - 1, SOUTH, true) ||
++               p_149742_1_.isSideSolid(p_149742_2_, p_149742_3_, p_149742_4_ + 1, NORTH, true) ||
++               func_150107_m(p_149742_1_, p_149742_2_, p_149742_3_ - 1, p_149742_4_);
      }
  
-     /**
-@@ -89,22 +96,22 @@
+     public int func_149660_a(World p_149660_1_, int p_149660_2_, int p_149660_3_, int p_149660_4_, int p_149660_5_, float p_149660_6_, float p_149660_7_, float p_149660_8_, int p_149660_9_)
+@@ -69,22 +74,22 @@
              j1 = 5;
          }
  
--        if (par5 == 2 && par1World.isBlockNormalCubeDefault(par2, par3, par4 + 1, true))
-+        if (par5 == 2 && par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH, true))
+-        if (p_149660_5_ == 2 && p_149660_1_.func_147445_c(p_149660_2_, p_149660_3_, p_149660_4_ + 1, true))
++        if (p_149660_5_ == 2 && p_149660_1_.isSideSolid(p_149660_2_, p_149660_3_, p_149660_4_ + 1, NORTH, true))
          {
              j1 = 4;
          }
  
--        if (par5 == 3 && par1World.isBlockNormalCubeDefault(par2, par3, par4 - 1, true))
-+        if (par5 == 3 && par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH, true))
+-        if (p_149660_5_ == 3 && p_149660_1_.func_147445_c(p_149660_2_, p_149660_3_, p_149660_4_ - 1, true))
++        if (p_149660_5_ == 3 && p_149660_1_.isSideSolid(p_149660_2_, p_149660_3_, p_149660_4_ - 1, SOUTH, true))
          {
              j1 = 3;
          }
  
--        if (par5 == 4 && par1World.isBlockNormalCubeDefault(par2 + 1, par3, par4, true))
-+        if (par5 == 4 && par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST, true))
+-        if (p_149660_5_ == 4 && p_149660_1_.func_147445_c(p_149660_2_ + 1, p_149660_3_, p_149660_4_, true))
++        if (p_149660_5_ == 4 && p_149660_1_.isSideSolid(p_149660_2_ + 1, p_149660_3_, p_149660_4_, WEST, true))
          {
              j1 = 2;
          }
  
--        if (par5 == 5 && par1World.isBlockNormalCubeDefault(par2 - 1, par3, par4, true))
-+        if (par5 == 5 && par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST, true))
+-        if (p_149660_5_ == 5 && p_149660_1_.func_147445_c(p_149660_2_ - 1, p_149660_3_, p_149660_4_, true))
++        if (p_149660_5_ == 5 && p_149660_1_.isSideSolid(p_149660_2_ - 1, p_149660_3_, p_149660_4_, EAST, true))
          {
              j1 = 1;
          }
-@@ -132,19 +139,19 @@
+@@ -106,19 +111,19 @@
      {
-         if (par1World.getBlockMetadata(par2, par3, par4) == 0)
+         if (p_149726_1_.getBlockMetadata(p_149726_2_, p_149726_3_, p_149726_4_) == 0)
          {
--            if (par1World.isBlockNormalCubeDefault(par2 - 1, par3, par4, true))
-+            if (par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST, true))
+-            if (p_149726_1_.func_147445_c(p_149726_2_ - 1, p_149726_3_, p_149726_4_, true))
++            if (p_149726_1_.isSideSolid(p_149726_2_ - 1, p_149726_3_, p_149726_4_, EAST, true))
              {
-                 par1World.setBlockMetadataWithNotify(par2, par3, par4, 1, 2);
+                 p_149726_1_.setBlockMetadataWithNotify(p_149726_2_, p_149726_3_, p_149726_4_, 1, 2);
              }
--            else if (par1World.isBlockNormalCubeDefault(par2 + 1, par3, par4, true))
-+            else if (par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST, true))
+-            else if (p_149726_1_.func_147445_c(p_149726_2_ + 1, p_149726_3_, p_149726_4_, true))
++            else if (p_149726_1_.isSideSolid(p_149726_2_ + 1, p_149726_3_, p_149726_4_, WEST, true))
              {
-                 par1World.setBlockMetadataWithNotify(par2, par3, par4, 2, 2);
+                 p_149726_1_.setBlockMetadataWithNotify(p_149726_2_, p_149726_3_, p_149726_4_, 2, 2);
              }
--            else if (par1World.isBlockNormalCubeDefault(par2, par3, par4 - 1, true))
-+            else if (par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH, true))
+-            else if (p_149726_1_.func_147445_c(p_149726_2_, p_149726_3_, p_149726_4_ - 1, true))
++            else if (p_149726_1_.isSideSolid(p_149726_2_, p_149726_3_, p_149726_4_ - 1, SOUTH, true))
              {
-                 par1World.setBlockMetadataWithNotify(par2, par3, par4, 3, 2);
+                 p_149726_1_.setBlockMetadataWithNotify(p_149726_2_, p_149726_3_, p_149726_4_, 3, 2);
              }
--            else if (par1World.isBlockNormalCubeDefault(par2, par3, par4 + 1, true))
-+            else if (par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH, true))
+-            else if (p_149726_1_.func_147445_c(p_149726_2_, p_149726_3_, p_149726_4_ + 1, true))
++            else if (p_149726_1_.isSideSolid(p_149726_2_, p_149726_3_, p_149726_4_ + 1, NORTH, true))
              {
-                 par1World.setBlockMetadataWithNotify(par2, par3, par4, 4, 2);
+                 p_149726_1_.setBlockMetadataWithNotify(p_149726_2_, p_149726_3_, p_149726_4_, 4, 2);
              }
-@@ -173,22 +180,22 @@
-             int i1 = par1World.getBlockMetadata(par2, par3, par4);
+@@ -143,22 +148,22 @@
+             int l = p_150108_1_.getBlockMetadata(p_150108_2_, p_150108_3_, p_150108_4_);
              boolean flag = false;
  
--            if (!par1World.isBlockNormalCubeDefault(par2 - 1, par3, par4, true) && i1 == 1)
-+            if (!par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST, true) && i1 == 1)
+-            if (!p_150108_1_.func_147445_c(p_150108_2_ - 1, p_150108_3_, p_150108_4_, true) && l == 1)
++            if (!p_150108_1_.isSideSolid(p_150108_2_ - 1, p_150108_3_, p_150108_4_, EAST, true) && l == 1)
              {
                  flag = true;
              }
  
--            if (!par1World.isBlockNormalCubeDefault(par2 + 1, par3, par4, true) && i1 == 2)
-+            if (!par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST, true) && i1 == 2)
+-            if (!p_150108_1_.func_147445_c(p_150108_2_ + 1, p_150108_3_, p_150108_4_, true) && l == 2)
++            if (!p_150108_1_.isSideSolid(p_150108_2_ + 1, p_150108_3_, p_150108_4_, WEST, true) && l == 2)
              {
                  flag = true;
              }
  
--            if (!par1World.isBlockNormalCubeDefault(par2, par3, par4 - 1, true) && i1 == 3)
-+            if (!par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH, true) && i1 == 3)
+-            if (!p_150108_1_.func_147445_c(p_150108_2_, p_150108_3_, p_150108_4_ - 1, true) && l == 3)
++            if (!p_150108_1_.isSideSolid(p_150108_2_, p_150108_3_, p_150108_4_ - 1, SOUTH, true) && l == 3)
              {
                  flag = true;
              }
  
--            if (!par1World.isBlockNormalCubeDefault(par2, par3, par4 + 1, true) && i1 == 4)
-+            if (!par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH, true) && i1 == 4)
+-            if (!p_150108_1_.func_147445_c(p_150108_2_, p_150108_3_, p_150108_4_ + 1, true) && l == 4)
++            if (!p_150108_1_.isSideSolid(p_150108_2_, p_150108_3_, p_150108_4_ + 1, NORTH, true) && l == 4)
              {
                  flag = true;
              }

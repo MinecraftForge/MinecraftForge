@@ -1,27 +1,58 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockOre.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockOre.java
-@@ -60,6 +60,11 @@
-     {
-         super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, par7);
+@@ -7,6 +7,7 @@
+ import net.minecraft.init.Items;
+ import net.minecraft.item.Item;
+ import net.minecraft.util.MathHelper;
++import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
  
+ public class BlockOre extends Block
+@@ -51,34 +52,40 @@
+     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
+     {
+         super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
 +    }
-+    
+ 
+-        if (this.func_149650_a(p_149690_5_, p_149690_1_.rand, p_149690_7_) != Item.func_150898_a(this))
++    private Random rand = new Random();
 +    @Override
-+    public int getExpDrop(World par1World, int par5, int par7)
++    public int getExpDrop(IBlockAccess p_149690_1_, int p_149690_5_, int p_149690_7_)
 +    {
-         if (this.idDropped(par5, par1World.rand, par7) != this.blockID)
++        if (this.func_149650_a(p_149690_5_, rand, p_149690_7_) != Item.func_150898_a(this))
          {
              int j1 = 0;
-@@ -84,9 +89,10 @@
+ 
+             if (this == Blocks.coal_ore)
              {
-                 j1 = MathHelper.getRandomIntegerInRange(par1World.rand, 2, 5);
+-                j1 = MathHelper.getRandomIntegerInRange(p_149690_1_.rand, 0, 2);
++                j1 = MathHelper.getRandomIntegerInRange(rand, 0, 2);
              }
--
--            this.dropXpOnBlockBreak(par1World, par2, par3, par4, j1);
+             else if (this == Blocks.diamond_ore)
+             {
+-                j1 = MathHelper.getRandomIntegerInRange(p_149690_1_.rand, 3, 7);
++                j1 = MathHelper.getRandomIntegerInRange(rand, 3, 7);
+             }
+             else if (this == Blocks.emerald_ore)
+             {
+-                j1 = MathHelper.getRandomIntegerInRange(p_149690_1_.rand, 3, 7);
++                j1 = MathHelper.getRandomIntegerInRange(rand, 3, 7);
+             }
+             else if (this == Blocks.lapis_ore)
+             {
+-                j1 = MathHelper.getRandomIntegerInRange(p_149690_1_.rand, 2, 5);
++                j1 = MathHelper.getRandomIntegerInRange(rand, 2, 5);
+             }
+             else if (this == Blocks.quartz_ore)
+             {
+-                j1 = MathHelper.getRandomIntegerInRange(p_149690_1_.rand, 2, 5);
++                j1 = MathHelper.getRandomIntegerInRange(rand, 2, 5);
+             }
+ 
+-            this.func_149657_c(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, j1);
 +            return j1;
          }
-+
 +        return 0;
      }
  
-     /**
+     public int func_149692_a(int p_149692_1_)

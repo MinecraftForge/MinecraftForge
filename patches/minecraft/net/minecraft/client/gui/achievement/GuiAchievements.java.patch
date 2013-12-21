@@ -1,39 +1,30 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/achievement/GuiAchievements.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/achievement/GuiAchievements.java
-@@ -2,6 +2,9 @@
- 
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
-+
-+import java.util.LinkedList;
-+import java.util.List;
- import java.util.Random;
- import net.minecraft.block.Block;
- import net.minecraft.client.Minecraft;
-@@ -22,6 +25,8 @@
+@@ -24,6 +24,9 @@
+ import org.lwjgl.input.Mouse;
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
- 
++import java.util.LinkedList;
++import java.util.List;
 +import net.minecraftforge.common.AchievementPage;
-+
+ 
  @SideOnly(Side.CLIENT)
- public class GuiAchievements extends GuiScreen
- {
-@@ -60,6 +65,10 @@
-     private int isMouseButtonDown;
-     private StatFileWriter statFileWriter;
+ public class GuiAchievements extends GuiScreen implements IProgressMeter
+@@ -50,6 +53,10 @@
+     private boolean field_146558_F = true;
+     private static final String __OBFID = "CL_00000722";
  
 +    private int currentPage = -1;
-+    private GuiSmallButton button;
++    private GuiButton button;
 +    private LinkedList<Achievement> minecraftAchievements = new LinkedList<Achievement>();
 +
-     public GuiAchievements(StatFileWriter par1StatFileWriter)
+     public GuiAchievements(GuiScreen p_i45026_1_, StatFileWriter p_i45026_2_)
      {
-         this.statFileWriter = par1StatFileWriter;
-@@ -67,6 +76,14 @@
+         this.field_146562_a = p_i45026_1_;
+@@ -58,6 +65,14 @@
          short short2 = 141;
-         this.field_74117_m = this.guiMapX = this.field_74124_q = (double)(AchievementList.openInventory.displayColumn * 24 - short1 / 2 - 12);
-         this.field_74115_n = this.guiMapY = this.field_74123_r = (double)(AchievementList.openInventory.displayRow * 24 - short2 / 2);
+         this.field_146569_s = this.field_146567_u = this.field_146565_w = (double)(AchievementList.openInventory.displayColumn * 24 - short1 / 2 - 12);
+         this.field_146568_t = this.field_146566_v = this.field_146573_x = (double)(AchievementList.openInventory.displayRow * 24 - short2 / 2);
 +        minecraftAchievements.clear();
 +        for (Object achievement : AchievementList.achievementList)
 +        {
@@ -44,57 +35,57 @@
 +        }
      }
  
-     /**
-@@ -76,6 +93,7 @@
-     {
-         this.buttonList.clear();
-         this.buttonList.add(new GuiSmallButton(1, this.width / 2 + 24, this.height / 2 + 74, 80, 20, I18n.getString("gui.done")));
-+        this.buttonList.add(button = new GuiSmallButton(2, (width - achievementsPaneWidth) / 2 + 24, height / 2 + 74, 125, 20, AchievementPage.getTitle(currentPage)));
+     // JAVADOC METHOD $$ func_73866_w_
+@@ -66,6 +81,7 @@
+         this.field_146297_k.func_147114_u().func_147297_a(new C16PacketClientStatus(C16PacketClientStatus.EnumState.REQUEST_STATS));
+         this.field_146292_n.clear();
+         this.field_146292_n.add(new GuiOptionButton(1, this.field_146294_l / 2 + 24, this.field_146295_m / 2 + 74, 80, 20, I18n.getStringParams("gui.done", new Object[0])));
++        this.field_146292_n.add(button = new GuiButton(2, (field_146294_l - field_146555_f) / 2 + 24, field_146295_m / 2 + 74, 125, 20, AchievementPage.getTitle(currentPage)));
      }
  
-     /**
-@@ -89,6 +107,16 @@
-             this.mc.setIngameFocus();
-         }
- 
-+        if (par1GuiButton.id == 2)
-+        {
-+            currentPage++;
-+            if (currentPage >= AchievementPage.getAchievementPages().size())
-+            {
-+                currentPage = -1;
-+            }
-+            button.displayString = AchievementPage.getTitle(currentPage);
-+        }
+     protected void func_146284_a(GuiButton p_146284_1_)
+@@ -76,6 +92,16 @@
+             {
+                 this.field_146297_k.func_147108_a(this.field_146562_a);
+             }
 +
-         super.actionPerformed(par1GuiButton);
++            if (p_146284_1_.field_146127_k == 2)
++            {
++                currentPage++;
++                if (currentPage >= AchievementPage.getAchievementPages().size())
++                {
++                    currentPage = -1;
++                }
++                button.field_146126_j = AchievementPage.getTitle(currentPage);
++            }
+         }
      }
  
-@@ -314,11 +342,12 @@
+@@ -343,11 +369,12 @@
          int i4;
-         int j4;
+         int j5;
  
 -        for (i3 = 0; i3 < AchievementList.achievementList.size(); ++i3)
 +        List<Achievement> achievementList = (currentPage == -1 ? minecraftAchievements : AchievementPage.getAchievementPage(currentPage).getAchievements());
 +        for (i3 = 0; i3 < achievementList.size(); ++i3)
          {
--            Achievement achievement = (Achievement)AchievementList.achievementList.get(i3);
-+            Achievement achievement = achievementList.get(i3);
+-            Achievement achievement1 = (Achievement)AchievementList.achievementList.get(i3);
++            Achievement achievement1 = achievementList.get(i3);
  
--            if (achievement.parentAchievement != null)
-+            if (achievement.parentAchievement != null && achievementList.contains(achievement.parentAchievement))
+-            if (achievement1.parentAchievement != null)
++            if (achievement1.parentAchievement != null && achievementList.contains(achievement1.parentAchievement))
              {
-                 k3 = achievement.displayColumn * 24 - k + 11 + k1;
-                 j3 = achievement.displayRow * 24 - l + 11 + l1;
-@@ -352,9 +381,9 @@
-         int l4;
+                 j3 = achievement1.displayColumn * 24 - k + 11;
+                 k3 = achievement1.displayRow * 24 - l + 11;
+@@ -404,9 +431,9 @@
          int i5;
+         int l4;
  
--        for (k3 = 0; k3 < AchievementList.achievementList.size(); ++k3)
-+        for (k3 = 0; k3 < achievementList.size(); ++k3)
+-        for (j5 = 0; j5 < AchievementList.achievementList.size(); ++j5)
++        for (j5 = 0; j5 < achievementList.size(); ++j5)
          {
--            Achievement achievement2 = (Achievement)AchievementList.achievementList.get(k3);
-+            Achievement achievement2 = (Achievement)achievementList.get(k3);
-             j4 = achievement2.displayColumn * 24 - k;
-             l3 = achievement2.displayRow * 24 - l;
+-            Achievement achievement2 = (Achievement)AchievementList.achievementList.get(j5);
++            Achievement achievement2 = (Achievement)achievementList.get(j5);
+             l4 = achievement2.displayColumn * 24 - k;
+             i5 = achievement2.displayRow * 24 - l;
  

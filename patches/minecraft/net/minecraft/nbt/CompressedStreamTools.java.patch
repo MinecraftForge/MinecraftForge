@@ -1,14 +1,30 @@
 --- ../src-base/minecraft/net/minecraft/nbt/CompressedStreamTools.java
 +++ ../src-work/minecraft/net/minecraft/nbt/CompressedStreamTools.java
-@@ -140,7 +140,6 @@
-         NBTBase.writeNamedTag(par0NBTTagCompound, par1DataOutput);
+@@ -1,7 +1,5 @@
+ package net.minecraft.nbt;
+ 
+-import cpw.mods.fml.relauncher.Side;
+-import cpw.mods.fml.relauncher.SideOnly;
+ import java.io.BufferedInputStream;
+ import java.io.ByteArrayInputStream;
+ import java.io.ByteArrayOutputStream;
+@@ -92,7 +90,6 @@
+         return bytearrayoutputstream.toByteArray();
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public static void safeWrite(NBTTagCompound par0NBTTagCompound, File par1File) throws IOException
+     {
+         File file2 = new File(par1File.getAbsolutePath() + "_tmp");
+@@ -179,7 +176,6 @@
+         }
      }
  
 -    @SideOnly(Side.CLIENT)
      public static void write(NBTTagCompound par0NBTTagCompound, File par1File) throws IOException
      {
          DataOutputStream dataoutputstream = new DataOutputStream(new FileOutputStream(par1File));
-@@ -155,7 +154,6 @@
+@@ -194,7 +190,6 @@
          }
      }
  

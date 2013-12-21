@@ -1,35 +1,29 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenBigMushroom.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenBigMushroom.java
-@@ -56,7 +56,9 @@
+@@ -57,7 +57,7 @@
                          {
-                             i2 = par1World.getBlockId(k1, j1, l1);
+                             Block block = par1World.func_147439_a(k1, j1, l1);
  
--                            if (i2 != 0 && i2 != Block.leaves.blockID)
-+                            Block block = Block.blocksList[i2];
-+                            
-+                            if (block != null && !block.isAirBlock(par1World, k1, j1, l1) && !block.isLeaves(par1World, k1, j1, l1))
+-                            if (block.func_149688_o() != Material.field_151579_a && block.func_149688_o() != Material.field_151584_j)
++                            if (!block.isAir(par1World, k1, j1, l1) && !block.isLeaves(par1World, k1, j1, l1))
                              {
                                  flag = false;
                              }
-@@ -183,7 +185,9 @@
-                                     l2 = 0;
+@@ -184,7 +184,7 @@
+                                     j2 = 0;
                                  }
  
--                                if ((l2 != 0 || par4 >= par4 + i1 - 1) && !Block.opaqueCubeLookup[par1World.getBlockId(i2, k1, k2)])
-+                                Block block = Block.blocksList[par1World.getBlockId(i2, k1, k2)];
-+
-+                                if ((l2 != 0 || par4 >= par4 + i1 - 1) && (block == null || block.canBeReplacedByLeaves(par1World, i2, k1, k2)))
+-                                if ((j2 != 0 || par4 >= par4 + i1 - 1) && !par1World.func_147439_a(l2, k1, i2).func_149730_j())
++                                if ((j2 != 0 || par4 >= par4 + i1 - 1) && !par1World.func_147439_a(l2, k1, i2).canBeReplacedByLeaves(par1World, l2, k1, i2))
                                  {
-                                     this.setBlockAndMetadata(par1World, i2, k1, k2, Block.mushroomCapBrown.blockID + l, l2);
+                                     this.func_150516_a(par1World, l2, k1, i2, Block.func_149729_e(Block.func_149682_b(Blocks.brown_mushroom_block) + l), j2);
                                  }
-@@ -195,7 +199,9 @@
+@@ -196,7 +196,7 @@
                      {
-                         l1 = par1World.getBlockId(par3, par4 + k1, par5);
+                         Block block2 = par1World.func_147439_a(par3, par4 + k1, par5);
  
--                        if (!Block.opaqueCubeLookup[l1])
-+                        Block block = Block.blocksList[l1];
-+
-+                        if (block == null || block.canBeReplacedByLeaves(par1World, par3, par4 + k1, par5))
+-                        if (!block2.func_149730_j())
++                        if (block2.canBeReplacedByLeaves(par1World, par3, par4 + k1, par5))
                          {
-                             this.setBlockAndMetadata(par1World, par3, par4 + k1, par5, Block.mushroomCapBrown.blockID + l, 10);
+                             this.func_150516_a(par1World, par3, par4 + k1, par5, Block.func_149729_e(Block.func_149682_b(Blocks.brown_mushroom_block) + l), 10);
                          }

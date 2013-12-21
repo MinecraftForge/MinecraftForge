@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Level;
+
+import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
@@ -219,7 +220,7 @@ public class ForgeChunkManager
             }
             else
             {
-                FMLLog.log(Level.SEVERE, "Attempt to create a player ticket without a valid player");
+                FMLLog.log(Level.ERROR, "Attempt to create a player ticket without a valid player");
                 throw new RuntimeException();
             }
         }
@@ -422,7 +423,7 @@ public class ForgeChunkManager
             }
             catch (IOException e)
             {
-                FMLLog.log(Level.WARNING, e, "Unable to read forced chunk data at %s - it will be ignored", chunkLoaderData.getAbsolutePath());
+                FMLLog.log(Level.WARN, e, "Unable to read forced chunk data at %s - it will be ignored", chunkLoaderData.getAbsolutePath());
                 return;
             }
             NBTTagList ticketList = forcedChunkData.func_150295_c("TicketList", 9);
@@ -628,7 +629,7 @@ public class ForgeChunkManager
         ModContainer mc = getContainer(mod);
         if (mc == null)
         {
-            FMLLog.log(Level.SEVERE, "Failed to locate the container for mod instance %s (%s : %x)", mod, mod.getClass().getName(), System.identityHashCode(mod));
+            FMLLog.log(Level.ERROR, "Failed to locate the container for mod instance %s (%s : %x)", mod, mod.getClass().getName(), System.identityHashCode(mod));
             return null;
         }
         if (playerTickets.get(player).size()>playerTicketLength)
@@ -654,7 +655,7 @@ public class ForgeChunkManager
         ModContainer container = getContainer(mod);
         if (container == null)
         {
-            FMLLog.log(Level.SEVERE, "Failed to locate the container for mod instance %s (%s : %x)", mod, mod.getClass().getName(), System.identityHashCode(mod));
+            FMLLog.log(Level.ERROR, "Failed to locate the container for mod instance %s (%s : %x)", mod, mod.getClass().getName(), System.identityHashCode(mod));
             return null;
         }
         String modId = container.getModId();
@@ -874,7 +875,7 @@ public class ForgeChunkManager
         }
         catch (IOException e)
         {
-            FMLLog.log(Level.WARNING, e, "Unable to write forced chunk data to %s - chunkloading won't work", chunkLoaderData.getAbsolutePath());
+            FMLLog.log(Level.WARN, e, "Unable to write forced chunk data to %s - chunkloading won't work", chunkLoaderData.getAbsolutePath());
             return;
         }
     }
@@ -936,7 +937,7 @@ public class ForgeChunkManager
                 dest.delete();
             }
             cfgFile.renameTo(dest);
-            FMLLog.log(Level.SEVERE, e, "A critical error occured reading the forgeChunkLoading.cfg file, defaults will be used - the invalid file is backed up at forgeChunkLoading.cfg.bak");
+            FMLLog.log(Level.ERROR, e, "A critical error occured reading the forgeChunkLoading.cfg file, defaults will be used - the invalid file is backed up at forgeChunkLoading.cfg.bak");
         }
         config.addCustomCategoryComment("defaults", "Default configuration for forge chunk loading control");
         Property maxTicketCount = config.get("defaults", "maximumTicketCount", 200);

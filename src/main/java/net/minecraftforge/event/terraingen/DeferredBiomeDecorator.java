@@ -10,20 +10,19 @@ import net.minecraftforge.common.MinecraftForge;
 public class DeferredBiomeDecorator extends BiomeDecorator {
     private BiomeDecorator wrapped;
 
-    public DeferredBiomeDecorator(BiomeGenBase biomeGenBase, BiomeDecorator wrappedOriginal)
+    public DeferredBiomeDecorator(BiomeDecorator wrappedOriginal)
     {
-        super(biomeGenBase);
         this.wrapped = wrappedOriginal;
     }
 
     @Override
-    public void decorate(World par1World, Random par2Random, int par3, int par4)
+    public void func_150512_a(World par1World, Random par2Random, BiomeGenBase biome, int par3, int par4)
     {
-        fireCreateEventAndReplace();
+        fireCreateEventAndReplace(biome);
         // On first call to decorate, we fire and substitute ourselves, if we haven't already done so
-        biome.theBiomeDecorator.decorate(par1World, par2Random, par3, par4);
+        biome.theBiomeDecorator.func_150512_a(par1World, par2Random, biome, par3, par4);
     }
-    public void fireCreateEventAndReplace()
+    public void fireCreateEventAndReplace(BiomeGenBase biome)
     {
         // Copy any configuration from us to the real instance.
         wrapped.bigMushroomsPerChunk = bigMushroomsPerChunk;

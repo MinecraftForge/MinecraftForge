@@ -8,12 +8,19 @@
  import java.io.DataInput;
  import java.io.DataOutput;
  import java.io.IOException;
-@@ -99,8 +97,6 @@
+@@ -96,7 +94,6 @@
          this.tagList.add(par1NBTBase);
      }
  
 -    @SideOnly(Side.CLIENT)
--
-     /**
-      * Removes a tag at the given index.
-      */
+     public void func_150304_a(int p_150304_1_, NBTBase p_150304_2_)
+     {
+         if (p_150304_1_ >= 0 && p_150304_1_ < this.tagList.size())
+@@ -120,7 +117,6 @@
+     }
+ 
+     // JAVADOC METHOD $$ func_74744_a
+-    @SideOnly(Side.CLIENT)
+     public NBTBase removeTag(int par1)
+     {
+         return (NBTBase)this.tagList.remove(par1);

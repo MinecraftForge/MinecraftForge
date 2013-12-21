@@ -9,28 +9,21 @@
  
  public class EntityEnderPearl extends EntityThrowable
  {
-@@ -51,14 +53,18 @@
+@@ -51,6 +53,9 @@
  
-                 if (!entityplayermp.playerNetServerHandler.connectionClosed && entityplayermp.worldObj == this.worldObj)
+                 if (entityplayermp.playerNetServerHandler.func_147362_b().func_150724_d() && entityplayermp.worldObj == this.worldObj)
                  {
--                    if (this.getThrower().isRiding())
 +                    EnderTeleportEvent event = new EnderTeleportEvent(entityplayermp, this.posX, this.posY, this.posZ, 5.0F);
 +                    if (!MinecraftForge.EVENT_BUS.post(event))
++                    { // Don't indent to lower patch size
+                     if (this.getThrower().isRiding())
                      {
--                        this.getThrower().mountEntity((Entity)null);
-+                        if (this.getThrower().isRiding())
-+                        {
-+                            this.getThrower().mountEntity((Entity)null);
-+                        }
-+    
-+                        this.getThrower().setPositionAndUpdate(event.targetX, event.targetY, event.targetZ);
-+                        this.getThrower().fallDistance = 0.0F;
-+                        this.getThrower().attackEntityFrom(DamageSource.fall, event.attackDamage);
-                     }
--
--                    this.getThrower().setPositionAndUpdate(this.posX, this.posY, this.posZ);
--                    this.getThrower().fallDistance = 0.0F;
--                    this.getThrower().attackEntityFrom(DamageSource.fall, 5.0F);
+                         this.getThrower().mountEntity((Entity)null);
+@@ -59,6 +64,7 @@
+                     this.getThrower().setPositionAndUpdate(this.posX, this.posY, this.posZ);
+                     this.getThrower().fallDistance = 0.0F;
+                     this.getThrower().attackEntityFrom(DamageSource.fall, 5.0F);
++                    }
                  }
              }
  

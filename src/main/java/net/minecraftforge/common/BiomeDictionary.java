@@ -213,7 +213,7 @@ public class BiomeDictionary
             if (biome.theBiomeDecorator instanceof DeferredBiomeDecorator)
             {
                 DeferredBiomeDecorator decorator = (DeferredBiomeDecorator) biome.theBiomeDecorator;
-                decorator.fireCreateEventAndReplace();
+                decorator.fireCreateEventAndReplace(biome);
             }
 
             checkRegistration(biome);

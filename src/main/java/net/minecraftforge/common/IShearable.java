@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.world.World;
+import net.minecraft.world.IBlockAccess;
 
 /**
  *
@@ -28,7 +28,7 @@ public interface IShearable
      * @param z The Z Position
      * @return If this is shearable, and onSheared should be called.
      */
-    public boolean isShearable(ItemStack item, World world, int x, int y, int z);
+    public boolean isShearable(ItemStack item, IBlockAccess world, int x, int y, int z);
 
     /**
      * Performs the shear function on this object.
@@ -49,5 +49,5 @@ public interface IShearable
      * @param fortune The fortune level of the shears being used
      * @return A ArrayList containing all items from this shearing. Possible to be null.
      */
-    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int x, int y, int z, int fortune);
+    public ArrayList<ItemStack> onSheared(ItemStack item, IBlockAccess world, int x, int y, int z, int fortune);
 }

@@ -6,8 +6,11 @@
 package net.minecraftforge.client;
 
 import java.util.BitSet;
+import java.util.IdentityHashMap;
 
 import org.lwjgl.opengl.Display;
+
+import com.google.common.collect.Maps;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -20,7 +23,7 @@ import net.minecraftforge.common.MinecraftForge;
 
 public class MinecraftForgeClient
 {
-    private static IItemRenderer[] customItemRenderers = new IItemRenderer[Item.itemsList.length];
+    private static IdentityHashMap<Item, IItemRenderer> customItemRenderers = Maps.newIdentityHashMap();
 
     /**
      * Register a custom renderer for a specific item. This can be used to
@@ -30,17 +33,17 @@ public class MinecraftForgeClient
      * @param renderer The IItemRenderer interface that handles rendering for
      * this item.
      */
-    public static void registerItemRenderer(int itemID, IItemRenderer renderer)
+    public static void registerItemRenderer(Item item, IItemRenderer renderer)
     {
-        customItemRenderers[itemID] = renderer;
+        customItemRenderers.put(item, renderer);
     }
 
     public static IItemRenderer getItemRenderer(ItemStack item, ItemRenderType type)
     {
-        IItemRenderer renderer = customItemRenderers[item.itemID];
+        IItemRenderer renderer = customItemRenderers.get(item);
         if (renderer != null && renderer.handleRenderType(item, type))
         {
-            return customItemRenderers[item.itemID];
+            return renderer;
         }
         return null;
     }

@@ -1,32 +1,33 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/EntitySheep.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntitySheep.java
-@@ -2,6 +2,8 @@
+@@ -2,6 +2,7 @@
  
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
-+
 +import java.util.ArrayList;
  import java.util.Random;
  import net.minecraft.block.Block;
  import net.minecraft.entity.EntityAgeable;
-@@ -26,7 +28,9 @@
+@@ -27,9 +28,11 @@
+ import net.minecraft.item.crafting.CraftingManager;
+ import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.util.MathHelper;
++import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
++import net.minecraftforge.common.IShearable;
  
 -public class EntitySheep extends EntityAnimal
-+import net.minecraftforge.common.IShearable;
-+
 +public class EntitySheep extends EntityAnimal implements IShearable
  {
-     private final InventoryCrafting field_90016_e = new InventoryCrafting(new ContainerSheep(this), 2, 1);
- 
-@@ -141,28 +145,6 @@
-      */
+     private final InventoryCrafting field_90016_e = new InventoryCrafting(new Container()
+     {
+@@ -130,28 +133,6 @@
+     // JAVADOC METHOD $$ func_70085_c
      public boolean interact(EntityPlayer par1EntityPlayer)
      {
 -        ItemStack itemstack = par1EntityPlayer.inventory.getCurrentItem();
 -
--        if (itemstack != null && itemstack.itemID == Item.shears.itemID && !this.getSheared() && !this.isChild())
+-        if (itemstack != null && itemstack.getItem() == Items.shears && !this.getSheared() && !this.isChild())
 -        {
 -            if (!this.worldObj.isRemote)
 -            {
@@ -35,7 +36,7 @@
 -
 -                for (int j = 0; j < i; ++j)
 -                {
--                    EntityItem entityitem = this.entityDropItem(new ItemStack(Block.cloth.blockID, 1, this.getFleeceColor()), 1.0F);
+-                    EntityItem entityitem = this.entityDropItem(new ItemStack(Item.func_150898_a(Blocks.wool), 1, this.getFleeceColor()), 1.0F);
 -                    entityitem.motionY += (double)(this.rand.nextFloat() * 0.05F);
 -                    entityitem.motionX += (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);
 -                    entityitem.motionZ += (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);
@@ -49,28 +50,28 @@
          return super.interact(par1EntityPlayer);
      }
  
-@@ -343,4 +325,24 @@
+@@ -305,4 +286,24 @@
      {
-         return this.func_90015_b(par1EntityAgeable);
+         return 15 - ((EntitySheep)par1EntityAnimal).getFleeceColor();
      }
 +
 +    @Override
-+    public boolean isShearable(ItemStack item, World world, int X, int Y, int Z)
++    public boolean isShearable(ItemStack item, IBlockAccess world, int x, int y, int z)
 +    {
 +        return !getSheared() && !isChild();
 +    }
 +
 +    @Override
-+    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int X, int Y, int Z, int fortune)
++    public ArrayList<ItemStack> onSheared(ItemStack item, IBlockAccess world, int x, int y, int z, int fortune)
 +    {
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
 +        setSheared(true);
 +        int i = 1 + rand.nextInt(3);
 +        for (int j = 0; j < i; j++)
 +        {
-+            ret.add(new ItemStack(Block.cloth.blockID, 1, getFleeceColor()));
++            ret.add(new ItemStack(Blocks.wool, 1, getFleeceColor()));
 +        }
-+        this.worldObj.playSoundAtEntity(this, "mob.sheep.shear", 1.0F, 1.0F);
++        this.playSound("mob.sheep.shear", 1.0F, 1.0F);
 +        return ret;
 +    }
  }

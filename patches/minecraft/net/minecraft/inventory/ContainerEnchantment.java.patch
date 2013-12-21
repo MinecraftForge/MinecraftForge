@@ -1,14 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerEnchantment.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerEnchantment.java
 @@ -12,6 +12,7 @@
- import net.minecraft.item.Item;
+ import net.minecraft.init.Items;
  import net.minecraft.item.ItemStack;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.ForgeHooks;
  
  public class ContainerEnchantment extends Container
  {
-@@ -109,6 +110,7 @@
+@@ -125,6 +126,7 @@
                  {
                      i = 0;
                      int j;
@@ -16,40 +16,40 @@
  
                      for (j = -1; j <= 1; ++j)
                      {
-@@ -116,37 +118,15 @@
+@@ -132,37 +134,15 @@
                          {
-                             if ((j != 0 || k != 0) && this.worldPointer.isAirBlock(this.posX + k, this.posY, this.posZ + j) && this.worldPointer.isAirBlock(this.posX + k, this.posY + 1, this.posZ + j))
+                             if ((j != 0 || k != 0) && this.worldPointer.func_147437_c(this.posX + k, this.posY, this.posZ + j) && this.worldPointer.func_147437_c(this.posX + k, this.posY + 1, this.posZ + j))
                              {
--                                if (this.worldPointer.getBlockId(this.posX + k * 2, this.posY, this.posZ + j * 2) == Block.bookShelf.blockID)
+-                                if (this.worldPointer.func_147439_a(this.posX + k * 2, this.posY, this.posZ + j * 2) == Blocks.bookshelf)
 -                                {
 -                                    ++i;
 -                                }
 +                                power += ForgeHooks.getEnchantPower(worldPointer, posX + k * 2, posY,     posZ + j * 2);
 +                                power += ForgeHooks.getEnchantPower(worldPointer, posX + k * 2, posY + 1, posZ + j * 2);
  
--                                if (this.worldPointer.getBlockId(this.posX + k * 2, this.posY + 1, this.posZ + j * 2) == Block.bookShelf.blockID)
+-                                if (this.worldPointer.func_147439_a(this.posX + k * 2, this.posY + 1, this.posZ + j * 2) == Blocks.bookshelf)
 -                                {
 -                                    ++i;
 -                                }
 -
                                  if (k != 0 && j != 0)
                                  {
--                                    if (this.worldPointer.getBlockId(this.posX + k * 2, this.posY, this.posZ + j) == Block.bookShelf.blockID)
+-                                    if (this.worldPointer.func_147439_a(this.posX + k * 2, this.posY, this.posZ + j) == Blocks.bookshelf)
 -                                    {
 -                                        ++i;
 -                                    }
 -
--                                    if (this.worldPointer.getBlockId(this.posX + k * 2, this.posY + 1, this.posZ + j) == Block.bookShelf.blockID)
+-                                    if (this.worldPointer.func_147439_a(this.posX + k * 2, this.posY + 1, this.posZ + j) == Blocks.bookshelf)
 -                                    {
 -                                        ++i;
 -                                    }
 -
--                                    if (this.worldPointer.getBlockId(this.posX + k, this.posY, this.posZ + j * 2) == Block.bookShelf.blockID)
+-                                    if (this.worldPointer.func_147439_a(this.posX + k, this.posY, this.posZ + j * 2) == Blocks.bookshelf)
 -                                    {
 -                                        ++i;
 -                                    }
 -
--                                    if (this.worldPointer.getBlockId(this.posX + k, this.posY + 1, this.posZ + j * 2) == Block.bookShelf.blockID)
+-                                    if (this.worldPointer.func_147439_a(this.posX + k, this.posY + 1, this.posZ + j * 2) == Blocks.bookshelf)
 -                                    {
 -                                        ++i;
 -                                    }
@@ -60,7 +60,7 @@
                                  }
                              }
                          }
-@@ -154,7 +134,7 @@
+@@ -170,7 +150,7 @@
  
                      for (j = 0; j < 3; ++j)
                      {

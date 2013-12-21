@@ -1,19 +1,29 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneOre.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneOre.java
-@@ -116,11 +116,17 @@
-     {
-         super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, par7);
+@@ -10,6 +10,7 @@
+ import net.minecraft.init.Items;
+ import net.minecraft.item.Item;
+ import net.minecraft.item.ItemStack;
++import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
  
+ public class BlockRedstoneOre extends Block
+@@ -88,12 +89,17 @@
+     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
+     {
+         super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
 +    }
-+    
-+    @Override
-+    public int getExpDrop(World par1World, int par5, int par7)
+ 
+-        if (this.func_149650_a(p_149690_5_, p_149690_1_.rand, p_149690_7_) != Item.func_150898_a(this))
++    private Random rand = new Random();
++    @Override // World, meta, fortune
++    public int getExpDrop(IBlockAccess p_149690_1_, int p_149690_5_, int p_149690_7_)
 +    {
-         if (this.idDropped(par5, par1World.rand, par7) != this.blockID)
++        if (this.func_149650_a(p_149690_5_, rand, p_149690_7_) != Item.func_150898_a(this))
          {
-             int j1 = 1 + par1World.rand.nextInt(5);
--            this.dropXpOnBlockBreak(par1World, par2, par3, par4, j1);
-+            return j1;
+-            int j1 = 1 + p_149690_1_.rand.nextInt(5);
+-            this.func_149657_c(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, j1);
++            return 1 + rand.nextInt(5);
          }
 +        return 0;
      }

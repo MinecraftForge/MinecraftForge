@@ -7,18 +7,16 @@
 -@SideOnly(Side.CLIENT)
  public class ModelRenderer
  {
-     /** The size of the texture file's width in pixels. */
-@@ -117,7 +116,8 @@
-         this.rotationPointY = par2;
+     // JAVADOC FIELD $$ field_78801_a
+@@ -110,6 +109,7 @@
          this.rotationPointZ = par3;
      }
--
-+    
+ 
 +    @SideOnly(Side.CLIENT)
      public void render(float par1)
      {
          if (!this.isHidden)
-@@ -200,6 +200,7 @@
+@@ -192,6 +192,7 @@
          }
      }
  
@@ -26,18 +24,18 @@
      public void renderWithRotation(float par1)
      {
          if (!this.isHidden)
-@@ -238,6 +239,7 @@
-     /**
-      * Allows the changing of Angles after a box has been rendered
-      */
+@@ -228,6 +229,7 @@
+     }
+ 
+     // JAVADOC METHOD $$ func_78794_c
 +    @SideOnly(Side.CLIENT)
      public void postRender(float par1)
      {
          if (!this.isHidden)
-@@ -282,6 +284,7 @@
-     /**
-      * Compiles a GL display list for this model
-      */
+@@ -270,6 +272,7 @@
+     }
+ 
+     // JAVADOC METHOD $$ func_78788_d
 +    @SideOnly(Side.CLIENT)
      private void compileDisplayList(float par1)
      {

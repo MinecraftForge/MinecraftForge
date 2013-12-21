@@ -1,56 +1,65 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonBase.java
-@@ -439,7 +439,7 @@
+@@ -11,6 +11,7 @@
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.item.ItemStack;
++import net.minecraft.server.management.PlayerManager;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityPiston;
+ import net.minecraft.util.AxisAlignedBB;
+@@ -360,7 +361,8 @@
                  return false;
              }
  
--            return !(Block.blocksList[par0] instanceof ITileEntityProvider);
-+            return !par1World.blockHasTileEntity(par2, par3, par4);
+-            return !(p_150080_0_ instanceof ITileEntityProvider);
++            return !(p_150080_1_.func_147439_a(p_150080_2_, p_150080_3_, p_150080_4_).hasTileEntity(p_150080_1_.getBlockMetadata(p_150080_2_, p_150080_3_, p_150080_4_)));
++            
          }
      }
  
-@@ -457,14 +457,14 @@
+@@ -375,14 +377,14 @@
          {
              if (l1 < 13)
              {
 -                if (j1 <= 0 || j1 >= 255)
-+                if (j1 <= 0 || j1 >= par0World.getHeight() - 1)
++                if (j1 <= 0 || j1 >= p_150077_0_.getHeight())
                  {
                      return false;
                  }
  
-                 int i2 = par0World.getBlockId(i1, j1, k1);
+                 Block block = p_150077_0_.func_147439_a(i1, j1, k1);
  
--                if (i2 != 0)
-+                if (!par0World.isAirBlock(i1, j1, k1))
+-                if (block.func_149688_o() != Material.field_151579_a)
++                if (block.isAir(p_150077_0_, i1, j1, k1))
                  {
-                     if (!canPushBlock(i2, par0World, i1, j1, k1, true))
+                     if (!func_150080_a(block, p_150077_0_, i1, j1, k1, true))
                      {
-@@ -507,14 +507,14 @@
- 
+@@ -420,14 +422,14 @@
+         {
              if (l1 < 13)
              {
 -                if (j1 <= 0 || j1 >= 255)
-+                if (j1 <= 0 || j1 >= par1World.getHeight() - 1)
++                if (j1 <= 0 || j1 >= p_150079_1_.getHeight())
                  {
                      return false;
                  }
  
-                 i2 = par1World.getBlockId(i1, j1, k1);
+                 Block block = p_150079_1_.func_147439_a(i1, j1, k1);
  
--                if (i2 != 0)
-+                if (!par1World.isAirBlock(i1, j1, k1))
+-                if (block.func_149688_o() != Material.field_151579_a)
++                if (block.isAir(p_150079_1_, i1, j1, k1))
                  {
-                     if (!canPushBlock(i2, par1World, i1, j1, k1, true))
+                     if (!func_150080_a(block, p_150079_1_, i1, j1, k1, true))
                      {
-@@ -535,7 +535,9 @@
+@@ -448,7 +450,9 @@
                          continue;
                      }
  
--                    Block.blocksList[i2].dropBlockAsItem(par1World, i1, j1, k1, par1World.getBlockMetadata(i1, j1, k1), 0);
+-                    block.func_149697_b(p_150079_1_, i1, j1, k1, p_150079_1_.getBlockMetadata(i1, j1, k1), 0);
 +                    //With our change to how snowballs are dropped this needs to disallow to mimic vanilla behavior.
-+                    float chance = (Block.blocksList[i2] instanceof BlockSnow ? -1.0f : 1.0f);
-+                    Block.blocksList[i2].dropBlockAsItemWithChance(par1World, i1, j1, k1, par1World.getBlockMetadata(i1, j1, k1), chance, 0);
-                     par1World.setBlockToAir(i1, j1, k1);
++                    float chance = block instanceof BlockSnow ? -1.0f : 1.0f;
++                    block.func_149690_a(p_150079_1_, i1, j1, k1, p_150079_1_.getBlockMetadata(i1, j1, k1), chance, 0);
+                     p_150079_1_.func_147468_f(i1, j1, k1);
                  }
              }

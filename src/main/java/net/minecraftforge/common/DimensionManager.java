@@ -12,7 +12,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
-import java.util.logging.Level;
+
+import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultiset;
@@ -26,7 +27,6 @@ import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -251,7 +251,7 @@ public class DimensionManager
         ISaveHandler savehandler = overworld.getSaveHandler();
         WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
 
-        WorldServer world = (dim == 0 ? overworld : new WorldServerMulti(mcServer, savehandler, overworld.getWorldInfo().getWorldName(), dim, worldSettings, overworld, mcServer.theProfiler, overworld.getWorldLogAgent()));
+        WorldServer world = (dim == 0 ? overworld : new WorldServerMulti(mcServer, savehandler, overworld.getWorldInfo().getWorldName(), dim, worldSettings, overworld, mcServer.theProfiler));
         world.addWorldAccess(new WorldManager(mcServer, world));
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
         if (!mcServer.isSinglePlayer())
@@ -259,7 +259,7 @@ public class DimensionManager
             world.getWorldInfo().setGameType(mcServer.getGameType());
         }
 
-        mcServer.setDifficultyForAllWorlds(mcServer.getDifficulty());
+        mcServer.func_147139_a(mcServer.func_147135_j());
     }
 
     public static WorldServer getWorld(int id)
@@ -308,7 +308,7 @@ public class DimensionManager
         }
         catch (Exception e)
         {
-            FMLCommonHandler.instance().getFMLLogger().log(Level.SEVERE,String.format("An error occured trying to create an instance of WorldProvider %d (%s)",
+            FMLCommonHandler.instance().getFMLLogger().log(Level.ERROR, String.format("An error occured trying to create an instance of WorldProvider %d (%s)",
                     dim, providers.get(getProviderType(dim)).getSimpleName()),e);
             throw new RuntimeException(e);
         }

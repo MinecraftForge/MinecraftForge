@@ -1,13 +1,26 @@
 --- ../src-base/minecraft/net/minecraft/item/Item.java
 +++ ../src-work/minecraft/net/minecraft/item/Item.java
-@@ -11,13 +11,18 @@
+@@ -7,10 +7,12 @@
+ import cpw.mods.fml.common.registry.GameData;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++import java.util.HashMap;
+ import java.util.HashSet;
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Random;
++import java.util.Set;
  import java.util.UUID;
  import net.minecraft.block.Block;
+ import net.minecraft.block.BlockDirt;
+@@ -27,13 +29,18 @@
+ import net.minecraft.block.BlockWall;
+ import net.minecraft.block.BlockWood;
  import net.minecraft.block.material.Material;
 +import net.minecraft.client.gui.FontRenderer;
 +import net.minecraft.client.gui.ScaledResolution;
 +import net.minecraft.client.model.ModelBiped;
- import net.minecraft.client.renderer.texture.IconRegister;
+ import net.minecraft.client.renderer.texture.IIconRegister;
  import net.minecraft.creativetab.CreativeTabs;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityLivingBase;
@@ -16,55 +29,38 @@
  import net.minecraft.entity.item.EntityPainting;
  import net.minecraft.entity.player.EntityPlayer;
 +import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.init.Items;
  import net.minecraft.potion.Potion;
- import net.minecraft.potion.PotionHelper;
- import net.minecraft.stats.StatList;
-@@ -26,7 +31,9 @@
- import net.minecraft.util.MovingObjectPosition;
+@@ -44,7 +51,10 @@
+ import net.minecraft.util.RegistryNamespaced;
  import net.minecraft.util.StatCollector;
  import net.minecraft.util.Vec3;
 +import net.minecraft.util.WeightedRandomChestContent;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.ChestGenHooks;
++import net.minecraftforge.common.util.EnumHelper;
  
  public class Item
  {
-@@ -250,13 +257,16 @@
-     /** The string associated with this Item's Icon. */
-     protected String iconString;
+@@ -462,6 +472,7 @@
+     }
  
-+    /** FORGE: To disable repair recipes. */
-+    protected boolean canRepair = true;
-+
-     public Item(int par1)
-     {
-         this.itemID = 256 + par1;
- 
-         if (itemsList[256 + par1] != null)
-         {
--            System.out.println("CONFLICT @ " + par1);
-+            System.out.println("CONFLICT @ " + par1 + " item slot already occupied by " + itemsList[256 + par1] + " while adding " + this);
-         }
- 
-         itemsList[256 + par1] = this;
-@@ -334,6 +344,7 @@
-     /**
-      * Returns the maximum size of the stack for a specific item. *Isn't this more a Set than a Get?*
-      */
+     // JAVADOC METHOD $$ func_77639_j
 +    @Deprecated
      public int getItemStackLimit()
      {
          return this.maxStackSize;
-@@ -606,6 +617,7 @@
+@@ -660,6 +671,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-+    @Deprecated //Render pass sensitive version below.
++    @Deprecated
      public boolean hasEffect(ItemStack par1ItemStack)
      {
          return par1ItemStack.isItemEnchanted();
-@@ -626,7 +638,7 @@
-      */
+@@ -674,7 +686,7 @@
+     // JAVADOC METHOD $$ func_77616_k
      public boolean isItemTool(ItemStack par1ItemStack)
      {
 -        return this.getItemStackLimit() == 1 && this.isDamageable();
@@ -72,7 +68,7 @@
      }
  
      protected MovingObjectPosition getMovingObjectPositionFromPlayer(World par1World, EntityPlayer par2EntityPlayer, boolean par3)
-@@ -635,7 +647,7 @@
+@@ -683,7 +695,7 @@
          float f1 = par2EntityPlayer.prevRotationPitch + (par2EntityPlayer.rotationPitch - par2EntityPlayer.prevRotationPitch) * f;
          float f2 = par2EntityPlayer.prevRotationYaw + (par2EntityPlayer.rotationYaw - par2EntityPlayer.prevRotationYaw) * f;
          double d0 = par2EntityPlayer.prevPosX + (par2EntityPlayer.posX - par2EntityPlayer.prevPosX) * (double)f;
@@ -81,7 +77,7 @@
          double d2 = par2EntityPlayer.prevPosZ + (par2EntityPlayer.posZ - par2EntityPlayer.prevPosZ) * (double)f;
          Vec3 vec3 = par1World.getWorldVec3Pool().getVecFromPool(d0, d1, d2);
          float f3 = MathHelper.cos(-f2 * 0.017453292F - (float)Math.PI);
-@@ -645,6 +657,10 @@
+@@ -693,6 +705,10 @@
          float f7 = f4 * f5;
          float f8 = f3 * f5;
          double d3 = 5.0D;
@@ -90,14 +86,13 @@
 +            d3 = ((EntityPlayerMP)par2EntityPlayer).theItemInWorldManager.getBlockReachDistance();
 +        }
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
-         return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
+         return par1World.func_147447_a(vec3, vec31, par3, !par3, false);
      }
-@@ -753,4 +769,546 @@
-     {
-         StatList.initStats();
+@@ -773,6 +789,532 @@
+         return this.iconString == null ? "MISSING_ICON_ITEM_" + field_150901_e.func_148757_b(this) + "_" + this.unlocalizedName : this.iconString;
      }
-+
-+    /* =========================================================== FORGE START ===============================================================*/
+ 
++    /* ======================================== FORGE START =====================================*/
 +    /**
 +     * Called when a player drops the item into the world,
 +     * returning false from this will prevent the item from
@@ -135,11 +130,12 @@
 +     * @param metadata The items current metadata
 +     * @return The damage strength
 +     */
-+    public float getStrVsBlock(ItemStack itemstack, Block block, int metadata)
++    public float getDigSpeed(ItemStack itemstack, Block block, int metadata)
 +    {
-+        return getStrVsBlock(itemstack, block);
++        return func_150893_a(itemstack, block);
 +    }
 +
++    protected boolean canRepair = true;
 +    /**
 +     * Called by CraftingManager to determine if an item is reparable.
 +     * @return True if reparable
@@ -182,7 +178,7 @@
 +     * @param player The Player using the item
 +     * @param count The amount of time in tick the item has been used for continuously
 +     */
-+    public void onUsingItemTick(ItemStack stack, EntityPlayer player, int count)
++    public void onUsingTick(ItemStack stack, EntityPlayer player, int count)
 +    {
 +    }
 +
@@ -211,7 +207,7 @@
 +     * @param useRemaining The ticks remaining for the active item.
 +     * @return The icon index
 +     */
-+    public Icon getIcon(ItemStack stack, int renderPass, EntityPlayer player, ItemStack usingItem, int useRemaining)
++    public IIcon getIcon(ItemStack stack, int renderPass, EntityPlayer player, ItemStack usingItem, int useRemaining)
 +    {
 +        return getIcon(stack, renderPass);
 +    }
@@ -236,7 +232,7 @@
 +     * @param itemStack The current ItemStack
 +     * @return The resulting ItemStack
 +     */
-+    public ItemStack getContainerItemStack(ItemStack itemStack)
++    public ItemStack getContainerItem(ItemStack itemStack)
 +    {
 +        if (!hasContainerItem())
 +        {
@@ -331,9 +327,9 @@
 +     * @param pass the multi-render pass
 +     * @return the icon
 +     */
-+    public Icon getIcon(ItemStack stack, int pass)
++    public IIcon getIcon(ItemStack stack, int pass)
 +    {
-+    	return getIconFromDamageForRenderPass(stack.getItemDamage(), pass);
++        return getIconFromDamageForRenderPass(stack.getItemDamage(), pass);
 +    }
 +
 +    /**
@@ -360,17 +356,17 @@
 +     *
 +     * Should this item, when held, allow sneak-clicks to pass through to the underlying block?
 +     *
-+     * @param par2World
-+     * @param par4
-+     * @param par5
-+     * @param par6
++     * @param world The world 
++     * @param x The X Position
++     * @param y The X Position
++     * @param z The X Position
++     * @param player The Player that is wielding the item
 +     * @return
 +     */
-+    public boolean shouldPassSneakingClickToBlock(World par2World, int par4, int par5, int par6)
++    public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player)
 +    {
 +        return false;
 +    }
-+
 +
 +    /**
 +     * Called to tick armor in the armor slot. Override to do something
@@ -379,7 +375,7 @@
 +     * @param player
 +     * @param itemStack
 +     */
-+    public void onArmorTickUpdate(World world, EntityPlayer player, ItemStack itemStack)
++    public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack)
 +    {
 +
 +    }
@@ -401,79 +397,24 @@
 +
 +        if (armorType == 0)
 +        {
-+            return itemID == Block.pumpkin.blockID || itemID == Item.skull.itemID;
++            return this == Item.func_150898_a(Blocks.pumpkin) || this == Items.skull;
 +        }
 +
 +        return false;
 +    }
 +
 +    /**
-+     * ItemStack sensitive version of isPotionIngredient
-+     *
-+     * @param stack The item stack
-+     * @return True if this stack can be used as a potion ingredient
-+     */
-+    public boolean isPotionIngredient(ItemStack stack)
-+    {
-+        return isPotionIngredient();
-+    }
-+
-+    /**
-+     * ItemStack sensitive version of getPotionEffect
-+     *
-+     * @param stack The item stack
-+     * @return A string containing the bit manipulation to apply the the potion.
-+     */
-+    public String getPotionEffect(ItemStack stack)
-+    {
-+        return getPotionEffect();
-+    }
-+
-+    /**
 +     * Allow or forbid the specific book/item combination as an anvil enchant
 +     *
-+     * @param itemstack1 The item
-+     * @param itemstack2 The book
++     * @param stack The item
++     * @param book The book
 +     * @return if the enchantment is allowed
 +     */
-+    public boolean isBookEnchantable(ItemStack itemstack1, ItemStack itemstack2)
++    public boolean isBookEnchantable(ItemStack stack, ItemStack book)
 +    {
 +        return true;
 +    }
 +
-+    /**
-+     * An itemstack sensitive version of getDamageVsEntity - allows items to handle damage based on
-+     * itemstack data, like tags. Falls back to getDamageVsEntity.
-+     *
-+     * @param par1Entity The entity being attacked (or the attacking mob, if it's a mob - vanilla bug?)
-+     * @param itemStack The itemstack
-+     * @return the damage
-+     */
-+    @Deprecated //Need to find a new place to hook this
-+    public float getDamageVsEntity(Entity par1Entity, ItemStack itemStack)
-+    {
-+        return 0.0F; //getDamageVsEntity(par1Entity);
-+    }
-+    
-+    /**
-+     * Called by RenderBiped and RenderPlayer to determine the armor texture that 
-+     * should be use for the currently equiped item.
-+     * This will only be called on instances of ItemArmor. 
-+     * 
-+     * Returning null from this function will use the default value.
-+     * 
-+     * @param stack ItemStack for the equpt armor
-+     * @param entity The entity wearing the armor
-+     * @param slot The slot the armor is in
-+     * @param layer The render layer, either 1 or 2, 2 is only used for CLOTH armor by default
-+     * @return Path of texture to bind, or null to use default
-+     */
-+    @Deprecated //Replaced with more useful version below
-+    public String getArmorTexture(ItemStack stack, Entity entity, int slot, int layer)
-+    {
-+        return null;
-+    }
-+    
 +    /**
 +     * Called by RenderBiped and RenderPlayer to determine the armor texture that 
 +     * should be use for the currently equiped item.
@@ -489,9 +430,8 @@
 +     */
 +    public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type)
 +    {
-+        return getArmorTexture(stack, entity, slot, (slot == 2 ? 2 : 1));
++        return null;
 +    }
-+
 +
 +    /**
 +     * Returns the font renderer used to render tooltips and overlays for this item.
@@ -605,7 +545,7 @@
 +            stack.itemDamage = 0;
 +        }
 +    }
-+    
++
 +    /**
 +     * ItemStack sensitive version of {@link #canHarvestBlock(Block)} 
 +     * @param par1Block The block trying to harvest
@@ -614,9 +554,8 @@
 +     */
 +    public boolean canHarvestBlock(Block par1Block, ItemStack itemStack)
 +    {
-+        return canHarvestBlock(par1Block);  
++        return func_150897_b(par1Block);  
 +    }
-+
 +
 +    /**
 +     * Render Pass sensitive version of hasEffect()
@@ -624,7 +563,7 @@
 +    @SideOnly(Side.CLIENT)
 +    public boolean hasEffect(ItemStack par1ItemStack, int pass)
 +    {
-+        return hasEffect(par1ItemStack) && (pass == 0 || itemID != Item.potion.itemID);
++        return hasEffect(par1ItemStack) && (pass == 0 || this == Items.potionitem);
 +    }
 +
 +    /**
@@ -638,4 +577,74 @@
 +    {
 +        return this.getItemStackLimit();
 +    }
++
++    private HashMap<String, Integer> toolClasses = new HashMap<String, Integer>();
++    /**
++     * Sets or removes the harvest level for the specified tool class.
++     * 
++     * @param toolClass Class
++     * @param level Harvest level:
++     *     Wood:    0
++     *     Stone:   1
++     *     Iron:    2
++     *     Diamond: 3
++     *     Gold:    0
++     */
++    public void setHarvestLevel(String toolClass, int level)
++    {
++        if (level < 0)
++            toolClasses.remove(toolClass);
++        else
++            toolClasses.put(toolClass, level);
++    }
++
++    public Set<String> getToolClasses(ItemStack stack)
++    {
++        return toolClasses.keySet();
++    }
++
++    /**
++     * Queries the harvest level of this item stack for the specifred tool class,
++     * Returns -1 if this tool is not of the specified type
++     * 
++     * @param stack This item stack instance
++     * @param toolClass Tool Class
++     * @return Harvest level, or -1 if not the specified tool type.
++     */
++    public int getHarvestLevel(ItemStack stack, String toolClass)
++    {
++        Integer ret = toolClasses.get(toolClass);
++        return ret == null ? -1 : ret; 
++    }
++    /* ======================================== FORGE END   =====================================*/
++
+     public static enum ToolMaterial
+     {
+         WOOD(0, 59, 2.0F, 0.0F, 15),
+@@ -793,6 +1335,9 @@
+ 
+         private static final String __OBFID = "CL_00000042";
+ 
++        //Added by forge for custom Tool materials.
++        public Item customCraftingMaterial = null;
++
+         private ToolMaterial(int par3, int par4, float par5, float par6, int par7)
+         {
+             this.harvestLevel = par3;
+@@ -834,7 +1379,15 @@
+ 
+         public Item func_150995_f()
+         {
+-            return this == WOOD ? Item.func_150898_a(Blocks.planks) : (this == STONE ? Item.func_150898_a(Blocks.cobblestone) : (this == GOLD ? Items.gold_ingot : (this == IRON ? Items.iron_ingot : (this == EMERALD ? Items.diamond : null))));
++            switch (this)
++            {
++                case WOOD:    return Item.func_150898_a(Blocks.planks);
++                case STONE:   return Item.func_150898_a(Blocks.cobblestone);
++                case GOLD:    return Items.gold_ingot;
++                case IRON:    return Items.iron_ingot;
++                case EMERALD: return Items.diamond;
++                default:      return customCraftingMaterial;
++            }
+         }
+     }
  }

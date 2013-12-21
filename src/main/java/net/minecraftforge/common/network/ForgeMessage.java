@@ -36,23 +36,27 @@ public abstract class ForgeMessage {
         @Override
         void toBytes(ByteBuf bytes)
         {
+            /*
             bytes.writeInt(FluidRegistry.maxID);
             for (Map.Entry<String, Integer> entry : FluidRegistry.fluidIDs.entrySet())
             {
                 ByteBufUtils.writeUTF8String(bytes,entry.getKey());
                 bytes.writeInt(entry.getValue());
             }
+            */
         }
 
         @Override
         void fromBytes(ByteBuf bytes)
         {
+            /*
             int listSize = bytes.readInt();
             for (int i = 0; i < listSize; i++) {
                 String fluidName = ByteBufUtils.readUTF8String(bytes);
                 int fluidId = bytes.readInt();
                 fluidIds.put(fluidName, fluidId);
             }
+            */
         }
     }
 

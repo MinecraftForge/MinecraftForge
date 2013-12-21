@@ -13,10 +13,7 @@ public class FMLForgePlugin implements IFMLLoadingPlugin
     @Override
     public String[] getASMTransformerClass()
     {
-        return new String[]{ 
-                                "net.minecraftforge.transformers.ForgeAccessTransformer",
-                                "net.minecraftforge.transformers.EventTransformer"
-                           };
+        return new String[0];
     }
 
     @Override
@@ -36,5 +33,11 @@ public class FMLForgePlugin implements IFMLLoadingPlugin
     {
         RUNTIME_DEOBF = (Boolean)data.get("runtimeDeobfuscationEnabled");
         forgeLocation = (File)data.get("coremodLocation");
+    }
+
+    @Override
+    public String getAccessTransformerClass()
+    {
+        return "net.minecraftforge.transformers.ForgeAccessTransformer";
     }
 }

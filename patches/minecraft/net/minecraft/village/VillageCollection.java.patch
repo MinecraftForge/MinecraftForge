@@ -1,11 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/village/VillageCollection.java
 +++ ../src-work/minecraft/net/minecraft/village/VillageCollection.java
-@@ -165,7 +165,7 @@
+@@ -152,7 +152,7 @@
                  {
                      Village village = (Village)iterator.next();
                      int j = (int)village.getCenter().getDistanceSquared(villagedoorinfo.posX, villagedoorinfo.posY, villagedoorinfo.posZ);
 -                    int k = 32 + village.getVillageRadius();
-+                    float k = 32f + village.getVillageRadius();
++                    float k = 32f + village.getVillageRadius(); //BugFix: Avoid int wrapping
  
                      if (j > k * k)
                      {

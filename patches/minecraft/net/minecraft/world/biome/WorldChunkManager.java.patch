@@ -7,22 +7,22 @@
 +import java.util.Arrays;
  import java.util.List;
  import java.util.Random;
- import net.minecraft.world.ChunkPosition;
-@@ -11,8 +12,13 @@
+ import net.minecraft.crash.CrashReport;
+@@ -13,9 +14,13 @@
+ import net.minecraft.world.WorldType;
  import net.minecraft.world.gen.layer.GenLayer;
  import net.minecraft.world.gen.layer.IntCache;
- 
-+import net.minecraftforge.common.*;
-+import net.minecraftforge.event.terraingen.*;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.terraingen.WorldTypeEvent;
 +import static net.minecraft.world.biome.BiomeGenBase.*;
-+
+ 
  public class WorldChunkManager
  {
 +    public static ArrayList<BiomeGenBase> allowedBiomes = new ArrayList<BiomeGenBase>(Arrays.asList(forest, plains, taiga, taigaHills, forestHills, jungle, jungleHills));
      private GenLayer genBiomes;
- 
-     /** A GenLayer containing the indices into BiomeGenBase.biomeList[] */
-@@ -28,19 +34,14 @@
+     // JAVADOC FIELD $$ field_76945_e
+     private GenLayer biomeIndexLayer;
+@@ -29,19 +34,14 @@
      {
          this.biomeCache = new BiomeCache(this);
          this.biomesToSpawnIn = new ArrayList();
@@ -44,7 +44,7 @@
          this.genBiomes = agenlayer[0];
          this.biomeIndexLayer = agenlayer[1];
      }
-@@ -264,4 +265,11 @@
+@@ -254,4 +254,11 @@
      {
          this.biomeCache.cleanupCache();
      }

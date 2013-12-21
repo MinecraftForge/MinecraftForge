@@ -4,17 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cpw.mods.fml.common.eventhandler.Event.Result;
-
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
@@ -117,5 +119,10 @@ public class ForgeEventFactory
         SummonAidEvent summonEvent = new SummonAidEvent(zombie, world, x, y, z, attacker, summonChance);
         MinecraftForge.EVENT_BUS.post(summonEvent);
         return summonEvent;
+    }
+
+    public static boolean onEntityStruckByLightning(Entity entity, EntityLightningBolt bolt)
+    {
+        return MinecraftForge.EVENT_BUS.post(new EntityStruckByLightningEvent(entity, bolt));
     }
 }

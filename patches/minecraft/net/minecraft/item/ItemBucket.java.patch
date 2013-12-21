@@ -1,17 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBucket.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBucket.java
-@@ -8,6 +8,10 @@
+@@ -8,6 +8,9 @@
+ import net.minecraft.init.Items;
  import net.minecraft.util.MovingObjectPosition;
  import net.minecraft.world.World;
- 
++import cpw.mods.fml.common.eventhandler.Event;
 +import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.Event;
 +import net.minecraftforge.event.entity.player.FillBucketEvent;
-+
+ 
  public class ItemBucket extends Item
  {
-     /** field for checking if the bucket has been filled. */
-@@ -35,6 +39,32 @@
+@@ -34,6 +37,31 @@
          }
          else
          {
@@ -35,12 +34,11 @@
 +
 +                if (!par3EntityPlayer.inventory.addItemStackToInventory(event.result))
 +                {
-+                    par3EntityPlayer.dropPlayerItem(event.result);
++                    par3EntityPlayer.dropPlayerItemWithRandomChoice(event.result, false);
 +                }
 +
 +                return par1ItemStack;
 +            }
-+
-             if (movingobjectposition.typeOfHit == EnumMovingObjectType.TILE)
+             if (movingobjectposition.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
              {
                  int i = movingobjectposition.blockX;

@@ -1,43 +1,44 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemShears.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemShears.java
-@@ -1,9 +1,19 @@
+@@ -1,11 +1,20 @@
  package net.minecraft.item;
  
 +import java.util.ArrayList;
 +import java.util.Random;
 +
  import net.minecraft.block.Block;
+ import net.minecraft.block.material.Material;
  import net.minecraft.creativetab.CreativeTabs;
 +import net.minecraft.enchantment.Enchantment;
 +import net.minecraft.enchantment.EnchantmentHelper;
-+import net.minecraft.entity.EntityLiving;
  import net.minecraft.entity.EntityLivingBase;
 +import net.minecraft.entity.item.EntityItem;
 +import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.init.Blocks;
 +import net.minecraft.stats.StatList;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.IShearable;
  
  public class ItemShears extends Item
  {
-@@ -17,13 +27,12 @@
+@@ -20,13 +29,12 @@
  
-     public boolean onBlockDestroyed(ItemStack par1ItemStack, World par2World, int par3, int par4, int par5, int par6, EntityLivingBase par7EntityLivingBase)
+     public boolean func_150894_a(ItemStack p_150894_1_, World p_150894_2_, Block p_150894_3_, int p_150894_4_, int p_150894_5_, int p_150894_6_, EntityLivingBase p_150894_7_)
      {
--        if (par3 != Block.leaves.blockID && par3 != Block.web.blockID && par3 != Block.tallGrass.blockID && par3 != Block.vine.blockID && par3 != Block.tripWire.blockID)
-+        if (par3 != Block.leaves.blockID && par3 != Block.web.blockID && par3 != Block.tallGrass.blockID && par3 != Block.vine.blockID && par3 != Block.tripWire.blockID && !(Block.blocksList[par3] instanceof IShearable))
+-        if (p_150894_3_.func_149688_o() != Material.field_151584_j && p_150894_3_ != Blocks.web && p_150894_3_ != Blocks.tallgrass && p_150894_3_ != Blocks.vine && p_150894_3_ != Blocks.tripwire)
++        if (p_150894_3_.func_149688_o() != Material.field_151584_j && p_150894_3_ != Blocks.web && p_150894_3_ != Blocks.tallgrass && p_150894_3_ != Blocks.vine && p_150894_3_ != Blocks.tripwire && !(p_150894_3_ instanceof IShearable))
          {
-             return super.onBlockDestroyed(par1ItemStack, par2World, par3, par4, par5, par6, par7EntityLivingBase);
+             return super.func_150894_a(p_150894_1_, p_150894_2_, p_150894_3_, p_150894_4_, p_150894_5_, p_150894_6_, p_150894_7_);
          }
          else
          {
--            par1ItemStack.damageItem(1, par7EntityLivingBase);
+-            p_150894_1_.damageItem(1, p_150894_7_);
              return true;
          }
      }
-@@ -44,4 +53,69 @@
+@@ -40,4 +48,69 @@
      {
-         return par2Block.blockID != Block.web.blockID && par2Block.blockID != Block.leaves.blockID ? (par2Block.blockID == Block.cloth.blockID ? 5.0F : super.getStrVsBlock(par1ItemStack, par2Block)) : 15.0F;
+         return p_150893_2_ != Blocks.web && p_150893_2_.func_149688_o() != Material.field_151584_j ? (p_150893_2_ == Blocks.wool ? 5.0F : super.func_150893_a(p_150893_1_, p_150893_2_)) : 15.0F;
      }
 +
 +    @Override
@@ -77,10 +78,10 @@
 +        {
 +            return false;
 +        }
-+        int id = player.worldObj.getBlockId(x, y, z);
-+        if (Block.blocksList[id] instanceof IShearable)
++        Block block = player.worldObj.func_147439_a(x, y, z);
++        if (block instanceof IShearable)
 +        {
-+            IShearable target = (IShearable)Block.blocksList[id];
++            IShearable target = (IShearable)block;
 +            if (target.isShearable(itemstack, player.worldObj, x, y, z))
 +            {
 +                ArrayList<ItemStack> drops = target.onSheared(itemstack, player.worldObj, x, y, z,
@@ -94,12 +95,12 @@
 +                    double d1 = (double)(rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
 +                    double d2 = (double)(rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
 +                    EntityItem entityitem = new EntityItem(player.worldObj, (double)x + d, (double)y + d1, (double)z + d2, stack);
-+                    entityitem.delayBeforeCanPickup = 10;
++                    entityitem.field_145804_b = 10;
 +                    player.worldObj.spawnEntityInWorld(entityitem);
 +                }
 +
 +                itemstack.damageItem(1, player);
-+                player.addStat(StatList.mineBlockStatArray[id], 1);
++                player.addStat(StatList.mineBlockStatArray[Block.func_149682_b(block)], 1);
 +            }
 +        }
 +        return false;

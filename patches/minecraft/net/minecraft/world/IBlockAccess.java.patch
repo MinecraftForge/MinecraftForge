@@ -4,26 +4,25 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.util.Vec3Pool;
  import net.minecraft.world.biome.BiomeGenBase;
-+import net.minecraftforge.common.ForgeDirection;
++import net.minecraftforge.common.util.ForgeDirection;
  
  public interface IBlockAccess
  {
-@@ -59,8 +60,6 @@
-      */
-     boolean isBlockNormalCube(int i, int j, int k);
+@@ -20,7 +21,6 @@
+     // JAVADOC METHOD $$ func_72805_g
+     int getBlockMetadata(int var1, int var2, int var3);
  
 -    @SideOnly(Side.CLIENT)
--
-     /**
-      * Returns true if the block at the specified coordinates is empty
-      */
-@@ -103,4 +102,16 @@
-      * Is this block powering in the specified direction Args: x, y, z, direction
-      */
-     int isBlockProvidingPowerTo(int i, int j, int k, int l);
+     boolean func_147437_c(int var1, int var2, int var3);
+ 
+     // JAVADOC METHOD $$ func_72807_a
+@@ -40,4 +40,16 @@
+ 
+     // JAVADOC METHOD $$ func_72879_k
+     int isBlockProvidingPowerTo(int var1, int var2, int var3, int var4);
 +
 +    /**
-+     * FORGE: isBlockSolidOnSide, pulled up from {@link World}
++     * FORGE: isSideSolid, pulled up from {@link World}
 +     *
 +     * @param x X coord
 +     * @param y Y coord
@@ -32,5 +31,5 @@
 +     * @param _default default return value
 +     * @return if the block is solid on the side
 +     */
-+    boolean isBlockSolidOnSide(int x, int y, int z, ForgeDirection side, boolean _default);
++    boolean isSideSolid(int x, int y, int z, ForgeDirection side, boolean _default);
  }

@@ -1,31 +1,31 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
-@@ -8,6 +8,8 @@
+@@ -8,6 +8,9 @@
  import net.minecraft.tileentity.TileEntityMobSpawner;
  import net.minecraft.util.WeightedRandomChestContent;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.ChestGenHooks;
 +import net.minecraftforge.common.DungeonHooks;
++import static net.minecraftforge.common.ChestGenHooks.DUNGEON_CHEST;;
  
  public class WorldGenDungeons extends WorldGenerator
  {
-@@ -122,12 +124,12 @@
+@@ -123,12 +126,11 @@
                                  if (k2 == 1)
                                  {
-                                     par1World.setBlock(i2, par4, j2, Block.chest.blockID, 0, 2);
--                                    WeightedRandomChestContent[] aweightedrandomchestcontent = WeightedRandomChestContent.func_92080_a(field_111189_a, new WeightedRandomChestContent[] {Item.enchantedBook.func_92114_b(par2Random)});
-                                     TileEntityChest tileentitychest = (TileEntityChest)par1World.getBlockTileEntity(i2, par4, j2);
+                                     par1World.func_147465_d(i2, par4, j2, Blocks.chest, 0, 2);
+-                                    WeightedRandomChestContent[] aweightedrandomchestcontent = WeightedRandomChestContent.func_92080_a(field_111189_a, new WeightedRandomChestContent[] {Items.enchanted_book.func_92114_b(par2Random)});
+                                     TileEntityChest tileentitychest = (TileEntityChest)par1World.func_147438_o(i2, par4, j2);
  
                                      if (tileentitychest != null)
                                      {
 -                                        WeightedRandomChestContent.generateChestContents(par2Random, aweightedrandomchestcontent, tileentitychest, 8);
-+                                        ChestGenHooks info = ChestGenHooks.getInfo(ChestGenHooks.DUNGEON_CHEST);
-+                                        WeightedRandomChestContent.generateChestContents(par2Random, info.getItems(par2Random), tileentitychest, info.getCount(par2Random));
++                                        WeightedRandomChestContent.generateChestContents(par2Random, ChestGenHooks.getItems(DUNGEON_CHEST, par2Random), tileentitychest, ChestGenHooks.getCount(DUNGEON_CHEST, par2Random));
                                      }
  
                                      break label101;
-@@ -169,7 +171,6 @@
-      */
+@@ -168,7 +170,6 @@
+     // JAVADOC METHOD $$ func_76543_b
      private String pickMobSpawner(Random par1Random)
      {
 -        int i = par1Random.nextInt(4);

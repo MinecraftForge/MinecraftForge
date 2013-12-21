@@ -1,16 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldType.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldType.java
-@@ -10,6 +10,9 @@
- import com.google.common.collect.ObjectArrays;
- import com.google.common.collect.Sets;
+@@ -2,6 +2,9 @@
+ 
+ import java.util.Random;
  
 +import net.minecraft.client.Minecraft;
 +import net.minecraft.client.gui.GuiCreateFlatWorld;
 +import net.minecraft.client.gui.GuiCreateWorld;
- import net.minecraft.world.*;
- import net.minecraft.world.gen.*;
- import net.minecraft.world.biome.*;
-@@ -224,4 +227,47 @@
+ import net.minecraft.world.biome.BiomeGenBase;
+ import net.minecraft.world.biome.WorldChunkManager;
+ import net.minecraft.world.biome.WorldChunkManagerHell;
+@@ -203,4 +206,47 @@
       * Called when 'Create New World' button is pressed before starting game
       */
      public void onGUICreateWorldPress() { }
@@ -35,11 +35,11 @@
 +    {
 +        if (this == FLAT)
 +        {
-+            instance.displayGuiScreen(new GuiCreateFlatWorld(guiCreateWorld, guiCreateWorld.generatorOptionsToUse));
++            instance.func_147108_a(new GuiCreateFlatWorld(guiCreateWorld, guiCreateWorld.field_146334_a));
 +        }
 +    }
 +
-+    /*
++    /**
 +     * Should world creation GUI show 'Customize' button for this world type?
 +     * @return if this world type has customization parameters
 +     */
@@ -48,10 +48,10 @@
 +        return this == FLAT;
 +    }
 +    
-+    @SideOnly(Side.CLIENT)
 +
 +    /**
-+     * the y level at which clouds are rendered.
++     * Get the height to render the clouds for this world type
++     * @return The height to render clouds at
 +     */
 +    public float getCloudHeight()
 +    {

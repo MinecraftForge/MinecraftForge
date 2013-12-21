@@ -1,0 +1,38 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenMegaJungle.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenMegaJungle.java
+@@ -56,7 +56,7 @@
+             {
+                 Block block = par1World.func_147439_a(par3, par4 + l2, par5);
+ 
+-                if (block.func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j)
++                if (block.isAir(par1World, par3, par4 + l2, par5) || block.isLeaves(par1World, par3, par4 + l2, par5))
+                 {
+                     this.func_150516_a(par1World, par3, par4 + l2, par5, Blocks.log, this.woodMetadata);
+ 
+@@ -78,7 +78,7 @@
+                 {
+                     block = par1World.func_147439_a(par3 + 1, par4 + l2, par5);
+ 
+-                    if (block.func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j)
++                    if (block.isAir(par1World, par3 + 1, par4 + l2, par5) || block.isLeaves(par1World, par3 + 1, par4 + l2, par5))
+                     {
+                         this.func_150516_a(par1World, par3 + 1, par4 + l2, par5, Blocks.log, this.woodMetadata);
+ 
+@@ -98,7 +98,7 @@
+ 
+                     block = par1World.func_147439_a(par3 + 1, par4 + l2, par5 + 1);
+ 
+-                    if (block.func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j)
++                    if (block.isAir(par1World, par3 + 1, par4 + l2, par5 + 1) || block.isLeaves(par1World, par3 + 1, par4 + l2, par5 + 1))
+                     {
+                         this.func_150516_a(par1World, par3 + 1, par4 + l2, par5 + 1, Blocks.log, this.woodMetadata);
+ 
+@@ -118,7 +118,7 @@
+ 
+                     block = par1World.func_147439_a(par3, par4 + l2, par5 + 1);
+ 
+-                    if (block.func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j)
++                    if (block.isAir(par1World, par3, par4 + l2, par5 + 1) || block.isLeaves(par1World, par3, par4 + l2, par5 + 1))
+                     {
+                         this.func_150516_a(par1World, par3, par4 + l2, par5 + 1, Blocks.log, this.woodMetadata);
+ 

@@ -1,22 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTallGrass.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTallGrass.java
-@@ -20,10 +20,16 @@
+@@ -21,10 +21,15 @@
      {
-         int l;
+         Block block;
  
--        for (boolean flag = false; ((l = par1World.getBlockId(par3, par4, par5)) == 0 || l == Block.leaves.blockID) && par4 > 0; --par4)
-+        Block block = null;
-+        do 
+-        while (((block = par1World.func_147439_a(par3, par4, par5)).func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j) && par4 > 0)
++        do
          {
--            ;
--        }
-+            block = Block.blocksList[par1World.getBlockId(par3,  par4, par5)];
-+            if (block != null && !block.isLeaves(par1World, par3, par4, par5))
++            block = par1World.func_147439_a(par3, par4, par5);
++            if (block.isLeaves(par1World, par3, par4, par5) || block.isAir(par1World, par3, par4, par5))
 +            {
 +                break;
 +            }
-+            par4--;
+             --par4;
+-        }
 +        } while (par4 > 0);
  
-         for (int i1 = 0; i1 < 128; ++i1)
+         for (int l = 0; l < 128; ++l)
          {

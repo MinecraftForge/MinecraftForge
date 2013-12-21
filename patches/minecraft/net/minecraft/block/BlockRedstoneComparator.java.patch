@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRedstoneComparator.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneComparator.java
+@@ -228,4 +228,19 @@
+     {
+         return new TileEntityComparator();
+     }
++
++    @Override
++    public void onNeighborChange(IBlockAccess world, int x, int y, int z, int tileX, int tileY, int tileZ)
++    {
++        if (y == tileY && world instanceof World)
++        {
++            func_149695_a((World)world, x, y, z, world.func_147439_a(tileX, tileY, tileZ));
++        }   
++    }
++    
++    @Override
++    public boolean getWeakChanges(IBlockAccess world, int x, int y, int z)
++    {
++        return true;
++    }
+ }

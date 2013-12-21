@@ -1,44 +1,93 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenSwamp.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenSwamp.java
-@@ -47,7 +47,7 @@
+@@ -2,9 +2,11 @@
+ 
+ import java.util.Random;
+ import net.minecraft.block.Block;
++import net.minecraft.block.BlockSapling;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.util.ForgeDirection;
+ 
+ public class WorldGenSwamp extends WorldGenAbstractTree
+ {
+@@ -53,7 +55,7 @@
                          {
-                             l1 = par1World.getBlockId(j1, i1, k1);
+                             Block block = par1World.func_147439_a(j1, i1, k1);
  
--                            if (l1 != 0 && l1 != Block.leaves.blockID)
-+                            if (l1 != 0 && (Block.blocksList[l1] != null && !Block.blocksList[l1].isLeaves(par1World, j1, i1, k1)))
+-                            if (block.func_149688_o() != Material.field_151579_a && block.func_149688_o() != Material.field_151584_j)
++                            if (block.isAir(par1World, j1, i1, k1) || block.isLeaves(par1World, j1, i1, k1))
                              {
-                                 if (l1 != Block.waterStill.blockID && l1 != Block.waterMoving.blockID)
+                                 if (block != Blocks.water && block != Blocks.flowing_water)
                                  {
-@@ -94,7 +94,10 @@
-                             {
-                                 int l2 = k2 - par5;
+@@ -81,9 +83,10 @@
+             {
+                 Block block1 = par1World.func_147439_a(par3, par4 - 1, par5);
  
--                                if ((Math.abs(i2) != k1 || Math.abs(l2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0) && !Block.opaqueCubeLookup[par1World.getBlockId(l1, j2, k2)])
-+                                Block block = Block.blocksList[par1World.getBlockId(l1, j2, k2)];
-+
-+                                if ((Math.abs(i2) != k1 || Math.abs(l2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0) && 
-+                                    (block == null || block.canBeReplacedByLeaves(par1World, l1, j2, k2)))
+-                if ((block1 == Blocks.grass || block1 == Blocks.dirt) && par4 < 256 - l - 1)
++                boolean isSoil = block1.canSustainPlant(par1World, par3, par4 - 1, par5, ForgeDirection.UP, (BlockSapling)Blocks.sapling);
++                if (isSoil && par4 < 256 - l - 1)
+                 {
+-                    this.func_150515_a(par1World, par3, par4 - 1, par5, Blocks.dirt);
++                    block1.onPlantGrow(par1World, par3, par4 - 1, par5, par3, par4, par5);
+                     int l1;
+                     int l2;
+                     int k2;
+@@ -101,7 +104,7 @@
+                             {
+                                 int j2 = i2 - par5;
+ 
+-                                if ((Math.abs(l1) != k1 || Math.abs(j2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0) && !par1World.func_147439_a(l2, k2, i2).func_149730_j())
++                                if ((Math.abs(l1) != k1 || Math.abs(j2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0) && !par1World.func_147439_a(l2, k2, i2).canBeReplacedByLeaves(par1World, l2, k2, i2))
                                  {
-                                     this.setBlock(par1World, l1, j2, k2, Block.leaves.blockID);
+                                     this.func_150515_a(par1World, l2, k2, i2, Blocks.leaves);
                                  }
-@@ -106,7 +109,9 @@
+@@ -113,7 +116,7 @@
                      {
-                         j1 = par1World.getBlockId(par3, par4 + j2, par5);
+                         Block block2 = par1World.func_147439_a(par3, par4 + k2, par5);
  
--                        if (j1 == 0 || j1 == Block.leaves.blockID || j1 == Block.waterMoving.blockID || j1 == Block.waterStill.blockID)
-+                        Block block = Block.blocksList[j1];
-+
-+                        if (j1 == 0 || (block != null && block.isLeaves(par1World, par3, par4 + j2, par5)) || j1 == Block.waterMoving.blockID || j1 == Block.waterStill.blockID)
+-                        if (block2.func_149688_o() == Material.field_151579_a || block2.func_149688_o() == Material.field_151584_j || block2 == Blocks.flowing_water || block2 == Blocks.water)
++                        if (block2.isAir(par1World, par3, par4 + k2, par5) || block2.isLeaves(par1World, par3, par4 + k2, par5) || block2 == Blocks.flowing_water || block2 == Blocks.water)
                          {
-                             this.setBlock(par1World, par3, par4 + j2, par5, Block.wood.blockID);
+                             this.func_150515_a(par1World, par3, par4 + k2, par5, Blocks.log);
                          }
-@@ -121,7 +126,8 @@
+@@ -128,24 +131,24 @@
                          {
-                             for (i2 = par5 - k1; i2 <= par5 + k1; ++i2)
+                             for (l1 = par5 - k1; l1 <= par5 + k1; ++l1)
                              {
--                                if (par1World.getBlockId(l1, j2, i2) == Block.leaves.blockID)
-+                                Block block = Block.blocksList[par1World.getBlockId(l1, j2, i2)];
-+                                if (block != null && block.isLeaves(par1World, l1, j2, i2))
+-                                if (par1World.func_147439_a(l2, k2, l1).func_149688_o() == Material.field_151584_j)
++                                if (par1World.func_147439_a(l2, k2, l1).isLeaves(par1World, l2, k2, l1))
                                  {
-                                     if (par2Random.nextInt(4) == 0 && par1World.getBlockId(l1 - 1, j2, i2) == 0)
+-                                    if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(l2 - 1, k2, l1).func_149688_o() == Material.field_151579_a)
++                                    if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(l2 - 1, k2, l1).isAir(par1World, l2 - 1, k2, l1))
                                      {
+                                         this.generateVines(par1World, l2 - 1, k2, l1, 8);
+                                     }
+ 
+-                                    if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(l2 + 1, k2, l1).func_149688_o() == Material.field_151579_a)
++                                    if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(l2 + 1, k2, l1).isAir(par1World, l2 + 1, k2, l1))
+                                     {
+                                         this.generateVines(par1World, l2 + 1, k2, l1, 2);
+                                     }
+ 
+-                                    if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(l2, k2, l1 - 1).func_149688_o() == Material.field_151579_a)
++                                    if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(l2, k2, l1 - 1).isAir(par1World, l2, k2, l1 - 1))
+                                     {
+                                         this.generateVines(par1World, l2, k2, l1 - 1, 1);
+                                     }
+ 
+-                                    if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(l2, k2, l1 + 1).func_149688_o() == Material.field_151579_a)
++                                    if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(l2, k2, l1 + 1).isAir(par1World, l2, k2, l1 + 1))
+                                     {
+                                         this.generateVines(par1World, l2, k2, l1 + 1, 4);
+                                     }
+@@ -178,7 +181,7 @@
+         {
+             --par3;
+ 
+-            if (par1World.func_147439_a(par2, par3, par4).func_149688_o() != Material.field_151579_a || i1 <= 0)
++            if (par1World.func_147439_a(par2, par3, par4).isAir(par1World, par2, par3, par4) || i1 <= 0)
+             {
+                 return;
+             }

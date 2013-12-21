@@ -1,6 +1,7 @@
 package net.minecraftforge.event.terraingen;
 
 import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraft.block.Block;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.event.*;
@@ -26,10 +27,10 @@ public class ChunkProviderEvent extends Event
     {
         public final int chunkX;
         public final int chunkZ;
-        public final byte[] blockArray;
+        public final Block[] blockArray;
         public final BiomeGenBase[] biomeArray;
         
-        public ReplaceBiomeBlocks(IChunkProvider chunkProvider, int chunkX, int chunkZ, byte[] blockArray, BiomeGenBase[] biomeArray)
+        public ReplaceBiomeBlocks(IChunkProvider chunkProvider, int chunkX, int chunkZ, Block[] blockArray, BiomeGenBase[] biomeArray)
         {
             super(chunkProvider);
             this.chunkX = chunkX;

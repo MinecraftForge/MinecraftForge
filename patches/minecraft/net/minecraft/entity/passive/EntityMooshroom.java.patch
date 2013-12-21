@@ -1,23 +1,30 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/EntityMooshroom.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntityMooshroom.java
-@@ -8,7 +8,11 @@
- import net.minecraft.item.ItemStack;
- import net.minecraft.world.World;
+@@ -1,14 +1,18 @@
+ package net.minecraft.entity.passive;
  
--public class EntityMooshroom extends EntityCow
 +import java.util.ArrayList;
 +
+ import net.minecraft.entity.EntityAgeable;
+ import net.minecraft.entity.item.EntityItem;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.init.Items;
+ import net.minecraft.item.ItemStack;
++import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
 +import net.minecraftforge.common.IShearable;
-+
+ 
+-public class EntityMooshroom extends EntityCow
 +public class EntityMooshroom extends EntityCow implements IShearable
  {
-     public EntityMooshroom(World par1World)
-     {
-@@ -38,29 +42,7 @@
+     private static final String __OBFID = "CL_00001645";
+ 
+@@ -38,32 +42,7 @@
              }
          }
  
--        if (itemstack != null && itemstack.itemID == Item.shears.itemID && this.getGrowingAge() >= 0)
+-        if (itemstack != null && itemstack.getItem() == Items.shears && this.getGrowingAge() >= 0)
          {
 -            this.setDead();
 -            this.worldObj.spawnParticle("largeexplode", this.posX, this.posY + (double)(this.height / 2.0F), this.posZ, 0.0D, 0.0D, 0.0D);
@@ -32,8 +39,11 @@
 -
 -                for (int i = 0; i < 5; ++i)
 -                {
--                    this.worldObj.spawnEntityInWorld(new EntityItem(this.worldObj, this.posX, this.posY + (double)this.height, this.posZ, new ItemStack(Block.mushroomRed)));
+-                    this.worldObj.spawnEntityInWorld(new EntityItem(this.worldObj, this.posX, this.posY + (double)this.height, this.posZ, new ItemStack(Blocks.red_mushroom)));
 -                }
+-
+-                itemstack.damageItem(1, par1EntityPlayer);
+-                this.playSound("mob.sheep.shear", 1.0F, 1.0F);
 -            }
 -
 -            return true;
@@ -43,19 +53,19 @@
              return super.interact(par1EntityPlayer);
          }
      }
-@@ -82,4 +64,29 @@
+@@ -72,4 +51,30 @@
      {
-         return this.func_94900_c(par1EntityAgeable);
+         return new EntityMooshroom(this.worldObj);
      }
 +
 +    @Override
-+    public boolean isShearable(ItemStack item, World world, int X, int Y, int Z)
++    public boolean isShearable(ItemStack item, IBlockAccess world, int x, int y, int z)
 +    {
 +        return getGrowingAge() >= 0;
 +    }
 +
 +    @Override
-+    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int X, int Y, int Z, int fortune)
++    public ArrayList<ItemStack> onSheared(ItemStack item, IBlockAccess world, int x, int y, int z, int fortune)
 +    {
 +        setDead();
 +        EntityCow entitycow = new EntityCow(worldObj);
@@ -66,10 +76,11 @@
 +        worldObj.spawnParticle("largeexplode", posX, posY + (double)(height / 2.0F), posZ, 0.0D, 0.0D, 0.0D);
 +
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-+        for (int x = 0; x < 5; x++)
++        for (int i = 0; i < 5; i++)
 +        {
-+            ret.add(new ItemStack(Block.mushroomRed));
++            ret.add(new ItemStack(Blocks.red_mushroom));
 +        }
++        playSound("mob.sheep.shear", 1.0F, 1.0F);
 +        return ret;
 +    }
  }

@@ -1,37 +1,37 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRailBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRailBase.java
-@@ -3,6 +3,7 @@
+@@ -5,6 +5,7 @@
  import java.util.Random;
  import net.minecraft.block.material.Material;
  import net.minecraft.creativetab.CreativeTabs;
 +import net.minecraft.entity.item.EntityMinecart;
+ import net.minecraft.init.Blocks;
  import net.minecraft.util.AxisAlignedBB;
  import net.minecraft.util.MovingObjectPosition;
- import net.minecraft.util.Vec3;
-@@ -28,7 +29,7 @@
-      */
-     public static final boolean isRailBlock(int par0)
+@@ -25,7 +26,7 @@
+ 
+     public static final boolean func_150051_a(Block p_150051_0_)
      {
--        return par0 == Block.rail.blockID || par0 == Block.railPowered.blockID || par0 == Block.railDetector.blockID || par0 == Block.railActivator.blockID;
-+        return Block.blocksList[par0] instanceof BlockRailBase;
+-        return p_150051_0_ == Blocks.rail || p_150051_0_ == Blocks.golden_rail || p_150051_0_ == Blocks.detector_rail || p_150051_0_ == Blocks.activator_rail;
++        return p_150051_0_ instanceof BlockRailBase;
      }
  
-     protected BlockRailBase(int par1, boolean par2)
-@@ -105,7 +106,7 @@
-      */
-     public int getRenderType()
+     protected BlockRailBase(boolean p_i45389_1_)
+@@ -78,7 +79,7 @@
+ 
+     public int func_149645_b()
      {
 -        return 9;
 +        return renderType;
      }
  
-     /**
-@@ -244,4 +245,107 @@
-             par1World.notifyBlocksOfNeighborChange(par2, par3 - 1, par4, par5);
+     public int func_149745_a(Random p_149745_1_)
+@@ -193,6 +194,111 @@
          }
      }
-+    
-+        /**
+ 
++    /* ======================================== FORGE START =====================================*/
++    /**
 +     * Return true if the rail can make corners.
 +     * Used by placement logic.
 +     * @param world The world.
@@ -40,9 +40,9 @@
 +     * @param z The rail Z coordinate.
 +     * @return True if the rail can make corners.
 +     */
-+    public boolean isFlexibleRail(World world, int y, int x, int z)
++    public boolean isFlexibleRail(IBlockAccess world, int y, int x, int z)
 +    {
-+        return !isPowered;
++        return !func_150050_e();
 +    }
 +
 +    /**
@@ -54,7 +54,7 @@
 +     * @param z The rail Z coordinate.
 +     * @return True if the rail can make slopes.
 +     */
-+    public boolean canMakeSlopes(World world, int x, int y, int z)
++    public boolean canMakeSlopes(IBlockAccess world, int x, int y, int z)
 +    {
 +        return true;
 +    }
@@ -87,7 +87,7 @@
 +    public int getBasicRailMetadata(IBlockAccess world, EntityMinecart cart, int x, int y, int z)
 +    {
 +        int meta = world.getBlockMetadata(x, y, z);
-+        if(isPowered)
++        if(func_150050_e())
 +        {
 +            meta = meta & 7;
 +        }
@@ -133,4 +133,76 @@
 +    {
 +        renderType = value;
 +    }
- }
++    /* ======================================== FORGE END =====================================*/
++
+     public class Rail
+     {
+         private World field_150660_b;
+@@ -202,6 +308,7 @@
+         private final boolean field_150656_f;
+         private List field_150657_g = new ArrayList();
+         private static final String __OBFID = "CL_00000196";
++        private final boolean canMakeSlopes;
+ 
+         public Rail(World p_i45388_2_, int p_i45388_3_, int p_i45388_4_, int p_i45388_5_)
+         {
+@@ -209,19 +316,10 @@
+             this.field_150661_c = p_i45388_3_;
+             this.field_150658_d = p_i45388_4_;
+             this.field_150659_e = p_i45388_5_;
+-            Block block = p_i45388_2_.func_147439_a(p_i45388_3_, p_i45388_4_, p_i45388_5_);
+-            int l = p_i45388_2_.getBlockMetadata(p_i45388_3_, p_i45388_4_, p_i45388_5_);
+-
+-            if (((BlockRailBase)block).field_150053_a)
+-            {
+-                this.field_150656_f = true;
+-                l &= -9;
+-            }
+-            else
+-            {
+-                this.field_150656_f = false;
+-            }
+-
++            BlockRailBase block = (BlockRailBase)p_i45388_2_.func_147439_a(p_i45388_3_, p_i45388_4_, p_i45388_5_);
++            int l = block.getBasicRailMetadata(p_i45388_2_, null, p_i45388_3_, p_i45388_4_, p_i45388_5_);
++            this.field_150656_f = block.isFlexibleRail(p_i45388_2_, p_i45388_3_, p_i45388_4_, p_i45388_5_);
++            canMakeSlopes = block.canMakeSlopes(p_i45388_2_, p_i45388_3_, p_i45388_4_, p_i45388_5_);
+             this.func_150648_a(l);
+         }
+ 
+@@ -412,7 +510,7 @@
+                 }
+             }
+ 
+-            if (b0 == 0)
++            if (b0 == 0 && canMakeSlopes)
+             {
+                 if (BlockRailBase.func_150049_b_(this.field_150660_b, this.field_150661_c, this.field_150658_d + 1, this.field_150659_e - 1))
+                 {
+@@ -425,7 +523,7 @@
+                 }
+             }
+ 
+-            if (b0 == 1)
++            if (b0 == 1 && canMakeSlopes)
+             {
+                 if (BlockRailBase.func_150049_b_(this.field_150660_b, this.field_150661_c + 1, this.field_150658_d + 1, this.field_150659_e))
+                 {
+@@ -570,7 +668,7 @@
+                 }
+             }
+ 
+-            if (b0 == 0)
++            if (b0 == 0 && canMakeSlopes)
+             {
+                 if (BlockRailBase.func_150049_b_(this.field_150660_b, this.field_150661_c, this.field_150658_d + 1, this.field_150659_e - 1))
+                 {
+@@ -583,7 +681,7 @@
+                 }
+             }
+ 
+-            if (b0 == 1)
++            if (b0 == 1 && canMakeSlopes)
+             {
+                 if (BlockRailBase.func_150049_b_(this.field_150660_b, this.field_150661_c + 1, this.field_150658_d + 1, this.field_150659_e))
+                 {

@@ -1,0 +1,65 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenMegaPineTree.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenMegaPineTree.java
+@@ -2,10 +2,12 @@
+ 
+ import java.util.Random;
+ import net.minecraft.block.Block;
++import net.minecraft.block.BlockSapling;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.util.ForgeDirection;
+ 
+ public class WorldGenMegaPineTree extends WorldGenHugeTrees
+ {
+@@ -34,7 +36,7 @@
+             {
+                 Block block = par1World.func_147439_a(par3, par4 + i1, par5);
+ 
+-                if (block.func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j)
++                if (block.isAir(par1World, par3, par4 + i1, par5) || block.isLeaves(par1World, par3, par4 + i1, par5))
+                 {
+                     this.func_150516_a(par1World, par3, par4 + i1, par5, Blocks.log, this.woodMetadata);
+                 }
+@@ -43,21 +45,21 @@
+                 {
+                     block = par1World.func_147439_a(par3 + 1, par4 + i1, par5);
+ 
+-                    if (block.func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j)
++                    if (block.isAir(par1World, par3 + 1, par4 + i1, par5) || block.isLeaves(par1World, par3 + 1, par4 + i1, par5))
+                     {
+                         this.func_150516_a(par1World, par3 + 1, par4 + i1, par5, Blocks.log, this.woodMetadata);
+                     }
+ 
+                     block = par1World.func_147439_a(par3 + 1, par4 + i1, par5 + 1);
+ 
+-                    if (block.func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j)
++                    if (block.isAir(par1World, par3 + 1, par4 + i1, par5 + 1) || block.isLeaves(par1World, par3 + 1, par4 + i1, par5 + 1))
+                     {
+                         this.func_150516_a(par1World, par3 + 1, par4 + i1, par5 + 1, Blocks.log, this.woodMetadata);
+                     }
+ 
+                     block = par1World.func_147439_a(par3, par4 + i1, par5 + 1);
+ 
+-                    if (block.func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j)
++                    if (block.isAir(par1World, par3, par4 + i1, par5 + 1) || block.isLeaves(par1World, par3, par4 + i1, par5 + 1))
+                     {
+                         this.func_150516_a(par1World, par3, par4 + i1, par5 + 1, Blocks.log, this.woodMetadata);
+                     }
+@@ -132,13 +134,13 @@
+         {
+             Block block = p_150540_1_.func_147439_a(p_150540_2_, l, p_150540_4_);
+ 
+-            if (block == Blocks.grass || block == Blocks.dirt)
++            if (block.canSustainPlant(p_150540_1_, p_150540_2_, l, p_150540_4_, ForgeDirection.UP, (BlockSapling)Blocks.sapling))
+             {
+                 this.func_150516_a(p_150540_1_, p_150540_2_, l, p_150540_4_, Blocks.dirt, 2);
+                 break;
+             }
+ 
+-            if (block.func_149688_o() != Material.field_151579_a && l < p_150540_3_)
++            if (block.isAir(p_150540_1_, p_150540_2_, l, p_150540_4_) && l < p_150540_3_)
+             {
+                 break;
+             }

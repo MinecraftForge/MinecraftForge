@@ -1,55 +1,56 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
-@@ -21,6 +21,7 @@
- import net.minecraft.util.Icon;
+@@ -29,6 +29,7 @@
+ import net.minecraft.util.MathHelper;
  import net.minecraft.util.ReportedException;
  import net.minecraft.util.ResourceLocation;
 +import net.minecraftforge.client.ForgeHooksClient;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
  
- @SideOnly(Side.CLIENT)
- public class TextureMap extends AbstractTexture implements TickableTextureObject, IconRegister
-@@ -58,10 +59,13 @@
+@@ -92,11 +93,14 @@
  
-     public void loadTextureAtlas(ResourceManager par1ResourceManager)
+     public void loadTextureAtlas(IResourceManager par1ResourceManager)
      {
 +        registerIcons(); //Re-gather list of Icons, allows for addition/removal of blocks/items after this map was initially constructed.
 +
          int i = Minecraft.getGLMaximumTextureSize();
-         Stitcher stitcher = new Stitcher(i, i, true);
+         Stitcher stitcher = new Stitcher(i, i, true, 0, this.field_147636_j);
          this.mapUploadedSprites.clear();
          this.listAnimatedSprites.clear();
+         int j = Integer.MAX_VALUE;
 +        ForgeHooksClient.onTextureStitchedPre(this);
          Iterator iterator = this.mapRegisteredSprites.entrySet().iterator();
+         TextureAtlasSprite textureatlassprite;
  
-         while (iterator.hasNext())
-@@ -73,7 +77,7 @@
+@@ -107,6 +111,16 @@
+             textureatlassprite = (TextureAtlasSprite)entry.getValue();
+             ResourceLocation resourcelocation1 = this.func_147634_a(resourcelocation, 0);
  
++            if (textureatlassprite.hasCustomLoader(par1ResourceManager, resourcelocation))
++            {
++                if (!textureatlassprite.load(par1ResourceManager, resourcelocation))
++                {
++                    j = Math.min(j, Math.min(textureatlassprite.getIconWidth(), textureatlassprite.getIconHeight()));
++                    stitcher.addSprite(textureatlassprite);
++                }
++                continue;
++            }
++
              try
              {
--                textureatlassprite.loadSprite(par1ResourceManager.getResource(resourcelocation1));
-+                if (!textureatlassprite.load(par1ResourceManager, resourcelocation1)) continue;
-             }
-             catch (RuntimeException runtimeexception)
-             {
-@@ -142,6 +146,7 @@
-             textureatlassprite1 = (TextureAtlasSprite)iterator1.next();
-             textureatlassprite1.copyFrom(this.missingImage);
+                 IResource iresource = par1ResourceManager.getResource(resourcelocation1);
+@@ -275,6 +289,7 @@
+             textureatlassprite = (TextureAtlasSprite)iterator2.next();
+             textureatlassprite.copyFrom(this.missingImage);
          }
 +        ForgeHooksClient.onTextureStitchedPost(this);
      }
  
-     private void registerIcons()
-@@ -212,6 +217,7 @@
-         if (par1Str == null)
-         {
-             (new RuntimeException("Don\'t register null!")).printStackTrace();
-+            par1Str = "null"; //Don't allow things to actually register null..
-         }
- 
-         Object object = (TextureAtlasSprite)this.mapRegisteredSprites.get(par1Str);
-@@ -253,4 +259,37 @@
+     private ResourceLocation func_147634_a(ResourceLocation p_147634_1_, int p_147634_2_)
+@@ -404,4 +419,37 @@
      {
-         this.updateAnimations();
+         this.field_147637_k = p_147632_1_;
      }
 +
 +    //===================================================================================================

@@ -7,11 +7,11 @@
 -@SideOnly(Side.CLIENT)
  public class ModelBox
  {
-     /**
-@@ -96,6 +95,7 @@
-     /**
-      * Draw the six sided box defined by this ModelBox
-      */
+     // JAVADOC FIELD $$ field_78253_h
+@@ -86,6 +85,7 @@
+     }
+ 
+     // JAVADOC METHOD $$ func_78245_a
 +    @SideOnly(Side.CLIENT)
      public void render(Tessellator par1Tessellator, float par2)
      {

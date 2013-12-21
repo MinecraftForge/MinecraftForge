@@ -1,118 +1,71 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenHugeTrees.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenHugeTrees.java
-@@ -2,8 +2,10 @@
+@@ -2,9 +2,11 @@
  
  import java.util.Random;
  import net.minecraft.block.Block;
 +import net.minecraft.block.BlockSapling;
- import net.minecraft.util.MathHelper;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.init.Blocks;
  import net.minecraft.world.World;
-+import net.minecraftforge.common.ForgeDirection;
++import net.minecraftforge.common.util.ForgeDirection;
  
- public class WorldGenHugeTrees extends WorldGenerator
+ public abstract class WorldGenHugeTrees extends WorldGenAbstractTree
  {
-@@ -57,8 +59,15 @@
-                         if (i1 >= 0 && i1 < 256)
+@@ -66,7 +68,7 @@
                          {
-                             l1 = par1World.getBlockId(j1, i1, k1);
-+                            Block block = Block.blocksList[l1];
+                             Block block = p_150536_1_.func_147439_a(j1, i1, k1);
  
--                            if (l1 != 0 && l1 != Block.leaves.blockID && l1 != Block.grass.blockID && l1 != Block.dirt.blockID && l1 != Block.wood.blockID && l1 != Block.sapling.blockID)
-+                            if (block != null &&
-+                               !block.isAirBlock(par1World, j1, i1, k1) &&
-+                               !block.isLeaves(par1World, j1, i1, k1) &&
-+                               !block.isWood(par1World, j1, i1, k1) &&
-+                                block != Block.grass &&
-+                                block != Block.dirt &&
-+                                block != Block.sapling)
+-                            if (!this.func_150523_a(block))
++                            if (!this.isReplaceable(p_150536_1_, j1, i1, k1))
                              {
                                  flag = false;
                              }
-@@ -79,12 +88,15 @@
-             {
-                 i1 = par1World.getBlockId(par3, par4 - 1, par5);
+@@ -91,12 +93,13 @@
+     {
+         Block block = p_150532_1_.func_147439_a(p_150532_3_, p_150532_4_ - 1, p_150532_5_);
  
--                if ((i1 == Block.grass.blockID || i1 == Block.dirt.blockID) && par4 < 256 - l - 1)
-+                Block soil = Block.blocksList[i1];
-+                boolean isValidSoil = soil != null && soil.canSustainPlant(par1World, par3, par4 - 1, par5, ForgeDirection.UP, (BlockSapling)Block.sapling);
-+
-+                if (isValidSoil && par4 < 256 - l - 1)
+-        if ((block == Blocks.grass || block == Blocks.dirt) && p_150532_4_ >= 2)
++        boolean isSoil = block.canSustainPlant(p_150532_1_, p_150532_3_, p_150532_4_ - 1, p_150532_5_, ForgeDirection.UP, (BlockSapling)Blocks.sapling);
++        if (isSoil && p_150532_4_ >= 2)
+         {
+-            p_150532_1_.func_147465_d(p_150532_3_, p_150532_4_ - 1, p_150532_5_, Blocks.dirt, 0, 2);
+-            p_150532_1_.func_147465_d(p_150532_3_ + 1, p_150532_4_ - 1, p_150532_5_, Blocks.dirt, 0, 2);
+-            p_150532_1_.func_147465_d(p_150532_3_, p_150532_4_ - 1, p_150532_5_ + 1, Blocks.dirt, 0, 2);
+-            p_150532_1_.func_147465_d(p_150532_3_ + 1, p_150532_4_ - 1, p_150532_5_ + 1, Blocks.dirt, 0, 2);
++            onPlantGrow(p_150532_1_, p_150532_3_,     p_150532_4_ - 1, p_150532_5_,     p_150532_3_, p_150532_4_, p_150532_5_);
++            onPlantGrow(p_150532_1_, p_150532_3_ + 1, p_150532_4_ - 1, p_150532_5_,     p_150532_3_, p_150532_4_, p_150532_5_);
++            onPlantGrow(p_150532_1_, p_150532_3_,     p_150532_4_ - 1, p_150532_5_ + 1, p_150532_3_, p_150532_4_, p_150532_5_);
++            onPlantGrow(p_150532_1_, p_150532_3_ + 1, p_150532_4_ - 1, p_150532_5_ + 1, p_150532_3_, p_150532_4_, p_150532_5_);
+             return true;
+         }
+         else
+@@ -128,7 +131,7 @@
                  {
--                    par1World.setBlock(par3, par4 - 1, par5, Block.dirt.blockID, 0, 2);
--                    par1World.setBlock(par3 + 1, par4 - 1, par5, Block.dirt.blockID, 0, 2);
--                    par1World.setBlock(par3, par4 - 1, par5 + 1, Block.dirt.blockID, 0, 2);
--                    par1World.setBlock(par3 + 1, par4 - 1, par5 + 1, Block.dirt.blockID, 0, 2);
-+                    onPlantGrow(par1World, par3,     par4 - 1, par5,     par3, par4, par5);
-+                    onPlantGrow(par1World, par3 + 1, par4 - 1, par5,     par3, par4, par5);
-+                    onPlantGrow(par1World, par3,     par4 - 1, par5 + 1, par3, par4, par5);
-+                    onPlantGrow(par1World, par3 + 1, par4 - 1, par5 + 1, par3, par4, par5);
-                     this.growLeaves(par1World, par3, par5, par4 + l, 2, par2Random);
+                     Block block = p_150535_1_.func_147439_a(j1, p_150535_3_, l1);
  
-                     for (int i2 = par4 + l - 2 - par2Random.nextInt(4); i2 > par4 + l / 2; i2 -= 2 + par2Random.nextInt(4))
-@@ -106,7 +118,7 @@
+-                    if (block.func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j)
++                    if (block.isAir(p_150535_1_, j1, p_150535_3_, l1) || block.isLeaves(p_150535_1_, j1, p_150535_3_, l1))
                      {
-                         k1 = par1World.getBlockId(par3, par4 + j1, par5);
+                         this.func_150516_a(p_150535_1_, j1, p_150535_3_, l1, Blocks.leaves, this.leavesMetadata);
+                     }
+@@ -153,7 +156,7 @@
+                 {
+                     Block block = p_150534_1_.func_147439_a(j1, p_150534_3_, l1);
  
--                        if (k1 == 0 || k1 == Block.leaves.blockID)
-+                        if (isReplaceable(par1World, par3, par4 + j1, par5))
-                         {
-                             this.setBlockAndMetadata(par1World, par3, par4 + j1, par5, Block.wood.blockID, this.woodMetadata);
- 
-@@ -128,7 +140,7 @@
-                         {
-                             k1 = par1World.getBlockId(par3 + 1, par4 + j1, par5);
- 
--                            if (k1 == 0 || k1 == Block.leaves.blockID)
-+                            if (isReplaceable(par1World, par3 + 1, par4 + j1, par5))
-                             {
-                                 this.setBlockAndMetadata(par1World, par3 + 1, par4 + j1, par5, Block.wood.blockID, this.woodMetadata);
- 
-@@ -148,7 +160,7 @@
- 
-                             k1 = par1World.getBlockId(par3 + 1, par4 + j1, par5 + 1);
- 
--                            if (k1 == 0 || k1 == Block.leaves.blockID)
-+                            if (isReplaceable(par1World, par3 + 1, par4 + j1, par5 + 1))
-                             {
-                                 this.setBlockAndMetadata(par1World, par3 + 1, par4 + j1, par5 + 1, Block.wood.blockID, this.woodMetadata);
- 
-@@ -168,7 +180,7 @@
- 
-                             k1 = par1World.getBlockId(par3, par4 + j1, par5 + 1);
- 
--                            if (k1 == 0 || k1 == Block.leaves.blockID)
-+                            if (isReplaceable(par1World, par3, par4 + j1, par5 + 1))
-                             {
-                                 this.setBlockAndMetadata(par1World, par3, par4 + j1, par5 + 1, Block.wood.blockID, this.woodMetadata);
- 
-@@ -222,8 +234,9 @@
-                     if ((i2 >= 0 || k2 >= 0 || i2 * i2 + k2 * k2 <= k1 * k1) && (i2 <= 0 && k2 <= 0 || i2 * i2 + k2 * k2 <= (k1 + 1) * (k1 + 1)) && (par6Random.nextInt(4) != 0 || i2 * i2 + k2 * k2 <= (k1 - 1) * (k1 - 1)))
+-                    if (block.func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j)
++                    if (block.isAir(p_150534_1_, j1, p_150534_3_, l1) || block.isLeaves(p_150534_1_, j1, p_150534_3_, l1))
                      {
-                         int l2 = par1World.getBlockId(l1, i1, j2);
-+                        Block block = Block.blocksList[l2];
- 
--                        if (l2 == 0 || l2 == Block.leaves.blockID)
-+                        if (block == null || block.canBeReplacedByLeaves(par1World, l1, i1, j2))
-                         {
-                             this.setBlockAndMetadata(par1World, l1, i1, j2, Block.leaves.blockID, this.leavesMetadata);
-                         }
-@@ -232,4 +245,19 @@
+                         this.func_150516_a(p_150534_1_, j1, p_150534_3_, l1, Blocks.leaves, this.leavesMetadata);
+                     }
+@@ -161,4 +164,10 @@
              }
          }
      }
 +
++    //Just a helper macro
 +    private void onPlantGrow(World world, int x, int y, int z, int sourceX, int sourceY, int sourceZ)
 +    {
-+        Block block = Block.blocksList[world.getBlockId(x, y, z)];
-+        if (block != null)
-+        {
-+            block.onPlantGrow(world, x, y, z, sourceX, sourceY, sourceZ);
-+        }
-+    }
-+
-+    private boolean isReplaceable(World world, int x, int y, int z)
-+    {
-+        Block block = Block.blocksList[world.getBlockId(x, y, z)];
-+        return (block == null || block.isAirBlock(world, x, y, z) || block.isLeaves(world, x, y, z));
++        world.func_147439_a(x, y, z).onPlantGrow(world, x, y, z, sourceX, sourceY, sourceZ);
 +    }
  }

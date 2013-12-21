@@ -1,18 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/Enchantment.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/Enchantment.java
-@@ -1,6 +1,9 @@
- package net.minecraft.enchantment;
+@@ -157,6 +157,36 @@
  
- import java.util.ArrayList;
-+
-+import com.google.common.collect.ObjectArrays;
-+
- import net.minecraft.entity.EntityLivingBase;
- import net.minecraft.item.ItemStack;
- import net.minecraft.util.DamageSource;
-@@ -207,6 +210,36 @@
-         return this.type.canEnchantItem(par1ItemStack.getItem());
-     }
+     public void func_151367_b(EntityLivingBase p_151367_1_, Entity p_151367_2_, int p_151367_3_) {}
  
 +    /**
 +     * This applies specifically to applying at the enchanting table. The other method {@link #canApply(ItemStack)}
@@ -32,7 +22,7 @@
 +     */
 +    public static void addToBookList(Enchantment enchantment)
 +    {
-+        ObjectArrays.concat(enchantmentsBookList, enchantment);
++        com.google.common.collect.ObjectArrays.concat(enchantmentsBookList, enchantment);
 +    }
 +
 +    /**
@@ -46,4 +36,4 @@
 +
      static
      {
-         ArrayList arraylist = new ArrayList();
+         ArrayList var0 = new ArrayList();

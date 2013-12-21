@@ -1,16 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandHandler.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandHandler.java
-@@ -12,6 +12,9 @@
- import net.minecraft.util.ChatMessageComponent;
- import net.minecraft.util.EnumChatFormatting;
+@@ -14,6 +14,9 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
  
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.CommandEvent;
 +
  public class CommandHandler implements ICommandManager
  {
-     /** Map of Strings to the ICommand objects they represent */
-@@ -45,6 +48,16 @@
+     private static final Logger field_147175_a = LogManager.getLogger();
+@@ -49,6 +52,16 @@
  
              if (icommand.canCommandSenderUseCommand(par1ICommandSender))
              {

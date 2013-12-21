@@ -1,15 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/ItemRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/ItemRenderer.java
-@@ -16,6 +16,8 @@
- import net.minecraft.entity.EntityLivingBase;
- import net.minecraft.item.EnumAction;
+@@ -20,6 +20,7 @@
  import net.minecraft.item.Item;
-+import net.minecraft.item.ItemBlock;
+ import net.minecraft.item.ItemBlock;
+ import net.minecraft.item.ItemCloth;
 +import net.minecraft.item.ItemMap;
  import net.minecraft.item.ItemStack;
- import net.minecraft.util.Icon;
+ import net.minecraft.util.IIcon;
  import net.minecraft.util.MathHelper;
-@@ -24,6 +26,13 @@
+@@ -28,6 +29,13 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
@@ -23,65 +22,56 @@
  @SideOnly(Side.CLIENT)
  public class ItemRenderer
  {
-@@ -54,16 +63,33 @@
-         this.mapItemRenderer = new MapItemRenderer(par1Minecraft.gameSettings, par1Minecraft.getTextureManager());
-     }
- 
-+    public void renderItem(EntityLivingBase par1EntityLivingBase, ItemStack par2ItemStack, int par3)
-+    {
-+        this.renderItem(par1EntityLivingBase, par2ItemStack, par3, ItemRenderType.EQUIPPED);
+@@ -53,13 +61,25 @@
+     // JAVADOC METHOD $$ func_78443_a
+     public void renderItem(EntityLivingBase par1EntityLivingBase, ItemStack par2ItemStack, int par3)
+     {
++        this.renderItem(par1EntityLivingBase, par2ItemStack, par3, EQUIPPED);
 +    }
 +
-     /**
-      * Renders the item stack for being in an entity's hand Args: itemStack
-      */
--    public void renderItem(EntityLivingBase par1EntityLivingBase, ItemStack par2ItemStack, int par3)
++    // JAVADOC METHOD $$ func_78443_a
 +    public void renderItem(EntityLivingBase par1EntityLivingBase, ItemStack par2ItemStack, int par3, ItemRenderType type)
-     {
++    {
          GL11.glPushMatrix();
          TextureManager texturemanager = this.mc.getTextureManager();
+         Item item = par2ItemStack.getItem();
+         Block block = Block.func_149634_a(item);
  
--        if (par2ItemStack.getItemSpriteNumber() == 0 && par2ItemStack.itemID < Block.blocksList.length && Block.blocksList[par2ItemStack.itemID] != null && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
-+        Block block = null;
-+        if (par2ItemStack.getItem() instanceof ItemBlock && par2ItemStack.itemID < Block.blocksList.length)
-         {
-+            block = Block.blocksList[par2ItemStack.itemID];
-+        }
-+
+-        if (par2ItemStack.getItemSpriteNumber() == 0 && item instanceof ItemBlock && RenderBlocks.func_147739_a(block.func_149645_b()))
 +        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(par2ItemStack, type);
 +        if (customRenderer != null)
-+        {
+         {
 +            texturemanager.bindTexture(texturemanager.getResourceLocation(par2ItemStack.getItemSpriteNumber()));
-+            ForgeHooksClient.renderEquippedItem(type, customRenderer, renderBlocksInstance, par1EntityLivingBase, par2ItemStack);
++            ForgeHooksClient.renderEquippedItem(type, customRenderer, field_147720_h, par1EntityLivingBase, par2ItemStack);
 +        }
-+        else if (block != null && par2ItemStack.getItemSpriteNumber() == 0 && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
++        else if (par2ItemStack.getItemSpriteNumber() == 0 && item instanceof ItemBlock && RenderBlocks.func_147739_a(block.func_149645_b()))
 +        {
              texturemanager.bindTexture(texturemanager.getResourceLocation(0));
-             this.renderBlocksInstance.renderBlockAsItem(Block.blocksList[par2ItemStack.itemID], par2ItemStack.getItemDamage(), 1.0F);
-         }
-@@ -94,7 +120,7 @@
+ 
+             if (par2ItemStack != null && par2ItemStack.getItem() instanceof ItemCloth)
+@@ -104,7 +124,7 @@
              GL11.glTranslatef(-0.9375F, -0.0625F, 0.0F);
-             renderItemIn2D(tessellator, f1, f2, f, f3, icon.getIconWidth(), icon.getIconHeight(), 0.0625F);
+             renderItemIn2D(tessellator, f1, f2, f, f3, iicon.getIconWidth(), iicon.getIconHeight(), 0.0625F);
  
 -            if (par2ItemStack.hasEffect() && par3 == 0)
 +            if (par2ItemStack.hasEffect(par3))
              {
                  GL11.glDepthFunc(GL11.GL_EQUAL);
                  GL11.glDisable(GL11.GL_LIGHTING);
-@@ -266,7 +292,7 @@
-         Render render;
+@@ -279,7 +299,7 @@
          RenderPlayer renderplayer;
+         Render render;
  
--        if (itemstack != null && itemstack.itemID == Item.map.itemID)
+-        if (itemstack != null && itemstack.getItem() == Items.filled_map)
 +        if (itemstack != null && itemstack.getItem() instanceof ItemMap)
          {
              GL11.glPushMatrix();
-             f12 = 0.8F;
-@@ -333,12 +359,21 @@
+             f13 = 0.8F;
+@@ -346,12 +366,21 @@
              tessellator.addVertexWithUV((double)(128 + b0), (double)(0 - b0), 0.0D, 1.0D, 0.0D);
              tessellator.addVertexWithUV((double)(0 - b0), (double)(0 - b0), 0.0D, 0.0D, 0.0D);
              tessellator.draw();
--            MapData mapdata = Item.map.getMapData(itemstack, this.mc.theWorld);
+-            MapData mapdata = Items.filled_map.getMapData(itemstack, this.mc.theWorld);
  
 -            if (mapdata != null)
 +            IItemRenderer custom = MinecraftForgeClient.getItemRenderer(itemstack, FIRST_PERSON_MAP);
@@ -89,10 +79,10 @@
 +
 +            if (custom == null)
              {
--                this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.getTextureManager(), mapdata);
+-                this.mc.entityRenderer.func_147701_i().func_148250_a(mapdata, false);
 +                if (mapdata != null)
 +                {
-+                    this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.getTextureManager(), mapdata);
++                    this.mc.entityRenderer.func_147701_i().func_148250_a(mapdata, false);
 +                }
              }
 +            else
@@ -102,32 +92,32 @@
  
              GL11.glPopMatrix();
          }
-@@ -439,17 +474,20 @@
+@@ -452,17 +481,20 @@
  
              if (itemstack.getItem().requiresMultipleRenderPasses())
              {
 -                this.renderItem(entityclientplayermp, itemstack, 0);
--                int i1 = Item.itemsList[itemstack.itemID].getColorFromItemStack(itemstack, 1);
--                f11 = (float)(i1 >> 16 & 255) / 255.0F;
--                f13 = (float)(i1 >> 8 & 255) / 255.0F;
--                f14 = (float)(i1 & 255) / 255.0F;
--                GL11.glColor4f(f5 * f11, f5 * f13, f5 * f14, 1.0F);
+-                int j1 = itemstack.getItem().getColorFromItemStack(itemstack, 1);
+-                f10 = (float)(j1 >> 16 & 255) / 255.0F;
+-                f11 = (float)(j1 >> 8 & 255) / 255.0F;
+-                f12 = (float)(j1 & 255) / 255.0F;
+-                GL11.glColor4f(1.0F * f10, 1.0F * f11, 1.0F * f12, 1.0F);
 -                this.renderItem(entityclientplayermp, itemstack, 1);
-+                this.renderItem(entityclientplayermp, itemstack, 0, ItemRenderType.EQUIPPED_FIRST_PERSON);
++                this.renderItem(entityclientplayermp, itemstack, 0, EQUIPPED_FIRST_PERSON);
 +                for (int x = 1; x < itemstack.getItem().getRenderPasses(itemstack.getItemDamage()); x++)
 +                {
-+                    int i1 = Item.itemsList[itemstack.itemID].getColorFromItemStack(itemstack, x);
-+                    f11 = (float)(i1 >> 16 & 255) / 255.0F;
-+                    f13 = (float)(i1 >> 8 & 255) / 255.0F;
-+                    f14 = (float)(i1 & 255) / 255.0F;
-+                    GL11.glColor4f(f5 * f11, f5 * f13, f5 * f14, 1.0F);
-+                    this.renderItem(entityclientplayermp, itemstack, x, ItemRenderType.EQUIPPED_FIRST_PERSON);
++                    int j1 = itemstack.getItem().getColorFromItemStack(itemstack, x);
++                    f10 = (float)(j1 >> 16 & 255) / 255.0F;
++                    f11 = (float)(j1 >> 8 & 255) / 255.0F;
++                    f12 = (float)(j1 & 255) / 255.0F;
++                    GL11.glColor4f(1.0F * f10, 1.0F * f11, 1.0F * f12, 1.0F);
++                    this.renderItem(entityclientplayermp, itemstack, 1, EQUIPPED_FIRST_PERSON);
 +                }
              }
              else
              {
 -                this.renderItem(entityclientplayermp, itemstack, 0);
-+                this.renderItem(entityclientplayermp, itemstack, 0, ItemRenderType.EQUIPPED_FIRST_PERSON);
++                this.renderItem(entityclientplayermp, itemstack, 0, EQUIPPED_FIRST_PERSON);
              }
  
              GL11.glPopMatrix();

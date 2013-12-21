@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
 +++ ../src-work/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
-@@ -49,6 +49,9 @@
- import net.minecraft.util.MovementInput;
+@@ -50,6 +50,9 @@
+ import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.Session;
  import net.minecraft.world.World;
 +import net.minecraftforge.client.ForgeHooksClient;
@@ -10,7 +10,7 @@
  
  @SideOnly(Side.CLIENT)
  public class EntityPlayerSP extends AbstractClientPlayer
-@@ -343,7 +346,7 @@
+@@ -331,7 +334,7 @@
              f *= 1.0F - f1 * 0.15F;
          }
  
@@ -18,26 +18,37 @@
 +        return ForgeHooksClient.getOffsetFOV(this, f);
      }
  
-     /**
-@@ -570,18 +573,66 @@
-      */
-     protected boolean pushOutOfBlocks(double par1, double par3, double par5)
+     // JAVADOC METHOD $$ func_71053_j
+@@ -494,20 +497,45 @@
+         return this.worldObj.func_147439_a(par1, par2, par3).func_149721_r();
+     }
+ 
++    private boolean isHeadspaceFree(int x, int y, int z, int height)
++    {
++        for (int i1 = 0; i1 < height; i1++)
++        {
++            if (isBlockTranslucent(x, y + i1, z + 1)) return false;
++        }
++        return true;
++    }
++
+     protected boolean func_145771_j(double p_145771_1_, double p_145771_3_, double p_145771_5_)
      {
 +        if (this.noClip)
 +        {
 +            return false;
 +        }
-         int i = MathHelper.floor_double(par1);
-         int j = MathHelper.floor_double(par3);
-         int k = MathHelper.floor_double(par5);
-         double d3 = par1 - (double)i;
-         double d4 = par5 - (double)k;
+         int i = MathHelper.floor_double(p_145771_1_);
+         int j = MathHelper.floor_double(p_145771_3_);
+         int k = MathHelper.floor_double(p_145771_5_);
+         double d3 = p_145771_1_ - (double)i;
+         double d4 = p_145771_5_ - (double)k;
  
 -        if (this.isBlockTranslucent(i, j, k) || this.isBlockTranslucent(i, j + 1, k))
 +        int entHeight = Math.max(Math.round(this.height), 1);
-+        
++
 +        boolean inTranslucentBlock = true;
-+        
++
 +        for (int i1 = 0; i1 < entHeight; i1++)
          {
 -            boolean flag = !this.isBlockTranslucent(i - 1, j, k) && !this.isBlockTranslucent(i - 1, j + 1, k);
@@ -49,49 +60,17 @@
 +                inTranslucentBlock = false;
 +            }
 +        }
-+        
++
 +        if (inTranslucentBlock)
 +        {
-+            boolean flag = true;
-+            boolean flag1 = true;
-+            boolean flag2 = true;
-+            boolean flag3 = true;
-+            for (int i1 = 0; i1 < entHeight; i1++)
-+            {
-+                if(this.isBlockTranslucent(i - 1, j + i1, k))
-+                {
-+            	    flag = false;
-+            	    break;
-+                }
-+            }
-+            for (int i1 = 0; i1 < entHeight; i1++)
-+            {
-+                if(this.isBlockTranslucent(i + 1, j + i1, k))
-+                {
-+            	    flag1 = false;
-+            	    break;
-+                }
-+            }
-+            for (int i1 = 0; i1 < entHeight; i1++)
-+            {
-+                if(this.isBlockTranslucent(i, j + i1, k - 1))
-+                {
-+            	    flag2 = false;
-+            	    break;
-+                }
-+            }
-+            for (int i1 = 0; i1 < entHeight; i1++)
-+            {
-+                if(this.isBlockTranslucent(i, j + i1, k + 1))
-+                {
-+            	    flag3 = false;
-+            	    break;
-+                }
-+            }
++            boolean flag  = !isHeadspaceFree(i - 1, j, k, entHeight);
++            boolean flag1 = !isHeadspaceFree(i + 1, j, k, entHeight);
++            boolean flag2 = !isHeadspaceFree(i, j, k - 1, entHeight);
++            boolean flag3 = !isHeadspaceFree(i, j, k + 1, entHeight);
              byte b0 = -1;
              double d5 = 9999.0D;
  
-@@ -685,6 +736,12 @@
+@@ -595,6 +623,12 @@
  
      public void playSound(String par1Str, float par2, float par3)
      {

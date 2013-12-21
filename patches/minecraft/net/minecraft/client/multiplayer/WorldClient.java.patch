@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/WorldClient.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/WorldClient.java
-@@ -29,6 +29,9 @@
+@@ -34,6 +34,9 @@
  import net.minecraft.world.chunk.IChunkProvider;
  import net.minecraft.world.storage.SaveHandlerMP;
  
@@ -10,21 +10,21 @@
  @SideOnly(Side.CLIENT)
  public class WorldClient extends World
  {
-@@ -59,8 +62,11 @@
-         super(new SaveHandlerMP(), "MpServer", WorldProvider.getProviderForDimension(par3), par2WorldSettings, par5Profiler, par6ILogAgent);
-         this.sendQueue = par1NetClientHandler;
-         this.difficultySetting = par4;
+@@ -56,8 +59,11 @@
+         super(new SaveHandlerMP(), "MpServer", WorldProvider.getProviderForDimension(p_i45063_3_), p_i45063_2_, p_i45063_5_);
+         this.sendQueue = p_i45063_1_;
+         this.difficultySetting = p_i45063_4_;
 -        this.setSpawnLocation(8, 64, 8);
-         this.mapStorage = par1NetClientHandler.mapStorage;
+         this.mapStorage = p_i45063_1_.field_147305_a;
 +        this.isRemote = true;
-+        finishSetup();
++        this.finishSetup();
 +        this.setSpawnLocation(8, 64, 8);
 +        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(this));
      }
  
-     /**
-@@ -290,6 +296,12 @@
-      */
+     // JAVADOC METHOD $$ func_72835_b
+@@ -275,6 +281,12 @@
+     // JAVADOC METHOD $$ func_72979_l
      protected void updateWeather()
      {
 +        super.updateWeather();
@@ -35,4 +35,4 @@
 +    {
          if (!this.provider.hasNoSky)
          {
-             this.prevRainingStrength = this.rainingStrength;
+             ;

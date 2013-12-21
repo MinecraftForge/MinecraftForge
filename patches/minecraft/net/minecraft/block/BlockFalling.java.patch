@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockFalling.java
++++ ../src-work/minecraft/net/minecraft/block/BlockFalling.java
+@@ -84,7 +84,7 @@
+     {
+         Block block = p_149831_0_.func_147439_a(p_149831_1_, p_149831_2_, p_149831_3_);
+ 
+-        if (block.field_149764_J == Material.field_151579_a)
++        if (block.isAir(p_149831_0_, p_149831_1_, p_149831_2_, p_149831_3_))
+         {
+             return true;
+         }
+@@ -94,6 +94,7 @@
+         }
+         else
+         {
++            //TODO: King, take a look here when doing liquids!
+             Material material = block.field_149764_J;
+             return material == Material.field_151586_h ? true : material == Material.field_151587_i;
+         }

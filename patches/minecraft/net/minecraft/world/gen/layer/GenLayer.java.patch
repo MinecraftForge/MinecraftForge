@@ -1,27 +1,27 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/layer/GenLayer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/layer/GenLayer.java
-@@ -2,6 +2,9 @@
- 
+@@ -7,6 +7,9 @@
  import net.minecraft.world.WorldType;
+ import net.minecraft.world.biome.BiomeGenBase;
  
 +import net.minecraftforge.common.*;
 +import net.minecraftforge.event.terraingen.*;
 +
  public abstract class GenLayer
  {
-     /** seed from World#getWorldSeed that is used in the LCG prng */
-@@ -42,6 +45,7 @@
+     // JAVADOC FIELD $$ field_75907_b
+@@ -53,6 +56,7 @@
          {
-             b0 = 6;
+             b0 = 4;
          }
 +        b0 = getModdedBiomeSize(par2WorldType, b0);
  
-         GenLayer genlayer = GenLayerZoom.magnify(1000L, genlayeraddmushroomisland, 0);
+         GenLayer genlayer = GenLayerZoom.magnify(1000L, genlayer3, 0);
          GenLayerRiverInit genlayerriverinit = new GenLayerRiverInit(100L, genlayer);
-@@ -151,4 +155,11 @@
-      * amounts, or biomeList[] indices based on the particular GenLayer subclass.
-      */
-     public abstract int[] getInts(int i, int j, int k, int l);
+@@ -213,4 +217,11 @@
+     {
+         return p_151617_2_ == p_151617_3_ && p_151617_3_ == p_151617_4_ ? p_151617_2_ : (p_151617_1_ == p_151617_2_ && p_151617_1_ == p_151617_3_ ? p_151617_1_ : (p_151617_1_ == p_151617_2_ && p_151617_1_ == p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_3_ && p_151617_1_ == p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_2_ && p_151617_3_ != p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_3_ && p_151617_2_ != p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_4_ && p_151617_2_ != p_151617_3_ ? p_151617_1_ : (p_151617_2_ == p_151617_3_ && p_151617_1_ != p_151617_4_ ? p_151617_2_ : (p_151617_2_ == p_151617_4_ && p_151617_1_ != p_151617_3_ ? p_151617_2_ : (p_151617_3_ == p_151617_4_ && p_151617_1_ != p_151617_2_ ? p_151617_3_ : this.func_151619_a(new int[] {p_151617_1_, p_151617_2_, p_151617_3_, p_151617_4_}))))))))));
+     }
 +
 +    public static byte getModdedBiomeSize(WorldType worldType, byte original)
 +    {

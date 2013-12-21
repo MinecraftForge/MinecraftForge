@@ -9,85 +9,84 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
-+import net.minecraftforge.common.ForgeDirection;
-+import static net.minecraftforge.common.ForgeDirection.*;
++import net.minecraftforge.common.util.ForgeDirection;
++import static net.minecraftforge.common.util.ForgeDirection.*;
 +
  public class BlockLadder extends Block
  {
-     protected BlockLadder(int par1)
-@@ -104,7 +108,10 @@
-      */
-     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
+     private static final String __OBFID = "CL_00000262";
+@@ -79,29 +83,32 @@
+ 
+     public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
      {
--        return par1World.isBlockNormalCube(par2 - 1, par3, par4) ? true : (par1World.isBlockNormalCube(par2 + 1, par3, par4) ? true : (par1World.isBlockNormalCube(par2, par3, par4 - 1) ? true : par1World.isBlockNormalCube(par2, par3, par4 + 1)));
-+        return par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST ) ||
-+               par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST ) ||
-+               par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH) ||
-+               par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH);
+-        return p_149742_1_.func_147439_a(p_149742_2_ - 1, p_149742_3_, p_149742_4_).func_149721_r() ? true : (p_149742_1_.func_147439_a(p_149742_2_ + 1, p_149742_3_, p_149742_4_).func_149721_r() ? true : (p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_, p_149742_4_ - 1).func_149721_r() ? true : p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_, p_149742_4_ + 1).func_149721_r()));
++        return p_149742_1_.isSideSolid(p_149742_2_ - 1, p_149742_3_, p_149742_4_, EAST ) ||
++               p_149742_1_.isSideSolid(p_149742_2_ + 1, p_149742_3_, p_149742_4_, WEST ) ||
++               p_149742_1_.isSideSolid(p_149742_2_, p_149742_3_, p_149742_4_ - 1, SOUTH) ||
++               p_149742_1_.isSideSolid(p_149742_2_, p_149742_3_, p_149742_4_ + 1, NORTH);
      }
  
-     /**
-@@ -114,22 +121,22 @@
+     public int func_149660_a(World p_149660_1_, int p_149660_2_, int p_149660_3_, int p_149660_4_, int p_149660_5_, float p_149660_6_, float p_149660_7_, float p_149660_8_, int p_149660_9_)
      {
-         int j1 = par9;
+         int j1 = p_149660_9_;
  
--        if ((par9 == 0 || par5 == 2) && par1World.isBlockNormalCube(par2, par3, par4 + 1))
-+        if ((j1 == 0 || par5 == 2) && par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH))
+-        if ((p_149660_9_ == 0 || p_149660_5_ == 2) && p_149660_1_.func_147439_a(p_149660_2_, p_149660_3_, p_149660_4_ + 1).func_149721_r())
++        if ((p_149660_9_ == 0 || p_149660_5_ == 2) && p_149660_1_.isSideSolid(p_149660_2_, p_149660_3_, p_149660_4_ + 1, NORTH))
          {
              j1 = 2;
          }
  
--        if ((j1 == 0 || par5 == 3) && par1World.isBlockNormalCube(par2, par3, par4 - 1))
-+        if ((j1 == 0 || par5 == 3) && par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH))
+-        if ((j1 == 0 || p_149660_5_ == 3) && p_149660_1_.func_147439_a(p_149660_2_, p_149660_3_, p_149660_4_ - 1).func_149721_r())
++        if ((j1 == 0 || p_149660_5_ == 3) && p_149660_1_.isSideSolid(p_149660_2_, p_149660_3_, p_149660_4_ - 1, SOUTH))
          {
              j1 = 3;
          }
  
--        if ((j1 == 0 || par5 == 4) && par1World.isBlockNormalCube(par2 + 1, par3, par4))
-+        if ((j1 == 0 || par5 == 4) && par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST))
+-        if ((j1 == 0 || p_149660_5_ == 4) && p_149660_1_.func_147439_a(p_149660_2_ + 1, p_149660_3_, p_149660_4_).func_149721_r())
++        if ((j1 == 0 || p_149660_5_ == 4) && p_149660_1_.isSideSolid(p_149660_2_ + 1, p_149660_3_, p_149660_4_, WEST))
          {
              j1 = 4;
          }
  
--        if ((j1 == 0 || par5 == 5) && par1World.isBlockNormalCube(par2 - 1, par3, par4))
-+        if ((j1 == 0 || par5 == 5) && par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST))
+-        if ((j1 == 0 || p_149660_5_ == 5) && p_149660_1_.func_147439_a(p_149660_2_ - 1, p_149660_3_, p_149660_4_).func_149721_r())
++        if ((j1 == 0 || p_149660_5_ == 5) && p_149660_1_.isSideSolid(p_149660_2_ - 1, p_149660_3_, p_149660_4_, EAST))
          {
              j1 = 5;
          }
-@@ -146,22 +153,22 @@
-         int i1 = par1World.getBlockMetadata(par2, par3, par4);
+@@ -114,22 +121,22 @@
+         int l = p_149695_1_.getBlockMetadata(p_149695_2_, p_149695_3_, p_149695_4_);
          boolean flag = false;
  
--        if (i1 == 2 && par1World.isBlockNormalCube(par2, par3, par4 + 1))
-+        if (i1 == 2 && par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH))
+-        if (l == 2 && p_149695_1_.func_147439_a(p_149695_2_, p_149695_3_, p_149695_4_ + 1).func_149721_r())
++        if (l == 2 && p_149695_1_.isSideSolid(p_149695_2_, p_149695_3_, p_149695_4_ + 1, NORTH))
          {
              flag = true;
          }
  
--        if (i1 == 3 && par1World.isBlockNormalCube(par2, par3, par4 - 1))
-+        if (i1 == 3 && par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH))
+-        if (l == 3 && p_149695_1_.func_147439_a(p_149695_2_, p_149695_3_, p_149695_4_ - 1).func_149721_r())
++        if (l == 3 && p_149695_1_.isSideSolid(p_149695_2_, p_149695_3_, p_149695_4_ - 1, SOUTH))
          {
              flag = true;
          }
  
--        if (i1 == 4 && par1World.isBlockNormalCube(par2 + 1, par3, par4))
-+        if (i1 == 4 && par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST))
+-        if (l == 4 && p_149695_1_.func_147439_a(p_149695_2_ + 1, p_149695_3_, p_149695_4_).func_149721_r())
++        if (l == 4 && p_149695_1_.isSideSolid(p_149695_2_ + 1, p_149695_3_, p_149695_4_, WEST))
          {
              flag = true;
          }
  
--        if (i1 == 5 && par1World.isBlockNormalCube(par2 - 1, par3, par4))
-+        if (i1 == 5 && par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST))
+-        if (l == 5 && p_149695_1_.func_147439_a(p_149695_2_ - 1, p_149695_3_, p_149695_4_).func_149721_r())
++        if (l == 5 && p_149695_1_.isSideSolid(p_149695_2_ - 1, p_149695_3_, p_149695_4_, EAST))
          {
              flag = true;
          }
-@@ -182,4 +189,10 @@
+@@ -147,4 +154,10 @@
      {
          return 1;
      }
 +
 +    @Override
-+    public boolean isLadder(World world, int x, int y, int z, EntityLivingBase entity)
++    public boolean isLadder(IBlockAccess world, int x, int y, int z, EntityLivingBase entity)
 +    {
 +        return true;
 +    }

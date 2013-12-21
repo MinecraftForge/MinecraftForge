@@ -1,14 +1,38 @@
 --- ../src-base/minecraft/net/minecraft/stats/StatList.java
 +++ ../src-work/minecraft/net/minecraft/stats/StatList.java
-@@ -182,9 +182,9 @@
-      */
-     private static StatBase[] initMinableStats(String par0Str, int par1)
-     {
--        StatBase[] astatbase = new StatBase[256];
-+        StatBase[] astatbase = new StatBase[Block.blocksList.length];
+@@ -118,7 +118,7 @@
  
--        for (int j = 0; j < 256; ++j)
-+        for (int j = 0; j < Block.blocksList.length; ++j)
-         {
-             if (Block.blocksList[j] != null && Block.blocksList[j].getEnableStats())
+             if (item != null)
              {
+-                int i = Item.func_150891_b(item);
++                int i = Item.func_150891_b(item); //TODO: Hook FML's stat change event and re-assign these
+                 objectCraftStats[i] = (new StatCrafting("stat.craftItem." + i, new ChatComponentTranslation("stat.craftItem", new Object[] {(new ItemStack(item)).func_151000_E()}), item)).registerStat();
+             }
+         }
+@@ -136,7 +136,7 @@
+ 
+             if (Item.func_150898_a(block) != null)
+             {
+-                int i = Block.func_149682_b(block);
++                int i = Block.func_149682_b(block); //TODO: Hook FML's stat change event and re-assign these
+ 
+                 if (block.func_149652_G())
+                 {
+@@ -159,7 +159,7 @@
+ 
+             if (item != null)
+             {
+-                int i = Item.func_150891_b(item);
++                int i = Item.func_150891_b(item); //TODO: Hook FML's stat change event and re-assign these
+                 objectUseStats[i] = (new StatCrafting("stat.useItem." + i, new ChatComponentTranslation("stat.useItem", new Object[] {(new ItemStack(item)).func_151000_E()}), item)).registerStat();
+ 
+                 if (!(item instanceof ItemBlock))
+@@ -182,7 +182,7 @@
+ 
+             if (item != null)
+             {
+-                int i = Item.func_150891_b(item);
++                int i = Item.func_150891_b(item); //TODO: Hook FML's stat change event and re-assign these
+ 
+                 if (item.isDamageable())
+                 {

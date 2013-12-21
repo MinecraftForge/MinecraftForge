@@ -1,18 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RendererLivingEntity.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RendererLivingEntity.java
-@@ -18,6 +18,9 @@
- import net.minecraft.util.EnumChatFormatting;
- import net.minecraft.util.MathHelper;
+@@ -20,6 +20,9 @@
  import net.minecraft.util.ResourceLocation;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
 +import net.minecraftforge.client.event.RenderLivingEvent;
 +import net.minecraftforge.common.MinecraftForge;
 +
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
-@@ -30,6 +33,9 @@
-     /** The model to be used during the render passes. */
+@@ -33,6 +36,9 @@
      protected ModelBase renderPassModel;
+     private static final String __OBFID = "CL_00001012";
  
 +    public static float NAME_TAG_RANGE = 64.0f;
 +    public static float NAME_TAG_RANGE_SNEAK = 32.0f;
@@ -20,29 +20,31 @@
      public RendererLivingEntity(ModelBase par1ModelBase, float par2)
      {
          this.mainModel = par1ModelBase;
-@@ -69,6 +75,7 @@
- 
-     public void doRenderLiving(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6, float par8, float par9)
+@@ -66,6 +72,7 @@
+     // JAVADOC METHOD $$ func_76986_a
+     public void doRender(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6, float par8, float par9)
      {
 +        if (MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Pre(par1EntityLivingBase, this))) return;
          GL11.glPushMatrix();
          GL11.glDisable(GL11.GL_CULL_FACE);
          this.mainModel.onGround = this.renderSwingProgress(par1EntityLivingBase, par9);
-@@ -278,6 +285,7 @@
+@@ -275,6 +282,7 @@
          GL11.glEnable(GL11.GL_CULL_FACE);
          GL11.glPopMatrix();
          this.passSpecialRender(par1EntityLivingBase, par2, par4, par6);
 +        MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Post(par1EntityLivingBase, this));
      }
  
-     /**
-@@ -448,12 +456,13 @@
-      */
+     // JAVADOC METHOD $$ func_77036_a
+@@ -428,6 +436,7 @@
+     // JAVADOC METHOD $$ func_77033_b
      protected void passSpecialRender(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6)
      {
 +        if (MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Specials.Pre(par1EntityLivingBase, this))) return;
+         GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
+ 
          if (this.func_110813_b(par1EntityLivingBase))
-         {
+@@ -435,7 +444,7 @@
              float f = 1.6F;
              float f1 = 0.016666668F * f;
              double d3 = par1EntityLivingBase.getDistanceSqToEntity(this.renderManager.livingPlayer);
@@ -51,7 +53,7 @@
  
              if (d3 < (double)(f2 * f2))
              {
-@@ -497,6 +506,7 @@
+@@ -479,6 +488,7 @@
                  }
              }
          }

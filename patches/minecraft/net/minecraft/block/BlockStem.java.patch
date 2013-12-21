@@ -1,85 +1,80 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockStem.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockStem.java
-@@ -2,6 +2,8 @@
+@@ -2,6 +2,7 @@
  
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
-+
 +import java.util.ArrayList;
  import java.util.Random;
- import net.minecraft.client.renderer.texture.IconRegister;
- import net.minecraft.creativetab.CreativeTabs;
-@@ -12,6 +14,8 @@
+ import net.minecraft.block.material.Material;
+ import net.minecraft.client.renderer.texture.IIconRegister;
+@@ -14,6 +15,7 @@
+ import net.minecraft.util.MathHelper;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
++import static net.minecraftforge.common.util.ForgeDirection.*;
  
-+import net.minecraftforge.common.ForgeDirection;
-+
- public class BlockStem extends BlockFlower
+ public class BlockStem extends BlockBush implements IGrowable
  {
-     /** Defines if it is a Melon or a Pumpkin that the stem is producing. */
-@@ -106,7 +110,8 @@
+@@ -101,7 +103,7 @@
  
-                     int l1 = par1World.getBlockId(j1, par3 - 1, k1);
+                     Block block = p_149674_1_.func_147439_a(j1, p_149674_3_ - 1, k1);
  
--                    if (par1World.getBlockId(j1, par3, k1) == 0 && (l1 == Block.tilledField.blockID || l1 == Block.dirt.blockID || l1 == Block.grass.blockID))
-+                    boolean isSoil = (blocksList[l1] != null && blocksList[l1].canSustainPlant(par1World, j1, par3 - 1, k1, ForgeDirection.UP, this));
-+                    if (par1World.isAirBlock(j1, par3, k1) && (isSoil || l1 == Block.dirt.blockID || l1 == Block.grass.blockID))
+-                    if (p_149674_1_.func_147439_a(j1, p_149674_3_, k1).field_149764_J == Material.field_151579_a && (block == Blocks.farmland || block == Blocks.dirt || block == Blocks.grass))
++                    if (p_149674_1_.func_147437_c(j1, p_149674_3_, k1) && (block.canSustainPlant(p_149674_1_, j1, p_149674_3_ - 1, k1, UP, this) || block == Blocks.dirt || block == Blocks.grass))
                      {
-                         par1World.setBlock(j1, par3, k1, this.fruitType.blockID);
+                         p_149674_1_.func_147449_b(j1, p_149674_3_, k1, this.field_149877_a);
                      }
-@@ -149,11 +154,11 @@
-                 int j3 = par1World.getBlockId(l2, par3 - 1, i3);
+@@ -144,11 +146,11 @@
+                 Block block8 = p_149875_1_.func_147439_a(l, p_149875_3_ - 1, i1);
                  float f1 = 0.0F;
  
--                if (j3 == Block.tilledField.blockID)
-+                if (blocksList[j3] != null && blocksList[j3].canSustainPlant(par1World, l2, par3 - 1, i3, ForgeDirection.UP, this))
+-                if (block8 == Blocks.farmland)
++                if (block8.canSustainPlant(p_149875_1_, l, p_149875_3_ - 1, i1, UP, this))
                  {
                      f1 = 1.0F;
  
--                    if (par1World.getBlockMetadata(l2, par3 - 1, i3) > 0)
-+                    if (blocksList[j3].isFertile(par1World, l2, par3 - 1, i3))
+-                    if (p_149875_1_.getBlockMetadata(l, p_149875_3_ - 1, i1) > 0)
++                    if (block8.isFertile(p_149875_1_, l, p_149875_3_ - 1, i1))
                      {
                          f1 = 3.0F;
                      }
-@@ -245,29 +250,22 @@
-     public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
+@@ -215,6 +217,7 @@
      {
-         super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, par7);
-+    }
+         super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
  
--        if (!par1World.isRemote)
--        {
--            Item item = null;
-+    @Override 
-+    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
-+    {
-+        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
- 
--            if (this.fruitType == Block.pumpkin)
-+        for (int i = 0; i < 3; i++)
-+        {
-+            if (world.rand.nextInt(15) <= metadata)
-             {
--                item = Item.pumpkinSeeds;
-+                ret.add(new ItemStack(fruitType == pumpkin ? Item.pumpkinSeeds : Item.melonSeeds));
++        /*
+         if (!p_149690_1_.isRemote)
+         {
+             Item item = null;
+@@ -237,6 +240,7 @@
+                 }
              }
--
--            if (this.fruitType == Block.melon)
--            {
--                item = Item.melonSeeds;
--            }
--
--            for (int j1 = 0; j1 < 3; ++j1)
--            {
--                if (par1World.rand.nextInt(15) <= par5)
--                {
--                    this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(item));
--                }
--            }
          }
-+
-+        return ret;
++        */
      }
  
-     /**
+     public Item func_149650_a(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
+@@ -282,4 +286,22 @@
+     {
+         this.func_149874_m(p_149853_1_, p_149853_3_, p_149853_4_, p_149853_5_);
+     }
++
++
++    @Override
++    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int meta, int fortune)
++    {
++        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
++
++        Item item = null;
++        item = field_149877_a == Blocks.pumpkin ? Items.pumpkin_seeds : item;
++        item = field_149877_a == Blocks.melon_block ? Items.melon_seeds : item;
++
++        for (int i = 0; item != null && i < 3; i++)
++        {
++            ret.add(new ItemStack(item));
++        }
++
++        return ret;
++    }
+ }

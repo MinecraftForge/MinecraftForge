@@ -1,0 +1,83 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureVillagePieces.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureVillagePieces.java
+@@ -4,7 +4,7 @@
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Random;
+-
++import cpw.mods.fml.common.eventhandler.Event.Result;
+ import cpw.mods.fml.common.registry.VillagerRegistry;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.material.Material;
+@@ -18,6 +18,10 @@
+ import net.minecraft.world.World;
+ import net.minecraft.world.biome.BiomeGenBase;
+ import net.minecraft.world.biome.WorldChunkManager;
++import net.minecraftforge.common.ChestGenHooks;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.terraingen.BiomeEvent;
++import static net.minecraftforge.common.ChestGenHooks.*;
+ 
+ public class StructureVillagePieces
+ {
+@@ -351,6 +355,7 @@
+             private int villagersSpawned;
+             private boolean field_143014_b;
+             private static final String __OBFID = "CL_00000531";
++            private StructureVillagePieces.Start startPiece;
+ 
+             public Village() {}
+ 
+@@ -361,6 +366,7 @@
+                 if (par1ComponentVillageStartPiece != null)
+                 {
+                     this.field_143014_b = par1ComponentVillageStartPiece.inDesert;
++                    startPiece = par1ComponentVillageStartPiece;
+                 }
+             }
+ 
+@@ -479,6 +485,9 @@
+ 
+             protected Block func_151558_b(Block p_151558_1_, int p_151558_2_)
+             {
++                BiomeEvent.GetVillageBlockID event = new BiomeEvent.GetVillageBlockID(startPiece == null ? null : startPiece.biome, p_151558_1_, p_151558_2_);
++                MinecraftForge.TERRAIN_GEN_BUS.post(event);
++                if (event.getResult() == Result.DENY) return event.replacement;
+                 if (this.field_143014_b)
+                 {
+                     if (p_151558_1_ == Blocks.log || p_151558_1_ == Blocks.log2)
+@@ -517,6 +526,9 @@
+ 
+             protected int func_151557_c(Block p_151557_1_, int p_151557_2_)
+             {
++                BiomeEvent.GetVillageBlockMeta event = new BiomeEvent.GetVillageBlockMeta(startPiece == null ? null : startPiece.biome, p_151557_1_, p_151557_2_);
++                MinecraftForge.TERRAIN_GEN_BUS.post(event);
++                if (event.getResult() == Result.DENY) return event.replacement;
+                 if (this.field_143014_b)
+                 {
+                     if (p_151557_1_ == Blocks.log || p_151557_1_ == Blocks.log2)
+@@ -1286,7 +1298,7 @@
+                     if (par3StructureBoundingBox.isVecInside(j, i, k))
+                     {
+                         this.hasMadeChest = true;
+-                        this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 5, 1, 5, villageBlacksmithChestContents, 3 + par2Random.nextInt(6));
++                        this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 5, 1, 5, ChestGenHooks.getItems(VILLAGE_BLACKSMITH, par2Random), ChestGenHooks.getCount(VILLAGE_BLACKSMITH, par2Random));
+                     }
+                 }
+ 
+@@ -1331,6 +1343,7 @@
+             public List field_74932_i = new ArrayList();
+             public List field_74930_j = new ArrayList();
+             private static final String __OBFID = "CL_00000527";
++            public BiomeGenBase biome;
+ 
+             public Start() {}
+ 
+@@ -1342,6 +1355,7 @@
+                 this.terrainType = par7;
+                 BiomeGenBase biomegenbase = par1WorldChunkManager.getBiomeGenAt(par4, par5);
+                 this.inDesert = biomegenbase == BiomeGenBase.desert || biomegenbase == BiomeGenBase.desertHills;
++                this.biome = biomegenbase;
+             }
+ 
+             public WorldChunkManager getWorldChunkManager()

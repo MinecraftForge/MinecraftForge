@@ -1,92 +1,56 @@
 --- ../src-base/minecraft/net/minecraft/world/ChunkCache.java
 +++ ../src-work/minecraft/net/minecraft/world/ChunkCache.java
-@@ -8,6 +8,7 @@
+@@ -9,6 +9,7 @@
  import net.minecraft.util.Vec3Pool;
  import net.minecraft.world.biome.BiomeGenBase;
  import net.minecraft.world.chunk.Chunk;
-+import net.minecraftforge.common.ForgeDirection;
++import net.minecraftforge.common.util.ForgeDirection;
  
  public class ChunkCache implements IBlockAccess
  {
-@@ -108,7 +109,15 @@
+@@ -95,6 +96,8 @@
      {
-         int l = (par1 >> 4) - this.chunkX;
-         int i1 = (par3 >> 4) - this.chunkZ;
--        return this.chunkArray[l][i1].getChunkBlockTileEntity(par1 & 15, par2, par3 & 15);
-+        if (l >= 0 && l < this.chunkArray.length && i1 >= 0 && i1 < this.chunkArray[l].length)
-+        {
-+            Chunk chunk = this.chunkArray[l][i1];
-+            return chunk == null ? null : chunk.getChunkBlockTileEntity(par1 & 15, par2, par3 & 15);
-+        }
-+        else
-+        {
-+            return null;
-+        }
+         int l = (p_147438_1_ >> 4) - this.chunkX;
+         int i1 = (p_147438_3_ >> 4) - this.chunkZ;
++        if (l < 0 || l >= chunkArray.length || i1 < 0 || i1 >= chunkArray[l].length) return null;
++        if (chunkArray[l][i1] == null) return null;
+         return this.chunkArray[l][i1].func_150806_e(p_147438_1_ & 15, p_147438_2_, p_147438_3_ & 15);
      }
  
-     @SideOnly(Side.CLIENT)
-@@ -159,7 +168,12 @@
+@@ -128,6 +131,8 @@
          {
              int l = (par1 >> 4) - this.chunkX;
              int i1 = (par3 >> 4) - this.chunkZ;
--            return this.chunkArray[l][i1].getBlockMetadata(par1 & 15, par2, par3 & 15);
-+            if (l >= 0 && l < this.chunkArray.length && i1 >= 0 && i1 < this.chunkArray[l].length)
-+            {
-+                Chunk chunk = this.chunkArray[l][i1];
-+                return chunk == null ? 0 : chunk.getBlockMetadata(par1 & 15, par2, par3 & 15);
-+            }
-+            return 0;
++            if (l < 0 || l >= chunkArray.length || i1 < 0 || i1 >= chunkArray[l].length) return 0;
++            if (chunkArray[l][i1] == null) return 0;
+             return this.chunkArray[l][i1].getBlockMetadata(par1 & 15, par2, par3 & 15);
          }
      }
- 
-@@ -306,8 +320,7 @@
-      */
-     public boolean doesBlockHaveSolidTopSurface(int par1, int par2, int par3)
-     {
--        Block block = Block.blocksList[this.getBlockId(par1, par2, par3)];
--        return this.worldObj.isBlockTopFacingSurfaceSolid(block, this.getBlockMetadata(par1, par2, par3));
-+        return this.worldObj.doesBlockHaveSolidTopSurface(par1, par2, par3);
-     }
- 
-     /**
-@@ -318,15 +331,13 @@
+@@ -145,10 +150,9 @@
          return this.worldObj.getWorldVec3Pool();
      }
  
 -    @SideOnly(Side.CLIENT)
--
-     /**
-      * Returns true if the block at the specified coordinates is empty
-      */
-     public boolean isAirBlock(int par1, int par2, int par3)
+     public boolean func_147437_c(int p_147437_1_, int p_147437_2_, int p_147437_3_)
      {
--        Block block = Block.blocksList[this.getBlockId(par1, par2, par3)];
--        return block == null;
-+        int id = getBlockId(par1, par2, par3);
-+        return id == 0 || Block.blocksList[id] == null || Block.blocksList[id].isAirBlock(this.worldObj, par1, par2, par3);
+-        return this.func_147439_a(p_147437_1_, p_147437_2_, p_147437_3_).func_149688_o() == Material.field_151579_a;
++        return this.func_147439_a(p_147437_1_, p_147437_2_, p_147437_3_).isAir(this, p_147437_1_, p_147437_2_, p_147437_3_);
      }
  
-     @SideOnly(Side.CLIENT)
-@@ -449,4 +460,22 @@
-         int i1 = this.getBlockId(par1, par2, par3);
-         return i1 == 0 ? 0 : Block.blocksList[i1].isProvidingStrongPower(this, par1, par2, par3, par4);
+     // JAVADOC METHOD $$ func_72810_a
+@@ -258,4 +262,15 @@
+     {
+         return this.func_147439_a(par1, par2, par3).func_149748_c(this, par1, par2, par3, par4);
      }
 +
-+    public boolean isBlockSolidOnSide(int x, int y, int z, ForgeDirection side, boolean _default)
++    @Override
++    public boolean isSideSolid(int x, int y, int z, ForgeDirection side, boolean _default)
 +    {
 +        if (x < -30000000 || z < -30000000 || x >= 30000000 || z >= 30000000)
 +        {
 +            return _default;
 +        }
 +
-+        int blockId = getBlockId(x, y, z);
-+        Block block = Block.blocksList[blockId];
-+
-+        if (block != null)
-+        {
-+            return block.isBlockSolidOnSide(this.worldObj, x, y, z, side);
-+        }
-+
-+        return false;
++        return func_147439_a(x, y, z).isSideSolid(this, x, y, z, side);
 +    }
  }

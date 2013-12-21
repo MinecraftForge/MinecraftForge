@@ -4,7 +4,6 @@ package net.minecraftforge.fluids;
 import java.util.Map;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.common.network.ForgePacket;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -12,7 +11,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
-public class FluidIdMapPacket extends ForgePacket
+public class FluidIdMapPacket// extends ForgePacket
 {
     /*
     private BiMap<String, Integer> fluidIds = HashBiMap.create();

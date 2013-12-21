@@ -1,56 +1,49 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockTrapDoor.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockTrapDoor.java
-@@ -11,8 +11,13 @@
+@@ -11,9 +11,12 @@
+ import net.minecraft.util.Vec3;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
++import net.minecraftforge.common.util.ForgeDirection;
  
-+import net.minecraftforge.common.ForgeDirection;
-+
  public class BlockTrapDoor extends Block
  {
 +    /** Set this to allow trapdoors to remain free-floating */
 +    public static boolean disableValidation = false;
-+
-     protected BlockTrapDoor(int par1, Material par2Material)
-     {
-         super(par1, par2Material);
-@@ -194,7 +199,7 @@
-                 --j1;
+     private static final String __OBFID = "CL_00000327";
+ 
+     protected BlockTrapDoor(Material p_i45434_1_)
+@@ -163,7 +166,7 @@
+                 --i1;
              }
  
--            if (!isValidSupportBlock(par1World.getBlockId(j1, par3, k1)))
-+            if (!(isValidSupportBlock(par1World.getBlockId(j1, par3, k1)) || par1World.isBlockSolidOnSide(j1, par3, k1, ForgeDirection.getOrientation((i1 & 3) + 2))))
+-            if (!func_150119_a(p_149695_1_.func_147439_a(i1, p_149695_3_, j1)))
++            if (!func_150119_a(p_149695_1_.func_147439_a(i1, p_149695_3_, j1)) || p_149695_1_.isSideSolid(i1, p_149695_3_, j1, ForgeDirection.getOrientation((l & 3) + 2)))
              {
-                 par1World.setBlockToAir(par2, par3, par4);
-                 this.dropBlockAsItem(par1World, par2, par3, par4, i1, 0);
-@@ -259,6 +264,10 @@
-      */
-     public boolean canPlaceBlockOnSide(World par1World, int par2, int par3, int par4, int par5)
+                 p_149695_1_.func_147468_f(p_149695_2_, p_149695_3_, p_149695_4_);
+                 this.func_149697_b(p_149695_1_, p_149695_2_, p_149695_3_, p_149695_4_, l, 0);
+@@ -218,6 +221,7 @@
+ 
+     public boolean func_149707_d(World p_149707_1_, int p_149707_2_, int p_149707_3_, int p_149707_4_, int p_149707_5_)
      {
-+        if (disableValidation)
-+        {
-+            return true;
-+        }
-         if (par5 == 0)
++        if (disableValidation) return true;
+         if (p_149707_5_ == 0)
          {
              return false;
-@@ -289,7 +298,7 @@
-                 --par2;
+@@ -248,7 +252,7 @@
+                 --p_149707_2_;
              }
  
--            return isValidSupportBlock(par1World.getBlockId(par2, par3, par4));
-+            return isValidSupportBlock(par1World.getBlockId(par2, par3, par4)) || par1World.isBlockSolidOnSide(par2, par3, par4, ForgeDirection.UP);
+-            return func_150119_a(p_149707_1_.func_147439_a(p_149707_2_, p_149707_3_, p_149707_4_));
++            return func_150119_a(p_149707_1_.func_147439_a(p_149707_2_, p_149707_3_, p_149707_4_)) || p_149707_1_.isSideSolid(p_149707_2_, p_149707_3_, p_149707_4_, ForgeDirection.UP);
          }
      }
  
-@@ -304,6 +313,10 @@
-      */
-     private static boolean isValidSupportBlock(int par0)
+@@ -259,6 +263,7 @@
+ 
+     private static boolean func_150119_a(Block p_150119_0_)
      {
-+        if (disableValidation)
-+        {
-+            return true;
-+        }
-         if (par0 <= 0)
-         {
-             return false;
++        if (disableValidation) return true;
+         return p_150119_0_.field_149764_J.isOpaque() && p_150119_0_.func_149686_d() || p_150119_0_ == Blocks.glowstone || p_150119_0_ instanceof BlockSlab || p_150119_0_ instanceof BlockStairs;
+     }
+ }

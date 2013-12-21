@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
-@@ -11,6 +11,8 @@
+@@ -12,6 +12,8 @@
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.nbt.NBTTagList;
  import net.minecraft.potion.PotionHelper;
@@ -9,48 +9,47 @@
  
  public class TileEntityBrewingStand extends TileEntity implements ISidedInventory
  {
-@@ -122,7 +124,7 @@
+@@ -105,7 +107,7 @@
  
                  for (int i = 0; i < 3; ++i)
                  {
--                    if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].itemID == Item.potion.itemID)
-+                    if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() instanceof ItemPotion)
+-                    if (this.field_145945_j[i] != null && this.field_145945_j[i].getItem() == Items.potionitem)
++                    if (this.field_145945_j[i] != null && this.field_145945_j[i].getItem() instanceof ItemPotion)
                      {
-                         int j = this.brewingItemStacks[i].getItemDamage();
-                         int k = this.getPotionResult(j, itemstack);
-@@ -161,7 +163,7 @@
+                         int j = this.field_145945_j[i].getItemDamage();
+                         int k = this.func_145936_c(j, itemstack);
+@@ -144,7 +146,7 @@
  
              for (int i = 0; i < 3; ++i)
              {
--                if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].itemID == Item.potion.itemID)
-+                if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() instanceof ItemPotion)
+-                if (this.field_145945_j[i] != null && this.field_145945_j[i].getItem() == Items.potionitem)
++                if (this.field_145945_j[i] != null && this.field_145945_j[i].getItem() instanceof ItemPotion)
                  {
-                     int j = this.brewingItemStacks[i].getItemDamage();
-                     int k = this.getPotionResult(j, itemstack);
-@@ -184,7 +186,7 @@
+                     int j = this.field_145945_j[i].getItemDamage();
+                     int k = this.func_145936_c(j, itemstack);
+@@ -167,7 +169,7 @@
  
-             if (Item.itemsList[itemstack.itemID].hasContainerItem())
+             if (itemstack.getItem().hasContainerItem())
              {
--                this.brewingItemStacks[3] = new ItemStack(Item.itemsList[itemstack.itemID].getContainerItem());
-+                this.brewingItemStacks[3] = Item.itemsList[itemstack.itemID].getContainerItemStack(brewingItemStacks[3]);
+-                this.field_145945_j[3] = new ItemStack(itemstack.getItem().getContainerItem());
++                this.field_145945_j[3] = itemstack.getItem().getContainerItem(itemstack);
              }
              else
              {
-@@ -195,6 +197,8 @@
-                     this.brewingItemStacks[3] = null;
+@@ -178,6 +180,7 @@
+                     this.field_145945_j[3] = null;
                  }
              }
-+            
-+            MinecraftForge.EVENT_BUS.post(new PotionBrewedEvent(brewingItemStacks));
++            MinecraftForge.EVENT_BUS.post(new PotionBrewedEvent(field_145945_j));
          }
      }
  
-@@ -343,7 +347,7 @@
-      */
+@@ -300,7 +303,7 @@
+     // JAVADOC METHOD $$ func_94041_b
      public boolean isItemValidForSlot(int par1, ItemStack par2ItemStack)
      {
--        return par1 == 3 ? Item.itemsList[par2ItemStack.itemID].isPotionIngredient() : par2ItemStack.itemID == Item.potion.itemID || par2ItemStack.itemID == Item.glassBottle.itemID;
-+        return par1 == 3 ? Item.itemsList[par2ItemStack.itemID].isPotionIngredient() : par2ItemStack.getItem() instanceof ItemPotion || par2ItemStack.itemID == Item.glassBottle.itemID;
+-        return par1 == 3 ? par2ItemStack.getItem().func_150892_m(par2ItemStack) : par2ItemStack.getItem() == Items.potionitem || par2ItemStack.getItem() == Items.glass_bottle;
++        return par1 == 3 ? par2ItemStack.getItem().func_150892_m(par2ItemStack) : par2ItemStack.getItem() instanceof ItemPotion || par2ItemStack.getItem() == Items.glass_bottle;
      }
  
      @SideOnly(Side.CLIENT)

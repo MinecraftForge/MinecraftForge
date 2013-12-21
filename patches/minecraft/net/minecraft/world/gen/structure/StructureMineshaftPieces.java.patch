@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureMineshaftPieces.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureMineshaftPieces.java
+@@ -16,6 +16,9 @@
+ import net.minecraft.util.WeightedRandomChestContent;
+ import net.minecraft.world.World;
+ 
++import net.minecraftforge.common.ChestGenHooks;
++import static net.minecraftforge.common.ChestGenHooks.*;
++
+ public class StructureMineshaftPieces
+ {
+     // JAVADOC FIELD $$ field_78818_a
+@@ -664,14 +667,15 @@
+                         this.func_151552_a(par1World, par3StructureBoundingBox, par2Random, 0.05F, 1, 2, k - 1, Blocks.torch, 0);
+                         this.func_151552_a(par1World, par3StructureBoundingBox, par2Random, 0.05F, 1, 2, k + 1, Blocks.torch, 0);
+ 
++                        ChestGenHooks info = ChestGenHooks.getInfo(MINESHAFT_CORRIDOR);
+                         if (par2Random.nextInt(100) == 0)
+                         {
+-                            this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 2, 0, k - 1, WeightedRandomChestContent.func_92080_a(StructureMineshaftPieces.mineshaftChestContents, new WeightedRandomChestContent[] {Items.enchanted_book.func_92114_b(par2Random)}), 3 + par2Random.nextInt(4));
++                            this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 2, 0, k - 1, info.getItems(par2Random), info.getCount(par2Random));
+                         }
+ 
+                         if (par2Random.nextInt(100) == 0)
+                         {
+-                            this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 0, 0, k + 1, WeightedRandomChestContent.func_92080_a(StructureMineshaftPieces.mineshaftChestContents, new WeightedRandomChestContent[] {Items.enchanted_book.func_92114_b(par2Random)}), 3 + par2Random.nextInt(4));
++                            this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 0, 0, k + 1, info.getItems(par2Random), info.getCount(par2Random));
+                         }
+ 
+                         if (this.hasSpiders && !this.spawnerPlaced)

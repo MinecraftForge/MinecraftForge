@@ -1,24 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/RecipeFireworks.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/RecipeFireworks.java
-@@ -91,9 +91,9 @@
+@@ -90,9 +90,9 @@
              {
-                 this.field_92102_a = new ItemStack(Item.firework);
+                 this.field_92102_a = new ItemStack(Items.fireworks);
  
 +                nbttagcompound = new NBTTagCompound();
                  if (l > 0)
                  {
 -                    nbttagcompound = new NBTTagCompound();
-                     nbttagcompound1 = new NBTTagCompound("Fireworks");
-                     NBTTagList nbttaglist = new NBTTagList("Explosions");
+                     nbttagcompound1 = new NBTTagCompound();
+                     NBTTagList nbttaglist = new NBTTagList();
  
-@@ -110,9 +110,9 @@
+@@ -109,8 +109,8 @@
                      nbttagcompound1.setTag("Explosions", nbttaglist);
                      nbttagcompound1.setByte("Flight", (byte)j);
                      nbttagcompound.setTag("Fireworks", nbttagcompound1);
 -                    this.field_92102_a.setTagCompound(nbttagcompound);
                  }
++                this.field_92102_a.setTagCompound(nbttagcompound); //Forge BugFix: NPE Protection
  
-+                this.field_92102_a.setTagCompound(nbttagcompound);
                  return true;
              }
-             else if (j == 1 && i == 0 && l == 0 && k > 0 && j1 <= 1)

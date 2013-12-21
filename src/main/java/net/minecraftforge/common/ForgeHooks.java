@@ -5,11 +5,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFlower;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -22,18 +24,25 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
+import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldSettings.GameType;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
@@ -47,6 +56,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import static net.minecraft.init.Blocks.*;
 
 public class ForgeHooks
 {
@@ -74,14 +84,21 @@ public class ForgeHooks
     static final List<GrassEntry> grassList = new ArrayList<GrassEntry>();
     static final List<SeedEntry> seedList = new ArrayList<SeedEntry>();
 
-    public static void plantGrass(World world, int x, int y, int z)
+    public static void plantGrass(World world, Random rand, int x, int y, int z)
     {
+        BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
+        String flowername = biome.func_150572_a(rand, x, y, z);
+        
+        /*
+        field_149992_a.debug("Flower in " + p_149853_1_.getBiomeGenForCoords(i1, k1).biomeName + ": " + s);
+        BlockFlower blockflower = BlockFlower.func_149857_e(s);
+        */
         GrassEntry grass = (GrassEntry)WeightedRandom.getRandomItem(world.rand, grassList);
-        if (grass == null || grass.block == null || !grass.block.canBlockStay(world, x, y, z))
+        if (grass == null || grass.block == null || !grass.block.func_149718_j(world, x, y, z))
         {
             return;
         }
-        world.setBlock(x, y, z, grass.block, grass.metadata, 3);
+        world.func_147465_d(x, y, z, grass.block, grass.metadata, 3);
     }
 
     public static ItemStack getGrassSeed(World world)
@@ -95,64 +112,42 @@ public class ForgeHooks
     }
 
     private static boolean toolInit = false;
-    static HashMap<Item, List> toolClasses = new HashMap<Item, List>();
-    static HashMap<List, Integer> toolHarvestLevels = new HashMap<List, Integer>();
     static HashSet<List> toolEffectiveness = new HashSet<List>();
 
     public static boolean canHarvestBlock(Block block, EntityPlayer player, int metadata)
     {
-        if (block.blockMaterial.isToolNotRequired())
+        if (block.func_149688_o().isToolNotRequired())
         {
             return true;
         }
 
         ItemStack stack = player.inventory.getCurrentItem();
-        if (stack == null)
+        String tool = block.getHarvestTool(metadata);
+        if (stack == null || tool == null)
         {
-            return player.canHarvestBlock(block);
+            return player.func_146099_a(block);
         }
 
-        List info = toolClasses.get(stack.getItem());
-        if (info == null)
+        int toolLevel = stack.getItem().getHarvestLevel(stack, tool);
+        if (toolLevel < 0)
         {
-            return player.canHarvestBlock(block);
+            return player.func_146099_a(block);
         }
 
-        Object[] tmp = info.toArray();
-        String toolClass = (String)tmp[0];
-        int harvestLevel = (Integer)tmp[1];
-
-        Integer blockHarvestLevel = toolHarvestLevels.get(Arrays.asList(block, metadata, toolClass));
-        if (blockHarvestLevel == null)
-        {
-            return player.canHarvestBlock(block);
-        }
-
-        if (blockHarvestLevel > harvestLevel)
-        {
-            return false;
-        }
-        return true;
+        return toolLevel >= block.getHarvestLevel(metadata);
     }
 
     public static boolean canToolHarvestBlock(Block block, int metadata, ItemStack stack)
     {
-        if (stack == null) return false;
-        List info = toolClasses.get(stack.getItem());
-        if (info == null) return false;
-
-        Object[] tmp = info.toArray();
-        String toolClass = (String)tmp[0];
-        int harvestLevel = (Integer)tmp[1];
-
-        Integer blockHarvestLevel = toolHarvestLevels.get(Arrays.asList(block, metadata, toolClass));
-        return !(blockHarvestLevel == null || blockHarvestLevel > harvestLevel);
+        String tool = block.getHarvestTool(metadata);
+        if (stack == null || tool == null) return false;
+        return stack.getItem().getHarvestLevel(stack, tool) >= block.getHarvestLevel(metadata);
     }
 
     public static float blockStrength(Block block, EntityPlayer player, World world, int x, int y, int z)
     {
         int metadata = world.getBlockMetadata(x, y, z);
-        float hardness = block.getBlockHardness(world, x, y, z);
+        float hardness = block.func_149712_f(world, x, y, z);
         if (hardness < 0.0F)
         {
             return 0.0F;
@@ -160,19 +155,22 @@ public class ForgeHooks
 
         if (!canHarvestBlock(block, player, metadata))
         {
-            float speed = ForgeEventFactory.getBreakSpeed(player, block, metadata, 1.0f);
-            return (speed < 0 ? 0 : speed) / hardness / 100F;
+            return player.getBreakSpeed(block, true, metadata) / hardness / 100F;
         }
         else
         {
-             return player.getCurrentPlayerStrVsBlock(block, false, metadata) / hardness / 30F;
+            return player.getBreakSpeed(block, false, metadata) / hardness / 30F;
         }
     }
 
     public static boolean isToolEffective(ItemStack stack, Block block, int metadata)
     {
-        List toolClass = toolClasses.get(stack.getItem());
-        return toolClass != null && toolEffectiveness.contains(Arrays.asList(block, metadata, toolClass.get(0)));
+        for (String type : stack.getItem().getToolClasses(stack))
+        {
+            if (block.isToolEffective(type, metadata))
+                return true;
+        }
+        return false;
     }
 
     static void initTools()
@@ -183,55 +181,33 @@ public class ForgeHooks
         }
         toolInit = true;
 
-        MinecraftForge.setToolClass(Items.wooden_pickaxe,  "pickaxe", 0);
-        MinecraftForge.setToolClass(Items.stone_pickaxe,   "pickaxe", 1);
-        MinecraftForge.setToolClass(Items.iron_pickaxe,    "pickaxe", 2);
-        MinecraftForge.setToolClass(Items.golden_pickaxe,  "pickaxe", 0);
-        MinecraftForge.setToolClass(Items.diamond_pickaxe, "pickaxe", 3);
-
-        MinecraftForge.setToolClass(Items.wooden_axe,  "axe", 0);
-        MinecraftForge.setToolClass(Items.stone_axe,   "axe", 1);
-        MinecraftForge.setToolClass(Items.iron_axe,    "axe", 2);
-        MinecraftForge.setToolClass(Items.golden_axe,  "axe", 0);
-        MinecraftForge.setToolClass(Items.diamond_axe, "axe", 3);
-
-        MinecraftForge.setToolClass(Items.wooden_shovel,  "shovel", 0);
-        MinecraftForge.setToolClass(Items.stone_shovel,   "shovel", 1);
-        MinecraftForge.setToolClass(Items.iron_shovel,    "shovel", 2);
-        MinecraftForge.setToolClass(Items.golden_shovel,  "shovel", 0);
-        MinecraftForge.setToolClass(Items.diamond_shovel, "shovel", 3);
-
         Set<Block> blocks = ReflectionHelper.getPrivateValue(ItemPickaxe.class, null, 0);
         for (Block block : blocks)
         {
-            MinecraftForge.setBlockHarvestLevel(block, "pickaxe", 0);
+            block.setHarvestLevel("pickaxe", 0);
         }
 
         blocks = ReflectionHelper.getPrivateValue(ItemSpade.class, null, 0);
         for (Block block : blocks)
         {
-            MinecraftForge.setBlockHarvestLevel(block, "shovel", 0);
+            block.setHarvestLevel("shovel", 0);
         }
 
         blocks = ReflectionHelper.getPrivateValue(ItemAxe.class, null, 0);
         for (Block block : blocks)
         {
-            MinecraftForge.setBlockHarvestLevel(block, "axe", 0);
+            block.setHarvestLevel("axe", 0);
         }
 
-        MinecraftForge.setBlockHarvestLevel(Blocks.obsidian,         "pickaxe", 3);
-        MinecraftForge.setBlockHarvestLevel(Blocks.emerald_ore,      "pickaxe", 2);
-        MinecraftForge.setBlockHarvestLevel(Blocks.emerald_block,    "pickaxe", 2);
-        MinecraftForge.setBlockHarvestLevel(Blocks.diamond_ore,      "pickaxe", 2);
-        MinecraftForge.setBlockHarvestLevel(Blocks.diamond_block,    "pickaxe", 2);
-        MinecraftForge.setBlockHarvestLevel(Blocks.gold_ore,         "pickaxe", 2);
-        MinecraftForge.setBlockHarvestLevel(Blocks.gold_block,       "pickaxe", 2);
-        MinecraftForge.setBlockHarvestLevel(Blocks.iron_ore,         "pickaxe", 1);
-        MinecraftForge.setBlockHarvestLevel(Blocks.iron_block,       "pickaxe", 1);
-        MinecraftForge.setBlockHarvestLevel(Blocks.lapis_ore,        "pickaxe", 1);
-        MinecraftForge.setBlockHarvestLevel(Blocks.lapis_block,      "pickaxe", 1);
-        MinecraftForge.setBlockHarvestLevel(Blocks.redstone_ore,     "pickaxe", 2);
-        MinecraftForge.setBlockHarvestLevel(Blocks.lit_redstone_ore, "pickaxe", 2);
+        Blocks.obsidian.setHarvestLevel("pickaxe", 3);
+        for (Block block : new Block[]{emerald_ore, emerald_block, diamond_ore, diamond_block, gold_ore, gold_block, redstone_ore, lit_redstone_ore})
+        {
+            block.setHarvestLevel("pickaxe", 2);
+        }
+        Blocks.iron_ore.setHarvestLevel("pickaxe", 1);
+        Blocks.iron_block.setHarvestLevel("pickaxe", 1);
+        Blocks.lapis_ore.setHarvestLevel("pickaxe", 1);
+        Blocks.lapis_block.setHarvestLevel("pickaxe", 1);
         MinecraftForge.removeBlockEffectiveness(Blocks.redstone_ore, "pickaxe");
         MinecraftForge.removeBlockEffectiveness(Blocks.obsidian,     "pickaxe");
         MinecraftForge.removeBlockEffectiveness(Blocks.lit_redstone_ore, "pickaxe");
@@ -271,23 +247,23 @@ public class ForgeHooks
         ItemStack result = null;
         boolean isCreative = player.capabilities.isCreativeMode;
 
-        if (target.typeOfHit == EnumMovingObjectType.TILE)
+        if (target.typeOfHit == MovingObjectType.BLOCK)
         {
             int x = target.blockX;
             int y = target.blockY;
             int z = target.blockZ;
-            Block var8 = world.func_147439_a(x, y, z);
+            Block block = world.func_147439_a(x, y, z);
 
-            if (var8 == null)
+            if (block.isAir(world, x, y, z))
             {
                 return false;
             }
 
-            result = var8.getPickBlock(target, world, x, y, z);
+            result = block.getPickBlock(target, world, x, y, z);
         }
         else
         {
-            if (target.typeOfHit != EnumMovingObjectType.ENTITY || target.entityHit == null || !isCreative)
+            if (target.typeOfHit != MovingObjectType.ENTITY || target.entityHit == null || !isCreative)
             {
                 return false;
             }
@@ -401,10 +377,10 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new LivingJumpEvent(entity));
     }
 
-    public static EntityItem onPlayerTossEvent(EntityPlayer player, ItemStack item)
+    public static EntityItem onPlayerTossEvent(EntityPlayer player, ItemStack item, boolean includeName)
     {
         player.captureDrops = true;
-        EntityItem ret = player.dropPlayerItemWithRandomChoice(item, false);
+        EntityItem ret = player.func_146097_a(item, false, includeName);
         player.capturedDrops.clear();
         player.captureDrops = false;
 
@@ -425,18 +401,12 @@ public class ForgeHooks
 
     public static float getEnchantPower(World world, int x, int y, int z)
     {
-        if (world.isAirBlock(x, y, z))
-        {
-            return 0;
-        }
-
-        Block block = world.func_147439_a(x, y, z);
-        return (block == null ? 0 : block.getEnchantPowerBonus(world, x, y, z));
+        return world.func_147439_a(x, y, z).getEnchantPowerBonus(world, x, y, z);
     }
 
-    public static ChatMessageComponent onServerChatEvent(NetServerHandler net, String raw, ChatMessageComponent comp)
+    public static ChatComponentTranslation onServerChatEvent(NetHandlerPlayServer net, String raw, ChatComponentTranslation comp)
     {
-        ServerChatEvent event = new ServerChatEvent(net.playerEntity, raw, comp);
+        ServerChatEvent event = new ServerChatEvent(net.field_147369_b, raw, comp);
         if (MinecraftForge.EVENT_BUS.post(event))
         {
             return null;
@@ -451,7 +421,7 @@ public class ForgeHooks
         return event.getResult() == Event.Result.DEFAULT ? event.canInteractWith : event.getResult() == Event.Result.ALLOW ? true : false;
     }
     
-    public static BlockEvent.BreakEvent onBlockBreakEvent(World world, EnumGameType gameType, EntityPlayerMP entityPlayer, int x, int y, int z)
+    public static BlockEvent.BreakEvent onBlockBreakEvent(World world, GameType gameType, EntityPlayerMP entityPlayer, int x, int y, int z)
     {
         // Logic from tryHarvestBlock for pre-canceling the event
         boolean preCancelEvent = false;
@@ -465,12 +435,12 @@ public class ForgeHooks
         }
 
         // Tell client the block is gone immediately then process events
-        if (world.getBlockTileEntity(x, y, z) == null)
+        if (world.func_147438_o(x, y, z) == null)
         {
-            Packet53BlockChange packet = new Packet53BlockChange(x, y, z, world);
-            packet.type = 0;
-            packet.metadata = 0;
-            entityPlayer.playerNetServerHandler.sendPacketToPlayer(packet);
+            S23PacketBlockChange packet = new S23PacketBlockChange(x, y, z, world);
+            packet.field_148883_d = Blocks.air;
+            packet.field_148884_e = 0;
+            entityPlayer.playerNetServerHandler.func_147359_a(packet);
         }
 
         // Post the block break event
@@ -484,16 +454,16 @@ public class ForgeHooks
         if (event.isCanceled())
         {
             // Let the client know the block still exists
-            entityPlayer.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(x, y, z, world));
+            entityPlayer.playerNetServerHandler.func_147359_a(new S23PacketBlockChange(x, y, z, world));
             
             // Update any tile entity data for this block
-            TileEntity tileentity = world.getBlockTileEntity(x, y, z);
+            TileEntity tileentity = world.func_147438_o(x, y, z);
             if (tileentity != null)
             {
                 Packet pkt = tileentity.func_145844_m();
                 if (pkt != null)
                 {
-                    entityPlayer.playerNetServerHandler.sendPacketToPlayer(pkt);
+                    entityPlayer.playerNetServerHandler.func_147359_a(pkt);
                 }
             }
         }

@@ -1,21 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderGenerate.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderGenerate.java
-@@ -20,6 +20,12 @@
+@@ -22,6 +22,12 @@
  import net.minecraft.world.gen.structure.MapGenStronghold;
  import net.minecraft.world.gen.structure.MapGenVillage;
  
 +import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.*;
 +import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.*;
 +import net.minecraftforge.common.*;
-+import net.minecraftforge.event.Event.*;
++import cpw.mods.fml.common.eventhandler.Event.*;
 +import net.minecraftforge.event.terraingen.*;
 +
  public class ChunkProviderGenerate implements IChunkProvider
  {
-     /** RNG. */
-@@ -92,6 +98,15 @@
-     float[] parabolicField;
+     // JAVADOC FIELD $$ field_73220_k
+@@ -62,6 +68,15 @@
      int[][] field_73219_j = new int[32][32];
+     private static final String __OBFID = "CL_00000396";
  
 +    {
 +        caveGenerator = TerrainGen.getModdedMapGen(caveGenerator, CAVE);
@@ -24,51 +24,40 @@
 +        mineshaftGenerator = (MapGenMineshaft) TerrainGen.getModdedMapGen(mineshaftGenerator, MINESHAFT);
 +        scatteredFeatureGenerator = (MapGenScatteredFeature) TerrainGen.getModdedMapGen(scatteredFeatureGenerator, SCATTERED_FEATURE);
 +        ravineGenerator = TerrainGen.getModdedMapGen(ravineGenerator, RAVINE);
-+    }
++    }    
 +
      public ChunkProviderGenerate(World par1World, long par2, boolean par4)
      {
          this.worldObj = par1World;
-@@ -104,6 +119,16 @@
-         this.noiseGen5 = new NoiseGeneratorOctaves(this.rand, 10);
-         this.noiseGen6 = new NoiseGeneratorOctaves(this.rand, 16);
-         this.mobSpawnerNoise = new NoiseGeneratorOctaves(this.rand, 8);
+@@ -86,6 +101,16 @@
+                 this.field_147433_r[j + 2 + (k + 2) * 5] = f;
+             }
+         }
 +
-+        NoiseGeneratorOctaves[] noiseGens = {noiseGen1, noiseGen2, noiseGen3, noiseGen4, noiseGen5, noiseGen6, mobSpawnerNoise};
++        NoiseGeneratorOctaves[] noiseGens = {field_147431_j, field_147432_k, field_147429_l, field_147430_m, noiseGen5, noiseGen6, mobSpawnerNoise};
 +        noiseGens = TerrainGen.getModdedNoiseGenerators(par1World, this.rand, noiseGens);
-+        this.noiseGen1 = noiseGens[0];
-+        this.noiseGen2 = noiseGens[1];
-+        this.noiseGen3 = noiseGens[2];
-+        this.noiseGen4 = noiseGens[3];
++        this.field_147431_j = noiseGens[0];
++        this.field_147432_k = noiseGens[1];
++        this.field_147429_l = noiseGens[2];
++        this.field_147430_m = noiseGens[3];
 +        this.noiseGen5 = noiseGens[4];
 +        this.noiseGen6 = noiseGens[5];
 +        this.mobSpawnerNoise = noiseGens[6];
      }
  
-     /**
-@@ -189,6 +214,10 @@
-      */
-     public void replaceBlocksForBiome(int par1, int par2, byte[] par3ArrayOfByte, BiomeGenBase[] par4ArrayOfBiomeGenBase)
+     public void func_147424_a(int p_147424_1_, int p_147424_2_, Block[] p_147424_3_)
+@@ -167,6 +192,10 @@
+ 
+     public void func_147422_a(int p_147422_1_, int p_147422_2_, Block[] p_147422_3_, byte[] p_147422_4_, BiomeGenBase[] p_147422_5_)
      {
-+        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, par1, par2, par3ArrayOfByte, par4ArrayOfBiomeGenBase);
++        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, p_147422_1_, p_147422_2_, p_147422_3_, p_147422_5_);
 +        MinecraftForge.EVENT_BUS.post(event);
 +        if (event.getResult() == Result.DENY) return;
 +
-         byte b0 = 63;
          double d0 = 0.03125D;
-         this.stoneNoise = this.noiseGen4.generateNoiseOctaves(this.stoneNoise, par1 * 16, par2 * 16, 0, 16, 16, 1, d0 * 2.0D, d0 * 2.0D, d0 * 2.0D);
-@@ -324,6 +353,10 @@
-      */
-     private double[] initializeNoiseField(double[] par1ArrayOfDouble, int par2, int par3, int par4, int par5, int par6, int par7)
-     {
-+        ChunkProviderEvent.InitNoiseField event = new ChunkProviderEvent.InitNoiseField(this, par1ArrayOfDouble, par2, par3, par4, par5, par6, par7);
-+        MinecraftForge.EVENT_BUS.post(event);
-+        if (event.getResult() == Result.DENY) return event.noisefield;
-+
-         if (par1ArrayOfDouble == null)
-         {
-             par1ArrayOfDouble = new double[par5 * par6 * par7];
-@@ -492,6 +525,8 @@
+         this.stoneNoise = this.field_147430_m.func_151599_a(this.stoneNoise, (double)(p_147422_1_ * 16), (double)(p_147422_2_ * 16), 16, 16, d0 * 2.0D, d0 * 2.0D, 1.0D);
+ 
+@@ -359,6 +388,8 @@
          this.rand.setSeed((long)par2 * i1 + (long)par3 * j1 ^ this.worldObj.getSeed());
          boolean flag = false;
  
@@ -77,7 +66,7 @@
          if (this.mapFeaturesEnabled)
          {
              this.mineshaftGenerator.generateStructuresInChunk(this.worldObj, this.rand, par2, par3);
-@@ -504,7 +539,8 @@
+@@ -371,7 +402,8 @@
          int l1;
          int i2;
  
@@ -86,18 +75,17 @@
 +            && TerrainGen.populate(par1IChunkProvider, worldObj, rand, par2, par3, flag, LAKE))
          {
              k1 = k + this.rand.nextInt(16) + 8;
-             l1 = this.rand.nextInt(128);
-@@ -512,7 +548,8 @@
-             (new WorldGenLakes(Block.waterStill.blockID)).generate(this.worldObj, this.rand, k1, l1, i2);
+             l1 = this.rand.nextInt(256);
+@@ -379,7 +411,7 @@
+             (new WorldGenLakes(Blocks.water)).generate(this.worldObj, this.rand, k1, l1, i2);
          }
  
 -        if (!flag && this.rand.nextInt(8) == 0)
-+        if (TerrainGen.populate(par1IChunkProvider, worldObj, rand, par2, par3, flag, LAVA) &&
-+                !flag && this.rand.nextInt(8) == 0)
++        if (TerrainGen.populate(par1IChunkProvider, worldObj, rand, par2, par3, flag, LAVA) && !flag && this.rand.nextInt(8) == 0)
          {
              k1 = k + this.rand.nextInt(16) + 8;
-             l1 = this.rand.nextInt(this.rand.nextInt(120) + 8);
-@@ -524,7 +561,8 @@
+             l1 = this.rand.nextInt(this.rand.nextInt(248) + 8);
+@@ -391,7 +423,8 @@
              }
          }
  
@@ -106,8 +94,8 @@
 +        for (k1 = 0; doGen && k1 < 8; ++k1)
          {
              l1 = k + this.rand.nextInt(16) + 8;
-             i2 = this.rand.nextInt(128);
-@@ -537,7 +575,8 @@
+             i2 = this.rand.nextInt(256);
+@@ -404,7 +437,8 @@
          k += 8;
          l += 8;
  
@@ -117,12 +105,12 @@
          {
              for (l1 = 0; l1 < 16; ++l1)
              {
-@@ -555,6 +594,8 @@
+@@ -422,6 +456,8 @@
              }
          }
  
 +        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(par1IChunkProvider, worldObj, rand, par2, par3, flag));
 +
-         BlockSand.fallInstantly = false;
+         BlockFalling.field_149832_M = false;
      }
  

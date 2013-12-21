@@ -2,6 +2,7 @@ package net.minecraftforge.event.entity.player;
 
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
@@ -20,18 +21,18 @@ public class BonemealEvent extends PlayerEvent
      */
 
     public final World world;
-    public final int ID;
-    public final int X;
-    public final int Y;
-    public final int Z;
+    public final Block block;
+    public final int x;
+    public final int y;
+    public final int z;
     
-    public BonemealEvent(EntityPlayer player, World world, int id, int x, int y, int z)
+    public BonemealEvent(EntityPlayer player, World world, Block block, int x, int y, int z)
     {
         super(player);
         this.world = world;
-        this.ID = id;
-        this.X = x;
-        this.Y = y;
-        this.Z = z;
+        this.block = block;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 }

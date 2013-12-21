@@ -1,21 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
-@@ -223,12 +223,14 @@
- 
-         if (par4EntityLivingBase.isPlayerSleeping())
+@@ -218,11 +218,13 @@
+         if (p_147938_4_.isPlayerSleeping())
          {
--            int i = par1World.getBlockId(MathHelper.floor_double(par4EntityLivingBase.posX), MathHelper.floor_double(par4EntityLivingBase.posY), MathHelper.floor_double(par4EntityLivingBase.posZ));
-+            int x = MathHelper.floor_double(par4EntityLivingBase.posX);
-+            int y = MathHelper.floor_double(par4EntityLivingBase.posY);
-+            int z = MathHelper.floor_double(par4EntityLivingBase.posZ);
-+            Block block = Block.blocksList[par1World.getBlockId(x, y, z)];
+             Block block = p_147938_1_.func_147439_a(MathHelper.floor_double(p_147938_4_.posX), MathHelper.floor_double(p_147938_4_.posY), MathHelper.floor_double(p_147938_4_.posZ));
++            int x = MathHelper.floor_double(p_147938_4_.posX);
++            int y = MathHelper.floor_double(p_147938_4_.posY);
++            int z = MathHelper.floor_double(p_147938_4_.posZ);
  
--            if (i == Block.bed.blockID)
-+            if (block != null && block.isBed(par1World, x, y, z, par4EntityLivingBase))
+-            if (block == Blocks.bed)
++            if (block.isBed(p_147938_1_, x, y, z, p_147938_4_))
              {
--                int j = par1World.getBlockMetadata(MathHelper.floor_double(par4EntityLivingBase.posX), MathHelper.floor_double(par4EntityLivingBase.posY), MathHelper.floor_double(par4EntityLivingBase.posZ));
--                int k = j & 3;
-+                int k = block.getBedDirection(par1World, x, y, z);
-                 this.playerViewY = (float)(k * 90 + 180);
+-                int i = p_147938_1_.getBlockMetadata(MathHelper.floor_double(p_147938_4_.posX), MathHelper.floor_double(p_147938_4_.posY), MathHelper.floor_double(p_147938_4_.posZ));
+-                int j = i & 3;
++                int j = block.getBedDirection(p_147938_1_, x, y, z);
+                 this.playerViewY = (float)(j * 90 + 180);
                  this.playerViewX = 0.0F;
              }

@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenAbstractTree.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenAbstractTree.java
+@@ -21,4 +21,10 @@
+     }
+ 
+     public void func_150524_b(World p_150524_1_, Random p_150524_2_, int p_150524_3_, int p_150524_4_, int p_150524_5_) {}
++
++    protected boolean isReplaceable(World world, int x, int y, int z)
++    {
++        Block block = world.func_147439_a(x, y, z);
++        return block.isAir(world, x, y, z) || block.isLeaves(world, x, y, z) || block.isWood(world, x, y, z) || func_150523_a(block);
++    }
+ }

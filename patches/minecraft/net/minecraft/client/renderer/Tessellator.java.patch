@@ -1,15 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/Tessellator.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/Tessellator.java
-@@ -7,6 +7,8 @@
+@@ -7,6 +7,7 @@
  import java.nio.FloatBuffer;
  import java.nio.IntBuffer;
  import java.nio.ShortBuffer;
 +import java.util.Arrays;
-+
- import org.lwjgl.opengl.ARBVertexBufferObject;
- import org.lwjgl.opengl.GL11;
- import org.lwjgl.opengl.GLContext;
-@@ -14,6 +16,12 @@
+ import java.util.PriorityQueue;
+ import net.minecraft.client.shader.TesselatorVertexState;
+ import net.minecraft.client.util.QuadComparator;
+@@ -15,11 +16,18 @@
  @SideOnly(Side.CLIENT)
  public class Tessellator
  {
@@ -19,84 +18,44 @@
 +    public boolean defaultTexture = false;
 +    private int rawBufferSize = 0;
 +    public int textureID = 0;
-     /**
-      * Boolean used to check whether quads should be drawn as two triangles. Initialized to false and never changed.
-      */
-@@ -25,16 +33,16 @@
-     private static boolean tryVBO;
- 
-     /** The byte buffer used for GL allocation. */
++
+     // JAVADOC FIELD $$ field_78394_d
 -    private ByteBuffer byteBuffer;
+-    private IntBuffer field_147568_c;
+-    private FloatBuffer field_147566_d;
+-    private ShortBuffer field_147567_e;
 +    private static ByteBuffer byteBuffer = GLAllocation.createDirectByteBuffer(nativeBufferSize * 4);
- 
-     /** The same memory as byteBuffer, but referenced as an integer buffer. */
--    private IntBuffer intBuffer;
-+    private static IntBuffer intBuffer = byteBuffer.asIntBuffer();
- 
-     /** The same memory as byteBuffer, but referenced as an float buffer. */
--    private FloatBuffer floatBuffer;
-+    private static FloatBuffer floatBuffer = byteBuffer.asFloatBuffer();
- 
-     /** Short buffer */
--    private ShortBuffer shortBuffer;
-+    private static ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
- 
-     /** Raw integer array. */
++    private static IntBuffer field_147568_c = byteBuffer.asIntBuffer();
++    private static FloatBuffer field_147566_d = byteBuffer.asFloatBuffer();
++    private static ShortBuffer field_147567_e = byteBuffer.asShortBuffer();
+     // JAVADOC FIELD $$ field_78405_h
      private int[] rawBuffer;
-@@ -110,10 +118,10 @@
-     public boolean isDrawing;
- 
-     /** Whether we are currently using VBO or not. */
--    private boolean useVBO;
-+    private static boolean useVBO = false;
- 
-     /** An IntBuffer used to store the indices of vertex buffer objects. */
--    private IntBuffer vertexBuffers;
-+    private static IntBuffer vertexBuffers;
- 
-     /**
-      * The index of the last VBO used. This is used in round-robin fashion, sequentially, through the vboCount vertex
-@@ -122,25 +130,28 @@
-     private int vboIndex;
- 
-     /** Number of vertex buffer objects allocated for use. */
--    private int vboCount = 10;
-+    private static int vboCount = 10;
- 
-     /** The size of the buffers used (in integers). */
-     private int bufferSize;
+     // JAVADOC FIELD $$ field_78406_i
+@@ -63,14 +71,17 @@
  
      private Tessellator(int par1)
      {
 -        this.bufferSize = par1;
 -        this.byteBuffer = GLAllocation.createDirectByteBuffer(par1 * 4);
--        this.intBuffer = this.byteBuffer.asIntBuffer();
--        this.floatBuffer = this.byteBuffer.asFloatBuffer();
--        this.shortBuffer = this.byteBuffer.asShortBuffer();
+-        this.field_147568_c = this.byteBuffer.asIntBuffer();
+-        this.field_147566_d = this.byteBuffer.asFloatBuffer();
+-        this.field_147567_e = this.byteBuffer.asShortBuffer();
 -        this.rawBuffer = new int[par1];
--        this.useVBO = tryVBO && GLContext.getCapabilities().GL_ARB_vertex_buffer_object;
-+    }
-+    
+     }
+ 
 +    public Tessellator()
 +    {
 +    }
-+    
++
 +    static
 +    {
 +        instance.defaultTexture = true;
-+        useVBO = tryVBO && GLContext.getCapabilities().GL_ARB_vertex_buffer_object;
- 
--        if (this.useVBO)
-+        if (useVBO)
-         {
--            this.vertexBuffers = GLAllocation.createDirectIntBuffer(this.vboCount);
--            ARBVertexBufferObject.glGenBuffersARB(this.vertexBuffers);
-+            vertexBuffers = GLAllocation.createDirectIntBuffer(vboCount);
-+            ARBVertexBufferObject.glGenBuffersARB(vertexBuffers);
-         }
-     }
- 
-@@ -157,12 +168,23 @@
++    }
++
+     // JAVADOC METHOD $$ func_78381_a
+     public int draw()
+     {
+@@ -82,12 +93,15 @@
          {
              this.isDrawing = false;
  
@@ -104,57 +63,44 @@
 +            int offs = 0;
 +            while (offs < vertexCount)
              {
-+                int vtc = 0;
-+                if (drawMode == 7 && convertQuadsToTriangles)
-+                {
-+                    vtc = Math.min(vertexCount - offs, trivertsInBuffer);
-+                }
-+                else
-+                {
-+                    vtc = Math.min(vertexCount - offs, nativeBufferSize >> 5);
-+                }
-                 this.intBuffer.clear();
--                this.intBuffer.put(this.rawBuffer, 0, this.rawBufferIndex);
-+                this.intBuffer.put(this.rawBuffer, offs * 8, vtc * 8);
++                int vtc = Math.min(vertexCount - offs, nativeBufferSize >> 5);
+                 this.field_147568_c.clear();
+-                this.field_147568_c.put(this.rawBuffer, 0, this.field_147569_p);
++                this.field_147568_c.put(this.rawBuffer, offs * 8, vtc * 8);
                  this.byteBuffer.position(0);
--                this.byteBuffer.limit(this.rawBufferIndex * 4);
+-                this.byteBuffer.limit(this.field_147569_p * 4);
 +                this.byteBuffer.limit(vtc * 32);
 +                offs += vtc;
  
-                 if (this.useVBO)
+                 if (this.hasTexture)
                  {
-@@ -248,11 +270,11 @@
- 
-                 if (this.drawMode == 7 && convertQuadsToTriangles)
-                 {
--                    GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, this.vertexCount);
-+                    GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, vtc);
-                 }
-                 else
-                 {
--                    GL11.glDrawArrays(this.drawMode, 0, this.vertexCount);
-+                    GL11.glDrawArrays(this.drawMode, 0, vtc);
-                 }
- 
+@@ -122,7 +136,7 @@
+                 this.field_147566_d.position(0);
+                 GL11.glVertexPointer(3, 32, this.field_147566_d);
+                 GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+-                GL11.glDrawArrays(this.drawMode, 0, this.vertexCount);
++                GL11.glDrawArrays(this.drawMode, 0, vtc);
                  GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-@@ -280,6 +302,12 @@
+ 
+                 if (this.hasTexture)
+@@ -148,6 +162,12 @@
                  }
              }
  
-+            if (rawBufferSize > 0x20000 && rawBufferIndex < (rawBufferSize << 3))
++            if (rawBufferSize > 0x20000 && field_147569_p < (rawBufferSize << 3))
 +            {
-+                rawBufferSize = 0;
++                field_147569_p = 0;
 +                rawBuffer = null;
 +            }
 +
-             int i = this.rawBufferIndex * 4;
+             int i = this.field_147569_p * 4;
              this.reset();
              return i;
-@@ -442,6 +470,19 @@
-      */
+@@ -326,6 +346,19 @@
+     // JAVADOC METHOD $$ func_78377_a
      public void addVertex(double par1, double par3, double par5)
      {
-+        if (rawBufferIndex >= rawBufferSize - 32) 
++        if (field_147569_p >= rawBufferSize - 32) 
 +        {
 +            if (rawBufferSize == 0)
 +            {
@@ -169,17 +115,17 @@
 +        }
          ++this.addedVertices;
  
-         if (this.drawMode == 7 && convertQuadsToTriangles && this.addedVertices % 4 == 0)
-@@ -500,12 +541,6 @@
-         this.rawBuffer[this.rawBufferIndex + 2] = Float.floatToRawIntBits((float)(par5 + this.zOffset));
-         this.rawBufferIndex += 8;
+         if (this.hasTexture)
+@@ -354,12 +387,6 @@
+         this.rawBuffer[this.field_147569_p + 2] = Float.floatToRawIntBits((float)(par5 + this.zOffset));
+         this.field_147569_p += 8;
          ++this.vertexCount;
 -
--        if (this.vertexCount % 4 == 0 && this.rawBufferIndex >= this.bufferSize - 32)
+-        if (this.vertexCount % 4 == 0 && this.field_147569_p >= this.bufferSize - 32)
 -        {
 -            this.draw();
 -            this.isDrawing = true;
 -        }
      }
  
-     /**
+     // JAVADOC METHOD $$ func_78378_d

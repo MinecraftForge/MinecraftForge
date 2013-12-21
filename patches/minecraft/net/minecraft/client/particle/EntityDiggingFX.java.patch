@@ -1,9 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/client/particle/EntityDiggingFX.java
 +++ ../src-work/minecraft/net/minecraft/client/particle/EntityDiggingFX.java
-@@ -10,15 +10,22 @@
- public class EntityDiggingFX extends EntityFX
+@@ -12,21 +12,28 @@
  {
-     private Block blockInstance;
+     private Block field_145784_a;
+     private static final String __OBFID = "CL_00000932";
 +    private int side;
  
      public EntityDiggingFX(World par1World, double par2, double par4, double par6, double par8, double par10, double par12, Block par14Block, int par15)
@@ -14,22 +14,20 @@
 +    public EntityDiggingFX(World par1World, double par2, double par4, double par6, double par8, double par10, double par12, Block par14Block, int par15, int side)
 +    {
          super(par1World, par2, par4, par6, par8, par10, par12);
-         this.blockInstance = par14Block;
--        this.setParticleIcon(par14Block.getIcon(0, par15));
-+        this.setParticleIcon(par14Block.getIcon(side, par15));
-         this.particleGravity = par14Block.blockParticleGravity;
+         this.field_145784_a = par14Block;
+-        this.setParticleIcon(par14Block.func_149691_a(0, par15));
++        this.setParticleIcon(par14Block.func_149691_a(side, par15));
+         this.particleGravity = par14Block.field_149763_I;
          this.particleRed = this.particleGreen = this.particleBlue = 0.6F;
          this.particleScale /= 2.0F;
 +        this.side = side;
      }
  
-     /**
-@@ -26,7 +33,7 @@
-      */
+     // JAVADOC METHOD $$ func_70596_a
      public EntityDiggingFX applyColourMultiplier(int par1, int par2, int par3)
      {
--        if (this.blockInstance == Block.grass)
-+        if (this.blockInstance == Block.grass && this.side != 1)
+-        if (this.field_145784_a == Blocks.grass)
++        if (this.field_145784_a == Blocks.grass && this.side != 1)
          {
              return this;
          }

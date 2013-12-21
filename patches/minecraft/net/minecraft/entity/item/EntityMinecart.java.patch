@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityMinecart.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecart.java
-@@ -21,6 +21,10 @@
+@@ -23,6 +23,10 @@
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
@@ -12,8 +12,8 @@
  public abstract class EntityMinecart extends Entity
  {
 @@ -45,6 +49,20 @@
-     @SideOnly(Side.CLIENT)
-     protected double velocityZ;
+     private double velocityZ;
+     private static final String __OBFID = "CL_00001670";
  
 +    /* Forge: Minecart Compatibility Layer Integration. */
 +    public static float defaultMaxSpeedAirLateral = 0.4f;
@@ -32,8 +32,8 @@
      public EntityMinecart(World par1World)
      {
          super(par1World);
-@@ -104,6 +122,10 @@
-      */
+@@ -94,19 +112,27 @@
+     // JAVADOC METHOD $$ func_70114_g
      public AxisAlignedBB getCollisionBox(Entity par1Entity)
      {
 +        if (getCollisionHandler() != null)
@@ -43,8 +43,7 @@
          return par1Entity.canBePushed() ? par1Entity.boundingBox : null;
      }
  
-@@ -112,6 +134,10 @@
-      */
+     // JAVADOC METHOD $$ func_70046_E
      public AxisAlignedBB getBoundingBox()
      {
 +        if (getCollisionHandler() != null)
@@ -54,8 +53,7 @@
          return null;
      }
  
-@@ -120,7 +146,7 @@
-      */
+     // JAVADOC METHOD $$ func_70104_M
      public boolean canBePushed()
      {
 -        return true;
@@ -63,35 +61,33 @@
      }
  
      public EntityMinecart(World par1World, double par2, double par4, double par6)
-@@ -352,19 +378,21 @@
-             double d5 = 0.0078125D;
-             int l = this.worldObj.getBlockId(j, i, k);
+@@ -315,19 +341,20 @@
+             double d2 = 0.0078125D;
+             Block block = this.worldObj.func_147439_a(l, i, i1);
  
--            if (BlockRailBase.isRailBlock(l))
-+            if (canUseRail() && BlockRailBase.isRailBlock(l))
+-            if (BlockRailBase.func_150051_a(block))
++            if (canUseRail() && BlockRailBase.func_150051_a(block))
              {
--                int i1 = this.worldObj.getBlockMetadata(j, i, k);
--                this.updateOnTrack(j, i, k, d4, d5, l, i1);
--
-+                BlockRailBase rail = (BlockRailBase)Block.blocksList[l];
-+                float railMaxSpeed = rail.getRailMaxSpeed(worldObj, this, j, i, k);
+-                int j = this.worldObj.getBlockMetadata(l, i, i1);
+-                this.func_145821_a(l, i, i1, d0, d2, block, j);
++                float railMaxSpeed = ((BlockRailBase)block).getRailMaxSpeed(worldObj, this, l, i, i1);
 +                double maxSpeed = Math.min(railMaxSpeed, getCurrentCartSpeedCapOnRail());
-+                int i1 = rail.getBasicRailMetadata(worldObj, this, j, i, k);
-+                this.updateOnTrack(j, i, k, maxSpeed, getSlopeAdjustment(), l, i1);
-                 if (l == Block.railActivator.blockID)
++                this.func_145821_a(l, i, i1, maxSpeed, getSlopeAdjustment(), block, ((BlockRailBase)block).getBasicRailMetadata(worldObj, this, l, i, i1));
+ 
+                 if (block == Blocks.activator_rail)
                  {
--                    this.onActivatorRailPass(j, i, k, (i1 & 8) != 0);
-+                    this.onActivatorRailPass(j, i, k, (worldObj.getBlockMetadata(j, i, k) & 8) != 0);
+-                    this.onActivatorRailPass(l, i, i1, (j & 8) != 0);
++                    this.onActivatorRailPass(l, i, i1, (worldObj.getBlockMetadata(l, i, i1) & 8) != 0);
                  }
              }
              else
              {
--                this.func_94088_b(d4);
-+                this.func_94088_b(onGround ? d4 : getMaxSpeedAirLateral());
+-                this.func_94088_b(d0);
++                this.func_94088_b(onGround ? d0 : getMaxSpeedAirLateral());
              }
  
-             this.doBlockCollisions();
-@@ -391,8 +419,19 @@
+             this.func_145775_I();
+@@ -354,8 +381,19 @@
              }
  
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -111,17 +107,17 @@
 +
              if (list != null && !list.isEmpty())
              {
-                 for (int j1 = 0; j1 < list.size(); ++j1)
-@@ -415,6 +454,8 @@
+                 for (int k = 0; k < list.size(); ++k)
+@@ -378,6 +416,8 @@
  
                  this.riddenByEntity = null;
              }
 +
-+            MinecraftForge.EVENT_BUS.post(new MinecartUpdateEvent(this, j, i, k));
++            MinecraftForge.EVENT_BUS.post(new MinecartUpdateEvent(this, l, i, i1));
          }
      }
  
-@@ -445,6 +486,17 @@
+@@ -406,6 +446,17 @@
              this.motionZ = par1;
          }
  
@@ -139,7 +135,7 @@
          if (this.onGround)
          {
              this.motionX *= 0.5D;
-@@ -452,13 +504,13 @@
+@@ -413,13 +464,13 @@
              this.motionZ *= 0.5D;
          }
  
@@ -157,16 +153,16 @@
          }
      }
  
-@@ -472,7 +524,7 @@
+@@ -433,7 +484,7 @@
  
-         if (par8 == Block.railPowered.blockID)
+         if (p_145821_8_ == Blocks.golden_rail)
          {
--            flag = (par9 & 8) != 0;
-+            flag = (worldObj.getBlockMetadata(par1, par2, par3) & 8) != 0;
+-            flag = (p_145821_9_ & 8) != 0;
++            flag = (worldObj.getBlockMetadata(p_145821_1_, p_145821_2_, p_145821_3_) & 8) != 0;
              flag1 = !flag;
          }
  
-@@ -551,7 +603,7 @@
+@@ -512,7 +563,7 @@
              }
          }
  
@@ -175,7 +171,7 @@
          {
              d7 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
  
-@@ -599,37 +651,9 @@
+@@ -560,37 +611,9 @@
          this.posX = d8 + d2 * d7;
          this.posZ = d9 + d3 * d7;
          this.setPosition(this.posX, this.posY + (double)this.yOffset, this.posZ);
@@ -187,41 +183,41 @@
 -            d12 *= 0.75D;
 -            d13 *= 0.75D;
 -        }
-+        moveMinecartOnRail(par1, par2, par3, par4);
++        moveMinecartOnRail(p_145821_1_, p_145821_2_, p_145821_3_, p_145821_4_);
  
--        if (d12 < -par4)
+-        if (d12 < -p_145821_4_)
 -        {
--            d12 = -par4;
+-            d12 = -p_145821_4_;
 -        }
 -
--        if (d12 > par4)
+-        if (d12 > p_145821_4_)
 -        {
--            d12 = par4;
+-            d12 = p_145821_4_;
 -        }
 -
--        if (d13 < -par4)
+-        if (d13 < -p_145821_4_)
 -        {
--            d13 = -par4;
+-            d13 = -p_145821_4_;
 -        }
 -
--        if (d13 > par4)
+-        if (d13 > p_145821_4_)
 -        {
--            d13 = par4;
+-            d13 = p_145821_4_;
 -        }
 -
 -        this.moveEntity(d12, 0.0D, d13);
 -
-         if (aint[0][1] != 0 && MathHelper.floor_double(this.posX) - par1 == aint[0][0] && MathHelper.floor_double(this.posZ) - par3 == aint[0][2])
+         if (aint[0][1] != 0 && MathHelper.floor_double(this.posX) - p_145821_1_ == aint[0][0] && MathHelper.floor_double(this.posZ) - p_145821_3_ == aint[0][2])
          {
              this.setPosition(this.posX, this.posY + (double)aint[0][1], this.posZ);
-@@ -666,8 +690,13 @@
-             this.motionZ = d6 * (double)(k1 - par3);
+@@ -627,8 +650,13 @@
+             this.motionZ = d6 * (double)(i1 - p_145821_3_);
          }
  
 -        if (flag)
 +        if(shouldDoRailFunctions())
          {
-+            ((BlockRailBase)Block.blocksList[par8]).onMinecartPass(worldObj, this, par1, par2, par3);
++            ((BlockRailBase)p_145821_8_).onMinecartPass(worldObj, this, p_145821_1_, p_145821_2_, p_145821_3_);
 +        }
 +
 +        if (flag && shouldDoRailFunctions())
@@ -229,39 +225,39 @@
              double d15 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
  
              if (d15 > 0.01D)
-@@ -737,13 +766,8 @@
+@@ -698,13 +726,8 @@
          }
          else
          {
--            int i1 = this.worldObj.getBlockMetadata(i, j, k);
-+            int i1 = ((BlockRailBase)Block.blocksList[l]).getBasicRailMetadata(worldObj, this, i, j, k);
+-            int l = this.worldObj.getBlockMetadata(i, j, k);
++            int l = ((BlockRailBase)block).getBasicRailMetadata(worldObj, this, i, j, k);
  
--            if (((BlockRailBase)Block.blocksList[l]).isPowered())
+-            if (((BlockRailBase)block).func_150050_e())
 -            {
--                i1 &= 7;
+-                l &= 7;
 -            }
 -
              par3 = (double)j;
  
-             if (i1 >= 2 && i1 <= 5)
-@@ -788,14 +812,9 @@
+             if (l >= 2 && l <= 5)
+@@ -749,14 +772,9 @@
  
-         if (BlockRailBase.isRailBlock(l))
+         if (BlockRailBase.func_150051_a(block))
          {
--            int i1 = this.worldObj.getBlockMetadata(i, j, k);
-+            int i1 = ((BlockRailBase)Block.blocksList[l]).getBasicRailMetadata(worldObj, this, i, j, k);
+-            int l = this.worldObj.getBlockMetadata(i, j, k);
++            int l = ((BlockRailBase)block).getBasicRailMetadata(worldObj, this, i, j, k);
              par3 = (double)j;
  
--            if (((BlockRailBase)Block.blocksList[l]).isPowered())
+-            if (((BlockRailBase)block).func_150050_e())
 -            {
--                i1 &= 7;
+-                l &= 7;
 -            }
 -
-             if (i1 >= 2 && i1 <= 5)
+             if (l >= 2 && l <= 5)
              {
                  par3 = (double)(j + 1);
-@@ -900,11 +919,17 @@
-      */
+@@ -855,11 +873,17 @@
+     // JAVADOC METHOD $$ func_70108_f
      public void applyEntityCollision(Entity par1Entity)
      {
 +        MinecraftForge.EVENT_BUS.post(new MinecartCollisionEvent(this, par1Entity));
@@ -279,7 +275,7 @@
                  {
                      par1Entity.mountEntity(this);
                  }
-@@ -950,7 +975,7 @@
+@@ -905,7 +929,7 @@
                          double d7 = par1Entity.motionX + this.motionX;
                          double d8 = par1Entity.motionZ + this.motionZ;
  
@@ -288,20 +284,20 @@
                          {
                              this.motionX *= 0.20000000298023224D;
                              this.motionZ *= 0.20000000298023224D;
-@@ -958,7 +983,7 @@
+@@ -913,7 +937,7 @@
                              par1Entity.motionX *= 0.949999988079071D;
                              par1Entity.motionZ *= 0.949999988079071D;
                          }
 -                        else if (((EntityMinecart)par1Entity).getMinecartType() != 2 && this.getMinecartType() == 2)
-+                        else if (!((EntityMinecart)par1Entity).isPoweredCart() && isPoweredCart())
++                        else if (((EntityMinecart)par1Entity).isPoweredCart() && !isPoweredCart())
                          {
                              par1Entity.motionX *= 0.20000000298023224D;
                              par1Entity.motionZ *= 0.20000000298023224D;
-@@ -1168,4 +1193,211 @@
+@@ -1092,4 +1116,216 @@
      {
          return this.entityName;
      }
-+
++    /* =================================== FORGE START ===========================================*/
 +    /**
 +     * Moved to allow overrides.
 +     * This code handles minecart movement and speed capping when on a rail.
@@ -367,23 +363,27 @@
 +     */
 +    public ItemStack getCartItem()
 +    {
-+        if (this instanceof EntityMinecartChest)
++        if (this instanceof EntityMinecartFurnace)
 +        {
-+            return new ItemStack(Item.minecartCrate);
++            return new ItemStack(Items.furnace_minecart);
++        }
++        else if (this instanceof EntityMinecartChest)
++        {
++            return new ItemStack(Items.chest_minecart);
 +        }
 +        else if (this instanceof EntityMinecartTNT)
 +        {
-+            return new ItemStack(Item.minecartTnt);
-+        }
-+        else if (this instanceof EntityMinecartFurnace)
-+        {
-+            return new ItemStack(Item.minecartPowered);
++            return new ItemStack(Items.tnt_minecart);
 +        }
 +        else if (this instanceof EntityMinecartHopper)
 +        {
-+            return new ItemStack(Item.minecartHopper);
++            return new ItemStack(Items.hopper_minecart);
 +        }
-+        return new ItemStack(Item.minecartEmpty);
++        else if (this instanceof EntityMinecartHopper)
++        {
++            return new ItemStack(Items.command_block_minecart);
++        }
++        return new ItemStack(Items.minecart);
 +    }
 +
 +    /**
@@ -508,4 +508,5 @@
 +    {
 +        return 0.0078125D;
 +    }
++    /* =================================== FORGE END ===========================================*/
  }

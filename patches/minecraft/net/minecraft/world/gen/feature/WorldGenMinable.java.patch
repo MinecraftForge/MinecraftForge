@@ -1,36 +1,35 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenMinable.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenMinable.java
-@@ -9,6 +9,7 @@
- {
-     /** The block ID of the ore to be placed using this generator. */
-     private int minableBlockId;
-+    private int minableBlockMeta = 0;
- 
-     /** The number of blocks to generate. */
+@@ -13,6 +13,7 @@
      private int numberOfBlocks;
-@@ -28,6 +29,12 @@
-         this.blockToReplace = par3;
+     private Block field_150518_c;
+     private static final String __OBFID = "CL_00000426";
++    private int mineableBlockMeta;
+ 
+     public WorldGenMinable(Block p_i45459_1_, int p_i45459_2_)
+     {
+@@ -26,6 +27,12 @@
+         this.field_150518_c = p_i45460_3_;
      }
  
-+    public WorldGenMinable(int id, int meta, int number, int target)
++    public WorldGenMinable(Block block, int meta, int number, Block target)
 +    {
-+        this(id, number, target);
-+        this.minableBlockMeta = meta;
++        this(block, number, target);
++        this.mineableBlockMeta = meta;
 +    }
 +
      public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
      {
          float f = par2Random.nextFloat() * (float)Math.PI;
-@@ -69,9 +76,10 @@
+@@ -67,9 +74,9 @@
                              {
                                  double d14 = ((double)i3 + 0.5D - d8) / (d10 / 2.0D);
  
--                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && par1World.getBlockId(k2, l2, i3) == this.blockToReplace)
-+                                Block block = Block.blocksList[par1World.getBlockId(k2, l2, i3)];
-+                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && (block != null && block.isGenMineableReplaceable(par1World, k2, l2, i3, this.blockToReplace)))
+-                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && par1World.func_147439_a(k2, l2, i3) == this.field_150518_c)
++                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && par1World.func_147439_a(k2, l2, i3).isReplaceableOreGen(par1World, k2, l2, i3, field_150518_c))
                                  {
--                                    par1World.setBlock(k2, l2, i3, this.minableBlockId, 0, 2);
-+                                    par1World.setBlock(k2, l2, i3, this.minableBlockId, minableBlockMeta, 2);
+-                                    par1World.func_147465_d(k2, l2, i3, this.field_150519_a, 0, 2);
++                                    par1World.func_147465_d(k2, l2, i3, this.field_150519_a, mineableBlockMeta, 2);
                                  }
                              }
                          }

@@ -1,0 +1,96 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockTripWireHook.java
++++ ../src-work/minecraft/net/minecraft/block/BlockTripWireHook.java
+@@ -9,6 +9,9 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import net.minecraftforge.common.util.ForgeDirection;
++import static net.minecraftforge.common.util.ForgeDirection.*;
++
+ public class BlockTripWireHook extends Block
+ {
+     private static final String __OBFID = "CL_00000329";
+@@ -47,34 +50,41 @@
+ 
+     public boolean func_149707_d(World p_149707_1_, int p_149707_2_, int p_149707_3_, int p_149707_4_, int p_149707_5_)
+     {
+-        return p_149707_5_ == 2 && p_149707_1_.func_147439_a(p_149707_2_, p_149707_3_, p_149707_4_ + 1).func_149721_r() ? true : (p_149707_5_ == 3 && p_149707_1_.func_147439_a(p_149707_2_, p_149707_3_, p_149707_4_ - 1).func_149721_r() ? true : (p_149707_5_ == 4 && p_149707_1_.func_147439_a(p_149707_2_ + 1, p_149707_3_, p_149707_4_).func_149721_r() ? true : p_149707_5_ == 5 && p_149707_1_.func_147439_a(p_149707_2_ - 1, p_149707_3_, p_149707_4_).func_149721_r()));
++        ForgeDirection dir = ForgeDirection.getOrientation(p_149707_5_);
++        return (dir == NORTH && p_149707_1_.isSideSolid(p_149707_2_, p_149707_3_, p_149707_4_ + 1, NORTH)) ||
++               (dir == SOUTH && p_149707_1_.isSideSolid(p_149707_2_, p_149707_3_, p_149707_4_ - 1, SOUTH)) ||
++               (dir == WEST  && p_149707_1_.isSideSolid(p_149707_2_ + 1, p_149707_3_, p_149707_4_, WEST )) ||
++               (dir == EAST  && p_149707_1_.isSideSolid(p_149707_2_ - 1, p_149707_3_, p_149707_4_, EAST ));
+     }
+ 
+     public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
+     {
+-        return p_149742_1_.func_147439_a(p_149742_2_ - 1, p_149742_3_, p_149742_4_).func_149721_r() ? true : (p_149742_1_.func_147439_a(p_149742_2_ + 1, p_149742_3_, p_149742_4_).func_149721_r() ? true : (p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_, p_149742_4_ - 1).func_149721_r() ? true : p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_, p_149742_4_ + 1).func_149721_r()));
++        return p_149742_1_.isSideSolid(p_149742_2_ - 1, p_149742_3_, p_149742_4_, EAST ) ||
++               p_149742_1_.isSideSolid(p_149742_2_ + 1, p_149742_3_, p_149742_4_, WEST ) ||
++               p_149742_1_.isSideSolid(p_149742_2_, p_149742_3_, p_149742_4_ - 1, SOUTH) ||
++               p_149742_1_.isSideSolid(p_149742_2_, p_149742_3_, p_149742_4_ + 1, NORTH);
+     }
+ 
+     public int func_149660_a(World p_149660_1_, int p_149660_2_, int p_149660_3_, int p_149660_4_, int p_149660_5_, float p_149660_6_, float p_149660_7_, float p_149660_8_, int p_149660_9_)
+     {
+         byte b0 = 0;
+ 
+-        if (p_149660_5_ == 2 && p_149660_1_.func_147445_c(p_149660_2_, p_149660_3_, p_149660_4_ + 1, true))
++        if (p_149660_5_ == 2 && p_149660_1_.isSideSolid(p_149660_2_, p_149660_3_, p_149660_4_ + 1, NORTH, true))
+         {
+             b0 = 2;
+         }
+ 
+-        if (p_149660_5_ == 3 && p_149660_1_.func_147445_c(p_149660_2_, p_149660_3_, p_149660_4_ - 1, true))
++        if (p_149660_5_ == 3 && p_149660_1_.isSideSolid(p_149660_2_, p_149660_3_, p_149660_4_ - 1, SOUTH, true))
+         {
+             b0 = 0;
+         }
+ 
+-        if (p_149660_5_ == 4 && p_149660_1_.func_147445_c(p_149660_2_ + 1, p_149660_3_, p_149660_4_, true))
++        if (p_149660_5_ == 4 && p_149660_1_.isSideSolid(p_149660_2_ + 1, p_149660_3_, p_149660_4_, WEST, true))
+         {
+             b0 = 1;
+         }
+ 
+-        if (p_149660_5_ == 5 && p_149660_1_.func_147445_c(p_149660_2_ - 1, p_149660_3_, p_149660_4_, true))
++        if (p_149660_5_ == 5 && p_149660_1_.isSideSolid(p_149660_2_ - 1, p_149660_3_, p_149660_4_, EAST, true))
+         {
+             b0 = 3;
+         }
+@@ -97,22 +107,22 @@
+                 int i1 = l & 3;
+                 boolean flag = false;
+ 
+-                if (!p_149695_1_.func_147439_a(p_149695_2_ - 1, p_149695_3_, p_149695_4_).func_149721_r() && i1 == 3)
++                if (!p_149695_1_.isSideSolid(p_149695_2_ - 1, p_149695_3_, p_149695_4_, EAST) && i1 == 3)
+                 {
+                     flag = true;
+                 }
+ 
+-                if (!p_149695_1_.func_147439_a(p_149695_2_ + 1, p_149695_3_, p_149695_4_).func_149721_r() && i1 == 1)
++                if (!p_149695_1_.isSideSolid(p_149695_2_ + 1, p_149695_3_, p_149695_4_, WEST) && i1 == 1)
+                 {
+                     flag = true;
+                 }
+ 
+-                if (!p_149695_1_.func_147439_a(p_149695_2_, p_149695_3_, p_149695_4_ - 1).func_149721_r() && i1 == 0)
++                if (!p_149695_1_.isSideSolid(p_149695_2_, p_149695_3_, p_149695_4_ - 1, SOUTH) && i1 == 0)
+                 {
+                     flag = true;
+                 }
+ 
+-                if (!p_149695_1_.func_147439_a(p_149695_2_, p_149695_3_, p_149695_4_ + 1).func_149721_r() && i1 == 2)
++                if (!p_149695_1_.isSideSolid(p_149695_2_, p_149695_3_, p_149695_4_ + 1, NORTH) && i1 == 2)
+                 {
+                     flag = true;
+                 }
+@@ -133,7 +143,7 @@
+         boolean flag3 = (p_150136_6_ & 8) == 8;
+         boolean flag4 = !p_150136_5_;
+         boolean flag5 = false;
+-        boolean flag6 = !World.func_147466_a(p_150136_1_, p_150136_2_, p_150136_3_ - 1, p_150136_4_);
++        boolean flag6 = !p_150136_1_.isSideSolid(p_150136_2_, p_150136_3_ - 1, p_150136_4_, UP);
+         int l1 = Direction.offsetX[k1];
+         int i2 = Direction.offsetZ[k1];
+         int j2 = 0;

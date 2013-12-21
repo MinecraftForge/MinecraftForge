@@ -1,46 +1,48 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockCactus.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockCactus.java
-@@ -12,7 +12,11 @@
- import net.minecraft.util.Icon;
+@@ -11,9 +11,13 @@
+ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.IIcon;
++import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
++import net.minecraftforge.common.EnumPlantType;
++import net.minecraftforge.common.util.ForgeDirection;
++import net.minecraftforge.common.IPlantable;
  
 -public class BlockCactus extends Block
-+import net.minecraftforge.common.EnumPlantType;
-+import net.minecraftforge.common.ForgeDirection;
-+import net.minecraftforge.common.IPlantable;
-+
 +public class BlockCactus extends Block implements IPlantable
  {
      @SideOnly(Side.CLIENT)
-     private Icon cactusTopIcon;
-@@ -158,7 +162,7 @@
+     private IIcon field_150041_a;
+@@ -125,7 +129,7 @@
          else
          {
-             int l = par1World.getBlockId(par2, par3 - 1, par4);
--            return l == Block.cactus.blockID || l == Block.sand.blockID;
-+            return blocksList[l] != null && blocksList[l].canSustainPlant(par1World, par2, par3 - 1, par4, ForgeDirection.UP, this);
+             Block block = p_149718_1_.func_147439_a(p_149718_2_, p_149718_3_ - 1, p_149718_4_);
+-            return block == Blocks.cactus || block == Blocks.sand;
++            return block.canSustainPlant(p_149718_1_, p_149718_2_, p_149718_3_ - 1, p_149718_4_, ForgeDirection.UP, this);
          }
      }
  
-@@ -182,4 +186,22 @@
-         this.cactusTopIcon = par1IconRegister.registerIcon(this.getTextureName() + "_top");
-         this.cactusBottomIcon = par1IconRegister.registerIcon(this.getTextureName() + "_bottom");
+@@ -141,4 +145,22 @@
+         this.field_150041_a = p_149651_1_.registerIcon(this.func_149641_N() + "_top");
+         this.field_150040_b = p_149651_1_.registerIcon(this.func_149641_N() + "_bottom");
      }
 +
 +    @Override
-+    public EnumPlantType getPlantType(World world, int x, int y, int z)
++    public EnumPlantType getPlantType(IBlockAccess world, int x, int y, int z)
 +    {
 +        return EnumPlantType.Desert;
 +    }
 +
 +    @Override
-+    public int getPlantID(World world, int x, int y, int z)
++    public Block getPlant(IBlockAccess world, int x, int y, int z)
 +    {
-+        return blockID;
++        return this;
 +    }
 +
 +    @Override
-+    public int getPlantMetadata(World world, int x, int y, int z)
++    public int getPlantMetadata(IBlockAccess world, int x, int y, int z)
 +    {
 +        return -1;
 +    }

@@ -7,17 +7,17 @@
 +import net.minecraft.client.renderer.texture.TextureMap;
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.item.ItemStack;
- import net.minecraft.util.Icon;
+ import net.minecraft.util.IIcon;
 +import net.minecraft.util.ResourceLocation;
  
  public class Slot
  {
-@@ -23,6 +25,13 @@
-     /** display position of the inventory slot on the screen y axis */
+@@ -20,6 +22,13 @@
      public int yDisplayPosition;
+     private static final String __OBFID = "CL_00001762";
  
 +    /** Position within background texture file, normally -1 which causes no background to be drawn. */
-+    protected Icon backgroundIcon = null;
++    protected IIcon backgroundIcon = null;
 +
 +    /** Background texture file assigned to this slot, if any. Vanilla "/gui/items.png" is used if this is null. */
 +    @SideOnly(Side.CLIENT)
@@ -26,20 +26,21 @@
      public Slot(IInventory par1IInventory, int par2, int par3, int par4)
      {
          this.inventory = par1IInventory;
-@@ -148,7 +157,7 @@
-      */
-     public Icon getBackgroundIconIndex()
+@@ -115,7 +124,7 @@
+     @SideOnly(Side.CLIENT)
+     public IIcon getBackgroundIconIndex()
      {
 -        return null;
 +        return backgroundIcon;
      }
  
      @SideOnly(Side.CLIENT)
-@@ -156,4 +165,44 @@
+@@ -123,4 +132,46 @@
      {
          return true;
      }
 +
++    /*========================================= FORGE START =====================================*/
 +    /**
 +     * Gets the path of the texture file to use for the background image of this slot when drawing the GUI.
 +     * @return String: The texture file that will be used in GuiContainer.drawSlotInventory for the slot background.
@@ -54,7 +55,7 @@
 +     * Sets which icon index to use as the background image of the slot when it's empty.
 +     * @param icon The icon to use, null for none
 +     */
-+    public void setBackgroundIcon(Icon icon)
++    public void setBackgroundIcon(IIcon icon)
 +    {
 +        backgroundIcon = icon;
 +    }
@@ -79,4 +80,5 @@
 +    {
 +        return slotIndex;
 +    }
++    /*========================================= FORGE END =====================================*/
  }

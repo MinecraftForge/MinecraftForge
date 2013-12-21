@@ -1,18 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBow.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBow.java
-@@ -11,6 +11,10 @@
- import net.minecraft.util.Icon;
+@@ -11,6 +11,9 @@
+ import net.minecraft.init.Items;
+ import net.minecraft.util.IIcon;
  import net.minecraft.world.World;
- 
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 +import net.minecraftforge.event.entity.player.ArrowNockEvent;
-+
+ 
  public class ItemBow extends Item
  {
-     public static final String[] bowPullIconNameArray = new String[] {"pulling_0", "pulling_1", "pulling_2"};
-@@ -30,11 +34,20 @@
-      */
+@@ -29,11 +32,20 @@
+     // JAVADOC METHOD $$ func_77615_a
      public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, int par4)
      {
 +        int j = this.getMaxItemUseDuration(par1ItemStack) - par4;
@@ -27,14 +26,14 @@
 +
          boolean flag = par3EntityPlayer.capabilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, par1ItemStack) > 0;
  
-         if (flag || par3EntityPlayer.inventory.hasItem(Item.arrow.itemID))
+         if (flag || par3EntityPlayer.inventory.func_146028_b(Items.arrow))
          {
 -            int j = this.getMaxItemUseDuration(par1ItemStack) - par4;
              float f = (float)j / 20.0F;
              f = (f * f + f * 2.0F) / 3.0F;
  
-@@ -119,6 +132,13 @@
-      */
+@@ -112,6 +124,13 @@
+     // JAVADOC METHOD $$ func_77659_a
      public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
      {
 +        ArrowNockEvent event = new ArrowNockEvent(par3EntityPlayer, par1ItemStack);
@@ -44,6 +43,6 @@
 +            return event.result;
 +        }
 +
-         if (par3EntityPlayer.capabilities.isCreativeMode || par3EntityPlayer.inventory.hasItem(Item.arrow.itemID))
+         if (par3EntityPlayer.capabilities.isCreativeMode || par3EntityPlayer.inventory.func_146028_b(Items.arrow))
          {
              par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));

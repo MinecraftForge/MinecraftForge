@@ -1,20 +1,45 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockGrass.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockGrass.java
-@@ -44,7 +44,7 @@
-     {
-         if (!par1World.isRemote)
-         {
--            if (par1World.getBlockLightValue(par2, par3 + 1, par4) < 4 && Block.lightOpacity[par1World.getBlockId(par2, par3 + 1, par4)] > 2)
-+            if (par1World.getBlockLightValue(par2, par3 + 1, par4) < 4 && par1World.getBlockLightOpacity(par2, par3 + 1, par4) > 2)
-             {
-                 par1World.setBlock(par2, par3, par4, Block.dirt.blockID);
-             }
-@@ -57,7 +57,7 @@
-                     int k1 = par4 + par5Random.nextInt(3) - 1;
-                     int l1 = par1World.getBlockId(i1, j1 + 1, k1);
+@@ -12,6 +12,7 @@
+ import net.minecraft.world.ColorizerGrass;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeHooks;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
  
--                    if (par1World.getBlockId(i1, j1, k1) == Block.dirt.blockID && par1World.getBlockLightValue(i1, j1 + 1, k1) >= 4 && Block.lightOpacity[l1] <= 2)
-+                    if (par1World.getBlockId(i1, j1, k1) == Block.dirt.blockID && par1World.getBlockLightValue(i1, j1 + 1, k1) >= 4 && par1World.getBlockLightOpacity(i1, j1 + 1, k1) <= 2)
+@@ -43,7 +44,7 @@
+     {
+         if (!p_149674_1_.isRemote)
+         {
+-            if (p_149674_1_.getBlockLightValue(p_149674_2_, p_149674_3_ + 1, p_149674_4_) < 4 && p_149674_1_.func_147439_a(p_149674_2_, p_149674_3_ + 1, p_149674_4_).func_149717_k() > 2)
++            if (p_149674_1_.getBlockLightValue(p_149674_2_, p_149674_3_ + 1, p_149674_4_) < 4 && p_149674_1_.getBlockLightOpacity(p_149674_2_, p_149674_3_ + 1, p_149674_4_) > 2)
+             {
+                 p_149674_1_.func_147449_b(p_149674_2_, p_149674_3_, p_149674_4_, Blocks.dirt);
+             }
+@@ -56,7 +57,7 @@
+                     int k1 = p_149674_4_ + p_149674_5_.nextInt(3) - 1;
+                     Block block = p_149674_1_.func_147439_a(i1, j1 + 1, k1);
+ 
+-                    if (p_149674_1_.func_147439_a(i1, j1, k1) == Blocks.dirt && p_149674_1_.getBlockMetadata(i1, j1, k1) == 0 && p_149674_1_.getBlockLightValue(i1, j1 + 1, k1) >= 4 && block.func_149717_k() <= 2)
++                    if (p_149674_1_.func_147439_a(i1, j1, k1) == Blocks.dirt && p_149674_1_.getBlockMetadata(i1, j1, k1) == 0 && p_149674_1_.getBlockLightValue(i1, j1 + 1, k1) >= 4 && p_149674_1_.getBlockLightOpacity(i1, j1 + 1, k1) <= 2)
                      {
-                         par1World.setBlock(i1, j1, k1, Block.grass.blockID);
+                         p_149674_1_.func_147449_b(i1, j1, k1, Blocks.grass);
                      }
+@@ -184,15 +185,7 @@
+                     }
+                     else
+                     {
+-                        String s = p_149853_1_.getBiomeGenForCoords(i1, k1).func_150572_a(p_149853_2_, i1, j1, k1);
+-                        field_149992_a.debug("Flower in " + p_149853_1_.getBiomeGenForCoords(i1, k1).biomeName + ": " + s);
+-                        BlockFlower blockflower = BlockFlower.func_149857_e(s);
+-
+-                        if (blockflower != null && blockflower.func_149718_j(p_149853_1_, i1, j1, k1))
+-                        {
+-                            int i2 = BlockFlower.func_149856_f(s);
+-                            p_149853_1_.func_147465_d(i1, j1, k1, blockflower, i2, 3);
+-                        }
++                        ForgeHooks.plantGrass(p_149853_1_, p_149853_2_, i1, j1, k1);
+                     }
+                 }
+ 

@@ -1,13 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
-@@ -121,7 +121,9 @@
+@@ -110,7 +110,7 @@
                      {
-                         int i1 = this.worldObj.getBlockId(k, j, l);
+                         Block block = this.field_145850_b.func_147439_a(l, k, i1);
  
--                        if (i1 != Block.blockEmerald.blockID && i1 != Block.blockGold.blockID && i1 != Block.blockDiamond.blockID && i1 != Block.blockIron.blockID)
-+                        Block block = Block.blocksList[i1];
-+
-+                        if (block == null || !block.isBeaconBase(worldObj, k, j, l, xCoord, yCoord, zCoord))
+-                        if (block != Blocks.emerald_block && block != Blocks.gold_block && block != Blocks.diamond_block && block != Blocks.iron_block)
++                        if (!block.isBeaconBase(this.field_145850_b, l, k, i1, field_145851_c, field_145848_d, field_145849_e))
                          {
                              flag = false;
                              break;

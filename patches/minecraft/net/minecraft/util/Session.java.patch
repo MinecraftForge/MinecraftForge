@@ -1,13 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/util/Session.java
 +++ ../src-work/minecraft/net/minecraft/util/Session.java
-@@ -11,6 +11,19 @@
+@@ -14,6 +14,19 @@
  
-     public Session(String par1Str, String par2Str)
+     public Session(String p_i45006_1_, String p_i45006_2_, String p_i45006_3_)
      {
-+        if (par1Str == null || par1Str.isEmpty())
++        if (p_i45006_1_ == null || p_i45006_1_.isEmpty())
 +        {
-+            par1Str = "MissingName";
-+            par2Str = "NotValid";
++            p_i45006_1_ = "MissingName";
++            p_i45006_2_ = p_i45006_3_ = "NotValid";
 +            System.out.println("=========================================================");
 +            System.out.println("Warning the username was not set for this session, typically");
 +            System.out.println("this means you installed Forge incorrectly. We have set your");
@@ -17,6 +17,6 @@
 +            System.out.println("=========================================================");
 +            
 +        }
-         this.username = par1Str;
-         this.sessionId = par2Str;
-     }
+         this.username = p_i45006_1_;
+         this.field_148257_b = p_i45006_2_;
+         this.field_148258_c = p_i45006_3_;

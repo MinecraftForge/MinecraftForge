@@ -1,72 +1,34 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
-@@ -9,6 +9,7 @@
- import net.minecraft.entity.player.EntityPlayer;
- import net.minecraft.inventory.ISidedInventory;
- import net.minecraft.item.Item;
-+import net.minecraft.item.ItemBlock;
- import net.minecraft.item.ItemHoe;
- import net.minecraft.item.ItemStack;
- import net.minecraft.item.ItemSword;
-@@ -16,6 +17,8 @@
- import net.minecraft.item.crafting.FurnaceRecipes;
- import net.minecraft.nbt.NBTTagCompound;
- import net.minecraft.nbt.NBTTagList;
-+import net.minecraftforge.common.ForgeDirection;
-+import net.minecraftforge.common.ForgeDummyContainer;
+@@ -223,8 +223,7 @@
  
- public class TileEntityFurnace extends TileEntity implements ISidedInventory
- {
-@@ -279,8 +282,7 @@
- 
-                         if (this.furnaceItemStacks[1].stackSize == 0)
+                         if (this.field_145957_n[1].stackSize == 0)
                          {
--                            Item item = this.furnaceItemStacks[1].getItem().getContainerItem();
--                            this.furnaceItemStacks[1] = item != null ? new ItemStack(item) : null;
-+                            this.furnaceItemStacks[1] = this.furnaceItemStacks[1].getItem().getContainerItemStack(furnaceItemStacks[1]);
+-                            Item item = this.field_145957_n[1].getItem().getContainerItem();
+-                            this.field_145957_n[1] = item != null ? new ItemStack(item) : null;
++                            this.field_145957_n[1] = field_145957_n[1].getItem().getContainerItem(field_145957_n[1]);
                          }
                      }
                  }
-@@ -326,8 +328,12 @@
-         }
+@@ -268,7 +267,11 @@
          else
          {
--            ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0].getItem().itemID);
--            return itemstack == null ? false : (this.furnaceItemStacks[2] == null ? true : (!this.furnaceItemStacks[2].isItemEqual(itemstack) ? false : (this.furnaceItemStacks[2].stackSize < this.getInventoryStackLimit() && this.furnaceItemStacks[2].stackSize < this.furnaceItemStacks[2].getMaxStackSize() ? true : this.furnaceItemStacks[2].stackSize < itemstack.getMaxStackSize())));
-+            ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0]);
+             ItemStack itemstack = FurnaceRecipes.smelting().func_151395_a(this.field_145957_n[0]);
+-            return itemstack == null ? false : (this.field_145957_n[2] == null ? true : (!this.field_145957_n[2].isItemEqual(itemstack) ? false : (this.field_145957_n[2].stackSize < this.getInventoryStackLimit() && this.field_145957_n[2].stackSize < this.field_145957_n[2].getMaxStackSize() ? true : this.field_145957_n[2].stackSize < itemstack.getMaxStackSize())));
 +            if (itemstack == null) return false;
-+            if (this.furnaceItemStacks[2] == null) return true;
-+            if (!this.furnaceItemStacks[2].isItemEqual(itemstack)) return false;
-+            int result = furnaceItemStacks[2].stackSize + itemstack.stackSize;
-+            return (result <= getInventoryStackLimit() && result <= itemstack.getMaxStackSize());
++            if (this.field_145957_n[2] == null) return true;
++            if (!this.field_145957_n[2].isItemEqual(itemstack)) return false;
++            int result = field_145957_n[2].stackSize + itemstack.stackSize;
++            return result < getInventoryStackLimit() && result <= this.field_145957_n[2].getMaxStackSize(); //Forge BugFix: Make it respect stack sizes properly.
          }
      }
  
-@@ -338,15 +344,15 @@
-     {
-         if (this.canSmelt())
-         {
--            ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0].getItem().itemID);
-+            ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0]);
- 
-             if (this.furnaceItemStacks[2] == null)
-             {
-                 this.furnaceItemStacks[2] = itemstack.copy();
+@@ -284,7 +287,7 @@
              }
--            else if (this.furnaceItemStacks[2].itemID == itemstack.itemID)
-+            else if (this.furnaceItemStacks[2].isItemEqual(itemstack))
+             else if (this.field_145957_n[2].getItem() == itemstack.getItem())
              {
--                ++this.furnaceItemStacks[2].stackSize;
-+                furnaceItemStacks[2].stackSize += itemstack.stackSize;
+-                ++this.field_145957_n[2].stackSize;
++                this.field_145957_n[2].stackSize += itemstack.stackSize; // Forge BugFix: Results may have multiple items
              }
  
-             --this.furnaceItemStacks[0].stackSize;
-@@ -373,7 +379,7 @@
-             int i = par0ItemStack.getItem().itemID;
-             Item item = par0ItemStack.getItem();
- 
--            if (i < 256 && Block.blocksList[i] != null)
-+            if (par0ItemStack.getItem() instanceof ItemBlock && Block.blocksList[i] != null)
-             {
-                 Block block = Block.blocksList[i];
- 
+             --this.field_145957_n[0].stackSize;

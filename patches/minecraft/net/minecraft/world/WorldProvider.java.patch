@@ -1,15 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
-@@ -3,16 +3,23 @@
+@@ -2,17 +2,25 @@
+ 
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
- import net.minecraft.block.Block;
 +import net.minecraft.entity.Entity;
 +import net.minecraft.entity.player.EntityPlayer;
 +import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.init.Blocks;
  import net.minecraft.util.ChunkCoordinates;
  import net.minecraft.util.MathHelper;
  import net.minecraft.util.Vec3;
++import net.minecraft.world.WorldSettings.GameType;
  import net.minecraft.world.biome.BiomeGenBase;
  import net.minecraft.world.biome.WorldChunkManager;
  import net.minecraft.world.biome.WorldChunkManagerHell;
@@ -24,7 +26,7 @@
  
  public abstract class WorldProvider
  {
-@@ -199,7 +206,7 @@
+@@ -166,14 +174,14 @@
  
      public static WorldProvider getProviderForDimension(int par0)
      {
@@ -32,9 +34,8 @@
 +        return DimensionManager.createProviderFor(par0);
      }
  
+     // JAVADOC METHOD $$ func_76571_f
      @SideOnly(Side.CLIENT)
-@@ -209,7 +216,7 @@
-      */
      public float getCloudHeight()
      {
 -        return 128.0F;
@@ -42,9 +43,9 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -268,4 +275,277 @@
-      * Returns the dimension's name, e.g. "The End", "Nether", or "Overworld".
-      */
+@@ -216,4 +224,272 @@
+ 
+     // JAVADOC METHOD $$ func_80007_l
      public abstract String getDimensionName();
 +
 +    /*======================================= Forge Start =========================================*/
@@ -151,7 +152,7 @@
 +    {
 +        ChunkCoordinates chunkcoordinates = new ChunkCoordinates(this.worldObj.getSpawnPoint());
 +
-+        boolean isAdventure = worldObj.getWorldInfo().getGameType() == EnumGameType.ADVENTURE;
++        boolean isAdventure = worldObj.getWorldInfo().getGameType() == GameType.ADVENTURE;
 +        int spawnFuzz = terrainType.getSpawnFuzz();
 +        int spawnFuzzHalf = spawnFuzz / 2;
 +
@@ -236,19 +237,14 @@
 +        worldObj.updateWeatherBody();
 +    }
 +
-+    public void toggleRain()
-+    {
-+        worldObj.worldInfo.setRainTime(1);
-+    }
-+
 +    public boolean canBlockFreeze(int x, int y, int z, boolean byWater)
 +    {
 +        return worldObj.canBlockFreezeBody(x, y, z, byWater);
 +    }
 +
-+    public boolean canSnowAt(int x, int y, int z)
++    public boolean canSnowAt(int x, int y, int z, boolean checkLight)
 +    {
-+        return worldObj.canSnowAtBody(x, y, z);
++        return worldObj.canSnowAtBody(x, y, z, checkLight);
 +    }
 +
 +    public void setWorldTime(long time)

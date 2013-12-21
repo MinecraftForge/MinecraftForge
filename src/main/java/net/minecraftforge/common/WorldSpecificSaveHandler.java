@@ -35,10 +35,12 @@ public class WorldSpecificSaveHandler implements ISaveHandler
     @Override public IPlayerFileData getSaveHandler() { return parent.getSaveHandler(); }
     @Override public void flush() { parent.flush(); }
     @Override public String getWorldDirectoryName() { return parent.getWorldDirectoryName(); }
+    @Override public File getWorldDirectory() { return parent.getWorldDirectory(); }
 
     @Override
     public File getMapFileFromName(String name)
     {
         return new File(dataDir, name + ".dat");
     }
+
 }

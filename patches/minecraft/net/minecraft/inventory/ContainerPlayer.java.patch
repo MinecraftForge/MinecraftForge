@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerPlayer.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerPlayer.java
+@@ -52,7 +52,8 @@
+                 // JAVADOC METHOD $$ func_75214_a
+                 public boolean isItemValid(ItemStack par1ItemStack)
+                 {
+-                    return par1ItemStack == null ? false : (par1ItemStack.getItem() instanceof ItemArmor ? ((ItemArmor)par1ItemStack.getItem()).armorType == k : (par1ItemStack.getItem() != Item.func_150898_a(Blocks.pumpkin) && par1ItemStack.getItem() != Items.skull ? false : k == 0));
++                    if (par1ItemStack == null) return false;
++                    return par1ItemStack.getItem().isValidArmor(par1ItemStack, k, thePlayer);
+                 }
+                 // JAVADOC METHOD $$ func_75212_b
+                 @SideOnly(Side.CLIENT)

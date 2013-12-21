@@ -1,39 +1,47 @@
 --- ../src-base/minecraft/net/minecraft/client/particle/EffectRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/particle/EffectRenderer.java
-@@ -12,6 +12,7 @@
- import net.minecraft.client.renderer.texture.TextureMap;
+@@ -16,9 +16,11 @@
+ import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.entity.Entity;
  import net.minecraft.util.MathHelper;
 +import net.minecraft.util.MovingObjectPosition;
+ import net.minecraft.util.ReportedException;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.world.World;
++
  import org.lwjgl.opengl.GL11;
-@@ -63,10 +64,14 @@
-             for (int j = 0; j < this.fxLayers[i].size(); ++j)
-             {
-                 EntityFX entityfx = (EntityFX)this.fxLayers[i].get(j);
--                entityfx.onUpdate();
+ 
+ @SideOnly(Side.CLIENT)
+@@ -72,7 +74,10 @@
+ 
+                 try
+                 {
+-                    entityfx.onUpdate();
++                    if (entityfx != null)
++                    {
++                        entityfx.onUpdate();
++                    }
+                 }
+                 catch (Throwable throwable)
+                 {
+@@ -97,7 +102,7 @@
+                     throw new ReportedException(crashreport);
+                 }
  
 -                if (entityfx.isDead)
-+                if (entityfx != null)
-                 {
-+                    entityfx.onUpdate();
-+                }
-+
 +                if (entityfx == null || entityfx.isDead)
-+                {
+                 {
                      this.fxLayers[i].remove(j--);
                  }
-             }
-@@ -115,6 +120,7 @@
+@@ -147,6 +152,7 @@
                  for (int j = 0; j < this.fxLayers[i].size(); ++j)
                  {
-                     EntityFX entityfx = (EntityFX)this.fxLayers[i].get(j);
+                     final EntityFX entityfx = (EntityFX)this.fxLayers[i].get(j);
 +                    if (entityfx == null) continue;
                      tessellator.setBrightness(entityfx.getBrightnessForRender(par2));
-                     entityfx.renderParticle(tessellator, par2, f1, f5, f2, f3, f4);
-                 }
-@@ -145,6 +151,7 @@
+ 
+                     try
+@@ -203,6 +209,7 @@
              for (int i = 0; i < list.size(); ++i)
              {
                  EntityFX entityfx = (EntityFX)list.get(i);
@@ -41,27 +49,24 @@
                  tessellator.setBrightness(entityfx.getBrightnessForRender(par2));
                  entityfx.renderParticle(tessellator, par2, f2, f6, f3, f4, f5);
              }
-@@ -163,9 +170,9 @@
+@@ -221,7 +228,7 @@
  
-     public void addBlockDestroyEffects(int par1, int par2, int par3, int par4, int par5)
+     public void func_147215_a(int p_147215_1_, int p_147215_2_, int p_147215_3_, Block p_147215_4_, int p_147215_5_)
      {
--        if (par4 != 0)
-+        Block block = Block.blocksList[par4];
-+        if (block != null && !block.addBlockDestroyEffects(worldObj, par1, par2, par3, par5, this))
+-        if (p_147215_4_.func_149688_o() != Material.field_151579_a)
++        if (!p_147215_4_.isAir(worldObj, p_147215_1_, p_147215_2_, p_147215_3_) && !p_147215_4_.addDestroyEffects(worldObj, p_147215_1_, p_147215_2_, p_147215_3_, p_147215_5_, this))
          {
--            Block block = Block.blocksList[par4];
              byte b0 = 4;
  
-             for (int j1 = 0; j1 < b0; ++j1)
-@@ -237,4 +244,13 @@
+@@ -291,4 +298,13 @@
      {
          return "" + (this.fxLayers[0].size() + this.fxLayers[1].size() + this.fxLayers[2].size());
      }
 +
 +    public void addBlockHitEffects(int x, int y, int z, MovingObjectPosition target)
 +    {
-+        Block block = Block.blocksList[worldObj.getBlockId(x, y, z)];
-+        if (block != null && !block.addBlockHitEffects(worldObj, target, this))
++        Block block = worldObj.func_147439_a(x, y, z);
++        if (block != null && !block.addHitEffects(worldObj, target, this))
 +        {
 +            addBlockHitEffects(x, y, z, target.sideHit);
 +        }

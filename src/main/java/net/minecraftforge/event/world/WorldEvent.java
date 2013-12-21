@@ -8,7 +8,7 @@ import cpw.mods.fml.common.eventhandler.Event;
 
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.SpawnListEntry;
+import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
 
 public class WorldEvent extends Event
 {

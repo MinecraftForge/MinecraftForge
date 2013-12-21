@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemTool.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemTool.java
-@@ -9,6 +9,7 @@
+@@ -10,6 +10,7 @@
  import net.minecraft.entity.SharedMonsterAttributes;
  import net.minecraft.entity.ai.attributes.AttributeModifier;
  import net.minecraft.world.World;
@@ -8,19 +8,38 @@
  
  public class ItemTool extends Item
  {
-@@ -114,4 +115,15 @@
+@@ -91,4 +92,34 @@
          multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Tool modifier", (double)this.damageVsEntity, 0));
          return multimap;
      }
 +
-+    /** FORGE: Overridden to allow custom tool effectiveness */
++    /*===================================== FORGE START =================================*/
 +    @Override
-+    public float getStrVsBlock(ItemStack stack, Block block, int meta) 
++    public int getHarvestLevel(ItemStack stack, String toolClass)
++    {
++        if ("pickaxe".equals(toolClass) && this instanceof ItemPickaxe)
++        {
++            return this.toolMaterial.getHarvestLevel();
++        }
++        else if ("axe".equals(toolClass) && this instanceof ItemAxe)
++        {
++            return this.toolMaterial.getHarvestLevel();
++        }
++        else if ("shovel".equals(toolClass) && this instanceof ItemSpade)
++        {
++            return this.toolMaterial.getHarvestLevel();
++        }
++        return super.getHarvestLevel(stack, toolClass);
++    }
++
++    @Override
++    public float getDigSpeed(ItemStack stack, Block block, int meta) 
 +    {
 +        if (ForgeHooks.isToolEffective(stack, block, meta))
 +        {
 +            return efficiencyOnProperMaterial;
 +        }
-+        return getStrVsBlock(stack, block);
++        return super.getDigSpeed(stack, block, meta);
 +    }
++    /*===================================== FORGE END =================================*/
  }

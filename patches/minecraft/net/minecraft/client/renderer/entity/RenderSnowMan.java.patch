@@ -1,10 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderSnowMan.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderSnowMan.java
-@@ -8,9 +8,14 @@
- import net.minecraft.entity.Entity;
- import net.minecraft.entity.EntityLivingBase;
- import net.minecraft.entity.monster.EntitySnowman;
-+import net.minecraft.item.ItemBlock;
+@@ -13,6 +13,10 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.ResourceLocation;
  import org.lwjgl.opengl.GL11;
@@ -15,21 +11,15 @@
  
  @SideOnly(Side.CLIENT)
  public class RenderSnowMan extends RenderLiving
-@@ -35,12 +40,15 @@
-         super.renderEquippedItems(par1EntitySnowman, par2);
-         ItemStack itemstack = new ItemStack(Block.pumpkin, 1);
- 
--        if (itemstack != null && itemstack.getItem().itemID < 256)
-+        if (itemstack != null && itemstack.getItem() instanceof ItemBlock)
-         {
+@@ -39,7 +43,10 @@
              GL11.glPushMatrix();
              this.snowmanModel.head.postRender(0.0625F);
  
--            if (RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
+-            if (RenderBlocks.func_147739_a(Block.func_149634_a(itemstack.getItem()).func_149645_b()))
 +            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack, EQUIPPED);
 +            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, itemstack, BLOCK_3D));
 +
-+            if (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
++            if (is3D || RenderBlocks.func_147739_a(Block.func_149634_a(itemstack.getItem()).func_149645_b()))
              {
                  float f1 = 0.625F;
                  GL11.glTranslatef(0.0F, -0.34375F, 0.0F);

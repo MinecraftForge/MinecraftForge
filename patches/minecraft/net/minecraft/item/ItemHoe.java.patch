@@ -1,16 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemHoe.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemHoe.java
-@@ -6,6 +6,9 @@
- import net.minecraft.creativetab.CreativeTabs;
+@@ -1,5 +1,6 @@
+ package net.minecraft.item;
+ 
++import cpw.mods.fml.common.eventhandler.Event.Result;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import net.minecraft.block.Block;
+@@ -8,6 +9,8 @@
  import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.init.Blocks;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.Event.Result;
 +import net.minecraftforge.event.entity.player.UseHoeEvent;
  
  public class ItemHoe extends Item
  {
-@@ -32,10 +35,22 @@
+@@ -31,9 +34,21 @@
          }
          else
          {
@@ -26,12 +32,10 @@
 +                return true;
 +            }
 +
-             int i1 = par3World.getBlockId(par4, par5, par6);
--            int j1 = par3World.getBlockId(par4, par5 + 1, par6);
-+            boolean air = par3World.isAirBlock(par4, par5 + 1, par6);
+             Block block = par3World.func_147439_a(par4, par5, par6);
  
--            if (par7 != 0 && j1 == 0 && (i1 == Block.grass.blockID || i1 == Block.dirt.blockID))
-+            if (par7 != 0 && air && (i1 == Block.grass.blockID || i1 == Block.dirt.blockID))
+-            if (par7 != 0 && par3World.func_147439_a(par4, par5 + 1, par6).func_149688_o() == Material.field_151579_a && (block == Blocks.grass || block == Blocks.dirt))
++            if (par7 != 0 && par3World.func_147439_a(par4, par5 + 1, par6).isAir(par3World, par4, par5 + 1, par6) && (block == Blocks.grass || block == Blocks.dirt))
              {
-                 Block block = Block.tilledField;
-                 par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), block.stepSound.getStepSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
+                 Block block1 = Blocks.farmland;
+                 par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), block1.field_149762_H.func_150498_e(), (block1.field_149762_H.func_150497_c() + 1.0F) / 2.0F, block1.field_149762_H.func_150494_d() * 0.8F);

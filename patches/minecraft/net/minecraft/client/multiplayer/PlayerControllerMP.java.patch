@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
-@@ -22,6 +22,10 @@
- import net.minecraft.world.EnumGameType;
+@@ -28,6 +28,10 @@
  import net.minecraft.world.World;
+ import net.minecraft.world.WorldSettings;
  
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
@@ -11,8 +11,8 @@
  @SideOnly(Side.CLIENT)
  public class PlayerControllerMP
  {
-@@ -125,6 +129,12 @@
-      */
+@@ -104,6 +108,12 @@
+     // JAVADOC METHOD $$ func_78751_a
      public boolean onPlayerDestroyBlock(int par1, int par2, int par3, int par4)
      {
 +        ItemStack stack = mc.thePlayer.getCurrentEquippedItem();
@@ -24,32 +24,37 @@
          if (this.currentGameType.isAdventure() && !this.mc.thePlayer.isCurrentToolAdventureModeExempt(par1, par2, par3))
          {
              return false;
-@@ -146,7 +156,7 @@
+@@ -125,7 +135,7 @@
              {
-                 worldclient.playAuxSFX(2001, par1, par2, par3, block.blockID + (worldclient.getBlockMetadata(par1, par2, par3) << 12));
+                 worldclient.playAuxSFX(2001, par1, par2, par3, Block.func_149682_b(block) + (worldclient.getBlockMetadata(par1, par2, par3) << 12));
                  int i1 = worldclient.getBlockMetadata(par1, par2, par3);
--                boolean flag = worldclient.setBlockToAir(par1, par2, par3);
-+                boolean flag = block.removeBlockByPlayer(worldclient, mc.thePlayer, par1, par2, par3);
+-                boolean flag = worldclient.func_147468_f(par1, par2, par3);
++                boolean flag = block.removedByPlayer(worldclient, mc.thePlayer, par1, par2, par3);
  
                  if (flag)
                  {
-@@ -347,8 +357,14 @@
+@@ -326,11 +336,18 @@
          float f2 = (float)par8Vec3.zCoord - (float)par6;
          boolean flag = false;
-         int i1;
+ 
+-        if ((!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null) && par2World.func_147439_a(par4, par5, par6).func_149727_a(par2World, par4, par5, par6, par1EntityPlayer, par7, f, f1, f2))
 +        if (par3ItemStack != null &&
 +            par3ItemStack.getItem() != null &&
 +            par3ItemStack.getItem().onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, f, f1, f2))
-+        {
-+                return true;
-+        }
- 
--        if (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null)
-+        if (!par1EntityPlayer.isSneaking() || (par1EntityPlayer.getHeldItem() == null || par1EntityPlayer.getHeldItem().getItem().shouldPassSneakingClickToBlock(par2World, par4, par5, par6)))
          {
-             i1 = par2World.getBlockId(par4, par5, par6);
+-            flag = true;
++                return true;
+         }
  
-@@ -389,7 +405,15 @@
++        if (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null || par1EntityPlayer.getHeldItem().getItem().doesSneakBypassUse(par2World, par4, par5, par6, par1EntityPlayer))
++        {
++            flag = par2World.func_147439_a(par4, par5, par6).func_149727_a(par2World, par4, par5, par6, par1EntityPlayer, par7, f, f1, f2);
++        }
++
+         if (!flag && par3ItemStack != null && par3ItemStack.getItem() instanceof ItemBlock)
+         {
+             ItemBlock itemblock = (ItemBlock)par3ItemStack.getItem();
+@@ -362,7 +379,15 @@
          }
          else
          {
@@ -66,7 +71,7 @@
          }
      }
  
-@@ -411,9 +435,10 @@
+@@ -382,9 +407,10 @@
          {
              par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = itemstack1;
  

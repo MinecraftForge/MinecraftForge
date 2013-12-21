@@ -38,17 +38,17 @@ public class BiomeManager
 
     public static void addStrongholdBiome(BiomeGenBase biome)
     {
-        if (!MapGenStronghold.allowedBiomes.contains(biome))
+        if (!MapGenStronghold.field_151546_e.contains(biome))
         {
-            MapGenStronghold.allowedBiomes.add(biome);
+            MapGenStronghold.field_151546_e.add(biome);
         }
     }
 
     public static void removeStrongholdBiome(BiomeGenBase biome)
     {
-        if (MapGenStronghold.allowedBiomes.contains(biome))
+        if (MapGenStronghold.field_151546_e.contains(biome))
         {
-            MapGenStronghold.allowedBiomes.remove(biome);
+            MapGenStronghold.field_151546_e.remove(biome);
         }
     }
 

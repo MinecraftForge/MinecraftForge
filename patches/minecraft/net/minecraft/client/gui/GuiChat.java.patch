@@ -1,36 +1,48 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiChat.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiChat.java
-@@ -7,8 +7,11 @@
- import java.util.Iterator;
- import java.util.List;
- import net.minecraft.network.packet.Packet203AutoComplete;
-+import net.minecraft.util.EnumChatFormatting;
-+import net.minecraftforge.client.ClientCommandHandler;
- import org.lwjgl.input.Keyboard;
- import org.lwjgl.input.Mouse;
+@@ -1,6 +1,7 @@
+ package net.minecraft.client.gui;
+ 
+ import com.google.common.collect.Lists;
 +import com.google.common.collect.ObjectArrays;
- 
- @SideOnly(Side.CLIENT)
- public class GuiChat extends GuiScreen
-@@ -278,13 +281,14 @@
-             this.mc.ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(stringbuilder.toString(), 1);
-         }
- 
--        this.inputField.writeText((String)this.field_73904_o.get(this.field_73903_n++));
-+        this.inputField.writeText(EnumChatFormatting.func_110646_a((String)this.field_73904_o.get(this.field_73903_n++)));
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.io.File;
+@@ -24,6 +25,7 @@
+ import net.minecraft.util.ChatComponentTranslation;
+ import net.minecraft.util.EnumChatFormatting;
+ import net.minecraft.util.IChatComponent;
++import net.minecraftforge.client.ClientCommandHandler;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ import org.lwjgl.input.Keyboard;
+@@ -134,6 +136,7 @@
+     public void func_146403_a(String p_146403_1_)
+     {
+         this.field_146297_k.ingameGUI.func_146158_b().func_146239_a(p_146403_1_);
++        if (ClientCommandHandler.instance.executeCommand(field_146297_k.thePlayer, p_146403_1_) == 1) return;
+         this.field_146297_k.thePlayer.sendChatMessage(p_146403_1_);
      }
  
-     private void func_73893_a(String par1Str, String par2Str)
-     {
-         if (par1Str.length() >= 1)
-         {
-+            ClientCommandHandler.instance.autoComplete(par1Str, par2Str);
-             this.mc.thePlayer.sendQueue.addToSendQueue(new Packet203AutoComplete(par1Str));
-             this.field_73905_m = true;
+@@ -309,13 +312,14 @@
+             this.field_146297_k.ingameGUI.func_146158_b().func_146234_a(new ChatComponentText(stringbuilder.toString()), 1);
          }
-@@ -347,6 +351,13 @@
-             String[] astring1 = par1ArrayOfStr;
-             int i = par1ArrayOfStr.length;
+ 
+-        this.field_146415_a.func_146191_b((String)this.field_146412_t.get(this.field_146413_s++));
++        this.field_146415_a.func_146191_b(EnumChatFormatting.func_110646_a((String)this.field_146412_t.get(this.field_146413_s++)));
+     }
+ 
+     private void func_146405_a(String p_146405_1_, String p_146405_2_)
+     {
+         if (p_146405_1_.length() >= 1)
+         {
++            ClientCommandHandler.instance.autoComplete(p_146405_1_, p_146405_2_);
+             this.field_146297_k.thePlayer.sendQueue.func_147297_a(new C14PacketTabComplete(p_146405_1_));
+             this.field_146414_r = true;
+         }
+@@ -438,6 +442,13 @@
+             String[] astring1 = p_146406_1_;
+             int i = p_146406_1_.length;
  
 +            String[] complete = ClientCommandHandler.instance.latestAutoComplete;
 +            if (complete != null)

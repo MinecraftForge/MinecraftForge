@@ -1,35 +1,44 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLog.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLog.java
-@@ -62,14 +62,9 @@
-                     {
-                         int j2 = par1World.getBlockId(par2 + k1, par3 + l1, par4 + i2);
+@@ -7,6 +7,7 @@
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.item.Item;
+ import net.minecraft.util.IIcon;
++import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
  
--                        if (j2 == Block.leaves.blockID)
-+                        if (Block.blocksList[j2] != null)
+ public abstract class BlockLog extends BlockRotatedPillar
+@@ -53,14 +54,10 @@
+                 {
+                     for (int l1 = -b0; l1 <= b0; ++l1)
+                     {
+-                        if (p_149749_1_.func_147439_a(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1).func_149688_o() == Material.field_151584_j)
++                        Block block = p_149749_1_.func_147439_a(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
++                        if (block.isLeaves(p_149749_1_, p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1))
                          {
--                            int k2 = par1World.getBlockMetadata(par2 + k1, par3 + l1, par4 + i2);
+-                            int i2 = p_149749_1_.getBlockMetadata(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
 -
--                            if ((k2 & 8) == 0)
+-                            if ((i2 & 8) == 0)
 -                            {
--                                par1World.setBlockMetadataWithNotify(par2 + k1, par3 + l1, par4 + i2, k2 | 8, 4);
+-                                p_149749_1_.setBlockMetadataWithNotify(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1, i2 | 8, 4);
 -                            }
-+                            Block.blocksList[j2].beginLeavesDecay(par1World, par2 + k1, par3 + l1, par4 + i2);
++                            block.beginLeavesDecay(p_149749_1_, p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
                          }
                      }
                  }
-@@ -135,4 +130,16 @@
-             this.tree_top[i] = par1IconRegister.registerIcon(this.getTextureName() + "_" + woodType[i] + "_top");
-         }
+@@ -79,4 +76,16 @@
+     {
+         return this.field_150166_b[p_150161_1_ % this.field_150166_b.length];
      }
 +
 +    @Override
-+    public boolean canSustainLeaves(World world, int x, int y, int z)
++    public boolean canSustainLeaves(IBlockAccess world, int x, int y, int z)
 +    {
 +        return true;
 +    }
 +
 +    @Override
-+    public boolean isWood(World world, int x, int y, int z)
++    public boolean isWood(IBlockAccess world, int x, int y, int z)
 +    {
 +        return true;
 +    }

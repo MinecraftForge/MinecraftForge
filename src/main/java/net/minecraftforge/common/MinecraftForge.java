@@ -19,7 +19,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeHooks.GrassEntry;
 import net.minecraftforge.common.ForgeHooks.SeedEntry;
-import net.minecraftforge.common.util.IdentityMap;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -38,8 +37,6 @@ public class MinecraftForge
     public static final EventBus ORE_GEN_BUS = new EventBus();
 
     private static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();
-    
-    private static final IdentityMap<Block, BlockExtension> EXTENSION_BLOCK = new IdentityMap<Block, BlockExtension>(4096, 1.0f);
 
 
     /** Register a new plant to be planted when bonemeal is used on grass.
@@ -64,141 +61,6 @@ public class MinecraftForge
     {
         ForgeHooks.seedList.add(new SeedEntry(seed, weight));
     }
-
-    /**
-     *
-     * Register a tool as a tool class with a given harvest level.
-     *
-     * @param tool The custom tool to register.
-     * @param toolClass The tool class to register as.  The predefined tool
-     *                  clases are "pickaxe", "shovel", "axe".  You can add
-     *                  others for custom tools.
-     * @param harvestLevel The harvest level of the tool.
-     */
-   public static void setToolClass(Item tool, String toolClass, int harvestLevel)
-   {
-       ForgeHooks.toolClasses.put(tool, Arrays.asList(toolClass, harvestLevel));
-   }
-
-   /**
-    * Register a block to be harvested by a tool class.  This is the metadata
-    * sensitive version, use it if your blocks are using metadata variants.
-    * By default, this sets the block class as effective against that type.
-    *
-    * @param block The block to register.
-    * @param metadata The metadata for the block subtype.
-    * @param toolClass The tool class to register as able to remove this block.
-    *                  You may register the same block multiple times with different tool
-    *                  classes, if multiple tool types can be used to harvest this block.
-    * @param harvestLevel The minimum tool harvest level required to successfully
-    * harvest the block.
-    * @see MinecraftForge#setToolClass for details on tool classes.
-    */
-   public static void setBlockHarvestLevel(Block block, int metadata, String toolClass, int harvestLevel)
-   {
-       List key = Arrays.asList(block, metadata, toolClass);
-       ForgeHooks.toolHarvestLevels.put(key, harvestLevel);
-       ForgeHooks.toolEffectiveness.add(key);
-   }
-
-   /**
-    * Remove a block effectiveness mapping.  Since setBlockHarvestLevel
-    * makes the tool class effective against the block by default, this can be
-    * used to remove that mapping.  This will force a block to be harvested at
-    * the same speed regardless of tool quality, while still requiring a given
-    * harvesting level.
-    *
-    * @param block The block to remove effectiveness from.
-    * @param metadata The metadata for the block subtype.
-    * @param toolClass The tool class to remove the effectiveness mapping from.
-    * @see MinecraftForge#setToolClass for details on tool classes.
-    */
-   public static void removeBlockEffectiveness(Block block, int metadata, String toolClass)
-   {
-       List key = Arrays.asList(block, metadata, toolClass);
-       ForgeHooks.toolEffectiveness.remove(key);
-   }
-
-   /**
-    * Register a block to be harvested by a tool class.
-    * By default, this sets the block class as effective against that type.
-    *
-    * @param block The block to register.
-    * @param toolClass The tool class to register as able to remove this block.
-    *                  You may register the same block multiple times with different tool
-    *                  classes, if multiple tool types can be used to harvest this block.
-    * @param harvestLevel The minimum tool harvest level required to successfully
-    *                     harvest the block.
-    * @see MinecraftForge#setToolClass for details on tool classes.
-    */
-   public static void setBlockHarvestLevel(Block block, String toolClass, int harvestLevel)
-   {
-       for (int metadata = 0; metadata < 16; metadata++)
-       {
-           List key = Arrays.asList(block, metadata, toolClass);
-           ForgeHooks.toolHarvestLevels.put(key, harvestLevel);
-           ForgeHooks.toolEffectiveness.add(key);
-       }
-   }
-
-   /**
-    * Returns the block harvest level for a particular tool class.
-    *
-    * @param block The block to check.
-    * @param metadata The metadata for the block subtype.
-    * @param toolClass The tool class to check as able to remove this block.
-    * @see MinecraftForge#setToolClass for details on tool classes.
-    * @return The harvest level or -1 if no mapping exists.
-    */
-   public static int getBlockHarvestLevel(Block block, int metadata, String toolClass)
-   {
-       ForgeHooks.initTools();
-       List key = Arrays.asList(block, metadata, toolClass);
-       Integer harvestLevel = ForgeHooks.toolHarvestLevels.get(key);
-       return (harvestLevel == null ? -1 : harvestLevel);
-   }
-
-   /**
-    * Remove a block effectiveness mapping.  Since setBlockHarvestLevel
-    * makes the tool class effective against the block by default, this can be
-    * used to remove that mapping.  This will force a block to be harvested at
-    * the same speed regardless of tool quality, while still requiring a given
-    * harvesting level.
-    *
-    * @param block The block to remove effectiveness from.
-    * @param toolClass The tool class to remove the effectiveness mapping from.
-    * @see MinecraftForge#setToolClass for details on tool classes.
-    */
-   public static void removeBlockEffectiveness(Block block, String toolClass)
-   {
-       for (int metadata = 0; metadata < 16; metadata++)
-       {
-           List key = Arrays.asList(block, metadata, toolClass);
-           ForgeHooks.toolEffectiveness.remove(key);
-       }
-   }
-
-   /**
-    * Gets the associated Extension object for the specified block,
-    * if guarantee is true, and there is no extension associated, it will
-    * create a new one and register it.
-    * 
-    * May return null, unless guarantee is set to true
-    * 
-    * @param block The block instance
-    * @param guarantee Wither to create a new extension if one does not exist.
-    * @return The extension object or null if none is registered and guarantee is false
-    */
-   public static BlockExtension getBlockExtension(Block block, boolean guarantee)
-   {
-       BlockExtension ret = EXTENSION_BLOCK.get(block);
-       if (ret == null && guarantee)
-       {
-           ret = new BlockExtension(block);
-           EXTENSION_BLOCK.put(block, ret);
-       }
-       return ret;
-   }
 
    /**
     * Method invoked by FML before any other mods are loaded.

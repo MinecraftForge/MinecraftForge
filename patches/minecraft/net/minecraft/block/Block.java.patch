@@ -1,20 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/block/Block.java
 +++ ../src-work/minecraft/net/minecraft/block/Block.java
-@@ -1,15 +1,22 @@
- package net.minecraft.block;
- 
--import cpw.mods.fml.relauncher.Side;
--import cpw.mods.fml.relauncher.SideOnly;
-+import static net.minecraftforge.common.ForgeDirection.DOWN;
-+import static net.minecraftforge.common.ForgeDirection.UP;
+@@ -3,24 +3,36 @@
+ import cpw.mods.fml.common.registry.GameData;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
 +
 +import java.util.ArrayList;
++import java.util.HashMap;
+ import java.util.Iterator;
  import java.util.List;
  import java.util.Random;
 +
+ import net.minecraft.block.material.MapColor;
  import net.minecraft.block.material.Material;
 +import net.minecraft.client.particle.EffectRenderer;
- import net.minecraft.client.renderer.texture.IconRegister;
+ import net.minecraft.client.renderer.texture.IIconRegister;
  import net.minecraft.creativetab.CreativeTabs;
  import net.minecraft.enchantment.EnchantmentHelper;
  import net.minecraft.entity.Entity;
@@ -25,181 +25,174 @@
  import net.minecraft.entity.item.EntityItem;
  import net.minecraft.entity.item.EntityXPOrb;
  import net.minecraft.entity.player.EntityPlayer;
-@@ -26,8 +33,10 @@
- import net.minecraft.item.ItemSnow;
++import net.minecraft.init.Blocks;
+ import net.minecraft.item.Item;
++import net.minecraft.item.ItemBlock;
  import net.minecraft.item.ItemStack;
  import net.minecraft.stats.StatList;
 +import net.minecraft.tileentity.TileEntity;
  import net.minecraft.tileentity.TileEntitySign;
  import net.minecraft.util.AxisAlignedBB;
 +import net.minecraft.util.ChunkCoordinates;
- import net.minecraft.util.Icon;
+ import net.minecraft.util.IIcon;
  import net.minecraft.util.MovingObjectPosition;
- import net.minecraft.util.StatCollector;
-@@ -35,9 +44,20 @@
+ import net.minecraft.util.RegistryNamespaced;
+@@ -30,6 +42,15 @@
  import net.minecraft.world.Explosion;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
 +import net.minecraft.world.WorldProviderEnd;
 +import net.minecraftforge.common.EnumPlantType;
-+import net.minecraftforge.common.ForgeDirection;
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.IPlantable;
-+import net.minecraftforge.common.RotationHelper;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.common.util.ForgeDirection;
++import net.minecraftforge.common.util.RotationHelper;
 +import net.minecraftforge.event.ForgeEventFactory;
-+import cpw.mods.fml.relauncher.Side;
-+import cpw.mods.fml.relauncher.SideOnly;
++import static net.minecraftforge.common.util.ForgeDirection.*;
  
  public class Block
  {
-+    protected static int[] blockFireSpreadSpeed = new int[4096];
-+    protected static int[] blockFlammability = new int[4096];
-     /**
-      * used as foreach item, if item.tab = current tab, display it on the screen
-      */
-@@ -460,9 +480,10 @@
-         return this.needsRandomTick;
+@@ -110,7 +131,8 @@
+ 
+     public static Block func_149729_e(int p_149729_0_)
+     {
+-        return (Block)field_149771_c.func_148754_a(p_149729_0_);
++        Block ret = (Block)field_149771_c.func_148754_a(p_149729_0_);
++        return ret == null ? Blocks.air : ret;
+     }
+ 
+     public static Block func_149634_a(Item p_149634_0_)
+@@ -481,9 +503,10 @@
+         return this.field_149789_z;
      }
  
 +    @Deprecated //Forge: New Metadata sensitive version.
-     public boolean hasTileEntity()
+     public boolean func_149716_u()
      {
--        return this.isBlockContainer;
+-        return this.field_149758_A;
 +        return hasTileEntity(0);
      }
  
-     /**
-@@ -485,7 +506,7 @@
-      */
-     public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
+     protected final void func_149676_a(float p_149676_1_, float p_149676_2_, float p_149676_3_, float p_149676_4_, float p_149676_5_, float p_149676_6_)
+@@ -500,13 +523,13 @@
+     public int func_149677_c(IBlockAccess p_149677_1_, int p_149677_2_, int p_149677_3_, int p_149677_4_)
      {
--        return par1IBlockAccess.getBrightness(par2, par3, par4, lightValue[par1IBlockAccess.getBlockId(par2, par3, par4)]);
-+        return par1IBlockAccess.getBrightness(par2, par3, par4, getLightValue(par1IBlockAccess, par2, par3, par4));
-     }
+         Block block = p_149677_1_.func_147439_a(p_149677_2_, p_149677_3_, p_149677_4_);
+-        int l = p_149677_1_.getLightBrightnessForSkyBlocks(p_149677_2_, p_149677_3_, p_149677_4_, block.func_149750_m());
++        int l = p_149677_1_.getLightBrightnessForSkyBlocks(p_149677_2_, p_149677_3_, p_149677_4_, block.getLightValue(p_149677_1_, p_149677_2_, p_149677_3_, p_149677_4_));
  
-     @SideOnly(Side.CLIENT)
-@@ -495,7 +516,7 @@
-      */
-     public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
-     {
--        return par1IBlockAccess.getLightBrightnessForSkyBlocks(par2, par3, par4, lightValue[par1IBlockAccess.getBlockId(par2, par3, par4)]);
-+        return par1IBlockAccess.getLightBrightnessForSkyBlocks(par2, par3, par4, getLightValue(par1IBlockAccess, par2, par3, par4));
-     }
+         if (l == 0 && block instanceof BlockSlab)
+         {
+             --p_149677_3_;
+             block = p_149677_1_.func_147439_a(p_149677_2_, p_149677_3_, p_149677_4_);
+-            return p_149677_1_.getLightBrightnessForSkyBlocks(p_149677_2_, p_149677_3_, p_149677_4_, block.func_149750_m());
++            return p_149677_1_.getLightBrightnessForSkyBlocks(p_149677_2_, p_149677_3_, p_149677_4_, block.getLightValue(p_149677_1_, p_149677_2_, p_149677_3_, p_149677_4_));
+         }
+         else
+         {
+@@ -595,7 +618,13 @@
  
-     @SideOnly(Side.CLIENT)
-@@ -648,7 +669,13 @@
-      * different metadata value, but before the new metadata value is set. Args: World, x, y, z, old block ID, old
-      * metadata
-      */
--    public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6) {}
-+    public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
+     public void func_149726_b(World p_149726_1_, int p_149726_2_, int p_149726_3_, int p_149726_4_) {}
+ 
+-    public void func_149749_a(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_) {}
++    public void func_149749_a(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_)
 +    {
-+        if (hasTileEntity(par6) && !(this instanceof BlockContainer))
++        if (hasTileEntity(p_149749_6_) && !(this instanceof BlockContainer))
 +        {
-+            par1World.removeBlockTileEntity(par2, par3, par4);
++            p_149749_1_.func_147475_p(p_149749_2_, p_149749_3_, p_149749_4_);
 +        }
 +    }
  
-     /**
-      * Returns the quantity of items to drop on block destruction.
-@@ -673,7 +700,7 @@
-     public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
+     public int func_149745_a(Random p_149745_1_)
      {
-         float f = this.getBlockHardness(par2World, par3, par4, par5);
--        return f < 0.0F ? 0.0F : (!par1EntityPlayer.canHarvestBlock(this) ? par1EntityPlayer.getCurrentPlayerStrVsBlock(this, false) / f / 100.0F : par1EntityPlayer.getCurrentPlayerStrVsBlock(this, true) / f / 30.0F);
-+        return ForgeHooks.blockStrength(this, par1EntityPlayer, par2World, par3, par4, par5);
+@@ -609,8 +638,7 @@
+ 
+     public float func_149737_a(EntityPlayer p_149737_1_, World p_149737_2_, int p_149737_3_, int p_149737_4_, int p_149737_5_)
+     {
+-        float f = this.func_149712_f(p_149737_2_, p_149737_3_, p_149737_4_, p_149737_5_);
+-        return f < 0.0F ? 0.0F : (!p_149737_1_.func_146099_a(this) ? p_149737_1_.func_146096_a(this, false) / f / 100.0F : p_149737_1_.func_146096_a(this, true) / f / 30.0F);
++        return ForgeHooks.blockStrength(this, p_149737_1_, p_149737_2_, p_149737_3_, p_149737_4_, p_149737_5_);
      }
  
-     /**
-@@ -691,18 +718,14 @@
+     public final void func_149697_b(World p_149697_1_, int p_149697_2_, int p_149697_3_, int p_149697_4_, int p_149697_5_, int p_149697_6_)
+@@ -622,18 +650,14 @@
      {
-         if (!par1World.isRemote)
+         if (!p_149690_1_.isRemote)
          {
--            int j1 = this.quantityDroppedWithBonus(par7, par1World.rand);
--
+-            int j1 = this.func_149679_a(p_149690_7_, p_149690_1_.rand);
++            ArrayList<ItemStack> items = getDrops(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_7_);
++            p_149690_6_ = ForgeEventFactory.fireBlockHarvesting(items, p_149690_1_, this, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_7_, p_149690_6_, false, harvesters.get());
+ 
 -            for (int k1 = 0; k1 < j1; ++k1)
-+            ArrayList<ItemStack> items = getBlockDropped(par1World, par2, par3, par4, par5, par7);
-+            par6 = ForgeEventFactory.fireBlockHarvesting(items, par1World, this, par2, par3, par4, par5, par7, par6, false, harvesters.get());
-+            
 +            for (ItemStack item : items)
              {
-                 if (par1World.rand.nextFloat() <= par6)
+                 if (p_149690_1_.rand.nextFloat() <= p_149690_6_)
                  {
--                    int l1 = this.idDropped(par5, par1World.rand, par7);
+-                    Item item = this.func_149650_a(p_149690_5_, p_149690_1_.rand, p_149690_7_);
 -
--                    if (l1 > 0)
+-                    if (item != null)
 -                    {
--                        this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(l1, 1, this.damageDropped(par5)));
+-                        this.func_149642_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(item, 1, this.func_149692_a(p_149690_5_)));
 -                    }
-+                    this.dropBlockAsItem_do(par1World, par2, par3, par4, item);
++                    this.func_149642_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, item);
                  }
              }
          }
-@@ -935,7 +958,8 @@
-     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
+@@ -827,7 +851,7 @@
+ 
+     public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
      {
-         int l = par1World.getBlockId(par2, par3, par4);
--        return l == 0 || blocksList[l].blockMaterial.isReplaceable();
-+        Block block = Block.blocksList[l];
-+        return block == null || block.isBlockReplaceable(par1World, par2, par3, par4);
+-        return p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_, p_149742_4_).field_149764_J.isReplaceable();
++        return p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_, p_149742_4_).isReplaceable(p_149742_1_, p_149742_2_, p_149742_3_, p_149742_4_);
      }
  
-     /**
-@@ -1086,6 +1110,7 @@
-      */
-     public void setBlockBoundsForItemRender() {}
+     public boolean func_149727_a(World p_149727_1_, int p_149727_2_, int p_149727_3_, int p_149727_4_, EntityPlayer p_149727_5_, int p_149727_6_, float p_149727_7_, float p_149727_8_, float p_149727_9_)
+@@ -920,25 +944,34 @@
+         p_149636_2_.addStat(StatList.mineBlockStatArray[func_149682_b(this)], 1);
+         p_149636_2_.addExhaustion(0.025F);
  
-+    private ThreadLocal<EntityPlayer> harvesters = new ThreadLocal();
-     /**
-      * Called when the player destroys a block with an item that can harvest it. (i, j, k) are the coordinates of the
-      * block and l is the block's subtype/damage.
-@@ -1095,28 +1120,37 @@
-         par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
-         par2EntityPlayer.addExhaustion(0.025F);
- 
--        if (this.canSilkHarvest() && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer))
-+        if (this.canSilkHarvest(par1World, par2EntityPlayer, par3, par4, par5, par6) && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer))
+-        if (this.func_149700_E() && EnchantmentHelper.getSilkTouchModifier(p_149636_2_))
++        if (this.canSilkHarvest(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_) && EnchantmentHelper.getSilkTouchModifier(p_149636_2_))
          {
 +            ArrayList<ItemStack> items = new ArrayList<ItemStack>();
-             ItemStack itemstack = this.createStackedBlock(par6);
+             ItemStack itemstack = this.func_149644_j(p_149636_6_);
  
              if (itemstack != null)
              {
--                this.dropBlockAsItem_do(par1World, par3, par4, par5, itemstack);
+-                this.func_149642_a(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, itemstack);
 +                items.add(itemstack);
              }
-+            ForgeEventFactory.fireBlockHarvesting(items, par1World, this, par3, par4, par5, par6, 0, 1.0f, true, par2EntityPlayer);
++
++            ForgeEventFactory.fireBlockHarvesting(items, p_149636_1_, this, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_, 0, 1.0f, true, p_149636_2_);
 +            for (ItemStack is : items)
 +            {
-+                this.dropBlockAsItem_do(par1World, par3, par4, par5, is);
++                this.func_149642_a(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, is);
 +            }
          }
          else
          {
-+            harvesters.set(par2EntityPlayer);
-             int i1 = EnchantmentHelper.getFortuneModifier(par2EntityPlayer);
-             this.dropBlockAsItem(par1World, par3, par4, par5, par6, i1);
++            harvesters.set(p_149636_2_);
+             int i1 = EnchantmentHelper.getFortuneModifier(p_149636_2_);
+             this.func_149697_b(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_, i1);
 +            harvesters.set(null);
          }
      }
  
-+    private int silk_check_meta = -1; //Dirty hack to stop us from needing to special case the silk check hook.
-     /**
-      * Return true if a player with Silk Touch can harvest this block directly, and not its normal drops.
-      */
-     protected boolean canSilkHarvest()
+     protected boolean func_149700_E()
      {
--        return this.renderAsNormalBlock() && !this.isBlockContainer;
-+        return this.renderAsNormalBlock() && !this.hasTileEntity(silk_check_meta);
+-        return this.func_149686_d() && !this.field_149758_A;
++        return this.func_149686_d() && !this.hasTileEntity(silk_check_meta.get());
      }
  
-     /**
-@@ -1457,4 +1491,1001 @@
-         canBlockGrass[0] = true;
-         StatList.initBreakableStats();
+     protected ItemStack func_149644_j(int p_149644_1_)
+@@ -1114,6 +1147,1062 @@
+         return null;
      }
-+
-+    /* =================================================== FORGE START =====================================*/
+ 
++    /* ======================================== FORGE START =====================================*/
++    private ThreadLocal<EntityPlayer> harvesters = new ThreadLocal();
++    private ThreadLocal<Integer> silk_check_meta = new ThreadLocal(); 
 +    /**
 +     * Get a light value for the block at the specified coordinates, normal ranges are between 0 and 15
 +     *
@@ -211,12 +204,12 @@
 +     */
 +    public int getLightValue(IBlockAccess world, int x, int y, int z)
 +    {
-+        Block block = blocksList[world.getBlockId(x, y, z)];
-+        if (block != null && block != this)
++        Block block = world.func_147439_a(x, y, z);
++        if (block != this)
 +        {
 +            return block.getLightValue(world, x, y, z);
 +        }
-+        return lightValue[blockID];
++        return func_149750_m();
 +    }
 +
 +    /**
@@ -229,7 +222,7 @@
 +     * @param entity The entity trying to use the ladder, CAN be null.
 +     * @return True if the block should act like a ladder
 +     */
-+    public boolean isLadder(World world, int x, int y, int z, EntityLivingBase entity)
++    public boolean isLadder(IBlockAccess world, int x, int y, int z, EntityLivingBase entity)
 +    {
 +        return false;
 +    }
@@ -245,9 +238,9 @@
 +     * @param z Z position
 +     * @return True if the block is a full cube
 +     */
-+    public boolean isBlockNormalCube(World world, int x, int y, int z)
++    public boolean isNormalCube(IBlockAccess world, int x, int y, int z)
 +    {
-+        return blockMaterial.isOpaque() && renderAsNormalBlock() && !canProvidePower();
++        return func_149688_o().isOpaque() && func_149686_d() && !func_149744_f();
 +    }
 +
 +    /**
@@ -260,12 +253,13 @@
 +     * @param side The side to check
 +     * @return True if the block is solid on the specified side.
 +     */
-+    public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side)
++    public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side)
 +    {
 +        int meta = world.getBlockMetadata(x, y, z);
-+        if (this instanceof BlockHalfSlab)
++
++        if (this instanceof BlockSlab)
 +        {
-+            return (((meta & 8) == 8 && (side == UP)) || isOpaqueCube());
++            return (((meta & 8) == 8 && (side == UP)) || func_149730_j());
 +        }
 +        else if (this instanceof BlockFarmland)
 +        {
@@ -276,15 +270,19 @@
 +            boolean flipped = ((meta & 4) != 0);
 +            return ((meta & 3) + side.ordinal() == 5) || (side == UP && flipped);
 +        }
++        else if (this instanceof BlockSnow)
++        {
++            return (meta & 7) == 7;
++        }
 +        else if (this instanceof BlockHopper && side == UP)
 +        {
 +            return true;
 +        }
-+        else if (this instanceof BlockPoweredOre)
++        else if (this instanceof BlockCompressedPowered)
 +        {
 +            return true;
 +        }
-+        return isBlockNormalCube(world, x, y, z);
++        return isNormalCube(world, x, y, z);
 +    }
 +
 +    /**
@@ -297,9 +295,9 @@
 +     * @param z Z position
 +     * @return True if the block is replaceable by another block
 +     */
-+    public boolean isBlockReplaceable(World world, int x, int y, int z)
++    public boolean isReplaceable(IBlockAccess world, int x, int y, int z)
 +    {
-+        return blockMaterial.isReplaceable();
++        return field_149764_J.isReplaceable();
 +    }
 +
 +    /**
@@ -312,7 +310,7 @@
 +     * @param z Z position
 +     * @return True if the block should deal damage
 +     */
-+    public boolean isBlockBurning(World world, int x, int y, int z)
++    public boolean isBurning(IBlockAccess world, int x, int y, int z)
 +    {
 +        return false;
 +    }
@@ -329,9 +327,9 @@
 +     * @param z Z position
 +     * @return True if the block considered air
 +     */
-+    public boolean isAirBlock(World world, int x, int y, int z)
++    public boolean isAir(IBlockAccess world, int x, int y, int z)
 +    {
-+        return false;
++        return func_149688_o() == Material.field_151579_a;
 +    }
 +
 +    /**
@@ -364,21 +362,9 @@
 +     * @param z Z position
 +     * @return True if the block is actually destroyed.
 +     */
-+    public boolean removeBlockByPlayer(World world, EntityPlayer player, int x, int y, int z)
++    public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z)
 +    {
-+        return world.setBlockToAir(x, y, z);
-+    }
-+
-+    /**
-+     * Called when a new CreativeContainer is opened, populate the list
-+     * with all of the items for this block you want a player in creative mode
-+     * to have access to.
-+     *
-+     * @param itemList The list of items to display on the creative inventory.
-+     */
-+    @Deprecated
-+    public void addCreativeItems(ArrayList itemList)
-+    {
++        return world.func_147468_f(x, y, z);
 +    }
 +
 +    /**
@@ -389,13 +375,12 @@
 +     * @param x The blocks X position
 +     * @param y The blocks Y position
 +     * @param z The blocks Z position
-+     * @param metadata The blocks current metadata
 +     * @param face The face that the fire is coming from
 +     * @return A number ranging from 0 to 300 relating used to determine if the block will be consumed by fire
 +     */
-+    public int getFlammability(IBlockAccess world, int x, int y, int z, int metadata, ForgeDirection face)
++    public int getFlammability(IBlockAccess world, int x, int y, int z, ForgeDirection face)
 +    {
-+        return blockFlammability[blockID];
++        return Blocks.fire.getFlammability(this);
 +    }
 +
 +    /**
@@ -406,13 +391,12 @@
 +     * @param x The blocks X position
 +     * @param y The blocks Y position
 +     * @param z The blocks Z position
-+     * @param metadata The blocks current metadata
 +     * @param face The face that the fire is coming from
 +     * @return True if the face can be on fire, false otherwise.
 +     */
-+    public boolean isFlammable(IBlockAccess world, int x, int y, int z, int metadata, ForgeDirection face)
++    public boolean isFlammable(IBlockAccess world, int x, int y, int z, ForgeDirection face)
 +    {
-+        return getFlammability(world, x, y, z, metadata, face) > 0;
++        return getFlammability(world, x, y, z, face) > 0;
 +    }
 +
 +    /**
@@ -423,13 +407,12 @@
 +     * @param x The blocks X position
 +     * @param y The blocks Y position
 +     * @param z The blocks Z position
-+     * @param metadata The blocks current metadata
 +     * @param face The face that the fire is coming from
 +     * @return A number that is used to determine the speed of fire growth around the block
 +     */
-+    public int getFireSpreadSpeed(World world, int x, int y, int z, int metadata, ForgeDirection face)
++    public int getFireSpreadSpeed(IBlockAccess world, int x, int y, int z, ForgeDirection face)
 +    {
-+        return blockFireSpreadSpeed[blockID];
++        return Blocks.fire.getEncouragement(this);
 +    }
 +
 +    /**
@@ -445,35 +428,23 @@
 +     * @param side The face that the fire is coming from
 +     * @return True if this block sustains fire, meaning it will never go out.
 +     */
-+    public boolean isFireSource(World world, int x, int y, int z, int metadata, ForgeDirection side)
++    public boolean isFireSource(World world, int x, int y, int z, ForgeDirection side)
 +    {
-+        if (blockID == Block.netherrack.blockID && side == UP)
++        if (this == Blocks.netherrack && side == UP)
 +        {
 +            return true;
 +        }
-+        if ((world.provider instanceof WorldProviderEnd) && blockID == Block.bedrock.blockID && side == UP)
++        if ((world.provider instanceof WorldProviderEnd) && this == Blocks.bedrock && side == UP)
 +        {
 +            return true;
 +        }
 +        return false;
 +    }
 +
-+    /**
-+     * Called by BlockFire to setup the burn values of vanilla blocks.
-+     * @param id The block id
-+     * @param encouragement How much the block encourages fire to spread
-+     * @param flammability how easy a block is to catch fire
-+     */
-+    public static void setBurnProperties(int id, int encouragement, int flammability)
-+    {
-+        blockFireSpreadSpeed[id] = encouragement;
-+        blockFlammability[id] = flammability;
-+    }
-+
 +    private boolean isTileProvider = this instanceof ITileEntityProvider;
 +    /**
 +     * Called throughout the code as a replacement for block instanceof BlockContainer
-+     * Moving this to the Block base class allows for mods that wish to extend vinella
++     * Moving this to the Block base class allows for mods that wish to extend vanilla
 +     * blocks, and also want to have a tile entity on that block, may.
 +     *
 +     * Return true from this function to specify this block has a tile entity.
@@ -498,7 +469,7 @@
 +    {
 +        if (isTileProvider)
 +        {
-+            return ((ITileEntityProvider)this).createNewTileEntity(world);
++            return ((ITileEntityProvider)this).func_149915_a(world, metadata);
 +        }
 +        return null;
 +    }
@@ -514,7 +485,7 @@
 +     */
 +    public int quantityDropped(int meta, int fortune, Random random)
 +    {
-+        return quantityDroppedWithBonus(fortune, random);
++        return func_149679_a(fortune, random);
 +    }
 +
 +    /**
@@ -528,17 +499,17 @@
 +     * @param fortune Breakers fortune level
 +     * @return A ArrayList containing all items this block drops
 +     */
-+    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
++    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune)
 +    {
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
 +
 +        int count = quantityDropped(metadata, fortune, world.rand);
 +        for(int i = 0; i < count; i++)
 +        {
-+            int id = idDropped(metadata, world.rand, fortune);
-+            if (id > 0)
++            Item item = func_149650_a(metadata, world.rand, fortune);
++            if (item != null)
 +            {
-+                ret.add(new ItemStack(id, 1, damageDropped(metadata)));
++                ret.add(new ItemStack(item, 1, func_149692_a(metadata)));
 +            }
 +        }
 +        return ret;
@@ -557,9 +528,9 @@
 +     */
 +    public boolean canSilkHarvest(World world, EntityPlayer player, int x, int y, int z, int metadata)
 +    {
-+        silk_check_meta = metadata;
-+        boolean ret = this.canSilkHarvest();
-+        silk_check_meta = 0;
++        silk_check_meta.set(metadata);;
++        boolean ret = this.func_149700_E();
++        silk_check_meta.set(null);
 +        return ret;
 +    }
 +
@@ -574,18 +545,18 @@
 +     * @param z The Z Position
 +     * @return True to allow a mob of the specified category to spawn, false to prevent it.
 +     */
-+    public boolean canCreatureSpawn(EnumCreatureType type, World world, int x, int y, int z)
++    public boolean canCreatureSpawn(EnumCreatureType type, IBlockAccess world, int x, int y, int z)
 +    {
 +        int meta = world.getBlockMetadata(x, y, z);
-+        if (this instanceof BlockStep)
++        if (this instanceof BlockSlab)
 +        {
-+            return (((meta & 8) == 8) || isOpaqueCube());
++            return (((meta & 8) == 8) || func_149730_j());
 +        }
 +        else if (this instanceof BlockStairs)
 +        {
 +            return ((meta & 4) != 0);
 +        }
-+        return isBlockSolidOnSide(world, x, y, z, UP);
++        return isSideSolid(world, x, y, z, UP);
 +    }
 +
 +    /**
@@ -600,9 +571,9 @@
 +     * @param player The player or camera entity, null in some cases.
 +     * @return True to treat this as a bed
 +     */
-+    public boolean isBed(World world, int x, int y, int z, EntityLivingBase player)
++    public boolean isBed(IBlockAccess world, int x, int y, int z, EntityLivingBase player)
 +    {
-+        return blockID == Block.bed.blockID;
++        return this == Blocks.bed;
 +    }
 +
 +    /**
@@ -616,9 +587,11 @@
 +     * @param player The player or camera entity, null in some cases.
 +     * @return The spawn position
 +     */
-+    public ChunkCoordinates getBedSpawnPosition(World world, int x, int y, int z, EntityPlayer player)
++    public ChunkCoordinates getBedSpawnPosition(IBlockAccess world, int x, int y, int z, EntityPlayer player)
 +    {
-+        return BlockBed.getNearestEmptyChunkCoordinates(world, x, y, z, 0);
++        if (world instanceof World)
++            return BlockBed.func_149977_a((World)world, x, y, z, 0);
++        return null;
 +    }
 +
 +    /**
@@ -631,9 +604,10 @@
 +     * @param player The player or camera entity, null in some cases.
 +     * @param occupied True if we are occupying the bed, or false if they are stopping use of the bed
 +     */
-+    public void setBedOccupied(World world, int x, int y, int z, EntityPlayer player, boolean occupied)
++    public void setBedOccupied(IBlockAccess world, int x, int y, int z, EntityPlayer player, boolean occupied)
 +    {
-+        BlockBed.setBedOccupied(world,  x, y, z, occupied);
++        if (world instanceof World)
++            BlockBed.func_149979_a((World)world,  x, y, z, occupied);
 +    }
 +
 +    /**
@@ -648,7 +622,7 @@
 +     */
 +    public int getBedDirection(IBlockAccess world, int x, int y, int z)
 +    {
-+        return BlockBed.getDirection(world.getBlockMetadata(x,  y, z));
++        return BlockBed.func_149895_l(world.getBlockMetadata(x,  y, z));
 +    }
 +
 +    /**
@@ -662,7 +636,7 @@
 +     */
 +    public boolean isBedFoot(IBlockAccess world, int x, int y, int z)
 +    {
-+        return BlockBed.isBlockHeadOfBed(world.getBlockMetadata(x,  y, z));
++        return BlockBed.func_149975_b(world.getBlockMetadata(x,  y, z));
 +    }
 +
 +    /**
@@ -684,7 +658,7 @@
 +     * @param z Z Position
 +     * @return true if the presence this block can prevent leaves from decaying.
 +     */
-+    public boolean canSustainLeaves(World world, int x, int y, int z)
++    public boolean canSustainLeaves(IBlockAccess world, int x, int y, int z)
 +    {
 +        return false;
 +    }
@@ -698,9 +672,9 @@
 +     * @param z Z Position
 +     * @return true if this block is considered leaves.
 +     */
-+    public boolean isLeaves(World world, int x, int y, int z)
++    public boolean isLeaves(IBlockAccess world, int x, int y, int z)
 +    {
-+        return false;
++        return func_149688_o() == Material.field_151584_j;
 +    }
 +
 +    /**
@@ -712,9 +686,9 @@
 +     * @param z Z Position
 +     * @return true if this block can be replaced by growing leaves.
 +     */
-+    public boolean canBeReplacedByLeaves(World world, int x, int y, int z)
++    public boolean canBeReplacedByLeaves(IBlockAccess world, int x, int y, int z)
 +    {
-+        return !Block.opaqueCubeLookup[this.blockID];
++        return func_149730_j();
 +    }
 +
 +    /**
@@ -725,7 +699,7 @@
 +     * @param z Z Position
 +     * @return  true if the block is wood (logs)
 +     */
-+    public boolean isWood(World world, int x, int y, int z)
++    public boolean isWood(IBlockAccess world, int x, int y, int z)
 +    {
 +         return false;
 +    }
@@ -741,9 +715,9 @@
 +     *      for overworld generation, and neatherack for the nether.
 +     * @return True to allow this block to be replaced by a ore
 +     */
-+    public boolean isGenMineableReplaceable(World world, int x, int y, int z, int target)
++    public boolean isReplaceableOreGen(World world, int x, int y, int z, Block target)
 +    {
-+        return blockID == target;
++        return this == target;
 +    }
 +
 +    /**
@@ -761,7 +735,7 @@
 +     */
 +    public float getExplosionResistance(Entity par1Entity, World world, int x, int y, int z, double explosionX, double explosionY, double explosionZ)
 +    {
-+        return getExplosionResistance(par1Entity);
++        return func_149638_a(par1Entity);
 +    }
 +
 +    /**
@@ -777,8 +751,8 @@
 +     */
 +    public void onBlockExploded(World world, int x, int y, int z, Explosion explosion)
 +    {
-+        world.setBlockToAir(x, y, z);
-+        onBlockDestroyedByExplosion(world, x, y, z, explosion);
++        world.func_147468_f(x, y, z);
++        func_149723_a(world, x, y, z, explosion);
 +    }
 +
 +    /**
@@ -801,7 +775,7 @@
 +     */
 +    public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side)
 +    {
-+        return Block.blocksList[blockID].canProvidePower() && side != -1;
++        return func_149744_f() && side != -1;
 +    }
 +
 +    /**
@@ -816,17 +790,15 @@
 +     */
 +    public boolean canPlaceTorchOnTop(World world, int x, int y, int z)
 +    {
-+        if (world.doesBlockHaveSolidTopSurface(x, y, z))
++        if (isSideSolid(world, x, y, z, UP))
 +        {
 +            return true;
 +        }
 +        else
 +        {
-+            int id = world.getBlockId(x, y, z);
-+            return id == Block.fence.blockID || id == Block.netherFence.blockID || id == Block.glass.blockID || id == Block.cobblestoneWall.blockID;
++            return this == Blocks.fence || this == Blocks.nether_brick_fence || this == Blocks.glass || this == Blocks.cobblestone_wall;
 +        }
 +    }
-+
 +
 +    /**
 +     * Determines if this block should render in this pass.
@@ -836,7 +808,7 @@
 +     */
 +    public boolean canRenderInPass(int pass)
 +    {
-+        return pass == getRenderBlockPass();
++        return pass == func_149701_w();
 +    }
 +
 +    /**
@@ -847,20 +819,15 @@
 +     */
 +    public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z)
 +    {
-+        int id = idPicked(world, x, y, z);
++        Item item = func_149694_d(world, x, y, z);
 +
-+        if (id == 0)
-+        {
-+            return null;
-+        }
-+
-+        Item item = Item.itemsList[id];
 +        if (item == null)
 +        {
 +            return null;
 +        }
 +
-+        return new ItemStack(id, 1, getDamageValue(world, x, y, z));
++        Block block = item instanceof ItemBlock && !func_149648_K() ? Block.func_149634_a(item) : this;
++        return new ItemStack(item, 1, block.func_149643_k(world, x, y, z));
 +    }
 +
 +    /**
@@ -869,7 +836,7 @@
 +     *
 +     * @return False to disallow spawning
 +     */
-+    public boolean isBlockFoliage(World world, int x, int y, int z)
++    public boolean isFoliage(IBlockAccess world, int x, int y, int z)
 +    {
 +        return false;
 +    }
@@ -886,7 +853,7 @@
 +     * @return True to prevent vanilla digging particles form spawning.
 +     */
 +    @SideOnly(Side.CLIENT)
-+    public boolean addBlockHitEffects(World worldObj, MovingObjectPosition target, EffectRenderer effectRenderer)
++    public boolean addHitEffects(World worldObj, MovingObjectPosition target, EffectRenderer effectRenderer)
 +    {
 +        return false;
 +    }
@@ -906,7 +873,7 @@
 +     * @return True to prevent vanilla break particles from spawning.
 +     */
 +    @SideOnly(Side.CLIENT)
-+    public boolean addBlockDestroyEffects(World world, int x, int y, int z, int meta, EffectRenderer effectRenderer)
++    public boolean addDestroyEffects(World world, int x, int y, int z, int meta, EffectRenderer effectRenderer)
 +    {
 +        return false;
 +    }
@@ -927,43 +894,43 @@
 +     * @param y Y Position
 +     * @param z Z position
 +     * @param direction The direction relative to the given position the plant wants to be, typically its UP
-+     * @param plant The plant that wants to check
++     * @param plantable The plant that wants to check
 +     * @return True to allow the plant to be planted/stay.
 +     */
-+    public boolean canSustainPlant(World world, int x, int y, int z, ForgeDirection direction, IPlantable plant)
++    public boolean canSustainPlant(IBlockAccess world, int x, int y, int z, ForgeDirection direction, IPlantable plantable)
 +    {
-+        int plantID = plant.getPlantID(world, x, y + 1, z);
-+        EnumPlantType plantType = plant.getPlantType(world, x, y + 1, z);
++        Block plant = plantable.getPlant(world, x, y + 1, z);
++        EnumPlantType plantType = plantable.getPlantType(world, x, y + 1, z);
 +
-+        if (plantID == cactus.blockID && blockID == cactus.blockID)
++        if (plant == Blocks.cactus && this == Blocks.cactus)
 +        {
 +            return true;
 +        }
 +
-+        if (plantID == reed.blockID && blockID == reed.blockID)
++        if (plant == Blocks.reeds && this == Blocks.reeds)
 +        {
 +            return true;
 +        }
 +
-+        if (plant instanceof BlockFlower && ((BlockFlower)plant).canThisPlantGrowOnThisBlockID(blockID))
++        if (plantable instanceof BlockBush && ((BlockBush)plantable).func_149854_a(this))
 +        {
 +            return true;
 +        }
 +
 +        switch (plantType)
 +        {
-+            case Desert: return blockID == sand.blockID;
-+            case Nether: return blockID == slowSand.blockID;
-+            case Crop:   return blockID == tilledField.blockID;
-+            case Cave:   return isBlockSolidOnSide(world, x, y, z, UP);
-+            case Plains: return blockID == grass.blockID || blockID == dirt.blockID;
-+            case Water:  return world.getBlockMaterial(x, y, z) == Material.water && world.getBlockMetadata(x, y, z) == 0;
++            case Desert: return this == Blocks.sand;
++            case Nether: return this == Blocks.soul_sand;
++            case Crop:   return this == Blocks.farmland;
++            case Cave:   return isSideSolid(world, x, y, z, UP);
++            case Plains: return this == Blocks.grass || this == Blocks.dirt;
++            case Water:  return world.func_147439_a(x, y, z).func_149688_o() == Material.field_151586_h && world.getBlockMetadata(x, y, z) == 0;
 +            case Beach:
-+                boolean isBeach = (blockID == Block.grass.blockID || blockID == Block.dirt.blockID || blockID == Block.sand.blockID);
-+                boolean hasWater = (world.getBlockMaterial(x - 1, y, z    ) == Material.water ||
-+                                    world.getBlockMaterial(x + 1, y, z    ) == Material.water ||
-+                                    world.getBlockMaterial(x,     y, z - 1) == Material.water ||
-+                                    world.getBlockMaterial(x,     y, z + 1) == Material.water);
++                boolean isBeach = this == Blocks.grass || this == Blocks.dirt || this == Blocks.sand;
++                boolean hasWater = (world.func_147439_a(x - 1, y, z    ).func_149688_o() == Material.field_151586_h ||
++                                    world.func_147439_a(x + 1, y, z    ).func_149688_o() == Material.field_151586_h ||
++                                    world.func_147439_a(x,     y, z - 1).func_149688_o() == Material.field_151586_h ||
++                                    world.func_147439_a(x,     y, z + 1).func_149688_o() == Material.field_151586_h);
 +                return isBeach && hasWater;
 +        }
 +
@@ -989,9 +956,9 @@
 +     */
 +    public void onPlantGrow(World world, int x, int y, int z, int sourceX, int sourceY, int sourceZ)
 +    {
-+        if (blockID == grass.blockID)
++        if (this == Blocks.grass || this == Blocks.farmland)
 +        {
-+            world.setBlock(x, y, z, dirt.blockID, 0, 2);
++            world.func_147465_d(x, y, z, Blocks.dirt, 0, 2);
 +        }
 +    }
 +
@@ -1008,7 +975,7 @@
 +     */
 +    public boolean isFertile(World world, int x, int y, int z)
 +    {
-+        if (blockID == tilledField.blockID)
++        if (this == Blocks.farmland)
 +        {
 +            return world.getBlockMetadata(x, y, z) > 0;
 +        }
@@ -1030,9 +997,9 @@
 +     * @param z Z position
 +     * @return The amount of light to block, 0 for air, 255 for fully opaque.
 +     */
-+    public int getLightOpacity(World world, int x, int y, int z)
++    public int getLightOpacity(IBlockAccess world, int x, int y, int z)
 +    {
-+        return lightOpacity[blockID];
++        return func_149717_k();
 +    }
 +
 +    /**
@@ -1044,23 +1011,18 @@
 +     * @param z Z position
 +     * @return True to allow the ender dragon to destroy this block
 +     */
-+    public boolean canEntityDestroy(World world, int x, int y, int z, Entity entity)
++    public boolean canEntityDestroy(IBlockAccess world, int x, int y, int z, Entity entity)
 +    {
 +        if (entity instanceof EntityWither)
 +        {
-+            return blockID != Block.bedrock.blockID && blockID != Block.endPortal.blockID && blockID != Block.endPortalFrame.blockID;
++            return this != Blocks.bedrock && this != Blocks.end_portal && this != Blocks.end_portal_frame && this != Blocks.command_block;
 +        }
 +        else if (entity instanceof EntityDragon)
 +        {
-+            return canDragonDestroy(world, x, y, z);
++            return this != Blocks.obsidian && this != Blocks.end_stone && this != Blocks.bedrock; 
 +        }
 +
 +        return true;
-+    }
-+    @Deprecated
-+    public boolean canDragonDestroy(World world, int x, int y, int z)
-+    {
-+        return blockID != obsidian.blockID && blockID != whiteStone.blockID && blockID != bedrock.blockID;
 +    }
 +
 +    /**
@@ -1075,9 +1037,9 @@
 +     * @param beaconZ Beacons Z Position
 +     * @return True, to support the beacon, and make it active with this block.
 +     */
-+    public boolean isBeaconBase(World worldObj, int x, int y, int z, int beaconX, int beaconY, int beaconZ)
++    public boolean isBeaconBase(IBlockAccess worldObj, int x, int y, int z, int beaconX, int beaconY, int beaconZ)
 +    {
-+        return (blockID == blockEmerald.blockID || blockID == blockGold.blockID || blockID == blockDiamond.blockID || blockID == blockIron.blockID);
++        return this == Blocks.emerald_block || this == Blocks.gold_block || this == Blocks.diamond_block || this == Blocks.iron_block;
 +    }
 +
 +    /**
@@ -1122,8 +1084,9 @@
 +     */
 +    public float getEnchantPowerBonus(World world, int x, int y, int z)
 +    {
-+        return blockID == bookShelf.blockID ? 1 : 0;
++        return this == Blocks.bookshelf ? 1 : 0;
 +    }
++
 +    /**
 +     * Common way to recolour a block with an external tool
 +     * @param world The world
@@ -1136,7 +1099,7 @@
 +     */
 +    public boolean recolourBlock(World world, int x, int y, int z, ForgeDirection side, int colour)
 +    {
-+        if (blockID == cloth.blockID)
++        if (this == Blocks.wool)
 +        {
 +            int meta = world.getBlockMetadata(x, y, z);
 +            if (meta != colour)
@@ -1149,13 +1112,18 @@
 +    }
 +
 +    /**
-+     * @return the amount of XP that this block should drop when it is broken
++     * Gathers how much experience this block drops when broken.
++     * 
++     * @param world The world
++     * @param metadata
++     * @param fortune
++     * @return Amount of XP from breaking this block.
 +     */
-+    public int getExpDrop(World world, int data, int enchantmentLevel)
++    public int getExpDrop(IBlockAccess world, int metadata, int fortune)
 +    {
 +        return 0;
 +    }
-+    
++
 +    /**
 +     * Called when a tile entity on a side of this block changes is created or is destroyed.
 +     * @param world The world
@@ -1166,16 +1134,8 @@
 +     * @param tileY The y position of the tile that changed
 +     * @param tileZ The z position of the tile that changed
 +     */
-+    public void onNeighborTileChange(World world, int x, int y, int z, int tileX, int tileY, int tileZ)
++    public void onNeighborChange(IBlockAccess world, int x, int y, int z, int tileX, int tileY, int tileZ)
 +    {
-+    }
-+    
-+    /**
-+     * @return true if this block is to be notified of TileEntity changes directly through one solid block like comparators
-+     */
-+    public boolean weakTileChanges()
-+    {
-+        return false;
 +    }
 +
 +    /**
@@ -1187,12 +1147,105 @@
 +     * @param side The INPUT side of the block to be powered - ie the opposite of this block's output side
 +     * @return Whether Block#isProvidingWeakPower should be called when determining indirect power
 +     */
-+    public boolean shouldCheckWeakPower(World world, int x, int y, int z, int side)
++    public boolean shouldCheckWeakPower(IBlockAccess world, int x, int y, int z, int side)
 +    {
-+        return !this.isNormalCube(world.getBlockId(x, y, z));
++        return func_149721_r();
 +    }
 +
-+    @Deprecated //Implemented here as we changed the IFluidBlock interface, and this allows us to do so without breaking exisitng mods.
-+    // To be removed next MC version {1.6.3+}
-+    public float getFilledPercentage(World world, int x, int y, int z){ return 1; }
- }
++    /**
++     * If this block should be notified of weak changes.
++     * Weak changes are changes 1 block away through a solid block.
++     * Similar to comparators.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y position
++     * @param z Z position
++     * @param side The side to check
++     * @return true To be notified of changes
++     */
++    public boolean getWeakChanges(IBlockAccess world, int x, int y, int z)
++    {
++        return false;
++    }
++
++    private String[] harvestTool = new String[16];
++    private int[] harvestLevel = new int[]{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
++    /**
++     * Sets or removes the tool and level required to harvest this block.
++     * 
++     * @param toolClass Class
++     * @param level Harvest level:
++     *     Wood:    0
++     *     Stone:   1
++     *     Iton:    2
++     *     Diamond: 3
++     *     Gold:    0
++     */
++    public void setHarvestLevel(String toolClass, int level)
++    {
++        for (int m = 0; m < 16; m++)
++        {
++            setHarvestLevel(toolClass, level, m);
++        }
++    }
++    /**
++     * Sets or removes the tool and level required to harvest this block.
++     * 
++     * @param toolClass Class
++     * @param level Harvest level:
++     *     Wood:    0
++     *     Stone:   1
++     *     Iton:    2
++     *     Diamond: 3
++     *     Gold:    0
++     * @param metadata The specific metadata to set
++     */
++    public void setHarvestLevel(String toolClass, int level, int metadata)
++    {
++        this.harvestTool[metadata] = toolClass;
++        this.harvestLevel[metadata] = level;
++    }
++
++    /**
++     * Queries the class of tool required to harvest this block, if null is returned 
++     * we assume that anything can harvest this block.
++     * 
++     * @param metadata
++     * @return
++     */
++    public String getHarvestTool(int metadata)
++    {
++        return harvestTool[metadata];
++    }
++
++    /**
++     * Queries the harvest level of this item stack for the specifred tool class,
++     * Returns -1 if this tool is not of the specified type
++     * 
++     * @param stack This item stack instance
++     * @return Harvest level, or -1 if not the specified tool type.
++     */
++    public int getHarvestLevel(int metadata)
++    {
++        return harvestLevel[metadata];
++    }
++
++    /**
++     * Checks if the specified tool type is efficient on this block, 
++     * meaning that it digs at full speed.
++     * 
++     * @param type
++     * @param metadata
++     * @return
++     */
++    public boolean isToolEffective(String type, int metadata)
++    {
++        if (harvestTool[metadata] == null) return true;
++        return harvestTool[metadata].equals(type);
++    }
++    /* ========================================= FORGE END ======================================*/
++
+     public static class SoundType
+         {
+             public final String field_150501_a;

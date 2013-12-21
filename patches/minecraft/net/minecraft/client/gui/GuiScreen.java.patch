@@ -1,0 +1,42 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiScreen.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiScreen.java
+@@ -113,7 +113,9 @@
+             }
+         }
+ 
++        FontRenderer font = p_146285_1_.getItem().getFontRenderer(p_146285_1_);
+         this.func_146283_a(list, p_146285_2_, p_146285_3_);
++        drawHoveringText(list, p_146285_2_, p_146285_3_, (font == null ? field_146289_q : font));
+     }
+ 
+     protected void func_146279_a(String p_146279_1_, int p_146279_2_, int p_146279_3_)
+@@ -123,6 +125,11 @@
+ 
+     protected void func_146283_a(List p_146283_1_, int p_146283_2_, int p_146283_3_)
+     {
++        drawHoveringText(p_146283_1_, p_146283_2_, p_146283_3_, field_146289_q);   
++    }
++
++    protected void drawHoveringText(List p_146283_1_, int p_146283_2_, int p_146283_3_, FontRenderer font)
++    {
+         if (!p_146283_1_.isEmpty())
+         {
+             GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+@@ -135,7 +142,7 @@
+             while (iterator.hasNext())
+             {
+                 String s = (String)iterator.next();
+-                int l = this.field_146289_q.getStringWidth(s);
++                int l = font.getStringWidth(s);
+ 
+                 if (l > k)
+                 {
+@@ -180,7 +187,7 @@
+             for (int i2 = 0; i2 < p_146283_1_.size(); ++i2)
+             {
+                 String s1 = (String)p_146283_1_.get(i2);
+-                this.field_146289_q.drawStringWithShadow(s1, j2, k2, -1);
++                font.drawStringWithShadow(s1, j2, k2, -1);
+ 
+                 if (i2 == 0)
+                 {

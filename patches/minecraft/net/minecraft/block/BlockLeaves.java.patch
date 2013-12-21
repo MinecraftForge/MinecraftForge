@@ -1,84 +1,78 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLeaves.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLeaves.java
-@@ -2,6 +2,8 @@
+@@ -2,6 +2,7 @@
  
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
-+
 +import java.util.ArrayList;
- import java.util.List;
  import java.util.Random;
  import net.minecraft.block.material.Material;
-@@ -16,7 +18,9 @@
+ import net.minecraft.creativetab.CreativeTabs;
+@@ -15,8 +16,9 @@
+ import net.minecraft.world.ColorizerFoliage;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
- 
--public class BlockLeaves extends BlockLeavesBase
 +import net.minecraftforge.common.IShearable;
-+
-+public class BlockLeaves extends BlockLeavesBase implements IShearable
- {
-     public static final String[] LEAF_TYPES = new String[] {"oak", "spruce", "birch", "jungle"};
-     public static final String[][] field_94396_b = new String[][] {{"leaves_oak", "leaves_spruce", "leaves_birch", "leaves_jungle"}, {"leaves_oak_opaque", "leaves_spruce_opaque", "leaves_birch_opaque", "leaves_jungle_opaque"}};
-@@ -111,10 +115,9 @@
-                     {
-                         int j2 = par1World.getBlockId(par2 + k1, par3 + l1, par4 + i2);
  
--                        if (j2 == Block.leaves.blockID)
-+                        if (Block.blocksList[j2] != null)
+-public abstract class BlockLeaves extends BlockLeavesBase
++public abstract class BlockLeaves extends BlockLeavesBase implements IShearable
+ {
+     int[] field_150128_a;
+     @SideOnly(Side.CLIENT)
+@@ -82,10 +84,10 @@
+                 {
+                     for (int l1 = -b0; l1 <= b0; ++l1)
+                     {
+-                        if (p_149749_1_.func_147439_a(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1).func_149688_o() == Material.field_151584_j)
++                        Block block = p_149749_1_.func_147439_a(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
++                        if (block.isLeaves(p_149749_1_, p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1))
                          {
--                            int k2 = par1World.getBlockMetadata(par2 + k1, par3 + l1, par4 + i2);
--                            par1World.setBlockMetadataWithNotify(par2 + k1, par3 + l1, par4 + i2, k2 | 8, 4);
-+                            Block.blocksList[j2].beginLeavesDecay(par1World, par2 + k1, par3 + l1, par4 + i2);
+-                            int i2 = p_149749_1_.getBlockMetadata(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
+-                            p_149749_1_.setBlockMetadataWithNotify(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1, i2 | 8, 4);
++                            block.beginLeavesDecay(p_149749_1_, p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
                          }
                      }
                  }
-@@ -160,11 +163,13 @@
+@@ -127,9 +129,9 @@
                              {
-                                 k2 = par1World.getBlockId(par2 + l1, par3 + i2, par4 + j2);
+                                 Block block = p_149674_1_.func_147439_a(p_149674_2_ + l1, p_149674_3_ + i2, p_149674_4_ + j2);
  
--                                if (k2 == Block.wood.blockID)
-+                                Block block = Block.blocksList[k2];
-+
-+                                if (block != null && block.canSustainLeaves(par1World, par2 + l1, par3 + i2, par4 + j2))
+-                                if (block != Blocks.log && block != Blocks.log2)
++                                if (!block.canSustainLeaves(p_149674_1_, p_149674_2_ + l1, p_149674_3_ + i2, p_149674_4_ + j2))
                                  {
-                                     this.adjacentTreeBlocks[(l1 + k1) * j1 + (i2 + k1) * b1 + j2 + k1] = 0;
-                                 }
--                                else if (k2 == Block.leaves.blockID)
-+                                else if (block != null && block.isLeaves(par1World, par2 + l1, par3 + i2, par4 + j2))
-                                 {
-                                     this.adjacentTreeBlocks[(l1 + k1) * j1 + (i2 + k1) * b1 + j2 + k1] = -2;
-                                 }
-@@ -329,15 +334,7 @@
-      */
-     public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
+-                                    if (block.func_149688_o() == Material.field_151584_j)
++                                    if (block.isLeaves(p_149674_1_, p_149674_2_ + l1, p_149674_3_ + i2, p_149674_4_ + j2))
+                                     {
+                                         this.field_150128_a[(l1 + k1) * j1 + (i2 + k1) * b1 + j2 + k1] = -2;
+                                     }
+@@ -281,13 +283,7 @@
+ 
+     public void func_149636_a(World p_149636_1_, EntityPlayer p_149636_2_, int p_149636_3_, int p_149636_4_, int p_149636_5_, int p_149636_6_)
      {
--        if (!par1World.isRemote && par2EntityPlayer.getCurrentEquippedItem() != null && par2EntityPlayer.getCurrentEquippedItem().itemID == Item.shears.itemID)
--        {
--            par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
--            this.dropBlockAsItem_do(par1World, par3, par4, par5, new ItemStack(Block.leaves.blockID, 1, par6 & 3));
+-        if (!p_149636_1_.isRemote && p_149636_2_.getCurrentEquippedItem() != null && p_149636_2_.getCurrentEquippedItem().getItem() == Items.shears)
+         {
+-            p_149636_2_.addStat(StatList.mineBlockStatArray[Block.func_149682_b(this)], 1);
+-            this.func_149642_a(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, new ItemStack(Item.func_150898_a(this), 1, p_149636_6_ & 3));
 -        }
 -        else
 -        {
--            super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
--        }
-+        super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
-     }
- 
-     /**
-@@ -418,4 +415,30 @@
-             }
+             super.func_149636_a(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_);
          }
      }
+@@ -318,4 +314,38 @@
+     }
+ 
+     public abstract String[] func_150125_e();
++
 +
 +    @Override
-+    public boolean isShearable(ItemStack item, World world, int x, int y, int z)
++    public boolean isShearable(ItemStack item, IBlockAccess world, int x, int y, int z)
 +    {
 +        return true;
 +    }
 +
 +    @Override
-+    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int x, int y, int z, int fortune)
++    public ArrayList<ItemStack> onSheared(ItemStack item, IBlockAccess world, int x, int y, int z, int fortune)
 +    {
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
 +        ret.add(new ItemStack(this, 1, world.getBlockMetadata(x, y, z) & 3));
@@ -88,11 +82,18 @@
 +    @Override
 +    public void beginLeavesDecay(World world, int x, int y, int z)
 +    {
++
++        int i2 = world.getBlockMetadata(x, y, z);
++
++        if ((i2 & 8) == 0)
++        {
++            world.setBlockMetadataWithNotify(x, y, z, i2 | 8, 4);
++        }
 +        world.setBlockMetadataWithNotify(x, y, z, world.getBlockMetadata(x, y, z) | 8, 4);
 +    }
 +
 +    @Override
-+    public boolean isLeaves(World world, int x, int y, int z)
++    public boolean isLeaves(IBlockAccess world, int x, int y, int z)
 +    {
 +        return true;
 +    }

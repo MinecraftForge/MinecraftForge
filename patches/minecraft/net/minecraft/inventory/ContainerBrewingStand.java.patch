@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
+@@ -5,6 +5,7 @@
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.entity.player.InventoryPlayer;
+ import net.minecraft.init.Items;
++import net.minecraft.item.ItemPotion;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.stats.AchievementList;
+ import net.minecraft.tileentity.TileEntityBrewingStand;
+@@ -203,7 +204,7 @@
+ 
+             public void onPickupFromSlot(EntityPlayer par1EntityPlayer, ItemStack par2ItemStack)
+             {
+-                if (par2ItemStack.getItem() == Items.potionitem && par2ItemStack.getItemDamage() > 0)
++                if (par2ItemStack.getItem() instanceof ItemPotion && par2ItemStack.getItemDamage() > 0)
+                 {
+                     this.player.addStat(AchievementList.potion, 1);
+                 }
+@@ -214,7 +215,7 @@
+             // JAVADOC METHOD $$ func_75243_a_
+             public static boolean canHoldPotion(ItemStack par0ItemStack)
+             {
+-                return par0ItemStack != null && (par0ItemStack.getItem() == Items.potionitem || par0ItemStack.getItem() == Items.glass_bottle);
++                return par0ItemStack != null && (par0ItemStack.getItem() instanceof ItemPotion || par0ItemStack.getItem() == Items.glass_bottle);
+             }
+         }
+ }
