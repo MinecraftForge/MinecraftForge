@@ -7,7 +7,7 @@ import cpw.mods.fml.common.eventhandler.Event.*;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.MapGenBase;
-import net.minecraft.world.gen.NoiseGeneratorOctaves;
+import net.minecraft.world.gen.NoiseGenerator;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.*;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent.*;
@@ -17,7 +17,7 @@ import net.minecraftforge.event.terraingen.PopulateChunkEvent.*;
 
 public abstract class TerrainGen
 {
-    public static NoiseGeneratorOctaves[] getModdedNoiseGenerators(World world, Random rand, NoiseGeneratorOctaves[] original)
+    public static NoiseGenerator[] getModdedNoiseGenerators(World world, Random rand, NoiseGenerator[] original)
     {
         InitNoiseGensEvent event = new InitNoiseGensEvent(world, rand, original);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);

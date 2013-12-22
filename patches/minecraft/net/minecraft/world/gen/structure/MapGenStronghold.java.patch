@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/MapGenStronghold.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/MapGenStronghold.java
+@@ -11,6 +11,7 @@
+ import net.minecraft.world.ChunkPosition;
+ import net.minecraft.world.World;
+ import net.minecraft.world.biome.BiomeGenBase;
++import net.minecraftforge.common.BiomeManager;
+ 
+ public class MapGenStronghold extends MapGenStructure
+ {
+@@ -35,11 +36,18 @@
+         {
+             BiomeGenBase biomegenbase = abiomegenbase[j];
+ 
+-            if (biomegenbase != null && biomegenbase.minHeight > 0.0F)
++            if (biomegenbase != null && biomegenbase.minHeight > 0.0F && !BiomeManager.strongHoldBiomesBlackList.contains(biomegenbase))
+             {
+                 this.field_151546_e.add(biomegenbase);
+             }
+         }
++        for (BiomeGenBase biome : BiomeManager.strongHoldBiomes)
++        {
++            if (!this.field_151546_e.contains(biome))
++            {
++                this.field_151546_e.add(biome);
++            }
++        }
+     }
+ 
+     public MapGenStronghold(Map par1Map)
