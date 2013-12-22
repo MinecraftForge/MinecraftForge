@@ -34,15 +34,15 @@
              }
          }
 +
-+        NoiseGeneratorOctaves[] noiseGens = {field_147431_j, field_147432_k, field_147429_l, field_147430_m, noiseGen5, noiseGen6, mobSpawnerNoise};
++        NoiseGenerator[] noiseGens = {field_147431_j, field_147432_k, field_147429_l, field_147430_m, noiseGen5, noiseGen6, mobSpawnerNoise};
 +        noiseGens = TerrainGen.getModdedNoiseGenerators(par1World, this.rand, noiseGens);
-+        this.field_147431_j = noiseGens[0];
-+        this.field_147432_k = noiseGens[1];
-+        this.field_147429_l = noiseGens[2];
-+        this.field_147430_m = noiseGens[3];
-+        this.noiseGen5 = noiseGens[4];
-+        this.noiseGen6 = noiseGens[5];
-+        this.mobSpawnerNoise = noiseGens[6];
++        this.field_147431_j = (NoiseGeneratorOctaves)noiseGens[0];
++        this.field_147432_k = (NoiseGeneratorOctaves)noiseGens[1];
++        this.field_147429_l = (NoiseGeneratorOctaves)noiseGens[2];
++        this.field_147430_m = (NoiseGeneratorPerlin)noiseGens[3];
++        this.noiseGen5 = (NoiseGeneratorOctaves)noiseGens[4];
++        this.noiseGen6 = (NoiseGeneratorOctaves)noiseGens[5];
++        this.mobSpawnerNoise = (NoiseGeneratorOctaves)noiseGens[6];
      }
  
      public void func_147424_a(int p_147424_1_, int p_147424_2_, Block[] p_147424_3_)

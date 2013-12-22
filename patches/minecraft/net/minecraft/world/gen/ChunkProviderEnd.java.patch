@@ -16,13 +16,13 @@
          this.noiseGen4 = new NoiseGeneratorOctaves(this.endRNG, 10);
          this.noiseGen5 = new NoiseGeneratorOctaves(this.endRNG, 16);
 +
-+        NoiseGeneratorOctaves[] noiseGens = {noiseGen1, noiseGen2, noiseGen3, noiseGen4, noiseGen5};
++        NoiseGenerator[] noiseGens = {noiseGen1, noiseGen2, noiseGen3, noiseGen4, noiseGen5};
 +        noiseGens = TerrainGen.getModdedNoiseGenerators(par1World, this.endRNG, noiseGens);
-+        this.noiseGen1 = noiseGens[0];
-+        this.noiseGen2 = noiseGens[1];
-+        this.noiseGen3 = noiseGens[2];
-+        this.noiseGen4 = noiseGens[3];
-+        this.noiseGen5 = noiseGens[4];
++        this.noiseGen1 = (NoiseGeneratorOctaves)noiseGens[0];
++        this.noiseGen2 = (NoiseGeneratorOctaves)noiseGens[1];
++        this.noiseGen3 = (NoiseGeneratorOctaves)noiseGens[2];
++        this.noiseGen4 = (NoiseGeneratorOctaves)noiseGens[3];
++        this.noiseGen5 = (NoiseGeneratorOctaves)noiseGens[4];
      }
  
      public void func_147420_a(int p_147420_1_, int p_147420_2_, Block[] p_147420_3_, BiomeGenBase[] p_147420_4_)

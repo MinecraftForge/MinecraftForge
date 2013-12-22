@@ -32,15 +32,15 @@
          this.netherNoiseGen6 = new NoiseGeneratorOctaves(this.hellRNG, 10);
          this.netherNoiseGen7 = new NoiseGeneratorOctaves(this.hellRNG, 16);
 +
-+        NoiseGeneratorOctaves[] noiseGens = {netherNoiseGen1, netherNoiseGen2, netherNoiseGen3, slowsandGravelNoiseGen, netherrackExculsivityNoiseGen, netherNoiseGen6, netherNoiseGen7};
++        NoiseGenerator[] noiseGens = {netherNoiseGen1, netherNoiseGen2, netherNoiseGen3, slowsandGravelNoiseGen, netherrackExculsivityNoiseGen, netherNoiseGen6, netherNoiseGen7};
 +        noiseGens = TerrainGen.getModdedNoiseGenerators(par1World, this.hellRNG, noiseGens);
-+        this.netherNoiseGen1 = noiseGens[0];
-+        this.netherNoiseGen2 = noiseGens[1];
-+        this.netherNoiseGen3 = noiseGens[2];
-+        this.slowsandGravelNoiseGen = noiseGens[3];
-+        this.netherrackExculsivityNoiseGen = noiseGens[4];
-+        this.netherNoiseGen6 = noiseGens[5];
-+        this.netherNoiseGen7 = noiseGens[6];
++        this.netherNoiseGen1 = (NoiseGeneratorOctaves)noiseGens[0];
++        this.netherNoiseGen2 = (NoiseGeneratorOctaves)noiseGens[1];
++        this.netherNoiseGen3 = (NoiseGeneratorOctaves)noiseGens[2];
++        this.slowsandGravelNoiseGen = (NoiseGeneratorOctaves)noiseGens[3];
++        this.netherrackExculsivityNoiseGen = (NoiseGeneratorOctaves)noiseGens[4];
++        this.netherNoiseGen6 = (NoiseGeneratorOctaves)noiseGens[5];
++        this.netherNoiseGen7 = (NoiseGeneratorOctaves)noiseGens[6];
      }
  
      public void func_147419_a(int p_147419_1_, int p_147419_2_, Block[] p_147419_3_)

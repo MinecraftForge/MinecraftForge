@@ -16,6 +16,9 @@ import com.google.common.collect.Lists;
 
 public class BiomeManager
 {
+    public static ArrayList<BiomeGenBase> strongHoldBiomes = new ArrayList<BiomeGenBase>();
+    public static ArrayList<BiomeGenBase> strongHoldBiomesBlackList = new ArrayList<BiomeGenBase>();
+
     public static void addVillageBiome(BiomeGenBase biome, boolean canSpawn)
     {
         if (!MapGenVillage.villageSpawnBiomes.contains(biome))
@@ -38,17 +41,17 @@ public class BiomeManager
 
     public static void addStrongholdBiome(BiomeGenBase biome)
     {
-        if (!MapGenStronghold.field_151546_e.contains(biome))
+        if (!strongHoldBiomes.contains(biome))
         {
-            MapGenStronghold.field_151546_e.add(biome);
+            strongHoldBiomes.add(biome);
         }
     }
 
     public static void removeStrongholdBiome(BiomeGenBase biome)
     {
-        if (MapGenStronghold.field_151546_e.contains(biome))
+        if (!strongHoldBiomesBlackList.contains(biome))
         {
-            MapGenStronghold.field_151546_e.remove(biome);
+            strongHoldBiomesBlackList.add(biome);
         }
     }
 
