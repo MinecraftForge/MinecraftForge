@@ -208,9 +208,9 @@ public class ForgeHooks
         Blocks.iron_block.setHarvestLevel("pickaxe", 1);
         Blocks.lapis_ore.setHarvestLevel("pickaxe", 1);
         Blocks.lapis_block.setHarvestLevel("pickaxe", 1);
-        MinecraftForge.removeBlockEffectiveness(Blocks.redstone_ore, "pickaxe");
-        MinecraftForge.removeBlockEffectiveness(Blocks.obsidian,     "pickaxe");
-        MinecraftForge.removeBlockEffectiveness(Blocks.lit_redstone_ore, "pickaxe");
+        //MinecraftForge.removeBlockEffectiveness(Blocks.redstone_ore, "pickaxe");
+        //MinecraftForge.removeBlockEffectiveness(Blocks.obsidian,     "pickaxe");
+        //MinecraftForge.removeBlockEffectiveness(Blocks.lit_redstone_ore, "pickaxe");
     }
 
     public static int getTotalArmorValue(EntityPlayer player)

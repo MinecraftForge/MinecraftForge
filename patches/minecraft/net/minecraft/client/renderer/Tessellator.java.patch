@@ -89,7 +89,7 @@
  
 +            if (rawBufferSize > 0x20000 && field_147569_p < (rawBufferSize << 3))
 +            {
-+                field_147569_p = 0;
++                rawBufferSize = 0;
 +                rawBuffer = null;
 +            }
 +

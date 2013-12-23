@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/management/ItemInWorldManager.java
 +++ ../src-work/minecraft/net/minecraft/server/management/ItemInWorldManager.java
-@@ -7,12 +7,24 @@
+@@ -7,12 +7,23 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.item.ItemSword;
  import net.minecraft.network.play.server.S23PacketBlockChange;
@@ -8,7 +8,6 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
  import net.minecraft.world.WorldSettings;
- 
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
 +import cpw.mods.fml.common.eventhandler.Event;
@@ -17,7 +16,7 @@
 +import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 +import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 +import net.minecraftforge.event.world.BlockEvent;
-+
+ 
  public class ItemInWorldManager
  {
 +    /** Forge reach distance */
@@ -25,7 +24,7 @@
      // JAVADOC FIELD $$ field_73092_a
      public World theWorld;
      // JAVADOC FIELD $$ field_73090_b
-@@ -133,6 +145,13 @@
+@@ -133,6 +144,13 @@
      {
          if (!this.gameType.isAdventure() || this.thisPlayerMP.isCurrentToolAdventureModeExempt(par1, par2, par3))
          {
@@ -39,7 +38,7 @@
              if (this.isCreative())
              {
                  if (!this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4))
-@@ -142,19 +161,36 @@
+@@ -142,19 +160,36 @@
              }
              else
              {
@@ -81,7 +80,7 @@
                      this.tryHarvestBlock(par1, par2, par3);
                  }
                  else
-@@ -178,7 +214,7 @@
+@@ -178,7 +213,7 @@
              int l = this.curblockDamage - this.initialDamage;
              Block block = this.theWorld.func_147439_a(par1, par2, par3);
  
@@ -90,7 +89,7 @@
              {
                  float f = block.func_149737_a(this.thisPlayerMP, this.thisPlayerMP.worldObj, par1, par2, par3) * (float)(l + 1);
  
-@@ -214,7 +250,7 @@
+@@ -214,7 +249,7 @@
          Block block = this.theWorld.func_147439_a(par1, par2, par3);
          int l = this.theWorld.getBlockMetadata(par1, par2, par3);
          block.func_149681_a(this.theWorld, par1, par2, par3, l, this.thisPlayerMP);
@@ -99,7 +98,7 @@
  
          if (flag)
          {
-@@ -227,29 +263,32 @@
+@@ -227,29 +262,32 @@
      // JAVADOC METHOD $$ func_73084_b
      public boolean tryHarvestBlock(int par1, int par2, int par3)
      {
@@ -139,7 +138,7 @@
  
                  if (itemstack != null)
                  {
-@@ -261,12 +300,18 @@
+@@ -261,12 +299,18 @@
                      }
                  }
  
@@ -158,7 +157,7 @@
              return flag;
          }
      }
-@@ -299,6 +344,7 @@
+@@ -299,6 +343,7 @@
              if (itemstack1.stackSize == 0)
              {
                  par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
@@ -166,7 +165,7 @@
              }
  
              if (!par1EntityPlayer.isUsingItem())
-@@ -313,27 +359,56 @@
+@@ -313,27 +358,57 @@
      // JAVADOC METHOD $$ func_73078_a
      public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
      {
@@ -187,6 +186,7 @@
 +            return true;
          }
 -        else if (this.isCreative())
++
 +        Block block = par2World.func_147439_a(par4, par5, par6);
 +        boolean isAir = block.isAir(par2World, par4, par5, par6);
 +        boolean useBlock = !par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null;

@@ -5,7 +5,7 @@
              par7 = 1;
          }
 -        else if (block != Blocks.vine && block != Blocks.tallgrass && block != Blocks.deadbush)
-+        else if (block != Blocks.vine && block != Blocks.tallgrass && block != Blocks.deadbush && block.isReplaceable(par3World, par4, par5, par6))
++        else if (block != Blocks.vine && block != Blocks.tallgrass && block != Blocks.deadbush && !block.isReplaceable(par3World, par4, par5, par6))
          {
              if (par7 == 0)
              {
@@ -30,7 +30,7 @@
              p_150936_5_ = 1;
          }
 -        else if (block != Blocks.vine && block != Blocks.tallgrass && block != Blocks.deadbush)
-+        else if (block != Blocks.vine && block != Blocks.tallgrass && block != Blocks.deadbush && block.isReplaceable(p_150936_1_, p_150936_2_, p_150936_3_, p_150936_4_))
++        else if (block != Blocks.vine && block != Blocks.tallgrass && block != Blocks.deadbush && !block.isReplaceable(p_150936_1_, p_150936_2_, p_150936_3_, p_150936_4_))
          {
              if (p_150936_5_ == 0)
              {

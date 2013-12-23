@@ -145,7 +145,7 @@
      public EntityItem func_146097_a(ItemStack p_146097_1_, boolean p_146097_2_, boolean p_146097_3_)
 @@ -765,13 +817,25 @@
      // JAVADOC METHOD $$ func_71012_a
-     protected void joinEntityItemWithWorld(EntityItem par1EntityItem)
+     public void joinEntityItemWithWorld(EntityItem par1EntityItem)
      {
 +        if (captureDrops)
 +        {

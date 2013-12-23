@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.Event;
-
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -184,7 +184,7 @@ public class OreDictionary
         recipes.addAll(recipesToAdd);
         if (recipesToRemove.size() > 0)
         {
-            System.out.println("Replaced " + recipesToRemove.size() + " ore recipies");
+            FMLLog.info("Replaced %d ore recipies", recipesToRemove.size());
         }
     }
 

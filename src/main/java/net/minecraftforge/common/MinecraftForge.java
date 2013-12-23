@@ -67,7 +67,6 @@ public class MinecraftForge
     */
    public static void initialize()
    {
-       System.out.printf("MinecraftForge v%s Initialized\n", ForgeVersion.getVersion());
        FMLLog.info("MinecraftForge v%s Initialized", ForgeVersion.getVersion());
 
        EVENT_BUS.register(INTERNAL_HANDLER);
