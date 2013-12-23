@@ -19,7 +19,7 @@ public class ForgeNetworkHandler
 
     public static void registerChannel(ForgeModContainer forgeModContainer, Side side)
     {
-        channelPair = NetworkRegistry.INSTANCE.newChannel(forgeModContainer, "FML", new FMLRuntimeCodec(), new HandshakeCompletionHandler());
+        channelPair = NetworkRegistry.INSTANCE.newChannel(forgeModContainer, "FORGE", new ForgeRuntimeCodec(), new HandshakeCompletionHandler());
         EmbeddedChannel embeddedChannel = channelPair.get(Side.SERVER);
         embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.NOWHERE);
 
