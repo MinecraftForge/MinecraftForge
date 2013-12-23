@@ -35,7 +35,7 @@
      {
 -        this.field_149849_a[p_149842_1_] = p_149842_2_;
 -        this.field_149848_b[p_149842_1_] = p_149842_3_;
-+        this.setFireInfo((Block)Block.field_149771_c.getObject(p_149842_1_), p_149842_2_, p_149842_3_);
++        this.setFireInfo((Block)Block.field_149771_c.func_148754_a(p_149842_1_), p_149842_2_, p_149842_3_);
      }
  
      public AxisAlignedBB func_149668_a(World p_149668_1_, int p_149668_2_, int p_149668_3_, int p_149668_4_)
