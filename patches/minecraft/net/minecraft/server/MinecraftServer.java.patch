@@ -181,3 +181,11 @@
                  worldserver.flush();
              }
          }
+@@ -1494,7 +1492,6 @@
+         this.field_147141_M = p_155759_1_;
+     }
+ 
+-    @SideOnly(Side.SERVER)
+     public boolean isServerStopped()
+     {
+         return this.serverStopped;
