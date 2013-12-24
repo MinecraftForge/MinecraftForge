@@ -615,6 +615,7 @@ public class GuiIngameForge extends GuiIngame
     protected void renderHUDText(int width, int height)
     {
         mc.mcProfiler.startSection("forgeHudText");
+        OpenGlHelper.func_148821_a(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         ArrayList<String> left = new ArrayList<String>();
         ArrayList<String> right = new ArrayList<String>();
 
