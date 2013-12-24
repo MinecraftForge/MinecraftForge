@@ -57,7 +57,7 @@ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
             {
                 ctx.writeAndFlush(new FMLHandshakeMessage.ModIdData(GameData.buildItemDataList()));
             }
-            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck());
+            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal()));
             NetworkRegistry.INSTANCE.fireNetworkHandshake(ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get(), Side.SERVER);
             return COMPLETE;
         }
@@ -67,6 +67,8 @@ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
         @Override
         public FMLHandshakeServerState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
         {
+            // Poke the client
+            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal()));
             FMLMessage.CompleteHandshake complete = new FMLMessage.CompleteHandshake(Side.SERVER);
             ctx.fireChannelRead(complete);
             return DONE;

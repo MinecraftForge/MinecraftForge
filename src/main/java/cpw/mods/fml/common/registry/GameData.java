@@ -214,7 +214,7 @@ public class GameData {
         }
     }
 
-    public static boolean injectWorldIDMap(Map<String, Integer> dataList)
+    public static boolean injectWorldIDMap(Map<String, Integer> dataList, boolean injectFrozenData)
     {
         Map<String, Integer[]> remaps = Maps.newHashMap();
         ArrayListMultimap<String,String> missing = ArrayListMultimap.create();
@@ -265,6 +265,46 @@ public class GameData {
             return false;
         }
 
+        if (injectFrozenData)
+        {
+            FMLLog.info("Injecting new block and item data from this server instance");
+            Map<String, Integer> missingBlocks = Maps.newHashMap(blockRegistry.getMissingMappings());
+            Map<String, Integer> missingItems = Maps.newHashMap(itemRegistry.getMissingMappings());
+
+            for (Entry<String, Integer> item: missingItems.entrySet())
+            {
+                String itemName = item.getKey();
+                if (missingBlocks.containsKey(itemName))
+                {
+                    FMLLog.info("Injecting new block/item %s", itemName);
+                    int blockId = blockRegistry.swap(item.getValue(), itemName, blockRegistry.get(itemName));
+                    itemRegistry.swap(blockId, itemName, itemRegistry.get(itemName));
+                    missingBlocks.remove(itemName);
+                    if (Integer.valueOf(blockId) != item.getValue())
+                    {
+                        remaps.put(itemName, new Integer[] { item.getValue(), blockId });
+                    }
+                }
+                else
+                {
+                    FMLLog.info("Injecting new item %s", itemName);
+                    int itemId = itemRegistry.swap(item.getValue(), itemName, itemRegistry.get(itemName));
+                    if (Integer.valueOf(itemId) != item.getValue())
+                    {
+                        remaps.put(itemName, new Integer[] { item.getValue(), itemId });
+                    }
+                }
+            }
+            for (Entry<String, Integer> block : missingBlocks.entrySet())
+            {
+                FMLLog.info("Injecting new block %s", block.getKey());
+                int blockId = blockRegistry.swap(block.getValue(), block.getKey(), blockRegistry.get(block.getKey()));
+                if (Integer.valueOf(blockId) != block.getValue())
+                {
+                    remaps.put(block.getKey(), new Integer[] { block.getValue(), blockId });
+                }
+            }
+        }
         blockRegistry.completeIdSwap();
         itemRegistry.completeIdSwap();
         Loader.instance().fireRemapEvent(remaps);
@@ -297,5 +337,19 @@ public class GameData {
             FMLLog.fine("There were %d missing mappings that have been ignored", ignored.size());
         }
         return true;
+    }
+
+    public static void freezeData()
+    {
+        FMLLog.fine("Freezing block and item id maps");
+        blockRegistry.freezeMap();
+        itemRegistry.freezeMap();
+    }
+
+    public static void revertToFrozen()
+    {
+        FMLLog.fine("Reverting to frozen data state");
+        blockRegistry.revertToFrozen();
+        itemRegistry.revertToFrozen();
     }
 }

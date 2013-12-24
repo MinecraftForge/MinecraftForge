@@ -1,28 +1,27 @@
 package cpw.mods.fml.common.registry;
 
 import gnu.trove.map.hash.TIntIntHashMap;
-
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.RegistryNamespaced;
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Ints;
-
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 
 public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     static class FMLObjectIntIdentityMap extends ObjectIntIdentityMap {
+        private TIntIntHashMap frozenMap;
         private TIntIntHashMap oldMap;
         private TIntIntHashMap newMap;
+        private ArrayList<Integer> frozenIndex;
         private ArrayList<Integer> oldIndex;
         private ArrayList<Integer> newIndex;
 
@@ -54,6 +53,18 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
             newIndex = new ArrayList<Integer>(oldIndex.size());
         }
 
+        @SuppressWarnings("unchecked")
+        void freezeMap()
+        {
+            frozenMap = new TIntIntHashMap(field_148749_a);
+            frozenIndex = new ArrayList<Integer>(field_148748_b);
+        }
+
+        void revertToFrozen()
+        {
+            field_148749_a = frozenMap;
+            field_148748_b = frozenIndex;
+        }
         void completeSwap()
         {
             field_148749_a = newMap;
@@ -91,6 +102,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     private I optionalDefaultObject;
 
     private BiMap<String,Integer> namedIds = HashBiMap.create();
+    private BiMap<String,Integer> frozenIds;
     private Map<String,Integer> transactionalNamedIds;
     private BitSet availabilityMap;
     private int maxId;
@@ -114,6 +126,11 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         add(id, name, superType.cast(thing));
     }
 
+    int swap(int id, String name, I thing)
+    {
+        field_82596_a.remove(name);
+        return add(id, name, thing);
+    }
     public int add(int id, String name, I thing)
     {
         if (name.equals(optionalDefaultName))
@@ -182,6 +199,25 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         transactionalNamedIds.put(name,newId);
     }
 
+    void freezeMap()
+    {
+        if (frozenIds == null)
+        {
+            frozenIds = ImmutableBiMap.copyOf(namedIds);
+            idMap().freezeMap();
+        }
+    }
+
+    void revertToFrozen()
+    {
+        namedIds = HashBiMap.create(frozenIds);
+        idMap().revertToFrozen();
+    }
+
+    Map<String,Integer> getMissingMappings()
+    {
+        return Maps.difference(frozenIds, transactionalNamedIds).entriesOnlyOnLeft();
+    }
     void completeIdSwap()
     {
         idMap().completeSwap();
@@ -232,7 +268,14 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
 
     public int getId(String itemName)
     {
-        return namedIds.get(itemName);
+        if (namedIds.containsKey(itemName))
+        {
+            return namedIds.get(itemName);
+        }
+        else
+        {
+            return -1;
+        }
     }
 
     public boolean contains(String itemName)

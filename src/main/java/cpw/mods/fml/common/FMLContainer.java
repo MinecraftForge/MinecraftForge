@@ -146,7 +146,7 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
                 NBTTagCompound dataTag = list.func_150305_b(i);
                 dataList.put(dataTag.func_74779_i("K"), dataTag.func_74762_e("V"));
             }
-            boolean successfullyInjected = GameData.injectWorldIDMap(dataList);
+            boolean successfullyInjected = GameData.injectWorldIDMap(dataList, true);
             if (!successfullyInjected)
             {
                 throw new RuntimeException("Failed to load the world - there are fatal block and item id issues");

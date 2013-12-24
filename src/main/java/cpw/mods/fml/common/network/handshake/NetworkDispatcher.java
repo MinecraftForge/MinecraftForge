@@ -36,7 +36,7 @@ import cpw.mods.fml.relauncher.Side;
 
 public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> implements ChannelOutboundHandler {
     private static enum ConnectionState {
-        OPENING, AWAITING_HANDSHAKE, HANDSHAKING, CONNECTED;
+        OPENING, AWAITING_HANDSHAKE, HANDSHAKING, HANDSHAKECOMPLETE, CONNECTED;
     }
 
     private static enum ConnectionType {
@@ -172,12 +172,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         {
             handled = handleClientSideCustomPacket((S3FPacketCustomPayload)msg, ctx);
         }
-        else if (msg instanceof S40PacketDisconnect && state != ConnectionState.CONNECTED)
-        {
-            // Switch to play state to handle the disconnect message
-            completeClientSideConnection();
-        }
-        else if (state != ConnectionState.CONNECTED)
+        else if (state != ConnectionState.CONNECTED && state != ConnectionState.HANDSHAKECOMPLETE)
         {
             FMLLog.info("Unexpected packet during modded negotiation - assuming vanilla or keepalives : %s", msg.getClass().getName());
         }
@@ -379,6 +374,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     {
         if (state == ConnectionState.CONNECTED)
         {
+            FMLLog.severe("Attempt to double complete the network connection!");
             throw new FMLNetworkException("Attempt to double complete!");
         }
         if (side == Side.CLIENT)
@@ -389,5 +385,10 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         {
             completeServerSideConnection();
         }
+    }
+
+    public void completeClientHandshake()
+    {
+        state = ConnectionState.HANDSHAKECOMPLETE;
     }
 }

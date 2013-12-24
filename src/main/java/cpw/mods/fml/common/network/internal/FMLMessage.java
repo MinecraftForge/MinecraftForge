@@ -21,7 +21,8 @@ import cpw.mods.fml.relauncher.Side;
 public abstract class FMLMessage {
     public static class CompleteHandshake extends FMLMessage {
         Side target;
-        public CompleteHandshake() {}
+        public CompleteHandshake() {
+        }
         public CompleteHandshake(Side target)
         {
             this.target = target;
