@@ -81,25 +81,7 @@ public class ForgeHooks
             this.seed = seed;
         }
     }
-    static final List<GrassEntry> grassList = new ArrayList<GrassEntry>();
     static final List<SeedEntry> seedList = new ArrayList<SeedEntry>();
-
-    public static void plantGrass(World world, Random rand, int x, int y, int z)
-    {
-        BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
-        String flowername = biome.func_150572_a(rand, x, y, z);
-        
-        /*
-        field_149992_a.debug("Flower in " + p_149853_1_.getBiomeGenForCoords(i1, k1).biomeName + ": " + s);
-        BlockFlower blockflower = BlockFlower.func_149857_e(s);
-        */
-        GrassEntry grass = (GrassEntry)WeightedRandom.getRandomItem(world.rand, grassList);
-        if (grass == null || grass.block == null || !grass.block.func_149718_j(world, x, y, z))
-        {
-            return;
-        }
-        world.func_147465_d(x, y, z, grass.block, grass.metadata, 3);
-    }
 
     public static ItemStack getGrassSeed(World world)
     {
@@ -112,7 +94,7 @@ public class ForgeHooks
     }
 
     private static boolean toolInit = false;
-    static HashSet<List> toolEffectiveness = new HashSet<List>();
+    //static HashSet<List> toolEffectiveness = new HashSet<List>();
 
     public static boolean canHarvestBlock(Block block, EntityPlayer player, int metadata)
     {
@@ -233,8 +215,6 @@ public class ForgeHooks
 
     static
     {
-        grassList.add(new GrassEntry(Blocks.yellow_flower, 0, 20));
-        grassList.add(new GrassEntry(Blocks.red_flower,    0, 10));
         seedList.add(new SeedEntry(new ItemStack(Items.wheat_seeds), 10));
         initTools();
     }

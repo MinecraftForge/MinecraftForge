@@ -64,7 +64,7 @@
 +        updateFilteredItems(containercreative);
 +    }
  
-+    //split from above for sutom search tabs
++    //split from above for custom search tabs
 +    private void updateFilteredItems(GuiContainerCreative.ContainerCreative containercreative)
 +    {
 +        Iterator iterator;

@@ -38,18 +38,6 @@ public class MinecraftForge
 
     private static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();
 
-
-    /** Register a new plant to be planted when bonemeal is used on grass.
-     * @param block The block to place.
-     * @param metadata The metadata to set for the block when being placed.
-     * @param weight The weight of the plant, where red flowers are
-     *               10 and yellow flowers are 20.
-     */
-    public static void addGrassPlant(Block block, int metadata, int weight)
-    {
-        ForgeHooks.grassList.add(new GrassEntry(block, metadata, weight));
-    }
-
     /**
      * Register a new seed to be dropped when breaking tall grass.
      *
