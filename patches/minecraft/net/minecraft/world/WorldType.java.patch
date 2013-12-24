@@ -116,7 +116,7 @@
 +     * @param parentLayer The parent layer to feed into any layer you return
 +     * @return A GenLayer that will return ints representing the Biomes to be generated, see GenLayerBiome
 +     */
-+    public GenLayer getBiomeLayer(int worldSeed, GenLayer parentLayer)
++    public GenLayer getBiomeLayer(long worldSeed, GenLayer parentLayer)
 +    {
 +        GenLayer ret = new GenLayerBiome(200L, parentLayer, this);
 +        ret = GenLayerZoom.magnify(1000L, ret, 2);

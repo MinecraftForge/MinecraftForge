@@ -19,7 +19,7 @@
          GenLayer genlayer = GenLayerZoom.magnify(1000L, genlayer3, 0);
          GenLayerRiverInit genlayerriverinit = new GenLayerRiverInit(100L, genlayer);
 -        Object object = new GenLayerBiome(200L, genlayer3, par2WorldType);
-+        Object object = par2WorldType.getBiomeLayer(flag, genlayer3);
++        Object object = par2WorldType.getBiomeLayer(par0, genlayer3);
  
 -        if (!flag)
 -        {

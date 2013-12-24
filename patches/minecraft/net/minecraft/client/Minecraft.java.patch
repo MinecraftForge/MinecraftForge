@@ -146,7 +146,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2287,113 +2322,10 @@
+@@ -2288,113 +2323,10 @@
          if (this.objectMouseOver != null)
          {
              boolean flag = this.thePlayer.capabilities.isCreativeMode;
@@ -262,7 +262,7 @@
              if (flag)
              {
                  j = this.thePlayer.inventoryContainer.inventorySlots.size() - 9 + this.thePlayer.inventory.currentItem;
-@@ -2563,9 +2495,16 @@
+@@ -2564,9 +2496,16 @@
          par1PlayerUsageSnooper.addData("gl_max_texture_size", Integer.valueOf(getGLMaximumTextureSize()));
      }
  
@@ -279,7 +279,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
-@@ -2573,6 +2512,7 @@
+@@ -2574,6 +2513,7 @@
  
              if (j != 0)
              {
