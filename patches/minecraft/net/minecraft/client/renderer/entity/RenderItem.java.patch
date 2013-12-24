@@ -160,10 +160,17 @@
                  int i1 = par3ItemStack.getItem().getColorFromItemStack(par3ItemStack, l);
                  f = (float)(i1 >> 16 & 255) / 255.0F;
                  float f1 = (float)(i1 >> 8 & 255) / 255.0F;
-@@ -442,6 +479,11 @@
+@@ -441,7 +478,18 @@
+                     GL11.glColor4f(f, f1, f2, 1.0F);
                  }
  
++                GL11.glDisable(GL11.GL_LIGHTING); //Forge: Make sure that render states are reset, ad renderEffect can derp them up.
++                GL11.glEnable(GL11.GL_ALPHA_TEST);
++
                  this.renderIcon(par4, par5, iicon, 16, 16);
++
++                GL11.glDisable(GL11.GL_ALPHA_TEST);
++                GL11.glEnable(GL11.GL_LIGHTING);
 +
 +                if (renderEffect && par3ItemStack.hasEffect(l))
 +                {
@@ -172,19 +179,27 @@
              }
  
              GL11.glDisable(GL11.GL_ALPHA_TEST);
-@@ -469,6 +511,11 @@
+@@ -468,8 +516,19 @@
+                 GL11.glColor4f(f4, f3, f, 1.0F);
              }
  
++            GL11.glDisable(GL11.GL_LIGHTING); //Forge: Make sure that render states are reset, ad renderEffect can derp them up.
++            GL11.glEnable(GL11.GL_ALPHA_TEST);
++
              this.renderIcon(par4, par5, (IIcon)object, 16, 16);
++
++            GL11.glDisable(GL11.GL_ALPHA_TEST);
+             GL11.glEnable(GL11.GL_LIGHTING);
 +
 +            if (renderEffect && par3ItemStack.hasEffect(0))
 +            {
 +                renderEffect(par2TextureManager, par4, par5);
 +            }
-             GL11.glEnable(GL11.GL_LIGHTING);
++            GL11.glEnable(GL11.GL_LIGHTING);
          }
  
-@@ -484,7 +531,10 @@
+         GL11.glEnable(GL11.GL_CULL_FACE);
+@@ -484,7 +543,10 @@
  
              try
              {
@@ -196,7 +211,7 @@
              }
              catch (Throwable throwable)
              {
-@@ -525,6 +575,7 @@
+@@ -525,6 +587,7 @@
                  throw new ReportedException(crashreport);
              }
  
@@ -204,7 +219,7 @@
              if (par3ItemStack.hasEffect())
              {
                  GL11.glDepthFunc(GL11.GL_EQUAL);
-@@ -540,11 +591,28 @@
+@@ -540,11 +603,28 @@
                  GL11.glEnable(GL11.GL_LIGHTING);
                  GL11.glDepthFunc(GL11.GL_LEQUAL);
              }
@@ -233,7 +248,7 @@
      private void renderGlint(int par1, int par2, int par3, int par4, int par5)
      {
          for (int j1 = 0; j1 < 2; ++j1)
-@@ -649,4 +717,42 @@
+@@ -649,4 +729,42 @@
      {
          this.doRender((EntityItem)par1Entity, par2, par4, par6, par8, par9);
      }
