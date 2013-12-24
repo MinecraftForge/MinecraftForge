@@ -143,15 +143,18 @@
          int k = par3ItemStack.getItemDamage();
          Object object = par3ItemStack.getIconIndex();
          GL11.glEnable(GL11.GL_BLEND);
-@@ -428,9 +463,11 @@
+@@ -426,11 +461,13 @@
+             GL11.glColorMask(true, true, true, true);
+             GL11.glEnable(GL11.GL_TEXTURE_2D);
              GL11.glEnable(GL11.GL_ALPHA_TEST);
-             OpenGlHelper.func_148821_a(770, 771, 1, 0);
+-            OpenGlHelper.func_148821_a(770, 771, 1, 0);
  
 -            for (l = 0; l <= 1; ++l)
 +            Item item = par3ItemStack.getItem();
-+            for (l = 0; l <= item.getRenderPasses(k); ++l)
++            for (l = 0; l < item.getRenderPasses(k); ++l)
              {
 -                IIcon iicon = par3ItemStack.getItem().getIconFromDamageForRenderPass(k, l);
++                OpenGlHelper.func_148821_a(770, 771, 1, 0);
 +                par2TextureManager.bindTexture(item.getSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
 +                IIcon iicon = item.getIcon(par3ItemStack, l);
                  int i1 = par3ItemStack.getItem().getColorFromItemStack(par3ItemStack, l);
