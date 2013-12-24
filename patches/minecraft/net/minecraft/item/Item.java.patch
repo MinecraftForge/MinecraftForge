@@ -563,7 +563,7 @@
 +    @SideOnly(Side.CLIENT)
 +    public boolean hasEffect(ItemStack par1ItemStack, int pass)
 +    {
-+        return hasEffect(par1ItemStack) && (pass == 0 || this == Items.potionitem);
++        return hasEffect(par1ItemStack) && (pass == 0 || this != Items.potionitem);
 +    }
 +
 +    /**
