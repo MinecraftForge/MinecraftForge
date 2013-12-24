@@ -57,14 +57,14 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
                 dispatcher.rejectHandshake(result);
                 return ERROR;
             }
-            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck());
+            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal()));
             if (!ctx.channel().attr(NetworkDispatcher.IS_LOCAL).get())
             {
                 return WAITINGSERVERCOMPLETE;
             }
             else
             {
-                return COMPLETE;
+                return PENDINGCOMPLETE;
             }
         }
     },
@@ -74,13 +74,22 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
         public FMLHandshakeClientState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
         {
             FMLHandshakeMessage.ModIdData modIds = (FMLHandshakeMessage.ModIdData)msg;
-            if (!GameData.injectWorldIDMap(modIds.dataList()))
+            if (!GameData.injectWorldIDMap(modIds.dataList(), false))
             {
                 NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
                 dispatcher.rejectHandshake("Fatally missing blocks and items");
                 return ERROR;
             }
-            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck());
+            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal()));
+            return PENDINGCOMPLETE;
+        }
+    },
+    PENDINGCOMPLETE
+    {
+        @Override
+        public FMLHandshakeClientState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
+        {
+            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal()));
             return COMPLETE;
         }
     },
@@ -89,9 +98,11 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
         @Override
         public FMLHandshakeClientState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
         {
-            FMLMessage.CompleteHandshake complete = new FMLMessage.CompleteHandshake(Side.SERVER);
-            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck());
+            NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+            dispatcher.completeClientHandshake();
+            FMLMessage.CompleteHandshake complete = new FMLMessage.CompleteHandshake(Side.CLIENT);
             ctx.fireChannelRead(complete);
+            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal()));
             return DONE;
         }
     },

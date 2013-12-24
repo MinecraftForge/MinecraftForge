@@ -110,6 +110,12 @@ public abstract class FMLHandshakeMessage {
         {
             return modTags;
         }
+
+        @Override
+        public String toString(Class<? extends Enum<?>> side)
+        {
+            return super.toString(side)+":"+modTags.size()+" mods";
+        }
     }
 
     public static class ModIdData extends FMLHandshakeMessage {
@@ -150,9 +156,35 @@ public abstract class FMLHandshakeMessage {
         {
             return modIds;
         }
+        @Override
+        public String toString(Class<? extends Enum<?>> side)
+        {
+            return super.toString(side) + ":"+modIds.size()+" mappings";
+        }
     }
     public static class HandshakeAck extends FMLHandshakeMessage {
+        int phase;
+        public HandshakeAck() {}
+        HandshakeAck(int phase)
+        {
+            this.phase = phase;
+        }
+        @Override
+        public void fromBytes(ByteBuf buffer)
+        {
+            phase = buffer.readByte();
+        }
 
+        @Override
+        public void toBytes(ByteBuf buffer)
+        {
+            buffer.writeByte(phase);
+        }
+        @Override
+        public String toString(Class<? extends Enum<?>> side)
+        {
+            return super.toString(side) + ":{"+phase+"}";
+        }
     }
     public void fromBytes(ByteBuf buffer)
     {
@@ -162,5 +194,8 @@ public abstract class FMLHandshakeMessage {
     {
     }
 
-
+    public String toString(Class<? extends Enum<?>> side)
+    {
+        return getClass().getName().substring(getClass().getName().lastIndexOf('$'));
+    }
 }

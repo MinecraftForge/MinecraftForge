@@ -1,5 +1,6 @@
 package cpw.mods.fml.common.network.handshake;
 
+import cpw.mods.fml.common.FMLLog;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
@@ -8,17 +9,20 @@ public class HandshakeMessageHandler<S extends Enum<S> & IHandshakeState<S>> ext
     private static final AttributeKey<IHandshakeState<?>> STATE = new AttributeKey<IHandshakeState<?>>("fml:handshake-state");
     private final AttributeKey<S> fmlHandshakeState;
     private S initialState;
+    private Class<S> stateType;
 
     @SuppressWarnings("unchecked")
     public HandshakeMessageHandler(Class<S> stateType)
     {
         fmlHandshakeState = (AttributeKey<S>) ((Object)STATE);
         initialState = Enum.valueOf(stateType, "START");
+        this.stateType = stateType;
     }
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FMLHandshakeMessage msg) throws Exception
     {
         S state = ctx.attr(fmlHandshakeState).get();
+        FMLLog.info(msg.toString(stateType) + "->" + state.getClass().getName().substring(state.getClass().getName().lastIndexOf('.')+1)+":"+state);
         S newState = state.accept(ctx, msg);
         ctx.attr(fmlHandshakeState).set(newState);
     }

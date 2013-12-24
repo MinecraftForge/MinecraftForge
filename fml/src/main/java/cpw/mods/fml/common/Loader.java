@@ -496,6 +496,7 @@ public class Loader
         }
         modController.transition(LoaderState.PREINITIALIZATION, false);
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, disc.getASMTable(), canonicalConfigDir);
+        GameData.freezeData();
         modController.transition(LoaderState.INITIALIZATION, false);
     }
 
@@ -778,6 +779,7 @@ public class Loader
 
     public void serverStopped()
     {
+        GameData.revertToFrozen();
         modController.distributeStateMessage(LoaderState.SERVER_STOPPED);
         modController.transition(LoaderState.SERVER_STOPPED, true);
         modController.transition(LoaderState.AVAILABLE, true);

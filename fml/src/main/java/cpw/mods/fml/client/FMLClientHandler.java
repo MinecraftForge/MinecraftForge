@@ -54,6 +54,7 @@ import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.WrongMinecraftVersionException;
+import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.toposort.ModSortingException;
 import cpw.mods.fml.relauncher.Side;
 
@@ -487,5 +488,10 @@ public class FMLClientHandler implements IFMLSidedHandler
     public NetworkManager getClientToServerNetworkManager()
     {
         return this.client.func_147114_u()!=null ? this.client.func_147114_u().func_147298_b() : null;
+    }
+
+    public void handleClientWorldClosing(WorldClient field_71441_e)
+    {
+        GameData.revertToFrozen();
     }
 }
