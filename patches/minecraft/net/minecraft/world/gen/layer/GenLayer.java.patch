@@ -10,7 +10,7 @@
  public abstract class GenLayer
  {
      // JAVADOC FIELD $$ field_75907_b
-@@ -53,6 +56,7 @@
+@@ -53,17 +56,12 @@
          {
              b0 = 4;
          }
@@ -18,7 +18,19 @@
  
          GenLayer genlayer = GenLayerZoom.magnify(1000L, genlayer3, 0);
          GenLayerRiverInit genlayerriverinit = new GenLayerRiverInit(100L, genlayer);
-@@ -213,4 +217,11 @@
+-        Object object = new GenLayerBiome(200L, genlayer3, par2WorldType);
++        Object object = par2WorldType.getBiomeLayer(flag, genlayer3);
+ 
+-        if (!flag)
+-        {
+-            GenLayer genlayer2 = GenLayerZoom.magnify(1000L, (GenLayer)object, 2);
+-            object = new GenLayerBiomeEdge(1000L, genlayer2);
+-        }
+-
+         GenLayer genlayer1 = GenLayerZoom.magnify(1000L, genlayerriverinit, 2);
+         GenLayerHills genlayerhills = new GenLayerHills(1000L, (GenLayer)object, genlayer1);
+         genlayer = GenLayerZoom.magnify(1000L, genlayerriverinit, 2);
+@@ -213,4 +211,11 @@
      {
          return p_151617_2_ == p_151617_3_ && p_151617_3_ == p_151617_4_ ? p_151617_2_ : (p_151617_1_ == p_151617_2_ && p_151617_1_ == p_151617_3_ ? p_151617_1_ : (p_151617_1_ == p_151617_2_ && p_151617_1_ == p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_3_ && p_151617_1_ == p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_2_ && p_151617_3_ != p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_3_ && p_151617_2_ != p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_4_ && p_151617_2_ != p_151617_3_ ? p_151617_1_ : (p_151617_2_ == p_151617_3_ && p_151617_1_ != p_151617_4_ ? p_151617_2_ : (p_151617_2_ == p_151617_4_ && p_151617_1_ != p_151617_3_ ? p_151617_2_ : (p_151617_3_ == p_151617_4_ && p_151617_1_ != p_151617_2_ ? p_151617_3_ : this.func_151619_a(new int[] {p_151617_1_, p_151617_2_, p_151617_3_, p_151617_4_}))))))))));
      }
