@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiMainMenu.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiMainMenu.java
+@@ -30,6 +30,7 @@
+ import net.minecraft.world.demo.DemoWorldServer;
+ import net.minecraft.world.storage.ISaveFormat;
+ import net.minecraft.world.storage.WorldInfo;
++import net.minecraftforge.client.ForgeHooksClient;
+ import org.apache.commons.io.Charsets;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+@@ -630,6 +631,7 @@
+                 this.drawString(this.field_146289_q, brd, 2, this.field_146295_m - ( 10 + i * (this.field_146289_q.FONT_HEIGHT + 1)), 16777215);
+             }
+         }
++        ForgeHooksClient.renderMainMenu(this, field_146289_q, field_146294_l, field_146295_m);
+         String s1 = "Copyright Mojang AB. Do not distribute!";
+         this.drawString(this.field_146289_q, s1, this.field_146294_l - this.field_146289_q.getStringWidth(s1) - 2, this.field_146295_m - 10, -1);
+ 

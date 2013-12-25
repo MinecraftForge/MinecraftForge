@@ -81,7 +81,7 @@ public class GuiIngameForge extends GuiIngame
     private ScaledResolution res = null;
     private FontRenderer fontrenderer = null;
     private RenderGameOverlayEvent eventParent;
-    private static final String MC_VERSION = "1.7.2";
+    private static final String MC_VERSION = MinecraftForge.MC_VERSION;
 
     public GuiIngameForge(Minecraft mc)
     {

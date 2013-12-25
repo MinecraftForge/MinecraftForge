@@ -60,18 +60,6 @@ import static net.minecraft.init.Blocks.*;
 
 public class ForgeHooks
 {
-    static class GrassEntry extends WeightedRandom.Item
-    {
-        public final Block block;
-        public final int metadata;
-        public GrassEntry(Block block, int meta, int weight)
-        {
-            super(weight);
-            this.block = block;
-            this.metadata = meta;
-        }
-    }
-
     static class SeedEntry extends WeightedRandom.Item
     {
         public final ItemStack seed;

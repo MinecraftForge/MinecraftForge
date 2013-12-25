@@ -1,6 +1,12 @@
 package net.minecraftforge.client;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.TreeSet;
 
@@ -8,6 +14,8 @@ import javax.imageio.ImageIO;
 
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 
 import org.lwjgl.LWJGLException;
@@ -16,9 +24,16 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.PixelFormat;
 
+import com.google.common.io.ByteStreams;
+import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.versioning.ArtifactVersion;
+import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -31,6 +46,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ResourceLocation;
@@ -50,11 +66,14 @@ import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.common.ForgeVersion.Status;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.RenderBlockFluid;
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
+import static net.minecraftforge.common.ForgeVersion.Status.*;
 
 public class ForgeHooksClient
 {
@@ -403,5 +422,35 @@ public class ForgeHooksClient
     {
         //FluidRegistry.renderIdFluid = RenderingRegistry.getNextAvailableRenderId();
         //RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
+    }
+
+    public static void renderMainMenu(GuiMainMenu gui, FontRenderer font, int width, int height)
+    {
+        Status status = ForgeVersion.getStatus();
+        if (status == BETA || status == BETA_OUTDATED)
+        {
+            // render a warning at the top of the screen,
+            String line = EnumChatFormatting.RED + "WARNING:" + EnumChatFormatting.RESET + " Forge Beta,";
+            gui.drawString(font, line, (width - font.getStringWidth(line)) / 2, 4 + (0 * (font.FONT_HEIGHT + 1)), -1);
+            line = "Major issues may arise, verify before reporting.";
+            gui.drawString(font, line, (width - font.getStringWidth(line)) / 2, 4 + (1 * (font.FONT_HEIGHT + 1)), -1);
+        }
+
+        String line = null;
+        switch(status)
+        {
+            //case FAILED:        line = " Version check failed"; break;
+            //case UP_TO_DATE:    line = "Forge up to date"}; break;
+            //case AHEAD:         line = "Using non-recommended Forge build, issues may arise."}; break;
+            case OUTDATED:
+            case BETA_OUTDATED: line = "New Forge version avalible: " + ForgeVersion.getTarget(); break;
+            default: break;
+        }
+
+        if (line != null)
+        {
+            // if we have a line, render it in the bottom right, above Mojang's copyright line
+            gui.drawString(font, line, width - font.getStringWidth(line) - 2, height - (2 * (font.FONT_HEIGHT + 1)), -1);
+        }
     }
 }

@@ -54,7 +54,8 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static double zombieSummonBaseChance = 0.1;
     public static int[] blendRanges = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32 };
     public static float zombieBabyChance = 0.05f;
-    public static boolean shouldSortRecipies = false;
+    public static boolean shouldSortRecipies = true;
+    public static boolean disableVersionCheck = false;
 
     public ForgeModContainer()
     {
@@ -158,6 +159,10 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         prop = config.get(CATEGORY_GENERAL, "sortRecipies", shouldSortRecipies);
         prop.comment = "Set to true to enable the post initlization sorting of crafting recipes using Froge's sorter. May cause desyncing on conflicting recipies. ToDo: Set to true by default in 1.7";
         shouldSortRecipies = prop.getBoolean(shouldSortRecipies);
+
+        prop = config.get(CATEGORY_GENERAL, "disableVersionCheck", disableVersionCheck);
+        prop.comment = "Set to true to disable Forge's version check mechanics, Forge queries a small json file on our server for version information. For more details see the ForgeVersion class in our github.";
+        disableVersionCheck = prop.getBoolean(disableVersionCheck);
 
         if (config.hasChanged())
         {

@@ -17,7 +17,6 @@ import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeHooks.GrassEntry;
 import net.minecraftforge.common.ForgeHooks.SeedEntry;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.oredict.OreDictionary;
@@ -35,6 +34,7 @@ public class MinecraftForge
     public static final EventBus EVENT_BUS = new EventBus();
     public static final EventBus TERRAIN_GEN_BUS = new EventBus();
     public static final EventBus ORE_GEN_BUS = new EventBus();
+    public static final String MC_VERSION = "1.7.2";
 
     private static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();
 
@@ -59,6 +59,11 @@ public class MinecraftForge
 
        EVENT_BUS.register(INTERNAL_HANDLER);
        OreDictionary.getOreName(0);
+
+       if (!ForgeModContainer.disableVersionCheck)
+       {
+           ForgeVersion.startVersionCheck();
+       }
 
        //Force these classes to be defined, Should prevent derp error hiding.
        new CrashReport("ThisIsFake", new Exception("Not real"));
