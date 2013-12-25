@@ -36,7 +36,18 @@
              {
                  short short1 = (short)(p_151253_1_ << 12 | p_151253_3_ << 8 | p_151253_2_);
  
-@@ -420,7 +426,7 @@
+@@ -388,6 +394,10 @@
+                     }
+                 }
+ 
++                if (numberOfTilesToUpdate == field_151254_d.length)
++                {
++                    field_151254_d = Arrays.copyOf(field_151254_d, field_151254_d.length << 1);
++                }
+                 this.field_151254_d[this.numberOfTilesToUpdate++] = short1;
+             }
+         }
+@@ -420,7 +430,7 @@
                      k = this.chunkLocation.chunkZPos * 16 + (this.field_151254_d[0] >> 8 & 15);
                      this.func_151251_a(new S23PacketBlockChange(i, j, k, PlayerManager.this.theWorldServer));
  
@@ -45,7 +56,7 @@
                      {
                          this.func_151252_a(PlayerManager.this.theWorldServer.func_147438_o(i, j, k));
                      }
-@@ -429,12 +435,13 @@
+@@ -429,12 +439,13 @@
                  {
                      int l;
  
@@ -60,7 +71,7 @@
                          for (k = 0; k < 16; ++k)
                          {
                              if ((this.flagsYAreasToUpdate & 1 << k) != 0)
-@@ -448,18 +455,22 @@
+@@ -448,18 +459,22 @@
                                  }
                              }
                          }
