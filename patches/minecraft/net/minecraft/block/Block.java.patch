@@ -186,7 +186,7 @@
      }
  
      protected ItemStack func_149644_j(int p_149644_1_)
-@@ -1114,6 +1147,1062 @@
+@@ -1114,6 +1147,1065 @@
          return null;
      }
  
@@ -1189,6 +1189,7 @@
 +            setHarvestLevel(toolClass, level, m);
 +        }
 +    }
++
 +    /**
 +     * Sets or removes the tool and level required to harvest this block.
 +     * 
@@ -1241,6 +1242,8 @@
 +     */
 +    public boolean isToolEffective(String type, int metadata)
 +    {
++        if ("pickaxe".equals(type) && (this == Blocks.redstone_ore || this == Blocks.lit_redstone_ore || this == Blocks.obsidian))
++            return false;
 +        if (harvestTool[metadata] == null) return true;
 +        return harvestTool[metadata].equals(type);
 +    }
