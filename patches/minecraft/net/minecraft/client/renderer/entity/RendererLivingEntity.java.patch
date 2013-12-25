@@ -24,7 +24,7 @@
      // JAVADOC METHOD $$ func_76986_a
      public void doRender(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6, float par8, float par9)
      {
-+        if (MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Pre(par1EntityLivingBase, this))) return;
++        if (MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Pre(par1EntityLivingBase, this, par2, par4, par6))) return;
          GL11.glPushMatrix();
          GL11.glDisable(GL11.GL_CULL_FACE);
          this.mainModel.onGround = this.renderSwingProgress(par1EntityLivingBase, par9);
@@ -32,7 +32,7 @@
          GL11.glEnable(GL11.GL_CULL_FACE);
          GL11.glPopMatrix();
          this.passSpecialRender(par1EntityLivingBase, par2, par4, par6);
-+        MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Post(par1EntityLivingBase, this));
++        MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Post(par1EntityLivingBase, this, par2, par4, par6));
      }
  
      // JAVADOC METHOD $$ func_77036_a
@@ -40,7 +40,7 @@
      // JAVADOC METHOD $$ func_77033_b
      protected void passSpecialRender(EntityLivingBase par1EntityLivingBase, double par2, double par4, double par6)
      {
-+        if (MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Specials.Pre(par1EntityLivingBase, this))) return;
++        if (MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Specials.Pre(par1EntityLivingBase, this, par2, par4, par6))) return;
          GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
  
          if (this.func_110813_b(par1EntityLivingBase))
@@ -57,7 +57,7 @@
                  }
              }
          }
-+        MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Specials.Post(par1EntityLivingBase, this));
++        MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Specials.Post(par1EntityLivingBase, this, par2, par4, par6));
      }
  
      protected boolean func_110813_b(EntityLivingBase par1EntityLivingBase)
