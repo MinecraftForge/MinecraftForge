@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityItem.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityItem.java
-@@ -14,10 +14,13 @@
+@@ -14,9 +14,13 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.util.StatCollector;
  import net.minecraft.world.World;
@@ -9,13 +9,12 @@
 +import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
--
- import cpw.mods.fml.common.FMLCommonHandler;
+ 
 +import cpw.mods.fml.common.eventhandler.Event.Result;
+ import cpw.mods.fml.common.registry.GameRegistry;
  
  public class EntityItem extends Entity
- {
-@@ -33,6 +36,11 @@
+@@ -33,6 +37,11 @@
      public float hoverStart;
      private static final String __OBFID = "CL_00001669";
  
@@ -27,7 +26,7 @@
      public EntityItem(World par1World, double par2, double par4, double par6)
      {
          super(par1World);
-@@ -49,8 +57,9 @@
+@@ -49,8 +58,9 @@
  
      public EntityItem(World par1World, double par2, double par4, double par6, ItemStack par8ItemStack)
      {
@@ -38,7 +37,7 @@
      }
  
      // JAVADOC METHOD $$ func_70041_e_
-@@ -76,6 +85,15 @@
+@@ -76,6 +86,15 @@
      // JAVADOC METHOD $$ func_70071_h_
      public void onUpdate()
      {
@@ -54,7 +53,7 @@
          if (this.getEntityItem() == null)
          {
              this.setDead();
-@@ -131,8 +149,30 @@
+@@ -131,8 +150,30 @@
  
              ++this.age;
  
@@ -86,7 +85,7 @@
                  this.setDead();
              }
          }
-@@ -254,6 +294,7 @@
+@@ -254,6 +295,7 @@
      {
          par1NBTTagCompound.setShort("Health", (short)((byte)this.health));
          par1NBTTagCompound.setShort("Age", (short)this.age);
@@ -94,7 +93,7 @@
  
          if (this.func_145800_j() != null)
          {
-@@ -290,10 +331,17 @@
+@@ -290,10 +332,17 @@
          NBTTagCompound nbttagcompound1 = par1NBTTagCompound.getCompoundTag("Item");
          this.setEntityItemStack(ItemStack.loadItemStackFromNBT(nbttagcompound1));
  
@@ -113,7 +112,7 @@
      }
  
      // JAVADOC METHOD $$ func_70100_b_
-@@ -301,10 +349,22 @@
+@@ -301,10 +350,22 @@
      {
          if (!this.worldObj.isRemote)
          {
