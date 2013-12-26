@@ -218,6 +218,8 @@ public class GameData {
     {
         Map<String, Integer[]> remaps = Maps.newHashMap();
         ArrayListMultimap<String,String> missing = ArrayListMultimap.create();
+        blockRegistry.dump();
+        itemRegistry.dump();
         blockRegistry.beginIdSwap();
         itemRegistry.beginIdSwap();
         for (Entry<String, Integer> entry : dataList.entrySet())
@@ -267,7 +269,7 @@ public class GameData {
 
         if (injectFrozenData)
         {
-            FMLLog.info("Injecting new block and item data from this server instance");
+            FMLLog.info("Injecting new block and item data into this server instance");
             Map<String, Integer> missingBlocks = Maps.newHashMap(blockRegistry.getMissingMappings());
             Map<String, Integer> missingItems = Maps.newHashMap(itemRegistry.getMissingMappings());
 
@@ -276,9 +278,9 @@ public class GameData {
                 String itemName = item.getKey();
                 if (missingBlocks.containsKey(itemName))
                 {
-                    FMLLog.info("Injecting new block/item %s", itemName);
                     int blockId = blockRegistry.swap(item.getValue(), itemName, blockRegistry.get(itemName));
                     itemRegistry.swap(blockId, itemName, itemRegistry.get(itemName));
+                    FMLLog.info("Injecting new block/item %s : %d", itemName, blockId);
                     missingBlocks.remove(itemName);
                     if (Integer.valueOf(blockId) != item.getValue())
                     {
@@ -307,6 +309,8 @@ public class GameData {
         }
         blockRegistry.completeIdSwap();
         itemRegistry.completeIdSwap();
+        blockRegistry.dump();
+        itemRegistry.dump();
         Loader.instance().fireRemapEvent(remaps);
         return true;
     }

@@ -13,6 +13,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Ints;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 
@@ -104,6 +105,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     private BiMap<String,Integer> namedIds = HashBiMap.create();
     private BiMap<String,Integer> frozenIds;
     private Map<String,Integer> transactionalNamedIds;
+    private BitSet transactionalAvailabilityMap;
     private BitSet availabilityMap;
     private int maxId;
     private int minId;
@@ -123,13 +125,32 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     @Override
     public void func_148756_a(int id, String name, Object thing)
     {
+        FMLLog.info("Add : %s %d %s", name, id, thing);
         add(id, name, superType.cast(thing));
     }
 
     int swap(int id, String name, I thing)
     {
-        field_82596_a.remove(name);
-        return add(id, name, thing);
+        FMLLog.info("Swap : %s %d %s", name, id, thing);
+        BitSet temporary = availabilityMap;
+        availabilityMap = transactionalAvailabilityMap;
+
+        int idToUse = id;
+        if (id == 0 || availabilityMap.get(id))
+        {
+            idToUse = availabilityMap.nextClearBit(minId);
+        }
+        if (idToUse >= maxId)
+        {
+            throw new RuntimeException(String.format("Invalid id %s - not accepted",id));
+        }
+
+        namedIds.forcePut(func_148755_c(name),idToUse);
+        reassignMapping(name, idToUse);
+        useSlot(idToUse);
+        availabilityMap = temporary;
+        FMLLog.info("Swap : %s %d %s", name, idToUse, thing);
+        return idToUse;
     }
     public int add(int id, String name, I thing)
     {
@@ -154,9 +175,10 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
             String prefix = mc.getModId();
             name = prefix + ":"+ name;
         }
-        namedIds.put(func_148755_c(name),idToUse);
+        namedIds.forcePut(func_148755_c(name),idToUse);
         super.func_148756_a(idToUse, name, thing);
         useSlot(idToUse);
+        FMLLog.info("Add : %s %d %s", name, idToUse, thing);
         return idToUse;
     }
 
@@ -190,6 +212,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     {
         idMap().beginSwap();
         transactionalNamedIds = Maps.newHashMap();
+        transactionalAvailabilityMap = new BitSet();
     }
 
     void reassignMapping(String name, int newId)
@@ -197,6 +220,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         Object item = nameMap().get(name);
         idMap().putNew(newId, item);
         transactionalNamedIds.put(name,newId);
+        transactionalAvailabilityMap.set(newId);
     }
 
     void freezeMap()
@@ -281,5 +305,15 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     public boolean contains(String itemName)
     {
         return namedIds.containsKey(itemName);
+    }
+
+    void dump()
+    {
+        for (Entry<String, Integer> entry : namedIds.entrySet())
+        {
+            String name = entry.getKey();
+            Object thing = idMap().get(entry.getValue().intValue());
+            FMLLog.info("Registry : %s %d %s", name, entry.getValue(), thing);
+        }
     }
 }
