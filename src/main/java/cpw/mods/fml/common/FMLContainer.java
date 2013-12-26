@@ -96,6 +96,7 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
         }
         fmlData.func_74782_a("ModList", list);
         NBTTagList dataList = new NBTTagList();
+        FMLLog.fine("Gathering id map for writing to world save %s", info.func_76065_j());
         Map<String,Integer> itemList = GameData.buildItemDataList();
         for (Entry<String, Integer> item : itemList.entrySet())
         {

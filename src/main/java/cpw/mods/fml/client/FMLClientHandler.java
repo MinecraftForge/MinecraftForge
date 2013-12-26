@@ -17,9 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.apache.logging.log4j.Level;
 import java.util.logging.Logger;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.GuiScreen;
@@ -34,12 +32,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
-
+import org.apache.logging.log4j.Level;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.DuplicateModsFoundException;
@@ -490,8 +487,13 @@ public class FMLClientHandler implements IFMLSidedHandler
         return this.client.func_147114_u()!=null ? this.client.func_147114_u().func_147298_b() : null;
     }
 
-    public void handleClientWorldClosing(WorldClient field_71441_e)
+    public void handleClientWorldClosing(WorldClient world)
     {
-        GameData.revertToFrozen();
+        NetworkManager client = getClientToServerNetworkManager();
+        // ONLY revert a non-local connection
+        if (client != null && !client.func_150731_c())
+        {
+            GameData.revertToFrozen();
+        }
     }
 }
