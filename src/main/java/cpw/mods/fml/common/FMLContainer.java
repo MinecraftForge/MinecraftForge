@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.logging.log4j.Level;
 
+import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -134,9 +135,49 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
         }
         if (tag.func_74764_b("ModItemData"))
         {
+            FMLLog.info("Attempting to convert old world data to new system. This may be trouble!");
             NBTTagList modList = tag.func_150295_c("ModItemData", (byte)10);
-//            Set<ItemData> worldSaveItems = GameData.buildWorldItemData(modList);
-//            GameData.validateWorldSave(worldSaveItems);
+            Map<String,Integer> dataList = Maps.newLinkedHashMap();
+            for (int i = 0; i < modList.func_74745_c(); i++)
+            {
+                NBTTagCompound itemTag = modList.func_150305_b(i);
+                String modId = itemTag.func_74779_i("ModId");
+                String itemType = itemTag.func_74779_i("ItemType");
+                int itemId = itemTag.func_74762_e("ItemId");
+                int ordinal = itemTag.func_74762_e("ordinal");
+                String forcedModId = itemTag.func_74764_b("ForcedModId") ? itemTag.func_74779_i("ForcedModId") : null;
+                String forcedName = itemTag.func_74764_b("ForcedName") ? itemTag.func_74779_i("ForcedName") : null;
+                if (forcedName == null)
+                {
+                    FMLLog.warning("Found unlabelled item in world save, this may cause problems. The item type %s:%d will not be present", itemType, ordinal);
+                }
+                else
+                {
+                    boolean isItem;
+                    try {
+                        Class<?> clazz = Class.forName(itemType);
+                        clazz.asSubclass(Item.class);
+                        isItem = true;
+                    }
+                    catch (ClassNotFoundException cnfs)
+                    {
+                        FMLLog.warning("The old item %s is not present in this game, it's type cannot be inferred - it will be skipped", itemType);
+                        // MISSING, skip
+                        continue;
+                    }
+                    catch (ClassCastException ccs)
+                    {
+                        isItem = false;
+                    }
+                    String itemLabel = String.format("%c%s:%s", isItem ? '\u0002' : '\u0001', forcedModId != null ? forcedModId : modId, forcedName);
+                    dataList.put(itemLabel, itemId);
+                }
+            }
+            boolean successfullyInjected = GameData.injectWorldIDMap(dataList, true);
+            if (!successfullyInjected)
+            {
+                throw new RuntimeException("Failed to load the world - there are fatal block and item id issues");
+            }
         }
         else if (tag.func_74764_b("ItemData"))
         {
