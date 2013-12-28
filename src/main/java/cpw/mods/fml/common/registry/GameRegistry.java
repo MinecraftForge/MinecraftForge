@@ -38,6 +38,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.ObjectArrays;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 
@@ -165,7 +166,7 @@ public class GameRegistry
      * @param name The mod-unique name to register it with
      * @param modId The modId that will own the block name. null defaults to the active modId
      */
-    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name, String modId)
+    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name, String modId, Object... itemCtorArgs)
     {
         if (Loader.instance().isInState(LoaderState.CONSTRUCTING))
         {
@@ -177,8 +178,14 @@ public class GameRegistry
             ItemBlock i = null;
             if (itemclass != null)
             {
-                Constructor<? extends ItemBlock> itemCtor = itemclass.getConstructor(Block.class);
-                i = itemCtor.newInstance(block);
+                Class<?>[] ctorArgClasses = new Class<?>[itemCtorArgs.length + 1];
+                ctorArgClasses[0] = Block.class;
+                for (int idx = 1; idx < ctorArgClasses.length; idx++)
+                {
+                    ctorArgClasses[idx] = itemCtorArgs[idx-1].getClass();
+                }
+                Constructor<? extends ItemBlock> itemCtor = itemclass.getConstructor(ctorArgClasses);
+                i = itemCtor.newInstance(ObjectArrays.concat(block, itemCtorArgs));
             }
             if (i != null)
             {
@@ -226,6 +233,11 @@ public class GameRegistry
     public static void addSmelting(Item input, ItemStack output, float xp)
     {
         FurnaceRecipes.func_77602_a().func_151396_a(input, output, xp);
+    }
+
+    public static void addSmelting(ItemStack input, ItemStack output, float xp)
+    {
+        FurnaceRecipes.func_77602_a().func_151394_a(input, output, xp);
     }
 
     public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id)
