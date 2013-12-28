@@ -34,7 +34,7 @@
      }
  
      public float func_150893_a(ItemStack p_150893_1_, Block p_150893_2_)
-@@ -91,4 +105,36 @@
+@@ -91,4 +105,37 @@
          multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Tool modifier", (double)this.damageVsEntity, 0));
          return multimap;
      }
@@ -44,13 +44,14 @@
 +    @Override
 +    public int getHarvestLevel(ItemStack stack, String toolClass)
 +    {
-+        if (toolClass != null && toolClass.equals(this.toolClass))
++        int level = super.getHarvestLevel(stack, toolClass);
++        if (level == -1 && toolClass != null && toolClass.equals(this.toolClass))
 +        {
 +            return this.toolMaterial.getHarvestLevel();
 +        }
 +        else
 +        {
-+            return super.getHarvestLevel(stack, toolClass);
++            return level;
 +        }
 +    }
 +
