@@ -21,12 +21,15 @@ import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
+import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.network.play.client.C17PacketCustomPayload;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;
 import net.minecraft.network.play.server.S40PacketDisconnect;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.util.ChatComponentText;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.common.network.FMLNetworkException;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.internal.FMLMessage;
@@ -151,6 +154,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         FMLLog.info("[%s] Client side modded connection established", Thread.currentThread().getName());
         this.state = ConnectionState.CONNECTED;
         this.connectionType = ConnectionType.MODDED;
+        FMLCommonHandler.instance().bus().post(new FMLNetworkEvent.ClientConnectedToServerEvent(manager));
     }
 
     private void completeServerSideConnection()
@@ -158,6 +162,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         FMLLog.info("[%s] Server side modded connection established", Thread.currentThread().getName());
         this.state = ConnectionState.CONNECTED;
         this.connectionType = ConnectionType.MODDED;
+        FMLCommonHandler.instance().bus().post(new FMLNetworkEvent.ServerConnectionFromClientEvent(manager));
         scm.func_72355_a(manager, player, serverHandler);
     }
     @Override
@@ -326,6 +331,14 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     @Override
     public void disconnect(ChannelHandlerContext ctx, ChannelPromise promise) throws Exception
     {
+        if (side == Side.CLIENT)
+        {
+            FMLCommonHandler.instance().bus().post(new FMLNetworkEvent.ClientDisconnectionFromServerEvent(manager));
+        }
+        else
+        {
+            FMLCommonHandler.instance().bus().post(new FMLNetworkEvent.ServerDisconnectionFromClientEvent(manager));
+        }
         ctx.disconnect(promise);
     }
 
