@@ -152,20 +152,17 @@ public class ForgeHooks
         toolInit = true;
 
         Set<Block> blocks = ReflectionHelper.getPrivateValue(ItemPickaxe.class, null, 0);
-        setHarvestForItem(Arrays.asList(Items.wooden_pickaxe, Items.stone_pickaxe, Items.iron_pickaxe, Items.diamond_pickaxe), "pickaxe");
         for (Block block : blocks)
         {
             block.setHarvestLevel("pickaxe", 0);
         }
 
-        setHarvestForItem(Arrays.asList(Items.wooden_shovel, Items.stone_shovel, Items.iron_shovel, Items.diamond_shovel), "shovel");
         blocks = ReflectionHelper.getPrivateValue(ItemSpade.class, null, 0);
         for (Block block : blocks)
         {
             block.setHarvestLevel("shovel", 0);
         }
 
-        setHarvestForItem(Arrays.asList(Items.wooden_axe, Items.stone_axe, Items.iron_axe, Items.diamond_axe), "axe");
         blocks = ReflectionHelper.getPrivateValue(ItemAxe.class, null, 0);
         for (Block block : blocks)
         {
@@ -181,15 +178,6 @@ public class ForgeHooks
         Blocks.iron_block.setHarvestLevel("pickaxe", 1);
         Blocks.lapis_ore.setHarvestLevel("pickaxe", 1);
         Blocks.lapis_block.setHarvestLevel("pickaxe", 1);
-    }
-
-    private static void setHarvestForItem(List<Item> itemList, String toolClass)
-    {
-        for (int i = 0; i < itemList.size(); i++)
-        {
-            Item item = itemList.get(i);
-            item.setHarvestLevel("pickaxe", i);
-        }
     }
 
     public static int getTotalArmorValue(EntityPlayer player)
