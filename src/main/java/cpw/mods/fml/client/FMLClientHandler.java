@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiSelectWorld;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -495,5 +496,10 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             GameData.revertToFrozen();
         }
+    }
+
+    public void tryLoadWorld(GuiSelectWorld selectWorldGUI, int selectedIndex)
+    {
+        selectWorldGUI.func_146615_e(selectedIndex);
     }
 }
