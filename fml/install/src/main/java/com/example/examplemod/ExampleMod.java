@@ -1,6 +1,6 @@
 package com.example.examplemod;
 
-import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -15,6 +15,6 @@ public class ExampleMod
     public void init(FMLInitializationEvent event)
     {
 		// some example code
-        System.out.println("DIRT BLOCK >> "+Block.dirt.getUnlocalizedName());
+        System.out.println("DIRT BLOCK >> "+Blocks.dirt.func_149739_a());
     }
 }
