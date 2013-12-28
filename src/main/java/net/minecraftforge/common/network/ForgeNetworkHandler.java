@@ -27,13 +27,13 @@ public class ForgeNetworkHandler
         {
             addClientHandlers();
         }
-        channelPair.get(Side.SERVER).pipeline().addAfter("ForgeRuntimeCodec#0", "ServerToClientConnection", new ServerToClientConnectionEstablishedHandler());
+        channelPair.get(Side.SERVER).pipeline().addAfter("net.minecraftforge.common.network.ForgeRuntimeCodec#0", "ServerToClientConnection", new ServerToClientConnectionEstablishedHandler());
     }
 
     @SideOnly(Side.CLIENT)
     private static void addClientHandlers()
     {
-        channelPair.get(Side.CLIENT).pipeline().addAfter("ForgeRuntimeCodec#0", "DimensionHandler", new DimensionMessageHandler());
-        channelPair.get(Side.CLIENT).pipeline().addAfter("ForgeRuntimeCodec#0", "FluidIdRegistryHandler", new FluidIdRegistryMessageHandler());
+        channelPair.get(Side.CLIENT).pipeline().addAfter("net.minecraftforge.common.network.ForgeRuntimeCodec#0", "DimensionHandler", new DimensionMessageHandler());
+        channelPair.get(Side.CLIENT).pipeline().addAfter("net.minecraftforge.common.network.ForgeRuntimeCodec#0", "FluidIdRegistryHandler", new FluidIdRegistryMessageHandler());
     }
 }
