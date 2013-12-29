@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
-@@ -92,6 +92,12 @@
+@@ -92,6 +92,13 @@
  import net.minecraft.world.WorldServer;
  import net.minecraft.world.chunk.Chunk;
  
@@ -8,12 +8,13 @@
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.player.PlayerDropsEvent;
++import net.minecraftforge.event.entity.player.PlayerEvent;
 +import net.minecraftforge.event.world.ChunkWatchEvent;
 +
  public class EntityPlayerMP extends EntityPlayer implements ICrafting
  {
      private String translator = "en_US";
-@@ -164,20 +170,15 @@
+@@ -164,25 +171,23 @@
          super(par2World, par3Str);
          par4ItemInWorldManager.thisPlayerMP = this;
          this.theItemInWorldManager = par4ItemInWorldManager;
@@ -39,7 +40,16 @@
          this.mcServer = par1MinecraftServer;
          this.stepHeight = 0.0F;
          this.yOffset = 0.0F;
-@@ -240,11 +241,6 @@
+-        this.setLocationAndAngles((double)i + 0.5D, (double)k, (double)j + 0.5D, 0.0F, 0.0F);
+ 
++        PlayerEvent.Spawnpoint event = new PlayerEvent.Spawnpoint(this, chunkcoordinates);
++        MinecraftForge.EVENT_BUS.post(event);
++        this.setLocationAndAngles((double)event.spawnPoint.posX + 0.5D, (double)event.spawnPoint.posY, (double)event.spawnPoint.posZ + 0.5D, event.yaw, event.pitch);
++
+         while (!par2World.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty())
+         {
+             this.setPosition(this.posX, this.posY + 1.0D, this.posZ);
+@@ -240,11 +245,6 @@
          this.yOffset = 0.0F;
      }
  
@@ -51,7 +61,7 @@
      /**
       * Called to update the entity's position/logic.
       */
-@@ -254,7 +250,7 @@
+@@ -254,7 +254,7 @@
          --this.initialInvulnerability;
          this.openContainer.detectAndSendChanges();
  
@@ -60,7 +70,7 @@
          {
              this.closeScreen();
              this.openContainer = this.inventoryContainer;
-@@ -290,7 +286,10 @@
+@@ -290,7 +290,10 @@
                  if (chunkcoordintpair != null && this.worldObj.blockExists(chunkcoordintpair.chunkXPos << 4, 0, chunkcoordintpair.chunkZPos << 4))
                  {
                      arraylist.add(this.worldObj.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos));
@@ -72,7 +82,7 @@
                  }
              }
  
-@@ -311,6 +310,7 @@
+@@ -311,6 +314,7 @@
                  {
                      Chunk chunk = (Chunk)iterator2.next();
                      this.getServerForPlayer().getEntityTracker().func_85172_a(this, chunk);
@@ -80,7 +90,7 @@
                  }
              }
          }
-@@ -383,11 +383,25 @@
+@@ -383,11 +387,25 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -106,7 +116,7 @@
          }
  
          Collection collection = this.worldObj.getScoreboard().func_96520_a(ScoreObjectiveCriteria.deathCount);
-@@ -1054,4 +1068,16 @@
+@@ -1054,4 +1072,16 @@
      {
          this.field_143005_bX = MinecraftServer.getSystemTimeMillis();
      }
