@@ -38,6 +38,7 @@ minecraft {
     mcpVersion = '9.01-pre'
     fmlDir = projectDir.getAbsolutePath() + "/fml";
     mainClass = 'cpw.mods.fml.relauncher.ServerLaunchWrapper'
+    tweakClass = 'cpw.mods.fml.common.launcher.FMLTweaker'
     installerVersion = "1.4"
 }
 
