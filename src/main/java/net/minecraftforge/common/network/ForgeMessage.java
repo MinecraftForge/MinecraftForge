@@ -13,9 +13,9 @@ import io.netty.buffer.ByteBuf;
 public abstract class ForgeMessage {
     public static class DimensionRegisterMessage extends ForgeMessage {
         /** The dimension ID to register on client */
-        int dimensionId;
+        public int dimensionId;
         /** The provider ID to register with dimension on client */
-        int providerId;
+        public int providerId;
         @Override
         void toBytes(ByteBuf bytes)
         {
