@@ -16,6 +16,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.EnumConnectionState;
+import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
@@ -68,10 +69,12 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     private final ServerConfigurationManager scm;
     private EntityPlayerMP player;
     private ConnectionState state;
+    @SuppressWarnings("unused")
     private ConnectionType connectionType;
     private final Side side;
     private final EmbeddedChannel handshakeChannel;
     private NetHandlerPlayServer serverHandler;
+    private INetHandler netHandler;
 
     public NetworkDispatcher(NetworkManager manager)
     {
@@ -134,6 +137,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         this.manager.channel().pipeline().addFirst("fml:vanilla_detector", new VanillaTimeoutWaiter());
         // Need to start the handler here, so we can send custompayload packets
         serverHandler = new NetHandlerPlayServer(scm.func_72365_p(), manager, player);
+        this.netHandler = serverHandler;
         // NULL the play server here - we restore it further on. If not, there are packets sent before the login
         player.field_71135_a = null;
         // manually for the manager into the PLAY state, so we can send packets later
@@ -143,6 +147,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     void clientListenForServerHandshake()
     {
         manager.func_150723_a(EnumConnectionState.PLAY);
+        this.netHandler = FMLCommonHandler.instance().getClientPlayHandler();
         this.state = ConnectionState.AWAITING_HANDSHAKE;
     }
 
@@ -182,6 +187,11 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         {
             ctx.fireChannelRead(msg);
         }
+    }
+
+    public INetHandler getNetHandler()
+    {
+        return netHandler;
     }
 
     @Override

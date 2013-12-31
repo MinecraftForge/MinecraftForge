@@ -35,6 +35,7 @@ import com.google.common.collect.Lists;
 import cpw.mods.fml.common.FMLContainer;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -50,7 +51,7 @@ public class FMLNetworkHandler
 {
     public static final int READ_TIMEOUT = Integers.parseInt(System.getProperty("fml.readTimeout","30"),30);
     public static final int LOGIN_TIMEOUT = Integers.parseInt(System.getProperty("fml.loginTimeout","600"),600);
-    private static EnumMap<Side, EmbeddedChannel> channelPair;
+    private static EnumMap<Side, FMLEmbeddedChannel> channelPair;
 
     /*    private static final int FML_HASH = Hashing.murmur3_32().hashString("FML").asInt();
     private static final int PROTOCOL_VERSION = 0x2;
@@ -472,11 +473,7 @@ public class FMLNetworkHandler
             return null;
         }
 
-        EmbeddedChannel embeddedChannel = channelPair.get(Side.SERVER);
-        embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.NOWHERE);
-        embeddedChannel.writeOutbound(new FMLMessage.EntitySpawnMessage(er, entity, er.getContainer()));
-        FMLProxyPacket result = (FMLProxyPacket) embeddedChannel.outboundMessages().poll();
-        return result;
+        return channelPair.get(Side.SERVER).generatePacketFrom(new FMLMessage.EntitySpawnMessage(er, entity, er.getContainer()));
     }
 
     public static String checkModList(FMLHandshakeMessage.ModList modListPacket, Side side)

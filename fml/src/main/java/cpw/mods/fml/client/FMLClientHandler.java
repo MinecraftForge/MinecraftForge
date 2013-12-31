@@ -31,6 +31,7 @@ import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import org.apache.logging.log4j.Level;
@@ -482,6 +483,11 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
     }
 
+    @Override
+    public INetHandler getClientPlayHandler()
+    {
+        return this.client.func_147114_u();
+    }
     @Override
     public NetworkManager getClientToServerNetworkManager()
     {

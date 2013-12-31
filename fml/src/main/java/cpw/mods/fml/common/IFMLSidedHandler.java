@@ -14,6 +14,7 @@ package cpw.mods.fml.common;
 
 import java.util.List;
 
+import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import cpw.mods.fml.relauncher.Side;
@@ -45,4 +46,6 @@ public interface IFMLSidedHandler
     void serverStopped();
 
     NetworkManager getClientToServerNetworkManager();
+
+    INetHandler getClientPlayHandler();
 }
