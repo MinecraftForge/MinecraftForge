@@ -1,5 +1,6 @@
 package cpw.mods.fml.common.network;
 
+import net.minecraft.network.INetHandler;
 import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
 import cpw.mods.fml.relauncher.Side;
 
@@ -16,8 +17,11 @@ import cpw.mods.fml.relauncher.Side;
 public class NetworkHandshakeEstablished {
     public final NetworkDispatcher dispatcher;
     public final Side side;
-    public NetworkHandshakeEstablished(NetworkDispatcher dispatcher, Side origin)
+    public final INetHandler netHandler;
+
+    public NetworkHandshakeEstablished(NetworkDispatcher dispatcher, INetHandler netHandler, Side origin)
     {
+        this.netHandler = netHandler;
         this.dispatcher = dispatcher;
         this.side = origin;
     }

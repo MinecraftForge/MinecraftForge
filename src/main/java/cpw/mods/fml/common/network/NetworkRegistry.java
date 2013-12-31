@@ -14,7 +14,6 @@ package cpw.mods.fml.common.network;
 
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.MessageToMessageCodec;
 import io.netty.util.AttributeKey;
 
@@ -25,6 +24,7 @@ import java.util.Set;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.INetHandler;
 import net.minecraft.world.World;
 
 import com.google.common.collect.ImmutableMap;
@@ -32,7 +32,6 @@ import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
@@ -58,6 +57,7 @@ public enum NetworkRegistry
     public static final AttributeKey<String> FML_CHANNEL = new AttributeKey<String>("fml:channelName");
     public static final AttributeKey<Side> CHANNEL_SOURCE = new AttributeKey<Side>("fml:channelSource");
     public static final AttributeKey<ModContainer> MOD_CONTAINER = new AttributeKey<ModContainer>("fml:modContainer");
+    public static final AttributeKey<INetHandler> NET_HANDLER = new AttributeKey<INetHandler>("fml:netHandler");
 
     public static final byte FML_PROTOCOL = 1;
 
@@ -82,21 +82,6 @@ public enum NetworkRegistry
         public final double range;
         public final int dimension;
     }
-    static class FMLEmbeddedChannel extends EmbeddedChannel {
-        public FMLEmbeddedChannel(String channelName, Side source, ChannelHandler... handlers)
-        {
-            this(Loader.instance().activeModContainer(), channelName, source, handlers);
-        }
-        public FMLEmbeddedChannel(ModContainer container, String channelName, Side source, ChannelHandler... handlers)
-        {
-            super(handlers);
-            this.attr(FML_CHANNEL).set(channelName);
-            this.attr(CHANNEL_SOURCE).set(source);
-            this.attr(MOD_CONTAINER).setIfAbsent(container);
-            this.pipeline().addFirst("fml:outbound",new FMLOutboundHandler());
-        }
-    }
-
     /**
      * Create a new synchronous message channel pair based on netty.
      * There are two channels created : one for each logical side (considered as the source of an outbound message)
@@ -123,13 +108,13 @@ public enum NetworkRegistry
      * @param handlers
      * @return
      */
-    public EnumMap<Side,EmbeddedChannel> newChannel(String name, ChannelHandler... handlers)
+    public EnumMap<Side,FMLEmbeddedChannel> newChannel(String name, ChannelHandler... handlers)
     {
         if (channels.containsKey(name) || name.startsWith("MC|") || name.startsWith("\u0001") || name.startsWith("FML"))
         {
             throw new RuntimeException("That channel is already registered");
         }
-        EnumMap<Side,EmbeddedChannel> result = Maps.newEnumMap(Side.class);
+        EnumMap<Side,FMLEmbeddedChannel> result = Maps.newEnumMap(Side.class);
 
         for (Side side : Side.values())
         {
@@ -140,13 +125,13 @@ public enum NetworkRegistry
         return result;
     }
 
-    public EnumMap<Side,EmbeddedChannel> newChannel(ModContainer container, String name, ChannelHandler... handlers)
+    public EnumMap<Side,FMLEmbeddedChannel> newChannel(ModContainer container, String name, ChannelHandler... handlers)
     {
         if (channels.containsKey(name) || name.startsWith("MC|") || name.startsWith("\u0001") || (name.startsWith("FML") && !("FML".equals(container.getModId()))))
         {
             throw new RuntimeException("That channel is already registered");
         }
-        EnumMap<Side,EmbeddedChannel> result = Maps.newEnumMap(Side.class);
+        EnumMap<Side,FMLEmbeddedChannel> result = Maps.newEnumMap(Side.class);
 
         for (Side side : Side.values())
         {
@@ -157,7 +142,7 @@ public enum NetworkRegistry
         return result;
     }
 
-    public EmbeddedChannel getChannel(String name, Side source)
+    public FMLEmbeddedChannel getChannel(String name, Side source)
     {
         return channels.get(source).get(name);
     }
@@ -428,7 +413,7 @@ public enum NetworkRegistry
 
     public void fireNetworkHandshake(NetworkDispatcher networkDispatcher, Side origin)
     {
-        NetworkHandshakeEstablished handshake = new NetworkHandshakeEstablished(networkDispatcher, origin);
+        NetworkHandshakeEstablished handshake = new NetworkHandshakeEstablished(networkDispatcher, networkDispatcher.getNetHandler(), origin);
         for (Entry<String, FMLEmbeddedChannel> channel : channels.get(origin).entrySet())
         {
             channel.getValue().pipeline().fireUserEventTriggered(handshake);

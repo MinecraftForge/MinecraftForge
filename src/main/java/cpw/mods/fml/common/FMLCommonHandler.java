@@ -24,6 +24,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
@@ -484,5 +485,10 @@ public class FMLCommonHandler
     public void firePlayerSmeltedEvent(EntityPlayer player, ItemStack smelted)
     {
         bus().post(new PlayerEvent.ItemSmeltedEvent(player, smelted));
+    }
+
+    public INetHandler getClientPlayHandler()
+    {
+        return sidedDelegate.getClientPlayHandler();
     }
 }

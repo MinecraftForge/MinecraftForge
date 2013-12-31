@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.StringTranslate;
@@ -214,5 +215,10 @@ public class FMLServerHandler implements IFMLSidedHandler
     public NetworkManager getClientToServerNetworkManager()
     {
         throw new RuntimeException("Missing");
+    }
+    @Override
+    public INetHandler getClientPlayHandler()
+    {
+        return null;
     }
 }
