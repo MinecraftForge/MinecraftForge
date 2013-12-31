@@ -31,7 +31,7 @@
                  Block block = p_150077_0_.func_147439_a(i1, j1, k1);
  
 -                if (block.func_149688_o() != Material.field_151579_a)
-+                if (block.isAir(p_150077_0_, i1, j1, k1))
++                if (!block.isAir(p_150077_0_, i1, j1, k1))
                  {
                      if (!func_150080_a(block, p_150077_0_, i1, j1, k1, true))
                      {
