@@ -17,6 +17,7 @@ public abstract class ForgeMessage {
         /** The provider ID to register with dimension on client */
         int providerId;
         
+        public DimensionRegisterMessage(){}
         public DimensionRegisterMessage(int dimensionId, int providerId)
         {
             this.dimensionId = dimensionId;
