@@ -5,6 +5,7 @@ import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.EnumMap;
 
 import net.minecraftforge.common.ForgeModContainer;
+import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -15,7 +16,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class ForgeNetworkHandler
 {
-    private static EnumMap<Side, EmbeddedChannel> channelPair;
+    private static EnumMap<Side, FMLEmbeddedChannel> channelPair;
 
     public static void registerChannel(ForgeModContainer forgeModContainer, Side side)
     {
