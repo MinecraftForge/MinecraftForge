@@ -10,7 +10,7 @@
  public class RenderBlocks
  {
 @@ -336,9 +338,9 @@
-     private boolean func_147773_v(Block p_147773_1_, int p_147773_2_, int p_147773_3_, int p_147773_4_)
+     public boolean func_147773_v(Block p_147773_1_, int p_147773_2_, int p_147773_3_, int p_147773_4_)
      {
          Tessellator tessellator = Tessellator.instance;
 -        int l = this.field_147845_a.getBlockMetadata(p_147773_2_, p_147773_3_, p_147773_4_);
