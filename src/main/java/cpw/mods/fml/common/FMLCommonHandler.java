@@ -116,7 +116,14 @@ public class FMLCommonHandler
      */
     public ModContainer findContainerFor(Object mod)
     {
-        return Loader.instance().getReversedModObjectList().get(mod);
+        if (mod instanceof String)
+        {
+            return Loader.instance().getIndexedModList().get(mod);
+        }
+        else
+        {
+            return Loader.instance().getReversedModObjectList().get(mod);
+        }
     }
     /**
      * Get the forge mod loader logging instance (goes to the forgemodloader log file)

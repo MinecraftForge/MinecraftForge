@@ -11,7 +11,7 @@ public class OpenGuiHandler extends SimpleChannelInboundHandler<FMLMessage.OpenG
     protected void channelRead0(ChannelHandlerContext ctx, OpenGui msg) throws Exception
     {
         EntityPlayer player = FMLClientHandler.instance().getClient().field_71439_g;
-        player.openGui(msg.networkId, msg.modGuiId, player.field_70170_p, msg.x, msg.y, msg.z);
+        player.openGui(msg.modId, msg.modGuiId, player.field_70170_p, msg.x, msg.y, msg.z);
         player.field_71070_bA.field_75152_c = msg.windowId;
     }
 
