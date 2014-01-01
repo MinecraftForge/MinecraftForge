@@ -44,6 +44,7 @@ public class FMLRelaunchLog {
     private static void configureLogging()
     {
         log.myLog = LogManager.getLogger("FML");
+        configured = true;
     }
 
     public static void log(String targetLog, Level level, String format, Object... data)
