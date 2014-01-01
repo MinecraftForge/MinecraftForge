@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSelectWorld;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -507,5 +508,10 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void tryLoadWorld(GuiSelectWorld selectWorldGUI, int selectedIndex)
     {
         selectWorldGUI.func_146615_e(selectedIndex);
+    }
+
+    public void showInGameModOptions(GuiIngameMenu guiIngameMenu)
+    {
+        showGuiScreen(new GuiIngameModOptions(guiIngameMenu));
     }
 }

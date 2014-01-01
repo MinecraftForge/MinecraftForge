@@ -39,6 +39,7 @@ import com.google.common.base.Strings;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.ModContainer.Disableable;
 
 /**
  * @author cpw
@@ -201,6 +202,25 @@ public class GuiModList extends GuiScreen
                 if (rightSide > 20)
                 {
                     this.getFontRenderer().func_78279_b(selectedMod.getMetadata().description, offset, shifty + 10, rightSide, 0xDDDDDD);
+                }
+                Disableable disableable = selectedMod.canBeDisabled();
+                if (disableable == Disableable.RESTART)
+                {
+                    disableModButton.field_146124_l = true;
+                    disableModButton.field_146125_m = true;
+                    disableModButton.packedFGColour = 0xFF3377;
+                }
+                else if (disableable == Disableable.YES)
+                {
+                    disableModButton.field_146124_l = true;
+                    disableModButton.field_146125_m = true;
+                    disableModButton.packedFGColour = 0;
+                }
+                else
+                {
+                    disableModButton.packedFGColour = 0;
+                    disableModButton.field_146125_m = true;
+                    disableModButton.field_146124_l = false;
                 }
             } else {
                 offset = ( this.listWidth + this.field_146294_l ) / 2;
