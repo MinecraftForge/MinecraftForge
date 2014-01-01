@@ -42,7 +42,7 @@ public class GuiIngameModOptions extends GuiScreen
     public void func_73863_a(int p_73863_1_, int p_73863_2_, float p_73863_3_)
     {
         // force a non-transparent background
-        this.func_146278_c(1);
+        this.func_146276_q_();
         this.optionList.drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);
         this.func_73732_a(this.field_146289_q, this.title, this.field_146294_l / 2, 15, 0xFFFFFF);
         super.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
