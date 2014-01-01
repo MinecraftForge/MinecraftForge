@@ -40,7 +40,7 @@
      {
          this.field_130023_H.field_146125_m = true;
 +        fmlModButton.field_146120_f = 98;
-+        fmlModButton.field_146121_g = this.field_146294_l / 2 + 2;
++        fmlModButton.field_146128_h = this.field_146294_l / 2 + 2;
      }
  
      private void func_73969_a(int p_73969_1_, int p_73969_2_)
@@ -54,7 +54,7 @@
 +
 +        field_130023_H = new GuiButton(14, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.func_135052_a("menu.online"));
 +        field_130023_H.field_146120_f = 98;
-+        field_130023_H.field_146121_g = this.field_146294_l / 2 - 100;
++        field_130023_H.field_146128_h = this.field_146294_l / 2 - 100;
 +        this.field_146292_n.add(field_130023_H);
          this.field_130023_H.field_146125_m = false;
      }
