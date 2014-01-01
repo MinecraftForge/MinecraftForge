@@ -93,8 +93,8 @@ public class GuiModList extends GuiScreen
         }
         listWidth=Math.min(listWidth, 150);
         this.field_146292_n.add(new GuiButton(6, this.field_146294_l / 2 - 75, this.field_146295_m - 38, I18n.func_135052_a("gui.done")));
-        configModButton = new GuiButton(7, 10, this.field_146295_m - 58, this.listWidth, 18, "Config");
-        disableModButton = new GuiButton(8, 10, this.field_146295_m - 36, this.listWidth, 18, "Disable");
+        configModButton = new GuiButton(7, 10, this.field_146295_m - 58, this.listWidth, 20, "Config");
+        disableModButton = new GuiButton(8, 10, this.field_146295_m - 36, this.listWidth, 20, "Disable");
         this.field_146292_n.add(configModButton);
         this.field_146292_n.add(disableModButton);
         this.modList=new GuiSlotModList(this, mods, listWidth);
