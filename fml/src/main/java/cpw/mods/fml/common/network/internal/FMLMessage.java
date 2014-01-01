@@ -40,16 +40,28 @@ public abstract class FMLMessage {
     }
     public static class OpenGui extends FMLMessage {
         int windowId;
-        int networkId;
+        String modId;
         int modGuiId;
         int x;
         int y;
         int z;
+
+        public OpenGui() {}
+        OpenGui(int windowId, String modId, int modGuiId, int x, int y, int z)
+        {
+            this.windowId = windowId;
+            this.modId = modId;
+            this.modGuiId = modGuiId;
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
         @Override
         void toBytes(ByteBuf buf)
         {
             buf.writeInt(windowId);
-            buf.writeInt(networkId);
+            ByteBufUtils.writeUTF8String(buf, modId);
             buf.writeInt(modGuiId);
             buf.writeInt(x);
             buf.writeInt(y);
@@ -60,7 +72,7 @@ public abstract class FMLMessage {
         void fromBytes(ByteBuf buf)
         {
             windowId = buf.readInt();
-            networkId = buf.readInt();
+            modId = ByteBufUtils.readUTF8String(buf);
             modGuiId = buf.readInt();
             x = buf.readInt();
             y = buf.readInt();
