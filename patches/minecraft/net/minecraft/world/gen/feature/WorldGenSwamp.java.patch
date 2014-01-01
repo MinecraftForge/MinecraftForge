@@ -17,7 +17,7 @@
                              Block block = par1World.func_147439_a(j1, i1, k1);
  
 -                            if (block.func_149688_o() != Material.field_151579_a && block.func_149688_o() != Material.field_151584_j)
-+                            if (block.isAir(par1World, j1, i1, k1) || block.isLeaves(par1World, j1, i1, k1))
++                            if (!(block.isAir(par1World, j1, i1, k1) || block.isLeaves(par1World, j1, i1, k1)))
                              {
                                  if (block != Blocks.water && block != Blocks.flowing_water)
                                  {
@@ -87,7 +87,7 @@
              --par3;
  
 -            if (par1World.func_147439_a(par2, par3, par4).func_149688_o() != Material.field_151579_a || i1 <= 0)
-+            if (par1World.func_147439_a(par2, par3, par4).isAir(par1World, par2, par3, par4) || i1 <= 0)
++            if (!(par1World.func_147439_a(par2, par3, par4).isAir(par1World, par2, par3, par4)) || i1 <= 0)
              {
                  return;
              }

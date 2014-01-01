@@ -52,7 +52,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean forceDuplicateFluidBlockCrash = true;
     public static boolean fullBoundingBoxLadders = false;
     public static double zombieSummonBaseChance = 0.1;
-    public static int[] blendRanges = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32 };
+    public static int[] blendRanges = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 };
     public static float zombieBabyChance = 0.05f;
     public static boolean shouldSortRecipies = true;
     public static boolean disableVersionCheck = false;
@@ -144,7 +144,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             FMLLog.warning("Disabling forced crashes on duplicate Fluid Blocks - USE AT YOUR OWN RISK");
         }
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "biomeSkyBlendRange", new int[] { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32 });
+        prop = config.get(Configuration.CATEGORY_GENERAL, "biomeSkyBlendRange", new int[] { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 });
         prop.comment = "Control the range of sky blending for colored skies in biomes.";
         blendRanges = prop.getIntList();
 
