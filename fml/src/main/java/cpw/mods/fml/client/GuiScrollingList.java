@@ -17,6 +17,7 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 
 import org.lwjgl.input.Mouse;
@@ -262,20 +263,27 @@ public abstract class GuiScrollingList
         }
 
         this.applyScrollLimits();
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glDisable(GL11.GL_FOG);
         Tessellator var18 = Tessellator.field_78398_a;
-        this.client.field_71446_o.func_110577_a(Gui.field_110325_k);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        float var17 = 32.0F;
-        var18.func_78382_b();
-        var18.func_78378_d(2105376);
-        var18.func_78374_a((double)this.left, (double)this.bottom, 0.0D, (double)((float)this.left / var17), (double)((float)(this.bottom + (int)this.scrollDistance) / var17));
-        var18.func_78374_a((double)this.right, (double)this.bottom, 0.0D, (double)((float)this.right / var17), (double)((float)(this.bottom + (int)this.scrollDistance) / var17));
-        var18.func_78374_a((double)this.right, (double)this.top, 0.0D, (double)((float)this.right / var17), (double)((float)(this.top + (int)this.scrollDistance) / var17));
-        var18.func_78374_a((double)this.left, (double)this.top, 0.0D, (double)((float)this.left / var17), (double)((float)(this.top + (int)this.scrollDistance) / var17));
-        var18.func_78381_a();
-//        boxRight = this.listWidth / 2 - 92 - 16;
+        if (this.client.field_71441_e != null)
+        {
+            this.drawGradientRect(this.left, this.top, this.right, this.bottom, -1072689136, -804253680);
+        }
+        else
+        {
+            GL11.glDisable(GL11.GL_LIGHTING);
+            GL11.glDisable(GL11.GL_FOG);
+            this.client.field_71446_o.func_110577_a(Gui.field_110325_k);
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            float var17 = 32.0F;
+            var18.func_78382_b();
+            var18.func_78378_d(2105376);
+            var18.func_78374_a((double)this.left, (double)this.bottom, 0.0D, (double)((float)this.left / var17), (double)((float)(this.bottom + (int)this.scrollDistance) / var17));
+            var18.func_78374_a((double)this.right, (double)this.bottom, 0.0D, (double)((float)this.right / var17), (double)((float)(this.bottom + (int)this.scrollDistance) / var17));
+            var18.func_78374_a((double)this.right, (double)this.top, 0.0D, (double)((float)this.right / var17), (double)((float)(this.top + (int)this.scrollDistance) / var17));
+            var18.func_78374_a((double)this.left, (double)this.top, 0.0D, (double)((float)this.left / var17), (double)((float)(this.top + (int)this.scrollDistance) / var17));
+            var18.func_78381_a();
+        }
+ //        boxRight = this.listWidth / 2 - 92 - 16;
         var10 = this.top + 4 - (int)this.scrollDistance;
 
         if (this.field_27262_q)
@@ -319,8 +327,11 @@ public abstract class GuiScrollingList
 
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         byte var20 = 4;
-        this.overlayBackground(0, this.top, 255, 255);
-        this.overlayBackground(this.bottom, this.listHeight, 255, 255);
+        if (this.client.field_71441_e == null)
+        {
+            this.overlayBackground(0, this.top, 255, 255);
+            this.overlayBackground(this.bottom, this.listHeight, 255, 255);
+        }
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glDisable(GL11.GL_ALPHA_TEST);
@@ -409,5 +420,35 @@ public abstract class GuiScrollingList
         var5.func_78374_a((double)this.listWidth + 30, (double)p_22239_1_, 0.0D, (double)((float)(this.listWidth + 30) / var6), (double)((float)p_22239_1_ / var6));
         var5.func_78374_a(0.0D, (double)p_22239_1_, 0.0D, 0.0D, (double)((float)p_22239_1_ / var6));
         var5.func_78381_a();
+    }
+    
+    protected void drawGradientRect(int par1, int par2, int par3, int par4, int par5, int par6)
+    {
+        float f = (float)(par5 >> 24 & 255) / 255.0F;
+        float f1 = (float)(par5 >> 16 & 255) / 255.0F;
+        float f2 = (float)(par5 >> 8 & 255) / 255.0F;
+        float f3 = (float)(par5 & 255) / 255.0F;
+        float f4 = (float)(par6 >> 24 & 255) / 255.0F;
+        float f5 = (float)(par6 >> 16 & 255) / 255.0F;
+        float f6 = (float)(par6 >> 8 & 255) / 255.0F;
+        float f7 = (float)(par6 & 255) / 255.0F;
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_ALPHA_TEST);
+        OpenGlHelper.func_148821_a(770, 771, 1, 0);
+        GL11.glShadeModel(GL11.GL_SMOOTH);
+        Tessellator tessellator = Tessellator.instance;
+        tessellator.startDrawingQuads();
+        tessellator.setColorRGBA_F(f1, f2, f3, f);
+        tessellator.addVertex((double)par3, (double)par2, 0.0D);
+        tessellator.addVertex((double)par1, (double)par2, 0.0D);
+        tessellator.setColorRGBA_F(f5, f6, f7, f4);
+        tessellator.addVertex((double)par1, (double)par4, 0.0D);
+        tessellator.addVertex((double)par3, (double)par4, 0.0D);
+        tessellator.draw();
+        GL11.glShadeModel(GL11.GL_FLAT);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
 }
