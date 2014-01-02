@@ -2,13 +2,14 @@ This is Forge Mod Loader.
 
 You can find the source code at all times at https://github.com/MinecraftForge/FML
 
-This minecraft mod is a clean open source implementation of a mod loader for
-minecraft servers, minecraft bukkit servers, and minecraft clients.
+This minecraft mod is a clean open source implementation of a mod loader for minecraft servers
+and minecraft clients.
 
 The code is authored by cpw.
 
-It (partially) implements API defined by the client side ModLoader, authored by Risugami.
+It began by partially implementing an API defined by the client side ModLoader, authored by Risugami.
 http://www.minecraftforum.net/topic/75440-
+This support has been dropped as of Minecraft release 1.7, as Risugami no longer maintains ModLoader.
 
 It also contains suggestions and hints and generous helpings of code from LexManos, author of MinecraftForge.
 http://www.minecraftforge.net/
