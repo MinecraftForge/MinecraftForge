@@ -143,4 +143,6 @@ public interface ModContainer
     Map<String, String> getSharedModDescriptor();
 
     Disableable canBeDisabled();
+
+    String getGuiClassName();
 }

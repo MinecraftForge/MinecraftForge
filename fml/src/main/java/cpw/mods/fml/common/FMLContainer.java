@@ -215,4 +215,10 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
     {
         return getSource().isDirectory() ? FMLFolderResourcePack.class : FMLFileResourcePack.class;
     }
+
+    @Override
+    public String getGuiClassName()
+    {
+        return "cpw.mods.fml.client.FMLConfigGuiFactory";
+    }
 }

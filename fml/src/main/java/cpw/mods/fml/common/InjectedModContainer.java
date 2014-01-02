@@ -174,4 +174,10 @@ public class InjectedModContainer implements ModContainer
     {
         return wrappedContainer.canBeDisabled();
     }
+
+    @Override
+    public String getGuiClassName()
+    {
+        return wrappedContainer.getGuiClassName();
+    }
 }

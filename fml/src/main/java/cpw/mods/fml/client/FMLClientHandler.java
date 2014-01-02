@@ -36,7 +36,10 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import org.apache.logging.log4j.Level;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -118,6 +121,8 @@ public class FMLClientHandler implements IFMLSidedHandler
     private IReloadableResourceManager resourceManager;
 
     private Map<String, IResourcePack> resourcePackMap;
+
+    private BiMap<ModContainer, IModGuiFactory> guiFactories;
 
     /**
      * Called to start the whole game off
@@ -239,6 +244,26 @@ public class FMLClientHandler implements IFMLSidedHandler
         // Reload resources
 //        client.func_110436_a();
         RenderingRegistry.instance().loadEntityRenderers((Map<Class<? extends Entity>, Render>)RenderManager.field_78727_a.field_78729_o);
+        guiFactories = HashBiMap.create();
+        for (ModContainer mc : Loader.instance().getActiveModList())
+        {
+            String className = mc.getGuiClassName();
+            if (Strings.isNullOrEmpty(className))
+            {
+                continue;
+            }
+            try
+            {
+                Class<?> clazz = Class.forName(className, true, Loader.instance().getModClassLoader());
+                Class<? extends IModGuiFactory> guiClassFactory = clazz.asSubclass(IModGuiFactory.class);
+                IModGuiFactory guiFactory = guiClassFactory.newInstance();
+                guiFactory.initialize(client);
+                guiFactories.put(mc, guiFactory);
+            } catch (Exception e)
+            {
+                FMLLog.log(Level.ERROR, e, "A critical error occurred instantiating the gui factory for mod %s", mc.getModId());
+            }
+        }
         loading = false;
     }
 
@@ -513,5 +538,10 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void showInGameModOptions(GuiIngameMenu guiIngameMenu)
     {
         showGuiScreen(new GuiIngameModOptions(guiIngameMenu));
+    }
+
+    public IModGuiFactory getGuiFactoryFor(ModContainer selectedMod)
+    {
+        return guiFactories.get(selectedMod);
     }
 }
