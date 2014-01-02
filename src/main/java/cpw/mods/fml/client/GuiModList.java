@@ -33,10 +33,12 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.util.ResourceLocation;
 
+import org.apache.logging.log4j.Level;
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Strings;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModContainer.Disableable;
@@ -93,8 +95,8 @@ public class GuiModList extends GuiScreen
         }
         listWidth=Math.min(listWidth, 150);
         this.field_146292_n.add(new GuiButton(6, this.field_146294_l / 2 - 75, this.field_146295_m - 38, I18n.func_135052_a("gui.done")));
-        configModButton = new GuiButton(7, 10, this.field_146295_m - 60, this.listWidth, 20, "Config");
-        disableModButton = new GuiButton(8, 10, this.field_146295_m - 38, this.listWidth, 20, "Disable");
+        configModButton = new GuiButton(20, 10, this.field_146295_m - 60, this.listWidth, 20, "Config");
+        disableModButton = new GuiButton(21, 10, this.field_146295_m - 38, this.listWidth, 20, "Disable");
         this.field_146292_n.add(configModButton);
         this.field_146292_n.add(disableModButton);
         this.modList=new GuiSlotModList(this, mods, listWidth);
@@ -109,6 +111,18 @@ public class GuiModList extends GuiScreen
             {
                 case 6:
                     this.field_146297_k.func_147108_a(this.mainMenu);
+                    return;
+                case 20:
+                    try
+                    {
+                        IModGuiFactory guiFactory = FMLClientHandler.instance().getGuiFactoryFor(selectedMod);
+                        GuiScreen newScreen = guiFactory.mainConfigGuiClass().getConstructor(GuiScreen.class).newInstance(this);
+                        this.field_146297_k.func_147108_a(newScreen);
+                    }
+                    catch (Exception e)
+                    {
+                        FMLLog.log(Level.ERROR, e, "There was a critical issue trying to build the config GUI for %s", selectedMod.getModId());
+                    }
                     return;
             }
         }
@@ -221,6 +235,17 @@ public class GuiModList extends GuiScreen
                     disableModButton.packedFGColour = 0;
                     disableModButton.field_146125_m = true;
                     disableModButton.field_146124_l = false;
+                }
+                IModGuiFactory guiFactory = FMLClientHandler.instance().getGuiFactoryFor(selectedMod);
+                if (guiFactory == null || guiFactory.mainConfigGuiClass() == null)
+                {
+                    configModButton.field_146125_m = true;
+                    configModButton.field_146124_l = false;
+                }
+                else
+                {
+                    configModButton.field_146125_m = true;
+                    configModButton.field_146124_l = true;
                 }
             } else {
                 offset = ( this.listWidth + this.field_146294_l ) / 2;

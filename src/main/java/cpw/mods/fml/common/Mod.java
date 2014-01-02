@@ -17,6 +17,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import cpw.mods.fml.client.IModGuiFactory;
 import cpw.mods.fml.common.event.FMLEvent;
 import cpw.mods.fml.common.event.FMLFingerprintViolationEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -149,10 +150,20 @@ public @interface Mod
      * (minimap mods, graphical tweak mods) then you can set true here and receive the FMLDeactivationEvent to perform deactivation
      * tasks.
      * This does not affect administrative disabling through the system property fml.modStates or the config file fmlModState.properties.
+     * The mod will only be deactivated outside of a running game world - FML will never allow mod deactivation whilst a game server
+     * is running.
      *
-     * @return if I can be deactivated whilst the game is running.
+     * @return if this mod can be deactivated whilst the game is open.
      */
     boolean canBeDeactivated() default false;
+
+    /**
+     * An optional GUI factory for this mod. This is the name of a class implementing {@link IModGuiFactory} that will be instantiated
+     * on the client side, and will have certain configuration/options guis requested from it.
+     *
+     * @return The name of a class implementing {@link IModGuiFactory}
+     */
+    String guiFactory() default "";
     /**
      * A list of custom properties for this mod. Completely up to the mod author if/when they
      * want to put anything in here.

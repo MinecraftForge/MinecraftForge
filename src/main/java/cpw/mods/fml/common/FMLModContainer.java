@@ -616,4 +616,10 @@ public class FMLModContainer implements ModContainer
     {
         return disableability;
     }
+
+    @Override
+    public String getGuiClassName()
+    {
+        return (String) descriptor.get("guiFactory");
+    }
 }

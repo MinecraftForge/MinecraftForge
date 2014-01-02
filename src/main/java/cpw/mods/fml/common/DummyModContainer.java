@@ -186,4 +186,10 @@ public class DummyModContainer implements ModContainer
     {
         return Disableable.NEVER;
     }
+
+    @Override
+    public String getGuiClassName()
+    {
+        return null;
+    }
 }
