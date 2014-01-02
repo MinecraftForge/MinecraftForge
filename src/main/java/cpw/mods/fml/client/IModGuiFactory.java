@@ -1,7 +1,9 @@
 package cpw.mods.fml.client;
 
+import java.util.List;
 import java.util.Set;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 
 public interface IModGuiFactory {
@@ -100,7 +102,7 @@ public interface IModGuiFactory {
          * @param w width
          * @param h height
          */
-        public void addWidgets(int x, int y, int w, int h);
+        public void addWidgets(List<Gui> widgetList, int x, int y, int w, int h);
 
         /**
          * Called to paint the rectangle specified.

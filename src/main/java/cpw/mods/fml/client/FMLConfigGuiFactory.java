@@ -1,7 +1,10 @@
 package cpw.mods.fml.client;
 
+import java.util.List;
 import java.util.Set;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -53,18 +56,43 @@ public class FMLConfigGuiFactory implements IModGuiFactory {
         return FMLConfigGuiScreen.class;
     }
 
+    private static final Set<RuntimeOptionCategoryElement> fmlCategories = ImmutableSet.of(new RuntimeOptionCategoryElement("HELP", "FML"));
+
     @Override
     public Set<RuntimeOptionCategoryElement> runtimeGuiCategories()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return fmlCategories;
     }
 
     @Override
     public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element)
     {
-        // TODO Auto-generated method stub
-        return null;
+        return new RuntimeOptionGuiHandler() {
+            @Override
+            public void paint(int x, int y, int w, int h)
+            {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void close()
+            {
+            }
+
+            @Override
+            public void addWidgets(List<Gui> widgets, int x, int y, int w, int h)
+            {
+                widgets.add(new GuiButton(100, x+10, y+10, "HELLO"));
+            }
+
+            @Override
+            public void actionCallback(int actionId)
+            {
+                // TODO Auto-generated method stub
+
+            }
+        };
     }
 
 }
