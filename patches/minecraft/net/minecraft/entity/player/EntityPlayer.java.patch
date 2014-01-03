@@ -139,7 +139,7 @@
      public EntityItem dropPlayerItemWithRandomChoice(ItemStack par1ItemStack, boolean par2)
      {
 -        return this.func_146097_a(par1ItemStack, false, false);
-+        return ForgeHooks.onPlayerTossEvent(this, par1ItemStack, false);
++        return ForgeHooks.onPlayerTossEvent(this, par1ItemStack, par2);
      }
  
      public EntityItem func_146097_a(ItemStack p_146097_1_, boolean p_146097_2_, boolean p_146097_3_)
