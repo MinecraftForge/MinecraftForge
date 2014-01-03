@@ -421,7 +421,7 @@ public abstract class GuiScrollingList
         var5.func_78374_a(0.0D, (double)p_22239_1_, 0.0D, 0.0D, (double)((float)p_22239_1_ / var6));
         var5.func_78381_a();
     }
-    
+
     protected void drawGradientRect(int par1, int par2, int par3, int par4, int par5, int par6)
     {
         float f = (float)(par5 >> 24 & 255) / 255.0F;
@@ -437,15 +437,15 @@ public abstract class GuiScrollingList
         GL11.glDisable(GL11.GL_ALPHA_TEST);
         OpenGlHelper.func_148821_a(770, 771, 1, 0);
         GL11.glShadeModel(GL11.GL_SMOOTH);
-        Tessellator tessellator = Tessellator.instance;
-        tessellator.startDrawingQuads();
-        tessellator.setColorRGBA_F(f1, f2, f3, f);
-        tessellator.addVertex((double)par3, (double)par2, 0.0D);
-        tessellator.addVertex((double)par1, (double)par2, 0.0D);
-        tessellator.setColorRGBA_F(f5, f6, f7, f4);
-        tessellator.addVertex((double)par1, (double)par4, 0.0D);
-        tessellator.addVertex((double)par3, (double)par4, 0.0D);
-        tessellator.draw();
+        Tessellator tessellator = Tessellator.field_78398_a;
+        tessellator.func_78382_b();
+        tessellator.func_78369_a(f1, f2, f3, f);
+        tessellator.func_78377_a((double)par3, (double)par2, 0.0D);
+        tessellator.func_78377_a((double)par1, (double)par2, 0.0D);
+        tessellator.func_78369_a(f5, f6, f7, f4);
+        tessellator.func_78377_a((double)par1, (double)par4, 0.0D);
+        tessellator.func_78377_a((double)par3, (double)par4, 0.0D);
+        tessellator.func_78381_a();
         GL11.glShadeModel(GL11.GL_FLAT);
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glEnable(GL11.GL_ALPHA_TEST);
