@@ -688,7 +688,7 @@
 +     */
 +    public boolean canBeReplacedByLeaves(IBlockAccess world, int x, int y, int z)
 +    {
-+        return func_149730_j();
++        return !func_149730_j();
 +    }
 +
 +    /**
