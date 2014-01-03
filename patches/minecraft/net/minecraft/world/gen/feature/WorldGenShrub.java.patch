@@ -23,7 +23,7 @@
                          int j2 = i2 - par5;
  
 -                        if ((Math.abs(l1) != j1 || Math.abs(j2) != j1 || par2Random.nextInt(2) != 0) && !par1World.func_147439_a(k1, l, i2).func_149730_j())
-+                        if ((Math.abs(l1) != j1 || Math.abs(j2) != j1 || par2Random.nextInt(2) != 0) && !par1World.func_147439_a(k1, l, i2).canBeReplacedByLeaves(par1World, k1, l, i2))
++                        if ((Math.abs(l1) != j1 || Math.abs(j2) != j1 || par2Random.nextInt(2) != 0) && par1World.func_147439_a(k1, l, i2).canBeReplacedByLeaves(par1World, k1, l, i2))
                          {
                              this.func_150516_a(par1World, k1, l, i2, Blocks.leaves, this.field_150528_a);
                          }
