@@ -46,7 +46,7 @@
 +
 +    public boolean canPaneConnectTo(IBlockAccess world, int x, int y, int z, ForgeDirection dir)
 +    {
-+        return func_150098_a(world.func_147439_a(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ)) || 
-+                world.isSideSolid(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir.getOpposite(), false);
++        return func_150098_a(world.func_147439_a(x, y, z)) || 
++                world.isSideSolid(x, y, z, dir.getOpposite(), false);
 +    }
  }
