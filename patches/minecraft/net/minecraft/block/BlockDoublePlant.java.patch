@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDoublePlant.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDoublePlant.java
+@@ -56,7 +56,7 @@
+ 
+     public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
+     {
+-        return super.func_149742_c(p_149742_1_, p_149742_2_, p_149742_3_, p_149742_4_) && p_149742_1_.func_147437_c(p_149742_2_, p_149742_3_ + 1, p_149742_4_);
++        return super.func_149718_j(p_149742_1_, p_149742_2_, p_149742_3_, p_149742_4_) && p_149742_1_.func_147437_c(p_149742_2_, p_149742_3_ + 1, p_149742_4_);
+     }
+ 
+     protected void func_149855_e(World p_149855_1_, int p_149855_2_, int p_149855_3_, int p_149855_4_)
