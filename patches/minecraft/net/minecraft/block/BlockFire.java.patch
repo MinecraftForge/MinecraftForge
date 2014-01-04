@@ -29,8 +29,11 @@
      @SideOnly(Side.CLIENT)
      private IIcon[] field_149850_M;
      private static final String __OBFID = "CL_00000245";
-@@ -56,8 +63,7 @@
+@@ -54,10 +61,10 @@
+         Blocks.fire.func_149842_a(func_149682_b(Blocks.carpet), 60, 20);
+     }
  
++    @Deprecated // Use setFireInfo
      public void func_149842_a(int p_149842_1_, int p_149842_2_, int p_149842_3_)
      {
 -        this.field_149849_a[p_149842_1_] = p_149842_2_;
@@ -39,7 +42,7 @@
      }
  
      public AxisAlignedBB func_149668_a(World p_149668_1_, int p_149668_2_, int p_149668_3_, int p_149668_4_)
-@@ -94,13 +100,8 @@
+@@ -94,13 +101,8 @@
      {
          if (p_149674_1_.getGameRules().getGameRuleBooleanValue("doFireTick"))
          {
@@ -54,7 +57,7 @@
              if (!this.func_149742_c(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_))
              {
                  p_149674_1_.func_147468_f(p_149674_2_, p_149674_3_, p_149674_4_);
-@@ -128,7 +129,7 @@
+@@ -128,7 +130,7 @@
                          p_149674_1_.func_147468_f(p_149674_2_, p_149674_3_, p_149674_4_);
                      }
                  }
@@ -63,7 +66,7 @@
                  {
                      p_149674_1_.func_147468_f(p_149674_2_, p_149674_3_, p_149674_4_);
                  }
-@@ -142,12 +143,12 @@
+@@ -142,12 +144,12 @@
                          b0 = -50;
                      }
  
@@ -82,7 +85,7 @@
  
                      for (int i1 = p_149674_2_ - 1; i1 <= p_149674_2_ + 1; ++i1)
                      {
-@@ -201,10 +202,16 @@
+@@ -201,10 +203,16 @@
          return false;
      }
  
@@ -100,7 +103,7 @@
          if (p_149841_6_.nextInt(p_149841_5_) < j1)
          {
              boolean flag = p_149841_1_.func_147439_a(p_149841_2_, p_149841_3_, p_149841_4_) == Blocks.tnt;
-@@ -234,7 +241,12 @@
+@@ -234,7 +242,12 @@
  
      private boolean func_149847_e(World p_149847_1_, int p_149847_2_, int p_149847_3_, int p_149847_4_)
      {
@@ -114,7 +117,7 @@
      }
  
      private int func_149845_m(World p_149845_1_, int p_149845_2_, int p_149845_3_, int p_149845_4_)
-@@ -247,12 +259,13 @@
+@@ -247,12 +260,13 @@
          }
          else
          {
@@ -134,7 +137,7 @@
              return l;
          }
      }
-@@ -262,15 +275,16 @@
+@@ -262,15 +276,16 @@
          return false;
      }
  
@@ -154,7 +157,7 @@
      }
  
      public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
-@@ -314,9 +328,9 @@
+@@ -314,9 +329,9 @@
          float f1;
          float f2;
  
@@ -166,7 +169,7 @@
              {
                  for (l = 0; l < 2; ++l)
                  {
-@@ -327,7 +341,7 @@
+@@ -327,7 +342,7 @@
                  }
              }
  
@@ -175,7 +178,7 @@
              {
                  for (l = 0; l < 2; ++l)
                  {
-@@ -338,7 +352,7 @@
+@@ -338,7 +353,7 @@
                  }
              }
  
@@ -184,7 +187,7 @@
              {
                  for (l = 0; l < 2; ++l)
                  {
-@@ -349,7 +363,7 @@
+@@ -349,7 +364,7 @@
                  }
              }
  
@@ -193,7 +196,7 @@
              {
                  for (l = 0; l < 2; ++l)
                  {
-@@ -360,7 +374,7 @@
+@@ -360,7 +375,7 @@
                  }
              }
  
@@ -202,7 +205,7 @@
              {
                  for (l = 0; l < 2; ++l)
                  {
-@@ -405,4 +419,100 @@
+@@ -405,4 +420,101 @@
      {
          return MapColor.field_151656_f;
      }
@@ -217,6 +220,7 @@
 +
 +    public void setFireInfo(Block block, int encouragement, int flammibility)
 +    {
++        if (block == Blocks.air) throw new IllegalArgumentException("Tried to set air on fire... This is bad.");
 +        int id = Block.func_149682_b(block);
 +        this.field_149849_a[id] = encouragement;
 +        this.field_149848_b[id] = flammibility;

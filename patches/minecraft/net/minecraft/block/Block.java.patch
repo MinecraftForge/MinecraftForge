@@ -885,7 +885,7 @@
 +     *   Cacti checks if its a cacti, or if its sand
 +     *   Nether types check for soul sand
 +     *   Crops check for tilled soil
-+     *   Caves check if it's a colid surface
++     *   Caves check if it's a solid surface
 +     *   Plains check if its grass or dirt
 +     *   Water check if its still water
 +     *
