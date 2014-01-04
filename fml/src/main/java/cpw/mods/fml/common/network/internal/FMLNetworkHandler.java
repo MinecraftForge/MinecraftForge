@@ -12,14 +12,13 @@
 
 package cpw.mods.fml.common.network.internal;
 
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.embedded.EmbeddedChannel;
-
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -28,11 +27,8 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.world.World;
-
 import org.apache.logging.log4j.core.helpers.Integers;
-
 import com.google.common.collect.Lists;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLContainer;
 import cpw.mods.fml.common.FMLLog;
@@ -149,8 +145,10 @@ public class FMLNetworkHandler
     @SideOnly(Side.CLIENT)
     private static void addClientHandlers()
     {
-        channelPair.get(Side.CLIENT).pipeline().addAfter("FMLRuntimeCodec#0", "GuiHandler", new OpenGuiHandler());
-        channelPair.get(Side.CLIENT).pipeline().addAfter("FMLRuntimeCodec#0", "EntitySpawnHandler", new EntitySpawnHandler());
+        ChannelPipeline pipeline = channelPair.get(Side.CLIENT).pipeline();
+        String targetName = channelPair.get(Side.CLIENT).findChannelHandlerNameForType(FMLRuntimeCodec.class);
+        pipeline.addAfter(targetName, "GuiHandler", new OpenGuiHandler());
+        pipeline.addAfter(targetName, "EntitySpawnHandler", new EntitySpawnHandler());
     }
     public static void registerChannel(FMLContainer container, Side side)
     {
