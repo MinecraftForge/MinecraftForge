@@ -72,7 +72,7 @@
 -        double d0 = par1Entity.posX;
 -        double d1 = par1Entity.posZ;
 -        double d2 = 8.0D;
-+        transferEntityToWorld(par1Entity, par2, par3WorldServer, par4WorldServer);
++        transferEntityToWorld(par1Entity, par2, par3WorldServer, par4WorldServer, par4WorldServer.getDefaultTeleporter());
 +    }
 +
 +    public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer, Teleporter teleporter)
