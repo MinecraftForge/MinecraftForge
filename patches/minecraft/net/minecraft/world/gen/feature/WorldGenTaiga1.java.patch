@@ -39,7 +39,7 @@
                                  int l2 = k2 - par5;
  
 -                                if ((Math.abs(j3) != i3 || Math.abs(l2) != i3 || i3 <= 0) && !par1World.func_147439_a(j2, i2, k2).func_149730_j())
-+                                if ((Math.abs(j3) != i3 || Math.abs(l2) != i3 || i3 <= 0) && !par1World.func_147439_a(j2, i2, k2).canBeReplacedByLeaves(par1World, j2, i2, k2))
++                                if ((Math.abs(j3) != i3 || Math.abs(l2) != i3 || i3 <= 0) && par1World.func_147439_a(j2, i2, k2).canBeReplacedByLeaves(par1World, j2, i2, k2))
                                  {
                                      this.func_150516_a(par1World, j2, i2, k2, Blocks.leaves, 1);
                                  }

@@ -14,7 +14,7 @@
                                  }
  
 -                                if ((j2 != 0 || par4 >= par4 + i1 - 1) && !par1World.func_147439_a(l2, k1, i2).func_149730_j())
-+                                if ((j2 != 0 || par4 >= par4 + i1 - 1) && !par1World.func_147439_a(l2, k1, i2).canBeReplacedByLeaves(par1World, l2, k1, i2))
++                                if ((j2 != 0 || par4 >= par4 + i1 - 1) && par1World.func_147439_a(l2, k1, i2).canBeReplacedByLeaves(par1World, l2, k1, i2))
                                  {
                                      this.func_150516_a(par1World, l2, k1, i2, Block.func_149729_e(Block.func_149682_b(Blocks.brown_mushroom_block) + l), j2);
                                  }
