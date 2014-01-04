@@ -57,7 +57,7 @@ public class FMLEmbeddedChannel extends EmbeddedChannel {
         String targetName = null;
         for (Entry<String, ChannelHandler> entry : pipeline())
         {
-            if (FMLRuntimeCodec.class.isInstance(entry.getValue()))
+            if (type.isInstance(entry.getValue()))
             {
                 targetName = entry.getKey();
                 break;
