@@ -1,0 +1,6 @@
+commands.forge.usage=Nutzte /forge <subbefehl>. Subbefehle sind tps, track
+commands.forge.usage.tracking=Nutze /forge track <typ> <Dauer>. Gültige Typen sind te (Tile Entities). Dauer ist < 60. 
+commands.forge.tps.summary=%s : Mittlere tick-Zeit: %d ms. Mittlere TPS: %d
+
+commands.forge.tracking.te.enabled=Tile-Entity-Tracking aktiviert für %d Sekunden.
+forge.texture.preload.warning=Warnung: Textur %s nicht vorgeladen, wird Render-Probleme verursachen!
