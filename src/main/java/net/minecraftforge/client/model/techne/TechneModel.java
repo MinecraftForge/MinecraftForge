@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -31,10 +32,11 @@ import org.xml.sax.SAXException;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.resources.IResource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.client.model.ModelFormatException;
 import net.minecraftforge.client.model.obj.GroupObject;
@@ -57,17 +59,26 @@ public class TechneModel extends ModelBase implements IModelCustom {
     private int textureName;
     private boolean textureNameSet = false;
 
-    public TechneModel(String fileName, URL resource) throws ModelFormatException
+    public TechneModel(ResourceLocation resource) throws ModelFormatException
     {
-        this.fileName = fileName;
-        loadTechneModel(resource);
+        this.fileName = resource.toString();
+
+        try
+        {
+            IResource res = Minecraft.getMinecraft().getResourceManager().getResource(resource);
+            loadTechneModel(res.getInputStream());
+        }
+        catch (IOException e)
+        {
+            throw new ModelFormatException("IO Exception reading model format", e);
+        }
     }
     
-    private void loadTechneModel(URL fileURL) throws ModelFormatException
+    private void loadTechneModel(InputStream stream) throws ModelFormatException
     {
         try
         {
-            ZipInputStream zipInput = new ZipInputStream(fileURL.openStream());
+            ZipInputStream zipInput = new ZipInputStream(stream);
             
             ZipEntry entry;
             while ((entry = zipInput.getNextEntry()) != null)

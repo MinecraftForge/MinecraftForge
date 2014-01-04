@@ -3,11 +3,13 @@ package net.minecraftforge.client.model.obj;
 import java.io.InputStream;
 import java.net.URL;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.client.model.IModelCustomLoader;
 import net.minecraftforge.client.model.ModelFormatException;
 
-public class ObjModelLoader implements IModelCustomLoader {
+public class ObjModelLoader implements IModelCustomLoader
+{
 
     @Override
     public String getType()
@@ -23,9 +25,8 @@ public class ObjModelLoader implements IModelCustomLoader {
     }
 
     @Override
-    public IModelCustom loadInstance(String resourceName, URL resource) throws ModelFormatException
+    public IModelCustom loadInstance(ResourceLocation resource) throws ModelFormatException
     {
-        return new WavefrontObject(resourceName, resource);
+        return new WavefrontObject(resource);
     }
-
 }

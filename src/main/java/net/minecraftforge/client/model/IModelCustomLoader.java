@@ -3,6 +3,8 @@ package net.minecraftforge.client.model;
 import java.io.InputStream;
 import java.net.URL;
 
+import net.minecraft.util.ResourceLocation;
+
 /**
  * Instances of this class act as factories for their model type
  *
@@ -22,10 +24,9 @@ public interface IModelCustomLoader {
     String[] getSuffixes();
     /**
      * Load a model instance from the supplied path
-     * @param resourceName The resource name to load
-     * @param resource The URL associated with the classloader resource
+     * @param resource The ResourceLocation of the model
      * @return A model instance
      * @throws ModelFormatException if the model format is not correct
      */
-    IModelCustom loadInstance(String resourceName, URL resource) throws ModelFormatException;
+    IModelCustom loadInstance(ResourceLocation resource) throws ModelFormatException;
 }

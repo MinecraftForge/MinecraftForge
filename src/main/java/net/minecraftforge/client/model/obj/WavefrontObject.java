@@ -9,7 +9,10 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.resources.IResource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.client.model.ModelFormatException;
 
@@ -46,13 +49,14 @@ public class WavefrontObject implements IModelCustom
     private GroupObject currentGroupObject;
     private String fileName;
 
-    public WavefrontObject(String fileName, URL resource) throws ModelFormatException
+    public WavefrontObject(ResourceLocation resource) throws ModelFormatException
     {
-        this.fileName = fileName;
+        this.fileName = resource.toString();
         
         try
         {
-            loadObjModel(resource.openStream());
+            IResource res = Minecraft.getMinecraft().getResourceManager().getResource(resource);
+            loadObjModel(res.getInputStream());
         }
         catch (IOException e)
         {

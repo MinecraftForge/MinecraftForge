@@ -1,10 +1,10 @@
 package net.minecraftforge.client.model;
 
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.obj.ObjModelLoader;
 import net.minecraftforge.client.model.techne.TechneModelLoader;
 
@@ -40,34 +40,29 @@ public class AdvancedModelLoader {
 
     /**
      * Load the model from the supplied classpath resolvable resource name
-     * @param resourceName The resource name
+     * @param resource The resource name
      * @return A model
      * @throws IllegalArgumentException if the resource name cannot be understood
      * @throws ModelFormatException if the underlying model handler cannot parse the model format
      */
-    public static IModelCustom loadModel(String resourceName) throws IllegalArgumentException, ModelFormatException
+    public static IModelCustom loadModel(ResourceLocation resource) throws IllegalArgumentException, ModelFormatException
     {
-        int i = resourceName.lastIndexOf('.');
+        String name = resource.getResourcePath();
+        int i = name.lastIndexOf('.');
         if (i == -1)
         {
-            FMLLog.severe("The resource name %s is not valid", resourceName);
+            FMLLog.severe("The resource name %s is not valid", resource);
             throw new IllegalArgumentException("The resource name is not valid");
         }
-        String suffix = resourceName.substring(i+1);
+        String suffix = name.substring(i+1);
         IModelCustomLoader loader = instances.get(suffix);
         if (loader == null)
         {
-            FMLLog.severe("The resource name %s is not supported", resourceName);
+            FMLLog.severe("The resource name %s is not supported", resource);
             throw new IllegalArgumentException("The resource name is not supported");
         }
 
-        URL resource = AdvancedModelLoader.class.getResource(resourceName);
-        if (resource == null)
-        {
-            FMLLog.severe("The resource name %s could not be found", resourceName);
-            throw new IllegalArgumentException("The resource name could not be found");
-        }
-        return loader.loadInstance(resourceName, resource);
+        return loader.loadInstance(resource);
     }
 
     public static Collection<String> getSupportedSuffixes()

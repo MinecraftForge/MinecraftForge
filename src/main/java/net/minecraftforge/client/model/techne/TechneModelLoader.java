@@ -4,7 +4,7 @@ import java.net.URL;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.client.model.IModelCustomLoader;
 import net.minecraftforge.client.model.ModelFormatException;
@@ -25,9 +25,9 @@ public class TechneModelLoader implements IModelCustomLoader {
     }
 
     @Override
-    public IModelCustom loadInstance(String resourceName, URL resource) throws ModelFormatException
+    public IModelCustom loadInstance(ResourceLocation resource) throws ModelFormatException
     {
-        return new TechneModel(resourceName, resource);
+        return new TechneModel(resource);
     }
 
 }
