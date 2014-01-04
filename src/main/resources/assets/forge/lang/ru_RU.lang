@@ -1,6 +1,6 @@
-commands.forge.usage=Используйте /forge <подкоманда>. Подкоманды: tps, track
-commands.forge.usage.tracking=Используйте /forge track <тип> <длительность>. Возможные типы te (Tile Entities). Длительность < 60. 
-commands.forge.tps.summary=%s : Среднее время (такт): %d ms. Средняя TPS: %d
+commands.forge.usage=Используйте /forge <значение>. Значения: tps, track
+commands.forge.usage.tracking=Используйте /forge track <тип> <длительность>. Возможные типы - te (индекс блока, "Tile Entity"). Длительность: значение меньшее, чем 60. 
+commands.forge.tps.summary=%s : Среднее время (такт): %d ms. Среднее TPS: %d
 
-commands.forge.tracking.te.enabled=Tile Entity отслеживание включено на %d секунд.
-forge.texture.preload.warning=Предупреждение: Текстура %s не загрузилась, вызовет графические глюки!
+commands.forge.tracking.te.enabled=Отслеживание индексов блоков включено на %d секунд.
+forge.texture.preload.warning=Предупреждение: Текстура %s не загрузилась, возможны проблемы с графикой!
