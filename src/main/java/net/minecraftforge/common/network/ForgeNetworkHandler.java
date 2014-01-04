@@ -1,15 +1,11 @@
 package net.minecraftforge.common.network;
 
-import io.netty.channel.embedded.EmbeddedChannel;
-
 import java.util.EnumMap;
-
 import net.minecraftforge.common.ForgeModContainer;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.internal.FMLRuntimeCodec;
 import cpw.mods.fml.common.network.internal.HandshakeCompletionHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -21,20 +17,23 @@ public class ForgeNetworkHandler
     public static void registerChannel(ForgeModContainer forgeModContainer, Side side)
     {
         channelPair = NetworkRegistry.INSTANCE.newChannel(forgeModContainer, "FORGE", new ForgeRuntimeCodec(), new HandshakeCompletionHandler());
-        EmbeddedChannel embeddedChannel = channelPair.get(Side.SERVER);
-        embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.NOWHERE);
-
         if (side == Side.CLIENT)
         {
             addClientHandlers();
         }
-        channelPair.get(Side.SERVER).pipeline().addAfter("ForgeRuntimeCodec#0", "ServerToClientConnection", new ServerToClientConnectionEstablishedHandler());
+
+        FMLEmbeddedChannel serverChannel = channelPair.get(Side.SERVER);
+        serverChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.NOWHERE);
+        String handlerName = serverChannel.findChannelHandlerNameForType(ForgeRuntimeCodec.class);
+        serverChannel.pipeline().addAfter(handlerName, "ServerToClientConnection", new ServerToClientConnectionEstablishedHandler());
     }
 
     @SideOnly(Side.CLIENT)
     private static void addClientHandlers()
     {
-        channelPair.get(Side.CLIENT).pipeline().addAfter("ForgeRuntimeCodec#0", "DimensionHandler", new DimensionMessageHandler());
-        channelPair.get(Side.CLIENT).pipeline().addAfter("ForgeRuntimeCodec#0", "FluidIdRegistryHandler", new FluidIdRegistryMessageHandler());
+        FMLEmbeddedChannel clientChannel = channelPair.get(Side.CLIENT);
+        String handlerName = clientChannel.findChannelHandlerNameForType(ForgeRuntimeCodec.class);
+        clientChannel.pipeline().addAfter(handlerName, "DimensionHandler", new DimensionMessageHandler());
+        clientChannel.pipeline().addAfter(handlerName, "FluidIdRegistryHandler", new FluidIdRegistryMessageHandler());
     }
 }
