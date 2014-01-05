@@ -1,6 +1,6 @@
-commands.forge.usage=Pouij /forge <podpøíkaz>. Podpøíkazy jsou tps, track
-commands.forge.usage.tracking=Pouij /forge track <typ> <trvání>. Platné typy jsou (Tile Entities). Trvání je < 60. 
-commands.forge.tps.summary=%s : Prùmìrná doba ticku: %d ms. Prùmìrné TPS: %d
+commands.forge.usage=PouÅ¾ij /forge <podpÅ™Ã­kaz>. PodpÅ™Ã­kazy jsou tps, track
+commands.forge.usage.tracking=PouÅ¾ij /forge track <typ> <trvÃ¡nÃ­>. PlatnÃ© typy jsou (Tile Entities). TrvÃ¡nÃ­ je < 60. 
+commands.forge.tps.summary=%s : PrÅ¯mÄ›rnÃ¡ doba ticku: %d ms. PrÅ¯mÄ›rnÃ© TPS: %d
 
-commands.forge.tracking.te.enabled=Sledování Tile Entit zapnuto na %d sekund.
-forge.texture.preload.warning=Warning: Textura %s nebyla pøednaètena, co zpùsobí vykreslovací problémy!
+commands.forge.tracking.te.enabled=SledovÃ¡nÃ­ Tile Entit zapnuto na %d sekund.
+forge.texture.preload.warning=Warning: Textura %s nebyla pÅ™ednaÄtena, coÅ¾ zpÃ¹sobÃ­ vykreslovacÃ­ problÃ©my!
