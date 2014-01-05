@@ -58,6 +58,29 @@ public class BlockEvent extends Event {
     }
     
     /**
+     * Event that is fired when an Block is about to be placed by a player
+     * Canceling this event will prevent the Block from being placed.
+     * 
+     * @author ElConquistador
+     */
+    @Cancelable
+    public static class PlaceEvent extends BlockEvent 
+    {
+        private final EntityPlayer player;
+        
+        public PlaceEvent(int x, int y, int z, World world, Block block, int blockMetadata, EntityPlayer player)
+        {
+            super(x, y, z, world, block, blockMetadata);
+            this.player = player;
+        }
+        
+        public EntityPlayer getPlayer()
+        {
+            return player;
+        }
+    }
+    
+    /**
      * Event that is fired when an Block is about to be broken by a player
      * Canceling this event will prevent the Block from being broken.
      */
