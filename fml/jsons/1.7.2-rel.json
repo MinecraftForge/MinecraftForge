@@ -55,7 +55,8 @@
       "name": "com.ibm.icu:icu4j-core-mojang:51.2"
     },
     {
-      "name": "net.sf.jopt-simple:jopt-simple:4.5"
+      "name": "net.sf.jopt-simple:jopt-simple:4.5",
+      "serverreq":true
     },
     {
       "name": "lzma:lzma:0.0.1",
