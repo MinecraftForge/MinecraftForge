@@ -363,6 +363,12 @@ public class GameRegistry
             final UniqueIdentifier other = (UniqueIdentifier) obj;
             return Objects.equal(modId, other.modId) && Objects.equal(name, other.name);
         }
+        
+        @Override
+        public String toString()
+        {
+            return String.format("%s:%s", modId, name);
+        }
 	}
 
 	/**
