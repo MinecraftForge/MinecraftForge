@@ -40,7 +40,7 @@ public class MinecraftForgeClient
 
     public static IItemRenderer getItemRenderer(ItemStack item, ItemRenderType type)
     {
-        IItemRenderer renderer = customItemRenderers.get(item);
+        IItemRenderer renderer = customItemRenderers.get(item.getItem());
         if (renderer != null && renderer.handleRenderType(item, type))
         {
             return renderer;
