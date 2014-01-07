@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/net/minecraft/network/ServerStatusResponse.java
++++ ../src-work/minecraft/net/minecraft/network/ServerStatusResponse.java
+@@ -8,6 +8,8 @@
+ import com.google.gson.JsonSerializationContext;
+ import com.google.gson.JsonSerializer;
+ import com.mojang.authlib.GameProfile;
++import cpw.mods.fml.client.FMLClientHandler;
++import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
+ import java.lang.reflect.Type;
+ import net.minecraft.util.IChatComponent;
+ import net.minecraft.util.JsonUtils;
+@@ -230,6 +232,7 @@
+                     serverstatusresponse.func_151320_a(JsonUtils.func_151200_h(jsonobject, "favicon"));
+                 }
+ 
++                FMLClientHandler.instance().captureAdditionalData(serverstatusresponse, jsonobject);
+                 return serverstatusresponse;
+             }
+ 
+@@ -257,6 +260,7 @@
+                     jsonobject.addProperty("favicon", p_151313_1_.func_151316_d());
+                 }
+ 
++                FMLNetworkHandler.enhanceStatusQuery(jsonobject);
+                 return jsonobject;
+             }
+ 

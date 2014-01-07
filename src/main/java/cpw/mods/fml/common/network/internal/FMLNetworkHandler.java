@@ -29,9 +29,12 @@ import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.core.helpers.Integers;
 import com.google.common.collect.Lists;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLContainer;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
@@ -176,4 +179,20 @@ public class FMLNetworkHandler
         return list;
     }
 
+
+    public static void enhanceStatusQuery(JsonObject jsonobject)
+    {
+        JsonObject fmlData = new JsonObject();
+        fmlData.addProperty("type", "FML");
+        JsonArray modList = new JsonArray();
+        for (ModContainer mc : Loader.instance().getActiveModList())
+        {
+            JsonObject modData = new JsonObject();
+            modData.addProperty("modid", mc.getModId());
+            modData.addProperty("version", mc.getVersion());
+            modList.add(modData);
+        }
+        fmlData.add("modList", modList);
+        jsonobject.add("modinfo", fmlData);
+    }
 }
