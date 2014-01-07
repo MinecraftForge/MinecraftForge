@@ -89,8 +89,8 @@
  
 +            if (rawBufferSize > 0x20000 && field_147569_p < (rawBufferSize << 3))
 +            {
-+                rawBufferSize = 0;
-+                rawBuffer = null;
++                rawBufferSize = 0x10000;
++                rawBuffer = new int[rawBufferSize];
 +            }
 +
              int i = this.field_147569_p * 4;
