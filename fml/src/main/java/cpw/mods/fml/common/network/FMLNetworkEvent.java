@@ -20,10 +20,12 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
     }
     public static class ClientConnectedToServerEvent extends FMLNetworkEvent<INetHandlerPlayClient> {
         public final boolean isLocal;
-        public ClientConnectedToServerEvent(NetworkManager manager)
+        public final String connectionType;
+        public ClientConnectedToServerEvent(NetworkManager manager, String connectionType)
         {
             super((INetHandlerPlayClient) manager.func_150729_e(), INetHandlerPlayClient.class, manager);
-            isLocal = manager.func_150731_c();
+            this.isLocal = manager.func_150731_c();
+            this.connectionType = connectionType;
         }
     }
 
@@ -32,7 +34,7 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
         public ServerConnectionFromClientEvent(NetworkManager manager)
         {
             super((INetHandlerPlayServer) manager.func_150729_e(), INetHandlerPlayServer.class, manager);
-            isLocal = manager.func_150731_c();
+            this.isLocal = manager.func_150731_c();
         }
     }
     public static class ServerDisconnectionFromClientEvent extends FMLNetworkEvent<INetHandlerPlayServer> {

@@ -14,15 +14,19 @@ package cpw.mods.fml.client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSelectWorld;
+import net.minecraft.client.gui.ServerListEntryNormal;
+import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -34,7 +38,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
+import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.Level;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -43,6 +49,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.google.gson.JsonObject;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.DuplicateModsFoundException;
@@ -123,6 +130,9 @@ public class FMLClientHandler implements IFMLSidedHandler
     private Map<String, IResourcePack> resourcePackMap;
 
     private BiMap<ModContainer, IModGuiFactory> guiFactories;
+
+    private Map<ServerStatusResponse,JsonObject> extraServerListData;
+    private Map<ServerData, ExtendedServerListData> serverDataTag;
 
     /**
      * Called to start the whole game off
@@ -543,5 +553,98 @@ public class FMLClientHandler implements IFMLSidedHandler
     public IModGuiFactory getGuiFactoryFor(ModContainer selectedMod)
     {
         return guiFactories.get(selectedMod);
+    }
+
+
+    public void setupServerList()
+    {
+        extraServerListData = Collections.synchronizedMap(Maps.<ServerStatusResponse,JsonObject>newHashMap());
+        serverDataTag = Collections.synchronizedMap(Maps.<ServerData,ExtendedServerListData>newHashMap());
+    }
+
+    public void captureAdditionalData(ServerStatusResponse serverstatusresponse, JsonObject jsonobject)
+    {
+        if (jsonobject.has("modinfo"))
+        {
+            JsonObject fmlData = jsonobject.get("modinfo").getAsJsonObject();
+            extraServerListData.put(serverstatusresponse, fmlData);
+        }
+    }
+    public void bindServerListData(ServerData data, ServerStatusResponse originalResponse)
+    {
+        if (extraServerListData.containsKey(originalResponse))
+        {
+            JsonObject jsonData = extraServerListData.get(originalResponse);
+            String type = jsonData.get("type").getAsString();
+            int modCount = jsonData.get("modList").getAsJsonArray().size();
+            boolean moddedClientAllowed = jsonData.has("clientModsAllowed") ? jsonData.get("clientModsAllowed").getAsBoolean() : true;
+            serverDataTag.put(data, new ExtendedServerListData(type, true, modCount, !moddedClientAllowed));
+        }
+        else
+        {
+            String serverDescription = data.field_78843_d;
+            boolean moddedClientAllowed = true;
+            if (!Strings.isNullOrEmpty(serverDescription))
+            {
+                moddedClientAllowed = !serverDescription.endsWith(":NOFML§r");
+            }
+            serverDataTag.put(data, new ExtendedServerListData("VANILLA", false, -1, !moddedClientAllowed));
+        }
+    }
+
+    private static final ResourceLocation iconSheet = new ResourceLocation("fml:textures/gui/icons.png");
+
+    public String enhanceServerListEntry(ServerListEntryNormal serverListEntry, ServerData serverEntry, int x, int width, int y, int relativeMouseX, int relativeMouseY)
+    {
+        String tooltip;
+        int idx;
+        boolean blocked = false;
+        if (serverDataTag.containsKey(serverEntry))
+        {
+            ExtendedServerListData extendedData = serverDataTag.get(serverEntry);
+            if ("FML".equals(extendedData.type) && extendedData.isCompatible)
+            {
+                idx = 0;
+                tooltip = String.format("Compatible FML modded server\n%d mods present", extendedData.modCount);
+            }
+            else if ("FML".equals(extendedData.type) && !extendedData.isCompatible)
+            {
+                idx = 16;
+                tooltip = String.format("Incompatible FML modded server\n%d mods present", extendedData.modCount);
+            }
+            else if ("BUKKIT".equals(extendedData.type))
+            {
+                idx = 32;
+                tooltip = String.format("Bukkit modded server");
+            }
+            else if ("VANILLA".equals(extendedData.type))
+            {
+                idx = 48;
+                tooltip = String.format("Vanilla server");
+            }
+            else
+            {
+                idx = 64;
+                tooltip = String.format("Unknown server data");
+            }
+            blocked = extendedData.isBlocked;
+        }
+        else
+        {
+            return null;
+        }
+        this.client.func_110434_K().func_110577_a(iconSheet);
+        Gui.func_146110_a(x + width - 18, y + 10, 0, (float)idx, 16, 16, 256.0f, 256.0f);
+        if (blocked)
+        {
+            Gui.func_146110_a(x + width - 18, y + 10, 0, 80, 16, 16, 256.0f, 256.0f);
+        }
+
+        return relativeMouseX > width - 15 && relativeMouseX < width && relativeMouseY > 10 && relativeMouseY < 26 ? tooltip : null;
+    }
+
+    public String fixDescription(String description)
+    {
+        return description.endsWith(":NOFML§r") ? description.substring(0, description.length() - 8)+"§r" : description;
     }
 }

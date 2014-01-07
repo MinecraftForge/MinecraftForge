@@ -12,6 +12,7 @@ import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.ScheduledFuture;
 import java.net.SocketAddress;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -21,6 +22,7 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C17PacketCustomPayload;
+import net.minecraft.network.play.server.S01PacketJoinGame;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;
 import net.minecraft.network.play.server.S40PacketDisconnect;
 import net.minecraft.server.management.ServerConfigurationManager;
@@ -69,7 +71,6 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     private final ServerConfigurationManager scm;
     private EntityPlayerMP player;
     private ConnectionState state;
-    @SuppressWarnings("unused")
     private ConnectionType connectionType;
     private final Side side;
     private final EmbeddedChannel handshakeChannel;
@@ -151,19 +152,19 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         this.state = ConnectionState.AWAITING_HANDSHAKE;
     }
 
-    private void completeClientSideConnection()
+    private void completeClientSideConnection(ConnectionType type)
     {
-        FMLLog.info("[%s] Client side modded connection established", Thread.currentThread().getName());
+        this.connectionType = type;
+        FMLLog.info("[%s] Client side %s connection established", Thread.currentThread().getName(), this.connectionType.name().toLowerCase(Locale.ENGLISH));
         this.state = ConnectionState.CONNECTED;
-        this.connectionType = ConnectionType.MODDED;
-        FMLCommonHandler.instance().bus().post(new FMLNetworkEvent.ClientConnectedToServerEvent(manager));
+        FMLCommonHandler.instance().bus().post(new FMLNetworkEvent.ClientConnectedToServerEvent(manager, this.connectionType.name()));
     }
 
-    private void completeServerSideConnection()
+    private void completeServerSideConnection(ConnectionType type)
     {
-        FMLLog.info("[%s] Server side modded connection established", Thread.currentThread().getName());
+        this.connectionType = type;
+        FMLLog.info("[%s] Server side %s connection established", Thread.currentThread().getName(), this.connectionType.name().toLowerCase(Locale.ENGLISH));
         this.state = ConnectionState.CONNECTED;
-        this.connectionType = ConnectionType.MODDED;
         FMLCommonHandler.instance().bus().post(new FMLNetworkEvent.ServerConnectionFromClientEvent(manager));
         scm.func_72355_a(manager, player, serverHandler);
     }
@@ -181,12 +182,25 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         }
         else if (state != ConnectionState.CONNECTED && state != ConnectionState.HANDSHAKECOMPLETE)
         {
-            FMLLog.info("Unexpected packet during modded negotiation - assuming vanilla or keepalives : %s", msg.getClass().getName());
+            handled = handleVanilla(msg);
         }
         if (!handled)
         {
             ctx.fireChannelRead(msg);
         }
+    }
+
+    private boolean handleVanilla(Packet msg)
+    {
+        if (state == ConnectionState.AWAITING_HANDSHAKE && msg instanceof S01PacketJoinGame)
+        {
+            handshakeChannel.pipeline().fireUserEventTriggered(msg);
+        }
+        else
+        {
+            FMLLog.info("Unexpected packet during modded negotiation - assuming vanilla or keepalives : %s", msg.getClass().getName());
+        }
+        return false;
     }
 
     public INetHandler getNetHandler()
@@ -399,16 +413,21 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         }
         if (side == Side.CLIENT)
         {
-            completeClientSideConnection();
+            completeClientSideConnection(ConnectionType.MODDED);
         }
         else
         {
-            completeServerSideConnection();
+            completeServerSideConnection(ConnectionType.MODDED);
         }
     }
 
     public void completeClientHandshake()
     {
         state = ConnectionState.HANDSHAKECOMPLETE;
+    }
+
+    public void abortClientHandshake(String type)
+    {
+        completeClientSideConnection(ConnectionType.valueOf(type));
     }
 }
