@@ -69,7 +69,7 @@ public enum NetworkRegistry
         channels.put(Side.SERVER, Maps.<String,FMLEmbeddedChannel>newConcurrentMap());
     }
 
-    public class TargetPoint {
+    public static class TargetPoint {
         public TargetPoint(int dimension, double x, double y, double z, double range)
         {
             this.x = x;
