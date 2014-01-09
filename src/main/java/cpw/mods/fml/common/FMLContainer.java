@@ -54,7 +54,7 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
         meta.name="Forge Mod Loader";
         meta.version=Loader.instance().getFMLVersionString();
         meta.credits="Made possible with help from many people";
-        meta.authorList=Arrays.asList("cpw, LexManos");
+        meta.authorList=Arrays.asList("cpw", "LexManos");
         meta.description="The Forge Mod Loader provides the ability for systems to load mods " +
                     "from the file system. It also provides key capabilities for mods to be able " +
                     "to cooperate and provide a good modding environment. ";
