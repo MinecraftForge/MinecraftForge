@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemRecord.java
++++ ../src-work/minecraft/net/minecraft/item/ItemRecord.java
+@@ -81,4 +81,10 @@
+     {
+         return (ItemRecord)field_150928_b.get(p_150926_0_);
+     }
++    
++    @SideOnly(Side.CLIENT)
++    public String getResourceDomain() 
++    {
++        return "minecraft";
++    }
+ }

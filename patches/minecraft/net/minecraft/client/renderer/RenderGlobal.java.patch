@@ -111,3 +111,17 @@
          double d0 = par2EntityPlayer.lastTickPosX + (par2EntityPlayer.posX - par2EntityPlayer.lastTickPosX) * (double)par3;
          double d1 = par2EntityPlayer.lastTickPosY + (par2EntityPlayer.posY - par2EntityPlayer.lastTickPosY) * (double)par3;
          double d2 = par2EntityPlayer.lastTickPosZ + (par2EntityPlayer.posZ - par2EntityPlayer.lastTickPosZ) * (double)par3;
+@@ -1837,11 +1871,12 @@
+ 
+         if (par1Str != null)
+         {
+-            ItemRecord itemrecord = ItemRecord.func_150926_b(par1Str);
++            ItemRecord itemrecord = ItemRecord.func_150926_b(par1Str.replace("records.", ""));
+ 
+             if (itemrecord != null)
+             {
+                 this.mc.ingameGUI.setRecordPlayingMessage(itemrecord.func_150927_i());
++                par1Str = itemrecord.getResourceDomain() + ":" + par1Str;
+             }
+ 
+             PositionedSoundRecord positionedsoundrecord = PositionedSoundRecord.func_147675_a(new ResourceLocation(par1Str), (float)par2, (float)par3, (float)par4);
