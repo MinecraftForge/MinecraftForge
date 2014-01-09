@@ -46,6 +46,6 @@ public class ClientRegistry
 
     public static void registerKeyBinding(KeyBinding key)
     {
-        Minecraft.func_71410_x().field_71474_y.field_151456_ac = ArrayUtils.add(Minecraft.func_71410_x().field_71474_y.field_151456_ac, key);
+        Minecraft.func_71410_x().field_71474_y.field_74324_K = ArrayUtils.add(Minecraft.func_71410_x().field_71474_y.field_74324_K, key);
     }
 }
