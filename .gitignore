@@ -1,21 +1,25 @@
-#eclipse
+# Eclipse
 /bin
 /.settings
 /.classpath
 
-#idea
+# Idea
 /.idea
 *.iml
 
-#gradle
+# Gradle
 /build
 /.gradle
 
-#occupational hazards
+# Occupational hazards
 /eclipse/
 /repo/
 /buildSrc
 
-#Patch rejects
+# Patch rejects
 *.rej
 /patches-/
+
+# OS cache files
+*.DS_Store
+_MACOSX
