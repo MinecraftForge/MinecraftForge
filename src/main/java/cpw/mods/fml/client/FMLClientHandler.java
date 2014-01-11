@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.Gui;
@@ -102,10 +101,8 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private DummyModContainer optifineContainer;
 
-    @SuppressWarnings("unused")
     private boolean guiLoaded;
 
-    @SuppressWarnings("unused")
     private boolean serverIsRunning;
 
     private MissingModsException modsMissing;
@@ -124,7 +121,6 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private List<IResourcePack> resourcePackList;
 
-    @SuppressWarnings("unused")
     private IReloadableResourceManager resourceManager;
 
     private Map<String, IResourcePack> resourcePackMap;
@@ -277,7 +273,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         loading = false;
     }
 
-    @SuppressWarnings("unused")
     public void extendModList()
     {
         @SuppressWarnings("unchecked")
@@ -336,15 +331,6 @@ public class FMLClientHandler implements IFMLSidedHandler
     public Minecraft getClient()
     {
         return client;
-    }
-
-    /**
-     * Get a handle to the client's logger instance
-     * The client actually doesn't have one- so we return null
-     */
-    public Logger getMinecraftLogger()
-    {
-        return null;
     }
 
     /**
