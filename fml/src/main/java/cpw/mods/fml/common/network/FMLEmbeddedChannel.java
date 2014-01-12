@@ -1,14 +1,13 @@
 package cpw.mods.fml.common.network;
 
-import java.util.Map.Entry;
-import net.minecraft.network.Packet;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.embedded.EmbeddedChannel;
+import java.util.Map.Entry;
+import net.minecraft.network.Packet;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
-import cpw.mods.fml.common.network.internal.FMLRuntimeCodec;
 import cpw.mods.fml.relauncher.Side;
 
 /**

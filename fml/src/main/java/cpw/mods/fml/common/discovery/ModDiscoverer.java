@@ -13,22 +13,19 @@
 package cpw.mods.fml.common.discovery;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import org.apache.logging.log4j.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import org.apache.logging.log4j.Level;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.ModClassLoader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.relauncher.CoreModManager;
+import cpw.mods.fml.relauncher.FileListHelper;
 
 public class ModDiscoverer
 {
@@ -84,15 +81,7 @@ public class ModDiscoverer
 
     public void findModDirMods(File modsDir)
     {
-        File[] modList = modsDir.listFiles();
-        // Sort the files into alphabetical order first
-        Arrays.sort(modList, new Comparator<File>() {
-            @Override
-            public int compare(File o1, File o2)
-            {
-                return o1.getName().compareToIgnoreCase(o2.getName());
-            }
-        });
+        File[] modList = FileListHelper.sortFileList(modsDir, null);
 
         for (File modFile : modList)
         {

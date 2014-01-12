@@ -234,7 +234,7 @@ public class CoreModManager {
             coreModList = ObjectArrays.concat(coreModList, versionedCoreMods, File.class);
         }
 
-        Arrays.sort(coreModList);
+        coreModList = FileListHelper.sortFileList(coreModList);
 
         for (File coreMod : coreModList)
         {
