@@ -28,6 +28,7 @@ import com.google.gson.JsonParser;
 
 public class MetadataCollection
 {
+    @SuppressWarnings("unused")
     private String modListVersion;
     private ModMetadata[] modList;
     private Map<String, ModMetadata> metadatas = Maps.newHashMap();

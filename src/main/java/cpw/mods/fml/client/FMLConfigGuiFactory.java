@@ -43,6 +43,8 @@ public class FMLConfigGuiFactory implements IModGuiFactory {
         }
 
     }
+
+    @SuppressWarnings("unused")
     private Minecraft minecraft;
     @Override
     public void initialize(Minecraft minecraftInstance)
