@@ -127,6 +127,10 @@ public enum NetworkRegistry
         return result;
     }
 
+    public FMLEventChannel newEventDrivenChannel(String name)
+    {
+        return new FMLEventChannel(name);
+    }
     /**
      * INTERNAL Create a new channel pair with the specified name and channel handlers.
      * This is used internally in forge and FML
