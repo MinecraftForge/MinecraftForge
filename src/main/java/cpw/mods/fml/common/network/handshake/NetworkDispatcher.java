@@ -67,7 +67,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
 
     public static final AttributeKey<NetworkDispatcher> FML_DISPATCHER = new AttributeKey<NetworkDispatcher>("fml:dispatcher");
     public static final AttributeKey<Boolean> IS_LOCAL = new AttributeKey<Boolean>("fml:isLocal");
-    private final NetworkManager manager;
+    public final NetworkManager manager;
     private final ServerConfigurationManager scm;
     private EntityPlayerMP player;
     private ConnectionState state;
@@ -259,6 +259,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         else if (NetworkRegistry.INSTANCE.hasChannel(channelName, Side.CLIENT))
         {
             FMLProxyPacket proxy = new FMLProxyPacket(msg);
+            proxy.setDispatcher(this);
             context.fireChannelRead(proxy);
             return true;
         }
@@ -293,6 +294,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         else if (NetworkRegistry.INSTANCE.hasChannel(channelName, Side.SERVER))
         {
             FMLProxyPacket proxy = new FMLProxyPacket(msg);
+            proxy.setDispatcher(this);
             context.fireChannelRead(proxy);
             return true;
         }
