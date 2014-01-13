@@ -60,9 +60,9 @@ public class FMLProxyPacket extends Packet {
     {
         this.netHandler = inethandler;
         EmbeddedChannel internalChannel = NetworkRegistry.INSTANCE.getChannel(this.channel, this.target);
-        internalChannel.attr(NetworkRegistry.NET_HANDLER).set(this.netHandler);
         if (internalChannel != null)
         {
+            internalChannel.attr(NetworkRegistry.NET_HANDLER).set(this.netHandler);
             internalChannel.writeInbound(this);
         }
     }
