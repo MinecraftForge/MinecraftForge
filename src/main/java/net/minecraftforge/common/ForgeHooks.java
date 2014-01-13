@@ -436,8 +436,8 @@ public class ForgeHooks
         return event;
     }
     
-    public static void onLivingSprintToggle(EntityLivingBase entity, boolean isSprinting)
+    public static boolean onLivingSprintToggle(EntityLivingBase entity, boolean isSprinting)
     {
-        MinecraftForge.EVENT_BUS.post(new LivingSprintEvent(entity, isSprinting));
+        return MinecraftForge.EVENT_BUS.post(new LivingSprintEvent(entity, isSprinting));
     }
 }
