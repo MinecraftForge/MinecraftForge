@@ -28,7 +28,7 @@
          this.field_71446_o = new TextureManager(this.field_110451_am);
          this.field_110451_am.func_110542_a(this.field_71446_o);
          this.field_147127_av = new SoundHandler(this.field_110451_am, this.field_71474_y);
-@@ -508,6 +513,7 @@
+@@ -508,12 +513,13 @@
          this.field_71446_o.func_130088_a(TextureMap.field_110576_c, new TextureMap(1, "textures/items"));
          GL11.glViewport(0, 0, this.field_71443_c, this.field_71440_d);
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
@@ -36,6 +36,13 @@
          this.func_71361_d("Post startup");
          this.field_71456_v = new GuiIngame(this);
  
+         if (this.field_71475_ae != null)
+         {
+-            this.func_147108_a(new GuiConnecting(new GuiMainMenu(), this, this.field_71475_ae, this.field_71477_af));
++            FMLClientHandler.instance().connectToServerAtStartup(this.field_71475_ae, this.field_71477_af);
+         }
+         else
+         {
 @@ -527,6 +533,7 @@
              this.func_71352_k();
          }
