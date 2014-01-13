@@ -50,6 +50,7 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingSprintEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -433,5 +434,10 @@ public class ForgeHooks
             }
         }
         return event;
+    }
+    
+    public static void onLivingSprintToggle(EntityLivingBase entity, boolean isSprinting)
+    {
+        MinecraftForge.EVENT_BUS.post(new LivingSprintEvent(entity, isSprinting));
     }
 }

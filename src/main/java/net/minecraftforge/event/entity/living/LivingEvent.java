@@ -23,4 +23,15 @@ public class LivingEvent extends EntityEvent
     {
         public LivingJumpEvent(EntityLivingBase e){ super(e); }
     }
+    
+    public static class LivingSprintEvent extends LivingEvent
+    {
+        public final boolean isSprinting;
+        public LivingSprintEvent(EntityLivingBase entity, boolean isSprinting)
+        {
+            super(entity);
+            this.isSprinting = isSprinting;
+        }
+        
+    }
 }

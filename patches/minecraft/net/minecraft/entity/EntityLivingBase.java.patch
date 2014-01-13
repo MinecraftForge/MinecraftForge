@@ -148,7 +148,15 @@
          if (!this.isSwingInProgress || this.swingProgressInt >= this.getArmSwingAnimationEnd() / 2 || this.swingProgressInt < 0)
          {
              this.swingProgressInt = -1;
-@@ -1422,6 +1455,7 @@
+@@ -1311,6 +1344,7 @@
+     // JAVADOC METHOD $$ func_70031_b
+     public void setSprinting(boolean par1)
+     {
++        ForgeHooks.onLivingSprintToggle(this, par1);
+         super.setSprinting(par1);
+         IAttributeInstance iattributeinstance = this.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
+ 
+@@ -1422,6 +1456,7 @@
          }
  
          this.isAirBorne = true;
@@ -156,7 +164,7 @@
      }
  
      // JAVADOC METHOD $$ func_70612_e
-@@ -1602,6 +1636,7 @@
+@@ -1602,6 +1637,7 @@
      // JAVADOC METHOD $$ func_70071_h_
      public void onUpdate()
      {
@@ -164,7 +172,7 @@
          super.onUpdate();
  
          if (!this.worldObj.isRemote)
-@@ -2099,4 +2134,42 @@
+@@ -2099,4 +2135,42 @@
      {
          return this.getTeam() != null ? this.getTeam().isSameTeam(par1Team) : false;
      }
