@@ -1,0 +1,42 @@
+--- ../src-base/minecraft/net/minecraft/world/chunk/storage/RegionFile.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/storage/RegionFile.java
+@@ -104,6 +104,39 @@
+         }
+     }
+ 
++    // This is a copy (sort of) of the method below it, make sure they stay in sync
++    public synchronized boolean chunkExists(int x, int z)
++    {
++        if (this.func_76705_d(x, z)) return false;
++
++        try
++        {
++            int offset = this.func_76707_e(x, z);
++
++            if (offset == 0) return false;
++
++            int sectorNumber = offset >> 8;
++            int numSectors = offset & 255;
++
++            if (sectorNumber + numSectors > this.field_76714_f.size()) return false;
++
++            this.field_76719_c.seek((long)(sectorNumber * 4096));
++            int length = this.field_76719_c.readInt();
++
++            if (length > 4096 * numSectors || length <= 0) return false;
++
++            byte version = this.field_76719_c.readByte();
++
++            if (version == 1 || version == 2) return true;
++        }
++        catch (IOException ioexception)
++        {
++            return false;
++        }
++
++        return false;
++    }
++
+     public synchronized DataInputStream func_76704_a(int p_76704_1_, int p_76704_2_)
+     {
+         if (this.func_76705_d(p_76704_1_, p_76704_2_))
