@@ -18,16 +18,21 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiIngameMenu;
+import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSelectWorld;
 import net.minecraft.client.gui.ServerListEntryNormal;
+import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.network.OldServerPinger;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.resources.IReloadableResourceManager;
@@ -590,9 +595,11 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
             serverDataTag.put(data, new ExtendedServerListData("VANILLA", false, -1, !moddedClientAllowed));
         }
+        startupConnectionData.countDown();
     }
 
     private static final ResourceLocation iconSheet = new ResourceLocation("fml:textures/gui/icons.png");
+    private static final CountDownLatch startupConnectionData = new CountDownLatch(1);
 
     public String enhanceServerListEntry(ServerListEntryNormal serverListEntry, ServerData serverEntry, int x, int width, int y, int relativeMouseX, int relativeMouseY)
     {
@@ -646,5 +653,36 @@ public class FMLClientHandler implements IFMLSidedHandler
     public String fixDescription(String description)
     {
         return description.endsWith(":NOFML§r") ? description.substring(0, description.length() - 8)+"§r" : description;
+    }
+
+    public void connectToServerAtStartup(String host, int port)
+    {
+        setupServerList();
+        OldServerPinger osp = new OldServerPinger();
+        ServerData serverData = new ServerData("Command Line", host+":"+port);
+        try
+        {
+            osp.func_147224_a(serverData);
+            startupConnectionData.await(30, TimeUnit.SECONDS);
+        }
+        catch (Exception e)
+        {
+            showGuiScreen(new GuiConnecting(new GuiMainMenu(), client, host, port));
+            return;
+        }
+        connectToServer(new GuiMainMenu(), serverData);
+    }
+
+    public void connectToServer(GuiScreen guiMultiplayer, ServerData serverEntry)
+    {
+        ExtendedServerListData extendedData = serverDataTag.get(serverEntry);
+        if (extendedData.isBlocked)
+        {
+            showGuiScreen(new GuiAccessDenied(guiMultiplayer, serverEntry));
+        }
+        else
+        {
+            showGuiScreen(new GuiConnecting(guiMultiplayer, client, serverEntry));
+        }
     }
 }
