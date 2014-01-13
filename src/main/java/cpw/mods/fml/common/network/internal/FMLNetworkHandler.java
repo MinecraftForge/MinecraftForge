@@ -78,10 +78,11 @@ public class FMLNetworkHandler
                 entityPlayerMP.func_71117_bO();
                 entityPlayerMP.func_71128_l();
                 int windowId = entityPlayerMP.field_71139_cq;
-                new FMLMessage.OpenGui(windowId, mc.getModId(), modGuiId, x, y, z);
+                FMLMessage.OpenGui openGui = new FMLMessage.OpenGui(windowId, mc.getModId(), modGuiId, x, y, z);
                 EmbeddedChannel embeddedChannel = channelPair.get(Side.SERVER);
                 embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.PLAYER);
                 embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(entityPlayerMP);
+                embeddedChannel.writeOutbound(openGui);
                 entityPlayerMP.field_71070_bA = remoteGuiContainer;
                 entityPlayerMP.field_71070_bA.field_75152_c = windowId;
                 entityPlayerMP.field_71070_bA.func_75132_a(entityPlayerMP);
