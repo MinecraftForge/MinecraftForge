@@ -7,7 +7,7 @@ import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.relauncher.Side;
 
 public class TickEvent extends Event {
-    private static enum Type {
+    public enum Type {
         WORLD, PLAYER, CLIENT, SERVER, RENDER;
     }
 
