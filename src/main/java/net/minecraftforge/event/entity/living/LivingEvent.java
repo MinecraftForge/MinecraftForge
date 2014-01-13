@@ -24,6 +24,13 @@ public class LivingEvent extends EntityEvent
         public LivingJumpEvent(EntityLivingBase e){ super(e); }
     }
     
+    /**
+     * An event that fires whenever an EntityLivingBase or
+     * anything deriving from it start/stops sprinting
+     * 
+     * Canceling this event will stop the entity
+     * from changing its sprinting state.
+     */
     public static class LivingSprintEvent extends LivingEvent
     {
         public final boolean isSprinting;
