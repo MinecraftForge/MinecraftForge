@@ -1,6 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
 +++ ../src-work/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
-@@ -54,7 +54,9 @@
+@@ -7,6 +7,7 @@
+ import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.io.File;
+ import java.net.SocketAddress;
+ import java.text.SimpleDateFormat;
+@@ -18,6 +19,7 @@
+ import java.util.Map;
+ import java.util.Set;
+ import java.util.Map.Entry;
++
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityList;
+ import net.minecraft.entity.player.EntityPlayer;
+@@ -54,11 +56,15 @@
  import net.minecraft.util.EnumChatFormatting;
  import net.minecraft.util.IChatComponent;
  import net.minecraft.util.MathHelper;
@@ -10,7 +26,29 @@
  import net.minecraft.world.WorldServer;
  import net.minecraft.world.WorldSettings;
  import net.minecraft.world.demo.DemoWorldManager;
-@@ -361,13 +363,23 @@
+ import net.minecraft.world.storage.IPlayerFileData;
++import net.minecraftforge.common.chunkio.ChunkIOExecutor;
++
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -244,6 +250,7 @@
+         this.func_148540_a(new S38PacketPlayerListItem(p_72377_1_.func_70005_c_(), true, 1000));
+         this.field_72404_b.add(p_72377_1_);
+         WorldServer worldserver = this.field_72400_f.func_71218_a(p_72377_1_.field_71093_bK);
++        ChunkIOExecutor.adjustPoolSize(this.func_72394_k());
+         worldserver.func_72838_d(p_72377_1_);
+         this.func_72375_a(p_72377_1_, (WorldServer)null);
+ 
+@@ -276,6 +283,7 @@
+         worldserver.func_73040_p().func_72695_c(p_72367_1_);
+         this.field_72404_b.remove(p_72367_1_);
+         this.field_148547_k.remove(p_72367_1_.func_70005_c_());
++        ChunkIOExecutor.adjustPoolSize(this.func_72394_k());
+         this.func_148540_a(new S38PacketPlayerListItem(p_72367_1_.func_70005_c_(), false, 9999));
+     }
+ 
+@@ -361,13 +369,23 @@
  
      public EntityPlayerMP func_72368_a(EntityPlayerMP p_72368_1_, int p_72368_2_, boolean p_72368_3_)
      {
@@ -36,7 +74,7 @@
          p_72368_1_.field_71093_bK = p_72368_2_;
          Object object;
  
-@@ -383,6 +395,7 @@
+@@ -383,6 +401,7 @@
          EntityPlayerMP entityplayermp1 = new EntityPlayerMP(this.field_72400_f, this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK), p_72368_1_.func_146103_bH(), (ItemInWorldManager)object);
          entityplayermp1.field_71135_a = p_72368_1_.field_71135_a;
          entityplayermp1.func_71049_a(p_72368_1_, p_72368_3_);
@@ -44,7 +82,7 @@
          entityplayermp1.func_145769_d(p_72368_1_.func_145782_y());
          WorldServer worldserver = this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK);
          this.func_72381_a(entityplayermp1, p_72368_1_, worldserver);
-@@ -427,6 +440,11 @@
+@@ -427,6 +446,11 @@
  
      public void func_72356_a(EntityPlayerMP p_72356_1_, int p_72356_2_)
      {
@@ -56,7 +94,7 @@
          int j = p_72356_1_.field_71093_bK;
          WorldServer worldserver = this.field_72400_f.func_71218_a(p_72356_1_.field_71093_bK);
          p_72356_1_.field_71093_bK = p_72356_2_;
-@@ -434,7 +452,7 @@
+@@ -434,7 +458,7 @@
          p_72356_1_.field_71135_a.func_147359_a(new S07PacketRespawn(p_72356_1_.field_71093_bK, p_72356_1_.field_70170_p.field_73013_u, p_72356_1_.field_70170_p.func_72912_H().func_76067_t(), p_72356_1_.field_71134_c.func_73081_b()));
          worldserver.func_72973_f(p_72356_1_);
          p_72356_1_.field_70128_L = false;
@@ -65,7 +103,7 @@
          this.func_72375_a(p_72356_1_, worldserver);
          p_72356_1_.field_71135_a.func_147364_a(p_72356_1_.field_70165_t, p_72356_1_.field_70163_u, p_72356_1_.field_70161_v, p_72356_1_.field_70177_z, p_72356_1_.field_70125_A);
          p_72356_1_.field_71134_c.func_73080_a(worldserver1);
-@@ -452,38 +470,47 @@
+@@ -452,38 +476,47 @@
  
      public void func_82448_a(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_)
      {
@@ -125,7 +163,7 @@
          {
              ChunkCoordinates chunkcoordinates;
  
-@@ -518,7 +545,7 @@
+@@ -518,7 +551,7 @@
              if (p_82448_1_.func_70089_S())
              {
                  p_82448_1_.func_70012_b(d0, p_82448_1_.field_70163_u, d1, p_82448_1_.field_70177_z, p_82448_1_.field_70125_A);

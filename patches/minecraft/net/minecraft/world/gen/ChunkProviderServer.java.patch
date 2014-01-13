@@ -1,23 +1,27 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -24,6 +24,8 @@
+@@ -23,7 +23,12 @@
+ import net.minecraft.world.chunk.Chunk;
  import net.minecraft.world.chunk.EmptyChunk;
  import net.minecraft.world.chunk.IChunkProvider;
++import net.minecraft.world.chunk.storage.AnvilChunkLoader;
  import net.minecraft.world.chunk.storage.IChunkLoader;
 +import net.minecraftforge.common.DimensionManager;
 +import net.minecraftforge.common.ForgeChunkManager;
++import net.minecraftforge.common.chunkio.ChunkIOExecutor;
++
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -38,6 +40,7 @@
-     private LongHashMap field_73244_f = new LongHashMap();
-     private List field_73245_g = new ArrayList();
-     private WorldServer field_73251_h;
+@@ -38,6 +43,7 @@
+     public LongHashMap field_73244_f = new LongHashMap();
+     public List field_73245_g = new ArrayList();
+     public WorldServer field_73251_h;
 +    private Set<Long> loadingChunks = com.google.common.collect.Sets.newHashSet();
      private static final String __OBFID = "CL_00001436";
  
      public ChunkProviderServer(WorldServer p_i1520_1_, IChunkLoader p_i1520_2_, IChunkProvider p_i1520_3_)
-@@ -55,7 +58,7 @@
+@@ -55,7 +61,7 @@
  
      public void func_73241_b(int p_73241_1_, int p_73241_2_)
      {
@@ -26,7 +30,57 @@
          {
              ChunkCoordinates chunkcoordinates = this.field_73251_h.func_72861_E();
              int k = p_73241_1_ * 16 + 8 - chunkcoordinates.field_71574_a;
-@@ -92,7 +95,16 @@
+@@ -86,13 +92,66 @@
+ 
+     public Chunk func_73158_c(int p_73158_1_, int p_73158_2_)
+     {
++        return loadChunk(p_73158_1_, p_73158_2_, null);
++    }
++
++    public Chunk loadChunk(int par1, int par2, Runnable runnable)
++    {
++        long k = ChunkCoordIntPair.func_77272_a(par1, par2);
++        this.field_73248_b.remove(Long.valueOf(k));
++        Chunk chunk = (Chunk)this.field_73244_f.func_76164_a(k);
++        AnvilChunkLoader loader = null;
++
++        if (this.field_73247_e instanceof AnvilChunkLoader)
++        {
++            loader = (AnvilChunkLoader) this.field_73247_e;
++        }
++
++        // We can only use the queue for already generated chunks
++        if (chunk == null && loader != null && loader.chunkExists(this.field_73251_h, par1, par2))
++        {
++            if (runnable != null)
++            {
++                ChunkIOExecutor.queueChunkLoad(this.field_73251_h, loader, this, par1, par2, runnable);
++                return null;
++            }
++            else
++            {
++                chunk = ChunkIOExecutor.syncChunkLoad(this.field_73251_h, loader, this, par1, par2);
++            }
++        }
++        else if (chunk == null)
++        {
++            chunk = this.originalLoadChunk(par1, par2);
++        }
++
++        // If we didn't load the chunk async and have a callback run it now
++        if (runnable != null)
++        {
++            runnable.run();
++        }
++
++        return chunk;
++    }
++
++    public Chunk originalLoadChunk(int p_73158_1_, int p_73158_2_)
++    {
+         long k = ChunkCoordIntPair.func_77272_a(p_73158_1_, p_73158_2_);
+         this.field_73248_b.remove(Long.valueOf(k));
+         Chunk chunk = (Chunk)this.field_73244_f.func_76164_a(k);
  
          if (chunk == null)
          {
@@ -44,7 +98,7 @@
  
              if (chunk == null)
              {
-@@ -120,6 +132,7 @@
+@@ -120,6 +179,7 @@
  
              this.field_73244_f.func_76163_a(k, chunk);
              this.field_73245_g.add(chunk);
@@ -52,7 +106,7 @@
              chunk.func_76631_c();
              chunk.func_76624_a(this, this, p_73158_1_, p_73158_2_);
          }
-@@ -258,6 +271,11 @@
+@@ -258,6 +318,11 @@
      {
          if (!this.field_73251_h.field_73058_d)
          {
@@ -64,7 +118,7 @@
              for (int i = 0; i < 100; ++i)
              {
                  if (!this.field_73248_b.isEmpty())
-@@ -270,6 +288,11 @@
+@@ -270,6 +335,11 @@
                      this.field_73248_b.remove(olong);
                      this.field_73244_f.func_76159_d(olong.longValue());
                      this.field_73245_g.remove(chunk);

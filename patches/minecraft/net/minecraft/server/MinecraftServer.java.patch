@@ -126,8 +126,11 @@
              if (this.field_71307_n.func_76468_d())
              {
                  this.field_71307_n.func_76470_e();
-@@ -592,13 +579,15 @@
+@@ -590,15 +577,18 @@
+     public void func_71190_q()
+     {
          this.field_71304_b.func_76320_a("levels");
++        net.minecraftforge.common.chunkio.ChunkIOExecutor.tick();
          int i;
  
 -        for (i = 0; i < this.field_71305_c.length; ++i)
@@ -145,7 +148,7 @@
                  this.field_71304_b.func_76320_a(worldserver.func_72912_H().func_76065_j());
                  this.field_71304_b.func_76320_a("pools");
                  worldserver.func_82732_R().func_72343_a();
-@@ -645,9 +634,11 @@
+@@ -645,9 +635,11 @@
                  this.field_71304_b.func_76319_b();
              }
  
@@ -158,7 +161,7 @@
          this.field_71304_b.func_76318_c("connection");
          this.func_147137_ag().func_151269_c();
          this.field_71304_b.func_76318_c("players");
-@@ -692,7 +683,13 @@
+@@ -692,7 +684,13 @@
  
      public WorldServer func_71218_a(int p_71218_1_)
      {
@@ -173,7 +176,7 @@
      }
  
      public String func_71249_w()
-@@ -951,6 +948,7 @@
+@@ -951,6 +949,7 @@
  
              if (worldserver != null)
              {
@@ -181,7 +184,7 @@
                  worldserver.func_73041_k();
              }
          }
-@@ -1421,7 +1419,6 @@
+@@ -1421,7 +1420,6 @@
          this.field_147141_M = p_155759_1_;
      }
  

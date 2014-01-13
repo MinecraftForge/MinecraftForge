@@ -1,24 +1,176 @@
 --- ../src-base/minecraft/net/minecraft/server/management/PlayerManager.java
 +++ ../src-work/minecraft/net/minecraft/server/management/PlayerManager.java
-@@ -1,6 +1,7 @@
+@@ -1,7 +1,11 @@
  package net.minecraft.server.management;
  
  import java.util.ArrayList;
 +import java.util.Arrays;
++import java.util.Collections;
++import java.util.HashMap;
  import java.util.List;
++
  import net.minecraft.entity.player.EntityPlayerMP;
  import net.minecraft.network.Packet;
-@@ -13,6 +14,9 @@
+ import net.minecraft.network.play.server.S21PacketChunkData;
+@@ -13,6 +17,11 @@
  import net.minecraft.world.WorldProvider;
  import net.minecraft.world.WorldServer;
  import net.minecraft.world.chunk.Chunk;
 +import net.minecraftforge.common.ForgeModContainer;
 +import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.common.chunkio.ChunkIOExecutor;
++import net.minecraftforge.common.util.ChunkCoordComparator;
 +import net.minecraftforge.event.world.ChunkWatchEvent;
  
  public class PlayerManager
  {
-@@ -320,6 +324,8 @@
+@@ -120,15 +129,24 @@
+         int j = (int)p_72683_1_.field_70161_v >> 4;
+         p_72683_1_.field_71131_d = p_72683_1_.field_70165_t;
+         p_72683_1_.field_71132_e = p_72683_1_.field_70161_v;
++        // Load nearby chunks first
++        List<ChunkCoordIntPair> chunkList = new ArrayList<ChunkCoordIntPair>();
+ 
+         for (int k = i - this.field_72698_e; k <= i + this.field_72698_e; ++k)
+         {
+             for (int l = j - this.field_72698_e; l <= j + this.field_72698_e; ++l)
+             {
+-                this.func_72690_a(k, l, true).func_73255_a(p_72683_1_);
++                chunkList.add(new ChunkCoordIntPair(k, l));
+             }
+         }
+ 
++        Collections.sort(chunkList, new ChunkCoordComparator(p_72683_1_));
++
++        for (ChunkCoordIntPair pair : chunkList)
++        {
++            this.func_72690_a(pair.field_77276_a, pair.field_77275_b, true).func_73255_a(p_72683_1_);
++        }
++
+         this.field_72699_b.add(p_72683_1_);
+         this.func_72691_b(p_72683_1_);
+     }
+@@ -230,6 +248,7 @@
+             int i1 = this.field_72698_e;
+             int j1 = i - k;
+             int k1 = j - l;
++            List<ChunkCoordIntPair> chunksToLoad = new ArrayList<ChunkCoordIntPair>();
+ 
+             if (j1 != 0 || k1 != 0)
+             {
+@@ -239,7 +258,7 @@
+                     {
+                         if (!this.func_72684_a(l1, i2, k, l, i1))
+                         {
+-                            this.func_72690_a(l1, i2, true).func_73255_a(p_72685_1_);
++                            chunksToLoad.add(new ChunkCoordIntPair(l1, i2));
+                         }
+ 
+                         if (!this.func_72684_a(l1 - j1, i2 - k1, i, j, i1))
+@@ -257,6 +276,18 @@
+                 this.func_72691_b(p_72685_1_);
+                 p_72685_1_.field_71131_d = p_72685_1_.field_70165_t;
+                 p_72685_1_.field_71132_e = p_72685_1_.field_70161_v;
++                // send nearest chunks first
++                Collections.sort(chunksToLoad, new ChunkCoordComparator(p_72685_1_));
++
++                for (ChunkCoordIntPair pair : chunksToLoad)
++                {
++                    this.func_72690_a(pair.field_77276_a, pair.field_77275_b, true).func_73255_a(p_72685_1_);
++                }
++
++                if (i1 > 1 || i1 < -1 || j1 > 1 || j1 < -1)
++                {
++                    Collections.sort(p_72685_1_.field_71129_f, new ChunkCoordComparator(p_72685_1_));
++                }
+             }
+         }
+     }
+@@ -280,15 +311,24 @@
+         private int field_73262_e;
+         private int field_73260_f;
+         private long field_111198_g;
++        private final HashMap<EntityPlayerMP, Runnable> players = new HashMap<EntityPlayerMP, Runnable>();
++        private boolean loaded = false;
++        private Runnable loadedRunnable = new Runnable()
++        {
++            public void run()
++            {
++                PlayerInstance.this.loaded = true;
++            }
++        };
+         private static final String __OBFID = "CL_00001435";
+ 
+         public PlayerInstance(int p_i1518_2_, int p_i1518_3_)
+         {
+             this.field_73264_c = new ChunkCoordIntPair(p_i1518_2_, p_i1518_3_);
+-            PlayerManager.this.func_72688_a().field_73059_b.func_73158_c(p_i1518_2_, p_i1518_3_);
++            PlayerManager.this.field_72701_a.field_73059_b.loadChunk(p_i1518_2_, p_i1518_3_, this.loadedRunnable);
+         }
+ 
+-        public void func_73255_a(EntityPlayerMP p_73255_1_)
++        public void func_73255_a(final EntityPlayerMP p_73255_1_)
+         {
+             if (this.field_73263_b.contains(p_73255_1_))
+             {
+@@ -302,7 +342,26 @@
+                 }
+ 
+                 this.field_73263_b.add(p_73255_1_);
+-                p_73255_1_.field_71129_f.add(this.field_73264_c);
++                Runnable playerRunnable;
++
++                if (this.loaded)
++                {
++                    playerRunnable = null;
++                    p_73255_1_.field_71129_f.add(this.field_73264_c);
++                }
++                else
++                {
++                    playerRunnable = new Runnable()
++                    {
++                        public void run()
++                        {
++                            p_73255_1_.field_71129_f.add(PlayerInstance.this.field_73264_c);
++                        }
++                    };
++                    PlayerManager.this.func_72688_a().field_73059_b.loadChunk(this.field_73264_c.field_77276_a, this.field_73264_c.field_77275_b, playerRunnable);
++                }
++
++                this.players.put(p_73255_1_, playerRunnable);
+             }
+         }
+ 
+@@ -310,6 +369,24 @@
+         {
+             if (this.field_73263_b.contains(p_73252_1_))
+             {
++                // If we haven't loaded yet don't load the chunk just so we can clean it up
++                if (!this.loaded)
++                {
++                    ChunkIOExecutor.dropQueuedChunkLoad(PlayerManager.this.func_72688_a(), this.field_73264_c.field_77276_a, this.field_73264_c.field_77275_b, this.players.get(p_73252_1_));
++                    this.field_73263_b.remove(p_73252_1_);
++                    this.players.remove(p_73252_1_);
++
++                    if (this.field_73263_b.isEmpty())
++                    {
++                        ChunkIOExecutor.dropQueuedChunkLoad(PlayerManager.this.func_72688_a(), this.field_73264_c.field_77276_a, this.field_73264_c.field_77275_b, this.loadedRunnable);
++                        long i = (long) this.field_73264_c.field_77276_a + 2147483647L | (long) this.field_73264_c.field_77275_b + 2147483647L << 32;
++                        PlayerManager.this.field_72700_c.func_76159_d(i);
++                        PlayerManager.this.field_111193_e.remove(this);
++                    }
++
++                    return;
++                }
++
+                 Chunk chunk = PlayerManager.this.field_72701_a.func_72964_e(this.field_73264_c.field_77276_a, this.field_73264_c.field_77275_b);
+ 
+                 if (chunk.func_150802_k())
+@@ -317,9 +394,12 @@
+                     p_73252_1_.field_71135_a.func_147359_a(new S21PacketChunkData(chunk, true, 0));
+                 }
+ 
++                this.players.remove(p_73252_1_);
                  this.field_73263_b.remove(p_73252_1_);
                  p_73252_1_.field_71129_f.remove(this.field_73264_c);
  
@@ -27,7 +179,7 @@
                  if (this.field_73263_b.isEmpty())
                  {
                      long i = (long)this.field_73264_c.field_77276_a + 2147483647L | (long)this.field_73264_c.field_77275_b + 2147483647L << 32;
-@@ -357,7 +363,7 @@
+@@ -357,7 +437,7 @@
  
              this.field_73260_f |= 1 << (p_151253_2_ >> 4);
  
@@ -36,7 +188,7 @@
              {
                  short short1 = (short)(p_151253_1_ << 12 | p_151253_3_ << 8 | p_151253_2_);
  
-@@ -369,6 +375,10 @@
+@@ -369,6 +449,10 @@
                      }
                  }
  
@@ -47,7 +199,7 @@
                  this.field_151254_d[this.field_73262_e++] = short1;
              }
          }
-@@ -401,7 +411,7 @@
+@@ -401,7 +485,7 @@
                      k = this.field_73264_c.field_77275_b * 16 + (this.field_151254_d[0] >> 8 & 15);
                      this.func_151251_a(new S23PacketBlockChange(i, j, k, PlayerManager.this.field_72701_a));
  
@@ -56,7 +208,7 @@
                      {
                          this.func_151252_a(PlayerManager.this.field_72701_a.func_147438_o(i, j, k));
                      }
-@@ -410,13 +420,14 @@
+@@ -410,13 +494,14 @@
                  {
                      int l;
  
@@ -73,7 +225,7 @@
                          {
                              if ((this.field_73260_f & 1 << k) != 0)
                              {
-@@ -433,14 +444,17 @@
+@@ -433,14 +518,17 @@
                      else
                      {
                          this.func_151251_a(new S22PacketMultiBlockChange(this.field_73262_e, this.field_151254_d, PlayerManager.this.field_72701_a.func_72964_e(this.field_73264_c.field_77276_a, this.field_73264_c.field_77275_b)));
