@@ -21,11 +21,8 @@ import com.google.common.collect.Maps;
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
 
 public class FMLTweaker implements ITweaker {
-    @SuppressWarnings("unused")
     private List<String> args;
-    @SuppressWarnings("unused")
     private File assetsDir;
-    @SuppressWarnings("unused")
     private String profile;
     private File gameDir;
     private Map<String, String> launchArgs;
@@ -96,6 +93,8 @@ public class FMLTweaker implements ITweaker {
         {
             launchArgs.put("--assetsDir", assetsDir.getAbsolutePath());
         }
+
+        Yggdrasil.login(launchArgs);
 
         try
         {
