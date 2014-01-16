@@ -39,6 +39,7 @@ import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.common.network.internal.NetworkModHolder;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
 
 /**
@@ -69,7 +70,21 @@ public enum NetworkRegistry
         channels.put(Side.SERVER, Maps.<String,FMLEmbeddedChannel>newConcurrentMap());
     }
 
+    /**
+     * Represents a target point for the ALLROUNDPOINT target.
+     *
+     * @author cpw
+     *
+     */
     public static class TargetPoint {
+        /**
+         * A target point
+         * @param dimension The dimension to target
+         * @param x The X coordinate
+         * @param y The Y coordinate
+         * @param z The Z coordinate
+         * @param range The range
+         */
         public TargetPoint(int dimension, double x, double y, double z, double range)
         {
             this.x = x;
@@ -86,6 +101,16 @@ public enum NetworkRegistry
     }
     /**
      * Create a new synchronous message channel pair based on netty.
+     *
+     * There are two preconstructed models available:
+     * <ul>
+     * <li> {@link #newSimpleChannel(String)} provides {@link SimpleNetworkWrapper}, a simple implementation of a netty handler, suitable for those who don't
+     * wish to dive too deeply into netty.
+     * <li> {@link #newEventChannel(String)} provides {@link FMLEventChannel} an event driven implementation, with lower level
+     * access to the network data stream, for those with advanced bitbanging needs that don't wish to poke netty too hard.
+     * <li> Alternatively, simply use the netty features provided here and implement the full power of the netty stack.
+     * </ul>
+     *
      * There are two channels created : one for each logical side (considered as the source of an outbound message)
      * The returned map will contain a value for each logical side, though both will only be working in the
      * integrated server case.
@@ -127,6 +152,22 @@ public enum NetworkRegistry
         return result;
     }
 
+    /**
+     * Construct a new {@link SimpleNetworkWrapper} for the channel.
+     *
+     * @param name The name of the channel
+     * @return A {@link SimpleNetworkWrapper} for handling this channel
+     */
+    public SimpleNetworkWrapper newSimpleChannel(String name)
+    {
+        return new SimpleNetworkWrapper(name);
+    }
+    /**
+     * Construct a new {@link FMLEventChannel} for the channel.
+     *
+     * @param name The name of the channel
+     * @return An {@link FMLEventChannel} for handling this channel
+     */
     public FMLEventChannel newEventDrivenChannel(String name)
     {
         return new FMLEventChannel(name);
