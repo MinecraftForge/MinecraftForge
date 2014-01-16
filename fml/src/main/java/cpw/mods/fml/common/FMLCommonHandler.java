@@ -498,4 +498,9 @@ public class FMLCommonHandler
     {
         return sidedDelegate.getClientPlayHandler();
     }
+
+    public void waitForPlayClient()
+    {
+        sidedDelegate.waitForPlayClient();
+    }
 }
