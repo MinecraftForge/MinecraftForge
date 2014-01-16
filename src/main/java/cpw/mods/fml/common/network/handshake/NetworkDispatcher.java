@@ -148,6 +148,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     void clientListenForServerHandshake()
     {
         manager.func_150723_a(EnumConnectionState.PLAY);
+        FMLCommonHandler.instance().waitForPlayClient();
         this.netHandler = FMLCommonHandler.instance().getClientPlayHandler();
         this.state = ConnectionState.AWAITING_HANDSHAKE;
     }

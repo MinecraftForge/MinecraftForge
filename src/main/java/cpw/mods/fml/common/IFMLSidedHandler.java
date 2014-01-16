@@ -48,4 +48,6 @@ public interface IFMLSidedHandler
     NetworkManager getClientToServerNetworkManager();
 
     INetHandler getClientPlayHandler();
+
+    void waitForPlayClient();
 }

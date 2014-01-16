@@ -32,6 +32,7 @@ import net.minecraft.client.gui.ServerListEntryNormal;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.OldServerPinger;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -683,6 +684,29 @@ public class FMLClientHandler implements IFMLSidedHandler
         else
         {
             showGuiScreen(new GuiConnecting(guiMultiplayer, client, serverEntry));
+        }
+        playClientBlock = new CountDownLatch(1);
+    }
+
+    private CountDownLatch playClientBlock;
+    public void setPlayClient(NetHandlerPlayClient netHandlerPlayClient)
+    {
+        playClientBlock.countDown();
+    }
+
+    @Override
+    public void waitForPlayClient()
+    {
+        boolean gotIt = false;
+        try
+        {
+            gotIt = playClientBlock.await(1,TimeUnit.SECONDS);
+        } catch (InterruptedException e)
+        {
+        }
+        if (!gotIt)
+        {
+            throw new RuntimeException("Timeout waiting for client thread to catch up!");
         }
     }
 }

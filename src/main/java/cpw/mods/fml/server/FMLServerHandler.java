@@ -221,4 +221,9 @@ public class FMLServerHandler implements IFMLSidedHandler
     {
         return null;
     }
+    @Override
+    public void waitForPlayClient()
+    {
+        // NOOP
+    }
 }

@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
++++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
+@@ -1,6 +1,7 @@
+ package net.minecraft.client.network;
+ 
+ import com.google.common.base.Charsets;
++import cpw.mods.fml.client.FMLClientHandler;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import io.netty.buffer.ByteBuf;
+@@ -215,6 +216,7 @@
+         this.field_147299_f = p_i45061_1_;
+         this.field_147307_j = p_i45061_2_;
+         this.field_147302_e = p_i45061_3_;
++        FMLClientHandler.instance().setPlayClient(this);
+     }
+ 
+     public void func_147296_c()
