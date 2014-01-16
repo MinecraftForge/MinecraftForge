@@ -20,6 +20,7 @@ import com.google.gson.GsonBuilder;
  * Basic implementation of Mojang's 'Yggdrasil' login system, purely intended as a dev time bare bones login.
  * Login errors are not handled.
  */
+@SuppressWarnings("unused")
 public class Yggdrasil {
     private static class Request {
         Agent agent = new Agent();
@@ -88,7 +89,7 @@ public class Yggdrasil {
         OutputStream out = null;
         InputStream in = null;
 
-        try 
+        try
         {
             HttpURLConnection con = (HttpURLConnection)(new URL("https://authserver.mojang.com/authenticate")).openConnection();
             con.setConnectTimeout(15000);
