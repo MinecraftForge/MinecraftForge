@@ -19,3 +19,5 @@
 #Patch rejects
 *.rej
 /patches-/
+# FML changelog
+changelog.txt
