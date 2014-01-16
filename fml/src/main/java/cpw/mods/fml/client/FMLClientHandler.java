@@ -548,6 +548,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     public void tryLoadWorld(GuiSelectWorld selectWorldGUI, int selectedIndex)
     {
+        playClientBlock = new CountDownLatch(1);
         selectWorldGUI.func_146615_e(selectedIndex);
     }
 
