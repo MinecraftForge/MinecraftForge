@@ -15,7 +15,6 @@ package cpw.mods.fml.common;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.item.EntityItem;
@@ -30,10 +29,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -42,7 +39,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
@@ -502,5 +498,10 @@ public class FMLCommonHandler
     public void waitForPlayClient()
     {
         sidedDelegate.waitForPlayClient();
+    }
+
+    public void fireNetRegistrationEvent(NetworkManager manager, Set<String> channelSet, String channel, Side side)
+    {
+        sidedDelegate.fireNetRegistrationEvent(bus(), manager, channelSet, channel, side);
     }
 }

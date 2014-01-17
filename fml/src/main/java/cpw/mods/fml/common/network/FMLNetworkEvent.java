@@ -1,5 +1,7 @@
 package cpw.mods.fml.common.network;
 
+import java.util.Set;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.INetHandlerPlayClient;
@@ -49,6 +51,19 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
         public ClientDisconnectionFromServerEvent(NetworkManager manager)
         {
             super((INetHandlerPlayClient) manager.func_150729_e(), INetHandlerPlayClient.class, manager);
+        }
+    }
+
+    public static class CustomPacketRegistrationEvent<S extends INetHandler> extends FMLNetworkEvent<S> {
+        public final ImmutableSet<String> registrations;
+        public final String operation;
+        public final Side side;
+        public CustomPacketRegistrationEvent(NetworkManager manager, Set<String> registrations, String operation, Side side, Class<S> type)
+        {
+            super(type.cast(manager.func_150729_e()), type, manager);
+            this.registrations = ImmutableSet.copyOf(registrations);
+            this.side = side;
+            this.operation = operation;
         }
     }
 
