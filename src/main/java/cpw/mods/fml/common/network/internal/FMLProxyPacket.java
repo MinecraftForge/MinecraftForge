@@ -108,4 +108,9 @@ public class FMLProxyPacket extends Packet {
     {
         return this.dispatcher;
     }
+
+    public Side getTarget()
+    {
+        return target;
+    }
 }
