@@ -12,18 +12,26 @@
 
 package cpw.mods.fml.common.registry;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.StringTranslate;
 
 import com.google.common.base.Charsets;
 
@@ -31,12 +39,15 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.relauncher.Side;
 
 public class LanguageRegistry
 {
     private static final LanguageRegistry INSTANCE = new LanguageRegistry();
 
     private Map<String,Properties> modLanguageData=new HashMap<String,Properties>();
+
+    private static final Pattern assetENUSLang = Pattern.compile("assets/(.*)/lang/(.*).lang");
 
     public static LanguageRegistry instance()
     {
@@ -62,10 +73,19 @@ public class LanguageRegistry
         return localizedString;
     }
 
+    /**
+     * Deprecated for removal in 1.8. Use the assets lang system
+     */
+    @Deprecated
     public void addStringLocalization(String key, String value)
     {
         addStringLocalization(key, "en_US", value);
     }
+
+    /**
+     * Deprecated for removal in 1.8. Use the assets lang system
+     */
+    @Deprecated
     public void addStringLocalization(String key, String lang, String value)
     {
         Properties langPack=modLanguageData.get(lang);
@@ -76,10 +96,18 @@ public class LanguageRegistry
         langPack.put(key,value);
     }
 
+    /**
+     * Deprecated for removal in 1.8. Use the assets lang system
+     */
+    @Deprecated
     public void addStringLocalization(Properties langPackAdditions) {
         addStringLocalization(langPackAdditions, "en_US");
     }
 
+    /**
+     * Deprecated for removal in 1.8. Use the assets lang system
+     */
+    @Deprecated
     public void addStringLocalization(Properties langPackAdditions, String lang) {
         Properties langPack = modLanguageData.get(lang);
         if (langPack == null) {
@@ -91,14 +119,10 @@ public class LanguageRegistry
         }
     }
 
-    public static void reloadLanguageTable()
-    {
-//        // reload language table by forcing lang to null and reloading the properties file
-//        String lang = StringTranslate.func_74808_a().func_74811_c();
-//        StringTranslate.func_74808_a().func_74810_a(lang, true);
-    }
-
-
+    /**
+     * Deprecated for removal in 1.8. Use the assets lang system
+     */
+    @Deprecated
     public void addNameForObject(Object objectToName, String lang, String name)
     {
         String objectName;
@@ -115,12 +139,20 @@ public class LanguageRegistry
         addStringLocalization(objectName, lang, name);
     }
 
+    /**
+     * Deprecated for removal in 1.8. Use the assets lang system
+     */
+    @Deprecated
     public static void addName(Object objectToName, String name)
     {
         instance().addNameForObject(objectToName, "en_US", name);
     }
 
+    /**
+     * Deprecated for removal in 1.8. Use the assets lang system
+     */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public void loadLanguageTable(@SuppressWarnings("rawtypes") Map field_135032_a, String lang)
     {
         Properties usPack=modLanguageData.get("en_US");
@@ -134,6 +166,10 @@ public class LanguageRegistry
         field_135032_a.putAll(langPack);
     }
 
+    /**
+     * Deprecated for removal in 1.8. Use the assets lang system
+     */
+    @Deprecated
     public void loadLocalization(String localizationFile, String lang, boolean isXML)
     {
         URL urlResource = this.getClass().getResource(localizationFile);
@@ -155,6 +191,10 @@ public class LanguageRegistry
         }
     }
 
+    /**
+     * Deprecated for removal in 1.8. Use the assets lang system
+     */
+    @Deprecated
     public void loadLocalization(URL localizationFile, String lang, boolean isXML)
     {
         InputStream langStream = null;
@@ -183,6 +223,83 @@ public class LanguageRegistry
             }
             catch (IOException ex) {
                 // HUSH
+            }
+        }
+    }
+
+    public void injectLanguage(String language, HashMap<String, String> parsedLangFile)
+    {
+
+        Properties p = modLanguageData.get(language);
+        if (p == null)
+        {
+            p = new Properties();
+            modLanguageData.put(language, p);
+        }
+        p.putAll(parsedLangFile);
+    }
+
+    public void loadLanguagesFor(ModContainer container, Side side)
+    {
+        File source = container.getSource();
+        try
+        {
+            if (source.isDirectory())
+            {
+                searchDirForLanguages(source, "", side);
+            }
+            else
+            {
+                searchZipForLanguages(source, side);
+            }
+        }
+        catch (IOException ioe)
+        {
+
+        }
+    }
+
+    private void searchZipForLanguages(File source, Side side) throws IOException
+    {
+        ZipFile zf = new ZipFile(source);
+        for (ZipEntry ze : Collections.list(zf.entries()))
+        {
+            Matcher matcher = assetENUSLang.matcher(ze.getName());
+            if (matcher.matches())
+            {
+                String lang = matcher.group(2);
+                FMLLog.fine("Injecting found translation data for lang %s in zip file %s at %s into language system", lang, source.getName(), ze.getName());
+                LanguageRegistry.instance().injectLanguage(lang, StringTranslate.parseLangFile(zf.getInputStream(ze)));
+                // Ensure en_US is available to StringTranslate on the server
+                if ("en_US".equals(lang) && side == Side.SERVER)
+                {
+                    StringTranslate.inject(zf.getInputStream(ze));
+                }
+            }
+        }
+        zf.close();
+    }
+
+    private void searchDirForLanguages(File source, String path, Side side) throws IOException
+    {
+        for (File file : source.listFiles())
+        {
+            String currPath = path+file.getName();
+            if (file.isDirectory())
+            {
+                searchDirForLanguages(file, currPath+'/', side);
+            }
+            Matcher matcher = assetENUSLang.matcher(currPath);
+            if (matcher.matches())
+            {
+                String lang = matcher.group(2);
+                FMLLog.fine("Injecting found translation assets for lang %s at %s into language system", lang, currPath);
+                LanguageRegistry.instance().injectLanguage(lang, StringTranslate.parseLangFile(new FileInputStream(file)));
+                // Ensure en_US is available to StringTranslate on the server
+                if ("en_US".equals(lang) && side == Side.SERVER)
+                {
+                    StringTranslate.inject(new FileInputStream(file));
+                }
             }
         }
     }

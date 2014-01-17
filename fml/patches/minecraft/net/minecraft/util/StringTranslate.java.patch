@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/util/StringTranslate.java
 +++ ../src-work/minecraft/net/minecraft/util/StringTranslate.java
-@@ -3,6 +3,8 @@
+@@ -3,10 +3,13 @@
  import com.google.common.base.Splitter;
  import com.google.common.collect.Iterables;
  import com.google.common.collect.Maps;
@@ -9,33 +9,53 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.io.IOException;
-@@ -25,9 +27,19 @@
+ import java.io.InputStream;
++import java.util.HashMap;
+ import java.util.IllegalFormatException;
+ import java.util.Iterator;
+ import java.util.Map;
+@@ -25,9 +28,22 @@
  
      public StringTranslate()
      {
 +        InputStream inputstream = StringTranslate.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang");
-+        localInject(inputstream);
++        inject(inputstream);
 +    }
 +
 +    public static void inject(InputStream inputstream)
 +    {
-+        field_74817_a.localInject(inputstream);
++        HashMap<String, String> map = parseLangFile(inputstream);
++        field_74817_a.field_74816_c.putAll(map);
++        field_74817_a.field_150511_e = System.currentTimeMillis();
 +    }
 +
-+    private void localInject(InputStream inputstream)
++    public static HashMap<String,String> parseLangFile(InputStream inputstream)
 +    {
++        HashMap<String,String> table = Maps.newHashMap();
          try
          {
 -            InputStream inputstream = StringTranslate.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang");
              Iterator iterator = IOUtils.readLines(inputstream, Charsets.UTF_8).iterator();
  
              while (iterator.hasNext())
-@@ -49,7 +61,7 @@
+@@ -42,17 +58,17 @@
+                     {
+                         String s1 = astring[0];
+                         String s2 = field_111053_a.matcher(astring[1]).replaceAll("%$1s");
+-                        this.field_74816_c.put(s1, s2);
++                        table.put(s1, s2);
+                     }
+                 }
+             }
  
-             this.field_150511_e = System.currentTimeMillis();
+-            this.field_150511_e = System.currentTimeMillis();
          }
 -        catch (IOException ioexception)
 +        catch (Exception ioexception)
          {
              ;
          }
++        return table;
+     }
+ 
+     static StringTranslate func_74808_a()
