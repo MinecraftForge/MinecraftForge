@@ -17,8 +17,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -75,6 +75,7 @@ import cpw.mods.fml.common.WrongMinecraftVersionException;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.common.registry.GameData;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.toposort.ModSortingException;
 import cpw.mods.fml.relauncher.Side;
 
@@ -480,6 +481,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public void addModAsResource(ModContainer container)
     {
+        LanguageRegistry.instance().loadLanguagesFor(container, Side.CLIENT);
         Class<?> resourcePackType = container.getCustomResourcePackClass();
         if (resourcePackType != null)
         {

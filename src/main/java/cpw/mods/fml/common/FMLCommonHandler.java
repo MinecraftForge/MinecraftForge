@@ -79,7 +79,6 @@ public class FMLCommonHandler
     private List<ICrashCallable> crashCallables = Lists.newArrayList(Loader.instance().getCallableCrashInformation());
     private Set<SaveHandler> handlerSet = Sets.newSetFromMap(new MapMaker().weakKeys().<SaveHandler,Boolean>makeMap());
     private EventBus eventBus = new EventBus();
-
     /**
      * The FML event bus. Subscribe here for FML related events
      *
