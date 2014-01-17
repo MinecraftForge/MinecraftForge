@@ -14,8 +14,6 @@ public class XpOrbPickedUpEvent extends EntityEvent
     {
         super(entity);
         orb = entity;
-        System.out.println("EVENT WORKS");
-        setXP((short)500);
     }
     public void setXP(short i)
     {
