@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import org.apache.logging.log4j.Level;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.INetHandler;
@@ -242,6 +243,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         if ("FML|HS".equals(channelName) || "REGISTER".equals(channelName) || "UNREGISTER".equals(channelName))
         {
             FMLProxyPacket proxy = new FMLProxyPacket(msg);
+            proxy.setDispatcher(this);
             handshakeChannel.writeInbound(proxy);
             // forward any messages into the regular channel
             for (Object push : handshakeChannel.inboundMessages())
@@ -278,6 +280,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         if ("FML|HS".equals(channelName) || "REGISTER".equals(channelName) || "UNREGISTER".equals(channelName))
         {
             FMLProxyPacket proxy = new FMLProxyPacket(msg);
+            proxy.setDispatcher(this);
             handshakeChannel.writeInbound(proxy);
             for (Object push : handshakeChannel.inboundMessages())
             {
@@ -433,4 +436,12 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     {
         completeClientSideConnection(ConnectionType.valueOf(type));
     }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
+    {
+        FMLLog.log(Level.ERROR, cause, "NetworkDispatcher exception");
+        super.exceptionCaught(ctx, cause);
+    }
+
 }

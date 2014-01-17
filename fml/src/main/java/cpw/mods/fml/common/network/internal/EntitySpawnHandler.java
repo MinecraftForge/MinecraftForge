@@ -123,4 +123,11 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
             throw Throwables.propagate(e);
         }
     }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
+    {
+        FMLLog.log(Level.ERROR, cause, "EntitySpawnHandler exception");
+        super.exceptionCaught(ctx, cause);
+    }
 }

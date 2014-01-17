@@ -1,5 +1,7 @@
 package cpw.mods.fml.common.network;
 
+import org.apache.logging.log4j.Level;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -26,4 +28,10 @@ public class NetworkEventFiringHandler extends SimpleChannelInboundHandler<FMLPr
         eventChannel.fireRead(msg,ctx);
     }
 
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
+    {
+        FMLLog.log(Level.ERROR, cause, "NetworkEventFiringHandler exception");
+        super.exceptionCaught(ctx, cause);
+    }
 }

@@ -144,6 +144,8 @@ public class FMLClientHandler implements IFMLSidedHandler
     private Map<ServerStatusResponse,JsonObject> extraServerListData;
     private Map<ServerData, ExtendedServerListData> serverDataTag;
 
+    private NetHandlerPlayClient currentPlayClient;
+
     /**
      * Called to start the whole game off
      *
@@ -532,7 +534,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public INetHandler getClientPlayHandler()
     {
-        return this.client.func_147114_u();
+        return this.currentPlayClient;
     }
     @Override
     public NetworkManager getClientToServerNetworkManager()
@@ -697,6 +699,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void setPlayClient(NetHandlerPlayClient netHandlerPlayClient)
     {
         playClientBlock.countDown();
+        this.currentPlayClient = netHandlerPlayClient;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package cpw.mods.fml.common.network.internal;
 
+import org.apache.logging.log4j.Level;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
 import cpw.mods.fml.common.network.internal.FMLMessage.CompleteHandshake;
 import io.netty.channel.ChannelHandlerContext;
@@ -13,5 +15,12 @@ public class HandshakeCompletionHandler extends SimpleChannelInboundHandler<FMLM
     {
         NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).getAndRemove();
         dispatcher.completeHandshake(msg.target);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
+    {
+        FMLLog.log(Level.ERROR, cause, "HandshakeCompletionHandler exception");
+        super.exceptionCaught(ctx, cause);
     }
 }
