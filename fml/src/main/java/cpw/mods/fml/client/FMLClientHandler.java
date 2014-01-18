@@ -28,7 +28,6 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiSelectWorld;
 import net.minecraft.client.gui.ServerListEntryNormal;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
@@ -49,6 +48,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.WorldSettings;
 import org.apache.logging.log4j.Level;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -554,10 +554,9 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
     }
 
-    public void tryLoadWorld(GuiSelectWorld selectWorldGUI, int selectedIndex)
+    public void startIntegratedServer(String id, String name, WorldSettings settings)
     {
         playClientBlock = new CountDownLatch(1);
-        selectWorldGUI.func_146615_e(selectedIndex);
     }
 
     public void showInGameModOptions(GuiIngameMenu guiIngameMenu)

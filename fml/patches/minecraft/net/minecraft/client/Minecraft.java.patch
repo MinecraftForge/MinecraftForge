@@ -88,7 +88,7 @@
                  }
              }
  
-@@ -1978,6 +1991,8 @@
+@@ -1978,12 +1991,15 @@
              this.field_71453_ak.func_74428_b();
          }
  
@@ -97,7 +97,14 @@
          this.field_71424_I.func_76319_b();
          this.field_71423_H = func_71386_F();
      }
-@@ -2094,6 +2109,7 @@
+ 
+     public void func_71371_a(String p_71371_1_, String p_71371_2_, WorldSettings p_71371_3_)
+     {
++        FMLClientHandler.instance().startIntegratedServer(p_71371_1_, p_71371_2_, p_71371_3_);
+         this.func_71403_a((WorldClient)null);
+         System.gc();
+         ISaveHandler isavehandler = this.field_71469_aa.func_75804_a(p_71371_1_, false);
+@@ -2094,6 +2110,7 @@
              this.field_110448_aq.func_148529_f();
              this.func_71351_a((ServerData)null);
              this.field_71455_al = false;
