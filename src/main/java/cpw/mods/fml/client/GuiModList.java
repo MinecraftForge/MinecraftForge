@@ -57,6 +57,8 @@ public class GuiModList extends GuiScreen
     private ArrayList<ModContainer> mods;
     private GuiButton configModButton;
     private GuiButton disableModButton;
+    private ResourceLocation cachedLogo;
+    private Dimension cachedLogoDimensions;
 
     /**
      * @param mainMenu
@@ -157,40 +159,46 @@ public class GuiModList extends GuiScreen
                     IResourcePack pack = FMLClientHandler.instance().getResourcePackFor(selectedMod.getModId());
                     try
                     {
-                        BufferedImage logo = null;
-                        if (pack!=null)
+                        if (cachedLogo == null)
                         {
-                            logo = pack.func_110586_a();
-                        }
-                        else
-                        {
-                            InputStream logoResource = getClass().getResourceAsStream(logoFile);
-                            if (logoResource != null)
+                            BufferedImage logo = null;
+                            if (pack!=null)
                             {
-                                logo = ImageIO.read(logoResource);
+                                logo = pack.func_110586_a();
+                            }
+                            else
+                            {
+                                InputStream logoResource = getClass().getResourceAsStream(logoFile);
+                                if (logoResource != null)
+                                {
+                                    logo = ImageIO.read(logoResource);
+                                }
+                            }
+                            if (logo != null)
+                            {
+                                cachedLogo = tm.func_110578_a("modlogo", new DynamicTexture(logo));
+                                cachedLogoDimensions = new Dimension(logo.getWidth(), logo.getHeight());
                             }
                         }
-                        if (logo != null)
+                        if (cachedLogo != null)
                         {
-                            ResourceLocation rl = tm.func_110578_a("modlogo", new DynamicTexture(logo));
-                            this.field_146297_k.field_71446_o.func_110577_a(rl);
-                            Dimension dim = new Dimension(logo.getWidth(), logo.getHeight());
-                            double scaleX = dim.width / 200.0;
-                            double scaleY = dim.height / 65.0;
+                            this.field_146297_k.field_71446_o.func_110577_a(cachedLogo);
+                            double scaleX = cachedLogoDimensions.width / 200.0;
+                            double scaleY = cachedLogoDimensions.height / 65.0;
                             double scale = 1.0;
                             if (scaleX > 1 || scaleY > 1)
                             {
                                 scale = 1.0 / Math.max(scaleX, scaleY);
                             }
-                            dim.width *= scale;
-                            dim.height *= scale;
+                            cachedLogoDimensions.width *= scale;
+                            cachedLogoDimensions.height *= scale;
                             int top = 32;
                             Tessellator tess = Tessellator.field_78398_a;
                             tess.func_78382_b();
-                            tess.func_78374_a(offset,             top + dim.height, field_73735_i, 0, 1);
-                            tess.func_78374_a(offset + dim.width, top + dim.height, field_73735_i, 1, 1);
-                            tess.func_78374_a(offset + dim.width, top,              field_73735_i, 1, 0);
-                            tess.func_78374_a(offset,             top,              field_73735_i, 0, 0);
+                            tess.func_78374_a(offset,                               top + cachedLogoDimensions.height,  field_73735_i, 0, 1);
+                            tess.func_78374_a(offset + cachedLogoDimensions.width,  top + cachedLogoDimensions.height,  field_73735_i, 1, 1);
+                            tess.func_78374_a(offset + cachedLogoDimensions.width,  top,                                field_73735_i, 1, 0);
+                            tess.func_78374_a(offset,                               top,                                field_73735_i, 0, 0);
                             tess.func_78381_a();
 
                             shifty += 65;
@@ -286,6 +294,7 @@ public class GuiModList extends GuiScreen
         } else {
             this.selectedMod=null;
         }
+        cachedLogo = null;
     }
 
     public boolean modIndexSelected(int var1)
