@@ -531,6 +531,7 @@ public class Loader
 
         Map<String, Boolean> isEnabled = Maps.transformValues(modStates, new Function<String, Boolean>()
         {
+            @Override
             public Boolean apply(String input)
             {
                 return Boolean.parseBoolean(input);

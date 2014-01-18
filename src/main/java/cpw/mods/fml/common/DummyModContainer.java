@@ -109,6 +109,7 @@ public class DummyModContainer implements ModContainer
         return md.version;
     }
 
+    @Override
     public boolean matches(Object mod)
     {
         return false;

@@ -34,76 +34,91 @@ public class InjectedModContainer implements ModContainer
         this.wrappedContainer = mc;
     }
 
+    @Override
     public String getModId()
     {
         return wrappedContainer.getModId();
     }
 
+    @Override
     public String getName()
     {
         return wrappedContainer.getName();
     }
 
+    @Override
     public String getVersion()
     {
         return wrappedContainer.getVersion();
     }
 
+    @Override
     public File getSource()
     {
         return source;
     }
 
+    @Override
     public ModMetadata getMetadata()
     {
         return wrappedContainer.getMetadata();
     }
 
+    @Override
     public void bindMetadata(MetadataCollection mc)
     {
         wrappedContainer.bindMetadata(mc);
     }
 
+    @Override
     public void setEnabledState(boolean enabled)
     {
         wrappedContainer.setEnabledState(enabled);
     }
 
+    @Override
     public Set<ArtifactVersion> getRequirements()
     {
         return wrappedContainer.getRequirements();
     }
 
+    @Override
     public List<ArtifactVersion> getDependencies()
     {
         return wrappedContainer.getDependencies();
     }
 
+    @Override
     public List<ArtifactVersion> getDependants()
     {
         return wrappedContainer.getDependants();
     }
 
+    @Override
     public String getSortingRules()
     {
         return wrappedContainer.getSortingRules();
     }
 
+    @Override
     public boolean registerBus(EventBus bus, LoadController controller)
     {
         return wrappedContainer.registerBus(bus, controller);
     }
 
+    @Override
     public boolean matches(Object mod)
     {
         return wrappedContainer.matches(mod);
     }
 
+    @Override
     public Object getMod()
     {
         return wrappedContainer.getMod();
     }
 
+    @Override
     public ArtifactVersion getProcessedVersion()
     {
         return wrappedContainer.getProcessedVersion();

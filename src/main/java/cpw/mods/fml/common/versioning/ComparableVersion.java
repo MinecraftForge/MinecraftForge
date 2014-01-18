@@ -114,16 +114,19 @@ public class ComparableVersion
             this.value = new BigInteger( str );
         }
 
+        @Override
         public int getType()
         {
             return INTEGER_ITEM;
         }
 
+        @Override
         public boolean isNull()
         {
             return BigInteger_ZERO.equals( value );
         }
 
+        @Override
         public int compareTo( Item item )
         {
             if ( item == null )
@@ -147,6 +150,7 @@ public class ComparableVersion
             }
         }
 
+        @Override
         public String toString()
         {
             return value.toString();
@@ -200,11 +204,13 @@ public class ComparableVersion
             this.value = ALIASES.getProperty( value , value );
         }
 
+        @Override
         public int getType()
         {
             return STRING_ITEM;
         }
 
+        @Override
         public boolean isNull()
         {
             return ( comparableQualifier( value ).compareTo( RELEASE_VERSION_INDEX ) == 0 );
@@ -229,6 +235,7 @@ public class ComparableVersion
             return i == -1 ? ( _QUALIFIERS.size() + "-" + qualifier ) : String.valueOf( i );
         }
 
+        @Override
         public int compareTo( Item item )
         {
             if ( item == null )
@@ -252,6 +259,7 @@ public class ComparableVersion
             }
         }
 
+        @Override
         public String toString()
         {
             return value;
@@ -271,11 +279,13 @@ public class ComparableVersion
          */
         private static final long serialVersionUID = 1L;
 
+        @Override
         public int getType()
         {
             return LIST_ITEM;
         }
 
+        @Override
         public boolean isNull()
         {
             return ( size() == 0 );
@@ -297,6 +307,7 @@ public class ComparableVersion
             }
         }
 
+        @Override
         public int compareTo( Item item )
         {
             if ( item == null )
@@ -341,6 +352,7 @@ public class ComparableVersion
             }
         }
 
+        @Override
         public String toString()
         {
             StringBuilder buffer = new StringBuilder( "(" );
@@ -462,21 +474,25 @@ public class ComparableVersion
         return isDigit ? new IntegerItem( buf ) : new StringItem( buf, false );
     }
 
+    @Override
     public int compareTo( ComparableVersion o )
     {
         return items.compareTo( o.items );
     }
 
+    @Override
     public String toString()
     {
         return value;
     }
 
+    @Override
     public boolean equals( Object o )
     {
         return ( o instanceof ComparableVersion ) && canonical.equals( ( (ComparableVersion) o ).canonical );
     }
 
+    @Override
     public int hashCode()
     {
         return canonical.hashCode();

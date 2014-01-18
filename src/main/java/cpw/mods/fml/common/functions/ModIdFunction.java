@@ -18,6 +18,7 @@ import cpw.mods.fml.common.ModContainer;
 
 public final class ModIdFunction implements Function<ModContainer, String>
 {
+    @Override
     public String apply(ModContainer container)
     {
         return container.getModId();

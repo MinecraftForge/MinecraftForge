@@ -28,11 +28,13 @@ public abstract class FMLHandshakeMessage {
     }
     public static class ServerHello extends FMLHandshakeMessage {
         private byte serverProtocolVersion;
+        @Override
         public void toBytes(ByteBuf buffer)
         {
             buffer.writeByte(NetworkRegistry.FML_PROTOCOL);
         }
 
+        @Override
         public void fromBytes(ByteBuf buffer)
         {
             serverProtocolVersion = buffer.readByte();
@@ -45,11 +47,13 @@ public abstract class FMLHandshakeMessage {
     }
     public static class ClientHello extends FMLHandshakeMessage {
         private byte serverProtocolVersion;
+        @Override
         public void toBytes(ByteBuf buffer)
         {
             buffer.writeByte(NetworkRegistry.FML_PROTOCOL);
         }
 
+        @Override
         public void fromBytes(ByteBuf buffer)
         {
             serverProtocolVersion = buffer.readByte();
@@ -130,6 +134,7 @@ public abstract class FMLHandshakeMessage {
         }
 
         private Map<String,Integer> modIds;
+        @Override
         public void fromBytes(ByteBuf buffer)
         {
             int length = ByteBufUtils.readVarInt(buffer, 3);

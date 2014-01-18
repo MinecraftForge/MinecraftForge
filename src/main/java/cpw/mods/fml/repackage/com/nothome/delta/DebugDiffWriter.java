@@ -1,4 +1,4 @@
-/* 
+/*
  *
  * Copyright (c) 2001 Torgeir Veimo
  *
@@ -32,20 +32,22 @@ import java.io.IOException;
  * For debugging patch generation.
  */
 public class DebugDiffWriter implements DiffWriter {
-    
+
     private ByteArrayOutputStream os = new ByteArrayOutputStream();
-    
+
     /**
      * Constructs a new DebugDiffWriter.
      */
     public DebugDiffWriter() {}
-    
+
+    @Override
     public void addCopy(long offset, int length) throws IOException {
         if (os.size() > 0)
             writeBuf();
         System.err.println("COPY off: " + offset + ", len: " + length);
     }
-    
+
+    @Override
     public void addData(byte b) throws IOException {
         os.write(b);
         writeBuf();
@@ -63,10 +65,12 @@ public class DebugDiffWriter implements DiffWriter {
         System.err.println("");
         os.reset();
     }
-    
+
+    @Override
     public void flush() throws IOException {
         System.err.println("FLUSH");
     }
+    @Override
     public void close() throws IOException {
         System.err.println("CLOSE");
     }
