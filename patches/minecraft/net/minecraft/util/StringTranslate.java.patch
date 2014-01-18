@@ -14,19 +14,33 @@
  import java.util.IllegalFormatException;
  import java.util.Iterator;
  import java.util.Map;
-@@ -25,9 +28,22 @@
+@@ -18,16 +21,35 @@
+ {
+     private static final Pattern field_111053_a = Pattern.compile("%(\\d+\\$)?[\\d\\.]*[df]");
+     private static final Splitter field_135065_b = Splitter.on('=').limit(2);
++    private final Map field_74816_c;
+     private static StringTranslate field_74817_a = new StringTranslate();
+-    private final Map field_74816_c = Maps.newHashMap();
+     private long field_150511_e;
+     private static final String __OBFID = "CL_00001212";
  
      public StringTranslate()
      {
 +        InputStream inputstream = StringTranslate.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang");
-+        inject(inputstream);
++        field_74816_c = Maps.newHashMap();
++        inject(this, inputstream);
 +    }
 +
 +    public static void inject(InputStream inputstream)
 +    {
++        inject(field_74817_a, inputstream);
++    }
++
++    private static void inject(StringTranslate inst, InputStream inputstream)
++    {
 +        HashMap<String, String> map = parseLangFile(inputstream);
-+        field_74817_a.field_74816_c.putAll(map);
-+        field_74817_a.field_150511_e = System.currentTimeMillis();
++        inst.field_74816_c.putAll(map);
++        inst.field_150511_e = System.currentTimeMillis();
 +    }
 +
 +    public static HashMap<String,String> parseLangFile(InputStream inputstream)
@@ -38,7 +52,7 @@
              Iterator iterator = IOUtils.readLines(inputstream, Charsets.UTF_8).iterator();
  
              while (iterator.hasNext())
-@@ -42,17 +58,17 @@
+@@ -42,17 +64,17 @@
                      {
                          String s1 = astring[0];
                          String s2 = field_111053_a.matcher(astring[1]).replaceAll("%$1s");
