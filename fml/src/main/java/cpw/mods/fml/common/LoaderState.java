@@ -112,6 +112,7 @@ public enum LoaderState
             this.label = label;
         }
 
+        @Override
         public String toString()
         {
             return this.label;

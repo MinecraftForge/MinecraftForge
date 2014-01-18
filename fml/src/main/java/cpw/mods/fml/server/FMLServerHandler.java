@@ -69,6 +69,7 @@ public class FMLServerHandler implements IFMLSidedHandler
      *
      * @param minecraftServer
      */
+    @Override
     public void beginServerLoading(MinecraftServer minecraftServer)
     {
         server = minecraftServer;
@@ -78,6 +79,7 @@ public class FMLServerHandler implements IFMLSidedHandler
     /**
      * Called a bit later on during server initialization to finish loading mods
      */
+    @Override
     public void finishServerLoading()
     {
         Loader.instance().initializeMods();
@@ -92,6 +94,7 @@ public class FMLServerHandler implements IFMLSidedHandler
     /**
      * Get the server instance
      */
+    @Override
     public MinecraftServer getServer()
     {
         return server;

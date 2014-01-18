@@ -83,6 +83,7 @@ public class GDiffWriter implements DiffWriter {
         this(new DataOutputStream(output));
     }
 
+    @Override
     public void addCopy(long offset, int length) throws IOException {
         writeBuf();
         
@@ -130,6 +131,7 @@ public class GDiffWriter implements DiffWriter {
     /**
      * Adds a data byte.
      */
+    @Override
     public void addData(byte b) throws IOException {
         buf.write(b);
         if (buf.size() >= CHUNK_SIZE)
@@ -155,6 +157,7 @@ public class GDiffWriter implements DiffWriter {
     /**
      * Flushes accumulated data bytes, if any.
      */
+    @Override
     public void flush() throws IOException 
     { 
 		writeBuf(); 
@@ -164,6 +167,7 @@ public class GDiffWriter implements DiffWriter {
     /**
      * Writes the final EOF byte, closes the underlying stream.
      */
+    @Override
     public void close() throws IOException {
         this.flush();
         output.write((byte)EOF);

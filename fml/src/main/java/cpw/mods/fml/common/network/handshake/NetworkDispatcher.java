@@ -229,6 +229,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         final ChatComponentText chatcomponenttext = new ChatComponentText(message);
         manager.func_150725_a(new S40PacketDisconnect(chatcomponenttext), new GenericFutureListener<Future<?>>()
         {
+            @Override
             public void operationComplete(Future<?> result)
             {
                 manager.func_150718_a(chatcomponenttext);

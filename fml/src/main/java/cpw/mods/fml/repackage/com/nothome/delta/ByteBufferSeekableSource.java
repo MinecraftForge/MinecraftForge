@@ -59,6 +59,7 @@ public class ByteBufferSeekableSource implements SeekableSource {
         }
     }
     
+    @Override
     public void seek(long pos) throws IOException {
         cur = bb.slice();
         if (pos > cur.limit())
@@ -66,6 +67,7 @@ public class ByteBufferSeekableSource implements SeekableSource {
         cur.position((int) pos);
     }
     
+    @Override
     public int read(ByteBuffer dest) throws IOException {
         if (!cur.hasRemaining())
             return -1;
@@ -77,6 +79,7 @@ public class ByteBufferSeekableSource implements SeekableSource {
         return c;
     }
     
+    @Override
     public void close() throws IOException {
         bb = null;
         cur = null;

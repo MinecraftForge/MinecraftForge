@@ -52,6 +52,7 @@ public interface DiffWriter extends Closeable {
      * Closes this stream.
      * Note that {@link DiffWriter} will invoke this method at the end.
      */
+    @Override
     public void close() throws IOException;
 }
 
