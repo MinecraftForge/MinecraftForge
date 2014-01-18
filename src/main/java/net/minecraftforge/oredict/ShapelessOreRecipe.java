@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
@@ -18,7 +17,7 @@ import net.minecraft.world.World;
 public class ShapelessOreRecipe implements IRecipe
 {
     private ItemStack output = null;
-    private ArrayList input = new ArrayList();
+    private ArrayList<Object> input = new ArrayList<Object>();
 
     public ShapelessOreRecipe(Block result, Object... recipe){ this(new ItemStack(result), recipe); }
     public ShapelessOreRecipe(Item  result, Object... recipe){ this(new ItemStack(result), recipe); }
@@ -57,6 +56,7 @@ public class ShapelessOreRecipe implements IRecipe
         }
     }
 
+    @SuppressWarnings("unchecked")
     ShapelessOreRecipe(ShapelessRecipes recipe, Map<ItemStack, String> replacements)
     {
         output = recipe.getRecipeOutput();
@@ -85,10 +85,11 @@ public class ShapelessOreRecipe implements IRecipe
     @Override
     public ItemStack getCraftingResult(InventoryCrafting var1){ return output.copy(); }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean matches(InventoryCrafting var1, World world)
     {
-        ArrayList required = new ArrayList(input);
+        ArrayList<Object> required = new ArrayList<Object>(input);
 
         for (int x = 0; x < var1.getSizeInventory(); x++)
         {
@@ -97,7 +98,7 @@ public class ShapelessOreRecipe implements IRecipe
             if (slot != null)
             {
                 boolean inRecipe = false;
-                Iterator req = required.iterator();
+                Iterator<Object> req = required.iterator();
 
                 while (req.hasNext())
                 {
@@ -145,7 +146,7 @@ public class ShapelessOreRecipe implements IRecipe
      * manipulate the values in this array as it will effect the recipe itself.
      * @return The recipes input vales.
      */
-    public ArrayList getInput()
+    public ArrayList<Object> getInput()
     {
         return this.input;
     }

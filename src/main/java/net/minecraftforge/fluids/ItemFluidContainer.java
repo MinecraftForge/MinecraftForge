@@ -10,6 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
  * @author King Lemming
  * 
  */
+@SuppressWarnings("unused")
 public class ItemFluidContainer extends Item implements IFluidContainerItem
 {
     @Override public FluidStack getFluid(ItemStack container){ return null; }

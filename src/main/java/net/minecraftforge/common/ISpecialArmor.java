@@ -293,6 +293,7 @@ public interface ISpecialArmor
             }
         }
 
+        @Override
         public int compareTo(ArmorProperties o)
         {
             if (o.Priority != Priority)
@@ -304,6 +305,7 @@ public interface ISpecialArmor
             return (int)(left - right);
         }
 
+        @Override
         public String toString()
         {
             return String.format("%d, %d, %f, %d", Priority, AbsorbMax, AbsorbRatio, (AbsorbRatio == 0 ? 0 : (int)(AbsorbMax * 100.0D / AbsorbRatio)));

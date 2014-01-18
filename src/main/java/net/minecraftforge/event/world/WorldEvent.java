@@ -5,7 +5,6 @@ import java.util.List;
 
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import cpw.mods.fml.common.eventhandler.Event;
-
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
@@ -47,7 +46,7 @@ public class WorldEvent extends Event
         public final int z;
         public final List<SpawnListEntry> list;
 
-        public PotentialSpawns(World world, EnumCreatureType type, int x, int y, int z, List oldList)
+        public PotentialSpawns(World world, EnumCreatureType type, int x, int y, int z, List<SpawnListEntry> oldList)
         {
             super(world);
             this.x = x;
@@ -56,7 +55,7 @@ public class WorldEvent extends Event
             this.type = type;
             if (oldList != null)
             {
-                this.list = (List<SpawnListEntry>)oldList;
+                this.list = oldList;
             }
             else
             {

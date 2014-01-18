@@ -1,12 +1,8 @@
 package net.minecraftforge.common;
 
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,33 +10,23 @@ import java.util.UUID;
 
 import org.apache.logging.log4j.Level;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
-import com.google.common.collect.ForwardingSet;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Multisets;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
-import com.google.common.collect.TreeMultiset;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
@@ -51,14 +37,11 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -196,7 +179,7 @@ public class ForgeChunkManager
         private NBTTagCompound modData;
         public final World world;
         private int maxDepth;
-        private String entityClazz;
+        //private String entityClazz;
         private int entityChunkX;
         private int entityChunkZ;
         private Entity entity;
@@ -339,7 +322,7 @@ public class ForgeChunkManager
         /**
          * Gets a list of requested chunks for this ticket.
          */
-        public ImmutableSet getChunkList()
+        public ImmutableSet<ChunkCoordIntPair> getChunkList()
         {
             return ImmutableSet.copyOf(requestedChunks);
         }
@@ -451,7 +434,7 @@ public class ForgeChunkManager
                     NBTTagCompound ticket = (NBTTagCompound) tickets.func_150305_b(j);
                     modId = ticket.hasKey("ModId") ? ticket.getString("ModId") : modId;
                     Type type = Type.values()[ticket.getByte("Type")];
-                    byte ticketChunkDepth = ticket.getByte("ChunkListDepth");
+                    //byte ticketChunkDepth = ticket.getByte("ChunkListDepth");
                     Ticket tick = new Ticket(modId, type, world);
                     if (ticket.hasKey("ModData"))
                     {
@@ -900,6 +883,7 @@ public class ForgeChunkManager
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static Chunk fetchDormantChunk(long coords, World world)
     {
         Cache<Long, Chunk> cache = dormantChunkCache.get(world);
@@ -910,7 +894,7 @@ public class ForgeChunkManager
         Chunk chunk = cache.getIfPresent(coords);
         if (chunk != null)
         {
-            for (List<Entity> eList : chunk.entityLists)
+            for (List<Entity> eList : (List<Entity>[])chunk.entityLists)
             {
                 for (Entity e: eList)
                 {
@@ -979,8 +963,8 @@ public class ForgeChunkManager
             {
                 continue;
             }
-            Property modTC = config.get(mod, "maximumTicketCount", 200);
-            Property modCPT = config.get(mod, "maximumChunksPerTicket", 25);
+            config.get(mod, "maximumTicketCount", 200);
+            config.get(mod, "maximumChunksPerTicket", 25);
         }
     }
 

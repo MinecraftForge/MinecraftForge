@@ -15,6 +15,7 @@ import net.minecraft.world.World;
  * @author King Lemming
  *
  */
+@SuppressWarnings("unused")
 public class BlockFluidClassic extends BlockFluidBase
 {
     /*

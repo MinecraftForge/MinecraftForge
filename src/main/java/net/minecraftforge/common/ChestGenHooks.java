@@ -140,11 +140,11 @@ public class ChestGenHooks
     public static void removeItem(String category, ItemStack item){ getInfo(category).removeItem(item); }
     public static ItemStack getOneItem(String category, Random rand){ return getInfo(category).getOneItem(rand); }
 
+    @SuppressWarnings("unused")
     private String category;
     private int countMin = 0;
     private int countMax = 0;
-    //TO-DO: Privatize this once again when we remove the Deprecated stuff in DungeonHooks
-    ArrayList<WeightedRandomChestContent> contents = new ArrayList<WeightedRandomChestContent>();
+    private ArrayList<WeightedRandomChestContent> contents = new ArrayList<WeightedRandomChestContent>();
 
     public ChestGenHooks(String category)
     {

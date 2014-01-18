@@ -2,9 +2,7 @@ package net.minecraftforge.common;
 
 import java.util.ArrayList;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 
 /**

@@ -1,10 +1,7 @@
 package net.minecraftforge.oredict;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,13 +11,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.toposort.TopologicalSort;
 import cpw.mods.fml.common.toposort.TopologicalSort.DirectedGraph;
-import cpw.mods.fml.common.versioning.ArtifactVersion;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.RecipeFireworks;
@@ -31,6 +24,7 @@ import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import static net.minecraftforge.oredict.RecipeSorter.Category.*;
 
+@SuppressWarnings("rawtypes")
 public class RecipeSorter implements Comparator<IRecipe>
 {
     public enum Category
@@ -43,12 +37,12 @@ public class RecipeSorter implements Comparator<IRecipe>
     private static class SortEntry
     {
         private String name;
-        private Class cls;
+        private Class<?> cls;
         private Category cat;
         List<String> before = Lists.newArrayList();
         List<String> after = Lists.newArrayList();
 
-        private SortEntry(String name, Class cls, Category cat, String deps)
+        private SortEntry(String name, Class<?> cls, Category cat, String deps)
         {
             this.name = name;
             this.cls = cls;
@@ -105,7 +99,7 @@ public class RecipeSorter implements Comparator<IRecipe>
     };
 
     private static Map<Class, Category>     categories = Maps.newHashMap();
-    private static Map<String, Class>       types = Maps.newHashMap();
+    //private static Map<String, Class>       types = Maps.newHashMap();
     private static Map<String, SortEntry>   entries = Maps.newHashMap();
     private static Map<Class, Integer>      priorities = Maps.newHashMap();
 
@@ -141,6 +135,7 @@ public class RecipeSorter implements Comparator<IRecipe>
     }
 
     private static Set<Class> warned = Sets.newHashSet();
+    @SuppressWarnings("unchecked")
     public static void sortCraftManager()
     {
         bake();
@@ -149,7 +144,7 @@ public class RecipeSorter implements Comparator<IRecipe>
         Collections.sort(CraftingManager.getInstance().getRecipeList(), INSTANCE);
     }
     
-    public static void register(String name, Class recipe, Category category, String dependancies)
+    public static void register(String name, Class<?> recipe, Category category, String dependancies)
     {
         assert(category != UNKNOWN) : "Category must not be unknown!";
         isDirty = true;
@@ -159,7 +154,7 @@ public class RecipeSorter implements Comparator<IRecipe>
         setCategory(recipe, category);
     }
 
-    public static void setCategory(Class recipe, Category category)
+    public static void setCategory(Class<?> recipe, Category category)
     {
         assert(category != UNKNOWN) : "Category must not be unknown!";
         categories.put(recipe, category);
@@ -170,9 +165,9 @@ public class RecipeSorter implements Comparator<IRecipe>
         return getCategory(recipe.getClass());
     }
 
-    public static Category getCategory(Class recipe)
+    public static Category getCategory(Class<?> recipe)
     {
-        Class cls = recipe;
+        Class<?> cls = recipe;
         Category ret = categories.get(cls);
 
         if (ret == null)
@@ -194,12 +189,12 @@ public class RecipeSorter implements Comparator<IRecipe>
 
     private static int getPriority(IRecipe recipe)
     {
-        Class cls = recipe.getClass();
+        Class<?> cls = recipe.getClass();
         Integer ret = priorities.get(cls);
 
         if (ret == null)
         {
-            if (!INSTANCE.warned.contains(cls))
+            if (!warned.contains(cls))
             {
                 FMLLog.fine("  Unknown recipe class! %s Modder please refer to %s", cls.getName(), RecipeSorter.class.getName());
                 warned.add(cls);

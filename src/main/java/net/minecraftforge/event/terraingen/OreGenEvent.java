@@ -6,7 +6,6 @@ import cpw.mods.fml.common.eventhandler.Event;
 
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
-import net.minecraftforge.event.*;
 
 public class OreGenEvent extends Event
 {

@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import cpw.mods.fml.common.eventhandler.Event;
-
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -24,6 +23,7 @@ import net.minecraftforge.common.MinecraftForge;
  * @author King Lemming
  * 
  */
+@SuppressWarnings("unused")
 public abstract class FluidContainerRegistry
 {
     /*

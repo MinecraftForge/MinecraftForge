@@ -3,7 +3,6 @@ package net.minecraftforge.common.util;
 import java.lang.reflect.*;
 import java.util.*;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import net.minecraft.block.BlockPressurePlate.Sensitivity;
 import net.minecraft.block.material.Material;
@@ -31,6 +30,7 @@ public class EnumHelper
     private static boolean isSetup               = false;
 
     //Some enums are decompiled with extra arguments, so lets check for that
+    @SuppressWarnings("rawtypes")
     private static Class[][] commonTypes =
     {
         {EnumAction.class},
@@ -64,6 +64,7 @@ public class EnumHelper
     {
         return addEnum(EnumCreatureAttribute.class, name);
     }
+    @SuppressWarnings("rawtypes")
     public static EnumCreatureType addCreatureType(String name, Class typeClass, int maxNumber, Material material, boolean peaceful)
     {
         return addEnum(EnumCreatureType.class, name, typeClass, maxNumber, material, peaceful);
@@ -183,6 +184,7 @@ public class EnumHelper
         return addEnum(commonTypes, enumType, enumName, paramValues);
     }
     
+    @SuppressWarnings("rawtypes")
     public static <T extends Enum<? >> T addEnum(Class[][] map, Class<T> enumType, String enumName, Object... paramValues)
     {
         for (Class[] lookup : map)

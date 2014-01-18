@@ -16,6 +16,7 @@ import net.minecraft.world.World;
  * @author OvermindDL1, KingLemming
  * 
  */
+@SuppressWarnings("unused")
 public class BlockFluidFinite extends BlockFluidBase
 {
     public BlockFluidFinite(int id, Fluid fluid, Material material)

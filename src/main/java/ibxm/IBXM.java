@@ -85,7 +85,8 @@ public class IBXM {
 		clear_vol_ramp_buffer();
 	}
 
-	public void seek( int sample_position ) {
+	@SuppressWarnings("unused")
+    public void seek( int sample_position ) {
 		int idx;
 		set_sequence_index( 0, 0 );
 		next_tick();

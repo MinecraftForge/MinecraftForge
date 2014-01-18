@@ -11,6 +11,7 @@ import net.minecraftforge.common.util.ForgeDirection;
  * @author King Lemming
  * 
  */
+@SuppressWarnings("unused")
 public class TileFluidHandler extends TileEntity implements IFluidHandler
 {
     @Override public int fill(ForgeDirection from, FluidStack resource, boolean doFill) { return 0; }

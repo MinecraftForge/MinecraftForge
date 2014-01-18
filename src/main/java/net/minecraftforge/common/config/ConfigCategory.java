@@ -39,6 +39,7 @@ public class ConfigCategory implements Map<String, Property>
         }
     }
 
+    @Override
     public boolean equals(Object obj)
     {
         if (obj instanceof ConfigCategory)

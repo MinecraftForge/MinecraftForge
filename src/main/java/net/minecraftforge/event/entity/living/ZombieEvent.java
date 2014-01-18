@@ -1,7 +1,5 @@
 package net.minecraftforge.event.entity.living;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.world.World;

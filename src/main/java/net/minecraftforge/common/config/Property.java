@@ -7,8 +7,6 @@ package net.minecraftforge.common.config;
 
 import java.util.ArrayList;
 
-import net.minecraftforge.common.config.Property.Type;
-
 public class Property
 {
     public enum Type

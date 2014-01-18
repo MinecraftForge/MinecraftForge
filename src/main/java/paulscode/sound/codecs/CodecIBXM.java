@@ -7,13 +7,13 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
+
 import javax.sound.sampled.AudioFormat;
 
 import paulscode.sound.ICodec;
 import paulscode.sound.SoundBuffer;
 import paulscode.sound.SoundSystemConfig;
 import paulscode.sound.SoundSystemLogger;
-
 import ibxm.FastTracker2;
 import ibxm.IBXM;
 import ibxm.Module;
@@ -170,6 +170,7 @@ public class CodecIBXM implements ICodec
  * will call the reverseByteOrder() method.
  * @param b True if the calling audio library requires byte-reversal.
  */
+    @Override
     public void reverseByteOrder( boolean b )
     {
         reverseBytes = b;
@@ -181,6 +182,7 @@ public class CodecIBXM implements ICodec
  * @param url URL to an audio file to stream from.
  * @return False if an error occurred or if end of stream was reached.
  */
+    @Override
     public boolean initialize( URL url )
     {
         initialized( SET, false );
@@ -265,6 +267,7 @@ public class CodecIBXM implements ICodec
  * Returns false if the stream is busy initializing.
  * @return True if steam is initialized.
  */
+    @Override
     public boolean initialized()
     {
         return initialized( GET, XXX );
@@ -276,6 +279,7 @@ public class CodecIBXM implements ICodec
  * information about accessing and changing default settings.
  * @return The audio data wrapped into a SoundBuffer context.
  */
+    @Override
     public SoundBuffer read()
     {
         if( endOfStream( GET, XXX ) )
@@ -333,6 +337,7 @@ public class CodecIBXM implements ICodec
  * information about accessing and changing default settings.
  * @return the audio data wrapped into a SoundBuffer context.
  */
+    @Override
     public SoundBuffer readAll()
     {
         if( module == null )
@@ -393,6 +398,7 @@ public class CodecIBXM implements ICodec
  * Returns false if there is still more data available to be read in.
  * @return True if end of stream was reached.
  */
+    @Override
     public boolean endOfStream()
     {
         return endOfStream( GET, XXX );
@@ -401,6 +407,7 @@ public class CodecIBXM implements ICodec
 /**
  * Closes the audio stream and remove references to all instantiated objects.
  */
+    @Override
     public void cleanup()
     {
 //        if( ibxm != null )
@@ -413,6 +420,7 @@ public class CodecIBXM implements ICodec
  * readAll() methods.
  * @return Information wrapped into an AudioFormat context.
  */
+    @Override
     public AudioFormat getAudioFormat()
     {
         return myAudioFormat;
@@ -493,6 +501,7 @@ public class CodecIBXM implements ICodec
  * @param maxLength Maximum size this array may be.
  * @return New array.
  */
+    @SuppressWarnings("unused")
     private static byte[] trimArray( byte[] array, int maxLength )
     {
         byte[] trimmedArray = null;
@@ -537,6 +546,7 @@ public class CodecIBXM implements ICodec
  * @param two_bytes_data For stereo sounds.
  * @return byte array containing the converted data.
  */
+    @SuppressWarnings("unused")
     private static byte[] convertAudioBytes( byte[] audio_bytes,
                                              boolean two_bytes_data )
     {

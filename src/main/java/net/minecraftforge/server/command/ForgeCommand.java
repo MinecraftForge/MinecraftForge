@@ -1,21 +1,12 @@
 package net.minecraftforge.server.command;
 
 import java.text.DecimalFormat;
-import java.util.List;
-
-import com.google.common.collect.Multiset;
-
 import net.minecraft.command.CommandBase;
-import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.world.ChunkCoordIntPair;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.server.ForgeTimeTracker;
 
 public class ForgeCommand extends CommandBase {

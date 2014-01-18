@@ -1,13 +1,8 @@
 package net.minecraftforge.common.network;
 
-import java.util.Map;
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-import cpw.mods.fml.common.network.ByteBufUtils;
-
-import net.minecraftforge.fluids.FluidRegistry;
 import io.netty.buffer.ByteBuf;
 
 public abstract class ForgeMessage {

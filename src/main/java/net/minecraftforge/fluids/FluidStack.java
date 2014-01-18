@@ -16,6 +16,7 @@ import net.minecraft.nbt.NBTTagCompound;
  * @author King Lemming, SirSengir (LiquidStack)
  *
  */
+@SuppressWarnings("unused")
 public class FluidStack
 {
     /*

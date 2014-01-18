@@ -57,7 +57,8 @@ public class ScreamTracker3 {
 		return s3m_identifier.equals( "SCRM" );
 	}
 
-	public static Module load_s3m( byte[] header_96_bytes, DataInput data_input ) throws IOException {
+	@SuppressWarnings("unused")
+    public static Module load_s3m( byte[] header_96_bytes, DataInput data_input ) throws IOException {
 		int num_pattern_orders, num_instruments, num_patterns, num_channels;
 		int flags, tracker_version, master_volume, panning, channel_config, sequence_length;
 		int instrument_idx, pattern_idx, channel_idx, order_idx, panning_offset;

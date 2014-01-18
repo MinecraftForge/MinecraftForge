@@ -1,24 +1,10 @@
 package net.minecraftforge.common;
 
-import java.lang.reflect.Constructor;
-import java.util.*;
-
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.eventhandler.EventBus;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
-import net.minecraft.entity.monster.EntityEnderman;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeHooks.SeedEntry;
-import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class MinecraftForge

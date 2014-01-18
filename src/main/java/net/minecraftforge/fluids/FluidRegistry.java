@@ -19,6 +19,7 @@ import cpw.mods.fml.common.eventhandler.Event;
  * @author King Lemming, CovertJaguar (LiquidDictionary)
  *
  */
+@SuppressWarnings("unused")
 public abstract class FluidRegistry
 {
     /*

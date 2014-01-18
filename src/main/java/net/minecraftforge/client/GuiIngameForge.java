@@ -6,7 +6,6 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -17,7 +16,6 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -36,7 +34,6 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.FoodStats;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
 import net.minecraft.util.StringUtils;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.chunk.Chunk;
@@ -52,9 +49,9 @@ import cpw.mods.fml.common.FMLCommonHandler;
 
 public class GuiIngameForge extends GuiIngame
 {
-    private static final ResourceLocation VIGNETTE     = new ResourceLocation("textures/misc/vignette.png");
+    //private static final ResourceLocation VIGNETTE     = new ResourceLocation("textures/misc/vignette.png");
     private static final ResourceLocation WIDGITS      = new ResourceLocation("textures/gui/widgets.png");
-    private static final ResourceLocation PUMPKIN_BLUR = new ResourceLocation("textures/misc/pumpkinblur.png");
+    //private static final ResourceLocation PUMPKIN_BLUR = new ResourceLocation("textures/misc/pumpkinblur.png");
 
     private static final int WHITE = 0xFFFFFF;
 
@@ -378,7 +375,7 @@ public class GuiIngameForge extends GuiIngame
 
         for (int i = MathHelper.ceiling_float_int((healthMax + absorb) / 2.0F) - 1; i >= 0; --i)
         {
-            int b0 = (highlight ? 1 : 0);
+            //int b0 = (highlight ? 1 : 0);
             int row = MathHelper.ceiling_float_int((float)(i + 1) / 10.0F) - 1;
             int x = left + i % 10 * 8;
             int y = top - row * rowHeight;
@@ -758,6 +755,7 @@ public class GuiIngameForge extends GuiIngame
         mc.mcProfiler.endSection();
     }
 
+    @SuppressWarnings("unchecked")
     protected void renderPlayerList(int width, int height)
     {
         ScoreObjective scoreobjective = this.mc.theWorld.getScoreboard().func_96539_a(0);
@@ -767,7 +765,7 @@ public class GuiIngameForge extends GuiIngame
         {
             if (pre(PLAYER_LIST)) return;
             this.mc.mcProfiler.startSection("playerList");
-            List players = handler.field_147303_b;
+            List<GuiPlayerInfo> players = (List<GuiPlayerInfo>)handler.field_147303_b;
             int maxPlayers = handler.field_147304_c;
             int rows = maxPlayers;
             int columns = 1;

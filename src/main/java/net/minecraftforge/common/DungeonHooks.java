@@ -3,15 +3,7 @@ package net.minecraftforge.common;
 import java.util.ArrayList;
 import java.util.Random;
 
-import cpw.mods.fml.common.FMLLog;
-
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedRandom;
-import net.minecraft.util.WeightedRandomChestContent;
-
-import static net.minecraftforge.common.ChestGenHooks.DUNGEON_CHEST;
 
 public class DungeonHooks
 {

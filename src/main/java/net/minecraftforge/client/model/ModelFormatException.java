@@ -8,6 +8,8 @@ package net.minecraftforge.client.model;
  */
 public class ModelFormatException extends RuntimeException {
 
+    private static final long serialVersionUID = 2023547503969671835L;
+
     public ModelFormatException()
     {
         super();

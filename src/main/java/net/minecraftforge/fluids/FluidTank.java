@@ -10,6 +10,7 @@ import net.minecraft.tileentity.TileEntity;
  * @author King Lemming, cpw (LiquidTank)
  * 
  */
+@SuppressWarnings("unused")
 public class FluidTank implements IFluidTank
 {
     @Override public FluidStack getFluid() { return null; }

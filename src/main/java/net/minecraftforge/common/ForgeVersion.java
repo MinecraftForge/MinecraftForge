@@ -80,6 +80,7 @@ public class ForgeVersion
     {
         new Thread("Forge Version Check")
         {
+            @SuppressWarnings("unchecked")
             @Override
             public void run()
             {
@@ -91,7 +92,7 @@ public class ForgeVersion
                     con.close();
 
                     Map<String, Object> json = new Gson().fromJson(data, Map.class);
-                    String homepage = (String)json.get("homepage");
+                    //String homepage = (String)json.get("homepage");
                     Map<String, String> promos = (Map<String, String>)json.get("promos");
 
                     String rec = promos.get(MinecraftForge.MC_VERSION + "-recommended");

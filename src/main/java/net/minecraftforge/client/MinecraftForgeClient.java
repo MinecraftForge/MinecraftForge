@@ -8,18 +8,11 @@ package net.minecraftforge.client;
 import java.util.BitSet;
 import java.util.IdentityHashMap;
 
-import org.lwjgl.opengl.Display;
-
 import com.google.common.collect.Maps;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.world.World;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
-import net.minecraftforge.common.MinecraftForge;
 
 public class MinecraftForgeClient
 {

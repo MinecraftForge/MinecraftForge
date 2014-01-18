@@ -9,8 +9,6 @@ import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.logging.Level;
-
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -41,7 +39,6 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
 
 public class ForgeModContainer extends DummyModContainer implements WorldAccessContainer
 {

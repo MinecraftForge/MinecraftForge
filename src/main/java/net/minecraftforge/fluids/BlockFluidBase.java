@@ -20,6 +20,7 @@ import net.minecraft.world.World;
  * @author King Lemming, OvermindDL1
  *
  */
+@SuppressWarnings("unused")
 public abstract class BlockFluidBase extends Block implements IFluidBlock
 {
     /*

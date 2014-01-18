@@ -2,7 +2,6 @@ package net.minecraftforge.oredict;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,6 +36,7 @@ public class OreDictionary
         initVanillaEntries();
     }
 
+    @SuppressWarnings("unchecked")
     public static void initVanillaEntries()
     {
         if (!hasInit)
@@ -140,7 +140,7 @@ public class OreDictionary
             new ItemStack(Blocks.dark_oak_stairs)
         };
 
-        List recipes = CraftingManager.getInstance().getRecipeList();
+        List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
         List<IRecipe> recipesToRemove = new ArrayList<IRecipe>();
         List<IRecipe> recipesToAdd = new ArrayList<IRecipe>();
 

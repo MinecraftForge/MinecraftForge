@@ -1,8 +1,5 @@
 package net.minecraftforge.client.model;
 
-import java.io.InputStream;
-import java.net.URL;
-
 import net.minecraft.util.ResourceLocation;
 
 /**

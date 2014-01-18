@@ -14,6 +14,7 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
  * @author King Lemming
  * 
  */
+@SuppressWarnings("unused")
 public class RenderBlockFluid implements ISimpleBlockRenderingHandler
 {
     @Override public void renderInventoryBlock(Block block, int metadata, int modelID, RenderBlocks renderer) {}

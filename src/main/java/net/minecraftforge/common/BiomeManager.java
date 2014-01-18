@@ -1,24 +1,17 @@
 package net.minecraftforge.common;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.gen.ChunkProviderGenerate;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.structure.MapGenStronghold;
 import net.minecraft.world.gen.structure.MapGenVillage;
 import net.minecraft.world.biome.WorldChunkManager;
-
-import com.google.common.collect.Lists;
 
 public class BiomeManager
 {
     public static ArrayList<BiomeGenBase> strongHoldBiomes = new ArrayList<BiomeGenBase>();
     public static ArrayList<BiomeGenBase> strongHoldBiomesBlackList = new ArrayList<BiomeGenBase>();
 
+    @SuppressWarnings("unchecked")
     public static void addVillageBiome(BiomeGenBase biome, boolean canSpawn)
     {
         if (!MapGenVillage.villageSpawnBiomes.contains(biome))
@@ -29,6 +22,7 @@ public class BiomeManager
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static void removeVillageBiome(BiomeGenBase biome)
     {
         if (MapGenVillage.villageSpawnBiomes.contains(biome))

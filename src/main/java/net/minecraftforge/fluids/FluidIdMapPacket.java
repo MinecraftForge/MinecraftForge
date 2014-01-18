@@ -11,6 +11,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
+@SuppressWarnings("unused")
 public class FluidIdMapPacket// extends ForgePacket
 {
     /*

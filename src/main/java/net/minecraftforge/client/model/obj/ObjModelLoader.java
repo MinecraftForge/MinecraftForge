@@ -1,8 +1,5 @@
 package net.minecraftforge.client.model.obj;
 
-import java.io.InputStream;
-import java.net.URL;
-
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.client.model.IModelCustomLoader;

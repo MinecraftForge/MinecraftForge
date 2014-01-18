@@ -1,9 +1,6 @@
 package net.minecraftforge.client.event.sound;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
 import cpw.mods.fml.common.eventhandler.Event;
-import net.minecraft.entity.Entity;
-import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.audio.SoundPoolEntry;
 import net.minecraftforge.common.MinecraftForge;
 

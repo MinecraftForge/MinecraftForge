@@ -104,7 +104,8 @@ public class Player {
 	}
 	
 	private class Driver implements Runnable {
-		public void run() {
+		@Override
+        public void run() {
 			if( running ) return;
 			try {
 				output_line.open();
