@@ -25,6 +25,7 @@
             <Policies>
                 <TimeBasedTriggeringPolicy />
                 <OnStartupTriggeringPolicy />
+                <DefaultRolloverStrategy max="3"/>
             </Policies>
         </RollingRandomAccessFile>
     </Appenders>
