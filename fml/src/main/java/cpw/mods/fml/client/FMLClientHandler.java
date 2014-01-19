@@ -12,6 +12,8 @@
  */
 package cpw.mods.fml.client;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,6 +30,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiSelectWorld;
 import net.minecraft.client.gui.ServerListEntryNormal;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
@@ -42,6 +45,8 @@ import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
@@ -56,7 +61,10 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Maps;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.DummyModContainer;
@@ -559,6 +567,46 @@ public class FMLClientHandler implements IFMLSidedHandler
         playClientBlock = new CountDownLatch(1);
     }
 
+    public File getSavesDir()
+    {
+        return new File(client.field_71412_D, "saves");
+    }
+    public void tryLoadExistingWorld(GuiSelectWorld selectWorldGUI, String dirName, String saveName)
+    {
+        File dir = new File(getSavesDir(), dirName);
+        NBTTagCompound leveldat;
+        try
+        {
+            leveldat = CompressedStreamTools.func_74796_a(new FileInputStream(new File(dir, "level.dat")));
+        }
+        catch (Exception e)
+        {
+            try
+            {
+                leveldat = CompressedStreamTools.func_74796_a(new FileInputStream(new File(dir, "level.dat_old")));
+            }
+            catch (Exception e1)
+            {
+                FMLLog.warning("There appears to be a problem loading the save %s, both level files are unreadable.", dirName);
+                return;
+            }
+        }
+        NBTTagCompound fmlData = leveldat.func_74775_l("FML");
+        if (fmlData.func_74764_b("ModItemData"))
+        {
+            showGuiScreen(new GuiOldSaveLoadConfirm(dirName, saveName, selectWorldGUI));
+        }
+        else
+        {
+            launchIntegratedServerCallback(dirName, saveName);
+        }
+    }
+
+    public void launchIntegratedServerCallback(String dirName, String saveName)
+    {
+        client.func_71371_a(dirName, saveName, (WorldSettings)null);
+    }
+
     public void showInGameModOptions(GuiIngameMenu guiIngameMenu)
     {
         showGuiScreen(new GuiIngameModOptions(guiIngameMenu));
@@ -590,9 +638,16 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             JsonObject jsonData = extraServerListData.get(originalResponse);
             String type = jsonData.get("type").getAsString();
-            int modCount = jsonData.get("modList").getAsJsonArray().size();
+            JsonArray modDataArray = jsonData.get("modList").getAsJsonArray();
             boolean moddedClientAllowed = jsonData.has("clientModsAllowed") ? jsonData.get("clientModsAllowed").getAsBoolean() : true;
-            serverDataTag.put(data, new ExtendedServerListData(type, true, modCount, !moddedClientAllowed));
+            Builder<String, String> modListBldr = ImmutableMap.<String,String>builder();
+            for (JsonElement obj : modDataArray)
+            {
+                JsonObject modObj = obj.getAsJsonObject();
+                modListBldr.put(modObj.get("modid").getAsString(), modObj.get("version").getAsString());
+            }
+
+            serverDataTag.put(data, new ExtendedServerListData(type, true, modListBldr.build(), !moddedClientAllowed));
         }
         else
         {
@@ -602,7 +657,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             {
                 moddedClientAllowed = !serverDescription.endsWith(":NOFML§r");
             }
-            serverDataTag.put(data, new ExtendedServerListData("VANILLA", false, -1, !moddedClientAllowed));
+            serverDataTag.put(data, new ExtendedServerListData("VANILLA", false, ImmutableMap.<String,String>of(), !moddedClientAllowed));
         }
         startupConnectionData.countDown();
     }
@@ -621,12 +676,12 @@ public class FMLClientHandler implements IFMLSidedHandler
             if ("FML".equals(extendedData.type) && extendedData.isCompatible)
             {
                 idx = 0;
-                tooltip = String.format("Compatible FML modded server\n%d mods present", extendedData.modCount);
+                tooltip = String.format("Compatible FML modded server\n%d mods present", extendedData.modData.size());
             }
             else if ("FML".equals(extendedData.type) && !extendedData.isCompatible)
             {
                 idx = 16;
-                tooltip = String.format("Incompatible FML modded server\n%d mods present", extendedData.modCount);
+                tooltip = String.format("Incompatible FML modded server\n%d mods present", extendedData.modData.size());
             }
             else if ("BUKKIT".equals(extendedData.type))
             {

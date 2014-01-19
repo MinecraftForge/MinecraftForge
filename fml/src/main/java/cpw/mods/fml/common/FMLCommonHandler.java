@@ -371,7 +371,7 @@ public class FMLCommonHandler
         }
         handlerSet.add(handler);
         Map<String,NBTBase> additionalProperties = Maps.newHashMap();
-//        worldInfo.setAdditionalProperties(additionalProperties);
+        worldInfo.setAdditionalProperties(additionalProperties);
         for (ModContainer mc : Loader.instance().getModList())
         {
             if (mc instanceof InjectedModContainer)
