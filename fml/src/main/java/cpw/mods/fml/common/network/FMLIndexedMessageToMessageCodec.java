@@ -46,6 +46,10 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
         ByteBuf payload = msg.payload();
         byte discriminator = payload.readByte();
         Class<? extends A> clazz = discriminators.get(discriminator);
+        if(clazz == null)
+        {
+            throw new NullPointerException("Undefined message for discriminator " + discriminator + " in channel " + msg.channel());
+        }
         A newMsg = clazz.newInstance();
         decodeInto(ctx, payload.slice(), newMsg);
         out.add(newMsg);
