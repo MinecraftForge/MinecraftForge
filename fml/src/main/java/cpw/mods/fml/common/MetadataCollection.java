@@ -12,6 +12,7 @@
 
 package cpw.mods.fml.common;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
@@ -25,6 +26,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+import cpw.mods.fml.common.versioning.ArtifactVersion;
+import cpw.mods.fml.common.versioning.VersionParser;
 
 public class MetadataCollection
 {
@@ -44,7 +50,7 @@ public class MetadataCollection
         try
         {
             MetadataCollection collection;
-            Gson gson = new GsonBuilder().create();
+            Gson gson = new GsonBuilder().registerTypeAdapter(ArtifactVersion.class, new ArtifactVersionAdapter()).create();
             JsonParser parser = new JsonParser();
             JsonElement rootElement = parser.parse(reader);
             if (rootElement.isJsonArray())
@@ -99,4 +105,20 @@ public class MetadataCollection
         return metadatas.get(modId);
     }
 
+    public static class ArtifactVersionAdapter extends TypeAdapter<ArtifactVersion>
+    {
+
+        @Override
+        public void write(JsonWriter out, ArtifactVersion value) throws IOException
+        {
+            // no op - we never write these out
+        }
+
+        @Override
+        public ArtifactVersion read(JsonReader in) throws IOException
+        {
+            return VersionParser.parseVersionReference(in.nextString());
+        }
+
+    }
 }
