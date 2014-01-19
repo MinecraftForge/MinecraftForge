@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiSelectWorld.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiSelectWorld.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.client.gui;
+ 
++import cpw.mods.fml.client.FMLClientHandler;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.text.DateFormat;
+@@ -179,7 +180,7 @@
+ 
+             if (this.field_146297_k.func_71359_d().func_90033_f(s))
+             {
+-                this.field_146297_k.func_71371_a(s, s1, (WorldSettings)null);
++                FMLClientHandler.instance().tryLoadExistingWorld(this, s, s1);
+             }
+         }
+     }
