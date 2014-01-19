@@ -37,7 +37,7 @@
             <AppenderRef ref="File"/>
             <AppenderRef ref="ServerGuiConsole"/>
         </Root>
-        <Root level="info">
+        <Root level="all">
             <AppenderRef ref="FmlSysOut"/>
             <AppenderRef ref="FmlFile"/>
             <AppenderRef ref="FmlServerGuiConsole"/>
