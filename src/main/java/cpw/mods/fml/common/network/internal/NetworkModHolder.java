@@ -58,7 +58,7 @@ public class NetworkModHolder
         {
             try
             {
-                return (Boolean) checkHandler.invoke(container, remoteVersions, side);
+                return (Boolean) checkHandler.invoke(container.getMod(), remoteVersions, side);
             }
             catch (Exception e)
             {
