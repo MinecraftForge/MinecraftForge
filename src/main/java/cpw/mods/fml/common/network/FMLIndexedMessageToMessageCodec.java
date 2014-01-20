@@ -1,16 +1,14 @@
 package cpw.mods.fml.common.network;
 
-import java.util.List;
-
-import cpw.mods.fml.common.network.internal.FMLProxyPacket;
-
 import gnu.trove.map.hash.TByteObjectHashMap;
 import gnu.trove.map.hash.TObjectByteHashMap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageCodec;
+import java.util.List;
+import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 
 @Sharable
 public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessageCodec<FMLProxyPacket, A> {
@@ -43,6 +41,7 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
     @Override
     protected final void decode(ChannelHandlerContext ctx, FMLProxyPacket msg, List<Object> out) throws Exception
     {
+        testMessageValidity(msg);
         ByteBuf payload = msg.payload();
         byte discriminator = payload.readByte();
         Class<? extends A> clazz = discriminators.get(discriminator);
@@ -53,5 +52,14 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
         A newMsg = clazz.newInstance();
         decodeInto(ctx, payload.slice(), newMsg);
         out.add(newMsg);
+    }
+
+    /**
+     * Called to verify the message received. This can be used to hard disconnect in case of an unexpected packet,
+     * say due to a weird protocol mismatch. Use with caution.
+     * @param msg
+     */
+    protected void testMessageValidity(FMLProxyPacket msg)
+    {
     }
 }
