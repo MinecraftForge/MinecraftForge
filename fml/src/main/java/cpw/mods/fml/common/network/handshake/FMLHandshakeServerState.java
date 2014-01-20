@@ -1,5 +1,6 @@
 package cpw.mods.fml.common.network.handshake;
 
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
@@ -18,8 +19,8 @@ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
         {
             NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
             dispatcher.serverInitiateHandshake();
-            ctx.writeAndFlush(FMLHandshakeMessage.makeCustomChannelRegistration(NetworkRegistry.INSTANCE.channelNamesFor(Side.SERVER)));
-            ctx.writeAndFlush(new FMLHandshakeMessage.ServerHello());
+            ctx.writeAndFlush(FMLHandshakeMessage.makeCustomChannelRegistration(NetworkRegistry.INSTANCE.channelNamesFor(Side.SERVER))).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+            ctx.writeAndFlush(new FMLHandshakeMessage.ServerHello()).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             return HELLO;
         }
     },
@@ -55,9 +56,9 @@ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
         {
             if (!ctx.channel().attr(NetworkDispatcher.IS_LOCAL).get())
             {
-                ctx.writeAndFlush(new FMLHandshakeMessage.ModIdData(GameData.buildItemDataList()));
+                ctx.writeAndFlush(new FMLHandshakeMessage.ModIdData(GameData.buildItemDataList())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             }
-            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal()));
+            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             NetworkRegistry.INSTANCE.fireNetworkHandshake(ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get(), Side.SERVER);
             return COMPLETE;
         }
@@ -68,7 +69,7 @@ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
         public FMLHandshakeServerState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
         {
             // Poke the client
-            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal()));
+            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             FMLMessage.CompleteHandshake complete = new FMLMessage.CompleteHandshake(Side.SERVER);
             ctx.fireChannelRead(complete);
             return DONE;

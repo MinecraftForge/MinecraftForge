@@ -1,5 +1,6 @@
 package cpw.mods.fml.common.network.simpleimpl;
 
+import io.netty.channel.ChannelFutureListener;
 import java.util.EnumMap;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetHandler;
@@ -105,7 +106,7 @@ public class SimpleNetworkWrapper {
     public void sendToAll(IMessage message)
     {
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
-        channels.get(Side.SERVER).writeAndFlush(message);
+        channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
     /**
@@ -119,7 +120,7 @@ public class SimpleNetworkWrapper {
     {
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player);
-        channels.get(Side.SERVER).writeAndFlush(message);
+        channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
     /**
@@ -133,7 +134,7 @@ public class SimpleNetworkWrapper {
     {
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(point);
-        channels.get(Side.SERVER).writeAndFlush(message);
+        channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
     /**
@@ -147,7 +148,7 @@ public class SimpleNetworkWrapper {
     {
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.DIMENSION);
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(dimensionId);
-        channels.get(Side.SERVER).writeAndFlush(message);
+        channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
     /**
@@ -159,6 +160,6 @@ public class SimpleNetworkWrapper {
     public void sendToServer(IMessage message)
     {
         channels.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
-        channels.get(Side.CLIENT).writeAndFlush(message);
+        channels.get(Side.CLIENT).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 }

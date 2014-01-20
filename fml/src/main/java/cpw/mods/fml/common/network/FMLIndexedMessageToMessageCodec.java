@@ -7,7 +7,10 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageCodec;
+import io.netty.util.AttributeKey;
 import java.util.List;
+import org.apache.logging.log4j.Level;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 
 @Sharable
@@ -18,7 +21,15 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
     /**
      * Make this accessible to subclasses
      */
-    protected final ThreadLocal<FMLProxyPacket> inboundPacket = new ThreadLocal<FMLProxyPacket>();
+
+    protected static final AttributeKey<ThreadLocal<FMLProxyPacket>> INBOUNDPACKETTRACKER = new AttributeKey<ThreadLocal<FMLProxyPacket>>("fml:inboundpacket");
+
+    @Override
+    public void handlerAdded(ChannelHandlerContext ctx) throws Exception
+    {
+        super.handlerAdded(ctx);
+        ctx.attr(INBOUNDPACKETTRACKER).set(new ThreadLocal<FMLProxyPacket>());
+    }
 
     public FMLIndexedMessageToMessageCodec<A> addDiscriminator(int discriminator, Class<? extends A> type)
     {
@@ -38,8 +49,11 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
         buffer.writeByte(discriminator);
         encodeInto(ctx, msg, buffer);
         FMLProxyPacket proxy = new FMLProxyPacket(buffer.copy(), ctx.channel().attr(NetworkRegistry.FML_CHANNEL).get());
-        FMLProxyPacket old = inboundPacket.get();
-        proxy.setDispatcher(old.getDispatcher());
+        FMLProxyPacket old = ctx.attr(INBOUNDPACKETTRACKER).get().get();
+        if (old != null)
+        {
+            proxy.setDispatcher(old.getDispatcher());
+        }
         out.add(proxy);
     }
 
@@ -57,7 +71,7 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
             throw new NullPointerException("Undefined message for discriminator " + discriminator + " in channel " + msg.channel());
         }
         A newMsg = clazz.newInstance();
-        inboundPacket.set(msg);
+        ctx.attr(INBOUNDPACKETTRACKER).get().set(msg);
         decodeInto(ctx, payload.slice(), newMsg);
         out.add(newMsg);
     }
@@ -69,5 +83,12 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
      */
     protected void testMessageValidity(FMLProxyPacket msg)
     {
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
+    {
+        FMLLog.log(Level.ERROR, cause, "FMLIndexedMessageCodec exception caught");
+        super.exceptionCaught(ctx, cause);
     }
 }
