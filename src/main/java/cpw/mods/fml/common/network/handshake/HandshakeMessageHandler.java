@@ -23,7 +23,7 @@ public class HandshakeMessageHandler<S extends Enum<S> & IHandshakeState<S>> ext
     protected void channelRead0(ChannelHandlerContext ctx, FMLHandshakeMessage msg) throws Exception
     {
         S state = ctx.attr(fmlHandshakeState).get();
-        FMLLog.info(msg.toString(stateType) + "->" + state.getClass().getName().substring(state.getClass().getName().lastIndexOf('.')+1)+":"+state);
+        FMLLog.finer(msg.toString(stateType) + "->" + state.getClass().getName().substring(state.getClass().getName().lastIndexOf('.')+1)+":"+state);
         S newState = state.accept(ctx, msg);
         ctx.attr(fmlHandshakeState).set(newState);
     }
