@@ -63,7 +63,8 @@ public class GameData {
 
     static Block findBlock(String modId, String name)
     {
-        return (Block) blockRegistry.func_82594_a(modId + ":" + name);
+        String key = modId + ":" + name;
+        return blockRegistry.contains(key) ? blockRegistry.func_82594_a(key) : null;
     }
 
     static ItemStack findItemStack(String modId, String name)
