@@ -22,6 +22,11 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
         this.type = type;
         this.manager = manager;
     }
+    /**
+     * Fired at the client when a client connects to a server
+     * @author cpw
+     *
+     */
     public static class ClientConnectedToServerEvent extends FMLNetworkEvent<INetHandlerPlayClient> {
         public final boolean isLocal;
         public final String connectionType;
@@ -33,6 +38,12 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
         }
     }
 
+    /**
+     * Fired at the server when a client connects to the server.
+     *
+     * @author cpw
+     *
+     */
     public static class ServerConnectionFromClientEvent extends FMLNetworkEvent<INetHandlerPlayServer> {
         public final boolean isLocal;
         public ServerConnectionFromClientEvent(NetworkManager manager)
@@ -41,12 +52,24 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
             this.isLocal = manager.func_150731_c();
         }
     }
+    /**
+     * Fired at the server when a client disconnects.
+     *
+     * @author cpw
+     *
+     */
     public static class ServerDisconnectionFromClientEvent extends FMLNetworkEvent<INetHandlerPlayServer> {
         public ServerDisconnectionFromClientEvent(NetworkManager manager)
         {
             super((INetHandlerPlayServer) manager.func_150729_e(), INetHandlerPlayServer.class, manager);
         }
     }
+    /**
+     * Fired at the client when the client is disconnected from the server.
+     *
+     * @author cpw
+     *
+     */
     public static class ClientDisconnectionFromServerEvent extends FMLNetworkEvent<INetHandlerPlayClient> {
         public ClientDisconnectionFromServerEvent(NetworkManager manager)
         {
@@ -54,6 +77,13 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
         }
     }
 
+    /**
+     * Fired when the REGISTER/UNREGISTER for custom channels is received.
+     *
+     * @author cpw
+     *
+     * @param <S> The side
+     */
     public static class CustomPacketRegistrationEvent<S extends INetHandler> extends FMLNetworkEvent<S> {
         public final ImmutableSet<String> registrations;
         public final String operation;
@@ -86,6 +116,11 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
         public abstract Side side();
     }
 
+    /**
+     * Fired when a custom packet is received on the client for the channel
+     * @author cpw
+     *
+     */
     public static class ClientCustomPacketEvent extends CustomPacketEvent<INetHandlerPlayClient> {
         public ClientCustomPacketEvent(NetworkManager manager, FMLProxyPacket packet)
         {
@@ -99,6 +134,11 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
         }
     }
 
+    /**
+     * Fired when a custom packet is received at the server for the channel
+     * @author cpw
+     *
+     */
     public static class ServerCustomPacketEvent extends CustomPacketEvent<INetHandlerPlayServer> {
         public ServerCustomPacketEvent(NetworkManager manager, FMLProxyPacket packet)
         {
@@ -109,6 +149,20 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
         public Side side()
         {
             return Side.SERVER;
+        }
+    }
+
+    /**
+     * Fired when a custom event, such as {@link NetworkHandshakeEstablished} is fired for the channel
+     *
+     * @author cpw
+     *
+     */
+    public static class CustomNetworkEvent extends Event {
+        public final Object wrappedEvent;
+        public CustomNetworkEvent(Object wrappedEvent)
+        {
+            this.wrappedEvent = wrappedEvent;
         }
     }
 }

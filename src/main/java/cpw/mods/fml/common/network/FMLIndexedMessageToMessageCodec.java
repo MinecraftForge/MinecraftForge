@@ -15,6 +15,11 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
     private TByteObjectHashMap<Class<? extends A>> discriminators = new TByteObjectHashMap<Class<? extends A>>();
     private TObjectByteHashMap<Class<? extends A>> types = new TObjectByteHashMap<Class<? extends A>>();
 
+    /**
+     * Make this accessible to subclasses
+     */
+    protected final ThreadLocal<FMLProxyPacket> inboundPacket = new ThreadLocal<FMLProxyPacket>();
+
     public FMLIndexedMessageToMessageCodec<A> addDiscriminator(int discriminator, Class<? extends A> type)
     {
         discriminators.put((byte)discriminator, type);
@@ -33,6 +38,8 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
         buffer.writeByte(discriminator);
         encodeInto(ctx, msg, buffer);
         FMLProxyPacket proxy = new FMLProxyPacket(buffer.copy(), ctx.channel().attr(NetworkRegistry.FML_CHANNEL).get());
+        FMLProxyPacket old = inboundPacket.get();
+        proxy.setDispatcher(old.getDispatcher());
         out.add(proxy);
     }
 
@@ -50,6 +57,7 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
             throw new NullPointerException("Undefined message for discriminator " + discriminator + " in channel " + msg.channel());
         }
         A newMsg = clazz.newInstance();
+        inboundPacket.set(msg);
         decodeInto(ctx, payload.slice(), newMsg);
         out.add(newMsg);
     }
