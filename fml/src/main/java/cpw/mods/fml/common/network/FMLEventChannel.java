@@ -53,6 +53,12 @@ public class FMLEventChannel {
         }
     }
 
+    public void fireUserEvent(Object evt, ChannelHandlerContext ctx)
+    {
+        FMLNetworkEvent.CustomNetworkEvent event = new FMLNetworkEvent.CustomNetworkEvent(evt);
+        this.eventBus.post(event);
+    }
+
     public void sendToAll(FMLProxyPacket pkt)
     {
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
