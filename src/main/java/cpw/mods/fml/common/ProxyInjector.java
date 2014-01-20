@@ -47,6 +47,7 @@ public class ProxyInjector
                     FMLLog.severe("Attempted to load a proxy type into %s.%s but the field was not found", targ.getClassName(), targ.getObjectName());
                     throw new LoaderException();
                 }
+                target.setAccessible(true);
 
                 SidedProxy annotation = target.getAnnotation(SidedProxy.class);
                 if (!Strings.isNullOrEmpty(annotation.modId()) && !annotation.modId().equals(mod.getModId()))
