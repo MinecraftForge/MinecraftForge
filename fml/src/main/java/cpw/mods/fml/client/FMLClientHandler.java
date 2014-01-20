@@ -740,7 +740,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void connectToServer(GuiScreen guiMultiplayer, ServerData serverEntry)
     {
         ExtendedServerListData extendedData = serverDataTag.get(serverEntry);
-        if (extendedData.isBlocked)
+        if (extendedData != null && extendedData.isBlocked)
         {
             showGuiScreen(new GuiAccessDenied(guiMultiplayer, serverEntry));
         }
