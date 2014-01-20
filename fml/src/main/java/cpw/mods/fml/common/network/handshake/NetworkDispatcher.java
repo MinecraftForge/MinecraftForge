@@ -11,6 +11,7 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.ScheduledFuture;
 import java.net.SocketAddress;
+import java.nio.channels.ClosedChannelException;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
@@ -441,7 +442,11 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
     {
-        FMLLog.log(Level.ERROR, cause, "NetworkDispatcher exception");
+        // Stop the epic channel closed spam at close
+        if (!(cause instanceof ClosedChannelException))
+        {
+            FMLLog.log(Level.ERROR, cause, "NetworkDispatcher exception");
+        }
         super.exceptionCaught(ctx, cause);
     }
 
