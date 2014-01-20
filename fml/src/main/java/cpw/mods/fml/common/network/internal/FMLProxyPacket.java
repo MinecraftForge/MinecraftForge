@@ -10,6 +10,9 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.C17PacketCustomPayload;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;
+import org.apache.logging.log4j.Level;
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.network.FMLNetworkException;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
 import cpw.mods.fml.relauncher.Side;
@@ -63,7 +66,20 @@ public class FMLProxyPacket extends Packet {
         if (internalChannel != null)
         {
             internalChannel.attr(NetworkRegistry.NET_HANDLER).set(this.netHandler);
-            internalChannel.writeInbound(this);
+            try
+            {
+                internalChannel.writeInbound(this);
+            }
+            catch (FMLNetworkException ne)
+            {
+                FMLLog.log(Level.ERROR, ne, "There was a network exception handling a packet on channel %s", channel);
+                dispatcher.rejectHandshake(ne.getMessage());
+            }
+            catch (Throwable t)
+            {
+                FMLLog.log(Level.ERROR, t, "There was a critical exception handling a packet on channel %s", channel);
+                dispatcher.rejectHandshake("A fatal error has occured, this connection is terminated");
+            }
         }
     }
 
