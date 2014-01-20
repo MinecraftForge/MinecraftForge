@@ -31,7 +31,12 @@ public class ModAPITransformer implements IClassTransformer {
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass)
     {
-        if (optionals == null || !optionals.containsKey(name))
+        String lookupName = name;
+        if(name.endsWith("$class"))
+        {
+            lookupName = name.substring(0, name.length() - 6);
+        }
+        if (optionals == null || !optionals.containsKey(lookupName))
         {
             return basicClass;
         }
@@ -40,7 +45,7 @@ public class ModAPITransformer implements IClassTransformer {
         classReader.accept(classNode, 0);
 
         if (logDebugInfo) FMLRelaunchLog.finer("Optional removal - found optionals for class %s - processing", name);
-        for (ASMData optional : optionals.get(name))
+        for (ASMData optional : optionals.get(lookupName))
         {
             String modId = (String) optional.getAnnotationInfo().get("modid");
 
@@ -72,6 +77,12 @@ public class ModAPITransformer implements IClassTransformer {
 
     private void stripMethod(ClassNode classNode, String methodDescriptor)
     {
+        if(classNode.name.endsWith("$class"))
+        {
+            String subName = classNode.name.substring(0, classNode.name.length() - 6);
+            int pos = methodDescriptor.indexOf('(') + 1;
+            methodDescriptor = methodDescriptor.substring(0, pos) + 'L' + subName + ';' + methodDescriptor.substring(pos);
+        }
         for (ListIterator<MethodNode> iterator = classNode.methods.listIterator(); iterator.hasNext();)
         {
             MethodNode method = iterator.next();
