@@ -23,6 +23,7 @@ archivesBaseName = "modid"
 
 minecraft {
     version = "${version}"
+    assetDir = "eclipse/assets"
 }
 processResources
 {
