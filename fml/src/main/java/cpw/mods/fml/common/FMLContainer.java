@@ -221,4 +221,10 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
     {
         return "cpw.mods.fml.client.FMLConfigGuiFactory";
     }
+
+    @Override
+    public Object getMod()
+    {
+        return this;
+    }
 }
