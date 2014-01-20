@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN" packages="net.minecraft,com.mojang">
+<Configuration status="WARN" packages="com.mojang.util" verbose="true">
     <Appenders>
         <Console name="FmlSysOut" target="SYSTEM_OUT">
             <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n" />
@@ -8,10 +8,7 @@
             <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />
         </Console>
         <Queue name="ServerGuiConsole">
-            <PatternLayout pattern="[%d{HH:mm:ss} %level]: %msg%n" />
-        </Queue>
-        <Queue name="FmlServerGuiConsole">
-            <PatternLayout pattern="[%d{HH:mm:ss} %level] [%logger]: %msg%n" />
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n" />
         </Queue>
         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
             <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />
@@ -22,26 +19,26 @@
         </RollingRandomAccessFile>
         <RollingRandomAccessFile name="FmlFile" fileName="logs/fml-latest.log" filePattern="logs/fml-%d{yyyy-MM-dd}-%i.log.gz">
             <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n" />
+            <DefaultRolloverStrategy max="3" />
             <Policies>
                 <TimeBasedTriggeringPolicy />
                 <OnStartupTriggeringPolicy />
-                <DefaultRolloverStrategy max="3"/>
             </Policies>
         </RollingRandomAccessFile>
     </Appenders>
     <Loggers>
-        <Root level="info" name="net/minecraft" additibity="false">
+        <Logger level="info" name="net.minecraft" additivity="false">
             <filters>
                 <MarkerFilter marker="NETWORK_PACKETS" onMatch="DENY" onMismatch="NEUTRAL" />
             </filters>
-            <AppenderRef ref="SysOut"/>
-            <AppenderRef ref="File"/>
-            <AppenderRef ref="ServerGuiConsole"/>
-        </Root>
+            <AppenderRef ref="SysOut" level="INFO"/>
+            <AppenderRef ref="File" />
+            <AppenderRef ref="ServerGuiConsole" level="INFO"/>
+        </Logger>
         <Root level="all">
-            <AppenderRef ref="FmlSysOut"/>
-            <AppenderRef ref="FmlFile"/>
-            <AppenderRef ref="FmlServerGuiConsole"/>
+            <AppenderRef ref="FmlSysOut" level="INFO"/>
+            <AppenderRef ref="ServerGuiConsole" level="INFO"/>
+            <AppenderRef ref="FmlFile" />
         </Root>
     </Loggers>
 </Configuration>
