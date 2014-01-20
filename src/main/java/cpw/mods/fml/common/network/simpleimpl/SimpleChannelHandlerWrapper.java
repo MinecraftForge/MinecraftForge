@@ -6,6 +6,7 @@ import com.google.common.base.Throwables;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -31,7 +32,7 @@ public class SimpleChannelHandlerWrapper<REQ extends IMessage, REPLY extends IMe
         REPLY result = messageHandler.onMessage(msg, context);
         if (result != null)
         {
-            ctx.writeAndFlush(result);
+            ctx.writeAndFlush(result).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
         }
     }
 

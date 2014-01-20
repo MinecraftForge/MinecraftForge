@@ -1,5 +1,6 @@
 package cpw.mods.fml.common.network;
 
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import java.util.EnumMap;
 import net.minecraft.client.network.NetHandlerPlayClient;
@@ -48,7 +49,7 @@ public class FMLEventChannel {
             if (event.reply != null)
             {
                 ctx.channel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.REPLY);
-                ctx.writeAndFlush(event.reply);
+                ctx.writeAndFlush(event.reply).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             }
         }
     }
@@ -62,33 +63,33 @@ public class FMLEventChannel {
     public void sendToAll(FMLProxyPacket pkt)
     {
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
-        channels.get(Side.SERVER).writeAndFlush(pkt);
+        channels.get(Side.SERVER).writeAndFlush(pkt).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
     public void sendTo(FMLProxyPacket pkt, EntityPlayerMP player)
     {
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player);
-        channels.get(Side.SERVER).writeAndFlush(pkt);
+        channels.get(Side.SERVER).writeAndFlush(pkt).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
     public void sendToAllAround(FMLProxyPacket pkt, NetworkRegistry.TargetPoint point)
     {
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(point);
-        channels.get(Side.SERVER).writeAndFlush(pkt);
+        channels.get(Side.SERVER).writeAndFlush(pkt).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
     public void sendToDimension(FMLProxyPacket pkt, int dimensionId)
     {
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.DIMENSION);
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(dimensionId);
-        channels.get(Side.SERVER).writeAndFlush(pkt);
+        channels.get(Side.SERVER).writeAndFlush(pkt).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
     public void sendToServer(FMLProxyPacket pkt)
     {
         channels.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
-        channels.get(Side.CLIENT).writeAndFlush(pkt);
+        channels.get(Side.CLIENT).writeAndFlush(pkt).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 }
