@@ -125,13 +125,13 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     @Override
     public void func_148756_a(int id, String name, Object thing)
     {
-        FMLLog.info("Add : %s %d %s", name, id, thing);
+        FMLLog.finer("Add : %s %d %s", name, id, thing);
         add(id, name, superType.cast(thing));
     }
 
     int swap(int id, String name, I thing)
     {
-        FMLLog.info("Swap : %s %d %s", name, id, thing);
+        FMLLog.fine("Swap : %s %d %s", name, id, thing);
         BitSet temporary = availabilityMap;
         availabilityMap = transactionalAvailabilityMap;
 
@@ -149,7 +149,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         reassignMapping(name, idToUse);
         useSlot(idToUse);
         availabilityMap = temporary;
-        FMLLog.info("Swap : %s %d %s", name, idToUse, thing);
+        FMLLog.fine("Swap : %s %d %s", name, idToUse, thing);
         return idToUse;
     }
     public int add(int id, String name, I thing)
@@ -178,7 +178,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         namedIds.forcePut(func_148755_c(name),idToUse);
         super.func_148756_a(idToUse, name, thing);
         useSlot(idToUse);
-        FMLLog.info("Add : %s %d %s", name, idToUse, thing);
+        FMLLog.finer("Add : %s %d %s", name, idToUse, thing);
         return idToUse;
     }
 
@@ -313,7 +313,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         {
             String name = entry.getKey();
             Object thing = idMap().get(entry.getValue().intValue());
-            FMLLog.info("Registry : %s %d %s", name, entry.getValue(), thing);
+            FMLLog.finer("Registry : %s %d %s", name, entry.getValue(), thing);
         }
     }
 }
