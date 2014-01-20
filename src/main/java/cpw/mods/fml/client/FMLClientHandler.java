@@ -23,7 +23,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.Gui;
@@ -121,8 +120,10 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private DummyModContainer optifineContainer;
 
+    @SuppressWarnings("unused")
     private boolean guiLoaded;
 
+    @SuppressWarnings("unused")
     private boolean serverIsRunning;
 
     private MissingModsException modsMissing;
@@ -141,6 +142,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private List<IResourcePack> resourcePackList;
 
+    @SuppressWarnings("unused")
     private IReloadableResourceManager resourceManager;
 
     private Map<String, IResourcePack> resourcePackMap;
@@ -295,6 +297,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         loading = false;
     }
 
+    @SuppressWarnings("unused")
     public void extendModList()
     {
         @SuppressWarnings("unchecked")
