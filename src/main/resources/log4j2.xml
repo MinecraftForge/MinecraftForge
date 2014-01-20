@@ -27,6 +27,11 @@
         </RollingRandomAccessFile>
     </Appenders>
     <Loggers>
+        <Logger level="info" name="com.mojang" additivity="false">
+            <AppenderRef ref="SysOut" level="INFO"/>
+            <AppenderRef ref="File" />
+            <AppenderRef ref="ServerGuiConsole" level="INFO"/>
+        </Logger>
         <Logger level="info" name="net.minecraft" additivity="false">
             <filters>
                 <MarkerFilter marker="NETWORK_PACKETS" onMatch="DENY" onMismatch="NEUTRAL" />
