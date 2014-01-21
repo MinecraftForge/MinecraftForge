@@ -206,7 +206,7 @@ public class LoadController
         FMLLog.log(modId, Level.TRACE, "Sending event %s to mod %s", stateEvent.getEventType(), modId);
         eventChannels.get(modId).post(stateEvent);
         FMLLog.log(modId, Level.TRACE, "Sent event %s to mod %s", stateEvent.getEventType(), modId);
-        ThreadContext.put("mod", "<NONE>");
+        ThreadContext.remove("mod");
         activeContainer = null;
         if (stateEvent instanceof FMLStateEvent)
         {

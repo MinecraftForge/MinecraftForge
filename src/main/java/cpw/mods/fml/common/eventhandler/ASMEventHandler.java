@@ -42,7 +42,7 @@ public class ASMEventHandler implements IEventListener
         }
         else
         {
-            ThreadContext.put("mod", "<NONE>");
+            ThreadContext.put("mod", "");
         }
         if (handler != null)
         {
