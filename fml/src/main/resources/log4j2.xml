@@ -21,7 +21,7 @@
             <Routes pattern="$${ctx:side}">
                 <Route>
                     <RollingRandomAccessFile name="FmlFile" fileName="logs/fml-${ctx:side}-latest.log" filePattern="logs/fml-${ctx:side}-%i.log">
-                        <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n" />
+                        <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger/%X{mod}]: %msg%n" />
                         <DefaultRolloverStrategy max="3" fileIndex="max" />
                         <Policies>
                             <OnStartupTriggeringPolicy />

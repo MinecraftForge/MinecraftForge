@@ -6,25 +6,29 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 
 
+import org.apache.logging.log4j.ThreadContext;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
 import com.google.common.collect.Maps;
+import cpw.mods.fml.common.ModContainer;
 
 
 public class ASMEventHandler implements IEventListener
 {
     private static int IDs = 0;
     private static final String HANDLER_DESC = Type.getInternalName(IEventListener.class);
-    private static final String HANDLER_FUNC_DESC = Type.getMethodDescriptor(IEventListener.class.getDeclaredMethods()[0]);    
+    private static final String HANDLER_FUNC_DESC = Type.getMethodDescriptor(IEventListener.class.getDeclaredMethods()[0]);
     private static final ASMClassLoader LOADER = new ASMClassLoader();
     private static final HashMap<Method, Class<?>> cache = Maps.newHashMap();
-    
+
     private final IEventListener handler;
     private final SubscribeEvent subInfo;
-    public ASMEventHandler(Object target, Method method) throws Exception
+    private ModContainer owner;
+    public ASMEventHandler(Object target, Method method, ModContainer owner) throws Exception
     {
+        this.owner = owner;
         handler = (IEventListener)createWrapper(method).getConstructor(Object.class).newInstance(target);
         subInfo = method.getAnnotation(SubscribeEvent.class);
     }
@@ -32,6 +36,14 @@ public class ASMEventHandler implements IEventListener
     @Override
     public void invoke(Event event)
     {
+        if (owner != null)
+        {
+            ThreadContext.put("mod", owner.getName());
+        }
+        else
+        {
+            ThreadContext.put("mod", "<NONE>");
+        }
         if (handler != null)
         {
             if (!event.isCancelable() || !event.isCanceled() || subInfo.receiveCanceled())
@@ -39,13 +51,14 @@ public class ASMEventHandler implements IEventListener
                 handler.invoke(event);
             }
         }
+        ThreadContext.remove("mod");
     }
-    
+
     public EventPriority getPriority()
     {
         return subInfo.priority();
     }
-    
+
     public Class<?> createWrapper(Method callback)
     {
         if (cache.containsKey(callback))
@@ -55,12 +68,12 @@ public class ASMEventHandler implements IEventListener
 
         ClassWriter cw = new ClassWriter(0);
         MethodVisitor mv;
-        
+
         String name = getUniqueName(callback);
         String desc = name.replace('.',  '/');
         String instType = Type.getInternalName(callback.getDeclaringClass());
         String eventType = Type.getInternalName(callback.getParameterTypes()[0]);
-        
+
         /*
         System.out.println("Name:     " + name);
         System.out.println("Desc:     " + desc);
@@ -68,7 +81,7 @@ public class ASMEventHandler implements IEventListener
         System.out.println("Callback: " + callback.getName() + Type.getMethodDescriptor(callback));
         System.out.println("Event:    " + eventType);
         */
-        
+
         cw.visit(V1_6, ACC_PUBLIC | ACC_SUPER, desc, null, "java/lang/Object", new String[]{ HANDLER_DESC });
 
         cw.visitSource(".dynamic", null);
@@ -105,22 +118,22 @@ public class ASMEventHandler implements IEventListener
         cache.put(callback, ret);
         return ret;
     }
-    
+
     private String getUniqueName(Method callback)
     {
-        return String.format("%s_%d_%s_%s_%s", getClass().getName(), IDs++, 
-                callback.getDeclaringClass().getSimpleName(), 
-                callback.getName(), 
+        return String.format("%s_%d_%s_%s_%s", getClass().getName(), IDs++,
+                callback.getDeclaringClass().getSimpleName(),
+                callback.getName(),
                 callback.getParameterTypes()[0].getSimpleName());
     }
-    
+
     private static class ASMClassLoader extends ClassLoader
     {
         private ASMClassLoader()
         {
             super(ASMClassLoader.class.getClassLoader());
         }
-        
+
         public Class<?> define(String name, byte[] data)
         {
             return defineClass(name, data, 0, data.length);
