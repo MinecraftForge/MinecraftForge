@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN" packages="com.mojang.util" verbose="true">
+<Configuration status="debug" packages="com.mojang.util">
     <Appenders>
         <Console name="FmlSysOut" target="SYSTEM_OUT">
             <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n" />
@@ -17,33 +17,43 @@
                 <OnStartupTriggeringPolicy />
             </Policies>
         </RollingRandomAccessFile>
-        <RollingRandomAccessFile name="FmlFile" fileName="logs/fml-latest.log" filePattern="logs/fml-%d{yyyy-MM-dd}-%i.log.gz">
-            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n" />
-            <DefaultRolloverStrategy max="3" />
-            <Policies>
-                <TimeBasedTriggeringPolicy />
-                <OnStartupTriggeringPolicy />
-            </Policies>
-        </RollingRandomAccessFile>
+        <Routing name="FmlFile">
+            <Routes pattern="$${ctx:side}">
+                <Route>
+                    <RollingRandomAccessFile name="FmlFile" fileName="logs/fml-${ctx:side}-latest.log" filePattern="logs/fml-${ctx:side}-%i.log">
+                        <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n" />
+                        <DefaultRolloverStrategy max="3" fileIndex="max" />
+                        <Policies>
+                            <OnStartupTriggeringPolicy />
+                        </Policies>
+                    </RollingRandomAccessFile>
+                </Route>
+                <Route key="$${ctx:side}">
+                    <RandomAccessFile name="FmlFile" fileName="logs/fml-junk-earlystartup.log" >
+                        <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n" />
+                    </RandomAccessFile>
+                </Route>
+            </Routes>
+        </Routing>
     </Appenders>
     <Loggers>
         <Logger level="info" name="com.mojang" additivity="false">
-            <AppenderRef ref="SysOut" level="INFO"/>
+            <AppenderRef ref="SysOut" level="INFO" />
             <AppenderRef ref="File" />
-            <AppenderRef ref="ServerGuiConsole" level="INFO"/>
+            <AppenderRef ref="ServerGuiConsole" level="INFO" />
         </Logger>
         <Logger level="info" name="net.minecraft" additivity="false">
             <filters>
                 <MarkerFilter marker="NETWORK_PACKETS" onMatch="DENY" onMismatch="NEUTRAL" />
             </filters>
-            <AppenderRef ref="SysOut" level="INFO"/>
+            <AppenderRef ref="SysOut" level="INFO" />
             <AppenderRef ref="File" />
-            <AppenderRef ref="ServerGuiConsole" level="INFO"/>
+            <AppenderRef ref="ServerGuiConsole" level="INFO" />
         </Logger>
         <Root level="all">
-            <AppenderRef ref="FmlSysOut" level="INFO"/>
-            <AppenderRef ref="ServerGuiConsole" level="INFO"/>
-            <AppenderRef ref="FmlFile" />
+            <AppenderRef ref="FmlSysOut" level="INFO" />
+            <AppenderRef ref="ServerGuiConsole" level="INFO" />
+            <AppenderRef ref="FmlFile"/>
         </Root>
     </Loggers>
 </Configuration>

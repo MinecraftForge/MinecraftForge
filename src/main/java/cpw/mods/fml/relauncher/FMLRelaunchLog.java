@@ -13,9 +13,11 @@
 package cpw.mods.fml.relauncher;
 
 import java.io.File;
+import java.util.Locale;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 
 public class FMLRelaunchLog {
 
@@ -30,7 +32,7 @@ public class FMLRelaunchLog {
 
     private Logger myLog;
 
-    static String logFileNamePattern;
+    static Side side;
 
     private FMLRelaunchLog()
     {
@@ -42,6 +44,7 @@ public class FMLRelaunchLog {
     private static void configureLogging()
     {
         log.myLog = LogManager.getLogger("FML");
+        ThreadContext.put("side", side.name().toLowerCase(Locale.ENGLISH));
         configured = true;
     }
 
