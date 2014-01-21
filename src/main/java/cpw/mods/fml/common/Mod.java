@@ -103,9 +103,18 @@ public @interface Mod
      *
      * This is ignored if there is a {@link NetworkCheckHandler} annotation on a method in this class.
      *
-     * @return
+     * @return A version range as specified by the maven version range specification or the empty string
      */
     String acceptableRemoteVersions() default "";
+
+    /**
+     * A version range specifying compatible save version information. If your mod follows good version numbering
+     * practice <a href="http://semver.org/">Like this (http://semver.org/)</a> then this should be sufficient.
+     *
+     * Advanced users can specify a {@link SaveInspectionHandler} instead.
+     * @return A version range as specified by the maven version range specification or the empty string
+     */
+    String acceptableSaveVersions() default "";
     /**
      * An optional bukkit plugin that will be injected into the bukkit plugin framework if
      * this mod is loaded into the FML framework and the bukkit coremod is present.
