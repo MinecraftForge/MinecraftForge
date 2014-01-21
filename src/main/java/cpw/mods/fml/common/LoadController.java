@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.ThreadContext;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ArrayListMultimap;
@@ -201,9 +202,11 @@ public class LoadController
         }
         activeContainer = mc;
         stateEvent.applyModContainer(activeContainer());
+        ThreadContext.put("mod", modId);
         FMLLog.log(modId, Level.TRACE, "Sending event %s to mod %s", stateEvent.getEventType(), modId);
         eventChannels.get(modId).post(stateEvent);
         FMLLog.log(modId, Level.TRACE, "Sent event %s to mod %s", stateEvent.getEventType(), modId);
+        ThreadContext.put("mod", "<NONE>");
         activeContainer = null;
         if (stateEvent instanceof FMLStateEvent)
         {

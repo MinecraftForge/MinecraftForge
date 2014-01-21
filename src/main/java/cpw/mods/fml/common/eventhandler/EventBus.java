@@ -3,18 +3,23 @@ package cpw.mods.fml.common.eventhandler;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 
 
+import com.google.common.collect.MapMaker;
 import com.google.common.reflect.TypeToken;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
 
 public class EventBus
 {
     private static int maxID = 0;
 
     private ConcurrentHashMap<Object, ArrayList<IEventListener>> listeners = new ConcurrentHashMap<Object, ArrayList<IEventListener>>();
+    private Map<Object,ModContainer> listenerOwners = new MapMaker().weakKeys().weakValues().makeMap();
     private final int busID = maxID++;
 
     public EventBus()
@@ -29,6 +34,7 @@ public class EventBus
             return;
         }
 
+        listenerOwners.put(target, Loader.instance().activeModContainer());
         Set<? extends Class<?>> supers = TypeToken.of(target.getClass()).getTypes().rawTypes();
         for (Method method : target.getClass().getMethods())
         {
@@ -52,10 +58,10 @@ public class EventBus
 
                         if (!Event.class.isAssignableFrom(eventType))
                         {
-                            throw new IllegalArgumentException("Method " + method + " has @SubscribeEvent annotation, but takes a argument that is not a Event " + eventType);
+                            throw new IllegalArgumentException("Method " + method + " has @SubscribeEvent annotation, but takes a argument that is not an Event " + eventType);
                         }
 
-                        register(eventType, target, method);
+                        register(eventType, target, method, Loader.instance().activeModContainer());
                         break;
                     }
                 }
@@ -67,14 +73,14 @@ public class EventBus
         }
     }
 
-    private void register(Class<?> eventType, Object target, Method method)
+    private void register(Class<?> eventType, Object target, Method method, ModContainer owner)
     {
         try
         {
             Constructor<?> ctr = eventType.getConstructor();
             ctr.setAccessible(true);
             Event event = (Event)ctr.newInstance();
-            ASMEventHandler listener = new ASMEventHandler(target, method);
+            ASMEventHandler listener = new ASMEventHandler(target, method, owner);
             event.getListenerList().register(busID, listener.getPriority(), listener);
 
             ArrayList<IEventListener> others = listeners.get(target);
