@@ -62,14 +62,14 @@ public class FMLLaunchHandler
 
     private void setupClient()
     {
-        FMLRelaunchLog.logFileNamePattern = "ForgeModLoader-client-%g.log";
+        FMLRelaunchLog.side = Side.CLIENT;
         side = Side.CLIENT;
         setupHome();
     }
 
     private void setupServer()
     {
-        FMLRelaunchLog.logFileNamePattern = "ForgeModLoader-server-%g.log";
+        FMLRelaunchLog.side = Side.SERVER;
         side = Side.SERVER;
         setupHome();
 
