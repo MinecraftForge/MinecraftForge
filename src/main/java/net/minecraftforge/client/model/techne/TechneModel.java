@@ -29,6 +29,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.render.texture.TextureUtil;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModelCustom;
@@ -263,7 +264,6 @@ public class TechneModel extends ModelBase implements IModelCustom {
     
     private void bindTexture()
     {
-        /* TODO: Update to 1.6
         if (texture != null)
         {
             if (!textureNameSet)
@@ -277,7 +277,7 @@ public class TechneModel extends ModelBase implements IModelCustom {
                     }
                     
                     BufferedImage image = ImageIO.read(new ByteArrayInputStream(textureEntry));
-                    textureName = Minecraft.getMinecraft().renderEngine.allocateAndSetupTexture(image);
+                    textureName = TextureUtil.uploadTextureImage(TextureUtil.glGenTextures(), image);
                     textureNameSet = true;
                 }
                 catch (ZipException e)
@@ -293,10 +293,8 @@ public class TechneModel extends ModelBase implements IModelCustom {
             if (textureNameSet)
             {
                 GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureName);
-                Minecraft.getMinecraft().renderEngine.resetBoundTexture();
             }
         }
-        */
     }
     
     @Override
