@@ -19,7 +19,7 @@
 +            if (this.field_145957_n[2] == null) return true;
 +            if (!this.field_145957_n[2].isItemEqual(itemstack)) return false;
 +            int result = field_145957_n[2].stackSize + itemstack.stackSize;
-+            return result < getInventoryStackLimit() && result <= this.field_145957_n[2].getMaxStackSize(); //Forge BugFix: Make it respect stack sizes properly.
++            return result <= getInventoryStackLimit() && result <= this.field_145957_n[2].getMaxStackSize(); //Forge BugFix: Make it respect stack sizes properly.
          }
      }
  
