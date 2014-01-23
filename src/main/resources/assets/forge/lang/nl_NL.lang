@@ -1,0 +1,6 @@
+commands.forge.usage=Gebruik /forge <sub commando>. Sub commando's zijn tps, track
+commands.forge.usage.tracking=Gebruik /forge track <type> <tijd>. Types zijn te (Tile Entities). Duratie is < 60. 
+commands.forge.tps.summary=%s : Betekent tik tijd: %d ms. Betekend TPS: %d
+
+commands.forge.tracking.te.enabled=Tile Entity traceren aangezet voor %d seconden.
+forge.texture.preload.warning=Waarschuwing: Texture %s ge voorgeladen, Kan render glitches geven!
