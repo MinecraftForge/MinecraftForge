@@ -130,6 +130,7 @@ public class OreDictionary
             new ItemStack(Items.cookie),
             new ItemStack(Blocks.stonebrick),
             new ItemStack(Blocks.stone_slab),
+            new ItemStack(Blocks.stone_slab, 1, 3),
             new ItemStack(Blocks.stone_stairs),
             new ItemStack(Blocks.cobblestone_wall),
             new ItemStack(Blocks.oak_stairs),
