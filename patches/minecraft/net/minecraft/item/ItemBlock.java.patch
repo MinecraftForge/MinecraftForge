@@ -63,4 +63,8 @@
 +
 +       return true;
 +    }
++    
++    public Block getBlock(){
++       return field_150939_a;
++    }
  }
