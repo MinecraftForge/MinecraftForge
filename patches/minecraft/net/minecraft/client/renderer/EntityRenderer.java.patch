@@ -1,17 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/EntityRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/EntityRenderer.java
-@@ -52,6 +52,11 @@
+@@ -51,6 +51,11 @@
+ import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GLContext;
  import org.lwjgl.util.glu.Project;
- 
 +import net.minecraftforge.client.ForgeHooksClient;
++import net.minecraftforge.client.IRenderHandler;
 +import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 +import net.minecraftforge.client.event.RenderWorldLastEvent;
 +import net.minecraftforge.common.MinecraftForge;
-+
+ 
  @SideOnly(Side.CLIENT)
  public class EntityRenderer implements IResourceManagerReloadListener
- {
 @@ -397,7 +402,7 @@
  
                              if (d3 < d2 || d2 == 0.0D)
@@ -135,3 +135,17 @@
              this.mc.mcProfiler.endStartSection("hand");
  
              if (this.cameraZoom == 1.0D)
+@@ -1477,6 +1503,13 @@
+     // JAVADOC METHOD $$ func_78474_d
+     protected void renderRainSnow(float par1)
+     {
++        IRenderHandler renderer = null;
++        if ((renderer = this.mc.theWorld.provider.getWeatherRenderer()) != null)
++        {
++            renderer.render(par1, this.mc.theWorld, mc);
++            return;
++        }
++
+         float f1 = this.mc.theWorld.getRainStrength(par1);
+ 
+         if (f1 > 0.0F)

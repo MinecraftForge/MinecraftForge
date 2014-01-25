@@ -43,7 +43,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -216,4 +224,272 @@
+@@ -216,4 +224,285 @@
  
      // JAVADOC METHOD $$ func_80007_l
      public abstract String getDimensionName();
@@ -51,6 +51,7 @@
 +    /*======================================= Forge Start =========================================*/
 +    private IRenderHandler skyRenderer = null;
 +    private IRenderHandler cloudRenderer = null;
++    private IRenderHandler weatherRenderer = null;
 +    
 +    /**
 +     * Sets the providers current dimension ID, used in default getSaveFolder()
@@ -146,6 +147,18 @@
 +    public void setCloudRenderer(IRenderHandler renderer)
 +    {
 +        cloudRenderer = renderer;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public IRenderHandler getWeatherRenderer()
++    {
++        return weatherRenderer;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public void setWeatherRenderer(IRenderHandler renderer)
++    {
++        weatherRenderer = renderer;
 +    }
 +
 +    public ChunkCoordinates getRandomizedSpawnPoint()
