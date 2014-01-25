@@ -145,4 +145,6 @@ public interface ModContainer
     Disableable canBeDisabled();
 
     String getGuiClassName();
+
+    List<String> getOwnedPackages();
 }
