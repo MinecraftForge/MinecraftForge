@@ -1244,7 +1244,7 @@
 +    {
 +        if ("pickaxe".equals(type) && (this == Blocks.redstone_ore || this == Blocks.lit_redstone_ore || this == Blocks.obsidian))
 +            return false;
-+        if (harvestTool[metadata] == null) return true;
++        if (harvestTool[metadata] == null) return false;
 +        return harvestTool[metadata].equals(type);
 +    }
 +    /* ========================================= FORGE END ======================================*/
