@@ -129,7 +129,7 @@ public class OreDictionary
             new ItemStack(Blocks.lapis_block),
             new ItemStack(Items.cookie),
             new ItemStack(Blocks.stonebrick),
-            new ItemStack(Blocks.stone_slab),
+            new ItemStack(Blocks.stone_slab, 1, WILDCARD_VALUE),
             new ItemStack(Blocks.stone_stairs),
             new ItemStack(Blocks.cobblestone_wall),
             new ItemStack(Blocks.oak_stairs),
