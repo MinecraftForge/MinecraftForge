@@ -195,4 +195,10 @@ public class InjectedModContainer implements ModContainer
     {
         return wrappedContainer.getGuiClassName();
     }
+
+    @Override
+    public List<String> getOwnedPackages()
+    {
+        return wrappedContainer.getOwnedPackages();
+    }
 }

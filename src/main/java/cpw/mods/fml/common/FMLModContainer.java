@@ -624,4 +624,10 @@ public class FMLModContainer implements ModContainer
     {
         return (String) descriptor.get("guiFactory");
     }
+
+    @Override
+    public List<String> getOwnedPackages()
+    {
+        return candidate.getContainedPackages();
+    }
 }

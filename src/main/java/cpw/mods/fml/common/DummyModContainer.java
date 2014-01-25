@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 
 import cpw.mods.fml.common.versioning.ArtifactVersion;
@@ -192,5 +193,11 @@ public class DummyModContainer implements ModContainer
     public String getGuiClassName()
     {
         return null;
+    }
+
+    @Override
+    public List<String> getOwnedPackages()
+    {
+        return ImmutableList.of();
     }
 }
