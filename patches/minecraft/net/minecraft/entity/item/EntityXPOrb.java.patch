@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityXPOrb.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityXPOrb.java
+@@ -9,6 +9,8 @@
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
+ 
+ public class EntityXPOrb extends Entity
+ {
+@@ -218,6 +220,7 @@
+         {
+             if (this.field_70532_c == 0 && par1EntityPlayer.xpCooldown == 0)
+             {
++                if (MinecraftForge.EVENT_BUS.post(new PlayerPickupXpEvent(par1EntityPlayer, this))) return;
+                 par1EntityPlayer.xpCooldown = 2;
+                 this.worldObj.playSoundAtEntity(par1EntityPlayer, "random.orb", 0.1F, 0.5F * ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7F + 1.8F));
+                 par1EntityPlayer.onItemPickup(this, 1);

@@ -72,7 +72,7 @@
          if (p_147108_1_ instanceof GuiMainMenu)
          {
              this.gameSettings.showDebugInfo = false;
-@@ -1338,7 +1352,7 @@
+@@ -1337,7 +1351,7 @@
  
                      if (this.thePlayer.isCurrentToolAdventureModeExempt(i, j, k))
                      {
@@ -81,7 +81,7 @@
                          this.thePlayer.swingItem();
                      }
                  }
-@@ -1419,11 +1433,12 @@
+@@ -1418,11 +1432,12 @@
                      int j = this.objectMouseOver.blockY;
                      int k = this.objectMouseOver.blockZ;
  
@@ -96,7 +96,7 @@
                          {
                              flag = false;
                              this.thePlayer.swingItem();
-@@ -1450,7 +1465,8 @@
+@@ -1449,7 +1464,8 @@
          {
              ItemStack itemstack1 = this.thePlayer.inventory.getCurrentItem();
  
@@ -106,7 +106,7 @@
              {
                  this.entityRenderer.itemRenderer.resetEquippedProgress2();
              }
-@@ -1652,6 +1668,8 @@
+@@ -1651,6 +1667,8 @@
  
              while (Mouse.next())
              {
@@ -115,7 +115,7 @@
                  i = Mouse.getEventButton();
  
                  if (isRunningOnMac && i == 0 && (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)))
-@@ -2122,6 +2140,11 @@
+@@ -2121,6 +2139,11 @@
      // JAVADOC METHOD $$ func_71353_a
      public void loadWorld(WorldClient par1WorldClient, String par2Str)
      {
@@ -127,7 +127,7 @@
          if (par1WorldClient == null)
          {
              NetHandlerPlayClient nethandlerplayclient = this.func_147114_u();
-@@ -2134,6 +2157,18 @@
+@@ -2133,6 +2156,18 @@
              if (this.theIntegratedServer != null)
              {
                  this.theIntegratedServer.initiateShutdown();
@@ -146,7 +146,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2289,113 +2324,10 @@
+@@ -2288,113 +2323,10 @@
          if (this.objectMouseOver != null)
          {
              boolean flag = this.thePlayer.capabilities.isCreativeMode;
@@ -262,7 +262,7 @@
              if (flag)
              {
                  j = this.thePlayer.inventoryContainer.inventorySlots.size() - 9 + this.thePlayer.inventory.currentItem;
-@@ -2565,9 +2497,16 @@
+@@ -2564,9 +2496,16 @@
          par1PlayerUsageSnooper.addData("gl_max_texture_size", Integer.valueOf(getGLMaximumTextureSize()));
      }
  
@@ -279,7 +279,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
-@@ -2575,6 +2514,7 @@
+@@ -2574,6 +2513,7 @@
  
              if (j != 0)
              {
