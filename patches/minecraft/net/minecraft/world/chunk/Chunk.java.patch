@@ -31,7 +31,13 @@
      }
  
      public Block func_150810_a(final int p_150810_1_, final int p_150810_2_, final int p_150810_3_)
-@@ -618,9 +624,13 @@
+@@ -613,14 +619,19 @@
+             }
+ 
+             extendedblockstorage.func_150818_a(p_150807_1_, p_150807_2_ & 15, p_150807_3_, p_150807_4_);
++            extendedblockstorage.setExtBlockMetadata(p_150807_1_, p_150807_2_ & 15, p_150807_3_, p_150807_5_); // Move this above to prevent other mods/tile entites from creating invalid ones for the wrong metadata
+ 
+             if (!this.worldObj.isRemote)
              {
                  block1.func_149749_a(this.worldObj, l1, p_150807_2_, i2, block1, k1);
              }
@@ -47,7 +53,16 @@
              }
  
              if (extendedblockstorage.func_150819_a(p_150807_1_, p_150807_2_ & 15, p_150807_3_) != p_150807_4_)
-@@ -660,34 +670,19 @@
+@@ -629,8 +640,6 @@
+             }
+             else
+             {
+-                extendedblockstorage.setExtBlockMetadata(p_150807_1_, p_150807_2_ & 15, p_150807_3_, p_150807_5_);
+-
+                 if (flag)
+                 {
+                     this.generateSkylightMap();
+@@ -660,34 +669,19 @@
  
                  TileEntity tileentity;
  
@@ -84,7 +99,7 @@
                      }
                  }
  
-@@ -719,7 +714,7 @@
+@@ -719,7 +713,7 @@
                  this.isModified = true;
                  extendedblockstorage.setExtBlockMetadata(par1, par2 & 15, par3, par4);
  
@@ -93,7 +108,7 @@
                  {
                      TileEntity tileentity = this.func_150806_e(par1, par2, par3);
  
-@@ -823,6 +818,7 @@
+@@ -823,6 +817,7 @@
              k = this.entityLists.length - 1;
          }
  
@@ -101,7 +116,7 @@
          par1Entity.addedToChunk = true;
          par1Entity.chunkCoordX = this.xPosition;
          par1Entity.chunkCoordY = k;
-@@ -863,28 +859,27 @@
+@@ -863,28 +858,27 @@
          ChunkPosition chunkposition = new ChunkPosition(p_150806_1_, p_150806_2_, p_150806_3_);
          TileEntity tileentity = (TileEntity)this.field_150816_i.get(chunkposition);
  
@@ -140,7 +155,7 @@
      }
  
      public void func_150813_a(TileEntity p_150813_1_)
-@@ -896,7 +891,7 @@
+@@ -896,7 +890,7 @@
  
          if (this.isChunkLoaded)
          {
@@ -149,7 +164,7 @@
          }
      }
  
-@@ -908,7 +903,8 @@
+@@ -908,7 +902,8 @@
          p_150812_4_.field_145848_d = p_150812_2_;
          p_150812_4_.field_145849_e = this.zPosition * 16 + p_150812_3_;
  
@@ -159,7 +174,7 @@
          {
              if (this.field_150816_i.containsKey(chunkposition))
              {
-@@ -953,6 +949,7 @@
+@@ -953,6 +948,7 @@
  
              this.worldObj.addLoadedEntities(this.entityLists[i]);
          }
@@ -167,7 +182,7 @@
      }
  
      // JAVADOC METHOD $$ func_76623_d
-@@ -971,6 +968,7 @@
+@@ -971,6 +967,7 @@
          {
              this.worldObj.unloadEntities(this.entityLists[i]);
          }
@@ -175,7 +190,7 @@
      }
  
      // JAVADOC METHOD $$ func_76630_e
-@@ -982,8 +980,8 @@
+@@ -982,8 +979,8 @@
      // JAVADOC METHOD $$ func_76588_a
      public void getEntitiesWithinAABBForEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, List par3List, IEntitySelector par4IEntitySelector)
      {
@@ -186,7 +201,7 @@
          i = MathHelper.clamp_int(i, 0, this.entityLists.length - 1);
          j = MathHelper.clamp_int(j, 0, this.entityLists.length - 1);
  
-@@ -1020,8 +1018,8 @@
+@@ -1020,8 +1017,8 @@
      // JAVADOC METHOD $$ func_76618_a
      public void getEntitiesOfTypeWithinAAAB(Class par1Class, AxisAlignedBB par2AxisAlignedBB, List par3List, IEntitySelector par4IEntitySelector)
      {
@@ -197,7 +212,7 @@
          i = MathHelper.clamp_int(i, 0, this.entityLists.length - 1);
          j = MathHelper.clamp_int(j, 0, this.entityLists.length - 1);
  
-@@ -1185,6 +1183,15 @@
+@@ -1185,6 +1182,15 @@
      @SideOnly(Side.CLIENT)
      public void fillChunk(byte[] par1ArrayOfByte, int par2, int par3, boolean par4)
      {
@@ -213,7 +228,7 @@
          int k = 0;
          boolean flag1 = !this.worldObj.provider.hasNoSky;
          int l;
-@@ -1287,13 +1294,27 @@
+@@ -1287,13 +1293,27 @@
          this.field_150814_l = true;
          this.isTerrainPopulated = true;
          this.generateHeightMap();
@@ -242,7 +257,7 @@
      }
  
      // JAVADOC METHOD $$ func_76591_a
-@@ -1501,4 +1522,48 @@
+@@ -1501,4 +1521,48 @@
  
          return true;
      }
