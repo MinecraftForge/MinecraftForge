@@ -6,11 +6,13 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import org.apache.logging.log4j.Level;
 
 
 
 import com.google.common.collect.MapMaker;
 import com.google.common.reflect.TypeToken;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 
@@ -34,7 +36,13 @@ public class EventBus
             return;
         }
 
-        listenerOwners.put(target, Loader.instance().activeModContainer());
+        ModContainer activeModContainer = Loader.instance().activeModContainer();
+        if (activeModContainer == null)
+        {
+            FMLLog.log(Level.ERROR, new Throwable(), "Unable to determine registrant mod for %s. This is a critical error and should be impossible", target);
+            activeModContainer = Loader.instance().getMinecraftModContainer();
+        }
+        listenerOwners.put(target, activeModContainer);
         Set<? extends Class<?>> supers = TypeToken.of(target.getClass()).getTypes().rawTypes();
         for (Method method : target.getClass().getMethods())
         {
@@ -61,7 +69,7 @@ public class EventBus
                             throw new IllegalArgumentException("Method " + method + " has @SubscribeEvent annotation, but takes a argument that is not an Event " + eventType);
                         }
 
-                        register(eventType, target, method, Loader.instance().activeModContainer());
+                        register(eventType, target, method, activeModContainer);
                         break;
                     }
                 }
