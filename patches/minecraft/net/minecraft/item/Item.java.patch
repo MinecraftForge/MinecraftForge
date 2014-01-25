@@ -51,7 +51,15 @@
      public int getItemStackLimit()
      {
          return this.maxStackSize;
-@@ -660,6 +671,7 @@
+@@ -595,6 +606,7 @@
+     }
+ 
+     // JAVADOC METHOD $$ func_77634_r
++    @Deprecated // Use ItemStack sensitive version below.
+     public boolean hasContainerItem()
+     {
+         return this.containerItem != null;
+@@ -660,6 +672,7 @@
      }
  
      @SideOnly(Side.CLIENT)
@@ -59,7 +67,7 @@
      public boolean hasEffect(ItemStack par1ItemStack)
      {
          return par1ItemStack.isItemEnchanted();
-@@ -674,7 +686,7 @@
+@@ -674,7 +687,7 @@
      // JAVADOC METHOD $$ func_77616_k
      public boolean isItemTool(ItemStack par1ItemStack)
      {
@@ -68,7 +76,7 @@
      }
  
      protected MovingObjectPosition getMovingObjectPositionFromPlayer(World par1World, EntityPlayer par2EntityPlayer, boolean par3)
-@@ -683,7 +695,7 @@
+@@ -683,7 +696,7 @@
          float f1 = par2EntityPlayer.prevRotationPitch + (par2EntityPlayer.rotationPitch - par2EntityPlayer.prevRotationPitch) * f;
          float f2 = par2EntityPlayer.prevRotationYaw + (par2EntityPlayer.rotationYaw - par2EntityPlayer.prevRotationYaw) * f;
          double d0 = par2EntityPlayer.prevPosX + (par2EntityPlayer.posX - par2EntityPlayer.prevPosX) * (double)f;
@@ -77,7 +85,7 @@
          double d2 = par2EntityPlayer.prevPosZ + (par2EntityPlayer.posZ - par2EntityPlayer.prevPosZ) * (double)f;
          Vec3 vec3 = par1World.getWorldVec3Pool().getVecFromPool(d0, d1, d2);
          float f3 = MathHelper.cos(-f2 * 0.017453292F - (float)Math.PI);
-@@ -693,6 +705,10 @@
+@@ -693,6 +706,10 @@
          float f7 = f4 * f5;
          float f8 = f3 * f5;
          double d3 = 5.0D;
@@ -88,7 +96,7 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.func_147447_a(vec3, vec31, par3, !par3, false);
      }
-@@ -773,6 +789,532 @@
+@@ -773,6 +790,542 @@
          return this.iconString == null ? "MISSING_ICON_ITEM_" + field_150901_e.func_148757_b(this) + "_" + this.unlocalizedName : this.iconString;
      }
  
@@ -234,11 +242,21 @@
 +     */
 +    public ItemStack getContainerItem(ItemStack itemStack)
 +    {
-+        if (!hasContainerItem())
++        if (!hasContainerItem(itemStack))
 +        {
 +            return null;
 +        }
 +        return new ItemStack(getContainerItem());
++    }
++
++    /**
++     * ItemStack sensitive version of hasContainerItem
++     * @param stack The current item stack
++     * @return True if this item has a 'container'
++     */
++    public boolean hasContainerItem(ItemStack stack)
++    {
++        return hasContainerItem();
 +    }
 +
 +    /**
@@ -621,7 +639,7 @@
      public static enum ToolMaterial
      {
          WOOD(0, 59, 2.0F, 0.0F, 15),
-@@ -793,6 +1335,9 @@
+@@ -793,6 +1346,9 @@
  
          private static final String __OBFID = "CL_00000042";
  
@@ -631,7 +649,7 @@
          private ToolMaterial(int par3, int par4, float par5, float par6, int par7)
          {
              this.harvestLevel = par3;
-@@ -834,7 +1379,15 @@
+@@ -834,7 +1390,15 @@
  
          public Item func_150995_f()
          {

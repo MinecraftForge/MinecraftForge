@@ -27,9 +27,12 @@
                  {
                      int j = this.field_145945_j[i].getItemDamage();
                      int k = this.func_145936_c(j, itemstack);
-@@ -167,7 +169,7 @@
+@@ -165,9 +167,9 @@
+                 }
+             }
  
-             if (itemstack.getItem().hasContainerItem())
+-            if (itemstack.getItem().hasContainerItem())
++            if (itemstack.getItem().hasContainerItem(itemstack))
              {
 -                this.field_145945_j[3] = new ItemStack(itemstack.getItem().getContainerItem());
 +                this.field_145945_j[3] = itemstack.getItem().getContainerItem(itemstack);
