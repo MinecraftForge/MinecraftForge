@@ -2,7 +2,6 @@ package net.minecraftforge.event;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -27,6 +26,7 @@ import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
+import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
@@ -124,5 +124,29 @@ public class ForgeEventFactory
     public static boolean onEntityStruckByLightning(Entity entity, EntityLightningBolt bolt)
     {
         return MinecraftForge.EVENT_BUS.post(new EntityStruckByLightningEvent(entity, bolt));
+    }
+
+    public static int onItemUseStart(EntityPlayer player, ItemStack item, int duration)
+    {
+        PlayerUseItemEvent event = new PlayerUseItemEvent.Start(player, item, duration);
+        return MinecraftForge.EVENT_BUS.post(event) ? -1 : event.duration;
+    }
+
+    public static int onItemUseTick(EntityPlayer player, ItemStack item, int duration)
+    {
+        PlayerUseItemEvent event = new PlayerUseItemEvent.Tick(player, item, duration);
+        return MinecraftForge.EVENT_BUS.post(event) ? -1 : event.duration;
+    }
+
+    public static boolean onUseItemStop(EntityPlayer player, ItemStack item, int duration)
+    {
+        return MinecraftForge.EVENT_BUS.post(new PlayerUseItemEvent.Stop(player, item, duration));
+    }
+
+    public static ItemStack onItemUseFinish(EntityPlayer player, ItemStack item, int duration, ItemStack result)
+    {
+        PlayerUseItemEvent.Finish event = new PlayerUseItemEvent.Finish(player, item, duration, result);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.result;
     }
 }
