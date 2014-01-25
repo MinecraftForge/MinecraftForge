@@ -419,16 +419,19 @@
      }
  
      protected String func_146067_o(int p_146067_1_)
-@@ -1757,7 +1886,7 @@
+@@ -1755,11 +1884,6 @@
+         }
+         else
          {
-             if (par1ItemStack.getItem().requiresMultipleRenderPasses())
-             {
+-            if (par1ItemStack.getItem().requiresMultipleRenderPasses())
+-            {
 -                return par1ItemStack.getItem().getIconFromDamageForRenderPass(par1ItemStack.getItemDamage(), par2);
-+                return par1ItemStack.getItem().getIcon(par1ItemStack, par2);
-             }
- 
+-            }
+-
              if (this.itemInUse != null && par1ItemStack.getItem() == Items.bow)
-@@ -1779,6 +1908,7 @@
+             {
+                 int j = par1ItemStack.getMaxItemUseDuration() - this.itemInUseCount;
+@@ -1779,6 +1903,7 @@
                      return Items.bow.getItemIconForUseDuration(0);
                  }
              }
@@ -436,7 +439,7 @@
          }
  
          return iicon;
-@@ -1967,6 +2097,17 @@
+@@ -1967,6 +2092,17 @@
          }
  
          this.theInventoryEnderChest = par1EntityPlayer.theInventoryEnderChest;
@@ -454,7 +457,7 @@
      }
  
      // JAVADOC METHOD $$ func_70041_e_
-@@ -2013,7 +2154,14 @@
+@@ -2013,7 +2149,14 @@
      // JAVADOC METHOD $$ func_70062_b
      public void setCurrentItemOrArmor(int par1, ItemStack par2ItemStack)
      {
@@ -470,7 +473,7 @@
      }
  
      // JAVADOC METHOD $$ func_98034_c
-@@ -2059,7 +2207,7 @@
+@@ -2059,7 +2202,7 @@
  
      public IChatComponent func_145748_c_()
      {
@@ -479,7 +482,7 @@
          chatcomponenttext.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.getCommandSenderName() + " "));
          return chatcomponenttext;
      }
-@@ -2096,6 +2244,119 @@
+@@ -2096,6 +2239,119 @@
          FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
      }
  
