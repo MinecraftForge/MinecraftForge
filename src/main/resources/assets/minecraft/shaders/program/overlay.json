@@ -1,0 +1,23 @@
+{
+    "blend": {
+        "func": "add",
+        "srcrgb": "one",
+        "dstrgb": "zero"
+    },
+    "vertex": "blit",
+    "fragment": "overlay",
+    "attributes": [ "Position" ],
+    "samplers": [
+        { "name": "OverlaySampler" },
+        { "name": "DiffuseSampler" }
+    ],
+    "uniforms": [
+        { "name": "ProjMat",     "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+        { "name": "InSize",      "type": "float",     "count": 2,  "values": [ 1.0, 1.0 ] },
+        { "name": "OutSize",     "type": "float",     "count": 2,  "values": [ 1.0, 1.0 ] },
+        { "name": "MosaicSize",  "type": "float",     "count": 1,  "values": [ 1.0 ] },
+        { "name": "RedMatrix",   "type": "float",     "count": 3,  "values": [ 1.0, 0.0, 0.0 ] },
+        { "name": "GreenMatrix", "type": "float",     "count": 3,  "values": [ 0.0, 1.0, 1.0 ] },
+        { "name": "BlueMatrix",  "type": "float",     "count": 3,  "values": [ 0.0, 0.0, 1.0 ] }
+    ]
+}

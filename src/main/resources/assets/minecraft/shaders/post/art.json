@@ -1,0 +1,64 @@
+{
+    "targets": [
+        "0",
+        "1"
+    ],
+    "passes": [
+        {
+            "name": "blobs2",
+            "intarget": "minecraft:main",
+            "outtarget": "0"
+        },
+        {
+            "name": "outline_watercolor",
+            "intarget": "0",
+            "outtarget": "minecraft:main"
+        },
+        {
+            "name": "blur",
+            "intarget": "minecraft:main",
+            "outtarget": "1",
+            "uniforms": [
+                {
+                    "name": "BlurDir",
+                    "values": [ 0.8, 0.0 ]
+                },
+                {
+                    "name": "Radius",
+                    "values": [ 20.0 ]
+                }
+            ]
+        },
+        {
+            "name": "blur",
+            "intarget": "1",
+            "outtarget": "minecraft:main",
+            "uniforms": [
+                {
+                    "name": "BlurDir",
+                    "values": [ 0.0, 0.8 ]
+                },
+                {
+                    "name": "Radius",
+                    "values": [ 20.0 ]
+                }
+            ]
+        },
+        {
+            "name": "outline_combine",
+            "intarget": "0",
+            "outtarget": "1",
+            "auxtargets": [
+                {
+                    "name": "OutlineSampler",
+                    "id": "minecraft:main"
+                }
+            ]
+        },
+        {
+            "name": "blit",
+            "intarget": "1",
+            "outtarget": "minecraft:main"
+        }
+    ]
+}

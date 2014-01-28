@@ -1,0 +1,21 @@
+{
+    "blend": {
+        "func": "add",
+        "srcrgb": "one",
+        "dstrgb": "zero"
+    },
+    "vertex": "sobel",
+    "fragment": "wobble",
+    "attributes": [ "Position" ],
+    "samplers": [
+        { "name": "DiffuseSampler" }
+    ],
+    "uniforms": [
+        { "name": "ProjMat",      "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+        { "name": "InSize",       "type": "float",     "count": 2,  "values": [ 1.0, 1.0 ] },
+        { "name": "OutSize",      "type": "float",     "count": 2,  "values": [ 1.0, 1.0 ] },
+        { "name": "Time",         "type": "float",     "count": 1,  "values": [ 0.0 ] },
+        { "name": "Frequency",    "type": "float",     "count": 2,  "values": [ 512.0, 288.0 ] },
+        { "name": "WobbleAmount", "type": "float",     "count": 2,  "values": [ 0.002, 0.002 ] }
+    ]
+}
