@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockIce.java
++++ ../src-work/minecraft/net/minecraft/block/BlockIce.java
+@@ -43,7 +43,7 @@
+         p_149636_2_.addStat(StatList.mineBlockStatArray[Block.func_149682_b(this)], 1);
+         p_149636_2_.addExhaustion(0.025F);
+ 
+-        if (this.func_149700_E() && EnchantmentHelper.getSilkTouchModifier(p_149636_2_))
++        if (this.canSilkHarvest(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_) && EnchantmentHelper.getSilkTouchModifier(p_149636_2_))
+         {
+             ItemStack itemstack = this.func_149644_j(p_149636_6_);
+ 

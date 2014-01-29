@@ -148,7 +148,7 @@
      }
  
      public boolean func_149727_a(World p_149727_1_, int p_149727_2_, int p_149727_3_, int p_149727_4_, EntityPlayer p_149727_5_, int p_149727_6_, float p_149727_7_, float p_149727_8_, float p_149727_9_)
-@@ -920,25 +944,34 @@
+@@ -920,25 +944,35 @@
          p_149636_2_.addStat(StatList.mineBlockStatArray[func_149682_b(this)], 1);
          p_149636_2_.addExhaustion(0.025F);
  
@@ -182,11 +182,12 @@
      protected boolean func_149700_E()
      {
 -        return this.func_149686_d() && !this.field_149758_A;
-+        return this.func_149686_d() && !this.hasTileEntity(silk_check_meta.get());
++        Integer meta = silk_check_meta.get();
++        return this.func_149686_d() && !this.hasTileEntity(meta == null ? 0 : meta);
      }
  
      protected ItemStack func_149644_j(int p_149644_1_)
-@@ -1114,6 +1147,1065 @@
+@@ -1114,6 +1148,1065 @@
          return null;
      }
  
