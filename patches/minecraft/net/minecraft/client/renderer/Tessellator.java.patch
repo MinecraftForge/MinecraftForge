@@ -96,7 +96,22 @@
              int i = this.field_147569_p * 4;
              this.reset();
              return i;
-@@ -326,6 +346,19 @@
+@@ -182,6 +202,14 @@
+ 
+     public void func_147565_a(TesselatorVertexState p_147565_1_)
+     {
++        while (p_147565_1_.func_147572_a().length > rawBufferSize && rawBufferSize > 0)
++        {
++            rawBufferSize <<= 1;
++        }
++        if (rawBufferSize > rawBuffer.length)
++        {
++            rawBuffer = new int[rawBufferSize];
++        }
+         System.arraycopy(p_147565_1_.func_147572_a(), 0, this.rawBuffer, 0, p_147565_1_.func_147572_a().length);
+         this.field_147569_p = p_147565_1_.func_147576_b();
+         this.vertexCount = p_147565_1_.func_147575_c();
+@@ -326,6 +354,19 @@
      // JAVADOC METHOD $$ func_78377_a
      public void addVertex(double par1, double par3, double par5)
      {
@@ -116,7 +131,7 @@
          ++this.addedVertices;
  
          if (this.hasTexture)
-@@ -354,12 +387,6 @@
+@@ -354,12 +395,6 @@
          this.rawBuffer[this.field_147569_p + 2] = Float.floatToRawIntBits((float)(par5 + this.zOffset));
          this.field_147569_p += 8;
          ++this.vertexCount;
