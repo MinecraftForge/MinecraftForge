@@ -4,9 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import com.google.common.collect.Maps;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
@@ -23,18 +27,17 @@ import net.minecraft.world.World;
 @SuppressWarnings("unused")
 public abstract class BlockFluidBase extends Block implements IFluidBlock
 {
-    /*
-    protected final static Map<Integer, Boolean> defaultDisplacementIds = new HashMap<Integer, Boolean>();
+    protected final static Map<Block, Boolean> defaultDisplacements = Maps.newHashMap();
 
     static
     {
-        defaultDisplacementIds.put(Block.doorWood.blockID, false);
-        defaultDisplacementIds.put(Block.doorIron.blockID, false);
-        defaultDisplacementIds.put(Block.signPost.blockID, false);
-        defaultDisplacementIds.put(Block.signWall.blockID, false);
-        defaultDisplacementIds.put(Block.reed.blockID,     false);
+        defaultDisplacements.put(Blocks.wooden_door,   false);
+        defaultDisplacements.put(Blocks.iron_door,     false);
+        defaultDisplacements.put(Blocks.standing_sign, false);
+        defaultDisplacements.put(Blocks.wall_sign,     false);
+        defaultDisplacements.put(Blocks.reeds,         false);
     }
-    protected Map<Integer, Boolean> displacementIds = new HashMap<Integer, Boolean>();
+    protected Map<Block, Boolean> displacements = Maps.newHashMap();
 
     protected int quantaPerBlock = 8;
     protected float quantaPerBlockFloat = 8F;
@@ -47,14 +50,13 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     protected int maxScaledLight = 0;
 
     protected final String fluidName;
-    */
-    public BlockFluidBase(int id, Fluid fluid, Material material)
+
+    public BlockFluidBase(Fluid fluid, Material material)
     {
         super(material);
-        /*
-        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-        this.setTickRandomly(true);
-        this.disableStats();
+        this.func_149676_a(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+        this.func_149675_a(true);
+        this.func_149649_H();
 
         this.fluidName = fluid.getName();
         this.density = fluid.density;
@@ -62,12 +64,11 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         this.maxScaledLight = fluid.luminosity;
         this.tickRate = fluid.viscosity / 200;
         this.densityDir = fluid.density > 0 ? -1 : 1;
-        fluid.setBlockID(id);
+        fluid.setBlock(this);
 
-        displacementIds.putAll(defaultDisplacementIds);
-        */
+        displacements.putAll(defaultDisplacements);
     }
-    /*
+
     public BlockFluidBase setQuantaPerBlock(int quantaPerBlock)
     {
         if (quantaPerBlock > 16 || quantaPerBlock < 1) quantaPerBlock = 8;
@@ -111,25 +112,25 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     /**
      * Returns true if the block at (x, y, z) is displaceable. Does not displace the block.
-     * /
+     */
     public boolean canDisplace(IBlockAccess world, int x, int y, int z)
     {
-        if (world.isAirBlock(x, y, z)) return true;
+        if (world.func_147439_a(x, y, z).isAir(world, x, y, z)) return true;
 
-        int bId = world.getBlockId(x, y, z);
+        Block block = world.func_147439_a(x, y, z);
 
-        if (bId == blockID)
+        if (block == this)
         {
             return false;
         }
 
-        if (displacementIds.containsKey(bId))
+        if (displacements.containsKey(block))
         {
-            return displacementIds.get(bId);
+            return displacements.get(block);
         }
 
-        Material material = Block.blocksList[bId].blockMaterial;
-        if (material.blocksMovement() || material == Material.portal)
+        Material material = block.func_149688_o();
+        if (material.blocksMovement() || material == Material.field_151567_E)
         {
             return false;
         }
@@ -152,32 +153,32 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     /**
      * Attempt to displace the block at (x, y, z), return true if it was displaced.
-     * /
+     */
     public boolean displaceIfPossible(World world, int x, int y, int z)
     {
-        if (world.isAirBlock(x, y, z))
+        if (world.func_147439_a(x, y, z).isAir(world, x, y, z))
         {
             return true;
         }
 
-        int bId = world.getBlockId(x, y, z);
-        if (bId == blockID)
+        Block block = world.func_147439_a(x, y, z);
+        if (block == this)
         {
             return false;
         }
 
-        if (displacementIds.containsKey(bId))
+        if (displacements.containsKey(block))
         {
-            if (displacementIds.get(bId))
+            if (displacements.get(block))
             {
-                Block.blocksList[bId].dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
+                block.func_149697_b(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
                 return true;
             }
             return false;
         }
 
-        Material material = Block.blocksList[bId].blockMaterial;
-        if (material.blocksMovement() || material == Material.portal)
+        Material material = block.func_149688_o();
+        if (material.blocksMovement() || material == Material.field_151567_E)
         {
             return false;
         }
@@ -185,7 +186,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         int density = getDensity(world, x, y, z);
         if (density == Integer.MAX_VALUE) 
         {
-        	 Block.blocksList[bId].dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
+        	 block.func_149697_b(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
         	 return true;
         }
         
@@ -202,62 +203,62 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     public abstract int getQuantaValue(IBlockAccess world, int x, int y, int z);
 
     @Override
-    public abstract boolean canCollideCheck(int meta, boolean fullHit);
+    public abstract boolean func_149678_a(int meta, boolean fullHit);
 
     public abstract int getMaxRenderHeightMeta();
 
-    /* BLOCK FUNCTIONS * /
+    /* BLOCK FUNCTIONS */
     @Override
-    public void onBlockAdded(World world, int x, int y, int z)
+    public void func_149726_b(World world, int x, int y, int z)
     {
-        world.scheduleBlockUpdate(x, y, z, blockID, tickRate);
+        world.func_147464_a(x, y, z, this, tickRate);
     }
 
     @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, int blockId)
+    public void func_149695_a(World world, int x, int y, int z, Block block)
     {
-        world.scheduleBlockUpdate(x, y, z, blockID, tickRate);
+        world.func_147464_a(x, y, z, this, tickRate);
     }
 
     // Used to prevent updates on chunk generation
     @Override
-    public boolean func_82506_l()
+    public boolean func_149698_L()
     {
         return false;
     }
 
     @Override
-    public boolean getBlocksMovement(IBlockAccess world, int x, int y, int z)
+    public boolean func_149655_b(IBlockAccess world, int x, int y, int z)
     {
         return true;
     }
 
     @Override
-    public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z)
+    public AxisAlignedBB func_149668_a(World world, int x, int y, int z)
     {
         return null;
     }
 
     @Override
-    public int idDropped(int par1, Random par2Random, int par3)
+    public Item func_149650_a(int par1, Random par2Random, int par3)
+    {
+        return null;
+    }
+
+    @Override
+    public int func_149745_a(Random par1Random)
     {
         return 0;
     }
 
     @Override
-    public int quantityDropped(Random par1Random)
-    {
-        return 0;
-    }
-
-    @Override
-    public int tickRate(World world)
+    public int func_149738_a(World world)
     {
         return tickRate;
     }
 
     @Override
-    public void velocityToAddToEntity(World world, int x, int y, int z, Entity entity, Vec3 vec)
+    public void func_149640_a(World world, int x, int y, int z, Entity entity, Vec3 vec)
     {
         if (densityDir > 0) return;
         Vec3 vec_flow = this.getFlowVector(world, x, y, z);
@@ -278,33 +279,35 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
 
     @Override
-    public int getRenderType()
+    public int func_149645_b()
     {
         return FluidRegistry.renderIdFluid;
     }
 
     @Override
-    public boolean isOpaqueCube()
+    public boolean func_149662_c()
     {
         return false;
     }
 
     @Override
-    public boolean renderAsNormalBlock()
+    public boolean func_149686_d()
     {
         return false;
     }
 
+    /* Never used...?
     @Override
-    public float getBlockBrightness(IBlockAccess world, int x, int y, int z)
+    public float getBlockBrightness(World world, int x, int y, int z)
     {
         float lightThis = world.getLightBrightness(x, y, z);
         float lightUp = world.getLightBrightness(x, y + 1, z);
         return lightThis > lightUp ? lightThis : lightUp;
     }
+    */
 
     @Override
-    public int getMixedBrightnessForBlock(IBlockAccess world, int x, int y, int z)
+    public int func_149677_c(IBlockAccess world, int x, int y, int z)
     {
         int lightThis     = world.getLightBrightnessForSkyBlocks(x, y, z, 0);
         int lightUp       = world.getLightBrightnessForSkyBlocks(x, y + 1, z, 0);
@@ -317,26 +320,26 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
 
     @Override
-    public int getRenderBlockPass()
+    public int func_149701_w()
     {
         return renderPass;
     }
 
     @Override
-    public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side)
+    public boolean func_149646_a(IBlockAccess world, int x, int y, int z, int side)
     {
-        if (world.getBlockId(x, y, z) != blockID)
+        Block block = world.func_147439_a(x, y, z);
+        if (block != this)
         {
-            return !world.isBlockOpaqueCube(x, y, z);
+            return !block.func_149662_c();
         }
-        Material mat = world.getBlockMaterial(x, y, z);
-        return mat == this.blockMaterial ? false : super.shouldSideBeRendered(world, x, y, z, side);
+        return block.func_149688_o() == this.func_149688_o() ? false : super.func_149646_a(world, x, y, z, side);
     }
 
-    /* FLUID FUNCTIONS * /
+    /* FLUID FUNCTIONS */
     public static final int getDensity(IBlockAccess world, int x, int y, int z)
     {
-        Block block = Block.blocksList[world.getBlockId(x, y, z)];
+        Block block = world.func_147439_a(x, y, z);
         if (!(block instanceof BlockFluidBase))
         {
             return Integer.MAX_VALUE;
@@ -346,7 +349,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 	
     public static final int getTemperature(IBlockAccess world, int x, int y, int z)
     {
-        Block block = Block.blocksList[world.getBlockId(x, y, z)];
+        Block block = world.func_147439_a(x, y, z);
         if (!(block instanceof BlockFluidBase))
         {
             return Integer.MAX_VALUE;
@@ -356,8 +359,8 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     public static double getFlowDirection(IBlockAccess world, int x, int y, int z)
     {
-        Block block = Block.blocksList[world.getBlockId(x, y, z)];
-        if (!world.getBlockMaterial(x, y, z).isLiquid())
+        Block block = world.func_147439_a(x, y, z);
+        if (!block.func_149688_o().isLiquid())
         {
             return -1000.0;
         }
@@ -412,7 +415,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             int otherDecay = quantaPerBlock - getQuantaValue(world, x2, y, z2);
             if (otherDecay >= quantaPerBlock)
             {
-                if (!world.getBlockMaterial(x2, y, z2).blocksMovement())
+                if (!world.func_147439_a(x2, y, z2).func_149688_o().blocksMovement())
                 {
                     otherDecay = quantaPerBlock - getQuantaValue(world, x2, y - 1, z2);
                     if (otherDecay >= 0)
@@ -429,17 +432,17 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             }
         }
 
-        if (world.getBlockId(x, y + 1, z) == blockID)
+        if (world.func_147439_a(x, y + 1, z) == this)
         {
             boolean flag =
-                isBlockSolid(world, x,     y,     z - 1, 2) ||
-                isBlockSolid(world, x,     y,     z + 1, 3) ||
-                isBlockSolid(world, x - 1, y,     z,     4) ||
-                isBlockSolid(world, x + 1, y,     z,     5) ||
-                isBlockSolid(world, x,     y + 1, z - 1, 2) ||
-                isBlockSolid(world, x,     y + 1, z + 1, 3) ||
-                isBlockSolid(world, x - 1, y + 1, z,     4) ||
-                isBlockSolid(world, x + 1, y + 1, z,     5);
+                func_149747_d(world, x,     y,     z - 1, 2) ||
+                func_149747_d(world, x,     y,     z + 1, 3) ||
+                func_149747_d(world, x - 1, y,     z,     4) ||
+                func_149747_d(world, x + 1, y,     z,     5) ||
+                func_149747_d(world, x,     y + 1, z - 1, 2) ||
+                func_149747_d(world, x,     y + 1, z + 1, 3) ||
+                func_149747_d(world, x - 1, y + 1, z,     4) ||
+                func_149747_d(world, x + 1, y + 1, z,     5);
 
             if (flag)
             {
@@ -450,7 +453,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         return vec;
     }
 
-    /* IFluidBlock * /
+    /* IFluidBlock */
     @Override
     public Fluid getFluid()
     {
@@ -465,5 +468,4 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         if (remaining > 1) remaining = 1.0f;
         return remaining * (density > 0 ? 1 : -1);
     }
-    */
 }

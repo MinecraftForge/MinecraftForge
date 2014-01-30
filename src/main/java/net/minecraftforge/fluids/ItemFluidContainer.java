@@ -10,14 +10,8 @@ import net.minecraft.nbt.NBTTagCompound;
  * @author King Lemming
  * 
  */
-@SuppressWarnings("unused")
 public class ItemFluidContainer extends Item implements IFluidContainerItem
 {
-    @Override public FluidStack getFluid(ItemStack container){ return null; }
-    @Override public int getCapacity(ItemStack container){ return 0; }
-    @Override public int fill(ItemStack container, FluidStack resource, boolean doFill) { return 0; }
-    @Override public FluidStack drain(ItemStack container, int maxDrain, boolean doDrain){ return null; }
-    /*
     protected int capacity;
 
     public ItemFluidContainer(int itemID)
@@ -37,7 +31,7 @@ public class ItemFluidContainer extends Item implements IFluidContainerItem
         return this;
     }
 
-    /* IFluidContainerItem * /
+    /* IFluidContainerItem */
     @Override
     public FluidStack getFluid(ItemStack container)
     {
@@ -161,5 +155,4 @@ public class ItemFluidContainer extends Item implements IFluidContainerItem
         }
         return stack;
     }
-    */
 }

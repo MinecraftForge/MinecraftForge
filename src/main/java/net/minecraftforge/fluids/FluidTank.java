@@ -10,16 +10,8 @@ import net.minecraft.tileentity.TileEntity;
  * @author King Lemming, cpw (LiquidTank)
  * 
  */
-@SuppressWarnings("unused")
 public class FluidTank implements IFluidTank
 {
-    @Override public FluidStack getFluid() { return null; }
-    @Override public int getFluidAmount() { return 0; }
-    @Override public int getCapacity() { return 0; }
-    @Override public FluidTankInfo getInfo() { return null; } 
-    @Override public int fill(FluidStack resource, boolean doFill) { return 0; }
-    @Override public FluidStack drain(int maxDrain, boolean doDrain){ return null; }
-    /*
     protected FluidStack fluid;
     protected int capacity;
     protected TileEntity tile;
@@ -77,7 +69,7 @@ public class FluidTank implements IFluidTank
         this.capacity = capacity;
     }
 
-    /* IFluidTank * /
+    /* IFluidTank */
     @Override
     public FluidStack getFluid()
     {
@@ -193,5 +185,4 @@ public class FluidTank implements IFluidTank
         }
         return stack;
     }
-    */
 }

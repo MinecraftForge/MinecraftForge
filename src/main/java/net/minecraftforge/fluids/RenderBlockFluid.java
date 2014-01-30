@@ -1,8 +1,10 @@
 package net.minecraftforge.fluids;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
@@ -14,14 +16,8 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
  * @author King Lemming
  * 
  */
-@SuppressWarnings("unused")
 public class RenderBlockFluid implements ISimpleBlockRenderingHandler
 {
-    @Override public void renderInventoryBlock(Block block, int metadata, int modelID, RenderBlocks renderer) {}
-    @Override public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) { return false; }
-    @Override public boolean shouldRender3DInInventory(int modelId) { return false; }
-    @Override public int getRenderId() { return 0; }
-    /*
     public static RenderBlockFluid instance = new RenderBlockFluid();
 
     static final float LIGHT_Y_NEG = 0.5F;
@@ -59,9 +55,9 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
 
     public float getFluidHeightForRender(IBlockAccess world, int x, int y, int z, BlockFluidBase block)
     {
-        if (world.getBlockId(x, y, z) == block.blockID)
+        if (world.func_147439_a(x, y, z) == block)
         {
-            if (world.getBlockMaterial(x, y - block.densityDir, z).isLiquid())
+            if (world.func_147439_a(x, y - block.densityDir, z).func_149688_o().isLiquid())
             {
                 return 1;
             }
@@ -71,10 +67,10 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                 return 0.875F;
             }
         }
-        return !world.getBlockMaterial(x, y, z).isSolid() && world.getBlockId(x, y - block.densityDir, z) == block.blockID ? 1 : block.getQuantaPercentage(world, x, y, z) * 0.875F;
+        return !world.func_147439_a(x, y, z).func_149688_o().isSolid() && world.func_147439_a(x, y - block.densityDir, z) == block ? 1 : block.getQuantaPercentage(world, x, y, z) * 0.875F;
     }
 
-    /* ISimpleBlockRenderingHandler * /
+    /* ISimpleBlockRenderingHandler */
     @Override
     public void renderInventoryBlock(Block block, int metadata, int modelID, RenderBlocks renderer){}
 
@@ -87,7 +83,7 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
         }
 
         Tessellator tessellator = Tessellator.instance;
-        int color = block.colorMultiplier(world, x, y, z);
+        int color = block.func_149720_d(world, x, y, z);
         float red = (color >> 16 & 255) / 255.0F;
         float green = (color >> 8 & 255) / 255.0F;
         float blue = (color & 255) / 255.0F;
@@ -95,16 +91,16 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
         BlockFluidBase theFluid = (BlockFluidBase) block;
         int bMeta = world.getBlockMetadata(x, y, z);
 
-        boolean renderTop = world.getBlockId(x, y - theFluid.densityDir, z) != theFluid.blockID;
+        boolean renderTop = world.func_147439_a(x, y - theFluid.densityDir, z) != theFluid;
 
-        boolean renderBottom = block.shouldSideBeRendered(world, x, y + theFluid.densityDir, z, 0) && world.getBlockId(x, y + theFluid.densityDir, z) != theFluid.blockID;
+        boolean renderBottom = block.func_149646_a(world, x, y + theFluid.densityDir, z, 0) && world.func_147439_a(x, y + theFluid.densityDir, z) != theFluid;
 
         boolean[] renderSides = new boolean[]
         {
-            block.shouldSideBeRendered(world, x, y, z - 1, 2), 
-            block.shouldSideBeRendered(world, x, y, z + 1, 3),
-            block.shouldSideBeRendered(world, x - 1, y, z, 4), 
-            block.shouldSideBeRendered(world, x + 1, y, z, 5)
+            block.func_149646_a(world, x, y, z - 1, 2), 
+            block.func_149646_a(world, x, y, z + 1, 3),
+            block.func_149646_a(world, x - 1, y, z, 4), 
+            block.func_149646_a(world, x + 1, y, z, 5)
         };
 
         if (!renderTop && !renderBottom && !renderSides[0] && !renderSides[1] && !renderSides[2] && !renderSides[3])
@@ -142,15 +138,15 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
             }
 
             boolean rises = theFluid.densityDir == 1;
-            if (renderer.renderAllFaces || renderTop)
+            if (renderer.field_147837_f || renderTop)
             {
                 rendered = true;
-                Icon iconStill = block.getIcon(1, bMeta);
+                IIcon iconStill = getIcon(block.func_149691_a(1, bMeta));
                 float flowDir = (float) BlockFluidBase.getFlowDirection(world, x, y, z);
 
                 if (flowDir > -999.0F)
                 {
-                    iconStill = block.getIcon(2, bMeta);
+                    iconStill = getIcon(block.func_149691_a(2, bMeta));
                 }
 
                 heightNW -= RENDER_OFFSET;
@@ -185,7 +181,7 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                     v3 = iconStill.getInterpolatedV(8.0F + (-zFlow - xFlow) * 16.0F);
                 }
 
-                tessellator.setBrightness(block.getMixedBrightnessForBlock(world, x, y, z));
+                tessellator.setBrightness(block.func_149677_c(world, x, y, z));
                 tessellator.setColorOpaque_F(LIGHT_Y_POS * red, LIGHT_Y_POS * green, LIGHT_Y_POS * blue);
 
                 if (!rises)
@@ -204,19 +200,19 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                 }
             }
 
-            if (renderer.renderAllFaces || renderBottom)
+            if (renderer.field_147837_f || renderBottom)
             {
                 rendered = true;
-                tessellator.setBrightness(block.getMixedBrightnessForBlock(world, x, y - 1, z));
+                tessellator.setBrightness(block.func_149677_c(world, x, y - 1, z));
                 if (!rises)
                 {
                     tessellator.setColorOpaque_F(LIGHT_Y_NEG * red, LIGHT_Y_NEG * green, LIGHT_Y_NEG * blue);
-                    renderer.renderFaceYNeg(block, x, y + RENDER_OFFSET, z, block.getIcon(0, bMeta));
+                    renderer.func_147768_a(block, x, y + RENDER_OFFSET, z, getIcon(block.func_149691_a(0, bMeta)));
                 }
                 else
                 {
                     tessellator.setColorOpaque_F(LIGHT_Y_POS * red, LIGHT_Y_POS * green, LIGHT_Y_POS * blue);
-                    renderer.renderFaceYPos(block, x, y + RENDER_OFFSET, z, block.getIcon(1, bMeta));
+                    renderer.func_147806_b(block, x, y + RENDER_OFFSET, z, getIcon(block.func_149691_a(1, bMeta)));
                 }
             }
 
@@ -233,8 +229,8 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                     case 3: ++x2; break;
                 }
 
-                Icon iconFlow = block.getIcon(side + 2, bMeta);
-                if (renderer.renderAllFaces || renderSides[side])
+                IIcon iconFlow = getIcon(block.func_149691_a(side + 2, bMeta));
+                if (renderer.field_147837_f || renderSides[side])
                 {
                     rendered = true;
 
@@ -287,7 +283,7 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                     float v1Flow = iconFlow.getInterpolatedV((1.0D - ty1) * 16.0D * 0.5D);
                     float v2Flow = iconFlow.getInterpolatedV((1.0D - ty2) * 16.0D * 0.5D);
                     float v3Flow = iconFlow.getInterpolatedV(8.0D);
-                    tessellator.setBrightness(block.getMixedBrightnessForBlock(world, x2, y, z2));
+                    tessellator.setBrightness(block.func_149677_c(world, x2, y, z2));
                     float sideLighting = 1.0F;
 
                     if (side < 2)
@@ -317,18 +313,24 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                     }
                 }
             }
-            renderer.renderMinY = 0;
-            renderer.renderMaxY = 1;
+            renderer.field_147855_j = 0;
+            renderer.field_147857_k = 1;
             return rendered;
         }
     }
 
     @Override
-    public boolean shouldRender3DInInventory(){ return false; }
+    public boolean shouldRender3DInInventory(int modelId){ return false; }
     @Override
     public int getRenderId()
     {
         return FluidRegistry.renderIdFluid;
     }
-    */
+
+
+    private IIcon getIcon(IIcon icon)
+    {
+        if (icon != null) return icon;
+        return ((TextureMap)Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
+    }
 }

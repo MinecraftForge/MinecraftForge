@@ -11,33 +11,25 @@ import net.minecraftforge.common.util.ForgeDirection;
  * @author King Lemming
  * 
  */
-@SuppressWarnings("unused")
 public class TileFluidHandler extends TileEntity implements IFluidHandler
 {
-    @Override public int fill(ForgeDirection from, FluidStack resource, boolean doFill) { return 0; }
-    @Override public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) { return null; }
-    @Override public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) { return null; }
-    @Override public boolean canFill(ForgeDirection from, Fluid fluid) { return false; }
-    @Override public boolean canDrain(ForgeDirection from, Fluid fluid) { return false; }
-    @Override public FluidTankInfo[] getTankInfo(ForgeDirection from) { return null; }
-    /*
     protected FluidTank tank = new FluidTank(FluidContainerRegistry.BUCKET_VOLUME);
 
     @Override
-    public void readFromNBT(NBTTagCompound tag)
+    public void func_145839_a(NBTTagCompound tag)
     {
-        super.readFromNBT(tag);
-        tank.writeToNBT(tag);
-    }
-
-    @Override
-    public void writeToNBT(NBTTagCompound tag)
-    {
-        super.writeToNBT(tag);
+        super.func_145839_a(tag);
         tank.readFromNBT(tag);
     }
 
-    /* IFluidHandler * /
+    @Override
+    public void func_145841_b(NBTTagCompound tag)
+    {
+        super.func_145841_b(tag);
+        tank.writeToNBT(tag);
+    }
+
+    /* IFluidHandler */
     @Override
     public int fill(ForgeDirection from, FluidStack resource, boolean doFill)
     {
@@ -77,5 +69,4 @@ public class TileFluidHandler extends TileEntity implements IFluidHandler
     {
         return new FluidTankInfo[] { tank.getInfo() };
     }
-    */
 }
