@@ -16,9 +16,11 @@ import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.PixelFormat;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLLog;
 import net.minecraft.client.Minecraft;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -48,6 +50,8 @@ import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.RenderBlockFluid;
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
 import static net.minecraftforge.common.ForgeVersion.Status.*;
@@ -256,8 +260,8 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Post(map));
 
-        //FluidRegistry.WATER.setIcons(BlockLiquid.func_149803_e("water_still"), BlockLiquid.func_149803_e("water_flow"));
-        //FluidRegistry.LAVA.setIcons(BlockLiquid.func_149803_e("lava_still"), BlockLiquid.func_149803_e("lava_flow"));
+        FluidRegistry.WATER.setIcons(BlockLiquid.func_149803_e("water_still"), BlockLiquid.func_149803_e("water_flow"));
+        FluidRegistry.LAVA.setIcons(BlockLiquid.func_149803_e("lava_still"), BlockLiquid.func_149803_e("lava_flow"));
     }
 
     /**
@@ -397,8 +401,8 @@ public class ForgeHooksClient
      */
     static
     {
-        //FluidRegistry.renderIdFluid = RenderingRegistry.getNextAvailableRenderId();
-        //RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
+        FluidRegistry.renderIdFluid = RenderingRegistry.getNextAvailableRenderId();
+        RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
     }
 
     public static void renderMainMenu(GuiMainMenu gui, FontRenderer font, int width, int height)
