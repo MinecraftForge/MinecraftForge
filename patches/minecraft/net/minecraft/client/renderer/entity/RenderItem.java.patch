@@ -219,7 +219,7 @@
              if (par3ItemStack.hasEffect())
              {
                  GL11.glDepthFunc(GL11.GL_EQUAL);
-@@ -540,11 +603,28 @@
+@@ -540,11 +603,29 @@
                  GL11.glEnable(GL11.GL_LIGHTING);
                  GL11.glDepthFunc(GL11.GL_LEQUAL);
              }
@@ -240,6 +240,7 @@
 +        GL11.glColor4f(0.5F, 0.25F, 0.8F, 1.0F);
 +        this.renderGlint(x * 431278612 + y * 32178161, x - 2, y - 2, 20, 20);
 +        GL11.glDepthMask(true);
++        GL11.glDisable(GL11.GL_BLEND);
 +        GL11.glDisable(GL11.GL_ALPHA_TEST);
 +        GL11.glEnable(GL11.GL_LIGHTING);
 +        GL11.glDepthFunc(GL11.GL_LEQUAL);
@@ -248,7 +249,7 @@
      private void renderGlint(int par1, int par2, int par3, int par4, int par5)
      {
          for (int j1 = 0; j1 < 2; ++j1)
-@@ -649,4 +729,42 @@
+@@ -649,4 +730,42 @@
      {
          this.doRender((EntityItem)par1Entity, par2, par4, par6, par8, par9);
      }
