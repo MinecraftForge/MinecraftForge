@@ -14,6 +14,7 @@ package cpw.mods.fml.common.registry;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -157,11 +158,19 @@ public class GameData {
         {
             customOwners.put(new UniqueIdentifier(modId, name), mc);
         }
-        int blockId = blockRegistry.add(0, name, block);
-        int itemId = itemRegistry.add(blockId, name, item);
-        if (itemId != blockId)
+        BitSet blockAvailability = blockRegistry.slots();
+        BitSet itemAvailability = itemRegistry.slots();
+        blockAvailability.or(itemAvailability);
+        int blockId = blockAvailability.nextClearBit(0);
+        if (blockId >= blockRegistry.maxId)
         {
-            throw new RuntimeException();
+        	throw new RuntimeException(String.format("No more space for block allocations: used %d block ids", blockId -1));
+        }
+        int actualBlockId = blockRegistry.add(blockId, name, block);
+        int itemId = itemRegistry.add(blockId, name, item);
+        if (blockId != actualBlockId || itemId != blockId)
+        {
+            throw new RuntimeException(String.format("There was a failure to allocate a matching block and item pair for %s: requested %d, got %d and %d", name, blockId, actualBlockId, itemId));
         }
 
     }

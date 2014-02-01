@@ -107,7 +107,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     private Map<String,Integer> transactionalNamedIds;
     private BitSet transactionalAvailabilityMap;
     private BitSet availabilityMap;
-    private int maxId;
+    int maxId;
     private int minId;
     private char discriminator;
 
@@ -315,5 +315,10 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
             Object thing = idMap().get(entry.getValue().intValue());
             FMLLog.finer("Registry : %s %d %s", name, entry.getValue(), thing);
         }
+    }
+    
+    BitSet slots()
+    {
+    	return (BitSet) availabilityMap.clone();
     }
 }
