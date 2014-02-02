@@ -1,6 +1,7 @@
 package net.minecraftforge.client.model.techne;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.IModelAnimationCustom;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.client.model.IModelCustomLoader;
 import net.minecraftforge.client.model.ModelFormatException;
@@ -26,4 +27,9 @@ public class TechneModelLoader implements IModelCustomLoader {
         return new TechneModel(resource);
     }
 
+    @Override
+    public IModelAnimationCustom loadAnimationInstance(ResourceLocation resource) throws ModelFormatException
+    {
+        throw new ModelFormatException("Techne format does not support animations");
+    }
 }

@@ -1,6 +1,7 @@
 package net.minecraftforge.client.model.obj;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.IModelAnimationCustom;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.client.model.IModelCustomLoader;
 import net.minecraftforge.client.model.ModelFormatException;
@@ -25,5 +26,11 @@ public class ObjModelLoader implements IModelCustomLoader
     public IModelCustom loadInstance(ResourceLocation resource) throws ModelFormatException
     {
         return new WavefrontObject(resource);
+    }
+
+    @Override
+    public IModelAnimationCustom loadAnimationInstance(ResourceLocation resource) throws ModelFormatException
+    {
+        throw new ModelFormatException("Obj format does not support animations");
     }
 }
