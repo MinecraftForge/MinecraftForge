@@ -6,7 +6,6 @@ import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.internal.HandshakeCompletionHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -16,7 +15,7 @@ public class ForgeNetworkHandler
 
     public static void registerChannel(ForgeModContainer forgeModContainer, Side side)
     {
-        channelPair = NetworkRegistry.INSTANCE.newChannel(forgeModContainer, "FORGE", new ForgeRuntimeCodec(), new HandshakeCompletionHandler());
+        channelPair = NetworkRegistry.INSTANCE.newChannel(forgeModContainer, "FORGE", new ForgeRuntimeCodec());
         if (side == Side.CLIENT)
         {
             addClientHandlers();
