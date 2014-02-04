@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemEmptyMap.java
++++ ../src-work/minecraft/net/minecraft/item/ItemEmptyMap.java
+@@ -25,7 +25,7 @@
+         int i = 128 * (1 << mapdata.field_76197_d);
+         mapdata.field_76201_a = (int)(Math.round(p_77659_3_.field_70165_t / (double)i) * (long)i);
+         mapdata.field_76199_b = (int)(Math.round(p_77659_3_.field_70161_v / (double)i) * (long)i);
+-        mapdata.field_76200_c = (byte)p_77659_2_.field_73011_w.field_76574_g;
++        mapdata.field_76200_c = p_77659_2_.field_73011_w.field_76574_g;
+         mapdata.func_76185_a();
+         --p_77659_1_.field_77994_a;
+ 
