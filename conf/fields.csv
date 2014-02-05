@@ -705,7 +705,7 @@ field_72990_M,ambientTickCountdown,2,number of ticks until the next random ambie
 field_72992_H,spawnPeacefulMobs,2,A flag indicating whether we should spawn peaceful mobs.
 field_72993_I,activeChunkSet,2,Positions to update
 field_72994_J,lightUpdateBlockList,2,"is a temporary list of blocks and light values used when updating light levels. Holds up to 32x32x32 blocks (the maximum influence of a light source.) Every element is a packed bit value: 0000000000LLLLzzzzzzyyyyyyxxxxxx. The 4-bit L is a light level used when darkening blocks. 6-bit numbers x, y and z represent the block's offset from the original block, plus 32 (i.e. value of 31 would mean a -1 offset"
-field_72995_K,isClient,2,"This is set to true for client worlds, and false for server worlds."
+field_72995_K,isRemote,2,"This is set to true for client worlds, and false for server worlds."
 field_72996_f,loadedEntityList,2,A list of all Entities in all currently-loaded chunks
 field_72997_g,unloadedEntityList,2,
 field_72998_d,collidingBoundingBoxes,2,
