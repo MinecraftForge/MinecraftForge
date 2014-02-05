@@ -14,7 +14,7 @@
      // JAVADOC FIELD $$ field_76815_a
 @@ -136,26 +141,30 @@
  
-     protected void func_150513_a(BiomeGenBase p_150513_1_)
+     protected void genDecorations(BiomeGenBase p_150513_1_)
      {
 +        MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Pre(currentWorld, randomGenerator, chunk_X, chunk_Z));
          this.generateOres();

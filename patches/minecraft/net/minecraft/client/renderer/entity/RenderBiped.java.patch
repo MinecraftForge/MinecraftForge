@@ -76,8 +76,8 @@
 +
              if (item instanceof ItemBlock)
              {
--                if (RenderBlocks.func_147739_a(Block.func_149634_a(item).func_149645_b()))
-+                if (is3D || RenderBlocks.func_147739_a(Block.func_149634_a(item).func_149645_b()))
+-                if (RenderBlocks.renderItemIn3d(Block.getBlockFromItem(item).getRenderType()))
++                if (is3D || RenderBlocks.renderItemIn3d(Block.getBlockFromItem(item).getRenderType()))
                  {
                      f1 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
@@ -85,11 +85,11 @@
              this.modelBipedMain.bipedRightArm.postRender(0.0625F);
              GL11.glTranslatef(-0.0625F, 0.4375F, 0.0625F);
  
--            if (item instanceof ItemBlock && RenderBlocks.func_147739_a(Block.func_149634_a(item).func_149645_b()))
+-            if (item instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.getBlockFromItem(item).getRenderType()))
 +            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack, EQUIPPED);
 +            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, itemstack, BLOCK_3D));
 +
-+            if (item instanceof ItemBlock && (is3D || RenderBlocks.func_147739_a(Block.func_149634_a(item).func_149645_b())))
++            if (item instanceof ItemBlock && (is3D || RenderBlocks.renderItemIn3d(Block.getBlockFromItem(item).getRenderType())))
              {
                  f1 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);

@@ -56,9 +56,9 @@
  
 +    private HashMap<String, IExtendedEntityProperties> extendedProperties;
 +
-     public int func_145782_y()
+     public int getEntityId()
      {
-         return this.field_145783_c;
+         return this.entityId;
 @@ -189,6 +209,15 @@
          this.dataWatcher.addObject(0, Byte.valueOf((byte)0));
          this.dataWatcher.addObject(1, Short.valueOf((short)300));
@@ -77,9 +77,9 @@
      protected abstract void entityInit();
 @@ -1051,9 +1080,22 @@
  
-         if (block.func_149688_o() == par1Material)
+         if (block.getMaterial() == par1Material)
          {
--            float f = BlockLiquid.func_149801_b(this.worldObj.getBlockMetadata(i, j, k)) - 0.11111111F;
+-            float f = BlockLiquid.getLiquidHeightPercent(this.worldObj.getBlockMetadata(i, j, k)) - 0.11111111F;
 -            float f1 = (float)(j + 1) - f;
 -            return d0 < (double)f1;
 +            double filled = 1.0f; //If it's not a liquid assume it's a solid block
@@ -164,7 +164,7 @@
 @@ -1512,7 +1597,14 @@
          {
              EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
-             entityitem.field_145804_b = 10;
+             entityitem.delayBeforeCanPickup = 10;
 -            this.worldObj.spawnEntityInWorld(entityitem);
 +            if (captureDrops)
 +            {
@@ -190,12 +190,12 @@
  
      public float func_145772_a(Explosion p_145772_1_, World p_145772_2_, int p_145772_3_, int p_145772_4_, int p_145772_5_, Block p_145772_6_)
      {
--        return p_145772_6_.func_149638_a(this);
+-        return p_145772_6_.getExplosionResistance(this);
 +        return p_145772_6_.getExplosionResistance(this, p_145772_2_, p_145772_3_, p_145772_3_, p_145772_4_, posX, posY + getEyeHeight(), posZ);
      }
  
      public boolean func_145774_a(Explosion p_145774_1_, World p_145774_2_, int p_145774_3_, int p_145774_4_, int p_145774_5_, Block p_145774_6_, float p_145774_7_)
-@@ -2175,6 +2267,174 @@
+@@ -2176,6 +2268,174 @@
  
      public void func_145781_i(int p_145781_1_) {}
  
@@ -280,7 +280,7 @@
 +     */
 +    public final void resetEntityId()
 +    {
-+        this.field_145783_c = nextEntityID++;
++        this.entityId = nextEntityID++;
 +    }
 +
 +    public boolean shouldRenderInPass(int pass)

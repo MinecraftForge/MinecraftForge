@@ -10,7 +10,7 @@
  import net.minecraft.world.WorldServer;
  import net.minecraft.world.WorldSettings;
  import net.minecraft.world.demo.DemoWorldManager;
-@@ -375,13 +377,23 @@
+@@ -377,13 +379,23 @@
      // JAVADOC METHOD $$ func_72368_a
      public EntityPlayerMP respawnPlayer(EntityPlayerMP par1EntityPlayerMP, int par2, boolean par3)
      {
@@ -36,15 +36,15 @@
          par1EntityPlayerMP.dimension = par2;
          Object object;
  
-@@ -397,6 +409,7 @@
-         EntityPlayerMP entityplayermp1 = new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension), par1EntityPlayerMP.func_146103_bH(), (ItemInWorldManager)object);
+@@ -399,6 +411,7 @@
+         EntityPlayerMP entityplayermp1 = new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension), par1EntityPlayerMP.getGameProfile(), (ItemInWorldManager)object);
          entityplayermp1.playerNetServerHandler = par1EntityPlayerMP.playerNetServerHandler;
          entityplayermp1.clonePlayer(par1EntityPlayerMP, par3);
 +        entityplayermp1.dimension = par2;
-         entityplayermp1.func_145769_d(par1EntityPlayerMP.func_145782_y());
+         entityplayermp1.setEntityId(par1EntityPlayerMP.getEntityId());
          WorldServer worldserver = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
          this.func_72381_a(entityplayermp1, par1EntityPlayerMP, worldserver);
-@@ -441,6 +454,11 @@
+@@ -443,6 +456,11 @@
  
      public void transferPlayerToDimension(EntityPlayerMP par1EntityPlayerMP, int par2)
      {
@@ -56,16 +56,16 @@
          int j = par1EntityPlayerMP.dimension;
          WorldServer worldserver = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
          par1EntityPlayerMP.dimension = par2;
-@@ -448,7 +466,7 @@
-         par1EntityPlayerMP.playerNetServerHandler.func_147359_a(new S07PacketRespawn(par1EntityPlayerMP.dimension, par1EntityPlayerMP.worldObj.difficultySetting, par1EntityPlayerMP.worldObj.getWorldInfo().getTerrainType(), par1EntityPlayerMP.theItemInWorldManager.getGameType()));
+@@ -450,7 +468,7 @@
+         par1EntityPlayerMP.playerNetServerHandler.sendPacket(new S07PacketRespawn(par1EntityPlayerMP.dimension, par1EntityPlayerMP.worldObj.difficultySetting, par1EntityPlayerMP.worldObj.getWorldInfo().getTerrainType(), par1EntityPlayerMP.theItemInWorldManager.getGameType()));
          worldserver.removePlayerEntityDangerously(par1EntityPlayerMP);
          par1EntityPlayerMP.isDead = false;
 -        this.transferEntityToWorld(par1EntityPlayerMP, j, worldserver, worldserver1);
 +        this.transferEntityToWorld(par1EntityPlayerMP, j, worldserver, worldserver1, teleporter);
          this.func_72375_a(par1EntityPlayerMP, worldserver);
-         par1EntityPlayerMP.playerNetServerHandler.func_147364_a(par1EntityPlayerMP.posX, par1EntityPlayerMP.posY, par1EntityPlayerMP.posZ, par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
+         par1EntityPlayerMP.playerNetServerHandler.setPlayerLocation(par1EntityPlayerMP.posX, par1EntityPlayerMP.posY, par1EntityPlayerMP.posZ, par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
          par1EntityPlayerMP.theItemInWorldManager.setWorld(worldserver1);
-@@ -467,15 +485,23 @@
+@@ -469,15 +487,23 @@
      // JAVADOC METHOD $$ func_82448_a
      public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer)
      {
@@ -92,7 +92,7 @@
          if (par1Entity.dimension == -1)
          {
              d0 /= d2;
-@@ -498,7 +524,8 @@
+@@ -500,7 +526,8 @@
                  par3WorldServer.updateEntityWithOptionalForce(par1Entity, false);
              }
          }
@@ -102,7 +102,7 @@
          {
              ChunkCoordinates chunkcoordinates;
  
-@@ -533,7 +560,7 @@
+@@ -535,7 +562,7 @@
              if (par1Entity.isEntityAlive())
              {
                  par1Entity.setLocationAndAngles(d0, par1Entity.posY, d1, par1Entity.rotationYaw, par1Entity.rotationPitch);

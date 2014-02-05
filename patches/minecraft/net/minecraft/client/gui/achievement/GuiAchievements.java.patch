@@ -37,26 +37,26 @@
  
      // JAVADOC METHOD $$ func_73866_w_
 @@ -66,6 +81,7 @@
-         this.field_146297_k.func_147114_u().func_147297_a(new C16PacketClientStatus(C16PacketClientStatus.EnumState.REQUEST_STATS));
-         this.field_146292_n.clear();
-         this.field_146292_n.add(new GuiOptionButton(1, this.field_146294_l / 2 + 24, this.field_146295_m / 2 + 74, 80, 20, I18n.getStringParams("gui.done", new Object[0])));
-+        this.field_146292_n.add(button = new GuiButton(2, (field_146294_l - field_146555_f) / 2 + 24, field_146295_m / 2 + 74, 125, 20, AchievementPage.getTitle(currentPage)));
+         this.mc.getNetHandler().addToSendQueue(new C16PacketClientStatus(C16PacketClientStatus.EnumState.REQUEST_STATS));
+         this.buttonList.clear();
+         this.buttonList.add(new GuiOptionButton(1, this.width / 2 + 24, this.height / 2 + 74, 80, 20, I18n.format("gui.done", new Object[0])));
++        this.buttonList.add(button = new GuiButton(2, (width - field_146555_f) / 2 + 24, height / 2 + 74, 125, 20, AchievementPage.getTitle(currentPage)));
      }
  
-     protected void func_146284_a(GuiButton p_146284_1_)
+     protected void actionPerformed(GuiButton p_146284_1_)
 @@ -76,6 +92,16 @@
              {
-                 this.field_146297_k.func_147108_a(this.field_146562_a);
+                 this.mc.displayGuiScreen(this.field_146562_a);
              }
 +
-+            if (p_146284_1_.field_146127_k == 2)
++            if (p_146284_1_.id == 2)
 +            {
 +                currentPage++;
 +                if (currentPage >= AchievementPage.getAchievementPages().size())
 +                {
 +                    currentPage = -1;
 +                }
-+                button.field_146126_j = AchievementPage.getTitle(currentPage);
++                button.displayString = AchievementPage.getTitle(currentPage);
 +            }
          }
      }

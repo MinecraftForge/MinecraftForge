@@ -8,18 +8,18 @@
  import net.minecraft.world.World;
  
  public class BlockOre extends Block
-@@ -51,34 +52,40 @@
-     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
+@@ -54,34 +55,40 @@
+     public void dropBlockAsItemWithChance(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
      {
-         super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
+         super.dropBlockAsItemWithChance(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
 +    }
  
--        if (this.func_149650_a(p_149690_5_, p_149690_1_.rand, p_149690_7_) != Item.func_150898_a(this))
+-        if (this.getItemDropped(p_149690_5_, p_149690_1_.rand, p_149690_7_) != Item.getItemFromBlock(this))
 +    private Random rand = new Random();
 +    @Override
 +    public int getExpDrop(IBlockAccess p_149690_1_, int p_149690_5_, int p_149690_7_)
 +    {
-+        if (this.func_149650_a(p_149690_5_, rand, p_149690_7_) != Item.func_150898_a(this))
++        if (this.getItemDropped(p_149690_5_, rand, p_149690_7_) != Item.getItemFromBlock(this))
          {
              int j1 = 0;
  
@@ -49,10 +49,10 @@
 +                j1 = MathHelper.getRandomIntegerInRange(rand, 2, 5);
              }
  
--            this.func_149657_c(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, j1);
+-            this.dropXpOnBlockBreak(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, j1);
 +            return j1;
          }
 +        return 0;
      }
  
-     public int func_149692_a(int p_149692_1_)
+     // JAVADOC METHOD $$ func_149692_a

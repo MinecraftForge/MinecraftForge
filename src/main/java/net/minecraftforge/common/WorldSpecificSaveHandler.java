@@ -15,7 +15,6 @@ import net.minecraft.world.WorldServer;
 
 public class WorldSpecificSaveHandler implements ISaveHandler
 {
-    @SuppressWarnings("unused")
     private WorldServer world;
     private ISaveHandler parent;
     private File dataDir;

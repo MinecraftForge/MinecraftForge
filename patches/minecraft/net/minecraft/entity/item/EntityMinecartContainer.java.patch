@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityMinecartContainer.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecartContainer.java
-@@ -248,6 +248,7 @@
+@@ -249,6 +249,7 @@
      // JAVADOC METHOD $$ func_130002_c
      public boolean interactFirst(EntityPlayer par1EntityPlayer)
      {

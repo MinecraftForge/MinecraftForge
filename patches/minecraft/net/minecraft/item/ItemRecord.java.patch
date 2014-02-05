@@ -8,8 +8,8 @@
  import net.minecraft.util.StatCollector;
  import net.minecraft.world.World;
  
-@@ -24,7 +25,7 @@
-         this.field_150929_a = p_i45350_1_;
+@@ -25,7 +26,7 @@
+         this.recordName = p_i45350_1_;
          this.maxStackSize = 1;
          this.setCreativeTab(CreativeTabs.tabMisc);
 -        field_150928_b.put(p_i45350_1_, this);
@@ -17,7 +17,7 @@
      }
  
      // JAVADOC METHOD $$ func_77617_a
-@@ -81,4 +82,15 @@
+@@ -83,4 +84,15 @@
      {
          return (ItemRecord)field_150928_b.get(p_150926_0_);
      }

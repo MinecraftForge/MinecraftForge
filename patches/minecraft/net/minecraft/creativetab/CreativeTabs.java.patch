@@ -52,7 +52,7 @@
 -            if (item != null && item.getCreativeTab() == this)
 +            if (item == null)
              {
--                item.func_150895_a(item, this, par1List);
+-                item.getSubItems(item, this, par1List);
 +                continue;
              }
 +
@@ -60,7 +60,7 @@
 +            {
 +                if (tab == this)
 +                {
-+                    item.func_150895_a(item, this, par1List);
++                    item.getSubItems(item, this, par1List);
 +                }
 +            }
          }

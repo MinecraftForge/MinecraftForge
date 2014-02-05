@@ -15,9 +15,9 @@
 +    {
          super(par1World, par2, par4, par6, par8, par10, par12);
          this.field_145784_a = par14Block;
--        this.setParticleIcon(par14Block.func_149691_a(0, par15));
-+        this.setParticleIcon(par14Block.func_149691_a(side, par15));
-         this.particleGravity = par14Block.field_149763_I;
+-        this.setParticleIcon(par14Block.getIcon(0, par15));
++        this.setParticleIcon(par14Block.getIcon(side, par15));
+         this.particleGravity = par14Block.blockParticleGravity;
          this.particleRed = this.particleGreen = this.particleBlue = 0.6F;
          this.particleScale /= 2.0F;
 +        this.side = side;

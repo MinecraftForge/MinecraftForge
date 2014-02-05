@@ -15,7 +15,7 @@
          this.sendQueue = p_i45063_1_;
          this.difficultySetting = p_i45063_4_;
 -        this.setSpawnLocation(8, 64, 8);
-         this.mapStorage = p_i45063_1_.field_147305_a;
+         this.mapStorage = p_i45063_1_.mapStorageOrigin;
 +        this.isRemote = true;
 +        this.finishSetup();
 +        this.setSpawnLocation(8, 64, 8);

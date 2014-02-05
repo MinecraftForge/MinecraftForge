@@ -32,10 +32,10 @@
 +                return true;
 +            }
 +
-             Block block = par3World.func_147439_a(par4, par5, par6);
+             Block block = par3World.getBlock(par4, par5, par6);
  
--            if (par7 != 0 && par3World.func_147439_a(par4, par5 + 1, par6).func_149688_o() == Material.field_151579_a && (block == Blocks.grass || block == Blocks.dirt))
-+            if (par7 != 0 && par3World.func_147439_a(par4, par5 + 1, par6).isAir(par3World, par4, par5 + 1, par6) && (block == Blocks.grass || block == Blocks.dirt))
+-            if (par7 != 0 && par3World.getBlock(par4, par5 + 1, par6).getMaterial() == Material.air && (block == Blocks.grass || block == Blocks.dirt))
++            if (par7 != 0 && par3World.getBlock(par4, par5 + 1, par6).isAir(par3World, par4, par5 + 1, par6) && (block == Blocks.grass || block == Blocks.dirt))
              {
                  Block block1 = Blocks.farmland;
-                 par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), block1.field_149762_H.func_150498_e(), (block1.field_149762_H.func_150497_c() + 1.0F) / 2.0F, block1.field_149762_H.func_150494_d() * 0.8F);
+                 par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), block1.stepSound.getStepResourcePath(), (block1.stepSound.getVolume() + 1.0F) / 2.0F, block1.stepSound.getPitch() * 0.8F);

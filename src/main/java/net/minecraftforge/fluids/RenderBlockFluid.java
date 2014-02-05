@@ -55,9 +55,9 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
 
     public float getFluidHeightForRender(IBlockAccess world, int x, int y, int z, BlockFluidBase block)
     {
-        if (world.func_147439_a(x, y, z) == block)
+        if (world.getBlock(x, y, z) == block)
         {
-            if (world.func_147439_a(x, y - block.densityDir, z).func_149688_o().isLiquid())
+            if (world.getBlock(x, y - block.densityDir, z).getMaterial().isLiquid())
             {
                 return 1;
             }
@@ -67,7 +67,7 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                 return 0.875F;
             }
         }
-        return !world.func_147439_a(x, y, z).func_149688_o().isSolid() && world.func_147439_a(x, y - block.densityDir, z) == block ? 1 : block.getQuantaPercentage(world, x, y, z) * 0.875F;
+        return !world.getBlock(x, y, z).getMaterial().isSolid() && world.getBlock(x, y - block.densityDir, z) == block ? 1 : block.getQuantaPercentage(world, x, y, z) * 0.875F;
     }
 
     /* ISimpleBlockRenderingHandler */
@@ -83,7 +83,7 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
         }
 
         Tessellator tessellator = Tessellator.instance;
-        int color = block.func_149720_d(world, x, y, z);
+        int color = block.colorMultiplier(world, x, y, z);
         float red = (color >> 16 & 255) / 255.0F;
         float green = (color >> 8 & 255) / 255.0F;
         float blue = (color & 255) / 255.0F;
@@ -91,16 +91,16 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
         BlockFluidBase theFluid = (BlockFluidBase) block;
         int bMeta = world.getBlockMetadata(x, y, z);
 
-        boolean renderTop = world.func_147439_a(x, y - theFluid.densityDir, z) != theFluid;
+        boolean renderTop = world.getBlock(x, y - theFluid.densityDir, z) != theFluid;
 
-        boolean renderBottom = block.func_149646_a(world, x, y + theFluid.densityDir, z, 0) && world.func_147439_a(x, y + theFluid.densityDir, z) != theFluid;
+        boolean renderBottom = block.shouldSideBeRendered(world, x, y + theFluid.densityDir, z, 0) && world.getBlock(x, y + theFluid.densityDir, z) != theFluid;
 
         boolean[] renderSides = new boolean[]
         {
-            block.func_149646_a(world, x, y, z - 1, 2), 
-            block.func_149646_a(world, x, y, z + 1, 3),
-            block.func_149646_a(world, x - 1, y, z, 4), 
-            block.func_149646_a(world, x + 1, y, z, 5)
+            block.shouldSideBeRendered(world, x, y, z - 1, 2), 
+            block.shouldSideBeRendered(world, x, y, z + 1, 3),
+            block.shouldSideBeRendered(world, x - 1, y, z, 4), 
+            block.shouldSideBeRendered(world, x + 1, y, z, 5)
         };
 
         if (!renderTop && !renderBottom && !renderSides[0] && !renderSides[1] && !renderSides[2] && !renderSides[3])
@@ -138,15 +138,15 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
             }
 
             boolean rises = theFluid.densityDir == 1;
-            if (renderer.field_147837_f || renderTop)
+            if (renderer.renderAllFaces || renderTop)
             {
                 rendered = true;
-                IIcon iconStill = getIcon(block.func_149691_a(1, bMeta));
+                IIcon iconStill = getIcon(block.getIcon(1, bMeta));
                 float flowDir = (float) BlockFluidBase.getFlowDirection(world, x, y, z);
 
                 if (flowDir > -999.0F)
                 {
-                    iconStill = getIcon(block.func_149691_a(2, bMeta));
+                    iconStill = getIcon(block.getIcon(2, bMeta));
                 }
 
                 heightNW -= RENDER_OFFSET;
@@ -181,7 +181,7 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                     v3 = iconStill.getInterpolatedV(8.0F + (-zFlow - xFlow) * 16.0F);
                 }
 
-                tessellator.setBrightness(block.func_149677_c(world, x, y, z));
+                tessellator.setBrightness(block.getMixedBrightnessForBlock(world, x, y, z));
                 tessellator.setColorOpaque_F(LIGHT_Y_POS * red, LIGHT_Y_POS * green, LIGHT_Y_POS * blue);
 
                 if (!rises)
@@ -200,19 +200,19 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                 }
             }
 
-            if (renderer.field_147837_f || renderBottom)
+            if (renderer.renderAllFaces || renderBottom)
             {
                 rendered = true;
-                tessellator.setBrightness(block.func_149677_c(world, x, y - 1, z));
+                tessellator.setBrightness(block.getMixedBrightnessForBlock(world, x, y - 1, z));
                 if (!rises)
                 {
                     tessellator.setColorOpaque_F(LIGHT_Y_NEG * red, LIGHT_Y_NEG * green, LIGHT_Y_NEG * blue);
-                    renderer.func_147768_a(block, x, y + RENDER_OFFSET, z, getIcon(block.func_149691_a(0, bMeta)));
+                    renderer.renderFaceYNeg(block, x, y + RENDER_OFFSET, z, getIcon(block.getIcon(0, bMeta)));
                 }
                 else
                 {
                     tessellator.setColorOpaque_F(LIGHT_Y_POS * red, LIGHT_Y_POS * green, LIGHT_Y_POS * blue);
-                    renderer.func_147806_b(block, x, y + RENDER_OFFSET, z, getIcon(block.func_149691_a(1, bMeta)));
+                    renderer.renderFaceYPos(block, x, y + RENDER_OFFSET, z, getIcon(block.getIcon(1, bMeta)));
                 }
             }
 
@@ -229,8 +229,8 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                     case 3: ++x2; break;
                 }
 
-                IIcon iconFlow = getIcon(block.func_149691_a(side + 2, bMeta));
-                if (renderer.field_147837_f || renderSides[side])
+                IIcon iconFlow = getIcon(block.getIcon(side + 2, bMeta));
+                if (renderer.renderAllFaces || renderSides[side])
                 {
                     rendered = true;
 
@@ -283,7 +283,7 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                     float v1Flow = iconFlow.getInterpolatedV((1.0D - ty1) * 16.0D * 0.5D);
                     float v2Flow = iconFlow.getInterpolatedV((1.0D - ty2) * 16.0D * 0.5D);
                     float v3Flow = iconFlow.getInterpolatedV(8.0D);
-                    tessellator.setBrightness(block.func_149677_c(world, x2, y, z2));
+                    tessellator.setBrightness(block.getMixedBrightnessForBlock(world, x2, y, z2));
                     float sideLighting = 1.0F;
 
                     if (side < 2)
@@ -313,8 +313,8 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                     }
                 }
             }
-            renderer.field_147855_j = 0;
-            renderer.field_147857_k = 1;
+            renderer.renderMinY = 0;
+            renderer.renderMaxY = 1;
             return rendered;
         }
     }

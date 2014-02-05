@@ -58,10 +58,10 @@
 @@ -210,7 +222,8 @@
          else
          {
-             Block block = par1World.func_147439_a(par2, par3 - 1, par4);
--            return block != Blocks.bedrock && !par1World.func_147439_a(par2, par3, par4).func_149721_r() && !par1World.func_147439_a(par2, par3, par4).func_149688_o().isLiquid() && !par1World.func_147439_a(par2, par3 + 1, par4).func_149721_r();
+             Block block = par1World.getBlock(par2, par3 - 1, par4);
+-            return block != Blocks.bedrock && !par1World.getBlock(par2, par3, par4).isNormalCube() && !par1World.getBlock(par2, par3, par4).getMaterial().isLiquid() && !par1World.getBlock(par2, par3 + 1, par4).isNormalCube();
 +            boolean spawnBlock = block.canCreatureSpawn(par0EnumCreatureType, par1World, par2, par3, par4);
-+            return spawnBlock && block != Blocks.bedrock && !par1World.func_147439_a(par2, par3, par4).func_149721_r() && !par1World.func_147439_a(par2, par3, par4).func_149688_o().isLiquid() && !par1World.func_147439_a(par2, par3 + 1, par4).func_149721_r();
++            return spawnBlock && block != Blocks.bedrock && !par1World.getBlock(par2, par3, par4).isNormalCube() && !par1World.getBlock(par2, par3, par4).getMaterial().isLiquid() && !par1World.getBlock(par2, par3 + 1, par4).isNormalCube();
          }
      }
  

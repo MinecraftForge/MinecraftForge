@@ -56,7 +56,7 @@
                  if (this.field_143014_b)
                  {
                      if (p_151557_1_ == Blocks.log || p_151557_1_ == Blocks.log2)
-@@ -1286,7 +1298,7 @@
+@@ -1288,7 +1300,7 @@
                      if (par3StructureBoundingBox.isVecInside(j, i, k))
                      {
                          this.hasMadeChest = true;
@@ -65,7 +65,7 @@
                      }
                  }
  
-@@ -1331,6 +1343,7 @@
+@@ -1333,6 +1345,7 @@
              public List field_74932_i = new ArrayList();
              public List field_74930_j = new ArrayList();
              private static final String __OBFID = "CL_00000527";
@@ -73,7 +73,7 @@
  
              public Start() {}
  
-@@ -1342,6 +1355,7 @@
+@@ -1344,6 +1357,7 @@
                  this.terrainType = par7;
                  BiomeGenBase biomegenbase = par1WorldChunkManager.getBiomeGenAt(par4, par5);
                  this.inDesert = biomegenbase == BiomeGenBase.desert || biomegenbase == BiomeGenBase.desertHills;

@@ -8,15 +8,15 @@
  
  public interface IBlockAccess
  {
-@@ -20,7 +21,6 @@
-     // JAVADOC METHOD $$ func_72805_g
+@@ -21,7 +22,6 @@
      int getBlockMetadata(int var1, int var2, int var3);
  
+     // JAVADOC METHOD $$ func_147437_c
 -    @SideOnly(Side.CLIENT)
-     boolean func_147437_c(int var1, int var2, int var3);
+     boolean isAirBlock(int var1, int var2, int var3);
  
      // JAVADOC METHOD $$ func_72807_a
-@@ -40,4 +40,16 @@
+@@ -41,4 +41,16 @@
  
      // JAVADOC METHOD $$ func_72879_k
      int isBlockProvidingPowerTo(int var1, int var2, int var3, int var4);

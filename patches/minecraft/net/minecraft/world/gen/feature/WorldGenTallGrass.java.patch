@@ -4,10 +4,10 @@
      {
          Block block;
  
--        while (((block = par1World.func_147439_a(par3, par4, par5)).func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j) && par4 > 0)
+-        while (((block = par1World.getBlock(par3, par4, par5)).getMaterial() == Material.air || block.getMaterial() == Material.leaves) && par4 > 0)
 +        do
          {
-+            block = par1World.func_147439_a(par3, par4, par5);
++            block = par1World.getBlock(par3, par4, par5);
 +            if (!(block.isLeaves(par1World, par3, par4, par5) || block.isAir(par1World, par3, par4, par5)))
 +            {
 +                break;

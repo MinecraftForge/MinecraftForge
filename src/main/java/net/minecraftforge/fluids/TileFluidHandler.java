@@ -16,16 +16,16 @@ public class TileFluidHandler extends TileEntity implements IFluidHandler
     protected FluidTank tank = new FluidTank(FluidContainerRegistry.BUCKET_VOLUME);
 
     @Override
-    public void func_145839_a(NBTTagCompound tag)
+    public void readFromNBT(NBTTagCompound tag)
     {
-        super.func_145839_a(tag);
+        super.readFromNBT(tag);
         tank.readFromNBT(tag);
     }
 
     @Override
-    public void func_145841_b(NBTTagCompound tag)
+    public void writeToNBT(NBTTagCompound tag)
     {
-        super.func_145841_b(tag);
+        super.writeToNBT(tag);
         tank.writeToNBT(tag);
     }
 

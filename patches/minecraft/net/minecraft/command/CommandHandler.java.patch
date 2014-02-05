@@ -9,7 +9,7 @@
 +
  public class CommandHandler implements ICommandManager
  {
-     private static final Logger field_147175_a = LogManager.getLogger();
+     private static final Logger logger = LogManager.getLogger();
 @@ -49,6 +52,16 @@
  
              if (icommand.canCommandSenderUseCommand(par1ICommandSender))

@@ -90,12 +90,12 @@ public class ForgeHooksClient
         boolean is3D = customRenderer.shouldUseRenderHelper(ENTITY, item, BLOCK_3D);
 
         engine.bindTexture(item.getItemSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
-        Block block = item.getItem() instanceof ItemBlock ? Block.func_149634_a(item.getItem()) : null;
-        if (is3D || (block != null && RenderBlocks.func_147739_a(block.func_149645_b())))
+        Block block = item.getItem() instanceof ItemBlock ? Block.getBlockFromItem(item.getItem()) : null;
+        if (is3D || (block != null && RenderBlocks.renderItemIn3d(block.getRenderType())))
         {
-            int renderType = (block != null ? block.func_149645_b() : 1);
+            int renderType = (block != null ? block.getRenderType() : 1);
             float scale = (renderType == 1 || renderType == 19 || renderType == 12 || renderType == 2 ? 0.5F : 0.25F);
-            boolean blend = block != null && block.func_149701_w() > 0;
+            boolean blend = block != null && block.getRenderBlockPass() > 0;
 
             if (RenderItem.renderInFrame)
             {
@@ -108,7 +108,7 @@ public class ForgeHooksClient
             {
                 GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
                 GL11.glEnable(GL11.GL_BLEND);
-                OpenGlHelper.func_148821_a(770, 771, 1, 0);
+                OpenGlHelper.glBlendFunc(770, 771, 1, 0);
             }
 
             GL11.glScalef(scale, scale, scale);
@@ -169,9 +169,9 @@ public class ForgeHooksClient
             }
 
             GL11.glRotatef(-90F, 0.0F, 1.0F, 0.0F);
-            renderBlocks.field_147844_c = inColor;
+            renderBlocks.useInventoryTint = inColor;
             customRenderer.renderItem(INVENTORY, item, renderBlocks);
-            renderBlocks.field_147844_c = true;
+            renderBlocks.useInventoryTint = true;
             GL11.glPopMatrix();
         }
         else
@@ -233,7 +233,7 @@ public class ForgeHooksClient
         int x = MathHelper.floor_double(entity.posX);
         int y = MathHelper.floor_double(entity.posY);
         int z = MathHelper.floor_double(entity.posZ);
-        Block block = mc.theWorld.func_147439_a(x, y, z);
+        Block block = mc.theWorld.getBlock(x, y, z);
 
         if (block != null && block.isBed(mc.theWorld, x, y, z, entity))
         {
@@ -260,8 +260,8 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Post(map));
 
-        FluidRegistry.WATER.setIcons(BlockLiquid.func_149803_e("water_still"), BlockLiquid.func_149803_e("water_flow"));
-        FluidRegistry.LAVA.setIcons(BlockLiquid.func_149803_e("lava_still"), BlockLiquid.func_149803_e("lava_flow"));
+        FluidRegistry.WATER.setIcons(BlockLiquid.getLiquidIcon("water_still"), BlockLiquid.getLiquidIcon("water_flow"));
+        FluidRegistry.LAVA.setIcons(BlockLiquid.getLiquidIcon("lava_still"), BlockLiquid.getLiquidIcon("lava_flow"));
     }
 
     /**
@@ -280,7 +280,7 @@ public class ForgeHooksClient
                     Minecraft mc = FMLClientHandler.instance().getClient();
                     if (mc.ingameGUI != null)
                     {
-                        mc.ingameGUI.func_146158_b().func_146227_a(new ChatComponentTranslation("forge.texture.preload.warning", texture));
+                        mc.ingameGUI.getChatGUI().printChatMessage(new ChatComponentTranslation("forge.texture.preload.warning", texture));
                     }
                 }
             }
@@ -366,9 +366,9 @@ public class ForgeHooksClient
         GameSettings settings = Minecraft.getMinecraft().gameSettings;
         int[] ranges = ForgeModContainer.blendRanges;
         int distance = 0;
-        if (settings.fancyGraphics && settings.field_151451_c >= 0 && settings.field_151451_c < ranges.length)
+        if (settings.fancyGraphics && settings.renderDistanceChunks >= 0 && settings.renderDistanceChunks < ranges.length)
         {
-            distance = ranges[settings.field_151451_c];
+            distance = ranges[settings.renderDistanceChunks];
         }
         
         int r = 0;
@@ -381,7 +381,7 @@ public class ForgeHooksClient
             for (int z = -distance; z <= distance; ++z)
             {
                 BiomeGenBase biome = world.getBiomeGenForCoords(playerX + x, playerZ + z);
-                int colour = biome.getSkyColorByTemp(biome.func_150564_a(playerX + x, playerY, playerZ + z));
+                int colour = biome.getSkyColorByTemp(biome.getFloatTemperature(playerX + x, playerY, playerZ + z));
                 r += (colour & 0xFF0000) >> 16;
                 g += (colour & 0x00FF00) >> 8;
                 b += colour & 0x0000FF;

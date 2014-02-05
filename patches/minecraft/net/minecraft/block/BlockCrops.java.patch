@@ -16,24 +16,24 @@
  
  public class BlockCrops extends BlockBush implements IGrowable
  {
-@@ -89,11 +91,11 @@
+@@ -91,11 +93,11 @@
              {
                  float f1 = 0.0F;
  
--                if (p_149864_1_.func_147439_a(l, p_149864_3_ - 1, i1) == Blocks.farmland)
-+                if (p_149864_1_.func_147439_a(l, p_149864_3_ - 1, i1).canSustainPlant(p_149864_1_, l, p_149864_3_ - 1, i1, ForgeDirection.UP, this))
+-                if (p_149864_1_.getBlock(l, p_149864_3_ - 1, i1) == Blocks.farmland)
++                if (p_149864_1_.getBlock(l, p_149864_3_ - 1, i1).canSustainPlant(p_149864_1_, l, p_149864_3_ - 1, i1, ForgeDirection.UP, this))
                  {
                      f1 = 1.0F;
  
 -                    if (p_149864_1_.getBlockMetadata(l, p_149864_3_ - 1, i1) > 0)
-+                    if (p_149864_1_.func_147439_a(l, p_149864_3_ - 1, i1).isFertile(p_149864_1_, l, p_149864_3_ - 1, i1))
++                    if (p_149864_1_.getBlock(l, p_149864_3_ - 1, i1).isFertile(p_149864_1_, l, p_149864_3_ - 1, i1))
                      {
                          f1 = 3.0F;
                      }
-@@ -145,22 +147,6 @@
-     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
+@@ -150,22 +152,6 @@
+     public void dropBlockAsItemWithChance(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
      {
-         super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, 0);
+         super.dropBlockAsItemWithChance(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, 0);
 -
 -        if (!p_149690_1_.isRemote)
 -        {
@@ -45,15 +45,15 @@
 -                {
 -                    if (p_149690_1_.rand.nextInt(15) <= p_149690_5_)
 -                    {
--                        this.func_149642_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(this.func_149866_i(), 1, 0));
+-                        this.dropBlockAsItem(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(this.func_149866_i(), 1, 0));
 -                    }
 -                }
 -            }
 -        }
      }
  
-     public Item func_149650_a(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
-@@ -204,4 +190,23 @@
+     public Item getItemDropped(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
+@@ -211,4 +197,23 @@
      {
          this.func_149863_m(p_149853_1_, p_149853_3_, p_149853_4_, p_149853_5_);
      }

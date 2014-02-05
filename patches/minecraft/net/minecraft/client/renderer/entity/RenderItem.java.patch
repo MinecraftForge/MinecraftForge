@@ -43,9 +43,9 @@
 +                ;
 +            }
 +            else // Code Style break here to prevent the patch from editing this line
-             if (itemstack.getItemSpriteNumber() == 0 && itemstack.getItem() instanceof ItemBlock && RenderBlocks.func_147739_a(Block.func_149634_a(itemstack.getItem()).func_149645_b()))
+             if (itemstack.getItemSpriteNumber() == 0 && itemstack.getItem() instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.getBlockFromItem(itemstack.getItem()).getRenderType()))
              {
-                 Block block = Block.func_149634_a(itemstack.getItem());
+                 Block block = Block.getBlockFromItem(itemstack.getItem());
 @@ -140,7 +150,7 @@
              {
                  float f5;
@@ -89,7 +89,7 @@
 +        this.renderDroppedItem(par1EntityItem, par2Icon, par3, par4, par5, par6, par7, 0);
 +    }
 +
-+    // JAVADOC METHOD $$ func_77020_a
++    // JAVADOC METHOD $$ renderDroppedItem
 +    private void renderDroppedItem(EntityItem par1EntityItem, IIcon par2Icon, int par3, float par4, float par5, float par6, float par7, int pass)
 +    {
          Tessellator tessellator = Tessellator.instance;
@@ -137,7 +137,7 @@
 +        this.renderItemIntoGUI(par1FontRenderer, par2TextureManager, par3ItemStack, par4, par5, false);
 +    }
 +
-+    // JAVADOC METHOD $$ func_77015_a
++    // JAVADOC METHOD $$ renderItemIntoGUI
 +    public void renderItemIntoGUI(FontRenderer par1FontRenderer, TextureManager par2TextureManager, ItemStack par3ItemStack, int par4, int par5, boolean renderEffect)
 +    {
          int k = par3ItemStack.getItemDamage();
@@ -147,14 +147,14 @@
              GL11.glColorMask(true, true, true, true);
              GL11.glEnable(GL11.GL_TEXTURE_2D);
              GL11.glEnable(GL11.GL_ALPHA_TEST);
--            OpenGlHelper.func_148821_a(770, 771, 1, 0);
+-            OpenGlHelper.glBlendFunc(770, 771, 1, 0);
  
 -            for (l = 0; l <= 1; ++l)
 +            Item item = par3ItemStack.getItem();
 +            for (l = 0; l < item.getRenderPasses(k); ++l)
              {
 -                IIcon iicon = par3ItemStack.getItem().getIconFromDamageForRenderPass(k, l);
-+                OpenGlHelper.func_148821_a(770, 771, 1, 0);
++                OpenGlHelper.glBlendFunc(770, 771, 1, 0);
 +                par2TextureManager.bindTexture(item.getSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
 +                IIcon iicon = item.getIcon(par3ItemStack, l);
                  int i1 = par3ItemStack.getItem().getColorFromItemStack(par3ItemStack, l);

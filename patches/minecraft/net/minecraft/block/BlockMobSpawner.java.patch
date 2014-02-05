@@ -8,12 +8,12 @@
  import net.minecraft.world.World;
  
  public class BlockMobSpawner extends BlockContainer
-@@ -36,10 +37,15 @@
-     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
+@@ -39,10 +40,15 @@
+     public void dropBlockAsItemWithChance(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
      {
-         super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
+         super.dropBlockAsItemWithChance(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
 -        int j1 = 15 + p_149690_1_.rand.nextInt(15) + p_149690_1_.rand.nextInt(15);
--        this.func_149657_c(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, j1);
+-        this.dropXpOnBlockBreak(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, j1);
      }
  
 +    private Random rand = new Random();
@@ -23,6 +23,6 @@
 +        return 15 + rand.nextInt(15) + rand.nextInt(15);
 +    }
 +
-     public boolean func_149662_c()
+     // JAVADOC METHOD $$ func_149662_c
+     public boolean isOpaqueCube()
      {
-         return false;

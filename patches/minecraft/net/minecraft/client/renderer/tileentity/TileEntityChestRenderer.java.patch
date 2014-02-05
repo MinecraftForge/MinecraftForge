@@ -13,12 +13,12 @@
              {
 +                try
 +                {
-                 ((BlockChest)block).func_149954_e(p_147502_1_.func_145831_w(), p_147502_1_.field_145851_c, p_147502_1_.field_145848_d, p_147502_1_.field_145849_e);
+                 ((BlockChest)block).func_149954_e(p_147502_1_.getWorldObj(), p_147502_1_.xCoord, p_147502_1_.yCoord, p_147502_1_.zCoord);
 +                }
 +                catch (ClassCastException e)
 +                {
-+                    FMLLog.severe("Attempted to render a chest at %d,  %d, %d that was not a chest", p_147502_1_.field_145851_c, p_147502_1_.field_145848_d, p_147502_1_.field_145849_e);
++                    FMLLog.severe("Attempted to render a chest at %d,  %d, %d that was not a chest", p_147502_1_.xCoord, p_147502_1_.yCoord, p_147502_1_.zCoord);
 +                }
-                 i = p_147502_1_.func_145832_p();
+                 i = p_147502_1_.getBlockMetadata();
              }
  

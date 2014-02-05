@@ -10,9 +10,9 @@
  @SideOnly(Side.CLIENT)
  public class RenderGlobal implements IWorldAccess
  {
-@@ -411,8 +414,10 @@
- 
-     public void func_147589_a(EntityLivingBase p_147589_1_, ICamera p_147589_2_, float p_147589_3_)
+@@ -413,8 +416,10 @@
+     // JAVADOC METHOD $$ func_147589_a
+     public void renderEntities(EntityLivingBase p_147589_1_, ICamera p_147589_2_, float p_147589_3_)
      {
 +        int pass = MinecraftForgeClient.getRenderPass();
          if (this.renderEntitiesStartupCounter > 0)
@@ -21,10 +21,10 @@
              --this.renderEntitiesStartupCounter;
          }
          else
-@@ -423,9 +428,12 @@
+@@ -425,9 +430,12 @@
              this.theWorld.theProfiler.startSection("prepare");
-             TileEntityRendererDispatcher.field_147556_a.func_147542_a(this.theWorld, this.mc.getTextureManager(), this.mc.fontRenderer, this.mc.renderViewEntity, p_147589_3_);
-             RenderManager.instance.func_147938_a(this.theWorld, this.mc.getTextureManager(), this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.field_147125_j, this.mc.gameSettings, p_147589_3_);
+             TileEntityRendererDispatcher.instance.cacheActiveRenderInfo(this.theWorld, this.mc.getTextureManager(), this.mc.fontRenderer, this.mc.renderViewEntity, p_147589_3_);
+             RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.mc.getTextureManager(), this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.pointedEntity, this.mc.gameSettings, p_147589_3_);
 +            if (pass == 0) // no indentation to shrink patch
 +            {
              this.countEntitiesTotal = 0;
@@ -34,7 +34,7 @@
              EntityLivingBase entitylivingbase1 = this.mc.renderViewEntity;
              double d3 = entitylivingbase1.lastTickPosX + (entitylivingbase1.posX - entitylivingbase1.lastTickPosX) * (double)p_147589_3_;
              double d4 = entitylivingbase1.lastTickPosY + (entitylivingbase1.posY - entitylivingbase1.lastTickPosY) * (double)p_147589_3_;
-@@ -454,13 +462,17 @@
+@@ -456,13 +464,17 @@
              this.mc.entityRenderer.enableLightmap((double)p_147589_3_);
              this.theWorld.theProfiler.endStartSection("global");
              List list = this.theWorld.getLoadedEntityList();
@@ -51,29 +51,29 @@
 +                if (!entity.shouldRenderInPass(pass)) continue;
                  ++this.countEntitiesRendered;
  
-                 if (entity.func_145770_h(d0, d1, d2))
-@@ -474,6 +486,7 @@
+                 if (entity.isInRangeToRender3d(d0, d1, d2))
+@@ -476,6 +488,7 @@
              for (i = 0; i < list.size(); ++i)
              {
                  entity = (Entity)list.get(i);
 +                if (!entity.shouldRenderInPass(pass)) continue;
-                 boolean flag = entity.func_145770_h(d0, d1, d2) && (entity.ignoreFrustumCheck || p_147589_2_.isBoundingBoxInFrustum(entity.boundingBox) || entity.riddenByEntity == this.mc.thePlayer);
+                 boolean flag = entity.isInRangeToRender3d(d0, d1, d2) && (entity.ignoreFrustumCheck || p_147589_2_.isBoundingBoxInFrustum(entity.boundingBox) || entity.riddenByEntity == this.mc.thePlayer);
  
                  if (!flag && entity instanceof EntityLiving)
-@@ -499,7 +512,11 @@
+@@ -501,7 +514,11 @@
  
-             for (i = 0; i < this.field_147598_a.size(); ++i)
+             for (i = 0; i < this.tileEntities.size(); ++i)
              {
--                TileEntityRendererDispatcher.field_147556_a.func_147544_a((TileEntity)this.field_147598_a.get(i), p_147589_3_);
-+                TileEntity tile = (TileEntity)this.field_147598_a.get(i);
+-                TileEntityRendererDispatcher.instance.renderTileEntity((TileEntity)this.tileEntities.get(i), p_147589_3_);
++                TileEntity tile = (TileEntity)this.tileEntities.get(i);
 +                if (tile.shouldRenderInPass(pass) && p_147589_2_.isBoundingBoxInFrustum(tile.getRenderBoundingBox()))
 +                {
-+                    TileEntityRendererDispatcher.field_147556_a.func_147544_a(tile, p_147589_3_);
++                    TileEntityRendererDispatcher.instance.renderTileEntity(tile, p_147589_3_);
 +                }
              }
  
              this.mc.entityRenderer.disableLightmap((double)p_147589_3_);
-@@ -976,6 +993,12 @@
+@@ -978,6 +995,12 @@
      // JAVADOC METHOD $$ func_72714_a
      public void renderSky(float par1)
      {
@@ -86,7 +86,7 @@
          if (this.mc.theWorld.provider.dimensionId == 1)
          {
              GL11.glDisable(GL11.GL_FOG);
-@@ -1214,6 +1237,12 @@
+@@ -1216,6 +1239,12 @@
  
      public void renderClouds(float par1)
      {
@@ -99,7 +99,7 @@
          if (this.mc.theWorld.provider.isSurfaceWorld())
          {
              if (this.mc.gameSettings.fancyGraphics)
-@@ -1617,6 +1646,11 @@
+@@ -1619,6 +1648,11 @@
  
      public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityPlayer par2EntityPlayer, float par3)
      {
@@ -111,20 +111,20 @@
          double d0 = par2EntityPlayer.lastTickPosX + (par2EntityPlayer.posX - par2EntityPlayer.lastTickPosX) * (double)par3;
          double d1 = par2EntityPlayer.lastTickPosY + (par2EntityPlayer.posY - par2EntityPlayer.lastTickPosY) * (double)par3;
          double d2 = par2EntityPlayer.lastTickPosZ + (par2EntityPlayer.posZ - par2EntityPlayer.lastTickPosZ) * (double)par3;
-@@ -1839,12 +1873,15 @@
+@@ -1845,12 +1879,15 @@
          {
-             ItemRecord itemrecord = ItemRecord.func_150926_b(par1Str);
+             ItemRecord itemrecord = ItemRecord.getRecord(par1Str);
  
 +            ResourceLocation resource = null;
              if (itemrecord != null)
              {
-                 this.mc.ingameGUI.setRecordPlayingMessage(itemrecord.func_150927_i());
+                 this.mc.ingameGUI.setRecordPlayingMessage(itemrecord.getRecordNameLocal());
 +                resource = itemrecord.getRecordResource(par1Str);
              }
  
 -            PositionedSoundRecord positionedsoundrecord = PositionedSoundRecord.func_147675_a(new ResourceLocation(par1Str), (float)par2, (float)par3, (float)par4);
 +            if (resource == null) resource = new ResourceLocation(par1Str);
 +            PositionedSoundRecord positionedsoundrecord = PositionedSoundRecord.func_147675_a(resource, (float)par2, (float)par3, (float)par4);
-             this.field_147593_P.put(chunkcoordinates, positionedsoundrecord);
-             this.mc.func_147118_V().func_147682_a(positionedsoundrecord);
+             this.mapSoundPositions.put(chunkcoordinates, positionedsoundrecord);
+             this.mc.getSoundHandler().playSound(positionedsoundrecord);
          }

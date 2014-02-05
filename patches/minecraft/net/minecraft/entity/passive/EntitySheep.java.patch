@@ -36,7 +36,7 @@
 -
 -                for (int j = 0; j < i; ++j)
 -                {
--                    EntityItem entityitem = this.entityDropItem(new ItemStack(Item.func_150898_a(Blocks.wool), 1, this.getFleeceColor()), 1.0F);
+-                    EntityItem entityitem = this.entityDropItem(new ItemStack(Item.getItemFromBlock(Blocks.wool), 1, this.getFleeceColor()), 1.0F);
 -                    entityitem.motionY += (double)(this.rand.nextFloat() * 0.05F);
 -                    entityitem.motionX += (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);
 -                    entityitem.motionZ += (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);

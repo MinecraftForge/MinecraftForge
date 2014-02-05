@@ -14,16 +14,16 @@
  {
 @@ -49,7 +51,7 @@
                          {
-                             Block block = par1World.func_147439_a(i2, l1, j2);
+                             Block block = par1World.getBlock(i2, l1, j2);
  
--                            if (block.func_149688_o() != Material.field_151579_a && block.func_149688_o() != Material.field_151584_j)
+-                            if (block.getMaterial() != Material.air && block.getMaterial() != Material.leaves)
 +                            if (!block.isAir(par1World, i2, l1, j2) && !block.isLeaves(par1World, i2, l1, j2))
                              {
                                  flag = false;
                              }
 @@ -70,9 +72,10 @@
              {
-                 Block block1 = par1World.func_147439_a(par3, par4 - 1, par5);
+                 Block block1 = par1World.getBlock(par3, par4 - 1, par5);
  
 -                if ((block1 == Blocks.grass || block1 == Blocks.dirt || block1 == Blocks.farmland) && par4 < 256 - l - 1)
 +                boolean isSoil = block1.canSustainPlant(par1World, par3, par4 - 1, par5, ForgeDirection.UP, (BlockSapling)Blocks.sapling);
@@ -38,17 +38,17 @@
                              {
                                  int k3 = j3 - par5;
  
--                                if ((Math.abs(i3) != l3 || Math.abs(k3) != l3 || l3 <= 0) && !par1World.func_147439_a(l2, k2, j3).func_149730_j())
-+                                if ((Math.abs(i3) != l3 || Math.abs(k3) != l3 || l3 <= 0) && par1World.func_147439_a(l2, k2, j3).canBeReplacedByLeaves(par1World, l2, k2, j3))
+-                                if ((Math.abs(i3) != l3 || Math.abs(k3) != l3 || l3 <= 0) && !par1World.getBlock(l2, k2, j3).func_149730_j())
++                                if ((Math.abs(i3) != l3 || Math.abs(k3) != l3 || l3 <= 0) && par1World.getBlock(l2, k2, j3).canBeReplacedByLeaves(par1World, l2, k2, j3))
                                  {
-                                     this.func_150516_a(par1World, l2, k2, j3, Blocks.leaves, 1);
+                                     this.setBlockAndNotifyAdequately(par1World, l2, k2, j3, Blocks.leaves, 1);
                                  }
 @@ -121,7 +124,7 @@
                      {
-                         Block block2 = par1World.func_147439_a(par3, par4 + k2, par5);
+                         Block block2 = par1World.getBlock(par3, par4 + k2, par5);
  
--                        if (block2.func_149688_o() == Material.field_151579_a || block2.func_149688_o() == Material.field_151584_j)
+-                        if (block2.getMaterial() == Material.air || block2.getMaterial() == Material.leaves)
 +                        if (block2.isAir(par1World, par3, par4 + k2, par5) || block2.isLeaves(par1World, par3, par4 + k2, par5))
                          {
-                             this.func_150516_a(par1World, par3, par4 + k2, par5, Blocks.log, 1);
+                             this.setBlockAndNotifyAdequately(par1World, par3, par4 + k2, par5, Blocks.log, 1);
                          }

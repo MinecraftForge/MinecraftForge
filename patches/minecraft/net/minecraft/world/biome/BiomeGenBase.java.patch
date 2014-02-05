@@ -9,7 +9,7 @@
 +
  public abstract class BiomeGenBase
  {
-     private static final Logger field_150586_aC = LogManager.getLogger();
+     private static final Logger logger = LogManager.getLogger();
 @@ -155,6 +158,10 @@
  
      public BiomeGenBase(int par1)
@@ -44,25 +44,25 @@
      }
  
      // JAVADOC METHOD $$ func_76732_a
-@@ -373,7 +382,7 @@
+@@ -375,7 +384,7 @@
      {
-         double d0 = (double)MathHelper.clamp_float(this.func_150564_a(p_150558_1_, p_150558_2_, p_150558_3_), 0.0F, 1.0F);
+         double d0 = (double)MathHelper.clamp_float(this.getFloatTemperature(p_150558_1_, p_150558_2_, p_150558_3_), 0.0F, 1.0F);
          double d1 = (double)MathHelper.clamp_float(this.getFloatRainfall(), 0.0F, 1.0F);
 -        return ColorizerGrass.getGrassColor(d0, d1);
 +        return getModdedBiomeGrassColor(ColorizerGrass.getGrassColor(d0, d1));
      }
  
-     @SideOnly(Side.CLIENT)
-@@ -381,7 +390,7 @@
+     // JAVADOC METHOD $$ func_150571_c
+@@ -384,7 +393,7 @@
      {
-         double d0 = (double)MathHelper.clamp_float(this.func_150564_a(p_150571_1_, p_150571_2_, p_150571_3_), 0.0F, 1.0F);
+         double d0 = (double)MathHelper.clamp_float(this.getFloatTemperature(p_150571_1_, p_150571_2_, p_150571_3_), 0.0F, 1.0F);
          double d1 = (double)MathHelper.clamp_float(this.getFloatRainfall(), 0.0F, 1.0F);
 -        return ColorizerFoliage.getFoliageColor(d0, d1);
 +        return getModdedBiomeFoliageColor(ColorizerFoliage.getFoliageColor(d0, d1));
      }
  
      public boolean func_150559_j()
-@@ -529,6 +538,88 @@
+@@ -535,6 +544,88 @@
          }
      }
  
@@ -137,12 +137,12 @@
 +        String flowername = biome.func_150572_a(rand, x, y, z);
 +        
 +        FlowerEntry flower = (FlowerEntry)WeightedRandom.getRandomItem(rand, flowers);
-+        if (flower == null || flower.block == null || !flower.block.func_149718_j(world, x, y, z))
++        if (flower == null || flower.block == null || !flower.block.canBlockStay(world, x, y, z))
 +        {
 +            return;
 +        }
 +
-+        world.func_147465_d(x, y, z, flower.block, flower.metadata, 3);
++        world.setBlock(x, y, z, flower.block, flower.metadata, 3);
 +    }
 +
 +    
@@ -150,4 +150,4 @@
 +
      static
      {
-         plains.func_150566_k();
+         plains.createMutation();

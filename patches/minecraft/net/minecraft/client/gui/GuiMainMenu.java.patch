@@ -9,10 +9,10 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 @@ -630,6 +631,7 @@
-                 this.drawString(this.field_146289_q, brd, 2, this.field_146295_m - ( 10 + i * (this.field_146289_q.FONT_HEIGHT + 1)), 16777215);
+                 this.drawString(this.fontRendererObj, brd, 2, this.height - ( 10 + i * (this.fontRendererObj.FONT_HEIGHT + 1)), 16777215);
              }
          }
-+        ForgeHooksClient.renderMainMenu(this, field_146289_q, field_146294_l, field_146295_m);
++        ForgeHooksClient.renderMainMenu(this, fontRendererObj, width, height);
          String s1 = "Copyright Mojang AB. Do not distribute!";
-         this.drawString(this.field_146289_q, s1, this.field_146294_l - this.field_146289_q.getStringWidth(s1) - 2, this.field_146295_m - 10, -1);
+         this.drawString(this.fontRendererObj, s1, this.width - this.fontRendererObj.getStringWidth(s1) - 2, this.height - 10, -1);
  

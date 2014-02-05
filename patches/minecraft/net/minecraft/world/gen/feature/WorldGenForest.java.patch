@@ -14,7 +14,7 @@
  {
 @@ -55,7 +57,7 @@
                          {
-                             Block block = par1World.func_147439_a(j1, i1, k1);
+                             Block block = par1World.getBlock(j1, i1, k1);
  
 -                            if (!this.func_150523_a(block))
 +                            if (!this.isReplaceable(par1World, j1, i1, k1))
@@ -23,7 +23,7 @@
                              }
 @@ -76,9 +78,10 @@
              {
-                 Block block2 = par1World.func_147439_a(par3, par4 - 1, par5);
+                 Block block2 = par1World.getBlock(par3, par4 - 1, par5);
  
 -                if ((block2 == Blocks.grass || block2 == Blocks.dirt || block2 == Blocks.farmland) && par4 < 256 - l - 1)
 +                boolean isSoil = block2.canSustainPlant(par1World, par3, par4 - 1, par5, ForgeDirection.UP, (BlockSapling)Blocks.sapling);
@@ -36,19 +36,19 @@
                      for (k2 = par4 - 3 + l; k2 <= par4 + l; ++k2)
 @@ -98,7 +101,7 @@
                                  {
-                                     Block block1 = par1World.func_147439_a(l2, k2, i2);
+                                     Block block1 = par1World.getBlock(l2, k2, i2);
  
--                                    if (block1.func_149688_o() == Material.field_151579_a || block1.func_149688_o() == Material.field_151584_j)
+-                                    if (block1.getMaterial() == Material.air || block1.getMaterial() == Material.leaves)
 +                                    if (block1.isAir(par1World, l2, k2, i2) || block1.isLeaves(par1World, l2, k2, i2))
                                      {
-                                         this.func_150516_a(par1World, l2, k2, i2, Blocks.leaves, 2);
+                                         this.setBlockAndNotifyAdequately(par1World, l2, k2, i2, Blocks.leaves, 2);
                                      }
 @@ -111,7 +114,7 @@
                      {
-                         Block block3 = par1World.func_147439_a(par3, par4 + k2, par5);
+                         Block block3 = par1World.getBlock(par3, par4 + k2, par5);
  
--                        if (block3.func_149688_o() == Material.field_151579_a || block3.func_149688_o() == Material.field_151584_j)
+-                        if (block3.getMaterial() == Material.air || block3.getMaterial() == Material.leaves)
 +                        if (block3.isAir(par1World, par3, par4 + k2, par5) || block3.isLeaves(par1World, par3, par4 + k2, par5))
                          {
-                             this.func_150516_a(par1World, par3, par4 + k2, par5, Blocks.log, 2);
+                             this.setBlockAndNotifyAdequately(par1World, par3, par4 + k2, par5, Blocks.log, 2);
                          }

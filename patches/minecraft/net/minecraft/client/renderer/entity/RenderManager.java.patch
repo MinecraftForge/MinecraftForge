@@ -1,9 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
-@@ -218,11 +218,13 @@
+@@ -219,11 +219,13 @@
          if (p_147938_4_.isPlayerSleeping())
          {
-             Block block = p_147938_1_.func_147439_a(MathHelper.floor_double(p_147938_4_.posX), MathHelper.floor_double(p_147938_4_.posY), MathHelper.floor_double(p_147938_4_.posZ));
+             Block block = p_147938_1_.getBlock(MathHelper.floor_double(p_147938_4_.posX), MathHelper.floor_double(p_147938_4_.posY), MathHelper.floor_double(p_147938_4_.posZ));
 +            int x = MathHelper.floor_double(p_147938_4_.posX);
 +            int y = MathHelper.floor_double(p_147938_4_.posY);
 +            int z = MathHelper.floor_double(p_147938_4_.posZ);

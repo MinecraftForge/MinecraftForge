@@ -97,7 +97,7 @@
 @@ -1021,7 +1039,7 @@
          int j = MathHelper.floor_double(this.boundingBox.minY);
          int k = MathHelper.floor_double(this.posZ);
-         Block block = this.worldObj.func_147439_a(i, j, k);
+         Block block = this.worldObj.getBlock(i, j, k);
 -        return block == Blocks.ladder || block == Blocks.vine;
 +        return ForgeHooks.isLivingOnLadder(block, worldObj, i, j, k, this);
      }

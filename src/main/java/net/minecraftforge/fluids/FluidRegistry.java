@@ -34,14 +34,14 @@ public abstract class FluidRegistry
         public String getLocalizedName() {
             return StatCollector.translateToLocal("tile.water.name");
         }
-    }.setBlock(Blocks.water).setUnlocalizedName(Blocks.water.func_149739_a());
+    }.setBlock(Blocks.water).setUnlocalizedName(Blocks.water.getUnlocalizedName());
     
     public static final Fluid LAVA = new Fluid("lava") {
         @Override
         public String getLocalizedName() {
             return StatCollector.translateToLocal("tile.lava.name");
         }
-    }.setBlock(Blocks.lava).setLuminosity(15).setDensity(3000).setViscosity(6000).setTemperature(1300).setUnlocalizedName(Blocks.lava.func_149739_a());
+    }.setBlock(Blocks.lava).setLuminosity(15).setDensity(3000).setViscosity(6000).setTemperature(1300).setUnlocalizedName(Blocks.lava.getUnlocalizedName());
 
     public static int renderIdFluid = -1;
 

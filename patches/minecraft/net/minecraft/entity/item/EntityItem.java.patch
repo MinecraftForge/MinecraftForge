@@ -117,7 +117,7 @@
      {
          if (!this.worldObj.isRemote)
          {
-+            if (this.field_145804_b > 0)
++            if (this.delayBeforeCanPickup > 0)
 +            {
 +                return;
 +            }
@@ -132,8 +132,8 @@
              ItemStack itemstack = this.getEntityItem();
              int i = itemstack.stackSize;
  
--            if (this.field_145804_b == 0 && (this.field_145802_g == null || 6000 - this.age <= 200 || this.field_145802_g.equals(par1EntityPlayer.getCommandSenderName())) && par1EntityPlayer.inventory.addItemStackToInventory(itemstack))
-+            if (this.field_145804_b <= 0 && (this.field_145802_g == null || lifespan - this.age <= 200 || this.field_145802_g.equals(par1EntityPlayer.getCommandSenderName())) && (event.getResult() == Result.ALLOW || i <= 0 || par1EntityPlayer.inventory.addItemStackToInventory(itemstack)))
+-            if (this.delayBeforeCanPickup == 0 && (this.field_145802_g == null || 6000 - this.age <= 200 || this.field_145802_g.equals(par1EntityPlayer.getCommandSenderName())) && par1EntityPlayer.inventory.addItemStackToInventory(itemstack))
++            if (this.delayBeforeCanPickup <= 0 && (this.field_145802_g == null || lifespan - this.age <= 200 || this.field_145802_g.equals(par1EntityPlayer.getCommandSenderName())) && (event.getResult() == Result.ALLOW || i <= 0 || par1EntityPlayer.inventory.addItemStackToInventory(itemstack)))
              {
-                 if (itemstack.getItem() == Item.func_150898_a(Blocks.log))
+                 if (itemstack.getItem() == Item.getItemFromBlock(Blocks.log))
                  {

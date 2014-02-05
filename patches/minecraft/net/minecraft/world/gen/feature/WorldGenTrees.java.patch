@@ -15,7 +15,7 @@
  {
 @@ -66,7 +68,7 @@
                          {
-                             block = par1World.func_147439_a(j1, i1, k1);
+                             block = par1World.getBlock(j1, i1, k1);
  
 -                            if (!this.func_150523_a(block))
 +                            if (!this.isReplaceable(par1World, j1, i1, k1))
@@ -24,7 +24,7 @@
                              }
 @@ -87,9 +89,10 @@
              {
-                 Block block2 = par1World.func_147439_a(par3, par4 - 1, par5);
+                 Block block2 = par1World.getBlock(par3, par4 - 1, par5);
  
 -                if ((block2 == Blocks.grass || block2 == Blocks.dirt || block2 == Blocks.farmland) && par4 < 256 - l - 1)
 +                boolean isSoil = block2.canSustainPlant(par1World, par3, par4 - 1, par5, ForgeDirection.UP, (BlockSapling)Blocks.sapling);
@@ -37,49 +37,49 @@
                      int l1;
 @@ -114,7 +117,7 @@
                                  {
-                                     Block block1 = par1World.func_147439_a(i2, k1, k2);
+                                     Block block1 = par1World.getBlock(i2, k1, k2);
  
--                                    if (block1.func_149688_o() == Material.field_151579_a || block1.func_149688_o() == Material.field_151584_j)
+-                                    if (block1.getMaterial() == Material.air || block1.getMaterial() == Material.leaves)
 +                                    if (block1.isAir(par1World, i2, k1, k2) || block1.isLeaves(par1World, i2, k1, k2))
                                      {
-                                         this.func_150516_a(par1World, i2, k1, k2, Blocks.leaves, this.metaLeaves);
+                                         this.setBlockAndNotifyAdequately(par1World, i2, k1, k2, Blocks.leaves, this.metaLeaves);
                                      }
 @@ -127,7 +130,7 @@
                      {
-                         block = par1World.func_147439_a(par3, par4 + k1, par5);
+                         block = par1World.getBlock(par3, par4 + k1, par5);
  
--                        if (block.func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j)
+-                        if (block.getMaterial() == Material.air || block.getMaterial() == Material.leaves)
 +                        if (block.isAir(par1World, par3, par4 + k1, par5) || block.isLeaves(par1World, par3, par4 + k1, par5))
                          {
-                             this.func_150516_a(par1World, par3, par4 + k1, par5, Blocks.log, this.metaWood);
+                             this.setBlockAndNotifyAdequately(par1World, par3, par4 + k1, par5, Blocks.log, this.metaWood);
  
 @@ -167,24 +170,24 @@
                              {
                                  for (j2 = par5 - l1; j2 <= par5 + l1; ++j2)
                                  {
--                                    if (par1World.func_147439_a(i2, k1, j2).func_149688_o() == Material.field_151584_j)
-+                                    if (par1World.func_147439_a(i2, k1, j2).isLeaves(par1World, i2, k1, j2))
+-                                    if (par1World.getBlock(i2, k1, j2).getMaterial() == Material.leaves)
++                                    if (par1World.getBlock(i2, k1, j2).isLeaves(par1World, i2, k1, j2))
                                      {
--                                        if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(i2 - 1, k1, j2).func_149688_o() == Material.field_151579_a)
-+                                        if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(i2 - 1, k1, j2).isAir(par1World, i2 - 1, k1, j2))
+-                                        if (par2Random.nextInt(4) == 0 && par1World.getBlock(i2 - 1, k1, j2).getMaterial() == Material.air)
++                                        if (par2Random.nextInt(4) == 0 && par1World.getBlock(i2 - 1, k1, j2).isAir(par1World, i2 - 1, k1, j2))
                                          {
                                              this.growVines(par1World, i2 - 1, k1, j2, 8);
                                          }
  
--                                        if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(i2 + 1, k1, j2).func_149688_o() == Material.field_151579_a)
-+                                        if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(i2 + 1, k1, j2).isAir(par1World, i2 + 1, k1, j2))
+-                                        if (par2Random.nextInt(4) == 0 && par1World.getBlock(i2 + 1, k1, j2).getMaterial() == Material.air)
++                                        if (par2Random.nextInt(4) == 0 && par1World.getBlock(i2 + 1, k1, j2).isAir(par1World, i2 + 1, k1, j2))
                                          {
                                              this.growVines(par1World, i2 + 1, k1, j2, 2);
                                          }
  
--                                        if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(i2, k1, j2 - 1).func_149688_o() == Material.field_151579_a)
-+                                        if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(i2, k1, j2 - 1).isAir(par1World, i2, k1, j2 - 1))
+-                                        if (par2Random.nextInt(4) == 0 && par1World.getBlock(i2, k1, j2 - 1).getMaterial() == Material.air)
++                                        if (par2Random.nextInt(4) == 0 && par1World.getBlock(i2, k1, j2 - 1).isAir(par1World, i2, k1, j2 - 1))
                                          {
                                              this.growVines(par1World, i2, k1, j2 - 1, 1);
                                          }
  
--                                        if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(i2, k1, j2 + 1).func_149688_o() == Material.field_151579_a)
-+                                        if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(i2, k1, j2 + 1).isAir(par1World, i2, k1, j2 + 1))
+-                                        if (par2Random.nextInt(4) == 0 && par1World.getBlock(i2, k1, j2 + 1).getMaterial() == Material.air)
++                                        if (par2Random.nextInt(4) == 0 && par1World.getBlock(i2, k1, j2 + 1).isAir(par1World, i2, k1, j2 + 1))
                                          {
                                              this.growVines(par1World, i2, k1, j2 + 1, 4);
                                          }
@@ -87,8 +87,8 @@
          {
              --par3;
  
--            if (par1World.func_147439_a(par2, par3, par4).func_149688_o() != Material.field_151579_a || i1 <= 0)
-+            if (par1World.func_147439_a(par2, par3, par4).isAir(par1World, par2, par3, par4) || i1 <= 0)
+-            if (par1World.getBlock(par2, par3, par4).getMaterial() != Material.air || i1 <= 0)
++            if (par1World.getBlock(par2, par3, par4).isAir(par1World, par2, par3, par4) || i1 <= 0)
              {
                  return;
              }

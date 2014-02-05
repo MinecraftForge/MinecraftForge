@@ -51,9 +51,9 @@
              }
 @@ -221,7 +228,7 @@
  
-     public void func_147215_a(int p_147215_1_, int p_147215_2_, int p_147215_3_, Block p_147215_4_, int p_147215_5_)
+     public void addBlockDestroyEffects(int p_147215_1_, int p_147215_2_, int p_147215_3_, Block p_147215_4_, int p_147215_5_)
      {
--        if (p_147215_4_.func_149688_o() != Material.field_151579_a)
+-        if (p_147215_4_.getMaterial() != Material.air)
 +        if (!p_147215_4_.isAir(worldObj, p_147215_1_, p_147215_2_, p_147215_3_) && !p_147215_4_.addDestroyEffects(worldObj, p_147215_1_, p_147215_2_, p_147215_3_, p_147215_5_, this))
          {
              byte b0 = 4;
@@ -65,7 +65,7 @@
 +
 +    public void addBlockHitEffects(int x, int y, int z, MovingObjectPosition target)
 +    {
-+        Block block = worldObj.func_147439_a(x, y, z);
++        Block block = worldObj.getBlock(x, y, z);
 +        if (block != null && !block.addHitEffects(worldObj, target, this))
 +        {
 +            addBlockHitEffects(x, y, z, target.sideHit);

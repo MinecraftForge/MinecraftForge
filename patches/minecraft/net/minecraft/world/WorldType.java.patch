@@ -23,7 +23,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  
-@@ -45,6 +53,7 @@
+@@ -46,6 +54,7 @@
  
      private WorldType(int par1, String par2Str, int par3)
      {
@@ -31,7 +31,7 @@
          this.worldType = par2Str;
          this.generatorVersion = par3;
          this.canBeCreated = true;
-@@ -199,8 +208,92 @@
+@@ -202,8 +211,92 @@
          return this == FLAT ? random.nextInt(4) != 1 : false;
      }
  
@@ -86,7 +86,7 @@
 +    {
 +        if (this == FLAT)
 +        {
-+            instance.func_147108_a(new GuiCreateFlatWorld(guiCreateWorld, guiCreateWorld.field_146334_a));
++            instance.displayGuiScreen(new GuiCreateFlatWorld(guiCreateWorld, guiCreateWorld.field_146334_a));
 +        }
 +    }
 +

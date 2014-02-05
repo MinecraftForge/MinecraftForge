@@ -9,101 +9,101 @@
  @SideOnly(Side.CLIENT)
  public class RenderBlocks
  {
-@@ -336,9 +338,9 @@
-     public boolean func_147773_v(Block p_147773_1_, int p_147773_2_, int p_147773_3_, int p_147773_4_)
+@@ -414,9 +416,9 @@
+     public boolean renderBlockBed(Block p_147773_1_, int p_147773_2_, int p_147773_3_, int p_147773_4_)
      {
          Tessellator tessellator = Tessellator.instance;
--        int l = this.field_147845_a.getBlockMetadata(p_147773_2_, p_147773_3_, p_147773_4_);
--        int i1 = BlockBed.func_149895_l(l);
--        boolean flag = BlockBed.func_149975_b(l);
-+        Block bed = this.field_147845_a.func_147439_a(p_147773_2_, p_147773_3_, p_147773_4_);
-+        int i1 = bed.getBedDirection(field_147845_a, p_147773_2_, p_147773_3_, p_147773_4_);
-+        boolean flag = bed.isBedFoot(field_147845_a, p_147773_2_, p_147773_3_, p_147773_4_);
+-        int l = this.blockAccess.getBlockMetadata(p_147773_2_, p_147773_3_, p_147773_4_);
+-        int i1 = BlockBed.getDirection(l);
+-        boolean flag = BlockBed.isBlockHeadOfBed(l);
++        Block bed = this.blockAccess.getBlock(p_147773_2_, p_147773_3_, p_147773_4_);
++        int i1 = bed.getBedDirection(blockAccess, p_147773_2_, p_147773_3_, p_147773_4_);
++        boolean flag = bed.isBedFoot(blockAccess, p_147773_2_, p_147773_3_, p_147773_4_);
          float f = 0.5F;
          float f1 = 1.0F;
          float f2 = 0.8F;
-@@ -347,6 +349,7 @@
+@@ -425,6 +427,7 @@
          tessellator.setBrightness(j1);
          tessellator.setColorOpaque_F(f, f, f);
-         IIcon iicon = this.func_147793_a(p_147773_1_, this.field_147845_a, p_147773_2_, p_147773_3_, p_147773_4_, 0);
-+        if (func_147744_b()) iicon = field_147840_d; //BugFix Proper breaking texture on underside
+         IIcon iicon = this.getBlockIcon(p_147773_1_, this.blockAccess, p_147773_2_, p_147773_3_, p_147773_4_, 0);
++        if (hasOverrideBlockTexture()) iicon = overrideBlockTexture; //BugFix Proper breaking texture on underside
          double d0 = (double)iicon.getMinU();
          double d1 = (double)iicon.getMaxU();
          double d2 = (double)iicon.getMinV();
-@@ -363,6 +366,7 @@
-         tessellator.setBrightness(p_147773_1_.func_149677_c(this.field_147845_a, p_147773_2_, p_147773_3_ + 1, p_147773_4_));
+@@ -441,6 +444,7 @@
+         tessellator.setBrightness(p_147773_1_.getMixedBrightnessForBlock(this.blockAccess, p_147773_2_, p_147773_3_ + 1, p_147773_4_));
          tessellator.setColorOpaque_F(f1, f1, f1);
-         iicon = this.func_147793_a(p_147773_1_, this.field_147845_a, p_147773_2_, p_147773_3_, p_147773_4_, 1);
-+        if (func_147744_b()) iicon = field_147840_d; //BugFix Proper breaking texture on underside
+         iicon = this.getBlockIcon(p_147773_1_, this.blockAccess, p_147773_2_, p_147773_3_, p_147773_4_, 1);
++        if (hasOverrideBlockTexture()) iicon = overrideBlockTexture; //BugFix Proper breaking texture on underside
          d0 = (double)iicon.getMinU();
          d1 = (double)iicon.getMaxU();
          d2 = (double)iicon.getMinV();
-@@ -2037,7 +2041,7 @@
+@@ -2135,7 +2139,7 @@
          double d9;
          double d10;
  
--        if (!World.func_147466_a(this.field_147845_a, p_147801_2_, p_147801_3_ - 1, p_147801_4_) && !Blocks.fire.func_149844_e(this.field_147845_a, p_147801_2_, p_147801_3_ - 1, p_147801_4_))
-+        if (!World.func_147466_a(this.field_147845_a, p_147801_2_, p_147801_3_ - 1, p_147801_4_) && !Blocks.fire.canCatchFire(this.field_147845_a, p_147801_2_, p_147801_3_ - 1, p_147801_4_, UP))
+-        if (!World.doesBlockHaveSolidTopSurface(this.blockAccess, p_147801_2_, p_147801_3_ - 1, p_147801_4_) && !Blocks.fire.canBlockCatchFire(this.blockAccess, p_147801_2_, p_147801_3_ - 1, p_147801_4_))
++        if (!World.doesBlockHaveSolidTopSurface(this.blockAccess, p_147801_2_, p_147801_3_ - 1, p_147801_4_) && !Blocks.fire.canCatchFire(this.blockAccess, p_147801_2_, p_147801_3_ - 1, p_147801_4_, UP))
          {
              float f2 = 0.2F;
              float f1 = 0.0625F;
-@@ -2057,7 +2061,7 @@
+@@ -2155,7 +2159,7 @@
                  d0 = d5;
              }
  
--            if (Blocks.fire.func_149844_e(this.field_147845_a, p_147801_2_ - 1, p_147801_3_, p_147801_4_))
-+            if (Blocks.fire.canCatchFire(this.field_147845_a, p_147801_2_ - 1, p_147801_3_, p_147801_4_, EAST))
+-            if (Blocks.fire.canBlockCatchFire(this.blockAccess, p_147801_2_ - 1, p_147801_3_, p_147801_4_))
++            if (Blocks.fire.canCatchFire(this.blockAccess, p_147801_2_ - 1, p_147801_3_, p_147801_4_, EAST))
              {
                  tessellator.addVertexWithUV((double)((float)p_147801_2_ + f2), (double)((float)p_147801_3_ + f + f1), (double)(p_147801_4_ + 1), d2, d1);
                  tessellator.addVertexWithUV((double)(p_147801_2_ + 0), (double)((float)(p_147801_3_ + 0) + f1), (double)(p_147801_4_ + 1), d2, d3);
-@@ -2069,7 +2073,7 @@
+@@ -2167,7 +2171,7 @@
                  tessellator.addVertexWithUV((double)((float)p_147801_2_ + f2), (double)((float)p_147801_3_ + f + f1), (double)(p_147801_4_ + 1), d2, d1);
              }
  
--            if (Blocks.fire.func_149844_e(this.field_147845_a, p_147801_2_ + 1, p_147801_3_, p_147801_4_))
-+            if (Blocks.fire.canCatchFire(this.field_147845_a, p_147801_2_ + 1, p_147801_3_, p_147801_4_, WEST))
+-            if (Blocks.fire.canBlockCatchFire(this.blockAccess, p_147801_2_ + 1, p_147801_3_, p_147801_4_))
++            if (Blocks.fire.canCatchFire(this.blockAccess, p_147801_2_ + 1, p_147801_3_, p_147801_4_, WEST))
              {
                  tessellator.addVertexWithUV((double)((float)(p_147801_2_ + 1) - f2), (double)((float)p_147801_3_ + f + f1), (double)(p_147801_4_ + 0), d0, d1);
                  tessellator.addVertexWithUV((double)(p_147801_2_ + 1 - 0), (double)((float)(p_147801_3_ + 0) + f1), (double)(p_147801_4_ + 0), d0, d3);
-@@ -2081,7 +2085,7 @@
+@@ -2179,7 +2183,7 @@
                  tessellator.addVertexWithUV((double)((float)(p_147801_2_ + 1) - f2), (double)((float)p_147801_3_ + f + f1), (double)(p_147801_4_ + 0), d0, d1);
              }
  
--            if (Blocks.fire.func_149844_e(this.field_147845_a, p_147801_2_, p_147801_3_, p_147801_4_ - 1))
-+            if (Blocks.fire.canCatchFire(this.field_147845_a, p_147801_2_, p_147801_3_, p_147801_4_ - 1, SOUTH))
+-            if (Blocks.fire.canBlockCatchFire(this.blockAccess, p_147801_2_, p_147801_3_, p_147801_4_ - 1))
++            if (Blocks.fire.canCatchFire(this.blockAccess, p_147801_2_, p_147801_3_, p_147801_4_ - 1, SOUTH))
              {
                  tessellator.addVertexWithUV((double)(p_147801_2_ + 0), (double)((float)p_147801_3_ + f + f1), (double)((float)p_147801_4_ + f2), d2, d1);
                  tessellator.addVertexWithUV((double)(p_147801_2_ + 0), (double)((float)(p_147801_3_ + 0) + f1), (double)(p_147801_4_ + 0), d2, d3);
-@@ -2093,7 +2097,7 @@
+@@ -2191,7 +2195,7 @@
                  tessellator.addVertexWithUV((double)(p_147801_2_ + 0), (double)((float)p_147801_3_ + f + f1), (double)((float)p_147801_4_ + f2), d2, d1);
              }
  
--            if (Blocks.fire.func_149844_e(this.field_147845_a, p_147801_2_, p_147801_3_, p_147801_4_ + 1))
-+            if (Blocks.fire.canCatchFire(this.field_147845_a, p_147801_2_, p_147801_3_, p_147801_4_ + 1, NORTH))
+-            if (Blocks.fire.canBlockCatchFire(this.blockAccess, p_147801_2_, p_147801_3_, p_147801_4_ + 1))
++            if (Blocks.fire.canCatchFire(this.blockAccess, p_147801_2_, p_147801_3_, p_147801_4_ + 1, NORTH))
              {
                  tessellator.addVertexWithUV((double)(p_147801_2_ + 1), (double)((float)p_147801_3_ + f + f1), (double)((float)(p_147801_4_ + 1) - f2), d0, d1);
                  tessellator.addVertexWithUV((double)(p_147801_2_ + 1), (double)((float)(p_147801_3_ + 0) + f1), (double)(p_147801_4_ + 1 - 0), d0, d3);
-@@ -2105,7 +2109,7 @@
+@@ -2203,7 +2207,7 @@
                  tessellator.addVertexWithUV((double)(p_147801_2_ + 1), (double)((float)p_147801_3_ + f + f1), (double)((float)(p_147801_4_ + 1) - f2), d0, d1);
              }
  
--            if (Blocks.fire.func_149844_e(this.field_147845_a, p_147801_2_, p_147801_3_ + 1, p_147801_4_))
-+            if (Blocks.fire.canCatchFire(this.field_147845_a, p_147801_2_, p_147801_3_ + 1, p_147801_4_, DOWN))
+-            if (Blocks.fire.canBlockCatchFire(this.blockAccess, p_147801_2_, p_147801_3_ + 1, p_147801_4_))
++            if (Blocks.fire.canCatchFire(this.blockAccess, p_147801_2_, p_147801_3_ + 1, p_147801_4_, DOWN))
              {
                  d5 = (double)p_147801_2_ + 0.5D + 0.5D;
                  d6 = (double)p_147801_2_ + 0.5D - 0.5D;
-@@ -3118,10 +3122,10 @@
+@@ -3217,10 +3221,10 @@
          double d16 = (double)p_147767_2_ + 0.5D + 0.0625D;
          double d17 = (double)p_147767_4_ + 0.5D - 0.0625D;
          double d18 = (double)p_147767_4_ + 0.5D + 0.0625D;
--        boolean flag = p_147767_1_.func_150098_a(this.field_147845_a.func_147439_a(p_147767_2_, p_147767_3_, p_147767_4_ - 1));
--        boolean flag1 = p_147767_1_.func_150098_a(this.field_147845_a.func_147439_a(p_147767_2_, p_147767_3_, p_147767_4_ + 1));
--        boolean flag2 = p_147767_1_.func_150098_a(this.field_147845_a.func_147439_a(p_147767_2_ - 1, p_147767_3_, p_147767_4_));
--        boolean flag3 = p_147767_1_.func_150098_a(this.field_147845_a.func_147439_a(p_147767_2_ + 1, p_147767_3_, p_147767_4_));
-+        boolean flag  = p_147767_1_.canPaneConnectTo(this.field_147845_a, p_147767_2_, p_147767_3_, p_147767_4_ - 1, NORTH);
-+        boolean flag1 = p_147767_1_.canPaneConnectTo(this.field_147845_a, p_147767_2_, p_147767_3_, p_147767_4_ + 1, SOUTH);
-+        boolean flag2 = p_147767_1_.canPaneConnectTo(this.field_147845_a, p_147767_2_ - 1, p_147767_3_, p_147767_4_, WEST );
-+        boolean flag3 = p_147767_1_.canPaneConnectTo(this.field_147845_a, p_147767_2_ + 1, p_147767_3_, p_147767_4_, EAST );
-         boolean flag4 = p_147767_1_.func_149646_a(this.field_147845_a, p_147767_2_, p_147767_3_ + 1, p_147767_4_, 1);
-         boolean flag5 = p_147767_1_.func_149646_a(this.field_147845_a, p_147767_2_, p_147767_3_ - 1, p_147767_4_, 0);
+-        boolean flag = p_147767_1_.canPaneConnectToBlock(this.blockAccess.getBlock(p_147767_2_, p_147767_3_, p_147767_4_ - 1));
+-        boolean flag1 = p_147767_1_.canPaneConnectToBlock(this.blockAccess.getBlock(p_147767_2_, p_147767_3_, p_147767_4_ + 1));
+-        boolean flag2 = p_147767_1_.canPaneConnectToBlock(this.blockAccess.getBlock(p_147767_2_ - 1, p_147767_3_, p_147767_4_));
+-        boolean flag3 = p_147767_1_.canPaneConnectToBlock(this.blockAccess.getBlock(p_147767_2_ + 1, p_147767_3_, p_147767_4_));
++        boolean flag  = p_147767_1_.canPaneConnectTo(this.blockAccess, p_147767_2_, p_147767_3_, p_147767_4_ - 1, NORTH);
++        boolean flag1 = p_147767_1_.canPaneConnectTo(this.blockAccess, p_147767_2_, p_147767_3_, p_147767_4_ + 1, SOUTH);
++        boolean flag2 = p_147767_1_.canPaneConnectTo(this.blockAccess, p_147767_2_ - 1, p_147767_3_, p_147767_4_, WEST );
++        boolean flag3 = p_147767_1_.canPaneConnectTo(this.blockAccess, p_147767_2_ + 1, p_147767_3_, p_147767_4_, EAST );
+         boolean flag4 = p_147767_1_.shouldSideBeRendered(this.blockAccess, p_147767_2_, p_147767_3_ + 1, p_147767_4_, 1);
+         boolean flag5 = p_147767_1_.shouldSideBeRendered(this.blockAccess, p_147767_2_, p_147767_3_ - 1, p_147767_4_, 0);
          double d19 = 0.01D;

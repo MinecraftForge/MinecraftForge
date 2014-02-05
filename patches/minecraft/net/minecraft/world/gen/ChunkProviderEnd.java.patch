@@ -51,7 +51,7 @@
 @@ -341,10 +361,16 @@
      public void populate(IChunkProvider par1IChunkProvider, int par2, int par3)
      {
-         BlockFalling.field_149832_M = true;
+         BlockFalling.fallInstantly = true;
 +
 +        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(par1IChunkProvider, endWorld, endWorld.rand, par2, par3, false));
 +
@@ -62,6 +62,6 @@
 +
 +        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(par1IChunkProvider, endWorld, endWorld.rand, par2, par3, false));
 +
-         BlockFalling.field_149832_M = false;
+         BlockFalling.fallInstantly = false;
      }
  

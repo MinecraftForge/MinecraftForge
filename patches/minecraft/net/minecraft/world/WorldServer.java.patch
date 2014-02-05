@@ -129,8 +129,8 @@
              {
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
                  i1 = this.updateLCG >> 2;
-@@ -401,6 +432,9 @@
-     public void func_147454_a(int p_147454_1_, int p_147454_2_, int p_147454_3_, Block p_147454_4_, int p_147454_5_, int p_147454_6_)
+@@ -403,6 +434,9 @@
+     public void scheduleBlockUpdateWithPriority(int p_147454_1_, int p_147454_2_, int p_147454_3_, Block p_147454_4_, int p_147454_5_, int p_147454_6_)
      {
          NextTickListEntry nextticklistentry = new NextTickListEntry(p_147454_1_, p_147454_2_, p_147454_3_, p_147454_4_);
 +        //Keeping here as a note for future when it may be restored.
@@ -138,8 +138,8 @@
 +        //byte b0 = isForced ? 0 : 8;
          byte b0 = 0;
  
-         if (this.scheduledUpdatesAreImmediate && p_147454_4_.func_149688_o() != Material.field_151579_a)
-@@ -461,7 +495,7 @@
+         if (this.scheduledUpdatesAreImmediate && p_147454_4_.getMaterial() != Material.air)
+@@ -463,7 +497,7 @@
      // JAVADOC METHOD $$ func_72939_s
      public void updateEntities()
      {
@@ -148,7 +148,7 @@
          {
              if (this.updateEntityTick++ >= 1200)
              {
-@@ -523,6 +557,9 @@
+@@ -525,6 +559,9 @@
              {
                  nextticklistentry = (NextTickListEntry)iterator.next();
                  iterator.remove();
@@ -158,29 +158,29 @@
                  byte b0 = 0;
  
                  if (this.checkChunksExist(nextticklistentry.xCoord - b0, nextticklistentry.yCoord - b0, nextticklistentry.zCoord - b0, nextticklistentry.xCoord + b0, nextticklistentry.yCoord + b0, nextticklistentry.zCoord + b0))
-@@ -647,13 +684,26 @@
+@@ -649,13 +686,26 @@
      {
          ArrayList arraylist = new ArrayList();
  
--        for (int k1 = 0; k1 < this.field_147482_g.size(); ++k1)
+-        for (int k1 = 0; k1 < this.loadedTileEntityList.size(); ++k1)
 +        for(int x = (p_147486_1_ >> 4); x <= (p_147486_4_ >> 4); x++)
          {
--            TileEntity tileentity = (TileEntity)this.field_147482_g.get(k1);
+-            TileEntity tileentity = (TileEntity)this.loadedTileEntityList.get(k1);
 -
--            if (tileentity.field_145851_c >= p_147486_1_ && tileentity.field_145848_d >= p_147486_2_ && tileentity.field_145849_e >= p_147486_3_ && tileentity.field_145851_c < p_147486_4_ && tileentity.field_145848_d < p_147486_5_ && tileentity.field_145849_e < p_147486_6_)
+-            if (tileentity.xCoord >= p_147486_1_ && tileentity.yCoord >= p_147486_2_ && tileentity.zCoord >= p_147486_3_ && tileentity.xCoord < p_147486_4_ && tileentity.yCoord < p_147486_5_ && tileentity.zCoord < p_147486_6_)
 +            for(int z = (p_147486_3_ >> 4); z <= (p_147486_6_ >> 4); z++)
              {
 -                arraylist.add(tileentity);
 +                Chunk chunk = getChunkFromChunkCoords(x, z);
 +                if (chunk != null)
 +                {
-+                    for(Object obj : chunk.field_150816_i.values())
++                    for(Object obj : chunk.chunkTileEntityMap.values())
 +                    {
 +                        TileEntity entity = (TileEntity)obj;
-+                        if (!entity.func_145837_r())
++                        if (!entity.isInvalid())
 +                        {
-+                            if (entity.field_145851_c >= p_147486_1_ && entity.field_145848_d >= p_147486_2_ && entity.field_145849_e >= p_147486_3_ &&
-+                                entity.field_145851_c <= p_147486_4_ && entity.field_145848_d <= p_147486_5_ && entity.field_145849_e <= p_147486_6_)
++                            if (entity.xCoord >= p_147486_1_ && entity.yCoord >= p_147486_2_ && entity.zCoord >= p_147486_3_ &&
++                                entity.xCoord <= p_147486_4_ && entity.yCoord <= p_147486_5_ && entity.zCoord <= p_147486_6_)
 +                            {
 +                                arraylist.add(entity);
 +                            }
@@ -190,7 +190,7 @@
              }
          }
  
-@@ -663,6 +713,11 @@
+@@ -665,6 +715,11 @@
      // JAVADOC METHOD $$ func_72962_a
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
      {
@@ -202,7 +202,7 @@
          return !this.mcServer.isBlockProtected(this, par2, par3, par4, par1EntityPlayer);
      }
  
-@@ -742,7 +797,7 @@
+@@ -744,7 +799,7 @@
      // JAVADOC METHOD $$ func_73047_i
      protected void createBonusChest()
      {
@@ -211,7 +211,7 @@
  
          for (int i = 0; i < 10; ++i)
          {
-@@ -781,6 +836,7 @@
+@@ -783,6 +838,7 @@
              }
  
              this.chunkProvider.saveChunks(par1, par2IProgressUpdate);
@@ -219,7 +219,7 @@
          }
      }
  
-@@ -799,6 +855,7 @@
+@@ -801,6 +857,7 @@
          this.checkSessionLock();
          this.saveHandler.saveWorldInfoWithPlayer(this.worldInfo, this.mcServer.getConfigurationManager().getHostPlayerData());
          this.mapStorage.saveAllData();
@@ -227,7 +227,7 @@
      }
  
      protected void onEntityAdded(Entity par1Entity)
-@@ -1013,6 +1070,11 @@
+@@ -1015,6 +1072,11 @@
          }
      }
  

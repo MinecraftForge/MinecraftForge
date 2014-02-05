@@ -9,16 +9,16 @@
      public static int chunksUpdated;
      public int posX;
      public int posY;
-@@ -177,7 +177,7 @@
-                                         this.func_147890_b(k2);
+@@ -179,7 +179,7 @@
+                                         this.preRenderBlocks(k2);
                                      }
  
--                                    if (k2 == 0 && block.func_149716_u())
+-                                    if (k2 == 0 && block.hasTileEntity())
 +                                    if (k2 == 0 && block.hasTileEntity(chunkcache.getBlockMetadata(j3, l2, i3)))
                                      {
-                                         TileEntity tileentity = chunkcache.func_147438_o(j3, l2, i3);
+                                         TileEntity tileentity = chunkcache.getTileEntity(j3, l2, i3);
  
-@@ -193,7 +193,9 @@
+@@ -195,7 +195,9 @@
                                      {
                                          flag = true;
                                      }
@@ -27,9 +27,9 @@
 +                                    if (!block.canRenderInPass(k2)) continue;
 +
                                      {
-                                         flag1 |= renderblocks.func_147805_b(block, j3, l2, i3);
+                                         flag1 |= renderblocks.renderBlockByRenderType(block, j3, l2, i3);
  
-@@ -252,21 +254,22 @@
+@@ -254,21 +256,22 @@
          GL11.glTranslatef(-8.0F, -8.0F, -8.0F);
          GL11.glScalef(f, f, f);
          GL11.glTranslatef(8.0F, 8.0F, 8.0F);
@@ -39,12 +39,12 @@
 +        Tessellator.instance.setTranslation((double)(-this.posX), (double)(-this.posY), (double)(-this.posZ));
      }
  
-     private void func_147891_a(int p_147891_1_, EntityLivingBase p_147891_2_)
+     private void postRenderBlocks(int p_147891_1_, EntityLivingBase p_147891_2_)
      {
          if (p_147891_1_ == 1 && !this.skipRenderPass[p_147891_1_])
          {
--            this.field_147894_y = tessellator.func_147564_a((float)p_147891_2_.posX, (float)p_147891_2_.posY, (float)p_147891_2_.posZ);
-+            this.field_147894_y = Tessellator.instance.func_147564_a((float)p_147891_2_.posX, (float)p_147891_2_.posY, (float)p_147891_2_.posZ);
+-            this.vertexState = tessellator.getVertexState((float)p_147891_2_.posX, (float)p_147891_2_.posY, (float)p_147891_2_.posZ);
++            this.vertexState = Tessellator.instance.getVertexState((float)p_147891_2_.posX, (float)p_147891_2_.posY, (float)p_147891_2_.posZ);
          }
  
 -        this.bytesDrawn += tessellator.draw();
@@ -56,13 +56,13 @@
 +        Tessellator.instance.setTranslation(0.0D, 0.0D, 0.0D);
      }
  
-     public void func_147889_b(EntityLivingBase p_147889_1_)
-@@ -274,7 +277,7 @@
-         if (this.field_147894_y != null && !this.skipRenderPass[1])
+     public void updateRendererSort(EntityLivingBase p_147889_1_)
+@@ -276,7 +279,7 @@
+         if (this.vertexState != null && !this.skipRenderPass[1])
          {
-             this.func_147890_b(1);
--            tessellator.func_147565_a(this.field_147894_y);
-+            Tessellator.instance.func_147565_a(this.field_147894_y);
-             this.func_147891_a(1, p_147889_1_);
+             this.preRenderBlocks(1);
+-            tessellator.setVertexState(this.vertexState);
++            Tessellator.instance.setVertexState(this.vertexState);
+             this.postRenderBlocks(1, p_147889_1_);
          }
      }

@@ -9,9 +9,9 @@
  
  public class BlockFarmland extends Block
  {
-@@ -94,7 +96,7 @@
+@@ -100,7 +102,7 @@
              {
-                 Block block = p_149822_1_.func_147439_a(l, p_149822_3_ + 1, i1);
+                 Block block = p_149822_1_.getBlock(l, p_149822_3_ + 1, i1);
  
 -                if (block == Blocks.wheat || block == Blocks.melon_stem || block == Blocks.pumpkin_stem || block == Blocks.potatoes || block == Blocks.carrots)
 +                if (block instanceof IPlantable && canSustainPlant(p_149822_1_, p_149822_2_, p_149822_3_, p_149822_4_, ForgeDirection.UP, (IPlantable)block))

@@ -30,7 +30,7 @@
      private IIcon[] field_149850_M;
      private static final String __OBFID = "CL_00000245";
 @@ -54,10 +61,10 @@
-         Blocks.fire.func_149842_a(func_149682_b(Blocks.carpet), 60, 20);
+         Blocks.fire.func_149842_a(getIdFromBlock(Blocks.carpet), 60, 20);
      }
  
 +    @Deprecated // Use setFireInfo
@@ -38,44 +38,44 @@
      {
 -        this.field_149849_a[p_149842_1_] = p_149842_2_;
 -        this.field_149848_b[p_149842_1_] = p_149842_3_;
-+        this.setFireInfo((Block)Block.field_149771_c.func_148754_a(p_149842_1_), p_149842_2_, p_149842_3_);
++        this.setFireInfo((Block)Block.blockRegistry.getObjectById(p_149842_1_), p_149842_2_, p_149842_3_);
      }
  
-     public AxisAlignedBB func_149668_a(World p_149668_1_, int p_149668_2_, int p_149668_3_, int p_149668_4_)
-@@ -94,13 +101,8 @@
+     // JAVADOC METHOD $$ func_149668_a
+@@ -101,13 +108,8 @@
      {
          if (p_149674_1_.getGameRules().getGameRuleBooleanValue("doFireTick"))
          {
--            boolean flag = p_149674_1_.func_147439_a(p_149674_2_, p_149674_3_ - 1, p_149674_4_) == Blocks.netherrack;
-+            boolean flag = p_149674_1_.func_147439_a(p_149674_2_, p_149674_3_ - 1, p_149674_4_).isFireSource(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_, UP);
+-            boolean flag = p_149674_1_.getBlock(p_149674_2_, p_149674_3_ - 1, p_149674_4_) == Blocks.netherrack;
++            boolean flag = p_149674_1_.getBlock(p_149674_2_, p_149674_3_ - 1, p_149674_4_).isFireSource(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_, UP);
  
--            if (p_149674_1_.provider instanceof WorldProviderEnd && p_149674_1_.func_147439_a(p_149674_2_, p_149674_3_ - 1, p_149674_4_) == Blocks.bedrock)
+-            if (p_149674_1_.provider instanceof WorldProviderEnd && p_149674_1_.getBlock(p_149674_2_, p_149674_3_ - 1, p_149674_4_) == Blocks.bedrock)
 -            {
 -                flag = true;
 -            }
 -
-             if (!this.func_149742_c(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_))
+             if (!this.canPlaceBlockAt(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_))
              {
-                 p_149674_1_.func_147468_f(p_149674_2_, p_149674_3_, p_149674_4_);
-@@ -128,7 +130,7 @@
-                         p_149674_1_.func_147468_f(p_149674_2_, p_149674_3_, p_149674_4_);
+                 p_149674_1_.setBlockToAir(p_149674_2_, p_149674_3_, p_149674_4_);
+@@ -135,7 +137,7 @@
+                         p_149674_1_.setBlockToAir(p_149674_2_, p_149674_3_, p_149674_4_);
                      }
                  }
--                else if (!flag && !this.func_149844_e(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_) && l == 15 && p_149674_5_.nextInt(4) == 0)
+-                else if (!flag && !this.canBlockCatchFire(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_) && l == 15 && p_149674_5_.nextInt(4) == 0)
 +                else if (!flag && !this.canCatchFire(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_, UP) && l == 15 && p_149674_5_.nextInt(4) == 0)
                  {
-                     p_149674_1_.func_147468_f(p_149674_2_, p_149674_3_, p_149674_4_);
+                     p_149674_1_.setBlockToAir(p_149674_2_, p_149674_3_, p_149674_4_);
                  }
-@@ -142,12 +144,12 @@
+@@ -149,12 +151,12 @@
                          b0 = -50;
                      }
  
--                    this.func_149841_a(p_149674_1_, p_149674_2_ + 1, p_149674_3_, p_149674_4_, 300 + b0, p_149674_5_, l);
--                    this.func_149841_a(p_149674_1_, p_149674_2_ - 1, p_149674_3_, p_149674_4_, 300 + b0, p_149674_5_, l);
--                    this.func_149841_a(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_, 250 + b0, p_149674_5_, l);
--                    this.func_149841_a(p_149674_1_, p_149674_2_, p_149674_3_ + 1, p_149674_4_, 250 + b0, p_149674_5_, l);
--                    this.func_149841_a(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_ - 1, 300 + b0, p_149674_5_, l);
--                    this.func_149841_a(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_ + 1, 300 + b0, p_149674_5_, l);
+-                    this.tryCatchFire(p_149674_1_, p_149674_2_ + 1, p_149674_3_, p_149674_4_, 300 + b0, p_149674_5_, l);
+-                    this.tryCatchFire(p_149674_1_, p_149674_2_ - 1, p_149674_3_, p_149674_4_, 300 + b0, p_149674_5_, l);
+-                    this.tryCatchFire(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_, 250 + b0, p_149674_5_, l);
+-                    this.tryCatchFire(p_149674_1_, p_149674_2_, p_149674_3_ + 1, p_149674_4_, 250 + b0, p_149674_5_, l);
+-                    this.tryCatchFire(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_ - 1, 300 + b0, p_149674_5_, l);
+-                    this.tryCatchFire(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_ + 1, 300 + b0, p_149674_5_, l);
 +                    this.tryCatchFire(p_149674_1_, p_149674_2_ + 1, p_149674_3_, p_149674_4_, 300 + b0, p_149674_5_, l, WEST );
 +                    this.tryCatchFire(p_149674_1_, p_149674_2_ - 1, p_149674_3_, p_149674_4_, 300 + b0, p_149674_5_, l, EAST );
 +                    this.tryCatchFire(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_, 250 + b0, p_149674_5_, l, UP   );
@@ -85,29 +85,29 @@
  
                      for (int i1 = p_149674_2_ - 1; i1 <= p_149674_2_ + 1; ++i1)
                      {
-@@ -201,10 +203,16 @@
-         return false;
+@@ -209,10 +211,16 @@
      }
  
+     // JAVADOC METHOD $$ func_149841_a
 +    @Deprecated
-     private void func_149841_a(World p_149841_1_, int p_149841_2_, int p_149841_3_, int p_149841_4_, int p_149841_5_, Random p_149841_6_, int p_149841_7_)
+     private void tryCatchFire(World p_149841_1_, int p_149841_2_, int p_149841_3_, int p_149841_4_, int p_149841_5_, Random p_149841_6_, int p_149841_7_)
      {
--        int j1 = this.field_149848_b[Block.func_149682_b(p_149841_1_.func_147439_a(p_149841_2_, p_149841_3_, p_149841_4_))];
+-        int j1 = this.field_149848_b[Block.getIdFromBlock(p_149841_1_.getBlock(p_149841_2_, p_149841_3_, p_149841_4_))];
 +        this.tryCatchFire(p_149841_1_, p_149841_2_, p_149841_3_, p_149841_4_, p_149841_5_, p_149841_6_, p_149841_7_, UP);
 +    }
  
 +    private void tryCatchFire(World p_149841_1_, int p_149841_2_, int p_149841_3_, int p_149841_4_, int p_149841_5_, Random p_149841_6_, int p_149841_7_, ForgeDirection face)
 +    {
-+        int j1 = p_149841_1_.func_147439_a(p_149841_2_, p_149841_3_, p_149841_4_).getFlammability(p_149841_1_, p_149841_2_, p_149841_3_, p_149841_4_, face);
++        int j1 = p_149841_1_.getBlock(p_149841_2_, p_149841_3_, p_149841_4_).getFlammability(p_149841_1_, p_149841_2_, p_149841_3_, p_149841_4_, face);
 +
          if (p_149841_6_.nextInt(p_149841_5_) < j1)
          {
-             boolean flag = p_149841_1_.func_147439_a(p_149841_2_, p_149841_3_, p_149841_4_) == Blocks.tnt;
-@@ -234,7 +242,12 @@
- 
-     private boolean func_149847_e(World p_149847_1_, int p_149847_2_, int p_149847_3_, int p_149847_4_)
+             boolean flag = p_149841_1_.getBlock(p_149841_2_, p_149841_3_, p_149841_4_) == Blocks.tnt;
+@@ -243,7 +251,12 @@
+     // JAVADOC METHOD $$ func_149847_e
+     private boolean canNeighborBurn(World p_149847_1_, int p_149847_2_, int p_149847_3_, int p_149847_4_)
      {
--        return this.func_149844_e(p_149847_1_, p_149847_2_ + 1, p_149847_3_, p_149847_4_) ? true : (this.func_149844_e(p_149847_1_, p_149847_2_ - 1, p_149847_3_, p_149847_4_) ? true : (this.func_149844_e(p_149847_1_, p_149847_2_, p_149847_3_ - 1, p_149847_4_) ? true : (this.func_149844_e(p_149847_1_, p_149847_2_, p_149847_3_ + 1, p_149847_4_) ? true : (this.func_149844_e(p_149847_1_, p_149847_2_, p_149847_3_, p_149847_4_ - 1) ? true : this.func_149844_e(p_149847_1_, p_149847_2_, p_149847_3_, p_149847_4_ + 1)))));
+-        return this.canBlockCatchFire(p_149847_1_, p_149847_2_ + 1, p_149847_3_, p_149847_4_) ? true : (this.canBlockCatchFire(p_149847_1_, p_149847_2_ - 1, p_149847_3_, p_149847_4_) ? true : (this.canBlockCatchFire(p_149847_1_, p_149847_2_, p_149847_3_ - 1, p_149847_4_) ? true : (this.canBlockCatchFire(p_149847_1_, p_149847_2_, p_149847_3_ + 1, p_149847_4_) ? true : (this.canBlockCatchFire(p_149847_1_, p_149847_2_, p_149847_3_, p_149847_4_ - 1) ? true : this.canBlockCatchFire(p_149847_1_, p_149847_2_, p_149847_3_, p_149847_4_ + 1)))));
 +        return this.canCatchFire(p_149847_1_, p_149847_2_ + 1, p_149847_3_, p_149847_4_, WEST ) ||
 +               this.canCatchFire(p_149847_1_, p_149847_2_ - 1, p_149847_3_, p_149847_4_, EAST ) ||
 +               this.canCatchFire(p_149847_1_, p_149847_2_, p_149847_3_ - 1, p_149847_4_, UP   ) ||
@@ -116,8 +116,8 @@
 +               this.canCatchFire(p_149847_1_, p_149847_2_, p_149847_3_, p_149847_4_ + 1, NORTH);
      }
  
-     private int func_149845_m(World p_149845_1_, int p_149845_2_, int p_149845_3_, int p_149845_4_)
-@@ -247,12 +260,13 @@
+     // JAVADOC METHOD $$ func_149845_m
+@@ -257,12 +270,13 @@
          }
          else
          {
@@ -137,77 +137,77 @@
              return l;
          }
      }
-@@ -262,15 +276,16 @@
-         return false;
+@@ -274,15 +288,16 @@
      }
  
+     // JAVADOC METHOD $$ func_149844_e
 +    @Deprecated
-     public boolean func_149844_e(IBlockAccess p_149844_1_, int p_149844_2_, int p_149844_3_, int p_149844_4_)
+     public boolean canBlockCatchFire(IBlockAccess p_149844_1_, int p_149844_2_, int p_149844_3_, int p_149844_4_)
      {
--        return this.field_149849_a[Block.func_149682_b(p_149844_1_.func_147439_a(p_149844_2_, p_149844_3_, p_149844_4_))] > 0;
+-        return this.field_149849_a[Block.getIdFromBlock(p_149844_1_.getBlock(p_149844_2_, p_149844_3_, p_149844_4_))] > 0;
 +        return canCatchFire(p_149844_1_, p_149844_2_, p_149844_3_, p_149844_4_, UP);
      }
  
 +    @Deprecated
      public int func_149846_a(World p_149846_1_, int p_149846_2_, int p_149846_3_, int p_149846_4_, int p_149846_5_)
      {
--        int i1 = this.field_149849_a[Block.func_149682_b(p_149846_1_.func_147439_a(p_149846_2_, p_149846_3_, p_149846_4_))];
+-        int i1 = this.field_149849_a[Block.getIdFromBlock(p_149846_1_.getBlock(p_149846_2_, p_149846_3_, p_149846_4_))];
 -        return i1 > p_149846_5_ ? i1 : p_149846_5_;
 +        return getChanceToEncourageFire(p_149846_1_, p_149846_2_, p_149846_3_, p_149846_4_, p_149846_5_, UP);
      }
  
-     public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
-@@ -314,9 +329,9 @@
+     // JAVADOC METHOD $$ func_149742_c
+@@ -330,9 +345,9 @@
          float f1;
          float f2;
  
--        if (!World.func_147466_a(p_149734_1_, p_149734_2_, p_149734_3_ - 1, p_149734_4_) && !Blocks.fire.func_149844_e(p_149734_1_, p_149734_2_, p_149734_3_ - 1, p_149734_4_))
-+        if (!World.func_147466_a(p_149734_1_, p_149734_2_, p_149734_3_ - 1, p_149734_4_) && !Blocks.fire.canCatchFire(p_149734_1_, p_149734_2_, p_149734_3_ - 1, p_149734_4_, UP))
+-        if (!World.doesBlockHaveSolidTopSurface(p_149734_1_, p_149734_2_, p_149734_3_ - 1, p_149734_4_) && !Blocks.fire.canBlockCatchFire(p_149734_1_, p_149734_2_, p_149734_3_ - 1, p_149734_4_))
++        if (!World.doesBlockHaveSolidTopSurface(p_149734_1_, p_149734_2_, p_149734_3_ - 1, p_149734_4_) && !Blocks.fire.canCatchFire(p_149734_1_, p_149734_2_, p_149734_3_ - 1, p_149734_4_, UP))
          {
--            if (Blocks.fire.func_149844_e(p_149734_1_, p_149734_2_ - 1, p_149734_3_, p_149734_4_))
+-            if (Blocks.fire.canBlockCatchFire(p_149734_1_, p_149734_2_ - 1, p_149734_3_, p_149734_4_))
 +            if (Blocks.fire.canCatchFire(p_149734_1_, p_149734_2_ - 1, p_149734_3_, p_149734_4_, EAST))
              {
                  for (l = 0; l < 2; ++l)
                  {
-@@ -327,7 +342,7 @@
+@@ -343,7 +358,7 @@
                  }
              }
  
--            if (Blocks.fire.func_149844_e(p_149734_1_, p_149734_2_ + 1, p_149734_3_, p_149734_4_))
+-            if (Blocks.fire.canBlockCatchFire(p_149734_1_, p_149734_2_ + 1, p_149734_3_, p_149734_4_))
 +            if (Blocks.fire.canCatchFire(p_149734_1_, p_149734_2_ + 1, p_149734_3_, p_149734_4_, WEST))
              {
                  for (l = 0; l < 2; ++l)
                  {
-@@ -338,7 +353,7 @@
+@@ -354,7 +369,7 @@
                  }
              }
  
--            if (Blocks.fire.func_149844_e(p_149734_1_, p_149734_2_, p_149734_3_, p_149734_4_ - 1))
+-            if (Blocks.fire.canBlockCatchFire(p_149734_1_, p_149734_2_, p_149734_3_, p_149734_4_ - 1))
 +            if (Blocks.fire.canCatchFire(p_149734_1_, p_149734_2_, p_149734_3_, p_149734_4_ - 1, SOUTH))
              {
                  for (l = 0; l < 2; ++l)
                  {
-@@ -349,7 +364,7 @@
+@@ -365,7 +380,7 @@
                  }
              }
  
--            if (Blocks.fire.func_149844_e(p_149734_1_, p_149734_2_, p_149734_3_, p_149734_4_ + 1))
+-            if (Blocks.fire.canBlockCatchFire(p_149734_1_, p_149734_2_, p_149734_3_, p_149734_4_ + 1))
 +            if (Blocks.fire.canCatchFire(p_149734_1_, p_149734_2_, p_149734_3_, p_149734_4_ + 1, NORTH))
              {
                  for (l = 0; l < 2; ++l)
                  {
-@@ -360,7 +375,7 @@
+@@ -376,7 +391,7 @@
                  }
              }
  
--            if (Blocks.fire.func_149844_e(p_149734_1_, p_149734_2_, p_149734_3_ + 1, p_149734_4_))
+-            if (Blocks.fire.canBlockCatchFire(p_149734_1_, p_149734_2_, p_149734_3_ + 1, p_149734_4_))
 +            if (Blocks.fire.canCatchFire(p_149734_1_, p_149734_2_, p_149734_3_ + 1, p_149734_4_, DOWN))
              {
                  for (l = 0; l < 2; ++l)
                  {
-@@ -405,4 +420,101 @@
+@@ -422,4 +437,101 @@
      {
-         return MapColor.field_151656_f;
+         return MapColor.tntColor;
      }
 +
 +    /*================================= Forge Start ======================================*/
@@ -221,7 +221,7 @@
 +    public void setFireInfo(Block block, int encouragement, int flammibility)
 +    {
 +        if (block == Blocks.air) throw new IllegalArgumentException("Tried to set air on fire... This is bad.");
-+        int id = Block.func_149682_b(block);
++        int id = Block.getIdFromBlock(block);
 +        this.field_149849_a[id] = encouragement;
 +        this.field_149848_b[id] = flammibility;
 +
@@ -253,7 +253,7 @@
 +
 +        for (Entry<Block, FireInfo> e : blockInfo.entrySet())
 +        {
-+            int id = Block.func_149682_b(e.getKey());
++            int id = Block.getIdFromBlock(e.getKey());
 +            if (id >= 0 && id < 4096)
 +            {
 +                field_149849_a[id] = e.getValue().encouragement;
@@ -264,13 +264,13 @@
 +
 +    public int getFlammability(Block block)
 +    {
-+        int id = Block.func_149682_b(block);
++        int id = Block.getIdFromBlock(block);
 +        return id >= 0 && id < 4096 ? field_149848_b[id] : 0;
 +    }
 +
 +    public int getEncouragement(Block block)
 +    {
-+        int id = Block.func_149682_b(block);
++        int id = Block.getIdFromBlock(block);
 +        return id >= 0 && id < 4096 ? field_149849_a[id] : 0;
 +    }
 +
@@ -286,7 +286,7 @@
 +     */
 +    public boolean canCatchFire(IBlockAccess world, int x, int y, int z, ForgeDirection face)
 +    {
-+        return world.func_147439_a(x, y, z).isFlammable(world, x, y, z, face);
++        return world.getBlock(x, y, z).isFlammable(world, x, y, z, face);
 +    }
 +
 +    /**
@@ -302,7 +302,7 @@
 +     */
 +    public int getChanceToEncourageFire(IBlockAccess world, int x, int y, int z, int oldChance, ForgeDirection face)
 +    {
-+        int newChance = world.func_147439_a(x, y, z).getFireSpreadSpeed(world, x, y, z, face);
++        int newChance = world.getBlock(x, y, z).getFireSpreadSpeed(world, x, y, z, face);
 +        return (newChance > oldChance ? newChance : oldChance);
 +    }
 +    /*================================= Forge Start ======================================*/

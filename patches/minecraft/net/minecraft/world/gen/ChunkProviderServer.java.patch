@@ -33,7 +33,7 @@
              {
 @@ -272,6 +278,11 @@
      {
-         if (!this.worldObj.canNotSave)
+         if (!this.worldObj.levelSaving)
          {
 +            for (ChunkCoordIntPair forced : this.worldObj.getPersistentChunks().keySet())
 +            {

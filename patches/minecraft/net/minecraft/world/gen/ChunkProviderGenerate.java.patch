@@ -30,7 +30,7 @@
      {
          this.worldObj = par1World;
 @@ -86,6 +101,16 @@
-                 this.field_147433_r[j + 2 + (k + 2) * 5] = f;
+                 this.parabolicField[j + 2 + (k + 2) * 5] = f;
              }
          }
 +
@@ -48,7 +48,7 @@
      public void func_147424_a(int p_147424_1_, int p_147424_2_, Block[] p_147424_3_)
 @@ -167,6 +192,10 @@
  
-     public void func_147422_a(int p_147422_1_, int p_147422_2_, Block[] p_147422_3_, byte[] p_147422_4_, BiomeGenBase[] p_147422_5_)
+     public void replaceBlocksForBiome(int p_147422_1_, int p_147422_2_, Block[] p_147422_3_, byte[] p_147422_4_, BiomeGenBase[] p_147422_5_)
      {
 +        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, p_147422_1_, p_147422_2_, p_147422_3_, p_147422_5_);
 +        MinecraftForge.EVENT_BUS.post(event);
@@ -111,6 +111,6 @@
  
 +        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(par1IChunkProvider, worldObj, rand, par2, par3, flag));
 +
-         BlockFalling.field_149832_M = false;
+         BlockFalling.fallInstantly = false;
      }
  

@@ -1,10 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDoublePlant.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDoublePlant.java
-@@ -81,6 +81,7 @@
- 
-     public boolean func_149718_j(World p_149718_1_, int p_149718_2_, int p_149718_3_, int p_149718_4_)
+@@ -86,6 +86,7 @@
+     // JAVADOC METHOD $$ func_149718_j
+     public boolean canBlockStay(World p_149718_1_, int p_149718_2_, int p_149718_3_, int p_149718_4_)
      {
-+        if (p_149718_1_.func_147439_a(p_149718_2_, p_149718_3_, p_149718_4_) != this) return super.func_149718_j(p_149718_1_, p_149718_2_, p_149718_3_, p_149718_4_); //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
++        if (p_149718_1_.getBlock(p_149718_2_, p_149718_3_, p_149718_4_) != this) return super.canBlockStay(p_149718_1_, p_149718_2_, p_149718_3_, p_149718_4_); //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
          int l = p_149718_1_.getBlockMetadata(p_149718_2_, p_149718_3_, p_149718_4_);
-         return func_149887_c(l) ? p_149718_1_.func_147439_a(p_149718_2_, p_149718_3_ - 1, p_149718_4_) == this : p_149718_1_.func_147439_a(p_149718_2_, p_149718_3_ + 1, p_149718_4_) == this && super.func_149718_j(p_149718_1_, p_149718_2_, p_149718_3_, p_149718_4_);
+         return func_149887_c(l) ? p_149718_1_.getBlock(p_149718_2_, p_149718_3_ - 1, p_149718_4_) == this : p_149718_1_.getBlock(p_149718_2_, p_149718_3_ + 1, p_149718_4_) == this && super.canBlockStay(p_149718_1_, p_149718_2_, p_149718_3_, p_149718_4_);
      }

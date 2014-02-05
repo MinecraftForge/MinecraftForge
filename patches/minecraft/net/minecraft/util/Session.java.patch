@@ -18,5 +18,5 @@
 +            
 +        }
          this.username = p_i45006_1_;
-         this.field_148257_b = p_i45006_2_;
-         this.field_148258_c = p_i45006_3_;
+         this.playerID = p_i45006_2_;
+         this.token = p_i45006_3_;

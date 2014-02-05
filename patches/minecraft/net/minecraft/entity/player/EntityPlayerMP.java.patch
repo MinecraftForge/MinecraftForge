@@ -12,7 +12,7 @@
 +
  public class EntityPlayerMP extends EntityPlayer implements ICrafting
  {
-     private static final Logger field_147102_bM = LogManager.getLogger();
+     private static final Logger logger = LogManager.getLogger();
 @@ -148,19 +154,11 @@
          p_i45285_4_.thisPlayerMP = this;
          this.theItemInWorldManager = p_i45285_4_;
@@ -77,7 +77,7 @@
      public void onDeath(DamageSource par1DamageSource)
      {
 +        if (ForgeHooks.onLivingDeath(this, par1DamageSource)) return;
-         this.mcServer.getConfigurationManager().func_148539_a(this.func_110142_aN().func_151521_b());
+         this.mcServer.getConfigurationManager().sendChatMsg(this.func_110142_aN().func_151521_b());
  
          if (!this.worldObj.getGameRules().getGameRuleBooleanValue("keepInventory"))
          {
@@ -98,7 +98,7 @@
          }
  
          Collection collection = this.worldObj.getScoreboard().func_96520_a(IScoreObjectiveCriteria.deathCount);
-@@ -1034,4 +1048,15 @@
+@@ -1037,4 +1051,15 @@
      {
          return this.field_147103_bO;
      }

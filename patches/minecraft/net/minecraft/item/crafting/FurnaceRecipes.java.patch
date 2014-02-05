@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/FurnaceRecipes.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/FurnaceRecipes.java
-@@ -109,6 +109,9 @@
+@@ -110,6 +110,9 @@
  
      public float func_151398_b(ItemStack p_151398_1_)
      {

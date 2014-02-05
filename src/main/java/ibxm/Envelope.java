@@ -10,7 +10,6 @@ public class Envelope {
 		set_num_points( 1 );
 	}
 
-	@SuppressWarnings("unused")
     public void set_num_points( int num_points ) {
 		int point;
 		if( num_points <= 0 ) {

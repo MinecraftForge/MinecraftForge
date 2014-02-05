@@ -31,7 +31,7 @@
 +            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(thisPlayerMP, Action.LEFT_CLICK_BLOCK, par1, par2, par3, par4);
 +            if (event.isCanceled())
 +            {
-+                thisPlayerMP.playerNetServerHandler.func_147359_a(new S23PacketBlockChange(par1, par2, par3, theWorld));
++                thisPlayerMP.playerNetServerHandler.sendPacket(new S23PacketBlockChange(par1, par2, par3, theWorld));
 +                return;
 +            }
 +
@@ -45,32 +45,32 @@
 -                this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4);
                  this.initialDamage = this.curblockDamage;
                  float f = 1.0F;
-                 Block block = this.theWorld.func_147439_a(par1, par2, par3);
+                 Block block = this.theWorld.getBlock(par1, par2, par3);
  
--                if (block.func_149688_o() != Material.field_151579_a)
+-                if (block.getMaterial() != Material.air)
 +                
 +                if (!block.isAir(theWorld, par1, par2, par3))
                  {
--                    block.func_149699_a(this.theWorld, par1, par2, par3, this.thisPlayerMP);
--                    f = block.func_149737_a(this.thisPlayerMP, this.thisPlayerMP.worldObj, par1, par2, par3);
+-                    block.onBlockClicked(this.theWorld, par1, par2, par3, this.thisPlayerMP);
+-                    f = block.getPlayerRelativeBlockHardness(this.thisPlayerMP, this.thisPlayerMP.worldObj, par1, par2, par3);
 +                    if (event.useBlock != Event.Result.DENY)
 +                    {
-+                        block.func_149699_a(theWorld, par1, par2, par3, thisPlayerMP);
++                        block.onBlockClicked(theWorld, par1, par2, par3, thisPlayerMP);
 +                        theWorld.extinguishFire(thisPlayerMP, par1, par2, par3, par4);
 +                    }
 +                    else
 +                    {
-+                        thisPlayerMP.playerNetServerHandler.func_147359_a(new S23PacketBlockChange(par1, par2, par3, theWorld));
++                        thisPlayerMP.playerNetServerHandler.sendPacket(new S23PacketBlockChange(par1, par2, par3, theWorld));
 +                    }
-+                    f = block.func_149737_a(thisPlayerMP, thisPlayerMP.worldObj, par1, par2, par3);
++                    f = block.getPlayerRelativeBlockHardness(thisPlayerMP, thisPlayerMP.worldObj, par1, par2, par3);
                  }
  
--                if (block.func_149688_o() != Material.field_151579_a && f >= 1.0F)
+-                if (block.getMaterial() != Material.air && f >= 1.0F)
 +                if (event.useItem == Event.Result.DENY)
                  {
 +                    if (f >= 1.0f)
 +                    {
-+                        thisPlayerMP.playerNetServerHandler.func_147359_a(new S23PacketBlockChange(par1, par2, par3, theWorld));
++                        thisPlayerMP.playerNetServerHandler.sendPacket(new S23PacketBlockChange(par1, par2, par3, theWorld));
 +                    }
 +                    return;
 +                }
@@ -82,18 +82,18 @@
                  else
 @@ -178,7 +213,7 @@
              int l = this.curblockDamage - this.initialDamage;
-             Block block = this.theWorld.func_147439_a(par1, par2, par3);
+             Block block = this.theWorld.getBlock(par1, par2, par3);
  
--            if (block.func_149688_o() != Material.field_151579_a)
+-            if (block.getMaterial() != Material.air)
 +            if (!block.isAir(theWorld, par1, par2, par3))
              {
-                 float f = block.func_149737_a(this.thisPlayerMP, this.thisPlayerMP.worldObj, par1, par2, par3) * (float)(l + 1);
+                 float f = block.getPlayerRelativeBlockHardness(this.thisPlayerMP, this.thisPlayerMP.worldObj, par1, par2, par3) * (float)(l + 1);
  
 @@ -214,7 +249,7 @@
-         Block block = this.theWorld.func_147439_a(par1, par2, par3);
+         Block block = this.theWorld.getBlock(par1, par2, par3);
          int l = this.theWorld.getBlockMetadata(par1, par2, par3);
-         block.func_149681_a(this.theWorld, par1, par2, par3, l, this.thisPlayerMP);
--        boolean flag = this.theWorld.func_147468_f(par1, par2, par3);
+         block.onBlockHarvested(this.theWorld, par1, par2, par3, l, this.thisPlayerMP);
+-        boolean flag = this.theWorld.setBlockToAir(par1, par2, par3);
 +        boolean flag = block.removedByPlayer(theWorld, thisPlayerMP, par1, par2, par3);
  
          if (flag)
@@ -119,21 +119,21 @@
 +            {
 +                return false;
 +            }
-             Block block = this.theWorld.func_147439_a(par1, par2, par3);
+             Block block = this.theWorld.getBlock(par1, par2, par3);
              int l = this.theWorld.getBlockMetadata(par1, par2, par3);
-             this.theWorld.playAuxSFXAtEntity(this.thisPlayerMP, 2001, par1, par2, par3, Block.func_149682_b(block) + (this.theWorld.getBlockMetadata(par1, par2, par3) << 12));
+             this.theWorld.playAuxSFXAtEntity(this.thisPlayerMP, 2001, par1, par2, par3, Block.getIdFromBlock(block) + (this.theWorld.getBlockMetadata(par1, par2, par3) << 12));
 -            boolean flag = this.removeBlock(par1, par2, par3);
 +            boolean flag = false;
  
              if (this.isCreative())
              {
 +                flag = this.removeBlock(par1, par2, par3);
-                 this.thisPlayerMP.playerNetServerHandler.func_147359_a(new S23PacketBlockChange(par1, par2, par3, this.theWorld));
+                 this.thisPlayerMP.playerNetServerHandler.sendPacket(new S23PacketBlockChange(par1, par2, par3, this.theWorld));
              }
              else
              {
                  ItemStack itemstack = this.thisPlayerMP.getCurrentEquippedItem();
--                boolean flag1 = this.thisPlayerMP.func_146099_a(block);
+-                boolean flag1 = this.thisPlayerMP.canHarvestBlock(block);
 +                boolean flag1 = block.canHarvestBlock(thisPlayerMP, l);
  
                  if (itemstack != null)
@@ -145,14 +145,14 @@
 +                flag = this.removeBlock(par1, par2, par3);
                  if (flag && flag1)
                  {
-                     block.func_149636_a(this.theWorld, this.thisPlayerMP, par1, par2, par3, l);
+                     block.harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, l);
                  }
              }
  
 +            // Drop experience
 +            if (!this.isCreative() && flag && event != null)
 +            {
-+                block.func_149657_c(this.theWorld, par1, par2, par3, event.getExpToDrop());
++                block.dropXpOnBlockBreak(this.theWorld, par1, par2, par3, event.getExpToDrop());
 +            }
              return flag;
          }
@@ -169,12 +169,12 @@
      // JAVADOC METHOD $$ func_73078_a
      public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
      {
--        if ((!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null) && par2World.func_147439_a(par4, par5, par6).func_149727_a(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10))
+-        if ((!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null) && par2World.getBlock(par4, par5, par6).onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10))
 +        PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(par1EntityPlayer, Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7);
 +        if (event.isCanceled())
          {
 -            return true;
-+            thisPlayerMP.playerNetServerHandler.func_147359_a(new S23PacketBlockChange(par4, par5, par6, theWorld));
++            thisPlayerMP.playerNetServerHandler.sendPacket(new S23PacketBlockChange(par4, par5, par6, theWorld));
 +            return false;
          }
 -        else if (par3ItemStack == null)
@@ -187,7 +187,7 @@
          }
 -        else if (this.isCreative())
 +
-+        Block block = par2World.func_147439_a(par4, par5, par6);
++        Block block = par2World.getBlock(par4, par5, par6);
 +        boolean isAir = block.isAir(par2World, par4, par5, par6);
 +        boolean useBlock = !par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null;
 +        if (!useBlock) useBlock = par1EntityPlayer.getHeldItem().getItem().doesSneakBypassUse(par2World, par4, par5, par6, par1EntityPlayer);
@@ -203,11 +203,11 @@
 -            return flag;
 +            if (event.useBlock != Event.Result.DENY)
 +            {
-+                result = block.func_149727_a(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10);
++                result = block.onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10);
 +            }
 +            else
 +            {
-+                thisPlayerMP.playerNetServerHandler.func_147359_a(new S23PacketBlockChange(par4, par5, par6, theWorld));
++                thisPlayerMP.playerNetServerHandler.sendPacket(new S23PacketBlockChange(par4, par5, par6, theWorld));
 +                result = event.useItem != Event.Result.ALLOW;
 +            }
          }

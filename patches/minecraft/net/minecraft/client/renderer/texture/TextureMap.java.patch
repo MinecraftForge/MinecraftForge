@@ -15,7 +15,7 @@
 +        registerIcons(); //Re-gather list of Icons, allows for addition/removal of blocks/items after this map was initially constructed.
 +
          int i = Minecraft.getGLMaximumTextureSize();
-         Stitcher stitcher = new Stitcher(i, i, true, 0, this.field_147636_j);
+         Stitcher stitcher = new Stitcher(i, i, true, 0, this.mipmapLevels);
          this.mapUploadedSprites.clear();
          this.listAnimatedSprites.clear();
          int j = Integer.MAX_VALUE;
@@ -25,7 +25,7 @@
  
 @@ -107,6 +111,16 @@
              textureatlassprite = (TextureAtlasSprite)entry.getValue();
-             ResourceLocation resourcelocation1 = this.func_147634_a(resourcelocation, 0);
+             ResourceLocation resourcelocation1 = this.completeResourceLocation(resourcelocation, 0);
  
 +            if (textureatlassprite.hasCustomLoader(par1ResourceManager, resourcelocation))
 +            {
@@ -47,7 +47,7 @@
 +        ForgeHooksClient.onTextureStitchedPost(this);
      }
  
-     private ResourceLocation func_147634_a(ResourceLocation p_147634_1_, int p_147634_2_)
+     private ResourceLocation completeResourceLocation(ResourceLocation p_147634_1_, int p_147634_2_)
 @@ -348,7 +363,7 @@
          {
              throw new IllegalArgumentException("Name cannot be null!");
@@ -59,7 +59,7 @@
  
 @@ -404,4 +419,37 @@
      {
-         this.field_147637_k = p_147632_1_;
+         this.anisotropicFiltering = p_147632_1_;
      }
 +
 +    //===================================================================================================

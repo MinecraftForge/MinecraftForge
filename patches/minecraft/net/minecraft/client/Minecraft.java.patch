@@ -18,9 +18,9 @@
 @@ -274,7 +282,7 @@
          this.startTimerHackThread();
          this.session = par1Session;
-         field_147123_G.info("Setting user: " + par1Session.getUsername());
--        field_147123_G.info("(Session ID is " + par1Session.getSessionID() + ")");
-+        //field_147123_G.info("(Session ID is " + par1Session.getSessionID() + ")"); //don't print the session to the console.. that's stupid...
+         logger.info("Setting user: " + par1Session.getUsername());
+-        logger.info("(Session ID is " + par1Session.getSessionID() + ")");
++        //logger.info("(Session ID is " + par1Session.getSessionID() + ")"); //don't print the session to the console.. that's stupid...
          this.isDemo = par5;
          this.displayWidth = par2;
          this.displayHeight = par3;
@@ -42,19 +42,19 @@
  
          if (this.serverName != null)
          {
-@@ -733,11 +741,6 @@
- 
-     public void func_147108_a(GuiScreen p_147108_1_)
+@@ -734,11 +742,6 @@
+     // JAVADOC METHOD $$ func_147108_a
+     public void displayGuiScreen(GuiScreen p_147108_1_)
      {
 -        if (this.currentScreen != null)
 -        {
--            this.currentScreen.func_146281_b();
+-            this.currentScreen.onGuiClosed();
 -        }
 -
          if (p_147108_1_ == null && this.theWorld == null)
          {
              p_147108_1_ = new GuiMainMenu();
-@@ -747,6 +750,17 @@
+@@ -748,6 +751,17 @@
              p_147108_1_ = new GuiGameOver();
          }
  
@@ -66,13 +66,13 @@
 +        p_147108_1_ = event.gui;
 +        if (old != null && p_147108_1_ != old)
 +        {
-+            old.func_146281_b();
++            old.onGuiClosed();
 +        }
 +        
          if (p_147108_1_ instanceof GuiMainMenu)
          {
              this.gameSettings.showDebugInfo = false;
-@@ -1337,7 +1351,7 @@
+@@ -1339,7 +1353,7 @@
  
                      if (this.thePlayer.isCurrentToolAdventureModeExempt(i, j, k))
                      {
@@ -81,12 +81,12 @@
                          this.thePlayer.swingItem();
                      }
                  }
-@@ -1418,11 +1432,12 @@
+@@ -1420,11 +1434,12 @@
                      int j = this.objectMouseOver.blockY;
                      int k = this.objectMouseOver.blockZ;
  
--                    if (this.theWorld.func_147439_a(i, j, k).func_149688_o() != Material.field_151579_a)
-+                    if (!this.theWorld.func_147439_a(i, j, k).isAir(theWorld, i, j, k))
+-                    if (this.theWorld.getBlock(i, j, k).getMaterial() != Material.air)
++                    if (!this.theWorld.getBlock(i, j, k).isAir(theWorld, i, j, k))
                      {
                          int l = itemstack != null ? itemstack.stackSize : 0;
  
@@ -96,7 +96,7 @@
                          {
                              flag = false;
                              this.thePlayer.swingItem();
-@@ -1449,7 +1464,8 @@
+@@ -1451,7 +1466,8 @@
          {
              ItemStack itemstack1 = this.thePlayer.inventory.getCurrentItem();
  
@@ -106,7 +106,7 @@
              {
                  this.entityRenderer.itemRenderer.resetEquippedProgress2();
              }
-@@ -1651,6 +1667,8 @@
+@@ -1653,6 +1669,8 @@
  
              while (Mouse.next())
              {
@@ -115,7 +115,7 @@
                  i = Mouse.getEventButton();
  
                  if (isRunningOnMac && i == 0 && (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)))
-@@ -2121,6 +2139,11 @@
+@@ -2123,6 +2141,11 @@
      // JAVADOC METHOD $$ func_71353_a
      public void loadWorld(WorldClient par1WorldClient, String par2Str)
      {
@@ -126,8 +126,8 @@
 +
          if (par1WorldClient == null)
          {
-             NetHandlerPlayClient nethandlerplayclient = this.func_147114_u();
-@@ -2133,6 +2156,18 @@
+             NetHandlerPlayClient nethandlerplayclient = this.getNetHandler();
+@@ -2135,6 +2158,18 @@
              if (this.theIntegratedServer != null)
              {
                  this.theIntegratedServer.initiateShutdown();
@@ -146,7 +146,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2288,113 +2323,10 @@
+@@ -2290,113 +2325,10 @@
          if (this.objectMouseOver != null)
          {
              boolean flag = this.thePlayer.capabilities.isCreativeMode;
@@ -160,14 +160,14 @@
 -                j = this.objectMouseOver.blockX;
 -                int k = this.objectMouseOver.blockY;
 -                int l = this.objectMouseOver.blockZ;
--                Block block = this.theWorld.func_147439_a(j, k, l);
+-                Block block = this.theWorld.getBlock(j, k, l);
 -
--                if (block.func_149688_o() == Material.field_151579_a)
+-                if (block.getMaterial() == Material.air)
 -                {
 -                    return;
 -                }
 -
--                item = block.func_149694_d(this.theWorld, j, k, l);
+-                item = block.getItem(this.theWorld, j, k, l);
 -
 -                if (item == null)
 -                {
@@ -175,8 +175,8 @@
 -                }
 -
 -                flag1 = item.getHasSubtypes();
--                Block block1 = item instanceof ItemBlock && !block.func_149648_K() ? Block.func_149634_a(item) : block;
--                i = block1.func_149643_k(this.theWorld, j, k, l);
+-                Block block1 = item instanceof ItemBlock && !block.isFlowerPot() ? Block.getBlockFromItem(item) : block;
+-                i = block1.getDamageValue(this.theWorld, j, k, l);
 -            }
 -            else
 -            {
@@ -262,7 +262,7 @@
              if (flag)
              {
                  j = this.thePlayer.inventoryContainer.inventorySlots.size() - 9 + this.thePlayer.inventory.currentItem;
-@@ -2564,9 +2496,16 @@
+@@ -2566,9 +2498,16 @@
          par1PlayerUsageSnooper.addData("gl_max_texture_size", Integer.valueOf(getGLMaximumTextureSize()));
      }
  
@@ -279,7 +279,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
-@@ -2574,6 +2513,7 @@
+@@ -2576,6 +2515,7 @@
  
              if (j != 0)
              {

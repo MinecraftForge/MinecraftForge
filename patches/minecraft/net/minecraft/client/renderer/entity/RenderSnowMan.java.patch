@@ -15,11 +15,11 @@
              GL11.glPushMatrix();
              this.snowmanModel.head.postRender(0.0625F);
  
--            if (RenderBlocks.func_147739_a(Block.func_149634_a(itemstack.getItem()).func_149645_b()))
+-            if (RenderBlocks.renderItemIn3d(Block.getBlockFromItem(itemstack.getItem()).getRenderType()))
 +            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack, EQUIPPED);
 +            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, itemstack, BLOCK_3D));
 +
-+            if (is3D || RenderBlocks.func_147739_a(Block.func_149634_a(itemstack.getItem()).func_149645_b()))
++            if (is3D || RenderBlocks.renderItemIn3d(Block.getBlockFromItem(itemstack.getItem()).getRenderType()))
              {
                  float f1 = 0.625F;
                  GL11.glTranslatef(0.0F, -0.34375F, 0.0F);

@@ -59,7 +59,7 @@
      public boolean hasContainerItem()
      {
          return this.containerItem != null;
-@@ -660,6 +672,7 @@
+@@ -662,6 +674,7 @@
      }
  
      @SideOnly(Side.CLIENT)
@@ -67,7 +67,7 @@
      public boolean hasEffect(ItemStack par1ItemStack)
      {
          return par1ItemStack.isItemEnchanted();
-@@ -674,7 +687,7 @@
+@@ -676,7 +689,7 @@
      // JAVADOC METHOD $$ func_77616_k
      public boolean isItemTool(ItemStack par1ItemStack)
      {
@@ -76,7 +76,7 @@
      }
  
      protected MovingObjectPosition getMovingObjectPositionFromPlayer(World par1World, EntityPlayer par2EntityPlayer, boolean par3)
-@@ -683,7 +696,7 @@
+@@ -685,7 +698,7 @@
          float f1 = par2EntityPlayer.prevRotationPitch + (par2EntityPlayer.rotationPitch - par2EntityPlayer.prevRotationPitch) * f;
          float f2 = par2EntityPlayer.prevRotationYaw + (par2EntityPlayer.rotationYaw - par2EntityPlayer.prevRotationYaw) * f;
          double d0 = par2EntityPlayer.prevPosX + (par2EntityPlayer.posX - par2EntityPlayer.prevPosX) * (double)f;
@@ -85,7 +85,7 @@
          double d2 = par2EntityPlayer.prevPosZ + (par2EntityPlayer.posZ - par2EntityPlayer.prevPosZ) * (double)f;
          Vec3 vec3 = par1World.getWorldVec3Pool().getVecFromPool(d0, d1, d2);
          float f3 = MathHelper.cos(-f2 * 0.017453292F - (float)Math.PI);
-@@ -693,6 +706,10 @@
+@@ -695,6 +708,10 @@
          float f7 = f4 * f5;
          float f8 = f3 * f5;
          double d3 = 5.0D;
@@ -96,8 +96,8 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.func_147447_a(vec3, vec31, par3, !par3, false);
      }
-@@ -773,6 +790,542 @@
-         return this.iconString == null ? "MISSING_ICON_ITEM_" + field_150901_e.func_148757_b(this) + "_" + this.unlocalizedName : this.iconString;
+@@ -776,6 +793,542 @@
+         return this.iconString == null ? "MISSING_ICON_ITEM_" + itemRegistry.getIDForObject(this) + "_" + this.unlocalizedName : this.iconString;
      }
  
 +    /* ======================================== FORGE START =====================================*/
@@ -415,7 +415,7 @@
 +
 +        if (armorType == 0)
 +        {
-+            return this == Item.func_150898_a(Blocks.pumpkin) || this == Items.skull;
++            return this == Item.getItemFromBlock(Blocks.pumpkin) || this == Items.skull;
 +        }
 +
 +        return false;
@@ -639,7 +639,7 @@
      public static enum ToolMaterial
      {
          WOOD(0, 59, 2.0F, 0.0F, 15),
-@@ -793,6 +1346,9 @@
+@@ -796,6 +1349,9 @@
  
          private static final String __OBFID = "CL_00000042";
  
@@ -649,15 +649,15 @@
          private ToolMaterial(int par3, int par4, float par5, float par6, int par7)
          {
              this.harvestLevel = par3;
-@@ -834,7 +1390,15 @@
+@@ -837,7 +1393,15 @@
  
          public Item func_150995_f()
          {
--            return this == WOOD ? Item.func_150898_a(Blocks.planks) : (this == STONE ? Item.func_150898_a(Blocks.cobblestone) : (this == GOLD ? Items.gold_ingot : (this == IRON ? Items.iron_ingot : (this == EMERALD ? Items.diamond : null))));
+-            return this == WOOD ? Item.getItemFromBlock(Blocks.planks) : (this == STONE ? Item.getItemFromBlock(Blocks.cobblestone) : (this == GOLD ? Items.gold_ingot : (this == IRON ? Items.iron_ingot : (this == EMERALD ? Items.diamond : null))));
 +            switch (this)
 +            {
-+                case WOOD:    return Item.func_150898_a(Blocks.planks);
-+                case STONE:   return Item.func_150898_a(Blocks.cobblestone);
++                case WOOD:    return Item.getItemFromBlock(Blocks.planks);
++                case STONE:   return Item.getItemFromBlock(Blocks.cobblestone);
 +                case GOLD:    return Items.gold_ingot;
 +                case IRON:    return Items.iron_ingot;
 +                case EMERALD: return Items.diamond;

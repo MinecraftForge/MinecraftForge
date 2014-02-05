@@ -16,11 +16,11 @@ public class DeferredBiomeDecorator extends BiomeDecorator {
     }
 
     @Override
-    public void func_150512_a(World par1World, Random par2Random, BiomeGenBase biome, int par3, int par4)
+    public void decorateChunk(World par1World, Random par2Random, BiomeGenBase biome, int par3, int par4)
     {
         fireCreateEventAndReplace(biome);
         // On first call to decorate, we fire and substitute ourselves, if we haven't already done so
-        biome.theBiomeDecorator.func_150512_a(par1World, par2Random, biome, par3, par4);
+        biome.theBiomeDecorator.decorateChunk(par1World, par2Random, biome, par3, par4);
     }
     public void fireCreateEventAndReplace(BiomeGenBase biome)
     {

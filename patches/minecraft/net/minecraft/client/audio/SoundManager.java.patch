@@ -12,7 +12,7 @@
  @SideOnly(Side.CLIENT)
  public class SoundManager
  {
-@@ -69,6 +74,7 @@
+@@ -81,6 +86,7 @@
          {
              SoundSystemConfig.addLibrary(LibraryLWJGLOpenAL.class);
              SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
@@ -20,11 +20,11 @@
          }
          catch (SoundSystemException soundsystemexception)
          {
-@@ -80,6 +86,7 @@
+@@ -92,6 +98,7 @@
      {
-         this.func_148613_b();
-         this.func_148608_i();
+         this.unloadSoundSystem();
+         this.loadSoundSystem();
 +        MinecraftForge.EVENT_BUS.post(new SoundLoadEvent(this));
      }
  
-     private synchronized void func_148608_i()
+     // JAVADOC METHOD $$ func_148608_i

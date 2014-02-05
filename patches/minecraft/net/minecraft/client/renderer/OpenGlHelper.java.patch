@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/OpenGlHelper.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/OpenGlHelper.java
 @@ -27,6 +27,10 @@
-     public static boolean field_148824_g;
+     public static boolean shadersSupported;
      private static final String __OBFID = "CL_00001179";
  
 +    /* Stores the last values sent into setLightmapTextureCoords */
@@ -23,4 +23,4 @@
 +        }
      }
  
-     public static void func_148821_a(int p_148821_0_, int p_148821_1_, int p_148821_2_, int p_148821_3_)
+     public static void glBlendFunc(int p_148821_0_, int p_148821_1_, int p_148821_2_, int p_148821_3_)

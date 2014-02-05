@@ -12,8 +12,8 @@
          {
              BiomeGenBase biomegenbase = abiomegenbase[j];
  
--            if (biomegenbase != null && biomegenbase.minHeight > 0.0F)
-+            if (biomegenbase != null && biomegenbase.minHeight > 0.0F && !BiomeManager.strongHoldBiomesBlackList.contains(biomegenbase))
+-            if (biomegenbase != null && biomegenbase.rootHeight > 0.0F)
++            if (biomegenbase != null && biomegenbase.rootHeight > 0.0F && !BiomeManager.strongHoldBiomesBlackList.contains(biomegenbase))
              {
                  this.field_151546_e.add(biomegenbase);
              }

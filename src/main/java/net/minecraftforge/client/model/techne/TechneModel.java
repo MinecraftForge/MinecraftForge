@@ -37,7 +37,6 @@ import net.minecraftforge.client.model.ModelFormatException;
 /**
  * Techne model importer, based on iChun's Hats importer
  */
-@SuppressWarnings("unused")
 @SideOnly(Side.CLIENT)
 public class TechneModel extends ModelBase implements IModelCustom {
     public static final List<String> cubeTypes = Arrays.asList(

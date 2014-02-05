@@ -11,8 +11,8 @@
  {
      private static final String __OBFID = "CL_00000473";
 @@ -277,9 +280,12 @@
-                     this.func_151550_a(par1World, Blocks.redstone_wire, 0, 4, -3, 1, par3StructureBoundingBox);
-                     this.func_151550_a(par1World, Blocks.mossy_cobblestone, 0, 3, -3, 1, par3StructureBoundingBox);
+                     this.placeBlockAtCurrentPosition(par1World, Blocks.redstone_wire, 0, 4, -3, 1, par3StructureBoundingBox);
+                     this.placeBlockAtCurrentPosition(par1World, Blocks.mossy_cobblestone, 0, 3, -3, 1, par3StructureBoundingBox);
  
 +                    ChestGenHooks dispenser = ChestGenHooks.getInfo(PYRAMID_JUNGLE_DISPENSER);
 +                    ChestGenHooks chest = ChestGenHooks.getInfo(PYRAMID_JUNGLE_CHEST);
@@ -23,7 +23,7 @@
 +                        this.field_74945_j = this.generateStructureDispenserContents(par1World, par3StructureBoundingBox, par2Random, 3, -2, 1, 2, dispenser.getItems(par2Random), dispenser.getCount(par2Random));
                      }
  
-                     this.func_151550_a(par1World, Blocks.vine, 15, 3, -2, 2, par3StructureBoundingBox);
+                     this.placeBlockAtCurrentPosition(par1World, Blocks.vine, 15, 3, -2, 2, par3StructureBoundingBox);
 @@ -296,7 +302,7 @@
  
                      if (!this.field_74946_k)
@@ -32,7 +32,7 @@
 +                        this.field_74946_k = this.generateStructureDispenserContents(par1World, par3StructureBoundingBox, par2Random, 9, -2, 3, 4, dispenser.getItems(par2Random), dispenser.getCount(par2Random));
                      }
  
-                     this.func_151550_a(par1World, Blocks.vine, 15, 8, -1, 3, par3StructureBoundingBox);
+                     this.placeBlockAtCurrentPosition(par1World, Blocks.vine, 15, 8, -1, 3, par3StructureBoundingBox);
 @@ -304,7 +310,7 @@
  
                      if (!this.field_74947_h)
@@ -41,7 +41,7 @@
 +                        this.field_74947_h = this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 8, -3, 3, chest.getItems(par2Random), chest.getCount(par2Random));
                      }
  
-                     this.func_151550_a(par1World, Blocks.mossy_cobblestone, 0, 9, -3, 2, par3StructureBoundingBox);
+                     this.placeBlockAtCurrentPosition(par1World, Blocks.mossy_cobblestone, 0, 9, -3, 2, par3StructureBoundingBox);
 @@ -337,7 +343,7 @@
  
                      if (!this.field_74948_i)

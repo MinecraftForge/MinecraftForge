@@ -12,11 +12,11 @@
  public class EntityZombie extends EntityMob
  {
 @@ -75,7 +79,7 @@
-         this.getEntityAttribute(SharedMonsterAttributes.followRange).setAttribute(40.0D);
-         this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.23000000417232513D);
-         this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setAttribute(3.0D);
--        this.getAttributeMap().func_111150_b(field_110186_bp).setAttribute(this.rand.nextDouble() * 0.10000000149011612D);
-+        this.getAttributeMap().func_111150_b(field_110186_bp).setAttribute(this.rand.nextDouble() * ForgeModContainer.zombieSummonBaseChance);
+         this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(40.0D);
+         this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.23000000417232513D);
+         this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(3.0D);
+-        this.getAttributeMap().registerAttribute(field_110186_bp).setBaseValue(this.rand.nextDouble() * 0.10000000149011612D);
++        this.getAttributeMap().registerAttribute(field_110186_bp).setBaseValue(this.rand.nextDouble() * ForgeModContainer.zombieSummonBaseChance);
      }
  
      protected void entityInit()

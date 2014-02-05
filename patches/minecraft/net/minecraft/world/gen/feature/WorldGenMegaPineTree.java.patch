@@ -15,50 +15,50 @@
  {
 @@ -34,7 +36,7 @@
              {
-                 Block block = par1World.func_147439_a(par3, par4 + i1, par5);
+                 Block block = par1World.getBlock(par3, par4 + i1, par5);
  
--                if (block.func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j)
+-                if (block.getMaterial() == Material.air || block.getMaterial() == Material.leaves)
 +                if (block.isAir(par1World, par3, par4 + i1, par5) || block.isLeaves(par1World, par3, par4 + i1, par5))
                  {
-                     this.func_150516_a(par1World, par3, par4 + i1, par5, Blocks.log, this.woodMetadata);
+                     this.setBlockAndNotifyAdequately(par1World, par3, par4 + i1, par5, Blocks.log, this.woodMetadata);
                  }
 @@ -43,21 +45,21 @@
                  {
-                     block = par1World.func_147439_a(par3 + 1, par4 + i1, par5);
+                     block = par1World.getBlock(par3 + 1, par4 + i1, par5);
  
--                    if (block.func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j)
+-                    if (block.getMaterial() == Material.air || block.getMaterial() == Material.leaves)
 +                    if (block.isAir(par1World, par3 + 1, par4 + i1, par5) || block.isLeaves(par1World, par3 + 1, par4 + i1, par5))
                      {
-                         this.func_150516_a(par1World, par3 + 1, par4 + i1, par5, Blocks.log, this.woodMetadata);
+                         this.setBlockAndNotifyAdequately(par1World, par3 + 1, par4 + i1, par5, Blocks.log, this.woodMetadata);
                      }
  
-                     block = par1World.func_147439_a(par3 + 1, par4 + i1, par5 + 1);
+                     block = par1World.getBlock(par3 + 1, par4 + i1, par5 + 1);
  
--                    if (block.func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j)
+-                    if (block.getMaterial() == Material.air || block.getMaterial() == Material.leaves)
 +                    if (block.isAir(par1World, par3 + 1, par4 + i1, par5 + 1) || block.isLeaves(par1World, par3 + 1, par4 + i1, par5 + 1))
                      {
-                         this.func_150516_a(par1World, par3 + 1, par4 + i1, par5 + 1, Blocks.log, this.woodMetadata);
+                         this.setBlockAndNotifyAdequately(par1World, par3 + 1, par4 + i1, par5 + 1, Blocks.log, this.woodMetadata);
                      }
  
-                     block = par1World.func_147439_a(par3, par4 + i1, par5 + 1);
+                     block = par1World.getBlock(par3, par4 + i1, par5 + 1);
  
--                    if (block.func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j)
+-                    if (block.getMaterial() == Material.air || block.getMaterial() == Material.leaves)
 +                    if (block.isAir(par1World, par3, par4 + i1, par5 + 1) || block.isLeaves(par1World, par3, par4 + i1, par5 + 1))
                      {
-                         this.func_150516_a(par1World, par3, par4 + i1, par5 + 1, Blocks.log, this.woodMetadata);
+                         this.setBlockAndNotifyAdequately(par1World, par3, par4 + i1, par5 + 1, Blocks.log, this.woodMetadata);
                      }
 @@ -132,13 +134,13 @@
          {
-             Block block = p_150540_1_.func_147439_a(p_150540_2_, l, p_150540_4_);
+             Block block = p_150540_1_.getBlock(p_150540_2_, l, p_150540_4_);
  
 -            if (block == Blocks.grass || block == Blocks.dirt)
 +            if (block.canSustainPlant(p_150540_1_, p_150540_2_, l, p_150540_4_, ForgeDirection.UP, (BlockSapling)Blocks.sapling))
              {
-                 this.func_150516_a(p_150540_1_, p_150540_2_, l, p_150540_4_, Blocks.dirt, 2);
+                 this.setBlockAndNotifyAdequately(p_150540_1_, p_150540_2_, l, p_150540_4_, Blocks.dirt, 2);
                  break;
              }
  
--            if (block.func_149688_o() != Material.field_151579_a && l < p_150540_3_)
+-            if (block.getMaterial() != Material.air && l < p_150540_3_)
 +            if (block.isAir(p_150540_1_, p_150540_2_, l, p_150540_4_) && l < p_150540_3_)
              {
                  break;

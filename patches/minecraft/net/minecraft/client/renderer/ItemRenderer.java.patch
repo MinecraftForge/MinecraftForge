@@ -29,22 +29,22 @@
 +        this.renderItem(par1EntityLivingBase, par2ItemStack, par3, EQUIPPED);
 +    }
 +
-+    // JAVADOC METHOD $$ func_78443_a
++    // JAVADOC METHOD $$ renderItem
 +    public void renderItem(EntityLivingBase par1EntityLivingBase, ItemStack par2ItemStack, int par3, ItemRenderType type)
 +    {
          GL11.glPushMatrix();
          TextureManager texturemanager = this.mc.getTextureManager();
          Item item = par2ItemStack.getItem();
-         Block block = Block.func_149634_a(item);
+         Block block = Block.getBlockFromItem(item);
  
--        if (par2ItemStack.getItemSpriteNumber() == 0 && item instanceof ItemBlock && RenderBlocks.func_147739_a(block.func_149645_b()))
+-        if (par2ItemStack.getItemSpriteNumber() == 0 && item instanceof ItemBlock && RenderBlocks.renderItemIn3d(block.getRenderType()))
 +        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(par2ItemStack, type);
 +        if (customRenderer != null)
          {
 +            texturemanager.bindTexture(texturemanager.getResourceLocation(par2ItemStack.getItemSpriteNumber()));
-+            ForgeHooksClient.renderEquippedItem(type, customRenderer, field_147720_h, par1EntityLivingBase, par2ItemStack);
++            ForgeHooksClient.renderEquippedItem(type, customRenderer, renderBlocksIr, par1EntityLivingBase, par2ItemStack);
 +        }
-+        else if (par2ItemStack.getItemSpriteNumber() == 0 && item instanceof ItemBlock && RenderBlocks.func_147739_a(block.func_149645_b()))
++        else if (par2ItemStack.getItemSpriteNumber() == 0 && item instanceof ItemBlock && RenderBlocks.renderItemIn3d(block.getRenderType()))
 +        {
              texturemanager.bindTexture(texturemanager.getResourceLocation(0));
  
@@ -79,10 +79,10 @@
 +
 +            if (custom == null)
              {
--                this.mc.entityRenderer.func_147701_i().func_148250_a(mapdata, false);
+-                this.mc.entityRenderer.getMapItemRenderer().func_148250_a(mapdata, false);
 +                if (mapdata != null)
 +                {
-+                    this.mc.entityRenderer.func_147701_i().func_148250_a(mapdata, false);
++                    this.mc.entityRenderer.getMapItemRenderer().func_148250_a(mapdata, false);
 +                }
              }
 +            else

@@ -87,7 +87,7 @@
 +        return getItem().canHarvestBlock(p_150998_1_, this);
      }
  
-     public boolean func_111282_a(EntityPlayer par1EntityPlayer, EntityLivingBase par2EntityLivingBase)
+     public boolean interactWithEntity(EntityPlayer par1EntityPlayer, EntityLivingBase par2EntityLivingBase)
 @@ -653,16 +649,24 @@
          {
              arraylist.add("Durability: " + (this.getMaxDamage() - this.getItemDamageForDisplay()) + " / " + this.getMaxDamage());

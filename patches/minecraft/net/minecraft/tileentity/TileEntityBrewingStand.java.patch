@@ -9,50 +9,50 @@
  
  public class TileEntityBrewingStand extends TileEntity implements ISidedInventory
  {
-@@ -105,7 +107,7 @@
+@@ -109,7 +111,7 @@
  
                  for (int i = 0; i < 3; ++i)
                  {
--                    if (this.field_145945_j[i] != null && this.field_145945_j[i].getItem() == Items.potionitem)
-+                    if (this.field_145945_j[i] != null && this.field_145945_j[i].getItem() instanceof ItemPotion)
+-                    if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() == Items.potionitem)
++                    if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() instanceof ItemPotion)
                      {
-                         int j = this.field_145945_j[i].getItemDamage();
+                         int j = this.brewingItemStacks[i].getItemDamage();
                          int k = this.func_145936_c(j, itemstack);
-@@ -144,7 +146,7 @@
+@@ -148,7 +150,7 @@
  
              for (int i = 0; i < 3; ++i)
              {
--                if (this.field_145945_j[i] != null && this.field_145945_j[i].getItem() == Items.potionitem)
-+                if (this.field_145945_j[i] != null && this.field_145945_j[i].getItem() instanceof ItemPotion)
+-                if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() == Items.potionitem)
++                if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() instanceof ItemPotion)
                  {
-                     int j = this.field_145945_j[i].getItemDamage();
+                     int j = this.brewingItemStacks[i].getItemDamage();
                      int k = this.func_145936_c(j, itemstack);
-@@ -165,9 +167,9 @@
+@@ -169,9 +171,9 @@
                  }
              }
  
 -            if (itemstack.getItem().hasContainerItem())
 +            if (itemstack.getItem().hasContainerItem(itemstack))
              {
--                this.field_145945_j[3] = new ItemStack(itemstack.getItem().getContainerItem());
-+                this.field_145945_j[3] = itemstack.getItem().getContainerItem(itemstack);
+-                this.brewingItemStacks[3] = new ItemStack(itemstack.getItem().getContainerItem());
++                this.brewingItemStacks[3] = itemstack.getItem().getContainerItem(itemstack);
              }
              else
              {
-@@ -178,6 +180,7 @@
-                     this.field_145945_j[3] = null;
+@@ -182,6 +184,7 @@
+                     this.brewingItemStacks[3] = null;
                  }
              }
-+            MinecraftForge.EVENT_BUS.post(new PotionBrewedEvent(field_145945_j));
++            MinecraftForge.EVENT_BUS.post(new PotionBrewedEvent(brewingItemStacks));
          }
      }
  
-@@ -300,7 +303,7 @@
+@@ -304,7 +307,7 @@
      // JAVADOC METHOD $$ func_94041_b
      public boolean isItemValidForSlot(int par1, ItemStack par2ItemStack)
      {
--        return par1 == 3 ? par2ItemStack.getItem().func_150892_m(par2ItemStack) : par2ItemStack.getItem() == Items.potionitem || par2ItemStack.getItem() == Items.glass_bottle;
-+        return par1 == 3 ? par2ItemStack.getItem().func_150892_m(par2ItemStack) : par2ItemStack.getItem() instanceof ItemPotion || par2ItemStack.getItem() == Items.glass_bottle;
+-        return par1 == 3 ? par2ItemStack.getItem().isPotionIngredient(par2ItemStack) : par2ItemStack.getItem() == Items.potionitem || par2ItemStack.getItem() == Items.glass_bottle;
++        return par1 == 3 ? par2ItemStack.getItem().isPotionIngredient(par2ItemStack) : par2ItemStack.getItem() instanceof ItemPotion || par2ItemStack.getItem() == Items.glass_bottle;
      }
  
      @SideOnly(Side.CLIENT)

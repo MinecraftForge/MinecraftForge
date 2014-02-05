@@ -20,7 +20,7 @@
  
      // JAVADOC METHOD $$ func_71053_j
 @@ -494,20 +497,45 @@
-         return this.worldObj.func_147439_a(par1, par2, par3).func_149721_r();
+         return this.worldObj.getBlock(par1, par2, par3).isNormalCube();
      }
  
 +    private boolean isHeadspaceFree(int x, int y, int z, int height)
@@ -70,7 +70,7 @@
              byte b0 = -1;
              double d5 = 9999.0D;
  
-@@ -595,6 +623,12 @@
+@@ -596,6 +624,12 @@
  
      public void playSound(String par1Str, float par2, float par3)
      {

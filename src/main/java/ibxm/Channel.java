@@ -1,7 +1,6 @@
 
 package ibxm;
 
-@SuppressWarnings("unused")
 public class Channel {
 	public int pattern_loop_row;
 

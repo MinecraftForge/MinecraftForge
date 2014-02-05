@@ -13,9 +13,9 @@
 @@ -123,12 +126,11 @@
                                  if (k2 == 1)
                                  {
-                                     par1World.func_147465_d(i2, par4, j2, Blocks.chest, 0, 2);
+                                     par1World.setBlock(i2, par4, j2, Blocks.chest, 0, 2);
 -                                    WeightedRandomChestContent[] aweightedrandomchestcontent = WeightedRandomChestContent.func_92080_a(field_111189_a, new WeightedRandomChestContent[] {Items.enchanted_book.func_92114_b(par2Random)});
-                                     TileEntityChest tileentitychest = (TileEntityChest)par1World.func_147438_o(i2, par4, j2);
+                                     TileEntityChest tileentitychest = (TileEntityChest)par1World.getTileEntity(i2, par4, j2);
  
                                      if (tileentitychest != null)
                                      {

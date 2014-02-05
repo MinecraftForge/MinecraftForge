@@ -114,11 +114,11 @@
  
              if (itemstack.getItem() instanceof ItemBlock)
              {
--                if (RenderBlocks.func_147739_a(Block.func_149634_a(itemstack.getItem()).func_149645_b()))
+-                if (RenderBlocks.renderItemIn3d(Block.getBlockFromItem(itemstack.getItem()).getRenderType()))
 +                IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack, EQUIPPED);
 +                boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, itemstack, BLOCK_3D));
 +
-+                if (is3D || RenderBlocks.func_147739_a(Block.func_149634_a(itemstack.getItem()).func_149645_b()))
++                if (is3D || RenderBlocks.renderItemIn3d(Block.getBlockFromItem(itemstack.getItem()).getRenderType()))
                  {
                      f1 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
@@ -143,11 +143,11 @@
                  enumaction = itemstack1.getItemUseAction();
              }
  
--            if (itemstack1.getItem() instanceof ItemBlock && RenderBlocks.func_147739_a(Block.func_149634_a(itemstack1.getItem()).func_149645_b()))
+-            if (itemstack1.getItem() instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.getBlockFromItem(itemstack1.getItem()).getRenderType()))
 +            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack1, EQUIPPED);
 +            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, itemstack1, BLOCK_3D));
 +
-+            if (is3D || itemstack1.getItem() instanceof ItemBlock && RenderBlocks.func_147739_a(Block.func_149634_a(itemstack1.getItem()).func_149645_b()))
++            if (is3D || itemstack1.getItem() instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.getBlockFromItem(itemstack1.getItem()).getRenderType()))
              {
                  f3 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);

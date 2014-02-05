@@ -8,28 +8,29 @@
  import java.util.Iterator;
  import java.util.Random;
  import net.minecraft.block.material.Material;
-@@ -108,8 +109,6 @@
+@@ -118,9 +119,6 @@
          return p_149692_1_;
      }
  
--    public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_) {}
+-    // JAVADOC METHOD $$ func_149690_a
+-    public void dropBlockAsItemWithChance(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_) {}
 -
-     public void func_149681_a(World p_149681_1_, int p_149681_2_, int p_149681_3_, int p_149681_4_, int p_149681_5_, EntityPlayer p_149681_6_)
+     // JAVADOC METHOD $$ func_149681_a
+     public void onBlockHarvested(World p_149681_1_, int p_149681_2_, int p_149681_3_, int p_149681_4_, int p_149681_5_, EntityPlayer p_149681_6_)
      {
-         if (p_149681_6_.capabilities.isCreativeMode)
-@@ -118,29 +117,38 @@
+@@ -130,29 +128,38 @@
              p_149681_1_.setBlockMetadataWithNotify(p_149681_2_, p_149681_3_, p_149681_4_, p_149681_5_, 4);
          }
  
-+        this.func_149697_b(p_149681_1_, p_149681_2_, p_149681_3_, p_149681_4_, p_149681_5_, 0);
++        this.dropBlockAsItem(p_149681_1_, p_149681_2_, p_149681_3_, p_149681_4_, p_149681_5_, 0);
 +
-         super.func_149681_a(p_149681_1_, p_149681_2_, p_149681_3_, p_149681_4_, p_149681_5_, p_149681_6_);
+         super.onBlockHarvested(p_149681_1_, p_149681_2_, p_149681_3_, p_149681_4_, p_149681_5_, p_149681_6_);
      }
  
-     public void func_149749_a(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_)
+     public void breakBlock(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_)
      {
 -        if (!p_149749_1_.isRemote)
-+        super.func_149749_a(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, p_149749_5_, p_149749_6_);
++        super.breakBlock(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, p_149749_5_, p_149749_6_);
 +    }
 +
 +    @Override
@@ -39,8 +40,8 @@
          {
              if ((p_149749_6_ & 8) == 0)
              {
-                 ItemStack itemstack = new ItemStack(Items.skull, 1, this.func_149643_k(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_));
-                 TileEntitySkull tileentityskull = (TileEntitySkull)p_149749_1_.func_147438_o(p_149749_2_, p_149749_3_, p_149749_4_);
+                 ItemStack itemstack = new ItemStack(Items.skull, 1, this.getDamageValue(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_));
+                 TileEntitySkull tileentityskull = (TileEntitySkull)p_149749_1_.getTileEntity(p_149749_2_, p_149749_3_, p_149749_4_);
  
 +                if (tileentityskull == null) return ret;
 +
@@ -50,13 +51,13 @@
                      itemstack.getTagCompound().setString("SkullOwner", tileentityskull.func_145907_c());
                  }
  
--                this.func_149642_a(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, itemstack);
+-                this.dropBlockAsItem(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, itemstack);
 +                ret.add(itemstack);
              }
 -
--            super.func_149749_a(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, p_149749_5_, p_149749_6_);
+-            super.breakBlock(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, p_149749_5_, p_149749_6_);
          }
 +        return ret;
      }
  
-     public Item func_149650_a(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
+     public Item getItemDropped(int p_149650_1_, Random p_149650_2_, int p_149650_3_)

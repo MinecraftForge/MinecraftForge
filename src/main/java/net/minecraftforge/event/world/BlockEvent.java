@@ -80,7 +80,7 @@ public class BlockEvent extends Event {
             }
             else
             {
-                int meta = block.func_149643_k(world, x, y, z);
+                int meta = block.getDamageValue(world, x, y, z);
                 int bonusLevel = EnchantmentHelper.getFortuneModifier(player);
                 this.exp = block.getExpDrop(world, meta, bonusLevel);
             }

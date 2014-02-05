@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityHopper.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityHopper.java
-@@ -402,17 +402,30 @@
+@@ -404,17 +404,30 @@
  
              if (itemstack1 == null)
              {

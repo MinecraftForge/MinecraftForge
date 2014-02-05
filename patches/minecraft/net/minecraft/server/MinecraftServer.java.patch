@@ -18,7 +18,7 @@
 +
  public abstract class MinecraftServer implements ICommandSender, Runnable, IPlayerUsage
  {
-     private static final Logger field_147145_h = LogManager.getLogger();
+     private static final Logger logger = LogManager.getLogger();
 @@ -93,7 +98,7 @@
      // JAVADOC FIELD $$ field_71319_s
      private int serverPort = -1;
@@ -156,7 +156,7 @@
 +        this.theProfiler.endStartSection("dim_unloading");
 +        DimensionManager.unloadWorlds(worldTickTimes);
          this.theProfiler.endStartSection("connection");
-         this.func_147137_ag().func_151269_c();
+         this.func_147137_ag().networkTick();
          this.theProfiler.endStartSection("players");
 @@ -731,7 +722,13 @@
      // JAVADOC METHOD $$ func_71218_a
@@ -173,7 +173,7 @@
      }
  
      // JAVADOC METHOD $$ func_71249_w
-@@ -1006,6 +1003,7 @@
+@@ -1007,6 +1004,7 @@
  
              if (worldserver != null)
              {
@@ -181,7 +181,7 @@
                  worldserver.flush();
              }
          }
-@@ -1494,7 +1492,6 @@
+@@ -1496,7 +1494,6 @@
          this.field_147141_M = p_155759_1_;
      }
  

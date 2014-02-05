@@ -26,7 +26,6 @@ import net.minecraftforge.common.MinecraftForge;
  * @author King Lemming
  * 
  */
-@SuppressWarnings("unused")
 public abstract class FluidContainerRegistry
 {
     // Holder object that implements HashCode for an ItemStack, 

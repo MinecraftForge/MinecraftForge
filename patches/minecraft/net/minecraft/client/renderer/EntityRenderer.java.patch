@@ -52,7 +52,7 @@
  
              if (!this.mc.gameSettings.debugCamEnable)
              {
--                Block block = this.mc.theWorld.func_147439_a(MathHelper.floor_double(entitylivingbase.posX), MathHelper.floor_double(entitylivingbase.posY), MathHelper.floor_double(entitylivingbase.posZ));
+-                Block block = this.mc.theWorld.getBlock(MathHelper.floor_double(entitylivingbase.posX), MathHelper.floor_double(entitylivingbase.posY), MathHelper.floor_double(entitylivingbase.posZ));
 -
 -                if (block == Blocks.bed)
 -                {
@@ -70,7 +70,7 @@
                  RenderHelper.enableStandardItemLighting();
                  this.mc.mcProfiler.endStartSection("entities");
 +                ForgeHooksClient.setRenderPass(0);
-                 renderglobal.func_147589_a(entitylivingbase, frustrum, par1);
+                 renderglobal.renderEntities(entitylivingbase, frustrum, par1);
 +                ForgeHooksClient.setRenderPass(0);
 +                // ToDo: Try and figure out how to make particles render sorted correctly.. {They render behind water}
                  this.enableLightmap((double)par1);
@@ -102,7 +102,7 @@
  
              this.mc.mcProfiler.endStartSection("destroyProgress");
              GL11.glEnable(GL11.GL_BLEND);
-             OpenGlHelper.func_148821_a(770, 1, 1, 0);
+             OpenGlHelper.glBlendFunc(770, 1, 1, 0);
 -            renderglobal.drawBlockDamageTexture(Tessellator.instance, (EntityPlayer)entitylivingbase, par1);
 +            renderglobal.drawBlockDamageTexture(Tessellator.instance, entitylivingbase, par1);
              GL11.glDisable(GL11.GL_BLEND);
@@ -117,7 +117,7 @@
 +                RenderHelper.enableStandardItemLighting();
 +                this.mc.mcProfiler.endStartSection("entities");
 +                ForgeHooksClient.setRenderPass(1);
-+                renderglobal.func_147589_a(entitylivingbase, frustrum, par1);
++                renderglobal.renderEntities(entitylivingbase, frustrum, par1);
 +                ForgeHooksClient.setRenderPass(-1);
 +                RenderHelper.disableStandardItemLighting();
 +            }

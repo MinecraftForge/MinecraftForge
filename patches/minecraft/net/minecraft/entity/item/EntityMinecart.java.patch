@@ -63,7 +63,7 @@
      public EntityMinecart(World par1World, double par2, double par4, double par6)
 @@ -315,19 +341,20 @@
              double d2 = 0.0078125D;
-             Block block = this.worldObj.func_147439_a(l, i, i1);
+             Block block = this.worldObj.getBlock(l, i, i1);
  
 -            if (BlockRailBase.func_150051_a(block))
 +            if (canUseRail() && BlockRailBase.func_150051_a(block))
@@ -232,7 +232,7 @@
 -            int l = this.worldObj.getBlockMetadata(i, j, k);
 +            int l = ((BlockRailBase)block).getBasicRailMetadata(worldObj, this, i, j, k);
  
--            if (((BlockRailBase)block).func_150050_e())
+-            if (((BlockRailBase)block).isPowered())
 -            {
 -                l &= 7;
 -            }
@@ -248,7 +248,7 @@
 +            int l = ((BlockRailBase)block).getBasicRailMetadata(worldObj, this, i, j, k);
              par3 = (double)j;
  
--            if (((BlockRailBase)block).func_150050_e())
+-            if (((BlockRailBase)block).isPowered())
 -            {
 -                l &= 7;
 -            }
@@ -293,7 +293,7 @@
                          {
                              par1Entity.motionX *= 0.20000000298023224D;
                              par1Entity.motionZ *= 0.20000000298023224D;
-@@ -1092,4 +1116,216 @@
+@@ -1093,4 +1117,216 @@
      {
          return this.entityName;
      }

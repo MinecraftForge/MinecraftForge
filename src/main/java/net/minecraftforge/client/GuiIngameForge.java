@@ -111,7 +111,7 @@ public class GuiIngameForge extends GuiIngame
         }
         else
         {
-            OpenGlHelper.func_148821_a(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+            OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         }
 
         if (renderHelmet) renderHelmet(res, partialTicks, hasScreen, mouseX, mouseY);
@@ -162,7 +162,7 @@ public class GuiIngameForge extends GuiIngame
         }
 
         GL11.glEnable(GL11.GL_BLEND);
-        OpenGlHelper.func_148821_a(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         GL11.glDisable(GL11.GL_ALPHA_TEST);
 
         renderChat(width, height);
@@ -217,9 +217,9 @@ public class GuiIngameForge extends GuiIngame
         if (pre(CROSSHAIRS)) return;
         bind(Gui.icons);
         GL11.glEnable(GL11.GL_BLEND);
-        OpenGlHelper.func_148821_a(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ONE_MINUS_SRC_COLOR, 1, 0);
+        OpenGlHelper.glBlendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ONE_MINUS_SRC_COLOR, 1, 0);
         drawTexturedModalRect(width / 2 - 7, height / 2 - 7, 0, 0, 16, 16);
-        OpenGlHelper.func_148821_a(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         GL11.glDisable(GL11.GL_BLEND);
         post(CROSSHAIRS);
     }
@@ -244,7 +244,7 @@ public class GuiIngameForge extends GuiIngame
 
         if (this.mc.gameSettings.thirdPersonView == 0 && itemstack != null && itemstack.getItem() != null)
         {
-            if (itemstack.getItem() == Item.func_150898_a(Blocks.pumpkin))
+            if (itemstack.getItem() == Item.getItemFromBlock(Blocks.pumpkin))
             {
                 renderPumpkinBlur(res.getScaledWidth(), res.getScaledHeight());
             }
@@ -312,7 +312,7 @@ public class GuiIngameForge extends GuiIngame
         int left = width / 2 + 91;
         int top = height - right_height;
 
-        if (mc.thePlayer.isInsideOfMaterial(Material.field_151586_h))
+        if (mc.thePlayer.isInsideOfMaterial(Material.water))
         {
             int air = mc.thePlayer.getAir();
             int full = MathHelper.ceiling_double_int((double)(air - 2) * 10.0D / 300.0D);
@@ -499,7 +499,7 @@ public class GuiIngameForge extends GuiIngame
         if (pre(EXPERIENCE)) return;
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-        if (mc.playerController.func_78763_f())
+        if (mc.playerController.gameIsSurvivalOrAdventure())
         {
             mc.mcProfiler.startSection("expBar");
             int cap = this.mc.thePlayer.xpBarCap();
@@ -521,7 +521,7 @@ public class GuiIngameForge extends GuiIngame
             this.mc.mcProfiler.endSection();
 
 
-            if (mc.playerController.func_78763_f() && mc.thePlayer.experienceLevel > 0)
+            if (mc.playerController.gameIsSurvivalOrAdventure() && mc.thePlayer.experienceLevel > 0)
             {
                 mc.mcProfiler.startSection("expLevel");
                 boolean flag1 = false;
@@ -588,7 +588,7 @@ public class GuiIngameForge extends GuiIngame
 
                     GL11.glPushMatrix();
                     GL11.glEnable(GL11.GL_BLEND);
-                    OpenGlHelper.func_148821_a(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+                    OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
                     FontRenderer font = highlightingItemStack.getItem().getFontRenderer(highlightingItemStack);
                     if (font != null)
                     {
@@ -612,7 +612,7 @@ public class GuiIngameForge extends GuiIngame
     protected void renderHUDText(int width, int height)
     {
         mc.mcProfiler.startSection("forgeHudText");
-        OpenGlHelper.func_148821_a(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         ArrayList<String> left = new ArrayList<String>();
         ArrayList<String> right = new ArrayList<String>();
 
@@ -621,11 +621,11 @@ public class GuiIngameForge extends GuiIngame
             long time = mc.theWorld.getTotalWorldTime();
             if (time >= 120500L)
             {
-                right.add(I18n.getStringParams("demo.demoExpired"));
+                right.add(I18n.format("demo.demoExpired"));
             }
             else
             {
-                right.add(I18n.getStringParams("demo.remainingTime", StringUtils.ticksToElapsedTime((int)(120500L - time))));
+                right.add(I18n.format("demo.remainingTime", StringUtils.ticksToElapsedTime((int)(120500L - time))));
             }
         }
 
@@ -676,9 +676,9 @@ public class GuiIngameForge extends GuiIngame
             }
 
             left.add(String.format("ws: %.3f, fs: %.3f, g: %b, fl: %d", mc.thePlayer.capabilities.getWalkSpeed(), mc.thePlayer.capabilities.getFlySpeed(), mc.thePlayer.onGround, mc.theWorld.getHeightValue(x, z)));
-            if (mc.entityRenderer != null && mc.entityRenderer.func_147702_a())
+            if (mc.entityRenderer != null && mc.entityRenderer.isShaderActive())
             {
-                left.add(String.format("shader: %s", mc.entityRenderer.func_147706_e().func_148022_b()));
+                left.add(String.format("shader: %s", mc.entityRenderer.getShaderGroup().getShaderGroupName()));
             }
 
             right.add(null);
@@ -727,7 +727,7 @@ public class GuiIngameForge extends GuiIngame
                 GL11.glPushMatrix();
                 GL11.glTranslatef((float)(width / 2), (float)(height - 48), 0.0F);
                 GL11.glEnable(GL11.GL_BLEND);
-                OpenGlHelper.func_148821_a(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+                OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
                 int color = (recordIsPlaying ? Color.HSBtoRGB(hue / 50.0F, 0.7F, 0.6F) & WHITE : WHITE);
                 fontrenderer.drawString(recordPlaying, -fontrenderer.getStringWidth(recordPlaying) / 2, -4, color | (opacity << 24));
                 GL11.glDisable(GL11.GL_BLEND);
@@ -747,7 +747,7 @@ public class GuiIngameForge extends GuiIngame
 
         GL11.glPushMatrix();
         GL11.glTranslatef((float)event.posX, (float)event.posY, 0.0F);
-        persistantChatGUI.func_146230_a(updateCounter);
+        persistantChatGUI.drawChat(updateCounter);
         GL11.glPopMatrix();
 
         post(CHAT);
@@ -761,12 +761,12 @@ public class GuiIngameForge extends GuiIngame
         ScoreObjective scoreobjective = this.mc.theWorld.getScoreboard().func_96539_a(0);
         NetHandlerPlayClient handler = mc.thePlayer.sendQueue;
 
-        if (mc.gameSettings.keyBindPlayerList.func_151470_d() && (!mc.isIntegratedServerRunning() || handler.field_147303_b.size() > 1 || scoreobjective != null))
+        if (mc.gameSettings.keyBindPlayerList.getIsKeyPressed() && (!mc.isIntegratedServerRunning() || handler.playerInfoList.size() > 1 || scoreobjective != null))
         {
             if (pre(PLAYER_LIST)) return;
             this.mc.mcProfiler.startSection("playerList");
-            List<GuiPlayerInfo> players = (List<GuiPlayerInfo>)handler.field_147303_b;
-            int maxPlayers = handler.field_147304_c;
+            List<GuiPlayerInfo> players = (List<GuiPlayerInfo>)handler.playerInfoList;
+            int maxPlayers = handler.currentServerMaxPlayers;
             int rows = maxPlayers;
             int columns = 1;
 

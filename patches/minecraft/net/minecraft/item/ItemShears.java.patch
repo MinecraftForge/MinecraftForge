@@ -23,12 +23,12 @@
  {
 @@ -20,13 +29,12 @@
  
-     public boolean func_150894_a(ItemStack p_150894_1_, World p_150894_2_, Block p_150894_3_, int p_150894_4_, int p_150894_5_, int p_150894_6_, EntityLivingBase p_150894_7_)
+     public boolean onBlockDestroyed(ItemStack p_150894_1_, World p_150894_2_, Block p_150894_3_, int p_150894_4_, int p_150894_5_, int p_150894_6_, EntityLivingBase p_150894_7_)
      {
--        if (p_150894_3_.func_149688_o() != Material.field_151584_j && p_150894_3_ != Blocks.web && p_150894_3_ != Blocks.tallgrass && p_150894_3_ != Blocks.vine && p_150894_3_ != Blocks.tripwire)
-+        if (p_150894_3_.func_149688_o() != Material.field_151584_j && p_150894_3_ != Blocks.web && p_150894_3_ != Blocks.tallgrass && p_150894_3_ != Blocks.vine && p_150894_3_ != Blocks.tripwire && !(p_150894_3_ instanceof IShearable))
+-        if (p_150894_3_.getMaterial() != Material.leaves && p_150894_3_ != Blocks.web && p_150894_3_ != Blocks.tallgrass && p_150894_3_ != Blocks.vine && p_150894_3_ != Blocks.tripwire)
++        if (p_150894_3_.getMaterial() != Material.leaves && p_150894_3_ != Blocks.web && p_150894_3_ != Blocks.tallgrass && p_150894_3_ != Blocks.vine && p_150894_3_ != Blocks.tripwire && !(p_150894_3_ instanceof IShearable))
          {
-             return super.func_150894_a(p_150894_1_, p_150894_2_, p_150894_3_, p_150894_4_, p_150894_5_, p_150894_6_, p_150894_7_);
+             return super.onBlockDestroyed(p_150894_1_, p_150894_2_, p_150894_3_, p_150894_4_, p_150894_5_, p_150894_6_, p_150894_7_);
          }
          else
          {
@@ -38,7 +38,7 @@
      }
 @@ -40,4 +48,69 @@
      {
-         return p_150893_2_ != Blocks.web && p_150893_2_.func_149688_o() != Material.field_151584_j ? (p_150893_2_ == Blocks.wool ? 5.0F : super.func_150893_a(p_150893_1_, p_150893_2_)) : 15.0F;
+         return p_150893_2_ != Blocks.web && p_150893_2_.getMaterial() != Material.leaves ? (p_150893_2_ == Blocks.wool ? 5.0F : super.func_150893_a(p_150893_1_, p_150893_2_)) : 15.0F;
      }
 +
 +    @Override
@@ -78,7 +78,7 @@
 +        {
 +            return false;
 +        }
-+        Block block = player.worldObj.func_147439_a(x, y, z);
++        Block block = player.worldObj.getBlock(x, y, z);
 +        if (block instanceof IShearable)
 +        {
 +            IShearable target = (IShearable)block;
@@ -95,12 +95,12 @@
 +                    double d1 = (double)(rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
 +                    double d2 = (double)(rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
 +                    EntityItem entityitem = new EntityItem(player.worldObj, (double)x + d, (double)y + d1, (double)z + d2, stack);
-+                    entityitem.field_145804_b = 10;
++                    entityitem.delayBeforeCanPickup = 10;
 +                    player.worldObj.spawnEntityInWorld(entityitem);
 +                }
 +
 +                itemstack.damageItem(1, player);
-+                player.addStat(StatList.mineBlockStatArray[Block.func_149682_b(block)], 1);
++                player.addStat(StatList.mineBlockStatArray[Block.getIdFromBlock(block)], 1);
 +            }
 +        }
 +        return false;

@@ -38,7 +38,7 @@
 +
 +    public static boolean applyBonemeal(ItemStack p_150919_0_, World p_150919_1_, int p_150919_2_, int p_150919_3_, int p_150919_4_, EntityPlayer player)
 +    {
-         Block block = p_150919_1_.func_147439_a(p_150919_2_, p_150919_3_, p_150919_4_);
+         Block block = p_150919_1_.getBlock(p_150919_2_, p_150919_3_, p_150919_4_);
  
 +        BonemealEvent event = new BonemealEvent(player, p_150919_1_, block, p_150919_2_, p_150919_3_, p_150919_4_);
 +        if (MinecraftForge.EVENT_BUS.post(event))
@@ -59,7 +59,7 @@
          {
              IGrowable igrowable = (IGrowable)block;
 @@ -175,6 +202,16 @@
-                 p_150918_0_.spawnParticle("happyVillager", (double)((float)p_150918_1_ + itemRand.nextFloat()), (double)p_150918_2_ + (double)itemRand.nextFloat() * block.func_149669_A(), (double)((float)p_150918_3_ + itemRand.nextFloat()), d0, d1, d2);
+                 p_150918_0_.spawnParticle("happyVillager", (double)((float)p_150918_1_ + itemRand.nextFloat()), (double)p_150918_2_ + (double)itemRand.nextFloat() * block.getBlockBoundsMaxY(), (double)((float)p_150918_3_ + itemRand.nextFloat()), d0, d1, d2);
              }
          }
 +        else

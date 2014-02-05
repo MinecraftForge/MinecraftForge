@@ -2,13 +2,13 @@
 +++ ../src-work/minecraft/net/minecraft/entity/boss/EntityDragon.java
 @@ -495,9 +495,9 @@
                  {
-                     Block block = this.worldObj.func_147439_a(k1, l1, i2);
+                     Block block = this.worldObj.getBlock(k1, l1, i2);
  
--                    if (block.func_149688_o() != Material.field_151579_a)
+-                    if (block.getMaterial() != Material.air)
 +                    if (!block.isAir(worldObj, k1, l1, i2))
                      {
 -                        if (block != Blocks.obsidian && block != Blocks.end_stone && block != Blocks.bedrock && this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"))
 +                        if (block.canEntityDestroy(worldObj, k1, l1, i2, this) && this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"))
                          {
-                             flag1 = this.worldObj.func_147468_f(k1, l1, i2) || flag1;
+                             flag1 = this.worldObj.setBlockToAir(k1, l1, i2) || flag1;
                          }

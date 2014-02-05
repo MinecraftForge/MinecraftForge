@@ -2,9 +2,9 @@
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntityOcelot.java
 @@ -298,7 +298,7 @@
  
-                 Block block = this.worldObj.func_147439_a(i, j - 1, k);
+                 Block block = this.worldObj.getBlock(i, j - 1, k);
  
--                if (block == Blocks.grass || block.func_149688_o() == Material.field_151584_j)
+-                if (block == Blocks.grass || block.getMaterial() == Material.leaves)
 +                if (block == Blocks.grass || block.isLeaves(worldObj, i, j - 1, k))
                  {
                      return true;

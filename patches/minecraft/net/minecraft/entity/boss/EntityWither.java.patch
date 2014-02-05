@@ -2,9 +2,9 @@
 +++ ../src-work/minecraft/net/minecraft/entity/boss/EntityWither.java
 @@ -355,7 +355,7 @@
                                  int l = j1 + i2;
-                                 Block block = this.worldObj.func_147439_a(j2, k, l);
+                                 Block block = this.worldObj.getBlock(j2, k, l);
  
--                                if (block.func_149688_o() != Material.field_151579_a && block != Blocks.bedrock && block != Blocks.end_portal && block != Blocks.end_portal_frame && block != Blocks.command_block)
+-                                if (block.getMaterial() != Material.air && block != Blocks.bedrock && block != Blocks.end_portal && block != Blocks.end_portal_frame && block != Blocks.command_block)
 +                                if (!block.isAir(worldObj, j2, k, l) && block.canEntityDestroy(worldObj, j2, k, l, this))
                                  {
                                      flag = this.worldObj.func_147480_a(j2, k, l, true) || flag;

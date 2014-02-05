@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/InventoryPlayer.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/InventoryPlayer.java
-@@ -324,6 +324,14 @@
+@@ -325,6 +325,14 @@
                  this.mainInventory[i].updateAnimation(this.player.worldObj, this.player, i, this.currentItem == i);
              }
          }
@@ -14,4 +14,4 @@
 +        }
      }
  
-     public boolean func_146026_a(Item p_146026_1_)
+     // JAVADOC METHOD $$ func_146026_a

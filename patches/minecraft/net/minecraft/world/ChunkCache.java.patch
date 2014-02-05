@@ -26,21 +26,21 @@
              return this.chunkArray[l][i1].getBlockMetadata(par1 & 15, par2, par3 & 15);
          }
      }
-@@ -145,10 +150,9 @@
-         return this.worldObj.getWorldVec3Pool();
+@@ -146,10 +151,9 @@
      }
  
+     // JAVADOC METHOD $$ func_147437_c
 -    @SideOnly(Side.CLIENT)
-     public boolean func_147437_c(int p_147437_1_, int p_147437_2_, int p_147437_3_)
+     public boolean isAirBlock(int p_147437_1_, int p_147437_2_, int p_147437_3_)
      {
--        return this.func_147439_a(p_147437_1_, p_147437_2_, p_147437_3_).func_149688_o() == Material.field_151579_a;
-+        return this.func_147439_a(p_147437_1_, p_147437_2_, p_147437_3_).isAir(this, p_147437_1_, p_147437_2_, p_147437_3_);
+-        return this.getBlock(p_147437_1_, p_147437_2_, p_147437_3_).getMaterial() == Material.air;
++        return this.getBlock(p_147437_1_, p_147437_2_, p_147437_3_).isAir(this, p_147437_1_, p_147437_2_, p_147437_3_);
      }
  
      // JAVADOC METHOD $$ func_72810_a
-@@ -258,4 +262,15 @@
+@@ -259,4 +263,15 @@
      {
-         return this.func_147439_a(par1, par2, par3).func_149748_c(this, par1, par2, par3, par4);
+         return this.getBlock(par1, par2, par3).isProvidingStrongPower(this, par1, par2, par3, par4);
      }
 +
 +    @Override
@@ -51,6 +51,6 @@
 +            return _default;
 +        }
 +
-+        return func_147439_a(x, y, z).isSideSolid(this, x, y, z, side);
++        return getBlock(x, y, z).isSideSolid(this, x, y, z, side);
 +    }
  }

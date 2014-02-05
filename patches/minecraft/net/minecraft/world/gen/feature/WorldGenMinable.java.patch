@@ -25,11 +25,11 @@
                              {
                                  double d14 = ((double)i3 + 0.5D - d8) / (d10 / 2.0D);
  
--                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && par1World.func_147439_a(k2, l2, i3) == this.field_150518_c)
-+                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && par1World.func_147439_a(k2, l2, i3).isReplaceableOreGen(par1World, k2, l2, i3, field_150518_c))
+-                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && par1World.getBlock(k2, l2, i3) == this.field_150518_c)
++                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && par1World.getBlock(k2, l2, i3).isReplaceableOreGen(par1World, k2, l2, i3, field_150518_c))
                                  {
--                                    par1World.func_147465_d(k2, l2, i3, this.field_150519_a, 0, 2);
-+                                    par1World.func_147465_d(k2, l2, i3, this.field_150519_a, mineableBlockMeta, 2);
+-                                    par1World.setBlock(k2, l2, i3, this.field_150519_a, 0, 2);
++                                    par1World.setBlock(k2, l2, i3, this.field_150519_a, mineableBlockMeta, 2);
                                  }
                              }
                          }

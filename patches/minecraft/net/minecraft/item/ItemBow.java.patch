@@ -26,7 +26,7 @@
 +
          boolean flag = par3EntityPlayer.capabilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, par1ItemStack) > 0;
  
-         if (flag || par3EntityPlayer.inventory.func_146028_b(Items.arrow))
+         if (flag || par3EntityPlayer.inventory.hasItem(Items.arrow))
          {
 -            int j = this.getMaxItemUseDuration(par1ItemStack) - par4;
              float f = (float)j / 20.0F;
@@ -43,6 +43,6 @@
 +            return event.result;
 +        }
 +
-         if (par3EntityPlayer.capabilities.isCreativeMode || par3EntityPlayer.inventory.func_146028_b(Items.arrow))
+         if (par3EntityPlayer.capabilities.isCreativeMode || par3EntityPlayer.inventory.hasItem(Items.arrow))
          {
              par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));

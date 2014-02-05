@@ -75,7 +75,7 @@ public class ForgeHooks
 
     public static boolean canHarvestBlock(Block block, EntityPlayer player, int metadata)
     {
-        if (block.func_149688_o().isToolNotRequired())
+        if (block.getMaterial().isToolNotRequired())
         {
             return true;
         }
@@ -84,13 +84,13 @@ public class ForgeHooks
         String tool = block.getHarvestTool(metadata);
         if (stack == null || tool == null)
         {
-            return player.func_146099_a(block);
+            return player.canHarvestBlock(block);
         }
 
         int toolLevel = stack.getItem().getHarvestLevel(stack, tool);
         if (toolLevel < 0)
         {
-            return player.func_146099_a(block);
+            return player.canHarvestBlock(block);
         }
 
         return toolLevel >= block.getHarvestLevel(metadata);
@@ -106,7 +106,7 @@ public class ForgeHooks
     public static float blockStrength(Block block, EntityPlayer player, World world, int x, int y, int z)
     {
         int metadata = world.getBlockMetadata(x, y, z);
-        float hardness = block.func_149712_f(world, x, y, z);
+        float hardness = block.getBlockHardness(world, x, y, z);
         if (hardness < 0.0F)
         {
             return 0.0F;
@@ -206,7 +206,7 @@ public class ForgeHooks
             int x = target.blockX;
             int y = target.blockY;
             int z = target.blockZ;
-            Block block = world.func_147439_a(x, y, z);
+            Block block = world.getBlock(x, y, z);
 
             if (block.isAir(world, x, y, z))
             {
@@ -314,7 +314,7 @@ public class ForgeHooks
                 {
                     for (int z2 = mZ; z2 < bb.maxZ; z2++)
                     {
-                        block = world.func_147439_a(x2, y2, z2);
+                        block = world.getBlock(x2, y2, z2);
                         if (block != null && block.isLadder(world, x2, y2, z2, entity))
                         {
                             return true;
@@ -355,12 +355,12 @@ public class ForgeHooks
 
     public static float getEnchantPower(World world, int x, int y, int z)
     {
-        return world.func_147439_a(x, y, z).getEnchantPowerBonus(world, x, y, z);
+        return world.getBlock(x, y, z).getEnchantPowerBonus(world, x, y, z);
     }
 
     public static ChatComponentTranslation onServerChatEvent(NetHandlerPlayServer net, String raw, ChatComponentTranslation comp)
     {
-        ServerChatEvent event = new ServerChatEvent(net.field_147369_b, raw, comp);
+        ServerChatEvent event = new ServerChatEvent(net.playerEntity, raw, comp);
         if (MinecraftForge.EVENT_BUS.post(event))
         {
             return null;
@@ -389,16 +389,16 @@ public class ForgeHooks
         }
 
         // Tell client the block is gone immediately then process events
-        if (world.func_147438_o(x, y, z) == null)
+        if (world.getTileEntity(x, y, z) == null)
         {
             S23PacketBlockChange packet = new S23PacketBlockChange(x, y, z, world);
             packet.field_148883_d = Blocks.air;
             packet.field_148884_e = 0;
-            entityPlayer.playerNetServerHandler.func_147359_a(packet);
+            entityPlayer.playerNetServerHandler.sendPacket(packet);
         }
 
         // Post the block break event
-        Block block = world.func_147439_a(x, y, z);
+        Block block = world.getBlock(x, y, z);
         int blockMetadata = world.getBlockMetadata(x, y, z);
         BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(x, y, z, world, block, blockMetadata, entityPlayer);
         event.setCanceled(preCancelEvent);
@@ -408,16 +408,16 @@ public class ForgeHooks
         if (event.isCanceled())
         {
             // Let the client know the block still exists
-            entityPlayer.playerNetServerHandler.func_147359_a(new S23PacketBlockChange(x, y, z, world));
+            entityPlayer.playerNetServerHandler.sendPacket(new S23PacketBlockChange(x, y, z, world));
 
             // Update any tile entity data for this block
-            TileEntity tileentity = world.func_147438_o(x, y, z);
+            TileEntity tileentity = world.getTileEntity(x, y, z);
             if (tileentity != null)
             {
-                Packet pkt = tileentity.func_145844_m();
+                Packet pkt = tileentity.getDescriptionPacket();
                 if (pkt != null)
                 {
-                    entityPlayer.playerNetServerHandler.func_147359_a(pkt);
+                    entityPlayer.playerNetServerHandler.sendPacket(pkt);
                 }
             }
         }
