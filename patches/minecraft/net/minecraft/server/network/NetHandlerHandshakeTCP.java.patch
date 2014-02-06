@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraft/server/network/NetHandlerHandshakeTCP.java
++++ ../src-work/minecraft/net/minecraft/server/network/NetHandlerHandshakeTCP.java
+@@ -7,6 +7,7 @@
+ import net.minecraft.network.handshake.client.C00Handshake;
+ import net.minecraft.network.login.server.S00PacketDisconnect;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.server.dedicated.DedicatedServer;
+ import net.minecraft.util.ChatComponentText;
+ import net.minecraft.util.IChatComponent;
+ 
+@@ -24,6 +25,14 @@
+ 
+     public void func_147383_a(C00Handshake p_147383_1_)
+     {
++        if (!DedicatedServer.allowPlayerLogins)
++        {
++            ChatComponentText chatcomponenttext = new ChatComponentText("Server is still starting! Please wait before reconnecting.");
++            this.field_147386_b.func_150725_a(new S00PacketDisconnect(chatcomponenttext), new GenericFutureListener[0]);
++            this.field_147386_b.func_150718_a(chatcomponenttext);
++            return;
++        }
++
+         switch (NetHandlerHandshakeTCP.SwitchEnumConnectionState.field_151291_a[p_147383_1_.func_149594_c().ordinal()])
+         {
+             case 1:
