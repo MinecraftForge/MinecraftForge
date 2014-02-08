@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityEnderman.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityEnderman.java
-@@ -19,6 +19,8 @@
+@@ -1,6 +1,8 @@
+ package net.minecraft.entity.monster;
+ 
++import java.util.IdentityHashMap;
+ import java.util.UUID;
++import com.google.common.collect.Maps;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.entity.Entity;
+@@ -19,11 +21,14 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
@@ -9,7 +18,22 @@
  
  public class EntityEnderman extends EntityMob
  {
-@@ -275,12 +277,16 @@
+     private static final UUID attackingSpeedBoostModifierUUID = UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0");
+     private static final AttributeModifier attackingSpeedBoostModifier = (new AttributeModifier(attackingSpeedBoostModifierUUID, "Attacking speed boost", 6.199999809265137D, 0)).setSaved(false);
++    @Deprecated //DO NOT TOUCH THIS EVER
+     private static boolean[] carriableBlocks = new boolean[256];
+     // JAVADOC FIELD $$ field_70828_e
+     private int teleportDelay;
+@@ -161,7 +166,7 @@
+                     j = MathHelper.floor_double(this.posZ - 2.0D + this.rand.nextDouble() * 4.0D);
+                     block = this.worldObj.getBlock(k, i, j);
+ 
+-                    if (carriableBlocks[Block.getIdFromBlock(block)])
++                    if (EntityEnderman.getCarriable(block))
+                     {
+                         this.func_146081_a(block);
+                         this.setCarryingData(this.worldObj.getBlockMetadata(k, i, j));
+@@ -275,12 +280,16 @@
      // JAVADOC METHOD $$ func_70825_j
      protected boolean teleportTo(double par1, double par3, double par5)
      {
@@ -29,7 +53,7 @@
          boolean flag = false;
          int i = MathHelper.floor_double(this.posX);
          int j = MathHelper.floor_double(this.posY);
-@@ -432,7 +438,7 @@
+@@ -432,7 +441,7 @@
                      }
                  }
  
@@ -38,3 +62,27 @@
              }
              else
              {
+@@ -467,5 +476,23 @@
+         carriableBlocks[Block.getIdFromBlock(Blocks.pumpkin)] = true;
+         carriableBlocks[Block.getIdFromBlock(Blocks.melon_block)] = true;
+         carriableBlocks[Block.getIdFromBlock(Blocks.mycelium)] = true;
++        for (int x = 0; x < carriableBlocks.length; x++)
++        {
++            if (carriableBlocks[x]) setCarriable(Block.getBlockById(x), true);
++        }
+     }
++
++    /*===================================== Forge Start ==============================*/
++    private static IdentityHashMap<Block, Boolean> carriable;
++    public static void setCarriable(Block block, boolean canCarry)
++    {
++        if (carriable == null) carriable = new IdentityHashMap(4096);
++        carriable.put(block, canCarry);
++    }
++    public static boolean getCarriable(Block block)
++    {
++        Boolean ret = carriable.get(block);
++        return ret != null ? ret : false;
++    }
++    /*===================================== Forge End ==============================*/
+ }
