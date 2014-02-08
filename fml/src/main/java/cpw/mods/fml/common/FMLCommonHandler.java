@@ -39,6 +39,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
@@ -502,5 +503,10 @@ public class FMLCommonHandler
     public void fireNetRegistrationEvent(NetworkManager manager, Set<String> channelSet, String channel, Side side)
     {
         sidedDelegate.fireNetRegistrationEvent(bus(), manager, channelSet, channel, side);
+    }
+
+    public FMLMissingMappingsEvent.Action getDefaultMissingAction()
+    {
+        return sidedDelegate.getDefaultMissingAction();
     }
 }

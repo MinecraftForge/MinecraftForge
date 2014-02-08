@@ -5,7 +5,9 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ListMultimap;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 /**
  * This event is fired if a world is loaded that has block and item mappings referring the mod that are not
@@ -16,29 +18,28 @@ import cpw.mods.fml.common.ModContainer;
  *
  */
 public class FMLMissingMappingsEvent extends FMLEvent {
-    public static enum Type { BLOCK, ITEM }
-
     /**
      * Actions you can take with this missing mapping.
      * <ul>
      * <li>{@link #IGNORE} means this missing mapping will be ignored.
      * <li>{@link #WARN} means this missing mapping will generate a warning.
+     * <li>{@link #FAIL} means this missing mapping will prevent the world from loading.
      * </ul>
      * @author cpw
      *
      */
-    public static enum Action { IGNORE, WARN }
+    public static enum Action { IGNORE, WARN, FAIL }
     public static class MissingMapping {
-        public final Type type;
+        public final GameRegistry.Type type;
         public final String name;
         private Action action;
         private List<MissingMapping> remaps;
         public MissingMapping(String name, List<MissingMapping> remaps)
         {
-            this.type = name.charAt(0) == '\u0001' ? Type.BLOCK : Type.ITEM;
+            this.type = name.charAt(0) == '\u0001' ? GameRegistry.Type.BLOCK : GameRegistry.Type.ITEM;
             this.name = name;
             this.remaps = remaps;
-            this.action = Action.WARN;
+            this.action = FMLCommonHandler.instance().getDefaultMissingAction();
         }
         public void setAction(Action target)
         {

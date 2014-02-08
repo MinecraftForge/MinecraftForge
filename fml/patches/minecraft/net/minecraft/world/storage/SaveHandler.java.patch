@@ -1,15 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/SaveHandler.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/SaveHandler.java
-@@ -6,6 +6,8 @@
+@@ -6,6 +6,9 @@
  import java.io.FileInputStream;
  import java.io.FileOutputStream;
  import java.io.IOException;
 +
 +import cpw.mods.fml.common.FMLCommonHandler;
++import cpw.mods.fml.common.registry.GameRegistryException;
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.nbt.CompressedStreamTools;
  import net.minecraft.nbt.NBTTagCompound;
-@@ -107,16 +109,24 @@
+@@ -107,14 +110,22 @@
          NBTTagCompound nbttagcompound;
          NBTTagCompound nbttagcompound1;
  
@@ -26,16 +27,14 @@
 +                FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
 +                return worldInfo;
              }
++            catch (GameRegistryException gre)
++            {
++                throw gre;
++            }
              catch (Exception exception1)
              {
-+                if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
-+                {
-+                    throw (RuntimeException)exception1;
-+                }
                  exception1.printStackTrace();
-             }
-         }
-@@ -129,10 +139,16 @@
+@@ -129,8 +140,14 @@
              {
                  nbttagcompound = CompressedStreamTools.func_74796_a(new FileInputStream(file1));
                  nbttagcompound1 = nbttagcompound.func_74775_l("Data");
@@ -44,16 +43,14 @@
 +                FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
 +                return worldInfo;
              }
++            catch (GameRegistryException gre)
++            {
++                throw gre;
++            }
              catch (Exception exception)
              {
-+                if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
-+                {
-+                    throw (RuntimeException)exception;
-+                }
                  exception.printStackTrace();
-             }
-         }
-@@ -146,6 +162,8 @@
+@@ -146,6 +163,8 @@
          NBTTagCompound nbttagcompound2 = new NBTTagCompound();
          nbttagcompound2.func_74782_a("Data", nbttagcompound1);
  
@@ -62,7 +59,7 @@
          try
          {
              File file1 = new File(this.field_75770_b, "level.dat_new");
-@@ -184,6 +202,8 @@
+@@ -184,6 +203,8 @@
          NBTTagCompound nbttagcompound1 = new NBTTagCompound();
          nbttagcompound1.func_74782_a("Data", nbttagcompound);
  

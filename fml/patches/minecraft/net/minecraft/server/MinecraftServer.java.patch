@@ -25,18 +25,7 @@
              }
              else
              {
-@@ -466,6 +470,10 @@
-         {
-             try
-             {
-+                if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
-+                {
-+                    return;
-+                }
-                 this.func_71260_j();
-                 this.field_71316_v = true;
-             }
-@@ -475,6 +483,8 @@
+@@ -475,6 +479,8 @@
              }
              finally
              {
@@ -45,7 +34,7 @@
                  this.func_71240_o();
              }
          }
-@@ -517,6 +527,7 @@
+@@ -517,6 +523,7 @@
      {
          long i = System.nanoTime();
          AxisAlignedBB.func_72332_a().func_72298_a();
@@ -53,7 +42,7 @@
          ++this.field_71315_w;
  
          if (this.field_71295_T)
-@@ -570,6 +581,7 @@
+@@ -570,6 +577,7 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -61,7 +50,7 @@
      }
  
      public void func_71190_q()
-@@ -597,6 +609,7 @@
+@@ -597,6 +605,7 @@
                  }
  
                  this.field_71304_b.func_76320_a("tick");
@@ -69,7 +58,7 @@
                  CrashReport crashreport;
  
                  try
-@@ -621,6 +634,7 @@
+@@ -621,6 +630,7 @@
                      throw new ReportedException(crashreport);
                  }
  
@@ -77,7 +66,7 @@
                  this.field_71304_b.func_76319_b();
                  this.field_71304_b.func_76320_a("tracker");
                  worldserver.func_73039_n().func_72788_a();
-@@ -699,7 +713,7 @@
+@@ -699,7 +709,7 @@
  
      public String getServerModName()
      {

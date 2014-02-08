@@ -15,21 +15,19 @@ package cpw.mods.fml.common;
 import java.io.File;
 import java.security.cert.Certificate;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.apache.logging.log4j.Level;
-
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
-
+import org.apache.logging.log4j.Level;
 import com.google.common.collect.Maps;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-
 import cpw.mods.fml.client.FMLFileResourcePack;
 import cpw.mods.fml.client.FMLFolderResourcePack;
 import cpw.mods.fml.common.asm.FMLSanityChecker;
@@ -38,6 +36,7 @@ import cpw.mods.fml.common.network.NetworkCheckHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
 import cpw.mods.fml.common.registry.GameData;
+import cpw.mods.fml.common.registry.GameRegistryException;
 import cpw.mods.fml.relauncher.Side;
 
 /**
@@ -173,10 +172,10 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
                     dataList.put(itemLabel, itemId);
                 }
             }
-            boolean successfullyInjected = GameData.injectWorldIDMap(dataList, true);
-            if (!successfullyInjected)
+            List<String> failedElements = GameData.injectWorldIDMap(dataList, true, true);
+            if (!failedElements.isEmpty())
             {
-                throw new RuntimeException("Failed to load the world - there are fatal block and item id issues");
+                throw new GameRegistryException("Failed to load the world - there are fatal block and item id issues", failedElements);
             }
         }
         else if (tag.func_74764_b("ItemData"))
@@ -188,10 +187,10 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
                 NBTTagCompound dataTag = list.func_150305_b(i);
                 dataList.put(dataTag.func_74779_i("K"), dataTag.func_74762_e("V"));
             }
-            boolean successfullyInjected = GameData.injectWorldIDMap(dataList, true);
-            if (!successfullyInjected)
+            List<String> failedElements = GameData.injectWorldIDMap(dataList, true, true);
+            if (!failedElements.isEmpty())
             {
-                throw new RuntimeException("Failed to load the world - there are fatal block and item id issues");
+                throw new GameRegistryException("Failed to load the world - there are fatal block and item id issues", failedElements);
             }
         }
     }

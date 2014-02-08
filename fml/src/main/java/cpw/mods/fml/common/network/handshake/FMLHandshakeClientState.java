@@ -1,5 +1,6 @@
 package cpw.mods.fml.common.network.handshake;
 
+import java.util.List;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import cpw.mods.fml.common.FMLLog;
@@ -84,10 +85,13 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
         public FMLHandshakeClientState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
         {
             FMLHandshakeMessage.ModIdData modIds = (FMLHandshakeMessage.ModIdData)msg;
-            if (!GameData.injectWorldIDMap(modIds.dataList(), false))
+            List<String> locallyMissing = GameData.injectWorldIDMap(modIds.dataList(), false, false);
+            if (!locallyMissing.isEmpty())
             {
                 NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
                 dispatcher.rejectHandshake("Fatally missing blocks and items");
+                FMLLog.severe("Failed to connect to server: there are %d missing blocks and items", locallyMissing.size());
+                FMLLog.fine("Missing list: %s", locallyMissing);
                 return ERROR;
             }
             ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
