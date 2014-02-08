@@ -140,6 +140,11 @@ public class GameRegistry
         return item;
     }
 
+
+    public static void addAlias(String alias, String forName, GameRegistry.Type type)
+    {
+
+    }
     /**
      * Register a block with the specified mod specific name
      * @param block The block to register
@@ -377,7 +382,8 @@ public class GameRegistry
         }
 	}
 
-	/**
+	public static enum Type { BLOCK, ITEM }
+    /**
 	 * Look up the mod identifier data for a block.
 	 * Returns null if there is no mod specified mod identifier data, or it is part of a
 	 * custom itemstack definition {@link #registerCustomItemStack}

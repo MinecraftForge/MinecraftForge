@@ -30,6 +30,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Joiner.MapJoiner;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -224,7 +225,7 @@ public class GameData {
         }
     }
 
-    public static boolean injectWorldIDMap(Map<String, Integer> dataList, boolean injectFrozenData)
+    public static List<String> injectWorldIDMap(Map<String, Integer> dataList, boolean injectFrozenData, boolean isLocalWorld)
     {
         Map<String, Integer[]> remaps = Maps.newHashMap();
         ArrayListMultimap<String,String> missing = ArrayListMultimap.create();
@@ -269,12 +270,12 @@ public class GameData {
                 itemRegistry.reassignMapping(itemName, newId);
             }
         }
-        boolean successfullyLoaded = Loader.instance().fireMissingMappingEvent(missing);
-        if (!successfullyLoaded)
+        List<String> missedMappings = Loader.instance().fireMissingMappingEvent(missing, isLocalWorld);
+        if (!missedMappings.isEmpty())
         {
             blockRegistry.revertSwap();
             itemRegistry.revertSwap();
-            return false;
+            return missedMappings;
         }
 
         if (injectFrozenData)
@@ -322,10 +323,11 @@ public class GameData {
         blockRegistry.dump();
         itemRegistry.dump();
         Loader.instance().fireRemapEvent(remaps);
-        return true;
+        return ImmutableList.of();
     }
-    public static boolean processIdRematches(List<MissingMapping> remaps)
+    public static List<String> processIdRematches(List<MissingMapping> remaps, boolean isLocalWorld)
     {
+        List<String> failed = Lists.newArrayList();
         List<String> ignored = Lists.newArrayList();
         List<String> warned = Lists.newArrayList();
 
@@ -336,21 +338,30 @@ public class GameData {
             {
                 ignored.add(remap.name);
             }
+            else if (action == FMLMissingMappingsEvent.Action.FAIL)
+            {
+                failed.add(remap.name);
+            }
             else
             {
                 warned.add(remap.name);
             }
         }
+        if (!failed.isEmpty())
+        {
+            FMLLog.severe("This world contains blocks and items that refuse to be remapped. The world will not be loaded");
+            return failed;
+        }
         if (!warned.isEmpty())
         {
             FMLLog.severe("This world contains block and item mappings that may cause world breakage");
-            return false;
+            return failed;
         }
         else if (!ignored.isEmpty())
         {
             FMLLog.fine("There were %d missing mappings that have been ignored", ignored.size());
         }
-        return true;
+        return failed;
     }
 
     public static void freezeData()
@@ -366,4 +377,5 @@ public class GameData {
         blockRegistry.revertToFrozen();
         itemRegistry.revertToFrozen();
     }
+
 }

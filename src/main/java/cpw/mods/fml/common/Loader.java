@@ -23,9 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
 import org.apache.logging.log4j.Level;
-
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -47,7 +45,6 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.collect.TreeMultimap;
-
 import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.ModContainer.Disableable;
 import cpw.mods.fml.common.discovery.ModDiscoverer;
@@ -845,7 +842,7 @@ public class Loader
         return true;
     }
 
-    public boolean fireMissingMappingEvent(ArrayListMultimap<String,String> missing)
+    public List<String> fireMissingMappingEvent(ArrayListMultimap<String,String> missing, boolean isLocalWorld)
     {
         if (!missing.isEmpty())
         {
@@ -859,14 +856,26 @@ public class Loader
             }
             FMLMissingMappingsEvent missingEvent = new FMLMissingMappingsEvent(missingMappings);
             modController.propogateStateMessage(missingEvent);
-            if (!missingMappings.isEmpty())
+            if (!missingMappings.isEmpty() && isLocalWorld)
             {
-                FMLLog.severe("There are unidentified mappings in this world - it cannot be loaded");
-                throw new RuntimeException("Mod IDs are missing");
+                FMLLog.severe("There are unidentified mappings in this world - we are going to attempt to process anyway");
+                for (java.util.Map.Entry<String, MissingMapping> missed : missingMappings.entries())
+                {
+                    remaps.add(missed.getValue());
+                }
             }
-            return GameData.processIdRematches(remaps);
+            else if (!missingMappings.isEmpty() && !isLocalWorld)
+            {
+                List<String> missedMapping = Lists.newArrayList();
+                for (java.util.Map.Entry<String, MissingMapping> missed : missingMappings.entries())
+                {
+                    missedMapping.add(missed.getKey()+ ":" + missed.getValue().name);
+                }
+                return ImmutableList.copyOf(missedMapping);
+            }
+            return GameData.processIdRematches(remaps, isLocalWorld);
         }
-        return true;
+        return ImmutableList.of();
     }
     public void fireRemapEvent(Map<String, Integer[]> remaps)
     {

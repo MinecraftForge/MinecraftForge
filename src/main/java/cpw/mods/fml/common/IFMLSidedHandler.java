@@ -18,6 +18,7 @@ import java.util.Set;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
+import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.relauncher.Side;
 
@@ -54,4 +55,6 @@ public interface IFMLSidedHandler
     void waitForPlayClient();
 
     void fireNetRegistrationEvent(EventBus bus, NetworkManager manager, Set<String> channelSet, String channel, Side side);
+
+    FMLMissingMappingsEvent.Action getDefaultMissingAction();
 }

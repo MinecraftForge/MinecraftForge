@@ -79,9 +79,12 @@ import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.WrongMinecraftVersionException;
+import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
+import cpw.mods.fml.common.event.FMLMissingMappingsEvent.Action;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.common.registry.GameData;
+import cpw.mods.fml.common.registry.GameRegistryException;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.toposort.ModSortingException;
 import cpw.mods.fml.relauncher.Side;
@@ -588,13 +591,21 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         else
         {
+
             launchIntegratedServerCallback(dirName, saveName);
         }
     }
 
     public void launchIntegratedServerCallback(String dirName, String saveName)
     {
-        client.func_71371_a(dirName, saveName, (WorldSettings)null);
+        try
+        {
+            client.func_71371_a(dirName, saveName, (WorldSettings)null);
+        }
+        catch (GameRegistryException gre)
+        {
+            showGuiScreen(new GuiModItemsMissing(gre.getItems(), gre.getMessage()));
+        }
     }
 
     public void showInGameModOptions(GuiIngameMenu guiIngameMenu)
@@ -742,6 +753,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
 
     private CountDownLatch playClientBlock;
+
     public void setPlayClient(NetHandlerPlayClient netHandlerPlayClient)
     {
         playClientBlock.countDown();
@@ -775,5 +787,18 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             bus.post(new FMLNetworkEvent.CustomPacketRegistrationEvent<NetHandlerPlayServer>(manager, channelSet, channel, side, NetHandlerPlayServer.class));
         }
+    }
+
+    public void setDefaultMissingAction(FMLMissingMappingsEvent.Action action)
+    {
+        this.defaultMissingAction = action;
+    }
+
+    private Action defaultMissingAction = FMLMissingMappingsEvent.Action.FAIL;
+
+    @Override
+    public Action getDefaultMissingAction()
+    {
+        return defaultMissingAction;
     }
 }
