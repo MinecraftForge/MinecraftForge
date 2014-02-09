@@ -23,6 +23,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.WorldAccessContainer;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
@@ -184,5 +185,15 @@ public class FMLServerHandler implements IFMLSidedHandler
     public FMLMissingMappingsEvent.Action getDefaultMissingAction()
     {
         return FMLMissingMappingsEvent.Action.valueOf(System.getProperty("fml.missingBlockAction", "FAIL"));
+    }
+    @Override
+    public void serverLoadedSuccessfully()
+    {
+
+    }
+    @Override
+    public void failedServerLoading(RuntimeException ex, WorldAccessContainer wac)
+    {
+
     }
 }

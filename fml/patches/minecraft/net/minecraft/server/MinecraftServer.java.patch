@@ -1,15 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/server/MinecraftServer.java
 +++ ../src-work/minecraft/net/minecraft/server/MinecraftServer.java
-@@ -4,6 +4,8 @@
+@@ -4,6 +4,10 @@
  import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.minecraft.MinecraftSessionService;
  import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 +
 +import cpw.mods.fml.common.FMLCommonHandler;
++import cpw.mods.fml.common.Loader;
++import cpw.mods.fml.common.LoaderState;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import io.netty.buffer.ByteBuf;
-@@ -385,6 +387,7 @@
+@@ -385,6 +389,7 @@
          {
              if (this.func_71197_b())
              {
@@ -17,7 +19,7 @@
                  long i = func_130071_aq();
                  long l = 0L;
                  this.field_147147_p.func_151315_a(new ChatComponentText(this.field_71286_C));
-@@ -429,6 +432,7 @@
+@@ -429,6 +434,7 @@
                      Thread.sleep(1L);
                      this.field_71296_Q = true;
                  }
@@ -25,7 +27,18 @@
              }
              else
              {
-@@ -475,6 +479,8 @@
+@@ -466,7 +472,10 @@
+         {
+             try
+             {
++                if (Loader.instance().hasReachedState(LoaderState.SERVER_STARTED))
++                {
+                 this.func_71260_j();
++                }
+                 this.field_71316_v = true;
+             }
+             catch (Throwable throwable)
+@@ -475,6 +484,8 @@
              }
              finally
              {
@@ -34,7 +47,7 @@
                  this.func_71240_o();
              }
          }
-@@ -517,6 +523,7 @@
+@@ -517,6 +528,7 @@
      {
          long i = System.nanoTime();
          AxisAlignedBB.func_72332_a().func_72298_a();
@@ -42,7 +55,7 @@
          ++this.field_71315_w;
  
          if (this.field_71295_T)
-@@ -570,6 +577,7 @@
+@@ -570,6 +582,7 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -50,7 +63,7 @@
      }
  
      public void func_71190_q()
-@@ -597,6 +605,7 @@
+@@ -597,6 +610,7 @@
                  }
  
                  this.field_71304_b.func_76320_a("tick");
@@ -58,7 +71,7 @@
                  CrashReport crashreport;
  
                  try
-@@ -621,6 +630,7 @@
+@@ -621,6 +635,7 @@
                      throw new ReportedException(crashreport);
                  }
  
@@ -66,7 +79,7 @@
                  this.field_71304_b.func_76319_b();
                  this.field_71304_b.func_76320_a("tracker");
                  worldserver.func_73039_n().func_72788_a();
-@@ -699,7 +709,7 @@
+@@ -699,7 +714,7 @@
  
      public String getServerModName()
      {
