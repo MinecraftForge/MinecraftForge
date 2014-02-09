@@ -57,4 +57,8 @@ public interface IFMLSidedHandler
     void fireNetRegistrationEvent(EventBus bus, NetworkManager manager, Set<String> channelSet, String channel, Side side);
 
     FMLMissingMappingsEvent.Action getDefaultMissingAction();
+
+    void serverLoadedSuccessfully();
+
+    void failedServerLoading(RuntimeException ex, WorldAccessContainer wac);
 }

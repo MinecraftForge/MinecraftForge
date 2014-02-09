@@ -266,6 +266,7 @@ public class FMLCommonHandler
 
     public boolean handleServerStarting(MinecraftServer server)
     {
+        sidedDelegate.serverLoadedSuccessfully();
         return Loader.instance().serverStarting(server);
     }
 
@@ -380,7 +381,15 @@ public class FMLCommonHandler
                 WorldAccessContainer wac = ((InjectedModContainer)mc).getWrappedWorldAccessContainer();
                 if (wac != null)
                 {
-                    wac.readData(handler, worldInfo, additionalProperties, tagCompound.func_74775_l(mc.getModId()));
+                    try
+                    {
+                        wac.readData(handler, worldInfo, additionalProperties, tagCompound.func_74775_l(mc.getModId()));
+                    }
+                    catch (RuntimeException ex)
+                    {
+                        sidedDelegate.failedServerLoading(ex, wac);
+                        throw ex;
+                    }
                 }
             }
         }

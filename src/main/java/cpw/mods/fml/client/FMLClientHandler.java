@@ -21,7 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -69,6 +71,7 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.DuplicateModsFoundException;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLContainer;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
@@ -78,6 +81,7 @@ import cpw.mods.fml.common.MissingModsException;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
+import cpw.mods.fml.common.WorldAccessContainer;
 import cpw.mods.fml.common.WrongMinecraftVersionException;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent.Action;
@@ -596,16 +600,35 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
     }
 
+    private CountDownLatch gameReleaseLatch;
+    private Thread clientWaiter;
+    private GameRegistryException gre;
+
     public void launchIntegratedServerCallback(String dirName, String saveName)
     {
         try
         {
-            client.func_71371_a(dirName, saveName, (WorldSettings)null);
+            try
+            {
+                Thread.interrupted();
+                gameReleaseLatch = new CountDownLatch(1);
+                clientWaiter = Thread.currentThread();
+                client.func_71371_a(dirName, saveName, (WorldSettings)null);
+                System.out.printf("POKEE %b\n", Thread.currentThread().isInterrupted());
+                gameReleaseLatch.await();
+            }
+            catch (InterruptedException ie)
+            {
+                Thread.interrupted();
+                throw gre;
+            }
         }
         catch (GameRegistryException gre)
         {
+            client.func_71403_a(null);
             showGuiScreen(new GuiModItemsMissing(gre.getItems(), gre.getMessage()));
         }
+        Thread.interrupted();
     }
 
     public void showInGameModOptions(GuiIngameMenu guiIngameMenu)
@@ -800,5 +823,53 @@ public class FMLClientHandler implements IFMLSidedHandler
     public Action getDefaultMissingAction()
     {
         return defaultMissingAction;
+    }
+
+    @Override
+    public void serverLoadedSuccessfully()
+    {
+        if (gameReleaseLatch!=null)
+        {
+            gameReleaseLatch.countDown();
+        }
+    }
+
+    @Override
+    public void failedServerLoading(RuntimeException ex, WorldAccessContainer wac)
+    {
+        if (wac instanceof FMLContainer && ex instanceof GameRegistryException)
+        {
+            try
+            {
+                gre = (GameRegistryException) ex;
+                Executors.newSingleThreadExecutor().submit(new Callable<Void>()
+                {
+                    @Override
+                    public Void call() throws Exception
+                    {
+                        System.err.println("POKE");
+                        clientWaiter.interrupt();
+                        Thread.sleep(50);
+                        System.err.println("POKE");
+                        clientWaiter.interrupt();
+                        Thread.sleep(50);
+                        System.err.println("POKE");
+                        clientWaiter.interrupt();
+                        return null;
+                    }
+
+                });
+
+            }
+            catch (Throwable t)
+            {
+                FMLLog.log(Level.ERROR, t, "stuff");
+            }
+        }
+    }
+
+    public boolean handlingCrash(CrashReport report)
+    {
+        return report.func_71505_b() instanceof GameRegistryException;
     }
 }
