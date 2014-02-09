@@ -844,6 +844,9 @@ public class FMLClientHandler implements IFMLSidedHandler
                 gre = (GameRegistryException) ex;
                 Executors.newSingleThreadExecutor().submit(new Callable<Void>()
                 {
+                    // This needs to happen in a separate thread so that the server can "crash"
+                    // The three pokes are for the client - it's in a sleep loop, and needs to get
+                    // out of it
                     @Override
                     public Void call() throws Exception
                     {
