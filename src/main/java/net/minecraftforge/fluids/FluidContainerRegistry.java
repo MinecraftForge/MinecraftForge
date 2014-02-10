@@ -223,8 +223,8 @@ public abstract class FluidContainerRegistry
             return false;
         }
 
-        FluidContainerData data = filledContainerMap.get(new ContainerKey(container, fluid));
-        return data == null ? false : data.fluid.isFluidEqual(fluid);
+        FluidContainerData data = containerFluidMap.get(new ContainerKey(container));
+        return data == null ? false : data.fluid.containsFluid(fluid);
     }
 
     public static boolean isBucket(ItemStack container)
