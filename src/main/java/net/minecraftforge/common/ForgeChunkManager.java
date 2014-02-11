@@ -45,6 +45,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.common.util.Constants;
 
 /**
  * Manages chunkloading for mods.
@@ -369,7 +370,7 @@ public class ForgeChunkManager
             try
             {
                 NBTTagCompound forcedChunkData = CompressedStreamTools.read(chunkLoaderData);
-                return forcedChunkData.getTagList("TicketList", 9).tagCount() > 0;
+                return forcedChunkData.getTagList("TicketList", Constants.NBT.TAG_COMPOUND).tagCount() > 0;
             }
             catch (IOException e)
             {
@@ -409,7 +410,7 @@ public class ForgeChunkManager
                 FMLLog.log(Level.WARN, e, "Unable to read forced chunk data at %s - it will be ignored", chunkLoaderData.getAbsolutePath());
                 return;
             }
-            NBTTagList ticketList = forcedChunkData.getTagList("TicketList", 9);
+            NBTTagList ticketList = forcedChunkData.getTagList("TicketList", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < ticketList.tagCount(); i++)
             {
                 NBTTagCompound ticketHolder = (NBTTagCompound)ticketList.getCompoundTagAt(i);
@@ -428,7 +429,7 @@ public class ForgeChunkManager
                     continue;
                 }
 
-                NBTTagList tickets = ticketHolder.getTagList("Tickets", 9);
+                NBTTagList tickets = ticketHolder.getTagList("Tickets", Constants.NBT.TAG_COMPOUND);
                 for (int j = 0; j < tickets.tagCount(); j++)
                 {
                     NBTTagCompound ticket = (NBTTagCompound) tickets.getCompoundTagAt(j);
