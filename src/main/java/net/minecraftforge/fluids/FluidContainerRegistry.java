@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -20,16 +21,16 @@ import net.minecraftforge.common.MinecraftForge;
 /**
  * Register simple items that contain fluids here. Useful for buckets, bottles, and things that have
  * ID/metadata mappings.
- * 
+ *
  * For more complex items, use {@link IFluidContainerItem} instead.
- * 
+ *
  * @author King Lemming
- * 
+ *
  */
 public abstract class FluidContainerRegistry
 {
-    // Holder object that implements HashCode for an ItemStack, 
-    // the local maps are not guaranteed to have the same internal generic structure, 
+    // Holder object that implements HashCode for an ItemStack,
+    // the local maps are not guaranteed to have the same internal generic structure,
     // but the external interface for checking ItemStacks will still exist.
     private static class ContainerKey
     {
@@ -45,11 +46,22 @@ public abstract class FluidContainerRegistry
             this.fluid = fluid;
         }
         @Override
+        public boolean equals(Object obj)
+        {
+            if(obj == null || obj instanceof ContainerKey)
+                return false;
+            ContainerKey key = (ContainerKey)obj;
+            return ItemStack.areItemStacksEqual(this.container, key.container)
+                && (this.fluid == null && key.fluid == null ? true : (this.fluid != null && key.fluid != null ? this.fluid.equals(key.fluid) : false));
+        }
+        @Override
         public int hashCode()
         {
             int code = 1;
-            code = 31*code + container.hashCode();
-            code = 31*code + container.getItemDamage();
+            if(container != null){
+                code = 31*code + container.getItem().hashCode();
+                code = 31*code + container.getItemDamage();
+            }
             if (fluid != null)
                 code = 31*code + fluid.fluidID;
             return code;
@@ -63,7 +75,7 @@ public abstract class FluidContainerRegistry
     public static final int BUCKET_VOLUME = 1000;
     public static final ItemStack EMPTY_BUCKET = new ItemStack(Items.bucket);
     public static final ItemStack EMPTY_BOTTLE = new ItemStack(Items.glass_bottle);
-    private static final ItemStack NULL_EMPTYCONTAINER = new ItemStack(Items.bucket);
+    private static final ItemStack NULL_EMPTYCONTAINER = new ItemStack(Blocks.air);
 
     static
     {
@@ -76,7 +88,7 @@ public abstract class FluidContainerRegistry
 
     /**
      * Register a new fluid containing item.
-     * 
+     *
      * @param stack
      *            FluidStack containing the type and amount of the fluid stored in the item.
      * @param filledContainer
@@ -93,7 +105,7 @@ public abstract class FluidContainerRegistry
     /**
      * Register a new fluid containing item. The item is assumed to hold 1000 mB of fluid. Also
      * registers the Fluid if possible.
-     * 
+     *
      * @param fluid
      *            Fluid type that is stored in the item.
      * @param filledContainer
@@ -113,7 +125,7 @@ public abstract class FluidContainerRegistry
 
     /**
      * Register a new fluid containing item that does not have an empty container.
-     * 
+     *
      * @param stack
      *            FluidStack containing the type and amount of the fluid stored in the item.
      * @param filledContainer
@@ -128,7 +140,7 @@ public abstract class FluidContainerRegistry
     /**
      * Register a new fluid containing item that does not have an empty container. The item is
      * assumed to hold 1000 mB of fluid. Also registers the Fluid if possible.
-     * 
+     *
      * @param fluid
      *            Fluid type that is stored in the item.
      * @param filledContainer
@@ -146,7 +158,7 @@ public abstract class FluidContainerRegistry
 
     /**
      * Register a new fluid containing item.
-     * 
+     *
      * @param data
      *            See {@link FluidContainerData}.
      * @return True if container was successfully registered; false if it already is.
@@ -171,7 +183,7 @@ public abstract class FluidContainerRegistry
 
     /**
      * Determines the fluid type and amount inside a container.
-     * 
+     *
      * @param container
      *            The fluid container.
      * @return FluidStack representing stored fluid.
@@ -189,9 +201,9 @@ public abstract class FluidContainerRegistry
 
     /**
      * Attempts to fill an empty container with a fluid.
-     * 
+     *
      * NOTE: Returns null on fail, NOT the empty container.
-     * 
+     *
      * @param fluid
      *            FluidStack containing the type and amount of fluid to fill.
      * @param container
@@ -273,7 +285,7 @@ public abstract class FluidContainerRegistry
         public final ItemStack filledContainer;
         public final ItemStack emptyContainer;
 
-        
+
         public FluidContainerData(FluidStack stack, ItemStack filledContainer, ItemStack emptyContainer)
         {
             this(stack, filledContainer, emptyContainer, false);
