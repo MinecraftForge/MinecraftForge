@@ -3,11 +3,12 @@ package net.minecraftforge.common;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.entity.*;
 import net.minecraftforge.event.world.WorldEvent;
 
@@ -73,5 +74,7 @@ public class ForgeInternalHandler
     public void onDimensionUnload(WorldEvent.Unload event)
     {
         ForgeChunkManager.unloadWorld(event.world);
+        if (event.world instanceof WorldServer)
+            FakePlayerFactory.unloadWorld((WorldServer)event.world);
     }
 }
