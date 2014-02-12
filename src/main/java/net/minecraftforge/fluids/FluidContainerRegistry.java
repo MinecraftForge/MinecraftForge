@@ -47,7 +47,7 @@ public abstract class FluidContainerRegistry
         public int hashCode()
         {
             int code = 1;
-            code = 31*code + Item.getIdFromItem(container.getItem());
+            code = 31*code + Item.hashCode();
             code = 31*code + container.getItemDamage()
             if (stack.hasTagCompound())
 			    code = 31*code + stack.getTagCompound().hashCode();
