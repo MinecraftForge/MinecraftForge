@@ -49,7 +49,7 @@ public abstract class FluidContainerRegistry
             int code = 1;
             code = 31*code + Item.getIdFromItem(container.getItem());
             code = 31*code + container.getItemDamage()
-            if (!stack.hasTagCompound())
+            if (stack.hasTagCompound())
 			    code = 31*code + stack.getTagCompound().hashCode();
             if (fluid != null)
                 code = 31*code + fluid.fluidID;
