@@ -138,15 +138,22 @@
  
                  if (itemstack != null)
                  {
-@@ -261,12 +299,18 @@
+@@ -261,12 +299,24 @@
                      }
                  }
  
++                TileEntity tile = null;
++                if(block.hasTileEntity(l))
++                {
++                    tile = this.theWorld.getTileEntity(par1, par2, par3);
++                }
 +                flag = this.removeBlock(par1, par2, par3);
                  if (flag && flag1)
                  {
-                     block.harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, l);
+-                    block.harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, l);
++                    block.harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, l, tile);
                  }
++                tile = null;
              }
  
 +            // Drop experience
@@ -157,7 +164,7 @@
              return flag;
          }
      }
-@@ -299,6 +343,7 @@
+@@ -299,6 +349,7 @@
              if (itemstack1.stackSize == 0)
              {
                  par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
@@ -165,7 +172,7 @@
              }
  
              if (!par1EntityPlayer.isUsingItem())
-@@ -313,27 +358,57 @@
+@@ -313,27 +364,57 @@
      // JAVADOC METHOD $$ func_73078_a
      public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
      {
@@ -236,7 +243,7 @@
      }
  
      // JAVADOC METHOD $$ func_73080_a
-@@ -341,4 +416,13 @@
+@@ -341,4 +422,13 @@
      {
          this.theWorld = par1WorldServer;
      }
