@@ -32,13 +32,11 @@
                      label110:
  
                      while (iterator.hasNext())
-@@ -159,14 +167,18 @@
-                                                             }
+@@ -160,13 +168,17 @@
  
                                                              entityliving.setLocationAndAngles((double)f, (double)f1, (double)f2, par1WorldServer.rand.nextFloat() * 360.0F, 0.0F);
--
+ 
 -                                                            if (entityliving.getCanSpawnHere())
-+                                                            
 +                                                            Result canSpawn = ForgeEventFactory.canEntitySpawn(entityliving, par1WorldServer, f, f1, f2);
 +                                                            if (canSpawn == Result.ALLOW || (canSpawn == Result.DEFAULT && entityliving.getCanSpawnHere()))
                                                              {
@@ -60,7 +58,7 @@
          {
              Block block = par1World.getBlock(par2, par3 - 1, par4);
 -            return block != Blocks.bedrock && !par1World.getBlock(par2, par3, par4).isNormalCube() && !par1World.getBlock(par2, par3, par4).getMaterial().isLiquid() && !par1World.getBlock(par2, par3 + 1, par4).isNormalCube();
-+            boolean spawnBlock = block.canCreatureSpawn(par0EnumCreatureType, par1World, par2, par3, par4);
++            boolean spawnBlock = block.canCreatureSpawn(par0EnumCreatureType, par1World, par2, par3 - 1, par4);
 +            return spawnBlock && block != Blocks.bedrock && !par1World.getBlock(par2, par3, par4).isNormalCube() && !par1World.getBlock(par2, par3, par4).getMaterial().isLiquid() && !par1World.getBlock(par2, par3 + 1, par4).isNormalCube();
          }
      }
