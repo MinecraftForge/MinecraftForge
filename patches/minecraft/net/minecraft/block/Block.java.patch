@@ -188,7 +188,7 @@
      }
  
      // JAVADOC METHOD $$ func_149644_j
-@@ -1228,6 +1262,1065 @@
+@@ -1228,6 +1262,1171 @@
          return null;
      }
  
@@ -515,6 +515,24 @@
 +            }
 +        }
 +        return ret;
++    }
++    
++    /**
++     * This returns a complete list of items dropped from this block,
++     * but has a TileEntity instance from before it was removed.
++     * 
++     * @param world
++     * @param x
++     * @param y
++     * @param z
++     * @param metadata
++     * @param fortune
++     * @param tile
++     * @return
++     */
++    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune, TileEntity tile) 
++    {
++        return getDrops(world, x, y, z, metadata, fortune);
 +    }
 +
 +    /**
@@ -1248,6 +1266,94 @@
 +            return false;
 +        if (harvestTool[metadata] == null) return false;
 +        return harvestTool[metadata].equals(type);
++    }
++    
++    /**
++     * Called when a block is destroyed and the player gets drops from it, 
++     * but has an instance of the TileEntity from before it was removed.
++     * 
++     * @param world
++     * @param player
++     * @param x
++     * @param y
++     * @param z
++     * @param metadata
++     * @param tile
++     */
++    public void harvestBlock(World world, EntityPlayer player, int x, int y, int z, int metadata, TileEntity tile)
++    {
++        player.addStat(StatList.mineBlockStatArray[getIdFromBlock(this)], 1);
++        player.addExhaustion(0.025F);
++
++        if (this.canSilkHarvest(world, player, x, y, z, metadata) && EnchantmentHelper.getSilkTouchModifier(player))
++        {
++            ArrayList<ItemStack> items = new ArrayList<ItemStack>();
++            ItemStack itemstack = this.createStackedBlock(metadata);
++
++            if (itemstack != null)
++            {
++                items.add(itemstack);
++            }
++
++            ForgeEventFactory.fireBlockHarvesting(items, world, this, x, y, z, metadata, 0, 1.0f, true, player);
++            for (ItemStack is : items)
++            {
++                this.dropBlockAsItem(world, x, y, z, is);
++            }
++        }
++        else
++        {
++            harvesters.set(player);
++            int i1 = EnchantmentHelper.getFortuneModifier(player);
++            this.dropBlockAsItem(world, x, y, z, metadata, i1, tile);
++            harvesters.set(null);
++        }
++    }
++    
++    /**
++     * Called when a block is destroyed to drop the block as item,
++     * but with a TileEntity instance from before it was removed.
++     * 
++     * @param world
++     * @param x
++     * @param y
++     * @param z
++     * @param metadata
++     * @param fortune
++     * @param tile
++     */    
++    public final void dropBlockAsItem(World world, int x, int y, int z, int metadata, int fortune, TileEntity tile)
++    {
++        this.dropBlockAsItemWithChance(world, x, y, z, metadata, 1.0F, fortune, tile);
++    }
++
++    /**
++     * Called when a block is destroyed to drop the block as item with a chance,
++     * but with a TileEntity instance from before it was removed.
++     * 
++     * @param world
++     * @param x
++     * @param y
++     * @param z
++     * @param metadata
++     * @param fortune
++     * @param tile
++     */ 
++    public void dropBlockAsItemWithChance(World world, int x, int y, int z, int metadata, float chance, int fortune, TileEntity tile)
++    {
++        if (!world.isRemote)
++        {
++            ArrayList<ItemStack> items = getDrops(world, x, y, z, metadata, fortune, tile);
++            chance = ForgeEventFactory.fireBlockHarvesting(items, world, this, x, y, z, metadata, fortune, chance, false, harvesters.get());
++
++            for (ItemStack item : items)
++            {
++                if (world.rand.nextFloat() <= chance)
++                {
++                    this.dropBlockAsItem(world, x, y, z, item);
++                }
++            }
++        }
 +    }
 +    /* ========================================= FORGE END ======================================*/
 +
