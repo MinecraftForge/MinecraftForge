@@ -63,8 +63,9 @@ public abstract class FluidContainerRegistry
             if(!(obj instanceof ContainerKey))
             	return false;
             ContainerKey key = (ContainerKey) obj;
+            boolean bothFluidsNull = fluid != null && key.fluid != null;
             boolean itemStacksEqual = ItemStack.areItemStacksEqual(container, key.container) && ItemStack.areItemStackTagsEqual(container, key.container);
-            boolean fluidsEqual = fluid != null && key.fluid ? fluid.isFluidStackIdentical(key.fluid) && FluidStack.areFluidStackTagsEqual(fluid, key.fluid) : true;
+            boolean fluidsEqual = bothFluidsNull ? fluid.isFluidStackIdentical(key.fluid) && FluidStack.areFluidStackTagsEqual(fluid, key.fluid) : bothFluidsNull;
             return itemStacksEqual && fluidsEqual;
         }
     }
