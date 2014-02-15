@@ -32,17 +32,20 @@ public abstract class FluidContainerRegistry
     // but the external interface for checking ItemStacks will still exist.
     private static class ContainerKey
     {
-        ItemStack container;
-        FluidStack fluid;
+        public ItemStack container;
+        public FluidStack fluid;
+        
         private ContainerKey(ItemStack container)
         {
             this.container = container;
         }
+        
         private ContainerKey(ItemStack container, FluidStack fluid)
         {
             this(container);
             this.fluid = fluid;
         }
+        
         @Override
         public int hashCode()
         {
@@ -52,6 +55,17 @@ public abstract class FluidContainerRegistry
             if (fluid != null)
                 code = 31*code + fluid.fluidID;
             return code;
+        }
+        
+        @Override
+        public boolean equals(Object obj)
+        {
+            if(!(obj instanceof ContainerKey))
+            	return false;
+            ContainerKey key = (ContainerKey) obj;
+            boolean itemStacksEqual = ItemStack.areItemStacksEqual(container, key.container) && ItemStack.areItemStackTagsEqual(container, key.container);
+            boolean fluidsEqual = fluid != null && key.fluid ? fluid.isFluidStackIdentical(key.fluid) && FluidStack.areFluidStackTagsEqual(fluid, key.fluid) : true;
+            return itemStacksEqual && fluidsEqual;
         }
     }
 
