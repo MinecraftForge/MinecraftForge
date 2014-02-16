@@ -120,4 +120,55 @@ public class TestNetStuff {
         assertArrayEquals("String repeat bytes", new byte[] {-112, 3, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 116, 101, 115, 116, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, buf.array());
     }
 
+
+    @Test
+    public void testVarShort()
+    {
+        ByteBuf buf = Unpooled.buffer(3,3);
+        ByteBufUtils.writeVarShort(buf, 32766);
+        assertArrayEquals("Two byte short written", new byte[] { 127, -2, 0}, buf.array());
+        assertEquals("Two byte short written", 2, buf.readableBytes());
+
+        buf.clear();
+        buf.writeZero(3);
+        buf.clear();
+
+        buf.writeShort(32766);
+        assertArrayEquals("Two byte short written", new byte[] { 127, -2, 0}, buf.array());
+        int val = ByteBufUtils.readVarShort(buf);
+
+        assertEquals("Two byte short read correctly", 32766, val);
+
+        buf.clear();
+        buf.writeZero(3);
+        buf.clear();
+
+        ByteBufUtils.writeVarShort(buf, 32768);
+        assertArrayEquals("Three byte short written", new byte[] { -128, 0, 1}, buf.array());
+        assertEquals("Three byte short written", 3, buf.readableBytes());
+
+        buf.clear();
+        buf.writeZero(3);
+        buf.clear();
+        buf.writeShort(-32768);
+        buf.writeByte(1);
+        val = ByteBufUtils.readVarShort(buf);
+        assertEquals("Three byte short read correctly", 32768, val);
+
+        buf.clear();
+        buf.writeZero(3);
+        buf.clear();
+
+        ByteBufUtils.writeVarShort(buf, 8388607);
+        assertArrayEquals("Three byte short written", new byte[] { -1, -1, -1}, buf.array());
+        assertEquals("Three byte short written", 3, buf.readableBytes());
+
+        buf.clear();
+        buf.writeZero(3);
+        buf.clear();
+        buf.writeShort(-1);
+        buf.writeByte(-1);
+        val = ByteBufUtils.readVarShort(buf);
+        assertEquals("Three byte short read correctly", 8388607, val);
+    }
 }
