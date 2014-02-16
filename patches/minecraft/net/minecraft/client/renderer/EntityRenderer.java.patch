@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/EntityRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/EntityRenderer.java
-@@ -51,6 +51,11 @@ import org.lwjgl.opengl.Display;
+@@ -51,6 +51,11 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GLContext;
  import org.lwjgl.util.glu.Project;
@@ -12,7 +12,7 @@
  
  @SideOnly(Side.CLIENT)
  public class EntityRenderer implements IResourceManagerReloadListener
-@@ -250,6 +255,12 @@ public class EntityRenderer implements IResourceManagerReloadListener
+@@ -250,6 +255,12 @@
          this.locationLightMap = p_i45076_1_.getTextureManager().getDynamicTextureLocation("lightMap", this.lightmapTexture);
          this.lightmapColors = this.lightmapTexture.getTextureData();
          this.theShaderGroup = null;
@@ -25,7 +25,7 @@
      }
  
      public boolean isShaderActive()
-@@ -475,7 +486,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
+@@ -475,7 +486,7 @@
  
                              if (d3 < d2 || d2 == 0.0D)
                              {
@@ -34,8 +34,8 @@
                                  {
                                      if (d2 == 0.0D)
                                      {
-@@ -512,8 +523,15 @@ public class EntityRenderer implements IResourceManagerReloadListener
-      */
+@@ -512,8 +523,15 @@
+     // JAVADOC METHOD $$ func_78477_e
      private void updateFovModifierHand()
      {
 -        EntityPlayerSP entityplayersp = (EntityPlayerSP)this.mc.renderViewEntity;
@@ -52,7 +52,7 @@
          this.fovModifierHandPrev = this.fovModifierHand;
          this.fovModifierHand += (this.fovMultiplierTemp - this.fovModifierHand) * 0.5F;
  
-@@ -539,7 +557,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
+@@ -539,7 +557,7 @@
          }
          else
          {
@@ -61,7 +61,7 @@
              float f1 = 70.0F;
  
              if (par2)
-@@ -626,15 +644,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
+@@ -626,15 +644,7 @@
  
              if (!this.mc.gameSettings.debugCamEnable)
              {
@@ -78,7 +78,7 @@
                  GL11.glRotatef(entitylivingbase.prevRotationYaw + (entitylivingbase.rotationYaw - entitylivingbase.prevRotationYaw) * par1 + 180.0F, 0.0F, -1.0F, 0.0F);
                  GL11.glRotatef(entitylivingbase.prevRotationPitch + (entitylivingbase.rotationPitch - entitylivingbase.prevRotationPitch) * par1, -1.0F, 0.0F, 0.0F);
              }
-@@ -1353,7 +1363,10 @@ public class EntityRenderer implements IResourceManagerReloadListener
+@@ -1353,7 +1363,10 @@
                  GL11.glPushMatrix();
                  RenderHelper.enableStandardItemLighting();
                  this.mc.mcProfiler.endStartSection("entities");
@@ -89,7 +89,7 @@
                  this.enableLightmap((double)par1);
                  this.mc.mcProfiler.endStartSection("litParticles");
                  effectrenderer.renderLitParticles(entitylivingbase, par1);
-@@ -1371,7 +1384,10 @@ public class EntityRenderer implements IResourceManagerReloadListener
+@@ -1371,7 +1384,10 @@
                      entityplayer = (EntityPlayer)entitylivingbase;
                      GL11.glDisable(GL11.GL_ALPHA_TEST);
                      this.mc.mcProfiler.endStartSection("outline");
@@ -101,7 +101,7 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1384,14 +1400,17 @@ public class EntityRenderer implements IResourceManagerReloadListener
+@@ -1384,14 +1400,17 @@
                  entityplayer = (EntityPlayer)entitylivingbase;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
                  this.mc.mcProfiler.endStartSection("outline");
@@ -121,7 +121,7 @@
              GL11.glDisable(GL11.GL_BLEND);
              GL11.glDepthMask(false);
              GL11.glEnable(GL11.GL_CULL_FACE);
-@@ -1446,6 +1465,16 @@ public class EntityRenderer implements IResourceManagerReloadListener
+@@ -1446,6 +1465,16 @@
                  renderglobal.sortAndRender(entitylivingbase, 1, (double)par1);
              }
  
@@ -138,7 +138,7 @@
              GL11.glDepthMask(true);
              GL11.glEnable(GL11.GL_CULL_FACE);
              GL11.glDisable(GL11.GL_BLEND);
-@@ -1457,6 +1486,9 @@ public class EntityRenderer implements IResourceManagerReloadListener
+@@ -1457,6 +1486,9 @@
                  this.renderCloudsCheck(renderglobal, par1);
              }
  
@@ -148,8 +148,8 @@
              this.mc.mcProfiler.endStartSection("hand");
  
              if (this.cameraZoom == 1.0D)
-@@ -1581,6 +1613,13 @@ public class EntityRenderer implements IResourceManagerReloadListener
-      */
+@@ -1581,6 +1613,13 @@
+     // JAVADOC METHOD $$ func_78474_d
      protected void renderRainSnow(float par1)
      {
 +        IRenderHandler renderer = null;
