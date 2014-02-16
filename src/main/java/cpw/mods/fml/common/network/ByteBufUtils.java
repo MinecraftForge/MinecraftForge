@@ -55,7 +55,38 @@ public class ByteBufUtils {
 
         return i;
     }
+    /**
+     * An extended length short. Used by custom payload packets to extend size.
+     *
+     * @param buf
+     * @return
+     */
+    public static int readVarShort(ByteBuf buf)
+    {
+        int low = buf.readUnsignedShort();
+        int high = 0;
+        if ((low & 0x8000) != 0)
+        {
+            low = low & 0x7FFF;
+            high = buf.readUnsignedByte();
+        }
+        return ((high & 0xFF) << 15) | low;
+    }
 
+    public static void writeVarShort(ByteBuf buf, int toWrite)
+    {
+        int low = toWrite & 0x7FFF;
+        int high = ( toWrite & 0x7F8000 ) >> 15;
+        if (high != 0)
+        {
+            low = low | 0x8000;
+        }
+        buf.writeShort(low);
+        if (high != 0)
+        {
+            buf.writeByte(high);
+        }
+    }
     /**
      * Write an integer to the buffer using variable length encoding. The maxSize constrains
      * how many bytes (and therefore the maximum number) that will be written.
