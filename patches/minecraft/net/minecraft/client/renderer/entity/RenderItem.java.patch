@@ -60,7 +60,7 @@
                      }
  
 -                    for (int j = 0; j <= 1; ++j)
-+                    for (int j = 0; j <= itemstack.getItem().getRenderPasses(itemstack.getItemDamage()); ++j)
++                    for (int j = 0; j < itemstack.getItem().getRenderPasses(itemstack.getItemDamage()); ++j)
                      {
                          this.random.setSeed(187L);
 -                        IIcon iicon1 = itemstack.getItem().getIconFromDamageForRenderPass(itemstack.getItemDamage(), j);
