@@ -9,4 +9,7 @@ public abstract class IRenderHandler
 {
     @SideOnly(Side.CLIENT)
     public abstract void render(float partialTicks, WorldClient world, Minecraft mc);
+    
+    @SideOnly(Side.CLIENT)
+    public abstract void init(WorldClient world, Minecraft mc);
 }

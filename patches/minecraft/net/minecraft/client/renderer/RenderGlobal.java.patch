@@ -10,7 +10,35 @@
  @SideOnly(Side.CLIENT)
  public class RenderGlobal implements IWorldAccess
  {
-@@ -413,8 +416,10 @@
+@@ -273,6 +276,13 @@
+             ARBOcclusionQuery.glGenQueriesARB(this.glOcclusionQueryBase);
+         }
+ 
++        IRenderHandler skyProvider = null;
++        if ((skyProvider = this.mc.theWorld.provider.getSkyRenderer()) != null)
++        {
++            skyProvider.init(this.theWorld, mc);
++        }
++        else
++        {
+         this.starGLCallList = GLAllocation.generateDisplayLists(3);
+         GL11.glPushMatrix();
+         GL11.glNewList(this.starGLCallList, GL11.GL_COMPILE);
+@@ -320,6 +330,13 @@
+ 
+         tessellator.draw();
+         GL11.glEndList();
++        }
++        
++        IRenderHandler renderer = null;
++        if ((renderer = theWorld.provider.getCloudRenderer()) != null)
++        {
++            renderer.init(theWorld, mc);
++        }
+     }
+ 
+     private void renderStars()
+@@ -493,8 +510,10 @@
      // JAVADOC METHOD $$ func_147589_a
      public void renderEntities(EntityLivingBase p_147589_1_, ICamera p_147589_2_, float p_147589_3_)
      {
@@ -21,7 +49,7 @@
              --this.renderEntitiesStartupCounter;
          }
          else
-@@ -425,9 +430,12 @@
+@@ -505,9 +524,12 @@
              this.theWorld.theProfiler.startSection("prepare");
              TileEntityRendererDispatcher.instance.cacheActiveRenderInfo(this.theWorld, this.mc.getTextureManager(), this.mc.fontRenderer, this.mc.renderViewEntity, p_147589_3_);
              RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.mc.getTextureManager(), this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.pointedEntity, this.mc.gameSettings, p_147589_3_);
@@ -34,7 +62,7 @@
              EntityLivingBase entitylivingbase1 = this.mc.renderViewEntity;
              double d3 = entitylivingbase1.lastTickPosX + (entitylivingbase1.posX - entitylivingbase1.lastTickPosX) * (double)p_147589_3_;
              double d4 = entitylivingbase1.lastTickPosY + (entitylivingbase1.posY - entitylivingbase1.lastTickPosY) * (double)p_147589_3_;
-@@ -456,13 +464,17 @@
+@@ -536,13 +558,17 @@
              this.mc.entityRenderer.enableLightmap((double)p_147589_3_);
              this.theWorld.theProfiler.endStartSection("global");
              List list = this.theWorld.getLoadedEntityList();
@@ -52,7 +80,7 @@
                  ++this.countEntitiesRendered;
  
                  if (entity.isInRangeToRender3d(d0, d1, d2))
-@@ -476,6 +488,7 @@
+@@ -556,6 +582,7 @@
              for (i = 0; i < list.size(); ++i)
              {
                  entity = (Entity)list.get(i);
@@ -60,7 +88,7 @@
                  boolean flag = entity.isInRangeToRender3d(d0, d1, d2) && (entity.ignoreFrustumCheck || p_147589_2_.isBoundingBoxInFrustum(entity.boundingBox) || entity.riddenByEntity == this.mc.thePlayer);
  
                  if (!flag && entity instanceof EntityLiving)
-@@ -501,7 +514,11 @@
+@@ -581,7 +608,11 @@
  
              for (i = 0; i < this.tileEntities.size(); ++i)
              {
@@ -73,7 +101,7 @@
              }
  
              this.mc.entityRenderer.disableLightmap((double)p_147589_3_);
-@@ -978,6 +995,12 @@
+@@ -1074,6 +1105,12 @@
      // JAVADOC METHOD $$ func_72714_a
      public void renderSky(float par1)
      {
@@ -86,7 +114,7 @@
          if (this.mc.theWorld.provider.dimensionId == 1)
          {
              GL11.glDisable(GL11.GL_FOG);
-@@ -1216,6 +1239,12 @@
+@@ -1312,6 +1349,12 @@
  
      public void renderClouds(float par1)
      {
@@ -99,7 +127,7 @@
          if (this.mc.theWorld.provider.isSurfaceWorld())
          {
              if (this.mc.gameSettings.fancyGraphics)
-@@ -1619,6 +1648,11 @@
+@@ -1721,6 +1764,11 @@
  
      public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityPlayer par2EntityPlayer, float par3)
      {
@@ -111,7 +139,7 @@
          double d0 = par2EntityPlayer.lastTickPosX + (par2EntityPlayer.posX - par2EntityPlayer.lastTickPosX) * (double)par3;
          double d1 = par2EntityPlayer.lastTickPosY + (par2EntityPlayer.posY - par2EntityPlayer.lastTickPosY) * (double)par3;
          double d2 = par2EntityPlayer.lastTickPosZ + (par2EntityPlayer.posZ - par2EntityPlayer.lastTickPosZ) * (double)par3;
-@@ -1845,12 +1879,15 @@
+@@ -1966,12 +2014,15 @@
          {
              ItemRecord itemrecord = ItemRecord.getRecord(par1Str);
  
