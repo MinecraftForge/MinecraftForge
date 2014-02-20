@@ -244,7 +244,7 @@ public class DimensionManager
 
         WorldServer world = (dim == 0 ? overworld : new WorldServerMulti(mcServer, savehandler, overworld.getWorldInfo().getWorldName(), dim, worldSettings, overworld, mcServer.theProfiler));
         world.addWorldAccess(new WorldManager(mcServer, world));
-        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
+        FMLCommonHandler.instance().bus().post(new WorldEvent.Load(world));
         if (!mcServer.isSinglePlayer())
         {
             world.getWorldInfo().setGameType(mcServer.getGameType());
@@ -331,7 +331,7 @@ public class DimensionManager
             {
                 if (w != null)
                 {
-                    MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(w));
+                    FMLCommonHandler.instance().bus().post(new WorldEvent.Unload(w));
                     w.flush();
                     setWorld(id, null);
                 }
