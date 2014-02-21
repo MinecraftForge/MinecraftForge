@@ -1,6 +1,7 @@
 package net.minecraftforge.client;
 
 import java.util.Random;
+
 import javax.imageio.ImageIO;
 
 import net.minecraftforge.client.event.MouseEvent;
@@ -44,6 +45,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.ForgeModContainer;
@@ -249,6 +251,11 @@ public class ForgeHooksClient
     public static void dispatchRenderLast(RenderGlobal context, float partialTicks)
     {
         MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, partialTicks));
+    }
+
+    public static boolean renderFirstPersonHand(RenderGlobal context, float partialTicks, int renderPass)
+    {
+        return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(context, partialTicks, renderPass));
     }
 
     public static void onTextureStitchedPre(TextureMap map)
