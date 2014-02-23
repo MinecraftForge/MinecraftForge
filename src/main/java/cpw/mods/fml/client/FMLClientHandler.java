@@ -302,6 +302,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
         }
         loading = false;
+        client.field_71474_y.func_74300_a(); //Reload options to load any mod added keybindings.
     }
 
     @SuppressWarnings("unused")
