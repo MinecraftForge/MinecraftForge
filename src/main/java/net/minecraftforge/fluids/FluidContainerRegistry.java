@@ -48,7 +48,7 @@ public abstract class FluidContainerRegistry
         public int hashCode()
         {
             int code = 1;
-            code = 31*code + container.hashCode();
+            code = 31*code + container.getItem().hashCode();
             code = 31*code + container.getItemDamage();
             if (fluid != null)
                 code = 31*code + fluid.fluidID;
