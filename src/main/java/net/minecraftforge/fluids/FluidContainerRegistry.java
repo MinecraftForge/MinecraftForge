@@ -1,4 +1,3 @@
-
 package net.minecraftforge.fluids;
 
 import java.util.Arrays;
@@ -33,26 +32,41 @@ public abstract class FluidContainerRegistry
     // but the external interface for checking ItemStacks will still exist.
     private static class ContainerKey
     {
-        ItemStack container;
-        FluidStack fluid;
+        public ItemStack container;
+        public FluidStack fluid;
+        
         private ContainerKey(ItemStack container)
         {
             this.container = container;
         }
+        
         private ContainerKey(ItemStack container, FluidStack fluid)
         {
             this(container);
             this.fluid = fluid;
         }
+        
         @Override
         public int hashCode()
         {
             int code = 1;
-            code = 31*code + container.hashCode();
+            code = 31*code + container.getItem().hashCode();
             code = 31*code + container.getItemDamage();
             if (fluid != null)
                 code = 31*code + fluid.fluidID;
             return code;
+        }
+        
+        @Override
+        public boolean equals(Object obj)
+        {
+            if(!(obj instanceof ContainerKey))
+            	return false;
+            ContainerKey key = (ContainerKey) obj;
+            boolean bothFluidsNull = fluid != null && key.fluid != null;
+            boolean itemStacksEqual = ItemStack.areItemStacksEqual(container, key.container) && ItemStack.areItemStackTagsEqual(container, key.container);
+            boolean fluidsEqual = bothFluidsNull ? fluid.isFluidStackIdentical(key.fluid) && FluidStack.areFluidStackTagsEqual(fluid, key.fluid) : bothFluidsNull;
+            return itemStacksEqual && fluidsEqual;
         }
     }
 
