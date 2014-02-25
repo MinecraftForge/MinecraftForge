@@ -52,16 +52,6 @@ import cpw.mods.fml.common.discovery.ModCandidate;
 import cpw.mods.fml.common.event.FMLConstructionEvent;
 import cpw.mods.fml.common.event.FMLEvent;
 import cpw.mods.fml.common.event.FMLFingerprintViolationEvent;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
-import cpw.mods.fml.common.event.FMLModDisabledEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
-import cpw.mods.fml.common.event.FMLServerStartedEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.event.FMLServerStoppedEvent;
-import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
@@ -93,19 +83,6 @@ public class FMLModContainer implements ModContainer
     private ListMultimap<Class<? extends FMLEvent>,Method> eventMethods;
     private Map<String, String> customModProperties;
     private ModCandidate candidate;
-    private static final Set<Class<? extends FMLEvent>> modEventTypes = ImmutableSet.<Class<? extends FMLEvent>>builder()
-        .add(FMLPreInitializationEvent.class)
-        .add(FMLInitializationEvent.class)
-        .add(FMLPostInitializationEvent.class)
-        .add(FMLServerAboutToStartEvent.class)
-        .add(FMLServerStartingEvent.class)
-        .add(FMLServerStartedEvent.class)
-        .add(FMLServerStoppingEvent.class)
-        .add(FMLServerStoppedEvent.class)
-        .add(IMCEvent.class)
-        .add(FMLFingerprintViolationEvent.class)
-        .add(FMLModDisabledEvent.class)
-        .build();
 
     public FMLModContainer(String className, ModCandidate container, Map<String,Object> modDescriptor)
     {
@@ -323,7 +300,7 @@ public class FMLModContainer implements ModContainer
             {
                 if (a.annotationType().equals(Mod.EventHandler.class))
                 {
-                    if (m.getParameterTypes().length == 1 && modEventTypes.contains(m.getParameterTypes()[0]))
+                    if (m.getParameterTypes().length == 1 && FMLEvent.class.isAssignableFrom(m.getParameterTypes()[0]))
                     {
                         m.setAccessible(true);
                         eventMethods.put((Class<? extends FMLEvent>) m.getParameterTypes()[0],m);
