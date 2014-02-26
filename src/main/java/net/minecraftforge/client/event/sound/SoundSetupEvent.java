@@ -1,5 +1,6 @@
 package net.minecraftforge.client.event.sound;
 
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.audio.SoundManager;
 
 /**
@@ -8,9 +9,8 @@ import net.minecraft.client.audio.SoundManager;
  */
 public class SoundSetupEvent extends SoundEvent
 {
-    public final SoundManager manager;
-    public SoundSetupEvent(SoundManager manager)
+    public SoundSetupEvent(SoundManager manager, SoundHandler handler)
     {
-        this.manager = manager;
+        super(manager, handler);
     }
 }

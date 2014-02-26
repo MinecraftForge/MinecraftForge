@@ -1,20 +1,14 @@
 package net.minecraftforge.client.event.sound;
 
+import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.audio.SoundManager;
+import net.minecraftforge.client.event.sound.SoundEvent.SoundSourceEvent;
 
-public class PlayStreamingSourceEvent extends SoundEvent
+public class PlayStreamingSourceEvent extends SoundSourceEvent
 {
-    public final SoundManager manager;
-    public final String name;
-    public final float x;
-    public final float y;
-    public final float z;
-    public PlayStreamingSourceEvent(SoundManager manager, String name, float x, float y, float z)
+    public PlayStreamingSourceEvent(SoundManager manager, SoundHandler handler, ISound sound, String uuid)
     {
-        this.manager = manager;
-        this.name = name;
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        super(manager, handler, sound, uuid);
     }
 }
