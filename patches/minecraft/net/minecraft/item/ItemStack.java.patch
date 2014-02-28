@@ -164,7 +164,7 @@
 +        if(!(o instanceof ItemStack))
 +            return false;
 +        ItemStack stack = (ItemStack) o;
-+        if(getItem() != null ? getItem() != stack.getItem() : stack.getItem() != null)
++        if(getItem() != stack.getItem())
 +            return false;
 +        if(stackSize != stack.stackSize)
 +            return false;
