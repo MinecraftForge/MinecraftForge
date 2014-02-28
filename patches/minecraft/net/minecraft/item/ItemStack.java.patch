@@ -139,7 +139,7 @@
      public EnumRarity getRarity()
      {
          return this.getItem().getRarity(this);
-@@ -798,4 +805,29 @@
+@@ -798,4 +805,33 @@
  
          return ichatcomponent;
      }
@@ -159,13 +159,17 @@
 +    
 +    @Override
 +    public boolean equals(Object o){
++        if(o == this)
++            return true;
 +        if(!(o instanceof ItemStack))
 +            return false;
 +        ItemStack stack = (ItemStack) o;
-+        boolean itemsSame = getItem().equals(stack.getItem());
-+        boolean amountSame = stackSize == stack.stackSize;
-+        boolean metaSame = getItemDamage() == stack.getItemDamage();
-+        boolean stackTagSame = hasTagCompound() ? getTagCompound().equals(stack.getTagCompound()) : stack.hasTagCompound();
-+        return itemsSame && amountSame && metaSame && stackTagSame;
++        if(getItem() != null ? !getItem().equals(stack.getItem()) : stack.getItem() != null)
++            return false;
++        if(stackSize != stack.stackSize)
++            return false;
++        if(getItemDamage() != stack.getItemDamage())
++            return false;
++        return hasTagCompound() ? getTagCompound().equals(stack.getTagCompound()) : stack.hasTagCompound();
 +    }
  }
