@@ -99,7 +99,7 @@ public class OreDictionary
         replacements.put(new ItemStack(Items.diamond), "gemDiamond");
         replacements.put(new ItemStack(Items.emerald), "gemEmerald");
         replacements.put(new ItemStack(Items.redstone), "dustRedstone");
-        replacements.put(new ItemStack(Items.glowstone), "dustGlowstone");
+        replacements.put(new ItemStack(Items.glowstone_dust), "dustGlowstone");
         replacements.put(new ItemStack(Blocks.glowstone), "glowstone");
 
         // Register dyes
