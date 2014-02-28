@@ -1,4 +1,3 @@
-
 package net.minecraftforge.fluids;
 
 import java.util.Arrays;
@@ -53,6 +52,10 @@ public abstract class FluidContainerRegistry
             if (fluid != null)
                 code = 31*code + fluid.fluidID;
             return code;
+        }
+        @Override
+        public boolean equals(Object o){
+            return o != null && o.hashCode() == hashCode();
         }
     }
 
