@@ -63,6 +63,14 @@ public class OreDictionary
             registerOre("oreEmerald",  Blocks.emerald_ore);
             registerOre("oreQuartz",   Blocks.quartz_ore);
             registerOre("oreCoal",     Blocks.coal_ore);
+            registerOre("gemDiamond",  Items.diamond);
+            registerOre("gemEmerald",  Items.emerald);
+            registerOre("dustRedstone",  Items.redstone);
+            registerOre("dustGlowstone", Items.glowstone_dust);
+            registerOre("glowstone",   Blocks.glowstone);
+            registerOre("cropWheat",   Items.wheat);
+            registerOre("cropPotato",  Items.potato);
+            registerOre("cropCarrot",  Items.carrot);
             registerOre("stone",       Blocks.stone);
             registerOre("cobblestone", Blocks.cobblestone);
             registerOre("record",      Items.record_13);
@@ -88,6 +96,11 @@ public class OreDictionary
         replacements.put(new ItemStack(Blocks.stone, 1, WILDCARD_VALUE), "stone");
         replacements.put(new ItemStack(Blocks.cobblestone), "cobblestone");
         replacements.put(new ItemStack(Blocks.cobblestone, 1, WILDCARD_VALUE), "cobblestone");
+        replacements.put(new ItemStack(Items.diamond), "gemDiamond");
+        replacements.put(new ItemStack(Items.emerald), "gemEmerald");
+        replacements.put(new ItemStack(Items.redstone), "dustRedstone");
+        replacements.put(new ItemStack(Items.glowstone), "dustGlowstone");
+        replacements.put(new ItemStack(Blocks.glowstone), "glowstone");
 
         // Register dyes
         String[] dyes =
