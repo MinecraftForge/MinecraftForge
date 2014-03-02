@@ -29,6 +29,12 @@ public class AnvilRecipes {
         anvilRecipes.add(fRecipe);
     }
     
+    public void removeRepair(IAnvilRecipe fRecipe)
+    {
+        if(anvilRecipes.contains(fRecipe))
+            anvilRecipes.remove(fRecipe);
+    }
+    
     public ItemStack getRepairResult(ItemStack inputSlot1, ItemStack inputSlot2, boolean renaming, World world)
     {
         for(IAnvilRecipe recipe : anvilRecipes)
@@ -54,7 +60,10 @@ public class AnvilRecipes {
         for(IAnvilRecipe recipe : anvilRecipes)
         {
             if(recipe.matches(inputSlot1, inputSlot2, renaming, world))
+            {
                 recipe.getOutput(inputSlot1, inputSlot2, output, renaming, world);
+                return;
+            }
         }
     }
 }
