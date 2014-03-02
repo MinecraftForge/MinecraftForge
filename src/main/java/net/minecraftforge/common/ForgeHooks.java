@@ -8,6 +8,7 @@ import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -34,6 +35,7 @@ import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.entity.BoatCrashEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -294,6 +296,11 @@ public class ForgeHooks
     {
         LivingFallEvent event = new LivingFallEvent(entity, distance);
         return (MinecraftForge.EVENT_BUS.post(event) ? 0.0f : event.distance);
+    }
+    
+    public static boolean onBoatCrash(EntityBoat entity, double power)
+    {
+        return MinecraftForge.EVENT_BUS.post(new BoatCrashEvent(entity, power));
     }
 
     public static boolean isLivingOnLadder(Block block, World world, int x, int y, int z, EntityLivingBase entity)
