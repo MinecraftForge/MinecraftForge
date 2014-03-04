@@ -279,7 +279,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
 
         // Reload resources
-//        client.func_110436_a();
+        client.func_110436_a();
         RenderingRegistry.instance().loadEntityRenderers((Map<Class<? extends Entity>, Render>)RenderManager.field_78727_a.field_78729_o);
         guiFactories = HashBiMap.create();
         for (ModContainer mc : Loader.instance().getActiveModList())
