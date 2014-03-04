@@ -1,39 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerRepair.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerRepair.java
-@@ -2,8 +2,10 @@
- 
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
-+
- import java.util.Iterator;
- import java.util.Map;
-+
- import net.minecraft.enchantment.Enchantment;
- import net.minecraft.enchantment.EnchantmentHelper;
- import net.minecraft.entity.player.EntityPlayer;
-@@ -12,6 +14,8 @@
+@@ -12,6 +12,7 @@
  import net.minecraft.init.Items;
  import net.minecraft.item.ItemStack;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.AnvilRecipes;
-+
  import org.apache.commons.lang3.StringUtils;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-@@ -74,26 +78,45 @@
+@@ -74,6 +75,24 @@
                      par1EntityPlayer.addExperienceLevel(-ContainerRepair.this.maximumCost);
                  }
  
--                ContainerRepair.this.inputSlots.setInventorySlotContents(0, (ItemStack)null);
--
--                if (ContainerRepair.this.stackSizeToBeUsedInRepair > 0)
 +                // IAnvilRecipe Implementation
 +                boolean renaming = false;
 +                if(!StringUtils.isBlank(ContainerRepair.this.repairedItemName) && (!ContainerRepair.this.repairedItemName.equals(ContainerRepair.this.inputSlots.getStackInSlot(0).getDisplayName())))
 +                    renaming = true;
 +                if(AnvilRecipes.getInstance().getRepairResult(ContainerRepair.this.inputSlots.getStackInSlot(0), ContainerRepair.this.inputSlots.getStackInSlot(1), renaming, ContainerRepair.this.theWorld) != null)
-                 {
--                    ItemStack itemstack1 = ContainerRepair.this.inputSlots.getStackInSlot(1);
++                {
 +                    AnvilRecipes.getInstance().repair(ContainerRepair.this.inputSlots.getStackInSlot(0), ContainerRepair.this.inputSlots.getStackInSlot(1), par2ItemStack, renaming, ContainerRepair.this.theWorld);
 +                    
 +                    if(ContainerRepair.this.inputSlots.getStackInSlot(0).stackSize <= 0)
@@ -46,38 +30,18 @@
 +                }
 +                else
 +                {
-+                    ContainerRepair.this.inputSlots.setInventorySlotContents(0, (ItemStack)null);
+                 ContainerRepair.this.inputSlots.setInventorySlotContents(0, (ItemStack)null);
  
--                    if (itemstack1 != null && itemstack1.stackSize > ContainerRepair.this.stackSizeToBeUsedInRepair)
-+                    if (ContainerRepair.this.stackSizeToBeUsedInRepair > 0)
-                     {
--                        itemstack1.stackSize -= ContainerRepair.this.stackSizeToBeUsedInRepair;
--                        ContainerRepair.this.inputSlots.setInventorySlotContents(1, itemstack1);
-+                        ItemStack itemstack1 = ContainerRepair.this.inputSlots.getStackInSlot(1);
-+    
-+                        if (itemstack1 != null && itemstack1.stackSize > ContainerRepair.this.stackSizeToBeUsedInRepair)
-+                        {
-+                            itemstack1.stackSize -= ContainerRepair.this.stackSizeToBeUsedInRepair;
-+                            ContainerRepair.this.inputSlots.setInventorySlotContents(1, itemstack1);
-+                        }
-+                        else
-+                        {
-+                            ContainerRepair.this.inputSlots.setInventorySlotContents(1, (ItemStack)null);
-+                        }
-                     }
-                     else
-                     {
-                         ContainerRepair.this.inputSlots.setInventorySlotContents(1, (ItemStack)null);
-                     }
+                 if (ContainerRepair.this.stackSizeToBeUsedInRepair > 0)
+@@ -94,6 +113,7 @@
+                 {
+                     ContainerRepair.this.inputSlots.setInventorySlotContents(1, (ItemStack)null);
                  }
--                else
--                {
--                    ContainerRepair.this.inputSlots.setInventorySlotContents(1, (ItemStack)null);
--                }
++                }
  
                  ContainerRepair.this.maximumCost = 0;
  
-@@ -177,9 +200,26 @@
+@@ -177,6 +197,23 @@
              int l1;
              Iterator iterator1;
              Enchantment enchantment;
@@ -100,12 +64,8 @@
 +            }
  
              if (itemstack2 != null)
--            {
-+            {                
-                 flag = itemstack2.getItem() == Items.enchanted_book && Items.enchanted_book.func_92110_g(itemstack2).tagCount() > 0;
- 
-                 if (itemstack1.isItemStackDamageable() && itemstack1.getItem().getIsRepairable(itemstack, itemstack2))
-@@ -383,6 +423,8 @@
+             {
+@@ -383,6 +420,8 @@
                  k2 = Math.max(1, k2 / 2);
              }
  
