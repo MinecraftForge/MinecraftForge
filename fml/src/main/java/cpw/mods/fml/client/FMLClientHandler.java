@@ -876,4 +876,10 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         return report.func_71505_b() instanceof GameRegistryException;
     }
+
+    @Override
+    public boolean shouldAllowPlayerLogins()
+    {
+        return true; //Always true as the server has to be started before clicking 'Open to lan'
+    }
 }

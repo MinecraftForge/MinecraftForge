@@ -61,4 +61,6 @@ public interface IFMLSidedHandler
     void serverLoadedSuccessfully();
 
     void failedServerLoading(RuntimeException ex, WorldAccessContainer wac);
+
+    boolean shouldAllowPlayerLogins();
 }

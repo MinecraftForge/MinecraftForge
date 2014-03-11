@@ -518,4 +518,9 @@ public class FMLCommonHandler
     {
         return sidedDelegate.getDefaultMissingAction();
     }
+
+    public boolean shouldAllowPlayerLogins()
+    {
+        return sidedDelegate.shouldAllowPlayerLogins();
+    }
 }
