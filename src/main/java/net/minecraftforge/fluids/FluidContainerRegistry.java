@@ -57,7 +57,14 @@ public abstract class FluidContainerRegistry
         @Override
         public boolean equals(Object o)
         {
-            return o != null && o.hashCode() == hashCode();
+            if (!(o instanceof ContainerKey)) return false;
+            ContainerKey ck = (ContainerKey)o;
+            if (container.getItem() != ck.container.getItem()) return false;
+            if (container.getItemDamage() != ck.container.getItemDamage()) return false;
+            if (fluid == null && ck.fluid != null) return false;
+            if (fluid != null && ck.fluid == null) return false;
+            if (fluid.fluidID != ck.fluid.fluidID) return false;
+            return true;
         }
     }
 
