@@ -63,6 +63,7 @@ public abstract class FluidContainerRegistry
             if (container.getItemDamage() != ck.container.getItemDamage()) return false;
             if (fluid == null && ck.fluid != null) return false;
             if (fluid != null && ck.fluid == null) return false;
+            if (fluid == null && ck.fluid == null) return true;
             if (fluid.fluidID != ck.fluid.fluidID) return false;
             return true;
         }
