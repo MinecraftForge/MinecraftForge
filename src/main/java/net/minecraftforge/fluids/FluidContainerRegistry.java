@@ -54,6 +54,11 @@ public abstract class FluidContainerRegistry
                 code = 31*code + fluid.fluidID;
             return code;
         }
+        @Override
+        public boolean equals(Object o)
+        {
+            return o != null && o.hashCode() == hashCode();
+        }
     }
 
     private static Map<ContainerKey, FluidContainerData> containerFluidMap = Maps.newHashMap();
