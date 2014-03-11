@@ -18,6 +18,7 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.DedicatedServer;
 import com.google.common.collect.ImmutableList;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IFMLSidedHandler;
@@ -195,5 +196,10 @@ public class FMLServerHandler implements IFMLSidedHandler
     public void failedServerLoading(RuntimeException ex, WorldAccessContainer wac)
     {
 
+    }
+    @Override
+    public boolean shouldAllowPlayerLogins()
+    {
+        return DedicatedServer.allowPlayerLogins;
     }
 }

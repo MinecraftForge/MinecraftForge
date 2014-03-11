@@ -1,18 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/server/network/NetHandlerHandshakeTCP.java
 +++ ../src-work/minecraft/net/minecraft/server/network/NetHandlerHandshakeTCP.java
-@@ -7,6 +7,7 @@
- import net.minecraft.network.handshake.client.C00Handshake;
- import net.minecraft.network.login.server.S00PacketDisconnect;
- import net.minecraft.server.MinecraftServer;
-+import net.minecraft.server.dedicated.DedicatedServer;
- import net.minecraft.util.ChatComponentText;
- import net.minecraft.util.IChatComponent;
+@@ -1,5 +1,6 @@
+ package net.minecraft.server.network;
  
++import cpw.mods.fml.common.FMLCommonHandler;
+ import io.netty.util.concurrent.GenericFutureListener;
+ import net.minecraft.network.EnumConnectionState;
+ import net.minecraft.network.NetworkManager;
 @@ -24,6 +25,14 @@
  
      public void func_147383_a(C00Handshake p_147383_1_)
      {
-+        if (!DedicatedServer.allowPlayerLogins)
++        if (!FMLCommonHandler.instance().shouldAllowPlayerLogins())
 +        {
 +            ChatComponentText chatcomponenttext = new ChatComponentText("Server is still starting! Please wait before reconnecting.");
 +            this.field_147386_b.func_150725_a(new S00PacketDisconnect(chatcomponenttext), new GenericFutureListener[0]);
