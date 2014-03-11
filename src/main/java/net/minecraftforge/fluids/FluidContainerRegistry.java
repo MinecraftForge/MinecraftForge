@@ -1,4 +1,3 @@
-
 package net.minecraftforge.fluids;
 
 import java.util.Arrays;
@@ -57,14 +56,16 @@ public abstract class FluidContainerRegistry
         @Override
         public boolean equals(Object o)
         {
-            if (!(o instanceof ContainerKey)) return false;
-            ContainerKey ck = (ContainerKey)o;
-            if (container.getItem() != ck.container.getItem()) return false;
-            if (container.getItemDamage() != ck.container.getItemDamage()) return false;
-            if (fluid == null && ck.fluid != null) return false;
-            if (fluid != null && ck.fluid == null) return false;
-            if (fluid.fluidID != ck.fluid.fluidID) return false;
-            return true;
+        	if (o instanceof ContainerKey)
+        	{
+        		ContainerKey other = (ContainerKey) o;
+        		
+        		return container.getItem() == o.container.getItem() &&
+        			container.getItemDamage() == o.container.getItemDamage() &&
+        			(fluid == null && o.fluid == null || fluid != null && o.fluid != null && fluid.fluidID == o.fluid.fluidID);
+        	}
+        	
+        	return false;
         }
     }
 
