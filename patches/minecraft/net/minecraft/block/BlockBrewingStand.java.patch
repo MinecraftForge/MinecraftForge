@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockBrewingStand.java
++++ ../src-work/minecraft/net/minecraft/block/BlockBrewingStand.java
+@@ -2,8 +2,10 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.util.List;
+ import java.util.Random;
++
+ import net.minecraft.block.material.Material;
+ import net.minecraft.client.renderer.texture.IIconRegister;
+ import net.minecraft.entity.Entity;
+@@ -19,6 +21,7 @@
+ import net.minecraft.tileentity.TileEntityBrewingStand;
+ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.util.IIcon;
++import net.minecraft.util.Util;
+ import net.minecraft.world.World;
+ 
+ public class BlockBrewingStand extends BlockContainer
+@@ -103,12 +106,10 @@
+ 
+     public void breakBlock(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_)
+     {
+-        TileEntity tileentity = p_149749_1_.getTileEntity(p_149749_2_, p_149749_3_, p_149749_4_);
++        TileEntityBrewingStand tileentitybrewingstand = Util.getTileBehavior(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, TileEntityBrewingStand.class);
+ 
+-        if (tileentity instanceof TileEntityBrewingStand)
++        if (tileentitybrewingstand != null)
+         {
+-            TileEntityBrewingStand tileentitybrewingstand = (TileEntityBrewingStand)tileentity;
+-
+             for (int i1 = 0; i1 < tileentitybrewingstand.getSizeInventory(); ++i1)
+             {
+                 ItemStack itemstack = tileentitybrewingstand.getStackInSlot(i1);

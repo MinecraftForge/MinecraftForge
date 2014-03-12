@@ -1,0 +1,33 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockCommandBlock.java
++++ ../src-work/minecraft/net/minecraft/block/BlockCommandBlock.java
+@@ -1,6 +1,7 @@
+ package net.minecraft.block;
+ 
+ import java.util.Random;
++
+ import net.minecraft.block.material.Material;
+ import net.minecraft.command.server.CommandBlockLogic;
+ import net.minecraft.entity.EntityLivingBase;
+@@ -8,6 +9,7 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityCommandBlock;
++import net.minecraft.util.Util;
+ import net.minecraft.world.World;
+ 
+ public class BlockCommandBlock extends BlockContainer
+@@ -49,11 +51,11 @@
+     // JAVADOC METHOD $$ func_149674_a
+     public void updateTick(World p_149674_1_, int p_149674_2_, int p_149674_3_, int p_149674_4_, Random p_149674_5_)
+     {
+-        TileEntity tileentity = p_149674_1_.getTileEntity(p_149674_2_, p_149674_3_, p_149674_4_);
++        TileEntityCommandBlock tile = Util.getTileBehavior(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, TileEntityCommandBlock.class);
+ 
+-        if (tileentity != null && tileentity instanceof TileEntityCommandBlock)
++        if (tile != null)
+         {
+-            CommandBlockLogic commandblocklogic = ((TileEntityCommandBlock)tileentity).func_145993_a();
++            CommandBlockLogic commandblocklogic = ((TileEntityCommandBlock)tile).func_145993_a();
+             commandblocklogic.func_145755_a(p_149674_1_);
+             p_149674_1_.func_147453_f(p_149674_2_, p_149674_3_, p_149674_4_, this);
+         }

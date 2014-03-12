@@ -1,16 +1,28 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureMineshaftPieces.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureMineshaftPieces.java
-@@ -16,6 +16,9 @@
+@@ -4,6 +4,7 @@
+ import java.util.LinkedList;
+ import java.util.List;
+ import java.util.Random;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.entity.item.EntityMinecartChest;
+@@ -12,9 +13,13 @@
+ import net.minecraft.item.Item;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
++import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityMobSpawner;
++import net.minecraft.util.Util;
  import net.minecraft.util.WeightedRandomChestContent;
  import net.minecraft.world.World;
- 
 +import net.minecraftforge.common.ChestGenHooks;
 +import static net.minecraftforge.common.ChestGenHooks.*;
-+
+ 
  public class StructureMineshaftPieces
  {
-     // JAVADOC FIELD $$ field_78818_a
-@@ -664,14 +667,15 @@
+@@ -664,14 +669,15 @@
                          this.func_151552_a(par1World, par3StructureBoundingBox, par2Random, 0.05F, 1, 2, k - 1, Blocks.torch, 0);
                          this.func_151552_a(par1World, par3StructureBoundingBox, par2Random, 0.05F, 1, 2, k + 1, Blocks.torch, 0);
  
@@ -28,3 +40,17 @@
                          }
  
                          if (this.hasSpiders && !this.spawnerPlaced)
+@@ -685,12 +691,9 @@
+                             {
+                                 this.spawnerPlaced = true;
+                                 par1World.setBlock(j1, l, i1, Blocks.mob_spawner, 0, 2);
+-                                TileEntityMobSpawner tileentitymobspawner = (TileEntityMobSpawner)par1World.getTileEntity(j1, l, i1);
+-
++                                TileEntityMobSpawner tileentitymobspawner = Util.getTileBehavior(par1World, j1, l, i1, TileEntityMobSpawner.class);
+                                 if (tileentitymobspawner != null)
+-                                {
+                                     tileentitymobspawner.func_145881_a().setEntityName("CaveSpider");
+-                                }
+                             }
+                         }
+                     }
