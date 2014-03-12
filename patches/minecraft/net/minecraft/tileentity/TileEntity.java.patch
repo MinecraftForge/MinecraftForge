@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -12,7 +12,10 @@
+@@ -3,6 +3,7 @@
+ import cpw.mods.fml.common.FMLLog;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.util.HashMap;
+ import java.util.Map;
+ import java.util.concurrent.Callable;
+@@ -12,8 +13,12 @@
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.init.Blocks;
  import net.minecraft.nbt.NBTTagCompound;
@@ -9,9 +17,11 @@
 +import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 +import net.minecraft.util.AxisAlignedBB;
  import net.minecraft.world.World;
++import net.minecraftforge.common.util.ForgeDirection;
  
  import org.apache.logging.log4j.Level;
-@@ -296,4 +299,93 @@
+ import org.apache.logging.log4j.LogManager;
+@@ -296,4 +301,131 @@
          addMapping(TileEntityComparator.class, "Comparator");
          addMapping(TileEntityFlowerPot.class, "FlowerPot");
      }
@@ -103,5 +113,43 @@
 +            }
 +        }
 +        return bb;
++    }
++    /** Use this method to request any required behavior, like IInventory, instead of simple type cast
++     * 
++     * Sample override which utilizes internal behaviors map
++     * @code
++     * private Map<Class, Object> behaviors = new HashMap<Class, Object>();
++     * 
++     * public<T> T getBehavior(Class<T> clazz, ForgeDirection side) {
++     *     Object behavior = behaviors.get(clazz);
++     *     if (behavior != null && clazz.isInstance(behavior))
++     *         return clazz.cast(behavior); 
++     *     return super.getBehavior(clazz, side);
++     * }
++     * @endcode
++     * Sample usage:
++     * @code
++     * IInventory inv = tileEntity.getBehavior(IInventory.class, ForgeDirection.UP);
++     * if (inv != null)
++     *     // perform actions with IInventory
++     * @endcode
++     * 
++     * @param  clazz Requested behavior type
++     * @param  side  Side to get behavior from 
++     * @return       Behavior reference or null, if this TileEntity doesn't support requested behavior on specified side
++     */
++    public<T> T getBehavior(Class<T> clazz, ForgeDirection side) {
++        if (clazz != null && clazz.isInstance(this))
++            return clazz.cast(this);
++        return null;
++    }
++    /** Requests behavior from ForgeDirection.UNKNOWN side.
++     *  Shouldn't be overridden. Override other overload, which requests side explicitly, instead.
++     * 
++     * @param clazz Requested behavior type
++     * @return      Behavior reference or null, if this TileEntity doesn't support requested behavior on unknown side
++     */
++    final public<T> T getBehavior(Class<T> clazz) {
++        return getBehavior(clazz, ForgeDirection.UNKNOWN);
 +    }
  }
