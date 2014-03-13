@@ -10,15 +10,33 @@
  import net.minecraft.block.material.Material;
  import net.minecraft.client.renderer.texture.IIconRegister;
  import net.minecraft.creativetab.CreativeTabs;
-@@ -24,6 +26,7 @@
+@@ -24,7 +26,9 @@
  import net.minecraft.util.IIcon;
  import net.minecraft.util.IRegistry;
  import net.minecraft.util.RegistryDefaulted;
 +import net.minecraft.util.Util;
  import net.minecraft.world.World;
++import net.minecraftforge.common.util.ForgeDirection;
  
  public class BlockDispenser extends BlockContainer
-@@ -208,7 +211,7 @@
+ {
+@@ -118,7 +122,7 @@
+         }
+         else
+         {
+-            TileEntityDispenser tileentitydispenser = (TileEntityDispenser)p_149727_1_.getTileEntity(p_149727_2_, p_149727_3_, p_149727_4_);
++            TileEntityDispenser tileentitydispenser = Util.getTileBehavior(p_149727_1_, p_149727_2_, p_149727_3_, p_149727_4_, TileEntityDispenser.class);
+ 
+             if (tileentitydispenser != null)
+             {
+@@ -202,13 +206,13 @@
+ 
+         if (p_149689_6_.hasDisplayName())
+         {
+-            ((TileEntityDispenser)p_149689_1_.getTileEntity(p_149689_2_, p_149689_3_, p_149689_4_)).func_146018_a(p_149689_6_.getDisplayName());
++            p_149689_1_.getTileEntity(p_149689_2_, p_149689_3_, p_149689_4_).getBehavior(TileEntityDispenser.class).func_146018_a(p_149689_6_.getDisplayName());
+         }
+     }
  
      public void breakBlock(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_)
      {
@@ -27,3 +45,11 @@
  
          if (tileentitydispenser != null)
          {
+@@ -277,6 +281,6 @@
+     // JAVADOC METHOD $$ func_149736_g
+     public int getComparatorInputOverride(World p_149736_1_, int p_149736_2_, int p_149736_3_, int p_149736_4_, int p_149736_5_)
+     {
+-        return Container.calcRedstoneFromInventory((IInventory)p_149736_1_.getTileEntity(p_149736_2_, p_149736_3_, p_149736_4_));
++        return Container.calcRedstoneFromInventory(p_149736_1_.getTileEntity(p_149736_2_, p_149736_3_, p_149736_4_).getBehavior(IInventory.class, p_149736_5_));
+     }
+ }

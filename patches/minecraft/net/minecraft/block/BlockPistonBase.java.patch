@@ -1,6 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonBase.java
-@@ -11,6 +11,7 @@
+@@ -2,7 +2,9 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.util.List;
++
+ import net.minecraft.block.material.Material;
+ import net.minecraft.client.renderer.texture.IIconRegister;
+ import net.minecraft.creativetab.CreativeTabs;
+@@ -11,12 +13,14 @@
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.init.Blocks;
  import net.minecraft.item.ItemStack;
@@ -8,7 +18,36 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.tileentity.TileEntityPiston;
  import net.minecraft.util.AxisAlignedBB;
-@@ -380,7 +381,8 @@
+ import net.minecraft.util.Facing;
+ import net.minecraft.util.IIcon;
+ import net.minecraft.util.MathHelper;
++import net.minecraft.util.Util;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
+@@ -187,12 +191,16 @@
+         }
+         else if (p_149696_5_ == 1)
+         {
+-            TileEntity tileentity1 = p_149696_1_.getTileEntity(p_149696_2_ + Facing.offsetsXForSide[p_149696_6_], p_149696_3_ + Facing.offsetsYForSide[p_149696_6_], p_149696_4_ + Facing.offsetsZForSide[p_149696_6_]);
++            TileEntityPiston tileentity1 = Util.getTileBehavior(
++                p_149696_1_,
++                p_149696_2_ + Facing.offsetsXForSide[p_149696_6_],
++                p_149696_3_ + Facing.offsetsYForSide[p_149696_6_],
++                p_149696_4_ + Facing.offsetsZForSide[p_149696_6_],
++                TileEntityPiston.class
++            );
+ 
+-            if (tileentity1 instanceof TileEntityPiston)
+-            {
+-                ((TileEntityPiston)tileentity1).clearPistonTileEntity();
+-            }
++            if (tileentity1 != null)
++                tileentity1.clearPistonTileEntity();
+ 
+             p_149696_1_.setBlock(p_149696_2_, p_149696_3_, p_149696_4_, Blocks.piston_extension, p_149696_6_, 3);
+             p_149696_1_.setTileEntity(p_149696_2_, p_149696_3_, p_149696_4_, BlockPistonMoving.getTileEntity(this, p_149696_6_, p_149696_6_, false, true));
+@@ -380,7 +388,8 @@
                  return false;
              }
  
@@ -18,7 +57,7 @@
          }
      }
  
-@@ -396,14 +398,14 @@
+@@ -396,14 +405,14 @@
          {
              if (l1 < 13)
              {
@@ -35,7 +74,7 @@
                  {
                      if (!canPushBlock(block, p_150077_0_, i1, j1, k1, true))
                      {
-@@ -442,14 +444,14 @@
+@@ -442,14 +451,14 @@
          {
              if (l1 < 13)
              {
@@ -52,7 +91,7 @@
                  {
                      if (!canPushBlock(block, p_150079_1_, i1, j1, k1, true))
                      {
-@@ -470,7 +472,9 @@
+@@ -470,7 +479,9 @@
                          continue;
                      }
  

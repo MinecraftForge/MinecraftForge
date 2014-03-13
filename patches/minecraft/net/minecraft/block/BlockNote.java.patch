@@ -1,0 +1,37 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockNote.java
++++ ../src-work/minecraft/net/minecraft/block/BlockNote.java
+@@ -5,6 +5,7 @@
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityNote;
++import net.minecraft.util.Util;
+ import net.minecraft.world.World;
+ 
+ public class BlockNote extends BlockContainer
+@@ -21,7 +22,7 @@
+     public void onNeighborBlockChange(World p_149695_1_, int p_149695_2_, int p_149695_3_, int p_149695_4_, Block p_149695_5_)
+     {
+         boolean flag = p_149695_1_.isBlockIndirectlyGettingPowered(p_149695_2_, p_149695_3_, p_149695_4_);
+-        TileEntityNote tileentitynote = (TileEntityNote)p_149695_1_.getTileEntity(p_149695_2_, p_149695_3_, p_149695_4_);
++        TileEntityNote tileentitynote = Util.getTileBehavior(p_149695_1_, p_149695_2_, p_149695_3_, p_149695_4_, TileEntityNote.class);
+ 
+         if (tileentitynote != null && tileentitynote.previousRedstoneState != flag)
+         {
+@@ -43,7 +44,7 @@
+         }
+         else
+         {
+-            TileEntityNote tileentitynote = (TileEntityNote)p_149727_1_.getTileEntity(p_149727_2_, p_149727_3_, p_149727_4_);
++            TileEntityNote tileentitynote = Util.getTileBehavior(p_149727_1_, p_149727_2_, p_149727_3_, p_149727_4_, TileEntityNote.class);
+ 
+             if (tileentitynote != null)
+             {
+@@ -60,7 +61,7 @@
+     {
+         if (!p_149699_1_.isRemote)
+         {
+-            TileEntityNote tileentitynote = (TileEntityNote)p_149699_1_.getTileEntity(p_149699_2_, p_149699_3_, p_149699_4_);
++            TileEntityNote tileentitynote = Util.getTileBehavior(p_149699_1_, p_149699_2_, p_149699_3_, p_149699_4_, TileEntityNote.class);
+ 
+             if (tileentitynote != null)
+             {

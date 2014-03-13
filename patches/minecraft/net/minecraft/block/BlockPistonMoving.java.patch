@@ -33,3 +33,13 @@
          }
          else
          {
+@@ -228,8 +231,7 @@
+ 
+     private TileEntityPiston func_149963_e(IBlockAccess p_149963_1_, int p_149963_2_, int p_149963_3_, int p_149963_4_)
+     {
+-        TileEntity tileentity = p_149963_1_.getTileEntity(p_149963_2_, p_149963_3_, p_149963_4_);
+-        return tileentity instanceof TileEntityPiston ? (TileEntityPiston)tileentity : null;
++        return Util.getTileBehavior(p_149963_1_, p_149963_2_, p_149963_3_, p_149963_4_, TileEntityPiston.class);
+     }
+ 
+     // JAVADOC METHOD $$ func_149694_d

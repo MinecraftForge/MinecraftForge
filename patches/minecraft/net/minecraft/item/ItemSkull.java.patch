@@ -1,0 +1,45 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemSkull.java
++++ ../src-work/minecraft/net/minecraft/item/ItemSkull.java
+@@ -2,7 +2,9 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.util.List;
++
+ import net.minecraft.block.BlockSkull;
+ import net.minecraft.client.renderer.texture.IIconRegister;
+ import net.minecraft.creativetab.CreativeTabs;
+@@ -13,6 +15,7 @@
+ import net.minecraft.util.IIcon;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.util.StatCollector;
++import net.minecraft.util.Util;
+ import net.minecraft.world.World;
+ 
+ public class ItemSkull extends Item
+@@ -86,9 +89,9 @@
+                     i1 = MathHelper.floor_double((double)(par2EntityPlayer.rotationYaw * 16.0F / 360.0F) + 0.5D) & 15;
+                 }
+ 
+-                TileEntity tileentity = par3World.getTileEntity(par4, par5, par6);
++                TileEntitySkull tileentity = Util.getTileBehavior(par3World, par4, par5, par6, TileEntitySkull.class);
+ 
+-                if (tileentity != null && tileentity instanceof TileEntitySkull)
++                if (tileentity != null)
+                 {
+                     String s = "";
+ 
+@@ -97,9 +100,9 @@
+                         s = par1ItemStack.getTagCompound().getString("SkullOwner");
+                     }
+ 
+-                    ((TileEntitySkull)tileentity).func_145905_a(par1ItemStack.getItemDamage(), s);
+-                    ((TileEntitySkull)tileentity).func_145903_a(i1);
+-                    ((BlockSkull)Blocks.skull).func_149965_a(par3World, par4, par5, par6, (TileEntitySkull)tileentity);
++                    tileentity.func_145905_a(par1ItemStack.getItemDamage(), s);
++                    tileentity.func_145903_a(i1);
++                    ((BlockSkull)Blocks.skull).func_149965_a(par3World, par4, par5, par6, tileentity);
+                 }
+ 
+                 --par1ItemStack.stackSize;

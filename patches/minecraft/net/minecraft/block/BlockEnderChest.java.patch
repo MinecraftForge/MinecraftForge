@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockEnderChest.java
++++ ../src-work/minecraft/net/minecraft/block/BlockEnderChest.java
+@@ -2,7 +2,9 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.util.Random;
++
+ import net.minecraft.block.material.Material;
+ import net.minecraft.client.renderer.texture.IIconRegister;
+ import net.minecraft.creativetab.CreativeTabs;
+@@ -15,6 +17,7 @@
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityEnderChest;
+ import net.minecraft.util.MathHelper;
++import net.minecraft.util.Util;
+ import net.minecraft.world.World;
+ 
+ public class BlockEnderChest extends BlockContainer
+@@ -96,7 +99,7 @@
+     public boolean onBlockActivated(World p_149727_1_, int p_149727_2_, int p_149727_3_, int p_149727_4_, EntityPlayer p_149727_5_, int p_149727_6_, float p_149727_7_, float p_149727_8_, float p_149727_9_)
+     {
+         InventoryEnderChest inventoryenderchest = p_149727_5_.getInventoryEnderChest();
+-        TileEntityEnderChest tileentityenderchest = (TileEntityEnderChest)p_149727_1_.getTileEntity(p_149727_2_, p_149727_3_, p_149727_4_);
++        TileEntityEnderChest tileentityenderchest = Util.getTileBehavior(p_149727_1_, p_149727_2_, p_149727_3_, p_149727_4_, TileEntityEnderChest.class);
+ 
+         if (inventoryenderchest != null && tileentityenderchest != null)
+         {

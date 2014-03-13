@@ -1,0 +1,39 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockJukebox.java
++++ ../src-work/minecraft/net/minecraft/block/BlockJukebox.java
+@@ -13,7 +13,9 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.util.IIcon;
++import net.minecraft.util.Util;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.util.ForgeDirection;
+ 
+ public class BlockJukebox extends BlockContainer
+ {
+@@ -52,7 +54,7 @@
+     {
+         if (!p_149926_1_.isRemote)
+         {
+-            BlockJukebox.TileEntityJukebox tileentityjukebox = (BlockJukebox.TileEntityJukebox)p_149926_1_.getTileEntity(p_149926_2_, p_149926_3_, p_149926_4_);
++            BlockJukebox.TileEntityJukebox tileentityjukebox = Util.getTileBehavior(p_149926_1_, p_149926_2_, p_149926_3_, p_149926_4_, BlockJukebox.TileEntityJukebox.class);
+ 
+             if (tileentityjukebox != null)
+             {
+@@ -66,7 +68,7 @@
+     {
+         if (!p_149925_1_.isRemote)
+         {
+-            BlockJukebox.TileEntityJukebox tileentityjukebox = (BlockJukebox.TileEntityJukebox)p_149925_1_.getTileEntity(p_149925_2_, p_149925_3_, p_149925_4_);
++            BlockJukebox.TileEntityJukebox tileentityjukebox = Util.getTileBehavior(p_149925_1_, p_149925_2_, p_149925_3_, p_149925_4_, BlockJukebox.TileEntityJukebox.class);
+ 
+             if (tileentityjukebox != null)
+             {
+@@ -128,7 +130,7 @@
+     // JAVADOC METHOD $$ func_149736_g
+     public int getComparatorInputOverride(World p_149736_1_, int p_149736_2_, int p_149736_3_, int p_149736_4_, int p_149736_5_)
+     {
+-        ItemStack itemstack = ((BlockJukebox.TileEntityJukebox)p_149736_1_.getTileEntity(p_149736_2_, p_149736_3_, p_149736_4_)).func_145856_a();
++        ItemStack itemstack = p_149736_1_.getTileEntity(p_149736_2_, p_149736_3_, p_149736_4_).getBehavior(BlockJukebox.TileEntityJukebox.class, p_149736_5_).func_145856_a();
+         return itemstack == null ? 0 : Item.getIdFromItem(itemstack.getItem()) + 1 - Item.getIdFromItem(Items.record_13);
+     }
+ 

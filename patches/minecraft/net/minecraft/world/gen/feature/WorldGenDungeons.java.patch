@@ -1,7 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
-@@ -8,6 +8,9 @@
+@@ -1,13 +1,18 @@
+ package net.minecraft.world.gen.feature;
+ 
+ import java.util.Random;
++
+ import net.minecraft.block.material.Material;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.init.Items;
+ import net.minecraft.tileentity.TileEntityChest;
  import net.minecraft.tileentity.TileEntityMobSpawner;
++import net.minecraft.util.Util;
  import net.minecraft.util.WeightedRandomChestContent;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.ChestGenHooks;
@@ -10,12 +19,13 @@
  
  public class WorldGenDungeons extends WorldGenerator
  {
-@@ -123,12 +126,11 @@
+@@ -123,12 +128,11 @@
                                  if (k2 == 1)
                                  {
                                      par1World.setBlock(i2, par4, j2, Blocks.chest, 0, 2);
 -                                    WeightedRandomChestContent[] aweightedrandomchestcontent = WeightedRandomChestContent.func_92080_a(field_111189_a, new WeightedRandomChestContent[] {Items.enchanted_book.func_92114_b(par2Random)});
-                                     TileEntityChest tileentitychest = (TileEntityChest)par1World.getTileEntity(i2, par4, j2);
+-                                    TileEntityChest tileentitychest = (TileEntityChest)par1World.getTileEntity(i2, par4, j2);
++                                    TileEntityChest tileentitychest = Util.getTileBehavior(par1World, i2, par4, j2, TileEntityChest.class);
  
                                      if (tileentitychest != null)
                                      {
@@ -24,7 +34,16 @@
                                      }
  
                                      break label101;
-@@ -168,7 +170,6 @@
+@@ -146,7 +150,7 @@
+             }
+ 
+             par1World.setBlock(par3, par4, par5, Blocks.mob_spawner, 0, 2);
+-            TileEntityMobSpawner tileentitymobspawner = (TileEntityMobSpawner)par1World.getTileEntity(par3, par4, par5);
++            TileEntityMobSpawner tileentitymobspawner = Util.getTileBehavior(par1World, par3, par4, par5, TileEntityMobSpawner.class);
+ 
+             if (tileentitymobspawner != null)
+             {
+@@ -168,7 +172,6 @@
      // JAVADOC METHOD $$ func_76543_b
      private String pickMobSpawner(Random par1Random)
      {

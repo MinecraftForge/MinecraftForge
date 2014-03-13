@@ -1,6 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureComponent.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureComponent.java
-@@ -36,6 +36,10 @@
+@@ -3,6 +3,7 @@
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Random;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockDirectional;
+ import net.minecraft.block.material.Material;
+@@ -13,6 +14,7 @@
+ import net.minecraft.tileentity.TileEntityDispenser;
+ import net.minecraft.util.Direction;
+ import net.minecraft.util.Facing;
++import net.minecraft.util.Util;
+ import net.minecraft.util.WeightedRandomChestContent;
+ import net.minecraft.world.ChunkPosition;
+ import net.minecraft.world.World;
+@@ -36,6 +38,10 @@
  
      public NBTTagCompound func_143010_b()
      {
@@ -11,3 +27,21 @@
          NBTTagCompound nbttagcompound = new NBTTagCompound();
          nbttagcompound.setString("id", MapGenStructureIO.func_143036_a(this));
          nbttagcompound.setTag("BB", this.boundingBox.func_151535_h());
+@@ -749,7 +755,7 @@
+         if (par2StructureBoundingBox.isVecInside(i1, j1, k1) && par1World.getBlock(i1, j1, k1) != Blocks.chest)
+         {
+             par1World.setBlock(i1, j1, k1, Blocks.chest, 0, 2);
+-            TileEntityChest tileentitychest = (TileEntityChest)par1World.getTileEntity(i1, j1, k1);
++            TileEntityChest tileentitychest = Util.getTileBehavior(par1World, i1, j1, k1, TileEntityChest.class);
+ 
+             if (tileentitychest != null)
+             {
+@@ -774,7 +780,7 @@
+         if (par2StructureBoundingBox.isVecInside(j1, k1, l1) && par1World.getBlock(j1, k1, l1) != Blocks.dispenser)
+         {
+             par1World.setBlock(j1, k1, l1, Blocks.dispenser, this.getMetadataWithOffset(Blocks.dispenser, par7), 2);
+-            TileEntityDispenser tileentitydispenser = (TileEntityDispenser)par1World.getTileEntity(j1, k1, l1);
++            TileEntityDispenser tileentitydispenser = Util.getTileBehavior(par1World, j1, k1, l1, TileEntityDispenser.class);
+ 
+             if (tileentitydispenser != null)
+             {

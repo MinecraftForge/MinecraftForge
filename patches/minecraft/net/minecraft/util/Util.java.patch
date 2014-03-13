@@ -15,7 +15,7 @@
  public class Util
  {
      // JAVADOC FIELD $$ field_147174_a
-@@ -62,4 +67,26 @@
+@@ -62,4 +67,30 @@
  
          private static final String __OBFID = "CL_00001660";
      }
@@ -40,5 +40,9 @@
 +    
 +    public static <T> T getTileBehavior(IBlockAccess world, int x, int y, int z, Class<T> clazz) {
 +        return getTileBehavior(world, x, y, z, clazz, ForgeDirection.UNKNOWN);
++    }
++
++    public static <T> T getTileBehavior(IBlockAccess world, int x, int y, int z, Class<T> clazz, int side) {
++        return getTileBehavior(world, x, y, z, clazz, ForgeDirection.getOrientation(side));
 +    }
  }

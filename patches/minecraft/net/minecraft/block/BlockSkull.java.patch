@@ -1,14 +1,37 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockSkull.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockSkull.java
-@@ -2,6 +2,7 @@
+@@ -2,8 +2,11 @@
  
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
++
 +import java.util.ArrayList;
  import java.util.Iterator;
  import java.util.Random;
++
  import net.minecraft.block.material.Material;
-@@ -118,9 +119,6 @@
+ import net.minecraft.client.renderer.texture.IIconRegister;
+ import net.minecraft.entity.EntityLivingBase;
+@@ -21,6 +24,7 @@
+ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.util.IIcon;
+ import net.minecraft.util.MathHelper;
++import net.minecraft.util.Util;
+ import net.minecraft.world.EnumDifficulty;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+@@ -108,8 +112,8 @@
+     // JAVADOC METHOD $$ func_149643_k
+     public int getDamageValue(World p_149643_1_, int p_149643_2_, int p_149643_3_, int p_149643_4_)
+     {
+-        TileEntity tileentity = p_149643_1_.getTileEntity(p_149643_2_, p_149643_3_, p_149643_4_);
+-        return tileentity != null && tileentity instanceof TileEntitySkull ? ((TileEntitySkull)tileentity).func_145904_a() : super.getDamageValue(p_149643_1_, p_149643_2_, p_149643_3_, p_149643_4_);
++        TileEntitySkull tile = Util.getTileBehavior(p_149643_1_, p_149643_2_, p_149643_3_, p_149643_4_, TileEntitySkull.class);
++        return tile != null ? tile.func_145904_a() : super.getDamageValue(p_149643_1_, p_149643_2_, p_149643_3_, p_149643_4_);
+     }
+ 
+     // JAVADOC METHOD $$ func_149692_a
+@@ -118,9 +122,6 @@
          return p_149692_1_;
      }
  
@@ -18,7 +41,7 @@
      // JAVADOC METHOD $$ func_149681_a
      public void onBlockHarvested(World p_149681_1_, int p_149681_2_, int p_149681_3_, int p_149681_4_, int p_149681_5_, EntityPlayer p_149681_6_)
      {
-@@ -130,29 +128,38 @@
+@@ -130,29 +131,38 @@
              p_149681_1_.setBlockMetadataWithNotify(p_149681_2_, p_149681_3_, p_149681_4_, p_149681_5_, 4);
          }
  
@@ -41,7 +64,8 @@
              if ((p_149749_6_ & 8) == 0)
              {
                  ItemStack itemstack = new ItemStack(Items.skull, 1, this.getDamageValue(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_));
-                 TileEntitySkull tileentityskull = (TileEntitySkull)p_149749_1_.getTileEntity(p_149749_2_, p_149749_3_, p_149749_4_);
+-                TileEntitySkull tileentityskull = (TileEntitySkull)p_149749_1_.getTileEntity(p_149749_2_, p_149749_3_, p_149749_4_);
++                TileEntitySkull tileentityskull = Util.getTileBehavior(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, TileEntitySkull.class);
  
 +                if (tileentityskull == null) return ret;
 +
@@ -61,3 +85,14 @@
      }
  
      public Item getItemDropped(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
+@@ -283,8 +293,8 @@
+         }
+         else
+         {
+-            TileEntity tileentity = p_149966_1_.getTileEntity(p_149966_2_, p_149966_3_, p_149966_4_);
+-            return tileentity != null && tileentity instanceof TileEntitySkull ? ((TileEntitySkull)tileentity).func_145904_a() == p_149966_5_ : false;
++            TileEntitySkull tileentity = Util.getTileBehavior(p_149966_1_, p_149966_2_, p_149966_3_, p_149966_4_, TileEntitySkull.class, p_149966_5_);
++            return tileentity != null ? tileentity.func_145904_a() == p_149966_5_ : false;
+         }
+     }
+ 

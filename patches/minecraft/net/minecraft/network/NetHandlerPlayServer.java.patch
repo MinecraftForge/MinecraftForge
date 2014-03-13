@@ -1,6 +1,33 @@
 --- ../src-base/minecraft/net/minecraft/network/NetHandlerPlayServer.java
 +++ ../src-work/minecraft/net/minecraft/network/NetHandlerPlayServer.java
-@@ -85,6 +85,14 @@
+@@ -2,9 +2,11 @@
+ 
+ import com.google.common.base.Charsets;
+ import com.google.common.collect.Lists;
++
+ import io.netty.buffer.Unpooled;
+ import io.netty.util.concurrent.Future;
+ import io.netty.util.concurrent.GenericFutureListener;
++
+ import java.io.ByteArrayInputStream;
+ import java.io.DataInputStream;
+ import java.io.IOException;
+@@ -12,6 +14,7 @@
+ import java.util.Iterator;
+ import java.util.Random;
+ import java.util.concurrent.Callable;
++
+ import net.minecraft.block.material.Material;
+ import net.minecraft.command.server.CommandBlockLogic;
+ import net.minecraft.crash.CrashReport;
+@@ -80,11 +83,21 @@
+ import net.minecraft.util.IChatComponent;
+ import net.minecraft.util.IntHashMap;
+ import net.minecraft.util.ReportedException;
++import net.minecraft.util.Util;
+ import net.minecraft.world.WorldServer;
++
+ import org.apache.commons.lang3.StringUtils;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -15,7 +42,7 @@
  public class NetHandlerPlayServer implements INetHandlerPlayServer
  {
      private static final Logger logger = LogManager.getLogger();
-@@ -229,6 +237,11 @@
+@@ -229,6 +242,11 @@
                          this.playerEntity.ridingEntity.updateRiderPosition();
                      }
  
@@ -27,7 +54,7 @@
                      this.serverController.getConfigurationManager().updatePlayerPertinentChunks(this.playerEntity);
  
                      if (this.hasMoved)
-@@ -306,9 +319,10 @@
+@@ -306,9 +324,10 @@
                  d4 = d1 - this.playerEntity.posX;
                  double d5 = d2 - this.playerEntity.posY;
                  double d6 = d3 - this.playerEntity.posZ;
@@ -41,7 +68,7 @@
                  double d10 = d7 * d7 + d8 * d8 + d9 * d9;
  
                  if (d10 > 100.0D && (!this.serverController.isSinglePlayer() || !this.serverController.getServerOwner().equals(this.playerEntity.getCommandSenderName())))
-@@ -326,6 +340,11 @@
+@@ -326,6 +345,11 @@
                      this.playerEntity.jump();
                  }
  
@@ -53,7 +80,7 @@
                  this.playerEntity.moveEntity(d4, d5, d6);
                  this.playerEntity.onGround = p_147347_1_.func_149465_i();
                  this.playerEntity.addMovementStat(d4, d5, d6);
-@@ -348,10 +367,15 @@
+@@ -348,10 +372,15 @@
                      logger.warn(this.playerEntity.getCommandSenderName() + " moved wrongly!");
                  }
  
@@ -70,7 +97,7 @@
                  {
                      this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, f1, f2);
                      return;
-@@ -359,7 +383,7 @@
+@@ -359,7 +388,7 @@
  
                  AxisAlignedBB axisalignedbb = this.playerEntity.boundingBox.copy().expand((double)f3, (double)f3, (double)f3).addCoord(0.0D, -0.55D, 0.0D);
  
@@ -79,7 +106,7 @@
                  {
                      if (d11 >= -0.03125D)
                      {
-@@ -378,6 +402,11 @@
+@@ -378,6 +407,11 @@
                      this.floatingTickCount = 0;
                  }
  
@@ -91,7 +118,7 @@
                  this.playerEntity.onGround = p_147347_1_.func_149465_i();
                  this.serverController.getConfigurationManager().updatePlayerPertinentChunks(this.playerEntity);
                  this.playerEntity.handleFalling(this.playerEntity.posY - d0, p_147347_1_.func_149465_i());
-@@ -448,7 +477,10 @@
+@@ -448,7 +482,10 @@
                  double d2 = this.playerEntity.posZ - ((double)k + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
@@ -103,7 +130,7 @@
                  {
                      return;
                  }
-@@ -510,7 +542,11 @@
+@@ -510,7 +547,11 @@
                  return;
              }
  
@@ -116,7 +143,7 @@
          }
          else if (p_147346_1_.func_149571_d() >= this.serverController.getBuildLimit() - 1 && (p_147346_1_.func_149568_f() == 1 || p_147346_1_.func_149571_d() >= this.serverController.getBuildLimit()))
          {
-@@ -521,7 +557,9 @@
+@@ -521,7 +562,9 @@
          }
          else
          {
@@ -127,7 +154,7 @@
              {
                  this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, worldserver, itemstack, i, j, k, l, p_147346_1_.func_149573_h(), p_147346_1_.func_149569_i(), p_147346_1_.func_149575_j());
              }
-@@ -690,6 +728,8 @@
+@@ -690,6 +733,8 @@
              else
              {
                  ChatComponentTranslation chatcomponenttranslation1 = new ChatComponentTranslation("chat.type.text", new Object[] {this.playerEntity.func_145748_c_(), s});
@@ -136,7 +163,7 @@
                  this.serverController.getConfigurationManager().sendChatMsgImpl(chatcomponenttranslation1, false);
              }
  
-@@ -831,7 +871,7 @@
+@@ -831,7 +876,7 @@
                          return;
                      }
  
@@ -145,3 +172,53 @@
                  }
  
                  break;
+@@ -950,13 +995,11 @@
+ 
+         if (worldserver.blockExists(p_147343_1_.func_149588_c(), p_147343_1_.func_149586_d(), p_147343_1_.func_149585_e()))
+         {
+-            TileEntity tileentity = worldserver.getTileEntity(p_147343_1_.func_149588_c(), p_147343_1_.func_149586_d(), p_147343_1_.func_149585_e());
++            TileEntitySign tile = Util.getTileBehavior(worldserver, p_147343_1_.func_149588_c(), p_147343_1_.func_149586_d(), p_147343_1_.func_149585_e(), TileEntitySign.class);
+ 
+-            if (tileentity instanceof TileEntitySign)
++            if (tile != null)
+             {
+-                TileEntitySign tileentitysign = (TileEntitySign)tileentity;
+-
+-                if (!tileentitysign.func_145914_a() || tileentitysign.func_145911_b() != this.playerEntity)
++                if (!tile.func_145914_a() || tile.func_145911_b() != this.playerEntity)
+                 {
+                     this.serverController.logWarning("Player " + this.playerEntity.getCommandSenderName() + " just tried to change non-editable sign");
+                     return;
+@@ -991,14 +1034,13 @@
+                 }
+             }
+ 
+-            if (tileentity instanceof TileEntitySign)
++            if (tile != null)
+             {
+                 j = p_147343_1_.func_149588_c();
+                 int k = p_147343_1_.func_149586_d();
+                 i = p_147343_1_.func_149585_e();
+-                TileEntitySign tileentitysign1 = (TileEntitySign)tileentity;
+-                System.arraycopy(p_147343_1_.func_149589_f(), 0, tileentitysign1.signText, 0, 4);
+-                tileentitysign1.markDirty();
++                System.arraycopy(p_147343_1_.func_149589_f(), 0, tile.signText, 0, 4);
++                tile.markDirty();
+                 worldserver.markBlockForUpdate(j, k, i);
+             }
+         }
+@@ -1140,11 +1182,11 @@
+ 
+                         if (b0 == 0)
+                         {
+-                            TileEntity tileentity = this.playerEntity.worldObj.getTileEntity(packetbuffer.readInt(), packetbuffer.readInt(), packetbuffer.readInt());
++                            TileEntityCommandBlock tile = Util.getTileBehavior(this.playerEntity.worldObj, packetbuffer.readInt(), packetbuffer.readInt(), packetbuffer.readInt(), TileEntityCommandBlock.class);
+ 
+-                            if (tileentity instanceof TileEntityCommandBlock)
++                            if (tile != null)
+                             {
+-                                commandblocklogic = ((TileEntityCommandBlock)tileentity).func_145993_a();
++                                commandblocklogic = tile.func_145993_a();
+                             }
+                         }
+                         else if (b0 == 1)

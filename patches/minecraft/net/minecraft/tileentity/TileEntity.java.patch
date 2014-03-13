@@ -21,7 +21,7 @@
  
  import org.apache.logging.log4j.Level;
  import org.apache.logging.log4j.LogManager;
-@@ -296,4 +301,131 @@
+@@ -296,4 +301,141 @@
          addMapping(TileEntityComparator.class, "Comparator");
          addMapping(TileEntityFlowerPot.class, "FlowerPot");
      }
@@ -151,5 +151,15 @@
 +     */
 +    final public<T> T getBehavior(Class<T> clazz) {
 +        return getBehavior(clazz, ForgeDirection.UNKNOWN);
++    }
++    /** Requests behavior from specified side.
++     *  Shouldn't be overridden. Override other overload, which requests side explicitly as ForgeDirection, instead.
++     * 
++     * @param clazz Requested behavior type
++     * @param side  Behavior is requested from this side; specified via integer
++     * @return      Behavior reference or null, if this TileEntity doesn't support requested behavior on unknown side
++     */
++    final public<T> T getBehavior(Class<T> clazz, int side) {
++        return getBehavior(clazz, ForgeDirection.getOrientation(side));
 +    }
  }

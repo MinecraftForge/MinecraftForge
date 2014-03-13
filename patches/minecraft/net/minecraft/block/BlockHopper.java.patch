@@ -28,3 +28,12 @@
  
          if (tileentityhopper != null)
          {
+@@ -259,7 +262,7 @@
+ 
+     public static TileEntityHopper func_149920_e(IBlockAccess p_149920_0_, int p_149920_1_, int p_149920_2_, int p_149920_3_)
+     {
+-        return (TileEntityHopper)p_149920_0_.getTileEntity(p_149920_1_, p_149920_2_, p_149920_3_);
++        return Util.getTileBehavior(p_149920_0_, p_149920_1_, p_149920_2_, p_149920_3_, TileEntityHopper.class);
+     }
+ 
+     // JAVADOC METHOD $$ func_149702_O
