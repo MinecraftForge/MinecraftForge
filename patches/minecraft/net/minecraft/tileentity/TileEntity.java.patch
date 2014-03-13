@@ -116,14 +116,14 @@
 +    }
 +    /** Use this method to request any required behavior, like IInventory, instead of simple type cast
 +     * 
-+     * Sample override which utilizes internal behaviors map
++     * Sample override which utilizes internal behaviors map (we assume that addition to map is properly guarded)
 +     * @code
 +     * private Map<Class, Object> behaviors = new HashMap<Class, Object>();
 +     * 
 +     * public<T> T getBehavior(Class<T> clazz, ForgeDirection side) {
 +     *     Object behavior = behaviors.get(clazz);
-+     *     if (behavior != null && clazz.isInstance(behavior))
-+     *         return clazz.cast(behavior); 
++     *     if (behavior != null)
++     *         return (T)behavior; 
 +     *     return super.getBehavior(clazz, side);
 +     * }
 +     * @endcode
@@ -140,7 +140,7 @@
 +     */
 +    public<T> T getBehavior(Class<T> clazz, ForgeDirection side) {
 +        if (clazz != null && clazz.isInstance(this))
-+            return clazz.cast(this);
++            return (T)this;
 +        return null;
 +    }
 +    /** Requests behavior from ForgeDirection.UNKNOWN side.
