@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -76,7 +77,7 @@ public abstract class FluidContainerRegistry
     public static final int BUCKET_VOLUME = 1000;
     public static final ItemStack EMPTY_BUCKET = new ItemStack(Items.bucket);
     public static final ItemStack EMPTY_BOTTLE = new ItemStack(Items.glass_bottle);
-    private static final ItemStack NULL_EMPTYCONTAINER = new ItemStack(Items.bucket);
+    private static final ItemStack NULL_EMPTYCONTAINER = new ItemStack(Blocks.air);
 
     static
     {
