@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureNetherBridgePieces.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureNetherBridgePieces.java
+@@ -4,10 +4,13 @@
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Random;
++
+ import net.minecraft.init.Blocks;
+ import net.minecraft.init.Items;
+ import net.minecraft.nbt.NBTTagCompound;
++import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityMobSpawner;
++import net.minecraft.util.Util;
+ import net.minecraft.util.WeightedRandomChestContent;
+ import net.minecraft.world.World;
+ 
+@@ -521,12 +524,9 @@
+                     {
+                         this.hasSpawner = true;
+                         par1World.setBlock(j, i, k, Blocks.mob_spawner, 0, 2);
+-                        TileEntityMobSpawner tileentitymobspawner = (TileEntityMobSpawner)par1World.getTileEntity(j, i, k);
+-
++                        TileEntityMobSpawner tileentitymobspawner = Util.getTileBehavior(par1World, j, i, k, TileEntityMobSpawner.class);
+                         if (tileentitymobspawner != null)
+-                        {
+                             tileentitymobspawner.func_145881_a().setEntityName("Blaze");
+-                        }
+                     }
+                 }
+ 

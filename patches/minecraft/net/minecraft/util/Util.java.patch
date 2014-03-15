@@ -1,0 +1,48 @@
+--- ../src-base/minecraft/net/minecraft/util/Util.java
++++ ../src-work/minecraft/net/minecraft/util/Util.java
+@@ -2,9 +2,14 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.util.UUID;
+ import java.util.regex.Pattern;
+ 
++import net.minecraft.tileentity.TileEntity;
++import net.minecraft.world.IBlockAccess;
++import net.minecraftforge.common.util.ForgeDirection;
++
+ public class Util
+ {
+     // JAVADOC FIELD $$ field_147174_a
+@@ -62,4 +67,30 @@
+ 
+         private static final String __OBFID = "CL_00001660";
+     }
++    // == FORGE ==
++    /** Shortcut method, gets tile entity, then gets desired behavior.
++     * Returns null if there's no tile entity
++     * 
++     * @param world Block provider
++     * @param x
++     * @param y
++     * @param z
++     * @param clazz Behavior type
++     * @param side  Side to get behavior from
++     * @return      Behavior, if there's tile entity present and behavior is supported; null otherwise
++     */
++    public static <T> T getTileBehavior(IBlockAccess world, int x, int y, int z, Class<T> clazz, ForgeDirection side) {
++        TileEntity tile = world.getTileEntity(x, y, z);
++        if (tile != null)
++            return tile.getBehavior(clazz, side);
++        return null;
++    }
++    
++    public static <T> T getTileBehavior(IBlockAccess world, int x, int y, int z, Class<T> clazz) {
++        return getTileBehavior(world, x, y, z, clazz, ForgeDirection.UNKNOWN);
++    }
++
++    public static <T> T getTileBehavior(IBlockAccess world, int x, int y, int z, Class<T> clazz, int side) {
++        return getTileBehavior(world, x, y, z, clazz, ForgeDirection.getOrientation(side));
++    }
+ }

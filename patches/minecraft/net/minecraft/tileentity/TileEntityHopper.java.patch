@@ -38,3 +38,23 @@
              }
  
              if (flag)
+@@ -456,12 +469,15 @@
+         int j = MathHelper.floor_double(p_145893_3_);
+         int k = MathHelper.floor_double(p_145893_5_);
+         TileEntity tileentity = p_145893_0_.getTileEntity(i, j, k);
++        TileEntityChest tilechest = null;
++        if (tileentity != null) {
++            iinventory = tileentity.getBehavior(IInventory.class);
++            tilechest = tileentity.getBehavior(TileEntityChest.class);
++        }
+ 
+-        if (tileentity != null && tileentity instanceof IInventory)
++        if (iinventory != null)
+         {
+-            iinventory = (IInventory)tileentity;
+-
+-            if (iinventory instanceof TileEntityChest)
++            if (tilechest != null)
+             {
+                 Block block = p_145893_0_.getBlock(i, j, k);
+ 

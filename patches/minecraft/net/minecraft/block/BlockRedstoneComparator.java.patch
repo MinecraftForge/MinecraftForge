@@ -1,6 +1,33 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneComparator.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneComparator.java
-@@ -237,4 +237,19 @@
+@@ -2,7 +2,9 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.util.Random;
++
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.init.Items;
+@@ -11,6 +13,7 @@
+ import net.minecraft.tileentity.TileEntityComparator;
+ import net.minecraft.util.Direction;
+ import net.minecraft.util.IIcon;
++import net.minecraft.util.Util;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
+@@ -135,7 +138,7 @@
+     // JAVADOC METHOD $$ func_149971_e
+     public TileEntityComparator getTileEntityComparator(IBlockAccess p_149971_1_, int p_149971_2_, int p_149971_3_, int p_149971_4_)
+     {
+-        return (TileEntityComparator)p_149971_1_.getTileEntity(p_149971_2_, p_149971_3_, p_149971_4_);
++        return Util.getTileBehavior(p_149971_1_, p_149971_2_, p_149971_3_, p_149971_4_, TileEntityComparator.class);
+     }
+ 
+     // JAVADOC METHOD $$ func_149727_a
+@@ -237,4 +240,19 @@
      {
          return new TileEntityComparator();
      }

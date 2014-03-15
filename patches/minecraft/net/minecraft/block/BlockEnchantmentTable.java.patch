@@ -1,0 +1,38 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockEnchantmentTable.java
++++ ../src-work/minecraft/net/minecraft/block/BlockEnchantmentTable.java
+@@ -2,7 +2,9 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.util.Random;
++
+ import net.minecraft.block.material.Material;
+ import net.minecraft.client.renderer.texture.IIconRegister;
+ import net.minecraft.creativetab.CreativeTabs;
+@@ -13,6 +15,7 @@
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityEnchantmentTable;
+ import net.minecraft.util.IIcon;
++import net.minecraft.util.Util;
+ import net.minecraft.world.World;
+ 
+ public class BlockEnchantmentTable extends BlockContainer
+@@ -99,7 +102,7 @@
+         }
+         else
+         {
+-            TileEntityEnchantmentTable tileentityenchantmenttable = (TileEntityEnchantmentTable)p_149727_1_.getTileEntity(p_149727_2_, p_149727_3_, p_149727_4_);
++            TileEntityEnchantmentTable tileentityenchantmenttable = Util.getTileBehavior(p_149727_1_, p_149727_2_, p_149727_3_, p_149727_4_, TileEntityEnchantmentTable.class);
+             p_149727_5_.displayGUIEnchantment(p_149727_2_, p_149727_3_, p_149727_4_, tileentityenchantmenttable.func_145921_b() ? tileentityenchantmenttable.func_145919_a() : null);
+             return true;
+         }
+@@ -112,7 +115,7 @@
+ 
+         if (p_149689_6_.hasDisplayName())
+         {
+-            ((TileEntityEnchantmentTable)p_149689_1_.getTileEntity(p_149689_2_, p_149689_3_, p_149689_4_)).func_145920_a(p_149689_6_.getDisplayName());
++            p_149689_1_.getTileEntity(p_149689_2_, p_149689_3_, p_149689_4_).getBehavior(TileEntityEnchantmentTable.class).func_145920_a(p_149689_6_.getDisplayName());
+         }
+     }
+ 

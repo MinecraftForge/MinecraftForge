@@ -1,15 +1,56 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockChest.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockChest.java
-@@ -23,6 +23,8 @@
+@@ -2,8 +2,10 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.util.Iterator;
+ import java.util.Random;
++
+ import net.minecraft.block.material.Material;
+ import net.minecraft.client.renderer.texture.IIconRegister;
+ import net.minecraft.creativetab.CreativeTabs;
+@@ -20,8 +22,11 @@
+ import net.minecraft.tileentity.TileEntityChest;
+ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.util.MathHelper;
++import net.minecraft.util.Util;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
- 
++import net.minecraftforge.common.util.ForgeDirection;
 +import static net.minecraftforge.common.util.ForgeDirection.*;
-+
+ 
  public class BlockChest extends BlockContainer
  {
-     private final Random field_149955_b = new Random();
-@@ -416,7 +418,7 @@
+@@ -178,7 +183,7 @@
+ 
+         if (p_149689_6_.hasDisplayName())
+         {
+-            ((TileEntityChest)p_149689_1_.getTileEntity(p_149689_2_, p_149689_3_, p_149689_4_)).func_145976_a(p_149689_6_.getDisplayName());
++            p_149689_1_.getTileEntity(p_149689_2_, p_149689_3_, p_149689_4_).getBehavior(TileEntityChest.class).func_145976_a(p_149689_6_.getDisplayName());
+         }
+     }
+ 
+@@ -334,7 +339,7 @@
+     public void onNeighborBlockChange(World p_149695_1_, int p_149695_2_, int p_149695_3_, int p_149695_4_, Block p_149695_5_)
+     {
+         super.onNeighborBlockChange(p_149695_1_, p_149695_2_, p_149695_3_, p_149695_4_, p_149695_5_);
+-        TileEntityChest tileentitychest = (TileEntityChest)p_149695_1_.getTileEntity(p_149695_2_, p_149695_3_, p_149695_4_);
++        TileEntityChest tileentitychest = Util.getTileBehavior(p_149695_1_, p_149695_2_, p_149695_3_, p_149695_4_, TileEntityChest.class);
+ 
+         if (tileentitychest != null)
+         {
+@@ -344,7 +349,7 @@
+ 
+     public void breakBlock(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_)
+     {
+-        TileEntityChest tileentitychest = (TileEntityChest)p_149749_1_.getTileEntity(p_149749_2_, p_149749_3_, p_149749_4_);
++        TileEntityChest tileentitychest = Util.getTileBehavior(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, TileEntityChest.class);
+ 
+         if (tileentitychest != null)
+         {
+@@ -416,7 +421,7 @@
          {
              return null;
          }
@@ -18,7 +59,7 @@
          {
              return null;
          }
-@@ -424,19 +426,19 @@
+@@ -424,19 +429,19 @@
          {
              return null;
          }
@@ -42,3 +83,12 @@
          {
              return null;
          }
+@@ -487,7 +492,7 @@
+         }
+         else
+         {
+-            int i1 = ((TileEntityChest)p_149709_1_.getTileEntity(p_149709_2_, p_149709_3_, p_149709_4_)).numPlayersUsing;
++            int i1 = p_149709_1_.getTileEntity(p_149709_2_, p_149709_3_, p_149709_4_).getBehavior(TileEntityChest.class, ForgeDirection.getOrientation(p_149709_5_)).numPlayersUsing;
+             return MathHelper.clamp_int(i1, 0, 15);
+         }
+     }

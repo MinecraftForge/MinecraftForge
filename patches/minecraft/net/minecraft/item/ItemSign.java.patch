@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemSign.java
++++ ../src-work/minecraft/net/minecraft/item/ItemSign.java
+@@ -5,6 +5,7 @@
+ import net.minecraft.init.Blocks;
+ import net.minecraft.tileentity.TileEntitySign;
+ import net.minecraft.util.MathHelper;
++import net.minecraft.util.Util;
+ import net.minecraft.world.World;
+ 
+ public class ItemSign extends Item
+@@ -80,7 +81,7 @@
+                 }
+ 
+                 --par1ItemStack.stackSize;
+-                TileEntitySign tileentitysign = (TileEntitySign)par3World.getTileEntity(par4, par5, par6);
++                TileEntitySign tileentitysign = Util.getTileBehavior(par3World, par4, par5, par6, TileEntitySign.class);
+ 
+                 if (tileentitysign != null)
+                 {

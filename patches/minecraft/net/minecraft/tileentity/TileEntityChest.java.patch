@@ -1,0 +1,48 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityChest.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityChest.java
+@@ -2,8 +2,10 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.util.Iterator;
+ import java.util.List;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockChest;
+ import net.minecraft.entity.player.EntityPlayer;
+@@ -14,6 +16,7 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.util.AxisAlignedBB;
++import net.minecraft.util.Util;
+ 
+ public class TileEntityChest extends TileEntity implements IInventory
+ {
+@@ -260,22 +263,22 @@
+ 
+             if (this.func_145977_a(this.xCoord - 1, this.yCoord, this.zCoord))
+             {
+-                this.adjacentChestXNeg = (TileEntityChest)this.worldObj.getTileEntity(this.xCoord - 1, this.yCoord, this.zCoord);
++                this.adjacentChestXNeg = Util.getTileBehavior(this.worldObj, this.xCoord - 1, this.yCoord, this.zCoord, TileEntityChest.class);
+             }
+ 
+             if (this.func_145977_a(this.xCoord + 1, this.yCoord, this.zCoord))
+             {
+-                this.adjacentChestXPos = (TileEntityChest)this.worldObj.getTileEntity(this.xCoord + 1, this.yCoord, this.zCoord);
++                this.adjacentChestXPos = Util.getTileBehavior(this.worldObj, this.xCoord + 1, this.yCoord, this.zCoord, TileEntityChest.class);
+             }
+ 
+             if (this.func_145977_a(this.xCoord, this.yCoord, this.zCoord - 1))
+             {
+-                this.adjacentChestZNeg = (TileEntityChest)this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord - 1);
++                this.adjacentChestZNeg = Util.getTileBehavior(this.worldObj, this.xCoord, this.yCoord, this.zCoord - 1, TileEntityChest.class);
+             }
+ 
+             if (this.func_145977_a(this.xCoord, this.yCoord, this.zCoord + 1))
+             {
+-                this.adjacentChestZPos = (TileEntityChest)this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord + 1);
++                this.adjacentChestZPos = Util.getTileBehavior(this.worldObj, this.xCoord, this.yCoord, this.zCoord + 1, TileEntityChest.class);
+             }
+ 
+             if (this.adjacentChestZNeg != null)

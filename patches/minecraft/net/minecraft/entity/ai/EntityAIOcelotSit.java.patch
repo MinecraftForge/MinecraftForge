@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/entity/ai/EntityAIOcelotSit.java
++++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAIOcelotSit.java
+@@ -5,6 +5,7 @@
+ import net.minecraft.entity.passive.EntityOcelot;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.tileentity.TileEntityChest;
++import net.minecraft.util.Util;
+ import net.minecraft.world.World;
+ 
+ public class EntityAIOcelotSit extends EntityAIBase
+@@ -110,7 +111,7 @@
+ 
+         if (block == Blocks.chest)
+         {
+-            TileEntityChest tileentitychest = (TileEntityChest)p_151486_1_.getTileEntity(p_151486_2_, p_151486_3_, p_151486_4_);
++            TileEntityChest tileentitychest = Util.getTileBehavior(p_151486_1_, p_151486_2_, p_151486_3_, p_151486_4_, TileEntityChest.class);
+ 
+             if (tileentitychest.numPlayersUsing < 1)
+             {

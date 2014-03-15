@@ -1,0 +1,62 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockCommandBlock.java
++++ ../src-work/minecraft/net/minecraft/block/BlockCommandBlock.java
+@@ -1,6 +1,7 @@
+ package net.minecraft.block;
+ 
+ import java.util.Random;
++
+ import net.minecraft.block.material.Material;
+ import net.minecraft.command.server.CommandBlockLogic;
+ import net.minecraft.entity.EntityLivingBase;
+@@ -8,7 +9,9 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityCommandBlock;
++import net.minecraft.util.Util;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.util.ForgeDirection;
+ 
+ public class BlockCommandBlock extends BlockContainer
+ {
+@@ -49,11 +52,11 @@
+     // JAVADOC METHOD $$ func_149674_a
+     public void updateTick(World p_149674_1_, int p_149674_2_, int p_149674_3_, int p_149674_4_, Random p_149674_5_)
+     {
+-        TileEntity tileentity = p_149674_1_.getTileEntity(p_149674_2_, p_149674_3_, p_149674_4_);
++        TileEntityCommandBlock tile = Util.getTileBehavior(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, TileEntityCommandBlock.class);
+ 
+-        if (tileentity != null && tileentity instanceof TileEntityCommandBlock)
++        if (tile != null)
+         {
+-            CommandBlockLogic commandblocklogic = ((TileEntityCommandBlock)tileentity).func_145993_a();
++            CommandBlockLogic commandblocklogic = ((TileEntityCommandBlock)tile).func_145993_a();
+             commandblocklogic.func_145755_a(p_149674_1_);
+             p_149674_1_.func_147453_f(p_149674_2_, p_149674_3_, p_149674_4_, this);
+         }
+@@ -68,7 +71,7 @@
+     // JAVADOC METHOD $$ func_149727_a
+     public boolean onBlockActivated(World p_149727_1_, int p_149727_2_, int p_149727_3_, int p_149727_4_, EntityPlayer p_149727_5_, int p_149727_6_, float p_149727_7_, float p_149727_8_, float p_149727_9_)
+     {
+-        TileEntityCommandBlock tileentitycommandblock = (TileEntityCommandBlock)p_149727_1_.getTileEntity(p_149727_2_, p_149727_3_, p_149727_4_);
++        TileEntityCommandBlock tileentitycommandblock = Util.getTileBehavior(p_149727_1_, p_149727_2_, p_149727_3_, p_149727_4_, TileEntityCommandBlock.class);
+ 
+         if (tileentitycommandblock != null)
+         {
+@@ -87,14 +90,14 @@
+     // JAVADOC METHOD $$ func_149736_g
+     public int getComparatorInputOverride(World p_149736_1_, int p_149736_2_, int p_149736_3_, int p_149736_4_, int p_149736_5_)
+     {
+-        TileEntity tileentity = p_149736_1_.getTileEntity(p_149736_2_, p_149736_3_, p_149736_4_);
+-        return tileentity != null && tileentity instanceof TileEntityCommandBlock ? ((TileEntityCommandBlock)tileentity).func_145993_a().func_145760_g() : 0;
++        TileEntityCommandBlock tileentity = Util.getTileBehavior(p_149736_1_, p_149736_2_, p_149736_3_, p_149736_4_, TileEntityCommandBlock.class, p_149736_5_);
++        return tileentity != null ? tileentity.func_145993_a().func_145760_g() : 0;
+     }
+ 
+     // JAVADOC METHOD $$ func_149689_a
+     public void onBlockPlacedBy(World p_149689_1_, int p_149689_2_, int p_149689_3_, int p_149689_4_, EntityLivingBase p_149689_5_, ItemStack p_149689_6_)
+     {
+-        TileEntityCommandBlock tileentitycommandblock = (TileEntityCommandBlock)p_149689_1_.getTileEntity(p_149689_2_, p_149689_3_, p_149689_4_);
++        TileEntityCommandBlock tileentitycommandblock = p_149689_1_.getTileEntity(p_149689_2_, p_149689_3_, p_149689_4_).getBehavior(TileEntityCommandBlock.class);
+ 
+         if (p_149689_6_.hasDisplayName())
+         {

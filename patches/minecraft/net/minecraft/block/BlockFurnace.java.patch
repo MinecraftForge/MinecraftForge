@@ -1,0 +1,58 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockFurnace.java
++++ ../src-work/minecraft/net/minecraft/block/BlockFurnace.java
+@@ -2,7 +2,9 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.util.Random;
++
+ import net.minecraft.block.material.Material;
+ import net.minecraft.client.renderer.texture.IIconRegister;
+ import net.minecraft.entity.EntityLivingBase;
+@@ -18,7 +20,9 @@
+ import net.minecraft.tileentity.TileEntityFurnace;
+ import net.minecraft.util.IIcon;
+ import net.minecraft.util.MathHelper;
++import net.minecraft.util.Util;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.util.ForgeDirection;
+ 
+ public class BlockFurnace extends BlockContainer
+ {
+@@ -107,7 +111,7 @@
+         }
+         else
+         {
+-            TileEntityFurnace tileentityfurnace = (TileEntityFurnace)p_149727_1_.getTileEntity(p_149727_2_, p_149727_3_, p_149727_4_);
++            TileEntityFurnace tileentityfurnace = Util.getTileBehavior(p_149727_1_, p_149727_2_, p_149727_3_, p_149727_4_, TileEntityFurnace.class);
+ 
+             if (tileentityfurnace != null)
+             {
+@@ -177,7 +181,7 @@
+ 
+         if (p_149689_6_.hasDisplayName())
+         {
+-            ((TileEntityFurnace)p_149689_1_.getTileEntity(p_149689_2_, p_149689_3_, p_149689_4_)).func_145951_a(p_149689_6_.getDisplayName());
++            p_149689_1_.getTileEntity(p_149689_2_, p_149689_3_, p_149689_4_).getBehavior(TileEntityFurnace.class).func_145951_a(p_149689_6_.getDisplayName());
+         }
+     }
+ 
+@@ -185,7 +189,7 @@
+     {
+         if (!field_149934_M)
+         {
+-            TileEntityFurnace tileentityfurnace = (TileEntityFurnace)p_149749_1_.getTileEntity(p_149749_2_, p_149749_3_, p_149749_4_);
++            TileEntityFurnace tileentityfurnace = Util.getTileBehavior(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, TileEntityFurnace.class);
+ 
+             if (tileentityfurnace != null)
+             {
+@@ -277,7 +281,7 @@
+     // JAVADOC METHOD $$ func_149736_g
+     public int getComparatorInputOverride(World p_149736_1_, int p_149736_2_, int p_149736_3_, int p_149736_4_, int p_149736_5_)
+     {
+-        return Container.calcRedstoneFromInventory((IInventory)p_149736_1_.getTileEntity(p_149736_2_, p_149736_3_, p_149736_4_));
++        return Container.calcRedstoneFromInventory(p_149736_1_.getTileEntity(p_149736_2_, p_149736_3_, p_149736_4_).getBehavior(IInventory.class, p_149736_5_));
+     }
+ 
+     // JAVADOC METHOD $$ func_149694_d
