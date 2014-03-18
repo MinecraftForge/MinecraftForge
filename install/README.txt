@@ -15,10 +15,11 @@ Standalone source installation
 ==============================
 
 To install this source code for development purposes, extract this zip file.
-It ships with a demonstration mod. Run "gradle setupDevWorkspace" to create
-a gradle environment primed with FML. Run gradle eclipse or gradle idea to
+It ships with a demonstration mod. Run 'gradlew setupDevWorkspace' to create
+a gradle environment primed with FML. Run 'gradlew eclipse' or 'gradlew idea' to
 create an IDE workspace of your choice.
 Refer to ForgeGradle for more information about the gradle environment
+Note: On macs or linux you run the './gradlew.sh' instead of 'gradlew'
 
 Forge source installation
 =========================
@@ -31,3 +32,6 @@ for Minecraft version @MCVERSION@.
 LexManos' Install Video
 =======================
 https://www.youtube.com/watch?v=8VEdtQLuLO0&feature=youtu.be
+
+For more details update more often refer to the Forge Forums:
+http://www.minecraftforge.net/forum/index.php/topic,14048.0.html
