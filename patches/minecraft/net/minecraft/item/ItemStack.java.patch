@@ -1,14 +1,39 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemStack.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
-@@ -32,6 +32,7 @@
+@@ -1,15 +1,12 @@
+ package net.minecraft.item;
+ 
+-import com.google.common.collect.HashMultimap;
+-import com.google.common.collect.Multimap;
+-import cpw.mods.fml.relauncher.Side;
+-import cpw.mods.fml.relauncher.SideOnly;
+ import java.text.DecimalFormat;
+ import java.util.ArrayList;
+ import java.util.Iterator;
+ import java.util.List;
+-import java.util.Random;
+ import java.util.Map.Entry;
++import java.util.Random;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.enchantment.Enchantment;
+ import net.minecraft.enchantment.EnchantmentDurability;
+@@ -32,7 +29,14 @@
  import net.minecraft.util.IIcon;
  import net.minecraft.util.StatCollector;
  import net.minecraft.world.World;
 +import net.minecraftforge.event.ForgeEventFactory;
  
++import com.google.common.collect.HashMultimap;
++import com.google.common.collect.Multimap;
++
++import cpw.mods.fml.relauncher.Side;
++import cpw.mods.fml.relauncher.SideOnly;
++
  public final class ItemStack
  {
-@@ -192,7 +193,7 @@
+     public static final DecimalFormat field_111284_a = new DecimalFormat("#.###");
+@@ -192,7 +196,7 @@
      // JAVADOC METHOD $$ func_77976_d
      public int getMaxStackSize()
      {
@@ -17,7 +42,7 @@
      }
  
      // JAVADOC METHOD $$ func_77985_e
-@@ -204,7 +205,7 @@
+@@ -204,7 +208,7 @@
      // JAVADOC METHOD $$ func_77984_f
      public boolean isItemStackDamageable()
      {
@@ -26,7 +51,7 @@
      }
  
      public boolean getHasSubtypes()
-@@ -215,36 +216,31 @@
+@@ -215,36 +219,31 @@
      // JAVADOC METHOD $$ func_77951_h
      public boolean isItemDamaged()
      {
@@ -68,7 +93,7 @@
      }
  
      // JAVADOC METHOD $$ func_96631_a
-@@ -277,8 +273,8 @@
+@@ -277,8 +276,8 @@
                  }
              }
  
@@ -79,7 +104,7 @@
          }
      }
  
-@@ -339,7 +335,7 @@
+@@ -339,7 +338,7 @@
  
      public boolean func_150998_b(Block p_150998_1_)
      {
@@ -88,7 +113,7 @@
      }
  
      public boolean interactWithEntity(EntityPlayer par1EntityPlayer, EntityLivingBase par2EntityLivingBase)
-@@ -653,16 +649,24 @@
+@@ -653,16 +652,24 @@
          {
              arraylist.add("Durability: " + (this.getMaxDamage() - this.getItemDamageForDisplay()) + " / " + this.getMaxDamage());
          }
@@ -114,3 +139,37 @@
      public EnumRarity getRarity()
      {
          return this.getItem().getRarity(this);
+@@ -798,4 +805,33 @@
+ 
+         return ichatcomponent;
+     }
++
++    @Override
++    public int hashCode()
++    {
++        int code = 1;
++        if(getItem() != null)
++            code = 31*code + getItem().hashCode();
++        code = 31*code + getItemDamage();
++        code = 31*code + stackSize;
++        if(hasTagCompound())
++            code = 31*code + getTagCompound().hashCode();
++        return code;
++    }
++    
++    @Override
++    public boolean equals(Object o){
++        if(o == this)
++            return true;
++        if(!(o instanceof ItemStack))
++            return false;
++        ItemStack stack = (ItemStack) o;
++        if(getItem() != stack.getItem())
++            return false;
++        if(stackSize != stack.stackSize)
++            return false;
++        if(getItemDamage() != stack.getItemDamage())
++            return false;
++        return hasTagCompound() ? getTagCompound().equals(stack.getTagCompound()) : !stack.hasTagCompound();
++    }
+ }
