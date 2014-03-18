@@ -1,6 +1,71 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerRepair.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerRepair.java
-@@ -383,6 +383,8 @@
+@@ -12,6 +12,7 @@
+ import net.minecraft.init.Items;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.AnvilRecipes;
+ import org.apache.commons.lang3.StringUtils;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+@@ -74,6 +75,24 @@
+                     par1EntityPlayer.addExperienceLevel(-ContainerRepair.this.maximumCost);
+                 }
+ 
++                // IAnvilRecipe Implementation
++                boolean renaming = false;
++                if(!StringUtils.isBlank(ContainerRepair.this.repairedItemName) && (!ContainerRepair.this.repairedItemName.equals(ContainerRepair.this.inputSlots.getStackInSlot(0).getDisplayName())))
++                    renaming = true;
++                if(AnvilRecipes.getInstance().getRepairResult(ContainerRepair.this.inputSlots.getStackInSlot(0), ContainerRepair.this.inputSlots.getStackInSlot(1), renaming, ContainerRepair.this.theWorld) != null)
++                {
++                    AnvilRecipes.getInstance().repair(ContainerRepair.this.inputSlots.getStackInSlot(0), ContainerRepair.this.inputSlots.getStackInSlot(1), par2ItemStack, renaming, ContainerRepair.this.theWorld);
++                    
++                    if(ContainerRepair.this.inputSlots.getStackInSlot(0).stackSize <= 0)
++                        ContainerRepair.this.inputSlots.setInventorySlotContents(0, (ItemStack)null);  
++                    if(ContainerRepair.this.inputSlots.getStackInSlot(1).stackSize <= 0)
++                        ContainerRepair.this.inputSlots.setInventorySlotContents(1, (ItemStack)null);
++                    
++                    if(renaming)
++                        par2ItemStack.setStackDisplayName(ContainerRepair.this.repairedItemName);
++                }
++                else
++                {
+                 ContainerRepair.this.inputSlots.setInventorySlotContents(0, (ItemStack)null);
+ 
+                 if (ContainerRepair.this.stackSizeToBeUsedInRepair > 0)
+@@ -94,6 +113,7 @@
+                 {
+                     ContainerRepair.this.inputSlots.setInventorySlotContents(1, (ItemStack)null);
+                 }
++                }
+ 
+                 ContainerRepair.this.maximumCost = 0;
+ 
+@@ -177,6 +197,23 @@
+             int l1;
+             Iterator iterator1;
+             Enchantment enchantment;
++            
++            // IAnvilRecipe Implementation
++            boolean renaming = false;
++            if(!StringUtils.isBlank(this.repairedItemName) && (!this.repairedItemName.equals(itemstack.getDisplayName())))
++                renaming = true;
++                
++            this.outputSlot.setInventorySlotContents(0, AnvilRecipes.getInstance().getRepairResult(itemstack1, itemstack2, renaming, theWorld));
++            if(this.outputSlot.getStackInSlot(0) != null)
++            {
++                // Processing an IAnvilRecipe
++                this.stackSizeToBeUsedInRepair = 0;
++                this.maximumCost = AnvilRecipes.getInstance().getRepairCost(itemstack1, itemstack2, renaming, theWorld);
++                if(renaming)
++                    this.outputSlot.getStackInSlot(0).setStackDisplayName(this.repairedItemName);
++                this.detectAndSendChanges();
++                return;
++            }
+ 
+             if (itemstack2 != null)
+             {
+@@ -383,6 +420,8 @@
                  k2 = Math.max(1, k2 / 2);
              }
  
