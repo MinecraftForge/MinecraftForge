@@ -23,11 +23,11 @@
  
  @SideOnly(Side.CLIENT)
  public class RenderPlayer extends RendererLivingEntity
-@@ -46,6 +55,13 @@
+@@ -45,6 +54,13 @@
      {
-         ItemStack itemstack = par1AbstractClientPlayer.inventory.armorItemInSlot(3 - par2);
+         ItemStack itemstack = p_77107_1_.field_71071_by.func_70440_f(3 - p_77107_2_);
  
-+        RenderPlayerEvent.SetArmorModel event = new RenderPlayerEvent.SetArmorModel(par1AbstractClientPlayer, this, 3 - par2, par3, itemstack);
++        RenderPlayerEvent.SetArmorModel event = new RenderPlayerEvent.SetArmorModel(p_77107_1_, this, 3 - p_77107_2_, p_77107_3_, itemstack);
 +        MinecraftForge.EVENT_BUS.post(event);
 +        if (event.result != -1)
 +        {
@@ -36,135 +36,135 @@
 +
          if (itemstack != null)
          {
-             Item item = itemstack.getItem();
-@@ -53,7 +69,7 @@
+             Item item = itemstack.func_77973_b();
+@@ -52,7 +68,7 @@
              if (item instanceof ItemArmor)
              {
                  ItemArmor itemarmor = (ItemArmor)item;
--                this.bindTexture(RenderBiped.func_110857_a(itemarmor, par2));
-+                this.bindTexture(RenderBiped.getArmorResource(par1AbstractClientPlayer, itemstack, par2, null));
-                 ModelBiped modelbiped = par2 == 2 ? this.modelArmor : this.modelArmorChestplate;
-                 modelbiped.bipedHead.showModel = par2 == 0;
-                 modelbiped.bipedHeadwear.showModel = par2 == 0;
-@@ -62,14 +78,16 @@
-                 modelbiped.bipedLeftArm.showModel = par2 == 1;
-                 modelbiped.bipedRightLeg.showModel = par2 == 2 || par2 == 3;
-                 modelbiped.bipedLeftLeg.showModel = par2 == 2 || par2 == 3;
-+                modelbiped = ForgeHooksClient.getArmorModel(par1AbstractClientPlayer, itemstack, par2, modelbiped);
-                 this.setRenderPassModel(modelbiped);
-                 modelbiped.onGround = this.mainModel.onGround;
-                 modelbiped.isRiding = this.mainModel.isRiding;
-                 modelbiped.isChild = this.mainModel.isChild;
+-                this.func_110776_a(RenderBiped.func_110857_a(itemarmor, p_77107_2_));
++                this.func_110776_a(RenderBiped.getArmorResource(p_77107_1_, itemstack, p_77107_2_, null));
+                 ModelBiped modelbiped = p_77107_2_ == 2 ? this.field_77111_i : this.field_77108_b;
+                 modelbiped.field_78116_c.field_78806_j = p_77107_2_ == 0;
+                 modelbiped.field_78114_d.field_78806_j = p_77107_2_ == 0;
+@@ -61,14 +77,16 @@
+                 modelbiped.field_78113_g.field_78806_j = p_77107_2_ == 1;
+                 modelbiped.field_78123_h.field_78806_j = p_77107_2_ == 2 || p_77107_2_ == 3;
+                 modelbiped.field_78124_i.field_78806_j = p_77107_2_ == 2 || p_77107_2_ == 3;
++                modelbiped = ForgeHooksClient.getArmorModel(p_77107_1_, itemstack, p_77107_2_, modelbiped);
+                 this.func_77042_a(modelbiped);
+                 modelbiped.field_78095_p = this.field_77045_g.field_78095_p;
+                 modelbiped.field_78093_q = this.field_77045_g.field_78093_q;
+                 modelbiped.field_78091_s = this.field_77045_g.field_78091_s;
  
--                if (itemarmor.getArmorMaterial() == ItemArmor.ArmorMaterial.CLOTH)
+-                if (itemarmor.func_82812_d() == ItemArmor.ArmorMaterial.CLOTH)
 +                //Move outside if to allow for more then just CLOTH
-+                int j = itemarmor.getColor(itemstack);
++                int j = itemarmor.func_82814_b(itemstack);
 +                if (j != -1)
                  {
--                    int j = itemarmor.getColor(itemstack);
+-                    int j = itemarmor.func_82814_b(itemstack);
                      float f1 = (float)(j >> 16 & 255) / 255.0F;
                      float f2 = (float)(j >> 8 & 255) / 255.0F;
                      float f3 = (float)(j & 255) / 255.0F;
-@@ -107,7 +125,7 @@
+@@ -106,7 +124,7 @@
  
              if (item instanceof ItemArmor)
              {
--                this.bindTexture(RenderBiped.func_110858_a((ItemArmor)item, par2, "overlay"));
-+                this.bindTexture(RenderBiped.getArmorResource(par1AbstractClientPlayer, itemstack, par2, "overlay"));
+-                this.func_110776_a(RenderBiped.func_110858_a((ItemArmor)item, p_130220_2_, "overlay"));
++                this.func_110776_a(RenderBiped.getArmorResource(p_130220_1_, itemstack, p_130220_2_, "overlay"));
                  GL11.glColor3f(1.0F, 1.0F, 1.0F);
              }
          }
-@@ -116,6 +134,7 @@
-     // JAVADOC METHOD $$ func_76986_a
-     public void doRender(AbstractClientPlayer par1AbstractClientPlayer, double par2, double par4, double par6, float par8, float par9)
+@@ -114,6 +132,7 @@
+ 
+     public void func_76986_a(AbstractClientPlayer p_130009_1_, double p_130009_2_, double p_130009_4_, double p_130009_6_, float p_130009_8_, float p_130009_9_)
      {
-+        if (MinecraftForge.EVENT_BUS.post(new RenderPlayerEvent.Pre(par1AbstractClientPlayer, this, par9))) return;
++        if (MinecraftForge.EVENT_BUS.post(new RenderPlayerEvent.Pre(p_130009_1_, this, p_130009_9_))) return;
          GL11.glColor3f(1.0F, 1.0F, 1.0F);
-         ItemStack itemstack = par1AbstractClientPlayer.inventory.getCurrentItem();
-         this.modelArmorChestplate.heldItemRight = this.modelArmor.heldItemRight = this.modelBipedMain.heldItemRight = itemstack != null ? 1 : 0;
-@@ -146,6 +165,7 @@
-         this.modelArmorChestplate.aimedBow = this.modelArmor.aimedBow = this.modelBipedMain.aimedBow = false;
-         this.modelArmorChestplate.isSneak = this.modelArmor.isSneak = this.modelBipedMain.isSneak = false;
-         this.modelArmorChestplate.heldItemRight = this.modelArmor.heldItemRight = this.modelBipedMain.heldItemRight = 0;
-+        MinecraftForge.EVENT_BUS.post(new RenderPlayerEvent.Post(par1AbstractClientPlayer, this, par9));
+         ItemStack itemstack = p_130009_1_.field_71071_by.func_70448_g();
+         this.field_77108_b.field_78120_m = this.field_77111_i.field_78120_m = this.field_77109_a.field_78120_m = itemstack != null ? 1 : 0;
+@@ -144,6 +163,7 @@
+         this.field_77108_b.field_78118_o = this.field_77111_i.field_78118_o = this.field_77109_a.field_78118_o = false;
+         this.field_77108_b.field_78117_n = this.field_77111_i.field_78117_n = this.field_77109_a.field_78117_n = false;
+         this.field_77108_b.field_78120_m = this.field_77111_i.field_78120_m = this.field_77109_a.field_78120_m = 0;
++        MinecraftForge.EVENT_BUS.post(new RenderPlayerEvent.Post(p_130009_1_, this, p_130009_9_));
      }
  
-     // JAVADOC METHOD $$ func_110775_a
-@@ -156,12 +176,18 @@
+     protected ResourceLocation func_110775_a(AbstractClientPlayer p_110817_1_)
+@@ -153,12 +173,18 @@
  
-     protected void renderEquippedItems(AbstractClientPlayer par1AbstractClientPlayer, float par2)
+     protected void func_77029_c(AbstractClientPlayer p_77100_1_, float p_77100_2_)
      {
-+        RenderPlayerEvent.Specials.Pre event = new RenderPlayerEvent.Specials.Pre(par1AbstractClientPlayer, this, par2);
++        RenderPlayerEvent.Specials.Pre event = new RenderPlayerEvent.Specials.Pre(p_77100_1_, this, p_77100_2_);
 +        if (MinecraftForge.EVENT_BUS.post(event))
 +        {
 +            return;
 +        }
 +
          GL11.glColor3f(1.0F, 1.0F, 1.0F);
-         super.renderEquippedItems(par1AbstractClientPlayer, par2);
-         super.renderArrowsStuckInEntity(par1AbstractClientPlayer, par2);
-         ItemStack itemstack = par1AbstractClientPlayer.inventory.armorItemInSlot(3);
+         super.func_77029_c(p_77100_1_, p_77100_2_);
+         super.func_85093_e(p_77100_1_, p_77100_2_);
+         ItemStack itemstack = p_77100_1_.field_71071_by.func_70440_f(3);
  
 -        if (itemstack != null)
 +        if (itemstack != null && event.renderHelmet)
          {
              GL11.glPushMatrix();
-             this.modelBipedMain.bipedHead.postRender(0.0625F);
-@@ -169,7 +195,10 @@
+             this.field_77109_a.field_78116_c.func_78794_c(0.0625F);
+@@ -166,7 +192,10 @@
  
-             if (itemstack.getItem() instanceof ItemBlock)
+             if (itemstack.func_77973_b() instanceof ItemBlock)
              {
--                if (RenderBlocks.renderItemIn3d(Block.getBlockFromItem(itemstack.getItem()).getRenderType()))
+-                if (RenderBlocks.func_147739_a(Block.func_149634_a(itemstack.func_77973_b()).func_149645_b()))
 +                IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack, EQUIPPED);
 +                boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, itemstack, BLOCK_3D));
 +
-+                if (is3D || RenderBlocks.renderItemIn3d(Block.getBlockFromItem(itemstack.getItem()).getRenderType()))
++                if (is3D || RenderBlocks.func_147739_a(Block.func_149634_a(itemstack.func_77973_b()).func_149645_b()))
                  {
                      f1 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
-@@ -221,6 +250,7 @@
+@@ -218,6 +247,7 @@
          }
  
-         boolean flag = par1AbstractClientPlayer.getTextureCape().isTextureUploaded();
+         boolean flag = p_77100_1_.func_110310_o().func_110557_a();
 +        flag = event.renderCape && flag;
          float f5;
  
-         if (flag && !par1AbstractClientPlayer.isInvisible() && !par1AbstractClientPlayer.getHideCape())
-@@ -272,7 +302,7 @@
+         if (flag && !p_77100_1_.func_82150_aj() && !p_77100_1_.func_82238_cc())
+@@ -269,7 +299,7 @@
  
-         ItemStack itemstack1 = par1AbstractClientPlayer.inventory.getCurrentItem();
+         ItemStack itemstack1 = p_77100_1_.field_71071_by.func_70448_g();
  
 -        if (itemstack1 != null)
 +        if (itemstack1 != null && event.renderItem)
          {
              GL11.glPushMatrix();
-             this.modelBipedMain.bipedRightArm.postRender(0.0625F);
-@@ -290,7 +320,10 @@
-                 enumaction = itemstack1.getItemUseAction();
+             this.field_77109_a.field_78112_f.func_78794_c(0.0625F);
+@@ -287,7 +317,10 @@
+                 enumaction = itemstack1.func_77975_n();
              }
  
--            if (itemstack1.getItem() instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.getBlockFromItem(itemstack1.getItem()).getRenderType()))
+-            if (itemstack1.func_77973_b() instanceof ItemBlock && RenderBlocks.func_147739_a(Block.func_149634_a(itemstack1.func_77973_b()).func_149645_b()))
 +            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack1, EQUIPPED);
 +            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, itemstack1, BLOCK_3D));
 +
-+            if (is3D || itemstack1.getItem() instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.getBlockFromItem(itemstack1.getItem()).getRenderType()))
++            if (is3D || itemstack1.func_77973_b() instanceof ItemBlock && RenderBlocks.func_147739_a(Block.func_149634_a(itemstack1.func_77973_b()).func_149645_b()))
              {
                  f3 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -347,7 +380,7 @@
+@@ -344,7 +377,7 @@
  
-             if (itemstack1.getItem().requiresMultipleRenderPasses())
+             if (itemstack1.func_77973_b().func_77623_v())
              {
 -                for (k = 0; k <= 1; ++k)
-+                for (k = 0; k <= itemstack1.getItem().getRenderPasses(itemstack1.getItemDamage()); ++k)
++                for (k = 0; k <= itemstack1.func_77973_b().getRenderPasses(itemstack1.func_77960_j()); ++k)
                  {
-                     int i = itemstack1.getItem().getColorFromItemStack(itemstack1, k);
+                     int i = itemstack1.func_77973_b().func_82790_a(itemstack1, k);
                      f12 = (float)(i >> 16 & 255) / 255.0F;
-@@ -369,6 +402,7 @@
+@@ -366,6 +399,7 @@
  
              GL11.glPopMatrix();
          }
-+        MinecraftForge.EVENT_BUS.post(new RenderPlayerEvent.Specials.Post(par1AbstractClientPlayer, this, par2));
++        MinecraftForge.EVENT_BUS.post(new RenderPlayerEvent.Specials.Post(p_77100_1_, this, p_77100_2_));
      }
  
-     // JAVADOC METHOD $$ func_77041_b
+     protected void func_77041_b(AbstractClientPlayer p_77104_1_, float p_77104_2_)

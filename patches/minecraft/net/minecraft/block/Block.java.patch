@@ -53,142 +53,141 @@
  
  public class Block
  {
-@@ -132,7 +153,8 @@
+@@ -110,7 +131,8 @@
  
-     public static Block getBlockById(int p_149729_0_)
+     public static Block func_149729_e(int p_149729_0_)
      {
--        return (Block)blockRegistry.getObjectById(p_149729_0_);
-+        Block ret = (Block)blockRegistry.getObjectById(p_149729_0_);
-+        return ret == null ? Blocks.air : ret;
+-        return (Block)field_149771_c.func_148754_a(p_149729_0_);
++        Block ret = (Block)field_149771_c.func_148754_a(p_149729_0_);
++        return ret == null ? Blocks.field_150350_a : ret;
      }
  
-     public static Block getBlockFromItem(Item p_149634_0_)
-@@ -517,9 +539,10 @@
-         return this.needsRandomTick;
+     public static Block func_149634_a(Item p_149634_0_)
+@@ -481,9 +503,10 @@
+         return this.field_149789_z;
      }
  
 +    @Deprecated //Forge: New Metadata sensitive version.
-     public boolean hasTileEntity()
+     public boolean func_149716_u()
      {
--        return this.isBlockContainer;
+-        return this.field_149758_A;
 +        return hasTileEntity(0);
      }
  
-     // JAVADOC METHOD $$ func_149676_a
-@@ -538,13 +561,13 @@
-     public int getMixedBrightnessForBlock(IBlockAccess p_149677_1_, int p_149677_2_, int p_149677_3_, int p_149677_4_)
+     public final void func_149676_a(float p_149676_1_, float p_149676_2_, float p_149676_3_, float p_149676_4_, float p_149676_5_, float p_149676_6_)
+@@ -500,13 +523,13 @@
+     public int func_149677_c(IBlockAccess p_149677_1_, int p_149677_2_, int p_149677_3_, int p_149677_4_)
      {
-         Block block = p_149677_1_.getBlock(p_149677_2_, p_149677_3_, p_149677_4_);
--        int l = p_149677_1_.getLightBrightnessForSkyBlocks(p_149677_2_, p_149677_3_, p_149677_4_, block.getLightValue());
-+        int l = p_149677_1_.getLightBrightnessForSkyBlocks(p_149677_2_, p_149677_3_, p_149677_4_, block.getLightValue(p_149677_1_, p_149677_2_, p_149677_3_, p_149677_4_));
+         Block block = p_149677_1_.func_147439_a(p_149677_2_, p_149677_3_, p_149677_4_);
+-        int l = p_149677_1_.func_72802_i(p_149677_2_, p_149677_3_, p_149677_4_, block.func_149750_m());
++        int l = p_149677_1_.func_72802_i(p_149677_2_, p_149677_3_, p_149677_4_, block.getLightValue(p_149677_1_, p_149677_2_, p_149677_3_, p_149677_4_));
  
          if (l == 0 && block instanceof BlockSlab)
          {
              --p_149677_3_;
-             block = p_149677_1_.getBlock(p_149677_2_, p_149677_3_, p_149677_4_);
--            return p_149677_1_.getLightBrightnessForSkyBlocks(p_149677_2_, p_149677_3_, p_149677_4_, block.getLightValue());
-+            return p_149677_1_.getLightBrightnessForSkyBlocks(p_149677_2_, p_149677_3_, p_149677_4_, block.getLightValue(p_149677_1_, p_149677_2_, p_149677_3_, p_149677_4_));
+             block = p_149677_1_.func_147439_a(p_149677_2_, p_149677_3_, p_149677_4_);
+-            return p_149677_1_.func_72802_i(p_149677_2_, p_149677_3_, p_149677_4_, block.func_149750_m());
++            return p_149677_1_.func_72802_i(p_149677_2_, p_149677_3_, p_149677_4_, block.getLightValue(p_149677_1_, p_149677_2_, p_149677_3_, p_149677_4_));
          }
          else
          {
-@@ -649,7 +672,13 @@
-     // JAVADOC METHOD $$ func_149726_b
-     public void onBlockAdded(World p_149726_1_, int p_149726_2_, int p_149726_3_, int p_149726_4_) {}
+@@ -595,7 +618,13 @@
  
--    public void breakBlock(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_) {}
-+    public void breakBlock(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_)
+     public void func_149726_b(World p_149726_1_, int p_149726_2_, int p_149726_3_, int p_149726_4_) {}
+ 
+-    public void func_149749_a(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_) {}
++    public void func_149749_a(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_)
 +    {
 +        if (hasTileEntity(p_149749_6_) && !(this instanceof BlockContainer))
 +        {
-+            p_149749_1_.removeTileEntity(p_149749_2_, p_149749_3_, p_149749_4_);
++            p_149749_1_.func_147475_p(p_149749_2_, p_149749_3_, p_149749_4_);
 +        }
 +    }
  
-     // JAVADOC METHOD $$ func_149745_a
-     public int quantityDropped(Random p_149745_1_)
-@@ -665,8 +694,7 @@
-     // JAVADOC METHOD $$ func_149737_a
-     public float getPlayerRelativeBlockHardness(EntityPlayer p_149737_1_, World p_149737_2_, int p_149737_3_, int p_149737_4_, int p_149737_5_)
+     public int func_149745_a(Random p_149745_1_)
      {
--        float f = this.getBlockHardness(p_149737_2_, p_149737_3_, p_149737_4_, p_149737_5_);
--        return f < 0.0F ? 0.0F : (!p_149737_1_.canHarvestBlock(this) ? p_149737_1_.getCurrentPlayerStrVsBlock(this, false) / f / 100.0F : p_149737_1_.getCurrentPlayerStrVsBlock(this, true) / f / 30.0F);
+@@ -609,8 +638,7 @@
+ 
+     public float func_149737_a(EntityPlayer p_149737_1_, World p_149737_2_, int p_149737_3_, int p_149737_4_, int p_149737_5_)
+     {
+-        float f = this.func_149712_f(p_149737_2_, p_149737_3_, p_149737_4_, p_149737_5_);
+-        return f < 0.0F ? 0.0F : (!p_149737_1_.func_146099_a(this) ? p_149737_1_.func_146096_a(this, false) / f / 100.0F : p_149737_1_.func_146096_a(this, true) / f / 30.0F);
 +        return ForgeHooks.blockStrength(this, p_149737_1_, p_149737_2_, p_149737_3_, p_149737_4_, p_149737_5_);
      }
  
-     // JAVADOC METHOD $$ func_149697_b
-@@ -680,18 +708,14 @@
+     public final void func_149697_b(World p_149697_1_, int p_149697_2_, int p_149697_3_, int p_149697_4_, int p_149697_5_, int p_149697_6_)
+@@ -622,18 +650,14 @@
      {
-         if (!p_149690_1_.isRemote)
+         if (!p_149690_1_.field_72995_K)
          {
--            int j1 = this.quantityDroppedWithBonus(p_149690_7_, p_149690_1_.rand);
+-            int j1 = this.func_149679_a(p_149690_7_, p_149690_1_.field_73012_v);
 +            ArrayList<ItemStack> items = getDrops(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_7_);
 +            p_149690_6_ = ForgeEventFactory.fireBlockHarvesting(items, p_149690_1_, this, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_7_, p_149690_6_, false, harvesters.get());
  
 -            for (int k1 = 0; k1 < j1; ++k1)
 +            for (ItemStack item : items)
              {
-                 if (p_149690_1_.rand.nextFloat() <= p_149690_6_)
+                 if (p_149690_1_.field_73012_v.nextFloat() <= p_149690_6_)
                  {
--                    Item item = this.getItemDropped(p_149690_5_, p_149690_1_.rand, p_149690_7_);
+-                    Item item = this.func_149650_a(p_149690_5_, p_149690_1_.field_73012_v, p_149690_7_);
 -
 -                    if (item != null)
 -                    {
--                        this.dropBlockAsItem(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(item, 1, this.damageDropped(p_149690_5_)));
+-                        this.func_149642_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(item, 1, this.func_149692_a(p_149690_5_)));
 -                    }
-+                    this.dropBlockAsItem(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, item);
++                    this.func_149642_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, item);
                  }
              }
          }
-@@ -897,7 +921,7 @@
-     // JAVADOC METHOD $$ func_149742_c
-     public boolean canPlaceBlockAt(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
+@@ -827,7 +851,7 @@
+ 
+     public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
      {
--        return p_149742_1_.getBlock(p_149742_2_, p_149742_3_, p_149742_4_).blockMaterial.isReplaceable();
-+        return p_149742_1_.getBlock(p_149742_2_, p_149742_3_, p_149742_4_).isReplaceable(p_149742_1_, p_149742_2_, p_149742_3_, p_149742_4_);
+-        return p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_, p_149742_4_).field_149764_J.func_76222_j();
++        return p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_, p_149742_4_).isReplaceable(p_149742_1_, p_149742_2_, p_149742_3_, p_149742_4_);
      }
  
-     // JAVADOC METHOD $$ func_149727_a
-@@ -1008,26 +1032,36 @@
-         p_149636_2_.addStat(StatList.mineBlockStatArray[getIdFromBlock(this)], 1);
-         p_149636_2_.addExhaustion(0.025F);
+     public boolean func_149727_a(World p_149727_1_, int p_149727_2_, int p_149727_3_, int p_149727_4_, EntityPlayer p_149727_5_, int p_149727_6_, float p_149727_7_, float p_149727_8_, float p_149727_9_)
+@@ -920,25 +944,35 @@
+         p_149636_2_.func_71064_a(StatList.field_75934_C[func_149682_b(this)], 1);
+         p_149636_2_.func_71020_j(0.025F);
  
--        if (this.canSilkHarvest() && EnchantmentHelper.getSilkTouchModifier(p_149636_2_))
-+        if (this.canSilkHarvest(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_) && EnchantmentHelper.getSilkTouchModifier(p_149636_2_))
+-        if (this.func_149700_E() && EnchantmentHelper.func_77502_d(p_149636_2_))
++        if (this.canSilkHarvest(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_) && EnchantmentHelper.func_77502_d(p_149636_2_))
          {
 +            ArrayList<ItemStack> items = new ArrayList<ItemStack>();
-             ItemStack itemstack = this.createStackedBlock(p_149636_6_);
+             ItemStack itemstack = this.func_149644_j(p_149636_6_);
  
              if (itemstack != null)
              {
--                this.dropBlockAsItem(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, itemstack);
+-                this.func_149642_a(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, itemstack);
 +                items.add(itemstack);
              }
 +
 +            ForgeEventFactory.fireBlockHarvesting(items, p_149636_1_, this, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_, 0, 1.0f, true, p_149636_2_);
 +            for (ItemStack is : items)
 +            {
-+                this.dropBlockAsItem(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, is);
++                this.func_149642_a(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, is);
 +            }
          }
          else
          {
 +            harvesters.set(p_149636_2_);
-             int i1 = EnchantmentHelper.getFortuneModifier(p_149636_2_);
-             this.dropBlockAsItem(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_, i1);
+             int i1 = EnchantmentHelper.func_77517_e(p_149636_2_);
+             this.func_149697_b(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_, i1);
 +            harvesters.set(null);
          }
      }
  
-     // JAVADOC METHOD $$ func_149700_E
-     protected boolean canSilkHarvest()
+     protected boolean func_149700_E()
      {
--        return this.renderAsNormalBlock() && !this.isBlockContainer;
+-        return this.func_149686_d() && !this.field_149758_A;
 +        Integer meta = silk_check_meta.get();
-+        return this.renderAsNormalBlock() && !this.hasTileEntity(meta == null ? 0 : meta);
++        return this.func_149686_d() && !this.hasTileEntity(meta == null ? 0 : meta);
      }
  
-     // JAVADOC METHOD $$ func_149644_j
-@@ -1228,6 +1262,1065 @@
+     protected ItemStack func_149644_j(int p_149644_1_)
+@@ -1114,6 +1148,1065 @@
          return null;
      }
  
@@ -206,12 +205,12 @@
 +     */
 +    public int getLightValue(IBlockAccess world, int x, int y, int z)
 +    {
-+        Block block = world.getBlock(x, y, z);
++        Block block = world.func_147439_a(x, y, z);
 +        if (block != this)
 +        {
 +            return block.getLightValue(world, x, y, z);
 +        }
-+        return getLightValue();
++        return func_149750_m();
 +    }
 +
 +    /**
@@ -242,7 +241,7 @@
 +     */
 +    public boolean isNormalCube(IBlockAccess world, int x, int y, int z)
 +    {
-+        return getMaterial().isOpaque() && renderAsNormalBlock() && !canProvidePower();
++        return func_149688_o().func_76218_k() && func_149686_d() && !func_149744_f();
 +    }
 +
 +    /**
@@ -257,7 +256,7 @@
 +     */
 +    public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side)
 +    {
-+        int meta = world.getBlockMetadata(x, y, z);
++        int meta = world.func_72805_g(x, y, z);
 +
 +        if (this instanceof BlockSlab)
 +        {
@@ -299,7 +298,7 @@
 +     */
 +    public boolean isReplaceable(IBlockAccess world, int x, int y, int z)
 +    {
-+        return blockMaterial.isReplaceable();
++        return field_149764_J.func_76222_j();
 +    }
 +
 +    /**
@@ -331,7 +330,7 @@
 +     */
 +    public boolean isAir(IBlockAccess world, int x, int y, int z)
 +    {
-+        return getMaterial() == Material.air;
++        return func_149688_o() == Material.field_151579_a;
 +    }
 +
 +    /**
@@ -366,7 +365,7 @@
 +     */
 +    public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z)
 +    {
-+        return world.setBlockToAir(x, y, z);
++        return world.func_147468_f(x, y, z);
 +    }
 +
 +    /**
@@ -382,7 +381,7 @@
 +     */
 +    public int getFlammability(IBlockAccess world, int x, int y, int z, ForgeDirection face)
 +    {
-+        return Blocks.fire.getFlammability(this);
++        return Blocks.field_150480_ab.getFlammability(this);
 +    }
 +
 +    /**
@@ -414,7 +413,7 @@
 +     */
 +    public int getFireSpreadSpeed(IBlockAccess world, int x, int y, int z, ForgeDirection face)
 +    {
-+        return Blocks.fire.getEncouragement(this);
++        return Blocks.field_150480_ab.getEncouragement(this);
 +    }
 +
 +    /**
@@ -432,11 +431,11 @@
 +     */
 +    public boolean isFireSource(World world, int x, int y, int z, ForgeDirection side)
 +    {
-+        if (this == Blocks.netherrack && side == UP)
++        if (this == Blocks.field_150424_aL && side == UP)
 +        {
 +            return true;
 +        }
-+        if ((world.provider instanceof WorldProviderEnd) && this == Blocks.bedrock && side == UP)
++        if ((world.field_73011_w instanceof WorldProviderEnd) && this == Blocks.field_150357_h && side == UP)
 +        {
 +            return true;
 +        }
@@ -471,7 +470,7 @@
 +    {
 +        if (isTileProvider)
 +        {
-+            return ((ITileEntityProvider)this).createNewTileEntity(world, metadata);
++            return ((ITileEntityProvider)this).func_149915_a(world, metadata);
 +        }
 +        return null;
 +    }
@@ -487,7 +486,7 @@
 +     */
 +    public int quantityDropped(int meta, int fortune, Random random)
 +    {
-+        return quantityDroppedWithBonus(fortune, random);
++        return func_149679_a(fortune, random);
 +    }
 +
 +    /**
@@ -505,13 +504,13 @@
 +    {
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
 +
-+        int count = quantityDropped(metadata, fortune, world.rand);
++        int count = quantityDropped(metadata, fortune, world.field_73012_v);
 +        for(int i = 0; i < count; i++)
 +        {
-+            Item item = getItemDropped(metadata, world.rand, fortune);
++            Item item = func_149650_a(metadata, world.field_73012_v, fortune);
 +            if (item != null)
 +            {
-+                ret.add(new ItemStack(item, 1, damageDropped(metadata)));
++                ret.add(new ItemStack(item, 1, func_149692_a(metadata)));
 +            }
 +        }
 +        return ret;
@@ -531,7 +530,7 @@
 +    public boolean canSilkHarvest(World world, EntityPlayer player, int x, int y, int z, int metadata)
 +    {
 +        silk_check_meta.set(metadata);;
-+        boolean ret = this.canSilkHarvest();
++        boolean ret = this.func_149700_E();
 +        silk_check_meta.set(null);
 +        return ret;
 +    }
@@ -549,7 +548,7 @@
 +     */
 +    public boolean canCreatureSpawn(EnumCreatureType type, IBlockAccess world, int x, int y, int z)
 +    {
-+        int meta = world.getBlockMetadata(x, y, z);
++        int meta = world.func_72805_g(x, y, z);
 +        if (this instanceof BlockSlab)
 +        {
 +            return (((meta & 8) == 8) || func_149730_j());
@@ -575,7 +574,7 @@
 +     */
 +    public boolean isBed(IBlockAccess world, int x, int y, int z, EntityLivingBase player)
 +    {
-+        return this == Blocks.bed;
++        return this == Blocks.field_150324_C;
 +    }
 +
 +    /**
@@ -624,7 +623,7 @@
 +     */
 +    public int getBedDirection(IBlockAccess world, int x, int y, int z)
 +    {
-+        return BlockBed.getDirection(world.getBlockMetadata(x,  y, z));
++        return BlockBed.func_149895_l(world.func_72805_g(x,  y, z));
 +    }
 +
 +    /**
@@ -638,7 +637,7 @@
 +     */
 +    public boolean isBedFoot(IBlockAccess world, int x, int y, int z)
 +    {
-+        return BlockBed.isBlockHeadOfBed(world.getBlockMetadata(x,  y, z));
++        return BlockBed.func_149975_b(world.func_72805_g(x,  y, z));
 +    }
 +
 +    /**
@@ -676,7 +675,7 @@
 +     */
 +    public boolean isLeaves(IBlockAccess world, int x, int y, int z)
 +    {
-+        return getMaterial() == Material.leaves;
++        return func_149688_o() == Material.field_151584_j;
 +    }
 +
 +    /**
@@ -737,7 +736,7 @@
 +     */
 +    public float getExplosionResistance(Entity par1Entity, World world, int x, int y, int z, double explosionX, double explosionY, double explosionZ)
 +    {
-+        return getExplosionResistance(par1Entity);
++        return func_149638_a(par1Entity);
 +    }
 +
 +    /**
@@ -753,8 +752,8 @@
 +     */
 +    public void onBlockExploded(World world, int x, int y, int z, Explosion explosion)
 +    {
-+        world.setBlockToAir(x, y, z);
-+        onBlockDestroyedByExplosion(world, x, y, z, explosion);
++        world.func_147468_f(x, y, z);
++        func_149723_a(world, x, y, z, explosion);
 +    }
 +
 +    /**
@@ -777,7 +776,7 @@
 +     */
 +    public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side)
 +    {
-+        return canProvidePower() && side != -1;
++        return func_149744_f() && side != -1;
 +    }
 +
 +    /**
@@ -798,7 +797,7 @@
 +        }
 +        else
 +        {
-+            return this == Blocks.fence || this == Blocks.nether_brick_fence || this == Blocks.glass || this == Blocks.cobblestone_wall;
++            return this == Blocks.field_150422_aJ || this == Blocks.field_150386_bk || this == Blocks.field_150359_w || this == Blocks.field_150463_bK;
 +        }
 +    }
 +
@@ -810,7 +809,7 @@
 +     */
 +    public boolean canRenderInPass(int pass)
 +    {
-+        return pass == getRenderBlockPass();
++        return pass == func_149701_w();
 +    }
 +
 +    /**
@@ -821,15 +820,15 @@
 +     */
 +    public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z)
 +    {
-+        Item item = getItem(world, x, y, z);
++        Item item = func_149694_d(world, x, y, z);
 +
 +        if (item == null)
 +        {
 +            return null;
 +        }
 +
-+        Block block = item instanceof ItemBlock && !isFlowerPot() ? Block.getBlockFromItem(item) : this;
-+        return new ItemStack(item, 1, block.getDamageValue(world, x, y, z));
++        Block block = item instanceof ItemBlock && !func_149648_K() ? Block.func_149634_a(item) : this;
++        return new ItemStack(item, 1, block.func_149643_k(world, x, y, z));
 +    }
 +
 +    /**
@@ -904,35 +903,35 @@
 +        Block plant = plantable.getPlant(world, x, y + 1, z);
 +        EnumPlantType plantType = plantable.getPlantType(world, x, y + 1, z);
 +
-+        if (plant == Blocks.cactus && this == Blocks.cactus)
++        if (plant == Blocks.field_150434_aF && this == Blocks.field_150434_aF)
 +        {
 +            return true;
 +        }
 +
-+        if (plant == Blocks.reeds && this == Blocks.reeds)
++        if (plant == Blocks.field_150436_aH && this == Blocks.field_150436_aH)
 +        {
 +            return true;
 +        }
 +
-+        if (plantable instanceof BlockBush && ((BlockBush)plantable).canPlaceBlockOn(this))
++        if (plantable instanceof BlockBush && ((BlockBush)plantable).func_149854_a(this))
 +        {
 +            return true;
 +        }
 +
 +        switch (plantType)
 +        {
-+            case Desert: return this == Blocks.sand;
-+            case Nether: return this == Blocks.soul_sand;
-+            case Crop:   return this == Blocks.farmland;
++            case Desert: return this == Blocks.field_150354_m;
++            case Nether: return this == Blocks.field_150425_aM;
++            case Crop:   return this == Blocks.field_150458_ak;
 +            case Cave:   return isSideSolid(world, x, y, z, UP);
-+            case Plains: return this == Blocks.grass || this == Blocks.dirt;
-+            case Water:  return world.getBlock(x, y, z).getMaterial() == Material.water && world.getBlockMetadata(x, y, z) == 0;
++            case Plains: return this == Blocks.field_150349_c || this == Blocks.field_150346_d;
++            case Water:  return world.func_147439_a(x, y, z).func_149688_o() == Material.field_151586_h && world.func_72805_g(x, y, z) == 0;
 +            case Beach:
-+                boolean isBeach = this == Blocks.grass || this == Blocks.dirt || this == Blocks.sand;
-+                boolean hasWater = (world.getBlock(x - 1, y, z    ).getMaterial() == Material.water ||
-+                                    world.getBlock(x + 1, y, z    ).getMaterial() == Material.water ||
-+                                    world.getBlock(x,     y, z - 1).getMaterial() == Material.water ||
-+                                    world.getBlock(x,     y, z + 1).getMaterial() == Material.water);
++                boolean isBeach = this == Blocks.field_150349_c || this == Blocks.field_150346_d || this == Blocks.field_150354_m;
++                boolean hasWater = (world.func_147439_a(x - 1, y, z    ).func_149688_o() == Material.field_151586_h ||
++                                    world.func_147439_a(x + 1, y, z    ).func_149688_o() == Material.field_151586_h ||
++                                    world.func_147439_a(x,     y, z - 1).func_149688_o() == Material.field_151586_h ||
++                                    world.func_147439_a(x,     y, z + 1).func_149688_o() == Material.field_151586_h);
 +                return isBeach && hasWater;
 +        }
 +
@@ -958,9 +957,9 @@
 +     */
 +    public void onPlantGrow(World world, int x, int y, int z, int sourceX, int sourceY, int sourceZ)
 +    {
-+        if (this == Blocks.grass || this == Blocks.farmland)
++        if (this == Blocks.field_150349_c || this == Blocks.field_150458_ak)
 +        {
-+            world.setBlock(x, y, z, Blocks.dirt, 0, 2);
++            world.func_147465_d(x, y, z, Blocks.field_150346_d, 0, 2);
 +        }
 +    }
 +
@@ -977,9 +976,9 @@
 +     */
 +    public boolean isFertile(World world, int x, int y, int z)
 +    {
-+        if (this == Blocks.farmland)
++        if (this == Blocks.field_150458_ak)
 +        {
-+            return world.getBlockMetadata(x, y, z) > 0;
++            return world.func_72805_g(x, y, z) > 0;
 +        }
 +
 +        return false;
@@ -1001,7 +1000,7 @@
 +     */
 +    public int getLightOpacity(IBlockAccess world, int x, int y, int z)
 +    {
-+        return getLightOpacity();
++        return func_149717_k();
 +    }
 +
 +    /**
@@ -1017,11 +1016,11 @@
 +    {
 +        if (entity instanceof EntityWither)
 +        {
-+            return this != Blocks.bedrock && this != Blocks.end_portal && this != Blocks.end_portal_frame && this != Blocks.command_block;
++            return this != Blocks.field_150357_h && this != Blocks.field_150384_bq && this != Blocks.field_150378_br && this != Blocks.field_150483_bI;
 +        }
 +        else if (entity instanceof EntityDragon)
 +        {
-+            return this != Blocks.obsidian && this != Blocks.end_stone && this != Blocks.bedrock; 
++            return this != Blocks.field_150343_Z && this != Blocks.field_150377_bs && this != Blocks.field_150357_h; 
 +        }
 +
 +        return true;
@@ -1041,7 +1040,7 @@
 +     */
 +    public boolean isBeaconBase(IBlockAccess worldObj, int x, int y, int z, int beaconX, int beaconY, int beaconZ)
 +    {
-+        return this == Blocks.emerald_block || this == Blocks.gold_block || this == Blocks.diamond_block || this == Blocks.iron_block;
++        return this == Blocks.field_150475_bE || this == Blocks.field_150340_R || this == Blocks.field_150484_ah || this == Blocks.field_150339_S;
 +    }
 +
 +    /**
@@ -1086,7 +1085,7 @@
 +     */
 +    public float getEnchantPowerBonus(World world, int x, int y, int z)
 +    {
-+        return this == Blocks.bookshelf ? 1 : 0;
++        return this == Blocks.field_150342_X ? 1 : 0;
 +    }
 +
 +    /**
@@ -1101,12 +1100,12 @@
 +     */
 +    public boolean recolourBlock(World world, int x, int y, int z, ForgeDirection side, int colour)
 +    {
-+        if (this == Blocks.wool)
++        if (this == Blocks.field_150325_L)
 +        {
-+            int meta = world.getBlockMetadata(x, y, z);
++            int meta = world.func_72805_g(x, y, z);
 +            if (meta != colour)
 +            {
-+                world.setBlockMetadataWithNotify(x, y, z, colour, 3);
++                world.func_72921_c(x, y, z, colour, 3);
 +                return true;
 +            }
 +        }
@@ -1151,7 +1150,7 @@
 +     */
 +    public boolean shouldCheckWeakPower(IBlockAccess world, int x, int y, int z, int side)
 +    {
-+        return isNormalCube();
++        return func_149721_r();
 +    }
 +
 +    /**
@@ -1244,7 +1243,7 @@
 +     */
 +    public boolean isToolEffective(String type, int metadata)
 +    {
-+        if ("pickaxe".equals(type) && (this == Blocks.redstone_ore || this == Blocks.lit_redstone_ore || this == Blocks.obsidian))
++        if ("pickaxe".equals(type) && (this == Blocks.field_150450_ax || this == Blocks.field_150439_ay || this == Blocks.field_150343_Z))
 +            return false;
 +        if (harvestTool[metadata] == null) return false;
 +        return harvestTool[metadata].equals(type);
@@ -1253,4 +1252,4 @@
 +
      public static class SoundType
          {
-             public final String soundName;
+             public final String field_150501_a;

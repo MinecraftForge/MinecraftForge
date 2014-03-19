@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/Enchantment.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/Enchantment.java
-@@ -157,6 +157,36 @@
+@@ -123,6 +123,36 @@
  
      public void func_151367_b(EntityLivingBase p_151367_1_, Entity p_151367_2_, int p_151367_3_) {}
  
@@ -12,7 +12,7 @@
 +     */
 +    public boolean canApplyAtEnchantingTable(ItemStack stack)
 +    {
-+        return canApply(stack);
++        return func_92089_a(stack);
 +    }
 +
 +    /**
@@ -22,7 +22,7 @@
 +     */
 +    public static void addToBookList(Enchantment enchantment)
 +    {
-+        com.google.common.collect.ObjectArrays.concat(enchantmentsBookList, enchantment);
++        com.google.common.collect.ObjectArrays.concat(field_92090_c, enchantment);
 +    }
 +
 +    /**

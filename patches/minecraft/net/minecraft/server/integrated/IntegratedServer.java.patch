@@ -10,27 +10,27 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -55,44 +58,23 @@
-     protected void loadAllWorlds(String par1Str, String par2Str, long par3, WorldType par5WorldType, String par6Str)
+@@ -54,44 +57,23 @@
+     protected void func_71247_a(String p_71247_1_, String p_71247_2_, long p_71247_3_, WorldType p_71247_5_, String p_71247_6_)
      {
-         this.convertMapIfNeeded(par1Str);
--        this.worldServers = new WorldServer[3];
--        this.timeOfLastDimensionTick = new long[this.worldServers.length][100];
-         ISaveHandler isavehandler = this.getActiveAnvilConverter().getSaveLoader(par1Str, true);
+         this.func_71237_c(p_71247_1_);
+-        this.field_71305_c = new WorldServer[3];
+-        this.field_71312_k = new long[this.field_71305_c.length][100];
+         ISaveHandler isavehandler = this.func_71254_M().func_75804_a(p_71247_1_, true);
  
--        for (int j = 0; j < this.worldServers.length; ++j)
-+        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, isavehandler, par2Str, 0, theProfiler) : new WorldServer(this, isavehandler, par2Str, 0, theWorldSettings, theProfiler));
+-        for (int j = 0; j < this.field_71305_c.length; ++j)
++        WorldServer overWorld = (func_71242_L() ? new DemoWorldServer(this, isavehandler, p_71247_2_, 0, field_71304_b) : new WorldServer(this, isavehandler, p_71247_2_, 0, field_71350_m, field_71304_b));
 +        for (int dim : DimensionManager.getStaticDimensionIDs())
          {
 -            byte b0 = 0;
-+            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, isavehandler, par2Str, dim, theWorldSettings, overWorld, theProfiler));
-+            world.addWorldAccess(new WorldManager(this, world));
++            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, isavehandler, p_71247_2_, dim, field_71350_m, overWorld, field_71304_b));
++            world.func_72954_a(new WorldManager(this, world));
  
 -            if (j == 1)
-+            if (!this.isSinglePlayer())
++            if (!this.func_71264_H())
              {
 -                b0 = -1;
-+                world.getWorldInfo().setGameType(getGameType());
++                world.func_72912_H().func_76060_a(func_71265_f());
              }
  
 -            if (j == 2)
@@ -40,26 +40,26 @@
 -
 -            if (j == 0)
 -            {
--                if (this.isDemo())
+-                if (this.func_71242_L())
 -                {
--                    this.worldServers[j] = new DemoWorldServer(this, isavehandler, par2Str, b0, this.theProfiler);
+-                    this.field_71305_c[j] = new DemoWorldServer(this, isavehandler, p_71247_2_, b0, this.field_71304_b);
 -                }
 -                else
 -                {
--                    this.worldServers[j] = new WorldServer(this, isavehandler, par2Str, b0, this.theWorldSettings, this.theProfiler);
+-                    this.field_71305_c[j] = new WorldServer(this, isavehandler, p_71247_2_, b0, this.field_71350_m, this.field_71304_b);
 -                }
 -            }
 -            else
 -            {
--                this.worldServers[j] = new WorldServerMulti(this, isavehandler, par2Str, b0, this.theWorldSettings, this.worldServers[0], this.theProfiler);
+-                this.field_71305_c[j] = new WorldServerMulti(this, isavehandler, p_71247_2_, b0, this.field_71350_m, this.field_71305_c[0], this.field_71304_b);
 -            }
 -
--            this.worldServers[j].addWorldAccess(new WorldManager(this, this.worldServers[j]));
--            this.getConfigurationManager().setPlayerManager(this.worldServers);
+-            this.field_71305_c[j].func_72954_a(new WorldManager(this, this.field_71305_c[j]));
+-            this.func_71203_ab().func_72364_a(this.field_71305_c);
 +            MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
          }
  
-+        this.getConfigurationManager().setPlayerManager(new WorldServer[]{ overWorld });
++        this.func_71203_ab().func_72364_a(new WorldServer[]{ overWorld });
          this.func_147139_a(this.func_147135_j());
-         this.initialWorldChunkLoad();
+         this.func_71222_d();
      }

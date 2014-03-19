@@ -8,27 +8,27 @@
  import java.io.BufferedInputStream;
  import java.io.ByteArrayInputStream;
  import java.io.ByteArrayOutputStream;
-@@ -92,7 +90,6 @@
+@@ -90,7 +88,6 @@
          return bytearrayoutputstream.toByteArray();
      }
  
 -    @SideOnly(Side.CLIENT)
-     public static void safeWrite(NBTTagCompound par0NBTTagCompound, File par1File) throws IOException
+     public static void func_74793_a(NBTTagCompound p_74793_0_, File p_74793_1_) throws IOException
      {
-         File file2 = new File(par1File.getAbsolutePath() + "_tmp");
-@@ -179,7 +176,6 @@
+         File file2 = new File(p_74793_1_.getAbsolutePath() + "_tmp");
+@@ -176,7 +173,6 @@
          }
      }
  
 -    @SideOnly(Side.CLIENT)
-     public static void write(NBTTagCompound par0NBTTagCompound, File par1File) throws IOException
+     public static void func_74795_b(NBTTagCompound p_74795_0_, File p_74795_1_) throws IOException
      {
-         DataOutputStream dataoutputstream = new DataOutputStream(new FileOutputStream(par1File));
-@@ -194,7 +190,6 @@
+         DataOutputStream dataoutputstream = new DataOutputStream(new FileOutputStream(p_74795_1_));
+@@ -191,7 +187,6 @@
          }
      }
  
 -    @SideOnly(Side.CLIENT)
-     public static NBTTagCompound read(File par0File) throws IOException
+     public static NBTTagCompound func_74797_a(File p_74797_0_) throws IOException
      {
-         if (!par0File.exists())
+         if (!p_74797_0_.exists())

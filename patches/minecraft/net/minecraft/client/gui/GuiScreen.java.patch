@@ -1,20 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiScreen.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiScreen.java
-@@ -123,7 +123,9 @@
+@@ -111,7 +111,9 @@
              }
          }
  
-+        FontRenderer font = p_146285_1_.getItem().getFontRenderer(p_146285_1_);
++        FontRenderer font = p_146285_1_.func_77973_b().getFontRenderer(p_146285_1_);
          this.func_146283_a(list, p_146285_2_, p_146285_3_);
-+        drawHoveringText(list, p_146285_2_, p_146285_3_, (font == null ? fontRendererObj : font));
++        drawHoveringText(list, p_146285_2_, p_146285_3_, (font == null ? field_146289_q : font));
      }
  
-     // JAVADOC METHOD $$ func_146279_a
-@@ -134,6 +136,11 @@
+     protected void func_146279_a(String p_146279_1_, int p_146279_2_, int p_146279_3_)
+@@ -121,6 +123,11 @@
  
      protected void func_146283_a(List p_146283_1_, int p_146283_2_, int p_146283_3_)
      {
-+        drawHoveringText(p_146283_1_, p_146283_2_, p_146283_3_, fontRendererObj);   
++        drawHoveringText(p_146283_1_, p_146283_2_, p_146283_3_, field_146289_q);   
 +    }
 +
 +    protected void drawHoveringText(List p_146283_1_, int p_146283_2_, int p_146283_3_, FontRenderer font)
@@ -22,21 +22,21 @@
          if (!p_146283_1_.isEmpty())
          {
              GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-@@ -146,7 +153,7 @@
+@@ -133,7 +140,7 @@
              while (iterator.hasNext())
              {
                  String s = (String)iterator.next();
--                int l = this.fontRendererObj.getStringWidth(s);
-+                int l = font.getStringWidth(s);
+-                int l = this.field_146289_q.func_78256_a(s);
++                int l = font.func_78256_a(s);
  
                  if (l > k)
                  {
-@@ -191,7 +198,7 @@
+@@ -178,7 +185,7 @@
              for (int i2 = 0; i2 < p_146283_1_.size(); ++i2)
              {
                  String s1 = (String)p_146283_1_.get(i2);
--                this.fontRendererObj.drawStringWithShadow(s1, j2, k2, -1);
-+                font.drawStringWithShadow(s1, j2, k2, -1);
+-                this.field_146289_q.func_78261_a(s1, j2, k2, -1);
++                font.func_78261_a(s1, j2, k2, -1);
  
                  if (i2 == 0)
                  {

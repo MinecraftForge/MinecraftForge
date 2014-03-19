@@ -15,18 +15,18 @@
  {
      @SideOnly(Side.CLIENT)
      private IIcon field_150041_a;
-@@ -135,7 +139,7 @@
+@@ -125,7 +129,7 @@
          else
          {
-             Block block = p_149718_1_.getBlock(p_149718_2_, p_149718_3_ - 1, p_149718_4_);
--            return block == Blocks.cactus || block == Blocks.sand;
+             Block block = p_149718_1_.func_147439_a(p_149718_2_, p_149718_3_ - 1, p_149718_4_);
+-            return block == Blocks.field_150434_aF || block == Blocks.field_150354_m;
 +            return block.canSustainPlant(p_149718_1_, p_149718_2_, p_149718_3_ - 1, p_149718_4_, ForgeDirection.UP, this);
          }
      }
  
-@@ -152,4 +156,22 @@
-         this.field_150041_a = p_149651_1_.registerIcon(this.getTextureName() + "_top");
-         this.field_150040_b = p_149651_1_.registerIcon(this.getTextureName() + "_bottom");
+@@ -141,4 +145,22 @@
+         this.field_150041_a = p_149651_1_.func_94245_a(this.func_149641_N() + "_top");
+         this.field_150040_b = p_149651_1_.func_94245_a(this.func_149641_N() + "_bottom");
      }
 +
 +    @Override

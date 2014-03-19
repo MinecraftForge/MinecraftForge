@@ -8,58 +8,58 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.tileentity.TileEntityPiston;
  import net.minecraft.util.AxisAlignedBB;
-@@ -380,7 +381,8 @@
+@@ -360,7 +361,8 @@
                  return false;
              }
  
 -            return !(p_150080_0_ instanceof ITileEntityProvider);
-+            return !(p_150080_1_.getBlock(p_150080_2_, p_150080_3_, p_150080_4_).hasTileEntity(p_150080_1_.getBlockMetadata(p_150080_2_, p_150080_3_, p_150080_4_)));
++            return !(p_150080_1_.func_147439_a(p_150080_2_, p_150080_3_, p_150080_4_).hasTileEntity(p_150080_1_.func_72805_g(p_150080_2_, p_150080_3_, p_150080_4_)));
 +            
          }
      }
  
-@@ -396,14 +398,14 @@
+@@ -375,14 +377,14 @@
          {
              if (l1 < 13)
              {
 -                if (j1 <= 0 || j1 >= 255)
-+                if (j1 <= 0 || j1 >= p_150077_0_.getHeight())
++                if (j1 <= 0 || j1 >= p_150077_0_.func_72800_K())
                  {
                      return false;
                  }
  
-                 Block block = p_150077_0_.getBlock(i1, j1, k1);
+                 Block block = p_150077_0_.func_147439_a(i1, j1, k1);
  
--                if (block.getMaterial() != Material.air)
+-                if (block.func_149688_o() != Material.field_151579_a)
 +                if (!block.isAir(p_150077_0_, i1, j1, k1))
                  {
-                     if (!canPushBlock(block, p_150077_0_, i1, j1, k1, true))
+                     if (!func_150080_a(block, p_150077_0_, i1, j1, k1, true))
                      {
-@@ -442,14 +444,14 @@
+@@ -420,14 +422,14 @@
          {
              if (l1 < 13)
              {
 -                if (j1 <= 0 || j1 >= 255)
-+                if (j1 <= 0 || j1 >= p_150079_1_.getHeight())
++                if (j1 <= 0 || j1 >= p_150079_1_.func_72800_K())
                  {
                      return false;
                  }
  
-                 Block block = p_150079_1_.getBlock(i1, j1, k1);
+                 Block block = p_150079_1_.func_147439_a(i1, j1, k1);
  
--                if (block.getMaterial() != Material.air)
+-                if (block.func_149688_o() != Material.field_151579_a)
 +                if (!block.isAir(p_150079_1_, i1, j1, k1))
                  {
-                     if (!canPushBlock(block, p_150079_1_, i1, j1, k1, true))
+                     if (!func_150080_a(block, p_150079_1_, i1, j1, k1, true))
                      {
-@@ -470,7 +472,9 @@
+@@ -448,7 +450,9 @@
                          continue;
                      }
  
--                    block.dropBlockAsItem(p_150079_1_, i1, j1, k1, p_150079_1_.getBlockMetadata(i1, j1, k1), 0);
+-                    block.func_149697_b(p_150079_1_, i1, j1, k1, p_150079_1_.func_72805_g(i1, j1, k1), 0);
 +                    //With our change to how snowballs are dropped this needs to disallow to mimic vanilla behavior.
 +                    float chance = block instanceof BlockSnow ? -1.0f : 1.0f;
-+                    block.dropBlockAsItemWithChance(p_150079_1_, i1, j1, k1, p_150079_1_.getBlockMetadata(i1, j1, k1), chance, 0);
-                     p_150079_1_.setBlockToAir(i1, j1, k1);
++                    block.func_149690_a(p_150079_1_, i1, j1, k1, p_150079_1_.func_72805_g(i1, j1, k1), chance, 0);
+                     p_150079_1_.func_147468_f(i1, j1, k1);
                  }
              }

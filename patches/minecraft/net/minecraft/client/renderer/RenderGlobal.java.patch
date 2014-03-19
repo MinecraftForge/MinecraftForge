@@ -10,121 +10,152 @@
  @SideOnly(Side.CLIENT)
  public class RenderGlobal implements IWorldAccess
  {
-@@ -413,8 +416,10 @@
-     // JAVADOC METHOD $$ func_147589_a
-     public void renderEntities(EntityLivingBase p_147589_1_, ICamera p_147589_2_, float p_147589_3_)
+@@ -375,8 +378,10 @@
+ 
+     public void func_147589_a(EntityLivingBase p_147589_1_, ICamera p_147589_2_, float p_147589_3_)
      {
 +        int pass = MinecraftForgeClient.getRenderPass();
-         if (this.renderEntitiesStartupCounter > 0)
+         if (this.field_72740_G > 0)
          {
 +            if (pass > 0) return;
-             --this.renderEntitiesStartupCounter;
+             --this.field_72740_G;
          }
          else
-@@ -425,9 +430,12 @@
-             this.theWorld.theProfiler.startSection("prepare");
-             TileEntityRendererDispatcher.instance.cacheActiveRenderInfo(this.theWorld, this.mc.getTextureManager(), this.mc.fontRenderer, this.mc.renderViewEntity, p_147589_3_);
-             RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.mc.getTextureManager(), this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.pointedEntity, this.mc.gameSettings, p_147589_3_);
+@@ -387,9 +392,12 @@
+             this.field_72769_h.field_72984_F.func_76320_a("prepare");
+             TileEntityRendererDispatcher.field_147556_a.func_147542_a(this.field_72769_h, this.field_72777_q.func_110434_K(), this.field_72777_q.field_71466_p, this.field_72777_q.field_71451_h, p_147589_3_);
+             RenderManager.field_78727_a.func_147938_a(this.field_72769_h, this.field_72777_q.func_110434_K(), this.field_72777_q.field_71466_p, this.field_72777_q.field_71451_h, this.field_72777_q.field_147125_j, this.field_72777_q.field_71474_y, p_147589_3_);
 +            if (pass == 0) // no indentation to shrink patch
 +            {
-             this.countEntitiesTotal = 0;
-             this.countEntitiesRendered = 0;
-             this.countEntitiesHidden = 0;
+             this.field_72748_H = 0;
+             this.field_72749_I = 0;
+             this.field_72750_J = 0;
 +            }
-             EntityLivingBase entitylivingbase1 = this.mc.renderViewEntity;
-             double d3 = entitylivingbase1.lastTickPosX + (entitylivingbase1.posX - entitylivingbase1.lastTickPosX) * (double)p_147589_3_;
-             double d4 = entitylivingbase1.lastTickPosY + (entitylivingbase1.posY - entitylivingbase1.lastTickPosY) * (double)p_147589_3_;
-@@ -456,13 +464,17 @@
-             this.mc.entityRenderer.enableLightmap((double)p_147589_3_);
-             this.theWorld.theProfiler.endStartSection("global");
-             List list = this.theWorld.getLoadedEntityList();
+             EntityLivingBase entitylivingbase1 = this.field_72777_q.field_71451_h;
+             double d3 = entitylivingbase1.field_70142_S + (entitylivingbase1.field_70165_t - entitylivingbase1.field_70142_S) * (double)p_147589_3_;
+             double d4 = entitylivingbase1.field_70137_T + (entitylivingbase1.field_70163_u - entitylivingbase1.field_70137_T) * (double)p_147589_3_;
+@@ -418,13 +426,17 @@
+             this.field_72777_q.field_71460_t.func_78463_b((double)p_147589_3_);
+             this.field_72769_h.field_72984_F.func_76318_c("global");
+             List list = this.field_72769_h.func_72910_y();
 +            if (pass == 0) // no indentation for smaller patch size
 +            {
-             this.countEntitiesTotal = list.size();
+             this.field_72748_H = list.size();
 +            }
              Entity entity;
              int i;
  
-             for (i = 0; i < this.theWorld.weatherEffects.size(); ++i)
+             for (i = 0; i < this.field_72769_h.field_73007_j.size(); ++i)
              {
-                 entity = (Entity)this.theWorld.weatherEffects.get(i);
+                 entity = (Entity)this.field_72769_h.field_73007_j.get(i);
 +                if (!entity.shouldRenderInPass(pass)) continue;
-                 ++this.countEntitiesRendered;
+                 ++this.field_72749_I;
  
-                 if (entity.isInRangeToRender3d(d0, d1, d2))
-@@ -476,6 +488,7 @@
+                 if (entity.func_145770_h(d0, d1, d2))
+@@ -438,6 +450,7 @@
              for (i = 0; i < list.size(); ++i)
              {
                  entity = (Entity)list.get(i);
 +                if (!entity.shouldRenderInPass(pass)) continue;
-                 boolean flag = entity.isInRangeToRender3d(d0, d1, d2) && (entity.ignoreFrustumCheck || p_147589_2_.isBoundingBoxInFrustum(entity.boundingBox) || entity.riddenByEntity == this.mc.thePlayer);
+                 boolean flag = entity.func_145770_h(d0, d1, d2) && (entity.field_70158_ak || p_147589_2_.func_78546_a(entity.field_70121_D) || entity.field_70153_n == this.field_72777_q.field_71439_g);
  
                  if (!flag && entity instanceof EntityLiving)
-@@ -501,7 +514,11 @@
+@@ -463,7 +476,11 @@
  
-             for (i = 0; i < this.tileEntities.size(); ++i)
+             for (i = 0; i < this.field_147598_a.size(); ++i)
              {
--                TileEntityRendererDispatcher.instance.renderTileEntity((TileEntity)this.tileEntities.get(i), p_147589_3_);
-+                TileEntity tile = (TileEntity)this.tileEntities.get(i);
-+                if (tile.shouldRenderInPass(pass) && p_147589_2_.isBoundingBoxInFrustum(tile.getRenderBoundingBox()))
+-                TileEntityRendererDispatcher.field_147556_a.func_147544_a((TileEntity)this.field_147598_a.get(i), p_147589_3_);
++                TileEntity tile = (TileEntity)this.field_147598_a.get(i);
++                if (tile.shouldRenderInPass(pass) && p_147589_2_.func_78546_a(tile.getRenderBoundingBox()))
 +                {
-+                    TileEntityRendererDispatcher.instance.renderTileEntity(tile, p_147589_3_);
++                    TileEntityRendererDispatcher.field_147556_a.func_147544_a(tile, p_147589_3_);
 +                }
              }
  
-             this.mc.entityRenderer.disableLightmap((double)p_147589_3_);
-@@ -978,6 +995,12 @@
-     // JAVADOC METHOD $$ func_72714_a
-     public void renderSky(float par1)
+             this.field_72777_q.field_71460_t.func_78483_a((double)p_147589_3_);
+@@ -933,6 +950,12 @@
+ 
+     public void func_72714_a(float p_72714_1_)
      {
 +        IRenderHandler skyProvider = null;
-+        if ((skyProvider = this.mc.theWorld.provider.getSkyRenderer()) != null)
++        if ((skyProvider = this.field_72777_q.field_71441_e.field_73011_w.getSkyRenderer()) != null)
 +        {
-+            skyProvider.render(par1, this.theWorld, mc);
++            skyProvider.render(p_72714_1_, this.field_72769_h, field_72777_q);
 +            return;
 +        }
-         if (this.mc.theWorld.provider.dimensionId == 1)
+         if (this.field_72777_q.field_71441_e.field_73011_w.field_76574_g == 1)
          {
              GL11.glDisable(GL11.GL_FOG);
-@@ -1216,6 +1239,12 @@
+@@ -1171,6 +1194,12 @@
  
-     public void renderClouds(float par1)
+     public void func_72718_b(float p_72718_1_)
      {
 +        IRenderHandler renderer = null;
-+        if ((renderer = theWorld.provider.getCloudRenderer()) != null)
++        if ((renderer = field_72769_h.field_73011_w.getCloudRenderer()) != null)
 +        {
-+            renderer.render(par1, theWorld, mc);
++            renderer.render(p_72718_1_, field_72769_h, field_72777_q);
 +            return;
 +        }
-         if (this.mc.theWorld.provider.isSurfaceWorld())
+         if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d())
          {
-             if (this.mc.gameSettings.fancyGraphics)
-@@ -1619,6 +1648,11 @@
+             if (this.field_72777_q.field_71474_y.field_74347_j)
+@@ -1571,10 +1600,15 @@
  
-     public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityPlayer par2EntityPlayer, float par3)
+     public void func_72717_a(Tessellator p_72717_1_, EntityPlayer p_72717_2_, float p_72717_3_)
      {
-+        drawBlockDamageTexture(par1Tessellator, (EntityLivingBase)par2EntityPlayer, par3);
+-        double d0 = p_72717_2_.field_70142_S + (p_72717_2_.field_70165_t - p_72717_2_.field_70142_S) * (double)p_72717_3_;
+-        double d1 = p_72717_2_.field_70137_T + (p_72717_2_.field_70163_u - p_72717_2_.field_70137_T) * (double)p_72717_3_;
+-        double d2 = p_72717_2_.field_70136_U + (p_72717_2_.field_70161_v - p_72717_2_.field_70136_U) * (double)p_72717_3_;
++        drawBlockDamageTexture(p_72717_1_, (EntityLivingBase)p_72717_2_, p_72717_3_);
 +    }
-+
+ 
 +    public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityLivingBase par2EntityPlayer, float par3)
 +    {
-         double d0 = par2EntityPlayer.lastTickPosX + (par2EntityPlayer.posX - par2EntityPlayer.lastTickPosX) * (double)par3;
-         double d1 = par2EntityPlayer.lastTickPosY + (par2EntityPlayer.posY - par2EntityPlayer.lastTickPosY) * (double)par3;
-         double d2 = par2EntityPlayer.lastTickPosZ + (par2EntityPlayer.posZ - par2EntityPlayer.lastTickPosZ) * (double)par3;
-@@ -1845,12 +1879,15 @@
++        double d0 = par2EntityPlayer.field_70142_S + (par2EntityPlayer.field_70165_t - par2EntityPlayer.field_70142_S) * (double)par3;
++        double d1 = par2EntityPlayer.field_70137_T + (par2EntityPlayer.field_70163_u - par2EntityPlayer.field_70137_T) * (double)par3;
++        double d2 = par2EntityPlayer.field_70136_U + (par2EntityPlayer.field_70161_v - par2EntityPlayer.field_70136_U) * (double)par3;
++
+         if (!this.field_72738_E.isEmpty())
          {
-             ItemRecord itemrecord = ItemRecord.getRecord(par1Str);
+             OpenGlHelper.func_148821_a(774, 768, 1, 0);
+@@ -1584,9 +1618,9 @@
+             GL11.glPolygonOffset(-3.0F, -3.0F);
+             GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
+             GL11.glEnable(GL11.GL_ALPHA_TEST);
+-            p_72717_1_.func_78382_b();
+-            p_72717_1_.func_78373_b(-d0, -d1, -d2);
+-            p_72717_1_.func_78383_c();
++            par1Tessellator.func_78382_b();
++            par1Tessellator.func_78373_b(-d0, -d1, -d2);
++            par1Tessellator.func_78383_c();
+             Iterator iterator = this.field_72738_E.values().iterator();
+ 
+             while (iterator.hasNext())
+@@ -1611,8 +1645,8 @@
+                 }
+             }
+ 
+-            p_72717_1_.func_78381_a();
+-            p_72717_1_.func_78373_b(0.0D, 0.0D, 0.0D);
++            par1Tessellator.func_78381_a();
++            par1Tessellator.func_78373_b(0.0D, 0.0D, 0.0D);
+             GL11.glDisable(GL11.GL_ALPHA_TEST);
+             GL11.glPolygonOffset(0.0F, 0.0F);
+             GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
+@@ -1789,12 +1823,15 @@
+         {
+             ItemRecord itemrecord = ItemRecord.func_150926_b(p_72702_1_);
  
 +            ResourceLocation resource = null;
              if (itemrecord != null)
              {
-                 this.mc.ingameGUI.setRecordPlayingMessage(itemrecord.getRecordNameLocal());
-+                resource = itemrecord.getRecordResource(par1Str);
+                 this.field_72777_q.field_71456_v.func_73833_a(itemrecord.func_150927_i());
++                resource = itemrecord.getRecordResource(p_72702_1_);
              }
  
--            PositionedSoundRecord positionedsoundrecord = PositionedSoundRecord.func_147675_a(new ResourceLocation(par1Str), (float)par2, (float)par3, (float)par4);
-+            if (resource == null) resource = new ResourceLocation(par1Str);
-+            PositionedSoundRecord positionedsoundrecord = PositionedSoundRecord.func_147675_a(resource, (float)par2, (float)par3, (float)par4);
-             this.mapSoundPositions.put(chunkcoordinates, positionedsoundrecord);
-             this.mc.getSoundHandler().playSound(positionedsoundrecord);
+-            PositionedSoundRecord positionedsoundrecord = PositionedSoundRecord.func_147675_a(new ResourceLocation(p_72702_1_), (float)p_72702_2_, (float)p_72702_3_, (float)p_72702_4_);
++            if (resource == null) resource = new ResourceLocation(p_72702_1_);
++            PositionedSoundRecord positionedsoundrecord = PositionedSoundRecord.func_147675_a(resource, (float)p_72702_2_, (float)p_72702_3_, (float)p_72702_4_);
+             this.field_147593_P.put(chunkcoordinates, positionedsoundrecord);
+             this.field_72777_q.func_147118_V().func_147682_a(positionedsoundrecord);
          }

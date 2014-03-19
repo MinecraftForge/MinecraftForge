@@ -16,46 +16,68 @@
  
  public class BlockStem extends BlockBush implements IGrowable
  {
-@@ -103,7 +105,7 @@
+@@ -101,7 +103,7 @@
  
-                     Block block = p_149674_1_.getBlock(j1, p_149674_3_ - 1, k1);
+                     Block block = p_149674_1_.func_147439_a(j1, p_149674_3_ - 1, k1);
  
--                    if (p_149674_1_.getBlock(j1, p_149674_3_, k1).blockMaterial == Material.air && (block == Blocks.farmland || block == Blocks.dirt || block == Blocks.grass))
-+                    if (p_149674_1_.isAirBlock(j1, p_149674_3_, k1) && (block.canSustainPlant(p_149674_1_, j1, p_149674_3_ - 1, k1, UP, this) || block == Blocks.dirt || block == Blocks.grass))
+-                    if (p_149674_1_.func_147439_a(j1, p_149674_3_, k1).field_149764_J == Material.field_151579_a && (block == Blocks.field_150458_ak || block == Blocks.field_150346_d || block == Blocks.field_150349_c))
++                    if (p_149674_1_.func_147437_c(j1, p_149674_3_, k1) && (block.canSustainPlant(p_149674_1_, j1, p_149674_3_ - 1, k1, UP, this) || block == Blocks.field_150346_d || block == Blocks.field_150349_c))
                      {
-                         p_149674_1_.setBlock(j1, p_149674_3_, k1, this.field_149877_a);
+                         p_149674_1_.func_147449_b(j1, p_149674_3_, k1, this.field_149877_a);
                      }
-@@ -146,11 +148,11 @@
-                 Block block8 = p_149875_1_.getBlock(l, p_149875_3_ - 1, i1);
+@@ -144,11 +146,11 @@
+                 Block block8 = p_149875_1_.func_147439_a(l, p_149875_3_ - 1, i1);
                  float f1 = 0.0F;
  
--                if (block8 == Blocks.farmland)
+-                if (block8 == Blocks.field_150458_ak)
 +                if (block8.canSustainPlant(p_149875_1_, l, p_149875_3_ - 1, i1, UP, this))
                  {
                      f1 = 1.0F;
  
--                    if (p_149875_1_.getBlockMetadata(l, p_149875_3_ - 1, i1) > 0)
+-                    if (p_149875_1_.func_72805_g(l, p_149875_3_ - 1, i1) > 0)
 +                    if (block8.isFertile(p_149875_1_, l, p_149875_3_ - 1, i1))
                      {
                          f1 = 3.0F;
                      }
-@@ -224,6 +226,7 @@
+@@ -215,28 +217,30 @@
      {
-         super.dropBlockAsItemWithChance(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
+         super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
  
+-        if (!p_149690_1_.field_72995_K)
 +        /*
-         if (!p_149690_1_.isRemote)
++        if (!p_149690_1_.isRemote)
          {
              Item item = null;
-@@ -246,6 +249,7 @@
+ 
+-            if (this.field_149877_a == Blocks.field_150423_aK)
++            if (this.field_149877_a == Blocks.pumpkin)
+             {
+-                item = Items.field_151080_bb;
++                item = Items.pumpkin_seeds;
+             }
+ 
+-            if (this.field_149877_a == Blocks.field_150440_ba)
++            if (this.field_149877_a == Blocks.melon_block)
+             {
+-                item = Items.field_151081_bc;
++                item = Items.melon_seeds;
+             }
+ 
+             for (int j1 = 0; j1 < 3; ++j1)
+             {
+-                if (p_149690_1_.field_73012_v.nextInt(15) <= p_149690_5_)
++                if (p_149690_1_.rand.nextInt(15) <= p_149690_5_)
+                 {
+-                    this.func_149642_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(item));
++                    this.dropBlockAsItem(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(item));
                  }
              }
          }
 +        */
      }
  
-     public Item getItemDropped(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
-@@ -293,4 +297,22 @@
+     public Item func_149650_a(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
+@@ -282,4 +286,22 @@
      {
          this.func_149874_m(p_149853_1_, p_149853_3_, p_149853_4_, p_149853_5_);
      }
@@ -67,8 +89,8 @@
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
 +
 +        Item item = null;
-+        item = field_149877_a == Blocks.pumpkin ? Items.pumpkin_seeds : item;
-+        item = field_149877_a == Blocks.melon_block ? Items.melon_seeds : item;
++        item = field_149877_a == Blocks.field_150423_aK ? Items.field_151080_bb : item;
++        item = field_149877_a == Blocks.field_150440_ba ? Items.field_151081_bc : item;
 +
 +        for (int i = 0; item != null && i < 3; i++)
 +        {

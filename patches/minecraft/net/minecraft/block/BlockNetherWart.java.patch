@@ -16,34 +16,50 @@
  
  public class BlockNetherWart extends BlockBush
  {
-@@ -35,7 +37,7 @@
-     // JAVADOC METHOD $$ func_149718_j
-     public boolean canBlockStay(World p_149718_1_, int p_149718_2_, int p_149718_3_, int p_149718_4_)
+@@ -33,7 +35,7 @@
+ 
+     public boolean func_149718_j(World p_149718_1_, int p_149718_2_, int p_149718_3_, int p_149718_4_)
      {
--        return this.canPlaceBlockOn(p_149718_1_.getBlock(p_149718_2_, p_149718_3_ - 1, p_149718_4_));
-+        return super.canBlockStay(p_149718_1_, p_149718_2_, p_149718_3_, p_149718_4_);
+-        return this.func_149854_a(p_149718_1_.func_147439_a(p_149718_2_, p_149718_3_ - 1, p_149718_4_));
++        return super.func_149718_j(p_149718_1_, p_149718_2_, p_149718_3_, p_149718_4_);
      }
  
-     // JAVADOC METHOD $$ func_149674_a
-@@ -68,6 +70,8 @@
-     // JAVADOC METHOD $$ func_149690_a
-     public void dropBlockAsItemWithChance(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
+     public void func_149674_a(World p_149674_1_, int p_149674_2_, int p_149674_3_, int p_149674_4_, Random p_149674_5_)
+@@ -62,25 +64,28 @@
+ 
+     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
      {
-+        super.dropBlockAsItemWithChance(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
+-        if (!p_149690_1_.field_72995_K)
++        super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
 +        /*
-         if (!p_149690_1_.isRemote)
++        if (!p_149690_1_.isRemote)
          {
              int j1 = 1;
-@@ -87,6 +91,7 @@
-                 this.dropBlockAsItem(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(Items.nether_wart));
+ 
+             if (p_149690_5_ >= 3)
+             {
+-                j1 = 2 + p_149690_1_.field_73012_v.nextInt(3);
++                j1 = 2 + p_149690_1_.rand.nextInt(3);
+ 
+                 if (p_149690_7_ > 0)
+                 {
+-                    j1 += p_149690_1_.field_73012_v.nextInt(p_149690_7_ + 1);
++                    j1 += p_149690_1_.rand.nextInt(p_149690_7_ + 1);
+                 }
+             }
+ 
+             for (int k1 = 0; k1 < j1; ++k1)
+             {
+-                this.func_149642_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(Items.field_151075_bm));
++                this.dropBlockAsItem(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(Items.nether_wart));
              }
          }
 +        */
      }
  
-     public Item getItemDropped(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
-@@ -117,4 +122,23 @@
-             this.field_149883_a[i] = p_149651_1_.registerIcon(this.getTextureName() + "_stage_" + i);
+     public Item func_149650_a(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
+@@ -109,4 +114,23 @@
+             this.field_149883_a[i] = p_149651_1_.func_94245_a(this.func_149641_N() + "_stage_" + i);
          }
      }
 +
@@ -55,12 +71,12 @@
 +
 +        if (metadata >= 3)
 +        {
-+            count = 2 + world.rand.nextInt(3) + (fortune > 0 ? world.rand.nextInt(fortune + 1) : 0);
++            count = 2 + world.field_73012_v.nextInt(3) + (fortune > 0 ? world.field_73012_v.nextInt(fortune + 1) : 0);
 +        }
 +
 +        for (int i = 0; i < count; i++)
 +        {
-+            ret.add(new ItemStack(Items.nether_wart));
++            ret.add(new ItemStack(Items.field_151075_bm));
 +        }
 +
 +        return ret;

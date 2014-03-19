@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/Stitcher.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/Stitcher.java
-@@ -164,7 +164,7 @@
+@@ -161,7 +161,7 @@
  
              if (flag4 ^ flag5)
              {

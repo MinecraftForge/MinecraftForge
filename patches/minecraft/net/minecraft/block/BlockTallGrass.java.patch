@@ -20,31 +20,31 @@
  {
      private static final String[] field_149871_a = new String[] {"deadbush", "tallgrass", "fern"};
      @SideOnly(Side.CLIENT)
-@@ -75,7 +78,7 @@
+@@ -71,7 +74,7 @@
  
-     public Item getItemDropped(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
+     public Item func_149650_a(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
      {
--        return p_149650_2_.nextInt(8) == 0 ? Items.wheat_seeds : null;
+-        return p_149650_2_.nextInt(8) == 0 ? Items.field_151014_N : null;
 +        return null;
      }
  
-     // JAVADOC METHOD $$ func_149679_a
-@@ -87,13 +90,7 @@
-     // JAVADOC METHOD $$ func_149636_a
-     public void harvestBlock(World p_149636_1_, EntityPlayer p_149636_2_, int p_149636_3_, int p_149636_4_, int p_149636_5_, int p_149636_6_)
+     public int func_149679_a(int p_149679_1_, Random p_149679_2_)
+@@ -81,13 +84,7 @@
+ 
+     public void func_149636_a(World p_149636_1_, EntityPlayer p_149636_2_, int p_149636_3_, int p_149636_4_, int p_149636_5_, int p_149636_6_)
      {
--        if (!p_149636_1_.isRemote && p_149636_2_.getCurrentEquippedItem() != null && p_149636_2_.getCurrentEquippedItem().getItem() == Items.shears)
+-        if (!p_149636_1_.field_72995_K && p_149636_2_.func_71045_bC() != null && p_149636_2_.func_71045_bC().func_77973_b() == Items.field_151097_aZ)
          {
--            p_149636_2_.addStat(StatList.mineBlockStatArray[Block.getIdFromBlock(this)], 1);
--            this.dropBlockAsItem(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, new ItemStack(Blocks.tallgrass, 1, p_149636_6_));
+-            p_149636_2_.func_71064_a(StatList.field_75934_C[Block.func_149682_b(this)], 1);
+-            this.func_149642_a(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, new ItemStack(Blocks.field_150329_H, 1, p_149636_6_));
 -        }
 -        else
 -        {
-             super.harvestBlock(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_);
+             super.func_149636_a(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_);
          }
      }
-@@ -151,4 +148,28 @@
-             Blocks.double_plant.func_149889_c(p_149853_1_, p_149853_3_, p_149853_4_, p_149853_5_, b0, 2);
+@@ -143,4 +140,28 @@
+             Blocks.field_150398_cm.func_149889_c(p_149853_1_, p_149853_3_, p_149853_4_, p_149853_5_, b0, 2);
          }
      }
 +
@@ -52,7 +52,7 @@
 +    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int meta, int fortune)
 +    {
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-+        if (world.rand.nextInt(8) != 0) return ret;
++        if (world.field_73012_v.nextInt(8) != 0) return ret;
 +        ItemStack seed = ForgeHooks.getGrassSeed(world);
 +        if (seed != null) ret.add(seed);
 +        return ret;
@@ -68,7 +68,7 @@
 +    public ArrayList<ItemStack> onSheared(ItemStack item, IBlockAccess world, int x, int y, int z, int fortune)
 +    {
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-+        ret.add(new ItemStack(this, 1, world.getBlockMetadata(x, y, z)));
++        ret.add(new ItemStack(this, 1, world.func_72805_g(x, y, z)));
 +        return ret;
 +    }
  }

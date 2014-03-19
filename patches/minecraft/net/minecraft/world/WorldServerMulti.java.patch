@@ -1,12 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldServerMulti.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldServerMulti.java
-@@ -18,5 +18,8 @@
+@@ -17,5 +17,8 @@
+         this.field_72986_A = new DerivedWorldInfo(p_i45283_6_.func_72912_H());
      }
  
-     // JAVADOC METHOD $$ func_73042_a
--    protected void saveLevel() throws MinecraftException {}
-+    protected void saveLevel() throws MinecraftException
+-    protected void func_73042_a() throws MinecraftException {}
++    protected void func_73042_a() throws MinecraftException
 +    {
-+        this.perWorldStorage.saveAllData();
++        this.perWorldStorage.func_75744_a();
 +    }
  }

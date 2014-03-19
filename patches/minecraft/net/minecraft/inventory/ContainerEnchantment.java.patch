@@ -8,7 +8,7 @@
  
  public class ContainerEnchantment extends Container
  {
-@@ -125,6 +126,7 @@
+@@ -116,6 +117,7 @@
                  {
                      i = 0;
                      int j;
@@ -16,56 +16,56 @@
  
                      for (j = -1; j <= 1; ++j)
                      {
-@@ -132,37 +134,15 @@
+@@ -123,37 +125,15 @@
                          {
-                             if ((j != 0 || k != 0) && this.worldPointer.isAirBlock(this.posX + k, this.posY, this.posZ + j) && this.worldPointer.isAirBlock(this.posX + k, this.posY + 1, this.posZ + j))
+                             if ((j != 0 || k != 0) && this.field_75172_h.func_147437_c(this.field_75173_i + k, this.field_75170_j, this.field_75171_k + j) && this.field_75172_h.func_147437_c(this.field_75173_i + k, this.field_75170_j + 1, this.field_75171_k + j))
                              {
--                                if (this.worldPointer.getBlock(this.posX + k * 2, this.posY, this.posZ + j * 2) == Blocks.bookshelf)
+-                                if (this.field_75172_h.func_147439_a(this.field_75173_i + k * 2, this.field_75170_j, this.field_75171_k + j * 2) == Blocks.field_150342_X)
 -                                {
 -                                    ++i;
 -                                }
-+                                power += ForgeHooks.getEnchantPower(worldPointer, posX + k * 2, posY,     posZ + j * 2);
-+                                power += ForgeHooks.getEnchantPower(worldPointer, posX + k * 2, posY + 1, posZ + j * 2);
++                                power += ForgeHooks.getEnchantPower(field_75172_h, field_75173_i + k * 2, field_75170_j,     field_75171_k + j * 2);
++                                power += ForgeHooks.getEnchantPower(field_75172_h, field_75173_i + k * 2, field_75170_j + 1, field_75171_k + j * 2);
  
--                                if (this.worldPointer.getBlock(this.posX + k * 2, this.posY + 1, this.posZ + j * 2) == Blocks.bookshelf)
+-                                if (this.field_75172_h.func_147439_a(this.field_75173_i + k * 2, this.field_75170_j + 1, this.field_75171_k + j * 2) == Blocks.field_150342_X)
 -                                {
 -                                    ++i;
 -                                }
 -
                                  if (k != 0 && j != 0)
                                  {
--                                    if (this.worldPointer.getBlock(this.posX + k * 2, this.posY, this.posZ + j) == Blocks.bookshelf)
+-                                    if (this.field_75172_h.func_147439_a(this.field_75173_i + k * 2, this.field_75170_j, this.field_75171_k + j) == Blocks.field_150342_X)
 -                                    {
 -                                        ++i;
 -                                    }
 -
--                                    if (this.worldPointer.getBlock(this.posX + k * 2, this.posY + 1, this.posZ + j) == Blocks.bookshelf)
+-                                    if (this.field_75172_h.func_147439_a(this.field_75173_i + k * 2, this.field_75170_j + 1, this.field_75171_k + j) == Blocks.field_150342_X)
 -                                    {
 -                                        ++i;
 -                                    }
 -
--                                    if (this.worldPointer.getBlock(this.posX + k, this.posY, this.posZ + j * 2) == Blocks.bookshelf)
+-                                    if (this.field_75172_h.func_147439_a(this.field_75173_i + k, this.field_75170_j, this.field_75171_k + j * 2) == Blocks.field_150342_X)
 -                                    {
 -                                        ++i;
 -                                    }
 -
--                                    if (this.worldPointer.getBlock(this.posX + k, this.posY + 1, this.posZ + j * 2) == Blocks.bookshelf)
+-                                    if (this.field_75172_h.func_147439_a(this.field_75173_i + k, this.field_75170_j + 1, this.field_75171_k + j * 2) == Blocks.field_150342_X)
 -                                    {
 -                                        ++i;
 -                                    }
-+                                    power += ForgeHooks.getEnchantPower(worldPointer, posX + k * 2, posY,     posZ + j    );
-+                                    power += ForgeHooks.getEnchantPower(worldPointer, posX + k * 2, posY + 1, posZ + j    );
-+                                    power += ForgeHooks.getEnchantPower(worldPointer, posX + k,     posY,     posZ + j * 2);
-+                                    power += ForgeHooks.getEnchantPower(worldPointer, posX + k,     posY + 1, posZ + j * 2);
++                                    power += ForgeHooks.getEnchantPower(field_75172_h, field_75173_i + k * 2, field_75170_j,     field_75171_k + j    );
++                                    power += ForgeHooks.getEnchantPower(field_75172_h, field_75173_i + k * 2, field_75170_j + 1, field_75171_k + j    );
++                                    power += ForgeHooks.getEnchantPower(field_75172_h, field_75173_i + k,     field_75170_j,     field_75171_k + j * 2);
++                                    power += ForgeHooks.getEnchantPower(field_75172_h, field_75173_i + k,     field_75170_j + 1, field_75171_k + j * 2);
                                  }
                              }
                          }
-@@ -170,7 +150,7 @@
+@@ -161,7 +141,7 @@
  
                      for (j = 0; j < 3; ++j)
                      {
--                        this.enchantLevels[j] = EnchantmentHelper.calcItemStackEnchantability(this.rand, j, i, itemstack);
-+                        this.enchantLevels[j] = EnchantmentHelper.calcItemStackEnchantability(this.rand, j, (int)power, itemstack);
+-                        this.field_75167_g[j] = EnchantmentHelper.func_77514_a(this.field_75169_l, j, i, itemstack);
++                        this.field_75167_g[j] = EnchantmentHelper.func_77514_a(this.field_75169_l, j, (int)power, itemstack);
                      }
  
-                     this.detectAndSendChanges();
+                     this.func_75142_b();

@@ -22,91 +22,132 @@
  @SideOnly(Side.CLIENT)
  public class ItemRenderer
  {
-@@ -53,13 +61,25 @@
-     // JAVADOC METHOD $$ func_78443_a
-     public void renderItem(EntityLivingBase par1EntityLivingBase, ItemStack par2ItemStack, int par3)
+@@ -49,32 +57,43 @@
+ 
+     public void func_78443_a(EntityLivingBase p_78443_1_, ItemStack p_78443_2_, int p_78443_3_)
      {
-+        this.renderItem(par1EntityLivingBase, par2ItemStack, par3, EQUIPPED);
++        this.renderItem(p_78443_1_, p_78443_2_, p_78443_3_, EQUIPPED);
 +    }
 +
-+    // JAVADOC METHOD $$ renderItem
 +    public void renderItem(EntityLivingBase par1EntityLivingBase, ItemStack par2ItemStack, int par3, ItemRenderType type)
 +    {
          GL11.glPushMatrix();
-         TextureManager texturemanager = this.mc.getTextureManager();
-         Item item = par2ItemStack.getItem();
-         Block block = Block.getBlockFromItem(item);
+         TextureManager texturemanager = this.field_78455_a.func_110434_K();
+-        Item item = p_78443_2_.func_77973_b();
++        Item item = par2ItemStack.func_77973_b();
+         Block block = Block.func_149634_a(item);
  
--        if (par2ItemStack.getItemSpriteNumber() == 0 && item instanceof ItemBlock && RenderBlocks.renderItemIn3d(block.getRenderType()))
+-        if (p_78443_2_.func_94608_d() == 0 && item instanceof ItemBlock && RenderBlocks.func_147739_a(block.func_149645_b()))
 +        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(par2ItemStack, type);
 +        if (customRenderer != null)
          {
-+            texturemanager.bindTexture(texturemanager.getResourceLocation(par2ItemStack.getItemSpriteNumber()));
-+            ForgeHooksClient.renderEquippedItem(type, customRenderer, renderBlocksIr, par1EntityLivingBase, par2ItemStack);
++            texturemanager.func_110577_a(texturemanager.func_130087_a(par2ItemStack.func_94608_d()));
++            ForgeHooksClient.renderEquippedItem(type, customRenderer, field_147720_h, par1EntityLivingBase, par2ItemStack);
 +        }
-+        else if (par2ItemStack.getItemSpriteNumber() == 0 && item instanceof ItemBlock && RenderBlocks.renderItemIn3d(block.getRenderType()))
++        else if (par2ItemStack.func_94608_d() == 0 && item instanceof ItemBlock && RenderBlocks.func_147739_a(block.func_149645_b()))
 +        {
-             texturemanager.bindTexture(texturemanager.getResourceLocation(0));
+             texturemanager.func_110577_a(texturemanager.func_130087_a(0));
  
-             if (par2ItemStack != null && par2ItemStack.getItem() instanceof ItemCloth)
-@@ -104,7 +124,7 @@
+-            if (p_78443_2_ != null && p_78443_2_.func_77973_b() instanceof ItemCloth)
++            if (par2ItemStack != null && par2ItemStack.func_77973_b() instanceof ItemCloth)
+             {
+                 GL11.glEnable(GL11.GL_BLEND);
+                 GL11.glDepthMask(false);
+                 OpenGlHelper.func_148821_a(770, 771, 1, 0);
+-                this.field_147720_h.func_147800_a(block, p_78443_2_.func_77960_j(), 1.0F);
++                this.field_147720_h.func_147800_a(block, par2ItemStack.func_77960_j(), 1.0F);
+                 GL11.glDepthMask(true);
+                 GL11.glDisable(GL11.GL_BLEND);
+             }
+             else
+             {
+-                this.field_147720_h.func_147800_a(block, p_78443_2_.func_77960_j(), 1.0F);
++                this.field_147720_h.func_147800_a(block, par2ItemStack.func_77960_j(), 1.0F);
+             }
+         }
+         else
+         {
+-            IIcon iicon = p_78443_1_.func_70620_b(p_78443_2_, p_78443_3_);
++            IIcon iicon = par1EntityLivingBase.func_70620_b(par2ItemStack, par3);
+ 
+             if (iicon == null)
+             {
+@@ -82,7 +101,7 @@
+                 return;
+             }
+ 
+-            texturemanager.func_110577_a(texturemanager.func_130087_a(p_78443_2_.func_94608_d()));
++            texturemanager.func_110577_a(texturemanager.func_130087_a(par2ItemStack.func_94608_d()));
+             TextureUtil.func_147950_a(false, false);
+             Tessellator tessellator = Tessellator.field_78398_a;
+             float f = iicon.func_94209_e();
+@@ -100,7 +119,7 @@
              GL11.glTranslatef(-0.9375F, -0.0625F, 0.0F);
-             renderItemIn2D(tessellator, f1, f2, f, f3, iicon.getIconWidth(), iicon.getIconHeight(), 0.0625F);
+             func_78439_a(tessellator, f1, f2, f, f3, iicon.func_94211_a(), iicon.func_94216_b(), 0.0625F);
  
--            if (par2ItemStack.hasEffect() && par3 == 0)
+-            if (p_78443_2_.func_77962_s() && p_78443_3_ == 0)
 +            if (par2ItemStack.hasEffect(par3))
              {
                  GL11.glDepthFunc(GL11.GL_EQUAL);
                  GL11.glDisable(GL11.GL_LIGHTING);
-@@ -279,7 +299,7 @@
+@@ -132,7 +151,7 @@
+             }
+ 
+             GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+-            texturemanager.func_110577_a(texturemanager.func_130087_a(p_78443_2_.func_94608_d()));
++            texturemanager.func_110577_a(texturemanager.func_130087_a(par2ItemStack.func_94608_d()));
+             TextureUtil.func_147945_b();
+         }
+ 
+@@ -273,7 +292,7 @@
          RenderPlayer renderplayer;
          Render render;
  
--        if (itemstack != null && itemstack.getItem() == Items.filled_map)
-+        if (itemstack != null && itemstack.getItem() instanceof ItemMap)
+-        if (itemstack != null && itemstack.func_77973_b() == Items.field_151098_aY)
++        if (itemstack != null && itemstack.func_77973_b() instanceof ItemMap)
          {
              GL11.glPushMatrix();
              f13 = 0.8F;
-@@ -346,12 +366,21 @@
-             tessellator.addVertexWithUV((double)(128 + b0), (double)(0 - b0), 0.0D, 1.0D, 0.0D);
-             tessellator.addVertexWithUV((double)(0 - b0), (double)(0 - b0), 0.0D, 0.0D, 0.0D);
-             tessellator.draw();
--            MapData mapdata = Items.filled_map.getMapData(itemstack, this.mc.theWorld);
+@@ -340,12 +359,21 @@
+             tessellator.func_78374_a((double)(128 + b0), (double)(0 - b0), 0.0D, 1.0D, 0.0D);
+             tessellator.func_78374_a((double)(0 - b0), (double)(0 - b0), 0.0D, 0.0D, 0.0D);
+             tessellator.func_78381_a();
+-            MapData mapdata = Items.field_151098_aY.func_77873_a(itemstack, this.field_78455_a.field_71441_e);
  
 -            if (mapdata != null)
 +            IItemRenderer custom = MinecraftForgeClient.getItemRenderer(itemstack, FIRST_PERSON_MAP);
-+            MapData mapdata = ((ItemMap)itemstack.getItem()).getMapData(itemstack, this.mc.theWorld);
++            MapData mapdata = ((ItemMap)itemstack.func_77973_b()).func_77873_a(itemstack, this.field_78455_a.field_71441_e);
 +
 +            if (custom == null)
              {
--                this.mc.entityRenderer.getMapItemRenderer().func_148250_a(mapdata, false);
+-                this.field_78455_a.field_71460_t.func_147701_i().func_148250_a(mapdata, false);
 +                if (mapdata != null)
 +                {
-+                    this.mc.entityRenderer.getMapItemRenderer().func_148250_a(mapdata, false);
++                    this.field_78455_a.field_71460_t.func_147701_i().func_148250_a(mapdata, false);
 +                }
              }
 +            else
 +            {
-+                custom.renderItem(FIRST_PERSON_MAP, itemstack, mc.thePlayer, mc.getTextureManager(), mapdata);
++                custom.renderItem(FIRST_PERSON_MAP, itemstack, field_78455_a.field_71439_g, field_78455_a.func_110434_K(), mapdata);
 +            }
  
              GL11.glPopMatrix();
          }
-@@ -452,17 +481,20 @@
+@@ -446,17 +474,20 @@
  
-             if (itemstack.getItem().requiresMultipleRenderPasses())
+             if (itemstack.func_77973_b().func_77623_v())
              {
--                this.renderItem(entityclientplayermp, itemstack, 0);
--                int j1 = itemstack.getItem().getColorFromItemStack(itemstack, 1);
+-                this.func_78443_a(entityclientplayermp, itemstack, 0);
+-                int j1 = itemstack.func_77973_b().func_82790_a(itemstack, 1);
 -                f10 = (float)(j1 >> 16 & 255) / 255.0F;
 -                f11 = (float)(j1 >> 8 & 255) / 255.0F;
 -                f12 = (float)(j1 & 255) / 255.0F;
 -                GL11.glColor4f(1.0F * f10, 1.0F * f11, 1.0F * f12, 1.0F);
--                this.renderItem(entityclientplayermp, itemstack, 1);
+-                this.func_78443_a(entityclientplayermp, itemstack, 1);
 +                this.renderItem(entityclientplayermp, itemstack, 0, EQUIPPED_FIRST_PERSON);
-+                for (int x = 1; x < itemstack.getItem().getRenderPasses(itemstack.getItemDamage()); x++)
++                for (int x = 1; x < itemstack.func_77973_b().getRenderPasses(itemstack.func_77960_j()); x++)
 +                {
-+                    int j1 = itemstack.getItem().getColorFromItemStack(itemstack, x);
++                    int j1 = itemstack.func_77973_b().func_82790_a(itemstack, x);
 +                    f10 = (float)(j1 >> 16 & 255) / 255.0F;
 +                    f11 = (float)(j1 >> 8 & 255) / 255.0F;
 +                    f12 = (float)(j1 & 255) / 255.0F;
@@ -116,7 +157,7 @@
              }
              else
              {
--                this.renderItem(entityclientplayermp, itemstack, 0);
+-                this.func_78443_a(entityclientplayermp, itemstack, 0);
 +                this.renderItem(entityclientplayermp, itemstack, 0, EQUIPPED_FIRST_PERSON);
              }
  

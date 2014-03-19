@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneComparator.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneComparator.java
-@@ -237,4 +237,19 @@
+@@ -228,4 +228,19 @@
      {
          return new TileEntityComparator();
      }
@@ -10,7 +10,7 @@
 +    {
 +        if (y == tileY && world instanceof World)
 +        {
-+            onNeighborBlockChange((World)world, x, y, z, world.getBlock(tileX, tileY, tileZ));
++            func_149695_a((World)world, x, y, z, world.func_147439_a(tileX, tileY, tileZ));
 +        }   
 +    }
 +    

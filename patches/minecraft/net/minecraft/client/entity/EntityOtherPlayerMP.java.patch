@@ -1,10 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/client/entity/EntityOtherPlayerMP.java
 +++ ../src-work/minecraft/net/minecraft/client/entity/EntityOtherPlayerMP.java
-@@ -157,7 +157,8 @@
+@@ -151,7 +151,8 @@
          }
      }
  
--    public float getEyeHeight()
+-    public float func_70047_e()
 +    @Override
 +    public float getDefaultEyeHeight()
      {

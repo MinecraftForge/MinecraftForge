@@ -12,7 +12,7 @@
                                  {
                                      Block block = p_151541_5_[j3];
  
--                                    if (block == Blocks.flowing_water || block == Blocks.water)
+-                                    if (block == Blocks.field_150358_i || block == Blocks.field_150355_j)
 +                                    if (isOceanBlock(p_151541_5_, j3, k2, i3, l2, p_151541_3_, p_151541_4_))
                                      {
                                          flag3 = true;
@@ -21,25 +21,25 @@
                                          {
                                              Block block1 = p_151541_5_[k3];
  
--                                            if (block1 == Blocks.grass)
+-                                            if (block1 == Blocks.field_150349_c)
 +                                            if (isTopBlock(p_151541_5_, k3, k2, l3, j3, p_151541_3_, p_151541_4_))
                                              {
                                                  flag1 = true;
                                              }
 -
--                                            if (block1 == Blocks.stone || block1 == Blocks.dirt || block1 == Blocks.grass)
+-                                            if (block1 == Blocks.field_150348_b || block1 == Blocks.field_150346_d || block1 == Blocks.field_150349_c)
 -                                            {
 -                                                if (l3 < 10)
 -                                                {
--                                                    p_151541_5_[k3] = Blocks.lava;
+-                                                    p_151541_5_[k3] = Blocks.field_150353_l;
 -                                                }
 -                                                else
 -                                                {
 -                                                    p_151541_5_[k3] = null;
 -
--                                                    if (flag1 && p_151541_5_[k3 - 1] == Blocks.dirt)
+-                                                    if (flag1 && p_151541_5_[k3 - 1] == Blocks.field_150346_d)
 -                                                    {
--                                                        p_151541_5_[k3 - 1] = this.worldObj.getBiomeGenForCoords(k2 + p_151541_3_ * 16, j3 + p_151541_4_ * 16).topBlock;
+-                                                        p_151541_5_[k3 - 1] = this.field_75039_c.func_72807_a(k2 + p_151541_3_ * 16, j3 + p_151541_4_ * 16).field_76752_A;
 -                                                    }
 -                                                }
 -                                            }
@@ -54,15 +54,15 @@
 +
 +    protected boolean isOceanBlock(Block[] data, int index, int x, int y, int z, int chunkX, int chunkZ)
 +    {
-+        return data[index] == Blocks.flowing_water || data[index] == Blocks.water;
++        return data[index] == Blocks.field_150358_i || data[index] == Blocks.field_150355_j;
 +    }
 +
 +    //Exception biomes to make sure we generate like vanilla
 +    private boolean isExceptionBiome(BiomeGenBase biome)
 +    {
-+        if (biome == BiomeGenBase.mushroomIsland) return true;
-+        if (biome == BiomeGenBase.beach) return true;
-+        if (biome == BiomeGenBase.desert) return true;
++        if (biome == BiomeGenBase.field_76789_p) return true;
++        if (biome == BiomeGenBase.field_76787_r) return true;
++        if (biome == BiomeGenBase.field_76769_d) return true;
 +        return false;
 +    }
 +
@@ -70,8 +70,8 @@
 +    //Vanilla bugs to make sure that we generate the map the same way vanilla does.
 +    private boolean isTopBlock(Block[] data, int index, int x, int y, int z, int chunkX, int chunkZ)
 +    {
-+        BiomeGenBase biome = worldObj.getBiomeGenForCoords(x + chunkX * 16, z + chunkZ * 16);
-+        return (isExceptionBiome(biome) ? data[index] == Blocks.grass : data[index] == biome.topBlock);
++        BiomeGenBase biome = field_75039_c.func_72807_a(x + chunkX * 16, z + chunkZ * 16);
++        return (isExceptionBiome(biome) ? data[index] == Blocks.field_150349_c : data[index] == biome.field_76752_A);
 +    }
 +
 +    /**
@@ -91,16 +91,16 @@
 +     */
 +    protected void digBlock(Block[] data, int index, int x, int y, int z, int chunkX, int chunkZ, boolean foundTop)
 +    {
-+        BiomeGenBase biome = worldObj.getBiomeGenForCoords(x + chunkX * 16, z + chunkZ * 16);
-+        Block top    = (isExceptionBiome(biome) ? Blocks.grass : biome.topBlock);
-+        Block filler = (isExceptionBiome(biome) ? Blocks.dirt  : biome.fillerBlock);
++        BiomeGenBase biome = field_75039_c.func_72807_a(x + chunkX * 16, z + chunkZ * 16);
++        Block top    = (isExceptionBiome(biome) ? Blocks.field_150349_c : biome.field_76752_A);
++        Block filler = (isExceptionBiome(biome) ? Blocks.field_150346_d  : biome.field_76753_B);
 +        Block block  = data[index];
 +
-+        if (block == Blocks.stone || block == filler || block == top)
++        if (block == Blocks.field_150348_b || block == filler || block == top)
 +        {
 +            if (y < 10)
 +            {
-+                data[index] = Blocks.lava;
++                data[index] = Blocks.field_150353_l;
 +            }
 +            else
 +            {

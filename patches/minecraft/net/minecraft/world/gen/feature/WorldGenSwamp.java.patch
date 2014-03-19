@@ -14,80 +14,80 @@
  {
 @@ -53,7 +55,7 @@
                          {
-                             Block block = par1World.getBlock(j1, i1, k1);
+                             Block block = p_76484_1_.func_147439_a(j1, i1, k1);
  
--                            if (block.getMaterial() != Material.air && block.getMaterial() != Material.leaves)
-+                            if (!(block.isAir(par1World, j1, i1, k1) || block.isLeaves(par1World, j1, i1, k1)))
+-                            if (block.func_149688_o() != Material.field_151579_a && block.func_149688_o() != Material.field_151584_j)
++                            if (!(block.isAir(p_76484_1_, j1, i1, k1) || block.isLeaves(p_76484_1_, j1, i1, k1)))
                              {
-                                 if (block != Blocks.water && block != Blocks.flowing_water)
+                                 if (block != Blocks.field_150355_j && block != Blocks.field_150358_i)
                                  {
 @@ -81,9 +83,10 @@
              {
-                 Block block1 = par1World.getBlock(par3, par4 - 1, par5);
+                 Block block1 = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_ - 1, p_76484_5_);
  
--                if ((block1 == Blocks.grass || block1 == Blocks.dirt) && par4 < 256 - l - 1)
-+                boolean isSoil = block1.canSustainPlant(par1World, par3, par4 - 1, par5, ForgeDirection.UP, (BlockSapling)Blocks.sapling);
-+                if (isSoil && par4 < 256 - l - 1)
+-                if ((block1 == Blocks.field_150349_c || block1 == Blocks.field_150346_d) && p_76484_4_ < 256 - l - 1)
++                boolean isSoil = block1.canSustainPlant(p_76484_1_, p_76484_3_, p_76484_4_ - 1, p_76484_5_, ForgeDirection.UP, (BlockSapling)Blocks.field_150345_g);
++                if (isSoil && p_76484_4_ < 256 - l - 1)
                  {
--                    this.func_150515_a(par1World, par3, par4 - 1, par5, Blocks.dirt);
-+                    block1.onPlantGrow(par1World, par3, par4 - 1, par5, par3, par4, par5);
+-                    this.func_150515_a(p_76484_1_, p_76484_3_, p_76484_4_ - 1, p_76484_5_, Blocks.field_150346_d);
++                    block1.onPlantGrow(p_76484_1_, p_76484_3_, p_76484_4_ - 1, p_76484_5_, p_76484_3_, p_76484_4_, p_76484_5_);
                      int l1;
                      int l2;
                      int k2;
 @@ -101,7 +104,7 @@
                              {
-                                 int j2 = i2 - par5;
+                                 int j2 = i2 - p_76484_5_;
  
--                                if ((Math.abs(l1) != k1 || Math.abs(j2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0) && !par1World.getBlock(l2, k2, i2).func_149730_j())
-+                                if ((Math.abs(l1) != k1 || Math.abs(j2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0) && par1World.getBlock(l2, k2, i2).canBeReplacedByLeaves(par1World, l2, k2, i2))
+-                                if ((Math.abs(l1) != k1 || Math.abs(j2) != k1 || p_76484_2_.nextInt(2) != 0 && j1 != 0) && !p_76484_1_.func_147439_a(l2, k2, i2).func_149730_j())
++                                if ((Math.abs(l1) != k1 || Math.abs(j2) != k1 || p_76484_2_.nextInt(2) != 0 && j1 != 0) && p_76484_1_.func_147439_a(l2, k2, i2).canBeReplacedByLeaves(p_76484_1_, l2, k2, i2))
                                  {
-                                     this.func_150515_a(par1World, l2, k2, i2, Blocks.leaves);
+                                     this.func_150515_a(p_76484_1_, l2, k2, i2, Blocks.field_150362_t);
                                  }
 @@ -113,7 +116,7 @@
                      {
-                         Block block2 = par1World.getBlock(par3, par4 + k2, par5);
+                         Block block2 = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_ + k2, p_76484_5_);
  
--                        if (block2.getMaterial() == Material.air || block2.getMaterial() == Material.leaves || block2 == Blocks.flowing_water || block2 == Blocks.water)
-+                        if (block2.isAir(par1World, par3, par4 + k2, par5) || block2.isLeaves(par1World, par3, par4 + k2, par5) || block2 == Blocks.flowing_water || block2 == Blocks.water)
+-                        if (block2.func_149688_o() == Material.field_151579_a || block2.func_149688_o() == Material.field_151584_j || block2 == Blocks.field_150358_i || block2 == Blocks.field_150355_j)
++                        if (block2.isAir(p_76484_1_, p_76484_3_, p_76484_4_ + k2, p_76484_5_) || block2.isLeaves(p_76484_1_, p_76484_3_, p_76484_4_ + k2, p_76484_5_) || block2 == Blocks.field_150358_i || block2 == Blocks.field_150355_j)
                          {
-                             this.func_150515_a(par1World, par3, par4 + k2, par5, Blocks.log);
+                             this.func_150515_a(p_76484_1_, p_76484_3_, p_76484_4_ + k2, p_76484_5_, Blocks.field_150364_r);
                          }
 @@ -128,24 +131,24 @@
                          {
-                             for (l1 = par5 - k1; l1 <= par5 + k1; ++l1)
+                             for (l1 = p_76484_5_ - k1; l1 <= p_76484_5_ + k1; ++l1)
                              {
--                                if (par1World.getBlock(l2, k2, l1).getMaterial() == Material.leaves)
-+                                if (par1World.getBlock(l2, k2, l1).isLeaves(par1World, l2, k2, l1))
+-                                if (p_76484_1_.func_147439_a(l2, k2, l1).func_149688_o() == Material.field_151584_j)
++                                if (p_76484_1_.func_147439_a(l2, k2, l1).isLeaves(p_76484_1_, l2, k2, l1))
                                  {
--                                    if (par2Random.nextInt(4) == 0 && par1World.getBlock(l2 - 1, k2, l1).getMaterial() == Material.air)
-+                                    if (par2Random.nextInt(4) == 0 && par1World.getBlock(l2 - 1, k2, l1).isAir(par1World, l2 - 1, k2, l1))
+-                                    if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(l2 - 1, k2, l1).func_149688_o() == Material.field_151579_a)
++                                    if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(l2 - 1, k2, l1).isAir(p_76484_1_, l2 - 1, k2, l1))
                                      {
-                                         this.generateVines(par1World, l2 - 1, k2, l1, 8);
+                                         this.func_76536_b(p_76484_1_, l2 - 1, k2, l1, 8);
                                      }
  
--                                    if (par2Random.nextInt(4) == 0 && par1World.getBlock(l2 + 1, k2, l1).getMaterial() == Material.air)
-+                                    if (par2Random.nextInt(4) == 0 && par1World.getBlock(l2 + 1, k2, l1).isAir(par1World, l2 + 1, k2, l1))
+-                                    if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(l2 + 1, k2, l1).func_149688_o() == Material.field_151579_a)
++                                    if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(l2 + 1, k2, l1).isAir(p_76484_1_, l2 + 1, k2, l1))
                                      {
-                                         this.generateVines(par1World, l2 + 1, k2, l1, 2);
+                                         this.func_76536_b(p_76484_1_, l2 + 1, k2, l1, 2);
                                      }
  
--                                    if (par2Random.nextInt(4) == 0 && par1World.getBlock(l2, k2, l1 - 1).getMaterial() == Material.air)
-+                                    if (par2Random.nextInt(4) == 0 && par1World.getBlock(l2, k2, l1 - 1).isAir(par1World, l2, k2, l1 - 1))
+-                                    if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(l2, k2, l1 - 1).func_149688_o() == Material.field_151579_a)
++                                    if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(l2, k2, l1 - 1).isAir(p_76484_1_, l2, k2, l1 - 1))
                                      {
-                                         this.generateVines(par1World, l2, k2, l1 - 1, 1);
+                                         this.func_76536_b(p_76484_1_, l2, k2, l1 - 1, 1);
                                      }
  
--                                    if (par2Random.nextInt(4) == 0 && par1World.getBlock(l2, k2, l1 + 1).getMaterial() == Material.air)
-+                                    if (par2Random.nextInt(4) == 0 && par1World.getBlock(l2, k2, l1 + 1).isAir(par1World, l2, k2, l1 + 1))
+-                                    if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(l2, k2, l1 + 1).func_149688_o() == Material.field_151579_a)
++                                    if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(l2, k2, l1 + 1).isAir(p_76484_1_, l2, k2, l1 + 1))
                                      {
-                                         this.generateVines(par1World, l2, k2, l1 + 1, 4);
+                                         this.func_76536_b(p_76484_1_, l2, k2, l1 + 1, 4);
                                      }
-@@ -178,7 +181,7 @@
+@@ -177,7 +180,7 @@
          {
-             --par3;
+             --p_76536_3_;
  
--            if (par1World.getBlock(par2, par3, par4).getMaterial() != Material.air || i1 <= 0)
-+            if (!(par1World.getBlock(par2, par3, par4).isAir(par1World, par2, par3, par4)) || i1 <= 0)
+-            if (p_76536_1_.func_147439_a(p_76536_2_, p_76536_3_, p_76536_4_).func_149688_o() != Material.field_151579_a || i1 <= 0)
++            if (!(p_76536_1_.func_147439_a(p_76536_2_, p_76536_3_, p_76536_4_).isAir(p_76536_1_, p_76536_2_, p_76536_3_, p_76536_4_)) || i1 <= 0)
              {
                  return;
              }

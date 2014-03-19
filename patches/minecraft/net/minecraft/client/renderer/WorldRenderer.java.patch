@@ -1,24 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/WorldRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/WorldRenderer.java
-@@ -29,7 +29,7 @@
-     // JAVADOC FIELD $$ field_78924_a
-     public World worldObj;
-     private int glRenderList = -1;
--    private static Tessellator tessellator = Tessellator.instance;
+@@ -28,7 +28,7 @@
+     private TesselatorVertexState field_147894_y;
+     public World field_78924_a;
+     private int field_78942_y = -1;
+-    private static Tessellator field_78941_z = Tessellator.field_78398_a;
 +    //private static Tessellator tessellator = Tessellator.instance;
-     public static int chunksUpdated;
-     public int posX;
-     public int posY;
-@@ -179,7 +179,7 @@
-                                         this.preRenderBlocks(k2);
+     public static int field_78922_b;
+     public int field_78923_c;
+     public int field_78920_d;
+@@ -157,7 +157,7 @@
+                                         this.func_147890_b(k2);
                                      }
  
--                                    if (k2 == 0 && block.hasTileEntity())
-+                                    if (k2 == 0 && block.hasTileEntity(chunkcache.getBlockMetadata(j3, l2, i3)))
+-                                    if (k2 == 0 && block.func_149716_u())
++                                    if (k2 == 0 && block.hasTileEntity(chunkcache.func_72805_g(j3, l2, i3)))
                                      {
-                                         TileEntity tileentity = chunkcache.getTileEntity(j3, l2, i3);
+                                         TileEntity tileentity = chunkcache.func_147438_o(j3, l2, i3);
  
-@@ -195,7 +195,9 @@
+@@ -173,7 +173,9 @@
                                      {
                                          flag = true;
                                      }
@@ -27,42 +27,42 @@
 +                                    if (!block.canRenderInPass(k2)) continue;
 +
                                      {
-                                         flag1 |= renderblocks.renderBlockByRenderType(block, j3, l2, i3);
+                                         flag1 |= renderblocks.func_147805_b(block, j3, l2, i3);
  
-@@ -254,21 +256,22 @@
+@@ -232,21 +234,22 @@
          GL11.glTranslatef(-8.0F, -8.0F, -8.0F);
          GL11.glScalef(f, f, f);
          GL11.glTranslatef(8.0F, 8.0F, 8.0F);
--        tessellator.startDrawingQuads();
--        tessellator.setTranslation((double)(-this.posX), (double)(-this.posY), (double)(-this.posZ));
-+        Tessellator.instance.startDrawingQuads();
-+        Tessellator.instance.setTranslation((double)(-this.posX), (double)(-this.posY), (double)(-this.posZ));
+-        field_78941_z.func_78382_b();
+-        field_78941_z.func_78373_b((double)(-this.field_78923_c), (double)(-this.field_78920_d), (double)(-this.field_78921_e));
++        Tessellator.field_78398_a.func_78382_b();
++        Tessellator.field_78398_a.func_78373_b((double)(-this.field_78923_c), (double)(-this.field_78920_d), (double)(-this.field_78921_e));
      }
  
-     private void postRenderBlocks(int p_147891_1_, EntityLivingBase p_147891_2_)
+     private void func_147891_a(int p_147891_1_, EntityLivingBase p_147891_2_)
      {
-         if (p_147891_1_ == 1 && !this.skipRenderPass[p_147891_1_])
+         if (p_147891_1_ == 1 && !this.field_78928_m[p_147891_1_])
          {
--            this.vertexState = tessellator.getVertexState((float)p_147891_2_.posX, (float)p_147891_2_.posY, (float)p_147891_2_.posZ);
-+            this.vertexState = Tessellator.instance.getVertexState((float)p_147891_2_.posX, (float)p_147891_2_.posY, (float)p_147891_2_.posZ);
+-            this.field_147894_y = field_78941_z.func_147564_a((float)p_147891_2_.field_70165_t, (float)p_147891_2_.field_70163_u, (float)p_147891_2_.field_70161_v);
++            this.field_147894_y = Tessellator.field_78398_a.func_147564_a((float)p_147891_2_.field_70165_t, (float)p_147891_2_.field_70163_u, (float)p_147891_2_.field_70161_v);
          }
  
--        this.bytesDrawn += tessellator.draw();
+-        this.field_78917_C += field_78941_z.func_78381_a();
 +        //ForgeHooksClient.afterRenderPass(l1); Noop fo now, TODO: Event if anyone needs
-+        this.bytesDrawn += Tessellator.instance.draw();
++        this.field_78917_C += Tessellator.field_78398_a.func_78381_a();
          GL11.glPopMatrix();
          GL11.glEndList();
--        tessellator.setTranslation(0.0D, 0.0D, 0.0D);
-+        Tessellator.instance.setTranslation(0.0D, 0.0D, 0.0D);
+-        field_78941_z.func_78373_b(0.0D, 0.0D, 0.0D);
++        Tessellator.field_78398_a.func_78373_b(0.0D, 0.0D, 0.0D);
      }
  
-     public void updateRendererSort(EntityLivingBase p_147889_1_)
-@@ -276,7 +279,7 @@
-         if (this.vertexState != null && !this.skipRenderPass[1])
+     public void func_147889_b(EntityLivingBase p_147889_1_)
+@@ -254,7 +257,7 @@
+         if (this.field_147894_y != null && !this.field_78928_m[1])
          {
-             this.preRenderBlocks(1);
--            tessellator.setVertexState(this.vertexState);
-+            Tessellator.instance.setVertexState(this.vertexState);
-             this.postRenderBlocks(1, p_147889_1_);
+             this.func_147890_b(1);
+-            field_78941_z.func_147565_a(this.field_147894_y);
++            Tessellator.field_78398_a.func_147565_a(this.field_147894_y);
+             this.func_147891_a(1, p_147889_1_);
          }
      }

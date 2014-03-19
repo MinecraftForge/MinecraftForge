@@ -1,54 +1,53 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockSnow.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockSnow.java
-@@ -79,7 +79,7 @@
-     public boolean canPlaceBlockAt(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
+@@ -73,7 +73,7 @@
+     public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
      {
-         Block block = p_149742_1_.getBlock(p_149742_2_, p_149742_3_ - 1, p_149742_4_);
--        return block != Blocks.ice && block != Blocks.packed_ice ? (block.getMaterial() == Material.leaves ? true : (block == this && (p_149742_1_.getBlockMetadata(p_149742_2_, p_149742_3_ - 1, p_149742_4_) & 7) == 7 ? true : block.isOpaqueCube() && block.blockMaterial.blocksMovement())) : false;
-+        return block != Blocks.ice && block != Blocks.packed_ice ? (block.isLeaves(p_149742_1_, p_149742_2_, p_149742_3_ - 1, p_149742_4_) ? true : (block == this && (p_149742_1_.getBlockMetadata(p_149742_2_, p_149742_3_ - 1, p_149742_4_) & 7) == 7 ? true : block.isOpaqueCube() && block.blockMaterial.blocksMovement())) : false;
+         Block block = p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_ - 1, p_149742_4_);
+-        return block != Blocks.field_150432_aD && block != Blocks.field_150403_cj ? (block.func_149688_o() == Material.field_151584_j ? true : (block == this && (p_149742_1_.func_72805_g(p_149742_2_, p_149742_3_ - 1, p_149742_4_) & 7) == 7 ? true : block.func_149662_c() && block.field_149764_J.func_76230_c())) : false;
++        return block != Blocks.field_150432_aD && block != Blocks.field_150403_cj ? (block.isLeaves(p_149742_1_, p_149742_2_, p_149742_3_ - 1, p_149742_4_) ? true : (block == this && (p_149742_1_.func_72805_g(p_149742_2_, p_149742_3_ - 1, p_149742_4_) & 7) == 7 ? true : block.func_149662_c() && block.field_149764_J.func_76230_c())) : false;
      }
  
-     // JAVADOC METHOD $$ func_149695_a
-@@ -92,7 +92,6 @@
+     public void func_149695_a(World p_149695_1_, int p_149695_2_, int p_149695_3_, int p_149695_4_, Block p_149695_5_)
+@@ -85,7 +85,6 @@
      {
-         if (!this.canPlaceBlockAt(p_150155_1_, p_150155_2_, p_150155_3_, p_150155_4_))
+         if (!this.func_149742_c(p_150155_1_, p_150155_2_, p_150155_3_, p_150155_4_))
          {
--            this.dropBlockAsItem(p_150155_1_, p_150155_2_, p_150155_3_, p_150155_4_, p_150155_1_.getBlockMetadata(p_150155_2_, p_150155_3_, p_150155_4_), 0);
-             p_150155_1_.setBlockToAir(p_150155_2_, p_150155_3_, p_150155_4_);
+-            this.func_149697_b(p_150155_1_, p_150155_2_, p_150155_3_, p_150155_4_, p_150155_1_.func_72805_g(p_150155_2_, p_150155_3_, p_150155_4_), 0);
+             p_150155_1_.func_147468_f(p_150155_2_, p_150155_3_, p_150155_4_);
              return false;
          }
-@@ -105,10 +104,8 @@
-     // JAVADOC METHOD $$ func_149636_a
-     public void harvestBlock(World p_149636_1_, EntityPlayer p_149636_2_, int p_149636_3_, int p_149636_4_, int p_149636_5_, int p_149636_6_)
+@@ -97,10 +96,8 @@
+ 
+     public void func_149636_a(World p_149636_1_, EntityPlayer p_149636_2_, int p_149636_3_, int p_149636_4_, int p_149636_5_, int p_149636_6_)
      {
 -        int i1 = p_149636_6_ & 7;
--        this.dropBlockAsItem(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, new ItemStack(Items.snowball, i1 + 1, 0));
-+        super.harvestBlock(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_);
-         p_149636_1_.setBlockToAir(p_149636_3_, p_149636_4_, p_149636_5_);
--        p_149636_2_.addStat(StatList.mineBlockStatArray[Block.getIdFromBlock(this)], 1);
+-        this.func_149642_a(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, new ItemStack(Items.field_151126_ay, i1 + 1, 0));
++        super.func_149636_a(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_);
+         p_149636_1_.func_147468_f(p_149636_3_, p_149636_4_, p_149636_5_);
+-        p_149636_2_.func_71064_a(StatList.field_75934_C[Block.func_149682_b(this)], 1);
      }
  
-     public Item getItemDropped(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
-@@ -119,7 +116,7 @@
-     // JAVADOC METHOD $$ func_149745_a
-     public int quantityDropped(Random p_149745_1_)
+     public Item func_149650_a(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
+@@ -110,14 +107,13 @@
+ 
+     public int func_149745_a(Random p_149745_1_)
      {
 -        return 0;
 +        return 1;
      }
  
-     // JAVADOC METHOD $$ func_149674_a
-@@ -127,7 +124,6 @@
+     public void func_149674_a(World p_149674_1_, int p_149674_2_, int p_149674_3_, int p_149674_4_, Random p_149674_5_)
      {
-         if (p_149674_1_.getSavedLightValue(EnumSkyBlock.Block, p_149674_2_, p_149674_3_, p_149674_4_) > 11)
+         if (p_149674_1_.func_72972_b(EnumSkyBlock.Block, p_149674_2_, p_149674_3_, p_149674_4_) > 11)
          {
--            this.dropBlockAsItem(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, p_149674_1_.getBlockMetadata(p_149674_2_, p_149674_3_, p_149674_4_), 0);
-             p_149674_1_.setBlockToAir(p_149674_2_, p_149674_3_, p_149674_4_);
+-            this.func_149697_b(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, p_149674_1_.func_72805_g(p_149674_2_, p_149674_3_, p_149674_4_), 0);
+             p_149674_1_.func_147468_f(p_149674_2_, p_149674_3_, p_149674_4_);
          }
      }
-@@ -138,4 +134,34 @@
+@@ -127,4 +123,34 @@
      {
-         return p_149646_5_ == 1 ? true : super.shouldSideBeRendered(p_149646_1_, p_149646_2_, p_149646_3_, p_149646_4_, p_149646_5_);
+         return p_149646_5_ == 1 ? true : super.func_149646_a(p_149646_1_, p_149646_2_, p_149646_3_, p_149646_4_, p_149646_5_);
      }
 +
 +    /**
@@ -77,7 +76,7 @@
 +     */
 +    public boolean isReplaceable(IBlockAccess world, int x, int y, int z)
 +    {
-+        int meta = world.getBlockMetadata(x, y, z);
-+        return meta >= 7 ? false : blockMaterial.isReplaceable();
++        int meta = world.func_72805_g(x, y, z);
++        return meta >= 7 ? false : field_149764_J.func_76222_j();
 +    }
  }

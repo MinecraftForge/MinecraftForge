@@ -1,41 +1,41 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBlock.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBlock.java
-@@ -54,7 +54,7 @@
+@@ -50,7 +50,7 @@
          {
-             par7 = 1;
+             p_77648_7_ = 1;
          }
--        else if (block != Blocks.vine && block != Blocks.tallgrass && block != Blocks.deadbush)
-+        else if (block != Blocks.vine && block != Blocks.tallgrass && block != Blocks.deadbush && !block.isReplaceable(par3World, par4, par5, par6))
+-        else if (block != Blocks.field_150395_bd && block != Blocks.field_150329_H && block != Blocks.field_150330_I)
++        else if (block != Blocks.field_150395_bd && block != Blocks.field_150329_H && block != Blocks.field_150330_I && !block.isReplaceable(p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_))
          {
-             if (par7 == 0)
+             if (p_77648_7_ == 0)
              {
-@@ -104,14 +104,8 @@
-             int i1 = this.getMetadata(par1ItemStack.getItemDamage());
-             int j1 = this.field_150939_a.onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, i1);
+@@ -100,14 +100,8 @@
+             int i1 = this.func_77647_b(p_77648_1_.func_77960_j());
+             int j1 = this.field_150939_a.func_149660_a(p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_, p_77648_7_, p_77648_8_, p_77648_9_, p_77648_10_, i1);
  
--            if (par3World.setBlock(par4, par5, par6, this.field_150939_a, j1, 3))
-+            if (placeBlockAt(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10, j1))
+-            if (p_77648_3_.func_147465_d(p_77648_4_, p_77648_5_, p_77648_6_, this.field_150939_a, j1, 3))
++            if (placeBlockAt(p_77648_1_, p_77648_2_, p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_, p_77648_7_, p_77648_8_, p_77648_9_, p_77648_10_, j1))
              {
--                if (par3World.getBlock(par4, par5, par6) == this.field_150939_a)
+-                if (p_77648_3_.func_147439_a(p_77648_4_, p_77648_5_, p_77648_6_) == this.field_150939_a)
 -                {
--                    this.field_150939_a.onBlockPlacedBy(par3World, par4, par5, par6, par2EntityPlayer, par1ItemStack);
--                    this.field_150939_a.onPostBlockPlaced(par3World, par4, par5, par6, j1);
+-                    this.field_150939_a.func_149689_a(p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_, p_77648_2_, p_77648_1_);
+-                    this.field_150939_a.func_149714_e(p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_, j1);
 -                }
 -
-                 par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.field_150939_a.stepSound.func_150496_b(), (this.field_150939_a.stepSound.getVolume() + 1.0F) / 2.0F, this.field_150939_a.stepSound.getPitch() * 0.8F);
-                 --par1ItemStack.stackSize;
+                 p_77648_3_.func_72908_a((double)((float)p_77648_4_ + 0.5F), (double)((float)p_77648_5_ + 0.5F), (double)((float)p_77648_6_ + 0.5F), this.field_150939_a.field_149762_H.func_150496_b(), (this.field_150939_a.field_149762_H.func_150497_c() + 1.0F) / 2.0F, this.field_150939_a.field_149762_H.func_150494_d() * 0.8F);
+                 --p_77648_1_.field_77994_a;
              }
-@@ -133,7 +127,7 @@
+@@ -129,7 +123,7 @@
          {
              p_150936_5_ = 1;
          }
--        else if (block != Blocks.vine && block != Blocks.tallgrass && block != Blocks.deadbush)
-+        else if (block != Blocks.vine && block != Blocks.tallgrass && block != Blocks.deadbush && !block.isReplaceable(p_150936_1_, p_150936_2_, p_150936_3_, p_150936_4_))
+-        else if (block != Blocks.field_150395_bd && block != Blocks.field_150329_H && block != Blocks.field_150330_I)
++        else if (block != Blocks.field_150395_bd && block != Blocks.field_150329_H && block != Blocks.field_150330_I && !block.isReplaceable(p_150936_1_, p_150936_2_, p_150936_3_, p_150936_4_))
          {
              if (p_150936_5_ == 0)
              {
-@@ -205,4 +199,29 @@
-             this.field_150938_b = par1IconRegister.registerIcon(s);
+@@ -197,4 +191,29 @@
+             this.field_150938_b = p_94581_1_.func_94245_a(s);
          }
      }
 +
@@ -50,15 +50,15 @@
 +    public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata)
 +    {
 +
-+       if (!world.setBlock(x, y, z, field_150939_a, metadata, 3))
++       if (!world.func_147465_d(x, y, z, field_150939_a, metadata, 3))
 +       {
 +           return false;
 +       }
 +
-+       if (world.getBlock(x, y, z) == field_150939_a)
++       if (world.func_147439_a(x, y, z) == field_150939_a)
 +       {
-+           field_150939_a.onBlockPlacedBy(world, x, y, z, player, stack);
-+           field_150939_a.onPostBlockPlaced(world, x, y, z, metadata);
++           field_150939_a.func_149689_a(world, x, y, z, player, stack);
++           field_150939_a.func_149714_e(world, x, y, z, metadata);
 +       }
 +
 +       return true;

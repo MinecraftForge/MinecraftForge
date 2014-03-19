@@ -9,48 +9,48 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -59,7 +61,7 @@
-     // JAVADOC METHOD $$ func_73241_b
-     public void unloadChunksIfNotNearSpawn(int par1, int par2)
+@@ -55,7 +57,7 @@
+ 
+     public void func_73241_b(int p_73241_1_, int p_73241_2_)
      {
--        if (this.worldObj.provider.canRespawnHere())
-+        if (this.worldObj.provider.canRespawnHere() && DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId))
+-        if (this.field_73251_h.field_73011_w.func_76567_e())
++        if (this.field_73251_h.field_73011_w.func_76567_e() && DimensionManager.shouldLoadSpawn(this.field_73251_h.field_73011_w.field_76574_g))
          {
-             ChunkCoordinates chunkcoordinates = this.worldObj.getSpawnPoint();
-             int k = par1 * 16 + 8 - chunkcoordinates.posX;
-@@ -98,7 +100,11 @@
+             ChunkCoordinates chunkcoordinates = this.field_73251_h.func_72861_E();
+             int k = p_73241_1_ * 16 + 8 - chunkcoordinates.field_71574_a;
+@@ -92,7 +94,11 @@
  
          if (chunk == null)
          {
--            chunk = this.safeLoadChunk(par1, par2);
-+            chunk = ForgeChunkManager.fetchDormantChunk(k, this.worldObj);
+-            chunk = this.func_73239_e(p_73158_1_, p_73158_2_);
++            chunk = ForgeChunkManager.fetchDormantChunk(k, this.field_73251_h);
 +            if (chunk == null)
 +            {
-+                chunk = this.safeLoadChunk(par1, par2);
++                chunk = this.func_73239_e(p_73158_1_, p_73158_2_);
 +            }
  
              if (chunk == null)
              {
-@@ -272,6 +278,11 @@
+@@ -258,6 +264,11 @@
      {
-         if (!this.worldObj.levelSaving)
+         if (!this.field_73251_h.field_73058_d)
          {
-+            for (ChunkCoordIntPair forced : this.worldObj.getPersistentChunks().keySet())
++            for (ChunkCoordIntPair forced : this.field_73251_h.getPersistentChunks().keySet())
 +            {
-+                this.chunksToUnload.remove(ChunkCoordIntPair.chunkXZ2Int(forced.chunkXPos, forced.chunkZPos));
++                this.field_73248_b.remove(ChunkCoordIntPair.func_77272_a(forced.field_77276_a, forced.field_77275_b));
 +            }
 +
              for (int i = 0; i < 100; ++i)
              {
-                 if (!this.chunksToUnload.isEmpty())
-@@ -284,6 +295,11 @@
-                     this.chunksToUnload.remove(olong);
-                     this.loadedChunkHashMap.remove(olong.longValue());
-                     this.loadedChunks.remove(chunk);
-+                    ForgeChunkManager.putDormantChunk(ChunkCoordIntPair.chunkXZ2Int(chunk.xPosition, chunk.zPosition), chunk);
-+                    if(loadedChunks.size() == 0 && ForgeChunkManager.getPersistentChunksFor(this.worldObj).size() == 0 && !DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId)){
-+                        DimensionManager.unloadWorld(this.worldObj.provider.dimensionId);
-+                        return currentChunkProvider.unloadQueuedChunks();
+                 if (!this.field_73248_b.isEmpty())
+@@ -270,6 +281,11 @@
+                     this.field_73248_b.remove(olong);
+                     this.field_73244_f.func_76159_d(olong.longValue());
+                     this.field_73245_g.remove(chunk);
++                    ForgeChunkManager.putDormantChunk(ChunkCoordIntPair.func_77272_a(chunk.field_76635_g, chunk.field_76647_h), chunk);
++                    if(field_73245_g.size() == 0 && ForgeChunkManager.getPersistentChunksFor(this.field_73251_h).size() == 0 && !DimensionManager.shouldLoadSpawn(this.field_73251_h.field_73011_w.field_76574_g)){
++                        DimensionManager.unloadWorld(this.field_73251_h.field_73011_w.field_76574_g);
++                        return field_73246_d.func_73156_b();
 +                    }
                  }
              }

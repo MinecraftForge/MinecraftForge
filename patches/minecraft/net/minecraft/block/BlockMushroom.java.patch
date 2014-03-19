@@ -8,12 +8,12 @@
  
  public class BlockMushroom extends BlockBush implements IGrowable
  {
-@@ -89,7 +90,7 @@
+@@ -85,7 +86,7 @@
          if (p_149718_3_ >= 0 && p_149718_3_ < 256)
          {
-             Block block = p_149718_1_.getBlock(p_149718_2_, p_149718_3_ - 1, p_149718_4_);
--            return block == Blocks.mycelium || block == Blocks.dirt && p_149718_1_.getBlockMetadata(p_149718_2_, p_149718_3_ - 1, p_149718_4_) == 2 || p_149718_1_.getFullBlockLightValue(p_149718_2_, p_149718_3_, p_149718_4_) < 13 && this.canPlaceBlockOn(block);
-+            return block == Blocks.mycelium || block == Blocks.dirt && p_149718_1_.getBlockMetadata(p_149718_2_, p_149718_3_ - 1, p_149718_4_) == 2 || p_149718_1_.getFullBlockLightValue(p_149718_2_, p_149718_3_, p_149718_4_) < 13 && block.canSustainPlant(p_149718_1_, p_149718_2_, p_149718_3_ - 1, p_149718_4_, ForgeDirection.UP, this);
+             Block block = p_149718_1_.func_147439_a(p_149718_2_, p_149718_3_ - 1, p_149718_4_);
+-            return block == Blocks.field_150391_bh || block == Blocks.field_150346_d && p_149718_1_.func_72805_g(p_149718_2_, p_149718_3_ - 1, p_149718_4_) == 2 || p_149718_1_.func_72883_k(p_149718_2_, p_149718_3_, p_149718_4_) < 13 && this.func_149854_a(block);
++            return block == Blocks.field_150391_bh || block == Blocks.field_150346_d && p_149718_1_.func_72805_g(p_149718_2_, p_149718_3_ - 1, p_149718_4_) == 2 || p_149718_1_.func_72883_k(p_149718_2_, p_149718_3_, p_149718_4_) < 13 && block.canSustainPlant(p_149718_1_, p_149718_2_, p_149718_3_ - 1, p_149718_4_, ForgeDirection.UP, this);
          }
          else
          {

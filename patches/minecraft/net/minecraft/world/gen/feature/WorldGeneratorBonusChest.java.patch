@@ -1,18 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGeneratorBonusChest.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGeneratorBonusChest.java
-@@ -26,10 +26,12 @@
+@@ -24,10 +24,12 @@
      {
          Block block;
  
--        while (((block = par1World.getBlock(par3, par4, par5)).getMaterial() == Material.air || block.getMaterial() == Material.leaves) && par4 > 1)
+-        while (((block = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_, p_76484_5_)).func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j) && p_76484_4_ > 1)
 +        do
          {
--            --par4;
+-            --p_76484_4_;
 -        }
-+            block = par1World.getBlock(par3, par4, par5);
-+            if (!block.isAir(par1World, par3, par4, par5) && !block.isLeaves(par1World, par3, par4, par5)) break;
-+            par4--;
-+        } while (par4 > 1);
++            block = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_, p_76484_5_);
++            if (!block.isAir(p_76484_1_, p_76484_3_, p_76484_4_, p_76484_5_) && !block.isLeaves(p_76484_1_, p_76484_3_, p_76484_4_, p_76484_5_)) break;
++            p_76484_4_--;
++        } while (p_76484_4_ > 1);
  
-         if (par4 < 1)
+         if (p_76484_4_ < 1)
          {

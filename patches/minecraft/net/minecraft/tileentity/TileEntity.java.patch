@@ -11,9 +11,9 @@
  import net.minecraft.world.World;
  
  import org.apache.logging.log4j.Level;
-@@ -296,4 +299,93 @@
-         addMapping(TileEntityComparator.class, "Comparator");
-         addMapping(TileEntityFlowerPot.class, "FlowerPot");
+@@ -278,4 +281,93 @@
+         func_145826_a(TileEntityComparator.class, "Comparator");
+         func_145826_a(TileEntityFlowerPot.class, "FlowerPot");
      }
 +
 +    // -- BEGIN FORGE PATCHES --
@@ -73,7 +73,7 @@
 +    /**
 +     * Sometimes default render bounding box: infinite in scope. Used to control rendering on {@link TileEntitySpecialRenderer}.
 +     */
-+    public static final AxisAlignedBB INFINITE_EXTENT_AABB = AxisAlignedBB.getBoundingBox(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
++    public static final AxisAlignedBB INFINITE_EXTENT_AABB = AxisAlignedBB.func_72330_a(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 +    /**
 +     * Return an {@link AxisAlignedBB} that controls the visible scope of a {@link TileEntitySpecialRenderer} associated with this {@link TileEntity}
 +     * Defaults to the collision bounding box {@link Block#getCollisionBoundingBoxFromPool(World, int, int, int)} associated with the block
@@ -85,18 +85,18 @@
 +    public AxisAlignedBB getRenderBoundingBox()
 +    {
 +        AxisAlignedBB bb = INFINITE_EXTENT_AABB;
-+        Block type = getBlockType();
-+        if (type == Blocks.enchanting_table)
++        Block type = func_145838_q();
++        if (type == Blocks.field_150381_bn)
 +        {
-+            bb = AxisAlignedBB.getAABBPool().getAABB(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1);
++            bb = AxisAlignedBB.func_72332_a().func_72299_a(field_145851_c, field_145848_d, field_145849_e, field_145851_c + 1, field_145848_d + 1, field_145849_e + 1);
 +        }
-+        else if (type == Blocks.chest || type == Blocks.trapped_chest)
++        else if (type == Blocks.field_150486_ae || type == Blocks.field_150447_bR)
 +        {
-+            bb = AxisAlignedBB.getAABBPool().getAABB(xCoord - 1, yCoord, zCoord - 1, xCoord + 2, yCoord + 2, zCoord + 2);
++            bb = AxisAlignedBB.func_72332_a().func_72299_a(field_145851_c - 1, field_145848_d, field_145849_e - 1, field_145851_c + 2, field_145848_d + 2, field_145849_e + 2);
 +        }
-+        else if (type != null && type != Blocks.beacon)
++        else if (type != null && type != Blocks.field_150461_bJ)
 +        {
-+            AxisAlignedBB cbb = type.getCollisionBoundingBoxFromPool(worldObj, xCoord, yCoord, zCoord);
++            AxisAlignedBB cbb = type.func_149668_a(field_145850_b, field_145851_c, field_145848_d, field_145849_e);
 +            if (cbb != null)
 +            {
 +                bb = cbb;

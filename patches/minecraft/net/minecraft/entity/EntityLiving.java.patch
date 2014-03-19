@@ -10,42 +10,42 @@
  
  public abstract class EntityLiving extends EntityLivingBase
  {
-@@ -130,6 +133,7 @@
-     public void setAttackTarget(EntityLivingBase par1EntityLivingBase)
+@@ -117,6 +120,7 @@
+     public void func_70624_b(EntityLivingBase p_70624_1_)
      {
-         this.attackTarget = par1EntityLivingBase;
-+        ForgeHooks.onLivingSetAttackTarget(this, par1EntityLivingBase);
+         this.field_70696_bz = p_70624_1_;
++        ForgeHooks.onLivingSetAttackTarget(this, p_70624_1_);
      }
  
-     // JAVADOC METHOD $$ func_70686_a
-@@ -506,10 +510,22 @@
-     // JAVADOC METHOD $$ func_70623_bb
-     protected void despawnEntity()
+     public boolean func_70686_a(Class p_70686_1_)
+@@ -476,10 +480,22 @@
+ 
+     protected void func_70623_bb()
      {
 +        Result result = null;
-         if (this.persistenceRequired)
+         if (this.field_82179_bU)
          {
-             this.entityAge = 0;
+             this.field_70708_bq = 0;
          }
-+        else if ((this.entityAge & 0x1F) == 0x1F && (result = ForgeEventFactory.canEntityDespawn(this)) != Result.DEFAULT)
++        else if ((this.field_70708_bq & 0x1F) == 0x1F && (result = ForgeEventFactory.canEntityDespawn(this)) != Result.DEFAULT)
 +        {
 +            if (result == Result.DENY)
 +            {
-+                this.entityAge = 0;
++                this.field_70708_bq = 0;
 +            }
 +            else
 +            {
-+                this.setDead();
++                this.func_70106_y();
 +            }
 +        }
          else
          {
-             EntityPlayer entityplayer = this.worldObj.getClosestPlayerToEntity(this, -1.0D);
-@@ -677,7 +693,6 @@
+             EntityPlayer entityplayer = this.field_70170_p.func_72890_a(this, -1.0D);
+@@ -642,7 +658,6 @@
+         return this.field_70170_p.func_72855_b(this.field_70121_D) && this.field_70170_p.func_72945_a(this, this.field_70121_D).isEmpty() && !this.field_70170_p.func_72953_d(this.field_70121_D);
      }
  
-     // JAVADOC METHOD $$ func_70603_bj
 -    @SideOnly(Side.CLIENT)
-     public float getRenderSizeModifier()
+     public float func_70603_bj()
      {
          return 1.0F;

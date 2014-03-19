@@ -16,98 +16,98 @@
  
  @SideOnly(Side.CLIENT)
  public class RenderBiped extends RenderLiving
-@@ -50,11 +56,13 @@
+@@ -49,11 +55,13 @@
          this.field_82425_h = new ModelBiped(0.5F);
      }
  
 +    @Deprecated //Use the more sensitive version getArmorResource below
-     public static ResourceLocation func_110857_a(ItemArmor par0ItemArmor, int par1)
+     public static ResourceLocation func_110857_a(ItemArmor p_110857_0_, int p_110857_1_)
      {
-         return func_110858_a(par0ItemArmor, par1, (String)null);
+         return func_110858_a(p_110857_0_, p_110857_1_, (String)null);
      }
  
 +    @Deprecated //Use the more sensitive version getArmorResource below
-     public static ResourceLocation func_110858_a(ItemArmor par0ItemArmor, int par1, String par2Str)
+     public static ResourceLocation func_110858_a(ItemArmor p_110858_0_, int p_110858_1_, String p_110858_2_)
      {
-         String s1 = String.format("textures/models/armor/%s_layer_%d%s.png", new Object[] {bipedArmorFilenamePrefix[par0ItemArmor.renderIndex], Integer.valueOf(par1 == 2 ? 2 : 1), par2Str == null ? "" : String.format("_%s", new Object[]{par2Str})});
-@@ -81,7 +89,7 @@
+         String s1 = String.format("textures/models/armor/%s_layer_%d%s.png", new Object[] {field_82424_k[p_110858_0_.field_77880_c], Integer.valueOf(p_110858_1_ == 2 ? 2 : 1), p_110858_2_ == null ? "" : String.format("_%s", new Object[]{p_110858_2_})});
+@@ -79,7 +87,7 @@
              if (item instanceof ItemArmor)
              {
                  ItemArmor itemarmor = (ItemArmor)item;
--                this.bindTexture(func_110857_a(itemarmor, par2));
-+                this.bindTexture(getArmorResource(par1EntityLiving, itemstack, par2, null));
-                 ModelBiped modelbiped = par2 == 2 ? this.field_82425_h : this.field_82423_g;
-                 modelbiped.bipedHead.showModel = par2 == 0;
-                 modelbiped.bipedHeadwear.showModel = par2 == 0;
-@@ -90,14 +98,16 @@
-                 modelbiped.bipedLeftArm.showModel = par2 == 1;
-                 modelbiped.bipedRightLeg.showModel = par2 == 2 || par2 == 3;
-                 modelbiped.bipedLeftLeg.showModel = par2 == 2 || par2 == 3;
-+                modelbiped = ForgeHooksClient.getArmorModel(par1EntityLiving, itemstack, par2, modelbiped);
-                 this.setRenderPassModel(modelbiped);
-                 modelbiped.onGround = this.mainModel.onGround;
-                 modelbiped.isRiding = this.mainModel.isRiding;
-                 modelbiped.isChild = this.mainModel.isChild;
+-                this.func_110776_a(func_110857_a(itemarmor, p_130006_2_));
++                this.func_110776_a(getArmorResource(p_130006_1_, itemstack, p_130006_2_, null));
+                 ModelBiped modelbiped = p_130006_2_ == 2 ? this.field_82425_h : this.field_82423_g;
+                 modelbiped.field_78116_c.field_78806_j = p_130006_2_ == 0;
+                 modelbiped.field_78114_d.field_78806_j = p_130006_2_ == 0;
+@@ -88,14 +96,16 @@
+                 modelbiped.field_78113_g.field_78806_j = p_130006_2_ == 1;
+                 modelbiped.field_78123_h.field_78806_j = p_130006_2_ == 2 || p_130006_2_ == 3;
+                 modelbiped.field_78124_i.field_78806_j = p_130006_2_ == 2 || p_130006_2_ == 3;
++                modelbiped = ForgeHooksClient.getArmorModel(p_130006_1_, itemstack, p_130006_2_, modelbiped);
+                 this.func_77042_a(modelbiped);
+                 modelbiped.field_78095_p = this.field_77045_g.field_78095_p;
+                 modelbiped.field_78093_q = this.field_77045_g.field_78093_q;
+                 modelbiped.field_78091_s = this.field_77045_g.field_78091_s;
  
--                if (itemarmor.getArmorMaterial() == ItemArmor.ArmorMaterial.CLOTH)
+-                if (itemarmor.func_82812_d() == ItemArmor.ArmorMaterial.CLOTH)
 +                //Move out of if to allow for more then just CLOTH to have color
-+                int j = itemarmor.getColor(itemstack);
++                int j = itemarmor.func_82814_b(itemstack);
 +                if (j != -1)
                  {
--                    int j = itemarmor.getColor(itemstack);
+-                    int j = itemarmor.func_82814_b(itemstack);
                      float f1 = (float)(j >> 16 & 255) / 255.0F;
                      float f2 = (float)(j >> 8 & 255) / 255.0F;
                      float f3 = (float)(j & 255) / 255.0F;
-@@ -135,7 +145,7 @@
+@@ -133,7 +143,7 @@
  
              if (item instanceof ItemArmor)
              {
--                this.bindTexture(func_110858_a((ItemArmor)item, par2, "overlay"));
-+                this.bindTexture(getArmorResource(par1EntityLivingBase, itemstack, par2, "overlay"));
+-                this.func_110776_a(func_110858_a((ItemArmor)item, p_82408_2_, "overlay"));
++                this.func_110776_a(getArmorResource(p_82408_1_, itemstack, p_82408_2_, "overlay"));
                  float f1 = 1.0F;
                  GL11.glColor3f(1.0F, 1.0F, 1.0F);
              }
-@@ -188,9 +198,12 @@
-             this.modelBipedMain.bipedHead.postRender(0.0625F);
-             item = itemstack1.getItem();
+@@ -184,9 +194,12 @@
+             this.field_77071_a.field_78116_c.func_78794_c(0.0625F);
+             item = itemstack1.func_77973_b();
  
 +            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack1, EQUIPPED);
 +            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, itemstack1, BLOCK_3D));
 +
              if (item instanceof ItemBlock)
              {
--                if (RenderBlocks.renderItemIn3d(Block.getBlockFromItem(item).getRenderType()))
-+                if (is3D || RenderBlocks.renderItemIn3d(Block.getBlockFromItem(item).getRenderType()))
+-                if (RenderBlocks.func_147739_a(Block.func_149634_a(item).func_149645_b()))
++                if (is3D || RenderBlocks.func_147739_a(Block.func_149634_a(item).func_149645_b()))
                  {
                      f1 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
-@@ -233,7 +246,10 @@
-             this.modelBipedMain.bipedRightArm.postRender(0.0625F);
+@@ -229,7 +242,10 @@
+             this.field_77071_a.field_78112_f.func_78794_c(0.0625F);
              GL11.glTranslatef(-0.0625F, 0.4375F, 0.0625F);
  
--            if (item instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.getBlockFromItem(item).getRenderType()))
+-            if (item instanceof ItemBlock && RenderBlocks.func_147739_a(Block.func_149634_a(item).func_149645_b()))
 +            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack, EQUIPPED);
 +            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, itemstack, BLOCK_3D));
 +
-+            if (item instanceof ItemBlock && (is3D || RenderBlocks.renderItemIn3d(Block.getBlockFromItem(item).getRenderType())))
++            if (item instanceof ItemBlock && (is3D || RenderBlocks.func_147739_a(Block.func_149634_a(item).func_149645_b())))
              {
                  f1 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -289,7 +305,10 @@
+@@ -285,7 +301,10 @@
                      f3 = (float)(i >> 8 & 255) / 255.0F;
                      float f4 = (float)(i & 255) / 255.0F;
                      GL11.glColor4f(f2, f3, f4, 1.0F);
--                    this.renderManager.itemRenderer.renderItem(par1EntityLiving, itemstack, j);
-+                    for (int x = 1; x < itemstack.getItem().getRenderPasses(itemstack.getItemDamage()); x++)
+-                    this.field_76990_c.field_78721_f.func_78443_a(p_130005_1_, itemstack, j);
++                    for (int x = 1; x < itemstack.func_77973_b().getRenderPasses(itemstack.func_77960_j()); x++)
 +                    {
-+                        this.renderManager.itemRenderer.renderItem(par1EntityLiving, itemstack, x);
++                        this.field_76990_c.field_78721_f.func_78443_a(p_130005_1_, itemstack, x);
 +                    }
                  }
              }
              else
-@@ -344,4 +363,33 @@
+@@ -336,4 +355,33 @@
      {
-         this.doRender((EntityLiving)par1Entity, par2, par4, par6, par8, par9);
+         this.func_76986_a((EntityLiving)p_76986_1_, p_76986_2_, p_76986_4_, p_76986_6_, p_76986_8_, p_76986_9_);
      }
 +
 +    /*=================================== FORGE START =========================================*/
@@ -122,9 +122,9 @@
 +     */
 +    public static ResourceLocation getArmorResource(Entity entity, ItemStack stack, int slot, String type)
 +    {
-+        ItemArmor item = (ItemArmor)stack.getItem();
++        ItemArmor item = (ItemArmor)stack.func_77973_b();
 +        String s1 = String.format("textures/models/armor/%s_layer_%d%s.png",
-+                bipedArmorFilenamePrefix[item.renderIndex], (slot == 2 ? 2 : 1), type == null ? "" : String.format("_%s", type));
++                field_82424_k[item.field_77880_c], (slot == 2 ? 2 : 1), type == null ? "" : String.format("_%s", type));
 +
 +        s1 = ForgeHooksClient.getArmorTexture(entity, stack, s1, slot, type);
 +        ResourceLocation resourcelocation = (ResourceLocation)field_110859_k.get(s1);

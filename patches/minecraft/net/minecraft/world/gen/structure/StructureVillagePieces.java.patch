@@ -20,23 +20,23 @@
  
  public class StructureVillagePieces
  {
-@@ -351,6 +355,7 @@
-             private int villagersSpawned;
+@@ -346,6 +350,7 @@
+             private int field_74896_a;
              private boolean field_143014_b;
              private static final String __OBFID = "CL_00000531";
 +            private StructureVillagePieces.Start startPiece;
  
              public Village() {}
  
-@@ -361,6 +366,7 @@
-                 if (par1ComponentVillageStartPiece != null)
+@@ -356,6 +361,7 @@
+                 if (p_i2107_1_ != null)
                  {
-                     this.field_143014_b = par1ComponentVillageStartPiece.inDesert;
-+                    startPiece = par1ComponentVillageStartPiece;
+                     this.field_143014_b = p_i2107_1_.field_74927_b;
++                    startPiece = p_i2107_1_;
                  }
              }
  
-@@ -479,6 +485,9 @@
+@@ -469,6 +475,9 @@
  
              protected Block func_151558_b(Block p_151558_1_, int p_151558_2_)
              {
@@ -45,8 +45,8 @@
 +                if (event.getResult() == Result.DENY) return event.replacement;
                  if (this.field_143014_b)
                  {
-                     if (p_151558_1_ == Blocks.log || p_151558_1_ == Blocks.log2)
-@@ -517,6 +526,9 @@
+                     if (p_151558_1_ == Blocks.field_150364_r || p_151558_1_ == Blocks.field_150363_s)
+@@ -507,6 +516,9 @@
  
              protected int func_151557_c(Block p_151557_1_, int p_151557_2_)
              {
@@ -55,17 +55,17 @@
 +                if (event.getResult() == Result.DENY) return event.replacement;
                  if (this.field_143014_b)
                  {
-                     if (p_151557_1_ == Blocks.log || p_151557_1_ == Blocks.log2)
-@@ -1288,7 +1300,7 @@
-                     if (par3StructureBoundingBox.isVecInside(j, i, k))
+                     if (p_151557_1_ == Blocks.field_150364_r || p_151557_1_ == Blocks.field_150363_s)
+@@ -1265,7 +1277,7 @@
+                     if (p_74875_3_.func_78890_b(j, i, k))
                      {
-                         this.hasMadeChest = true;
--                        this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 5, 1, 5, villageBlacksmithChestContents, 3 + par2Random.nextInt(6));
-+                        this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 5, 1, 5, ChestGenHooks.getItems(VILLAGE_BLACKSMITH, par2Random), ChestGenHooks.getCount(VILLAGE_BLACKSMITH, par2Random));
+                         this.field_74917_c = true;
+-                        this.func_74879_a(p_74875_1_, p_74875_3_, p_74875_2_, 5, 1, 5, field_74918_a, 3 + p_74875_2_.nextInt(6));
++                        this.func_74879_a(p_74875_1_, p_74875_3_, p_74875_2_, 5, 1, 5, ChestGenHooks.getItems(VILLAGE_BLACKSMITH, p_74875_2_), ChestGenHooks.getCount(VILLAGE_BLACKSMITH, p_74875_2_));
                      }
                  }
  
-@@ -1333,6 +1345,7 @@
+@@ -1306,6 +1318,7 @@
              public List field_74932_i = new ArrayList();
              public List field_74930_j = new ArrayList();
              private static final String __OBFID = "CL_00000527";
@@ -73,11 +73,11 @@
  
              public Start() {}
  
-@@ -1344,6 +1357,7 @@
-                 this.terrainType = par7;
-                 BiomeGenBase biomegenbase = par1WorldChunkManager.getBiomeGenAt(par4, par5);
-                 this.inDesert = biomegenbase == BiomeGenBase.desert || biomegenbase == BiomeGenBase.desertHills;
+@@ -1317,6 +1330,7 @@
+                 this.field_74928_c = p_i2104_7_;
+                 BiomeGenBase biomegenbase = p_i2104_1_.func_76935_a(p_i2104_4_, p_i2104_5_);
+                 this.field_74927_b = biomegenbase == BiomeGenBase.field_76769_d || biomegenbase == BiomeGenBase.field_76786_s;
 +                this.biome = biomegenbase;
              }
  
-             public WorldChunkManager getWorldChunkManager()
+             public WorldChunkManager func_74925_d()

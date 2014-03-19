@@ -8,10 +8,14 @@
  import java.util.PriorityQueue;
  import net.minecraft.client.shader.TesselatorVertexState;
  import net.minecraft.client.util.QuadComparator;
-@@ -15,14 +16,21 @@
+@@ -15,10 +16,17 @@
  @SideOnly(Side.CLIENT)
  public class Tessellator
  {
+-    private ByteBuffer field_78394_d;
+-    private IntBuffer field_147568_c;
+-    private FloatBuffer field_147566_d;
+-    private ShortBuffer field_147567_e;
 +    private static int nativeBufferSize = 0x200000;
 +    private static int trivertsInBuffer = (nativeBufferSize / 48) * 6;
 +    public static boolean renderingWorldRenderer = false;
@@ -19,31 +23,23 @@
 +    private int rawBufferSize = 0;
 +    public int textureID = 0;
 +
-     // JAVADOC FIELD $$ field_78394_d
--    private ByteBuffer byteBuffer;
-+    private static ByteBuffer byteBuffer = GLAllocation.createDirectByteBuffer(nativeBufferSize * 4);
-     // JAVADOC FIELD $$ field_147568_c
--    private IntBuffer intBuffer;
-+    private static IntBuffer intBuffer = byteBuffer.asIntBuffer();
-     // JAVADOC FIELD $$ field_147566_d
--    private FloatBuffer floatBuffer;
-+    private static FloatBuffer floatBuffer = byteBuffer.asFloatBuffer();
-     // JAVADOC FIELD $$ field_147567_e
--    private ShortBuffer shortBuffer;
-+    private static ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
-     // JAVADOC FIELD $$ field_78405_h
-     private int[] rawBuffer;
-     // JAVADOC FIELD $$ field_78406_i
-@@ -67,14 +75,17 @@
++    private static ByteBuffer field_78394_d = GLAllocation.func_74524_c(nativeBufferSize * 4);
++    private static IntBuffer field_147568_c = field_78394_d.asIntBuffer();
++    private static FloatBuffer field_147566_d = field_78394_d.asFloatBuffer();
++    private static ShortBuffer field_147567_e = field_78394_d.asShortBuffer();
+     private int[] field_78405_h;
+     private int field_78406_i;
+     private double field_78403_j;
+@@ -44,14 +52,17 @@
  
-     private Tessellator(int par1)
+     private Tessellator(int p_i1250_1_)
      {
--        this.bufferSize = par1;
--        this.byteBuffer = GLAllocation.createDirectByteBuffer(par1 * 4);
--        this.intBuffer = this.byteBuffer.asIntBuffer();
--        this.floatBuffer = this.byteBuffer.asFloatBuffer();
--        this.shortBuffer = this.byteBuffer.asShortBuffer();
--        this.rawBuffer = new int[par1];
+-        this.field_78388_E = p_i1250_1_;
+-        this.field_78394_d = GLAllocation.func_74524_c(p_i1250_1_ * 4);
+-        this.field_147568_c = this.field_78394_d.asIntBuffer();
+-        this.field_147566_d = this.field_78394_d.asFloatBuffer();
+-        this.field_147567_e = this.field_78394_d.asShortBuffer();
+-        this.field_78405_h = new int[p_i1250_1_];
      }
  
 +    public Tessellator()
@@ -52,98 +48,98 @@
 +
 +    static
 +    {
-+        instance.defaultTexture = true;
++        field_78398_a.defaultTexture = true;
 +    }
 +
-     // JAVADOC METHOD $$ func_78381_a
-     public int draw()
+     public int func_78381_a()
      {
-@@ -86,12 +97,15 @@
+         if (!this.field_78415_z)
+@@ -62,12 +73,15 @@
          {
-             this.isDrawing = false;
+             this.field_78415_z = false;
  
--            if (this.vertexCount > 0)
+-            if (this.field_78406_i > 0)
 +            int offs = 0;
-+            while (offs < vertexCount)
++            while (offs < field_78406_i)
              {
-+                int vtc = Math.min(vertexCount - offs, nativeBufferSize >> 5);
-                 this.intBuffer.clear();
--                this.intBuffer.put(this.rawBuffer, 0, this.rawBufferIndex);
-+                this.intBuffer.put(this.rawBuffer, offs * 8, vtc * 8);
-                 this.byteBuffer.position(0);
--                this.byteBuffer.limit(this.rawBufferIndex * 4);
-+                this.byteBuffer.limit(vtc * 32);
++                int vtc = Math.min(field_78406_i - offs, nativeBufferSize >> 5);
+                 this.field_147568_c.clear();
+-                this.field_147568_c.put(this.field_78405_h, 0, this.field_147569_p);
++                this.field_147568_c.put(this.field_78405_h, offs * 8, vtc * 8);
+                 this.field_78394_d.position(0);
+-                this.field_78394_d.limit(this.field_147569_p * 4);
++                this.field_78394_d.limit(vtc * 32);
 +                offs += vtc;
  
-                 if (this.hasTexture)
+                 if (this.field_78400_o)
                  {
-@@ -126,7 +140,7 @@
-                 this.floatBuffer.position(0);
-                 GL11.glVertexPointer(3, 32, this.floatBuffer);
+@@ -102,7 +116,7 @@
+                 this.field_147566_d.position(0);
+                 GL11.glVertexPointer(3, 32, this.field_147566_d);
                  GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
--                GL11.glDrawArrays(this.drawMode, 0, this.vertexCount);
-+                GL11.glDrawArrays(this.drawMode, 0, vtc);
+-                GL11.glDrawArrays(this.field_78409_u, 0, this.field_78406_i);
++                GL11.glDrawArrays(this.field_78409_u, 0, vtc);
                  GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
  
-                 if (this.hasTexture)
-@@ -152,6 +166,12 @@
+                 if (this.field_78400_o)
+@@ -128,6 +142,12 @@
                  }
              }
  
-+            if (rawBufferSize > 0x20000 && rawBufferIndex < (rawBufferSize << 3))
++            if (rawBufferSize > 0x20000 && field_147569_p < (rawBufferSize << 3))
 +            {
 +                rawBufferSize = 0x10000;
-+                rawBuffer = new int[rawBufferSize];
++                field_78405_h = new int[rawBufferSize];
 +            }
 +
-             int i = this.rawBufferIndex * 4;
-             this.reset();
+             int i = this.field_147569_p * 4;
+             this.func_78379_d();
              return i;
-@@ -186,6 +206,14 @@
+@@ -162,6 +182,14 @@
  
-     public void setVertexState(TesselatorVertexState p_147565_1_)
+     public void func_147565_a(TesselatorVertexState p_147565_1_)
      {
-+        while (p_147565_1_.getRawBuffer().length > rawBufferSize && rawBufferSize > 0)
++        while (p_147565_1_.func_147572_a().length > rawBufferSize && rawBufferSize > 0)
 +        {
 +            rawBufferSize <<= 1;
 +        }
-+        if (rawBufferSize > rawBuffer.length)
++        if (rawBufferSize > field_78405_h.length)
 +        {
-+            rawBuffer = new int[rawBufferSize];
++            field_78405_h = new int[rawBufferSize];
 +        }
-         System.arraycopy(p_147565_1_.getRawBuffer(), 0, this.rawBuffer, 0, p_147565_1_.getRawBuffer().length);
-         this.rawBufferIndex = p_147565_1_.getRawBufferIndex();
-         this.vertexCount = p_147565_1_.getVertexCount();
-@@ -330,6 +358,19 @@
-     // JAVADOC METHOD $$ func_78377_a
-     public void addVertex(double par1, double par3, double par5)
+         System.arraycopy(p_147565_1_.func_147572_a(), 0, this.field_78405_h, 0, p_147565_1_.func_147572_a().length);
+         this.field_147569_p = p_147565_1_.func_147576_b();
+         this.field_78406_i = p_147565_1_.func_147575_c();
+@@ -296,6 +324,19 @@
+ 
+     public void func_78377_a(double p_78377_1_, double p_78377_3_, double p_78377_5_)
      {
-+        if (rawBufferIndex >= rawBufferSize - 32) 
++        if (field_147569_p >= rawBufferSize - 32) 
 +        {
 +            if (rawBufferSize == 0)
 +            {
 +                rawBufferSize = 0x10000;
-+                rawBuffer = new int[rawBufferSize];
++                field_78405_h = new int[rawBufferSize];
 +            }
 +            else
 +            {
 +                rawBufferSize *= 2;
-+                rawBuffer = Arrays.copyOf(rawBuffer, rawBufferSize);
++                field_78405_h = Arrays.copyOf(field_78405_h, rawBufferSize);
 +            }
 +        }
-         ++this.addedVertices;
+         ++this.field_78411_s;
  
-         if (this.hasTexture)
-@@ -358,12 +399,6 @@
-         this.rawBuffer[this.rawBufferIndex + 2] = Float.floatToRawIntBits((float)(par5 + this.zOffset));
-         this.rawBufferIndex += 8;
-         ++this.vertexCount;
+         if (this.field_78400_o)
+@@ -324,12 +365,6 @@
+         this.field_78405_h[this.field_147569_p + 2] = Float.floatToRawIntBits((float)(p_78377_5_ + this.field_78417_x));
+         this.field_147569_p += 8;
+         ++this.field_78406_i;
 -
--        if (this.vertexCount % 4 == 0 && this.rawBufferIndex >= this.bufferSize - 32)
+-        if (this.field_78406_i % 4 == 0 && this.field_147569_p >= this.field_78388_E - 32)
 -        {
--            this.draw();
--            this.isDrawing = true;
+-            this.func_78381_a();
+-            this.field_78415_z = true;
 -        }
      }
  
-     // JAVADOC METHOD $$ func_78378_d
+     public void func_78378_d(int p_78378_1_)

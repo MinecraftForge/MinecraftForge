@@ -8,60 +8,60 @@
  
  public class WeightedRandomChestContent extends WeightedRandom.Item
  {
-@@ -38,23 +39,12 @@
-         for (int j = 0; j < par3; ++j)
+@@ -34,23 +35,12 @@
+         for (int j = 0; j < p_76293_3_; ++j)
          {
-             WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
--            int k = weightedrandomchestcontent.theMinimumChanceToGenerateItem + par0Random.nextInt(weightedrandomchestcontent.theMaximumChanceToGenerateItem - weightedrandomchestcontent.theMinimumChanceToGenerateItem + 1);
-+            ItemStack[] stacks = weightedrandomchestcontent.generateChestContent(par0Random, par2IInventory);
+             WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.func_76274_a(p_76293_0_, p_76293_1_);
+-            int k = weightedrandomchestcontent.field_76295_d + p_76293_0_.nextInt(weightedrandomchestcontent.field_76296_e - weightedrandomchestcontent.field_76295_d + 1);
++            ItemStack[] stacks = weightedrandomchestcontent.generateChestContent(p_76293_0_, p_76293_2_);
  
--            if (weightedrandomchestcontent.theItemId.getMaxStackSize() >= k)
+-            if (weightedrandomchestcontent.field_76297_b.func_77976_d() >= k)
 +            for (ItemStack item : stacks)
              {
--                ItemStack itemstack = weightedrandomchestcontent.theItemId.copy();
--                itemstack.stackSize = k;
--                par2IInventory.setInventorySlotContents(par0Random.nextInt(par2IInventory.getSizeInventory()), itemstack);
-+                par2IInventory.setInventorySlotContents(par0Random.nextInt(par2IInventory.getSizeInventory()), item);
+-                ItemStack itemstack = weightedrandomchestcontent.field_76297_b.func_77946_l();
+-                itemstack.field_77994_a = k;
+-                p_76293_2_.func_70299_a(p_76293_0_.nextInt(p_76293_2_.func_70302_i_()), itemstack);
++                p_76293_2_.func_70299_a(p_76293_0_.nextInt(p_76293_2_.func_70302_i_()), item);
              }
 -            else
 -            {
 -                for (int l = 0; l < k; ++l)
 -                {
--                    ItemStack itemstack1 = weightedrandomchestcontent.theItemId.copy();
--                    itemstack1.stackSize = 1;
--                    par2IInventory.setInventorySlotContents(par0Random.nextInt(par2IInventory.getSizeInventory()), itemstack1);
+-                    ItemStack itemstack1 = weightedrandomchestcontent.field_76297_b.func_77946_l();
+-                    itemstack1.field_77994_a = 1;
+-                    p_76293_2_.func_70299_a(p_76293_0_.nextInt(p_76293_2_.func_70302_i_()), itemstack1);
 -                }
 -            }
          }
      }
  
-@@ -64,22 +54,11 @@
+@@ -60,22 +50,11 @@
          {
-             WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(p_150706_0_, p_150706_1_);
-             int k = weightedrandomchestcontent.theMinimumChanceToGenerateItem + p_150706_0_.nextInt(weightedrandomchestcontent.theMaximumChanceToGenerateItem - weightedrandomchestcontent.theMinimumChanceToGenerateItem + 1);
+             WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.func_76274_a(p_150706_0_, p_150706_1_);
+             int k = weightedrandomchestcontent.field_76295_d + p_150706_0_.nextInt(weightedrandomchestcontent.field_76296_e - weightedrandomchestcontent.field_76295_d + 1);
 -
--            if (weightedrandomchestcontent.theItemId.getMaxStackSize() >= k)
+-            if (weightedrandomchestcontent.field_76297_b.func_77976_d() >= k)
 +            ItemStack[] stacks = weightedrandomchestcontent.generateChestContent(p_150706_0_, p_150706_2_);
 +            for (ItemStack item : stacks)
              {
--                ItemStack itemstack = weightedrandomchestcontent.theItemId.copy();
--                itemstack.stackSize = k;
--                p_150706_2_.setInventorySlotContents(p_150706_0_.nextInt(p_150706_2_.getSizeInventory()), itemstack);
-+                p_150706_2_.setInventorySlotContents(p_150706_0_.nextInt(p_150706_2_.getSizeInventory()), item);
+-                ItemStack itemstack = weightedrandomchestcontent.field_76297_b.func_77946_l();
+-                itemstack.field_77994_a = k;
+-                p_150706_2_.func_70299_a(p_150706_0_.nextInt(p_150706_2_.func_70302_i_()), itemstack);
++                p_150706_2_.func_70299_a(p_150706_0_.nextInt(p_150706_2_.func_70302_i_()), item);
              }
 -            else
 -            {
 -                for (int l = 0; l < k; ++l)
 -                {
--                    ItemStack itemstack1 = weightedrandomchestcontent.theItemId.copy();
--                    itemstack1.stackSize = 1;
--                    p_150706_2_.setInventorySlotContents(p_150706_0_.nextInt(p_150706_2_.getSizeInventory()), itemstack1);
+-                    ItemStack itemstack1 = weightedrandomchestcontent.field_76297_b.func_77946_l();
+-                    itemstack1.field_77994_a = 1;
+-                    p_150706_2_.func_70299_a(p_150706_0_.nextInt(p_150706_2_.func_70302_i_()), itemstack1);
 -                }
 -            }
          }
      }
  
-@@ -104,4 +83,17 @@
+@@ -100,4 +79,17 @@
  
          return aweightedrandomchestcontent1;
      }
@@ -76,6 +76,6 @@
 +     */
 +    protected ItemStack[] generateChestContent(Random random, IInventory newInventory)
 +    {
-+        return ChestGenHooks.generateStacks(random, theItemId, theMinimumChanceToGenerateItem, theMaximumChanceToGenerateItem);
++        return ChestGenHooks.generateStacks(random, field_76297_b, field_76295_d, field_76296_e);
 +    }
  }

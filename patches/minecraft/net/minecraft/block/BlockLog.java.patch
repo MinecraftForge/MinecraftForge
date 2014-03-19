@@ -8,25 +8,25 @@
  import net.minecraft.world.World;
  
  public abstract class BlockLog extends BlockRotatedPillar
-@@ -54,14 +55,10 @@
+@@ -53,14 +54,10 @@
                  {
                      for (int l1 = -b0; l1 <= b0; ++l1)
                      {
--                        if (p_149749_1_.getBlock(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1).getMaterial() == Material.leaves)
-+                        Block block = p_149749_1_.getBlock(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
+-                        if (p_149749_1_.func_147439_a(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1).func_149688_o() == Material.field_151584_j)
++                        Block block = p_149749_1_.func_147439_a(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
 +                        if (block.isLeaves(p_149749_1_, p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1))
                          {
--                            int i2 = p_149749_1_.getBlockMetadata(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
+-                            int i2 = p_149749_1_.func_72805_g(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
 -
 -                            if ((i2 & 8) == 0)
 -                            {
--                                p_149749_1_.setBlockMetadataWithNotify(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1, i2 | 8, 4);
+-                                p_149749_1_.func_72921_c(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1, i2 | 8, 4);
 -                            }
 +                            block.beginLeavesDecay(p_149749_1_, p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
                          }
                      }
                  }
-@@ -80,4 +77,16 @@
+@@ -79,4 +76,16 @@
      {
          return this.field_150166_b[p_150161_1_ % this.field_150166_b.length];
      }

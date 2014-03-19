@@ -10,7 +10,7 @@
  
  @SideOnly(Side.CLIENT)
  public class EntityPlayerSP extends AbstractClientPlayer
-@@ -331,7 +334,7 @@
+@@ -325,7 +328,7 @@
              f *= 1.0F - f1 * 0.15F;
          }
  
@@ -18,44 +18,44 @@
 +        return ForgeHooksClient.getOffsetFOV(this, f);
      }
  
-     // JAVADOC METHOD $$ func_71053_j
-@@ -494,20 +497,45 @@
-         return this.worldObj.getBlock(par1, par2, par3).isNormalCube();
+     public void func_71053_j()
+@@ -479,20 +482,45 @@
+         return this.field_70170_p.func_147439_a(p_71153_1_, p_71153_2_, p_71153_3_).func_149721_r();
      }
  
 +    private boolean isHeadspaceFree(int x, int y, int z, int height)
 +    {
 +        for (int i1 = 0; i1 < height; i1++)
 +        {
-+            if (isBlockTranslucent(x, y + i1, z + 1)) return false;
++            if (func_71153_f(x, y + i1, z + 1)) return false;
 +        }
 +        return true;
 +    }
 +
      protected boolean func_145771_j(double p_145771_1_, double p_145771_3_, double p_145771_5_)
      {
-+        if (this.noClip)
++        if (this.field_70145_X)
 +        {
 +            return false;
 +        }
-         int i = MathHelper.floor_double(p_145771_1_);
-         int j = MathHelper.floor_double(p_145771_3_);
-         int k = MathHelper.floor_double(p_145771_5_);
+         int i = MathHelper.func_76128_c(p_145771_1_);
+         int j = MathHelper.func_76128_c(p_145771_3_);
+         int k = MathHelper.func_76128_c(p_145771_5_);
          double d3 = p_145771_1_ - (double)i;
          double d4 = p_145771_5_ - (double)k;
  
--        if (this.isBlockTranslucent(i, j, k) || this.isBlockTranslucent(i, j + 1, k))
-+        int entHeight = Math.max(Math.round(this.height), 1);
+-        if (this.func_71153_f(i, j, k) || this.func_71153_f(i, j + 1, k))
++        int entHeight = Math.max(Math.round(this.field_70131_O), 1);
 +
 +        boolean inTranslucentBlock = true;
 +
 +        for (int i1 = 0; i1 < entHeight; i1++)
          {
--            boolean flag = !this.isBlockTranslucent(i - 1, j, k) && !this.isBlockTranslucent(i - 1, j + 1, k);
--            boolean flag1 = !this.isBlockTranslucent(i + 1, j, k) && !this.isBlockTranslucent(i + 1, j + 1, k);
--            boolean flag2 = !this.isBlockTranslucent(i, j, k - 1) && !this.isBlockTranslucent(i, j + 1, k - 1);
--            boolean flag3 = !this.isBlockTranslucent(i, j, k + 1) && !this.isBlockTranslucent(i, j + 1, k + 1);
-+            if (!this.isBlockTranslucent(i, j + i1, k))
+-            boolean flag = !this.func_71153_f(i - 1, j, k) && !this.func_71153_f(i - 1, j + 1, k);
+-            boolean flag1 = !this.func_71153_f(i + 1, j, k) && !this.func_71153_f(i + 1, j + 1, k);
+-            boolean flag2 = !this.func_71153_f(i, j, k - 1) && !this.func_71153_f(i, j + 1, k - 1);
+-            boolean flag3 = !this.func_71153_f(i, j, k + 1) && !this.func_71153_f(i, j + 1, k + 1);
++            if (!this.func_71153_f(i, j + i1, k))
 +            {
 +                inTranslucentBlock = false;
 +            }
@@ -70,16 +70,16 @@
              byte b0 = -1;
              double d5 = 9999.0D;
  
-@@ -596,6 +624,12 @@
+@@ -576,6 +604,12 @@
  
-     public void playSound(String par1Str, float par2, float par3)
+     public void func_85030_a(String p_85030_1_, float p_85030_2_, float p_85030_3_)
      {
-+        PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(this, par1Str, par2, par3);
++        PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(this, p_85030_1_, p_85030_2_, p_85030_3_);
 +        if (MinecraftForge.EVENT_BUS.post(event))
 +        {
 +            return;
 +        }
-+        par1Str = event.name;
-         this.worldObj.playSound(this.posX, this.posY - (double)this.yOffset, this.posZ, par1Str, par2, par3, false);
++        p_85030_1_ = event.name;
+         this.field_70170_p.func_72980_b(this.field_70165_t, this.field_70163_u - (double)this.field_70129_M, this.field_70161_v, p_85030_1_, p_85030_2_, p_85030_3_, false);
      }
  

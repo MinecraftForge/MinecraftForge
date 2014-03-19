@@ -12,144 +12,144 @@
  
  @SideOnly(Side.CLIENT)
  public class EntityRenderer implements IResourceManagerReloadListener
-@@ -397,7 +402,7 @@
+@@ -358,7 +363,7 @@
  
                              if (d3 < d2 || d2 == 0.0D)
                              {
--                                if (entity == this.mc.renderViewEntity.ridingEntity)
-+                                if (entity == this.mc.renderViewEntity.ridingEntity && !entity.canRiderInteract())
+-                                if (entity == this.field_78531_r.field_71451_h.field_70154_o)
++                                if (entity == this.field_78531_r.field_71451_h.field_70154_o && !entity.canRiderInteract())
                                  {
                                      if (d2 == 0.0D)
                                      {
-@@ -432,8 +437,15 @@
-     // JAVADOC METHOD $$ func_78477_e
-     private void updateFovModifierHand()
+@@ -392,8 +397,15 @@
+ 
+     private void func_78477_e()
      {
--        EntityPlayerSP entityplayersp = (EntityPlayerSP)this.mc.renderViewEntity;
--        this.fovMultiplierTemp = entityplayersp.getFOVMultiplier();
-+        if (mc.renderViewEntity instanceof EntityPlayerSP)
+-        EntityPlayerSP entityplayersp = (EntityPlayerSP)this.field_78531_r.field_71451_h;
+-        this.field_78501_T = entityplayersp.func_71151_f();
++        if (field_78531_r.field_71451_h instanceof EntityPlayerSP)
 +        {
-+            EntityPlayerSP entityplayersp = (EntityPlayerSP)this.mc.renderViewEntity;
-+            this.fovMultiplierTemp = entityplayersp.getFOVMultiplier();
++            EntityPlayerSP entityplayersp = (EntityPlayerSP)this.field_78531_r.field_71451_h;
++            this.field_78501_T = entityplayersp.func_71151_f();
 +        }
 +        else
 +        {
-+            this.fovMultiplierTemp = mc.thePlayer.getFOVMultiplier();
++            this.field_78501_T = field_78531_r.field_71439_g.func_71151_f();
 +        }
-         this.fovModifierHandPrev = this.fovModifierHand;
-         this.fovModifierHand += (this.fovMultiplierTemp - this.fovModifierHand) * 0.5F;
+         this.field_78506_S = this.field_78507_R;
+         this.field_78507_R += (this.field_78501_T - this.field_78507_R) * 0.5F;
  
-@@ -457,7 +469,7 @@
+@@ -416,7 +428,7 @@
          }
          else
          {
--            EntityPlayer entityplayer = (EntityPlayer)this.mc.renderViewEntity;
-+            EntityLivingBase entityplayer = (EntityLivingBase)this.mc.renderViewEntity;
+-            EntityPlayer entityplayer = (EntityPlayer)this.field_78531_r.field_71451_h;
++            EntityLivingBase entityplayer = (EntityLivingBase)this.field_78531_r.field_71451_h;
              float f1 = 70.0F;
  
-             if (par2)
-@@ -540,15 +552,7 @@
+             if (p_78481_2_)
+@@ -497,15 +509,7 @@
  
-             if (!this.mc.gameSettings.debugCamEnable)
+             if (!this.field_78531_r.field_71474_y.field_74325_U)
              {
--                Block block = this.mc.theWorld.getBlock(MathHelper.floor_double(entitylivingbase.posX), MathHelper.floor_double(entitylivingbase.posY), MathHelper.floor_double(entitylivingbase.posZ));
+-                Block block = this.field_78531_r.field_71441_e.func_147439_a(MathHelper.func_76128_c(entitylivingbase.field_70165_t), MathHelper.func_76128_c(entitylivingbase.field_70163_u), MathHelper.func_76128_c(entitylivingbase.field_70161_v));
 -
--                if (block == Blocks.bed)
+-                if (block == Blocks.field_150324_C)
 -                {
--                    int i = this.mc.theWorld.getBlockMetadata(MathHelper.floor_double(entitylivingbase.posX), MathHelper.floor_double(entitylivingbase.posY), MathHelper.floor_double(entitylivingbase.posZ));
+-                    int i = this.field_78531_r.field_71441_e.func_72805_g(MathHelper.func_76128_c(entitylivingbase.field_70165_t), MathHelper.func_76128_c(entitylivingbase.field_70163_u), MathHelper.func_76128_c(entitylivingbase.field_70161_v));
 -                    int j = i & 3;
 -                    GL11.glRotatef((float)(j * 90), 0.0F, 1.0F, 0.0F);
 -                }
 -
-+                ForgeHooksClient.orientBedCamera(mc, entitylivingbase);
-                 GL11.glRotatef(entitylivingbase.prevRotationYaw + (entitylivingbase.rotationYaw - entitylivingbase.prevRotationYaw) * par1 + 180.0F, 0.0F, -1.0F, 0.0F);
-                 GL11.glRotatef(entitylivingbase.prevRotationPitch + (entitylivingbase.rotationPitch - entitylivingbase.prevRotationPitch) * par1, -1.0F, 0.0F, 0.0F);
++                ForgeHooksClient.orientBedCamera(field_78531_r, entitylivingbase);
+                 GL11.glRotatef(entitylivingbase.field_70126_B + (entitylivingbase.field_70177_z - entitylivingbase.field_70126_B) * p_78467_1_ + 180.0F, 0.0F, -1.0F, 0.0F);
+                 GL11.glRotatef(entitylivingbase.field_70127_C + (entitylivingbase.field_70125_A - entitylivingbase.field_70127_C) * p_78467_1_, -1.0F, 0.0F, 0.0F);
              }
-@@ -1253,7 +1257,10 @@
+@@ -1203,7 +1207,10 @@
                  GL11.glPushMatrix();
-                 RenderHelper.enableStandardItemLighting();
-                 this.mc.mcProfiler.endStartSection("entities");
+                 RenderHelper.func_74519_b();
+                 this.field_78531_r.field_71424_I.func_76318_c("entities");
 +                ForgeHooksClient.setRenderPass(0);
-                 renderglobal.renderEntities(entitylivingbase, frustrum, par1);
+                 renderglobal.func_147589_a(entitylivingbase, frustrum, p_78471_1_);
 +                ForgeHooksClient.setRenderPass(0);
 +                // ToDo: Try and figure out how to make particles render sorted correctly.. {They render behind water}
-                 this.enableLightmap((double)par1);
-                 this.mc.mcProfiler.endStartSection("litParticles");
-                 effectrenderer.renderLitParticles(entitylivingbase, par1);
-@@ -1271,7 +1278,10 @@
+                 this.func_78463_b((double)p_78471_1_);
+                 this.field_78531_r.field_71424_I.func_76318_c("litParticles");
+                 effectrenderer.func_78872_b(entitylivingbase, p_78471_1_);
+@@ -1221,7 +1228,10 @@
                      entityplayer = (EntityPlayer)entitylivingbase;
                      GL11.glDisable(GL11.GL_ALPHA_TEST);
-                     this.mc.mcProfiler.endStartSection("outline");
--                    renderglobal.drawSelectionBox(entityplayer, this.mc.objectMouseOver, 0, par1);
-+                    if (!ForgeHooksClient.onDrawBlockHighlight(renderglobal, entityplayer, mc.objectMouseOver, 0, entityplayer.inventory.getCurrentItem(), par1))
+                     this.field_78531_r.field_71424_I.func_76318_c("outline");
+-                    renderglobal.func_72731_b(entityplayer, this.field_78531_r.field_71476_x, 0, p_78471_1_);
++                    if (!ForgeHooksClient.onDrawBlockHighlight(renderglobal, entityplayer, field_78531_r.field_71476_x, 0, entityplayer.field_71071_by.func_70448_g(), p_78471_1_))
 +                    {
-+                        renderglobal.drawSelectionBox(entityplayer, this.mc.objectMouseOver, 0, par1);
++                        renderglobal.func_72731_b(entityplayer, this.field_78531_r.field_71476_x, 0, p_78471_1_);
 +                    }
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1284,14 +1294,17 @@
+@@ -1234,14 +1244,17 @@
                  entityplayer = (EntityPlayer)entitylivingbase;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
-                 this.mc.mcProfiler.endStartSection("outline");
--                renderglobal.drawSelectionBox(entityplayer, this.mc.objectMouseOver, 0, par1);
-+                if (!ForgeHooksClient.onDrawBlockHighlight(renderglobal, entityplayer, mc.objectMouseOver, 0, entityplayer.inventory.getCurrentItem(), par1))
+                 this.field_78531_r.field_71424_I.func_76318_c("outline");
+-                renderglobal.func_72731_b(entityplayer, this.field_78531_r.field_71476_x, 0, p_78471_1_);
++                if (!ForgeHooksClient.onDrawBlockHighlight(renderglobal, entityplayer, field_78531_r.field_71476_x, 0, entityplayer.field_71071_by.func_70448_g(), p_78471_1_))
 +                {
-+                    renderglobal.drawSelectionBox(entityplayer, this.mc.objectMouseOver, 0, par1);
++                    renderglobal.func_72731_b(entityplayer, this.field_78531_r.field_71476_x, 0, p_78471_1_);
 +                }
                  GL11.glEnable(GL11.GL_ALPHA_TEST);
              }
  
-             this.mc.mcProfiler.endStartSection("destroyProgress");
+             this.field_78531_r.field_71424_I.func_76318_c("destroyProgress");
              GL11.glEnable(GL11.GL_BLEND);
-             OpenGlHelper.glBlendFunc(770, 1, 1, 0);
--            renderglobal.drawBlockDamageTexture(Tessellator.instance, (EntityPlayer)entitylivingbase, par1);
-+            renderglobal.drawBlockDamageTexture(Tessellator.instance, entitylivingbase, par1);
+             OpenGlHelper.func_148821_a(770, 1, 1, 0);
+-            renderglobal.func_72717_a(Tessellator.field_78398_a, (EntityPlayer)entitylivingbase, p_78471_1_);
++            renderglobal.drawBlockDamageTexture(Tessellator.field_78398_a, entitylivingbase, p_78471_1_);
              GL11.glDisable(GL11.GL_BLEND);
              GL11.glDepthMask(false);
              GL11.glEnable(GL11.GL_CULL_FACE);
-@@ -1346,6 +1359,16 @@
-                 renderglobal.sortAndRender(entitylivingbase, 1, (double)par1);
+@@ -1296,6 +1309,16 @@
+                 renderglobal.func_72719_a(entitylivingbase, 1, (double)p_78471_1_);
              }
  
-+            if (this.debugViewDirection == 0) //Only render if render pass 0 happens as well.
++            if (this.field_78532_q == 0) //Only render if render pass 0 happens as well.
 +            {
-+                RenderHelper.enableStandardItemLighting();
-+                this.mc.mcProfiler.endStartSection("entities");
++                RenderHelper.func_74519_b();
++                this.field_78531_r.field_71424_I.func_76318_c("entities");
 +                ForgeHooksClient.setRenderPass(1);
-+                renderglobal.renderEntities(entitylivingbase, frustrum, par1);
++                renderglobal.func_147589_a(entitylivingbase, frustrum, p_78471_1_);
 +                ForgeHooksClient.setRenderPass(-1);
-+                RenderHelper.disableStandardItemLighting();
++                RenderHelper.func_74518_a();
 +            }
 +
              GL11.glDepthMask(true);
              GL11.glEnable(GL11.GL_CULL_FACE);
              GL11.glDisable(GL11.GL_BLEND);
-@@ -1357,9 +1380,12 @@
-                 this.renderCloudsCheck(renderglobal, par1);
+@@ -1307,9 +1330,12 @@
+                 this.func_82829_a(renderglobal, p_78471_1_);
              }
  
-+            this.mc.mcProfiler.endStartSection("FRenderLast");
-+            ForgeHooksClient.dispatchRenderLast(renderglobal, par1);
++            this.field_78531_r.field_71424_I.func_76318_c("FRenderLast");
++            ForgeHooksClient.dispatchRenderLast(renderglobal, p_78471_1_);
 +
-             this.mc.mcProfiler.endStartSection("hand");
+             this.field_78531_r.field_71424_I.func_76318_c("hand");
  
--            if (this.cameraZoom == 1.0D)
-+            if (!ForgeHooksClient.renderFirstPersonHand(renderglobal, par1, j) && this.cameraZoom == 1.0D)
+-            if (this.field_78503_V == 1.0D)
++            if (!ForgeHooksClient.renderFirstPersonHand(renderglobal, p_78471_1_, j) && this.field_78503_V == 1.0D)
              {
                  GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-                 this.renderHand(par1, j);
-@@ -1477,6 +1503,13 @@
-     // JAVADOC METHOD $$ func_78474_d
-     protected void renderRainSnow(float par1)
+                 this.func_78476_b(p_78471_1_, j);
+@@ -1425,6 +1451,13 @@
+ 
+     protected void func_78474_d(float p_78474_1_)
      {
 +        IRenderHandler renderer = null;
-+        if ((renderer = this.mc.theWorld.provider.getWeatherRenderer()) != null)
++        if ((renderer = this.field_78531_r.field_71441_e.field_73011_w.getWeatherRenderer()) != null)
 +        {
-+            renderer.render(par1, this.mc.theWorld, mc);
++            renderer.render(p_78474_1_, this.field_78531_r.field_71441_e, field_78531_r);
 +            return;
 +        }
 +
-         float f1 = this.mc.theWorld.getRainStrength(par1);
+         float f1 = this.field_78531_r.field_71441_e.func_72867_j(p_78474_1_);
  
          if (f1 > 0.0F)
