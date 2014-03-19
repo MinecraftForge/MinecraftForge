@@ -96,7 +96,7 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.func_147447_a(vec3, vec31, par3, !par3, false);
      }
-@@ -776,6 +793,542 @@
+@@ -776,6 +793,552 @@
          return this.iconString == null ? "MISSING_ICON_ITEM_" + itemRegistry.getIDForObject(this) + "_" + this.unlocalizedName : this.iconString;
      }
  
@@ -634,12 +634,22 @@
 +        Integer ret = toolClasses.get(toolClass);
 +        return ret == null ? -1 : ret; 
 +    }
++    
++    /**
++     * ItemStack sensitive version of {@link #getItemAttributeModifiers()} 
++     * @param stack The itemstack used to generate modifiers for
++     * @return map containing the resulting attribute modifiers
++     */
++    public Multimap getItemAttributeModifiers(ItemStack stack)
++    {
++        return getItemAttributeModifiers();
++    }
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static enum ToolMaterial
      {
          WOOD(0, 59, 2.0F, 0.0F, 15),
-@@ -796,6 +1349,9 @@
+@@ -796,6 +1359,9 @@
  
          private static final String __OBFID = "CL_00000042";
  
@@ -649,7 +659,7 @@
          private ToolMaterial(int par3, int par4, float par5, float par6, int par7)
          {
              this.harvestLevel = par3;
-@@ -837,7 +1393,15 @@
+@@ -837,7 +1403,15 @@
  
          public Item func_150995_f()
          {
