@@ -114,3 +114,12 @@
      public EnumRarity getRarity()
      {
          return this.getItem().getRarity(this);
+@@ -773,7 +777,7 @@
+         }
+         else
+         {
+-            object = this.getItem().getItemAttributeModifiers();
++            object = this.getItem().getItemAttributeModifiers(this);
+         }
+ 
+         return (Multimap)object;
