@@ -11,7 +11,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import io.netty.buffer.ByteBuf;
-@@ -385,6 +389,7 @@
+@@ -381,6 +385,7 @@
          {
              if (this.func_71197_b())
              {
@@ -19,7 +19,7 @@
                  long i = func_130071_aq();
                  long l = 0L;
                  this.field_147147_p.func_151315_a(new ChatComponentText(this.field_71286_C));
-@@ -429,6 +434,7 @@
+@@ -425,6 +430,7 @@
                      Thread.sleep(1L);
                      this.field_71296_Q = true;
                  }
@@ -27,7 +27,7 @@
              }
              else
              {
-@@ -466,7 +472,10 @@
+@@ -462,7 +468,10 @@
          {
              try
              {
@@ -38,7 +38,7 @@
                  this.field_71316_v = true;
              }
              catch (Throwable throwable)
-@@ -475,6 +484,8 @@
+@@ -471,6 +480,8 @@
              }
              finally
              {
@@ -47,7 +47,7 @@
                  this.func_71240_o();
              }
          }
-@@ -517,6 +528,7 @@
+@@ -513,6 +524,7 @@
      {
          long i = System.nanoTime();
          AxisAlignedBB.func_72332_a().func_72298_a();
@@ -55,7 +55,7 @@
          ++this.field_71315_w;
  
          if (this.field_71295_T)
-@@ -570,6 +582,7 @@
+@@ -566,6 +578,7 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -63,7 +63,7 @@
      }
  
      public void func_71190_q()
-@@ -597,6 +610,7 @@
+@@ -593,6 +606,7 @@
                  }
  
                  this.field_71304_b.func_76320_a("tick");
@@ -71,7 +71,7 @@
                  CrashReport crashreport;
  
                  try
-@@ -621,6 +635,7 @@
+@@ -617,6 +631,7 @@
                      throw new ReportedException(crashreport);
                  }
  
@@ -79,7 +79,7 @@
                  this.field_71304_b.func_76319_b();
                  this.field_71304_b.func_76320_a("tracker");
                  worldserver.func_73039_n().func_72788_a();
-@@ -699,7 +714,7 @@
+@@ -695,7 +710,7 @@
  
      public String getServerModName()
      {

@@ -175,7 +175,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         this.resourcePackList = resourcePackList;
         this.resourceManager = resourceManager;
         this.resourcePackMap = Maps.newHashMap();
-        if (minecraft.func_71355_q())
+        if (minecraft.isDemo())
         {
             FMLLog.severe("DEMO MODE DETECTED, FML will not work. Finishing now.");
             haltGame("FML will not run in demo mode", new RuntimeException());
@@ -247,7 +247,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public void haltGame(String message, Throwable t)
     {
-        client.func_71377_b(new CrashReport(message, t));
+        client.displayCrashReport(new CrashReport(message, t));
         throw Throwables.propagate(t);
     }
     /**
@@ -279,8 +279,8 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
 
         // Reload resources
-        client.func_110436_a();
-        RenderingRegistry.instance().loadEntityRenderers((Map<Class<? extends Entity>, Render>)RenderManager.field_78727_a.field_78729_o);
+        client.refreshResources();
+        RenderingRegistry.instance().loadEntityRenderers((Map<Class<? extends Entity>, Render>)RenderManager.instance.entityRenderMap);
         guiFactories = HashBiMap.create();
         for (ModContainer mc : Loader.instance().getActiveModList())
         {
@@ -302,7 +302,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
         }
         loading = false;
-        client.field_71474_y.func_74300_a(); //Reload options to load any mod added keybindings.
+        client.gameSettings.loadOptions(); //Reload options to load any mod added keybindings.
     }
 
     @SuppressWarnings("unused")
@@ -380,8 +380,8 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void displayGuiScreen(EntityPlayer player, GuiScreen gui)
     {
-        if (client.field_71439_g==player && gui != null) {
-            client.func_147108_a(gui);
+        if (client.thePlayer==player && gui != null) {
+            client.displayGuiScreen(gui);
         }
     }
 
@@ -421,17 +421,17 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void showGuiScreen(Object clientGuiElement)
     {
         GuiScreen gui = (GuiScreen) clientGuiElement;
-        client.func_147108_a(gui);
+        client.displayGuiScreen(gui);
     }
 
     public WorldClient getWorldClient()
     {
-        return client.field_71441_e;
+        return client.theWorld;
     }
 
     public EntityClientPlayerMP getClientPlayerEntity()
     {
-        return client.field_71439_g;
+        return client.thePlayer;
     }
 
     @Override
@@ -450,7 +450,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public MinecraftServer getServer()
     {
-        return client.func_71401_C();
+        return client.getIntegratedServer();
     }
 
     public void displayMissingMods(Object modMissingPacket)
@@ -480,7 +480,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public boolean isGUIOpen(Class<? extends GuiScreen> gui)
     {
-        return client.field_71462_r != null && client.field_71462_r.getClass().equals(gui);
+        return client.currentScreen != null && client.currentScreen.getClass().equals(gui);
     }
 
 
@@ -513,7 +513,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public void updateResourcePackList()
     {
-        client.func_110436_a();
+        client.refreshResources();
     }
 
     public IResourcePack getResourcePackFor(String modId)
@@ -524,7 +524,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public String getCurrentLanguage()
     {
-        return client.func_135016_M().func_135041_c().func_135034_a();
+        return client.getLanguageManager().getCurrentLanguage().getLanguageCode();
     }
 
     @Override
@@ -533,7 +533,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         // If the server crashes during startup, it might hang the client- reset the client so it can abend properly.
         MinecraftServer server = getServer();
 
-        if (server != null && !server.func_71200_ad())
+        if (server != null && !server.serverIsInRunLoop())
         {
             ObfuscationReflectionHelper.setPrivateValue(MinecraftServer.class, server, true, "field_71296"+"_Q","serverIs"+"Running");
         }
@@ -547,14 +547,14 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public NetworkManager getClientToServerNetworkManager()
     {
-        return this.client.func_147114_u()!=null ? this.client.func_147114_u().func_147298_b() : null;
+        return this.client.getNetHandler()!=null ? this.client.getNetHandler().getNetworkManager() : null;
     }
 
     public void handleClientWorldClosing(WorldClient world)
     {
         NetworkManager client = getClientToServerNetworkManager();
         // ONLY revert a non-local connection
-        if (client != null && !client.func_150731_c())
+        if (client != null && !client.isLocalChannel())
         {
             GameData.revertToFrozen();
         }
@@ -567,7 +567,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     public File getSavesDir()
     {
-        return new File(client.field_71412_D, "saves");
+        return new File(client.mcDataDir, "saves");
     }
     public void tryLoadExistingWorld(GuiSelectWorld selectWorldGUI, String dirName, String saveName)
     {
@@ -575,13 +575,13 @@ public class FMLClientHandler implements IFMLSidedHandler
         NBTTagCompound leveldat;
         try
         {
-            leveldat = CompressedStreamTools.func_74796_a(new FileInputStream(new File(dir, "level.dat")));
+            leveldat = CompressedStreamTools.readCompressed(new FileInputStream(new File(dir, "level.dat")));
         }
         catch (Exception e)
         {
             try
             {
-                leveldat = CompressedStreamTools.func_74796_a(new FileInputStream(new File(dir, "level.dat_old")));
+                leveldat = CompressedStreamTools.readCompressed(new FileInputStream(new File(dir, "level.dat_old")));
             }
             catch (Exception e1)
             {
@@ -589,8 +589,8 @@ public class FMLClientHandler implements IFMLSidedHandler
                 return;
             }
         }
-        NBTTagCompound fmlData = leveldat.func_74775_l("FML");
-        if (fmlData.func_74764_b("ModItemData"))
+        NBTTagCompound fmlData = leveldat.getCompoundTag("FML");
+        if (fmlData.hasKey("ModItemData"))
         {
             showGuiScreen(new GuiOldSaveLoadConfirm(dirName, saveName, selectWorldGUI));
         }
@@ -614,7 +614,7 @@ public class FMLClientHandler implements IFMLSidedHandler
                 Thread.interrupted();
                 gameReleaseLatch = new CountDownLatch(1);
                 clientWaiter = Thread.currentThread();
-                client.func_71371_a(dirName, saveName, (WorldSettings)null);
+                client.launchIntegratedServer(dirName, saveName, (WorldSettings)null);
                 System.out.printf("POKEE %b\n", Thread.currentThread().isInterrupted());
                 gameReleaseLatch.await();
             }
@@ -626,7 +626,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         catch (GameRegistryException gre)
         {
-            client.func_71403_a(null);
+            client.loadWorld(null);
             showGuiScreen(new GuiModItemsMissing(gre.getItems(), gre.getMessage()));
         }
         Thread.interrupted();
@@ -676,7 +676,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         else
         {
-            String serverDescription = data.field_78843_d;
+            String serverDescription = data.serverMOTD;
             boolean moddedClientAllowed = true;
             if (!Strings.isNullOrEmpty(serverDescription))
             {
@@ -729,7 +729,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             return null;
         }
-        this.client.func_110434_K().func_110577_a(iconSheet);
+        this.client.getTextureManager().bindTexture(iconSheet);
         Gui.func_146110_a(x + width - 18, y + 10, 0, (float)idx, 16, 16, 256.0f, 256.0f);
         if (blocked)
         {
@@ -874,7 +874,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     public boolean handlingCrash(CrashReport report)
     {
-        return report.func_71505_b() instanceof GameRegistryException;
+        return report.getCrashCause() instanceof GameRegistryException;
     }
 
     @Override

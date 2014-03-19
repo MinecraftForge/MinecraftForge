@@ -30,29 +30,29 @@ public class GuiModItemsMissing extends GuiScreen
 
     @SuppressWarnings("unchecked")
     @Override
-    public void func_73866_w_()
+    public void initGui()
     {
-        this.field_146292_n.add(new GuiButton(1, this.field_146294_l / 2 - 75, this.field_146295_m - 38, I18n.func_135052_a("gui.done")));
+        this.buttonList.add(new GuiButton(1, this.width / 2 - 75, this.height - 38, I18n.format("gui.done")));
     }
 
     @Override
-    protected void func_146284_a(GuiButton p_73875_1_)
+    protected void actionPerformed(GuiButton p_73875_1_)
     {
-        if (p_73875_1_.field_146124_l && p_73875_1_.field_146127_k == 1)
+        if (p_73875_1_.enabled && p_73875_1_.id == 1)
         {
             FMLClientHandler.instance().showGuiScreen(null);
         }
     }
     @Override
-    public void func_73863_a(int p_73863_1_, int p_73863_2_, float p_73863_3_)
+    public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_)
     {
-        this.func_146276_q_();
+        this.drawDefaultBackground();
         int offset = 85;
-        this.func_73732_a(this.field_146289_q, "Forge Mod Loader could load this save", this.field_146294_l / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, "Forge Mod Loader could load this save", this.width / 2, offset, 0xFFFFFF);
         offset += 10;
-        this.func_73732_a(this.field_146289_q, String.format("There are %d unassigned blocks and items in this save", missingItems.size()), this.field_146294_l / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, String.format("There are %d unassigned blocks and items in this save", missingItems.size()), this.width / 2, offset, 0xFFFFFF);
         offset += 10;
-        this.func_73732_a(this.field_146289_q, "You will not be able to load until they are present again", this.field_146294_l / 2, offset, 0xFFFFFF);
-        super.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
+        this.drawCenteredString(this.fontRendererObj, "You will not be able to load until they are present again", this.width / 2, offset, 0xFFFFFF);
+        super.drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);
     }
 }

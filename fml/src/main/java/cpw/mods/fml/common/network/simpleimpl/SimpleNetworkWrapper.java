@@ -25,7 +25,7 @@ import cpw.mods.fml.relauncher.Side;
  * should be unique for this channelName - it is used to discriminate between different types of message that might
  * occur on this channel (a simple form of message channel multiplexing, if you will).
  * <li>To get a packet suitable for presenting to the rest of minecraft, you can call {@link #getPacketFrom(IMessage)}. The return result
- * is suitable for returning from things like {@link TileEntity#func_145844_m()} for example.
+ * is suitable for returning from things like {@link TileEntity#func_145844_m} for example.
  * <li>Finally, use the sendXXX to send unsolicited messages to various classes of recipients.
  * </ul>
  *
@@ -87,7 +87,7 @@ public class SimpleNetworkWrapper {
 
     /**
      * Construct a minecraft packet from the supplied message. Can be used where minecraft packets are required, such as
-     * {@link TileEntity#func_145844_m()}.
+     * {@link TileEntity#func_145844_m}.
      *
      * @param message The message to translate into packet form
      * @return A minecraft {@link Packet} suitable for use in minecraft APIs

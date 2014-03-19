@@ -119,11 +119,11 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         this.availabilityMap = new BitSet(maxIdValue);
         this.maxId = maxIdValue;
         this.minId = minIdValue;
-        this.field_148759_a = new FMLObjectIntIdentityMap();
+        this.underlyingIntegerMap = new FMLObjectIntIdentityMap();
     }
 
     @Override
-    public void func_148756_a(int id, String name, Object thing)
+    public void addObject(int id, String name, Object thing)
     {
         FMLLog.finer("Add : %s %d %s", name, id, thing);
         add(id, name, superType.cast(thing));
@@ -145,7 +145,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
             throw new RuntimeException(String.format("Invalid id %s - not accepted",id));
         }
 
-        namedIds.forcePut(func_148755_c(name),idToUse);
+        namedIds.forcePut(ensureNamespaced(name),idToUse);
         reassignMapping(name, idToUse);
         useSlot(idToUse);
         availabilityMap = temporary;
@@ -175,37 +175,37 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
             String prefix = mc.getModId();
             name = prefix + ":"+ name;
         }
-        namedIds.forcePut(func_148755_c(name),idToUse);
-        super.func_148756_a(idToUse, name, thing);
+        namedIds.forcePut(ensureNamespaced(name),idToUse);
+        super.addObject(idToUse, name, thing);
         useSlot(idToUse);
         FMLLog.finer("Add : %s %d %s", name, idToUse, thing);
         return idToUse;
     }
 
     @Override
-    public I func_82594_a(String name)
+    public I getObject(String name)
     {
-        I object = superType.cast(super.func_82594_a(name));
+        I object = superType.cast(super.getObject(name));
         return object == null ? this.optionalDefaultObject : object;
     }
 
     @Override
-    public I func_148754_a(int id)
+    public I getObjectById(int id)
     {
-        I object = superType.cast(super.func_148754_a(id));
+        I object = superType.cast(super.getObjectById(id));
         return object == null ? this.optionalDefaultObject : object;
     }
 
 
     private FMLObjectIntIdentityMap idMap()
     {
-        return (FMLObjectIntIdentityMap) field_148759_a;
+        return (FMLObjectIntIdentityMap) underlyingIntegerMap;
     }
 
     @SuppressWarnings("unchecked")
     private BiMap<String,I> nameMap()
     {
-        return (BiMap<String,I>) field_82596_a;
+        return (BiMap<String,I>) registryObjects;
     }
 
     void beginIdSwap()
@@ -258,17 +258,17 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
 
     public I get(int id)
     {
-        return func_148754_a(id);
+        return getObjectById(id);
     }
 
     public I get(String name)
     {
-        return func_82594_a(name);
+        return getObject(name);
     }
 
     public int getId(I thing)
     {
-        return func_148757_b(thing);
+        return getIDForObject(thing);
     }
 
     public void serializeInto(Map<String, Integer> idMapping)
@@ -287,7 +287,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
 
     List<Integer> usedIds()
     {
-        return ((FMLObjectIntIdentityMap)field_148759_a).usedIds();
+        return ((FMLObjectIntIdentityMap)underlyingIntegerMap).usedIds();
     }
 
     public int getId(String itemName)
