@@ -16,7 +16,7 @@
      }
  
      public MinecraftServerGui(DedicatedServer p_i2362_1_)
-@@ -165,8 +167,15 @@
+@@ -164,8 +166,15 @@
          return jpanel;
      }
  

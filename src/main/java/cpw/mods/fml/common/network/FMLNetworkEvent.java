@@ -32,8 +32,8 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
         public final String connectionType;
         public ClientConnectedToServerEvent(NetworkManager manager, String connectionType)
         {
-            super((INetHandlerPlayClient) manager.func_150729_e(), INetHandlerPlayClient.class, manager);
-            this.isLocal = manager.func_150731_c();
+            super((INetHandlerPlayClient) manager.getNetHandler(), INetHandlerPlayClient.class, manager);
+            this.isLocal = manager.isLocalChannel();
             this.connectionType = connectionType;
         }
     }
@@ -48,8 +48,8 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
         public final boolean isLocal;
         public ServerConnectionFromClientEvent(NetworkManager manager)
         {
-            super((INetHandlerPlayServer) manager.func_150729_e(), INetHandlerPlayServer.class, manager);
-            this.isLocal = manager.func_150731_c();
+            super((INetHandlerPlayServer) manager.getNetHandler(), INetHandlerPlayServer.class, manager);
+            this.isLocal = manager.isLocalChannel();
         }
     }
     /**
@@ -61,7 +61,7 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
     public static class ServerDisconnectionFromClientEvent extends FMLNetworkEvent<INetHandlerPlayServer> {
         public ServerDisconnectionFromClientEvent(NetworkManager manager)
         {
-            super((INetHandlerPlayServer) manager.func_150729_e(), INetHandlerPlayServer.class, manager);
+            super((INetHandlerPlayServer) manager.getNetHandler(), INetHandlerPlayServer.class, manager);
         }
     }
     /**
@@ -73,7 +73,7 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
     public static class ClientDisconnectionFromServerEvent extends FMLNetworkEvent<INetHandlerPlayClient> {
         public ClientDisconnectionFromServerEvent(NetworkManager manager)
         {
-            super((INetHandlerPlayClient) manager.func_150729_e(), INetHandlerPlayClient.class, manager);
+            super((INetHandlerPlayClient) manager.getNetHandler(), INetHandlerPlayClient.class, manager);
         }
     }
 
@@ -90,7 +90,7 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
         public final Side side;
         public CustomPacketRegistrationEvent(NetworkManager manager, Set<String> registrations, String operation, Side side, Class<S> type)
         {
-            super(type.cast(manager.func_150729_e()), type, manager);
+            super(type.cast(manager.getNetHandler()), type, manager);
             this.registrations = ImmutableSet.copyOf(registrations);
             this.side = side;
             this.operation = operation;
@@ -124,7 +124,7 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
     public static class ClientCustomPacketEvent extends CustomPacketEvent<INetHandlerPlayClient> {
         public ClientCustomPacketEvent(NetworkManager manager, FMLProxyPacket packet)
         {
-            super((INetHandlerPlayClient) manager.func_150729_e(), INetHandlerPlayClient.class, manager, packet);
+            super((INetHandlerPlayClient) manager.getNetHandler(), INetHandlerPlayClient.class, manager, packet);
         }
 
         @Override
@@ -142,7 +142,7 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
     public static class ServerCustomPacketEvent extends CustomPacketEvent<INetHandlerPlayServer> {
         public ServerCustomPacketEvent(NetworkManager manager, FMLProxyPacket packet)
         {
-            super((INetHandlerPlayServer) manager.func_150729_e(), INetHandlerPlayServer.class, manager, packet);
+            super((INetHandlerPlayServer) manager.getNetHandler(), INetHandlerPlayServer.class, manager, packet);
         }
 
         @Override
