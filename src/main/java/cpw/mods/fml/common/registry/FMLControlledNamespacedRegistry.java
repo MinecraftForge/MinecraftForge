@@ -1,158 +1,76 @@
 package cpw.mods.fml.common.registry;
 
-import gnu.trove.map.hash.TIntIntHashMap;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.RegistryNamespaced;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Maps;
-import com.google.common.primitives.Ints;
+
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 
 public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
-    static class FMLObjectIntIdentityMap extends ObjectIntIdentityMap {
-        private TIntIntHashMap frozenMap;
-        private TIntIntHashMap oldMap;
-        private TIntIntHashMap newMap;
-        private ArrayList<Integer> frozenIndex;
-        private ArrayList<Integer> oldIndex;
-        private ArrayList<Integer> newIndex;
-
-        public FMLObjectIntIdentityMap()
-        {
-        }
-
-        boolean containsID(int id)
-        {
-            return func_148744_b(id);
-        }
-
-        Object get(int id)
-        {
-            return func_148745_a(id);
-        }
-
-        int get(Object obj)
-        {
-            return func_148747_b(obj);
-        }
-
-        @SuppressWarnings("unchecked")
-        void beginSwap()
-        {
-            oldMap = field_148749_a;
-            newMap  = new TIntIntHashMap(256, 0.5F, -1, -1);
-            oldIndex = (ArrayList<Integer>) field_148748_b;
-            newIndex = new ArrayList<Integer>(oldIndex.size());
-        }
-
-        @SuppressWarnings("unchecked")
-        void freezeMap()
-        {
-            frozenMap = new TIntIntHashMap(field_148749_a);
-            frozenIndex = new ArrayList<Integer>(field_148748_b);
-        }
-
-        void revertToFrozen()
-        {
-            field_148749_a = frozenMap;
-            field_148748_b = frozenIndex;
-        }
-        void completeSwap()
-        {
-            field_148749_a = newMap;
-            field_148748_b = newIndex;
-            oldIndex = newIndex = null;
-            oldMap = newMap = null;
-        }
-
-        void revertSwap()
-        {
-            field_148749_a = oldMap;
-            field_148748_b = oldIndex;
-            oldIndex = newIndex = null;
-            oldMap = newMap = null;
-        }
-
-        void putNew(int id, Object item)
-        {
-            field_148749_a = newMap;
-            field_148748_b = newIndex;
-            super.func_148746_a(item, id);
-            field_148749_a = oldMap;
-            field_148748_b = oldIndex;
-        }
-
-        List<Integer> usedIds()
-        {
-            return Ints.asList(field_148749_a.keys());
-        }
-
-    }
-
     private final Class<I> superType;
     private String optionalDefaultName;
     private I optionalDefaultObject;
 
-    private BiMap<String,Integer> namedIds = HashBiMap.create();
-    private BiMap<String,Integer> frozenIds;
-    private Map<String,Integer> transactionalNamedIds;
-    private BitSet transactionalAvailabilityMap;
-    private BitSet availabilityMap;
     int maxId;
     private int minId;
     private char discriminator;
 
-    public FMLControlledNamespacedRegistry(String optionalDefault, int maxIdValue, int minIdValue, Class<I> type, char discriminator)
+    FMLControlledNamespacedRegistry(String optionalDefault, int maxIdValue, int minIdValue, Class<I> type, char discriminator)
     {
         this.superType = type;
         this.discriminator = discriminator;
         this.optionalDefaultName = optionalDefault;
-        this.availabilityMap = new BitSet(maxIdValue);
         this.maxId = maxIdValue;
         this.minId = minIdValue;
-        this.field_148759_a = new FMLObjectIntIdentityMap();
     }
 
+    void set(FMLControlledNamespacedRegistry<I> registry)
+    {
+        if (this.superType != registry.superType) throw new IllegalArgumentException("incompatible registry");
+
+        this.discriminator = registry.discriminator;
+        this.optionalDefaultName = registry.optionalDefaultName;
+        this.maxId = registry.maxId;
+        this.minId = registry.minId;
+        field_148759_a = new ObjectIntIdentityMap();
+        field_82596_a.clear();
+
+        for (Iterator<Object> it = registry.iterator(); it.hasNext(); )
+        {
+            I obj = (I) it.next();
+
+            super.func_148756_a(registry.getId(obj), registry.func_148750_c(obj), obj);
+        }
+    }
+
+    /**
+     * Add an object to the registry, trying to use the specified id.
+     *
+     * @deprecated register through {@link GameRegistry} instead.
+     */
     @Override
+    @Deprecated
     public void func_148756_a(int id, String name, Object thing)
     {
-        FMLLog.finer("Add : %s %d %s", name, id, thing);
-        add(id, name, superType.cast(thing));
+        GameData.getMain().register(thing, name, id);
     }
 
-    int swap(int id, String name, I thing)
-    {
-        FMLLog.fine("Swap : %s %d %s", name, id, thing);
-        BitSet temporary = availabilityMap;
-        availabilityMap = transactionalAvailabilityMap;
-
-        int idToUse = id;
-        if (id == 0 || availabilityMap.get(id))
-        {
-            idToUse = availabilityMap.nextClearBit(minId);
-        }
-        if (idToUse >= maxId)
-        {
-            throw new RuntimeException(String.format("Invalid id %s - not accepted",id));
-        }
-
-        namedIds.forcePut(func_148755_c(name),idToUse);
-        reassignMapping(name, idToUse);
-        useSlot(idToUse);
-        availabilityMap = temporary;
-        FMLLog.fine("Swap : %s %d %s", name, idToUse, thing);
-        return idToUse;
-    }
-    public int add(int id, String name, I thing)
+    int add(int id, String name, I thing, BitSet availabilityMap)
     {
         if (name.equals(optionalDefaultName))
         {
@@ -175,9 +93,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
             String prefix = mc.getModId();
             name = prefix + ":"+ name;
         }
-        namedIds.forcePut(func_148755_c(name),idToUse);
         super.func_148756_a(idToUse, name, thing);
-        useSlot(idToUse);
         FMLLog.finer("Add : %s %d %s", name, idToUse, thing);
         return idToUse;
     }
@@ -197,9 +113,9 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     }
 
 
-    private FMLObjectIntIdentityMap idMap()
+    private ObjectIntIdentityMap idMap()
     {
-        return (FMLObjectIntIdentityMap) field_148759_a;
+        return field_148759_a;
     }
 
     @SuppressWarnings("unchecked")
@@ -208,52 +124,17 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         return (BiMap<String,I>) field_82596_a;
     }
 
-    void beginIdSwap()
+    Map<String,Integer> getEntriesNotIn(FMLControlledNamespacedRegistry<I> registry)
     {
-        idMap().beginSwap();
-        transactionalNamedIds = Maps.newHashMap();
-        transactionalAvailabilityMap = new BitSet();
-    }
+        Map<String,Integer> ret = new HashMap<String, Integer>();
 
-    void reassignMapping(String name, int newId)
-    {
-        Object item = nameMap().get(name);
-        idMap().putNew(newId, item);
-        transactionalNamedIds.put(name,newId);
-        transactionalAvailabilityMap.set(newId);
-    }
-
-    void freezeMap()
-    {
-        if (frozenIds == null)
+        for (Iterator<Object> it = iterator(); it.hasNext(); )
         {
-            frozenIds = ImmutableBiMap.copyOf(namedIds);
-            idMap().freezeMap();
+            I thing = (I) it.next();
+            if (!registry.field_148758_b.containsKey(thing)) ret.put(func_148750_c(thing), getId(thing));
         }
-    }
 
-    void revertToFrozen()
-    {
-        namedIds = HashBiMap.create(frozenIds);
-        idMap().revertToFrozen();
-    }
-
-    Map<String,Integer> getMissingMappings()
-    {
-        return Maps.difference(frozenIds, transactionalNamedIds).entriesOnlyOnLeft();
-    }
-    void completeIdSwap()
-    {
-        idMap().completeSwap();
-        namedIds.clear();
-        namedIds.putAll(transactionalNamedIds);
-        transactionalNamedIds = null;
-    }
-
-    void revertSwap()
-    {
-        idMap().revertSwap();
-        transactionalNamedIds = null;
+        return ret;
     }
 
     public I get(int id)
@@ -271,54 +152,54 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         return func_148757_b(thing);
     }
 
+    public I getRaw(int id)
+    {
+        return superType.cast(super.func_148754_a(id));
+    }
+
+    public I getRaw(String name)
+    {
+        return superType.cast(super.func_82594_a(name));
+    }
+
     public void serializeInto(Map<String, Integer> idMapping)
     {
-        for (Entry<String, Integer> id: namedIds.entrySet())
+        for (Iterator<Object> it = iterator(); it.hasNext(); )
         {
-            idMapping.put(discriminator+id.getKey(), id.getValue());
+            I thing = (I) it.next();
+            idMapping.put(discriminator+func_148750_c(thing), getId(thing));
         }
-    }
-
-    public void useSlot(int id)
-    {
-        if (id >= maxId) return;
-        availabilityMap.set(id);
-    }
-
-    List<Integer> usedIds()
-    {
-        return ((FMLObjectIntIdentityMap)field_148759_a).usedIds();
     }
 
     public int getId(String itemName)
     {
-        if (namedIds.containsKey(itemName))
-        {
-            return namedIds.get(itemName);
-        }
-        else
-        {
-            return -1;
-        }
+        I obj = getRaw(itemName);
+        if (obj == null) return -1;
+
+        return getId(obj);
     }
 
     public boolean contains(String itemName)
     {
-        return namedIds.containsKey(itemName);
+        return field_82596_a.containsKey(itemName);
     }
 
     void dump()
     {
-        for (Entry<String, Integer> entry : namedIds.entrySet())
+        List<Integer> ids = new ArrayList<Integer>();
+
+        for (Iterator<Object> it = iterator(); it.hasNext(); )
         {
-            String name = entry.getKey();
-            Object thing = idMap().get(entry.getValue().intValue());
-            FMLLog.finer("Registry : %s %d %s", name, entry.getValue(), thing);
+            ids.add(getId((I) it.next()));
         }
-    }
-    
-    BitSet slots()
-    {
-    	return (BitSet) availabilityMap.clone();
+
+        // sort by id
+        Collections.sort(ids);
+
+        for (int id : ids)
+        {
+            I thing = getRaw(id);
+            FMLLog.finer("Registry : %s %d %s", func_148750_c(thing), id, thing);
+        }
     }
 }

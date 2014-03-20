@@ -453,7 +453,6 @@ public class Loader
     {
         initializeLoader();
         mods = Lists.newArrayList();
-        GameData.fixupRegistries();
         namedMods = Maps.newHashMap();
         modController = new LoadController(this);
         modController.transition(LoaderState.LOADING, false);
@@ -493,7 +492,6 @@ public class Loader
         }
         modController.transition(LoaderState.PREINITIALIZATION, false);
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, disc.getASMTable(), canonicalConfigDir);
-        GameData.freezeData();
         modController.transition(LoaderState.INITIALIZATION, false);
     }
 
@@ -676,6 +674,7 @@ public class Loader
         modController.distributeStateMessage(LoaderState.POSTINITIALIZATION);
         modController.transition(LoaderState.AVAILABLE, false);
         modController.distributeStateMessage(LoaderState.AVAILABLE);
+        GameData.freezeData();
         // Dump the custom registry data map, if necessary
         GameData.dumpRegistry(minecraftDir);
         FMLLog.info("Forge Mod Loader has successfully loaded %d mod%s", mods.size(), mods.size() == 1 ? "" : "s");
