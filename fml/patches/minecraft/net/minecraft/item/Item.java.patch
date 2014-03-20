@@ -14,7 +14,7 @@
  public class Item
  {
 -    public static final RegistryNamespaced field_150901_e = new RegistryNamespaced();
-+    public static final RegistryNamespaced field_150901_e = GameData.itemRegistry;
++    public static final RegistryNamespaced field_150901_e = GameData.getItemRegistry();
      protected static final UUID field_111210_e = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
      private CreativeTabs field_77701_a;
      protected static Random field_77697_d = new Random();

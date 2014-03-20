@@ -15,15 +15,18 @@ package cpw.mods.fml.common.registry;
 import java.io.File;
 import java.io.IOException;
 import java.util.BitSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.RegistryNamespaced;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
@@ -37,6 +40,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
 import com.google.common.io.Files;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
@@ -45,55 +49,51 @@ import cpw.mods.fml.common.event.FMLMissingMappingsEvent.MissingMapping;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
 public class GameData {
-    private static Table<String, String, ItemStack> customItemStacks = HashBasedTable.create();
+    private static final GameData mainData = new GameData();
 
-    public static final FMLControlledNamespacedRegistry<Block> blockRegistry = new FMLControlledNamespacedRegistry<Block>("air", 4095, 0, Block.class,'\u0001');
-    public static final FMLControlledNamespacedRegistry<Item> itemRegistry = new FMLControlledNamespacedRegistry<Item>(null, 32000, 4096, Item.class,'\u0002');
+    /**
+     * @deprecated use {@link getBlockRegistry()} instead.
+     */
+    @Deprecated
+    public static final FMLControlledNamespacedRegistry<Block> blockRegistry = getBlockRegistry();
+    /**
+     * @deprecated use {@link getItemRegistry()} instead.
+     */
+    @Deprecated
+    public static final FMLControlledNamespacedRegistry<Item> itemRegistry = getItemRegistry();
+
+    private static Table<String, String, ItemStack> customItemStacks = HashBasedTable.create();
+    private static Map<UniqueIdentifier, ModContainer> customOwners = Maps.newHashMap();
+    private static GameData frozen;
+
+    // public api
+
+    public static FMLControlledNamespacedRegistry<Block> getBlockRegistry() {
+        return getMain().iBlockRegistry;
+    }
+
+    public static FMLControlledNamespacedRegistry<Item> getItemRegistry() {
+        return getMain().iItemRegistry;
+    }
+
+    public static ModContainer findModOwner(String string)
+    {
+        UniqueIdentifier ui = new UniqueIdentifier(string);
+        if (customOwners.containsKey(ui))
+        {
+            return customOwners.get(ui);
+        }
+        return Loader.instance().getIndexedModList().get(ui.modId);
+    }
+
+    // internal from here
 
     public static Map<String,Integer> buildItemDataList()
     {
         Map<String,Integer> idMapping = Maps.newHashMap();
-        blockRegistry.serializeInto(idMapping);
-        itemRegistry.serializeInto(idMapping);
+        getMain().iBlockRegistry.serializeInto(idMapping);
+        getMain().iItemRegistry.serializeInto(idMapping);
         return idMapping;
-    }
-
-    static Item findItem(String modId, String name)
-    {
-        return (Item) itemRegistry.func_82594_a(modId + ":" + name);
-    }
-
-    static Block findBlock(String modId, String name)
-    {
-        String key = modId + ":" + name;
-        return blockRegistry.contains(key) ? blockRegistry.func_82594_a(key) : null;
-    }
-
-    static ItemStack findItemStack(String modId, String name)
-    {
-        ItemStack is = customItemStacks.get(modId, name);
-        if (is == null)
-        {
-            Item i = findItem(modId, name);
-            if (i != null)
-            {
-                is = new ItemStack(i, 0 ,0);
-            }
-        }
-        if (is == null)
-        {
-            Block b = findBlock(modId, name);
-            if (b != null)
-            {
-                is = new ItemStack(b, 0, Short.MAX_VALUE);
-            }
-        }
-        return is;
-    }
-
-    static void registerCustomItemStack(String name, ItemStack itemStack)
-    {
-        customItemStacks.put(Loader.instance().activeModContainer().getModId(), name, itemStack);
     }
 
     public static void dumpRegistry(File minecraftDir)
@@ -124,10 +124,48 @@ public class GameData {
         }
     }
 
+    static Item findItem(String modId, String name)
+    {
+        return (Item) getMain().iItemRegistry.func_82594_a(modId + ":" + name);
+    }
+
+    static Block findBlock(String modId, String name)
+    {
+        String key = modId + ":" + name;
+        return getMain().iBlockRegistry.contains(key) ? getMain().iBlockRegistry.func_82594_a(key) : null;
+    }
+
+    static ItemStack findItemStack(String modId, String name)
+    {
+        ItemStack is = customItemStacks.get(modId, name);
+        if (is == null)
+        {
+            Item i = findItem(modId, name);
+            if (i != null)
+            {
+                is = new ItemStack(i, 0 ,0);
+            }
+        }
+        if (is == null)
+        {
+            Block b = findBlock(modId, name);
+            if (b != null)
+            {
+                is = new ItemStack(b, 0, Short.MAX_VALUE);
+            }
+        }
+        return is;
+    }
+
+    static void registerCustomItemStack(String name, ItemStack itemStack)
+    {
+        customItemStacks.put(Loader.instance().activeModContainer().getModId(), name, itemStack);
+    }
+
     static UniqueIdentifier getUniqueName(Block block)
     {
         if (block == null) return null;
-        String name = blockRegistry.func_148750_c(block);
+        String name = getMain().iBlockRegistry.func_148750_c(block);
         UniqueIdentifier ui = new UniqueIdentifier(name);
         if (customItemStacks.contains(ui.modId, ui.name))
         {
@@ -140,7 +178,7 @@ public class GameData {
     static UniqueIdentifier getUniqueName(Item item)
     {
         if (item == null) return null;
-        String name = itemRegistry.func_148750_c(item);
+        String name = getMain().iItemRegistry.func_148750_c(item);
         UniqueIdentifier ui = new UniqueIdentifier(name);
         if (customItemStacks.contains(ui.modId, ui.name))
         {
@@ -150,181 +188,120 @@ public class GameData {
         return ui;
     }
 
-    private static Map<UniqueIdentifier, ModContainer> customOwners = Maps.newHashMap();
-
-    static void registerBlockAndItem(ItemBlock item, Block block, String name, String modId)
-    {
-        ModContainer mc = Loader.instance().activeModContainer();
-        if (modId != null)
-        {
-            customOwners.put(new UniqueIdentifier(modId, name), mc);
-        }
-        BitSet blockAvailability = blockRegistry.slots();
-        BitSet itemAvailability = itemRegistry.slots();
-        blockAvailability.or(itemAvailability);
-        int blockId = blockAvailability.nextClearBit(0);
-        if (blockId >= blockRegistry.maxId)
-        {
-        	throw new RuntimeException(String.format("No more space for block allocations: used %d block ids", blockId -1));
-        }
-        int actualBlockId = blockRegistry.add(blockId, name, block);
-        int itemId = itemRegistry.add(blockId, name, item);
-        if (blockId != actualBlockId || itemId != blockId)
-        {
-            throw new RuntimeException(String.format("There was a failure to allocate a matching block and item pair for %s: requested %d, got %d and %d", name, blockId, actualBlockId, itemId));
-        }
-
-    }
-    static void registerItem(Item item, String name, String modId)
-    {
-        ModContainer mc = Loader.instance().activeModContainer();
-        if (modId != null)
-        {
-            customOwners.put(new UniqueIdentifier(modId, name), mc);
-        }
-        if (item instanceof ItemBlock)
-        {
-            throw new RuntimeException("Cannot register an itemblock separately from it's block");
-        }
-        int itemId = itemRegistry.add(0, name, item);
-        blockRegistry.useSlot(itemId);
-    }
-
-    static void registerBlock(Block block, String name, String modId)
-    {
-        ModContainer mc = Loader.instance().activeModContainer();
-        if (modId != null)
-        {
-            customOwners.put(new UniqueIdentifier(modId, name), mc);
-        }
-        int blockId = blockRegistry.add(0, name, block);
-        itemRegistry.useSlot(blockId);
-    }
-
-    public static ModContainer findModOwner(String string)
-    {
-        UniqueIdentifier ui = new UniqueIdentifier(string);
-        if (customOwners.containsKey(ui))
-        {
-            return customOwners.get(ui);
-        }
-        return Loader.instance().getIndexedModList().get(ui.modId);
-    }
-
-
-    public static void fixupRegistries()
-    {
-        for (Integer id : blockRegistry.usedIds())
-        {
-            itemRegistry.useSlot(id);
-        }
-
-        for (Integer id : itemRegistry.usedIds())
-        {
-            blockRegistry.useSlot(id);
-        }
-    }
-
     public static List<String> injectWorldIDMap(Map<String, Integer> dataList, boolean injectFrozenData, boolean isLocalWorld)
     {
+        FMLLog.info("Injecting existing block and item data into this %s instance", FMLCommonHandler.instance().getEffectiveSide().isServer() ? "server" : "client");
         Map<String, Integer[]> remaps = Maps.newHashMap();
-        ArrayListMultimap<String,String> missing = ArrayListMultimap.create();
-        blockRegistry.dump();
-        itemRegistry.dump();
-        blockRegistry.beginIdSwap();
-        itemRegistry.beginIdSwap();
-        for (Entry<String, Integer> entry : dataList.entrySet())
+        ArrayListMultimap<String,String> missingMappings = ArrayListMultimap.create();
+        getMain().testConsistency();
+        getMain().iBlockRegistry.dump();
+        getMain().iItemRegistry.dump();
+
+        GameData newData = new GameData();
+
+        // process blocks and items in the world, blocks in the first pass, items in the second
+        // blocks need to be added first for proper ItemBlock handling
+        for (int pass = 0; pass < 2; pass++)
         {
-            String itemName = entry.getKey();
-            char discriminator = itemName.charAt(0);
-            itemName = itemName.substring(1);
-            Integer newId = entry.getValue();
-            int currId;
-            boolean isBlock = discriminator == '\u0001';
-            if (isBlock)
-            {
-                currId = blockRegistry.getId(itemName);
-            }
-            else
-            {
-                currId = itemRegistry.getId(itemName);
-            }
+            boolean isBlock = (pass == 0);
 
-            if (currId == -1)
+            for (Entry<String, Integer> entry : dataList.entrySet())
             {
-                FMLLog.info("Found a missing id from the world %s", itemName);
-                missing.put(itemName.substring(0, itemName.indexOf(':')), itemName);
-            }
-            else if (currId != newId)
-            {
-                FMLLog.info("Found %s id mismatch %s : %d %d", isBlock ? "block" : "item", itemName, currId, newId);
-                remaps.put(itemName, new Integer[] { currId, newId });
-            }
+                String itemName = entry.getKey();
+                int newId = entry.getValue();
 
-            if (isBlock)
-            {
-                blockRegistry.reassignMapping(itemName, newId);
-            }
-            else
-            {
-                itemRegistry.reassignMapping(itemName, newId);
-            }
-        }
-        List<String> missedMappings = Loader.instance().fireMissingMappingEvent(missing, isLocalWorld);
-        if (!missedMappings.isEmpty())
-        {
-            blockRegistry.revertSwap();
-            itemRegistry.revertSwap();
-            return missedMappings;
-        }
+                // names starting with 0x1 are blocks, skip if the type isn't handled by this pass
+                if ((itemName.charAt(0) == '\u0001') != isBlock) continue;
 
-        if (injectFrozenData)
-        {
-            FMLLog.info("Injecting new block and item data into this server instance");
-            Map<String, Integer> missingBlocks = Maps.newHashMap(blockRegistry.getMissingMappings());
-            Map<String, Integer> missingItems = Maps.newHashMap(itemRegistry.getMissingMappings());
+                itemName = itemName.substring(1);
+                int currId = isBlock ? getMain().iBlockRegistry.getId(itemName) : getMain().iItemRegistry.getId(itemName);
 
-            for (Entry<String, Integer> item: missingItems.entrySet())
-            {
-                String itemName = item.getKey();
-                if (missingBlocks.containsKey(itemName))
+                if (currId == -1)
                 {
-                    int blockId = blockRegistry.swap(item.getValue(), itemName, blockRegistry.get(itemName));
-                    itemRegistry.swap(blockId, itemName, itemRegistry.get(itemName));
-                    FMLLog.info("Injecting new block/item %s : %d", itemName, blockId);
-                    missingBlocks.remove(itemName);
-                    if (Integer.valueOf(blockId) != item.getValue())
-                    {
-                        remaps.put(itemName, new Integer[] { item.getValue(), blockId });
-                    }
+                    FMLLog.info("Found a missing id from the world %s", itemName);
+                    missingMappings.put(itemName.substring(0, itemName.indexOf(':')), itemName);
+                    continue; // no block/item -> nothing to add
+                }
+                else if (currId != newId)
+                {
+                    FMLLog.info("Found %s id mismatch %s : %d (was %d)", isBlock ? "block" : "item", itemName, currId, newId);
+                    remaps.put(itemName, new Integer[] { currId, newId });
+                }
+
+                if (isBlock)
+                {
+                    Block block = getMain().iBlockRegistry.getRaw(itemName);
+                    if (block == null) throw new IllegalStateException(String.format("Can't find block for name %s, id %d", itemName, currId));
+
+                    currId = newData.registerBlock(block, itemName, null, newId);
                 }
                 else
                 {
-                    FMLLog.info("Injecting new item %s", itemName);
-                    int itemId = itemRegistry.swap(item.getValue(), itemName, itemRegistry.get(itemName));
-                    if (Integer.valueOf(itemId) != item.getValue())
-                    {
-                        remaps.put(itemName, new Integer[] { item.getValue(), itemId });
-                    }
+                    Item item = getMain().iItemRegistry.getRaw(itemName);
+                    if (item == null) throw new IllegalStateException(String.format("Can't find item for name %s, id %d", itemName, currId));
+
+                    currId = newData.registerItem(item, itemName, null, newId);
                 }
-            }
-            for (Entry<String, Integer> block : missingBlocks.entrySet())
-            {
-                FMLLog.info("Injecting new block %s", block.getKey());
-                int blockId = blockRegistry.swap(block.getValue(), block.getKey(), blockRegistry.get(block.getKey()));
-                if (Integer.valueOf(blockId) != block.getValue())
+
+                if (currId != newId)
                 {
-                    remaps.put(block.getKey(), new Integer[] { block.getValue(), blockId });
+                    throw new IllegalStateException(String.format("Can't map %s %s to id %d, already occupied by %s",
+                            isBlock ? "block" : "item",
+                                    itemName,
+                                    newId,
+                                    isBlock ? newData.iBlockRegistry.get(newId) : newData.iItemRegistry.get(newId)));
                 }
             }
         }
-        blockRegistry.completeIdSwap();
-        itemRegistry.completeIdSwap();
-        blockRegistry.dump();
-        itemRegistry.dump();
+
+        List<String> missedMappings = Loader.instance().fireMissingMappingEvent(missingMappings, isLocalWorld);
+        if (!missedMappings.isEmpty()) return missedMappings;
+
+        if (injectFrozenData) // add blocks + items missing from the map
+        {
+            FMLLog.info("Injecting new block and item data into this server instance");
+            Map<String, Integer> missingBlocks = frozen.iBlockRegistry.getEntriesNotIn(newData.iBlockRegistry);
+            Map<String, Integer> missingItems = frozen.iItemRegistry.getEntriesNotIn(newData.iItemRegistry);
+
+            for (int pass = 0; pass < 2; pass++)
+            {
+                boolean isBlock = pass == 0;
+                Map<String, Integer> missing = (pass == 0) ? missingBlocks : missingItems;
+
+                for (Entry<String, Integer> entry : missing.entrySet())
+                {
+                    String itemName = entry.getKey();
+                    int currId = entry.getValue();
+                    int newId;
+
+                    if (isBlock)
+                    {
+                        newId = newData.registerBlock(frozen.iBlockRegistry.get(itemName), itemName, null, currId);
+                    }
+                    else
+                    {
+                        newId = newData.registerItem(frozen.iItemRegistry.get(itemName), itemName, null, currId);
+                    }
+
+                    FMLLog.info("Injected new block/item %s : %d (was %d)", itemName, newId, currId);
+
+                    if (newId != currId) // a new id was assigned
+                    {
+                        remaps.put(itemName, new Integer[] { entry.getValue(), newId });
+                    }
+                }
+            }
+        }
+
+        newData.testConsistency();
+        getMain().set(newData);
+
+        getMain().iBlockRegistry.dump();
+        getMain().iItemRegistry.dump();
         Loader.instance().fireRemapEvent(remaps);
         return ImmutableList.of();
     }
+
     public static List<String> processIdRematches(List<MissingMapping> remaps, boolean isLocalWorld)
     {
         List<String> failed = Lists.newArrayList();
@@ -367,15 +344,206 @@ public class GameData {
     public static void freezeData()
     {
         FMLLog.fine("Freezing block and item id maps");
-        blockRegistry.freezeMap();
-        itemRegistry.freezeMap();
+
+        frozen = new GameData(getMain());
+        frozen.testConsistency();
     }
 
     public static void revertToFrozen()
     {
-        FMLLog.fine("Reverting to frozen data state");
-        blockRegistry.revertToFrozen();
-        itemRegistry.revertToFrozen();
+        if (frozen == null)
+        {
+            FMLLog.warning("Can't revert to frozen GameData state without freezing first.");
+        }
+        else
+        {
+            FMLLog.fine("Reverting to frozen data state.");
+
+            getMain().set(frozen);
+        }
     }
 
+    protected static GameData getMain()
+    {
+        return mainData;
+    }
+
+    // internal registry objects
+    private final FMLControlledNamespacedRegistry<Block> iBlockRegistry;
+    private final FMLControlledNamespacedRegistry<Item> iItemRegistry;
+    // bit set marking ids as occupied
+    private final BitSet availabilityMap;
+
+    private GameData()
+    {
+        iBlockRegistry = new FMLControlledNamespacedRegistry<Block>("air", 4095, 0, Block.class,'\u0001');
+        iItemRegistry = new FMLControlledNamespacedRegistry<Item>(null, 32000, 4096, Item.class,'\u0002');
+        availabilityMap = new BitSet(32000);
+    }
+
+    private GameData(GameData data)
+    {
+        this();
+        set(data);
+    }
+
+    private void set(GameData data)
+    {
+        iBlockRegistry.set(data.iBlockRegistry);
+        iItemRegistry.set(data.iItemRegistry);
+        availabilityMap.clear();
+        availabilityMap.or(data.availabilityMap);
+    }
+
+    void register(Object obj, String name, int idHint)
+    {
+        if (obj instanceof Block)
+        {
+            registerBlock((Block) obj, name, null, idHint);
+        }
+        else if (obj instanceof Item)
+        {
+            registerItem((Item) obj, name, null, idHint);
+        }
+        else
+        {
+            throw new IllegalArgumentException("An invalid registry object is to be added, only instances of Block or Item are allowed.");
+        }
+    }
+
+    int registerItem(Item item, String name, String modId)
+    {
+        return registerItem(item, name, modId, 0);
+    }
+
+    int registerItem(Item item, String name, String modId, int idHint)
+    {
+        if (modId != null)
+        {
+            ModContainer mc = Loader.instance().activeModContainer();
+            customOwners.put(new UniqueIdentifier(modId, name), mc);
+        }
+        if (item instanceof ItemBlock)
+        {
+            // ItemBlock, clear the item slot already occupied by the corresponding block
+            idHint = iBlockRegistry.getId(((ItemBlock) item).field_150939_a);
+
+            if (idHint == -1)
+            {
+                throw new RuntimeException("Cannot register an itemblock before its block");
+            }
+
+            if (iItemRegistry.get(idHint) != null)
+            {
+                throw new IllegalStateException(String.format("The Item Registry slot %d is already used by %s", idHint, iItemRegistry.get(idHint)));
+            }
+
+            if (!freeSlot(idHint)) // temporarily free the slot occupied by the Block for the ItemBlock registration
+            {
+                throw new IllegalStateException(String.format("The Registry slot %d is supposed to be blocked by the ItemBlock's Block's blockId at this point.", idHint));
+            }
+        }
+
+        int itemId = iItemRegistry.add(idHint, name, item, availabilityMap);
+
+        if (item instanceof ItemBlock)
+        {
+            if (itemId != idHint) // just in case of bugs...
+            {
+                throw new IllegalStateException("ItemBlock insertion failed.");
+            }
+        }
+
+        // normal item, block the Block Registry slot with the same id
+        if (useSlot(itemId))
+        {
+            throw new IllegalStateException(String.format("Registry slot %d is supposed to be empty when adding a non-ItemBlock with the same id.", itemId));
+        }
+
+        return itemId;
+    }
+
+    int registerBlock(Block block, String name, String modId)
+    {
+        return registerBlock(block, name, modId, 0);
+    }
+
+    int registerBlock(Block block, String name, String modId, int idHint)
+    {
+        if (modId != null)
+        {
+            ModContainer mc = Loader.instance().activeModContainer();
+            customOwners.put(new UniqueIdentifier(modId, name), mc);
+        }
+        int blockId = iBlockRegistry.add(idHint, name, block, availabilityMap);
+
+        if (useSlot(blockId))
+        {
+            throw new IllegalStateException(String.format("Registry slot %d is supposed to be empty when adding a Block with the same id.", blockId));
+        }
+
+        return blockId;
+    }
+
+    private boolean useSlot(int id)
+    {
+        boolean oldValue = availabilityMap.get(id);
+        availabilityMap.set(id);
+        return oldValue;
+    }
+
+    private boolean freeSlot(int id)
+    {
+        boolean oldValue = availabilityMap.get(id);
+        availabilityMap.clear(id);
+        return oldValue;
+    }
+
+    private void testConsistency() {
+        // test if there's an entry for every set bit in availabilityMap
+        for (int i = availabilityMap.nextSetBit(0); i >= 0; i = availabilityMap.nextSetBit(i+1))
+        {
+            if (iBlockRegistry.getRaw(i) == null && iItemRegistry.getRaw(i) == null)
+            {
+                throw new IllegalStateException(String.format("availabilityMap references empty entries for id %d.", i));
+            }
+        }
+
+        // test if there's a bit in availabilityMap set for every entry in the block registry
+        for (Iterator<Object> it = iBlockRegistry.iterator(); it.hasNext(); )
+        {
+            Block block = (Block) it.next();
+            int id = iBlockRegistry.getId(block);
+
+            if (!availabilityMap.get(id))
+            {
+                throw new IllegalStateException(String.format("Registry entry for block %s, id %d, marked as empty.", block, id));
+            }
+        }
+
+        // test if there's a bit in availabilityMap set for every entry in the item registry,
+        // check if ItemBlocks have blocks with matching ids in the block registry
+        for (Iterator<Object> it = iItemRegistry.iterator(); it.hasNext(); )
+        {
+            Item item = (Item) it.next();
+            int id = iItemRegistry.getId(item);
+
+            if (!availabilityMap.get(id))
+            {
+                throw new IllegalStateException(String.format("Registry entry for item %s, id %d, marked as empty.", item, id));
+            }
+
+            if (item instanceof ItemBlock)
+            {
+                Block block = ((ItemBlock) item).field_150939_a;
+
+                if (iBlockRegistry.getId(block) != id)
+                {
+                    throw new IllegalStateException(String.format("Registry entry for ItemBlock %s, id %d, is missing or uses the non-matching id %d.", item, id, iBlockRegistry.getId(block)));
+                }
+            }
+        }
+
+        FMLLog.fine("Registry consistency check successful");
+    }
 }

@@ -12,7 +12,7 @@
  public class Block
  {
 -    public static final RegistryNamespaced field_149771_c = new RegistryNamespacedDefaultedByKey("air");
-+    public static final RegistryNamespaced field_149771_c = GameData.blockRegistry;
++    public static final RegistryNamespaced field_149771_c = GameData.getBlockRegistry();
      private CreativeTabs field_149772_a;
      protected String field_149768_d;
      public static final Block.SoundType field_149769_e = new Block.SoundType("stone", 1.0F, 1.0F);
