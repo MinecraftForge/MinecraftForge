@@ -35,7 +35,7 @@
              }
  
 -            return func_150119_a(p_149707_1_.getBlock(p_149707_2_, p_149707_3_, p_149707_4_));
-+            return func_150119_a(p_149707_1_.getBlock(p_149707_2_, p_149707_3_, p_149707_4_)) || p_149707_1_.isSideSolid(p_149707_2_, p_149707_3_, p_149707_4_, ForgeDirection.UP);
++            return func_150119_a(p_149707_1_.getBlock(p_149707_2_, p_149707_3_, p_149707_4_)) || p_149707_1_.isSideSolid(p_149707_2_, p_149707_3_, p_149707_4_, ForgeDirection.VALID_DIRECTIONS[p_149707_5_]);
          }
      }
  
