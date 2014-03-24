@@ -28,23 +28,43 @@ public class FMLMissingMappingsEvent extends FMLEvent {
      * @author cpw
      *
      */
-    public static enum Action { IGNORE, WARN, FAIL }
+    public static enum Action { DEFAULT, IGNORE, WARN, FAIL }
     public static class MissingMapping {
         public final GameRegistry.Type type;
         public final String name;
-        private Action action;
-        private List<MissingMapping> remaps;
-        public MissingMapping(String name, List<MissingMapping> remaps)
+        public final int id;
+        private Action action = Action.DEFAULT;
+
+        public MissingMapping(String name, int id)
         {
             this.type = name.charAt(0) == '\u0001' ? GameRegistry.Type.BLOCK : GameRegistry.Type.ITEM;
             this.name = name;
-            this.remaps = remaps;
-            this.action = FMLCommonHandler.instance().getDefaultMissingAction();
+            this.id = id;
         }
+        /**
+         * @deprecated use ignore(), warn() or fail() instead
+         */
+        @Deprecated
         public void setAction(Action target)
         {
+            if (target == Action.DEFAULT) throw new IllegalArgumentException();
+
             this.action = target;
-            remaps.add(this);
+        }
+
+        public void ignore()
+        {
+            this.action = Action.IGNORE;
+        }
+
+        public void warn()
+        {
+            this.action = Action.WARN;
+        }
+
+        public void fail()
+        {
+            this.action = Action.FAIL;
         }
 
         public Action getAction()
