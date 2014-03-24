@@ -1,12 +1,11 @@
 package net.minecraftforge.common;
 
+import static net.minecraft.init.Blocks.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import cpw.mods.fml.common.eventhandler.Event;
-import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,6 +33,7 @@ import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -45,7 +45,8 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.world.BlockEvent;
-import static net.minecraft.init.Blocks.*;
+import cpw.mods.fml.common.eventhandler.Event;
+import cpw.mods.fml.relauncher.ReflectionHelper;
 
 public class ForgeHooks
 {
@@ -267,6 +268,11 @@ public class ForgeHooks
     public static boolean onLivingUpdate(EntityLivingBase entity)
     {
         return MinecraftForge.EVENT_BUS.post(new LivingUpdateEvent(entity));
+    }
+    
+    public static boolean onEntityMount(Entity rider, Entity entity)
+    {
+        return MinecraftForge.EVENT_BUS.post(new EntityMountEvent(rider, entity));
     }
 
     public static boolean onLivingAttack(EntityLivingBase entity, DamageSource src, float amount)
