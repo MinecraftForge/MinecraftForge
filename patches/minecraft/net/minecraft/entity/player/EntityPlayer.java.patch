@@ -21,13 +21,13 @@
 +import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.ForgeEventFactory;
++import net.minecraftforge.event.entity.EntityMountEvent;
 +import net.minecraftforge.event.entity.living.LivingHurtEvent;
 +import net.minecraftforge.event.entity.player.AttackEntityEvent;
 +import net.minecraftforge.event.entity.player.EntityInteractEvent;
 +import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 +import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 +import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
-+import net.minecraftforge.event.entity.player.PlayerMountEvent;
 +import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 +
  public abstract class EntityPlayer extends EntityLivingBase implements ICommandSender
@@ -110,20 +110,38 @@
                  {
                      this.inventory.mainInventory[this.inventory.currentItem] = null;
                  }
-@@ -472,6 +505,12 @@
+@@ -454,28 +487,10 @@
+     {
+         this.openContainer = this.inventoryContainer;
+     }
+-
+-    // JAVADOC METHOD $$ func_70078_a
++    
+     public void mountEntity(Entity par1Entity)
+     {
+-        if (this.ridingEntity != null && par1Entity == null)
+-        {
+-            if (!this.worldObj.isRemote)
+-            {
+-                this.dismountEntity(this.ridingEntity);
+-            }
+-
+-            if (this.ridingEntity != null)
+-            {
+-                this.ridingEntity.riddenByEntity = null;
+-            }
+-
+-            this.ridingEntity = null;
+-        }
+-        else
+-        {
+-            super.mountEntity(par1Entity);
+-        }
++        super.mountEntity(par1Entity);
+     }
  
-             this.ridingEntity = null;
-         }
-+        PlayerMountEvent event = new PlayerMountEvent(this, par1Entity);
-+        MinecraftForge.EVENT_BUS.post(event);
-+        if(event.isCanceled())
-+        {
-+            return;
-+        }
-         else
-         {
-             super.mountEntity(par1Entity);
-@@ -498,11 +537,11 @@
+     // JAVADOC METHOD $$ func_70098_U
+@@ -498,11 +513,11 @@
              this.cameraYaw = 0.0F;
              this.addMountedMovementStat(this.posX - d0, this.posY - d1, this.posZ - d2);
  
@@ -137,7 +155,7 @@
              }
          }
      }
-@@ -632,11 +671,15 @@
+@@ -632,11 +647,15 @@
      // JAVADOC METHOD $$ func_70645_a
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -153,7 +171,7 @@
          if (this.getCommandSenderName().equals("Notch"))
          {
              this.func_146097_a(new ItemStack(Items.apple, 1), true, false);
-@@ -647,6 +690,20 @@
+@@ -647,6 +666,20 @@
              this.inventory.dropAllItems();
          }
  
@@ -174,7 +192,7 @@
          if (par1DamageSource != null)
          {
              this.motionX = (double)(-MathHelper.cos((this.attackedAtYaw + this.rotationYaw) * (float)Math.PI / 180.0F) * 0.1F);
-@@ -702,13 +759,26 @@
+@@ -702,13 +735,26 @@
      // JAVADOC METHOD $$ func_71040_bB
      public EntityItem dropOneItem(boolean par1)
      {
@@ -203,7 +221,7 @@
      }
  
      public EntityItem func_146097_a(ItemStack p_146097_1_, boolean p_146097_2_, boolean p_146097_3_)
-@@ -765,14 +835,26 @@
+@@ -765,14 +811,26 @@
      // JAVADOC METHOD $$ func_71012_a
      public void joinEntityItemWithWorld(EntityItem par1EntityItem)
      {
@@ -231,7 +249,7 @@
          if (f > 1.0F)
          {
              int i = EnchantmentHelper.getEfficiencyModifier(this);
-@@ -782,7 +864,9 @@
+@@ -782,7 +840,9 @@
              {
                  float f1 = (float)(i * i + 1);
  
@@ -242,7 +260,7 @@
                  {
                      f += f1 * 0.08F;
                  }
-@@ -813,13 +897,14 @@
+@@ -813,13 +873,14 @@
              f /= 5.0F;
          }
  
@@ -259,7 +277,7 @@
      }
  
      // JAVADOC METHOD $$ func_70037_a
-@@ -849,6 +934,16 @@
+@@ -849,6 +910,16 @@
              this.spawnForced = par1NBTTagCompound.getBoolean("SpawnForced");
          }
  
@@ -276,7 +294,7 @@
          this.foodStats.readNBT(par1NBTTagCompound);
          this.capabilities.readCapabilitiesFromNBT(par1NBTTagCompound);
  
-@@ -880,6 +975,23 @@
+@@ -880,6 +951,23 @@
              par1NBTTagCompound.setBoolean("SpawnForced", this.spawnForced);
          }
  
@@ -300,7 +318,7 @@
          this.foodStats.writeNBT(par1NBTTagCompound);
          this.capabilities.writeCapabilitiesToNBT(par1NBTTagCompound);
          par1NBTTagCompound.setTag("EnderItems", this.theInventoryEnderChest.saveInventoryToNBT());
-@@ -904,7 +1016,7 @@
+@@ -904,7 +992,7 @@
  
      public float getEyeHeight()
      {
@@ -309,7 +327,7 @@
      }
  
      // JAVADOC METHOD $$ func_71061_d_
-@@ -916,6 +1028,7 @@
+@@ -916,6 +1004,7 @@
      // JAVADOC METHOD $$ func_70097_a
      public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
      {
@@ -317,7 +335,7 @@
          if (this.isEntityInvulnerable())
          {
              return false;
-@@ -1020,12 +1133,15 @@
+@@ -1020,12 +1109,15 @@
      {
          if (!this.isEntityInvulnerable())
          {
@@ -334,7 +352,7 @@
              par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
              float f1 = par2;
              par2 = Math.max(par2 - this.getAbsorptionAmount(), 0.0F);
-@@ -1060,6 +1176,7 @@
+@@ -1060,6 +1152,7 @@
  
      public boolean interactWith(Entity par1Entity)
      {
@@ -342,7 +360,7 @@
          ItemStack itemstack = this.getCurrentEquippedItem();
          ItemStack itemstack1 = itemstack != null ? itemstack.copy() : null;
  
-@@ -1112,7 +1229,9 @@
+@@ -1112,7 +1205,9 @@
      // JAVADOC METHOD $$ func_71028_bD
      public void destroyCurrentEquippedItem()
      {
@@ -352,7 +370,7 @@
      }
  
      // JAVADOC METHOD $$ func_70033_W
-@@ -1124,6 +1243,15 @@
+@@ -1124,6 +1219,15 @@
      // JAVADOC METHOD $$ func_71059_n
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -368,7 +386,7 @@
          if (par1Entity.canAttackWithItem())
          {
              if (!par1Entity.hitByEntity(this))
-@@ -1276,6 +1404,12 @@
+@@ -1276,6 +1380,12 @@
      // JAVADOC METHOD $$ func_71018_a
      public EntityPlayer.EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -381,7 +399,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1318,8 +1452,7 @@
+@@ -1318,8 +1428,7 @@
  
          if (this.worldObj.blockExists(par1, par2, par3))
          {
@@ -391,7 +409,7 @@
              float f1 = 0.5F;
              float f = 0.5F;
  
-@@ -1387,11 +1520,12 @@
+@@ -1387,11 +1496,12 @@
          this.resetHeight();
          ChunkCoordinates chunkcoordinates = this.playerLocation;
          ChunkCoordinates chunkcoordinates1 = this.playerLocation;
@@ -407,7 +425,7 @@
  
              if (chunkcoordinates1 == null)
              {
-@@ -1426,7 +1560,7 @@
+@@ -1426,7 +1536,7 @@
      // JAVADOC METHOD $$ func_71065_l
      private boolean isInBed()
      {
@@ -416,7 +434,7 @@
      }
  
      // JAVADOC METHOD $$ func_71056_a
-@@ -1438,9 +1572,9 @@
+@@ -1438,9 +1548,9 @@
          ichunkprovider.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          ichunkprovider.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -428,7 +446,7 @@
              return chunkcoordinates1;
          }
          else
-@@ -1459,8 +1593,10 @@
+@@ -1459,8 +1569,10 @@
      {
          if (this.playerLocation != null)
          {
@@ -441,7 +459,7 @@
  
              switch (j)
              {
-@@ -1519,19 +1655,26 @@
+@@ -1519,19 +1631,26 @@
      public void addChatComponentMessage(IChatComponent p_146105_1_) {}
  
      // JAVADOC METHOD $$ func_70997_bJ
@@ -470,7 +488,7 @@
          if (par1ChunkCoordinates != null)
          {
              this.spawnChunk = new ChunkCoordinates(par1ChunkCoordinates);
-@@ -1713,6 +1856,10 @@
+@@ -1713,6 +1832,10 @@
  
              super.fall(par1);
          }
@@ -481,7 +499,7 @@
      }
  
      protected String func_146067_o(int p_146067_1_)
-@@ -1758,11 +1905,6 @@
+@@ -1758,11 +1881,6 @@
          }
          else
          {
@@ -493,7 +511,7 @@
              if (this.itemInUse != null && par1ItemStack.getItem() == Items.bow)
              {
                  int j = par1ItemStack.getMaxItemUseDuration() - this.itemInUseCount;
-@@ -1782,6 +1924,7 @@
+@@ -1782,6 +1900,7 @@
                      return Items.bow.getItemIconForUseDuration(0);
                  }
              }
@@ -501,7 +519,7 @@
          }
  
          return iicon;
-@@ -1872,6 +2015,8 @@
+@@ -1872,6 +1991,8 @@
      {
          if (par1ItemStack != this.itemInUse)
          {
@@ -510,7 +528,7 @@
              this.itemInUse = par1ItemStack;
              this.itemInUseCount = par2;
  
-@@ -1970,6 +2115,17 @@
+@@ -1970,6 +2091,17 @@
          }
  
          this.theInventoryEnderChest = par1EntityPlayer.theInventoryEnderChest;
@@ -528,7 +546,7 @@
      }
  
      // JAVADOC METHOD $$ func_70041_e_
-@@ -2016,7 +2172,14 @@
+@@ -2016,7 +2148,14 @@
      // JAVADOC METHOD $$ func_70062_b
      public void setCurrentItemOrArmor(int par1, ItemStack par2ItemStack)
      {
@@ -544,7 +562,7 @@
      }
  
      // JAVADOC METHOD $$ func_98034_c
-@@ -2062,7 +2225,7 @@
+@@ -2062,7 +2201,7 @@
  
      public IChatComponent func_145748_c_()
      {
@@ -553,7 +571,7 @@
          chatcomponenttext.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.getCommandSenderName() + " "));
          return chatcomponenttext;
      }
-@@ -2099,6 +2262,119 @@
+@@ -2099,6 +2238,119 @@
          FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
      }
  

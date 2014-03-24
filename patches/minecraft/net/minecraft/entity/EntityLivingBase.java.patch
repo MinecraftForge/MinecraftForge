@@ -148,7 +148,19 @@
          if (!this.isSwingInProgress || this.swingProgressInt >= this.getArmSwingAnimationEnd() / 2 || this.swingProgressInt < 0)
          {
              this.swingProgressInt = -1;
-@@ -1422,6 +1455,7 @@
+@@ -1390,6 +1423,11 @@
+ 
+         this.setPositionAndUpdate(d0, d1, d2);
+     }
++    
++    public void mountEntity(Entity par1Entity)
++    {
++        super.mountEntity(par1Entity);
++    }
+ 
+     @SideOnly(Side.CLIENT)
+     public boolean getAlwaysRenderNameTagForRender()
+@@ -1422,6 +1460,7 @@
          }
  
          this.isAirBorne = true;
@@ -156,7 +168,7 @@
      }
  
      // JAVADOC METHOD $$ func_70612_e
-@@ -1602,6 +1636,7 @@
+@@ -1602,6 +1641,7 @@
      // JAVADOC METHOD $$ func_70071_h_
      public void onUpdate()
      {
@@ -164,7 +176,7 @@
          super.onUpdate();
  
          if (!this.worldObj.isRemote)
-@@ -2099,4 +2134,42 @@
+@@ -2099,4 +2139,42 @@
      {
          return this.getTeam() != null ? this.getTeam().isSameTeam(par1Team) : false;
      }
