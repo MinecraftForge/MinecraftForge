@@ -74,7 +74,6 @@ public class FMLMissingMappingsEvent extends FMLEvent {
     }
     private ListMultimap<String,MissingMapping> missing;
     private ModContainer activeContainer;
-    private List<MissingMapping> currentList;
 
     public FMLMissingMappingsEvent(ListMultimap<String,MissingMapping> missingMappings)
     {
@@ -85,7 +84,6 @@ public class FMLMissingMappingsEvent extends FMLEvent {
     {
         super.applyModContainer(activeContainer);
         this.activeContainer = activeContainer;
-        this.currentList = null;
     }
 
     /**
@@ -94,10 +92,6 @@ public class FMLMissingMappingsEvent extends FMLEvent {
      */
     public List<MissingMapping> get()
     {
-        if (currentList == null)
-        {
-            currentList = ImmutableList.copyOf(missing.removeAll(activeContainer.getModId()));
-        }
-        return currentList;
+        return ImmutableList.copyOf(missing.get(activeContainer.getModId()));
     }
 }
