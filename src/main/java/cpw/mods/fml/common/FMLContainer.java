@@ -15,19 +15,25 @@ package cpw.mods.fml.common;
 import java.io.File;
 import java.security.cert.Certificate;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
+
 import org.apache.logging.log4j.Level;
+
 import com.google.common.collect.Maps;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+
 import cpw.mods.fml.client.FMLFileResourcePack;
 import cpw.mods.fml.client.FMLFolderResourcePack;
 import cpw.mods.fml.common.asm.FMLSanityChecker;
@@ -106,6 +112,7 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
             dataList.func_74742_a(tag);
         }
         fmlData.func_74782_a("ItemData", dataList);
+        fmlData.func_74783_a("BlockedIds", GameData.getBlockedIds());
         return fmlData;
     }
 
@@ -180,6 +187,7 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
         }
         else if (tag.func_74764_b("ItemData"))
         {
+            // read name <-> id mappings
             NBTTagList list = tag.func_150295_c("ItemData", (byte)10);
             Map<String,Integer> dataList = Maps.newLinkedHashMap();
             for (int i = 0; i < list.func_74745_c(); i++)
@@ -187,7 +195,10 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
                 NBTTagCompound dataTag = list.func_150305_b(i);
                 dataList.put(dataTag.func_74779_i("K"), dataTag.func_74762_e("V"));
             }
-            List<String> failedElements = GameData.injectWorldIDMap(dataList, true, true);
+            // read blocked ids
+            int[] blockedIds = tag.func_74759_k("BlockedIds");
+
+            List<String> failedElements = GameData.injectWorldIDMap(dataList, blockedIds, true, true);
             if (!failedElements.isEmpty())
             {
                 throw new GameRegistryException("Failed to load the world - there are fatal block and item id issues", failedElements);

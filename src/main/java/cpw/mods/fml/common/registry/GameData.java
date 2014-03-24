@@ -15,23 +15,24 @@ package cpw.mods.fml.common.registry;
 import java.io.File;
 import java.io.IOException;
 import java.util.BitSet;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.apache.logging.log4j.Level;
+import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.RegistryNamespaced;
+
+import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.base.Joiner.MapJoiner;
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
@@ -94,6 +95,20 @@ public class GameData {
         getMain().iBlockRegistry.serializeInto(idMapping);
         getMain().iItemRegistry.serializeInto(idMapping);
         return idMapping;
+    }
+
+    public static int[] getBlockedIds()
+    {
+        int[] ret = new int[getMain().blockedIds.size()];
+        int index = 0;
+
+        for (int id : getMain().blockedIds)
+        {
+            ret[index] = id;
+            index++;
+        }
+
+        return ret;
     }
 
     public static void dumpRegistry(File minecraftDir)
@@ -190,14 +205,24 @@ public class GameData {
 
     public static List<String> injectWorldIDMap(Map<String, Integer> dataList, boolean injectFrozenData, boolean isLocalWorld)
     {
+        return injectWorldIDMap(dataList, new int[0], injectFrozenData, isLocalWorld);
+    }
+
+    public static List<String> injectWorldIDMap(Map<String, Integer> dataList, int[] blockedIds, boolean injectFrozenData, boolean isLocalWorld)
+    {
         FMLLog.info("Injecting existing block and item data into this %s instance", FMLCommonHandler.instance().getEffectiveSide().isServer() ? "server" : "client");
         Map<String, Integer[]> remaps = Maps.newHashMap();
-        ArrayListMultimap<String,String> missingMappings = ArrayListMultimap.create();
+        LinkedHashMap<String, Integer> missingMappings = new LinkedHashMap<String, Integer>();
         getMain().testConsistency();
         getMain().iBlockRegistry.dump();
         getMain().iItemRegistry.dump();
 
         GameData newData = new GameData();
+
+        for (int id : blockedIds)
+        {
+            newData.block(id);
+        }
 
         // process blocks and items in the world, blocks in the first pass, items in the second
         // blocks need to be added first for proper ItemBlock handling
@@ -219,7 +244,7 @@ public class GameData {
                 if (currId == -1)
                 {
                     FMLLog.info("Found a missing id from the world %s", itemName);
-                    missingMappings.put(itemName.substring(0, itemName.indexOf(':')), itemName);
+                    missingMappings.put(itemName, newId);
                     continue; // no block/item -> nothing to add
                 }
                 else if (currId != newId)
@@ -254,7 +279,7 @@ public class GameData {
             }
         }
 
-        List<String> missedMappings = Loader.instance().fireMissingMappingEvent(missingMappings, isLocalWorld);
+        List<String> missedMappings = Loader.instance().fireMissingMappingEvent(missingMappings, isLocalWorld, newData);
         if (!missedMappings.isEmpty()) return missedMappings;
 
         if (injectFrozenData) // add blocks + items missing from the map
@@ -302,7 +327,7 @@ public class GameData {
         return ImmutableList.of();
     }
 
-    public static List<String> processIdRematches(List<MissingMapping> remaps, boolean isLocalWorld)
+    public static List<String> processIdRematches(Iterable<MissingMapping> remaps, boolean isLocalWorld, GameData gameData)
     {
         List<String> failed = Lists.newArrayList();
         List<String> ignored = Lists.newArrayList();
@@ -311,6 +336,11 @@ public class GameData {
         for (MissingMapping remap : remaps)
         {
             FMLMissingMappingsEvent.Action action = remap.getAction();
+            if (action == FMLMissingMappingsEvent.Action.DEFAULT)
+            {
+                action = FMLCommonHandler.instance().getDefaultMissingAction();
+            }
+
             if (action == FMLMissingMappingsEvent.Action.IGNORE)
             {
                 ignored.add(remap.name);
@@ -319,10 +349,12 @@ public class GameData {
             {
                 failed.add(remap.name);
             }
-            else
+            else if (action == FMLMissingMappingsEvent.Action.WARN)
             {
                 warned.add(remap.name);
             }
+
+            gameData.block(remap.id); // prevent the id from being reused later
         }
         if (!failed.isEmpty())
         {
@@ -373,12 +405,15 @@ public class GameData {
     private final FMLControlledNamespacedRegistry<Item> iItemRegistry;
     // bit set marking ids as occupied
     private final BitSet availabilityMap;
+    // IDs previously allocated in a world, but now unmapped/dangling; prevents the IDs from being reused
+    private final Set<Integer> blockedIds;
 
     private GameData()
     {
         iBlockRegistry = new FMLControlledNamespacedRegistry<Block>("air", 4095, 0, Block.class,'\u0001');
         iItemRegistry = new FMLControlledNamespacedRegistry<Item>(null, 32000, 4096, Item.class,'\u0002');
         availabilityMap = new BitSet(32000);
+        blockedIds = new HashSet<Integer>();
     }
 
     private GameData(GameData data)
@@ -393,6 +428,7 @@ public class GameData {
         iItemRegistry.set(data.iItemRegistry);
         availabilityMap.clear();
         availabilityMap.or(data.availabilityMap);
+        blockedIds.addAll(data.blockedIds);
     }
 
     void register(Object obj, String name, int idHint)
@@ -485,6 +521,15 @@ public class GameData {
         return blockId;
     }
 
+    /**
+     * Block the specified id from being reused.
+     */
+    private void block(int id)
+    {
+        blockedIds.add(id);
+        useSlot(id);
+    }
+
     private boolean useSlot(int id)
     {
         boolean oldValue = availabilityMap.get(id);
@@ -503,13 +548,13 @@ public class GameData {
         // test if there's an entry for every set bit in availabilityMap
         for (int i = availabilityMap.nextSetBit(0); i >= 0; i = availabilityMap.nextSetBit(i+1))
         {
-            if (iBlockRegistry.getRaw(i) == null && iItemRegistry.getRaw(i) == null)
+            if (iBlockRegistry.getRaw(i) == null && iItemRegistry.getRaw(i) == null && !blockedIds.contains(i))
             {
                 throw new IllegalStateException(String.format("availabilityMap references empty entries for id %d.", i));
             }
         }
 
-        // test if there's a bit in availabilityMap set for every entry in the block registry
+        // test if there's a bit in availabilityMap set for every entry in the block registry, make sure it's not a blocked id
         for (Iterator<Object> it = iBlockRegistry.iterator(); it.hasNext(); )
         {
             Block block = (Block) it.next();
@@ -519,9 +564,13 @@ public class GameData {
             {
                 throw new IllegalStateException(String.format("Registry entry for block %s, id %d, marked as empty.", block, id));
             }
+            if (blockedIds.contains(id))
+            {
+                throw new IllegalStateException(String.format("Registry entry for block %s, id %d, marked as dangling.", block, id));
+            }
         }
 
-        // test if there's a bit in availabilityMap set for every entry in the item registry,
+        // test if there's a bit in availabilityMap set for every entry in the item registry, make sure it's not a blocked id,
         // check if ItemBlocks have blocks with matching ids in the block registry
         for (Iterator<Object> it = iItemRegistry.iterator(); it.hasNext(); )
         {
@@ -531,6 +580,10 @@ public class GameData {
             if (!availabilityMap.get(id))
             {
                 throw new IllegalStateException(String.format("Registry entry for item %s, id %d, marked as empty.", item, id));
+            }
+            if (blockedIds.contains(id))
+            {
+                throw new IllegalStateException(String.format("Registry entry for item %s, id %d, marked as dangling.", item, id));
             }
 
             if (item instanceof ItemBlock)
