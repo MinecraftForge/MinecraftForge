@@ -15,6 +15,7 @@ package cpw.mods.fml.common;
 import java.io.File;
 import java.security.cert.Certificate;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -101,6 +102,7 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
             list.func_74742_a(mod);
         }
         fmlData.func_74782_a("ModList", list);
+        // name <-> id mappings
         NBTTagList dataList = new NBTTagList();
         FMLLog.fine("Gathering id map for writing to world save %s", info.func_76065_j());
         Map<String,Integer> itemList = GameData.buildItemDataList();
@@ -112,7 +114,29 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
             dataList.func_74742_a(tag);
         }
         fmlData.func_74782_a("ItemData", dataList);
-        fmlData.func_74783_a("BlockedIds", GameData.getBlockedIds());
+        // blocked ids
+        fmlData.func_74783_a("BlockedItemIds", GameData.getBlockedIds());
+        // block aliases
+        NBTTagList blockAliasList = new NBTTagList();
+        for (Entry<String, String> entry : GameData.getBlockRegistry().getAliases().entrySet())
+        {
+            NBTTagCompound tag = new NBTTagCompound();
+            tag.func_74778_a("K", entry.getKey());
+            tag.func_74778_a("V", entry.getValue());
+            blockAliasList.func_74742_a(tag);
+        }
+        fmlData.func_74782_a("BlockAliases", blockAliasList);
+        // item aliases
+        NBTTagList itemAliasList = new NBTTagList();
+        for (Entry<String, String> entry : GameData.getItemRegistry().getAliases().entrySet())
+        {
+            NBTTagCompound tag = new NBTTagCompound();
+            tag.func_74778_a("K", entry.getKey());
+            tag.func_74778_a("V", entry.getValue());
+            itemAliasList.func_74742_a(tag);
+        }
+        fmlData.func_74782_a("ItemAliases", itemAliasList);
+
         return fmlData;
     }
 
@@ -187,18 +211,34 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
         }
         else if (tag.func_74764_b("ItemData"))
         {
-            // read name <-> id mappings
-            NBTTagList list = tag.func_150295_c("ItemData", (byte)10);
+            // name <-> id mappings
+            NBTTagList list = tag.func_150295_c("ItemData", 10);
             Map<String,Integer> dataList = Maps.newLinkedHashMap();
             for (int i = 0; i < list.func_74745_c(); i++)
             {
                 NBTTagCompound dataTag = list.func_150305_b(i);
                 dataList.put(dataTag.func_74779_i("K"), dataTag.func_74762_e("V"));
             }
-            // read blocked ids
-            int[] blockedIds = tag.func_74759_k("BlockedIds");
+            // blocked ids
+            int[] blockedIds = tag.func_74759_k("BlockedItemIds");
+            // block aliases
+            Map<String, String> blockAliases = new HashMap<String, String>();
+            list = tag.func_150295_c("BlockAliases", 10);
+            for (int i = 0; i < list.func_74745_c(); i++)
+            {
+                NBTTagCompound dataTag = list.func_150305_b(i);
+                blockAliases.put(dataTag.func_74779_i("K"), dataTag.func_74779_i("V"));
+            }
+            // item aliases
+            Map<String, String> itemAliases = new HashMap<String, String>();
+            list = tag.func_150295_c("ItemAliases", 10);
+            for (int i = 0; i < list.func_74745_c(); i++)
+            {
+                NBTTagCompound dataTag = list.func_150305_b(i);
+                itemAliases.put(dataTag.func_74779_i("K"), dataTag.func_74779_i("V"));
+            }
 
-            List<String> failedElements = GameData.injectWorldIDMap(dataList, blockedIds, true, true);
+            List<String> failedElements = GameData.injectWorldIDMap(dataList, blockedIds, blockAliases, itemAliases, true, true);
             if (!failedElements.isEmpty())
             {
                 throw new GameRegistryException("Failed to load the world - there are fatal block and item id issues", failedElements);

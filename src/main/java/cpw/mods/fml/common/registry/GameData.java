@@ -15,6 +15,7 @@ package cpw.mods.fml.common.registry;
 import java.io.File;
 import java.io.IOException;
 import java.util.BitSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -47,6 +48,7 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent.MissingMapping;
+import cpw.mods.fml.common.registry.GameRegistry.Type;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
 public class GameData {
@@ -205,10 +207,10 @@ public class GameData {
 
     public static List<String> injectWorldIDMap(Map<String, Integer> dataList, boolean injectFrozenData, boolean isLocalWorld)
     {
-        return injectWorldIDMap(dataList, new int[0], injectFrozenData, isLocalWorld);
+        return injectWorldIDMap(dataList, new int[0], new HashMap<String, String>(), new HashMap<String, String>(), injectFrozenData, isLocalWorld);
     }
 
-    public static List<String> injectWorldIDMap(Map<String, Integer> dataList, int[] blockedIds, boolean injectFrozenData, boolean isLocalWorld)
+    public static List<String> injectWorldIDMap(Map<String, Integer> dataList, int[] blockedIds, Map<String, String> blockAliases, Map<String, String> itemAliases, boolean injectFrozenData, boolean isLocalWorld)
     {
         FMLLog.info("Injecting existing block and item data into this %s instance", FMLCommonHandler.instance().getEffectiveSide().isServer() ? "server" : "client");
         Map<String, Integer[]> remaps = Maps.newHashMap();
@@ -222,6 +224,16 @@ public class GameData {
         for (int id : blockedIds)
         {
             newData.block(id);
+        }
+
+        for (Map.Entry<String, String> entry : blockAliases.entrySet())
+        {
+            newData.iBlockRegistry.addAlias(entry.getKey(), entry.getValue());
+        }
+
+        for (Map.Entry<String, String> entry : itemAliases.entrySet())
+        {
+            newData.iItemRegistry.addAlias(entry.getKey(), entry.getValue());
         }
 
         // process blocks and items in the world, blocks in the first pass, items in the second
@@ -244,7 +256,7 @@ public class GameData {
                 if (currId == -1)
                 {
                     FMLLog.info("Found a missing id from the world %s", itemName);
-                    missingMappings.put(itemName, newId);
+                    missingMappings.put(entry.getKey(), newId);
                     continue; // no block/item -> nothing to add
                 }
                 else if (currId != newId)
@@ -279,7 +291,7 @@ public class GameData {
             }
         }
 
-        List<String> missedMappings = Loader.instance().fireMissingMappingEvent(missingMappings, isLocalWorld, newData);
+        List<String> missedMappings = Loader.instance().fireMissingMappingEvent(missingMappings, isLocalWorld, newData, remaps);
         if (!missedMappings.isEmpty()) return missedMappings;
 
         if (injectFrozenData) // add blocks + items missing from the map
@@ -327,34 +339,76 @@ public class GameData {
         return ImmutableList.of();
     }
 
-    public static List<String> processIdRematches(Iterable<MissingMapping> remaps, boolean isLocalWorld, GameData gameData)
+    public static List<String> processIdRematches(Iterable<MissingMapping> missedMappings, boolean isLocalWorld, GameData gameData, Map<String, Integer[]> remaps)
     {
         List<String> failed = Lists.newArrayList();
         List<String> ignored = Lists.newArrayList();
         List<String> warned = Lists.newArrayList();
 
-        for (MissingMapping remap : remaps)
+        for (MissingMapping remap : missedMappings)
         {
             FMLMissingMappingsEvent.Action action = remap.getAction();
-            if (action == FMLMissingMappingsEvent.Action.DEFAULT)
-            {
-                action = FMLCommonHandler.instance().getDefaultMissingAction();
-            }
 
-            if (action == FMLMissingMappingsEvent.Action.IGNORE)
+            if (action == FMLMissingMappingsEvent.Action.REMAP)
             {
-                ignored.add(remap.name);
-            }
-            else if (action == FMLMissingMappingsEvent.Action.FAIL)
-            {
-                failed.add(remap.name);
-            }
-            else if (action == FMLMissingMappingsEvent.Action.WARN)
-            {
-                warned.add(remap.name);
-            }
+                // block/item re-mapped, finish the registration with the new name/object, but the old id
+                int currId, newId;
+                String newName;
 
-            gameData.block(remap.id); // prevent the id from being reused later
+                if (remap.type == Type.BLOCK)
+                {
+                    currId = getMain().iBlockRegistry.getId((Block) remap.getTarget());
+                    newName = getMain().iBlockRegistry.func_148750_c(remap.getTarget());
+                    FMLLog.fine("The Block %s is being remapped to %s.", remap.name, newName);
+
+                    newId = gameData.registerBlock((Block) remap.getTarget(), newName, null, remap.id);
+                    gameData.iBlockRegistry.addAlias(remap.name, newName);
+                }
+                else
+                {
+                    currId = getMain().iItemRegistry.getId((Item) remap.getTarget());
+                    newName = getMain().iItemRegistry.func_148750_c(remap.getTarget());
+                    FMLLog.fine("The Item %s is being remapped to %s.", remap.name, newName);
+
+                    newId = gameData.registerItem((Item) remap.getTarget(), newName, null, remap.id);
+                    gameData.iItemRegistry.addAlias(remap.name, newName);
+                }
+
+                if (newId != remap.id) throw new IllegalStateException();
+
+                if (currId != newId)
+                {
+                    FMLLog.info("Found %s id mismatch %s : %d (was %d)", remap.type == Type.BLOCK ? "block" : "item", newName, currId, newId);
+                    remaps.put(newName, new Integer[] { currId, newId });
+                }
+            }
+            else
+            {
+                // block item missing, warn as requested and block the id
+                if (action == FMLMissingMappingsEvent.Action.DEFAULT)
+                {
+                    action = FMLCommonHandler.instance().getDefaultMissingAction();
+                }
+
+                if (action == FMLMissingMappingsEvent.Action.IGNORE)
+                {
+                    ignored.add(remap.name);
+                }
+                else if (action == FMLMissingMappingsEvent.Action.FAIL)
+                {
+                    failed.add(remap.name);
+                }
+                else if (action == FMLMissingMappingsEvent.Action.WARN)
+                {
+                    warned.add(remap.name);
+                }
+                else
+                {
+                    throw new RuntimeException(String.format("Invalid default missing id action specified: %s", action.name()));
+                }
+
+                gameData.block(remap.id); // prevent the id from being reused later
+            }
         }
         if (!failed.isEmpty())
         {
