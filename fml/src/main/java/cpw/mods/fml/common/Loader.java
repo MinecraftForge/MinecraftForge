@@ -856,7 +856,7 @@ public class Loader
      * @param gameData GameData instance where the new map's config is to be loaded into.
      * @return List with the mapping results.
      */
-    public List<String> fireMissingMappingEvent(LinkedHashMap<String, Integer> missing, boolean isLocalWorld, GameData gameData)
+    public List<String> fireMissingMappingEvent(LinkedHashMap<String, Integer> missing, boolean isLocalWorld, GameData gameData, Map<String, Integer[]> remaps)
     {
         if (missing.isEmpty()) // nothing to do
         {
@@ -868,10 +868,9 @@ public class Loader
 
         for (Map.Entry<String, Integer> mapping : missing.entrySet())
         {
-            String itemName = mapping.getKey();
             int id = mapping.getValue();
-            MissingMapping m = new MissingMapping(itemName, id);
-            missingMappings.put(itemName.substring(0, itemName.indexOf(':')), m);
+            MissingMapping m = new MissingMapping(mapping.getKey(), id);
+            missingMappings.put(m.name.substring(0, m.name.indexOf(':')), m);
         }
 
         FMLMissingMappingsEvent missingEvent = new FMLMissingMappingsEvent(missingMappings);
@@ -913,7 +912,7 @@ public class Loader
             }
         }
 
-        return GameData.processIdRematches(missingMappings.values(), isLocalWorld, gameData);
+        return GameData.processIdRematches(missingMappings.values(), isLocalWorld, gameData, remaps);
     }
 
     public void fireRemapEvent(Map<String, Integer[]> remaps)
