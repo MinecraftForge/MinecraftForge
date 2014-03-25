@@ -124,9 +124,7 @@ public class OreDictionary
         replacements.put(new ItemStack(Items.glowstone_dust), "dustGlowstone");
         replacements.put(new ItemStack(Blocks.glowstone), "glowstone");
         replacements.put(new ItemStack(Blocks.glass), "blockGlass"); // allows stained glass inplace of regular glass
-        replacements.put(new ItemStack(Blocks.glass, 1, WILDCARD_VALUE), "blockGlass"); // allows stained glass inplace of 
-
-regular glass
+        replacements.put(new ItemStack(Blocks.glass, 1, WILDCARD_VALUE), "blockGlass"); // allows stained glass inplace of regular glass
         replacements.put(new ItemStack(Items.slime_ball), "slimeball");
 
         // Register dyes
@@ -218,9 +216,7 @@ regular glass
                     continue;
                 }
 
-                if(containsMatch(true, (ItemStack[])recipe.recipeItems.toArray(new ItemStack[recipe.recipeItems.size()]), 
-
-replaceStacks))
+                if(containsMatch(true, (ItemStack[])recipe.recipeItems.toArray(new ItemStack[recipe.recipeItems.size()]), replaceStacks))
                 {
                     recipesToRemove.add((IRecipe)obj);
                     IRecipe newRecipe = new ShapelessOreRecipe(recipe, replacements);
@@ -292,9 +288,7 @@ replaceStacks))
         {
             for(ItemStack target : ore.getValue())
             {
-                if(itemStack.getItem() == target.getItem() && (target.getItemDamage() == WILDCARD_VALUE || 
-
-itemStack.getItemDamage() == target.getItemDamage()))
+                if(itemStack.getItem() == target.getItem() && (target.getItemDamage() == WILDCARD_VALUE || itemStack.getItemDamage() == target.getItemDamage()))
                 {
                     return ore.getKey();
                 }
@@ -364,9 +358,7 @@ itemStack.getItemDamage() == target.getItemDamage()))
         {
             return false;
         }
-        return (target.getItem() == input.getItem() && ((target.getItemDamage() == WILDCARD_VALUE && !strict) || 
-
-target.getItemDamage() == input.getItemDamage()));
+        return (target.getItem() == input.getItem() && ((target.getItemDamage() == WILDCARD_VALUE && !strict) || target.getItemDamage() == input.getItemDamage()));
     }
 
     //Convenience functions that make for cleaner code mod side. They all drill down to registerOre(String, int, ItemStack)
