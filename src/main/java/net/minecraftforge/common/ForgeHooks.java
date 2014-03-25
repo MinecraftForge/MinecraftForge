@@ -7,6 +7,7 @@ import java.util.Set;
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,6 +35,7 @@ import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -329,6 +331,11 @@ public class ForgeHooks
     public static void onLivingJump(EntityLivingBase entity)
     {
         MinecraftForge.EVENT_BUS.post(new LivingJumpEvent(entity));
+    }
+    
+    public static boolean onEntityMount(Entity entity, Entity rider)
+    {
+        return MinecraftForge.EVENT_BUS.post(new EntityMountEvent(entity, rider));
     }
 
     public static EntityItem onPlayerTossEvent(EntityPlayer player, ItemStack item, boolean includeName)
