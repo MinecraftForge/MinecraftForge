@@ -26,7 +26,7 @@
  import net.minecraft.item.Item;
  import net.minecraft.item.ItemStack;
  import net.minecraft.nbt.NBTTagCompound;
-@@ -30,12 +38,17 @@
+@@ -30,12 +38,18 @@
  import net.minecraft.util.Direction;
  import net.minecraft.util.IChatComponent;
  import net.minecraft.util.MathHelper;
@@ -37,6 +37,7 @@
  import net.minecraft.world.Explosion;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
++import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.IExtendedEntityProperties;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.EntityEvent;
@@ -44,7 +45,7 @@
  
  public abstract class Entity
  {
-@@ -152,7 +165,14 @@
+@@ -152,7 +166,14 @@
      protected UUID entityUniqueID;
      public Entity.EnumEntitySize myEntitySize;
      private static final String __OBFID = "CL_00001533";
@@ -59,7 +60,7 @@
      public int getEntityId()
      {
          return this.entityId;
-@@ -189,6 +209,15 @@
+@@ -189,6 +210,15 @@
          this.dataWatcher.addObject(0, Byte.valueOf((byte)0));
          this.dataWatcher.addObject(1, Short.valueOf((short)300));
          this.entityInit();
@@ -75,7 +76,7 @@
      }
  
      protected abstract void entityInit();
-@@ -1051,9 +1080,22 @@
+@@ -1051,9 +1081,22 @@
  
          if (block.getMaterial() == par1Material)
          {
@@ -101,7 +102,7 @@
          }
          else
          {
-@@ -1360,8 +1402,27 @@
+@@ -1360,8 +1403,27 @@
              par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
              par1NBTTagCompound.setLong("UUIDMost", this.getUniqueID().getMostSignificantBits());
              par1NBTTagCompound.setLong("UUIDLeast", this.getUniqueID().getLeastSignificantBits());
@@ -130,7 +131,7 @@
              if (this.ridingEntity != null)
              {
                  NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-@@ -1428,6 +1489,30 @@
+@@ -1428,6 +1490,30 @@
  
              this.setPosition(this.posX, this.posY, this.posZ);
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -161,7 +162,7 @@
              this.readEntityFromNBT(par1NBTTagCompound);
  
              if (this.shouldSetPosAfterLoading())
-@@ -1512,7 +1597,14 @@
+@@ -1512,7 +1598,14 @@
          {
              EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
              entityitem.delayBeforeCanPickup = 10;
@@ -177,7 +178,21 @@
              return entityitem;
          }
          else
-@@ -1782,7 +1874,7 @@
+@@ -1678,8 +1771,11 @@
+                 this.ridingEntity.riddenByEntity = null;
+             }
+ 
+-            this.ridingEntity = par1Entity;
+-            par1Entity.riddenByEntity = this;
++            if(!ForgeHooks.onEntityMount(this, this.ridingEntity));
++            {
++                this.ridingEntity = par1Entity;
++                par1Entity.riddenByEntity = this;
++            }
+         }
+     }
+ 
+@@ -1782,7 +1878,7 @@
      // JAVADOC METHOD $$ func_70115_ae
      public boolean isRiding()
      {
@@ -186,7 +201,7 @@
      }
  
      // JAVADOC METHOD $$ func_70093_af
-@@ -2103,7 +2195,7 @@
+@@ -2103,7 +2199,7 @@
  
      public float func_145772_a(Explosion p_145772_1_, World p_145772_2_, int p_145772_3_, int p_145772_4_, int p_145772_5_, Block p_145772_6_)
      {
@@ -195,7 +210,7 @@
      }
  
      public boolean func_145774_a(Explosion p_145774_1_, World p_145774_2_, int p_145774_3_, int p_145774_4_, int p_145774_5_, Block p_145774_6_, float p_145774_7_)
-@@ -2176,6 +2268,174 @@
+@@ -2176,6 +2272,174 @@
  
      public void func_145781_i(int p_145781_1_) {}
  
