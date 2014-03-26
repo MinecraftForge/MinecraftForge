@@ -65,7 +65,7 @@
          Display.setVSyncEnabled(this.field_71474_y.field_74352_v);
      }
  
-@@ -916,9 +926,11 @@
+@@ -915,9 +925,11 @@
  
          if (!this.field_71454_w)
          {
@@ -77,7 +77,7 @@
          }
  
          GL11.glFlush();
-@@ -1496,6 +1508,8 @@
+@@ -1495,6 +1507,8 @@
              --this.field_71467_ac;
          }
  
@@ -86,7 +86,7 @@
          this.field_71424_I.func_76320_a("gui");
  
          if (!this.field_71445_n)
-@@ -1646,6 +1660,7 @@
+@@ -1645,6 +1659,7 @@
                          this.field_71462_r.func_146274_d();
                      }
                  }
@@ -94,7 +94,7 @@
              }
  
              if (this.field_71429_W > 0)
-@@ -1787,6 +1802,7 @@
+@@ -1786,6 +1801,7 @@
                              }
                          }
                      }
@@ -102,7 +102,7 @@
                  }
              }
  
-@@ -1978,12 +1994,15 @@
+@@ -1977,12 +1993,15 @@
              this.field_71453_ak.func_74428_b();
          }
  
@@ -118,7 +118,7 @@
          this.func_71403_a((WorldClient)null);
          System.gc();
          ISaveHandler isavehandler = this.field_71469_aa.func_75804_a(p_71371_1_, false);
-@@ -2094,6 +2113,7 @@
+@@ -2093,6 +2112,7 @@
              this.field_110448_aq.func_148529_f();
              this.func_71351_a((ServerData)null);
              this.field_71455_al = false;

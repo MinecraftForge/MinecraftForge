@@ -29,18 +29,18 @@ public class GuiModsMissing extends GuiErrorScreen
     }
 
     @Override
-    public void func_73866_w_()
+    public void initGui()
     {
-        super.func_73866_w_();
+        super.initGui();
     }
     @Override
-    public void func_73863_a(int p_73863_1_, int p_73863_2_, float p_73863_3_)
+    public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_)
     {
-        this.func_146276_q_();
+        this.drawDefaultBackground();
         int offset = Math.max(85 - modsMissing.missingMods.size() * 10, 10);
-        this.func_73732_a(this.field_146289_q, "Forge Mod Loader has found a problem with your minecraft installation", this.field_146294_l / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, "Forge Mod Loader has found a problem with your minecraft installation", this.width / 2, offset, 0xFFFFFF);
         offset+=10;
-        this.func_73732_a(this.field_146289_q, "The mods and versions listed below could not be found", this.field_146294_l / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, "The mods and versions listed below could not be found", this.width / 2, offset, 0xFFFFFF);
         offset+=5;
         for (ArtifactVersion v : modsMissing.missingMods)
         {
@@ -50,13 +50,13 @@ public class GuiModsMissing extends GuiErrorScreen
                 DefaultArtifactVersion dav =  (DefaultArtifactVersion)v;
                 if (dav.getRange() != null && dav.getRange().isUnboundedAbove())
                 {
-                    this.func_73732_a(this.field_146289_q, String.format("%s : minimum version required is %s", v.getLabel(), dav.getRange().getLowerBoundString()), this.field_146294_l / 2, offset, 0xEEEEEE);
+                    this.drawCenteredString(this.fontRendererObj, String.format("%s : minimum version required is %s", v.getLabel(), dav.getRange().getLowerBoundString()), this.width / 2, offset, 0xEEEEEE);
                     continue;
                 }
             }
-            this.func_73732_a(this.field_146289_q, String.format("%s : %s", v.getLabel(), v.getRangeString()), this.field_146294_l / 2, offset, 0xEEEEEE);
+            this.drawCenteredString(this.fontRendererObj, String.format("%s : %s", v.getLabel(), v.getRangeString()), this.width / 2, offset, 0xEEEEEE);
         }
         offset+=20;
-        this.func_73732_a(this.field_146289_q, "The file 'ForgeModLoader-client-0.log' contains more information", this.field_146294_l / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, "The file 'ForgeModLoader-client-0.log' contains more information", this.width / 2, offset, 0xFFFFFF);
     }
 }
