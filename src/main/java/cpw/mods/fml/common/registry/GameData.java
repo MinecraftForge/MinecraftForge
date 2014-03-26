@@ -60,13 +60,13 @@ public class GameData {
 
     static Item findItem(String modId, String name)
     {
-        return (Item) itemRegistry.func_82594_a(modId + ":" + name);
+        return (Item) itemRegistry.getObject(modId + ":" + name);
     }
 
     static Block findBlock(String modId, String name)
     {
         String key = modId + ":" + name;
-        return blockRegistry.contains(key) ? blockRegistry.func_82594_a(key) : null;
+        return blockRegistry.contains(key) ? blockRegistry.getObject(key) : null;
     }
 
     static ItemStack findItemStack(String modId, String name)
@@ -127,7 +127,7 @@ public class GameData {
     static UniqueIdentifier getUniqueName(Block block)
     {
         if (block == null) return null;
-        String name = blockRegistry.func_148750_c(block);
+        String name = blockRegistry.getNameForObject(block);
         UniqueIdentifier ui = new UniqueIdentifier(name);
         if (customItemStacks.contains(ui.modId, ui.name))
         {
@@ -140,7 +140,7 @@ public class GameData {
     static UniqueIdentifier getUniqueName(Item item)
     {
         if (item == null) return null;
-        String name = itemRegistry.func_148750_c(item);
+        String name = itemRegistry.getNameForObject(item);
         UniqueIdentifier ui = new UniqueIdentifier(name);
         if (customItemStacks.contains(ui.modId, ui.name))
         {

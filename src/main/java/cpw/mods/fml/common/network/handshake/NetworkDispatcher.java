@@ -89,7 +89,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         this.handshakeChannel.attr(FML_DISPATCHER).set(this);
         this.handshakeChannel.attr(NetworkRegistry.CHANNEL_SOURCE).set(Side.SERVER);
         this.handshakeChannel.attr(NetworkRegistry.FML_CHANNEL).set("FML|HS");
-        this.handshakeChannel.attr(IS_LOCAL).set(manager.func_150731_c());
+        this.handshakeChannel.attr(IS_LOCAL).set(manager.isLocalChannel());
     }
 
     public NetworkDispatcher(NetworkManager manager, ServerConfigurationManager scm)
@@ -102,7 +102,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         this.handshakeChannel.attr(FML_DISPATCHER).set(this);
         this.handshakeChannel.attr(NetworkRegistry.CHANNEL_SOURCE).set(Side.CLIENT);
         this.handshakeChannel.attr(NetworkRegistry.FML_CHANNEL).set("FML|HS");
-        this.handshakeChannel.attr(IS_LOCAL).set(manager.func_150731_c());
+        this.handshakeChannel.attr(IS_LOCAL).set(manager.isLocalChannel());
     }
 
     public void serverToClientHandshake(EntityPlayerMP player)
@@ -139,17 +139,17 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         this.state = ConnectionState.AWAITING_HANDSHAKE;
         this.manager.channel().pipeline().addFirst("fml:vanilla_detector", new VanillaTimeoutWaiter());
         // Need to start the handler here, so we can send custompayload packets
-        serverHandler = new NetHandlerPlayServer(scm.func_72365_p(), manager, player);
+        serverHandler = new NetHandlerPlayServer(scm.getServerInstance(), manager, player);
         this.netHandler = serverHandler;
         // NULL the play server here - we restore it further on. If not, there are packets sent before the login
-        player.field_71135_a = null;
+        player.playerNetServerHandler = null;
         // manually for the manager into the PLAY state, so we can send packets later
-        this.manager.func_150723_a(EnumConnectionState.PLAY);
+        this.manager.setConnectionState(EnumConnectionState.PLAY);
     }
 
     void clientListenForServerHandshake()
     {
-        manager.func_150723_a(EnumConnectionState.PLAY);
+        manager.setConnectionState(EnumConnectionState.PLAY);
         FMLCommonHandler.instance().waitForPlayClient();
         this.netHandler = FMLCommonHandler.instance().getClientPlayHandler();
         this.state = ConnectionState.AWAITING_HANDSHAKE;
@@ -169,7 +169,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         FMLLog.info("[%s] Server side %s connection established", Thread.currentThread().getName(), this.connectionType.name().toLowerCase(Locale.ENGLISH));
         this.state = ConnectionState.CONNECTED;
         FMLCommonHandler.instance().bus().post(new FMLNetworkEvent.ServerConnectionFromClientEvent(manager));
-        scm.func_72355_a(manager, player, serverHandler);
+        scm.initializeConnectionToPlayer(manager, player, serverHandler);
     }
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Packet msg) throws Exception
@@ -228,12 +228,12 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     private void kickWithMessage(String message)
     {
         final ChatComponentText chatcomponenttext = new ChatComponentText(message);
-        manager.func_150725_a(new S40PacketDisconnect(chatcomponenttext), new GenericFutureListener<Future<?>>()
+        manager.scheduleOutboundPacket(new S40PacketDisconnect(chatcomponenttext), new GenericFutureListener<Future<?>>()
         {
             @Override
             public void operationComplete(Future<?> result)
             {
-                manager.func_150718_a(chatcomponenttext);
+                manager.closeChannel(chatcomponenttext);
             }
         });
         manager.channel().config().setAutoRead(false);
@@ -337,7 +337,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
 
     public void sendProxy(FMLProxyPacket msg)
     {
-        manager.func_150725_a(msg);
+        manager.scheduleOutboundPacket(msg);
     }
 
     public void rejectHandshake(String result)

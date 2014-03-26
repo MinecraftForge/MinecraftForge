@@ -25,22 +25,22 @@ public class GuiWrongMinecraft extends GuiErrorScreen
         this.wrongMC = wrongMC;
     }
     @Override
-    public void func_73866_w_()
+    public void initGui()
     {
-        super.func_73866_w_();
+        super.initGui();
     }
     @Override
-    public void func_73863_a(int p_73863_1_, int p_73863_2_, float p_73863_3_)
+    public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_)
     {
-        this.func_146276_q_();
+        this.drawDefaultBackground();
         int offset = 75;
-        this.func_73732_a(this.field_146289_q, "Forge Mod Loader has found a problem with your minecraft installation", this.field_146294_l / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, "Forge Mod Loader has found a problem with your minecraft installation", this.width / 2, offset, 0xFFFFFF);
         offset+=10;
-        this.func_73732_a(this.field_146289_q, String.format("The mod listed below does not want to run in Minecraft version %s", Loader.instance().getMinecraftModContainer().getVersion()), this.field_146294_l / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, String.format("The mod listed below does not want to run in Minecraft version %s", Loader.instance().getMinecraftModContainer().getVersion()), this.width / 2, offset, 0xFFFFFF);
         offset+=5;
         offset+=10;
-        this.func_73732_a(this.field_146289_q, String.format("%s (%s) wants Minecraft %s", wrongMC.mod.getName(), wrongMC.mod.getModId(), wrongMC.mod.acceptableMinecraftVersionRange()), this.field_146294_l / 2, offset, 0xEEEEEE);
+        this.drawCenteredString(this.fontRendererObj, String.format("%s (%s) wants Minecraft %s", wrongMC.mod.getName(), wrongMC.mod.getModId(), wrongMC.mod.acceptableMinecraftVersionRange()), this.width / 2, offset, 0xEEEEEE);
         offset+=20;
-        this.func_73732_a(this.field_146289_q, "The file 'ForgeModLoader-client-0.log' contains more information", this.field_146294_l / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, "The file 'ForgeModLoader-client-0.log' contains more information", this.width / 2, offset, 0xFFFFFF);
     }
 }
