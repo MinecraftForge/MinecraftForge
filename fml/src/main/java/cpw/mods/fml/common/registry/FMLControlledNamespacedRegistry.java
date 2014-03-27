@@ -3,21 +3,13 @@ package cpw.mods.fml.common.registry;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.RegistryNamespaced;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
@@ -29,7 +21,8 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     private int maxId;
     private int minId;
     private char discriminator;
-    // aliases redirecting legacy names to the actual name, may need recursive application to find the final name
+    // aliases redirecting legacy names to the actual name, may need recursive application to find the final name.
+    // these need to be registry specific, it's possible to only have a loosely linked item for a block which may get renamed by itself.
     private final Map<String, String> aliases = new HashMap<String, String>();
 
     FMLControlledNamespacedRegistry(String optionalDefault, int maxIdValue, int minIdValue, Class<I> type, char discriminator)
@@ -41,6 +34,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         this.minId = minIdValue;
     }
 
+    @SuppressWarnings("unchecked")
     void set(FMLControlledNamespacedRegistry<I> registry)
     {
         if (this.superType != registry.superType) throw new IllegalArgumentException("incompatible registry");
@@ -49,15 +43,14 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         this.optionalDefaultName = registry.optionalDefaultName;
         this.maxId = registry.maxId;
         this.minId = registry.minId;
+        this.aliases.clear();
         this.aliases.putAll(registry.aliases);
         field_148759_a = new ObjectIntIdentityMap();
         field_82596_a.clear();
 
-        for (Iterator<Object> it = registry.iterator(); it.hasNext(); )
+        for (I thing : (Iterable<I>) registry)
         {
-            I obj = (I) it.next();
-
-            super.func_148756_a(registry.getId(obj), registry.func_148750_c(obj), obj);
+            super.func_148756_a(registry.getId(thing), registry.func_148750_c(thing), thing);
         }
     }
 
@@ -123,7 +116,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
      * Usually the name should be used instead of the id, if using the Block/Item object itself is
      * not suitable for the task.
      *
-     * @param think Block/Item object.
+     * @param thing Block/Item object.
      * @return Block/Item id or -1 if it wasn't found.
      */
     public int getId(I thing)
@@ -177,6 +170,17 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         return ret;
     }
 
+    /**
+     * Get the id for the specified object.
+     *
+     * Don't hold onto the id across the world, it's being dynamically re-mapped as needed.
+     *
+     * Usually the name should be used instead of the id, if using the Block/Item object itself is
+     * not suitable for the task.
+     *
+     * @param itemName Block/Item registry name.
+     * @return Block/Item id or -1 if it wasn't found.
+     */
     public int getId(String itemName)
     {
         I obj = getRaw(itemName);
@@ -192,11 +196,11 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
 
     // internal
 
+    @SuppressWarnings("unchecked")
     public void serializeInto(Map<String, Integer> idMapping)
     {
-        for (Iterator<Object> it = iterator(); it.hasNext(); )
+        for (I thing : (Iterable<I>) this)
         {
-            I thing = (I) it.next();
             idMapping.put(discriminator+func_148750_c(thing), getId(thing));
         }
     }
@@ -239,26 +243,27 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         aliases.put(from, to);
     }
 
+    @SuppressWarnings("unchecked")
     Map<String,Integer> getEntriesNotIn(FMLControlledNamespacedRegistry<I> registry)
     {
         Map<String,Integer> ret = new HashMap<String, Integer>();
 
-        for (Iterator<Object> it = iterator(); it.hasNext(); )
+        for (I thing : (Iterable<I>) this)
         {
-            I thing = (I) it.next();
             if (!registry.field_148758_b.containsKey(thing)) ret.put(func_148750_c(thing), getId(thing));
         }
 
         return ret;
     }
 
+    @SuppressWarnings("unchecked")
     void dump()
     {
         List<Integer> ids = new ArrayList<Integer>();
 
-        for (Iterator<Object> it = iterator(); it.hasNext(); )
+        for (I thing : (Iterable<I>) this)
         {
-            ids.add(getId((I) it.next()));
+            ids.add(getId(thing));
         }
 
         // sort by id

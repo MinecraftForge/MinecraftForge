@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,14 +70,28 @@ public class GameData {
 
     // public api
 
+    /**
+     * Get the currently active block registry.
+     *
+     * @return Block Registry.
+     */
     public static FMLControlledNamespacedRegistry<Block> getBlockRegistry() {
         return getMain().iBlockRegistry;
     }
 
+    /**
+     * Get the currently active item registry.
+     *
+     * @return Item Registry.
+     */
     public static FMLControlledNamespacedRegistry<Item> getItemRegistry() {
         return getMain().iItemRegistry;
     }
 
+    /**
+     * @deprecated no replacement planned
+     */
+    @Deprecated
     public static ModContainer findModOwner(String string)
     {
         UniqueIdentifier ui = new UniqueIdentifier(string);
@@ -265,20 +278,9 @@ public class GameData {
                     remaps.put(itemName, new Integer[] { currId, newId });
                 }
 
-                if (isBlock)
-                {
-                    Block block = getMain().iBlockRegistry.getRaw(itemName);
-                    if (block == null) throw new IllegalStateException(String.format("Can't find block for name %s, id %d", itemName, currId));
-
-                    currId = newData.registerBlock(block, itemName, null, newId);
-                }
-                else
-                {
-                    Item item = getMain().iItemRegistry.getRaw(itemName);
-                    if (item == null) throw new IllegalStateException(String.format("Can't find item for name %s, id %d", itemName, currId));
-
-                    currId = newData.registerItem(item, itemName, null, newId);
-                }
+                // register
+                FMLControlledNamespacedRegistry<?> srcRegistry = isBlock ? getMain().iBlockRegistry : getMain().iItemRegistry;
+                currId = newData.register(srcRegistry.getRaw(itemName), itemName, newId);
 
                 if (currId != newId)
                 {
@@ -485,15 +487,15 @@ public class GameData {
         blockedIds.addAll(data.blockedIds);
     }
 
-    void register(Object obj, String name, int idHint)
+    int register(Object obj, String name, int idHint)
     {
         if (obj instanceof Block)
         {
-            registerBlock((Block) obj, name, null, idHint);
+            return registerBlock((Block) obj, name, null, idHint);
         }
         else if (obj instanceof Item)
         {
-            registerItem((Item) obj, name, null, idHint);
+            return registerItem((Item) obj, name, null, idHint);
         }
         else
         {
@@ -598,6 +600,7 @@ public class GameData {
         return oldValue;
     }
 
+    @SuppressWarnings("unchecked")
     private void testConsistency() {
         // test if there's an entry for every set bit in availabilityMap
         for (int i = availabilityMap.nextSetBit(0); i >= 0; i = availabilityMap.nextSetBit(i+1))
@@ -609,9 +612,8 @@ public class GameData {
         }
 
         // test if there's a bit in availabilityMap set for every entry in the block registry, make sure it's not a blocked id
-        for (Iterator<Object> it = iBlockRegistry.iterator(); it.hasNext(); )
+        for (Block block : (Iterable<Block>) iBlockRegistry)
         {
-            Block block = (Block) it.next();
             int id = iBlockRegistry.getId(block);
 
             if (!availabilityMap.get(id))
@@ -626,9 +628,8 @@ public class GameData {
 
         // test if there's a bit in availabilityMap set for every entry in the item registry, make sure it's not a blocked id,
         // check if ItemBlocks have blocks with matching ids in the block registry
-        for (Iterator<Object> it = iItemRegistry.iterator(); it.hasNext(); )
+        for (Item item : (Iterable<Item>) iItemRegistry)
         {
-            Item item = (Item) it.next();
             int id = iItemRegistry.getId(item);
 
             if (!availabilityMap.get(id))
