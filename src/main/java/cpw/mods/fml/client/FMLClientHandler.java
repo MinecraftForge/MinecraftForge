@@ -627,7 +627,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         catch (GameRegistryException gre)
         {
             client.func_71403_a(null);
-            showGuiScreen(new GuiModItemsMissing(gre.getItems(), gre.getMessage()));
+            showGuiScreen(new GuiModItemsMissing(gre.getItems()));
         }
         Thread.interrupted();
     }
