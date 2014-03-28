@@ -48,30 +48,10 @@ public final class KeyboardHandler {
             return;
         }
 
-        keyboardSwitch.add(keyBinding);
         ClientRegistry.registerKeyBinding(keyBinding);
-        instance().registerKeyboardSwitch(keyboardSwitch);
-    }
-
-    /**
-     * Register a keyboard switch
-     *
-     * @param keyboardSwitch the keyboard switch
-     * @return true if the keyboard switch was registered
-     */
-    private boolean registerKeyboardSwitch(KeyboardSwitch keyboardSwitch) {
-        if (this.keyboardSwitches.size() > 256) {
-            System.out.println("[KeyboardHandler] Too many Keyboard Switches registered - " + keyboardSwitch);
-            return false;
-        }
-
-        if (this.keyboardSwitches.contains(keyboardSwitch)) {
-            System.out.println("[KeyboardHandler] Keyboard Switch already registered - " + keyboardSwitch);
-            return false;
-        }
-
-        this.keyboardSwitches.add(keyboardSwitch);
-        return true;
+        if (!keyBindings.contains(keyBinding)) keyBindings.add(keyBinding);
+        if (!keyboardSwitch.contains(keyBinding)) keyboardSwitch.add(keyBinding);
+        if (!keyboardSwitches.contains(keyboardSwitch)) keyboardSwitches.add(keyboardSwitch);
     }
 
     /**
@@ -88,22 +68,6 @@ public final class KeyboardHandler {
         }
 
         return KeyboardSwitch.MINECRAFT_KEYBOARD_SWITCH;
-    }
-
-    /**
-     * Get a keybinding by name
-     *
-     * @param name The keybinding description
-     * @return returns the first keybinding if the name doesn't match any keybindings
-     */
-    public KeyBinding getKeyBinding(String name) {
-        for (KeyBinding keyBinding : keyBindings) {
-            if (name.equals(keyBinding.getKeyDescription())) {
-                return keyBinding;
-            }
-        }
-
-        return keyBindings.get(0);
     }
 
     /**
@@ -125,20 +89,6 @@ public final class KeyboardHandler {
                 switchKeyboard();
             }
         }
-    }
-
-    /**
-     * Is the keybinding registered to a keyboard switch
-     *
-     * @param keyBinding the keybinding
-     * @return true if the keybinding is registered
-     */
-    public boolean isKeyBindingRegisteredToKeyboardSwitch(KeyBinding keyBinding) {
-        for (KeyboardSwitch keyboardSwitch : keyboardSwitches) {
-            if (keyboardSwitch.contains(keyBinding)) return true;
-        }
-
-        return false;
     }
 
     /**
