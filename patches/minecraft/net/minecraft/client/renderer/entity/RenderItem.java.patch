@@ -82,53 +82,18 @@
                          }
                      }
                  }
-@@ -222,19 +232,24 @@
+@@ -222,6 +232,11 @@
  
      private void func_77020_a(EntityItem p_77020_1_, IIcon p_77020_2_, int p_77020_3_, float p_77020_4_, float p_77020_5_, float p_77020_6_, float p_77020_7_)
      {
 +        this.renderDroppedItem(p_77020_1_, p_77020_2_, p_77020_3_, p_77020_4_, p_77020_5_, p_77020_6_, p_77020_7_, 0);
 +    }
 +
-+    private void renderDroppedItem(EntityItem par1EntityItem, IIcon par2Icon, int par3, float par4, float par5, float par6, float par7, int pass)
++    private void renderDroppedItem(EntityItem p_77020_1_, IIcon p_77020_2_, int p_77020_3_, float p_77020_4_, float p_77020_5_, float p_77020_6_, float p_77020_7_, int pass)
 +    {
          Tessellator tessellator = Tessellator.field_78398_a;
  
--        if (p_77020_2_ == null)
-+        if (par2Icon == null)
-         {
-             TextureManager texturemanager = Minecraft.func_71410_x().func_110434_K();
--            ResourceLocation resourcelocation = texturemanager.func_130087_a(p_77020_1_.func_92059_d().func_94608_d());
--            p_77020_2_ = ((TextureMap)texturemanager.func_110581_b(resourcelocation)).func_110572_b("missingno");
-+            ResourceLocation resourcelocation = texturemanager.func_130087_a(par1EntityItem.func_92059_d().func_94608_d());
-+            par2Icon = ((TextureMap)texturemanager.func_110581_b(resourcelocation)).func_110572_b("missingno");
-         }
- 
--        float f14 = ((IIcon)p_77020_2_).func_94209_e();
--        float f15 = ((IIcon)p_77020_2_).func_94212_f();
--        float f4 = ((IIcon)p_77020_2_).func_94206_g();
--        float f5 = ((IIcon)p_77020_2_).func_94210_h();
-+        float f14 = ((IIcon)par2Icon).func_94209_e();
-+        float f15 = ((IIcon)par2Icon).func_94212_f();
-+        float f4 = ((IIcon)par2Icon).func_94206_g();
-+        float f5 = ((IIcon)par2Icon).func_94210_h();
-         float f6 = 1.0F;
-         float f7 = 0.5F;
-         float f8 = 0.25F;
-@@ -250,12 +265,12 @@
-             }
-             else
-             {
--                GL11.glRotatef((((float)p_77020_1_.field_70292_b + p_77020_4_) / 20.0F + p_77020_1_.field_70290_d) * (180F / (float)Math.PI), 0.0F, 1.0F, 0.0F);
-+                GL11.glRotatef((((float)par1EntityItem.field_70292_b + par4) / 20.0F + par1EntityItem.field_70290_d) * (180F / (float)Math.PI), 0.0F, 1.0F, 0.0F);
-             }
- 
-             float f9 = 0.0625F;
-             f10 = 0.021875F;
--            ItemStack itemstack = p_77020_1_.func_92059_d();
-+            ItemStack itemstack = par1EntityItem.func_92059_d();
-             int j = itemstack.field_77994_a;
-             byte b0;
- 
+         if (p_77020_2_ == null)
 @@ -276,11 +291,24 @@
                  b0 = 4;
              }
@@ -155,178 +120,78 @@
  
                  if (itemstack.func_94608_d() == 0)
                  {
-@@ -291,10 +319,10 @@
-                     this.func_110776_a(TextureMap.field_110576_c);
-                 }
- 
--                GL11.glColor4f(p_77020_5_, p_77020_6_, p_77020_7_, 1.0F);
--                ItemRenderer.func_78439_a(tessellator, f15, f4, f14, f5, ((IIcon)p_77020_2_).func_94211_a(), ((IIcon)p_77020_2_).func_94216_b(), f9);
-+                GL11.glColor4f(par5, par6, par7, 1.0F);
-+                ItemRenderer.func_78439_a(tessellator, f15, f4, f14, f5, ((IIcon)par2Icon).func_94211_a(), ((IIcon)par2Icon).func_94216_b(), f9);
+@@ -294,7 +322,7 @@
+                 GL11.glColor4f(p_77020_5_, p_77020_6_, p_77020_7_, 1.0F);
+                 ItemRenderer.func_78439_a(tessellator, f15, f4, f14, f5, ((IIcon)p_77020_2_).func_94211_a(), ((IIcon)p_77020_2_).func_94216_b(), f9);
  
 -                if (itemstack.func_77962_s())
 +                if (itemstack.hasEffect(pass))
                  {
                      GL11.glDepthFunc(GL11.GL_EQUAL);
                      GL11.glDisable(GL11.GL_LIGHTING);
-@@ -330,7 +358,7 @@
-         }
-         else
-         {
--            for (int l = 0; l < p_77020_3_; ++l)
-+            for (int l = 0; l < par3; ++l)
-             {
-                 GL11.glPushMatrix();
- 
-@@ -347,7 +375,7 @@
-                     GL11.glRotatef(180.0F - this.field_76990_c.field_78735_i, 0.0F, 1.0F, 0.0F);
-                 }
- 
--                GL11.glColor4f(p_77020_5_, p_77020_6_, p_77020_7_, 1.0F);
-+                GL11.glColor4f(par5, par6, par7, 1.0F);
-                 tessellator.func_78382_b();
-                 tessellator.func_78375_b(0.0F, 1.0F, 0.0F);
-                 tessellator.func_78374_a((double)(0.0F - f7), (double)(0.0F - f8), 0.0D, (double)f14, (double)f5);
-@@ -362,8 +390,13 @@
+@@ -362,6 +390,11 @@
  
      public void func_77015_a(FontRenderer p_77015_1_, TextureManager p_77015_2_, ItemStack p_77015_3_, int p_77015_4_, int p_77015_5_)
      {
--        int k = p_77015_3_.func_77960_j();
--        Object object = p_77015_3_.func_77954_c();
 +        this.renderItemIntoGUI(p_77015_1_, p_77015_2_, p_77015_3_, p_77015_4_, p_77015_5_, false);
 +    }
 +
-+    public void renderItemIntoGUI(FontRenderer par1FontRenderer, TextureManager par2TextureManager, ItemStack par3ItemStack, int par4, int par5, boolean renderEffect)
++    public void renderItemIntoGUI(FontRenderer p_77015_1_, TextureManager p_77015_2_, ItemStack p_77015_3_, int p_77015_4_, int p_77015_5_, boolean renderEffect)
 +    {
-+        int k = par3ItemStack.func_77960_j();
-+        Object object = par3ItemStack.func_77954_c();
+         int k = p_77015_3_.func_77960_j();
+         Object object = p_77015_3_.func_77954_c();
          GL11.glEnable(GL11.GL_BLEND);
-         OpenGlHelper.func_148821_a(770, 771, 1, 0);
-         float f3;
-@@ -371,18 +404,18 @@
-         int l;
-         float f;
- 
--        if (p_77015_3_.func_94608_d() == 0 && RenderBlocks.func_147739_a(Block.func_149634_a(p_77015_3_.func_77973_b()).func_149645_b()))
-+        if (par3ItemStack.func_94608_d() == 0 && RenderBlocks.func_147739_a(Block.func_149634_a(par3ItemStack.func_77973_b()).func_149645_b()))
-         {
--            p_77015_2_.func_110577_a(TextureMap.field_110575_b);
--            Block block = Block.func_149634_a(p_77015_3_.func_77973_b());
-+            par2TextureManager.func_110577_a(TextureMap.field_110575_b);
-+            Block block = Block.func_149634_a(par3ItemStack.func_77973_b());
-             GL11.glPushMatrix();
--            GL11.glTranslatef((float)(p_77015_4_ - 2), (float)(p_77015_5_ + 3), -3.0F + this.field_77023_b);
-+            GL11.glTranslatef((float)(par4 - 2), (float)(par5 + 3), -3.0F + this.field_77023_b);
-             GL11.glScalef(10.0F, 10.0F, 10.0F);
-             GL11.glTranslatef(1.0F, 0.5F, 1.0F);
-             GL11.glScalef(1.0F, 1.0F, -1.0F);
-             GL11.glRotatef(210.0F, 1.0F, 0.0F, 0.0F);
-             GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
--            l = p_77015_3_.func_77973_b().func_82790_a(p_77015_3_, 0);
-+            l = par3ItemStack.func_77973_b().func_82790_a(par3ItemStack, 0);
-             f4 = (float)(l >> 16 & 255) / 255.0F;
-             f3 = (float)(l >> 8 & 255) / 255.0F;
-             f = (float)(l & 255) / 255.0F;
-@@ -398,11 +431,11 @@
-             this.field_147913_i.field_147844_c = true;
-             GL11.glPopMatrix();
-         }
--        else if (p_77015_3_.func_77973_b().func_77623_v())
-+        else if (par3ItemStack.func_77973_b().func_77623_v())
-         {
-             GL11.glDisable(GL11.GL_LIGHTING);
-             GL11.glEnable(GL11.GL_ALPHA_TEST);
--            p_77015_2_.func_110577_a(TextureMap.field_110576_c);
-+            par2TextureManager.func_110577_a(TextureMap.field_110576_c);
-             GL11.glDisable(GL11.GL_ALPHA_TEST);
-             GL11.glDisable(GL11.GL_TEXTURE_2D);
-             GL11.glEnable(GL11.GL_BLEND);
-@@ -412,20 +445,22 @@
-             Tessellator tessellator = Tessellator.field_78398_a;
-             tessellator.func_78382_b();
-             tessellator.func_78378_d(-1);
--            tessellator.func_78377_a((double)(p_77015_4_ - 2), (double)(p_77015_5_ + 18), (double)this.field_77023_b);
--            tessellator.func_78377_a((double)(p_77015_4_ + 18), (double)(p_77015_5_ + 18), (double)this.field_77023_b);
--            tessellator.func_78377_a((double)(p_77015_4_ + 18), (double)(p_77015_5_ - 2), (double)this.field_77023_b);
--            tessellator.func_78377_a((double)(p_77015_4_ - 2), (double)(p_77015_5_ - 2), (double)this.field_77023_b);
-+            tessellator.func_78377_a((double)(par4 - 2), (double)(par5 + 18), (double)this.field_77023_b);
-+            tessellator.func_78377_a((double)(par4 + 18), (double)(par5 + 18), (double)this.field_77023_b);
-+            tessellator.func_78377_a((double)(par4 + 18), (double)(par5 - 2), (double)this.field_77023_b);
-+            tessellator.func_78377_a((double)(par4 - 2), (double)(par5 - 2), (double)this.field_77023_b);
-             tessellator.func_78381_a();
+@@ -420,11 +453,13 @@
              GL11.glColorMask(true, true, true, true);
              GL11.glEnable(GL11.GL_TEXTURE_2D);
              GL11.glEnable(GL11.GL_ALPHA_TEST);
 -            OpenGlHelper.func_148821_a(770, 771, 1, 0);
  
 -            for (l = 0; l <= 1; ++l)
-+            Item item = par3ItemStack.func_77973_b();
++            Item item = p_77015_3_.func_77973_b();
 +            for (l = 0; l < item.getRenderPasses(k); ++l)
              {
 -                IIcon iicon = p_77015_3_.func_77973_b().func_77618_c(k, l);
--                int i1 = p_77015_3_.func_77973_b().func_82790_a(p_77015_3_, l);
 +                OpenGlHelper.func_148821_a(770, 771, 1, 0);
-+                par2TextureManager.func_110577_a(item.func_94901_k() == 0 ? TextureMap.field_110575_b : TextureMap.field_110576_c);
-+                IIcon iicon = item.getIcon(par3ItemStack, l);
-+                int i1 = par3ItemStack.func_77973_b().func_82790_a(par3ItemStack, l);
++                p_77015_2_.func_110577_a(item.func_94901_k() == 0 ? TextureMap.field_110575_b : TextureMap.field_110576_c);
++                IIcon iicon = item.getIcon(p_77015_3_, l);
+                 int i1 = p_77015_3_.func_77973_b().func_82790_a(p_77015_3_, l);
                  f = (float)(i1 >> 16 & 255) / 255.0F;
                  float f1 = (float)(i1 >> 8 & 255) / 255.0F;
-                 float f2 = (float)(i1 & 255) / 255.0F;
 @@ -435,7 +470,18 @@
                      GL11.glColor4f(f, f1, f2, 1.0F);
                  }
  
--                this.func_94149_a(p_77015_4_, p_77015_5_, iicon, 16, 16);
 +                GL11.glDisable(GL11.GL_LIGHTING); //Forge: Make sure that render states are reset, ad renderEffect can derp them up.
 +                GL11.glEnable(GL11.GL_ALPHA_TEST);
 +
-+                this.func_94149_a(par4, par5, iicon, 16, 16);
+                 this.func_94149_a(p_77015_4_, p_77015_5_, iicon, 16, 16);
 +
 +                GL11.glDisable(GL11.GL_ALPHA_TEST);
 +                GL11.glEnable(GL11.GL_LIGHTING);
 +
-+                if (renderEffect && par3ItemStack.hasEffect(l))
++                if (renderEffect && p_77015_3_.hasEffect(l))
 +                {
-+                    renderEffect(par2TextureManager, par4, par5);
++                    renderEffect(p_77015_2_, p_77015_4_, p_77015_5_);
 +                }
              }
  
              GL11.glDisable(GL11.GL_ALPHA_TEST);
-@@ -444,15 +490,15 @@
-         else
-         {
-             GL11.glDisable(GL11.GL_LIGHTING);
--            ResourceLocation resourcelocation = p_77015_2_.func_130087_a(p_77015_3_.func_94608_d());
--            p_77015_2_.func_110577_a(resourcelocation);
-+            ResourceLocation resourcelocation = par2TextureManager.func_130087_a(par3ItemStack.func_94608_d());
-+            par2TextureManager.func_110577_a(resourcelocation);
- 
-             if (object == null)
-             {
-                 object = ((TextureMap)Minecraft.func_71410_x().func_110434_K().func_110581_b(resourcelocation)).func_110572_b("missingno");
-             }
- 
--            l = p_77015_3_.func_77973_b().func_82790_a(p_77015_3_, 0);
-+            l = par3ItemStack.func_77973_b().func_82790_a(par3ItemStack, 0);
-             f4 = (float)(l >> 16 & 255) / 255.0F;
-             f3 = (float)(l >> 8 & 255) / 255.0F;
-             f = (float)(l & 255) / 255.0F;
 @@ -462,8 +508,19 @@
                  GL11.glColor4f(f4, f3, f, 1.0F);
              }
  
--            this.func_94149_a(p_77015_4_, p_77015_5_, (IIcon)object, 16, 16);
 +            GL11.glDisable(GL11.GL_LIGHTING); //Forge: Make sure that render states are reset, ad renderEffect can derp them up.
 +            GL11.glEnable(GL11.GL_ALPHA_TEST);
 +
-+            this.func_94149_a(par4, par5, (IIcon)object, 16, 16);
+             this.func_94149_a(p_77015_4_, p_77015_5_, (IIcon)object, 16, 16);
 +
 +            GL11.glDisable(GL11.GL_ALPHA_TEST);
              GL11.glEnable(GL11.GL_LIGHTING);
 +
-+            if (renderEffect && par3ItemStack.hasEffect(0))
++            if (renderEffect && p_77015_3_.hasEffect(0))
 +            {
-+                renderEffect(par2TextureManager, par4, par5);
++                renderEffect(p_77015_2_, p_77015_4_, p_77015_5_);
 +            }
 +            GL11.glEnable(GL11.GL_LIGHTING);
          }

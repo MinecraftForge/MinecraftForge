@@ -8,19 +8,16 @@
  
      public EntityDiggingFX(World p_i1234_1_, double p_i1234_2_, double p_i1234_4_, double p_i1234_6_, double p_i1234_8_, double p_i1234_10_, double p_i1234_12_, Block p_i1234_14_, int p_i1234_15_)
      {
--        super(p_i1234_1_, p_i1234_2_, p_i1234_4_, p_i1234_6_, p_i1234_8_, p_i1234_10_, p_i1234_12_);
--        this.field_145784_a = p_i1234_14_;
--        this.func_110125_a(p_i1234_14_.func_149691_a(0, p_i1234_15_));
--        this.field_70545_g = p_i1234_14_.field_149763_I;
 +        this(p_i1234_1_, p_i1234_2_, p_i1234_4_, p_i1234_6_, p_i1234_8_, p_i1234_10_, p_i1234_12_, p_i1234_14_, p_i1234_15_, p_i1234_1_.field_73012_v.nextInt(6));
 +    }
 +
-+    public EntityDiggingFX(World par1World, double par2, double par4, double par6, double par8, double par10, double par12, Block par14Block, int par15, int side)
++    public EntityDiggingFX(World p_i1234_1_, double p_i1234_2_, double p_i1234_4_, double p_i1234_6_, double p_i1234_8_, double p_i1234_10_, double p_i1234_12_, Block p_i1234_14_, int p_i1234_15_, int side)
 +    {
-+        super(par1World, par2, par4, par6, par8, par10, par12);
-+        this.field_145784_a = par14Block;
-+        this.func_110125_a(par14Block.func_149691_a(side, par15));
-+        this.field_70545_g = par14Block.field_149763_I;
+         super(p_i1234_1_, p_i1234_2_, p_i1234_4_, p_i1234_6_, p_i1234_8_, p_i1234_10_, p_i1234_12_);
+         this.field_145784_a = p_i1234_14_;
+-        this.func_110125_a(p_i1234_14_.func_149691_a(0, p_i1234_15_));
++        this.func_110125_a(p_i1234_14_.func_149691_a(side, p_i1234_15_));
+         this.field_70545_g = p_i1234_14_.field_149763_I;
          this.field_70552_h = this.field_70553_i = this.field_70551_j = 0.6F;
          this.field_70544_f /= 2.0F;
 +        this.side = side;

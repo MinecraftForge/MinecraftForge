@@ -99,49 +99,18 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d())
          {
              if (this.field_72777_q.field_71474_y.field_74347_j)
-@@ -1571,10 +1600,15 @@
+@@ -1571,6 +1600,11 @@
  
      public void func_72717_a(Tessellator p_72717_1_, EntityPlayer p_72717_2_, float p_72717_3_)
      {
--        double d0 = p_72717_2_.field_70142_S + (p_72717_2_.field_70165_t - p_72717_2_.field_70142_S) * (double)p_72717_3_;
--        double d1 = p_72717_2_.field_70137_T + (p_72717_2_.field_70163_u - p_72717_2_.field_70137_T) * (double)p_72717_3_;
--        double d2 = p_72717_2_.field_70136_U + (p_72717_2_.field_70161_v - p_72717_2_.field_70136_U) * (double)p_72717_3_;
 +        drawBlockDamageTexture(p_72717_1_, (EntityLivingBase)p_72717_2_, p_72717_3_);
 +    }
- 
-+    public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityLivingBase par2EntityPlayer, float par3)
-+    {
-+        double d0 = par2EntityPlayer.field_70142_S + (par2EntityPlayer.field_70165_t - par2EntityPlayer.field_70142_S) * (double)par3;
-+        double d1 = par2EntityPlayer.field_70137_T + (par2EntityPlayer.field_70163_u - par2EntityPlayer.field_70137_T) * (double)par3;
-+        double d2 = par2EntityPlayer.field_70136_U + (par2EntityPlayer.field_70161_v - par2EntityPlayer.field_70136_U) * (double)par3;
 +
-         if (!this.field_72738_E.isEmpty())
-         {
-             OpenGlHelper.func_148821_a(774, 768, 1, 0);
-@@ -1584,9 +1618,9 @@
-             GL11.glPolygonOffset(-3.0F, -3.0F);
-             GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
-             GL11.glEnable(GL11.GL_ALPHA_TEST);
--            p_72717_1_.func_78382_b();
--            p_72717_1_.func_78373_b(-d0, -d1, -d2);
--            p_72717_1_.func_78383_c();
-+            par1Tessellator.func_78382_b();
-+            par1Tessellator.func_78373_b(-d0, -d1, -d2);
-+            par1Tessellator.func_78383_c();
-             Iterator iterator = this.field_72738_E.values().iterator();
- 
-             while (iterator.hasNext())
-@@ -1611,8 +1645,8 @@
-                 }
-             }
- 
--            p_72717_1_.func_78381_a();
--            p_72717_1_.func_78373_b(0.0D, 0.0D, 0.0D);
-+            par1Tessellator.func_78381_a();
-+            par1Tessellator.func_78373_b(0.0D, 0.0D, 0.0D);
-             GL11.glDisable(GL11.GL_ALPHA_TEST);
-             GL11.glPolygonOffset(0.0F, 0.0F);
-             GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
++    public void drawBlockDamageTexture(Tessellator p_72717_1_, EntityLivingBase p_72717_2_, float p_72717_3_)
++    {
+         double d0 = p_72717_2_.field_70142_S + (p_72717_2_.field_70165_t - p_72717_2_.field_70142_S) * (double)p_72717_3_;
+         double d1 = p_72717_2_.field_70137_T + (p_72717_2_.field_70163_u - p_72717_2_.field_70137_T) * (double)p_72717_3_;
+         double d2 = p_72717_2_.field_70136_U + (p_72717_2_.field_70161_v - p_72717_2_.field_70136_U) * (double)p_72717_3_;
 @@ -1789,12 +1823,15 @@
          {
              ItemRecord itemrecord = ItemRecord.func_150926_b(p_72702_1_);

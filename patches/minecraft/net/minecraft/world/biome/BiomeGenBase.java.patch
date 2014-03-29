@@ -16,23 +16,19 @@
      {
 +        this(p_i1971_1_, true);
 +    }
-+    public BiomeGenBase(int par1, boolean register)
++    public BiomeGenBase(int p_i1971_1_, boolean register)
 +    {
          this.field_76752_A = Blocks.field_150349_c;
          this.field_150604_aj = 0;
          this.field_76753_B = Blocks.field_150346_d;
-@@ -147,8 +154,9 @@
-         this.field_76757_N = new WorldGenTrees(false);
+@@ -148,6 +155,7 @@
          this.field_76758_O = new WorldGenBigTree(false);
          this.field_76763_Q = new WorldGenSwamp();
--        this.field_76756_M = p_i1971_1_;
--        field_76773_a[p_i1971_1_] = this;
-+        this.field_76756_M = par1;
+         this.field_76756_M = p_i1971_1_;
 +        if (register)
-+        field_76773_a[par1] = this;
+         field_76773_a[p_i1971_1_] = this;
          this.field_76760_I = this.func_76729_a();
          this.field_76762_K.add(new BiomeGenBase.SpawnListEntry(EntitySheep.class, 12, 4, 4));
-         this.field_76762_K.add(new BiomeGenBase.SpawnListEntry(EntityPig.class, 10, 4, 4));
 @@ -163,11 +171,12 @@
          this.field_76761_J.add(new BiomeGenBase.SpawnListEntry(EntityWitch.class, 5, 1, 1));
          this.field_76755_L.add(new BiomeGenBase.SpawnListEntry(EntitySquid.class, 10, 4, 4));
