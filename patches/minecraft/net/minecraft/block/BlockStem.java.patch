@@ -39,45 +39,16 @@
                      {
                          f1 = 3.0F;
                      }
-@@ -215,28 +217,30 @@
+@@ -215,7 +217,7 @@
      {
          super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
  
 -        if (!p_149690_1_.field_72995_K)
-+        /*
-+        if (!p_149690_1_.isRemote)
++        if (false && !p_149690_1_.field_72995_K)
          {
              Item item = null;
  
--            if (this.field_149877_a == Blocks.field_150423_aK)
-+            if (this.field_149877_a == Blocks.pumpkin)
-             {
--                item = Items.field_151080_bb;
-+                item = Items.pumpkin_seeds;
-             }
- 
--            if (this.field_149877_a == Blocks.field_150440_ba)
-+            if (this.field_149877_a == Blocks.melon_block)
-             {
--                item = Items.field_151081_bc;
-+                item = Items.melon_seeds;
-             }
- 
-             for (int j1 = 0; j1 < 3; ++j1)
-             {
--                if (p_149690_1_.field_73012_v.nextInt(15) <= p_149690_5_)
-+                if (p_149690_1_.rand.nextInt(15) <= p_149690_5_)
-                 {
--                    this.func_149642_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(item));
-+                    this.dropBlockAsItem(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(item));
-                 }
-             }
-         }
-+        */
-     }
- 
-     public Item func_149650_a(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
-@@ -282,4 +286,22 @@
+@@ -282,4 +284,22 @@
      {
          this.func_149874_m(p_149853_1_, p_149853_3_, p_149853_4_, p_149853_5_);
      }

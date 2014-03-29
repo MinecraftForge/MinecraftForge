@@ -209,32 +209,17 @@
              }
              catch (Throwable throwable)
              {
-@@ -518,26 +578,45 @@
+@@ -518,7 +578,8 @@
                  throw new ReportedException(crashreport);
              }
  
 -            if (p_82406_3_.func_77962_s())
-+            /* Forge: Bugfix, Move this to a per-render pass, modders must handle themselves
-+            if (par3ItemStack.hasEffect())
++            // Forge: Bugfix, Move this to a per-render pass, modders must handle themselves
++            if (false && p_82406_3_.func_77962_s())
              {
                  GL11.glDepthFunc(GL11.GL_EQUAL);
                  GL11.glDisable(GL11.GL_LIGHTING);
-                 GL11.glDepthMask(false);
--                p_82406_2_.func_110577_a(field_110798_h);
-+                par2TextureManager.bindTexture(RES_ITEM_GLINT);
-                 GL11.glEnable(GL11.GL_ALPHA_TEST);
-                 GL11.glEnable(GL11.GL_BLEND);
-                 GL11.glColor4f(0.5F, 0.25F, 0.8F, 1.0F);
--                this.func_77018_a(p_82406_4_ * 431278612 + p_82406_5_ * 32178161, p_82406_4_ - 2, p_82406_5_ - 2, 20, 20);
-+                this.renderGlint(par4 * 431278612 + par5 * 32178161, par4 - 2, par5 - 2, 20, 20);
-                 GL11.glDepthMask(true);
-                 GL11.glDisable(GL11.GL_ALPHA_TEST);
-                 GL11.glEnable(GL11.GL_LIGHTING);
-                 GL11.glDepthFunc(GL11.GL_LEQUAL);
-             }
-+            */
- 
-             this.field_77023_b -= 50.0F;
+@@ -538,6 +599,23 @@
          }
      }
  
@@ -258,7 +243,7 @@
      private void func_77018_a(int p_77018_1_, int p_77018_2_, int p_77018_3_, int p_77018_4_, int p_77018_5_)
      {
          for (int j1 = 0; j1 < 2; ++j1)
-@@ -638,4 +717,42 @@
+@@ -638,4 +716,42 @@
      {
          this.func_76986_a((EntityItem)p_76986_1_, p_76986_2_, p_76986_4_, p_76986_6_, p_76986_8_, p_76986_9_);
      }

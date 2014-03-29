@@ -25,40 +25,18 @@
      }
  
      public void func_149674_a(World p_149674_1_, int p_149674_2_, int p_149674_3_, int p_149674_4_, Random p_149674_5_)
-@@ -62,25 +64,28 @@
+@@ -62,7 +64,9 @@
  
      public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
      {
 -        if (!p_149690_1_.field_72995_K)
 +        super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
-+        /*
-+        if (!p_149690_1_.isRemote)
++        
++        if (false && !p_149690_1_.field_72995_K)
          {
              int j1 = 1;
  
-             if (p_149690_5_ >= 3)
-             {
--                j1 = 2 + p_149690_1_.field_73012_v.nextInt(3);
-+                j1 = 2 + p_149690_1_.rand.nextInt(3);
- 
-                 if (p_149690_7_ > 0)
-                 {
--                    j1 += p_149690_1_.field_73012_v.nextInt(p_149690_7_ + 1);
-+                    j1 += p_149690_1_.rand.nextInt(p_149690_7_ + 1);
-                 }
-             }
- 
-             for (int k1 = 0; k1 < j1; ++k1)
-             {
--                this.func_149642_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(Items.field_151075_bm));
-+                this.dropBlockAsItem(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(Items.nether_wart));
-             }
-         }
-+        */
-     }
- 
-     public Item func_149650_a(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
-@@ -109,4 +114,23 @@
+@@ -109,4 +113,23 @@
              this.field_149883_a[i] = p_149651_1_.func_94245_a(this.func_149641_N() + "_stage_" + i);
          }
      }

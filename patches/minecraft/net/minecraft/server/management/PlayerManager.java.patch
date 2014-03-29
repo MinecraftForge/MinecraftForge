@@ -56,7 +56,7 @@
                      {
                          this.func_151252_a(PlayerManager.this.field_72701_a.func_147438_o(i, j, k));
                      }
-@@ -410,37 +420,42 @@
+@@ -410,13 +420,14 @@
                  {
                      int l;
  
@@ -67,25 +67,13 @@
                          j = this.field_73264_c.field_77275_b * 16;
                          this.func_151251_a(new S21PacketChunkData(PlayerManager.this.field_72701_a.func_72964_e(this.field_73264_c.field_77276_a, this.field_73264_c.field_77275_b), false, this.field_73260_f));
  
-+                        /* Forge: Grabs ALL tile entities is costly on a modded server, only send needed ones
-                         for (k = 0; k < 16; ++k)
+-                        for (k = 0; k < 16; ++k)
++                        // Forge: Grabs ALL tile entities is costly on a modded server, only send needed ones
++                        for (k = 0; false && k < 16; ++k)
                          {
--                            if ((this.field_73260_f & 1 << k) != 0)
-+                            if ((this.flagsYAreasToUpdate & 1 << k) != 0)
+                             if ((this.field_73260_f & 1 << k) != 0)
                              {
-                                 l = k << 4;
--                                List list = PlayerManager.this.field_72701_a.func_147486_a(i, l, j, i + 16, l + 16, j + 16);
-+                                List list = PlayerManager.this.theWorldServer.func_147486_a(i, l, j, i + 16, l + 16, j + 16);
- 
-                                 for (int i1 = 0; i1 < list.size(); ++i1)
-                                 {
--                                    this.func_151252_a((TileEntity)list.get(i1));
-+                                    this.sendTileToAllPlayersWatchingChunk((TileEntity)list.get(i1));
-                                 }
-                             }
-                         }
-+                        */
-                     }
+@@ -433,14 +444,17 @@
                      else
                      {
                          this.func_151251_a(new S22PacketMultiBlockChange(this.field_73262_e, this.field_151254_d, PlayerManager.this.field_72701_a.func_72964_e(this.field_73264_c.field_77276_a, this.field_73264_c.field_77275_b)));
