@@ -1,5 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
+@@ -316,7 +316,7 @@
+     public static int calcItemStackEnchantability(Random par0Random, int par1, int par2, ItemStack par3ItemStack)
+     {
+         Item item = par3ItemStack.getItem();
+-        int k = item.getItemEnchantability();
++        int k = item.getItemEnchantability(par3ItemStack);
+ 
+         if (k <= 0)
+         {
+@@ -371,7 +371,7 @@
+     public static List buildEnchantmentList(Random par0Random, ItemStack par1ItemStack, int par2)
+     {
+         Item item = par1ItemStack.getItem();
+-        int j = item.getItemEnchantability();
++        int j = item.getItemEnchantability(par1ItemStack);
+ 
+         if (j <= 0)
+         {
 @@ -461,7 +461,8 @@
          {
              Enchantment enchantment = aenchantment[k];
