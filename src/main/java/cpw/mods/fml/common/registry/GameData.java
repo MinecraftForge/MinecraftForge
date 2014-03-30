@@ -218,6 +218,78 @@ public class GameData {
         return ui;
     }
 
+    /**
+     * Fix IDs improperly allocated by early versions of the registry, best-effort.
+     *
+     * Items sharing the same ID with a block, but not sharing the same registry name will be
+     * mapped to an unused id. Losing items instead of blocks should minimize the damage.
+     *
+     * @param dataList List containing the IDs to fix
+     */
+    public static void fixBrokenIds(Map<String, Integer> dataList)
+    {
+        BitSet availabilityMap = new BitSet(32000);
+
+        // reserve all ids occupied by blocks
+        for (Entry<String, Integer> entry : dataList.entrySet())
+        {
+            String itemName = entry.getKey();
+
+            if (itemName.charAt(0) == '\u0001') // is a block
+            {
+                availabilityMap.set(entry.getValue());
+            }
+        }
+
+        Set<String> itemsToAllocate = new HashSet<String>();
+
+        // check all ids occupied by items
+        for (Entry<String, Integer> entry : dataList.entrySet())
+        {
+            String itemName = entry.getKey();
+
+            if (itemName.charAt(0) != '\u0001') // is an item
+            {
+                int oldId = entry.getValue();
+
+                if (availabilityMap.get(oldId)) // id is already occupied
+                {
+                    String realName = itemName.substring(1);
+                    String blockName = '\u0001' + realName;
+
+                    if (!dataList.containsKey(blockName) ||
+                            !(getMain().iItemRegistry.getRaw(realName) instanceof ItemBlock)) // the slot is occupied by something else and this item is no ItemBlock
+                    {
+                        // relocate the item later, after all correct ids have been claimed
+                        itemsToAllocate.add(itemName);
+                    }
+                    else if (dataList.get(blockName) != oldId) // occupied, but this is an ItemBlock for a different block than whatever may use its id
+                    {
+                        // relocate to the matching block
+                        int newId = dataList.get(blockName);
+                        entry.setValue(newId);
+
+                        FMLLog.warning("Fixed ItemBlock %s not using the id of its block, old id %d, new id %d.", realName, oldId, newId);
+                    }
+                }
+                else // unused id, occupy
+                {
+                    availabilityMap.set(oldId);
+                }
+            }
+        }
+
+        for (String itemName : itemsToAllocate)
+        {
+            int oldId = dataList.get(itemName);
+            int newId = availabilityMap.nextClearBit(4096);
+
+            dataList.put(itemName, newId);
+
+            FMLLog.warning("Fixed Item %s conflicting with another block/item, old id %d, new id %d.", itemName.substring(1), oldId, newId);
+        }
+    }
+
     public static List<String> injectWorldIDMap(Map<String, Integer> dataList, boolean injectFrozenData, boolean isLocalWorld)
     {
         return injectWorldIDMap(dataList, new int[0], new HashMap<String, String>(), new HashMap<String, String>(), injectFrozenData, isLocalWorld);
