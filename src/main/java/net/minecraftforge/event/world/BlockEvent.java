@@ -27,7 +27,7 @@ public class BlockEvent extends Event {
         this.block = block;
         this.blockMetadata = blockMetadata;
     }
-    
+
     /**
      * Fired when a block is about to drop it's harvested items. The {@link #drops} array can be amended, as can the {@link #dropChance}.
      * <strong>Note well:</strong> the {@link #harvester} player field is null in a variety of scenarios. Code expecting null.
@@ -39,7 +39,6 @@ public class BlockEvent extends Event {
      * 
      * @author cpw
      */
-    
     public static class HarvestDropsEvent extends BlockEvent {
         public final int fortuneLevel;
         public final ArrayList<ItemStack> drops;
@@ -57,7 +56,7 @@ public class BlockEvent extends Event {
             this.harvester = harvester;
         }
     }
-    
+
     /**
      * Event that is fired when an Block is about to be broken by a player
      * Canceling this event will prevent the Block from being broken.
@@ -75,7 +74,7 @@ public class BlockEvent extends Event {
             this.player = player;
 
             if (block == null || !ForgeHooks.canHarvestBlock(block, player, blockMetadata) || // Handle empty block or player unable to break block scenario
-                block.canSilkHarvest(world, player, x, y, z, blockMetadata) && EnchantmentHelper.getSilkTouchModifier(player)) // If the block is being silk harvested, the exp dropped is 0
+                    block.canSilkHarvest(world, player, x, y, z, blockMetadata) && EnchantmentHelper.getSilkTouchModifier(player)) // If the block is being silk harvested, the exp dropped is 0
             {
                 this.exp = 0;
             }
@@ -91,7 +90,7 @@ public class BlockEvent extends Event {
         {
             return player;
         }
-        
+
         /**
          * Get the experience dropped by the block after the event has processed
          *
