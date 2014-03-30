@@ -2,6 +2,7 @@ package net.minecraftforge.event;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -29,6 +30,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.world.DispenseEvent.*;
 
 public class ForgeEventFactory
 {
@@ -148,5 +150,19 @@ public class ForgeEventFactory
         PlayerUseItemEvent.Finish event = new PlayerUseItemEvent.Finish(player, item, duration, result);
         MinecraftForge.EVENT_BUS.post(event);
         return event.result;
+    }
+    
+    public static PreDispenserFireEvent onDispenseStart(int x,int y,int z,World world,ItemStack itemstack)
+    {
+        PreDispenserFireEvent event = new PreDispenserFireEvent(x, y, z, world, itemstack);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+    
+    public static PostDispenserFireEvent onDispenseFinish(int x,int y,int z,World world,ItemStack itemstack)
+    {
+        PostDispenserFireEvent event = new PostDispenserFireEvent(x, y, z, world, itemstack);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
     }
 }

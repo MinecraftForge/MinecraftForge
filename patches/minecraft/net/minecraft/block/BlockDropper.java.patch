@@ -1,0 +1,78 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDropper.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDropper.java
+@@ -13,6 +13,8 @@
+ import net.minecraft.tileentity.TileEntityHopper;
+ import net.minecraft.util.Facing;
+ import net.minecraft.world.World;
++import net.minecraftforge.event.ForgeEventFactory;
++import net.minecraftforge.event.world.DispenseEvent.PreDispenserFireEvent;
+ 
+ public class BlockDropper extends BlockDispenser
+ {
+@@ -55,39 +57,45 @@
+             else
+             {
+                 ItemStack itemstack = tileentitydispenser.getStackInSlot(l);
+-                int i1 = p_149941_1_.getBlockMetadata(p_149941_2_, p_149941_3_, p_149941_4_) & 7;
+-                IInventory iinventory = TileEntityHopper.func_145893_b(p_149941_1_, (double)(p_149941_2_ + Facing.offsetsXForSide[i1]), (double)(p_149941_3_ + Facing.offsetsYForSide[i1]), (double)(p_149941_4_ + Facing.offsetsZForSide[i1]));
+-                ItemStack itemstack1;
+-
+-                if (iinventory != null)
++                PreDispenserFireEvent event = ForgeEventFactory.onDispenseStart(p_149941_2_, p_149941_3_, p_149941_4_, p_149941_1_, itemstack);
++                if(!event.isCanceled())
+                 {
+-                    itemstack1 = TileEntityHopper.func_145889_a(iinventory, itemstack.copy().splitStack(1), Facing.oppositeSide[i1]);
++                    itemstack = event.itemstack;
++                    int i1 = p_149941_1_.getBlockMetadata(p_149941_2_, p_149941_3_, p_149941_4_) & 7;
++                    IInventory iinventory = TileEntityHopper.func_145893_b(p_149941_1_, (double)(p_149941_2_ + Facing.offsetsXForSide[i1]), (double)(p_149941_3_ + Facing.offsetsYForSide[i1]), (double)(p_149941_4_ + Facing.offsetsZForSide[i1]));
++                    ItemStack itemstack1;
+ 
+-                    if (itemstack1 == null)
++                    if (iinventory != null)
+                     {
+-                        itemstack1 = itemstack.copy();
++                        itemstack1 = TileEntityHopper.func_145889_a(iinventory, itemstack.copy().splitStack(1), Facing.oppositeSide[i1]);
+ 
+-                        if (--itemstack1.stackSize == 0)
++                        if (itemstack1 == null)
+                         {
+-                            itemstack1 = null;
++                            itemstack1 = itemstack.copy();
++
++                            if (--itemstack1.stackSize == 0)
++                            {
++                                itemstack1 = null;
++                            }
+                         }
++                        else
++                        {
++                            itemstack1 = itemstack.copy();
++                        }
+                     }
+                     else
+                     {
+-                        itemstack1 = itemstack.copy();
+-                    }
+-                }
+-                else
+-                {
+-                    itemstack1 = this.field_149947_P.dispense(blocksourceimpl, itemstack);
++                        itemstack1 = this.field_149947_P.dispense(blocksourceimpl, itemstack);
+ 
+-                    if (itemstack1 != null && itemstack1.stackSize == 0)
+-                    {
+-                        itemstack1 = null;
++                        if (itemstack1 != null && itemstack1.stackSize == 0)
++                        {
++                            itemstack1 = null;
++                        }
+                     }
+-                }
+ 
+-                tileentitydispenser.setInventorySlotContents(l, itemstack1);
++                    tileentitydispenser.setInventorySlotContents(l, itemstack1);
++                    ForgeEventFactory.onDispenseFinish(p_149941_2_, p_149941_3_, p_149941_4_, p_149941_1_, itemstack);
++                }
+             }
+         }
+     }
