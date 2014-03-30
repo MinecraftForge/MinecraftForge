@@ -216,6 +216,14 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
                 NBTTagCompound dataTag = list.func_150305_b(i);
                 dataList.put(dataTag.func_74779_i("K"), dataTag.func_74762_e("V"));
             }
+
+            if (!tag.func_74764_b("BlockedItemIds")) // no blocked id info -> old 1.7 save
+            {
+                // old 1.7 save potentially affected by the registry mapping bug
+                // fix the ids the best we can...
+                GameData.fixBrokenIds(dataList);
+            }
+
             // blocked ids
             int[] blockedIds = tag.func_74759_k("BlockedItemIds");
             // block aliases
