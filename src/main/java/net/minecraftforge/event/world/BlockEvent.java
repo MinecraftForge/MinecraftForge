@@ -39,7 +39,6 @@ public class BlockEvent extends Event {
      * 
      * @author cpw
      */
-    
     public static class HarvestDropsEvent extends BlockEvent {
         public final int fortuneLevel;
         public final ArrayList<ItemStack> drops;
