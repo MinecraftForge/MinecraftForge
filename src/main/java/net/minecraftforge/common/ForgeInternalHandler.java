@@ -1,19 +1,42 @@
 package net.minecraftforge.common;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.InputEvent;
+import cpw.mods.fml.relauncher.Side;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.client.IKeyBoundItem;
 import net.minecraftforge.common.util.FakePlayerFactory;
-import net.minecraftforge.event.entity.*;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import org.lwjgl.input.Keyboard;
 
 public class ForgeInternalHandler
 {
+    /**
+     * Go through every keyBoundItem, if its key is down then invoke its keyPressed(stack, player) method
+     */
+    @SubscribeEvent
+    public void keyPressed(InputEvent.KeyInputEvent event) {
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+            for (IKeyBoundItem keyBoundItem : ListOfRegisteredKeyBoundItems) {
+                if (Keyboard.isKeyDown(keyBoundItem.getKey())) {
+                    EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+                    ItemStack stack = player.getCurrentEquippedItem();
+                    keyBoundItem.keyPressed(stack, player);
+                }
+            }
+        }
+    }
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onEntityJoinWorld(EntityJoinWorldEvent event)
     {
