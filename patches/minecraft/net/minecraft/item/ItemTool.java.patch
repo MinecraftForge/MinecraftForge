@@ -40,7 +40,7 @@
      }
 +
 +    /*===================================== FORGE START =================================*/
-+    private String toolClass;
++    protected String toolClass;
 +    @Override
 +    public int getHarvestLevel(ItemStack stack, String toolClass)
 +    {
