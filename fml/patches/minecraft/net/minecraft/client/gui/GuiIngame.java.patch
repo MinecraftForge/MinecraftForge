@@ -9,7 +9,7 @@
  import java.awt.Color;
 @@ -312,6 +313,11 @@
              this.func_73731_b(fontrenderer, s, k - fontrenderer.func_78256_a(s) - 2, 2, 14737632);
-             s = "Allocated memory: " + k5 * 100L / i5 + "% (" + k5 / 1024L / 1024L + "MB)";
+             s = "Allocated memory: " + j5 * 100L / i5 + "% (" + j5 / 1024L / 1024L + "MB)";
              this.func_73731_b(fontrenderer, s, k - fontrenderer.func_78256_a(s) - 2, 12, 14737632);
 +            int offset = 22;
 +            for (String brd : FMLCommonHandler.instance().getBrandings(false))
