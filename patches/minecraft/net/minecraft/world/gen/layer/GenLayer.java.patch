@@ -16,15 +16,15 @@
          }
 +        b0 = getModdedBiomeSize(p_75901_2_, b0);
  
-         GenLayer genlayer = GenLayerZoom.func_75915_a(1000L, genlayer3, 0);
+         GenLayer genlayer = GenLayerZoom.func_75915_a(1000L, genlayer2, 0);
          GenLayerRiverInit genlayerriverinit = new GenLayerRiverInit(100L, genlayer);
--        Object object = new GenLayerBiome(200L, genlayer3, p_75901_2_);
-+        Object object = p_75901_2_.getBiomeLayer(p_75901_0_, genlayer3);
+-        Object object = new GenLayerBiome(200L, genlayer2, p_75901_2_);
++        Object object = p_75901_2_.getBiomeLayer(p_75901_0_, genlayer2);
  
 -        if (!flag)
 -        {
--            GenLayer genlayer2 = GenLayerZoom.func_75915_a(1000L, (GenLayer)object, 2);
--            object = new GenLayerBiomeEdge(1000L, genlayer2);
+-            GenLayer genlayer3 = GenLayerZoom.func_75915_a(1000L, (GenLayer)object, 2);
+-            object = new GenLayerBiomeEdge(1000L, genlayer3);
 -        }
 -
          GenLayer genlayer1 = GenLayerZoom.func_75915_a(1000L, genlayerriverinit, 2);

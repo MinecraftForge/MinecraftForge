@@ -39,8 +39,8 @@
          d1 = (double)iicon.func_94212_f();
          d2 = (double)iicon.func_94206_g();
 @@ -2037,7 +2041,7 @@
-         double d9;
          double d10;
+         double d11;
  
 -        if (!World.func_147466_a(this.field_147845_a, p_147801_2_, p_147801_3_ - 1, p_147801_4_) && !Blocks.field_150480_ab.func_149844_e(this.field_147845_a, p_147801_2_, p_147801_3_ - 1, p_147801_4_))
 +        if (!World.func_147466_a(this.field_147845_a, p_147801_2_, p_147801_3_ - 1, p_147801_4_) && !Blocks.field_150480_ab.canCatchFire(this.field_147845_a, p_147801_2_, p_147801_3_ - 1, p_147801_4_, UP))

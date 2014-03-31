@@ -93,19 +93,16 @@
              {
                  f1 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -285,7 +301,10 @@
-                     f3 = (float)(i >> 8 & 255) / 255.0F;
-                     float f4 = (float)(i & 255) / 255.0F;
-                     GL11.glColor4f(f2, f3, f4, 1.0F);
--                    this.field_76990_c.field_78721_f.func_78443_a(p_130005_1_, itemstack, j);
-+                    for (int x = 1; x < itemstack.func_77973_b().getRenderPasses(itemstack.func_77960_j()); x++)
-+                    {
-+                        this.field_76990_c.field_78721_f.func_78443_a(p_130005_1_, itemstack, x);
-+                    }
-                 }
-             }
-             else
-@@ -336,4 +355,33 @@
+@@ -278,7 +294,7 @@
+ 
+             if (itemstack.func_77973_b().func_77623_v())
+             {
+-                for (i = 0; i <= 1; ++i)
++                for (i = 0; i < itemstack.func_77973_b().getRenderPasses(itemstack.func_77960_j()); ++i)
+                 {
+                     int j = itemstack.func_77973_b().func_82790_a(itemstack, i);
+                     f2 = (float)(j >> 16 & 255) / 255.0F;
+@@ -336,4 +352,33 @@
      {
          this.func_76986_a((EntityLiving)p_76986_1_, p_76986_2_, p_76986_4_, p_76986_6_, p_76986_8_, p_76986_9_);
      }

@@ -34,8 +34,8 @@
 +
              GL11.glTranslatef((float)p_77014_2_, (float)p_77014_4_ + f2, (float)p_77014_6_);
              GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-             float f7;
              float f6;
+             float f7;
              int k;
  
 +            if (ForgeHooksClient.renderEntityItem(p_77014_1_, itemstack, f2, f3, field_77025_h, field_76990_c.field_78724_e, field_147909_c, b0))
@@ -178,7 +178,7 @@
  
              GL11.glDisable(GL11.GL_ALPHA_TEST);
 @@ -462,8 +508,19 @@
-                 GL11.glColor4f(f4, f3, f, 1.0F);
+                 GL11.glColor4f(f3, f4, f, 1.0F);
              }
  
 +            GL11.glDisable(GL11.GL_LIGHTING); //Forge: Make sure that render states are reset, ad renderEffect can derp them up.

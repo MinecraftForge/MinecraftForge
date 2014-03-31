@@ -535,7 +535,7 @@
          chatcomponenttext.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
          return chatcomponenttext;
      }
-@@ -1996,6 +2152,118 @@
+@@ -2042,6 +2198,118 @@
          FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
      }
  

@@ -20,7 +20,32 @@
  
  public class StructureVillagePieces
  {
-@@ -346,6 +350,7 @@
+@@ -927,7 +931,7 @@
+                     if (p_74875_3_.func_78890_b(j, i, k))
+                     {
+                         this.field_74917_c = true;
+-                        this.func_74879_a(p_74875_1_, p_74875_3_, p_74875_2_, 5, 1, 5, field_74918_a, 3 + p_74875_2_.nextInt(6));
++                        this.func_74879_a(p_74875_1_, p_74875_3_, p_74875_2_, 5, 1, 5, ChestGenHooks.getItems(VILLAGE_BLACKSMITH, p_74875_2_), ChestGenHooks.getCount(VILLAGE_BLACKSMITH, p_74875_2_));
+                     }
+                 }
+ 
+@@ -1424,6 +1428,7 @@
+             public List field_74932_i = new ArrayList();
+             public List field_74930_j = new ArrayList();
+             private static final String __OBFID = "CL_00000527";
++            public BiomeGenBase biome;
+ 
+             public Start() {}
+ 
+@@ -1435,6 +1440,7 @@
+                 this.field_74928_c = p_i2104_7_;
+                 BiomeGenBase biomegenbase = p_i2104_1_.func_76935_a(p_i2104_4_, p_i2104_5_);
+                 this.field_74927_b = biomegenbase == BiomeGenBase.field_76769_d || biomegenbase == BiomeGenBase.field_76786_s;
++                this.biome = biomegenbase;
+             }
+ 
+             public WorldChunkManager func_74925_d()
+@@ -1495,6 +1501,7 @@
              private int field_74896_a;
              private boolean field_143014_b;
              private static final String __OBFID = "CL_00000531";
@@ -28,7 +53,7 @@
  
              public Village() {}
  
-@@ -356,6 +361,7 @@
+@@ -1505,6 +1512,7 @@
                  if (p_i2107_1_ != null)
                  {
                      this.field_143014_b = p_i2107_1_.field_74927_b;
@@ -36,7 +61,7 @@
                  }
              }
  
-@@ -469,6 +475,9 @@
+@@ -1618,6 +1626,9 @@
  
              protected Block func_151558_b(Block p_151558_1_, int p_151558_2_)
              {
@@ -46,7 +71,7 @@
                  if (this.field_143014_b)
                  {
                      if (p_151558_1_ == Blocks.field_150364_r || p_151558_1_ == Blocks.field_150363_s)
-@@ -507,6 +516,9 @@
+@@ -1656,6 +1667,9 @@
  
              protected int func_151557_c(Block p_151557_1_, int p_151557_2_)
              {
@@ -56,28 +81,3 @@
                  if (this.field_143014_b)
                  {
                      if (p_151557_1_ == Blocks.field_150364_r || p_151557_1_ == Blocks.field_150363_s)
-@@ -1265,7 +1277,7 @@
-                     if (p_74875_3_.func_78890_b(j, i, k))
-                     {
-                         this.field_74917_c = true;
--                        this.func_74879_a(p_74875_1_, p_74875_3_, p_74875_2_, 5, 1, 5, field_74918_a, 3 + p_74875_2_.nextInt(6));
-+                        this.func_74879_a(p_74875_1_, p_74875_3_, p_74875_2_, 5, 1, 5, ChestGenHooks.getItems(VILLAGE_BLACKSMITH, p_74875_2_), ChestGenHooks.getCount(VILLAGE_BLACKSMITH, p_74875_2_));
-                     }
-                 }
- 
-@@ -1306,6 +1318,7 @@
-             public List field_74932_i = new ArrayList();
-             public List field_74930_j = new ArrayList();
-             private static final String __OBFID = "CL_00000527";
-+            public BiomeGenBase biome;
- 
-             public Start() {}
- 
-@@ -1317,6 +1330,7 @@
-                 this.field_74928_c = p_i2104_7_;
-                 BiomeGenBase biomegenbase = p_i2104_1_.func_76935_a(p_i2104_4_, p_i2104_5_);
-                 this.field_74927_b = biomegenbase == BiomeGenBase.field_76769_d || biomegenbase == BiomeGenBase.field_76786_s;
-+                this.biome = biomegenbase;
-             }
- 
-             public WorldChunkManager func_74925_d()

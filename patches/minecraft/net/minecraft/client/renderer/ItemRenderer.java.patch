@@ -58,8 +58,8 @@
                  GL11.glDepthFunc(GL11.GL_EQUAL);
                  GL11.glDisable(GL11.GL_LIGHTING);
 @@ -273,7 +292,7 @@
-         RenderPlayer renderplayer;
          Render render;
+         RenderPlayer renderplayer;
  
 -        if (itemstack != null && itemstack.func_77973_b() == Items.field_151098_aY)
 +        if (itemstack != null && itemstack.func_77973_b() instanceof ItemMap)
@@ -96,21 +96,21 @@
              if (itemstack.func_77973_b().func_77623_v())
              {
 -                this.func_78443_a(entityclientplayermp, itemstack, 0);
--                int j1 = itemstack.func_77973_b().func_82790_a(itemstack, 1);
--                f10 = (float)(j1 >> 16 & 255) / 255.0F;
--                f11 = (float)(j1 >> 8 & 255) / 255.0F;
--                f12 = (float)(j1 & 255) / 255.0F;
+-                int k1 = itemstack.func_77973_b().func_82790_a(itemstack, 1);
+-                f10 = (float)(k1 >> 16 & 255) / 255.0F;
+-                f11 = (float)(k1 >> 8 & 255) / 255.0F;
+-                f12 = (float)(k1 & 255) / 255.0F;
 -                GL11.glColor4f(1.0F * f10, 1.0F * f11, 1.0F * f12, 1.0F);
 -                this.func_78443_a(entityclientplayermp, itemstack, 1);
 +                this.renderItem(entityclientplayermp, itemstack, 0, EQUIPPED_FIRST_PERSON);
 +                for (int x = 1; x < itemstack.func_77973_b().getRenderPasses(itemstack.func_77960_j()); x++)
 +                {
-+                    int j1 = itemstack.func_77973_b().func_82790_a(itemstack, x);
-+                    f10 = (float)(j1 >> 16 & 255) / 255.0F;
-+                    f11 = (float)(j1 >> 8 & 255) / 255.0F;
-+                    f12 = (float)(j1 & 255) / 255.0F;
++                    int k1 = itemstack.func_77973_b().func_82790_a(itemstack, 1);
++                    f10 = (float)(k1 >> 16 & 255) / 255.0F;
++                    f11 = (float)(k1 >> 8 & 255) / 255.0F;
++                    f12 = (float)(k1 & 255) / 255.0F;
 +                    GL11.glColor4f(1.0F * f10, 1.0F * f11, 1.0F * f12, 1.0F);
-+                    this.renderItem(entityclientplayermp, itemstack, x, EQUIPPED_FIRST_PERSON);
++                    this.renderItem(entityclientplayermp, itemstack, 1, EQUIPPED_FIRST_PERSON);
 +                }
              }
              else

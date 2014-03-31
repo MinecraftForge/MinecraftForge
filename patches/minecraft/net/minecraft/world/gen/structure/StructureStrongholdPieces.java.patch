@@ -10,7 +10,16 @@
  public class StructureStrongholdPieces
  {
      private static final StructureStrongholdPieces.PieceWeight[] field_75205_b = new StructureStrongholdPieces.PieceWeight[] {new StructureStrongholdPieces.PieceWeight(StructureStrongholdPieces.Straight.class, 40, 0), new StructureStrongholdPieces.PieceWeight(StructureStrongholdPieces.Prison.class, 5, 5), new StructureStrongholdPieces.PieceWeight(StructureStrongholdPieces.LeftTurn.class, 20, 0), new StructureStrongholdPieces.PieceWeight(StructureStrongholdPieces.RightTurn.class, 20, 0), new StructureStrongholdPieces.PieceWeight(StructureStrongholdPieces.RoomCrossing.class, 10, 6), new StructureStrongholdPieces.PieceWeight(StructureStrongholdPieces.StairsStraight.class, 5, 5), new StructureStrongholdPieces.PieceWeight(StructureStrongholdPieces.Stairs.class, 5, 5), new StructureStrongholdPieces.PieceWeight(StructureStrongholdPieces.Crossing.class, 5, 4), new StructureStrongholdPieces.PieceWeight(StructureStrongholdPieces.ChestCorridor.class, 5, 4), new StructureStrongholdPieces.PieceWeight(StructureStrongholdPieces.Library.class, 10, 2)
-@@ -562,12 +565,14 @@
+@@ -305,7 +308,7 @@
+                         if (p_74875_3_.func_78890_b(j, i, k))
+                         {
+                             this.field_75002_c = true;
+-                            this.func_74879_a(p_74875_1_, p_74875_3_, p_74875_2_, 3, 2, 3, WeightedRandomChestContent.func_92080_a(field_75003_a, new WeightedRandomChestContent[] {Items.field_151134_bR.func_92114_b(p_74875_2_)}), 2 + p_74875_2_.nextInt(2));
++                            this.func_74879_a(p_74875_1_, p_74875_3_, p_74875_2_, 3, 2, 3, ChestGenHooks.getItems(STRONGHOLD_CORRIDOR, p_74875_2_), ChestGenHooks.getCount(STRONGHOLD_CORRIDOR, p_74875_2_));
+                         }
+                     }
+ 
+@@ -744,12 +747,14 @@
                          this.func_151550_a(p_74875_1_, Blocks.field_150478_aa, 0, b1, 8, b2 + 1, p_74875_3_);
                      }
  
@@ -27,16 +36,7 @@
                      }
  
                      return true;
-@@ -788,7 +793,7 @@
-                         if (p_74875_3_.func_78890_b(j, i, k))
-                         {
-                             this.field_75002_c = true;
--                            this.func_74879_a(p_74875_1_, p_74875_3_, p_74875_2_, 3, 2, 3, WeightedRandomChestContent.func_92080_a(field_75003_a, new WeightedRandomChestContent[] {Items.field_151134_bR.func_92114_b(p_74875_2_)}), 2 + p_74875_2_.nextInt(2));
-+                            this.func_74879_a(p_74875_1_, p_74875_3_, p_74875_2_, 3, 2, 3, ChestGenHooks.getItems(STRONGHOLD_CORRIDOR, p_74875_2_), ChestGenHooks.getCount(STRONGHOLD_CORRIDOR, p_74875_2_));
-                         }
-                     }
- 
-@@ -938,7 +943,7 @@
+@@ -1160,7 +1165,7 @@
                              this.func_151550_a(p_74875_1_, Blocks.field_150468_ap, this.func_151555_a(Blocks.field_150468_ap, 4), 9, 1, 3, p_74875_3_);
                              this.func_151550_a(p_74875_1_, Blocks.field_150468_ap, this.func_151555_a(Blocks.field_150468_ap, 4), 9, 2, 3, p_74875_3_);
                              this.func_151550_a(p_74875_1_, Blocks.field_150468_ap, this.func_151555_a(Blocks.field_150468_ap, 4), 9, 3, 3, p_74875_3_);

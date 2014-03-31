@@ -42,8 +42,8 @@
 +            {
              this.field_72748_H = list.size();
 +            }
-             Entity entity;
              int i;
+             Entity entity;
  
              for (i = 0; i < this.field_72769_h.field_73007_j.size(); ++i)
              {
