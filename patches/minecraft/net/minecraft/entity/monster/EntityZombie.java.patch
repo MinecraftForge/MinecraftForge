@@ -11,36 +11,36 @@
  
  public class EntityZombie extends EntityMob
  {
-@@ -75,7 +79,7 @@
-         this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(40.0D);
-         this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.23000000417232513D);
-         this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(3.0D);
--        this.getAttributeMap().registerAttribute(field_110186_bp).setBaseValue(this.rand.nextDouble() * 0.10000000149011612D);
-+        this.getAttributeMap().registerAttribute(field_110186_bp).setBaseValue(this.rand.nextDouble() * ForgeModContainer.zombieSummonBaseChance);
+@@ -74,7 +78,7 @@
+         this.func_110148_a(SharedMonsterAttributes.field_111265_b).func_111128_a(40.0D);
+         this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.23000000417232513D);
+         this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111128_a(3.0D);
+-        this.func_110140_aT().func_111150_b(field_110186_bp).func_111128_a(this.field_70146_Z.nextDouble() * 0.10000000149011612D);
++        this.func_110140_aT().func_111150_b(field_110186_bp).func_111128_a(this.field_70146_Z.nextDouble() * ForgeModContainer.zombieSummonBaseChance);
      }
  
-     protected void entityInit()
-@@ -234,12 +238,28 @@
-                 entitylivingbase = (EntityLivingBase)par1DamageSource.getEntity();
+     protected void func_70088_a()
+@@ -224,12 +228,28 @@
+                 entitylivingbase = (EntityLivingBase)p_70097_1_.func_76346_g();
              }
  
--            if (entitylivingbase != null && this.worldObj.difficultySetting == EnumDifficulty.HARD && (double)this.rand.nextFloat() < this.getEntityAttribute(field_110186_bp).getAttributeValue())
+-            if (entitylivingbase != null && this.field_70170_p.field_73013_u == EnumDifficulty.HARD && (double)this.field_70146_Z.nextFloat() < this.func_110148_a(field_110186_bp).func_111126_e())
 +
-+            int i = MathHelper.floor_double(this.posX);
-+            int j = MathHelper.floor_double(this.posY);
-+            int k = MathHelper.floor_double(this.posZ);
++            int i = MathHelper.func_76128_c(this.field_70165_t);
++            int j = MathHelper.func_76128_c(this.field_70163_u);
++            int k = MathHelper.func_76128_c(this.field_70161_v);
 +
-+            SummonAidEvent summonAid = ForgeEventFactory.fireZombieSummonAid(this, worldObj, i, j, k, entitylivingbase, this.getEntityAttribute(field_110186_bp).getAttributeValue());
++            SummonAidEvent summonAid = ForgeEventFactory.fireZombieSummonAid(this, field_70170_p, i, j, k, entitylivingbase, this.func_110148_a(field_110186_bp).func_111126_e());
 +            
 +            if (summonAid.getResult() == Result.DENY)
              {
--                int i = MathHelper.floor_double(this.posX);
--                int j = MathHelper.floor_double(this.posY);
--                int k = MathHelper.floor_double(this.posZ);
--                EntityZombie entityzombie = new EntityZombie(this.worldObj);
+-                int i = MathHelper.func_76128_c(this.field_70165_t);
+-                int j = MathHelper.func_76128_c(this.field_70163_u);
+-                int k = MathHelper.func_76128_c(this.field_70161_v);
+-                EntityZombie entityzombie = new EntityZombie(this.field_70170_p);
 +                return true;
 +            }
-+            else if (summonAid.getResult() == Result.ALLOW || entitylivingbase != null && this.worldObj.difficultySetting == EnumDifficulty.HARD && (double)this.rand.nextFloat() < this.getEntityAttribute(field_110186_bp).getAttributeValue())
++            else if (summonAid.getResult() == Result.ALLOW || entitylivingbase != null && this.field_70170_p.field_73013_u == EnumDifficulty.HARD && (double)this.field_70146_Z.nextFloat() < this.func_110148_a(field_110186_bp).func_111126_e())
 +            {
 +                EntityZombie entityzombie;
 +                if (summonAid.customSummonedAid != null && summonAid.getResult() == Result.ALLOW)
@@ -49,26 +49,26 @@
 +                }
 +                else
 +                {
-+                    entityzombie = new EntityZombie(this.worldObj);
++                    entityzombie = new EntityZombie(this.field_70170_p);
 +                }
  
                  for (int l = 0; l < 50; ++l)
                  {
-@@ -254,7 +274,7 @@
-                         if (this.worldObj.checkNoEntityCollision(entityzombie.boundingBox) && this.worldObj.getCollidingBoundingBoxes(entityzombie, entityzombie.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(entityzombie.boundingBox))
+@@ -244,7 +264,7 @@
+                         if (this.field_70170_p.func_72855_b(entityzombie.field_70121_D) && this.field_70170_p.func_72945_a(entityzombie, entityzombie.field_70121_D).isEmpty() && !this.field_70170_p.func_72953_d(entityzombie.field_70121_D))
                          {
-                             this.worldObj.spawnEntityInWorld(entityzombie);
--                            entityzombie.setAttackTarget(entitylivingbase);
-+                            if (entitylivingbase != null) entityzombie.setAttackTarget(entitylivingbase);
-                             entityzombie.onSpawnWithEgg((IEntityLivingData)null);
-                             this.getEntityAttribute(field_110186_bp).applyModifier(new AttributeModifier("Zombie reinforcement caller charge", -0.05000000074505806D, 0));
-                             entityzombie.getEntityAttribute(field_110186_bp).applyModifier(new AttributeModifier("Zombie reinforcement callee charge", -0.05000000074505806D, 0));
-@@ -449,7 +469,7 @@
+                             this.field_70170_p.func_72838_d(entityzombie);
+-                            entityzombie.func_70624_b(entitylivingbase);
++                            if (entitylivingbase != null) entityzombie.func_70624_b(entitylivingbase);
+                             entityzombie.func_110161_a((IEntityLivingData)null);
+                             this.func_110148_a(field_110186_bp).func_111121_a(new AttributeModifier("Zombie reinforcement caller charge", -0.05000000074505806D, 0));
+                             entityzombie.func_110148_a(field_110186_bp).func_111121_a(new AttributeModifier("Zombie reinforcement callee charge", -0.05000000074505806D, 0));
+@@ -430,7 +450,7 @@
  
-         if (par1EntityLivingData1 == null)
+         if (p_110161_1_1 == null)
          {
--            par1EntityLivingData1 = new EntityZombie.GroupData(this.worldObj.rand.nextFloat() < 0.05F, this.worldObj.rand.nextFloat() < 0.05F, null);
-+            par1EntityLivingData1 = new EntityZombie.GroupData(this.worldObj.rand.nextFloat() < ForgeModContainer.zombieBabyChance, this.worldObj.rand.nextFloat() < 0.05F, null);
+-            p_110161_1_1 = new EntityZombie.GroupData(this.field_70170_p.field_73012_v.nextFloat() < 0.05F, this.field_70170_p.field_73012_v.nextFloat() < 0.05F, null);
++            p_110161_1_1 = new EntityZombie.GroupData(this.field_70170_p.field_73012_v.nextFloat() < ForgeModContainer.zombieBabyChance, this.field_70170_p.field_73012_v.nextFloat() < 0.05F, null);
          }
  
-         if (par1EntityLivingData1 instanceof EntityZombie.GroupData)
+         if (p_110161_1_1 instanceof EntityZombie.GroupData)

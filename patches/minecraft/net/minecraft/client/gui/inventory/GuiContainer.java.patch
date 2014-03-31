@@ -8,29 +8,29 @@
  import net.minecraft.client.gui.GuiScreen;
  import net.minecraft.client.renderer.OpenGlHelper;
  import net.minecraft.client.renderer.RenderHelper;
-@@ -123,7 +124,11 @@
+@@ -112,7 +113,11 @@
              }
          }
  
 +        //Forge: Force lighting to be disabled as there are some issue where lighting would
 +        //incorrectly be applied based on items that are in the inventory.
 +        GL11.glDisable(GL11.GL_LIGHTING);
-         this.drawGuiContainerForegroundLayer(par1, par2);
+         this.func_146979_b(p_73863_1_, p_73863_2_);
 +        GL11.glEnable(GL11.GL_LIGHTING);
-         InventoryPlayer inventoryplayer = this.mc.thePlayer.inventory;
-         ItemStack itemstack = this.draggedStack == null ? inventoryplayer.getItemStack() : this.draggedStack;
+         InventoryPlayer inventoryplayer = this.field_146297_k.field_71439_g.field_71071_by;
+         ItemStack itemstack = this.field_147012_x == null ? inventoryplayer.func_70445_o() : this.field_147012_x;
  
-@@ -187,8 +192,11 @@
+@@ -176,8 +181,11 @@
          GL11.glTranslatef(0.0F, 0.0F, 32.0F);
-         this.zLevel = 200.0F;
-         itemRender.zLevel = 200.0F;
--        itemRender.renderItemAndEffectIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), p_146982_1_, p_146982_2_, p_146982_3_);
--        itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), p_146982_1_, p_146982_2_, p_146982_3_ - (this.draggedStack == null ? 0 : 8), p_146982_4_);
+         this.field_73735_i = 200.0F;
+         field_146296_j.field_77023_b = 200.0F;
+-        field_146296_j.func_82406_b(this.field_146289_q, this.field_146297_k.func_110434_K(), p_146982_1_, p_146982_2_, p_146982_3_);
+-        field_146296_j.func_94148_a(this.field_146289_q, this.field_146297_k.func_110434_K(), p_146982_1_, p_146982_2_, p_146982_3_ - (this.field_147012_x == null ? 0 : 8), p_146982_4_);
 +        FontRenderer font = null;
-+        if (p_146982_1_ != null) font = p_146982_1_.getItem().getFontRenderer(p_146982_1_);
-+        if (font == null) font = fontRendererObj;
-+        itemRender.renderItemAndEffectIntoGUI(font, this.mc.getTextureManager(), p_146982_1_, p_146982_2_, p_146982_3_);
-+        itemRender.renderItemOverlayIntoGUI(font, this.mc.getTextureManager(), p_146982_1_, p_146982_2_, p_146982_3_ - (this.draggedStack == null ? 0 : 8), p_146982_4_);
-         this.zLevel = 0.0F;
-         itemRender.zLevel = 0.0F;
++        if (p_146982_1_ != null) font = p_146982_1_.func_77973_b().getFontRenderer(p_146982_1_);
++        if (font == null) font = field_146289_q;
++        field_146296_j.func_82406_b(font, this.field_146297_k.func_110434_K(), p_146982_1_, p_146982_2_, p_146982_3_);
++        field_146296_j.func_94148_a(font, this.field_146297_k.func_110434_K(), p_146982_1_, p_146982_2_, p_146982_3_ - (this.field_147012_x == null ? 0 : 8), p_146982_4_);
+         this.field_73735_i = 0.0F;
+         field_146296_j.field_77023_b = 0.0F;
      }

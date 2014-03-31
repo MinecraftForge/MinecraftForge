@@ -15,25 +15,25 @@
  {
      private static final String __OBFID = "CL_00000208";
  
-@@ -28,7 +33,7 @@
-     // JAVADOC METHOD $$ func_149742_c
-     public boolean canPlaceBlockAt(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
+@@ -27,7 +32,7 @@
+ 
+     public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
      {
--        return super.canPlaceBlockAt(p_149742_1_, p_149742_2_, p_149742_3_, p_149742_4_) && this.canPlaceBlockOn(p_149742_1_.getBlock(p_149742_2_, p_149742_3_ - 1, p_149742_4_));
-+        return super.canPlaceBlockAt(p_149742_1_, p_149742_2_, p_149742_3_, p_149742_4_) && this.canBlockStay(p_149742_1_, p_149742_2_, p_149742_3_, p_149742_4_);
+-        return super.func_149742_c(p_149742_1_, p_149742_2_, p_149742_3_, p_149742_4_) && this.func_149854_a(p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_ - 1, p_149742_4_));
++        return super.func_149742_c(p_149742_1_, p_149742_2_, p_149742_3_, p_149742_4_) && this.func_149718_j(p_149742_1_, p_149742_2_, p_149742_3_, p_149742_4_);
      }
  
-     // JAVADOC METHOD $$ func_149854_a
-@@ -63,7 +68,7 @@
-     // JAVADOC METHOD $$ func_149718_j
-     public boolean canBlockStay(World p_149718_1_, int p_149718_2_, int p_149718_3_, int p_149718_4_)
+     protected boolean func_149854_a(Block p_149854_1_)
+@@ -57,7 +62,7 @@
+ 
+     public boolean func_149718_j(World p_149718_1_, int p_149718_2_, int p_149718_3_, int p_149718_4_)
      {
--        return this.canPlaceBlockOn(p_149718_1_.getBlock(p_149718_2_, p_149718_3_ - 1, p_149718_4_));
-+        return  p_149718_1_.getBlock(p_149718_2_, p_149718_3_ - 1, p_149718_4_).canSustainPlant(p_149718_1_, p_149718_2_, p_149718_3_ - 1, p_149718_4_, ForgeDirection.UP, this);
+-        return this.func_149854_a(p_149718_1_.func_147439_a(p_149718_2_, p_149718_3_ - 1, p_149718_4_));
++        return  p_149718_1_.func_147439_a(p_149718_2_, p_149718_3_ - 1, p_149718_4_).canSustainPlant(p_149718_1_, p_149718_2_, p_149718_3_ - 1, p_149718_4_, ForgeDirection.UP, this);
      }
  
-     // JAVADOC METHOD $$ func_149668_a
-@@ -89,4 +94,37 @@
+     public AxisAlignedBB func_149668_a(World p_149668_1_, int p_149668_2_, int p_149668_3_, int p_149668_4_)
+@@ -79,4 +84,37 @@
      {
          return 1;
      }
@@ -41,21 +41,21 @@
 +    @Override
 +    public EnumPlantType getPlantType(IBlockAccess world, int x, int y, int z)
 +    {
-+        if (this == Blocks.wheat)          return Crop;
-+        if (this == Blocks.carrots)        return Crop;
-+        if (this == Blocks.potatoes)       return Crop;
-+        if (this == Blocks.melon_stem)     return Crop;
-+        if (this == Blocks.pumpkin_stem)   return Crop;
-+        if (this == Blocks.deadbush)       return Desert;
-+        if (this == Blocks.waterlily)      return Water;
-+        if (this == Blocks.red_mushroom)   return Cave;
-+        if (this == Blocks.brown_mushroom) return Cave;
-+        if (this == Blocks.nether_wart)    return Nether;
-+        if (this == Blocks.sapling)        return Plains;
-+        if (this == Blocks.tallgrass)      return Plains;
-+        if (this == Blocks.double_plant)   return Plains;
-+        if (this == Blocks.red_flower)     return Plains;
-+        if (this == Blocks.yellow_flower)  return Plains;        
++        if (this == Blocks.field_150464_aj)          return Crop;
++        if (this == Blocks.field_150459_bM)        return Crop;
++        if (this == Blocks.field_150469_bN)       return Crop;
++        if (this == Blocks.field_150394_bc)     return Crop;
++        if (this == Blocks.field_150393_bb)   return Crop;
++        if (this == Blocks.field_150330_I)       return Desert;
++        if (this == Blocks.field_150392_bi)      return Water;
++        if (this == Blocks.field_150337_Q)   return Cave;
++        if (this == Blocks.field_150338_P) return Cave;
++        if (this == Blocks.field_150388_bm)    return Nether;
++        if (this == Blocks.field_150345_g)        return Plains;
++        if (this == Blocks.field_150329_H)      return Plains;
++        if (this == Blocks.field_150398_cm)   return Plains;
++        if (this == Blocks.field_150328_O)     return Plains;
++        if (this == Blocks.field_150327_N)  return Plains;        
 +        return Plains;
 +    }
 +
@@ -68,6 +68,6 @@
 +    @Override
 +    public int getPlantMetadata(IBlockAccess world, int x, int y, int z)
 +    {
-+        return world.getBlockMetadata(x, y, z);
++        return world.func_72805_g(x, y, z);
 +    }
  }

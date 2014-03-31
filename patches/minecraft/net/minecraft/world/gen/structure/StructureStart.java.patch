@@ -1,13 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureStart.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureStart.java
-@@ -65,6 +65,10 @@
+@@ -62,6 +62,10 @@
  
-     public NBTTagCompound func_143021_a(int par1, int par2)
+     public NBTTagCompound func_143021_a(int p_143021_1_, int p_143021_2_)
      {
 +        if (MapGenStructureIO.func_143033_a(this) == null) // This is just a more friendly error instead of the 'Null String' below
 +        {
 +            throw new RuntimeException("StructureStart \"" + this.getClass().getName() + "\" missing ID Mapping, Modder see MapGenStructureIO");
 +        }
          NBTTagCompound nbttagcompound = new NBTTagCompound();
-         nbttagcompound.setString("id", MapGenStructureIO.func_143033_a(this));
-         nbttagcompound.setInteger("ChunkX", par1);
+         nbttagcompound.func_74778_a("id", MapGenStructureIO.func_143033_a(this));
+         nbttagcompound.func_74768_a("ChunkX", p_143021_1_);

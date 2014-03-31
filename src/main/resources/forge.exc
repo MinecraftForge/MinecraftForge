@@ -1,0 +1,12 @@
+net/minecraft/client/particle/EntityDiggingFX.<init>(Lnet/minecraft/world/World;DDDDDDLnet/minecraft/block/Block;II)V=|p_i1234_1_,p_i1234_2_,p_i1234_4_,p_i1234_6_,p_i1234_8_,p_i1234_10_,p_i1234_12_,p_i1234_14_,p_i1234_15_,side
+net/minecraft/client/renderer/ItemRenderer.renderItem(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/item/ItemStack;ILnet/minecraftforge/client/IItemRenderer$ItemRenderType;)V=|p_78443_1_,p_78443_2_,p_78443_3_,type
+net/minecraft/client/renderer/RenderGlobal.drawBlockDamageTexture(Lnet/minecraft/client/renderer/Tessellator;Lnet/minecraft/entity/EntityLivingBase;F)V=|p_72717_1_,p_72717_2_,p_72717_3_
+net/minecraft/client/renderer/entity/RenderItem.renderDroppedItem(Lnet/minecraft/entity/item/EntityItem;Lnet/minecraft/util/IIcon;IFFFFI)V=|p_77020_1_,p_77020_2_,p_77020_3_,p_77020_4_,p_77020_5_,p_77020_6_,p_77020_7_,pass
+net/minecraft/client/renderer/entity/RenderItem.renderItemIntoGUI(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/client/renderer/texture/TextureManager;Lnet/minecraft/item/ItemStack;IIZ)V=|p_77015_1_,p_77015_2_,p_77015_3_,p_77015_4_,p_77015_5_,renderEffect
+net/minecraft/server/management/ServerConfigurationManager.transferPlayerToDimension(Lnet/minecraft/entity/player/EntityPlayerMP;ILnet/minecraft/world/Teleporter;)V=|p_72356_1_,p_72356_2_,teleporter
+net/minecraft/server/management/ServerConfigurationManager.transferEntityToWorld(Lnet/minecraft/entity/Entity;ILnet/minecraft/world/WorldServer;Lnet/minecraft/world/WorldServer;Lnet/minecraft/world/Teleporter;)V=|p_82448_1_,p_82448_2_,p_82448_3_,p_82448_4_,teleporter
+net/minecraft/world/World.getBiomeGenForCoordsBody(II)Lnet/minecraft/world/biome/BiomeGenBase;=|p_72807_1_,p_72807_2_
+net/minecraft/world/World.getSkyColorBody(Lnet/minecraft/entity/Entity;F)Lnet/minecraft/util/Vec3;=|p_72833_1_,p_72833_2_
+net/minecraft/world/World.drawCloudsBody(F)Lnet/minecraft/util/Vec3;=|p_72824_1_
+net/minecraft/world/World.canBlockFreezeBody(IIIZ)Z=|p_72834_1_,p_72834_2_,p_72834_3_,p_72834_4_
+net/minecraft/world/biome/BiomeGenBase.<init>(IZ)V=|p_i1971_1_,register

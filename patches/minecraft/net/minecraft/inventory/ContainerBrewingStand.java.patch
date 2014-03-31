@@ -8,21 +8,21 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.stats.AchievementList;
  import net.minecraft.tileentity.TileEntityBrewingStand;
-@@ -203,7 +204,7 @@
+@@ -194,7 +195,7 @@
  
-             public void onPickupFromSlot(EntityPlayer par1EntityPlayer, ItemStack par2ItemStack)
+             public void func_82870_a(EntityPlayer p_82870_1_, ItemStack p_82870_2_)
              {
--                if (par2ItemStack.getItem() == Items.potionitem && par2ItemStack.getItemDamage() > 0)
-+                if (par2ItemStack.getItem() instanceof ItemPotion && par2ItemStack.getItemDamage() > 0)
+-                if (p_82870_2_.func_77973_b() == Items.field_151068_bn && p_82870_2_.func_77960_j() > 0)
++                if (p_82870_2_.func_77973_b() instanceof ItemPotion && p_82870_2_.func_77960_j() > 0)
                  {
-                     this.player.addStat(AchievementList.potion, 1);
+                     this.field_75244_a.func_71064_a(AchievementList.field_76001_A, 1);
                  }
-@@ -214,7 +215,7 @@
-             // JAVADOC METHOD $$ func_75243_a_
-             public static boolean canHoldPotion(ItemStack par0ItemStack)
+@@ -204,7 +205,7 @@
+ 
+             public static boolean func_75243_a_(ItemStack p_75243_0_)
              {
--                return par0ItemStack != null && (par0ItemStack.getItem() == Items.potionitem || par0ItemStack.getItem() == Items.glass_bottle);
-+                return par0ItemStack != null && (par0ItemStack.getItem() instanceof ItemPotion || par0ItemStack.getItem() == Items.glass_bottle);
+-                return p_75243_0_ != null && (p_75243_0_.func_77973_b() == Items.field_151068_bn || p_75243_0_.func_77973_b() == Items.field_151069_bo);
++                return p_75243_0_ != null && (p_75243_0_.func_77973_b() instanceof ItemPotion || p_75243_0_.func_77973_b() == Items.field_151069_bo);
              }
          }
  }

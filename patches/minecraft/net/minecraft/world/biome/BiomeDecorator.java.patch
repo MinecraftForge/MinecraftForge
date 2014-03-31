@@ -11,207 +11,207 @@
 +
  public class BiomeDecorator
  {
-     // JAVADOC FIELD $$ field_76815_a
-@@ -136,26 +141,30 @@
+     public World field_76815_a;
+@@ -105,26 +110,30 @@
  
-     protected void genDecorations(BiomeGenBase p_150513_1_)
+     protected void func_150513_a(BiomeGenBase p_150513_1_)
      {
-+        MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Pre(currentWorld, randomGenerator, chunk_X, chunk_Z));
-         this.generateOres();
++        MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Pre(field_76815_a, field_76813_b, field_76814_c, field_76811_d));
+         this.func_76797_b();
          int i;
          int j;
          int k;
  
--        for (i = 0; i < this.sandPerChunk2; ++i)
-+        boolean doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, SAND);
-+        for (i = 0; doGen && i < this.sandPerChunk2; ++i)
+-        for (i = 0; i < this.field_76805_H; ++i)
++        boolean doGen = TerrainGen.decorate(field_76815_a, field_76813_b, field_76814_c, field_76811_d, SAND);
++        for (i = 0; doGen && i < this.field_76805_H; ++i)
          {
-             j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             k = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-             this.sandGen.generate(this.currentWorld, this.randomGenerator, j, this.currentWorld.getTopSolidOrLiquidBlock(j, k), k);
+             j = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
+             k = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
+             this.field_76810_g.func_76484_a(this.field_76815_a, this.field_76813_b, j, this.field_76815_a.func_72825_h(j, k), k);
          }
  
--        for (i = 0; i < this.clayPerChunk; ++i)
-+        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, CLAY);
-+        for (i = 0; doGen && i < this.clayPerChunk; ++i)
+-        for (i = 0; i < this.field_76806_I; ++i)
++        doGen = TerrainGen.decorate(field_76815_a, field_76813_b, field_76814_c, field_76811_d, CLAY);
++        for (i = 0; doGen && i < this.field_76806_I; ++i)
          {
-             j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             k = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-             this.clayGen.generate(this.currentWorld, this.randomGenerator, j, this.currentWorld.getTopSolidOrLiquidBlock(j, k), k);
+             j = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
+             k = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
+             this.field_76809_f.func_76484_a(this.field_76815_a, this.field_76813_b, j, this.field_76815_a.func_72825_h(j, k), k);
          }
  
--        for (i = 0; i < this.sandPerChunk; ++i)
-+        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, SAND_PASS2);
-+        for (i = 0; doGen && i < this.sandPerChunk; ++i)
+-        for (i = 0; i < this.field_76801_G; ++i)
++        doGen = TerrainGen.decorate(field_76815_a, field_76813_b, field_76814_c, field_76811_d, SAND_PASS2);
++        for (i = 0; doGen && i < this.field_76801_G; ++i)
          {
-             j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             k = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-@@ -172,7 +181,8 @@
+             j = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
+             k = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
+@@ -141,7 +150,8 @@
          int l;
          int i1;
  
 -        for (j = 0; j < i; ++j)
-+        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, TREE);
++        doGen = TerrainGen.decorate(field_76815_a, field_76813_b, field_76814_c, field_76811_d, TREE);
 +        for (j = 0; doGen && j < i; ++j)
          {
-             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-@@ -186,14 +196,16 @@
+             k = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
+             l = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
+@@ -155,14 +165,16 @@
              }
          }
  
--        for (j = 0; j < this.bigMushroomsPerChunk; ++j)
-+        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, BIG_SHROOM);
-+        for (j = 0; doGen && j < this.bigMushroomsPerChunk; ++j)
+-        for (j = 0; j < this.field_76807_J; ++j)
++        doGen = TerrainGen.decorate(field_76815_a, field_76813_b, field_76814_c, field_76811_d, BIG_SHROOM);
++        for (j = 0; doGen && j < this.field_76807_J; ++j)
          {
-             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-             this.bigMushroomGen.generate(this.currentWorld, this.randomGenerator, k, this.currentWorld.getHeightValue(k, l), l);
+             k = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
+             l = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
+             this.field_76826_u.func_76484_a(this.field_76815_a, this.field_76813_b, k, this.field_76815_a.func_72976_f(k, l), l);
          }
  
--        for (j = 0; j < this.flowersPerChunk; ++j)
-+        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, FLOWERS);
-+        for (j = 0; doGen && j < this.flowersPerChunk; ++j)
+-        for (j = 0; j < this.field_76802_A; ++j)
++        doGen = TerrainGen.decorate(field_76815_a, field_76813_b, field_76814_c, field_76811_d, FLOWERS);
++        for (j = 0; doGen && j < this.field_76802_A; ++j)
          {
-             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-@@ -208,7 +220,8 @@
+             k = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
+             l = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
+@@ -177,7 +189,8 @@
              }
          }
  
--        for (j = 0; j < this.grassPerChunk; ++j)
-+        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, GRASS);
-+        for (j = 0; doGen && j < this.grassPerChunk; ++j)
+-        for (j = 0; j < this.field_76803_B; ++j)
++        doGen = TerrainGen.decorate(field_76815_a, field_76813_b, field_76814_c, field_76811_d, GRASS);
++        for (j = 0; doGen && j < this.field_76803_B; ++j)
          {
-             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-@@ -217,7 +230,8 @@
-             worldgenerator.generate(this.currentWorld, this.randomGenerator, k, i1, l);
+             k = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
+             l = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
+@@ -186,7 +199,8 @@
+             worldgenerator.func_76484_a(this.field_76815_a, this.field_76813_b, k, i1, l);
          }
  
--        for (j = 0; j < this.deadBushPerChunk; ++j)
-+        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, DEAD_BUSH);
-+        for (j = 0; doGen && j < this.deadBushPerChunk; ++j)
+-        for (j = 0; j < this.field_76804_C; ++j)
++        doGen = TerrainGen.decorate(field_76815_a, field_76813_b, field_76814_c, field_76811_d, DEAD_BUSH);
++        for (j = 0; doGen && j < this.field_76804_C; ++j)
          {
-             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-@@ -225,7 +239,8 @@
-             (new WorldGenDeadBush(Blocks.deadbush)).generate(this.currentWorld, this.randomGenerator, k, i1, l);
+             k = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
+             l = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
+@@ -194,7 +208,8 @@
+             (new WorldGenDeadBush(Blocks.field_150330_I)).func_76484_a(this.field_76815_a, this.field_76813_b, k, i1, l);
          }
  
--        for (j = 0; j < this.waterlilyPerChunk; ++j)
-+        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, LILYPAD);
-+        for (j = 0; doGen && j < this.waterlilyPerChunk; ++j)
+-        for (j = 0; j < this.field_76833_y; ++j)
++        doGen = TerrainGen.decorate(field_76815_a, field_76813_b, field_76814_c, field_76811_d, LILYPAD);
++        for (j = 0; doGen && j < this.field_76833_y; ++j)
          {
-             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-@@ -238,7 +253,8 @@
-             this.waterlilyGen.generate(this.currentWorld, this.randomGenerator, k, i1, l);
+             k = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
+             l = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
+@@ -207,7 +222,8 @@
+             this.field_76834_x.func_76484_a(this.field_76815_a, this.field_76813_b, k, i1, l);
          }
  
--        for (j = 0; j < this.mushroomsPerChunk; ++j)
-+        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, SHROOM);
-+        for (j = 0; doGen && j < this.mushroomsPerChunk; ++j)
+-        for (j = 0; j < this.field_76798_D; ++j)
++        doGen = TerrainGen.decorate(field_76815_a, field_76813_b, field_76814_c, field_76811_d, SHROOM);
++        for (j = 0; doGen && j < this.field_76798_D; ++j)
          {
-             if (this.randomGenerator.nextInt(4) == 0)
+             if (this.field_76813_b.nextInt(4) == 0)
              {
-@@ -257,7 +273,7 @@
+@@ -226,7 +242,7 @@
              }
          }
  
--        if (this.randomGenerator.nextInt(4) == 0)
-+        if (doGen && this.randomGenerator.nextInt(4) == 0)
+-        if (this.field_76813_b.nextInt(4) == 0)
++        if (doGen && this.field_76813_b.nextInt(4) == 0)
          {
-             j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             k = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-@@ -265,7 +281,7 @@
-             this.mushroomBrownGen.generate(this.currentWorld, this.randomGenerator, j, l, k);
+             j = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
+             k = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
+@@ -234,7 +250,7 @@
+             this.field_76828_s.func_76484_a(this.field_76815_a, this.field_76813_b, j, l, k);
          }
  
--        if (this.randomGenerator.nextInt(8) == 0)
-+        if (doGen && this.randomGenerator.nextInt(8) == 0)
+-        if (this.field_76813_b.nextInt(8) == 0)
++        if (doGen && this.field_76813_b.nextInt(8) == 0)
          {
-             j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             k = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-@@ -273,7 +289,8 @@
-             this.mushroomRedGen.generate(this.currentWorld, this.randomGenerator, j, l, k);
+             j = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
+             k = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
+@@ -242,7 +258,8 @@
+             this.field_76827_t.func_76484_a(this.field_76815_a, this.field_76813_b, j, l, k);
          }
  
--        for (j = 0; j < this.reedsPerChunk; ++j)
-+        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, REED);
-+        for (j = 0; doGen && j < this.reedsPerChunk; ++j)
+-        for (j = 0; j < this.field_76799_E; ++j)
++        doGen = TerrainGen.decorate(field_76815_a, field_76813_b, field_76814_c, field_76811_d, REED);
++        for (j = 0; doGen && j < this.field_76799_E; ++j)
          {
-             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-@@ -281,7 +298,7 @@
-             this.reedGen.generate(this.currentWorld, this.randomGenerator, k, i1, l);
+             k = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
+             l = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
+@@ -250,7 +267,7 @@
+             this.field_76825_v.func_76484_a(this.field_76815_a, this.field_76813_b, k, i1, l);
          }
  
 -        for (j = 0; j < 10; ++j)
 +        for (j = 0; doGen && j < 10; ++j)
          {
-             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-@@ -289,7 +306,8 @@
-             this.reedGen.generate(this.currentWorld, this.randomGenerator, k, i1, l);
+             k = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
+             l = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
+@@ -258,7 +275,8 @@
+             this.field_76825_v.func_76484_a(this.field_76815_a, this.field_76813_b, k, i1, l);
          }
  
--        if (this.randomGenerator.nextInt(32) == 0)
-+        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, PUMPKIN);
-+        if (doGen && this.randomGenerator.nextInt(32) == 0)
+-        if (this.field_76813_b.nextInt(32) == 0)
++        doGen = TerrainGen.decorate(field_76815_a, field_76813_b, field_76814_c, field_76811_d, PUMPKIN);
++        if (doGen && this.field_76813_b.nextInt(32) == 0)
          {
-             j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             k = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-@@ -297,7 +315,8 @@
-             (new WorldGenPumpkin()).generate(this.currentWorld, this.randomGenerator, j, l, k);
+             j = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
+             k = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
+@@ -266,7 +284,8 @@
+             (new WorldGenPumpkin()).func_76484_a(this.field_76815_a, this.field_76813_b, j, l, k);
          }
  
--        for (j = 0; j < this.cactiPerChunk; ++j)
-+        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, CACTUS);
-+        for (j = 0; doGen && j < this.cactiPerChunk; ++j)
+-        for (j = 0; j < this.field_76800_F; ++j)
++        doGen = TerrainGen.decorate(field_76815_a, field_76813_b, field_76814_c, field_76811_d, CACTUS);
++        for (j = 0; doGen && j < this.field_76800_F; ++j)
          {
-             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-@@ -305,7 +324,8 @@
-             this.cactusGen.generate(this.currentWorld, this.randomGenerator, k, i1, l);
+             k = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
+             l = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
+@@ -274,7 +293,8 @@
+             this.field_76824_w.func_76484_a(this.field_76815_a, this.field_76813_b, k, i1, l);
          }
  
--        if (this.generateLakes)
-+        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, LAKE);
-+        if (doGen && this.generateLakes)
+-        if (this.field_76808_K)
++        doGen = TerrainGen.decorate(field_76815_a, field_76813_b, field_76814_c, field_76811_d, LAKE);
++        if (doGen && this.field_76808_K)
          {
              for (j = 0; j < 50; ++j)
              {
-@@ -323,6 +343,8 @@
-                 (new WorldGenLiquids(Blocks.flowing_lava)).generate(this.currentWorld, this.randomGenerator, k, l, i1);
+@@ -292,6 +312,8 @@
+                 (new WorldGenLiquids(Blocks.field_150356_k)).func_76484_a(this.field_76815_a, this.field_76813_b, k, l, i1);
              }
          }
 +
-+        MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Post(currentWorld, randomGenerator, chunk_X, chunk_Z));
++        MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Post(field_76815_a, field_76813_b, field_76814_c, field_76811_d));
      }
  
-     // JAVADOC METHOD $$ func_76795_a
-@@ -352,13 +374,23 @@
-     // JAVADOC METHOD $$ func_76797_b
-     protected void generateOres()
+     protected void func_76795_a(int p_76795_1_, WorldGenerator p_76795_2_, int p_76795_3_, int p_76795_4_)
+@@ -318,13 +340,23 @@
+ 
+     protected void func_76797_b()
      {
-+        MinecraftForge.ORE_GEN_BUS.post(new OreGenEvent.Pre(currentWorld, randomGenerator, chunk_X, chunk_Z));
-+        if (TerrainGen.generateOre(currentWorld, randomGenerator, dirtGen, chunk_X, chunk_Z, DIRT))
-         this.genStandardOre1(20, this.dirtGen, 0, 256);
-+        if (TerrainGen.generateOre(currentWorld, randomGenerator, gravelGen, chunk_X, chunk_Z, GRAVEL))
-         this.genStandardOre1(10, this.gravelGen, 0, 256);
-+        if (TerrainGen.generateOre(currentWorld, randomGenerator, coalGen, chunk_X, chunk_Z, COAL))
-         this.genStandardOre1(20, this.coalGen, 0, 128);
-+        if (TerrainGen.generateOre(currentWorld, randomGenerator, ironGen, chunk_X, chunk_Z, IRON))
-         this.genStandardOre1(20, this.ironGen, 0, 64);
-+        if (TerrainGen.generateOre(currentWorld, randomGenerator, goldGen, chunk_X, chunk_Z, GOLD))
-         this.genStandardOre1(2, this.goldGen, 0, 32);
-+        if (TerrainGen.generateOre(currentWorld, randomGenerator, redstoneGen, chunk_X, chunk_Z, REDSTONE))
-         this.genStandardOre1(8, this.redstoneGen, 0, 16);
-+        if (TerrainGen.generateOre(currentWorld, randomGenerator, diamondGen, chunk_X, chunk_Z, DIAMOND))
-         this.genStandardOre1(1, this.diamondGen, 0, 16);
-+        if (TerrainGen.generateOre(currentWorld, randomGenerator, lapisGen, chunk_X, chunk_Z, LAPIS))
-         this.genStandardOre2(1, this.lapisGen, 16, 16);
-+        MinecraftForge.ORE_GEN_BUS.post(new OreGenEvent.Post(currentWorld, randomGenerator, chunk_X, chunk_Z));
++        MinecraftForge.ORE_GEN_BUS.post(new OreGenEvent.Pre(field_76815_a, field_76813_b, field_76814_c, field_76811_d));
++        if (TerrainGen.generateOre(field_76815_a, field_76813_b, field_76823_i, field_76814_c, field_76811_d, DIRT))
+         this.func_76795_a(20, this.field_76823_i, 0, 256);
++        if (TerrainGen.generateOre(field_76815_a, field_76813_b, field_76820_j, field_76814_c, field_76811_d, GRAVEL))
+         this.func_76795_a(10, this.field_76820_j, 0, 256);
++        if (TerrainGen.generateOre(field_76815_a, field_76813_b, field_76821_k, field_76814_c, field_76811_d, COAL))
+         this.func_76795_a(20, this.field_76821_k, 0, 128);
++        if (TerrainGen.generateOre(field_76815_a, field_76813_b, field_76818_l, field_76814_c, field_76811_d, IRON))
+         this.func_76795_a(20, this.field_76818_l, 0, 64);
++        if (TerrainGen.generateOre(field_76815_a, field_76813_b, field_76819_m, field_76814_c, field_76811_d, GOLD))
+         this.func_76795_a(2, this.field_76819_m, 0, 32);
++        if (TerrainGen.generateOre(field_76815_a, field_76813_b, field_76816_n, field_76814_c, field_76811_d, REDSTONE))
+         this.func_76795_a(8, this.field_76816_n, 0, 16);
++        if (TerrainGen.generateOre(field_76815_a, field_76813_b, field_76817_o, field_76814_c, field_76811_d, DIAMOND))
+         this.func_76795_a(1, this.field_76817_o, 0, 16);
++        if (TerrainGen.generateOre(field_76815_a, field_76813_b, field_76831_p, field_76814_c, field_76811_d, LAPIS))
+         this.func_76793_b(1, this.field_76831_p, 16, 16);
++        MinecraftForge.ORE_GEN_BUS.post(new OreGenEvent.Post(field_76815_a, field_76813_b, field_76814_c, field_76811_d));
      }
  }

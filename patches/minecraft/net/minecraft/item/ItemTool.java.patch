@@ -15,10 +15,10 @@
  
  public class ItemTool extends Item
  {
-@@ -30,6 +32,18 @@
-         this.efficiencyOnProperMaterial = p_i45333_2_.getEfficiencyOnProperMaterial();
-         this.damageVsEntity = p_i45333_1_ + p_i45333_2_.getDamageVsEntity();
-         this.setCreativeTab(CreativeTabs.tabTools);
+@@ -28,6 +30,18 @@
+         this.field_77864_a = p_i45333_2_.func_77998_b();
+         this.field_77865_bY = p_i45333_1_ + p_i45333_2_.func_78000_c();
+         this.func_77637_a(CreativeTabs.field_78040_i);
 +        if (this instanceof ItemPickaxe)
 +        {
 +            toolClass = "pickaxe";
@@ -34,8 +34,8 @@
      }
  
      public float func_150893_a(ItemStack p_150893_1_, Block p_150893_2_)
-@@ -91,4 +105,37 @@
-         multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Tool modifier", (double)this.damageVsEntity, 0));
+@@ -83,4 +97,37 @@
+         multimap.put(SharedMonsterAttributes.field_111264_e.func_111108_a(), new AttributeModifier(field_111210_e, "Tool modifier", (double)this.field_77865_bY, 0));
          return multimap;
      }
 +
@@ -47,7 +47,7 @@
 +        int level = super.getHarvestLevel(stack, toolClass);
 +        if (level == -1 && toolClass != null && toolClass.equals(this.toolClass))
 +        {
-+            return this.toolMaterial.getHarvestLevel();
++            return this.field_77862_b.func_77996_d();
 +        }
 +        else
 +        {
@@ -66,7 +66,7 @@
 +    {
 +        if (ForgeHooks.isToolEffective(stack, block, meta))
 +        {
-+            return efficiencyOnProperMaterial;
++            return field_77864_a;
 +        }
 +        return super.getDigSpeed(stack, block, meta);
 +    }

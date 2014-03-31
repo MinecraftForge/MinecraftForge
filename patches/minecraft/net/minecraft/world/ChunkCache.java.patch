@@ -8,39 +8,39 @@
  
  public class ChunkCache implements IBlockAccess
  {
-@@ -95,6 +96,8 @@
+@@ -92,6 +93,8 @@
      {
-         int l = (p_147438_1_ >> 4) - this.chunkX;
-         int i1 = (p_147438_3_ >> 4) - this.chunkZ;
-+        if (l < 0 || l >= chunkArray.length || i1 < 0 || i1 >= chunkArray[l].length) return null;
-+        if (chunkArray[l][i1] == null) return null;
-         return this.chunkArray[l][i1].func_150806_e(p_147438_1_ & 15, p_147438_2_, p_147438_3_ & 15);
+         int l = (p_147438_1_ >> 4) - this.field_72818_a;
+         int i1 = (p_147438_3_ >> 4) - this.field_72816_b;
++        if (l < 0 || l >= field_72817_c.length || i1 < 0 || i1 >= field_72817_c[l].length) return null;
++        if (field_72817_c[l][i1] == null) return null;
+         return this.field_72817_c[l][i1].func_150806_e(p_147438_1_ & 15, p_147438_2_, p_147438_3_ & 15);
      }
  
-@@ -128,6 +131,8 @@
+@@ -123,6 +126,8 @@
          {
-             int l = (par1 >> 4) - this.chunkX;
-             int i1 = (par3 >> 4) - this.chunkZ;
-+            if (l < 0 || l >= chunkArray.length || i1 < 0 || i1 >= chunkArray[l].length) return 0;
-+            if (chunkArray[l][i1] == null) return 0;
-             return this.chunkArray[l][i1].getBlockMetadata(par1 & 15, par2, par3 & 15);
+             int l = (p_72805_1_ >> 4) - this.field_72818_a;
+             int i1 = (p_72805_3_ >> 4) - this.field_72816_b;
++            if (l < 0 || l >= field_72817_c.length || i1 < 0 || i1 >= field_72817_c[l].length) return 0;
++            if (field_72817_c[l][i1] == null) return 0;
+             return this.field_72817_c[l][i1].func_76628_c(p_72805_1_ & 15, p_72805_2_, p_72805_3_ & 15);
          }
      }
-@@ -146,10 +151,9 @@
+@@ -138,10 +143,9 @@
+         return this.field_72815_e.func_82732_R();
      }
  
-     // JAVADOC METHOD $$ func_147437_c
 -    @SideOnly(Side.CLIENT)
-     public boolean isAirBlock(int p_147437_1_, int p_147437_2_, int p_147437_3_)
+     public boolean func_147437_c(int p_147437_1_, int p_147437_2_, int p_147437_3_)
      {
--        return this.getBlock(p_147437_1_, p_147437_2_, p_147437_3_).getMaterial() == Material.air;
-+        return this.getBlock(p_147437_1_, p_147437_2_, p_147437_3_).isAir(this, p_147437_1_, p_147437_2_, p_147437_3_);
+-        return this.func_147439_a(p_147437_1_, p_147437_2_, p_147437_3_).func_149688_o() == Material.field_151579_a;
++        return this.func_147439_a(p_147437_1_, p_147437_2_, p_147437_3_).isAir(this, p_147437_1_, p_147437_2_, p_147437_3_);
      }
  
-     // JAVADOC METHOD $$ func_72810_a
-@@ -259,4 +263,15 @@
+     @SideOnly(Side.CLIENT)
+@@ -247,4 +251,15 @@
      {
-         return this.getBlock(par1, par2, par3).isProvidingStrongPower(this, par1, par2, par3, par4);
+         return this.func_147439_a(p_72879_1_, p_72879_2_, p_72879_3_).func_149748_c(this, p_72879_1_, p_72879_2_, p_72879_3_, p_72879_4_);
      }
 +
 +    @Override
@@ -51,6 +51,6 @@
 +            return _default;
 +        }
 +
-+        return getBlock(x, y, z).isSideSolid(this, x, y, z, side);
++        return func_147439_a(x, y, z).isSideSolid(this, x, y, z, side);
 +    }
  }

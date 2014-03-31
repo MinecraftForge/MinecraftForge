@@ -1,36 +1,36 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemArmor.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemArmor.java
-@@ -235,7 +235,7 @@
+@@ -221,7 +221,7 @@
  
          if (itemstack1 == null)
          {
--            par3EntityPlayer.setCurrentItemOrArmor(i, par1ItemStack.copy());
-+            par3EntityPlayer.setCurrentItemOrArmor(i + 1, par1ItemStack.copy());  //Forge: Vanilla bug fix associated with fixed setCurrentItemOrArmor indexs for players.
-             par1ItemStack.stackSize = 0;
+-            p_77659_3_.func_70062_b(i, p_77659_1_.func_77946_l());
++            p_77659_3_.func_70062_b(i + 1, p_77659_1_.func_77946_l());  //Forge: Vanilla bug fix associated with fixed setCurrentItemOrArmor indexs for players.
+             p_77659_1_.field_77994_a = 0;
          }
  
-@@ -276,6 +276,9 @@
+@@ -259,6 +259,9 @@
  
          private static final String __OBFID = "CL_00001768";
  
 +        //Added by forge for custom Armor materials.
 +        public Item customCraftingMaterial = null;
 +
-         private ArmorMaterial(int par3, int[] par4ArrayOfInteger, int par5)
+         private ArmorMaterial(int p_i1827_3_, int[] p_i1827_4_, int p_i1827_5_)
          {
-             this.maxDamageFactor = par3;
-@@ -303,7 +306,15 @@
+             this.field_78048_f = p_i1827_3_;
+@@ -283,7 +286,15 @@
  
          public Item func_151685_b()
          {
--            return this == CLOTH ? Items.leather : (this == CHAIN ? Items.iron_ingot : (this == GOLD ? Items.gold_ingot : (this == IRON ? Items.iron_ingot : (this == DIAMOND ? Items.diamond : null))));
+-            return this == CLOTH ? Items.field_151116_aA : (this == CHAIN ? Items.field_151042_j : (this == GOLD ? Items.field_151043_k : (this == IRON ? Items.field_151042_j : (this == DIAMOND ? Items.field_151045_i : null))));
 +            switch (this)
 +            {
-+                case CLOTH:   return Items.leather;
-+                case CHAIN:   return Items.iron_ingot;
-+                case GOLD:    return Items.gold_ingot;
-+                case IRON:    return Items.iron_ingot;
-+                case DIAMOND: return Items.diamond;
++                case CLOTH:   return Items.field_151116_aA;
++                case CHAIN:   return Items.field_151042_j;
++                case GOLD:    return Items.field_151043_k;
++                case IRON:    return Items.field_151042_j;
++                case DIAMOND: return Items.field_151045_i;
 +                default:      return customCraftingMaterial;
 +            }
          }

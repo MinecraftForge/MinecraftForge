@@ -17,49 +17,49 @@
 +
  public final class SpawnerAnimals
  {
-     // JAVADOC FIELD $$ field_77193_b
-@@ -80,9 +85,12 @@
+     private HashMap field_77193_b = new HashMap();
+@@ -78,9 +83,12 @@
              {
                  EnumCreatureType enumcreaturetype = aenumcreaturetype[k3];
  
--                if ((!enumcreaturetype.getPeacefulCreature() || par3) && (enumcreaturetype.getPeacefulCreature() || par2) && (!enumcreaturetype.getAnimal() || par4) && par1WorldServer.countEntities(enumcreaturetype.getCreatureClass()) <= enumcreaturetype.getMaxNumberOfCreature() * this.eligibleChunksForSpawning.size() / 256)
-+                if ((!enumcreaturetype.getPeacefulCreature() || par3) && (enumcreaturetype.getPeacefulCreature() || par2) && (!enumcreaturetype.getAnimal() || par4) && par1WorldServer.countEntities(enumcreaturetype, true) <= enumcreaturetype.getMaxNumberOfCreature() * this.eligibleChunksForSpawning.size() / 256)
+-                if ((!enumcreaturetype.func_75599_d() || p_77192_3_) && (enumcreaturetype.func_75599_d() || p_77192_2_) && (!enumcreaturetype.func_82705_e() || p_77192_4_) && p_77192_1_.func_72907_a(enumcreaturetype.func_75598_a()) <= enumcreaturetype.func_75601_b() * this.field_77193_b.size() / 256)
++                if ((!enumcreaturetype.func_75599_d() || p_77192_3_) && (enumcreaturetype.func_75599_d() || p_77192_2_) && (!enumcreaturetype.func_82705_e() || p_77192_4_) && p_77192_1_.countEntities(enumcreaturetype, true) <= enumcreaturetype.func_75601_b() * this.field_77193_b.size() / 256)
                  {
-                     Iterator iterator = this.eligibleChunksForSpawning.keySet().iterator();
-+                    ArrayList<ChunkCoordIntPair> tmp = new ArrayList(eligibleChunksForSpawning.keySet());
+                     Iterator iterator = this.field_77193_b.keySet().iterator();
++                    ArrayList<ChunkCoordIntPair> tmp = new ArrayList(field_77193_b.keySet());
 +                    Collections.shuffle(tmp);
 +                    iterator = tmp.iterator();
                      label110:
  
                      while (iterator.hasNext())
-@@ -160,13 +168,17 @@
+@@ -158,13 +166,17 @@
  
-                                                             entityliving.setLocationAndAngles((double)f, (double)f1, (double)f2, par1WorldServer.rand.nextFloat() * 360.0F, 0.0F);
+                                                             entityliving.func_70012_b((double)f, (double)f1, (double)f2, p_77192_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
  
--                                                            if (entityliving.getCanSpawnHere())
-+                                                            Result canSpawn = ForgeEventFactory.canEntitySpawn(entityliving, par1WorldServer, f, f1, f2);
-+                                                            if (canSpawn == Result.ALLOW || (canSpawn == Result.DEFAULT && entityliving.getCanSpawnHere()))
+-                                                            if (entityliving.func_70601_bi())
++                                                            Result canSpawn = ForgeEventFactory.canEntitySpawn(entityliving, p_77192_1_, f, f1, f2);
++                                                            if (canSpawn == Result.ALLOW || (canSpawn == Result.DEFAULT && entityliving.func_70601_bi()))
                                                              {
                                                                  ++i2;
-                                                                 par1WorldServer.spawnEntityInWorld(entityliving);
--                                                                ientitylivingdata = entityliving.onSpawnWithEgg(ientitylivingdata);
-+                                                                if (!ForgeEventFactory.doSpecialSpawn(entityliving, par1WorldServer, f, f1, f2))
+                                                                 p_77192_1_.func_72838_d(entityliving);
+-                                                                ientitylivingdata = entityliving.func_110161_a(ientitylivingdata);
++                                                                if (!ForgeEventFactory.doSpecialSpawn(entityliving, p_77192_1_, f, f1, f2))
 +                                                                {
-+                                                                    ientitylivingdata = entityliving.onSpawnWithEgg(ientitylivingdata);
++                                                                    ientitylivingdata = entityliving.func_110161_a(ientitylivingdata);
 +                                                                }
  
--                                                                if (i2 >= entityliving.getMaxSpawnedInChunk())
+-                                                                if (i2 >= entityliving.func_70641_bl())
 +                                                                if (j2 >= ForgeEventFactory.getMaxSpawnPackSize(entityliving))
                                                                  {
                                                                      continue label110;
                                                                  }
-@@ -210,7 +222,8 @@
+@@ -207,7 +219,8 @@
          else
          {
-             Block block = par1World.getBlock(par2, par3 - 1, par4);
--            return block != Blocks.bedrock && !par1World.getBlock(par2, par3, par4).isNormalCube() && !par1World.getBlock(par2, par3, par4).getMaterial().isLiquid() && !par1World.getBlock(par2, par3 + 1, par4).isNormalCube();
-+            boolean spawnBlock = block.canCreatureSpawn(par0EnumCreatureType, par1World, par2, par3 - 1, par4);
-+            return spawnBlock && block != Blocks.bedrock && !par1World.getBlock(par2, par3, par4).isNormalCube() && !par1World.getBlock(par2, par3, par4).getMaterial().isLiquid() && !par1World.getBlock(par2, par3 + 1, par4).isNormalCube();
+             Block block = p_77190_1_.func_147439_a(p_77190_2_, p_77190_3_ - 1, p_77190_4_);
+-            return block != Blocks.field_150357_h && !p_77190_1_.func_147439_a(p_77190_2_, p_77190_3_, p_77190_4_).func_149721_r() && !p_77190_1_.func_147439_a(p_77190_2_, p_77190_3_, p_77190_4_).func_149688_o().func_76224_d() && !p_77190_1_.func_147439_a(p_77190_2_, p_77190_3_ + 1, p_77190_4_).func_149721_r();
++            boolean spawnBlock = block.canCreatureSpawn(p_77190_0_, p_77190_1_, p_77190_2_, p_77190_3_ - 1, p_77190_4_);
++            return spawnBlock && block != Blocks.field_150357_h && !p_77190_1_.func_147439_a(p_77190_2_, p_77190_3_, p_77190_4_).func_149721_r() && !p_77190_1_.func_147439_a(p_77190_2_, p_77190_3_, p_77190_4_).func_149688_o().func_76224_d() && !p_77190_1_.func_147439_a(p_77190_2_, p_77190_3_ + 1, p_77190_4_).func_149721_r();
          }
      }
  

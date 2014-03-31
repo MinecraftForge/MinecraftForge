@@ -18,16 +18,16 @@
  
  public class ItemDye extends Item
  {
-@@ -60,7 +65,7 @@
+@@ -57,7 +62,7 @@
          {
-             if (par1ItemStack.getItemDamage() == 15)
+             if (p_77648_1_.func_77960_j() == 15)
              {
--                if (func_150919_a(par1ItemStack, par3World, par4, par5, par6))
-+                if (applyBonemeal(par1ItemStack, par3World, par4, par5, par6, par2EntityPlayer))
+-                if (func_150919_a(p_77648_1_, p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_))
++                if (applyBonemeal(p_77648_1_, p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_, p_77648_2_))
                  {
-                     if (!par3World.isRemote)
+                     if (!p_77648_3_.field_72995_K)
                      {
-@@ -128,8 +133,30 @@
+@@ -125,8 +130,30 @@
  
      public static boolean func_150919_a(ItemStack p_150919_0_, World p_150919_1_, int p_150919_2_, int p_150919_3_, int p_150919_4_)
      {
@@ -38,7 +38,7 @@
 +
 +    public static boolean applyBonemeal(ItemStack p_150919_0_, World p_150919_1_, int p_150919_2_, int p_150919_3_, int p_150919_4_, EntityPlayer player)
 +    {
-         Block block = p_150919_1_.getBlock(p_150919_2_, p_150919_3_, p_150919_4_);
+         Block block = p_150919_1_.func_147439_a(p_150919_2_, p_150919_3_, p_150919_4_);
  
 +        BonemealEvent event = new BonemealEvent(player, p_150919_1_, block, p_150919_2_, p_150919_3_, p_150919_4_);
 +        if (MinecraftForge.EVENT_BUS.post(event))
@@ -48,9 +48,9 @@
 +
 +        if (event.getResult() == Result.ALLOW)
 +        {
-+            if (!p_150919_1_.isRemote)
++            if (!p_150919_1_.field_72995_K)
 +            {
-+                p_150919_0_.stackSize--;
++                p_150919_0_.field_77994_a--;
 +            }
 +            return true;
 +        }
@@ -58,20 +58,20 @@
          if (block instanceof IGrowable)
          {
              IGrowable igrowable = (IGrowable)block;
-@@ -175,6 +202,16 @@
-                 p_150918_0_.spawnParticle("happyVillager", (double)((float)p_150918_1_ + itemRand.nextFloat()), (double)p_150918_2_ + (double)itemRand.nextFloat() * block.getBlockBoundsMaxY(), (double)((float)p_150918_3_ + itemRand.nextFloat()), d0, d1, d2);
+@@ -172,6 +199,16 @@
+                 p_150918_0_.func_72869_a("happyVillager", (double)((float)p_150918_1_ + field_77697_d.nextFloat()), (double)p_150918_2_ + (double)field_77697_d.nextFloat() * block.func_149669_A(), (double)((float)p_150918_3_ + field_77697_d.nextFloat()), d0, d1, d2);
              }
          }
 +        else
 +        {
 +            for (int i1 = 0; i1 < p_150918_4_; ++i1)
 +            {
-+                double d0 = itemRand.nextGaussian() * 0.02D;
-+                double d1 = itemRand.nextGaussian() * 0.02D;
-+                double d2 = itemRand.nextGaussian() * 0.02D;
-+                p_150918_0_.spawnParticle("happyVillager", (double)((float)p_150918_1_ + itemRand.nextFloat()), (double)p_150918_2_ + (double)itemRand.nextFloat() * 1.0f, (double)((float)p_150918_3_ + itemRand.nextFloat()), d0, d1, d2);
++                double d0 = field_77697_d.nextGaussian() * 0.02D;
++                double d1 = field_77697_d.nextGaussian() * 0.02D;
++                double d2 = field_77697_d.nextGaussian() * 0.02D;
++                p_150918_0_.func_72869_a("happyVillager", (double)((float)p_150918_1_ + field_77697_d.nextFloat()), (double)p_150918_2_ + (double)field_77697_d.nextFloat() * 1.0f, (double)((float)p_150918_3_ + field_77697_d.nextFloat()), d0, d1, d2);
 +            }
 +        }
      }
  
-     // JAVADOC METHOD $$ func_111207_a
+     public boolean func_111207_a(ItemStack p_111207_1_, EntityPlayer p_111207_2_, EntityLivingBase p_111207_3_)

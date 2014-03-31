@@ -1,12 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/entity/effect/EntityLightningBolt.java
 +++ ../src-work/minecraft/net/minecraft/entity/effect/EntityLightningBolt.java
-@@ -106,7 +106,8 @@
+@@ -102,7 +102,8 @@
                  for (int l = 0; l < list.size(); ++l)
                  {
                      Entity entity = (Entity)list.get(l);
--                    entity.onStruckByLightning(this);
+-                    entity.func_70077_a(this);
 +                    if (!net.minecraftforge.event.ForgeEventFactory.onEntityStruckByLightning(entity, this))
-+                        entity.onStruckByLightning(this);
++                        entity.func_70077_a(this);
                  }
              }
          }

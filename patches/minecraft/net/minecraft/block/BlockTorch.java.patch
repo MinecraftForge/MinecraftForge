@@ -8,19 +8,18 @@
  
  public class BlockTorch extends Block
  {
-@@ -55,14 +56,18 @@
+@@ -51,13 +52,17 @@
          else
          {
-             Block block = p_150107_1_.getBlock(p_150107_2_, p_150107_3_, p_150107_4_);
--            return block == Blocks.fence || block == Blocks.nether_brick_fence || block == Blocks.glass || block == Blocks.cobblestone_wall;
+             Block block = p_150107_1_.func_147439_a(p_150107_2_, p_150107_3_, p_150107_4_);
+-            return block == Blocks.field_150422_aJ || block == Blocks.field_150386_bk || block == Blocks.field_150359_w || block == Blocks.field_150463_bK;
 +            return block.canPlaceTorchOnTop(p_150107_1_, p_150107_2_, p_150107_3_, p_150107_4_);
          }
      }
  
-     // JAVADOC METHOD $$ func_149742_c
-     public boolean canPlaceBlockAt(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
+     public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
      {
--        return p_149742_1_.isBlockNormalCubeDefault(p_149742_2_ - 1, p_149742_3_, p_149742_4_, true) ? true : (p_149742_1_.isBlockNormalCubeDefault(p_149742_2_ + 1, p_149742_3_, p_149742_4_, true) ? true : (p_149742_1_.isBlockNormalCubeDefault(p_149742_2_, p_149742_3_, p_149742_4_ - 1, true) ? true : (p_149742_1_.isBlockNormalCubeDefault(p_149742_2_, p_149742_3_, p_149742_4_ + 1, true) ? true : this.func_150107_m(p_149742_1_, p_149742_2_, p_149742_3_ - 1, p_149742_4_))));
+-        return p_149742_1_.func_147445_c(p_149742_2_ - 1, p_149742_3_, p_149742_4_, true) ? true : (p_149742_1_.func_147445_c(p_149742_2_ + 1, p_149742_3_, p_149742_4_, true) ? true : (p_149742_1_.func_147445_c(p_149742_2_, p_149742_3_, p_149742_4_ - 1, true) ? true : (p_149742_1_.func_147445_c(p_149742_2_, p_149742_3_, p_149742_4_ + 1, true) ? true : this.func_150107_m(p_149742_1_, p_149742_2_, p_149742_3_ - 1, p_149742_4_))));
 +        return p_149742_1_.isSideSolid(p_149742_2_ - 1, p_149742_3_, p_149742_4_, EAST,  true) ||
 +               p_149742_1_.isSideSolid(p_149742_2_ + 1, p_149742_3_, p_149742_4_, WEST,  true) ||
 +               p_149742_1_.isSideSolid(p_149742_2_, p_149742_3_, p_149742_4_ - 1, SOUTH, true) ||
@@ -28,81 +27,81 @@
 +               func_150107_m(p_149742_1_, p_149742_2_, p_149742_3_ - 1, p_149742_4_);
      }
  
-     // JAVADOC METHOD $$ func_149660_a
-@@ -75,22 +80,22 @@
+     public int func_149660_a(World p_149660_1_, int p_149660_2_, int p_149660_3_, int p_149660_4_, int p_149660_5_, float p_149660_6_, float p_149660_7_, float p_149660_8_, int p_149660_9_)
+@@ -69,22 +74,22 @@
              j1 = 5;
          }
  
--        if (p_149660_5_ == 2 && p_149660_1_.isBlockNormalCubeDefault(p_149660_2_, p_149660_3_, p_149660_4_ + 1, true))
+-        if (p_149660_5_ == 2 && p_149660_1_.func_147445_c(p_149660_2_, p_149660_3_, p_149660_4_ + 1, true))
 +        if (p_149660_5_ == 2 && p_149660_1_.isSideSolid(p_149660_2_, p_149660_3_, p_149660_4_ + 1, NORTH, true))
          {
              j1 = 4;
          }
  
--        if (p_149660_5_ == 3 && p_149660_1_.isBlockNormalCubeDefault(p_149660_2_, p_149660_3_, p_149660_4_ - 1, true))
+-        if (p_149660_5_ == 3 && p_149660_1_.func_147445_c(p_149660_2_, p_149660_3_, p_149660_4_ - 1, true))
 +        if (p_149660_5_ == 3 && p_149660_1_.isSideSolid(p_149660_2_, p_149660_3_, p_149660_4_ - 1, SOUTH, true))
          {
              j1 = 3;
          }
  
--        if (p_149660_5_ == 4 && p_149660_1_.isBlockNormalCubeDefault(p_149660_2_ + 1, p_149660_3_, p_149660_4_, true))
+-        if (p_149660_5_ == 4 && p_149660_1_.func_147445_c(p_149660_2_ + 1, p_149660_3_, p_149660_4_, true))
 +        if (p_149660_5_ == 4 && p_149660_1_.isSideSolid(p_149660_2_ + 1, p_149660_3_, p_149660_4_, WEST, true))
          {
              j1 = 2;
          }
  
--        if (p_149660_5_ == 5 && p_149660_1_.isBlockNormalCubeDefault(p_149660_2_ - 1, p_149660_3_, p_149660_4_, true))
+-        if (p_149660_5_ == 5 && p_149660_1_.func_147445_c(p_149660_2_ - 1, p_149660_3_, p_149660_4_, true))
 +        if (p_149660_5_ == 5 && p_149660_1_.isSideSolid(p_149660_2_ - 1, p_149660_3_, p_149660_4_, EAST, true))
          {
              j1 = 1;
          }
-@@ -114,19 +119,19 @@
+@@ -106,19 +111,19 @@
      {
-         if (p_149726_1_.getBlockMetadata(p_149726_2_, p_149726_3_, p_149726_4_) == 0)
+         if (p_149726_1_.func_72805_g(p_149726_2_, p_149726_3_, p_149726_4_) == 0)
          {
--            if (p_149726_1_.isBlockNormalCubeDefault(p_149726_2_ - 1, p_149726_3_, p_149726_4_, true))
+-            if (p_149726_1_.func_147445_c(p_149726_2_ - 1, p_149726_3_, p_149726_4_, true))
 +            if (p_149726_1_.isSideSolid(p_149726_2_ - 1, p_149726_3_, p_149726_4_, EAST, true))
              {
-                 p_149726_1_.setBlockMetadataWithNotify(p_149726_2_, p_149726_3_, p_149726_4_, 1, 2);
+                 p_149726_1_.func_72921_c(p_149726_2_, p_149726_3_, p_149726_4_, 1, 2);
              }
--            else if (p_149726_1_.isBlockNormalCubeDefault(p_149726_2_ + 1, p_149726_3_, p_149726_4_, true))
+-            else if (p_149726_1_.func_147445_c(p_149726_2_ + 1, p_149726_3_, p_149726_4_, true))
 +            else if (p_149726_1_.isSideSolid(p_149726_2_ + 1, p_149726_3_, p_149726_4_, WEST, true))
              {
-                 p_149726_1_.setBlockMetadataWithNotify(p_149726_2_, p_149726_3_, p_149726_4_, 2, 2);
+                 p_149726_1_.func_72921_c(p_149726_2_, p_149726_3_, p_149726_4_, 2, 2);
              }
--            else if (p_149726_1_.isBlockNormalCubeDefault(p_149726_2_, p_149726_3_, p_149726_4_ - 1, true))
+-            else if (p_149726_1_.func_147445_c(p_149726_2_, p_149726_3_, p_149726_4_ - 1, true))
 +            else if (p_149726_1_.isSideSolid(p_149726_2_, p_149726_3_, p_149726_4_ - 1, SOUTH, true))
              {
-                 p_149726_1_.setBlockMetadataWithNotify(p_149726_2_, p_149726_3_, p_149726_4_, 3, 2);
+                 p_149726_1_.func_72921_c(p_149726_2_, p_149726_3_, p_149726_4_, 3, 2);
              }
--            else if (p_149726_1_.isBlockNormalCubeDefault(p_149726_2_, p_149726_3_, p_149726_4_ + 1, true))
+-            else if (p_149726_1_.func_147445_c(p_149726_2_, p_149726_3_, p_149726_4_ + 1, true))
 +            else if (p_149726_1_.isSideSolid(p_149726_2_, p_149726_3_, p_149726_4_ + 1, NORTH, true))
              {
-                 p_149726_1_.setBlockMetadataWithNotify(p_149726_2_, p_149726_3_, p_149726_4_, 4, 2);
+                 p_149726_1_.func_72921_c(p_149726_2_, p_149726_3_, p_149726_4_, 4, 2);
              }
-@@ -152,22 +157,22 @@
-             int l = p_150108_1_.getBlockMetadata(p_150108_2_, p_150108_3_, p_150108_4_);
+@@ -143,22 +148,22 @@
+             int l = p_150108_1_.func_72805_g(p_150108_2_, p_150108_3_, p_150108_4_);
              boolean flag = false;
  
--            if (!p_150108_1_.isBlockNormalCubeDefault(p_150108_2_ - 1, p_150108_3_, p_150108_4_, true) && l == 1)
+-            if (!p_150108_1_.func_147445_c(p_150108_2_ - 1, p_150108_3_, p_150108_4_, true) && l == 1)
 +            if (!p_150108_1_.isSideSolid(p_150108_2_ - 1, p_150108_3_, p_150108_4_, EAST, true) && l == 1)
              {
                  flag = true;
              }
  
--            if (!p_150108_1_.isBlockNormalCubeDefault(p_150108_2_ + 1, p_150108_3_, p_150108_4_, true) && l == 2)
+-            if (!p_150108_1_.func_147445_c(p_150108_2_ + 1, p_150108_3_, p_150108_4_, true) && l == 2)
 +            if (!p_150108_1_.isSideSolid(p_150108_2_ + 1, p_150108_3_, p_150108_4_, WEST, true) && l == 2)
              {
                  flag = true;
              }
  
--            if (!p_150108_1_.isBlockNormalCubeDefault(p_150108_2_, p_150108_3_, p_150108_4_ - 1, true) && l == 3)
+-            if (!p_150108_1_.func_147445_c(p_150108_2_, p_150108_3_, p_150108_4_ - 1, true) && l == 3)
 +            if (!p_150108_1_.isSideSolid(p_150108_2_, p_150108_3_, p_150108_4_ - 1, SOUTH, true) && l == 3)
              {
                  flag = true;
              }
  
--            if (!p_150108_1_.isBlockNormalCubeDefault(p_150108_2_, p_150108_3_, p_150108_4_ + 1, true) && l == 4)
+-            if (!p_150108_1_.func_147445_c(p_150108_2_, p_150108_3_, p_150108_4_ + 1, true) && l == 4)
 +            if (!p_150108_1_.isSideSolid(p_150108_2_, p_150108_3_, p_150108_4_ + 1, NORTH, true) && l == 4)
              {
                  flag = true;

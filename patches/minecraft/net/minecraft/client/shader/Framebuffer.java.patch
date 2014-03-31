@@ -9,13 +9,13 @@
  import org.lwjgl.opengl.GL11;
  
 @@ -118,8 +119,8 @@
-             if (this.useDepth)
+             if (this.field_147619_e)
              {
-                 EXTFramebufferObject.glBindRenderbufferEXT(36161, this.depthBuffer);
--                EXTFramebufferObject.glRenderbufferStorageEXT(36161, 33190, this.framebufferTextureWidth, this.framebufferTextureHeight);
--                EXTFramebufferObject.glFramebufferRenderbufferEXT(36160, 36096, 36161, this.depthBuffer);
-+                EXTFramebufferObject.glRenderbufferStorageEXT(36161, MinecraftForgeClient.getStencilBits() > 0 ? 35056 /* ARBFramebufferObject.GL_DEPTH24_STENCIL8 */ : 33190, this.framebufferTextureWidth, this.framebufferTextureHeight);
-+                EXTFramebufferObject.glFramebufferRenderbufferEXT(36160, MinecraftForgeClient.getStencilBits() > 0 ? 33306 /* ARBFramebufferObject.GL_DEPTH_STENCIL_ATTACHMENT */ : 36096, 36161, this.depthBuffer);
+                 EXTFramebufferObject.glBindRenderbufferEXT(36161, this.field_147624_h);
+-                EXTFramebufferObject.glRenderbufferStorageEXT(36161, 33190, this.field_147622_a, this.field_147620_b);
+-                EXTFramebufferObject.glFramebufferRenderbufferEXT(36160, 36096, 36161, this.field_147624_h);
++                EXTFramebufferObject.glRenderbufferStorageEXT(36161, MinecraftForgeClient.getStencilBits() > 0 ? 35056 /* ARBFramebufferObject.GL_DEPTH24_STENCIL8 */ : 33190, this.field_147622_a, this.field_147620_b);
++                EXTFramebufferObject.glFramebufferRenderbufferEXT(36160, MinecraftForgeClient.getStencilBits() > 0 ? 33306 /* ARBFramebufferObject.GL_DEPTH_STENCIL_ATTACHMENT */ : 36096, 36161, this.field_147624_h);
              }
  
-             this.framebufferClear();
+             this.func_147614_f();

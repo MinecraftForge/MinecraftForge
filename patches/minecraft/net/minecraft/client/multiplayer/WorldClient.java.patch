@@ -10,29 +10,29 @@
  @SideOnly(Side.CLIENT)
  public class WorldClient extends World
  {
-@@ -56,8 +59,11 @@
-         super(new SaveHandlerMP(), "MpServer", WorldProvider.getProviderForDimension(p_i45063_3_), p_i45063_2_, p_i45063_5_);
-         this.sendQueue = p_i45063_1_;
-         this.difficultySetting = p_i45063_4_;
--        this.setSpawnLocation(8, 64, 8);
-         this.mapStorage = p_i45063_1_.mapStorageOrigin;
-+        this.isRemote = true;
+@@ -51,8 +54,11 @@
+         super(new SaveHandlerMP(), "MpServer", WorldProvider.func_76570_a(p_i45063_3_), p_i45063_2_, p_i45063_5_);
+         this.field_73035_a = p_i45063_1_;
+         this.field_73013_u = p_i45063_4_;
+-        this.func_72950_A(8, 64, 8);
+         this.field_72988_C = p_i45063_1_.field_147305_a;
++        this.field_72995_K = true;
 +        this.finishSetup();
-+        this.setSpawnLocation(8, 64, 8);
++        this.func_72950_A(8, 64, 8);
 +        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(this));
      }
  
-     // JAVADOC METHOD $$ func_72835_b
-@@ -275,6 +281,12 @@
-     // JAVADOC METHOD $$ func_72979_l
-     protected void updateWeather()
+     public void func_72835_b()
+@@ -261,6 +267,12 @@
+ 
+     protected void func_72979_l()
      {
-+        super.updateWeather();
++        super.func_72979_l();
 +    }
 +
 +    @Override
 +    public void updateWeatherBody()
 +    {
-         if (!this.provider.hasNoSky)
+         if (!this.field_73011_w.field_76576_e)
          {
              ;

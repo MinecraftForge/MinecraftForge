@@ -16,157 +16,157 @@
  
  public abstract class EntityLivingBase extends Entity
  {
-@@ -254,7 +256,7 @@
+@@ -225,7 +227,7 @@
                  }
              }
  
--            if (!this.worldObj.isRemote && this.isRiding() && this.ridingEntity instanceof EntityLivingBase)
-+            if (!this.worldObj.isRemote && this.isRiding() && this.ridingEntity != null && ridingEntity.shouldDismountInWater(this))
+-            if (!this.field_70170_p.field_72995_K && this.func_70115_ae() && this.field_70154_o instanceof EntityLivingBase)
++            if (!this.field_70170_p.field_72995_K && this.func_70115_ae() && this.field_70154_o != null && field_70154_o.shouldDismountInWater(this))
              {
-                 this.mountEntity((Entity)null);
+                 this.func_70078_a((Entity)null);
              }
-@@ -408,6 +410,7 @@
+@@ -374,6 +376,7 @@
      {
-         this.entityLivingToAttack = par1EntityLivingBase;
-         this.revengeTimer = this.ticksExisted;
-+        ForgeHooks.onLivingSetAttackTarget(this, par1EntityLivingBase);
+         this.field_70755_b = p_70604_1_;
+         this.field_70756_c = this.field_70173_aa;
++        ForgeHooks.onLivingSetAttackTarget(this, p_70604_1_);
      }
  
-     public EntityLivingBase getLastAttacker()
-@@ -701,7 +704,6 @@
+     public EntityLivingBase func_110144_aD()
+@@ -661,7 +664,6 @@
+         return this.func_70668_bt() == EnumCreatureAttribute.UNDEAD;
      }
  
-     // JAVADOC METHOD $$ func_70618_n
 -    @SideOnly(Side.CLIENT)
-     public void removePotionEffectClient(int par1)
+     public void func_70618_n(int p_70618_1_)
      {
-         this.activePotionsMap.remove(Integer.valueOf(par1));
-@@ -773,6 +775,7 @@
-     // JAVADOC METHOD $$ func_70097_a
-     public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
+         this.field_70713_bf.remove(Integer.valueOf(p_70618_1_));
+@@ -730,6 +732,7 @@
+ 
+     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
      {
-+        if (ForgeHooks.onLivingAttack(this, par1DamageSource, par2)) return false;
-         if (this.isEntityInvulnerable())
++        if (ForgeHooks.onLivingAttack(this, p_70097_1_, p_70097_2_)) return false;
+         if (this.func_85032_ar())
          {
              return false;
-@@ -928,6 +931,7 @@
-     // JAVADOC METHOD $$ func_70645_a
-     public void onDeath(DamageSource par1DamageSource)
+@@ -883,6 +886,7 @@
+ 
+     public void func_70645_a(DamageSource p_70645_1_)
      {
-+        if (ForgeHooks.onLivingDeath(this, par1DamageSource)) return;
-         Entity entity = par1DamageSource.getEntity();
++        if (ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
+         Entity entity = p_70645_1_.func_76346_g();
          EntityLivingBase entitylivingbase = this.func_94060_bK();
  
-@@ -952,6 +956,10 @@
-                 i = EnchantmentHelper.getLootingModifier((EntityLivingBase)entity);
+@@ -907,6 +911,10 @@
+                 i = EnchantmentHelper.func_77519_f((EntityLivingBase)entity);
              }
  
 +            captureDrops = true;
 +            capturedDrops.clear();
 +            int j = 0;
 +
-             if (this.func_146066_aG() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
+             if (this.func_146066_aG() && this.field_70170_p.func_82736_K().func_82766_b("doMobLoot"))
              {
-                 this.dropFewItems(this.recentlyHit > 0, i);
-@@ -959,7 +967,7 @@
+                 this.func_70628_a(this.field_70718_bc > 0, i);
+@@ -914,7 +922,7 @@
  
-                 if (this.recentlyHit > 0)
+                 if (this.field_70718_bc > 0)
                  {
--                    int j = this.rand.nextInt(200) - i;
-+                    j = this.rand.nextInt(200) - i;
+-                    int j = this.field_70146_Z.nextInt(200) - i;
++                    j = this.field_70146_Z.nextInt(200) - i;
  
                      if (j < 5)
                      {
-@@ -967,6 +975,16 @@
+@@ -922,6 +930,16 @@
                      }
                  }
              }
 +
 +            captureDrops = false;
 +
-+            if (!ForgeHooks.onLivingDrops(this, par1DamageSource, capturedDrops, i, recentlyHit > 0, j))
++            if (!ForgeHooks.onLivingDrops(this, p_70645_1_, capturedDrops, i, field_70718_bc > 0, j))
 +            {
 +                for (EntityItem item : capturedDrops)
 +                {
-+                    worldObj.spawnEntityInWorld(item);
++                    field_70170_p.func_72838_d(item);
 +                }
 +            }
          }
  
-         this.worldObj.setEntityState(this, (byte)3);
-@@ -1021,7 +1039,7 @@
-         int j = MathHelper.floor_double(this.boundingBox.minY);
-         int k = MathHelper.floor_double(this.posZ);
-         Block block = this.worldObj.getBlock(i, j, k);
--        return block == Blocks.ladder || block == Blocks.vine;
-+        return ForgeHooks.isLivingOnLadder(block, worldObj, i, j, k, this);
+         this.field_70170_p.func_72960_a(this, (byte)3);
+@@ -970,7 +988,7 @@
+         int j = MathHelper.func_76128_c(this.field_70121_D.field_72338_b);
+         int k = MathHelper.func_76128_c(this.field_70161_v);
+         Block block = this.field_70170_p.func_147439_a(i, j, k);
+-        return block == Blocks.field_150468_ap || block == Blocks.field_150395_bd;
++        return ForgeHooks.isLivingOnLadder(block, field_70170_p, i, j, k, this);
      }
  
-     // JAVADOC METHOD $$ func_70089_S
-@@ -1033,6 +1051,8 @@
-     // JAVADOC METHOD $$ func_70069_a
-     protected void fall(float par1)
+     public boolean func_70089_S()
+@@ -980,6 +998,8 @@
+ 
+     protected void func_70069_a(float p_70069_1_)
      {
-+        par1 = ForgeHooks.onLivingFall(this, par1);
-+        if (par1 <= 0) return;
-         super.fall(par1);
-         PotionEffect potioneffect = this.getActivePotionEffect(Potion.jump);
-         float f1 = potioneffect != null ? (float)(potioneffect.getAmplifier() + 1) : 0.0F;
-@@ -1116,7 +1136,7 @@
++        p_70069_1_ = ForgeHooks.onLivingFall(this, p_70069_1_);
++        if (p_70069_1_ <= 0) return;
+         super.func_70069_a(p_70069_1_);
+         PotionEffect potioneffect = this.func_70660_b(Potion.field_76430_j);
+         float f1 = potioneffect != null ? (float)(potioneffect.func_76458_c() + 1) : 0.0F;
+@@ -1059,7 +1079,7 @@
          {
              if (this instanceof EntityZombie)
              {
--                par2 = par2;
+-                p_70672_2_ = p_70672_2_;
 +                //par2 = par2; // Forge: Noop Warning
              }
  
              int i;
-@@ -1161,6 +1181,8 @@
+@@ -1103,6 +1123,8 @@
      {
-         if (!this.isEntityInvulnerable())
+         if (!this.func_85032_ar())
          {
-+            par2 = ForgeHooks.onLivingHurt(this, par1DamageSource, par2);
-+            if (par2 <= 0) return;
-             par2 = this.applyArmorCalculations(par1DamageSource, par2);
-             par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
-             float f1 = par2;
-@@ -1213,6 +1235,17 @@
-     // JAVADOC METHOD $$ func_71038_i
-     public void swingItem()
++            p_70665_2_ = ForgeHooks.onLivingHurt(this, p_70665_1_, p_70665_2_);
++            if (p_70665_2_ <= 0) return;
+             p_70665_2_ = this.func_70655_b(p_70665_1_, p_70665_2_);
+             p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
+             float f1 = p_70665_2_;
+@@ -1151,6 +1173,17 @@
+ 
+     public void func_71038_i()
      {
-+        ItemStack stack = this.getHeldItem();
++        ItemStack stack = this.func_70694_bm();
 +
-+        if (stack != null && stack.getItem() != null)
++        if (stack != null && stack.func_77973_b() != null)
 +        {
-+            Item item = stack.getItem();
++            Item item = stack.func_77973_b();
 +            if (item.onEntitySwing(this, stack))
 +            {
 +                return;
 +            }
 +        }
 +
-         if (!this.isSwingInProgress || this.swingProgressInt >= this.getArmSwingAnimationEnd() / 2 || this.swingProgressInt < 0)
+         if (!this.field_82175_bq || this.field_110158_av >= this.func_82166_i() / 2 || this.field_110158_av < 0)
          {
-             this.swingProgressInt = -1;
-@@ -1422,6 +1455,7 @@
+             this.field_110158_av = -1;
+@@ -1346,6 +1379,7 @@
          }
  
-         this.isAirBorne = true;
+         this.field_70160_al = true;
 +        ForgeHooks.onLivingJump(this);
      }
  
-     // JAVADOC METHOD $$ func_70612_e
-@@ -1602,6 +1636,7 @@
-     // JAVADOC METHOD $$ func_70071_h_
-     public void onUpdate()
+     public void func_70612_e(float p_70612_1_, float p_70612_2_)
+@@ -1520,6 +1554,7 @@
+ 
+     public void func_70071_h_()
      {
 +        if (ForgeHooks.onLivingUpdate(this)) return;
-         super.onUpdate();
+         super.func_70071_h_();
  
-         if (!this.worldObj.isRemote)
-@@ -2099,4 +2134,42 @@
+         if (!this.field_70170_p.field_72995_K)
+@@ -2000,4 +2035,42 @@
      {
-         return this.getTeam() != null ? this.getTeam().isSameTeam(par1Team) : false;
+         return this.func_96124_cp() != null ? this.func_96124_cp().func_142054_a(p_142012_1_) : false;
      }
 +
 +    /***
@@ -175,9 +175,9 @@
 +     */
 +    public void curePotionEffects(ItemStack curativeItem)
 +    {
-+        Iterator<Integer> potionKey = activePotionsMap.keySet().iterator();
++        Iterator<Integer> potionKey = field_70713_bf.keySet().iterator();
 +
-+        if (worldObj.isRemote)
++        if (field_70170_p.field_72995_K)
 +        {
 +            return;
 +        }
@@ -185,12 +185,12 @@
 +        while (potionKey.hasNext())
 +        {
 +            Integer key = potionKey.next();
-+            PotionEffect effect = (PotionEffect)activePotionsMap.get(key);
++            PotionEffect effect = (PotionEffect)field_70713_bf.get(key);
 +
 +            if (effect.isCurativeItem(curativeItem))
 +            {
 +                potionKey.remove();
-+                onFinishedPotionEffect(effect);
++                func_70688_c(effect);
 +            }
 +        }
 +    }

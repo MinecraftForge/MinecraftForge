@@ -12,21 +12,21 @@
  
      public static final boolean func_150051_a(Block p_150051_0_)
      {
--        return p_150051_0_ == Blocks.rail || p_150051_0_ == Blocks.golden_rail || p_150051_0_ == Blocks.detector_rail || p_150051_0_ == Blocks.activator_rail;
+-        return p_150051_0_ == Blocks.field_150448_aq || p_150051_0_ == Blocks.field_150318_D || p_150051_0_ == Blocks.field_150319_E || p_150051_0_ == Blocks.field_150408_cc;
 +        return p_150051_0_ instanceof BlockRailBase;
      }
  
      protected BlockRailBase(boolean p_i45389_1_)
-@@ -85,7 +86,7 @@
-     // JAVADOC METHOD $$ func_149645_b
-     public int getRenderType()
+@@ -78,7 +79,7 @@
+ 
+     public int func_149645_b()
      {
 -        return 9;
 +        return renderType;
      }
  
-     // JAVADOC METHOD $$ func_149745_a
-@@ -205,6 +206,111 @@
+     public int func_149745_a(Random p_149745_1_)
+@@ -193,6 +194,111 @@
          }
      }
  
@@ -42,7 +42,7 @@
 +     */
 +    public boolean isFlexibleRail(IBlockAccess world, int y, int x, int z)
 +    {
-+        return isPowered();
++        return func_150050_e();
 +    }
 +
 +    /**
@@ -86,8 +86,8 @@
 +     */
 +    public int getBasicRailMetadata(IBlockAccess world, EntityMinecart cart, int x, int y, int z)
 +    {
-+        int meta = world.getBlockMetadata(x, y, z);
-+        if(isPowered())
++        int meta = world.func_72805_g(x, y, z);
++        if(func_150050_e())
 +        {
 +            meta = meta & 7;
 +        }
@@ -138,7 +138,7 @@
      public class Rail
      {
          private World field_150660_b;
-@@ -214,6 +320,7 @@
+@@ -202,6 +308,7 @@
          private final boolean field_150656_f;
          private List field_150657_g = new ArrayList();
          private static final String __OBFID = "CL_00000196";
@@ -146,12 +146,12 @@
  
          public Rail(World p_i45388_2_, int p_i45388_3_, int p_i45388_4_, int p_i45388_5_)
          {
-@@ -221,19 +328,10 @@
+@@ -209,19 +316,10 @@
              this.field_150661_c = p_i45388_3_;
              this.field_150658_d = p_i45388_4_;
              this.field_150659_e = p_i45388_5_;
--            Block block = p_i45388_2_.getBlock(p_i45388_3_, p_i45388_4_, p_i45388_5_);
--            int l = p_i45388_2_.getBlockMetadata(p_i45388_3_, p_i45388_4_, p_i45388_5_);
+-            Block block = p_i45388_2_.func_147439_a(p_i45388_3_, p_i45388_4_, p_i45388_5_);
+-            int l = p_i45388_2_.func_72805_g(p_i45388_3_, p_i45388_4_, p_i45388_5_);
 -
 -            if (((BlockRailBase)block).field_150053_a)
 -            {
@@ -163,14 +163,14 @@
 -                this.field_150656_f = false;
 -            }
 -
-+            BlockRailBase block = (BlockRailBase)p_i45388_2_.getBlock(p_i45388_3_, p_i45388_4_, p_i45388_5_);
++            BlockRailBase block = (BlockRailBase)p_i45388_2_.func_147439_a(p_i45388_3_, p_i45388_4_, p_i45388_5_);
 +            int l = block.getBasicRailMetadata(p_i45388_2_, null, p_i45388_3_, p_i45388_4_, p_i45388_5_);
 +            this.field_150656_f = block.isFlexibleRail(p_i45388_2_, p_i45388_3_, p_i45388_4_, p_i45388_5_);
 +            canMakeSlopes = block.canMakeSlopes(p_i45388_2_, p_i45388_3_, p_i45388_4_, p_i45388_5_);
              this.func_150648_a(l);
          }
  
-@@ -424,7 +522,7 @@
+@@ -412,7 +510,7 @@
                  }
              }
  
@@ -179,7 +179,7 @@
              {
                  if (BlockRailBase.func_150049_b_(this.field_150660_b, this.field_150661_c, this.field_150658_d + 1, this.field_150659_e - 1))
                  {
-@@ -437,7 +535,7 @@
+@@ -425,7 +523,7 @@
                  }
              }
  
@@ -188,7 +188,7 @@
              {
                  if (BlockRailBase.func_150049_b_(this.field_150660_b, this.field_150661_c + 1, this.field_150658_d + 1, this.field_150659_e))
                  {
-@@ -582,7 +680,7 @@
+@@ -570,7 +668,7 @@
                  }
              }
  
@@ -197,7 +197,7 @@
              {
                  if (BlockRailBase.func_150049_b_(this.field_150660_b, this.field_150661_c, this.field_150658_d + 1, this.field_150659_e - 1))
                  {
-@@ -595,7 +693,7 @@
+@@ -583,7 +681,7 @@
                  }
              }
  

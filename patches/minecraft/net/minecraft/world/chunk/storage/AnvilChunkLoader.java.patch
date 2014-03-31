@@ -9,19 +9,19 @@
  
  import org.apache.logging.log4j.Level;
  import org.apache.logging.log4j.LogManager;
-@@ -109,6 +111,7 @@
-                 chunk = this.readChunkFromNBT(par1World, par4NBTTagCompound.getCompoundTag("Level"));
+@@ -106,6 +108,7 @@
+                 chunk = this.func_75823_a(p_75822_1_, p_75822_4_.func_74775_l("Level"));
              }
  
-+            MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, par4NBTTagCompound));
++            MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, p_75822_4_));
              return chunk;
          }
      }
-@@ -123,6 +126,7 @@
+@@ -120,6 +123,7 @@
              NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-             nbttagcompound.setTag("Level", nbttagcompound1);
-             this.writeChunkToNBT(par2Chunk, par1World, nbttagcompound1);
-+            MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Save(par2Chunk, nbttagcompound));
-             this.addChunkToPending(par2Chunk.getChunkCoordIntPair(), nbttagcompound);
+             nbttagcompound.func_74782_a("Level", nbttagcompound1);
+             this.func_75820_a(p_75816_2_, p_75816_1_, nbttagcompound1);
++            MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Save(p_75816_2_, nbttagcompound));
+             this.func_75824_a(p_75816_2_.func_76632_l(), nbttagcompound);
          }
          catch (Exception exception)

@@ -7,4 +7,4 @@
 -@SideOnly(Side.CLIENT)
  public abstract class ModelBase
  {
-     public float onGround;
+     public float field_78095_p;

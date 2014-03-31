@@ -31,8 +31,8 @@
 -
 -            System.arraycopy(extracted.field_150282_a, 0, field_149268_i, j, extracted.field_150282_a.length);
              j += extracted.field_150282_a.length;
-             this.field_149266_a[k] = chunk.xPosition;
-             this.field_149264_b[k] = chunk.zPosition;
+             this.field_149266_a[k] = chunk.field_76635_g;
+             this.field_149264_b[k] = chunk.field_76647_h;
 @@ -59,15 +53,28 @@
              this.field_149262_d[k] = extracted.field_150281_c;
              this.field_149260_f[k] = extracted.field_150282_a;
@@ -65,9 +65,9 @@
          }
          finally
          {
-@@ -150,6 +157,16 @@
-     // JAVADOC METHOD $$ func_148840_b
-     public void writePacketData(PacketBuffer p_148840_1_) throws IOException
+@@ -148,6 +155,16 @@
+ 
+     public void func_148840_b(PacketBuffer p_148840_1_) throws IOException
      {
 +        if (this.field_149263_e == null)
 +        {

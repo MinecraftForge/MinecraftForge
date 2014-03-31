@@ -9,30 +9,30 @@
 +
  public abstract class GenLayer
  {
-     // JAVADOC FIELD $$ field_75907_b
-@@ -53,17 +56,12 @@
+     private long field_75907_b;
+@@ -48,17 +51,12 @@
          {
              b0 = 4;
          }
-+        b0 = getModdedBiomeSize(par2WorldType, b0);
++        b0 = getModdedBiomeSize(p_75901_2_, b0);
  
-         GenLayer genlayer = GenLayerZoom.magnify(1000L, genlayer3, 0);
+         GenLayer genlayer = GenLayerZoom.func_75915_a(1000L, genlayer3, 0);
          GenLayerRiverInit genlayerriverinit = new GenLayerRiverInit(100L, genlayer);
--        Object object = new GenLayerBiome(200L, genlayer3, par2WorldType);
-+        Object object = par2WorldType.getBiomeLayer(par0, genlayer3);
+-        Object object = new GenLayerBiome(200L, genlayer3, p_75901_2_);
++        Object object = p_75901_2_.getBiomeLayer(p_75901_0_, genlayer3);
  
 -        if (!flag)
 -        {
--            GenLayer genlayer2 = GenLayerZoom.magnify(1000L, (GenLayer)object, 2);
+-            GenLayer genlayer2 = GenLayerZoom.func_75915_a(1000L, (GenLayer)object, 2);
 -            object = new GenLayerBiomeEdge(1000L, genlayer2);
 -        }
 -
-         GenLayer genlayer1 = GenLayerZoom.magnify(1000L, genlayerriverinit, 2);
+         GenLayer genlayer1 = GenLayerZoom.func_75915_a(1000L, genlayerriverinit, 2);
          GenLayerHills genlayerhills = new GenLayerHills(1000L, (GenLayer)object, genlayer1);
-         genlayer = GenLayerZoom.magnify(1000L, genlayerriverinit, 2);
-@@ -217,4 +215,11 @@
+         genlayer = GenLayerZoom.func_75915_a(1000L, genlayerriverinit, 2);
+@@ -204,4 +202,11 @@
      {
-         return p_151617_2_ == p_151617_3_ && p_151617_3_ == p_151617_4_ ? p_151617_2_ : (p_151617_1_ == p_151617_2_ && p_151617_1_ == p_151617_3_ ? p_151617_1_ : (p_151617_1_ == p_151617_2_ && p_151617_1_ == p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_3_ && p_151617_1_ == p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_2_ && p_151617_3_ != p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_3_ && p_151617_2_ != p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_4_ && p_151617_2_ != p_151617_3_ ? p_151617_1_ : (p_151617_2_ == p_151617_3_ && p_151617_1_ != p_151617_4_ ? p_151617_2_ : (p_151617_2_ == p_151617_4_ && p_151617_1_ != p_151617_3_ ? p_151617_2_ : (p_151617_3_ == p_151617_4_ && p_151617_1_ != p_151617_2_ ? p_151617_3_ : this.selectRandom(new int[] {p_151617_1_, p_151617_2_, p_151617_3_, p_151617_4_}))))))))));
+         return p_151617_2_ == p_151617_3_ && p_151617_3_ == p_151617_4_ ? p_151617_2_ : (p_151617_1_ == p_151617_2_ && p_151617_1_ == p_151617_3_ ? p_151617_1_ : (p_151617_1_ == p_151617_2_ && p_151617_1_ == p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_3_ && p_151617_1_ == p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_2_ && p_151617_3_ != p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_3_ && p_151617_2_ != p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_4_ && p_151617_2_ != p_151617_3_ ? p_151617_1_ : (p_151617_2_ == p_151617_3_ && p_151617_1_ != p_151617_4_ ? p_151617_2_ : (p_151617_2_ == p_151617_4_ && p_151617_1_ != p_151617_3_ ? p_151617_2_ : (p_151617_3_ == p_151617_4_ && p_151617_1_ != p_151617_2_ ? p_151617_3_ : this.func_151619_a(new int[] {p_151617_1_, p_151617_2_, p_151617_3_, p_151617_4_}))))))))));
      }
 +
 +    public static byte getModdedBiomeSize(WorldType worldType, byte original)

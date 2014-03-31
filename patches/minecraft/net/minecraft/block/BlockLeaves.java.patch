@@ -19,47 +19,47 @@
  {
      int[] field_150128_a;
      @SideOnly(Side.CLIENT)
-@@ -84,10 +86,10 @@
+@@ -82,10 +84,10 @@
                  {
                      for (int l1 = -b0; l1 <= b0; ++l1)
                      {
--                        if (p_149749_1_.getBlock(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1).getMaterial() == Material.leaves)
-+                        Block block = p_149749_1_.getBlock(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
+-                        if (p_149749_1_.func_147439_a(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1).func_149688_o() == Material.field_151584_j)
++                        Block block = p_149749_1_.func_147439_a(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
 +                        if (block.isLeaves(p_149749_1_, p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1))
                          {
--                            int i2 = p_149749_1_.getBlockMetadata(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
--                            p_149749_1_.setBlockMetadataWithNotify(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1, i2 | 8, 4);
+-                            int i2 = p_149749_1_.func_72805_g(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
+-                            p_149749_1_.func_72921_c(p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1, i2 | 8, 4);
 +                            block.beginLeavesDecay(p_149749_1_, p_149749_2_ + j1, p_149749_3_ + k1, p_149749_4_ + l1);
                          }
                      }
                  }
-@@ -130,9 +132,9 @@
+@@ -127,9 +129,9 @@
                              {
-                                 Block block = p_149674_1_.getBlock(p_149674_2_ + l1, p_149674_3_ + i2, p_149674_4_ + j2);
+                                 Block block = p_149674_1_.func_147439_a(p_149674_2_ + l1, p_149674_3_ + i2, p_149674_4_ + j2);
  
--                                if (block != Blocks.log && block != Blocks.log2)
+-                                if (block != Blocks.field_150364_r && block != Blocks.field_150363_s)
 +                                if (!block.canSustainLeaves(p_149674_1_, p_149674_2_ + l1, p_149674_3_ + i2, p_149674_4_ + j2))
                                  {
--                                    if (block.getMaterial() == Material.leaves)
+-                                    if (block.func_149688_o() == Material.field_151584_j)
 +                                    if (block.isLeaves(p_149674_1_, p_149674_2_ + l1, p_149674_3_ + i2, p_149674_4_ + j2))
                                      {
                                          this.field_150128_a[(l1 + k1) * j1 + (i2 + k1) * b1 + j2 + k1] = -2;
                                      }
-@@ -288,13 +290,7 @@
-     // JAVADOC METHOD $$ func_149636_a
-     public void harvestBlock(World p_149636_1_, EntityPlayer p_149636_2_, int p_149636_3_, int p_149636_4_, int p_149636_5_, int p_149636_6_)
+@@ -281,13 +283,7 @@
+ 
+     public void func_149636_a(World p_149636_1_, EntityPlayer p_149636_2_, int p_149636_3_, int p_149636_4_, int p_149636_5_, int p_149636_6_)
      {
--        if (!p_149636_1_.isRemote && p_149636_2_.getCurrentEquippedItem() != null && p_149636_2_.getCurrentEquippedItem().getItem() == Items.shears)
+-        if (!p_149636_1_.field_72995_K && p_149636_2_.func_71045_bC() != null && p_149636_2_.func_71045_bC().func_77973_b() == Items.field_151097_aZ)
          {
--            p_149636_2_.addStat(StatList.mineBlockStatArray[Block.getIdFromBlock(this)], 1);
--            this.dropBlockAsItem(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, new ItemStack(Item.getItemFromBlock(this), 1, p_149636_6_ & 3));
+-            p_149636_2_.func_71064_a(StatList.field_75934_C[Block.func_149682_b(this)], 1);
+-            this.func_149642_a(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, new ItemStack(Item.func_150898_a(this), 1, p_149636_6_ & 3));
 -        }
 -        else
 -        {
-             super.harvestBlock(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_);
+             super.func_149636_a(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_);
          }
      }
-@@ -330,4 +326,38 @@
+@@ -318,4 +314,38 @@
      }
  
      public abstract String[] func_150125_e();
@@ -75,7 +75,7 @@
 +    public ArrayList<ItemStack> onSheared(ItemStack item, IBlockAccess world, int x, int y, int z, int fortune)
 +    {
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-+        ret.add(new ItemStack(this, 1, world.getBlockMetadata(x, y, z) & 3));
++        ret.add(new ItemStack(this, 1, world.func_72805_g(x, y, z) & 3));
 +        return ret;
 +    }
 +
@@ -83,13 +83,13 @@
 +    public void beginLeavesDecay(World world, int x, int y, int z)
 +    {
 +
-+        int i2 = world.getBlockMetadata(x, y, z);
++        int i2 = world.func_72805_g(x, y, z);
 +
 +        if ((i2 & 8) == 0)
 +        {
-+            world.setBlockMetadataWithNotify(x, y, z, i2 | 8, 4);
++            world.func_72921_c(x, y, z, i2 | 8, 4);
 +        }
-+        world.setBlockMetadataWithNotify(x, y, z, world.getBlockMetadata(x, y, z) | 8, 4);
++        world.func_72921_c(x, y, z, world.func_72805_g(x, y, z) | 8, 4);
 +    }
 +
 +    @Override

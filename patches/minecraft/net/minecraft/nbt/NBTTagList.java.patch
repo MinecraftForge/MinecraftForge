@@ -8,19 +8,19 @@
  import java.io.DataInput;
  import java.io.DataOutput;
  import java.io.IOException;
-@@ -96,7 +94,6 @@
-         this.tagList.add(par1NBTBase);
+@@ -90,7 +88,6 @@
+         this.field_74747_a.add(p_74742_1_);
      }
  
 -    @SideOnly(Side.CLIENT)
      public void func_150304_a(int p_150304_1_, NBTBase p_150304_2_)
      {
-         if (p_150304_1_ >= 0 && p_150304_1_ < this.tagList.size())
-@@ -120,7 +117,6 @@
+         if (p_150304_1_ >= 0 && p_150304_1_ < this.field_74747_a.size())
+@@ -113,7 +110,6 @@
+         }
      }
  
-     // JAVADOC METHOD $$ func_74744_a
 -    @SideOnly(Side.CLIENT)
-     public NBTBase removeTag(int par1)
+     public NBTBase func_74744_a(int p_74744_1_)
      {
-         return (NBTBase)this.tagList.remove(par1);
+         return (NBTBase)this.field_74747_a.remove(p_74744_1_);

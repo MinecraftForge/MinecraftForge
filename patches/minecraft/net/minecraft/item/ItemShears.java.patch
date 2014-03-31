@@ -23,48 +23,48 @@
  {
 @@ -20,13 +29,12 @@
  
-     public boolean onBlockDestroyed(ItemStack p_150894_1_, World p_150894_2_, Block p_150894_3_, int p_150894_4_, int p_150894_5_, int p_150894_6_, EntityLivingBase p_150894_7_)
+     public boolean func_150894_a(ItemStack p_150894_1_, World p_150894_2_, Block p_150894_3_, int p_150894_4_, int p_150894_5_, int p_150894_6_, EntityLivingBase p_150894_7_)
      {
--        if (p_150894_3_.getMaterial() != Material.leaves && p_150894_3_ != Blocks.web && p_150894_3_ != Blocks.tallgrass && p_150894_3_ != Blocks.vine && p_150894_3_ != Blocks.tripwire)
-+        if (p_150894_3_.getMaterial() != Material.leaves && p_150894_3_ != Blocks.web && p_150894_3_ != Blocks.tallgrass && p_150894_3_ != Blocks.vine && p_150894_3_ != Blocks.tripwire && !(p_150894_3_ instanceof IShearable))
+-        if (p_150894_3_.func_149688_o() != Material.field_151584_j && p_150894_3_ != Blocks.field_150321_G && p_150894_3_ != Blocks.field_150329_H && p_150894_3_ != Blocks.field_150395_bd && p_150894_3_ != Blocks.field_150473_bD)
++        if (p_150894_3_.func_149688_o() != Material.field_151584_j && p_150894_3_ != Blocks.field_150321_G && p_150894_3_ != Blocks.field_150329_H && p_150894_3_ != Blocks.field_150395_bd && p_150894_3_ != Blocks.field_150473_bD && !(p_150894_3_ instanceof IShearable))
          {
-             return super.onBlockDestroyed(p_150894_1_, p_150894_2_, p_150894_3_, p_150894_4_, p_150894_5_, p_150894_6_, p_150894_7_);
+             return super.func_150894_a(p_150894_1_, p_150894_2_, p_150894_3_, p_150894_4_, p_150894_5_, p_150894_6_, p_150894_7_);
          }
          else
          {
--            p_150894_1_.damageItem(1, p_150894_7_);
+-            p_150894_1_.func_77972_a(1, p_150894_7_);
              return true;
          }
      }
 @@ -40,4 +48,69 @@
      {
-         return p_150893_2_ != Blocks.web && p_150893_2_.getMaterial() != Material.leaves ? (p_150893_2_ == Blocks.wool ? 5.0F : super.func_150893_a(p_150893_1_, p_150893_2_)) : 15.0F;
+         return p_150893_2_ != Blocks.field_150321_G && p_150893_2_.func_149688_o() != Material.field_151584_j ? (p_150893_2_ == Blocks.field_150325_L ? 5.0F : super.func_150893_a(p_150893_1_, p_150893_2_)) : 15.0F;
      }
 +
 +    @Override
-+    public boolean itemInteractionForEntity(ItemStack itemstack, EntityPlayer player, EntityLivingBase entity)
++    public boolean func_111207_a(ItemStack itemstack, EntityPlayer player, EntityLivingBase entity)
 +    {
-+        if (entity.worldObj.isRemote)
++        if (entity.field_70170_p.field_72995_K)
 +        {
 +            return false;
 +        }
 +        if (entity instanceof IShearable)
 +        {
 +            IShearable target = (IShearable)entity;
-+            if (target.isShearable(itemstack, entity.worldObj, (int)entity.posX, (int)entity.posY, (int)entity.posZ))
++            if (target.isShearable(itemstack, entity.field_70170_p, (int)entity.field_70165_t, (int)entity.field_70163_u, (int)entity.field_70161_v))
 +            {
-+                ArrayList<ItemStack> drops = target.onSheared(itemstack, entity.worldObj, (int)entity.posX, (int)entity.posY, (int)entity.posZ,
-+                        EnchantmentHelper.getEnchantmentLevel(Enchantment.fortune.effectId, itemstack));
++                ArrayList<ItemStack> drops = target.onSheared(itemstack, entity.field_70170_p, (int)entity.field_70165_t, (int)entity.field_70163_u, (int)entity.field_70161_v,
++                        EnchantmentHelper.func_77506_a(Enchantment.field_77346_s.field_77352_x, itemstack));
 +
 +                Random rand = new Random();
 +                for(ItemStack stack : drops)
 +                {
-+                    EntityItem ent = entity.entityDropItem(stack, 1.0F);
-+                    ent.motionY += rand.nextFloat() * 0.05F;
-+                    ent.motionX += (rand.nextFloat() - rand.nextFloat()) * 0.1F;
-+                    ent.motionZ += (rand.nextFloat() - rand.nextFloat()) * 0.1F;
++                    EntityItem ent = entity.func_70099_a(stack, 1.0F);
++                    ent.field_70181_x += rand.nextFloat() * 0.05F;
++                    ent.field_70159_w += (rand.nextFloat() - rand.nextFloat()) * 0.1F;
++                    ent.field_70179_y += (rand.nextFloat() - rand.nextFloat()) * 0.1F;
 +                }
-+                itemstack.damageItem(1, entity);
++                itemstack.func_77972_a(1, entity);
 +            }
 +            return true;
 +        }
@@ -74,18 +74,18 @@
 +    @Override
 +    public boolean onBlockStartBreak(ItemStack itemstack, int x, int y, int z, EntityPlayer player)
 +    {
-+        if (player.worldObj.isRemote)
++        if (player.field_70170_p.field_72995_K)
 +        {
 +            return false;
 +        }
-+        Block block = player.worldObj.getBlock(x, y, z);
++        Block block = player.field_70170_p.func_147439_a(x, y, z);
 +        if (block instanceof IShearable)
 +        {
 +            IShearable target = (IShearable)block;
-+            if (target.isShearable(itemstack, player.worldObj, x, y, z))
++            if (target.isShearable(itemstack, player.field_70170_p, x, y, z))
 +            {
-+                ArrayList<ItemStack> drops = target.onSheared(itemstack, player.worldObj, x, y, z,
-+                        EnchantmentHelper.getEnchantmentLevel(Enchantment.fortune.effectId, itemstack));
++                ArrayList<ItemStack> drops = target.onSheared(itemstack, player.field_70170_p, x, y, z,
++                        EnchantmentHelper.func_77506_a(Enchantment.field_77346_s.field_77352_x, itemstack));
 +                Random rand = new Random();
 +
 +                for(ItemStack stack : drops)
@@ -94,13 +94,13 @@
 +                    double d  = (double)(rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
 +                    double d1 = (double)(rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
 +                    double d2 = (double)(rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-+                    EntityItem entityitem = new EntityItem(player.worldObj, (double)x + d, (double)y + d1, (double)z + d2, stack);
-+                    entityitem.delayBeforeCanPickup = 10;
-+                    player.worldObj.spawnEntityInWorld(entityitem);
++                    EntityItem entityitem = new EntityItem(player.field_70170_p, (double)x + d, (double)y + d1, (double)z + d2, stack);
++                    entityitem.field_145804_b = 10;
++                    player.field_70170_p.func_72838_d(entityitem);
 +                }
 +
-+                itemstack.damageItem(1, player);
-+                player.addStat(StatList.mineBlockStatArray[Block.getIdFromBlock(block)], 1);
++                itemstack.func_77972_a(1, player);
++                player.func_71064_a(StatList.field_75934_C[Block.func_149682_b(block)], 1);
 +            }
 +        }
 +        return false;

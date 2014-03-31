@@ -17,7 +17,7 @@
      public S21PacketChunkData() {}
  
 @@ -35,17 +37,22 @@
-         this.field_149282_b = p_i45196_1_.zPosition;
+         this.field_149282_b = p_i45196_1_.field_76647_h;
          this.field_149279_g = p_i45196_2_;
          S21PacketChunkData.Extracted extracted = func_149269_a(p_i45196_1_, p_i45196_2_, p_i45196_3_);
 -        Deflater deflater = new Deflater(-1);
@@ -44,7 +44,7 @@
          }
          finally
          {
-@@ -76,13 +83,16 @@
+@@ -75,13 +82,16 @@
          p_148837_1_.readBytes(field_149286_i, 0, this.field_149285_h);
          int i = 0;
          int j;
@@ -61,9 +61,9 @@
  
          if (this.field_149279_g)
          {
-@@ -110,6 +120,15 @@
-     // JAVADOC METHOD $$ func_148840_b
-     public void writePacketData(PacketBuffer p_148840_1_) throws IOException
+@@ -108,6 +118,15 @@
+ 
+     public void func_148840_b(PacketBuffer p_148840_1_) throws IOException
      {
 +        if (this.field_149281_e == null)
 +        {

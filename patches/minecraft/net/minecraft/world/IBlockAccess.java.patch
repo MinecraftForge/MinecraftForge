@@ -8,18 +8,18 @@
  
  public interface IBlockAccess
  {
-@@ -21,7 +22,6 @@
-     int getBlockMetadata(int var1, int var2, int var3);
+@@ -18,7 +19,6 @@
  
-     // JAVADOC METHOD $$ func_147437_c
+     int func_72805_g(int var1, int var2, int var3);
+ 
 -    @SideOnly(Side.CLIENT)
-     boolean isAirBlock(int var1, int var2, int var3);
+     boolean func_147437_c(int var1, int var2, int var3);
  
-     // JAVADOC METHOD $$ func_72807_a
-@@ -41,4 +41,16 @@
+     @SideOnly(Side.CLIENT)
+@@ -33,4 +33,16 @@
+     Vec3Pool func_82732_R();
  
-     // JAVADOC METHOD $$ func_72879_k
-     int isBlockProvidingPowerTo(int var1, int var2, int var3, int var4);
+     int func_72879_k(int var1, int var2, int var3, int var4);
 +
 +    /**
 +     * FORGE: isSideSolid, pulled up from {@link World}
