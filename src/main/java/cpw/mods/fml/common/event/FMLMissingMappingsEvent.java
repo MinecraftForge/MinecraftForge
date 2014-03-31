@@ -16,8 +16,9 @@ import cpw.mods.fml.common.registry.GameRegistry;
  * This event is fired if a world is loaded that has block and item mappings referring the mod that are not
  * in existence.
  * These can be remapped to other existing objects, or simply discarded.
+ * Use get() and getAll() to process this event.
  *
- * @author cpw
+ * @author cpw, Player
  *
  */
 public class FMLMissingMappingsEvent extends FMLEvent {
@@ -135,6 +136,7 @@ public class FMLMissingMappingsEvent extends FMLEvent {
     {
         this.missing = missingMappings;
     }
+
     @Override
     public void applyModContainer(ModContainer activeContainer)
     {
@@ -144,10 +146,29 @@ public class FMLMissingMappingsEvent extends FMLEvent {
 
     /**
      * Get the list of missing mappings for the active mod.
-     * @return
+     *
+     * Process the list entries by calling ignore(), warn(), fail() or remap() on each entry.
+     *
+     * @return list of missing mappings
      */
     public List<MissingMapping> get()
     {
         return ImmutableList.copyOf(missing.get(activeContainer.getModId()));
+    }
+
+    /**
+     * Get the list of missing mappings for all mods.
+     *
+     * Only use this if you need to handle mod id changes, e.g. if you renamed your mod or
+     * split/merge into/from multiple mods.
+     *
+     * Process the list entries by calling ignore(), warn(), fail() or remap() on each entry you
+     * want to handle.
+     *
+     * @return list of missing mappings
+     */
+    public List<MissingMapping> getAll()
+    {
+        return ImmutableList.copyOf(missing.values());
     }
 }
