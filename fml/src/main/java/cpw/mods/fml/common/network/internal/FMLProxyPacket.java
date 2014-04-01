@@ -47,19 +47,19 @@ public class FMLProxyPacket extends Packet {
         this.payload = payload;
     }
     @Override
-    public void func_148837_a(PacketBuffer packetbuffer) throws IOException
+    public void readPacketData(PacketBuffer packetbuffer) throws IOException
     {
         // NOOP - we are not built this way
     }
 
     @Override
-    public void func_148840_b(PacketBuffer packetbuffer) throws IOException
+    public void writePacketData(PacketBuffer packetbuffer) throws IOException
     {
         // NOOP - we are not built this way
     }
 
     @Override
-    public void func_148833_a(INetHandler inethandler)
+    public void processPacket(INetHandler inethandler)
     {
         this.netHandler = inethandler;
         EmbeddedChannel internalChannel = NetworkRegistry.INSTANCE.getChannel(this.channel, this.target);

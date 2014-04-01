@@ -26,16 +26,16 @@ public class FMLFileResourcePack extends FileResourcePack {
     }
 
     @Override
-    public String func_130077_b()
+    public String getPackName()
     {
         return "FMLFileResourcePack:"+container.getName();
     }
     @Override
-    protected InputStream func_110591_a(String resourceName) throws IOException
+    protected InputStream getInputStreamByName(String resourceName) throws IOException
     {
         try
         {
-            return super.func_110591_a(resourceName);
+            return super.getInputStreamByName(resourceName);
         }
         catch (IOException ioe)
         {
@@ -54,8 +54,8 @@ public class FMLFileResourcePack extends FileResourcePack {
     }
 
     @Override
-    public BufferedImage func_110586_a() throws IOException
+    public BufferedImage getPackImage() throws IOException
     {
-        return ImageIO.read(func_110591_a(container.getMetadata().logoFile));
+        return ImageIO.read(getInputStreamByName(container.getMetadata().logoFile));
     }
 }

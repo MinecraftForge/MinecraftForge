@@ -56,7 +56,7 @@ public class FMLEventChannel {
                 if (msg.handler() instanceof NetHandlerPlayClient)
                 {
                     NetHandlerPlayClient client = (NetHandlerPlayClient) msg.handler();
-                    event = new FMLNetworkEvent.ClientCustomPacketEvent(client.func_147298_b(), msg);
+                    event = new FMLNetworkEvent.ClientCustomPacketEvent(client.getNetworkManager(), msg);
                 }
                 else if (msg.handler() instanceof NetHandlerPlayServer)
                 {

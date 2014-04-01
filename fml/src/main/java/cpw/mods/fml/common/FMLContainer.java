@@ -94,45 +94,45 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
         for (ModContainer mc : Loader.instance().getActiveModList())
         {
             NBTTagCompound mod = new NBTTagCompound();
-            mod.func_74778_a("ModId", mc.getModId());
-            mod.func_74778_a("ModVersion", mc.getVersion());
-            list.func_74742_a(mod);
+            mod.setString("ModId", mc.getModId());
+            mod.setString("ModVersion", mc.getVersion());
+            list.appendTag(mod);
         }
-        fmlData.func_74782_a("ModList", list);
+        fmlData.setTag("ModList", list);
         // name <-> id mappings
         NBTTagList dataList = new NBTTagList();
-        FMLLog.fine("Gathering id map for writing to world save %s", info.func_76065_j());
+        FMLLog.fine("Gathering id map for writing to world save %s", info.getWorldName());
         Map<String,Integer> itemList = GameData.buildItemDataList();
         for (Entry<String, Integer> item : itemList.entrySet())
         {
             NBTTagCompound tag = new NBTTagCompound();
-            tag.func_74778_a("K",item.getKey());
-            tag.func_74768_a("V",item.getValue());
-            dataList.func_74742_a(tag);
+            tag.setString("K",item.getKey());
+            tag.setInteger("V",item.getValue());
+            dataList.appendTag(tag);
         }
-        fmlData.func_74782_a("ItemData", dataList);
+        fmlData.setTag("ItemData", dataList);
         // blocked ids
-        fmlData.func_74783_a("BlockedItemIds", GameData.getBlockedIds());
+        fmlData.setIntArray("BlockedItemIds", GameData.getBlockedIds());
         // block aliases
         NBTTagList blockAliasList = new NBTTagList();
         for (Entry<String, String> entry : GameData.getBlockRegistry().getAliases().entrySet())
         {
             NBTTagCompound tag = new NBTTagCompound();
-            tag.func_74778_a("K", entry.getKey());
-            tag.func_74778_a("V", entry.getValue());
-            blockAliasList.func_74742_a(tag);
+            tag.setString("K", entry.getKey());
+            tag.setString("V", entry.getValue());
+            blockAliasList.appendTag(tag);
         }
-        fmlData.func_74782_a("BlockAliases", blockAliasList);
+        fmlData.setTag("BlockAliases", blockAliasList);
         // item aliases
         NBTTagList itemAliasList = new NBTTagList();
         for (Entry<String, String> entry : GameData.getItemRegistry().getAliases().entrySet())
         {
             NBTTagCompound tag = new NBTTagCompound();
-            tag.func_74778_a("K", entry.getKey());
-            tag.func_74778_a("V", entry.getValue());
-            itemAliasList.func_74742_a(tag);
+            tag.setString("K", entry.getKey());
+            tag.setString("V", entry.getValue());
+            itemAliasList.appendTag(tag);
         }
-        fmlData.func_74782_a("ItemAliases", itemAliasList);
+        fmlData.setTag("ItemAliases", itemAliasList);
 
         return fmlData;
     }
@@ -140,14 +140,14 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
     @Override
     public void readData(SaveHandler handler, WorldInfo info, Map<String, NBTBase> propertyMap, NBTTagCompound tag)
     {
-        if (tag.func_74764_b("ModList"))
+        if (tag.hasKey("ModList"))
         {
-            NBTTagList modList = tag.func_150295_c("ModList", (byte)10);
-            for (int i = 0; i < modList.func_74745_c(); i++)
+            NBTTagList modList = tag.getTagList("ModList", (byte)10);
+            for (int i = 0; i < modList.tagCount(); i++)
             {
-                NBTTagCompound mod = modList.func_150305_b(i);
-                String modId = mod.func_74779_i("ModId");
-                String modVersion = mod.func_74779_i("ModVersion");
+                NBTTagCompound mod = modList.getCompoundTagAt(i);
+                String modId = mod.getString("ModId");
+                String modVersion = mod.getString("ModVersion");
                 ModContainer container = Loader.instance().getIndexedModList().get(modId);
                 if (container == null)
                 {
@@ -160,20 +160,20 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
                 }
             }
         }
-        if (tag.func_74764_b("ModItemData"))
+        if (tag.hasKey("ModItemData"))
         {
             FMLLog.info("Attempting to convert old world data to new system. This may be trouble!");
-            NBTTagList modList = tag.func_150295_c("ModItemData", (byte)10);
+            NBTTagList modList = tag.getTagList("ModItemData", (byte)10);
             Map<String,Integer> dataList = Maps.newLinkedHashMap();
-            for (int i = 0; i < modList.func_74745_c(); i++)
+            for (int i = 0; i < modList.tagCount(); i++)
             {
-                NBTTagCompound itemTag = modList.func_150305_b(i);
-                String modId = itemTag.func_74779_i("ModId");
-                String itemType = itemTag.func_74779_i("ItemType");
-                int itemId = itemTag.func_74762_e("ItemId");
-                int ordinal = itemTag.func_74762_e("ordinal");
-                String forcedModId = itemTag.func_74764_b("ForcedModId") ? itemTag.func_74779_i("ForcedModId") : null;
-                String forcedName = itemTag.func_74764_b("ForcedName") ? itemTag.func_74779_i("ForcedName") : null;
+                NBTTagCompound itemTag = modList.getCompoundTagAt(i);
+                String modId = itemTag.getString("ModId");
+                String itemType = itemTag.getString("ItemType");
+                int itemId = itemTag.getInteger("ItemId");
+                int ordinal = itemTag.getInteger("ordinal");
+                String forcedModId = itemTag.hasKey("ForcedModId") ? itemTag.getString("ForcedModId") : null;
+                String forcedName = itemTag.hasKey("ForcedName") ? itemTag.getString("ForcedName") : null;
                 if (forcedName == null)
                 {
                     FMLLog.warning("Found unlabelled item in world save, this may cause problems. The item type %s:%d will not be present", itemType, ordinal);
@@ -206,18 +206,18 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
                 throw new GameRegistryException("Failed to load the world - there are fatal block and item id issues", failedElements);
             }
         }
-        else if (tag.func_74764_b("ItemData"))
+        else if (tag.hasKey("ItemData"))
         {
             // name <-> id mappings
-            NBTTagList list = tag.func_150295_c("ItemData", 10);
+            NBTTagList list = tag.getTagList("ItemData", 10);
             Map<String,Integer> dataList = Maps.newLinkedHashMap();
-            for (int i = 0; i < list.func_74745_c(); i++)
+            for (int i = 0; i < list.tagCount(); i++)
             {
-                NBTTagCompound dataTag = list.func_150305_b(i);
-                dataList.put(dataTag.func_74779_i("K"), dataTag.func_74762_e("V"));
+                NBTTagCompound dataTag = list.getCompoundTagAt(i);
+                dataList.put(dataTag.getString("K"), dataTag.getInteger("V"));
             }
 
-            if (!tag.func_74764_b("BlockedItemIds")) // no blocked id info -> old 1.7 save
+            if (!tag.hasKey("BlockedItemIds")) // no blocked id info -> old 1.7 save
             {
                 // old 1.7 save potentially affected by the registry mapping bug
                 // fix the ids the best we can...
@@ -225,22 +225,22 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
             }
 
             // blocked ids
-            int[] blockedIds = tag.func_74759_k("BlockedItemIds");
+            int[] blockedIds = tag.getIntArray("BlockedItemIds");
             // block aliases
             Map<String, String> blockAliases = new HashMap<String, String>();
-            list = tag.func_150295_c("BlockAliases", 10);
-            for (int i = 0; i < list.func_74745_c(); i++)
+            list = tag.getTagList("BlockAliases", 10);
+            for (int i = 0; i < list.tagCount(); i++)
             {
-                NBTTagCompound dataTag = list.func_150305_b(i);
-                blockAliases.put(dataTag.func_74779_i("K"), dataTag.func_74779_i("V"));
+                NBTTagCompound dataTag = list.getCompoundTagAt(i);
+                blockAliases.put(dataTag.getString("K"), dataTag.getString("V"));
             }
             // item aliases
             Map<String, String> itemAliases = new HashMap<String, String>();
-            list = tag.func_150295_c("ItemAliases", 10);
-            for (int i = 0; i < list.func_74745_c(); i++)
+            list = tag.getTagList("ItemAliases", 10);
+            for (int i = 0; i < list.tagCount(); i++)
             {
-                NBTTagCompound dataTag = list.func_150305_b(i);
-                itemAliases.put(dataTag.func_74779_i("K"), dataTag.func_74779_i("V"));
+                NBTTagCompound dataTag = list.getCompoundTagAt(i);
+                itemAliases.put(dataTag.getString("K"), dataTag.getString("V"));
             }
 
             List<String> failedElements = GameData.injectWorldIDMap(dataList, blockedIds, blockAliases, itemAliases, true, true);

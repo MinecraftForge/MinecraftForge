@@ -156,13 +156,13 @@ public class GameData {
 
     static Item findItem(String modId, String name)
     {
-        return (Item) getMain().iItemRegistry.func_82594_a(modId + ":" + name);
+        return (Item) getMain().iItemRegistry.getObject(modId + ":" + name);
     }
 
     static Block findBlock(String modId, String name)
     {
         String key = modId + ":" + name;
-        return getMain().iBlockRegistry.contains(key) ? getMain().iBlockRegistry.func_82594_a(key) : null;
+        return getMain().iBlockRegistry.containsKey(key) ? getMain().iBlockRegistry.getObject(key) : null;
     }
 
     static ItemStack findItemStack(String modId, String name)
@@ -195,7 +195,7 @@ public class GameData {
     static UniqueIdentifier getUniqueName(Block block)
     {
         if (block == null) return null;
-        String name = getMain().iBlockRegistry.func_148750_c(block);
+        String name = getMain().iBlockRegistry.getNameForObject(block);
         UniqueIdentifier ui = new UniqueIdentifier(name);
         if (customItemStacks.contains(ui.modId, ui.name))
         {
@@ -208,7 +208,7 @@ public class GameData {
     static UniqueIdentifier getUniqueName(Item item)
     {
         if (item == null) return null;
-        String name = getMain().iItemRegistry.func_148750_c(item);
+        String name = getMain().iItemRegistry.getNameForObject(item);
         UniqueIdentifier ui = new UniqueIdentifier(name);
         if (customItemStacks.contains(ui.modId, ui.name))
         {
@@ -360,7 +360,7 @@ public class GameData {
                             isBlock ? "block" : "item",
                                     itemName,
                                     newId,
-                                    isBlock ? newData.iBlockRegistry.get(newId) : newData.iItemRegistry.get(newId)));
+                                    isBlock ? newData.iBlockRegistry.getObjectById(newId) : newData.iItemRegistry.getObjectById(newId)));
                 }
             }
         }
@@ -387,11 +387,11 @@ public class GameData {
 
                     if (isBlock)
                     {
-                        newId = newData.registerBlock(frozen.iBlockRegistry.get(itemName), itemName, null, currId);
+                        newId = newData.registerBlock(frozen.iBlockRegistry.getRaw(itemName), itemName, null, currId);
                     }
                     else
                     {
-                        newId = newData.registerItem(frozen.iItemRegistry.get(itemName), itemName, null, currId);
+                        newId = newData.registerItem(frozen.iItemRegistry.getRaw(itemName), itemName, null, currId);
                     }
 
                     FMLLog.info("Injected new block/item %s : %d (was %d)", itemName, newId, currId);
@@ -432,7 +432,7 @@ public class GameData {
                 if (remap.type == Type.BLOCK)
                 {
                     currId = getMain().iBlockRegistry.getId((Block) remap.getTarget());
-                    newName = getMain().iBlockRegistry.func_148750_c(remap.getTarget());
+                    newName = getMain().iBlockRegistry.getNameForObject(remap.getTarget());
                     FMLLog.fine("The Block %s is being remapped to %s.", remap.name, newName);
 
                     newId = gameData.registerBlock((Block) remap.getTarget(), newName, null, remap.id);
@@ -441,7 +441,7 @@ public class GameData {
                 else
                 {
                     currId = getMain().iItemRegistry.getId((Item) remap.getTarget());
-                    newName = getMain().iItemRegistry.func_148750_c(remap.getTarget());
+                    newName = getMain().iItemRegistry.getNameForObject(remap.getTarget());
                     FMLLog.fine("The Item %s is being remapped to %s.", remap.name, newName);
 
                     newId = gameData.registerItem((Item) remap.getTarget(), newName, null, remap.id);
@@ -597,9 +597,9 @@ public class GameData {
                 throw new RuntimeException("Cannot register an itemblock before its block");
             }
 
-            if (iItemRegistry.get(idHint) != null)
+            if (iItemRegistry.getObjectById(idHint) != null)
             {
-                throw new IllegalStateException(String.format("The Item Registry slot %d is already used by %s", idHint, iItemRegistry.get(idHint)));
+                throw new IllegalStateException(String.format("The Item Registry slot %d is already used by %s", idHint, iItemRegistry.getObjectById(idHint)));
             }
 
             if (!freeSlot(idHint)) // temporarily free the slot occupied by the Block for the ItemBlock registration

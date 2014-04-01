@@ -6,10 +6,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.RegistryNamespaced;
 
 import com.google.common.collect.ImmutableMap;
+
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
@@ -45,12 +47,12 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         this.minId = registry.minId;
         this.aliases.clear();
         this.aliases.putAll(registry.aliases);
-        field_148759_a = new ObjectIntIdentityMap();
-        field_82596_a.clear();
+        underlyingIntegerMap = new ObjectIntIdentityMap();
+        registryObjects.clear();
 
         for (I thing : (Iterable<I>) registry)
         {
-            super.func_148756_a(registry.getId(thing), registry.func_148750_c(thing), thing);
+            super.addObject(registry.getId(thing), registry.getNameForObject(thing), thing);
         }
     }
 
@@ -63,49 +65,41 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
      */
     @Override
     @Deprecated
-    public void func_148756_a(int id, String name, Object thing)
+    public void addObject(int id, String name, Object thing)
     {
         GameData.getMain().register(thing, name, id);
     }
 
     @Override
-    public I func_82594_a(String name)
+    public I getObject(String name)
     {
         I object = getRaw(name);
         return object == null ? this.optionalDefaultObject : object;
     }
 
     @Override
-    public I func_148754_a(int id)
+    public I getObjectById(int id)
     {
         I object = getRaw(id);
         return object == null ? this.optionalDefaultObject : object;
     }
 
     /**
-     * Get the object identified by the specified id.
-     *
-     * The default object is the air block for the block registry or null for the item registry.
-     *
-     * @param id Block/Item id.
-     * @return Block/Item object or the default object if it wasn't found.
+     * @deprecated use getObjectById instead
      */
+    @Deprecated
     public I get(int id)
     {
-        return func_148754_a(id);
+        return getObjectById(id);
     }
 
     /**
-     * Get the object identified by the specified name.
-     *
-     * The default object is the air block for the block registry or null for the item registry.
-     *
-     * @param name Block/Item name.
-     * @return Block/Item object or the default object if it wasn't found.
+     * @deprecated use getObject instead
      */
+    @Deprecated
     public I get(String name)
     {
-        return func_82594_a(name);
+        return getObject(name);
     }
 
     /**
@@ -121,7 +115,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
      */
     public int getId(I thing)
     {
-        return func_148757_b(thing);
+        return getIDForObject(thing);
     }
 
     /**
@@ -132,7 +126,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
      */
     public I getRaw(int id)
     {
-        return superType.cast(super.func_148754_a(id));
+        return superType.cast(super.getObjectById(id));
     }
 
     /**
@@ -143,7 +137,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
      */
     public I getRaw(String name)
     {
-        I ret = superType.cast(super.func_82594_a(name));
+        I ret = superType.cast(super.getObject(name));
 
         if (ret == null) // no match, try aliases recursively
         {
@@ -156,15 +150,15 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     }
 
     @Override
-    public boolean func_148741_d(String name)
+    public boolean containsKey(String name)
     {
-        boolean ret = super.func_148741_d(name);
+        boolean ret = super.containsKey(name);
 
         if (!ret) // no match, try aliases recursively
         {
             name = aliases.get(name);
 
-            if (name != null) return func_148741_d(name);
+            if (name != null) return containsKey(name);
         }
 
         return ret;
@@ -189,9 +183,13 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         return getId(obj);
     }
 
+    /**
+     * @deprecated use containsKey instead
+     */
+    @Deprecated
     public boolean contains(String itemName)
     {
-        return func_148741_d(itemName);
+        return containsKey(itemName);
     }
 
     // internal
@@ -201,7 +199,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     {
         for (I thing : (Iterable<I>) this)
         {
-            idMapping.put(discriminator+func_148750_c(thing), getId(thing));
+            idMapping.put(discriminator+getNameForObject(thing), getId(thing));
         }
     }
 
@@ -212,6 +210,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
 
     int add(int id, String name, I thing, BitSet availabilityMap)
     {
+        if (thing == null) throw new NullPointerException("Can't add null-object to the registry.");
         if (name.equals(optionalDefaultName))
         {
             this.optionalDefaultObject = thing;
@@ -233,7 +232,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
             String prefix = mc.getModId();
             name = prefix + ":"+ name;
         }
-        super.func_148756_a(idToUse, name, thing);
+        super.addObject(idToUse, name, thing);
         FMLLog.finer("Add : %s %d %s", name, idToUse, thing);
         return idToUse;
     }
@@ -250,7 +249,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
 
         for (I thing : (Iterable<I>) this)
         {
-            if (!registry.field_148758_b.containsKey(thing)) ret.put(func_148750_c(thing), getId(thing));
+            if (!registry.field_148758_b.containsKey(thing)) ret.put(getNameForObject(thing), getId(thing));
         }
 
         return ret;
@@ -272,7 +271,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         for (int id : ids)
         {
             I thing = getRaw(id);
-            FMLLog.finer("Registry : %s %d %s", func_148750_c(thing), id, thing);
+            FMLLog.finer("Registry : %s %d %s", getNameForObject(thing), id, thing);
         }
     }
 }
