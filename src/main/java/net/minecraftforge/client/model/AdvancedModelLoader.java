@@ -1,4 +1,5 @@
 package net.minecraftforge.client.model;
+// TODO: Move this package to net.minecraftforge.model in 1.8
 
 import java.util.Collection;
 import java.util.Map;

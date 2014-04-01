@@ -6,10 +6,8 @@ import net.minecraft.client.renderer.Tessellator;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@SideOnly(Side.CLIENT)
 public class GroupObject
 {
-
     public String name;
     public ArrayList<Face> faces = new ArrayList<Face>();
     public int glDrawingMode;
@@ -30,6 +28,7 @@ public class GroupObject
         this.glDrawingMode = glDrawingMode;
     }
 
+    @SideOnly(Side.CLIENT)
     public void render()
     {
         if (faces.size() > 0)
@@ -41,6 +40,7 @@ public class GroupObject
         }
     }
 
+    @SideOnly(Side.CLIENT)
     public void render(Tessellator tessellator)
     {
         if (faces.size() > 0)

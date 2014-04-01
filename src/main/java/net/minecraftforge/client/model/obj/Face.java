@@ -5,20 +5,20 @@ import net.minecraft.util.Vec3;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@SideOnly(Side.CLIENT)
 public class Face
 {
-
     public Vertex[] vertices;
     public Vertex[] vertexNormals;
     public Vertex faceNormal;
     public TextureCoordinate[] textureCoordinates;
 
+    @SideOnly(Side.CLIENT)
     public void addFaceForRender(Tessellator tessellator)
     {
         addFaceForRender(tessellator, 0.0005F);
     }
 
+    @SideOnly(Side.CLIENT)
     public void addFaceForRender(Tessellator tessellator, float textureOffset)
     {
         if (faceNormal == null)
