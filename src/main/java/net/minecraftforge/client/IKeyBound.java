@@ -1,10 +1,9 @@
 package net.minecraftforge.client;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 
-public interface IKeyBoundItem {
-    public void keyPressed(ItemStack stack, EntityPlayer player);
+public interface IKeyBound {
+    public void keyPressed(EntityPlayer player);
 
     public String getKeyName();
 
