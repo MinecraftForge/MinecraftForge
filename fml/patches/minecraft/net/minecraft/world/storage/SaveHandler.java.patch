@@ -6,7 +6,7 @@
  import java.io.IOException;
 +
 +import cpw.mods.fml.common.FMLCommonHandler;
-+import cpw.mods.fml.common.registry.GameRegistryException;
++import cpw.mods.fml.common.StartupQuery;
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.nbt.CompressedStreamTools;
  import net.minecraft.nbt.NBTTagCompound;
@@ -27,9 +27,9 @@
 +                FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
 +                return worldInfo;
              }
-+            catch (GameRegistryException gre)
++            catch (StartupQuery.AbortedException e)
 +            {
-+                throw gre;
++                throw e;
 +            }
              catch (Exception exception1)
              {
@@ -43,9 +43,9 @@
 +                FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
 +                return worldInfo;
              }
-+            catch (GameRegistryException gre)
++            catch (StartupQuery.AbortedException e)
 +            {
-+                throw gre;
++                throw e;
 +            }
              catch (Exception exception)
              {

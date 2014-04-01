@@ -14,6 +14,8 @@ package cpw.mods.fml.common;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
@@ -31,6 +33,8 @@ public interface IFMLSidedHandler
     void haltGame(String message, Throwable exception);
 
     void showGuiScreen(Object clientGuiElement);
+
+    void queryUser(StartupQuery query) throws InterruptedException;
 
     void beginServerLoading(MinecraftServer server);
 
@@ -57,10 +61,6 @@ public interface IFMLSidedHandler
     void fireNetRegistrationEvent(EventBus bus, NetworkManager manager, Set<String> channelSet, String channel, Side side);
 
     FMLMissingMappingsEvent.Action getDefaultMissingAction();
-
-    void serverLoadedSuccessfully();
-
-    void failedServerLoading(RuntimeException ex, WorldAccessContainer wac);
 
     boolean shouldAllowPlayerLogins();
 }

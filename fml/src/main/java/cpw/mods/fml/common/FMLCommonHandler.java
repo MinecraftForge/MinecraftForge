@@ -15,6 +15,9 @@ package cpw.mods.fml.common;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.item.EntityItem;
@@ -29,8 +32,10 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -39,6 +44,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.common.gameevent.InputEvent;
@@ -266,7 +272,6 @@ public class FMLCommonHandler
 
     public boolean handleServerStarting(MinecraftServer server)
     {
-        sidedDelegate.serverLoadedSuccessfully();
         return Loader.instance().serverStarting(server);
     }
 
@@ -288,6 +293,11 @@ public class FMLCommonHandler
     public void showGuiScreen(Object clientGuiElement)
     {
         sidedDelegate.showGuiScreen(clientGuiElement);
+    }
+
+    public void queryUser(StartupQuery query) throws InterruptedException
+    {
+        sidedDelegate.queryUser(query);
     }
 
     public void onServerStart(MinecraftServer dedicatedServer)
@@ -381,15 +391,7 @@ public class FMLCommonHandler
                 WorldAccessContainer wac = ((InjectedModContainer)mc).getWrappedWorldAccessContainer();
                 if (wac != null)
                 {
-                    try
-                    {
-                        wac.readData(handler, worldInfo, additionalProperties, tagCompound.getCompoundTag(mc.getModId()));
-                    }
-                    catch (RuntimeException ex)
-                    {
-                        sidedDelegate.failedServerLoading(ex, wac);
-                        throw ex;
-                    }
+                    wac.readData(handler, worldInfo, additionalProperties, tagCompound.getCompoundTag(mc.getModId()));
                 }
             }
         }

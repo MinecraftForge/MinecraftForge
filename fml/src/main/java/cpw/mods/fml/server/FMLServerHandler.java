@@ -12,18 +12,27 @@
  */
 package cpw.mods.fml.server;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import net.minecraft.command.ServerCommand;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
+
 import com.google.common.collect.ImmutableList;
+
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.StartupQuery;
 import cpw.mods.fml.common.WorldAccessContainer;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.eventhandler.EventBus;
@@ -134,6 +143,65 @@ public class FMLServerHandler implements IFMLSidedHandler
     {
 
     }
+
+    @Override
+    public void queryUser(StartupQuery query) throws InterruptedException
+    {
+        if (query.getResult() == null)
+        {
+            FMLLog.warning("%s", query.getText());
+            query.finish();
+        }
+        else
+        {
+            String text = query.getText() +
+                    "\n\nRun the command /fml confirm or or /fml cancel to proceed." +
+                    "\nAlternatively start the server with -Dfml.queryResult=confirm or -Dfml.queryResult=cancel to preselect the answer.";
+            FMLLog.warning("%s", text);
+
+            boolean done = false;
+
+            while (!done && server.isServerRunning())
+            {
+                if (Thread.interrupted()) throw new InterruptedException();
+
+                DedicatedServer dedServer = (DedicatedServer) server;
+
+                // rudimentary command processing, check for fml confirm/cancel and stop commands
+                synchronized (dedServer.pendingCommandList)
+                {
+                    for (Iterator<ServerCommand> it = dedServer.pendingCommandList.iterator(); it.hasNext(); )
+                    {
+                        String cmd = it.next().command.trim().toLowerCase();
+
+                        if (cmd.equals("/fml confirm"))
+                        {
+                            FMLLog.info("confirmed");
+                            query.setResult(true);
+                            done = true;
+                            it.remove();
+                        }
+                        else if (cmd.equals("/fml cancel"))
+                        {
+                            FMLLog.info("cancelled");
+                            query.setResult(false);
+                            done = true;
+                            it.remove();
+                        }
+                        else if (cmd.equals("/stop"))
+                        {
+                            StartupQuery.abort();
+                        }
+                    }
+                }
+
+                Thread.sleep(10L);
+            }
+
+            query.finish();
+        }
+    }
+
     @Override
     public boolean shouldServerShouldBeKilledQuietly()
     {
@@ -186,16 +254,6 @@ public class FMLServerHandler implements IFMLSidedHandler
     public FMLMissingMappingsEvent.Action getDefaultMissingAction()
     {
         return FMLMissingMappingsEvent.Action.valueOf(System.getProperty("fml.missingBlockAction", "FAIL"));
-    }
-    @Override
-    public void serverLoadedSuccessfully()
-    {
-
-    }
-    @Override
-    public void failedServerLoading(RuntimeException ex, WorldAccessContainer wac)
-    {
-
     }
     @Override
     public boolean shouldAllowPlayerLogins()
