@@ -210,6 +210,8 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
 
     int add(int id, String name, I thing, BitSet availabilityMap)
     {
+        if (name == null) throw new NullPointerException("Can't use a null-name for the registry.");
+        if (name.isEmpty()) throw new IllegalArgumentException("Can't use an empty name for the registry.");
         if (thing == null) throw new NullPointerException("Can't add null-object to the registry.");
         if (name.equals(optionalDefaultName))
         {
@@ -232,6 +234,20 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
             String prefix = mc.getModId();
             name = prefix + ":"+ name;
         }
+
+        if (getRaw(name) != null)
+        {
+            FMLLog.warning("****************************************");
+            FMLLog.warning("* The name %s has been registered twice, for %s and %s.", name, getRaw(name), thing);
+            FMLLog.warning("****************************************");
+        }
+        if (getId(thing) >= 0)
+        {
+            FMLLog.warning("****************************************");
+            FMLLog.warning("* The object %s has been registered twice, using the names %s and %s.", thing, getNameForObject(thing), name);
+            FMLLog.warning("****************************************");
+        }
+
         super.addObject(idToUse, name, thing);
         FMLLog.finer("Add : %s %d %s", name, idToUse, thing);
         return idToUse;
