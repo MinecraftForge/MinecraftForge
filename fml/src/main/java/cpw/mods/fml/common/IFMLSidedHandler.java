@@ -14,12 +14,11 @@ package cpw.mods.fml.common;
 
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.storage.ISaveFormat;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.relauncher.Side;
@@ -40,6 +39,8 @@ public interface IFMLSidedHandler
 
     void finishServerLoading();
 
+    ISaveFormat getSaveFormat();
+
     MinecraftServer getServer();
 
     boolean shouldServerShouldBeKilledQuietly();
@@ -59,8 +60,6 @@ public interface IFMLSidedHandler
     void waitForPlayClient();
 
     void fireNetRegistrationEvent(EventBus bus, NetworkManager manager, Set<String> channelSet, String channel, Side side);
-
-    FMLMissingMappingsEvent.Action getDefaultMissingAction();
 
     boolean shouldAllowPlayerLogins();
 }

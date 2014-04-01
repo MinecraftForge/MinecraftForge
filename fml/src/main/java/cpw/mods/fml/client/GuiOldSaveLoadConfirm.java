@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Level;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
+import cpw.mods.fml.common.StartupQuery;
 import cpw.mods.fml.common.ZipperUtil;
 
 public class GuiOldSaveLoadConfirm extends GuiYesNo {
@@ -69,7 +70,15 @@ public class GuiOldSaveLoadConfirm extends GuiYesNo {
                 return;
             }
             FMLClientHandler.instance().showGuiScreen(null);
-            mc.launchIntegratedServer(dirName, saveName, (WorldSettings)null);
+
+            try
+            {
+                mc.launchIntegratedServer(dirName, saveName, (WorldSettings)null);
+            }
+            catch (StartupQuery.AbortedException e)
+            {
+                // ignore
+            }
         }
     }
 }

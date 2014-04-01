@@ -10,7 +10,12 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
+import org.apache.logging.log4j.Level;
+
 import com.google.common.io.Files;
+
+import cpw.mods.fml.client.FMLClientHandler;
 
 /**
  * Copied from http://stackoverflow.com/questions/1399126/java-util-zip-recreating-directory-structure
@@ -54,5 +59,40 @@ public class ZipperUtil {
         {
             res.close();
         }
+    }
+
+    public static void backupWorld() throws IOException
+    {
+        String dirName = FMLCommonHandler.instance().getMinecraftServerInstance().getFolderName();
+        String saveName;
+
+        if (FMLCommonHandler.instance().getSide().isClient())
+        {
+            saveName = FMLCommonHandler.instance().getMinecraftServerInstance().getWorldName();
+        }
+        else
+        {
+            saveName = dirName;
+        }
+
+        backupWorld(dirName, saveName);
+    }
+
+    public static void backupWorld(String dirName, String saveName) throws IOException
+    {
+        File dstFolder = FMLCommonHandler.instance().getSaveFormat().getSaveLoader(dirName, false).getWorldDirectory().getParentFile();
+        File zip = new File(dstFolder, String.format("%s-%2$tY%2$tm%2$td-%2$tH%2$tM%2$tS.zip", saveName, System.currentTimeMillis()));
+
+        try
+        {
+            ZipperUtil.zip(new File(dstFolder, dirName), zip);
+        }
+        catch (IOException e)
+        {
+            FMLLog.log(Level.WARN, e, "World backup failed.");
+            throw e;
+        }
+
+        FMLLog.info("World backup created at %s.", zip.getCanonicalPath());
     }
 }

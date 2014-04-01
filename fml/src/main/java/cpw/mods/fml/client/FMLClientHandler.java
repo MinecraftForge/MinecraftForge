@@ -21,9 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import net.minecraft.client.Minecraft;
@@ -57,6 +55,7 @@ import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.WorldSettings;
+import net.minecraft.world.storage.ISaveFormat;
 
 import org.apache.logging.log4j.Level;
 import org.lwjgl.input.Mouse;
@@ -77,7 +76,6 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.DuplicateModsFoundException;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLContainer;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
@@ -88,7 +86,6 @@ import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.StartupQuery;
-import cpw.mods.fml.common.WorldAccessContainer;
 import cpw.mods.fml.common.WrongMinecraftVersionException;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent.Action;
@@ -441,6 +438,18 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             client.displayGuiScreen(new GuiConfirmation(query));
         }
+
+        if (query.isSynchronous())
+        {
+            while (!(client.currentScreen instanceof GuiMainMenu))
+            {
+                if (Thread.interrupted()) throw new InterruptedException();
+
+                client.loadingScreen.resetProgresAndWorkingMessage("");
+
+                Thread.sleep(50);
+            }
+        }
     }
 
     public boolean handleLoadingScreen(ScaledResolution scaledResolution)
@@ -484,6 +493,12 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void finishServerLoading()
     {
         // NOOP
+    }
+
+    @Override
+    public ISaveFormat getSaveFormat()
+    {
+        return client.getSaveLoader();
     }
 
     @Override
@@ -635,7 +650,14 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         else
         {
-            client.launchIntegratedServer(dirName, saveName, (WorldSettings)null);
+            try
+            {
+                client.launchIntegratedServer(dirName, saveName, (WorldSettings)null);
+            }
+            catch (StartupQuery.AbortedException e)
+            {
+                // ignore
+            }
         }
     }
 
@@ -818,19 +840,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             bus.post(new FMLNetworkEvent.CustomPacketRegistrationEvent<NetHandlerPlayServer>(manager, channelSet, channel, side, NetHandlerPlayServer.class));
         }
-    }
-
-    public void setDefaultMissingAction(FMLMissingMappingsEvent.Action action)
-    {
-        this.defaultMissingAction = action;
-    }
-
-    private Action defaultMissingAction = FMLMissingMappingsEvent.Action.FAIL;
-
-    @Override
-    public Action getDefaultMissingAction()
-    {
-        return defaultMissingAction;
     }
 
     @Override

@@ -41,11 +41,13 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
 import com.google.common.io.Files;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.StartupQuery;
+import cpw.mods.fml.common.ZipperUtil;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent.MissingMapping;
 import cpw.mods.fml.common.registry.GameRegistry.Type;
@@ -243,6 +245,7 @@ public class GameData {
         }
 
         Set<String> itemsToAllocate = new HashSet<String>();
+        Map<String, Integer> itemsToRelocate = new HashMap<String, Integer>();
 
         // check all ids occupied by items
         for (Entry<String, Integer> entry : dataList.entrySet())
@@ -259,18 +262,17 @@ public class GameData {
                     String blockName = '\u0001' + realName;
 
                     if (!dataList.containsKey(blockName) ||
-                            !(getMain().iItemRegistry.getRaw(realName) instanceof ItemBlock)) // the slot is occupied by something else and this item is no ItemBlock
+                            (getMain().iItemRegistry.getRaw(realName) != null && // don't assume missing items are no ItemBlock
+                            !(getMain().iItemRegistry.getRaw(realName) instanceof ItemBlock))) // the slot is occupied by something else and this item is no ItemBlock
                     {
-                        // relocate the item later, after all correct ids have been claimed
+                        // allocate the item later, after all correct ids have been claimed
                         itemsToAllocate.add(itemName);
                     }
                     else if (dataList.get(blockName) != oldId) // occupied, but this is an ItemBlock for a different block than whatever may use its id
                     {
                         // relocate to the matching block
                         int newId = dataList.get(blockName);
-                        entry.setValue(newId);
-
-                        FMLLog.warning("Fixed ItemBlock %s not using the id of its block, old id %d, new id %d.", realName, oldId, newId);
+                        itemsToRelocate.put(entry.getKey(), newId);
                     }
                 }
                 else // unused id, occupy
@@ -278,6 +280,27 @@ public class GameData {
                     availabilityMap.set(oldId);
                 }
             }
+        }
+
+        if (itemsToAllocate.isEmpty() && itemsToRelocate.isEmpty()) return; // nothing to do
+
+        String text = "Forge Mod Loader detected that this save is damaged.\n\n" +
+                "It's likely that an automatic repair can successfully restore\n" +
+                "most of it, except some items which may get swapped with others.\n\n" +
+                "A world backup will be created as a zip file in your saves\n"+
+                "directory automatically.";
+
+        boolean confirmed = StartupQuery.confirm(text);
+        if (!confirmed) StartupQuery.abort();
+
+        try
+        {
+            ZipperUtil.backupWorld();
+        }
+        catch (IOException e)
+        {
+            StartupQuery.notify("The world backup couldn't be created.\n\n"+e);
+            StartupQuery.abort();
         }
 
         for (String itemName : itemsToAllocate)
@@ -288,6 +311,16 @@ public class GameData {
             dataList.put(itemName, newId);
 
             FMLLog.warning("Fixed Item %s conflicting with another block/item, old id %d, new id %d.", itemName.substring(1), oldId, newId);
+        }
+
+        for (Map.Entry<String, Integer> entry : itemsToRelocate.entrySet())
+        {
+            String itemName = entry.getKey();
+            int newId = entry.getValue();
+
+            int oldId = dataList.put(itemName, newId);
+
+            FMLLog.warning("Fixed ItemBlock %s not using the id of its block, old id %d, new id %d.", itemName.substring(1), oldId, newId);
         }
     }
 
@@ -419,6 +452,7 @@ public class GameData {
         List<String> failed = Lists.newArrayList();
         List<String> ignored = Lists.newArrayList();
         List<String> warned = Lists.newArrayList();
+        List<String> defaulted = Lists.newArrayList();
 
         for (MissingMapping remap : missedMappings)
         {
@@ -462,10 +496,9 @@ public class GameData {
                 // block item missing, warn as requested and block the id
                 if (action == FMLMissingMappingsEvent.Action.DEFAULT)
                 {
-                    action = FMLCommonHandler.instance().getDefaultMissingAction();
+                    defaulted.add(remap.name);
                 }
-
-                if (action == FMLMissingMappingsEvent.Action.IGNORE)
+                else if (action == FMLMissingMappingsEvent.Action.IGNORE)
                 {
                     ignored.add(remap.name);
                 }
@@ -477,13 +510,35 @@ public class GameData {
                 {
                     warned.add(remap.name);
                 }
-                else
-                {
-                    throw new RuntimeException(String.format("Invalid default missing id action specified: %s", action.name()));
-                }
 
                 gameData.block(remap.id); // prevent the id from being reused later
             }
+        }
+
+        if (!defaulted.isEmpty())
+        {
+            String text = "Forge Mod Loader detected missing blocks/items.\n\n" +
+                    "There are "+defaulted.size()+" missing blocks and items in this save.\n" +
+                    "If you continue the missing blocks/items will get removed.\n" +
+                    "A world backup will be automatically created in your saves directory.\n\n" +
+                    "Missing Blocks/Items:\n";
+
+            for (String s : defaulted) text += s + "\n";
+
+            boolean confirmed = StartupQuery.confirm(text);
+            if (!confirmed) StartupQuery.abort();
+
+            try
+            {
+                ZipperUtil.backupWorld();
+            }
+            catch (IOException e)
+            {
+                StartupQuery.notify("The world backup couldn't be created.\n\n"+e);
+                StartupQuery.abort();
+            }
+
+            warned.addAll(defaulted);
         }
         if (!failed.isEmpty())
         {
@@ -557,6 +612,7 @@ public class GameData {
         iItemRegistry.set(data.iItemRegistry);
         availabilityMap.clear();
         availabilityMap.or(data.availabilityMap);
+        blockedIds.clear();
         blockedIds.addAll(data.blockedIds);
     }
 

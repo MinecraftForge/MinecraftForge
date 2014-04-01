@@ -10,7 +10,7 @@
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.nbt.CompressedStreamTools;
  import net.minecraft.nbt.NBTTagCompound;
-@@ -107,14 +110,22 @@
+@@ -107,20 +110,29 @@
          NBTTagCompound nbttagcompound;
          NBTTagCompound nbttagcompound1;
  
@@ -34,7 +34,14 @@
              catch (Exception exception1)
              {
                  exception1.printStackTrace();
-@@ -129,8 +140,14 @@
+             }
+         }
+ 
++        FMLCommonHandler.instance().confirmBackupLevelDatUse();
+         file1 = new File(this.field_75770_b, "level.dat_old");
+ 
+         if (file1.exists())
+@@ -129,8 +141,14 @@
              {
                  nbttagcompound = CompressedStreamTools.func_74796_a(new FileInputStream(file1));
                  nbttagcompound1 = nbttagcompound.func_74775_l("Data");
@@ -50,7 +57,7 @@
              catch (Exception exception)
              {
                  exception.printStackTrace();
-@@ -146,6 +163,8 @@
+@@ -146,6 +164,8 @@
          NBTTagCompound nbttagcompound2 = new NBTTagCompound();
          nbttagcompound2.func_74782_a("Data", nbttagcompound1);
  
@@ -59,7 +66,7 @@
          try
          {
              File file1 = new File(this.field_75770_b, "level.dat_new");
-@@ -184,6 +203,8 @@
+@@ -184,6 +204,8 @@
          NBTTagCompound nbttagcompound1 = new NBTTagCompound();
          nbttagcompound1.func_74782_a("Data", nbttagcompound);
  

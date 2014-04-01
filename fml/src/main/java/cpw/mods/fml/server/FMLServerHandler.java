@@ -15,8 +15,6 @@ package cpw.mods.fml.server;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.minecraft.command.ServerCommand;
 import net.minecraft.network.INetHandler;
@@ -24,6 +22,7 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.world.storage.ISaveFormat;
 
 import com.google.common.collect.ImmutableList;
 
@@ -33,7 +32,6 @@ import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.StartupQuery;
-import cpw.mods.fml.common.WorldAccessContainer;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
@@ -103,6 +101,12 @@ public class FMLServerHandler implements IFMLSidedHandler
         throw new RuntimeException(message, exception);
     }
 
+    @Override
+    public ISaveFormat getSaveFormat()
+    {
+        return server.getActiveAnvilConverter();
+    }
+
     /**
      * Get the server instance
      */
@@ -158,6 +162,8 @@ public class FMLServerHandler implements IFMLSidedHandler
                     "\n\nRun the command /fml confirm or or /fml cancel to proceed." +
                     "\nAlternatively start the server with -Dfml.queryResult=confirm or -Dfml.queryResult=cancel to preselect the answer.";
             FMLLog.warning("%s", text);
+
+            if (!query.isSynchronous()) return; // no-op until mc does commands in another thread (if ever)
 
             boolean done = false;
 
@@ -250,11 +256,7 @@ public class FMLServerHandler implements IFMLSidedHandler
     {
         bus.post(new FMLNetworkEvent.CustomPacketRegistrationEvent<NetHandlerPlayServer>(manager, channelSet, channel, side, NetHandlerPlayServer.class));
     }
-    @Override
-    public FMLMissingMappingsEvent.Action getDefaultMissingAction()
-    {
-        return FMLMissingMappingsEvent.Action.valueOf(System.getProperty("fml.missingBlockAction", "FAIL"));
-    }
+
     @Override
     public boolean shouldAllowPlayerLogins()
     {

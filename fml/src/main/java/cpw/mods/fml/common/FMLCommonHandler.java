@@ -15,8 +15,6 @@ package cpw.mods.fml.common;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
@@ -30,6 +28,7 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
+import net.minecraft.world.storage.ISaveFormat;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 
@@ -285,6 +284,10 @@ public class FMLCommonHandler
         Loader.instance().serverStopping();
     }
 
+    public ISaveFormat getSaveFormat() {
+        return sidedDelegate.getSaveFormat();
+    }
+
     public MinecraftServer getMinecraftServerInstance()
     {
         return sidedDelegate.getServer();
@@ -395,6 +398,33 @@ public class FMLCommonHandler
                 }
             }
         }
+    }
+
+    public void confirmBackupLevelDatUse()
+    {
+        // ignore invocations from the world ctor, those are always preceded by another invocation
+        for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
+            try
+            {
+                if (e.getMethodName().equals("<init>") &&
+                        Class.forName(e.getClassName()) == World.class)
+                {
+                    return;
+                }
+            }
+            catch (ClassNotFoundException e1)
+            {
+                // nothing
+            }
+        }
+
+        String text = "Forge Mod Loader detected that the backup level.dat is being used.\n\n" +
+                "This may happen due to a bug or corruption, continuing can damage\n" +
+                "your world beyond repair or lose data / progress.\n\n" +
+                "It's recommended to create a world backup before continuing.";
+
+        boolean confirmed = StartupQuery.confirm(text);
+        if (!confirmed) StartupQuery.abort();
     }
 
     public boolean shouldServerBeKilledQuietly()
@@ -514,11 +544,6 @@ public class FMLCommonHandler
     public void fireNetRegistrationEvent(NetworkManager manager, Set<String> channelSet, String channel, Side side)
     {
         sidedDelegate.fireNetRegistrationEvent(bus(), manager, channelSet, channel, side);
-    }
-
-    public FMLMissingMappingsEvent.Action getDefaultMissingAction()
-    {
-        return sidedDelegate.getDefaultMissingAction();
     }
 
     public boolean shouldAllowPlayerLogins()
