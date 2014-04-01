@@ -146,7 +146,7 @@ public class ByteBufUtils {
         PacketBuffer pb = new PacketBuffer(to);
         try
         {
-            pb.func_150788_a(stack);
+            pb.writeItemStackToBuffer(stack);
         } catch (IOException e)
         {
             // Unpossible?
@@ -165,7 +165,7 @@ public class ByteBufUtils {
         PacketBuffer pb = new PacketBuffer(from);
         try
         {
-            return pb.func_150791_c();
+            return pb.readItemStackFromBuffer();
         } catch (IOException e)
         {
             // Unpossible?
@@ -184,7 +184,7 @@ public class ByteBufUtils {
         PacketBuffer pb = new PacketBuffer(to);
         try
         {
-            pb.func_150786_a(tag);
+            pb.writeNBTTagCompoundToBuffer(tag);
         } catch (IOException e)
         {
             // Unpossible?
@@ -203,7 +203,7 @@ public class ByteBufUtils {
         PacketBuffer pb = new PacketBuffer(from);
         try
         {
-            return pb.func_150793_b();
+            return pb.readNBTTagCompoundFromBuffer();
         } catch (IOException e)
         {
             // Unpossible?

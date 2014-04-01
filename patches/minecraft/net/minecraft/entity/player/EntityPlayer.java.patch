@@ -26,8 +26,8 @@
      }
  
      public int func_82145_z()
-@@ -1986,6 +1991,11 @@
-         return uuid;
+@@ -2032,6 +2037,11 @@
+         }
      }
  
 +    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z)

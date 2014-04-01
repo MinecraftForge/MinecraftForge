@@ -18,38 +18,38 @@ public class GuiIngameModOptions extends GuiScreen
 
     @SuppressWarnings("unchecked")
     @Override
-    public void func_73866_w_()
+    public void initGui()
     {
         this.optionList=new GuiModOptionList(this);
-        this.optionList.registerScrollButtons(this.field_146292_n, 7, 8);
-        this.field_146292_n.add(new GuiButton(200, this.field_146294_l / 2 - 100, this.field_146295_m / 6 + 168, I18n.func_135052_a("gui.done", new Object[0])));
+        this.optionList.registerScrollButtons(this.buttonList, 7, 8);
+        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, I18n.format("gui.done", new Object[0])));
     }
 
     @Override
-    protected void func_146284_a(GuiButton p_146284_1_)
+    protected void actionPerformed(GuiButton p_146284_1_)
     {
-        if (p_146284_1_.field_146124_l)
+        if (p_146284_1_.enabled)
         {
-            if (p_146284_1_.field_146127_k == 200)
+            if (p_146284_1_.id == 200)
             {
-                this.field_146297_k.field_71474_y.func_74303_b();
-                this.field_146297_k.func_147108_a(this.parentScreen);
+                this.mc.gameSettings.saveOptions();
+                this.mc.displayGuiScreen(this.parentScreen);
             }
         }
     }
 
     @Override
-    public void func_73863_a(int p_73863_1_, int p_73863_2_, float p_73863_3_)
+    public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_)
     {
         // force a non-transparent background
-        this.func_146276_q_();
+        this.drawDefaultBackground();
         this.optionList.drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);
-        this.func_73732_a(this.field_146289_q, this.title, this.field_146294_l / 2, 15, 0xFFFFFF);
-        super.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
+        this.drawCenteredString(this.fontRendererObj, this.title, this.width / 2, 15, 0xFFFFFF);
+        super.drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);
     }
 
     FontRenderer getFontRenderer() {
-        return field_146289_q;
+        return fontRendererObj;
     }
 
 }

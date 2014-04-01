@@ -127,11 +127,11 @@ public class LanguageRegistry
     {
         String objectName;
         if (objectToName instanceof Item) {
-            objectName=((Item)objectToName).func_77658_a();
+            objectName=((Item)objectToName).getUnlocalizedName();
         } else if (objectToName instanceof Block) {
-            objectName=((Block)objectToName).func_149739_a();
+            objectName=((Block)objectToName).getUnlocalizedName();
         } else if (objectToName instanceof ItemStack) {
-            objectName=((ItemStack)objectToName).func_77973_b().func_77667_c((ItemStack)objectToName);
+            objectName=((ItemStack)objectToName).getItem().getUnlocalizedName((ItemStack)objectToName);
         } else {
             throw new IllegalArgumentException(String.format("Illegal object for naming %s",objectToName));
         }

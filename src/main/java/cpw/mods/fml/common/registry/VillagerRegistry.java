@@ -217,7 +217,7 @@ public class VillagerRegistry
     public static Object getVillageComponent(StructureVillagePieces.PieceWeight villagePiece, StructureVillagePieces.Start startPiece, @SuppressWarnings("rawtypes") List pieces, Random random,
             int p1, int p2, int p3, int p4, int p5)
     {
-        return instance().villageCreationHandlers.get(villagePiece.field_75090_a).buildComponent(villagePiece, startPiece, pieces, random, p1, p2, p3, p4, p5);
+        return instance().villageCreationHandlers.get(villagePiece.villagePieceClass).buildComponent(villagePiece, startPiece, pieces, random, p1, p2, p3, p4, p5);
     }
 
 
@@ -226,7 +226,7 @@ public class VillagerRegistry
     {
         if (min > 0 && max > 0)
         {
-            EntityVillager.field_70958_bB.put(item, new Tuple(min, max));
+            EntityVillager.villagersSellingList.put(item, new Tuple(min, max));
         }
         EntityVillager.func_146091_a(list, item, random, chance);
     }
@@ -236,7 +236,7 @@ public class VillagerRegistry
     {
         if (min > 0 && max > 0)
         {
-            EntityVillager.field_70960_bC.put(item, new Tuple(min, max));
+            EntityVillager.blacksmithSellingList.put(item, new Tuple(min, max));
         }
         EntityVillager.func_146089_b(list, item, random, chance);
     }
@@ -245,6 +245,6 @@ public class VillagerRegistry
     {
         int extra = instance().newVillagerIds.size();
         int trade = rand.nextInt(5 + extra);
-        villager.func_70938_b(trade < 5 ? trade : instance().newVillagerIds.get(trade - 5));
+        villager.setProfession(trade < 5 ? trade : instance().newVillagerIds.get(trade - 5));
     }
 }

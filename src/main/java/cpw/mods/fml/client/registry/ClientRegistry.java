@@ -40,12 +40,12 @@ public class ClientRegistry
     @SuppressWarnings("unchecked")
     public static void bindTileEntitySpecialRenderer(Class <? extends TileEntity> tileEntityClass, TileEntitySpecialRenderer specialRenderer)
     {
-        TileEntityRendererDispatcher.field_147556_a.field_147559_m.put(tileEntityClass, specialRenderer);
-        specialRenderer.func_147497_a(TileEntityRendererDispatcher.field_147556_a);
+        TileEntityRendererDispatcher.instance.mapSpecialRenderers.put(tileEntityClass, specialRenderer);
+        specialRenderer.func_147497_a(TileEntityRendererDispatcher.instance);
     }
 
     public static void registerKeyBinding(KeyBinding key)
     {
-        Minecraft.func_71410_x().field_71474_y.field_74324_K = ArrayUtils.add(Minecraft.func_71410_x().field_71474_y.field_74324_K, key);
+        Minecraft.getMinecraft().gameSettings.keyBindings = ArrayUtils.add(Minecraft.getMinecraft().gameSettings.keyBindings, key);
     }
 }

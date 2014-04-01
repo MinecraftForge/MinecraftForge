@@ -341,7 +341,7 @@ public class FMLCommonHandler
     {
         for (ICrashCallable call: crashCallables)
         {
-            category.func_71500_a(call.getLabel(), call);
+            category.addCrashSectionCallable(call.getLabel(), call);
         }
     }
 
@@ -355,7 +355,7 @@ public class FMLCommonHandler
                 if (wac != null)
                 {
                     NBTTagCompound dataForWriting = wac.getDataForWriting(handler, worldInfo);
-                    tagCompound.func_74782_a(mc.getModId(), dataForWriting);
+                    tagCompound.setTag(mc.getModId(), dataForWriting);
                 }
             }
         }
@@ -383,7 +383,7 @@ public class FMLCommonHandler
                 {
                     try
                     {
-                        wac.readData(handler, worldInfo, additionalProperties, tagCompound.func_74775_l(mc.getModId()));
+                        wac.readData(handler, worldInfo, additionalProperties, tagCompound.getCompoundTag(mc.getModId()));
                     }
                     catch (RuntimeException ex)
                     {

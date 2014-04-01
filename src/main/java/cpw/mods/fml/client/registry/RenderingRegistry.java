@@ -48,8 +48,8 @@ public class RenderingRegistry
      */
     public static int addNewArmourRendererPrefix(String armor)
     {
-        RenderBiped.field_82424_k = ObjectArrays.concat(RenderBiped.field_82424_k, armor);
-        return RenderBiped.field_82424_k.length - 1;
+        RenderBiped.bipedArmorFilenamePrefix = ObjectArrays.concat(RenderBiped.bipedArmorFilenamePrefix, armor);
+        return RenderBiped.bipedArmorFilenamePrefix.length - 1;
     }
 
     /**
@@ -136,7 +136,7 @@ public class RenderingRegistry
         for (EntityRendererInfo info : entityRenderers)
         {
             rendererMap.put(info.target, info.renderer);
-            info.renderer.func_76976_a(RenderManager.field_78727_a);
+            info.renderer.setRenderManager(RenderManager.instance);
         }
     }
 }

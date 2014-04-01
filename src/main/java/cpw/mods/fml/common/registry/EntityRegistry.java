@@ -127,7 +127,7 @@ public class EntityRegistry
     {
         availableIndicies = new BitSet(256);
         availableIndicies.set(1,255);
-        for (Object id : EntityList.field_75623_d.keySet())
+        for (Object id : EntityList.IDtoClassMapping.keySet())
         {
             availableIndicies.clear((Integer)id);
         }
@@ -158,11 +158,11 @@ public class EntityRegistry
         {
             entityClassRegistrations.put(entityClass, er);
             entityNames.put(entityName, mc);
-            if (!EntityList.field_75626_c.containsKey(entityClass))
+            if (!EntityList.classToStringMapping.containsKey(entityClass))
             {
                 String entityModName = String.format("%s.%s", mc.getModId(), entityName);
-                EntityList.field_75626_c.put(entityClass, entityModName);
-                EntityList.field_75625_b.put(entityModName, entityClass);
+                EntityList.classToStringMapping.put(entityClass, entityModName);
+                EntityList.stringToClassMapping.put(entityModName, entityClass);
                 FMLLog.finer("Automatically registered mod %s entity %s as %s", mc.getModId(), entityName, entityModName);
             }
             else
@@ -180,7 +180,7 @@ public class EntityRegistry
 
     public static void registerGlobalEntityID(Class <? extends Entity > entityClass, String entityName, int id)
     {
-        if (EntityList.field_75626_c.containsKey(entityClass))
+        if (EntityList.classToStringMapping.containsKey(entityClass))
         {
             ModContainer activeModContainer = Loader.instance().activeModContainer();
             String modId = "unknown";
@@ -196,7 +196,7 @@ public class EntityRegistry
             return;
         }
         id = instance().validateAndClaimId(id);
-        EntityList.func_75618_a(entityClass, entityName, id);
+        EntityList.addMapping(entityClass, entityName, id);
     }
 
     private int validateAndClaimId(int id)
@@ -232,7 +232,7 @@ public class EntityRegistry
 
     public static void registerGlobalEntityID(Class <? extends Entity > entityClass, String entityName, int id, int backgroundEggColour, int foregroundEggColour)
     {
-        if (EntityList.field_75626_c.containsKey(entityClass))
+        if (EntityList.classToStringMapping.containsKey(entityClass))
         {
             ModContainer activeModContainer = Loader.instance().activeModContainer();
             String modId = "unknown";
@@ -248,7 +248,7 @@ public class EntityRegistry
             return;
         }
         instance().validateAndClaimId(id);
-        EntityList.func_75614_a(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
+        EntityList.addMapping(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
     }
 
     public static void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
@@ -256,16 +256,16 @@ public class EntityRegistry
         for (BiomeGenBase biome : biomes)
         {
             @SuppressWarnings("unchecked")
-            List<SpawnListEntry> spawns = biome.func_76747_a(typeOfCreature);
+            List<SpawnListEntry> spawns = biome.getSpawnableList(typeOfCreature);
 
             for (SpawnListEntry entry : spawns)
             {
                 //Adjusting an existing spawn entry
-                if (entry.field_76300_b == entityClass)
+                if (entry.entityClass == entityClass)
                 {
-                    entry.field_76292_a = weightedProb;
-                    entry.field_76301_c = min;
-                    entry.field_76299_d = max;
+                    entry.itemWeight = weightedProb;
+                    entry.minGroupCount = min;
+                    entry.maxGroupCount = max;
                     break;
                 }
             }
@@ -277,7 +277,7 @@ public class EntityRegistry
     @SuppressWarnings("unchecked")
     public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
-        Class <? extends Entity > entityClazz = (Class<? extends Entity>) EntityList.field_75625_b.get(entityName);
+        Class <? extends Entity > entityClazz = (Class<? extends Entity>) EntityList.stringToClassMapping.get(entityName);
 
         if (EntityLiving.class.isAssignableFrom(entityClazz))
         {
@@ -290,12 +290,12 @@ public class EntityRegistry
         for (BiomeGenBase biome : biomes)
         {
             @SuppressWarnings("unchecked")
-            Iterator<SpawnListEntry> spawns = biome.func_76747_a(typeOfCreature).iterator();
+            Iterator<SpawnListEntry> spawns = biome.getSpawnableList(typeOfCreature).iterator();
 
             while (spawns.hasNext())
             {
                 SpawnListEntry entry = spawns.next();
-                if (entry.field_76300_b == entityClass)
+                if (entry.entityClass == entityClass)
                 {
                     spawns.remove();
                 }
@@ -306,7 +306,7 @@ public class EntityRegistry
     @SuppressWarnings("unchecked")
     public static void removeSpawn(String entityName, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
-        Class <? extends Entity > entityClazz = (Class<? extends Entity>) EntityList.field_75625_b.get(entityName);
+        Class <? extends Entity > entityClazz = (Class<? extends Entity>) EntityList.stringToClassMapping.get(entityName);
 
         if (EntityLiving.class.isAssignableFrom(entityClazz))
         {
@@ -361,7 +361,7 @@ public class EntityRegistry
         EntityRegistration er = lookupModSpawn(entity.getClass(), true);
         if (er != null)
         {
-            entityTracker.func_72785_a(entity, er.getTrackingRange(), er.getUpdateFrequency(), er.sendsVelocityUpdates());
+            entityTracker.addEntityToTracker(entity, er.getTrackingRange(), er.getUpdateFrequency(), er.sendsVelocityUpdates());
             return true;
         }
         return false;
