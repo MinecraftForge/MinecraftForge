@@ -114,11 +114,11 @@ public class ForgeHooks
 
         if (!canHarvestBlock(block, player, metadata))
         {
-            return player.getBreakSpeed(block, true, metadata) / hardness / 100F;
+            return player.getBreakSpeed(block, true, metadata, x, y, z) / hardness / 100F;
         }
         else
         {
-            return player.getBreakSpeed(block, false, metadata) / hardness / 30F;
+            return player.getBreakSpeed(block, false, metadata, x, y, z) / hardness / 30F;
         }
     }
 
