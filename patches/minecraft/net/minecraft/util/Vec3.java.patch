@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/util/Vec3.java
++++ ../src_work/minecraft/net/minecraft/util/Vec3.java
+@@ -86,8 +86,6 @@
+     {
+         return this.xCoord * par1Vec3.xCoord + this.yCoord * par1Vec3.yCoord + this.zCoord * par1Vec3.zCoord;
+     }
+-
+-    @SideOnly(Side.CLIENT)
+ 
+     /**
+      * Returns a new vector with the result of this vector x the specified vector.
