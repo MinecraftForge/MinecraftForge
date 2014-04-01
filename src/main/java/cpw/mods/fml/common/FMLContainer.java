@@ -219,7 +219,7 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
 
             if (!tag.hasKey("BlockedItemIds")) // no blocked id info -> old 1.7 save
             {
-                // old 1.7 save potentially affected by the registry mapping bug
+                // old early 1.7 save potentially affected by the registry mapping bug
                 // fix the ids the best we can...
                 GameData.fixBrokenIds(dataList);
             }
@@ -248,10 +248,10 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
 
         if (failedElements != null && !failedElements.isEmpty())
         {
-            String text = "Forge Mod Loader could not load this save\n\n" +
-            "There are "+failedElements.size()+" unassigned blocks and items in this save\n"+
-                    "You will not be able to load until they are present again\n\n"+
-            "Missing Blocks/Items:\n";
+            String text = "Forge Mod Loader could not load this save.\n\n" +
+            "There are "+failedElements.size()+" unassigned blocks and items in this save.\n" +
+                    "You will not be able to load until they are present again.\n\n" +
+                    "Missing Blocks/Items:\n";
 
             for (String s : failedElements) text += s + "\n";
 

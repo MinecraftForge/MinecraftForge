@@ -3,6 +3,8 @@ package cpw.mods.fml.common;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import net.minecraft.server.MinecraftServer;
+
 public class StartupQuery {
     // internal class/functionality, do not use
 
@@ -21,7 +23,9 @@ public class StartupQuery {
 
     public static void abort()
     {
-        FMLCommonHandler.instance().getMinecraftServerInstance().initiateShutdown();
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        if (server != null) server.initiateShutdown();
+
         aborted = true; // to abort loading and go back to the main menu
         throw new AbortedException(); // to halt the server
     }
@@ -78,6 +82,11 @@ public class StartupQuery {
         return text;
     }
 
+    public boolean isSynchronous()
+    {
+        return synchronous;
+    }
+
     public void finish()
     {
         signal.countDown();
@@ -105,15 +114,23 @@ public class StartupQuery {
             FMLLog.warning("Invalid value for fml.queryResult: %s, expected confirm or cancel", prop);
         }
 
+        synchronous = false;
         pending = this; // let the other thread start the query
 
-        // the client will eventually check pending and execute the query
-        // command handling in mc is synchronous, execute the server-side query directly
-        if (FMLCommonHandler.instance().getSide().isServer()) check();
+        // from the integrated server thread: the client will eventually check pending and execute the query
+        // from the client thread: synchronous execution
+        // dedicated server: command handling in mc is synchronous, execute the server-side query directly
+        if (FMLCommonHandler.instance().getSide().isServer() ||
+                FMLCommonHandler.instance().getEffectiveSide().isClient())
+        {
+            synchronous = true;
+            check();
+        }
 
         try
         {
             signal.await();
+            reset();
         }
         catch (InterruptedException e)
         {
@@ -125,6 +142,7 @@ public class StartupQuery {
     private String text;
     private AtomicBoolean result;
     private CountDownLatch signal = new CountDownLatch(1);
+    private volatile boolean synchronous;
 
 
     /**
