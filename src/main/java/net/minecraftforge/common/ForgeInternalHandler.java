@@ -5,33 +5,72 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.client.IKeyBoundItem;
+import net.minecraftforge.client.IKeyBound;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import org.lwjgl.input.Keyboard;
 
+import java.util.LinkedList;
+
 public class ForgeInternalHandler
 {
+    public final LinkedList<IKeyBound> keyBoundObjects = new LinkedList<IKeyBound>();
+
     /**
-     * Go through every keyBoundItem, if its key is down then invoke its keyPressed(stack, player) method
+     * Go through every registered keyBoundItem, if its key is down and is the current item, then invoke its keyPressed(stack, player) method
      */
     @SubscribeEvent
     public void keyPressed(InputEvent.KeyInputEvent event) {
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-            for (IKeyBoundItem keyBoundItem : ListOfRegisteredKeyBoundItems) {
-                if (Keyboard.isKeyDown(keyBoundItem.getKey())) {
+            for (IKeyBound keyBound : keyBoundObjects) {
+                if (Keyboard.isKeyDown(keyBound.getKey())) {
                     EntityPlayer player = Minecraft.getMinecraft().thePlayer;
                     ItemStack stack = player.getCurrentEquippedItem();
-                    keyBoundItem.keyPressed(stack, player);
+
+                    if (stack.getItem() instanceof IKeyBound) {
+                        keyBound.keyPressed(player);
+                    }
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void tickEvent(TickEvent event) {
+        MovingObjectPosition mop = Minecraft.getMinecraft().objectMouseOver;
+
+        if (mop != null) {
+            if (event.side == Side.CLIENT) {
+                if (mop.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY) {
+                    if (mop.entityHit instanceof IKeyBound) {
+                        IKeyBound keyBound = (IKeyBound) mop.entityHit;
+
+                        if (Keyboard.isKeyDown(keyBound.getKey())) {
+                            keyBound.keyPressed(Minecraft.getMinecraft().thePlayer);
+                        }
+                    }
+                } else if (mop.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+                    Block block = Minecraft.getMinecraft().theWorld.getBlock(mop.blockX, mop.blockY, mop.blockZ);
+
+                    if (block instanceof IKeyBound) {
+                        IKeyBound keyBound = (IKeyBound) block;
+
+                        if (Keyboard.isKeyDown(keyBound.getKey())) {
+                            keyBound.keyPressed(Minecraft.getMinecraft().thePlayer);
+                        }
+                    }
                 }
             }
         }
