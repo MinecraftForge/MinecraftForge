@@ -8,4 +8,11 @@ public interface IKeyBound {
     public String getKeyName();
 
     public int[] getKeys();
+
+    public KeyBoundType getKeyBoundType();
+
+    public static enum KeyBoundType {
+        IN_WORLD,
+        EQUIPPED,
+    }
 }

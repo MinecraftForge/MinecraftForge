@@ -5,13 +5,13 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
@@ -32,63 +32,63 @@ public class ForgeInternalHandler
      * Go through every registered keyBoundItem, if its key is down and is the current item, then invoke its keyPressed(stack, player) method
      */
     @SubscribeEvent
-    public void keyPressed(InputEvent.KeyInputEvent event) {
+    public void onHotKeyPressed(InputEvent.KeyInputEvent event) {
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
             for (IKeyBound keyBound : keyBoundObjects) {
-                LinkedList<Boolean> pressedKeys = new LinkedList<Boolean>(); //list of keys, pressed and unpressed
+                if (keyBound.getKeyBoundType() == IKeyBound.KeyBoundType.EQUIPPED) {
+                    LinkedList<Boolean> pressedKeys = new LinkedList<Boolean>(); //list of keys, pressed and unpressed
 
-                for (int key : keyBound.getKeys()) {
-                    pressedKeys.add(Keyboard.isKeyDown(key));
-                }
-
-                if (!pressedKeys.contains(false)) { //if there is not a single unpressed key, continue
-                    EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-                    ItemStack stack = player.getCurrentEquippedItem();
-
-                    if (stack != null && stack.getItem() == keyBound) {
-                        keyBound.keyPressed(player);
+                    for (int key : keyBound.getKeys()) {
+                        pressedKeys.add(Keyboard.isKeyDown(key));
                     }
-                }
-            }
-        }
-    }
 
-    @SubscribeEvent
-    public void tickEvent(TickEvent event) {
-        MovingObjectPosition mop = Minecraft.getMinecraft().objectMouseOver;
+                    if (!pressedKeys.contains(false)) { //if there is not a single unpressed key, continue
+                        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+                        ItemStack stack = player.getCurrentEquippedItem();
 
-        if (mop != null) {
-            if (event.side == Side.CLIENT) {
-                if (mop.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY) {
-                    if (mop.entityHit instanceof IKeyBound) {
-                        LinkedList<Boolean> pressedKeys = new LinkedList<Boolean>(); // list of keys, pressed and unpressed
-                        IKeyBound keyBound = (IKeyBound) mop.entityHit;
-
-                        for (int key : keyBound.getKeys()) {
-                            pressedKeys.add(Keyboard.isKeyDown(key));
-                        }
-
-                        if (!pressedKeys.contains(false)) { // if there is not a single unpressed key, continue
-                            keyBound.keyPressed(Minecraft.getMinecraft().thePlayer);
+                        if (stack != null && stack.getItem() == keyBound) {
+                            keyBound.keyPressed(player);
                         }
                     }
-                } else if (mop.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-                    Block block = Minecraft.getMinecraft().theWorld.getBlock(mop.blockX, mop.blockY, mop.blockZ);
+                } else if (keyBound.getKeyBoundType() == IKeyBound.KeyBoundType.IN_WORLD) {
+                    MovingObjectPosition mop = Minecraft.getMinecraft().objectMouseOver;
 
-                    if (block instanceof IKeyBound) {
-                        LinkedList<Boolean> pressedKeys = new LinkedList<Boolean>(); // list of keys, pressed and unpressed
-                        IKeyBound keyBound = (IKeyBound) block;
+                    if (mop != null) {
+                        if (mop.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY) {
+                            if (mop.entityHit instanceof IKeyBound && mop.entityHit == keyBound) {
+                                LinkedList<Boolean> pressedKeys = new LinkedList<Boolean>(); // list of keys, pressed and unpressed
 
-                        for (int key : keyBound.getKeys()) {
-                            pressedKeys.add(Keyboard.isKeyDown(key));
-                        }
+                                for (int key : keyBound.getKeys()) {
+                                    pressedKeys.add(Keyboard.isKeyDown(key));
+                                }
 
-                        if (!pressedKeys.contains(false)) { // if there is not a single unpressed key, continue
-                            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-                            ItemStack stack = player.getCurrentEquippedItem();
+                                if (!pressedKeys.contains(false)) { // if there is not a single unpressed key, continue
+                                    EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+                                    ItemStack stack = player.getCurrentEquippedItem();
 
-                            if (stack == null || !(stack.getItem() instanceof IKeyBound)) { // or some other way for the player to not accidentally press a keyBound itemStack and a keyBound block
-                                keyBound.keyPressed(player);
+                                    if (stack == null || !(stack.getItem() instanceof IKeyBound)) { // or some other way for the player to not accidentally press a keyBound itemStack and a keyBound block
+                                        keyBound.keyPressed(player);
+                                    }
+                                }
+                            }
+                        } else if (mop.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+                            Block block = Minecraft.getMinecraft().theWorld.getBlock(mop.blockX, mop.blockY, mop.blockZ);
+
+                            if (block != Blocks.air && block instanceof IKeyBound && block == keyBound) {
+                                LinkedList<Boolean> pressedKeys = new LinkedList<Boolean>(); // list of keys, pressed and unpressed
+
+                                for (int key : keyBound.getKeys()) {
+                                    pressedKeys.add(Keyboard.isKeyDown(key));
+                                }
+
+                                if (!pressedKeys.contains(false)) { // if there is not a single unpressed key, continue
+                                    EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+                                    ItemStack stack = player.getCurrentEquippedItem();
+
+                                    if (stack == null || !(stack.getItem() instanceof IKeyBound)) { // or some other way for the player to not accidentally press a keyBound itemStack and a keyBound block
+                                        keyBound.keyPressed(player);
+                                    }
+                                }
                             }
                         }
                     }
