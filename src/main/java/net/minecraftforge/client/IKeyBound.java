@@ -7,5 +7,5 @@ public interface IKeyBound {
 
     public String getKeyName();
 
-    public int getKey();
+    public int[] getKeys();
 }
