@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiIngameMenu.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiIngameMenu.java
+@@ -59,9 +59,11 @@
+                 this.field_146297_k.func_71381_h();
+                 break;
+             case 5:
++                if (this.field_146297_k.field_71439_g != null)
+                 this.field_146297_k.func_147108_a(new GuiAchievements(this, this.field_146297_k.field_71439_g.func_146107_m()));
+                 break;
+             case 6:
++                if (this.field_146297_k.field_71439_g != null)
+                 this.field_146297_k.func_147108_a(new GuiStats(this, this.field_146297_k.field_71439_g.func_146107_m()));
+                 break;
+             case 7:
