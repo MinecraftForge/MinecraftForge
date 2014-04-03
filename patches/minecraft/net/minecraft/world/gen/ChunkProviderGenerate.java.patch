@@ -95,7 +95,14 @@
          {
              l1 = k + this.field_73220_k.nextInt(16) + 8;
              i2 = this.field_73220_k.nextInt(256);
-@@ -390,7 +423,8 @@
+@@ -386,11 +419,15 @@
+         }
+ 
+         biomegenbase.func_76728_a(this.field_73230_p, this.field_73220_k, k, l);
++        if (TerrainGen.populate(p_73153_1_, field_73230_p, field_73220_k, p_73153_2_, p_73153_3_, flag, ANIMALS))
++        {
+         SpawnerAnimals.func_77191_a(this.field_73230_p, biomegenbase, k + 8, l + 8, 16, 16, this.field_73220_k);
++        }
          k += 8;
          l += 8;
  
@@ -105,7 +112,7 @@
          {
              for (l1 = 0; l1 < 16; ++l1)
              {
-@@ -408,6 +442,8 @@
+@@ -408,6 +445,8 @@
              }
          }
  
