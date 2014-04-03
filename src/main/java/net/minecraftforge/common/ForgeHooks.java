@@ -3,7 +3,6 @@ package net.minecraftforge.common;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.block.Block;
@@ -14,6 +13,8 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ContainerRepair;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemPickaxe;
@@ -33,6 +34,7 @@ import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
+import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -422,5 +424,16 @@ public class ForgeHooks
             }
         }
         return event;
+    }
+
+    public static boolean onAnvilChange(ContainerRepair container, ItemStack left, ItemStack right, IInventory outputSlot, String name, int baseCost)
+    {
+        AnvilUpdateEvent e = new AnvilUpdateEvent(left, right, name, baseCost);
+        if (MinecraftForge.EVENT_BUS.post(e)) return false;
+        if (e.output == null) return true;
+
+        outputSlot.setInventorySlotContents(0, e.output);
+        container.maximumCost = e.cost;
+        return false;
     }
 }

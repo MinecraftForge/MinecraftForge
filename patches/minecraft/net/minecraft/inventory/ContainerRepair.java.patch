@@ -1,6 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerRepair.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerRepair.java
-@@ -373,6 +373,8 @@
+@@ -12,6 +12,7 @@
+ import net.minecraft.init.Items;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeHooks;
+ import org.apache.commons.lang3.StringUtils;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+@@ -170,6 +171,7 @@
+ 
+             if (itemstack2 != null)
+             {
++                if (!ForgeHooks.onAnvilChange(this, itemstack, itemstack2, field_82852_f, field_82857_m, k2)) return;
+                 flag = itemstack2.func_77973_b() == Items.field_151134_bR && Items.field_151134_bR.func_92110_g(itemstack2).func_74745_c() > 0;
+ 
+                 if (itemstack1.func_77984_f() && itemstack1.func_77973_b().func_82789_a(itemstack, itemstack2))
+@@ -373,6 +375,8 @@
                  k2 = Math.max(1, k2 / 2);
              }
  
