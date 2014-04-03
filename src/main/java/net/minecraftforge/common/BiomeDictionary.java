@@ -29,7 +29,7 @@ public class BiomeDictionary
         MAGICAL;
     }
 
-    private static final int BIOME_LIST_SIZE = 256;
+    private static final int BIOME_LIST_SIZE = BiomeGenBase.getBiomeGenArray().length;
     private static BiomeInfo[] biomeList = new BiomeInfo[BIOME_LIST_SIZE];
     @SuppressWarnings("unchecked")
     private static ArrayList<BiomeGenBase>[] typeInfoList = new ArrayList[Type.values().length];
