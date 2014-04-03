@@ -57,7 +57,6 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
 
     private void spawnEntity(FMLMessage.EntitySpawnMessage spawnMsg)
     {
-        System.out.println("Spawning entity on client");
         ModContainer mc = Loader.instance().getIndexedModList().get(spawnMsg.modId);
         EntityRegistration er = EntityRegistry.instance().lookupModSpawn(mc, spawnMsg.modEntityTypeId);
         WorldClient wc = FMLClientHandler.instance().getWorldClient();
@@ -116,7 +115,6 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
                 ((IEntityAdditionalSpawnData) entity).readSpawnData(spawnMsg.dataStream);
             }
             wc.addEntityToWorld(spawnMsg.entityId, entity);
-            System.out.println("Entity spawned on client");
         } catch (Exception e)
         {
             FMLLog.log(Level.ERROR, e, "A severe problem occurred during the spawning of an entity");
