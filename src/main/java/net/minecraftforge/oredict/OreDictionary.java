@@ -1,5 +1,11 @@
 package net.minecraftforge.oredict;
 
+import gnu.trove.impl.Constants;
+import gnu.trove.map.TMap;
+import gnu.trove.map.TObjectIntMap;
+import gnu.trove.map.custom_hash.TObjectIntCustomHashMap;
+import gnu.trove.strategy.HashingStrategy;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +31,7 @@ public class OreDictionary
     private static int maxID = 0;
     private static HashMap<String, Integer> oreIDs = new HashMap<String, Integer>();
     private static HashMap<Integer, ArrayList<ItemStack>> oreStacks = new HashMap<Integer, ArrayList<ItemStack>>();
+    static TObjectIntMap<ItemStack> stackToID = new TObjectIntCustomHashMap<ItemStack>(ItemStackHasher.INSTANCE, Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
 
     /**
      * Minecraft changed from -1 to Short.MAX_VALUE in 1.5 release for the "block wildcard". Use this in case it
@@ -252,19 +259,16 @@ public class OreDictionary
             return -1;
         }
 
-        for(Entry<Integer, ArrayList<ItemStack>> ore : oreStacks.entrySet())
+        int id = stackToID.get(itemStack);
+        if (id == -1)
         {
-            for(ItemStack target : ore.getValue())
-            {
-                if(itemStack.getItem() == target.getItem() && (target.getItemDamage() == WILDCARD_VALUE || itemStack.getItemDamage() == target.getItemDamage()))
-                {
-                    return ore.getKey();
-                }
-            }
+            // need to try again with wildcard value if not found
+            id = stackToID.get(new ItemStack(itemStack.getItem(), 1, WILDCARD_VALUE));
         }
-        return -1; // didn't find it.
+        
+        return id;
     }
-
+    
     /**
      * Retrieves the ArrayList of items that are registered to this ore type.
      * Creates the list as empty if it did not exist.
@@ -350,6 +354,7 @@ public class OreDictionary
         ArrayList<ItemStack> ores = getOres(id);
         ore = ore.copy();
         ores.add(ore);
+        stackToID.put(ore, id);
         MinecraftForge.EVENT_BUS.post(new OreRegisterEvent(name, ore));
     }
 
@@ -363,5 +368,27 @@ public class OreDictionary
             this.Name = name;
             this.Ore = ore;
         }
+    }
+    
+    static enum ItemStackHasher implements HashingStrategy<ItemStack> {
+        
+        INSTANCE;
+        
+        @Override
+        public int computeHashCode(ItemStack stack)
+        {
+            int result = 31 + stack.getItem().hashCode();
+            return 31 * result + stack.getItemDamage();
+        }
+
+        @Override
+        public boolean equals(ItemStack s1, ItemStack s2)
+        {
+            if (s1 == s2) return true;
+            if (s1 == null || s2 == null) return false;
+            if (s1.getItem() != s2.getItem()) return false;
+            return s1.getItemDamage() == s2.getItemDamage();
+        }
+        
     }
 }
