@@ -96,11 +96,27 @@
          Vec3 vec31 = vec3.func_72441_c((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return p_77621_1_.func_147447_a(vec3, vec31, p_77621_3_, !p_77621_3_, false);
      }
-@@ -726,6 +743,562 @@
+@@ -709,6 +726,7 @@
+         this.field_77791_bV = p_94581_1_.func_94245_a(this.func_111208_A());
+     }
+ 
++    @Deprecated
+     public Multimap func_111205_h()
+     {
+         return HashMultimap.create();
+@@ -726,6 +744,570 @@
          return this.field_111218_cA == null ? "MISSING_ICON_ITEM_" + field_150901_e.func_148757_b(this) + "_" + this.field_77774_bZ : this.field_111218_cA;
      }
  
 +    /* ======================================== FORGE START =====================================*/
++    /**
++     * ItemStack sensitive version of getItemAttributeModifiers
++     */
++    public Multimap getAttributeModifiers(ItemStack stack)
++    {
++        return this.func_111205_h();
++    }
++
 +    /**
 +     * Called when a player drops the item into the world,
 +     * returning false from this will prevent the item from
@@ -659,7 +675,7 @@
      public static enum ToolMaterial
      {
          WOOD(0, 59, 2.0F, 0.0F, 15),
-@@ -741,6 +1314,9 @@
+@@ -741,6 +1323,9 @@
  
          private static final String __OBFID = "CL_00000042";
  
@@ -669,7 +685,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -777,7 +1353,15 @@
+@@ -777,7 +1362,15 @@
  
          public Item func_150995_f()
          {

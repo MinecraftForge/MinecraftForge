@@ -110,3 +110,12 @@
      public EnumRarity func_77953_t()
      {
          return this.func_77973_b().func_77613_e(this);
+@@ -729,7 +733,7 @@
+         }
+         else
+         {
+-            object = this.func_77973_b().func_111205_h();
++            object = this.func_77973_b().getAttributeModifiers(this);
+         }
+ 
+         return (Multimap)object;
