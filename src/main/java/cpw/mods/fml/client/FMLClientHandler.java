@@ -441,7 +441,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
         if (query.isSynchronous())
         {
-            while (!(client.currentScreen instanceof GuiMainMenu))
+            while (client.currentScreen instanceof GuiNotification)
             {
                 if (Thread.interrupted()) throw new InterruptedException();
 
@@ -454,11 +454,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     public boolean handleLoadingScreen(ScaledResolution scaledResolution)
     {
-        if (client.currentScreen instanceof GuiMainMenu)
-        {
-            return false;
-        }
-        else
+        if (client.currentScreen instanceof GuiNotification)
         {
             int width = scaledResolution.getScaledWidth();
             int height = scaledResolution.getScaledHeight();
@@ -469,6 +465,10 @@ public class FMLClientHandler implements IFMLSidedHandler
             client.currentScreen.handleInput();
 
             return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
