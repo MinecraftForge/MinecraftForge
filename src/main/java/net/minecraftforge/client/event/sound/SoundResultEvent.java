@@ -3,6 +3,7 @@ package net.minecraftforge.client.event.sound;
 import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.audio.SoundPoolEntry;
 
+@Deprecated //Remove in 1.8
 public abstract class SoundResultEvent extends SoundEvent
 {
     public final SoundManager manager;
@@ -14,6 +15,7 @@ public abstract class SoundResultEvent extends SoundEvent
     
     public SoundResultEvent(SoundManager manager, SoundPoolEntry source, String name, float volume, float pitch)
     {
+        super(manager);
         this.manager = manager;
         this.source = source;
         this.name = name;

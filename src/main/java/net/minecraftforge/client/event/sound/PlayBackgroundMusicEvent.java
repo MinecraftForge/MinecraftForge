@@ -8,6 +8,7 @@ import net.minecraft.client.audio.SoundPoolEntry;
  * If you return null from this function it will prevent the sound from being played,
  * you can return a different entry if you want to change the sound being played.
  */
+@Deprecated // Remove in 1.8
 public class PlayBackgroundMusicEvent extends SoundResultEvent
 {
     public PlayBackgroundMusicEvent(SoundManager manager, SoundPoolEntry entry)

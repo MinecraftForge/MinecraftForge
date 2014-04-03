@@ -4,12 +4,12 @@ import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.audio.SoundPoolEntry;
 
 /***
- * Raised when the SoundManager tries to play a normal sound,
- * dogs barking, footsteps, etc. THe majority of all sounds during normal game play.
+ * Raised when the SoundManager tries to play a normal sound.
  * 
  * If you return null from this function it will prevent the sound from being played,
  * you can return a different entry if you want to change the sound being played.
  */
+@Deprecated // Switch with PlaySoundEvent17 in 1.8
 public class PlaySoundEvent extends SoundResultEvent
 {
     public final float x;

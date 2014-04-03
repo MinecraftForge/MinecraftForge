@@ -5,6 +5,9 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 
 import net.minecraftforge.client.event.MouseEvent;
+import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.SoundEventAccessorComposite;
+import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiMainMenu;
@@ -48,6 +51,7 @@ import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.event.sound.PlaySoundEvent17;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
@@ -440,5 +444,13 @@ public class ForgeHooksClient
             // if we have a line, render it in the bottom right, above Mojang's copyright line
             gui.drawString(font, line, width - font.getStringWidth(line) - 2, height - (2 * (font.FONT_HEIGHT + 1)), -1);
         }
+    }
+
+    public static ISound playSound(SoundManager manager, ISound sound)
+    {
+        SoundEventAccessorComposite accessor = manager.sndHandler.getSound(sound.getPositionedSoundLocation());
+        PlaySoundEvent17 e = new PlaySoundEvent17(manager, sound, (accessor == null ? null : accessor.getSoundCategory()));
+        MinecraftForge.EVENT_BUS.post(e);
+        return e.result;
     }
 }

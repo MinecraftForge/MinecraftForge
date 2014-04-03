@@ -72,7 +72,7 @@
          if (p_147108_1_ instanceof GuiMainMenu)
          {
              this.field_71474_y.field_74330_P = false;
-@@ -1297,7 +1311,7 @@
+@@ -1296,7 +1310,7 @@
  
                      if (this.field_71439_g.func_82246_f(i, j, k))
                      {
@@ -81,7 +81,7 @@
                          this.field_71439_g.func_71038_i();
                      }
                  }
-@@ -1378,11 +1392,12 @@
+@@ -1377,11 +1391,12 @@
                      int j = this.field_71476_x.field_72312_c;
                      int k = this.field_71476_x.field_72309_d;
  
@@ -96,7 +96,7 @@
                          {
                              flag = false;
                              this.field_71439_g.func_71038_i();
-@@ -1409,7 +1424,8 @@
+@@ -1408,7 +1423,8 @@
          {
              ItemStack itemstack1 = this.field_71439_g.field_71071_by.func_70448_g();
  
@@ -106,7 +106,7 @@
              {
                  this.field_71460_t.field_78516_c.func_78445_c();
              }
-@@ -1608,6 +1624,8 @@
+@@ -1607,6 +1623,8 @@
  
              while (Mouse.next())
              {
@@ -115,7 +115,7 @@
                  i = Mouse.getEventButton();
  
                  if (field_142025_a && i == 0 && (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)))
-@@ -2075,6 +2093,11 @@
+@@ -2074,6 +2092,11 @@
  
      public void func_71353_a(WorldClient p_71353_1_, String p_71353_2_)
      {
@@ -127,7 +127,7 @@
          if (p_71353_1_ == null)
          {
              NetHandlerPlayClient nethandlerplayclient = this.func_147114_u();
-@@ -2087,6 +2110,18 @@
+@@ -2086,6 +2109,18 @@
              if (this.field_71437_Z != null)
              {
                  this.field_71437_Z.func_71263_m();
@@ -146,7 +146,7 @@
              }
  
              this.field_71437_Z = null;
-@@ -2235,113 +2270,10 @@
+@@ -2234,113 +2269,10 @@
          if (this.field_71476_x != null)
          {
              boolean flag = this.field_71439_g.field_71075_bZ.field_75098_d;
@@ -262,7 +262,7 @@
              if (flag)
              {
                  j = this.field_71439_g.field_71069_bz.field_75151_b.size() - 9 + this.field_71439_g.field_71071_by.field_70461_c;
-@@ -2508,8 +2440,15 @@
+@@ -2507,8 +2439,15 @@
          p_70001_1_.func_76472_a("gl_max_texture_size", Integer.valueOf(func_71369_N()));
      }
  
@@ -278,7 +278,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
-@@ -2517,6 +2456,7 @@
+@@ -2516,6 +2455,7 @@
  
              if (j != 0)
              {
