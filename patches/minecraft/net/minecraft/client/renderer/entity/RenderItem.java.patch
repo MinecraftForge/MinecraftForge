@@ -177,7 +177,7 @@
              }
  
              GL11.glDisable(GL11.GL_ALPHA_TEST);
-@@ -462,8 +508,19 @@
+@@ -462,13 +508,25 @@
                  GL11.glColor4f(f3, f4, f, 1.0F);
              }
  
@@ -197,7 +197,13 @@
          }
  
          GL11.glEnable(GL11.GL_CULL_FACE);
-@@ -477,7 +534,10 @@
+     }
+ 
++    @SuppressWarnings("unused")
+     public void func_82406_b(FontRenderer p_82406_1_, TextureManager p_82406_2_, final ItemStack p_82406_3_, int p_82406_4_, int p_82406_5_)
+     {
+         if (p_82406_3_ != null)
+@@ -477,7 +535,10 @@
  
              try
              {
@@ -209,7 +215,7 @@
              }
              catch (Throwable throwable)
              {
-@@ -518,7 +578,8 @@
+@@ -518,7 +579,8 @@
                  throw new ReportedException(crashreport);
              }
  
@@ -219,7 +225,7 @@
              {
                  GL11.glDepthFunc(GL11.GL_EQUAL);
                  GL11.glDisable(GL11.GL_LIGHTING);
-@@ -538,6 +599,23 @@
+@@ -538,6 +600,23 @@
          }
      }
  
@@ -243,7 +249,22 @@
      private void func_77018_a(int p_77018_1_, int p_77018_2_, int p_77018_3_, int p_77018_4_, int p_77018_5_)
      {
          for (int j1 = 0; j1 < 2; ++j1)
-@@ -638,4 +716,42 @@
+@@ -584,10 +663,11 @@
+                 GL11.glEnable(GL11.GL_DEPTH_TEST);
+             }
+ 
+-            if (p_94148_3_.func_77951_h())
++            if (p_94148_3_.func_77973_b().showDurabilityBar(p_94148_3_))
+             {
+-                int j1 = (int)Math.round(13.0D - (double)p_94148_3_.func_77952_i() * 13.0D / (double)p_94148_3_.func_77958_k());
+-                int k = (int)Math.round(255.0D - (double)p_94148_3_.func_77952_i() * 255.0D / (double)p_94148_3_.func_77958_k());
++                double health = p_94148_3_.func_77973_b().getDurabilityForDisplay(p_94148_3_);
++                int j1 = (int)Math.round(13.0D - health * 13.0D);
++                int k = (int)Math.round(255.0D - health * 255.0D);
+                 GL11.glDisable(GL11.GL_LIGHTING);
+                 GL11.glDisable(GL11.GL_DEPTH_TEST);
+                 GL11.glDisable(GL11.GL_TEXTURE_2D);
+@@ -638,4 +718,42 @@
      {
          this.func_76986_a((EntityItem)p_76986_1_, p_76986_2_, p_76986_4_, p_76986_6_, p_76986_8_, p_76986_9_);
      }

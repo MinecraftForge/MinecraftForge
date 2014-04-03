@@ -96,7 +96,7 @@
          Vec3 vec31 = vec3.func_72441_c((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return p_77621_1_.func_147447_a(vec3, vec31, p_77621_3_, !p_77621_3_, false);
      }
-@@ -726,6 +743,542 @@
+@@ -726,6 +743,562 @@
          return this.field_111218_cA == null ? "MISSING_ICON_ITEM_" + field_150901_e.func_148757_b(this) + "_" + this.field_77774_bZ : this.field_111218_cA;
      }
  
@@ -517,14 +517,34 @@
 +        return stack.field_77991_e;
 +    }
 +
-+    /**
-+     * Return the itemDamage display value represented by this itemstack.
-+     * @param stack the stack
-+     * @return the damage value
-+     */
++    @Deprecated // This isn't 'display' its normal Damage, the above function is 'Aux' data, but the same value.
 +    public int getDisplayDamage(ItemStack stack)
 +    {
 +        return stack.field_77991_e;
++    }
++
++    /**
++     * Determines if the durability bar should be rendered for this item.
++     * Defaults to vanilla stack.isDamaged behavior.
++     * But modders can use this for any data they wish.
++     * 
++     * @param stack The current Item Stack
++     * @return True if it should render the 'durability' bar.
++     */
++    public boolean showDurabilityBar(ItemStack stack)
++    {
++        return stack.func_77951_h();
++    }
++
++    /**
++     * Queries the percentage of the 'Durability' bar that should be drawn.
++     * 
++     * @param stack The current ItemStack
++     * @return 1.0 for 100% 0 for 0%
++     */
++    public double getDurabilityForDisplay(ItemStack stack)
++    {
++        return (double)stack.func_77952_i() / (double)stack.func_77958_k();
 +    }
 +    
 +    /**
@@ -639,7 +659,7 @@
      public static enum ToolMaterial
      {
          WOOD(0, 59, 2.0F, 0.0F, 15),
-@@ -741,6 +1294,9 @@
+@@ -741,6 +1314,9 @@
  
          private static final String __OBFID = "CL_00000042";
  
@@ -649,7 +669,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -777,7 +1333,15 @@
+@@ -777,7 +1353,15 @@
  
          public Item func_150995_f()
          {
