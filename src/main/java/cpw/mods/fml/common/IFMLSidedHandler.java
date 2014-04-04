@@ -12,14 +12,13 @@
 
 package cpw.mods.fml.common;
 
+import java.io.File;
 import java.util.List;
 import java.util.Set;
 
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.storage.ISaveFormat;
-import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.relauncher.Side;
 
@@ -39,7 +38,7 @@ public interface IFMLSidedHandler
 
     void finishServerLoading();
 
-    ISaveFormat getSaveFormat();
+    File getSavesDirectory();
 
     MinecraftServer getServer();
 

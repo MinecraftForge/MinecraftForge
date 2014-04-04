@@ -37,7 +37,7 @@
              }
          }
  
-+        FMLCommonHandler.instance().confirmBackupLevelDatUse();
++        FMLCommonHandler.instance().confirmBackupLevelDatUse(this);
          file1 = new File(this.field_75770_b, "level.dat_old");
  
          if (file1.exists())

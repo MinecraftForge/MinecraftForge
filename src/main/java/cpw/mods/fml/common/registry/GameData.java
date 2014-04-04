@@ -14,9 +14,11 @@ package cpw.mods.fml.common.registry;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -229,7 +231,7 @@ public class GameData {
      *
      * @param dataList List containing the IDs to fix
      */
-    public static void fixBrokenIds(Map<String, Integer> dataList)
+    public static void fixBrokenIds(Map<String, Integer> dataList, Set<Integer> blockedIds)
     {
         BitSet availabilityMap = new BitSet(32000);
 
@@ -237,6 +239,7 @@ public class GameData {
         for (Entry<String, Integer> entry : dataList.entrySet())
         {
             String itemName = entry.getKey();
+            String realName = itemName.substring(1);
 
             if (itemName.charAt(0) == '\u0001') // is a block
             {
@@ -244,7 +247,8 @@ public class GameData {
             }
         }
 
-        Set<String> itemsToAllocate = new HashSet<String>();
+        Set<Integer> newBlockedIds = new HashSet<Integer>();
+        Set<String> itemsToRemove = new HashSet<String>();
         Map<String, Integer> itemsToRelocate = new HashMap<String, Integer>();
 
         // check all ids occupied by items
@@ -255,40 +259,76 @@ public class GameData {
             if (itemName.charAt(0) != '\u0001') // is an item
             {
                 int oldId = entry.getValue();
+                String realName = itemName.substring(1);
+                String blockName = '\u0001' + realName;
+                Item item = getMain().iItemRegistry.getRaw(realName);
+                boolean blockThisId = false; // block oldId unless it's used by a block
 
-                if (availabilityMap.get(oldId)) // id is already occupied
+                if (item == null) // item no longer available
                 {
-                    String realName = itemName.substring(1);
-                    String blockName = '\u0001' + realName;
+                    // can't fix items without reliably checking if they are ItemBlocks
+                    FMLLog.warning("Item %s (old id %d) is no longer available and thus can't be fixed.", realName, oldId);
+                    itemsToRemove.add(itemName);
+                    blockThisId = true;
+                }
+                else if (item instanceof ItemBlock)
+                {
+                    if (dataList.containsKey(blockName)) // the item was an ItemBlock before
+                    {
+                        int blockId = dataList.get(blockName);
 
-                    if (!dataList.containsKey(blockName) ||
-                            (getMain().iItemRegistry.getRaw(realName) != null && // don't assume missing items are no ItemBlock
-                            !(getMain().iItemRegistry.getRaw(realName) instanceof ItemBlock))) // the slot is occupied by something else and this item is no ItemBlock
-                    {
-                        // allocate the item later, after all correct ids have been claimed
-                        itemsToAllocate.add(itemName);
+                        if (blockId != oldId) // mis-located ItemBlock
+                        {
+                            // relocate to the matching block
+                            FMLLog.warning("ItemBlock %s (old id %d) doesn't have the same id as its block (%d).", realName, oldId, blockId);
+                            itemsToRelocate.put(entry.getKey(), blockId);
+                            blockThisId = true;
+                        }
+                        else // intact ItemBlock
+                        {
+                            availabilityMap.set(oldId); // occupy id
+                        }
                     }
-                    else if (dataList.get(blockName) != oldId) // occupied, but this is an ItemBlock for a different block than whatever may use its id
+                    else // the item hasn't been an ItemBlock before, but it's now
                     {
-                        // relocate to the matching block
-                        int newId = dataList.get(blockName);
-                        itemsToRelocate.put(entry.getKey(), newId);
+                        // can't fix these, drop them
+                        FMLLog.warning("Item %s (old id %d) has been migrated to an ItemBlock and can't be fixed.", realName, oldId);
+                        itemsToRemove.add(itemName);
+                        blockThisId = true;
                     }
                 }
-                else // unused id, occupy
+                else if (availabilityMap.get(oldId)) // normal item, id is already occupied
                 {
+                    // remove the item mapping
+                    FMLLog.warning("Item %s (old id %d) is conflicting with another block/item and can't be fixed.", realName, oldId);
+                    itemsToRemove.add(itemName);
+                }
+                else // intact Item
+                {
+                    availabilityMap.set(oldId); // occupy id
+                }
+
+                // handle blocking the id from future use if possible (i.e. not used by a conflicting block)
+                // blockThisId requests don't modify availabilityMap, it could only be set by a block (or another item, which isn't being handled)
+                if (blockThisId && !availabilityMap.get(oldId))
+                {
+                    // there's no block occupying this id, thus block the id from future use
+                    // as there may still be ItemStacks in the world referencing it
+                    newBlockedIds.add(oldId);
                     availabilityMap.set(oldId);
                 }
             }
         }
 
-        if (itemsToAllocate.isEmpty() && itemsToRelocate.isEmpty()) return; // nothing to do
+        if (itemsToRemove.isEmpty() && itemsToRelocate.isEmpty()) return; // nothing to do
 
         String text = "Forge Mod Loader detected that this save is damaged.\n\n" +
                 "It's likely that an automatic repair can successfully restore\n" +
                 "most of it, except some items which may get swapped with others.\n\n" +
-                "A world backup will be created as a zip file in your saves\n"+
-                "directory automatically.";
+                "A world backup will be created as a zip file in your saves\n" +
+                "directory automatically.\n\n" +
+                itemsToRemove.size()+" items need to be removed.\n"+
+                itemsToRelocate.size()+" items need to be relocated.";
 
         boolean confirmed = StartupQuery.confirm(text);
         if (!confirmed) StartupQuery.abort();
@@ -303,14 +343,11 @@ public class GameData {
             StartupQuery.abort();
         }
 
-        for (String itemName : itemsToAllocate)
+        for (String itemName : itemsToRemove)
         {
-            int oldId = dataList.get(itemName);
-            int newId = availabilityMap.nextClearBit(4096);
+            int id = dataList.remove(itemName);
 
-            dataList.put(itemName, newId);
-
-            FMLLog.warning("Fixed Item %s conflicting with another block/item, old id %d, new id %d.", itemName.substring(1), oldId, newId);
+            FMLLog.warning("Removed Item %s, old id %d.", itemName.substring(1), id);
         }
 
         for (Map.Entry<String, Integer> entry : itemsToRelocate.entrySet())
@@ -320,16 +357,18 @@ public class GameData {
 
             int oldId = dataList.put(itemName, newId);
 
-            FMLLog.warning("Fixed ItemBlock %s not using the id of its block, old id %d, new id %d.", itemName.substring(1), oldId, newId);
+            FMLLog.warning("Remapped Item %s to id %d, old id %d.", itemName.substring(1), newId, oldId);
         }
+
+        blockedIds.addAll(newBlockedIds);
     }
 
     public static List<String> injectWorldIDMap(Map<String, Integer> dataList, boolean injectFrozenData, boolean isLocalWorld)
     {
-        return injectWorldIDMap(dataList, new int[0], new HashMap<String, String>(), new HashMap<String, String>(), injectFrozenData, isLocalWorld);
+        return injectWorldIDMap(dataList, new HashSet<Integer>(), new HashMap<String, String>(), new HashMap<String, String>(), injectFrozenData, isLocalWorld);
     }
 
-    public static List<String> injectWorldIDMap(Map<String, Integer> dataList, int[] blockedIds, Map<String, String> blockAliases, Map<String, String> itemAliases, boolean injectFrozenData, boolean isLocalWorld)
+    public static List<String> injectWorldIDMap(Map<String, Integer> dataList, Set<Integer> blockedIds, Map<String, String> blockAliases, Map<String, String> itemAliases, boolean injectFrozenData, boolean isLocalWorld)
     {
         FMLLog.info("Injecting existing block and item data into this %s instance", FMLCommonHandler.instance().getEffectiveSide().isServer() ? "server" : "client");
         Map<String, Integer[]> remaps = Maps.newHashMap();
@@ -390,11 +429,13 @@ public class GameData {
 
                 if (currId != newId)
                 {
-                    throw new IllegalStateException(String.format("Can't map %s %s to id %d, already occupied by %s",
+                    throw new IllegalStateException(String.format("Can't map %s %s to id %d, already occupied by %s, blocked %b, ItemBlock %b",
                             isBlock ? "block" : "item",
                                     itemName,
                                     newId,
-                                    isBlock ? newData.iBlockRegistry.getObjectById(newId) : newData.iItemRegistry.getObjectById(newId)));
+                                    isBlock ? newData.iBlockRegistry.getRaw(newId) : newData.iItemRegistry.getRaw(newId),
+                                    newData.blockedIds.contains(newId),
+                                    isBlock ? getMain().iBlockRegistry.getRaw(currId) : getMain().iItemRegistry.getRaw(currId)));
                 }
             }
         }

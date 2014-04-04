@@ -16,9 +16,11 @@ import java.io.File;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTBase;
@@ -217,15 +219,20 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
                 dataList.put(dataTag.getString("K"), dataTag.getInteger("V"));
             }
 
+            Set<Integer> blockedIds = new HashSet<Integer>();
+
             if (!tag.hasKey("BlockedItemIds")) // no blocked id info -> old 1.7 save
             {
                 // old early 1.7 save potentially affected by the registry mapping bug
                 // fix the ids the best we can...
-                GameData.fixBrokenIds(dataList);
+                GameData.fixBrokenIds(dataList, blockedIds);
             }
 
             // blocked ids
-            int[] blockedIds = tag.getIntArray("BlockedItemIds");
+            for (int id : tag.getIntArray("BlockedItemIds"))
+            {
+                blockedIds.add(id);
+            }
             // block aliases
             Map<String, String> blockAliases = new HashMap<String, String>();
             list = tag.getTagList("BlockAliases", 10);

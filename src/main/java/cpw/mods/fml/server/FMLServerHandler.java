@@ -12,6 +12,7 @@
  */
 package cpw.mods.fml.server;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -22,7 +23,7 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.world.storage.ISaveFormat;
+import net.minecraft.world.storage.SaveFormatOld;
 
 import com.google.common.collect.ImmutableList;
 
@@ -32,7 +33,6 @@ import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.StartupQuery;
-import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.common.registry.LanguageRegistry;
@@ -102,9 +102,9 @@ public class FMLServerHandler implements IFMLSidedHandler
     }
 
     @Override
-    public ISaveFormat getSaveFormat()
+    public File getSavesDirectory()
     {
-        return server.getActiveAnvilConverter();
+        return ((SaveFormatOld) server.getActiveAnvilConverter()).savesDirectory;
     }
 
     /**

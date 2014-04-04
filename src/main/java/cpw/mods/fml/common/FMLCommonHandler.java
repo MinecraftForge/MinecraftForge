@@ -12,6 +12,8 @@
 
 package cpw.mods.fml.common;
 
+import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +30,6 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.ISaveFormat;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 
@@ -44,7 +45,6 @@ import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
@@ -84,6 +84,7 @@ public class FMLCommonHandler
     private List<String> brandingsNoMC;
     private List<ICrashCallable> crashCallables = Lists.newArrayList(Loader.instance().getCallableCrashInformation());
     private Set<SaveHandler> handlerSet = Sets.newSetFromMap(new MapMaker().weakKeys().<SaveHandler,Boolean>makeMap());
+    private WeakReference<SaveHandler> handlerToCheck;
     private EventBus eventBus = new EventBus();
     /**
      * The FML event bus. Subscribe here for FML related events
@@ -284,8 +285,8 @@ public class FMLCommonHandler
         Loader.instance().serverStopping();
     }
 
-    public ISaveFormat getSaveFormat() {
-        return sidedDelegate.getSaveFormat();
+    public File getSavesDirectory() {
+        return sidedDelegate.getSavesDirectory();
     }
 
     public MinecraftServer getMinecraftServerInstance()
@@ -385,6 +386,7 @@ public class FMLCommonHandler
             return;
         }
         handlerSet.add(handler);
+        handlerToCheck = new WeakReference<SaveHandler>(handler); // for confirmBackupLevelDatUse
         Map<String,NBTBase> additionalProperties = Maps.newHashMap();
         worldInfo.setAdditionalProperties(additionalProperties);
         for (ModContainer mc : Loader.instance().getModList())
@@ -400,22 +402,12 @@ public class FMLCommonHandler
         }
     }
 
-    public void confirmBackupLevelDatUse()
+    public void confirmBackupLevelDatUse(SaveHandler handler)
     {
-        // ignore invocations from the world ctor, those are always preceded by another invocation
-        for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
-            try
-            {
-                if (e.getMethodName().equals("<init>") &&
-                        Class.forName(e.getClassName()) == World.class)
-                {
-                    return;
-                }
-            }
-            catch (ClassNotFoundException e1)
-            {
-                // nothing
-            }
+        if (handlerToCheck == null || handlerToCheck.get() != handler) {
+            // only run if the save has been initially loaded
+            handlerToCheck = null;
+            return;
         }
 
         String text = "Forge Mod Loader detected that the backup level.dat is being used.\n\n" +
