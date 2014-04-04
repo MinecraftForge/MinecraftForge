@@ -16,12 +16,14 @@ public class PlaySoundEvent17 extends SoundEvent
 {
     public final String name;
     public final ISound sound;
+    public final SoundCategory category;
     public ISound result;
 
     public PlaySoundEvent17(SoundManager manager, ISound sound, SoundCategory category)
     { 
         super(manager);
         this.sound = sound;
+        this.category = category;
         this.name = sound.getPositionedSoundLocation().getResourcePath();
         this.result = sound;
     }
