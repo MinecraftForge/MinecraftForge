@@ -435,7 +435,7 @@ public class GameData {
                                     newId,
                                     isBlock ? newData.iBlockRegistry.getRaw(newId) : newData.iItemRegistry.getRaw(newId),
                                     newData.blockedIds.contains(newId),
-                                    isBlock ? getMain().iBlockRegistry.getRaw(currId) : getMain().iItemRegistry.getRaw(currId)));
+                                    isBlock ? false : (getMain().iItemRegistry.getRaw(currId) instanceof ItemBlock)));
                 }
             }
         }
