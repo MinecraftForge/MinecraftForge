@@ -156,7 +156,7 @@
              if (itemstack1.func_77973_b().func_77623_v())
              {
 -                for (k = 0; k <= 1; ++k)
-+                for (k = 0; k <= itemstack1.func_77973_b().getRenderPasses(itemstack1.func_77960_j()); ++k)
++                for (k = 0; k < itemstack1.func_77973_b().getRenderPasses(itemstack1.func_77960_j()); ++k)
                  {
                      int i = itemstack1.func_77973_b().func_82790_a(itemstack1, k);
                      f12 = (float)(i >> 16 & 255) / 255.0F;
