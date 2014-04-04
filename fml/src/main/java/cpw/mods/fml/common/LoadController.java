@@ -130,7 +130,7 @@ public class LoadController
             FMLLog.severe("Fatal errors were detected during the transition from %s to %s. Loading cannot continue", oldState, desiredState);
             StringBuilder sb = new StringBuilder();
             printModStates(sb);
-            FMLLog.severe(sb.toString());
+            FMLLog.severe("%s", sb.toString());
             if (errors.size()>0)
             {
                 FMLLog.severe("The following problems were captured during this phase");

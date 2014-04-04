@@ -55,7 +55,7 @@ import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.WorldSettings;
-import net.minecraft.world.storage.ISaveFormat;
+import net.minecraft.world.storage.SaveFormatOld;
 
 import org.apache.logging.log4j.Level;
 import org.lwjgl.input.Mouse;
@@ -87,8 +87,6 @@ import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.StartupQuery;
 import cpw.mods.fml.common.WrongMinecraftVersionException;
-import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
-import cpw.mods.fml.common.event.FMLMissingMappingsEvent.Action;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.common.registry.GameData;
@@ -496,9 +494,9 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
 
     @Override
-    public ISaveFormat getSaveFormat()
+    public File getSavesDirectory()
     {
-        return client.getSaveLoader();
+        return ((SaveFormatOld) client.getSaveLoader()).savesDirectory;
     }
 
     @Override
