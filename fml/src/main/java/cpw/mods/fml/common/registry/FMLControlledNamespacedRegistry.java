@@ -52,7 +52,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
 
         for (I thing : (Iterable<I>) registry)
         {
-            super.addObject(registry.getId(thing), registry.getNameForObject(thing), thing);
+            addObjectRaw(registry.getId(thing), registry.getNameForObject(thing), thing);
         }
     }
 
@@ -68,6 +68,39 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     public void addObject(int id, String name, Object thing)
     {
         GameData.getMain().register(thing, name, id);
+    }
+
+    /**
+     * DANGEROUS! EVIL! DO NOT USE!
+     *
+     * @deprecated register through {@link GameRegistry} instead.
+     */
+    @Override
+    @Deprecated
+    public void putObject(Object objName, Object obj)
+    {
+        String name = (String) objName;
+        I thing = (I) obj;
+
+        if (name == null) throw new NullPointerException("Can't use a null-name for the registry.");
+        if (name.isEmpty()) throw new IllegalArgumentException("Can't use an empty name for the registry.");
+        if (thing == null) throw new NullPointerException("Can't add null-object to the registry.");
+
+        String existingName = getNameForObject(thing);
+
+        if (existingName == null)
+        {
+            FMLLog.bigWarning("Ignoring putObject(%s, %s), not resolvable", name, thing);
+        }
+        else if (existingName.equals(name))
+        {
+            FMLLog.bigWarning("Ignoring putObject(%s, %s), already added", name, thing);
+        }
+        else
+        {
+            FMLLog.bigWarning("Ignoring putObject(%s, %s), adding alias to %s instead", name, thing, existingName);
+            addAlias(name, existingName);
+        }
     }
 
     @Override
@@ -235,33 +268,34 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
             name = prefix + ":"+ name;
         }
 
-        if (getRaw(name) != null)
+        if (getRaw(name) == thing) // already registered, return prev registration's id
         {
-            FMLLog.warning("****************************************");
-            FMLLog.warning("* The name %s has been registered twice, for %s and %s.", name, getRaw(name), thing);
-            FMLLog.warning("****************************************");
+            FMLLog.bigWarning("The object %s has been registered twice for the same name %s.", thing, name);
+            return getId(thing);
         }
-        if (getId(thing) >= 0)
+        if (getRaw(name) != null) // duplicate name, will crash later due to the BiMap
         {
-            FMLLog.warning("****************************************");
-            FMLLog.warning("* The object %s has been registered twice, using the names %s and %s.", thing, getNameForObject(thing), name);
-            FMLLog.warning("****************************************");
+            FMLLog.bigWarning("The name %s has been registered twice, for %s and %s.", name, getRaw(name), thing);
+        }
+        if (getId(thing) >= 0) // duplicate object, will crash later due to the BiMap
+        {
+            FMLLog.bigWarning("The object %s has been registered twice, using the names %s and %s.", thing, getNameForObject(thing), name);
         }
         if (GameData.isFrozen(this))
         {
-            FMLLog.warning("****************************************");
-            FMLLog.warning("* The object %s (name %s) is being added too late.", thing, name);
-            FMLLog.warning("****************************************");
+            FMLLog.bigWarning("The object %s (name %s) is being added too late.", thing, name);
         }
 
-        super.addObject(idToUse, name, thing);
-        FMLLog.finer("Add : %s %d %s", name, idToUse, thing);
+        addObjectRaw(idToUse, name, thing);
+
+        FMLLog.finer("Registry add: %s %d %s", name, idToUse, thing);
         return idToUse;
     }
 
     void addAlias(String from, String to)
     {
         aliases.put(from, to);
+        FMLLog.finer("Registry alias: %s -> %s", from, to);
     }
 
     @SuppressWarnings("unchecked")
@@ -293,7 +327,19 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         for (int id : ids)
         {
             I thing = getRaw(id);
-            FMLLog.finer("Registry : %s %d %s", getNameForObject(thing), id, thing);
+            FMLLog.finer("Registry: %s %d %s", getNameForObject(thing), id, thing);
         }
+    }
+
+    /**
+     * Version of addObject not using the API restricting overrides.
+     */
+    private void addObjectRaw(int id, String name, I thing)
+    {
+        if (name == null) throw new NullPointerException();
+        if (thing == null) throw new NullPointerException();
+
+        underlyingIntegerMap.func_148746_a(thing, id); // obj <-> id
+        super.putObject(ensureNamespaced(name), thing); // name <-> obj
     }
 }

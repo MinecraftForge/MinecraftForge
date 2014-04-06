@@ -45,6 +45,13 @@ public class FMLLog
         log(Level.ERROR, format, data);
     }
 
+    public static void bigWarning(String format, Object... data)
+    {
+        log(Level.WARN, "****************************************");
+        log(Level.WARN, "* "+format, data);
+        log(Level.WARN, "****************************************");
+    }
+
     public static void warning(String format, Object... data)
     {
         log(Level.WARN, format, data);
