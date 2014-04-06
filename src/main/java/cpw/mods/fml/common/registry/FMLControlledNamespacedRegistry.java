@@ -247,6 +247,12 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
             FMLLog.warning("* The object %s has been registered twice, using the names %s and %s.", thing, getNameForObject(thing), name);
             FMLLog.warning("****************************************");
         }
+        if (GameData.isFrozen(this))
+        {
+            FMLLog.warning("****************************************");
+            FMLLog.warning("* The object %s (name %s) is being added too late.", thing, name);
+            FMLLog.warning("****************************************");
+        }
 
         super.addObject(idToUse, name, thing);
         FMLLog.finer("Add : %s %d %s", name, idToUse, thing);

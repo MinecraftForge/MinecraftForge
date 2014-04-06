@@ -322,6 +322,7 @@ public class GameData {
 
         if (itemsToRemove.isEmpty() && itemsToRelocate.isEmpty()) return; // nothing to do
 
+        // confirm
         String text = "Forge Mod Loader detected that this save is damaged.\n\n" +
                 "It's likely that an automatic repair can successfully restore\n" +
                 "most of it, except some items which may get swapped with others.\n\n" +
@@ -333,6 +334,35 @@ public class GameData {
         boolean confirmed = StartupQuery.confirm(text);
         if (!confirmed) StartupQuery.abort();
 
+        // confirm missing mods causing item removal
+        Set<String> modsMissing = new HashSet<String>();
+
+        for (String itemName : itemsToRemove)
+        {
+            modsMissing.add(itemName.substring(1, itemName.indexOf(':')));
+        }
+
+        for (Iterator<String> it = modsMissing.iterator(); it.hasNext(); )
+        {
+            String mod = it.next();
+
+            if (mod.equals("minecraft") || Loader.instance().isModLoaded(mod)) it.remove();
+        }
+
+        if (!modsMissing.isEmpty())
+        {
+            text = "Forge Mod Loader detected that "+modsMissing.size()+" mods are missing.\n\n" +
+                        "If you continue items previously provided by those mods will be\n" +
+                        "removed while repairing this world save.\n\n" +
+                        "Missing mods:\n";
+
+            for (String mod : modsMissing) text += mod+"\n";
+
+            confirmed = StartupQuery.confirm(text);
+            if (!confirmed) StartupQuery.abort();
+        }
+
+        // backup
         try
         {
             ZipperUtil.backupWorld();
@@ -343,6 +373,7 @@ public class GameData {
             StartupQuery.abort();
         }
 
+        // apply fix
         for (String itemName : itemsToRemove)
         {
             int id = dataList.remove(itemName);
@@ -419,7 +450,7 @@ public class GameData {
                 }
                 else if (currId != newId)
                 {
-                    FMLLog.info("Found %s id mismatch %s : %d (was %d)", isBlock ? "block" : "item", itemName, currId, newId);
+                    FMLLog.fine("Found %s id mismatch %s : %d (was %d)", isBlock ? "block" : "item", itemName, currId, newId);
                     remaps.put(itemName, new Integer[] { currId, newId });
                 }
 
@@ -445,35 +476,39 @@ public class GameData {
 
         if (injectFrozenData) // add blocks + items missing from the map
         {
-            FMLLog.info("Injecting new block and item data into this server instance");
             Map<String, Integer> missingBlocks = frozen.iBlockRegistry.getEntriesNotIn(newData.iBlockRegistry);
             Map<String, Integer> missingItems = frozen.iItemRegistry.getEntriesNotIn(newData.iItemRegistry);
 
-            for (int pass = 0; pass < 2; pass++)
+            if (!missingBlocks.isEmpty() || !missingItems.isEmpty())
             {
-                boolean isBlock = pass == 0;
-                Map<String, Integer> missing = (pass == 0) ? missingBlocks : missingItems;
+                FMLLog.info("Injecting new block and item data into this server instance");
 
-                for (Entry<String, Integer> entry : missing.entrySet())
+                for (int pass = 0; pass < 2; pass++)
                 {
-                    String itemName = entry.getKey();
-                    int currId = entry.getValue();
-                    int newId;
+                    boolean isBlock = pass == 0;
+                    Map<String, Integer> missing = (pass == 0) ? missingBlocks : missingItems;
 
-                    if (isBlock)
+                    for (Entry<String, Integer> entry : missing.entrySet())
                     {
-                        newId = newData.registerBlock(frozen.iBlockRegistry.getRaw(itemName), itemName, null, currId);
-                    }
-                    else
-                    {
-                        newId = newData.registerItem(frozen.iItemRegistry.getRaw(itemName), itemName, null, currId);
-                    }
+                        String itemName = entry.getKey();
+                        int currId = entry.getValue();
+                        int newId;
 
-                    FMLLog.info("Injected new block/item %s : %d (was %d)", itemName, newId, currId);
+                        if (isBlock)
+                        {
+                            newId = newData.registerBlock(frozen.iBlockRegistry.getRaw(itemName), itemName, null, currId);
+                        }
+                        else
+                        {
+                            newId = newData.registerItem(frozen.iItemRegistry.getRaw(itemName), itemName, null, currId);
+                        }
 
-                    if (newId != currId) // a new id was assigned
-                    {
-                        remaps.put(itemName, new Integer[] { entry.getValue(), newId });
+                        FMLLog.info("Injected new block/item %s : %d (was %d)", itemName, newId, currId);
+
+                        if (newId != currId) // a new id was assigned
+                        {
+                            remaps.put(itemName, new Integer[] { entry.getValue(), newId });
+                        }
                     }
                 }
             }
@@ -618,6 +653,11 @@ public class GameData {
 
             getMain().set(frozen);
         }
+    }
+
+    protected static boolean isFrozen(FMLControlledNamespacedRegistry<?> registry)
+    {
+        return frozen != null && (getMain().iBlockRegistry == registry || getMain().iItemRegistry == registry);
     }
 
     protected static GameData getMain()
