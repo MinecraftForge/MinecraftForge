@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityNote.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityNote.java
+@@ -4,6 +4,8 @@
+ import net.minecraft.init.Blocks;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.world.World;
++import net.minecraftforge.event.ForgeEventFactory;
++import net.minecraftforge.event.NoteblockEvent;
+ 
+ public class TileEntityNote extends TileEntity
+ {
+@@ -35,7 +37,9 @@
+ 
+     public void func_145877_a()
+     {
+-        this.field_145879_a = (byte)((this.field_145879_a + 1) % 25);
++        NoteblockEvent.Change event; // fire the event here, too, in case someone calls this directly
++        if ((event = ForgeEventFactory.onNoteblockChange(field_145850_b, field_145851_c, field_145848_d, field_145849_e, func_145832_p(), field_145879_a)).isCanceled()) return;
++        field_145879_a = (byte) event.getVanillaNoteId();
+         this.func_70296_d();
+     }
+ 

@@ -155,4 +155,19 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
         return event.result;
     }
+    
+    public static NoteblockEvent.Play onNoteblockPlay(World world, int x, int y, int z, int soundId, int noteId)
+    {
+        NoteblockEvent.Play event = new NoteblockEvent.Play(soundId, noteId, x, y, z, world, world.getBlockMetadata(x, y, z));
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+    
+    public static NoteblockEvent.Change onNoteblockChange(World world, int x, int y, int z, int meta, int oldNote)
+    {
+        int newNote = (oldNote + 1) % 25;
+        NoteblockEvent.Change event = new NoteblockEvent.Change(oldNote, newNote, x, y, z, world, meta);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
 }
