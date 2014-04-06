@@ -740,10 +740,7 @@ public class GameData {
                 throw new IllegalStateException(String.format("The Item Registry slot %d is already used by %s", idHint, iItemRegistry.getObjectById(idHint)));
             }
 
-            if (!freeSlot(idHint)) // temporarily free the slot occupied by the Block for the ItemBlock registration
-            {
-                throw new IllegalStateException(String.format("The Registry slot %d is supposed to be blocked by the ItemBlock's Block's blockId at this point.", idHint));
-            }
+            freeSlot(idHint); // temporarily free the slot occupied by the Block for the item registration
         }
 
         int itemId = iItemRegistry.add(idHint, name, item, availabilityMap);
@@ -756,11 +753,8 @@ public class GameData {
             }
         }
 
-        // normal item, block the Block Registry slot with the same id
-        if (useSlot(itemId))
-        {
-            throw new IllegalStateException(String.format("Registry slot %d is supposed to be empty when adding a non-ItemBlock with the same id.", itemId));
-        }
+        // block the Block Registry slot with the same id
+        useSlot(itemId);
 
         return itemId;
     }
@@ -779,10 +773,7 @@ public class GameData {
         }
         int blockId = iBlockRegistry.add(idHint, name, block, availabilityMap);
 
-        if (useSlot(blockId))
-        {
-            throw new IllegalStateException(String.format("Registry slot %d is supposed to be empty when adding a Block with the same id.", blockId));
-        }
+        useSlot(blockId);
 
         return blockId;
     }
@@ -796,18 +787,14 @@ public class GameData {
         useSlot(id);
     }
 
-    private boolean useSlot(int id)
+    private void useSlot(int id)
     {
-        boolean oldValue = availabilityMap.get(id);
         availabilityMap.set(id);
-        return oldValue;
     }
 
-    private boolean freeSlot(int id)
+    private void freeSlot(int id)
     {
-        boolean oldValue = availabilityMap.get(id);
         availabilityMap.clear(id);
-        return oldValue;
     }
 
     @SuppressWarnings("unchecked")
@@ -825,14 +812,19 @@ public class GameData {
         for (Block block : (Iterable<Block>) iBlockRegistry)
         {
             int id = iBlockRegistry.getId(block);
+            String name = iBlockRegistry.getNameForObject(block);
 
-            if (!availabilityMap.get(id))
-            {
-                throw new IllegalStateException(String.format("Registry entry for block %s, id %d, marked as empty.", block, id));
+            if (id < 0) {
+                throw new IllegalStateException(String.format("Registry entry for block %s, name %s, doesn't yield an id", block, name));
             }
-            if (blockedIds.contains(id))
-            {
-                throw new IllegalStateException(String.format("Registry entry for block %s, id %d, marked as dangling.", block, id));
+            if (name == null) {
+                throw new IllegalStateException(String.format("Registry entry for block %s, id %d, doesn't yield a name", block, id));
+            }
+            if (!availabilityMap.get(id)) {
+                throw new IllegalStateException(String.format("Registry entry for block %s, id %d, name %s, marked as empty.", block, id, name));
+            }
+            if (blockedIds.contains(id)) {
+                throw new IllegalStateException(String.format("Registry entry for block %s, id %d, name %s, marked as dangling.", block, id, name));
             }
         }
 
@@ -841,14 +833,19 @@ public class GameData {
         for (Item item : (Iterable<Item>) iItemRegistry)
         {
             int id = iItemRegistry.getId(item);
+            String name = iItemRegistry.getNameForObject(item);
 
-            if (!availabilityMap.get(id))
-            {
-                throw new IllegalStateException(String.format("Registry entry for item %s, id %d, marked as empty.", item, id));
+            if (id < 0) {
+                throw new IllegalStateException(String.format("Registry entry for item %s, name %s, doesn't yield an id", item, name));
             }
-            if (blockedIds.contains(id))
-            {
-                throw new IllegalStateException(String.format("Registry entry for item %s, id %d, marked as dangling.", item, id));
+            if (name == null) {
+                throw new IllegalStateException(String.format("Registry entry for item %s, id %d, doesn't yield a name", item, id));
+            }
+            if (!availabilityMap.get(id)) {
+                throw new IllegalStateException(String.format("Registry entry for item %s, id %d, name %s, marked as empty.", item, id, name));
+            }
+            if (blockedIds.contains(id)) {
+                throw new IllegalStateException(String.format("Registry entry for item %s, id %d, name %s, marked as dangling.", item, id, name));
             }
 
             if (item instanceof ItemBlock)
