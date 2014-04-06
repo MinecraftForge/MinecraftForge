@@ -178,21 +178,20 @@
              return entityitem;
          }
          else
-@@ -1678,8 +1771,11 @@
+@@ -1678,8 +1771,10 @@
                  this.ridingEntity.riddenByEntity = null;
              }
  
 -            this.ridingEntity = par1Entity;
 -            par1Entity.riddenByEntity = this;
-+            if(!ForgeHooks.onEntityMount(this, this.ridingEntity));
-+            {
++            if(!ForgeHooks.onEntityMount(this, this.ridingEntity)) return;
++            
 +                this.ridingEntity = par1Entity;
 +                par1Entity.riddenByEntity = this;
-+            }
          }
      }
  
-@@ -1782,7 +1878,7 @@
+@@ -1782,7 +1877,7 @@
      // JAVADOC METHOD $$ func_70115_ae
      public boolean isRiding()
      {
@@ -201,7 +200,7 @@
      }
  
      // JAVADOC METHOD $$ func_70093_af
-@@ -2103,7 +2199,7 @@
+@@ -2103,7 +2198,7 @@
  
      public float func_145772_a(Explosion p_145772_1_, World p_145772_2_, int p_145772_3_, int p_145772_4_, int p_145772_5_, Block p_145772_6_)
      {
@@ -210,7 +209,7 @@
      }
  
      public boolean func_145774_a(Explosion p_145774_1_, World p_145774_2_, int p_145774_3_, int p_145774_4_, int p_145774_5_, Block p_145774_6_, float p_145774_7_)
-@@ -2176,6 +2272,174 @@
+@@ -2176,6 +2271,174 @@
  
      public void func_145781_i(int p_145781_1_) {}
  
