@@ -14,4 +14,16 @@ public class EntityMountEvent extends EntityEvent
         super(entity);
         this.rider = rider;
     }
+    
+    @Cancelable
+    public static class Dismount extends EntityMountEvent
+    {
+
+        public Dismount(Entity entity, Entity rider)
+        {
+            super(entity, rider);
+        }
+        
+    }
+    
 }

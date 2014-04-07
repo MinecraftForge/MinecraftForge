@@ -337,6 +337,11 @@ public class ForgeHooks
     {
         return MinecraftForge.EVENT_BUS.post(new EntityMountEvent(entity, rider));
     }
+    
+    public static boolean onEntityDismount(Entity entity, Entity rider)
+    {
+        return MinecraftForge.EVENT_BUS.post(new EntityMountEvent.Dismount(entity, rider));
+    }
 
     public static EntityItem onPlayerTossEvent(EntityPlayer player, ItemStack item, boolean includeName)
     {

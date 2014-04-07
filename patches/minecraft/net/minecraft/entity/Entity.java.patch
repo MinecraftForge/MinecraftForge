@@ -178,19 +178,15 @@
              return entityitem;
          }
          else
-@@ -1678,8 +1771,10 @@
+@@ -1678,6 +1771,8 @@
                  this.ridingEntity.riddenByEntity = null;
              }
  
--            this.ridingEntity = par1Entity;
--            par1Entity.riddenByEntity = this;
-+            if(!ForgeHooks.onEntityMount(this, this.ridingEntity)) return;
++            if(ForgeHooks.onEntityMount(this, this.ridingEntity)) return;
 +            
-+                this.ridingEntity = par1Entity;
-+                par1Entity.riddenByEntity = this;
+             this.ridingEntity = par1Entity;
+             par1Entity.riddenByEntity = this;
          }
-     }
- 
 @@ -1782,7 +1877,7 @@
      // JAVADOC METHOD $$ func_70115_ae
      public boolean isRiding()

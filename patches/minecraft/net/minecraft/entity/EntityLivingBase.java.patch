@@ -148,6 +148,15 @@
          if (!this.isSwingInProgress || this.swingProgressInt >= this.getArmSwingAnimationEnd() / 2 || this.swingProgressInt < 0)
          {
              this.swingProgressInt = -1;
+@@ -1387,7 +1420,7 @@
+                 }
+             }
+         }
+-
++        if(ForgeHooks.onEntityDismount(this, this.ridingEntity)) return;
+         this.setPositionAndUpdate(d0, d1, d2);
+     }
+ 
 @@ -1422,6 +1455,7 @@
          }
  
