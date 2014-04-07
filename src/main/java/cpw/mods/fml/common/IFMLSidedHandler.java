@@ -12,13 +12,13 @@
 
 package cpw.mods.fml.common;
 
+import java.io.File;
 import java.util.List;
 import java.util.Set;
 
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
-import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.relauncher.Side;
 
@@ -32,9 +32,13 @@ public interface IFMLSidedHandler
 
     void showGuiScreen(Object clientGuiElement);
 
+    void queryUser(StartupQuery query) throws InterruptedException;
+
     void beginServerLoading(MinecraftServer server);
 
     void finishServerLoading();
+
+    File getSavesDirectory();
 
     MinecraftServer getServer();
 
@@ -55,12 +59,6 @@ public interface IFMLSidedHandler
     void waitForPlayClient();
 
     void fireNetRegistrationEvent(EventBus bus, NetworkManager manager, Set<String> channelSet, String channel, Side side);
-
-    FMLMissingMappingsEvent.Action getDefaultMissingAction();
-
-    void serverLoadedSuccessfully();
-
-    void failedServerLoading(RuntimeException ex, WorldAccessContainer wac);
 
     boolean shouldAllowPlayerLogins();
 }

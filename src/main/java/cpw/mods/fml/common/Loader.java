@@ -17,13 +17,17 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
 import org.apache.logging.log4j.Level;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -45,6 +49,7 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.collect.TreeMultimap;
+
 import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.ModContainer.Disableable;
 import cpw.mods.fml.common.discovery.ModDiscoverer;
@@ -56,6 +61,7 @@ import cpw.mods.fml.common.event.FMLModIdMappingEvent;
 import cpw.mods.fml.common.functions.ArtifactVersionNameFunction;
 import cpw.mods.fml.common.functions.ModIdFunction;
 import cpw.mods.fml.common.registry.GameData;
+import cpw.mods.fml.common.registry.GameRegistry.Type;
 import cpw.mods.fml.common.toposort.ModSorter;
 import cpw.mods.fml.common.toposort.ModSortingException;
 import cpw.mods.fml.common.toposort.ModSortingException.SortingExceptionData;
@@ -453,7 +459,6 @@ public class Loader
     {
         initializeLoader();
         mods = Lists.newArrayList();
-        GameData.fixupRegistries();
         namedMods = Maps.newHashMap();
         modController = new LoadController(this);
         modController.transition(LoaderState.LOADING, false);
@@ -493,7 +498,6 @@ public class Loader
         }
         modController.transition(LoaderState.PREINITIALIZATION, false);
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, disc.getASMTable(), canonicalConfigDir);
-        GameData.freezeData();
         modController.transition(LoaderState.INITIALIZATION, false);
     }
 
@@ -676,6 +680,7 @@ public class Loader
         modController.distributeStateMessage(LoaderState.POSTINITIALIZATION);
         modController.transition(LoaderState.AVAILABLE, false);
         modController.distributeStateMessage(LoaderState.AVAILABLE);
+        GameData.freezeData();
         // Dump the custom registry data map, if necessary
         GameData.dumpRegistry(minecraftDir);
         FMLLog.info("Forge Mod Loader has successfully loaded %d mod%s", mods.size(), mods.size() == 1 ? "" : "s");
@@ -842,41 +847,74 @@ public class Loader
         return true;
     }
 
-    public List<String> fireMissingMappingEvent(ArrayListMultimap<String,String> missing, boolean isLocalWorld)
+    /**
+     * Fire a FMLMissingMappingsEvent to let mods determine how blocks/items defined in the world
+     * save, but missing from the runtime, are to be handled.
+     *
+     * @param missing Map containing missing names with their associated id, blocks need to come before items for remapping.
+     * @param isLocalWorld Whether this is executing for a world load (local/server) or a client.
+     * @param gameData GameData instance where the new map's config is to be loaded into.
+     * @return List with the mapping results.
+     */
+    public List<String> fireMissingMappingEvent(LinkedHashMap<String, Integer> missing, boolean isLocalWorld, GameData gameData, Map<String, Integer[]> remaps)
     {
-        if (!missing.isEmpty())
+        if (missing.isEmpty()) // nothing to do
         {
-            FMLLog.fine("There are %d mappings missing - attempting a mod remap", missing.size());
-            ArrayListMultimap<String,MissingMapping> missingMappings = ArrayListMultimap.create();
-            List<MissingMapping> remaps = Lists.newArrayList();
-            for (Map.Entry<String, String> mapping : missing.entries())
+            return ImmutableList.of();
+        }
+
+        FMLLog.fine("There are %d mappings missing - attempting a mod remap", missing.size());
+        ArrayListMultimap<String, MissingMapping> missingMappings = ArrayListMultimap.create();
+
+        for (Map.Entry<String, Integer> mapping : missing.entrySet())
+        {
+            int id = mapping.getValue();
+            MissingMapping m = new MissingMapping(mapping.getKey(), id);
+            missingMappings.put(m.name.substring(0, m.name.indexOf(':')), m);
+        }
+
+        FMLMissingMappingsEvent missingEvent = new FMLMissingMappingsEvent(missingMappings);
+        modController.propogateStateMessage(missingEvent);
+
+        if (isLocalWorld) // local world, warn about entries still being set to the default action
+        {
+            boolean didWarn = false;
+
+            for (MissingMapping mapping : missingMappings.values())
             {
-                MissingMapping m = new MissingMapping(mapping.getValue(), remaps);
-                missingMappings.put(mapping.getKey(), m);
-            }
-            FMLMissingMappingsEvent missingEvent = new FMLMissingMappingsEvent(missingMappings);
-            modController.propogateStateMessage(missingEvent);
-            if (!missingMappings.isEmpty() && isLocalWorld)
-            {
-                FMLLog.severe("There are unidentified mappings in this world - we are going to attempt to process anyway");
-                for (java.util.Map.Entry<String, MissingMapping> missed : missingMappings.entries())
+                if (mapping.getAction() == FMLMissingMappingsEvent.Action.DEFAULT)
                 {
-                    remaps.add(missed.getValue());
+                    if (!didWarn)
+                    {
+                        FMLLog.severe("There are unidentified mappings in this world - we are going to attempt to process anyway");
+                        didWarn = true;
+                    }
+
+                    FMLLog.severe("Unidentified %s: %s, id %d", mapping.type == Type.BLOCK ? "block" : "item", mapping.name, mapping.id);
                 }
             }
-            else if (!missingMappings.isEmpty() && !isLocalWorld)
+        }
+        else // remote world, fail on entries with the default action
+        {
+            List<String> missedMapping = new ArrayList<String>();
+
+            for (MissingMapping mapping : missingMappings.values())
             {
-                List<String> missedMapping = Lists.newArrayList();
-                for (java.util.Map.Entry<String, MissingMapping> missed : missingMappings.entries())
+                if (mapping.getAction() == FMLMissingMappingsEvent.Action.DEFAULT)
                 {
-                    missedMapping.add(missed.getKey()+ ":" + missed.getValue().name);
+                    missedMapping.add(mapping.name);
                 }
+            }
+
+            if (!missedMapping.isEmpty())
+            {
                 return ImmutableList.copyOf(missedMapping);
             }
-            return GameData.processIdRematches(remaps, isLocalWorld);
         }
-        return ImmutableList.of();
+
+        return GameData.processIdRematches(missingMappings.values(), isLocalWorld, gameData, remaps);
     }
+
     public void fireRemapEvent(Map<String, Integer[]> remaps)
     {
         if (remaps.isEmpty())

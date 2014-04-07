@@ -2,14 +2,19 @@ package cpw.mods.fml.client;
 
 import java.io.File;
 import java.io.IOException;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSelectWorld;
 import net.minecraft.client.gui.GuiYesNo;
+import net.minecraft.world.WorldSettings;
+
 import org.apache.logging.log4j.Level;
+
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
+import cpw.mods.fml.common.StartupQuery;
 import cpw.mods.fml.common.ZipperUtil;
 
 public class GuiOldSaveLoadConfirm extends GuiYesNo {
@@ -65,9 +70,15 @@ public class GuiOldSaveLoadConfirm extends GuiYesNo {
                 return;
             }
             FMLClientHandler.instance().showGuiScreen(null);
-            FMLClientHandler.instance().launchIntegratedServerCallback(dirName, saveName);
+
+            try
+            {
+                mc.launchIntegratedServer(dirName, saveName, (WorldSettings)null);
+            }
+            catch (StartupQuery.AbortedException e)
+            {
+                // ignore
+            }
         }
-
     }
-
 }

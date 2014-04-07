@@ -15,19 +15,26 @@ package cpw.mods.fml.common;
 import java.io.File;
 import java.security.cert.Certificate;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
+
 import org.apache.logging.log4j.Level;
+
 import com.google.common.collect.Maps;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+
 import cpw.mods.fml.client.FMLFileResourcePack;
 import cpw.mods.fml.client.FMLFolderResourcePack;
 import cpw.mods.fml.common.asm.FMLSanityChecker;
@@ -36,7 +43,6 @@ import cpw.mods.fml.common.network.NetworkCheckHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
 import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.common.registry.GameRegistryException;
 import cpw.mods.fml.relauncher.Side;
 
 /**
@@ -95,6 +101,7 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
             list.appendTag(mod);
         }
         fmlData.setTag("ModList", list);
+        // name <-> id mappings
         NBTTagList dataList = new NBTTagList();
         FMLLog.fine("Gathering id map for writing to world save %s", info.getWorldName());
         Map<String,Integer> itemList = GameData.buildItemDataList();
@@ -106,6 +113,29 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
             dataList.appendTag(tag);
         }
         fmlData.setTag("ItemData", dataList);
+        // blocked ids
+        fmlData.setIntArray("BlockedItemIds", GameData.getBlockedIds());
+        // block aliases
+        NBTTagList blockAliasList = new NBTTagList();
+        for (Entry<String, String> entry : GameData.getBlockRegistry().getAliases().entrySet())
+        {
+            NBTTagCompound tag = new NBTTagCompound();
+            tag.setString("K", entry.getKey());
+            tag.setString("V", entry.getValue());
+            blockAliasList.appendTag(tag);
+        }
+        fmlData.setTag("BlockAliases", blockAliasList);
+        // item aliases
+        NBTTagList itemAliasList = new NBTTagList();
+        for (Entry<String, String> entry : GameData.getItemRegistry().getAliases().entrySet())
+        {
+            NBTTagCompound tag = new NBTTagCompound();
+            tag.setString("K", entry.getKey());
+            tag.setString("V", entry.getValue());
+            itemAliasList.appendTag(tag);
+        }
+        fmlData.setTag("ItemAliases", itemAliasList);
+
         return fmlData;
     }
 
@@ -132,6 +162,9 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
                 }
             }
         }
+
+        List<String> failedElements = null;
+
         if (tag.hasKey("ModItemData"))
         {
             FMLLog.info("Attempting to convert old world data to new system. This may be trouble!");
@@ -172,26 +205,65 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
                     dataList.put(itemLabel, itemId);
                 }
             }
-            List<String> failedElements = GameData.injectWorldIDMap(dataList, true, true);
-            if (!failedElements.isEmpty())
-            {
-                throw new GameRegistryException("Failed to load the world - there are fatal block and item id issues", failedElements);
-            }
+            failedElements = GameData.injectWorldIDMap(dataList, true, true);
+
         }
         else if (tag.hasKey("ItemData"))
         {
-            NBTTagList list = tag.getTagList("ItemData", (byte)10);
+            // name <-> id mappings
+            NBTTagList list = tag.getTagList("ItemData", 10);
             Map<String,Integer> dataList = Maps.newLinkedHashMap();
             for (int i = 0; i < list.tagCount(); i++)
             {
                 NBTTagCompound dataTag = list.getCompoundTagAt(i);
                 dataList.put(dataTag.getString("K"), dataTag.getInteger("V"));
             }
-            List<String> failedElements = GameData.injectWorldIDMap(dataList, true, true);
-            if (!failedElements.isEmpty())
+
+            Set<Integer> blockedIds = new HashSet<Integer>();
+
+            if (!tag.hasKey("BlockedItemIds")) // no blocked id info -> old 1.7 save
             {
-                throw new GameRegistryException("Failed to load the world - there are fatal block and item id issues", failedElements);
+                // old early 1.7 save potentially affected by the registry mapping bug
+                // fix the ids the best we can...
+                GameData.fixBrokenIds(dataList, blockedIds);
             }
+
+            // blocked ids
+            for (int id : tag.getIntArray("BlockedItemIds"))
+            {
+                blockedIds.add(id);
+            }
+            // block aliases
+            Map<String, String> blockAliases = new HashMap<String, String>();
+            list = tag.getTagList("BlockAliases", 10);
+            for (int i = 0; i < list.tagCount(); i++)
+            {
+                NBTTagCompound dataTag = list.getCompoundTagAt(i);
+                blockAliases.put(dataTag.getString("K"), dataTag.getString("V"));
+            }
+            // item aliases
+            Map<String, String> itemAliases = new HashMap<String, String>();
+            list = tag.getTagList("ItemAliases", 10);
+            for (int i = 0; i < list.tagCount(); i++)
+            {
+                NBTTagCompound dataTag = list.getCompoundTagAt(i);
+                itemAliases.put(dataTag.getString("K"), dataTag.getString("V"));
+            }
+
+            failedElements = GameData.injectWorldIDMap(dataList, blockedIds, blockAliases, itemAliases, true, true);
+        }
+
+        if (failedElements != null && !failedElements.isEmpty())
+        {
+            String text = "Forge Mod Loader could not load this save.\n\n" +
+            "There are "+failedElements.size()+" unassigned blocks and items in this save.\n" +
+                    "You will not be able to load until they are present again.\n\n" +
+                    "Missing Blocks/Items:\n";
+
+            for (String s : failedElements) text += s + "\n";
+
+            StartupQuery.notify(text);
+            StartupQuery.abort();
         }
     }
 
