@@ -56,6 +56,11 @@ import cpw.mods.fml.common.registry.GameRegistry.Type;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
 public class GameData {
+    private static final int MIN_BLOCK_ID = 0;
+    private static final int MAX_BLOCK_ID = 4095;
+    private static final int MIN_ITEM_ID = 4096;
+    private static final int MAX_ITEM_ID = 31999;
+
     private static final GameData mainData = new GameData();
 
     /**
@@ -233,7 +238,7 @@ public class GameData {
      */
     public static void fixBrokenIds(Map<String, Integer> dataList, Set<Integer> blockedIds)
     {
-        BitSet availabilityMap = new BitSet(32000);
+        BitSet availabilityMap = new BitSet(MAX_ITEM_ID + 1);
 
         // reserve all ids occupied by blocks
         for (Entry<String, Integer> entry : dataList.entrySet())
@@ -675,9 +680,9 @@ public class GameData {
 
     private GameData()
     {
-        iBlockRegistry = new FMLControlledNamespacedRegistry<Block>("air", 4095, 0, Block.class,'\u0001');
-        iItemRegistry = new FMLControlledNamespacedRegistry<Item>(null, 32000, 4096, Item.class,'\u0002');
-        availabilityMap = new BitSet(32000);
+        iBlockRegistry = new FMLControlledNamespacedRegistry<Block>("air", MAX_BLOCK_ID, MIN_BLOCK_ID, Block.class,'\u0001');
+        iItemRegistry = new FMLControlledNamespacedRegistry<Item>(null, MAX_ITEM_ID, MIN_ITEM_ID, Item.class,'\u0002');
+        availabilityMap = new BitSet(MAX_ITEM_ID + 1);
         blockedIds = new HashSet<Integer>();
     }
 
@@ -725,32 +730,29 @@ public class GameData {
             ModContainer mc = Loader.instance().activeModContainer();
             customOwners.put(new UniqueIdentifier(modId, name), mc);
         }
-        if (item instanceof ItemBlock)
+        if (item instanceof ItemBlock) // ItemBlock, adjust id and clear the slot already occupied by the corresponding block
         {
-            // ItemBlock, clear the item slot already occupied by the corresponding block
-            idHint = iBlockRegistry.getId(((ItemBlock) item).field_150939_a);
+            Block block = ((ItemBlock) item).field_150939_a;
+            idHint = iBlockRegistry.getId(block);
 
-            if (idHint == -1)
+            if (idHint == -1) // ItemBlock before its Block
             {
-                throw new RuntimeException("Cannot register an itemblock before its block");
+                idHint = availabilityMap.nextClearBit(MIN_BLOCK_ID); // find suitable id here, iItemRegistry would search from MIN_ITEM_ID
+                if (idHint > MAX_BLOCK_ID) throw new RuntimeException(String.format("Invalid id %d - maximum id range exceeded.", idHint));
             }
-
-            if (iItemRegistry.getObjectById(idHint) != null)
+            else // ItemBlock after its Block
             {
-                throw new IllegalStateException(String.format("The Item Registry slot %d is already used by %s", idHint, iItemRegistry.getObjectById(idHint)));
+                FMLLog.fine("Found matching Block %s for ItemBlock %s at id %d", block, item, idHint);
+                freeSlot(idHint, item); // temporarily free the slot occupied by the Block for the item registration
             }
-
-            freeSlot(idHint); // temporarily free the slot occupied by the Block for the item registration
         }
 
         int itemId = iItemRegistry.add(idHint, name, item, availabilityMap);
 
-        if (item instanceof ItemBlock)
+        if (item instanceof ItemBlock) // verify
         {
-            if (itemId != idHint) // just in case of bugs...
-            {
-                throw new IllegalStateException("ItemBlock insertion failed.");
-            }
+            if (itemId != idHint) throw new IllegalStateException("Block -> ItemBlock insertion failed.");
+            verifyItemBlockName((ItemBlock) item);
         }
 
         // block the Block Registry slot with the same id
@@ -771,7 +773,34 @@ public class GameData {
             ModContainer mc = Loader.instance().activeModContainer();
             customOwners.put(new UniqueIdentifier(modId, name), mc);
         }
+
+        // handle ItemBlock-before-Block registrations
+        ItemBlock itemBlock = null;
+
+        for (Item item : (Iterable<Item>) iItemRegistry) // find matching ItemBlock
+        {
+            if (item instanceof ItemBlock && ((ItemBlock) item).field_150939_a == block)
+            {
+                itemBlock = (ItemBlock) item;
+                break;
+            }
+        }
+
+        if (itemBlock != null) // has ItemBlock, adjust id and clear the slot already occupied by the corresponding item
+        {
+            idHint = iItemRegistry.getId(itemBlock);
+            FMLLog.fine("Found matching ItemBlock %s for Block %s at id %d", itemBlock, block, idHint);
+            freeSlot(idHint, block); // temporarily free the slot occupied by the Item for the block registration
+        }
+
+        // add
         int blockId = iBlockRegistry.add(idHint, name, block, availabilityMap);
+
+        if (itemBlock != null) // verify
+        {
+            if (blockId != idHint) throw new IllegalStateException("ItemBlock -> Block insertion failed.");
+            verifyItemBlockName(itemBlock);
+        }
 
         useSlot(blockId);
 
@@ -792,9 +821,37 @@ public class GameData {
         availabilityMap.set(id);
     }
 
-    private void freeSlot(int id)
+    /**
+     * Free the specified slot.
+     *
+     * The slot must not be occupied by something else than the specified object within the same type.
+     * The same object is permitted for handling duplicate registrations.
+     *
+     * @param id id to free
+     * @param obj object allowed besides different types (block vs item)
+     */
+    private void freeSlot(int id, Object obj)
     {
+        FMLControlledNamespacedRegistry<?> registry = (obj instanceof Block) ? iBlockRegistry : iItemRegistry;
+        Object thing = registry.getRaw(id);
+
+        if (thing != null && thing != obj)
+        {
+            throw new IllegalStateException(String.format("Can't free registry slot %d occupied by %s", id, thing));
+        }
+
         availabilityMap.clear(id);
+    }
+
+    private void verifyItemBlockName(ItemBlock item)
+    {
+        String blockName = iBlockRegistry.getNameForObject(item.field_150939_a);
+        String itemName = iItemRegistry.getNameForObject(item);
+
+        if (blockName != null && !blockName.equals(itemName))
+        {
+            FMLLog.bigWarning("Block <-> ItemBlock name mismatch, block name %s, item name %s", blockName, itemName);
+        }
     }
 
     @SuppressWarnings("unchecked")

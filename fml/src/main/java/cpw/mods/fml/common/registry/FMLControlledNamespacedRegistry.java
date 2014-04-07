@@ -103,6 +103,14 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         }
     }
 
+    /**
+     * Fetch the object identified by the specified name or the default object.
+     *
+     * For blocks the default object is the air block, for items it's null.
+     *
+     * @param name Unique name identifying the object.
+     * @return Registered object of the default object if it wasn't found-
+     */
     @Override
     public I getObject(String name)
     {
@@ -110,6 +118,14 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         return object == null ? this.optionalDefaultObject : object;
     }
 
+    /**
+     * Fetch the object identified by the specified id or the default object.
+     *
+     * For blocks the default object is the air block, for items it's null.
+     *
+     * @param id ID identifying the object.
+     * @return Registered object of the default object if it wasn't found-
+     */
     @Override
     public I getObjectById(int id)
     {
@@ -182,6 +198,14 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         return ret;
     }
 
+    /**
+     * Determine if the registry has an entry for the specified name.
+     *
+     * Aliased names will be resolved as well.
+     *
+     * @param name Object name to check.
+     * @return true if a matching entry was found.
+     */
     @Override
     public boolean containsKey(String name)
     {
@@ -228,7 +252,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     // internal
 
     @SuppressWarnings("unchecked")
-    public void serializeInto(Map<String, Integer> idMapping)
+    public void serializeInto(Map<String, Integer> idMapping) // for saving
     {
         for (I thing : (Iterable<I>) this)
         {
@@ -236,11 +260,20 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         }
     }
 
-    public Map<String, String> getAliases()
+    public Map<String, String> getAliases() // for saving
     {
         return ImmutableMap.copyOf(aliases);
     }
 
+    /**
+     * Add the specified object to the registry.
+     *
+     * @param id ID to use if available, auto-assigned otherwise.
+     * @param name Name to use, prefixed by the mod id.
+     * @param thing Object to add.
+     * @param availabilityMap Map marking available IDs for auto assignment.
+     * @return ID eventually allocated.
+     */
     int add(int id, String name, I thing, BitSet availabilityMap)
     {
         if (name == null) throw new NullPointerException("Can't use a null-name for the registry.");
@@ -256,9 +289,9 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         {
             idToUse = availabilityMap.nextClearBit(minId);
         }
-        if (idToUse >= maxId)
+        if (idToUse > maxId)
         {
-            throw new RuntimeException(String.format("Invalid id %s - not accepted",id));
+            throw new RuntimeException(String.format("Invalid id %d - maximum id range exceeded.", id));
         }
 
         ModContainer mc = Loader.instance().activeModContainer();
