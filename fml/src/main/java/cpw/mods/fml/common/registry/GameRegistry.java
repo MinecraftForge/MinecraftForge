@@ -136,7 +136,7 @@ public class GameRegistry
      */
     public static Item registerItem(Item item, String name, String modId)
     {
-        GameData.registerItem(item, name, modId);
+        GameData.getMain().registerItem(item, name, modId);
         return item;
     }
 
@@ -192,13 +192,11 @@ public class GameRegistry
                 Constructor<? extends ItemBlock> itemCtor = itemclass.getConstructor(ctorArgClasses);
                 i = itemCtor.newInstance(ObjectArrays.concat(block, itemCtorArgs));
             }
+            // block registration has to happen first
+            GameData.getMain().registerBlock(block, name, modId);
             if (i != null)
             {
-                GameData.registerBlockAndItem(i, block, name, modId);
-            }
-            else
-            {
-                GameData.registerBlock(block, name, modId);
+                GameData.getMain().registerItem(i, name, modId);
             }
             return block;
         }

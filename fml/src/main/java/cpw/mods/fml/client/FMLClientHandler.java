@@ -21,10 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.Gui;
@@ -32,6 +31,7 @@ import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSelectWorld;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.ServerListEntryNormal;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
@@ -55,7 +55,11 @@ import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.WorldSettings;
+import net.minecraft.world.storage.SaveFormatOld;
+
 import org.apache.logging.log4j.Level;
+import org.lwjgl.input.Mouse;
+
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
@@ -67,11 +71,11 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.DuplicateModsFoundException;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLContainer;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
@@ -81,14 +85,11 @@ import cpw.mods.fml.common.MissingModsException;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
-import cpw.mods.fml.common.WorldAccessContainer;
+import cpw.mods.fml.common.StartupQuery;
 import cpw.mods.fml.common.WrongMinecraftVersionException;
-import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
-import cpw.mods.fml.common.event.FMLMissingMappingsEvent.Action;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.common.registry.GameRegistryException;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.toposort.ModSortingException;
 import cpw.mods.fml.relauncher.Side;
@@ -424,6 +425,53 @@ public class FMLClientHandler implements IFMLSidedHandler
         client.displayGuiScreen(gui);
     }
 
+    @Override
+    public void queryUser(StartupQuery query) throws InterruptedException
+    {
+        if (query.getResult() == null)
+        {
+            client.displayGuiScreen(new GuiNotification(query));
+        }
+        else
+        {
+            client.displayGuiScreen(new GuiConfirmation(query));
+        }
+
+        if (query.isSynchronous())
+        {
+            while (client.currentScreen instanceof GuiNotification)
+            {
+                if (Thread.interrupted()) throw new InterruptedException();
+
+                client.loadingScreen.resetProgresAndWorkingMessage("");
+
+                Thread.sleep(50);
+            }
+
+            client.loadingScreen.resetProgresAndWorkingMessage(""); // make sure the blank screen is being drawn at the end
+        }
+    }
+
+    public boolean handleLoadingScreen(ScaledResolution scaledResolution)
+    {
+        if (client.currentScreen instanceof GuiNotification)
+        {
+            int width = scaledResolution.getScaledWidth();
+            int height = scaledResolution.getScaledHeight();
+            int mouseX = Mouse.getX() * width / client.displayWidth;
+            int mouseZ = height - Mouse.getY() * height / client.displayHeight - 1;
+
+            client.currentScreen.drawScreen(mouseX, mouseZ, 0);
+            client.currentScreen.handleInput();
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     public WorldClient getWorldClient()
     {
         return client.theWorld;
@@ -445,6 +493,12 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void finishServerLoading()
     {
         // NOOP
+    }
+
+    @Override
+    public File getSavesDirectory()
+    {
+        return ((SaveFormatOld) client.getSaveLoader()).savesDirectory;
     }
 
     @Override
@@ -596,40 +650,15 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         else
         {
-
-            launchIntegratedServerCallback(dirName, saveName);
-        }
-    }
-
-    private CountDownLatch gameReleaseLatch;
-    private Thread clientWaiter;
-    private GameRegistryException gre;
-
-    public void launchIntegratedServerCallback(String dirName, String saveName)
-    {
-        try
-        {
             try
             {
-                Thread.interrupted();
-                gameReleaseLatch = new CountDownLatch(1);
-                clientWaiter = Thread.currentThread();
                 client.launchIntegratedServer(dirName, saveName, (WorldSettings)null);
-                System.out.printf("POKEE %b\n", Thread.currentThread().isInterrupted());
-                gameReleaseLatch.await();
             }
-            catch (InterruptedException ie)
+            catch (StartupQuery.AbortedException e)
             {
-                Thread.interrupted();
-                throw gre;
+                // ignore
             }
         }
-        catch (GameRegistryException gre)
-        {
-            client.loadWorld(null);
-            showGuiScreen(new GuiModItemsMissing(gre.getItems(), gre.getMessage()));
-        }
-        Thread.interrupted();
     }
 
     public void showInGameModOptions(GuiIngameMenu guiIngameMenu)
@@ -811,70 +840,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             bus.post(new FMLNetworkEvent.CustomPacketRegistrationEvent<NetHandlerPlayServer>(manager, channelSet, channel, side, NetHandlerPlayServer.class));
         }
-    }
-
-    public void setDefaultMissingAction(FMLMissingMappingsEvent.Action action)
-    {
-        this.defaultMissingAction = action;
-    }
-
-    private Action defaultMissingAction = FMLMissingMappingsEvent.Action.FAIL;
-
-    @Override
-    public Action getDefaultMissingAction()
-    {
-        return defaultMissingAction;
-    }
-
-    @Override
-    public void serverLoadedSuccessfully()
-    {
-        if (gameReleaseLatch!=null)
-        {
-            gameReleaseLatch.countDown();
-        }
-    }
-
-    @Override
-    public void failedServerLoading(RuntimeException ex, WorldAccessContainer wac)
-    {
-        if (wac instanceof FMLContainer && ex instanceof GameRegistryException)
-        {
-            try
-            {
-                gre = (GameRegistryException) ex;
-                Executors.newSingleThreadExecutor().submit(new Callable<Void>()
-                {
-                    // This needs to happen in a separate thread so that the server can "crash"
-                    // The three pokes are for the client - it's in a sleep loop, and needs to get
-                    // out of it
-                    @Override
-                    public Void call() throws Exception
-                    {
-                        System.err.println("POKE");
-                        clientWaiter.interrupt();
-                        Thread.sleep(50);
-                        System.err.println("POKE");
-                        clientWaiter.interrupt();
-                        Thread.sleep(50);
-                        System.err.println("POKE");
-                        clientWaiter.interrupt();
-                        return null;
-                    }
-
-                });
-
-            }
-            catch (Throwable t)
-            {
-                FMLLog.log(Level.ERROR, t, "stuff");
-            }
-        }
-    }
-
-    public boolean handlingCrash(CrashReport report)
-    {
-        return report.getCrashCause() instanceof GameRegistryException;
     }
 
     @Override

@@ -1,159 +1,284 @@
 package cpw.mods.fml.common.registry;
 
-import gnu.trove.map.hash.TIntIntHashMap;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.RegistryNamespaced;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.Maps;
-import com.google.common.primitives.Ints;
+
+import com.google.common.collect.ImmutableMap;
+
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 
 public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
-    static class FMLObjectIntIdentityMap extends ObjectIntIdentityMap {
-        private TIntIntHashMap frozenMap;
-        private TIntIntHashMap oldMap;
-        private TIntIntHashMap newMap;
-        private ArrayList<Integer> frozenIndex;
-        private ArrayList<Integer> oldIndex;
-        private ArrayList<Integer> newIndex;
-
-        public FMLObjectIntIdentityMap()
-        {
-        }
-
-        boolean containsID(int id)
-        {
-            return func_148744_b(id);
-        }
-
-        Object get(int id)
-        {
-            return func_148745_a(id);
-        }
-
-        int get(Object obj)
-        {
-            return func_148747_b(obj);
-        }
-
-        @SuppressWarnings("unchecked")
-        void beginSwap()
-        {
-            oldMap = field_148749_a;
-            newMap  = new TIntIntHashMap(256, 0.5F, -1, -1);
-            oldIndex = (ArrayList<Integer>) field_148748_b;
-            newIndex = new ArrayList<Integer>(oldIndex.size());
-        }
-
-        @SuppressWarnings("unchecked")
-        void freezeMap()
-        {
-            frozenMap = new TIntIntHashMap(field_148749_a);
-            frozenIndex = new ArrayList<Integer>(field_148748_b);
-        }
-
-        void revertToFrozen()
-        {
-            field_148749_a = frozenMap;
-            field_148748_b = frozenIndex;
-        }
-        void completeSwap()
-        {
-            field_148749_a = newMap;
-            field_148748_b = newIndex;
-            oldIndex = newIndex = null;
-            oldMap = newMap = null;
-        }
-
-        void revertSwap()
-        {
-            field_148749_a = oldMap;
-            field_148748_b = oldIndex;
-            oldIndex = newIndex = null;
-            oldMap = newMap = null;
-        }
-
-        void putNew(int id, Object item)
-        {
-            field_148749_a = newMap;
-            field_148748_b = newIndex;
-            super.func_148746_a(item, id);
-            field_148749_a = oldMap;
-            field_148748_b = oldIndex;
-        }
-
-        List<Integer> usedIds()
-        {
-            return Ints.asList(field_148749_a.keys());
-        }
-
-    }
-
     private final Class<I> superType;
     private String optionalDefaultName;
     private I optionalDefaultObject;
-
-    private BiMap<String,Integer> namedIds = HashBiMap.create();
-    private BiMap<String,Integer> frozenIds;
-    private Map<String,Integer> transactionalNamedIds;
-    private BitSet transactionalAvailabilityMap;
-    private BitSet availabilityMap;
-    int maxId;
+    private int maxId;
     private int minId;
     private char discriminator;
+    // aliases redirecting legacy names to the actual name, may need recursive application to find the final name.
+    // these need to be registry specific, it's possible to only have a loosely linked item for a block which may get renamed by itself.
+    private final Map<String, String> aliases = new HashMap<String, String>();
 
-    public FMLControlledNamespacedRegistry(String optionalDefault, int maxIdValue, int minIdValue, Class<I> type, char discriminator)
+    FMLControlledNamespacedRegistry(String optionalDefault, int maxIdValue, int minIdValue, Class<I> type, char discriminator)
     {
         this.superType = type;
         this.discriminator = discriminator;
         this.optionalDefaultName = optionalDefault;
-        this.availabilityMap = new BitSet(maxIdValue);
         this.maxId = maxIdValue;
         this.minId = minIdValue;
-        this.underlyingIntegerMap = new FMLObjectIntIdentityMap();
     }
 
+    @SuppressWarnings("unchecked")
+    void set(FMLControlledNamespacedRegistry<I> registry)
+    {
+        if (this.superType != registry.superType) throw new IllegalArgumentException("incompatible registry");
+
+        this.discriminator = registry.discriminator;
+        this.optionalDefaultName = registry.optionalDefaultName;
+        this.maxId = registry.maxId;
+        this.minId = registry.minId;
+        this.aliases.clear();
+        this.aliases.putAll(registry.aliases);
+        underlyingIntegerMap = new ObjectIntIdentityMap();
+        registryObjects.clear();
+
+        for (I thing : (Iterable<I>) registry)
+        {
+            addObjectRaw(registry.getId(thing), registry.getNameForObject(thing), thing);
+        }
+    }
+
+    // public api
+
+    /**
+     * Add an object to the registry, trying to use the specified id.
+     *
+     * @deprecated register through {@link GameRegistry} instead.
+     */
     @Override
+    @Deprecated
     public void addObject(int id, String name, Object thing)
     {
-        FMLLog.finer("Add : %s %d %s", name, id, thing);
-        add(id, name, superType.cast(thing));
+        GameData.getMain().register(thing, name, id);
     }
 
-    int swap(int id, String name, I thing)
+    /**
+     * DANGEROUS! EVIL! DO NOT USE!
+     *
+     * @deprecated register through {@link GameRegistry} instead.
+     */
+    @Override
+    @Deprecated
+    public void putObject(Object objName, Object obj)
     {
-        FMLLog.fine("Swap : %s %d %s", name, id, thing);
-        BitSet temporary = availabilityMap;
-        availabilityMap = transactionalAvailabilityMap;
+        String name = (String) objName;
+        I thing = (I) obj;
 
-        int idToUse = id;
-        if (id == 0 || availabilityMap.get(id))
-        {
-            idToUse = availabilityMap.nextClearBit(minId);
-        }
-        if (idToUse >= maxId)
-        {
-            throw new RuntimeException(String.format("Invalid id %s - not accepted",id));
-        }
+        if (name == null) throw new NullPointerException("Can't use a null-name for the registry.");
+        if (name.isEmpty()) throw new IllegalArgumentException("Can't use an empty name for the registry.");
+        if (thing == null) throw new NullPointerException("Can't add null-object to the registry.");
 
-        namedIds.forcePut(ensureNamespaced(name),idToUse);
-        reassignMapping(name, idToUse);
-        useSlot(idToUse);
-        availabilityMap = temporary;
-        FMLLog.fine("Swap : %s %d %s", name, idToUse, thing);
-        return idToUse;
+        String existingName = getNameForObject(thing);
+
+        if (existingName == null)
+        {
+            FMLLog.bigWarning("Ignoring putObject(%s, %s), not resolvable", name, thing);
+        }
+        else if (existingName.equals(name))
+        {
+            FMLLog.bigWarning("Ignoring putObject(%s, %s), already added", name, thing);
+        }
+        else
+        {
+            FMLLog.bigWarning("Ignoring putObject(%s, %s), adding alias to %s instead", name, thing, existingName);
+            addAlias(name, existingName);
+        }
     }
-    public int add(int id, String name, I thing)
+
+    /**
+     * Fetch the object identified by the specified name or the default object.
+     *
+     * For blocks the default object is the air block, for items it's null.
+     *
+     * @param name Unique name identifying the object.
+     * @return Registered object of the default object if it wasn't found-
+     */
+    @Override
+    public I getObject(String name)
     {
+        I object = getRaw(name);
+        return object == null ? this.optionalDefaultObject : object;
+    }
+
+    /**
+     * Fetch the object identified by the specified id or the default object.
+     *
+     * For blocks the default object is the air block, for items it's null.
+     *
+     * @param id ID identifying the object.
+     * @return Registered object of the default object if it wasn't found-
+     */
+    @Override
+    public I getObjectById(int id)
+    {
+        I object = getRaw(id);
+        return object == null ? this.optionalDefaultObject : object;
+    }
+
+    /**
+     * @deprecated use getObjectById instead
+     */
+    @Deprecated
+    public I get(int id)
+    {
+        return getObjectById(id);
+    }
+
+    /**
+     * @deprecated use getObject instead
+     */
+    @Deprecated
+    public I get(String name)
+    {
+        return getObject(name);
+    }
+
+    /**
+     * Get the id for the specified object.
+     *
+     * Don't hold onto the id across the world, it's being dynamically re-mapped as needed.
+     *
+     * Usually the name should be used instead of the id, if using the Block/Item object itself is
+     * not suitable for the task.
+     *
+     * @param thing Block/Item object.
+     * @return Block/Item id or -1 if it wasn't found.
+     */
+    public int getId(I thing)
+    {
+        return getIDForObject(thing);
+    }
+
+    /**
+     * Get the object identified by the specified id.
+     *
+     * @param id Block/Item id.
+     * @return Block/Item object or null if it wasn't found.
+     */
+    public I getRaw(int id)
+    {
+        return superType.cast(super.getObjectById(id));
+    }
+
+    /**
+     * Get the object identified by the specified name.
+     *
+     * @param name Block/Item name.
+     * @return Block/Item object or null if it wasn't found.
+     */
+    public I getRaw(String name)
+    {
+        I ret = superType.cast(super.getObject(name));
+
+        if (ret == null) // no match, try aliases recursively
+        {
+            name = aliases.get(name);
+
+            if (name != null) return getRaw(name);
+        }
+
+        return ret;
+    }
+
+    /**
+     * Determine if the registry has an entry for the specified name.
+     *
+     * Aliased names will be resolved as well.
+     *
+     * @param name Object name to check.
+     * @return true if a matching entry was found.
+     */
+    @Override
+    public boolean containsKey(String name)
+    {
+        boolean ret = super.containsKey(name);
+
+        if (!ret) // no match, try aliases recursively
+        {
+            name = aliases.get(name);
+
+            if (name != null) return containsKey(name);
+        }
+
+        return ret;
+    }
+
+    /**
+     * Get the id for the specified object.
+     *
+     * Don't hold onto the id across the world, it's being dynamically re-mapped as needed.
+     *
+     * Usually the name should be used instead of the id, if using the Block/Item object itself is
+     * not suitable for the task.
+     *
+     * @param itemName Block/Item registry name.
+     * @return Block/Item id or -1 if it wasn't found.
+     */
+    public int getId(String itemName)
+    {
+        I obj = getRaw(itemName);
+        if (obj == null) return -1;
+
+        return getId(obj);
+    }
+
+    /**
+     * @deprecated use containsKey instead
+     */
+    @Deprecated
+    public boolean contains(String itemName)
+    {
+        return containsKey(itemName);
+    }
+
+    // internal
+
+    @SuppressWarnings("unchecked")
+    public void serializeInto(Map<String, Integer> idMapping) // for saving
+    {
+        for (I thing : (Iterable<I>) this)
+        {
+            idMapping.put(discriminator+getNameForObject(thing), getId(thing));
+        }
+    }
+
+    public Map<String, String> getAliases() // for saving
+    {
+        return ImmutableMap.copyOf(aliases);
+    }
+
+    /**
+     * Add the specified object to the registry.
+     *
+     * @param id ID to use if available, auto-assigned otherwise.
+     * @param name Name to use, prefixed by the mod id.
+     * @param thing Object to add.
+     * @param availabilityMap Map marking available IDs for auto assignment.
+     * @return ID eventually allocated.
+     */
+    int add(int id, String name, I thing, BitSet availabilityMap)
+    {
+        if (name == null) throw new NullPointerException("Can't use a null-name for the registry.");
+        if (name.isEmpty()) throw new IllegalArgumentException("Can't use an empty name for the registry.");
+        if (thing == null) throw new NullPointerException("Can't add null-object to the registry.");
         if (name.equals(optionalDefaultName))
         {
             this.optionalDefaultObject = thing;
@@ -164,9 +289,9 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         {
             idToUse = availabilityMap.nextClearBit(minId);
         }
-        if (idToUse >= maxId)
+        if (idToUse > maxId)
         {
-            throw new RuntimeException(String.format("Invalid id %s - not accepted",id));
+            throw new RuntimeException(String.format("Invalid id %d - maximum id range exceeded.", id));
         }
 
         ModContainer mc = Loader.instance().activeModContainer();
@@ -175,150 +300,79 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
             String prefix = mc.getModId();
             name = prefix + ":"+ name;
         }
-        namedIds.forcePut(ensureNamespaced(name),idToUse);
-        super.addObject(idToUse, name, thing);
-        useSlot(idToUse);
-        FMLLog.finer("Add : %s %d %s", name, idToUse, thing);
+
+        if (getRaw(name) == thing) // already registered, return prev registration's id
+        {
+            FMLLog.bigWarning("The object %s has been registered twice for the same name %s.", thing, name);
+            return getId(thing);
+        }
+        if (getRaw(name) != null) // duplicate name, will crash later due to the BiMap
+        {
+            FMLLog.bigWarning("The name %s has been registered twice, for %s and %s.", name, getRaw(name), thing);
+        }
+        if (getId(thing) >= 0) // duplicate object, will crash later due to the BiMap
+        {
+            FMLLog.bigWarning("The object %s has been registered twice, using the names %s and %s.", thing, getNameForObject(thing), name);
+        }
+        if (GameData.isFrozen(this))
+        {
+            FMLLog.bigWarning("The object %s (name %s) is being added too late.", thing, name);
+        }
+
+        addObjectRaw(idToUse, name, thing);
+
+        FMLLog.finer("Registry add: %s %d %s", name, idToUse, thing);
         return idToUse;
     }
 
-    @Override
-    public I getObject(String name)
+    void addAlias(String from, String to)
     {
-        I object = superType.cast(super.getObject(name));
-        return object == null ? this.optionalDefaultObject : object;
-    }
-
-    @Override
-    public I getObjectById(int id)
-    {
-        I object = superType.cast(super.getObjectById(id));
-        return object == null ? this.optionalDefaultObject : object;
-    }
-
-
-    private FMLObjectIntIdentityMap idMap()
-    {
-        return (FMLObjectIntIdentityMap) underlyingIntegerMap;
+        aliases.put(from, to);
+        FMLLog.finer("Registry alias: %s -> %s", from, to);
     }
 
     @SuppressWarnings("unchecked")
-    private BiMap<String,I> nameMap()
+    Map<String,Integer> getEntriesNotIn(FMLControlledNamespacedRegistry<I> registry)
     {
-        return (BiMap<String,I>) registryObjects;
-    }
+        Map<String,Integer> ret = new HashMap<String, Integer>();
 
-    void beginIdSwap()
-    {
-        idMap().beginSwap();
-        transactionalNamedIds = Maps.newHashMap();
-        transactionalAvailabilityMap = new BitSet();
-    }
-
-    void reassignMapping(String name, int newId)
-    {
-        Object item = nameMap().get(name);
-        idMap().putNew(newId, item);
-        transactionalNamedIds.put(name,newId);
-        transactionalAvailabilityMap.set(newId);
-    }
-
-    void freezeMap()
-    {
-        if (frozenIds == null)
+        for (I thing : (Iterable<I>) this)
         {
-            frozenIds = ImmutableBiMap.copyOf(namedIds);
-            idMap().freezeMap();
+            if (!registry.field_148758_b.containsKey(thing)) ret.put(getNameForObject(thing), getId(thing));
         }
+
+        return ret;
     }
 
-    void revertToFrozen()
-    {
-        namedIds = HashBiMap.create(frozenIds);
-        idMap().revertToFrozen();
-    }
-
-    Map<String,Integer> getMissingMappings()
-    {
-        return Maps.difference(frozenIds, transactionalNamedIds).entriesOnlyOnLeft();
-    }
-    void completeIdSwap()
-    {
-        idMap().completeSwap();
-        namedIds.clear();
-        namedIds.putAll(transactionalNamedIds);
-        transactionalNamedIds = null;
-    }
-
-    void revertSwap()
-    {
-        idMap().revertSwap();
-        transactionalNamedIds = null;
-    }
-
-    public I get(int id)
-    {
-        return getObjectById(id);
-    }
-
-    public I get(String name)
-    {
-        return getObject(name);
-    }
-
-    public int getId(I thing)
-    {
-        return getIDForObject(thing);
-    }
-
-    public void serializeInto(Map<String, Integer> idMapping)
-    {
-        for (Entry<String, Integer> id: namedIds.entrySet())
-        {
-            idMapping.put(discriminator+id.getKey(), id.getValue());
-        }
-    }
-
-    public void useSlot(int id)
-    {
-        if (id >= maxId) return;
-        availabilityMap.set(id);
-    }
-
-    List<Integer> usedIds()
-    {
-        return ((FMLObjectIntIdentityMap)underlyingIntegerMap).usedIds();
-    }
-
-    public int getId(String itemName)
-    {
-        if (namedIds.containsKey(itemName))
-        {
-            return namedIds.get(itemName);
-        }
-        else
-        {
-            return -1;
-        }
-    }
-
-    public boolean contains(String itemName)
-    {
-        return namedIds.containsKey(itemName);
-    }
-
+    @SuppressWarnings("unchecked")
     void dump()
     {
-        for (Entry<String, Integer> entry : namedIds.entrySet())
+        List<Integer> ids = new ArrayList<Integer>();
+
+        for (I thing : (Iterable<I>) this)
         {
-            String name = entry.getKey();
-            Object thing = idMap().get(entry.getValue().intValue());
-            FMLLog.finer("Registry : %s %d %s", name, entry.getValue(), thing);
+            ids.add(getId(thing));
+        }
+
+        // sort by id
+        Collections.sort(ids);
+
+        for (int id : ids)
+        {
+            I thing = getRaw(id);
+            FMLLog.finer("Registry: %s %d %s", getNameForObject(thing), id, thing);
         }
     }
-    
-    BitSet slots()
+
+    /**
+     * Version of addObject not using the API restricting overrides.
+     */
+    private void addObjectRaw(int id, String name, I thing)
     {
-    	return (BitSet) availabilityMap.clone();
+        if (name == null) throw new NullPointerException();
+        if (thing == null) throw new NullPointerException();
+
+        underlyingIntegerMap.func_148746_a(thing, id); // obj <-> id
+        super.putObject(ensureNamespaced(name), thing); // name <-> obj
     }
 }

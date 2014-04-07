@@ -1,16 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src-work/minecraft/net/minecraft/client/Minecraft.java
-@@ -1,6 +1,9 @@
+@@ -1,6 +1,10 @@
  package net.minecraft.client;
  
  import com.google.common.collect.Lists;
 +
 +import cpw.mods.fml.client.FMLClientHandler;
 +import cpw.mods.fml.common.FMLCommonHandler;
++import cpw.mods.fml.common.StartupQuery;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import io.netty.util.concurrent.GenericFutureListener;
-@@ -146,6 +149,8 @@
+@@ -146,6 +150,8 @@
  import org.lwjgl.opengl.PixelFormat;
  import org.lwjgl.util.glu.GLU;
  
@@ -19,21 +20,7 @@
  @SideOnly(Side.CLIENT)
  public class Minecraft implements IPlayerUsage
  {
-@@ -323,8 +328,11 @@
- 
-     public void func_71404_a(CrashReport p_71404_1_)
-     {
--        this.field_71434_R = true;
--        this.field_71433_S = p_71404_1_;
-+        if (!FMLClientHandler.instance().handlingCrash(p_71404_1_))
-+        {
-+            this.field_71434_R = true;
-+            this.field_71433_S = p_71404_1_;
-+        }
-     }
- 
-     public void func_71377_b(CrashReport p_71377_1_)
-@@ -448,7 +456,7 @@
+@@ -448,7 +454,7 @@
          this.field_110451_am = new SimpleReloadableResourceManager(this.field_110452_an);
          this.field_135017_as = new LanguageManager(this.field_110452_an, this.field_71474_y.field_74363_ab);
          this.field_110451_am.func_110542_a(this.field_135017_as);
@@ -42,7 +29,7 @@
          this.field_71446_o = new TextureManager(this.field_110451_am);
          this.field_110451_am.func_110542_a(this.field_71446_o);
          this.field_147127_av = new SoundHandler(this.field_110451_am, this.field_71474_y);
-@@ -508,12 +516,13 @@
+@@ -508,12 +514,13 @@
          this.field_71446_o.func_130088_a(TextureMap.field_110576_c, new TextureMap(1, "textures/items"));
          GL11.glViewport(0, 0, this.field_71443_c, this.field_71440_d);
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
@@ -57,7 +44,7 @@
          }
          else
          {
-@@ -527,6 +536,7 @@
+@@ -527,6 +534,7 @@
              this.func_71352_k();
          }
  
@@ -65,7 +52,7 @@
          Display.setVSyncEnabled(this.field_71474_y.field_74352_v);
      }
  
-@@ -916,9 +926,11 @@
+@@ -916,9 +924,11 @@
  
          if (!this.field_71454_w)
          {
@@ -77,7 +64,7 @@
          }
  
          GL11.glFlush();
-@@ -1496,6 +1508,8 @@
+@@ -1496,6 +1506,8 @@
              --this.field_71467_ac;
          }
  
@@ -86,7 +73,7 @@
          this.field_71424_I.func_76320_a("gui");
  
          if (!this.field_71445_n)
-@@ -1646,6 +1660,7 @@
+@@ -1646,6 +1658,7 @@
                          this.field_71462_r.func_146274_d();
                      }
                  }
@@ -94,7 +81,7 @@
              }
  
              if (this.field_71429_W > 0)
-@@ -1787,6 +1802,7 @@
+@@ -1787,6 +1800,7 @@
                              }
                          }
                      }
@@ -102,7 +89,7 @@
                  }
              }
  
-@@ -1978,12 +1994,15 @@
+@@ -1978,12 +1992,15 @@
              this.field_71453_ak.func_74428_b();
          }
  
@@ -118,7 +105,20 @@
          this.func_71403_a((WorldClient)null);
          System.gc();
          ISaveHandler isavehandler = this.field_71469_aa.func_75804_a(p_71371_1_, false);
-@@ -2094,6 +2113,7 @@
+@@ -2019,6 +2036,12 @@
+ 
+         while (!this.field_71437_Z.func_71200_ad())
+         {
++            if (!StartupQuery.check())
++            {
++                func_71403_a(null);
++                func_147108_a(null);
++                return;
++            }
+             String s2 = this.field_71437_Z.func_71195_b_();
+ 
+             if (s2 != null)
+@@ -2094,6 +2117,7 @@
              this.field_110448_aq.func_148529_f();
              this.func_71351_a((ServerData)null);
              this.field_71455_al = false;

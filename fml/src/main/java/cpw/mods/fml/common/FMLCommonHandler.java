@@ -12,9 +12,12 @@
 
 package cpw.mods.fml.common;
 
+import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.item.EntityItem;
@@ -29,8 +32,10 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -39,7 +44,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
+
 import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
@@ -79,6 +84,7 @@ public class FMLCommonHandler
     private List<String> brandingsNoMC;
     private List<ICrashCallable> crashCallables = Lists.newArrayList(Loader.instance().getCallableCrashInformation());
     private Set<SaveHandler> handlerSet = Sets.newSetFromMap(new MapMaker().weakKeys().<SaveHandler,Boolean>makeMap());
+    private WeakReference<SaveHandler> handlerToCheck;
     private EventBus eventBus = new EventBus();
     /**
      * The FML event bus. Subscribe here for FML related events
@@ -266,7 +272,6 @@ public class FMLCommonHandler
 
     public boolean handleServerStarting(MinecraftServer server)
     {
-        sidedDelegate.serverLoadedSuccessfully();
         return Loader.instance().serverStarting(server);
     }
 
@@ -280,6 +285,10 @@ public class FMLCommonHandler
         Loader.instance().serverStopping();
     }
 
+    public File getSavesDirectory() {
+        return sidedDelegate.getSavesDirectory();
+    }
+
     public MinecraftServer getMinecraftServerInstance()
     {
         return sidedDelegate.getServer();
@@ -288,6 +297,11 @@ public class FMLCommonHandler
     public void showGuiScreen(Object clientGuiElement)
     {
         sidedDelegate.showGuiScreen(clientGuiElement);
+    }
+
+    public void queryUser(StartupQuery query) throws InterruptedException
+    {
+        sidedDelegate.queryUser(query);
     }
 
     public void onServerStart(MinecraftServer dedicatedServer)
@@ -372,6 +386,7 @@ public class FMLCommonHandler
             return;
         }
         handlerSet.add(handler);
+        handlerToCheck = new WeakReference<SaveHandler>(handler); // for confirmBackupLevelDatUse
         Map<String,NBTBase> additionalProperties = Maps.newHashMap();
         worldInfo.setAdditionalProperties(additionalProperties);
         for (ModContainer mc : Loader.instance().getModList())
@@ -381,18 +396,27 @@ public class FMLCommonHandler
                 WorldAccessContainer wac = ((InjectedModContainer)mc).getWrappedWorldAccessContainer();
                 if (wac != null)
                 {
-                    try
-                    {
-                        wac.readData(handler, worldInfo, additionalProperties, tagCompound.getCompoundTag(mc.getModId()));
-                    }
-                    catch (RuntimeException ex)
-                    {
-                        sidedDelegate.failedServerLoading(ex, wac);
-                        throw ex;
-                    }
+                    wac.readData(handler, worldInfo, additionalProperties, tagCompound.getCompoundTag(mc.getModId()));
                 }
             }
         }
+    }
+
+    public void confirmBackupLevelDatUse(SaveHandler handler)
+    {
+        if (handlerToCheck == null || handlerToCheck.get() != handler) {
+            // only run if the save has been initially loaded
+            handlerToCheck = null;
+            return;
+        }
+
+        String text = "Forge Mod Loader detected that the backup level.dat is being used.\n\n" +
+                "This may happen due to a bug or corruption, continuing can damage\n" +
+                "your world beyond repair or lose data / progress.\n\n" +
+                "It's recommended to create a world backup before continuing.";
+
+        boolean confirmed = StartupQuery.confirm(text);
+        if (!confirmed) StartupQuery.abort();
     }
 
     public boolean shouldServerBeKilledQuietly()
@@ -512,11 +536,6 @@ public class FMLCommonHandler
     public void fireNetRegistrationEvent(NetworkManager manager, Set<String> channelSet, String channel, Side side)
     {
         sidedDelegate.fireNetRegistrationEvent(bus(), manager, channelSet, channel, side);
-    }
-
-    public FMLMissingMappingsEvent.Action getDefaultMissingAction()
-    {
-        return sidedDelegate.getDefaultMissingAction();
     }
 
     public boolean shouldAllowPlayerLogins()
