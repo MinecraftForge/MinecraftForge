@@ -17,6 +17,8 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
@@ -86,6 +88,7 @@ public class FMLCommonHandler
     private Set<SaveHandler> handlerSet = Sets.newSetFromMap(new MapMaker().weakKeys().<SaveHandler,Boolean>makeMap());
     private WeakReference<SaveHandler> handlerToCheck;
     private EventBus eventBus = new EventBus();
+    private volatile CountDownLatch exitLatch = null;
     /**
      * The FML event bus. Subscribe here for FML related events
      *
@@ -428,6 +431,50 @@ public class FMLCommonHandler
         return sidedDelegate.shouldServerShouldBeKilledQuietly();
     }
 
+    /**
+     * Make handleExit() wait for handleServerStopped().
+     *
+     * For internal use only!
+     */
+    public void expectServerStopped()
+    {
+        exitLatch = new CountDownLatch(1);
+    }
+
+    /**
+     * Delayed System.exit() until the server is actually stopped/done saving.
+     *
+     * For internal use only!
+     *
+     * @param retVal Exit code for System.exit()
+     */
+    public void handleExit(int retVal)
+    {
+        CountDownLatch latch = exitLatch;
+
+        if (latch != null)
+        {
+            try
+            {
+                FMLLog.info("Waiting for the server to terminate/save.");
+                if (!latch.await(10, TimeUnit.SECONDS))
+                {
+                    FMLLog.warning("The server didn't stop within 10 seconds, exiting anyway.");
+                }
+                else
+                {
+                    FMLLog.info("Server terminated.");
+                }
+            }
+            catch (InterruptedException e)
+            {
+                FMLLog.warning("Interrupted wait, exiting.");
+            }
+        }
+
+        System.exit(retVal);
+    }
+
     public void handleServerStopped()
     {
         sidedDelegate.serverStopped();
@@ -435,6 +482,15 @@ public class FMLCommonHandler
         Loader.instance().serverStopped();
         // FORCE the internal server to stop: hello optifine workaround!
         if (server!=null) ObfuscationReflectionHelper.setPrivateValue(MinecraftServer.class, server, false, "field_71316"+"_v", "u", "serverStopped");
+
+        // allow any pending exit to continue, clear exitLatch
+        CountDownLatch latch = exitLatch;
+
+        if (latch != null)
+        {
+            latch.countDown();
+            exitLatch = null;
+        }
     }
 
     public String getModName()

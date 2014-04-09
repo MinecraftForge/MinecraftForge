@@ -20,7 +20,34 @@
  @SideOnly(Side.CLIENT)
  public class Minecraft implements IPlayerUsage
  {
-@@ -448,7 +454,7 @@
+@@ -333,21 +339,23 @@
+         File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-client.txt");
+         System.out.println(p_71377_1_.func_71502_e());
+ 
++        int retVal;
+         if (p_71377_1_.func_71497_f() != null)
+         {
+             System.out.println("#@!@# Game crashed! Crash report saved to: #@!@# " + p_71377_1_.func_71497_f());
+-            System.exit(-1);
++            retVal = -1;
+         }
+         else if (p_71377_1_.func_147149_a(file2))
+         {
+             System.out.println("#@!@# Game crashed! Crash report saved to: #@!@# " + file2.getAbsolutePath());
+-            System.exit(-1);
++            retVal = -1;
+         }
+         else
+         {
+             System.out.println("#@?@# Game crashed! Crash report could not be saved. #@?@#");
+-            System.exit(-2);
++            retVal = -2;
+         }
++        FMLCommonHandler.instance().handleExit(retVal);
+     }
+ 
+     public void func_71367_a(String p_71367_1_, int p_71367_2_)
+@@ -448,7 +456,7 @@
          this.field_110451_am = new SimpleReloadableResourceManager(this.field_110452_an);
          this.field_135017_as = new LanguageManager(this.field_110452_an, this.field_71474_y.field_74363_ab);
          this.field_110451_am.func_110542_a(this.field_135017_as);
@@ -29,7 +56,7 @@
          this.field_71446_o = new TextureManager(this.field_110451_am);
          this.field_110451_am.func_110542_a(this.field_71446_o);
          this.field_147127_av = new SoundHandler(this.field_110451_am, this.field_71474_y);
-@@ -508,12 +514,13 @@
+@@ -508,12 +516,13 @@
          this.field_71446_o.func_130088_a(TextureMap.field_110576_c, new TextureMap(1, "textures/items"));
          GL11.glViewport(0, 0, this.field_71443_c, this.field_71440_d);
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
@@ -44,7 +71,7 @@
          }
          else
          {
-@@ -527,6 +534,7 @@
+@@ -527,6 +536,7 @@
              this.func_71352_k();
          }
  
@@ -52,7 +79,7 @@
          Display.setVSyncEnabled(this.field_71474_y.field_74352_v);
      }
  
-@@ -916,9 +924,11 @@
+@@ -916,9 +926,11 @@
  
          if (!this.field_71454_w)
          {
@@ -64,7 +91,7 @@
          }
  
          GL11.glFlush();
-@@ -1496,6 +1506,8 @@
+@@ -1496,6 +1508,8 @@
              --this.field_71467_ac;
          }
  
@@ -73,7 +100,7 @@
          this.field_71424_I.func_76320_a("gui");
  
          if (!this.field_71445_n)
-@@ -1646,6 +1658,7 @@
+@@ -1646,6 +1660,7 @@
                          this.field_71462_r.func_146274_d();
                      }
                  }
@@ -81,7 +108,7 @@
              }
  
              if (this.field_71429_W > 0)
-@@ -1787,6 +1800,7 @@
+@@ -1787,6 +1802,7 @@
                              }
                          }
                      }
@@ -89,7 +116,7 @@
                  }
              }
  
-@@ -1978,12 +1992,15 @@
+@@ -1978,12 +1994,15 @@
              this.field_71453_ak.func_74428_b();
          }
  
@@ -105,7 +132,7 @@
          this.func_71403_a((WorldClient)null);
          System.gc();
          ISaveHandler isavehandler = this.field_71469_aa.func_75804_a(p_71371_1_, false);
-@@ -2019,6 +2036,12 @@
+@@ -2019,6 +2038,12 @@
  
          while (!this.field_71437_Z.func_71200_ad())
          {
@@ -118,7 +145,7 @@
              String s2 = this.field_71437_Z.func_71195_b_();
  
              if (s2 != null)
-@@ -2094,6 +2117,7 @@
+@@ -2094,6 +2119,7 @@
              this.field_110448_aq.func_148529_f();
              this.func_71351_a((ServerData)null);
              this.field_71455_al = false;
