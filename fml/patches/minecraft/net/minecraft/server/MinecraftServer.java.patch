@@ -29,25 +29,36 @@
                  long i = func_130071_aq();
                  long l = 0L;
                  this.field_147147_p.func_151315_a(new ChatComponentText(this.field_71286_C));
-@@ -425,12 +431,17 @@
+@@ -425,12 +431,20 @@
                      Thread.sleep(1L);
                      this.field_71296_Q = true;
                  }
 +                FMLCommonHandler.instance().handleServerStopping();
++                FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
              }
              else
              {
++                FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
                  this.func_71228_a((CrashReport)null);
              }
          }
 +        catch (StartupQuery.AbortedException e)
 +        {
 +            // ignore silently
++            FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
 +        }
          catch (Throwable throwable1)
          {
              field_147145_h.error("Encountered an unexpected exception", throwable1);
-@@ -471,6 +482,8 @@
+@@ -456,6 +470,7 @@
+                 field_147145_h.error("We were unable to save this crash report to disk.");
+             }
+ 
++            FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
+             this.func_71228_a(crashreport);
+         }
+         finally
+@@ -471,6 +486,8 @@
              }
              finally
              {
@@ -56,7 +67,7 @@
                  this.func_71240_o();
              }
          }
-@@ -513,6 +526,7 @@
+@@ -513,6 +530,7 @@
      {
          long i = System.nanoTime();
          AxisAlignedBB.func_72332_a().func_72298_a();
@@ -64,7 +75,7 @@
          ++this.field_71315_w;
  
          if (this.field_71295_T)
-@@ -566,6 +580,7 @@
+@@ -566,6 +584,7 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -72,7 +83,7 @@
      }
  
      public void func_71190_q()
-@@ -593,6 +608,7 @@
+@@ -593,6 +612,7 @@
                  }
  
                  this.field_71304_b.func_76320_a("tick");
@@ -80,7 +91,7 @@
                  CrashReport crashreport;
  
                  try
-@@ -617,6 +633,7 @@
+@@ -617,6 +637,7 @@
                      throw new ReportedException(crashreport);
                  }
  
@@ -88,7 +99,7 @@
                  this.field_71304_b.func_76319_b();
                  this.field_71304_b.func_76320_a("tracker");
                  worldserver.func_73039_n().func_72788_a();
-@@ -648,6 +665,7 @@
+@@ -648,6 +669,7 @@
  
      public void func_71256_s()
      {
@@ -96,7 +107,7 @@
          (new Thread("Server thread")
          {
              private static final String __OBFID = "CL_00001418";
-@@ -695,7 +713,7 @@
+@@ -695,7 +717,7 @@
  
      public String getServerModName()
      {
