@@ -1,39 +1,31 @@
 --- ../src-base/minecraft/net/minecraft/client/shader/Framebuffer.java
 +++ ../src-work/minecraft/net/minecraft/client/shader/Framebuffer.java
-@@ -2,11 +2,16 @@
+@@ -2,6 +2,11 @@
  
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
 +
- import java.nio.ByteBuffer;
++import net.minecraftforge.client.MinecraftForgeClient;
++import static org.lwjgl.opengl.EXTFramebufferObject.*;
++import static org.lwjgl.opengl.EXTPackedDepthStencil.*;
 +
+ import java.nio.ByteBuffer;
  import net.minecraft.client.renderer.OpenGlHelper;
  import net.minecraft.client.renderer.Tessellator;
- import net.minecraft.client.renderer.texture.TextureUtil;
-+import net.minecraftforge.client.MinecraftForgeClient;
-+
- import org.lwjgl.opengl.EXTFramebufferObject;
-+import org.lwjgl.opengl.EXTPackedDepthStencil;
- import org.lwjgl.opengl.GL11;
- 
- @SideOnly(Side.CLIENT)
-@@ -118,8 +123,18 @@
+@@ -118,8 +123,17 @@
              if (this.field_147619_e)
              {
                  EXTFramebufferObject.glBindRenderbufferEXT(36161, this.field_147624_h);
--                EXTFramebufferObject.glRenderbufferStorageEXT(36161, 33190, this.field_147622_a, this.field_147620_b);
--                EXTFramebufferObject.glFramebufferRenderbufferEXT(36160, 36096, 36161, this.field_147624_h);
 +                if(MinecraftForgeClient.getStencilBits() > 0)
 +                {
-+                    EXTFramebufferObject.glRenderbufferStorageEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT, this.field_147622_a, this.field_147620_b);
-+                    EXTFramebufferObject.glFramebufferRenderbufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, EXTFramebufferObject.GL_RENDERBUFFER_EXT, this.field_147624_h);
-+                    EXTFramebufferObject.glFramebufferRenderbufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, EXTFramebufferObject.GL_RENDERBUFFER_EXT, this.field_147624_h);
++                    glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8_EXT, this.field_147622_a, this.field_147620_b);
++                    glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, this.field_147624_h);
++                    glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, this.field_147624_h);
 +                }
-+                else
++                else // Allocate without stencil - vanilla
 +                {
-+                    // Vanilla
-+                    EXTFramebufferObject.glRenderbufferStorageEXT(36161, 33190, this.field_147622_a, this.field_147620_b);
-+                    EXTFramebufferObject.glFramebufferRenderbufferEXT(36160, 36096, 36161, this.field_147624_h);
+                 EXTFramebufferObject.glRenderbufferStorageEXT(36161, 33190, this.field_147622_a, this.field_147620_b);
+                 EXTFramebufferObject.glFramebufferRenderbufferEXT(36160, 36096, 36161, this.field_147624_h);
 +                }
              }
  
