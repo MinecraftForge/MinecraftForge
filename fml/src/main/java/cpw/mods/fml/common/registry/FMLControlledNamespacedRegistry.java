@@ -285,19 +285,20 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         }
 
         int idToUse = id;
-        if (id == 0 || availabilityMap.get(id))
+        if (idToUse < 0 || availabilityMap.get(idToUse))
         {
             idToUse = availabilityMap.nextClearBit(minId);
         }
         if (idToUse > maxId)
         {
-            throw new RuntimeException(String.format("Invalid id %d - maximum id range exceeded.", id));
+            throw new RuntimeException(String.format("Invalid id %d - maximum id range exceeded.", idToUse));
         }
 
         ModContainer mc = Loader.instance().activeModContainer();
         if (mc != null)
         {
             String prefix = mc.getModId();
+            if (name.contains(":")) FMLLog.bigWarning("Illegal extra prefix %s for name %s, invalid registry invocation/invalid name?", prefix, name);
             name = prefix + ":"+ name;
         }
 
@@ -321,7 +322,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
 
         addObjectRaw(idToUse, name, thing);
 
-        FMLLog.finer("Registry add: %s %d %s", name, idToUse, thing);
+        FMLLog.finer("Registry add: %s %d %s (req. id %d)", name, idToUse, thing, id);
         return idToUse;
     }
 
@@ -369,8 +370,8 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
      */
     private void addObjectRaw(int id, String name, I thing)
     {
-        if (name == null) throw new NullPointerException();
-        if (thing == null) throw new NullPointerException();
+        if (name == null) throw new NullPointerException("internal registry bug");
+        if (thing == null) throw new NullPointerException("internal registry bug");
 
         underlyingIntegerMap.func_148746_a(thing, id); // obj <-> id
         super.putObject(ensureNamespaced(name), thing); // name <-> obj

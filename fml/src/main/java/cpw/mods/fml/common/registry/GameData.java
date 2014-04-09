@@ -455,7 +455,7 @@ public class GameData {
                 }
                 else if (currId != newId)
                 {
-                    FMLLog.fine("Found %s id mismatch %s : %d (was %d)", isBlock ? "block" : "item", itemName, currId, newId);
+                    FMLLog.fine("Fixed %s id mismatch %s: %d (init) -> %d (map).", isBlock ? "block" : "item", itemName, currId, newId);
                     remaps.put(itemName, new Integer[] { currId, newId });
                 }
 
@@ -486,7 +486,7 @@ public class GameData {
 
             if (!missingBlocks.isEmpty() || !missingItems.isEmpty())
             {
-                FMLLog.info("Injecting new block and item data into this server instance");
+                FMLLog.info("Injecting new block and item data into this server instance.");
 
                 for (int pass = 0; pass < 2; pass++)
                 {
@@ -508,7 +508,7 @@ public class GameData {
                             newId = newData.registerItem(frozen.iItemRegistry.getRaw(itemName), itemName, null, currId);
                         }
 
-                        FMLLog.info("Injected new block/item %s : %d (was %d)", itemName, newId, currId);
+                        FMLLog.info("Injected new block/item %s: %d (init) -> %d (map).", itemName, currId, newId);
 
                         if (newId != currId) // a new id was assigned
                         {
@@ -568,7 +568,7 @@ public class GameData {
 
                 if (currId != newId)
                 {
-                    FMLLog.info("Found %s id mismatch %s : %d (was %d)", remap.type == Type.BLOCK ? "block" : "item", newName, currId, newId);
+                    FMLLog.info("Fixed %s id mismatch %s: %d (init) -> %d (map).", remap.type == Type.BLOCK ? "block" : "item", newName, currId, newId);
                     remaps.put(newName, new Integer[] { currId, newId });
                 }
             }
@@ -642,6 +642,7 @@ public class GameData {
     {
         FMLLog.fine("Freezing block and item id maps");
 
+        getMain().testConsistency();
         frozen = new GameData(getMain());
         frozen.testConsistency();
     }
@@ -720,7 +721,7 @@ public class GameData {
 
     int registerItem(Item item, String name, String modId)
     {
-        return registerItem(item, name, modId, 0);
+        return registerItem(item, name, modId, -1);
     }
 
     int registerItem(Item item, String name, String modId, int idHint)
@@ -733,25 +734,35 @@ public class GameData {
         if (item instanceof ItemBlock) // ItemBlock, adjust id and clear the slot already occupied by the corresponding block
         {
             Block block = ((ItemBlock) item).field_150939_a;
-            idHint = iBlockRegistry.getId(block);
+            int id = iBlockRegistry.getId(block);
 
-            if (idHint == -1) // ItemBlock before its Block
+            if (id == -1) // ItemBlock before its Block
             {
-                idHint = availabilityMap.nextClearBit(MIN_BLOCK_ID); // find suitable id here, iItemRegistry would search from MIN_ITEM_ID
-                if (idHint > MAX_BLOCK_ID) throw new RuntimeException(String.format("Invalid id %d - maximum id range exceeded.", idHint));
+                if (idHint < 0 || availabilityMap.get(idHint) || idHint > MAX_BLOCK_ID) // non-suitable id, allocate one in the block id range, add would use the item id range otherwise
+                {
+                    id = availabilityMap.nextClearBit(MIN_BLOCK_ID); // find suitable id here, iItemRegistry would search from MIN_ITEM_ID
+                    if (id > MAX_BLOCK_ID) throw new RuntimeException(String.format("Invalid id %d - maximum id range exceeded.", id));
+                    FMLLog.fine("Allocated id %d for ItemBlock %s in the block id range, original id requested: %d.", id, name, idHint);
+                }
+                else // idHint is suitable without changes
+                {
+                    id = idHint;
+                }
             }
             else // ItemBlock after its Block
             {
-                FMLLog.fine("Found matching Block %s for ItemBlock %s at id %d", block, item, idHint);
-                freeSlot(idHint, item); // temporarily free the slot occupied by the Block for the item registration
+                FMLLog.fine("Found matching Block %s for ItemBlock %s at id %d, original id requested: %d", block, item, id, idHint);
+                freeSlot(id, item); // temporarily free the slot occupied by the Block for the item registration
             }
+
+            idHint = id;
         }
 
         int itemId = iItemRegistry.add(idHint, name, item, availabilityMap);
 
         if (item instanceof ItemBlock) // verify
         {
-            if (itemId != idHint) throw new IllegalStateException("Block -> ItemBlock insertion failed.");
+            if (itemId != idHint) throw new IllegalStateException(String.format("ItemBlock at block id %d insertion failed, got id %d.", idHint, itemId));
             verifyItemBlockName((ItemBlock) item);
         }
 
@@ -763,7 +774,7 @@ public class GameData {
 
     int registerBlock(Block block, String name, String modId)
     {
-        return registerBlock(block, name, modId, 0);
+        return registerBlock(block, name, modId, -1);
     }
 
     int registerBlock(Block block, String name, String modId, int idHint)
@@ -798,7 +809,7 @@ public class GameData {
 
         if (itemBlock != null) // verify
         {
-            if (blockId != idHint) throw new IllegalStateException("ItemBlock -> Block insertion failed.");
+            if (blockId != idHint) throw new IllegalStateException(String.format("Block at itemblock id %d insertion failed, got id %d.", idHint, blockId));
             verifyItemBlockName(itemBlock);
         }
 
@@ -865,53 +876,48 @@ public class GameData {
             }
         }
 
-        // test if there's a bit in availabilityMap set for every entry in the block registry, make sure it's not a blocked id
-        for (Block block : (Iterable<Block>) iBlockRegistry)
+        for (int pass = 0; pass < 2; pass++)
         {
-            int id = iBlockRegistry.getId(block);
-            String name = iBlockRegistry.getNameForObject(block);
+            boolean isBlock = pass == 0;
+            String type = isBlock ? "block" : "item";
+            FMLControlledNamespacedRegistry registry = isBlock ? iBlockRegistry : iItemRegistry;
 
-            if (id < 0) {
-                throw new IllegalStateException(String.format("Registry entry for block %s, name %s, doesn't yield an id", block, name));
-            }
-            if (name == null) {
-                throw new IllegalStateException(String.format("Registry entry for block %s, id %d, doesn't yield a name", block, id));
-            }
-            if (!availabilityMap.get(id)) {
-                throw new IllegalStateException(String.format("Registry entry for block %s, id %d, name %s, marked as empty.", block, id, name));
-            }
-            if (blockedIds.contains(id)) {
-                throw new IllegalStateException(String.format("Registry entry for block %s, id %d, name %s, marked as dangling.", block, id, name));
-            }
-        }
-
-        // test if there's a bit in availabilityMap set for every entry in the item registry, make sure it's not a blocked id,
-        // check if ItemBlocks have blocks with matching ids in the block registry
-        for (Item item : (Iterable<Item>) iItemRegistry)
-        {
-            int id = iItemRegistry.getId(item);
-            String name = iItemRegistry.getNameForObject(item);
-
-            if (id < 0) {
-                throw new IllegalStateException(String.format("Registry entry for item %s, name %s, doesn't yield an id", item, name));
-            }
-            if (name == null) {
-                throw new IllegalStateException(String.format("Registry entry for item %s, id %d, doesn't yield a name", item, id));
-            }
-            if (!availabilityMap.get(id)) {
-                throw new IllegalStateException(String.format("Registry entry for item %s, id %d, name %s, marked as empty.", item, id, name));
-            }
-            if (blockedIds.contains(id)) {
-                throw new IllegalStateException(String.format("Registry entry for item %s, id %d, name %s, marked as dangling.", item, id, name));
-            }
-
-            if (item instanceof ItemBlock)
+            // test if the registry is consistent
+            // test if there's a bit in availabilityMap set for every entry in the registry
+            // make sure it's not a blocked id
+            for (Object obj : registry)
             {
-                Block block = ((ItemBlock) item).field_150939_a;
+                int id = registry.getId(obj);
+                String name = registry.getNameForObject(obj);
 
-                if (iBlockRegistry.getId(block) != id)
+                // id lookup failed -> obj is not in the obj<->id map
+                if (id < 0) throw new IllegalStateException(String.format("Registry entry for %s %s, name %s, doesn't yield an id.", type, obj, name));
+                // id is too high
+                if (id > (isBlock ? MAX_BLOCK_ID : MAX_ITEM_ID)) throw new IllegalStateException(String.format("Registry entry for %s %s, name %s uses the too large id %d.", type, obj, name));
+                // name lookup failed -> obj is not in the obj<->name map
+                if (name == null) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, doesn't yield a name.", type, obj, id));
+                // id -> obj lookup is inconsistent
+                if (registry.getRaw(id) != obj) throw new IllegalStateException(String.format("Registry entry for id %d, name %s, doesn't yield the expected %s %s.", id, name, type, obj));
+                // name -> obj lookup is inconsistent
+                if (registry.getRaw(name) != obj) throw new IllegalStateException(String.format("Registry entry for name %s, id %d, doesn't yield the expected %s %s.", name, id, type, obj));
+                // name -> id lookup is inconsistent
+                if (registry.getId(name) != id) throw new IllegalStateException(String.format("Registry entry for name %s doesn't yield the expected id %d.", name, id));
+                // id isn't marked as unavailable
+                if (!availabilityMap.get(id)) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, name %s, marked as empty.", type, obj, id, name));
+                // entry is blocked, thus should be empty
+                if (blockedIds.contains(id)) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, name %s, marked as dangling.", type, obj, id, name));
+
+                if (obj instanceof ItemBlock)
                 {
-                    throw new IllegalStateException(String.format("Registry entry for ItemBlock %s, id %d, is missing or uses the non-matching id %d.", item, id, iBlockRegistry.getId(block)));
+                    Block block = ((ItemBlock) obj).field_150939_a;
+
+                    // verify matching block entry
+                    if (iBlockRegistry.getId(block) != id)
+                    {
+                        throw new IllegalStateException(String.format("Registry entry for ItemBlock %s, id %d, is missing or uses the non-matching id %d.", obj, id, iBlockRegistry.getId(block)));
+                    }
+                    // verify id range
+                    if (id > MAX_BLOCK_ID) throw new IllegalStateException(String.format("ItemBlock %s uses the id %d outside the block id range", name, id));
                 }
             }
         }
