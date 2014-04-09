@@ -1,22 +1,44 @@
---- ../src-base/minecraft/net/minecraft/client/shader/Framebuffer.java
-+++ ../src-work/minecraft/net/minecraft/client/shader/Framebuffer.java
-@@ -6,6 +6,7 @@
- import net.minecraft.client.renderer.OpenGlHelper;
- import net.minecraft.client.renderer.Tessellator;
- import net.minecraft.client.renderer.texture.TextureUtil;
-+import net.minecraftforge.client.MinecraftForgeClient;
- import org.lwjgl.opengl.EXTFramebufferObject;
- import org.lwjgl.opengl.GL11;
- 
-@@ -120,6 +121,11 @@
-                 EXTFramebufferObject.glBindRenderbufferEXT(36161, this.field_147624_h);
-                 EXTFramebufferObject.glRenderbufferStorageEXT(36161, 33190, this.field_147622_a, this.field_147620_b);
-                 EXTFramebufferObject.glFramebufferRenderbufferEXT(36160, 36096, 36161, this.field_147624_h);
-+                if(MinecraftForgeClient.getStencilBits() > 0)
-+                {
-+                    EXTFramebufferObject.glRenderbufferStorageEXT(36161, EXTFramebufferObject.GL_STENCIL_INDEX8_EXT, this.field_147622_a, this.field_147620_b);
-+                    EXTFramebufferObject.glFramebufferRenderbufferEXT(36160, EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, 36161, this.field_147624_h);
-+                }
-             }
- 
-             this.func_147614_f();
+*** /Users/lukas/Documents/Forge Modding/Forge-Repo/MinecraftForge/eclipse/Clean/src/main/java/net/minecraft/client/shader/Framebuffer.java	2014-04-09 15:59:40.000000000 +0200
+--- /Users/lukas/Documents/Forge Modding/Forge-Repo/MinecraftForge/eclipse/Forge/src/main/java/net/minecraft/client/shader/Framebuffer.java	2014-04-09 16:50:02.000000000 +0200
+***************
+*** 6,12 ****
+--- 8,17 ----
+  import net.minecraft.client.renderer.OpenGlHelper;
+  import net.minecraft.client.renderer.Tessellator;
+  import net.minecraft.client.renderer.texture.TextureUtil;
++ import net.minecraftforge.client.MinecraftForgeClient;
++ 
+  import org.lwjgl.opengl.EXTFramebufferObject;
++ import org.lwjgl.opengl.EXTPackedDepthStencil;
+  import org.lwjgl.opengl.GL11;
+  
+  @SideOnly(Side.CLIENT)
+***************
+*** 118,125 ****
+              if (this.useDepth)
+              {
+                  EXTFramebufferObject.glBindRenderbufferEXT(36161, this.depthBuffer);
+!                 EXTFramebufferObject.glRenderbufferStorageEXT(36161, 33190, this.framebufferTextureWidth, this.framebufferTextureHeight);
+!                 EXTFramebufferObject.glFramebufferRenderbufferEXT(36160, 36096, 36161, this.depthBuffer);
+              }
+  
+              this.framebufferClear();
+--- 123,140 ----
+              if (this.useDepth)
+              {
+                  EXTFramebufferObject.glBindRenderbufferEXT(36161, this.depthBuffer);
+!                 if(MinecraftForgeClient.getStencilBits() > 0)
+!                 {
+!                     EXTFramebufferObject.glRenderbufferStorageEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT, this.framebufferTextureWidth, this.framebufferTextureHeight);
+!                     EXTFramebufferObject.glFramebufferRenderbufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, EXTFramebufferObject.GL_RENDERBUFFER_EXT, this.depthBuffer);
+!                     EXTFramebufferObject.glFramebufferRenderbufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, EXTFramebufferObject.GL_RENDERBUFFER_EXT, this.depthBuffer);
+!                 }
+!                 else
+!                 {
+!                     // Vanilla
+!                     EXTFramebufferObject.glRenderbufferStorageEXT(36161, 33190, this.framebufferTextureWidth, this.framebufferTextureHeight);
+!                     EXTFramebufferObject.glFramebufferRenderbufferEXT(36160, 36096, 36161, this.depthBuffer);
+!                 }
+              }
+  
+              this.framebufferClear();
