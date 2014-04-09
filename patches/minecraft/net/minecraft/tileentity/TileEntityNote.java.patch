@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityNote.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityNote.java
+@@ -4,6 +4,8 @@
+ import net.minecraft.init.Blocks;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.NoteBlockEvent;
+ 
+ public class TileEntityNote extends TileEntity
+ {
+@@ -35,8 +37,11 @@
+ 
+     public void func_145877_a()
+     {
+-        this.field_145879_a = (byte)((this.field_145879_a + 1) % 25);
+-        this.func_70296_d();
++        if (!MinecraftForge.EVENT_BUS.post(new NoteBlockEvent.Tune(this.field_145851_c, this.field_145848_d, this.field_145849_e, this.field_145850_b, (byte)((this.field_145879_a + 1) % 25), this.field_145879_a)))
++        {
++            this.field_145879_a = (byte)((this.field_145879_a + 1) % 25);
++            this.func_70296_d();
++        }
+     }
+ 
+     public void func_145878_a(World p_145878_1_, int p_145878_2_, int p_145878_3_, int p_145878_4_)
