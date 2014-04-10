@@ -1,0 +1,45 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDispenser.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDispenser.java
+@@ -2,7 +2,9 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.util.Random;
++
+ import net.minecraft.block.material.Material;
+ import net.minecraft.client.renderer.texture.IIconRegister;
+ import net.minecraft.creativetab.CreativeTabs;
+@@ -25,6 +27,8 @@
+ import net.minecraft.util.IRegistry;
+ import net.minecraft.util.RegistryDefaulted;
+ import net.minecraft.world.World;
++import net.minecraftforge.event.ForgeEventFactory;
++import net.minecraftforge.event.world.DispenseEvent.PreDispenserFireEvent;
+ 
+ public class BlockDispenser extends BlockContainer
+ {
+@@ -145,12 +149,18 @@
+             else
+             {
+                 ItemStack itemstack = tileentitydispenser.getStackInSlot(l);
+-                IBehaviorDispenseItem ibehaviordispenseitem = this.func_149940_a(itemstack);
+-
+-                if (ibehaviordispenseitem != IBehaviorDispenseItem.itemDispenseBehaviorProvider)
++                PreDispenserFireEvent event = ForgeEventFactory.onDispenseStart(p_149941_2_, p_149941_3_, p_149941_4_, p_149941_1_, itemstack);
++                if(!event.isCanceled())
+                 {
+-                    ItemStack itemstack1 = ibehaviordispenseitem.dispense(blocksourceimpl, itemstack);
+-                    tileentitydispenser.setInventorySlotContents(l, itemstack1.stackSize == 0 ? null : itemstack1);
++                    itemstack = event.itemstack;
++                    IBehaviorDispenseItem ibehaviordispenseitem = this.func_149940_a(itemstack);
++
++                    if (ibehaviordispenseitem != IBehaviorDispenseItem.itemDispenseBehaviorProvider)
++                    {
++                        ItemStack itemstack1 = ibehaviordispenseitem.dispense(blocksourceimpl, itemstack);
++                        tileentitydispenser.setInventorySlotContents(l, itemstack1.stackSize == 0 ? null : itemstack1);
++                        ForgeEventFactory.onDispenseFinish(p_149941_2_, p_149941_3_, p_149941_4_, p_149941_1_, itemstack);
++                    }
+                 }
+             }
+         }
