@@ -1,0 +1,161 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/layer/GenLayerBiome.java
++++ ../src-work/minecraft/net/minecraft/world/gen/layer/GenLayerBiome.java
+@@ -1,29 +1,65 @@
+ package net.minecraft.world.gen.layer;
+ 
++import java.util.ArrayList;
++import java.util.Collection;
++import java.util.Iterator;
++import java.util.List;
++
++import net.minecraft.util.WeightedRandom;
+ import net.minecraft.world.WorldType;
+ import net.minecraft.world.biome.BiomeGenBase;
+ 
+ public class GenLayerBiome extends GenLayer
+ {
+-    private BiomeGenBase[] field_151623_c;
+-    private BiomeGenBase[] field_151621_d;
+-    private BiomeGenBase[] field_151622_e;
+-    private BiomeGenBase[] field_151620_f;
++    public static List<BiomeEntry> desertBiomes = new ArrayList<BiomeEntry>();
++    public static List<BiomeEntry> warmBiomes = new ArrayList<BiomeEntry>();
++    public static List<BiomeEntry> coolBiomes = new ArrayList<BiomeEntry>();
++    public static List<BiomeEntry> icyBiomes = new ArrayList<BiomeEntry>();
++    
++    public static List<BiomeGenBase> oceanBiomes = new ArrayList<BiomeGenBase>();
++    
+     private static final String __OBFID = "CL_00000555";
+ 
+     public GenLayerBiome(long p_i2122_1_, GenLayer p_i2122_3_, WorldType p_i2122_4_)
+     {
+         super(p_i2122_1_);
+-        this.field_151623_c = new BiomeGenBase[] {BiomeGenBase.field_76769_d, BiomeGenBase.field_76769_d, BiomeGenBase.field_76769_d, BiomeGenBase.field_150588_X, BiomeGenBase.field_150588_X, BiomeGenBase.field_76772_c};
+-        this.field_151621_d = new BiomeGenBase[] {BiomeGenBase.field_76767_f, BiomeGenBase.field_150585_R, BiomeGenBase.field_76770_e, BiomeGenBase.field_76772_c, BiomeGenBase.field_150583_P, BiomeGenBase.field_76780_h};
+-        this.field_151622_e = new BiomeGenBase[] {BiomeGenBase.field_76767_f, BiomeGenBase.field_76770_e, BiomeGenBase.field_76768_g, BiomeGenBase.field_76772_c};
+-        this.field_151620_f = new BiomeGenBase[] {BiomeGenBase.field_76774_n, BiomeGenBase.field_76774_n, BiomeGenBase.field_76774_n, BiomeGenBase.field_150584_S};
++        
+         this.field_75909_a = p_i2122_3_;
+-
++        
+         if (p_i2122_4_ == WorldType.field_77136_e)
+         {
+-            this.field_151623_c = new BiomeGenBase[] {BiomeGenBase.field_76769_d, BiomeGenBase.field_76767_f, BiomeGenBase.field_76770_e, BiomeGenBase.field_76780_h, BiomeGenBase.field_76772_c, BiomeGenBase.field_76768_g};
++            this.desertBiomes.add(new BiomeEntry(BiomeGenBase.field_76769_d, 10));
++            this.desertBiomes.add(new BiomeEntry(BiomeGenBase.field_76767_f, 10));
++            this.desertBiomes.add(new BiomeEntry(BiomeGenBase.field_76770_e, 10));
++            this.desertBiomes.add(new BiomeEntry(BiomeGenBase.field_76780_h, 10));
++            this.desertBiomes.add(new BiomeEntry(BiomeGenBase.field_76772_c, 10));
++            this.desertBiomes.add(new BiomeEntry(BiomeGenBase.field_76768_g, 10));
+         }
++        else
++        {
++            this.desertBiomes.add(new BiomeEntry(BiomeGenBase.field_76769_d, 30));
++            this.desertBiomes.add(new BiomeEntry(BiomeGenBase.field_150588_X, 20));
++            this.desertBiomes.add(new BiomeEntry(BiomeGenBase.field_76772_c, 10));
++        }
++        
++        this.warmBiomes.add(new BiomeEntry(BiomeGenBase.field_76767_f, 10));
++        this.warmBiomes.add(new BiomeEntry(BiomeGenBase.field_150585_R, 10));
++        this.warmBiomes.add(new BiomeEntry(BiomeGenBase.field_76770_e, 10));
++        this.warmBiomes.add(new BiomeEntry(BiomeGenBase.field_76772_c, 10));
++        this.warmBiomes.add(new BiomeEntry(BiomeGenBase.field_150583_P, 10));
++        this.warmBiomes.add(new BiomeEntry(BiomeGenBase.field_76780_h, 10));
++        
++        this.coolBiomes.add(new BiomeEntry(BiomeGenBase.field_76767_f, 10));
++        this.coolBiomes.add(new BiomeEntry(BiomeGenBase.field_76770_e, 10));
++        this.coolBiomes.add(new BiomeEntry(BiomeGenBase.field_76768_g, 10));
++        this.coolBiomes.add(new BiomeEntry(BiomeGenBase.field_76772_c, 10));
++        
++        this.icyBiomes.add(new BiomeEntry(BiomeGenBase.field_76774_n, 30));
++        this.icyBiomes.add(new BiomeEntry(BiomeGenBase.field_150584_S, 10));
++        
++        this.oceanBiomes.add(BiomeGenBase.field_76771_b);
++        this.oceanBiomes.add(BiomeGenBase.field_150575_M);
++        this.oceanBiomes.add(BiomeGenBase.field_76776_l);
+     }
+ 
+     public int[] func_75904_a(int p_75904_1_, int p_75904_2_, int p_75904_3_, int p_75904_4_)
+@@ -63,7 +99,7 @@
+                     }
+                     else
+                     {
+-                        aint1[j1 + i1 * p_75904_3_] = this.field_151623_c[this.func_75902_a(this.field_151623_c.length)].field_76756_M;
++                        aint1[j1 + i1 * p_75904_3_] = getWeightedRandomBiome(this.desertBiomes).biome.field_76756_M;
+                     }
+                 }
+                 else if (k1 == 2)
+@@ -74,7 +110,7 @@
+                     }
+                     else
+                     {
+-                        aint1[j1 + i1 * p_75904_3_] = this.field_151621_d[this.func_75902_a(this.field_151621_d.length)].field_76756_M;
++                        aint1[j1 + i1 * p_75904_3_] = getWeightedRandomBiome(this.warmBiomes).biome.field_76756_M;
+                     }
+                 }
+                 else if (k1 == 3)
+@@ -85,12 +121,12 @@
+                     }
+                     else
+                     {
+-                        aint1[j1 + i1 * p_75904_3_] = this.field_151622_e[this.func_75902_a(this.field_151622_e.length)].field_76756_M;
++                        aint1[j1 + i1 * p_75904_3_] = getWeightedRandomBiome(this.coolBiomes).biome.field_76756_M;
+                     }
+                 }
+                 else if (k1 == 4)
+                 {
+-                    aint1[j1 + i1 * p_75904_3_] = this.field_151620_f[this.func_75902_a(this.field_151620_f.length)].field_76756_M;
++                    aint1[j1 + i1 * p_75904_3_] = getWeightedRandomBiome(this.icyBiomes).biome.field_76756_M;
+                 }
+                 else
+                 {
+@@ -101,4 +137,49 @@
+ 
+         return aint1;
+     }
++    
++    public static class BiomeEntry extends WeightedRandom.Item
++    {
++        public final BiomeGenBase biome;
++        
++        public BiomeEntry(BiomeGenBase biome, int weight)
++        {
++            super(weight);
++            
++            this.biome = biome;
++        }
++    }
++    
++    public BiomeEntry getWeightedRandomBiome(Collection<BiomeEntry> weightedBiomes)
++    {
++        return getWeightedRandomBiome(weightedBiomes, WeightedRandom.func_76272_a(weightedBiomes));
++    }
++    
++    private BiomeEntry getWeightedRandomBiome(Collection<BiomeEntry> weightedBiomes, int totalWeight)
++    {
++        if (totalWeight <= 0)
++        {
++            throw new IllegalArgumentException();
++        }
++        else
++        {
++            int i = this.func_75902_a(totalWeight);
++            Iterator iterator = weightedBiomes.iterator();
++            BiomeEntry biomeEntry;
++            
++            do
++            {
++                if (!iterator.hasNext())
++                {
++                    return null;
++                }
++                
++                biomeEntry = (BiomeEntry)iterator.next();
++                i -= biomeEntry.field_76292_a;
++            }
++            while (i >= 0);
++            
++            return biomeEntry;
++        }
++    }
+ }
