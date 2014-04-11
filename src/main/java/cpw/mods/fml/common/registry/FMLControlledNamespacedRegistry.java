@@ -307,13 +307,13 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
             FMLLog.bigWarning("The object %s has been registered twice for the same name %s.", thing, name);
             return getId(thing);
         }
-        if (getRaw(name) != null) // duplicate name, will crash later due to the BiMap
+        if (getRaw(name) != null) // duplicate name
         {
-            FMLLog.bigWarning("The name %s has been registered twice, for %s and %s.", name, getRaw(name), thing);
+            throw new IllegalArgumentException(String.format("The name %s has been registered twice, for %s and %s.", name, getRaw(name), thing));
         }
-        if (getId(thing) >= 0) // duplicate object, will crash later due to the BiMap
+        if (getId(thing) >= 0) // duplicate object
         {
-            FMLLog.bigWarning("The object %s has been registered twice, using the names %s and %s.", thing, getNameForObject(thing), name);
+            throw new IllegalArgumentException(String.format("The object %s has been registered twice, using the names %s and %s.", thing, getNameForObject(thing), name));
         }
         if (GameData.isFrozen(this))
         {
