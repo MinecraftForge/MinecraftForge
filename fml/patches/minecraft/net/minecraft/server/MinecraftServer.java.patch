@@ -17,7 +17,7 @@
      public void func_71260_j()
      {
 -        if (!this.field_71290_O)
-+        if (!this.field_71290_O && Loader.instance().hasReachedState(LoaderState.SERVER_STARTED))
++        if (!this.field_71290_O && Loader.instance().hasReachedState(LoaderState.SERVER_STARTED) && !field_71316_v) // make sure the save is valid and we don't save twice
          {
              field_147145_h.info("Stopping server");
  
