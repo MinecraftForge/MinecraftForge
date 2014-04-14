@@ -104,7 +104,7 @@
      public Multimap func_111205_h()
      {
          return HashMultimap.create();
-@@ -726,6 +744,570 @@
+@@ -726,6 +744,586 @@
          return this.field_111218_cA == null ? "MISSING_ICON_ITEM_" + field_150901_e.func_148757_b(this) + "_" + this.field_77774_bZ : this.field_111218_cA;
      }
  
@@ -670,12 +670,28 @@
 +        Integer ret = toolClasses.get(toolClass);
 +        return ret == null ? -1 : ret; 
 +    }
++
++    /**
++     * Returns if the item stack can be equipped by the player.
++     */
++    public boolean canEquip(EntityPlayer player, ItemStack stack)
++    {
++        return true;
++    }
++
++    /**
++     * Returns if the item stack can be unequipped by the player.
++     */
++    public boolean canUnequip(EntityPlayer player, ItemStack stack)
++    {
++        return true;
++    }
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static enum ToolMaterial
      {
          WOOD(0, 59, 2.0F, 0.0F, 15),
-@@ -741,6 +1323,9 @@
+@@ -741,6 +1339,9 @@
  
          private static final String __OBFID = "CL_00000042";
  
@@ -685,7 +701,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -777,7 +1362,15 @@
+@@ -777,7 +1378,15 @@
  
          public Item func_150995_f()
          {
