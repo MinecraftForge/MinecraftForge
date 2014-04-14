@@ -8,6 +8,7 @@ public class PlayerRepairEvent extends PlayerEvent
     public final ItemStack left;      // The left side of the input
     public final ItemStack right;     // The right side of the input
     public final ItemStack output;    // Set this to set the output stack
+    public float breakChance;        // Modifies chance to break. Multiplicative
     
     public PlayerRepairEvent(EntityPlayer player, ItemStack output, ItemStack left, ItemStack right)
     {
@@ -15,5 +16,6 @@ public class PlayerRepairEvent extends PlayerEvent
         this.output = output;
         this.left = left;
         this.right = right;
+        this.breakChance = 1.0f;
     }
 }

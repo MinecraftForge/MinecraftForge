@@ -13,10 +13,19 @@
                      p_82870_1_.func_82242_a(-ContainerRepair.this.field_82854_e);
                  }
 +                
-+                ForgeHooks.onAnvilRepair(p_82870_1_, p_82870_2_, ContainerRepair.this.field_82853_g.func_70301_a(0), ContainerRepair.this.field_82853_g.func_70301_a(1));
++                float breakChanceMod = ForgeHooks.onAnvilRepair(p_82870_1_, p_82870_2_, ContainerRepair.this.field_82853_g.func_70301_a(0), ContainerRepair.this.field_82853_g.func_70301_a(1));
  
                  ContainerRepair.this.field_82853_g.func_70299_a(0, (ItemStack)null);
  
+@@ -89,7 +92,7 @@
+ 
+                 ContainerRepair.this.field_82854_e = 0;
+ 
+-                if (!p_82870_1_.field_71075_bZ.field_75098_d && !p_i1800_2_.field_72995_K && p_i1800_2_.func_147439_a(p_i1800_3_, p_i1800_4_, p_i1800_5_) == Blocks.field_150467_bQ && p_82870_1_.func_70681_au().nextFloat() < 0.12F)
++                if (!p_82870_1_.field_71075_bZ.field_75098_d && !p_i1800_2_.field_72995_K && p_i1800_2_.func_147439_a(p_i1800_3_, p_i1800_4_, p_i1800_5_) == Blocks.field_150467_bQ && p_82870_1_.func_70681_au().nextFloat() < (0.12F * breakChanceMod))
+                 {
+                     int i1 = p_i1800_2_.func_72805_g(p_i1800_3_, p_i1800_4_, p_i1800_5_);
+                     int k = i1 & 3;
 @@ -170,6 +173,7 @@
  
              if (itemstack2 != null)

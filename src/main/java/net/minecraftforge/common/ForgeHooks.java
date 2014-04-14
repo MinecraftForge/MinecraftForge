@@ -439,8 +439,10 @@ public class ForgeHooks
         return false;
     }
     
-    public static void onAnvilRepair(EntityPlayer player, ItemStack output, ItemStack left, ItemStack right)
+    public static float onAnvilRepair(EntityPlayer player, ItemStack output, ItemStack left, ItemStack right)
     {
-        MinecraftForge.EVENT_BUS.post(new PlayerRepairEvent(player, left, right, output));
+        PlayerRepairEvent e = new PlayerRepairEvent(player, left, right, output);
+        MinecraftForge.EVENT_BUS.post(e);
+        return e.breakChance;
     }
 }
