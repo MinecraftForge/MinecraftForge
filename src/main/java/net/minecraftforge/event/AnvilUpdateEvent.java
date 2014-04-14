@@ -19,6 +19,7 @@ public class AnvilUpdateEvent extends Event
     public final String name;     // The name to set the item, if the user specified one.
     public ItemStack output;      // Set this to set the output stack
     public int cost;              // The base cost, set this to change it if output != null
+    public int stackSizeToBeUsedInRepair;   // The number of items from the right slot to be consumed during the repair. Leave as 0 to consume the entire stack.
 
     public AnvilUpdateEvent(ItemStack left, ItemStack right, String name, int cost)
     {
@@ -26,5 +27,6 @@ public class AnvilUpdateEvent extends Event
         this.right = right;
         this.name = name;
         this.cost = cost;
+        this.stackSizeToBeUsedInRepair = 0;
     }
 }

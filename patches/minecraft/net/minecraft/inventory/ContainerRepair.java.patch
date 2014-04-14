@@ -8,7 +8,25 @@
  import org.apache.commons.lang3.StringUtils;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-@@ -170,6 +171,7 @@
+@@ -65,6 +66,8 @@
+                 {
+                     p_82870_1_.func_82242_a(-ContainerRepair.this.field_82854_e);
+                 }
++                
++                float breakChanceMod = ForgeHooks.onAnvilRepair(p_82870_1_, p_82870_2_, ContainerRepair.this.field_82853_g.func_70301_a(0), ContainerRepair.this.field_82853_g.func_70301_a(1));
+ 
+                 ContainerRepair.this.field_82853_g.func_70299_a(0, (ItemStack)null);
+ 
+@@ -89,7 +92,7 @@
+ 
+                 ContainerRepair.this.field_82854_e = 0;
+ 
+-                if (!p_82870_1_.field_71075_bZ.field_75098_d && !p_i1800_2_.field_72995_K && p_i1800_2_.func_147439_a(p_i1800_3_, p_i1800_4_, p_i1800_5_) == Blocks.field_150467_bQ && p_82870_1_.func_70681_au().nextFloat() < 0.12F)
++                if (!p_82870_1_.field_71075_bZ.field_75098_d && !p_i1800_2_.field_72995_K && p_i1800_2_.func_147439_a(p_i1800_3_, p_i1800_4_, p_i1800_5_) == Blocks.field_150467_bQ && p_82870_1_.func_70681_au().nextFloat() < (0.12F * breakChanceMod))
+                 {
+                     int i1 = p_i1800_2_.func_72805_g(p_i1800_3_, p_i1800_4_, p_i1800_5_);
+                     int k = i1 & 3;
+@@ -170,6 +173,7 @@
  
              if (itemstack2 != null)
              {
@@ -16,7 +34,7 @@
                  flag = itemstack2.func_77973_b() == Items.field_151134_bR && Items.field_151134_bR.func_92110_g(itemstack2).func_74745_c() > 0;
  
                  if (itemstack1.func_77984_f() && itemstack1.func_77973_b().func_82789_a(itemstack, itemstack2))
-@@ -373,6 +375,8 @@
+@@ -373,6 +377,8 @@
                  k2 = Math.max(1, k2 / 2);
              }
  

@@ -46,6 +46,7 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
+import net.minecraftforge.event.entity.player.PlayerRepairEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import static net.minecraft.init.Blocks.*;
 
@@ -434,6 +435,14 @@ public class ForgeHooks
 
         outputSlot.setInventorySlotContents(0, e.output);
         container.maximumCost = e.cost;
+        container.stackSizeToBeUsedInRepair = e.stackSizeToBeUsedInRepair;
         return false;
+    }
+    
+    public static float onAnvilRepair(EntityPlayer player, ItemStack output, ItemStack left, ItemStack right)
+    {
+        PlayerRepairEvent e = new PlayerRepairEvent(player, left, right, output);
+        MinecraftForge.EVENT_BUS.post(e);
+        return e.breakChance;
     }
 }
