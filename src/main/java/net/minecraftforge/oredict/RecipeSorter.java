@@ -174,9 +174,9 @@ public class RecipeSorter implements Comparator<IRecipe>
 
         if (ret == null)
         {
-            cls = cls.getSuperclass();
             while (cls != Object.class)
             {
+                cls = cls.getSuperclass();
                 ret = categories.get(cls);
                 if (ret != null)
                 {
