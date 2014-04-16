@@ -74,7 +74,7 @@ public class OreDictionary
             registerOre("blockGlass",  Blocks.glass);
             registerOre("blockGlass",  new ItemStack(Blocks.stained_glass, 1, WILDCARD_VALUE));
             registerOre("paneGlass",   Blocks.glass_pane);
-            registerOre("paneGlass",   new ItemStack(Blocks.stained_glass_pane, WILDCARD_VALUE));
+            registerOre("paneGlass",   new ItemStack(Blocks.stained_glass_pane, 1, WILDCARD_VALUE));
             registerOre("ingotIron",   Items.iron_ingot);
             registerOre("ingotGold",   Items.gold_ingot);
             registerOre("ingotBrick",  Items.brick);
@@ -93,6 +93,8 @@ public class OreDictionary
             registerOre("cropCarrot",  Items.carrot);
             registerOre("stone",       Blocks.stone);
             registerOre("cobblestone", Blocks.cobblestone);
+            registerOre("sandstone", new ItemStack(Blocks.sandstone, 1, WILDCARD_VALUE));
+            registerOre("dye",         new ItemStack(Items.dye, 1, WILDCARD_VALUE));
             registerOre("record",      Items.record_13);
             registerOre("record",      Items.record_cat);
             registerOre("record",      Items.record_blocks);
