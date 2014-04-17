@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityBoat.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityBoat.java
+@@ -16,6 +16,7 @@ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeHooks;
+ 
+ public class EntityBoat extends Entity
+ {
+@@ -379,7 +382,7 @@ public class EntityBoat extends Entity
+ 
+             this.moveEntity(this.motionX, this.motionY, this.motionZ);
+ 
+-            if (this.isCollidedHorizontally && d10 > 0.2D)
++            if (this.isCollidedHorizontally && !ForgeHooks.onBoatCrash(this, d10) && d10 > 0.2D)
+             {
+                 if (!this.worldObj.isRemote && !this.isDead)
+                 {
