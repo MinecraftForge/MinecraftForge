@@ -1,6 +1,6 @@
 {
   "id": "1.7.2",
-  "time": "2013-10-25T15:00:00+02:00",
+  "time": "2014-04-02T12:00:00+02:00",
   "releaseTime": "2013-10-25T15:00:00+02:00",
   "type": "release",
   "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${game_assets} --uuid ${auth_uuid} --accessToken ${auth_access_token}",
