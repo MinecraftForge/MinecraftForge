@@ -435,7 +435,7 @@ public class ForgeHooksClient
             //case UP_TO_DATE:    line = "Forge up to date"}; break;
             //case AHEAD:         line = "Using non-recommended Forge build, issues may arise."}; break;
             case OUTDATED:
-            case BETA_OUTDATED: line = "New Forge version avalible: " + ForgeVersion.getTarget(); break;
+            case BETA_OUTDATED: line = "New Forge version available: " + ForgeVersion.getTarget(); break;
             default: break;
         }
 
