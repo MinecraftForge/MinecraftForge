@@ -187,7 +187,7 @@
      }
  
      protected ItemStack func_149644_j(int p_149644_1_)
-@@ -1114,6 +1148,1065 @@
+@@ -1114,6 +1148,1078 @@
          return null;
      }
  
@@ -807,7 +807,20 @@
 +     * @param pass The pass in question
 +     * @return True to render
 +     */
++    @Deprecated
 +    public boolean canRenderInPass(int pass)
++    {
++        return canRenderInPass(pass, 0);
++    }
++
++    /**
++     * Determines if this block should render in this pass.
++     *
++     * @param pass The pass in question
++     * @param meta The metadata of the block
++     * @return True to render
++     */
++    public boolean canRenderInPass(int pass, int meta)
 +    {
 +        return pass == func_149701_w();
 +    }

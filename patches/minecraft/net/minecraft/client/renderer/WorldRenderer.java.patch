@@ -24,7 +24,7 @@
                                      }
 -                                    else if (k3 == k2)
 +
-+                                    if (!block.canRenderInPass(k2)) continue;
++                                    if (!block.canRenderInPass(k2, chunkcache.func_72805_g(j3, l2, i3))) continue;
 +
                                      {
                                          flag1 |= renderblocks.func_147805_b(block, j3, l2, i3);
