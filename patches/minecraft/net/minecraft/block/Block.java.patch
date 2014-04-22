@@ -187,7 +187,7 @@
      }
  
      protected ItemStack func_149644_j(int p_149644_1_)
-@@ -1114,6 +1148,1078 @@
+@@ -1114,6 +1148,1081 @@
          return null;
      }
  
@@ -817,10 +817,13 @@
 +     * Determines if this block should render in this pass.
 +     *
 +     * @param pass The pass in question
-+     * @param meta The metadata of the block
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
 +     * @return True to render
 +     */
-+    public boolean canRenderInPass(int pass, int meta)
++    public boolean canRenderInPass(int pass, IBlockAccess world, int x, int y, int z)
 +    {
 +        return pass == func_149701_w();
 +    }
