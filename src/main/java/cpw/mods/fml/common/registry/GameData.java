@@ -64,12 +64,12 @@ public class GameData {
     private static final GameData mainData = new GameData();
 
     /**
-     * @deprecated use {@link getBlockRegistry()} instead.
+     * @deprecated use {@link #getBlockRegistry()} instead.
      */
     @Deprecated
     public static final FMLControlledNamespacedRegistry<Block> blockRegistry = getBlockRegistry();
     /**
-     * @deprecated use {@link getItemRegistry()} instead.
+     * @deprecated use {@link #getItemRegistry()} instead.
      */
     @Deprecated
     public static final FMLControlledNamespacedRegistry<Item> itemRegistry = getItemRegistry();
@@ -460,8 +460,14 @@ public class GameData {
                 }
 
                 // register
-                FMLControlledNamespacedRegistry<?> srcRegistry = isBlock ? getMain().iBlockRegistry : getMain().iItemRegistry;
-                currId = newData.register(srcRegistry.getRaw(itemName), itemName, newId);
+                if (isBlock)
+                {
+                    currId = newData.registerBlock(getMain().iBlockRegistry.getRaw(itemName), itemName, newId);
+                }
+                else
+                {
+                    currId = newData.registerItem(getMain().iItemRegistry.getRaw(itemName), itemName, newId);
+                }
 
                 if (currId != newId)
                 {
@@ -501,11 +507,11 @@ public class GameData {
 
                         if (isBlock)
                         {
-                            newId = newData.registerBlock(frozen.iBlockRegistry.getRaw(itemName), itemName, null, currId);
+                            newId = newData.registerBlock(frozen.iBlockRegistry.getRaw(itemName), itemName, currId);
                         }
                         else
                         {
-                            newId = newData.registerItem(frozen.iItemRegistry.getRaw(itemName), itemName, null, currId);
+                            newId = newData.registerItem(frozen.iItemRegistry.getRaw(itemName), itemName, currId);
                         }
 
                         FMLLog.info("Injected new block/item %s: %d (init) -> %d (map).", itemName, currId, newId);
@@ -551,7 +557,7 @@ public class GameData {
                     newName = getMain().iBlockRegistry.getNameForObject(remap.getTarget());
                     FMLLog.fine("The Block %s is being remapped to %s.", remap.name, newName);
 
-                    newId = gameData.registerBlock((Block) remap.getTarget(), newName, null, remap.id);
+                    newId = gameData.registerBlock((Block) remap.getTarget(), newName, remap.id);
                     gameData.iBlockRegistry.addAlias(remap.name, newName);
                 }
                 else
@@ -560,7 +566,7 @@ public class GameData {
                     newName = getMain().iItemRegistry.getNameForObject(remap.getTarget());
                     FMLLog.fine("The Item %s is being remapped to %s.", remap.name, newName);
 
-                    newId = gameData.registerItem((Item) remap.getTarget(), newName, null, remap.id);
+                    newId = gameData.registerItem((Item) remap.getTarget(), newName, remap.id);
                     gameData.iItemRegistry.addAlias(remap.name, newName);
                 }
 
@@ -703,15 +709,18 @@ public class GameData {
         blockedIds.addAll(data.blockedIds);
     }
 
-    int register(Object obj, String name, int idHint)
+    int register(Object obj, String name, int idHint) // from FMLControlledNamespacedRegistry.addObject
     {
+        // tolerate extra name prefixes here since mc does it as well
+        name = addPrefix(name);
+
         if (obj instanceof Block)
         {
-            return registerBlock((Block) obj, name, null, idHint);
+            return registerBlock((Block) obj, name, idHint);
         }
         else if (obj instanceof Item)
         {
-            return registerItem((Item) obj, name, null, idHint);
+            return registerItem((Item) obj, name, idHint);
         }
         else
         {
@@ -719,18 +728,17 @@ public class GameData {
         }
     }
 
-    int registerItem(Item item, String name, String modId)
+    int registerItem(Item item, String name) // from GameRegistry
     {
-        return registerItem(item, name, modId, -1);
+        int index = name.indexOf(':');
+        if (name.indexOf(':') != -1) FMLLog.bigWarning("Illegal extra prefix %s for name %s, invalid registry invocation/invalid name?", name.substring(0, index), name);
+
+        name = addPrefix(name);
+        return registerItem(item, name, -1);
     }
 
-    int registerItem(Item item, String name, String modId, int idHint)
+    private int registerItem(Item item, String name, int idHint)
     {
-        if (modId != null)
-        {
-            ModContainer mc = Loader.instance().activeModContainer();
-            customOwners.put(new UniqueIdentifier(modId, name), mc);
-        }
         if (item instanceof ItemBlock) // ItemBlock, adjust id and clear the slot already occupied by the corresponding block
         {
             Block block = ((ItemBlock) item).field_150939_a;
@@ -772,23 +780,21 @@ public class GameData {
         return itemId;
     }
 
-    int registerBlock(Block block, String name, String modId)
+    int registerBlock(Block block, String name) // from GameRegistry
     {
-        return registerBlock(block, name, modId, -1);
+        int index = name.indexOf(':');
+        if (name.indexOf(':') != -1) FMLLog.bigWarning("Illegal extra prefix %s for name %s, invalid registry invocation/invalid name?", name.substring(0, index), name);
+
+        name = addPrefix(name);
+        return registerBlock(block, name, -1);
     }
 
-    int registerBlock(Block block, String name, String modId, int idHint)
+    private int registerBlock(Block block, String name, int idHint)
     {
-        if (modId != null)
-        {
-            ModContainer mc = Loader.instance().activeModContainer();
-            customOwners.put(new UniqueIdentifier(modId, name), mc);
-        }
-
         // handle ItemBlock-before-Block registrations
         ItemBlock itemBlock = null;
 
-        for (Item item : (Iterable<Item>) iItemRegistry) // find matching ItemBlock
+        for (Item item : iItemRegistry.typeSafeIterable()) // find matching ItemBlock
         {
             if (item instanceof ItemBlock && ((ItemBlock) item).field_150939_a == block)
             {
@@ -854,6 +860,42 @@ public class GameData {
         availabilityMap.clear(id);
     }
 
+    /**
+     * Prefix the supplied name with the current mod id.
+     *
+     * If no mod id can be determined, minecraft will be assumed.
+     * The prefix is separated with a colon.
+     *
+     * If there's already a prefix, it'll be prefixed again if the new prefix
+     * doesn't match the old prefix, as used by vanilla calls to addObject.
+     *
+     * @param name name to prefix.
+     * @return prefixed name.
+     */
+    private String addPrefix(String name)
+    {
+        int index = name.lastIndexOf(':');
+        String oldPrefix = index == -1 ? "" : name.substring(0, index);
+        String prefix;
+        ModContainer mc = Loader.instance().activeModContainer();
+
+        if (mc != null)
+        {
+            prefix = mc.getModId();
+        }
+        else // no mod container, assume minecraft
+        {
+            prefix = "minecraft";
+        }
+
+        if (!oldPrefix.equals(prefix))
+        {
+            name = prefix + ":" + name;
+        }
+
+        return name;
+    }
+
     private void verifyItemBlockName(ItemBlock item)
     {
         String blockName = iBlockRegistry.getNameForObject(item.field_150939_a);
@@ -896,6 +938,10 @@ public class GameData {
                 if (id > (isBlock ? MAX_BLOCK_ID : MAX_ITEM_ID)) throw new IllegalStateException(String.format("Registry entry for %s %s, name %s uses the too large id %d.", type, obj, name));
                 // name lookup failed -> obj is not in the obj<->name map
                 if (name == null) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, doesn't yield a name.", type, obj, id));
+                // empty name
+                if (name.isEmpty()) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, yields an empty name.", type, obj, id));
+                // non-prefixed name
+                if (name.indexOf(':') == -1) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, has the non-prefixed name %s.", type, obj, id, name));
                 // id -> obj lookup is inconsistent
                 if (registry.getRaw(id) != obj) throw new IllegalStateException(String.format("Registry entry for id %d, name %s, doesn't yield the expected %s %s.", id, name, type, obj));
                 // name -> obj lookup is inconsistent

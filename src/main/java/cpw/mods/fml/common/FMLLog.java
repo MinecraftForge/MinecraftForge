@@ -47,8 +47,13 @@ public class FMLLog
 
     public static void bigWarning(String format, Object... data)
     {
+        StackTraceElement[] trace = Thread.currentThread().getStackTrace();
         log(Level.WARN, "****************************************");
         log(Level.WARN, "* "+format, data);
+        for (int i = 2; i < 8 && i < trace.length; i++)
+        {
+            log(Level.WARN, "*  at %s%s", trace[i].toString(), i == 7 ? "..." : "");
+        }
         log(Level.WARN, "****************************************");
     }
 
