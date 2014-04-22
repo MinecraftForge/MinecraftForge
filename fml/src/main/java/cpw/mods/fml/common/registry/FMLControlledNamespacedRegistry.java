@@ -10,7 +10,9 @@ import java.util.Map;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.RegistryNamespaced;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
@@ -50,7 +52,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         underlyingIntegerMap = new ObjectIntIdentityMap();
         registryObjects.clear();
 
-        for (I thing : (Iterable<I>) registry)
+        for (I thing : registry.typeSafeIterable())
         {
             addObjectRaw(registry.getId(thing), registry.getNameForObject(thing), thing);
         }
@@ -80,12 +82,13 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     public void putObject(Object objName, Object obj)
     {
         String name = (String) objName;
-        I thing = (I) obj;
+        I thing = superType.cast(obj);
 
         if (name == null) throw new NullPointerException("Can't use a null-name for the registry.");
         if (name.isEmpty()) throw new IllegalArgumentException("Can't use an empty name for the registry.");
         if (thing == null) throw new NullPointerException("Can't add null-object to the registry.");
 
+        name = ensureNamespaced(name);
         String existingName = getNameForObject(thing);
 
         if (existingName == null)
@@ -249,12 +252,17 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         return containsKey(itemName);
     }
 
+    public Iterable<I> typeSafeIterable()
+    {
+        return Iterables.transform(this, new TypeCastFunction());
+    }
+
     // internal
 
     @SuppressWarnings("unchecked")
     public void serializeInto(Map<String, Integer> idMapping) // for saving
     {
-        for (I thing : (Iterable<I>) this)
+        for (I thing : this.typeSafeIterable())
         {
             idMapping.put(discriminator+getNameForObject(thing), getId(thing));
         }
@@ -276,9 +284,10 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
      */
     int add(int id, String name, I thing, BitSet availabilityMap)
     {
-        if (name == null) throw new NullPointerException("Can't use a null-name for the registry.");
-        if (name.isEmpty()) throw new IllegalArgumentException("Can't use an empty name for the registry.");
-        if (thing == null) throw new NullPointerException("Can't add null-object to the registry.");
+        if (name == null) throw new NullPointerException(String.format("Can't use a null-name for the registry, object %s.", thing));
+        if (name.isEmpty()) throw new IllegalArgumentException(String.format("Can't use an empty name for the registry, object %s.", thing));
+        if (name.indexOf(':') == -1) throw new IllegalArgumentException(String.format("Can't add the name (%s) without a prefix, object %s", name, thing));
+        if (thing == null) throw new NullPointerException(String.format("Can't add null-object to the registry, name %s.", name));
         if (name.equals(optionalDefaultName))
         {
             this.optionalDefaultObject = thing;
@@ -292,14 +301,6 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         if (idToUse > maxId)
         {
             throw new RuntimeException(String.format("Invalid id %d - maximum id range exceeded.", idToUse));
-        }
-
-        ModContainer mc = Loader.instance().activeModContainer();
-        if (mc != null)
-        {
-            String prefix = mc.getModId();
-            if (name.contains(":")) FMLLog.bigWarning("Illegal extra prefix %s for name %s, invalid registry invocation/invalid name?", prefix, name);
-            name = prefix + ":"+ name;
         }
 
         if (getRaw(name) == thing) // already registered, return prev registration's id
@@ -337,7 +338,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     {
         Map<String,Integer> ret = new HashMap<String, Integer>();
 
-        for (I thing : (Iterable<I>) this)
+        for (I thing : this.typeSafeIterable())
         {
             if (!registry.field_148758_b.containsKey(thing)) ret.put(getNameForObject(thing), getId(thing));
         }
@@ -350,7 +351,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     {
         List<Integer> ids = new ArrayList<Integer>();
 
-        for (I thing : (Iterable<I>) this)
+        for (I thing : this.typeSafeIterable())
         {
             ids.add(getId(thing));
         }
@@ -370,10 +371,20 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
      */
     private void addObjectRaw(int id, String name, I thing)
     {
-        if (name == null) throw new NullPointerException("internal registry bug");
-        if (thing == null) throw new NullPointerException("internal registry bug");
+        if (name == null) throw new NullPointerException("The name to be added to the registry is null. This can only happen with a corrupted registry state. Reflection/ASM hackery? Registry bug?");
+        if (thing == null) throw new NullPointerException("The object to be added to the registry is null. This can only happen with a corrupted registry state. Reflection/ASM hackery? Registry bug?");
+        if (!superType.isInstance(thing)) throw new IllegalArgumentException("The object to be added to the registry is not of the right type. Reflection/ASM hackery? Registry bug?");
 
         underlyingIntegerMap.func_148746_a(thing, id); // obj <-> id
-        super.putObject(ensureNamespaced(name), thing); // name <-> obj
+        super.putObject(name, thing); // name <-> obj
+    }
+
+    private class TypeCastFunction implements Function<Object, I>
+    {
+        @Override
+        public I apply(Object o)
+        {
+            return superType.cast(o);
+        }
     }
 }
