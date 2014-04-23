@@ -810,7 +810,7 @@
 +    @Deprecated
 +    public boolean canRenderInPass(int pass)
 +    {
-+        return canRenderInPass(pass, 0);
++        return pass == func_149701_w();
 +    }
 +
 +    /**
@@ -825,7 +825,7 @@
 +     */
 +    public boolean canRenderInPass(int pass, IBlockAccess world, int x, int y, int z)
 +    {
-+        return pass == func_149701_w();
++        return canRenderInPass(pass);
 +    }
 +
 +    /**
