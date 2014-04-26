@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -15,6 +16,8 @@ import cpw.mods.fml.relauncher.Side;
 /**
  * This class is a simplified netty wrapper for those not wishing to deal with the full power of netty.
  * It provides a simple message driven system, based on a discriminator byte over the custom packet channel.
+ * It assumes that you have a series of unique message types with each having a unique handler. Generally, context should be
+ * derived at message handling time.
  *
  * Usage is simple:<ul>
  * <li>construct, and store, an instance of this class. It will automatically register and configure your underlying netty channel.
@@ -25,10 +28,51 @@ import cpw.mods.fml.relauncher.Side;
  * should be unique for this channelName - it is used to discriminate between different types of message that might
  * occur on this channel (a simple form of message channel multiplexing, if you will).
  * <li>To get a packet suitable for presenting to the rest of minecraft, you can call {@link #getPacketFrom(IMessage)}. The return result
- * is suitable for returning from things like {@link TileEntity#func_145844_m} for example.
+ * is suitable for returning from things like {@link TileEntity#getDescriptionPacket()} for example.
  * <li>Finally, use the sendXXX to send unsolicited messages to various classes of recipients.
  * </ul>
  *
+ * Example
+ * <code>
+ * <pre>
+ *  // Request message
+ *  public Message1 implements IMessage {
+ *  // message structure
+ *   public fromBytes(ByteBuf buf) {
+ *    // build message from byte array
+ *   }
+ *   public toBytes(ByteBuf buf) {
+ *    // put message content into byte array
+ *   }
+ *  }
+ *  // Reply message
+ *  public Message2 implements IMessage {
+ *   // stuff as before
+ *  }
+ *  // Message1Handler expects input of type Message1 and returns type Message2
+ *  public Message1Handler implements IMessageHandler<Message1,Message2> {
+ *   public Message2 onMessage(Message1 message, MessageContext ctx) {
+ *    // do something and generate reply message
+ *    return aMessage2Object;
+ *   }
+ *  }
+ *  // Message2Handler expects input of type Message2 and returns no message (IMessage)
+ *  public Message2Handler implements IMessageHandler<Message2,IMessage> {
+ *   public IMessage onMessage(Message2 message, MessageContext ctx) {
+ *    // handle the message 2 response message at the other end
+ *    // no reply for this message - return null
+ *    return null;
+ *   }
+ *  }
+ *
+ *  // Code in a {@link FMLPreInitializationEvent} or {@link FMLInitializationEvent} handler
+ *  SimpleNetworkWrapper wrapper = NetworkRegistry.newSimpleChannel("MYCHANNEL");
+ *  // Message1 is handled by the Message1Handler class, it has discriminator id 1 and it's on the client
+ *  wrapper.registerMessage(Message1Handler.class, Message1.class, 1, Side.CLIENT);
+ *  // Message2 is handled by the Message2Handler class, it has discriminator id 2 and it's on the server
+ *  wrapper.registerMessage(Message2Handler.class, Message2.class, 2, Side.SERVER);
+ *  </pre>
+ * </code>
  *
  *
  * @author cpw
@@ -49,40 +93,40 @@ public class SimpleNetworkWrapper {
      * be registered on the supplied side (this is the side where you want the message to be processed and acted upon).
      *
      * @param messageHandler the message handler type
-     * @param message the message type
+     * @param requestMessageType the message type
      * @param discriminator a discriminator byte
      * @param side the side for the handler
      */
-    public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> message, int discriminator, Side side)
+    public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType, int discriminator, Side side)
     {
-        packetCodec.addDiscriminator(discriminator, message);
+        packetCodec.addDiscriminator(discriminator, requestMessageType);
         FMLEmbeddedChannel channel = channels.get(side);
         String type = channel.findChannelHandlerNameForType(SimpleIndexedCodec.class);
         if (side == Side.SERVER)
         {
-            addServerHandlerAfter(channel, type, messageHandler);
+            addServerHandlerAfter(channel, type, messageHandler, requestMessageType);
         }
         else
         {
-            addClientHandlerAfter(channel, type, messageHandler);
+            addClientHandlerAfter(channel, type, messageHandler, requestMessageType);
         }
     }
 
-    private <REQ extends IMessage, REPLY extends IMessage, NH extends INetHandler> void addServerHandlerAfter(FMLEmbeddedChannel channel, String type, Class<? extends IMessageHandler<REQ, REPLY>> messageHandler)
+    private <REQ extends IMessage, REPLY extends IMessage, NH extends INetHandler> void addServerHandlerAfter(FMLEmbeddedChannel channel, String type, Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestType)
     {
-        SimpleChannelHandlerWrapper<REQ, REPLY> handler = getHandlerWrapper(messageHandler, Side.SERVER);
+        SimpleChannelHandlerWrapper<REQ, REPLY> handler = getHandlerWrapper(messageHandler, Side.SERVER, requestType);
         channel.pipeline().addAfter(type, messageHandler.getName(), handler);
     }
 
-    private <REQ extends IMessage, REPLY extends IMessage, NH extends INetHandler> void addClientHandlerAfter(FMLEmbeddedChannel channel, String type, Class<? extends IMessageHandler<REQ, REPLY>> messageHandler)
+    private <REQ extends IMessage, REPLY extends IMessage, NH extends INetHandler> void addClientHandlerAfter(FMLEmbeddedChannel channel, String type, Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestType)
     {
-        SimpleChannelHandlerWrapper<REQ, REPLY> handler = getHandlerWrapper(messageHandler, Side.CLIENT);
+        SimpleChannelHandlerWrapper<REQ, REPLY> handler = getHandlerWrapper(messageHandler, Side.CLIENT, requestType);
         channel.pipeline().addAfter(type, messageHandler.getName(), handler);
     }
 
-    private <REPLY extends IMessage, REQ extends IMessage> SimpleChannelHandlerWrapper<REQ, REPLY> getHandlerWrapper(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Side side)
+    private <REPLY extends IMessage, REQ extends IMessage> SimpleChannelHandlerWrapper<REQ, REPLY> getHandlerWrapper(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Side side, Class<REQ> requestType)
     {
-        return new SimpleChannelHandlerWrapper<REQ, REPLY>(messageHandler, side);
+        return new SimpleChannelHandlerWrapper<REQ, REPLY>(messageHandler, side, requestType);
     }
 
     /**
