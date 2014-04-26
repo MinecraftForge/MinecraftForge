@@ -185,23 +185,8 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
                 }
                 else
                 {
-                    boolean isItem;
-                    try {
-                        Class<?> clazz = Class.forName(itemType);
-                        clazz.asSubclass(Item.class);
-                        isItem = true;
-                    }
-                    catch (ClassNotFoundException cnfs)
-                    {
-                        FMLLog.warning("The old item %s is not present in this game, it's type cannot be inferred - it will be skipped", itemType);
-                        // MISSING, skip
-                        continue;
-                    }
-                    catch (ClassCastException ccs)
-                    {
-                        isItem = false;
-                    }
-                    String itemLabel = String.format("%c%s:%s", isItem ? '\u0002' : '\u0001', forcedModId != null ? forcedModId : modId, forcedName);
+                    // all entries are Items, blocks were only saved through their ItemBlock
+                    String itemLabel = String.format("%c%s:%s", '\u0002', forcedModId != null ? forcedModId : modId, forcedName);
                     dataList.put(itemLabel, itemId);
                 }
             }
