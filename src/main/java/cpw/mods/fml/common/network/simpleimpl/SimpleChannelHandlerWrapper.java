@@ -13,8 +13,9 @@ import io.netty.channel.SimpleChannelInboundHandler;
 public class SimpleChannelHandlerWrapper<REQ extends IMessage, REPLY extends IMessage> extends SimpleChannelInboundHandler<REQ> {
     private IMessageHandler<REQ, REPLY> messageHandler;
     private Side side;
-    public SimpleChannelHandlerWrapper(Class<? extends IMessageHandler<REQ, REPLY>> handler, Side side)
+    public SimpleChannelHandlerWrapper(Class<? extends IMessageHandler<REQ, REPLY>> handler, Side side, Class<REQ> requestType)
     {
+        super(requestType);
         try
         {
             messageHandler = handler.newInstance();
