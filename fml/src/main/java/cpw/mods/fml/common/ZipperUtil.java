@@ -15,8 +15,6 @@ import org.apache.logging.log4j.Level;
 
 import com.google.common.io.Files;
 
-import cpw.mods.fml.client.FMLClientHandler;
-
 /**
  * Copied from http://stackoverflow.com/questions/1399126/java-util-zip-recreating-directory-structure
  * because the code looked very tidy and neat. Thanks, McDowell!

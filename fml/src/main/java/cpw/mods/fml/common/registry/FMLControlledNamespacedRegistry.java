@@ -6,17 +6,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.RegistryNamespaced;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.functions.GenericIterableFactory;
 
 public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     private final Class<I> superType;
@@ -38,7 +38,49 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         this.minId = minIdValue;
     }
 
-    @SuppressWarnings("unchecked")
+    void validateContent(int maxId, String type, BitSet availabilityMap, Set<Integer> blockedIds, FMLControlledNamespacedRegistry<Block> iBlockRegistry)
+    {
+        for (I obj : typeSafeIterable())
+        {
+            int id = getId(obj);
+            String name = getNameForObject(obj);
+
+            // id lookup failed -> obj is not in the obj<->id map
+            if (id < 0) throw new IllegalStateException(String.format("Registry entry for %s %s, name %s, doesn't yield an id.", type, obj, name));
+            // id is too high
+            if (id > maxId) throw new IllegalStateException(String.format("Registry entry for %s %s, name %s uses the too large id %d.", type, obj, name));
+            // name lookup failed -> obj is not in the obj<->name map
+            if (name == null) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, doesn't yield a name.", type, obj, id));
+            // empty name
+            if (name.isEmpty()) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, yields an empty name.", type, obj, id));
+            // non-prefixed name
+            if (name.indexOf(':') == -1) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, has the non-prefixed name %s.", type, obj, id, name));
+            // id -> obj lookup is inconsistent
+            if (getRaw(id) != obj) throw new IllegalStateException(String.format("Registry entry for id %d, name %s, doesn't yield the expected %s %s.", id, name, type, obj));
+            // name -> obj lookup is inconsistent
+            if (getRaw(name) != obj) throw new IllegalStateException(String.format("Registry entry for name %s, id %d, doesn't yield the expected %s %s.", name, id, type, obj));
+            // name -> id lookup is inconsistent
+            if (getId(name) != id) throw new IllegalStateException(String.format("Registry entry for name %s doesn't yield the expected id %d.", name, id));
+            // id isn't marked as unavailable
+            if (!availabilityMap.get(id)) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, name %s, marked as empty.", type, obj, id, name));
+            // entry is blocked, thus should be empty
+            if (blockedIds.contains(id)) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, name %s, marked as dangling.", type, obj, id, name));
+
+            if (obj instanceof ItemBlock)
+            {
+                Block block = ((ItemBlock) obj).field_150939_a;
+
+                // verify matching block entry
+                if (iBlockRegistry.getId(block) != id)
+                {
+                    throw new IllegalStateException(String.format("Registry entry for ItemBlock %s, id %d, is missing or uses the non-matching id %d.", obj, id, iBlockRegistry.getId(block)));
+                }
+                // verify id range
+                if (id > GameData.MAX_BLOCK_ID) throw new IllegalStateException(String.format("ItemBlock %s uses the id %d outside the block id range", name, id));
+            }
+        }
+
+    }
     void set(FMLControlledNamespacedRegistry<I> registry)
     {
         if (this.superType != registry.superType) throw new IllegalArgumentException("incompatible registry");
@@ -254,12 +296,12 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
 
     public Iterable<I> typeSafeIterable()
     {
-        return Iterables.transform(this, new TypeCastFunction());
+        Iterable<?> self = this;
+        return GenericIterableFactory.newCastingIterable(self, superType);
     }
 
     // internal
 
-    @SuppressWarnings("unchecked")
     public void serializeInto(Map<String, Integer> idMapping) // for saving
     {
         for (I thing : this.typeSafeIterable())
@@ -333,7 +375,6 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         FMLLog.finer("Registry alias: %s -> %s", from, to);
     }
 
-    @SuppressWarnings("unchecked")
     Map<String,Integer> getEntriesNotIn(FMLControlledNamespacedRegistry<I> registry)
     {
         Map<String,Integer> ret = new HashMap<String, Integer>();
@@ -346,7 +387,6 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         return ret;
     }
 
-    @SuppressWarnings("unchecked")
     void dump()
     {
         List<Integer> ids = new ArrayList<Integer>();
@@ -377,14 +417,5 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
 
         underlyingIntegerMap.func_148746_a(thing, id); // obj <-> id
         super.putObject(name, thing); // name <-> obj
-    }
-
-    private class TypeCastFunction implements Function<Object, I>
-    {
-        @Override
-        public I apply(Object o)
-        {
-            return superType.cast(o);
-        }
     }
 }

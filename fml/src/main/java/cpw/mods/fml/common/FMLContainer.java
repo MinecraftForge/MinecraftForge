@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
