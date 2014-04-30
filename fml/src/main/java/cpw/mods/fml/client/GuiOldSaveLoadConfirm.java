@@ -27,7 +27,7 @@ public class GuiOldSaveLoadConfirm extends GuiYesNo {
         super(parent, "", "", 0);
         this.dirName = dirName;
         this.saveName = saveName;
-        this.zip = new File(FMLClientHandler.instance().getClient().mcDataDir,String.format("%s-%2$td%2$tm%2$ty%2$tH%2$tM%2$tS.zip", saveName, System.currentTimeMillis()));
+        this.zip = new File(FMLClientHandler.instance().getClient().mcDataDir,String.format("%s-%2$td%2$tm%2$ty%2$tH%2$tM%2$tS.zip", dirName, System.currentTimeMillis()));
     }
     @Override
     public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_)

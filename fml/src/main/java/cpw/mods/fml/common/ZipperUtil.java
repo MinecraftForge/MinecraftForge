@@ -64,24 +64,20 @@ public class ZipperUtil {
     public static void backupWorld() throws IOException
     {
         String dirName = FMLCommonHandler.instance().getMinecraftServerInstance().getFolderName();
-        String saveName;
 
-        if (FMLCommonHandler.instance().getSide().isClient())
-        {
-            saveName = FMLCommonHandler.instance().getMinecraftServerInstance().getWorldName();
-        }
-        else
-        {
-            saveName = dirName;
-        }
-
-        backupWorld(dirName, saveName);
+        backupWorld(dirName);
     }
 
+    @Deprecated
     public static void backupWorld(String dirName, String saveName) throws IOException
     {
+        backupWorld(dirName);
+    }
+
+    public static void backupWorld(String dirName) throws IOException
+    {
         File dstFolder = FMLCommonHandler.instance().getSavesDirectory();
-        File zip = new File(dstFolder, String.format("%s-%2$tY%2$tm%2$td-%2$tH%2$tM%2$tS.zip", saveName, System.currentTimeMillis()));
+        File zip = new File(dstFolder, String.format("%s-%2$tY%2$tm%2$td-%2$tH%2$tM%2$tS.zip", dirName, System.currentTimeMillis()));
 
         try
         {
