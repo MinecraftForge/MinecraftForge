@@ -14,7 +14,6 @@ package cpw.mods.fml.common.registry;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,7 +42,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
 import com.google.common.io.Files;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
@@ -56,10 +54,10 @@ import cpw.mods.fml.common.registry.GameRegistry.Type;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
 public class GameData {
-    private static final int MIN_BLOCK_ID = 0;
-    private static final int MAX_BLOCK_ID = 4095;
-    private static final int MIN_ITEM_ID = 4096;
-    private static final int MAX_ITEM_ID = 31999;
+    static final int MIN_BLOCK_ID = 0;
+    static final int MAX_BLOCK_ID = 4095;
+    static final int MIN_ITEM_ID = 4096;
+    static final int MAX_ITEM_ID = 31999;
 
     private static final GameData mainData = new GameData();
 
@@ -244,6 +242,7 @@ public class GameData {
         for (Entry<String, Integer> entry : dataList.entrySet())
         {
             String itemName = entry.getKey();
+            @SuppressWarnings("unused")
             String realName = itemName.substring(1);
 
             if (itemName.charAt(0) == '\u0001') // is a block
@@ -351,7 +350,7 @@ public class GameData {
         {
             String mod = it.next();
 
-            if (mod.equals("minecraft") || Loader.instance().isModLoaded(mod)) it.remove();
+            if (mod.equals("minecraft") || Loader.isModLoaded(mod)) it.remove();
         }
 
         if (!modsMissing.isEmpty())
@@ -907,7 +906,6 @@ public class GameData {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void testConsistency() {
         // test if there's an entry for every set bit in availabilityMap
         for (int i = availabilityMap.nextSetBit(0); i >= 0; i = availabilityMap.nextSetBit(i+1))
@@ -922,50 +920,8 @@ public class GameData {
         {
             boolean isBlock = pass == 0;
             String type = isBlock ? "block" : "item";
-            FMLControlledNamespacedRegistry registry = isBlock ? iBlockRegistry : iItemRegistry;
-
-            // test if the registry is consistent
-            // test if there's a bit in availabilityMap set for every entry in the registry
-            // make sure it's not a blocked id
-            for (Object obj : registry)
-            {
-                int id = registry.getId(obj);
-                String name = registry.getNameForObject(obj);
-
-                // id lookup failed -> obj is not in the obj<->id map
-                if (id < 0) throw new IllegalStateException(String.format("Registry entry for %s %s, name %s, doesn't yield an id.", type, obj, name));
-                // id is too high
-                if (id > (isBlock ? MAX_BLOCK_ID : MAX_ITEM_ID)) throw new IllegalStateException(String.format("Registry entry for %s %s, name %s uses the too large id %d.", type, obj, name));
-                // name lookup failed -> obj is not in the obj<->name map
-                if (name == null) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, doesn't yield a name.", type, obj, id));
-                // empty name
-                if (name.isEmpty()) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, yields an empty name.", type, obj, id));
-                // non-prefixed name
-                if (name.indexOf(':') == -1) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, has the non-prefixed name %s.", type, obj, id, name));
-                // id -> obj lookup is inconsistent
-                if (registry.getRaw(id) != obj) throw new IllegalStateException(String.format("Registry entry for id %d, name %s, doesn't yield the expected %s %s.", id, name, type, obj));
-                // name -> obj lookup is inconsistent
-                if (registry.getRaw(name) != obj) throw new IllegalStateException(String.format("Registry entry for name %s, id %d, doesn't yield the expected %s %s.", name, id, type, obj));
-                // name -> id lookup is inconsistent
-                if (registry.getId(name) != id) throw new IllegalStateException(String.format("Registry entry for name %s doesn't yield the expected id %d.", name, id));
-                // id isn't marked as unavailable
-                if (!availabilityMap.get(id)) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, name %s, marked as empty.", type, obj, id, name));
-                // entry is blocked, thus should be empty
-                if (blockedIds.contains(id)) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, name %s, marked as dangling.", type, obj, id, name));
-
-                if (obj instanceof ItemBlock)
-                {
-                    Block block = ((ItemBlock) obj).field_150939_a;
-
-                    // verify matching block entry
-                    if (iBlockRegistry.getId(block) != id)
-                    {
-                        throw new IllegalStateException(String.format("Registry entry for ItemBlock %s, id %d, is missing or uses the non-matching id %d.", obj, id, iBlockRegistry.getId(block)));
-                    }
-                    // verify id range
-                    if (id > MAX_BLOCK_ID) throw new IllegalStateException(String.format("ItemBlock %s uses the id %d outside the block id range", name, id));
-                }
-            }
+            FMLControlledNamespacedRegistry<?> registry = isBlock ? iBlockRegistry : iItemRegistry;
+            registry.validateContent((isBlock ? MAX_BLOCK_ID : MAX_ITEM_ID), type, availabilityMap, blockedIds, iBlockRegistry);
         }
 
         FMLLog.fine("Registry consistency check successful");
