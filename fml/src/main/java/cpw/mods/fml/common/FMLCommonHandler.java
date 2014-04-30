@@ -514,11 +514,6 @@ public class FMLCommonHandler
         sidedDelegate.addModAsResource(container);
     }
 
-    public void updateResourcePackList()
-    {
-        sidedDelegate.updateResourcePackList();
-    }
-
     public String getCurrentLanguage()
     {
 
