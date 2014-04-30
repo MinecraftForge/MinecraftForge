@@ -227,6 +227,10 @@ public class FMLClientHandler implements IFMLSidedHandler
             haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
             return;
         }
+        finally
+        {
+            client.refreshResources();
+        }
 
         Map<String,Map<String,String>> sharedModList = (Map<String, Map<String, String>>) Launch.blackboard.get("modList");
         if (sharedModList == null)
@@ -279,7 +283,8 @@ public class FMLClientHandler implements IFMLSidedHandler
             return;
         }
 
-        // Reload resources
+        // Reload resources has to happen early, or minecraft itself has resource loading issues
+        // This is a second refresh for mods that register stuff late!
         client.refreshResources();
         RenderingRegistry.instance().loadEntityRenderers((Map<Class<? extends Entity>, Render>)RenderManager.instance.entityRenderMap);
         guiFactories = HashBiMap.create();
@@ -562,12 +567,6 @@ public class FMLClientHandler implements IFMLSidedHandler
                 throw Throwables.propagate(e);
             }
         }
-    }
-
-    @Override
-    public void updateResourcePackList()
-    {
-        client.refreshResources();
     }
 
     public IResourcePack getResourcePackFor(String modId)
