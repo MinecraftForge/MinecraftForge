@@ -687,7 +687,7 @@ public class GameData {
 
     private GameData()
     {
-        iBlockRegistry = new FMLControlledNamespacedRegistry<Block>("air", MAX_BLOCK_ID, MIN_BLOCK_ID, Block.class,'\u0001');
+        iBlockRegistry = new FMLControlledNamespacedRegistry<Block>("minecraft:air", MAX_BLOCK_ID, MIN_BLOCK_ID, Block.class,'\u0001');
         iItemRegistry = new FMLControlledNamespacedRegistry<Item>(null, MAX_ITEM_ID, MIN_ITEM_ID, Item.class,'\u0002');
         availabilityMap = new BitSet(MAX_ITEM_ID + 1);
         blockedIds = new HashSet<Integer>();
