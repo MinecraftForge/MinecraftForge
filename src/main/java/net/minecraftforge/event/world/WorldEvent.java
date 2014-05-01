@@ -68,12 +68,16 @@ public class WorldEvent extends Event
     
     /**
      * Called by WorldServer when it attempts to create a spawnpoint for a dimension.
-     * Setting the event Result to Result.Deny will prevent the vanilla code from running.
+     * Canceling the event will prevent the vanilla code from running.
      */
-    @HasResult
+    @Cancelable
     public static class CreateSpawnPosition extends WorldEvent
     {
         public final WorldSettings worldSettings;
-        public CreateSpawnPosition(World world, WorldSettings ws) { super(world); this.worldSettings = ws; }
+        public CreateSpawnPosition(World world, WorldSettings ws) 
+        { 
+            super(world); 
+            this.worldSettings = ws; 
+        }
     }
 }
