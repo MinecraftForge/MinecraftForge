@@ -214,7 +214,7 @@
          {
 +            WorldEvent.CreateSpawnPosition event = new WorldEvent.CreateSpawnPosition(this, p_73052_1_);
 +            MinecraftForge.EVENT_BUS.post(event);
-+            if (event.getResult() == Result.DENY) return;
++            if (event.isCanceled()) return;
              this.field_72987_B = true;
              WorldChunkManager worldchunkmanager = this.field_73011_w.field_76578_c;
              List list = worldchunkmanager.func_76932_a();
