@@ -126,10 +126,14 @@ public class FMLNetworkHandler
     public static String checkModList(FMLHandshakeMessage.ModList modListPacket, Side side)
     {
         Map<String,String> modList = modListPacket.modList();
+        return checkModList(modList, side);
+    }
+    public static String checkModList(Map<String,String> listData, Side side)
+    {
         List<ModContainer> rejects = Lists.newArrayList();
         for (Entry<ModContainer, NetworkModHolder> networkMod : NetworkRegistry.INSTANCE.registry().entrySet())
         {
-            boolean result = networkMod.getValue().check(modList, side);
+            boolean result = networkMod.getValue().check(listData, side);
             if (!result)
             {
                 rejects.add(networkMod.getKey());
