@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.logging.log4j.Level;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.SetMultimap;
@@ -33,7 +34,7 @@ import cpw.mods.fml.relauncher.Side;
 
 public class NetworkModHolder
 {
-    private abstract class NetworkChecker {
+    public abstract class NetworkChecker {
         public abstract boolean check(Map<String,String> remoteVersions, Side side);
     }
 
@@ -43,6 +44,11 @@ public class NetworkModHolder
         {
             return true;
         }
+        @Override
+        public String toString()
+        {
+            return "No network checking performed";
+        }
     }
     private class DefaultNetworkChecker extends NetworkChecker {
         @Override
@@ -50,7 +56,11 @@ public class NetworkModHolder
         {
             return remoteVersions.containsKey(container.getModId()) ? acceptVersion(remoteVersions.get(container.getModId())) : false;
         }
-
+        @Override
+        public String toString()
+        {
+            return acceptableRange != null ? String.format("Accepting range %s", acceptableRange) : String.format("Accepting version %s", container.getVersion());
+        }
     }
     private class MethodNetworkChecker extends NetworkChecker {
         @Override
@@ -65,6 +75,11 @@ public class NetworkModHolder
                 FMLLog.log(Level.ERROR, e, "Error occurred invoking NetworkCheckHandler %s at %s", checkHandler.getName(), container);
                 return false;
             }
+        }
+        @Override
+        public String toString()
+        {
+            return String.format("Invoking method %s", checkHandler.getName());
         }
     }
     private static int assignedIds = 1;
@@ -84,6 +99,12 @@ public class NetworkModHolder
         this.container = container;
         this.localId = assignedIds++;
         this.networkId = this.localId;
+    }
+    public NetworkModHolder(ModContainer container, NetworkChecker checker)
+    {
+        this(container);
+        this.checker = Preconditions.checkNotNull(checker);
+        FMLLog.fine("The mod %s is using a custom checker %s", container.getModId(), checker.getClass().getName());
     }
     public NetworkModHolder(ModContainer container, Class<?> modClass, String acceptableVersionRange, ASMDataTable table)
     {
@@ -144,7 +165,12 @@ public class NetworkModHolder
         if (this.checkHandler != null)
         {
             this.checker = new MethodNetworkChecker();
-        } else if (!Strings.isNullOrEmpty(acceptableVersionRange) && !acceptableVersionRange.equals('*'))
+        }
+        else if (!Strings.isNullOrEmpty(acceptableVersionRange) && acceptableVersionRange.equals("*"))
+        {
+            this.checker = new IgnoredChecker();
+        }
+        else
         {
             try
             {
@@ -155,9 +181,8 @@ public class NetworkModHolder
                 FMLLog.log(Level.WARN, e, "Invalid bounded range %s specified for network mod id %s", acceptableVersionRange, container.getModId());
             }
             this.checker = new DefaultNetworkChecker();
-        } else {
-            this.checker = new IgnoredChecker();
         }
+        FMLLog.finer("Mod %s is using network checker : %s", container.getModId(), this.checker);
         FMLLog.finer("Testing mod %s to verify it accepts its own version in a remote connection", container.getModId());
         boolean acceptsSelf = acceptVersion(container.getVersion());
         if (!acceptsSelf)
