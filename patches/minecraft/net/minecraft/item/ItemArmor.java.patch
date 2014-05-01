@@ -1,8 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemArmor.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemArmor.java
-@@ -221,7 +221,7 @@
+@@ -219,9 +219,9 @@
+         int i = EntityLiving.func_82159_b(p_77659_1_) - 1;
+         ItemStack itemstack1 = p_77659_3_.func_82169_q(i);
  
-         if (itemstack1 == null)
+-        if (itemstack1 == null)
++        if (itemstack1 == null && p_77659_1_.func_77973_b().canEquip(p_77659_3_, p_77659_1_))
          {
 -            p_77659_3_.func_70062_b(i, p_77659_1_.func_77946_l());
 +            p_77659_3_.func_70062_b(i + 1, p_77659_1_.func_77946_l());  //Forge: Vanilla bug fix associated with fixed setCurrentItemOrArmor indexs for players.

@@ -1,7 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/InventoryPlayer.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/InventoryPlayer.java
-@@ -311,6 +311,14 @@
+@@ -13,6 +13,7 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.util.ReportedException;
++import net.minecraftforge.common.StackOrigin;
+ 
+ public class InventoryPlayer implements IInventory
+ {
+@@ -309,8 +310,18 @@
+             if (this.field_70462_a[i] != null)
+             {
                  this.field_70462_a[i].func_77945_a(this.field_70458_d.field_70170_p, this.field_70458_d, i, this.field_70461_c == i);
++                this.field_70462_a[i].func_77973_b().onUpdate(field_70462_a[i], new StackOrigin.Player(field_70458_d, i));
              }
          }
 +
@@ -10,6 +21,7 @@
 +            if (field_70460_b[i] != null)
 +            {
 +                field_70460_b[i].func_77973_b().onArmorTick(field_70458_d.field_70170_p, field_70458_d, field_70460_b[i]);
++                field_70460_b[i].func_77973_b().onUpdate(field_70460_b[i], new StackOrigin.Player(this.field_70458_d, 36 + i));
 +            }
 +        }
      }

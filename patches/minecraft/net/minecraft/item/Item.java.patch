@@ -32,18 +32,19 @@
  import net.minecraft.init.Blocks;
  import net.minecraft.init.Items;
  import net.minecraft.potion.Potion;
-@@ -44,7 +51,10 @@
+@@ -44,7 +51,11 @@
  import net.minecraft.util.RegistryNamespaced;
  import net.minecraft.util.StatCollector;
  import net.minecraft.util.Vec3;
 +import net.minecraft.util.WeightedRandomChestContent;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.ChestGenHooks;
++import net.minecraftforge.common.StackOrigin;
 +import net.minecraftforge.common.util.EnumHelper;
  
  public class Item
  {
-@@ -448,6 +458,7 @@
+@@ -448,6 +459,7 @@
          return p_77654_1_;
      }
  
@@ -51,7 +52,7 @@
      public int func_77639_j()
      {
          return this.field_77777_bU;
-@@ -566,6 +577,7 @@
+@@ -566,6 +578,7 @@
          return this.field_77700_c;
      }
  
@@ -59,7 +60,15 @@
      public boolean func_77634_r()
      {
          return this.field_77700_c != null;
-@@ -623,6 +635,7 @@
+@@ -577,6 +590,7 @@
+         return 16777215;
+     }
+ 
++    @Deprecated // Use the more generic version of onUpdate instead.
+     public void func_77663_a(ItemStack p_77663_1_, World p_77663_2_, Entity p_77663_3_, int p_77663_4_, boolean p_77663_5_) {}
+ 
+     public void func_77622_d(ItemStack p_77622_1_, World p_77622_2_, EntityPlayer p_77622_3_) {}
+@@ -623,6 +637,7 @@
      }
  
      @SideOnly(Side.CLIENT)
@@ -67,7 +76,7 @@
      public boolean func_77636_d(ItemStack p_77636_1_)
      {
          return p_77636_1_.func_77948_v();
-@@ -635,7 +648,7 @@
+@@ -635,7 +650,7 @@
  
      public boolean func_77616_k(ItemStack p_77616_1_)
      {
@@ -76,7 +85,7 @@
      }
  
      protected MovingObjectPosition func_77621_a(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_)
-@@ -644,7 +657,7 @@
+@@ -644,7 +659,7 @@
          float f1 = p_77621_2_.field_70127_C + (p_77621_2_.field_70125_A - p_77621_2_.field_70127_C) * f;
          float f2 = p_77621_2_.field_70126_B + (p_77621_2_.field_70177_z - p_77621_2_.field_70126_B) * f;
          double d0 = p_77621_2_.field_70169_q + (p_77621_2_.field_70165_t - p_77621_2_.field_70169_q) * (double)f;
@@ -85,7 +94,7 @@
          double d2 = p_77621_2_.field_70166_s + (p_77621_2_.field_70161_v - p_77621_2_.field_70166_s) * (double)f;
          Vec3 vec3 = p_77621_1_.func_82732_R().func_72345_a(d0, d1, d2);
          float f3 = MathHelper.func_76134_b(-f2 * 0.017453292F - (float)Math.PI);
-@@ -654,6 +667,10 @@
+@@ -654,6 +669,10 @@
          float f7 = f4 * f5;
          float f8 = f3 * f5;
          double d3 = 5.0D;
@@ -96,7 +105,7 @@
          Vec3 vec31 = vec3.func_72441_c((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return p_77621_1_.func_147447_a(vec3, vec31, p_77621_3_, !p_77621_3_, false);
      }
-@@ -709,6 +726,7 @@
+@@ -709,6 +728,7 @@
          this.field_77791_bV = p_94581_1_.func_94245_a(this.func_111208_A());
      }
  
@@ -104,7 +113,7 @@
      public Multimap func_111205_h()
      {
          return HashMultimap.create();
-@@ -726,6 +744,570 @@
+@@ -726,6 +746,595 @@
          return this.field_111218_cA == null ? "MISSING_ICON_ITEM_" + field_150901_e.func_148757_b(this) + "_" + this.field_77774_bZ : this.field_111218_cA;
      }
  
@@ -409,9 +418,9 @@
 +     * @param player
 +     * @param itemStack
 +     */
++    @Deprecated // Use the generic version of onUpdate instead.
 +    public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack)
 +    {
-+
 +    }
 +
 +    /**
@@ -670,12 +679,36 @@
 +        Integer ret = toolClasses.get(toolClass);
 +        return ret == null ? -1 : ret; 
 +    }
++
++    /**
++     * Returns if the item stack can be equipped by the player.
++     */
++    public boolean canEquip(EntityPlayer player, ItemStack stack)
++    {
++        return true;
++    }
++
++    /**
++     * Returns if the item stack can be unequipped by the player.
++     */
++    public boolean canUnequip(EntityPlayer player, ItemStack stack)
++    {
++        return true;
++    }
++
++    /**
++     * Called every tick for most items the player is holding or carrying in some way,
++     * and may be called for entities or even tile entities.
++     */
++    public void onUpdate(ItemStack stack, StackOrigin origin)
++    {
++    }
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static enum ToolMaterial
      {
          WOOD(0, 59, 2.0F, 0.0F, 15),
-@@ -741,6 +1323,9 @@
+@@ -741,6 +1350,9 @@
  
          private static final String __OBFID = "CL_00000042";
  
@@ -685,7 +718,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -777,7 +1362,15 @@
+@@ -777,7 +1389,15 @@
  
          public Item func_150995_f()
          {
