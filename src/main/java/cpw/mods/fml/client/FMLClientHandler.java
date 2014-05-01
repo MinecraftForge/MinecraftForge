@@ -89,6 +89,7 @@ import cpw.mods.fml.common.StartupQuery;
 import cpw.mods.fml.common.WrongMinecraftVersionException;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
+import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.toposort.ModSortingException;
@@ -700,7 +701,8 @@ public class FMLClientHandler implements IFMLSidedHandler
                 modListBldr.put(modObj.get("modid").getAsString(), modObj.get("version").getAsString());
             }
 
-            serverDataTag.put(data, new ExtendedServerListData(type, true, modListBldr.build(), !moddedClientAllowed));
+            Map<String,String> modListMap = modListBldr.build();
+            serverDataTag.put(data, new ExtendedServerListData(type, FMLNetworkHandler.checkModList(modListMap, Side.CLIENT) == null, modListMap, !moddedClientAllowed));
         }
         else
         {
