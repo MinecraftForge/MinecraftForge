@@ -8,6 +8,7 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageCodec;
 import io.netty.util.AttributeKey;
+import java.lang.ref.WeakReference;
 import java.util.List;
 import org.apache.logging.log4j.Level;
 import cpw.mods.fml.common.FMLLog;
@@ -22,13 +23,13 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
      * Make this accessible to subclasses
      */
 
-    protected static final AttributeKey<ThreadLocal<FMLProxyPacket>> INBOUNDPACKETTRACKER = new AttributeKey<ThreadLocal<FMLProxyPacket>>("fml:inboundpacket");
+    public static final AttributeKey<ThreadLocal<WeakReference<FMLProxyPacket>>> INBOUNDPACKETTRACKER = new AttributeKey<ThreadLocal<WeakReference<FMLProxyPacket>>>("fml:inboundpacket");
 
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception
     {
         super.handlerAdded(ctx);
-        ctx.attr(INBOUNDPACKETTRACKER).set(new ThreadLocal<FMLProxyPacket>());
+        ctx.attr(INBOUNDPACKETTRACKER).set(new ThreadLocal<WeakReference<FMLProxyPacket>>());
     }
 
     public FMLIndexedMessageToMessageCodec<A> addDiscriminator(int discriminator, Class<? extends A> type)
@@ -49,7 +50,8 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
         buffer.writeByte(discriminator);
         encodeInto(ctx, msg, buffer);
         FMLProxyPacket proxy = new FMLProxyPacket(buffer.copy(), ctx.channel().attr(NetworkRegistry.FML_CHANNEL).get());
-        FMLProxyPacket old = ctx.attr(INBOUNDPACKETTRACKER).get().get();
+        WeakReference<FMLProxyPacket> ref = ctx.attr(INBOUNDPACKETTRACKER).get().get();
+        FMLProxyPacket old = ref == null ? null : ref.get();
         if (old != null)
         {
             proxy.setDispatcher(old.getDispatcher());
@@ -71,7 +73,7 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
             throw new NullPointerException("Undefined message for discriminator " + discriminator + " in channel " + msg.channel());
         }
         A newMsg = clazz.newInstance();
-        ctx.attr(INBOUNDPACKETTRACKER).get().set(msg);
+        ctx.attr(INBOUNDPACKETTRACKER).get().set(new WeakReference(msg));
         decodeInto(ctx, payload.slice(), newMsg);
         out.add(newMsg);
     }

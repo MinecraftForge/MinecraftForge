@@ -14,6 +14,7 @@ package cpw.mods.fml.client;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -161,7 +162,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     private Map<ServerStatusResponse,JsonObject> extraServerListData;
     private Map<ServerData, ExtendedServerListData> serverDataTag;
 
-    private NetHandlerPlayClient currentPlayClient;
+    private WeakReference<NetHandlerPlayClient> currentPlayClient;
 
     /**
      * Called to start the whole game off
@@ -596,7 +597,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public INetHandler getClientPlayHandler()
     {
-        return this.currentPlayClient;
+        return this.currentPlayClient == null ? null : this.currentPlayClient.get();
     }
     @Override
     public NetworkManager getClientToServerNetworkManager()
@@ -811,7 +812,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void setPlayClient(NetHandlerPlayClient netHandlerPlayClient)
     {
         playClientBlock.countDown();
-        this.currentPlayClient = netHandlerPlayClient;
+        this.currentPlayClient = new WeakReference(netHandlerPlayClient);
     }
 
     @Override
