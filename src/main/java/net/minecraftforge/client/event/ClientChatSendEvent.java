@@ -8,8 +8,8 @@ import cpw.mods.fml.common.eventhandler.Event;
 public class ClientChatSendEvent extends Event
 {
     public String message;
-    public ClientChatSendEvent(String p_146403_1_)
+    public ClientChatSendEvent(String msg)
     {
-        this.message = p_146403_1_;
+        this.message = msg;
     }
 }
