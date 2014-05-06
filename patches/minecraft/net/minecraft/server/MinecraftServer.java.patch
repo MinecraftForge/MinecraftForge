@@ -126,7 +126,7 @@
              if (this.field_71307_n.func_76468_d())
              {
                  this.field_71307_n.func_76470_e();
-@@ -588,13 +575,15 @@
+@@ -592,13 +579,15 @@
          this.field_71304_b.func_76320_a("levels");
          int i;
  
@@ -145,7 +145,7 @@
                  this.field_71304_b.func_76320_a(worldserver.func_72912_H().func_76065_j());
                  this.field_71304_b.func_76320_a("pools");
                  worldserver.func_82732_R().func_72343_a();
-@@ -641,9 +630,11 @@
+@@ -645,9 +634,11 @@
                  this.field_71304_b.func_76319_b();
              }
  
@@ -158,7 +158,7 @@
          this.field_71304_b.func_76318_c("connection");
          this.func_147137_ag().func_151269_c();
          this.field_71304_b.func_76318_c("players");
-@@ -688,7 +679,13 @@
+@@ -692,7 +683,13 @@
  
      public WorldServer func_71218_a(int p_71218_1_)
      {
@@ -173,7 +173,7 @@
      }
  
      public String func_71249_w()
-@@ -947,6 +944,7 @@
+@@ -951,6 +948,7 @@
  
              if (worldserver != null)
              {
@@ -181,7 +181,7 @@
                  worldserver.func_73041_k();
              }
          }
-@@ -1417,7 +1415,6 @@
+@@ -1421,7 +1419,6 @@
          this.field_147141_M = p_155759_1_;
      }
  
