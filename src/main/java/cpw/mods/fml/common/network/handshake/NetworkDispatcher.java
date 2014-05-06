@@ -31,8 +31,10 @@ import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.util.ChatComponentText;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.network.FMLIndexedMessageToMessageCodec;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.common.network.FMLNetworkException;
+import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.internal.FMLMessage;
 import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
@@ -368,6 +370,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         {
             FMLCommonHandler.instance().bus().post(new FMLNetworkEvent.ServerDisconnectionFromClientEvent(manager));
         }
+        cleanAttributes(ctx);
         ctx.disconnect(promise);
     }
 
@@ -382,6 +385,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         {
             FMLCommonHandler.instance().bus().post(new FMLNetworkEvent.ServerDisconnectionFromClientEvent(manager));
         }
+        cleanAttributes(ctx);
         ctx.close(promise);
     }
 
@@ -458,4 +462,14 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         super.exceptionCaught(ctx, cause);
     }
 
+    // if we add any attributes, we should force removal of them here so that 
+    //they do not hold references to the world and causes it to leak.
+    private void cleanAttributes(ChannelHandlerContext ctx)
+    {
+        ctx.channel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).remove();
+        ctx.channel().attr(NetworkRegistry.NET_HANDLER).remove();
+        ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).remove();
+        this.handshakeChannel.attr(FML_DISPATCHER).remove();
+        this.manager.channel().attr(FML_DISPATCHER).remove();
+    }
 }
