@@ -834,6 +834,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public void fireNetRegistrationEvent(EventBus bus, NetworkManager manager, Set<String> channelSet, String channel, Side side)
     {
+        waitForPlayClient();
         if (side == Side.CLIENT)
         {
             bus.post(new FMLNetworkEvent.CustomPacketRegistrationEvent<NetHandlerPlayClient>(manager, channelSet, channel, side, NetHandlerPlayClient.class));
