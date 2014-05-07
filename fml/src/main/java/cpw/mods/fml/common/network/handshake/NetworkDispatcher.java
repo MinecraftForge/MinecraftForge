@@ -29,6 +29,7 @@ import net.minecraft.network.play.server.S3FPacketCustomPayload;
 import net.minecraft.network.play.server.S40PacketDisconnect;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.util.ChatComponentText;
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.FMLIndexedMessageToMessageCodec;
@@ -448,6 +449,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
 
     public void abortClientHandshake(String type)
     {
+        FMLClientHandler.instance().waitForPlayClient();
         completeClientSideConnection(ConnectionType.valueOf(type));
     }
 
