@@ -49,7 +49,6 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -247,17 +246,6 @@ public class ForgeHooksClient
         {
             GL11.glRotatef((float)(block.getBedDirection(mc.theWorld, x, y, z) * 90), 0.0F, 1.0F, 0.0F);
         }
-    }
-    
-    public static boolean onDisplayGuiScreen(GuiScreenEvent.GuiOpenEvent event)
-    {
-        // TODO: Remove all but the commented line when net.minecraftforge.client.event.GuiOpenEvent is removed.
-        if (MinecraftForge.EVENT_BUS.post(event)) return true;
-        GuiOpenEvent deprecatedEvent = new GuiOpenEvent(event.newGui);
-        boolean flag = MinecraftForge.EVENT_BUS.post(deprecatedEvent);
-        event.newGui = deprecatedEvent.gui;
-        return flag;
-        // return MinecraftForge.EVENT_BUS.post(event);
     }
 
     public static boolean onDrawBlockHighlight(RenderGlobal context, EntityPlayer player, MovingObjectPosition target, int subID, ItemStack currentItem, float partialTicks)

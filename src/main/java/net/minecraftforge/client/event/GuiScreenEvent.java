@@ -176,26 +176,4 @@ public class GuiScreenEvent extends Event
             }
         }
     }
-
-    /**
-     * This event is called before any GuiScreen will open.
-     * If you don't want this to happen cancel the event.
-     * If you want to override this GuiScreen set the newGui variable to your own Gui.
-     * 
-     * @author jk-5
-     */
-    @Cancelable
-    public static class GuiOpenEvent extends GuiScreenEvent
-    {
-        /**
-         * The GuiScreen object that will be opened.
-         */
-        public GuiScreen newGui;
-        
-        public GuiOpenEvent(GuiScreen gui)
-        {
-            super(gui);
-            newGui = gui;
-        }
-    }
 }
