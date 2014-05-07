@@ -119,3 +119,32 @@
          }
  
          return (Multimap)object;
+@@ -754,4 +758,28 @@
+ 
+         return ichatcomponent;
+     }
++
++    /*========================= Forge Start=======================*/
++    @Override
++    public int hashCode()
++    {
++        int hash = 1;
++        if (field_151002_e != null) hash = 31*hash + field_151002_e.hashCode();
++        hash = 31*hash + field_77991_e;
++        hash = 31*hash + field_77994_a;
++        if (field_77990_d != null) hash = 31*hash + field_77990_d.hashCode();
++        return hash;
++    }
++
++    @Override
++    public boolean equals(Object o)
++    {
++        if (!(o instanceof ItemStack)) return false;
++        if (o == this) return true;
++        ItemStack i = (ItemStack)o;
++        if (field_151002_e != i.field_151002_e || field_77994_a != i.field_77994_a || field_77991_e != i.field_77991_e)
++            return false;
++        if (field_77990_d != null) return field_77990_d.equals(i.field_77990_d);
++        return i.field_77990_d == null;
++    }
+ }
