@@ -24,7 +24,7 @@
          this.field_71459_aj = p_i1014_5_;
          this.field_71443_c = p_i1014_2_;
          this.field_71440_d = p_i1014_3_;
-@@ -417,7 +425,7 @@
+@@ -419,7 +427,7 @@
  
          try
          {
@@ -33,7 +33,7 @@
          }
          catch (LWJGLException lwjglexception)
          {
-@@ -516,7 +524,7 @@
+@@ -518,7 +526,7 @@
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
          FMLClientHandler.instance().finishMinecraftLoading();
          this.func_71361_d("Post startup");
@@ -42,7 +42,7 @@
  
          if (this.field_71475_ae != null)
          {
-@@ -699,11 +707,6 @@
+@@ -701,11 +709,6 @@
  
      public void func_147108_a(GuiScreen p_147108_1_)
      {
@@ -54,7 +54,7 @@
          if (p_147108_1_ == null && this.field_71441_e == null)
          {
              p_147108_1_ = new GuiMainMenu();
-@@ -713,6 +716,17 @@
+@@ -715,6 +718,17 @@
              p_147108_1_ = new GuiGameOver();
          }
  
@@ -72,7 +72,7 @@
          if (p_147108_1_ instanceof GuiMainMenu)
          {
              this.field_71474_y.field_74330_P = false;
-@@ -1295,7 +1309,7 @@
+@@ -1297,7 +1311,7 @@
  
                      if (this.field_71439_g.func_82246_f(i, j, k))
                      {
@@ -81,7 +81,7 @@
                          this.field_71439_g.func_71038_i();
                      }
                  }
-@@ -1376,11 +1390,12 @@
+@@ -1378,11 +1392,12 @@
                      int j = this.field_71476_x.field_72312_c;
                      int k = this.field_71476_x.field_72309_d;
  
@@ -96,7 +96,7 @@
                          {
                              flag = false;
                              this.field_71439_g.func_71038_i();
-@@ -1407,7 +1422,8 @@
+@@ -1409,7 +1424,8 @@
          {
              ItemStack itemstack1 = this.field_71439_g.field_71071_by.func_70448_g();
  
@@ -106,7 +106,7 @@
              {
                  this.field_71460_t.field_78516_c.func_78445_c();
              }
-@@ -1606,6 +1622,8 @@
+@@ -1608,6 +1624,8 @@
  
              while (Mouse.next())
              {
@@ -115,7 +115,7 @@
                  i = Mouse.getEventButton();
  
                  if (field_142025_a && i == 0 && (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)))
-@@ -2079,6 +2097,11 @@
+@@ -2081,6 +2099,11 @@
  
      public void func_71353_a(WorldClient p_71353_1_, String p_71353_2_)
      {
@@ -127,7 +127,7 @@
          if (p_71353_1_ == null)
          {
              NetHandlerPlayClient nethandlerplayclient = this.func_147114_u();
-@@ -2091,6 +2114,18 @@
+@@ -2093,6 +2116,18 @@
              if (this.field_71437_Z != null)
              {
                  this.field_71437_Z.func_71263_m();
@@ -146,7 +146,7 @@
              }
  
              this.field_71437_Z = null;
-@@ -2239,113 +2274,10 @@
+@@ -2241,113 +2276,10 @@
          if (this.field_71476_x != null)
          {
              boolean flag = this.field_71439_g.field_71075_bZ.field_75098_d;
@@ -262,7 +262,7 @@
              if (flag)
              {
                  j = this.field_71439_g.field_71069_bz.field_75151_b.size() - 9 + this.field_71439_g.field_71071_by.field_70461_c;
-@@ -2512,8 +2444,15 @@
+@@ -2514,8 +2446,15 @@
          p_70001_1_.func_76472_a("gl_max_texture_size", Integer.valueOf(func_71369_N()));
      }
  
@@ -278,7 +278,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
-@@ -2521,6 +2460,7 @@
+@@ -2523,6 +2462,7 @@
  
              if (j != 0)
              {
