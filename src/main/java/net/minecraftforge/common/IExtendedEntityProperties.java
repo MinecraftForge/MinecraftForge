@@ -30,6 +30,8 @@ public interface IExtendedEntityProperties {
      * Used to initialize the extended properties with the entity that this is attached to, as well
      * as the world object.
      * Called automatically if you register with the EntityConstructing event.
+     * May be called multiple times if the extended properties is moved over to a new entity.
+     *  Such as when a player switches dimension {Minecraft re-creates the player entity}
      * @param entity  The entity that this extended properties is attached to
      * @param world  The world in which the entity exists
      */

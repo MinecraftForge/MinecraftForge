@@ -498,7 +498,18 @@
              this.field_71074_e = p_71008_1_;
              this.field_71072_f = p_71008_2_;
  
-@@ -1876,6 +2020,17 @@
+@@ -1865,6 +2009,10 @@
+             this.field_71106_cc = p_71049_1_.field_71106_cc;
+             this.func_85040_s(p_71049_1_.func_71037_bA());
+             this.field_82152_aq = p_71049_1_.field_82152_aq;
++            //Copy and re-init ExtendedProperties when switching dimensions.
++            this.extendedProperties = p_71049_1_.extendedProperties;
++            for (net.minecraftforge.common.IExtendedEntityProperties p : this.extendedProperties.values())
++                p.init(this, this.field_70170_p);
+         }
+         else if (this.field_70170_p.func_82736_K().func_82766_b("keepInventory"))
+         {
+@@ -1876,6 +2024,17 @@
          }
  
          this.field_71078_a = p_71049_1_.field_71078_a;
@@ -516,7 +527,7 @@
      }
  
      protected boolean func_70041_e_()
-@@ -1914,7 +2069,14 @@
+@@ -1914,7 +2073,14 @@
  
      public void func_70062_b(int p_70062_1_, ItemStack p_70062_2_)
      {
@@ -532,7 +543,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -1959,7 +2121,7 @@
+@@ -1959,7 +2125,7 @@
  
      public IChatComponent func_145748_c_()
      {
@@ -541,7 +552,7 @@
          chatcomponenttext.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
          return chatcomponenttext;
      }
-@@ -2042,6 +2204,118 @@
+@@ -2042,6 +2208,118 @@
          FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
      }
  
