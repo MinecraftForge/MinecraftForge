@@ -41,3 +41,19 @@
          {
              return false;
          }
+@@ -443,6 +446,7 @@
+ 
+         if (!this.func_76497_e())
+         {
++            this.field_76506_c = null; //Fix vanilla Mem leak, holds latest world
+             return false;
+         }
+         else
+@@ -451,6 +455,7 @@
+             this.func_76498_b();
+             this.func_76499_c();
+             this.func_76494_d();
++            this.field_76506_c = null; //Fix vanilla Mem leak, holds latest world
+             return true;
+         }
+     }
