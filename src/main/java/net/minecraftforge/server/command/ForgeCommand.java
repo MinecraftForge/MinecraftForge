@@ -1,5 +1,6 @@
 package net.minecraftforge.server.command;
 
+import java.lang.ref.WeakReference;
 import java.text.DecimalFormat;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -11,13 +12,13 @@ import net.minecraftforge.server.ForgeTimeTracker;
 
 public class ForgeCommand extends CommandBase {
 
-    private MinecraftServer server;
+    private static final DecimalFormat timeFormatter = new DecimalFormat("########0.000");
+    private WeakReference<MinecraftServer> server;
 
     public ForgeCommand(MinecraftServer server)
     {
-        this.server = server;
+        this.server = new WeakReference(server);
     }
-    private static final DecimalFormat timeFormatter = new DecimalFormat("########0.000");
 
     @Override
     public String getCommandName()
@@ -109,17 +110,17 @@ public class ForgeCommand extends CommandBase {
         {
             for (Integer dimId : DimensionManager.getIDs())
             {
-                double worldTickTime = ForgeCommand.mean(this.server.worldTickTimes.get(dimId)) * 1.0E-6D;
+                double worldTickTime = ForgeCommand.mean(this.getServer().worldTickTimes.get(dimId)) * 1.0E-6D;
                 double worldTPS = Math.min(1000.0/worldTickTime, 20);
                 sender.addChatMessage(new ChatComponentTranslation("commands.forge.tps.summary",String.format("Dim %d", dimId), timeFormatter.format(worldTickTime), timeFormatter.format(worldTPS)));
             }
-            double meanTickTime = ForgeCommand.mean(this.server.tickTimeArray) * 1.0E-6D;
+            double meanTickTime = ForgeCommand.mean(this.getServer().tickTimeArray) * 1.0E-6D;
             double meanTPS = Math.min(1000.0/meanTickTime, 20);
             sender.addChatMessage(new ChatComponentTranslation("commands.forge.tps.summary","Overall", timeFormatter.format(meanTickTime), timeFormatter.format(meanTPS)));
         }
         else
         {
-            double worldTickTime = ForgeCommand.mean(this.server.worldTickTimes.get(dim)) * 1.0E-6D;
+            double worldTickTime = ForgeCommand.mean(this.getServer().worldTickTimes.get(dim)) * 1.0E-6D;
             double worldTPS = Math.min(1000.0/worldTickTime, 20);
             sender.addChatMessage(new ChatComponentTranslation("commands.forge.tps.summary",String.format("Dim %d", dim), timeFormatter.format(worldTickTime), timeFormatter.format(worldTPS)));
         }
@@ -134,5 +135,10 @@ public class ForgeCommand extends CommandBase {
         }
 
         return sum / values.length;
+    }
+
+    private MinecraftServer getServer()
+    {
+        return this.server.get();
     }
 }
