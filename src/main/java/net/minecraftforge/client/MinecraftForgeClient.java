@@ -10,6 +10,7 @@ import java.util.IdentityHashMap;
 
 import com.google.common.collect.Maps;
 
+import net.minecraft.command.ICommand;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
@@ -17,6 +18,7 @@ import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 public class MinecraftForgeClient
 {
     private static IdentityHashMap<Item, IItemRenderer> customItemRenderers = Maps.newIdentityHashMap();
+    private static ClientCommandHandler clientCommandHanlder = ClientCommandHandler.instance;
 
     /**
      * Register a custom renderer for a specific item. This can be used to
@@ -84,5 +86,14 @@ public class MinecraftForgeClient
         {
             stencilBits.set(bit);
         }
+    }
+
+    /**
+     * Register a client command. The command will be executed only by the client.
+     * @param command Your command
+     */
+    public static void registerClientCommand(ICommand command)
+    {
+        clientCommandHanlder.registerCommand(command);
     }
 }
