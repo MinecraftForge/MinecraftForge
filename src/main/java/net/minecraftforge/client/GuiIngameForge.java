@@ -630,7 +630,7 @@ public class GuiIngameForge extends GuiIngame
         }
 
 
-        if (this.mc.gameSettings.showDebugInfo)
+        if (this.mc.gameSettings.showDebugInfo && !pre(DEBUG))
         {
             mc.mcProfiler.startSection("debug");
             GL11.glPushMatrix();
@@ -689,6 +689,7 @@ public class GuiIngameForge extends GuiIngame
             GL11.glPopMatrix();
             mc.mcProfiler.endSection();
         }
+        post(DEBUG);
 
         RenderGameOverlayEvent.Text event = new RenderGameOverlayEvent.Text(eventParent, left, right);
         if (!MinecraftForge.EVENT_BUS.post(event))
