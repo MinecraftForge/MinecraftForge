@@ -688,8 +688,8 @@ public class GuiIngameForge extends GuiIngame
             }
             GL11.glPopMatrix();
             mc.mcProfiler.endSection();
+            post(DEBUG);
         }
-        post(DEBUG);
 
         RenderGameOverlayEvent.Text event = new RenderGameOverlayEvent.Text(eventParent, left, right);
         if (!MinecraftForge.EVENT_BUS.post(event))
