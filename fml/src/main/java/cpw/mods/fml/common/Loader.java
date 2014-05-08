@@ -502,6 +502,11 @@ public class Loader
 
     public void preinitializeMods()
     {
+        if (!modController.isInState(LoaderState.PREINITIALIZATION))
+        {
+            FMLLog.warning("There were errors previously. Not beginning mod initialization phase");
+            return;
+        }
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, discoverer.getASMTable(), canonicalConfigDir);
         modController.transition(LoaderState.INITIALIZATION, false);
     }
