@@ -46,6 +46,8 @@ public interface IFMLSidedHandler
 
     void addModAsResource(ModContainer container);
 
+    void updateResourcePackList();
+
     String getCurrentLanguage();
 
     void serverStopped();
