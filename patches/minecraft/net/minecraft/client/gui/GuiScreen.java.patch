@@ -64,7 +64,7 @@
 +                    this.field_146290_a = event.button;
 +                    event.button.func_146113_a(this.field_146297_k.func_147118_V());
 +                    this.func_146284_a(event.button);
-+                    if (this.field_146297_k.field_71462_r.equals(this))
++                    if (this.equals(this.field_146297_k.field_71462_r))
 +                        MinecraftForge.EVENT_BUS.post(new ActionPerformedEvent.Post(this, event.button, this.field_146292_n));
                  }
              }
