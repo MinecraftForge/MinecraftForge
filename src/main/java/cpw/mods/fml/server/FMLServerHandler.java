@@ -85,6 +85,7 @@ public class FMLServerHandler implements IFMLSidedHandler
     {
         server = minecraftServer;
         Loader.instance().loadMods();
+        Loader.instance().preinitializeMods();
     }
 
     /**
@@ -220,11 +221,6 @@ public class FMLServerHandler implements IFMLSidedHandler
         LanguageRegistry.instance().loadLanguagesFor(container, Side.SERVER);
     }
 
-    @Override
-    public void updateResourcePackList()
-    {
-
-    }
     @Override
     public String getCurrentLanguage()
     {

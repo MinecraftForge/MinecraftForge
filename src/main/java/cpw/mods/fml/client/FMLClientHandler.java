@@ -229,7 +229,25 @@ public class FMLClientHandler implements IFMLSidedHandler
             haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
             return;
         }
+        finally
+        {
+            client.refreshResources();
+        }
 
+        try
+        {
+            Loader.instance().preinitializeMods();
+        }
+        catch (CustomModLoadingErrorDisplayException custom)
+        {
+            FMLLog.log(Level.ERROR, custom, "A custom exception was thrown by a mod, the game will now halt");
+            customError = custom;
+        }
+        catch (LoaderException le)
+        {
+            haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
+            return;
+        }
         Map<String,Map<String,String>> sharedModList = (Map<String, Map<String, String>>) Launch.blackboard.get("modList");
         if (sharedModList == null)
         {
@@ -566,12 +584,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
     }
 
-    @Override
-    public void updateResourcePackList()
-    {
-        client.refreshResources();
-    }
-
     public IResourcePack getResourcePackFor(String modId)
     {
         return resourcePackMap.get(modId);
@@ -813,7 +825,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void setPlayClient(NetHandlerPlayClient netHandlerPlayClient)
     {
         playClientBlock.countDown();
-        this.currentPlayClient = new WeakReference(netHandlerPlayClient);
+        this.currentPlayClient = new WeakReference<NetHandlerPlayClient>(netHandlerPlayClient);
     }
 
     @Override
