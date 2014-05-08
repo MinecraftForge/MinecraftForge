@@ -148,6 +148,7 @@ public class Loader
     private static List<String> injectedContainers;
     private ImmutableMap<String, String> fmlBrandingProperties;
     private File forcedModFile;
+    private ModDiscoverer discoverer;
 
     public static Loader instance()
     {
@@ -462,15 +463,15 @@ public class Loader
         namedMods = Maps.newHashMap();
         modController = new LoadController(this);
         modController.transition(LoaderState.LOADING, false);
-        ModDiscoverer disc = identifyMods();
-        ModAPIManager.INSTANCE.manageAPI(modClassLoader, disc);
+        discoverer = identifyMods();
+        ModAPIManager.INSTANCE.manageAPI(modClassLoader, discoverer);
         disableRequestedMods();
         modController.distributeStateMessage(FMLLoadEvent.class);
         sortModList();
         ModAPIManager.INSTANCE.cleanupAPIContainers(modController.getActiveModList());
         ModAPIManager.INSTANCE.cleanupAPIContainers(mods);
         mods = ImmutableList.copyOf(mods);
-        for (File nonMod : disc.getNonModLibs())
+        for (File nonMod : discoverer.getNonModLibs())
         {
             if (nonMod.isFile())
             {
@@ -486,7 +487,7 @@ public class Loader
             }
         }
         modController.transition(LoaderState.CONSTRUCTING, false);
-        modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader, disc.getASMTable(), reverseDependencies);
+        modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader, discoverer.getASMTable(), reverseDependencies);
         FMLLog.fine("Mod signature data");
         for (ModContainer mod : getActiveModList())
         {
@@ -497,7 +498,11 @@ public class Loader
             FMLLog.fine("No user mod signature data found");
         }
         modController.transition(LoaderState.PREINITIALIZATION, false);
-        modController.distributeStateMessage(LoaderState.PREINITIALIZATION, disc.getASMTable(), canonicalConfigDir);
+    }
+
+    public void preinitializeMods()
+    {
+        modController.distributeStateMessage(LoaderState.PREINITIALIZATION, discoverer.getASMTable(), canonicalConfigDir);
         modController.transition(LoaderState.INITIALIZATION, false);
     }
 
