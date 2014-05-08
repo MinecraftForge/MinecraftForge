@@ -31,7 +31,6 @@ import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.util.ChatComponentText;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.network.FMLIndexedMessageToMessageCodec;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.common.network.FMLNetworkException;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
@@ -463,7 +462,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         super.exceptionCaught(ctx, cause);
     }
 
-    // if we add any attributes, we should force removal of them here so that 
+    // if we add any attributes, we should force removal of them here so that
     //they do not hold references to the world and causes it to leak.
     private void cleanAttributes(ChannelHandlerContext ctx)
     {
