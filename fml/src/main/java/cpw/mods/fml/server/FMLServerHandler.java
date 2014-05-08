@@ -34,7 +34,6 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.StartupQuery;
 import cpw.mods.fml.common.eventhandler.EventBus;
-import cpw.mods.fml.common.functions.GenericIterableFactory;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -177,8 +176,7 @@ public class FMLServerHandler implements IFMLSidedHandler
                 // rudimentary command processing, check for fml confirm/cancel and stop commands
                 synchronized (dedServer.pendingCommandList)
                 {
-
-                    for (Iterator<ServerCommand> it = GenericIterableFactory.newCastingIterable(dedServer.pendingCommandList, ServerCommand.class).iterator(); it.hasNext();)
+                    for (Iterator<ServerCommand> it = dedServer.pendingCommandList.iterator(); it.hasNext(); )
                     {
                         String cmd = it.next().command.trim().toLowerCase();
 
@@ -221,6 +219,11 @@ public class FMLServerHandler implements IFMLSidedHandler
         LanguageRegistry.instance().loadLanguagesFor(container, Side.SERVER);
     }
 
+    @Override
+    public void updateResourcePackList()
+    {
+
+    }
     @Override
     public String getCurrentLanguage()
     {
