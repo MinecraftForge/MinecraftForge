@@ -54,7 +54,7 @@ public class NetworkModHolder
         @Override
         public boolean check(Map<String,String> remoteVersions, Side side)
         {
-            return remoteVersions.containsKey(container.getModId()) ? acceptVersion(remoteVersions.get(container.getModId())) : false;
+            return remoteVersions.containsKey(container.getModId()) ? acceptVersion(remoteVersions.get(container.getModId())) : side == Side.SERVER;
         }
         @Override
         public String toString()
