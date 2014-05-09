@@ -229,14 +229,21 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     private void kickWithMessage(String message)
     {
         final ChatComponentText chatcomponenttext = new ChatComponentText(message);
-        manager.scheduleOutboundPacket(new S40PacketDisconnect(chatcomponenttext), new GenericFutureListener<Future<?>>()
+        if (side == Side.CLIENT)
         {
-            @Override
-            public void operationComplete(Future<?> result)
+            manager.closeChannel(chatcomponenttext);
+        }
+        else
+        {
+            manager.scheduleOutboundPacket(new S40PacketDisconnect(chatcomponenttext), new GenericFutureListener<Future<?>>()
             {
-                manager.closeChannel(chatcomponenttext);
-            }
-        });
+                @Override
+                public void operationComplete(Future<?> result)
+                {
+                    manager.closeChannel(chatcomponenttext);
+                }
+            });
+        }
         manager.channel().config().setAutoRead(false);
     }
 
