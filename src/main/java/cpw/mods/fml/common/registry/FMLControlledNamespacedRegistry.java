@@ -356,7 +356,9 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         }
         if (getId(thing) >= 0) // duplicate object
         {
-            throw new IllegalArgumentException(String.format("The object %s has been registered twice, using the names %s and %s.", thing, getNameForObject(thing), name));
+            int foundId = getId(thing);
+            Object otherThing = getRaw(foundId);
+            throw new IllegalArgumentException(String.format("The object %s{%x} has been registered twice, using the names %s and %s. (Other object at this id is %s{%x})", thing, System.identityHashCode(thing), getNameForObject(thing), name, otherThing, System.identityHashCode(otherThing)));
         }
         if (GameData.isFrozen(this))
         {
