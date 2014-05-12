@@ -380,9 +380,9 @@ public class DimensionManager
 
     public static void loadDimensionDataMap(NBTTagCompound compoundTag)
     {
+        dimensionMap.clear();
         if (compoundTag == null)
         {
-            dimensionMap.clear();
             for (Integer id : dimensions.keySet())
             {
                 if (id >= 0)

@@ -223,10 +223,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     @Override
     public void readData(SaveHandler handler, WorldInfo info, Map<String, NBTBase> propertyMap, NBTTagCompound tag)
     {
-        if (tag.hasKey("DimensionData"))
-        {
-            DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
-        }
+        DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
     }
 
     @Subscribe
