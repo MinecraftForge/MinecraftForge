@@ -18,7 +18,7 @@
 +            this.flowers.clear();
 +            for (int x = 0; x < BlockFlower.field_149859_a.length; x++)
 +            {
-+                this.addFlower(Blocks.field_150328_O, x, 10);
++                this.addFlower(Blocks.field_150328_O, x == 1 ? 0 : x, 10);
 +            }
 +        }
      }
