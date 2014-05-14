@@ -14,14 +14,15 @@ public class ListenerList
 
     public ListenerList()
     {
-        extendMasterList(this);
-        resizeLists(maxSize);
+        this(null);
     }
 
     public ListenerList(ListenerList parent)
     {
-        this();
+        // parent needs to be set before resize !
         this.parent = parent;
+        extendMasterList(this);
+        resizeLists(maxSize);
     }
 
     private synchronized static void extendMasterList(ListenerList inst)
