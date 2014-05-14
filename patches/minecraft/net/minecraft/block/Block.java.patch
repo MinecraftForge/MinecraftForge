@@ -924,7 +924,7 @@
 +            case Nether: return this == Blocks.field_150425_aM;
 +            case Crop:   return this == Blocks.field_150458_ak;
 +            case Cave:   return isSideSolid(world, x, y, z, UP);
-+            case Plains: return this == Blocks.field_150349_c || this == Blocks.field_150346_d;
++            case Plains: return this == Blocks.field_150349_c || this == Blocks.field_150346_d || this == Blocks.field_150458_ak;
 +            case Water:  return world.func_147439_a(x, y, z).func_149688_o() == Material.field_151586_h && world.func_72805_g(x, y, z) == 0;
 +            case Beach:
 +                boolean isBeach = this == Blocks.field_150349_c || this == Blocks.field_150346_d || this == Blocks.field_150354_m;
