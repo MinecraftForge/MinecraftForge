@@ -1,0 +1,34 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockNote.java
++++ ../src-work/minecraft/net/minecraft/block/BlockNote.java
+@@ -6,6 +6,8 @@
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityNote;
+ import net.minecraft.world.World;
++import net.minecraftforge.event.ForgeEventFactory;
++import net.minecraftforge.event.NoteblockEvent;
+ 
+ public class BlockNote extends BlockContainer
+ {
+@@ -45,7 +47,9 @@
+ 
+             if (tileentitynote != null)
+             {
+-                tileentitynote.func_145877_a();
++                NoteblockEvent.Change event;
++                if ((event = ForgeEventFactory.onNoteblockChange(p_149727_1_, p_149727_2_, p_149727_3_, p_149727_4_, tileentitynote.func_145832_p(), tileentitynote.field_145879_a)).isCanceled()) return false;
++                tileentitynote.field_145879_a = (byte) event.getVanillaNoteId();
+                 tileentitynote.func_145878_a(p_149727_1_, p_149727_2_, p_149727_3_, p_149727_4_);
+             }
+ 
+@@ -73,6 +77,11 @@
+ 
+     public boolean func_149696_a(World p_149696_1_, int p_149696_2_, int p_149696_3_, int p_149696_4_, int p_149696_5_, int p_149696_6_)
+     {
++        NoteblockEvent.Play event;
++        if ((event = ForgeEventFactory.onNoteblockPlay(p_149696_1_, p_149696_2_, p_149696_3_, p_149696_4_, p_149696_5_, p_149696_6_)).isCanceled()) return false;
++        p_149696_5_ = event.getVanillaInstrumentId();
++        p_149696_6_ = event.getVanillaNoteId();
++        
+         float f = (float)Math.pow(2.0D, (double)(p_149696_6_ - 12) / 12.0D);
+         String s = "harp";
+ 
