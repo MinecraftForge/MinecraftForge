@@ -31,7 +31,7 @@ public interface ISpecialArmor
      * same priority, damage will be distributed between them based on there
      * absorption ratio.
      *
-     * @param player The entity wearing the armor.
+     * @param entity The entity wearing the armor.
      * @param armor The ItemStack of the armor item itself.
      * @param source The source of the damage, which can be used to alter armor
      *     properties based on the type or source of damage.
@@ -39,7 +39,7 @@ public interface ISpecialArmor
      * @param slot The armor slot the item is in.
      * @return A ArmorProperties instance holding information about how the armor effects damage.
      */
-    public ArmorProperties getProperties(EntityLivingBase player, ItemStack armor, DamageSource source, double damage, int slot);
+    public ArmorProperties getProperties(EntityLivingBase entity, ItemStack armor, DamageSource source, double damage, int slot);
 
     /**
      * Get the displayed effective armor.
@@ -84,13 +84,12 @@ public interface ISpecialArmor
         /**
          * Gathers and applies armor reduction to damage being dealt to a entity.
          *
-         * @param entity The Entity being damage
-         * @param inventory An array of armor items
+         * @param entity The entity being damaged
          * @param source The damage source type
          * @param damage The total damage being done
          * @return The left over damage that has not been absorbed by the armor
          */
-        public static float ApplyArmor(EntityLivingBase entity, ItemStack[] inventory, DamageSource source, double damage)
+        public static float ApplyArmor(EntityLivingBase entity, DamageSource source, double damage)
         {
             if (DEBUG)
             {
@@ -98,9 +97,9 @@ public interface ISpecialArmor
             }
             damage *= 25;
             ArrayList<ArmorProperties> dmgVals = new ArrayList<ArmorProperties>();
-            for (int x = 0; x < inventory.length; x++)
+            for (int x = 0; x < 4; x++)
             {
-                ItemStack stack = inventory[x];
+                ItemStack stack = entity.getEquipmentInSlot(x + 1);
                 if (stack == null)
                 {
                     continue;
@@ -141,7 +140,7 @@ public interface ISpecialArmor
                     double absorb = damage * prop.AbsorbRatio;
                     if (absorb > 0)
                     {
-                        ItemStack stack = inventory[prop.Slot];
+                        ItemStack stack = entity.getEquipmentInSlot(prop.Slot + 1);
                         int itemDamage = (int)(absorb / 25D < 1 ? 1 : absorb / 25D);
                         if (stack.getItem() instanceof ISpecialArmor)
                         {
@@ -161,7 +160,7 @@ public interface ISpecialArmor
                             {
                                 stack.onItemDestroyedByUse((EntityPlayer)entity);
                             }*/
-                            inventory[prop.Slot] = null;
+                            entity.setCurrentItemOrArmor(prop.Slot + 1, null);
                         }
                     }
                 }
@@ -172,6 +171,12 @@ public interface ISpecialArmor
                 System.out.println("Return: " + (int)(damage / 25.0F) + " " + damage);
             }
             return (float)(damage / 25.0F);
+        }
+
+        @Deprecated // Use updated ApplyArmor instead. Parameter inventory is ignored.
+        public static float ApplyArmor(EntityLivingBase entity, ItemStack[] inventory, DamageSource source, double damage)
+        {
+            return ApplyArmor(entity, source, damage);
         }
 
         /**

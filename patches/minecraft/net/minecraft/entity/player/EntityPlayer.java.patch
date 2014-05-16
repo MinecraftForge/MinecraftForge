@@ -318,7 +318,7 @@
              }
  
 -            p_70665_2_ = this.func_70655_b(p_70665_1_, p_70665_2_);
-+            p_70665_2_ = ArmorProperties.ApplyArmor(this, field_71071_by.field_70460_b, p_70665_1_, p_70665_2_);
++            p_70665_2_ = ArmorProperties.ApplyArmor(this, p_70665_1_, p_70665_2_);
 +            if (p_70665_2_ <= 0) return;
              p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
              float f1 = p_70665_2_;
