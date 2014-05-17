@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/World.java
 +++ ../src-work/minecraft/net/minecraft/world/World.java
-@@ -1800,14 +1800,14 @@
+@@ -1799,14 +1799,14 @@
              }
          }
  
@@ -17,7 +17,7 @@
          this.field_72984_F.func_76318_c("pendingBlockEntities");
  
          if (!this.field_147484_a.isEmpty())
-@@ -3570,7 +3570,7 @@
+@@ -3597,7 +3597,7 @@
      @SideOnly(Side.CLIENT)
      public double func_72919_O()
      {

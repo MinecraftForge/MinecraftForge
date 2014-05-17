@@ -9,7 +9,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import io.netty.bootstrap.Bootstrap;
-@@ -127,7 +129,7 @@
+@@ -142,7 +144,7 @@
          final EnumConnectionState enumconnectionstate = EnumConnectionState.func_150752_a(p_150732_1_);
          final EnumConnectionState enumconnectionstate1 = (EnumConnectionState)this.field_150746_k.attr(field_150739_c).get();
  
@@ -18,7 +18,7 @@
          {
              field_150735_g.debug("Disabled auto read");
              this.field_150746_k.config().setAutoRead(false);
-@@ -135,7 +137,7 @@
+@@ -150,7 +152,7 @@
  
          if (this.field_150746_k.eventLoop().inEventLoop())
          {
@@ -27,7 +27,7 @@
              {
                  this.func_150723_a(enumconnectionstate);
              }
-@@ -149,7 +151,7 @@
+@@ -164,7 +166,7 @@
                  private static final String __OBFID = "CL_00001241";
                  public void run()
                  {
@@ -36,7 +36,7 @@
                      {
                          NetworkManager.this.func_150723_a(enumconnectionstate);
                      }
-@@ -299,6 +301,11 @@
+@@ -315,6 +317,11 @@
          this.channelRead0(p_channelRead0_1_, (Packet)p_channelRead0_2_);
      }
  

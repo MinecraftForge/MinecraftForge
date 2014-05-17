@@ -8,6 +8,7 @@ import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSelectWorld;
 import net.minecraft.client.gui.GuiYesNo;
+import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.world.WorldSettings;
 
 import org.apache.logging.log4j.Level;
@@ -17,18 +18,21 @@ import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.StartupQuery;
 import cpw.mods.fml.common.ZipperUtil;
 
-public class GuiOldSaveLoadConfirm extends GuiYesNo {
+public class GuiOldSaveLoadConfirm extends GuiYesNo implements GuiYesNoCallback {
 
     private String dirName;
     private String saveName;
     private File zip;
+    private GuiScreen parent;
     public GuiOldSaveLoadConfirm(String dirName, String saveName, GuiScreen parent)
     {
-        super(parent, "", "", 0);
+        super(null, "", "", 0);
+        this.parent = parent;
         this.dirName = dirName;
         this.saveName = saveName;
         this.zip = new File(FMLClientHandler.instance().getClient().mcDataDir,String.format("%s-%2$td%2$tm%2$ty%2$tH%2$tM%2$tS.zip", dirName, System.currentTimeMillis()));
     }
+
     @Override
     public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_)
     {
@@ -55,7 +59,7 @@ public class GuiOldSaveLoadConfirm extends GuiYesNo {
         if (p_146284_1_.id == 1)
         {
             ObfuscationReflectionHelper.setPrivateValue(GuiSelectWorld.class, (GuiSelectWorld)parentScreen, false, "field_"+"146634_i");
-            FMLClientHandler.instance().showGuiScreen(parentScreen);
+            FMLClientHandler.instance().showGuiScreen(parent);
         }
         else
         {
@@ -66,7 +70,7 @@ public class GuiOldSaveLoadConfirm extends GuiYesNo {
             } catch (IOException e)
             {
                 FMLLog.log(Level.WARN, e, "There was a problem saving the backup %s. Please fix and try again", zip.getName());
-                FMLClientHandler.instance().showGuiScreen(new GuiBackupFailed(parentScreen, zip));
+                FMLClientHandler.instance().showGuiScreen(new GuiBackupFailed(parent, zip));
                 return;
             }
             FMLClientHandler.instance().showGuiScreen(null);

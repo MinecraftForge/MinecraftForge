@@ -7,7 +7,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.io.File;
-@@ -141,6 +142,7 @@
+@@ -140,6 +141,7 @@
                  return IntCache.func_85144_b();
              }
          });

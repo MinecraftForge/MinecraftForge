@@ -7,9 +7,9 @@
 +import cpw.mods.fml.client.FMLClientHandler;
 +import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
  import java.lang.reflect.Type;
+ import java.util.UUID;
  import net.minecraft.util.IChatComponent;
- import net.minecraft.util.JsonUtils;
-@@ -230,6 +232,7 @@
+@@ -233,6 +235,7 @@
                      serverstatusresponse.func_151320_a(JsonUtils.func_151200_h(jsonobject, "favicon"));
                  }
  
@@ -17,8 +17,8 @@
                  return serverstatusresponse;
              }
  
-@@ -257,6 +260,7 @@
-                     jsonobject.addProperty("favicon", p_151313_1_.func_151316_d());
+@@ -260,6 +263,7 @@
+                     jsonobject.addProperty("favicon", p_serialize_1_.func_151316_d());
                  }
  
 +                FMLNetworkHandler.enhanceStatusQuery(jsonobject);

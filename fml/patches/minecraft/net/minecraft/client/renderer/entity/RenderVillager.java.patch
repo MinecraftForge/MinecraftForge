@@ -12,7 +12,7 @@
                  return field_110906_m;
              default:
 -                return field_110903_f;
-+                return VillagerRegistry.getVillagerSkin(p_110902_1_.func_70946_n(), field_110903_f);
++                return VillagerRegistry.getVillagerSkin(p_110775_1_.func_70946_n(), field_110903_f);
          }
      }
  

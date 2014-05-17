@@ -10,7 +10,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.util.Collection;
-@@ -194,6 +197,7 @@
+@@ -193,6 +196,7 @@
  
      public void func_70071_h_()
      {
@@ -18,7 +18,7 @@
          if (this.field_71074_e != null)
          {
              ItemStack itemstack = this.field_71071_by.func_70448_g();
-@@ -317,6 +321,7 @@
+@@ -316,6 +320,7 @@
              this.field_71100_bB.func_75118_a(this);
              this.func_71064_a(StatList.field_75948_k, 1);
          }
@@ -26,7 +26,7 @@
      }
  
      public int func_82145_z()
-@@ -2032,6 +2037,11 @@
+@@ -2031,6 +2036,11 @@
          }
      }
  
