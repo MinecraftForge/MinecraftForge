@@ -7,7 +7,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.awt.Color;
-@@ -312,6 +313,11 @@
+@@ -314,6 +315,11 @@
              this.func_73731_b(fontrenderer, s, k - fontrenderer.func_78256_a(s) - 2, 2, 14737632);
              s = "Allocated memory: " + j5 * 100L / i5 + "% (" + j5 / 1024L / 1024L + "MB)";
              this.func_73731_b(fontrenderer, s, k - fontrenderer.func_78256_a(s) - 2, 12, 14737632);

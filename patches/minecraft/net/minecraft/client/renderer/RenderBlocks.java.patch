@@ -8,7 +8,7 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.tileentity.TileEntityFlowerPot;
  import net.minecraft.util.Direction;
-@@ -242,7 +243,53 @@
+@@ -245,7 +246,53 @@
          {
              p_147805_1_.func_149719_a(this.field_147845_a, p_147805_2_, p_147805_3_, p_147805_4_);
              this.func_147775_a(p_147805_1_);
@@ -63,7 +63,7 @@
          }
      }
  
-@@ -8060,6 +8107,10 @@
+@@ -8089,6 +8136,10 @@
                  this.func_147799_a((BlockHopper)p_147800_1_, 0, 0, 0, 0, true);
                  GL11.glTranslatef(0.5F, 0.5F, 0.5F);
              }
@@ -74,7 +74,7 @@
          }
          else
          {
-@@ -8118,7 +8169,24 @@
+@@ -8147,7 +8198,24 @@
  
      public static boolean func_147739_a(int p_147739_0_)
      {

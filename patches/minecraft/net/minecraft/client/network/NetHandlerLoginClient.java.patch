@@ -18,7 +18,7 @@
  import net.minecraft.util.ChatComponentTranslation;
  import net.minecraft.util.CryptManager;
  import net.minecraft.util.IChatComponent;
-@@ -90,7 +94,7 @@
+@@ -100,7 +104,7 @@
  
      public void func_147390_a(S02PacketLoginSuccess p_147390_1_)
      {
@@ -27,7 +27,7 @@
      }
  
      public void func_147231_a(IChatComponent p_147231_1_)
-@@ -104,7 +108,10 @@
+@@ -114,7 +118,10 @@
  
          if (p_147232_2_ == EnumConnectionState.PLAY)
          {

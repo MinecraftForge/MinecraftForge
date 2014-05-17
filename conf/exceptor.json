@@ -215,59 +215,67 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/Minecraft$1", 
-        "start": "274"
+        "start": "245"
       }, 
       {
         "inner_class": "net/minecraft/client/Minecraft$2", 
-        "start": "425"
+        "start": "409"
       }, 
       {
         "inner_class": "net/minecraft/client/Minecraft$3", 
-        "start": "1307"
+        "start": "1332"
       }, 
       {
         "inner_class": "net/minecraft/client/Minecraft$4", 
-        "start": "1322"
+        "start": "1347"
       }, 
       {
         "inner_class": "net/minecraft/client/Minecraft$5", 
-        "start": "1865"
+        "start": "1880"
       }, 
       {
         "inner_class": "net/minecraft/client/Minecraft$6", 
-        "start": "1872"
+        "start": "1887"
       }, 
       {
         "inner_class": "net/minecraft/client/Minecraft$7", 
-        "start": "1879"
+        "start": "1894"
       }, 
       {
         "inner_class": "net/minecraft/client/Minecraft$8", 
-        "start": "1886"
+        "start": "1901"
       }, 
       {
         "inner_class": "net/minecraft/client/Minecraft$9", 
-        "start": "1897"
+        "start": "1908"
       }, 
       {
         "inner_class": "net/minecraft/client/Minecraft$10", 
-        "start": "1904"
-      }, 
-      {
-        "inner_class": "net/minecraft/client/Minecraft$11", 
-        "start": "1911"
-      }, 
-      {
-        "inner_class": "net/minecraft/client/Minecraft$12", 
         "start": "1918"
       }, 
       {
-        "inner_class": "net/minecraft/client/Minecraft$13", 
+        "inner_class": "net/minecraft/client/Minecraft$11", 
         "start": "1925"
       }, 
       {
-        "inner_class": "net/minecraft/client/Minecraft$14", 
+        "inner_class": "net/minecraft/client/Minecraft$12", 
+        "start": "1932"
+      }, 
+      {
+        "inner_class": "net/minecraft/client/Minecraft$13", 
         "start": "1939"
+      }, 
+      {
+        "inner_class": "net/minecraft/client/Minecraft$14", 
+        "start": "1946"
+      }, 
+      {
+        "inner_class": "net/minecraft/client/Minecraft$15", 
+        "start": "1960"
+      }, 
+      {
+        "inner_class": "net/minecraft/client/Minecraft$16", 
+        "start": "2268"
       }, 
       {
         "access": "1018", 
@@ -286,7 +294,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/Minecraft$1", 
-        "start": "274"
+        "start": "245"
       }
     ]
   }, 
@@ -299,7 +307,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/Minecraft$10", 
-        "start": "1904"
+        "start": "1918"
       }
     ]
   }, 
@@ -312,7 +320,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/Minecraft$11", 
-        "start": "1911"
+        "start": "1925"
       }
     ]
   }, 
@@ -325,7 +333,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/Minecraft$12", 
-        "start": "1918"
+        "start": "1932"
       }
     ]
   }, 
@@ -338,7 +346,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/Minecraft$13", 
-        "start": "1925"
+        "start": "1939"
       }
     ]
   }, 
@@ -351,7 +359,33 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/Minecraft$14", 
-        "start": "1939"
+        "start": "1946"
+      }
+    ]
+  }, 
+  "net/minecraft/client/Minecraft$15": {
+    "enclosingMethod": {
+      "desc": "(Lnet/minecraft/crash/CrashReport;)Lnet/minecraft/crash/CrashReport;", 
+      "name": "func_71396_d", 
+      "owner": "net/minecraft/client/Minecraft"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/client/Minecraft$15", 
+        "start": "1960"
+      }
+    ]
+  }, 
+  "net/minecraft/client/Minecraft$16": {
+    "enclosingMethod": {
+      "desc": "()V", 
+      "name": "func_152348_aa", 
+      "owner": "net/minecraft/client/Minecraft"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/client/Minecraft$16", 
+        "start": "2268"
       }
     ]
   }, 
@@ -364,7 +398,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/Minecraft$2", 
-        "start": "425"
+        "start": "409"
       }
     ]
   }, 
@@ -377,7 +411,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/Minecraft$3", 
-        "start": "1307"
+        "start": "1332"
       }
     ]
   }, 
@@ -390,7 +424,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/Minecraft$4", 
-        "start": "1322"
+        "start": "1347"
       }
     ]
   }, 
@@ -403,7 +437,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/Minecraft$5", 
-        "start": "1865"
+        "start": "1880"
       }
     ]
   }, 
@@ -416,7 +450,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/Minecraft$6", 
-        "start": "1872"
+        "start": "1887"
       }
     ]
   }, 
@@ -429,7 +463,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/Minecraft$7", 
-        "start": "1879"
+        "start": "1894"
       }
     ]
   }, 
@@ -442,7 +476,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/Minecraft$8", 
-        "start": "1886"
+        "start": "1901"
       }
     ]
   }, 
@@ -455,7 +489,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/Minecraft$9", 
-        "start": "1897"
+        "start": "1908"
       }
     ]
   }, 
@@ -695,6 +729,29 @@
       }
     ]
   }, 
+  "net/minecraft/client/entity/AbstractClientPlayer": {
+    "innerClasses": [
+      {
+        "access": "1018", 
+        "inner_class": "net/minecraft/client/entity/AbstractClientPlayer$SwitchType", 
+        "inner_name": "SwitchType", 
+        "outer_class": "net/minecraft/client/entity/AbstractClientPlayer"
+      }
+    ]
+  }, 
+  "net/minecraft/client/entity/AbstractClientPlayer$SwitchType": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/entity/AbstractClientPlayer"
+    }, 
+    "innerClasses": [
+      {
+        "access": "1018", 
+        "inner_class": "net/minecraft/client/entity/AbstractClientPlayer$SwitchType", 
+        "inner_name": "SwitchType", 
+        "outer_class": "net/minecraft/client/entity/AbstractClientPlayer"
+      }
+    ]
+  }, 
   "net/minecraft/client/gui/GuiCreateFlatWorld": {
     "innerClasses": [
       {
@@ -832,7 +889,7 @@
         "inner_class": "net/minecraft/client/gui/GuiLanguage$List", 
         "inner_name": "List", 
         "outer_class": "net/minecraft/client/gui/GuiLanguage", 
-        "start": "89"
+        "start": "100"
       }
     ]
   }, 
@@ -846,7 +903,7 @@
         "inner_class": "net/minecraft/client/gui/GuiLanguage$List", 
         "inner_name": "List", 
         "outer_class": "net/minecraft/client/gui/GuiLanguage", 
-        "start": "89"
+        "start": "100"
       }
     ]
   }, 
@@ -877,7 +934,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/gui/GuiMainMenu$1", 
-        "start": "199"
+        "start": "200"
       }
     ]
   }, 
@@ -890,7 +947,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/gui/GuiMainMenu$1", 
-        "start": "199"
+        "start": "200"
       }
     ]
   }, 
@@ -923,7 +980,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/gui/GuiOptions$1", 
-        "start": "65"
+        "start": "67"
       }
     ]
   }, 
@@ -936,7 +993,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/gui/GuiOptions$1", 
-        "start": "65"
+        "start": "67"
       }
     ]
   }, 
@@ -990,35 +1047,52 @@
       }
     ]
   }, 
-  "net/minecraft/client/gui/GuiScreenBuyRealms": {
+  "net/minecraft/client/gui/mco/GuiScreenBuyRealms": {
     "innerClasses": [
       {
-        "inner_class": "net/minecraft/client/gui/GuiScreenBuyRealms$1", 
-        "start": "53"
+        "inner_class": "net/minecraft/client/gui/mco/GuiScreenBuyRealms$1", 
+        "start": "59"
       }
     ]
   }, 
-  "net/minecraft/client/gui/GuiScreenBuyRealms$1": {
+  "net/minecraft/client/gui/mco/GuiScreenBuyRealms$1": {
     "enclosingMethod": {
       "desc": "()V", 
       "name": "func_146816_h", 
-      "owner": "net/minecraft/client/gui/GuiScreenBuyRealms"
+      "owner": "net/minecraft/client/gui/mco/GuiScreenBuyRealms"
     }, 
     "innerClasses": [
       {
-        "inner_class": "net/minecraft/client/gui/GuiScreenBuyRealms$1", 
-        "start": "53"
+        "inner_class": "net/minecraft/client/gui/mco/GuiScreenBuyRealms$1", 
+        "start": "59"
       }
     ]
   }, 
   "net/minecraft/client/gui/GuiScreenConfigureWorld": {
     "innerClasses": [
       {
+        "inner_class": "net/minecraft/client/gui/GuiScreenConfigureWorld$1", 
+        "start": "116"
+      }, 
+      {
         "access": "20", 
         "inner_class": "net/minecraft/client/gui/GuiScreenConfigureWorld$SelectionListInvited", 
         "inner_name": "SelectionListInvited", 
         "outer_class": "net/minecraft/client/gui/GuiScreenConfigureWorld", 
-        "start": "253"
+        "start": "353"
+      }
+    ]
+  }, 
+  "net/minecraft/client/gui/GuiScreenConfigureWorld$1": {
+    "enclosingMethod": {
+      "desc": "()V", 
+      "name": "func_152150_h", 
+      "owner": "net/minecraft/client/gui/GuiScreenConfigureWorld"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/client/gui/GuiScreenConfigureWorld$1", 
+        "start": "116"
       }
     ]
   }, 
@@ -1032,7 +1106,7 @@
         "inner_class": "net/minecraft/client/gui/GuiScreenConfigureWorld$SelectionListInvited", 
         "inner_name": "SelectionListInvited", 
         "outer_class": "net/minecraft/client/gui/GuiScreenConfigureWorld", 
-        "start": "253"
+        "start": "353"
       }
     ]
   }, 
@@ -1043,7 +1117,7 @@
         "inner_class": "net/minecraft/client/gui/GuiScreenConfirmation$ConfirmationType", 
         "inner_name": "ConfirmationType", 
         "outer_class": "net/minecraft/client/gui/GuiScreenConfirmation", 
-        "start": "52"
+        "start": "60"
       }
     ]
   }, 
@@ -1057,66 +1131,66 @@
         "inner_class": "net/minecraft/client/gui/GuiScreenConfirmation$ConfirmationType", 
         "inner_name": "ConfirmationType", 
         "outer_class": "net/minecraft/client/gui/GuiScreenConfirmation", 
-        "start": "52"
+        "start": "60"
       }
     ]
   }, 
-  "net/minecraft/client/gui/GuiScreenOnlineServers": {
+  "net/minecraft/client/gui/mco/GuiScreenOnlineServers": {
     "innerClasses": [
       {
-        "inner_class": "net/minecraft/client/gui/GuiScreenOnlineServers$1", 
+        "inner_class": "net/minecraft/client/gui/mco/GuiScreenOnlineServers$1", 
         "start": "215"
       }, 
       {
         "access": "20", 
-        "inner_class": "net/minecraft/client/gui/GuiScreenOnlineServers$OnlineServerList", 
+        "inner_class": "net/minecraft/client/gui/mco/GuiScreenOnlineServers$OnlineServerList", 
         "inner_name": "OnlineServerList", 
-        "outer_class": "net/minecraft/client/gui/GuiScreenOnlineServers", 
-        "start": "393"
+        "outer_class": "net/minecraft/client/gui/mco/GuiScreenOnlineServers", 
+        "start": "467"
       }
     ]
   }, 
-  "net/minecraft/client/gui/GuiScreenOnlineServers$1": {
+  "net/minecraft/client/gui/mco/GuiScreenOnlineServers$1": {
     "enclosingMethod": {
       "desc": "(ZI)V", 
       "name": "func_73878_a", 
-      "owner": "net/minecraft/client/gui/GuiScreenOnlineServers"
+      "owner": "net/minecraft/client/gui/mco/GuiScreenOnlineServers"
     }, 
     "innerClasses": [
       {
-        "inner_class": "net/minecraft/client/gui/GuiScreenOnlineServers$1", 
+        "inner_class": "net/minecraft/client/gui/mco/GuiScreenOnlineServers$1", 
         "start": "215"
       }
     ]
   }, 
-  "net/minecraft/client/gui/GuiScreenOnlineServers$OnlineServerList": {
+  "net/minecraft/client/gui/mco/GuiScreenOnlineServers$OnlineServerList": {
     "enclosingMethod": {
-      "owner": "net/minecraft/client/gui/GuiScreenOnlineServers"
+      "owner": "net/minecraft/client/gui/mco/GuiScreenOnlineServers"
     }, 
     "innerClasses": [
       {
         "access": "20", 
-        "inner_class": "net/minecraft/client/gui/GuiScreenOnlineServers$OnlineServerList", 
+        "inner_class": "net/minecraft/client/gui/mco/GuiScreenOnlineServers$OnlineServerList", 
         "inner_name": "OnlineServerList", 
-        "outer_class": "net/minecraft/client/gui/GuiScreenOnlineServers", 
-        "start": "393"
+        "outer_class": "net/minecraft/client/gui/mco/GuiScreenOnlineServers", 
+        "start": "467"
       }, 
       {
-        "inner_class": "net/minecraft/client/gui/GuiScreenOnlineServers$OnlineServerList$1", 
-        "start": "460"
+        "inner_class": "net/minecraft/client/gui/mco/GuiScreenOnlineServers$OnlineServerList$1", 
+        "start": "562"
       }
     ]
   }, 
-  "net/minecraft/client/gui/GuiScreenOnlineServers$OnlineServerList$1": {
+  "net/minecraft/client/gui/mco/GuiScreenOnlineServers$OnlineServerList$1": {
     "enclosingMethod": {
-      "desc": "(IIIILnet/minecraft/client/renderer/Tessellator;)V", 
-      "name": "func_148390_b", 
-      "owner": "net/minecraft/client/gui/GuiScreenOnlineServers$OnlineServerList"
+      "desc": "(III)V", 
+      "name": "func_152512_a", 
+      "owner": "net/minecraft/client/gui/mco/GuiScreenOnlineServers$OnlineServerList"
     }, 
     "innerClasses": [
       {
-        "inner_class": "net/minecraft/client/gui/GuiScreenOnlineServers$OnlineServerList$1", 
-        "start": "460"
+        "inner_class": "net/minecraft/client/gui/mco/GuiScreenOnlineServers$OnlineServerList$1", 
+        "start": "562"
       }
     ]
   }, 
@@ -1149,7 +1223,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/gui/GuiScreenRealmsPinger$1", 
-        "start": "42"
+        "start": "41"
       }
     ]
   }, 
@@ -1162,7 +1236,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/gui/GuiScreenRealmsPinger$1", 
-        "start": "42"
+        "start": "41"
       }
     ]
   }, 
@@ -1277,24 +1351,24 @@
       }
     ]
   }, 
-  "net/minecraft/client/gui/TaskOnlineConnect": {
+  "net/minecraft/client/gui/mco/TaskOnlineConnect": {
     "innerClasses": [
       {
-        "inner_class": "net/minecraft/client/gui/TaskOnlineConnect$1", 
-        "start": "107"
+        "inner_class": "net/minecraft/client/gui/mco/TaskOnlineConnect$1", 
+        "start": "104"
       }
     ]
   }, 
-  "net/minecraft/client/gui/TaskOnlineConnect$1": {
+  "net/minecraft/client/gui/mco/TaskOnlineConnect$1": {
     "enclosingMethod": {
       "desc": "(Ljava/lang/String;I)V", 
       "name": "func_148432_a", 
-      "owner": "net/minecraft/client/gui/TaskOnlineConnect"
+      "owner": "net/minecraft/client/gui/mco/TaskOnlineConnect"
     }, 
     "innerClasses": [
       {
-        "inner_class": "net/minecraft/client/gui/TaskOnlineConnect$1", 
-        "start": "107"
+        "inner_class": "net/minecraft/client/gui/mco/TaskOnlineConnect$1", 
+        "start": "104"
       }
     ]
   }, 
@@ -1575,21 +1649,21 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/gui/mco/GuiScreenBackup$1", 
-        "start": "64"
+        "start": "74"
       }, 
       {
         "access": "20", 
         "inner_class": "net/minecraft/client/gui/mco/GuiScreenBackup$RestoreTask", 
         "inner_name": "RestoreTask", 
         "outer_class": "net/minecraft/client/gui/mco/GuiScreenBackup", 
-        "start": "210"
+        "start": "262"
       }, 
       {
         "access": "20", 
         "inner_class": "net/minecraft/client/gui/mco/GuiScreenBackup$SelectionList", 
         "inner_name": "SelectionList", 
         "outer_class": "net/minecraft/client/gui/mco/GuiScreenBackup", 
-        "start": "247"
+        "start": "313"
       }
     ]
   }, 
@@ -1602,7 +1676,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/gui/mco/GuiScreenBackup$1", 
-        "start": "64"
+        "start": "74"
       }
     ]
   }, 
@@ -1616,7 +1690,7 @@
         "inner_class": "net/minecraft/client/gui/mco/GuiScreenBackup$RestoreTask", 
         "inner_name": "RestoreTask", 
         "outer_class": "net/minecraft/client/gui/mco/GuiScreenBackup", 
-        "start": "210"
+        "start": "262"
       }
     ]
   }, 
@@ -1630,7 +1704,7 @@
         "inner_class": "net/minecraft/client/gui/mco/GuiScreenBackup$SelectionList", 
         "inner_name": "SelectionList", 
         "outer_class": "net/minecraft/client/gui/mco/GuiScreenBackup", 
-        "start": "247"
+        "start": "313"
       }
     ]
   }, 
@@ -1641,7 +1715,7 @@
         "inner_class": "net/minecraft/client/gui/mco/GuiScreenCreateOnlineWorld$TaskWorldCreation", 
         "inner_name": "TaskWorldCreation", 
         "outer_class": "net/minecraft/client/gui/mco/GuiScreenCreateOnlineWorld", 
-        "start": "154"
+        "start": "157"
       }
     ]
   }, 
@@ -1655,7 +1729,7 @@
         "inner_class": "net/minecraft/client/gui/mco/GuiScreenCreateOnlineWorld$TaskWorldCreation", 
         "inner_name": "TaskWorldCreation", 
         "outer_class": "net/minecraft/client/gui/mco/GuiScreenCreateOnlineWorld", 
-        "start": "154"
+        "start": "157"
       }
     ]
   }, 
@@ -1670,7 +1744,7 @@
         "inner_class": "net/minecraft/client/gui/mco/GuiScreenMcoWorldTemplate$SelectionList", 
         "inner_name": "SelectionList", 
         "outer_class": "net/minecraft/client/gui/mco/GuiScreenMcoWorldTemplate", 
-        "start": "117"
+        "start": "141"
       }
     ]
   }, 
@@ -1697,7 +1771,32 @@
         "inner_class": "net/minecraft/client/gui/mco/GuiScreenMcoWorldTemplate$SelectionList", 
         "inner_name": "SelectionList", 
         "outer_class": "net/minecraft/client/gui/mco/GuiScreenMcoWorldTemplate", 
-        "start": "117"
+        "start": "141"
+      }
+    ]
+  }, 
+  "net/minecraft/client/gui/mco/GuiScreenModifyMinigame": {
+    "innerClasses": [
+      {
+        "access": "20", 
+        "inner_class": "net/minecraft/client/gui/mco/GuiScreenModifyMinigame$StopTask", 
+        "inner_name": "StopTask", 
+        "outer_class": "net/minecraft/client/gui/mco/GuiScreenModifyMinigame", 
+        "start": "115"
+      }
+    ]
+  }, 
+  "net/minecraft/client/gui/mco/GuiScreenModifyMinigame$StopTask": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/gui/mco/GuiScreenModifyMinigame"
+    }, 
+    "innerClasses": [
+      {
+        "access": "20", 
+        "inner_class": "net/minecraft/client/gui/mco/GuiScreenModifyMinigame$StopTask", 
+        "inner_name": "StopTask", 
+        "outer_class": "net/minecraft/client/gui/mco/GuiScreenModifyMinigame", 
+        "start": "115"
       }
     ]
   }, 
@@ -1705,22 +1804,22 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation$1", 
-        "start": "50"
+        "start": "48"
       }, 
       {
         "inner_class": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation$2", 
-        "start": "96"
+        "start": "101"
       }, 
       {
         "inner_class": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation$3", 
-        "start": "114"
+        "start": "119"
       }, 
       {
         "access": "20", 
         "inner_class": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation$List", 
         "inner_name": "List", 
         "outer_class": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation", 
-        "start": "160"
+        "start": "165"
       }
     ]
   }, 
@@ -1733,7 +1832,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation$1", 
-        "start": "50"
+        "start": "48"
       }
     ]
   }, 
@@ -1746,7 +1845,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation$2", 
-        "start": "96"
+        "start": "101"
       }
     ]
   }, 
@@ -1759,7 +1858,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation$3", 
-        "start": "114"
+        "start": "119"
       }
     ]
   }, 
@@ -1773,7 +1872,7 @@
         "inner_class": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation$List", 
         "inner_name": "List", 
         "outer_class": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation", 
-        "start": "160"
+        "start": "165"
       }
     ]
   }, 
@@ -1802,15 +1901,168 @@
       }
     ]
   }, 
+  "net/minecraft/client/gui/mco/GuiScreenStartMinigame": {
+    "innerClasses": [
+      {
+        "access": "20", 
+        "inner_class": "net/minecraft/client/gui/mco/GuiScreenStartMinigame$StartWorldTask", 
+        "inner_name": "StartWorldTask", 
+        "outer_class": "net/minecraft/client/gui/mco/GuiScreenStartMinigame", 
+        "start": "124"
+      }
+    ]
+  }, 
+  "net/minecraft/client/gui/mco/GuiScreenStartMinigame$StartWorldTask": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/gui/mco/GuiScreenStartMinigame"
+    }, 
+    "innerClasses": [
+      {
+        "access": "20", 
+        "inner_class": "net/minecraft/client/gui/mco/GuiScreenStartMinigame$StartWorldTask", 
+        "inner_name": "StartWorldTask", 
+        "outer_class": "net/minecraft/client/gui/mco/GuiScreenStartMinigame", 
+        "start": "124"
+      }
+    ]
+  }, 
+  "net/minecraft/client/gui/mco/McoThreadPool": {
+    "innerClasses": [
+      {
+        "access": "28", 
+        "inner_class": "net/minecraft/client/gui/mco/McoThreadPool$Factory", 
+        "inner_name": "Factory", 
+        "outer_class": "net/minecraft/client/gui/mco/McoThreadPool", 
+        "start": "17"
+      }, 
+      {
+        "access": "1000", 
+        "inner_class": "net/minecraft/client/gui/mco/McoThreadPool$1"
+      }
+    ]
+  }, 
+  "net/minecraft/client/gui/mco/McoThreadPool$1": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/gui/mco/McoThreadPool"
+    }, 
+    "innerClasses": [
+      {
+        "access": "1000", 
+        "inner_class": "net/minecraft/client/gui/mco/McoThreadPool$1"
+      }
+    ]
+  }, 
+  "net/minecraft/client/gui/mco/McoThreadPool$Factory": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/gui/mco/McoThreadPool"
+    }, 
+    "innerClasses": [
+      {
+        "access": "28", 
+        "inner_class": "net/minecraft/client/gui/mco/McoThreadPool$Factory", 
+        "inner_name": "Factory", 
+        "outer_class": "net/minecraft/client/gui/mco/McoThreadPool", 
+        "start": "17"
+      }, 
+      {
+        "inner_class": "net/minecraft/client/gui/mco/McoThreadPool$Factory$1", 
+        "start": "28"
+      }
+    ]
+  }, 
+  "net/minecraft/client/gui/mco/McoThreadPool$Factory$1": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/gui/mco/McoThreadPool$Factory"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/client/gui/mco/McoThreadPool$Factory$1", 
+        "start": "28"
+      }
+    ]
+  }, 
+  "net/minecraft/client/gui/stream/GuiIngestServers": {
+    "innerClasses": [
+      {
+        "access": "20", 
+        "inner_class": "net/minecraft/client/gui/stream/GuiIngestServers$ServerList", 
+        "inner_name": "ServerList", 
+        "outer_class": "net/minecraft/client/gui/stream/GuiIngestServers", 
+        "start": "70"
+      }
+    ]
+  }, 
+  "net/minecraft/client/gui/stream/GuiIngestServers$ServerList": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/gui/stream/GuiIngestServers"
+    }, 
+    "innerClasses": [
+      {
+        "access": "20", 
+        "inner_class": "net/minecraft/client/gui/stream/GuiIngestServers$ServerList", 
+        "inner_name": "ServerList", 
+        "outer_class": "net/minecraft/client/gui/stream/GuiIngestServers", 
+        "start": "70"
+      }
+    ]
+  }, 
+  "net/minecraft/client/gui/stream/GuiStreamUnavailable": {
+    "innerClasses": [
+      {
+        "access": "4029", 
+        "inner_class": "net/minecraft/client/gui/stream/GuiStreamUnavailable$Reason", 
+        "inner_name": "Reason", 
+        "outer_class": "net/minecraft/client/gui/stream/GuiStreamUnavailable", 
+        "start": "174"
+      }, 
+      {
+        "access": "1018", 
+        "inner_class": "net/minecraft/client/gui/stream/GuiStreamUnavailable$SwitchReason", 
+        "inner_name": "SwitchReason", 
+        "outer_class": "net/minecraft/client/gui/stream/GuiStreamUnavailable"
+      }
+    ]
+  }, 
+  "net/minecraft/client/gui/stream/GuiStreamUnavailable$Reason": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/gui/stream/GuiStreamUnavailable"
+    }, 
+    "innerClasses": [
+      {
+        "access": "4029", 
+        "inner_class": "net/minecraft/client/gui/stream/GuiStreamUnavailable$Reason", 
+        "inner_name": "Reason", 
+        "outer_class": "net/minecraft/client/gui/stream/GuiStreamUnavailable", 
+        "start": "174"
+      }
+    ]
+  }, 
+  "net/minecraft/client/gui/stream/GuiStreamUnavailable$SwitchReason": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/gui/stream/GuiStreamUnavailable"
+    }, 
+    "innerClasses": [
+      {
+        "access": "1018", 
+        "inner_class": "net/minecraft/client/gui/stream/GuiStreamUnavailable$SwitchReason", 
+        "inner_name": "SwitchReason", 
+        "outer_class": "net/minecraft/client/gui/stream/GuiStreamUnavailable"
+      }
+    ]
+  }, 
   "net/minecraft/client/main/Main": {
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/main/Main$1", 
-        "start": "64"
+        "start": "20"
       }, 
       {
         "inner_class": "net/minecraft/client/main/Main$2", 
-        "start": "95"
+        "start": "103"
+      }, 
+      {
+        "inner_class": "net/minecraft/client/main/Main$3", 
+        "start": "140"
       }
     ]
   }, 
@@ -1821,11 +2073,37 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/main/Main$1", 
-        "start": "64"
+        "start": "20"
+      }, 
+      {
+        "inner_class": "net/minecraft/client/main/Main$1$1", 
+        "start": "24"
+      }
+    ]
+  }, 
+  "net/minecraft/client/main/Main$1$1": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/main/Main$1"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/client/main/Main$1$1", 
+        "start": "24"
       }
     ]
   }, 
   "net/minecraft/client/main/Main$2": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/main/Main"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/client/main/Main$2", 
+        "start": "103"
+      }
+    ]
+  }, 
+  "net/minecraft/client/main/Main$3": {
     "enclosingMethod": {
       "desc": "([Ljava/lang/String;)V", 
       "name": "main", 
@@ -1833,19 +2111,57 @@
     }, 
     "innerClasses": [
       {
-        "inner_class": "net/minecraft/client/main/Main$2", 
-        "start": "95"
+        "inner_class": "net/minecraft/client/main/Main$3", 
+        "start": "140"
       }
     ]
   }, 
   "net/minecraft/client/mco/McoServer": {
     "innerClasses": [
       {
+        "inner_class": "net/minecraft/client/mco/McoServer$1", 
+        "start": "93"
+      }, 
+      {
+        "access": "29", 
+        "inner_class": "net/minecraft/client/mco/McoServer$Comparator", 
+        "inner_name": "Comparator", 
+        "outer_class": "net/minecraft/client/mco/McoServer", 
+        "start": "175"
+      }, 
+      {
         "access": "4029", 
         "inner_class": "net/minecraft/client/mco/McoServer$State", 
         "inner_name": "State", 
         "outer_class": "net/minecraft/client/mco/McoServer", 
-        "start": "127"
+        "start": "207"
+      }
+    ]
+  }, 
+  "net/minecraft/client/mco/McoServer$1": {
+    "enclosingMethod": {
+      "desc": "(Lnet/minecraft/client/mco/McoServer;)V", 
+      "name": "func_153105_b", 
+      "owner": "net/minecraft/client/mco/McoServer"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/client/mco/McoServer$1", 
+        "start": "93"
+      }
+    ]
+  }, 
+  "net/minecraft/client/mco/McoServer$Comparator": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/mco/McoServer"
+    }, 
+    "innerClasses": [
+      {
+        "access": "29", 
+        "inner_class": "net/minecraft/client/mco/McoServer$Comparator", 
+        "inner_name": "Comparator", 
+        "outer_class": "net/minecraft/client/mco/McoServer", 
+        "start": "175"
       }
     ]
   }, 
@@ -1859,7 +2175,7 @@
         "inner_class": "net/minecraft/client/mco/McoServer$State", 
         "inner_name": "State", 
         "outer_class": "net/minecraft/client/mco/McoServer", 
-        "start": "127"
+        "start": "207"
       }
     ]
   }, 
@@ -1867,10 +2183,24 @@
     "innerClasses": [
       {
         "access": "20", 
-        "inner_class": "net/minecraft/client/mco/McoServerList$UpdateTask", 
-        "inner_name": "UpdateTask", 
+        "inner_class": "net/minecraft/client/mco/McoServerList$ServerListChecker", 
+        "inner_name": "ServerListChecker", 
         "outer_class": "net/minecraft/client/mco/McoServerList", 
-        "start": "111"
+        "start": "132"
+      }, 
+      {
+        "access": "20", 
+        "inner_class": "net/minecraft/client/mco/McoServerList$PendingInviteChecker", 
+        "inner_name": "PendingInviteChecker", 
+        "outer_class": "net/minecraft/client/mco/McoServerList", 
+        "start": "166"
+      }, 
+      {
+        "access": "4029", 
+        "inner_class": "net/minecraft/client/mco/McoServerList$TaskTypes", 
+        "inner_name": "TaskTypes", 
+        "outer_class": "net/minecraft/client/mco/McoServerList", 
+        "start": "187"
       }, 
       {
         "access": "1000", 
@@ -1889,38 +2219,45 @@
       }
     ]
   }, 
-  "net/minecraft/client/mco/McoServerList$UpdateTask": {
+  "net/minecraft/client/mco/McoServerList$PendingInviteChecker": {
     "enclosingMethod": {
       "owner": "net/minecraft/client/mco/McoServerList"
     }, 
     "innerClasses": [
       {
         "access": "20", 
-        "inner_class": "net/minecraft/client/mco/McoServerList$UpdateTask", 
-        "inner_name": "UpdateTask", 
+        "inner_class": "net/minecraft/client/mco/McoServerList$PendingInviteChecker", 
+        "inner_name": "PendingInviteChecker", 
         "outer_class": "net/minecraft/client/mco/McoServerList", 
-        "start": "111"
-      }, 
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/mco/McoServerList$UpdateTask$Comparator", 
-        "inner_name": "Comparator", 
-        "outer_class": "net/minecraft/client/mco/McoServerList$UpdateTask", 
-        "start": "162"
+        "start": "166"
       }
     ]
   }, 
-  "net/minecraft/client/mco/McoServerList$UpdateTask$Comparator": {
+  "net/minecraft/client/mco/McoServerList$ServerListChecker": {
     "enclosingMethod": {
-      "owner": "net/minecraft/client/mco/McoServerList$UpdateTask"
+      "owner": "net/minecraft/client/mco/McoServerList"
     }, 
     "innerClasses": [
       {
         "access": "20", 
-        "inner_class": "net/minecraft/client/mco/McoServerList$UpdateTask$Comparator", 
-        "inner_name": "Comparator", 
-        "outer_class": "net/minecraft/client/mco/McoServerList$UpdateTask", 
-        "start": "162"
+        "inner_class": "net/minecraft/client/mco/McoServerList$ServerListChecker", 
+        "inner_name": "ServerListChecker", 
+        "outer_class": "net/minecraft/client/mco/McoServerList", 
+        "start": "132"
+      }
+    ]
+  }, 
+  "net/minecraft/client/mco/McoServerList$TaskTypes": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/mco/McoServerList"
+    }, 
+    "innerClasses": [
+      {
+        "access": "4029", 
+        "inner_class": "net/minecraft/client/mco/McoServerList$TaskTypes", 
+        "inner_name": "TaskTypes", 
+        "outer_class": "net/minecraft/client/mco/McoServerList", 
+        "start": "187"
       }
     ]
   }, 
@@ -1931,28 +2268,28 @@
         "inner_class": "net/minecraft/client/mco/Request$Delete", 
         "inner_name": "Delete", 
         "outer_class": "net/minecraft/client/mco/Request", 
-        "start": "179"
+        "start": "191"
       }, 
       {
         "access": "29", 
         "inner_class": "net/minecraft/client/mco/Request$Get", 
         "inner_name": "Get", 
         "outer_class": "net/minecraft/client/mco/Request", 
-        "start": "199"
+        "start": "211"
       }, 
       {
         "access": "29", 
         "inner_class": "net/minecraft/client/mco/Request$Put", 
         "inner_name": "Put", 
         "outer_class": "net/minecraft/client/mco/Request", 
-        "start": "220"
+        "start": "232"
       }, 
       {
         "access": "29", 
         "inner_class": "net/minecraft/client/mco/Request$Post", 
         "inner_name": "Post", 
         "outer_class": "net/minecraft/client/mco/Request", 
-        "start": "246"
+        "start": "258"
       }
     ]
   }, 
@@ -1966,7 +2303,7 @@
         "inner_class": "net/minecraft/client/mco/Request$Delete", 
         "inner_name": "Delete", 
         "outer_class": "net/minecraft/client/mco/Request", 
-        "start": "179"
+        "start": "191"
       }
     ]
   }, 
@@ -1980,7 +2317,7 @@
         "inner_class": "net/minecraft/client/mco/Request$Get", 
         "inner_name": "Get", 
         "outer_class": "net/minecraft/client/mco/Request", 
-        "start": "199"
+        "start": "211"
       }
     ]
   }, 
@@ -1994,7 +2331,7 @@
         "inner_class": "net/minecraft/client/mco/Request$Post", 
         "inner_name": "Post", 
         "outer_class": "net/minecraft/client/mco/Request", 
-        "start": "246"
+        "start": "258"
       }
     ]
   }, 
@@ -2008,7 +2345,32 @@
         "inner_class": "net/minecraft/client/mco/Request$Put", 
         "inner_name": "Put", 
         "outer_class": "net/minecraft/client/mco/Request", 
-        "start": "220"
+        "start": "232"
+      }
+    ]
+  }, 
+  "net/minecraft/client/mco/ValueObjectSubscription": {
+    "innerClasses": [
+      {
+        "access": "4029", 
+        "inner_class": "net/minecraft/client/mco/ValueObjectSubscription$Type", 
+        "inner_name": "Type", 
+        "outer_class": "net/minecraft/client/mco/ValueObjectSubscription", 
+        "start": "45"
+      }
+    ]
+  }, 
+  "net/minecraft/client/mco/ValueObjectSubscription$Type": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/mco/ValueObjectSubscription"
+    }, 
+    "innerClasses": [
+      {
+        "access": "4029", 
+        "inner_class": "net/minecraft/client/mco/ValueObjectSubscription$Type", 
+        "inner_name": "Type", 
+        "outer_class": "net/minecraft/client/mco/ValueObjectSubscription", 
+        "start": "45"
       }
     ]
   }, 
@@ -2016,7 +2378,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/multiplayer/GuiConnecting$1", 
-        "start": "54"
+        "start": "48"
       }
     ]
   }, 
@@ -2029,7 +2391,32 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/multiplayer/GuiConnecting$1", 
-        "start": "54"
+        "start": "48"
+      }
+    ]
+  }, 
+  "net/minecraft/client/multiplayer/ServerData": {
+    "innerClasses": [
+      {
+        "access": "4029", 
+        "inner_class": "net/minecraft/client/multiplayer/ServerData$ServerResourceMode", 
+        "inner_name": "ServerResourceMode", 
+        "outer_class": "net/minecraft/client/multiplayer/ServerData", 
+        "start": "99"
+      }
+    ]
+  }, 
+  "net/minecraft/client/multiplayer/ServerData$ServerResourceMode": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/multiplayer/ServerData"
+    }, 
+    "innerClasses": [
+      {
+        "access": "4029", 
+        "inner_class": "net/minecraft/client/multiplayer/ServerData$ServerResourceMode", 
+        "inner_name": "ServerResourceMode", 
+        "outer_class": "net/minecraft/client/multiplayer/ServerData", 
+        "start": "99"
       }
     ]
   }, 
@@ -2037,19 +2424,19 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/multiplayer/WorldClient$1", 
-        "start": "286"
+        "start": "291"
       }, 
       {
         "inner_class": "net/minecraft/client/multiplayer/WorldClient$2", 
-        "start": "293"
+        "start": "298"
       }, 
       {
         "inner_class": "net/minecraft/client/multiplayer/WorldClient$3", 
-        "start": "300"
+        "start": "305"
       }, 
       {
         "inner_class": "net/minecraft/client/multiplayer/WorldClient$4", 
-        "start": "307"
+        "start": "312"
       }
     ]
   }, 
@@ -2062,7 +2449,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/multiplayer/WorldClient$1", 
-        "start": "286"
+        "start": "291"
       }
     ]
   }, 
@@ -2075,7 +2462,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/multiplayer/WorldClient$2", 
-        "start": "293"
+        "start": "298"
       }
     ]
   }, 
@@ -2088,7 +2475,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/multiplayer/WorldClient$3", 
-        "start": "300"
+        "start": "305"
       }
     ]
   }, 
@@ -2101,7 +2488,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/multiplayer/WorldClient$4", 
-        "start": "307"
+        "start": "312"
       }
     ]
   }, 
@@ -2199,7 +2586,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/network/NetHandlerLoginClient$1", 
-        "start": "62"
+        "start": "69"
       }
     ]
   }, 
@@ -2212,7 +2599,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/network/NetHandlerLoginClient$1", 
-        "start": "62"
+        "start": "69"
       }
     ]
   }, 
@@ -2220,7 +2607,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/network/NetHandlerPlayClient$1", 
-        "start": "1040"
+        "start": "1074"
       }
     ]
   }, 
@@ -2233,7 +2620,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/network/NetHandlerPlayClient$1", 
-        "start": "1040"
+        "start": "1074"
       }
     ]
   }, 
@@ -2368,15 +2755,15 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/renderer/EntityRenderer$1", 
-        "start": "856"
+        "start": "857"
       }, 
       {
         "inner_class": "net/minecraft/client/renderer/EntityRenderer$2", 
-        "start": "863"
+        "start": "864"
       }, 
       {
         "inner_class": "net/minecraft/client/renderer/EntityRenderer$3", 
-        "start": "870"
+        "start": "871"
       }
     ]
   }, 
@@ -2389,7 +2776,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/renderer/EntityRenderer$1", 
-        "start": "856"
+        "start": "857"
       }
     ]
   }, 
@@ -2402,7 +2789,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/renderer/EntityRenderer$2", 
-        "start": "863"
+        "start": "864"
       }
     ]
   }, 
@@ -2415,7 +2802,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/renderer/EntityRenderer$3", 
-        "start": "870"
+        "start": "871"
       }
     ]
   }, 
@@ -2423,7 +2810,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/renderer/RenderGlobal$1", 
-        "start": "1526"
+        "start": "1532"
       }
     ]
   }, 
@@ -2436,7 +2823,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/renderer/RenderGlobal$1", 
-        "start": "1526"
+        "start": "1532"
       }
     ]
   }, 
@@ -2444,20 +2831,20 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/renderer/ThreadDownloadImageData$1", 
-        "start": "74"
+        "start": "103"
       }
     ]
   }, 
   "net/minecraft/client/renderer/ThreadDownloadImageData$1": {
     "enclosingMethod": {
-      "desc": "(Lnet/minecraft/client/resources/IResourceManager;)V", 
-      "name": "func_110551_a", 
+      "desc": "()V", 
+      "name": "func_152433_a", 
       "owner": "net/minecraft/client/renderer/ThreadDownloadImageData"
     }, 
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/renderer/ThreadDownloadImageData$1", 
-        "start": "74"
+        "start": "103"
       }
     ]
   }, 
@@ -2465,19 +2852,19 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/renderer/entity/RenderItem$1", 
-        "start": "384"
+        "start": "405"
       }, 
       {
         "inner_class": "net/minecraft/client/renderer/entity/RenderItem$2", 
-        "start": "391"
+        "start": "412"
       }, 
       {
         "inner_class": "net/minecraft/client/renderer/entity/RenderItem$3", 
-        "start": "398"
+        "start": "419"
       }, 
       {
         "inner_class": "net/minecraft/client/renderer/entity/RenderItem$4", 
-        "start": "405"
+        "start": "426"
       }
     ]
   }, 
@@ -2490,7 +2877,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/renderer/entity/RenderItem$1", 
-        "start": "384"
+        "start": "405"
       }
     ]
   }, 
@@ -2503,7 +2890,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/renderer/entity/RenderItem$2", 
-        "start": "391"
+        "start": "412"
       }
     ]
   }, 
@@ -2516,7 +2903,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/renderer/entity/RenderItem$3", 
-        "start": "398"
+        "start": "419"
       }
     ]
   }, 
@@ -2529,7 +2916,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/renderer/entity/RenderItem$4", 
-        "start": "405"
+        "start": "426"
       }
     ]
   }, 
@@ -2754,6 +3141,95 @@
       }
     ]
   }, 
+  "net/minecraft/client/resources/SkinManager": {
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/client/resources/SkinManager$1", 
+        "start": "45"
+      }, 
+      {
+        "inner_class": "net/minecraft/client/resources/SkinManager$2", 
+        "start": "72"
+      }, 
+      {
+        "inner_class": "net/minecraft/client/resources/SkinManager$3", 
+        "start": "98"
+      }, 
+      {
+        "access": "609", 
+        "inner_class": "net/minecraft/client/resources/SkinManager$SkinAvailableCallback", 
+        "inner_name": "SkinAvailableCallback", 
+        "outer_class": "net/minecraft/client/resources/SkinManager"
+      }
+    ]
+  }, 
+  "net/minecraft/client/resources/SkinManager$1": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/resources/SkinManager"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/client/resources/SkinManager$1", 
+        "start": "45"
+      }
+    ]
+  }, 
+  "net/minecraft/client/resources/SkinManager$2": {
+    "enclosingMethod": {
+      "desc": "(Lcom/mojang/authlib/minecraft/MinecraftProfileTexture;Lcom/mojang/authlib/minecraft/MinecraftProfileTexture$Type;Lnet/minecraft/client/resources/SkinManager$SkinAvailableCallback;)Lnet/minecraft/util/ResourceLocation;", 
+      "name": "func_152789_a", 
+      "owner": "net/minecraft/client/resources/SkinManager"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/client/resources/SkinManager$2", 
+        "start": "72"
+      }
+    ]
+  }, 
+  "net/minecraft/client/resources/SkinManager$3": {
+    "enclosingMethod": {
+      "desc": "(Lcom/mojang/authlib/GameProfile;Lnet/minecraft/client/resources/SkinManager$SkinAvailableCallback;Z)V", 
+      "name": "func_152790_a", 
+      "owner": "net/minecraft/client/resources/SkinManager"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/client/resources/SkinManager$3", 
+        "start": "98"
+      }, 
+      {
+        "inner_class": "net/minecraft/client/resources/SkinManager$3$1", 
+        "start": "112"
+      }
+    ]
+  }, 
+  "net/minecraft/client/resources/SkinManager$3$1": {
+    "enclosingMethod": {
+      "desc": "()V", 
+      "name": "run", 
+      "owner": "net/minecraft/client/resources/SkinManager$3"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/client/resources/SkinManager$3$1", 
+        "start": "112"
+      }
+    ]
+  }, 
+  "net/minecraft/client/resources/SkinManager$SkinAvailableCallback": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/resources/SkinManager"
+    }, 
+    "innerClasses": [
+      {
+        "access": "609", 
+        "inner_class": "net/minecraft/client/resources/SkinManager$SkinAvailableCallback", 
+        "inner_name": "SkinAvailableCallback", 
+        "outer_class": "net/minecraft/client/resources/SkinManager"
+      }
+    ]
+  }, 
   "net/minecraft/client/resources/data/IMetadataSerializer": {
     "innerClasses": [
       {
@@ -2796,14 +3272,14 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/settings/GameSettings$1", 
-        "start": "34"
+        "start": "35"
       }, 
       {
         "access": "4029", 
         "inner_class": "net/minecraft/client/settings/GameSettings$Options", 
         "inner_name": "Options", 
         "outer_class": "net/minecraft/client/settings/GameSettings", 
-        "start": "60"
+        "start": "76"
       }, 
       {
         "access": "1018", 
@@ -2820,7 +3296,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/settings/GameSettings$1", 
-        "start": "34"
+        "start": "35"
       }
     ]
   }, 
@@ -2834,12 +3310,12 @@
         "inner_class": "net/minecraft/client/settings/GameSettings$Options", 
         "inner_name": "Options", 
         "outer_class": "net/minecraft/client/settings/GameSettings", 
-        "start": "60"
+        "start": "76"
       }, 
       {
         "access": "4000", 
         "inner_class": "net/minecraft/client/settings/GameSettings$Options$1", 
-        "start": "99"
+        "start": "114"
       }
     ]
   }, 
@@ -2851,7 +3327,7 @@
       {
         "access": "4000", 
         "inner_class": "net/minecraft/client/settings/GameSettings$Options$1", 
-        "start": "99"
+        "start": "114"
       }
     ]
   }, 
@@ -2875,7 +3351,7 @@
         "inner_class": "net/minecraft/client/shader/ShaderLoader$ShaderType", 
         "inner_name": "ShaderType", 
         "outer_class": "net/minecraft/client/shader/ShaderLoader", 
-        "start": "80"
+        "start": "79"
       }
     ]
   }, 
@@ -2889,7 +3365,257 @@
         "inner_class": "net/minecraft/client/shader/ShaderLoader$ShaderType", 
         "inner_name": "ShaderType", 
         "outer_class": "net/minecraft/client/shader/ShaderLoader", 
-        "start": "80"
+        "start": "79"
+      }
+    ]
+  }, 
+  "net/minecraft/client/stream/BroadcastController": {
+    "innerClasses": [
+      {
+        "access": "4029", 
+        "inner_class": "net/minecraft/client/stream/BroadcastController$BroadcastState", 
+        "inner_name": "BroadcastState", 
+        "outer_class": "net/minecraft/client/stream/BroadcastController", 
+        "start": "50"
+      }, 
+      {
+        "access": "1018", 
+        "inner_class": "net/minecraft/client/stream/BroadcastController$SwitchBroadcastState", 
+        "inner_name": "SwitchBroadcastState", 
+        "outer_class": "net/minecraft/client/stream/BroadcastController"
+      }, 
+      {
+        "access": "609", 
+        "inner_class": "net/minecraft/client/stream/BroadcastController$BroadcastListener", 
+        "inner_name": "BroadcastListener", 
+        "outer_class": "net/minecraft/client/stream/BroadcastController"
+      }
+    ]
+  }, 
+  "net/minecraft/client/stream/BroadcastController$BroadcastListener": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/stream/BroadcastController"
+    }, 
+    "innerClasses": [
+      {
+        "access": "609", 
+        "inner_class": "net/minecraft/client/stream/BroadcastController$BroadcastListener", 
+        "inner_name": "BroadcastListener", 
+        "outer_class": "net/minecraft/client/stream/BroadcastController"
+      }
+    ]
+  }, 
+  "net/minecraft/client/stream/BroadcastController$BroadcastState": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/stream/BroadcastController"
+    }, 
+    "innerClasses": [
+      {
+        "access": "4029", 
+        "inner_class": "net/minecraft/client/stream/BroadcastController$BroadcastState", 
+        "inner_name": "BroadcastState", 
+        "outer_class": "net/minecraft/client/stream/BroadcastController", 
+        "start": "50"
+      }
+    ]
+  }, 
+  "net/minecraft/client/stream/BroadcastController$SwitchBroadcastState": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/stream/BroadcastController"
+    }, 
+    "innerClasses": [
+      {
+        "access": "1018", 
+        "inner_class": "net/minecraft/client/stream/BroadcastController$SwitchBroadcastState", 
+        "inner_name": "SwitchBroadcastState", 
+        "outer_class": "net/minecraft/client/stream/BroadcastController"
+      }
+    ]
+  }, 
+  "net/minecraft/client/stream/ChatController": {
+    "innerClasses": [
+      {
+        "access": "4029", 
+        "inner_class": "net/minecraft/client/stream/ChatController$ChatState", 
+        "inner_name": "ChatState", 
+        "outer_class": "net/minecraft/client/stream/ChatController", 
+        "start": "37"
+      }, 
+      {
+        "access": "1018", 
+        "inner_class": "net/minecraft/client/stream/ChatController$SwitchChatState", 
+        "inner_name": "SwitchChatState", 
+        "outer_class": "net/minecraft/client/stream/ChatController"
+      }, 
+      {
+        "access": "609", 
+        "inner_class": "net/minecraft/client/stream/ChatController$ChatListener", 
+        "inner_name": "ChatListener", 
+        "outer_class": "net/minecraft/client/stream/ChatController"
+      }
+    ]
+  }, 
+  "net/minecraft/client/stream/ChatController$ChatListener": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/stream/ChatController"
+    }, 
+    "innerClasses": [
+      {
+        "access": "609", 
+        "inner_class": "net/minecraft/client/stream/ChatController$ChatListener", 
+        "inner_name": "ChatListener", 
+        "outer_class": "net/minecraft/client/stream/ChatController"
+      }
+    ]
+  }, 
+  "net/minecraft/client/stream/ChatController$ChatState": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/stream/ChatController"
+    }, 
+    "innerClasses": [
+      {
+        "access": "4029", 
+        "inner_class": "net/minecraft/client/stream/ChatController$ChatState", 
+        "inner_name": "ChatState", 
+        "outer_class": "net/minecraft/client/stream/ChatController", 
+        "start": "37"
+      }
+    ]
+  }, 
+  "net/minecraft/client/stream/ChatController$SwitchChatState": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/stream/ChatController"
+    }, 
+    "innerClasses": [
+      {
+        "access": "1018", 
+        "inner_class": "net/minecraft/client/stream/ChatController$SwitchChatState", 
+        "inner_name": "SwitchChatState", 
+        "outer_class": "net/minecraft/client/stream/ChatController"
+      }
+    ]
+  }, 
+  "net/minecraft/client/stream/IStream": {
+    "innerClasses": [
+      {
+        "access": "4029", 
+        "inner_class": "net/minecraft/client/stream/IStream$AuthFailureReason", 
+        "inner_name": "AuthFailureReason", 
+        "outer_class": "net/minecraft/client/stream/IStream", 
+        "start": "11"
+      }
+    ]
+  }, 
+  "net/minecraft/client/stream/IStream$AuthFailureReason": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/stream/IStream"
+    }, 
+    "innerClasses": [
+      {
+        "access": "4029", 
+        "inner_class": "net/minecraft/client/stream/IStream$AuthFailureReason", 
+        "inner_name": "AuthFailureReason", 
+        "outer_class": "net/minecraft/client/stream/IStream", 
+        "start": "11"
+      }
+    ]
+  }, 
+  "net/minecraft/client/stream/IngestServerTester": {
+    "innerClasses": [
+      {
+        "access": "4029", 
+        "inner_class": "net/minecraft/client/stream/IngestServerTester$IngestTestState", 
+        "inner_name": "IngestTestState", 
+        "outer_class": "net/minecraft/client/stream/IngestServerTester", 
+        "start": "16"
+      }, 
+      {
+        "access": "609", 
+        "inner_class": "net/minecraft/client/stream/IngestServerTester$IngestTestListener", 
+        "inner_name": "IngestTestListener", 
+        "outer_class": "net/minecraft/client/stream/IngestServerTester"
+      }, 
+      {
+        "access": "1018", 
+        "inner_class": "net/minecraft/client/stream/IngestServerTester$SwitchStatType", 
+        "inner_name": "SwitchStatType", 
+        "outer_class": "net/minecraft/client/stream/IngestServerTester"
+      }
+    ]
+  }, 
+  "net/minecraft/client/stream/IngestServerTester$IngestTestListener": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/stream/IngestServerTester"
+    }, 
+    "innerClasses": [
+      {
+        "access": "609", 
+        "inner_class": "net/minecraft/client/stream/IngestServerTester$IngestTestListener", 
+        "inner_name": "IngestTestListener", 
+        "outer_class": "net/minecraft/client/stream/IngestServerTester"
+      }
+    ]
+  }, 
+  "net/minecraft/client/stream/IngestServerTester$IngestTestState": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/stream/IngestServerTester"
+    }, 
+    "innerClasses": [
+      {
+        "access": "4029", 
+        "inner_class": "net/minecraft/client/stream/IngestServerTester$IngestTestState", 
+        "inner_name": "IngestTestState", 
+        "outer_class": "net/minecraft/client/stream/IngestServerTester", 
+        "start": "16"
+      }
+    ]
+  }, 
+  "net/minecraft/client/stream/IngestServerTester$SwitchStatType": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/stream/IngestServerTester"
+    }, 
+    "innerClasses": [
+      {
+        "access": "1018", 
+        "inner_class": "net/minecraft/client/stream/IngestServerTester$SwitchStatType", 
+        "inner_name": "SwitchStatType", 
+        "outer_class": "net/minecraft/client/stream/IngestServerTester"
+      }
+    ]
+  }, 
+  "net/minecraft/client/stream/TwitchStream": {
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/client/stream/TwitchStream$1", 
+        "start": "81"
+      }
+    ]
+  }, 
+  "net/minecraft/client/stream/TwitchStream$1": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/client/stream/TwitchStream"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/client/stream/TwitchStream$1", 
+        "start": "81"
+      }, 
+      {
+        "inner_class": "net/minecraft/client/stream/TwitchStream$1$1", 
+        "start": "99"
+      }
+    ]
+  }, 
+  "net/minecraft/client/stream/TwitchStream$1$1": {
+    "enclosingMethod": {
+      "desc": "()V", 
+      "name": "run", 
+      "owner": "net/minecraft/client/stream/TwitchStream$1"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/client/stream/TwitchStream$1$1", 
+        "start": "99"
       }
     ]
   }, 
@@ -2969,11 +3695,15 @@
         "start": "17"
       }, 
       {
+        "inner_class": "net/minecraft/command/IEntitySelector$3", 
+        "start": "23"
+      }, 
+      {
         "access": "29", 
         "inner_class": "net/minecraft/command/IEntitySelector$ArmoredMob", 
         "inner_name": "ArmoredMob", 
         "outer_class": "net/minecraft/command/IEntitySelector", 
-        "start": "30"
+        "start": "36"
       }
     ]
   }, 
@@ -2999,6 +3729,17 @@
       }
     ]
   }, 
+  "net/minecraft/command/IEntitySelector$3": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/command/IEntitySelector"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/command/IEntitySelector$3", 
+        "start": "23"
+      }
+    ]
+  }, 
   "net/minecraft/command/IEntitySelector$ArmoredMob": {
     "enclosingMethod": {
       "owner": "net/minecraft/command/IEntitySelector"
@@ -3009,7 +3750,7 @@
         "inner_class": "net/minecraft/command/IEntitySelector$ArmoredMob", 
         "inner_name": "ArmoredMob", 
         "outer_class": "net/minecraft/command/IEntitySelector", 
-        "start": "30"
+        "start": "36"
       }
     ]
   }, 
@@ -3439,38 +4180,38 @@
         "inner_class": "net/minecraft/enchantment/EnchantmentHelper$ModifierDamage", 
         "inner_name": "ModifierDamage", 
         "outer_class": "net/minecraft/enchantment/EnchantmentHelper", 
-        "start": "122"
+        "start": "123"
       }, 
       {
         "access": "38", 
         "inner_class": "net/minecraft/enchantment/EnchantmentHelper$ModifierLiving", 
         "inner_name": "ModifierLiving", 
         "outer_class": "net/minecraft/enchantment/EnchantmentHelper", 
-        "start": "155"
+        "start": "156"
       }, 
       {
         "access": "38", 
         "inner_class": "net/minecraft/enchantment/EnchantmentHelper$HurtIterator", 
         "inner_name": "HurtIterator", 
         "outer_class": "net/minecraft/enchantment/EnchantmentHelper", 
-        "start": "176"
+        "start": "181"
       }, 
       {
         "access": "38", 
         "inner_class": "net/minecraft/enchantment/EnchantmentHelper$DamageIterator", 
         "inner_name": "DamageIterator", 
         "outer_class": "net/minecraft/enchantment/EnchantmentHelper", 
-        "start": "195"
+        "start": "200"
+      }, 
+      {
+        "access": "1000", 
+        "inner_class": "net/minecraft/enchantment/EnchantmentHelper$1"
       }, 
       {
         "access": "608", 
         "inner_class": "net/minecraft/enchantment/EnchantmentHelper$IModifier", 
         "inner_name": "IModifier", 
         "outer_class": "net/minecraft/enchantment/EnchantmentHelper"
-      }, 
-      {
-        "access": "1000", 
-        "inner_class": "net/minecraft/enchantment/EnchantmentHelper$1"
       }
     ]
   }, 
@@ -3495,7 +4236,7 @@
         "inner_class": "net/minecraft/enchantment/EnchantmentHelper$DamageIterator", 
         "inner_name": "DamageIterator", 
         "outer_class": "net/minecraft/enchantment/EnchantmentHelper", 
-        "start": "195"
+        "start": "200"
       }
     ]
   }, 
@@ -3509,7 +4250,7 @@
         "inner_class": "net/minecraft/enchantment/EnchantmentHelper$HurtIterator", 
         "inner_name": "HurtIterator", 
         "outer_class": "net/minecraft/enchantment/EnchantmentHelper", 
-        "start": "176"
+        "start": "181"
       }
     ]
   }, 
@@ -3536,7 +4277,7 @@
         "inner_class": "net/minecraft/enchantment/EnchantmentHelper$ModifierDamage", 
         "inner_name": "ModifierDamage", 
         "outer_class": "net/minecraft/enchantment/EnchantmentHelper", 
-        "start": "122"
+        "start": "123"
       }
     ]
   }, 
@@ -3550,7 +4291,7 @@
         "inner_class": "net/minecraft/enchantment/EnchantmentHelper$ModifierLiving", 
         "inner_name": "ModifierLiving", 
         "outer_class": "net/minecraft/enchantment/EnchantmentHelper", 
-        "start": "155"
+        "start": "156"
       }
     ]
   }, 
@@ -3586,15 +4327,15 @@
         "inner_class": "net/minecraft/entity/Entity$EnumEntitySize", 
         "inner_name": "EnumEntitySize", 
         "outer_class": "net/minecraft/entity/Entity", 
-        "start": "121"
+        "start": "120"
       }, 
       {
         "inner_class": "net/minecraft/entity/Entity$1", 
-        "start": "1585"
+        "start": "1601"
       }, 
       {
         "inner_class": "net/minecraft/entity/Entity$2", 
-        "start": "1592"
+        "start": "1608"
       }, 
       {
         "access": "1018", 
@@ -3613,7 +4354,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/entity/Entity$1", 
-        "start": "1585"
+        "start": "1601"
       }
     ]
   }, 
@@ -3626,7 +4367,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/entity/Entity$2", 
-        "start": "1592"
+        "start": "1608"
       }
     ]
   }, 
@@ -3640,7 +4381,7 @@
         "inner_class": "net/minecraft/entity/Entity$EnumEntitySize", 
         "inner_name": "EnumEntitySize", 
         "outer_class": "net/minecraft/entity/Entity", 
-        "start": "121"
+        "start": "120"
       }
     ]
   }, 
@@ -4018,7 +4759,7 @@
         "inner_class": "net/minecraft/entity/player/EntityPlayer$EnumStatus", 
         "inner_name": "EnumStatus", 
         "outer_class": "net/minecraft/entity/player/EntityPlayer", 
-        "start": "1026"
+        "start": "1030"
       }
     ]
   }, 
@@ -4046,7 +4787,7 @@
         "inner_class": "net/minecraft/entity/player/EntityPlayer$EnumStatus", 
         "inner_name": "EnumStatus", 
         "outer_class": "net/minecraft/entity/player/EntityPlayer", 
-        "start": "1026"
+        "start": "1030"
       }
     ]
   }, 
@@ -4805,6 +5546,25 @@
       }
     ]
   }, 
+  "net/minecraft/nbt/NBTSizeTracker": {
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/nbt/NBTSizeTracker$1", 
+        "start": "8"
+      }
+    ]
+  }, 
+  "net/minecraft/nbt/NBTSizeTracker$1": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/nbt/NBTSizeTracker"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/nbt/NBTSizeTracker$1", 
+        "start": "8"
+      }
+    ]
+  }, 
   "net/minecraft/nbt/NBTTagCompound": {
     "innerClasses": [
       {
@@ -4907,91 +5667,15 @@
       }
     ]
   }, 
-  "net/minecraft/network/NetworkManager": {
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/network/NetworkManager$1", 
-        "start": "130"
-      }, 
-      {
-        "inner_class": "net/minecraft/network/NetworkManager$2", 
-        "start": "197"
-      }, 
-      {
-        "inner_class": "net/minecraft/network/NetworkManager$3", 
-        "start": "233"
-      }, 
-      {
-        "access": "28", 
-        "inner_class": "net/minecraft/network/NetworkManager$InboundHandlerTuplePacketListener", 
-        "inner_name": "InboundHandlerTuplePacketListener", 
-        "outer_class": "net/minecraft/network/NetworkManager", 
-        "start": "264"
-      }
-    ]
-  }, 
-  "net/minecraft/network/NetworkManager$1": {
-    "enclosingMethod": {
-      "desc": "(Lnet/minecraft/network/Packet;[Lio/netty/util/concurrent/GenericFutureListener;)V", 
-      "name": "func_150732_b", 
-      "owner": "net/minecraft/network/NetworkManager"
-    }, 
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/network/NetworkManager$1", 
-        "start": "130"
-      }
-    ]
-  }, 
-  "net/minecraft/network/NetworkManager$2": {
-    "enclosingMethod": {
-      "desc": "(Ljava/net/InetAddress;I)Lnet/minecraft/network/NetworkManager;", 
-      "name": "func_150726_a", 
-      "owner": "net/minecraft/network/NetworkManager"
-    }, 
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/network/NetworkManager$2", 
-        "start": "197"
-      }
-    ]
-  }, 
-  "net/minecraft/network/NetworkManager$3": {
-    "enclosingMethod": {
-      "desc": "(Ljava/net/SocketAddress;)Lnet/minecraft/network/NetworkManager;", 
-      "name": "func_150722_a", 
-      "owner": "net/minecraft/network/NetworkManager"
-    }, 
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/network/NetworkManager$3", 
-        "start": "233"
-      }
-    ]
-  }, 
-  "net/minecraft/network/NetworkManager$InboundHandlerTuplePacketListener": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/network/NetworkManager"
-    }, 
-    "innerClasses": [
-      {
-        "access": "28", 
-        "inner_class": "net/minecraft/network/NetworkManager$InboundHandlerTuplePacketListener", 
-        "inner_name": "InboundHandlerTuplePacketListener", 
-        "outer_class": "net/minecraft/network/NetworkManager", 
-        "start": "264"
-      }
-    ]
-  }, 
   "net/minecraft/network/NetHandlerPlayServer": {
     "innerClasses": [
       {
         "inner_class": "net/minecraft/network/NetHandlerPlayServer$1", 
-        "start": "107"
+        "start": "108"
       }, 
       {
         "inner_class": "net/minecraft/network/NetHandlerPlayServer$2", 
-        "start": "440"
+        "start": "441"
       }, 
       {
         "access": "1018", 
@@ -5010,7 +5694,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/network/NetHandlerPlayServer$1", 
-        "start": "107"
+        "start": "108"
       }
     ]
   }, 
@@ -5023,7 +5707,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/network/NetHandlerPlayServer$2", 
-        "start": "440"
+        "start": "441"
       }
     ]
   }, 
@@ -5037,6 +5721,164 @@
         "inner_class": "net/minecraft/network/NetHandlerPlayServer$SwitchEnumState", 
         "inner_name": "SwitchEnumState", 
         "outer_class": "net/minecraft/network/NetHandlerPlayServer"
+      }
+    ]
+  }, 
+  "net/minecraft/network/NetworkManager": {
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/network/NetworkManager$1", 
+        "start": "140"
+      }, 
+      {
+        "inner_class": "net/minecraft/network/NetworkManager$2", 
+        "start": "207"
+      }, 
+      {
+        "inner_class": "net/minecraft/network/NetworkManager$3", 
+        "start": "243"
+      }, 
+      {
+        "access": "28", 
+        "inner_class": "net/minecraft/network/NetworkManager$InboundHandlerTuplePacketListener", 
+        "inner_name": "InboundHandlerTuplePacketListener", 
+        "outer_class": "net/minecraft/network/NetworkManager", 
+        "start": "279"
+      }
+    ]
+  }, 
+  "net/minecraft/network/NetworkManager$1": {
+    "enclosingMethod": {
+      "desc": "(Lnet/minecraft/network/Packet;[Lio/netty/util/concurrent/GenericFutureListener;)V", 
+      "name": "func_150732_b", 
+      "owner": "net/minecraft/network/NetworkManager"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/network/NetworkManager$1", 
+        "start": "140"
+      }
+    ]
+  }, 
+  "net/minecraft/network/NetworkManager$2": {
+    "enclosingMethod": {
+      "desc": "(Ljava/net/InetAddress;I)Lnet/minecraft/network/NetworkManager;", 
+      "name": "func_150726_a", 
+      "owner": "net/minecraft/network/NetworkManager"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/network/NetworkManager$2", 
+        "start": "207"
+      }
+    ]
+  }, 
+  "net/minecraft/network/NetworkManager$3": {
+    "enclosingMethod": {
+      "desc": "(Ljava/net/SocketAddress;)Lnet/minecraft/network/NetworkManager;", 
+      "name": "func_150722_a", 
+      "owner": "net/minecraft/network/NetworkManager"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/network/NetworkManager$3", 
+        "start": "243"
+      }
+    ]
+  }, 
+  "net/minecraft/network/NetworkManager$InboundHandlerTuplePacketListener": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/network/NetworkManager"
+    }, 
+    "innerClasses": [
+      {
+        "access": "28", 
+        "inner_class": "net/minecraft/network/NetworkManager$InboundHandlerTuplePacketListener", 
+        "inner_name": "InboundHandlerTuplePacketListener", 
+        "outer_class": "net/minecraft/network/NetworkManager", 
+        "start": "279"
+      }
+    ]
+  }, 
+  "net/minecraft/network/NetworkStatistics": {
+    "innerClasses": [
+      {
+        "access": "28", 
+        "inner_class": "net/minecraft/network/NetworkStatistics$Tracker", 
+        "inner_name": "Tracker", 
+        "outer_class": "net/minecraft/network/NetworkStatistics", 
+        "start": "86"
+      }, 
+      {
+        "access": "28", 
+        "inner_class": "net/minecraft/network/NetworkStatistics$PacketStatData", 
+        "inner_name": "PacketStatData", 
+        "outer_class": "net/minecraft/network/NetworkStatistics", 
+        "start": "159"
+      }, 
+      {
+        "access": "29", 
+        "inner_class": "net/minecraft/network/NetworkStatistics$PacketStat", 
+        "inner_name": "PacketStat", 
+        "outer_class": "net/minecraft/network/NetworkStatistics", 
+        "start": "209"
+      }, 
+      {
+        "access": "1000", 
+        "inner_class": "net/minecraft/network/NetworkStatistics$1"
+      }
+    ]
+  }, 
+  "net/minecraft/network/NetworkStatistics$1": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/network/NetworkStatistics"
+    }, 
+    "innerClasses": [
+      {
+        "access": "1000", 
+        "inner_class": "net/minecraft/network/NetworkStatistics$1"
+      }
+    ]
+  }, 
+  "net/minecraft/network/NetworkStatistics$PacketStat": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/network/NetworkStatistics"
+    }, 
+    "innerClasses": [
+      {
+        "access": "29", 
+        "inner_class": "net/minecraft/network/NetworkStatistics$PacketStat", 
+        "inner_name": "PacketStat", 
+        "outer_class": "net/minecraft/network/NetworkStatistics", 
+        "start": "209"
+      }
+    ]
+  }, 
+  "net/minecraft/network/NetworkStatistics$PacketStatData": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/network/NetworkStatistics"
+    }, 
+    "innerClasses": [
+      {
+        "access": "28", 
+        "inner_class": "net/minecraft/network/NetworkStatistics$PacketStatData", 
+        "inner_name": "PacketStatData", 
+        "outer_class": "net/minecraft/network/NetworkStatistics", 
+        "start": "159"
+      }
+    ]
+  }, 
+  "net/minecraft/network/NetworkStatistics$Tracker": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/network/NetworkStatistics"
+    }, 
+    "innerClasses": [
+      {
+        "access": "28", 
+        "inner_class": "net/minecraft/network/NetworkStatistics$Tracker", 
+        "inner_name": "Tracker", 
+        "outer_class": "net/minecraft/network/NetworkStatistics", 
+        "start": "86"
       }
     ]
   }, 
@@ -5119,21 +5961,21 @@
         "inner_class": "net/minecraft/network/ServerStatusResponse$PlayerCountData", 
         "inner_name": "PlayerCountData", 
         "outer_class": "net/minecraft/network/ServerStatusResponse", 
-        "start": "62"
+        "start": "63"
       }, 
       {
         "access": "29", 
         "inner_class": "net/minecraft/network/ServerStatusResponse$MinecraftProtocolVersionIdentifier", 
         "inner_name": "MinecraftProtocolVersionIdentifier", 
         "outer_class": "net/minecraft/network/ServerStatusResponse", 
-        "start": "133"
+        "start": "136"
       }, 
       {
         "access": "29", 
         "inner_class": "net/minecraft/network/ServerStatusResponse$Serializer", 
         "inner_name": "Serializer", 
         "outer_class": "net/minecraft/network/ServerStatusResponse", 
-        "start": "157"
+        "start": "160"
       }
     ]
   }, 
@@ -5147,14 +5989,14 @@
         "inner_class": "net/minecraft/network/ServerStatusResponse$MinecraftProtocolVersionIdentifier", 
         "inner_name": "MinecraftProtocolVersionIdentifier", 
         "outer_class": "net/minecraft/network/ServerStatusResponse", 
-        "start": "133"
+        "start": "136"
       }, 
       {
         "access": "29", 
         "inner_class": "net/minecraft/network/ServerStatusResponse$MinecraftProtocolVersionIdentifier$Serializer", 
         "inner_name": "Serializer", 
         "outer_class": "net/minecraft/network/ServerStatusResponse$MinecraftProtocolVersionIdentifier", 
-        "start": "140"
+        "start": "143"
       }
     ]
   }, 
@@ -5168,7 +6010,7 @@
         "inner_class": "net/minecraft/network/ServerStatusResponse$MinecraftProtocolVersionIdentifier$Serializer", 
         "inner_name": "Serializer", 
         "outer_class": "net/minecraft/network/ServerStatusResponse$MinecraftProtocolVersionIdentifier", 
-        "start": "140"
+        "start": "143"
       }
     ]
   }, 
@@ -5182,14 +6024,14 @@
         "inner_class": "net/minecraft/network/ServerStatusResponse$PlayerCountData", 
         "inner_name": "PlayerCountData", 
         "outer_class": "net/minecraft/network/ServerStatusResponse", 
-        "start": "62"
+        "start": "63"
       }, 
       {
         "access": "29", 
         "inner_class": "net/minecraft/network/ServerStatusResponse$PlayerCountData$Serializer", 
         "inner_name": "Serializer", 
         "outer_class": "net/minecraft/network/ServerStatusResponse$PlayerCountData", 
-        "start": "77"
+        "start": "78"
       }
     ]
   }, 
@@ -5203,7 +6045,7 @@
         "inner_class": "net/minecraft/network/ServerStatusResponse$PlayerCountData$Serializer", 
         "inner_name": "Serializer", 
         "outer_class": "net/minecraft/network/ServerStatusResponse$PlayerCountData", 
-        "start": "77"
+        "start": "78"
       }
     ]
   }, 
@@ -5217,7 +6059,7 @@
         "inner_class": "net/minecraft/network/ServerStatusResponse$Serializer", 
         "inner_name": "Serializer", 
         "outer_class": "net/minecraft/network/ServerStatusResponse", 
-        "start": "157"
+        "start": "160"
       }
     ]
   }, 
@@ -5482,7 +6324,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/profiler/PlayerUsageSnooper$1", 
-        "start": "46"
+        "start": "48"
       }
     ]
   }, 
@@ -5495,7 +6337,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/profiler/PlayerUsageSnooper$1", 
-        "start": "46"
+        "start": "48"
       }
     ]
   }, 
@@ -5547,27 +6389,27 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/MinecraftServer$1", 
-        "start": "131"
+        "start": "139"
       }, 
       {
         "inner_class": "net/minecraft/server/MinecraftServer$2", 
-        "start": "605"
+        "start": "616"
       }, 
       {
         "inner_class": "net/minecraft/server/MinecraftServer$3", 
-        "start": "617"
+        "start": "628"
       }, 
       {
         "inner_class": "net/minecraft/server/MinecraftServer$4", 
-        "start": "698"
+        "start": "713"
       }, 
       {
         "inner_class": "net/minecraft/server/MinecraftServer$5", 
-        "start": "706"
+        "start": "721"
       }, 
       {
         "inner_class": "net/minecraft/server/MinecraftServer$6", 
-        "start": "722"
+        "start": "737"
       }
     ]
   }, 
@@ -5580,7 +6422,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/MinecraftServer$1", 
-        "start": "131"
+        "start": "139"
       }
     ]
   }, 
@@ -5593,7 +6435,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/MinecraftServer$2", 
-        "start": "605"
+        "start": "616"
       }
     ]
   }, 
@@ -5606,7 +6448,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/MinecraftServer$3", 
-        "start": "617"
+        "start": "628"
       }
     ]
   }, 
@@ -5619,7 +6461,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/MinecraftServer$4", 
-        "start": "698"
+        "start": "713"
       }
     ]
   }, 
@@ -5632,7 +6474,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/MinecraftServer$5", 
-        "start": "706"
+        "start": "721"
       }
     ]
   }, 
@@ -5645,7 +6487,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/MinecraftServer$6", 
-        "start": "722"
+        "start": "737"
       }
     ]
   }, 
@@ -5653,19 +6495,19 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/dedicated/DedicatedServer$1", 
-        "start": "62"
+        "start": "65"
       }, 
       {
         "inner_class": "net/minecraft/server/dedicated/DedicatedServer$2", 
-        "start": "75"
+        "start": "78"
       }, 
       {
         "inner_class": "net/minecraft/server/dedicated/DedicatedServer$3", 
-        "start": "239"
+        "start": "249"
       }, 
       {
         "inner_class": "net/minecraft/server/dedicated/DedicatedServer$4", 
-        "start": "248"
+        "start": "258"
       }
     ]
   }, 
@@ -5676,7 +6518,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/dedicated/DedicatedServer$1", 
-        "start": "62"
+        "start": "65"
       }
     ]
   }, 
@@ -5689,7 +6531,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/dedicated/DedicatedServer$2", 
-        "start": "75"
+        "start": "78"
       }
     ]
   }, 
@@ -5702,7 +6544,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/dedicated/DedicatedServer$3", 
-        "start": "239"
+        "start": "249"
       }
     ]
   }, 
@@ -5715,7 +6557,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/dedicated/DedicatedServer$4", 
-        "start": "248"
+        "start": "258"
       }
     ]
   }, 
@@ -5810,7 +6652,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/gui/StatsComponent$1", 
-        "start": "30"
+        "start": "29"
       }
     ]
   }, 
@@ -5821,7 +6663,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/gui/StatsComponent$1", 
-        "start": "30"
+        "start": "29"
       }
     ]
   }, 
@@ -5829,11 +6671,11 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/integrated/IntegratedServer$1", 
-        "start": "160"
+        "start": "170"
       }, 
       {
         "inner_class": "net/minecraft/server/integrated/IntegratedServer$2", 
-        "start": "167"
+        "start": "177"
       }
     ]
   }, 
@@ -5846,7 +6688,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/integrated/IntegratedServer$1", 
-        "start": "160"
+        "start": "170"
       }
     ]
   }, 
@@ -5859,7 +6701,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/integrated/IntegratedServer$2", 
-        "start": "167"
+        "start": "177"
       }
     ]
   }, 
@@ -5870,7 +6712,7 @@
         "inner_class": "net/minecraft/server/management/PlayerManager$PlayerInstance", 
         "inner_name": "PlayerInstance", 
         "outer_class": "net/minecraft/server/management/PlayerManager", 
-        "start": "20"
+        "start": "23"
       }
     ]
   }, 
@@ -5884,7 +6726,265 @@
         "inner_class": "net/minecraft/server/management/PlayerManager$PlayerInstance", 
         "inner_name": "PlayerInstance", 
         "outer_class": "net/minecraft/server/management/PlayerManager", 
-        "start": "20"
+        "start": "23"
+      }
+    ]
+  }, 
+  "net/minecraft/server/management/PlayerProfileCache": {
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/server/management/PlayerProfileCache$1", 
+        "start": "50"
+      }, 
+      {
+        "access": "20", 
+        "inner_class": "net/minecraft/server/management/PlayerProfileCache$Serializer", 
+        "inner_name": "Serializer", 
+        "outer_class": "net/minecraft/server/management/PlayerProfileCache", 
+        "start": "210"
+      }, 
+      {
+        "access": "20", 
+        "inner_class": "net/minecraft/server/management/PlayerProfileCache$ProfileEntry", 
+        "inner_name": "ProfileEntry", 
+        "outer_class": "net/minecraft/server/management/PlayerProfileCache", 
+        "start": "257"
+      }, 
+      {
+        "inner_class": "net/minecraft/server/management/PlayerProfileCache$2", 
+        "start": "278"
+      }
+    ]
+  }, 
+  "net/minecraft/server/management/PlayerProfileCache$1": {
+    "enclosingMethod": {
+      "desc": "(Lnet/minecraft/server/MinecraftServer;Ljava/lang/String;)Lcom/mojang/authlib/GameProfile;", 
+      "name": "func_152650_a", 
+      "owner": "net/minecraft/server/management/PlayerProfileCache"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/server/management/PlayerProfileCache$1", 
+        "start": "50"
+      }
+    ]
+  }, 
+  "net/minecraft/server/management/PlayerProfileCache$2": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/server/management/PlayerProfileCache"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/server/management/PlayerProfileCache$2", 
+        "start": "278"
+      }
+    ]
+  }, 
+  "net/minecraft/server/management/PlayerProfileCache$ProfileEntry": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/server/management/PlayerProfileCache"
+    }, 
+    "innerClasses": [
+      {
+        "access": "20", 
+        "inner_class": "net/minecraft/server/management/PlayerProfileCache$ProfileEntry", 
+        "inner_name": "ProfileEntry", 
+        "outer_class": "net/minecraft/server/management/PlayerProfileCache", 
+        "start": "257"
+      }
+    ]
+  }, 
+  "net/minecraft/server/management/PlayerProfileCache$Serializer": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/server/management/PlayerProfileCache"
+    }, 
+    "innerClasses": [
+      {
+        "access": "20", 
+        "inner_class": "net/minecraft/server/management/PlayerProfileCache$Serializer", 
+        "inner_name": "Serializer", 
+        "outer_class": "net/minecraft/server/management/PlayerProfileCache", 
+        "start": "210"
+      }
+    ]
+  }, 
+  "net/minecraft/server/management/PreYggdrasilConverter": {
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/server/management/PreYggdrasilConverter$1", 
+        "start": "51"
+      }, 
+      {
+        "inner_class": "net/minecraft/server/management/PreYggdrasilConverter$2", 
+        "start": "85"
+      }, 
+      {
+        "inner_class": "net/minecraft/server/management/PreYggdrasilConverter$3", 
+        "start": "170"
+      }, 
+      {
+        "inner_class": "net/minecraft/server/management/PreYggdrasilConverter$4", 
+        "start": "212"
+      }, 
+      {
+        "inner_class": "net/minecraft/server/management/PreYggdrasilConverter$5", 
+        "start": "255"
+      }, 
+      {
+        "inner_class": "net/minecraft/server/management/PreYggdrasilConverter$6", 
+        "start": "307"
+      }, 
+      {
+        "inner_class": "net/minecraft/server/management/PreYggdrasilConverter$7", 
+        "start": "422"
+      }, 
+      {
+        "access": "28", 
+        "inner_class": "net/minecraft/server/management/PreYggdrasilConverter$ConversionError", 
+        "inner_name": "ConversionError", 
+        "outer_class": "net/minecraft/server/management/PreYggdrasilConverter"
+      }
+    ]
+  }, 
+  "net/minecraft/server/management/PreYggdrasilConverter$1": {
+    "enclosingMethod": {
+      "desc": "(Lnet/minecraft/server/MinecraftServer;Ljava/util/Collection;Lcom/mojang/authlib/ProfileLookupCallback;)V", 
+      "name": "func_152717_a", 
+      "owner": "net/minecraft/server/management/PreYggdrasilConverter"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/server/management/PreYggdrasilConverter$1", 
+        "start": "51"
+      }
+    ]
+  }, 
+  "net/minecraft/server/management/PreYggdrasilConverter$2": {
+    "enclosingMethod": {
+      "desc": "(Lnet/minecraft/server/MinecraftServer;)Z", 
+      "name": "func_152724_a", 
+      "owner": "net/minecraft/server/management/PreYggdrasilConverter"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/server/management/PreYggdrasilConverter$2", 
+        "start": "85"
+      }
+    ]
+  }, 
+  "net/minecraft/server/management/PreYggdrasilConverter$3": {
+    "enclosingMethod": {
+      "desc": "(Lnet/minecraft/server/MinecraftServer;)Z", 
+      "name": "func_152718_c", 
+      "owner": "net/minecraft/server/management/PreYggdrasilConverter"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/server/management/PreYggdrasilConverter$3", 
+        "start": "170"
+      }
+    ]
+  }, 
+  "net/minecraft/server/management/PreYggdrasilConverter$4": {
+    "enclosingMethod": {
+      "desc": "(Lnet/minecraft/server/MinecraftServer;)Z", 
+      "name": "func_152710_d", 
+      "owner": "net/minecraft/server/management/PreYggdrasilConverter"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/server/management/PreYggdrasilConverter$4", 
+        "start": "212"
+      }
+    ]
+  }, 
+  "net/minecraft/server/management/PreYggdrasilConverter$5": {
+    "enclosingMethod": {
+      "desc": "(Ljava/lang/String;)Ljava/lang/String;", 
+      "name": "func_152719_a", 
+      "owner": "net/minecraft/server/management/PreYggdrasilConverter"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/server/management/PreYggdrasilConverter$5", 
+        "start": "255"
+      }
+    ]
+  }, 
+  "net/minecraft/server/management/PreYggdrasilConverter$6": {
+    "enclosingMethod": {
+      "desc": "(Lnet/minecraft/server/dedicated/DedicatedServer;Lnet/minecraft/server/dedicated/PropertyManager;)Z", 
+      "name": "func_152723_a", 
+      "owner": "net/minecraft/server/management/PreYggdrasilConverter"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/server/management/PreYggdrasilConverter$6", 
+        "start": "307"
+      }
+    ]
+  }, 
+  "net/minecraft/server/management/PreYggdrasilConverter$7": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/server/management/PreYggdrasilConverter"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/server/management/PreYggdrasilConverter$7", 
+        "start": "422"
+      }
+    ]
+  }, 
+  "net/minecraft/server/management/PreYggdrasilConverter$ConversionError": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/server/management/PreYggdrasilConverter"
+    }, 
+    "innerClasses": [
+      {
+        "access": "28", 
+        "inner_class": "net/minecraft/server/management/PreYggdrasilConverter$ConversionError", 
+        "inner_name": "ConversionError", 
+        "outer_class": "net/minecraft/server/management/PreYggdrasilConverter"
+      }
+    ]
+  }, 
+  "net/minecraft/server/management/UserList": {
+    "innerClasses": [
+      {
+        "access": "20", 
+        "inner_class": "net/minecraft/server/management/UserList$Serializer", 
+        "inner_name": "Serializer", 
+        "outer_class": "net/minecraft/server/management/UserList", 
+        "start": "139"
+      }, 
+      {
+        "inner_class": "net/minecraft/server/management/UserList$1", 
+        "start": "161"
+      }
+    ]
+  }, 
+  "net/minecraft/server/management/UserList$1": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/server/management/UserList"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/server/management/UserList$1", 
+        "start": "161"
+      }
+    ]
+  }, 
+  "net/minecraft/server/management/UserList$Serializer": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/server/management/UserList"
+    }, 
+    "innerClasses": [
+      {
+        "access": "20", 
+        "inner_class": "net/minecraft/server/management/UserList$Serializer", 
+        "inner_name": "Serializer", 
+        "outer_class": "net/minecraft/server/management/UserList", 
+        "start": "139"
       }
     ]
   }, 
@@ -5915,14 +7015,14 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/network/NetHandlerLoginServer$1", 
-        "start": "142"
+        "start": "140"
       }, 
       {
         "access": "4028", 
         "inner_class": "net/minecraft/server/network/NetHandlerLoginServer$LoginState", 
         "inner_name": "LoginState", 
         "outer_class": "net/minecraft/server/network/NetHandlerLoginServer", 
-        "start": "160"
+        "start": "176"
       }
     ]
   }, 
@@ -5935,7 +7035,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/network/NetHandlerLoginServer$1", 
-        "start": "142"
+        "start": "140"
       }
     ]
   }, 
@@ -5949,7 +7049,7 @@
         "inner_class": "net/minecraft/server/network/NetHandlerLoginServer$LoginState", 
         "inner_name": "LoginState", 
         "outer_class": "net/minecraft/server/network/NetHandlerLoginServer", 
-        "start": "160"
+        "start": "176"
       }
     ]
   }, 
@@ -6135,25 +7235,6 @@
       }
     ]
   }, 
-  "net/minecraft/util/AxisAlignedBB": {
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/util/AxisAlignedBB$1", 
-        "start": "6"
-      }
-    ]
-  }, 
-  "net/minecraft/util/AxisAlignedBB$1": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/util/AxisAlignedBB"
-    }, 
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/util/AxisAlignedBB$1", 
-        "start": "6"
-      }
-    ]
-  }, 
   "net/minecraft/util/ChatComponentStyle": {
     "innerClasses": [
       {
@@ -6196,14 +7277,14 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/util/ChatStyle$1", 
-        "start": "192"
+        "start": "193"
       }, 
       {
         "access": "29", 
         "inner_class": "net/minecraft/util/ChatStyle$Serializer", 
         "inner_name": "Serializer", 
         "outer_class": "net/minecraft/util/ChatStyle", 
-        "start": "245"
+        "start": "246"
       }
     ]
   }, 
@@ -6214,7 +7295,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/util/ChatStyle$1", 
-        "start": "192"
+        "start": "193"
       }
     ]
   }, 
@@ -6228,7 +7309,7 @@
         "inner_class": "net/minecraft/util/ChatStyle$Serializer", 
         "inner_name": "Serializer", 
         "outer_class": "net/minecraft/util/ChatStyle", 
-        "start": "245"
+        "start": "246"
       }
     ]
   }, 
@@ -6391,6 +7472,31 @@
       }
     ]
   }, 
+  "net/minecraft/util/Session": {
+    "innerClasses": [
+      {
+        "access": "4029", 
+        "inner_class": "net/minecraft/util/Session$Type", 
+        "inner_name": "Type", 
+        "outer_class": "net/minecraft/util/Session", 
+        "start": "54"
+      }
+    ]
+  }, 
+  "net/minecraft/util/Session$Type": {
+    "enclosingMethod": {
+      "owner": "net/minecraft/util/Session"
+    }, 
+    "innerClasses": [
+      {
+        "access": "4029", 
+        "inner_class": "net/minecraft/util/Session$Type", 
+        "inner_name": "Type", 
+        "outer_class": "net/minecraft/util/Session", 
+        "start": "54"
+      }
+    ]
+  }, 
   "net/minecraft/util/Util": {
     "innerClasses": [
       {
@@ -6398,7 +7504,7 @@
         "inner_class": "net/minecraft/util/Util$EnumOS", 
         "inner_name": "EnumOS", 
         "outer_class": "net/minecraft/util/Util", 
-        "start": "9"
+        "start": "7"
       }
     ]
   }, 
@@ -6412,7 +7518,7 @@
         "inner_class": "net/minecraft/util/Util$EnumOS", 
         "inner_name": "EnumOS", 
         "outer_class": "net/minecraft/util/Util", 
-        "start": "9"
+        "start": "7"
       }
     ]
   }, 
@@ -6514,19 +7620,19 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/world/World$1", 
-        "start": "121"
+        "start": "120"
       }, 
       {
         "inner_class": "net/minecraft/world/World$2", 
-        "start": "492"
+        "start": "491"
       }, 
       {
         "inner_class": "net/minecraft/world/World$3", 
-        "start": "2557"
+        "start": "2574"
       }, 
       {
         "inner_class": "net/minecraft/world/World$4", 
-        "start": "2564"
+        "start": "2581"
       }
     ]
   }, 
@@ -6539,7 +7645,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/world/World$1", 
-        "start": "121"
+        "start": "120"
       }
     ]
   }, 
@@ -6552,7 +7658,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/world/World$2", 
-        "start": "492"
+        "start": "491"
       }
     ]
   }, 
@@ -6565,7 +7671,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/world/World$3", 
-        "start": "2557"
+        "start": "2574"
       }
     ]
   }, 
@@ -6578,21 +7684,21 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/world/World$4", 
-        "start": "2564"
+        "start": "2581"
       }
     ]
   }, 
   "net/minecraft/world/WorldServer": {
     "innerClasses": [
       {
+        "access": "1000", 
+        "inner_class": "net/minecraft/world/WorldServer$1"
+      }, 
+      {
         "access": "28", 
         "inner_class": "net/minecraft/world/WorldServer$ServerBlockEventList", 
         "inner_name": "ServerBlockEventList", 
         "outer_class": "net/minecraft/world/WorldServer"
-      }, 
-      {
-        "access": "1000", 
-        "inner_class": "net/minecraft/world/WorldServer$1"
       }
     ]
   }, 
@@ -6691,7 +7797,7 @@
         "inner_class": "net/minecraft/world/biome/BiomeGenBase$SpawnListEntry", 
         "inner_name": "SpawnListEntry", 
         "outer_class": "net/minecraft/world/biome/BiomeGenBase", 
-        "start": "324"
+        "start": "326"
       }
     ]
   }, 
@@ -6719,7 +7825,7 @@
         "inner_class": "net/minecraft/world/biome/BiomeGenBase$SpawnListEntry", 
         "inner_name": "SpawnListEntry", 
         "outer_class": "net/minecraft/world/biome/BiomeGenBase", 
-        "start": "324"
+        "start": "326"
       }
     ]
   }, 

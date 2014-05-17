@@ -16,17 +16,17 @@
  import java.util.Random;
  import java.util.concurrent.atomic.AtomicInteger;
  import net.minecraft.client.Minecraft;
-@@ -33,6 +36,9 @@
- import org.lwjgl.opengl.GL11;
+@@ -35,6 +38,9 @@
+ import org.lwjgl.opengl.GLContext;
  import org.lwjgl.util.glu.Project;
  
 +import com.google.common.base.Strings;
 +import com.google.common.collect.Lists;
 +
  @SideOnly(Side.CLIENT)
- public class GuiMainMenu extends GuiScreen
+ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
  {
-@@ -65,6 +71,8 @@
+@@ -67,6 +73,8 @@
      private GuiButton field_130023_H;
      private static final String __OBFID = "CL_00001154";
  
@@ -35,7 +35,7 @@
      public GuiMainMenu()
      {
          this.field_146972_A = field_96138_a;
-@@ -265,13 +273,22 @@
+@@ -267,13 +275,22 @@
      private void func_130022_h()
      {
          this.field_130023_H.field_146125_m = true;
@@ -59,7 +59,7 @@
          this.field_130023_H.field_146125_m = false;
      }
  
-@@ -320,6 +337,11 @@
+@@ -322,6 +339,11 @@
              this.field_146297_k.func_71400_g();
          }
  
@@ -71,7 +71,7 @@
          if (p_146284_1_.field_146127_k == 11)
          {
              this.field_146297_k.func_71371_a("Demo_World", "Demo_World", DemoWorldServer.field_73071_a);
-@@ -583,7 +605,15 @@
+@@ -585,7 +607,15 @@
              s = s + " Demo";
          }
  

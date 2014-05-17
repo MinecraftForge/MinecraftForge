@@ -7,7 +7,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.io.BufferedReader;
-@@ -45,6 +46,7 @@
+@@ -46,6 +47,7 @@
      private boolean field_71338_p;
      private WorldSettings.GameType field_71337_q;
      private boolean field_71335_s;
@@ -15,7 +15,7 @@
      private static final String __OBFID = "CL_00001784";
  
      public DedicatedServer(File p_i1508_1_)
-@@ -109,6 +111,8 @@
+@@ -110,6 +112,8 @@
              field_155771_h.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
          }
  
@@ -24,30 +24,29 @@
          field_155771_h.info("Loading properties");
          this.field_71340_o = new PropertyManager(new File("server.properties"));
  
-@@ -180,6 +184,8 @@
-             field_155771_h.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
+@@ -192,6 +196,7 @@
          }
+         else
+         {
++            FMLCommonHandler.instance().onServerStarted();
+             this.func_152361_a(new DedicatedPlayerList(this));
+             long j = System.nanoTime();
  
-+        FMLCommonHandler.instance().onServerStarted();
-+
-         this.func_71210_a(new DedicatedPlayerList(this));
-         long j = System.nanoTime();
+@@ -237,6 +242,7 @@
+             this.func_71191_d((this.func_71207_Z() + 8) / 16 * 16);
+             this.func_71191_d(MathHelper.func_76125_a(this.func_71207_Z(), 64, 256));
+             this.field_71340_o.func_73667_a("max-build-height", Integer.valueOf(this.func_71207_Z()));
++            if (!FMLCommonHandler.instance().handleServerAboutToStart(this)) { return false; }
+             field_155771_h.info("Preparing level \"" + this.func_71270_I() + "\"");
+             this.func_71247_a(this.func_71270_I(), this.func_71270_I(), k, worldtype, s2);
+             long i1 = System.nanoTime() - j;
+@@ -257,7 +263,8 @@
+                 this.field_71339_n.func_72602_a();
+             }
  
-@@ -225,6 +231,7 @@
-         this.func_71191_d((this.func_71207_Z() + 8) / 16 * 16);
-         this.func_71191_d(MathHelper.func_76125_a(this.func_71207_Z(), 64, 256));
-         this.field_71340_o.func_73667_a("max-build-height", Integer.valueOf(this.func_71207_Z()));
-+        if (!FMLCommonHandler.instance().handleServerAboutToStart(this)) { return false; }
-         field_155771_h.info("Preparing level \"" + this.func_71270_I() + "\"");
-         this.func_71247_a(this.func_71270_I(), this.func_71270_I(), k, worldtype, s2);
-         long i1 = System.nanoTime() - j;
-@@ -245,7 +252,8 @@
-             this.field_71339_n.func_72602_a();
+-            return true;
++            allowPlayerLogins = true;
++            return FMLCommonHandler.instance().handleServerStarting(this);
          }
- 
--        return true;
-+        allowPlayerLogins = true;
-+        return FMLCommonHandler.instance().handleServerStarting(this);
      }
  
-     public boolean func_71225_e()
