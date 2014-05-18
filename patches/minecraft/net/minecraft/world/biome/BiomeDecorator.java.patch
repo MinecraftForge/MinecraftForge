@@ -56,7 +56,7 @@
          {
              k = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
              l = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
-@@ -155,14 +165,16 @@
+@@ -155,18 +165,20 @@
              }
          }
  
@@ -75,7 +75,12 @@
          {
              k = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
              l = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
-@@ -177,7 +189,8 @@
+-            i1 = this.field_76813_b.nextInt(this.field_76815_a.func_72976_f(k, l) + 32);
++            i1 = nextInt(this.field_76815_a.func_72976_f(k, l) + 32);
+             String s = p_150513_1_.func_150572_a(this.field_76813_b, k, i1, l);
+             BlockFlower blockflower = BlockFlower.func_149857_e(s);
+ 
+@@ -177,29 +189,32 @@
              }
          }
  
@@ -85,7 +90,9 @@
          {
              k = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
              l = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
-@@ -186,7 +199,8 @@
+-            i1 = this.field_76813_b.nextInt(this.field_76815_a.func_72976_f(k, l) * 2);
++            i1 = nextInt(this.field_76815_a.func_72976_f(k, l) * 2);
+             WorldGenerator worldgenerator = p_150513_1_.func_76730_b(this.field_76813_b);
              worldgenerator.func_76484_a(this.field_76815_a, this.field_76813_b, k, i1, l);
          }
  
@@ -95,7 +102,8 @@
          {
              k = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
              l = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
-@@ -194,7 +208,8 @@
+-            i1 = this.field_76813_b.nextInt(this.field_76815_a.func_72976_f(k, l) * 2);
++            i1 = nextInt(this.field_76815_a.func_72976_f(k, l) * 2);
              (new WorldGenDeadBush(Blocks.field_150330_I)).func_76484_a(this.field_76815_a, this.field_76813_b, k, i1, l);
          }
  
@@ -105,6 +113,12 @@
          {
              k = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
              l = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
+ 
+-            for (i1 = this.field_76813_b.nextInt(this.field_76815_a.func_72976_f(k, l) * 2); i1 > 0 && this.field_76815_a.func_147437_c(k, i1 - 1, l); --i1)
++            for (i1 = nextInt(this.field_76815_a.func_72976_f(k, l) * 2); i1 > 0 && this.field_76815_a.func_147437_c(k, i1 - 1, l); --i1)
+             {
+                 ;
+             }
 @@ -207,7 +222,8 @@
              this.field_76834_x.func_76484_a(this.field_76815_a, this.field_76813_b, k, i1, l);
          }
@@ -115,7 +129,13 @@
          {
              if (this.field_76813_b.nextInt(4) == 0)
              {
-@@ -226,7 +242,7 @@
+@@ -221,60 +237,64 @@
+             {
+                 k = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
+                 l = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
+-                i1 = this.field_76813_b.nextInt(this.field_76815_a.func_72976_f(k, l) * 2);
++                i1 = nextInt(this.field_76815_a.func_72976_f(k, l) * 2);
+                 this.field_76827_t.func_76484_a(this.field_76815_a, this.field_76813_b, k, i1, l);
              }
          }
  
@@ -124,7 +144,8 @@
          {
              j = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
              k = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
-@@ -234,7 +250,7 @@
+-            l = this.field_76813_b.nextInt(this.field_76815_a.func_72976_f(j, k) * 2);
++            l = nextInt(this.field_76815_a.func_72976_f(j, k) * 2);
              this.field_76828_s.func_76484_a(this.field_76815_a, this.field_76813_b, j, l, k);
          }
  
@@ -133,7 +154,8 @@
          {
              j = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
              k = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
-@@ -242,7 +258,8 @@
+-            l = this.field_76813_b.nextInt(this.field_76815_a.func_72976_f(j, k) * 2);
++            l = nextInt(this.field_76815_a.func_72976_f(j, k) * 2);
              this.field_76827_t.func_76484_a(this.field_76815_a, this.field_76813_b, j, l, k);
          }
  
@@ -143,7 +165,8 @@
          {
              k = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
              l = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
-@@ -250,7 +267,7 @@
+-            i1 = this.field_76813_b.nextInt(this.field_76815_a.func_72976_f(k, l) * 2);
++            i1 = nextInt(this.field_76815_a.func_72976_f(k, l) * 2);
              this.field_76825_v.func_76484_a(this.field_76815_a, this.field_76813_b, k, i1, l);
          }
  
@@ -152,7 +175,8 @@
          {
              k = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
              l = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
-@@ -258,7 +275,8 @@
+-            i1 = this.field_76813_b.nextInt(this.field_76815_a.func_72976_f(k, l) * 2);
++            i1 = nextInt(this.field_76815_a.func_72976_f(k, l) * 2);
              this.field_76825_v.func_76484_a(this.field_76815_a, this.field_76813_b, k, i1, l);
          }
  
@@ -162,7 +186,8 @@
          {
              j = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
              k = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
-@@ -266,7 +284,8 @@
+-            l = this.field_76813_b.nextInt(this.field_76815_a.func_72976_f(j, k) * 2);
++            l = nextInt(this.field_76815_a.func_72976_f(j, k) * 2);
              (new WorldGenPumpkin()).func_76484_a(this.field_76815_a, this.field_76813_b, j, l, k);
          }
  
@@ -172,7 +197,8 @@
          {
              k = this.field_76814_c + this.field_76813_b.nextInt(16) + 8;
              l = this.field_76811_d + this.field_76813_b.nextInt(16) + 8;
-@@ -274,7 +293,8 @@
+-            i1 = this.field_76813_b.nextInt(this.field_76815_a.func_72976_f(k, l) * 2);
++            i1 = nextInt(this.field_76815_a.func_72976_f(k, l) * 2);
              this.field_76824_w.func_76484_a(this.field_76815_a, this.field_76813_b, k, i1, l);
          }
  
@@ -191,7 +217,7 @@
      }
  
      protected void func_76795_a(int p_76795_1_, WorldGenerator p_76795_2_, int p_76795_3_, int p_76795_4_)
-@@ -318,13 +340,23 @@
+@@ -318,13 +340,29 @@
  
      protected void func_76797_b()
      {
@@ -214,4 +240,10 @@
          this.func_76793_b(1, this.field_76831_p, 16, 16);
 +        MinecraftForge.ORE_GEN_BUS.post(new OreGenEvent.Post(field_76815_a, field_76813_b, field_76814_c, field_76811_d));
      }
++
++    private int nextInt(int i) {
++        if (i <= 1)
++            return 0;
++        return this.field_76813_b.nextInt(i);
++	}
  }
