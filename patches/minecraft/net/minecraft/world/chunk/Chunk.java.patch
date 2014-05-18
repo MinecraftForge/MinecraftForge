@@ -27,7 +27,7 @@
 -        return this.func_150810_a(p_150808_1_, p_150808_2_, p_150808_3_).func_149717_k();
 +        int x = (field_76635_g << 4) + p_150808_1_;
 +        int z = (field_76647_h << 4) + p_150808_3_;
-+        return this.func_150810_a(p_150808_1_, p_150808_2_, p_150808_3_).getLightOpacity(field_76637_e, x, p_150808_2_, p_150808_3_);
++        return this.func_150810_a(p_150808_1_, p_150808_2_, p_150808_3_).getLightOpacity(field_76637_e, x, p_150808_2_, z);
      }
  
      public Block func_150810_a(final int p_150810_1_, final int p_150810_2_, final int p_150810_3_)
