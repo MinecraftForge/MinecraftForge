@@ -1,4 +1,4 @@
-package resonantinduction.em;
+package net.minecraftforge.client.model.techne;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
