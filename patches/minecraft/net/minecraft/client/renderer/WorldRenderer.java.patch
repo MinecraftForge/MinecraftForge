@@ -9,7 +9,15 @@
      public static int field_78922_b;
      public int field_78923_c;
      public int field_78920_d;
-@@ -157,7 +157,7 @@
+@@ -132,6 +132,7 @@
+             {
+                 ++field_78922_b;
+                 RenderBlocks renderblocks = new RenderBlocks(chunkcache);
++                net.minecraftforge.client.ForgeHooksClient.setWorldRendererRB(renderblocks);
+                 this.field_78917_C = 0;
+                 this.field_147894_y = null;
+ 
+@@ -157,7 +158,7 @@
                                          this.func_147890_b(k2);
                                      }
  
@@ -18,7 +26,7 @@
                                      {
                                          TileEntity tileentity = chunkcache.func_147438_o(j3, l2, i3);
  
-@@ -173,7 +173,9 @@
+@@ -173,7 +174,9 @@
                                      {
                                          flag = true;
                                      }
@@ -29,12 +37,21 @@
                                      {
                                          flag1 |= renderblocks.func_147805_b(block, j3, l2, i3);
  
-@@ -232,21 +234,22 @@
+@@ -210,6 +213,7 @@
+                         break;
+                     }
+                 }
++                net.minecraftforge.client.ForgeHooksClient.setWorldRendererRB(null);
+             }
+ 
+             HashSet hashset1 = new HashSet();
+@@ -232,21 +236,23 @@
          GL11.glTranslatef(-8.0F, -8.0F, -8.0F);
          GL11.glScalef(f, f, f);
          GL11.glTranslatef(8.0F, 8.0F, 8.0F);
 -        field_78941_z.func_78382_b();
 -        field_78941_z.func_78373_b((double)(-this.field_78923_c), (double)(-this.field_78920_d), (double)(-this.field_78921_e));
++        net.minecraftforge.client.ForgeHooksClient.onPreRenderWorld(this, p_147890_1_);
 +        Tessellator.field_78398_a.func_78382_b();
 +        Tessellator.field_78398_a.func_78373_b((double)(-this.field_78923_c), (double)(-this.field_78920_d), (double)(-this.field_78921_e));
      }
@@ -48,8 +65,8 @@
          }
  
 -        this.field_78917_C += field_78941_z.func_78381_a();
-+        //ForgeHooksClient.afterRenderPass(l1); Noop fo now, TODO: Event if anyone needs
 +        this.field_78917_C += Tessellator.field_78398_a.func_78381_a();
++        net.minecraftforge.client.ForgeHooksClient.onPostRenderWorld(this, p_147891_1_);
          GL11.glPopMatrix();
          GL11.glEndList();
 -        field_78941_z.func_78373_b(0.0D, 0.0D, 0.0D);
@@ -57,7 +74,7 @@
      }
  
      public void func_147889_b(EntityLivingBase p_147889_1_)
-@@ -254,7 +257,7 @@
+@@ -254,7 +260,7 @@
          if (this.field_147894_y != null && !this.field_78928_m[1])
          {
              this.func_147890_b(1);
