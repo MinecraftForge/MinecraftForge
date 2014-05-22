@@ -16,7 +16,6 @@
          }
  
 +        FontRenderer font = p_146285_1_.func_77973_b().getFontRenderer(p_146285_1_);
-         this.func_146283_a(list, p_146285_2_, p_146285_3_);
 +        drawHoveringText(list, p_146285_2_, p_146285_3_, (font == null ? field_146289_q : font));
      }
  
