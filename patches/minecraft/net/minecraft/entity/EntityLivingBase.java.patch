@@ -195,12 +195,9 @@
 +        }
 +    }
 +
-+   /**
-+    * returns the PotionEffect for the supplied Potion if it is active, null otherwise.
-+    */
-+    public PotionEffect getActivePotionEffect(int potionId) {
-+       return (PotionEffect)this.field_70713_bf.get(Integer.valueOf(potionId));
-+    }
++     public HashMap getPotionMap() {
++       return this.field_70713_bf;
++     }
 +
 +    /**
 +     * Returns true if the entity's rider (EntityPlayer) should face forward when mounted.
