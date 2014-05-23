@@ -195,6 +195,10 @@
 +        }
 +    }
 +
++     public HashMap getPotionMap() {
++       return this.field_70713_bf;
++     }
++
 +    /**
 +     * Returns true if the entity's rider (EntityPlayer) should face forward when mounted.
 +     * currently only used in vanilla code by pigs.
