@@ -36,4 +36,10 @@ public interface IExtendedEntityProperties {
      * @param world  The world in which the entity exists
      */
     public void init(Entity entity, World world);
+
+    /**
+     * Used in the re-initialization of the Entity after death.
+     * @return If the data contained by this object should remain persistent for the entity.
+     */
+    public boolean isDataPersistent();
 }
