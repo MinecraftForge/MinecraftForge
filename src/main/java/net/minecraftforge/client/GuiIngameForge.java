@@ -49,11 +49,11 @@ import cpw.mods.fml.common.FMLCommonHandler;
 
 public class GuiIngameForge extends GuiIngame
 {
-    //private static final ResourceLocation VIGNETTE     = new ResourceLocation("textures/misc/vignette.png");
-    private static final ResourceLocation WIDGITS      = new ResourceLocation("textures/gui/widgets.png");
-    //private static final ResourceLocation PUMPKIN_BLUR = new ResourceLocation("textures/misc/pumpkinblur.png");
+    //protected static final ResourceLocation VIGNETTE     = new ResourceLocation("textures/misc/vignette.png");
+    protected static final ResourceLocation WIDGITS      = new ResourceLocation("textures/gui/widgets.png");
+    //protected static final ResourceLocation PUMPKIN_BLUR = new ResourceLocation("textures/misc/pumpkinblur.png");
 
-    private static final int WHITE = 0xFFFFFF;
+    protected static final int WHITE = 0xFFFFFF;
 
     //Flags to toggle the rendering of certain aspects of the HUD, valid conditions
     //must be met for them to render normally. If those conditions are met, but this flag
