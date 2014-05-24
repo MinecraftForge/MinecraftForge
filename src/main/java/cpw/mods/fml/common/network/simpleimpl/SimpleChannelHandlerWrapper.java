@@ -28,7 +28,7 @@ public class SimpleChannelHandlerWrapper<REQ extends IMessage, REPLY extends IMe
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, REQ msg) throws Exception
     {
-        INetHandler iNetHandler = ctx.attr(NetworkRegistry.NET_HANDLER).get();
+        INetHandler iNetHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
         MessageContext context = new MessageContext(iNetHandler, side);
         REPLY result = messageHandler.onMessage(msg, context);
         if (result != null)
