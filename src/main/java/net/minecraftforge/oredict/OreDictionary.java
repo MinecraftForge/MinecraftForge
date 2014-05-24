@@ -63,16 +63,42 @@ public class OreDictionary
             registerOre("oreEmerald",  Blocks.emerald_ore);
             registerOre("oreQuartz",   Blocks.quartz_ore);
             registerOre("oreCoal",     Blocks.coal_ore);
+            registerOre("blockGold",     Blocks.gold_block);
+            registerOre("blockIron",     Blocks.iron_block);
+            registerOre("blockLapis",    Blocks.lapis_block);
+            registerOre("blockDiamond",  Blocks.diamond_block);
+            registerOre("blockRedstone", Blocks.redstone_block);
+            registerOre("blockEmerald",  Blocks.emerald_block);
+            registerOre("blockQuartz",   Blocks.quartz_block);
+            registerOre("blockCoal",     Blocks.coal_block);
+            registerOre("blockGlassColorless", Blocks.glass);
+            registerOre("blockGlass",    Blocks.glass);
+            registerOre("blockGlass",    new ItemStack(Blocks.stained_glass, 1, WILDCARD_VALUE));
+            //blockGlass{Color} is added below with dyes
+            registerOre("paneGlassColorless", Blocks.glass_pane);
+            registerOre("paneGlass",     Blocks.glass_pane);
+            registerOre("paneGlass",     new ItemStack(Blocks.stained_glass_pane, 1, WILDCARD_VALUE));
+            //paneGlass{Color} is added below with dyes
+            registerOre("ingotIron",     Items.iron_ingot);
+            registerOre("ingotGold",     Items.gold_ingot);
+            registerOre("ingotBrick",    Items.brick);
+            registerOre("ingotBrickNether", Items.netherbrick);
+            registerOre("nuggetGold",  Items.gold_nugget);
             registerOre("gemDiamond",  Items.diamond);
             registerOre("gemEmerald",  Items.emerald);
+            registerOre("gemQuartz",   Items.quartz);
             registerOre("dustRedstone",  Items.redstone);
             registerOre("dustGlowstone", Items.glowstone_dust);
+            registerOre("dustLapis",   new ItemStack(Items.dye, 1, 4));
+            registerOre("slimeball",   Items.slime_ball);
             registerOre("glowstone",   Blocks.glowstone);
             registerOre("cropWheat",   Items.wheat);
             registerOre("cropPotato",  Items.potato);
             registerOre("cropCarrot",  Items.carrot);
             registerOre("stone",       Blocks.stone);
             registerOre("cobblestone", Blocks.cobblestone);
+            registerOre("sandstone",   new ItemStack(Blocks.sandstone, 1, WILDCARD_VALUE));
+            registerOre("dye",         new ItemStack(Items.dye, 1, WILDCARD_VALUE));
             registerOre("record",      Items.record_13);
             registerOre("record",      Items.record_cat);
             registerOre("record",      Items.record_blocks);
@@ -96,41 +122,51 @@ public class OreDictionary
         replacements.put(new ItemStack(Blocks.stone, 1, WILDCARD_VALUE), "stone");
         replacements.put(new ItemStack(Blocks.cobblestone), "cobblestone");
         replacements.put(new ItemStack(Blocks.cobblestone, 1, WILDCARD_VALUE), "cobblestone");
+        replacements.put(new ItemStack(Items.gold_ingot), "ingotGold");
+        replacements.put(new ItemStack(Items.iron_ingot), "ingotIron");
         replacements.put(new ItemStack(Items.diamond), "gemDiamond");
         replacements.put(new ItemStack(Items.emerald), "gemEmerald");
         replacements.put(new ItemStack(Items.redstone), "dustRedstone");
         replacements.put(new ItemStack(Items.glowstone_dust), "dustGlowstone");
         replacements.put(new ItemStack(Blocks.glowstone), "glowstone");
+        replacements.put(new ItemStack(Items.slime_ball), "slimeball");
+        replacements.put(new ItemStack(Blocks.glass), "blockGlassColorless");
 
         // Register dyes
         String[] dyes =
         {
-            "dyeBlack",
-            "dyeRed",
-            "dyeGreen",
-            "dyeBrown",
-            "dyeBlue",
-            "dyePurple",
-            "dyeCyan",
-            "dyeLightGray",
-            "dyeGray",
-            "dyePink",
-            "dyeLime",
-            "dyeYellow",
-            "dyeLightBlue",
-            "dyeMagenta",
-            "dyeOrange",
-            "dyeWhite"
+            "Black",
+            "Red",
+            "Green",
+            "Brown",
+            "Blue",
+            "Purple",
+            "Cyan",
+            "LightGray",
+            "Gray",
+            "Pink",
+            "Lime",
+            "Yellow",
+            "LightBlue",
+            "Magenta",
+            "Orange",
+            "White"
         };
 
         for(int i = 0; i < 16; i++)
         {
             ItemStack dye = new ItemStack(Items.dye, 1, i);
+            ItemStack block = new ItemStack(Blocks.stained_glass, 1, 15 - i);
+            ItemStack pane = new ItemStack(Blocks.stained_glass_pane, 1, 15 - i);
             if (!hasInit)
             {
-                registerOre(dyes[i], dye);
+                registerOre("dye" + dyes[i], dye);
+                registerOre("blockGlass" + dyes[i], block);
+                registerOre("paneGlass"  + dyes[i], pane);
             }
-            replacements.put(dye, dyes[i]);
+            replacements.put(dye,   "dye" + dyes[i]);
+            replacements.put(block, "blockGlass" + dyes[i]);
+            replacements.put(pane,  "paneGlass" + dyes[i]);
         }
         hasInit = true;
 
@@ -150,7 +186,9 @@ public class OreDictionary
             new ItemStack(Blocks.birch_stairs),
             new ItemStack(Blocks.jungle_stairs),
             new ItemStack(Blocks.acacia_stairs),
-            new ItemStack(Blocks.dark_oak_stairs)
+            new ItemStack(Blocks.dark_oak_stairs),
+            new ItemStack(Blocks.glass_pane),
+            new ItemStack(Blocks.stained_glass)
         };
 
         List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
