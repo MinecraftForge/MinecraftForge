@@ -349,8 +349,6 @@ public class BlockFluidClassic extends BlockFluidBase
     @Override
     public boolean canDrain(World world, int x, int y, int z)
     {
-        return false; //isSourceBlock(world, x, y, z);
+        return isSourceBlock(world, x, y, z);
     }
-    @Override public Fluid getFluid(){ return null; }
-    @Override public float getFilledPercentage(World world, int x, int y, int z) { return 0; }
 }
