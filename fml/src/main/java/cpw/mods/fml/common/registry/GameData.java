@@ -530,6 +530,8 @@ public class GameData {
         getMain().iBlockRegistry.dump();
         getMain().iItemRegistry.dump();
         Loader.instance().fireRemapEvent(remaps);
+        // The id map changed, ensure we apply object holders
+        ObjectHolderRegistry.INSTANCE.applyObjectHolders();
         return ImmutableList.of();
     }
 
@@ -664,6 +666,8 @@ public class GameData {
 
             getMain().set(frozen);
         }
+        // the id mapping has reverted, ensure we sync up the object holders
+        ObjectHolderRegistry.INSTANCE.applyObjectHolders();
     }
 
     protected static boolean isFrozen(FMLControlledNamespacedRegistry<?> registry)
