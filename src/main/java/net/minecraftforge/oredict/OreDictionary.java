@@ -294,13 +294,41 @@ public class OreDictionary
         {
             for(ItemStack target : ore.getValue())
             {
-                if(itemStack.getItem() == target.getItem() && (target.getItemDamage() == WILDCARD_VALUE || itemStack.getItemDamage() == target.getItemDamage()))
+                if (itemMatches(itemStack, target, false))
                 {
                     return ore.getKey();
                 }
             }
         }
         return -1; // didn't find it.
+    }
+
+    /**
+     * Gets all the integer ID for the ores that the specified item stakc is registered to.
+     * If the item stack is not linked to any ore, this will return an empty array and no new entry will be created.
+     *
+     * @param itemStack The item stack of the ore.
+     * @return An array of ids that this ore is registerd as.
+     */
+    public static int[] getOreIDs(ItemStack itemStack)
+    {
+        if (itemStack == null) return new int[0];
+
+        List<Integer> ids = new ArrayList<Integer>();
+        for(Entry<Integer, ArrayList<ItemStack>> ore : oreStacks.entrySet())
+        {
+            for(ItemStack target : ore.getValue())
+            {
+                if (itemMatches(itemStack, target, false))
+                {
+                    ids.add(ore.getKey());
+                }
+            }
+        }
+        int[] ret = new int[ids.size()];
+        for (int x = 0; x < ids.size(); x++)
+            ret[x] = ids.get(x);
+        return ret;
     }
 
     /**
@@ -358,6 +386,21 @@ public class OreDictionary
         return false;
     }
 
+    private static boolean containsMatch(boolean strict, List<ItemStack> inputs, ItemStack... targets)
+    {
+        for (ItemStack input : inputs)
+        {
+            for (ItemStack target : targets)
+            {
+                if (itemMatches(target, input, strict))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public static boolean itemMatches(ItemStack target, ItemStack input, boolean strict)
     {
         if (input == null && target != null || input != null && target == null)
@@ -386,6 +429,7 @@ public class OreDictionary
     private static void registerOre(String name, int id, ItemStack ore)
     {
         ArrayList<ItemStack> ores = getOres(id);
+        if (containsMatch(false, ores, ore)) return; // Prevent duplicates.
         ore = ore.copy();
         ores.add(ore);
         MinecraftForge.EVENT_BUS.post(new OreRegisterEvent(name, ore));
