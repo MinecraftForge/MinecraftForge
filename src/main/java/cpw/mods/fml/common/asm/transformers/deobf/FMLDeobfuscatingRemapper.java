@@ -153,8 +153,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
 
     public boolean isRemappedClass(String className)
     {
-        className = className.replace('.', '/');
-        return classNameBiMap.containsKey(className) || mcpNameBiMap.containsKey(className) || (!classNameBiMap.isEmpty() && className.indexOf('/') == -1);
+        return !map(className).equals(className);
     }
 
     private void parseField(String[] parts)
