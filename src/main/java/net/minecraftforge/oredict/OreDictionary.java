@@ -319,7 +319,7 @@ public class OreDictionary
         {
             for(ItemStack target : ore.getValue())
             {
-                if (itemMatches(itemStack, target, false))
+                if (itemMatches(target, itemStack, false))
                 {
                     ids.add(ore.getKey());
                 }
