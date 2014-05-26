@@ -35,6 +35,7 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.client.model.ModelBiped;
@@ -42,6 +43,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -49,6 +51,7 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.RenderWorldEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent17;
@@ -452,5 +455,36 @@ public class ForgeHooksClient
         PlaySoundEvent17 e = new PlaySoundEvent17(manager, sound, (accessor == null ? null : accessor.getSoundCategory()));
         MinecraftForge.EVENT_BUS.post(e);
         return e.result;
+    }
+
+    static RenderBlocks worldRendererRB;
+    static int worldRenderPass;
+
+    public static int getWorldRenderPass()
+    {
+        return worldRenderPass;
+    }
+
+    public static void setWorldRendererRB(RenderBlocks renderBlocks)
+    {
+        worldRendererRB = renderBlocks;
+    }
+
+    public static void onPreRenderWorld(WorldRenderer worldRenderer, int pass)
+    {
+        if(worldRendererRB != null)
+        {
+            worldRenderPass = pass;
+            MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.Pre(worldRenderer, (ChunkCache)worldRendererRB.blockAccess, worldRendererRB, pass));
+        }
+    }
+
+    public static void onPostRenderWorld(WorldRenderer worldRenderer, int pass)
+    {
+        if(worldRendererRB != null)
+        {
+            MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.Post(worldRenderer, (ChunkCache)worldRendererRB.blockAccess, worldRendererRB, pass));
+            worldRenderPass = -1;
+        }
     }
 }
