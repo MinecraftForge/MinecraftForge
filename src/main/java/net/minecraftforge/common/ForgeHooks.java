@@ -3,6 +3,7 @@ package net.minecraftforge.common;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.block.Block;
@@ -10,6 +11,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
@@ -32,6 +34,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.WeightedRandom;
+import net.minecraft.util.WeightedRandomFishable;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.event.AnvilUpdateEvent;
@@ -436,4 +439,27 @@ public class ForgeHooks
         container.maximumCost = e.cost;
         return false;
     }
+    
+    //Add Items to lists of what is catched when fishing.
+    /**
+     * 
+     * @param item -The item to add.
+     * @param weight - The chance it is fished
+     * @param remove - remove it from the list
+     * @param type - If it is Garbage,Fish,or Treasure signified by 0,1,2 respectivly.
+     */
+    public static void addFishableItem(ItemStack item, int weight,boolean remove,int type){
+      //create the WeightRadnomFishable
+        WeightedRandomFishable weightedRandom = new WeightedRandomFishable(item, weight);
+       switch(type){
+        //Select garbage
+        case 0:
+            EntityFishHook.Garbage(weightedRandom, remove);
+        case 1:
+            EntityFishHook.Fish(weightedRandom, remove);
+        case 2:
+            EntityFishHook.Treasure(weightedRandom, remove);
+        }
+    }
+    
 }
