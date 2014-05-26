@@ -68,4 +68,28 @@ public class PlayerEvent extends LivingEvent
             this.displayname = username;
         }
     }
+
+    /**
+     * Fired when the EntityPlayer is cloned, typically caused by the network sending a RESPAWN_PLAYER event.
+     * Either caused by death, or by traveling from the End to the overworld.
+     */
+    public static class Clone extends PlayerEvent
+    {
+        /**
+         * The old EntityPlayer that this new entity is a clone of.
+         */
+        public final EntityPlayer original;
+        /**
+         * True if this event was fired because the player died.
+         * False if it was fired because the entity switched dimensions.
+         */
+        public final boolean wasDeath;
+
+        public Clone(EntityPlayer _new, EntityPlayer oldPlayer, boolean wasDeath)
+        {
+            super(_new);
+            this.original = oldPlayer;
+            this.wasDeath = wasDeath;
+        }
+    }
 }
