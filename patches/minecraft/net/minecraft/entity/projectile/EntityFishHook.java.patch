@@ -1,10 +1,40 @@
 --- ../src-base/minecraft/net/minecraft/entity/projectile/EntityFishHook.java
 +++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityFishHook.java
-@@ -588,4 +588,7 @@
+@@ -588,4 +588,37 @@
              this.field_146042_b.field_71104_cf = null;
          }
      }
-+    public static void Garbage(WeightedRandomFishable item,boolean remove){if(!remove){field_146039_d.add(item);}else{field_146039_d.remove(item);}}
-+    public static void Fish(WeightedRandomFishable item,boolean remove){if(!remove){field_146036_f.add(item);}else{field_146036_f.remove(item);}}
-+    public static void Treasure(WeightedRandomFishable item,boolean remove){if(!remove){field_146041_e.add(item);}else{field_146041_e.remove(item);}}
++    public static void Garbage(WeightedRandomFishable item,boolean remove)
++    {
++        if(!remove)
++        {
++            field_146039_d.add(item);
++            }
++        else
++            {
++                field_146039_d.remove(item);
++                }
++        }
++    public static void Fish(WeightedRandomFishable item,boolean remove)
++    {
++        if(!remove)
++        {
++            field_146036_f.add(item);
++            }
++        else
++        {
++            field_146036_f.remove(item);
++            }
++        }
++    public static void Treasure(WeightedRandomFishable item,boolean remove)
++    {
++        if(!remove)
++        {
++            field_146041_e.add(item);
++            }
++        else
++        {
++            field_146041_e.remove(item);
++            }
++        }
  }
