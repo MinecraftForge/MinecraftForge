@@ -34,7 +34,22 @@ public enum ObjectHolderRegistry {
             String annotationTarget = data.getObjectName();
             String value = (String) data.getAnnotationInfo().get("value");
             boolean isClass = className.equals(annotationTarget);
-            scanTarget(classModIds, classCache, className, annotationTarget, value, isClass, false);
+            if (isClass)
+            {
+                scanTarget(classModIds, classCache, className, annotationTarget, value, isClass, false);
+            }
+        }
+        // double pass - get all the class level annotations first, then the field level annotations
+        for (ASMData data : allObjectHolders)
+        {
+            String className = data.getClassName();
+            String annotationTarget = data.getObjectName();
+            String value = (String) data.getAnnotationInfo().get("value");
+            boolean isClass = className.equals(annotationTarget);
+            if (!isClass)
+            {
+                scanTarget(classModIds, classCache, className, annotationTarget, value, isClass, false);
+            }
         }
         scanTarget(classModIds, classCache, "net.minecraft.init.Blocks", null, "minecraft", true, true);
         scanTarget(classModIds, classCache, "net.minecraft.init.Items", null, "minecraft", true, true);
@@ -107,7 +122,10 @@ public enum ObjectHolderRegistry {
 
     private void addHolderReference(ObjectHolderRef ref)
     {
-        objectHolders.add(ref);
+        if (ref.isValid())
+        {
+            objectHolders.add(ref);
+        }
     }
 
     public void applyObjectHolders()

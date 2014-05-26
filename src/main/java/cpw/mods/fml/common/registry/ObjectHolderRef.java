@@ -8,6 +8,7 @@ import com.google.common.base.Throwables;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 
 
@@ -34,8 +35,20 @@ class ObjectHolderRef {
             try
             {
                 Object existing = field.get(null);
-                this.injectedObject = isBlock ? GameData.getBlockRegistry().getNameForObject(existing) :
-                    isItem ? GameData.getItemRegistry().getNameForObject(existing) : null;
+                // nothing is ever allowed to replace AIR
+                if (existing == null || existing == GameData.getBlockRegistry().getDefaultValue())
+                {
+                    this.injectedObject = null;
+                    this.field = null;
+                    this.isBlock = false;
+                    this.isItem = false;
+                    return;
+                }
+                else
+                {
+                    this.injectedObject = isBlock ? GameData.getBlockRegistry().getNameForObject(existing) :
+                        isItem ? GameData.getItemRegistry().getNameForObject(existing) : null;
+                }
             } catch (Exception e)
             {
                 throw Throwables.propagate(e);
@@ -85,9 +98,27 @@ class ObjectHolderRef {
     {
         Object thing;
         if (isBlock)
+        {
             thing = GameData.getBlockRegistry().getObject(injectedObject);
-        else
+            if (thing == Blocks.air)
+            {
+                thing = null;
+            }
+        }
+        else if (isItem)
+        {
             thing = GameData.getItemRegistry().getObject(injectedObject);
+        }
+        else
+        {
+            thing = null;
+        }
+
+        if (thing == null)
+        {
+            FMLLog.warning("Unable to lookup %s for %s. Is there something wrong with the registry?", injectedObject, field);
+            return;
+        }
         try
         {
             Object fieldAccessor = newFieldAccessor.invoke(reflectionFactory, field, false);
