@@ -97,6 +97,24 @@ public class FluidEvent extends Event
     }
 
     /**
+     * Mods should fire this event when two different fluids are being {@link IFluidTank#fill(FluidStack, boolean)}
+     * or {@link IFluidHandler#drain(ForgeDirection, FluidStack, boolean)}.
+     * {@link FluidTank} and {@link TileFluidHandler} does this.
+     *
+     */
+    @HasResult
+    public static class FluidMixingEvent extends FluidEvent
+    {
+        public final IFluidTank tank;
+
+        public FluidMixingEvent(FluidStack source, World world, int x, int y, int z, IFluidTank tank)
+        {
+            super(source, world, x, y, z);
+            this.tank = tank;
+        }
+    }
+
+    /**
      * Mods should fire this event when a fluid "spills", for example, if a block containing fluid
      * is broken.
      * 
