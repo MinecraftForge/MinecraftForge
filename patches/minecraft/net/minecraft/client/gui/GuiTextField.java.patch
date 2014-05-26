@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiTextField.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiTextField.java
+@@ -4,6 +4,8 @@
+ import cpw.mods.fml.relauncher.SideOnly;
+ import net.minecraft.client.renderer.Tessellator;
+ import net.minecraft.util.ChatAllowedCharacters;
++import net.minecraftforge.client.event.TextFieldFocusEvent;
++import net.minecraftforge.common.MinecraftForge;
+ import org.lwjgl.opengl.GL11;
+ 
+ @SideOnly(Side.CLIENT)
+@@ -572,6 +574,9 @@
+         }
+ 
+         this.field_146213_o = p_146195_1_;
++
++        TextFieldFocusEvent event = new TextFieldFocusEvent(this);
++        MinecraftForge.EVENT_BUS.post(event);
+     }
+ 
+     public boolean func_146206_l()
