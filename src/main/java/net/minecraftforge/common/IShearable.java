@@ -32,7 +32,8 @@ public interface IShearable
      * Performs the shear function on this object.
      * This is called for both client, and server.
      * The object should perform all actions related to being sheared,
-     * except for dropping of the items.
+     * except for dropping of the items, and removal of the block.
+     * As those are handled by ItemShears itself.
      *
      * Returns a list of items that resulted from the shearing process.
      *
