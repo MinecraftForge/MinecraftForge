@@ -107,3 +107,22 @@
          boolean flag4 = p_147767_1_.func_149646_a(this.field_147845_a, p_147767_2_, p_147767_3_ + 1, p_147767_4_, 1);
          boolean flag5 = p_147767_1_.func_149646_a(this.field_147845_a, p_147767_2_, p_147767_3_ - 1, p_147767_4_, 0);
          double d19 = 0.01D;
+@@ -8218,4 +8222,18 @@
+ 
+         return (IIcon)p_147758_1_;
+     }
++
++    /*==================================== FORGE START ===========================================*/
++    private static RenderBlocks instance;
++    /**
++     * Returns a single lazy loaded instance of RenderBlocks, for use in mods who 
++     * don't care about the interaction of other objects on the current state of the RenderBlocks they are using.
++     * @return A global instance of RenderBlocks
++     */
++    public static RenderBlocks getInstance()
++    {
++        if (instance == null) instance = new RenderBlocks();
++        return instance;
++    }
++    /*==================================== FORGE END =============================================*/
+ }

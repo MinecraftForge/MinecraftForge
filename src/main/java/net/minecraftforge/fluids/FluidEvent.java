@@ -46,10 +46,23 @@ public class FluidEvent extends Event
     public static class FluidFillingEvent extends FluidEvent
     {
         public final IFluidTank tank;
+        public final int amount;
+
+        /**
+         * @deprecated Will be removed in 1.8
+         *
+         */
+        @Deprecated
         public FluidFillingEvent(FluidStack fluid, World world, int x, int y, int z, IFluidTank tank)
+        {
+            this(fluid, world, x, y, z, tank, -1);
+        }
+
+        public FluidFillingEvent(FluidStack fluid, World world, int x, int y, int z, IFluidTank tank, int amount)
         {
             super(fluid, world, x, y, z);
             this.tank = tank;
+            this.amount = amount;
         }
     }
 
@@ -63,9 +76,40 @@ public class FluidEvent extends Event
     public static class FluidDrainingEvent extends FluidEvent
     {
         public final IFluidTank tank;
+        public final int amount;
+
+        /**
+         * @deprecated Will be removed in 1.8
+         *
+         */
+        @Deprecated
         public FluidDrainingEvent(FluidStack fluid, World world, int x, int y, int z, IFluidTank tank)
         {
+            this(fluid, world, x, y, z, tank, -1);
+        }
+
+        public FluidDrainingEvent(FluidStack fluid, World world, int x, int y, int z, IFluidTank tank, int amount)
+        {
             super(fluid, world, x, y, z);
+            this.amount = amount;
+            this.tank = tank;
+        }
+    }
+
+    /**
+     * Mods should fire this event when two different fluids are being {@link IFluidTank#fill(FluidStack, boolean)}
+     * or {@link IFluidHandler#drain(ForgeDirection, FluidStack, boolean)}.
+     * {@link FluidTank} and {@link TileFluidHandler} does this.
+     *
+     */
+    @HasResult
+    public static class FluidMixingEvent extends FluidEvent
+    {
+        public final IFluidTank tank;
+
+        public FluidMixingEvent(FluidStack source, World world, int x, int y, int z, IFluidTank tank)
+        {
+            super(source, world, x, y, z);
             this.tank = tank;
         }
     }

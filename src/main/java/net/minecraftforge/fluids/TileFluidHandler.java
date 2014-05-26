@@ -39,9 +39,18 @@ public class TileFluidHandler extends TileEntity implements IFluidHandler
     @Override
     public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain)
     {
-        if (resource == null || !resource.isFluidEqual(tank.getFluid()))
+        if (resource == null)
         {
             return null;
+        }
+        if(!resource.isFluidEqual(tank.getFluid()))
+        {
+            FluidEvent event = new FluidEvent.FluidMixingEvent(resource, getWorldObj(), xCoord, yCoord, zCoord, tank);
+            FluidEvent.fireEvent(event);
+            if(event.getResult() != FluidEvent.Result.ALLOW)
+            {
+                return null;
+            }
         }
         return tank.drain(resource.amount, doDrain);
     }
