@@ -71,7 +71,7 @@ public class FMLProxyPacket extends Packet {
             {
                 if (internalChannel.writeInbound(this))
                 {
-                    FMLLog.severe("A packet for channel %s for side %s was not processed by the embedded channel - it has been dropped. Payload\n%s", this.channel, this.target, ByteBufUtils.getContentDump(this.payload));
+                    FMLLog.severe("Messages for channel %s for side %s were not processed by the embedded channel %s.\n They have been dropped.\n%s", this.channel, this.target, internalChannel.inboundMessages(), ByteBufUtils.getContentDump(this.payload));
                 }
                 internalChannel.inboundMessages().clear();
             }
