@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityTameable.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityTameable.java
+@@ -9,6 +9,8 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.scoreboard.Team;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.living.LivingSetTameEvent;
+ 
+ public abstract class EntityTameable extends EntityAnimal implements IEntityOwnable
+ {
+@@ -100,6 +102,9 @@
+ 
+     public void func_70903_f(boolean p_70903_1_)
+     {
++        LivingSetTameEvent event = new LivingSetTameEvent(this, p_70903_1_);
++        if (MinecraftForge.EVENT_BUS.post(event)) return;
++        p_70903_1_ = event.tame;
+         byte b0 = this.field_70180_af.func_75683_a(16);
+ 
+         if (p_70903_1_)
