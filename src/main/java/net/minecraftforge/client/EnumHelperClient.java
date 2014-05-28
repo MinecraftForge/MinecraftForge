@@ -14,7 +14,7 @@ public class EnumHelperClient extends EnumHelper
         {GameType.class, int.class, String.class},
         {Options.class, String.class, boolean.class, boolean.class},
         {EnumOS.class},
-        {EnumRarity.class, int.class, String.class}
+        {EnumRarity.class, EnumChatFormatting.class, String.class}
     };
     
     public static GameType addGameType(String name, int id, String displayName)
@@ -32,7 +32,7 @@ public class EnumHelperClient extends EnumHelper
         return addEnum(EnumOS.class, name);
     }
     
-    public static EnumRarity addRarity(String name, int color, String displayName)
+    public static EnumRarity addRarity(String name, EnumChatFormatting color, String displayName)
     {
         return addEnum(EnumRarity.class, name, color, displayName);
     }
