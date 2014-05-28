@@ -13,8 +13,10 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.item.EntityPainting.EnumArt;
 import net.minecraft.entity.player.EntityPlayer.EnumStatus;
 import net.minecraft.item.EnumAction;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.gen.structure.StructureStrongholdPieces.Stronghold.Door;
@@ -37,7 +39,7 @@ public class EnumHelper
         {ArmorMaterial.class, int.class, int[].class, int.class},
         {EnumArt.class, String.class, int.class, int.class, int.class, int.class},
         {EnumCreatureAttribute.class},
-        {EnumCreatureType.class, Class.class, int.class, Material.class, boolean.class},
+        {EnumCreatureType.class, Class.class, int.class, Material.class, boolean.class, boolean.class},
         {Door.class},
         {EnumEnchantmentType.class},
         {EnumEntitySize.class},
@@ -45,7 +47,8 @@ public class EnumHelper
         {MovingObjectType.class},
         {EnumSkyBlock.class, int.class},
         {EnumStatus.class},
-        {ToolMaterial.class, int.class, int.class, float.class, float.class, int.class}
+        {ToolMaterial.class, int.class, int.class, float.class, float.class, int.class},
+        {EnumRarity.class, EnumChatFormatting.class, String.class}
     }; 
 
     public static EnumAction addAction(String name)
@@ -65,9 +68,9 @@ public class EnumHelper
         return addEnum(EnumCreatureAttribute.class, name);
     }
     @SuppressWarnings("rawtypes")
-    public static EnumCreatureType addCreatureType(String name, Class typeClass, int maxNumber, Material material, boolean peaceful)
+    public static EnumCreatureType addCreatureType(String name, Class typeClass, int maxNumber, Material material, boolean peaceful, boolean animal)
     {
-        return addEnum(EnumCreatureType.class, name, typeClass, maxNumber, material, peaceful);
+        return addEnum(EnumCreatureType.class, name, typeClass, maxNumber, material, peaceful, animal);
     }
     public static Door addDoor(String name)
     {
@@ -100,6 +103,10 @@ public class EnumHelper
     public static ToolMaterial addToolMaterial(String name, int harvestLevel, int maxUses, float efficiency, float damage, int enchantability)
     {
         return addEnum(ToolMaterial.class, name, harvestLevel, maxUses, efficiency, damage, enchantability);
+    }
+    public static EnumRarity addRarity(String name, EnumChatFormatting color, String displayName)
+    {
+        return addEnum(EnumRarity.class, name, color, displayName);
     }
 
     private static void setup()
