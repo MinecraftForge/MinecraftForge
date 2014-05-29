@@ -2,6 +2,7 @@ package net.minecraftforge.event.entity.player;
 
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
@@ -91,5 +92,43 @@ public class PlayerEvent extends LivingEvent
             this.original = oldPlayer;
             this.wasDeath = wasDeath;
         }
+    }
+    
+    /**
+     * Fired when an Entity is started to be "tracked" by this player (the player receives updates about this entity, e.g. motion).
+     *
+     */
+    public static class StartTracking extends PlayerEvent {
+        
+        /**
+         * The Entity now being tracked.
+         */
+        public final Entity target;
+        
+        public StartTracking(EntityPlayer player, Entity target)
+        {
+            super(player);
+            this.target = target;
+        }
+        
+    }
+    
+    /**
+     * Fired when an Entity is stopped to be "tracked" by this player (the player no longer receives updates about this entity, e.g. motion).
+     *
+     */
+    public static class StopTracking extends PlayerEvent {
+        
+        /**
+         * The Entity no longer being tracked.
+         */
+        public final Entity target;
+        
+        public StopTracking(EntityPlayer player, Entity target)
+        {
+            super(player);
+            this.target = target;
+        }
+        
     }
 }
