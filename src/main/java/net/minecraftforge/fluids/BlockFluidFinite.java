@@ -5,6 +5,7 @@ import java.util.Random;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -310,12 +311,18 @@ public class BlockFluidFinite extends BlockFluidBase
     @Override
     public FluidStack drain(World world, int x, int y, int z, boolean doDrain)
     {
-        return null;
+        if (doDrain)
+        {
+            world.setBlock(x, y, z, Blocks.air);
+        }
+        
+        return new FluidStack(getFluid(),
+                MathHelper.floor_float(getQuantaPercentage(world, x, y, z) * FluidContainerRegistry.BUCKET_VOLUME));
     }
 
     @Override
     public boolean canDrain(World world, int x, int y, int z)
     {
-        return false;
+        return true;
     }
 }
