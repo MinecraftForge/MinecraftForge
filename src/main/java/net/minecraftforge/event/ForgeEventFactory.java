@@ -155,4 +155,14 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
         return event.result;
     }
+    
+    public static void onStartEntityTracking(Entity entity, EntityPlayer player)
+    {
+        MinecraftForge.EVENT_BUS.post(new PlayerEvent.StartTracking(player, entity));
+    }
+    
+    public static void onStopEntityTracking(Entity entity, EntityPlayer player)
+    {
+        MinecraftForge.EVENT_BUS.post(new PlayerEvent.StopTracking(player, entity));
+    }
 }
