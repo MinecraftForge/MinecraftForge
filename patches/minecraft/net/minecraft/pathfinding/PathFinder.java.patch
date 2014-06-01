@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/pathfinding/PathFinder.java
++++ ../src-work/minecraft/net/minecraft/pathfinding/PathFinder.java
+@@ -289,7 +289,7 @@
+ 
+                         int k1 = block.func_149645_b();
+ 
+-                        if (p_82565_0_.field_70170_p.func_147439_a(l, i1, j1).func_149645_b() == 9)
++                        if (block.func_149645_b() == 9)
+                         {
+                             int j2 = MathHelper.func_76128_c(p_82565_0_.field_70165_t);
+                             int l1 = MathHelper.func_76128_c(p_82565_0_.field_70163_u);
