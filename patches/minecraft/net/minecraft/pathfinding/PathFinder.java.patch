@@ -5,7 +5,7 @@
                          int k1 = block.func_149645_b();
  
 -                        if (p_82565_0_.field_70170_p.func_147439_a(l, i1, j1).func_149645_b() == 9)
-+                        if (block.func_149645_b() == 9)
++                        if (k1 == 9)
                          {
                              int j2 = MathHelper.func_76128_c(p_82565_0_.field_70165_t);
                              int l1 = MathHelper.func_76128_c(p_82565_0_.field_70163_u);
