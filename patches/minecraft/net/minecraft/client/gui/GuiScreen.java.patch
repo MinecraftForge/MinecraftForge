@@ -15,13 +15,13 @@
              }
          }
  
-+        FontRenderer font = p_146285_1_.func_77973_b().getFontRenderer(p_146285_1_);
 -        this.func_146283_a(list, p_146285_2_, p_146285_3_);
++        FontRenderer font = p_146285_1_.func_77973_b().getFontRenderer(p_146285_1_);
 +        drawHoveringText(list, p_146285_2_, p_146285_3_, (font == null ? field_146289_q : font));
      }
  
      protected void func_146279_a(String p_146279_1_, int p_146279_2_, int p_146279_3_)
-@@ -121,6 +127,11 @@
+@@ -121,6 +126,11 @@
  
      protected void func_146283_a(List p_146283_1_, int p_146283_2_, int p_146283_3_)
      {
@@ -33,7 +33,7 @@
          if (!p_146283_1_.isEmpty())
          {
              GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-@@ -133,7 +144,7 @@
+@@ -133,7 +143,7 @@
              while (iterator.hasNext())
              {
                  String s = (String)iterator.next();
@@ -42,7 +42,7 @@
  
                  if (l > k)
                  {
-@@ -178,7 +189,7 @@
+@@ -178,7 +188,7 @@
              for (int i2 = 0; i2 < p_146283_1_.size(); ++i2)
              {
                  String s1 = (String)p_146283_1_.get(i2);
@@ -51,7 +51,7 @@
  
                  if (i2 == 0)
                  {
-@@ -207,9 +218,14 @@
+@@ -207,9 +217,14 @@
  
                  if (guibutton.func_146116_c(this.field_146297_k, p_73864_1_, p_73864_2_))
                  {
@@ -69,7 +69,7 @@
                  }
              }
          }
-@@ -234,8 +250,12 @@
+@@ -234,8 +249,12 @@
          this.field_146289_q = p_146280_1_.field_71466_p;
          this.field_146294_l = p_146280_2_;
          this.field_146295_m = p_146280_3_;
