@@ -25,8 +25,11 @@
      }
  
      public void func_149674_a(World p_149674_1_, int p_149674_2_, int p_149674_3_, int p_149674_4_, Random p_149674_5_)
-@@ -62,7 +64,9 @@
+@@ -60,9 +62,12 @@
+         return 6;
+     }
  
++    @SuppressWarnings("unused")
      public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
      {
 -        if (!p_149690_1_.field_72995_K)
@@ -36,7 +39,7 @@
          {
              int j1 = 1;
  
-@@ -109,4 +113,23 @@
+@@ -109,4 +114,23 @@
              this.field_149883_a[i] = p_149651_1_.func_94245_a(this.func_149641_N() + "_stage_" + i);
          }
      }
