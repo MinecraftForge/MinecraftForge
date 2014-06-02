@@ -91,7 +91,7 @@
                          int l = itemstack != null ? itemstack.field_77994_a : 0;
  
 -                        if (this.field_71442_b.func_78760_a(this.field_71439_g, this.field_71441_e, itemstack, i, j, k, this.field_71476_x.field_72310_e, this.field_71476_x.field_72307_f))
-+                        boolean result = !ForgeEventFactory.onPlayerInteract(field_71439_g, Action.RIGHT_CLICK_BLOCK, i, j, k, this.field_71476_x.field_72310_e).isCanceled();
++                        boolean result = !ForgeEventFactory.onPlayerInteract(field_71439_g, Action.RIGHT_CLICK_BLOCK, i, j, k, this.field_71476_x.field_72310_e, this.field_71441_e).isCanceled();
 +                        if (result && this.field_71442_b.func_78760_a(this.field_71439_g, this.field_71441_e, itemstack, i, j, k, this.field_71476_x.field_72310_e, this.field_71476_x.field_72307_f))
                          {
                              flag = false;
@@ -101,7 +101,7 @@
              ItemStack itemstack1 = this.field_71439_g.field_71071_by.func_70448_g();
  
 -            if (itemstack1 != null && this.field_71442_b.func_78769_a(this.field_71439_g, this.field_71441_e, itemstack1))
-+            boolean result = !ForgeEventFactory.onPlayerInteract(field_71439_g, Action.RIGHT_CLICK_AIR, 0, 0, 0, -1).isCanceled();
++            boolean result = !ForgeEventFactory.onPlayerInteract(field_71439_g, Action.RIGHT_CLICK_AIR, 0, 0, 0, -1, this.field_71441_e).isCanceled();
 +            if (result && itemstack1 != null && this.field_71442_b.func_78769_a(this.field_71439_g, this.field_71441_e, itemstack1))
              {
                  this.field_71460_t.field_78516_c.func_78445_c();
