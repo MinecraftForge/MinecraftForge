@@ -34,3 +34,11 @@
          this.field_73735_i = 0.0F;
          field_146296_j.field_77023_b = 0.0F;
      }
+@@ -458,6 +466,7 @@
+ 
+     protected void func_146286_b(int p_146286_1_, int p_146286_2_, int p_146286_3_)
+     {
++        super.func_146286_b(p_146286_1_, p_146286_2_, p_146286_3_); //Forge, Call parent to release buttons
+         Slot slot = this.func_146975_c(p_146286_1_, p_146286_2_);
+         int l = this.field_147003_i;
+         int i1 = this.field_147009_r;
