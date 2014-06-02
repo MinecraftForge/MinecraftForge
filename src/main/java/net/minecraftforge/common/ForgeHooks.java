@@ -3,6 +3,7 @@ package net.minecraftforge.common;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.block.Block;
@@ -25,6 +26,7 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityNote;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.DamageSource;
@@ -47,6 +49,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.NoteBlockEvent;
 import static net.minecraft.init.Blocks.*;
 
 public class ForgeHooks
@@ -435,5 +438,17 @@ public class ForgeHooks
         outputSlot.setInventorySlotContents(0, e.output);
         container.maximumCost = e.cost;
         return false;
+    }
+
+    public static boolean onNoteChange(TileEntityNote te, byte old)
+    {
+        NoteBlockEvent.Change e = new NoteBlockEvent.Change(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, te.getBlockMetadata(), old, te.note);
+        if (MinecraftForge.EVENT_BUS.post(e))
+        {
+            te.note = old;
+            return false;
+        }
+        te.note = (byte)e.getVanillaNoteId();
+        return true;
     }
 }
