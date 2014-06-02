@@ -1,8 +1,10 @@
 package net.minecraftforge.event.entity.player;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
+import static cpw.mods.fml.common.eventhandler.Event.Result.DEFAULT;
+import static cpw.mods.fml.common.eventhandler.Event.Result.DENY;
 import net.minecraft.entity.player.EntityPlayer;
-import static cpw.mods.fml.common.eventhandler.Event.Result.*;
+import net.minecraft.world.World;
+import cpw.mods.fml.common.eventhandler.Cancelable;
 
 @Cancelable
 public class PlayerInteractEvent extends PlayerEvent
@@ -19,11 +21,18 @@ public class PlayerInteractEvent extends PlayerEvent
     public final int y;
     public final int z;
     public final int face;
+    public final World world;
     
     public Result useBlock = DEFAULT;
     public Result useItem = DEFAULT;
-    
+
+    @Deprecated
     public PlayerInteractEvent(EntityPlayer player, Action action, int x, int y, int z, int face)
+    {
+        this(player, action, x, y, z, face, player.worldObj);
+    }
+
+    public PlayerInteractEvent(EntityPlayer player, Action action, int x, int y, int z, int face, World world)
     {
         super(player);
         this.action = action;
@@ -32,6 +41,7 @@ public class PlayerInteractEvent extends PlayerEvent
         this.z = z;
         this.face = face;
         if (face == -1) useBlock = DENY;
+        this.world = world;
     }
     
     @Override

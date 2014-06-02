@@ -108,7 +108,7 @@
              }
  
 -            this.field_147369_b.field_71134_c.func_73085_a(this.field_147369_b, worldserver, itemstack);
-+            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(field_147369_b, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, 0, 0, 0, -1);
++            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(field_147369_b, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, 0, 0, 0, -1, worldserver);
 +            if (event.useItem != Event.Result.DENY)
 +            {
 +                this.field_147369_b.field_71134_c.func_73085_a(this.field_147369_b, worldserver, itemstack);

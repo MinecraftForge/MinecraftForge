@@ -51,9 +51,14 @@ public class ForgeEventFactory
         return (MinecraftForge.EVENT_BUS.post(event) ? -1 : event.newSpeed);
     }
 
+    @Deprecated
     public static PlayerInteractEvent onPlayerInteract(EntityPlayer player, Action action, int x, int y, int z, int face)
     {
-        PlayerInteractEvent event = new PlayerInteractEvent(player, action, x, y, z, face);
+        return onPlayerInteract(player, action, x, y, z, face, null);
+    }
+    public static PlayerInteractEvent onPlayerInteract(EntityPlayer player, Action action, int x, int y, int z, int face, World world)
+    {
+        PlayerInteractEvent event = new PlayerInteractEvent(player, action, x, y, z, face, world);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
