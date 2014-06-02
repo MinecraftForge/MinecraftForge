@@ -1,0 +1,38 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockFlowerPot.java
++++ ../src-work/minecraft/net/minecraft/block/BlockFlowerPot.java
+@@ -2,6 +2,7 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++import java.util.ArrayList;
+ import java.util.Random;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.entity.player.EntityPlayer;
+@@ -139,12 +140,6 @@
+     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
+     {
+         super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
+-        TileEntityFlowerPot tileentityflowerpot = this.func_149929_e(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_);
+-
+-        if (tileentityflowerpot != null && tileentityflowerpot.func_145965_a() != null)
+-        {
+-            this.func_149642_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(tileentityflowerpot.func_145965_a(), 1, tileentityflowerpot.func_145966_b()));
+-        }
+     }
+ 
+     public void func_149749_a(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_)
+@@ -242,4 +237,14 @@
+ 
+         return new TileEntityFlowerPot(Item.func_150898_a((Block)object), b0);
+     }
++
++    @Override
++    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune)
++    {
++        ArrayList<ItemStack> ret = super.getDrops(world, x, y, z, metadata, fortune);
++        TileEntityFlowerPot te = this.func_149929_e(world, x, y, z);
++        if (te != null && te.func_145965_a() != null)
++            ret.add(new ItemStack(te.func_145965_a(), 1, te.func_145966_b()));
++        return ret;
++    }
+ }

@@ -139,7 +139,19 @@
                  }
              }
          }
-@@ -827,7 +851,7 @@
+@@ -643,6 +667,11 @@
+     {
+         if (!p_149642_1_.field_72995_K && p_149642_1_.func_82736_K().func_82766_b("doTileDrops"))
+         {
++            if (captureDrops.get())
++            {
++                capturedDrops.get().add(p_149642_5_);
++                return;
++            }
+             float f = 0.7F;
+             double d0 = (double)(p_149642_1_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+             double d1 = (double)(p_149642_1_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+@@ -827,7 +856,7 @@
  
      public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
      {
@@ -148,7 +160,7 @@
      }
  
      public boolean func_149727_a(World p_149727_1_, int p_149727_2_, int p_149727_3_, int p_149727_4_, EntityPlayer p_149727_5_, int p_149727_6_, float p_149727_7_, float p_149727_8_, float p_149727_9_)
-@@ -920,25 +944,35 @@
+@@ -920,25 +949,35 @@
          p_149636_2_.func_71064_a(StatList.field_75934_C[func_149682_b(this)], 1);
          p_149636_2_.func_71020_j(0.025F);
  
@@ -187,12 +199,13 @@
      }
  
      protected ItemStack func_149644_j(int p_149644_1_)
-@@ -1114,6 +1148,1065 @@
+@@ -1114,6 +1153,1091 @@
          return null;
      }
  
 +    /* ======================================== FORGE START =====================================*/
-+    private ThreadLocal<EntityPlayer> harvesters = new ThreadLocal();
++    //For ForgeInternal use Only!
++    protected ThreadLocal<EntityPlayer> harvesters = new ThreadLocal();
 +    private ThreadLocal<Integer> silk_check_meta = new ThreadLocal(); 
 +    /**
 +     * Get a light value for the block at the specified coordinates, normal ranges are between 0 and 15
@@ -1247,6 +1260,31 @@
 +            return false;
 +        if (harvestTool[metadata] == null) return false;
 +        return harvestTool[metadata].equals(type);
++    }
++
++
++    // For Inernal use only to capture droped items inside getDrops
++    protected ThreadLocal<Boolean> captureDrops = new ThreadLocal<Boolean>()
++    {
++        @Override protected Boolean initialValue() { return false; }
++    };
++    protected ThreadLocal<List<ItemStack>> capturedDrops = new ThreadLocal<List<ItemStack>>()
++    {
++        @Override protected List<ItemStack> initialValue() { return new ArrayList<ItemStack>(); }
++    };
++    protected List<ItemStack> captureDrops(boolean start)
++    {
++        if (start)
++        {
++            captureDrops.set(true);
++            capturedDrops.get().clear();
++            return null;
++        }
++        else
++        {
++            captureDrops.set(false);
++            return capturedDrops.get();
++        }
 +    }
 +    /* ========================================= FORGE END ======================================*/
 +

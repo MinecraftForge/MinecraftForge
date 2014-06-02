@@ -45,7 +45,49 @@
                                      {
                                          this.field_150128_a[(l1 + k1) * j1 + (i2 + k1) * b1 + j2 + k1] = -2;
                                      }
-@@ -281,13 +283,7 @@
+@@ -236,40 +238,7 @@
+ 
+     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
+     {
+-        if (!p_149690_1_.field_72995_K)
+-        {
+-            int j1 = this.func_150123_b(p_149690_5_);
+-
+-            if (p_149690_7_ > 0)
+-            {
+-                j1 -= 2 << p_149690_7_;
+-
+-                if (j1 < 10)
+-                {
+-                    j1 = 10;
+-                }
+-            }
+-
+-            if (p_149690_1_.field_73012_v.nextInt(j1) == 0)
+-            {
+-                Item item = this.func_149650_a(p_149690_5_, p_149690_1_.field_73012_v, p_149690_7_);
+-                this.func_149642_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(item, 1, this.func_149692_a(p_149690_5_)));
+-            }
+-
+-            j1 = 200;
+-
+-            if (p_149690_7_ > 0)
+-            {
+-                j1 -= 10 << p_149690_7_;
+-
+-                if (j1 < 40)
+-                {
+-                    j1 = 40;
+-                }
+-            }
+-
+-            this.func_150124_c(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, j1);
+-        }
++        super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, 1.0f, p_149690_7_);
+     }
+ 
+     protected void func_150124_c(World p_150124_1_, int p_150124_2_, int p_150124_3_, int p_150124_4_, int p_150124_5_, int p_150124_6_) {}
+@@ -281,13 +250,7 @@
  
      public void func_149636_a(World p_149636_1_, EntityPlayer p_149636_2_, int p_149636_3_, int p_149636_4_, int p_149636_5_, int p_149636_6_)
      {
@@ -59,7 +101,7 @@
              super.func_149636_a(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_);
          }
      }
-@@ -318,4 +314,38 @@
+@@ -318,4 +281,67 @@
      }
  
      public abstract String[] func_150125_e();
@@ -96,5 +138,34 @@
 +    public boolean isLeaves(IBlockAccess world, int x, int y, int z)
 +    {
 +        return true;
++    }
++
++
++    @Override
++    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune)
++    {
++        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
++        int chance = this.func_150123_b(metadata);
++
++        if (fortune > 0)
++        {
++            chance -= 2 << fortune;
++            if (chance < 10) chance = 10;
++        }
++
++        if (world.field_73012_v.nextInt(chance) == 0)
++            ret.add(new ItemStack(this.func_149650_a(metadata, world.field_73012_v, fortune), 1, this.func_149692_a(metadata)));
++
++        chance = 200;
++        if (fortune > 0)
++        {
++            chance -= 10 << fortune;
++            if (chance < 40) chance = 40;
++        }
++
++        this.captureDrops(true);
++        this.func_150124_c(world, x, y, z, metadata, chance); // Dammet mojang
++        ret.addAll(this.captureDrops(false));
++        return ret;
 +    }
  }

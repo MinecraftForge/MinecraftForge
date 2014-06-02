@@ -1,0 +1,32 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockPotato.java
++++ ../src-work/minecraft/net/minecraft/block/BlockPotato.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.block;
+ 
++import java.util.ArrayList;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import net.minecraft.client.renderer.texture.IIconRegister;
+@@ -46,14 +47,15 @@
+     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
+     {
+         super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
++    }
+ 
+-        if (!p_149690_1_.field_72995_K)
+-        {
+-            if (p_149690_5_ >= 7 && p_149690_1_.field_73012_v.nextInt(50) == 0)
+-            {
+-                this.func_149642_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(Items.field_151170_bI));
+-            }
+-        }
++    @Override
++    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune)
++    {
++        ArrayList<ItemStack> ret = super.getDrops(world, x, y, z, metadata, fortune);
++        if (metadata >= 7 && world.field_73012_v.nextInt(50) == 0)
++            ret.add(new ItemStack(Items.field_151170_bI));
++        return ret;
+     }
+ 
+     @SideOnly(Side.CLIENT)
