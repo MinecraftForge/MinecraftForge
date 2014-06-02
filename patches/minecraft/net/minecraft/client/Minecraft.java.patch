@@ -133,7 +133,7 @@
                  this.field_71437_Z.func_71263_m();
 +                if (field_71461_s != null)
 +                {
-+                    this.field_71461_s.func_73719_c("Shutting down internal server...");
++                    this.field_71461_s.func_73719_c(I18n.func_135052_a("forge.client.shutdown.internal"));
 +                }
 +                while (!field_71437_Z.func_71241_aa())
 +                {
