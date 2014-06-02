@@ -42,6 +42,12 @@ import java.util.Map;
 
 import static net.minecraftforge.common.util.ForgeDirection.*;
 
+
+/**
+ * RotationHelper rotates vanilla blocks which can face in different directions.
+ * It's not intended for use by mods, use Block.rotateBlock(...) and Block.getValidRotations(...) instead.
+ */
+
 public class RotationHelper {
     /**
      * Some blocks have the same rotation.
