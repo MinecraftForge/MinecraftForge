@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockNote.java
++++ ../src-work/minecraft/net/minecraft/block/BlockNote.java
+@@ -6,6 +6,8 @@
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityNote;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.NoteBlockEvent;
+ 
+ public class BlockNote extends BlockContainer
+ {
+@@ -95,9 +97,15 @@
+         {
+             s = "bassattack";
+         }
+-
+-        p_149696_1_.func_72908_a((double)p_149696_2_ + 0.5D, (double)p_149696_3_ + 0.5D, (double)p_149696_4_ + 0.5D, "note." + s, 3.0F, f);
+-        p_149696_1_.func_72869_a("note", (double)p_149696_2_ + 0.5D, (double)p_149696_3_ + 1.2D, (double)p_149696_4_ + 0.5D, (double)p_149696_6_ / 24.0D, 0.0D, 0.0D);
+-        return true;
++        if (!MinecraftForge.EVENT_BUS.post(new NoteBlockEvent.Play(p_149696_2_, p_149696_3_, p_149696_4_, p_149696_1_, (byte) p_149696_6_, (byte) p_149696_5_)))
++        {
++            p_149696_1_.func_72908_a((double)p_149696_2_ + 0.5D, (double)p_149696_3_ + 0.5D, (double)p_149696_4_ + 0.5D, "note." + s, 3.0F, f);
++            p_149696_1_.func_72869_a("note", (double)p_149696_2_ + 0.5D, (double)p_149696_3_ + 1.2D, (double)p_149696_4_ + 0.5D, (double)p_149696_6_ / 24.0D, 0.0D, 0.0D);
++            return true;
++        }
++        else
++        {
++            return false;
++        }
+     }
+ }
