@@ -12,6 +12,10 @@
 
 package cpw.mods.fml.common.registry;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -424,4 +428,24 @@ public class GameRegistry
         return GameData.getUniqueName(item);
     }
 
+
+
+    /**
+     * This will cause runtime injection of public static final fields to occur at various points
+     * where mod blocks and items <em>could</em> be subject to change. This allows for dynamic
+     * substitution to occur.
+     *
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.TYPE, ElementType.FIELD})
+    public @interface ObjectHolder {
+        /**
+         * If used on a class, this represents a modid only.
+         * If used on a field, it represents a name, which can be abbreviated or complete.
+         * Abbreviated names derive their modid from an enclosing ObjectHolder at the class level.
+         *
+         * @return either a modid or a name based on the rules above
+         */
+        String value();
+    }
 }

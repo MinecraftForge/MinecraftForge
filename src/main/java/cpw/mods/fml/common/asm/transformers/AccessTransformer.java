@@ -16,6 +16,8 @@ import static org.objectweb.asm.Opcodes.ACC_FINAL;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.objectweb.asm.Opcodes.ACC_PROTECTED;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
+import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -27,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -36,8 +39,10 @@ import net.minecraft.launchwrapper.IClassTransformer;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import com.google.common.base.Charsets;
@@ -206,11 +211,28 @@ public class AccessTransformer implements IClassTransformer
             }
             else
             {
+                List<MethodNode> nowOverridable = Lists.newArrayList();
                 for (MethodNode n : classNode.methods)
                 {
                     if ((n.name.equals(m.name) && n.desc.equals(m.desc)) || m.name.equals("*"))
                     {
                         n.access = getFixedAccess(n.access, m);
+                        
+                        // constructors always use INVOKESPECIAL
+                        if (!n.name.equals("<init>"))
+                        {
+                            // if we changed from private to something else we need to replace all INVOKESPECIAL calls to this method with INVOKEVIRTUAL
+                            // so that overridden methods will be called. Only need to scan this class, because obviously the method was private.
+                            boolean wasPrivate = (m.oldAccess & ACC_PRIVATE) == ACC_PRIVATE;
+                            boolean isNowPrivate = (m.newAccess & ACC_PRIVATE) == ACC_PRIVATE;
+                            
+                            if (wasPrivate && !isNowPrivate)
+                            {
+                                nowOverridable.add(n);
+                            }
+                            
+                        }
+                        
                         if (DEBUG)
                         {
                             System.out.println(String.format("Method: %s.%s%s %s -> %s", name, n.name, n.desc, toBinary(m.oldAccess), toBinary(m.newAccess)));
@@ -222,12 +244,37 @@ public class AccessTransformer implements IClassTransformer
                         }
                     }
                 }
+                
+                replaceInvokeSpecial(classNode, nowOverridable);
             }
         }
 
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         classNode.accept(writer);
         return writer.toByteArray();
+    }
+    
+    private void replaceInvokeSpecial(ClassNode clazz, List<MethodNode> toReplace)
+    {
+        for (MethodNode method : clazz.methods)
+        {
+            for (Iterator<AbstractInsnNode> it = method.instructions.iterator(); it.hasNext();)
+            {
+                AbstractInsnNode insn = it.next();
+                if (insn.getOpcode() == INVOKESPECIAL)
+                {
+                    MethodInsnNode mInsn = (MethodInsnNode) insn;
+                    for (MethodNode n : toReplace)
+                    {
+                        if (n.name.equals(mInsn.name) && n.desc.equals(mInsn.desc))
+                        {
+                            mInsn.setOpcode(INVOKEVIRTUAL);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private String toBinary(int num)
