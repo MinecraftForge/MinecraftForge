@@ -12,6 +12,7 @@ import net.minecraft.network.play.client.C17PacketCustomPayload;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;
 import org.apache.logging.log4j.Level;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.FMLNetworkException;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
@@ -68,7 +69,11 @@ public class FMLProxyPacket extends Packet {
             internalChannel.attr(NetworkRegistry.NET_HANDLER).set(this.netHandler);
             try
             {
-                internalChannel.writeInbound(this);
+                if (internalChannel.writeInbound(this))
+                {
+                    FMLLog.severe("Messages for channel %s for side %s were not processed by the embedded channel %s.\n They have been dropped.\n%s", this.channel, this.target, internalChannel.inboundMessages(), ByteBufUtils.getContentDump(this.payload));
+                }
+                internalChannel.inboundMessages().clear();
             }
             catch (FMLNetworkException ne)
             {

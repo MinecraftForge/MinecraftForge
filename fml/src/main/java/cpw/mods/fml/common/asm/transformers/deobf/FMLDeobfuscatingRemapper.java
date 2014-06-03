@@ -53,7 +53,6 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     public static final FMLDeobfuscatingRemapper INSTANCE = new FMLDeobfuscatingRemapper();
 
     private BiMap<String, String> classNameBiMap;
-    private BiMap<String, String> mcpNameBiMap;
 
     private Map<String,Map<String,String>> rawFieldMaps;
     private Map<String,Map<String,String>> rawMethodMaps;
@@ -71,7 +70,6 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     private FMLDeobfuscatingRemapper()
     {
         classNameBiMap=ImmutableBiMap.of();
-        mcpNameBiMap=ImmutableBiMap.of();
     }
 
     public void setupLoadOnly(String deobfFileName, boolean loadAll)
@@ -85,7 +83,6 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             rawMethodMaps = Maps.newHashMap();
             rawFieldMaps = Maps.newHashMap();
             Builder<String, String> builder = ImmutableBiMap.<String,String>builder();
-            Builder<String, String> mcpBuilder = ImmutableBiMap.<String,String>builder();
             Splitter splitter = Splitter.on(CharMatcher.anyOf(": ")).omitEmptyStrings().trimResults();
             for (String line : srgList)
             {
@@ -94,7 +91,6 @@ public class FMLDeobfuscatingRemapper extends Remapper {
                 if ("CL".equals(typ))
                 {
                     parseClass(builder, parts);
-                    parseMCPClass(mcpBuilder,parts);
                 }
                 else if ("MD".equals(typ) && loadAll)
                 {
@@ -106,7 +102,6 @@ public class FMLDeobfuscatingRemapper extends Remapper {
                 }
             }
             classNameBiMap = builder.build();
-            mcpNameBiMap = mcpBuilder.build();
         }
         catch (IOException ioe)
         {
@@ -128,7 +123,6 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             rawMethodMaps = Maps.newHashMap();
             rawFieldMaps = Maps.newHashMap();
             Builder<String, String> builder = ImmutableBiMap.<String,String>builder();
-            Builder<String, String> mcpBuilder = ImmutableBiMap.<String,String>builder();
             Splitter splitter = Splitter.on(CharMatcher.anyOf(": ")).omitEmptyStrings().trimResults();
             for (String line : srgList)
             {
@@ -137,7 +131,6 @@ public class FMLDeobfuscatingRemapper extends Remapper {
                 if ("CL".equals(typ))
                 {
                     parseClass(builder, parts);
-                    parseMCPClass(mcpBuilder,parts);
                 }
                 else if ("MD".equals(typ))
                 {
@@ -149,13 +142,6 @@ public class FMLDeobfuscatingRemapper extends Remapper {
                 }
             }
             classNameBiMap = builder.build();
-            // Special case some mappings for modloader mods
-            mcpBuilder.put("BaseMod","net/minecraft/src/BaseMod");
-            mcpBuilder.put("ModLoader","net/minecraft/src/ModLoader");
-            mcpBuilder.put("EntityRendererProxy","net/minecraft/src/EntityRendererProxy");
-            mcpBuilder.put("MLProp","net/minecraft/src/MLProp");
-            mcpBuilder.put("TradeEntry","net/minecraft/src/TradeEntry");
-            mcpNameBiMap = mcpBuilder.build();
         }
         catch (IOException ioe)
         {
@@ -167,8 +153,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
 
     public boolean isRemappedClass(String className)
     {
-        className = className.replace('.', '/');
-        return classNameBiMap.containsKey(className) || mcpNameBiMap.containsKey(className) || (!classNameBiMap.isEmpty() && className.indexOf('/') == -1);
+        return !map(className).equals(className);
     }
 
     private void parseField(String[] parts)
@@ -235,12 +220,6 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         builder.put(parts[1],parts[2]);
     }
 
-    private void parseMCPClass(Builder<String, String> builder, String[] parts)
-    {
-        int clIdx = parts[2].lastIndexOf('/');
-        builder.put("net/minecraft/src/"+parts[2].substring(clIdx+1),parts[2]);
-    }
-
     private void parseMethod(String[] parts)
     {
         String oldSrg = parts[1];
@@ -280,13 +259,12 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         {
             return classNameBiMap.get(typeName);
         }
-        int dollarIdx = typeName.indexOf('$');
-        String realType = dollarIdx > -1 ? typeName.substring(0, dollarIdx) : typeName;
-        String subType = dollarIdx > -1 ? typeName.substring(dollarIdx+1) : "";
-
-        String result = classNameBiMap.containsKey(realType) ? classNameBiMap.get(realType) : mcpNameBiMap.containsKey(realType) ? mcpNameBiMap.get(realType) : realType;
-        result = dollarIdx > -1 ? result+"$"+subType : result;
-        return result;
+        int dollarIdx = typeName.lastIndexOf('$');
+        if (dollarIdx > -1)
+        {
+            return map(typeName.substring(0, dollarIdx)) + "$" + typeName.substring(dollarIdx + 1);
+        }
+        return typeName;
     }
 
     public String unmap(String typeName)
@@ -300,14 +278,12 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         {
             return classNameBiMap.inverse().get(typeName);
         }
-        int dollarIdx = typeName.indexOf('$');
-        String realType = dollarIdx > -1 ? typeName.substring(0, dollarIdx) : typeName;
-        String subType = dollarIdx > -1 ? typeName.substring(dollarIdx+1) : "";
-
-
-        String result = classNameBiMap.containsValue(realType) ? classNameBiMap.inverse().get(realType) : mcpNameBiMap.containsValue(realType) ? mcpNameBiMap.inverse().get(realType) : realType;
-        result = dollarIdx > -1 ? result+"$"+subType : result;
-        return result;
+        int dollarIdx = typeName.lastIndexOf('$');
+        if (dollarIdx > -1)
+        {
+            return unmap(typeName.substring(0, dollarIdx)) + "$" + typeName.substring(dollarIdx + 1);
+        }
+        return typeName;
     }
 
 
