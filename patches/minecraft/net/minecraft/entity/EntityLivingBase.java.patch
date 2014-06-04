@@ -175,6 +175,43 @@
      }
  
      public void func_70612_e(float p_70612_1_, float p_70612_2_)
+@@ -1358,9 +1392,9 @@
+             this.func_70060_a(p_70612_1_, p_70612_2_, this.func_70650_aV() ? 0.04F : 0.02F);
+             this.func_70091_d(this.field_70159_w, this.field_70181_x, this.field_70179_y);
+             this.field_70159_w *= 0.800000011920929D;
+-            this.field_70181_x *= 0.800000011920929D;
++            this.field_70181_x *= getYFriction(true, false);
+             this.field_70179_y *= 0.800000011920929D;
+-            this.field_70181_x -= 0.02D;
++            this.field_70181_x -= getGravity(true, false);
+ 
+             if (this.field_70123_F && this.func_70038_c(this.field_70159_w, this.field_70181_x + 0.6000000238418579D - this.field_70163_u + d0, this.field_70179_y))
+             {
+@@ -1373,9 +1407,9 @@
+             this.func_70060_a(p_70612_1_, p_70612_2_, 0.02F);
+             this.func_70091_d(this.field_70159_w, this.field_70181_x, this.field_70179_y);
+             this.field_70159_w *= 0.5D;
+-            this.field_70181_x *= 0.5D;
++            this.field_70181_x *= getYFriction(false, true);
+             this.field_70179_y *= 0.5D;
+-            this.field_70181_x -= 0.02D;
++            this.field_70181_x -= getGravity(false, true);
+ 
+             if (this.field_70123_F && this.func_70038_c(this.field_70159_w, this.field_70181_x + 0.6000000238418579D - this.field_70163_u + d0, this.field_70179_y))
+             {
+@@ -1470,10 +1504,10 @@
+             }
+             else
+             {
+-                this.field_70181_x -= 0.08D;
++                this.field_70181_x -= getGravity(false, false);
+             }
+ 
+-            this.field_70181_x *= 0.9800000190734863D;
++            this.field_70181_x *= getYFriction(false, false);
+             this.field_70159_w *= (double)f2;
+             this.field_70179_y *= (double)f2;
+         }
 @@ -1520,6 +1554,7 @@
  
      public void func_70071_h_()
@@ -183,12 +220,74 @@
          super.func_70071_h_();
  
          if (!this.field_70170_p.field_72995_K)
-@@ -2000,4 +2035,62 @@
+@@ -2000,4 +2035,124 @@
      {
          return this.func_96124_cp() != null ? this.func_96124_cp().func_142054_a(p_142012_1_) : false;
      }
 +
 +    /**************** Start Forge modification **************/
++
++    /**
++     * Return the gravity applied on this entity
++     * @param inWater   True if the entity is in water
++     * @param inLava    True if the entity is in lava
++     * @return The gravity to apply
++     */
++    protected double getGravity(boolean inWater, boolean inLava)
++    {
++        return inWater ? 0.02D : inLava ? 0.02D : 0.08D;
++    }
++
++    /**
++     * Return the Y friction of the entity
++     * @param inWater   True if the entity is in water
++     * @param inLava    True if the entity is in lava
++     * @return The friction on Y axis
++     */
++    protected double getYFriction(boolean inWater, boolean inLava)
++    {
++        return inWater ? 0.800000011920929D : inLava ? 0.5D : 0.9800000190734863D;
++    }
++
++    /**
++     * Compute and return the jump height of this entity
++     * @return The maximal jump height
++     */
++    public double getJumpHeight()
++    {
++        double jumpSpeed = getInitialJumpSpeed();
++        double jumpHeight = 0;
++
++        if (this.func_70090_H() && (!(this instanceof EntityPlayer) || !((EntityPlayer)this).field_71075_bZ.field_75100_b))
++        {
++            while (jumpSpeed > 0)
++            {
++                jumpHeight += jumpSpeed;
++
++                jumpSpeed *= getYFriction(true, false);
++                jumpSpeed -= getGravity(true, false);
++            }
++        }
++        else if (this.func_70058_J() && (!(this instanceof EntityPlayer) || !((EntityPlayer)this).field_71075_bZ.field_75100_b))
++        {
++            jumpHeight += jumpSpeed;
++
++            jumpSpeed *= getYFriction(false, true);;
++            jumpSpeed -= getGravity(false, true);;
++        }
++        else
++        {
++            while (jumpSpeed > 0)
++            {
++                jumpHeight += jumpSpeed;
++
++                jumpSpeed -= getGravity(false, false);;
++                jumpSpeed *= getYFriction(false, false);;
++            }
++        }
++
++        return jumpHeight;
++    }
 +
 +    /**
 +     * Return the initial jump velocity of this entity
