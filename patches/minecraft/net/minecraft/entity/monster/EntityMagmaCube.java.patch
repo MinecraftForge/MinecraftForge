@@ -1,0 +1,37 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityMagmaCube.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityMagmaCube.java
+@@ -7,6 +7,7 @@
+ import net.minecraft.item.Item;
+ import net.minecraft.world.EnumDifficulty;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeHooks;
+ 
+ public class EntityMagmaCube extends EntitySlime
+ {
+@@ -97,7 +98,7 @@
+ 
+     protected void func_70664_aZ()
+     {
+-        this.field_70181_x = (double)(0.42F + (float)this.func_70809_q() * 0.1F);
++        this.field_70181_x = getInitialJumpSpeed();
+         this.field_70160_al = true;
+     }
+ 
+@@ -127,4 +128,17 @@
+     {
+         return true;
+     }
++
++    /**************** Start Forge modification **************/
++
++    /**
++     * Return the initial jump velocity of this entity
++     * @return The initial jump velocity
++     */
++    protected double getInitialJumpSpeed()
++    {
++        return ForgeHooks.onGetLivingJumpSpeed(this, (double)(0.42F + (float)this.func_70809_q() * 0.1F));
++    }
++
++    /**************** End Forge modification **************/
+ }

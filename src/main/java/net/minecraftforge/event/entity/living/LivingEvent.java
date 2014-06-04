@@ -23,4 +23,15 @@ public class LivingEvent extends EntityEvent
     {
         public LivingJumpEvent(EntityLivingBase e){ super(e); }
     }
+
+    public static class GetLivingJumpSpeedEvent extends LivingEvent
+    {
+        public double jumpSpeed;
+
+        public GetLivingJumpSpeedEvent(EntityLivingBase e, double jumpSpeed)
+        {
+            super(e);
+            this.jumpSpeed = jumpSpeed;
+        }
+    }
 }

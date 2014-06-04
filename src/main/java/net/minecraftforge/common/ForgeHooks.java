@@ -42,6 +42,7 @@ import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.GetLivingJumpSpeedEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -334,6 +335,19 @@ public class ForgeHooks
     public static void onLivingJump(EntityLivingBase entity)
     {
         MinecraftForge.EVENT_BUS.post(new LivingJumpEvent(entity));
+    }
+
+    public static double onGetLivingJumpSpeed(EntityLivingBase entity, double jumpSpeed)
+    {
+        GetLivingJumpSpeedEvent event = new GetLivingJumpSpeedEvent(entity, jumpSpeed);
+        MinecraftForge.EVENT_BUS.post(event);
+
+        if (jumpSpeed != event.jumpSpeed)
+        {
+            return event.jumpSpeed;
+        }
+
+        return jumpSpeed;
     }
 
     public static EntityItem onPlayerTossEvent(EntityPlayer player, ItemStack item, boolean includeName)

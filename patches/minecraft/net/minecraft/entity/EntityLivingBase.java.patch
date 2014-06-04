@@ -148,6 +148,25 @@
          if (!this.field_82175_bq || this.field_110158_av >= this.func_82166_i() / 2 || this.field_110158_av < 0)
          {
              this.field_110158_av = -1;
+@@ -1331,13 +1364,13 @@
+ 
+     protected void func_70664_aZ()
+     {
+-        this.field_70181_x = 0.41999998688697815D;
++        this.field_70181_x = getInitialJumpSpeed();
+ 
+-        if (this.func_70644_a(Potion.field_76430_j))
+-        {
+-            this.field_70181_x += (double)((float)(this.func_70660_b(Potion.field_76430_j).func_76458_c() + 1) * 0.1F);
+-        }
+ 
++
++
++
++
+         if (this.func_70051_ag())
+         {
+             float f = this.field_70177_z * 0.017453292F;
 @@ -1346,6 +1379,7 @@
          }
  
@@ -164,10 +183,28 @@
          super.func_70071_h_();
  
          if (!this.field_70170_p.field_72995_K)
-@@ -2000,4 +2035,42 @@
+@@ -2000,4 +2035,62 @@
      {
          return this.func_96124_cp() != null ? this.func_96124_cp().func_142054_a(p_142012_1_) : false;
      }
++
++    /**************** Start Forge modification **************/
++
++    /**
++     * Return the initial jump velocity of this entity
++     * @return The initial jump velocity
++     */
++    protected double getInitialJumpSpeed()
++    {
++        double jumpSpeed = 0.41999998688697815D;
++
++        if (this.func_70644_a(Potion.field_76430_j))
++        {
++            jumpSpeed += (double)((float)(this.func_70660_b(Potion.field_76430_j).func_76458_c() + 1) * 0.1F);
++        }
++
++        return ForgeHooks.onGetLivingJumpSpeed(this, jumpSpeed);
++    }
 +
 +    /***
 +     * Removes all potion effects that have curativeItem as a curative item for its effect
@@ -206,4 +243,6 @@
 +    {
 +        return this instanceof EntityPig;
 +    }
++
++    /**************** End Forge modification **************/
  }
