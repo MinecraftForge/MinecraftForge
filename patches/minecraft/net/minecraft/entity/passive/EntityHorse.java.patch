@@ -1,0 +1,59 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityHorse.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityHorse.java
+@@ -39,6 +39,7 @@
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.util.StatCollector;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeHooks;
+ 
+ public class EntityHorse extends EntityAnimal implements IInvBasic
+ {
+@@ -1207,13 +1208,13 @@
+ 
+             if (this.field_110277_bt > 0.0F && !this.func_110246_bZ() && this.field_70122_E)
+             {
+-                this.field_70181_x = this.func_110215_cj() * (double)this.field_110277_bt;
++                this.field_70181_x = getInitialJumpSpeed();
+ 
+-                if (this.func_70644_a(Potion.field_76430_j))
+-                {
+-                    this.field_70181_x += (double)((float)(this.func_70660_b(Potion.field_76430_j).func_76458_c() + 1) * 0.1F);
+-                }
+ 
++
++
++
++
+                 this.func_110255_k(true);
+                 this.field_70160_al = true;
+ 
+@@ -1673,4 +1674,29 @@
+                 this.field_111106_b = p_i1684_2_;
+             }
+         }
++
++    /**************** Start Forge modification **************/
++
++    /**
++     * Return the initial jump velocity of this entity
++     * @return The initial jump velocity
++     */
++    protected double getInitialJumpSpeed()
++    {
++        if (this.field_70153_n != null && this.func_110257_ck() && this.field_110277_bt > 0.0F && !this.func_110246_bZ() && this.field_70122_E)
++        {
++            double jumpSpeed = this.func_110215_cj() * (double)this.field_110277_bt;
++
++            if (this.func_70644_a(Potion.field_76430_j))
++            {
++                jumpSpeed += (double)((float)(this.func_70660_b(Potion.field_76430_j).func_76458_c() + 1) * 0.1F);
++            }
++
++            return ForgeHooks.onGetLivingJumpSpeed(this, jumpSpeed);
++        }
++
++        return super.getInitialJumpSpeed();
++    }
++
++    /**************** End Forge modification **************/
+ }
