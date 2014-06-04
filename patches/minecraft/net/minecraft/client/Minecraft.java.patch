@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src-work/minecraft/net/minecraft/client/Minecraft.java
-@@ -135,6 +135,14 @@
+@@ -134,6 +134,14 @@
  import net.minecraft.world.storage.ISaveFormat;
  import net.minecraft.world.storage.ISaveHandler;
  import net.minecraft.world.storage.WorldInfo;
@@ -15,7 +15,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  import org.lwjgl.LWJGLException;
-@@ -246,7 +254,7 @@
+@@ -245,7 +253,7 @@
          this.func_71389_H();
          this.field_71449_j = p_i1014_1_;
          field_147123_G.info("Setting user: " + p_i1014_1_.func_111285_a());
@@ -72,16 +72,20 @@
          if (p_147108_1_ instanceof GuiMainMenu)
          {
              this.field_71474_y.field_74330_P = false;
-@@ -1297,7 +1311,7 @@
- 
-                     if (this.field_71439_g.func_82246_f(i, j, k))
-                     {
+@@ -1294,12 +1308,6 @@
+                 if (this.field_71441_e.func_147439_a(i, j, k).func_149688_o() != Material.field_151579_a)
+                 {
+                     this.field_71442_b.func_78759_c(i, j, k, this.field_71476_x.field_72310_e);
+-
+-                    if (this.field_71439_g.func_82246_f(i, j, k))
+-                    {
 -                        this.field_71452_i.func_78867_a(i, j, k, this.field_71476_x.field_72310_e);
-+                        this.field_71452_i.addBlockHitEffects(i, j, k, this.field_71476_x);
-                         this.field_71439_g.func_71038_i();
-                     }
+-                        this.field_71439_g.func_71038_i();
+-                    }
                  }
-@@ -1378,11 +1392,12 @@
+             }
+             else
+@@ -1378,16 +1386,19 @@
                      int j = this.field_71476_x.field_72312_c;
                      int k = this.field_71476_x.field_72309_d;
  
@@ -96,17 +100,24 @@
                          {
                              flag = false;
                              this.field_71439_g.func_71038_i();
-@@ -1409,7 +1424,8 @@
+                         }
+ 
++                        itemstack = this.field_71439_g.func_71045_bC();
++
+                         if (itemstack == null)
+                         {
+                             return;
+@@ -1409,7 +1420,8 @@
          {
              ItemStack itemstack1 = this.field_71439_g.field_71071_by.func_70448_g();
  
 -            if (itemstack1 != null && this.field_71442_b.func_78769_a(this.field_71439_g, this.field_71441_e, itemstack1))
 +            boolean result = !ForgeEventFactory.onPlayerInteract(field_71439_g, Action.RIGHT_CLICK_AIR, 0, 0, 0, -1, this.field_71441_e).isCanceled();
-+            if (result && itemstack1 != null && this.field_71442_b.func_78769_a(this.field_71439_g, this.field_71441_e, itemstack1))
++            if (this.field_71442_b.func_78769_a(this.field_71439_g, this.field_71441_e, itemstack1))
              {
                  this.field_71460_t.field_78516_c.func_78445_c();
              }
-@@ -1608,6 +1624,8 @@
+@@ -1608,6 +1620,8 @@
  
              while (Mouse.next())
              {
@@ -115,7 +126,7 @@
                  i = Mouse.getEventButton();
  
                  if (field_142025_a && i == 0 && (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)))
-@@ -2081,6 +2099,11 @@
+@@ -2075,6 +2089,11 @@
  
      public void func_71353_a(WorldClient p_71353_1_, String p_71353_2_)
      {
@@ -127,7 +138,7 @@
          if (p_71353_1_ == null)
          {
              NetHandlerPlayClient nethandlerplayclient = this.func_147114_u();
-@@ -2093,6 +2116,18 @@
+@@ -2087,6 +2106,18 @@
              if (this.field_71437_Z != null)
              {
                  this.field_71437_Z.func_71263_m();
@@ -146,7 +157,7 @@
              }
  
              this.field_71437_Z = null;
-@@ -2241,113 +2276,10 @@
+@@ -2235,113 +2266,10 @@
          if (this.field_71476_x != null)
          {
              boolean flag = this.field_71439_g.field_71075_bZ.field_75098_d;
@@ -262,7 +273,7 @@
              if (flag)
              {
                  j = this.field_71439_g.field_71069_bz.field_75151_b.size() - 9 + this.field_71439_g.field_71071_by.field_70461_c;
-@@ -2514,8 +2446,15 @@
+@@ -2508,8 +2436,15 @@
          p_70001_1_.func_76472_a("gl_max_texture_size", Integer.valueOf(func_71369_N()));
      }
  
@@ -278,7 +289,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
-@@ -2523,6 +2462,7 @@
+@@ -2517,6 +2452,7 @@
  
              if (j != 0)
              {

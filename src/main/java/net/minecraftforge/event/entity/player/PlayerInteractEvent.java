@@ -6,6 +6,19 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.eventhandler.Cancelable;
 
+/**
+ * Called when a player interacts with the world.
+ * Fired both on the server and the client.
+ * 
+ * Setting {@link #useBlock} to DENY will prevent onBlockClicked and
+ * onBlockActivated from being called.
+ * 
+ * Setting {@link #useItem} to DENY will prevent breaking of blocks.
+ * Setting it to ALLOW will allow breaking of blocks even in adventure mode.
+ * 
+ * When cancelled on the client, no packets will be sent to the server,
+ * and therefore no events will be fired on it.
+ */
 @Cancelable
 public class PlayerInteractEvent extends PlayerEvent
 {

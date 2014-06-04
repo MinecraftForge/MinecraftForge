@@ -24,63 +24,95 @@
      public World field_73092_a;
      public EntityPlayerMP field_73090_b;
      private WorldSettings.GameType field_73091_c;
-@@ -126,6 +137,13 @@
-     {
-         if (!this.field_73091_c.func_82752_c() || this.field_73090_b.func_82246_f(p_73074_1_, p_73074_2_, p_73074_3_))
-         {
-+            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(field_73090_b, Action.LEFT_CLICK_BLOCK, p_73074_1_, p_73074_2_, p_73074_3_, p_73074_4_, field_73092_a);
-+            if (event.isCanceled())
-+            {
-+                field_73090_b.field_71135_a.func_147359_a(new S23PacketBlockChange(p_73074_1_, p_73074_2_, p_73074_3_, field_73092_a));
-+                return;
-+            }
-+
-             if (this.func_73083_d())
-             {
-                 if (!this.field_73092_a.func_72886_a((EntityPlayer)null, p_73074_1_, p_73074_2_, p_73074_3_, p_73074_4_))
-@@ -135,19 +153,36 @@
-             }
-             else
-             {
--                this.field_73092_a.func_72886_a((EntityPlayer)null, p_73074_1_, p_73074_2_, p_73074_3_, p_73074_4_);
-                 this.field_73089_e = this.field_73100_i;
-                 float f = 1.0F;
-                 Block block = this.field_73092_a.func_147439_a(p_73074_1_, p_73074_2_, p_73074_3_);
+@@ -124,43 +135,62 @@
  
+     public void func_73074_a(int p_73074_1_, int p_73074_2_, int p_73074_3_, int p_73074_4_)
+     {
+-        if (!this.field_73091_c.func_82752_c() || this.field_73090_b.func_82246_f(p_73074_1_, p_73074_2_, p_73074_3_))
++        PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(field_73090_b, Action.LEFT_CLICK_BLOCK, p_73074_1_, p_73074_2_, p_73074_3_, p_73074_4_, field_73092_a);
++        boolean canBreak = !this.field_73091_c.func_82752_c() || this.field_73090_b.func_82246_f(p_73074_1_, p_73074_2_, p_73074_3_);
++        canBreak = event.useItem == Event.Result.DEFAULT ? canBreak : event.useItem == event.useItem.ALLOW;
++
++        if (event.isCanceled())
+         {
+-            if (this.func_73083_d())
++            field_73090_b.field_71135_a.func_147359_a(new S23PacketBlockChange(p_73074_1_, p_73074_2_, p_73074_3_, field_73092_a));
++        }
++        else
++        {
++            this.field_73089_e = this.field_73100_i;
++            float f = 1.0F;
++            Block block = this.field_73092_a.func_147439_a(p_73074_1_, p_73074_2_, p_73074_3_);
++
++            if (!block.isAir(field_73092_a, p_73074_1_, p_73074_2_, p_73074_3_))
+             {
+-                if (!this.field_73092_a.func_72886_a((EntityPlayer)null, p_73074_1_, p_73074_2_, p_73074_3_, p_73074_4_))
++                if (!this.func_73083_d())
+                 {
+-                    this.func_73084_b(p_73074_1_, p_73074_2_, p_73074_3_);
++                    f = block.func_149737_a(field_73090_b, field_73090_b.field_70170_p, p_73074_1_, p_73074_2_, p_73074_3_);
+                 }
+-            }
+-            else
+-            {
+-                this.field_73092_a.func_72886_a((EntityPlayer)null, p_73074_1_, p_73074_2_, p_73074_3_, p_73074_4_);
+-                this.field_73089_e = this.field_73100_i;
+-                float f = 1.0F;
+-                Block block = this.field_73092_a.func_147439_a(p_73074_1_, p_73074_2_, p_73074_3_);
+-
 -                if (block.func_149688_o() != Material.field_151579_a)
-+                
-+                if (!block.isAir(field_73092_a, p_73074_1_, p_73074_2_, p_73074_3_))
++                if (f < 1.0F && event.useBlock != Event.Result.DENY)
                  {
 -                    block.func_149699_a(this.field_73092_a, p_73074_1_, p_73074_2_, p_73074_3_, this.field_73090_b);
 -                    f = block.func_149737_a(this.field_73090_b, this.field_73090_b.field_70170_p, p_73074_1_, p_73074_2_, p_73074_3_);
-+                    if (event.useBlock != Event.Result.DENY)
-+                    {
-+                        block.func_149699_a(field_73092_a, p_73074_1_, p_73074_2_, p_73074_3_, field_73090_b);
-+                        field_73092_a.func_72886_a(field_73090_b, p_73074_1_, p_73074_2_, p_73074_3_, p_73074_4_);
-+                    }
-+                    else
-+                    {
-+                        field_73090_b.field_71135_a.func_147359_a(new S23PacketBlockChange(p_73074_1_, p_73074_2_, p_73074_3_, field_73092_a));
-+                    }
-+                    f = block.func_149737_a(field_73090_b, field_73090_b.field_70170_p, p_73074_1_, p_73074_2_, p_73074_3_);
++                    block.func_149699_a(field_73092_a, p_73074_1_, p_73074_2_, p_73074_3_, field_73090_b);
                  }
- 
+-
 -                if (block.func_149688_o() != Material.field_151579_a && f >= 1.0F)
-+                if (event.useItem == Event.Result.DENY)
++                if (event.useItem != Event.Result.DENY)
                  {
-+                    if (f >= 1.0f)
-+                    {
-+                        field_73090_b.field_71135_a.func_147359_a(new S23PacketBlockChange(p_73074_1_, p_73074_2_, p_73074_3_, field_73092_a));
-+                    }
-+                    return;
-+                }
-+
-+                if (!block.isAir(field_73092_a, p_73074_1_, p_73074_2_, p_73074_3_) && f >= 1.0F)
-+                {
-                     this.func_73084_b(p_73074_1_, p_73074_2_, p_73074_3_);
+-                    this.func_73084_b(p_73074_1_, p_73074_2_, p_73074_3_);
++                    field_73092_a.func_72886_a(field_73090_b, p_73074_1_, p_73074_2_, p_73074_3_, p_73074_4_);
                  }
                  else
-@@ -171,7 +206,7 @@
+                 {
+-                    this.field_73088_d = true;
+-                    this.field_73086_f = p_73074_1_;
+-                    this.field_73087_g = p_73074_2_;
+-                    this.field_73099_h = p_73074_3_;
+-                    int i1 = (int)(f * 10.0F);
+-                    this.field_73092_a.func_147443_d(this.field_73090_b.func_145782_y(), p_73074_1_, p_73074_2_, p_73074_3_, i1);
+-                    this.field_73094_o = i1;
++                    field_73090_b.field_71135_a.func_147359_a(new S23PacketBlockChange(p_73074_1_, p_73074_2_, p_73074_3_, field_73092_a));
+                 }
+             }
++
++            if (!canBreak)
++            {
++                if (f >= 1.0f)
++                {
++                    field_73090_b.field_71135_a.func_147359_a(new S23PacketBlockChange(p_73074_1_, p_73074_2_, p_73074_3_, field_73092_a));
++                }
++                this.field_73087_g = -1;
++            }
++            else if (!block.isAir(field_73092_a, p_73074_1_, p_73074_2_, p_73074_3_) && f >= 1.0F)
++            {
++                this.func_73084_b(p_73074_1_, p_73074_2_, p_73074_3_);
++            }
++            else
++            {
++                this.field_73088_d = true;
++                this.field_73086_f = p_73074_1_;
++                this.field_73087_g = p_73074_2_;
++                this.field_73099_h = p_73074_3_;
++                int i1 = (int)(f * 10.0F);
++                this.field_73092_a.func_147443_d(this.field_73090_b.func_145782_y(), p_73074_1_, p_73074_2_, p_73074_3_, i1);
++                this.field_73094_o = i1;
++            }
+         }
+     }
+ 
+@@ -171,7 +201,7 @@
              int l = this.field_73100_i - this.field_73089_e;
              Block block = this.field_73092_a.func_147439_a(p_73082_1_, p_73082_2_, p_73082_3_);
  
@@ -89,7 +121,7 @@
              {
                  float f = block.func_149737_a(this.field_73090_b, this.field_73090_b.field_70170_p, p_73082_1_, p_73082_2_, p_73082_3_) * (float)(l + 1);
  
-@@ -205,7 +240,7 @@
+@@ -205,7 +235,7 @@
          Block block = this.field_73092_a.func_147439_a(p_73079_1_, p_73079_2_, p_73079_3_);
          int l = this.field_73092_a.func_72805_g(p_73079_1_, p_73079_2_, p_73079_3_);
          block.func_149681_a(this.field_73092_a, p_73079_1_, p_73079_2_, p_73079_3_, l, this.field_73090_b);
@@ -98,7 +130,7 @@
  
          if (flag)
          {
-@@ -217,29 +252,32 @@
+@@ -217,29 +247,32 @@
  
      public boolean func_73084_b(int p_73084_1_, int p_73084_2_, int p_73084_3_)
      {
@@ -138,7 +170,7 @@
  
                  if (itemstack != null)
                  {
-@@ -251,12 +289,18 @@
+@@ -251,12 +284,18 @@
                      }
                  }
  
@@ -157,7 +189,7 @@
              return flag;
          }
      }
-@@ -288,6 +332,7 @@
+@@ -288,6 +327,7 @@
              if (itemstack1.field_77994_a == 0)
              {
                  p_73085_1_.field_71071_by.field_70462_a[p_73085_1_.field_71071_by.field_70461_c] = null;
@@ -165,7 +197,7 @@
              }
  
              if (!p_73085_1_.func_71039_bw())
-@@ -301,31 +346,70 @@
+@@ -301,31 +341,71 @@
  
      public boolean func_73078_a(EntityPlayer p_73078_1_, World p_73078_2_, ItemStack p_73078_3_, int p_73078_4_, int p_73078_5_, int p_73078_6_, int p_73078_7_, float p_73078_8_, float p_73078_9_, float p_73078_10_)
      {
@@ -179,7 +211,8 @@
          }
 -        else if (p_73078_3_ == null)
 +
-+        if (p_73078_3_ != null && p_73078_3_.func_77973_b().onItemUseFirst(p_73078_3_, p_73078_1_, p_73078_2_, p_73078_4_, p_73078_5_, p_73078_6_, p_73078_7_, p_73078_8_, p_73078_9_, p_73078_10_))
++        if (event.useItem != Event.Result.DENY &&
++            p_73078_3_ != null && p_73078_3_.func_77973_b().onItemUseFirst(p_73078_3_, p_73078_1_, p_73078_2_, p_73078_4_, p_73078_5_, p_73078_6_, p_73078_7_, p_73078_8_, p_73078_9_, p_73078_10_))
          {
 -            return false;
 +            if (p_73078_3_.field_77994_a <= 0) ForgeEventFactory.onPlayerDestroyItem(field_73090_b, p_73078_3_);
