@@ -4,6 +4,7 @@ import org.apache.logging.log4j.Level;
 import net.minecraft.network.INetHandler;
 import com.google.common.base.Throwables;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import io.netty.channel.ChannelFutureListener;
@@ -33,6 +34,7 @@ public class SimpleChannelHandlerWrapper<REQ extends IMessage, REPLY extends IMe
         REPLY result = messageHandler.onMessage(msg, context);
         if (result != null)
         {
+            ctx.channel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.REPLY);
             ctx.writeAndFlush(result).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
         }
     }
