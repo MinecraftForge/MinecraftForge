@@ -48,13 +48,14 @@ public class OreDictionary
         @Override
         public int hash(ItemStack object)
         {
-            int hash = object.getItem().hashCode();
-            int dmg1 = object.getItemDamage();
-            if (dmg1 == WILDCARD_VALUE)
+            int h = Item.getIdFromItem(object.getItem());
+            int damage = object.getItemDamage();
+            if (damage != WILDCARD_VALUE)
             {
-                return hash;
+                h = h | (damage << 16);
             }
-            return hash ^ dmg1;
+            h ^= (h >>> 20) ^ (h >>> 12);
+            return h ^ (h >>> 7) ^ (h >>> 4);
         }
     };
     private static final CustomHashMap<ItemStack, List<Integer>> stackToIds = new CustomHashMap<ItemStack, List<Integer>>(hasher, 100);
