@@ -150,7 +150,10 @@ public class FluidTank implements IFluidTank, IFluidHandler
 
             if (!fluid.isFluidEqual(resource))
             {
-                return 0;
+                if(!canLiquidsMix(resource))
+                {
+                    return 0;
+                }
             }
 
             return Math.min(capacity - fluid.amount, resource.amount);
@@ -171,7 +174,10 @@ public class FluidTank implements IFluidTank, IFluidHandler
 
         if (!fluid.isFluidEqual(resource))
         {
-            return 0;
+            if(!canLiquidsMix(resource))
+            {
+                return 0;
+            }
         }
         int filled = capacity - fluid.amount;
 
@@ -192,6 +198,11 @@ public class FluidTank implements IFluidTank, IFluidHandler
             FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fluid, tile.getWorld(), tile.getPos(), this, filled));
         }
         return filled;
+    }
+
+    private boolean canLiquidsMix(FluidStack resource)
+    {
+        return FluidEvent.fireEvent(new FluidEvent.TankMixingEvent(resource, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord, this));
     }
 
     @Override
