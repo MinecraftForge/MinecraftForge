@@ -71,7 +71,7 @@ public class Fluid
      * Viscosity ("thickness") of the fluid - completely arbitrary; negative values are not
      * permissible.
      *
-     * Default value is approximately the real-life density of water in m/s^2 (x10^-3).
+     * Default value is approximately the real-life density of water in mPa*s (x10^-3).
      */
     protected int viscosity = 1000;
 
