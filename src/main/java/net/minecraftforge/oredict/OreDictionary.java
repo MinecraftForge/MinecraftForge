@@ -1,6 +1,7 @@
 package net.minecraftforge.oredict;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,13 +19,47 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.oredict.CustomHashMap.Hasher;
 
 public class OreDictionary
 {
     private static boolean hasInit = false;
-    private static int maxID = 0;
-    private static HashMap<String, Integer> oreIDs = new HashMap<String, Integer>();
-    private static HashMap<Integer, ArrayList<ItemStack>> oreStacks = new HashMap<Integer, ArrayList<ItemStack>>();
+    private static final List<Container> idToInfo = new ArrayList<Container>();
+    private static final Map<String, Integer> oreIDs = new HashMap<String, Integer>();
+    private static final Hasher<ItemStack> hasher = new Hasher<ItemStack>() {
+
+        @Override
+        public boolean equals(ItemStack first, ItemStack second)
+        {
+            boolean itemsEqual = first.getItem() == second.getItem();
+            int damage1 = first.getItemDamage();
+            if (damage1 == WILDCARD_VALUE)
+            {
+                return itemsEqual;
+            }
+            int damage2 = second.getItemDamage();
+            if (damage2 == WILDCARD_VALUE)
+            {
+                return itemsEqual;
+            }
+            return itemsEqual && damage1 == damage2;
+        }
+
+        @Override
+        public int hash(ItemStack object)
+        {
+            int hash = object.getItem().hashCode();
+            int dmg1 = object.getItemDamage();
+            if (dmg1 == WILDCARD_VALUE)
+            {
+                return hash;
+            }
+            return hash ^ dmg1;
+        }
+    };
+    private static final CustomHashMap<ItemStack, List<Integer>> stackToIds = new CustomHashMap<ItemStack, List<Integer>>(hasher, 100);
+
+    private static final Container EMPTY = new Container("Unknwon");
 
     /**
      * Minecraft changed from -1 to Short.MAX_VALUE in 1.5 release for the "block wildcard". Use this in case it
@@ -251,9 +286,9 @@ public class OreDictionary
         Integer val = oreIDs.get(name);
         if (val == null)
         {
-            val = maxID++;
+            val = idToInfo.size();
             oreIDs.put(name, val);
-            oreStacks.put(val, new ArrayList<ItemStack>());
+            idToInfo.add(new Container(name));
         }
         return val;
     }
@@ -266,14 +301,7 @@ public class OreDictionary
      */
     public static String getOreName(int id)
     {
-        for (Map.Entry<String, Integer> entry : oreIDs.entrySet())
-        {
-            if (id == entry.getValue())
-            {
-                return entry.getKey();
-            }
-        }
-        return "Unknown";
+        return getContainer(id).name;
     }
 
     /**
@@ -285,22 +313,22 @@ public class OreDictionary
      */
     public static int getOreID(ItemStack itemStack)
     {
-        if (itemStack == null)
+        List<Integer> ids = stackToIds.get(itemStack);
+        if (ids == null)
         {
             return -1;
         }
+        return ids.get(0);
+    }
 
-        for(Entry<Integer, ArrayList<ItemStack>> ore : oreStacks.entrySet())
+    public static List<Integer> getIDs(ItemStack stack)
+    {
+        List<Integer> ids = stackToIds.get(stack);
+        if (ids == null)
         {
-            for(ItemStack target : ore.getValue())
-            {
-                if (itemMatches(target, itemStack, false))
-                {
-                    return ore.getKey();
-                }
-            }
+            ids = Collections.emptyList();
         }
-        return -1; // didn't find it.
+        return ids;
     }
 
     /**
@@ -312,19 +340,7 @@ public class OreDictionary
      */
     public static int[] getOreIDs(ItemStack itemStack)
     {
-        if (itemStack == null) return new int[0];
-
-        List<Integer> ids = new ArrayList<Integer>();
-        for(Entry<Integer, ArrayList<ItemStack>> ore : oreStacks.entrySet())
-        {
-            for(ItemStack target : ore.getValue())
-            {
-                if (itemMatches(target, itemStack, false))
-                {
-                    ids.add(ore.getKey());
-                }
-            }
-        }
+        List<Integer> ids = getIDs(itemStack);
         int[] ret = new int[ids.size()];
         for (int x = 0; x < ids.size(); x++)
             ret[x] = ids.get(x);
@@ -338,7 +354,7 @@ public class OreDictionary
      * @param name The ore name, directly calls getOreID
      * @return An arrayList containing ItemStacks registered for this ore
      */
-    public static ArrayList<ItemStack> getOres(String name)
+    public static List<ItemStack> getOres(String name)
     {
         return getOres(getOreID(name));
     }
@@ -360,15 +376,9 @@ public class OreDictionary
      * @param id The ore ID, see getOreID
      * @return An arrayList containing ItemStacks registered for this ore
      */
-    public static ArrayList<ItemStack> getOres(Integer id)
+    public static List<ItemStack> getOres(int id)
     {
-        ArrayList<ItemStack> val = oreStacks.get(id);
-        if (val == null)
-        {
-            val = new ArrayList<ItemStack>();
-            oreStacks.put(id, val);
-        }
-        return val;
+        return getContainer(id).stacks;
     }
 
     private static boolean containsMatch(boolean strict, ItemStack[] inputs, ItemStack... targets)
@@ -428,11 +438,39 @@ public class OreDictionary
      */
     private static void registerOre(String name, int id, ItemStack ore)
     {
-        ArrayList<ItemStack> ores = getOres(id);
+        List<ItemStack> ores = getOres(id);
         if (containsMatch(false, ores, ore)) return; // Prevent duplicates.
         ore = ore.copy();
         ores.add(ore);
+        List<Integer> ids = stackToIds.get(ore);
+        if(ids == null)
+        {
+          ids = new ArrayList<Integer>();
+          stackToIds.put(ore, ids);
+        }
+        ids.add(id);
         MinecraftForge.EVENT_BUS.post(new OreRegisterEvent(name, ore));
+    }
+
+    private static Container getContainer(int id)
+    {
+        Container container = idToInfo.get(id);
+        if (container == null)
+        {
+            return EMPTY;
+        }
+        return container;
+    }
+
+    private static class Container {
+        private final String name;
+        private final List<ItemStack> stacks;
+
+        private Container(String name)
+        {
+            this.name = name;
+            stacks = new ArrayList<ItemStack>();
+        }
     }
 
     public static class OreRegisterEvent extends Event
