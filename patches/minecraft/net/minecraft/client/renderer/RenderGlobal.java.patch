@@ -86,7 +86,26 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.field_76574_g == 1)
          {
              GL11.glDisable(GL11.GL_FOG);
-@@ -1171,6 +1194,12 @@
+@@ -1085,6 +1108,10 @@
+             tessellator1.func_78374_a((double)(-f10), 100.0D, (double)f10, 0.0D, 1.0D);
+             tessellator1.func_78381_a();
+             f10 = 20.0F;
++            net.minecraftforge.client.event.DrawMoonEvent event = new net.minecraftforge.client.event.DrawMoonEvent(this);
++            if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
++            {
++            GL11.glColor3f(event.moonRed, event.moonGreen, event.moonBlue);
+             this.field_72770_i.func_110577_a(field_110927_h);
+             int k = this.field_72769_h.func_72853_d();
+             int l = k % 4;
+@@ -1099,6 +1126,7 @@
+             tessellator1.func_78374_a((double)f10, -100.0D, (double)(-f10), (double)f14, (double)f15);
+             tessellator1.func_78374_a((double)(-f10), -100.0D, (double)(-f10), (double)f16, (double)f15);
+             tessellator1.func_78381_a();
++            }
+             GL11.glDisable(GL11.GL_TEXTURE_2D);
+             float f18 = this.field_72769_h.func_72880_h(p_72714_1_) * f6;
+ 
+@@ -1171,6 +1199,12 @@
  
      public void func_72718_b(float p_72718_1_)
      {
@@ -99,7 +118,7 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d())
          {
              if (this.field_72777_q.field_71474_y.field_74347_j)
-@@ -1571,6 +1600,11 @@
+@@ -1571,6 +1605,11 @@
  
      public void func_72717_a(Tessellator p_72717_1_, EntityPlayer p_72717_2_, float p_72717_3_)
      {
@@ -111,7 +130,7 @@
          double d0 = p_72717_2_.field_70142_S + (p_72717_2_.field_70165_t - p_72717_2_.field_70142_S) * (double)p_72717_3_;
          double d1 = p_72717_2_.field_70137_T + (p_72717_2_.field_70163_u - p_72717_2_.field_70137_T) * (double)p_72717_3_;
          double d2 = p_72717_2_.field_70136_U + (p_72717_2_.field_70161_v - p_72717_2_.field_70136_U) * (double)p_72717_3_;
-@@ -1789,12 +1823,15 @@
+@@ -1789,12 +1828,15 @@
          {
              ItemRecord itemrecord = ItemRecord.func_150926_b(p_72702_1_);
  
