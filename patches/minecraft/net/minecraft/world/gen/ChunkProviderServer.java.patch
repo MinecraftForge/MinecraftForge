@@ -9,7 +9,15 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -55,7 +57,7 @@
+@@ -38,6 +40,7 @@
+     private LongHashMap field_73244_f = new LongHashMap();
+     private List field_73245_g = new ArrayList();
+     private WorldServer field_73251_h;
++    private Set<Long> loadingChunks = com.google.common.collect.Sets.newHashSet();
+     private static final String __OBFID = "CL_00001436";
+ 
+     public ChunkProviderServer(WorldServer p_i1520_1_, IChunkLoader p_i1520_2_, IChunkProvider p_i1520_3_)
+@@ -55,7 +58,7 @@
  
      public void func_73241_b(int p_73241_1_, int p_73241_2_)
      {
@@ -18,11 +26,16 @@
          {
              ChunkCoordinates chunkcoordinates = this.field_73251_h.func_72861_E();
              int k = p_73241_1_ * 16 + 8 - chunkcoordinates.field_71574_a;
-@@ -92,7 +94,11 @@
+@@ -92,7 +95,16 @@
  
          if (chunk == null)
          {
 -            chunk = this.func_73239_e(p_73158_1_, p_73158_2_);
++            boolean added = loadingChunks.add(k);
++            if (!added)
++            {
++                cpw.mods.fml.common.FMLLog.bigWarning("There is an attempt to load a chunk (%d,%d) in dimension %d that is already being loaded. This will cause weird chunk breakages.", p_73158_1_, p_73158_2_, field_73251_h.field_73011_w.field_76574_g);
++            }
 +            chunk = ForgeChunkManager.fetchDormantChunk(k, this.field_73251_h);
 +            if (chunk == null)
 +            {
@@ -31,7 +44,15 @@
  
              if (chunk == null)
              {
-@@ -258,6 +264,11 @@
+@@ -120,6 +132,7 @@
+ 
+             this.field_73244_f.func_76163_a(k, chunk);
+             this.field_73245_g.add(chunk);
++            loadingChunks.remove(k);
+             chunk.func_76631_c();
+             chunk.func_76624_a(this, this, p_73158_1_, p_73158_2_);
+         }
+@@ -258,6 +271,11 @@
      {
          if (!this.field_73251_h.field_73058_d)
          {
@@ -43,7 +64,7 @@
              for (int i = 0; i < 100; ++i)
              {
                  if (!this.field_73248_b.isEmpty())
-@@ -270,6 +281,11 @@
+@@ -270,6 +288,11 @@
                      this.field_73248_b.remove(olong);
                      this.field_73244_f.func_76159_d(olong.longValue());
                      this.field_73245_g.remove(chunk);
