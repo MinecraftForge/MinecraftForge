@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
-@@ -2,17 +2,26 @@
+@@ -2,17 +2,25 @@
  
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
@@ -23,11 +23,10 @@
 +import net.minecraft.world.storage.WorldInfo;
 +import net.minecraftforge.client.IRenderHandler;
 +import net.minecraftforge.common.DimensionManager;
-+import net.minecraftforge.common.ISkyLightHandler;
  
  public abstract class WorldProvider
  {
-@@ -166,14 +175,14 @@
+@@ -166,14 +174,14 @@
  
      public static WorldProvider getProviderForDimension(int par0)
      {
@@ -44,7 +43,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -216,4 +225,284 @@
+@@ -216,4 +224,272 @@
  
      // JAVADOC METHOD $$ func_80007_l
      public abstract String getDimensionName();
@@ -52,8 +51,6 @@
 +    /*======================================= Forge Start =========================================*/
 +    private IRenderHandler skyRenderer = null;
 +    private IRenderHandler cloudRenderer = null;
-+    
-+    private ISkyLightHandler skylight = null;
 +    
 +    /**
 +     * Sets the providers current dimension ID, used in default getSaveFolder()
@@ -144,22 +141,11 @@
 +    {
 +        return cloudRenderer;
 +    }
-+    
-+    public ISkyLightHandler getSkyLightHandler(){
-+        return skylight;
-+    }
-+    
-+    public void setSkyLightHandler(ISkyLightHandler calculator){
-+        skylight = calculator;
-+    }
-+    
-+    /**
-+     * Gets the current amount of the Sky light.
-+     * Anything related with the amount of the solar light such as solar cell should use this method.
-+     * */
-+    public int getSkylight()
++
++    @SideOnly(Side.CLIENT)
++    public void setCloudRenderer(IRenderHandler renderer)
 +    {
-+        return worldObj.skylightSubtracted;
++        cloudRenderer = renderer;
 +    }
 +
 +    public ChunkCoordinates getRandomizedSpawnPoint()
@@ -228,10 +214,11 @@
 +    {
 +        return worldObj.drawCloudsBody(partialTicks);
 +    }
-+    
-+    public float getCurrentMoonPhaseFactor()
++
++    @SideOnly(Side.CLIENT)
++    public float getStarBrightness(float par1)
 +    {
-+        return worldObj.getCurrentMoonPhaseFactorBody();
++        return worldObj.getStarBrightnessBody(par1);
 +    }
 +
 +    public void setAllowedSpawnTypes(boolean allowHostile, boolean allowPeaceful)

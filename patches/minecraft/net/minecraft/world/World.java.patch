@@ -1,27 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/world/World.java
 +++ ../src-work/minecraft/net/minecraft/world/World.java
-@@ -2,6 +2,7 @@
- 
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
-+
- import java.util.ArrayList;
- import java.util.Calendar;
- import java.util.Collection;
-@@ -11,6 +12,7 @@
- import java.util.Random;
- import java.util.Set;
- import java.util.concurrent.Callable;
-+
- import net.minecraft.block.Block;
- import net.minecraft.block.BlockHopper;
- import net.minecraft.block.BlockLiquid;
-@@ -51,9 +53,36 @@
- import net.minecraft.world.storage.ISaveHandler;
+@@ -52,8 +52,35 @@
  import net.minecraft.world.storage.MapStorage;
  import net.minecraft.world.storage.WorldInfo;
-+import cpw.mods.fml.common.FMLLog;
  
++import cpw.mods.fml.common.FMLLog;
++
 +import com.google.common.collect.ImmutableSetMultimap;
 +
 +import net.minecraftforge.client.ForgeHooksClient;
@@ -29,7 +13,6 @@
 +import net.minecraftforge.common.ForgeChunkManager.Ticket;
 +import net.minecraftforge.common.ForgeModContainer;
 +import net.minecraftforge.common.ForgeHooks;
-+import net.minecraftforge.common.ISkyLightHandler;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.common.util.ForgeDirection;
 +import net.minecraftforge.common.WorldSpecificSaveHandler;
@@ -53,7 +36,7 @@
      // JAVADOC FIELD $$ field_72999_e
      public boolean scheduledUpdatesAreImmediate;
      // JAVADOC FIELD $$ field_72996_f
-@@ -120,6 +149,11 @@
+@@ -120,6 +147,11 @@
      // JAVADOC METHOD $$ func_72807_a
      public BiomeGenBase getBiomeGenForCoords(final int par1, final int par2)
      {
@@ -65,7 +48,7 @@
          if (this.blockExists(par1, 0, par2))
          {
              Chunk chunk = this.getChunkFromBlockCoords(par1, par2);
-@@ -166,7 +200,13 @@
+@@ -166,7 +198,13 @@
          this.theProfiler = p_i45368_5_;
          this.worldInfo = new WorldInfo(p_i45368_4_, p_i45368_2_);
          this.provider = p_i45368_3_;
@@ -80,7 +63,7 @@
          VillageCollection villagecollection = (VillageCollection)this.mapStorage.loadData(VillageCollection.class, "villages");
  
          if (villagecollection == null)
-@@ -180,7 +220,10 @@
+@@ -180,7 +218,10 @@
              this.villageCollectionObj.func_82566_a(this);
          }
  
@@ -92,7 +75,7 @@
          this.chunkProvider = this.createChunkProvider();
          this.calculateInitialSkylight();
          this.calculateInitialWeather();
-@@ -195,7 +238,7 @@
+@@ -195,7 +236,7 @@
          this.lightUpdateBlockList = new int[32768];
          this.saveHandler = p_i45369_1_;
          this.theProfiler = p_i45369_5_;
@@ -101,7 +84,7 @@
          this.worldInfo = p_i45369_1_.loadWorldInfo();
  
          if (p_i45369_4_ != null)
-@@ -223,6 +266,15 @@
+@@ -223,6 +264,15 @@
          this.provider.registerWorld(this);
          this.chunkProvider = this.createChunkProvider();
  
@@ -117,7 +100,7 @@
          if (!this.worldInfo.isInitialized())
          {
              try
-@@ -248,12 +300,12 @@
+@@ -248,12 +298,12 @@
              this.worldInfo.setServerInitialized(true);
          }
  
@@ -132,7 +115,7 @@
          }
          else
          {
-@@ -265,6 +317,20 @@
+@@ -265,6 +315,20 @@
          this.calculateInitialWeather();
      }
  
@@ -153,7 +136,7 @@
      // JAVADOC METHOD $$ func_72970_h
      protected abstract IChunkProvider createChunkProvider();
  
-@@ -320,7 +386,8 @@
+@@ -320,7 +384,8 @@
  
      public boolean func_147437_c(int p_147437_1_, int p_147437_2_, int p_147437_3_)
      {
@@ -163,7 +146,7 @@
      }
  
      // JAVADOC METHOD $$ func_72899_e
-@@ -973,7 +1040,7 @@
+@@ -973,7 +1038,7 @@
      // JAVADOC METHOD $$ func_72935_r
      public boolean isDaytime()
      {
@@ -172,7 +155,7 @@
      }
  
      // JAVADOC METHOD $$ func_72933_a
-@@ -1207,6 +1274,12 @@
+@@ -1207,6 +1272,12 @@
      // JAVADOC METHOD $$ func_72956_a
      public void playSoundAtEntity(Entity par1Entity, String par2Str, float par3, float par4)
      {
@@ -185,7 +168,7 @@
          for (int i = 0; i < this.worldAccesses.size(); ++i)
          {
              ((IWorldAccess)this.worldAccesses.get(i)).playSound(par2Str, par1Entity.posX, par1Entity.posY - (double)par1Entity.yOffset, par1Entity.posZ, par3, par4);
-@@ -1216,6 +1289,12 @@
+@@ -1216,6 +1287,12 @@
      // JAVADOC METHOD $$ func_85173_a
      public void playSoundToNearExcept(EntityPlayer par1EntityPlayer, String par2Str, float par3, float par4)
      {
@@ -198,7 +181,7 @@
          for (int i = 0; i < this.worldAccesses.size(); ++i)
          {
              ((IWorldAccess)this.worldAccesses.get(i)).playSoundToNearExcept(par1EntityPlayer, par2Str, par1EntityPlayer.posX, par1EntityPlayer.posY - (double)par1EntityPlayer.yOffset, par1EntityPlayer.posZ, par3, par4);
-@@ -1283,6 +1362,7 @@
+@@ -1283,6 +1360,7 @@
                  this.playerEntities.add(entityplayer);
                  this.updateAllPlayersSleepingFlag();
              }
@@ -206,23 +189,7 @@
  
              this.getChunkFromChunkCoords(i, j).addEntity(par1Entity);
              this.loadedEntityList.add(par1Entity);
-@@ -1458,6 +1538,15 @@
-     // JAVADOC METHOD $$ func_72967_a
-     public int calculateSkylightSubtracted(float par1)
-     {
-+        ISkyLightHandler skyProvider;
-+        
-+        if((skyProvider = provider.getSkyLightHandler()) != null)
-+            return skyProvider.calculateSkylight(par1);
-+        
-+        return calculateSkylightSubtractedBody(par1);
-+    }
-+    
-+    public int calculateSkylightSubtractedBody(float par1){
-         float f1 = this.getCelestialAngle(par1);
-         float f2 = 1.0F - (MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.5F);
- 
-@@ -1479,7 +1568,6 @@
+@@ -1479,7 +1557,6 @@
      }
  
      // JAVADOC METHOD $$ func_72848_b
@@ -230,24 +197,7 @@
      public void removeWorldAccess(IWorldAccess par1IWorldAccess)
      {
          this.worldAccesses.remove(par1IWorldAccess);
-@@ -1489,6 +1577,16 @@
-     @SideOnly(Side.CLIENT)
-     public float getSunBrightness(float par1)
-     {
-+        ISkyLightHandler skyProvider;
-+        
-+        if((skyProvider = provider.getSkyLightHandler()) != null)
-+            return skyProvider.getSunBrightness(par1);
-+        
-+        return getSunBrightnessBody(par1);
-+    }
-+    
-+    @SideOnly(Side.CLIENT)
-+    public float getSunBrightnessBody(float par1){
-         float f1 = this.getCelestialAngle(par1);
-         float f2 = 1.0F - (MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.2F);
- 
-@@ -1512,6 +1610,12 @@
+@@ -1512,6 +1589,12 @@
      @SideOnly(Side.CLIENT)
      public Vec3 getSkyColor(Entity par1Entity, float par2)
      {
@@ -260,7 +210,7 @@
          float f1 = this.getCelestialAngle(par2);
          float f2 = MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
  
-@@ -1528,9 +1632,7 @@
+@@ -1528,9 +1611,7 @@
          int i = MathHelper.floor_double(par1Entity.posX);
          int j = MathHelper.floor_double(par1Entity.posY);
          int k = MathHelper.floor_double(par1Entity.posZ);
@@ -271,19 +221,7 @@
          float f4 = (float)(l >> 16 & 255) / 255.0F;
          float f5 = (float)(l >> 8 & 255) / 255.0F;
          float f6 = (float)(l & 255) / 255.0F;
-@@ -1594,6 +1696,11 @@
-     // JAVADOC METHOD $$ func_130001_d
-     public float getCurrentMoonPhaseFactor()
-     {
-+        return this.provider.getCurrentMoonPhaseFactor();
-+    }
-+    
-+    public float getCurrentMoonPhaseFactorBody()
-+    {
-         return WorldProvider.moonPhaseFactors[this.provider.getMoonPhase(this.worldInfo.getWorldTime())];
-     }
- 
-@@ -1607,6 +1714,12 @@
+@@ -1607,6 +1688,12 @@
      @SideOnly(Side.CLIENT)
      public Vec3 getCloudColour(float par1)
      {
@@ -296,7 +234,7 @@
          float f1 = this.getCelestialAngle(par1);
          float f2 = MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
  
-@@ -1671,6 +1784,8 @@
+@@ -1671,6 +1758,8 @@
      public int getTopSolidOrLiquidBlock(int par1, int par2)
      {
          Chunk chunk = this.getChunkFromBlockCoords(par1, par2);
@@ -305,7 +243,7 @@
          int k = chunk.getTopFilledSegment() + 15;
          par1 &= 15;
  
-@@ -1678,7 +1793,7 @@
+@@ -1678,7 +1767,7 @@
          {
              Block block = chunk.func_150810_a(par1, k, par2);
  
@@ -314,16 +252,11 @@
              {
                  return k + 1;
              }
-@@ -1691,6 +1806,17 @@
+@@ -1691,6 +1780,12 @@
      @SideOnly(Side.CLIENT)
      public float getStarBrightness(float par1)
      {
-+        ISkyLightHandler skyProvider;
-+        
-+        if((skyProvider = provider.getSkyLightHandler()) != null)
-+            return skyProvider.getStarBrightness(par1);
-+        
-+        return getStarBrightnessBody(par1);
++        return provider.getStarBrightness(par1);
 +    }
 +
 +    @SideOnly(Side.CLIENT)
@@ -332,7 +265,7 @@
          float f1 = this.getCelestialAngle(par1);
          float f2 = 1.0F - (MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.25F);
  
-@@ -1746,7 +1872,15 @@
+@@ -1746,7 +1841,15 @@
                      entity.addEntityCrashInfo(crashreportcategory);
                  }
  
@@ -349,7 +282,7 @@
              }
  
              if (entity.isDead)
-@@ -1808,7 +1942,16 @@
+@@ -1808,7 +1911,16 @@
                      crashreport = CrashReport.makeCrashReport(throwable1, "Ticking entity");
                      crashreportcategory = crashreport.makeCategory("Entity being ticked");
                      entity.addEntityCrashInfo(crashreportcategory);
@@ -367,7 +300,7 @@
                  }
              }
  
-@@ -1851,7 +1994,16 @@
+@@ -1851,7 +1963,16 @@
                      crashreport = CrashReport.makeCrashReport(throwable, "Ticking block entity");
                      crashreportcategory = crashreport.makeCategory("Block entity being ticked");
                      tileentity.func_145828_a(crashreportcategory);
@@ -385,7 +318,7 @@
                  }
              }
  
-@@ -1865,7 +2017,7 @@
+@@ -1865,7 +1986,7 @@
  
                      if (chunk != null)
                      {
@@ -394,7 +327,7 @@
                      }
                  }
              }
-@@ -1873,6 +2025,10 @@
+@@ -1873,6 +1994,10 @@
  
          if (!this.field_147483_b.isEmpty())
          {
@@ -405,7 +338,7 @@
              this.field_147482_g.removeAll(this.field_147483_b);
              this.field_147483_b.clear();
          }
-@@ -1893,18 +2049,18 @@
+@@ -1893,18 +2018,18 @@
                      {
                          this.field_147482_g.add(tileentity1);
                      }
@@ -428,7 +361,7 @@
                  }
              }
  
-@@ -1917,14 +2073,11 @@
+@@ -1917,14 +2042,11 @@
  
      public void func_147448_a(Collection p_147448_1_)
      {
@@ -446,7 +379,7 @@
      }
  
      // JAVADOC METHOD $$ func_72870_g
-@@ -1938,10 +2091,19 @@
+@@ -1938,10 +2060,19 @@
      {
          int i = MathHelper.floor_double(par1Entity.posX);
          int j = MathHelper.floor_double(par1Entity.posZ);
@@ -468,7 +401,7 @@
              par1Entity.lastTickPosX = par1Entity.posX;
              par1Entity.lastTickPosY = par1Entity.posY;
              par1Entity.lastTickPosZ = par1Entity.posZ;
-@@ -2163,6 +2325,10 @@
+@@ -2163,6 +2294,10 @@
                          {
                              return true;
                          }
@@ -479,7 +412,7 @@
                      }
                  }
              }
-@@ -2456,13 +2622,15 @@
+@@ -2456,13 +2591,15 @@
  
      public void func_147455_a(int p_147455_1_, int p_147455_2_, int p_147455_3_, TileEntity p_147455_4_)
      {
@@ -499,7 +432,7 @@
                  Iterator iterator = this.field_147484_a.iterator();
  
                  while (iterator.hasNext())
-@@ -2481,40 +2649,22 @@
+@@ -2481,40 +2618,22 @@
              else
              {
                  this.field_147482_g.add(p_147455_4_);
@@ -550,7 +483,7 @@
      }
  
      public void func_147457_a(TileEntity p_147457_1_)
-@@ -2531,8 +2681,7 @@
+@@ -2531,8 +2650,7 @@
      public static boolean func_147466_a(IBlockAccess p_147466_0_, int p_147466_1_, int p_147466_2_, int p_147466_3_)
      {
          Block block = p_147466_0_.func_147439_a(p_147466_1_, p_147466_2_, p_147466_3_);
@@ -560,7 +493,7 @@
      }
  
      public boolean func_147445_c(int p_147445_1_, int p_147445_2_, int p_147445_3_, boolean p_147445_4_)
-@@ -2544,7 +2693,7 @@
+@@ -2544,7 +2662,7 @@
              if (chunk != null && !chunk.isEmpty())
              {
                  Block block = this.func_147439_a(p_147445_1_, p_147445_2_, p_147445_3_);
@@ -569,7 +502,7 @@
              }
              else
              {
-@@ -2571,8 +2720,7 @@
+@@ -2571,8 +2689,7 @@
      // JAVADOC METHOD $$ func_72891_a
      public void setAllowedSpawnTypes(boolean par1, boolean par2)
      {
@@ -579,7 +512,7 @@
      }
  
      // JAVADOC METHOD $$ func_72835_b
-@@ -2584,6 +2732,11 @@
+@@ -2584,6 +2701,11 @@
      // JAVADOC METHOD $$ func_72947_a
      private void calculateInitialWeather()
      {
@@ -591,7 +524,7 @@
          if (this.worldInfo.isRaining())
          {
              this.rainingStrength = 1.0F;
-@@ -2598,6 +2751,11 @@
+@@ -2598,6 +2720,11 @@
      // JAVADOC METHOD $$ func_72979_l
      protected void updateWeather()
      {
@@ -603,7 +536,7 @@
          if (!this.provider.hasNoSky)
          {
              if (!this.isRemote)
-@@ -2682,6 +2840,7 @@
+@@ -2682,6 +2809,7 @@
      {
          this.activeChunkSet.clear();
          this.theProfiler.startSection("buildList");
@@ -611,7 +544,7 @@
          int i;
          EntityPlayer entityplayer;
          int j;
-@@ -2776,6 +2935,11 @@
+@@ -2776,6 +2904,11 @@
      // JAVADOC METHOD $$ func_72834_c
      public boolean canBlockFreeze(int par1, int par2, int par3, boolean par4)
      {
@@ -623,7 +556,7 @@
          BiomeGenBase biomegenbase = this.getBiomeGenForCoords(par1, par3);
          float f = biomegenbase.func_150564_a(par1, par2, par3);
  
-@@ -2831,6 +2995,11 @@
+@@ -2831,6 +2964,11 @@
  
      public boolean func_147478_e(int p_147478_1_, int p_147478_2_, int p_147478_3_, boolean p_147478_4_)
      {
@@ -635,7 +568,7 @@
          BiomeGenBase biomegenbase = this.getBiomeGenForCoords(p_147478_1_, p_147478_3_);
          float f = biomegenbase.func_150564_a(p_147478_1_, p_147478_2_, p_147478_3_);
  
-@@ -2880,10 +3049,11 @@
+@@ -2880,10 +3018,11 @@
          else
          {
              Block block = this.func_147439_a(par1, par2, par3);
@@ -650,7 +583,7 @@
              {
                  i1 = 1;
              }
-@@ -2983,7 +3153,7 @@
+@@ -2983,7 +3122,7 @@
                                      int j4 = i2 + Facing.offsetsXForSide[i4];
                                      int k4 = j2 + Facing.offsetsYForSide[i4];
                                      int l4 = k2 + Facing.offsetsZForSide[i4];
@@ -659,7 +592,7 @@
                                      i3 = this.getSavedLightValue(p_147463_1_, j4, k4, l4);
  
                                      if (i3 == l2 - i5 && i1 < this.lightUpdateBlockList.length)
-@@ -3083,10 +3253,10 @@
+@@ -3083,10 +3222,10 @@
      public List getEntitiesWithinAABBExcludingEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, IEntitySelector par3IEntitySelector)
      {
          ArrayList arraylist = new ArrayList();
@@ -674,7 +607,7 @@
  
          for (int i1 = i; i1 <= j; ++i1)
          {
-@@ -3110,10 +3280,10 @@
+@@ -3110,10 +3249,10 @@
  
      public List selectEntitiesWithinAABB(Class par1Class, AxisAlignedBB par2AxisAlignedBB, IEntitySelector par3IEntitySelector)
      {
@@ -689,7 +622,7 @@
          ArrayList arraylist = new ArrayList();
  
          for (int i1 = i; i1 <= j; ++i1)
-@@ -3194,11 +3364,14 @@
+@@ -3194,11 +3333,14 @@
      // JAVADOC METHOD $$ func_72868_a
      public void addLoadedEntities(List par1List)
      {
@@ -707,7 +640,7 @@
          }
      }
  
-@@ -3212,7 +3385,7 @@
+@@ -3212,7 +3354,7 @@
      {
          Block block1 = this.func_147439_a(p_147472_2_, p_147472_3_, p_147472_4_);
          AxisAlignedBB axisalignedbb = p_147472_5_ ? null : p_147472_1_.func_149668_a(this, p_147472_2_, p_147472_3_, p_147472_4_);
@@ -716,7 +649,7 @@
      }
  
      public PathEntity getPathEntityToEntity(Entity par1Entity, Entity par2Entity, float par3, boolean par4, boolean par5, boolean par6, boolean par7)
-@@ -3321,7 +3494,8 @@
+@@ -3321,7 +3463,8 @@
      // JAVADOC METHOD $$ func_72878_l
      public int getIndirectPowerLevelTo(int par1, int par2, int par3, int par4)
      {
@@ -726,7 +659,7 @@
      }
  
      // JAVADOC METHOD $$ func_72864_z
-@@ -3461,7 +3635,7 @@
+@@ -3461,7 +3604,7 @@
      // JAVADOC METHOD $$ func_72905_C
      public long getSeed()
      {
@@ -735,7 +668,7 @@
      }
  
      public long getTotalWorldTime()
-@@ -3471,24 +3645,24 @@
+@@ -3471,24 +3614,24 @@
  
      public long getWorldTime()
      {
@@ -764,7 +697,7 @@
      }
  
      // JAVADOC METHOD $$ func_72897_h
-@@ -3509,13 +3683,21 @@
+@@ -3509,13 +3652,21 @@
  
          if (!this.loadedEntityList.contains(par1Entity))
          {
@@ -787,7 +720,7 @@
          return true;
      }
  
-@@ -3615,8 +3797,7 @@
+@@ -3615,8 +3766,7 @@
      // JAVADOC METHOD $$ func_72958_C
      public boolean isBlockHighHumidity(int par1, int par2, int par3)
      {
@@ -797,7 +730,7 @@
      }
  
      // JAVADOC METHOD $$ func_72823_a
-@@ -3676,13 +3857,13 @@
+@@ -3676,13 +3826,13 @@
      // JAVADOC METHOD $$ func_72800_K
      public int getHeight()
      {
@@ -813,7 +746,7 @@
      }
  
      // JAVADOC METHOD $$ func_72843_D
-@@ -3709,7 +3890,7 @@
+@@ -3709,7 +3859,7 @@
      @SideOnly(Side.CLIENT)
      public double getHorizon()
      {
@@ -822,7 +755,7 @@
      }
  
      // JAVADOC METHOD $$ func_72914_a
-@@ -3782,25 +3963,24 @@
+@@ -3782,25 +3932,24 @@
  
      public void func_147453_f(int p_147453_1_, int p_147453_2_, int p_147453_3_, Block p_147453_4_)
      {
@@ -861,7 +794,7 @@
                  }
              }
          }
-@@ -3841,4 +4021,110 @@
+@@ -3841,4 +3990,110 @@
              iworldaccess.func_147584_b();
          }
      }
