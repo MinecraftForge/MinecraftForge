@@ -1,13 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityLivingBase.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityLivingBase.java
-@@ -19,6 +19,7 @@
+@@ -19,7 +19,8 @@
  import net.minecraft.entity.item.EntityItem;
  import net.minecraft.entity.item.EntityXPOrb;
  import net.minecraft.entity.monster.EntityZombie;
+-import net.minecraft.entity.passive.EntityWolf;
 +import net.minecraft.entity.passive.EntityPig;
- import net.minecraft.entity.passive.EntityWolf;
++import net.minecraft.entity.passive.EntityTameable;
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.entity.projectile.EntityArrow;
 @@ -48,6 +49,7 @@
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
@@ -49,6 +51,21 @@
          if (this.func_85032_ar())
          {
              return false;
+@@ -796,11 +799,11 @@
+                         this.field_70718_bc = 100;
+                         this.field_70717_bb = (EntityPlayer)entity;
+                     }
+-                    else if (entity instanceof EntityWolf)
++                    else if (entity instanceof EntityTameable)
+                     {
+-                        EntityWolf entitywolf = (EntityWolf)entity;
++                        EntityTameable entitytameable = (EntityTameable)entity;
+ 
+-                        if (entitywolf.func_70909_n())
++                        if (entitytameable.func_70909_n())
+                         {
+                             this.field_70718_bc = 100;
+                             this.field_70717_bb = null;
 @@ -883,6 +886,7 @@
  
      public void func_70645_a(DamageSource p_70645_1_)
