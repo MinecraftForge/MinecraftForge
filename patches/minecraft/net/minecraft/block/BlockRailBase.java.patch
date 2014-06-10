@@ -42,7 +42,7 @@
 +     */
 +    public boolean isFlexibleRail(IBlockAccess world, int y, int x, int z)
 +    {
-+        return func_150050_e();
++        return !func_150050_e();
 +    }
 +
 +    /**
