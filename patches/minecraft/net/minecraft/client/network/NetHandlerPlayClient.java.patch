@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
 +++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
-@@ -191,6 +191,8 @@
+@@ -190,6 +190,8 @@
  import net.minecraft.world.storage.ISaveHandler;
  import net.minecraft.world.storage.MapData;
  import net.minecraft.world.storage.MapStorage;
@@ -9,20 +9,20 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -675,7 +677,11 @@
+@@ -673,7 +675,11 @@
  
      public void func_147251_a(S02PacketChat p_147251_1_)
      {
--        this.field_147299_f.ingameGUI.func_146158_b().func_146227_a(p_147251_1_.func_148915_c());
+-        this.field_147299_f.field_71456_v.func_146158_b().func_146227_a(p_147251_1_.func_148915_c());
 +        ClientChatReceivedEvent event = new ClientChatReceivedEvent(p_147251_1_.func_148915_c());
 +        if (!MinecraftForge.EVENT_BUS.post(event) && event.message != null)
 +        {
-+            this.field_147299_f.ingameGUI.func_146158_b().func_146227_a(event.message);
++            this.field_147299_f.field_71456_v.func_146158_b().func_146227_a(event.message);
 +        }
      }
  
      public void func_147279_a(S0BPacketAnimation p_147279_1_)
-@@ -1115,6 +1121,10 @@
+@@ -1113,6 +1119,10 @@
                  {
                      tileentity.func_145839_a(p_147273_1_.func_148857_g());
                  }

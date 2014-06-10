@@ -4,8 +4,8 @@
      public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
      {
          Block block = p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_ - 1, p_149742_4_);
--        return block != Blocks.ice && block != Blocks.packed_ice ? (block.func_149688_o() == Material.field_151584_j ? true : (block == this && (p_149742_1_.getBlockMetadata(p_149742_2_, p_149742_3_ - 1, p_149742_4_) & 7) == 7 ? true : block.func_149662_c() && block.field_149764_J.blocksMovement())) : false;
-+        return block != Blocks.ice && block != Blocks.packed_ice ? (block.isLeaves(p_149742_1_, p_149742_2_, p_149742_3_ - 1, p_149742_4_) ? true : (block == this && (p_149742_1_.getBlockMetadata(p_149742_2_, p_149742_3_ - 1, p_149742_4_) & 7) == 7 ? true : block.func_149662_c() && block.field_149764_J.blocksMovement())) : false;
+-        return block != Blocks.field_150432_aD && block != Blocks.field_150403_cj ? (block.func_149688_o() == Material.field_151584_j ? true : (block == this && (p_149742_1_.func_72805_g(p_149742_2_, p_149742_3_ - 1, p_149742_4_) & 7) == 7 ? true : block.func_149662_c() && block.field_149764_J.func_76230_c())) : false;
++        return block != Blocks.field_150432_aD && block != Blocks.field_150403_cj ? (block.isLeaves(p_149742_1_, p_149742_2_, p_149742_3_ - 1, p_149742_4_) ? true : (block == this && (p_149742_1_.func_72805_g(p_149742_2_, p_149742_3_ - 1, p_149742_4_) & 7) == 7 ? true : block.func_149662_c() && block.field_149764_J.func_76230_c())) : false;
      }
  
      public void func_149695_a(World p_149695_1_, int p_149695_2_, int p_149695_3_, int p_149695_4_, Block p_149695_5_)
@@ -13,7 +13,7 @@
      {
          if (!this.func_149742_c(p_150155_1_, p_150155_2_, p_150155_3_, p_150155_4_))
          {
--            this.func_149697_b(p_150155_1_, p_150155_2_, p_150155_3_, p_150155_4_, p_150155_1_.getBlockMetadata(p_150155_2_, p_150155_3_, p_150155_4_), 0);
+-            this.func_149697_b(p_150155_1_, p_150155_2_, p_150155_3_, p_150155_4_, p_150155_1_.func_72805_g(p_150155_2_, p_150155_3_, p_150155_4_), 0);
              p_150155_1_.func_147468_f(p_150155_2_, p_150155_3_, p_150155_4_);
              return false;
          }
@@ -22,10 +22,10 @@
      public void func_149636_a(World p_149636_1_, EntityPlayer p_149636_2_, int p_149636_3_, int p_149636_4_, int p_149636_5_, int p_149636_6_)
      {
 -        int i1 = p_149636_6_ & 7;
--        this.func_149642_a(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, new ItemStack(Items.snowball, i1 + 1, 0));
+-        this.func_149642_a(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, new ItemStack(Items.field_151126_ay, i1 + 1, 0));
 +        super.func_149636_a(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_);
          p_149636_1_.func_147468_f(p_149636_3_, p_149636_4_, p_149636_5_);
--        p_149636_2_.addStat(StatList.mineBlockStatArray[Block.func_149682_b(this)], 1);
+-        p_149636_2_.func_71064_a(StatList.field_75934_C[Block.func_149682_b(this)], 1);
      }
  
      public Item func_149650_a(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
@@ -39,9 +39,9 @@
  
      public void func_149674_a(World p_149674_1_, int p_149674_2_, int p_149674_3_, int p_149674_4_, Random p_149674_5_)
      {
-         if (p_149674_1_.getSavedLightValue(EnumSkyBlock.Block, p_149674_2_, p_149674_3_, p_149674_4_) > 11)
+         if (p_149674_1_.func_72972_b(EnumSkyBlock.Block, p_149674_2_, p_149674_3_, p_149674_4_) > 11)
          {
--            this.func_149697_b(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, p_149674_1_.getBlockMetadata(p_149674_2_, p_149674_3_, p_149674_4_), 0);
+-            this.func_149697_b(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, p_149674_1_.func_72805_g(p_149674_2_, p_149674_3_, p_149674_4_), 0);
              p_149674_1_.func_147468_f(p_149674_2_, p_149674_3_, p_149674_4_);
          }
      }
@@ -76,7 +76,7 @@
 +     */
 +    public boolean isReplaceable(IBlockAccess world, int x, int y, int z)
 +    {
-+        int meta = world.getBlockMetadata(x, y, z);
-+        return meta >= 7 ? false : field_149764_J.isReplaceable();
++        int meta = world.func_72805_g(x, y, z);
++        return meta >= 7 ? false : field_149764_J.func_76222_j();
 +    }
  }

@@ -1,11 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemFlintAndSteel.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemFlintAndSteel.java
-@@ -56,7 +56,7 @@
+@@ -55,7 +55,7 @@
          }
          else
          {
--            if (par3World.func_147439_a(par4, par5, par6).func_149688_o() == Material.field_151579_a)
-+            if (par3World.func_147437_c(par4, par5, par6))
+-            if (p_77648_3_.func_147439_a(p_77648_4_, p_77648_5_, p_77648_6_).func_149688_o() == Material.field_151579_a)
++            if (p_77648_3_.func_147437_c(p_77648_4_, p_77648_5_, p_77648_6_))
              {
-                 par3World.playSoundEffect((double)par4 + 0.5D, (double)par5 + 0.5D, (double)par6 + 0.5D, "fire.ignite", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F);
-                 par3World.func_147449_b(par4, par5, par6, Blocks.fire);
+                 p_77648_3_.func_72908_a((double)p_77648_4_ + 0.5D, (double)p_77648_5_ + 0.5D, (double)p_77648_6_ + 0.5D, "fire.ignite", 1.0F, field_77697_d.nextFloat() * 0.4F + 0.8F);
+                 p_77648_3_.func_147449_b(p_77648_4_, p_77648_5_, p_77648_6_, Blocks.field_150480_ab);

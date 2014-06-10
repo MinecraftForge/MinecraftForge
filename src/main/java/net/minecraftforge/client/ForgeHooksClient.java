@@ -1,9 +1,13 @@
 package net.minecraftforge.client;
 
 import java.util.Random;
+
 import javax.imageio.ImageIO;
 
 import net.minecraftforge.client.event.MouseEvent;
+import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.SoundEventAccessorComposite;
+import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiMainMenu;
@@ -16,9 +20,11 @@ import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.PixelFormat;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLLog;
 import net.minecraft.client.Minecraft;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -29,6 +35,7 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.client.model.ModelBiped;
@@ -36,18 +43,25 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.RenderWorldEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.event.sound.PlaySoundEvent17;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.RenderBlockFluid;
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
 import static net.minecraftforge.common.ForgeVersion.Status.*;
@@ -86,12 +100,12 @@ public class ForgeHooksClient
         boolean is3D = customRenderer.shouldUseRenderHelper(ENTITY, item, BLOCK_3D);
 
         engine.bindTexture(item.getItemSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
-        Block block = item.getItem() instanceof ItemBlock ? Block.func_149634_a(item.getItem()) : null;
-        if (is3D || (block != null && RenderBlocks.func_147739_a(block.func_149645_b())))
+        Block block = item.getItem() instanceof ItemBlock ? Block.getBlockFromItem(item.getItem()) : null;
+        if (is3D || (block != null && RenderBlocks.renderItemIn3d(block.getRenderType())))
         {
-            int renderType = (block != null ? block.func_149645_b() : 1);
+            int renderType = (block != null ? block.getRenderType() : 1);
             float scale = (renderType == 1 || renderType == 19 || renderType == 12 || renderType == 2 ? 0.5F : 0.25F);
-            boolean blend = block != null && block.func_149701_w() > 0;
+            boolean blend = block != null && block.getRenderBlockPass() > 0;
 
             if (RenderItem.renderInFrame)
             {
@@ -104,7 +118,7 @@ public class ForgeHooksClient
             {
                 GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
                 GL11.glEnable(GL11.GL_BLEND);
-                OpenGlHelper.func_148821_a(770, 771, 1, 0);
+                OpenGlHelper.glBlendFunc(770, 771, 1, 0);
             }
 
             GL11.glScalef(scale, scale, scale);
@@ -165,9 +179,9 @@ public class ForgeHooksClient
             }
 
             GL11.glRotatef(-90F, 0.0F, 1.0F, 0.0F);
-            renderBlocks.field_147844_c = inColor;
+            renderBlocks.useInventoryTint = inColor;
             customRenderer.renderItem(INVENTORY, item, renderBlocks);
-            renderBlocks.field_147844_c = true;
+            renderBlocks.useInventoryTint = true;
             GL11.glPopMatrix();
         }
         else
@@ -229,7 +243,7 @@ public class ForgeHooksClient
         int x = MathHelper.floor_double(entity.posX);
         int y = MathHelper.floor_double(entity.posY);
         int z = MathHelper.floor_double(entity.posZ);
-        Block block = mc.theWorld.func_147439_a(x, y, z);
+        Block block = mc.theWorld.getBlock(x, y, z);
 
         if (block != null && block.isBed(mc.theWorld, x, y, z, entity))
         {
@@ -247,6 +261,11 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, partialTicks));
     }
 
+    public static boolean renderFirstPersonHand(RenderGlobal context, float partialTicks, int renderPass)
+    {
+        return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(context, partialTicks, renderPass));
+    }
+
     public static void onTextureStitchedPre(TextureMap map)
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Pre(map));
@@ -256,8 +275,8 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Post(map));
 
-        //FluidRegistry.WATER.setIcons(BlockLiquid.func_149803_e("water_still"), BlockLiquid.func_149803_e("water_flow"));
-        //FluidRegistry.LAVA.setIcons(BlockLiquid.func_149803_e("lava_still"), BlockLiquid.func_149803_e("lava_flow"));
+        FluidRegistry.WATER.setIcons(BlockLiquid.getLiquidIcon("water_still"), BlockLiquid.getLiquidIcon("water_flow"));
+        FluidRegistry.LAVA.setIcons(BlockLiquid.getLiquidIcon("lava_still"), BlockLiquid.getLiquidIcon("lava_flow"));
     }
 
     /**
@@ -276,7 +295,7 @@ public class ForgeHooksClient
                     Minecraft mc = FMLClientHandler.instance().getClient();
                     if (mc.ingameGUI != null)
                     {
-                        mc.ingameGUI.func_146158_b().func_146227_a(new ChatComponentTranslation("forge.texture.preload.warning", texture));
+                        mc.ingameGUI.getChatGUI().printChatMessage(new ChatComponentTranslation("forge.texture.preload.warning", texture));
                     }
                 }
             }
@@ -362,9 +381,9 @@ public class ForgeHooksClient
         GameSettings settings = Minecraft.getMinecraft().gameSettings;
         int[] ranges = ForgeModContainer.blendRanges;
         int distance = 0;
-        if (settings.fancyGraphics && settings.field_151451_c >= 0 && settings.field_151451_c < ranges.length)
+        if (settings.fancyGraphics && settings.renderDistanceChunks >= 0 && settings.renderDistanceChunks < ranges.length)
         {
-            distance = ranges[settings.field_151451_c];
+            distance = ranges[settings.renderDistanceChunks];
         }
         
         int r = 0;
@@ -377,7 +396,7 @@ public class ForgeHooksClient
             for (int z = -distance; z <= distance; ++z)
             {
                 BiomeGenBase biome = world.getBiomeGenForCoords(playerX + x, playerZ + z);
-                int colour = biome.getSkyColorByTemp(biome.func_150564_a(playerX + x, playerY, playerZ + z));
+                int colour = biome.getSkyColorByTemp(biome.getFloatTemperature(playerX + x, playerY, playerZ + z));
                 r += (colour & 0xFF0000) >> 16;
                 g += (colour & 0x00FF00) >> 8;
                 b += colour & 0x0000FF;
@@ -397,8 +416,8 @@ public class ForgeHooksClient
      */
     static
     {
-        //FluidRegistry.renderIdFluid = RenderingRegistry.getNextAvailableRenderId();
-        //RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
+        FluidRegistry.renderIdFluid = RenderingRegistry.getNextAvailableRenderId();
+        RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
     }
 
     public static void renderMainMenu(GuiMainMenu gui, FontRenderer font, int width, int height)
@@ -407,9 +426,9 @@ public class ForgeHooksClient
         if (status == BETA || status == BETA_OUTDATED)
         {
             // render a warning at the top of the screen,
-            String line = EnumChatFormatting.RED + "WARNING:" + EnumChatFormatting.RESET + " Forge Beta,";
+            String line = I18n.format("forge.update.beta.1", EnumChatFormatting.RED, EnumChatFormatting.RESET);
             gui.drawString(font, line, (width - font.getStringWidth(line)) / 2, 4 + (0 * (font.FONT_HEIGHT + 1)), -1);
-            line = "Major issues may arise, verify before reporting.";
+            line = I18n.format("forge.update.beta.2");
             gui.drawString(font, line, (width - font.getStringWidth(line)) / 2, 4 + (1 * (font.FONT_HEIGHT + 1)), -1);
         }
 
@@ -420,7 +439,7 @@ public class ForgeHooksClient
             //case UP_TO_DATE:    line = "Forge up to date"}; break;
             //case AHEAD:         line = "Using non-recommended Forge build, issues may arise."}; break;
             case OUTDATED:
-            case BETA_OUTDATED: line = "New Forge version avalible: " + ForgeVersion.getTarget(); break;
+            case BETA_OUTDATED: line = I18n.format("forge.update.newversion", ForgeVersion.getTarget()); break;
             default: break;
         }
 
@@ -428,6 +447,45 @@ public class ForgeHooksClient
         {
             // if we have a line, render it in the bottom right, above Mojang's copyright line
             gui.drawString(font, line, width - font.getStringWidth(line) - 2, height - (2 * (font.FONT_HEIGHT + 1)), -1);
+        }
+    }
+
+    public static ISound playSound(SoundManager manager, ISound sound)
+    {
+        SoundEventAccessorComposite accessor = manager.sndHandler.getSound(sound.getPositionedSoundLocation());
+        PlaySoundEvent17 e = new PlaySoundEvent17(manager, sound, (accessor == null ? null : accessor.getSoundCategory()));
+        MinecraftForge.EVENT_BUS.post(e);
+        return e.result;
+    }
+
+    static RenderBlocks worldRendererRB;
+    static int worldRenderPass;
+
+    public static int getWorldRenderPass()
+    {
+        return worldRenderPass;
+    }
+
+    public static void setWorldRendererRB(RenderBlocks renderBlocks)
+    {
+        worldRendererRB = renderBlocks;
+    }
+
+    public static void onPreRenderWorld(WorldRenderer worldRenderer, int pass)
+    {
+        if(worldRendererRB != null)
+        {
+            worldRenderPass = pass;
+            MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.Pre(worldRenderer, (ChunkCache)worldRendererRB.blockAccess, worldRendererRB, pass));
+        }
+    }
+
+    public static void onPostRenderWorld(WorldRenderer worldRenderer, int pass)
+    {
+        if(worldRendererRB != null)
+        {
+            MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.Post(worldRenderer, (ChunkCache)worldRendererRB.blockAccess, worldRendererRB, pass));
+            worldRenderPass = -1;
         }
     }
 }

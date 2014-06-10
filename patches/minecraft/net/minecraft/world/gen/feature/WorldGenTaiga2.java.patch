@@ -14,41 +14,41 @@
  {
 @@ -49,7 +51,7 @@
                          {
-                             Block block = par1World.func_147439_a(i2, l1, j2);
+                             Block block = p_76484_1_.func_147439_a(i2, l1, j2);
  
 -                            if (block.func_149688_o() != Material.field_151579_a && block.func_149688_o() != Material.field_151584_j)
-+                            if (!block.isAir(par1World, i2, l1, j2) && !block.isLeaves(par1World, i2, l1, j2))
++                            if (!block.isAir(p_76484_1_, i2, l1, j2) && !block.isLeaves(p_76484_1_, i2, l1, j2))
                              {
                                  flag = false;
                              }
 @@ -70,9 +72,10 @@
              {
-                 Block block1 = par1World.func_147439_a(par3, par4 - 1, par5);
+                 Block block1 = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_ - 1, p_76484_5_);
  
--                if ((block1 == Blocks.grass || block1 == Blocks.dirt || block1 == Blocks.farmland) && par4 < 256 - l - 1)
-+                boolean isSoil = block1.canSustainPlant(par1World, par3, par4 - 1, par5, ForgeDirection.UP, (BlockSapling)Blocks.sapling);
-+                if (isSoil && par4 < 256 - l - 1)
+-                if ((block1 == Blocks.field_150349_c || block1 == Blocks.field_150346_d || block1 == Blocks.field_150458_ak) && p_76484_4_ < 256 - l - 1)
++                boolean isSoil = block1.canSustainPlant(p_76484_1_, p_76484_3_, p_76484_4_ - 1, p_76484_5_, ForgeDirection.UP, (BlockSapling)Blocks.field_150345_g);
++                if (isSoil && p_76484_4_ < 256 - l - 1)
                  {
--                    this.func_150515_a(par1World, par3, par4 - 1, par5, Blocks.dirt);
-+                    block1.onPlantGrow(par1World, par3, par4 - 1, par5, par3, par4, par5);
-                     l3 = par2Random.nextInt(2);
+-                    this.func_150515_a(p_76484_1_, p_76484_3_, p_76484_4_ - 1, p_76484_5_, Blocks.field_150346_d);
++                    block1.onPlantGrow(p_76484_1_, p_76484_3_, p_76484_4_ - 1, p_76484_5_, p_76484_3_, p_76484_4_, p_76484_5_);
+                     l3 = p_76484_2_.nextInt(2);
                      i2 = 1;
                      byte b0 = 0;
 @@ -91,7 +94,7 @@
                              {
-                                 int k3 = j3 - par5;
+                                 int k3 = j3 - p_76484_5_;
  
--                                if ((Math.abs(i3) != l3 || Math.abs(k3) != l3 || l3 <= 0) && !par1World.func_147439_a(l2, k2, j3).func_149730_j())
-+                                if ((Math.abs(i3) != l3 || Math.abs(k3) != l3 || l3 <= 0) && par1World.func_147439_a(l2, k2, j3).canBeReplacedByLeaves(par1World, l2, k2, j3))
+-                                if ((Math.abs(i3) != l3 || Math.abs(k3) != l3 || l3 <= 0) && !p_76484_1_.func_147439_a(l2, k2, j3).func_149730_j())
++                                if ((Math.abs(i3) != l3 || Math.abs(k3) != l3 || l3 <= 0) && p_76484_1_.func_147439_a(l2, k2, j3).canBeReplacedByLeaves(p_76484_1_, l2, k2, j3))
                                  {
-                                     this.func_150516_a(par1World, l2, k2, j3, Blocks.leaves, 1);
+                                     this.func_150516_a(p_76484_1_, l2, k2, j3, Blocks.field_150362_t, 1);
                                  }
 @@ -121,7 +124,7 @@
                      {
-                         Block block2 = par1World.func_147439_a(par3, par4 + k2, par5);
+                         Block block2 = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_ + k2, p_76484_5_);
  
 -                        if (block2.func_149688_o() == Material.field_151579_a || block2.func_149688_o() == Material.field_151584_j)
-+                        if (block2.isAir(par1World, par3, par4 + k2, par5) || block2.isLeaves(par1World, par3, par4 + k2, par5))
++                        if (block2.isAir(p_76484_1_, p_76484_3_, p_76484_4_ + k2, p_76484_5_) || block2.isLeaves(p_76484_1_, p_76484_3_, p_76484_4_ + k2, p_76484_5_))
                          {
-                             this.func_150516_a(par1World, par3, par4 + k2, par5, Blocks.log, 1);
+                             this.func_150516_a(p_76484_1_, p_76484_3_, p_76484_4_ + k2, p_76484_5_, Blocks.field_150364_r, 1);
                          }

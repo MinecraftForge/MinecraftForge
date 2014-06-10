@@ -14,14 +14,14 @@
          super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
 +    }
  
--        if (this.func_149650_a(p_149690_5_, p_149690_1_.rand, p_149690_7_) != Item.func_150898_a(this))
+-        if (this.func_149650_a(p_149690_5_, p_149690_1_.field_73012_v, p_149690_7_) != Item.func_150898_a(this))
 +    private Random rand = new Random();
 +    @Override // World, meta, fortune
 +    public int getExpDrop(IBlockAccess p_149690_1_, int p_149690_5_, int p_149690_7_)
 +    {
 +        if (this.func_149650_a(p_149690_5_, rand, p_149690_7_) != Item.func_150898_a(this))
          {
--            int j1 = 1 + p_149690_1_.rand.nextInt(5);
+-            int j1 = 1 + p_149690_1_.field_73012_v.nextInt(5);
 -            this.func_149657_c(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, j1);
 +            return 1 + rand.nextInt(5);
          }

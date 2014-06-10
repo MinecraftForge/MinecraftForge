@@ -26,8 +26,8 @@
  
          for (int k1 = 0; k1 < b0; ++k1)
          {
--            this.func_149642_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(Items.dye, 1, 3));
-+            dropped.add(new ItemStack(Items.dye, 1, 3));
+-            this.func_149642_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(Items.field_151100_aR, 1, 3));
++            dropped.add(new ItemStack(Items.field_151100_aR, 1, 3));
          }
 +        return dropped;
      }
@@ -35,7 +35,7 @@
      @SideOnly(Side.CLIENT)
 @@ -216,4 +225,10 @@
          ++j1;
-         p_149853_1_.setBlockMetadataWithNotify(p_149853_3_, p_149853_4_, p_149853_5_, j1 << 2 | i1, 2);
+         p_149853_1_.func_72921_c(p_149853_3_, p_149853_4_, p_149853_5_, j1 << 2 | i1, 2);
      }
 +
 +    @Override

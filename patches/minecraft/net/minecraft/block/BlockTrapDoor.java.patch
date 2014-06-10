@@ -18,7 +18,7 @@
              }
  
 -            if (!func_150119_a(p_149695_1_.func_147439_a(i1, p_149695_3_, j1)))
-+            if (!func_150119_a(p_149695_1_.func_147439_a(i1, p_149695_3_, j1)) || p_149695_1_.isSideSolid(i1, p_149695_3_, j1, ForgeDirection.getOrientation((l & 3) + 2)))
++            if (!(func_150119_a(p_149695_1_.func_147439_a(i1, p_149695_3_, j1)) || p_149695_1_.isSideSolid(i1, p_149695_3_, j1, ForgeDirection.getOrientation((l & 3) + 2))))
              {
                  p_149695_1_.func_147468_f(p_149695_2_, p_149695_3_, p_149695_4_);
                  this.func_149697_b(p_149695_1_, p_149695_2_, p_149695_3_, p_149695_4_, l, 0);
@@ -44,6 +44,6 @@
      private static boolean func_150119_a(Block p_150119_0_)
      {
 +        if (disableValidation) return true;
-         return p_150119_0_.field_149764_J.isOpaque() && p_150119_0_.func_149686_d() || p_150119_0_ == Blocks.glowstone || p_150119_0_ instanceof BlockSlab || p_150119_0_ instanceof BlockStairs;
+         return p_150119_0_.field_149764_J.func_76218_k() && p_150119_0_.func_149686_d() || p_150119_0_ == Blocks.field_150426_aN || p_150119_0_ instanceof BlockSlab || p_150119_0_ instanceof BlockStairs;
      }
  }

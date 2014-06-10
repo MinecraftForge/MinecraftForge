@@ -24,10 +24,8 @@ import cpw.mods.fml.relauncher.SideOnly;
  *  Wavefront Object importer
  *  Based heavily off of the specifications found at http://en.wikipedia.org/wiki/Wavefront_.obj_file
  */
-@SideOnly(Side.CLIENT)
 public class WavefrontObject implements IModelCustom
 {
-
     private static Pattern vertexPattern = Pattern.compile("(v( (\\-){0,1}\\d+\\.\\d+){3,4} *\\n)|(v( (\\-){0,1}\\d+\\.\\d+){3,4} *$)");
     private static Pattern vertexNormalPattern = Pattern.compile("(vn( (\\-){0,1}\\d+\\.\\d+){3,4} *\\n)|(vn( (\\-){0,1}\\d+\\.\\d+){3,4} *$)");
     private static Pattern textureCoordinatePattern = Pattern.compile("(vt( (\\-){0,1}\\d+\\.\\d+){2,3} *\\n)|(vt( (\\-){0,1}\\d+\\.\\d+){2,3} *$)");
@@ -173,6 +171,7 @@ public class WavefrontObject implements IModelCustom
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void renderAll()
     {
         Tessellator tessellator = Tessellator.instance;
@@ -190,6 +189,7 @@ public class WavefrontObject implements IModelCustom
         tessellator.draw();
     }
 
+    @SideOnly(Side.CLIENT)
     public void tessellateAll(Tessellator tessellator)
     {
         for (GroupObject groupObject : groupObjects)
@@ -199,6 +199,7 @@ public class WavefrontObject implements IModelCustom
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void renderOnly(String... groupNames)
     {
         for (GroupObject groupObject : groupObjects)
@@ -213,6 +214,7 @@ public class WavefrontObject implements IModelCustom
         }
     }
 
+    @SideOnly(Side.CLIENT)
     public void tessellateOnly(Tessellator tessellator, String... groupNames) {
         for (GroupObject groupObject : groupObjects)
         {
@@ -227,6 +229,7 @@ public class WavefrontObject implements IModelCustom
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void renderPart(String partName)
     {
         for (GroupObject groupObject : groupObjects)
@@ -238,6 +241,7 @@ public class WavefrontObject implements IModelCustom
         }
     }
 
+    @SideOnly(Side.CLIENT)
     public void tessellatePart(Tessellator tessellator, String partName) {
         for (GroupObject groupObject : groupObjects)
         {
@@ -249,6 +253,7 @@ public class WavefrontObject implements IModelCustom
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void renderAllExcept(String... excludedGroupNames)
     {
         for (GroupObject groupObject : groupObjects)
@@ -268,6 +273,7 @@ public class WavefrontObject implements IModelCustom
         }
     }
 
+    @SideOnly(Side.CLIENT)
     public void tessellateAllExcept(Tessellator tessellator, String... excludedGroupNames)
     {
         boolean exclude;

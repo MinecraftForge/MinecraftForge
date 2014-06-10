@@ -8,56 +8,56 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -92,11 +93,14 @@
+@@ -91,11 +92,14 @@
  
-     public void loadTextureAtlas(IResourceManager par1ResourceManager)
+     public void func_110571_b(IResourceManager p_110571_1_)
      {
-+        registerIcons(); //Re-gather list of Icons, allows for addition/removal of blocks/items after this map was initially constructed.
++        func_110573_f(); //Re-gather list of Icons, allows for addition/removal of blocks/items after this map was initially constructed.
 +
-         int i = Minecraft.getGLMaximumTextureSize();
+         int i = Minecraft.func_71369_N();
          Stitcher stitcher = new Stitcher(i, i, true, 0, this.field_147636_j);
-         this.mapUploadedSprites.clear();
-         this.listAnimatedSprites.clear();
+         this.field_94252_e.clear();
+         this.field_94258_i.clear();
          int j = Integer.MAX_VALUE;
 +        ForgeHooksClient.onTextureStitchedPre(this);
-         Iterator iterator = this.mapRegisteredSprites.entrySet().iterator();
+         Iterator iterator = this.field_110574_e.entrySet().iterator();
          TextureAtlasSprite textureatlassprite;
  
-@@ -107,6 +111,16 @@
+@@ -106,6 +110,16 @@
              textureatlassprite = (TextureAtlasSprite)entry.getValue();
              ResourceLocation resourcelocation1 = this.func_147634_a(resourcelocation, 0);
  
-+            if (textureatlassprite.hasCustomLoader(par1ResourceManager, resourcelocation))
++            if (textureatlassprite.hasCustomLoader(p_110571_1_, resourcelocation))
 +            {
-+                if (!textureatlassprite.load(par1ResourceManager, resourcelocation))
++                if (!textureatlassprite.load(p_110571_1_, resourcelocation))
 +                {
-+                    j = Math.min(j, Math.min(textureatlassprite.getIconWidth(), textureatlassprite.getIconHeight()));
-+                    stitcher.addSprite(textureatlassprite);
++                    j = Math.min(j, Math.min(textureatlassprite.func_94211_a(), textureatlassprite.func_94216_b()));
++                    stitcher.func_110934_a(textureatlassprite);
 +                }
 +                continue;
 +            }
 +
              try
              {
-                 IResource iresource = par1ResourceManager.getResource(resourcelocation1);
-@@ -275,6 +289,7 @@
+                 IResource iresource = p_110571_1_.func_110536_a(resourcelocation1);
+@@ -274,6 +288,7 @@
              textureatlassprite = (TextureAtlasSprite)iterator2.next();
-             textureatlassprite.copyFrom(this.missingImage);
+             textureatlassprite.func_94217_a(this.field_94249_f);
          }
 +        ForgeHooksClient.onTextureStitchedPost(this);
      }
  
      private ResourceLocation func_147634_a(ResourceLocation p_147634_1_, int p_147634_2_)
-@@ -348,7 +363,7 @@
+@@ -347,7 +362,7 @@
          {
              throw new IllegalArgumentException("Name cannot be null!");
          }
--        else if (par1Str.indexOf(47) == -1 && par1Str.indexOf(92) == -1)
-+        else if (par1Str.indexOf(92) == -1) // Disable backslashes (\) in texture asset paths.
+-        else if (p_94245_1_.indexOf(47) == -1 && p_94245_1_.indexOf(92) == -1)
++        else if (p_94245_1_.indexOf(92) == -1) // Disable backslashes (\) in texture asset paths.
          {
-             Object object = (TextureAtlasSprite)this.mapRegisteredSprites.get(par1Str);
+             Object object = (TextureAtlasSprite)this.field_110574_e.get(p_94245_1_);
  
-@@ -404,4 +419,37 @@
+@@ -403,4 +418,37 @@
      {
          this.field_147637_k = p_147632_1_;
      }
@@ -74,7 +74,7 @@
 +     */
 +    public TextureAtlasSprite getTextureExtry(String name)
 +    {
-+        return (TextureAtlasSprite)mapRegisteredSprites.get(name);
++        return (TextureAtlasSprite)field_110574_e.get(name);
 +    }
 +
 +    /**
@@ -87,9 +87,9 @@
 +     */
 +    public boolean setTextureEntry(String name, TextureAtlasSprite entry)
 +    {
-+        if (!mapRegisteredSprites.containsKey(name))
++        if (!field_110574_e.containsKey(name))
 +        {
-+            mapRegisteredSprites.put(name, entry);
++            field_110574_e.put(name, entry);
 +            return true;
 +        }
 +        return false;

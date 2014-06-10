@@ -10,16 +10,8 @@ import net.minecraft.tileentity.TileEntity;
  * @author King Lemming, cpw (LiquidTank)
  * 
  */
-@SuppressWarnings("unused")
 public class FluidTank implements IFluidTank
 {
-    @Override public FluidStack getFluid() { return null; }
-    @Override public int getFluidAmount() { return 0; }
-    @Override public int getCapacity() { return 0; }
-    @Override public FluidTankInfo getInfo() { return null; } 
-    @Override public int fill(FluidStack resource, boolean doFill) { return 0; }
-    @Override public FluidStack drain(int maxDrain, boolean doDrain){ return null; }
-    /*
     protected FluidStack fluid;
     protected int capacity;
     protected TileEntity tile;
@@ -77,7 +69,7 @@ public class FluidTank implements IFluidTank
         this.capacity = capacity;
     }
 
-    /* IFluidTank * /
+    /* IFluidTank */
     @Override
     public FluidStack getFluid()
     {
@@ -135,7 +127,7 @@ public class FluidTank implements IFluidTank
 
             if (tile != null)
             {
-                FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fluid, tile.func_145831_w(), tile.field_145851_c, tile.field_145848_d, tile.field_145849_e, this));
+                FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fluid, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord, this, fluid.amount));
             }
             return fluid.amount;
         }
@@ -158,7 +150,7 @@ public class FluidTank implements IFluidTank
 
         if (tile != null)
         {
-            FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fluid, tile.func_145831_w(), tile.field_145851_c, tile.field_145848_d, tile.field_145849_e, this));
+            FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fluid, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord, this, filled));
         }
         return filled;
     }
@@ -188,10 +180,9 @@ public class FluidTank implements IFluidTank
 
             if (tile != null)
             {
-                FluidEvent.fireEvent(new FluidEvent.FluidDrainingEvent(fluid, tile.func_145831_w(), tile.field_145851_c, tile.field_145848_d, tile.field_145849_e, this));
+                FluidEvent.fireEvent(new FluidEvent.FluidDrainingEvent(fluid, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord, this, drained));
             }
         }
         return stack;
     }
-    */
 }

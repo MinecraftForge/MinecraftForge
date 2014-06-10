@@ -40,8 +40,8 @@
          if ((!flag2 || !flag3) && (flag2 || flag3 || flag || flag1))
          {
 @@ -186,4 +188,10 @@
-         this.field_149761_L = p_149651_1_.registerIcon(this.field_150101_M);
-         this.field_150102_N = p_149651_1_.registerIcon(this.field_150100_a);
+         this.field_149761_L = p_149651_1_.func_94245_a(this.field_150101_M);
+         this.field_150102_N = p_149651_1_.func_94245_a(this.field_150100_a);
      }
 +
 +    public boolean canPaneConnectTo(IBlockAccess world, int x, int y, int z, ForgeDirection dir)

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureComponent.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureComponent.java
-@@ -36,6 +36,10 @@
+@@ -34,6 +34,10 @@
  
      public NBTTagCompound func_143010_b()
      {
@@ -9,5 +9,5 @@
 +            throw new RuntimeException("StructureComponent \"" + this.getClass().getName() + "\" missing ID Mapping, Modder see MapGenStructureIO");
 +        }
          NBTTagCompound nbttagcompound = new NBTTagCompound();
-         nbttagcompound.setString("id", MapGenStructureIO.func_143036_a(this));
-         nbttagcompound.setTag("BB", this.boundingBox.func_151535_h());
+         nbttagcompound.func_74778_a("id", MapGenStructureIO.func_143036_a(this));
+         nbttagcompound.func_74782_a("BB", this.field_74887_e.func_151535_h());

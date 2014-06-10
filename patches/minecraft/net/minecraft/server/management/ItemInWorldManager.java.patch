@@ -21,48 +21,48 @@
  {
 +    /** Forge reach distance */
 +    private double blockReachDistance = 5.0d;
-     // JAVADOC FIELD $$ field_73092_a
-     public World theWorld;
-     // JAVADOC FIELD $$ field_73090_b
-@@ -133,6 +144,13 @@
+     public World field_73092_a;
+     public EntityPlayerMP field_73090_b;
+     private WorldSettings.GameType field_73091_c;
+@@ -126,6 +137,13 @@
      {
-         if (!this.gameType.isAdventure() || this.thisPlayerMP.isCurrentToolAdventureModeExempt(par1, par2, par3))
+         if (!this.field_73091_c.func_82752_c() || this.field_73090_b.func_82246_f(p_73074_1_, p_73074_2_, p_73074_3_))
          {
-+            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(thisPlayerMP, Action.LEFT_CLICK_BLOCK, par1, par2, par3, par4);
++            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(field_73090_b, Action.LEFT_CLICK_BLOCK, p_73074_1_, p_73074_2_, p_73074_3_, p_73074_4_, field_73092_a);
 +            if (event.isCanceled())
 +            {
-+                thisPlayerMP.playerNetServerHandler.func_147359_a(new S23PacketBlockChange(par1, par2, par3, theWorld));
++                field_73090_b.field_71135_a.func_147359_a(new S23PacketBlockChange(p_73074_1_, p_73074_2_, p_73074_3_, field_73092_a));
 +                return;
 +            }
 +
-             if (this.isCreative())
+             if (this.func_73083_d())
              {
-                 if (!this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4))
-@@ -142,19 +160,36 @@
+                 if (!this.field_73092_a.func_72886_a((EntityPlayer)null, p_73074_1_, p_73074_2_, p_73074_3_, p_73074_4_))
+@@ -135,19 +153,36 @@
              }
              else
              {
--                this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4);
-                 this.initialDamage = this.curblockDamage;
+-                this.field_73092_a.func_72886_a((EntityPlayer)null, p_73074_1_, p_73074_2_, p_73074_3_, p_73074_4_);
+                 this.field_73089_e = this.field_73100_i;
                  float f = 1.0F;
-                 Block block = this.theWorld.func_147439_a(par1, par2, par3);
+                 Block block = this.field_73092_a.func_147439_a(p_73074_1_, p_73074_2_, p_73074_3_);
  
 -                if (block.func_149688_o() != Material.field_151579_a)
 +                
-+                if (!block.isAir(theWorld, par1, par2, par3))
++                if (!block.isAir(field_73092_a, p_73074_1_, p_73074_2_, p_73074_3_))
                  {
--                    block.func_149699_a(this.theWorld, par1, par2, par3, this.thisPlayerMP);
--                    f = block.func_149737_a(this.thisPlayerMP, this.thisPlayerMP.worldObj, par1, par2, par3);
+-                    block.func_149699_a(this.field_73092_a, p_73074_1_, p_73074_2_, p_73074_3_, this.field_73090_b);
+-                    f = block.func_149737_a(this.field_73090_b, this.field_73090_b.field_70170_p, p_73074_1_, p_73074_2_, p_73074_3_);
 +                    if (event.useBlock != Event.Result.DENY)
 +                    {
-+                        block.func_149699_a(theWorld, par1, par2, par3, thisPlayerMP);
-+                        theWorld.extinguishFire(thisPlayerMP, par1, par2, par3, par4);
++                        block.func_149699_a(field_73092_a, p_73074_1_, p_73074_2_, p_73074_3_, field_73090_b);
++                        field_73092_a.func_72886_a(field_73090_b, p_73074_1_, p_73074_2_, p_73074_3_, p_73074_4_);
 +                    }
 +                    else
 +                    {
-+                        thisPlayerMP.playerNetServerHandler.func_147359_a(new S23PacketBlockChange(par1, par2, par3, theWorld));
++                        field_73090_b.field_71135_a.func_147359_a(new S23PacketBlockChange(p_73074_1_, p_73074_2_, p_73074_3_, field_73092_a));
 +                    }
-+                    f = block.func_149737_a(thisPlayerMP, thisPlayerMP.worldObj, par1, par2, par3);
++                    f = block.func_149737_a(field_73090_b, field_73090_b.field_70170_p, p_73074_1_, p_73074_2_, p_73074_3_);
                  }
  
 -                if (block.func_149688_o() != Material.field_151579_a && f >= 1.0F)
@@ -70,161 +70,161 @@
                  {
 +                    if (f >= 1.0f)
 +                    {
-+                        thisPlayerMP.playerNetServerHandler.func_147359_a(new S23PacketBlockChange(par1, par2, par3, theWorld));
++                        field_73090_b.field_71135_a.func_147359_a(new S23PacketBlockChange(p_73074_1_, p_73074_2_, p_73074_3_, field_73092_a));
 +                    }
 +                    return;
 +                }
 +
-+                if (!block.isAir(theWorld, par1, par2, par3) && f >= 1.0F)
++                if (!block.isAir(field_73092_a, p_73074_1_, p_73074_2_, p_73074_3_) && f >= 1.0F)
 +                {
-                     this.tryHarvestBlock(par1, par2, par3);
+                     this.func_73084_b(p_73074_1_, p_73074_2_, p_73074_3_);
                  }
                  else
-@@ -178,7 +213,7 @@
-             int l = this.curblockDamage - this.initialDamage;
-             Block block = this.theWorld.func_147439_a(par1, par2, par3);
+@@ -171,7 +206,7 @@
+             int l = this.field_73100_i - this.field_73089_e;
+             Block block = this.field_73092_a.func_147439_a(p_73082_1_, p_73082_2_, p_73082_3_);
  
 -            if (block.func_149688_o() != Material.field_151579_a)
-+            if (!block.isAir(theWorld, par1, par2, par3))
++            if (!block.isAir(field_73092_a, p_73082_1_, p_73082_2_, p_73082_3_))
              {
-                 float f = block.func_149737_a(this.thisPlayerMP, this.thisPlayerMP.worldObj, par1, par2, par3) * (float)(l + 1);
+                 float f = block.func_149737_a(this.field_73090_b, this.field_73090_b.field_70170_p, p_73082_1_, p_73082_2_, p_73082_3_) * (float)(l + 1);
  
-@@ -214,7 +249,7 @@
-         Block block = this.theWorld.func_147439_a(par1, par2, par3);
-         int l = this.theWorld.getBlockMetadata(par1, par2, par3);
-         block.func_149681_a(this.theWorld, par1, par2, par3, l, this.thisPlayerMP);
--        boolean flag = this.theWorld.func_147468_f(par1, par2, par3);
-+        boolean flag = block.removedByPlayer(theWorld, thisPlayerMP, par1, par2, par3);
+@@ -205,7 +240,7 @@
+         Block block = this.field_73092_a.func_147439_a(p_73079_1_, p_73079_2_, p_73079_3_);
+         int l = this.field_73092_a.func_72805_g(p_73079_1_, p_73079_2_, p_73079_3_);
+         block.func_149681_a(this.field_73092_a, p_73079_1_, p_73079_2_, p_73079_3_, l, this.field_73090_b);
+-        boolean flag = this.field_73092_a.func_147468_f(p_73079_1_, p_73079_2_, p_73079_3_);
++        boolean flag = block.removedByPlayer(field_73092_a, field_73090_b, p_73079_1_, p_73079_2_, p_73079_3_);
  
          if (flag)
          {
-@@ -227,29 +262,32 @@
-     // JAVADOC METHOD $$ func_73084_b
-     public boolean tryHarvestBlock(int par1, int par2, int par3)
+@@ -217,29 +252,32 @@
+ 
+     public boolean func_73084_b(int p_73084_1_, int p_73084_2_, int p_73084_3_)
      {
--        if (this.gameType.isAdventure() && !this.thisPlayerMP.isCurrentToolAdventureModeExempt(par1, par2, par3))
-+        BlockEvent.BreakEvent event = ForgeHooks.onBlockBreakEvent(theWorld, gameType, thisPlayerMP, par1, par2, par3);
+-        if (this.field_73091_c.func_82752_c() && !this.field_73090_b.func_82246_f(p_73084_1_, p_73084_2_, p_73084_3_))
++        BlockEvent.BreakEvent event = ForgeHooks.onBlockBreakEvent(field_73092_a, field_73091_c, field_73090_b, p_73084_1_, p_73084_2_, p_73084_3_);
 +        if (event.isCanceled())
          {
              return false;
          }
--        else if (this.gameType.isCreative() && this.thisPlayerMP.getHeldItem() != null && this.thisPlayerMP.getHeldItem().getItem() instanceof ItemSword)
+-        else if (this.field_73091_c.func_77145_d() && this.field_73090_b.func_70694_bm() != null && this.field_73090_b.func_70694_bm().func_77973_b() instanceof ItemSword)
 -        {
 -            return false;
 -        }
          else
          {
-+            ItemStack stack = thisPlayerMP.getCurrentEquippedItem();
-+            if (stack != null && stack.getItem().onBlockStartBreak(stack, par1, par2, par3, thisPlayerMP))
++            ItemStack stack = field_73090_b.func_71045_bC();
++            if (stack != null && stack.func_77973_b().onBlockStartBreak(stack, p_73084_1_, p_73084_2_, p_73084_3_, field_73090_b))
 +            {
 +                return false;
 +            }
-             Block block = this.theWorld.func_147439_a(par1, par2, par3);
-             int l = this.theWorld.getBlockMetadata(par1, par2, par3);
-             this.theWorld.playAuxSFXAtEntity(this.thisPlayerMP, 2001, par1, par2, par3, Block.func_149682_b(block) + (this.theWorld.getBlockMetadata(par1, par2, par3) << 12));
--            boolean flag = this.removeBlock(par1, par2, par3);
+             Block block = this.field_73092_a.func_147439_a(p_73084_1_, p_73084_2_, p_73084_3_);
+             int l = this.field_73092_a.func_72805_g(p_73084_1_, p_73084_2_, p_73084_3_);
+             this.field_73092_a.func_72889_a(this.field_73090_b, 2001, p_73084_1_, p_73084_2_, p_73084_3_, Block.func_149682_b(block) + (this.field_73092_a.func_72805_g(p_73084_1_, p_73084_2_, p_73084_3_) << 12));
+-            boolean flag = this.func_73079_d(p_73084_1_, p_73084_2_, p_73084_3_);
 +            boolean flag = false;
  
-             if (this.isCreative())
+             if (this.func_73083_d())
              {
-+                flag = this.removeBlock(par1, par2, par3);
-                 this.thisPlayerMP.playerNetServerHandler.func_147359_a(new S23PacketBlockChange(par1, par2, par3, this.theWorld));
++                flag = this.func_73079_d(p_73084_1_, p_73084_2_, p_73084_3_);
+                 this.field_73090_b.field_71135_a.func_147359_a(new S23PacketBlockChange(p_73084_1_, p_73084_2_, p_73084_3_, this.field_73092_a));
              }
              else
              {
-                 ItemStack itemstack = this.thisPlayerMP.getCurrentEquippedItem();
--                boolean flag1 = this.thisPlayerMP.func_146099_a(block);
-+                boolean flag1 = block.canHarvestBlock(thisPlayerMP, l);
+                 ItemStack itemstack = this.field_73090_b.func_71045_bC();
+-                boolean flag1 = this.field_73090_b.func_146099_a(block);
++                boolean flag1 = block.canHarvestBlock(field_73090_b, l);
  
                  if (itemstack != null)
                  {
-@@ -261,12 +299,18 @@
+@@ -251,12 +289,18 @@
                      }
                  }
  
-+                flag = this.removeBlock(par1, par2, par3);
++                flag = this.func_73079_d(p_73084_1_, p_73084_2_, p_73084_3_);
                  if (flag && flag1)
                  {
-                     block.func_149636_a(this.theWorld, this.thisPlayerMP, par1, par2, par3, l);
+                     block.func_149636_a(this.field_73092_a, this.field_73090_b, p_73084_1_, p_73084_2_, p_73084_3_, l);
                  }
              }
  
 +            // Drop experience
-+            if (!this.isCreative() && flag && event != null)
++            if (!this.func_73083_d() && flag && event != null)
 +            {
-+                block.func_149657_c(this.theWorld, par1, par2, par3, event.getExpToDrop());
++                block.func_149657_c(this.field_73092_a, p_73084_1_, p_73084_2_, p_73084_3_, event.getExpToDrop());
 +            }
              return flag;
          }
      }
-@@ -299,6 +343,7 @@
-             if (itemstack1.stackSize == 0)
+@@ -288,6 +332,7 @@
+             if (itemstack1.field_77994_a == 0)
              {
-                 par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
-+                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(thisPlayerMP, itemstack1));
+                 p_73085_1_.field_71071_by.field_70462_a[p_73085_1_.field_71071_by.field_70461_c] = null;
++                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(field_73090_b, itemstack1));
              }
  
-             if (!par1EntityPlayer.isUsingItem())
-@@ -313,27 +358,57 @@
-     // JAVADOC METHOD $$ func_73078_a
-     public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+             if (!p_73085_1_.func_71039_bw())
+@@ -301,31 +346,70 @@
+ 
+     public boolean func_73078_a(EntityPlayer p_73078_1_, World p_73078_2_, ItemStack p_73078_3_, int p_73078_4_, int p_73078_5_, int p_73078_6_, int p_73078_7_, float p_73078_8_, float p_73078_9_, float p_73078_10_)
      {
--        if ((!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null) && par2World.func_147439_a(par4, par5, par6).func_149727_a(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10))
-+        PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(par1EntityPlayer, Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7);
+-        if ((!p_73078_1_.func_70093_af() || p_73078_1_.func_70694_bm() == null) && p_73078_2_.func_147439_a(p_73078_4_, p_73078_5_, p_73078_6_).func_149727_a(p_73078_2_, p_73078_4_, p_73078_5_, p_73078_6_, p_73078_1_, p_73078_7_, p_73078_8_, p_73078_9_, p_73078_10_))
++        PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(p_73078_1_, Action.RIGHT_CLICK_BLOCK, p_73078_4_, p_73078_5_, p_73078_6_, p_73078_7_, p_73078_2_);
 +        if (event.isCanceled())
          {
 -            return true;
-+            thisPlayerMP.playerNetServerHandler.func_147359_a(new S23PacketBlockChange(par4, par5, par6, theWorld));
++            field_73090_b.field_71135_a.func_147359_a(new S23PacketBlockChange(p_73078_4_, p_73078_5_, p_73078_6_, field_73092_a));
 +            return false;
          }
--        else if (par3ItemStack == null)
+-        else if (p_73078_3_ == null)
 +
-+        if (par3ItemStack != null && par3ItemStack.getItem().onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10))
++        if (p_73078_3_ != null && p_73078_3_.func_77973_b().onItemUseFirst(p_73078_3_, p_73078_1_, p_73078_2_, p_73078_4_, p_73078_5_, p_73078_6_, p_73078_7_, p_73078_8_, p_73078_9_, p_73078_10_))
          {
 -            return false;
-+            if (par3ItemStack.stackSize <= 0) ForgeEventFactory.onPlayerDestroyItem(thisPlayerMP, par3ItemStack);
++            if (p_73078_3_.field_77994_a <= 0) ForgeEventFactory.onPlayerDestroyItem(field_73090_b, p_73078_3_);
 +            return true;
          }
--        else if (this.isCreative())
+-        else if (this.func_73083_d())
 +
-+        Block block = par2World.func_147439_a(par4, par5, par6);
-+        boolean isAir = block.isAir(par2World, par4, par5, par6);
-+        boolean useBlock = !par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null;
-+        if (!useBlock) useBlock = par1EntityPlayer.getHeldItem().getItem().doesSneakBypassUse(par2World, par4, par5, par6, par1EntityPlayer);
++        Block block = p_73078_2_.func_147439_a(p_73078_4_, p_73078_5_, p_73078_6_);
++        boolean isAir = block.isAir(p_73078_2_, p_73078_4_, p_73078_5_, p_73078_6_);
++        boolean useBlock = !p_73078_1_.func_70093_af() || p_73078_1_.func_70694_bm() == null;
++        if (!useBlock) useBlock = p_73078_1_.func_70694_bm().func_77973_b().doesSneakBypassUse(p_73078_2_, p_73078_4_, p_73078_5_, p_73078_6_, p_73078_1_);
 +        boolean result = false;
 +
 +        if (useBlock)
          {
--            int i1 = par3ItemStack.getItemDamage();
--            int j1 = par3ItemStack.stackSize;
--            boolean flag = par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10);
--            par3ItemStack.setItemDamage(i1);
--            par3ItemStack.stackSize = j1;
+-            int i1 = p_73078_3_.func_77960_j();
+-            int j1 = p_73078_3_.field_77994_a;
+-            boolean flag = p_73078_3_.func_77943_a(p_73078_1_, p_73078_2_, p_73078_4_, p_73078_5_, p_73078_6_, p_73078_7_, p_73078_8_, p_73078_9_, p_73078_10_);
+-            p_73078_3_.func_77964_b(i1);
+-            p_73078_3_.field_77994_a = j1;
 -            return flag;
 +            if (event.useBlock != Event.Result.DENY)
 +            {
-+                result = block.func_149727_a(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10);
++                result = block.func_149727_a(p_73078_2_, p_73078_4_, p_73078_5_, p_73078_6_, p_73078_1_, p_73078_7_, p_73078_8_, p_73078_9_, p_73078_10_);
 +            }
 +            else
 +            {
-+                thisPlayerMP.playerNetServerHandler.func_147359_a(new S23PacketBlockChange(par4, par5, par6, theWorld));
++                field_73090_b.field_71135_a.func_147359_a(new S23PacketBlockChange(p_73078_4_, p_73078_5_, p_73078_6_, field_73092_a));
 +                result = event.useItem != Event.Result.ALLOW;
 +            }
          }
 -        else
 +
-+        if (par3ItemStack != null && !result && event.useItem != Event.Result.DENY)
++        if (p_73078_3_ != null && !result && event.useItem != Event.Result.DENY)
          {
--            return par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10);
-+            int meta = par3ItemStack.getItemDamage();
-+            int size = par3ItemStack.stackSize;
-+            result = par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10);
-+            if (isCreative())
+-            return p_73078_3_.func_77943_a(p_73078_1_, p_73078_2_, p_73078_4_, p_73078_5_, p_73078_6_, p_73078_7_, p_73078_8_, p_73078_9_, p_73078_10_);
++            int meta = p_73078_3_.func_77960_j();
++            int size = p_73078_3_.field_77994_a;
++            result = p_73078_3_.func_77943_a(p_73078_1_, p_73078_2_, p_73078_4_, p_73078_5_, p_73078_6_, p_73078_7_, p_73078_8_, p_73078_9_, p_73078_10_);
++            if (func_73083_d())
 +            {
-+                par3ItemStack.setItemDamage(meta);
-+                par3ItemStack.stackSize = size;
++                p_73078_3_.func_77964_b(meta);
++                p_73078_3_.field_77994_a = size;
 +            }
-+            if (par3ItemStack.stackSize <= 0) ForgeEventFactory.onPlayerDestroyItem(thisPlayerMP, par3ItemStack);
++            if (p_73078_3_.field_77994_a <= 0) ForgeEventFactory.onPlayerDestroyItem(field_73090_b, p_73078_3_);
          }
 +
 +        /* Re-enable if this causes bukkit incompatibility, or re-write client side to only send a single packet per right click.
@@ -235,10 +235,9 @@
 +        return result;
      }
  
-     // JAVADOC METHOD $$ func_73080_a
-@@ -341,4 +416,13 @@
+     public void func_73080_a(WorldServer p_73080_1_)
      {
-         this.theWorld = par1WorldServer;
+         this.field_73092_a = p_73080_1_;
      }
 +
 +    public double getBlockReachDistance()

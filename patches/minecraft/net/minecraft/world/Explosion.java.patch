@@ -1,21 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/world/Explosion.java
 +++ ../src-work/minecraft/net/minecraft/world/Explosion.java
-@@ -90,7 +90,7 @@
+@@ -86,7 +86,7 @@
  
                              if (block.func_149688_o() != Material.field_151579_a)
                              {
--                                float f3 = this.exploder != null ? this.exploder.func_145772_a(this, this.worldObj, j1, k1, l1, block) : block.func_149638_a(this.exploder);
-+                                float f3 = this.exploder != null ? this.exploder.func_145772_a(this, this.worldObj, j1, k1, l1, block) : block.getExplosionResistance(this.exploder, worldObj, j1, k1, l1, explosionX, explosionY, explosionZ);
+-                                float f3 = this.field_77283_e != null ? this.field_77283_e.func_145772_a(this, this.field_77287_j, j1, k1, l1, block) : block.func_149638_a(this.field_77283_e);
++                                float f3 = this.field_77283_e != null ? this.field_77283_e.func_145772_a(this, this.field_77287_j, j1, k1, l1, block) : block.getExplosionResistance(this.field_77283_e, field_77287_j, j1, k1, l1, field_77284_b, field_77285_c, field_77282_d);
                                  f1 -= (f3 + 0.3F) * f2;
                              }
  
-@@ -216,8 +216,7 @@
-                         block.func_149690_a(this.worldObj, i, j, k, this.worldObj.getBlockMetadata(i, j, k), 1.0F / this.explosionSize, 0);
+@@ -211,8 +211,7 @@
+                         block.func_149690_a(this.field_77287_j, i, j, k, this.field_77287_j.func_72805_g(i, j, k), 1.0F / this.field_77280_f, 0);
                      }
  
--                    this.worldObj.func_147465_d(i, j, k, Blocks.air, 0, 3);
--                    block.func_149723_a(this.worldObj, i, j, k, this);
-+                    block.onBlockExploded(this.worldObj, i, j, k, this);
+-                    this.field_77287_j.func_147465_d(i, j, k, Blocks.field_150350_a, 0, 3);
+-                    block.func_149723_a(this.field_77287_j, i, j, k, this);
++                    block.onBlockExploded(this.field_77287_j, i, j, k, this);
                  }
              }
          }

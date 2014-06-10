@@ -9,34 +9,37 @@
  
  public class TileEntityBrewingStand extends TileEntity implements ISidedInventory
  {
-@@ -105,7 +107,7 @@
+@@ -104,7 +106,7 @@
  
                  for (int i = 0; i < 3; ++i)
                  {
--                    if (this.field_145945_j[i] != null && this.field_145945_j[i].getItem() == Items.potionitem)
-+                    if (this.field_145945_j[i] != null && this.field_145945_j[i].getItem() instanceof ItemPotion)
+-                    if (this.field_145945_j[i] != null && this.field_145945_j[i].func_77973_b() == Items.field_151068_bn)
++                    if (this.field_145945_j[i] != null && this.field_145945_j[i].func_77973_b() instanceof ItemPotion)
                      {
-                         int j = this.field_145945_j[i].getItemDamage();
+                         int j = this.field_145945_j[i].func_77960_j();
                          int k = this.func_145936_c(j, itemstack);
-@@ -144,7 +146,7 @@
+@@ -143,7 +145,7 @@
  
              for (int i = 0; i < 3; ++i)
              {
--                if (this.field_145945_j[i] != null && this.field_145945_j[i].getItem() == Items.potionitem)
-+                if (this.field_145945_j[i] != null && this.field_145945_j[i].getItem() instanceof ItemPotion)
+-                if (this.field_145945_j[i] != null && this.field_145945_j[i].func_77973_b() == Items.field_151068_bn)
++                if (this.field_145945_j[i] != null && this.field_145945_j[i].func_77973_b() instanceof ItemPotion)
                  {
-                     int j = this.field_145945_j[i].getItemDamage();
+                     int j = this.field_145945_j[i].func_77960_j();
                      int k = this.func_145936_c(j, itemstack);
-@@ -167,7 +169,7 @@
+@@ -164,9 +166,9 @@
+                 }
+             }
  
-             if (itemstack.getItem().hasContainerItem())
+-            if (itemstack.func_77973_b().func_77634_r())
++            if (itemstack.func_77973_b().hasContainerItem(itemstack))
              {
--                this.field_145945_j[3] = new ItemStack(itemstack.getItem().getContainerItem());
-+                this.field_145945_j[3] = itemstack.getItem().getContainerItem(itemstack);
+-                this.field_145945_j[3] = new ItemStack(itemstack.func_77973_b().func_77668_q());
++                this.field_145945_j[3] = itemstack.func_77973_b().getContainerItem(itemstack);
              }
              else
              {
-@@ -178,6 +180,7 @@
+@@ -177,6 +179,7 @@
                      this.field_145945_j[3] = null;
                  }
              }
@@ -44,12 +47,12 @@
          }
      }
  
-@@ -300,7 +303,7 @@
-     // JAVADOC METHOD $$ func_94041_b
-     public boolean isItemValidForSlot(int par1, ItemStack par2ItemStack)
+@@ -292,7 +295,7 @@
+ 
+     public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_)
      {
--        return par1 == 3 ? par2ItemStack.getItem().func_150892_m(par2ItemStack) : par2ItemStack.getItem() == Items.potionitem || par2ItemStack.getItem() == Items.glass_bottle;
-+        return par1 == 3 ? par2ItemStack.getItem().func_150892_m(par2ItemStack) : par2ItemStack.getItem() instanceof ItemPotion || par2ItemStack.getItem() == Items.glass_bottle;
+-        return p_94041_1_ == 3 ? p_94041_2_.func_77973_b().func_150892_m(p_94041_2_) : p_94041_2_.func_77973_b() == Items.field_151068_bn || p_94041_2_.func_77973_b() == Items.field_151069_bo;
++        return p_94041_1_ == 3 ? p_94041_2_.func_77973_b().func_150892_m(p_94041_2_) : p_94041_2_.func_77973_b() instanceof ItemPotion || p_94041_2_.func_77973_b() == Items.field_151069_bo;
      }
  
      @SideOnly(Side.CLIENT)

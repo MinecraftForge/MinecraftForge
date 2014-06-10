@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/stats/StatList.java
 +++ ../src-work/minecraft/net/minecraft/stats/StatList.java
-@@ -118,7 +118,7 @@
+@@ -94,7 +94,7 @@
  
              if (item != null)
              {
 -                int i = Item.func_150891_b(item);
 +                int i = Item.func_150891_b(item); //TODO: Hook FML's stat change event and re-assign these
-                 objectCraftStats[i] = (new StatCrafting("stat.craftItem." + i, new ChatComponentTranslation("stat.craftItem", new Object[] {(new ItemStack(item)).func_151000_E()}), item)).registerStat();
+                 field_75928_D[i] = (new StatCrafting("stat.craftItem." + i, new ChatComponentTranslation("stat.craftItem", new Object[] {(new ItemStack(item)).func_151000_E()}), item)).func_75971_g();
              }
          }
-@@ -136,7 +136,7 @@
+@@ -112,7 +112,7 @@
  
              if (Item.func_150898_a(block) != null)
              {
@@ -18,21 +18,21 @@
  
                  if (block.func_149652_G())
                  {
-@@ -159,7 +159,7 @@
+@@ -135,7 +135,7 @@
  
              if (item != null)
              {
 -                int i = Item.func_150891_b(item);
 +                int i = Item.func_150891_b(item); //TODO: Hook FML's stat change event and re-assign these
-                 objectUseStats[i] = (new StatCrafting("stat.useItem." + i, new ChatComponentTranslation("stat.useItem", new Object[] {(new ItemStack(item)).func_151000_E()}), item)).registerStat();
+                 field_75929_E[i] = (new StatCrafting("stat.useItem." + i, new ChatComponentTranslation("stat.useItem", new Object[] {(new ItemStack(item)).func_151000_E()}), item)).func_75971_g();
  
                  if (!(item instanceof ItemBlock))
-@@ -182,7 +182,7 @@
+@@ -158,7 +158,7 @@
  
              if (item != null)
              {
 -                int i = Item.func_150891_b(item);
 +                int i = Item.func_150891_b(item); //TODO: Hook FML's stat change event and re-assign these
  
-                 if (item.isDamageable())
+                 if (item.func_77645_m())
                  {

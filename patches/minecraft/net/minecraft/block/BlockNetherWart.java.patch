@@ -25,25 +25,22 @@
      }
  
      public void func_149674_a(World p_149674_1_, int p_149674_2_, int p_149674_3_, int p_149674_4_, Random p_149674_5_)
-@@ -62,6 +64,8 @@
- 
-     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
-     {
-+        super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
-+        /*
-         if (!p_149690_1_.isRemote)
-         {
-             int j1 = 1;
-@@ -81,6 +85,7 @@
-                 this.func_149642_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(Items.nether_wart));
-             }
-         }
-+        */
+@@ -60,9 +62,12 @@
+         return 6;
      }
  
-     public Item func_149650_a(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
++    @SuppressWarnings("unused")
+     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
+     {
+-        if (!p_149690_1_.field_72995_K)
++        super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
++        
++        if (false && !p_149690_1_.field_72995_K)
+         {
+             int j1 = 1;
+ 
 @@ -109,4 +114,23 @@
-             this.field_149883_a[i] = p_149651_1_.registerIcon(this.func_149641_N() + "_stage_" + i);
+             this.field_149883_a[i] = p_149651_1_.func_94245_a(this.func_149641_N() + "_stage_" + i);
          }
      }
 +
@@ -55,12 +52,12 @@
 +
 +        if (metadata >= 3)
 +        {
-+            count = 2 + world.rand.nextInt(3) + (fortune > 0 ? world.rand.nextInt(fortune + 1) : 0);
++            count = 2 + world.field_73012_v.nextInt(3) + (fortune > 0 ? world.field_73012_v.nextInt(fortune + 1) : 0);
 +        }
 +
 +        for (int i = 0; i < count; i++)
 +        {
-+            ret.add(new ItemStack(Items.nether_wart));
++            ret.add(new ItemStack(Items.field_151075_bm));
 +        }
 +
 +        return ret;

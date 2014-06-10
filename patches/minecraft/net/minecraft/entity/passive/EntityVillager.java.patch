@@ -1,11 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/EntityVillager.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntityVillager.java
-@@ -189,7 +189,7 @@
-         ItemStack itemstack = par1EntityPlayer.inventory.getCurrentItem();
-         boolean flag = itemstack != null && itemstack.getItem() == Items.spawn_egg;
+@@ -180,7 +180,7 @@
+         ItemStack itemstack = p_70085_1_.field_71071_by.func_70448_g();
+         boolean flag = itemstack != null && itemstack.func_77973_b() == Items.field_151063_bx;
  
--        if (!flag && this.isEntityAlive() && !this.isTrading() && !this.isChild())
-+        if (!flag && this.isEntityAlive() && !this.isTrading() && !this.isChild() && !par1EntityPlayer.isSneaking())
+-        if (!flag && this.func_70089_S() && !this.func_70940_q() && !this.func_70631_g_())
++        if (!flag && this.func_70089_S() && !this.func_70940_q() && !this.func_70631_g_() && !p_70085_1_.func_70093_af())
          {
-             if (!this.worldObj.isRemote)
+             if (!this.field_70170_p.field_72995_K)
              {

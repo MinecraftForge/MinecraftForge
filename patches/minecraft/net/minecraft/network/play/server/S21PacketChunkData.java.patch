@@ -17,7 +17,7 @@
      public S21PacketChunkData() {}
  
 @@ -35,17 +37,22 @@
-         this.field_149282_b = p_i45196_1_.zPosition;
+         this.field_149282_b = p_i45196_1_.field_76647_h;
          this.field_149279_g = p_i45196_2_;
          S21PacketChunkData.Extracted extracted = func_149269_a(p_i45196_1_, p_i45196_2_, p_i45196_3_);
 -        Deflater deflater = new Deflater(-1);

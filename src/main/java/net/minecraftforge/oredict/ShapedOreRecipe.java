@@ -2,6 +2,7 @@ package net.minecraftforge.oredict;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -209,7 +210,7 @@ public class ShapedOreRecipe implements IRecipe
 
                 if (target instanceof ItemStack)
                 {
-                    if (!checkItemEquals((ItemStack)target, slot))
+                    if (!OreDictionary.itemMatches((ItemStack)target, slot, false))
                     {
                         return false;
                     }
@@ -218,9 +219,10 @@ public class ShapedOreRecipe implements IRecipe
                 {
                     boolean matched = false;
 
-                    for (ItemStack item : (ArrayList<ItemStack>)target)
+                    Iterator<ItemStack> itr = ((ArrayList<ItemStack>)target).iterator();
+                    while (itr.hasNext() && !matched)
                     {
-                        matched = matched || checkItemEquals(item, slot);
+                        matched = OreDictionary.itemMatches(itr.next(), slot, false);
                     }
 
                     if (!matched)
@@ -236,15 +238,6 @@ public class ShapedOreRecipe implements IRecipe
         }
 
         return true;
-    }
-
-    private boolean checkItemEquals(ItemStack target, ItemStack input)
-    {
-        if (input == null && target != null || input != null && target == null)
-        {
-            return false;
-        }
-        return (target.getItem() == input.getItem() && (target.getItemDamage() == OreDictionary.WILDCARD_VALUE|| target.getItemDamage() == input.getItemDamage()));
     }
 
     public ShapedOreRecipe setMirrored(boolean mirror)

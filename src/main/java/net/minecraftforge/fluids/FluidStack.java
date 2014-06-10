@@ -16,10 +16,8 @@ import net.minecraft.nbt.NBTTagCompound;
  * @author King Lemming, SirSengir (LiquidStack)
  *
  */
-@SuppressWarnings("unused")
 public class FluidStack
 {
-    /*
     public int fluidID;
     public int amount;
     public NBTTagCompound tag;
@@ -54,7 +52,7 @@ public class FluidStack
     /**
      * This provides a safe method for retrieving a FluidStack - if the Fluid is invalid, the stack
      * will return as null.
-     * /
+     */
     public static FluidStack loadFluidStackFromNBT(NBTTagCompound nbt)
     {
         if (nbt == null)
@@ -104,7 +102,7 @@ public class FluidStack
 
     /**
      * @return A copy of this FluidStack
-     * /
+     */
     public FluidStack copy()
     {
         return new FluidStack(fluidID, amount, tag);
@@ -116,7 +114,7 @@ public class FluidStack
      * @param other
      *            The FluidStack for comparison
      * @return true if the Fluids (IDs and NBT Tags) are the same
-     * /
+     */
     public boolean isFluidEqual(FluidStack other)
     {
         return other != null && fluidID == other.fluidID && isFluidStackTagEqual(other);
@@ -129,7 +127,7 @@ public class FluidStack
 
     /**
      * Determines if the NBT Tags are equal. Useful if the FluidIDs are known to be equal.
-     * /
+     */
     public static boolean areFluidStackTagsEqual(FluidStack stack1, FluidStack stack2)
     {
         return stack1 == null && stack2 == null ? true : stack1 == null || stack2 == null ? false : stack1.isFluidStackTagEqual(stack2);
@@ -140,7 +138,7 @@ public class FluidStack
      *
      * @param other
      * @return true if this FluidStack contains the other FluidStack (same fluid and >= amount)
-     * /
+     */
     public boolean containsFluid(FluidStack other)
     {
         return isFluidEqual(other) && amount >= other.amount;
@@ -152,7 +150,7 @@ public class FluidStack
      * @param other
      *            - the FluidStack for comparison
      * @return true if the two FluidStacks are exactly the same
-     * /
+     */
     public boolean isFluidStackIdentical(FluidStack other)
     {
         return isFluidEqual(other) && amount == other.amount;
@@ -165,7 +163,7 @@ public class FluidStack
      * @param other
      *            The ItemStack for comparison
      * @return true if the Fluids (IDs and NBT Tags) are the same
-     * /
+     */
     public boolean isFluidEqual(ItemStack other)
     {
         if (other == null)
@@ -191,7 +189,7 @@ public class FluidStack
      * Default equality comparison for a FluidStack. Same functionality as isFluidEqual().
      *
      * This is included for use in data structures.
-     * /
+     */
     @Override
     public final boolean equals(Object o)
     {
@@ -202,5 +200,4 @@ public class FluidStack
 
         return isFluidEqual((FluidStack) o);
     }
-    */
 }

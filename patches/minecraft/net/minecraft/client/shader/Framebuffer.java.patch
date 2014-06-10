@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/net/minecraft/client/shader/Framebuffer.java
++++ ../src-work/minecraft/net/minecraft/client/shader/Framebuffer.java
+@@ -6,6 +6,9 @@
+ import net.minecraft.client.renderer.OpenGlHelper;
+ import net.minecraft.client.renderer.Tessellator;
+ import net.minecraft.client.renderer.texture.TextureUtil;
++import net.minecraftforge.client.MinecraftForgeClient;
++import static org.lwjgl.opengl.EXTPackedDepthStencil.*;
++import static org.lwjgl.opengl.EXTFramebufferObject.*;
+ import org.lwjgl.opengl.EXTFramebufferObject;
+ import org.lwjgl.opengl.GL11;
+ 
+@@ -118,8 +121,17 @@
+             if (this.field_147619_e)
+             {
+                 EXTFramebufferObject.glBindRenderbufferEXT(36161, this.field_147624_h);
++                if (MinecraftForgeClient.getStencilBits() == 0)
++                {
+                 EXTFramebufferObject.glRenderbufferStorageEXT(36161, 33190, this.field_147622_a, this.field_147620_b);
+                 EXTFramebufferObject.glFramebufferRenderbufferEXT(36160, 36096, 36161, this.field_147624_h);
++                }
++                else
++                {
++                    EXTFramebufferObject.glRenderbufferStorageEXT(36161, GL_DEPTH24_STENCIL8_EXT, this.field_147622_a, this.field_147620_b);
++                    EXTFramebufferObject.glFramebufferRenderbufferEXT(36160, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, this.field_147624_h);
++                    EXTFramebufferObject.glFramebufferRenderbufferEXT(36160, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, this.field_147624_h);
++                }
+             }
+ 
+             this.func_147614_f();

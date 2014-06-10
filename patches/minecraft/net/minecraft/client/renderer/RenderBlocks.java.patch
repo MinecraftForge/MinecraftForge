@@ -12,8 +12,8 @@
 @@ -336,9 +338,9 @@
      public boolean func_147773_v(Block p_147773_1_, int p_147773_2_, int p_147773_3_, int p_147773_4_)
      {
-         Tessellator tessellator = Tessellator.instance;
--        int l = this.field_147845_a.getBlockMetadata(p_147773_2_, p_147773_3_, p_147773_4_);
+         Tessellator tessellator = Tessellator.field_78398_a;
+-        int l = this.field_147845_a.func_72805_g(p_147773_2_, p_147773_3_, p_147773_4_);
 -        int i1 = BlockBed.func_149895_l(l);
 -        boolean flag = BlockBed.func_149975_b(l);
 +        Block bed = this.field_147845_a.func_147439_a(p_147773_2_, p_147773_3_, p_147773_4_);
@@ -23,27 +23,27 @@
          float f1 = 1.0F;
          float f2 = 0.8F;
 @@ -347,6 +349,7 @@
-         tessellator.setBrightness(j1);
-         tessellator.setColorOpaque_F(f, f, f);
+         tessellator.func_78380_c(j1);
+         tessellator.func_78386_a(f, f, f);
          IIcon iicon = this.func_147793_a(p_147773_1_, this.field_147845_a, p_147773_2_, p_147773_3_, p_147773_4_, 0);
 +        if (func_147744_b()) iicon = field_147840_d; //BugFix Proper breaking texture on underside
-         double d0 = (double)iicon.getMinU();
-         double d1 = (double)iicon.getMaxU();
-         double d2 = (double)iicon.getMinV();
+         double d0 = (double)iicon.func_94209_e();
+         double d1 = (double)iicon.func_94212_f();
+         double d2 = (double)iicon.func_94206_g();
 @@ -363,6 +366,7 @@
-         tessellator.setBrightness(p_147773_1_.func_149677_c(this.field_147845_a, p_147773_2_, p_147773_3_ + 1, p_147773_4_));
-         tessellator.setColorOpaque_F(f1, f1, f1);
+         tessellator.func_78380_c(p_147773_1_.func_149677_c(this.field_147845_a, p_147773_2_, p_147773_3_ + 1, p_147773_4_));
+         tessellator.func_78386_a(f1, f1, f1);
          iicon = this.func_147793_a(p_147773_1_, this.field_147845_a, p_147773_2_, p_147773_3_, p_147773_4_, 1);
 +        if (func_147744_b()) iicon = field_147840_d; //BugFix Proper breaking texture on underside
-         d0 = (double)iicon.getMinU();
-         d1 = (double)iicon.getMaxU();
-         d2 = (double)iicon.getMinV();
+         d0 = (double)iicon.func_94209_e();
+         d1 = (double)iicon.func_94212_f();
+         d2 = (double)iicon.func_94206_g();
 @@ -2037,7 +2041,7 @@
-         double d9;
          double d10;
+         double d11;
  
--        if (!World.func_147466_a(this.field_147845_a, p_147801_2_, p_147801_3_ - 1, p_147801_4_) && !Blocks.fire.func_149844_e(this.field_147845_a, p_147801_2_, p_147801_3_ - 1, p_147801_4_))
-+        if (!World.func_147466_a(this.field_147845_a, p_147801_2_, p_147801_3_ - 1, p_147801_4_) && !Blocks.fire.canCatchFire(this.field_147845_a, p_147801_2_, p_147801_3_ - 1, p_147801_4_, UP))
+-        if (!World.func_147466_a(this.field_147845_a, p_147801_2_, p_147801_3_ - 1, p_147801_4_) && !Blocks.field_150480_ab.func_149844_e(this.field_147845_a, p_147801_2_, p_147801_3_ - 1, p_147801_4_))
++        if (!World.func_147466_a(this.field_147845_a, p_147801_2_, p_147801_3_ - 1, p_147801_4_) && !Blocks.field_150480_ab.canCatchFire(this.field_147845_a, p_147801_2_, p_147801_3_ - 1, p_147801_4_, UP))
          {
              float f2 = 0.2F;
              float f1 = 0.0625F;
@@ -51,44 +51,44 @@
                  d0 = d5;
              }
  
--            if (Blocks.fire.func_149844_e(this.field_147845_a, p_147801_2_ - 1, p_147801_3_, p_147801_4_))
-+            if (Blocks.fire.canCatchFire(this.field_147845_a, p_147801_2_ - 1, p_147801_3_, p_147801_4_, EAST))
+-            if (Blocks.field_150480_ab.func_149844_e(this.field_147845_a, p_147801_2_ - 1, p_147801_3_, p_147801_4_))
++            if (Blocks.field_150480_ab.canCatchFire(this.field_147845_a, p_147801_2_ - 1, p_147801_3_, p_147801_4_, EAST))
              {
-                 tessellator.addVertexWithUV((double)((float)p_147801_2_ + f2), (double)((float)p_147801_3_ + f + f1), (double)(p_147801_4_ + 1), d2, d1);
-                 tessellator.addVertexWithUV((double)(p_147801_2_ + 0), (double)((float)(p_147801_3_ + 0) + f1), (double)(p_147801_4_ + 1), d2, d3);
+                 tessellator.func_78374_a((double)((float)p_147801_2_ + f2), (double)((float)p_147801_3_ + f + f1), (double)(p_147801_4_ + 1), d2, d1);
+                 tessellator.func_78374_a((double)(p_147801_2_ + 0), (double)((float)(p_147801_3_ + 0) + f1), (double)(p_147801_4_ + 1), d2, d3);
 @@ -2069,7 +2073,7 @@
-                 tessellator.addVertexWithUV((double)((float)p_147801_2_ + f2), (double)((float)p_147801_3_ + f + f1), (double)(p_147801_4_ + 1), d2, d1);
+                 tessellator.func_78374_a((double)((float)p_147801_2_ + f2), (double)((float)p_147801_3_ + f + f1), (double)(p_147801_4_ + 1), d2, d1);
              }
  
--            if (Blocks.fire.func_149844_e(this.field_147845_a, p_147801_2_ + 1, p_147801_3_, p_147801_4_))
-+            if (Blocks.fire.canCatchFire(this.field_147845_a, p_147801_2_ + 1, p_147801_3_, p_147801_4_, WEST))
+-            if (Blocks.field_150480_ab.func_149844_e(this.field_147845_a, p_147801_2_ + 1, p_147801_3_, p_147801_4_))
++            if (Blocks.field_150480_ab.canCatchFire(this.field_147845_a, p_147801_2_ + 1, p_147801_3_, p_147801_4_, WEST))
              {
-                 tessellator.addVertexWithUV((double)((float)(p_147801_2_ + 1) - f2), (double)((float)p_147801_3_ + f + f1), (double)(p_147801_4_ + 0), d0, d1);
-                 tessellator.addVertexWithUV((double)(p_147801_2_ + 1 - 0), (double)((float)(p_147801_3_ + 0) + f1), (double)(p_147801_4_ + 0), d0, d3);
+                 tessellator.func_78374_a((double)((float)(p_147801_2_ + 1) - f2), (double)((float)p_147801_3_ + f + f1), (double)(p_147801_4_ + 0), d0, d1);
+                 tessellator.func_78374_a((double)(p_147801_2_ + 1 - 0), (double)((float)(p_147801_3_ + 0) + f1), (double)(p_147801_4_ + 0), d0, d3);
 @@ -2081,7 +2085,7 @@
-                 tessellator.addVertexWithUV((double)((float)(p_147801_2_ + 1) - f2), (double)((float)p_147801_3_ + f + f1), (double)(p_147801_4_ + 0), d0, d1);
+                 tessellator.func_78374_a((double)((float)(p_147801_2_ + 1) - f2), (double)((float)p_147801_3_ + f + f1), (double)(p_147801_4_ + 0), d0, d1);
              }
  
--            if (Blocks.fire.func_149844_e(this.field_147845_a, p_147801_2_, p_147801_3_, p_147801_4_ - 1))
-+            if (Blocks.fire.canCatchFire(this.field_147845_a, p_147801_2_, p_147801_3_, p_147801_4_ - 1, SOUTH))
+-            if (Blocks.field_150480_ab.func_149844_e(this.field_147845_a, p_147801_2_, p_147801_3_, p_147801_4_ - 1))
++            if (Blocks.field_150480_ab.canCatchFire(this.field_147845_a, p_147801_2_, p_147801_3_, p_147801_4_ - 1, SOUTH))
              {
-                 tessellator.addVertexWithUV((double)(p_147801_2_ + 0), (double)((float)p_147801_3_ + f + f1), (double)((float)p_147801_4_ + f2), d2, d1);
-                 tessellator.addVertexWithUV((double)(p_147801_2_ + 0), (double)((float)(p_147801_3_ + 0) + f1), (double)(p_147801_4_ + 0), d2, d3);
+                 tessellator.func_78374_a((double)(p_147801_2_ + 0), (double)((float)p_147801_3_ + f + f1), (double)((float)p_147801_4_ + f2), d2, d1);
+                 tessellator.func_78374_a((double)(p_147801_2_ + 0), (double)((float)(p_147801_3_ + 0) + f1), (double)(p_147801_4_ + 0), d2, d3);
 @@ -2093,7 +2097,7 @@
-                 tessellator.addVertexWithUV((double)(p_147801_2_ + 0), (double)((float)p_147801_3_ + f + f1), (double)((float)p_147801_4_ + f2), d2, d1);
+                 tessellator.func_78374_a((double)(p_147801_2_ + 0), (double)((float)p_147801_3_ + f + f1), (double)((float)p_147801_4_ + f2), d2, d1);
              }
  
--            if (Blocks.fire.func_149844_e(this.field_147845_a, p_147801_2_, p_147801_3_, p_147801_4_ + 1))
-+            if (Blocks.fire.canCatchFire(this.field_147845_a, p_147801_2_, p_147801_3_, p_147801_4_ + 1, NORTH))
+-            if (Blocks.field_150480_ab.func_149844_e(this.field_147845_a, p_147801_2_, p_147801_3_, p_147801_4_ + 1))
++            if (Blocks.field_150480_ab.canCatchFire(this.field_147845_a, p_147801_2_, p_147801_3_, p_147801_4_ + 1, NORTH))
              {
-                 tessellator.addVertexWithUV((double)(p_147801_2_ + 1), (double)((float)p_147801_3_ + f + f1), (double)((float)(p_147801_4_ + 1) - f2), d0, d1);
-                 tessellator.addVertexWithUV((double)(p_147801_2_ + 1), (double)((float)(p_147801_3_ + 0) + f1), (double)(p_147801_4_ + 1 - 0), d0, d3);
+                 tessellator.func_78374_a((double)(p_147801_2_ + 1), (double)((float)p_147801_3_ + f + f1), (double)((float)(p_147801_4_ + 1) - f2), d0, d1);
+                 tessellator.func_78374_a((double)(p_147801_2_ + 1), (double)((float)(p_147801_3_ + 0) + f1), (double)(p_147801_4_ + 1 - 0), d0, d3);
 @@ -2105,7 +2109,7 @@
-                 tessellator.addVertexWithUV((double)(p_147801_2_ + 1), (double)((float)p_147801_3_ + f + f1), (double)((float)(p_147801_4_ + 1) - f2), d0, d1);
+                 tessellator.func_78374_a((double)(p_147801_2_ + 1), (double)((float)p_147801_3_ + f + f1), (double)((float)(p_147801_4_ + 1) - f2), d0, d1);
              }
  
--            if (Blocks.fire.func_149844_e(this.field_147845_a, p_147801_2_, p_147801_3_ + 1, p_147801_4_))
-+            if (Blocks.fire.canCatchFire(this.field_147845_a, p_147801_2_, p_147801_3_ + 1, p_147801_4_, DOWN))
+-            if (Blocks.field_150480_ab.func_149844_e(this.field_147845_a, p_147801_2_, p_147801_3_ + 1, p_147801_4_))
++            if (Blocks.field_150480_ab.canCatchFire(this.field_147845_a, p_147801_2_, p_147801_3_ + 1, p_147801_4_, DOWN))
              {
                  d5 = (double)p_147801_2_ + 0.5D + 0.5D;
                  d6 = (double)p_147801_2_ + 0.5D - 0.5D;
@@ -107,3 +107,22 @@
          boolean flag4 = p_147767_1_.func_149646_a(this.field_147845_a, p_147767_2_, p_147767_3_ + 1, p_147767_4_, 1);
          boolean flag5 = p_147767_1_.func_149646_a(this.field_147845_a, p_147767_2_, p_147767_3_ - 1, p_147767_4_, 0);
          double d19 = 0.01D;
+@@ -8218,4 +8222,18 @@
+ 
+         return (IIcon)p_147758_1_;
+     }
++
++    /*==================================== FORGE START ===========================================*/
++    private static RenderBlocks instance;
++    /**
++     * Returns a single lazy loaded instance of RenderBlocks, for use in mods who 
++     * don't care about the interaction of other objects on the current state of the RenderBlocks they are using.
++     * @return A global instance of RenderBlocks
++     */
++    public static RenderBlocks getInstance()
++    {
++        if (instance == null) instance = new RenderBlocks();
++        return instance;
++    }
++    /*==================================== FORGE END =============================================*/
+ }

@@ -1,0 +1,50 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockIce.java
++++ ../src-work/minecraft/net/minecraft/block/BlockIce.java
+@@ -2,6 +2,7 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++import java.util.ArrayList;
+ import java.util.Random;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.creativetab.CreativeTabs;
+@@ -13,6 +14,7 @@
+ import net.minecraft.world.EnumSkyBlock;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import net.minecraftforge.event.ForgeEventFactory;
+ 
+ public class BlockIce extends BlockBreakable
+ {
+@@ -43,14 +45,16 @@
+         p_149636_2_.func_71064_a(StatList.field_75934_C[Block.func_149682_b(this)], 1);
+         p_149636_2_.func_71020_j(0.025F);
+ 
+-        if (this.func_149700_E() && EnchantmentHelper.func_77502_d(p_149636_2_))
++        if (this.canSilkHarvest(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_) && EnchantmentHelper.func_77502_d(p_149636_2_))
+         {
++            ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+             ItemStack itemstack = this.func_149644_j(p_149636_6_);
+ 
+-            if (itemstack != null)
+-            {
+-                this.func_149642_a(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, itemstack);
+-            }
++            if (itemstack != null) items.add(itemstack);
++
++            ForgeEventFactory.fireBlockHarvesting(items, p_149636_1_, this, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_, 0, 1.0f, true, p_149636_2_);
++            for (ItemStack is : items)
++                this.func_149642_a(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, is);
+         }
+         else
+         {
+@@ -61,7 +65,9 @@
+             }
+ 
+             int i1 = EnchantmentHelper.func_77517_e(p_149636_2_);
++            harvesters.set(p_149636_2_);
+             this.func_149697_b(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_, i1);
++            harvesters.set(null);
+             Material material = p_149636_1_.func_147439_a(p_149636_3_, p_149636_4_ - 1, p_149636_5_).func_149688_o();
+ 
+             if (material.func_76230_c() || material.func_76224_d())

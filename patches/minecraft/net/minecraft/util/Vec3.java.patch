@@ -1,0 +1,35 @@
+--- ../src-base/minecraft/net/minecraft/util/Vec3.java
++++ ../src-work/minecraft/net/minecraft/util/Vec3.java
+@@ -1,8 +1,5 @@
+ package net.minecraft.util;
+ 
+-import cpw.mods.fml.relauncher.Side;
+-import cpw.mods.fml.relauncher.SideOnly;
+-
+ public class Vec3
+ {
+     public static final Vec3Pool field_82592_a = new Vec3Pool(-1, -1);
+@@ -48,7 +45,6 @@
+         return this;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public Vec3 func_72444_a(Vec3 p_72444_1_)
+     {
+         return this.field_72447_d.func_72345_a(p_72444_1_.field_72450_a - this.field_72450_a, p_72444_1_.field_72448_b - this.field_72448_b, p_72444_1_.field_72449_c - this.field_72449_c);
+@@ -65,7 +61,6 @@
+         return this.field_72450_a * p_72430_1_.field_72450_a + this.field_72448_b * p_72430_1_.field_72448_b + this.field_72449_c * p_72430_1_.field_72449_c;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public Vec3 func_72431_c(Vec3 p_72431_1_)
+     {
+         return this.field_72447_d.func_72345_a(this.field_72448_b * p_72431_1_.field_72449_c - this.field_72449_c * p_72431_1_.field_72448_b, this.field_72449_c * p_72431_1_.field_72450_a - this.field_72450_a * p_72431_1_.field_72449_c, this.field_72450_a * p_72431_1_.field_72448_b - this.field_72448_b * p_72431_1_.field_72450_a);
+@@ -185,7 +180,6 @@
+         this.field_72449_c = d2;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_72446_c(float p_72446_1_)
+     {
+         float f1 = MathHelper.func_76134_b(p_72446_1_);

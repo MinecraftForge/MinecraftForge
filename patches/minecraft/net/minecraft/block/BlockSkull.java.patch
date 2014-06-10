@@ -16,9 +16,9 @@
 -
      public void func_149681_a(World p_149681_1_, int p_149681_2_, int p_149681_3_, int p_149681_4_, int p_149681_5_, EntityPlayer p_149681_6_)
      {
-         if (p_149681_6_.capabilities.isCreativeMode)
+         if (p_149681_6_.field_71075_bZ.field_75098_d)
 @@ -118,29 +117,38 @@
-             p_149681_1_.setBlockMetadataWithNotify(p_149681_2_, p_149681_3_, p_149681_4_, p_149681_5_, 4);
+             p_149681_1_.func_72921_c(p_149681_2_, p_149681_3_, p_149681_4_, p_149681_5_, 4);
          }
  
 +        this.func_149697_b(p_149681_1_, p_149681_2_, p_149681_3_, p_149681_4_, p_149681_5_, 0);
@@ -28,7 +28,7 @@
  
      public void func_149749_a(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_)
      {
--        if (!p_149749_1_.isRemote)
+-        if (!p_149749_1_.field_72995_K)
 +        super.func_149749_a(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, p_149749_5_, p_149749_6_);
 +    }
 +
@@ -39,15 +39,15 @@
          {
              if ((p_149749_6_ & 8) == 0)
              {
-                 ItemStack itemstack = new ItemStack(Items.skull, 1, this.func_149643_k(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_));
+                 ItemStack itemstack = new ItemStack(Items.field_151144_bL, 1, this.func_149643_k(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_));
                  TileEntitySkull tileentityskull = (TileEntitySkull)p_149749_1_.func_147438_o(p_149749_2_, p_149749_3_, p_149749_4_);
  
 +                if (tileentityskull == null) return ret;
 +
                  if (tileentityskull.func_145904_a() == 3 && tileentityskull.func_145907_c() != null && tileentityskull.func_145907_c().length() > 0)
                  {
-                     itemstack.setTagCompound(new NBTTagCompound());
-                     itemstack.getTagCompound().setString("SkullOwner", tileentityskull.func_145907_c());
+                     itemstack.func_77982_d(new NBTTagCompound());
+                     itemstack.func_77978_p().func_74778_a("SkullOwner", tileentityskull.func_145907_c());
                  }
  
 -                this.func_149642_a(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, itemstack);

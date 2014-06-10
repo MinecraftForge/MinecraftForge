@@ -11,15 +11,15 @@
  
  @SideOnly(Side.CLIENT)
  public class RenderSnowMan extends RenderLiving
-@@ -39,7 +43,10 @@
+@@ -38,7 +42,10 @@
              GL11.glPushMatrix();
-             this.snowmanModel.head.postRender(0.0625F);
+             this.field_77094_a.field_78195_c.func_78794_c(0.0625F);
  
--            if (RenderBlocks.func_147739_a(Block.func_149634_a(itemstack.getItem()).func_149645_b()))
+-            if (RenderBlocks.func_147739_a(Block.func_149634_a(itemstack.func_77973_b()).func_149645_b()))
 +            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack, EQUIPPED);
 +            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, itemstack, BLOCK_3D));
 +
-+            if (is3D || RenderBlocks.func_147739_a(Block.func_149634_a(itemstack.getItem()).func_149645_b()))
++            if (is3D || RenderBlocks.func_147739_a(Block.func_149634_a(itemstack.func_77973_b()).func_149645_b()))
              {
                  float f1 = 0.625F;
                  GL11.glTranslatef(0.0F, -0.34375F, 0.0F);

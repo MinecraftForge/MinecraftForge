@@ -10,7 +10,7 @@
  import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 @@ -53,6 +54,15 @@
          {
-             this.theBiomeDecorator.treesPerChunk = -999;
+             this.field_76760_I.field_76832_z = -999;
          }
 +
 +        if (this.field_150632_aF == 1)
@@ -18,7 +18,7 @@
 +            this.flowers.clear();
 +            for (int x = 0; x < BlockFlower.field_149859_a.length; x++)
 +            {
-+                this.addFlower(Blocks.red_flower, x, 10);
++                this.addFlower(Blocks.field_150328_O, x == 1 ? 0 : x, 10);
 +            }
 +        }
      }

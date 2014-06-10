@@ -17,14 +17,14 @@
      public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
      {
          Block block = p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_ - 1, p_149742_4_);
--        return block == this ? true : (block != Blocks.grass && block != Blocks.dirt && block != Blocks.sand ? false : (p_149742_1_.func_147439_a(p_149742_2_ - 1, p_149742_3_ - 1, p_149742_4_).func_149688_o() == Material.field_151586_h ? true : (p_149742_1_.func_147439_a(p_149742_2_ + 1, p_149742_3_ - 1, p_149742_4_).func_149688_o() == Material.field_151586_h ? true : (p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_ - 1, p_149742_4_ - 1).func_149688_o() == Material.field_151586_h ? true : p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_ - 1, p_149742_4_ + 1).func_149688_o() == Material.field_151586_h))));
+-        return block == this ? true : (block != Blocks.field_150349_c && block != Blocks.field_150346_d && block != Blocks.field_150354_m ? false : (p_149742_1_.func_147439_a(p_149742_2_ - 1, p_149742_3_ - 1, p_149742_4_).func_149688_o() == Material.field_151586_h ? true : (p_149742_1_.func_147439_a(p_149742_2_ + 1, p_149742_3_ - 1, p_149742_4_).func_149688_o() == Material.field_151586_h ? true : (p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_ - 1, p_149742_4_ - 1).func_149688_o() == Material.field_151586_h ? true : p_149742_1_.func_147439_a(p_149742_2_, p_149742_3_ - 1, p_149742_4_ + 1).func_149688_o() == Material.field_151586_h))));
 +        return block.canSustainPlant(p_149742_1_, p_149742_2_, p_149742_3_ - 1, p_149742_4_, ForgeDirection.UP, this);
      }
  
      public void func_149695_a(World p_149695_1_, int p_149695_2_, int p_149695_3_, int p_149695_4_, Block p_149695_5_)
 @@ -120,4 +124,22 @@
      {
-         return p_149720_1_.getBiomeGenForCoords(p_149720_2_, p_149720_4_).func_150558_b(p_149720_2_, p_149720_3_, p_149720_4_);
+         return p_149720_1_.func_72807_a(p_149720_2_, p_149720_4_).func_150558_b(p_149720_2_, p_149720_3_, p_149720_4_);
      }
 +
 +    @Override
@@ -42,6 +42,6 @@
 +    @Override
 +    public int getPlantMetadata(IBlockAccess world, int x, int y, int z)
 +    {
-+        return world.getBlockMetadata(x, y, z);
++        return world.func_72805_g(x, y, z);
 +    }
  }

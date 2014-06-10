@@ -7,12 +7,12 @@
 -@SideOnly(Side.CLIENT)
  public class ModelBox
  {
-     // JAVADOC FIELD $$ field_78253_h
-@@ -86,6 +85,7 @@
+     private PositionTextureVertex[] field_78253_h;
+@@ -77,6 +76,7 @@
+         }
      }
  
-     // JAVADOC METHOD $$ func_78245_a
 +    @SideOnly(Side.CLIENT)
-     public void render(Tessellator par1Tessellator, float par2)
+     public void func_78245_a(Tessellator p_78245_1_, float p_78245_2_)
      {
-         for (int i = 0; i < this.quadList.length; ++i)
+         for (int i = 0; i < this.field_78254_i.length; ++i)

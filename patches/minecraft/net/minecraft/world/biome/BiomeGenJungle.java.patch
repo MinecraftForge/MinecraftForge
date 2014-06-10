@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenJungle.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenJungle.java
+@@ -59,7 +59,9 @@
+         super.func_76728_a(p_76728_1_, p_76728_2_, p_76728_3_, p_76728_4_);
+         int k = p_76728_3_ + p_76728_2_.nextInt(16) + 8;
+         int l = p_76728_4_ + p_76728_2_.nextInt(16) + 8;
+-        int i1 = p_76728_2_.nextInt(p_76728_1_.func_72976_f(k, l) * 2);
++        int height = p_76728_1_.func_72976_f(k, l) * 2; //This was the original input for the nextInt below.  But it could == 0, which crashes nextInt
++        if (height < 1) height = 1;
++        int i1 = p_76728_2_.nextInt(height);
+         (new WorldGenMelon()).func_76484_a(p_76728_1_, p_76728_2_, k, i1, l);
+         WorldGenVines worldgenvines = new WorldGenVines();
+ 

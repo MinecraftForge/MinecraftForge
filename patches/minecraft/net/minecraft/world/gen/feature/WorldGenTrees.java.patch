@@ -13,82 +13,82 @@
  
  public class WorldGenTrees extends WorldGenAbstractTree
  {
-@@ -66,7 +68,7 @@
+@@ -62,7 +64,7 @@
                          {
-                             block = par1World.func_147439_a(j1, i1, k1);
+                             block = p_76484_1_.func_147439_a(j1, i1, k1);
  
 -                            if (!this.func_150523_a(block))
-+                            if (!this.isReplaceable(par1World, j1, i1, k1))
++                            if (!this.isReplaceable(p_76484_1_, j1, i1, k1))
                              {
                                  flag = false;
                              }
-@@ -87,9 +89,10 @@
+@@ -83,9 +85,10 @@
              {
-                 Block block2 = par1World.func_147439_a(par3, par4 - 1, par5);
+                 Block block2 = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_ - 1, p_76484_5_);
  
--                if ((block2 == Blocks.grass || block2 == Blocks.dirt || block2 == Blocks.farmland) && par4 < 256 - l - 1)
-+                boolean isSoil = block2.canSustainPlant(par1World, par3, par4 - 1, par5, ForgeDirection.UP, (BlockSapling)Blocks.sapling);
-+                if (isSoil && par4 < 256 - l - 1)
+-                if ((block2 == Blocks.field_150349_c || block2 == Blocks.field_150346_d || block2 == Blocks.field_150458_ak) && p_76484_4_ < 256 - l - 1)
++                boolean isSoil = block2.canSustainPlant(p_76484_1_, p_76484_3_, p_76484_4_ - 1, p_76484_5_, ForgeDirection.UP, (BlockSapling)Blocks.field_150345_g);
++                if (isSoil && p_76484_4_ < 256 - l - 1)
                  {
--                    this.func_150515_a(par1World, par3, par4 - 1, par5, Blocks.dirt);
-+                    block2.onPlantGrow(par1World, par3, par4 - 1, par5, par3, par4, par5);
+-                    this.func_150515_a(p_76484_1_, p_76484_3_, p_76484_4_ - 1, p_76484_5_, Blocks.field_150346_d);
++                    block2.onPlantGrow(p_76484_1_, p_76484_3_, p_76484_4_ - 1, p_76484_5_, p_76484_3_, p_76484_4_, p_76484_5_);
                      b0 = 3;
                      byte b1 = 0;
                      int l1;
-@@ -114,7 +117,7 @@
+@@ -110,7 +113,7 @@
                                  {
-                                     Block block1 = par1World.func_147439_a(i2, k1, k2);
+                                     Block block1 = p_76484_1_.func_147439_a(i2, k1, k2);
  
 -                                    if (block1.func_149688_o() == Material.field_151579_a || block1.func_149688_o() == Material.field_151584_j)
-+                                    if (block1.isAir(par1World, i2, k1, k2) || block1.isLeaves(par1World, i2, k1, k2))
++                                    if (block1.isAir(p_76484_1_, i2, k1, k2) || block1.isLeaves(p_76484_1_, i2, k1, k2))
                                      {
-                                         this.func_150516_a(par1World, i2, k1, k2, Blocks.leaves, this.metaLeaves);
+                                         this.func_150516_a(p_76484_1_, i2, k1, k2, Blocks.field_150362_t, this.field_76530_d);
                                      }
-@@ -127,7 +130,7 @@
+@@ -123,7 +126,7 @@
                      {
-                         block = par1World.func_147439_a(par3, par4 + k1, par5);
+                         block = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_ + k1, p_76484_5_);
  
 -                        if (block.func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j)
-+                        if (block.isAir(par1World, par3, par4 + k1, par5) || block.isLeaves(par1World, par3, par4 + k1, par5))
++                        if (block.isAir(p_76484_1_, p_76484_3_, p_76484_4_ + k1, p_76484_5_) || block.isLeaves(p_76484_1_, p_76484_3_, p_76484_4_ + k1, p_76484_5_))
                          {
-                             this.func_150516_a(par1World, par3, par4 + k1, par5, Blocks.log, this.metaWood);
+                             this.func_150516_a(p_76484_1_, p_76484_3_, p_76484_4_ + k1, p_76484_5_, Blocks.field_150364_r, this.field_76532_c);
  
-@@ -167,24 +170,24 @@
+@@ -163,24 +166,24 @@
                              {
-                                 for (j2 = par5 - l1; j2 <= par5 + l1; ++j2)
+                                 for (j2 = p_76484_5_ - l1; j2 <= p_76484_5_ + l1; ++j2)
                                  {
--                                    if (par1World.func_147439_a(i2, k1, j2).func_149688_o() == Material.field_151584_j)
-+                                    if (par1World.func_147439_a(i2, k1, j2).isLeaves(par1World, i2, k1, j2))
+-                                    if (p_76484_1_.func_147439_a(i2, k1, j2).func_149688_o() == Material.field_151584_j)
++                                    if (p_76484_1_.func_147439_a(i2, k1, j2).isLeaves(p_76484_1_, i2, k1, j2))
                                      {
--                                        if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(i2 - 1, k1, j2).func_149688_o() == Material.field_151579_a)
-+                                        if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(i2 - 1, k1, j2).isAir(par1World, i2 - 1, k1, j2))
+-                                        if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(i2 - 1, k1, j2).func_149688_o() == Material.field_151579_a)
++                                        if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(i2 - 1, k1, j2).isAir(p_76484_1_, i2 - 1, k1, j2))
                                          {
-                                             this.growVines(par1World, i2 - 1, k1, j2, 8);
+                                             this.func_76529_b(p_76484_1_, i2 - 1, k1, j2, 8);
                                          }
  
--                                        if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(i2 + 1, k1, j2).func_149688_o() == Material.field_151579_a)
-+                                        if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(i2 + 1, k1, j2).isAir(par1World, i2 + 1, k1, j2))
+-                                        if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(i2 + 1, k1, j2).func_149688_o() == Material.field_151579_a)
++                                        if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(i2 + 1, k1, j2).isAir(p_76484_1_, i2 + 1, k1, j2))
                                          {
-                                             this.growVines(par1World, i2 + 1, k1, j2, 2);
+                                             this.func_76529_b(p_76484_1_, i2 + 1, k1, j2, 2);
                                          }
  
--                                        if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(i2, k1, j2 - 1).func_149688_o() == Material.field_151579_a)
-+                                        if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(i2, k1, j2 - 1).isAir(par1World, i2, k1, j2 - 1))
+-                                        if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(i2, k1, j2 - 1).func_149688_o() == Material.field_151579_a)
++                                        if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(i2, k1, j2 - 1).isAir(p_76484_1_, i2, k1, j2 - 1))
                                          {
-                                             this.growVines(par1World, i2, k1, j2 - 1, 1);
+                                             this.func_76529_b(p_76484_1_, i2, k1, j2 - 1, 1);
                                          }
  
--                                        if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(i2, k1, j2 + 1).func_149688_o() == Material.field_151579_a)
-+                                        if (par2Random.nextInt(4) == 0 && par1World.func_147439_a(i2, k1, j2 + 1).isAir(par1World, i2, k1, j2 + 1))
+-                                        if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(i2, k1, j2 + 1).func_149688_o() == Material.field_151579_a)
++                                        if (p_76484_2_.nextInt(4) == 0 && p_76484_1_.func_147439_a(i2, k1, j2 + 1).isAir(p_76484_1_, i2, k1, j2 + 1))
                                          {
-                                             this.growVines(par1World, i2, k1, j2 + 1, 4);
+                                             this.func_76529_b(p_76484_1_, i2, k1, j2 + 1, 4);
                                          }
-@@ -233,7 +236,7 @@
+@@ -228,7 +231,7 @@
          {
-             --par3;
+             --p_76529_3_;
  
--            if (par1World.func_147439_a(par2, par3, par4).func_149688_o() != Material.field_151579_a || i1 <= 0)
-+            if (par1World.func_147439_a(par2, par3, par4).isAir(par1World, par2, par3, par4) || i1 <= 0)
+-            if (p_76529_1_.func_147439_a(p_76529_2_, p_76529_3_, p_76529_4_).func_149688_o() != Material.field_151579_a || i1 <= 0)
++            if (p_76529_1_.func_147439_a(p_76529_2_, p_76529_3_, p_76529_4_).isAir(p_76529_1_, p_76529_2_, p_76529_3_, p_76529_4_) || i1 <= 0)
              {
                  return;
              }

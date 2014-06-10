@@ -1,0 +1,44 @@
+--- ../src-base/minecraft/net/minecraft/util/WeightedRandom.java
++++ ../src-work/minecraft/net/minecraft/util/WeightedRandom.java
+@@ -27,10 +27,16 @@
+         {
+             throw new IllegalArgumentException();
+         }
+-        else
++        return getItem(p_76273_1_, p_76273_0_.nextInt(p_76273_2_));
++    }
++
++    //Forge: Added to allow custom random implementations, Modder is responsible for making sure the 
++    //'weight' is under the totalWeight of the items.
++    public static WeightedRandom.Item getItem(Collection par1Collection, int weight)
++    {
+         {
+-            int j = p_76273_0_.nextInt(p_76273_2_);
+-            Iterator iterator = p_76273_1_.iterator();
++            int j = weight;
++            Iterator iterator = par1Collection.iterator();
+             WeightedRandom.Item item;
+ 
+             do
+@@ -75,11 +81,17 @@
+         {
+             throw new IllegalArgumentException();
+         }
+-        else
++        return getItem(p_76269_1_, p_76269_0_.nextInt(p_76269_2_));
++    }
++
++    //Forge: Added to allow custom random implementations, Modder is responsible for making sure the 
++    //'weight' is under the totalWeight of the items.
++    public static WeightedRandom.Item getItem(WeightedRandom.Item[] par1ArrayOfWeightedRandomItem, int weight)
++    {
+         {
+-            int j = p_76269_0_.nextInt(p_76269_2_);
+-            WeightedRandom.Item[] aitem = p_76269_1_;
+-            int k = p_76269_1_.length;
++            int j = weight;
++            WeightedRandom.Item[] aitem = par1ArrayOfWeightedRandomItem;
++            int k = par1ArrayOfWeightedRandomItem.length;
+ 
+             for (int l = 0; l < k; ++l)
+             {

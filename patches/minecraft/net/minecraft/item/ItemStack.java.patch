@@ -8,109 +8,114 @@
  
  public final class ItemStack
  {
-@@ -192,7 +193,7 @@
-     // JAVADOC METHOD $$ func_77976_d
-     public int getMaxStackSize()
+@@ -180,7 +181,7 @@
+ 
+     public int func_77976_d()
      {
--        return this.getItem().getItemStackLimit();
-+        return this.getItem().getItemStackLimit(this);
+-        return this.func_77973_b().func_77639_j();
++        return this.func_77973_b().getItemStackLimit(this);
      }
  
-     // JAVADOC METHOD $$ func_77985_e
-@@ -204,7 +205,7 @@
-     // JAVADOC METHOD $$ func_77984_f
-     public boolean isItemStackDamageable()
+     public boolean func_77985_e()
+@@ -190,7 +191,7 @@
+ 
+     public boolean func_77984_f()
      {
--        return this.field_151002_e.getMaxDamage() <= 0 ? false : !this.hasTagCompound() || !this.getTagCompound().getBoolean("Unbreakable");
-+        return this.field_151002_e.getMaxDamage(this) <= 0 ? false : !this.hasTagCompound() || !this.getTagCompound().getBoolean("Unbreakable");
+-        return this.field_151002_e.func_77612_l() <= 0 ? false : !this.func_77942_o() || !this.func_77978_p().func_74767_n("Unbreakable");
++        return this.field_151002_e.getMaxDamage(this) <= 0 ? false : !this.func_77942_o() || !this.func_77978_p().func_74767_n("Unbreakable");
      }
  
-     public boolean getHasSubtypes()
-@@ -215,36 +216,31 @@
-     // JAVADOC METHOD $$ func_77951_h
-     public boolean isItemDamaged()
+     public boolean func_77981_g()
+@@ -200,32 +201,27 @@
+ 
+     public boolean func_77951_h()
      {
--        return this.isItemStackDamageable() && this.itemDamage > 0;
-+        return this.isItemStackDamageable() && getItem().isDamaged(this);
+-        return this.func_77984_f() && this.field_77991_e > 0;
++        return this.func_77984_f() && func_77973_b().isDamaged(this);
      }
  
-     // JAVADOC METHOD $$ func_77952_i
-     public int getItemDamageForDisplay()
+     public int func_77952_i()
      {
--        return this.itemDamage;
-+        return getItem().getDisplayDamage(this);
+-        return this.field_77991_e;
++        return func_77973_b().getDisplayDamage(this);
      }
  
-     // JAVADOC METHOD $$ func_77960_j
-     public int getItemDamage()
+     public int func_77960_j()
      {
--        return this.itemDamage;
-+        return getItem().getDamage(this);
+-        return this.field_77991_e;
++        return func_77973_b().getDamage(this);
      }
  
-     // JAVADOC METHOD $$ func_77964_b
-     public void setItemDamage(int par1)
+     public void func_77964_b(int p_77964_1_)
      {
--        this.itemDamage = par1;
+-        this.field_77991_e = p_77964_1_;
 -
--        if (this.itemDamage < 0)
+-        if (this.field_77991_e < 0)
 -        {
--            this.itemDamage = 0;
+-            this.field_77991_e = 0;
 -        }
-+        getItem().setDamage(this, par1);
++        func_77973_b().setDamage(this, p_77964_1_);
      }
  
-     // JAVADOC METHOD $$ func_77958_k
-     public int getMaxDamage()
+     public int func_77958_k()
      {
--        return this.field_151002_e.getMaxDamage();
-+        return getItem().getMaxDamage(this);
+-        return this.field_151002_e.func_77612_l();
++        return func_77973_b().getMaxDamage(this);
      }
  
-     // JAVADOC METHOD $$ func_96631_a
-@@ -277,8 +273,8 @@
+     public boolean func_96631_a(int p_96631_1_, Random p_96631_2_)
+@@ -257,8 +253,8 @@
                  }
              }
  
--            this.itemDamage += par1;
--            return this.itemDamage > this.getMaxDamage();
-+            setItemDamage(getItemDamage() + par1); //Redirect through Item's callback if applicable.
-+            return getItemDamage() > getMaxDamage();
+-            this.field_77991_e += p_96631_1_;
+-            return this.field_77991_e > this.func_77958_k();
++            func_77964_b(func_77960_j() + p_96631_1_); //Redirect through Item's callback if applicable.
++            return func_77960_j() > func_77958_k();
          }
      }
  
-@@ -339,7 +335,7 @@
+@@ -317,7 +313,7 @@
  
      public boolean func_150998_b(Block p_150998_1_)
      {
 -        return this.field_151002_e.func_150897_b(p_150998_1_);
-+        return getItem().canHarvestBlock(p_150998_1_, this);
++        return func_77973_b().canHarvestBlock(p_150998_1_, this);
      }
  
-     public boolean func_111282_a(EntityPlayer par1EntityPlayer, EntityLivingBase par2EntityLivingBase)
-@@ -653,16 +649,24 @@
+     public boolean func_111282_a(EntityPlayer p_111282_1_, EntityLivingBase p_111282_2_)
+@@ -618,16 +614,24 @@
          {
-             arraylist.add("Durability: " + (this.getMaxDamage() - this.getItemDamageForDisplay()) + " / " + this.getMaxDamage());
+             arraylist.add("Durability: " + (this.func_77958_k() - this.func_77952_i()) + " / " + this.func_77958_k());
          }
-+        ForgeEventFactory.onItemTooltip(this, par1EntityPlayer, arraylist, par2);
++        ForgeEventFactory.onItemTooltip(this, p_82840_1_, arraylist, p_82840_2_);
  
          return arraylist;
      }
  
 +    @Deprecated
      @SideOnly(Side.CLIENT)
-     public boolean hasEffect()
+     public boolean func_77962_s()
      {
--        return this.getItem().hasEffect(this);
+-        return this.func_77973_b().func_77636_d(this);
 +        return hasEffect(0);
      }
  
 +    @SideOnly(Side.CLIENT)
 +    public boolean hasEffect(int pass)
 +    {
-+        return this.getItem().hasEffect(this, pass);
++        return this.func_77973_b().hasEffect(this, pass);
 +    }
 +
-     public EnumRarity getRarity()
+     public EnumRarity func_77953_t()
      {
-         return this.getItem().getRarity(this);
+         return this.func_77973_b().func_77613_e(this);
+@@ -729,7 +733,7 @@
+         }
+         else
+         {
+-            object = this.func_77973_b().func_111205_h();
++            object = this.func_77973_b().getAttributeModifiers(this);
+         }
+ 
+         return (Multimap)object;

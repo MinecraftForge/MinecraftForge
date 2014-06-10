@@ -172,12 +172,10 @@ public class Fluid
         return this.fluidName;
     }
 
-    /*
     public final int getID()
     {
         return FluidRegistry.getFluidID(this.fluidName);
     }
-    */
 
     public final Block getBlock()
     {

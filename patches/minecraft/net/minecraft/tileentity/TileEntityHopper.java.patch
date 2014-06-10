@@ -1,38 +1,38 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityHopper.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityHopper.java
-@@ -402,17 +402,30 @@
+@@ -393,17 +393,30 @@
  
              if (itemstack1 == null)
              {
--                p_145899_0_.setInventorySlotContents(p_145899_2_, p_145899_1_);
+-                p_145899_0_.func_70299_a(p_145899_2_, p_145899_1_);
 -                p_145899_1_ = null;
 +                //Forge: BUGFIX: Again, make things respect max stack sizes.
-+                int max = Math.min(p_145899_1_.getMaxStackSize(), p_145899_0_.getInventoryStackLimit());
-+                if (max >= p_145899_1_.stackSize)
++                int max = Math.min(p_145899_1_.func_77976_d(), p_145899_0_.func_70297_j_());
++                if (max >= p_145899_1_.field_77994_a)
 +                {
-+                    p_145899_0_.setInventorySlotContents(p_145899_2_, p_145899_1_);
++                    p_145899_0_.func_70299_a(p_145899_2_, p_145899_1_);
 +                    p_145899_1_ = null;
 +                }
 +                else
 +                {
-+                    p_145899_0_.setInventorySlotContents(p_145899_2_, p_145899_1_.splitStack(max));
++                    p_145899_0_.func_70299_a(p_145899_2_, p_145899_1_.func_77979_a(max));
 +                }
                  flag = true;
              }
              else if (func_145894_a(itemstack1, p_145899_1_))
              {
--                int k = p_145899_1_.getMaxStackSize() - itemstack1.stackSize;
--                int l = Math.min(p_145899_1_.stackSize, k);
--                p_145899_1_.stackSize -= l;
--                itemstack1.stackSize += l;
+-                int k = p_145899_1_.func_77976_d() - itemstack1.field_77994_a;
+-                int l = Math.min(p_145899_1_.field_77994_a, k);
+-                p_145899_1_.field_77994_a -= l;
+-                itemstack1.field_77994_a += l;
 -                flag = l > 0;
 +                //Forge: BUGFIX: Again, make things respect max stack sizes.
-+                int max = Math.min(p_145899_1_.getMaxStackSize(), p_145899_0_.getInventoryStackLimit());
-+                if (max > itemstack1.stackSize)
++                int max = Math.min(p_145899_1_.func_77976_d(), p_145899_0_.func_70297_j_());
++                if (max > itemstack1.field_77994_a)
 +                {
-+                    int l = Math.min(p_145899_1_.stackSize, max - itemstack1.stackSize);
-+                    p_145899_1_.stackSize -= l;
-+                    itemstack1.stackSize += l;
++                    int l = Math.min(p_145899_1_.field_77994_a, max - itemstack1.field_77994_a);
++                    p_145899_1_.field_77994_a -= l;
++                    itemstack1.field_77994_a += l;
 +                    flag = l > 0;
 +                }
              }

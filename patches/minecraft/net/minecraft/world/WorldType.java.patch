@@ -23,31 +23,31 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  
-@@ -45,6 +53,7 @@
+@@ -35,6 +43,7 @@
  
-     private WorldType(int par1, String par2Str, int par3)
+     private WorldType(int p_i1960_1_, String p_i1960_2_, int p_i1960_3_)
      {
-+        if (par2Str.length() > 16) throw new IllegalArgumentException("World type names must not be longer then 16: " + par2Str.length());
-         this.worldType = par2Str;
-         this.generatorVersion = par3;
-         this.canBeCreated = true;
-@@ -199,8 +208,92 @@
-         return this == FLAT ? random.nextInt(4) != 1 : false;
++        if (p_i1960_2_.length() > 16) throw new IllegalArgumentException("World type names must not be longer then 16: " + p_i1960_2_.length());
+         this.field_77133_f = p_i1960_2_;
+         this.field_77134_g = p_i1960_3_;
+         this.field_77140_h = true;
+@@ -183,8 +192,92 @@
+         return this == field_77138_c ? random.nextInt(4) != 1 : false;
      }
  
 +    /*=================================================== FORGE START ======================================*/
 +    private static int getNextID()
 +    {
-+        for (int x = 0; x < worldTypes.length; x++)
++        for (int x = 0; x < field_77139_a.length; x++)
 +        {
-+            if (worldTypes[x] == null)
++            if (field_77139_a[x] == null)
 +            {
 +                return x;
 +            }
 +        }
 +
-+        int oldLen = worldTypes.length;
-+        worldTypes = Arrays.copyOf(worldTypes, oldLen + 16);
++        int oldLen = field_77139_a.length;
++        field_77139_a = Arrays.copyOf(field_77139_a, oldLen + 16);
 +        return oldLen;
 +    }
 +
@@ -84,7 +84,7 @@
 +    @SideOnly(Side.CLIENT)
 +    public void onCustomizeButton(Minecraft instance, GuiCreateWorld guiCreateWorld)
 +    {
-+        if (this == FLAT)
++        if (this == field_77138_c)
 +        {
 +            instance.func_147108_a(new GuiCreateFlatWorld(guiCreateWorld, guiCreateWorld.field_146334_a));
 +        }
@@ -96,7 +96,7 @@
 +     */
 +    public boolean isCustomizable()
 +    {
-+        return this == FLAT;
++        return this == field_77138_c;
 +    }
 +    
 +
@@ -119,7 +119,7 @@
 +    public GenLayer getBiomeLayer(long worldSeed, GenLayer parentLayer)
 +    {
 +        GenLayer ret = new GenLayerBiome(200L, parentLayer, this);
-+        ret = GenLayerZoom.magnify(1000L, ret, 2);
++        ret = GenLayerZoom.func_75915_a(1000L, ret, 2);
 +        ret = new GenLayerBiomeEdge(1000L, ret);
 +        return ret;
 +    }

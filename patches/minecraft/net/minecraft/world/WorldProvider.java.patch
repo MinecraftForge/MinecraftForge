@@ -26,31 +26,31 @@
  
  public abstract class WorldProvider
  {
-@@ -166,14 +174,14 @@
+@@ -149,13 +157,13 @@
  
-     public static WorldProvider getProviderForDimension(int par0)
+     public static WorldProvider func_76570_a(int p_76570_0_)
      {
--        return (WorldProvider)(par0 == -1 ? new WorldProviderHell() : (par0 == 0 ? new WorldProviderSurface() : (par0 == 1 ? new WorldProviderEnd() : null)));
-+        return DimensionManager.createProviderFor(par0);
+-        return (WorldProvider)(p_76570_0_ == -1 ? new WorldProviderHell() : (p_76570_0_ == 0 ? new WorldProviderSurface() : (p_76570_0_ == 1 ? new WorldProviderEnd() : null)));
++        return DimensionManager.createProviderFor(p_76570_0_);
      }
  
-     // JAVADOC METHOD $$ func_76571_f
      @SideOnly(Side.CLIENT)
-     public float getCloudHeight()
+     public float func_76571_f()
      {
 -        return 128.0F;
-+        return this.terrainType.getCloudHeight();
++        return this.field_76577_b.getCloudHeight();
      }
  
      @SideOnly(Side.CLIENT)
-@@ -216,4 +224,272 @@
+@@ -193,4 +201,285 @@
+     }
  
-     // JAVADOC METHOD $$ func_80007_l
-     public abstract String getDimensionName();
+     public abstract String func_80007_l();
 +
 +    /*======================================= Forge Start =========================================*/
 +    private IRenderHandler skyRenderer = null;
 +    private IRenderHandler cloudRenderer = null;
++    private IRenderHandler weatherRenderer = null;
 +    
 +    /**
 +     * Sets the providers current dimension ID, used in default getSaveFolder()
@@ -60,7 +60,7 @@
 +     */
 +    public void setDimension(int dim)
 +    {
-+        this.dimensionId = dim;
++        this.field_76574_g = dim;
 +    }
 +
 +    /**
@@ -70,7 +70,7 @@
 +     */
 +    public String getSaveFolder()
 +    {
-+        return (dimensionId == 0 ? null : "DIM" + dimensionId);
++        return (field_76574_g == 0 ? null : "DIM" + field_76574_g);
 +    }
 +
 +    /**
@@ -148,19 +148,31 @@
 +        cloudRenderer = renderer;
 +    }
 +
++    @SideOnly(Side.CLIENT)
++    public IRenderHandler getWeatherRenderer()
++    {
++        return weatherRenderer;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public void setWeatherRenderer(IRenderHandler renderer)
++    {
++        weatherRenderer = renderer;
++    }
++
 +    public ChunkCoordinates getRandomizedSpawnPoint()
 +    {
-+        ChunkCoordinates chunkcoordinates = new ChunkCoordinates(this.worldObj.getSpawnPoint());
++        ChunkCoordinates chunkcoordinates = new ChunkCoordinates(this.field_76579_a.func_72861_E());
 +
-+        boolean isAdventure = worldObj.getWorldInfo().getGameType() == GameType.ADVENTURE;
-+        int spawnFuzz = terrainType.getSpawnFuzz();
++        boolean isAdventure = field_76579_a.func_72912_H().func_76077_q() == GameType.ADVENTURE;
++        int spawnFuzz = field_76577_b.getSpawnFuzz();
 +        int spawnFuzzHalf = spawnFuzz / 2;
 +
-+        if (!hasNoSky && !isAdventure)
++        if (!field_76576_e && !isAdventure)
 +        {
-+            chunkcoordinates.posX += this.worldObj.rand.nextInt(spawnFuzz) - spawnFuzzHalf;
-+            chunkcoordinates.posZ += this.worldObj.rand.nextInt(spawnFuzz) - spawnFuzzHalf;
-+            chunkcoordinates.posY = this.worldObj.getTopSolidOrLiquidBlock(chunkcoordinates.posX, chunkcoordinates.posZ);
++            chunkcoordinates.field_71574_a += this.field_76579_a.field_73012_v.nextInt(spawnFuzz) - spawnFuzzHalf;
++            chunkcoordinates.field_71573_c += this.field_76579_a.field_73012_v.nextInt(spawnFuzz) - spawnFuzzHalf;
++            chunkcoordinates.field_71572_b = this.field_76579_a.func_72825_h(chunkcoordinates.field_71574_a, chunkcoordinates.field_71573_c);
 +        }
 +
 +        return chunkcoordinates;
@@ -177,7 +189,7 @@
 +     */
 +    public boolean shouldMapSpin(String entity, double x, double y, double z)
 +    {
-+        return dimensionId < 0;
++        return field_76574_g < 0;
 +    }
 +
 +    /**
@@ -195,92 +207,92 @@
 +
 +    public BiomeGenBase getBiomeGenForCoords(int x, int z)
 +    {
-+        return worldObj.getBiomeGenForCoordsBody(x, z);
++        return field_76579_a.getBiomeGenForCoordsBody(x, z);
 +    }
 +
 +    public boolean isDaytime()
 +    {
-+        return worldObj.skylightSubtracted < 4;
++        return field_76579_a.field_73008_k < 4;
 +    }
 +
 +    @SideOnly(Side.CLIENT)
 +    public Vec3 getSkyColor(Entity cameraEntity, float partialTicks)
 +    {
-+        return worldObj.getSkyColorBody(cameraEntity, partialTicks);
++        return field_76579_a.getSkyColorBody(cameraEntity, partialTicks);
 +    }
 +
 +    @SideOnly(Side.CLIENT)
 +    public Vec3 drawClouds(float partialTicks)
 +    {
-+        return worldObj.drawCloudsBody(partialTicks);
++        return field_76579_a.drawCloudsBody(partialTicks);
 +    }
 +
 +    @SideOnly(Side.CLIENT)
 +    public float getStarBrightness(float par1)
 +    {
-+        return worldObj.getStarBrightnessBody(par1);
++        return field_76579_a.getStarBrightnessBody(par1);
 +    }
 +
 +    public void setAllowedSpawnTypes(boolean allowHostile, boolean allowPeaceful)
 +    {
-+        worldObj.spawnHostileMobs = allowHostile;
-+        worldObj.spawnPeacefulMobs = allowPeaceful;
++        field_76579_a.field_72985_G = allowHostile;
++        field_76579_a.field_72992_H = allowPeaceful;
 +    }
 +
 +    public void calculateInitialWeather()
 +    {
-+        worldObj.calculateInitialWeatherBody();
++        field_76579_a.calculateInitialWeatherBody();
 +    }
 +
 +    public void updateWeather()
 +    {
-+        worldObj.updateWeatherBody();
++        field_76579_a.updateWeatherBody();
 +    }
 +
 +    public boolean canBlockFreeze(int x, int y, int z, boolean byWater)
 +    {
-+        return worldObj.canBlockFreezeBody(x, y, z, byWater);
++        return field_76579_a.canBlockFreezeBody(x, y, z, byWater);
 +    }
 +
 +    public boolean canSnowAt(int x, int y, int z, boolean checkLight)
 +    {
-+        return worldObj.canSnowAtBody(x, y, z, checkLight);
++        return field_76579_a.canSnowAtBody(x, y, z, checkLight);
 +    }
 +
 +    public void setWorldTime(long time)
 +    {
-+        worldObj.worldInfo.setWorldTime(time);
++        field_76579_a.field_72986_A.func_76068_b(time);
 +    }
 +
 +    public long getSeed()
 +    {
-+        return worldObj.worldInfo.getSeed();
++        return field_76579_a.field_72986_A.func_76063_b();
 +    }
 +
 +    public long getWorldTime()
 +    {
-+        return worldObj.worldInfo.getWorldTime();
++        return field_76579_a.field_72986_A.func_76073_f();
 +    }
 +
 +    public ChunkCoordinates getSpawnPoint()
 +    {
-+        WorldInfo info = worldObj.worldInfo;
-+        return new ChunkCoordinates(info.getSpawnX(), info.getSpawnY(), info.getSpawnZ());
++        WorldInfo info = field_76579_a.field_72986_A;
++        return new ChunkCoordinates(info.func_76079_c(), info.func_76075_d(), info.func_76074_e());
 +    }
 +
 +    public void setSpawnPoint(int x, int y, int z)
 +    {
-+        worldObj.worldInfo.setSpawnPosition(x, y, z);
++        field_76579_a.field_72986_A.func_76081_a(x, y, z);
 +    }
 +
 +    public boolean canMineBlock(EntityPlayer player, int x, int y, int z)
 +    {
-+        return worldObj.canMineBlockBody(player, x, y, z);
++        return field_76579_a.canMineBlockBody(player, x, y, z);
 +    }
 +
 +    public boolean isBlockHighHumidity(int x, int y, int z)
 +    {
-+        return worldObj.getBiomeGenForCoords(x, z).isHighHumidity();
++        return field_76579_a.func_72807_a(x, z).func_76736_e();
 +    }
 +
 +    public int getHeight()
@@ -290,20 +302,20 @@
 +
 +    public int getActualHeight()
 +    {
-+        return hasNoSky ? 128 : 256;
++        return field_76576_e ? 128 : 256;
 +    }
 +
 +    public double getHorizon()
 +    {
-+        return worldObj.worldInfo.getTerrainType().getHorizon(worldObj);
++        return field_76579_a.field_72986_A.func_76067_t().getHorizon(field_76579_a);
 +    }
 +
 +    public void resetRainAndThunder()
 +    {
-+        worldObj.worldInfo.setRainTime(0);
-+        worldObj.worldInfo.setRaining(false);
-+        worldObj.worldInfo.setThunderTime(0);
-+        worldObj.worldInfo.setThundering(false);
++        field_76579_a.field_72986_A.func_76080_g(0);
++        field_76579_a.field_72986_A.func_76084_b(false);
++        field_76579_a.field_72986_A.func_76090_f(0);
++        field_76579_a.field_72986_A.func_76069_a(false);
 +    }
 +
 +    public boolean canDoLightning(Chunk chunk)

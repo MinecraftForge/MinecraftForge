@@ -12,7 +12,7 @@
          else
          {
              Block block = p_150107_1_.func_147439_a(p_150107_2_, p_150107_3_, p_150107_4_);
--            return block == Blocks.fence || block == Blocks.nether_brick_fence || block == Blocks.glass || block == Blocks.cobblestone_wall;
+-            return block == Blocks.field_150422_aJ || block == Blocks.field_150386_bk || block == Blocks.field_150359_w || block == Blocks.field_150463_bK;
 +            return block.canPlaceTorchOnTop(p_150107_1_, p_150107_2_, p_150107_3_, p_150107_4_);
          }
      }
@@ -57,30 +57,30 @@
          }
 @@ -106,19 +111,19 @@
      {
-         if (p_149726_1_.getBlockMetadata(p_149726_2_, p_149726_3_, p_149726_4_) == 0)
+         if (p_149726_1_.func_72805_g(p_149726_2_, p_149726_3_, p_149726_4_) == 0)
          {
 -            if (p_149726_1_.func_147445_c(p_149726_2_ - 1, p_149726_3_, p_149726_4_, true))
 +            if (p_149726_1_.isSideSolid(p_149726_2_ - 1, p_149726_3_, p_149726_4_, EAST, true))
              {
-                 p_149726_1_.setBlockMetadataWithNotify(p_149726_2_, p_149726_3_, p_149726_4_, 1, 2);
+                 p_149726_1_.func_72921_c(p_149726_2_, p_149726_3_, p_149726_4_, 1, 2);
              }
 -            else if (p_149726_1_.func_147445_c(p_149726_2_ + 1, p_149726_3_, p_149726_4_, true))
 +            else if (p_149726_1_.isSideSolid(p_149726_2_ + 1, p_149726_3_, p_149726_4_, WEST, true))
              {
-                 p_149726_1_.setBlockMetadataWithNotify(p_149726_2_, p_149726_3_, p_149726_4_, 2, 2);
+                 p_149726_1_.func_72921_c(p_149726_2_, p_149726_3_, p_149726_4_, 2, 2);
              }
 -            else if (p_149726_1_.func_147445_c(p_149726_2_, p_149726_3_, p_149726_4_ - 1, true))
 +            else if (p_149726_1_.isSideSolid(p_149726_2_, p_149726_3_, p_149726_4_ - 1, SOUTH, true))
              {
-                 p_149726_1_.setBlockMetadataWithNotify(p_149726_2_, p_149726_3_, p_149726_4_, 3, 2);
+                 p_149726_1_.func_72921_c(p_149726_2_, p_149726_3_, p_149726_4_, 3, 2);
              }
 -            else if (p_149726_1_.func_147445_c(p_149726_2_, p_149726_3_, p_149726_4_ + 1, true))
 +            else if (p_149726_1_.isSideSolid(p_149726_2_, p_149726_3_, p_149726_4_ + 1, NORTH, true))
              {
-                 p_149726_1_.setBlockMetadataWithNotify(p_149726_2_, p_149726_3_, p_149726_4_, 4, 2);
+                 p_149726_1_.func_72921_c(p_149726_2_, p_149726_3_, p_149726_4_, 4, 2);
              }
 @@ -143,22 +148,22 @@
-             int l = p_150108_1_.getBlockMetadata(p_150108_2_, p_150108_3_, p_150108_4_);
+             int l = p_150108_1_.func_72805_g(p_150108_2_, p_150108_3_, p_150108_4_);
              boolean flag = false;
  
 -            if (!p_150108_1_.func_147445_c(p_150108_2_ - 1, p_150108_3_, p_150108_4_, true) && l == 1)

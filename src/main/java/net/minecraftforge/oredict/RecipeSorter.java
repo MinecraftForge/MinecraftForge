@@ -16,6 +16,7 @@ import cpw.mods.fml.common.toposort.TopologicalSort;
 import cpw.mods.fml.common.toposort.TopologicalSort.DirectedGraph;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.RecipeBookCloning;
 import net.minecraft.item.crafting.RecipeFireworks;
 import net.minecraft.item.crafting.RecipesArmorDyes;
 import net.minecraft.item.crafting.RecipesMapCloning;
@@ -114,9 +115,10 @@ public class RecipeSorter implements Comparator<IRecipe>
         register("minecraft:shaped",       ShapedRecipes.class,       SHAPED,    "before:minecraft:shapeless");
         register("minecraft:mapextending", RecipesMapExtending.class, SHAPED,    "after:minecraft:shaped before:minecraft:shapeless");
         register("minecraft:shapeless",    ShapelessRecipes.class,    SHAPELESS, "after:minecraft:shaped");
-        register("minecraft:fireworks",    RecipeFireworks.class,     SHAPELESS, "after:minecraft:shapeless");
-        register("minecraft:armordyes",    RecipesArmorDyes.class,    SHAPELESS, "after:minecraft:shapeless");
-        register("minecraft:mapcloning",   RecipesMapCloning.class,   SHAPELESS, "after:minecraft:shapeless");
+        register("minecraft:bookcloning",  RecipeBookCloning.class,   SHAPELESS, "after:minecraft:shapeless"); //Size 9
+        register("minecraft:fireworks",    RecipeFireworks.class,     SHAPELESS, "after:minecraft:shapeless"); //Size 10
+        register("minecraft:armordyes",    RecipesArmorDyes.class,    SHAPELESS, "after:minecraft:shapeless"); //Size 10
+        register("minecraft:mapcloning",   RecipesMapCloning.class,   SHAPELESS, "after:minecraft:shapeless"); //Size 10
 
         register("forge:shapedore",     ShapedOreRecipe.class,    SHAPED,    "after:minecraft:shaped before:minecraft:shapeless");
         register("forge:shapelessore",  ShapelessOreRecipe.class, SHAPELESS, "after:minecraft:shapeless");
@@ -172,9 +174,9 @@ public class RecipeSorter implements Comparator<IRecipe>
 
         if (ret == null)
         {
-            cls = cls.getSuperclass();
             while (cls != Object.class)
             {
+                cls = cls.getSuperclass();
                 ret = categories.get(cls);
                 if (ret != null)
                 {
@@ -196,7 +198,7 @@ public class RecipeSorter implements Comparator<IRecipe>
         {
             if (!warned.contains(cls))
             {
-                FMLLog.fine("  Unknown recipe class! %s Modder please refer to %s", cls.getName(), RecipeSorter.class.getName());
+                FMLLog.info("  Unknown recipe class! %s Modder please refer to %s", cls.getName(), RecipeSorter.class.getName());
                 warned.add(cls);
             }
             cls = cls.getSuperclass();

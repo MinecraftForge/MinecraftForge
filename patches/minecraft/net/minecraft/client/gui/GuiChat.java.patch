@@ -16,16 +16,16 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  import org.lwjgl.input.Keyboard;
-@@ -134,6 +136,7 @@
+@@ -131,6 +133,7 @@
      public void func_146403_a(String p_146403_1_)
      {
-         this.field_146297_k.ingameGUI.func_146158_b().func_146239_a(p_146403_1_);
-+        if (ClientCommandHandler.instance.executeCommand(field_146297_k.thePlayer, p_146403_1_) == 1) return;
-         this.field_146297_k.thePlayer.sendChatMessage(p_146403_1_);
+         this.field_146297_k.field_71456_v.func_146158_b().func_146239_a(p_146403_1_);
++        if (ClientCommandHandler.instance.func_71556_a(field_146297_k.field_71439_g, p_146403_1_) == 1) return;
+         this.field_146297_k.field_71439_g.func_71165_d(p_146403_1_);
      }
  
-@@ -309,13 +312,14 @@
-             this.field_146297_k.ingameGUI.func_146158_b().func_146234_a(new ChatComponentText(stringbuilder.toString()), 1);
+@@ -305,13 +308,14 @@
+             this.field_146297_k.field_71456_v.func_146158_b().func_146234_a(new ChatComponentText(stringbuilder.toString()), 1);
          }
  
 -        this.field_146415_a.func_146191_b((String)this.field_146412_t.get(this.field_146413_s++));
@@ -37,10 +37,10 @@
          if (p_146405_1_.length() >= 1)
          {
 +            ClientCommandHandler.instance.autoComplete(p_146405_1_, p_146405_2_);
-             this.field_146297_k.thePlayer.sendQueue.func_147297_a(new C14PacketTabComplete(p_146405_1_));
+             this.field_146297_k.field_71439_g.field_71174_a.func_147297_a(new C14PacketTabComplete(p_146405_1_));
              this.field_146414_r = true;
          }
-@@ -438,6 +442,13 @@
+@@ -433,6 +437,13 @@
              String[] astring1 = p_146406_1_;
              int i = p_146406_1_.length;
  

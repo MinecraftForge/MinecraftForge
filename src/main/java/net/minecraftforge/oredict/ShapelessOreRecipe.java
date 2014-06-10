@@ -108,13 +108,14 @@ public class ShapelessOreRecipe implements IRecipe
 
                     if (next instanceof ItemStack)
                     {
-                        match = checkItemEquals((ItemStack)next, slot);
+                        match = OreDictionary.itemMatches((ItemStack)next, slot, false);
                     }
                     else if (next instanceof ArrayList)
                     {
-                        for (ItemStack item : (ArrayList<ItemStack>)next)
+                        Iterator<ItemStack> itr = ((ArrayList<ItemStack>)next).iterator();
+                        while (itr.hasNext() && !match)
                         {
-                            match = match || checkItemEquals(item, slot);
+                            match = OreDictionary.itemMatches(itr.next(), slot, false);
                         }
                     }
 
@@ -134,11 +135,6 @@ public class ShapelessOreRecipe implements IRecipe
         }
 
         return required.isEmpty();
-    }
-
-    private boolean checkItemEquals(ItemStack target, ItemStack input)
-    {
-        return (target.getItem() == input.getItem() && (target.getItemDamage() == OreDictionary.WILDCARD_VALUE || target.getItemDamage() == input.getItemDamage()));
     }
 
     /**

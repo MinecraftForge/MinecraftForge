@@ -35,142 +35,193 @@
 +    private HashMap<Integer, ChunkCoordinates> spawnChunkMap = new HashMap<Integer, ChunkCoordinates>();
 +    private HashMap<Integer, Boolean> spawnForcedMap = new HashMap<Integer, Boolean>();
 +
-     // JAVADOC FIELD $$ field_71071_by
-     public InventoryPlayer inventory = new InventoryPlayer(this);
-     private InventoryEnderChest theInventoryEnderChest = new InventoryEnderChest();
-@@ -148,6 +167,7 @@
-         this.setLocationAndAngles((double)chunkcoordinates.posX + 0.5D, (double)(chunkcoordinates.posY + 1), (double)chunkcoordinates.posZ + 0.5D, 0.0F, 0.0F);
+     public InventoryPlayer field_71071_by = new InventoryPlayer(this);
+     private InventoryEnderChest field_71078_a = new InventoryEnderChest();
+     public Container field_71069_bz;
+@@ -130,6 +149,7 @@
+         this.func_70012_b((double)chunkcoordinates.field_71574_a + 0.5D, (double)(chunkcoordinates.field_71572_b + 1), (double)chunkcoordinates.field_71573_c + 0.5D, 0.0F, 0.0F);
          this.field_70741_aB = 180.0F;
-         this.fireResistance = 20;
+         this.field_70174_ab = 20;
 +        this.eyeHeight = this.getDefaultEyeHeight();
      }
  
-     protected void applyEntityAttributes()
-@@ -227,6 +247,7 @@
- 
-             if (itemstack == this.itemInUse)
-             {
-+                itemInUse.getItem().onUsingTick(itemInUse, this, itemInUseCount);
-                 if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
-                 {
-                     this.updateItemUse(itemstack, 5);
-@@ -281,7 +302,7 @@
- 
-         super.onUpdate();
- 
--        if (!this.worldObj.isRemote && this.openContainer != null && !this.openContainer.canInteractWith(this))
-+        if (!this.worldObj.isRemote && this.openContainer != null && !ForgeHooks.canInteractWith(this, this.openContainer))
+     protected void func_110147_ax()
+@@ -173,7 +193,8 @@
+     {
+         if (this.field_71074_e != null)
          {
-             this.closeScreen();
-             this.openContainer = this.inventoryContainer;
-@@ -498,11 +519,11 @@
-             this.cameraYaw = 0.0F;
-             this.addMountedMovementStat(this.posX - d0, this.posY - d1, this.posZ - d2);
+-            this.field_71074_e.func_77974_b(this.field_70170_p, this, this.field_71072_f);
++            if (!ForgeEventFactory.onUseItemStop(this, field_71074_e, field_71072_f))
++                this.field_71074_e.func_77974_b(this.field_70170_p, this, this.field_71072_f);
+         }
  
--            if (this.ridingEntity instanceof EntityPig)
-+            if (this.ridingEntity instanceof EntityLivingBase && ((EntityLivingBase)ridingEntity).shouldRiderFaceForward(this))
+         this.func_71041_bz();
+@@ -204,14 +225,23 @@
+ 
+             if (itemstack == this.field_71074_e)
              {
-                 this.rotationPitch = f1;
-                 this.rotationYaw = f;
--                this.renderYawOffset = ((EntityPig)this.ridingEntity).renderYawOffset;
-+                this.renderYawOffset = ((EntityLivingBase)this.ridingEntity).renderYawOffset;
+-                if (this.field_71072_f <= 25 && this.field_71072_f % 4 == 0)
++                field_71072_f = ForgeEventFactory.onItemUseTick(this, field_71074_e, field_71072_f);
++                if (field_71072_f <= 0)
+                 {
+-                    this.func_71010_c(itemstack, 5);
++                    this.func_71036_o();
+                 }
+-
+-                if (--this.field_71072_f == 0 && !this.field_70170_p.field_72995_K)
++                else
+                 {
+-                    this.func_71036_o();
++                    field_71074_e.func_77973_b().onUsingTick(field_71074_e, this, field_71072_f);
++                    if (this.field_71072_f <= 25 && this.field_71072_f % 4 == 0)
++                    {
++                        this.func_71010_c(itemstack, 5);
++                    }
++    
++                    if (--this.field_71072_f == 0 && !this.field_70170_p.field_72995_K)
++                    {
++                        this.func_71036_o();
++                    }
+                 }
+             }
+             else
+@@ -258,7 +288,7 @@
+ 
+         super.func_70071_h_();
+ 
+-        if (!this.field_70170_p.field_72995_K && this.field_71070_bA != null && !this.field_71070_bA.func_75145_c(this))
++        if (!this.field_70170_p.field_72995_K && this.field_71070_bA != null && !ForgeHooks.canInteractWith(this, this.field_71070_bA))
+         {
+             this.func_71053_j();
+             this.field_71070_bA = this.field_71069_bz;
+@@ -389,11 +419,13 @@
+             int i = this.field_71074_e.field_77994_a;
+             ItemStack itemstack = this.field_71074_e.func_77950_b(this.field_70170_p, this);
+ 
++            itemstack = ForgeEventFactory.onItemUseFinish(this, field_71074_e, field_71072_f, itemstack);
++
+             if (itemstack != this.field_71074_e || itemstack != null && itemstack.field_77994_a != i)
+             {
+                 this.field_71071_by.field_70462_a[this.field_71071_by.field_70461_c] = itemstack;
+ 
+-                if (itemstack.field_77994_a == 0)
++                if (itemstack != null && itemstack.field_77994_a == 0)
+                 {
+                     this.field_71071_by.field_70462_a[this.field_71071_by.field_70461_c] = null;
+                 }
+@@ -467,11 +499,11 @@
+             this.field_71109_bG = 0.0F;
+             this.func_71015_k(this.field_70165_t - d0, this.field_70163_u - d1, this.field_70161_v - d2);
+ 
+-            if (this.field_70154_o instanceof EntityPig)
++            if (this.field_70154_o instanceof EntityLivingBase && ((EntityLivingBase)field_70154_o).shouldRiderFaceForward(this))
+             {
+                 this.field_70125_A = f1;
+                 this.field_70177_z = f;
+-                this.field_70761_aq = ((EntityPig)this.field_70154_o).field_70761_aq;
++                this.field_70761_aq = ((EntityLivingBase)this.field_70154_o).field_70761_aq;
              }
          }
      }
-@@ -632,11 +653,15 @@
-     // JAVADOC METHOD $$ func_70645_a
-     public void onDeath(DamageSource par1DamageSource)
+@@ -596,11 +628,15 @@
+ 
+     public void func_70645_a(DamageSource p_70645_1_)
      {
-+        if (ForgeHooks.onLivingDeath(this, par1DamageSource)) return;
-         super.onDeath(par1DamageSource);
-         this.setSize(0.2F, 0.2F);
-         this.setPosition(this.posX, this.posY, this.posZ);
-         this.motionY = 0.10000000149011612D;
++        if (ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
+         super.func_70645_a(p_70645_1_);
+         this.func_70105_a(0.2F, 0.2F);
+         this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
+         this.field_70181_x = 0.10000000149011612D;
  
 +        captureDrops = true;
 +        capturedDrops.clear();
 +
-         if (this.getCommandSenderName().equals("Notch"))
+         if (this.func_70005_c_().equals("Notch"))
          {
-             this.func_146097_a(new ItemStack(Items.apple, 1), true, false);
-@@ -647,6 +672,20 @@
-             this.inventory.dropAllItems();
+             this.func_146097_a(new ItemStack(Items.field_151034_e, 1), true, false);
+@@ -611,6 +647,20 @@
+             this.field_71071_by.func_70436_m();
          }
  
 +        captureDrops = false;
 +
-+        if (!worldObj.isRemote)
++        if (!field_70170_p.field_72995_K)
 +        {
-+            PlayerDropsEvent event = new PlayerDropsEvent(this, par1DamageSource, capturedDrops, recentlyHit > 0);
++            PlayerDropsEvent event = new PlayerDropsEvent(this, p_70645_1_, capturedDrops, field_70718_bc > 0);
 +            if (!MinecraftForge.EVENT_BUS.post(event))
 +            {
 +                for (EntityItem item : capturedDrops)
 +                {
-+                    joinEntityItemWithWorld(item);
++                    func_71012_a(item);
 +                }
 +            }
 +        }
 +
-         if (par1DamageSource != null)
+         if (p_70645_1_ != null)
          {
-             this.motionX = (double)(-MathHelper.cos((this.attackedAtYaw + this.rotationYaw) * (float)Math.PI / 180.0F) * 0.1F);
-@@ -702,13 +741,26 @@
-     // JAVADOC METHOD $$ func_71040_bB
-     public EntityItem dropOneItem(boolean par1)
+             this.field_70159_w = (double)(-MathHelper.func_76134_b((this.field_70739_aP + this.field_70177_z) * (float)Math.PI / 180.0F) * 0.1F);
+@@ -662,12 +712,25 @@
+ 
+     public EntityItem func_71040_bB(boolean p_71040_1_)
      {
--        return this.func_146097_a(this.inventory.decrStackSize(this.inventory.currentItem, par1 && this.inventory.getCurrentItem() != null ? this.inventory.getCurrentItem().stackSize : 1), false, true);
-+        ItemStack stack = inventory.getCurrentItem();
+-        return this.func_146097_a(this.field_71071_by.func_70298_a(this.field_71071_by.field_70461_c, p_71040_1_ && this.field_71071_by.func_70448_g() != null ? this.field_71071_by.func_70448_g().field_77994_a : 1), false, true);
++        ItemStack stack = field_71071_by.func_70448_g();
 +
 +        if (stack == null)
 +        {
 +            return null;
 +        }
 +
-+        if (stack.getItem().onDroppedByPlayer(stack, this))
++        if (stack.func_77973_b().onDroppedByPlayer(stack, this))
 +        {
-+            int count = par1 && this.inventory.getCurrentItem() != null ? this.inventory.getCurrentItem().stackSize : 1;
-+            return ForgeHooks.onPlayerTossEvent(this, inventory.decrStackSize(inventory.currentItem, count), true);
++            int count = p_71040_1_ && this.field_71071_by.func_70448_g() != null ? this.field_71071_by.func_70448_g().field_77994_a : 1;
++            return ForgeHooks.onPlayerTossEvent(this, field_71071_by.func_70298_a(field_71071_by.field_70461_c, count), true);
 +        }
 +
 +        return null;
      }
  
-     // JAVADOC METHOD $$ func_71019_a
-     public EntityItem dropPlayerItemWithRandomChoice(ItemStack par1ItemStack, boolean par2)
+     public EntityItem func_71019_a(ItemStack p_71019_1_, boolean p_71019_2_)
      {
--        return this.func_146097_a(par1ItemStack, false, false);
-+        return ForgeHooks.onPlayerTossEvent(this, par1ItemStack, false);
+-        return this.func_146097_a(p_71019_1_, false, false);
++        return ForgeHooks.onPlayerTossEvent(this, p_71019_1_, false);
      }
  
      public EntityItem func_146097_a(ItemStack p_146097_1_, boolean p_146097_2_, boolean p_146097_3_)
-@@ -765,13 +817,25 @@
-     // JAVADOC METHOD $$ func_71012_a
-     public void joinEntityItemWithWorld(EntityItem par1EntityItem)
+@@ -723,13 +786,31 @@
+ 
+     public void func_71012_a(EntityItem p_71012_1_)
      {
 +        if (captureDrops)
 +        {
-+            capturedDrops.add(par1EntityItem);
++            capturedDrops.add(p_71012_1_);
 +            return;
 +        }
-         this.worldObj.spawnEntityInWorld(par1EntityItem);
+         this.field_70170_p.func_72838_d(p_71012_1_);
      }
  
-+    @Deprecated //Metadata sensitive version
++    @Deprecated //Metadata sensitive version, named getBreakSpeed
      public float func_146096_a(Block p_146096_1_, boolean p_146096_2_)
      {
--        float f = this.inventory.func_146023_a(p_146096_1_);
-+        return getBreakSpeed(p_146096_1_, p_146096_2_, 0);
+-        float f = this.field_71071_by.func_146023_a(p_146096_1_);
++        return getBreakSpeed(p_146096_1_, p_146096_2_, 0, 0, -1, 0);
 +    }
  
++    @Deprecated //Location Specifc, one below, remove in 1.8
 +    public float getBreakSpeed(Block p_146096_1_, boolean p_146096_2_, int meta)
 +    {
-+        ItemStack stack = inventory.getCurrentItem();
-+        float f = (stack == null ? 1.0F : stack.getItem().getDigSpeed(stack, p_146096_1_, meta));
++        return getBreakSpeed(p_146096_1_, p_146096_2_, meta, 0, -1, 0);
++    }
++
++    public float getBreakSpeed(Block p_146096_1_, boolean p_146096_2_, int meta, int x, int y, int z)
++    {
++        ItemStack stack = field_71071_by.func_70448_g();
++        float f = (stack == null ? 1.0F : stack.func_77973_b().getDigSpeed(stack, p_146096_1_, meta));
 +
          if (f > 1.0F)
          {
-             int i = EnchantmentHelper.getEfficiencyModifier(this);
-@@ -781,7 +845,9 @@
+             int i = EnchantmentHelper.func_77509_b(this);
+@@ -739,7 +820,9 @@
              {
                  float f1 = (float)(i * i + 1);
  
@@ -181,41 +232,41 @@
                  {
                      f += f1 * 0.08F;
                  }
-@@ -812,12 +878,13 @@
+@@ -770,12 +853,13 @@
              f /= 5.0F;
          }
  
 -        return f;
-+        f = ForgeEventFactory.getBreakSpeed(this, p_146096_1_, meta, f);
++        f = ForgeEventFactory.getBreakSpeed(this, p_146096_1_, meta, f, x, y, z);
 +        return (f < 0 ? 0 : f);
      }
  
      public boolean func_146099_a(Block p_146099_1_)
      {
--        return this.inventory.func_146025_b(p_146099_1_);
-+        return ForgeEventFactory.doPlayerHarvestCheck(this, p_146099_1_, this.inventory.func_146025_b(p_146099_1_));
+-        return this.field_71071_by.func_146025_b(p_146099_1_);
++        return ForgeEventFactory.doPlayerHarvestCheck(this, p_146099_1_, this.field_71071_by.func_146025_b(p_146099_1_));
      }
  
-     // JAVADOC METHOD $$ func_70037_a
-@@ -847,6 +914,16 @@
-             this.spawnForced = par1NBTTagCompound.getBoolean("SpawnForced");
+     public void func_70037_a(NBTTagCompound p_70037_1_)
+@@ -804,6 +888,16 @@
+             this.field_82248_d = p_70037_1_.func_74767_n("SpawnForced");
          }
  
 +        NBTTagList spawnlist = null;
-+        spawnlist = par1NBTTagCompound.func_150295_c("Spawns", 10);
-+        for (int i = 0; i < spawnlist.tagCount(); i++)
++        spawnlist = p_70037_1_.func_150295_c("Spawns", 10);
++        for (int i = 0; i < spawnlist.func_74745_c(); i++)
 +        {
 +            NBTTagCompound spawndata = (NBTTagCompound)spawnlist.func_150305_b(i);
-+            int spawndim = spawndata.getInteger("Dim");
-+            this.spawnChunkMap.put(spawndim, new ChunkCoordinates(spawndata.getInteger("SpawnX"), spawndata.getInteger("SpawnY"), spawndata.getInteger("SpawnZ")));
-+            this.spawnForcedMap.put(spawndim, spawndata.getBoolean("SpawnForced"));
++            int spawndim = spawndata.func_74762_e("Dim");
++            this.spawnChunkMap.put(spawndim, new ChunkCoordinates(spawndata.func_74762_e("SpawnX"), spawndata.func_74762_e("SpawnY"), spawndata.func_74762_e("SpawnZ")));
++            this.spawnForcedMap.put(spawndim, spawndata.func_74767_n("SpawnForced"));
 +        }
 +
-         this.foodStats.readNBT(par1NBTTagCompound);
-         this.capabilities.readCapabilitiesFromNBT(par1NBTTagCompound);
+         this.field_71100_bB.func_75112_a(p_70037_1_);
+         this.field_71075_bZ.func_75095_b(p_70037_1_);
  
-@@ -878,6 +955,23 @@
-             par1NBTTagCompound.setBoolean("SpawnForced", this.spawnForced);
+@@ -834,6 +928,23 @@
+             p_70014_1_.func_74757_a("SpawnForced", this.field_82248_d);
          }
  
 +        NBTTagList spawnlist = new NBTTagList();
@@ -226,279 +277,301 @@
 +            Boolean forced = spawnForcedMap.get(entry.getKey());
 +            if (forced == null) forced = false;
 +            NBTTagCompound spawndata = new NBTTagCompound();
-+            spawndata.setInteger("Dim", entry.getKey());
-+            spawndata.setInteger("SpawnX", spawn.posX);
-+            spawndata.setInteger("SpawnY", spawn.posY);
-+            spawndata.setInteger("SpawnZ", spawn.posZ);
-+            spawndata.setBoolean("SpawnForced", forced);
-+            spawnlist.appendTag(spawndata);
++            spawndata.func_74768_a("Dim", entry.getKey());
++            spawndata.func_74768_a("SpawnX", spawn.field_71574_a);
++            spawndata.func_74768_a("SpawnY", spawn.field_71572_b);
++            spawndata.func_74768_a("SpawnZ", spawn.field_71573_c);
++            spawndata.func_74757_a("SpawnForced", forced);
++            spawnlist.func_74742_a(spawndata);
 +        }
-+        par1NBTTagCompound.setTag("Spawns", spawnlist);
++        p_70014_1_.func_74782_a("Spawns", spawnlist);
 +
-         this.foodStats.writeNBT(par1NBTTagCompound);
-         this.capabilities.writeCapabilitiesToNBT(par1NBTTagCompound);
-         par1NBTTagCompound.setTag("EnderItems", this.theInventoryEnderChest.saveInventoryToNBT());
-@@ -902,7 +996,7 @@
+         this.field_71100_bB.func_75117_b(p_70014_1_);
+         this.field_71075_bZ.func_75091_a(p_70014_1_);
+         p_70014_1_.func_74782_a("EnderItems", this.field_71078_a.func_70487_g());
+@@ -855,7 +966,7 @@
  
-     public float getEyeHeight()
+     public float func_70047_e()
      {
 -        return 0.12F;
 +        return eyeHeight;
      }
  
-     // JAVADOC METHOD $$ func_71061_d_
-@@ -914,6 +1008,7 @@
-     // JAVADOC METHOD $$ func_70097_a
-     public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
+     protected void func_71061_d_()
+@@ -865,6 +976,7 @@
+ 
+     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
      {
-+        if (ForgeHooks.onLivingAttack(this, par1DamageSource, par2)) return false;
-         if (this.isEntityInvulnerable())
++        if (ForgeHooks.onLivingAttack(this, p_70097_1_, p_70097_2_)) return false;
+         if (this.func_85032_ar())
          {
              return false;
-@@ -1018,12 +1113,15 @@
+@@ -966,12 +1078,15 @@
      {
-         if (!this.isEntityInvulnerable())
+         if (!this.func_85032_ar())
          {
-+            par2 = ForgeHooks.onLivingHurt(this, par1DamageSource, par2);
-+            if (par2 <= 0) return;
-             if (!par1DamageSource.isUnblockable() && this.isBlocking() && par2 > 0.0F)
++            p_70665_2_ = ForgeHooks.onLivingHurt(this, p_70665_1_, p_70665_2_);
++            if (p_70665_2_ <= 0) return;
+             if (!p_70665_1_.func_76363_c() && this.func_70632_aY() && p_70665_2_ > 0.0F)
              {
-                 par2 = (1.0F + par2) * 0.5F;
+                 p_70665_2_ = (1.0F + p_70665_2_) * 0.5F;
              }
  
--            par2 = this.applyArmorCalculations(par1DamageSource, par2);
-+            par2 = ArmorProperties.ApplyArmor(this, inventory.armorInventory, par1DamageSource, par2);
-+            if (par2 <= 0) return;
-             par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
-             float f1 = par2;
-             par2 = Math.max(par2 - this.getAbsorptionAmount(), 0.0F);
-@@ -1058,6 +1156,7 @@
+-            p_70665_2_ = this.func_70655_b(p_70665_1_, p_70665_2_);
++            p_70665_2_ = ArmorProperties.ApplyArmor(this, field_71071_by.field_70460_b, p_70665_1_, p_70665_2_);
++            if (p_70665_2_ <= 0) return;
+             p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
+             float f1 = p_70665_2_;
+             p_70665_2_ = Math.max(p_70665_2_ - this.func_110139_bj(), 0.0F);
+@@ -1005,6 +1120,7 @@
  
-     public boolean interactWith(Entity par1Entity)
+     public boolean func_70998_m(Entity p_70998_1_)
      {
-+        if (MinecraftForge.EVENT_BUS.post(new EntityInteractEvent(this, par1Entity))) return false;
-         ItemStack itemstack = this.getCurrentEquippedItem();
-         ItemStack itemstack1 = itemstack != null ? itemstack.copy() : null;
++        if (MinecraftForge.EVENT_BUS.post(new EntityInteractEvent(this, p_70998_1_))) return false;
+         ItemStack itemstack = this.func_71045_bC();
+         ItemStack itemstack1 = itemstack != null ? itemstack.func_77946_l() : null;
  
-@@ -1110,7 +1209,9 @@
-     // JAVADOC METHOD $$ func_71028_bD
-     public void destroyCurrentEquippedItem()
+@@ -1055,7 +1171,9 @@
+ 
+     public void func_71028_bD()
      {
-+        ItemStack orig = getCurrentEquippedItem();
-         this.inventory.setInventorySlotContents(this.inventory.currentItem, (ItemStack)null);
++        ItemStack orig = func_71045_bC();
+         this.field_71071_by.func_70299_a(this.field_71071_by.field_70461_c, (ItemStack)null);
 +        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(this, orig));
      }
  
-     // JAVADOC METHOD $$ func_70033_W
-@@ -1122,6 +1223,15 @@
-     // JAVADOC METHOD $$ func_71059_n
-     public void attackTargetEntityWithCurrentItem(Entity par1Entity)
+     public double func_70033_W()
+@@ -1065,6 +1183,15 @@
+ 
+     public void func_71059_n(Entity p_71059_1_)
      {
-+        if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(this, par1Entity)))
++        if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(this, p_71059_1_)))
 +        {
 +            return;
 +        }
-+        ItemStack stack = getCurrentEquippedItem();
-+        if (stack != null && stack.getItem().onLeftClickEntity(stack, this, par1Entity))
++        ItemStack stack = func_71045_bC();
++        if (stack != null && stack.func_77973_b().onLeftClickEntity(stack, this, p_71059_1_))
 +        {
 +            return;
 +        }
-         if (par1Entity.canAttackWithItem())
+         if (p_71059_1_.func_70075_an())
          {
-             if (!par1Entity.hitByEntity(this))
-@@ -1273,6 +1383,12 @@
-     // JAVADOC METHOD $$ func_71018_a
-     public EntityPlayer.EnumStatus sleepInBedAt(int par1, int par2, int par3)
+             if (!p_71059_1_.func_85031_j(this))
+@@ -1212,6 +1339,12 @@
+ 
+     public EntityPlayer.EnumStatus func_71018_a(int p_71018_1_, int p_71018_2_, int p_71018_3_)
      {
-+        PlayerSleepInBedEvent event = new PlayerSleepInBedEvent(this, par1, par2, par3);
++        PlayerSleepInBedEvent event = new PlayerSleepInBedEvent(this, p_71018_1_, p_71018_2_, p_71018_3_);
 +        MinecraftForge.EVENT_BUS.post(event);
 +        if (event.result != null)
 +        {
 +            return event.result;
 +        }
-         if (!this.worldObj.isRemote)
+         if (!this.field_70170_p.field_72995_K)
          {
-             if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1315,8 +1431,7 @@
+             if (this.func_70608_bn() || !this.func_70089_S())
+@@ -1254,8 +1387,7 @@
  
-         if (this.worldObj.blockExists(par1, par2, par3))
+         if (this.field_70170_p.func_72899_e(p_71018_1_, p_71018_2_, p_71018_3_))
          {
--            int i1 = this.worldObj.getBlockMetadata(par1, par2, par3);
+-            int i1 = this.field_70170_p.func_72805_g(p_71018_1_, p_71018_2_, p_71018_3_);
 -            int l = BlockBed.func_149895_l(i1);
-+            int l = worldObj.func_147439_a(par1, par2, par3).getBedDirection(worldObj, par1, par2, par3);
++            int l = field_70170_p.func_147439_a(p_71018_1_, p_71018_2_, p_71018_3_).getBedDirection(field_70170_p, p_71018_1_, p_71018_2_, p_71018_3_);
              float f1 = 0.5F;
              float f = 0.5F;
  
-@@ -1384,11 +1499,12 @@
-         this.resetHeight();
-         ChunkCoordinates chunkcoordinates = this.playerLocation;
-         ChunkCoordinates chunkcoordinates1 = this.playerLocation;
-+        Block block = (chunkcoordinates == null ? null : worldObj.func_147439_a(chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ));
+@@ -1322,11 +1454,12 @@
+         this.func_71061_d_();
+         ChunkCoordinates chunkcoordinates = this.field_71081_bT;
+         ChunkCoordinates chunkcoordinates1 = this.field_71081_bT;
++        Block block = (chunkcoordinates == null ? null : field_70170_p.func_147439_a(chunkcoordinates.field_71574_a, chunkcoordinates.field_71572_b, chunkcoordinates.field_71573_c));
  
--        if (chunkcoordinates != null && this.worldObj.func_147439_a(chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ) == Blocks.bed)
-+        if (chunkcoordinates != null && block.isBed(worldObj, chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, this))
+-        if (chunkcoordinates != null && this.field_70170_p.func_147439_a(chunkcoordinates.field_71574_a, chunkcoordinates.field_71572_b, chunkcoordinates.field_71573_c) == Blocks.field_150324_C)
++        if (chunkcoordinates != null && block.isBed(field_70170_p, chunkcoordinates.field_71574_a, chunkcoordinates.field_71572_b, chunkcoordinates.field_71573_c, this))
          {
--            BlockBed.func_149979_a(this.worldObj, chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, false);
--            chunkcoordinates1 = BlockBed.func_149977_a(this.worldObj, chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, 0);
-+            block.setBedOccupied(this.worldObj, chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, this, false);
-+            chunkcoordinates1 = block.getBedSpawnPosition(this.worldObj, chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, this);
+-            BlockBed.func_149979_a(this.field_70170_p, chunkcoordinates.field_71574_a, chunkcoordinates.field_71572_b, chunkcoordinates.field_71573_c, false);
+-            chunkcoordinates1 = BlockBed.func_149977_a(this.field_70170_p, chunkcoordinates.field_71574_a, chunkcoordinates.field_71572_b, chunkcoordinates.field_71573_c, 0);
++            block.setBedOccupied(this.field_70170_p, chunkcoordinates.field_71574_a, chunkcoordinates.field_71572_b, chunkcoordinates.field_71573_c, this, false);
++            chunkcoordinates1 = block.getBedSpawnPosition(this.field_70170_p, chunkcoordinates.field_71574_a, chunkcoordinates.field_71572_b, chunkcoordinates.field_71573_c, this);
  
              if (chunkcoordinates1 == null)
              {
-@@ -1423,7 +1539,7 @@
-     // JAVADOC METHOD $$ func_71065_l
-     private boolean isInBed()
+@@ -1360,7 +1493,7 @@
+ 
+     private boolean func_71065_l()
      {
--        return this.worldObj.func_147439_a(this.playerLocation.posX, this.playerLocation.posY, this.playerLocation.posZ) == Blocks.bed;
-+        return this.worldObj.func_147439_a(this.playerLocation.posX, this.playerLocation.posY, this.playerLocation.posZ).isBed(worldObj, playerLocation.posX, playerLocation.posY, playerLocation.posZ, this);
+-        return this.field_70170_p.func_147439_a(this.field_71081_bT.field_71574_a, this.field_71081_bT.field_71572_b, this.field_71081_bT.field_71573_c) == Blocks.field_150324_C;
++        return this.field_70170_p.func_147439_a(this.field_71081_bT.field_71574_a, this.field_71081_bT.field_71572_b, this.field_71081_bT.field_71573_c).isBed(field_70170_p, field_71081_bT.field_71574_a, field_71081_bT.field_71572_b, field_71081_bT.field_71573_c, this);
      }
  
-     // JAVADOC METHOD $$ func_71056_a
-@@ -1435,9 +1551,9 @@
-         ichunkprovider.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
-         ichunkprovider.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
+     public static ChunkCoordinates func_71056_a(World p_71056_0_, ChunkCoordinates p_71056_1_, boolean p_71056_2_)
+@@ -1371,9 +1504,9 @@
+         ichunkprovider.func_73158_c(p_71056_1_.field_71574_a - 3 >> 4, p_71056_1_.field_71573_c + 3 >> 4);
+         ichunkprovider.func_73158_c(p_71056_1_.field_71574_a + 3 >> 4, p_71056_1_.field_71573_c + 3 >> 4);
  
--        if (par0World.func_147439_a(par1ChunkCoordinates.posX, par1ChunkCoordinates.posY, par1ChunkCoordinates.posZ) == Blocks.bed)
-+        if (par0World.func_147439_a(par1ChunkCoordinates.posX, par1ChunkCoordinates.posY, par1ChunkCoordinates.posZ).isBed(par0World, par1ChunkCoordinates.posX, par1ChunkCoordinates.posY, par1ChunkCoordinates.posZ, null))
+-        if (p_71056_0_.func_147439_a(p_71056_1_.field_71574_a, p_71056_1_.field_71572_b, p_71056_1_.field_71573_c) == Blocks.field_150324_C)
++        if (p_71056_0_.func_147439_a(p_71056_1_.field_71574_a, p_71056_1_.field_71572_b, p_71056_1_.field_71573_c).isBed(p_71056_0_, p_71056_1_.field_71574_a, p_71056_1_.field_71572_b, p_71056_1_.field_71573_c, null))
          {
--            ChunkCoordinates chunkcoordinates1 = BlockBed.func_149977_a(par0World, par1ChunkCoordinates.posX, par1ChunkCoordinates.posY, par1ChunkCoordinates.posZ, 0);
-+            ChunkCoordinates chunkcoordinates1 = par0World.func_147439_a(par1ChunkCoordinates.posX, par1ChunkCoordinates.posY, par1ChunkCoordinates.posZ).getBedSpawnPosition(par0World, par1ChunkCoordinates.posX, par1ChunkCoordinates.posY, par1ChunkCoordinates.posZ, null);
+-            ChunkCoordinates chunkcoordinates1 = BlockBed.func_149977_a(p_71056_0_, p_71056_1_.field_71574_a, p_71056_1_.field_71572_b, p_71056_1_.field_71573_c, 0);
++            ChunkCoordinates chunkcoordinates1 = p_71056_0_.func_147439_a(p_71056_1_.field_71574_a, p_71056_1_.field_71572_b, p_71056_1_.field_71573_c).getBedSpawnPosition(p_71056_0_, p_71056_1_.field_71574_a, p_71056_1_.field_71572_b, p_71056_1_.field_71573_c, null);
              return chunkcoordinates1;
          }
          else
-@@ -1456,8 +1572,10 @@
+@@ -1391,8 +1524,10 @@
      {
-         if (this.playerLocation != null)
+         if (this.field_71081_bT != null)
          {
--            int i = this.worldObj.getBlockMetadata(this.playerLocation.posX, this.playerLocation.posY, this.playerLocation.posZ);
+-            int i = this.field_70170_p.func_72805_g(this.field_71081_bT.field_71574_a, this.field_71081_bT.field_71572_b, this.field_71081_bT.field_71573_c);
 -            int j = BlockBed.func_149895_l(i);
-+            int x = playerLocation.posX;
-+            int y = playerLocation.posY;
-+            int z = playerLocation.posZ;
-+            int j = worldObj.func_147439_a(x, y, z).getBedDirection(worldObj, x, y, z);
++            int x = field_71081_bT.field_71574_a;
++            int y = field_71081_bT.field_71572_b;
++            int z = field_71081_bT.field_71573_c;
++            int j = field_70170_p.func_147439_a(x, y, z).getBedDirection(field_70170_p, x, y, z);
  
              switch (j)
              {
-@@ -1516,19 +1634,26 @@
+@@ -1448,18 +1583,25 @@
+ 
      public void func_146105_b(IChatComponent p_146105_1_) {}
  
-     // JAVADOC METHOD $$ func_70997_bJ
 +    @Deprecated
-     public ChunkCoordinates getBedLocation()
+     public ChunkCoordinates func_70997_bJ()
      {
--        return this.spawnChunk;
-+        return getBedLocation(this.dimension);
+-        return this.field_71077_c;
++        return getBedLocation(this.field_71093_bK);
      }
  
 +    @Deprecated
-     public boolean isSpawnForced()
+     public boolean func_82245_bX()
      {
--        return this.spawnForced;
-+        return isSpawnForced(this.dimension);
+-        return this.field_82248_d;
++        return isSpawnForced(this.field_71093_bK);
      }
  
-     // JAVADOC METHOD $$ func_71063_a
-     public void setSpawnChunk(ChunkCoordinates par1ChunkCoordinates, boolean par2)
+     public void func_71063_a(ChunkCoordinates p_71063_1_, boolean p_71063_2_)
      {
-+        if (this.dimension != 0)
++        if (this.field_71093_bK != 0)
 +        {
-+            setSpawnChunk(par1ChunkCoordinates, par2, this.dimension);
++            setSpawnChunk(p_71063_1_, p_71063_2_, this.field_71093_bK);
 +            return;
 +        }
-         if (par1ChunkCoordinates != null)
+         if (p_71063_1_ != null)
          {
-             this.spawnChunk = new ChunkCoordinates(par1ChunkCoordinates);
-@@ -1710,6 +1835,10 @@
+             this.field_71077_c = new ChunkCoordinates(p_71063_1_);
+@@ -1633,6 +1775,10 @@
  
-             super.fall(par1);
+             super.func_70069_a(p_70069_1_);
          }
 +        else
 +        {
-+            MinecraftForge.EVENT_BUS.post(new PlayerFlyableFallEvent(this, par1));
++            MinecraftForge.EVENT_BUS.post(new PlayerFlyableFallEvent(this, p_70069_1_));
 +        }
      }
  
      protected String func_146067_o(int p_146067_1_)
-@@ -1757,7 +1886,7 @@
+@@ -1675,11 +1821,6 @@
+         }
+         else
          {
-             if (par1ItemStack.getItem().requiresMultipleRenderPasses())
+-            if (p_70620_1_.func_77973_b().func_77623_v())
+-            {
+-                return p_70620_1_.func_77973_b().func_77618_c(p_70620_1_.func_77960_j(), p_70620_2_);
+-            }
+-
+             if (this.field_71074_e != null && p_70620_1_.func_77973_b() == Items.field_151031_f)
              {
--                return par1ItemStack.getItem().getIconFromDamageForRenderPass(par1ItemStack.getItemDamage(), par2);
-+                return par1ItemStack.getItem().getIcon(par1ItemStack, par2);
-             }
- 
-             if (this.itemInUse != null && par1ItemStack.getItem() == Items.bow)
-@@ -1779,6 +1908,7 @@
-                     return Items.bow.getItemIconForUseDuration(0);
+                 int j = p_70620_1_.func_77988_m() - this.field_71072_f;
+@@ -1699,6 +1840,7 @@
+                     return Items.field_151031_f.func_94599_c(0);
                  }
              }
-+            iicon = par1ItemStack.getItem().getIcon(par1ItemStack, par2, this, itemInUse, itemInUseCount);
++            iicon = p_70620_1_.func_77973_b().getIcon(p_70620_1_, p_70620_2_, this, field_71074_e, field_71072_f);
          }
  
          return iicon;
-@@ -1967,6 +2097,17 @@
+@@ -1782,6 +1924,8 @@
+     {
+         if (p_71008_1_ != this.field_71074_e)
+         {
++            p_71008_2_ = ForgeEventFactory.onItemUseStart(this, p_71008_1_, p_71008_2_);
++            if (p_71008_2_ <= 0) return;
+             this.field_71074_e = p_71008_1_;
+             this.field_71072_f = p_71008_2_;
+ 
+@@ -1865,6 +2009,10 @@
+             this.field_71106_cc = p_71049_1_.field_71106_cc;
+             this.func_85040_s(p_71049_1_.func_71037_bA());
+             this.field_82152_aq = p_71049_1_.field_82152_aq;
++            //Copy and re-init ExtendedProperties when switching dimensions.
++            this.extendedProperties = p_71049_1_.extendedProperties;
++            for (net.minecraftforge.common.IExtendedEntityProperties p : this.extendedProperties.values())
++                p.init(this, this.field_70170_p);
+         }
+         else if (this.field_70170_p.func_82736_K().func_82766_b("keepInventory"))
+         {
+@@ -1876,6 +2024,18 @@
          }
  
-         this.theInventoryEnderChest = par1EntityPlayer.theInventoryEnderChest;
+         this.field_71078_a = p_71049_1_.field_71078_a;
 +
-+        this.spawnChunkMap = par1EntityPlayer.spawnChunkMap;
-+        this.spawnForcedMap = par1EntityPlayer.spawnForcedMap;
++        this.spawnChunkMap = p_71049_1_.spawnChunkMap;
++        this.spawnForcedMap = p_71049_1_.spawnForcedMap;
 +
 +        //Copy over a section of the Entity Data from the old player.
 +        //Allows mods to specify data that persists after players respawn.
-+        NBTTagCompound old = par1EntityPlayer.getEntityData();
-+        if (old.hasKey(PERSISTED_NBT_TAG))
++        NBTTagCompound old = p_71049_1_.getEntityData();
++        if (old.func_74764_b(PERSISTED_NBT_TAG))
 +        {
-+            getEntityData().setTag(PERSISTED_NBT_TAG, old.getCompoundTag(PERSISTED_NBT_TAG));
++            getEntityData().func_74782_a(PERSISTED_NBT_TAG, old.func_74775_l(PERSISTED_NBT_TAG));
 +        }
++        MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerEvent.Clone(p_71049_1_, this, !p_71049_2_));
      }
  
-     // JAVADOC METHOD $$ func_70041_e_
-@@ -2013,7 +2154,14 @@
-     // JAVADOC METHOD $$ func_70062_b
-     public void setCurrentItemOrArmor(int par1, ItemStack par2ItemStack)
+     protected boolean func_70041_e_()
+@@ -1914,7 +2074,14 @@
+ 
+     public void func_70062_b(int p_70062_1_, ItemStack p_70062_2_)
      {
--        this.inventory.armorInventory[par1] = par2ItemStack;
-+        if (par1 == 0)
+-        this.field_71071_by.field_70460_b[p_70062_1_] = p_70062_2_;
++        if (p_70062_1_ == 0)
 +        {
-+            this.inventory.mainInventory[this.inventory.currentItem] = par2ItemStack;
++            this.field_71071_by.field_70462_a[this.field_71071_by.field_70461_c] = p_70062_2_;
 +        }
 +        else
 +        {
-+            this.inventory.armorInventory[par1 - 1] = par2ItemStack;
++            this.field_71071_by.field_70460_b[p_70062_1_ - 1] = p_70062_2_;
 +        }
      }
  
-     // JAVADOC METHOD $$ func_98034_c
-@@ -2059,7 +2207,7 @@
+     @SideOnly(Side.CLIENT)
+@@ -1959,7 +2126,7 @@
  
      public IChatComponent func_145748_c_()
      {
--        ChatComponentText chatcomponenttext = new ChatComponentText(ScorePlayerTeam.formatPlayerName(this.getTeam(), this.getCommandSenderName()));
-+        ChatComponentText chatcomponenttext = new ChatComponentText(ScorePlayerTeam.formatPlayerName(this.getTeam(), this.getDisplayName()));
-         chatcomponenttext.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.getCommandSenderName() + " "));
+-        ChatComponentText chatcomponenttext = new ChatComponentText(ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.func_70005_c_()));
++        ChatComponentText chatcomponenttext = new ChatComponentText(ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.getDisplayName()));
+         chatcomponenttext.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
          return chatcomponenttext;
      }
-@@ -2096,6 +2244,119 @@
+@@ -2042,6 +2209,118 @@
          FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
      }
  
 +    /* ======================================== FORGE START =====================================*/
-+    // JAVADOC METHOD $$ func_70666_h
 +    @SideOnly(Side.CLIENT)
 +    @Override
-+    public Vec3 getPosition(float par1)
++    public Vec3 func_70666_h(float par1)
 +    {
 +        if (par1 == 1.0F)
 +        {
-+            return this.worldObj.getWorldVec3Pool().getVecFromPool(this.posX, this.posY + (this.getEyeHeight() - this.getDefaultEyeHeight()), this.posZ);
++            return this.field_70170_p.func_82732_R().func_72345_a(this.field_70165_t, this.field_70163_u + (this.func_70047_e() - this.getDefaultEyeHeight()), this.field_70161_v);
 +        }
 +        else
 +        {
-+            double d0 = this.prevPosX + (this.posX - this.prevPosX) * (double)par1;
-+            double d1 = this.prevPosY + (this.posY - this.prevPosY) * (double)par1 + (this.getEyeHeight() - this.getDefaultEyeHeight());
-+            double d2 = this.prevPosZ + (this.posZ - this.prevPosZ) * (double)par1;
-+            return this.worldObj.getWorldVec3Pool().getVecFromPool(d0, d1, d2);
++            double d0 = this.field_70169_q + (this.field_70165_t - this.field_70169_q) * (double)par1;
++            double d1 = this.field_70167_r + (this.field_70163_u - this.field_70167_r) * (double)par1 + (this.func_70047_e() - this.getDefaultEyeHeight());
++            double d2 = this.field_70166_s + (this.field_70161_v - this.field_70166_s) * (double)par1;
++            return this.field_70170_p.func_82732_R().func_72345_a(d0, d1, d2);
 +        }
 +    }
 +
@@ -509,7 +582,7 @@
 +     */
 +    public ChunkCoordinates getBedLocation(int dimension)
 +    {
-+        return dimension == 0 ? spawnChunk : spawnChunkMap.get(dimension);
++        return dimension == 0 ? field_71077_c : spawnChunkMap.get(dimension);
 +    }
 +
 +    /**
@@ -521,7 +594,7 @@
 +     */
 +    public boolean isSpawnForced(int dimension)
 +    {
-+        if (dimension == 0) return this.spawnForced;
++        if (dimension == 0) return this.field_82248_d;
 +        Boolean forced = this.spawnForcedMap.get(dimension);
 +        return forced == null ? false : forced;
 +    }
@@ -539,13 +612,13 @@
 +        {
 +            if (chunkCoordinates != null)
 +            {
-+                spawnChunk = new ChunkCoordinates(chunkCoordinates);
-+                spawnForced = forced;
++                field_71077_c = new ChunkCoordinates(chunkCoordinates);
++                field_82248_d = forced;
 +            }
 +            else
 +            {
-+                spawnChunk = null;
-+                spawnForced = false;
++                field_71077_c = null;
++                field_82248_d = false;
 +            }
 +            return;
 +        }
@@ -582,7 +655,7 @@
 +    {
 +        if(this.displayname == null)
 +        {
-+            this.displayname = ForgeEventFactory.getPlayerDisplayName(this, this.getCommandSenderName());
++            this.displayname = ForgeEventFactory.getPlayerDisplayName(this, this.func_70005_c_());
 +        }
 +        return this.displayname;
 +    }
@@ -592,7 +665,7 @@
 +     */
 +    public void refreshDisplayName()
 +    {
-+        this.displayname = ForgeEventFactory.getPlayerDisplayName(this, this.getCommandSenderName());
++        this.displayname = ForgeEventFactory.getPlayerDisplayName(this, this.func_70005_c_());
 +    }
 +    /* ======================================== FORGE END  =====================================*/
 +

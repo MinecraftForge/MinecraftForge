@@ -8,12 +8,12 @@
  
  public class MapGenStronghold extends MapGenStructure
  {
-@@ -35,11 +36,18 @@
+@@ -34,11 +35,18 @@
          {
              BiomeGenBase biomegenbase = abiomegenbase[j];
  
--            if (biomegenbase != null && biomegenbase.minHeight > 0.0F)
-+            if (biomegenbase != null && biomegenbase.minHeight > 0.0F && !BiomeManager.strongHoldBiomesBlackList.contains(biomegenbase))
+-            if (biomegenbase != null && biomegenbase.field_76748_D > 0.0F)
++            if (biomegenbase != null && biomegenbase.field_76748_D > 0.0F && !BiomeManager.strongHoldBiomesBlackList.contains(biomegenbase))
              {
                  this.field_151546_e.add(biomegenbase);
              }
@@ -27,4 +27,4 @@
 +        }
      }
  
-     public MapGenStronghold(Map par1Map)
+     public MapGenStronghold(Map p_i2068_1_)

@@ -12,8 +12,8 @@
  
  public class Slot
  {
-@@ -20,6 +22,13 @@
-     public int yDisplayPosition;
+@@ -15,6 +17,13 @@
+     public int field_75221_f;
      private static final String __OBFID = "CL_00001762";
  
 +    /** Position within background texture file, normally -1 which causes no background to be drawn. */
@@ -23,19 +23,19 @@
 +    @SideOnly(Side.CLIENT)
 +    protected ResourceLocation texture;
 +
-     public Slot(IInventory par1IInventory, int par2, int par3, int par4)
+     public Slot(IInventory p_i1824_1_, int p_i1824_2_, int p_i1824_3_, int p_i1824_4_)
      {
-         this.inventory = par1IInventory;
-@@ -115,7 +124,7 @@
+         this.field_75224_c = p_i1824_1_;
+@@ -97,7 +106,7 @@
      @SideOnly(Side.CLIENT)
-     public IIcon getBackgroundIconIndex()
+     public IIcon func_75212_b()
      {
 -        return null;
 +        return backgroundIcon;
      }
  
      @SideOnly(Side.CLIENT)
-@@ -123,4 +132,46 @@
+@@ -105,4 +114,46 @@
      {
          return true;
      }
@@ -48,7 +48,7 @@
 +    @SideOnly(Side.CLIENT)
 +    public ResourceLocation getBackgroundIconTexture()
 +    {
-+        return (texture == null ? TextureMap.locationItemsTexture : texture);
++        return (texture == null ? TextureMap.field_110576_c : texture);
 +    }
 +
 +    /**
@@ -78,7 +78,7 @@
 +     */
 +    public int getSlotIndex()
 +    {
-+        return slotIndex;
++        return field_75225_a;
 +    }
 +    /*========================================= FORGE END =====================================*/
  }

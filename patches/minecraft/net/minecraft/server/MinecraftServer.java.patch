@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/MinecraftServer.java
 +++ ../src-work/minecraft/net/minecraft/server/MinecraftServer.java
-@@ -23,6 +23,7 @@
+@@ -26,6 +26,7 @@
  import java.util.Arrays;
  import java.util.Collections;
  import java.util.Date;
@@ -8,7 +8,7 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.Random;
-@@ -71,6 +72,10 @@
+@@ -74,6 +75,10 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -19,45 +19,45 @@
  public abstract class MinecraftServer implements ICommandSender, Runnable, IPlayerUsage
  {
      private static final Logger field_147145_h = LogManager.getLogger();
-@@ -93,7 +98,7 @@
-     // JAVADOC FIELD $$ field_71319_s
-     private int serverPort = -1;
-     // JAVADOC FIELD $$ field_71305_c
--    public WorldServer[] worldServers;
-+    public WorldServer[] worldServers = new WorldServer[0];
-     // JAVADOC FIELD $$ field_71318_t
-     private ServerConfigurationManager serverConfigManager;
-     // JAVADOC FIELD $$ field_71317_u
-@@ -123,7 +128,8 @@
+@@ -90,7 +95,7 @@
+     @SideOnly(Side.SERVER)
+     private String field_71320_r;
+     private int field_71319_s = -1;
+-    public WorldServer[] field_71305_c;
++    public WorldServer[] field_71305_c = new WorldServer[0];
+     private ServerConfigurationManager field_71318_t;
+     private boolean field_71317_u = true;
+     private boolean field_71316_v;
+@@ -107,7 +112,8 @@
+     private int field_71280_D;
      private int field_143008_E = 0;
-     public final long[] tickTimeArray = new long[100];
-     // JAVADOC FIELD $$ field_71312_k
--    public long[][] timeOfLastDimensionTick;
+     public final long[] field_71311_j = new long[100];
+-    public long[][] field_71312_k;
 +    //public long[][] timeOfLastDimensionTick;
 +    public Hashtable<Integer, long[]> worldTickTimes = new Hashtable<Integer, long[]>();
-     private KeyPair serverKeyPair;
-     // JAVADOC FIELD $$ field_71293_J
-     private String serverOwner;
-@@ -215,8 +221,6 @@
+     private KeyPair field_71292_I;
+     private String field_71293_J;
+     private String field_71294_K;
+@@ -183,8 +189,6 @@
      {
-         this.convertMapIfNeeded(par1Str);
-         this.setUserMessage("menu.loadingLevel");
--        this.worldServers = new WorldServer[3];
--        this.timeOfLastDimensionTick = new long[this.worldServers.length][100];
-         ISaveHandler isavehandler = this.anvilConverterForAnvilFile.getSaveLoader(par1Str, true);
-         WorldInfo worldinfo = isavehandler.loadWorldInfo();
+         this.func_71237_c(p_71247_1_);
+         this.func_71192_d("menu.loadingLevel");
+-        this.field_71305_c = new WorldServer[3];
+-        this.field_71312_k = new long[this.field_71305_c.length][100];
+         ISaveHandler isavehandler = this.field_71310_m.func_75804_a(p_71247_1_, true);
+         WorldInfo worldinfo = isavehandler.func_75757_d();
          WorldSettings worldsettings;
-@@ -236,46 +240,21 @@
-             worldsettings.enableBonusChest();
+@@ -204,46 +208,21 @@
+             worldsettings.func_77159_a();
          }
  
--        for (int j = 0; j < this.worldServers.length; ++j)
-+        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, isavehandler, par2Str, 0, theProfiler) : new WorldServer(this, isavehandler, par2Str, 0, worldsettings, theProfiler));
+-        for (int j = 0; j < this.field_71305_c.length; ++j)
++        WorldServer overWorld = (func_71242_L() ? new DemoWorldServer(this, isavehandler, p_71247_2_, 0, field_71304_b) : new WorldServer(this, isavehandler, p_71247_2_, 0, worldsettings, field_71304_b));
 +        for (int dim : DimensionManager.getStaticDimensionIDs())
          {
 -            byte b0 = 0;
-+            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, isavehandler, par2Str, dim, worldsettings, overWorld, theProfiler));
-+            world.addWorldAccess(new WorldManager(this, world));
++            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, isavehandler, p_71247_2_, dim, worldsettings, overWorld, field_71304_b));
++            world.func_72954_a(new WorldManager(this, world));
  
 -            if (j == 1)
 -            {
@@ -71,121 +71,121 @@
 -
 -            if (j == 0)
 -            {
--                if (this.isDemo())
+-                if (this.func_71242_L())
 -                {
--                    this.worldServers[j] = new DemoWorldServer(this, isavehandler, par2Str, b0, this.theProfiler);
+-                    this.field_71305_c[j] = new DemoWorldServer(this, isavehandler, p_71247_2_, b0, this.field_71304_b);
 -                }
 -                else
 -                {
--                    this.worldServers[j] = new WorldServer(this, isavehandler, par2Str, b0, worldsettings, this.theProfiler);
+-                    this.field_71305_c[j] = new WorldServer(this, isavehandler, p_71247_2_, b0, worldsettings, this.field_71304_b);
 -                }
 -            }
 -            else
 -            {
--                this.worldServers[j] = new WorldServerMulti(this, isavehandler, par2Str, b0, worldsettings, this.worldServers[0], this.theProfiler);
+-                this.field_71305_c[j] = new WorldServerMulti(this, isavehandler, p_71247_2_, b0, worldsettings, this.field_71305_c[0], this.field_71304_b);
 -            }
 -
--            this.worldServers[j].addWorldAccess(new WorldManager(this, this.worldServers[j]));
+-            this.field_71305_c[j].func_72954_a(new WorldManager(this, this.field_71305_c[j]));
 -
-             if (!this.isSinglePlayer())
+             if (!this.func_71264_H())
              {
--                this.worldServers[j].getWorldInfo().setGameType(this.getGameType());
-+                world.getWorldInfo().setGameType(this.getGameType());
+-                this.field_71305_c[j].func_72912_H().func_76060_a(this.func_71265_f());
++                world.func_72912_H().func_76060_a(this.func_71265_f());
              }
  
--            this.serverConfigManager.setPlayerManager(this.worldServers);
+-            this.field_71318_t.func_72364_a(this.field_71305_c);
 +            MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
          }
  
-+        this.serverConfigManager.setPlayerManager(new WorldServer[]{ overWorld });
++        this.field_71318_t.func_72364_a(new WorldServer[]{ overWorld });
          this.func_147139_a(this.func_147135_j());
-         this.initialWorldChunkLoad();
+         this.func_71222_d();
      }
-@@ -346,6 +325,7 @@
-         if (!this.worldIsBeingDeleted)
+@@ -310,6 +289,7 @@
+         if (!this.field_71290_O)
          {
-             WorldServer[] aworldserver = this.worldServers;
+             WorldServer[] aworldserver = this.field_71305_c;
 +            if (aworldserver == null) return; //Forge: Just in case, NPE protection as it has been encountered.
              int i = aworldserver.length;
  
              for (int j = 0; j < i; ++j)
-@@ -397,9 +377,16 @@
-             for (int i = 0; i < this.worldServers.length; ++i)
+@@ -360,9 +340,16 @@
+             for (int i = 0; i < this.field_71305_c.length; ++i)
              {
-                 WorldServer worldserver = this.worldServers[i];
+                 WorldServer worldserver = this.field_71305_c[i];
 +                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(worldserver));
-                 worldserver.flush();
+                 worldserver.func_73041_k();
              }
  
-+            WorldServer[] tmp = worldServers;
++            WorldServer[] tmp = field_71305_c;
 +            for (WorldServer world : tmp)
 +            {
-+                DimensionManager.setWorld(world.provider.dimensionId, null);
++                DimensionManager.setWorld(world.field_73011_w.field_76574_g, null);
 +            }
 +
-             if (this.usageSnooper.isSnooperRunning())
+             if (this.field_71307_n.func_76468_d())
              {
-                 this.usageSnooper.stopSnooper();
-@@ -629,13 +616,15 @@
-         this.theProfiler.startSection("levels");
+                 this.field_71307_n.func_76470_e();
+@@ -592,13 +579,15 @@
+         this.field_71304_b.func_76320_a("levels");
          int i;
  
--        for (i = 0; i < this.worldServers.length; ++i)
-+        Integer[] ids = DimensionManager.getIDs(this.tickCounter % 200 == 0);
+-        for (i = 0; i < this.field_71305_c.length; ++i)
++        Integer[] ids = DimensionManager.getIDs(this.field_71315_w % 200 == 0);
 +        for (int x = 0; x < ids.length; x++)
          {
 +            int id = ids[x];
              long j = System.nanoTime();
  
--            if (i == 0 || this.getAllowNether())
-+            if (id == 0 || this.getAllowNether())
+-            if (i == 0 || this.func_71255_r())
++            if (id == 0 || this.func_71255_r())
              {
--                WorldServer worldserver = this.worldServers[i];
+-                WorldServer worldserver = this.field_71305_c[i];
 +                WorldServer worldserver = DimensionManager.getWorld(id);
-                 this.theProfiler.startSection(worldserver.getWorldInfo().getWorldName());
-                 this.theProfiler.startSection("pools");
-                 worldserver.getWorldVec3Pool().clear();
-@@ -682,9 +671,11 @@
-                 this.theProfiler.endSection();
+                 this.field_71304_b.func_76320_a(worldserver.func_72912_H().func_76065_j());
+                 this.field_71304_b.func_76320_a("pools");
+                 worldserver.func_82732_R().func_72343_a();
+@@ -645,9 +634,11 @@
+                 this.field_71304_b.func_76319_b();
              }
  
--            this.timeOfLastDimensionTick[i][this.tickCounter % 100] = System.nanoTime() - j;
-+            worldTickTimes.get(id)[this.tickCounter % 100] = System.nanoTime() - j;
+-            this.field_71312_k[i][this.field_71315_w % 100] = System.nanoTime() - j;
++            worldTickTimes.get(id)[this.field_71315_w % 100] = System.nanoTime() - j;
          }
  
-+        this.theProfiler.endStartSection("dim_unloading");
++        this.field_71304_b.func_76318_c("dim_unloading");
 +        DimensionManager.unloadWorlds(worldTickTimes);
-         this.theProfiler.endStartSection("connection");
+         this.field_71304_b.func_76318_c("connection");
          this.func_147137_ag().func_151269_c();
-         this.theProfiler.endStartSection("players");
-@@ -731,7 +722,13 @@
-     // JAVADOC METHOD $$ func_71218_a
-     public WorldServer worldServerForDimension(int par1)
+         this.field_71304_b.func_76318_c("players");
+@@ -692,7 +683,13 @@
+ 
+     public WorldServer func_71218_a(int p_71218_1_)
      {
--        return par1 == -1 ? this.worldServers[1] : (par1 == 1 ? this.worldServers[2] : this.worldServers[0]);
-+        WorldServer ret = DimensionManager.getWorld(par1);
+-        return p_71218_1_ == -1 ? this.field_71305_c[1] : (p_71218_1_ == 1 ? this.field_71305_c[2] : this.field_71305_c[0]);
++        WorldServer ret = DimensionManager.getWorld(p_71218_1_);
 +        if (ret == null)
 +        {
-+            DimensionManager.initDimension(par1);
-+            ret = DimensionManager.getWorld(par1);
++            DimensionManager.initDimension(p_71218_1_);
++            ret = DimensionManager.getWorld(p_71218_1_);
 +        }
 +        return ret;
      }
  
-     // JAVADOC METHOD $$ func_71249_w
-@@ -1006,6 +1003,7 @@
+     public String func_71249_w()
+@@ -951,6 +948,7 @@
  
              if (worldserver != null)
              {
 +                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(worldserver));
-                 worldserver.flush();
+                 worldserver.func_73041_k();
              }
          }
-@@ -1494,7 +1492,6 @@
+@@ -1421,7 +1419,6 @@
          this.field_147141_M = p_155759_1_;
      }
  
 -    @SideOnly(Side.SERVER)
-     public boolean isServerStopped()
+     public boolean func_71241_aa()
      {
-         return this.serverStopped;
+         return this.field_71316_v;

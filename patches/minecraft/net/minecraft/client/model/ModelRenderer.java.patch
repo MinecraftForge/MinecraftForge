@@ -7,36 +7,36 @@
 -@SideOnly(Side.CLIENT)
  public class ModelRenderer
  {
-     // JAVADOC FIELD $$ field_78801_a
-@@ -110,6 +109,7 @@
-         this.rotationPointZ = par3;
+     public float field_78801_a;
+@@ -102,6 +101,7 @@
+         this.field_78798_e = p_78793_3_;
      }
  
 +    @SideOnly(Side.CLIENT)
-     public void render(float par1)
+     public void func_78785_a(float p_78785_1_)
      {
-         if (!this.isHidden)
-@@ -192,6 +192,7 @@
+         if (!this.field_78807_k)
+@@ -184,6 +184,7 @@
          }
      }
  
 +    @SideOnly(Side.CLIENT)
-     public void renderWithRotation(float par1)
+     public void func_78791_b(float p_78791_1_)
      {
-         if (!this.isHidden)
-@@ -228,6 +229,7 @@
+         if (!this.field_78807_k)
+@@ -219,6 +220,7 @@
+         }
      }
  
-     // JAVADOC METHOD $$ func_78794_c
 +    @SideOnly(Side.CLIENT)
-     public void postRender(float par1)
+     public void func_78794_c(float p_78794_1_)
      {
-         if (!this.isHidden)
-@@ -270,6 +272,7 @@
+         if (!this.field_78807_k)
+@@ -260,6 +262,7 @@
+         }
      }
  
-     // JAVADOC METHOD $$ func_78788_d
 +    @SideOnly(Side.CLIENT)
-     private void compileDisplayList(float par1)
+     private void func_78788_d(float p_78788_1_)
      {
-         this.displayList = GLAllocation.generateDisplayLists(1);
+         this.field_78811_r = GLAllocation.func_74526_a(1);

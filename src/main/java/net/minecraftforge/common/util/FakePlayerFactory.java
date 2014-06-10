@@ -1,10 +1,14 @@
 package net.minecraftforge.common.util;
 
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 
 //To be expanded for generic Mod fake players?
 public class FakePlayerFactory
@@ -24,7 +28,9 @@ public class FakePlayerFactory
     }
     
     /**
-     * Get a fake player with a given username
+     * Get a fake player with a given username,
+     * Mods should either hold weak references to the return value, or listen for a 
+     * WorldEvent.Unload and kill all references to prevent worlds staying in memory.
      */
     public static FakePlayer get(WorldServer world, GameProfile username)
     {
@@ -35,5 +41,18 @@ public class FakePlayerFactory
         }
 
         return fakePlayers.get(username);
+    }
+
+    public static void unloadWorld(WorldServer world)
+    {
+        Iterator<Entry<GameProfile, FakePlayer>> itr = fakePlayers.entrySet().iterator();
+        while (itr.hasNext())
+        {
+            Entry<GameProfile, FakePlayer> entry = itr.next();
+            if (entry.getValue().worldObj == world)
+            {
+                itr.remove();
+            }
+        }
     }
 }

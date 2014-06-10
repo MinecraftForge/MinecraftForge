@@ -11,75 +11,75 @@
  @SideOnly(Side.CLIENT)
  public class PlayerControllerMP
  {
-@@ -104,6 +108,12 @@
-     // JAVADOC METHOD $$ func_78751_a
-     public boolean onPlayerDestroyBlock(int par1, int par2, int par3, int par4)
+@@ -88,6 +92,12 @@
+ 
+     public boolean func_78751_a(int p_78751_1_, int p_78751_2_, int p_78751_3_, int p_78751_4_)
      {
-+        ItemStack stack = mc.thePlayer.getCurrentEquippedItem();
-+        if (stack != null && stack.getItem() != null && stack.getItem().onBlockStartBreak(stack, par1, par2, par3, mc.thePlayer))
++        ItemStack stack = field_78776_a.field_71439_g.func_71045_bC();
++        if (stack != null && stack.func_77973_b() != null && stack.func_77973_b().onBlockStartBreak(stack, p_78751_1_, p_78751_2_, p_78751_3_, field_78776_a.field_71439_g))
 +        {
 +            return false;
 +        }
 +
-         if (this.currentGameType.isAdventure() && !this.mc.thePlayer.isCurrentToolAdventureModeExempt(par1, par2, par3))
+         if (this.field_78779_k.func_82752_c() && !this.field_78776_a.field_71439_g.func_82246_f(p_78751_1_, p_78751_2_, p_78751_3_))
          {
              return false;
-@@ -125,7 +135,7 @@
+@@ -109,7 +119,7 @@
              {
-                 worldclient.playAuxSFX(2001, par1, par2, par3, Block.func_149682_b(block) + (worldclient.getBlockMetadata(par1, par2, par3) << 12));
-                 int i1 = worldclient.getBlockMetadata(par1, par2, par3);
--                boolean flag = worldclient.func_147468_f(par1, par2, par3);
-+                boolean flag = block.removedByPlayer(worldclient, mc.thePlayer, par1, par2, par3);
+                 worldclient.func_72926_e(2001, p_78751_1_, p_78751_2_, p_78751_3_, Block.func_149682_b(block) + (worldclient.func_72805_g(p_78751_1_, p_78751_2_, p_78751_3_) << 12));
+                 int i1 = worldclient.func_72805_g(p_78751_1_, p_78751_2_, p_78751_3_);
+-                boolean flag = worldclient.func_147468_f(p_78751_1_, p_78751_2_, p_78751_3_);
++                boolean flag = block.removedByPlayer(worldclient, field_78776_a.field_71439_g, p_78751_1_, p_78751_2_, p_78751_3_);
  
                  if (flag)
                  {
-@@ -326,11 +336,18 @@
-         float f2 = (float)par8Vec3.zCoord - (float)par6;
+@@ -304,11 +314,18 @@
+         float f2 = (float)p_78760_8_.field_72449_c - (float)p_78760_6_;
          boolean flag = false;
  
--        if ((!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null) && par2World.func_147439_a(par4, par5, par6).func_149727_a(par2World, par4, par5, par6, par1EntityPlayer, par7, f, f1, f2))
-+        if (par3ItemStack != null &&
-+            par3ItemStack.getItem() != null &&
-+            par3ItemStack.getItem().onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, f, f1, f2))
+-        if ((!p_78760_1_.func_70093_af() || p_78760_1_.func_70694_bm() == null) && p_78760_2_.func_147439_a(p_78760_4_, p_78760_5_, p_78760_6_).func_149727_a(p_78760_2_, p_78760_4_, p_78760_5_, p_78760_6_, p_78760_1_, p_78760_7_, f, f1, f2))
++        if (p_78760_3_ != null &&
++            p_78760_3_.func_77973_b() != null &&
++            p_78760_3_.func_77973_b().onItemUseFirst(p_78760_3_, p_78760_1_, p_78760_2_, p_78760_4_, p_78760_5_, p_78760_6_, p_78760_7_, f, f1, f2))
          {
 -            flag = true;
 +                return true;
          }
  
-+        if (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null || par1EntityPlayer.getHeldItem().getItem().doesSneakBypassUse(par2World, par4, par5, par6, par1EntityPlayer))
++        if (!p_78760_1_.func_70093_af() || p_78760_1_.func_70694_bm() == null || p_78760_1_.func_70694_bm().func_77973_b().doesSneakBypassUse(p_78760_2_, p_78760_4_, p_78760_5_, p_78760_6_, p_78760_1_))
 +        {
-+            flag = par2World.func_147439_a(par4, par5, par6).func_149727_a(par2World, par4, par5, par6, par1EntityPlayer, par7, f, f1, f2);
++            flag = p_78760_2_.func_147439_a(p_78760_4_, p_78760_5_, p_78760_6_).func_149727_a(p_78760_2_, p_78760_4_, p_78760_5_, p_78760_6_, p_78760_1_, p_78760_7_, f, f1, f2);
 +        }
 +
-         if (!flag && par3ItemStack != null && par3ItemStack.getItem() instanceof ItemBlock)
+         if (!flag && p_78760_3_ != null && p_78760_3_.func_77973_b() instanceof ItemBlock)
          {
-             ItemBlock itemblock = (ItemBlock)par3ItemStack.getItem();
-@@ -362,7 +379,15 @@
+             ItemBlock itemblock = (ItemBlock)p_78760_3_.func_77973_b();
+@@ -340,7 +357,15 @@
          }
          else
          {
--            return par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, f, f1, f2);
-+            if (!par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, f, f1, f2))
+-            return p_78760_3_.func_77943_a(p_78760_1_, p_78760_2_, p_78760_4_, p_78760_5_, p_78760_6_, p_78760_7_, f, f1, f2);
++            if (!p_78760_3_.func_77943_a(p_78760_1_, p_78760_2_, p_78760_4_, p_78760_5_, p_78760_6_, p_78760_7_, f, f1, f2))
 +            {
 +                return false;
 +            }
-+            if (par3ItemStack.stackSize <= 0)
++            if (p_78760_3_.field_77994_a <= 0)
 +            {
-+                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(par1EntityPlayer, par3ItemStack));
++                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(p_78760_1_, p_78760_3_));
 +            }
 +            return true;
          }
      }
  
-@@ -382,9 +407,10 @@
+@@ -359,9 +384,10 @@
          {
-             par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = itemstack1;
+             p_78769_1_.field_71071_by.field_70462_a[p_78769_1_.field_71071_by.field_70461_c] = itemstack1;
  
--            if (itemstack1.stackSize == 0)
-+            if (itemstack1.stackSize <= 0)
+-            if (itemstack1.field_77994_a == 0)
++            if (itemstack1.field_77994_a <= 0)
              {
-                 par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
-+                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(par1EntityPlayer, itemstack1));
+                 p_78769_1_.field_71071_by.field_70462_a[p_78769_1_.field_71071_by.field_70461_c] = null;
++                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(p_78769_1_, itemstack1));
              }
  
              return true;

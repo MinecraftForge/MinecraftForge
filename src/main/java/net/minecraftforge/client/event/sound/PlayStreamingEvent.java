@@ -11,6 +11,7 @@ import net.minecraft.client.audio.SoundPoolEntry;
  * you can return a different entry if you want to change the sound being played.
  * 
  */
+@Deprecated
 public class PlayStreamingEvent extends SoundResultEvent
 {
     public final float x;

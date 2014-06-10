@@ -8,9 +8,11 @@ import net.minecraft.client.audio.SoundManager;
  */
 public class SoundSetupEvent extends SoundEvent
 {
+    @Deprecated
     public final SoundManager manager;
     public SoundSetupEvent(SoundManager manager)
     {
+        super(manager);
         this.manager = manager;
     }
 }

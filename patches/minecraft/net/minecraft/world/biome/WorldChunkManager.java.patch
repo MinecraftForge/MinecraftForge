@@ -18,35 +18,35 @@
  
  public class WorldChunkManager
  {
-+    public static ArrayList<BiomeGenBase> allowedBiomes = new ArrayList<BiomeGenBase>(Arrays.asList(forest, plains, taiga, taigaHills, forestHills, jungle, jungleHills));
-     private GenLayer genBiomes;
-     // JAVADOC FIELD $$ field_76945_e
-     private GenLayer biomeIndexLayer;
-@@ -29,19 +34,14 @@
++    public static ArrayList<BiomeGenBase> allowedBiomes = new ArrayList<BiomeGenBase>(Arrays.asList(field_76767_f, field_76772_c, field_76768_g, field_76784_u, field_76785_t, field_76782_w, field_76792_x));
+     private GenLayer field_76944_d;
+     private GenLayer field_76945_e;
+     private BiomeCache field_76942_f;
+@@ -26,19 +31,14 @@
      {
-         this.biomeCache = new BiomeCache(this);
-         this.biomesToSpawnIn = new ArrayList();
--        this.biomesToSpawnIn.add(BiomeGenBase.forest);
--        this.biomesToSpawnIn.add(BiomeGenBase.plains);
--        this.biomesToSpawnIn.add(BiomeGenBase.taiga);
--        this.biomesToSpawnIn.add(BiomeGenBase.taigaHills);
--        this.biomesToSpawnIn.add(BiomeGenBase.forestHills);
--        this.biomesToSpawnIn.add(BiomeGenBase.jungle);
--        this.biomesToSpawnIn.add(BiomeGenBase.jungleHills);
-+        this.biomesToSpawnIn.addAll(allowedBiomes);
+         this.field_76942_f = new BiomeCache(this);
+         this.field_76943_g = new ArrayList();
+-        this.field_76943_g.add(BiomeGenBase.field_76767_f);
+-        this.field_76943_g.add(BiomeGenBase.field_76772_c);
+-        this.field_76943_g.add(BiomeGenBase.field_76768_g);
+-        this.field_76943_g.add(BiomeGenBase.field_76784_u);
+-        this.field_76943_g.add(BiomeGenBase.field_76785_t);
+-        this.field_76943_g.add(BiomeGenBase.field_76782_w);
+-        this.field_76943_g.add(BiomeGenBase.field_76792_x);
++        this.field_76943_g.addAll(allowedBiomes);
      }
  
-     public WorldChunkManager(long par1, WorldType par3WorldType)
+     public WorldChunkManager(long p_i1975_1_, WorldType p_i1975_3_)
      {
          this();
-         GenLayer[] agenlayer = GenLayer.initializeAllBiomeGenerators(par1, par3WorldType);
-+        agenlayer = getModdedBiomeGenerators(par3WorldType, par1, agenlayer);
-         this.genBiomes = agenlayer[0];
-         this.biomeIndexLayer = agenlayer[1];
+         GenLayer[] agenlayer = GenLayer.func_75901_a(p_i1975_1_, p_i1975_3_);
++        agenlayer = getModdedBiomeGenerators(p_i1975_3_, p_i1975_1_, agenlayer);
+         this.field_76944_d = agenlayer[0];
+         this.field_76945_e = agenlayer[1];
      }
-@@ -254,4 +254,11 @@
+@@ -242,4 +242,11 @@
      {
-         this.biomeCache.cleanupCache();
+         this.field_76942_f.func_76838_a();
      }
 +
 +    public GenLayer[] getModdedBiomeGenerators(WorldType worldType, long seed, GenLayer[] original)

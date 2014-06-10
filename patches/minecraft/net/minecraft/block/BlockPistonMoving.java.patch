@@ -1,0 +1,47 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockPistonMoving.java
++++ ../src-work/minecraft/net/minecraft/block/BlockPistonMoving.java
+@@ -2,11 +2,13 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++import java.util.ArrayList;
+ import java.util.Random;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.client.renderer.texture.IIconRegister;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.item.Item;
++import net.minecraft.item.ItemStack;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityPiston;
+ import net.minecraft.util.AxisAlignedBB;
+@@ -90,15 +92,7 @@
+ 
+     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
+     {
+-        if (!p_149690_1_.field_72995_K)
+-        {
+-            TileEntityPiston tileentitypiston = this.func_149963_e(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_);
+-
+-            if (tileentitypiston != null)
+-            {
+-                tileentitypiston.func_145861_a().func_149697_b(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, tileentitypiston.func_145832_p(), 0);
+-            }
+-        }
++        super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
+     }
+ 
+     public void func_149695_a(World p_149695_1_, int p_149695_2_, int p_149695_3_, int p_149695_4_, Block p_149695_5_)
+@@ -231,4 +225,13 @@
+     {
+         this.field_149761_L = p_149651_1_.func_94245_a("piston_top_normal");
+     }
++
++    @Override
++    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune)
++    {
++        TileEntityPiston te = this.func_149963_e(world, x, y, z);
++        if (te != null)
++            return te.func_145861_a().getDrops(world, x, y, z, te.func_145832_p(), 0);
++        return new ArrayList<ItemStack>();
++    }
+ }

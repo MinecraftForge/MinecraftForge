@@ -74,20 +74,20 @@ public class ClientCommandHandler extends CommandHandler
             }
             else
             {
-                sender.func_145747_a(format(RED, "commands.generic.permission"));
+                sender.addChatMessage(format(RED, "commands.generic.permission"));
             }
         }
         catch (WrongUsageException wue)
         {
-            sender.func_145747_a(format(RED, "commands.generic.usage", format(RED, wue.getMessage(), wue.getErrorOjbects())));
+            sender.addChatMessage(format(RED, "commands.generic.usage", format(RED, wue.getMessage(), wue.getErrorOjbects())));
         }
         catch (CommandException ce)
         {
-            sender.func_145747_a(format(RED, ce.getMessage(), ce.getErrorOjbects()));
+            sender.addChatMessage(format(RED, ce.getMessage(), ce.getErrorOjbects()));
         }
         catch (Throwable t)
         {
-            sender.func_145747_a(format(RED, "commands.generic.exception"));
+            sender.addChatMessage(format(RED, "commands.generic.exception"));
             t.printStackTrace();
         }
 
@@ -98,7 +98,7 @@ public class ClientCommandHandler extends CommandHandler
     private ChatComponentTranslation format(EnumChatFormatting color, String str, Object... args)
     {
         ChatComponentTranslation ret = new ChatComponentTranslation(str, args);
-        ret.func_150256_b().func_150238_a(color);
+        ret.getChatStyle().setColor(color);
         return ret;
     }
 

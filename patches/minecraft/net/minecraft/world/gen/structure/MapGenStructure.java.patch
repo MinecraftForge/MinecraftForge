@@ -1,17 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/structure/MapGenStructure.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/structure/MapGenStructure.java
-@@ -243,12 +243,12 @@
+@@ -239,12 +239,12 @@
      {
          if (this.field_143029_e == null)
          {
--            this.field_143029_e = (MapGenStructureData)par1World.loadItemData(MapGenStructureData.class, this.func_143025_a());
-+            this.field_143029_e = (MapGenStructureData)par1World.perWorldStorage.loadData(MapGenStructureData.class, this.func_143025_a());
+-            this.field_143029_e = (MapGenStructureData)p_143027_1_.func_72943_a(MapGenStructureData.class, this.func_143025_a());
++            this.field_143029_e = (MapGenStructureData)p_143027_1_.perWorldStorage.func_75742_a(MapGenStructureData.class, this.func_143025_a());
  
              if (this.field_143029_e == null)
              {
                  this.field_143029_e = new MapGenStructureData(this.func_143025_a());
--                par1World.setItemData(this.func_143025_a(), this.field_143029_e);
-+                par1World.perWorldStorage.setData(this.func_143025_a(), this.field_143029_e);
+-                p_143027_1_.func_72823_a(this.func_143025_a(), this.field_143029_e);
++                p_143027_1_.perWorldStorage.func_75745_a(this.func_143025_a(), this.field_143029_e);
              }
              else
              {

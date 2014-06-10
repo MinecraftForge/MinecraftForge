@@ -4,17 +4,17 @@
      {
          Block block;
  
--        while (((block = par1World.func_147439_a(par3, par4, par5)).func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j) && par4 > 0)
+-        while (((block = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_, p_76484_5_)).func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j) && p_76484_4_ > 0)
 +        do
          {
-+            block = par1World.func_147439_a(par3, par4, par5);
-+            if (!(block.isLeaves(par1World, par3, par4, par5) || block.isAir(par1World, par3, par4, par5)))
++            block = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_, p_76484_5_);
++            if (!(block.isLeaves(p_76484_1_, p_76484_3_, p_76484_4_, p_76484_5_) || block.isAir(p_76484_1_, p_76484_3_, p_76484_4_, p_76484_5_)))
 +            {
 +                break;
 +            }
-             --par4;
+             --p_76484_4_;
 -        }
-+        } while (par4 > 0);
++        } while (p_76484_4_ > 0);
  
          for (int l = 0; l < 128; ++l)
          {

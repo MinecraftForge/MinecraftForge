@@ -12,7 +12,7 @@
  
      public static final boolean func_150051_a(Block p_150051_0_)
      {
--        return p_150051_0_ == Blocks.rail || p_150051_0_ == Blocks.golden_rail || p_150051_0_ == Blocks.detector_rail || p_150051_0_ == Blocks.activator_rail;
+-        return p_150051_0_ == Blocks.field_150448_aq || p_150051_0_ == Blocks.field_150318_D || p_150051_0_ == Blocks.field_150319_E || p_150051_0_ == Blocks.field_150408_cc;
 +        return p_150051_0_ instanceof BlockRailBase;
      }
  
@@ -42,7 +42,7 @@
 +     */
 +    public boolean isFlexibleRail(IBlockAccess world, int y, int x, int z)
 +    {
-+        return func_150050_e();
++        return !func_150050_e();
 +    }
 +
 +    /**
@@ -86,7 +86,7 @@
 +     */
 +    public int getBasicRailMetadata(IBlockAccess world, EntityMinecart cart, int x, int y, int z)
 +    {
-+        int meta = world.getBlockMetadata(x, y, z);
++        int meta = world.func_72805_g(x, y, z);
 +        if(func_150050_e())
 +        {
 +            meta = meta & 7;
@@ -151,7 +151,7 @@
              this.field_150658_d = p_i45388_4_;
              this.field_150659_e = p_i45388_5_;
 -            Block block = p_i45388_2_.func_147439_a(p_i45388_3_, p_i45388_4_, p_i45388_5_);
--            int l = p_i45388_2_.getBlockMetadata(p_i45388_3_, p_i45388_4_, p_i45388_5_);
+-            int l = p_i45388_2_.func_72805_g(p_i45388_3_, p_i45388_4_, p_i45388_5_);
 -
 -            if (((BlockRailBase)block).field_150053_a)
 -            {
@@ -165,7 +165,7 @@
 -
 +            BlockRailBase block = (BlockRailBase)p_i45388_2_.func_147439_a(p_i45388_3_, p_i45388_4_, p_i45388_5_);
 +            int l = block.getBasicRailMetadata(p_i45388_2_, null, p_i45388_3_, p_i45388_4_, p_i45388_5_);
-+            this.field_150656_f = block.isFlexibleRail(p_i45388_2_, p_i45388_3_, p_i45388_4_, p_i45388_5_);
++            this.field_150656_f = !block.isFlexibleRail(p_i45388_2_, p_i45388_3_, p_i45388_4_, p_i45388_5_);
 +            canMakeSlopes = block.canMakeSlopes(p_i45388_2_, p_i45388_3_, p_i45388_4_, p_i45388_5_);
              this.func_150648_a(l);
          }

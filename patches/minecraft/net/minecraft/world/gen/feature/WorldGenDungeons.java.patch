@@ -13,23 +13,23 @@
 @@ -123,12 +126,11 @@
                                  if (k2 == 1)
                                  {
-                                     par1World.func_147465_d(i2, par4, j2, Blocks.chest, 0, 2);
--                                    WeightedRandomChestContent[] aweightedrandomchestcontent = WeightedRandomChestContent.func_92080_a(field_111189_a, new WeightedRandomChestContent[] {Items.enchanted_book.func_92114_b(par2Random)});
-                                     TileEntityChest tileentitychest = (TileEntityChest)par1World.func_147438_o(i2, par4, j2);
+                                     p_76484_1_.func_147465_d(i2, p_76484_4_, j2, Blocks.field_150486_ae, 0, 2);
+-                                    WeightedRandomChestContent[] aweightedrandomchestcontent = WeightedRandomChestContent.func_92080_a(field_111189_a, new WeightedRandomChestContent[] {Items.field_151134_bR.func_92114_b(p_76484_2_)});
+                                     TileEntityChest tileentitychest = (TileEntityChest)p_76484_1_.func_147438_o(i2, p_76484_4_, j2);
  
                                      if (tileentitychest != null)
                                      {
--                                        WeightedRandomChestContent.generateChestContents(par2Random, aweightedrandomchestcontent, tileentitychest, 8);
-+                                        WeightedRandomChestContent.generateChestContents(par2Random, ChestGenHooks.getItems(DUNGEON_CHEST, par2Random), tileentitychest, ChestGenHooks.getCount(DUNGEON_CHEST, par2Random));
+-                                        WeightedRandomChestContent.func_76293_a(p_76484_2_, aweightedrandomchestcontent, tileentitychest, 8);
++                                        WeightedRandomChestContent.func_76293_a(p_76484_2_, ChestGenHooks.getItems(DUNGEON_CHEST, p_76484_2_), tileentitychest, ChestGenHooks.getCount(DUNGEON_CHEST, p_76484_2_));
                                      }
  
                                      break label101;
-@@ -168,7 +170,6 @@
-     // JAVADOC METHOD $$ func_76543_b
-     private String pickMobSpawner(Random par1Random)
+@@ -167,7 +169,6 @@
+ 
+     private String func_76543_b(Random p_76543_1_)
      {
--        int i = par1Random.nextInt(4);
+-        int i = p_76543_1_.nextInt(4);
 -        return i == 0 ? "Skeleton" : (i == 1 ? "Zombie" : (i == 2 ? "Zombie" : (i == 3 ? "Spider" : "")));
-+        return DungeonHooks.getRandomDungeonMob(par1Random);
++        return DungeonHooks.getRandomDungeonMob(p_76543_1_);
      }
  }

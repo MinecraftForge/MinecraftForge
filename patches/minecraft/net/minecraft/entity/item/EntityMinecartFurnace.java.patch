@@ -1,10 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityMinecartFurnace.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecartFurnace.java
-@@ -124,6 +124,7 @@
-     // JAVADOC METHOD $$ func_130002_c
-     public boolean interactFirst(EntityPlayer par1EntityPlayer)
-     {
-+        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartInteractEvent(this, par1EntityPlayer))) return true;
-         ItemStack itemstack = par1EntityPlayer.inventory.getCurrentItem();
+@@ -122,6 +122,7 @@
  
-         if (itemstack != null && itemstack.getItem() == Items.coal)
+     public boolean func_130002_c(EntityPlayer p_130002_1_)
+     {
++        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartInteractEvent(this, p_130002_1_))) return true;
+         ItemStack itemstack = p_130002_1_.field_71071_by.func_70448_g();
+ 
+         if (itemstack != null && itemstack.func_77973_b() == Items.field_151044_h)

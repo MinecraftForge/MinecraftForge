@@ -4,7 +4,7 @@
                      {
                          Block block = this.field_145850_b.func_147439_a(l, k, i1);
  
--                        if (block != Blocks.emerald_block && block != Blocks.gold_block && block != Blocks.diamond_block && block != Blocks.iron_block)
+-                        if (block != Blocks.field_150475_bE && block != Blocks.field_150340_R && block != Blocks.field_150484_ah && block != Blocks.field_150339_S)
 +                        if (!block.isBeaconBase(this.field_145850_b, l, k, i1, field_145851_c, field_145848_d, field_145849_e))
                          {
                              flag = false;

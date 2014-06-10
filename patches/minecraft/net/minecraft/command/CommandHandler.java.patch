@@ -10,11 +10,11 @@
  public class CommandHandler implements ICommandManager
  {
      private static final Logger field_147175_a = LogManager.getLogger();
-@@ -49,6 +52,16 @@
+@@ -47,6 +50,16 @@
  
-             if (icommand.canCommandSenderUseCommand(par1ICommandSender))
+             if (icommand.func_71519_b(p_71556_1_))
              {
-+                CommandEvent event = new CommandEvent(icommand, par1ICommandSender, astring);
++                CommandEvent event = new CommandEvent(icommand, p_71556_1_, astring);
 +                if (MinecraftForge.EVENT_BUS.post(event))
 +                {
 +                    if (event.exception != null)
@@ -26,4 +26,4 @@
 +
                  if (i > -1)
                  {
-                     EntityPlayerMP[] aentityplayermp = PlayerSelector.matchPlayers(par1ICommandSender, astring[i]);
+                     EntityPlayerMP[] aentityplayermp = PlayerSelector.func_82380_c(p_71556_1_, astring[i]);

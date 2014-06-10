@@ -42,6 +42,11 @@ import java.util.Map;
 
 import static net.minecraftforge.common.util.ForgeDirection.*;
 
+/**
+ * This class is a helper function for vanilla blocks, and should not be called by Modders.
+ * Refer to block.rotateBlock and block.getValidRotations instead.
+ *
+ */
 public class RotationHelper {
     /**
      * Some blocks have the same rotation.

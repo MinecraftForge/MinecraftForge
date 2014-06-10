@@ -1,10 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityMinecartHopper.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecartHopper.java
-@@ -53,6 +53,7 @@
-     // JAVADOC METHOD $$ func_130002_c
-     public boolean interactFirst(EntityPlayer par1EntityPlayer)
+@@ -50,6 +50,7 @@
+ 
+     public boolean func_130002_c(EntityPlayer p_130002_1_)
      {
-+        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartInteractEvent(this, par1EntityPlayer))) return true;
-         if (!this.worldObj.isRemote)
++        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartInteractEvent(this, p_130002_1_))) return true;
+         if (!this.field_70170_p.field_72995_K)
          {
-             par1EntityPlayer.displayGUIHopperMinecart(this);
+             p_130002_1_.func_96125_a(this);

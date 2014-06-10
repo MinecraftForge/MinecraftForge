@@ -2,10 +2,10 @@
 +++ ../src-work/minecraft/net/minecraft/item/ItemBucketMilk.java
 @@ -24,7 +24,7 @@
  
-         if (!par2World.isRemote)
+         if (!p_77654_2_.field_72995_K)
          {
--            par3EntityPlayer.clearActivePotions();
-+            par3EntityPlayer.curePotionEffects(par1ItemStack);
+-            p_77654_3_.func_70674_bp();
++            p_77654_3_.curePotionEffects(p_77654_1_);
          }
  
-         return par1ItemStack.stackSize <= 0 ? new ItemStack(Items.bucket) : par1ItemStack;
+         return p_77654_1_.field_77994_a <= 0 ? new ItemStack(Items.field_151133_ar) : p_77654_1_;

@@ -4,9 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import com.google.common.collect.Maps;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
@@ -20,21 +24,19 @@ import net.minecraft.world.World;
  * @author King Lemming, OvermindDL1
  *
  */
-@SuppressWarnings("unused")
 public abstract class BlockFluidBase extends Block implements IFluidBlock
 {
-    /*
-    protected final static Map<Integer, Boolean> defaultDisplacementIds = new HashMap<Integer, Boolean>();
+    protected final static Map<Block, Boolean> defaultDisplacements = Maps.newHashMap();
 
     static
     {
-        defaultDisplacementIds.put(Block.doorWood.blockID, false);
-        defaultDisplacementIds.put(Block.doorIron.blockID, false);
-        defaultDisplacementIds.put(Block.signPost.blockID, false);
-        defaultDisplacementIds.put(Block.signWall.blockID, false);
-        defaultDisplacementIds.put(Block.reed.blockID,     false);
+        defaultDisplacements.put(Blocks.wooden_door,   false);
+        defaultDisplacements.put(Blocks.iron_door,     false);
+        defaultDisplacements.put(Blocks.standing_sign, false);
+        defaultDisplacements.put(Blocks.wall_sign,     false);
+        defaultDisplacements.put(Blocks.reeds,         false);
     }
-    protected Map<Integer, Boolean> displacementIds = new HashMap<Integer, Boolean>();
+    protected Map<Block, Boolean> displacements = Maps.newHashMap();
 
     protected int quantaPerBlock = 8;
     protected float quantaPerBlockFloat = 8F;
@@ -47,11 +49,10 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     protected int maxScaledLight = 0;
 
     protected final String fluidName;
-    */
-    public BlockFluidBase(int id, Fluid fluid, Material material)
+
+    public BlockFluidBase(Fluid fluid, Material material)
     {
         super(material);
-        /*
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
         this.setTickRandomly(true);
         this.disableStats();
@@ -62,12 +63,11 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         this.maxScaledLight = fluid.luminosity;
         this.tickRate = fluid.viscosity / 200;
         this.densityDir = fluid.density > 0 ? -1 : 1;
-        fluid.setBlockID(id);
+        fluid.setBlock(this);
 
-        displacementIds.putAll(defaultDisplacementIds);
-        */
+        displacements.putAll(defaultDisplacements);
     }
-    /*
+
     public BlockFluidBase setQuantaPerBlock(int quantaPerBlock)
     {
         if (quantaPerBlock > 16 || quantaPerBlock < 1) quantaPerBlock = 8;
@@ -111,24 +111,24 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     /**
      * Returns true if the block at (x, y, z) is displaceable. Does not displace the block.
-     * /
+     */
     public boolean canDisplace(IBlockAccess world, int x, int y, int z)
     {
-        if (world.isAirBlock(x, y, z)) return true;
+        if (world.getBlock(x, y, z).isAir(world, x, y, z)) return true;
 
-        int bId = world.getBlockId(x, y, z);
+        Block block = world.getBlock(x, y, z);
 
-        if (bId == blockID)
+        if (block == this)
         {
             return false;
         }
 
-        if (displacementIds.containsKey(bId))
+        if (displacements.containsKey(block))
         {
-            return displacementIds.get(bId);
+            return displacements.get(block);
         }
 
-        Material material = Block.blocksList[bId].blockMaterial;
+        Material material = block.getMaterial();
         if (material.blocksMovement() || material == Material.portal)
         {
             return false;
@@ -152,31 +152,31 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     /**
      * Attempt to displace the block at (x, y, z), return true if it was displaced.
-     * /
+     */
     public boolean displaceIfPossible(World world, int x, int y, int z)
     {
-        if (world.isAirBlock(x, y, z))
+        if (world.getBlock(x, y, z).isAir(world, x, y, z))
         {
             return true;
         }
 
-        int bId = world.getBlockId(x, y, z);
-        if (bId == blockID)
+        Block block = world.getBlock(x, y, z);
+        if (block == this)
         {
             return false;
         }
 
-        if (displacementIds.containsKey(bId))
+        if (displacements.containsKey(block))
         {
-            if (displacementIds.get(bId))
+            if (displacements.get(block))
             {
-                Block.blocksList[bId].dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
+                block.dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
                 return true;
             }
             return false;
         }
 
-        Material material = Block.blocksList[bId].blockMaterial;
+        Material material = block.getMaterial();
         if (material.blocksMovement() || material == Material.portal)
         {
             return false;
@@ -185,7 +185,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         int density = getDensity(world, x, y, z);
         if (density == Integer.MAX_VALUE) 
         {
-        	 Block.blocksList[bId].dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
+        	 block.dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
         	 return true;
         }
         
@@ -206,22 +206,22 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     public abstract int getMaxRenderHeightMeta();
 
-    /* BLOCK FUNCTIONS * /
+    /* BLOCK FUNCTIONS */
     @Override
     public void onBlockAdded(World world, int x, int y, int z)
     {
-        world.scheduleBlockUpdate(x, y, z, blockID, tickRate);
+        world.scheduleBlockUpdate(x, y, z, this, tickRate);
     }
 
     @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, int blockId)
+    public void onNeighborBlockChange(World world, int x, int y, int z, Block block)
     {
-        world.scheduleBlockUpdate(x, y, z, blockID, tickRate);
+        world.scheduleBlockUpdate(x, y, z, this, tickRate);
     }
 
     // Used to prevent updates on chunk generation
     @Override
-    public boolean func_82506_l()
+    public boolean func_149698_L()
     {
         return false;
     }
@@ -239,9 +239,9 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
 
     @Override
-    public int idDropped(int par1, Random par2Random, int par3)
+    public Item getItemDropped(int par1, Random par2Random, int par3)
     {
-        return 0;
+        return null;
     }
 
     @Override
@@ -295,13 +295,15 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         return false;
     }
 
+    /* Never used...?
     @Override
-    public float getBlockBrightness(IBlockAccess world, int x, int y, int z)
+    public float getBlockBrightness(World world, int x, int y, int z)
     {
         float lightThis = world.getLightBrightness(x, y, z);
         float lightUp = world.getLightBrightness(x, y + 1, z);
         return lightThis > lightUp ? lightThis : lightUp;
     }
+    */
 
     @Override
     public int getMixedBrightnessForBlock(IBlockAccess world, int x, int y, int z)
@@ -325,18 +327,18 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     @Override
     public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side)
     {
-        if (world.getBlockId(x, y, z) != blockID)
+        Block block = world.getBlock(x, y, z);
+        if (block != this)
         {
-            return !world.isBlockOpaqueCube(x, y, z);
+            return !block.isOpaqueCube();
         }
-        Material mat = world.getBlockMaterial(x, y, z);
-        return mat == this.blockMaterial ? false : super.shouldSideBeRendered(world, x, y, z, side);
+        return block.getMaterial() == this.getMaterial() ? false : super.shouldSideBeRendered(world, x, y, z, side);
     }
 
-    /* FLUID FUNCTIONS * /
+    /* FLUID FUNCTIONS */
     public static final int getDensity(IBlockAccess world, int x, int y, int z)
     {
-        Block block = Block.blocksList[world.getBlockId(x, y, z)];
+        Block block = world.getBlock(x, y, z);
         if (!(block instanceof BlockFluidBase))
         {
             return Integer.MAX_VALUE;
@@ -346,7 +348,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 	
     public static final int getTemperature(IBlockAccess world, int x, int y, int z)
     {
-        Block block = Block.blocksList[world.getBlockId(x, y, z)];
+        Block block = world.getBlock(x, y, z);
         if (!(block instanceof BlockFluidBase))
         {
             return Integer.MAX_VALUE;
@@ -356,8 +358,8 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     public static double getFlowDirection(IBlockAccess world, int x, int y, int z)
     {
-        Block block = Block.blocksList[world.getBlockId(x, y, z)];
-        if (!world.getBlockMaterial(x, y, z).isLiquid())
+        Block block = world.getBlock(x, y, z);
+        if (!block.getMaterial().isLiquid())
         {
             return -1000.0;
         }
@@ -412,7 +414,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             int otherDecay = quantaPerBlock - getQuantaValue(world, x2, y, z2);
             if (otherDecay >= quantaPerBlock)
             {
-                if (!world.getBlockMaterial(x2, y, z2).blocksMovement())
+                if (!world.getBlock(x2, y, z2).getMaterial().blocksMovement())
                 {
                     otherDecay = quantaPerBlock - getQuantaValue(world, x2, y - 1, z2);
                     if (otherDecay >= 0)
@@ -429,7 +431,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             }
         }
 
-        if (world.getBlockId(x, y + 1, z) == blockID)
+        if (world.getBlock(x, y + 1, z) == this)
         {
             boolean flag =
                 isBlockSolid(world, x,     y,     z - 1, 2) ||
@@ -450,7 +452,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         return vec;
     }
 
-    /* IFluidBlock * /
+    /* IFluidBlock */
     @Override
     public Fluid getFluid()
     {
@@ -465,5 +467,4 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         if (remaining > 1) remaining = 1.0f;
         return remaining * (density > 0 ? 1 : -1);
     }
-    */
 }

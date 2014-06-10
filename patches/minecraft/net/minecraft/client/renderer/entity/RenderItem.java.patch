@@ -17,85 +17,84 @@
  @SideOnly(Side.CLIENT)
  public class RenderItem extends Render
  {
-@@ -56,7 +59,7 @@
-             this.bindEntityTexture(par1EntityItem);
-             this.random.setSeed(187L);
+@@ -53,7 +56,7 @@
+             this.func_110777_b(p_77014_1_);
+             this.field_77025_h.setSeed(187L);
              GL11.glPushMatrix();
--            float f2 = MathHelper.sin(((float)par1EntityItem.age + par9) / 10.0F + par1EntityItem.hoverStart) * 0.1F + 0.1F;
-+            float f2 = shouldBob() ? MathHelper.sin(((float)par1EntityItem.age + par9) / 10.0F + par1EntityItem.hoverStart) * 0.1F + 0.1F : 0F;
-             float f3 = (((float)par1EntityItem.age + par9) / 20.0F + par1EntityItem.hoverStart) * (180F / (float)Math.PI);
+-            float f2 = MathHelper.func_76126_a(((float)p_77014_1_.field_70292_b + p_77014_9_) / 10.0F + p_77014_1_.field_70290_d) * 0.1F + 0.1F;
++            float f2 = shouldBob() ? MathHelper.func_76126_a(((float)p_77014_1_.field_70292_b + p_77014_9_) / 10.0F + p_77014_1_.field_70290_d) * 0.1F + 0.1F : 0F;
+             float f3 = (((float)p_77014_1_.field_70292_b + p_77014_9_) / 20.0F + p_77014_1_.field_70290_d) * (180F / (float)Math.PI);
              byte b0 = 1;
  
-@@ -80,12 +83,19 @@
+@@ -77,12 +80,19 @@
                  b0 = 5;
              }
  
 +            b0 = getMiniBlockCount(itemstack, b0);
 +
-             GL11.glTranslatef((float)par2, (float)par4 + f2, (float)par6);
+             GL11.glTranslatef((float)p_77014_2_, (float)p_77014_4_ + f2, (float)p_77014_6_);
              GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-             float f7;
              float f6;
+             float f7;
              int k;
  
-+            if (ForgeHooksClient.renderEntityItem(par1EntityItem, itemstack, f2, f3, random, renderManager.renderEngine, field_147909_c, b0))
++            if (ForgeHooksClient.renderEntityItem(p_77014_1_, itemstack, f2, f3, field_77025_h, field_76990_c.field_78724_e, field_147909_c, b0))
 +            {
 +                ;
 +            }
 +            else // Code Style break here to prevent the patch from editing this line
-             if (itemstack.getItemSpriteNumber() == 0 && itemstack.getItem() instanceof ItemBlock && RenderBlocks.func_147739_a(Block.func_149634_a(itemstack.getItem()).func_149645_b()))
+             if (itemstack.func_94608_d() == 0 && itemstack.func_77973_b() instanceof ItemBlock && RenderBlocks.func_147739_a(Block.func_149634_a(itemstack.func_77973_b()).func_149645_b()))
              {
-                 Block block = Block.func_149634_a(itemstack.getItem());
-@@ -140,7 +150,7 @@
+                 Block block = Block.func_149634_a(itemstack.func_77973_b());
+@@ -137,7 +147,7 @@
              {
                  float f5;
  
--                if (itemstack.getItemSpriteNumber() == 1 && itemstack.getItem().requiresMultipleRenderPasses())
-+                if (/*itemstack.getItemSpriteNumber() == 1 &&*/ itemstack.getItem().requiresMultipleRenderPasses())
+-                if (itemstack.func_94608_d() == 1 && itemstack.func_77973_b().func_77623_v())
++                if (/*itemstack.getItemSpriteNumber() == 1 &&*/ itemstack.func_77973_b().func_77623_v())
                  {
-                     if (renderInFrame)
+                     if (field_82407_g)
                      {
-@@ -152,10 +162,10 @@
+@@ -149,10 +159,10 @@
                          GL11.glScalef(0.5F, 0.5F, 0.5F);
                      }
  
 -                    for (int j = 0; j <= 1; ++j)
-+                    for (int j = 0; j <= itemstack.getItem().getRenderPasses(itemstack.getItemDamage()); ++j)
++                    for (int j = 0; j < itemstack.func_77973_b().getRenderPasses(itemstack.func_77960_j()); ++j)
                      {
-                         this.random.setSeed(187L);
--                        IIcon iicon1 = itemstack.getItem().getIconFromDamageForRenderPass(itemstack.getItemDamage(), j);
-+                        IIcon iicon1 = itemstack.getItem().getIcon(itemstack, j);
+                         this.field_77025_h.setSeed(187L);
+-                        IIcon iicon1 = itemstack.func_77973_b().func_77618_c(itemstack.func_77960_j(), j);
++                        IIcon iicon1 = itemstack.func_77973_b().getIcon(itemstack, j);
  
-                         if (this.renderWithColor)
+                         if (this.field_77024_a)
                          {
-@@ -164,11 +174,11 @@
+@@ -161,11 +171,11 @@
                              f6 = (float)(k >> 8 & 255) / 255.0F;
                              f7 = (float)(k & 255) / 255.0F;
                              GL11.glColor4f(f5, f6, f7, 1.0F);
--                            this.renderDroppedItem(par1EntityItem, iicon1, b0, par9, f5, f6, f7);
-+                            this.renderDroppedItem(par1EntityItem, iicon1, b0, par9, f5, f6, f7, j);
+-                            this.func_77020_a(p_77014_1_, iicon1, b0, p_77014_9_, f5, f6, f7);
++                            this.renderDroppedItem(p_77014_1_, iicon1, b0, p_77014_9_, f5, f6, f7, j);
                          }
                          else
                          {
--                            this.renderDroppedItem(par1EntityItem, iicon1, b0, par9, 1.0F, 1.0F, 1.0F);
-+                            this.renderDroppedItem(par1EntityItem, iicon1, b0, par9, 1.0F, 1.0F, 1.0F, j);
+-                            this.func_77020_a(p_77014_1_, iicon1, b0, p_77014_9_, 1.0F, 1.0F, 1.0F);
++                            this.renderDroppedItem(p_77014_1_, iicon1, b0, p_77014_9_, 1.0F, 1.0F, 1.0F, j);
                          }
                      }
                  }
-@@ -227,6 +237,12 @@
-     // JAVADOC METHOD $$ func_77020_a
-     private void renderDroppedItem(EntityItem par1EntityItem, IIcon par2Icon, int par3, float par4, float par5, float par6, float par7)
+@@ -222,6 +232,11 @@
+ 
+     private void func_77020_a(EntityItem p_77020_1_, IIcon p_77020_2_, int p_77020_3_, float p_77020_4_, float p_77020_5_, float p_77020_6_, float p_77020_7_)
      {
-+        this.renderDroppedItem(par1EntityItem, par2Icon, par3, par4, par5, par6, par7, 0);
++        this.renderDroppedItem(p_77020_1_, p_77020_2_, p_77020_3_, p_77020_4_, p_77020_5_, p_77020_6_, p_77020_7_, 0);
 +    }
 +
-+    // JAVADOC METHOD $$ func_77020_a
-+    private void renderDroppedItem(EntityItem par1EntityItem, IIcon par2Icon, int par3, float par4, float par5, float par6, float par7, int pass)
++    private void renderDroppedItem(EntityItem p_77020_1_, IIcon p_77020_2_, int p_77020_3_, float p_77020_4_, float p_77020_5_, float p_77020_6_, float p_77020_7_, int pass)
 +    {
-         Tessellator tessellator = Tessellator.instance;
+         Tessellator tessellator = Tessellator.field_78398_a;
  
-         if (par2Icon == null)
-@@ -281,11 +297,24 @@
+         if (p_77020_2_ == null)
+@@ -276,11 +291,24 @@
                  b0 = 4;
              }
  
@@ -109,9 +108,9 @@
 +                // Makes items offset when in 3D, like when in 2D, looks much better. Considered a vanilla bug...
 +                if (k > 0 && shouldSpreadItems())
 +                {
-+                    float x = (random.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
-+                    float y = (random.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
-+                    float z = (random.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
++                    float x = (field_77025_h.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
++                    float y = (field_77025_h.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
++                    float z = (field_77025_h.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
 +                    GL11.glTranslatef(x, y, f9 + f10);
 +                }
 +                else
@@ -119,113 +118,114 @@
 +                    GL11.glTranslatef(0f, 0f, f9 + f10);
 +                }
  
-                 if (itemstack.getItemSpriteNumber() == 0)
+                 if (itemstack.func_94608_d() == 0)
                  {
-@@ -299,7 +328,7 @@
-                 GL11.glColor4f(par5, par6, par7, 1.0F);
-                 ItemRenderer.renderItemIn2D(tessellator, f15, f4, f14, f5, ((IIcon)par2Icon).getIconWidth(), ((IIcon)par2Icon).getIconHeight(), f9);
+@@ -294,7 +322,7 @@
+                 GL11.glColor4f(p_77020_5_, p_77020_6_, p_77020_7_, 1.0F);
+                 ItemRenderer.func_78439_a(tessellator, f15, f4, f14, f5, ((IIcon)p_77020_2_).func_94211_a(), ((IIcon)p_77020_2_).func_94216_b(), f9);
  
--                if (itemstack.hasEffect())
+-                if (itemstack.func_77962_s())
 +                if (itemstack.hasEffect(pass))
                  {
                      GL11.glDepthFunc(GL11.GL_EQUAL);
                      GL11.glDisable(GL11.GL_LIGHTING);
-@@ -368,6 +397,12 @@
-     // JAVADOC METHOD $$ func_77015_a
-     public void renderItemIntoGUI(FontRenderer par1FontRenderer, TextureManager par2TextureManager, ItemStack par3ItemStack, int par4, int par5)
+@@ -362,6 +390,11 @@
+ 
+     public void func_77015_a(FontRenderer p_77015_1_, TextureManager p_77015_2_, ItemStack p_77015_3_, int p_77015_4_, int p_77015_5_)
      {
-+        this.renderItemIntoGUI(par1FontRenderer, par2TextureManager, par3ItemStack, par4, par5, false);
++        this.renderItemIntoGUI(p_77015_1_, p_77015_2_, p_77015_3_, p_77015_4_, p_77015_5_, false);
 +    }
 +
-+    // JAVADOC METHOD $$ func_77015_a
-+    public void renderItemIntoGUI(FontRenderer par1FontRenderer, TextureManager par2TextureManager, ItemStack par3ItemStack, int par4, int par5, boolean renderEffect)
++    public void renderItemIntoGUI(FontRenderer p_77015_1_, TextureManager p_77015_2_, ItemStack p_77015_3_, int p_77015_4_, int p_77015_5_, boolean renderEffect)
 +    {
-         int k = par3ItemStack.getItemDamage();
-         Object object = par3ItemStack.getIconIndex();
+         int k = p_77015_3_.func_77960_j();
+         Object object = p_77015_3_.func_77954_c();
          GL11.glEnable(GL11.GL_BLEND);
-@@ -426,11 +461,13 @@
+@@ -420,11 +453,13 @@
              GL11.glColorMask(true, true, true, true);
              GL11.glEnable(GL11.GL_TEXTURE_2D);
              GL11.glEnable(GL11.GL_ALPHA_TEST);
 -            OpenGlHelper.func_148821_a(770, 771, 1, 0);
  
 -            for (l = 0; l <= 1; ++l)
-+            Item item = par3ItemStack.getItem();
++            Item item = p_77015_3_.func_77973_b();
 +            for (l = 0; l < item.getRenderPasses(k); ++l)
              {
--                IIcon iicon = par3ItemStack.getItem().getIconFromDamageForRenderPass(k, l);
+-                IIcon iicon = p_77015_3_.func_77973_b().func_77618_c(k, l);
 +                OpenGlHelper.func_148821_a(770, 771, 1, 0);
-+                par2TextureManager.bindTexture(item.getSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
-+                IIcon iicon = item.getIcon(par3ItemStack, l);
-                 int i1 = par3ItemStack.getItem().getColorFromItemStack(par3ItemStack, l);
++                p_77015_2_.func_110577_a(item.func_94901_k() == 0 ? TextureMap.field_110575_b : TextureMap.field_110576_c);
++                IIcon iicon = item.getIcon(p_77015_3_, l);
+                 int i1 = p_77015_3_.func_77973_b().func_82790_a(p_77015_3_, l);
                  f = (float)(i1 >> 16 & 255) / 255.0F;
                  float f1 = (float)(i1 >> 8 & 255) / 255.0F;
-@@ -441,7 +478,18 @@
+@@ -435,7 +470,18 @@
                      GL11.glColor4f(f, f1, f2, 1.0F);
                  }
  
 +                GL11.glDisable(GL11.GL_LIGHTING); //Forge: Make sure that render states are reset, ad renderEffect can derp them up.
 +                GL11.glEnable(GL11.GL_ALPHA_TEST);
 +
-                 this.renderIcon(par4, par5, iicon, 16, 16);
+                 this.func_94149_a(p_77015_4_, p_77015_5_, iicon, 16, 16);
 +
 +                GL11.glDisable(GL11.GL_ALPHA_TEST);
 +                GL11.glEnable(GL11.GL_LIGHTING);
 +
-+                if (renderEffect && par3ItemStack.hasEffect(l))
++                if (renderEffect && p_77015_3_.hasEffect(l))
 +                {
-+                    renderEffect(par2TextureManager, par4, par5);
++                    renderEffect(p_77015_2_, p_77015_4_, p_77015_5_);
 +                }
              }
  
              GL11.glDisable(GL11.GL_ALPHA_TEST);
-@@ -468,8 +516,19 @@
-                 GL11.glColor4f(f4, f3, f, 1.0F);
+@@ -462,13 +508,25 @@
+                 GL11.glColor4f(f3, f4, f, 1.0F);
              }
  
 +            GL11.glDisable(GL11.GL_LIGHTING); //Forge: Make sure that render states are reset, ad renderEffect can derp them up.
 +            GL11.glEnable(GL11.GL_ALPHA_TEST);
 +
-             this.renderIcon(par4, par5, (IIcon)object, 16, 16);
+             this.func_94149_a(p_77015_4_, p_77015_5_, (IIcon)object, 16, 16);
 +
 +            GL11.glDisable(GL11.GL_ALPHA_TEST);
              GL11.glEnable(GL11.GL_LIGHTING);
 +
-+            if (renderEffect && par3ItemStack.hasEffect(0))
++            if (renderEffect && p_77015_3_.hasEffect(0))
 +            {
-+                renderEffect(par2TextureManager, par4, par5);
++                renderEffect(p_77015_2_, p_77015_4_, p_77015_5_);
 +            }
 +            GL11.glEnable(GL11.GL_LIGHTING);
          }
  
          GL11.glEnable(GL11.GL_CULL_FACE);
-@@ -484,7 +543,10 @@
+     }
+ 
++    @SuppressWarnings("unused")
+     public void func_82406_b(FontRenderer p_82406_1_, TextureManager p_82406_2_, final ItemStack p_82406_3_, int p_82406_4_, int p_82406_5_)
+     {
+         if (p_82406_3_ != null)
+@@ -477,7 +535,10 @@
  
              try
              {
--                this.renderItemIntoGUI(par1FontRenderer, par2TextureManager, par3ItemStack, par4, par5);
-+                if (!ForgeHooksClient.renderInventoryItem(this.field_147909_c, par2TextureManager, par3ItemStack, renderWithColor, zLevel, (float)par4, (float)par5))
+-                this.func_77015_a(p_82406_1_, p_82406_2_, p_82406_3_, p_82406_4_, p_82406_5_);
++                if (!ForgeHooksClient.renderInventoryItem(this.field_147909_c, p_82406_2_, p_82406_3_, field_77024_a, field_77023_b, (float)p_82406_4_, (float)p_82406_5_))
 +                {
-+                    this.renderItemIntoGUI(par1FontRenderer, par2TextureManager, par3ItemStack, par4, par5, true);
++                    this.renderItemIntoGUI(p_82406_1_, p_82406_2_, p_82406_3_, p_82406_4_, p_82406_5_, true);
 +                }
              }
              catch (Throwable throwable)
              {
-@@ -525,6 +587,7 @@
+@@ -518,7 +579,8 @@
                  throw new ReportedException(crashreport);
              }
  
-+            /* Forge: Bugfix, Move this to a per-render pass, modders must handle themselves
-             if (par3ItemStack.hasEffect())
+-            if (p_82406_3_.func_77962_s())
++            // Forge: Bugfix, Move this to a per-render pass, modders must handle themselves
++            if (false && p_82406_3_.func_77962_s())
              {
                  GL11.glDepthFunc(GL11.GL_EQUAL);
-@@ -540,11 +603,28 @@
-                 GL11.glEnable(GL11.GL_LIGHTING);
-                 GL11.glDepthFunc(GL11.GL_LEQUAL);
-             }
-+            */
- 
-             this.zLevel -= 50.0F;
+                 GL11.glDisable(GL11.GL_LIGHTING);
+@@ -538,6 +600,23 @@
          }
      }
  
@@ -234,23 +234,39 @@
 +        GL11.glDepthFunc(GL11.GL_EQUAL);
 +        GL11.glDisable(GL11.GL_LIGHTING);
 +        GL11.glDepthMask(false);
-+        manager.bindTexture(RES_ITEM_GLINT);
++        manager.func_110577_a(field_110798_h);
 +        GL11.glEnable(GL11.GL_ALPHA_TEST);
 +        GL11.glEnable(GL11.GL_BLEND);
 +        GL11.glColor4f(0.5F, 0.25F, 0.8F, 1.0F);
-+        this.renderGlint(x * 431278612 + y * 32178161, x - 2, y - 2, 20, 20);
++        this.func_77018_a(x * 431278612 + y * 32178161, x - 2, y - 2, 20, 20);
 +        GL11.glDepthMask(true);
++        GL11.glDisable(GL11.GL_BLEND);
 +        GL11.glDisable(GL11.GL_ALPHA_TEST);
 +        GL11.glEnable(GL11.GL_LIGHTING);
 +        GL11.glDepthFunc(GL11.GL_LEQUAL);
 +    }
 +
-     private void renderGlint(int par1, int par2, int par3, int par4, int par5)
+     private void func_77018_a(int p_77018_1_, int p_77018_2_, int p_77018_3_, int p_77018_4_, int p_77018_5_)
      {
          for (int j1 = 0; j1 < 2; ++j1)
-@@ -649,4 +729,42 @@
+@@ -584,10 +663,11 @@
+                 GL11.glEnable(GL11.GL_DEPTH_TEST);
+             }
+ 
+-            if (p_94148_3_.func_77951_h())
++            if (p_94148_3_.func_77973_b().showDurabilityBar(p_94148_3_))
+             {
+-                int j1 = (int)Math.round(13.0D - (double)p_94148_3_.func_77952_i() * 13.0D / (double)p_94148_3_.func_77958_k());
+-                int k = (int)Math.round(255.0D - (double)p_94148_3_.func_77952_i() * 255.0D / (double)p_94148_3_.func_77958_k());
++                double health = p_94148_3_.func_77973_b().getDurabilityForDisplay(p_94148_3_);
++                int j1 = (int)Math.round(13.0D - health * 13.0D);
++                int k = (int)Math.round(255.0D - health * 255.0D);
+                 GL11.glDisable(GL11.GL_LIGHTING);
+                 GL11.glDisable(GL11.GL_DEPTH_TEST);
+                 GL11.glDisable(GL11.GL_TEXTURE_2D);
+@@ -638,4 +718,54 @@
      {
-         this.doRender((EntityItem)par1Entity, par2, par4, par6, par8, par9);
+         this.func_76986_a((EntityItem)p_76986_1_, p_76986_2_, p_76986_4_, p_76986_6_, p_76986_8_, p_76986_9_);
      }
 +
 +    /*==================================== FORGE START ===========================================*/
@@ -288,6 +304,18 @@
 +    public byte getMiniItemCount(ItemStack stack, byte original)
 +    {
 +        return original;
++    }
++
++    private static RenderItem instance;
++    /**
++     * Returns a single lazy loaded instance of RenderItem, for use in mods who 
++     * don't care about the interaction of other objects on the current state of the RenderItem they are using.
++     * @return A global instance of RenderItem
++     */
++    public static RenderItem getInstance()
++    {
++        if (instance == null) instance = new RenderItem();
++        return instance;
 +    }
 +    /*==================================== FORGE END =============================================*/
  }

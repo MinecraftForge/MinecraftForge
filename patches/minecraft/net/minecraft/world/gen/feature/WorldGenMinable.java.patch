@@ -1,14 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenMinable.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenMinable.java
-@@ -13,6 +13,7 @@
-     private int numberOfBlocks;
+@@ -12,6 +12,7 @@
+     private int field_76541_b;
      private Block field_150518_c;
      private static final String __OBFID = "CL_00000426";
 +    private int mineableBlockMeta;
  
      public WorldGenMinable(Block p_i45459_1_, int p_i45459_2_)
      {
-@@ -26,6 +27,12 @@
+@@ -25,6 +26,12 @@
          this.field_150518_c = p_i45460_3_;
      }
  
@@ -18,18 +18,18 @@
 +        this.mineableBlockMeta = meta;
 +    }
 +
-     public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
+     public boolean func_76484_a(World p_76484_1_, Random p_76484_2_, int p_76484_3_, int p_76484_4_, int p_76484_5_)
      {
-         float f = par2Random.nextFloat() * (float)Math.PI;
-@@ -67,9 +74,9 @@
+         float f = p_76484_2_.nextFloat() * (float)Math.PI;
+@@ -66,9 +73,9 @@
                              {
                                  double d14 = ((double)i3 + 0.5D - d8) / (d10 / 2.0D);
  
--                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && par1World.func_147439_a(k2, l2, i3) == this.field_150518_c)
-+                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && par1World.func_147439_a(k2, l2, i3).isReplaceableOreGen(par1World, k2, l2, i3, field_150518_c))
+-                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && p_76484_1_.func_147439_a(k2, l2, i3) == this.field_150518_c)
++                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && p_76484_1_.func_147439_a(k2, l2, i3).isReplaceableOreGen(p_76484_1_, k2, l2, i3, field_150518_c))
                                  {
--                                    par1World.func_147465_d(k2, l2, i3, this.field_150519_a, 0, 2);
-+                                    par1World.func_147465_d(k2, l2, i3, this.field_150519_a, mineableBlockMeta, 2);
+-                                    p_76484_1_.func_147465_d(k2, l2, i3, this.field_150519_a, 0, 2);
++                                    p_76484_1_.func_147465_d(k2, l2, i3, this.field_150519_a, mineableBlockMeta, 2);
                                  }
                              }
                          }

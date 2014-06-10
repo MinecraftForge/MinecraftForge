@@ -13,92 +13,90 @@
  public class EntityPlayerMP extends EntityPlayer implements ICrafting
  {
      private static final Logger field_147102_bM = LogManager.getLogger();
-@@ -148,19 +154,11 @@
-         p_i45285_4_.thisPlayerMP = this;
-         this.theItemInWorldManager = p_i45285_4_;
-         this.renderDistance = p_i45285_1_.getConfigurationManager().getViewDistance();
--        ChunkCoordinates chunkcoordinates = p_i45285_2_.getSpawnPoint();
-+        ChunkCoordinates chunkcoordinates = p_i45285_2_.provider.getRandomizedSpawnPoint();
-         int i = chunkcoordinates.posX;
-         int j = chunkcoordinates.posZ;
-         int k = chunkcoordinates.posY;
+@@ -133,19 +139,11 @@
+         p_i45285_4_.field_73090_b = this;
+         this.field_71134_c = p_i45285_4_;
+         this.field_71142_cm = p_i45285_1_.func_71203_ab().func_72395_o();
+-        ChunkCoordinates chunkcoordinates = p_i45285_2_.func_72861_E();
++        ChunkCoordinates chunkcoordinates = p_i45285_2_.field_73011_w.getRandomizedSpawnPoint();
+         int i = chunkcoordinates.field_71574_a;
+         int j = chunkcoordinates.field_71573_c;
+         int k = chunkcoordinates.field_71572_b;
  
--        if (!p_i45285_2_.provider.hasNoSky && p_i45285_2_.getWorldInfo().getGameType() != WorldSettings.GameType.ADVENTURE)
+-        if (!p_i45285_2_.field_73011_w.field_76576_e && p_i45285_2_.func_72912_H().func_76077_q() != WorldSettings.GameType.ADVENTURE)
 -        {
--            int l = Math.max(5, p_i45285_1_.getSpawnProtectionSize() - 6);
--            i += this.rand.nextInt(l * 2) - l;
--            j += this.rand.nextInt(l * 2) - l;
--            k = p_i45285_2_.getTopSolidOrLiquidBlock(i, j);
+-            int l = Math.max(5, p_i45285_1_.func_82357_ak() - 6);
+-            i += this.field_70146_Z.nextInt(l * 2) - l;
+-            j += this.field_70146_Z.nextInt(l * 2) - l;
+-            k = p_i45285_2_.func_72825_h(i, j);
 -        }
 -
-         this.mcServer = p_i45285_1_;
-         this.field_147103_bO = p_i45285_1_.getConfigurationManager().func_148538_i(this.getCommandSenderName());
-         this.stepHeight = 0.0F;
-@@ -218,7 +216,7 @@
+         this.field_71133_b = p_i45285_1_;
+         this.field_147103_bO = p_i45285_1_.func_71203_ab().func_148538_i(this.func_70005_c_());
+         this.field_70138_W = 0.0F;
+@@ -199,7 +197,7 @@
  
-     public float getEyeHeight()
+     public float func_70047_e()
      {
 -        return 1.62F;
-+        return super.getEyeHeight();
++        return super.func_70047_e();
      }
  
-     // JAVADOC METHOD $$ func_70071_h_
-@@ -234,7 +232,7 @@
+     public void func_70071_h_()
+@@ -214,7 +212,7 @@
  
-         this.openContainer.detectAndSendChanges();
+         this.field_71070_bA.func_75142_b();
  
--        if (!this.worldObj.isRemote && !this.openContainer.canInteractWith(this))
-+        if (!this.worldObj.isRemote && !ForgeHooks.canInteractWith(this, this.openContainer))
+-        if (!this.field_70170_p.field_72995_K && !this.field_71070_bA.func_75145_c(this))
++        if (!this.field_70170_p.field_72995_K && !ForgeHooks.canInteractWith(this, this.field_71070_bA))
          {
-             this.closeScreen();
-             this.openContainer = this.inventoryContainer;
-@@ -275,8 +273,9 @@
- 
+             this.func_71053_j();
+             this.field_71070_bA = this.field_71069_bz;
+@@ -256,7 +254,8 @@
                          if (chunk.func_150802_k())
                          {
--                            arraylist.add(chunk);
--                            arraylist1.addAll(((WorldServer)this.worldObj).func_147486_a(chunkcoordintpair.chunkXPos * 16, 0, chunkcoordintpair.chunkZPos * 16, chunkcoordintpair.chunkXPos * 16 + 16, 256, chunkcoordintpair.chunkZPos * 16 + 16));
-+                            arraylist.add(chunk);                            
-+                            arraylist1.addAll(((WorldServer)this.worldObj).func_147486_a(chunkcoordintpair.chunkXPos * 16, 0, chunkcoordintpair.chunkZPos * 16, chunkcoordintpair.chunkXPos * 16 + 15, 256, chunkcoordintpair.chunkZPos * 16 + 16));
+                             arraylist.add(chunk);
+-                            arraylist1.addAll(((WorldServer)this.field_70170_p).func_147486_a(chunkcoordintpair.field_77276_a * 16, 0, chunkcoordintpair.field_77275_b * 16, chunkcoordintpair.field_77276_a * 16 + 16, 256, chunkcoordintpair.field_77275_b * 16 + 16));
++                            arraylist1.addAll(((WorldServer)this.field_70170_p).func_147486_a(chunkcoordintpair.field_77276_a * 16, 0, chunkcoordintpair.field_77275_b * 16, chunkcoordintpair.field_77276_a * 16 + 15, 256, chunkcoordintpair.field_77275_b * 16 + 15));
 +                            //BugFix: 16 makes it load an extra chunk, which isn't associated with a player, which makes it not unload unless a player walks near it.
                              iterator1.remove();
                          }
                      }
-@@ -304,6 +303,7 @@
+@@ -284,6 +283,7 @@
                  {
                      chunk = (Chunk)iterator2.next();
-                     this.getServerForPlayer().getEntityTracker().func_85172_a(this, chunk);
-+                    MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(chunk.getChunkCoordIntPair(), this));
+                     this.func_71121_q().func_73039_n().func_85172_a(this, chunk);
++                    MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(chunk.func_76632_l(), this));
                  }
              }
          }
-@@ -429,11 +429,25 @@
-     // JAVADOC METHOD $$ func_70645_a
-     public void onDeath(DamageSource par1DamageSource)
-     {
-+        if (ForgeHooks.onLivingDeath(this, par1DamageSource)) return;
-         this.mcServer.getConfigurationManager().func_148539_a(this.func_110142_aN().func_151521_b());
+@@ -408,11 +408,25 @@
  
-         if (!this.worldObj.getGameRules().getGameRuleBooleanValue("keepInventory"))
+     public void func_70645_a(DamageSource p_70645_1_)
+     {
++        if (ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
+         this.field_71133_b.func_71203_ab().func_148539_a(this.func_110142_aN().func_151521_b());
+ 
+         if (!this.field_70170_p.func_82736_K().func_82766_b("keepInventory"))
          {
 +            captureDrops = true;
 +            capturedDrops.clear();
 +
-             this.inventory.dropAllItems();
+             this.field_71071_by.func_70436_m();
 +
 +            captureDrops = false;
-+            PlayerDropsEvent event = new PlayerDropsEvent(this, par1DamageSource, capturedDrops, recentlyHit > 0);
++            PlayerDropsEvent event = new PlayerDropsEvent(this, p_70645_1_, capturedDrops, field_70718_bc > 0);
 +            if (!MinecraftForge.EVENT_BUS.post(event))
 +            {
 +                for (EntityItem item : capturedDrops)
 +                {
-+                    joinEntityItemWithWorld(item);
++                    func_71012_a(item);
 +                }
 +            }
          }
  
-         Collection collection = this.worldObj.getScoreboard().func_96520_a(IScoreObjectiveCriteria.deathCount);
-@@ -1034,4 +1048,15 @@
+         Collection collection = this.field_70170_p.func_96441_U().func_96520_a(IScoreObjectiveCriteria.field_96642_c);
+@@ -985,4 +999,15 @@
      {
          return this.field_147103_bO;
      }

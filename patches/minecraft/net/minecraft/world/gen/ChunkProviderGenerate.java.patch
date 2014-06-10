@@ -12,104 +12,111 @@
 +
  public class ChunkProviderGenerate implements IChunkProvider
  {
-     // JAVADOC FIELD $$ field_73220_k
-@@ -62,6 +68,15 @@
+     private Random field_73220_k;
+@@ -52,6 +58,15 @@
      int[][] field_73219_j = new int[32][32];
      private static final String __OBFID = "CL_00000396";
  
 +    {
-+        caveGenerator = TerrainGen.getModdedMapGen(caveGenerator, CAVE);
-+        strongholdGenerator = (MapGenStronghold) TerrainGen.getModdedMapGen(strongholdGenerator, STRONGHOLD);
-+        villageGenerator = (MapGenVillage) TerrainGen.getModdedMapGen(villageGenerator, VILLAGE);
-+        mineshaftGenerator = (MapGenMineshaft) TerrainGen.getModdedMapGen(mineshaftGenerator, MINESHAFT);
-+        scatteredFeatureGenerator = (MapGenScatteredFeature) TerrainGen.getModdedMapGen(scatteredFeatureGenerator, SCATTERED_FEATURE);
-+        ravineGenerator = TerrainGen.getModdedMapGen(ravineGenerator, RAVINE);
++        field_73226_t = TerrainGen.getModdedMapGen(field_73226_t, CAVE);
++        field_73225_u = (MapGenStronghold) TerrainGen.getModdedMapGen(field_73225_u, STRONGHOLD);
++        field_73224_v = (MapGenVillage) TerrainGen.getModdedMapGen(field_73224_v, VILLAGE);
++        field_73223_w = (MapGenMineshaft) TerrainGen.getModdedMapGen(field_73223_w, MINESHAFT);
++        field_73233_x = (MapGenScatteredFeature) TerrainGen.getModdedMapGen(field_73233_x, SCATTERED_FEATURE);
++        field_73232_y = TerrainGen.getModdedMapGen(field_73232_y, RAVINE);
 +    }    
 +
-     public ChunkProviderGenerate(World par1World, long par2, boolean par4)
+     public ChunkProviderGenerate(World p_i2006_1_, long p_i2006_2_, boolean p_i2006_4_)
      {
-         this.worldObj = par1World;
-@@ -86,6 +101,16 @@
+         this.field_73230_p = p_i2006_1_;
+@@ -76,6 +91,16 @@
                  this.field_147433_r[j + 2 + (k + 2) * 5] = f;
              }
          }
 +
-+        NoiseGenerator[] noiseGens = {field_147431_j, field_147432_k, field_147429_l, field_147430_m, noiseGen5, noiseGen6, mobSpawnerNoise};
-+        noiseGens = TerrainGen.getModdedNoiseGenerators(par1World, this.rand, noiseGens);
++        NoiseGenerator[] noiseGens = {field_147431_j, field_147432_k, field_147429_l, field_147430_m, field_73214_a, field_73212_b, field_73213_c};
++        noiseGens = TerrainGen.getModdedNoiseGenerators(p_i2006_1_, this.field_73220_k, noiseGens);
 +        this.field_147431_j = (NoiseGeneratorOctaves)noiseGens[0];
 +        this.field_147432_k = (NoiseGeneratorOctaves)noiseGens[1];
 +        this.field_147429_l = (NoiseGeneratorOctaves)noiseGens[2];
 +        this.field_147430_m = (NoiseGeneratorPerlin)noiseGens[3];
-+        this.noiseGen5 = (NoiseGeneratorOctaves)noiseGens[4];
-+        this.noiseGen6 = (NoiseGeneratorOctaves)noiseGens[5];
-+        this.mobSpawnerNoise = (NoiseGeneratorOctaves)noiseGens[6];
++        this.field_73214_a = (NoiseGeneratorOctaves)noiseGens[4];
++        this.field_73212_b = (NoiseGeneratorOctaves)noiseGens[5];
++        this.field_73213_c = (NoiseGeneratorOctaves)noiseGens[6];
      }
  
      public void func_147424_a(int p_147424_1_, int p_147424_2_, Block[] p_147424_3_)
-@@ -167,6 +192,10 @@
+@@ -157,6 +182,10 @@
  
      public void func_147422_a(int p_147422_1_, int p_147422_2_, Block[] p_147422_3_, byte[] p_147422_4_, BiomeGenBase[] p_147422_5_)
      {
-+        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, p_147422_1_, p_147422_2_, p_147422_3_, p_147422_5_);
++        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, p_147422_1_, p_147422_2_, p_147422_3_, p_147422_4_, p_147422_5_);
 +        MinecraftForge.EVENT_BUS.post(event);
 +        if (event.getResult() == Result.DENY) return;
 +
          double d0 = 0.03125D;
-         this.stoneNoise = this.field_147430_m.func_151599_a(this.stoneNoise, (double)(p_147422_1_ * 16), (double)(p_147422_2_ * 16), 16, 16, d0 * 2.0D, d0 * 2.0D, 1.0D);
+         this.field_73227_s = this.field_147430_m.func_151599_a(this.field_73227_s, (double)(p_147422_1_ * 16), (double)(p_147422_2_ * 16), 16, 16, d0 * 2.0D, d0 * 2.0D, 1.0D);
  
-@@ -359,6 +388,8 @@
-         this.rand.setSeed((long)par2 * i1 + (long)par3 * j1 ^ this.worldObj.getSeed());
+@@ -345,6 +374,8 @@
+         this.field_73220_k.setSeed((long)p_73153_2_ * i1 + (long)p_73153_3_ * j1 ^ this.field_73230_p.func_72905_C());
          boolean flag = false;
  
-+        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(par1IChunkProvider, worldObj, rand, par2, par3, flag));
++        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(p_73153_1_, field_73230_p, field_73220_k, p_73153_2_, p_73153_3_, flag));
 +
-         if (this.mapFeaturesEnabled)
+         if (this.field_73229_q)
          {
-             this.mineshaftGenerator.generateStructuresInChunk(this.worldObj, this.rand, par2, par3);
-@@ -371,7 +402,8 @@
+             this.field_73223_w.func_75051_a(this.field_73230_p, this.field_73220_k, p_73153_2_, p_73153_3_);
+@@ -357,7 +388,8 @@
          int l1;
          int i2;
  
--        if (biomegenbase != BiomeGenBase.desert && biomegenbase != BiomeGenBase.desertHills && !flag && this.rand.nextInt(4) == 0)
-+        if (biomegenbase != BiomeGenBase.desert && biomegenbase != BiomeGenBase.desertHills && !flag && this.rand.nextInt(4) == 0
-+            && TerrainGen.populate(par1IChunkProvider, worldObj, rand, par2, par3, flag, LAKE))
+-        if (biomegenbase != BiomeGenBase.field_76769_d && biomegenbase != BiomeGenBase.field_76786_s && !flag && this.field_73220_k.nextInt(4) == 0)
++        if (biomegenbase != BiomeGenBase.field_76769_d && biomegenbase != BiomeGenBase.field_76786_s && !flag && this.field_73220_k.nextInt(4) == 0
++            && TerrainGen.populate(p_73153_1_, field_73230_p, field_73220_k, p_73153_2_, p_73153_3_, flag, LAKE))
          {
-             k1 = k + this.rand.nextInt(16) + 8;
-             l1 = this.rand.nextInt(256);
-@@ -379,7 +411,7 @@
-             (new WorldGenLakes(Blocks.water)).generate(this.worldObj, this.rand, k1, l1, i2);
+             k1 = k + this.field_73220_k.nextInt(16) + 8;
+             l1 = this.field_73220_k.nextInt(256);
+@@ -365,7 +397,7 @@
+             (new WorldGenLakes(Blocks.field_150355_j)).func_76484_a(this.field_73230_p, this.field_73220_k, k1, l1, i2);
          }
  
--        if (!flag && this.rand.nextInt(8) == 0)
-+        if (TerrainGen.populate(par1IChunkProvider, worldObj, rand, par2, par3, flag, LAVA) && !flag && this.rand.nextInt(8) == 0)
+-        if (!flag && this.field_73220_k.nextInt(8) == 0)
++        if (TerrainGen.populate(p_73153_1_, field_73230_p, field_73220_k, p_73153_2_, p_73153_3_, flag, LAVA) && !flag && this.field_73220_k.nextInt(8) == 0)
          {
-             k1 = k + this.rand.nextInt(16) + 8;
-             l1 = this.rand.nextInt(this.rand.nextInt(248) + 8);
-@@ -391,7 +423,8 @@
+             k1 = k + this.field_73220_k.nextInt(16) + 8;
+             l1 = this.field_73220_k.nextInt(this.field_73220_k.nextInt(248) + 8);
+@@ -377,7 +409,8 @@
              }
          }
  
 -        for (k1 = 0; k1 < 8; ++k1)
-+        boolean doGen = TerrainGen.populate(par1IChunkProvider, worldObj, rand, par2, par3, flag, DUNGEON);
++        boolean doGen = TerrainGen.populate(p_73153_1_, field_73230_p, field_73220_k, p_73153_2_, p_73153_3_, flag, DUNGEON);
 +        for (k1 = 0; doGen && k1 < 8; ++k1)
          {
-             l1 = k + this.rand.nextInt(16) + 8;
-             i2 = this.rand.nextInt(256);
-@@ -404,7 +437,8 @@
+             l1 = k + this.field_73220_k.nextInt(16) + 8;
+             i2 = this.field_73220_k.nextInt(256);
+@@ -386,11 +419,15 @@
+         }
+ 
+         biomegenbase.func_76728_a(this.field_73230_p, this.field_73220_k, k, l);
++        if (TerrainGen.populate(p_73153_1_, field_73230_p, field_73220_k, p_73153_2_, p_73153_3_, flag, ANIMALS))
++        {
+         SpawnerAnimals.func_77191_a(this.field_73230_p, biomegenbase, k + 8, l + 8, 16, 16, this.field_73220_k);
++        }
          k += 8;
          l += 8;
  
 -        for (k1 = 0; k1 < 16; ++k1)
-+        doGen = TerrainGen.populate(par1IChunkProvider, worldObj, rand, par2, par3, flag, ICE);
++        doGen = TerrainGen.populate(p_73153_1_, field_73230_p, field_73220_k, p_73153_2_, p_73153_3_, flag, ICE);
 +        for (k1 = 0; doGen && k1 < 16; ++k1)
          {
              for (l1 = 0; l1 < 16; ++l1)
              {
-@@ -422,6 +456,8 @@
+@@ -408,6 +445,8 @@
              }
          }
  
-+        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(par1IChunkProvider, worldObj, rand, par2, par3, flag));
++        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(p_73153_1_, field_73230_p, field_73220_k, p_73153_2_, p_73153_3_, flag));
 +
          BlockFalling.field_149832_M = false;
      }

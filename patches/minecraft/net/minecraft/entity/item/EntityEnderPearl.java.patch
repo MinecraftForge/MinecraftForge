@@ -9,20 +9,20 @@
  
  public class EntityEnderPearl extends EntityThrowable
  {
-@@ -51,6 +53,9 @@
+@@ -50,6 +52,9 @@
  
-                 if (entityplayermp.playerNetServerHandler.func_147362_b().func_150724_d() && entityplayermp.worldObj == this.worldObj)
+                 if (entityplayermp.field_71135_a.func_147362_b().func_150724_d() && entityplayermp.field_70170_p == this.field_70170_p)
                  {
-+                    EnderTeleportEvent event = new EnderTeleportEvent(entityplayermp, this.posX, this.posY, this.posZ, 5.0F);
++                    EnderTeleportEvent event = new EnderTeleportEvent(entityplayermp, this.field_70165_t, this.field_70163_u, this.field_70161_v, 5.0F);
 +                    if (!MinecraftForge.EVENT_BUS.post(event))
 +                    { // Don't indent to lower patch size
-                     if (this.getThrower().isRiding())
+                     if (this.func_85052_h().func_70115_ae())
                      {
-                         this.getThrower().mountEntity((Entity)null);
-@@ -59,6 +64,7 @@
-                     this.getThrower().setPositionAndUpdate(this.posX, this.posY, this.posZ);
-                     this.getThrower().fallDistance = 0.0F;
-                     this.getThrower().attackEntityFrom(DamageSource.fall, 5.0F);
+                         this.func_85052_h().func_70078_a((Entity)null);
+@@ -58,6 +63,7 @@
+                     this.func_85052_h().func_70634_a(this.field_70165_t, this.field_70163_u, this.field_70161_v);
+                     this.func_85052_h().field_70143_R = 0.0F;
+                     this.func_85052_h().func_70097_a(DamageSource.field_76379_h, 5.0F);
 +                    }
                  }
              }

@@ -8,6 +8,7 @@ import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTBase;
@@ -21,6 +22,7 @@ import net.minecraftforge.common.network.ForgeNetworkHandler;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.server.command.ForgeCommand;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -177,13 +179,14 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     @Subscribe
     public void modConstruction(FMLConstructionEvent evt)
     {
-        NetworkRegistry.INSTANCE.register(this, this.getClass(), null, evt.getASMHarvestedData());
+        NetworkRegistry.INSTANCE.register(this, this.getClass(), "*", evt.getASMHarvestedData());
         ForgeNetworkHandler.registerChannel(this, evt.getSide());
     }
 
     @Subscribe
     public void preInit(FMLPreInitializationEvent evt)
     {
+        MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
     }
 
@@ -220,10 +223,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     @Override
     public void readData(SaveHandler handler, WorldInfo info, Map<String, NBTBase> propertyMap, NBTTagCompound tag)
     {
-        if (tag.hasKey("DimensionData"))
-        {
-            DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
-        }
+        DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
     }
 
     @Subscribe
@@ -231,7 +231,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     {
         Blocks.fire.rebuildFireInfo();
     }
-    
+
 
     @Override
     public File getSource()
@@ -249,5 +249,39 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         {
             return FMLFileResourcePack.class;
         }
+    }
+
+    @Override
+    public List<String> getOwnedPackages()
+    {
+        // All the packages which are part of forge. Only needs updating if new logic is added
+        // that requires event handlers
+        return ImmutableList.of(
+                "net.minecraftforge.classloading",
+                "net.minecraftforge.client",
+                "net.minecraftforge.client.event",
+                "net.minecraftforge.client.event.sound",
+                "net.minecraftforge.client.model",
+                "net.minecraftforge.client.model.obj",
+                "net.minecraftforge.client.model.techne",
+                "net.minecraftforge.common",
+                "net.minecraftforge.common.config",
+                "net.minecraftforge.common.network",
+                "net.minecraftforge.common.util",
+                "net.minecraftforge.event",
+                "net.minecraftforge.event.brewing",
+                "net.minecraftforge.event.entity",
+                "net.minecraftforge.event.entity.item",
+                "net.minecraftforge.event.entity.living",
+                "net.minecraftforge.event.entity.minecart",
+                "net.minecraftforge.event.entity.player",
+                "net.minecraftforge.event.terraingen",
+                "net.minecraftforge.event.world",
+                "net.minecraftforge.fluids",
+                "net.minecraftforge.oredict",
+                "net.minecraftforge.server",
+                "net.minecraftforge.server.command",
+                "net.minecraftforge.transformers"
+                );
     }
 }

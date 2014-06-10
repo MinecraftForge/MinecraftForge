@@ -4,12 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.eventhandler.Event;
 
@@ -19,13 +21,11 @@ import cpw.mods.fml.common.eventhandler.Event;
  * @author King Lemming, CovertJaguar (LiquidDictionary)
  *
  */
-@SuppressWarnings("unused")
 public abstract class FluidRegistry
 {
-    /*
     static int maxID = 0;
 
-    static HashMap<String, Fluid> fluids = new HashMap();
+    static HashMap<String, Fluid> fluids = Maps.newHashMap();
     static BiMap<String, Integer> fluidIDs = HashBiMap.create();
     static BiMap<Block, Fluid> fluidBlocks;
     
@@ -34,14 +34,14 @@ public abstract class FluidRegistry
         public String getLocalizedName() {
             return StatCollector.translateToLocal("tile.water.name");
         }
-    }.setBlockID(Block.waterStill.blockID).setUnlocalizedName(Block.waterStill.getUnlocalizedName());
+    }.setBlock(Blocks.water).setUnlocalizedName(Blocks.water.getUnlocalizedName());
     
     public static final Fluid LAVA = new Fluid("lava") {
         @Override
         public String getLocalizedName() {
             return StatCollector.translateToLocal("tile.lava.name");
         }
-    }.setBlockID(Block.lavaStill.blockID).setLuminosity(15).setDensity(3000).setViscosity(6000).setTemperature(1300).setUnlocalizedName(Block.lavaStill.getUnlocalizedName());
+    }.setBlock(Blocks.lava).setLuminosity(15).setDensity(3000).setViscosity(6000).setTemperature(1300).setUnlocalizedName(Blocks.lava.getUnlocalizedName());
 
     public static int renderIdFluid = -1;
 
@@ -55,8 +55,9 @@ public abstract class FluidRegistry
 
     /**
      * Called by Forge to prepare the ID map for server -> client sync.
-     * /
-    static void initFluidIDs(BiMap<String, Integer> newfluidIDs)
+     * Modders, DO NOT call this.
+     */
+    public static void initFluidIDs(BiMap<String, Integer> newfluidIDs)
     {
         maxID = newfluidIDs.size();
         fluidIDs.clear();
@@ -69,7 +70,7 @@ public abstract class FluidRegistry
      * @param fluid
      *            The fluid to register.
      * @return True if the fluid was successfully registered; false if there is a name clash.
-     * /
+     */
     public static boolean registerFluid(Fluid fluid)
     {
         if (fluidIDs.containsKey(fluid.getName()))
@@ -129,7 +130,7 @@ public abstract class FluidRegistry
 
     /**
      * Returns a read-only map containing Fluid Names and their associated Fluids.
-     * /
+     */
     public static Map<String, Fluid> getRegisteredFluids()
     {
         return ImmutableMap.copyOf(fluids);
@@ -137,7 +138,7 @@ public abstract class FluidRegistry
 
     /**
      * Returns a read-only map containing Fluid Names and their associated IDs.
-     * /
+     */
     public static Map<String, Integer> getRegisteredFluidIDs()
     {
         return ImmutableMap.copyOf(fluidIDs);
@@ -147,14 +148,15 @@ public abstract class FluidRegistry
     {
         if (fluidBlocks == null)
         {
-            fluidBlocks = HashBiMap.create();
+            BiMap<Block, Fluid> tmp = HashBiMap.create();
             for (Fluid fluid : fluids.values())
             {
-                if (fluid.canBePlacedInWorld() && Block.blocksList[fluid.getBlockID()] != null)
+                if (fluid.canBePlacedInWorld() && fluid.getBlock() != null)
                 {
-                    fluidBlocks.put(Block.blocksList[fluid.getBlockID()], fluid);
+                    tmp.put(fluid.getBlock(), fluid);
                 }
             }
+            fluidBlocks = tmp;
         }
         return fluidBlocks.get(block);
     }
@@ -170,5 +172,9 @@ public abstract class FluidRegistry
             this.fluidID = fluidID;
         }
     }
-    */
+
+    public static int getMaxID()
+    {
+        return maxID;
+    }
 }

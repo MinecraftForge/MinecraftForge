@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityXPOrb.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityXPOrb.java
+@@ -9,6 +9,8 @@
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
+ 
+ public class EntityXPOrb extends Entity
+ {
+@@ -204,6 +206,7 @@
+         {
+             if (this.field_70532_c == 0 && p_70100_1_.field_71090_bL == 0)
+             {
++                if (MinecraftForge.EVENT_BUS.post(new PlayerPickupXpEvent(p_70100_1_, this))) return;
+                 p_70100_1_.field_71090_bL = 2;
+                 this.field_70170_p.func_72956_a(p_70100_1_, "random.orb", 0.1F, 0.5F * ((this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.7F + 1.8F));
+                 p_70100_1_.func_71001_a(this, 1);

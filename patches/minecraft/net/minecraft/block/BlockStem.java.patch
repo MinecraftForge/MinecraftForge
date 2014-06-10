@@ -20,8 +20,8 @@
  
                      Block block = p_149674_1_.func_147439_a(j1, p_149674_3_ - 1, k1);
  
--                    if (p_149674_1_.func_147439_a(j1, p_149674_3_, k1).field_149764_J == Material.field_151579_a && (block == Blocks.farmland || block == Blocks.dirt || block == Blocks.grass))
-+                    if (p_149674_1_.func_147437_c(j1, p_149674_3_, k1) && (block.canSustainPlant(p_149674_1_, j1, p_149674_3_ - 1, k1, UP, this) || block == Blocks.dirt || block == Blocks.grass))
+-                    if (p_149674_1_.func_147439_a(j1, p_149674_3_, k1).field_149764_J == Material.field_151579_a && (block == Blocks.field_150458_ak || block == Blocks.field_150346_d || block == Blocks.field_150349_c))
++                    if (p_149674_1_.func_147437_c(j1, p_149674_3_, k1) && (block.canSustainPlant(p_149674_1_, j1, p_149674_3_ - 1, k1, UP, this) || block == Blocks.field_150346_d || block == Blocks.field_150349_c))
                      {
                          p_149674_1_.func_147449_b(j1, p_149674_3_, k1, this.field_149877_a);
                      }
@@ -29,33 +29,31 @@
                  Block block8 = p_149875_1_.func_147439_a(l, p_149875_3_ - 1, i1);
                  float f1 = 0.0F;
  
--                if (block8 == Blocks.farmland)
+-                if (block8 == Blocks.field_150458_ak)
 +                if (block8.canSustainPlant(p_149875_1_, l, p_149875_3_ - 1, i1, UP, this))
                  {
                      f1 = 1.0F;
  
--                    if (p_149875_1_.getBlockMetadata(l, p_149875_3_ - 1, i1) > 0)
+-                    if (p_149875_1_.func_72805_g(l, p_149875_3_ - 1, i1) > 0)
 +                    if (block8.isFertile(p_149875_1_, l, p_149875_3_ - 1, i1))
                      {
                          f1 = 3.0F;
                      }
-@@ -215,6 +217,7 @@
+@@ -211,11 +213,12 @@
+         return l < 7 ? -1 : (p_149873_1_.func_147439_a(p_149873_2_ - 1, p_149873_3_, p_149873_4_) == this.field_149877_a ? 0 : (p_149873_1_.func_147439_a(p_149873_2_ + 1, p_149873_3_, p_149873_4_) == this.field_149877_a ? 1 : (p_149873_1_.func_147439_a(p_149873_2_, p_149873_3_, p_149873_4_ - 1) == this.field_149877_a ? 2 : (p_149873_1_.func_147439_a(p_149873_2_, p_149873_3_, p_149873_4_ + 1) == this.field_149877_a ? 3 : -1))));
+     }
+ 
++    @SuppressWarnings("unused")
+     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
      {
          super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
  
-+        /*
-         if (!p_149690_1_.isRemote)
+-        if (!p_149690_1_.field_72995_K)
++        if (false && !p_149690_1_.field_72995_K)
          {
              Item item = null;
-@@ -237,6 +240,7 @@
-                 }
-             }
-         }
-+        */
-     }
  
-     public Item func_149650_a(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
-@@ -282,4 +286,22 @@
+@@ -282,4 +285,23 @@
      {
          this.func_149874_m(p_149853_1_, p_149853_3_, p_149853_4_, p_149853_5_);
      }
@@ -67,12 +65,13 @@
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
 +
 +        Item item = null;
-+        item = field_149877_a == Blocks.pumpkin ? Items.pumpkin_seeds : item;
-+        item = field_149877_a == Blocks.melon_block ? Items.melon_seeds : item;
++        item = field_149877_a == Blocks.field_150423_aK ? Items.field_151080_bb : item;
++        item = field_149877_a == Blocks.field_150440_ba ? Items.field_151081_bc : item;
 +
 +        for (int i = 0; item != null && i < 3; i++)
 +        {
-+            ret.add(new ItemStack(item));
++            if (world.field_73012_v.nextInt(15) <= meta)
++                ret.add(new ItemStack(item));
 +        }
 +
 +        return ret;

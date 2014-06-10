@@ -33,26 +33,26 @@
 +
 +    public final MapStorage perWorldStorage;
 +
-     // JAVADOC FIELD $$ field_72999_e
-     public boolean scheduledUpdatesAreImmediate;
-     // JAVADOC FIELD $$ field_72996_f
-@@ -120,6 +147,11 @@
-     // JAVADOC METHOD $$ func_72807_a
-     public BiomeGenBase getBiomeGenForCoords(final int par1, final int par2)
+     public boolean field_72999_e;
+     public List field_72996_f = new ArrayList();
+     protected List field_72997_g = new ArrayList();
+@@ -98,6 +125,11 @@
+ 
+     public BiomeGenBase func_72807_a(final int p_72807_1_, final int p_72807_2_)
      {
-+        return provider.getBiomeGenForCoords(par1, par2);
++        return field_73011_w.getBiomeGenForCoords(p_72807_1_, p_72807_2_);
 +    }
 +
-+    public BiomeGenBase getBiomeGenForCoordsBody(final int par1, final int par2)
++    public BiomeGenBase getBiomeGenForCoordsBody(final int p_72807_1_, final int p_72807_2_)
 +    {
-         if (this.blockExists(par1, 0, par2))
+         if (this.func_72899_e(p_72807_1_, 0, p_72807_2_))
          {
-             Chunk chunk = this.getChunkFromBlockCoords(par1, par2);
-@@ -166,7 +198,13 @@
-         this.theProfiler = p_i45368_5_;
-         this.worldInfo = new WorldInfo(p_i45368_4_, p_i45368_2_);
-         this.provider = p_i45368_3_;
--        this.mapStorage = new MapStorage(p_i45368_1_);
+             Chunk chunk = this.func_72938_d(p_72807_1_, p_72807_2_);
+@@ -144,7 +176,13 @@
+         this.field_72984_F = p_i45368_5_;
+         this.field_72986_A = new WorldInfo(p_i45368_4_, p_i45368_2_);
+         this.field_73011_w = p_i45368_3_;
+-        this.field_72988_C = new MapStorage(p_i45368_1_);
 +        perWorldStorage = new MapStorage((ISaveHandler)null);
 +    }
 +
@@ -60,33 +60,33 @@
 +    @SideOnly(Side.CLIENT)
 +    protected void finishSetup()
 +    {
-         VillageCollection villagecollection = (VillageCollection)this.mapStorage.loadData(VillageCollection.class, "villages");
+         VillageCollection villagecollection = (VillageCollection)this.field_72988_C.func_75742_a(VillageCollection.class, "villages");
  
          if (villagecollection == null)
-@@ -180,7 +218,10 @@
-             this.villageCollectionObj.func_82566_a(this);
+@@ -158,7 +196,10 @@
+             this.field_72982_D.func_82566_a(this);
          }
  
--        p_i45368_3_.registerWorld(this);
+-        p_i45368_3_.func_76558_a(this);
 +        // Guarantee the dimension ID was not reset by the provider
-+        int providerDim = this.provider.dimensionId;
-+        this.provider.registerWorld(this);
-+        this.provider.dimensionId = providerDim;
-         this.chunkProvider = this.createChunkProvider();
-         this.calculateInitialSkylight();
-         this.calculateInitialWeather();
-@@ -195,7 +236,7 @@
-         this.lightUpdateBlockList = new int[32768];
-         this.saveHandler = p_i45369_1_;
-         this.theProfiler = p_i45369_5_;
--        this.mapStorage = new MapStorage(p_i45369_1_);
-+        this.mapStorage = getMapStorage(p_i45369_1_);
-         this.worldInfo = p_i45369_1_.loadWorldInfo();
++        int providerDim = this.field_73011_w.field_76574_g;
++        this.field_73011_w.func_76558_a(this);
++        this.field_73011_w.field_76574_g = providerDim;
+         this.field_73020_y = this.func_72970_h();
+         this.func_72966_v();
+         this.func_72947_a();
+@@ -173,7 +214,7 @@
+         this.field_72994_J = new int[32768];
+         this.field_73019_z = p_i45369_1_;
+         this.field_72984_F = p_i45369_5_;
+-        this.field_72988_C = new MapStorage(p_i45369_1_);
++        this.field_72988_C = getMapStorage(p_i45369_1_);
+         this.field_72986_A = p_i45369_1_.func_75757_d();
  
          if (p_i45369_4_ != null)
-@@ -223,6 +264,15 @@
-         this.provider.registerWorld(this);
-         this.chunkProvider = this.createChunkProvider();
+@@ -201,6 +242,15 @@
+         this.field_73011_w.func_76558_a(this);
+         this.field_73020_y = this.func_72970_h();
  
 +        if (this instanceof WorldServer)
 +        {
@@ -97,26 +97,26 @@
 +            this.perWorldStorage = new MapStorage((ISaveHandler)null);
 +        }
 +
-         if (!this.worldInfo.isInitialized())
+         if (!this.field_72986_A.func_76070_v())
          {
              try
-@@ -248,12 +298,12 @@
-             this.worldInfo.setServerInitialized(true);
+@@ -226,12 +276,12 @@
+             this.field_72986_A.func_76091_d(true);
          }
  
--        VillageCollection villagecollection = (VillageCollection)this.mapStorage.loadData(VillageCollection.class, "villages");
-+        VillageCollection villagecollection = (VillageCollection)this.perWorldStorage.loadData(VillageCollection.class, "villages");
+-        VillageCollection villagecollection = (VillageCollection)this.field_72988_C.func_75742_a(VillageCollection.class, "villages");
++        VillageCollection villagecollection = (VillageCollection)this.perWorldStorage.func_75742_a(VillageCollection.class, "villages");
  
          if (villagecollection == null)
          {
-             this.villageCollectionObj = new VillageCollection(this);
--            this.mapStorage.setData("villages", this.villageCollectionObj);
-+            this.perWorldStorage.setData("villages", this.villageCollectionObj);
+             this.field_72982_D = new VillageCollection(this);
+-            this.field_72988_C.func_75745_a("villages", this.field_72982_D);
++            this.perWorldStorage.func_75745_a("villages", this.field_72982_D);
          }
          else
          {
-@@ -265,6 +315,20 @@
-         this.calculateInitialWeather();
+@@ -243,6 +293,20 @@
+         this.func_72947_a();
      }
  
 +    private static MapStorage s_mapStorage;
@@ -133,10 +133,10 @@
 +        return s_mapStorage;
 +    }
 +
-     // JAVADOC METHOD $$ func_72970_h
-     protected abstract IChunkProvider createChunkProvider();
+     protected abstract IChunkProvider func_72970_h();
  
-@@ -320,7 +384,8 @@
+     protected void func_72963_a(WorldSettings p_72963_1_)
+@@ -296,7 +360,8 @@
  
      public boolean func_147437_c(int p_147437_1_, int p_147437_2_, int p_147437_3_)
      {
@@ -145,135 +145,137 @@
 +        return block.isAir(this, p_147437_1_, p_147437_2_, p_147437_3_);
      }
  
-     // JAVADOC METHOD $$ func_72899_e
-@@ -973,7 +1038,7 @@
-     // JAVADOC METHOD $$ func_72935_r
-     public boolean isDaytime()
+     public boolean func_72899_e(int p_72899_1_, int p_72899_2_, int p_72899_3_)
+@@ -928,7 +993,7 @@
+ 
+     public boolean func_72935_r()
      {
--        return this.skylightSubtracted < 4;
-+        return provider.isDaytime();
+-        return this.field_73008_k < 4;
++        return field_73011_w.isDaytime();
      }
  
-     // JAVADOC METHOD $$ func_72933_a
-@@ -1207,6 +1272,12 @@
-     // JAVADOC METHOD $$ func_72956_a
-     public void playSoundAtEntity(Entity par1Entity, String par2Str, float par3, float par4)
+     public MovingObjectPosition func_72933_a(Vec3 p_72933_1_, Vec3 p_72933_2_)
+@@ -1159,6 +1224,12 @@
+ 
+     public void func_72956_a(Entity p_72956_1_, String p_72956_2_, float p_72956_3_, float p_72956_4_)
      {
-+        PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(par1Entity, par2Str, par3, par4);
++        PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(p_72956_1_, p_72956_2_, p_72956_3_, p_72956_4_);
 +        if (MinecraftForge.EVENT_BUS.post(event))
 +        {
 +            return;
 +        }
-+        par2Str = event.name;
-         for (int i = 0; i < this.worldAccesses.size(); ++i)
++        p_72956_2_ = event.name;
+         for (int i = 0; i < this.field_73021_x.size(); ++i)
          {
-             ((IWorldAccess)this.worldAccesses.get(i)).playSound(par2Str, par1Entity.posX, par1Entity.posY - (double)par1Entity.yOffset, par1Entity.posZ, par3, par4);
-@@ -1216,6 +1287,12 @@
-     // JAVADOC METHOD $$ func_85173_a
-     public void playSoundToNearExcept(EntityPlayer par1EntityPlayer, String par2Str, float par3, float par4)
+             ((IWorldAccess)this.field_73021_x.get(i)).func_72704_a(p_72956_2_, p_72956_1_.field_70165_t, p_72956_1_.field_70163_u - (double)p_72956_1_.field_70129_M, p_72956_1_.field_70161_v, p_72956_3_, p_72956_4_);
+@@ -1167,6 +1238,12 @@
+ 
+     public void func_85173_a(EntityPlayer p_85173_1_, String p_85173_2_, float p_85173_3_, float p_85173_4_)
      {
-+        PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(par1EntityPlayer, par2Str, par3, par4);
++        PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(p_85173_1_, p_85173_2_, p_85173_3_, p_85173_4_);
 +        if (MinecraftForge.EVENT_BUS.post(event))
 +        {
 +            return;
 +        }
-+        par2Str = event.name;
-         for (int i = 0; i < this.worldAccesses.size(); ++i)
++        p_85173_2_ = event.name;
+         for (int i = 0; i < this.field_73021_x.size(); ++i)
          {
-             ((IWorldAccess)this.worldAccesses.get(i)).playSoundToNearExcept(par1EntityPlayer, par2Str, par1EntityPlayer.posX, par1EntityPlayer.posY - (double)par1EntityPlayer.yOffset, par1EntityPlayer.posZ, par3, par4);
-@@ -1283,6 +1360,7 @@
-                 this.playerEntities.add(entityplayer);
-                 this.updateAllPlayersSleepingFlag();
+             ((IWorldAccess)this.field_73021_x.get(i)).func_85102_a(p_85173_1_, p_85173_2_, p_85173_1_.field_70165_t, p_85173_1_.field_70163_u - (double)p_85173_1_.field_70129_M, p_85173_1_.field_70161_v, p_85173_3_, p_85173_4_);
+@@ -1228,6 +1305,7 @@
+                 this.field_73010_i.add(entityplayer);
+                 this.func_72854_c();
              }
-+            if (MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(par1Entity, this)) && !flag) return false;
++            if (MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(p_72838_1_, this)) && !flag) return false;
  
-             this.getChunkFromChunkCoords(i, j).addEntity(par1Entity);
-             this.loadedEntityList.add(par1Entity);
-@@ -1479,7 +1557,6 @@
+             this.func_72964_e(i, j).func_76612_a(p_72838_1_);
+             this.field_72996_f.add(p_72838_1_);
+@@ -1418,7 +1496,6 @@
+         return (int)(f2 * 11.0F);
      }
  
-     // JAVADOC METHOD $$ func_72848_b
 -    @SideOnly(Side.CLIENT)
-     public void removeWorldAccess(IWorldAccess par1IWorldAccess)
+     public void func_72848_b(IWorldAccess p_72848_1_)
      {
-         this.worldAccesses.remove(par1IWorldAccess);
-@@ -1512,6 +1589,12 @@
+         this.field_73021_x.remove(p_72848_1_);
+@@ -1449,6 +1526,12 @@
      @SideOnly(Side.CLIENT)
-     public Vec3 getSkyColor(Entity par1Entity, float par2)
+     public Vec3 func_72833_a(Entity p_72833_1_, float p_72833_2_)
      {
-+        return provider.getSkyColor(par1Entity, par2);
++        return field_73011_w.getSkyColor(p_72833_1_, p_72833_2_);
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public Vec3 getSkyColorBody(Entity par1Entity, float par2)
++    public Vec3 getSkyColorBody(Entity p_72833_1_, float p_72833_2_)
 +    {
-         float f1 = this.getCelestialAngle(par2);
-         float f2 = MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
+         float f1 = this.func_72826_c(p_72833_2_);
+         float f2 = MathHelper.func_76134_b(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
  
-@@ -1528,9 +1611,7 @@
-         int i = MathHelper.floor_double(par1Entity.posX);
-         int j = MathHelper.floor_double(par1Entity.posY);
-         int k = MathHelper.floor_double(par1Entity.posZ);
--        BiomeGenBase biomegenbase = this.getBiomeGenForCoords(i, k);
+@@ -1465,9 +1548,7 @@
+         int i = MathHelper.func_76128_c(p_72833_1_.field_70165_t);
+         int j = MathHelper.func_76128_c(p_72833_1_.field_70163_u);
+         int k = MathHelper.func_76128_c(p_72833_1_.field_70161_v);
+-        BiomeGenBase biomegenbase = this.func_72807_a(i, k);
 -        float f3 = biomegenbase.func_150564_a(i, j, k);
--        int l = biomegenbase.getSkyColorByTemp(f3);
+-        int l = biomegenbase.func_76731_a(f3);
 +        int l = ForgeHooksClient.getSkyBlendColour(this, i, j, k);
          float f4 = (float)(l >> 16 & 255) / 255.0F;
          float f5 = (float)(l >> 8 & 255) / 255.0F;
          float f6 = (float)(l & 255) / 255.0F;
-@@ -1607,6 +1688,12 @@
+@@ -1541,6 +1622,12 @@
      @SideOnly(Side.CLIENT)
-     public Vec3 getCloudColour(float par1)
+     public Vec3 func_72824_f(float p_72824_1_)
      {
-+        return provider.drawClouds(par1);
++        return field_73011_w.drawClouds(p_72824_1_);
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public Vec3 drawCloudsBody(float par1)
++    public Vec3 drawCloudsBody(float p_72824_1_)
 +    {
-         float f1 = this.getCelestialAngle(par1);
-         float f2 = MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
+         float f1 = this.func_72826_c(p_72824_1_);
+         float f2 = MathHelper.func_76134_b(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
  
-@@ -1671,6 +1758,8 @@
-     public int getTopSolidOrLiquidBlock(int par1, int par2)
+@@ -1602,6 +1689,8 @@
+     public int func_72825_h(int p_72825_1_, int p_72825_2_)
      {
-         Chunk chunk = this.getChunkFromBlockCoords(par1, par2);
-+        int x = par1;
-+        int z = par2;
-         int k = chunk.getTopFilledSegment() + 15;
-         par1 &= 15;
+         Chunk chunk = this.func_72938_d(p_72825_1_, p_72825_2_);
++        int x = p_72825_1_;
++        int z = p_72825_2_;
+         int k = chunk.func_76625_h() + 15;
+         p_72825_1_ &= 15;
  
-@@ -1678,7 +1767,7 @@
+@@ -1609,7 +1698,7 @@
          {
-             Block block = chunk.func_150810_a(par1, k, par2);
+             Block block = chunk.func_150810_a(p_72825_1_, k, p_72825_2_);
  
--            if (block.func_149688_o().blocksMovement() && block.func_149688_o() != Material.field_151584_j)
-+            if (block.func_149688_o().blocksMovement() && block.func_149688_o() != Material.field_151584_j && !block.isFoliage(this, x, k, z))
+-            if (block.func_149688_o().func_76230_c() && block.func_149688_o() != Material.field_151584_j)
++            if (block.func_149688_o().func_76230_c() && block.func_149688_o() != Material.field_151584_j && !block.isFoliage(this, x, k, z))
              {
                  return k + 1;
              }
-@@ -1691,6 +1780,12 @@
+@@ -1621,7 +1710,13 @@
      @SideOnly(Side.CLIENT)
-     public float getStarBrightness(float par1)
+     public float func_72880_h(float p_72880_1_)
      {
-+        return provider.getStarBrightness(par1);
+-        float f1 = this.func_72826_c(p_72880_1_);
++        return field_73011_w.getStarBrightness(p_72880_1_);
 +    }
 +
 +    @SideOnly(Side.CLIENT)
 +    public float getStarBrightnessBody(float par1)
 +    {
-         float f1 = this.getCelestialAngle(par1);
-         float f2 = 1.0F - (MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.25F);
++        float f1 = this.func_72826_c(par1);
+         float f2 = 1.0F - (MathHelper.func_76134_b(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.25F);
  
-@@ -1746,7 +1841,15 @@
-                     entity.addEntityCrashInfo(crashreportcategory);
+         if (f2 < 0.0F)
+@@ -1675,7 +1770,15 @@
+                     entity.func_85029_a(crashreportcategory);
                  }
  
 -                throw new ReportedException(crashreport);
 +                if (ForgeModContainer.removeErroringEntities)
 +                {
-+                    FMLLog.severe(crashreport.getCompleteReport());
-+                    removeEntity(entity);
++                    FMLLog.severe(crashreport.func_71502_e());
++                    func_72900_e(entity);
 +                }
 +                else
 +                {
@@ -281,17 +283,17 @@
 +                }
              }
  
-             if (entity.isDead)
-@@ -1808,7 +1911,16 @@
-                     crashreport = CrashReport.makeCrashReport(throwable1, "Ticking entity");
-                     crashreportcategory = crashreport.makeCategory("Entity being ticked");
-                     entity.addEntityCrashInfo(crashreportcategory);
+             if (entity.field_70128_L)
+@@ -1737,7 +1840,16 @@
+                     crashreport = CrashReport.func_85055_a(throwable1, "Ticking entity");
+                     crashreportcategory = crashreport.func_85058_a("Entity being ticked");
+                     entity.func_85029_a(crashreportcategory);
 -                    throw new ReportedException(crashreport);
 +
 +                    if (ForgeModContainer.removeErroringEntities)
 +                    {
-+                        FMLLog.severe(crashreport.getCompleteReport());
-+                        removeEntity(entity);
++                        FMLLog.severe(crashreport.func_71502_e());
++                        func_72900_e(entity);
 +                    }
 +                    else
 +                    {
@@ -300,14 +302,14 @@
                  }
              }
  
-@@ -1851,7 +1963,16 @@
-                     crashreport = CrashReport.makeCrashReport(throwable, "Ticking block entity");
-                     crashreportcategory = crashreport.makeCategory("Block entity being ticked");
+@@ -1780,7 +1892,16 @@
+                     crashreport = CrashReport.func_85055_a(throwable, "Ticking block entity");
+                     crashreportcategory = crashreport.func_85058_a("Block entity being ticked");
                      tileentity.func_145828_a(crashreportcategory);
 -                    throw new ReportedException(crashreport);
 +                    if (ForgeModContainer.removeErroringTileEntities)
 +                    {
-+                        FMLLog.severe(crashreport.getCompleteReport());
++                        FMLLog.severe(crashreport.func_71502_e());
 +                        tileentity.func_145843_s();
 +                        func_147468_f(tileentity.field_145851_c, tileentity.field_145848_d, tileentity.field_145849_e);
 +                    }
@@ -318,7 +320,7 @@
                  }
              }
  
-@@ -1865,7 +1986,7 @@
+@@ -1794,7 +1915,7 @@
  
                      if (chunk != null)
                      {
@@ -327,7 +329,7 @@
                      }
                  }
              }
-@@ -1873,6 +1994,10 @@
+@@ -1802,6 +1923,10 @@
  
          if (!this.field_147483_b.isEmpty())
          {
@@ -338,7 +340,7 @@
              this.field_147482_g.removeAll(this.field_147483_b);
              this.field_147483_b.clear();
          }
-@@ -1893,18 +2018,18 @@
+@@ -1822,18 +1947,18 @@
                      {
                          this.field_147482_g.add(tileentity1);
                      }
@@ -346,9 +348,9 @@
 +                }
 +                else
 +                {
-                     if (this.chunkExists(tileentity1.field_145851_c >> 4, tileentity1.field_145849_e >> 4))
+                     if (this.func_72916_c(tileentity1.field_145851_c >> 4, tileentity1.field_145849_e >> 4))
                      {
-                         Chunk chunk1 = this.getChunkFromChunkCoords(tileentity1.field_145851_c >> 4, tileentity1.field_145849_e >> 4);
+                         Chunk chunk1 = this.func_72964_e(tileentity1.field_145851_c >> 4, tileentity1.field_145849_e >> 4);
  
                          if (chunk1 != null)
                          {
@@ -361,7 +363,7 @@
                  }
              }
  
-@@ -1917,14 +2042,11 @@
+@@ -1846,14 +1971,11 @@
  
      public void func_147448_a(Collection p_147448_1_)
      {
@@ -378,30 +380,30 @@
 -        }
      }
  
-     // JAVADOC METHOD $$ func_72870_g
-@@ -1938,10 +2060,19 @@
+     public void func_72870_g(Entity p_72870_1_)
+@@ -1865,10 +1987,19 @@
      {
-         int i = MathHelper.floor_double(par1Entity.posX);
-         int j = MathHelper.floor_double(par1Entity.posZ);
+         int i = MathHelper.func_76128_c(p_72866_1_.field_70165_t);
+         int j = MathHelper.func_76128_c(p_72866_1_.field_70161_v);
 -        byte b0 = 32;
 +        boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(i >> 4, j >> 4));
 +        byte b0 = isForced ? (byte)0 : 32;
-+        boolean canUpdate = !par2 || this.checkChunksExist(i - b0, 0, j - b0, i + b0, 0, j + b0);
++        boolean canUpdate = !p_72866_2_ || this.func_72904_c(i - b0, 0, j - b0, i + b0, 0, j + b0);
  
--        if (!par2 || this.checkChunksExist(i - b0, 0, j - b0, i + b0, 0, j + b0))
+-        if (!p_72866_2_ || this.func_72904_c(i - b0, 0, j - b0, i + b0, 0, j + b0))
 +        if (!canUpdate)
          {
-+            EntityEvent.CanUpdate event = new EntityEvent.CanUpdate(par1Entity);
++            EntityEvent.CanUpdate event = new EntityEvent.CanUpdate(p_72866_1_);
 +            MinecraftForge.EVENT_BUS.post(event);
 +            canUpdate = event.canUpdate;
 +        }
 +
 +        if (canUpdate)
 +        {
-             par1Entity.lastTickPosX = par1Entity.posX;
-             par1Entity.lastTickPosY = par1Entity.posY;
-             par1Entity.lastTickPosZ = par1Entity.posZ;
-@@ -2163,6 +2294,10 @@
+             p_72866_1_.field_70142_S = p_72866_1_.field_70165_t;
+             p_72866_1_.field_70137_T = p_72866_1_.field_70163_u;
+             p_72866_1_.field_70136_U = p_72866_1_.field_70161_v;
+@@ -2086,6 +2217,10 @@
                          {
                              return true;
                          }
@@ -412,7 +414,7 @@
                      }
                  }
              }
-@@ -2456,13 +2591,15 @@
+@@ -2370,13 +2505,15 @@
  
      public void func_147455_a(int p_147455_1_, int p_147455_2_, int p_147455_3_, TileEntity p_147455_4_)
      {
@@ -432,11 +434,11 @@
                  Iterator iterator = this.field_147484_a.iterator();
  
                  while (iterator.hasNext())
-@@ -2481,40 +2618,22 @@
+@@ -2395,40 +2532,22 @@
              else
              {
                  this.field_147482_g.add(p_147455_4_);
--                Chunk chunk = this.getChunkFromChunkCoords(p_147455_1_ >> 4, p_147455_3_ >> 4);
+-                Chunk chunk = this.func_72964_e(p_147455_1_ >> 4, p_147455_3_ >> 4);
 -
 -                if (chunk != null)
 -                {
@@ -444,7 +446,7 @@
 -                }
              }
          }
-+        Chunk chunk = this.getChunkFromChunkCoords(p_147455_1_ >> 4, p_147455_3_ >> 4);
++        Chunk chunk = this.func_72964_e(p_147455_1_ >> 4, p_147455_3_ >> 4);
 +        if (chunk != null)
 +        {
 +            chunk.func_150812_a(p_147455_1_ & 15, p_147455_2_, p_147455_3_ & 15, p_147455_4_);
@@ -470,249 +472,246 @@
 -                this.field_147482_g.remove(tileentity);
 -            }
 -
--            Chunk chunk = this.getChunkFromChunkCoords(p_147475_1_ >> 4, p_147475_3_ >> 4);
+-            Chunk chunk = this.func_72964_e(p_147475_1_ >> 4, p_147475_3_ >> 4);
 -
 -            if (chunk != null)
 -            {
 -                chunk.func_150805_f(p_147475_1_ & 15, p_147475_2_, p_147475_3_ & 15);
 -            }
 -        }
-+        Chunk chunk = getChunkFromChunkCoords(p_147475_1_ >> 4, p_147475_3_ >> 4);
++        Chunk chunk = func_72964_e(p_147475_1_ >> 4, p_147475_3_ >> 4);
 +        if (chunk != null) chunk.func_150805_f(p_147475_1_ & 15, p_147475_2_, p_147475_3_ & 15);
 +        func_147453_f(p_147475_1_, p_147475_2_, p_147475_3_, func_147439_a(p_147475_1_, p_147475_2_, p_147475_3_));
      }
  
      public void func_147457_a(TileEntity p_147457_1_)
-@@ -2531,8 +2650,7 @@
+@@ -2445,8 +2564,7 @@
      public static boolean func_147466_a(IBlockAccess p_147466_0_, int p_147466_1_, int p_147466_2_, int p_147466_3_)
      {
          Block block = p_147466_0_.func_147439_a(p_147466_1_, p_147466_2_, p_147466_3_);
--        int l = p_147466_0_.getBlockMetadata(p_147466_1_, p_147466_2_, p_147466_3_);
--        return block.func_149688_o().isOpaque() && block.func_149686_d() ? true : (block instanceof BlockStairs ? (l & 4) == 4 : (block instanceof BlockSlab ? (l & 8) == 8 : (block instanceof BlockHopper ? true : (block instanceof BlockSnow ? (l & 7) == 7 : false))));
+-        int l = p_147466_0_.func_72805_g(p_147466_1_, p_147466_2_, p_147466_3_);
+-        return block.func_149688_o().func_76218_k() && block.func_149686_d() ? true : (block instanceof BlockStairs ? (l & 4) == 4 : (block instanceof BlockSlab ? (l & 8) == 8 : (block instanceof BlockHopper ? true : (block instanceof BlockSnow ? (l & 7) == 7 : false))));
 +        return block.isSideSolid(p_147466_0_, p_147466_1_, p_147466_2_, p_147466_3_, ForgeDirection.UP);
      }
  
      public boolean func_147445_c(int p_147445_1_, int p_147445_2_, int p_147445_3_, boolean p_147445_4_)
-@@ -2544,7 +2662,7 @@
-             if (chunk != null && !chunk.isEmpty())
+@@ -2458,7 +2576,7 @@
+             if (chunk != null && !chunk.func_76621_g())
              {
                  Block block = this.func_147439_a(p_147445_1_, p_147445_2_, p_147445_3_);
--                return block.func_149688_o().isOpaque() && block.func_149686_d();
+-                return block.func_149688_o().func_76218_k() && block.func_149686_d();
 +                return block.isNormalCube(this, p_147445_1_, p_147445_2_, p_147445_3_);
              }
              else
              {
-@@ -2571,8 +2689,7 @@
-     // JAVADOC METHOD $$ func_72891_a
-     public void setAllowedSpawnTypes(boolean par1, boolean par2)
+@@ -2483,8 +2601,7 @@
+ 
+     public void func_72891_a(boolean p_72891_1_, boolean p_72891_2_)
      {
--        this.spawnHostileMobs = par1;
--        this.spawnPeacefulMobs = par2;
-+        provider.setAllowedSpawnTypes(par1, par2);
+-        this.field_72985_G = p_72891_1_;
+-        this.field_72992_H = p_72891_2_;
++        field_73011_w.setAllowedSpawnTypes(p_72891_1_, p_72891_2_);
      }
  
-     // JAVADOC METHOD $$ func_72835_b
-@@ -2584,6 +2701,11 @@
-     // JAVADOC METHOD $$ func_72947_a
-     private void calculateInitialWeather()
+     public void func_72835_b()
+@@ -2494,6 +2611,11 @@
+ 
+     private void func_72947_a()
      {
-+        provider.calculateInitialWeather();
++        field_73011_w.calculateInitialWeather();
 +    }
 +
 +    public void calculateInitialWeatherBody()
 +    {
-         if (this.worldInfo.isRaining())
+         if (this.field_72986_A.func_76059_o())
          {
-             this.rainingStrength = 1.0F;
-@@ -2598,6 +2720,11 @@
-     // JAVADOC METHOD $$ func_72979_l
-     protected void updateWeather()
+             this.field_73004_o = 1.0F;
+@@ -2507,6 +2629,11 @@
+ 
+     protected void func_72979_l()
      {
-+        provider.updateWeather();
++        field_73011_w.updateWeather();
 +    }
 +
 +    public void updateWeatherBody()
 +    {
-         if (!this.provider.hasNoSky)
+         if (!this.field_73011_w.field_76576_e)
          {
-             if (!this.isRemote)
-@@ -2682,6 +2809,7 @@
+             if (!this.field_72995_K)
+@@ -2591,6 +2718,7 @@
      {
-         this.activeChunkSet.clear();
-         this.theProfiler.startSection("buildList");
-+        this.activeChunkSet.addAll(getPersistentChunks().keySet());
+         this.field_72993_I.clear();
+         this.field_72984_F.func_76320_a("buildList");
++        this.field_72993_I.addAll(getPersistentChunks().keySet());
          int i;
          EntityPlayer entityplayer;
          int j;
-@@ -2776,6 +2904,11 @@
-     // JAVADOC METHOD $$ func_72834_c
-     public boolean canBlockFreeze(int par1, int par2, int par3, boolean par4)
+@@ -2682,6 +2810,11 @@
+ 
+     public boolean func_72834_c(int p_72834_1_, int p_72834_2_, int p_72834_3_, boolean p_72834_4_)
      {
-+        return provider.canBlockFreeze(par1, par2, par3, par4);
++        return field_73011_w.canBlockFreeze(p_72834_1_, p_72834_2_, p_72834_3_, p_72834_4_);
 +    }
 +
-+    public boolean canBlockFreezeBody(int par1, int par2, int par3, boolean par4)
++    public boolean canBlockFreezeBody(int p_72834_1_, int p_72834_2_, int p_72834_3_, boolean p_72834_4_)
 +    {
-         BiomeGenBase biomegenbase = this.getBiomeGenForCoords(par1, par3);
-         float f = biomegenbase.func_150564_a(par1, par2, par3);
+         BiomeGenBase biomegenbase = this.func_72807_a(p_72834_1_, p_72834_3_);
+         float f = biomegenbase.func_150564_a(p_72834_1_, p_72834_2_, p_72834_3_);
  
-@@ -2831,6 +2964,11 @@
+@@ -2737,6 +2870,11 @@
  
      public boolean func_147478_e(int p_147478_1_, int p_147478_2_, int p_147478_3_, boolean p_147478_4_)
      {
-+        return provider.canSnowAt(p_147478_1_, p_147478_2_, p_147478_3_, p_147478_4_);
++        return field_73011_w.canSnowAt(p_147478_1_, p_147478_2_, p_147478_3_, p_147478_4_);
 +    }
 +
 +    public boolean canSnowAtBody(int p_147478_1_, int p_147478_2_, int p_147478_3_, boolean p_147478_4_)
 +    {
-         BiomeGenBase biomegenbase = this.getBiomeGenForCoords(p_147478_1_, p_147478_3_);
+         BiomeGenBase biomegenbase = this.func_72807_a(p_147478_1_, p_147478_3_);
          float f = biomegenbase.func_150564_a(p_147478_1_, p_147478_2_, p_147478_3_);
  
-@@ -2880,10 +3018,11 @@
+@@ -2786,10 +2924,11 @@
          else
          {
-             Block block = this.func_147439_a(par1, par2, par3);
--            int l = par4EnumSkyBlock == EnumSkyBlock.Sky ? 0 : block.func_149750_m();
+             Block block = this.func_147439_a(p_98179_1_, p_98179_2_, p_98179_3_);
+-            int l = p_98179_4_ == EnumSkyBlock.Sky ? 0 : block.func_149750_m();
 -            int i1 = block.func_149717_k();
-+            int blockLight = block.getLightValue(this, par1, par2, par3);
-+            int l = par4EnumSkyBlock == EnumSkyBlock.Sky ? 0 : blockLight;
-+            int i1 = block.getLightOpacity(this, par1, par2, par3);
++            int blockLight = block.getLightValue(this, p_98179_1_, p_98179_2_, p_98179_3_);
++            int l = p_98179_4_ == EnumSkyBlock.Sky ? 0 : blockLight;
++            int i1 = block.getLightOpacity(this, p_98179_1_, p_98179_2_, p_98179_3_);
  
 -            if (i1 >= 15 && block.func_149750_m() > 0)
 +            if (i1 >= 15 && blockLight > 0)
              {
                  i1 = 1;
              }
-@@ -2983,7 +3122,7 @@
-                                     int j4 = i2 + Facing.offsetsXForSide[i4];
-                                     int k4 = j2 + Facing.offsetsYForSide[i4];
-                                     int l4 = k2 + Facing.offsetsZForSide[i4];
+@@ -2889,7 +3028,7 @@
+                                     int j4 = i2 + Facing.field_71586_b[i4];
+                                     int k4 = j2 + Facing.field_71587_c[i4];
+                                     int l4 = k2 + Facing.field_71585_d[i4];
 -                                    int i5 = Math.max(1, this.func_147439_a(j4, k4, l4).func_149717_k());
 +                                    int i5 = Math.max(1, this.func_147439_a(j4, k4, l4).getLightOpacity(this, j4, k4, l4));
-                                     i3 = this.getSavedLightValue(p_147463_1_, j4, k4, l4);
+                                     i3 = this.func_72972_b(p_147463_1_, j4, k4, l4);
  
-                                     if (i3 == l2 - i5 && i1 < this.lightUpdateBlockList.length)
-@@ -3083,10 +3222,10 @@
-     public List getEntitiesWithinAABBExcludingEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, IEntitySelector par3IEntitySelector)
+                                     if (i3 == l2 - i5 && i1 < this.field_72994_J.length)
+@@ -2987,10 +3126,10 @@
+     public List func_94576_a(Entity p_94576_1_, AxisAlignedBB p_94576_2_, IEntitySelector p_94576_3_)
      {
          ArrayList arraylist = new ArrayList();
--        int i = MathHelper.floor_double((par2AxisAlignedBB.minX - 2.0D) / 16.0D);
--        int j = MathHelper.floor_double((par2AxisAlignedBB.maxX + 2.0D) / 16.0D);
--        int k = MathHelper.floor_double((par2AxisAlignedBB.minZ - 2.0D) / 16.0D);
--        int l = MathHelper.floor_double((par2AxisAlignedBB.maxZ + 2.0D) / 16.0D);
-+        int i = MathHelper.floor_double((par2AxisAlignedBB.minX - MAX_ENTITY_RADIUS) / 16.0D);
-+        int j = MathHelper.floor_double((par2AxisAlignedBB.maxX + MAX_ENTITY_RADIUS) / 16.0D);
-+        int k = MathHelper.floor_double((par2AxisAlignedBB.minZ - MAX_ENTITY_RADIUS) / 16.0D);
-+        int l = MathHelper.floor_double((par2AxisAlignedBB.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
+-        int i = MathHelper.func_76128_c((p_94576_2_.field_72340_a - 2.0D) / 16.0D);
+-        int j = MathHelper.func_76128_c((p_94576_2_.field_72336_d + 2.0D) / 16.0D);
+-        int k = MathHelper.func_76128_c((p_94576_2_.field_72339_c - 2.0D) / 16.0D);
+-        int l = MathHelper.func_76128_c((p_94576_2_.field_72334_f + 2.0D) / 16.0D);
++        int i = MathHelper.func_76128_c((p_94576_2_.field_72340_a - MAX_ENTITY_RADIUS) / 16.0D);
++        int j = MathHelper.func_76128_c((p_94576_2_.field_72336_d + MAX_ENTITY_RADIUS) / 16.0D);
++        int k = MathHelper.func_76128_c((p_94576_2_.field_72339_c - MAX_ENTITY_RADIUS) / 16.0D);
++        int l = MathHelper.func_76128_c((p_94576_2_.field_72334_f + MAX_ENTITY_RADIUS) / 16.0D);
  
          for (int i1 = i; i1 <= j; ++i1)
          {
-@@ -3110,10 +3249,10 @@
+@@ -3013,10 +3152,10 @@
  
-     public List selectEntitiesWithinAABB(Class par1Class, AxisAlignedBB par2AxisAlignedBB, IEntitySelector par3IEntitySelector)
+     public List func_82733_a(Class p_82733_1_, AxisAlignedBB p_82733_2_, IEntitySelector p_82733_3_)
      {
--        int i = MathHelper.floor_double((par2AxisAlignedBB.minX - 2.0D) / 16.0D);
--        int j = MathHelper.floor_double((par2AxisAlignedBB.maxX + 2.0D) / 16.0D);
--        int k = MathHelper.floor_double((par2AxisAlignedBB.minZ - 2.0D) / 16.0D);
--        int l = MathHelper.floor_double((par2AxisAlignedBB.maxZ + 2.0D) / 16.0D);
-+        int i = MathHelper.floor_double((par2AxisAlignedBB.minX - MAX_ENTITY_RADIUS) / 16.0D);
-+        int j = MathHelper.floor_double((par2AxisAlignedBB.maxX + MAX_ENTITY_RADIUS) / 16.0D);
-+        int k = MathHelper.floor_double((par2AxisAlignedBB.minZ - MAX_ENTITY_RADIUS) / 16.0D);
-+        int l = MathHelper.floor_double((par2AxisAlignedBB.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
+-        int i = MathHelper.func_76128_c((p_82733_2_.field_72340_a - 2.0D) / 16.0D);
+-        int j = MathHelper.func_76128_c((p_82733_2_.field_72336_d + 2.0D) / 16.0D);
+-        int k = MathHelper.func_76128_c((p_82733_2_.field_72339_c - 2.0D) / 16.0D);
+-        int l = MathHelper.func_76128_c((p_82733_2_.field_72334_f + 2.0D) / 16.0D);
++        int i = MathHelper.func_76128_c((p_82733_2_.field_72340_a - MAX_ENTITY_RADIUS) / 16.0D);
++        int j = MathHelper.func_76128_c((p_82733_2_.field_72336_d + MAX_ENTITY_RADIUS) / 16.0D);
++        int k = MathHelper.func_76128_c((p_82733_2_.field_72339_c - MAX_ENTITY_RADIUS) / 16.0D);
++        int l = MathHelper.func_76128_c((p_82733_2_.field_72334_f + MAX_ENTITY_RADIUS) / 16.0D);
          ArrayList arraylist = new ArrayList();
  
          for (int i1 = i; i1 <= j; ++i1)
-@@ -3194,11 +3333,14 @@
-     // JAVADOC METHOD $$ func_72868_a
-     public void addLoadedEntities(List par1List)
+@@ -3093,11 +3232,14 @@
+ 
+     public void func_72868_a(List p_72868_1_)
      {
--        this.loadedEntityList.addAll(par1List);
+-        this.field_72996_f.addAll(p_72868_1_);
 -
-         for (int i = 0; i < par1List.size(); ++i)
+         for (int i = 0; i < p_72868_1_.size(); ++i)
          {
--            this.onEntityAdded((Entity)par1List.get(i));
-+            Entity entity = (Entity)par1List.get(i);
+-            this.func_72923_a((Entity)p_72868_1_.get(i));
++            Entity entity = (Entity)p_72868_1_.get(i);
 +            if (!MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(entity, this)))
 +            {
-+                loadedEntityList.add(entity);
-+                this.onEntityAdded(entity);
++                field_72996_f.add(entity);
++                this.func_72923_a(entity);
 +            }
          }
      }
  
-@@ -3212,7 +3354,7 @@
+@@ -3110,7 +3252,7 @@
      {
          Block block1 = this.func_147439_a(p_147472_2_, p_147472_3_, p_147472_4_);
          AxisAlignedBB axisalignedbb = p_147472_5_ ? null : p_147472_1_.func_149668_a(this, p_147472_2_, p_147472_3_, p_147472_4_);
--        return axisalignedbb != null && !this.checkNoEntityCollision(axisalignedbb, p_147472_7_) ? false : (block1.func_149688_o() == Material.field_151594_q && p_147472_1_ == Blocks.anvil ? true : block1.func_149688_o().isReplaceable() && p_147472_1_.func_149705_a(this, p_147472_2_, p_147472_3_, p_147472_4_, p_147472_6_, p_147472_8_));
-+        return axisalignedbb != null && !this.checkNoEntityCollision(axisalignedbb, p_147472_7_) ? false : (block1.func_149688_o() == Material.field_151594_q && p_147472_1_ == Blocks.anvil ? true : block1.isReplaceable(this, p_147472_2_, p_147472_3_, p_147472_4_) && p_147472_1_.func_149705_a(this, p_147472_2_, p_147472_3_, p_147472_4_, p_147472_6_, p_147472_8_));
+-        return axisalignedbb != null && !this.func_72917_a(axisalignedbb, p_147472_7_) ? false : (block1.func_149688_o() == Material.field_151594_q && p_147472_1_ == Blocks.field_150467_bQ ? true : block1.func_149688_o().func_76222_j() && p_147472_1_.func_149705_a(this, p_147472_2_, p_147472_3_, p_147472_4_, p_147472_6_, p_147472_8_));
++        return axisalignedbb != null && !this.func_72917_a(axisalignedbb, p_147472_7_) ? false : (block1.func_149688_o() == Material.field_151594_q && p_147472_1_ == Blocks.field_150467_bQ ? true : block1.isReplaceable(this, p_147472_2_, p_147472_3_, p_147472_4_) && p_147472_1_.func_149705_a(this, p_147472_2_, p_147472_3_, p_147472_4_, p_147472_6_, p_147472_8_));
      }
  
-     public PathEntity getPathEntityToEntity(Entity par1Entity, Entity par2Entity, float par3, boolean par4, boolean par5, boolean par6, boolean par7)
-@@ -3321,7 +3463,8 @@
-     // JAVADOC METHOD $$ func_72878_l
-     public int getIndirectPowerLevelTo(int par1, int par2, int par3, int par4)
+     public PathEntity func_72865_a(Entity p_72865_1_, Entity p_72865_2_, float p_72865_3_, boolean p_72865_4_, boolean p_72865_5_, boolean p_72865_6_, boolean p_72865_7_)
+@@ -3215,7 +3357,8 @@
+ 
+     public int func_72878_l(int p_72878_1_, int p_72878_2_, int p_72878_3_, int p_72878_4_)
      {
--        return this.func_147439_a(par1, par2, par3).func_149721_r() ? this.getBlockPowerInput(par1, par2, par3) : this.func_147439_a(par1, par2, par3).func_149709_b(this, par1, par2, par3, par4);
-+        Block block = this.func_147439_a(par1, par2, par3);        
-+        return block.shouldCheckWeakPower(this, par1, par2, par3, par4) ? this.getBlockPowerInput(par1, par2, par3) : block.func_149709_b(this, par1, par2, par3, par4);
+-        return this.func_147439_a(p_72878_1_, p_72878_2_, p_72878_3_).func_149721_r() ? this.func_94577_B(p_72878_1_, p_72878_2_, p_72878_3_) : this.func_147439_a(p_72878_1_, p_72878_2_, p_72878_3_).func_149709_b(this, p_72878_1_, p_72878_2_, p_72878_3_, p_72878_4_);
++        Block block = this.func_147439_a(p_72878_1_, p_72878_2_, p_72878_3_);        
++        return block.shouldCheckWeakPower(this, p_72878_1_, p_72878_2_, p_72878_3_, p_72878_4_) ? this.func_94577_B(p_72878_1_, p_72878_2_, p_72878_3_) : block.func_149709_b(this, p_72878_1_, p_72878_2_, p_72878_3_, p_72878_4_);
      }
  
-     // JAVADOC METHOD $$ func_72864_z
-@@ -3461,7 +3604,7 @@
-     // JAVADOC METHOD $$ func_72905_C
-     public long getSeed()
+     public boolean func_72864_z(int p_72864_1_, int p_72864_2_, int p_72864_3_)
+@@ -3346,7 +3489,7 @@
+ 
+     public long func_72905_C()
      {
--        return this.worldInfo.getSeed();
-+        return provider.getSeed();
+-        return this.field_72986_A.func_76063_b();
++        return field_73011_w.getSeed();
      }
  
-     public long getTotalWorldTime()
-@@ -3471,24 +3614,24 @@
+     public long func_82737_E()
+@@ -3356,22 +3499,22 @@
  
-     public long getWorldTime()
+     public long func_72820_D()
      {
--        return this.worldInfo.getWorldTime();
-+        return provider.getWorldTime();
+-        return this.field_72986_A.func_76073_f();
++        return field_73011_w.getWorldTime();
      }
  
-     // JAVADOC METHOD $$ func_72877_b
-     public void setWorldTime(long par1)
+     public void func_72877_b(long p_72877_1_)
      {
--        this.worldInfo.setWorldTime(par1);
-+        provider.setWorldTime(par1);
+-        this.field_72986_A.func_76068_b(p_72877_1_);
++        field_73011_w.setWorldTime(p_72877_1_);
      }
  
-     // JAVADOC METHOD $$ func_72861_E
-     public ChunkCoordinates getSpawnPoint()
+     public ChunkCoordinates func_72861_E()
      {
--        return new ChunkCoordinates(this.worldInfo.getSpawnX(), this.worldInfo.getSpawnY(), this.worldInfo.getSpawnZ());
-+        return provider.getSpawnPoint();
+-        return new ChunkCoordinates(this.field_72986_A.func_76079_c(), this.field_72986_A.func_76075_d(), this.field_72986_A.func_76074_e());
++        return field_73011_w.getSpawnPoint();
      }
  
-     public void setSpawnLocation(int par1, int par2, int par3)
+     public void func_72950_A(int p_72950_1_, int p_72950_2_, int p_72950_3_)
      {
--        this.worldInfo.setSpawnPosition(par1, par2, par3);
-+        provider.setSpawnPoint(par1, par2, par3);
+-        this.field_72986_A.func_76081_a(p_72950_1_, p_72950_2_, p_72950_3_);
++        field_73011_w.setSpawnPoint(p_72950_1_, p_72950_2_, p_72950_3_);
      }
  
-     // JAVADOC METHOD $$ func_72897_h
-@@ -3509,13 +3652,21 @@
+     @SideOnly(Side.CLIENT)
+@@ -3391,12 +3534,20 @@
  
-         if (!this.loadedEntityList.contains(par1Entity))
+         if (!this.field_72996_f.contains(p_72897_1_))
          {
--            this.loadedEntityList.add(par1Entity);
-+            if (!MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(par1Entity, this)))
+-            this.field_72996_f.add(p_72897_1_);
++            if (!MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(p_72897_1_, this)))
 +            {
-+                this.loadedEntityList.add(par1Entity);
++                this.field_72996_f.add(p_72897_1_);
 +            }
          }
      }
  
-     // JAVADOC METHOD $$ func_72962_a
-     public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
+     public boolean func_72962_a(EntityPlayer p_72962_1_, int p_72962_2_, int p_72962_3_, int p_72962_4_)
      {
-+        return provider.canMineBlock(par1EntityPlayer, par2, par3, par4);
++        return field_73011_w.canMineBlock(p_72962_1_, p_72962_2_, p_72962_3_, p_72962_4_);
 +    }
 +
 +    public boolean canMineBlockBody(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
@@ -720,57 +719,56 @@
          return true;
      }
  
-@@ -3615,8 +3766,7 @@
-     // JAVADOC METHOD $$ func_72958_C
-     public boolean isBlockHighHumidity(int par1, int par2, int par3)
+@@ -3486,8 +3637,7 @@
+ 
+     public boolean func_72958_C(int p_72958_1_, int p_72958_2_, int p_72958_3_)
      {
--        BiomeGenBase biomegenbase = this.getBiomeGenForCoords(par1, par3);
--        return biomegenbase.isHighHumidity();
-+        return provider.isBlockHighHumidity(par1, par2, par3);
+-        BiomeGenBase biomegenbase = this.func_72807_a(p_72958_1_, p_72958_3_);
+-        return biomegenbase.func_76736_e();
++        return field_73011_w.isBlockHighHumidity(p_72958_1_, p_72958_2_, p_72958_3_);
      }
  
-     // JAVADOC METHOD $$ func_72823_a
-@@ -3676,13 +3826,13 @@
-     // JAVADOC METHOD $$ func_72800_K
-     public int getHeight()
+     public void func_72823_a(String p_72823_1_, WorldSavedData p_72823_2_)
+@@ -3541,12 +3691,12 @@
+ 
+     public int func_72800_K()
      {
 -        return 256;
-+        return provider.getHeight();
++        return field_73011_w.getHeight();
      }
  
-     // JAVADOC METHOD $$ func_72940_L
-     public int getActualHeight()
+     public int func_72940_L()
      {
--        return this.provider.hasNoSky ? 128 : 256;
-+        return provider.getActualHeight();
+-        return this.field_73011_w.field_76576_e ? 128 : 256;
++        return field_73011_w.getActualHeight();
      }
  
-     // JAVADOC METHOD $$ func_72843_D
-@@ -3709,7 +3859,7 @@
+     public Random func_72843_D(int p_72843_1_, int p_72843_2_, int p_72843_3_)
+@@ -3570,7 +3720,7 @@
      @SideOnly(Side.CLIENT)
-     public double getHorizon()
+     public double func_72919_O()
      {
--        return this.worldInfo.getTerrainType().getHorizon(this);
-+        return provider.getHorizon();
+-        return this.field_72986_A.func_76067_t().getHorizon(this);
++        return field_73011_w.getHorizon();
      }
  
-     // JAVADOC METHOD $$ func_72914_a
-@@ -3782,25 +3932,24 @@
+     public CrashReportCategory func_72914_a(CrashReport p_72914_1_)
+@@ -3640,25 +3790,24 @@
  
      public void func_147453_f(int p_147453_1_, int p_147453_2_, int p_147453_3_, Block p_147453_4_)
      {
 -        for (int l = 0; l < 4; ++l)
 +        for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS)
          {
--            int i1 = p_147453_1_ + Direction.offsetX[l];
--            int j1 = p_147453_3_ + Direction.offsetZ[l];
+-            int i1 = p_147453_1_ + Direction.field_71583_a[l];
+-            int j1 = p_147453_3_ + Direction.field_71581_b[l];
 -            Block block1 = this.func_147439_a(i1, p_147453_2_, j1);
 +            int i1 = p_147453_1_ + dir.offsetX;
 +            int y  = p_147453_2_ + dir.offsetY;
 +            int j1 = p_147453_3_ + dir.offsetZ;
 +            Block block1 = this.func_147439_a(i1, y, j1);
  
--            if (Blocks.unpowered_comparator.func_149907_e(block1))
+-            if (Blocks.field_150441_bU.func_149907_e(block1))
 +            block1.onNeighborChange(this, i1, y, j1, p_147453_1_, p_147453_2_, p_147453_3_);
 +            if (block1.isNormalCube(this, i1, p_147453_2_, j1))
              {
@@ -778,15 +776,15 @@
 -            }
 -            else if (block1.func_149721_r())
 -            {
--                i1 += Direction.offsetX[l];
--                j1 += Direction.offsetZ[l];
+-                i1 += Direction.field_71583_a[l];
+-                j1 += Direction.field_71581_b[l];
 -                Block block2 = this.func_147439_a(i1, p_147453_2_, j1);
 +                i1 += dir.offsetX;
 +                y  += dir.offsetY;
 +                j1 += dir.offsetZ;
 +                Block block2 = this.func_147439_a(i1, y, j1);
  
--                if (Blocks.unpowered_comparator.func_149907_e(block2))
+-                if (Blocks.field_150441_bU.func_149907_e(block2))
 +                if (block2.getWeakChanges(this, i1, y, j1))
                  {
 -                    block2.func_149695_a(this, i1, p_147453_2_, j1, p_147453_4_);
@@ -794,7 +792,7 @@
                  }
              }
          }
-@@ -3841,4 +3990,110 @@
+@@ -3699,4 +3848,110 @@
              iworldaccess.func_147584_b();
          }
      }
@@ -848,8 +846,8 @@
 +            return _default;
 +        }
 +
-+        Chunk chunk = this.chunkProvider.provideChunk(x >> 4, z >> 4);
-+        if (chunk == null || chunk.isEmpty())
++        Chunk chunk = this.field_73020_y.func_73154_d(x >> 4, z >> 4);
++        if (chunk == null || chunk.func_76621_g())
 +        {
 +            return _default;
 +        }
@@ -886,7 +884,7 @@
 +            return 0;
 +        }
 +
-+        return getChunkFromChunkCoords(x >> 4, z >> 4).func_150808_b(x & 15, y, z & 15);
++        return func_72964_e(x >> 4, z >> 4).func_150808_b(x & 15, y, z & 15);
 +    }
 +
 +    /**
@@ -895,9 +893,9 @@
 +    public int countEntities(EnumCreatureType type, boolean forSpawnCount)
 +    {
 +        int count = 0;
-+        for (int x = 0; x < loadedEntityList.size(); x++)
++        for (int x = 0; x < field_72996_f.size(); x++)
 +        {
-+            if (((Entity)loadedEntityList.get(x)).isCreatureType(type, forSpawnCount))
++            if (((Entity)field_72996_f.get(x)).isCreatureType(type, forSpawnCount))
 +            {
 +                count++;
 +            }

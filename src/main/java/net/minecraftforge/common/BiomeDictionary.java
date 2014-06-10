@@ -29,7 +29,7 @@ public class BiomeDictionary
         MAGICAL;
     }
 
-    private static final int BIOME_LIST_SIZE = 256;
+    private static final int BIOME_LIST_SIZE = BiomeGenBase.getBiomeGenArray().length;
     private static BiomeInfo[] biomeList = new BiomeInfo[BIOME_LIST_SIZE];
     @SuppressWarnings("unchecked")
     private static ArrayList<BiomeGenBase>[] typeInfoList = new ArrayList[Type.values().length];
@@ -62,7 +62,7 @@ public class BiomeDictionary
      */
     public static boolean registerBiomeType(BiomeGenBase biome, Type ... types)
     {   
-        if(BiomeGenBase.func_150565_n()[biome.biomeID] != null)
+        if(BiomeGenBase.getBiomeGenArray()[biome.biomeID] != null)
         {
             for(Type type : types)
             {
@@ -202,9 +202,9 @@ public class BiomeDictionary
      */
     public static void registerAllBiomesAndGenerateEvents()
     {
-        for(int i = 0; i < BiomeGenBase.func_150565_n().length; i++)
+        for(int i = 0; i < BiomeGenBase.getBiomeGenArray().length; i++)
         {
-            BiomeGenBase biome = BiomeGenBase.func_150565_n()[i];
+            BiomeGenBase biome = BiomeGenBase.getBiomeGenArray()[i];
 
             if(biome == null)
             {
@@ -243,25 +243,25 @@ public class BiomeDictionary
                 BiomeDictionary.registerBiomeType(biome, FOREST);
             }
         }
-        else if(biome.maxHeight <= 0.3F && biome.maxHeight >= 0.0F)
+        else if(biome.heightVariation <= 0.3F && biome.heightVariation >= 0.0F)
         {
-            if(!biome.isHighHumidity() || biome.minHeight >= 0.0F)
+            if(!biome.isHighHumidity() || biome.rootHeight >= 0.0F)
             {
                 BiomeDictionary.registerBiomeType(biome, PLAINS);
             }
         }
 
-        if(biome.isHighHumidity() && biome.minHeight < 0.0F && (biome.maxHeight <= 0.3F && biome.maxHeight >= 0.0F))
+        if(biome.isHighHumidity() && biome.rootHeight < 0.0F && (biome.heightVariation <= 0.3F && biome.heightVariation >= 0.0F))
         {
             BiomeDictionary.registerBiomeType(biome, SWAMP);
         }
 
-        if(biome.minHeight <= -0.5F)
+        if(biome.rootHeight <= -0.5F)
         {
             BiomeDictionary.registerBiomeType(biome, WATER);
         }
 
-        if(biome.maxHeight >= 1.5F)
+        if(biome.heightVariation >= 1.5F)
         {
             BiomeDictionary.registerBiomeType(biome, MOUNTAIN);
         }

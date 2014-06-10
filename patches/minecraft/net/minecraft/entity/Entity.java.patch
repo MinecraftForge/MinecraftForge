@@ -44,9 +44,9 @@
  
  public abstract class Entity
  {
-@@ -152,7 +165,14 @@
-     protected UUID entityUniqueID;
-     public Entity.EnumEntitySize myEntitySize;
+@@ -116,7 +129,14 @@
+     protected UUID field_96093_i;
+     public Entity.EnumEntitySize field_70168_am;
      private static final String __OBFID = "CL_00001533";
 +    /** Forge: Used to store custom data for each entity. */
 +    private NBTTagCompound customEntityData;
@@ -54,15 +54,15 @@
 +    public ArrayList<EntityItem> capturedDrops = new ArrayList<EntityItem>();
 +    private UUID persistentID;
  
-+    private HashMap<String, IExtendedEntityProperties> extendedProperties;
++    protected HashMap<String, IExtendedEntityProperties> extendedProperties;
 +
      public int func_145782_y()
      {
          return this.field_145783_c;
-@@ -189,6 +209,15 @@
-         this.dataWatcher.addObject(0, Byte.valueOf((byte)0));
-         this.dataWatcher.addObject(1, Short.valueOf((short)300));
-         this.entityInit();
+@@ -153,6 +173,15 @@
+         this.field_70180_af.func_75682_a(0, Byte.valueOf((byte)0));
+         this.field_70180_af.func_75682_a(1, Short.valueOf((short)300));
+         this.func_70088_a();
 +
 +        extendedProperties = new HashMap<String, IExtendedEntityProperties>();
 +
@@ -70,22 +70,22 @@
 +
 +        for (IExtendedEntityProperties props : this.extendedProperties.values())
 +        {
-+            props.init(this, par1World);
++            props.init(this, p_i1582_1_);
 +        }
      }
  
-     protected abstract void entityInit();
-@@ -1051,9 +1080,22 @@
+     protected abstract void func_70088_a();
+@@ -991,9 +1020,22 @@
  
-         if (block.func_149688_o() == par1Material)
+         if (block.func_149688_o() == p_70055_1_)
          {
--            float f = BlockLiquid.func_149801_b(this.worldObj.getBlockMetadata(i, j, k)) - 0.11111111F;
+-            float f = BlockLiquid.func_149801_b(this.field_70170_p.func_72805_g(i, j, k)) - 0.11111111F;
 -            float f1 = (float)(j + 1) - f;
 -            return d0 < (double)f1;
 +            double filled = 1.0f; //If it's not a liquid assume it's a solid block
 +            if (block instanceof IFluidBlock)
 +            {
-+                filled = ((IFluidBlock)block).getFilledPercentage(worldObj, i, j, k);
++                filled = ((IFluidBlock)block).getFilledPercentage(field_70170_p, i, j, k);
 +            }
 +
 +            if (filled < 0)
@@ -101,14 +101,14 @@
          }
          else
          {
-@@ -1360,8 +1402,27 @@
-             par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
-             par1NBTTagCompound.setLong("UUIDMost", this.getUniqueID().getMostSignificantBits());
-             par1NBTTagCompound.setLong("UUIDLeast", this.getUniqueID().getLeastSignificantBits());
--            this.writeEntityToNBT(par1NBTTagCompound);
+@@ -1278,8 +1320,27 @@
+             p_70109_1_.func_74768_a("PortalCooldown", this.field_71088_bW);
+             p_70109_1_.func_74772_a("UUIDMost", this.func_110124_au().getMostSignificantBits());
+             p_70109_1_.func_74772_a("UUIDLeast", this.func_110124_au().getLeastSignificantBits());
+-            this.func_70014_b(p_70109_1_);
 +            if (customEntityData != null)
 +            {
-+                par1NBTTagCompound.setTag("ForgeData", customEntityData);
++                p_70109_1_.func_74782_a("ForgeData", customEntityData);
 +            }
  
 +           for (String identifier : this.extendedProperties.keySet())
@@ -116,7 +116,7 @@
 +                try
 +                {
 +                    IExtendedEntityProperties props = this.extendedProperties.get(identifier);
-+                    props.saveNBTData(par1NBTTagCompound);
++                    props.saveNBTData(p_70109_1_);
 +                }
 +                catch (Throwable t)
 +                {
@@ -125,18 +125,18 @@
 +                }
 +            }
 +
-+           this.writeEntityToNBT(par1NBTTagCompound);
++           this.func_70014_b(p_70109_1_);
 +
-             if (this.ridingEntity != null)
+             if (this.field_70154_o != null)
              {
                  NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-@@ -1428,6 +1489,30 @@
+@@ -1345,6 +1406,30 @@
  
-             this.setPosition(this.posX, this.posY, this.posZ);
-             this.setRotation(this.rotationYaw, this.rotationPitch);
-+            if (par1NBTTagCompound.hasKey("ForgeData"))
+             this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
+             this.func_70101_b(this.field_70177_z, this.field_70125_A);
++            if (p_70020_1_.func_74764_b("ForgeData"))
 +            {
-+                customEntityData = par1NBTTagCompound.getCompoundTag("ForgeData");
++                customEntityData = p_70020_1_.func_74775_l("ForgeData");
 +            }
 +
 +            for (String identifier : this.extendedProperties.keySet())
@@ -144,7 +144,7 @@
 +                try
 +                {
 +                    IExtendedEntityProperties props = this.extendedProperties.get(identifier);
-+                    props.loadNBTData(par1NBTTagCompound);
++                    props.loadNBTData(p_70020_1_);
 +                }
 +                catch (Throwable t)
 +                {
@@ -154,48 +154,48 @@
 +            }
 +
 +            //Rawr, legacy code, Vanilla added a UUID, keep this so older maps will convert properly
-+            if (par1NBTTagCompound.hasKey("PersistentIDMSB") && par1NBTTagCompound.hasKey("PersistentIDLSB"))
++            if (p_70020_1_.func_74764_b("PersistentIDMSB") && p_70020_1_.func_74764_b("PersistentIDLSB"))
 +            {
-+                this.entityUniqueID = new UUID(par1NBTTagCompound.getLong("PersistentIDMSB"), par1NBTTagCompound.getLong("PersistentIDLSB"));
++                this.field_96093_i = new UUID(p_70020_1_.func_74763_f("PersistentIDMSB"), p_70020_1_.func_74763_f("PersistentIDLSB"));
 +            }
-             this.readEntityFromNBT(par1NBTTagCompound);
+             this.func_70037_a(p_70020_1_);
  
-             if (this.shouldSetPosAfterLoading())
-@@ -1512,7 +1597,14 @@
+             if (this.func_142008_O())
+@@ -1423,7 +1508,14 @@
          {
-             EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
+             EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u + (double)p_70099_2_, this.field_70161_v, p_70099_1_);
              entityitem.field_145804_b = 10;
--            this.worldObj.spawnEntityInWorld(entityitem);
+-            this.field_70170_p.func_72838_d(entityitem);
 +            if (captureDrops)
 +            {
 +                capturedDrops.add(entityitem);
 +            }
 +            else
 +            {
-+                this.worldObj.spawnEntityInWorld(entityitem);
++                this.field_70170_p.func_72838_d(entityitem);
 +            }
              return entityitem;
          }
          else
-@@ -1782,7 +1874,7 @@
-     // JAVADOC METHOD $$ func_70115_ae
-     public boolean isRiding()
+@@ -1676,7 +1768,7 @@
+ 
+     public boolean func_70115_ae()
      {
--        return this.ridingEntity != null;
-+        return this.ridingEntity != null && ridingEntity.shouldRiderSit();
+-        return this.field_70154_o != null;
++        return this.field_70154_o != null && field_70154_o.shouldRiderSit();
      }
  
-     // JAVADOC METHOD $$ func_70093_af
-@@ -2103,7 +2195,7 @@
+     public boolean func_70093_af()
+@@ -1977,7 +2069,7 @@
  
      public float func_145772_a(Explosion p_145772_1_, World p_145772_2_, int p_145772_3_, int p_145772_4_, int p_145772_5_, Block p_145772_6_)
      {
 -        return p_145772_6_.func_149638_a(this);
-+        return p_145772_6_.getExplosionResistance(this, p_145772_2_, p_145772_3_, p_145772_3_, p_145772_4_, posX, posY + getEyeHeight(), posZ);
++        return p_145772_6_.getExplosionResistance(this, p_145772_2_, p_145772_3_, p_145772_4_, p_145772_5_, field_70165_t, field_70163_u + func_70047_e(), field_70161_v);
      }
  
      public boolean func_145774_a(Explosion p_145774_1_, World p_145774_2_, int p_145774_3_, int p_145774_4_, int p_145774_5_, Block p_145774_6_, float p_145774_7_)
-@@ -2175,6 +2267,174 @@
+@@ -2047,6 +2139,174 @@
  
      public void func_145781_i(int p_145781_1_) {}
  
@@ -233,22 +233,22 @@
 +    {
 +        if (this instanceof EntityPainting)
 +        {
-+            return new ItemStack(Items.painting);
++            return new ItemStack(Items.field_151159_an);
 +        }
 +        else if (this instanceof EntityLeashKnot)
 +        {
-+            return new ItemStack(Items.lead);
++            return new ItemStack(Items.field_151058_ca);
 +        }
 +        else if (this instanceof EntityItemFrame)
 +        {
-+            ItemStack held = ((EntityItemFrame)this).getDisplayedItem();
++            ItemStack held = ((EntityItemFrame)this).func_82335_i();
 +            if (held == null)
 +            {
-+                return new ItemStack(Items.item_frame);
++                return new ItemStack(Items.field_151160_bD);
 +            }
 +            else
 +            {
-+                return held.copy();
++                return held.func_77946_l();
 +            }
 +        }
 +        else if (this instanceof EntityMinecart)
@@ -257,14 +257,14 @@
 +        }
 +        else if (this instanceof EntityBoat)
 +        {
-+            return new ItemStack(Items.boat);
++            return new ItemStack(Items.field_151124_az);
 +        }
 +        else
 +        {
-+            int id = EntityList.getEntityID(this);
-+            if (id > 0 && EntityList.entityEggs.containsKey(id))
++            int id = EntityList.func_75619_a(this);
++            if (id > 0 && EntityList.field_75627_a.containsKey(id))
 +            {
-+                return new ItemStack(Items.spawn_egg, 1, id);
++                return new ItemStack(Items.field_151063_bx, 1, id);
 +            }
 +        }
 +        return null;
@@ -272,7 +272,7 @@
 +
 +    public UUID getPersistentID()
 +    {
-+        return entityUniqueID;
++        return field_96093_i;
 +    }
 +
 +    /**
@@ -280,7 +280,7 @@
 +     */
 +    public final void resetEntityId()
 +    {
-+        this.field_145783_c = nextEntityID++;
++        this.field_145783_c = field_70152_a++;
 +    }
 +
 +    public boolean shouldRenderInPass(int pass)
@@ -296,7 +296,7 @@
 +     */
 +    public boolean isCreatureType(EnumCreatureType type, boolean forSpawnCount)
 +    {
-+        return type.getCreatureClass().isAssignableFrom(this.getClass());
++        return type.func_75598_a().isAssignableFrom(this.getClass());
 +    }
 +
 +    /**

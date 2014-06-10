@@ -8,7 +8,7 @@ import net.minecraftforge.common.ForgeHooks.SeedEntry;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class MinecraftForge
-{   
+{
     /**
      * The core Forge EventBusses, all events for Forge will be fired on these,
      * you should use this to register all your listeners.
@@ -22,7 +22,7 @@ public class MinecraftForge
     public static final EventBus ORE_GEN_BUS = new EventBus();
     public static final String MC_VERSION = "1.7.2";
 
-    private static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();
+    static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();
 
     /**
      * Register a new seed to be dropped when breaking tall grass.
@@ -43,7 +43,6 @@ public class MinecraftForge
    {
        FMLLog.info("MinecraftForge v%s Initialized", ForgeVersion.getVersion());
 
-       EVENT_BUS.register(INTERNAL_HANDLER);
        OreDictionary.getOreName(0);
 
        if (!ForgeModContainer.disableVersionCheck)

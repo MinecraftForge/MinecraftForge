@@ -43,56 +43,80 @@
  
  public class Item
  {
-@@ -462,6 +472,7 @@
+@@ -448,6 +458,7 @@
+         return p_77654_1_;
      }
  
-     // JAVADOC METHOD $$ func_77639_j
 +    @Deprecated
-     public int getItemStackLimit()
+     public int func_77639_j()
      {
-         return this.maxStackSize;
-@@ -660,6 +671,7 @@
+         return this.field_77777_bU;
+@@ -566,6 +577,7 @@
+         return this.field_77700_c;
+     }
+ 
++    @Deprecated // Use ItemStack sensitive version below.
+     public boolean func_77634_r()
+     {
+         return this.field_77700_c != null;
+@@ -623,6 +635,7 @@
      }
  
      @SideOnly(Side.CLIENT)
 +    @Deprecated
-     public boolean hasEffect(ItemStack par1ItemStack)
+     public boolean func_77636_d(ItemStack p_77636_1_)
      {
-         return par1ItemStack.isItemEnchanted();
-@@ -674,7 +686,7 @@
-     // JAVADOC METHOD $$ func_77616_k
-     public boolean isItemTool(ItemStack par1ItemStack)
+         return p_77636_1_.func_77948_v();
+@@ -635,7 +648,7 @@
+ 
+     public boolean func_77616_k(ItemStack p_77616_1_)
      {
--        return this.getItemStackLimit() == 1 && this.isDamageable();
-+        return this.getItemStackLimit(par1ItemStack) == 1 && this.isDamageable();
+-        return this.func_77639_j() == 1 && this.func_77645_m();
++        return this.getItemStackLimit(p_77616_1_) == 1 && this.func_77645_m();
      }
  
-     protected MovingObjectPosition getMovingObjectPositionFromPlayer(World par1World, EntityPlayer par2EntityPlayer, boolean par3)
-@@ -683,7 +695,7 @@
-         float f1 = par2EntityPlayer.prevRotationPitch + (par2EntityPlayer.rotationPitch - par2EntityPlayer.prevRotationPitch) * f;
-         float f2 = par2EntityPlayer.prevRotationYaw + (par2EntityPlayer.rotationYaw - par2EntityPlayer.prevRotationYaw) * f;
-         double d0 = par2EntityPlayer.prevPosX + (par2EntityPlayer.posX - par2EntityPlayer.prevPosX) * (double)f;
--        double d1 = par2EntityPlayer.prevPosY + (par2EntityPlayer.posY - par2EntityPlayer.prevPosY) * (double)f + 1.62D - (double)par2EntityPlayer.yOffset;
-+        double d1 = par2EntityPlayer.prevPosY + (par2EntityPlayer.posY - par2EntityPlayer.prevPosY) * (double)f + (double)(par1World.isRemote ? par2EntityPlayer.getEyeHeight() - par2EntityPlayer.getDefaultEyeHeight() : par2EntityPlayer.getEyeHeight()); // isRemote check to revert changes to ray trace position due to adding the eye height clientside and player yOffset differences
-         double d2 = par2EntityPlayer.prevPosZ + (par2EntityPlayer.posZ - par2EntityPlayer.prevPosZ) * (double)f;
-         Vec3 vec3 = par1World.getWorldVec3Pool().getVecFromPool(d0, d1, d2);
-         float f3 = MathHelper.cos(-f2 * 0.017453292F - (float)Math.PI);
-@@ -693,6 +705,10 @@
+     protected MovingObjectPosition func_77621_a(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_)
+@@ -644,7 +657,7 @@
+         float f1 = p_77621_2_.field_70127_C + (p_77621_2_.field_70125_A - p_77621_2_.field_70127_C) * f;
+         float f2 = p_77621_2_.field_70126_B + (p_77621_2_.field_70177_z - p_77621_2_.field_70126_B) * f;
+         double d0 = p_77621_2_.field_70169_q + (p_77621_2_.field_70165_t - p_77621_2_.field_70169_q) * (double)f;
+-        double d1 = p_77621_2_.field_70167_r + (p_77621_2_.field_70163_u - p_77621_2_.field_70167_r) * (double)f + 1.62D - (double)p_77621_2_.field_70129_M;
++        double d1 = p_77621_2_.field_70167_r + (p_77621_2_.field_70163_u - p_77621_2_.field_70167_r) * (double)f + (double)(p_77621_1_.field_72995_K ? p_77621_2_.func_70047_e() - p_77621_2_.getDefaultEyeHeight() : p_77621_2_.func_70047_e()); // isRemote check to revert changes to ray trace position due to adding the eye height clientside and player yOffset differences
+         double d2 = p_77621_2_.field_70166_s + (p_77621_2_.field_70161_v - p_77621_2_.field_70166_s) * (double)f;
+         Vec3 vec3 = p_77621_1_.func_82732_R().func_72345_a(d0, d1, d2);
+         float f3 = MathHelper.func_76134_b(-f2 * 0.017453292F - (float)Math.PI);
+@@ -654,6 +667,10 @@
          float f7 = f4 * f5;
          float f8 = f3 * f5;
          double d3 = 5.0D;
-+        if (par2EntityPlayer instanceof EntityPlayerMP)
++        if (p_77621_2_ instanceof EntityPlayerMP)
 +        {
-+            d3 = ((EntityPlayerMP)par2EntityPlayer).theItemInWorldManager.getBlockReachDistance();
++            d3 = ((EntityPlayerMP)p_77621_2_).field_71134_c.getBlockReachDistance();
 +        }
-         Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
-         return par1World.func_147447_a(vec3, vec31, par3, !par3, false);
+         Vec3 vec31 = vec3.func_72441_c((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
+         return p_77621_1_.func_147447_a(vec3, vec31, p_77621_3_, !p_77621_3_, false);
      }
-@@ -773,6 +789,532 @@
-         return this.iconString == null ? "MISSING_ICON_ITEM_" + field_150901_e.func_148757_b(this) + "_" + this.unlocalizedName : this.iconString;
+@@ -709,6 +726,7 @@
+         this.field_77791_bV = p_94581_1_.func_94245_a(this.func_111208_A());
+     }
+ 
++    @Deprecated
+     public Multimap func_111205_h()
+     {
+         return HashMultimap.create();
+@@ -726,6 +744,570 @@
+         return this.field_111218_cA == null ? "MISSING_ICON_ITEM_" + field_150901_e.func_148757_b(this) + "_" + this.field_77774_bZ : this.field_111218_cA;
      }
  
 +    /* ======================================== FORGE START =====================================*/
++    /**
++     * ItemStack sensitive version of getItemAttributeModifiers
++     */
++    public Multimap getAttributeModifiers(ItemStack stack)
++    {
++        return this.func_111205_h();
++    }
++
 +    /**
 +     * Called when a player drops the item into the world,
 +     * returning false from this will prevent the item from
@@ -142,7 +166,7 @@
 +     */
 +    public boolean isRepairable()
 +    {
-+        return canRepair && isDamageable();
++        return canRepair && func_77645_m();
 +    }
 +
 +    /**
@@ -222,7 +246,7 @@
 +     */
 +    public int getRenderPasses(int metadata)
 +    {
-+        return requiresMultipleRenderPasses() ? 2 : 1;
++        return func_77623_v() ? 2 : 1;
 +    }
 +
 +    /**
@@ -234,11 +258,21 @@
 +     */
 +    public ItemStack getContainerItem(ItemStack itemStack)
 +    {
-+        if (!hasContainerItem())
++        if (!hasContainerItem(itemStack))
 +        {
 +            return null;
 +        }
-+        return new ItemStack(getContainerItem());
++        return new ItemStack(func_77668_q());
++    }
++
++    /**
++     * ItemStack sensitive version of hasContainerItem
++     * @param stack The current item stack
++     * @return True if this item has a 'container'
++     */
++    public boolean hasContainerItem(ItemStack stack)
++    {
++        return func_77634_r();
 +    }
 +
 +    /**
@@ -303,7 +337,7 @@
 +     */
 +    public CreativeTabs[] getCreativeTabs()
 +    {
-+        return new CreativeTabs[]{ getCreativeTab() };
++        return new CreativeTabs[]{ func_77640_w() };
 +    }
 +
 +    /**
@@ -329,7 +363,7 @@
 +     */
 +    public IIcon getIcon(ItemStack stack, int pass)
 +    {
-+        return getIconFromDamageForRenderPass(stack.getItemDamage(), pass);
++        return func_77618_c(stack.func_77960_j(), pass);
 +    }
 +
 +    /**
@@ -346,8 +380,8 @@
 +        if (this instanceof ItemEnchantedBook)
 +        {
 +            return ((ItemEnchantedBook)this).func_92112_a(rnd,
-+                    original.theMinimumChanceToGenerateItem,
-+                    original.theMaximumChanceToGenerateItem, original.itemWeight);
++                    original.field_76295_d,
++                    original.field_76296_e, original.field_76292_a);
 +        }
 +        return original;
 +    }
@@ -392,12 +426,12 @@
 +    {
 +        if (this instanceof ItemArmor)
 +        {
-+            return ((ItemArmor)this).armorType == armorType;
++            return ((ItemArmor)this).field_77881_a == armorType;
 +        }
 +
 +        if (armorType == 0)
 +        {
-+            return this == Item.func_150898_a(Blocks.pumpkin) || this == Items.skull;
++            return this == Item.func_150898_a(Blocks.field_150423_aK) || this == Items.field_151144_bL;
 +        }
 +
 +        return false;
@@ -496,17 +530,37 @@
 +     */
 +    public int getDamage(ItemStack stack)
 +    {
-+        return stack.itemDamage;
++        return stack.field_77991_e;
++    }
++
++    @Deprecated // This isn't 'display' its normal Damage, the above function is 'Aux' data, but the same value.
++    public int getDisplayDamage(ItemStack stack)
++    {
++        return stack.field_77991_e;
 +    }
 +
 +    /**
-+     * Return the itemDamage display value represented by this itemstack.
-+     * @param stack the stack
-+     * @return the damage value
++     * Determines if the durability bar should be rendered for this item.
++     * Defaults to vanilla stack.isDamaged behavior.
++     * But modders can use this for any data they wish.
++     * 
++     * @param stack The current Item Stack
++     * @return True if it should render the 'durability' bar.
 +     */
-+    public int getDisplayDamage(ItemStack stack)
++    public boolean showDurabilityBar(ItemStack stack)
 +    {
-+        return stack.itemDamage;
++        return stack.func_77951_h();
++    }
++
++    /**
++     * Queries the percentage of the 'Durability' bar that should be drawn.
++     * 
++     * @param stack The current ItemStack
++     * @return 1.0 for 100% 0 for 0%
++     */
++    public double getDurabilityForDisplay(ItemStack stack)
++    {
++        return (double)stack.func_77952_i() / (double)stack.func_77958_k();
 +    }
 +    
 +    /**
@@ -518,7 +572,7 @@
 +     */
 +    public int getMaxDamage(ItemStack stack)
 +    {
-+        return getMaxDamage();
++        return func_77612_l();
 +    }
 +
 +    /**
@@ -528,7 +582,7 @@
 +     */
 +    public boolean isDamaged(ItemStack stack)
 +    {
-+        return stack.itemDamage > 0;
++        return stack.field_77991_e > 0;
 +    }
 +
 +    /**
@@ -538,11 +592,11 @@
 +     */
 +    public void setDamage(ItemStack stack, int damage)
 +    {
-+        stack.itemDamage = damage;
++        stack.field_77991_e = damage;
 +
-+        if (stack.itemDamage < 0)
++        if (stack.field_77991_e < 0)
 +        {
-+            stack.itemDamage = 0;
++            stack.field_77991_e = 0;
 +        }
 +    }
 +
@@ -563,7 +617,7 @@
 +    @SideOnly(Side.CLIENT)
 +    public boolean hasEffect(ItemStack par1ItemStack, int pass)
 +    {
-+        return hasEffect(par1ItemStack) && (pass == 0 || this != Items.potionitem);
++        return func_77636_d(par1ItemStack) && (pass == 0 || this != Items.field_151068_bn);
 +    }
 +
 +    /**
@@ -575,7 +629,7 @@
 +     */
 +    public int getItemStackLimit(ItemStack stack)
 +    {
-+        return this.getItemStackLimit();
++        return this.func_77639_j();
 +    }
 +
 +    private HashMap<String, Integer> toolClasses = new HashMap<String, Integer>();
@@ -621,28 +675,28 @@
      public static enum ToolMaterial
      {
          WOOD(0, 59, 2.0F, 0.0F, 15),
-@@ -793,6 +1335,9 @@
+@@ -741,6 +1323,9 @@
  
          private static final String __OBFID = "CL_00000042";
  
 +        //Added by forge for custom Tool materials.
 +        public Item customCraftingMaterial = null;
 +
-         private ToolMaterial(int par3, int par4, float par5, float par6, int par7)
+         private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-             this.harvestLevel = par3;
-@@ -834,7 +1379,15 @@
+             this.field_78001_f = p_i1874_3_;
+@@ -777,7 +1362,15 @@
  
          public Item func_150995_f()
          {
--            return this == WOOD ? Item.func_150898_a(Blocks.planks) : (this == STONE ? Item.func_150898_a(Blocks.cobblestone) : (this == GOLD ? Items.gold_ingot : (this == IRON ? Items.iron_ingot : (this == EMERALD ? Items.diamond : null))));
+-            return this == WOOD ? Item.func_150898_a(Blocks.field_150344_f) : (this == STONE ? Item.func_150898_a(Blocks.field_150347_e) : (this == GOLD ? Items.field_151043_k : (this == IRON ? Items.field_151042_j : (this == EMERALD ? Items.field_151045_i : null))));
 +            switch (this)
 +            {
-+                case WOOD:    return Item.func_150898_a(Blocks.planks);
-+                case STONE:   return Item.func_150898_a(Blocks.cobblestone);
-+                case GOLD:    return Items.gold_ingot;
-+                case IRON:    return Items.iron_ingot;
-+                case EMERALD: return Items.diamond;
++                case WOOD:    return Item.func_150898_a(Blocks.field_150344_f);
++                case STONE:   return Item.func_150898_a(Blocks.field_150347_e);
++                case GOLD:    return Items.field_151043_k;
++                case IRON:    return Items.field_151042_j;
++                case EMERALD: return Items.field_151045_i;
 +                default:      return customCraftingMaterial;
 +            }
          }

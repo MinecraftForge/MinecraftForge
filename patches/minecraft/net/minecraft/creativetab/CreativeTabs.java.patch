@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/creativetab/CreativeTabs.java
 +++ ../src-work/minecraft/net/minecraft/creativetab/CreativeTabs.java
-@@ -140,8 +140,22 @@
+@@ -138,8 +138,22 @@
      private ItemStack field_151245_t;
      private static final String __OBFID = "CL_00000005";
  
@@ -9,50 +9,49 @@
 +        this(getNextID(), lable);
 +    }
 +
-     public CreativeTabs(int par1, String par2Str)
+     public CreativeTabs(int p_i1853_1_, String p_i1853_2_)
      {
-+        if (par1 >= creativeTabArray.length)
++        if (p_i1853_1_ >= field_78032_a.length)
 +        {
-+            CreativeTabs[] tmp = new CreativeTabs[par1 + 1];
-+            for (int x = 0; x < creativeTabArray.length; x++)
++            CreativeTabs[] tmp = new CreativeTabs[p_i1853_1_ + 1];
++            for (int x = 0; x < field_78032_a.length; x++)
 +            {
-+                tmp[x] = creativeTabArray[x];
++                tmp[x] = field_78032_a[x];
 +            }
-+            creativeTabArray = tmp;
++            field_78032_a = tmp;
 +        }
-         this.tabIndex = par1;
-         this.tabLabel = par2Str;
-         creativeTabArray[par1] = this;
-@@ -226,6 +240,10 @@
+         this.field_78033_n = p_i1853_1_;
+         this.field_78034_o = p_i1853_2_;
+         field_78032_a[p_i1853_1_] = this;
+@@ -222,12 +236,20 @@
      @SideOnly(Side.CLIENT)
-     public int getTabColumn()
+     public int func_78020_k()
      {
-+        if (tabIndex > 11)
++        if (field_78033_n > 11)
 +        {
-+            return ((tabIndex - 12) % 10) % 5;
++            return ((field_78033_n - 12) % 10) % 5;
 +        }
-         return this.tabIndex % 6;
+         return this.field_78033_n % 6;
      }
  
-@@ -233,6 +251,10 @@
      @SideOnly(Side.CLIENT)
-     public boolean isTabInFirstRow()
+     public boolean func_78023_l()
      {
-+        if (tabIndex > 11)
++        if (field_78033_n > 11)
 +        {
-+            return ((tabIndex - 12) % 10) < 5;
++            return ((field_78033_n - 12) % 10) < 5;
 +        }
-         return this.tabIndex < 6;
+         return this.field_78033_n < 6;
      }
  
-@@ -284,10 +306,18 @@
+@@ -278,10 +300,18 @@
          {
              Item item = (Item)iterator.next();
  
--            if (item != null && item.getCreativeTab() == this)
+-            if (item != null && item.func_77640_w() == this)
 +            if (item == null)
              {
--                item.func_150895_a(item, this, par1List);
+-                item.func_150895_a(item, this, p_78018_1_);
 +                continue;
              }
 +
@@ -60,29 +59,29 @@
 +            {
 +                if (tab == this)
 +                {
-+                    item.func_150895_a(item, this, par1List);
++                    item.func_150895_a(item, this, p_78018_1_);
 +                }
 +            }
          }
  
          if (this.func_111225_m() != null)
-@@ -326,4 +356,28 @@
+@@ -319,4 +349,28 @@
              }
          }
      }
 +
 +    public int getTabPage()
 +    {
-+        if (tabIndex > 11)
++        if (field_78033_n > 11)
 +        {
-+            return ((tabIndex - 12) / 10) + 1;
++            return ((field_78033_n - 12) / 10) + 1;
 +        }
 +        return 0;
 +    }
 +
 +    public static int getNextID()
 +    {
-+        return creativeTabArray.length;
++        return field_78032_a.length;
 +    }
 +
 +    /**
@@ -92,6 +91,6 @@
 +     */
 +    public boolean hasSearchBar()
 +    {
-+        return tabIndex == CreativeTabs.tabAllSearch.tabIndex;
++        return field_78033_n == CreativeTabs.field_78027_g.field_78033_n;
 +    }
  }

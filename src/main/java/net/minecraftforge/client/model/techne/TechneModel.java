@@ -1,5 +1,6 @@
 package net.minecraftforge.client.model.techne;
 
+import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +37,6 @@ import net.minecraftforge.client.model.ModelFormatException;
 /**
  * Techne model importer, based on iChun's Hats importer
  */
-@SuppressWarnings("unused")
 @SideOnly(Side.CLIENT)
 public class TechneModel extends ModelBase implements IModelCustom {
     public static final List<String> cubeTypes = Arrays.asList(
@@ -49,6 +49,7 @@ public class TechneModel extends ModelBase implements IModelCustom {
     
     private Map<String, ModelRenderer> parts = new LinkedHashMap<String, ModelRenderer>();
     private String texture = null;
+    private Dimension textureDims = null;
     private int textureName;
     private boolean textureNameSet = false;
 
@@ -118,6 +119,23 @@ public class TechneModel extends ModelBase implements IModelCustom {
             if (modelTexture != null)
             {
                 texture = modelTexture.getTextContent();
+            }
+
+            NodeList textureDim = document.getElementsByTagName("TextureSize");
+            if (textureDim.getLength() > 0)
+            {
+                try
+                {
+                    String[] tmp = textureDim.item(0).getTextContent().split(",");
+                    if (tmp.length == 2)
+                    {
+                        this.textureDims = new Dimension(Integer.parseInt(tmp[0]), Integer.parseInt(tmp[1]));
+                    }
+                }
+                catch (NumberFormatException e)
+                {
+                    throw new ModelFormatException("Model " + fileName + " contains a TextureSize tag with invalid data");
+                }
             }
             
             NodeList shapes = document.getElementsByTagName("Shape");
@@ -209,6 +227,11 @@ public class TechneModel extends ModelBase implements IModelCustom {
                     cube.rotateAngleX = (float)Math.toRadians(Float.parseFloat(rotation[0]));
                     cube.rotateAngleY = (float)Math.toRadians(Float.parseFloat(rotation[1]));
                     cube.rotateAngleZ = (float)Math.toRadians(Float.parseFloat(rotation[2]));
+
+                    if (this.textureDims != null)
+                    {
+                        cube.setTextureSize((int)textureDims.getWidth(), (int)textureDims.getHeight());
+                    }
 
                     parts.put(shapeName, cube);
                 }

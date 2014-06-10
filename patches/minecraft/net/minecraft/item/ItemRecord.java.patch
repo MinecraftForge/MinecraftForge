@@ -1,0 +1,35 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemRecord.java
++++ ../src-work/minecraft/net/minecraft/item/ItemRecord.java
+@@ -10,6 +10,7 @@
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.util.IIcon;
++import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.StatCollector;
+ import net.minecraft.world.World;
+ 
+@@ -24,7 +25,7 @@
+         this.field_150929_a = p_i45350_1_;
+         this.field_77777_bU = 1;
+         this.func_77637_a(CreativeTabs.field_78026_f);
+-        field_150928_b.put(p_i45350_1_, this);
++        field_150928_b.put("records." + p_i45350_1_, this); //Forge Bug Fix: RenderGlobal adds a "records." when looking up below.
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -77,4 +78,15 @@
+     {
+         return (ItemRecord)field_150928_b.get(p_150926_0_);
+     }
++
++    /**
++     * Retrieves the resource location of the sound to play for this record.
++     * 
++     * @param name The name of the record to play
++     * @return The resource location for the audio, null to use default.
++     */
++    public ResourceLocation getRecordResource(String name)
++    {
++        return new ResourceLocation(name);
++    }
+ }

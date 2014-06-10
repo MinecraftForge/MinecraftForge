@@ -1,16 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/crash/CrashReportCategory.java
 +++ ../src-work/minecraft/net/minecraft/crash/CrashReportCategory.java
-@@ -131,8 +131,11 @@
+@@ -127,8 +127,11 @@
          }
          else
          {
--            this.stackTrace = new StackTraceElement[astacktraceelement.length - 3 - par1];
--            System.arraycopy(astacktraceelement, 3 + par1, this.stackTrace, 0, this.stackTrace.length);
-+            int len = astacktraceelement.length - 3 - par1;
+-            this.field_85075_d = new StackTraceElement[astacktraceelement.length - 3 - p_85073_1_];
+-            System.arraycopy(astacktraceelement, 3 + p_85073_1_, this.field_85075_d, 0, this.field_85075_d.length);
++            int len = astacktraceelement.length - 3 - p_85073_1_;
 +            // Really Mojang, Still, god damn...
 +            if (len <= 0) len = astacktraceelement.length;
-+            this.stackTrace = new StackTraceElement[len];
-+            System.arraycopy(astacktraceelement, astacktraceelement.length - len, this.stackTrace, 0, this.stackTrace.length);
-             return this.stackTrace.length;
++            this.field_85075_d = new StackTraceElement[len];
++            System.arraycopy(astacktraceelement, astacktraceelement.length - len, this.field_85075_d, 0, this.field_85075_d.length);
+             return this.field_85075_d.length;
          }
      }

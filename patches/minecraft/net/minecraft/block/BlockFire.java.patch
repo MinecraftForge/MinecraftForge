@@ -30,7 +30,7 @@
      private IIcon[] field_149850_M;
      private static final String __OBFID = "CL_00000245";
 @@ -54,10 +61,10 @@
-         Blocks.fire.func_149842_a(func_149682_b(Blocks.carpet), 60, 20);
+         Blocks.field_150480_ab.func_149842_a(func_149682_b(Blocks.field_150404_cg), 60, 20);
      }
  
 +    @Deprecated // Use setFireInfo
@@ -44,12 +44,12 @@
      public AxisAlignedBB func_149668_a(World p_149668_1_, int p_149668_2_, int p_149668_3_, int p_149668_4_)
 @@ -94,13 +101,8 @@
      {
-         if (p_149674_1_.getGameRules().getGameRuleBooleanValue("doFireTick"))
+         if (p_149674_1_.func_82736_K().func_82766_b("doFireTick"))
          {
--            boolean flag = p_149674_1_.func_147439_a(p_149674_2_, p_149674_3_ - 1, p_149674_4_) == Blocks.netherrack;
+-            boolean flag = p_149674_1_.func_147439_a(p_149674_2_, p_149674_3_ - 1, p_149674_4_) == Blocks.field_150424_aL;
 +            boolean flag = p_149674_1_.func_147439_a(p_149674_2_, p_149674_3_ - 1, p_149674_4_).isFireSource(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_, UP);
  
--            if (p_149674_1_.provider instanceof WorldProviderEnd && p_149674_1_.func_147439_a(p_149674_2_, p_149674_3_ - 1, p_149674_4_) == Blocks.bedrock)
+-            if (p_149674_1_.field_73011_w instanceof WorldProviderEnd && p_149674_1_.func_147439_a(p_149674_2_, p_149674_3_ - 1, p_149674_4_) == Blocks.field_150357_h)
 -            {
 -                flag = true;
 -            }
@@ -102,7 +102,7 @@
 +
          if (p_149841_6_.nextInt(p_149841_5_) < j1)
          {
-             boolean flag = p_149841_1_.func_147439_a(p_149841_2_, p_149841_3_, p_149841_4_) == Blocks.tnt;
+             boolean flag = p_149841_1_.func_147439_a(p_149841_2_, p_149841_3_, p_149841_4_) == Blocks.field_150335_W;
 @@ -234,7 +242,12 @@
  
      private boolean func_149847_e(World p_149847_1_, int p_149847_2_, int p_149847_3_, int p_149847_4_)
@@ -161,11 +161,11 @@
          float f1;
          float f2;
  
--        if (!World.func_147466_a(p_149734_1_, p_149734_2_, p_149734_3_ - 1, p_149734_4_) && !Blocks.fire.func_149844_e(p_149734_1_, p_149734_2_, p_149734_3_ - 1, p_149734_4_))
-+        if (!World.func_147466_a(p_149734_1_, p_149734_2_, p_149734_3_ - 1, p_149734_4_) && !Blocks.fire.canCatchFire(p_149734_1_, p_149734_2_, p_149734_3_ - 1, p_149734_4_, UP))
+-        if (!World.func_147466_a(p_149734_1_, p_149734_2_, p_149734_3_ - 1, p_149734_4_) && !Blocks.field_150480_ab.func_149844_e(p_149734_1_, p_149734_2_, p_149734_3_ - 1, p_149734_4_))
++        if (!World.func_147466_a(p_149734_1_, p_149734_2_, p_149734_3_ - 1, p_149734_4_) && !Blocks.field_150480_ab.canCatchFire(p_149734_1_, p_149734_2_, p_149734_3_ - 1, p_149734_4_, UP))
          {
--            if (Blocks.fire.func_149844_e(p_149734_1_, p_149734_2_ - 1, p_149734_3_, p_149734_4_))
-+            if (Blocks.fire.canCatchFire(p_149734_1_, p_149734_2_ - 1, p_149734_3_, p_149734_4_, EAST))
+-            if (Blocks.field_150480_ab.func_149844_e(p_149734_1_, p_149734_2_ - 1, p_149734_3_, p_149734_4_))
++            if (Blocks.field_150480_ab.canCatchFire(p_149734_1_, p_149734_2_ - 1, p_149734_3_, p_149734_4_, EAST))
              {
                  for (l = 0; l < 2; ++l)
                  {
@@ -173,8 +173,8 @@
                  }
              }
  
--            if (Blocks.fire.func_149844_e(p_149734_1_, p_149734_2_ + 1, p_149734_3_, p_149734_4_))
-+            if (Blocks.fire.canCatchFire(p_149734_1_, p_149734_2_ + 1, p_149734_3_, p_149734_4_, WEST))
+-            if (Blocks.field_150480_ab.func_149844_e(p_149734_1_, p_149734_2_ + 1, p_149734_3_, p_149734_4_))
++            if (Blocks.field_150480_ab.canCatchFire(p_149734_1_, p_149734_2_ + 1, p_149734_3_, p_149734_4_, WEST))
              {
                  for (l = 0; l < 2; ++l)
                  {
@@ -182,8 +182,8 @@
                  }
              }
  
--            if (Blocks.fire.func_149844_e(p_149734_1_, p_149734_2_, p_149734_3_, p_149734_4_ - 1))
-+            if (Blocks.fire.canCatchFire(p_149734_1_, p_149734_2_, p_149734_3_, p_149734_4_ - 1, SOUTH))
+-            if (Blocks.field_150480_ab.func_149844_e(p_149734_1_, p_149734_2_, p_149734_3_, p_149734_4_ - 1))
++            if (Blocks.field_150480_ab.canCatchFire(p_149734_1_, p_149734_2_, p_149734_3_, p_149734_4_ - 1, SOUTH))
              {
                  for (l = 0; l < 2; ++l)
                  {
@@ -191,8 +191,8 @@
                  }
              }
  
--            if (Blocks.fire.func_149844_e(p_149734_1_, p_149734_2_, p_149734_3_, p_149734_4_ + 1))
-+            if (Blocks.fire.canCatchFire(p_149734_1_, p_149734_2_, p_149734_3_, p_149734_4_ + 1, NORTH))
+-            if (Blocks.field_150480_ab.func_149844_e(p_149734_1_, p_149734_2_, p_149734_3_, p_149734_4_ + 1))
++            if (Blocks.field_150480_ab.canCatchFire(p_149734_1_, p_149734_2_, p_149734_3_, p_149734_4_ + 1, NORTH))
              {
                  for (l = 0; l < 2; ++l)
                  {
@@ -200,8 +200,8 @@
                  }
              }
  
--            if (Blocks.fire.func_149844_e(p_149734_1_, p_149734_2_, p_149734_3_ + 1, p_149734_4_))
-+            if (Blocks.fire.canCatchFire(p_149734_1_, p_149734_2_, p_149734_3_ + 1, p_149734_4_, DOWN))
+-            if (Blocks.field_150480_ab.func_149844_e(p_149734_1_, p_149734_2_, p_149734_3_ + 1, p_149734_4_))
++            if (Blocks.field_150480_ab.canCatchFire(p_149734_1_, p_149734_2_, p_149734_3_ + 1, p_149734_4_, DOWN))
              {
                  for (l = 0; l < 2; ++l)
                  {
@@ -220,7 +220,7 @@
 +
 +    public void setFireInfo(Block block, int encouragement, int flammibility)
 +    {
-+        if (block == Blocks.air) throw new IllegalArgumentException("Tried to set air on fire... This is bad.");
++        if (block == Blocks.field_150350_a) throw new IllegalArgumentException("Tried to set air on fire... This is bad.");
 +        int id = Block.func_149682_b(block);
 +        this.field_149849_a[id] = encouragement;
 +        this.field_149848_b[id] = flammibility;

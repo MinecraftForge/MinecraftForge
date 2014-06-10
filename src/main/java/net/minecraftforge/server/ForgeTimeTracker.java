@@ -18,13 +18,11 @@ public class ForgeTimeTracker {
     public static long tileEntityTrackingTime;
     
     private Map<TileEntity,int[]> tileEntityTimings;
-    @SuppressWarnings("unused")
     private Map<Entity,int[]> entityTimings;
     
     private static final ForgeTimeTracker INSTANCE = new ForgeTimeTracker();
 
     private WeakReference<TileEntity> tile;
-    @SuppressWarnings("unused")
     private WeakReference<Entity> entity;
     
     private long timing;

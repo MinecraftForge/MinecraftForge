@@ -1,8 +1,13 @@
 package net.minecraftforge.common.network;
 
+import java.util.Map;
+
+import net.minecraftforge.fluids.FluidRegistry;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
+import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 
 public abstract class ForgeMessage {
@@ -39,27 +44,24 @@ public abstract class ForgeMessage {
         @Override
         void toBytes(ByteBuf bytes)
         {
-            /*
-            bytes.writeInt(FluidRegistry.maxID);
-            for (Map.Entry<String, Integer> entry : FluidRegistry.fluidIDs.entrySet())
+            Map<String, Integer> ids = FluidRegistry.getRegisteredFluidIDs();
+            bytes.writeInt(ids.size());
+            for (Map.Entry<String, Integer> entry : ids.entrySet())
             {
                 ByteBufUtils.writeUTF8String(bytes,entry.getKey());
                 bytes.writeInt(entry.getValue());
             }
-            */
         }
 
         @Override
         void fromBytes(ByteBuf bytes)
         {
-            /*
             int listSize = bytes.readInt();
             for (int i = 0; i < listSize; i++) {
                 String fluidName = ByteBufUtils.readUTF8String(bytes);
                 int fluidId = bytes.readInt();
                 fluidIds.put(fluidName, fluidId);
             }
-            */
         }
     }
 
