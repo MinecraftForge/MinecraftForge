@@ -49,6 +49,18 @@
          if (this.func_85032_ar())
          {
              return false;
+@@ -796,9 +799,9 @@
+                         this.field_70718_bc = 100;
+                         this.field_70717_bb = (EntityPlayer)entity;
+                     }
+-                    else if (entity instanceof EntityWolf)
++                    else if (entity instanceof net.minecraft.entity.passive.EntityTameable)
+                     {
+-                        EntityWolf entitywolf = (EntityWolf)entity;
++                        net.minecraft.entity.passive.EntityTameable entitywolf = (net.minecraft.entity.passive.EntityTameable)entity;
+ 
+                         if (entitywolf.func_70909_n())
+                         {
 @@ -883,6 +886,7 @@
  
      public void func_70645_a(DamageSource p_70645_1_)
