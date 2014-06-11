@@ -304,7 +304,7 @@ public class OreDictionary
     }
 
     /**
-     * Gets all the integer ID for the ores that the specified item stakc is registered to.
+     * Gets all the integer ID for the ores that the specified item stack is registered to.
      * If the item stack is not linked to any ore, this will return an empty array and no new entry will be created.
      *
      * @param stack The item stack of the ore.
@@ -319,7 +319,7 @@ public class OreDictionary
         int id = Item.getIdFromItem(stack.getItem());
         List<Integer> ids = stackToId.get(id);
         if (ids != null) set.addAll(ids);
-        ids = stackToId.get(id | (stack.getItemDamage() << 16));
+        ids = stackToId.get(id | ((stack.getItemDamage() + 1) << 16));
         if (ids != null) set.addAll(ids);
 
         Integer[] tmp = set.toArray(new Integer[set.size()]);
