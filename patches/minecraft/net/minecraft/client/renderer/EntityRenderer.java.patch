@@ -165,3 +165,31 @@
          float f1 = this.field_78531_r.field_71441_e.func_72867_j(p_78474_1_);
  
          if (f1 > 0.0F)
+@@ -1774,6 +1810,13 @@
+             this.field_78533_p = f7;
+         }
+ 
++        net.minecraftforge.client.event.EntityViewRenderEvent.FogColors event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogColors(this, entitylivingbase, block, p_78466_1_, this.field_78518_n, this.field_78519_o, this.field_78533_p);
++        MinecraftForge.EVENT_BUS.post(event);
++        
++        this.field_78518_n = event.red;
++        this.field_78533_p = event.blue;
++        this.field_78519_o = event.green;
++
+         GL11.glClearColor(this.field_78518_n, this.field_78519_o, this.field_78533_p, 0.0F);
+     }
+ 
+@@ -1809,6 +1852,13 @@
+             Block block = ActiveRenderInfo.func_151460_a(this.field_78531_r.field_71441_e, entitylivingbase, p_78468_2_);
+             float f1;
+ 
++            net.minecraftforge.client.event.EntityViewRenderEvent.FogDensity event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogDensity(this, entitylivingbase, block, 0.1F, p_78468_2_);
++
++            if (MinecraftForge.EVENT_BUS.post(event)) 
++            {
++                GL11.glFogf(GL11.GL_FOG_DENSITY, event.density);
++            }
++            else 
+             if (entitylivingbase.func_70644_a(Potion.field_76440_q))
+             {
+                 f1 = 5.0F;
