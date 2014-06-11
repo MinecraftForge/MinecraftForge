@@ -307,7 +307,7 @@ public class OreDictionary
     }
 
     /**
-     * Gets all the integer ID for the ores that the specified item stakc is registered to.
+     * Gets all the integer ID for the ores that the specified item stack is registered to.
      * If the item stack is not linked to any ore, this will return an empty array and no new entry will be created.
      *
      * @param stack The item stack of the ore.
