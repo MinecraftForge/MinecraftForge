@@ -36,7 +36,9 @@ public class OreDictionary
     private static List<String>          idToName = new ArrayList<String>();
     private static Map<String, Integer>  nameToId = new HashMap<String, Integer>();
     private static List<ArrayList<ItemStack>> idToStack = Lists.newArrayList(); //ToDo: Unqualify to List when possible {1.8}
+    private static List<ArrayList<ItemStack>> idToStackUn = Lists.newArrayList(); //ToDo: Unqualify to List when possible {1.8}
     private static Map<Integer, List<Integer>> stackToId = Maps.newHashMap();
+    public static final ArrayList<ItemStack> EMPTY_LIST = new UnmodifiableArrayList(Lists.newArrayList()); //ToDo: Unqualify to List when possible {1.8}
 
     /**
      * Minecraft changed from -1 to Short.MAX_VALUE in 1.5 release for the "block wildcard". Use this in case it
@@ -267,6 +269,7 @@ public class OreDictionary
             val = idToName.size() - 1; //0 indexed
             nameToId.put(name, val);
             idToStack.add(new ArrayList<ItemStack>());
+            idToStackUn.add(new UnmodifiableArrayList(idToStack.get(val)));
         }
         return val;
     }
@@ -319,7 +322,7 @@ public class OreDictionary
         int id = Item.getIdFromItem(stack.getItem());
         List<Integer> ids = stackToId.get(id);
         if (ids != null) set.addAll(ids);
-        ids = stackToId.get(id | (stack.getItemDamage() << 16));
+        ids = stackToId.get(id | ((stack.getItemDamage() + 1) << 16));
         if (ids != null) set.addAll(ids);
 
         Integer[] tmp = set.toArray(new Integer[set.size()]);
@@ -379,8 +382,9 @@ public class OreDictionary
             idToName.add(name);
             nameToId.put(name, idToName.size() - 1); //0 indexed
             idToStack.add(null);
+            idToStackUn.add(EMPTY_LIST);
         }
-        return new UnmodifiableArrayList(idToStack.size() > id ? idToStack.get(id) : new ArrayList<ItemStack>());
+        return idToStackUn.size() > id ? idToStackUn.get(id) : EMPTY_LIST;
     }
 
     private static boolean containsMatch(boolean strict, ItemStack[] inputs, ItemStack... targets)
