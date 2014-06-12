@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityMagmaCube.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityMagmaCube.java
+@@ -99,6 +99,7 @@
+     {
+         this.field_70181_x = (double)(0.42F + (float)this.func_70809_q() * 0.1F);
+         this.field_70160_al = true;
++        net.minecraftforge.common.ForgeHooks.onLivingJump(this);
+     }
+ 
+     protected void func_70069_a(float p_70069_1_) {}

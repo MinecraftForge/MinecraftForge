@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityHorse.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityHorse.java
+@@ -1227,6 +1227,7 @@
+                 }
+ 
+                 this.field_110277_bt = 0.0F;
++                net.minecraftforge.common.ForgeHooks.onLivingJump(this);
+             }
+ 
+             this.field_70138_W = 1.0F;
