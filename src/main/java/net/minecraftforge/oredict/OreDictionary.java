@@ -103,7 +103,7 @@ public class OreDictionary
             registerOre("gemQuartz",   Items.quartz);
             registerOre("dustRedstone",  Items.redstone);
             registerOre("dustGlowstone", Items.glowstone_dust);
-            registerOre("dustLapis",   new ItemStack(Items.dye, 1, 4));
+            registerOre("gemLapis",    new ItemStack(Items.dye, 1, 4));
             registerOre("slimeball",   Items.slime_ball);
             registerOre("glowstone",   Blocks.glowstone);
             registerOre("cropWheat",   Items.wheat);
