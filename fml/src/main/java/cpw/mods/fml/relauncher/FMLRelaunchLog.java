@@ -14,10 +14,13 @@ package cpw.mods.fml.relauncher;
 
 import java.io.File;
 import java.util.Locale;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
+
+import cpw.mods.fml.common.TracingPrintStream;
 
 public class FMLRelaunchLog {
 
@@ -39,13 +42,17 @@ public class FMLRelaunchLog {
     }
 
     /**
-     * Configure the FML logger
+     * Configure the FML logger and inject tracing printstreams.
      */
     private static void configureLogging()
     {
         log.myLog = LogManager.getLogger("FML");
         ThreadContext.put("side", side.name().toLowerCase(Locale.ENGLISH));
         configured = true;
+        
+        FMLRelaunchLog.fine("Injecting tracing printstreams for STDOUT/STDERR.");
+        System.setOut(new TracingPrintStream(LogManager.getLogger("STDOUT"), System.out));
+        System.setErr(new TracingPrintStream(LogManager.getLogger("STDERR"), System.err));
     }
 
     public static void log(String targetLog, Level level, String format, Object... data)
