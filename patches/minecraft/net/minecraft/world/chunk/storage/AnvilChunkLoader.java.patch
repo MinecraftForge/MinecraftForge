@@ -99,7 +99,7 @@
          if (!p_75822_4_.func_150297_b("Level", 10))
          {
              field_151505_a.error("Chunk file at " + p_75822_2_ + "," + p_75822_3_ + " is missing level data, skipping");
-@@ -103,10 +158,29 @@
+@@ -103,10 +158,30 @@
                  field_151505_a.error("Chunk file at " + p_75822_2_ + "," + p_75822_3_ + " is in the wrong location; relocating. (Expected " + p_75822_2_ + ", " + p_75822_3_ + ", got " + chunk.field_76635_g + ", " + chunk.field_76647_h + ")");
                  p_75822_4_.func_74768_a("xPos", p_75822_2_);
                  p_75822_4_.func_74768_a("zPos", p_75822_3_);
@@ -125,12 +125,13 @@
 +            Object[] data = new Object[2];
 +            data[0] = chunk;
 +            data[1] = p_75822_4_;
-+            MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, p_75822_4_));
++            // event is fired in ChunkIOProvider.callStage2 since it must be fired after TE's load.
++            // MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, par4NBTTagCompound));
 +            return data;
          }
      }
  
-@@ -120,6 +194,7 @@
+@@ -120,6 +195,7 @@
              NBTTagCompound nbttagcompound1 = new NBTTagCompound();
              nbttagcompound.func_74782_a("Level", nbttagcompound1);
              this.func_75820_a(p_75816_2_, p_75816_1_, nbttagcompound1);
@@ -138,7 +139,7 @@
              this.func_75824_a(p_75816_2_.func_76632_l(), nbttagcompound);
          }
          catch (Exception exception)
-@@ -373,6 +448,12 @@
+@@ -373,6 +449,12 @@
              chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
          }
  
@@ -151,7 +152,7 @@
          NBTTagList nbttaglist1 = p_75823_2_.func_150295_c("Entities", 10);
  
          if (nbttaglist1 != null)
-@@ -434,7 +515,7 @@
+@@ -434,7 +516,7 @@
              }
          }
  
