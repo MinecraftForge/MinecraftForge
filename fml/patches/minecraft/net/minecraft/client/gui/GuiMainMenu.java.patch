@@ -14,9 +14,9 @@
  import java.util.Date;
 +import java.util.List;
  import java.util.Random;
- import java.util.concurrent.atomic.AtomicInteger;
  import net.minecraft.client.Minecraft;
-@@ -35,6 +38,9 @@
+ import net.minecraft.client.renderer.OpenGlHelper;
+@@ -29,6 +32,9 @@
  import org.lwjgl.opengl.GLContext;
  import org.lwjgl.util.glu.Project;
  
@@ -26,40 +26,22 @@
  @SideOnly(Side.CLIENT)
  public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
  {
-@@ -67,6 +73,8 @@
-     private GuiButton field_130023_H;
-     private static final String __OBFID = "CL_00001154";
- 
-+    private GuiButton fmlModButton = null;
-+
-     public GuiMainMenu()
-     {
-         this.field_146972_A = field_96138_a;
-@@ -267,13 +275,22 @@
-     private void func_130022_h()
-     {
-         this.field_130023_H.field_146125_m = true;
-+        fmlModButton.field_146120_f = 98;
-+        fmlModButton.field_146128_h = this.field_146294_l / 2 + 2;
-     }
- 
-     private void func_73969_a(int p_73969_1_, int p_73969_2_)
+@@ -190,7 +196,13 @@
      {
          this.field_146292_n.add(new GuiButton(1, this.field_146294_l / 2 - 100, p_73969_1_, I18n.func_135052_a("menu.singleplayer", new Object[0])));
          this.field_146292_n.add(new GuiButton(2, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 1, I18n.func_135052_a("menu.multiplayer", new Object[0])));
--        this.field_146292_n.add(this.field_130023_H = new GuiButton(14, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.func_135052_a("menu.online", new Object[0])));
-+        //If Minecraft Realms is enabled, halve the size of both buttons and set them next to eachother.
-+        fmlModButton = new GuiButton(6, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, "Mods");
+-        this.field_146292_n.add(new GuiButton(14, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.func_135052_a("menu.online", new Object[0])));
++        GuiButton realmsButton = new GuiButton(14, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.func_135052_a("menu.online", new Object[0]));
++        GuiButton fmlModButton = new GuiButton(6, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, "Mods");
++        fmlModButton.field_146128_h = this.field_146294_l / 2 + 2;
++        realmsButton.field_146120_f = 98;
++        fmlModButton.field_146120_f = 98;
++        this.field_146292_n.add(realmsButton);
 +        this.field_146292_n.add(fmlModButton);
-+
-+        field_130023_H = new GuiButton(14, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.func_135052_a("menu.online"));
-+        field_130023_H.field_146120_f = 98;
-+        field_130023_H.field_146128_h = this.field_146294_l / 2 - 100;
-+        this.field_146292_n.add(field_130023_H);
-         this.field_130023_H.field_146125_m = false;
      }
  
-@@ -322,6 +339,11 @@
+     private void func_73972_b(int p_73972_1_, int p_73972_2_)
+@@ -238,6 +250,11 @@
              this.field_146297_k.func_71400_g();
          }
  
@@ -71,7 +53,7 @@
          if (p_146284_1_.field_146127_k == 11)
          {
              this.field_146297_k.func_71371_a("Demo_World", "Demo_World", DemoWorldServer.field_73071_a);
-@@ -585,7 +607,15 @@
+@@ -481,7 +498,15 @@
              s = s + " Demo";
          }
  

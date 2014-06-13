@@ -177,7 +177,7 @@ public class Loader
     private Loader()
     {
         modClassLoader = new ModClassLoader(getClass().getClassLoader());
-        String actualMCVersion = "1.7.9";
+        String actualMCVersion = "1.7.10-pre3";
         if (!mccversion.equals(actualMCVersion))
         {
             FMLLog.severe("This version of FML is built for Minecraft %s, we have detected Minecraft %s in your minecraft jar file", mccversion, actualMCVersion);
