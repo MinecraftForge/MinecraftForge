@@ -930,27 +930,6 @@
       }
     ]
   }, 
-  "net/minecraft/client/gui/GuiMainMenu": {
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/GuiMainMenu$1", 
-        "start": "200"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/GuiMainMenu$1": {
-    "enclosingMethod": {
-      "desc": "()V", 
-      "name": "func_130020_g", 
-      "owner": "net/minecraft/client/gui/GuiMainMenu"
-    }, 
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/GuiMainMenu$1", 
-        "start": "200"
-      }
-    ]
-  }, 
   "net/minecraft/client/gui/GuiMerchant": {
     "innerClasses": [
       {
@@ -1047,153 +1026,6 @@
       }
     ]
   }, 
-  "net/minecraft/client/gui/mco/GuiScreenBuyRealms": {
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenBuyRealms$1", 
-        "start": "59"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenBuyRealms$1": {
-    "enclosingMethod": {
-      "desc": "()V", 
-      "name": "func_146816_h", 
-      "owner": "net/minecraft/client/gui/mco/GuiScreenBuyRealms"
-    }, 
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenBuyRealms$1", 
-        "start": "59"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/GuiScreenConfigureWorld": {
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/GuiScreenConfigureWorld$1", 
-        "start": "116"
-      }, 
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/gui/GuiScreenConfigureWorld$SelectionListInvited", 
-        "inner_name": "SelectionListInvited", 
-        "outer_class": "net/minecraft/client/gui/GuiScreenConfigureWorld", 
-        "start": "353"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/GuiScreenConfigureWorld$1": {
-    "enclosingMethod": {
-      "desc": "()V", 
-      "name": "func_152150_h", 
-      "owner": "net/minecraft/client/gui/GuiScreenConfigureWorld"
-    }, 
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/GuiScreenConfigureWorld$1", 
-        "start": "116"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/GuiScreenConfigureWorld$SelectionListInvited": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/gui/GuiScreenConfigureWorld"
-    }, 
-    "innerClasses": [
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/gui/GuiScreenConfigureWorld$SelectionListInvited", 
-        "inner_name": "SelectionListInvited", 
-        "outer_class": "net/minecraft/client/gui/GuiScreenConfigureWorld", 
-        "start": "353"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/GuiScreenConfirmation": {
-    "innerClasses": [
-      {
-        "access": "4029", 
-        "inner_class": "net/minecraft/client/gui/GuiScreenConfirmation$ConfirmationType", 
-        "inner_name": "ConfirmationType", 
-        "outer_class": "net/minecraft/client/gui/GuiScreenConfirmation", 
-        "start": "60"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/GuiScreenConfirmation$ConfirmationType": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/gui/GuiScreenConfirmation"
-    }, 
-    "innerClasses": [
-      {
-        "access": "4029", 
-        "inner_class": "net/minecraft/client/gui/GuiScreenConfirmation$ConfirmationType", 
-        "inner_name": "ConfirmationType", 
-        "outer_class": "net/minecraft/client/gui/GuiScreenConfirmation", 
-        "start": "60"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenOnlineServers": {
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenOnlineServers$1", 
-        "start": "215"
-      }, 
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenOnlineServers$OnlineServerList", 
-        "inner_name": "OnlineServerList", 
-        "outer_class": "net/minecraft/client/gui/mco/GuiScreenOnlineServers", 
-        "start": "467"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenOnlineServers$1": {
-    "enclosingMethod": {
-      "desc": "(ZI)V", 
-      "name": "func_73878_a", 
-      "owner": "net/minecraft/client/gui/mco/GuiScreenOnlineServers"
-    }, 
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenOnlineServers$1", 
-        "start": "215"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenOnlineServers$OnlineServerList": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/gui/mco/GuiScreenOnlineServers"
-    }, 
-    "innerClasses": [
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenOnlineServers$OnlineServerList", 
-        "inner_name": "OnlineServerList", 
-        "outer_class": "net/minecraft/client/gui/mco/GuiScreenOnlineServers", 
-        "start": "467"
-      }, 
-      {
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenOnlineServers$OnlineServerList$1", 
-        "start": "562"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenOnlineServers$OnlineServerList$1": {
-    "enclosingMethod": {
-      "desc": "(III)V", 
-      "name": "func_152512_a", 
-      "owner": "net/minecraft/client/gui/mco/GuiScreenOnlineServers$OnlineServerList"
-    }, 
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenOnlineServers$OnlineServerList$1", 
-        "start": "562"
-      }
-    ]
-  }, 
   "net/minecraft/client/gui/GuiScreenOptionsSounds": {
     "innerClasses": [
       {
@@ -1216,27 +1048,6 @@
         "inner_name": "Button", 
         "outer_class": "net/minecraft/client/gui/GuiScreenOptionsSounds", 
         "start": "90"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/GuiScreenRealmsPinger": {
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/GuiScreenRealmsPinger$1", 
-        "start": "41"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/GuiScreenRealmsPinger$1": {
-    "enclosingMethod": {
-      "desc": "(Lnet/minecraft/client/mco/McoServer;)V", 
-      "name": "func_148506_a", 
-      "owner": "net/minecraft/client/gui/GuiScreenRealmsPinger"
-    }, 
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/GuiScreenRealmsPinger$1", 
-        "start": "41"
       }
     ]
   }, 
@@ -1348,27 +1159,6 @@
       {
         "inner_class": "net/minecraft/client/gui/ServerListEntryNormal$1", 
         "start": "66"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/TaskOnlineConnect": {
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/mco/TaskOnlineConnect$1", 
-        "start": "104"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/TaskOnlineConnect$1": {
-    "enclosingMethod": {
-      "desc": "(Ljava/lang/String;I)V", 
-      "name": "func_148432_a", 
-      "owner": "net/minecraft/client/gui/mco/TaskOnlineConnect"
-    }, 
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/mco/TaskOnlineConnect$1", 
-        "start": "104"
       }
     ]
   }, 
@@ -1645,342 +1435,6 @@
       }
     ]
   }, 
-  "net/minecraft/client/gui/mco/GuiScreenBackup": {
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenBackup$1", 
-        "start": "74"
-      }, 
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenBackup$RestoreTask", 
-        "inner_name": "RestoreTask", 
-        "outer_class": "net/minecraft/client/gui/mco/GuiScreenBackup", 
-        "start": "262"
-      }, 
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenBackup$SelectionList", 
-        "inner_name": "SelectionList", 
-        "outer_class": "net/minecraft/client/gui/mco/GuiScreenBackup", 
-        "start": "313"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenBackup$1": {
-    "enclosingMethod": {
-      "desc": "()V", 
-      "name": "func_73866_w_", 
-      "owner": "net/minecraft/client/gui/mco/GuiScreenBackup"
-    }, 
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenBackup$1", 
-        "start": "74"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenBackup$RestoreTask": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/gui/mco/GuiScreenBackup"
-    }, 
-    "innerClasses": [
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenBackup$RestoreTask", 
-        "inner_name": "RestoreTask", 
-        "outer_class": "net/minecraft/client/gui/mco/GuiScreenBackup", 
-        "start": "262"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenBackup$SelectionList": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/gui/mco/GuiScreenBackup"
-    }, 
-    "innerClasses": [
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenBackup$SelectionList", 
-        "inner_name": "SelectionList", 
-        "outer_class": "net/minecraft/client/gui/mco/GuiScreenBackup", 
-        "start": "313"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenCreateOnlineWorld": {
-    "innerClasses": [
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenCreateOnlineWorld$TaskWorldCreation", 
-        "inner_name": "TaskWorldCreation", 
-        "outer_class": "net/minecraft/client/gui/mco/GuiScreenCreateOnlineWorld", 
-        "start": "157"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenCreateOnlineWorld$TaskWorldCreation": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/gui/mco/GuiScreenCreateOnlineWorld"
-    }, 
-    "innerClasses": [
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenCreateOnlineWorld$TaskWorldCreation", 
-        "inner_name": "TaskWorldCreation", 
-        "outer_class": "net/minecraft/client/gui/mco/GuiScreenCreateOnlineWorld", 
-        "start": "157"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenMcoWorldTemplate": {
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenMcoWorldTemplate$1", 
-        "start": "53"
-      }, 
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenMcoWorldTemplate$SelectionList", 
-        "inner_name": "SelectionList", 
-        "outer_class": "net/minecraft/client/gui/mco/GuiScreenMcoWorldTemplate", 
-        "start": "141"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenMcoWorldTemplate$1": {
-    "enclosingMethod": {
-      "desc": "()V", 
-      "name": "func_73866_w_", 
-      "owner": "net/minecraft/client/gui/mco/GuiScreenMcoWorldTemplate"
-    }, 
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenMcoWorldTemplate$1", 
-        "start": "53"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenMcoWorldTemplate$SelectionList": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/gui/mco/GuiScreenMcoWorldTemplate"
-    }, 
-    "innerClasses": [
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenMcoWorldTemplate$SelectionList", 
-        "inner_name": "SelectionList", 
-        "outer_class": "net/minecraft/client/gui/mco/GuiScreenMcoWorldTemplate", 
-        "start": "141"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenModifyMinigame": {
-    "innerClasses": [
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenModifyMinigame$StopTask", 
-        "inner_name": "StopTask", 
-        "outer_class": "net/minecraft/client/gui/mco/GuiScreenModifyMinigame", 
-        "start": "115"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenModifyMinigame$StopTask": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/gui/mco/GuiScreenModifyMinigame"
-    }, 
-    "innerClasses": [
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenModifyMinigame$StopTask", 
-        "inner_name": "StopTask", 
-        "outer_class": "net/minecraft/client/gui/mco/GuiScreenModifyMinigame", 
-        "start": "115"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenPendingInvitation": {
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation$1", 
-        "start": "48"
-      }, 
-      {
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation$2", 
-        "start": "101"
-      }, 
-      {
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation$3", 
-        "start": "119"
-      }, 
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation$List", 
-        "inner_name": "List", 
-        "outer_class": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation", 
-        "start": "165"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenPendingInvitation$1": {
-    "enclosingMethod": {
-      "desc": "()V", 
-      "name": "func_73866_w_", 
-      "owner": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation"
-    }, 
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation$1", 
-        "start": "48"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenPendingInvitation$2": {
-    "enclosingMethod": {
-      "desc": "()V", 
-      "name": "func_146724_i", 
-      "owner": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation"
-    }, 
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation$2", 
-        "start": "101"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenPendingInvitation$3": {
-    "enclosingMethod": {
-      "desc": "()V", 
-      "name": "func_146723_p", 
-      "owner": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation"
-    }, 
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation$3", 
-        "start": "119"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenPendingInvitation$List": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation"
-    }, 
-    "innerClasses": [
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation$List", 
-        "inner_name": "List", 
-        "outer_class": "net/minecraft/client/gui/mco/GuiScreenPendingInvitation", 
-        "start": "165"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenResetWorld": {
-    "innerClasses": [
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenResetWorld$ResetWorldTask", 
-        "inner_name": "ResetWorldTask", 
-        "outer_class": "net/minecraft/client/gui/mco/GuiScreenResetWorld", 
-        "start": "150"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenResetWorld$ResetWorldTask": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/gui/mco/GuiScreenResetWorld"
-    }, 
-    "innerClasses": [
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenResetWorld$ResetWorldTask", 
-        "inner_name": "ResetWorldTask", 
-        "outer_class": "net/minecraft/client/gui/mco/GuiScreenResetWorld", 
-        "start": "150"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenStartMinigame": {
-    "innerClasses": [
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenStartMinigame$StartWorldTask", 
-        "inner_name": "StartWorldTask", 
-        "outer_class": "net/minecraft/client/gui/mco/GuiScreenStartMinigame", 
-        "start": "124"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/GuiScreenStartMinigame$StartWorldTask": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/gui/mco/GuiScreenStartMinigame"
-    }, 
-    "innerClasses": [
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/gui/mco/GuiScreenStartMinigame$StartWorldTask", 
-        "inner_name": "StartWorldTask", 
-        "outer_class": "net/minecraft/client/gui/mco/GuiScreenStartMinigame", 
-        "start": "124"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/McoThreadPool": {
-    "innerClasses": [
-      {
-        "access": "28", 
-        "inner_class": "net/minecraft/client/gui/mco/McoThreadPool$Factory", 
-        "inner_name": "Factory", 
-        "outer_class": "net/minecraft/client/gui/mco/McoThreadPool", 
-        "start": "17"
-      }, 
-      {
-        "access": "1000", 
-        "inner_class": "net/minecraft/client/gui/mco/McoThreadPool$1"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/McoThreadPool$1": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/gui/mco/McoThreadPool"
-    }, 
-    "innerClasses": [
-      {
-        "access": "1000", 
-        "inner_class": "net/minecraft/client/gui/mco/McoThreadPool$1"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/McoThreadPool$Factory": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/gui/mco/McoThreadPool"
-    }, 
-    "innerClasses": [
-      {
-        "access": "28", 
-        "inner_class": "net/minecraft/client/gui/mco/McoThreadPool$Factory", 
-        "inner_name": "Factory", 
-        "outer_class": "net/minecraft/client/gui/mco/McoThreadPool", 
-        "start": "17"
-      }, 
-      {
-        "inner_class": "net/minecraft/client/gui/mco/McoThreadPool$Factory$1", 
-        "start": "28"
-      }
-    ]
-  }, 
-  "net/minecraft/client/gui/mco/McoThreadPool$Factory$1": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/gui/mco/McoThreadPool$Factory"
-    }, 
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/gui/mco/McoThreadPool$Factory$1", 
-        "start": "28"
-      }
-    ]
-  }, 
   "net/minecraft/client/gui/stream/GuiIngestServers": {
     "innerClasses": [
       {
@@ -2113,264 +1567,6 @@
       {
         "inner_class": "net/minecraft/client/main/Main$3", 
         "start": "140"
-      }
-    ]
-  }, 
-  "net/minecraft/client/mco/McoServer": {
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/mco/McoServer$1", 
-        "start": "93"
-      }, 
-      {
-        "access": "29", 
-        "inner_class": "net/minecraft/client/mco/McoServer$Comparator", 
-        "inner_name": "Comparator", 
-        "outer_class": "net/minecraft/client/mco/McoServer", 
-        "start": "175"
-      }, 
-      {
-        "access": "4029", 
-        "inner_class": "net/minecraft/client/mco/McoServer$State", 
-        "inner_name": "State", 
-        "outer_class": "net/minecraft/client/mco/McoServer", 
-        "start": "207"
-      }
-    ]
-  }, 
-  "net/minecraft/client/mco/McoServer$1": {
-    "enclosingMethod": {
-      "desc": "(Lnet/minecraft/client/mco/McoServer;)V", 
-      "name": "func_153105_b", 
-      "owner": "net/minecraft/client/mco/McoServer"
-    }, 
-    "innerClasses": [
-      {
-        "inner_class": "net/minecraft/client/mco/McoServer$1", 
-        "start": "93"
-      }
-    ]
-  }, 
-  "net/minecraft/client/mco/McoServer$Comparator": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/mco/McoServer"
-    }, 
-    "innerClasses": [
-      {
-        "access": "29", 
-        "inner_class": "net/minecraft/client/mco/McoServer$Comparator", 
-        "inner_name": "Comparator", 
-        "outer_class": "net/minecraft/client/mco/McoServer", 
-        "start": "175"
-      }
-    ]
-  }, 
-  "net/minecraft/client/mco/McoServer$State": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/mco/McoServer"
-    }, 
-    "innerClasses": [
-      {
-        "access": "4029", 
-        "inner_class": "net/minecraft/client/mco/McoServer$State", 
-        "inner_name": "State", 
-        "outer_class": "net/minecraft/client/mco/McoServer", 
-        "start": "207"
-      }
-    ]
-  }, 
-  "net/minecraft/client/mco/McoServerList": {
-    "innerClasses": [
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/mco/McoServerList$ServerListChecker", 
-        "inner_name": "ServerListChecker", 
-        "outer_class": "net/minecraft/client/mco/McoServerList", 
-        "start": "132"
-      }, 
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/mco/McoServerList$PendingInviteChecker", 
-        "inner_name": "PendingInviteChecker", 
-        "outer_class": "net/minecraft/client/mco/McoServerList", 
-        "start": "166"
-      }, 
-      {
-        "access": "4029", 
-        "inner_class": "net/minecraft/client/mco/McoServerList$TaskTypes", 
-        "inner_name": "TaskTypes", 
-        "outer_class": "net/minecraft/client/mco/McoServerList", 
-        "start": "187"
-      }, 
-      {
-        "access": "1000", 
-        "inner_class": "net/minecraft/client/mco/McoServerList$1"
-      }
-    ]
-  }, 
-  "net/minecraft/client/mco/McoServerList$1": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/mco/McoServerList"
-    }, 
-    "innerClasses": [
-      {
-        "access": "1000", 
-        "inner_class": "net/minecraft/client/mco/McoServerList$1"
-      }
-    ]
-  }, 
-  "net/minecraft/client/mco/McoServerList$PendingInviteChecker": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/mco/McoServerList"
-    }, 
-    "innerClasses": [
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/mco/McoServerList$PendingInviteChecker", 
-        "inner_name": "PendingInviteChecker", 
-        "outer_class": "net/minecraft/client/mco/McoServerList", 
-        "start": "166"
-      }
-    ]
-  }, 
-  "net/minecraft/client/mco/McoServerList$ServerListChecker": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/mco/McoServerList"
-    }, 
-    "innerClasses": [
-      {
-        "access": "20", 
-        "inner_class": "net/minecraft/client/mco/McoServerList$ServerListChecker", 
-        "inner_name": "ServerListChecker", 
-        "outer_class": "net/minecraft/client/mco/McoServerList", 
-        "start": "132"
-      }
-    ]
-  }, 
-  "net/minecraft/client/mco/McoServerList$TaskTypes": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/mco/McoServerList"
-    }, 
-    "innerClasses": [
-      {
-        "access": "4029", 
-        "inner_class": "net/minecraft/client/mco/McoServerList$TaskTypes", 
-        "inner_name": "TaskTypes", 
-        "outer_class": "net/minecraft/client/mco/McoServerList", 
-        "start": "187"
-      }
-    ]
-  }, 
-  "net/minecraft/client/mco/Request": {
-    "innerClasses": [
-      {
-        "access": "29", 
-        "inner_class": "net/minecraft/client/mco/Request$Delete", 
-        "inner_name": "Delete", 
-        "outer_class": "net/minecraft/client/mco/Request", 
-        "start": "191"
-      }, 
-      {
-        "access": "29", 
-        "inner_class": "net/minecraft/client/mco/Request$Get", 
-        "inner_name": "Get", 
-        "outer_class": "net/minecraft/client/mco/Request", 
-        "start": "211"
-      }, 
-      {
-        "access": "29", 
-        "inner_class": "net/minecraft/client/mco/Request$Put", 
-        "inner_name": "Put", 
-        "outer_class": "net/minecraft/client/mco/Request", 
-        "start": "232"
-      }, 
-      {
-        "access": "29", 
-        "inner_class": "net/minecraft/client/mco/Request$Post", 
-        "inner_name": "Post", 
-        "outer_class": "net/minecraft/client/mco/Request", 
-        "start": "258"
-      }
-    ]
-  }, 
-  "net/minecraft/client/mco/Request$Delete": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/mco/Request"
-    }, 
-    "innerClasses": [
-      {
-        "access": "29", 
-        "inner_class": "net/minecraft/client/mco/Request$Delete", 
-        "inner_name": "Delete", 
-        "outer_class": "net/minecraft/client/mco/Request", 
-        "start": "191"
-      }
-    ]
-  }, 
-  "net/minecraft/client/mco/Request$Get": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/mco/Request"
-    }, 
-    "innerClasses": [
-      {
-        "access": "29", 
-        "inner_class": "net/minecraft/client/mco/Request$Get", 
-        "inner_name": "Get", 
-        "outer_class": "net/minecraft/client/mco/Request", 
-        "start": "211"
-      }
-    ]
-  }, 
-  "net/minecraft/client/mco/Request$Post": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/mco/Request"
-    }, 
-    "innerClasses": [
-      {
-        "access": "29", 
-        "inner_class": "net/minecraft/client/mco/Request$Post", 
-        "inner_name": "Post", 
-        "outer_class": "net/minecraft/client/mco/Request", 
-        "start": "258"
-      }
-    ]
-  }, 
-  "net/minecraft/client/mco/Request$Put": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/mco/Request"
-    }, 
-    "innerClasses": [
-      {
-        "access": "29", 
-        "inner_class": "net/minecraft/client/mco/Request$Put", 
-        "inner_name": "Put", 
-        "outer_class": "net/minecraft/client/mco/Request", 
-        "start": "232"
-      }
-    ]
-  }, 
-  "net/minecraft/client/mco/ValueObjectSubscription": {
-    "innerClasses": [
-      {
-        "access": "4029", 
-        "inner_class": "net/minecraft/client/mco/ValueObjectSubscription$Type", 
-        "inner_name": "Type", 
-        "outer_class": "net/minecraft/client/mco/ValueObjectSubscription", 
-        "start": "45"
-      }
-    ]
-  }, 
-  "net/minecraft/client/mco/ValueObjectSubscription$Type": {
-    "enclosingMethod": {
-      "owner": "net/minecraft/client/mco/ValueObjectSubscription"
-    }, 
-    "innerClasses": [
-      {
-        "access": "4029", 
-        "inner_class": "net/minecraft/client/mco/ValueObjectSubscription$Type", 
-        "inner_name": "Type", 
-        "outer_class": "net/minecraft/client/mco/ValueObjectSubscription", 
-        "start": "45"
       }
     ]
   }, 
@@ -2607,7 +1803,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/network/NetHandlerPlayClient$1", 
-        "start": "1074"
+        "start": "1080"
       }
     ]
   }, 
@@ -2620,7 +1816,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/client/network/NetHandlerPlayClient$1", 
-        "start": "1074"
+        "start": "1080"
       }
     ]
   }, 
@@ -3442,15 +2638,15 @@
         "start": "37"
       }, 
       {
-        "access": "1018", 
-        "inner_class": "net/minecraft/client/stream/ChatController$SwitchChatState", 
-        "inner_name": "SwitchChatState", 
-        "outer_class": "net/minecraft/client/stream/ChatController"
-      }, 
-      {
         "access": "609", 
         "inner_class": "net/minecraft/client/stream/ChatController$ChatListener", 
         "inner_name": "ChatListener", 
+        "outer_class": "net/minecraft/client/stream/ChatController"
+      }, 
+      {
+        "access": "1018", 
+        "inner_class": "net/minecraft/client/stream/ChatController$SwitchChatState", 
+        "inner_name": "SwitchChatState", 
         "outer_class": "net/minecraft/client/stream/ChatController"
       }
     ]
@@ -4204,14 +3400,14 @@
         "start": "200"
       }, 
       {
-        "access": "1000", 
-        "inner_class": "net/minecraft/enchantment/EnchantmentHelper$1"
-      }, 
-      {
         "access": "608", 
         "inner_class": "net/minecraft/enchantment/EnchantmentHelper$IModifier", 
         "inner_name": "IModifier", 
         "outer_class": "net/minecraft/enchantment/EnchantmentHelper"
+      }, 
+      {
+        "access": "1000", 
+        "inner_class": "net/minecraft/enchantment/EnchantmentHelper$1"
       }
     ]
   }, 
@@ -4634,14 +3830,14 @@
   "net/minecraft/entity/monster/EntityZombie": {
     "innerClasses": [
       {
-        "access": "1000", 
-        "inner_class": "net/minecraft/entity/monster/EntityZombie$1"
-      }, 
-      {
         "access": "20", 
         "inner_class": "net/minecraft/entity/monster/EntityZombie$GroupData", 
         "inner_name": "GroupData", 
         "outer_class": "net/minecraft/entity/monster/EntityZombie"
+      }, 
+      {
+        "access": "1000", 
+        "inner_class": "net/minecraft/entity/monster/EntityZombie$1"
       }
     ]
   }, 
@@ -5671,11 +4867,11 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/network/NetHandlerPlayServer$1", 
-        "start": "108"
+        "start": "109"
       }, 
       {
         "inner_class": "net/minecraft/network/NetHandlerPlayServer$2", 
-        "start": "441"
+        "start": "442"
       }, 
       {
         "access": "1018", 
@@ -5694,7 +4890,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/network/NetHandlerPlayServer$1", 
-        "start": "108"
+        "start": "109"
       }
     ]
   }, 
@@ -5707,7 +4903,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/network/NetHandlerPlayServer$2", 
-        "start": "441"
+        "start": "442"
       }
     ]
   }, 
@@ -6366,6 +5562,48 @@
       }
     ]
   }, 
+  "net/minecraft/realms/RealmsConnect": {
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/realms/RealmsConnect$1", 
+        "start": "33"
+      }
+    ]
+  }, 
+  "net/minecraft/realms/RealmsConnect$1": {
+    "enclosingMethod": {
+      "desc": "(Ljava/lang/String;I)V", 
+      "name": "connect", 
+      "owner": "net/minecraft/realms/RealmsConnect"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/realms/RealmsConnect$1", 
+        "start": "33"
+      }
+    ]
+  }, 
+  "net/minecraft/realms/RealmsServerStatusPinger": {
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/realms/RealmsServerStatusPinger$1", 
+        "start": "37"
+      }
+    ]
+  }, 
+  "net/minecraft/realms/RealmsServerStatusPinger$1": {
+    "enclosingMethod": {
+      "desc": "(Ljava/lang/String;Lnet/minecraft/realms/ServerPing;)V", 
+      "name": "pingServer", 
+      "owner": "net/minecraft/realms/RealmsServerStatusPinger"
+    }, 
+    "innerClasses": [
+      {
+        "inner_class": "net/minecraft/realms/RealmsServerStatusPinger$1", 
+        "start": "37"
+      }
+    ]
+  }, 
   "net/minecraft/scoreboard/Score": {
     "innerClasses": [
       {
@@ -6495,11 +5733,11 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/dedicated/DedicatedServer$1", 
-        "start": "65"
+        "start": "63"
       }, 
       {
         "inner_class": "net/minecraft/server/dedicated/DedicatedServer$2", 
-        "start": "78"
+        "start": "76"
       }, 
       {
         "inner_class": "net/minecraft/server/dedicated/DedicatedServer$3", 
@@ -6518,7 +5756,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/dedicated/DedicatedServer$1", 
-        "start": "65"
+        "start": "63"
       }
     ]
   }, 
@@ -6531,7 +5769,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/server/dedicated/DedicatedServer$2", 
-        "start": "78"
+        "start": "76"
       }
     ]
   }, 
@@ -7628,11 +6866,11 @@
       }, 
       {
         "inner_class": "net/minecraft/world/World$3", 
-        "start": "2574"
+        "start": "2575"
       }, 
       {
         "inner_class": "net/minecraft/world/World$4", 
-        "start": "2581"
+        "start": "2582"
       }
     ]
   }, 
@@ -7671,7 +6909,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/world/World$3", 
-        "start": "2574"
+        "start": "2575"
       }
     ]
   }, 
@@ -7684,7 +6922,7 @@
     "innerClasses": [
       {
         "inner_class": "net/minecraft/world/World$4", 
-        "start": "2581"
+        "start": "2582"
       }
     ]
   }, 
