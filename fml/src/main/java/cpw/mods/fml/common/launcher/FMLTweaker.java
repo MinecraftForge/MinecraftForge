@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
+import cpw.mods.fml.relauncher.FMLSecurityManager;
 
 public class FMLTweaker implements ITweaker {
     private File gameDir;
@@ -26,6 +27,17 @@ public class FMLTweaker implements ITweaker {
     private List<String> standaloneArgs;
     private static URI jarLocation;
 
+    public FMLTweaker()
+    {
+        try
+        {
+            System.setSecurityManager(new FMLSecurityManager());
+        }
+        catch (SecurityException se)
+        {
+            throw new RuntimeException("FML was unable to install the security manager. The game will not start", se);
+        }
+    }
     @SuppressWarnings("unchecked")
     @Override
     public void acceptOptions(List<String> args, File gameDir, File assetsDir, String profile)
