@@ -110,6 +110,10 @@ public class OreDictionary
             registerOre("cropPotato",  Items.potato);
             registerOre("cropCarrot",  Items.carrot);
             registerOre("stone",       Blocks.stone);
+            registerOre("brickStone",  new ItemStack(Blocks.stonebrick, 1, 0));
+            registerOre("brickStoneMossy", new ItemStack(Blocks.stonebrick, 1, 1);
+            registerOre("brickStoneCracked", new ItemStack(Blocks.stonebrick, 1, 2);
+            registerOre("brickStoneChiseled", new ItemStack(Blocks.stonebrick, 1, 3);
             registerOre("cobblestone", Blocks.cobblestone);
             registerOre("sandstone",   new ItemStack(Blocks.sandstone, 1, WILDCARD_VALUE));
             registerOre("dye",         new ItemStack(Items.dye, 1, WILDCARD_VALUE));
