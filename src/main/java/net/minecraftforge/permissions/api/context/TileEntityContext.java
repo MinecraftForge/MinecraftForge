@@ -2,18 +2,18 @@ package net.minecraftforge.permissions.api.context;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.permissions.api.context.IContext.IBlockContext;
 
-public class TileEntityContext extends Point{
+public class TileEntityContext implements IBlockContext{
     
     private int x, y, z, dim;
     private Block block;
-    private TileEntity hasTE;
+    private TileEntity tileEntity;
 
     public TileEntityContext(TileEntity entity)
     {
-        super(entity.xCoord, entity.yCoord, entity.zCoord, entity.getWorldObj().provider.dimensionId);
         block = entity.getBlockType();
-        hasTE = entity;
+        tileEntity = entity;
     }
 
     public Block getBlock()
@@ -23,7 +23,7 @@ public class TileEntityContext extends Point{
 
     public TileEntity getTileEntity()
     {
-        return hasTE;
+        return tileEntity;
     }
 
     public int getBlockX()
@@ -39,5 +39,35 @@ public class TileEntityContext extends Point{
     public int getBlockZ()
     {
         return z;
+    }
+
+    @Override
+    public double getX()
+    {
+        return x;
+    }
+
+    @Override
+    public double getY()
+    {
+        return y;
+    }
+
+    @Override
+    public double getZ()
+    {
+        return z;
+    }
+
+    @Override
+    public int getDimensionId()
+    {
+        return getTileEntity().getWorldObj().provider.dimensionId;
+    }
+
+    @Override
+    public boolean hasTileEntity()
+    {
+        return false;
     }
 }

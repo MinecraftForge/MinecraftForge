@@ -1,5 +1,9 @@
 package net.minecraftforge.permissions.opbasedimpl;
 
+import static net.minecraftforge.permissions.api.RegisteredPermValue.FALSE;
+import static net.minecraftforge.permissions.api.RegisteredPermValue.TRUE;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,6 +12,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
 import net.minecraft.dispenser.ILocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -15,6 +21,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.permissions.api.Group;
 import net.minecraftforge.permissions.api.PermBuilderFactory;
 import net.minecraftforge.permissions.api.context.EntityContext;
@@ -24,7 +32,6 @@ import net.minecraftforge.permissions.api.context.PlayerContext;
 import net.minecraftforge.permissions.api.context.Point;
 import net.minecraftforge.permissions.api.context.TileEntityContext;
 import net.minecraftforge.permissions.api.context.WorldContext;
-import static net.minecraftforge.permissions.api.RegisteredPermValue.*;
 
 public class OpPermFactory implements PermBuilderFactory<Builder>
 {
@@ -34,10 +41,57 @@ public class OpPermFactory implements PermBuilderFactory<Builder>
     static HashMap<String, Group> groups = new HashMap<String, Group>();
 
     public static final IContext GLOBAL = new IContext() {};
+    private static int userPermissionLevel = 0;
+    private static int opPermissionLevel = MinecraftServer.getServer().getOpPermissionLevel();
     
     @Override
     public void initialize()
     {
+        String fileData;
+        fileData = "This file will only be loaded and read if you have no permission framework installed.";
+        fileData += "\n If you have installed a mod that provides a permission framework, use the mod's configs instead.";
+        
+        //dedicated server and single player have different commands available
+        if (FMLCommonHandler.instance().getSide().isServer())
+        {
+            fileData += "\n To configure permission levels for ops, use op-permission-level in server.properties.";
+            
+            fileData += "\n Permission levels are as such:";
+            
+            fileData += "\n 0: Use commands /help, /kill, /me, /list, /tell";
+            fileData += "\n 1: Use /broadcast and bypass spawn protection";
+            fileData += "\n 2: Use most commands, and command blocks";
+            fileData += "\n 3: Use player management commands (op, deop, ban, pardon) and /debug";
+            fileData += "\n 4: Use /stop, /save-all, /save-on and /save-off";
+            
+        }
+        else
+        {
+            fileData += "\n Permission levels are as such:";
+            
+            fileData += "\n 0: Use commands /help, /kill, /me, /list, /tell";
+            fileData += "\n 1: Use /broadcast and bypass spawn protection";
+            fileData += "\n 2: Use most commands, and command blocks";
+            fileData += "\n 3: Use /debug";
+            
+        }
+        
+        Configuration config = new Configuration(new File(Loader.instance().getConfigDir(), "forgeOpBasedPerms.cfg"));
+        
+        config.addCustomCategoryComment("Help", fileData);
+        
+        Property prop;
+        prop = config.get("Levels", "userPermissionLevel", 0, "Permission level for users");
+        userPermissionLevel = prop.getInt(0);
+        
+        if (FMLCommonHandler.instance().getSide().isClient())
+        {
+            prop = config.get("Levels", "opPermissionLevel", 0, "Permission level for ops. Only effective in singleplayer.");
+            opPermissionLevel = prop.getInt(0);
+        }
+        
+        config.save();
+        
         groups.put("ALL", new OpBasedGroup("ALL"));
         groups.put("OP", new OpBasedGroup("OP"));
     }
@@ -150,7 +204,7 @@ public class OpPermFactory implements PermBuilderFactory<Builder>
             if (entry.role.getLevel() <= MinecraftServer.getServer().getOpPermissionLevel())
                 opPerms.add(entry.key);
             
-            else if (entry.role == TRUE)
+            else if (entry.role == TRUE || entry.role.getLevel() <= userPermissionLevel)
                 allowedPerms.add(entry.key);
             
             else if (entry.role == FALSE || entry.role.getLevel() > MinecraftServer.getServer().getOpPermissionLevel())

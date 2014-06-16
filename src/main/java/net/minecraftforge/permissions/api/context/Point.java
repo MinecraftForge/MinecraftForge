@@ -1,8 +1,9 @@
 package net.minecraftforge.permissions.api.context;
 
 import net.minecraft.dispenser.ILocation;
+import net.minecraftforge.permissions.api.context.IContext.ILocationContext;
 
-public class Point implements IContext
+public class Point implements ILocationContext
 {
     private final double x, y, z;
     private final int dim;
