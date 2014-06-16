@@ -42,7 +42,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -193,4 +201,285 @@
+@@ -193,4 +201,328 @@
      }
  
      public abstract String func_80007_l();
@@ -122,6 +122,33 @@
 +            return 8.0;
 +        }
 +        return 1.0;
++    }
++    
++    /**
++     * The current sun brightness factor for this dimension.
++     * Highly recommended for sunlight detection like solar panel.
++     * 
++     * @return The current brightness factor
++     * */
++    public float getSunBrightnessFactor()
++    {
++        float f1 = field_76579_a.func_72826_c(1.0F);
++        float f2 = 1.0F - (MathHelper.func_76134_b(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.5F);
++
++        if (f2 < 0.0F)
++        {
++            f2 = 0.0F;
++        }
++
++        if (f2 > 1.0F)
++        {
++            f2 = 1.0F;
++        }
++
++        f2 = 1.0F - f2;
++        f2 = (float)((double)f2 * (1.0D - (double)(field_76579_a.func_72867_j(1.0F) * 5.0F) / 16.0D));
++        f2 = (float)((double)f2 * (1.0D - (double)(field_76579_a.func_72819_i(1.0F) * 5.0F) / 16.0D));
++        return f2;
 +    }
 +
 +    @SideOnly(Side.CLIENT)
@@ -214,6 +241,16 @@
 +    {
 +        return field_76579_a.field_73008_k < 4;
 +    }
++    
++    public int calculateSkyLightSubtracted(float par1)
++    {
++        return field_76579_a.calculateSkylightSubtractedBody(par1);
++    }
++    
++    public float getCurrentMoonPhaseFactor()
++    {
++        return field_76579_a.getCurrentMoonPhaseFactorBody();
++    }
 +
 +    @SideOnly(Side.CLIENT)
 +    public Vec3 getSkyColor(Entity cameraEntity, float partialTicks)
@@ -225,6 +262,12 @@
 +    public Vec3 drawClouds(float partialTicks)
 +    {
 +        return field_76579_a.drawCloudsBody(partialTicks);
++    }
++    
++    @SideOnly(Side.CLIENT)
++    public float getSunBrightness(float par1)
++    {
++        return field_76579_a.getSunBrightnessBody(par1);
 +    }
 +
 +    @SideOnly(Side.CLIENT)
