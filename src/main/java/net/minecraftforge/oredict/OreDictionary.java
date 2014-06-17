@@ -282,7 +282,7 @@ public class OreDictionary
      */
     public static String getOreName(int id)
     {
-        return id < idToName.size() ? idToName.get(id) : "Unknown";
+        return (id >= 0 && id < idToName.size()) ? idToName.get(id) : "Unknown";
     }
 
     /**
