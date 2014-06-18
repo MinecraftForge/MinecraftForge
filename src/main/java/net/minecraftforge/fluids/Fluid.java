@@ -190,6 +190,15 @@ public class Fluid
     /**
      * Returns the localized name of this fluid.
      */
+    public String getLocalizedName(FluidStack stack)
+    {
+        return getLocalizedName();
+    }
+    
+    /**
+     * Use the FluidStack sensitive version above
+     */
+     @Deprecated
     public String getLocalizedName()
     {
         String s = this.getUnlocalizedName();
