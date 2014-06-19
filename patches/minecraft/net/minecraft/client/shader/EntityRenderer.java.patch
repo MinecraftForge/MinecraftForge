@@ -1,0 +1,30 @@
+--- EntityRender.java	2014-06-18 21:33:57.155733219 -0400
++++ EntityRender-new.java	2014-06-18 21:35:18.155735537 -0400
+@@ -245,6 +245,27 @@
+             }
+         }
+     }
++    
++    public ShaderGroup swapShaderGroup(ShaderGroup shaderGroup)
++    {
++        ShaderGroup temp = theShaderGroup;
++        this.theShaderGroup = shaderGroup;
++        return temp;
++    }
++    
++    public void setShader(int index)
++    {
++        this.shaderIndex = index % shaderResourceLocations.length;
++    }
++    
++    public void appendShaderGroup(ShaderGroup shaderGroup)
++    {
++        List shaderGroupList = theShaderGroup.getShaderList();
++        for(Shader shader : shaderGroup.getShaderList)
++        {
++            shaderGroupList.add(shader);
++        }
++    }
+ 
+     public void onResourceManagerReload(IResourceManager par1ResourceManager)
+     {
