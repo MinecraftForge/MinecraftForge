@@ -1,30 +1,37 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
-@@ -28,6 +28,10 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.client.multiplayer;
+ 
++import cpw.mods.fml.common.eventhandler.Event;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import net.minecraft.block.Block;
+@@ -28,6 +29,13 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldSettings;
  
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.ForgeEventFactory;
 +import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
++import net.minecraftforge.event.entity.player.PlayerInteractEvent;
++import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 +
  @SideOnly(Side.CLIENT)
  public class PlayerControllerMP
  {
-@@ -88,6 +92,12 @@
+@@ -88,7 +96,8 @@
  
      public boolean func_78751_a(int p_78751_1_, int p_78751_2_, int p_78751_3_, int p_78751_4_)
      {
+-        if (this.field_78779_k.func_82752_c() && !this.field_78776_a.field_71439_g.func_82246_f(p_78751_1_, p_78751_2_, p_78751_3_))
 +        ItemStack stack = field_78776_a.field_71439_g.func_71045_bC();
 +        if (stack != null && stack.func_77973_b() != null && stack.func_77973_b().onBlockStartBreak(stack, p_78751_1_, p_78751_2_, p_78751_3_, field_78776_a.field_71439_g))
-+        {
-+            return false;
-+        }
-+
-         if (this.field_78779_k.func_82752_c() && !this.field_78776_a.field_71439_g.func_82246_f(p_78751_1_, p_78751_2_, p_78751_3_))
          {
              return false;
-@@ -109,7 +119,7 @@
+         }
+@@ -109,15 +118,13 @@
              {
                  worldclient.func_72926_e(2001, p_78751_1_, p_78751_2_, p_78751_3_, Block.func_149682_b(block) + (worldclient.func_72805_g(p_78751_1_, p_78751_2_, p_78751_3_) << 12));
                  int i1 = worldclient.func_72805_g(p_78751_1_, p_78751_2_, p_78751_3_);
@@ -33,20 +40,148 @@
  
                  if (flag)
                  {
-@@ -304,11 +314,18 @@
+                     block.func_149664_b(worldclient, p_78751_1_, p_78751_2_, p_78751_3_, i1);
+                 }
+ 
+-                this.field_78772_d = -1;
+-
+                 if (!this.field_78779_k.func_77145_d())
+                 {
+                     ItemStack itemstack = this.field_78776_a.field_71439_g.func_71045_bC();
+@@ -140,40 +147,47 @@
+ 
+     public void func_78743_b(int p_78743_1_, int p_78743_2_, int p_78743_3_, int p_78743_4_)
+     {
+-        if (!this.field_78779_k.func_82752_c() || this.field_78776_a.field_71439_g.func_82246_f(p_78743_1_, p_78743_2_, p_78743_3_))
++        PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(this.field_78776_a.field_71439_g, Action.LEFT_CLICK_BLOCK, p_78743_1_, p_78743_2_, p_78743_3_, p_78743_4_, this.field_78776_a.field_71441_e);
++        boolean canBreak = !this.field_78779_k.func_82752_c() || this.field_78776_a.field_71439_g.func_82246_f(p_78743_1_, p_78743_2_, p_78743_3_);
++        canBreak = event.useItem == Event.Result.DEFAULT ? canBreak : event.useItem == Event.Result.ALLOW;
++
++        if (!event.isCanceled() && (!this.field_78778_j || !this.func_85182_a(p_78743_1_, p_78743_2_, p_78743_3_)))
+         {
+-            if (this.field_78779_k.func_77145_d())
++            if (this.field_78778_j)
+             {
+-                this.field_78774_b.func_147297_a(new C07PacketPlayerDigging(0, p_78743_1_, p_78743_2_, p_78743_3_, p_78743_4_));
+-                func_78744_a(this.field_78776_a, this, p_78743_1_, p_78743_2_, p_78743_3_, p_78743_4_);
+-                this.field_78781_i = 5;
++                this.field_78774_b.func_147297_a(new C07PacketPlayerDigging(1, this.field_78775_c, this.field_78772_d, this.field_78773_e, p_78743_4_));
+             }
+-            else if (!this.field_78778_j || !this.func_85182_a(p_78743_1_, p_78743_2_, p_78743_3_))
++
++            this.field_78774_b.func_147297_a(new C07PacketPlayerDigging(0, p_78743_1_, p_78743_2_, p_78743_3_, p_78743_4_));
++            Block block = this.field_78776_a.field_71441_e.func_147439_a(p_78743_1_, p_78743_2_, p_78743_3_);
++            boolean flag = block.func_149688_o() != Material.field_151579_a;
++
++            boolean breakInstantly = block.func_149737_a(this.field_78776_a.field_71439_g, this.field_78776_a.field_71439_g.field_70170_p, p_78743_1_, p_78743_2_, p_78743_3_) >= 1.0F;
++            breakInstantly = canBreak && (breakInstantly || this.field_78779_k.func_77145_d());
++
++            if (flag && !breakInstantly && this.field_78770_f == 0.0F && event.useBlock != Event.Result.DENY)
+             {
+-                if (this.field_78778_j)
+-                {
+-                    this.field_78774_b.func_147297_a(new C07PacketPlayerDigging(1, this.field_78775_c, this.field_78772_d, this.field_78773_e, p_78743_4_));
+-                }
++                block.func_149699_a(this.field_78776_a.field_71441_e, p_78743_1_, p_78743_2_, p_78743_3_, this.field_78776_a.field_71439_g);
++            }
+ 
+-                this.field_78774_b.func_147297_a(new C07PacketPlayerDigging(0, p_78743_1_, p_78743_2_, p_78743_3_, p_78743_4_));
+-                Block block = this.field_78776_a.field_71441_e.func_147439_a(p_78743_1_, p_78743_2_, p_78743_3_);
+-                boolean flag = block.func_149688_o() != Material.field_151579_a;
++            if (canBreak)
++            {
++                this.field_78775_c = p_78743_1_;
++                this.field_78772_d = p_78743_2_;
++                this.field_78773_e = p_78743_3_;
+ 
+-                if (flag && this.field_78770_f == 0.0F)
++                if (this.field_78779_k.func_77145_d())
+                 {
+-                    block.func_149699_a(this.field_78776_a.field_71441_e, p_78743_1_, p_78743_2_, p_78743_3_, this.field_78776_a.field_71439_g);
++                    func_78744_a(this.field_78776_a, this, p_78743_1_, p_78743_2_, p_78743_3_, p_78743_4_);
++                    this.field_78781_i = 5;
+                 }
+-
+-                if (flag && block.func_149737_a(this.field_78776_a.field_71439_g, this.field_78776_a.field_71439_g.field_70170_p, p_78743_1_, p_78743_2_, p_78743_3_) >= 1.0F)
++                else if (breakInstantly)
+                 {
+                     this.func_78751_a(p_78743_1_, p_78743_2_, p_78743_3_, p_78743_4_);
+                 }
+                 else
+                 {
+                     this.field_78778_j = true;
+-                    this.field_78775_c = p_78743_1_;
+-                    this.field_78772_d = p_78743_2_;
+-                    this.field_78773_e = p_78743_3_;
+                     this.field_85183_f = this.field_78776_a.field_71439_g.func_70694_bm();
+                     this.field_78770_f = 0.0F;
+                     this.field_78780_h = 0.0F;
+@@ -181,6 +195,12 @@
+                 }
+             }
+         }
++
++        if (!canBreak)
++        {
++            this.func_78767_c();
++            this.field_78772_d = -1;
++        }
+     }
+ 
+     public void func_78767_c()
+@@ -202,7 +222,12 @@
+         if (this.field_78781_i > 0)
+         {
+             --this.field_78781_i;
++            return;
+         }
++        else if (this.field_78772_d == -1)
++        {
++            return;
++        }
+         else if (this.field_78779_k.func_77145_d())
+         {
+             this.field_78781_i = 5;
+@@ -247,6 +272,9 @@
+                 this.func_78743_b(p_78759_1_, p_78759_2_, p_78759_3_, p_78759_4_);
+             }
+         }
++
++        this.field_78776_a.field_71452_i.addBlockHitEffects(p_78759_1_, p_78759_2_, p_78759_3_, this.field_78776_a.field_71476_x);
++        this.field_78776_a.field_71439_g.func_71038_i();
+     }
+ 
+     public float func_78757_d()
+@@ -298,17 +326,34 @@
+ 
+     public boolean func_78760_a(EntityPlayer p_78760_1_, World p_78760_2_, ItemStack p_78760_3_, int p_78760_4_, int p_78760_5_, int p_78760_6_, int p_78760_7_, Vec3 p_78760_8_)
+     {
++        PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(p_78760_1_, Action.RIGHT_CLICK_BLOCK, p_78760_4_, p_78760_5_, p_78760_6_, p_78760_7_, p_78760_2_);
++        if (event.isCanceled())
++        {
++            return false;
++        }
++
+         this.func_78750_j();
+         float f = (float)p_78760_8_.field_72450_a - (float)p_78760_4_;
+         float f1 = (float)p_78760_8_.field_72448_b - (float)p_78760_5_;
          float f2 = (float)p_78760_8_.field_72449_c - (float)p_78760_6_;
          boolean flag = false;
  
 -        if ((!p_78760_1_.func_70093_af() || p_78760_1_.func_70694_bm() == null) && p_78760_2_.func_147439_a(p_78760_4_, p_78760_5_, p_78760_6_).func_149727_a(p_78760_2_, p_78760_4_, p_78760_5_, p_78760_6_, p_78760_1_, p_78760_7_, f, f1, f2))
-+        if (p_78760_3_ != null &&
++        if (event.useItem != Event.Result.DENY &&
++            p_78760_3_ != null &&
 +            p_78760_3_.func_77973_b() != null &&
 +            p_78760_3_.func_77973_b().onItemUseFirst(p_78760_3_, p_78760_1_, p_78760_2_, p_78760_4_, p_78760_5_, p_78760_6_, p_78760_7_, f, f1, f2))
          {
 -            flag = true;
-+                return true;
++            if (p_78760_3_.field_77994_a <= 0) ForgeEventFactory.onPlayerDestroyItem(p_78760_1_, p_78760_3_);
++            return true;
          }
  
-+        if (!p_78760_1_.func_70093_af() || p_78760_1_.func_70694_bm() == null || p_78760_1_.func_70694_bm().func_77973_b().doesSneakBypassUse(p_78760_2_, p_78760_4_, p_78760_5_, p_78760_6_, p_78760_1_))
++        if (event.useBlock != Event.Result.DENY &&
++            !p_78760_1_.func_70093_af() || p_78760_1_.func_70694_bm() == null ||
++            p_78760_1_.func_70694_bm().func_77973_b().doesSneakBypassUse(p_78760_2_, p_78760_4_, p_78760_5_, p_78760_6_, p_78760_1_))
 +        {
 +            flag = p_78760_2_.func_147439_a(p_78760_4_, p_78760_5_, p_78760_6_).func_149727_a(p_78760_2_, p_78760_4_, p_78760_5_, p_78760_6_, p_78760_1_, p_78760_7_, f, f1, f2);
 +        }
@@ -54,7 +189,18 @@
          if (!flag && p_78760_3_ != null && p_78760_3_.func_77973_b() instanceof ItemBlock)
          {
              ItemBlock itemblock = (ItemBlock)p_78760_3_.func_77973_b();
-@@ -340,7 +357,15 @@
+@@ -329,6 +374,10 @@
+         {
+             return false;
+         }
++        else if (event.useItem == Event.Result.DENY)
++        {
++            return false;
++        }
+         else if (this.field_78779_k.func_77145_d())
+         {
+             int j1 = p_78760_3_.func_77960_j();
+@@ -340,14 +389,34 @@
          }
          else
          {
@@ -71,7 +217,26 @@
          }
      }
  
-@@ -359,9 +384,10 @@
+     public boolean func_78769_a(EntityPlayer p_78769_1_, World p_78769_2_, ItemStack p_78769_3_)
+     {
++        PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(p_78769_1_, Action.RIGHT_CLICK_AIR, 0, 0, 0, 0, p_78769_2_);
++        if (event.isCanceled())
++        {
++            return false;
++        }
++
+         this.func_78750_j();
+         this.field_78774_b.func_147297_a(new C08PacketPlayerBlockPlacement(-1, -1, -1, 255, p_78769_1_.field_71071_by.func_70448_g(), 0.0F, 0.0F, 0.0F));
++
++        if (p_78769_3_ == null || event.useItem == Event.Result.DENY)
++        {
++            return false;
++        }
++
+         int i = p_78769_3_.field_77994_a;
+         ItemStack itemstack1 = p_78769_3_.func_77957_a(p_78769_2_, p_78769_1_);
+ 
+@@ -359,9 +428,10 @@
          {
              p_78769_1_.field_71071_by.field_70462_a[p_78769_1_.field_71071_by.field_70461_c] = itemstack1;
  
