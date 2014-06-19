@@ -316,5 +316,22 @@ public class BiomeDictionary
         registerBiomeType(mushroomIsland,      MUSHROOM       );
         registerBiomeType(extremeHillsEdge,    MOUNTAIN       );
         registerBiomeType(mushroomIslandShore, MUSHROOM, BEACH);
+        registerBiomeType(jungleEdge,          JUNGLE         );
+        registerBiomeType(deepOcean,           WATER          );
+        registerBiomeType(stoneBeach,          BEACH          );
+        registerBiomeType(coldBeach,           BEACH,   FROZEN);
+        registerBiomeType(birchForest,         FOREST         );
+        registerBiomeType(birchForestHills,    FOREST         );
+        registerBiomeType(roofedForest,        FOREST         );
+        registerBiomeType(coldTaiga,           FOREST,  FROZEN);
+        registerBiomeType(coldTaigaHills,      FOREST,  FROZEN);
+        registerBiomeType(megaTaiga,           FOREST         );
+        registerBiomeType(megaTaigaHills,      FOREST         );
+        registerBiomeType(extremeHillsPlus,    FOREST         );
+        registerBiomeType(savanna,             PLAINS,  DESERT);
+        registerBiomeType(savannaPlateau,      PLAINS,  DESERT);
+        registerBiomeType(mesa,                DESERT         );
+        registerBiomeType(mesaPlateau_F,       DESERT         );
+        registerBiomeType(mesaPlateau,         DESERT         );
     }
 }
