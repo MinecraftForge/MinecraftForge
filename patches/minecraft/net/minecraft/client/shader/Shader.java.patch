@@ -1,0 +1,86 @@
+--- ShaderGroup.java	2014-06-18 20:50:46.439657703 -0400
++++ ShaderGroup-new.java	2014-06-18 20:51:15.047658533 -0400
+@@ -31,8 +31,10 @@
+     private final Map mapFramebuffers = Maps.newHashMap();
+     private final List listFramebuffers = Lists.newArrayList();
+     private Matrix4f projectionMatrix;
++    private JsonElement jsonelement = null;
+     private int mainFramebufferWidth;
+     private int mainFramebufferHeight;
++    private int index = 0;
+     private float field_148036_j;
+     private float field_148037_k;
+     private static final String __OBFID = "CL_00001041";
+@@ -50,6 +52,31 @@
+         this.initFromLocation(p_i45088_3_);
+     }
+ 
++    public List getShaderList()
++    {
++        return this.listShaders;
++    }
++	
++    public Shader getIndexedShader()
++    {
++        return (index > this.listShaders.size()) ? ((index == 0 ? null : this.listShaders.get(this.listShaders.size()))) : this.listShaders.get(index);
++    }
++
++    public void setShaderIndex(int index)
++    {
++        this.index = index;
++    }
++
++    public int getShaderIndex()
++    {
++        return this.index;
++    }
++    
++    public void setShaderList(List listShaders)
++    {
++        this.listShaders = listShaders;
++    }
++	
+     public void initFromLocation(ResourceLocation p_148025_1_) throws JsonException
+     {
+         JsonParser jsonparser = new JsonParser();
+@@ -146,6 +173,7 @@
+ 
+     private void initPass(JsonElement p_148019_1_) throws JsonException
+     {
++        this.jsonelement = p_148019_1_;
+         JsonObject jsonobject = JsonUtils.getJsonElementAsJsonObject(p_148019_1_, "pass");
+         String s = JsonUtils.getJsonObjectStringFieldValue(jsonobject, "name");
+         String s1 = JsonUtils.getJsonObjectStringFieldValue(jsonobject, "intarget");
+@@ -313,7 +341,32 @@
+         this.listShaders.add(this.listShaders.size(), shader);
+         return shader;
+     }
++	
++    public Shader addShader(String src) throws JsonException
++    {
++        JsonObject jsonobject = JsonUtils.getJsonElementAsJsonObject(p_148019_1_, "pass");
++        String s = JsonUtils.getJsonObjectStringFieldValue(jsonobject, "name");
++        String s1 = JsonUtils.getJsonObjectStringFieldValue(jsonobject, "intarget");
++        String s2 = JsonUtils.getJsonObjectStringFieldValue(jsonobject, "outtarget");
++        Framebuffer framebuffer = this.getFramebuffer(s1);
++        Framebuffer framebuffer1 = this.getFramebuffer(s2);
+ 
++        Shader shader;
++        if (framebuffer == null)
++        {
++            throw new JsonException("Input target \'" + s1 + "\' does not exist");
++        }
++        else if (framebuffer1 == null)
++        {
++            throw new JsonException("Output target \'" + s2 + "\' does not exist");
++        }
++        else
++        {
++            shader = this.addShader(s, framebuffer, framebuffer1);
++        }
++        this.listShaders.add(this.listShaders.size(), shader);
++        return shader;
++    }
+     private void resetProjectionMatrix()
+     {
+         this.projectionMatrix = new Matrix4f();
