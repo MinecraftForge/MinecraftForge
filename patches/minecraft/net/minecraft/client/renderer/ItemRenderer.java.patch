@@ -120,3 +120,34 @@
              }
  
              GL11.glPopMatrix();
+@@ -507,6 +538,7 @@
+ 
+         if (this.field_78455_a.field_71439_g.func_70027_ad())
+         {
++            if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderBlockOverlayEvent(this.field_78455_a.field_71439_g, p_78447_1_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.FIRE, Blocks.field_150480_ab, MathHelper.func_76128_c(this.field_78455_a.field_71439_g.field_70165_t), MathHelper.func_76128_c(this.field_78455_a.field_71439_g.field_70163_u), MathHelper.func_76128_c(this.field_78455_a.field_71439_g.field_70161_v))))
+             this.func_78442_d(p_78447_1_);
+         }
+ 
+@@ -519,6 +551,7 @@
+ 
+             if (this.field_78455_a.field_71441_e.func_147439_a(i, j, k).func_149721_r())
+             {
++                if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderBlockOverlayEvent(this.field_78455_a.field_71439_g, p_78447_1_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, block, i, j, k)))
+                 this.func_78446_a(p_78447_1_, block.func_149733_h(2));
+             }
+             else
+@@ -541,12 +574,14 @@
+ 
+             if (block.func_149688_o() != Material.field_151579_a)
+             {
++                if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderBlockOverlayEvent(this.field_78455_a.field_71439_g, p_78447_1_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, block, i, j, k)))
+                 this.func_78446_a(p_78447_1_, block.func_149733_h(2));
+             }
+         }
+ 
+         if (this.field_78455_a.field_71439_g.func_70055_a(Material.field_151586_h))
+         {
++            if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderBlockOverlayEvent(this.field_78455_a.field_71439_g, p_78447_1_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.WATER, Blocks.field_150355_j, MathHelper.func_76128_c(this.field_78455_a.field_71439_g.field_70165_t), MathHelper.func_76128_c(this.field_78455_a.field_71439_g.field_70163_u), MathHelper.func_76128_c(this.field_78455_a.field_71439_g.field_70161_v))))
+             this.func_78448_c(p_78447_1_);
+         }
+ 
