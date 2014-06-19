@@ -1,6 +1,6 @@
 --- EntityRender.java	2014-06-18 21:33:57.155733219 -0400
-+++ EntityRender-new.java	2014-06-18 21:35:18.155735537 -0400
-@@ -245,6 +245,27 @@
++++ EntityRender-new.java	2014-06-18 23:41:30.252048173 -0400
+@@ -245,6 +245,66 @@
              }
          }
      }
@@ -9,21 +9,60 @@
 +    {
 +        ShaderGroup temp = theShaderGroup;
 +        this.theShaderGroup = shaderGroup;
-+        return temp;
++        this.theShaderGroup.createBindFramebuffers(this.mc.displayWidth, this.mc.displayHeight);
++        return this.theShadreGroup;
++    }
++
++    public ResourceLocation[] swapResourceLocations(ResourceLocation[] resourceLocations)
++    {
++        ResourceLocation[] temp = this.shaderResourceLocations;
++        this.shaderResourceLocations = resourceLocations;
++        return this.shaderResourceLocations;
 +    }
 +    
 +    public void setShader(int index)
 +    {
-+        this.shaderIndex = index % shaderResourceLocations.length;
++        this.shaderIndex = index % shaderCount;
++        if (this.shaderIndex != shaderCount)
++        {
++            try
++            {
++                logger.info("Selecting effect " + shaderResourceLocations[this.shaderIndex]);
++                this.theShaderGroup = new ShaderGroup(this.resourceManager, this.mc.getFramebuffer(), shaderResourceLocations[this.shaderIndex]);
++                this.theShaderGroup.createBindFramebuffers(this.mc.displayWidth, this.mc.displayHeight);
++            }
++            catch (IOException ioexception)
++            {
++                logger.warn("Failed to load shader: " + shaderResourceLocations[this.shaderIndex], ioexception);
++                this.shaderIndex = shaderCount;
++            }
++            catch (JsonSyntaxException jsonsyntaxexception)
++            {
++                logger.warn("Failed to load shader: " + shaderResourceLocations[this.shaderIndex], jsonsyntaxexception);
++                this.shaderIndex = shaderCount;
++            }
++        }
++        else
++        {
++            this.theShaderGroup = null;
++            logger.info("No effect selected");
++        }
 +    }
 +    
-+    public void appendShaderGroup(ShaderGroup shaderGroup)
++    public void appendResourceLocations(ResourceLocation[] resourceLocations)
 +    {
-+        List shaderGroupList = theShaderGroup.getShaderList();
-+        for(Shader shader : shaderGroup.getShaderList)
++        int rlCount = this.shaderResourceLocations.length;
++        ResourceLocation[] tempShaderResourceLocations = new ResourceLocation[rlCount + resourceLocations.length];
++        for (int i = 0; i < rlCount; i++)
 +        {
-+            shaderGroupList.add(shader);
++            tempShaderResourceLocations[i] = this.shaderResourceLocation[i];
 +        }
++        for (int i = 0; i < resourceLocations.length; i++)
++        {
++            tempShaderResourceLocations[rlCount + i] = resourceLocations[i];
++        }
++        this.shaderResourceLocations = tempShaderResourceLocations;
++        this.shaderCount = this.shaderResourceLocations.length;
 +    }
  
      public void onResourceManagerReload(IResourceManager par1ResourceManager)
