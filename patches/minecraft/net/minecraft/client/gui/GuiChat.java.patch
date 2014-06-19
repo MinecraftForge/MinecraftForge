@@ -13,6 +13,8 @@
  import net.minecraft.util.EnumChatFormatting;
  import net.minecraft.util.IChatComponent;
 +import net.minecraftforge.client.ClientCommandHandler;
++import net.minecraftforge.client.event.ClientChatSendEvent;
++import net.minecraftforge.common.MinecraftForge;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  import org.lwjgl.input.Keyboard;
@@ -21,6 +23,7 @@
      {
          this.field_146297_k.field_71456_v.func_146158_b().func_146239_a(p_146403_1_);
 +        if (ClientCommandHandler.instance.func_71556_a(field_146297_k.field_71439_g, p_146403_1_) == 1) return;
++        if (MinecraftForge.EVENT_BUS.post(new ClientChatSendEvent(p_146403_1_))) return;
          this.field_146297_k.field_71439_g.func_71165_d(p_146403_1_);
      }
  
