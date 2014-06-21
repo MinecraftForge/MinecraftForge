@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/SaveHandler.java
++++ ../src-work/minecraft/net/minecraft/world/storage/SaveHandler.java
+@@ -254,6 +254,7 @@
+             }
+ 
+             file1.renameTo(file2);
++            net.minecraftforge.event.ForgeEventFactory.firePlayerSavingEvent(p_75753_1_, this.field_75771_c, p_75753_1_.func_110124_au().toString());
+         }
+         catch (Exception exception)
+         {
+@@ -270,6 +271,7 @@
+             p_75752_1_.func_70020_e(nbttagcompound);
+         }
+ 
++        net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(p_75752_1_, field_75771_c, p_75752_1_.func_110124_au().toString());
+         return nbttagcompound;
+     }
+ 

@@ -1,5 +1,6 @@
 package net.minecraftforge.event.entity.player;
 
+import java.io.File;
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -129,6 +130,86 @@ public class PlayerEvent extends LivingEvent
             super(player);
             this.target = target;
         }
-        
+
+    }
+
+    /**
+     * The player is being loaded from the world save. Note that the
+     * player won't have been added to the world yet. Intended to
+     * allow mods to load an additional file from the players directory
+     * containing additional mod related player data.
+     */
+    public static class LoadFromFile extends PlayerEvent {
+        /**
+         * The directory where player data is being stored. Use this
+         * to locate your mod additional file.
+         */
+        public final File playerDirectory;
+        /**
+         * The UUID is the standard for player related file storage.
+         * It is broken out here for convenience for quick file generation.
+         */
+        public final String playerUUID;
+
+        public LoadFromFile(EntityPlayer player, File originDirectory, String playerUUID)
+        {
+            super(player);
+            this.playerDirectory = originDirectory;
+            this.playerUUID = playerUUID;
+        }
+
+        /**
+         * Construct and return a recommended file for the supplied suffix
+         * @param suffix The suffix to use.
+         * @return
+         */
+        public File getPlayerFile(String suffix)
+        {
+            if ("dat".equals(suffix)) throw new IllegalArgumentException("The suffix 'dat' is reserved");
+            return new File(this.playerDirectory, this.playerUUID+"."+suffix);
+        }
+    }
+    /**
+     * The player is being saved to the world store. Note that the
+     * player may be in the process of logging out or otherwise departing
+     * from the world. Don't assume it's association with the world.
+     * This allows mods to load an additional file from the players directory
+     * containing additional mod related player data.
+     * <br>
+     * Use this event to save the additional mod related player data to the world.
+     *
+     * <br>
+     * <em>WARNING</em>: Do not overwrite the player's .dat file here. You will
+     * corrupt the world state.
+     */
+    public static class SaveToFile extends PlayerEvent {
+        /**
+         * The directory where player data is being stored. Use this
+         * to locate your mod additional file.
+         */
+        public final File playerDirectory;
+        /**
+         * The UUID is the standard for player related file storage.
+         * It is broken out here for convenience for quick file generation.
+         */
+        public final String playerUUID;
+
+        public SaveToFile(EntityPlayer player, File originDirectory, String playerUUID)
+        {
+            super(player);
+            this.playerDirectory = originDirectory;
+            this.playerUUID = playerUUID;
+        }
+
+        /**
+         * Construct and return a recommended file for the supplied suffix
+         * @param suffix The suffix to use.
+         * @return
+         */
+        public File getPlayerFile(String suffix)
+        {
+            if ("dat".equals(suffix)) throw new IllegalArgumentException("The suffix 'dat' is reserved");
+            return new File(this.playerDirectory, this.playerUUID+"."+suffix);
+        }
     }
 }
