@@ -116,12 +116,3 @@
      }
  
      public CrashReport func_71230_b(CrashReport p_71230_1_)
-@@ -1117,7 +1139,7 @@
-         return false;
-     }
- 
--    public abstract String func_71206_a(WorldSettings.GameType var1, boolean var2);
-+    public abstract String func_71206_a(WorldSettings.GameType p_71206_1_, boolean p_71206_2_);
- 
-     public int func_71259_af()
-     {

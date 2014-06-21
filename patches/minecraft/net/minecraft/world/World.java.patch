@@ -17,15 +17,6 @@
          this.field_72984_F.func_76318_c("pendingBlockEntities");
  
          if (!this.field_147484_a.isEmpty())
-@@ -3069,7 +3069,7 @@
-         return entity1;
-     }
- 
--    public abstract Entity func_73045_a(int var1);
-+    public abstract Entity func_73045_a(int p_73045_1_);
- 
-     @SideOnly(Side.CLIENT)
-     public List func_72910_y()
 @@ -3598,7 +3598,7 @@
      @SideOnly(Side.CLIENT)
      public double func_72919_O()
