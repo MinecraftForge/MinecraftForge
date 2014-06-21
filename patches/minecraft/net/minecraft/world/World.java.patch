@@ -753,7 +753,7 @@
      }
  
      public CrashReportCategory func_72914_a(CrashReport p_72914_1_)
-@@ -3640,25 +3790,24 @@
+@@ -3641,25 +3791,24 @@
  
      public void func_147453_f(int p_147453_1_, int p_147453_2_, int p_147453_3_, Block p_147453_4_)
      {
@@ -792,7 +792,7 @@
                  }
              }
          }
-@@ -3699,4 +3848,110 @@
+@@ -3700,4 +3849,110 @@
              iworldaccess.func_147584_b();
          }
      }

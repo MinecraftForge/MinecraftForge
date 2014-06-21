@@ -16,7 +16,7 @@
      boolean func_147437_c(int var1, int var2, int var3);
  
      @SideOnly(Side.CLIENT)
-@@ -33,4 +33,16 @@
+@@ -34,4 +34,16 @@
      Vec3Pool func_82732_R();
  
      int func_72879_k(int var1, int var2, int var3, int var4);
