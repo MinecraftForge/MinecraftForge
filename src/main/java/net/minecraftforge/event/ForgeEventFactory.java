@@ -1,5 +1,6 @@
 package net.minecraftforge.event;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import cpw.mods.fml.common.eventhandler.Event.Result;
@@ -169,5 +170,15 @@ public class ForgeEventFactory
     public static void onStopEntityTracking(Entity entity, EntityPlayer player)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.StopTracking(player, entity));
+    }
+
+    public static void firePlayerLoadingEvent(EntityPlayer player, File playerDirectory, String uuidString)
+    {
+        MinecraftForge.EVENT_BUS.post(new PlayerEvent.SaveToFile(player, playerDirectory, uuidString));
+    }
+
+    public static void firePlayerSavingEvent(EntityPlayer player, File playerDirectory, String uuidString)
+    {
+        MinecraftForge.EVENT_BUS.post(new PlayerEvent.SaveToFile(player, playerDirectory, uuidString));
     }
 }
