@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -43,8 +42,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.io.CharStreams;
-import com.google.common.io.InputSupplier;
+import com.google.common.io.CharSource;
 
 import cpw.mods.fml.common.patcher.ClassPatchManager;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
@@ -78,8 +76,8 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         {
             File mapData = new File(deobfFileName);
             LZMAInputSupplier zis = new LZMAInputSupplier(new FileInputStream(mapData));
-            InputSupplier<InputStreamReader> srgSupplier = CharStreams.newReaderSupplier(zis,Charsets.UTF_8);
-            List<String> srgList = CharStreams.readLines(srgSupplier);
+            CharSource srgSource = zis.asCharSource(Charsets.UTF_8);
+            List<String> srgList = srgSource.readLines();
             rawMethodMaps = Maps.newHashMap();
             rawFieldMaps = Maps.newHashMap();
             Builder<String, String> builder = ImmutableBiMap.<String,String>builder();
@@ -118,8 +116,8 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         {
             InputStream classData = getClass().getResourceAsStream(deobfFileName);
             LZMAInputSupplier zis = new LZMAInputSupplier(classData);
-            InputSupplier<InputStreamReader> srgSupplier = CharStreams.newReaderSupplier(zis,Charsets.UTF_8);
-            List<String> srgList = CharStreams.readLines(srgSupplier);
+            CharSource srgSource = zis.asCharSource(Charsets.UTF_8);
+            List<String> srgList = srgSource.readLines();
             rawMethodMaps = Maps.newHashMap();
             rawFieldMaps = Maps.newHashMap();
             Builder<String, String> builder = ImmutableBiMap.<String,String>builder();
