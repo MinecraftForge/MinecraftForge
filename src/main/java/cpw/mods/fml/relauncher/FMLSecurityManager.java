@@ -16,9 +16,11 @@ public class FMLSecurityManager extends SecurityManager {
         String permName = perm.getName() != null ? perm.getName() : "missing";
         if (permName.startsWith("exitVM"))
         {
-            String callingClass = getClassContext()[4].getName();
-            // FML is allowed to call system exit
-            if (!callingClass.startsWith("cpw.mods.fml."))
+            Class<?>[] classContexts = getClassContext();
+            String callingClass = classContexts.length > 3 ? classContexts[4].getName() : "none";
+            String callingParent = classContexts.length > 4 ? classContexts[5].getName() : "none";
+            // FML is allowed to call system exit and the Minecraft applet (from the quit button)
+            if (!(callingClass.startsWith("cpw.mods.fml.") || ( "net.minecraft.client.Minecraft".equals(callingClass) && "net.minecraft.client.Minecraft".equals(callingParent))))
             {
                 throw new ExitTrappedException();
             }
