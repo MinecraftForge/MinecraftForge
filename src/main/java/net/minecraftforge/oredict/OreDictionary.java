@@ -295,7 +295,7 @@ public class OreDictionary
     @Deprecated // Use getOreIds below for more accuracy
     public static int getOreID(ItemStack stack)
     {
-        if (stack == null) return -1;
+        if (stack == null || stack.getItem() == null) return -1;
 
         int id = Item.getIdFromItem(stack.getItem());
         List<Integer> ids = stackToId.get(id); //Try the wildcard first
@@ -315,7 +315,7 @@ public class OreDictionary
      */
     public static int[] getOreIDs(ItemStack stack)
     {
-        if (stack == null) return new int[0];
+        if (stack == null || stack.getItem() == null) return new int[0];
 
         Set<Integer> set = new HashSet<Integer>();
 
@@ -335,8 +335,8 @@ public class OreDictionary
     /**
      * Retrieves the ArrayList of items that are registered to this ore type.
      * Creates the list as empty if it did not exist.
-     * 
-     * The returned List is unmodifiable, but will be updated if a new ore 
+     *
+     * The returned List is unmodifiable, but will be updated if a new ore
      * is registered using registerOre
      *
      * @param name The ore name, directly calls getOreID
@@ -360,8 +360,8 @@ public class OreDictionary
     /**
      * Retrieves the ArrayList of items that are registered to this ore type.
      * Creates the list as empty if it did not exist.
-     * 
-     * Warning: In 1.8, the return value will become a immutible list, 
+     *
+     * Warning: In 1.8, the return value will become a immutible list,
      * and this function WILL NOT create the entry if the ID doesn't exist,
      * IDs are intended to be internal OreDictionary things and modders
      * should not ever code them in.
@@ -537,7 +537,7 @@ public class OreDictionary
         public <T> T[]  toArray(T[] a)        { return list.toArray(a);     }
         public String   toString()            { return list.toString();     }
         public boolean containsAll(Collection<?> coll) { return list.containsAll(coll); }
-        
+
         public E set(int index, E element)    { throw new UnsupportedOperationException(); }
         public void add(int index, E element) { throw new UnsupportedOperationException(); }
         public E remove(int index)            { throw new UnsupportedOperationException(); }
