@@ -87,7 +87,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult();
     }
-    
+
     public static List<BiomeGenBase.SpawnListEntry> getPotentialSpawns(WorldServer world, EnumCreatureType type, int x, int y, int z, List<BiomeGenBase.SpawnListEntry> oldList)
     {
         WorldEvent.PotentialSpawns event = new WorldEvent.PotentialSpawns(world, type, x, y, z, oldList);
@@ -97,7 +97,7 @@ public class ForgeEventFactory
         }
         return event.list;
     }
-    
+
     public static int getMaxSpawnPackSize(EntityLiving entity)
     {
         LivingPackSizeEvent maxCanSpawnEvent = new LivingPackSizeEvent(entity);
@@ -118,7 +118,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
         return event.dropChance;
     }
-    
+
     public static ItemTooltipEvent onItemTooltip(ItemStack itemStack, EntityPlayer entityPlayer, List<String> toolTip, boolean showAdvancedItemTooltips)
     {
         ItemTooltipEvent event = new ItemTooltipEvent(itemStack, entityPlayer, toolTip, showAdvancedItemTooltips);
@@ -161,12 +161,12 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
         return event.result;
     }
-    
+
     public static void onStartEntityTracking(Entity entity, EntityPlayer player)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.StartTracking(player, entity));
     }
-    
+
     public static void onStopEntityTracking(Entity entity, EntityPlayer player)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.StopTracking(player, entity));
@@ -174,7 +174,7 @@ public class ForgeEventFactory
 
     public static void firePlayerLoadingEvent(EntityPlayer player, File playerDirectory, String uuidString)
     {
-        MinecraftForge.EVENT_BUS.post(new PlayerEvent.SaveToFile(player, playerDirectory, uuidString));
+        MinecraftForge.EVENT_BUS.post(new PlayerEvent.LoadFromFile(player, playerDirectory, uuidString));
     }
 
     public static void firePlayerSavingEvent(EntityPlayer player, File playerDirectory, String uuidString)
