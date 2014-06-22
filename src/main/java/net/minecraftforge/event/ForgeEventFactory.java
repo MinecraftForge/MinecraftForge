@@ -3,6 +3,7 @@ package net.minecraftforge.event;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -12,10 +13,13 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.storage.IPlayerFileData;
+import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
@@ -180,5 +184,12 @@ public class ForgeEventFactory
     public static void firePlayerSavingEvent(EntityPlayer player, File playerDirectory, String uuidString)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.SaveToFile(player, playerDirectory, uuidString));
+    }
+
+    public static void firePlayerLoadingEvent(EntityPlayer player, IPlayerFileData playerFileData, String uuidString)
+    {
+        SaveHandler sh = (SaveHandler) playerFileData;
+        File dir = ObfuscationReflectionHelper.getPrivateValue(SaveHandler.class, sh, "playersDirectory", "field_"+"75771_c");
+        MinecraftForge.EVENT_BUS.post(new PlayerEvent.LoadFromFile(player, dir, uuidString));
     }
 }
