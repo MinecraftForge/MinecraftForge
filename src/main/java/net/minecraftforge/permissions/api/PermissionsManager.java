@@ -3,6 +3,7 @@ package net.minecraftforge.permissions.api;
 import java.util.Collection;
 import java.util.List;
 
+import cpw.mods.fml.common.FMLLog;
 import net.minecraft.dispenser.ILocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -76,6 +77,12 @@ public final class PermissionsManager
                       .check();
     }
 
+    /**
+     * Get an instance of PermBuilder, useful for if you need to get a permission but don't want to check it
+     * @param player The EntityPlayer being checked
+     * @param node The permission node to be checked
+     * @return a PermBuilder with your permission
+     */
     public static PermBuilder getPerm(EntityPlayer player, String node)
     {
         if (player instanceof FakePlayer)
@@ -87,6 +94,13 @@ public final class PermissionsManager
                       .setTargetContext(context);
     }
 
+    /**
+     * Get an instance of PermBuilder, useful for if you need to get a permission but don't want to check it
+     * @param player The EntityPlayer being checked
+     * @param node The permission node to be checked
+     * @param targetContext An Entity to be checked
+     * @return a PermBuilder with your permission
+     */
     public static PermBuilder getPerm(EntityPlayer player, String node, Entity targetContext)
     {
         if (player instanceof FakePlayer)
@@ -97,6 +111,13 @@ public final class PermissionsManager
                       .setTargetContext(FACTORY.getDefaultContext(targetContext));
     }
 
+    /**
+     * Get an instance of PermBuilder, useful for if you need to get a permission but don't want to check it
+     * @param player The EntityPlayer being checked
+     * @param node The permission node to be checked
+     * @param targetContext An Entity to be checked
+     * @return a PermBuilder with your permission
+     */
     public static PermBuilder getPerm(EntityPlayer player, String node, ILocation targetContext)
     {
         if (player instanceof FakePlayer)
@@ -107,26 +128,53 @@ public final class PermissionsManager
                       .setTargetContext(FACTORY.getDefaultContext(targetContext));
     }
 
+    /**
+     * Get an instance of PermBuilder, useful for if you need to get a permission but don't want to check it
+     * @param player The EntityPlayer being checked
+     * @param node The permission node to be checked
+     * @param targetContext An Entity to be checked
+     * @return a PermBuilder with your permission
+     */
     public static PermBuilder getPerm(EntityPlayer player, String node, TileEntity userContext)
     {
         return FACTORY.builder(player, node).setUserContext(FACTORY.getDefaultContext(userContext));
     }
 
+    /**
+     * Get a vanilla instance of PermBuilder, useful for if you need to get a permission but don't want to check it, and don't need additional contexts
+     * @param player The EntityPlayer being checked
+     * @param node The permission node to be checked
+     * @return a PermBuilder with your permission
+     */
     public static PermBuilder getPermWithNoContexts(EntityPlayer player, String node)
     {
         return FACTORY.builder(player, node);
     }
     
+    /**
+     * Get all groups a player is in.
+     * @param player Player to be queried
+     * @return a Collection of groups that the player is a member of.
+     */
     public static Collection<Group> getGroupsForPlayer(EntityPlayer player)
     {
         return FACTORY.getGroup(player);
     }
     
+    /**
+     * Get all groups
+     * @return a Collection containing all groups
+     */
     public static Collection<Group> getAllGroups()
     {
         return FACTORY.getAllGroups();
     }
     
+    /**
+     * Get a particular group
+     * @param name Name of the group
+     * @return the queried group
+     */
     public static Group getGroupForName(String name)
     {
         return FACTORY.getGroup(name);
@@ -153,12 +201,13 @@ public final class PermissionsManager
         }
         else if (wasSet)
         {
-            throw new IllegalStateException("Two Mods are trying to register permissions systems!");
+            throw new IllegalStateException(String.format("Attempted to register permissions framework %s1 when permissions framework %s2 is already registered!", factory.getName(), FACTORY.getName()));
         }
         else
         {
             FACTORY = factory;
             wasSet = true;
+            FMLLog.fine("Registered permissions framework " + FACTORY.getName());
         }
     }
 }

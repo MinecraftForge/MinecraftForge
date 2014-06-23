@@ -45,6 +45,12 @@ public class OpPermFactory implements PermBuilderFactory<Builder>
     private static int opPermissionLevel = MinecraftServer.getServer().getOpPermissionLevel();
     
     @Override
+    public String getName()
+    {
+        return "Forge";
+    }
+    
+    @Override
     public void initialize()
     {
         String fileData;
@@ -198,22 +204,22 @@ public class OpPermFactory implements PermBuilderFactory<Builder>
         for (PermReg entry : perms)
         {
             // avoid duplicates that are already configured
-            if (isRegisterred(entry.key))
+            if (isRegistered(entry.key))
                 continue;
 
-            if (entry.role.getLevel() <= MinecraftServer.getServer().getOpPermissionLevel())
+            if (entry.role.getLevel() <= opPermissionLevel)
                 opPerms.add(entry.key);
             
             else if (entry.role == TRUE || entry.role.getLevel() <= userPermissionLevel)
                 allowedPerms.add(entry.key);
             
-            else if (entry.role == FALSE || entry.role.getLevel() > MinecraftServer.getServer().getOpPermissionLevel())
+            else if (entry.role == FALSE || entry.role.getLevel() > opPermissionLevel)
                 deniedPerms.add(entry.key);
             
         }
     }
 
-    private static boolean isRegisterred(String node)
+    private static boolean isRegistered(String node)
     {
         return opPerms.contains(node) || allowedPerms.contains(node) || deniedPerms.contains(node);
     }

@@ -36,6 +36,20 @@ public interface Group {
      * @return if the player was in the group
      */
     boolean isPlayerInGroup(EntityPlayer player);
+    
+    /**
+     * Get the parent of the group
+     * 
+     * @return parent of group
+     */
+    Group getParent();
+    
+    /**
+     * Set the parent of the group
+     * 
+     * @param parent the parent group
+     */
+    void setParent(Group parent);
  
     /**
      * Get the group name

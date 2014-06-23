@@ -12,6 +12,7 @@ public class OpBasedGroup implements Group
 {
     private Set<UUID> players = Sets.newHashSet();
     private String name;
+    private Group parent;
     
     public OpBasedGroup(String name)
     {
@@ -41,6 +42,18 @@ public class OpBasedGroup implements Group
     public Collection<UUID> getAllPlayers()
     {
         return players;
+    }
+    
+    @Override
+    public void setParent(Group parent)
+    {
+        this.parent = parent;
+    }
+    
+    @Override
+    public Group getParent()
+    {
+        return parent;
     }
  
     @Override

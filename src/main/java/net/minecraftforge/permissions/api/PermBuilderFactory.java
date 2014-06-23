@@ -16,6 +16,12 @@ import com.google.gson.JsonObject;
 public interface PermBuilderFactory<T extends PermBuilder>
 {
     /**
+     * The name of this permissions provider (usually the modid)
+     * @return name Name of permissions provider
+     */
+    String getName();
+    
+    /**
      * This method should return a fresh unadulterated PermBuilder instance with no default values.
      * @return a new instance of your PermBuilder.
      */
