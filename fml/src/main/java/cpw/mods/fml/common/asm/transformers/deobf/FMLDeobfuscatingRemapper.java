@@ -405,4 +405,21 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     {
         return ImmutableSet.copyOf(classNameBiMap.keySet());
     }
+
+    public String getStaticFieldType(String oldType, String oldName, String newType, String newName)
+    {
+        String fType = getFieldType(oldType, oldName);
+        if (oldType.equals(newType))
+        {
+            return fType;
+        }
+        Map<String,String> newClassMap = fieldDescriptions.get(newType);
+        if (newClassMap == null)
+        {
+            newClassMap = Maps.newHashMap();
+            fieldDescriptions.put(newType, newClassMap);
+        }
+        newClassMap.put(newName, fType);
+        return fType;
+    }
 }
