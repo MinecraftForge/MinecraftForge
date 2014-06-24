@@ -199,7 +199,7 @@
      }
  
      protected ItemStack func_149644_j(int p_149644_1_)
-@@ -1114,6 +1153,1091 @@
+@@ -1114,6 +1153,1099 @@
          return null;
      }
  
@@ -374,8 +374,16 @@
 +     * @param x X Position
 +     * @param y Y position
 +     * @param z Z position
++     * @param willHarvest True if Block.harvestBlock will be called after this, if the return in true. 
++     *        Can be useful to delay the destruction of tile entities till after harvestBlock
 +     * @return True if the block is actually destroyed.
 +     */
++    public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z, boolean willHarvest)
++    {
++        return removedByPlayer(world, player, x, y, z);
++    }
++
++    @Deprecated
 +    public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z)
 +    {
 +        return world.func_147468_f(x, y, z);
