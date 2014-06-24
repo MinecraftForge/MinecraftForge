@@ -77,18 +77,18 @@
                  }
                  catch (Throwable throwable)
                  {
-@@ -1203,7 +1210,10 @@
+@@ -1213,7 +1220,10 @@
                  GL11.glPushMatrix();
                  RenderHelper.func_74519_b();
                  this.field_78531_r.field_71424_I.func_76318_c("entities");
-+                ForgeHooksClient.setRenderPass(0);
++                net.minecraftforge.client.ForgeHooksClient.setRenderPass(0);
                  renderglobal.func_147589_a(entitylivingbase, frustrum, p_78471_1_);
-+                ForgeHooksClient.setRenderPass(0);
-+                // ToDo: Try and figure out how to make particles render sorted correctly.. {They render behind water}
-                 this.func_78463_b((double)p_78471_1_);
-                 this.field_78531_r.field_71424_I.func_76318_c("litParticles");
-                 effectrenderer.func_78872_b(entitylivingbase, p_78471_1_);
-@@ -1221,7 +1231,10 @@
++                net.minecraftforge.client.ForgeHooksClient.setRenderPass(0);
++                //ToDo: Try and figure out how to make particles render sorted correctly.. {They render behind water}
+                 RenderHelper.func_74518_a();
+                 this.func_78483_a((double)p_78471_1_);
+                 GL11.glMatrixMode(GL11.GL_MODELVIEW);
+@@ -1225,7 +1235,10 @@
                      entityplayer = (EntityPlayer)entitylivingbase;
                      GL11.glDisable(GL11.GL_ALPHA_TEST);
                      this.field_78531_r.field_71424_I.func_76318_c("outline");
@@ -100,7 +100,7 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1234,14 +1247,17 @@
+@@ -1238,14 +1251,17 @@
                  entityplayer = (EntityPlayer)entitylivingbase;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
                  this.field_78531_r.field_71424_I.func_76318_c("outline");
@@ -118,9 +118,9 @@
 -            renderglobal.func_72717_a(Tessellator.field_78398_a, (EntityPlayer)entitylivingbase, p_78471_1_);
 +            renderglobal.drawBlockDamageTexture(Tessellator.field_78398_a, entitylivingbase, p_78471_1_);
              GL11.glDisable(GL11.GL_BLEND);
-             GL11.glDepthMask(false);
-             GL11.glEnable(GL11.GL_CULL_FACE);
-@@ -1296,6 +1312,16 @@
+ 
+             if (this.field_78532_q == 0)
+@@ -1313,6 +1329,16 @@
                  renderglobal.func_72719_a(entitylivingbase, 1, (double)p_78471_1_);
              }
  
@@ -137,7 +137,7 @@
              GL11.glDepthMask(true);
              GL11.glEnable(GL11.GL_CULL_FACE);
              GL11.glDisable(GL11.GL_BLEND);
-@@ -1307,9 +1333,12 @@
+@@ -1324,9 +1350,12 @@
                  this.func_82829_a(renderglobal, p_78471_1_);
              }
  
@@ -151,7 +151,7 @@
              {
                  GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
                  this.func_78476_b(p_78471_1_, j);
-@@ -1425,6 +1454,13 @@
+@@ -1442,6 +1471,13 @@
  
      protected void func_78474_d(float p_78474_1_)
      {
@@ -165,7 +165,7 @@
          float f1 = this.field_78531_r.field_71441_e.func_72867_j(p_78474_1_);
  
          if (f1 > 0.0F)
-@@ -1774,6 +1810,13 @@
+@@ -1791,6 +1827,13 @@
              this.field_78533_p = f7;
          }
  
@@ -179,7 +179,7 @@
          GL11.glClearColor(this.field_78518_n, this.field_78519_o, this.field_78533_p, 0.0F);
      }
  
-@@ -1809,6 +1852,13 @@
+@@ -1826,6 +1869,13 @@
              Block block = ActiveRenderInfo.func_151460_a(this.field_78531_r.field_71441_e, entitylivingbase, p_78468_2_);
              float f1;
  

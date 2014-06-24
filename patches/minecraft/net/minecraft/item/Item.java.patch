@@ -83,7 +83,7 @@
 -        double d1 = p_77621_2_.field_70167_r + (p_77621_2_.field_70163_u - p_77621_2_.field_70167_r) * (double)f + 1.62D - (double)p_77621_2_.field_70129_M;
 +        double d1 = p_77621_2_.field_70167_r + (p_77621_2_.field_70163_u - p_77621_2_.field_70167_r) * (double)f + (double)(p_77621_1_.field_72995_K ? p_77621_2_.func_70047_e() - p_77621_2_.getDefaultEyeHeight() : p_77621_2_.func_70047_e()); // isRemote check to revert changes to ray trace position due to adding the eye height clientside and player yOffset differences
          double d2 = p_77621_2_.field_70166_s + (p_77621_2_.field_70161_v - p_77621_2_.field_70166_s) * (double)f;
-         Vec3 vec3 = p_77621_1_.func_82732_R().func_72345_a(d0, d1, d2);
+         Vec3 vec3 = Vec3.func_72443_a(d0, d1, d2);
          float f3 = MathHelper.func_76134_b(-f2 * 0.017453292F - (float)Math.PI);
 @@ -654,6 +667,10 @@
          float f7 = f4 * f5;

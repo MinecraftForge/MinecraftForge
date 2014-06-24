@@ -34,7 +34,7 @@ repositories {
 }
 
 minecraft {
-    version = '1.7.2'
+    version = '1.7.10-pre4'
     mcpVersion = '9.03'
     fmlDir = projectDir.getAbsolutePath() + "/fml";
     mainClass = 'cpw.mods.fml.relauncher.ServerLaunchWrapper'

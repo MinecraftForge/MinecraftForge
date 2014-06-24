@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -23,7 +23,12 @@
+@@ -24,7 +24,12 @@
  import net.minecraft.world.chunk.Chunk;
  import net.minecraft.world.chunk.EmptyChunk;
  import net.minecraft.world.chunk.IChunkProvider;
@@ -13,7 +13,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -38,6 +43,7 @@
+@@ -39,6 +44,7 @@
      public LongHashMap field_73244_f = new LongHashMap();
      public List field_73245_g = new ArrayList();
      public WorldServer field_73251_h;
@@ -21,7 +21,7 @@
      private static final String __OBFID = "CL_00001436";
  
      public ChunkProviderServer(WorldServer p_i1520_1_, IChunkLoader p_i1520_2_, IChunkProvider p_i1520_3_)
-@@ -55,7 +61,7 @@
+@@ -61,7 +67,7 @@
  
      public void func_73241_b(int p_73241_1_, int p_73241_2_)
      {
@@ -30,7 +30,7 @@
          {
              ChunkCoordinates chunkcoordinates = this.field_73251_h.func_72861_E();
              int k = p_73241_1_ * 16 + 8 - chunkcoordinates.field_71574_a;
-@@ -86,13 +92,66 @@
+@@ -92,13 +98,66 @@
  
      public Chunk func_73158_c(int p_73158_1_, int p_73158_2_)
      {
@@ -98,7 +98,7 @@
  
              if (chunk == null)
              {
-@@ -120,6 +179,7 @@
+@@ -126,6 +185,7 @@
  
              this.field_73244_f.func_76163_a(k, chunk);
              this.field_73245_g.add(chunk);
@@ -106,7 +106,7 @@
              chunk.func_76631_c();
              chunk.func_76624_a(this, this, p_73158_1_, p_73158_2_);
          }
-@@ -258,6 +318,11 @@
+@@ -265,6 +325,11 @@
      {
          if (!this.field_73251_h.field_73058_d)
          {
@@ -118,15 +118,15 @@
              for (int i = 0; i < 100; ++i)
              {
                  if (!this.field_73248_b.isEmpty())
-@@ -270,6 +335,11 @@
-                     this.field_73248_b.remove(olong);
-                     this.field_73244_f.func_76159_d(olong.longValue());
-                     this.field_73245_g.remove(chunk);
-+                    ForgeChunkManager.putDormantChunk(ChunkCoordIntPair.func_77272_a(chunk.field_76635_g, chunk.field_76647_h), chunk);
-+                    if(field_73245_g.size() == 0 && ForgeChunkManager.getPersistentChunksFor(this.field_73251_h).size() == 0 && !DimensionManager.shouldLoadSpawn(this.field_73251_h.field_73011_w.field_76574_g)){
-+                        DimensionManager.unloadWorld(this.field_73251_h.field_73011_w.field_76574_g);
-+                        return field_73246_d.func_73156_b();
-+                    }
-                 }
-             }
+@@ -278,6 +343,11 @@
+                         this.func_73242_b(chunk);
+                         this.func_73243_a(chunk);
+                         this.field_73245_g.remove(chunk);
++                        ForgeChunkManager.putDormantChunk(ChunkCoordIntPair.func_77272_a(chunk.field_76635_g, chunk.field_76647_h), chunk);
++                        if(field_73245_g.size() == 0 && ForgeChunkManager.getPersistentChunksFor(this.field_73251_h).size() == 0 && !DimensionManager.shouldLoadSpawn(this.field_73251_h.field_73011_w.field_76574_g)){
++                            DimensionManager.unloadWorld(this.field_73251_h.field_73011_w.field_76574_g);
++                            return field_73246_d.func_73156_b();
++                        }
+                     }
  
+                     this.field_73248_b.remove(olong);

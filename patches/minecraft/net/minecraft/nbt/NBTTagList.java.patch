@@ -8,7 +8,7 @@
  import java.io.DataInput;
  import java.io.DataOutput;
  import java.io.IOException;
-@@ -90,7 +88,6 @@
+@@ -91,7 +89,6 @@
          this.field_74747_a.add(p_74742_1_);
      }
  
@@ -16,7 +16,7 @@
      public void func_150304_a(int p_150304_1_, NBTBase p_150304_2_)
      {
          if (p_150304_1_ >= 0 && p_150304_1_ < this.field_74747_a.size())
-@@ -113,7 +110,6 @@
+@@ -114,7 +111,6 @@
          }
      }
  

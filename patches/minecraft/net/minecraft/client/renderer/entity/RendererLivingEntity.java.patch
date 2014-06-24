@@ -22,17 +22,17 @@
          this.field_77045_g = p_i1261_1_;
 @@ -62,6 +68,7 @@
  
-     public void func_76986_a(EntityLivingBase p_130000_1_, double p_130000_2_, double p_130000_4_, double p_130000_6_, float p_130000_8_, float p_130000_9_)
+     public void func_76986_a(EntityLivingBase p_76986_1_, double p_76986_2_, double p_76986_4_, double p_76986_6_, float p_76986_8_, float p_76986_9_)
      {
-+        if (MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Pre(p_130000_1_, this, p_130000_2_, p_130000_4_, p_130000_6_))) return;
++        if (MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Pre(p_76986_1_, this, p_76986_2_, p_76986_4_, p_76986_6_))) return;
          GL11.glPushMatrix();
          GL11.glDisable(GL11.GL_CULL_FACE);
-         this.field_77045_g.field_78095_p = this.func_77040_d(p_130000_1_, p_130000_9_);
+         this.field_77045_g.field_78095_p = this.func_77040_d(p_76986_1_, p_76986_9_);
 @@ -271,6 +278,7 @@
          GL11.glEnable(GL11.GL_CULL_FACE);
          GL11.glPopMatrix();
-         this.func_77033_b(p_130000_1_, p_130000_2_, p_130000_4_, p_130000_6_);
-+        MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Post(p_130000_1_, this, p_130000_2_, p_130000_4_, p_130000_6_));
+         this.func_77033_b(p_76986_1_, p_76986_2_, p_76986_4_, p_76986_6_);
++        MinecraftForge.EVENT_BUS.post(new RenderLivingEvent.Post(p_76986_1_, this, p_76986_2_, p_76986_4_, p_76986_6_));
      }
  
      protected void func_77036_a(EntityLivingBase p_77036_1_, float p_77036_2_, float p_77036_3_, float p_77036_4_, float p_77036_5_, float p_77036_6_, float p_77036_7_)

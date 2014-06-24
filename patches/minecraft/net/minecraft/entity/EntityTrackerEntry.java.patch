@@ -10,7 +10,7 @@
              else if (this.field_73134_o.contains(p_73117_1_))
              {
                  this.field_73134_o.remove(p_73117_1_);
-                 p_73117_1_.field_71130_g.add(Integer.valueOf(this.field_73132_a.func_145782_y()));
+                 p_73117_1_.func_152339_d(this.field_73132_a);
 +                net.minecraftforge.event.ForgeEventFactory.onStopEntityTracking(field_73132_a, p_73117_1_);
              }
          }

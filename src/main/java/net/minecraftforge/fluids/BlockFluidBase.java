@@ -395,7 +395,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     public Vec3 getFlowVector(IBlockAccess world, int x, int y, int z)
     {
-        Vec3 vec = world.getWorldVec3Pool().getVecFromPool(0.0D, 0.0D, 0.0D);
+        Vec3 vec = Vec3.createVectorHelper(0.0D, 0.0D, 0.0D);
         int decay = quantaPerBlock - getQuantaValue(world, x, y, z);
 
         for (int side = 0; side < 4; ++side)

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderItem.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderItem.java
-@@ -17,6 +17,7 @@
+@@ -18,6 +18,7 @@
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.item.EntityItem;
@@ -8,7 +8,7 @@
  import net.minecraft.item.ItemBlock;
  import net.minecraft.item.ItemCloth;
  import net.minecraft.item.ItemStack;
-@@ -27,6 +28,8 @@
+@@ -28,6 +29,8 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
@@ -17,28 +17,28 @@
  @SideOnly(Side.CLIENT)
  public class RenderItem extends Render
  {
-@@ -53,7 +56,7 @@
-             this.func_110777_b(p_77014_1_);
+@@ -55,7 +58,7 @@
+             TextureUtil.func_152777_a(false, false, 1.0F);
              this.field_77025_h.setSeed(187L);
              GL11.glPushMatrix();
--            float f2 = MathHelper.func_76126_a(((float)p_77014_1_.field_70292_b + p_77014_9_) / 10.0F + p_77014_1_.field_70290_d) * 0.1F + 0.1F;
-+            float f2 = shouldBob() ? MathHelper.func_76126_a(((float)p_77014_1_.field_70292_b + p_77014_9_) / 10.0F + p_77014_1_.field_70290_d) * 0.1F + 0.1F : 0F;
-             float f3 = (((float)p_77014_1_.field_70292_b + p_77014_9_) / 20.0F + p_77014_1_.field_70290_d) * (180F / (float)Math.PI);
+-            float f2 = MathHelper.func_76126_a(((float)p_76986_1_.field_70292_b + p_76986_9_) / 10.0F + p_76986_1_.field_70290_d) * 0.1F + 0.1F;
++            float f2 = shouldBob() ? MathHelper.func_76126_a(((float)p_76986_1_.field_70292_b + p_76986_9_) / 10.0F + p_76986_1_.field_70290_d) * 0.1F + 0.1F : 0F;
+             float f3 = (((float)p_76986_1_.field_70292_b + p_76986_9_) / 20.0F + p_76986_1_.field_70290_d) * (180F / (float)Math.PI);
              byte b0 = 1;
  
-@@ -77,12 +80,19 @@
+@@ -79,12 +82,19 @@
                  b0 = 5;
              }
  
 +            b0 = getMiniBlockCount(itemstack, b0);
 +
-             GL11.glTranslatef((float)p_77014_2_, (float)p_77014_4_ + f2, (float)p_77014_6_);
+             GL11.glTranslatef((float)p_76986_2_, (float)p_76986_4_ + f2, (float)p_76986_6_);
              GL11.glEnable(GL12.GL_RESCALE_NORMAL);
              float f6;
              float f7;
              int k;
  
-+            if (ForgeHooksClient.renderEntityItem(p_77014_1_, itemstack, f2, f3, field_77025_h, field_76990_c.field_78724_e, field_147909_c, b0))
++            if (ForgeHooksClient.renderEntityItem(p_76986_1_, itemstack, f2, f3, field_77025_h, field_76990_c.field_78724_e, field_147909_c, b0))
 +            {
 +                ;
 +            }
@@ -46,7 +46,7 @@
              if (itemstack.func_94608_d() == 0 && itemstack.func_77973_b() instanceof ItemBlock && RenderBlocks.func_147739_a(Block.func_149634_a(itemstack.func_77973_b()).func_149645_b()))
              {
                  Block block = Block.func_149634_a(itemstack.func_77973_b());
-@@ -137,7 +147,7 @@
+@@ -139,7 +149,7 @@
              {
                  float f5;
  
@@ -55,7 +55,7 @@
                  {
                      if (field_82407_g)
                      {
-@@ -149,10 +159,10 @@
+@@ -151,10 +161,10 @@
                          GL11.glScalef(0.5F, 0.5F, 0.5F);
                      }
  
@@ -68,21 +68,21 @@
  
                          if (this.field_77024_a)
                          {
-@@ -161,11 +171,11 @@
+@@ -163,11 +173,11 @@
                              f6 = (float)(k >> 8 & 255) / 255.0F;
                              f7 = (float)(k & 255) / 255.0F;
                              GL11.glColor4f(f5, f6, f7, 1.0F);
--                            this.func_77020_a(p_77014_1_, iicon1, b0, p_77014_9_, f5, f6, f7);
-+                            this.renderDroppedItem(p_77014_1_, iicon1, b0, p_77014_9_, f5, f6, f7, j);
+-                            this.func_77020_a(p_76986_1_, iicon1, b0, p_76986_9_, f5, f6, f7);
++                            this.renderDroppedItem(p_76986_1_, iicon1, b0, p_76986_9_, f5, f6, f7, j);
                          }
                          else
                          {
--                            this.func_77020_a(p_77014_1_, iicon1, b0, p_77014_9_, 1.0F, 1.0F, 1.0F);
-+                            this.renderDroppedItem(p_77014_1_, iicon1, b0, p_77014_9_, 1.0F, 1.0F, 1.0F, j);
+-                            this.func_77020_a(p_76986_1_, iicon1, b0, p_76986_9_, 1.0F, 1.0F, 1.0F);
++                            this.renderDroppedItem(p_76986_1_, iicon1, b0, p_76986_9_, 1.0F, 1.0F, 1.0F,  j);
                          }
                      }
                  }
-@@ -222,6 +232,11 @@
+@@ -226,6 +236,11 @@
  
      private void func_77020_a(EntityItem p_77020_1_, IIcon p_77020_2_, int p_77020_3_, float p_77020_4_, float p_77020_5_, float p_77020_6_, float p_77020_7_)
      {
@@ -94,7 +94,7 @@
          Tessellator tessellator = Tessellator.field_78398_a;
  
          if (p_77020_2_ == null)
-@@ -276,11 +291,24 @@
+@@ -280,11 +295,24 @@
                  b0 = 4;
              }
  
@@ -120,7 +120,7 @@
  
                  if (itemstack.func_94608_d() == 0)
                  {
-@@ -294,7 +322,7 @@
+@@ -298,7 +326,7 @@
                  GL11.glColor4f(p_77020_5_, p_77020_6_, p_77020_7_, 1.0F);
                  ItemRenderer.func_78439_a(tessellator, f15, f4, f14, f5, ((IIcon)p_77020_2_).func_94211_a(), ((IIcon)p_77020_2_).func_94216_b(), f9);
  
@@ -129,7 +129,7 @@
                  {
                      GL11.glDepthFunc(GL11.GL_EQUAL);
                      GL11.glDisable(GL11.GL_LIGHTING);
-@@ -362,6 +390,11 @@
+@@ -366,6 +394,11 @@
  
      public void func_77015_a(FontRenderer p_77015_1_, TextureManager p_77015_2_, ItemStack p_77015_3_, int p_77015_4_, int p_77015_5_)
      {
@@ -140,8 +140,8 @@
 +    {
          int k = p_77015_3_.func_77960_j();
          Object object = p_77015_3_.func_77954_c();
-         GL11.glEnable(GL11.GL_BLEND);
-@@ -420,11 +453,13 @@
+         int l;
+@@ -442,11 +475,13 @@
              GL11.glColorMask(true, true, true, true);
              GL11.glEnable(GL11.GL_TEXTURE_2D);
              GL11.glEnable(GL11.GL_ALPHA_TEST);
@@ -158,7 +158,7 @@
                  int i1 = p_77015_3_.func_77973_b().func_82790_a(p_77015_3_, l);
                  f = (float)(i1 >> 16 & 255) / 255.0F;
                  float f1 = (float)(i1 >> 8 & 255) / 255.0F;
-@@ -435,7 +470,18 @@
+@@ -457,7 +492,18 @@
                      GL11.glColor4f(f, f1, f2, 1.0F);
                  }
  
@@ -176,18 +176,20 @@
 +                }
              }
  
-             GL11.glDisable(GL11.GL_ALPHA_TEST);
-@@ -462,13 +508,25 @@
+             GL11.glEnable(GL11.GL_LIGHTING);
+@@ -485,14 +531,27 @@
                  GL11.glColor4f(f3, f4, f, 1.0F);
              }
  
-+            GL11.glDisable(GL11.GL_LIGHTING); //Forge: Make sure that render states are reset, ad renderEffect can derp them up.
++            GL11.glDisable(GL11.GL_LIGHTING); //Forge: Make sure that render states are reset, a renderEffect can derp them up.
 +            GL11.glEnable(GL11.GL_ALPHA_TEST);
++            GL11.glEnable(GL11.GL_BLEND);
 +
              this.func_94149_a(p_77015_4_, p_77015_5_, (IIcon)object, 16, 16);
 +
-+            GL11.glDisable(GL11.GL_ALPHA_TEST);
              GL11.glEnable(GL11.GL_LIGHTING);
++            GL11.glDisable(GL11.GL_ALPHA_TEST);
+             GL11.glDisable(GL11.GL_BLEND);
 +
 +            if (renderEffect && p_77015_3_.hasEffect(0))
 +            {
@@ -203,7 +205,7 @@
      public void func_82406_b(FontRenderer p_82406_1_, TextureManager p_82406_2_, final ItemStack p_82406_3_, int p_82406_4_, int p_82406_5_)
      {
          if (p_82406_3_ != null)
-@@ -477,7 +535,10 @@
+@@ -501,7 +560,10 @@
  
              try
              {
@@ -215,7 +217,7 @@
              }
              catch (Throwable throwable)
              {
-@@ -518,7 +579,8 @@
+@@ -542,7 +604,8 @@
                  throw new ReportedException(crashreport);
              }
  
@@ -225,7 +227,7 @@
              {
                  GL11.glDepthFunc(GL11.GL_EQUAL);
                  GL11.glDisable(GL11.GL_LIGHTING);
-@@ -538,6 +600,23 @@
+@@ -562,6 +625,23 @@
          }
      }
  
@@ -249,7 +251,7 @@
      private void func_77018_a(int p_77018_1_, int p_77018_2_, int p_77018_3_, int p_77018_4_, int p_77018_5_)
      {
          for (int j1 = 0; j1 < 2; ++j1)
-@@ -584,10 +663,11 @@
+@@ -608,10 +688,11 @@
                  GL11.glEnable(GL11.GL_DEPTH_TEST);
              }
  
@@ -264,7 +266,7 @@
                  GL11.glDisable(GL11.GL_LIGHTING);
                  GL11.glDisable(GL11.GL_DEPTH_TEST);
                  GL11.glDisable(GL11.GL_TEXTURE_2D);
-@@ -638,4 +718,54 @@
+@@ -664,4 +745,54 @@
      {
          this.func_76986_a((EntityItem)p_76986_1_, p_76986_2_, p_76986_4_, p_76986_6_, p_76986_8_, p_76986_9_);
      }

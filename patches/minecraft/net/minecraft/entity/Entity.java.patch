@@ -177,7 +177,7 @@
              return entityitem;
          }
          else
-@@ -1676,7 +1768,7 @@
+@@ -1687,7 +1779,7 @@
  
      public boolean func_70115_ae()
      {
@@ -186,7 +186,7 @@
      }
  
      public boolean func_70093_af()
-@@ -1977,7 +2069,7 @@
+@@ -1988,7 +2080,7 @@
  
      public float func_145772_a(Explosion p_145772_1_, World p_145772_2_, int p_145772_3_, int p_145772_4_, int p_145772_5_, Block p_145772_6_)
      {
@@ -195,7 +195,7 @@
      }
  
      public boolean func_145774_a(Explosion p_145774_1_, World p_145774_2_, int p_145774_3_, int p_145774_4_, int p_145774_5_, Block p_145774_6_, float p_145774_7_)
-@@ -2047,6 +2139,174 @@
+@@ -2058,6 +2150,174 @@
  
      public void func_145781_i(int p_145781_1_) {}
  

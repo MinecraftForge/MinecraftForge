@@ -1,16 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
-@@ -217,8 +217,7 @@
+@@ -219,8 +219,7 @@
  
-                         if (this.field_145957_n[1].field_77994_a == 0)
-                         {
--                            Item item = this.field_145957_n[1].func_77973_b().func_77668_q();
--                            this.field_145957_n[1] = item != null ? new ItemStack(item) : null;
-+                            this.field_145957_n[1] = field_145957_n[1].func_77973_b().getContainerItem(field_145957_n[1]);
+                             if (this.field_145957_n[1].field_77994_a == 0)
+                             {
+-                                Item item = this.field_145957_n[1].func_77973_b().func_77668_q();
+-                                this.field_145957_n[1] = item != null ? new ItemStack(item) : null;
++                                this.field_145957_n[1] = field_145957_n[1].func_77973_b().getContainerItem(field_145957_n[1]);
+                             }
                          }
                      }
-                 }
-@@ -262,7 +261,11 @@
+@@ -265,7 +264,11 @@
          else
          {
              ItemStack itemstack = FurnaceRecipes.func_77602_a().func_151395_a(this.field_145957_n[0]);
@@ -23,7 +23,7 @@
          }
      }
  
-@@ -278,7 +281,7 @@
+@@ -281,7 +284,7 @@
              }
              else if (this.field_145957_n[2].func_77973_b() == itemstack.func_77973_b())
              {

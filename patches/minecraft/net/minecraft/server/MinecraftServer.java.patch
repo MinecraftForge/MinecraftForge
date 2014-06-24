@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/MinecraftServer.java
 +++ ../src-work/minecraft/net/minecraft/server/MinecraftServer.java
-@@ -26,6 +26,7 @@
+@@ -27,6 +27,7 @@
  import java.util.Arrays;
  import java.util.Collections;
  import java.util.Date;
@@ -8,7 +8,7 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.Random;
-@@ -74,6 +75,10 @@
+@@ -75,6 +76,10 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -19,7 +19,7 @@
  public abstract class MinecraftServer implements ICommandSender, Runnable, IPlayerUsage
  {
      private static final Logger field_147145_h = LogManager.getLogger();
-@@ -90,7 +95,7 @@
+@@ -92,7 +97,7 @@
      @SideOnly(Side.SERVER)
      private String field_71320_r;
      private int field_71319_s = -1;
@@ -28,7 +28,7 @@
      private ServerConfigurationManager field_71318_t;
      private boolean field_71317_u = true;
      private boolean field_71316_v;
-@@ -107,7 +112,8 @@
+@@ -109,7 +114,8 @@
      private int field_71280_D;
      private int field_143008_E = 0;
      public final long[] field_71311_j = new long[100];
@@ -38,7 +38,7 @@
      private KeyPair field_71292_I;
      private String field_71293_J;
      private String field_71294_K;
-@@ -183,8 +189,6 @@
+@@ -191,8 +197,6 @@
      {
          this.func_71237_c(p_71247_1_);
          this.func_71192_d("menu.loadingLevel");
@@ -47,7 +47,7 @@
          ISaveHandler isavehandler = this.field_71310_m.func_75804_a(p_71247_1_, true);
          WorldInfo worldinfo = isavehandler.func_75757_d();
          WorldSettings worldsettings;
-@@ -204,46 +208,21 @@
+@@ -212,46 +216,21 @@
              worldsettings.func_77159_a();
          }
  
@@ -101,7 +101,7 @@
          this.func_147139_a(this.func_147135_j());
          this.func_71222_d();
      }
-@@ -310,6 +289,7 @@
+@@ -320,6 +299,7 @@
          if (!this.field_71290_O)
          {
              WorldServer[] aworldserver = this.field_71305_c;
@@ -109,24 +109,23 @@
              int i = aworldserver.length;
  
              for (int j = 0; j < i; ++j)
-@@ -360,9 +340,16 @@
-             for (int i = 0; i < this.field_71305_c.length; ++i)
-             {
-                 WorldServer worldserver = this.field_71305_c[i];
-+                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(worldserver));
-                 worldserver.func_73041_k();
+@@ -372,8 +352,15 @@
+                 for (int i = 0; i < this.field_71305_c.length; ++i)
+                 {
+                     WorldServer worldserver = this.field_71305_c[i];
++                    MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(worldserver));
+                     worldserver.func_73041_k();
+                 }
++
++                WorldServer[] tmp = field_71305_c;
++                for (WorldServer world : tmp)
++                {
++                    DimensionManager.setWorld(world.field_73011_w.field_76574_g, null);
++                }
              }
  
-+            WorldServer[] tmp = field_71305_c;
-+            for (WorldServer world : tmp)
-+            {
-+                DimensionManager.setWorld(world.field_73011_w.field_76574_g, null);
-+            }
-+
              if (this.field_71307_n.func_76468_d())
-             {
-                 this.field_71307_n.func_76470_e();
-@@ -590,15 +577,18 @@
+@@ -606,15 +593,18 @@
      public void func_71190_q()
      {
          this.field_71304_b.func_76320_a("levels");
@@ -147,8 +146,8 @@
 +                WorldServer worldserver = DimensionManager.getWorld(id);
                  this.field_71304_b.func_76320_a(worldserver.func_72912_H().func_76065_j());
                  this.field_71304_b.func_76320_a("pools");
-                 worldserver.func_82732_R().func_72343_a();
-@@ -645,9 +635,11 @@
+                 this.field_71304_b.func_76319_b();
+@@ -660,9 +650,11 @@
                  this.field_71304_b.func_76319_b();
              }
  
@@ -161,7 +160,7 @@
          this.field_71304_b.func_76318_c("connection");
          this.func_147137_ag().func_151269_c();
          this.field_71304_b.func_76318_c("players");
-@@ -692,7 +684,13 @@
+@@ -707,7 +699,13 @@
  
      public WorldServer func_71218_a(int p_71218_1_)
      {
@@ -176,7 +175,7 @@
      }
  
      public String func_71249_w()
-@@ -951,6 +949,7 @@
+@@ -971,6 +969,7 @@
  
              if (worldserver != null)
              {
@@ -184,7 +183,7 @@
                  worldserver.func_73041_k();
              }
          }
-@@ -1421,7 +1420,6 @@
+@@ -1451,7 +1450,6 @@
          this.field_147141_M = p_155759_1_;
      }
  
