@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
-@@ -99,6 +99,12 @@
+@@ -100,6 +100,12 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -13,10 +13,10 @@
  public class EntityPlayerMP extends EntityPlayer implements ICrafting
  {
      private static final Logger field_147102_bM = LogManager.getLogger();
-@@ -133,19 +139,11 @@
+@@ -132,19 +138,11 @@
+         super(p_i45285_2_, p_i45285_3_);
          p_i45285_4_.field_73090_b = this;
          this.field_71134_c = p_i45285_4_;
-         this.field_71142_cm = p_i45285_1_.func_71203_ab().func_72395_o();
 -        ChunkCoordinates chunkcoordinates = p_i45285_2_.func_72861_E();
 +        ChunkCoordinates chunkcoordinates = p_i45285_2_.field_73011_w.getRandomizedSpawnPoint();
          int i = chunkcoordinates.field_71574_a;
@@ -32,9 +32,9 @@
 -        }
 -
          this.field_71133_b = p_i45285_1_;
-         this.field_147103_bO = p_i45285_1_.func_71203_ab().func_148538_i(this.func_70005_c_());
+         this.field_147103_bO = p_i45285_1_.func_71203_ab().func_152602_a(this);
          this.field_70138_W = 0.0F;
-@@ -199,7 +197,7 @@
+@@ -198,7 +196,7 @@
  
      public float func_70047_e()
      {
@@ -43,7 +43,7 @@
      }
  
      public void func_70071_h_()
-@@ -214,7 +212,7 @@
+@@ -213,7 +211,7 @@
  
          this.field_71070_bA.func_75142_b();
  
@@ -52,7 +52,7 @@
          {
              this.func_71053_j();
              this.field_71070_bA = this.field_71069_bz;
-@@ -256,7 +254,8 @@
+@@ -255,7 +253,8 @@
                          if (chunk.func_150802_k())
                          {
                              arraylist.add(chunk);
@@ -62,7 +62,7 @@
                              iterator1.remove();
                          }
                      }
-@@ -284,6 +283,7 @@
+@@ -283,6 +282,7 @@
                  {
                      chunk = (Chunk)iterator2.next();
                      this.func_71121_q().func_73039_n().func_85172_a(this, chunk);
@@ -70,7 +70,7 @@
                  }
              }
          }
-@@ -408,11 +408,25 @@
+@@ -402,11 +402,25 @@
  
      public void func_70645_a(DamageSource p_70645_1_)
      {
@@ -96,9 +96,9 @@
          }
  
          Collection collection = this.field_70170_p.func_96441_U().func_96520_a(IScoreObjectiveCriteria.field_96642_c);
-@@ -985,4 +999,15 @@
+@@ -1021,4 +1035,16 @@
      {
-         return this.field_147103_bO;
+         return this.field_143005_bX;
      }
 +
 +    /* ===================================== FORGE START =====================================*/
@@ -111,4 +111,5 @@
 +    {
 +        return 1.62F;
 +    }
++    /* ===================================== FORGE END =====================================*/
  }

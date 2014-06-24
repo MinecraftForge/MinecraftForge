@@ -1,22 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderBiped.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderBiped.java
-@@ -15,9 +15,15 @@
- import net.minecraft.item.Item;
- import net.minecraft.item.ItemArmor;
- import net.minecraft.item.ItemBlock;
-+import net.minecraft.item.ItemBlock;
- import net.minecraft.item.ItemStack;
- import net.minecraft.util.ResourceLocation;
- import org.lwjgl.opengl.GL11;
-+import static net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED;
-+import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.BLOCK_3D;
-+import net.minecraftforge.client.ForgeHooksClient;
-+import net.minecraftforge.client.IItemRenderer;
-+import net.minecraftforge.client.MinecraftForgeClient;
- 
- @SideOnly(Side.CLIENT)
- public class RenderBiped extends RenderLiving
-@@ -49,11 +55,13 @@
+@@ -54,11 +54,13 @@
          this.field_82425_h = new ModelBiped(0.5F);
      }
  
@@ -30,20 +14,20 @@
      public static ResourceLocation func_110858_a(ItemArmor p_110858_0_, int p_110858_1_, String p_110858_2_)
      {
          String s1 = String.format("textures/models/armor/%s_layer_%d%s.png", new Object[] {field_82424_k[p_110858_0_.field_77880_c], Integer.valueOf(p_110858_1_ == 2 ? 2 : 1), p_110858_2_ == null ? "" : String.format("_%s", new Object[]{p_110858_2_})});
-@@ -79,7 +87,7 @@
+@@ -84,7 +86,7 @@
              if (item instanceof ItemArmor)
              {
                  ItemArmor itemarmor = (ItemArmor)item;
--                this.func_110776_a(func_110857_a(itemarmor, p_130006_2_));
-+                this.func_110776_a(getArmorResource(p_130006_1_, itemstack, p_130006_2_, null));
-                 ModelBiped modelbiped = p_130006_2_ == 2 ? this.field_82425_h : this.field_82423_g;
-                 modelbiped.field_78116_c.field_78806_j = p_130006_2_ == 0;
-                 modelbiped.field_78114_d.field_78806_j = p_130006_2_ == 0;
-@@ -88,14 +96,16 @@
-                 modelbiped.field_78113_g.field_78806_j = p_130006_2_ == 1;
-                 modelbiped.field_78123_h.field_78806_j = p_130006_2_ == 2 || p_130006_2_ == 3;
-                 modelbiped.field_78124_i.field_78806_j = p_130006_2_ == 2 || p_130006_2_ == 3;
-+                modelbiped = ForgeHooksClient.getArmorModel(p_130006_1_, itemstack, p_130006_2_, modelbiped);
+-                this.func_110776_a(func_110857_a(itemarmor, p_77032_2_));
++                this.func_110776_a(getArmorResource(p_77032_1_, itemstack, p_77032_2_, null));
+                 ModelBiped modelbiped = p_77032_2_ == 2 ? this.field_82425_h : this.field_82423_g;
+                 modelbiped.field_78116_c.field_78806_j = p_77032_2_ == 0;
+                 modelbiped.field_78114_d.field_78806_j = p_77032_2_ == 0;
+@@ -93,14 +95,16 @@
+                 modelbiped.field_78113_g.field_78806_j = p_77032_2_ == 1;
+                 modelbiped.field_78123_h.field_78806_j = p_77032_2_ == 2 || p_77032_2_ == 3;
+                 modelbiped.field_78124_i.field_78806_j = p_77032_2_ == 2 || p_77032_2_ == 3;
++                modelbiped = net.minecraftforge.client.ForgeHooksClient.getArmorModel(p_77032_1_, itemstack, p_77032_2_, modelbiped);
                  this.func_77042_a(modelbiped);
                  modelbiped.field_78095_p = this.field_77045_g.field_78095_p;
                  modelbiped.field_78093_q = this.field_77045_g.field_78093_q;
@@ -58,7 +42,7 @@
                      float f1 = (float)(j >> 16 & 255) / 255.0F;
                      float f2 = (float)(j >> 8 & 255) / 255.0F;
                      float f3 = (float)(j & 255) / 255.0F;
-@@ -133,7 +143,7 @@
+@@ -138,7 +142,7 @@
  
              if (item instanceof ItemArmor)
              {
@@ -67,12 +51,12 @@
                  float f1 = 1.0F;
                  GL11.glColor3f(1.0F, 1.0F, 1.0F);
              }
-@@ -184,9 +194,12 @@
+@@ -189,9 +193,12 @@
              this.field_77071_a.field_78116_c.func_78794_c(0.0625F);
              item = itemstack1.func_77973_b();
  
-+            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack1, EQUIPPED);
-+            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, itemstack1, BLOCK_3D));
++            net.minecraftforge.client.IItemRenderer customRenderer = net.minecraftforge.client.MinecraftForgeClient.getItemRenderer(itemstack1, net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED);
++            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED, itemstack1, net.minecraftforge.client.IItemRenderer.ItemRendererHelper.BLOCK_3D));
 +
              if (item instanceof ItemBlock)
              {
@@ -81,19 +65,19 @@
                  {
                      f1 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
-@@ -229,7 +242,10 @@
+@@ -243,7 +250,10 @@
              this.field_77071_a.field_78112_f.func_78794_c(0.0625F);
              GL11.glTranslatef(-0.0625F, 0.4375F, 0.0625F);
  
 -            if (item instanceof ItemBlock && RenderBlocks.func_147739_a(Block.func_149634_a(item).func_149645_b()))
-+            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack, EQUIPPED);
-+            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, itemstack, BLOCK_3D));
++            net.minecraftforge.client.IItemRenderer customRenderer = net.minecraftforge.client.MinecraftForgeClient.getItemRenderer(itemstack, net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED);
++            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED, itemstack, net.minecraftforge.client.IItemRenderer.ItemRendererHelper.BLOCK_3D));
 +
 +            if (item instanceof ItemBlock && (is3D || RenderBlocks.func_147739_a(Block.func_149634_a(item).func_149645_b())))
              {
                  f1 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -278,7 +294,7 @@
+@@ -292,7 +302,7 @@
  
              if (itemstack.func_77973_b().func_77623_v())
              {
@@ -101,8 +85,8 @@
 +                for (i = 0; i < itemstack.func_77973_b().getRenderPasses(itemstack.func_77960_j()); ++i)
                  {
                      int j = itemstack.func_77973_b().func_82790_a(itemstack, i);
-                     f2 = (float)(j >> 16 & 255) / 255.0F;
-@@ -336,4 +352,33 @@
+                     f5 = (float)(j >> 16 & 255) / 255.0F;
+@@ -350,4 +360,33 @@
      {
          this.func_76986_a((EntityLiving)p_76986_1_, p_76986_2_, p_76986_4_, p_76986_6_, p_76986_8_, p_76986_9_);
      }
@@ -123,7 +107,7 @@
 +        String s1 = String.format("textures/models/armor/%s_layer_%d%s.png",
 +                field_82424_k[item.field_77880_c], (slot == 2 ? 2 : 1), type == null ? "" : String.format("_%s", type));
 +
-+        s1 = ForgeHooksClient.getArmorTexture(entity, stack, s1, slot, type);
++        s1 = net.minecraftforge.client.ForgeHooksClient.getArmorTexture(entity, stack, s1, slot, type);
 +        ResourceLocation resourcelocation = (ResourceLocation)field_110859_k.get(s1);
 +
 +        if (resourcelocation == null)

@@ -1,14 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/world/ChunkCache.java
 +++ ../src-work/minecraft/net/minecraft/world/ChunkCache.java
-@@ -9,6 +9,7 @@
- import net.minecraft.util.Vec3Pool;
+@@ -8,6 +8,7 @@
+ import net.minecraft.tileentity.TileEntity;
  import net.minecraft.world.biome.BiomeGenBase;
  import net.minecraft.world.chunk.Chunk;
 +import net.minecraftforge.common.util.ForgeDirection;
  
  public class ChunkCache implements IBlockAccess
  {
-@@ -92,6 +93,8 @@
+@@ -91,6 +92,8 @@
      {
          int l = (p_147438_1_ >> 4) - this.field_72818_a;
          int i1 = (p_147438_3_ >> 4) - this.field_72816_b;
@@ -17,7 +17,7 @@
          return this.field_72817_c[l][i1].func_150806_e(p_147438_1_ & 15, p_147438_2_, p_147438_3_ & 15);
      }
  
-@@ -123,6 +126,8 @@
+@@ -122,6 +125,8 @@
          {
              int l = (p_72805_1_ >> 4) - this.field_72818_a;
              int i1 = (p_72805_3_ >> 4) - this.field_72816_b;
@@ -26,8 +26,8 @@
              return this.field_72817_c[l][i1].func_76628_c(p_72805_1_ & 15, p_72805_2_, p_72805_3_ & 15);
          }
      }
-@@ -139,10 +144,9 @@
-         return this.field_72815_e.func_82732_R();
+@@ -137,10 +142,9 @@
+         return this.field_72815_e.func_72807_a(p_72807_1_, p_72807_2_);
      }
  
 -    @SideOnly(Side.CLIENT)
@@ -38,9 +38,9 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -248,4 +252,15 @@
+@@ -241,4 +245,15 @@
      {
-         return this.func_147439_a(p_72879_1_, p_72879_2_, p_72879_3_).func_149748_c(this, p_72879_1_, p_72879_2_, p_72879_3_, p_72879_4_);
+         return 256;
      }
 +
 +    @Override

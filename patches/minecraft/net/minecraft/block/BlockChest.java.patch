@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockChest.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockChest.java
-@@ -23,6 +23,8 @@
+@@ -24,6 +24,8 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
@@ -9,7 +9,7 @@
  public class BlockChest extends BlockContainer
  {
      private final Random field_149955_b = new Random();
-@@ -407,7 +409,7 @@
+@@ -408,7 +410,7 @@
          {
              return null;
          }
@@ -18,7 +18,7 @@
          {
              return null;
          }
-@@ -415,19 +417,19 @@
+@@ -416,19 +418,19 @@
          {
              return null;
          }

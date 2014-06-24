@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemStack.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
-@@ -32,6 +32,7 @@
+@@ -33,6 +33,7 @@
  import net.minecraft.util.IIcon;
  import net.minecraft.util.StatCollector;
  import net.minecraft.world.World;
@@ -8,7 +8,7 @@
  
  public final class ItemStack
  {
-@@ -180,7 +181,7 @@
+@@ -181,7 +182,7 @@
  
      public int func_77976_d()
      {
@@ -17,7 +17,7 @@
      }
  
      public boolean func_77985_e()
-@@ -190,7 +191,7 @@
+@@ -191,7 +192,7 @@
  
      public boolean func_77984_f()
      {
@@ -26,7 +26,7 @@
      }
  
      public boolean func_77981_g()
-@@ -200,32 +201,27 @@
+@@ -201,32 +202,27 @@
  
      public boolean func_77951_h()
      {
@@ -64,7 +64,7 @@
      }
  
      public boolean func_96631_a(int p_96631_1_, Random p_96631_2_)
-@@ -257,8 +253,8 @@
+@@ -258,8 +254,8 @@
                  }
              }
  
@@ -75,7 +75,7 @@
          }
      }
  
-@@ -317,7 +313,7 @@
+@@ -318,7 +314,7 @@
  
      public boolean func_150998_b(Block p_150998_1_)
      {
@@ -84,7 +84,7 @@
      }
  
      public boolean func_111282_a(EntityPlayer p_111282_1_, EntityLivingBase p_111282_2_)
-@@ -618,16 +614,24 @@
+@@ -625,16 +621,24 @@
          {
              arraylist.add("Durability: " + (this.func_77958_k() - this.func_77952_i()) + " / " + this.func_77958_k());
          }
@@ -110,7 +110,7 @@
      public EnumRarity func_77953_t()
      {
          return this.func_77973_b().func_77613_e(this);
-@@ -729,7 +733,7 @@
+@@ -736,7 +740,7 @@
          }
          else
          {

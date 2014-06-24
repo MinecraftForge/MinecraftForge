@@ -1,14 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldServer.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldServer.java
-@@ -2,6 +2,7 @@
- 
+@@ -3,6 +3,7 @@
+ import com.google.common.collect.Lists;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
 +import java.io.File;
  import java.util.ArrayList;
  import java.util.HashSet;
  import java.util.Iterator;
-@@ -49,11 +50,19 @@
+@@ -50,11 +51,19 @@
  import net.minecraft.world.biome.WorldChunkManager;
  import net.minecraft.world.chunk.Chunk;
  import net.minecraft.world.chunk.IChunkProvider;
@@ -28,7 +28,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -78,6 +87,10 @@
+@@ -79,6 +88,10 @@
      private IntHashMap field_73066_T;
      private static final String __OBFID = "CL_00001437";
  
@@ -39,7 +39,7 @@
      public WorldServer(MinecraftServer p_i45284_1_, ISaveHandler p_i45284_2_, String p_i45284_3_, int p_i45284_4_, WorldSettings p_i45284_5_, Profiler p_i45284_6_)
      {
          super(p_i45284_2_, p_i45284_3_, p_i45284_5_, WorldProvider.func_76570_a(p_i45284_4_), p_i45284_6_);
-@@ -110,8 +123,12 @@
+@@ -111,8 +124,12 @@
              this.field_72988_C.func_75745_a("scoreboard", scoreboardsavedata);
          }
  
@@ -53,7 +53,7 @@
      }
  
      public void func_72835_b()
-@@ -170,6 +187,10 @@
+@@ -171,6 +188,10 @@
          this.field_72983_E.func_75528_a();
          this.field_72984_F.func_76318_c("portalForcer");
          this.field_85177_Q.func_85189_a(this.func_82737_E());
@@ -64,7 +64,7 @@
          this.field_72984_F.func_76319_b();
          this.func_147488_Z();
      }
-@@ -177,6 +198,7 @@
+@@ -178,6 +199,7 @@
      public BiomeGenBase.SpawnListEntry func_73057_a(EnumCreatureType p_73057_1_, int p_73057_2_, int p_73057_3_, int p_73057_4_)
      {
          List list = this.func_72863_F().func_73155_a(p_73057_1_, p_73057_2_, p_73057_3_, p_73057_4_);
@@ -72,7 +72,7 @@
          return list != null && !list.isEmpty() ? (BiomeGenBase.SpawnListEntry)WeightedRandom.func_76271_a(this.field_73012_v, list) : null;
      }
  
-@@ -217,10 +239,7 @@
+@@ -218,10 +240,7 @@
  
      private void func_73051_P()
      {
@@ -84,7 +84,7 @@
      }
  
      public boolean func_73056_e()
-@@ -284,6 +303,14 @@
+@@ -285,6 +304,14 @@
          int j = 0;
          Iterator iterator = this.field_72993_I.iterator();
  
@@ -99,7 +99,7 @@
          while (iterator.hasNext())
          {
              ChunkCoordIntPair chunkcoordintpair = (ChunkCoordIntPair)iterator.next();
-@@ -293,14 +320,18 @@
+@@ -294,14 +321,18 @@
              Chunk chunk = this.func_72964_e(chunkcoordintpair.field_77276_a, chunkcoordintpair.field_77275_b);
              this.func_147467_a(k, l, chunk);
              this.field_72984_F.func_76318_c("tickChunk");
@@ -120,7 +120,7 @@
              {
                  this.field_73005_l = this.field_73005_l * 3 + 1013904223;
                  i1 = this.field_73005_l >> 2;
-@@ -316,7 +347,7 @@
+@@ -317,7 +348,7 @@
  
              this.field_72984_F.func_76318_c("iceandsnow");
  
@@ -129,7 +129,7 @@
              {
                  this.field_73005_l = this.field_73005_l * 3 + 1013904223;
                  i1 = this.field_73005_l >> 2;
-@@ -392,6 +423,9 @@
+@@ -393,6 +424,9 @@
      public void func_147454_a(int p_147454_1_, int p_147454_2_, int p_147454_3_, Block p_147454_4_, int p_147454_5_, int p_147454_6_)
      {
          NextTickListEntry nextticklistentry = new NextTickListEntry(p_147454_1_, p_147454_2_, p_147454_3_, p_147454_4_);
@@ -139,7 +139,7 @@
          byte b0 = 0;
  
          if (this.field_72999_e && p_147454_4_.func_149688_o() != Material.field_151579_a)
-@@ -451,7 +485,7 @@
+@@ -452,7 +486,7 @@
  
      public void func_72939_s()
      {
@@ -148,7 +148,7 @@
          {
              if (this.field_80004_Q++ >= 1200)
              {
-@@ -511,6 +545,9 @@
+@@ -512,6 +546,9 @@
              {
                  nextticklistentry = (NextTickListEntry)iterator.next();
                  iterator.remove();
@@ -158,7 +158,7 @@
                  byte b0 = 0;
  
                  if (this.func_72904_c(nextticklistentry.field_77183_a - b0, nextticklistentry.field_77181_b - b0, nextticklistentry.field_77182_c - b0, nextticklistentry.field_77183_a + b0, nextticklistentry.field_77181_b + b0, nextticklistentry.field_77182_c + b0))
-@@ -633,13 +670,26 @@
+@@ -634,13 +671,26 @@
      {
          ArrayList arraylist = new ArrayList();
  
@@ -190,7 +190,7 @@
              }
          }
  
-@@ -648,9 +698,14 @@
+@@ -649,9 +699,14 @@
  
      public boolean func_72962_a(EntityPlayer p_72962_1_, int p_72962_2_, int p_72962_3_, int p_72962_4_)
      {
@@ -206,7 +206,7 @@
      protected void func_72963_a(WorldSettings p_72963_1_)
      {
          if (this.field_73066_T == null)
-@@ -725,7 +780,7 @@
+@@ -726,7 +781,7 @@
  
      protected void func_73047_i()
      {
@@ -215,15 +215,15 @@
  
          for (int i = 0; i < 10; ++i)
          {
-@@ -762,6 +817,7 @@
+@@ -763,6 +818,7 @@
              }
  
              this.field_73020_y.func_73151_a(p_73044_1_, p_73044_2_);
 +            MinecraftForge.EVENT_BUS.post(new WorldEvent.Save(this));
-         }
-     }
+             ArrayList arraylist = Lists.newArrayList(this.field_73059_b.func_152380_a());
+             Iterator iterator = arraylist.iterator();
  
-@@ -778,6 +834,7 @@
+@@ -791,6 +847,7 @@
          this.func_72906_B();
          this.field_73019_z.func_75755_a(this.field_72986_A, this.field_73061_a.func_71203_ab().func_72378_q());
          this.field_72988_C.func_75744_a();
@@ -231,7 +231,7 @@
      }
  
      public void func_72923_a(Entity p_72923_1_)
-@@ -984,6 +1041,11 @@
+@@ -1002,6 +1059,11 @@
          }
      }
  

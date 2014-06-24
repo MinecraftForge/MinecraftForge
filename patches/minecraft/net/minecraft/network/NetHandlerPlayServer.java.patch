@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/network/NetHandlerPlayServer.java
 +++ ../src-work/minecraft/net/minecraft/network/NetHandlerPlayServer.java
-@@ -85,6 +85,14 @@
+@@ -86,6 +86,14 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -15,7 +15,7 @@
  public class NetHandlerPlayServer implements INetHandlerPlayServer
  {
      private static final Logger field_147370_c = LogManager.getLogger();
-@@ -219,6 +227,11 @@
+@@ -222,6 +230,11 @@
                          this.field_147369_b.field_70154_o.func_70043_V();
                      }
  
@@ -27,7 +27,7 @@
                      this.field_147367_d.func_71203_ab().func_72358_d(this.field_147369_b);
  
                      if (this.field_147380_r)
-@@ -296,9 +309,10 @@
+@@ -299,9 +312,10 @@
                  d4 = d1 - this.field_147369_b.field_70165_t;
                  double d5 = d2 - this.field_147369_b.field_70163_u;
                  double d6 = d3 - this.field_147369_b.field_70161_v;
@@ -41,7 +41,7 @@
                  double d10 = d7 * d7 + d8 * d8 + d9 * d9;
  
                  if (d10 > 100.0D && (!this.field_147367_d.func_71264_H() || !this.field_147367_d.func_71214_G().equals(this.field_147369_b.func_70005_c_())))
-@@ -316,6 +330,11 @@
+@@ -319,6 +333,11 @@
                      this.field_147369_b.func_70664_aZ();
                  }
  
@@ -53,7 +53,7 @@
                  this.field_147369_b.func_70091_d(d4, d5, d6);
                  this.field_147369_b.field_70122_E = p_147347_1_.func_149465_i();
                  this.field_147369_b.func_71000_j(d4, d5, d6);
-@@ -338,10 +357,15 @@
+@@ -341,10 +360,15 @@
                      field_147370_c.warn(this.field_147369_b.func_70005_c_() + " moved wrongly!");
                  }
  
@@ -70,7 +70,7 @@
                  {
                      this.func_147364_a(this.field_147373_o, this.field_147382_p, this.field_147381_q, f1, f2);
                      return;
-@@ -349,7 +373,7 @@
+@@ -352,7 +376,7 @@
  
                  AxisAlignedBB axisalignedbb = this.field_147369_b.field_70121_D.func_72329_c().func_72314_b((double)f3, (double)f3, (double)f3).func_72321_a(0.0D, -0.55D, 0.0D);
  
@@ -79,7 +79,7 @@
                  {
                      if (d11 >= -0.03125D)
                      {
-@@ -368,6 +392,11 @@
+@@ -371,6 +395,11 @@
                      this.field_147365_f = 0;
                  }
  
@@ -91,7 +91,7 @@
                  this.field_147369_b.field_70122_E = p_147347_1_.func_149465_i();
                  this.field_147367_d.func_71203_ab().func_72358_d(this.field_147369_b);
                  this.field_147369_b.func_71122_b(this.field_147369_b.field_70163_u - d0, p_147347_1_.func_149465_i());
-@@ -436,7 +465,10 @@
+@@ -439,7 +468,10 @@
                  double d2 = this.field_147369_b.field_70161_v - ((double)k + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
@@ -103,7 +103,7 @@
                  {
                      return;
                  }
-@@ -497,7 +529,11 @@
+@@ -500,7 +532,11 @@
                  return;
              }
  
@@ -116,7 +116,7 @@
          }
          else if (p_147346_1_.func_149571_d() >= this.field_147367_d.func_71207_Z() - 1 && (p_147346_1_.func_149568_f() == 1 || p_147346_1_.func_149571_d() >= this.field_147367_d.func_71207_Z()))
          {
-@@ -508,7 +544,9 @@
+@@ -511,7 +547,9 @@
          }
          else
          {
@@ -127,7 +127,7 @@
              {
                  this.field_147369_b.field_71134_c.func_73078_a(this.field_147369_b, worldserver, itemstack, i, j, k, l, p_147346_1_.func_149573_h(), p_147346_1_.func_149569_i(), p_147346_1_.func_149575_j());
              }
-@@ -674,6 +712,8 @@
+@@ -677,6 +715,8 @@
              else
              {
                  ChatComponentTranslation chatcomponenttranslation1 = new ChatComponentTranslation("chat.type.text", new Object[] {this.field_147369_b.func_145748_c_(), s});
@@ -136,7 +136,7 @@
                  this.field_147367_d.func_71203_ab().func_148544_a(chatcomponenttranslation1, false);
              }
  
-@@ -810,7 +850,7 @@
+@@ -812,7 +852,7 @@
                          return;
                      }
  
