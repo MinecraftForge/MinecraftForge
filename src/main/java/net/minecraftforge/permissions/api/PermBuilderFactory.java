@@ -87,20 +87,20 @@ public interface PermBuilderFactory<T extends PermBuilder>
      * @param player
      * @return A list of groups the player is in
      */
-    Collection<Group> getGroup(EntityPlayer player);
+    Collection<IGroup> getGroup(EntityPlayer player);
     
     /**
      * Get a group with a given name
      * @param name
      * @return A group if it exists, null if not found
      */
-    Group getGroup(String name);
+    IGroup getGroup(String name);
     
     /**
      * Get all groups known to the implementation
      * @return A list of all groups
      */
-    Collection<Group> getAllGroups();
+    Collection<IGroup> getAllGroups();
 
     public static class PermReg
     {

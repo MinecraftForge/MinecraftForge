@@ -23,7 +23,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.permissions.api.Group;
+import net.minecraftforge.permissions.api.IGroup;
 import net.minecraftforge.permissions.api.PermBuilderFactory;
 import net.minecraftforge.permissions.api.context.EntityContext;
 import net.minecraftforge.permissions.api.context.EntityLivingContext;
@@ -38,7 +38,7 @@ public class OpPermFactory implements PermBuilderFactory<Builder>
     static HashSet<String> opPerms      = new HashSet<String>();
     static HashSet<String> deniedPerms  = new HashSet<String>();
     static HashSet<String> allowedPerms = new HashSet<String>();
-    static HashMap<String, Group> groups = new HashMap<String, Group>();
+    static HashMap<String, IGroup> groups = new HashMap<String, IGroup>();
 
     public static final IContext GLOBAL = new IContext() {};
     private static int userPermissionLevel = 0;
@@ -164,13 +164,13 @@ public class OpPermFactory implements PermBuilderFactory<Builder>
     }
     
     @Override
-    public Collection<Group> getGroup(EntityPlayer player)
+    public Collection<IGroup> getGroup(EntityPlayer player)
     {
-        List<Group> reply = new ArrayList<Group>();
+        List<IGroup> reply = new ArrayList<IGroup>();
         Iterator it = groups.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pairs = (Map.Entry)it.next();
-            Group group = (Group)pairs.getValue();
+            IGroup group = (IGroup)pairs.getValue();
             if (!group.getAllPlayers().contains(player.getPersistentID())){break;}
             else reply.add(group);
             it.remove();
@@ -179,19 +179,19 @@ public class OpPermFactory implements PermBuilderFactory<Builder>
     }
  
     @Override
-    public Group getGroup(String name)
+    public IGroup getGroup(String name)
     {
         return groups.get(name);
     }
  
     @Override
-    public Collection<Group> getAllGroups()
+    public Collection<IGroup> getAllGroups()
     {
-        Collection<Group> reply = new ArrayList<Group>();
+        Collection<IGroup> reply = new ArrayList<IGroup>();
         Iterator it = groups.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pairs = (Map.Entry)it.next();
-            Group group = (Group)pairs.getValue();
+            IGroup group = (IGroup)pairs.getValue();
             reply.add(group);
             it.remove();
         }

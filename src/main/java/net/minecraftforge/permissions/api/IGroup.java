@@ -5,7 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import java.util.Collection;
 import java.util.UUID;
  
-public interface Group {
+public interface IGroup {
  
     /**
      * Add an EntityPlayer to the group
@@ -42,14 +42,14 @@ public interface Group {
      * 
      * @return parent of group
      */
-    Group getParent();
+    IGroup getParent();
     
     /**
      * Set the parent of the group
      * 
      * @param parent the parent group
      */
-    void setParent(Group parent);
+    void setParent(IGroup parent);
  
     /**
      * Get the group name

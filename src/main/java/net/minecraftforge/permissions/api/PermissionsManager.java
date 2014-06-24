@@ -156,7 +156,7 @@ public final class PermissionsManager
      * @param player Player to be queried
      * @return a Collection of groups that the player is a member of.
      */
-    public static Collection<Group> getGroupsForPlayer(EntityPlayer player)
+    public static Collection<IGroup> getGroupsForPlayer(EntityPlayer player)
     {
         return FACTORY.getGroup(player);
     }
@@ -165,7 +165,7 @@ public final class PermissionsManager
      * Get all groups
      * @return a Collection containing all groups
      */
-    public static Collection<Group> getAllGroups()
+    public static Collection<IGroup> getAllGroups()
     {
         return FACTORY.getAllGroups();
     }
@@ -175,7 +175,7 @@ public final class PermissionsManager
      * @param name Name of the group
      * @return the queried group
      */
-    public static Group getGroupForName(String name)
+    public static IGroup getGroupForName(String name)
     {
         return FACTORY.getGroup(name);
     }

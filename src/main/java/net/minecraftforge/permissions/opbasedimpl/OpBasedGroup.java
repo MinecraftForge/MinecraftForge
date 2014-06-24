@@ -6,13 +6,13 @@ import java.util.UUID;
  
 import com.google.common.collect.Sets;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.permissions.api.Group;
+import net.minecraftforge.permissions.api.IGroup;
  
-public class OpBasedGroup implements Group
+public class OpBasedGroup implements IGroup
 {
     private Set<UUID> players = Sets.newHashSet();
     private String name;
-    private Group parent;
+    private IGroup parent;
     
     public OpBasedGroup(String name)
     {
@@ -45,13 +45,13 @@ public class OpBasedGroup implements Group
     }
     
     @Override
-    public void setParent(Group parent)
+    public void setParent(IGroup parent)
     {
         this.parent = parent;
     }
     
     @Override
-    public Group getParent()
+    public IGroup getParent()
     {
         return parent;
     }
