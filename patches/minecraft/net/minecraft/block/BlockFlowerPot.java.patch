@@ -22,11 +22,12 @@
          super.func_149749_a(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, p_149749_5_, p_149749_6_);
      }
  
-@@ -231,4 +225,14 @@
+@@ -231,4 +225,28 @@
  
          return new TileEntityFlowerPot(Item.func_150898_a((Block)object), b0);
      }
 +
++    /*============================FORGE START=====================================*/
 +    @Override
 +    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune)
 +    {
@@ -36,4 +37,17 @@
 +            ret.add(new ItemStack(te.func_145965_a(), 1, te.func_145966_b()));
 +        return ret;
 +    }
++    @Override
++    public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z, boolean willHarvest)
++    {
++        if (willHarvest) return true; //If it will harvest, delay deletion of the block until after getDrops
++        return super.removedByPlayer(world, player, x, y, z, willHarvest);
++    }
++    @Override
++    public void func_149636_a(World world, EntityPlayer player, int x, int y, int z, int meta)
++    {
++        super.func_149636_a(world, player, x, y, z, meta);
++        world.func_147468_f(x, y, z);
++    }
++    /*===========================FORGE END==========================================*/
  }
