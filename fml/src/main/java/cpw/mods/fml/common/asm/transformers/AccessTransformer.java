@@ -110,6 +110,7 @@ public class AccessTransformer implements IClassTransformer
     {
         Manifest manifest = jar.getManifest();
         String atList = manifest.getMainAttributes().getValue("FMLAT");
+        if (atList == null) return;
         for (String at : atList.split(" "))
         {
             JarEntry jarEntry = jar.getJarEntry("META-INF/"+at);
