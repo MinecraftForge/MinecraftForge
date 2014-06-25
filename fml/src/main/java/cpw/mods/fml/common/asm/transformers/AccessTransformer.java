@@ -27,10 +27,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -51,6 +55,8 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.io.ByteSource;
+import com.google.common.io.CharSource;
 import com.google.common.io.LineProcessor;
 import com.google.common.io.Resources;
 
@@ -59,7 +65,7 @@ import cpw.mods.fml.relauncher.FMLRelaunchLog;
 public class AccessTransformer implements IClassTransformer
 {
     private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("fml.debugAccessTransformer", "false"));
-    private class Modifier
+    class Modifier
     {
         public String name = "";
         public String desc = "";
@@ -100,7 +106,41 @@ public class AccessTransformer implements IClassTransformer
         readMapFile(rulesFile);
     }
 
-    private void readMapFile(String rulesFile) throws IOException
+    AccessTransformer(JarFile jar) throws IOException
+    {
+        Manifest manifest = jar.getManifest();
+        String atList = manifest.getMainAttributes().getValue("FMLAT");
+        for (String at : atList.split(" "))
+        {
+            JarEntry jarEntry = jar.getJarEntry("META-INF/"+at);
+            if (jarEntry != null)
+            {
+                processATFile(new JarByteSource(jar,jarEntry).asCharSource(Charsets.UTF_8));
+            }
+        }
+        FMLRelaunchLog.fine("Loaded %d rules from AccessTransformer mod jar file %s\n", modifiers.size(), jar.getName());
+    }
+
+    AccessTransformer(Class<? extends AccessTransformer> dummyClazz)
+    {
+        // This is a noop
+    }
+    private class JarByteSource extends ByteSource {
+        private JarFile jar;
+        private JarEntry entry;
+        public JarByteSource(JarFile jar, JarEntry entry)
+        {
+            this.jar = jar;
+            this.entry = entry;
+        }
+        @Override
+        public InputStream openStream() throws IOException
+        {
+            return jar.getInputStream(entry);
+        }
+
+    }
+    void readMapFile(String rulesFile) throws IOException
     {
         File file = new File(rulesFile);
         URL rulesResource;
@@ -112,7 +152,12 @@ public class AccessTransformer implements IClassTransformer
         {
             rulesResource = Resources.getResource(rulesFile);
         }
-        Resources.readLines(rulesResource, Charsets.UTF_8, new LineProcessor<Void>()
+        processATFile(Resources.asCharSource(rulesResource, Charsets.UTF_8));
+        FMLRelaunchLog.fine("Loaded %d rules from AccessTransformer config file %s\n", modifiers.size(), rulesFile);
+    }
+    private void processATFile(CharSource rulesResource) throws IOException
+    {
+        rulesResource.readLines(new LineProcessor<Void>()
         {
             @Override
             public Void getResult()
@@ -160,7 +205,6 @@ public class AccessTransformer implements IClassTransformer
                 return true;
             }
         });
-        FMLRelaunchLog.fine("Loaded %d rules from AccessTransformer config file %s\n", modifiers.size(), rulesFile);
     }
 
     @Override
@@ -217,7 +261,7 @@ public class AccessTransformer implements IClassTransformer
                     if ((n.name.equals(m.name) && n.desc.equals(m.desc)) || m.name.equals("*"))
                     {
                         n.access = getFixedAccess(n.access, m);
-                        
+
                         // constructors always use INVOKESPECIAL
                         if (!n.name.equals("<init>"))
                         {
@@ -225,14 +269,14 @@ public class AccessTransformer implements IClassTransformer
                             // so that overridden methods will be called. Only need to scan this class, because obviously the method was private.
                             boolean wasPrivate = (m.oldAccess & ACC_PRIVATE) == ACC_PRIVATE;
                             boolean isNowPrivate = (m.newAccess & ACC_PRIVATE) == ACC_PRIVATE;
-                            
+
                             if (wasPrivate && !isNowPrivate)
                             {
                                 nowOverridable.add(n);
                             }
-                            
+
                         }
-                        
+
                         if (DEBUG)
                         {
                             System.out.println(String.format("Method: %s.%s%s %s -> %s", name, n.name, n.desc, toBinary(m.oldAccess), toBinary(m.newAccess)));
@@ -244,7 +288,7 @@ public class AccessTransformer implements IClassTransformer
                         }
                     }
                 }
-                
+
                 replaceInvokeSpecial(classNode, nowOverridable);
             }
         }
@@ -253,7 +297,7 @@ public class AccessTransformer implements IClassTransformer
         classNode.accept(writer);
         return writer.toByteArray();
     }
-    
+
     private void replaceInvokeSpecial(ClassNode clazz, List<MethodNode> toReplace)
     {
         for (MethodNode method : clazz.methods)
@@ -476,5 +520,13 @@ public class AccessTransformer implements IClassTransformer
                 }
             }
         }
+    }
+    Multimap<String, Modifier> getModifiers()
+    {
+        return modifiers;
+    }
+    boolean isEmpty()
+    {
+        return modifiers.isEmpty();
     }
 }

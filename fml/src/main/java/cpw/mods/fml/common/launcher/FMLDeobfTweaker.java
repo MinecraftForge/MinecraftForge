@@ -31,6 +31,7 @@ public class FMLDeobfTweaker implements ITweaker {
         {
             classLoader.registerTransformer(transformer);
         }
+        classLoader.registerTransformer("cpw.mods.fml.common.asm.transformers.ModAccessTransformer");
         try
         {
             FMLRelaunchLog.fine("Validating minecraft");
