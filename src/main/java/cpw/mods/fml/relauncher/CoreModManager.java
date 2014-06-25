@@ -243,7 +243,7 @@ public class CoreModManager {
                 jar = new JarFile(coreMod);
                 if (jar.getManifest() == null)
                 {
-                    // Not a coremod
+                    // Not a coremod and no access transformer list
                     continue;
                 }
                 ModAccessTransformer.addJar(jar);
