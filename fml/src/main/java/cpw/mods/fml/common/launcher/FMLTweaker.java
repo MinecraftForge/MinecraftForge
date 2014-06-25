@@ -117,6 +117,7 @@ public class FMLTweaker implements ITweaker {
     public void injectIntoClassLoader(LaunchClassLoader classLoader)
     {
         classLoader.addClassLoaderExclusion("org.apache.");
+        classLoader.addClassLoaderExclusion("com.google.common.");
         classLoader.addTransformerExclusion("cpw.mods.fml.repackage.");
         classLoader.addTransformerExclusion("cpw.mods.fml.relauncher.");
         classLoader.addTransformerExclusion("cpw.mods.fml.common.asm.transformers.");
