@@ -54,7 +54,7 @@
       "serverreq":true
     },
     {
-      "name": "com.mojang:realms:1.2.3"
+      "name": "com.mojang:realms:1.2.4"
     },
     {
       "name": "org.apache.commons:commons-compress:1.8.1"
@@ -96,10 +96,10 @@
       "name": "io.netty:netty-all:4.0.10.Final"
     },
     {
-      "name": "com.google.guava:guava:15.0"
+      "name": "com.google.guava:guava:16.0"
     },
     {
-      "name": "org.apache.commons:commons-lang3:3.1"
+      "name": "org.apache.commons:commons-lang3:3.2.1"
     },
     {
       "name": "commons-io:commons-io:2.4"
