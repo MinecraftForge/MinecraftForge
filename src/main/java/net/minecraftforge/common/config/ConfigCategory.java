@@ -271,12 +271,14 @@ public class ConfigCategory implements Map<String, Property>
             write(out, pad0, COMMENT_SEPARATOR, NEW_LINE);
         }
 
+        String displayName = name;
+
         if (!allowedProperties.matchesAllOf(name))
         {
-            name = '"' + name + '"';
+            displayName = '"' + name + '"';
         }
 
-        write(out, pad0, name, " {");
+        write(out, pad0, displayName, " {");
 
         Property[] props = getOrderedValues().toArray(new Property[] {});
 
