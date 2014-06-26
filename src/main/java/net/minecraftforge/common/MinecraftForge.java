@@ -1,6 +1,7 @@
 package net.minecraftforge.common;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.item.ItemStack;
@@ -20,7 +21,7 @@ public class MinecraftForge
     public static final EventBus EVENT_BUS = new EventBus();
     public static final EventBus TERRAIN_GEN_BUS = new EventBus();
     public static final EventBus ORE_GEN_BUS = new EventBus();
-    public static final String MC_VERSION = "1.7.10";
+    public static final String MC_VERSION = Loader.MC_VERSION;
 
     static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();
 
