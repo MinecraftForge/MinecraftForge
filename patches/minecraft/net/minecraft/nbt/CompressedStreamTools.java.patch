@@ -8,17 +8,7 @@
  import java.io.BufferedInputStream;
  import java.io.BufferedOutputStream;
  import java.io.ByteArrayInputStream;
-@@ -22,6 +20,9 @@
- import net.minecraft.crash.CrashReportCategory;
- import net.minecraft.util.ReportedException;
- 
-+import cpw.mods.fml.relauncher.Side;
-+import cpw.mods.fml.relauncher.SideOnly;
-+
- public class CompressedStreamTools
- {
-     private static final String __OBFID = "CL_00001226";
-@@ -91,7 +92,6 @@
+@@ -91,7 +89,6 @@
          return bytearrayoutputstream.toByteArray();
      }
  
@@ -26,7 +16,7 @@
      public static void func_74793_a(NBTTagCompound p_74793_0_, File p_74793_1_) throws IOException
      {
          File file2 = new File(p_74793_1_.getAbsolutePath() + "_tmp");
-@@ -182,7 +182,6 @@
+@@ -182,7 +179,6 @@
          }
      }
  
@@ -34,7 +24,7 @@
      public static void func_74795_b(NBTTagCompound p_74795_0_, File p_74795_1_) throws IOException
      {
          DataOutputStream dataoutputstream = new DataOutputStream(new FileOutputStream(p_74795_1_));
-@@ -197,13 +196,11 @@
+@@ -197,13 +193,11 @@
          }
      }
  
