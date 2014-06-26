@@ -1,3 +1,8 @@
+/**
+ * This software is provided under the terms of the Minecraft Forge Public
+ * License v1.0.
+ */
+
 package net.minecraftforge.common;
 
 import static net.minecraftforge.common.ForgeVersion.buildVersion;
@@ -7,6 +12,7 @@ import static net.minecraftforge.common.ForgeVersion.revisionVersion;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +36,9 @@ import com.google.common.eventbus.Subscribe;
 
 import cpw.mods.fml.client.FMLFileResourcePack;
 import cpw.mods.fml.client.FMLFolderResourcePack;
+import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import cpw.mods.fml.common.DummyModContainer;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.LoadController;
 import cpw.mods.fml.common.Loader;
@@ -42,6 +50,7 @@ import cpw.mods.fml.common.event.FMLModIdMappingEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 
 public class ForgeModContainer extends DummyModContainer implements WorldAccessContainer
@@ -57,6 +66,8 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static float zombieBabyChance = 0.05f;
     public static boolean shouldSortRecipies = true;
     public static boolean disableVersionCheck = false;
+    
+    private static Configuration config;
 
     public ForgeModContainer()
     {
@@ -75,44 +86,91 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         meta.screenshots = new String[0];
         meta.logoFile    = "/forge_logo.png";
 
-        Configuration config = null;
+        config = null;
         File cfgFile = new File(Loader.instance().getConfigDir(), "forge.cfg");
-        try
-        {
-            config = new Configuration(cfgFile);
-        }
-        catch (Exception e)
-        {
-            System.out.println("Error loading forge.cfg, deleting file and resetting: ");
-            e.printStackTrace();
+        config = new Configuration(cfgFile);
+        
+        syncConfig(true);
+    }
 
-            if (cfgFile.exists())
-                cfgFile.delete();
+    @Override
+    public String getGuiClassName()
+    {
+        return "net.minecraftforge.client.gui.ForgeGuiFactory";
+    }
+    
+    public static Configuration getConfig()
+    {
+        return config;
+    }
 
-            config = new Configuration(cfgFile);
-        }
+    /**
+     * Synchronizes the local fields with the values in the Configuration object.
+     */
+    private static void syncConfig(boolean load)
+    {
+        // By adding a property order list we are defining the order that the properties will appear both in the config file and on the GUIs.
+        // Property order lists are defined per-ConfigCategory.
+        List<String> propOrder = new ArrayList<String>();
+        
         if (!config.isChild)
         {
-            config.load();
-            Property enableGlobalCfg = config.get(Configuration.CATEGORY_GENERAL, "enableGlobalConfig", false);
+            if (load)
+            {
+                config.load();
+            }
+            Property enableGlobalCfg = config.get(Configuration.CATEGORY_GENERAL, "enableGlobalConfig", false).setShowInGui(false);
             if (enableGlobalCfg.getBoolean(false))
             {
                 Configuration.enableGlobalConfig();
             }
         }
+        
         Property prop;
-        prop = config.get(Configuration.CATEGORY_GENERAL, "clumpingThreshold", 64);
-        prop.comment = "Controls the number threshold at which Packet51 is preferred over Packet52, default and minimum 64, maximum 1024";
+
+        prop = config.get(CATEGORY_GENERAL, "disableVersionCheck", false);
+        prop.comment = "Set to true to disable Forge's version check mechanics. Forge queries a small json file on our server for version information. For more details see the ForgeVersion class in our github.";
+        // Language keys are a good idea to implement if you are using config GUIs. This allows you to use a .lang file that will hold the
+        // "pretty" version of the property name as well as allow others to provide their own localizations.
+        // This language key is also used to get the tooltip for a property. The tooltip language key is langKey + ".tooltip".
+        // If no tooltip language key is defined in your .lang file, the tooltip will default to the property comment field.
+        prop.setLanguageKey("forge.configgui.disableVersionCheck");
+        disableVersionCheck = prop.getBoolean(disableVersionCheck);
+        propOrder.add(prop.getName());
+        
+        prop = config.get(Configuration.CATEGORY_GENERAL, "clumpingThreshold", 64, 
+                "Controls the number threshold at which Packet51 is preferred over Packet52, default and minimum 64, maximum 1024", 64, 1024);
+        prop.setLanguageKey("forge.configgui.clumpingThreshold").setRequiresWorldRestart(true);
         clumpingThreshold = prop.getInt(64);
         if (clumpingThreshold > 1024 || clumpingThreshold < 64)
         {
             clumpingThreshold = 64;
             prop.set(64);
         }
+        propOrder.add(prop.getName());
+
+        prop = config.get(CATEGORY_GENERAL, "sortRecipies", true);
+        prop.comment = "Set to true to enable the post initialization sorting of crafting recipes using Forge's sorter. May cause desyncing on conflicting recipies. MUST RESTART MINECRAFT IF CHANGED FROM THE CONFIG GUI.";
+        prop.setLanguageKey("forge.configgui.sortRecipies").setRequiresMcRestart(true);
+        shouldSortRecipies = prop.getBoolean(shouldSortRecipies);
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "forceDuplicateFluidBlockCrash", true);
+        prop.comment = "Set this to true to force a crash if more than one block attempts to link back to the same Fluid. Enabled by default.";
+        prop.setLanguageKey("forge.configgui.forceDuplicateFluidBlockCrash").setRequiresMcRestart(true);
+        forceDuplicateFluidBlockCrash = prop.getBoolean(true);
+        propOrder.add(prop.getName());
+
+        if (!forceDuplicateFluidBlockCrash)
+        {
+            FMLLog.warning("Disabling forced crashes on duplicate Fluid Blocks - USE AT YOUR OWN RISK");
+        }
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "removeErroringEntities", false);
-        prop.comment = "Set this to just remove any TileEntity that throws a error in there update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.";
+        prop.comment = "Set this to true to remove any Entity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.";
+        prop.setLanguageKey("forge.configgui.removeErroringEntities").setRequiresWorldRestart(true);
         removeErroringEntities = prop.getBoolean(false);
+        propOrder.add(prop.getName());
 
         if (removeErroringEntities)
         {
@@ -120,8 +178,10 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         }
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "removeErroringTileEntities", false);
-        prop.comment = "Set this to just remove any TileEntity that throws a error in there update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.";
+        prop.comment = "Set this to true to remove any TileEntity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.";
+        prop.setLanguageKey("forge.configgui.removeErroringTileEntities").setRequiresWorldRestart(true);
         removeErroringTileEntities = prop.getBoolean(false);
+        propOrder.add(prop.getName());
 
         if (removeErroringTileEntities)
         {
@@ -133,41 +193,55 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         //disableStitchedFileSaving = prop.getBoolean(true);
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "fullBoundingBoxLadders", false);
-        prop.comment = "Set this to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticable differences in mechanics so default is vanilla behavior. Default: false";
+        prop.comment = "Set this to true to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticable differences in mechanics so default is vanilla behavior. Default: false";
+        prop.setLanguageKey("forge.configgui.fullBoundingBoxLadders").setRequiresWorldRestart(true);
         fullBoundingBoxLadders = prop.getBoolean(false);
-
-        prop = config.get(Configuration.CATEGORY_GENERAL, "forceDuplicateFluidBlockCrash", true);
-        prop.comment = "Set this to force a crash if more than one block attempts to link back to the same Fluid. Enabled by default.";
-        forceDuplicateFluidBlockCrash = prop.getBoolean(true);
-
-        if (!forceDuplicateFluidBlockCrash)
-        {
-            FMLLog.warning("Disabling forced crashes on duplicate Fluid Blocks - USE AT YOUR OWN RISK");
-        }
+        propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "biomeSkyBlendRange", new int[] { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 });
         prop.comment = "Control the range of sky blending for colored skies in biomes.";
+        prop.setLanguageKey("forge.configgui.biomeSkyBlendRange");
         blendRanges = prop.getIntList();
+        propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "zombieBaseSummonChance", 0.1);
-        prop.comment = "Base zombie summoning spawn chance. Allows changing the bonus zombie summoning mechanic.";
+        prop = config.get(Configuration.CATEGORY_GENERAL, "zombieBaseSummonChance", 0.1, 
+                "Base zombie summoning spawn chance. Allows changing the bonus zombie summoning mechanic.", 0.0D, 1.0D);
+        prop.setLanguageKey("forge.configgui.zombieBaseSummonChance").setRequiresWorldRestart(true);
         zombieSummonBaseChance = prop.getDouble(0.1);
+        propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "zombieBabyChance", 0.05);
-        prop.comment = "Chance that a zombie (or subclass) is a baby. Allows changing the zombie spawning mechanic.";
+        prop = config.get(Configuration.CATEGORY_GENERAL, "zombieBabyChance", 0.05, 
+                "Chance that a zombie (or subclass) is a baby. Allows changing the zombie spawning mechanic.", 0.0D, 1.0D);
+        prop.setLanguageKey("forge.configgui.zombieBabyChance").setRequiresWorldRestart(true);
         zombieBabyChance = (float) prop.getDouble(0.05);
-
-        prop = config.get(CATEGORY_GENERAL, "sortRecipies", shouldSortRecipies);
-        prop.comment = "Set to true to enable the post initlization sorting of crafting recipes using Froge's sorter. May cause desyncing on conflicting recipies. ToDo: Set to true by default in 1.7";
-        shouldSortRecipies = prop.getBoolean(shouldSortRecipies);
-
-        prop = config.get(CATEGORY_GENERAL, "disableVersionCheck", disableVersionCheck);
-        prop.comment = "Set to true to disable Forge's version check mechanics, Forge queries a small json file on our server for version information. For more details see the ForgeVersion class in our github.";
-        disableVersionCheck = prop.getBoolean(disableVersionCheck);
+        propOrder.add(prop.getName());
+        
+        config.setCategoryPropertyOrder(CATEGORY_GENERAL, propOrder);
 
         if (config.hasChanged())
         {
             config.save();
+        }
+    }
+    
+    /**
+     * By subscribing to the OnConfigChangedEvent we are able to execute code when our config screens are closed.
+     * This implementation uses the optional configID string to handle multiple Configurations using one event handler.
+     */
+    @SubscribeEvent
+    public void onConfigChanged(OnConfigChangedEvent event)
+    {
+        if (getMetadata().modId.equals(event.modID) && !event.isWorldRunning)
+        {
+            if (Configuration.CATEGORY_GENERAL.equals(event.configID))
+            {
+                syncConfig(false);
+            }
+            else if ("chunkLoader".equals(event.configID))
+            {
+                ForgeChunkManager.syncConfigDefaults();
+                ForgeChunkManager.loadConfiguration();
+            }
         }
     }
 
@@ -190,6 +264,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     {
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
+        FMLCommonHandler.instance().bus().register(this);
     }
 
     @Subscribe
@@ -200,7 +275,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     }
 
     @Subscribe
-    public void onAvalible(FMLLoadCompleteEvent evt)
+    public void onAvailable(FMLLoadCompleteEvent evt)
     {
         if (shouldSortRecipies)
         {
