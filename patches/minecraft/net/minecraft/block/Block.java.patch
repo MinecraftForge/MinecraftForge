@@ -199,7 +199,7 @@
      }
  
      protected ItemStack func_149644_j(int p_149644_1_)
-@@ -1114,6 +1153,1099 @@
+@@ -1114,6 +1153,1118 @@
          return null;
      }
  
@@ -1111,6 +1111,8 @@
 +
 +    /**
 +     * Common way to recolour a block with an external tool
++     * Deprecated use {@link #recolourBlock(World world, int x, int y, int z, ForgeDirection side, int colour, EntityPlayer player) recolourBlock}.
++     * 
 +     * @param world The world
 +     * @param x X
 +     * @param y Y
@@ -1119,6 +1121,7 @@
 +     * @param colour The colour to change to
 +     * @return If the recolouring was successful
 +     */
++    @Deprecated
 +    public boolean recolourBlock(World world, int x, int y, int z, ForgeDirection side, int colour)
 +    {
 +        if (this == Blocks.field_150325_L)
@@ -1131,6 +1134,22 @@
 +            }
 +        }
 +        return false;
++    }
++
++    /**
++     * Common way to recolour a block with an external tool
++     * @param world The world
++     * @param x X
++     * @param y Y
++     * @param z Z
++     * @param side The side hit with the colouring tool
++     * @param colour The colour to change to
++     * @param player The player recolouring the block, may be null if not applicable.
++     * @return If the recolouring was successful
++     */
++    public boolean recolourBlock(World world, int x, int y, int z, ForgeDirection side, int colour, EntityPlayer player )
++    {
++        return recolourBlock(world, x, y, z, side, colour );
 +    }
 +
 +    /**
