@@ -22,7 +22,7 @@
  @SideOnly(Side.CLIENT)
  public class ItemRenderer
  {
-@@ -49,13 +57,24 @@
+@@ -49,6 +57,11 @@
  
      public void func_78443_a(EntityLivingBase p_78443_1_, ItemStack p_78443_2_, int p_78443_3_)
      {
@@ -34,21 +34,22 @@
          GL11.glPushMatrix();
          TextureManager texturemanager = this.field_78455_a.func_110434_K();
          Item item = p_78443_2_.func_77973_b();
-         Block block = Block.func_149634_a(item);
- 
--        if (p_78443_2_.func_94608_d() == 0 && item instanceof ItemBlock && RenderBlocks.func_147739_a(block.func_149645_b()))
+@@ -60,7 +73,13 @@
+             GL11.glEnable(GL11.GL_CULL_FACE);
+             OpenGlHelper.func_148821_a(770, 771, 1, 0);
+         }
+-
 +        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(p_78443_2_, type);
 +        if (customRenderer != null)
-         {
++        {
 +            texturemanager.func_110577_a(texturemanager.func_130087_a(p_78443_2_.func_94608_d()));
 +            ForgeHooksClient.renderEquippedItem(type, customRenderer, field_147720_h, p_78443_1_, p_78443_2_);
 +        }
-+        else if (p_78443_2_.func_94608_d() == 0 && item instanceof ItemBlock && RenderBlocks.func_147739_a(block.func_149645_b()))
-+        {
++        else
+         if (p_78443_2_.func_94608_d() == 0 && item instanceof ItemBlock && RenderBlocks.func_147739_a(block.func_149645_b()))
+         {
              texturemanager.func_110577_a(texturemanager.func_130087_a(0));
- 
-             if (p_78443_2_ != null && p_78443_2_.func_77973_b() instanceof ItemCloth)
-@@ -100,7 +119,7 @@
+@@ -104,7 +123,7 @@
              GL11.glTranslatef(-0.9375F, -0.0625F, 0.0F);
              func_78439_a(tessellator, f1, f2, f, f3, iicon.func_94211_a(), iicon.func_94216_b(), 0.0625F);
  
@@ -57,7 +58,7 @@
              {
                  GL11.glDepthFunc(GL11.GL_EQUAL);
                  GL11.glDisable(GL11.GL_LIGHTING);
-@@ -273,7 +292,7 @@
+@@ -282,7 +301,7 @@
          Render render;
          RenderPlayer renderplayer;
  
@@ -66,7 +67,7 @@
          {
              GL11.glPushMatrix();
              f13 = 0.8F;
-@@ -340,12 +359,21 @@
+@@ -349,12 +368,21 @@
              tessellator.func_78374_a((double)(128 + b0), (double)(0 - b0), 0.0D, 1.0D, 0.0D);
              tessellator.func_78374_a((double)(0 - b0), (double)(0 - b0), 0.0D, 0.0D, 0.0D);
              tessellator.func_78381_a();
@@ -91,7 +92,7 @@
  
              GL11.glPopMatrix();
          }
-@@ -446,17 +474,20 @@
+@@ -455,17 +483,20 @@
  
              if (itemstack.func_77973_b().func_77623_v())
              {

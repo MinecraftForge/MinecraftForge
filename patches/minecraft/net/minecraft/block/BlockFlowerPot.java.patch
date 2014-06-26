@@ -8,24 +8,26 @@
  import java.util.Random;
  import net.minecraft.block.material.Material;
  import net.minecraft.entity.player.EntityPlayer;
-@@ -139,12 +140,6 @@
-     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
+@@ -138,13 +139,6 @@
+ 
+     public void func_149749_a(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_)
      {
-         super.func_149690_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_6_, p_149690_7_);
--        TileEntityFlowerPot tileentityflowerpot = this.func_149929_e(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_);
+-        TileEntityFlowerPot tileentityflowerpot = this.func_149929_e(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_);
 -
 -        if (tileentityflowerpot != null && tileentityflowerpot.func_145965_a() != null)
 -        {
--            this.func_149642_a(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, new ItemStack(tileentityflowerpot.func_145965_a(), 1, tileentityflowerpot.func_145966_b()));
+-            this.func_149642_a(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, new ItemStack(tileentityflowerpot.func_145965_a(), 1, tileentityflowerpot.func_145966_b()));
 -        }
+-
+         super.func_149749_a(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, p_149749_5_, p_149749_6_);
      }
  
-     public void func_149749_a(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_)
-@@ -242,4 +237,14 @@
+@@ -231,4 +225,28 @@
  
          return new TileEntityFlowerPot(Item.func_150898_a((Block)object), b0);
      }
 +
++    /*============================FORGE START=====================================*/
 +    @Override
 +    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune)
 +    {
@@ -35,4 +37,17 @@
 +            ret.add(new ItemStack(te.func_145965_a(), 1, te.func_145966_b()));
 +        return ret;
 +    }
++    @Override
++    public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z, boolean willHarvest)
++    {
++        if (willHarvest) return true; //If it will harvest, delay deletion of the block until after getDrops
++        return super.removedByPlayer(world, player, x, y, z, willHarvest);
++    }
++    @Override
++    public void func_149636_a(World world, EntityPlayer player, int x, int y, int z, int meta)
++    {
++        super.func_149636_a(world, player, x, y, z, meta);
++        world.func_147468_f(x, y, z);
++    }
++    /*===========================FORGE END==========================================*/
  }

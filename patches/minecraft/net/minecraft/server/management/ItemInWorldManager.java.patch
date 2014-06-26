@@ -89,16 +89,23 @@
              {
                  float f = block.func_149737_a(this.field_73090_b, this.field_73090_b.field_70170_p, p_73082_1_, p_73082_2_, p_73082_3_) * (float)(l + 1);
  
-@@ -205,7 +240,7 @@
+@@ -202,10 +237,14 @@
+ 
+     private boolean func_73079_d(int p_73079_1_, int p_73079_2_, int p_73079_3_)
+     {
++        return removeBlock(p_73079_1_, p_73079_2_, p_73079_3_, false);
++    }
++    private boolean removeBlock(int p_73079_1_, int p_73079_2_, int p_73079_3_, boolean canHarvest)
++    {
          Block block = this.field_73092_a.func_147439_a(p_73079_1_, p_73079_2_, p_73079_3_);
          int l = this.field_73092_a.func_72805_g(p_73079_1_, p_73079_2_, p_73079_3_);
          block.func_149681_a(this.field_73092_a, p_73079_1_, p_73079_2_, p_73079_3_, l, this.field_73090_b);
 -        boolean flag = this.field_73092_a.func_147468_f(p_73079_1_, p_73079_2_, p_73079_3_);
-+        boolean flag = block.removedByPlayer(field_73092_a, field_73090_b, p_73079_1_, p_73079_2_, p_73079_3_);
++        boolean flag = block.removedByPlayer(field_73092_a, field_73090_b, p_73079_1_, p_73079_2_, p_73079_3_, canHarvest);
  
          if (flag)
          {
-@@ -217,29 +252,32 @@
+@@ -217,29 +256,32 @@
  
      public boolean func_73084_b(int p_73084_1_, int p_73084_2_, int p_73084_3_)
      {
@@ -138,11 +145,11 @@
  
                  if (itemstack != null)
                  {
-@@ -251,12 +289,18 @@
+@@ -251,12 +293,18 @@
                      }
                  }
  
-+                flag = this.func_73079_d(p_73084_1_, p_73084_2_, p_73084_3_);
++                flag = this.removeBlock(p_73084_1_, p_73084_2_, p_73084_3_, flag1);
                  if (flag && flag1)
                  {
                      block.func_149636_a(this.field_73092_a, this.field_73090_b, p_73084_1_, p_73084_2_, p_73084_3_, l);
@@ -157,7 +164,7 @@
              return flag;
          }
      }
-@@ -288,6 +332,7 @@
+@@ -288,6 +336,7 @@
              if (itemstack1.field_77994_a == 0)
              {
                  p_73085_1_.field_71071_by.field_70462_a[p_73085_1_.field_71071_by.field_70461_c] = null;
@@ -165,7 +172,7 @@
              }
  
              if (!p_73085_1_.func_71039_bw())
-@@ -301,31 +346,70 @@
+@@ -301,31 +350,70 @@
  
      public boolean func_73078_a(EntityPlayer p_73078_1_, World p_73078_2_, ItemStack p_73078_3_, int p_73078_4_, int p_73078_5_, int p_73078_6_, int p_73078_7_, float p_73078_8_, float p_73078_9_, float p_73078_10_)
      {

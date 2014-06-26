@@ -8,7 +8,7 @@
  import java.util.Iterator;
  import java.util.Random;
  import net.minecraft.block.material.Material;
-@@ -108,8 +109,6 @@
+@@ -109,8 +110,6 @@
          return p_149692_1_;
      }
  
@@ -17,12 +17,12 @@
      public void func_149681_a(World p_149681_1_, int p_149681_2_, int p_149681_3_, int p_149681_4_, int p_149681_5_, EntityPlayer p_149681_6_)
      {
          if (p_149681_6_.field_71075_bZ.field_75098_d)
-@@ -118,29 +117,38 @@
+@@ -118,19 +117,28 @@
+             p_149681_5_ |= 8;
              p_149681_1_.func_72921_c(p_149681_2_, p_149681_3_, p_149681_4_, p_149681_5_, 4);
          }
- 
 +        this.func_149697_b(p_149681_1_, p_149681_2_, p_149681_3_, p_149681_4_, p_149681_5_, 0);
-+
+ 
          super.func_149681_a(p_149681_1_, p_149681_2_, p_149681_3_, p_149681_4_, p_149681_5_, p_149681_6_);
      }
  
@@ -44,10 +44,11 @@
  
 +                if (tileentityskull == null) return ret;
 +
-                 if (tileentityskull.func_145904_a() == 3 && tileentityskull.func_145907_c() != null && tileentityskull.func_145907_c().length() > 0)
+                 if (tileentityskull.func_145904_a() == 3 && tileentityskull.func_152108_a() != null)
                  {
                      itemstack.func_77982_d(new NBTTagCompound());
-                     itemstack.func_77978_p().func_74778_a("SkullOwner", tileentityskull.func_145907_c());
+@@ -139,11 +147,10 @@
+                     itemstack.func_77978_p().func_74782_a("SkullOwner", nbttagcompound);
                  }
  
 -                this.func_149642_a(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, itemstack);

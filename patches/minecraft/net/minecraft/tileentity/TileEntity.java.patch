@@ -88,11 +88,11 @@
 +        Block type = func_145838_q();
 +        if (type == Blocks.field_150381_bn)
 +        {
-+            bb = AxisAlignedBB.func_72332_a().func_72299_a(field_145851_c, field_145848_d, field_145849_e, field_145851_c + 1, field_145848_d + 1, field_145849_e + 1);
++            bb = AxisAlignedBB.func_72330_a(field_145851_c, field_145848_d, field_145849_e, field_145851_c + 1, field_145848_d + 1, field_145849_e + 1);
 +        }
 +        else if (type == Blocks.field_150486_ae || type == Blocks.field_150447_bR)
 +        {
-+            bb = AxisAlignedBB.func_72332_a().func_72299_a(field_145851_c - 1, field_145848_d, field_145849_e - 1, field_145851_c + 2, field_145848_d + 2, field_145849_e + 2);
++            bb = AxisAlignedBB.func_72330_a(field_145851_c - 1, field_145848_d, field_145849_e - 1, field_145851_c + 2, field_145848_d + 2, field_145849_e + 2);
 +        }
 +        else if (type != null && type != Blocks.field_150461_bJ)
 +        {

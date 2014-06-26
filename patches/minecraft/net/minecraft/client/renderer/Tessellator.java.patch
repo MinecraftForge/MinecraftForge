@@ -110,7 +110,7 @@
          System.arraycopy(p_147565_1_.func_147572_a(), 0, this.field_78405_h, 0, p_147565_1_.func_147572_a().length);
          this.field_147569_p = p_147565_1_.func_147576_b();
          this.field_78406_i = p_147565_1_.func_147575_c();
-@@ -296,6 +324,19 @@
+@@ -301,6 +329,19 @@
  
      public void func_78377_a(double p_78377_1_, double p_78377_3_, double p_78377_5_)
      {
@@ -130,7 +130,7 @@
          ++this.field_78411_s;
  
          if (this.field_78400_o)
-@@ -324,12 +365,6 @@
+@@ -329,12 +370,6 @@
          this.field_78405_h[this.field_147569_p + 2] = Float.floatToRawIntBits((float)(p_78377_5_ + this.field_78417_x));
          this.field_147569_p += 8;
          ++this.field_78406_i;

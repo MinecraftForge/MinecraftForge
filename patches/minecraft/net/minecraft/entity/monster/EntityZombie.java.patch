@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityZombie.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityZombie.java
-@@ -37,6 +37,10 @@
+@@ -41,6 +41,10 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.EnumDifficulty;
  import net.minecraft.world.World;
@@ -11,7 +11,7 @@
  
  public class EntityZombie extends EntityMob
  {
-@@ -74,7 +78,7 @@
+@@ -78,7 +82,7 @@
          this.func_110148_a(SharedMonsterAttributes.field_111265_b).func_111128_a(40.0D);
          this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.23000000417232513D);
          this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111128_a(3.0D);
@@ -20,7 +20,7 @@
      }
  
      protected void func_70088_a()
-@@ -224,12 +228,28 @@
+@@ -233,12 +237,28 @@
                  entitylivingbase = (EntityLivingBase)p_70097_1_.func_76346_g();
              }
  
@@ -54,7 +54,7 @@
  
                  for (int l = 0; l < 50; ++l)
                  {
-@@ -244,7 +264,7 @@
+@@ -253,7 +273,7 @@
                          if (this.field_70170_p.func_72855_b(entityzombie.field_70121_D) && this.field_70170_p.func_72945_a(entityzombie, entityzombie.field_70121_D).isEmpty() && !this.field_70170_p.func_72953_d(entityzombie.field_70121_D))
                          {
                              this.field_70170_p.func_72838_d(entityzombie);
@@ -63,7 +63,7 @@
                              entityzombie.func_110161_a((IEntityLivingData)null);
                              this.func_110148_a(field_110186_bp).func_111121_a(new AttributeModifier("Zombie reinforcement caller charge", -0.05000000074505806D, 0));
                              entityzombie.func_110148_a(field_110186_bp).func_111121_a(new AttributeModifier("Zombie reinforcement callee charge", -0.05000000074505806D, 0));
-@@ -430,7 +450,7 @@
+@@ -439,7 +459,7 @@
  
          if (p_110161_1_1 == null)
          {

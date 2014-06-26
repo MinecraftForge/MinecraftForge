@@ -8,7 +8,7 @@
          }
          catch (Exception exception)
          {
-@@ -270,6 +271,7 @@
+@@ -284,6 +285,7 @@
              p_75752_1_.func_70020_e(nbttagcompound);
          }
  

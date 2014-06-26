@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/OpenGlHelper.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/OpenGlHelper.java
-@@ -24,6 +24,10 @@
-     public static boolean field_148824_g;
+@@ -54,6 +54,10 @@
+     private static String field_153196_B = "";
      private static final String __OBFID = "CL_00001179";
  
 +    /* Stores the last values sent into setLightmapTextureCoords */
@@ -10,8 +10,8 @@
 +
      public static void func_77474_a()
      {
-         field_77477_c = GLContext.getCapabilities().GL_ARB_multitexture && !GLContext.getCapabilities().OpenGL13;
-@@ -82,6 +86,12 @@
+         ContextCapabilities contextcapabilities = GLContext.getCapabilities();
+@@ -688,6 +692,12 @@
          {
              GL13.glMultiTexCoord2f(p_77475_0_, p_77475_1_, p_77475_2_);
          }

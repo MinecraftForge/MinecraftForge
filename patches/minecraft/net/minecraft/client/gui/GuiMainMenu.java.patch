@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiMainMenu.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiMainMenu.java
-@@ -30,6 +30,7 @@
+@@ -25,6 +25,7 @@
  import net.minecraft.world.demo.DemoWorldServer;
  import net.minecraft.world.storage.ISaveFormat;
  import net.minecraft.world.storage.WorldInfo;
@@ -8,7 +8,7 @@
  import org.apache.commons.io.Charsets;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-@@ -614,6 +615,7 @@
+@@ -507,6 +508,7 @@
                  this.func_73731_b(this.field_146289_q, brd, 2, this.field_146295_m - ( 10 + i * (this.field_146289_q.field_78288_b + 1)), 16777215);
              }
          }

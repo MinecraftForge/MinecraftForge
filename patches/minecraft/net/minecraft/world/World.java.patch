@@ -36,7 +36,7 @@
      public boolean field_72999_e;
      public List field_72996_f = new ArrayList();
      protected List field_72997_g = new ArrayList();
-@@ -98,6 +125,11 @@
+@@ -97,6 +124,11 @@
  
      public BiomeGenBase func_72807_a(final int p_72807_1_, final int p_72807_2_)
      {
@@ -48,7 +48,7 @@
          if (this.func_72899_e(p_72807_1_, 0, p_72807_2_))
          {
              Chunk chunk = this.func_72938_d(p_72807_1_, p_72807_2_);
-@@ -144,7 +176,13 @@
+@@ -143,7 +175,13 @@
          this.field_72984_F = p_i45368_5_;
          this.field_72986_A = new WorldInfo(p_i45368_4_, p_i45368_2_);
          this.field_73011_w = p_i45368_3_;
@@ -63,7 +63,7 @@
          VillageCollection villagecollection = (VillageCollection)this.field_72988_C.func_75742_a(VillageCollection.class, "villages");
  
          if (villagecollection == null)
-@@ -158,7 +196,10 @@
+@@ -157,7 +195,10 @@
              this.field_72982_D.func_82566_a(this);
          }
  
@@ -75,7 +75,7 @@
          this.field_73020_y = this.func_72970_h();
          this.func_72966_v();
          this.func_72947_a();
-@@ -173,7 +214,7 @@
+@@ -172,7 +213,7 @@
          this.field_72994_J = new int[32768];
          this.field_73019_z = p_i45369_1_;
          this.field_72984_F = p_i45369_5_;
@@ -84,7 +84,7 @@
          this.field_72986_A = p_i45369_1_.func_75757_d();
  
          if (p_i45369_4_ != null)
-@@ -201,6 +242,15 @@
+@@ -200,6 +241,15 @@
          this.field_73011_w.func_76558_a(this);
          this.field_73020_y = this.func_72970_h();
  
@@ -100,7 +100,7 @@
          if (!this.field_72986_A.func_76070_v())
          {
              try
-@@ -226,12 +276,12 @@
+@@ -225,12 +275,12 @@
              this.field_72986_A.func_76091_d(true);
          }
  
@@ -115,7 +115,7 @@
          }
          else
          {
-@@ -243,6 +293,20 @@
+@@ -242,6 +292,20 @@
          this.func_72947_a();
      }
  
@@ -136,7 +136,7 @@
      protected abstract IChunkProvider func_72970_h();
  
      protected void func_72963_a(WorldSettings p_72963_1_)
-@@ -296,7 +360,8 @@
+@@ -295,7 +359,8 @@
  
      public boolean func_147437_c(int p_147437_1_, int p_147437_2_, int p_147437_3_)
      {
@@ -146,7 +146,7 @@
      }
  
      public boolean func_72899_e(int p_72899_1_, int p_72899_2_, int p_72899_3_)
-@@ -928,7 +993,7 @@
+@@ -927,7 +992,7 @@
  
      public boolean func_72935_r()
      {
@@ -155,7 +155,7 @@
      }
  
      public MovingObjectPosition func_72933_a(Vec3 p_72933_1_, Vec3 p_72933_2_)
-@@ -1159,6 +1224,12 @@
+@@ -1158,6 +1223,12 @@
  
      public void func_72956_a(Entity p_72956_1_, String p_72956_2_, float p_72956_3_, float p_72956_4_)
      {
@@ -168,7 +168,7 @@
          for (int i = 0; i < this.field_73021_x.size(); ++i)
          {
              ((IWorldAccess)this.field_73021_x.get(i)).func_72704_a(p_72956_2_, p_72956_1_.field_70165_t, p_72956_1_.field_70163_u - (double)p_72956_1_.field_70129_M, p_72956_1_.field_70161_v, p_72956_3_, p_72956_4_);
-@@ -1167,6 +1238,12 @@
+@@ -1166,6 +1237,12 @@
  
      public void func_85173_a(EntityPlayer p_85173_1_, String p_85173_2_, float p_85173_3_, float p_85173_4_)
      {
@@ -181,7 +181,7 @@
          for (int i = 0; i < this.field_73021_x.size(); ++i)
          {
              ((IWorldAccess)this.field_73021_x.get(i)).func_85102_a(p_85173_1_, p_85173_2_, p_85173_1_.field_70165_t, p_85173_1_.field_70163_u - (double)p_85173_1_.field_70129_M, p_85173_1_.field_70161_v, p_85173_3_, p_85173_4_);
-@@ -1228,6 +1305,7 @@
+@@ -1227,6 +1304,7 @@
                  this.field_73010_i.add(entityplayer);
                  this.func_72854_c();
              }
@@ -414,7 +414,7 @@
                      }
                  }
              }
-@@ -2370,13 +2505,15 @@
+@@ -2378,13 +2513,15 @@
  
      public void func_147455_a(int p_147455_1_, int p_147455_2_, int p_147455_3_, TileEntity p_147455_4_)
      {
@@ -434,7 +434,7 @@
                  Iterator iterator = this.field_147484_a.iterator();
  
                  while (iterator.hasNext())
-@@ -2395,40 +2532,22 @@
+@@ -2403,40 +2540,22 @@
              else
              {
                  this.field_147482_g.add(p_147455_4_);
@@ -485,7 +485,7 @@
      }
  
      public void func_147457_a(TileEntity p_147457_1_)
-@@ -2445,8 +2564,7 @@
+@@ -2453,8 +2572,7 @@
      public static boolean func_147466_a(IBlockAccess p_147466_0_, int p_147466_1_, int p_147466_2_, int p_147466_3_)
      {
          Block block = p_147466_0_.func_147439_a(p_147466_1_, p_147466_2_, p_147466_3_);
@@ -495,7 +495,7 @@
      }
  
      public boolean func_147445_c(int p_147445_1_, int p_147445_2_, int p_147445_3_, boolean p_147445_4_)
-@@ -2458,7 +2576,7 @@
+@@ -2466,7 +2584,7 @@
              if (chunk != null && !chunk.func_76621_g())
              {
                  Block block = this.func_147439_a(p_147445_1_, p_147445_2_, p_147445_3_);
@@ -504,7 +504,7 @@
              }
              else
              {
-@@ -2483,8 +2601,7 @@
+@@ -2491,8 +2609,7 @@
  
      public void func_72891_a(boolean p_72891_1_, boolean p_72891_2_)
      {
@@ -514,7 +514,7 @@
      }
  
      public void func_72835_b()
-@@ -2494,6 +2611,11 @@
+@@ -2502,6 +2619,11 @@
  
      private void func_72947_a()
      {
@@ -526,7 +526,7 @@
          if (this.field_72986_A.func_76059_o())
          {
              this.field_73004_o = 1.0F;
-@@ -2507,6 +2629,11 @@
+@@ -2515,6 +2637,11 @@
  
      protected void func_72979_l()
      {
@@ -538,7 +538,7 @@
          if (!this.field_73011_w.field_76576_e)
          {
              if (!this.field_72995_K)
-@@ -2591,6 +2718,7 @@
+@@ -2599,6 +2726,7 @@
      {
          this.field_72993_I.clear();
          this.field_72984_F.func_76320_a("buildList");
@@ -546,7 +546,7 @@
          int i;
          EntityPlayer entityplayer;
          int j;
-@@ -2682,6 +2810,11 @@
+@@ -2693,6 +2821,11 @@
  
      public boolean func_72834_c(int p_72834_1_, int p_72834_2_, int p_72834_3_, boolean p_72834_4_)
      {
@@ -558,7 +558,7 @@
          BiomeGenBase biomegenbase = this.func_72807_a(p_72834_1_, p_72834_3_);
          float f = biomegenbase.func_150564_a(p_72834_1_, p_72834_2_, p_72834_3_);
  
-@@ -2737,6 +2870,11 @@
+@@ -2748,6 +2881,11 @@
  
      public boolean func_147478_e(int p_147478_1_, int p_147478_2_, int p_147478_3_, boolean p_147478_4_)
      {
@@ -570,7 +570,7 @@
          BiomeGenBase biomegenbase = this.func_72807_a(p_147478_1_, p_147478_3_);
          float f = biomegenbase.func_150564_a(p_147478_1_, p_147478_2_, p_147478_3_);
  
-@@ -2786,10 +2924,11 @@
+@@ -2797,10 +2935,11 @@
          else
          {
              Block block = this.func_147439_a(p_98179_1_, p_98179_2_, p_98179_3_);
@@ -585,7 +585,7 @@
              {
                  i1 = 1;
              }
-@@ -2889,7 +3028,7 @@
+@@ -2900,7 +3039,7 @@
                                      int j4 = i2 + Facing.field_71586_b[i4];
                                      int k4 = j2 + Facing.field_71587_c[i4];
                                      int l4 = k2 + Facing.field_71585_d[i4];
@@ -594,7 +594,7 @@
                                      i3 = this.func_72972_b(p_147463_1_, j4, k4, l4);
  
                                      if (i3 == l2 - i5 && i1 < this.field_72994_J.length)
-@@ -2987,10 +3126,10 @@
+@@ -2998,10 +3137,10 @@
      public List func_94576_a(Entity p_94576_1_, AxisAlignedBB p_94576_2_, IEntitySelector p_94576_3_)
      {
          ArrayList arraylist = new ArrayList();
@@ -609,7 +609,7 @@
  
          for (int i1 = i; i1 <= j; ++i1)
          {
-@@ -3013,10 +3152,10 @@
+@@ -3024,10 +3163,10 @@
  
      public List func_82733_a(Class p_82733_1_, AxisAlignedBB p_82733_2_, IEntitySelector p_82733_3_)
      {
@@ -624,7 +624,7 @@
          ArrayList arraylist = new ArrayList();
  
          for (int i1 = i; i1 <= j; ++i1)
-@@ -3093,11 +3232,14 @@
+@@ -3104,11 +3243,14 @@
  
      public void func_72868_a(List p_72868_1_)
      {
@@ -642,7 +642,7 @@
          }
      }
  
-@@ -3110,7 +3252,7 @@
+@@ -3121,7 +3263,7 @@
      {
          Block block1 = this.func_147439_a(p_147472_2_, p_147472_3_, p_147472_4_);
          AxisAlignedBB axisalignedbb = p_147472_5_ ? null : p_147472_1_.func_149668_a(this, p_147472_2_, p_147472_3_, p_147472_4_);
@@ -651,7 +651,7 @@
      }
  
      public PathEntity func_72865_a(Entity p_72865_1_, Entity p_72865_2_, float p_72865_3_, boolean p_72865_4_, boolean p_72865_5_, boolean p_72865_6_, boolean p_72865_7_)
-@@ -3215,7 +3357,8 @@
+@@ -3226,7 +3368,8 @@
  
      public int func_72878_l(int p_72878_1_, int p_72878_2_, int p_72878_3_, int p_72878_4_)
      {
@@ -661,7 +661,7 @@
      }
  
      public boolean func_72864_z(int p_72864_1_, int p_72864_2_, int p_72864_3_)
-@@ -3346,7 +3489,7 @@
+@@ -3374,7 +3517,7 @@
  
      public long func_72905_C()
      {
@@ -670,7 +670,7 @@
      }
  
      public long func_82737_E()
-@@ -3356,22 +3499,22 @@
+@@ -3384,22 +3527,22 @@
  
      public long func_72820_D()
      {
@@ -697,7 +697,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -3391,12 +3534,20 @@
+@@ -3419,12 +3562,20 @@
  
          if (!this.field_72996_f.contains(p_72897_1_))
          {
@@ -719,7 +719,7 @@
          return true;
      }
  
-@@ -3486,8 +3637,7 @@
+@@ -3514,8 +3665,7 @@
  
      public boolean func_72958_C(int p_72958_1_, int p_72958_2_, int p_72958_3_)
      {
@@ -729,7 +729,7 @@
      }
  
      public void func_72823_a(String p_72823_1_, WorldSavedData p_72823_2_)
-@@ -3541,12 +3691,12 @@
+@@ -3569,12 +3719,12 @@
  
      public int func_72800_K()
      {
@@ -744,7 +744,7 @@
      }
  
      public Random func_72843_D(int p_72843_1_, int p_72843_2_, int p_72843_3_)
-@@ -3570,7 +3720,7 @@
+@@ -3598,7 +3748,7 @@
      @SideOnly(Side.CLIENT)
      public double func_72919_O()
      {
@@ -753,7 +753,7 @@
      }
  
      public CrashReportCategory func_72914_a(CrashReport p_72914_1_)
-@@ -3641,25 +3791,24 @@
+@@ -3663,25 +3813,24 @@
  
      public void func_147453_f(int p_147453_1_, int p_147453_2_, int p_147453_3_, Block p_147453_4_)
      {
@@ -792,7 +792,7 @@
                  }
              }
          }
-@@ -3700,4 +3849,110 @@
+@@ -3722,4 +3871,110 @@
              iworldaccess.func_147584_b();
          }
      }
