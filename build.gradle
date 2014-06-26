@@ -35,7 +35,7 @@ repositories {
 
 minecraft {
     version = '1.7.10-pre4'
-    mcpVersion = '9.03'
+    mcpVersion = '9.05'
     fmlDir = projectDir.getAbsolutePath() + "/fml";
     mainClass = 'cpw.mods.fml.relauncher.ServerLaunchWrapper'
     tweakClass = 'cpw.mods.fml.common.launcher.FMLTweaker'
