@@ -1048,15 +1048,28 @@ public class Configuration
 
         resetChangedState();
     }
-
+    
     public void save()
+    {
+        save(false);
+    }
+    
+    public void save(boolean forceSave)
     {
         if (PARENT != null && PARENT != this)
         {
             PARENT.save();
             return;
         }
-
+        
+        if (!forceSave)
+        {
+            if (!hasChanged())
+            {
+                return;
+            }
+        }
+        
         try
         {
             if (file.getParentFile() != null)
