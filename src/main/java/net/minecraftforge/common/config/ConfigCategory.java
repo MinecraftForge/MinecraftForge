@@ -63,9 +63,9 @@ public class ConfigCategory implements Map<String, Property>
         if (obj instanceof ConfigCategory)
         {
             ConfigCategory cat = (ConfigCategory)obj;
-            return name.equals(cat.name) && children.equals(cat.children);  
+            return name.equals(cat.name) && children.equals(cat.children);
         }
-        
+
         return false;
     }
 
@@ -107,30 +107,30 @@ public class ConfigCategory implements Map<String, Property>
             for (String key : this.propertyOrder)
                 if (properties.containsKey(key))
                     set.add(properties.get(key));
-            
+
             return ImmutableList.copyOf(set);
         }
         else
             return ImmutableList.copyOf(properties.values());
     }
-    
+
     public ConfigCategory setConfigEntryClass(Class<? extends IConfigEntry> clazz)
     {
         this.customEntryClass = clazz;
         return this;
     }
-    
+
     public Class<? extends IConfigEntry> getConfigEntryClass()
     {
         return this.customEntryClass;
     }
-    
+
     public ConfigCategory setLanguageKey(String languagekey)
     {
         this.languagekey = languagekey;
         return this;
     }
-    
+
     public String getLanguagekey()
     {
         if (this.languagekey != null)
@@ -138,11 +138,10 @@ public class ConfigCategory implements Map<String, Property>
         else
             return getQualifiedName();
     }
-    
-    public ConfigCategory setComment(String comment)
+
+    public void setComment(String comment)
     {
         this.comment = comment;
-        return this;
     }
 
     public String getComment()
@@ -152,7 +151,7 @@ public class ConfigCategory implements Map<String, Property>
 
     /**
      * Sets the flag for whether or not this category can be edited while a world is running. Care should be taken to ensure
-     * that only properties that are truly dynamic can be changed from the in-game options menu. Only set this flag to 
+     * that only properties that are truly dynamic can be changed from the in-game options menu. Only set this flag to
      * true if all child properties/categories are unable to be modified while a world is running.
      */
     public ConfigCategory setRequiresWorldRestart(boolean requiresWorldRestart)
@@ -169,7 +168,7 @@ public class ConfigCategory implements Map<String, Property>
     {
         return this.requiresWorldRestart;
     }
-    
+
     /**
      * Sets whether or not this ConfigCategory should be allowed to show on config GUIs.
      * Defaults to true.
@@ -179,7 +178,7 @@ public class ConfigCategory implements Map<String, Property>
         this.showInGui = showInGui;
         return this;
     }
-    
+
     /**
      * Gets whether or not this ConfigCategory should be allowed to show on config GUIs.
      * Defaults to true unless set to false.
@@ -188,7 +187,7 @@ public class ConfigCategory implements Map<String, Property>
     {
         return showInGui;
     }
-    
+
     /**
      * Sets whether or not this ConfigCategory requires Minecraft to be restarted when changed.
      * Defaults to false. Only set this flag to true if ALL child properties/categories require
@@ -200,7 +199,7 @@ public class ConfigCategory implements Map<String, Property>
         this.requiresMcRestart = this.requiresWorldRestart = requiresMcRestart;
         return this;
     }
-    
+
     /**
      * Gets whether or not this ConfigCategory requires Minecraft to be restarted when changed.
      * Defaults to false unless set to true.
@@ -209,7 +208,7 @@ public class ConfigCategory implements Map<String, Property>
     {
         return this.requiresMcRestart;
     }
-    
+
     public ConfigCategory setPropertyOrder(List<String> propertyOrder)
     {
         this.propertyOrder = propertyOrder;
@@ -218,7 +217,7 @@ public class ConfigCategory implements Map<String, Property>
                 propertyOrder.add(s);
         return this;
     }
-    
+
     public List<String> getPropertyOrder()
     {
         if (this.propertyOrder != null)
@@ -226,7 +225,7 @@ public class ConfigCategory implements Map<String, Property>
         else
             return ImmutableList.copyOf(properties.keySet());
     }
-    
+
     public boolean containsKey(String key)
     {
         return properties.containsKey(key);
@@ -268,7 +267,7 @@ public class ConfigCategory implements Map<String, Property>
             {
                 write(out, pad0, "# ", line);
             }
-            
+
             write(out, pad0, COMMENT_SEPARATOR, NEW_LINE);
         }
 
@@ -309,7 +308,7 @@ public class ConfigCategory implements Map<String, Property>
             if (prop.isList())
             {
                 char type = prop.getType().getID();
-                
+
                 write(out, pad1, String.valueOf(type), ":", propName, " <");
 
                 for (String line : prop.getStringList())
@@ -332,7 +331,7 @@ public class ConfigCategory implements Map<String, Property>
 
         if (children.size() > 0)
             out.newLine();
-        
+
         for (ConfigCategory child : children)
         {
             child.write(out, indent + 1);
@@ -413,14 +412,13 @@ public class ConfigCategory implements Map<String, Property>
     }
 
     public Set<ConfigCategory> getChildren(){ return ImmutableSet.copyOf(children); }
-    
-    public ConfigCategory removeChild(ConfigCategory child)
+
+    public void removeChild(ConfigCategory child)
     {
         if (children.contains(child))
         {
             children.remove(child);
             changed = true;
         }
-        return this;
     }
 }
