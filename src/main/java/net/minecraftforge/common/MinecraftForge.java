@@ -20,7 +20,7 @@ public class MinecraftForge
     public static final EventBus EVENT_BUS = new EventBus();
     public static final EventBus TERRAIN_GEN_BUS = new EventBus();
     public static final EventBus ORE_GEN_BUS = new EventBus();
-    public static final String MC_VERSION = "1.7.2";
+    public static final String MC_VERSION = "1.7.10";
 
     static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();
 
