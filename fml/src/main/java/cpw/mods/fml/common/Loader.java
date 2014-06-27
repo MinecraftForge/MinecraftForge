@@ -38,6 +38,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultiset;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
@@ -199,7 +200,7 @@ public class Loader
         try
         {
             BiMap<String, ArtifactVersion> modVersions = HashBiMap.create();
-            for (ModContainer mod : getActiveModList())
+            for (ModContainer mod : Iterables.concat(getActiveModList(), ModAPIManager.INSTANCE.getAPIList()))
             {
                 modVersions.put(mod.getModId(), mod.getProcessedVersion());
             }

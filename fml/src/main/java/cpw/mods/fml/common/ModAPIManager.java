@@ -36,6 +36,7 @@ public class ModAPIManager {
         private String version;
         private Set<String> currentReferents;
         private Set<String> packages;
+        private boolean selfReferenced;
 
         public APIContainer(String providedAPI, String apiVersion, File source, ArtifactVersion ownerMod)
         {
@@ -67,7 +68,7 @@ public class ModAPIManager {
         @Override
         public String getModId()
         {
-            return "API:"+providedAPI;
+            return providedAPI;
         }
         @Override
         public List<ArtifactVersion> getDependants()
@@ -78,7 +79,7 @@ public class ModAPIManager {
         @Override
         public List<ArtifactVersion> getDependencies()
         {
-            return ImmutableList.of(ownerMod);
+            return selfReferenced ? ImmutableList.<ArtifactVersion>of() : ImmutableList.of(ownerMod);
         }
 
         @Override
@@ -117,6 +118,11 @@ public class ModAPIManager {
             {
                 addAPIReference(modId);
             }
+        }
+
+        void markSelfReferenced()
+        {
+            selfReferenced = true;
         }
     }
     public void registerDataTableAndParseAPI(ASMDataTable dataTable)
@@ -181,6 +187,12 @@ public class ModAPIManager {
                 do
                 {
                     APIContainer parent = apiContainers.get(owner.getLabel());
+                    if (parent == container)
+                    {
+                        FMLLog.finer("APIContainer %s is it's own parent. skipping", owner);
+                        container.markSelfReferenced();
+                        break;
+                    }
                     FMLLog.finer("Removing upstream parent %s from %s", parent.ownerMod.getLabel(), container);
                     container.currentReferents.remove(parent.ownerMod.getLabel());
                     container.referredMods.remove(parent.ownerMod);
@@ -212,5 +224,10 @@ public class ModAPIManager {
     public boolean hasAPI(String modId)
     {
         return apiContainers.containsKey(modId);
+    }
+
+    public Iterable<? extends ModContainer> getAPIList()
+    {
+        return apiContainers.values();
     }
 }
