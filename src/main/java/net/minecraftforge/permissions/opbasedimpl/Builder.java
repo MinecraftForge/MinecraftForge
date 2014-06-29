@@ -1,13 +1,9 @@
 package net.minecraftforge.permissions.opbasedimpl;
 
-import com.mojang.authlib.GameProfile;
-
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraftforge.permissions.api.PermBuilder;
+import net.minecraftforge.permissions.api.PermissionsManager;
 import net.minecraftforge.permissions.api.context.IContext;
-import cpw.mods.fml.common.FMLCommonHandler;
 
 public class Builder implements PermBuilder<Builder>
 {
@@ -23,26 +19,9 @@ public class Builder implements PermBuilder<Builder>
         else if (OpPermFactory.allowedPerms.contains(node))
             return true;
         else if (OpPermFactory.opPerms.contains(node))
-            return isOp(player.getGameProfile());
+            return PermissionsManager.getGroupForName("OP").isPlayerInGroup(player);
         else
             throw new UnregisterredPermissionException(node);
-    }
-
-    private static boolean isOp(GameProfile profile)
-    {
-        MinecraftServer server = FMLCommonHandler.instance().getSidedDelegate().getServer();
-
-        // SP and LAN
-        if (server.isSinglePlayer())
-        {
-            if (server instanceof IntegratedServer)
-                return server.getServerOwner().equalsIgnoreCase(profile.getName());
-            else
-                return server.getConfigurationManager().func_152596_g(profile);
-        }
-
-        // SMP
-        return server.getConfigurationManager().func_152596_g(profile);
     }
     
     @Override

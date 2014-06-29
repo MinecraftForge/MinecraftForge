@@ -48,8 +48,9 @@ public interface IGroup {
      * Set the parent of the group
      * 
      * @param parent the parent group
+     * @return 
      */
-    void setParent(IGroup parent);
+    IGroup setParent(IGroup parent);
  
     /**
      * Get the group name

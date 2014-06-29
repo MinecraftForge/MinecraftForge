@@ -12,19 +12,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.mojang.authlib.GameProfile;
+
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraft.dispenser.ILocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.permissions.api.IGroup;
 import net.minecraftforge.permissions.api.PermBuilderFactory;
+import net.minecraftforge.permissions.api.PermissionsManager;
 import net.minecraftforge.permissions.api.context.EntityContext;
 import net.minecraftforge.permissions.api.context.EntityLivingContext;
 import net.minecraftforge.permissions.api.context.IContext;
@@ -43,6 +50,8 @@ public class OpPermFactory implements PermBuilderFactory<Builder>
     public static final IContext GLOBAL = new IContext() {};
     private static int userPermissionLevel = 0;
     private static int opPermissionLevel = MinecraftServer.getServer().getOpPermissionLevel();
+    
+    public static OpPermFactory INSTANCE;
     
     @Override
     public String getName()
@@ -91,14 +100,19 @@ public class OpPermFactory implements PermBuilderFactory<Builder>
         
         if (FMLCommonHandler.instance().getSide().isClient())
         {
-            prop = config.get("Levels", "opPermissionLevel", 0, "Permission level for ops. Only effective in singleplayer.");
-            opPermissionLevel = prop.getInt(0);
+            prop = config.get("Levels", "opPermissionLevel", 4, "Permission level for ops. Only effective in singleplayer.");
+            opPermissionLevel = prop.getInt(4);
         }
         
         config.save();
         
-        groups.put("ALL", new OpBasedGroup("ALL"));
-        groups.put("OP", new OpBasedGroup("OP"));
+        IGroup all = new OpBasedGroup("ALL");
+        IGroup ops = new OpBasedGroup("OP").setParent(all);
+        
+        groups.put("ALL", all);
+        groups.put("OP", ops);
+        
+        FMLCommonHandler.instance().bus().register(INSTANCE);
     }
 
     @Override
@@ -116,7 +130,8 @@ public class OpPermFactory implements PermBuilderFactory<Builder>
     @Override
     public IContext getDefaultContext(EntityPlayer player)
     {
-        return new PlayerContext(player);
+        IContext context = new PlayerContext(player);
+        return context;
     }
 
     @Override
@@ -221,6 +236,35 @@ public class OpPermFactory implements PermBuilderFactory<Builder>
     private static boolean isRegistered(String node)
     {
         return opPerms.contains(node) || allowedPerms.contains(node) || deniedPerms.contains(node);
+    }
+    
+    @SubscribeEvent
+    public void sortPlayers(PlayerLoggedInEvent e)
+    {
+        if (isOp(e.player.getGameProfile()))
+            PermissionsManager.getGroupForName("OP").addPlayerToGroup(e.player);
+        
+        PermissionsManager.getGroupForName("ALL").addPlayerToGroup(e.player);
+        
+        for (IGroup g : PermissionsManager.getGroupsForPlayer(e.player))
+        FMLLog.info("Player %s1 placed in group %s2", e.player.getDisplayName(), g.getName());
+    }
+    
+    private static boolean isOp(GameProfile profile)
+    {
+        MinecraftServer server = FMLCommonHandler.instance().getSidedDelegate().getServer();
+
+        // SP and LAN
+        if (server.isSinglePlayer())
+        {
+            if (server instanceof IntegratedServer)
+                return server.getServerOwner().equalsIgnoreCase(profile.getName());
+            else
+                return server.getConfigurationManager().func_152596_g(profile);
+        }
+
+        // SMP
+        return server.getConfigurationManager().func_152596_g(profile);
     }
     
 }

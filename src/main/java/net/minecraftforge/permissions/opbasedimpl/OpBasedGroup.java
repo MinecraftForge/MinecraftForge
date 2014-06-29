@@ -35,7 +35,7 @@ public class OpBasedGroup implements IGroup
     @Override
     public boolean isPlayerInGroup(EntityPlayer player)
     {
-        return players.contains(player.getPersistentID());
+        return players.contains(player.getPersistentID()) || parent.isPlayerInGroup(player);
     }
  
     @Override
@@ -45,9 +45,10 @@ public class OpBasedGroup implements IGroup
     }
     
     @Override
-    public void setParent(IGroup parent)
+    public IGroup setParent(IGroup parent)
     {
         this.parent = parent;
+        return this;
     }
     
     @Override

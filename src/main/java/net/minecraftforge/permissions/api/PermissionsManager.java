@@ -20,8 +20,8 @@ public final class PermissionsManager
     }
 
     private static       boolean            wasSet  = false;
-    private static final PermBuilderFactory DEFAULT = new OpPermFactory(); //Forge init takes this as default permissions API provider
-    private static PermBuilderFactory FACTORY;
+    private static final PermBuilderFactory DEFAULT = OpPermFactory.INSTANCE; //Forge init takes this as default permissions API provider
+    private static PermBuilderFactory FACTORY = getPermFactory();
 
     /**
      * Check a permission
@@ -34,11 +34,13 @@ public final class PermissionsManager
         if (player instanceof FakePlayer)
             throw new IllegalArgumentException("You cannot check permissions with a fake player. Use PermManager.getPerm(username, node)");
 
-        IContext context = FACTORY.getDefaultContext(player);
-        return FACTORY.builder(player, node)
-                      .setUserContext(context)
-                      .setTargetContext(context)
-                      .check();
+        PermBuilder builder = FACTORY.builder();
+        builder.setPermNode(node);
+        builder.setUser(player);
+        builder.setUserContext(FACTORY.getDefaultContext(player));
+        builder.setTargetContext(FACTORY.getDefaultContext(player));
+        
+        return builder.check();
     }
 
     /**
