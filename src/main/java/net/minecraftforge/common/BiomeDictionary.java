@@ -32,7 +32,7 @@ public class BiomeDictionary
      WATER,
      DESERT,
      FROZEN,
-     JUNGLE, //** Now defined as having Jungle wood along with the high tree count, temperature and humidity **//
+     JUNGLE, /* Is now it's own special category defined explictly by having jungle wood and/or cocoa bean pods*/
      WASTELAND,
      BEACH,
      NETHER,
@@ -212,6 +212,7 @@ public class BiomeDictionary
      * 
      * DO NOT call this during world generation
      */
+     
     public static void registerAllBiomesAndGenerateEvents()
     {
         for(int i = 0; i < BiomeGenBase.getBiomeGenArray().length; i++)
@@ -242,11 +243,15 @@ public class BiomeDictionary
      * 
      * @param biome the biome to be considered
      */
+     
+     
+     /*This will contain custom modifications to the register, it's probably not done right in any way.*/
+     
     public static void makeBestGuess(BiomeGenBase biome)
     {    
         if(biome.theBiomeDecorator.treesPerChunk >= 3)
         {
-            if(biome.isHighHumidity() && biome.temperature >= 1.0F && //**check for jungle wood**)
+            if(biome.isHighHumidity() && biome.temperature >= 1.0F && /*check for coca pods or jungle leaves/wood*/)
             {
                 BiomeDictionary.registerBiomeType(biome, JUNGLE);
             }
@@ -281,7 +286,7 @@ public class BiomeDictionary
            }
         }
 
-	if(biome.theBiomeDecorator.treeHeight <= 2 && biome.temperature >= 0.25F //** Not sure if it will work of not. **//)
+	if(biome.theBiomeDecorator.treeHeight <= 2 && biome.temperature >= 0.25F /* Not sure if it will work of not. */)
 	{
           BiomeDictionary.registerBiomeType(biome, SHRUBLAND);
 	}
@@ -312,7 +317,7 @@ public class BiomeDictionary
             BiomeDictionary.registerBiomeType(biome, DESERT);
         }
 	
-	if(//** Check if block ID is 172.  I have no clue how to do this.//);
+	if(/** Check if block ID is 172.  I have no clue how to do this./);
 	{ 
                BiomeDictionary.registerBiomeType(biome, MESA);
 	}
