@@ -16,10 +16,10 @@ public class BiomeDictionary
      DECIDUOUSFOREST,  //** Seasonal forests, Maple Woods and so on**//
      TAIGA,  //** Colder forests**//
      RAINFOREST, //** Takes place of Jungle's normal properties**//
-     GRASSLAND, //**Plains with higher humidity, but still same temperature.  Don't know how to define.**//
+     WETLAND, //**Plains with high humidity.**//
      BOG, //** Drier swamps.  Don't know how to define.**//
-     SHRUBLAND, //**Defined by very low tree heights- look at BoP for examples of this.**//
-     GROVE, //**Relatively less tree gen, but still temperature temperature**//
+     SHRUBLAND, //**Defined by very low tree heights and non-frozen temperature- look at BoP for examples of this with heathland, scrub land, shrubland and so on.**//
+     GROVE, //**Relatively less tree gen, but still temperate temperature**//
      MESA,  //**Defined by the use of hard clay blocks in world gen**//
      SAVANNA, //**Less trees than a forest, and high temperature**//
      HAUNTED, //**Special, basically meant to define biomes that have haunted traits about them like ghosts and dark energies.  Manually defined.**//
