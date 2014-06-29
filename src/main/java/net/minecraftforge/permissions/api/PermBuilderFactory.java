@@ -77,12 +77,6 @@ public interface PermBuilderFactory<T extends PermBuilder>
     void registerPermissions(List<PermReg> perms);
     
     /**
-     * Called on ServerStarted, during Forge's init
-     * Do any implementation-specific handling here.
-     */
-    void initialize();
-    
-    /**
      * Get the groups a player is in
      * @param player
      * @return A list of groups the player is in

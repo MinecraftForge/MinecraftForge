@@ -50,8 +50,7 @@ public class OpPermFactory implements PermBuilderFactory<Builder>
         return "Forge";
     }
     
-    @Override
-    public void initialize()
+    public static void initialize()
     {
         String fileData;
         fileData = "This file will only be loaded and read if you have no permission framework installed.";
