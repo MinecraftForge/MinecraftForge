@@ -239,15 +239,16 @@
          int k = p_147049_1_.func_78020_k();
          int l = 28 * k;
          byte b0 = 0;
-@@ -828,6 +913,7 @@
+@@ -828,6 +913,8 @@
          }
  
          GL11.glDisable(GL11.GL_LIGHTING);
 +        GL11.glColor3f(1F, 1F, 1F); //Forge: Reset color in case Items change it.
++        GL11.glEnable(GL11.GL_BLEND); //Forge: Make sure blend is enabled else tabs show a white border.
          this.func_73729_b(l, i1, j, k, 28, b0);
          this.field_73735_i = 100.0F;
          field_146296_j.field_77023_b = 100.0F;
-@@ -854,6 +940,15 @@
+@@ -854,6 +941,15 @@
          {
              this.field_146297_k.func_147108_a(new GuiStats(this, this.field_146297_k.field_71439_g.func_146107_m()));
          }
