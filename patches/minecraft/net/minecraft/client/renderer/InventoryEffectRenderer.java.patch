@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/InventoryEffectRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/InventoryEffectRenderer.java
+@@ -75,6 +75,8 @@
+                     this.func_73729_b(i + 6, j + 7, 0 + l % 8 * 18, 198 + l / 8 * 18, 18, 18);
+                 }
+ 
++                potion.renderInventoryEffect(i, j, potioneffect, field_146297_k);
++                if (!potion.shouldRenderInvText(potioneffect)) continue;
+                 String s1 = I18n.func_135052_a(potion.func_76393_a(), new Object[0]);
+ 
+                 if (potioneffect.func_76458_c() == 1)
