@@ -19,7 +19,7 @@ public class BiomeDictionary
      WETLAND, //**Plains with high humidity.**//
      BOG, //** Drier swamps.  Don't know how to define.**//
      SHRUBLAND, //**Defined by very low tree heights and non-frozen temperature- look at BoP for examples of this with heathland, scrub land, shrubland and so on.**//
-     GROVE, //**Relatively less tree gen, but still temperate temperature**//
+     GROVE, //**Relatively less tree gen, but still temperate temperature.  Stuff like meadows also belong here.**//
      MESA,  //**Defined by the use of hard clay blocks in world gen**//
      SAVANNA, //**Less trees than a forest, and high temperature**//
      HAUNTED, //**Special, basically meant to define biomes that have haunted traits about them like ghosts and dark energies.  Manually defined.**//
@@ -32,7 +32,7 @@ public class BiomeDictionary
      WATER,
      DESERT,
      FROZEN,
-     JUNGLE, /* Is now it's own special category defined explictly by having jungle wood and/or cocoa bean pods*/
+     JUNGLE, /* Is now its own special category defined explictly by having jungle wood and/or cocoa bean pods*/
      WASTELAND,
      BEACH,
      NETHER,
