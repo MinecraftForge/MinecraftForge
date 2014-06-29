@@ -373,7 +373,7 @@ public class BiomeDictionary
         registerBiomeType(coldTaigaHills,      TAIGA,   FROZEN);
         registerBiomeType(megaTaiga,           TAIGA          );
         registerBiomeType(megaTaigaHills,      TAIGA          );
-        registerBiomeType(extremeHillsPlus,    FOREST,   TAIGA);
+        registerBiomeType(extremeHillsPlus,    MOUNTAIN, TAIGA);
         registerBiomeType(savanna,             SAVANNA        );
         registerBiomeType(savannaPlateau,      SAVANNA        );
         registerBiomeType(mesa,                MESA           );
