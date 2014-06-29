@@ -32,7 +32,7 @@ public class BiomeDictionary
      WATER,
      DESERT,
      FROZEN,
-     JUNGLE, /* Is now its own special category defined explictly by having jungle wood and/or cocoa bean pods*/
+     JUNGLE, /* Jungle is now in its own special category defined explictly by having jungle wood and/or cocoa bean pods*/
      WASTELAND,
      BEACH,
      NETHER,
