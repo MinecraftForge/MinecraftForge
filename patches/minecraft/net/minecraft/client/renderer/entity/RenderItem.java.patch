@@ -310,7 +310,7 @@
 +
 +    private static RenderItem instance;
 +    /**
-+     * Returns a single lazy loaded instance of RenderItem, for use in mods who 
++     * Returns a single lazy loaded instance of RenderItem, for use in mods who
 +     * don't care about the interaction of other objects on the current state of the RenderItem they are using.
 +     * @return A global instance of RenderItem
 +     */
