@@ -14,7 +14,7 @@ public class BiomeDictionary
     {
      FOREST,
      DECIDUOUSFOREST,  //** Seasonal forests, Maple Woods and so on**//
-     TAIGA,  //** Colder forests**//
+     TAIGA,  //** Spruce forests, lower than warm temperatures**//
      RAINFOREST, //** Takes place of Jungle's normal properties**//
      WETLAND, //**Plains with high humidity.**//
      BOG, //** Drier swamps.  Don't know how to define.**//
@@ -23,7 +23,7 @@ public class BiomeDictionary
      MESA,  //**Defined by the use of hard clay blocks in world gen**//
      SAVANNA, //**Less trees than a forest, and high temperature**//
      HAUNTED, //**Special, basically meant to define biomes that have haunted traits about them like ghosts and dark energies.  Manually defined.**//
-     INFESTED, //** Special, meant to define biomes that have a infestation of silver fish or other unpleasant pests.  Manually defined. **//
+     TROPICAL, /* Special, defined by having "tropical" traits like palm trees and being a island paradise.  Manually added.*/
      PLAINS,
      FOREST,
      MOUNTAIN,
@@ -317,7 +317,7 @@ public class BiomeDictionary
             BiomeDictionary.registerBiomeType(biome, DESERT);
         }
 	
-	if(/** Check if block ID is 172.  I have no clue how to do this./);
+	if(/* Check if block ID is 172.  I have no clue how to do this.*/ && biome.temperature >= 1.0F);
 	{ 
                BiomeDictionary.registerBiomeType(biome, MESA);
 	}
