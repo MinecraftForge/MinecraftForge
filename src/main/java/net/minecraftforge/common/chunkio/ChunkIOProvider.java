@@ -34,7 +34,7 @@ class ChunkIOProvider implements AsynchronousExecutor.CallBackProvider<QueuedChu
     public void callStage2(QueuedChunk queuedChunk, net.minecraft.world.chunk.Chunk chunk) throws RuntimeException {
         if(chunk == null) {
             // If the chunk loading failed just do it synchronously (may generate)
-            queuedChunk.provider.loadChunk(queuedChunk.x, queuedChunk.z);
+            queuedChunk.provider.originalLoadChunk(queuedChunk.x, queuedChunk.z);
             return;
         }
 
