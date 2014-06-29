@@ -1,8 +1,12 @@
 package cpw.mods.fml.common.network.simpleimpl;
 
 import org.apache.logging.log4j.Level;
+
 import net.minecraft.network.INetHandler;
+
+import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
+
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -12,18 +16,18 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 public class SimpleChannelHandlerWrapper<REQ extends IMessage, REPLY extends IMessage> extends SimpleChannelInboundHandler<REQ> {
-    private IMessageHandler<REQ, REPLY> messageHandler;
-    private Side side;
-    public SimpleChannelHandlerWrapper(Class<? extends IMessageHandler<REQ, REPLY>> handler, Side side, Class<REQ> requestType)
+    private final IMessageHandler<? super REQ, ? extends REPLY> messageHandler;
+    private final Side side;
+    
+    public SimpleChannelHandlerWrapper(Class<? extends IMessageHandler<? super REQ, ? extends REPLY>> handler, Side side, Class<REQ> requestType)
+    {
+        this(SimpleNetworkWrapper.instantiate(handler), side, requestType);
+    }
+    
+    public SimpleChannelHandlerWrapper(IMessageHandler<? super REQ, ? extends REPLY> handler, Side side, Class<REQ> requestType)
     {
         super(requestType);
-        try
-        {
-            messageHandler = handler.newInstance();
-        } catch (Exception e)
-        {
-            Throwables.propagate(e);
-        }
+        messageHandler = Preconditions.checkNotNull(handler, "IMessageHandler must not be null");
         this.side = side;
     }
     @Override

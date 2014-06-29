@@ -1,7 +1,11 @@
 package cpw.mods.fml.common.network.simpleimpl;
 
 import io.netty.channel.ChannelFutureListener;
+
 import java.util.EnumMap;
+
+import com.google.common.base.Throwables;
+
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
@@ -99,6 +103,31 @@ public class SimpleNetworkWrapper {
      */
     public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType, int discriminator, Side side)
     {
+        registerMessage(instantiate(messageHandler), requestMessageType, discriminator, side);
+    }
+    
+    static <REQ extends IMessage, REPLY extends IMessage> IMessageHandler<? super REQ, ? extends REPLY> instantiate(Class<? extends IMessageHandler<? super REQ, ? extends REPLY>> handler)
+    {
+        try
+        {
+            return handler.newInstance();
+        } catch (Exception e)
+        {
+            throw Throwables.propagate(e);
+        }
+    }
+    
+    /**
+     * Register a message and it's associated handler. The message will have the supplied discriminator byte. The message handler will
+     * be registered on the supplied side (this is the side where you want the message to be processed and acted upon).
+     *
+     * @param messageHandler the message handler instance
+     * @param requestMessageType the message type
+     * @param discriminator a discriminator byte
+     * @param side the side for the handler
+     */
+    public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestMessageType, int discriminator, Side side)
+    {
         packetCodec.addDiscriminator(discriminator, requestMessageType);
         FMLEmbeddedChannel channel = channels.get(side);
         String type = channel.findChannelHandlerNameForType(SimpleIndexedCodec.class);
@@ -112,19 +141,19 @@ public class SimpleNetworkWrapper {
         }
     }
 
-    private <REQ extends IMessage, REPLY extends IMessage, NH extends INetHandler> void addServerHandlerAfter(FMLEmbeddedChannel channel, String type, Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestType)
+    private <REQ extends IMessage, REPLY extends IMessage, NH extends INetHandler> void addServerHandlerAfter(FMLEmbeddedChannel channel, String type, IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestType)
     {
         SimpleChannelHandlerWrapper<REQ, REPLY> handler = getHandlerWrapper(messageHandler, Side.SERVER, requestType);
-        channel.pipeline().addAfter(type, messageHandler.getName(), handler);
+        channel.pipeline().addAfter(type, messageHandler.getClass().getName(), handler);
     }
 
-    private <REQ extends IMessage, REPLY extends IMessage, NH extends INetHandler> void addClientHandlerAfter(FMLEmbeddedChannel channel, String type, Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestType)
+    private <REQ extends IMessage, REPLY extends IMessage, NH extends INetHandler> void addClientHandlerAfter(FMLEmbeddedChannel channel, String type, IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestType)
     {
         SimpleChannelHandlerWrapper<REQ, REPLY> handler = getHandlerWrapper(messageHandler, Side.CLIENT, requestType);
-        channel.pipeline().addAfter(type, messageHandler.getName(), handler);
+        channel.pipeline().addAfter(type, messageHandler.getClass().getName(), handler);
     }
 
-    private <REPLY extends IMessage, REQ extends IMessage> SimpleChannelHandlerWrapper<REQ, REPLY> getHandlerWrapper(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Side side, Class<REQ> requestType)
+    private <REPLY extends IMessage, REQ extends IMessage> SimpleChannelHandlerWrapper<REQ, REPLY> getHandlerWrapper(IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Side side, Class<REQ> requestType)
     {
         return new SimpleChannelHandlerWrapper<REQ, REPLY>(messageHandler, side, requestType);
     }
