@@ -241,86 +241,80 @@ public class BiomeDictionary
      */
 
     public static void makeBestGuess(BiomeGenBase biome)
-    {    
-        if(biome.theBiomeDecorator.treesPerChunk >= 3)
-        {
-            if(biome.isHighHumidity() && biome.temperature >= 1.0F && /*check for coca pods or jungle leaves/wood*/)
-            {
-                BiomeDictionary.registerBiomeType(biome, JUNGLE);
-            }
-            else if(biome.temperature <= 1.0F && biome.temperature >= 0.6F)
-            {
-                BiomeDictionary.registerBiomeType(biome, RAINFOREST);
-            }
-            else if(!biome.isHighHumidity() 
-            {
-                BiomeDictionary.registerBiomeType(biome, FOREST);
-            }
-            else if(biome.temperature <= 0.25F)
-            {
-		BiomeDictionary.registerBiomeType(biome, TAIGA);
-     	    }
-        }
-
-     if(!biome.isHighHumidity() || biome.rootHeight >= 0.0F)
+       for(int i = 0; i < BiomeGenBase.getBiomeGenArray().length; i++)
         {
-             BiomeDictionary.registerBiomeType(biome, PLAINS);
-        }
+            BiomeGenBase biome = BiomeGenBase.getBiomeGenArray()[i];
 
-       if(biome.theBiomeDecorator.treesPerChunk <= 3 && biome.theBiomeDecorator.treesPerChunk >= 1 && biome.temperature >= 0.5F)
+            if(biome == null)
+            {
+                continue;
+            }
+
+            if (biome.theBiomeDecorator instanceof DeferredBiomeDecorator)
+            {
+                DeferredBiomeDecorator decorator = (DeferredBiomeDecorator) biome.theBiomeDecorator;
+                decorator.fireCreateEventAndReplace(biome);
+            }
+
+            checkRegistration(biome);
+        }
+    }
+
+    /**
+     * Automatically looks for and registers a given biome with appropriate tags
+     * This method is called automatically if a biome has not been registered with any tags,
+     * And another method requests information about it
+     * 
+     * NOTE: You can opt out of having your biome registered by registering it as type NULL
+     * 
+     * @param biome the biome to be considered
+     */
+    public static void makeBestGuess(BiomeGenBase biome)
+    {    
+        if(biome.theBiomeDecorator.treesPerChunk >= 3)
         {
-	        if(biome.temperature >= 1.0F)
+            if(biome.isHighHumidity() && biome.temperature >= 1.0F)
             {
-                BiomeDictionary.registerBiomeType(biome, SAVANNA);
+                BiomeDictionary.registerBiomeType(biome, JUNGLE);
             }
-            
-            else if (!biome.isHighHumidity() && biome.temperature >= 0.3F)
+            else if(!biome.isHighHumidity())
             {
-                BiomeDictionary.registerBiomeType(biome, GROVE);
+                BiomeDictionary.registerBiomeType(biome, FOREST);
+            }
+        }
+        else if(biome.heightVariation <= 0.3F && biome.heightVariation >= 0.0F)
+        {
+            if(!biome.isHighHumidity() || biome.rootHeight >= 0.0F)
+            {
+                BiomeDictionary.registerBiomeType(biome, PLAINS);
             }
         }
 
-    	if(biome.theBiomeDecorator.treeHeight <= 2 && biome.temperature >= 0.25F /* Not sure if it will work of not. */)
-	    {
-            BiomeDictionary.registerBiomeType(biome, SHRUBLAND);
-	    }
-
-        if(biome.isHighHumidity() && biome.rootHeight < 0.0F && biome.heightVariation <= 0.3F && biome.heightVariation >= 0.0F && biome.theBiomeDecorator.treesPerChunk >= 1))
-            {
-                BiomeDictionary.registerBiomeType(biome, SWAMP);
-            }
-            
-            else if(biome.isHighHumidity() && biome.rootHeight < 0.0F && (biome.heightVariation <= 0.3F && biome.heightVariation >= 0.0F)
-            {
-                BiomeDictionary.registerBiomeType(biome, MARSH);
-            }
-        }
-
-        if(biome.rootHeight <= -0.5F)
-        {
-            BiomeDictionary.registerBiomeType(biome, WATER);
-        }
-
-        if(biome.heightVariation >= 1.5F)
-        {
-            BiomeDictionary.registerBiomeType(biome, MOUNTAIN);
-        }
-
-        if(biome.getEnableSnow() || biome.temperature < 0.2F)
-        {
-            BiomeDictionary.registerBiomeType(biome, FROZEN);
-        }
-        
-        if(!biome.isHighHumidity() && biome.temperature >= 1.0F)
-        {
-            BiomeDictionary.registerBiomeType(biome, DESERT);
-        }
-	
-        if(/* Check if block ID is 172.  I have no clue how to do this.*/ && biome.temperature >= 1.0F);
-        { 
-            BiomeDictionary.registerBiomeType(biome, MESA);
+        if(biome.isHighHumidity() && biome.rootHeight < 0.0F && (biome.heightVariation <= 0.3F && biome.heightVariation >= 0.0F))
+        {
+            BiomeDictionary.registerBiomeType(biome, SWAMP);
         }
-    }
+
+        if(biome.rootHeight <= -0.5F)
+        {
+            BiomeDictionary.registerBiomeType(biome, WATER);
+        }
+
+        if(biome.heightVariation >= 1.5F)
+        {
+            BiomeDictionary.registerBiomeType(biome, MOUNTAIN);
+        }
+        
+        if(biome.getEnableSnow() || biome.temperature < 0.2F)
+        {
+            BiomeDictionary.registerBiomeType(biome, FROZEN);
+        }
+        
+        if(!biome.isHighHumidity() && biome.temperature >= 1.0F)
+        {
+            BiomeDictionary.registerBiomeType(biome, DESERT);
+        }
+    }
 
     //Internal implementation    
     private static void checkRegistration(BiomeGenBase biome)
