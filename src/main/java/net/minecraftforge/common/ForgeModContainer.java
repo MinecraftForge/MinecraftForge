@@ -66,7 +66,8 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static float zombieBabyChance = 0.05f;
     public static boolean shouldSortRecipies = true;
     public static boolean disableVersionCheck = false;
-    
+    public static boolean enableStencilBits = true;
+
     private static Configuration config;
 
     public ForgeModContainer()
@@ -89,7 +90,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         config = null;
         File cfgFile = new File(Loader.instance().getConfigDir(), "forge.cfg");
         config = new Configuration(cfgFile);
-        
+
         syncConfig(true);
     }
 
@@ -98,7 +99,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     {
         return "net.minecraftforge.client.gui.ForgeGuiFactory";
     }
-    
+
     public static Configuration getConfig()
     {
         return config;
@@ -112,7 +113,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         // By adding a property order list we are defining the order that the properties will appear both in the config file and on the GUIs.
         // Property order lists are defined per-ConfigCategory.
         List<String> propOrder = new ArrayList<String>();
-        
+
         if (!config.isChild)
         {
             if (load)
@@ -125,7 +126,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 Configuration.enableGlobalConfig();
             }
         }
-        
+
         Property prop;
 
         prop = config.get(CATEGORY_GENERAL, "disableVersionCheck", false);
@@ -137,8 +138,8 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         prop.setLanguageKey("forge.configgui.disableVersionCheck");
         disableVersionCheck = prop.getBoolean(disableVersionCheck);
         propOrder.add(prop.getName());
-        
-        prop = config.get(Configuration.CATEGORY_GENERAL, "clumpingThreshold", 64, 
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "clumpingThreshold", 64,
                 "Controls the number threshold at which Packet51 is preferred over Packet52, default and minimum 64, maximum 1024", 64, 1024);
         prop.setLanguageKey("forge.configgui.clumpingThreshold").setRequiresWorldRestart(true);
         clumpingThreshold = prop.getInt(64);
@@ -204,18 +205,24 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         blendRanges = prop.getIntList();
         propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "zombieBaseSummonChance", 0.1, 
+        prop = config.get(Configuration.CATEGORY_GENERAL, "zombieBaseSummonChance", 0.1,
                 "Base zombie summoning spawn chance. Allows changing the bonus zombie summoning mechanic.", 0.0D, 1.0D);
         prop.setLanguageKey("forge.configgui.zombieBaseSummonChance").setRequiresWorldRestart(true);
         zombieSummonBaseChance = prop.getDouble(0.1);
         propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "zombieBabyChance", 0.05, 
+        prop = config.get(Configuration.CATEGORY_GENERAL, "zombieBabyChance", 0.05,
                 "Chance that a zombie (or subclass) is a baby. Allows changing the zombie spawning mechanic.", 0.0D, 1.0D);
         prop.setLanguageKey("forge.configgui.zombieBabyChance").setRequiresWorldRestart(true);
         zombieBabyChance = (float) prop.getDouble(0.05);
         propOrder.add(prop.getName());
-        
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "enableStencilBits", true);
+        prop.comment = "Set to false to attempt to allocate 8 stencil bits when starting the GL display context.";
+        prop.setLanguageKey("forge.configgui.stencilbits").setRequiresWorldRestart(true);
+        enableStencilBits = prop.getBoolean(true);
+        propOrder.add(prop.getName());
+
         config.setCategoryPropertyOrder(CATEGORY_GENERAL, propOrder);
 
         if (config.hasChanged())
@@ -223,7 +230,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             config.save();
         }
     }
-    
+
     /**
      * By subscribing to the OnConfigChangedEvent we are able to execute code when our config screens are closed.
      * This implementation uses the optional configID string to handle multiple Configurations using one event handler.
