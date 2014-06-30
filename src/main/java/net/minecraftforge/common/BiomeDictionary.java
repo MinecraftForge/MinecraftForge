@@ -12,7 +12,7 @@ public class BiomeDictionary
 {
     public enum Type
     {
-        DECIDUOUSFOREST,  /*Drier forests with aging/dying trees, is manually defined*/
+        DECIDUOUSFOREST,  /*Drier forests with aging/dying trees*/
         TAIGA,  /*The taiga is treated as its own biome group due to all the taiga variants and the existence of cold taigas*/
         RAINFOREST, /*Dense vegetation and high humidity + heat, but lacking the elements associeated with jungles like the cocoa beans or jungle wood*/
         MARSH /*Similiar traits to swamps like many lakes of water and damp grass, but lacks trees*/
@@ -20,7 +20,7 @@ public class BiomeDictionary
         GROVE, /*Temperate biomes with less trees thatn a forest, but a more trees than a plain*/
         MESA,  /*Defined by the use of hard clay blocks in world gen*/
         SAVANNA, /*Hot, relatively flat biomes with acacia trees*/
-        TROPICAL, /*Biomes that make use of palm trees and lush grass, is manually defined*/
+        TROPICAL, /*Biomes that make use of palm trees and lush grass*/
         FOREST,
         PLAINS,
         MOUNTAIN,
