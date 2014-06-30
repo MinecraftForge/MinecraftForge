@@ -69,7 +69,7 @@ import static net.minecraftforge.common.ForgeVersion.Status.*;
 public class ForgeHooksClient
 {
     //private static final ResourceLocation ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
-    
+
     static TextureManager engine()
     {
         return FMLClientHandler.instance().getClient().renderEngine;
@@ -319,6 +319,12 @@ public class ForgeHooksClient
     {
         ImageIO.setUseCache(false); //Disable on-disc stream cache should speed up texture pack reloading.
         PixelFormat format = new PixelFormat().withDepthBits(24);
+        if (!ForgeModContainer.enableStencilBits)
+        {
+            Display.create(format);
+            stencilBits = 0;
+            return;
+        }
         try
         {
             //TODO: Figure out how to determine the max bits.
@@ -369,7 +375,7 @@ public class ForgeHooksClient
 
     private static boolean skyInit;
     private static int skyRGBMultiplier;
-    
+
     public static int getSkyBlendColour(World world, int playerX, int playerY, int playerZ)
     {
         if (playerX == skyX && playerZ == skyZ && skyInit)
@@ -385,7 +391,7 @@ public class ForgeHooksClient
         {
             distance = ranges[settings.renderDistanceChunks];
         }
-        
+
         int r = 0;
         int g = 0;
         int b = 0;
