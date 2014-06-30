@@ -67,6 +67,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean shouldSortRecipies = true;
     public static boolean disableVersionCheck = false;
     public static boolean enableStencilBits = true;
+    public static int defaultSpawnFuzz = 20;
 
     private static Configuration config;
 
@@ -221,6 +222,13 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         prop.comment = "Set to false to attempt to allocate 8 stencil bits when starting the GL display context.";
         prop.setLanguageKey("forge.configgui.stencilbits").setRequiresWorldRestart(true);
         enableStencilBits = prop.getBoolean(true);
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "defaultSpawnFuzz", 20,
+            "The spawn fuzz when a player respawns in the world, this is controlable by WorldType, this config option is for the default overworld.",
+            1, Integer.MAX_VALUE);
+        prop.setLanguageKey("forge.configgui.spawnfuzz").setRequiresWorldRestart(false);
+        defaultSpawnFuzz = prop.getInt(20);
         propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(CATEGORY_GENERAL, propOrder);
