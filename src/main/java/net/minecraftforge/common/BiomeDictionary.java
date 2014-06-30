@@ -14,7 +14,7 @@ public class BiomeDictionary
     {
      DECIDUOUSFOREST,  /*Drier forests with aging/dying trees, is manually defined*/
      TAIGA,  /*The taiga is treated as its own biome group due to all the taiga variants and the existence of cold taigas*/
-     RAINFOREST, /*Dense vegetation and high humidity + heat, but lacking cocoa beens or jungle wood*/
+     RAINFOREST, /*Dense vegetation and high humidity + heat, but lacking cocoa beens, jungle wood or the overgrowth*/
      MARSH /*Similiar traits to swamps like many lakes of water and damp grass, but lacks trees*/
      SHRUBLAND, /*Defined by very low height of trees generated to make them look like shrubs, look at BoP for examples of SHRUBLAND biomes*/
      GROVE, /*Temperate biomes with less trees thatn a forest, but a more trees than a plain*/
