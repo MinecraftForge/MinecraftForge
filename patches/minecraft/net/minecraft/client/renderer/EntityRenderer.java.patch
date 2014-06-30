@@ -171,7 +171,7 @@
  
 +        net.minecraftforge.client.event.EntityViewRenderEvent.FogColors event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogColors(this, entitylivingbase, block, p_78466_1_, this.field_78518_n, this.field_78519_o, this.field_78533_p);
 +        MinecraftForge.EVENT_BUS.post(event);
-+        
++
 +        this.field_78518_n = event.red;
 +        this.field_78533_p = event.blue;
 +        this.field_78519_o = event.green;
@@ -185,11 +185,11 @@
  
 +            net.minecraftforge.client.event.EntityViewRenderEvent.FogDensity event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogDensity(this, entitylivingbase, block, p_78468_2_, 0.1F);
 +
-+            if (MinecraftForge.EVENT_BUS.post(event)) 
++            if (MinecraftForge.EVENT_BUS.post(event))
 +            {
 +                GL11.glFogf(GL11.GL_FOG_DENSITY, event.density);
 +            }
-+            else 
++            else
              if (entitylivingbase.func_70644_a(Potion.field_76440_q))
              {
                  f1 = 5.0F;

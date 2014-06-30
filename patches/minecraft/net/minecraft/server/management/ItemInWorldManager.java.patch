@@ -48,7 +48,7 @@
                  Block block = this.field_73092_a.func_147439_a(p_73074_1_, p_73074_2_, p_73074_3_);
  
 -                if (block.func_149688_o() != Material.field_151579_a)
-+                
++
 +                if (!block.isAir(field_73092_a, p_73074_1_, p_73074_2_, p_73074_3_))
                  {
 -                    block.func_149699_a(this.field_73092_a, p_73074_1_, p_73074_2_, p_73074_3_, this.field_73090_b);
@@ -56,7 +56,7 @@
 +                    if (event.useBlock != Event.Result.DENY)
 +                    {
 +                        block.func_149699_a(field_73092_a, p_73074_1_, p_73074_2_, p_73074_3_, field_73090_b);
-+                        field_73092_a.func_72886_a(field_73090_b, p_73074_1_, p_73074_2_, p_73074_3_, p_73074_4_);
++                        field_73092_a.func_72886_a(null, p_73074_1_, p_73074_2_, p_73074_3_, p_73074_4_);
 +                    }
 +                    else
 +                    {
