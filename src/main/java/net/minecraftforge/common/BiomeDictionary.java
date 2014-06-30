@@ -248,18 +248,18 @@ public class BiomeDictionary
             {
                 BiomeDictionary.registerBiomeType(biome, JUNGLE);
             }
-            else if(biome.isHighHumidity() && biome.temperature >= 1.0F)
+            else if(biome.temperature <= 1.0F && biome.temperature >= 0.6F)
             {
                 BiomeDictionary.registerBiomeType(biome, RAINFOREST);
             }
-            else if(biome.temperature <= 0.25F)
-            {
-		        BiomeDictionary.registerBiomeType(biome, TAIGA);
-     	    }
             else if(!biome.isHighHumidity() 
             {
                 BiomeDictionary.registerBiomeType(biome, FOREST);
             }
+            else if(biome.temperature <= 0.25F)
+            {
+		BiomeDictionary.registerBiomeType(biome, TAIGA);
+     	    }
         }
 
      if(!biome.isHighHumidity() || biome.rootHeight >= 0.0F)
@@ -274,7 +274,7 @@ public class BiomeDictionary
                 BiomeDictionary.registerBiomeType(biome, SAVANNA);
             }
             
-            else if (!biome.isHighHumidity() && biome.theBiomeDecorator.treesPerChunk <= 3 && biome.theBiomeDecorator.treesPerChunk >= 1)
+            else if (!biome.isHighHumidity() && biome.temperature >= 0.3F)
             {
                 BiomeDictionary.registerBiomeType(biome, GROVE);
             }
@@ -285,7 +285,7 @@ public class BiomeDictionary
             BiomeDictionary.registerBiomeType(biome, SHRUBLAND);
 	    }
 
-        if(biome.isHighHumidity() && biome.rootHeight < 0.0F && (biome.heightVariation <= 0.3F && biome.heightVariation >= 0.0F && biome.theBiomeDecorator.treesPerChunk >= 1))
+        if(biome.isHighHumidity() && biome.rootHeight < 0.0F && biome.heightVariation <= 0.3F && biome.heightVariation >= 0.0F && biome.theBiomeDecorator.treesPerChunk >= 1))
             {
                 BiomeDictionary.registerBiomeType(biome, SWAMP);
             }
