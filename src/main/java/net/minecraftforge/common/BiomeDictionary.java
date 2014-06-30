@@ -367,7 +367,7 @@ public class BiomeDictionary
         registerBiomeType(coldBeach,           BEACH,   FROZEN);
         registerBiomeType(birchForest,         FOREST         );
         registerBiomeType(birchForestHills,    FOREST         );
-        registerBiomeType(roofedForest,        FOREST, HAUNTED);
+        registerBiomeType(roofedForest,        FOREST,        );
         registerBiomeType(coldTaiga,           TAIGA,   FROZEN);
         registerBiomeType(coldTaigaHills,      TAIGA,   FROZEN);
         registerBiomeType(megaTaiga,           TAIGA          );
