@@ -12,6 +12,15 @@ public class BiomeDictionary
 {
     public enum Type
     {
+        DECIDUOUSFOREST,  /*Drier forests with aging/dying trees*/
+        TAIGA,  /*The taiga is treated as its own biome group due to all the taiga variants and the existence of cold taigas*/
+        RAINFOREST, /*Dense vegetation and high humidity + heat, but lacking the elements associeated with jungles like the cocoa beans or jungle wood*/
+        MARSH /*Similiar traits to swamps like many lakes of water and damp grass, but lacks trees*/
+        SHRUBLAND, /*Defined by very low height of trees generated to make them look like shrubs, look at BoP for examples of SHRUBLAND biomes*/
+        GROVE, /*Temperate biomes with less trees thatn a forest, but a more trees than a plain*/
+        MESA,  /*Defined by the use of hard clay blocks in world gen*/
+        SAVANNA, /*Hot, relatively flat biomes with acacia trees*/
+        TROPICAL, /*Biomes that make use of palm trees and lush grass*/
         FOREST,
         PLAINS,
         MOUNTAIN,
@@ -298,8 +307,8 @@ public class BiomeDictionary
         registerBiomeType(desert,              DESERT         );
         registerBiomeType(extremeHills,        MOUNTAIN       );
         registerBiomeType(forest,              FOREST         );
-        registerBiomeType(taiga,               FOREST,  FROZEN);
-        registerBiomeType(taigaHills,          FOREST,  FROZEN);
+        registerBiomeType(taiga,               TAIGA          );
+        registerBiomeType(taigaHills,          TAIGA          );
         registerBiomeType(swampland,           SWAMP          );
         registerBiomeType(river,               WATER          );
         registerBiomeType(frozenOcean,         WATER,   FROZEN);
@@ -323,15 +332,15 @@ public class BiomeDictionary
         registerBiomeType(birchForest,         FOREST         );
         registerBiomeType(birchForestHills,    FOREST         );
         registerBiomeType(roofedForest,        FOREST         );
-        registerBiomeType(coldTaiga,           FOREST,  FROZEN);
-        registerBiomeType(coldTaigaHills,      FOREST,  FROZEN);
-        registerBiomeType(megaTaiga,           FOREST         );
-        registerBiomeType(megaTaigaHills,      FOREST         );
-        registerBiomeType(extremeHillsPlus,    FOREST         );
-        registerBiomeType(savanna,             PLAINS,  DESERT);
-        registerBiomeType(savannaPlateau,      PLAINS,  DESERT);
-        registerBiomeType(mesa,                DESERT         );
-        registerBiomeType(mesaPlateau_F,       DESERT         );
-        registerBiomeType(mesaPlateau,         DESERT         );
+        registerBiomeType(coldTaiga,           TAIGA,   FROZEN);
+        registerBiomeType(coldTaigaHills,      TAIGA,   FROZEN);
+        registerBiomeType(megaTaiga,           TAIGA          );
+        registerBiomeType(megaTaigaHills,      TAIGA          );
+        registerBiomeType(extremeHillsPlus,    TAIGA, MOUNTAIN);
+        registerBiomeType(savanna,             SAVANNA        );
+        registerBiomeType(savannaPlateau,      SAVANNA        );
+        registerBiomeType(mesa,                MESA           );
+        registerBiomeType(mesaPlateau_F,       MESA           );
+        registerBiomeType(mesaPlateau,         MESA           );
     }
 }
