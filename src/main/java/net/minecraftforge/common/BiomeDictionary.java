@@ -12,18 +12,15 @@ public class BiomeDictionary
 {
     public enum Type
     {
-     FOREST,
-     DECIDUOUSFOREST,  //** Seasonal forests, Maple Woods and so on**//
-     TAIGA,  //** Spruce forests, lower than warm temperatures**//
-     RAINFOREST, //** Takes place of Jungle's normal properties**//
-     WETLAND, //**Plains with high humidity.**//
-     BOG, //** Drier swamps.  Don't know how to define.**//
-     SHRUBLAND, //**Defined by very low tree heights and non-frozen temperature- look at BoP for examples of this with heathland, scrub land, shrubland and so on.**//
-     GROVE, //**Relatively less tree gen, but still temperate temperature.  Stuff like meadows also belong here.**//
-     MESA,  //**Defined by the use of hard clay blocks in world gen**//
-     SAVANNA, //**Less trees than a forest, and high temperature**//
-     HAUNTED, //**Special, basically meant to define biomes that have haunted traits about them like ghosts and dark energies.  Manually defined.**//
-     TROPICAL, /* Special, defined by having "tropical" traits like palm trees and being a island paradise.  Manually added.*/
+     DECIDUOUSFOREST,  /*Drier forests with aging/dying trees, is manually defined*/
+     TAIGA,  /*The taiga is treated as its own biome group due to all the taiga variants and the existence of cold taigas*/
+     RAINFOREST, /*Dense vegetation and high humidity + heat, but lacking cocoa beens or jungle wood*/
+     MARSH /*Similiar traits to swamps like many lakes of water and damp grass, but lacks trees*/
+     SHRUBLAND, /*Defined by very low height of trees generated to make them look like shrubs, look at BoP for examples of SHRUBLAND biomes*/
+     GROVE, /*Temperate biomes with less trees thatn a forest, but a more trees than a plain*/
+     MESA,  /*Defined by the use of hard clay blocks in world gen*/
+     SAVANNA, /*Hot, relatively flat biomes with acacia trees*/
+     TROPICAL, /*Biomes that make use of palm trees and lush grass, is manually defined*/
      PLAINS,
      FOREST,
      MOUNTAIN,
@@ -32,7 +29,7 @@ public class BiomeDictionary
      WATER,
      DESERT,
      FROZEN,
-     JUNGLE, /* Jungle is now in its own special category defined explictly by having jungle wood and/or cocoa bean pods*/
+     JUNGLE, /* Jungle would be in its own category defined explictly by having jungle wood or cocoa bean plants since the jungle as a biome is that distinct from most other high heat high humidity forests*/
      WASTELAND,
      BEACH,
      NETHER,
@@ -41,200 +38,199 @@ public class BiomeDictionary
      MAGICAL;
     }
 
-    private static final int BIOME_LIST_SIZE = BiomeGenBase.getBiomeGenArray().length;
-    private static BiomeInfo[] biomeList = new BiomeInfo[BIOME_LIST_SIZE];
-    @SuppressWarnings("unchecked")
-    private static ArrayList<BiomeGenBase>[] typeInfoList = new ArrayList[Type.values().length];
+    private static final int BIOME_LIST_SIZE = BiomeGenBase.getBiomeGenArray().length;
+    private static BiomeInfo[] biomeList = new BiomeInfo[BIOME_LIST_SIZE];
+    @SuppressWarnings("unchecked")
+    private static ArrayList<BiomeGenBase>[] typeInfoList = new ArrayList[Type.values().length];
 
-    private static class BiomeInfo
-    {
-        public EnumSet<Type> typeList;
+    private static class BiomeInfo
+    {
+        public EnumSet<Type> typeList;
 
-        public BiomeInfo(Type[] types)
-        {
-            typeList = EnumSet.noneOf(Type.class);
-            for(Type t : types)
-            {
-                typeList.add(t);
-            }
-        }
-    }
+        public BiomeInfo(Type[] types)
+        {
+            typeList = EnumSet.noneOf(Type.class);
+            for(Type t : types)
+            {
+                typeList.add(t);
+            }
+        }
+    }
 
-    static
-    {
-        registerVanillaBiomes();
-    }
+    static
+    {
+        registerVanillaBiomes();
+    }
 
-    /**
+    /**
      * Registers a biome with a specific biome type
      * 
      * @param biome the biome to be registered
      * @param type the type to register the biome as
      * @return returns true if the biome was registered successfully
      */
-    public static boolean registerBiomeType(BiomeGenBase biome, Type ... types)
-    {   
-        if(BiomeGenBase.getBiomeGenArray()[biome.biomeID] != null)
-        {
-            for(Type type : types)
-            {
-                if(typeInfoList[type.ordinal()] == null)
-                {
-                    typeInfoList[type.ordinal()] = new ArrayList<BiomeGenBase>();
-                }
+    public static boolean registerBiomeType(BiomeGenBase biome, Type ... types)
+    {   
+        if(BiomeGenBase.getBiomeGenArray()[biome.biomeID] != null)
+        {
+            for(Type type : types)
+            {
+                if(typeInfoList[type.ordinal()] == null)
+                {
+                    typeInfoList[type.ordinal()] = new ArrayList<BiomeGenBase>();
+                }
 
-                typeInfoList[type.ordinal()].add(biome);
-            }
+                typeInfoList[type.ordinal()].add(biome);
+            }
 
-            if(biomeList[biome.biomeID] == null)
-            {
-                biomeList[biome.biomeID] = new BiomeInfo(types);
-            }
-            else
-            {
-                for(Type type : types)
-                {
-                    biomeList[biome.biomeID].typeList.add(type);
-                }
-            }
+            if(biomeList[biome.biomeID] == null)
+            {
+                biomeList[biome.biomeID] = new BiomeInfo(types);
+            }
+            else
+            {
+                for(Type type : types)
+                {
+                    biomeList[biome.biomeID].typeList.add(type);
+                }
+            }
 
-            return true;
-        }
+            return true;
+        }
 
-        return false;
-    }
+        return false;
+    }
 
-    /**
+    /**
      * Returns a list of biomes registered with a specific type
      * 
      * @param type the Type to look for
      * @return a list of biomes of the specified type, null if there are none
      */
-    public static BiomeGenBase[] getBiomesForType(Type type)
-    {
-        if(typeInfoList[type.ordinal()] != null)
-        {
-            return (BiomeGenBase[])typeInfoList[type.ordinal()].toArray(new BiomeGenBase[0]);
-        }
+    public static BiomeGenBase[] getBiomesForType(Type type)
+    {
+        if(typeInfoList[type.ordinal()] != null)
+        {
+            return (BiomeGenBase[])typeInfoList[type.ordinal()].toArray(new BiomeGenBase[0]);
+        }
 
-        return new BiomeGenBase[0];
-    }
+        return new BiomeGenBase[0];
+    }
 
-    /**
+    /**
      * Gets a list of Types that a specific biome is registered with
      * 
      * @param biome the biome to check
      * @return the list of types, null if there are none
      */
-    public static Type[] getTypesForBiome(BiomeGenBase biome)
-    {
-        checkRegistration(biome);
+    public static Type[] getTypesForBiome(BiomeGenBase biome)
+    {
+        checkRegistration(biome);
 
-        if(biomeList[biome.biomeID] != null)
-        {
-            return (Type[])biomeList[biome.biomeID].typeList.toArray(new Type[0]);
-        }
+        if(biomeList[biome.biomeID] != null)
+        {
+            return (Type[])biomeList[biome.biomeID].typeList.toArray(new Type[0]);
+        }
 
-        return new Type[0];
-    }
+        return new Type[0];
+    }
 
-    /**
+    /**
      * Checks to see if two biomes are registered as having the same type
      * 
      * @param biomeA
      * @param biomeB
      * @return returns true if a common type is found, false otherwise
      */
-    public static boolean areBiomesEquivalent(BiomeGenBase biomeA, BiomeGenBase biomeB)
-    {
-        int a = biomeA.biomeID;
-        int b = biomeB.biomeID;
+    public static boolean areBiomesEquivalent(BiomeGenBase biomeA, BiomeGenBase biomeB)
+    {
+        int a = biomeA.biomeID;
+        int b = biomeB.biomeID;
 
-        checkRegistration(biomeA);
-        checkRegistration(biomeB);
+        checkRegistration(biomeA);
+        checkRegistration(biomeB);
 
-        if(biomeList[a] != null && biomeList[b] != null)
-        {
-            for(Type type : biomeList[a].typeList)
-            {
-                if(containsType(biomeList[b], type))
-                {
-                    return true;
-                }
-            }
-        }
+        if(biomeList[a] != null && biomeList[b] != null)
+        {
+            for(Type type : biomeList[a].typeList)
+            {
+                if(containsType(biomeList[b], type))
+                {
+                    return true;
+                }
+            }
+        }
 
-        return false;
-    }
+        return false;
+    }
 
-    /**
+    /**
      * Checks to see if the given biome is registered as being a specific type
      * 
      * @param biome the biome to be considered
      * @param type the type to check for
      * @return returns true if the biome is registered as being of type type, false otherwise
      */
-    public static boolean isBiomeOfType(BiomeGenBase biome, Type type)
-    {
-        checkRegistration(biome);
+    public static boolean isBiomeOfType(BiomeGenBase biome, Type type)
+    {
+        checkRegistration(biome);
 
-        if(biomeList[biome.biomeID] != null)
-        {
-            return containsType(biomeList[biome.biomeID], type);
-        }
+        if(biomeList[biome.biomeID] != null)
+        {
+            return containsType(biomeList[biome.biomeID], type);
+        }
 
-        return false;
-    }
+        return false;
+    }
 
-    /**
+    /**
      * Checks to see if the given biome has been registered as being of any type
      * @param biome the biome to consider
      * @return returns true if the biome has been registered, false otherwise
      */
-    public static boolean isBiomeRegistered(BiomeGenBase biome)
-    {    
-        return biomeList[biome.biomeID] != null;
-    }
+    public static boolean isBiomeRegistered(BiomeGenBase biome)
+    {    
+        return biomeList[biome.biomeID] != null;
+    }
 
-    public static boolean isBiomeRegistered(int biomeID)
-    {
-        return biomeList[biomeID] != null;
-    }
+    public static boolean isBiomeRegistered(int biomeID)
+    {
+        return biomeList[biomeID] != null;
+    }
 
-    public static void registerAllBiomes()
-    {
-        FMLLog.warning("Redundant call to BiomeDictionary.registerAllBiomes ignored");
-    }
-    /**
+    public static void registerAllBiomes()
+    {
+        FMLLog.warning("Redundant call to BiomeDictionary.registerAllBiomes ignored");
+    }
+    /**
      * Loops through the biome list and automatically adds tags to any biome that does not have any
      * This is called by Forge at postinit time. It will additionally dispatch any deferred decorator
      * creation events.
      * 
      * DO NOT call this during world generation
      */
-     
-    public static void registerAllBiomesAndGenerateEvents()
-    {
-        for(int i = 0; i < BiomeGenBase.getBiomeGenArray().length; i++)
-        {
-            BiomeGenBase biome = BiomeGenBase.getBiomeGenArray()[i];
+    public static void registerAllBiomesAndGenerateEvents()
+    {
+        for(int i = 0; i < BiomeGenBase.getBiomeGenArray().length; i++)
+        {
+            BiomeGenBase biome = BiomeGenBase.getBiomeGenArray()[i];
 
-            if(biome == null)
-            {
-                continue;
-            }
+            if(biome == null)
+            {
+                continue;
+            }
 
-            if (biome.theBiomeDecorator instanceof DeferredBiomeDecorator)
-            {
-                DeferredBiomeDecorator decorator = (DeferredBiomeDecorator) biome.theBiomeDecorator;
-                decorator.fireCreateEventAndReplace(biome);
-            }
+            if (biome.theBiomeDecorator instanceof DeferredBiomeDecorator)
+            {
+                DeferredBiomeDecorator decorator = (DeferredBiomeDecorator) biome.theBiomeDecorator;
+                decorator.fireCreateEventAndReplace(biome);
+            }
 
-            checkRegistration(biome);
-        }
-    }
+            checkRegistration(biome);
+        }
+    }
 
-    /**
+    /**
      * Automatically looks for and registers a given biome with appropriate tags
      * This method is called automatically if a biome has not been registered with any tags,
      * And another method requests information about it
@@ -243,10 +239,7 @@ public class BiomeDictionary
      * 
      * @param biome the biome to be considered
      */
-     
-     
-     /*This will contain custom modifications to the register, it's probably not done right in any way.*/
-     
+
     public static void makeBestGuess(BiomeGenBase biome)
     {    
         if(biome.theBiomeDecorator.treesPerChunk >= 3)
@@ -255,51 +248,57 @@ public class BiomeDictionary
             {
                 BiomeDictionary.registerBiomeType(biome, JUNGLE);
             }
-            else if(biome.isHighHumidity() && biome.temperature >= 1.0F)
+            else if(biome.isHighHumidity() && biome.temperature >= 1.0F)
             {
                 BiomeDictionary.registerBiomeType(biome, RAINFOREST);
-            }
+            }
             else if(biome.temperature <= 0.25F)
             {
-		    BiomeDictionary.registerBiomeType(biome, TAIGA);
+		        BiomeDictionary.registerBiomeType(biome, TAIGA);
      	    }
             else if(!biome.isHighHumidity() 
             {
                 BiomeDictionary.registerBiomeType(biome, FOREST);
             }
-	  }
+        }
 
-         if(!biome.isHighHumidity() || biome.rootHeight >= 0.0F)
-            {
-                BiomeDictionary.registerBiomeType(biome, PLAINS);
-            }
-
-        if(biome.theBiomeDecorator.treesPerChunk <= 3 && biome.theBiomeDecorator.treesPerChunk >= 1 && biome.temperature >= 0.25F)
-	   {
-	    if(biome.temperature >= 1.0F)
-	   {
-            BiomeDictionary.registerBiomeType(biome, SAVANNA);
-	   }
-	else if (!biome.isHighHumidity()
-	   {
-	      BiomeDictionary.registerBiomeType(biome, GROVE);
-           }
+     if(!biome.isHighHumidity() || biome.rootHeight >= 0.0F)
+        {
+             BiomeDictionary.registerBiomeType(biome, PLAINS);
         }
 
-	if(biome.theBiomeDecorator.treeHeight <= 2 && biome.temperature >= 0.25F /* Not sure if it will work of not. */)
-	{
-          BiomeDictionary.registerBiomeType(biome, SHRUBLAND);
-	}
+       if(biome.theBiomeDecorator.treesPerChunk <= 3 && biome.theBiomeDecorator.treesPerChunk >= 1 && biome.temperature >= 0.5F)
+        {
+	        if(biome.temperature >= 1.0F)
+            {
+                BiomeDictionary.registerBiomeType(biome, SAVANNA);
+            }
+            
+            else if (!biome.isHighHumidity() && biome.theBiomeDecorator.treesPerChunk <= 3 && biome.theBiomeDecorator.treesPerChunk >= 1)
+            {
+                BiomeDictionary.registerBiomeType(biome, GROVE);
+            }
+        }
 
+    	if(biome.theBiomeDecorator.treeHeight <= 2 && biome.temperature >= 0.25F /* Not sure if it will work of not. */)
+	    {
+            BiomeDictionary.registerBiomeType(biome, SHRUBLAND);
+	    }
 
-        if(biome.isHighHumidity() && biome.rootHeight < 0.0F && (biome.heightVariation <= 0.3F && biome.heightVariation >= 0.0F))
-        {
-            BiomeDictionary.registerBiomeType(biome, SWAMP);
-        }
+        if(biome.isHighHumidity() && biome.rootHeight < 0.0F && (biome.heightVariation <= 0.3F && biome.heightVariation >= 0.0F && biome.theBiomeDecorator.treesPerChunk >= 1))
+            {
+                BiomeDictionary.registerBiomeType(biome, SWAMP);
+            }
+            
+            else if(biome.isHighHumidity() && biome.rootHeight < 0.0F && (biome.heightVariation <= 0.3F && biome.heightVariation >= 0.0F)
+            {
+                BiomeDictionary.registerBiomeType(biome, MARSH);
+            }
+        }
 
         if(biome.rootHeight <= -0.5F)
         {
-            BiomeDictionary.registerBiomeType(biome, WATER);
+            BiomeDictionary.registerBiomeType(biome, WATER);
         }
 
         if(biome.heightVariation >= 1.5F)
@@ -317,10 +316,10 @@ public class BiomeDictionary
             BiomeDictionary.registerBiomeType(biome, DESERT);
         }
 	
-	if(/* Check if block ID is 172.  I have no clue how to do this.*/ && biome.temperature >= 1.0F);
-	{ 
-               BiomeDictionary.registerBiomeType(biome, MESA);
-	}
+        if(/* Check if block ID is 172.  I have no clue how to do this.*/ && biome.temperature >= 1.0F);
+        { 
+            BiomeDictionary.registerBiomeType(biome, MESA);
+        }
     }
 
     //Internal implementation    
@@ -379,3 +378,5 @@ public class BiomeDictionary
         registerBiomeType(mesa,                MESA           );
         registerBiomeType(mesaPlateau_F,       MESA,   SAVANNA);
         registerBiomeType(mesaPlateau,         MESA           );
+    }
+}
