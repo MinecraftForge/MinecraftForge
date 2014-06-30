@@ -10,33 +10,33 @@ import static net.minecraftforge.common.BiomeDictionary.Type.*;
 
 public class BiomeDictionary
 {
-    public enum Type
-    {
-     DECIDUOUSFOREST,  /*Drier forests with aging/dying trees, is manually defined*/
-     TAIGA,  /*The taiga is treated as its own biome group due to all the taiga variants and the existence of cold taigas*/
-     RAINFOREST, /*Dense vegetation and high humidity + heat, but lacking cocoa beens, jungle wood or the overgrowth*/
-     MARSH /*Similiar traits to swamps like many lakes of water and damp grass, but lacks trees*/
-     SHRUBLAND, /*Defined by very low height of trees generated to make them look like shrubs, look at BoP for examples of SHRUBLAND biomes*/
-     GROVE, /*Temperate biomes with less trees thatn a forest, but a more trees than a plain*/
-     MESA,  /*Defined by the use of hard clay blocks in world gen*/
-     SAVANNA, /*Hot, relatively flat biomes with acacia trees*/
-     TROPICAL, /*Biomes that make use of palm trees and lush grass, is manually defined*/
-     PLAINS,
-     FOREST,
-     MOUNTAIN,
-     HILLS,
-     SWAMP,
-     WATER,
-     DESERT,
-     FROZEN,
-     JUNGLE, /* Jungle would be in its own category defined explictly by having jungle wood or cocoa bean plants since the jungle as a biome is that distinct from most other high heat high humidity forests*/
-     WASTELAND,
-     BEACH,
-     NETHER,
-     END,
-     MUSHROOM,
-     MAGICAL;
-    }
+    public enum Type
+    {
+        DECIDUOUSFOREST,  /*Drier forests with aging/dying trees, is manually defined*/
+        TAIGA,  /*The taiga is treated as its own biome group due to all the taiga variants and the existence of cold taigas*/
+        RAINFOREST, /*Dense vegetation and high humidity + heat, but lacking the elements associeated with jungles like the cocoa beans or jungle wood*/
+        MARSH /*Similiar traits to swamps like many lakes of water and damp grass, but lacks trees*/
+        SHRUBLAND, /*Defined by very low height of trees generated to make them look like shrubs, look at BoP for examples of SHRUBLAND biomes*/
+        GROVE, /*Temperate biomes with less trees thatn a forest, but a more trees than a plain*/
+        MESA,  /*Defined by the use of hard clay blocks in world gen*/
+        SAVANNA, /*Hot, relatively flat biomes with acacia trees*/
+        TROPICAL, /*Biomes that make use of palm trees and lush grass, is manually defined*/
+        FOREST,
+        PLAINS,
+        MOUNTAIN,
+        HILLS,
+        SWAMP,
+        WATER,
+        DESERT,
+        FROZEN,
+        JUNGLE,
+        WASTELAND,
+        BEACH,
+        NETHER,
+        END,
+        MUSHROOM,
+        MAGICAL;
+    }
 
     private static final int BIOME_LIST_SIZE = BiomeGenBase.getBiomeGenArray().length;
     private static BiomeInfo[] biomeList = new BiomeInfo[BIOME_LIST_SIZE];
@@ -239,36 +239,6 @@ public class BiomeDictionary
      * 
      * @param biome the biome to be considered
      */
-
-    public static void makeBestGuess(BiomeGenBase biome)
-       for(int i = 0; i < BiomeGenBase.getBiomeGenArray().length; i++)
-        {
-            BiomeGenBase biome = BiomeGenBase.getBiomeGenArray()[i];
-
-            if(biome == null)
-            {
-                continue;
-            }
-
-            if (biome.theBiomeDecorator instanceof DeferredBiomeDecorator)
-            {
-                DeferredBiomeDecorator decorator = (DeferredBiomeDecorator) biome.theBiomeDecorator;
-                decorator.fireCreateEventAndReplace(biome);
-            }
-
-            checkRegistration(biome);
-        }
-    }
-
-    /**
-     * Automatically looks for and registers a given biome with appropriate tags
-     * This method is called automatically if a biome has not been registered with any tags,
-     * And another method requests information about it
-     * 
-     * NOTE: You can opt out of having your biome registered by registering it as type NULL
-     * 
-     * @param biome the biome to be considered
-     */
     public static void makeBestGuess(BiomeGenBase biome)
     {    
         if(biome.theBiomeDecorator.treesPerChunk >= 3)
@@ -316,61 +286,61 @@ public class BiomeDictionary
         }
     }
 
-    //Internal implementation    
-    private static void checkRegistration(BiomeGenBase biome)
-    {
-        if(!isBiomeRegistered(biome))
-        {
-            makeBestGuess(biome);
-        }
-    }
+    //Internal implementation    
+    private static void checkRegistration(BiomeGenBase biome)
+    {
+        if(!isBiomeRegistered(biome))
+        {
+            makeBestGuess(biome);
+        }
+    }
 
-    private static boolean containsType(BiomeInfo info, Type type)
-    {
-        return info.typeList.contains(type);
-    }
+    private static boolean containsType(BiomeInfo info, Type type)
+    {
+        return info.typeList.contains(type);
+    }
 
-    private static void registerVanillaBiomes()
-    {
-        registerBiomeType(ocean,               WATER          );
-        registerBiomeType(plains,              PLAINS         );
-        registerBiomeType(desert,              DESERT         );
-        registerBiomeType(extremeHills,        MOUNTAIN       );
-        registerBiomeType(forest,              FOREST         );
-        registerBiomeType(taiga,               TAIGA          );
-        registerBiomeType(taigaHills,          TAIGA          );
-        registerBiomeType(swampland,           SWAMP          );
-        registerBiomeType(river,               WATER          );
-        registerBiomeType(frozenOcean,         WATER,   FROZEN);
-        registerBiomeType(frozenRiver,         WATER,   FROZEN);
-        registerBiomeType(icePlains,           FROZEN         );
-        registerBiomeType(iceMountains,        FROZEN         );
-        registerBiomeType(beach,               BEACH          );
-        registerBiomeType(desertHills,         DESERT         );
-        registerBiomeType(jungle,              JUNGLE         );
-        registerBiomeType(jungleHills,         JUNGLE         );
-        registerBiomeType(forestHills,         FOREST         );
-        registerBiomeType(sky,                 END            );
-        registerBiomeType(hell,                NETHER         );
-        registerBiomeType(mushroomIsland,      MUSHROOM       );
-        registerBiomeType(extremeHillsEdge,    MOUNTAIN       );
-        registerBiomeType(mushroomIslandShore, MUSHROOM, BEACH);
-        registerBiomeType(jungleEdge,          JUNGLE         );
-        registerBiomeType(deepOcean,           WATER          );
-        registerBiomeType(stoneBeach,          BEACH          );
-        registerBiomeType(coldBeach,           BEACH,   FROZEN);
-        registerBiomeType(birchForest,         FOREST         );
-        registerBiomeType(birchForestHills,    FOREST         );
-        registerBiomeType(roofedForest,        FOREST,        );
-        registerBiomeType(coldTaiga,           TAIGA,   FROZEN);
-        registerBiomeType(coldTaigaHills,      TAIGA,   FROZEN);
-        registerBiomeType(megaTaiga,           TAIGA          );
-        registerBiomeType(megaTaigaHills,      TAIGA          );
-        registerBiomeType(extremeHillsPlus,    MOUNTAIN, TAIGA);
-        registerBiomeType(savanna,             SAVANNA        );
-        registerBiomeType(savannaPlateau,      SAVANNA        );
-        registerBiomeType(mesa,                MESA           );
-        registerBiomeType(mesaPlateau_F,       MESA,   SAVANNA);
-        registerBiomeType(mesaPlateau,         MESA           );
+    private static void registerVanillaBiomes()
+    {
+        registerBiomeType(ocean,               WATER          );
+        registerBiomeType(plains,              PLAINS         );
+        registerBiomeType(desert,              DESERT         );
+        registerBiomeType(extremeHills,        MOUNTAIN       );
+        registerBiomeType(forest,              FOREST         );
+        registerBiomeType(taiga,               TAIGA          );
+        registerBiomeType(taigaHills,          TAIGA          );
+        registerBiomeType(swampland,           SWAMP          );
+        registerBiomeType(river,               WATER          );
+        registerBiomeType(frozenOcean,         WATER,   FROZEN);
+        registerBiomeType(frozenRiver,         WATER,   FROZEN);
+        registerBiomeType(icePlains,           FROZEN         );
+        registerBiomeType(iceMountains,        FROZEN         );
+        registerBiomeType(beach,               BEACH          );
+        registerBiomeType(desertHills,         DESERT         );
+        registerBiomeType(jungle,              JUNGLE         );
+        registerBiomeType(jungleHills,         JUNGLE         );
+        registerBiomeType(forestHills,         FOREST         );
+        registerBiomeType(sky,                 END            );
+        registerBiomeType(hell,                NETHER         );
+        registerBiomeType(mushroomIsland,      MUSHROOM       );
+        registerBiomeType(extremeHillsEdge,    MOUNTAIN       );
+        registerBiomeType(mushroomIslandShore, MUSHROOM, BEACH);
+        registerBiomeType(jungleEdge,          JUNGLE         );
+        registerBiomeType(deepOcean,           WATER          );
+        registerBiomeType(stoneBeach,          BEACH          );
+        registerBiomeType(coldBeach,           BEACH,   FROZEN);
+        registerBiomeType(birchForest,         FOREST         );
+        registerBiomeType(birchForestHills,    FOREST         );
+        registerBiomeType(roofedForest,        FOREST         );
+        registerBiomeType(coldTaiga,           TAIGA,   FROZEN);
+        registerBiomeType(coldTaigaHills,      TAIGA,   FROZEN);
+        registerBiomeType(megaTaiga,           TAIGA          );
+        registerBiomeType(megaTaigaHills,      TAIGA          );
+        registerBiomeType(extremeHillsPlus,    TAIGA, MOUNTAIN);
+        registerBiomeType(savanna,             SAVANNA        );
+        registerBiomeType(savannaPlateau,      SAVANNA        );
+        registerBiomeType(mesa,                MESA           );
+        registerBiomeType(mesaPlateau_F,       MESA           );
+        registerBiomeType(mesaPlateau,         MESA           );
     }
 }
