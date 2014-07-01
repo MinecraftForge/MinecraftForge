@@ -96,7 +96,15 @@
          }
  
          Collection collection = this.field_70170_p.func_96441_U().func_96520_a(IScoreObjectiveCriteria.field_96642_c);
-@@ -1021,4 +1035,16 @@
+@@ -806,6 +820,7 @@
+     {
+         if (p_71064_1_ != null)
+         {
++            if (p_71064_1_.func_75967_d() && MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.AchievementEvent(this, (net.minecraft.stats.Achievement) p_71064_1_))) return;
+             this.field_147103_bO.func_150871_b(this, p_71064_1_, p_71064_2_);
+             Iterator iterator = this.func_96123_co().func_96520_a(p_71064_1_.func_150952_k()).iterator();
+ 
+@@ -1021,4 +1036,16 @@
      {
          return this.field_143005_bX;
      }
