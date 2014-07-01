@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/tileentity/RenderItemFrame.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/tileentity/RenderItemFrame.java
+@@ -176,6 +176,9 @@
+                     GL11.glTranslatef(0.16F, -0.16F, 0.0F);
+             }
+ 
++            net.minecraftforge.client.event.RenderItemInFrameEvent event = new net.minecraftforge.client.event.RenderItemInFrameEvent(p_82402_1_, this);
++            if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
++            {
+             if (item == Items.field_151098_aY)
+             {
+                 this.field_76990_c.field_78724_e.func_110577_a(field_110789_a);
+@@ -244,6 +247,7 @@
+                     }
+                 }
+             }
++            }
+ 
+             GL11.glPopMatrix();
+         }
