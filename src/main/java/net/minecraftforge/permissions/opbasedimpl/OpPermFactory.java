@@ -250,7 +250,7 @@ public class OpPermFactory implements PermBuilderFactory<Builder>
         FMLLog.info("Player %s1 placed in group %s2", e.player.getDisplayName(), g.getName());
     }
     
-    private static boolean isOp(GameProfile profile)
+    protected static boolean isOp(GameProfile profile)
     {
         MinecraftServer server = FMLCommonHandler.instance().getSidedDelegate().getServer();
 
