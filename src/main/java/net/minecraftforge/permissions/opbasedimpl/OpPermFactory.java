@@ -107,12 +107,10 @@ public class OpPermFactory implements PermBuilderFactory<Builder>
         config.save();
         
         IGroup all = new OpBasedGroup("ALL");
-        IGroup ops = new OpBasedGroup("OP").setParent(all);
+        IGroup ops = new OpBasedGroup("OP");
         
         groups.put("ALL", all);
         groups.put("OP", ops);
-        
-        FMLCommonHandler.instance().bus().register(INSTANCE);
     }
 
     @Override
@@ -217,6 +215,9 @@ public class OpPermFactory implements PermBuilderFactory<Builder>
     {
         for (PermReg entry : perms)
         {
+            
+            System.out.println(entry.key + ":" + entry.role.getLevel());
+            
             // avoid duplicates that are already configured
             if (isRegistered(entry.key))
                 continue;
@@ -236,35 +237,6 @@ public class OpPermFactory implements PermBuilderFactory<Builder>
     private static boolean isRegistered(String node)
     {
         return opPerms.contains(node) || allowedPerms.contains(node) || deniedPerms.contains(node);
-    }
-    
-    @SubscribeEvent
-    public void sortPlayers(PlayerLoggedInEvent e)
-    {
-        if (isOp(e.player.getGameProfile()))
-            PermissionsManager.getGroupForName("OP").addPlayerToGroup(e.player);
-        
-        PermissionsManager.getGroupForName("ALL").addPlayerToGroup(e.player);
-        
-        for (IGroup g : PermissionsManager.getGroupsForPlayer(e.player))
-        FMLLog.info("Player %s1 placed in group %s2", e.player.getDisplayName(), g.getName());
-    }
-    
-    protected static boolean isOp(GameProfile profile)
-    {
-        MinecraftServer server = FMLCommonHandler.instance().getSidedDelegate().getServer();
-
-        // SP and LAN
-        if (server.isSinglePlayer())
-        {
-            if (server instanceof IntegratedServer)
-                return server.getServerOwner().equalsIgnoreCase(profile.getName());
-            else
-                return server.getConfigurationManager().func_152596_g(profile);
-        }
-
-        // SMP
-        return server.getConfigurationManager().func_152596_g(profile);
     }
     
 }

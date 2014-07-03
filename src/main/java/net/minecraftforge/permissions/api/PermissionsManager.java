@@ -14,15 +14,17 @@ import net.minecraftforge.permissions.opbasedimpl.OpPermFactory;
 
 public final class PermissionsManager
 {
-    private PermissionsManager()
+    private static PermBuilderFactory FACTORY = new OpPermFactory();
+    
+    private PermissionsManager(){}
+    
+    public static void initialize()
     {
-        // no touch
+        setPermFactory(null);
     }
 
     private static       boolean            wasSet  = false;
-    private static final PermBuilderFactory DEFAULT = OpPermFactory.INSTANCE; //Forge init takes this as default permissions API provider
-    private static PermBuilderFactory FACTORY = getPermFactory();
-
+    
     /**
      * Check a permission
      * @param player The EntityPlayer being checked
@@ -189,16 +191,14 @@ public final class PermissionsManager
      */
     public static PermBuilderFactory getPermFactory()
     {
-        if (FACTORY != null)
         return FACTORY;
-        else return DEFAULT;
     }
 
     public static void setPermFactory(PermBuilderFactory factory) throws IllegalStateException
     {
         if (factory == null)
         {
-            FACTORY = DEFAULT;
+            FACTORY = OpPermFactory.INSTANCE;
             wasSet = false;
         }
         else if (wasSet)

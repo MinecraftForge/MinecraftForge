@@ -10,13 +10,17 @@ import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraftforge.permissions.api.IGroup;
  
 /**
  * This class acts as merely a wrapper around the currently existing ops system in minecraft.
  * It does not provide any additional functionality, nor does it allow for group manipulation.
+ * You are not recommended to use this in your mods, as this class is not guaranteed to exist, especially
+ * when another permissions framework is installed.
  *
  */
 public class OpBasedGroup implements IGroup
@@ -32,7 +36,7 @@ public class OpBasedGroup implements IGroup
         this.server = MinecraftServer.getServer();
     }
     
- // noop - groups in opBased are just wrappers around the ops list
+    // noop - groups in opBased are just wrappers around the ops list
     @Override
     public void addPlayerToGroup(EntityPlayer player){}
  
@@ -47,7 +51,19 @@ public class OpBasedGroup implements IGroup
     {
         if (name.equals("OP"))
         {
-            return OpPermFactory.isOp(player.getGameProfile());
+            MinecraftServer server = FMLCommonHandler.instance().getSidedDelegate().getServer();
+
+            // SP and LAN
+            if (server.isSinglePlayer())
+            {
+                if (server instanceof IntegratedServer)
+                    return server.getServerOwner().equalsIgnoreCase(player.getGameProfile().getName());
+                else
+                    return server.getConfigurationManager().func_152596_g(player.getGameProfile());
+            }
+
+            // SMP
+            return server.getConfigurationManager().func_152596_g(player.getGameProfile());
         }
         else return true;
     }

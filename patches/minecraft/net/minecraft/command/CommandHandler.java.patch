@@ -10,9 +10,12 @@
  public class CommandHandler implements ICommandManager
  {
      private static final Logger field_147175_a = LogManager.getLogger();
-@@ -47,6 +50,16 @@
+@@ -45,8 +48,18 @@
+                 throw new CommandNotFoundException();
+             }
  
-             if (icommand.func_71519_b(p_71556_1_))
+-            if (icommand.func_71519_b(p_71556_1_))
++            if (net.minecraftforge.server.CommandHandlerForge.canCommandSenderUseCommand(icommand, p_71556_1_))
              {
 +                CommandEvent event = new CommandEvent(icommand, p_71556_1_, astring);
 +                if (MinecraftForge.EVENT_BUS.post(event))
@@ -27,3 +30,30 @@
                  if (i > -1)
                  {
                      EntityPlayerMP[] aentityplayermp = PlayerSelector.func_82380_c(p_71556_1_, astring[i]);
+@@ -140,6 +153,8 @@
+                 }
+             }
+         }
++        
++        net.minecraftforge.server.CommandHandlerForge.doPermissionReg(p_71560_1_);
+ 
+         return p_71560_1_;
+     }
+@@ -170,7 +185,7 @@
+             {
+                 Entry entry = (Entry)iterator.next();
+ 
+-                if (CommandBase.func_71523_a(s1, (String)entry.getKey()) && ((ICommand)entry.getValue()).func_71519_b(p_71558_1_))
++                if (CommandBase.func_71523_a(s1, (String)entry.getKey()) && net.minecraftforge.server.CommandHandlerForge.canCommandSenderUseCommand(((ICommand)entry.getValue()), p_71558_1_))
+                 {
+                     arraylist.add(entry.getKey());
+                 }
+@@ -203,7 +218,7 @@
+         {
+             ICommand icommand = (ICommand)iterator.next();
+ 
+-            if (icommand.func_71519_b(p_71557_1_))
++            if (net.minecraftforge.server.CommandHandlerForge.canCommandSenderUseCommand(icommand, p_71557_1_))
+             {
+                 arraylist.add(icommand);
+             }
