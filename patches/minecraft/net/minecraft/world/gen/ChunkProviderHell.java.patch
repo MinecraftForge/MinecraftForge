@@ -48,7 +48,7 @@
  
      public void func_147418_b(int p_147418_1_, int p_147418_2_, Block[] p_147418_3_)
      {
-+        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, p_147418_1_, p_147418_2_, p_147418_3_, null);
++        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, p_147418_1_, p_147418_2_, p_147418_3_, null, field_73175_o);
 +        MinecraftForge.EVENT_BUS.post(event);
 +        if (event.getResult() == Result.DENY) return;
 +
