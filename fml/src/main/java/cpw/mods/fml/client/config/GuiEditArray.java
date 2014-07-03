@@ -129,7 +129,7 @@ public class GuiEditArray extends GuiScreen
         }
         else if (button.id == 2001)
         {
-            this.currentValues = (String[]) configElement.getDefaults();
+            this.currentValues = configElement.getDefaults();
             this.entryList = new GuiEditArrayEntries(this, this.mc, this.configElement, this.beforeValues, this.currentValues);
         }
         else if (button.id == 2002)
