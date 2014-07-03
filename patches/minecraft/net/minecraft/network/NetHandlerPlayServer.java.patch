@@ -145,3 +145,12 @@
                  }
  
                  break;
+@@ -1140,7 +1180,7 @@
+                 {
+                     this.field_147369_b.func_145747_a(new ChatComponentTranslation("advMode.notEnabled", new Object[0]));
+                 }
+-                else if (this.field_147369_b.func_70003_b(2, "") && this.field_147369_b.field_71075_bZ.field_75098_d)
++                else if (net.minecraftforge.permissions.api.PermissionsManager.checkPerm(this.field_147369_b, "mc.cmdblocks") && this.field_147369_b.field_71075_bZ.field_75098_d)
+                 {
+                     packetbuffer = new PacketBuffer(Unpooled.wrappedBuffer(p_147349_1_.func_149558_e()));
+ 

@@ -28,6 +28,9 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.permissions.api.PermissionsManager;
+import net.minecraftforge.permissions.opbasedimpl.OpPermFactory;
+import net.minecraftforge.server.CommandHandlerForge;
 import net.minecraftforge.server.command.ForgeCommand;
 
 import com.google.common.collect.ImmutableList;
@@ -49,6 +52,7 @@ import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLModIdMappingEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -302,7 +306,15 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public void serverStarting(FMLServerStartingEvent evt)
     {
         evt.registerServerCommand(new ForgeCommand(evt.getServer()));
+        OpPermFactory.initialize();
     }
+    
+    @Subscribe
+    public void serverStarted(FMLServerStartedEvent evt)
+    {
+        PermissionsManager.getPermFactory().registerPermissions(CommandHandlerForge.getCommandPermRegList());
+    }
+    
     @Override
     public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info)
     {
