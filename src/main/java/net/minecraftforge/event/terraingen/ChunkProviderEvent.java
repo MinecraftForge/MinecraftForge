@@ -52,7 +52,27 @@ public class ChunkProviderEvent extends Event
             this.metaArray = metaArray;
             this.worldObj = worldObj;
         }
-       
+        
+        @Depreciated
+        public ReplaceBiomeBlocks(IChunkProvider chunkProvider, int chunkX, int chunkZ, Block[] blockArray, BiomeGenBase[] biomeArray)
+        {
+            super(chunkProvider);
+            this.chunkX = chunkX;
+            this.chunkZ = chunkZ;
+            this.blockArray = blockArray;
+            this.biomeArray = biomeArray;
+        }
+        
+        @Depreciated
+        public ReplaceBiomeBlocks(IChunkProvider chunkProvider, int chunkX, int chunkZ, Block[] blockArray, byte[] metaArray, BiomeGenBase[] biomeArray)
+        {
+            super(chunkProvider);
+            this.chunkX = chunkX;
+            this.chunkZ = chunkZ;
+            this.blockArray = blockArray;
+            this.biomeArray = biomeArray;
+            this.metaArray = metaArray;
+        }
     }
     
     /**
