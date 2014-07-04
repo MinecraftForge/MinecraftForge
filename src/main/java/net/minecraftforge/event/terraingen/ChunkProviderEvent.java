@@ -61,6 +61,7 @@ public class ChunkProviderEvent extends Event
             this.chunkZ = chunkZ;
             this.blockArray = blockArray;
             this.biomeArray = biomeArray;
+            metaArray = new byte[256];
         }
         
         @Depreciated
