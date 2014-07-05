@@ -23,7 +23,24 @@
      }
  
      public void func_72835_b()
-@@ -261,6 +267,12 @@
+@@ -228,6 +234,7 @@
+         {
+             this.field_73037_M.field_71438_f.func_147584_b();
+         }
++        net.minecraftforge.event.ForgeEventFactory.onStartEntityTracking(p_73027_2_, field_73037_M.field_71439_g);
+     }
+ 
+     public Entity func_73045_a(int p_73045_1_)
+@@ -244,7 +251,7 @@
+             this.field_73032_d.remove(entity);
+             this.func_72900_e(entity);
+         }
+-
++        net.minecraftforge.event.ForgeEventFactory.onStopEntityTracking(entity, field_73037_M.field_71439_g);
+         return entity;
+     }
+ 
+@@ -261,6 +268,12 @@
  
      protected void func_72979_l()
      {
