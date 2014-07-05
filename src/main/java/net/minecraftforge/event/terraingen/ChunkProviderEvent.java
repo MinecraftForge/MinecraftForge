@@ -53,6 +53,9 @@ public class ChunkProviderEvent extends Event
             this.worldObj = worldObj;
         }
         
+        /**
+         * Depreciated. Use the world sensitive version.
+         */
         @Depreciated
         public ReplaceBiomeBlocks(IChunkProvider chunkProvider, int chunkX, int chunkZ, Block[] blockArray, BiomeGenBase[] biomeArray)
         {
@@ -64,6 +67,9 @@ public class ChunkProviderEvent extends Event
             metaArray = new byte[256];
         }
         
+        /**
+         * Depreciated. Use the world sensitive version.
+         */
         @Depreciated
         public ReplaceBiomeBlocks(IChunkProvider chunkProvider, int chunkX, int chunkZ, Block[] blockArray, byte[] metaArray, BiomeGenBase[] biomeArray)
         {
