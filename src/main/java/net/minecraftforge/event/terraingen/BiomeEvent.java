@@ -1,10 +1,18 @@
 package net.minecraftforge.event.terraingen;
 
 import cpw.mods.fml.common.eventhandler.Event;
+import cpw.mods.fml.common.eventhandler.Event.HasResult;
 import net.minecraft.block.Block;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeGenBase;
 
+/**
+ * BiomeEvent is fired whenever an event involving biomes occurs.<br>
+ * If a method utilizes this {@link Event} as its parameter, the method will 
+ * receive every child event of this class.<br>
+ * <br>
+ * All children of this event are fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.
+ **/
 public class BiomeEvent extends Event
 {
     public final BiomeGenBase biome;
@@ -14,6 +22,20 @@ public class BiomeEvent extends Event
         this.biome = biome;
     }
     
+    /**
+     * CreateDecorator is fired when a BiomeDecorator is created.<br>
+     * This event is fired whenever a BiomeDecorator is created in
+     * DeferredBiomeDecorator#fireCreateEventAndReplace(BiomeGenBase).<br>
+     * <br>
+     * {@link #originalBiomeDecorator} contains the original BiomeDecorator that would be used in vanilla.
+     * {@link #newBiomeDecorator} contains the new BiomeDecoration to be used by Minecraft.
+     * <br>
+     * This event is not {@link Cancelable}.
+     * <br>
+     * This event does not have a result. {@link HasResult}
+     * <br>
+     * This event is fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.
+     **/
     public static class CreateDecorator extends BiomeEvent
     {
         public final BiomeDecorator originalBiomeDecorator;
@@ -27,6 +49,13 @@ public class BiomeEvent extends Event
         }
     }
 
+    /**
+     * BiomeColor is fired whenever an event involving biome colors occurs. <br>
+     * If a method utilizes this {@link Event} as its parameter, the method will 
+     * receive every child event of this class.<br>
+     * <br>
+     * All children of this event are fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.
+     **/
     public static class BiomeColor extends BiomeEvent
     {
         public final int originalColor;
