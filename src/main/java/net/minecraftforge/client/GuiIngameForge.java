@@ -498,6 +498,7 @@ public class GuiIngameForge extends GuiIngame
         bind(icons);
         if (pre(EXPERIENCE)) return;
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GL11.glDisable(GL11.GL_BLEND);
 
         if (mc.playerController.gameIsSurvivalOrAdventure())
         {
@@ -537,6 +538,7 @@ public class GuiIngameForge extends GuiIngame
                 mc.mcProfiler.endSection();
             }
         }
+        GL11.glEnable(GL11.GL_BLEND);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         post(EXPERIENCE);
@@ -547,6 +549,7 @@ public class GuiIngameForge extends GuiIngame
         bind(icons);
         if (pre(JUMPBAR)) return;
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GL11.glDisable(GL11.GL_BLEND);
 
         mc.mcProfiler.startSection("jumpBar");
         float charge = mc.thePlayer.getHorseJumpPower();
@@ -562,6 +565,7 @@ public class GuiIngameForge extends GuiIngame
             this.drawTexturedModalRect(x, top, 0, 89, filled, 5);
         }
 
+        GL11.glEnable(GL11.GL_BLEND);
         mc.mcProfiler.endSection();
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
