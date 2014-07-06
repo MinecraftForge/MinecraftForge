@@ -54,7 +54,7 @@
       "serverreq":true
     },
     {
-      "name": "com.mojang:realms:1.2.4"
+      "name": "com.mojang:realms:1.2.9"
     },
     {
       "name": "org.apache.commons:commons-compress:1.8.1"
