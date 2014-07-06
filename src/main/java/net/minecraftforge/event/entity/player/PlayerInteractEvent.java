@@ -6,6 +6,31 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.eventhandler.Cancelable;
 
+/**
+ * PlayerInteractEvent is fired when a player interacts in some way.
+ * <br>
+ * This event is fired whenever a player interacts in
+ * Minecraft#func_147121_ag(),
+ * NetHandlerPlayServer#processPlayerBlockPlacement(C08PacketPlayerBlockPlacement),
+ * ItemInWorldManager#activateBlockOrUseItem(EntityPlayer, World, ItemStack, int, int, int, int, float, float, float),
+ * ItemInWorldManager#onBlockClicked(int, int, int, int). <br>
+ * <br>
+ * This event is fired via the {@link ForgeEventFactory#onPlayerInteract(EntityPlayer, Action, int, int, int, int)}.
+ * <br>
+ * {@link #action} contains the Action the player performed durin this interaction. <br>
+ * {@link #x} contains the x-coordinate of where this event occurred. <br>
+ * {@link #y} contains the y-coordinate of where this event occurred. <br>
+ * {@link #z} contains the z-coordinate of where this event occurred. <br>
+ * {@link #face} contains the face of the block that was interacted with. <br>
+ * {@link #world} contains the world in which this event is occurring. <br>
+ * <br>
+ * This event is {@link Cancelable}.<br>
+ * If this event is canceled, the player does not interact.<br>
+ * <br>
+ * This event does not have a result. {@link HasResult}<br>
+ * <br>
+ * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ **/
 @Cancelable
 public class PlayerInteractEvent extends PlayerEvent
 {

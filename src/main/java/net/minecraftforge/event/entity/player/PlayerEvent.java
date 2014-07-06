@@ -1,12 +1,20 @@
 package net.minecraftforge.event.entity.player;
 
 import java.io.File;
+
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
+/**
+ * PlayerEvent is fired whenever an event involving Living entities occurs. <br>
+ * If a method utilizes this {@link Event} as its parameter, the method will 
+ * receive every child event of this class.<br>
+ * <br>
+ * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
+ **/
 public class PlayerEvent extends LivingEvent
 {
     public final EntityPlayer entityPlayer;
@@ -16,6 +24,22 @@ public class PlayerEvent extends LivingEvent
         entityPlayer = player;
     }
     
+    /**
+     * HarvestCheck is fired when a player attempts to harvest a block.<br>
+     * This event is fired whenever a player attempts to harvest a block in
+     * EntityPlayer#canHarvestBlock(Block).<br>
+     * <br>
+     * This event is fired via the {@link ForgeEventFactory#doPlayerHarvestCheck(EntityPlayer, Block, boolean)}.<br>
+     * <br>
+     * {@link #block} contains the Block that is being checked for harvesting. <br>
+     * {@link #success} contains the boolean value for whether the Block will be successfully harvested. <br>
+     * <br>
+     * This event is not {@link Cancelable}.<br>
+     * <br>
+     * This event does not have a result. {@link HasResult}<br>
+     * <br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+     **/
     public static class HarvestCheck extends PlayerEvent
     {
         public final Block block;
@@ -29,6 +53,28 @@ public class PlayerEvent extends LivingEvent
         }
     }
 
+    /**
+     * BreakSpeed is fired when a player attempts to harvest a block.<br>
+     * This event is fired whenever a player attempts to harvest a block in
+     * EntityPlayer#canHarvestBlock(Block).<br>
+     * <br>
+     * This event is fired via the {@link ForgeEventFactory#getBreakSpeed(EntityPlayer, Block, int, float, int, int, int)}.<br>
+     * <br>
+     * {@link #block} contains the block being broken. <br>
+     * {@link #metadata} contains the metadata of the block being broken. <br>
+     * {@link #originalSpeed} contains the original speed at which the player broke the block. <br>
+     * {@link #newSpeed} contains the newSpeed at which the player will break the block. <br>
+     * {@link #x} contains the x-coordinate at which this event is occurring. <br>
+     * {@link #y} contains the y-coordinate at which this event is occurring. <br>
+     * {@link #z} contains the z-coordinate at which this event is occurring. <br>
+     * <br>
+     * This event is {@link Cancelable}.<br>
+     * If it is canceled, the player is unable to break the block.<br>
+     * <br>
+     * This event does not have a result. {@link HasResult}<br>
+     * <br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+     **/
     @Cancelable
     public static class BreakSpeed extends PlayerEvent
     {
@@ -59,6 +105,22 @@ public class PlayerEvent extends LivingEvent
         }
     }
 
+    /**
+     * NameFormat is fired when a player's display name is retrieved.<br>
+     * This event is fired whenever a player's name is retrieved in
+     * EntityPlayer#getDisplayName() or EntityPlayer#refreshDisplayName().<br>
+     * <br>
+     * This event is fired via the {@link ForgeEventFactory#getPlayerDisplayName(EntityPlayer, String)}.<br>
+     * <br>
+     * {@link #username} contains the username of the player.
+     * {@link #displayname} contains the display name of the player.
+     * <br>
+     * This event is not {@link Cancelable}.
+     * <br>
+     * This event does not have a result. {@link HasResult}
+     * <br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+     **/
     public static class NameFormat extends PlayerEvent
     {
         public final String username;
