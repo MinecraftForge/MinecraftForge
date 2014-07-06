@@ -266,6 +266,15 @@
                  GL11.glDisable(GL11.GL_LIGHTING);
                  GL11.glDisable(GL11.GL_DEPTH_TEST);
                  GL11.glDisable(GL11.GL_TEXTURE_2D);
+@@ -623,7 +704,7 @@
+                 this.func_77017_a(tessellator, p_94148_4_ + 2, p_94148_5_ + 13, 13, 2, 0);
+                 this.func_77017_a(tessellator, p_94148_4_ + 2, p_94148_5_ + 13, 12, 1, i1);
+                 this.func_77017_a(tessellator, p_94148_4_ + 2, p_94148_5_ + 13, j1, 1, l);
+-                GL11.glEnable(GL11.GL_BLEND);
++                //GL11.glEnable(GL11.GL_BLEND); // Forge: Disable Bled because it screws with a lot of things down the line.
+                 GL11.glEnable(GL11.GL_ALPHA_TEST);
+                 GL11.glEnable(GL11.GL_TEXTURE_2D);
+                 GL11.glEnable(GL11.GL_LIGHTING);
 @@ -664,4 +745,54 @@
      {
          this.func_76986_a((EntityItem)p_76986_1_, p_76986_2_, p_76986_4_, p_76986_6_, p_76986_8_, p_76986_9_);
