@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/Enchantment.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/Enchantment.java
+@@ -10,7 +10,7 @@
+ 
+ public abstract class Enchantment
+ {
+-    public static final Enchantment[] field_77331_b = new Enchantment[256];
++    public static final Enchantment[] field_77331_b = new Enchantment[4096];
+     public static final Enchantment[] field_92090_c;
+     public static final Enchantment field_77332_c = new EnchantmentProtection(0, 10, 0);
+     public static final Enchantment field_77329_d = new EnchantmentProtection(1, 5, 1);
 @@ -124,6 +124,36 @@
  
      public void func_151367_b(EntityLivingBase p_151367_1_, Entity p_151367_2_, int p_151367_3_) {}
