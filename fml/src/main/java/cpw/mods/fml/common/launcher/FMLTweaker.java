@@ -29,6 +29,7 @@ public class FMLTweaker implements ITweaker {
 
     public FMLTweaker()
     {
+        System.setProperty("java.net.preferIPv4Stack", "true"); //Lets do this as early as possible. Vanilla does it in Main.main
         try
         {
             System.setSecurityManager(new FMLSecurityManager());
