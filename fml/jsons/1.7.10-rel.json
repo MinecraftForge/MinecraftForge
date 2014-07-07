@@ -46,13 +46,6 @@
       "clientreq":true
     },
     {
-      "name": "org.scala-lang:jline:2.11",
-      "url" : "http://files.minecraftforge.net/maven/",
-      "checksums" : [ "9504d5e2da5d78237239c5226e8200ec21182040", "294e800beb8041950a4f3ac8eedb42b6d75b46fb" ],
-      "serverreq":true,
-      "clientreq":true
-    },
-    {
       "name": "org.scala-lang:scala-actors-migration_2.11:1.1.0",
       "url" : "http://files.minecraftforge.net/maven/",
       "checksums" : [ "dfa8bc42b181d5b9f1a5dd147f8ae308b893eb6f", "8c9aaeeb68487ca519411a14068e1b4d69739207" ],
