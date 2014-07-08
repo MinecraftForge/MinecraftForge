@@ -49,7 +49,7 @@ public class EnumHelper
         {EnumStatus.class},
         {ToolMaterial.class, int.class, int.class, float.class, float.class, int.class},
         {EnumRarity.class, EnumChatFormatting.class, String.class}
-    }; 
+    };
 
     public static EnumAction addAction(String name)
     {
@@ -190,7 +190,7 @@ public class EnumHelper
         setup();
         return addEnum(commonTypes, enumType, enumName, paramValues);
     }
-    
+
     @SuppressWarnings("rawtypes")
     public static <T extends Enum<? >> T addEnum(Class[][] map, Class<T> enumType, String enumName, Object... paramValues)
     {
@@ -219,7 +219,7 @@ public class EnumHelper
 
         Field valuesField = null;
         Field[] fields = enumType.getDeclaredFields();
-        
+
         for (Field field : fields)
         {
             String name = field.getName();
@@ -234,7 +234,7 @@ public class EnumHelper
         if (valuesField == null)
         {
             String valueType = String.format("[L%s;", enumType.getName().replace('.', '/'));
-    
+
             for (Field field : fields)
             {
                 if ((field.getModifiers() & flags) == flags &&
