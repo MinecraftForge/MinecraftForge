@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/Enchantment.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/Enchantment.java
-@@ -124,6 +124,36 @@
+@@ -124,6 +124,45 @@
  
      public void func_151367_b(EntityLivingBase p_151367_1_, Entity p_151367_2_, int p_151367_3_) {}
  
@@ -15,6 +15,7 @@
 +        return func_92089_a(stack);
 +    }
 +
++    private static final java.lang.reflect.Field bookSetter = Enchantment.class.getDeclaredFields()[1];
 +    /**
 +     * Add to the list of enchantments applicable by the anvil from a book
 +     *
@@ -22,7 +23,15 @@
 +     */
 +    public static void addToBookList(Enchantment enchantment)
 +    {
-+        com.google.common.collect.ObjectArrays.concat(field_92090_c, enchantment);
++        try
++        {
++            net.minecraftforge.common.util.EnumHelper.setFailsafeFieldValue(bookSetter, null,
++                com.google.common.collect.ObjectArrays.concat(field_92090_c, enchantment));
++        }
++        catch (Exception e)
++        {
++            throw new RuntimeException(e); //Rethrow see what happens
++        }
 +    }
 +
 +    /**
