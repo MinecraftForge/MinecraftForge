@@ -1,0 +1,94 @@
+--- ShaderGroup.java	2014-06-18 20:50:46.439657703 -0400
++++ ShaderGroup-new.java	2014-06-19 08:24:03.668962117 -0400
+@@ -7,18 +7,26 @@
+ import com.google.gson.JsonElement;
+ import com.google.gson.JsonObject;
+ import com.google.gson.JsonParser;
++
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.io.InputStream;
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
++
+ import javax.vecmath.Matrix4f;
++
+ import net.minecraft.client.resources.IResource;
+ import net.minecraft.client.resources.IResourceManager;
++import net.minecraft.client.shader.Framebuffer;
++import net.minecraft.client.shader.Shader;
++import net.minecraft.client.shader.ShaderUniform;
+ import net.minecraft.client.util.JsonException;
+ import net.minecraft.util.JsonUtils;
+ import net.minecraft.util.ResourceLocation;
++
+ import org.apache.commons.io.IOUtils;
+ 
+ @SideOnly(Side.CLIENT)
+@@ -27,12 +35,14 @@
+     private final Framebuffer mainFramebuffer;
+     private final IResourceManager resourceManager;
+     private final String shaderGroupName;
+-    private final List listShaders = Lists.newArrayList();
++    private List listShaders = Lists.newArrayList();
+     private final Map mapFramebuffers = Maps.newHashMap();
+     private final List listFramebuffers = Lists.newArrayList();
+     private Matrix4f projectionMatrix;
++    private JsonElement jsonelement = null;
+     private int mainFramebufferWidth;
+     private int mainFramebufferHeight;
++    private int index = 0;
+     private float field_148036_j;
+     private float field_148037_k;
+     private static final String __OBFID = "CL_00001041";
+@@ -50,6 +60,31 @@
+         this.initFromLocation(p_i45088_3_);
+     }
+ 
++    public List getShaderList()
++    {
++        return this.listShaders;
++    }
++	
++    public Shader getIndexedShader()
++    {
++        return (Shader) ((index > this.listShaders.size()) ? ((index == 0 ? null : this.listShaders.get(this.listShaders.size()))) : this.listShaders.get(index));
++    }
++
++    public void setShaderIndex(int index)
++    {
++        this.index = index;
++    }
++
++    public int getShaderIndex()
++    {
++        return this.index;
++    }
++    
++    public void setShaderList(List listShaders)
++    {
++        this.listShaders = listShaders;
++    }
++	
+     public void initFromLocation(ResourceLocation p_148025_1_) throws JsonException
+     {
+         JsonParser jsonparser = new JsonParser();
+@@ -146,6 +181,7 @@
+ 
+     private void initPass(JsonElement p_148019_1_) throws JsonException
+     {
++        this.jsonelement = p_148019_1_;
+         JsonObject jsonobject = JsonUtils.getJsonElementAsJsonObject(p_148019_1_, "pass");
+         String s = JsonUtils.getJsonObjectStringFieldValue(jsonobject, "name");
+         String s1 = JsonUtils.getJsonObjectStringFieldValue(jsonobject, "intarget");
+@@ -313,7 +349,7 @@
+         this.listShaders.add(this.listShaders.size(), shader);
+         return shader;
+     }
+-
++	
+     private void resetProjectionMatrix()
+     {
+         this.projectionMatrix = new Matrix4f();
