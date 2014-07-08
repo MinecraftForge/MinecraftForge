@@ -121,7 +121,7 @@
              }
  
              GL11.glPopMatrix();
-@@ -507,6 +538,7 @@
+@@ -516,6 +547,7 @@
  
          if (this.field_78455_a.field_71439_g.func_70027_ad())
          {
@@ -129,7 +129,11 @@
              this.func_78442_d(p_78447_1_);
          }
  
-@@ -519,6 +551,7 @@
+@@ -525,9 +557,11 @@
+             int j = MathHelper.func_76128_c(this.field_78455_a.field_71439_g.field_70163_u);
+             int k = MathHelper.func_76128_c(this.field_78455_a.field_71439_g.field_70161_v);
+             Block block = this.field_78455_a.field_71441_e.func_147439_a(i, j, k);
++            int block2_X = i, block2_Y = j, block2_Z = k;
  
              if (this.field_78455_a.field_71441_e.func_147439_a(i, j, k).func_149721_r())
              {
@@ -137,11 +141,20 @@
                  this.func_78446_a(p_78447_1_, block.func_149733_h(2));
              }
              else
-@@ -541,12 +574,14 @@
+@@ -544,18 +578,23 @@
+                     if (this.field_78455_a.field_71441_e.func_147439_a(i1, j1, k1).func_149721_r())
+                     {
+                         block = this.field_78455_a.field_71441_e.func_147439_a(i1, j1, k1);
++                        block2_X = i;
++                        block2_Y = j;
++                        block2_Z = k;
+                     }
+                 }
+             }
  
              if (block.func_149688_o() != Material.field_151579_a)
              {
-+                if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderBlockOverlayEvent(this.field_78455_a.field_71439_g, p_78447_1_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, block, i, j, k)))
++                if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderBlockOverlayEvent(this.field_78455_a.field_71439_g, p_78447_1_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, block, block2_X, block2_Y, block2_Z)))
                  this.func_78446_a(p_78447_1_, block.func_149733_h(2));
              }
          }
