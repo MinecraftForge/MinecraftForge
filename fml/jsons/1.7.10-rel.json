@@ -117,7 +117,7 @@
       "serverreq":true
     },
     {
-      "name": "com.mojang:realms:1.2.9"
+      "name": "com.mojang:realms:1.2.10"
     },
     {
       "name": "org.apache.commons:commons-compress:1.8.1"
@@ -180,7 +180,7 @@
       "name": "com.google.code.gson:gson:2.2.4"
     },
     {
-      "name": "com.mojang:authlib:1.5.13"
+      "name": "com.mojang:authlib:1.5.16"
     },
     {
       "name": "org.apache.logging.log4j:log4j-api:2.0-beta9"
