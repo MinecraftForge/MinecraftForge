@@ -6,9 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraftforge.client.EnumHelperClient;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.EnumHelper;
 
-import org.apache.logging.log4j.core.helpers.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 import cpw.mods.fml.relauncher.ReflectionHelper;
@@ -32,6 +33,8 @@ public class EnumHelperTest
 
         if (failed)
             throw new RuntimeException("Enum Helper test failed!");
+        Assert.assertEquals(BiomeDictionary.Type.BEACH, BiomeDictionary.Type.getType("BEACH"));
+        Assert.assertEquals(BiomeDictionary.Type.getType("NEWTYPE"), BiomeDictionary.Type.getType("NEWTYPE"));
     }
     private void testType(Object[] info)
     {
