@@ -779,6 +779,104 @@ public class GuiConfigEntries extends GuiListExtended
     }
 
     /**
+     * NumberSliderEntry
+     * 
+     * Provides a slider for numeric properties.
+     */
+    public static class NumberSliderEntry extends ButtonEntry
+    {
+        protected final double beforeValue;
+
+        public NumberSliderEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement<?> configElement)
+        {
+            super(owningScreen, owningEntryList, configElement, new GuiSlider(0, owningEntryList.controlX, 0, owningEntryList.controlWidth, 18, 
+                    "", "", Double.valueOf(configElement.getMinValue().toString()), Double.valueOf(configElement.getMaxValue().toString()), 
+                    Double.valueOf(configElement.get().toString()), configElement.getType() == ConfigGuiType.DOUBLE, true));
+
+            if (configElement.getType() == ConfigGuiType.INTEGER)
+                this.beforeValue = Integer.valueOf(configElement.get().toString());
+            else
+                this.beforeValue = Double.valueOf(configElement.get().toString());
+        }
+
+        @Override
+        public void updateValueButtonText() 
+        {
+            ((GuiSlider) this.btnValue).updateSlider();
+        }
+
+        @Override
+        public void valueButtonPressed(int slotIndex) {}
+
+        @Override
+        public boolean isDefault()
+        {
+            if (configElement.getType() == ConfigGuiType.INTEGER)
+                return (int) ((GuiSlider) this.btnValue).getValue() == Integer.valueOf(configElement.getDefault().toString());
+            else
+                return ((GuiSlider) this.btnValue).getValue() == Double.valueOf(configElement.getDefault().toString());
+        }
+
+        @Override
+        public void setToDefault()
+        {
+            if (this.enabled())
+            {
+                ((GuiSlider) this.btnValue).setValue(Double.valueOf(configElement.getDefault().toString()));
+                ((GuiSlider) this.btnValue).updateSlider();
+            }
+        }
+
+        @Override
+        public boolean isChanged()
+        {
+            if (configElement.getType() == ConfigGuiType.INTEGER)
+                return (int) ((GuiSlider) this.btnValue).getValue() != (int) beforeValue;
+            else
+                return ((GuiSlider) this.btnValue).getValue() != beforeValue;
+        }
+
+        @Override
+        public void undoChanges()
+        {
+            if (this.enabled())
+            {
+                ((GuiSlider) this.btnValue).setValue(beforeValue);
+                ((GuiSlider) this.btnValue).updateSlider();
+            }
+        }
+
+        @Override
+        public boolean saveConfigElement()
+        {
+            if (this.enabled() && this.isChanged())
+            {
+                if (configElement.getType() == ConfigGuiType.INTEGER)
+                    configElement.set((int) ((GuiSlider) this.btnValue).getValue());
+                else
+                    configElement.set(((GuiSlider) this.btnValue).getValue());
+                return configElement.requiresMcRestart();
+            }
+            return false;
+        }
+
+        @Override
+        public Object getCurrentValue()
+        {
+            if (configElement.getType() == ConfigGuiType.INTEGER)
+                return (int) ((GuiSlider) this.btnValue).getValue();
+            else
+                return ((GuiSlider) this.btnValue).getValue();
+        }
+
+        @Override
+        public Object[] getCurrentValues()
+        {
+            return new Object[] { getCurrentValue() };
+        }
+    }
+
+    /**
      * ButtonEntry
      *
      * Provides a basic GuiButton entry to be used as a base for other entries that require a button for the value.
@@ -789,9 +887,14 @@ public class GuiConfigEntries extends GuiListExtended
 
         public ButtonEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement<?> configElement)
         {
+            this(owningScreen, owningEntryList, configElement, new GuiButtonExt(0, owningEntryList.controlX, 0, owningEntryList.controlWidth, 18, 
+                    configElement.get() != null ? I18n.format(String.valueOf(configElement.get())) : ""));
+        }
+
+        public ButtonEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement<?> configElement, GuiButtonExt button)
+        {
             super(owningScreen, owningEntryList, configElement);
-            this.btnValue = new GuiButtonExt(0, this.owningEntryList.controlX, 0, this.owningEntryList.controlWidth, 18, 
-                    configElement.get() != null ? I18n.format(String.valueOf(configElement.get())) : "");
+            this.btnValue = button;
         }
 
         /**
