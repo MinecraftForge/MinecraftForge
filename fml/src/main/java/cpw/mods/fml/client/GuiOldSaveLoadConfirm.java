@@ -66,7 +66,16 @@ public class GuiOldSaveLoadConfirm extends GuiYesNo implements GuiYesNoCallback 
             FMLLog.info("Capturing current state of world %s into file %s", saveName, zip.getAbsolutePath());
             try
             {
-                ZipperUtil.zip(new File(FMLClientHandler.instance().getSavesDir(), dirName), zip);
+                String skip = System.getProperty("fml.doNotBackup");
+                if (skip == null || !"true".equals(skip))
+                {
+                    ZipperUtil.zip(new File(FMLClientHandler.instance().getSavesDir(), dirName), zip);
+                }
+                else
+                {
+                    for (int x = 0; x < 10; x++)
+                        FMLLog.severe("!!!!!!!!!! UPDATING WORLD WITHOUT DOING BACKUP !!!!!!!!!!!!!!!!");
+                }
             } catch (IOException e)
             {
                 FMLLog.log(Level.WARN, e, "There was a problem saving the backup %s. Please fix and try again", zip.getName());

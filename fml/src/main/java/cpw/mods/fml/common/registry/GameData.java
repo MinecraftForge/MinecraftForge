@@ -369,7 +369,16 @@ public class GameData {
         // backup
         try
         {
-            ZipperUtil.backupWorld();
+            String skip = System.getProperty("fml.doNotBackup");
+            if (skip == null || !"true".equals(skip))
+            {
+                ZipperUtil.backupWorld();
+            }
+            else
+            {
+                for (int x = 0; x < 10; x++)
+                    FMLLog.severe("!!!!!!!!!! UPDATING WORLD WITHOUT DOING BACKUP !!!!!!!!!!!!!!!!");
+            }
         }
         catch (IOException e)
         {
@@ -618,7 +627,16 @@ public class GameData {
 
             try
             {
-                ZipperUtil.backupWorld();
+                String skip = System.getProperty("fml.doNotBackup");
+                if (skip == null || !"true".equals(skip))
+                {
+                    ZipperUtil.backupWorld();
+                }
+                else
+                {
+                    for (int x = 0; x < 10; x++)
+                        FMLLog.severe("!!!!!!!!!! UPDATING WORLD WITHOUT DOING BACKUP !!!!!!!!!!!!!!!!");
+                }
             }
             catch (IOException e)
             {
