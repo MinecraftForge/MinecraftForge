@@ -44,18 +44,42 @@
      }
  
      public void func_147419_a(int p_147419_1_, int p_147419_2_, Block[] p_147419_3_)
-@@ -134,6 +157,10 @@
+@@ -132,8 +155,17 @@
+         }
+     }
  
++    @Deprecated //You should provide meatadata and biome data in the below method
      public void func_147418_b(int p_147418_1_, int p_147418_2_, Block[] p_147418_3_)
      {
-+        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, p_147418_1_, p_147418_2_, p_147418_3_, null);
++        replaceBiomeBlocks(p_147418_1_, p_147418_2_, p_147418_3_, new byte[p_147418_3_.length], null);
++    }
++    public void replaceBiomeBlocks(int p_147418_1_, int p_147418_2_, Block[] p_147418_3_, byte[] meta, BiomeGenBase[] biomes)
++    {
++        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, p_147418_1_, p_147418_2_, p_147418_3_, meta, biomes, this.field_73175_o);
 +        MinecraftForge.EVENT_BUS.post(event);
 +        if (event.getResult() == Result.DENY) return;
 +
          byte b0 = 64;
          double d0 = 0.03125D;
          this.field_73185_q = this.field_73177_m.func_76304_a(this.field_73185_q, p_147418_1_ * 16, p_147418_2_ * 16, 0, 16, 16, 1, d0, d0, 1.0D);
-@@ -253,6 +280,10 @@
+@@ -234,12 +266,13 @@
+     {
+         this.field_73181_i.setSeed((long)p_73154_1_ * 341873128712L + (long)p_73154_2_ * 132897987541L);
+         Block[] ablock = new Block[32768];
++        byte[] meta = new byte[ablock.length];
++        BiomeGenBase[] abiomegenbase = this.field_73175_o.func_72959_q().func_76933_b((BiomeGenBase[])null, p_73154_1_ * 16, p_73154_2_ * 16, 16, 16); //Forge Move up to allow for passing to replaceBiomeBlocks
+         this.func_147419_a(p_73154_1_, p_73154_2_, ablock);
+-        this.func_147418_b(p_73154_1_, p_73154_2_, ablock);
++        this.replaceBiomeBlocks(p_73154_1_, p_73154_2_, ablock, meta, abiomegenbase);
+         this.field_73182_t.func_151539_a(this, this.field_73175_o, p_73154_1_, p_73154_2_, ablock);
+         this.field_73172_c.func_151539_a(this, this.field_73175_o, p_73154_1_, p_73154_2_, ablock);
+-        Chunk chunk = new Chunk(this.field_73175_o, ablock, p_73154_1_, p_73154_2_);
+-        BiomeGenBase[] abiomegenbase = this.field_73175_o.func_72959_q().func_76933_b((BiomeGenBase[])null, p_73154_1_ * 16, p_73154_2_ * 16, 16, 16);
++        Chunk chunk = new Chunk(this.field_73175_o, ablock, meta, p_73154_1_, p_73154_2_);
+         byte[] abyte = chunk.func_76605_m();
+ 
+         for (int k = 0; k < abyte.length; ++k)
+@@ -253,6 +286,10 @@
  
      private double[] func_73164_a(double[] p_73164_1_, int p_73164_2_, int p_73164_3_, int p_73164_4_, int p_73164_5_, int p_73164_6_, int p_73164_7_)
      {
@@ -66,7 +90,7 @@
          if (p_73164_1_ == null)
          {
              p_73164_1_ = new double[p_73164_5_ * p_73164_6_ * p_73164_7_];
-@@ -399,6 +430,9 @@
+@@ -399,6 +436,9 @@
      public void func_73153_a(IChunkProvider p_73153_1_, int p_73153_2_, int p_73153_3_)
      {
          BlockFalling.field_149832_M = true;
@@ -76,7 +100,7 @@
          int k = p_73153_2_ * 16;
          int l = p_73153_3_ * 16;
          this.field_73172_c.func_75051_a(this.field_73175_o, this.field_73181_i, p_73153_2_, p_73153_3_);
-@@ -407,7 +441,8 @@
+@@ -407,7 +447,8 @@
          int k1;
          int l1;
  
@@ -86,7 +110,7 @@
          {
              j1 = k + this.field_73181_i.nextInt(16) + 8;
              k1 = this.field_73181_i.nextInt(120) + 4;
-@@ -418,7 +453,8 @@
+@@ -418,7 +459,8 @@
          i1 = this.field_73181_i.nextInt(this.field_73181_i.nextInt(10) + 1) + 1;
          int i2;
  
@@ -96,19 +120,17 @@
          {
              k1 = k + this.field_73181_i.nextInt(16) + 8;
              l1 = this.field_73181_i.nextInt(120) + 4;
-@@ -427,8 +463,9 @@
-         }
+@@ -428,7 +470,8 @@
  
          i1 = this.field_73181_i.nextInt(this.field_73181_i.nextInt(10) + 1);
--
+ 
 -        for (j1 = 0; j1 < i1; ++j1)
-+        
 +        doGen = TerrainGen.populate(p_73153_1_, field_73175_o, field_73181_i, p_73153_2_, p_73153_3_, false, GLOWSTONE);
 +        for (j1 = 0; doGen && j1 < i1; ++j1)
          {
              k1 = k + this.field_73181_i.nextInt(16) + 8;
              l1 = this.field_73181_i.nextInt(120) + 4;
-@@ -436,7 +473,7 @@
+@@ -436,7 +479,7 @@
              (new WorldGenGlowStone1()).func_76484_a(this.field_73175_o, this.field_73181_i, k1, l1, i2);
          }
  
@@ -117,7 +139,7 @@
          {
              k1 = k + this.field_73181_i.nextInt(16) + 8;
              l1 = this.field_73181_i.nextInt(128);
-@@ -444,7 +481,10 @@
+@@ -444,7 +487,10 @@
              (new WorldGenGlowStone2()).func_76484_a(this.field_73175_o, this.field_73181_i, k1, l1, i2);
          }
  
@@ -129,7 +151,7 @@
          {
              j1 = k + this.field_73181_i.nextInt(16) + 8;
              k1 = this.field_73181_i.nextInt(128);
-@@ -452,7 +492,7 @@
+@@ -452,7 +498,7 @@
              (new WorldGenFlowers(Blocks.field_150338_P)).func_76484_a(this.field_73175_o, this.field_73181_i, j1, k1, l1);
          }
  
@@ -138,7 +160,7 @@
          {
              j1 = k + this.field_73181_i.nextInt(16) + 8;
              k1 = this.field_73181_i.nextInt(128);
-@@ -463,7 +503,8 @@
+@@ -463,7 +509,8 @@
          WorldGenMinable worldgenminable = new WorldGenMinable(Blocks.field_150449_bY, 13, Blocks.field_150424_aL);
          int j2;
  
@@ -148,7 +170,7 @@
          {
              l1 = k + this.field_73181_i.nextInt(16);
              i2 = this.field_73181_i.nextInt(108) + 10;
-@@ -479,6 +520,9 @@
+@@ -479,6 +526,9 @@
              (new WorldGenHellLava(Blocks.field_150356_k, true)).func_76484_a(this.field_73175_o, this.field_73181_i, l1, i2, j2);
          }
  
