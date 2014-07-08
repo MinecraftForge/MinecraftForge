@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenHills.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenHills.java
+@@ -55,7 +55,7 @@
+             j1 = p_76728_2_.nextInt(28) + 4;
+             int k1 = p_76728_4_ + p_76728_2_.nextInt(16);
+ 
+-            if (p_76728_1_.func_147439_a(i1, j1, k1) == Blocks.field_150348_b)
++            if (p_76728_1_.func_147439_a(i1, j1, k1).isReplaceableOreGen(p_76728_1_, i1, j1, k1, Blocks.field_150348_b))
+             {
+                 p_76728_1_.func_147465_d(i1, j1, k1, Blocks.field_150412_bA, 0, 2);
+             }
