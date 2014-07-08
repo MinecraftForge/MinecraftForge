@@ -29,7 +29,34 @@ public class ChunkProviderEvent extends Event
         public final Block[] blockArray;
         public final byte[] metaArray;
         public final BiomeGenBase[] biomeArray;
+        public final World worldObj;
         
+        public ReplaceBiomeBlocks(IChunkProvider chunkProvider, int chunkX, int chunkZ, Block[] blockArray, BiomeGenBase[] biomeArray, World worldObj)
+        {
+            super(chunkProvider);
+            this.chunkX = chunkX;
+            this.chunkZ = chunkZ;
+            this.blockArray = blockArray;
+            this.biomeArray = biomeArray;
+            metaArray = new byte[256];
+            this.worldObj = worldObj;
+        }
+        
+        public ReplaceBiomeBlocks(IChunkProvider chunkProvider, int chunkX, int chunkZ, Block[] blockArray, byte[] metaArray, BiomeGenBase[] biomeArray, World worldObj)
+        {
+            super(chunkProvider);
+            this.chunkX = chunkX;
+            this.chunkZ = chunkZ;
+            this.blockArray = blockArray;
+            this.biomeArray = biomeArray;
+            this.metaArray = metaArray;
+            this.worldObj = worldObj;
+        }
+        
+        /**
+         * Depreciated. Use the world sensitive version.
+         */
+        @Depreciated
         public ReplaceBiomeBlocks(IChunkProvider chunkProvider, int chunkX, int chunkZ, Block[] blockArray, BiomeGenBase[] biomeArray)
         {
             super(chunkProvider);
@@ -40,6 +67,10 @@ public class ChunkProviderEvent extends Event
             metaArray = new byte[256];
         }
         
+        /**
+         * Depreciated. Use the world sensitive version.
+         */
+        @Depreciated
         public ReplaceBiomeBlocks(IChunkProvider chunkProvider, int chunkX, int chunkZ, Block[] blockArray, byte[] metaArray, BiomeGenBase[] biomeArray)
         {
             super(chunkProvider);
@@ -49,7 +80,6 @@ public class ChunkProviderEvent extends Event
             this.biomeArray = biomeArray;
             this.metaArray = metaArray;
         }
-       
     }
     
     /**
