@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/net/minecraft/potion/Potion.java
++++ ../src-work/minecraft/net/minecraft/potion/Potion.java
+@@ -307,4 +307,27 @@
+     {
+         return p_111183_2_.func_111164_d() * (double)(p_111183_1_ + 1);
+     }
++    
++    /* ======================================== FORGE START =====================================*/
++    
++    /**
++     * If the standard PotionEffect text (name and duration) should be drawn when this potion is active. 
++     * @param effect the active PotionEffect
++     * @return true to draw the standard text
++     */
++    public boolean shouldRenderInvText(PotionEffect effect)
++    {
++        return true;
++    }
++    
++    /**
++     * Called to draw the this Potion onto the player's inventory when it's active.
++     * This can be used to e.g. render Potion icons from your own texture.
++     * @param x the x coordinate
++     * @param y the y coordinate
++     * @param effect the active PotionEffect
++     * @param mc the Minecraft instance, for convenience
++     */
++    @SideOnly(Side.CLIENT)
++    public void renderInventoryEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc) { }
+ }
