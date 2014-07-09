@@ -319,7 +319,7 @@ public class ForgeHooksClient
     {
         ImageIO.setUseCache(false); //Disable on-disc stream cache should speed up texture pack reloading.
         PixelFormat format = new PixelFormat().withDepthBits(24);
-        if (!ForgeModContainer.enableStencilBits)
+        if (!ForgeModContainer.enableStencilBits || Boolean.parseBoolean(System.getProperty("forge.forceNoStencil", "false")))
         {
             Display.create(format);
             stencilBits = 0;
