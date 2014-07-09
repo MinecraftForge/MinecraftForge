@@ -4,6 +4,7 @@ import java.util.Random;
 
 import cpw.mods.fml.common.eventhandler.Event.*;
 
+import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.MapGenBase;
@@ -56,5 +57,12 @@ public abstract class TerrainGen
         SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(world, rand, x, y, z);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         return event.getResult() != Result.DENY;
+    }
+
+    public static BiomeSpecificOreGenEvent generateBiomeSpecificOre(World world, Random rand, int worldX, int worldY, Block ore)
+    {
+        BiomeSpecificOreGenEvent event = new BiomeSpecificOreGenEvent(world, rand, worldX, worldY, ore);
+        MinecraftForge.ORE_GEN_BUS.post(event);
+        return event;
     }
 }
