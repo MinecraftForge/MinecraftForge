@@ -206,6 +206,14 @@ public class Fluid
     }
 
     /**
+     * A FluidStack sensitive version of getUnlocalizedName
+     */
+    public String getUnlocalizedName(FluidStack stack)
+    {
+        return this.getUnlocalizedName();
+    }
+
+    /**
      * Returns the unlocalized name of this fluid.
      */
     public String getUnlocalizedName()

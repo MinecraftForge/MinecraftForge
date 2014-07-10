@@ -100,6 +100,16 @@ public class FluidStack
         return FluidRegistry.getFluid(fluidID);
     }
 
+    public String getLocalizedName()
+    {
+        return this.getFluid().getLocalizedName(this);
+    }
+
+    public String getUnlocalizedName()
+    {
+        return this.getFluid().getUnlocalizedName(this);
+    }
+
     /**
      * @return A copy of this FluidStack
      */
