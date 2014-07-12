@@ -454,6 +454,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
 
     public void abortClientHandshake(String type)
     {
+        FMLLog.log(Level.INFO, "Aborting client handshake \"%s\"", type);
         FMLCommonHandler.instance().waitForPlayClient();
         completeClientSideConnection(ConnectionType.valueOf(type));
     }

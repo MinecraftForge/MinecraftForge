@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/realms/RealmsConnect.java
++++ ../src-work/minecraft/net/minecraft/realms/RealmsConnect.java
+@@ -40,6 +40,7 @@
+ 
+                 try
+                 {
++                    cpw.mods.fml.client.FMLClientHandler.instance().connectToRealmsServer(p_connect_1_, p_connect_2_);
+                     inetaddress = InetAddress.getByName(p_connect_1_);
+ 
+                     if (RealmsConnect.this.aborted)

@@ -820,10 +820,17 @@ public class FMLClientHandler implements IFMLSidedHandler
         playClientBlock = new CountDownLatch(1);
     }
 
+    public void connectToRealmsServer(String host, int port)
+    {
+        playClientBlock = new CountDownLatch(1);
+    }
+
     private CountDownLatch playClientBlock;
 
     public void setPlayClient(NetHandlerPlayClient netHandlerPlayClient)
     {
+        if (playClientBlock == null)
+            playClientBlock = new CountDownLatch(1);
         playClientBlock.countDown();
         this.currentPlayClient = new WeakReference<NetHandlerPlayClient>(netHandlerPlayClient);
     }
