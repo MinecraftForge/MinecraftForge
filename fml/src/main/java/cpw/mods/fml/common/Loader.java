@@ -504,12 +504,12 @@ public class Loader
 
     public void preinitializeMods()
     {
-        ObjectHolderRegistry.INSTANCE.findObjectHolders(discoverer.getASMTable());
         if (!modController.isInState(LoaderState.PREINITIALIZATION))
         {
             FMLLog.warning("There were errors previously. Not beginning mod initialization phase");
             return;
         }
+        ObjectHolderRegistry.INSTANCE.findObjectHolders(discoverer.getASMTable());
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, discoverer.getASMTable(), canonicalConfigDir);
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
         modController.transition(LoaderState.INITIALIZATION, false);
