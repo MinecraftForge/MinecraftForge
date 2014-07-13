@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiNewChat.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiNewChat.java
+@@ -99,6 +99,7 @@
+                                 byte b0 = 0;
+                                 int j2 = -j1 * 9;
+                                 func_73734_a(b0, j2 - 9, b0 + i1 + 4, j2, i2 / 2 << 24);
++                                GL11.glEnable(GL11.GL_BLEND); // FORGE: BugFix MC-36812 Chat Opacity Broken in 1.7.x
+                                 String s = chatline.func_151461_a().func_150254_d();
+                                 this.field_146247_f.field_71466_p.func_78261_a(s, b0, j2 - 8, 16777215 + (i2 << 24));
+                                 GL11.glDisable(GL11.GL_ALPHA_TEST);
