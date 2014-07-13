@@ -9,7 +9,17 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -686,7 +688,11 @@
+@@ -389,7 +391,8 @@
+ 
+     public void func_147286_a(S11PacketSpawnExperienceOrb p_147286_1_)
+     {
+-        EntityXPOrb entityxporb = new EntityXPOrb(this.field_147300_g, (double)p_147286_1_.func_148984_d(), (double)p_147286_1_.func_148983_e(), (double)p_147286_1_.func_148982_f(), p_147286_1_.func_148986_g());
++        EntityXPOrb entityxporb = new EntityXPOrb(this.field_147300_g, (double)p_147286_1_.func_148984_d() / 32.0D, (double)p_147286_1_.func_148983_e() / 32.0D, (double)p_147286_1_.func_148982_f() / 32.0D, p_147286_1_.func_148986_g());
++        // FORGE: BugFix MC-12013 Wrong XP orb clientside spawn position
+         entityxporb.field_70118_ct = p_147286_1_.func_148984_d();
+         entityxporb.field_70117_cu = p_147286_1_.func_148983_e();
+         entityxporb.field_70116_cv = p_147286_1_.func_148982_f();
+@@ -686,7 +689,11 @@
  
      public void func_147251_a(S02PacketChat p_147251_1_)
      {
@@ -22,7 +32,7 @@
      }
  
      public void func_147279_a(S0BPacketAnimation p_147279_1_)
-@@ -1126,6 +1132,10 @@
+@@ -1126,6 +1133,10 @@
                  {
                      tileentity.func_145839_a(p_147273_1_.func_148857_g());
                  }
