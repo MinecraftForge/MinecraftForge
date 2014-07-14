@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityAnimal.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityAnimal.java
+@@ -313,7 +313,7 @@
+     {
+         ItemStack itemstack = p_70085_1_.field_71071_by.func_70448_g();
+ 
+-        if (itemstack != null && this.func_70877_b(itemstack) && this.func_70874_b() == 0 && this.field_70881_d <= 0)
++        if (itemstack != null && net.minecraftforge.event.ForgeEventFactory.isBreedingItem(this, itemstack, this.func_70877_b(itemstack)) && this.func_70874_b() == 0 && this.field_70881_d <= 0)
+         {
+             if (!p_70085_1_.field_71075_bZ.field_75098_d)
+             {
