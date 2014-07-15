@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemSkull.java
++++ ../src-work/minecraft/net/minecraft/item/ItemSkull.java
+@@ -73,6 +73,7 @@
+ 
+             if (!p_77648_3_.field_72995_K)
+             {
++                if(!Blocks.field_150465_bP.func_149742_c(p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_)) return false;
+                 p_77648_3_.func_147465_d(p_77648_4_, p_77648_5_, p_77648_6_, Blocks.field_150465_bP, p_77648_7_, 2);
+                 int i1 = 0;
+ 
