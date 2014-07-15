@@ -93,6 +93,7 @@ public class Configuration
     public Configuration(File file, String configVersion)
     {
         this.file = file;
+        this.definedConfigVersion = configVersion;
         String basePath = ((File)(FMLInjectionData.data()[6])).getAbsolutePath().replace(File.separatorChar, '/').replace("/.", "");
         String path = file.getAbsolutePath().replace(File.separatorChar, '/').replace("/./", "/").replace(basePath, "");
         if (PARENT != null)
