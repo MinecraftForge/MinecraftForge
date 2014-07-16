@@ -106,40 +106,9 @@ public class AccessTransformer implements IClassTransformer
         readMapFile(rulesFile);
     }
 
-    AccessTransformer(JarFile jar) throws IOException
-    {
-        Manifest manifest = jar.getManifest();
-        String atList = manifest.getMainAttributes().getValue("FMLAT");
-        if (atList == null) return;
-        for (String at : atList.split(" "))
-        {
-            JarEntry jarEntry = jar.getJarEntry("META-INF/"+at);
-            if (jarEntry != null)
-            {
-                processATFile(new JarByteSource(jar,jarEntry).asCharSource(Charsets.UTF_8));
-            }
-        }
-        FMLRelaunchLog.fine("Loaded %d rules from AccessTransformer mod jar file %s\n", modifiers.size(), jar.getName());
-    }
-
     AccessTransformer(Class<? extends AccessTransformer> dummyClazz)
     {
         // This is a noop
-    }
-    private class JarByteSource extends ByteSource {
-        private JarFile jar;
-        private JarEntry entry;
-        public JarByteSource(JarFile jar, JarEntry entry)
-        {
-            this.jar = jar;
-            this.entry = entry;
-        }
-        @Override
-        public InputStream openStream() throws IOException
-        {
-            return jar.getInputStream(entry);
-        }
-
     }
     void readMapFile(String rulesFile) throws IOException
     {
@@ -156,7 +125,7 @@ public class AccessTransformer implements IClassTransformer
         processATFile(Resources.asCharSource(rulesResource, Charsets.UTF_8));
         FMLRelaunchLog.fine("Loaded %d rules from AccessTransformer config file %s\n", modifiers.size(), rulesFile);
     }
-    private void processATFile(CharSource rulesResource) throws IOException
+    protected void processATFile(CharSource rulesResource) throws IOException
     {
         rulesResource.readLines(new LineProcessor<Void>()
         {
