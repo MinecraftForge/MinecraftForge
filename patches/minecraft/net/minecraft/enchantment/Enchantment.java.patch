@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/Enchantment.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/Enchantment.java
+@@ -50,7 +50,7 @@
+ 
+         if (field_77331_b[p_i1926_1_] != null)
+         {
+-            throw new IllegalArgumentException("Duplicate enchantment id!");
++            throw new IllegalArgumentException("Duplicate enchantment id! " + this.getClass() + " and " + field_77331_b[p_i1926_1_].getClass() + " Enchantment ID:" + p_i1926_1_);
+         }
+         else
+         {
 @@ -124,6 +124,45 @@
  
      public void func_151367_b(EntityLivingBase p_151367_1_, Entity p_151367_2_, int p_151367_3_) {}
