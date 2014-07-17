@@ -1,0 +1,32 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemSkull.java
++++ ../src-work/minecraft/net/minecraft/item/ItemSkull.java
+@@ -36,11 +36,16 @@
+ 
+     public boolean func_77648_a(ItemStack p_77648_1_, EntityPlayer p_77648_2_, World p_77648_3_, int p_77648_4_, int p_77648_5_, int p_77648_6_, int p_77648_7_, float p_77648_8_, float p_77648_9_, float p_77648_10_)
+     {
++        if(p_77648_3_.func_147439_a(p_77648_4_, p_77648_5_, p_77648_6_).isReplaceable(p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_) && p_77648_7_ != 0)
++        {
++            p_77648_7_ = 1;
++            p_77648_5_--;
++        }
+         if (p_77648_7_ == 0)
+         {
+             return false;
+         }
+-        else if (!p_77648_3_.func_147439_a(p_77648_4_, p_77648_5_, p_77648_6_).func_149688_o().func_76220_a())
++        else if (!p_77648_3_.isSideSolid(p_77648_4_, p_77648_5_, p_77648_6_, net.minecraftforge.common.util.ForgeDirection.getOrientation(p_77648_7_)))
+         {
+             return false;
+         }
+@@ -71,8 +76,11 @@
+                 ++p_77648_4_;
+             }
+ 
++        }
++        {
+             if (!p_77648_3_.field_72995_K)
+             {
++                if (!Blocks.field_150465_bP.func_149707_d(p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_, p_77648_7_)) return false;
+                 p_77648_3_.func_147465_d(p_77648_4_, p_77648_5_, p_77648_6_, Blocks.field_150465_bP, p_77648_7_, 2);
+                 int i1 = 0;
+ 
