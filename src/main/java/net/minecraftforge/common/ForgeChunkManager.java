@@ -93,17 +93,17 @@ public class ForgeChunkManager
     private static Configuration config;
     private static int playerTicketLength;
     private static int dormantChunkCacheSize;
-    
+
     public static final List<String> MOD_PROP_ORDER = new ArrayList<String>(2);
 
     private static Set<String> warnedMods = Sets.newHashSet();
-    
+
     static
     {
         MOD_PROP_ORDER.add("maximumTicketCount");
         MOD_PROP_ORDER.add("maximumChunksPerTicket");
     }
-    
+
     /**
      * All mods requiring chunkloading need to implement this to handle the
      * re-registration of chunk tickets at world loading time
@@ -833,6 +833,7 @@ public class ForgeChunkManager
         forcedChunkData.setTag("TicketList", ticketList);
 
         Multimap<String, Ticket> ticketSet = tickets.get(worldServer);
+        if (ticketSet == null) return;
         for (String modId : ticketSet.keySet())
         {
             NBTTagCompound ticketHolder = new NBTTagCompound();
@@ -943,7 +944,7 @@ public class ForgeChunkManager
         }
         syncConfigDefaults();
     }
-    
+
     /**
      * Synchronizes the local fields with the values in the Configuration object.
      */
@@ -955,7 +956,7 @@ public class ForgeChunkManager
 
         config.setCategoryComment("defaults", "Default configuration for forge chunk loading control")
                 .setCategoryRequiresWorldRestart("defaults", true);
-        
+
         Property temp = config.get("defaults", "enabled", true);
         temp.comment = "Are mod overrides enabled?";
         temp.setLanguageKey("forge.configgui.enableModOverrides");
@@ -969,7 +970,7 @@ public class ForgeChunkManager
         temp.setMinValue(0);
         defaultMaxChunks = temp.getInt(25);
         propOrder.add("maximumChunksPerTicket");
-        
+
         temp = config.get("defaults", "maximumTicketCount", 200);
         temp.comment = "The default maximum ticket count for a mod which does not have an override\n" +
                     "in this file. This is the number of chunk loading requests a mod is allowed to make.";
@@ -993,7 +994,7 @@ public class ForgeChunkManager
         dormantChunkCacheSize = temp.getInt(0);
         propOrder.add("dormantChunkCacheSize");
         FMLLog.info("Configured a dormant chunk cache size of %d", temp.getInt(0));
-        
+
         config.setCategoryPropertyOrder("defaults", propOrder);
 
         config.addCustomCategoryComment("Forge", "Sample mod specific control section.\n" +
@@ -1014,23 +1015,23 @@ public class ForgeChunkManager
             config.get(mod, "maximumTicketCount", 200).setLanguageKey("forge.configgui.maximumTicketCount").setMinValue(0);
             config.get(mod, "maximumChunksPerTicket", 25).setLanguageKey("forge.configgui.maximumChunksPerTicket").setMinValue(0);
         }
-        
+
         if (config.hasChanged())
         {
             config.save();
         }
     }
-    
+
     public static Configuration getConfig()
     {
         return config;
     }
-    
+
     public static ConfigCategory getDefaultsCategory()
     {
         return config.getCategory("defaults");
     }
-    
+
     public static List<ConfigCategory> getModCategories()
     {
         List<ConfigCategory> list = new ArrayList<ConfigCategory>();
