@@ -1,14 +1,41 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonBase.java
-@@ -11,6 +11,7 @@
- import net.minecraft.entity.player.EntityPlayer;
- import net.minecraft.init.Blocks;
- import net.minecraft.item.ItemStack;
-+import net.minecraft.server.management.PlayerManager;
- import net.minecraft.tileentity.TileEntity;
- import net.minecraft.tileentity.TileEntityPiston;
- import net.minecraft.util.AxisAlignedBB;
-@@ -360,7 +361,8 @@
+@@ -1,8 +1,7 @@
+ package net.minecraft.block;
+ 
+-import cpw.mods.fml.relauncher.Side;
+-import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.List;
++
+ import net.minecraft.block.material.Material;
+ import net.minecraft.client.renderer.texture.IIconRegister;
+ import net.minecraft.creativetab.CreativeTabs;
+@@ -19,6 +18,10 @@
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.BlockEvent;
++import cpw.mods.fml.relauncher.Side;
++import cpw.mods.fml.relauncher.SideOnly;
+ 
+ public class BlockPistonBase extends Block
+ {
+@@ -127,7 +130,12 @@
+ 
+             if (flag && !func_150075_c(l))
+             {
+-                if (func_150077_h(p_150078_1_, p_150078_2_, p_150078_3_, p_150078_4_, i1))
++                Block b = getFacingBlock(p_150078_1_, p_150078_2_, p_150078_3_, p_150078_4_);
++                
++                BlockEvent.PushEvent e = new BlockEvent.PushEvent(p_150078_2_, p_150078_3_, p_150078_4_, p_150078_1_, p_150078_1_.func_147439_a(p_150078_2_, p_150078_3_, p_150078_4_), l, b);
++                MinecraftForge.EVENT_BUS.post(e);
++                
++                if (func_150077_h(p_150078_1_, p_150078_2_, p_150078_3_, p_150078_4_, i1) && !e.isCanceled())
+                 {
+                     p_150078_1_.func_147452_c(p_150078_2_, p_150078_3_, p_150078_4_, this, 0, i1);
+                 }
+@@ -360,7 +368,8 @@
                  return false;
              }
  
@@ -18,7 +45,7 @@
          }
      }
  
-@@ -375,14 +377,14 @@
+@@ -375,14 +384,14 @@
          {
              if (l1 < 13)
              {
@@ -35,7 +62,7 @@
                  {
                      if (!func_150080_a(block, p_150077_0_, i1, j1, k1, true))
                      {
-@@ -420,14 +422,14 @@
+@@ -420,14 +429,14 @@
          {
              if (l1 < 13)
              {
@@ -52,7 +79,7 @@
                  {
                      if (!func_150080_a(block, p_150079_1_, i1, j1, k1, true))
                      {
-@@ -448,7 +450,9 @@
+@@ -448,7 +457,9 @@
                          continue;
                      }
  
@@ -63,3 +90,26 @@
                      p_150079_1_.func_147468_f(i1, j1, k1);
                  }
              }
+@@ -503,4 +514,22 @@
+             return true;
+         }
+     }
++    
++    /* ======================================== FORGE START =====================================*/
++    public Block getFacingBlock(World world, int x, int y, int z)
++    {
++        int metadata = world.func_72805_g(x, y, z);
++        
++        switch(metadata)
++        {
++            case 0: return world.func_147439_a(x, y - 1, z);
++            case 1: return world.func_147439_a(x, y + 1, z);
++            case 2: return world.func_147439_a(x, y, z - 1);
++            case 3: return world.func_147439_a(x, y, z + 1);
++            case 4: return world.func_147439_a(x - 1, y, z);
++            case 5: return world.func_147439_a(x + 1, y, z);
++            default: return null;
++        }
++    }  
++    /* ========================================= FORGE END ======================================*/
+ }

@@ -7,6 +7,7 @@ import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
@@ -109,6 +110,33 @@ public class BlockEvent extends Event {
         public void setExpToDrop(int exp)
         {
             this.exp = exp;
+        }
+    }
+    
+    /**
+     * Event that is fired when an Block is about to be pushed by a piston
+     * Canceling this event will prevent the Block from being pushed.
+     */
+    @Cancelable
+    public static class PushEvent extends BlockEvent
+    {
+        /** Reference to the block that is about to be pushed */
+        public final Block pushed;
+        
+        /***
+         * @param block The piston that is pushing the block
+         * @param blockMetadata The pistons metadata
+         * @param pushed The block that is getting pushed
+         */
+        public PushEvent(int x, int y, int z, World world, Block block, int blockMetadata, Block pushed)
+        {
+            super(x, y, z, world, block, blockMetadata);
+            this.pushed = pushed;
+        }
+        
+        public Block getBlockToBePushed()
+        {
+            return this.isCanceled() ? Blocks.air : pushed;
         }
     }
 }
