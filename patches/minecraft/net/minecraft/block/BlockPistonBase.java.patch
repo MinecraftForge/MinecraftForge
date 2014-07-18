@@ -8,17 +8,34 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.tileentity.TileEntityPiston;
  import net.minecraft.util.AxisAlignedBB;
-@@ -360,7 +361,8 @@
+@@ -127,7 +128,7 @@
+ 
+             if (flag && !func_150075_c(l))
+             {
+-                if (func_150077_h(p_150078_1_, p_150078_2_, p_150078_3_, p_150078_4_, i1))
++                if (func_150077_h(p_150078_1_, p_150078_2_, p_150078_3_, p_150078_4_, i1) && !net.minecraftforge.event.ForgeEventFactory.onPistonPushEvent(p_150078_1_, p_150078_2_, p_150078_3_, p_150078_4_, i1))
+                 {
+                     p_150078_1_.func_147452_c(p_150078_2_, p_150078_3_, p_150078_4_, this, 0, i1);
+                 }
+@@ -212,7 +213,7 @@
+                     }
+                 }
+ 
+-                if (!flag1 && block.func_149688_o() != Material.field_151579_a && func_150080_a(block, p_149696_1_, j1, k1, l1, false) && (block.func_149656_h() == 0 || block == Blocks.field_150331_J || block == Blocks.field_150320_F))
++                if (!flag1 && block.func_149688_o() != Material.field_151579_a && func_150080_a(block, p_149696_1_, j1, k1, l1, false) && (block.func_149656_h() == 0 || block == Blocks.field_150331_J || block == Blocks.field_150320_F) && !net.minecraftforge.event.ForgeEventFactory.onPistonRetractEvent(p_149696_1_, p_149696_2_, p_149696_3_, p_149696_4_, i2))
+                 {
+                     p_149696_2_ += Facing.field_71586_b[p_149696_6_];
+                     p_149696_3_ += Facing.field_71587_c[p_149696_6_];
+@@ -360,7 +361,7 @@
                  return false;
              }
  
 -            return !(p_150080_0_ instanceof ITileEntityProvider);
 +            return !(p_150080_1_.func_147439_a(p_150080_2_, p_150080_3_, p_150080_4_).hasTileEntity(p_150080_1_.func_72805_g(p_150080_2_, p_150080_3_, p_150080_4_)));
-+            
          }
      }
  
-@@ -375,14 +377,14 @@
+@@ -375,14 +376,14 @@
          {
              if (l1 < 13)
              {
@@ -35,7 +52,7 @@
                  {
                      if (!func_150080_a(block, p_150077_0_, i1, j1, k1, true))
                      {
-@@ -420,14 +422,14 @@
+@@ -420,14 +421,14 @@
          {
              if (l1 < 13)
              {
@@ -52,7 +69,7 @@
                  {
                      if (!func_150080_a(block, p_150079_1_, i1, j1, k1, true))
                      {
-@@ -448,7 +450,9 @@
+@@ -448,7 +449,9 @@
                          continue;
                      }
  

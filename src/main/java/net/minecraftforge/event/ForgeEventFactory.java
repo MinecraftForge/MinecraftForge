@@ -3,8 +3,6 @@ package net.minecraftforge.event;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
-import cpw.mods.fml.common.eventhandler.Event.Result;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -13,7 +11,6 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -21,6 +18,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -33,7 +31,11 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.PistonEvent.PistonExtendEvent;
+import net.minecraftforge.event.world.PistonEvent.PistonRetractEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
+import cpw.mods.fml.common.eventhandler.Event.Result;
 
 public class ForgeEventFactory
 {
@@ -191,5 +193,23 @@ public class ForgeEventFactory
         SaveHandler sh = (SaveHandler) playerFileData;
         File dir = ObfuscationReflectionHelper.getPrivateValue(SaveHandler.class, sh, "playersDirectory", "field_"+"75771_c");
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.LoadFromFile(player, dir, uuidString));
+    }
+    
+    public static boolean onPistonPushEvent(World world, int x, int y, int z, int pistonOrientation)
+    {
+        ForgeDirection direction = ForgeDirection.getOrientation(pistonOrientation);
+                
+        PistonExtendEvent e = new PistonExtendEvent(world, x, y, z, direction, world.getBlock(x + direction.offsetX, y + direction.offsetY, z + direction.offsetZ));
+        MinecraftForge.EVENT_BUS.post(e);
+        return e.isCanceled();
+    }
+    
+    public static boolean onPistonRetractEvent(World world, int x, int y, int z, int pistonOrientation)
+    {
+        ForgeDirection direction = ForgeDirection.getOrientation(pistonOrientation);
+                
+        PistonRetractEvent e = new PistonRetractEvent(world, x, y, z, direction, world.getBlock(x + direction.offsetX, y + direction.offsetY, z + direction.offsetZ));
+        MinecraftForge.EVENT_BUS.post(e);
+        return e.isCanceled();
     }
 }
