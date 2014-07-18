@@ -15,7 +15,7 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.world.BlockEvent;
++import net.minecraftforge.event.world.BlockEvent.PushEvent;
 +import cpw.mods.fml.relauncher.Side;
 +import cpw.mods.fml.relauncher.SideOnly;
  
@@ -28,7 +28,7 @@
 -                if (func_150077_h(p_150078_1_, p_150078_2_, p_150078_3_, p_150078_4_, i1))
 +                Block b = getFacingBlock(p_150078_1_, p_150078_2_, p_150078_3_, p_150078_4_);
 +                
-+                BlockEvent.PushEvent e = new BlockEvent.PushEvent(p_150078_2_, p_150078_3_, p_150078_4_, p_150078_1_, p_150078_1_.func_147439_a(p_150078_2_, p_150078_3_, p_150078_4_), l, b);
++                PushEvent e = new PushEvent(p_150078_2_, p_150078_3_, p_150078_4_, p_150078_1_, p_150078_1_.func_147439_a(p_150078_2_, p_150078_3_, p_150078_4_), l, b);
 +                MinecraftForge.EVENT_BUS.post(e);
 +                
 +                if (func_150077_h(p_150078_1_, p_150078_2_, p_150078_3_, p_150078_4_, i1) && !e.isCanceled())
