@@ -111,4 +111,31 @@ public class BlockEvent extends Event {
             this.exp = exp;
         }
     }
+    
+    /**
+     * Event that is fired when an Block is about to be pushed by a piston
+     * Canceling this event will prevent the Block from being pushed.
+     */
+    @Cancelable
+    public static class PistonPushEvent extends BlockEvent
+    {
+        /** Stores the block, metadata and location of the block being pushed */
+        public final Block pushed;
+        public final int pushedMetadata;
+        public final int pushedX;
+        public final int pushedY;
+        public final int pushedZ;
+        
+        public PistonPushEvent(World world, int x, int y, int z, int pushedX, int pushedY, int pushedZ)
+        {
+            super(x, y, z, world, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z));
+            
+            this.pushedX = pushedX;
+            this.pushedY = pushedY;
+            this.pushedZ = pushedZ;
+            
+            pushed = world.getBlock(this.pushedX, this.pushedY, this.pushedZ);
+            pushedMetadata = world.getBlockMetadata(this.pushedX, this.pushedY, this.pushedZ);
+        }
+    }
 }

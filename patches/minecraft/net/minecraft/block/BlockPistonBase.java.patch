@@ -8,6 +8,15 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.tileentity.TileEntityPiston;
  import net.minecraft.util.AxisAlignedBB;
+@@ -127,7 +128,7 @@
+ 
+             if (flag && !func_150075_c(l))
+             {
+-                if (func_150077_h(p_150078_1_, p_150078_2_, p_150078_3_, p_150078_4_, i1))
++                if (func_150077_h(p_150078_1_, p_150078_2_, p_150078_3_, p_150078_4_, i1) && !net.minecraftforge.event.ForgeEventFactory.onPistonPushEvent(p_150078_1_, p_150078_2_, p_150078_3_, p_150078_4_, i1))
+                 {
+                     p_150078_1_.func_147452_c(p_150078_2_, p_150078_3_, p_150078_4_, this, 0, i1);
+                 }
 @@ -360,7 +361,8 @@
                  return false;
              }
