@@ -3,8 +3,7 @@ package net.minecraftforge.event;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
-import cpw.mods.fml.common.eventhandler.Event.Result;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -13,7 +12,6 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -33,7 +31,10 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.BlockEvent.PistonPushEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
+import cpw.mods.fml.common.eventhandler.Event.Result;
 
 public class ForgeEventFactory
 {
@@ -191,5 +192,26 @@ public class ForgeEventFactory
         SaveHandler sh = (SaveHandler) playerFileData;
         File dir = ObfuscationReflectionHelper.getPrivateValue(SaveHandler.class, sh, "playersDirectory", "field_"+"75771_c");
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.LoadFromFile(player, dir, uuidString));
+    }
+    
+    public static boolean onPistonPushEvent(World world, int x, int y, int z, int pistonOrientation)
+    {
+        int pushedX = x;
+        int pushedY = y;
+        int pushedZ = z;
+        
+        switch(pistonOrientation)
+        {
+            case 0: pushedY--; break;
+            case 1: pushedY++; break;
+            case 2: pushedZ--; break;
+            case 3: pushedZ++; break;
+            case 4: pushedX--; break;
+            case 5: pushedX++; break;
+        }
+                
+        PistonPushEvent e = new PistonPushEvent(world, x, y, z, pushedX, pushedY, pushedZ);
+        MinecraftForge.EVENT_BUS.post(e);
+        return e.isCanceled();
     }
 }
