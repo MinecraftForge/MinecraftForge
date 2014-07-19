@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiSelectWorld.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiSelectWorld.java
+@@ -294,7 +294,7 @@
+             }
+             else
+             {
+-                s2 = GuiSelectWorld.this.field_146635_w[saveformatcomparator.func_75790_f().func_77148_a()];
++                s2 = I18n.func_135052_a("gameMode." + saveformatcomparator.func_75790_f().func_77149_b());
+ 
+                 if (saveformatcomparator.func_75789_g())
+                 {
