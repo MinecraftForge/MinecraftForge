@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -153,19 +154,29 @@ public class LanguageRegistry
      */
     @SuppressWarnings("unchecked")
     @Deprecated
-    public void loadLanguageTable(@SuppressWarnings("rawtypes") Map field_135032_a, String lang)
+    public void mergeLanguageTable(@SuppressWarnings("rawtypes") Map field_135032_a, String lang)
     {
+        Properties langPack=modLanguageData.get(lang);
+        if (langPack!=null) {
+            mergeWithoutOverwrite(langPack, field_135032_a);
+        }
         Properties usPack=modLanguageData.get("en_US");
         if (usPack!=null) {
-            field_135032_a.putAll(usPack);
+            mergeWithoutOverwrite(usPack, field_135032_a);
         }
-        Properties langPack=modLanguageData.get(lang);
-        if (langPack==null) {
-            return;
-        }
-        field_135032_a.putAll(langPack);
     }
 
+    @Deprecated
+    private <K, V> void mergeWithoutOverwrite(Map<? extends K,? extends V> from, Map<K, V> to)
+    {
+        for (Entry<? extends K, ? extends V> e : from.entrySet())
+        {
+            if (!to.containsKey(e.getKey()))
+            {
+                to.put(e.getKey(),e.getValue());
+            }
+        }
+    }
     /**
      * Deprecated for removal in 1.8. Use the assets lang system
      */
