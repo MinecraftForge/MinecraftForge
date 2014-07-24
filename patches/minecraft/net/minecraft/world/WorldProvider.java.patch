@@ -42,7 +42,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -193,4 +201,285 @@
+@@ -193,4 +201,320 @@
      }
  
      public abstract String func_80007_l();
@@ -214,6 +214,29 @@
 +    {
 +        return field_76579_a.field_73008_k < 4;
 +    }
++    
++    /**
++     * The current sun brightness factor for this dimension.
++     * 0.0f means no light at all, and 1.0f means maximum sunlight.
++     * This will be used for the "calculateSkylightSubtracted"
++     * which is for Sky light value calculation.
++     * 
++     * @return The current brightness factor
++     * */
++    public float getSunBrightnessFactor(float par1)
++    {
++        return field_76579_a.getSunBrightnessFactor(par1);
++    }
++    
++    /**
++     * Calculates the current moon phase factor.
++     * This factor is effective for slimes.
++     * (This method do not affect the moon rendering)
++     * */
++    public float getCurrentMoonPhaseFactor()
++    {
++        return field_76579_a.getCurrentMoonPhaseFactorBody();
++    }
 +
 +    @SideOnly(Side.CLIENT)
 +    public Vec3 getSkyColor(Entity cameraEntity, float partialTicks)
@@ -227,6 +250,18 @@
 +        return field_76579_a.drawCloudsBody(partialTicks);
 +    }
 +
++    /**
++     * Gets the Sun Brightness for rendering sky.
++     * */
++    @SideOnly(Side.CLIENT)
++    public float getSunBrightness(float par1)
++    {
++        return field_76579_a.getSunBrightnessBody(par1);
++    }
++    
++    /**
++     * Gets the Star Brightness for rendering sky.
++     * */
 +    @SideOnly(Side.CLIENT)
 +    public float getStarBrightness(float par1)
 +    {
