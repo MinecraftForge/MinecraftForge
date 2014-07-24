@@ -1,37 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/entity/projectile/EntityFishHook.java
 +++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityFishHook.java
-@@ -571,32 +571,8 @@ public class EntityFishHook extends Entity
-         float f = this.worldObj.rand.nextFloat();
+@@ -551,6 +551,12 @@ public class EntityFishHook extends Entity
+         float f = this.field_70170_p.field_73012_v.nextFloat();
          int i = EnchantmentHelper.func_151386_g(this.field_146042_b);
          int j = EnchantmentHelper.func_151387_h(this.field_146042_b);
--        float f1 = 0.1F - (float)i * 0.025F - (float)j * 0.01F;
--        float f2 = 0.05F + (float)i * 0.01F - (float)j * 0.01F;
--        f1 = MathHelper.clamp_float(f1, 0.0F, 1.0F);
--        f2 = MathHelper.clamp_float(f2, 0.0F, 1.0F);
--
--        if (f < f1)
--        {
--            this.field_146042_b.addStat(StatList.field_151183_A, 1);
--            return ((WeightedRandomFishable)WeightedRandom.getRandomItem(this.rand, field_146039_d)).func_150708_a(this.rand);
--        }
--        else
--        {
--            f -= f1;
--
--            if (f < f2)
--            {
--                this.field_146042_b.addStat(StatList.field_151184_B, 1);
--                return ((WeightedRandomFishable)WeightedRandom.getRandomItem(this.rand, field_146041_e)).func_150708_a(this.rand);
--            }
--            else
--            {
--                float f3 = f - f2;
--                this.field_146042_b.addStat(StatList.fishCaughtStat, 1);
--                return ((WeightedRandomFishable)WeightedRandom.getRandomItem(this.rand, field_146036_f)).func_150708_a(this.rand);
--            }
--        }
-+        this.field_146042_b.addStat(net.minecraftforge.common.FishingHooks.getFishableCategory(f, i, j).stat, 1);
-+        return net.minecraftforge.common.FishingHooks.getRandomFishable(this.rand, f, i, j);
-     }
- 
-     /**
++        if (true)
++        {
++            this.field_146042_b.func_71064_a(net.minecraftforge.common.FishingHooks.getFishableCategory(f, i, j).stat, 1);
++            return net.minecraftforge.common.FishingHooks.getRandomFishable(this.field_70146_Z, f, i, j);
++        }
++
+         float f1 = 0.1F - (float)i * 0.025F - (float)j * 0.01F;
+         float f2 = 0.05F + (float)i * 0.01F - (float)j * 0.01F;
+         f1 = MathHelper.func_76131_a(f1, 0.0F, 1.0F);
