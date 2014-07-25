@@ -22,10 +22,12 @@
  
      private void func_145940_l()
      {
-+        if(MinecraftForge.EVENT_BUS.post(new PotionBrewedEvent.Pre(brewingItemStacks)))
-         {
-             return;
-         }
++       PotionBrewedEvent.Pre pre = new PotionBrewedEvent.Pre(brewingItemStacks.clone());
+        if(MinecraftForge.EVENT_BUS.post(pre))
+        {
+            brewingItemStacks = pre.brewingStacks;
+            return;
+        }
          if (this.func_145934_k())
          {
              ItemStack itemstack = this.field_145945_j[3];
