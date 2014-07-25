@@ -84,34 +84,7 @@
      }
  
      public boolean func_73056_e()
-@@ -285,6 +304,14 @@
-         int j = 0;
-         Iterator iterator = this.field_72993_I.iterator();
- 
-+        doneChunks.retainAll(field_72993_I);
-+        if (doneChunks.size() == field_72993_I.size())
-+        {
-+            doneChunks.clear();
-+        }
-+
-+        final long startTime = System.nanoTime();
-+
-         while (iterator.hasNext())
-         {
-             ChunkCoordIntPair chunkcoordintpair = (ChunkCoordIntPair)iterator.next();
-@@ -294,14 +321,18 @@
-             Chunk chunk = this.func_72964_e(chunkcoordintpair.field_77276_a, chunkcoordintpair.field_77275_b);
-             this.func_147467_a(k, l, chunk);
-             this.field_72984_F.func_76318_c("tickChunk");
--            chunk.func_150804_b(false);
-+            //Limits and evenly distributes the lighting update time
-+            if (System.nanoTime() - startTime <= 4000000 && doneChunks.add(chunkcoordintpair))
-+            {
-+                chunk.func_150804_b(false);
-+            }
-             this.field_72984_F.func_76318_c("thunder");
-             int i1;
-             int j1;
+@@ -301,7 +320,7 @@
              int k1;
              int l1;
  
@@ -120,7 +93,7 @@
              {
                  this.field_73005_l = this.field_73005_l * 3 + 1013904223;
                  i1 = this.field_73005_l >> 2;
-@@ -317,7 +348,7 @@
+@@ -317,7 +336,7 @@
  
              this.field_72984_F.func_76318_c("iceandsnow");
  
@@ -129,7 +102,7 @@
              {
                  this.field_73005_l = this.field_73005_l * 3 + 1013904223;
                  i1 = this.field_73005_l >> 2;
-@@ -393,6 +424,9 @@
+@@ -393,6 +412,9 @@
      public void func_147454_a(int p_147454_1_, int p_147454_2_, int p_147454_3_, Block p_147454_4_, int p_147454_5_, int p_147454_6_)
      {
          NextTickListEntry nextticklistentry = new NextTickListEntry(p_147454_1_, p_147454_2_, p_147454_3_, p_147454_4_);
@@ -139,7 +112,7 @@
          byte b0 = 0;
  
          if (this.field_72999_e && p_147454_4_.func_149688_o() != Material.field_151579_a)
-@@ -452,7 +486,7 @@
+@@ -452,7 +474,7 @@
  
      public void func_72939_s()
      {
@@ -148,7 +121,7 @@
          {
              if (this.field_80004_Q++ >= 1200)
              {
-@@ -512,6 +546,9 @@
+@@ -512,6 +534,9 @@
              {
                  nextticklistentry = (NextTickListEntry)iterator.next();
                  iterator.remove();
@@ -158,7 +131,7 @@
                  byte b0 = 0;
  
                  if (this.func_72904_c(nextticklistentry.field_77183_a - b0, nextticklistentry.field_77181_b - b0, nextticklistentry.field_77182_c - b0, nextticklistentry.field_77183_a + b0, nextticklistentry.field_77181_b + b0, nextticklistentry.field_77182_c + b0))
-@@ -634,13 +671,26 @@
+@@ -634,13 +659,26 @@
      {
          ArrayList arraylist = new ArrayList();
  
@@ -190,7 +163,7 @@
              }
          }
  
-@@ -649,9 +699,14 @@
+@@ -649,9 +687,14 @@
  
      public boolean func_72962_a(EntityPlayer p_72962_1_, int p_72962_2_, int p_72962_3_, int p_72962_4_)
      {
@@ -206,7 +179,7 @@
      protected void func_72963_a(WorldSettings p_72963_1_)
      {
          if (this.field_73066_T == null)
-@@ -726,7 +781,7 @@
+@@ -726,7 +769,7 @@
  
      protected void func_73047_i()
      {
@@ -215,7 +188,7 @@
  
          for (int i = 0; i < 10; ++i)
          {
-@@ -763,6 +818,7 @@
+@@ -763,6 +806,7 @@
              }
  
              this.field_73020_y.func_73151_a(p_73044_1_, p_73044_2_);
@@ -223,7 +196,7 @@
              ArrayList arraylist = Lists.newArrayList(this.field_73059_b.func_152380_a());
              Iterator iterator = arraylist.iterator();
  
-@@ -791,6 +847,7 @@
+@@ -791,6 +835,7 @@
          this.func_72906_B();
          this.field_73019_z.func_75755_a(this.field_72986_A, this.field_73061_a.func_71203_ab().func_72378_q());
          this.field_72988_C.func_75744_a();
@@ -231,7 +204,7 @@
      }
  
      public void func_72923_a(Entity p_72923_1_)
-@@ -1002,6 +1059,11 @@
+@@ -1002,6 +1047,11 @@
          }
      }
  
