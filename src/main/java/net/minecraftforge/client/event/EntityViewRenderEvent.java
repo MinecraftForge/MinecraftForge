@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.entity.EntityLivingBase;
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import cpw.mods.fml.common.eventhandler.Event;
+import cpw.mods.fml.common.eventhandler.Event.Result;
 
 /**
  * Event that hooks into EntityRenderer, allowing any feature to customize visual attributes of
@@ -38,6 +39,23 @@ public abstract class EntityViewRenderEvent extends Event
         {
             super(renderer, entity, block, renderPartialTicks);
             this.density = density;
+        }
+    }
+    
+    /**
+     * Event that allows any feature to customize the rendering of fog.
+     */
+    @HasResult
+    public static class RenderFogEvent extends EntityViewRenderEvent
+    {
+        public final int fogMode;
+        public final float farPlaneDistance;
+        
+        public RenderFogEvent(EntityRenderer renderer, EntityLivingBase entity, Block block, double renderPartialTicks, int fogMode, float farPlaneDistance)
+        {
+            super(renderer, entity, block, renderPartialTicks);
+            this.fogMode = fogMode;
+            this.farPlaneDistance = farPlaneDistance;
         }
     }
 
