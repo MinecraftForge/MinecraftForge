@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/pathfinding/PathFinder.java
++++ ../src-work/minecraft/net/minecraft/pathfinding/PathFinder.java
+@@ -302,7 +302,7 @@
+                         }
+                         else if (!block.func_149655_b(p_82565_0_.field_70170_p, l, i1, j1) && (!p_82565_6_ || block != Blocks.field_150466_ao))
+                         {
+-                            if (k1 == 11 || block == Blocks.field_150396_be || k1 == 32)
++                            if (block.hasExpandedHeight())
+                             {
+                                 return -3;
+                             }

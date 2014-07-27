@@ -199,7 +199,7 @@
      }
  
      protected ItemStack func_149644_j(int p_149644_1_)
-@@ -1114,6 +1153,1099 @@
+@@ -1114,6 +1153,1110 @@
          return null;
      }
  
@@ -1293,6 +1293,17 @@
 +            captureDrops.set(false);
 +            return capturedDrops.get();
 +        }
++    }
++
++    /**
++     * Return whether a Block has a height superior to the normal. Used to avoid
++     * this block in pathfinding (because they can't jump on that block) and in
++     * the selection of the block the entities are walking on.
++     * @return True if the block has a hitbox maxY > 1
++     */
++    public boolean hasExpandedHeight()
++    {
++        return this instanceof BlockFence || this instanceof BlockWall || this instanceof BlockFenceGate;
 +    }
 +    /* ========================================= FORGE END ======================================*/
 +
