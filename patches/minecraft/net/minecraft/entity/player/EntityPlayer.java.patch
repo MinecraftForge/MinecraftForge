@@ -357,6 +357,15 @@
          if (p_71059_1_.func_70075_an())
          {
              if (!p_71059_1_.func_85031_j(this))
+@@ -1102,7 +1229,7 @@
+                         p_71059_1_.func_70015_d(1);
+                     }
+ 
+-                    boolean flag2 = p_71059_1_.func_70097_a(DamageSource.func_76365_a(this), f);
++                    boolean flag2 = p_71059_1_.func_70097_a(stack == null ? DamageSource.func_76365_a(this) : stack.func_77973_b().getDamageSource(this, p_71059_1_), f);
+ 
+                     if (flag2)
+                     {
 @@ -1211,6 +1338,12 @@
  
      public EntityPlayer.EnumStatus func_71018_a(int p_71018_1_, int p_71018_2_, int p_71018_3_)
