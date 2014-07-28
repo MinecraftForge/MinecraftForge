@@ -75,6 +75,18 @@
      }
  
      protected abstract void func_70088_a();
+@@ -733,9 +762,9 @@
+                 k = MathHelper.func_76128_c(this.field_70163_u - 0.20000000298023224D - (double)this.field_70129_M);
+                 int l = MathHelper.func_76128_c(this.field_70161_v);
+                 Block block = this.field_70170_p.func_147439_a(j1, k, l);
+-                int i1 = this.field_70170_p.func_147439_a(j1, k - 1, l).func_149645_b();
++                Block blockUnder = this.field_70170_p.func_147439_a(j1, k - 1, l);
+ 
+-                if (i1 == 11 || i1 == 32 || i1 == 21)
++                if (blockUnder.hasExpandedHeight())
+                 {
+                     block = this.field_70170_p.func_147439_a(j1, k - 1, l);
+                 }
 @@ -991,9 +1020,22 @@
  
          if (block.func_149688_o() == p_70055_1_)
