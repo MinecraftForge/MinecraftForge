@@ -75,7 +75,25 @@
      }
  
      protected abstract void func_70088_a();
-@@ -991,9 +1020,22 @@
+@@ -739,6 +768,17 @@
+                 {
+                     block = this.field_70170_p.func_147439_a(j1, k - 1, l);
+                 }
++                else
++                {
++                    List<AxisAlignedBB> collisionBoxes = new ArrayList<AxisAlignedBB>();
++                    this.field_70170_p.func_147439_a(j1, k - 1, l).func_149743_a(field_70170_p, j1, k - 1, l, this.field_70121_D.func_72321_a(0, -1, 0), collisionBoxes, this);
++                    for (AxisAlignedBB collisionBoxe : collisionBoxes) {
++                        if (this.field_70163_u - this.field_70129_M - collisionBoxe.field_72337_e < 0.05D) {
++                            block = this.field_70170_p.func_147439_a(j1, k - 1, l);
++                            break;
++                        }
++                    }
++                }
+ 
+                 if (block != Blocks.field_150468_ap)
+                 {
+@@ -991,9 +1031,22 @@
  
          if (block.func_149688_o() == p_70055_1_)
          {
@@ -101,7 +119,7 @@
          }
          else
          {
-@@ -1278,8 +1320,27 @@
+@@ -1278,8 +1331,27 @@
              p_70109_1_.func_74768_a("PortalCooldown", this.field_71088_bW);
              p_70109_1_.func_74772_a("UUIDMost", this.func_110124_au().getMostSignificantBits());
              p_70109_1_.func_74772_a("UUIDLeast", this.func_110124_au().getLeastSignificantBits());
@@ -130,7 +148,7 @@
              if (this.field_70154_o != null)
              {
                  NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-@@ -1345,6 +1406,30 @@
+@@ -1345,6 +1417,30 @@
  
              this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
              this.func_70101_b(this.field_70177_z, this.field_70125_A);
@@ -161,7 +179,7 @@
              this.func_70037_a(p_70020_1_);
  
              if (this.func_142008_O())
-@@ -1423,7 +1508,14 @@
+@@ -1423,7 +1519,14 @@
          {
              EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u + (double)p_70099_2_, this.field_70161_v, p_70099_1_);
              entityitem.field_145804_b = 10;
@@ -177,7 +195,7 @@
              return entityitem;
          }
          else
-@@ -1687,7 +1779,7 @@
+@@ -1687,7 +1790,7 @@
  
      public boolean func_70115_ae()
      {
@@ -186,7 +204,7 @@
      }
  
      public boolean func_70093_af()
-@@ -1988,7 +2080,7 @@
+@@ -1988,7 +2091,7 @@
  
      public float func_145772_a(Explosion p_145772_1_, World p_145772_2_, int p_145772_3_, int p_145772_4_, int p_145772_5_, Block p_145772_6_)
      {
@@ -195,7 +213,7 @@
      }
  
      public boolean func_145774_a(Explosion p_145774_1_, World p_145774_2_, int p_145774_3_, int p_145774_4_, int p_145774_5_, Block p_145774_6_, float p_145774_7_)
-@@ -2058,6 +2150,174 @@
+@@ -2058,6 +2161,174 @@
  
      public void func_145781_i(int p_145781_1_) {}
  
