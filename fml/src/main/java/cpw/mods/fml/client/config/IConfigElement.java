@@ -34,7 +34,8 @@ public interface IConfigElement<T>
      * This method returns a class that implements {@code IConfigEntry} or null. This class MUST
      * provide a constructor with the following parameter types: {@code GuiConfig}, {@code GuiConfigEntries}, {@code IConfigElement}
      */
-    public Class<? extends IConfigEntry> getConfigEntryClass();
+    @SuppressWarnings("rawtypes")
+	public Class<? extends IConfigEntry> getConfigEntryClass();
     
     /**
      * This method returns a class that implements {@code IArrayEntry}. This class MUST provide a constructor with the 
@@ -67,7 +68,8 @@ public interface IConfigElement<T>
     /**
      * [Category] Gets this category's child categories/properties.
      */
-    public List<IConfigElement> getChildElements();
+    @SuppressWarnings("rawtypes")
+	public List<IConfigElement> getChildElements();
     
     /**
      * [Property, Category] Gets the ConfigGuiType value corresponding to the type of this property object, or CONFIG_CATEGORY if this is a

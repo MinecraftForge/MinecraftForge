@@ -15,8 +15,6 @@ package cpw.mods.fml.client.config;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 
-import org.lwjgl.opengl.GL11;
-
 /**
  * This class provides a button that fixes several bugs present in the vanilla GuiButton drawing code.
  * The gist of it is that it allows buttons of any size without gaps in the graphics and with the 

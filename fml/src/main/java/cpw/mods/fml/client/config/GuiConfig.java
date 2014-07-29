@@ -12,24 +12,19 @@
 
 package cpw.mods.fml.client.config;
 
-import java.lang.reflect.Method;
+import static cpw.mods.fml.client.config.GuiUtils.RESET_CHAR;
+import static cpw.mods.fml.client.config.GuiUtils.UNDO_CHAR;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiYesNo;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ChatComponentText;
 
 import org.lwjgl.input.Keyboard;
-
-import static cpw.mods.fml.client.config.GuiUtils.RESET_CHAR;
-import static cpw.mods.fml.client.config.GuiUtils.UNDO_CHAR;
 
 import cpw.mods.fml.client.config.GuiConfigEntries.IConfigEntry;
 import cpw.mods.fml.client.event.ConfigChangedEvent;
@@ -53,8 +48,10 @@ public class GuiConfig extends GuiScreen
     public final GuiScreen parentScreen;
     public String title = "Config GUI";
     public String titleLine2;
-    public final List<IConfigElement> configElements;
-    public final List<IConfigEntry> initEntries;
+    @SuppressWarnings("rawtypes")
+	public final List<IConfigElement> configElements;
+    @SuppressWarnings("rawtypes")
+	public final List<IConfigEntry> initEntries;
     public GuiConfigEntries entryList;
     private GuiButtonExt btnDefaultAll;
     private GuiButtonExt btnUndoAll;
@@ -90,7 +87,8 @@ public class GuiConfig extends GuiScreen
      * @param title the desired title for this screen. For consistency it is recommended that you pass the path of the config file being
      *            edited.
      */
-    public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, String configID, 
+    @SuppressWarnings("rawtypes")
+	public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, String configID, 
             boolean allRequireWorldRestart, boolean allRequireMcRestart, String title)
     {
         this(parentScreen, configElements, modID, configID, allRequireWorldRestart, allRequireMcRestart, title, null);
@@ -108,7 +106,8 @@ public class GuiConfig extends GuiScreen
      * @param title the desired title for this screen. For consistency it is recommended that you pass the path of the config file being
      *            edited.
      */
-    public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, 
+    @SuppressWarnings("rawtypes")
+	public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, 
             boolean allRequireWorldRestart, boolean allRequireMcRestart, String title)
     {
         this(parentScreen, configElements, modID, null, allRequireWorldRestart, allRequireMcRestart, title, null);
@@ -128,7 +127,8 @@ public class GuiConfig extends GuiScreen
      * @param titleLine2 the desired title second line for this screen. Typically this is used to send the category name of the category
      *            currently being edited.
      */
-    public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, 
+    @SuppressWarnings("rawtypes")
+	public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, 
             boolean allRequireWorldRestart, boolean allRequireMcRestart, String title, String titleLine2)
     {
         this(parentScreen, configElements, modID, null, allRequireWorldRestart, allRequireMcRestart, title, titleLine2);
@@ -151,7 +151,8 @@ public class GuiConfig extends GuiScreen
      * @param titleLine2 the desired title second line for this screen. Typically this is used to send the category name of the category
      *            currently being edited.
      */
-    public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, String configID, 
+    @SuppressWarnings("rawtypes")
+	public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, String configID, 
             boolean allRequireWorldRestart, boolean allRequireMcRestart, String title, String titleLine2)
     {
         this.mc = Minecraft.getMinecraft();
@@ -180,7 +181,8 @@ public class GuiConfig extends GuiScreen
             return path.replace("\\", "/").replace(mc.mcDataDir.getAbsolutePath().replace("\\", "/"), "/.minecraft");
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public void initGui()
     {
         Keyboard.enableRepeatEvents(true);
@@ -342,7 +344,8 @@ public class GuiConfig extends GuiScreen
             this.drawToolTip(this.mc.fontRenderer.listFormattedStringToWidth(I18n.format("fml.configgui.tooltip.applyGlobally"), 300), mouseX, mouseY);
     }
 
-    public void drawToolTip(List stringList, int x, int y)
+    @SuppressWarnings("rawtypes")
+	public void drawToolTip(List stringList, int x, int y)
     {
         this.func_146283_a(stringList, x, y);
     }

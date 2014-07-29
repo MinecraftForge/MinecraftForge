@@ -33,7 +33,8 @@ import static cpw.mods.fml.client.config.GuiUtils.UNDO_CHAR;
 public class GuiSelectString extends GuiScreen
 {
     protected GuiScreen parentScreen;
-    protected IConfigElement configElement;
+    @SuppressWarnings("rawtypes")
+	protected IConfigElement configElement;
     private GuiSelectStringEntries entriesList;
     private GuiButtonExt btnUndoChanges, btnDefault, btnDone;
     private String title;
@@ -44,10 +45,12 @@ public class GuiSelectString extends GuiScreen
     public final Object beforeValue;
     public Object currentValue;
     private HoverChecker tooltipHoverChecker;
-    private List toolTip;
+    @SuppressWarnings("rawtypes")
+	private List toolTip;
     protected boolean enabled;
 
-    public GuiSelectString(GuiScreen parentScreen, IConfigElement configElement, int slotIndex, Map<Object, String> selectableValues, Object currentValue, boolean enabled)
+    @SuppressWarnings("rawtypes")
+	public GuiSelectString(GuiScreen parentScreen, IConfigElement configElement, int slotIndex, Map<Object, String> selectableValues, Object currentValue, boolean enabled)
     {
         this.mc = Minecraft.getMinecraft();
         this.parentScreen = parentScreen;
@@ -89,7 +92,8 @@ public class GuiSelectString extends GuiScreen
         }
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public void initGui()
     {
         this.entriesList = new GuiSelectStringEntries(this, this.mc, this.configElement, this.selectableValues);
@@ -165,7 +169,8 @@ public class GuiSelectString extends GuiScreen
             drawToolTip(this.toolTip, par1, par2);
     }
 
-    public void drawToolTip(List stringList, int x, int y)
+    @SuppressWarnings("rawtypes")
+	public void drawToolTip(List stringList, int x, int y)
     {
         this.func_146283_a(stringList, x, y);
     }

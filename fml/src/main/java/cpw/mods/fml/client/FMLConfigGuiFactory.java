@@ -30,7 +30,8 @@ public class FMLConfigGuiFactory implements IModGuiFactory
             super(parent, getConfigElements(), "FML", false, false, I18n.format("fml.config.sample.title"));
         }
         
-        private static List<IConfigElement> getConfigElements()
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+		private static List<IConfigElement> getConfigElements()
         {
             List<IConfigElement> list = new ArrayList<IConfigElement>();
             List<IConfigElement> listsList = new ArrayList<IConfigElement>();
@@ -86,11 +87,9 @@ public class FMLConfigGuiFactory implements IModGuiFactory
         }
     }
 
-    private Minecraft minecraft;
     @Override
     public void initialize(Minecraft minecraftInstance)
     {
-        this.minecraft = minecraftInstance;
     }
 
     @Override

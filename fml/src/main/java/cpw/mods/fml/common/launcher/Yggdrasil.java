@@ -1,26 +1,15 @@
 package cpw.mods.fml.common.launcher;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.Proxy;
-import java.net.URL;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mojang.authlib.Agent;
-import com.mojang.authlib.exceptions.*;
-import com.mojang.authlib.yggdrasil.*;
+import com.mojang.authlib.exceptions.AuthenticationException;
+import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 
 /**
  * Basic implementation of Mojang's 'Yggdrasil' login system, purely intended as a dev time bare bones login.

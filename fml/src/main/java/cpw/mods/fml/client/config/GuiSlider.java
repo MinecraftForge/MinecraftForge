@@ -1,7 +1,6 @@
 package cpw.mods.fml.client.config;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
 
 import org.lwjgl.opengl.GL11;
 
