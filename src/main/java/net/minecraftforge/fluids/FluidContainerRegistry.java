@@ -74,6 +74,7 @@ public abstract class FluidContainerRegistry
     private static Set<ContainerKey> emptyContainers = Sets.newHashSet();
 
     public static final int BUCKET_VOLUME = 1000;
+    public static final int BOTTLE_VOLUME = 250;
     public static final ItemStack EMPTY_BUCKET = new ItemStack(Items.bucket);
     public static final ItemStack EMPTY_BOTTLE = new ItemStack(Items.glass_bottle);
     private static final ItemStack NULL_EMPTYCONTAINER = new ItemStack(Items.bucket);
@@ -82,7 +83,7 @@ public abstract class FluidContainerRegistry
     {
         registerFluidContainer(FluidRegistry.WATER, new ItemStack(Items.water_bucket), EMPTY_BUCKET);
         registerFluidContainer(FluidRegistry.LAVA,  new ItemStack(Items.lava_bucket),  EMPTY_BUCKET);
-        registerFluidContainer(FluidRegistry.WATER, new ItemStack(Items.potionitem),   EMPTY_BOTTLE);
+        registerFluidContainer(new FluidStack(FluidRegistry.WATER, BOTTLE_VOLUME), new ItemStack(Items.potionitem), EMPTY_BOTTLE);
     }
 
     private FluidContainerRegistry(){}
@@ -224,6 +225,81 @@ public abstract class FluidContainerRegistry
             return data.filledContainer.copy();
         }
         return null;
+    }
+
+    /**
+     * Attempts to empty a full container.
+     * 
+     * @param container
+     *            ItemStack representing the full container.
+     * @return Empty container if successful, otherwise null.
+     */
+    public static ItemStack drainFluidContainer(ItemStack container)
+    {
+        if (container == null)
+        {
+            return null;
+        }
+
+        FluidContainerData data = containerFluidMap.get(new ContainerKey(container));
+        if (data != null)
+        {
+            return data.emptyContainer.copy();
+        }
+
+        return null;
+    }
+
+    /**
+     * Determines the capacity of a full container.
+     * 
+     * @param container
+     *            The full container.
+     * @return The containers capacity, or 0 if the ItemStack does not represent
+     *         a registered container.
+     */
+    public static int getContainerCapacity(ItemStack container)
+    {
+        return getContainerCapacity(null, container);
+    }
+
+    /**
+     * Determines the capacity of a container.
+     * 
+     * @param fluid
+     *            FluidStack containing the type of fluid the capacity should be
+     *            determined for (ignored for full containers).
+     * @param container
+     *            The container (full or empty).
+     * @return The containers capacity, or 0 if the ItemStack does not represent
+     *         a registered container or the FluidStack is not registered with
+     *         the empty container.
+     */
+    public static int getContainerCapacity(FluidStack fluid, ItemStack container)
+    {
+        if (container == null)
+        {
+            return 0;
+        }
+
+        FluidContainerData data = containerFluidMap.get(new ContainerKey(container));
+
+        if (data != null)
+        {
+            return data.fluid.amount;
+        }
+
+        if (fluid != null)
+        {
+            data = filledContainerMap.get(new ContainerKey(container, fluid));
+
+            if (data != null)
+            {
+                return data.fluid.amount;
+            }
+        }
+
+        return 0;
     }
 
     /**
