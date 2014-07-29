@@ -11,7 +11,23 @@
  @SideOnly(Side.CLIENT)
  public class PlayerControllerMP
  {
-@@ -88,6 +92,12 @@
+@@ -63,6 +67,7 @@
+     public void func_78748_a(EntityPlayer p_78748_1_)
+     {
+         this.field_78779_k.func_77147_a(p_78748_1_.field_71075_bZ);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerEvent.ConfigurePlayerCapabilities(p_78748_1_, p_78748_1_.field_71075_bZ, this.field_78779_k));
+     }
+ 
+     public boolean func_78747_a()
+@@ -74,6 +79,7 @@
+     {
+         this.field_78779_k = p_78746_1_;
+         this.field_78779_k.func_77147_a(this.field_78776_a.field_71439_g.field_71075_bZ);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerEvent.ConfigurePlayerCapabilities(this.field_78776_a.field_71439_g, this.field_78776_a.field_71439_g.field_71075_bZ, p_78746_1_));
+     }
+ 
+     public void func_78745_b(EntityPlayer p_78745_1_)
+@@ -88,6 +94,12 @@
  
      public boolean func_78751_a(int p_78751_1_, int p_78751_2_, int p_78751_3_, int p_78751_4_)
      {
@@ -24,7 +40,7 @@
          if (this.field_78779_k.func_82752_c() && !this.field_78776_a.field_71439_g.func_82246_f(p_78751_1_, p_78751_2_, p_78751_3_))
          {
              return false;
-@@ -109,7 +119,7 @@
+@@ -109,7 +121,7 @@
              {
                  worldclient.func_72926_e(2001, p_78751_1_, p_78751_2_, p_78751_3_, Block.func_149682_b(block) + (worldclient.func_72805_g(p_78751_1_, p_78751_2_, p_78751_3_) << 12));
                  int i1 = worldclient.func_72805_g(p_78751_1_, p_78751_2_, p_78751_3_);
@@ -33,7 +49,7 @@
  
                  if (flag)
                  {
-@@ -304,11 +314,18 @@
+@@ -304,11 +316,18 @@
          float f2 = (float)p_78760_8_.field_72449_c - (float)p_78760_6_;
          boolean flag = false;
  
@@ -54,7 +70,7 @@
          if (!flag && p_78760_3_ != null && p_78760_3_.func_77973_b() instanceof ItemBlock)
          {
              ItemBlock itemblock = (ItemBlock)p_78760_3_.func_77973_b();
-@@ -340,7 +357,15 @@
+@@ -340,7 +359,15 @@
          }
          else
          {
@@ -71,7 +87,7 @@
          }
      }
  
-@@ -359,9 +384,10 @@
+@@ -359,9 +386,10 @@
          {
              p_78769_1_.field_71071_by.field_70462_a[p_78769_1_.field_71071_by.field_70461_c] = itemstack1;
  

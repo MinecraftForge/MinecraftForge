@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandGameMode.java
++++ ../src-work/minecraft/net/minecraft/command/CommandGameMode.java
+@@ -52,12 +52,12 @@
+ 
+     protected WorldSettings.GameType func_71539_b(ICommandSender p_71539_1_, String p_71539_2_)
+     {
+-        return !p_71539_2_.equalsIgnoreCase(WorldSettings.GameType.SURVIVAL.func_77149_b()) && !p_71539_2_.equalsIgnoreCase("s") ? (!p_71539_2_.equalsIgnoreCase(WorldSettings.GameType.CREATIVE.func_77149_b()) && !p_71539_2_.equalsIgnoreCase("c") ? (!p_71539_2_.equalsIgnoreCase(WorldSettings.GameType.ADVENTURE.func_77149_b()) && !p_71539_2_.equalsIgnoreCase("a") ? WorldSettings.func_77161_a(func_71532_a(p_71539_1_, p_71539_2_, 0, WorldSettings.GameType.values().length - 2)) : WorldSettings.GameType.ADVENTURE) : WorldSettings.GameType.CREATIVE) : WorldSettings.GameType.SURVIVAL;
++        return net.minecraftforge.common.ForgeHooks.getGamemodeFromInput(p_71539_2_);
+     }
+ 
+     public List func_71516_a(ICommandSender p_71516_1_, String[] p_71516_2_)
+     {
+-        return p_71516_2_.length == 1 ? func_71530_a(p_71516_2_, new String[] {"survival", "creative", "adventure"}): (p_71516_2_.length == 2 ? func_71530_a(p_71516_2_, this.func_71538_c()) : null);
++        return p_71516_2_.length == 1 ? func_71530_a(p_71516_2_, net.minecraftforge.common.ForgeHooks.getAllGamemodeNames()): (p_71516_2_.length == 2 ? func_71530_a(p_71516_2_, this.func_71538_c()) : null);
+     }
+ 
+     protected String[] func_71538_c()

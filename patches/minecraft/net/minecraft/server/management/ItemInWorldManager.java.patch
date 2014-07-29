@@ -24,7 +24,15 @@
      public World field_73092_a;
      public EntityPlayerMP field_73090_b;
      private WorldSettings.GameType field_73091_c;
-@@ -126,6 +137,13 @@
+@@ -41,6 +52,7 @@
+     {
+         this.field_73091_c = p_73076_1_;
+         p_73076_1_.func_77147_a(this.field_73090_b.field_71075_bZ);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerEvent.ConfigurePlayerCapabilities(this.field_73090_b, this.field_73090_b.field_71075_bZ, p_73076_1_));
+         this.field_73090_b.func_71016_p();
+     }
+ 
+@@ -126,6 +138,13 @@
      {
          if (!this.field_73091_c.func_82752_c() || this.field_73090_b.func_82246_f(p_73074_1_, p_73074_2_, p_73074_3_))
          {
@@ -38,7 +46,7 @@
              if (this.func_73083_d())
              {
                  if (!this.field_73092_a.func_72886_a((EntityPlayer)null, p_73074_1_, p_73074_2_, p_73074_3_, p_73074_4_))
-@@ -135,19 +153,36 @@
+@@ -135,19 +154,36 @@
              }
              else
              {
@@ -80,7 +88,7 @@
                      this.func_73084_b(p_73074_1_, p_73074_2_, p_73074_3_);
                  }
                  else
-@@ -171,7 +206,7 @@
+@@ -171,7 +207,7 @@
              int l = this.field_73100_i - this.field_73089_e;
              Block block = this.field_73092_a.func_147439_a(p_73082_1_, p_73082_2_, p_73082_3_);
  
@@ -89,7 +97,7 @@
              {
                  float f = block.func_149737_a(this.field_73090_b, this.field_73090_b.field_70170_p, p_73082_1_, p_73082_2_, p_73082_3_) * (float)(l + 1);
  
-@@ -202,10 +237,14 @@
+@@ -202,10 +238,14 @@
  
      private boolean func_73079_d(int p_73079_1_, int p_73079_2_, int p_73079_3_)
      {
@@ -105,7 +113,7 @@
  
          if (flag)
          {
-@@ -217,29 +256,32 @@
+@@ -217,29 +257,32 @@
  
      public boolean func_73084_b(int p_73084_1_, int p_73084_2_, int p_73084_3_)
      {
@@ -145,7 +153,7 @@
  
                  if (itemstack != null)
                  {
-@@ -251,12 +293,18 @@
+@@ -251,12 +294,18 @@
                      }
                  }
  
@@ -164,7 +172,7 @@
              return flag;
          }
      }
-@@ -288,6 +336,7 @@
+@@ -288,6 +337,7 @@
              if (itemstack1.field_77994_a == 0)
              {
                  p_73085_1_.field_71071_by.field_70462_a[p_73085_1_.field_71071_by.field_70461_c] = null;
@@ -172,7 +180,7 @@
              }
  
              if (!p_73085_1_.func_71039_bw())
-@@ -301,31 +350,70 @@
+@@ -301,31 +351,70 @@
  
      public boolean func_73078_a(EntityPlayer p_73078_1_, World p_73078_2_, ItemStack p_73078_3_, int p_73078_4_, int p_73078_5_, int p_73078_6_, int p_73078_7_, float p_73078_8_, float p_73078_9_, float p_73078_10_)
      {

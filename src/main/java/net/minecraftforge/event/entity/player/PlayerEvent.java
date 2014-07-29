@@ -6,6 +6,8 @@ import cpw.mods.fml.common.eventhandler.Cancelable;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerCapabilities;
+import net.minecraft.world.WorldSettings;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
 /**
@@ -272,6 +274,19 @@ public class PlayerEvent extends LivingEvent
         {
             if ("dat".equals(suffix)) throw new IllegalArgumentException("The suffix 'dat' is reserved");
             return new File(this.playerDirectory, this.playerUUID+"."+suffix);
+        }
+    }
+
+    public static class ConfigurePlayerCapabilities extends PlayerEvent {
+
+        public final PlayerCapabilities capabilities;
+        public final WorldSettings.GameType gamemode;
+
+        public ConfigurePlayerCapabilities(EntityPlayer player, PlayerCapabilities capabilities, WorldSettings.GameType gamemode)
+        {
+            super(player);
+            this.capabilities = capabilities;
+            this.gamemode = gamemode;
         }
     }
 }

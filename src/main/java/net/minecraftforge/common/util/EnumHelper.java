@@ -19,6 +19,7 @@ import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.world.EnumSkyBlock;
+import net.minecraft.world.WorldSettings.GameType;
 import net.minecraft.world.gen.structure.StructureStrongholdPieces.Stronghold.Door;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
@@ -48,7 +49,8 @@ public class EnumHelper
         {EnumSkyBlock.class, int.class},
         {EnumStatus.class},
         {ToolMaterial.class, int.class, int.class, float.class, float.class, int.class},
-        {EnumRarity.class, EnumChatFormatting.class, String.class}
+        {EnumRarity.class, EnumChatFormatting.class, String.class},
+        {GameType.class, int.class, String.class, boolean.class, boolean.class, boolean.class}
     };
 
     public static EnumAction addAction(String name)
@@ -108,6 +110,11 @@ public class EnumHelper
     {
         return addEnum(EnumRarity.class, name, color, displayName);
     }
+    public static GameType addGameType(String name, int id, String displayName, boolean isSurvival, boolean isCreative, boolean isAdventure)
+    {
+        return addEnum(GameType.class, name, id, displayName, isSurvival, isCreative, isAdventure);
+    }
+    
 
     private static void setup()
     {

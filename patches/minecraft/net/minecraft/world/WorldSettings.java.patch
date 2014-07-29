@@ -1,0 +1,45 @@
+--- ../src-base/minecraft/net/minecraft/world/WorldSettings.java
++++ ../src-work/minecraft/net/minecraft/world/WorldSettings.java
+@@ -104,11 +104,20 @@
+         ADVENTURE(2, "adventure");
+         int field_77154_e;
+         String field_77151_f;
++        boolean isSurvival, isCreative, isAdventure;
+ 
+         private static final String __OBFID = "CL_00000148";
+ 
+         private GameType(int p_i1956_3_, String p_i1956_4_)
+         {
++            this(p_i1956_3_, p_i1956_4_, p_i1956_3_ == 0, p_i1956_3_ == 1, p_i1956_3_ == 2);
++        }
++
++        private GameType(int p_i1956_3_, String p_i1956_4_, boolean isSurvival, boolean isCreative, boolean isAdventure)
++        {
++            this.isSurvival = isSurvival;
++            this.isCreative = isCreative;
++            this.isAdventure = isAdventure;
+             this.field_77154_e = p_i1956_3_;
+             this.field_77151_f = p_i1956_4_;
+         }
+@@ -144,18 +153,18 @@
+ 
+         public boolean func_82752_c()
+         {
+-            return this == ADVENTURE;
++            return this == ADVENTURE || this.isAdventure;
+         }
+ 
+         public boolean func_77145_d()
+         {
+-            return this == CREATIVE;
++            return this == CREATIVE || this.isCreative;
+         }
+ 
+         @SideOnly(Side.CLIENT)
+         public boolean func_77144_e()
+         {
+-            return this == SURVIVAL || this == ADVENTURE;
++            return this == SURVIVAL || this == ADVENTURE || this.isSurvival || this.isAdventure;
+         }
+ 
+         public static WorldSettings.GameType func_77146_a(int p_77146_0_)

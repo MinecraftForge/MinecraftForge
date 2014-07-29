@@ -4,9 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.mojang.realmsclient.dto.McoServer.WorldType;
+
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.block.Block;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.NumberInvalidException;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,6 +40,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ServerChatEvent;
@@ -259,6 +265,48 @@ public class ForgeHooks
         player.inventory.setInventorySlotContents(slot, result);
         player.inventory.currentItem = slot;
         return true;
+    }
+
+    public static String[] getAllGamemodeNames()
+    {
+        WorldSettings.GameType[] gamemodes = WorldSettings.GameType.values();
+        String[] result = new String[gamemodes.length];
+        for (int i = 0; i < gamemodes.length; i++)
+        {
+            result[i] = gamemodes[i].getName();
+        }
+        return result;
+    }
+
+    public static WorldSettings.GameType getGamemodeFromInput(String input)
+    {
+        if (input.equalsIgnoreCase("s")) return WorldSettings.GameType.SURVIVAL;
+        if (input.equalsIgnoreCase("c")) return WorldSettings.GameType.CREATIVE;
+        if (input.equalsIgnoreCase("a")) return WorldSettings.GameType.ADVENTURE;
+
+        WorldSettings.GameType[] gamemodes = WorldSettings.GameType.values();
+        for (int j = 0; j < gamemodes.length; ++j)
+        {
+            WorldSettings.GameType gametype = gamemodes[j];
+
+            if (gametype.getName().equalsIgnoreCase(input))
+            {
+                return gametype;
+            }
+        }
+
+        int number = CommandBase.parseInt(null, input);
+        for (int j = 0; j < gamemodes.length; ++j)
+        {
+            WorldSettings.GameType gametype = gamemodes[j];
+
+            if (gametype.getID() == number)
+            {
+                return gametype;
+            }
+        }
+
+        throw new NumberInvalidException("commands.forge.gamemode.invalid", number);
     }
 
     //Optifine Helper Functions u.u, these are here specifically for Optifine
