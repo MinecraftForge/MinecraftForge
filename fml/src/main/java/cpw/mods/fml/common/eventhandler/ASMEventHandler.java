@@ -22,6 +22,7 @@ public class ASMEventHandler implements IEventListener
     private static final String HANDLER_FUNC_DESC = Type.getMethodDescriptor(IEventListener.class.getDeclaredMethods()[0]);
     private static final ASMClassLoader LOADER = new ASMClassLoader();
     private static final HashMap<Method, Class<?>> cache = Maps.newHashMap();
+	private static final boolean GETCONTEXT = Boolean.parseBoolean(System.getProperty("fml.LogContext", "false"));
 
     private final IEventListener handler;
     private final SubscribeEvent subInfo;
@@ -36,11 +37,11 @@ public class ASMEventHandler implements IEventListener
     @Override
     public void invoke(Event event)
     {
-        if (owner != null)
+        if (owner != null && GETCONTEXT)
         {
             ThreadContext.put("mod", owner.getName());
         }
-        else
+        else if (GETCONTEXT)
         {
             ThreadContext.put("mod", "");
         }
@@ -51,7 +52,8 @@ public class ASMEventHandler implements IEventListener
                 handler.invoke(event);
             }
         }
-        ThreadContext.remove("mod");
+        if (GETCONTEXT)
+        	ThreadContext.remove("mod");
     }
 
     public EventPriority getPriority()
