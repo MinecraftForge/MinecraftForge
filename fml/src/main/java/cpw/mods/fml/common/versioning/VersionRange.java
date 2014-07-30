@@ -85,7 +85,17 @@ public class VersionRange
 
         return new VersionRange( recommendedVersion, copiedRestrictions );
     }
-
+    
+    /**
+     * Factory method, for custom versioning schemes
+     * @param version version
+     * @param restrictions restriction list
+     * @return a new version range
+     */
+    public static VersionRange newRange(ArtifactVersion version, List<Restriction> restrictions)
+    {
+    	return new VersionRange(version, restrictions);
+    }
     /**
      * Create a version range from a string representation
      * <p/>
