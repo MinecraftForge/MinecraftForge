@@ -94,7 +94,7 @@ public class VersionRange
      */
     public static VersionRange newRange(ArtifactVersion version, List<Restriction> restrictions)
     {
-    	return new VersionRange(version, restrictions);
+        return new VersionRange(version, restrictions);
     }
     /**
      * Create a version range from a string representation

@@ -425,4 +425,8 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     {
         return optionalDefaultObject;
     }
+
+    public RegistryDelegate<I> getDelegate(I thing, Class<I> clazz) {
+        return GameData.buildDelegate(thing, clazz);
+    }
 }

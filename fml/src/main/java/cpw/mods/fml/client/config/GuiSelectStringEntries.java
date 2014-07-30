@@ -35,14 +35,14 @@ public class GuiSelectStringEntries extends GuiListExtended
     public GuiSelectString owningScreen;
     public Minecraft mc;
     @SuppressWarnings("rawtypes")
-	public IConfigElement configElement;
+    public IConfigElement configElement;
     public List<IGuiSelectStringListEntry> listEntries;
     public final Map<Object, String> selectableValues;
     public int selectedIndex = -1;
     public int maxEntryWidth = 0;
     
     @SuppressWarnings("rawtypes")
-	public GuiSelectStringEntries(GuiSelectString owningScreen, Minecraft mc, IConfigElement configElement, Map<Object, String> selectableValues)
+    public GuiSelectStringEntries(GuiSelectString owningScreen, Minecraft mc, IConfigElement configElement, Map<Object, String> selectableValues)
     {
         super(mc, owningScreen.width, owningScreen.height, owningScreen.titleLine2 != null ? (owningScreen.titleLine3 != null ? 43 : 33) : 23, 
                 owningScreen.height - 32, 11);
@@ -144,7 +144,7 @@ public class GuiSelectStringEntries extends GuiListExtended
     }
     
     @SuppressWarnings("unchecked")
-	public void saveChanges()
+    public void saveChanges()
     {
         if (owningScreen.slotIndex != -1 && owningScreen.parentScreen != null
                 && owningScreen.parentScreen instanceof GuiConfig

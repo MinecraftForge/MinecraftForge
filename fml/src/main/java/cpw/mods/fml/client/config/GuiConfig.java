@@ -49,9 +49,9 @@ public class GuiConfig extends GuiScreen
     public String title = "Config GUI";
     public String titleLine2;
     @SuppressWarnings("rawtypes")
-	public final List<IConfigElement> configElements;
+    public final List<IConfigElement> configElements;
     @SuppressWarnings("rawtypes")
-	public final List<IConfigEntry> initEntries;
+    public final List<IConfigEntry> initEntries;
     public GuiConfigEntries entryList;
     private GuiButtonExt btnDefaultAll;
     private GuiButtonExt btnUndoAll;
@@ -88,7 +88,7 @@ public class GuiConfig extends GuiScreen
      *            edited.
      */
     @SuppressWarnings("rawtypes")
-	public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, String configID, 
+    public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, String configID, 
             boolean allRequireWorldRestart, boolean allRequireMcRestart, String title)
     {
         this(parentScreen, configElements, modID, configID, allRequireWorldRestart, allRequireMcRestart, title, null);
@@ -107,7 +107,7 @@ public class GuiConfig extends GuiScreen
      *            edited.
      */
     @SuppressWarnings("rawtypes")
-	public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, 
+    public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, 
             boolean allRequireWorldRestart, boolean allRequireMcRestart, String title)
     {
         this(parentScreen, configElements, modID, null, allRequireWorldRestart, allRequireMcRestart, title, null);
@@ -128,7 +128,7 @@ public class GuiConfig extends GuiScreen
      *            currently being edited.
      */
     @SuppressWarnings("rawtypes")
-	public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, 
+    public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, 
             boolean allRequireWorldRestart, boolean allRequireMcRestart, String title, String titleLine2)
     {
         this(parentScreen, configElements, modID, null, allRequireWorldRestart, allRequireMcRestart, title, titleLine2);
@@ -152,7 +152,7 @@ public class GuiConfig extends GuiScreen
      *            currently being edited.
      */
     @SuppressWarnings("rawtypes")
-	public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, String configID, 
+    public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, String configID, 
             boolean allRequireWorldRestart, boolean allRequireMcRestart, String title, String titleLine2)
     {
         this.mc = Minecraft.getMinecraft();
@@ -182,7 +182,7 @@ public class GuiConfig extends GuiScreen
     }
 
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     public void initGui()
     {
         Keyboard.enableRepeatEvents(true);
@@ -345,7 +345,7 @@ public class GuiConfig extends GuiScreen
     }
 
     @SuppressWarnings("rawtypes")
-	public void drawToolTip(List stringList, int x, int y)
+    public void drawToolTip(List stringList, int x, int y)
     {
         this.func_146283_a(stringList, x, y);
     }

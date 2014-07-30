@@ -37,7 +37,7 @@ public class GuiEditArray extends GuiScreen
 {
     protected GuiScreen parentScreen;
     @SuppressWarnings("rawtypes")
-	protected IConfigElement configElement;
+    protected IConfigElement configElement;
     private GuiEditArrayEntries entryList;
     private GuiButtonExt btnUndoChanges, btnDefault, btnDone;
     private String title;
@@ -48,11 +48,11 @@ public class GuiEditArray extends GuiScreen
     private Object[] currentValues;
     private HoverChecker tooltipHoverChecker;
     @SuppressWarnings("rawtypes")
-	private List toolTip;
+    private List toolTip;
     protected boolean enabled;
     
     @SuppressWarnings("rawtypes")
-	public GuiEditArray(GuiScreen parentScreen, IConfigElement configElement, int slotIndex, Object[] currentValues, boolean enabled)
+    public GuiEditArray(GuiScreen parentScreen, IConfigElement configElement, int slotIndex, Object[] currentValues, boolean enabled)
     {
         this.mc = Minecraft.getMinecraft();
         this.parentScreen = parentScreen;
@@ -98,7 +98,7 @@ public class GuiEditArray extends GuiScreen
     }
     
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     public void initGui()
     {
         this.entryList = new GuiEditArrayEntries(this, this.mc, this.configElement, this.beforeValues, this.currentValues);
@@ -202,7 +202,7 @@ public class GuiEditArray extends GuiScreen
     }
     
     @SuppressWarnings("rawtypes")
-	public void drawToolTip(List stringList, int x, int y)
+    public void drawToolTip(List stringList, int x, int y)
     {
         this.func_146283_a(stringList, x, y);
     }

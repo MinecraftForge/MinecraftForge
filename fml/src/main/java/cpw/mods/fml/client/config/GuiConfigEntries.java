@@ -45,7 +45,7 @@ public class GuiConfigEntries extends GuiListExtended
     public final GuiConfig owningScreen;
     public final Minecraft mc;
     @SuppressWarnings("rawtypes")
-	public List<IConfigEntry> listEntries;
+    public List<IConfigEntry> listEntries;
     /**
      * The max width of the label of all IConfigEntry objects.
      */
@@ -76,7 +76,7 @@ public class GuiConfigEntries extends GuiListExtended
     public int scrollBarX;
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	public GuiConfigEntries(GuiConfig parent, Minecraft mc)
+    public GuiConfigEntries(GuiConfig parent, Minecraft mc)
     {
         super(mc, parent.width, parent.height, parent.titleLine2 != null ? 33 : 23, parent.height - 32, 20);
         this.owningScreen = parent;
@@ -169,7 +169,7 @@ public class GuiConfigEntries extends GuiListExtended
     }
 
     @SuppressWarnings("rawtypes")
-	protected void initGui()
+    protected void initGui()
     {
         this.width = owningScreen.width;
         this.height = owningScreen.height;
@@ -207,7 +207,7 @@ public class GuiConfigEntries extends GuiListExtended
      * Gets the IGuiListEntry object for the given index
      */
     @SuppressWarnings("rawtypes")
-	@Override
+    @Override
     public IConfigEntry getListEntry(int index)
     {
         return this.listEntries.get(index);
@@ -232,7 +232,7 @@ public class GuiConfigEntries extends GuiListExtended
      * This method is a pass-through for IConfigEntry objects that require keystrokes. Called from the parent GuiConfig screen.
      */
     @SuppressWarnings("rawtypes")
-	public void keyTyped(char eventChar, int eventKey)
+    public void keyTyped(char eventChar, int eventKey)
     {
         for (IConfigEntry entry : this.listEntries)
             entry.keyTyped(eventChar, eventKey);
@@ -243,7 +243,7 @@ public class GuiConfigEntries extends GuiListExtended
      * screen.
      */
     @SuppressWarnings("rawtypes")
-	public void updateScreen()
+    public void updateScreen()
     {
         for (IConfigEntry entry : this.listEntries)
             entry.updateCursorCounter();
@@ -254,7 +254,7 @@ public class GuiConfigEntries extends GuiListExtended
      * screen.
      */
     @SuppressWarnings("rawtypes")
-	public void mouseClicked(int mouseX, int mouseY, int mouseEvent)
+    public void mouseClicked(int mouseX, int mouseY, int mouseEvent)
     {
         for (IConfigEntry entry : this.listEntries)
             entry.mouseClicked(mouseX, mouseY, mouseEvent);
@@ -264,7 +264,7 @@ public class GuiConfigEntries extends GuiListExtended
      * This method is a pass-through for IConfigListEntry objects that need to perform actions when the containing GUI is closed.
      */
     @SuppressWarnings("rawtypes")
-	public void onGuiClosed()
+    public void onGuiClosed()
     {
         for (IConfigEntry entry : this.listEntries)
             entry.onGuiClosed();
@@ -275,7 +275,7 @@ public class GuiConfigEntries extends GuiListExtended
      * a restart for proper handling.
      */
     @SuppressWarnings("rawtypes")
-	public boolean saveConfigElements()
+    public boolean saveConfigElements()
     {
         boolean requiresRestart = false;
         for (IConfigEntry entry : this.listEntries)
@@ -290,7 +290,7 @@ public class GuiConfigEntries extends GuiListExtended
      * objects are checked as well.
      */
     @SuppressWarnings("rawtypes")
-	public boolean areAllEntriesDefault(boolean includeChildren)
+    public boolean areAllEntriesDefault(boolean includeChildren)
     {
         for (IConfigEntry entry : this.listEntries)
             if ((includeChildren || !(entry instanceof CategoryEntry)) && !entry.isDefault())
@@ -304,7 +304,7 @@ public class GuiConfigEntries extends GuiListExtended
      * well.
      */
     @SuppressWarnings("rawtypes")
-	public void setAllToDefault(boolean includeChildren)
+    public void setAllToDefault(boolean includeChildren)
     {
         for (IConfigEntry entry : this.listEntries)
             if ((includeChildren || !(entry instanceof CategoryEntry)))
@@ -316,7 +316,7 @@ public class GuiConfigEntries extends GuiListExtended
      * are checked as well.
      */
     @SuppressWarnings("rawtypes")
-	public boolean hasChangedEntry(boolean includeChildren)
+    public boolean hasChangedEntry(boolean includeChildren)
     {
         for (IConfigEntry entry : this.listEntries)
             if ((includeChildren || !(entry instanceof CategoryEntry)) && entry.isChanged())
@@ -330,7 +330,7 @@ public class GuiConfigEntries extends GuiListExtended
      * are checked as well.
      */
     @SuppressWarnings("rawtypes")
-	public boolean areAnyEntriesEnabled(boolean includeChildren)
+    public boolean areAnyEntriesEnabled(boolean includeChildren)
     {
         for (IConfigEntry entry : this.listEntries)
             if ((includeChildren || !(entry instanceof CategoryEntry)) && entry.enabled())
@@ -344,7 +344,7 @@ public class GuiConfigEntries extends GuiListExtended
      * reverted as well.
      */
     @SuppressWarnings("rawtypes")
-	public void undoAllChanges(boolean includeChildren)
+    public void undoAllChanges(boolean includeChildren)
     {
         for (IConfigEntry entry : this.listEntries)
             if ((includeChildren || !(entry instanceof CategoryEntry)))
@@ -356,7 +356,7 @@ public class GuiConfigEntries extends GuiListExtended
      * after drawing all other elements.
      */
     @SuppressWarnings("rawtypes")
-	public void drawScreenPost(int mouseX, int mouseY, float partialTicks)
+    public void drawScreenPost(int mouseX, int mouseY, float partialTicks)
     {
         for (IConfigEntry entry : this.listEntries)
             entry.drawToolTip(mouseX, mouseY);
@@ -428,7 +428,7 @@ public class GuiConfigEntries extends GuiListExtended
         }
 
         @SuppressWarnings("unchecked")
-		@Override
+        @Override
         public boolean saveConfigElement()
         {
             if (enabled() && isChanged())
@@ -536,7 +536,7 @@ public class GuiConfigEntries extends GuiListExtended
         }
 
         @SuppressWarnings("unchecked")
-		@Override
+        @Override
         public boolean saveConfigElement()
         {
             if (enabled() && isChanged())
@@ -670,7 +670,7 @@ public class GuiConfigEntries extends GuiListExtended
         }
 
         @SuppressWarnings("unchecked")
-		@Override
+        @Override
         public boolean saveConfigElement()
         {
             if (enabled() && isChanged())
@@ -706,7 +706,7 @@ public class GuiConfigEntries extends GuiListExtended
         protected Object[]       currentValues;
 
         @SuppressWarnings("rawtypes")
-		public ArrayEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement)
+        public ArrayEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement)
         {
             super(owningScreen, owningEntryList, configElement);
             beforeValues = configElement.getList();
@@ -772,7 +772,7 @@ public class GuiConfigEntries extends GuiListExtended
         }
 
         @SuppressWarnings("unchecked")
-		@Override
+        @Override
         public boolean saveConfigElement()
         {
             if (enabled() && isChanged())
@@ -865,7 +865,7 @@ public class GuiConfigEntries extends GuiListExtended
         }
 
         @SuppressWarnings("unchecked")
-		@Override
+        @Override
         public boolean saveConfigElement()
         {
             if (this.enabled() && this.isChanged())
@@ -987,7 +987,7 @@ public class GuiConfigEntries extends GuiListExtended
         protected final int beforeValue;
 
         @SuppressWarnings("rawtypes")
-		public IntegerEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement)
+        public IntegerEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement)
         {
             super(owningScreen, owningEntryList, configElement);
             this.beforeValue = Integer.valueOf(configElement.get().toString());
@@ -1047,7 +1047,7 @@ public class GuiConfigEntries extends GuiListExtended
         }
 
         @SuppressWarnings("unchecked")
-		@Override
+        @Override
         public boolean saveConfigElement()
         {
             if (enabled())
@@ -1094,7 +1094,7 @@ public class GuiConfigEntries extends GuiListExtended
         protected final double beforeValue;
 
         @SuppressWarnings("rawtypes")
-		public DoubleEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement)
+        public DoubleEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement)
         {
             super(owningScreen, owningEntryList, configElement);
             this.beforeValue = Double.valueOf(configElement.get().toString());
@@ -1155,7 +1155,7 @@ public class GuiConfigEntries extends GuiListExtended
         }
 
         @SuppressWarnings("unchecked")
-		@Override
+        @Override
         public boolean saveConfigElement()
         {
             if (enabled())
@@ -1281,7 +1281,7 @@ public class GuiConfigEntries extends GuiListExtended
         }
 
         @SuppressWarnings("unchecked")
-		@Override
+        @Override
         public boolean saveConfigElement()
         {
             if (enabled())
@@ -1325,7 +1325,7 @@ public class GuiConfigEntries extends GuiListExtended
         protected final GuiButtonExt btnSelectCategory;
 
         @SuppressWarnings("rawtypes")
-		public CategoryEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement)
+        public CategoryEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement)
         {
             super(owningScreen, owningEntryList, configElement);
 
@@ -1341,7 +1341,7 @@ public class GuiConfigEntries extends GuiListExtended
          * This method is called in the constructor and is used to set the childScreen field.
          */
         @SuppressWarnings("unchecked")
-		protected GuiScreen buildChildScreen()
+        protected GuiScreen buildChildScreen()
         {
             return new GuiConfig(this.owningScreen, this.configElement.getChildElements(), this.owningScreen.modID, 
                     owningScreen.allRequireWorldRestart || this.configElement.requiresWorldRestart(), 
@@ -1487,18 +1487,18 @@ public class GuiConfigEntries extends GuiListExtended
      * Provides a base entry for others to extend. Handles drawing the prop label (if drawLabel == true) and the Undo/Default buttons.
      */
     @SuppressWarnings("rawtypes")
-	public static abstract class ListEntryBase implements IConfigEntry
+    public static abstract class ListEntryBase implements IConfigEntry
     {
         protected final GuiConfig owningScreen;
         protected final GuiConfigEntries owningEntryList;
-		protected final IConfigElement configElement;
+        protected final IConfigElement configElement;
         protected final Minecraft mc;
         protected final String name;
         protected final GuiButtonExt btnUndoChanges;
         protected final GuiButtonExt btnDefault;
-		protected List toolTip;
-		protected List undoToolTip;
-		protected List defaultToolTip;
+        protected List toolTip;
+        protected List undoToolTip;
+        protected List defaultToolTip;
         protected boolean isValidValue = true;
         protected HoverChecker tooltipHoverChecker;
         protected HoverChecker undoHoverChecker;
@@ -1506,7 +1506,7 @@ public class GuiConfigEntries extends GuiListExtended
         protected boolean drawLabel;
 
         @SuppressWarnings({ "unchecked" })
-		public ListEntryBase(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement)
+        public ListEntryBase(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement)
         {
             this.owningScreen = owningScreen;
             this.owningEntryList = owningEntryList;
@@ -1702,7 +1702,7 @@ public class GuiConfigEntries extends GuiListExtended
          * @return
          */
         @SuppressWarnings("rawtypes")
-		public IConfigElement getConfigElement();
+        public IConfigElement getConfigElement();
         
         /**
          * Gets the name of the ConfigElement owned by this entry.

@@ -31,7 +31,7 @@ public class FMLConfigGuiFactory implements IModGuiFactory
         }
         
         @SuppressWarnings({ "rawtypes", "unchecked" })
-		private static List<IConfigElement> getConfigElements()
+        private static List<IConfigElement> getConfigElements()
         {
             List<IConfigElement> list = new ArrayList<IConfigElement>();
             List<IConfigElement> listsList = new ArrayList<IConfigElement>();

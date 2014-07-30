@@ -42,7 +42,7 @@ public class GuiEditArrayEntries extends GuiListExtended
 {
     private GuiEditArray owningGui;
     public Minecraft mc;
-	public IConfigElement configElement;
+    public IConfigElement configElement;
     public List<IArrayEntry> listEntries;
     public boolean isDefault;
     public boolean isChanged;
@@ -52,7 +52,7 @@ public class GuiEditArrayEntries extends GuiListExtended
     public Object[] currentValues;
 
     @SuppressWarnings("unchecked")
-	public GuiEditArrayEntries(GuiEditArray parent, Minecraft mc, IConfigElement configElement, Object[] beforeValues, Object[] currentValues)
+    public GuiEditArrayEntries(GuiEditArray parent, Minecraft mc, IConfigElement configElement, Object[] beforeValues, Object[] currentValues)
     {
         super(mc, parent.width, parent.height, parent.titleLine2 != null ? (parent.titleLine3 != null ? 43 : 33) : 23, parent.height - 32, 20);
         this.owningGui = parent;
@@ -222,7 +222,7 @@ public class GuiEditArrayEntries extends GuiListExtended
     }
 
     @SuppressWarnings("unchecked")
-	protected void saveListChanges()
+    protected void saveListChanges()
     {
         int listLength = configElement.isListLengthFixed() ? listEntries.size() : listEntries.size() - 1;
 
@@ -544,7 +544,7 @@ public class GuiEditArrayEntries extends GuiListExtended
         protected boolean isValidated = false;
 
         @SuppressWarnings({ "unchecked" })
-		public BaseEntry(GuiEditArray owningScreen, GuiEditArrayEntries owningEntryList, IConfigElement configElement)
+        public BaseEntry(GuiEditArray owningScreen, GuiEditArrayEntries owningEntryList, IConfigElement configElement)
         {
             this.owningScreen = owningScreen;
             this.owningEntryList = owningEntryList;

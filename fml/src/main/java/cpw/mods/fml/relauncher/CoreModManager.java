@@ -233,11 +233,11 @@ public class CoreModManager {
         File[] derplist = coreMods.listFiles(derpfilter);
         if (derplist != null && derplist.length > 0)
         {
-        	FMLRelaunchLog.severe("FML has detected several badly downloaded jar files,  which have been named as zip files. You probably need to download them again, or they may not work properly");
-        	for (File f : derplist)
-        	{
-        		FMLRelaunchLog.severe("Problem file : %s", f.getName());
-        	}
+            FMLRelaunchLog.severe("FML has detected several badly downloaded jar files,  which have been named as zip files. You probably need to download them again, or they may not work properly");
+            for (File f : derplist)
+            {
+                FMLRelaunchLog.severe("Problem file : %s", f.getName());
+            }
         }
         File[] coreModList = coreMods.listFiles(ff);
         File versionedModDir = new File(coreMods, FMLInjectionData.mccversion);

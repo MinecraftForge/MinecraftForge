@@ -797,7 +797,7 @@ public class GameData {
 
         // block the Block Registry slot with the same id
         useSlot(itemId);
-
+        ((RegistryDelegate.Delegate<Item>) item.delegate).setName(name);
         return itemId;
     }
 
@@ -841,7 +841,7 @@ public class GameData {
         }
 
         useSlot(blockId);
-
+        ((RegistryDelegate.Delegate<Block>) block.delegate).setName(name);
         return blockId;
     }
 
@@ -947,5 +947,10 @@ public class GameData {
         }
 
         FMLLog.fine("Registry consistency check successful");
+    }
+    
+    static <T> RegistryDelegate<T> buildDelegate(T referant, Class<T> type)
+    {
+        return new RegistryDelegate.Delegate<T>(referant, type);
     }
 }
