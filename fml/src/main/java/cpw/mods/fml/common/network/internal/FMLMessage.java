@@ -248,7 +248,8 @@ public abstract class FMLMessage {
                 dataWatcherList = DataWatcher.readWatchedListFromPacketBuffer(new PacketBuffer(dat));
             } catch (IOException e)
             {
-                // Sigh
+                FMLLog.log(Level.FATAL, e, "There was a critical error decoding the datawatcher stream for a mod entity.");
+                throw Throwables.propagate(e);
             }
 
             throwerId = dat.readInt();
