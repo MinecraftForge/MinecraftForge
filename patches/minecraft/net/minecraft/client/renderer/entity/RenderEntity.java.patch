@@ -1,0 +1,9 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderEntity.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderEntity.java
+@@ -19,6 +19,6 @@
+     {
++		 if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderEntityEvent.Pre(p_76986_1_, this, p_76986_2_, p_76986_4_, p_76986_6_))) return;
+		 GL11.glPushMatrix();
+         func_76978_a(p_76986_1_.boundingBox, p_76986_2_ - p_76986_1_.lastTickPosX, p_76986_4_ - p_76986_1_.lastTickPosY, p_76986_6_ - p_76986_1_.lastTickPosZ);
+         GL11.glPopMatrix();
++		 net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderEntityEvent.Post(p_76986_1_, this, p_76986_2_, p_76986_4_, p_76986_6_))
