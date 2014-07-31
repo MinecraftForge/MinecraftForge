@@ -48,7 +48,7 @@ public class LanguageRegistry
 
     private Map<String,Properties> modLanguageData=new HashMap<String,Properties>();
 
-    private static final Pattern assetENUSLang = Pattern.compile("assets/(.*)/lang/(.*).lang");
+    private static final Pattern assetENUSLang = Pattern.compile("assets/(.*)/lang/(?:.+/|)([\\w_-]+).lang");
 
     public static LanguageRegistry instance()
     {
