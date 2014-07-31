@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * Reference implementation of {@link IFluidContainerItem}. Use/extend this or implement your own.
- * 
+ *
  * @author King Lemming
- * 
+ *
  */
 public class ItemFluidContainer extends Item implements IFluidContainerItem
 {
@@ -138,7 +138,7 @@ public class ItemFluidContainer extends Item implements IFluidContainerItem
         stack.amount = Math.min(stack.amount, maxDrain);
         if (doDrain)
         {
-            if (maxDrain >= capacity)
+            if (maxDrain >= stack.amount)
             {
                 container.stackTagCompound.removeTag("Fluid");
 
@@ -150,7 +150,7 @@ public class ItemFluidContainer extends Item implements IFluidContainerItem
             }
 
             NBTTagCompound fluidTag = container.stackTagCompound.getCompoundTag("Fluid");
-            fluidTag.setInteger("Amount", fluidTag.getInteger("Amount") - maxDrain);
+            fluidTag.setInteger("Amount", fluidTag.getInteger("Amount") - stack.amount);
             container.stackTagCompound.setTag("Fluid", fluidTag);
         }
         return stack;
