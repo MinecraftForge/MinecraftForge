@@ -195,7 +195,17 @@
      }
  
      public boolean func_145774_a(Explosion p_145774_1_, World p_145774_2_, int p_145774_3_, int p_145774_4_, int p_145774_5_, Block p_145774_6_, float p_145774_7_)
-@@ -2058,6 +2150,174 @@
+@@ -2008,7 +2100,8 @@
+ 
+     public boolean func_145773_az()
+     {
+-        return false;
++        NBTTagCompound customEntityData = this.getEntityData();
++        return customEntityData != null && customEntityData.func_74764_b("forge:canTriggerPressurePlate") ? customEntityData.func_74767_n("forge:canTriggerPressurePlate") : false;
+     }
+ 
+     public void func_85029_a(CrashReportCategory p_85029_1_)
+@@ -2058,6 +2151,174 @@
  
      public void func_145781_i(int p_145781_1_) {}
  
