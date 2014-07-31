@@ -31,6 +31,14 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public abstract class CustomModLoadingErrorDisplayException extends RuntimeException implements IFMLHandledException
 {
+    public CustomModLoadingErrorDisplayException() {
+    }
+    
+    public CustomModLoadingErrorDisplayException(String message, Throwable cause)
+    {
+        super(message, cause);
+    }
+    
     private static final long serialVersionUID = 1L;
 
     /**
