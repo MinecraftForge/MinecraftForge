@@ -135,10 +135,11 @@ public class ItemFluidContainer extends Item implements IFluidContainerItem
             return null;
         }
 
+		int currentAmount = stack.amount;
         stack.amount = Math.min(stack.amount, maxDrain);
         if (doDrain)
         {
-            if (maxDrain >= stack.amount)
+            if (currentAmount == stack.amount)
             {
                 container.stackTagCompound.removeTag("Fluid");
 
@@ -150,7 +151,7 @@ public class ItemFluidContainer extends Item implements IFluidContainerItem
             }
 
             NBTTagCompound fluidTag = container.stackTagCompound.getCompoundTag("Fluid");
-            fluidTag.setInteger("Amount", fluidTag.getInteger("Amount") - stack.amount);
+            fluidTag.setInteger("Amount", currentAmount - stack.amount);
             container.stackTagCompound.setTag("Fluid", fluidTag);
         }
         return stack;
