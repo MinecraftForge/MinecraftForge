@@ -75,6 +75,15 @@
      }
  
      protected abstract void func_70088_a();
+@@ -765,7 +794,7 @@
+                     }
+ 
+                     this.func_145780_a(j1, k, l, block);
+-                    block.func_149724_b(this.field_70170_p, j1, k, l, this);
++                    if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityWalkingEvent(this.field_70170_p, this, block, j1, k, l))) block.func_149724_b(this.field_70170_p, j1, k, l, this);
+                 }
+             }
+ 
 @@ -991,9 +1020,22 @@
  
          if (block.func_149688_o() == p_70055_1_)
