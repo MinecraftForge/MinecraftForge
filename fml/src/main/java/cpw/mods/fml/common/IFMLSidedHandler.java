@@ -59,4 +59,6 @@ public interface IFMLSidedHandler
     void fireNetRegistrationEvent(EventBus bus, NetworkManager manager, Set<String> channelSet, String channel, Side side);
 
     boolean shouldAllowPlayerLogins();
+
+    void allowLogins();
 }

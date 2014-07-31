@@ -215,7 +215,7 @@ public class FMLCommonHandler
             }
             if (sidedDelegate!=null)
             {
-            	brd.addAll(sidedDelegate.getAdditionalBrandingInformation());
+                brd.addAll(sidedDelegate.getAdditionalBrandingInformation());
             }
             if (Loader.instance().getFMLBrandingProperties().containsKey("fmlbranding"))
             {
@@ -281,6 +281,7 @@ public class FMLCommonHandler
     public void handleServerStarted()
     {
         Loader.instance().serverStarted();
+        sidedDelegate.allowLogins();
     }
 
     public void handleServerStopping()

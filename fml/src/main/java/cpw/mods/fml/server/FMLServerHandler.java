@@ -259,4 +259,9 @@ public class FMLServerHandler implements IFMLSidedHandler
     {
         return DedicatedServer.allowPlayerLogins;
     }
+    
+    @Override
+    public void allowLogins() {
+        DedicatedServer.allowPlayerLogins = true;
+    }
 }

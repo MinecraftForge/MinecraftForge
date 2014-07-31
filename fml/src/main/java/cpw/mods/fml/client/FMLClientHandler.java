@@ -146,7 +146,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private CustomModLoadingErrorDisplayException customError;
 
-	private DuplicateModsFoundException dupesFound;
+    private DuplicateModsFoundException dupesFound;
 
     private boolean serverShouldBeKilledQuietly;
 
@@ -209,7 +209,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         catch (DuplicateModsFoundException dupes)
         {
-        	dupesFound = dupes;
+            dupesFound = dupes;
         }
         catch (MissingModsException missing)
         {
@@ -371,9 +371,9 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             showGuiScreen(new GuiSortingProblem(modSorting));
         }
-		else if (customError != null)
+        else if (customError != null)
         {
-		    showGuiScreen(new GuiCustomModLoadingErrorScreen(customError));
+            showGuiScreen(new GuiCustomModLoadingErrorScreen(customError));
         }
         else
         {
@@ -869,5 +869,10 @@ public class FMLClientHandler implements IFMLSidedHandler
     public boolean shouldAllowPlayerLogins()
     {
         return true; //Always true as the server has to be started before clicking 'Open to lan'
+    }
+    
+    @Override
+    public void allowLogins() {
+        // NOOP for integrated server
     }
 }
