@@ -18,8 +18,8 @@ specific environment.
 
 There are some very visible changes to the client when FML is installed.
 
-There are some bukkit compatibility hooks available, consult MCPC+ for more
-information.
+There are some bukkit compatibility hooks available, consult MCPC+, now known as Cauldron
+for more information.
 
 Minecraft Forge in all cases bundles FML as it's modloading technology of choice
 because FML is open source, freely distributable, and can be easily updated by
