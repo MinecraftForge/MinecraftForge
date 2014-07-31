@@ -135,7 +135,7 @@ public class ItemFluidContainer extends Item implements IFluidContainerItem
             return null;
         }
 
-		int currentAmount = stack.amount;
+        int currentAmount = stack.amount;
         stack.amount = Math.min(stack.amount, maxDrain);
         if (doDrain)
         {
