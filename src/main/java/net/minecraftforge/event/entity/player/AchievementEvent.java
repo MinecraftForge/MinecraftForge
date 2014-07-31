@@ -1,9 +1,8 @@
 package net.minecraftforge.event.entity.player;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.stats.Achievement;
 import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
 
 /**
  * When the player receives an achievement. If canceled the player will not receive anything.
@@ -12,9 +11,12 @@ import cpw.mods.fml.common.eventhandler.Event;
 public class AchievementEvent extends PlayerEvent {
 
     public final Achievement achievement;
-    public AchievementEvent(EntityPlayer player, Achievement achievement)
+    public final boolean playerHasAchievement;
+    
+    public AchievementEvent(EntityPlayerMP player, Achievement achievement)
     {
         super(player);
         this.achievement = achievement;
+        this.playerHasAchievement = player.func_147099_x().hasAchievementUnlocked(achievement);
     }
 }
