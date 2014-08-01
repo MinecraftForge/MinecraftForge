@@ -13,6 +13,9 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.RegistryNamespaced;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 
 import cpw.mods.fml.common.FMLLog;
@@ -28,6 +31,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     // aliases redirecting legacy names to the actual name, may need recursive application to find the final name.
     // these need to be registry specific, it's possible to only have a loosely linked item for a block which may get renamed by itself.
     private final Map<String, String> aliases = new HashMap<String, String>();
+    private BiMap<String, String> persistentAliases = HashBiMap.create();
 
     FMLControlledNamespacedRegistry(String optionalDefault, int maxIdValue, int minIdValue, Class<I> type, char discriminator)
     {
@@ -231,6 +235,9 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
      */
     public I getRaw(String name)
     {
+        String aliasName = persistentAliases.get(name);
+        name = aliasName != null ? aliasName : name;
+        
         I ret = superType.cast(super.getObject(name));
 
         if (ret == null) // no match, try aliases recursively
@@ -315,6 +322,10 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         return ImmutableMap.copyOf(aliases);
     }
 
+    public Map<String, String> getPersistentAliases()
+    {
+        return ImmutableBiMap.copyOf(persistentAliases);
+    }
     /**
      * Add the specified object to the registry.
      *
@@ -428,5 +439,13 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
 
     public RegistryDelegate<I> getDelegate(I thing, Class<I> clazz) {
         return GameData.buildDelegate(thing, clazz);
+    }
+
+    public void addPersistentAlias(String fromName, String toName) throws ExistingAliasException {
+        if (persistentAliases.containsKey(fromName) || persistentAliases.containsKey(toName) || persistentAliases.containsValue(fromName) || persistentAliases.containsValue(toName))
+        {
+            throw new ExistingAliasException(fromName, toName);
+        }
+        persistentAliases.put(fromName, toName);
     }
 }

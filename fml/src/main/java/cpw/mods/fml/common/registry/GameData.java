@@ -949,6 +949,10 @@ public class GameData {
         FMLLog.fine("Registry consistency check successful");
     }
     
+    void registerPersistentAlias(String fromName, String toName, GameRegistry.Type type) throws ExistingAliasException
+    {
+        type.getRegistry().addPersistentAlias(fromName, toName);
+    }
     static <T> RegistryDelegate<T> buildDelegate(T referant, Class<T> type)
     {
         return new RegistryDelegate.Delegate<T>(referant, type);

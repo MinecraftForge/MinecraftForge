@@ -30,6 +30,8 @@ import net.minecraft.world.storage.WorldInfo;
 
 import org.apache.logging.log4j.Level;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -124,6 +126,15 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
             blockAliasList.appendTag(tag);
         }
         fmlData.setTag("BlockAliases", blockAliasList);
+        NBTTagList blockPersistentAliasList = new NBTTagList();
+        for (Entry<String, String> entry : GameData.getBlockRegistry().getPersistentAliases().entrySet())
+        {
+            NBTTagCompound tag = new NBTTagCompound();
+            tag.setString("K", entry.getKey());
+            tag.setString("V", entry.getValue());
+            blockPersistentAliasList.appendTag(tag);
+        }
+        fmlData.setTag("PersistentBlockAliases", blockPersistentAliasList);
         // item aliases
         NBTTagList itemAliasList = new NBTTagList();
         for (Entry<String, String> entry : GameData.getItemRegistry().getAliases().entrySet())
@@ -135,6 +146,15 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
         }
         fmlData.setTag("ItemAliases", itemAliasList);
 
+        NBTTagList itemPersistentAliasList = new NBTTagList();
+        for (Entry<String, String> entry : GameData.getItemRegistry().getPersistentAliases().entrySet())
+        {
+            NBTTagCompound tag = new NBTTagCompound();
+            tag.setString("K", entry.getKey());
+            tag.setString("V", entry.getValue());
+            itemPersistentAliasList.appendTag(tag);
+        }
+        fmlData.setTag("ItemPersistentAliases", itemPersistentAliasList);
         return fmlData;
     }
 
@@ -225,6 +245,16 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
                 NBTTagCompound dataTag = list.getCompoundTagAt(i);
                 blockAliases.put(dataTag.getString("K"), dataTag.getString("V"));
             }
+            BiMap<String, String> blockPersistentAliases = HashBiMap.create();
+            if (tag.hasKey("BlockPersistentAliases", 10))
+            {
+                list = tag.getTagList("BlockPersistentAliases", 10);
+                for (int i = 0; i < list.tagCount(); i++)
+                {
+                    NBTTagCompound dataTag = list.getCompoundTagAt(i);
+                    blockPersistentAliases.put(dataTag.getString("K"), dataTag.getString("V"));
+                }
+            }
             // item aliases
             Map<String, String> itemAliases = new HashMap<String, String>();
             list = tag.getTagList("ItemAliases", 10);
@@ -234,6 +264,16 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
                 itemAliases.put(dataTag.getString("K"), dataTag.getString("V"));
             }
 
+            BiMap<String, String> itemPersistentAliases = HashBiMap.create();
+            if (tag.hasKey("ItemPersistentAliases", 10))
+            {
+                list = tag.getTagList("ItemPersistentAliases", 10);
+                for (int i = 0; i < list.tagCount(); i++)
+                {
+                    NBTTagCompound dataTag = list.getCompoundTagAt(i);
+                    itemPersistentAliases.put(dataTag.getString("K"), dataTag.getString("V"));
+                }
+            }
             failedElements = GameData.injectWorldIDMap(dataList, blockedIds, blockAliases, itemAliases, true, true);
         }
 

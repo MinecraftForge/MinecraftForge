@@ -145,9 +145,19 @@ public class GameRegistry
     }
 
 
-    public static void addAlias(String alias, String forName, GameRegistry.Type type)
+    /**
+     * Add a forced persistent alias for the block or item to another block or item. This will have
+     * the effect of using the substituted block or item instead of the original, whereever it is
+     * referenced.
+     * 
+     * @param toName The name to link to (this is the NEW block or item)
+     * @param fromName The name to link from (this is the OLD block or item being substituted)
+     * @param type The type (Block or Item)
+     * @throws ExistingAliasException if someone else has already registered an alias either from or to one of the names
+     */
+    public static void addAlias(String toName, String fromName, GameRegistry.Type type) throws ExistingAliasException
     {
-
+        GameData.getMain().registerPersistentAlias(fromName, toName, type);
     }
 
     /**
@@ -300,67 +310,67 @@ public class GameRegistry
     }
 
     /**
-	 * Look up a mod block in the global "named item list"
-	 * @param modId The modid owning the block
-	 * @param name The name of the block itself
-	 * @return The block or null if not found
-	 */
-	public static Block findBlock(String modId, String name)
-	{
-	    return GameData.findBlock(modId, name);
-	}
+     * Look up a mod block in the global "named item list"
+     * @param modId The modid owning the block
+     * @param name The name of the block itself
+     * @return The block or null if not found
+     */
+    public static Block findBlock(String modId, String name)
+    {
+        return GameData.findBlock(modId, name);
+    }
 
-	/**
-	 * Look up a mod item in the global "named item list"
-	 * @param modId The modid owning the item
-	 * @param name The name of the item itself
-	 * @return The item or null if not found
-	 */
-	public static Item findItem(String modId, String name)
+    /**
+     * Look up a mod item in the global "named item list"
+     * @param modId The modid owning the item
+     * @param name The name of the item itself
+     * @return The item or null if not found
+     */
+    public static Item findItem(String modId, String name)
     {
         return GameData.findItem(modId, name);
     }
 
-	/**
-	 * Manually register a custom item stack with FML for later tracking. It is automatically scoped with the active modid
-	 *
-	 * @param name The name to register it under
-	 * @param itemStack The itemstack to register
-	 */
-	public static void registerCustomItemStack(String name, ItemStack itemStack)
-	{
-	    GameData.registerCustomItemStack(name, itemStack);
-	}
-	/**
-	 * Lookup an itemstack based on mod and name. It will create "default" itemstacks from blocks and items if no
-	 * explicit itemstack is found.
-	 *
-	 * If it is built from a block, the metadata is by default the "wildcard" value.
-	 *
-	 * Custom itemstacks can be dumped from minecraft by setting the system property fml.dumpRegistry to true
-	 * (-Dfml.dumpRegistry=true on the command line will work)
-	 *
-	 * @param modId The modid of the stack owner
-	 * @param name The name of the stack
-	 * @param stackSize The size of the stack returned
-	 * @return The custom itemstack or null if no such itemstack was found
-	 */
-	public static ItemStack findItemStack(String modId, String name, int stackSize)
-	{
-	    ItemStack foundStack = GameData.findItemStack(modId, name);
-	    if (foundStack != null)
-	    {
+    /**
+     * Manually register a custom item stack with FML for later tracking. It is automatically scoped with the active modid
+     *
+     * @param name The name to register it under
+     * @param itemStack The itemstack to register
+     */
+    public static void registerCustomItemStack(String name, ItemStack itemStack)
+    {
+        GameData.registerCustomItemStack(name, itemStack);
+    }
+    /**
+     * Lookup an itemstack based on mod and name. It will create "default" itemstacks from blocks and items if no
+     * explicit itemstack is found.
+     *
+     * If it is built from a block, the metadata is by default the "wildcard" value.
+     *
+     * Custom itemstacks can be dumped from minecraft by setting the system property fml.dumpRegistry to true
+     * (-Dfml.dumpRegistry=true on the command line will work)
+     *
+     * @param modId The modid of the stack owner
+     * @param name The name of the stack
+     * @param stackSize The size of the stack returned
+     * @return The custom itemstack or null if no such itemstack was found
+     */
+    public static ItemStack findItemStack(String modId, String name, int stackSize)
+    {
+        ItemStack foundStack = GameData.findItemStack(modId, name);
+        if (foundStack != null)
+        {
             ItemStack is = foundStack.copy();
-    	    is.stackSize = Math.min(stackSize, is.getMaxStackSize());
-    	    return is;
-	    }
-	    return null;
-	}
+            is.stackSize = Math.min(stackSize, is.getMaxStackSize());
+            return is;
+        }
+        return null;
+    }
 
-	public static final class UniqueIdentifier
-	{
-	    public final String modId;
-	    public final String name;
+    public static final class UniqueIdentifier
+    {
+        public final String modId;
+        public final String name;
         UniqueIdentifier(String modId, String name)
         {
             this.modId = modId;
@@ -394,24 +404,41 @@ public class GameRegistry
         {
             return String.format("%s:%s", modId, name);
         }
-	}
+    }
 
-	public static enum Type { BLOCK, ITEM }
+    public static enum Type { 
+        BLOCK
+        {
+            @Override
+            public FMLControlledNamespacedRegistry<?> getRegistry() {
+                return GameData.getBlockRegistry();
+            }
+        },
+        ITEM
+        {
+            @Override
+            public FMLControlledNamespacedRegistry<?> getRegistry() {
+                return GameData.getItemRegistry();
+            }
+        };
+
+        public abstract FMLControlledNamespacedRegistry<?> getRegistry();
+    }
     /**
-	 * Look up the mod identifier data for a block.
-	 * Returns null if there is no mod specified mod identifier data, or it is part of a
-	 * custom itemstack definition {@link #registerCustomItemStack}
-	 *
-	 * Note: uniqueness and persistence is only guaranteed by mods using the game registry
-	 * correctly.
-	 *
-	 * @param block to lookup
+     * Look up the mod identifier data for a block.
+     * Returns null if there is no mod specified mod identifier data, or it is part of a
+     * custom itemstack definition {@link #registerCustomItemStack}
+     *
+     * Note: uniqueness and persistence is only guaranteed by mods using the game registry
+     * correctly.
+     *
+     * @param block to lookup
      * @return a {@link UniqueIdentifier} for the block or null
-	 */
-	public static UniqueIdentifier findUniqueIdentifierFor(Block block)
-	{
-	    return GameData.getUniqueName(block);
-	}
+     */
+    public static UniqueIdentifier findUniqueIdentifierFor(Block block)
+    {
+        return GameData.getUniqueName(block);
+    }
     /**
      * Look up the mod identifier data for an item.
      * Returns null if there is no mod specified mod identifier data, or it is part of a
