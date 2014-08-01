@@ -38,6 +38,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.entity.item.ItemDeathEvent;
+import net.minecraftforge.event.entity.item.ItemHurtEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -356,6 +358,16 @@ public class ForgeHooks
 
         player.joinEntityItemWithWorld(event.entityItem);
         return event.entityItem;
+    }
+    
+    public static boolean onItemHurt(EntityItem entityItem, DamageSource damageSource, float amount)
+    {
+        return MinecraftForge.EVENT_BUS.post(new ItemHurtEvent(entityItem, damageSource, amount));
+    }
+    
+    public static boolean onItemDeath(EntityItem entityItem, DamageSource damageSource)
+    {
+        return MinecraftForge.EVENT_BUS.post(new ItemDeathEvent(entityItem, damageSource));
     }
 
     public static float getEnchantPower(World world, int x, int y, int z)

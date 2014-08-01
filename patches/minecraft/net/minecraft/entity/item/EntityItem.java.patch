@@ -86,7 +86,23 @@
                  this.func_70106_y();
              }
          }
-@@ -242,6 +282,7 @@
+@@ -216,6 +256,7 @@
+ 
+     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
+     {
++        if(net.minecraftforge.common.ForgeHooks.onItemHurt(this, p_70097_1_, p_70097_2_)) return false;
+         if (this.func_85032_ar())
+         {
+             return false;
+@@ -227,6 +268,7 @@
+         else
+         {
+             this.func_70018_K();
++            if((float)this.field_70291_e - p_70097_2_ <= 0.0F && net.minecraftforge.common.ForgeHooks.onItemDeath(this, p_70097_1_)) return false;
+             this.field_70291_e = (int)((float)this.field_70291_e - p_70097_2_);
+ 
+             if (this.field_70291_e <= 0)
+@@ -242,6 +284,7 @@
      {
          p_70014_1_.func_74777_a("Health", (short)((byte)this.field_70291_e));
          p_70014_1_.func_74777_a("Age", (short)this.field_70292_b);
@@ -94,7 +110,7 @@
  
          if (this.func_145800_j() != null)
          {
-@@ -277,20 +318,39 @@
+@@ -277,20 +320,39 @@
          NBTTagCompound nbttagcompound1 = p_70037_1_.func_74775_l("Item");
          this.func_92058_a(ItemStack.func_77949_a(nbttagcompound1));
  
