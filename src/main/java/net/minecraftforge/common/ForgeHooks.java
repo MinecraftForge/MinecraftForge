@@ -3,7 +3,6 @@ package net.minecraftforge.common;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.block.Block;
@@ -282,7 +281,7 @@ public class ForgeHooks
     public static float onLivingHurt(EntityLivingBase entity, DamageSource src, float amount)
     {
         LivingHurtEvent event = new LivingHurtEvent(entity, src, amount);
-        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.ammount);
+        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.amount);
     }
 
     public static boolean onLivingDeath(EntityLivingBase entity, DamageSource src)
