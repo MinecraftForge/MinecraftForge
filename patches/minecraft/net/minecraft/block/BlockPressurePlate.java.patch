@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockPressurePlate.java
++++ ../src-work/minecraft/net/minecraft/block/BlockPressurePlate.java
+@@ -56,7 +56,7 @@
+             {
+                 Entity entity = (Entity)iterator.next();
+ 
+-                if (!entity.func_145773_az())
++                if (!entity.func_145773_az() && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityTriggerPressurePlateEvent(entity, p_150065_1_, p_150065_2_, p_150065_3_, p_150065_4_, this)))
+                 {
+                     return 15;
+                 }
