@@ -26,12 +26,12 @@ import net.minecraft.entity.EntityLivingBase;
 public class LivingHurtEvent extends LivingEvent
 {
     public final DamageSource source;
-    public float ammount;
-    public LivingHurtEvent(EntityLivingBase entity, DamageSource source, float ammount)
+    public float amount;
+    public LivingHurtEvent(EntityLivingBase entity, DamageSource source, float amount)
     {
         super(entity);
         this.source = source;
-        this.ammount = ammount;
+        this.amount = amount;
     }
 
 }
