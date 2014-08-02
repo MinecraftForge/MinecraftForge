@@ -46,6 +46,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -283,6 +284,12 @@ public class ForgeHooks
     {
         LivingHurtEvent event = new LivingHurtEvent(entity, src, amount);
         return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.ammount);
+    }
+
+    public static float onLivingHeal(EntityLivingBase entity, float amount)
+    {
+        LivingHealEvent event = new LivingHealEvent(entity, amount);
+        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.amount);
     }
 
     public static boolean onLivingDeath(EntityLivingBase entity, DamageSource src)
