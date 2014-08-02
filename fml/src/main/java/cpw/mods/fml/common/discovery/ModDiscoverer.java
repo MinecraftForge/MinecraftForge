@@ -20,12 +20,15 @@ import org.apache.logging.log4j.Level;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.ObjectArrays;
+
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.ModClassLoader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.relauncher.CoreModManager;
 import cpw.mods.fml.relauncher.FileListHelper;
+import cpw.mods.fml.relauncher.ModListHelper;
 
 public class ModDiscoverer
 {
@@ -82,7 +85,8 @@ public class ModDiscoverer
     public void findModDirMods(File modsDir)
     {
         File[] modList = FileListHelper.sortFileList(modsDir, null);
-
+        modList = FileListHelper.sortFileList(ObjectArrays.concat(modList, ModListHelper.additionalMods.toArray(new File[0]), File.class));
+        
         for (File modFile : modList)
         {
             // skip loaded coremods
