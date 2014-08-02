@@ -38,7 +38,7 @@ import cpw.mods.fml.common.discovery.ASMDataTable;
  */
 public class ModClassLoader extends URLClassLoader
 {
-    private static final List<String> STANDARD_LIBRARIES = ImmutableList.of("jinput.jar", "lwjgl.jar", "lwjgl_util.jar");
+    private static final List<String> STANDARD_LIBRARIES = ImmutableList.of("jinput.jar", "lwjgl.jar", "lwjgl_util.jar", "rt.jar");
     private LaunchClassLoader mainClassLoader;
 
     public ModClassLoader(ClassLoader parent) {
