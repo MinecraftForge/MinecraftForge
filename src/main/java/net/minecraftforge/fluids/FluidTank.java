@@ -66,7 +66,10 @@ public class FluidTank implements IFluidTank
 
     public void setCapacity(int capacity)
     {
-        this.capacity = capacity;
+        this.capacity = Math.max(0,capacity);
+        if(getFluidAmount()>getCapacity()){
+            getFluid().amount = getCapacity();
+        }
     }
 
     /* IFluidTank */
