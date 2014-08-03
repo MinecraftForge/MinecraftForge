@@ -6,7 +6,7 @@
  import net.minecraft.world.World;
 +import net.minecraftforge.event.ForgeEventFactory;
  
- public final class ItemStack
+ public class ItemStack
  {
 @@ -181,7 +182,7 @@
  
