@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerPlayer.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerPlayer.java
-@@ -48,7 +48,8 @@
+@@ -11,6 +11,8 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.item.crafting.CraftingManager;
+ import net.minecraft.util.IIcon;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.player.ArmorChangedEvent;
+ 
+ public class ContainerPlayer extends Container
+ {
+@@ -48,8 +50,14 @@
                  }
                  public boolean func_75214_a(ItemStack p_75214_1_)
                  {
@@ -8,5 +17,11 @@
 +                    if (p_75214_1_ == null) return false;
 +                    return p_75214_1_.func_77973_b().isValidArmor(p_75214_1_, k, field_82862_h);
                  }
++                public void func_75218_e()
++                {
++                    super.func_75218_e();
++                    MinecraftForge.EVENT_BUS.post(new ArmorChangedEvent(field_82862_h, this.func_75211_c(), this));
++                }
                  @SideOnly(Side.CLIENT)
                  public IIcon func_75212_b()
+                 {
