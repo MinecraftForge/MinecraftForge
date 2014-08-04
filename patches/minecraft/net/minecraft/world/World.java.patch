@@ -418,7 +418,7 @@
      public Explosion func_72885_a(Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
      {
          Explosion explosion = new Explosion(this, p_72885_1_, p_72885_2_, p_72885_4_, p_72885_6_, p_72885_8_);
-+        if(ForgeHooks.onPreExplosion(explosion, this)) return null;
++        if(ForgeHooks.onPreExplosion(explosion, this)) return explosion;
          explosion.field_77286_a = p_72885_9_;
          explosion.field_82755_b = p_72885_10_;
          explosion.func_77278_a();
