@@ -104,4 +104,16 @@
 +        }
 +        return bb;
 +    }
++
++    /**
++     * Checks if a tileEntity class has been registered for the given name.
++     *
++     * @param name The class name that is to be checked
++     *
++     * @return true if the mapping exists or false if it does not
++     */
++    public static boolean hasMappingForName(String name)
++    {
++        return nameToClassMap.containsKey(name);
++    }
  }
