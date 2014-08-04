@@ -1,12 +1,31 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/FurnaceRecipes.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/FurnaceRecipes.java
-@@ -107,6 +107,9 @@
+@@ -78,6 +78,8 @@
+ 
+     public ItemStack func_151395_a(ItemStack p_151395_1_)
+     {
++        ItemStack output = net.minecraftforge.oredict.FurnaceOreRecipes.getSmeltingResult(p_151395_1_);
++        if(output != null) return output;
+         Iterator iterator = this.field_77604_b.entrySet().iterator();
+         Entry entry;
+ 
+@@ -107,6 +109,11 @@
  
      public float func_151398_b(ItemStack p_151398_1_)
      {
 +        float ret = p_151398_1_.func_77973_b().getSmeltingExperience(p_151398_1_);
 +        if (ret != -1) return ret;
++        ret = net.minecraftforge.oredict.FurnaceOreRecipes.getSmeltingExperience(p_151398_1_);
++        if (ret != -1) return ret;
 +
          Iterator iterator = this.field_77605_c.entrySet().iterator();
          Entry entry;
  
+@@ -123,4 +130,7 @@
+ 
+         return ((Float)entry.getValue()).floatValue();
+     }
++    
++    public Map<ItemStack, Float> getExperienceList() { return this.field_77605_c; }
++    public void addSmelting(String ore, ItemStack output, float xp) { net.minecraftforge.oredict.FurnaceOreRecipes.addSmelting(ore, output, xp); }
+ }
