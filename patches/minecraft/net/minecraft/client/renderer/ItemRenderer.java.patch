@@ -106,7 +106,7 @@
 +                this.renderItem(entityclientplayermp, itemstack, 0, EQUIPPED_FIRST_PERSON);
 +                for (int x = 1; x < itemstack.func_77973_b().getRenderPasses(itemstack.func_77960_j()); x++)
 +                {
-+                    int k1 = itemstack.func_77973_b().func_82790_a(itemstack, 1);
++                    int k1 = itemstack.func_77973_b().func_82790_a(itemstack, x);
 +                    f10 = (float)(k1 >> 16 & 255) / 255.0F;
 +                    f11 = (float)(k1 >> 8 & 255) / 255.0F;
 +                    f12 = (float)(k1 & 255) / 255.0F;
