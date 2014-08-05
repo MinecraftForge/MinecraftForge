@@ -40,30 +40,31 @@
              if (!this.field_76637_e.field_72995_K)
              {
                  block1.func_149725_f(this.field_76637_e, l1, p_150807_2_, i2, k1);
-@@ -590,27 +598,34 @@
+@@ -589,11 +597,21 @@
+             if (!this.field_76637_e.field_72995_K)
              {
                  block1.func_149749_a(this.field_76637_e, l1, p_150807_2_, i2, block1, k1);
++                extendedblockstorage.func_76654_b(p_150807_1_, p_150807_2_ & 15, p_150807_3_, p_150807_5_); //After break for redstone dust.
              }
 -            else if (block1 instanceof ITileEntityProvider && block1 != p_150807_4_)
 +            else if (block1.hasTileEntity(k1))
              {
 -                this.field_76637_e.func_147475_p(l1, p_150807_2_, i2);
-+                extendedblockstorage.func_76654_b(p_150807_1_, p_150807_2_ & 15, p_150807_3_, p_150807_5_); // Move this above to prevent other mods/tile entites from creating invalid ones for the wrong metadata
++                extendedblockstorage.func_76654_b(p_150807_1_, p_150807_2_ & 15, p_150807_3_, p_150807_5_); // Above TE to prevent requiring refresh
 +                TileEntity te = this.getTileEntityUnsafe(p_150807_1_ & 0x0F, p_150807_2_, p_150807_3_ & 0x0F);
 +                if (te != null && te.shouldRefresh(block1, p_150807_4_, k1, p_150807_5_, field_76637_e, l1, p_150807_2_, i2))
 +                {
 +                    this.field_76637_e.func_147475_p(l1, p_150807_2_, i2);
 +                }
              }
- 
-+            if (!block1.hasTileEntity(k1))
++            else
 +            {
-+                extendedblockstorage.func_76654_b(p_150807_1_, p_150807_2_ & 15, p_150807_3_, p_150807_5_); // Don't do this if we alredy have in the TE code above.
++                extendedblockstorage.func_76654_b(p_150807_1_, p_150807_2_ & 15, p_150807_3_, p_150807_5_); // Above everything else on the client.
 +            }
-+
+ 
              if (extendedblockstorage.func_150819_a(p_150807_1_, p_150807_2_ & 15, p_150807_3_) != p_150807_4_)
              {
-                 return false;
+@@ -601,16 +619,13 @@
              }
              else
              {
