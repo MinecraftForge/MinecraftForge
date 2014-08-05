@@ -2,7 +2,7 @@
 package net.minecraftforge.fluids;
 
 import java.util.Locale;
-
+import com.google.common.base.Strings;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -60,7 +60,7 @@ public class FluidStack
             return null;
         }
         String fluidName = nbt.getString("FluidName");
-        if (fluidName == null)
+        if (Strings.isNullOrEmpty(fluidName))
         {
             fluidName = nbt.hasKey("LiquidName") ? nbt.getString("LiquidName").toLowerCase(Locale.ENGLISH) : null;
             fluidName = Fluid.convertLegacyName(fluidName);
