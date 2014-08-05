@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/projectile/EntityFishHook.java
 +++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityFishHook.java
-@@ -551,6 +551,12 @@ public class EntityFishHook extends Entity
+@@ -551,6 +551,12 @@
          float f = this.field_70170_p.field_73012_v.nextFloat();
          int i = EnchantmentHelper.func_151386_g(this.field_146042_b);
          int j = EnchantmentHelper.func_151387_h(this.field_146042_b);
