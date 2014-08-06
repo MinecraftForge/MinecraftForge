@@ -1,0 +1,43 @@
+--- ../src-base/minecraft/net/minecraft/util/FoodStats.java
++++ ../src-work/minecraft/net/minecraft/util/FoodStats.java
+@@ -11,6 +11,7 @@
+ public class FoodStats
+ {
+     private int field_75127_a = 20;
++    private int maxFoodLevel = 20;
+     private float field_75125_b = 5.0F;
+     private float field_75126_c;
+     private int field_75123_d;
+@@ -19,7 +20,7 @@
+ 
+     public void func_75122_a(int p_75122_1_, float p_75122_2_)
+     {
+-        this.field_75127_a = Math.min(p_75122_1_ + this.field_75127_a, 20);
++        this.field_75127_a = Math.min(p_75122_1_ + this.field_75127_a, this.maxFoodLevel);
+         this.field_75125_b = Math.min(this.field_75125_b + (float)p_75122_1_ * p_75122_2_ * 2.0F, (float)this.field_75127_a);
+     }
+ 
+@@ -110,7 +111,7 @@
+ 
+     public boolean func_75121_c()
+     {
+-        return this.field_75127_a < 20;
++        return this.field_75127_a < this.maxFoodLevel;
+     }
+ 
+     public void func_75113_a(float p_75113_1_)
+@@ -134,4 +135,14 @@
+     {
+         this.field_75125_b = p_75119_1_;
+     }
++
++    public int getMaxFoodLevel()
++    {
++        return maxFoodLevel;
++    }
++
++    public void setMaxFoodLevel(int maxFoodLevel)
++    {
++        this.maxFoodLevel = maxFoodLevel;
++    }
+ }
