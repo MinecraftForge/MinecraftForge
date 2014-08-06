@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/client/audio/PositionedSoundRecord.java
++++ ../src-work/minecraft/net/minecraft/client/audio/PositionedSoundRecord.java
+@@ -4,6 +4,9 @@
+ import cpw.mods.fml.relauncher.SideOnly;
+ import net.minecraft.util.ResourceLocation;
+ 
++/**
++ * It is recommended that {@link net.minecraftforge.client.ForgeSound ForgeSound} is used over this as it has more customizable options.
++ */
+ @SideOnly(Side.CLIENT)
+ public class PositionedSoundRecord extends PositionedSound
+ {
