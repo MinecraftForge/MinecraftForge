@@ -65,7 +65,7 @@
          }
  
          if (this.func_111225_m() != null)
-@@ -319,4 +349,28 @@
+@@ -319,4 +349,38 @@
              }
          }
      }
@@ -92,5 +92,15 @@
 +    public boolean hasSearchBar()
 +    {
 +        return field_78033_n == CreativeTabs.field_78027_g.field_78033_n;
++    }
++
++    /**
++     * Gets the width of the search bar of the creative tab, use this if your creative tab name overflows together with a custom texture.
++     * 
++     * @return The width of the search bar
++     */
++    public int getSearchbarWidth()
++    {
++        return 89;
 +    }
  }
