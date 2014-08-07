@@ -111,7 +111,36 @@
          double d0 = p_72717_2_.field_70142_S + (p_72717_2_.field_70165_t - p_72717_2_.field_70142_S) * (double)p_72717_3_;
          double d1 = p_72717_2_.field_70137_T + (p_72717_2_.field_70163_u - p_72717_2_.field_70137_T) * (double)p_72717_3_;
          double d2 = p_72717_2_.field_70136_U + (p_72717_2_.field_70161_v - p_72717_2_.field_70136_U) * (double)p_72717_3_;
-@@ -1798,12 +1832,15 @@
+@@ -1646,11 +1680,23 @@
+ 
+             if (block.func_149688_o() != Material.field_151579_a)
+             {
+-                block.func_149719_a(this.field_72769_h, p_72731_2_.field_72311_b, p_72731_2_.field_72312_c, p_72731_2_.field_72309_d);
+-                double d0 = p_72731_1_.field_70142_S + (p_72731_1_.field_70165_t - p_72731_1_.field_70142_S) * (double)p_72731_4_;
+-                double d1 = p_72731_1_.field_70137_T + (p_72731_1_.field_70163_u - p_72731_1_.field_70137_T) * (double)p_72731_4_;
+-                double d2 = p_72731_1_.field_70136_U + (p_72731_1_.field_70161_v - p_72731_1_.field_70136_U) * (double)p_72731_4_;
+-                func_147590_a(block.func_149633_g(this.field_72769_h, p_72731_2_.field_72311_b, p_72731_2_.field_72312_c, p_72731_2_.field_72309_d).func_72314_b((double)f1, (double)f1, (double)f1).func_72325_c(-d0, -d1, -d2), -1);
++                if (block instanceof net.minecraftforge.common.ICustomHighlightedBlock)
++                {
++                    AxisAlignedBB[] bounds = ((net.minecraftforge.common.ICustomHighlightedBlock) block).getHighlightBoxes(p_72731_1_.field_70170_p, p_72731_2_.field_72311_b, p_72731_2_.field_72312_c, p_72731_2_.field_72309_d, p_72731_1_);
++                    Vec3 pos = p_72731_1_.func_70666_h(p_72731_4_);
++                    for (AxisAlignedBB aabb : bounds)
++                    {
++                        func_147590_a(aabb.func_72329_c().func_72317_d(p_72731_2_.field_72311_b, p_72731_2_.field_72312_c, p_72731_2_.field_72309_d).func_72317_d(-pos.field_72450_a, -pos.field_72448_b, -pos.field_72449_c), -1);
++                    }
++                }
++                else
++                {
++                    block.func_149719_a(this.field_72769_h, p_72731_2_.field_72311_b, p_72731_2_.field_72312_c, p_72731_2_.field_72309_d);
++                    double d0 = p_72731_1_.field_70142_S + (p_72731_1_.field_70165_t - p_72731_1_.field_70142_S) * (double)p_72731_4_;
++                    double d1 = p_72731_1_.field_70137_T + (p_72731_1_.field_70163_u - p_72731_1_.field_70137_T) * (double)p_72731_4_;
++                    double d2 = p_72731_1_.field_70136_U + (p_72731_1_.field_70161_v - p_72731_1_.field_70136_U) * (double)p_72731_4_;
++                    func_147590_a(block.func_149633_g(this.field_72769_h, p_72731_2_.field_72311_b, p_72731_2_.field_72312_c, p_72731_2_.field_72309_d).func_72314_b((double)f1, (double)f1, (double)f1).func_72325_c(-d0, -d1, -d2), -1);
++                }
+             }
+ 
+             GL11.glDepthMask(true);
+@@ -1798,12 +1844,15 @@
          {
              ItemRecord itemrecord = ItemRecord.func_150926_b(p_72702_1_);
  
