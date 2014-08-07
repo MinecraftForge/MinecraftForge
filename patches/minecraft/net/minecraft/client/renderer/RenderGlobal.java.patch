@@ -10,7 +10,15 @@
  @SideOnly(Side.CLIENT)
  public class RenderGlobal implements IWorldAccess
  {
-@@ -376,8 +379,10 @@
+@@ -113,7 +116,6 @@
+     private int field_72737_D;
+     private final Map field_72738_E = new HashMap();
+     private final Map field_147593_P = Maps.newHashMap();
+-    private IIcon[] field_94141_F;
+     private boolean field_147595_R;
+     private int field_147594_S;
+     private int field_72739_F = -1;
+@@ -376,8 +378,10 @@
  
      public void func_147589_a(EntityLivingBase p_147589_1_, ICamera p_147589_2_, float p_147589_3_)
      {
@@ -21,7 +29,7 @@
              --this.field_72740_G;
          }
          else
-@@ -388,9 +393,12 @@
+@@ -388,9 +392,12 @@
              this.field_72769_h.field_72984_F.func_76320_a("prepare");
              TileEntityRendererDispatcher.field_147556_a.func_147542_a(this.field_72769_h, this.field_72777_q.func_110434_K(), this.field_72777_q.field_71466_p, this.field_72777_q.field_71451_h, p_147589_3_);
              RenderManager.field_78727_a.func_147938_a(this.field_72769_h, this.field_72777_q.func_110434_K(), this.field_72777_q.field_71466_p, this.field_72777_q.field_71451_h, this.field_72777_q.field_147125_j, this.field_72777_q.field_71474_y, p_147589_3_);
@@ -34,7 +42,7 @@
              EntityLivingBase entitylivingbase1 = this.field_72777_q.field_71451_h;
              double d3 = entitylivingbase1.field_70142_S + (entitylivingbase1.field_70165_t - entitylivingbase1.field_70142_S) * (double)p_147589_3_;
              double d4 = entitylivingbase1.field_70137_T + (entitylivingbase1.field_70163_u - entitylivingbase1.field_70137_T) * (double)p_147589_3_;
-@@ -419,13 +427,17 @@
+@@ -419,13 +426,17 @@
              this.field_72777_q.field_71460_t.func_78463_b((double)p_147589_3_);
              this.field_72769_h.field_72984_F.func_76318_c("global");
              List list = this.field_72769_h.func_72910_y();
@@ -52,7 +60,7 @@
                  ++this.field_72749_I;
  
                  if (entity.func_145770_h(d0, d1, d2))
-@@ -439,6 +451,7 @@
+@@ -439,6 +450,7 @@
              for (i = 0; i < list.size(); ++i)
              {
                  entity = (Entity)list.get(i);
@@ -60,7 +68,7 @@
                  boolean flag = entity.func_145770_h(d0, d1, d2) && (entity.field_70158_ak || p_147589_2_.func_78546_a(entity.field_70121_D) || entity.field_70153_n == this.field_72777_q.field_71439_g);
  
                  if (!flag && entity instanceof EntityLiving)
-@@ -464,7 +477,11 @@
+@@ -464,7 +476,11 @@
  
              for (i = 0; i < this.field_147598_a.size(); ++i)
              {
@@ -73,7 +81,7 @@
              }
  
              this.field_72777_q.field_71460_t.func_78483_a((double)p_147589_3_);
-@@ -941,6 +958,12 @@
+@@ -941,6 +957,12 @@
  
      public void func_72714_a(float p_72714_1_)
      {
@@ -86,7 +94,7 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.field_76574_g == 1)
          {
              GL11.glDisable(GL11.GL_FOG);
-@@ -1179,6 +1202,12 @@
+@@ -1179,6 +1201,12 @@
  
      public void func_72718_b(float p_72718_1_)
      {
@@ -99,7 +107,7 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d())
          {
              if (this.field_72777_q.field_71474_y.field_74347_j)
-@@ -1579,6 +1608,11 @@
+@@ -1579,6 +1607,11 @@
  
      public void func_72717_a(Tessellator p_72717_1_, EntityPlayer p_72717_2_, float p_72717_3_)
      {
@@ -111,7 +119,45 @@
          double d0 = p_72717_2_.field_70142_S + (p_72717_2_.field_70165_t - p_72717_2_.field_70142_S) * (double)p_72717_3_;
          double d1 = p_72717_2_.field_70137_T + (p_72717_2_.field_70163_u - p_72717_2_.field_70137_T) * (double)p_72717_3_;
          double d2 = p_72717_2_.field_70136_U + (p_72717_2_.field_70161_v - p_72717_2_.field_70136_U) * (double)p_72717_3_;
-@@ -1798,12 +1832,15 @@
+@@ -1615,7 +1648,7 @@
+ 
+                     if (block.func_149688_o() != Material.field_151579_a)
+                     {
+-                        this.field_147592_B.func_147792_a(block, destroyblockprogress.func_73110_b(), destroyblockprogress.func_73109_c(), destroyblockprogress.func_73108_d(), this.field_94141_F[destroyblockprogress.func_73106_e()]);
++                        this.field_147592_B.func_147792_a(block, destroyblockprogress.func_73110_b(), destroyblockprogress.func_73109_c(), destroyblockprogress.func_73108_d(), block.destroyBlockIcons[destroyblockprogress.func_73106_e()]);
+                     }
+                 }
+             }
+@@ -1646,11 +1679,23 @@
+ 
+             if (block.func_149688_o() != Material.field_151579_a)
+             {
+-                block.func_149719_a(this.field_72769_h, p_72731_2_.field_72311_b, p_72731_2_.field_72312_c, p_72731_2_.field_72309_d);
+-                double d0 = p_72731_1_.field_70142_S + (p_72731_1_.field_70165_t - p_72731_1_.field_70142_S) * (double)p_72731_4_;
+-                double d1 = p_72731_1_.field_70137_T + (p_72731_1_.field_70163_u - p_72731_1_.field_70137_T) * (double)p_72731_4_;
+-                double d2 = p_72731_1_.field_70136_U + (p_72731_1_.field_70161_v - p_72731_1_.field_70136_U) * (double)p_72731_4_;
+-                func_147590_a(block.func_149633_g(this.field_72769_h, p_72731_2_.field_72311_b, p_72731_2_.field_72312_c, p_72731_2_.field_72309_d).func_72314_b((double)f1, (double)f1, (double)f1).func_72325_c(-d0, -d1, -d2), -1);
++                if (block instanceof net.minecraftforge.common.ICustomHighlightedBlock)
++                {
++                    AxisAlignedBB[] bounds = ((net.minecraftforge.common.ICustomHighlightedBlock) block).getHighlightBoxes(p_72731_1_.field_70170_p, p_72731_2_.field_72311_b, p_72731_2_.field_72312_c, p_72731_2_.field_72309_d, p_72731_1_);
++                    Vec3 pos = p_72731_1_.func_70666_h(p_72731_4_);
++                    for (AxisAlignedBB aabb : bounds)
++                    {
++                        func_147590_a(aabb.func_72329_c().func_72317_d(p_72731_2_.field_72311_b, p_72731_2_.field_72312_c, p_72731_2_.field_72309_d).func_72317_d(-pos.field_72450_a, -pos.field_72448_b, -pos.field_72449_c), -1);
++                    }
++                }
++                else
++                {
++                    block.func_149719_a(this.field_72769_h, p_72731_2_.field_72311_b, p_72731_2_.field_72312_c, p_72731_2_.field_72309_d);
++                    double d0 = p_72731_1_.field_70142_S + (p_72731_1_.field_70165_t - p_72731_1_.field_70142_S) * (double)p_72731_4_;
++                    double d1 = p_72731_1_.field_70137_T + (p_72731_1_.field_70163_u - p_72731_1_.field_70137_T) * (double)p_72731_4_;
++                    double d2 = p_72731_1_.field_70136_U + (p_72731_1_.field_70161_v - p_72731_1_.field_70136_U) * (double)p_72731_4_;
++                    func_147590_a(block.func_149633_g(this.field_72769_h, p_72731_2_.field_72311_b, p_72731_2_.field_72312_c, p_72731_2_.field_72309_d).func_72314_b((double)f1, (double)f1, (double)f1).func_72325_c(-d0, -d1, -d2), -1);
++                }
+             }
+ 
+             GL11.glDepthMask(true);
+@@ -1798,12 +1843,15 @@
          {
              ItemRecord itemrecord = ItemRecord.func_150926_b(p_72702_1_);
  
@@ -128,3 +174,18 @@
              this.field_147593_P.put(chunkcoordinates, positionedsoundrecord);
              this.field_72777_q.func_147118_V().func_147682_a(positionedsoundrecord);
          }
+@@ -2368,14 +2416,4 @@
+             this.field_72738_E.remove(Integer.valueOf(p_147587_1_));
+         }
+     }
+-
+-    public void func_94140_a(IIconRegister p_94140_1_)
+-    {
+-        this.field_94141_F = new IIcon[10];
+-
+-        for (int i = 0; i < this.field_94141_F.length; ++i)
+-        {
+-            this.field_94141_F[i] = p_94140_1_.func_94245_a("destroy_stage_" + i);
+-        }
+-    }
+ }
