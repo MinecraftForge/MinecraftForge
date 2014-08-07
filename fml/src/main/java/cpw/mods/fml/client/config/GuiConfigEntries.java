@@ -830,7 +830,7 @@ public class GuiConfigEntries extends GuiListExtended
         public boolean isDefault()
         {
             if (configElement.getType() == ConfigGuiType.INTEGER)
-                return (int) ((GuiSlider) this.btnValue).getValue() == Integer.valueOf(configElement.getDefault().toString());
+                return ((GuiSlider) this.btnValue).getValueInt() == Integer.valueOf(configElement.getDefault().toString());
             else
                 return ((GuiSlider) this.btnValue).getValue() == Double.valueOf(configElement.getDefault().toString());
         }
@@ -849,7 +849,7 @@ public class GuiConfigEntries extends GuiListExtended
         public boolean isChanged()
         {
             if (configElement.getType() == ConfigGuiType.INTEGER)
-                return (int) ((GuiSlider) this.btnValue).getValue() != (int) beforeValue;
+                return ((GuiSlider) this.btnValue).getValueInt() != (int) Math.round(beforeValue);
             else
                 return ((GuiSlider) this.btnValue).getValue() != beforeValue;
         }
@@ -871,7 +871,7 @@ public class GuiConfigEntries extends GuiListExtended
             if (this.enabled() && this.isChanged())
             {
                 if (configElement.getType() == ConfigGuiType.INTEGER)
-                    configElement.set((int) ((GuiSlider) this.btnValue).getValue());
+                    configElement.set(((GuiSlider) this.btnValue).getValueInt());
                 else
                     configElement.set(((GuiSlider) this.btnValue).getValue());
                 return configElement.requiresMcRestart();
@@ -883,7 +883,7 @@ public class GuiConfigEntries extends GuiListExtended
         public Object getCurrentValue()
         {
             if (configElement.getType() == ConfigGuiType.INTEGER)
-                return (int) ((GuiSlider) this.btnValue).getValue();
+                return ((GuiSlider) this.btnValue).getValueInt();
             else
                 return ((GuiSlider) this.btnValue).getValue();
         }
@@ -1529,7 +1529,7 @@ public class GuiConfigEntries extends GuiListExtended
 
             String comment;
 
-            comment = I18n.format(configElement.getLanguageKey() + ".tooltip");
+            comment = I18n.format(configElement.getLanguageKey() + ".tooltip").replace("\\n", "\n");
 
             if (!comment.equals(configElement.getLanguageKey() + ".tooltip"))
                 toolTip = new ArrayList<String>(this.mc.fontRenderer.listFormattedStringToWidth(
