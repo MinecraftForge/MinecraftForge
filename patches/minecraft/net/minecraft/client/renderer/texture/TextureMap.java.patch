@@ -48,6 +48,22 @@
      }
  
      private ResourceLocation func_147634_a(ResourceLocation p_147634_1_, int p_147634_2_)
+@@ -293,6 +308,7 @@
+             while (iterator.hasNext())
+             {
+                 Block block = (Block)iterator.next();
++                block.registerDestroyBlockIcons(this);
+ 
+                 if (block.func_149688_o() != Material.field_151579_a)
+                 {
+@@ -300,7 +316,6 @@
+                 }
+             }
+ 
+-            Minecraft.func_71410_x().field_71438_f.func_94140_a(this);
+             RenderManager.field_78727_a.func_94178_a(this);
+         }
+ 
 @@ -347,7 +362,7 @@
          {
              throw new IllegalArgumentException("Name cannot be null!");
