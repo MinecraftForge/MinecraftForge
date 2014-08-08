@@ -142,11 +142,3 @@
              this.field_147593_P.put(chunkcoordinates, positionedsoundrecord);
              this.field_72777_q.func_147118_V().func_147682_a(positionedsoundrecord);
          }
-@@ -2368,6 +2407,6 @@
-             this.field_72738_E.remove(Integer.valueOf(p_147587_1_));
-         }
-     }
-
-     public void func_94140_a(IIconRegister p_94140_1_)
-     {
-         this.field_94141_F = new IIcon[10];
