@@ -53,16 +53,7 @@
  
  public class Block
  {
-@@ -101,6 +122,8 @@
-     private String field_149770_b;
-     @SideOnly(Side.CLIENT)
-     protected IIcon field_149761_L;
-+    @SideOnly(Side.CLIENT)
-+    protected IIcon[] destroyBlockIcons;
-     private static final String __OBFID = "CL_00000199";
- 
-     public static int func_149682_b(Block p_149682_0_)
-@@ -110,7 +133,8 @@
+@@ -110,7 +131,8 @@
  
      public static Block func_149729_e(int p_149729_0_)
      {
@@ -72,7 +63,7 @@
      }
  
      public static Block func_149634_a(Item p_149634_0_)
-@@ -481,9 +505,10 @@
+@@ -481,9 +503,10 @@
          return this.field_149789_z;
      }
  
@@ -84,7 +75,7 @@
      }
  
      public final void func_149676_a(float p_149676_1_, float p_149676_2_, float p_149676_3_, float p_149676_4_, float p_149676_5_, float p_149676_6_)
-@@ -500,13 +525,13 @@
+@@ -500,13 +523,13 @@
      public int func_149677_c(IBlockAccess p_149677_1_, int p_149677_2_, int p_149677_3_, int p_149677_4_)
      {
          Block block = p_149677_1_.func_147439_a(p_149677_2_, p_149677_3_, p_149677_4_);
@@ -100,20 +91,7 @@
          }
          else
          {
-@@ -536,6 +561,12 @@
-     {
-         return this.field_149761_L;
-     }
-+    
-+    @SideOnly(Side.CLIENT)
-+    public IIcon[] getDestroyIcons(int p_149691_1_, int p_149691_2_)
-+    {
-+        return this.destroyBlockIcons;
-+    }
- 
-     public void func_149743_a(World p_149743_1_, int p_149743_2_, int p_149743_3_, int p_149743_4_, AxisAlignedBB p_149743_5_, List p_149743_6_, Entity p_149743_7_)
-     {
-@@ -595,7 +626,13 @@
+@@ -595,7 +618,13 @@
  
      public void func_149726_b(World p_149726_1_, int p_149726_2_, int p_149726_3_, int p_149726_4_) {}
  
@@ -128,7 +106,7 @@
  
      public int func_149745_a(Random p_149745_1_)
      {
-@@ -609,8 +646,7 @@
+@@ -609,8 +638,7 @@
  
      public float func_149737_a(EntityPlayer p_149737_1_, World p_149737_2_, int p_149737_3_, int p_149737_4_, int p_149737_5_)
      {
@@ -138,7 +116,7 @@
      }
  
      public final void func_149697_b(World p_149697_1_, int p_149697_2_, int p_149697_3_, int p_149697_4_, int p_149697_5_, int p_149697_6_)
-@@ -622,18 +658,14 @@
+@@ -622,18 +650,14 @@
      {
          if (!p_149690_1_.field_72995_K)
          {
@@ -161,7 +139,7 @@
                  }
              }
          }
-@@ -643,6 +675,11 @@
+@@ -643,6 +667,11 @@
      {
          if (!p_149642_1_.field_72995_K && p_149642_1_.func_82736_K().func_82766_b("doTileDrops"))
          {
@@ -173,7 +151,7 @@
              float f = 0.7F;
              double d0 = (double)(p_149642_1_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
              double d1 = (double)(p_149642_1_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-@@ -827,7 +864,7 @@
+@@ -827,7 +856,7 @@
  
      public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
      {
@@ -182,7 +160,7 @@
      }
  
      public boolean func_149727_a(World p_149727_1_, int p_149727_2_, int p_149727_3_, int p_149727_4_, EntityPlayer p_149727_5_, int p_149727_6_, float p_149727_7_, float p_149727_8_, float p_149727_9_)
-@@ -920,25 +957,35 @@
+@@ -920,25 +949,35 @@
          p_149636_2_.func_71064_a(StatList.field_75934_C[func_149682_b(this)], 1);
          p_149636_2_.func_71020_j(0.025F);
  
@@ -221,25 +199,7 @@
      }
  
      protected ItemStack func_149644_j(int p_149644_1_)
-@@ -1107,13 +1154,1117 @@
-     {
-         this.field_149761_L = p_149651_1_.func_94245_a(this.func_149641_N());
-     }
-+    
-+    @SideOnly(Side.CLIENT)
-+    public void registerDestroyBlockIcons(IIconRegister p_94140_1_)
-+    {
-+        this.destroyBlockIcons = new IIcon[10];
- 
-+        for (int i = 0; i < this.destroyBlockIcons.length; ++i)
-+        {
-+            this.destroyBlockIcons[i] = p_94140_1_.func_94245_a("destroy_stage_" + i);
-+        }
-+    }
-+
-     @SideOnly(Side.CLIENT)
-     public String func_149702_O()
-     {
+@@ -1114,6 +1153,1112 @@
          return null;
      }
  
@@ -247,6 +207,8 @@
 +    //For ForgeInternal use Only!
 +    protected ThreadLocal<EntityPlayer> harvesters = new ThreadLocal();
 +    private ThreadLocal<Integer> silk_check_meta = new ThreadLocal(); 
++    @SideOnly(Side.CLIENT)
++    protected IIcon[] destroyBlockIcons;
 +    /**
 +     * Get a light value for the block at the specified coordinates, normal ranges are between 0 and 15
 +     *
@@ -1309,8 +1271,19 @@
 +        if (harvestTool[metadata] == null) return false;
 +        return harvestTool[metadata].equals(type);
 +    }
-+
-+
++    
++    @SideOnly(Side.CLIENT)
++    public void registerDestroyBlockIcons(IIconRegister iconRegister)
++    {
++        
++    }
++    
++    @SideOnly(Side.CLIENT)
++    public IIcon[] getDestroyIcons(int side, int metadata)
++    {
++        return this.destroyBlockIcons;
++    }
++    
 +    // For Inernal use only to capture droped items inside getDrops
 +    protected ThreadLocal<Boolean> captureDrops = new ThreadLocal<Boolean>()
 +    {
