@@ -52,7 +52,7 @@
                  if (block.func_149688_o() != Material.field_151579_a)
                  {
                      block.func_149651_a(this);
-+                    block.registerDestroyBlockIcons(this);
++                    block.registerBlockDestroyIcons(this);
                  }
              }
  

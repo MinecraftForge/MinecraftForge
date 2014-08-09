@@ -119,8 +119,8 @@
                      if (block.func_149688_o() != Material.field_151579_a)
                      {
 -                        this.field_147592_B.func_147792_a(block, destroyblockprogress.func_73110_b(), destroyblockprogress.func_73109_c(), destroyblockprogress.func_73108_d(), this.field_94141_F[destroyblockprogress.func_73106_e()]);
-+                        IIcon[] icons = block.getDestroyIcons(p_72731_2_.field_72310_e, p_72717_2_.field_70170_p.func_72805_g(p_72731_2_.field_72311_b, p_72731_2_.field_72312_c, p_72731_2_.field_72309_d));
-+                        if (icons == null) icons = this.field_94141_F;
++                        IIcon[] icons = block.getBlockDestroyIcons(p_72731_2_.field_72310_e, p_72717_2_.field_70170_p.func_72805_g(p_72731_2_.field_72311_b, p_72731_2_.field_72312_c, p_72731_2_.field_72309_d));
++                        if (icons == null) icons = field_94141_F;
 +                        this.field_147592_B.func_147792_a(block, destroyblockprogress.func_73110_b(), destroyblockprogress.func_73109_c(), destroyblockprogress.func_73108_d(), icons[destroyblockprogress.func_73106_e()]);
                      }
                  }
@@ -142,12 +142,3 @@
              this.field_147593_P.put(chunkcoordinates, positionedsoundrecord);
              this.field_72777_q.func_147118_V().func_147682_a(positionedsoundrecord);
          }
-@@ -2368,7 +2407,7 @@
-             this.field_72738_E.remove(Integer.valueOf(p_147587_1_));
-         }
-     }
--
-+    
-     public void func_94140_a(IIconRegister p_94140_1_)
-     {
-         this.field_94141_F = new IIcon[10];
