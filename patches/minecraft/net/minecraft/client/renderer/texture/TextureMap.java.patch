@@ -40,6 +40,15 @@
              try
              {
                  IResource iresource = p_110571_1_.func_110536_a(resourcelocation1);
+@@ -161,7 +175,7 @@
+             }
+             catch (IOException ioexception1)
+             {
+-                field_147635_d.error("Using missing texture, unable to load " + resourcelocation1, ioexception1);
++                field_147635_d.error("Using missing texture, unable to load " + resourcelocation1);
+                 continue;
+             }
+ 
 @@ -274,6 +288,7 @@
              textureatlassprite = (TextureAtlasSprite)iterator2.next();
              textureatlassprite.func_94217_a(this.field_94249_f);
