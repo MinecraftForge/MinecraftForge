@@ -10,9 +10,12 @@
  public class CommandHandler implements ICommandManager
  {
      private static final Logger field_147175_a = LogManager.getLogger();
-@@ -47,6 +50,16 @@
+@@ -45,8 +48,18 @@
+                 throw new CommandNotFoundException();
+             }
  
-             if (icommand.func_71519_b(p_71556_1_))
+-            if (icommand.func_71519_b(p_71556_1_))
++            if (net.minecraftforge.permissions.PermissionsManager.getPermHandler().checkCommand(icommand, p_71556_1_))
              {
 +                CommandEvent event = new CommandEvent(icommand, p_71556_1_, astring);
 +                if (MinecraftForge.EVENT_BUS.post(event))
@@ -27,3 +30,29 @@
                  if (i > -1)
                  {
                      EntityPlayerMP[] aentityplayermp = PlayerSelector.func_82380_c(p_71556_1_, astring[i]);
+@@ -124,6 +137,7 @@
+         List list = p_71560_1_.func_71514_a();
+         this.field_71562_a.put(p_71560_1_.func_71517_b(), p_71560_1_);
+         this.field_71561_b.add(p_71560_1_);
++        net.minecraftforge.permissions.PermissionsManager.getPermHandler().registerCommand(p_71560_1_);
+ 
+         if (list != null)
+         {
+@@ -170,7 +184,7 @@
+             {
+                 Entry entry = (Entry)iterator.next();
+ 
+-                if (CommandBase.func_71523_a(s1, (String)entry.getKey()) && ((ICommand)entry.getValue()).func_71519_b(p_71558_1_))
++                if (CommandBase.func_71523_a(s1, (String)entry.getKey()) && net.minecraftforge.permissions.PermissionsManager.getPermHandler().checkCommand((ICommand)entry.getValue(), p_71558_1_))
+                 {
+                     arraylist.add(entry.getKey());
+                 }
+@@ -203,7 +217,7 @@
+         {
+             ICommand icommand = (ICommand)iterator.next();
+ 
+-            if (icommand.func_71519_b(p_71557_1_))
++            if (net.minecraftforge.permissions.PermissionsManager.getPermHandler().checkCommand(icommand, p_71557_1_))
+             {
+                 arraylist.add(icommand);
+             }
