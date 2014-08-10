@@ -34,6 +34,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.WeightedRandom;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.event.AnvilUpdateEvent;
@@ -50,6 +51,7 @@ import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import static net.minecraft.init.Blocks.*;
 
@@ -459,5 +461,16 @@ public class ForgeHooks
         }
         te.note = (byte)e.getVanillaNoteId();
         return true;
+    }
+
+    public static boolean onPreExplosion(Explosion explosion, World world)
+    {
+        ExplosionEvent.Pre event = new ExplosionEvent.Pre((int) explosion.explosionX, (int) explosion.explosionY, (int) explosion.explosionZ, explosion, world);
+        return MinecraftForge.EVENT_BUS.post(event);
+    }
+
+    public static void onPostExplosion(Explosion explosion, World world)
+    {
+        MinecraftForge.EVENT_BUS.post(new ExplosionEvent.Post((int) explosion.explosionX, (int) explosion.explosionY, (int) explosion.explosionZ, explosion, world));
     }
 }
