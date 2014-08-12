@@ -26,6 +26,7 @@ public class GuiCustomModLoadingErrorScreen extends GuiErrorScreen
     public void initGui()
     {
         super.initGui();
+        this.buttonList.clear();
         this.customException.initGui(this, fontRendererObj);
     }
     @Override

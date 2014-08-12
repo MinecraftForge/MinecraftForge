@@ -34,6 +34,7 @@ public class GuiDupesFound extends GuiErrorScreen
     public void initGui()
     {
         super.initGui();
+        this.buttonList.clear();
     }
     @Override
     public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_)
