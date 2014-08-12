@@ -57,7 +57,7 @@
          Iterator iterator = Item.field_150901_e.iterator();
  
          while (iterator.hasNext())
-@@ -329,7 +347,13 @@
+@@ -329,10 +347,17 @@
                  item.func_150895_a(item, (CreativeTabs)null, containercreative.field_148330_a);
              }
          }
@@ -71,7 +71,11 @@
          Enchantment[] aenchantment = Enchantment.field_77331_b;
          int j = aenchantment.length;
  
-@@ -383,7 +407,7 @@
++        if (CreativeTabs.field_78032_a[field_147058_w] != CreativeTabs.field_78027_g) j = 0; //Forge: Don't add enchants to custom tabs.
+         for (int i = 0; i < j; ++i)
+         {
+             Enchantment enchantment = aenchantment[i];
+@@ -383,7 +408,7 @@
      {
          CreativeTabs creativetabs = CreativeTabs.field_78032_a[field_147058_w];
  
@@ -80,7 +84,7 @@
          {
              GL11.glDisable(GL11.GL_BLEND);
              this.field_146289_q.func_78276_b(I18n.func_135052_a(creativetabs.func_78024_c(), new Object[0]), 8, 6, 4210752);
-@@ -403,7 +427,7 @@
+@@ -403,7 +428,7 @@
              {
                  CreativeTabs creativetabs = acreativetabs[k1];
  
@@ -89,7 +93,7 @@
                  {
                      return;
                  }
-@@ -426,7 +450,7 @@
+@@ -426,7 +451,7 @@
              {
                  CreativeTabs creativetabs = acreativetabs[k1];
  
@@ -98,7 +102,7 @@
                  {
                      this.func_147050_b(creativetabs);
                      return;
-@@ -439,11 +463,13 @@
+@@ -439,11 +464,13 @@
  
      private boolean func_147055_p()
      {
@@ -112,7 +116,7 @@
          int i = field_147058_w;
          field_147058_w = p_147050_1_.func_78021_a();
          GuiContainerCreative.ContainerCreative containercreative = (GuiContainerCreative.ContainerCreative)this.field_147002_h;
-@@ -512,7 +538,7 @@
+@@ -512,12 +539,14 @@
  
          if (this.field_147062_A != null)
          {
@@ -121,7 +125,14 @@
              {
                  this.field_147062_A.func_146189_e(true);
                  this.field_147062_A.func_146205_d(false);
-@@ -608,23 +634,45 @@
+                 this.field_147062_A.func_146195_b(true);
+                 this.field_147062_A.func_146180_a("");
++                this.field_147062_A.field_146218_h = p_147050_1_.getSearchbarWidth();
++                this.field_147062_A.field_146209_f = this.field_147003_i + (82 /*default left*/ - 89 /*default width*/) - this.field_147062_A.field_146218_h;
+                 this.func_147053_i();
+             }
+             else
+@@ -608,23 +637,45 @@
  
          super.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
          CreativeTabs[] acreativetabs = CreativeTabs.field_78032_a;
@@ -169,7 +180,7 @@
          GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
          GL11.glDisable(GL11.GL_LIGHTING);
      }
-@@ -693,17 +741,37 @@
+@@ -693,17 +744,37 @@
          int k = acreativetabs.length;
          int l;
  
@@ -208,7 +219,7 @@
          this.field_146297_k.func_110434_K().func_110577_a(new ResourceLocation("textures/gui/container/creative_inventory/tab_" + creativetabs.func_78015_f()));
          this.func_73729_b(this.field_147003_i, this.field_147009_r, 0, 0, this.field_146999_f, this.field_147000_g);
          this.field_147062_A.func_146194_f();
-@@ -718,6 +786,14 @@
+@@ -718,6 +789,14 @@
              this.func_73729_b(i1, k + (int)((float)(l - k - 17) * this.field_147067_x), 232 + (this.func_147055_p() ? 0 : 12), 0, 12, 15);
          }
  
@@ -223,7 +234,7 @@
          this.func_147051_a(creativetabs);
  
          if (creativetabs == CreativeTabs.field_78036_m)
-@@ -728,6 +804,15 @@
+@@ -728,6 +807,15 @@
  
      protected boolean func_147049_a(CreativeTabs p_147049_1_, int p_147049_2_, int p_147049_3_)
      {
@@ -239,7 +250,7 @@
          int k = p_147049_1_.func_78020_k();
          int l = 28 * k;
          byte b0 = 0;
-@@ -828,6 +913,8 @@
+@@ -828,6 +916,8 @@
          }
  
          GL11.glDisable(GL11.GL_LIGHTING);
@@ -248,7 +259,7 @@
          this.func_73729_b(l, i1, j, k, 28, b0);
          this.field_73735_i = 100.0F;
          field_146296_j.field_77023_b = 100.0F;
-@@ -854,6 +941,15 @@
+@@ -854,6 +944,15 @@
          {
              this.field_146297_k.func_147108_a(new GuiStats(this, this.field_146297_k.field_71439_g.func_146107_m()));
          }

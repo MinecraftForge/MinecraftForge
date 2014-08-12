@@ -65,7 +65,7 @@
          }
  
          if (this.func_111225_m() != null)
-@@ -319,4 +349,28 @@
+@@ -319,4 +349,39 @@
              }
          }
      }
@@ -86,11 +86,22 @@
 +
 +    /**
 +     * Determines if the search bar should be shown for this tab.
-+     * 
++     *
 +     * @return True to show the bar
 +     */
 +    public boolean hasSearchBar()
 +    {
 +        return field_78033_n == CreativeTabs.field_78027_g.field_78033_n;
++    }
++
++    /**
++     * Gets the width of the search bar of the creative tab, use this if your
++     * creative tab name overflows together with a custom texture.
++     *
++     * @return The width of the search bar, 89 by default
++     */
++    public int getSearchbarWidth()
++    {
++        return 89;
 +    }
  }
