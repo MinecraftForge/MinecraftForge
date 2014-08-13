@@ -18,16 +18,12 @@
                      {
                          int j = this.field_145945_j[i].func_77960_j();
                          int k = this.func_145936_c(j, itemstack);
-@@ -137,13 +139,19 @@
+@@ -137,13 +139,15 @@
  
      private void func_145940_l()
      {
 +        PotionBrewedEvent.Pre pre = new PotionBrewedEvent.Pre(field_145945_j.clone());
-+        MinecraftForge.EVENT_BUS.post(pre);
-+        if(pre.isCanceled()){
-+            this.field_145945_j = pre.brewingStacks;
-+            return;
-+        }
++        if(MinecraftForge.EVENT_BUS.post(pre)){field_145945_j = pre.brewingStacks; return;}
          if (this.func_145934_k())
          {
              ItemStack itemstack = this.field_145945_j[3];
@@ -39,7 +35,7 @@
                  {
                      int j = this.field_145945_j[i].func_77960_j();
                      int k = this.func_145936_c(j, itemstack);
-@@ -164,9 +172,9 @@
+@@ -164,9 +168,9 @@
                  }
              }
  
@@ -51,7 +47,7 @@
              }
              else
              {
-@@ -177,6 +185,7 @@
+@@ -177,6 +181,7 @@
                      this.field_145945_j[3] = null;
                  }
              }
@@ -59,7 +55,7 @@
          }
      }
  
-@@ -292,7 +301,7 @@
+@@ -292,7 +297,7 @@
  
      public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_)
      {
