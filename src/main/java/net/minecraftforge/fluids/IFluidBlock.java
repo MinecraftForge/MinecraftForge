@@ -5,7 +5,7 @@ import net.minecraft.world.World;
 /**
  * Implement this interface on Block classes which represent world-placeable Fluids.
  * 
- * NOTE: Using/extending the reference implementations {@link BlockFluidBase} is encouraged.
+ * NOTE: Using/extending the reference implementations {@link BlockFluidBase} is encouraged for liquid.
  * 
  * @author King Lemming
  * 
@@ -39,11 +39,16 @@ public interface IFluidBlock
     boolean canDrain(World world, int x, int y, int z);
 
     /**
-     * Returns the amount of a single block is filled. Value between 0 and 1.
+     * For liquid, Returns the amount of a single block is filled. Value between 0 and 1.
      * 1 meaning the entire 1x1x1 cube is full, 0 meaning completely empty.
      * 
      * If the return value is negative. It will be treated as filling the block 
      * from the top down instead of bottom up.
+     * 
+     * For gas, Returns the pressure of a single block is filled. Value bigger than 0.
+     * there is no limit of pressure for gas.
+     * 
+     * Gas will always fill the whole block, only the pressure will be varied.
      * 
      * @return
      */

@@ -17,7 +17,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 /**
- * This is a base implementation for Fluid blocks.
+ * This is a base implementation for Fluid blocks. (Mainly liquid)
  *
  * It is highly recommended that you extend this class or one of the Forge-provided child classes.
  *
