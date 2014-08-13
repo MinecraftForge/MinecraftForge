@@ -1016,7 +1016,7 @@
 +     * @return true if the block should hydrate/fertilize farmland
 +     */
 +    public boolean canHydrateSoil(World world, int x, int y, int z) {
-+        return false;
++        return func_149688_o() == Material.field_151586_h;
 +    }
 +
 +    /**

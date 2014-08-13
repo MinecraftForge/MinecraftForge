@@ -23,7 +23,7 @@
                  for (int j1 = p_149821_4_ - 4; j1 <= p_149821_4_ + 4; ++j1)
                  {
 -                    if (p_149821_1_.func_147439_a(l, i1, j1).func_149688_o() == Material.field_151586_h)
-+                    if (p_149821_1_.func_147439_a(l, i1, j1).func_149688_o() == Material.field_151586_h || p_149821_1_.func_147439_a(l, i1, j1).canHydrateSoil(p_149821_1_, l, i1, j1))
++                    if (p_149821_1_.func_147439_a(l, i1, j1).canHydrateSoil(p_149821_1_, l, i1, j1))
                      {
                          return true;
                      }
