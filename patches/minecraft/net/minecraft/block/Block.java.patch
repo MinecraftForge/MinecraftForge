@@ -199,7 +199,7 @@
      }
  
      protected ItemStack func_149644_j(int p_149644_1_)
-@@ -1114,6 +1153,1099 @@
+@@ -1114,6 +1153,1113 @@
          return null;
      }
  
@@ -1002,6 +1002,20 @@
 +            return world.func_72805_g(x, y, z) > 0;
 +        }
 +
++        return false;
++    }
++    
++    /**
++     * Called by {@link BlockFarmland}. Determines if farmland surrounding the block will
++     * become hydrated/fertile.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z position
++     * @return true if the block should hydrate/fertilize farmland
++     */
++    public boolean canHydrateSoil(World world, int x, int y, int z) {
 +        return false;
 +    }
 +
