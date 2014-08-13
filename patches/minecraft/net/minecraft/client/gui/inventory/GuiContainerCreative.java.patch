@@ -128,7 +128,7 @@
                  this.field_147062_A.func_146195_b(true);
                  this.field_147062_A.func_146180_a("");
 +                this.field_147062_A.field_146218_h = p_147050_1_.getSearchbarWidth();
-+                this.field_147062_A.field_146209_f = this.field_147003_i + (82 /*default left*/ - 89 /*default width*/) - this.field_147062_A.field_146218_h;
++                this.field_147062_A.field_146209_f = this.field_147003_i + (82 /*default left*/ + 89 /*default width*/) - this.field_147062_A.field_146218_h;
                  this.func_147053_i();
              }
              else
