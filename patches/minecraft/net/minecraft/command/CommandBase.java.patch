@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandBase.java
++++ ../src-work/minecraft/net/minecraft/command/CommandBase.java
+@@ -493,4 +493,9 @@
+     {
+         return this.compareTo((ICommand)p_compareTo_1_);
+     }
++    
++    public String getPermNode()
++    {
++        return "cmd." + func_71517_b();
++    }
+ }
