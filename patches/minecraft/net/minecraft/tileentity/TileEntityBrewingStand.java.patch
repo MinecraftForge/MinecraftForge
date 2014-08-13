@@ -22,8 +22,13 @@
  
      private void func_145940_l()
      {
+<<<<<<< HEAD
 +        PotionBrewedEvent.Pre pre = new PotionBrewedEvent.Pre(field_145945_j.clone());
 +        if(MinecraftForge.EVENT_BUS.post(pre)){field_145945_j = pre.brewingStacks; return;}
+=======
++        PotionBrewedEvent.Pre pre = new PotionBrewedEvent.Pre(brewingItemStacks.clone());
++        if(MinecraftForge.EVENT_BUS.post(pre)){brewingItemStacks = pre.brewingStacks; return;}
+>>>>>>> origin/master
          if (this.func_145934_k())
          {
              ItemStack itemstack = this.field_145945_j[3];
