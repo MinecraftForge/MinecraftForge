@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/command/server/CommandDeOp.java
++++ ../src-work/minecraft/net/minecraft/command/server/CommandDeOp.java
+@@ -38,7 +38,7 @@
+             {
+                 throw new CommandException("commands.deop.failed", new Object[] {p_71515_2_[0]});
+             }
+-            else
++            else if (!net.minecraftforge.common.ForgeHooks.onDeOP(gameprofile))
+             {
+                 minecraftserver.func_71203_ab().func_152610_b(gameprofile);
+                 func_152373_a(p_71515_1_, this, "commands.deop.success", new Object[] {p_71515_2_[0]});

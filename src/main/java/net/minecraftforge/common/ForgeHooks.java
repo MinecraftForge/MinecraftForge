@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.mojang.authlib.GameProfile;
+
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.block.Block;
@@ -37,6 +39,7 @@ import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.event.AnvilUpdateEvent;
+import net.minecraftforge.event.OPEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -459,5 +462,23 @@ public class ForgeHooks
         }
         te.note = (byte)e.getVanillaNoteId();
         return true;
+    }
+    
+    public static boolean onOP(GameProfile profile)
+    {
+        OPEvent.OP event = new OPEvent.OP(profile);
+        if (MinecraftForge.EVENT_BUS.post(event))
+            return true; // The event was canceled
+        
+        return false;
+    }
+    
+    public static boolean onDeOP(GameProfile profile)
+    {
+        OPEvent.DeOP event = new OPEvent.DeOP(profile);
+        if (MinecraftForge.EVENT_BUS.post(event))
+            return true; // The event was canceled
+        
+        return false;
     }
 }
