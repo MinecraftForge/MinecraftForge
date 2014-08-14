@@ -14,6 +14,7 @@ import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -32,6 +33,8 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
+import net.minecraftforge.event.item.ItemEnchantabilityEvent;
+import net.minecraftforge.event.item.ItemRarityEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
@@ -191,5 +194,19 @@ public class ForgeEventFactory
         SaveHandler sh = (SaveHandler) playerFileData;
         File dir = ObfuscationReflectionHelper.getPrivateValue(SaveHandler.class, sh, "playersDirectory", "field_"+"75771_c");
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.LoadFromFile(player, dir, uuidString));
+    }
+    
+    public static int onItemEnchantability(ItemStack stack, int enchantability)
+    {
+        ItemEnchantabilityEvent e = new ItemEnchantabilityEvent(stack, enchantability);
+        MinecraftForge.EVENT_BUS.post(e);
+        return e.enchantability;
+    }
+    
+    public static EnumRarity onItemRarity(ItemStack stack, EnumRarity rarity)
+    {
+        ItemRarityEvent e = new ItemRarityEvent(stack, rarity);
+        MinecraftForge.EVENT_BUS.post(e);
+        return e.rarity;
     }
 }
