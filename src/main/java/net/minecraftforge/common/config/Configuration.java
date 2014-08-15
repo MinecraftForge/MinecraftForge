@@ -1596,7 +1596,7 @@ public class Configuration
         Property prop = this.get(category, name, defaultValue);
         prop.setLanguageKey(langKey);
         prop.setValidValues(validValues);
-        prop.comment = comment + " [default: " + defaultValue + "]";
+        prop.comment = comment + " [default: " + prop.getDefault() + "]";
         return prop.getStringList();
     }
     
