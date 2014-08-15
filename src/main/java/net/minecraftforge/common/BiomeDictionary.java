@@ -101,7 +101,12 @@ public class BiomeDictionary
                 if (t.name().equals(name))
                     return t;
             }
-            return EnumHelper.addEnum(Type.class, name, new Class[]{Type[].class}, new Object[]{subTypes});
+            Type ret = EnumHelper.addEnum(Type.class, name, new Class[]{Type[].class}, new Object[]{subTypes});
+            if (ret.ordinal() >= typeInfoList.length)
+            {
+                typeInfoList = Arrays.copyOf(typeInfoList, ret.ordinal());
+            }
+            return ret;
         }
     }
 
