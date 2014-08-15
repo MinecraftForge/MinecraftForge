@@ -594,4 +594,37 @@ public class FMLCommonHandler
     {
         return sidedDelegate.shouldAllowPlayerLogins();
     }
+
+
+    /**
+     * Used to exit from java, with system exit preventions in place. Will be tidy about it and just log a message,
+     * unless debugging is enabled
+     *
+     * @param exitCode The exit code
+     * @param hardExit Perform a halt instead of an exit (only use when the world is unsavable)
+     */
+    public void exitJava(int exitCode, boolean hardExit)
+    {
+        FMLLog.log(Level.INFO, "Java has been asked to exit (code %d) by %s.", exitCode, Thread.currentThread().getStackTrace()[1]);
+        if (hardExit)
+        {
+            FMLLog.log(Level.INFO, "This is a forced exit");
+        }
+        if (Boolean.parseBoolean(System.getProperty("fml.debugExit", "false")))
+        {
+            FMLLog.log(Level.INFO, new Throwable(), "Exit trace");
+        }
+        else
+        {
+            FMLLog.log(Level.INFO, "If this was an unexpected exit, use -Dfml.debugExit=true to find out where it was called");
+        }
+        if (hardExit)
+        {
+            Runtime.getRuntime().halt(exitCode);
+        }
+        else
+        {
+            System.exit(exitCode);
+        }
+    }
 }
