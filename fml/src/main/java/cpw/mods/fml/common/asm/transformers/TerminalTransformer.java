@@ -11,6 +11,7 @@ public class TerminalTransformer implements IClassTransformer
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass)
     {
+        if (basicClass == null) return null;
         ClassReader reader = new ClassReader(basicClass);
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 
