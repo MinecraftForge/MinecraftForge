@@ -199,7 +199,7 @@
      }
  
      protected ItemStack func_149644_j(int p_149644_1_)
-@@ -1114,6 +1153,1099 @@
+@@ -1114,6 +1153,1124 @@
          return null;
      }
  
@@ -1270,6 +1270,31 @@
 +        return harvestTool[metadata].equals(type);
 +    }
 +
++    /**
++     * Returns true if this block from then given {@link ItemStack} {@code stack}
++     * can be placed in a flower pot in the given location. Delegates to
++     * {@link Block#canPlaceInFlowerPot(int)}.
++     * @param stack the stack
++     * @param world the world
++     * @param x the x position of the flower pot
++     * @param y the y position of the flower pot
++     * @param z the z position of the flower pot
++     * @return true, if the block can be placed in a flower pot
++     */
++    public boolean canPlaceInFlowerPot(ItemStack stack, World world, int x, int y, int z)
++    {
++        return this.canPlaceInFlowerPot(stack.func_77960_j());
++    }
++
++    /**
++     * Returns true if this block with the given {@code metadata} can be placed in a flower pot.
++     * @param metadata the metadata
++     * @return true, if the block can be placed in a flower pot
++     */
++    public boolean canPlaceInFlowerPot(int metadata)
++    {
++        return this == Blocks.field_150327_N || this == Blocks.field_150328_O || this == Blocks.field_150434_aF || this == Blocks.field_150338_P || this == Blocks.field_150337_Q || this == Blocks.field_150345_g || this ==  Blocks.field_150330_I || (this == Blocks.field_150329_H && metadata == 2);
++    }
 +
 +    // For Inernal use only to capture droped items inside getDrops
 +    protected ThreadLocal<Boolean> captureDrops = new ThreadLocal<Boolean>()
