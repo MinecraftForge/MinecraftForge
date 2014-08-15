@@ -17,15 +17,6 @@
                      {
                          return false;
                      }
-@@ -100,7 +101,7 @@
- 
-     private boolean func_149928_a(Block p_149928_1_, int p_149928_2_)
-     {
--        return p_149928_1_ != Blocks.field_150327_N && p_149928_1_ != Blocks.field_150328_O && p_149928_1_ != Blocks.field_150434_aF && p_149928_1_ != Blocks.field_150338_P && p_149928_1_ != Blocks.field_150337_Q && p_149928_1_ != Blocks.field_150345_g && p_149928_1_ != Blocks.field_150330_I ? p_149928_1_ == Blocks.field_150329_H && p_149928_2_ == 2 : true;
-+        return p_149928_1_.canPlaceInFlowerPot(p_149928_2_);
-     }
- 
-     @SideOnly(Side.CLIENT)
 @@ -138,13 +139,6 @@
  
      public void func_149749_a(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_)
