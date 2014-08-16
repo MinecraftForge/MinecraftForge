@@ -52,7 +52,7 @@ public class TerminalTransformer implements IClassTransformer
             return new MethodVisitor(Opcodes.ASM4, super.visitMethod(mAccess, mName, mDesc, mSignature, mExceptions))
             {
                 @Override
-                public void visitMethodInsn(int opcode, String owner, String name, String desc)
+                public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean isIntf)
                 {
                     if (opcode == Opcodes.INVOKESTATIC && owner.equals("java/lang/System") && name.equals("exit") && desc.equals("(I)V"))
                     {
@@ -98,7 +98,7 @@ public class TerminalTransformer implements IClassTransformer
                         desc = "(Ljava/lang/Runtime;I)V";
                     }
 
-                    super.visitMethodInsn(opcode, owner, name, desc);
+                    super.visitMethodInsn(opcode, owner, name, desc, isIntf);
                 }
             };
         }

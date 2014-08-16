@@ -71,7 +71,7 @@ public class ItemStackTransformer implements IClassTransformer {
                     if (itemField.name.equals(fi.name) && fi.getOpcode() == Opcodes.GETFIELD)
                     {
                         it.remove();
-                        MethodInsnNode replace = new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/item/ItemStack",getItemMethod.name, getItemMethod.desc);
+                        MethodInsnNode replace = new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/item/ItemStack",getItemMethod.name, getItemMethod.desc, false);
                         it.add(replace);
                     }
                 }
