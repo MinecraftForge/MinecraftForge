@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiTextField.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiTextField.java
+@@ -248,6 +248,8 @@
+         }
+         else
+         {
++            if(net.minecraft.client.Minecraft.field_142025_a && GuiScreen.func_146271_m() && p_146201_1_ == 99) { GuiScreen.func_146275_d(this.func_146207_c()); return true; } // Allows CMD+C (copy) when running on mac
++            if(net.minecraft.client.Minecraft.field_142025_a && GuiScreen.func_146271_m() && p_146201_1_ == 118 && this.field_146226_p) { this.func_146191_b(GuiScreen.func_146277_j()); return true; } // Allows CMD+V (paste) when running on mac
+             switch (p_146201_1_)
+             {
+                 case 1:
