@@ -6,16 +6,17 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.IChatComponent;
 
-public class GuiMessageDialog extends GuiDisconnected 
+public class GuiMessageDialog extends GuiDisconnected
 {
     private String buttonText;
-    
+
     public GuiMessageDialog(GuiScreen nextScreen, String title, IChatComponent message, String buttonText)
     {
         super(nextScreen, title, message);
         this.buttonText = buttonText;
     }
 
+    @Override
     public void initGui()
     {
         super.initGui();

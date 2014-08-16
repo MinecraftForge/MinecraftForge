@@ -36,8 +36,8 @@ import cpw.mods.fml.common.ModContainer;
 
 /**
  * This class implements the scrolling list functionality of the config GUI screens. It also provides all the default control handlers
- * for the various property types. 
- * 
+ * for the various property types.
+ *
  * @author bspkrs
  */
 public class GuiConfigEntries extends GuiListExtended
@@ -93,7 +93,7 @@ public class GuiConfigEntries extends GuiListExtended
                 if (configElement.isProperty() && configElement.showInGui()) // as opposed to being a child category entry
                 {
                     int length;
-                    
+
                     // protects against language keys that are not defined in the .lang file
                     if (!I18n.format(configElement.getLanguageKey()).equals(configElement.getLanguageKey()))
                         length = mc.fontRenderer.getStringWidth(I18n.format(configElement.getLanguageKey()));
@@ -259,7 +259,7 @@ public class GuiConfigEntries extends GuiListExtended
         for (IConfigEntry entry : this.listEntries)
             entry.mouseClicked(mouseX, mouseY, mouseEvent);
     }
-    
+
     /**
      * This method is a pass-through for IConfigListEntry objects that need to perform actions when the containing GUI is closed.
      */
@@ -281,7 +281,7 @@ public class GuiConfigEntries extends GuiListExtended
         for (IConfigEntry entry : this.listEntries)
             if (entry.saveConfigElement())
                 requiresRestart = true;
-        
+
         return requiresRestart;
     }
 
@@ -798,7 +798,7 @@ public class GuiConfigEntries extends GuiListExtended
 
     /**
      * NumberSliderEntry
-     * 
+     *
      * Provides a slider for numeric properties.
      */
     public static class NumberSliderEntry extends ButtonEntry
@@ -807,8 +807,8 @@ public class GuiConfigEntries extends GuiListExtended
 
         public NumberSliderEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement<?> configElement)
         {
-            super(owningScreen, owningEntryList, configElement, new GuiSlider(0, owningEntryList.controlX, 0, owningEntryList.controlWidth, 18, 
-                    "", "", Double.valueOf(configElement.getMinValue().toString()), Double.valueOf(configElement.getMaxValue().toString()), 
+            super(owningScreen, owningEntryList, configElement, new GuiSlider(0, owningEntryList.controlX, 0, owningEntryList.controlWidth, 18,
+                    "", "", Double.valueOf(configElement.getMinValue().toString()), Double.valueOf(configElement.getMaxValue().toString()),
                     Double.valueOf(configElement.get().toString()), configElement.getType() == ConfigGuiType.DOUBLE, true));
 
             if (configElement.getType() == ConfigGuiType.INTEGER)
@@ -818,7 +818,7 @@ public class GuiConfigEntries extends GuiListExtended
         }
 
         @Override
-        public void updateValueButtonText() 
+        public void updateValueButtonText()
         {
             ((GuiSlider) this.btnValue).updateSlider();
         }
@@ -906,7 +906,7 @@ public class GuiConfigEntries extends GuiListExtended
 
         public ButtonEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement<?> configElement)
         {
-            this(owningScreen, owningEntryList, configElement, new GuiButtonExt(0, owningEntryList.controlX, 0, owningEntryList.controlWidth, 18, 
+            this(owningScreen, owningEntryList, configElement, new GuiButtonExt(0, owningEntryList.controlX, 0, owningEntryList.controlWidth, 18,
                     configElement.get() != null ? I18n.format(String.valueOf(configElement.get())) : ""));
         }
 
@@ -1077,7 +1077,7 @@ public class GuiConfigEntries extends GuiListExtended
                     {
                         this.configElement.setToDefault();
                     }
-                
+
                 return configElement.requiresMcRestart() && beforeValue != Integer.parseInt(configElement.get().toString());
             }
             return false;
@@ -1184,7 +1184,7 @@ public class GuiConfigEntries extends GuiListExtended
                     {
                         this.configElement.setToDefault();
                     }
-                
+
                 return configElement.requiresMcRestart() && beforeValue != Double.parseDouble(configElement.get().toString());
             }
             return false;
@@ -1294,7 +1294,7 @@ public class GuiConfigEntries extends GuiListExtended
                 else if (isChanged() && !this.isValidValue)
                 {
                     this.configElement.setToDefault();
-                    return configElement.requiresMcRestart() 
+                    return configElement.requiresMcRestart()
                             && beforeValue != null ? beforeValue.equals(configElement.getDefault()) : configElement.getDefault() == null;
                 }
             }
@@ -1336,16 +1336,16 @@ public class GuiConfigEntries extends GuiListExtended
 
             this.drawLabel = false;
         }
-        
+
         /**
          * This method is called in the constructor and is used to set the childScreen field.
          */
         @SuppressWarnings("unchecked")
         protected GuiScreen buildChildScreen()
         {
-            return new GuiConfig(this.owningScreen, this.configElement.getChildElements(), this.owningScreen.modID, 
-                    owningScreen.allRequireWorldRestart || this.configElement.requiresWorldRestart(), 
-                    owningScreen.allRequireMcRestart || this.configElement.requiresMcRestart(), this.owningScreen.title, 
+            return new GuiConfig(this.owningScreen, this.configElement.getChildElements(), this.owningScreen.modID,
+                    owningScreen.allRequireWorldRestart || this.configElement.requiresWorldRestart(),
+                    owningScreen.allRequireMcRestart || this.configElement.requiresMcRestart(), this.owningScreen.title,
                     ((this.owningScreen.titleLine2 == null ? "" : this.owningScreen.titleLine2) + " > " + this.name));
         }
 
@@ -1395,7 +1395,7 @@ public class GuiConfigEntries extends GuiListExtended
         {
             if (childScreen instanceof GuiConfig && ((GuiConfig) childScreen).entryList != null)
                 return ((GuiConfig) childScreen).entryList.areAllEntriesDefault(true);
-            
+
             return true;
         }
 
@@ -1422,11 +1422,11 @@ public class GuiConfigEntries extends GuiListExtended
         public boolean saveConfigElement()
         {
             boolean requiresRestart = false;
-            
+
             if (childScreen instanceof GuiConfig && ((GuiConfig) childScreen).entryList != null)
             {
                 requiresRestart = configElement.requiresMcRestart() && ((GuiConfig) childScreen).entryList.hasChangedEntry(true);
-                
+
                 if (((GuiConfig) childScreen).entryList.saveConfigElements())
                     requiresRestart = true;
             }
@@ -1540,16 +1540,16 @@ public class GuiConfigEntries extends GuiListExtended
             else
                 toolTip = new ArrayList<String>(this.mc.fontRenderer.listFormattedStringToWidth(
                         EnumChatFormatting.GREEN + name + "\n" + EnumChatFormatting.RED + "No tooltip defined.", 300));
-            
-            if ((configElement.getType() == ConfigGuiType.INTEGER 
+
+            if ((configElement.getType() == ConfigGuiType.INTEGER
                     && (Integer.valueOf(configElement.getMinValue().toString()) != Integer.MIN_VALUE || Integer.valueOf(configElement.getMaxValue().toString()) != Integer.MAX_VALUE))
-                    || (configElement.getType() == ConfigGuiType.DOUBLE 
+                    || (configElement.getType() == ConfigGuiType.DOUBLE
                     && (Double.valueOf(configElement.getMinValue().toString()) != -Double.MAX_VALUE || Double.valueOf(configElement.getMaxValue().toString()) != Double.MAX_VALUE)))
                 toolTip.addAll(this.mc.fontRenderer.listFormattedStringToWidth(
                         EnumChatFormatting.AQUA + I18n.format("fml.configgui.tooltip.defaultNumeric", configElement.getMinValue(), configElement.getMaxValue(), configElement.getDefault()), 300));
             else if (configElement.getType() != ConfigGuiType.CONFIG_CATEGORY)
                 toolTip.addAll(this.mc.fontRenderer.listFormattedStringToWidth(EnumChatFormatting.AQUA + I18n.format("fml.configgui.tooltip.default", configElement.getDefault()),300));
-            
+
             if (configElement.requiresMcRestart() || owningScreen.allRequireMcRestart)
                 toolTip.add(EnumChatFormatting.RED + "[" + I18n.format("fml.configgui.gameRestartTitle") + "]");
         }
@@ -1669,13 +1669,13 @@ public class GuiConfigEntries extends GuiListExtended
         {
             return this.owningEntryList.resetX + 40;
         }
-        
+
         @Override
         public IConfigElement getConfigElement()
         {
             return configElement;
         }
-        
+
         @Override
         public String getName()
         {
@@ -1688,6 +1688,7 @@ public class GuiConfigEntries extends GuiListExtended
         @Override
         public abstract Object[] getCurrentValues();
 
+        @Override
         public void onGuiClosed()
         {}
     }
@@ -1703,22 +1704,22 @@ public class GuiConfigEntries extends GuiListExtended
          */
         @SuppressWarnings("rawtypes")
         public IConfigElement getConfigElement();
-        
+
         /**
          * Gets the name of the ConfigElement owned by this entry.
          */
         public String getName();
-        
+
         /**
          * Gets the current value of this entry as a String.
          */
         public T getCurrentValue();
-        
+
         /**
          * Gets the current values of this list entry as a String[].
          */
         public T[] getCurrentValues();
-        
+
         /**
          * Is this list entry enabled?
          *
@@ -1788,7 +1789,7 @@ public class GuiConfigEntries extends GuiListExtended
          * Gets this entry's right-hand x boundary. This value is used to control where the scroll bar is placed.
          */
         public int getEntryRightBound();
-        
+
         /**
          * This method is called when the parent GUI is closed. Most handlers won't need this; it is provided for special cases.
          */
