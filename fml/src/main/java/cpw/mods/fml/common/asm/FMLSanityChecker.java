@@ -28,6 +28,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
 
 import cpw.mods.fml.common.CertificateHelper;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import cpw.mods.fml.common.patcher.ClassPatchManager;
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
@@ -41,6 +42,7 @@ public class FMLSanityChecker implements IFMLCallHook
     private static final String FORGEFINGERPRINT = "E3:C3:D5:0C:7C:98:6D:F7:4C:64:5C:0A:C5:46:39:74:1C:90:A5:57".toLowerCase().replace(":", "");
     private static final String MCFINGERPRINT =    "CD:99:95:96:56:F7:53:DC:28:D8:63:B4:67:69:F7:F8:FB:AE:FC:FC".toLowerCase().replace(":", "");
     private LaunchClassLoader cl;
+    private Boolean liveEnv;
     public static File fmlLocation;
 
     @Override
@@ -80,8 +82,8 @@ public class FMLSanityChecker implements IFMLCallHook
         {
             goodFML = true;
         }
-
-        boolean goodMC = FMLLaunchHandler.side() == Side.SERVER; //Server is not signed, so assume it's good.
+        // Server is not signed, so assume it's good - a deobf env is dev time so it's good too
+        boolean goodMC = FMLLaunchHandler.side() == Side.SERVER || !liveEnv;
         int certCount = 0;
         try
         {
@@ -154,7 +156,7 @@ public class FMLSanityChecker implements IFMLCallHook
                 		"and should have returned us a valid, intact minecraft jar location. This did not work. Either you have modified the minecraft jar file (if so " +
                 		"run the forge installer again), or you are using a base editing jar that is changing this class (and likely others too). If you REALLY " +
                 		"want to run minecraft in this configuration, add the flag -Dfml.ignoreInvalidMinecraftCertificates=true to the 'JVM settings' in your launcher profile.");
-                System.exit(1);
+                FMLCommonHandler.instance().exitJava(1, false);
             }
             else
             {
@@ -172,6 +174,7 @@ public class FMLSanityChecker implements IFMLCallHook
     @Override
     public void injectData(Map<String, Object> data)
     {
+        liveEnv = (Boolean)data.get("runtimeDeobfuscationEnabled");
         cl = (LaunchClassLoader) data.get("classLoader");
         File mcDir = (File)data.get("mcLocation");
         fmlLocation = (File)data.get("coremodLocation");
