@@ -601,14 +601,14 @@ public class FMLCommonHandler
      * unless debugging is enabled
      *
      * @param exitCode The exit code
-     * @param hardExit Perform a halt instead of an exit (only use when the world is unsavable)
+     * @param hardExit Perform a halt instead of an exit (only use when the world is unsavable) - read the warnings at {@link Runtime#halt(int)}
      */
     public void exitJava(int exitCode, boolean hardExit)
     {
         FMLLog.log(Level.INFO, "Java has been asked to exit (code %d) by %s.", exitCode, Thread.currentThread().getStackTrace()[1]);
         if (hardExit)
         {
-            FMLLog.log(Level.INFO, "This is a forced exit");
+            FMLLog.log(Level.INFO, "This is an abortive exit and could cause world corruption or other things");
         }
         if (Boolean.parseBoolean(System.getProperty("fml.debugExit", "false")))
         {
@@ -616,7 +616,7 @@ public class FMLCommonHandler
         }
         else
         {
-            FMLLog.log(Level.INFO, "If this was an unexpected exit, use -Dfml.debugExit=true to find out where it was called");
+            FMLLog.log(Level.INFO, "If this was an unexpected exit, use -Dfml.debugExit=true as a JVM argument to find out where it was called");
         }
         if (hardExit)
         {
@@ -624,7 +624,7 @@ public class FMLCommonHandler
         }
         else
         {
-            System.exit(exitCode);
+            Runtime.getRuntime().exit(exitCode);
         }
     }
 }
