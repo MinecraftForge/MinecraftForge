@@ -145,7 +145,7 @@
  
                  if (itemstack != null)
                  {
-@@ -251,12 +293,18 @@
+@@ -251,18 +293,30 @@
                      }
                  }
  
@@ -164,7 +164,19 @@
              return flag;
          }
      }
-@@ -288,6 +336,7 @@
+ 
+     public boolean func_73085_a(EntityPlayer p_73085_1_, World p_73085_2_, ItemStack p_73085_3_)
+     {
++        PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(p_73085_1_, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, 0, 0, 0, -1, p_73085_2_);
++        if (event.isCanceled() || event.useItem == Event.Result.DENY)
++        {
++            return false;
++        }
++
+         int i = p_73085_3_.field_77994_a;
+         int j = p_73085_3_.func_77960_j();
+         ItemStack itemstack1 = p_73085_3_.func_77957_a(p_73085_2_, p_73085_1_);
+@@ -288,6 +342,7 @@
              if (itemstack1.field_77994_a == 0)
              {
                  p_73085_1_.field_71071_by.field_70462_a[p_73085_1_.field_71071_by.field_70461_c] = null;
@@ -172,7 +184,7 @@
              }
  
              if (!p_73085_1_.func_71039_bw())
-@@ -301,31 +350,70 @@
+@@ -301,31 +356,70 @@
  
      public boolean func_73078_a(EntityPlayer p_73078_1_, World p_73078_2_, ItemStack p_73078_3_, int p_73078_4_, int p_73078_5_, int p_73078_6_, int p_73078_7_, float p_73078_8_, float p_73078_9_, float p_73078_10_)
      {
