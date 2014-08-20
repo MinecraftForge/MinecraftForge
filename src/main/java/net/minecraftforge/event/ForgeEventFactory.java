@@ -12,8 +12,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -22,6 +22,7 @@ import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
+import net.minecraftforge.event.entity.living.CheckBreedingItemEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
@@ -37,6 +38,13 @@ import net.minecraftforge.event.world.WorldEvent;
 
 public class ForgeEventFactory
 {
+    public static boolean isBreedingItem(EntityAnimal entity, ItemStack stack, boolean isBreedingItem)
+    {
+        CheckBreedingItemEvent event = new CheckBreedingItemEvent(entity, stack, isBreedingItem);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.isBreedingItem;
+    }
+    
     public static boolean doPlayerHarvestCheck(EntityPlayer player, Block block, boolean success)
     {
         PlayerEvent.HarvestCheck event = new PlayerEvent.HarvestCheck(player, block, success);
