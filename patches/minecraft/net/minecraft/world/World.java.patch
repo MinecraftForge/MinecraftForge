@@ -821,7 +821,7 @@
  
 -            if (Blocks.field_150441_bU.func_149907_e(block1))
 +            block1.onNeighborChange(this, i1, y, j1, p_147453_1_, p_147453_2_, p_147453_3_);
-+            if (block1.isNormalCube(this, i1, p_147453_2_, j1))
++            if (block1.isNormalCube(this, i1, y, j1))
              {
 -                block1.func_149695_a(this, i1, p_147453_2_, j1, p_147453_4_);
 -            }
