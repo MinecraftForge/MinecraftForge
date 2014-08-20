@@ -99,19 +99,33 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d())
          {
              if (this.field_72777_q.field_71474_y.field_74347_j)
-@@ -1579,6 +1608,11 @@
+@@ -1577,8 +1606,13 @@
+         }
+     }
  
-     public void func_72717_a(Tessellator p_72717_1_, EntityPlayer p_72717_2_, float p_72717_3_)
+-    public void func_72717_a(Tessellator p_72717_1_, EntityPlayer p_72717_2_, float p_72717_3_)
++    public void drawBlockDamageTexture(Tessellator p_72717_1_, EntityPlayer p_72717_2_, MovingObjectPosition p_72731_2_, float p_72717_3_)
      {
-+        drawBlockDamageTexture(p_72717_1_, (EntityLivingBase)p_72717_2_, p_72717_3_);
++        drawBlockDamageTexture(p_72717_1_, (EntityLivingBase)p_72717_2_, p_72731_2_, p_72717_3_);
 +    }
 +
-+    public void drawBlockDamageTexture(Tessellator p_72717_1_, EntityLivingBase p_72717_2_, float p_72717_3_)
++    public void drawBlockDamageTexture(Tessellator p_72717_1_, EntityLivingBase p_72717_2_, MovingObjectPosition p_72731_2_, float p_72717_3_)
 +    {
          double d0 = p_72717_2_.field_70142_S + (p_72717_2_.field_70165_t - p_72717_2_.field_70142_S) * (double)p_72717_3_;
          double d1 = p_72717_2_.field_70137_T + (p_72717_2_.field_70163_u - p_72717_2_.field_70137_T) * (double)p_72717_3_;
          double d2 = p_72717_2_.field_70136_U + (p_72717_2_.field_70161_v - p_72717_2_.field_70136_U) * (double)p_72717_3_;
-@@ -1798,12 +1832,15 @@
+@@ -1615,7 +1649,9 @@
+ 
+                     if (block.func_149688_o() != Material.field_151579_a)
+                     {
+-                        this.field_147592_B.func_147792_a(block, destroyblockprogress.func_73110_b(), destroyblockprogress.func_73109_c(), destroyblockprogress.func_73108_d(), this.field_94141_F[destroyblockprogress.func_73106_e()]);
++                        IIcon[] icons = block.getBlockDestroyIcons(p_72731_2_.field_72310_e, p_72717_2_.field_70170_p.func_72805_g(p_72731_2_.field_72311_b, p_72731_2_.field_72312_c, p_72731_2_.field_72309_d));
++                        if (icons == null) icons = field_94141_F;
++                        this.field_147592_B.func_147792_a(block, destroyblockprogress.func_73110_b(), destroyblockprogress.func_73109_c(), destroyblockprogress.func_73108_d(), icons[destroyblockprogress.func_73106_e()]);
+                     }
+                 }
+             }
+@@ -1798,12 +1834,15 @@
          {
              ItemRecord itemrecord = ItemRecord.func_150926_b(p_72702_1_);
  

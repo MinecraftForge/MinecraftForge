@@ -116,7 +116,7 @@
              GL11.glEnable(GL11.GL_BLEND);
              OpenGlHelper.func_148821_a(770, 1, 1, 0);
 -            renderglobal.func_72717_a(Tessellator.field_78398_a, (EntityPlayer)entitylivingbase, p_78471_1_);
-+            renderglobal.drawBlockDamageTexture(Tessellator.field_78398_a, entitylivingbase, p_78471_1_);
++            renderglobal.drawBlockDamageTexture(Tessellator.field_78398_a, entitylivingbase, this.field_78531_r.field_71476_x, p_78471_1_);
              GL11.glDisable(GL11.GL_BLEND);
  
              if (this.field_78532_q == 0)
