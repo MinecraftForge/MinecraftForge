@@ -32,7 +32,28 @@ public class FMLMissingMappingsEvent extends FMLEvent {
      * @author cpw
      *
      */
-    public static enum Action { DEFAULT, IGNORE, WARN, FAIL, REMAP }
+    public static enum Action {
+        /**
+         * Take the default action
+         */
+        DEFAULT,
+        /**
+         * Ignore this missing mapping. This means the mapping will be abandoned
+         */
+        IGNORE,
+        /**
+         * Generate a warning but allow loading to continue
+         */
+        WARN,
+        /**
+         * Fail to load
+         */
+        FAIL,
+        /**
+         * Remap this name to a new name (add a migration mapping)
+         */
+        REMAP
+    }
     public static class MissingMapping {
         public final GameRegistry.Type type;
         public final String name;

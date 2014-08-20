@@ -15,7 +15,6 @@ import net.minecraft.util.RegistryNamespaced;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 
 import cpw.mods.fml.common.FMLLog;
@@ -31,7 +30,8 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     // aliases redirecting legacy names to the actual name, may need recursive application to find the final name.
     // these need to be registry specific, it's possible to only have a loosely linked item for a block which may get renamed by itself.
     private final Map<String, String> aliases = new HashMap<String, String>();
-    private BiMap<String, String> persistentAliases = HashBiMap.create();
+    private BiMap<String, I> persistentSubstitutions;
+    private BiMap<String, I> activeSubstitutions = HashBiMap.create();
 
     FMLControlledNamespacedRegistry(String optionalDefault, int maxIdValue, int minIdValue, Class<I> type, char discriminator)
     {
@@ -62,9 +62,9 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
             // id -> obj lookup is inconsistent
             if (getRaw(id) != obj) throw new IllegalStateException(String.format("Registry entry for id %d, name %s, doesn't yield the expected %s %s.", id, name, type, obj));
             // name -> obj lookup is inconsistent
-            if (getRaw(name) != obj) throw new IllegalStateException(String.format("Registry entry for name %s, id %d, doesn't yield the expected %s %s.", name, id, type, obj));
+            if (!(activeSubstitutions.containsKey(name) || activeSubstitutions.containsValue(name)) && getRaw(name) != obj ) throw new IllegalStateException(String.format("Registry entry for name %s, id %d, doesn't yield the expected %s %s.", name, id, type, obj));
             // name -> id lookup is inconsistent
-            if (getId(name) != id) throw new IllegalStateException(String.format("Registry entry for name %s doesn't yield the expected id %d.", name, id));
+            if (!(activeSubstitutions.containsKey(name) || activeSubstitutions.containsValue(name)) && getId(name) != id) throw new IllegalStateException(String.format("Registry entry for name %s doesn't yield the expected id %d.", name, id));
             // id isn't marked as unavailable
             if (!availabilityMap.get(id)) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, name %s, marked as empty.", type, obj, id, name));
             // entry is blocked, thus should be empty
@@ -235,9 +235,6 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
      */
     public I getRaw(String name)
     {
-        String aliasName = persistentAliases.get(name);
-        name = aliasName != null ? aliasName : name;
-        
         I ret = superType.cast(super.getObject(name));
 
         if (ret == null) // no match, try aliases recursively
@@ -322,10 +319,6 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         return ImmutableMap.copyOf(aliases);
     }
 
-    public Map<String, String> getPersistentAliases()
-    {
-        return ImmutableBiMap.copyOf(persistentAliases);
-    }
     /**
      * Add the specified object to the registry.
      *
@@ -345,7 +338,10 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         {
             this.optionalDefaultObject = thing;
         }
-
+        if (getPersistentSubstitutions().containsValue(thing))
+        {
+            throw new IllegalArgumentException(String.format("The object %s (%s) cannot be added to the registry. It is already being used as a substitute for %s", thing.getClass(), name, getPersistentSubstitutions().inverse().get(thing)));
+        }
         int idToUse = id;
         if (idToUse < 0 || availabilityMap.get(idToUse))
         {
@@ -365,7 +361,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         {
             throw new IllegalArgumentException(String.format("The name %s has been registered twice, for %s and %s.", name, getRaw(name), thing));
         }
-        if (getId(thing) >= 0) // duplicate object
+        if (getId(thing) >= 0) // duplicate object - but only if it's not being substituted
         {
             int foundId = getId(thing);
             Object otherThing = getRaw(foundId);
@@ -376,6 +372,10 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
             FMLLog.bigWarning("The object %s (name %s) is being added too late.", thing, name);
         }
 
+        if (activeSubstitutions.containsKey(name))
+        {
+            thing = activeSubstitutions.get(name);
+        }
         addObjectRaw(idToUse, name, thing);
 
         FMLLog.finer("Registry add: %s %d %s (req. id %d)", name, idToUse, thing, id);
@@ -394,7 +394,13 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
 
         for (I thing : this.typeSafeIterable())
         {
-            if (!registry.field_148758_b.containsKey(thing)) ret.put(getNameForObject(thing), getId(thing));
+            if (!registry.field_148758_b.containsKey(thing))
+            {
+                if (!registry.activeSubstitutions.containsKey(getNameForObject(thing)))
+                {
+                    ret.put(getNameForObject(thing), getId(thing));
+                }
+            }
         }
 
         return ret;
@@ -441,11 +447,54 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         return GameData.buildDelegate(thing, clazz);
     }
 
-    public void addPersistentAlias(String fromName, String toName) throws ExistingAliasException {
-        if (persistentAliases.containsKey(fromName) || persistentAliases.containsKey(toName) || persistentAliases.containsValue(fromName) || persistentAliases.containsValue(toName))
+    void activateSubstitution(String nameToReplace)
+    {
+        if (getPersistentSubstitutions().containsKey(nameToReplace))
         {
-            throw new ExistingAliasException(fromName, toName);
+            activeSubstitutions.put(nameToReplace, getPersistentSubstitutions().get(nameToReplace));
         }
-        persistentAliases.put(fromName, toName);
+    }
+
+    public void addSubstitutionAlias(String modId, String nameToReplace, Object toReplace) throws ExistingSubstitutionException {
+        if (getPersistentSubstitutions().containsKey(nameToReplace) || getPersistentSubstitutions().containsValue(toReplace))
+        {
+            FMLLog.severe("The substitution of %s has already occured. You cannot duplicate substitutions", nameToReplace);
+            throw new ExistingSubstitutionException(nameToReplace, toReplace);
+        }
+        I replacement = superType.cast(toReplace);
+        I original = getRaw(nameToReplace);
+        if (!original.getClass().isAssignableFrom(replacement.getClass()))
+        {
+            FMLLog.severe("The substitute %s for %s (type %s) is type incompatible. This won't work", replacement.getClass().getName(), nameToReplace, original.getClass().getName());
+            throw new IncompatibleSubstitutionException(nameToReplace, replacement, original);
+        }
+        int existingId = getId(replacement);
+        if (existingId != -1)
+        {
+            FMLLog.severe("The substitute %s for %s is registered into the game independently. This won't work", replacement.getClass().getName(), nameToReplace);
+            throw new IllegalArgumentException("The object substitution is already registered. This won't work");
+        }
+        getPersistentSubstitutions().put(nameToReplace, replacement);
+    }
+
+    public void serializeSubstitutions(Set<String> blockSubs)
+    {
+        blockSubs.addAll(activeSubstitutions.keySet());
+    }
+
+    @Override
+    public int getIDForObject(Object p_148757_1_)
+    {
+
+        int id = super.getIDForObject(p_148757_1_);
+        return id;
+    }
+    private BiMap<String, I> getPersistentSubstitutions()
+    {
+        if (persistentSubstitutions == null)
+        {
+            persistentSubstitutions = GameData.getMain().getPersistentSubstitutionMap(superType);
+        }
+        return persistentSubstitutions;
     }
 }

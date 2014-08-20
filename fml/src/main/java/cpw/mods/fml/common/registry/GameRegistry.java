@@ -146,18 +146,19 @@ public class GameRegistry
 
 
     /**
-     * Add a forced persistent alias for the block or item to another block or item. This will have
-     * the effect of using the substituted block or item instead of the original, whereever it is
+     * Add a forced persistent substitution alias for the block or item to another block or item. This will have
+     * the effect of using the substituted block or item instead of the original, where ever it is
      * referenced.
-     * 
-     * @param toName The name to link to (this is the NEW block or item)
-     * @param fromName The name to link from (this is the OLD block or item being substituted)
+     *
+     * @param nameToSubstitute The name to link to (this is the NEW block or item)
      * @param type The type (Block or Item)
-     * @throws ExistingAliasException if someone else has already registered an alias either from or to one of the names
+     * @param object a NEW instance that is type compatible with the existing instance
+     * @throws ExistingSubstitutionException if someone else has already registered an alias either from or to one of the names
+     * @throws IncompatibleSubstitutionException if the substitution is incompatible
      */
-    public static void addAlias(String toName, String fromName, GameRegistry.Type type) throws ExistingAliasException
+    public static void addSubstitutionAlias(String nameToSubstitute, GameRegistry.Type type, Object object) throws ExistingSubstitutionException
     {
-        GameData.getMain().registerPersistentAlias(fromName, toName, type);
+        GameData.getMain().registerSubstitutionAlias(nameToSubstitute, type, object);
     }
 
     /**
@@ -406,7 +407,7 @@ public class GameRegistry
         }
     }
 
-    public static enum Type { 
+    public static enum Type {
         BLOCK
         {
             @Override

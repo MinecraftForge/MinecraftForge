@@ -34,11 +34,14 @@ import org.apache.logging.log4j.Level;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.base.Joiner.MapJoiner;
+import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 import com.google.common.io.Files;
 
@@ -112,12 +115,27 @@ public class GameData {
 
     // internal from here
 
-    public static Map<String,Integer> buildItemDataList()
+    public static class GameDataSnapshot {
+        public final Map<String,Integer> idMap;
+        public final Set<String> blockSubstitutions;
+        public final Set<String> itemSubstitutions;
+        public GameDataSnapshot(Map<String, Integer> idMap, Set<String> blockSubstitutions, Set<String> itemSubstitutions)
+        {
+            this.idMap = idMap;
+            this.blockSubstitutions = blockSubstitutions;
+            this.itemSubstitutions = itemSubstitutions;
+        }
+    }
+    public static GameDataSnapshot buildItemDataList()
     {
         Map<String,Integer> idMapping = Maps.newHashMap();
         getMain().iBlockRegistry.serializeInto(idMapping);
         getMain().iItemRegistry.serializeInto(idMapping);
-        return idMapping;
+        Set<String> blockSubs = Sets.newHashSet();
+        getMain().iBlockRegistry.serializeSubstitutions(blockSubs);
+        Set<String> itemSubs = Sets.newHashSet();
+        getMain().iItemRegistry.serializeSubstitutions(itemSubs);
+        return new GameDataSnapshot(idMapping, blockSubs, itemSubs);
     }
 
     public static int[] getBlockedIds()
@@ -407,12 +425,12 @@ public class GameData {
         blockedIds.addAll(newBlockedIds);
     }
 
-    public static List<String> injectWorldIDMap(Map<String, Integer> dataList, boolean injectFrozenData, boolean isLocalWorld)
+    public static List<String> injectWorldIDMap(Map<String, Integer> dataList, Set<String> blockSubstitutions, Set<String> itemSubstitutions, boolean injectFrozenData, boolean isLocalWorld)
     {
-        return injectWorldIDMap(dataList, new HashSet<Integer>(), new HashMap<String, String>(), new HashMap<String, String>(), injectFrozenData, isLocalWorld);
+        return injectWorldIDMap(dataList, new HashSet<Integer>(), new HashMap<String, String>(), new HashMap<String, String>(), blockSubstitutions, itemSubstitutions, injectFrozenData, isLocalWorld);
     }
 
-    public static List<String> injectWorldIDMap(Map<String, Integer> dataList, Set<Integer> blockedIds, Map<String, String> blockAliases, Map<String, String> itemAliases, boolean injectFrozenData, boolean isLocalWorld)
+    public static List<String> injectWorldIDMap(Map<String, Integer> dataList, Set<Integer> blockedIds, Map<String, String> blockAliases, Map<String, String> itemAliases, Set<String> blockSubstitutions, Set<String> itemSubstitutions, boolean injectFrozenData, boolean isLocalWorld)
     {
         FMLLog.info("Injecting existing block and item data into this %s instance", FMLCommonHandler.instance().getEffectiveSide().isServer() ? "server" : "client");
         Map<String, Integer[]> remaps = Maps.newHashMap();
@@ -438,6 +456,31 @@ public class GameData {
             newData.iItemRegistry.addAlias(entry.getKey(), entry.getValue());
         }
 
+        for (String entry : blockSubstitutions)
+        {
+            newData.iBlockRegistry.activateSubstitution(entry);
+        }
+        for (String entry : itemSubstitutions)
+        {
+            newData.iItemRegistry.activateSubstitution(entry);
+        }
+        if (injectFrozenData)
+        {
+            for (String newBlockSubstitution : getMain().blockSubstitutions.keySet())
+            {
+                if (!blockSubstitutions.contains(newBlockSubstitution))
+                {
+                    newData.iBlockRegistry.activateSubstitution(newBlockSubstitution);
+                }
+            }
+            for (String newItemSubstitution : getMain().itemSubstitutions.keySet())
+            {
+                if (!itemSubstitutions.contains(newItemSubstitution))
+                {
+                    newData.iItemRegistry.activateSubstitution(newItemSubstitution);
+                }
+            }
+        }
         // process blocks and items in the world, blocks in the first pass, items in the second
         // blocks need to be added first for proper ItemBlock handling
         for (int pass = 0; pass < 2; pass++)
@@ -479,10 +522,11 @@ public class GameData {
 
                 if (currId != newId)
                 {
-                    throw new IllegalStateException(String.format("Can't map %s %s to id %d, already occupied by %s, blocked %b, ItemBlock %b",
+                    throw new IllegalStateException(String.format("Can't map %s %s to id %d (seen at: %d), already occupied by %s, blocked %b, ItemBlock %b",
                             isBlock ? "block" : "item",
                                     itemName,
                                     newId,
+                                    currId,
                                     isBlock ? newData.iBlockRegistry.getRaw(newId) : newData.iItemRegistry.getRaw(newId),
                                     newData.blockedIds.contains(newId),
                                     isBlock ? false : (getMain().iItemRegistry.getRaw(currId) instanceof ItemBlock)));
@@ -763,6 +807,10 @@ public class GameData {
         if (item instanceof ItemBlock) // ItemBlock, adjust id and clear the slot already occupied by the corresponding block
         {
             Block block = ((ItemBlock) item).field_150939_a;
+            if (idHint != -1 && getMain().blockSubstitutions.containsKey(name))
+            {
+                block = getMain().blockSubstitutions.get(name);
+            }
             int id = iBlockRegistry.getId(block);
 
             if (id == -1) // ItemBlock before its Block
@@ -948,13 +996,32 @@ public class GameData {
 
         FMLLog.fine("Registry consistency check successful");
     }
-    
-    void registerPersistentAlias(String fromName, String toName, GameRegistry.Type type) throws ExistingAliasException
+
+    void registerSubstitutionAlias(String nameToSubstitute, Type type, Object toReplace) throws ExistingSubstitutionException
     {
-        type.getRegistry().addPersistentAlias(fromName, toName);
+        type.getRegistry().addSubstitutionAlias(Loader.instance().activeModContainer().getModId(),nameToSubstitute, toReplace);
     }
     static <T> RegistryDelegate<T> buildDelegate(T referant, Class<T> type)
     {
         return new RegistryDelegate.Delegate<T>(referant, type);
+    }
+
+    private BiMap<String, Item> itemSubstitutions = HashBiMap.create();
+    private BiMap<String, Block> blockSubstitutions = HashBiMap.create();
+    @SuppressWarnings("unchecked")
+    <T> BiMap<String, T> getPersistentSubstitutionMap(Class<T> type)
+    {
+        if (type.equals(Item.class))
+        {
+            return (BiMap<String, T>) itemSubstitutions;
+        }
+        else if (type.equals(Block.class))
+        {
+            return (BiMap<String, T>) blockSubstitutions;
+        }
+        else
+        {
+            throw new RuntimeException("WHAT?");
+        }
     }
 }

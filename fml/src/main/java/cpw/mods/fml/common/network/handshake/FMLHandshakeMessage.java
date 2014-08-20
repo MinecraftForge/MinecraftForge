@@ -13,11 +13,13 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+import cpw.mods.fml.common.registry.GameData;
 
 public abstract class FMLHandshakeMessage {
     public static FMLProxyPacket makeCustomChannelRegistration(Set<String> channels)
@@ -128,21 +130,42 @@ public abstract class FMLHandshakeMessage {
 
         }
 
-        public ModIdData(Map<String,Integer> modIds)
+        public ModIdData(GameData.GameDataSnapshot snapshot)
         {
-            this.modIds = modIds;
+            this.modIds = snapshot.idMap;
+            this.blockSubstitutions = snapshot.blockSubstitutions;
+            this.itemSubstitutions = snapshot.itemSubstitutions;
         }
 
         private Map<String,Integer> modIds;
+        private Set<String> blockSubstitutions;
+        private Set<String> itemSubstitutions;
         @Override
         public void fromBytes(ByteBuf buffer)
         {
             int length = ByteBufUtils.readVarInt(buffer, 3);
             modIds = Maps.newHashMap();
+            blockSubstitutions = Sets.newHashSet();
+            itemSubstitutions = Sets.newHashSet();
 
             for (int i = 0; i < length; i++)
             {
                 modIds.put(ByteBufUtils.readUTF8String(buffer),ByteBufUtils.readVarInt(buffer, 3));
+            }
+            // we don't have any more data to read
+            if (!buffer.isReadable())
+            {
+                return;
+            }
+            length = ByteBufUtils.readVarInt(buffer, 3);
+            for (int i = 0; i < length; i++)
+            {
+                blockSubstitutions.add(ByteBufUtils.readUTF8String(buffer));
+            }
+            length = ByteBufUtils.readVarInt(buffer, 3);
+            for (int i = 0; i < length; i++)
+            {
+                itemSubstitutions.add(ByteBufUtils.readUTF8String(buffer));
             }
         }
 
@@ -155,12 +178,33 @@ public abstract class FMLHandshakeMessage {
                 ByteBufUtils.writeUTF8String(buffer, entry.getKey());
                 ByteBufUtils.writeVarInt(buffer, entry.getValue(), 3);
             }
+
+            ByteBufUtils.writeVarInt(buffer, blockSubstitutions.size(), 3);
+            for (String entry: blockSubstitutions)
+            {
+                ByteBufUtils.writeUTF8String(buffer, entry);
+            }
+            ByteBufUtils.writeVarInt(buffer, blockSubstitutions.size(), 3);
+
+            for (String entry: itemSubstitutions)
+            {
+                ByteBufUtils.writeUTF8String(buffer, entry);
+            }
         }
 
         public Map<String,Integer> dataList()
         {
             return modIds;
         }
+        public Set<String> blockSubstitutions()
+        {
+            return blockSubstitutions;
+        }
+        public Set<String> itemSubstitutions()
+        {
+            return itemSubstitutions;
+        }
+
         @Override
         public String toString(Class<? extends Enum<?>> side)
         {
