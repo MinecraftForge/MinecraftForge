@@ -42,7 +42,7 @@ public class FMLSanityChecker implements IFMLCallHook
     private static final String FORGEFINGERPRINT = "E3:C3:D5:0C:7C:98:6D:F7:4C:64:5C:0A:C5:46:39:74:1C:90:A5:57".toLowerCase().replace(":", "");
     private static final String MCFINGERPRINT =    "CD:99:95:96:56:F7:53:DC:28:D8:63:B4:67:69:F7:F8:FB:AE:FC:FC".toLowerCase().replace(":", "");
     private LaunchClassLoader cl;
-    private Boolean liveEnv;
+    private boolean liveEnv;
     public static File fmlLocation;
 
     @Override

@@ -115,6 +115,7 @@ public class CoreModManager {
                 {
                     IFMLCallHook call = (IFMLCallHook) Class.forName(setupClass, true, classLoader).newInstance();
                     Map<String, Object> callData = new HashMap<String, Object>();
+                    callData.put("runtimeDeobfuscationEnabled", !deobfuscatedEnvironment);
                     callData.put("mcLocation", mcDir);
                     callData.put("classLoader", classLoader);
                     callData.put("coremodLocation", location);
@@ -249,7 +250,7 @@ public class CoreModManager {
         }
 
         ObjectArrays.concat(coreModList, ModListHelper.additionalMods.toArray(new File[0]), File.class);
-        
+
         coreModList = FileListHelper.sortFileList(coreModList);
 
         for (File coreMod : coreModList)
