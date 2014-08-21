@@ -455,7 +455,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         }
     }
 
-    public void addSubstitutionAlias(String modId, String nameToReplace, Object toReplace) throws ExistingSubstitutionException {
+    void addSubstitutionAlias(String modId, String nameToReplace, Object toReplace) throws ExistingSubstitutionException {
         if (getPersistentSubstitutions().containsKey(nameToReplace) || getPersistentSubstitutions().containsValue(toReplace))
         {
             FMLLog.severe("The substitution of %s has already occured. You cannot duplicate substitutions", nameToReplace);
@@ -463,6 +463,10 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         }
         I replacement = superType.cast(toReplace);
         I original = getRaw(nameToReplace);
+        if (original == null)
+        {
+            throw new NullPointerException("The replacement target is not present. This won't work");
+        }
         if (!original.getClass().isAssignableFrom(replacement.getClass()))
         {
             FMLLog.severe("The substitute %s for %s (type %s) is type incompatible. This won't work", replacement.getClass().getName(), nameToReplace, original.getClass().getName());
@@ -482,13 +486,6 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         blockSubs.addAll(activeSubstitutions.keySet());
     }
 
-    @Override
-    public int getIDForObject(Object p_148757_1_)
-    {
-
-        int id = super.getIDForObject(p_148757_1_);
-        return id;
-    }
     private BiMap<String, I> getPersistentSubstitutions()
     {
         if (persistentSubstitutions == null)
