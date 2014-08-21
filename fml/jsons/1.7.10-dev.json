@@ -8,7 +8,7 @@
   "assets": "1.7.10",
   "libraries": [
     {
-      "name": "net.minecraft:launchwrapper:1.10"
+      "name": "net.minecraft:launchwrapper:1.11"
     },
     {
       "name": "org.ow2.asm:asm-debug-all:5.0.3",
