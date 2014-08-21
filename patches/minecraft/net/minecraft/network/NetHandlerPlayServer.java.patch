@@ -103,20 +103,7 @@
                  {
                      return;
                  }
-@@ -500,7 +532,11 @@
-                 return;
-             }
- 
--            this.field_147369_b.field_71134_c.func_73085_a(this.field_147369_b, worldserver, itemstack);
-+            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(field_147369_b, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, 0, 0, 0, -1, worldserver);
-+            if (event.useItem != Event.Result.DENY)
-+            {
-+                this.field_147369_b.field_71134_c.func_73085_a(this.field_147369_b, worldserver, itemstack);
-+            }
-         }
-         else if (p_147346_1_.func_149571_d() >= this.field_147367_d.func_71207_Z() - 1 && (p_147346_1_.func_149568_f() == 1 || p_147346_1_.func_149571_d() >= this.field_147367_d.func_71207_Z()))
-         {
-@@ -511,7 +547,9 @@
+@@ -511,7 +543,9 @@
          }
          else
          {
@@ -127,7 +114,7 @@
              {
                  this.field_147369_b.field_71134_c.func_73078_a(this.field_147369_b, worldserver, itemstack, i, j, k, l, p_147346_1_.func_149573_h(), p_147346_1_.func_149569_i(), p_147346_1_.func_149575_j());
              }
-@@ -677,6 +715,8 @@
+@@ -677,6 +711,8 @@
              else
              {
                  ChatComponentTranslation chatcomponenttranslation1 = new ChatComponentTranslation("chat.type.text", new Object[] {this.field_147369_b.func_145748_c_(), s});
@@ -136,7 +123,7 @@
                  this.field_147367_d.func_71203_ab().func_148544_a(chatcomponenttranslation1, false);
              }
  
-@@ -812,7 +852,7 @@
+@@ -812,7 +848,7 @@
                          return;
                      }
  
