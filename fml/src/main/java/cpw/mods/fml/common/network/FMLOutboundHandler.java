@@ -276,12 +276,14 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
         if (dispatchers == null)
         {
             ctx.write(msg, promise);
+            promise.setSuccess();
             return;
         }
         for (NetworkDispatcher targetDispatcher : dispatchers)
         {
             targetDispatcher.sendProxy((FMLProxyPacket) msg);
         }
+        promise.setSuccess();
     }
 
 }
