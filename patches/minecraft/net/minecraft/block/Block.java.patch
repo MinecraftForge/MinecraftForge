@@ -199,7 +199,7 @@
      }
  
      protected ItemStack func_149644_j(int p_149644_1_)
-@@ -1114,6 +1153,1099 @@
+@@ -1114,6 +1153,1106 @@
          return null;
      }
  
@@ -836,9 +836,16 @@
 +    /**
 +     * Called when a user uses the creative pick block button on this block
 +     *
++     * @param player The player using pickBlock
 +     * @param target The full target the player is looking at
 +     * @return A ItemStack to add to the player's inventory, Null if nothing should be added.
 +     */
++    public ItemStack getPickBlock(EntityPlayer player, MovingObjectPosition target, World world, int x, int y, int z)
++    {
++        return getPickBlock(target, world, x, y, z);
++    }
++
++    @Deprecated
 +    public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z)
 +    {
 +        Item item = func_149694_d(world, x, y, z);

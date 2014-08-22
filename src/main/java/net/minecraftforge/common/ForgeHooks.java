@@ -219,7 +219,7 @@ public class ForgeHooks
                 return false;
             }
 
-            result = block.getPickBlock(target, world, x, y, z);
+            result = block.getPickBlock(player, target, world, x, y, z);
         }
         else
         {
