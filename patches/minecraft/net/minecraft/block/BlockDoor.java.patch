@@ -18,3 +18,27 @@
      }
  
      public int func_149656_h()
+@@ -410,4 +410,23 @@
+             p_149681_1_.func_147468_f(p_149681_2_, p_149681_3_ - 1, p_149681_4_);
+         }
+     }
++    
++    /* ======================================== FORGE START =====================================*/
++    
++    /**
++     * <p>Determine if the given interaction ({@code TOGGLE} or {@code BREAK}) can be performed on this door by an AI task.</p>
++     * @param world the World
++     * @param x the X coordinate
++     * @param y the Y coordinate
++     * @param z the Z coordinate
++     * @param entity the Entity interacting with the door
++     * @param type the type of interaction to be performed
++     * @return true if the interaction can be performed
++     */
++    public boolean canAIInteract(World world, int x, int y, int z, net.minecraft.entity.EntityLivingBase entity, net.minecraftforge.common.AIDoorInteraction type)
++    {
++        return net.minecraft.init.Blocks.field_150466_ao == this;
++    }
++    
++    /* ========================================= FORGE END ======================================*/
+ }
