@@ -7,6 +7,7 @@ import java.util.Set;
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDoor;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -459,5 +460,19 @@ public class ForgeHooks
         }
         te.note = (byte)e.getVanillaNoteId();
         return true;
+    }
+    
+    public static BlockDoor chooseAIDoorBlock(World world, int x, int y, int z, EntityLivingBase entity, boolean isBreaking)
+    {
+        Block block = world.getBlock(x, y, z);
+        if (block instanceof BlockDoor)
+        {
+            BlockDoor door = (BlockDoor) block;
+            if (door.canAIInteract(world, x, y, z, entity, isBreaking ? AIDoorInteraction.BREAK : AIDoorInteraction.TOGGLE))
+            {
+                return door;
+            }
+        }
+        return null;
     }
 }

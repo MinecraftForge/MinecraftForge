@@ -1,0 +1,8 @@
+--- ../src-base/minecraft/net/minecraft/entity/ai/EntityAIBreakDoor.java
++++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAIBreakDoor.java
+@@ -63,4 +63,5 @@
+             this.field_75356_a.field_70170_p.func_72926_e(2001, this.field_75354_b, this.field_75355_c, this.field_75352_d, Block.func_149682_b(this.field_151504_e));
+         }
+     }
++    boolean breaksDoor() { return true; }
+ }
