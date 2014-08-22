@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.Set;
 
 import cpw.mods.fml.common.eventhandler.Event;
+import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,6 +41,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.entity.MobSpawnerSpawnEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -459,5 +463,21 @@ public class ForgeHooks
         }
         te.note = (byte)e.getVanillaNoteId();
         return true;
+    }
+    
+    public static boolean doEntitySpawnSpawnerCheck(Entity entity, EntityLiving living)
+    {
+        MobSpawnerSpawnEvent event = new MobSpawnerSpawnEvent(entity, living);
+        MinecraftForge.EVENT_BUS.post(event);
+        Result result = event.getResult();
+        
+        if (result == Result.DEFAULT)
+        {
+            return living == null || living.getCanSpawnHere();
+        }
+        else
+        {
+            return result == Result.ALLOW;
+        }
     }
 }

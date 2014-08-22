@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/MobSpawnerBaseLogic.java
++++ ../src-work/minecraft/net/minecraft/tileentity/MobSpawnerBaseLogic.java
+@@ -121,7 +121,7 @@
+                     EntityLiving entityliving = entity instanceof EntityLiving ? (EntityLiving)entity : null;
+                     entity.func_70012_b(d2, d3, d4, this.func_98271_a().field_73012_v.nextFloat() * 360.0F, 0.0F);
+ 
+-                    if (entityliving == null || entityliving.func_70601_bi())
++                    if (net.minecraftforge.common.ForgeHooks.doEntitySpawnSpawnerCheck(entity, entityliving))
+                     {
+                         this.func_98265_a(entity);
+                         this.func_98271_a().func_72926_e(2004, this.func_98275_b(), this.func_98274_c(), this.func_98266_d(), 0);
