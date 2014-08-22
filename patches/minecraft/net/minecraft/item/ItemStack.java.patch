@@ -9,6 +9,10 @@
  public final class ItemStack
  {
 @@ -181,7 +182,7 @@
+     public ItemStack(Item p_i1881_1_, int p_i1881_2_, int p_i1881_3_)
+     {
++        MinecraftForge.EVENT_BUS.post(new ItemStackCreateEvent(this));
+     }
  
      public int func_77976_d()
      {
