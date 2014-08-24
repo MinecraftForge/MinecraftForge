@@ -34,17 +34,7 @@
      }
  
      public float func_150893_a(ItemStack p_150893_1_, Block p_150893_2_)
-@@ -74,7 +88,8 @@
- 
-     public boolean func_82789_a(ItemStack p_82789_1_, ItemStack p_82789_2_)
-     {
--        return this.field_77862_b.func_150995_f() == p_82789_2_.func_77973_b() ? true : super.func_82789_a(p_82789_1_, p_82789_2_);
-+        // Forge fix to allow metadata
-+        return this.field_77862_b.func_150995_f() != null && (this.field_77862_b.func_150995_f().func_77969_a(p_82789_2_) ? true : super.func_82789_a(p_82789_1_, p_82789_2_));
-     }
- 
-     public Multimap func_111205_h()
-@@ -83,4 +98,37 @@
+@@ -83,4 +97,37 @@
          multimap.put(SharedMonsterAttributes.field_111264_e.func_111108_a(), new AttributeModifier(field_111210_e, "Tool modifier", (double)this.field_77865_bY, 0));
          return multimap;
      }
