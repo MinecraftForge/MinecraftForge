@@ -686,18 +686,24 @@
      public static enum ToolMaterial
      {
          WOOD(0, 59, 2.0F, 0.0F, 15),
-@@ -741,6 +1334,9 @@
+@@ -741,6 +1334,12 @@
  
          private static final String __OBFID = "CL_00000042";
  
 +        //Added by forge for custom Tool materials.
++        @Deprecated
 +        public Item customCraftingMaterial = null;
++        // Added to allow metadata sensitive crafting and repairing
++        private ItemStack properCustomCraftingMaterial;
 +
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -777,7 +1373,15 @@
+@@ -775,9 +1374,33 @@
+             return this.field_78008_j;
+         }
  
++        @Deprecated
          public Item func_150995_f()
          {
 -            return this == WOOD ? Item.func_150898_a(Blocks.field_150344_f) : (this == STONE ? Item.func_150898_a(Blocks.field_150347_e) : (this == GOLD ? Items.field_151043_k : (this == IRON ? Items.field_151042_j : (this == EMERALD ? Items.field_151045_i : null))));
@@ -711,5 +717,20 @@
 +                default:      return customCraftingMaterial;
 +            }
          }
++        
++        public ToolMaterial setCraftingMaterial(ItemStack craftingMaterial)
++        {
++            properCustomCraftingMaterial = craftingMaterial;
++            return this;
++        }
++        
++        public ItemStack getCraftingMaterial()
++        {
++            if (properCustomCraftingMaterial == null && func_150995_f() != null)
++            {
++                properCustomCraftingMaterial = new ItemStack(func_150995_f());
++            }
++            return properCustomCraftingMaterial;
++        }
      }
  }
