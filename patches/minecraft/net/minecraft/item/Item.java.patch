@@ -690,24 +690,27 @@
  
          private static final String __OBFID = "CL_00000042";
  
-+        //Added by forge for custom Tool materials.
-+        public Item customCraftingMaterial = null;
++        // Added by forge for custom Tool materials.
++        public ItemStack customCraftingMaterial = null;
 +
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -777,7 +1373,15 @@
+@@ -775,9 +1371,17 @@
+             return this.field_78008_j;
+         }
  
-         public Item func_150995_f()
+-        public Item func_150995_f()
++        public ItemStack func_150995_f()
          {
 -            return this == WOOD ? Item.func_150898_a(Blocks.field_150344_f) : (this == STONE ? Item.func_150898_a(Blocks.field_150347_e) : (this == GOLD ? Items.field_151043_k : (this == IRON ? Items.field_151042_j : (this == EMERALD ? Items.field_151045_i : null))));
 +            switch (this)
 +            {
-+                case WOOD:    return Item.func_150898_a(Blocks.field_150344_f);
-+                case STONE:   return Item.func_150898_a(Blocks.field_150347_e);
-+                case GOLD:    return Items.field_151043_k;
-+                case IRON:    return Items.field_151042_j;
-+                case EMERALD: return Items.field_151045_i;
++                case WOOD:    return new ItemStack(Blocks.field_150344_f);
++                case STONE:   return new ItemStack(Blocks.field_150347_e);
++                case GOLD:    return new ItemStack(Items.field_151043_k);
++                case IRON:    return new ItemStack(Items.field_151042_j);
++                case EMERALD: return new ItemStack(Items.field_151045_i);
 +                default:      return customCraftingMaterial;
 +            }
          }
