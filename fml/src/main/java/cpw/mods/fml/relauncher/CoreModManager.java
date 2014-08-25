@@ -534,7 +534,10 @@ public class CoreModManager {
     {
         @SuppressWarnings("unchecked")
         List<ITweaker> tweakers = (List<ITweaker>) Launch.blackboard.get("Tweaks");
-        Collections.sort(tweakers, new Comparator<ITweaker>() {
+        // Basically a copy of Collections.sort pre 8u20, optimized as we know we're an array list.
+        // Thanks unhelpful fixer of http://bugs.java.com/view_bug.do?bug_id=8032636
+        ITweaker[] toSort = tweakers.toArray(new ITweaker[tweakers.size()]);
+        Arrays.sort(toSort, new Comparator<ITweaker>() {
             @Override
             public int compare(ITweaker o1, ITweaker o2)
             {
@@ -577,6 +580,11 @@ public class CoreModManager {
                 return Ints.saturatedCast((long)first - (long)second);
             }
         });
+        // Basically a copy of Collections.sort, optimized as we know we're an array list.
+        // Thanks unhelpful fixer of http://bugs.java.com/view_bug.do?bug_id=8032636
+        for (int j = 0; j < toSort.length; j++) {
+            tweakers.set(j, toSort[j]);
+        }
     }
 
     public static List<String> getAccessTransformers()
