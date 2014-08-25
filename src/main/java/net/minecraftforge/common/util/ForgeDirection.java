@@ -1,5 +1,7 @@
 package net.minecraftforge.common.util;
 
+import net.minecraft.util.Vec3;
+
 public enum ForgeDirection
 {
     /** -Y */
@@ -29,6 +31,7 @@ public enum ForgeDirection
     public final int offsetY;
     public final int offsetZ;
     public final int flag;
+    private final Vec3 dir;
     public static final ForgeDirection[] VALID_DIRECTIONS = {DOWN, UP, NORTH, SOUTH, WEST, EAST};
     public static final int[] OPPOSITES = {1, 0, 3, 2, 5, 4, 6};
     // Left hand rule rotation matrix for all possible axes of rotation
@@ -48,6 +51,7 @@ public enum ForgeDirection
         offsetY = y;
         offsetZ = z;
         flag = 1 << ordinal();
+        dir = Vec3.createVectorHelper(x, y, z);
     }
 
     public static ForgeDirection getOrientation(int id)
@@ -67,5 +71,10 @@ public enum ForgeDirection
     public ForgeDirection getRotation(ForgeDirection axis)
     {
     	return getOrientation(ROTATION_MATRIX[axis.ordinal()][ordinal()]);
+    }
+    
+    public Vec3 getDirectionVec()
+    {
+        return dir;
     }
 }
