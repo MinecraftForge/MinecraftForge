@@ -53,7 +53,15 @@
  
  public class Block
  {
-@@ -110,7 +131,8 @@
+@@ -101,6 +122,7 @@
+     private String field_149770_b;
+     @SideOnly(Side.CLIENT)
+     protected IIcon field_149761_L;
++    public static final List<Block> beaconBases = java.util.Arrays.asList(Blocks.field_150475_bE, Blocks.field_150484_ah, Blocks.field_150340_R, Blocks.field_150339_S);
+     private static final String __OBFID = "CL_00000199";
+ 
+     public static int func_149682_b(Block p_149682_0_)
+@@ -110,7 +132,8 @@
  
      public static Block func_149729_e(int p_149729_0_)
      {
@@ -63,7 +71,7 @@
      }
  
      public static Block func_149634_a(Item p_149634_0_)
-@@ -481,9 +503,10 @@
+@@ -481,9 +504,10 @@
          return this.field_149789_z;
      }
  
@@ -75,7 +83,7 @@
      }
  
      public final void func_149676_a(float p_149676_1_, float p_149676_2_, float p_149676_3_, float p_149676_4_, float p_149676_5_, float p_149676_6_)
-@@ -500,13 +523,13 @@
+@@ -500,13 +524,13 @@
      public int func_149677_c(IBlockAccess p_149677_1_, int p_149677_2_, int p_149677_3_, int p_149677_4_)
      {
          Block block = p_149677_1_.func_147439_a(p_149677_2_, p_149677_3_, p_149677_4_);
@@ -91,7 +99,7 @@
          }
          else
          {
-@@ -595,7 +618,13 @@
+@@ -595,7 +619,13 @@
  
      public void func_149726_b(World p_149726_1_, int p_149726_2_, int p_149726_3_, int p_149726_4_) {}
  
@@ -106,7 +114,7 @@
  
      public int func_149745_a(Random p_149745_1_)
      {
-@@ -609,8 +638,7 @@
+@@ -609,8 +639,7 @@
  
      public float func_149737_a(EntityPlayer p_149737_1_, World p_149737_2_, int p_149737_3_, int p_149737_4_, int p_149737_5_)
      {
@@ -116,7 +124,7 @@
      }
  
      public final void func_149697_b(World p_149697_1_, int p_149697_2_, int p_149697_3_, int p_149697_4_, int p_149697_5_, int p_149697_6_)
-@@ -622,18 +650,14 @@
+@@ -622,18 +651,14 @@
      {
          if (!p_149690_1_.field_72995_K)
          {
@@ -139,7 +147,7 @@
                  }
              }
          }
-@@ -643,6 +667,11 @@
+@@ -643,6 +668,11 @@
      {
          if (!p_149642_1_.field_72995_K && p_149642_1_.func_82736_K().func_82766_b("doTileDrops"))
          {
@@ -151,7 +159,7 @@
              float f = 0.7F;
              double d0 = (double)(p_149642_1_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
              double d1 = (double)(p_149642_1_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-@@ -827,7 +856,7 @@
+@@ -827,7 +857,7 @@
  
      public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
      {
@@ -160,7 +168,7 @@
      }
  
      public boolean func_149727_a(World p_149727_1_, int p_149727_2_, int p_149727_3_, int p_149727_4_, EntityPlayer p_149727_5_, int p_149727_6_, float p_149727_7_, float p_149727_8_, float p_149727_9_)
-@@ -920,25 +949,35 @@
+@@ -920,25 +950,35 @@
          p_149636_2_.func_71064_a(StatList.field_75934_C[func_149682_b(this)], 1);
          p_149636_2_.func_71020_j(0.025F);
  
@@ -199,7 +207,7 @@
      }
  
      protected ItemStack func_149644_j(int p_149644_1_)
-@@ -1114,6 +1153,1099 @@
+@@ -1114,6 +1154,1099 @@
          return null;
      }
  
@@ -1061,7 +1069,7 @@
 +     */
 +    public boolean isBeaconBase(IBlockAccess worldObj, int x, int y, int z, int beaconX, int beaconY, int beaconZ)
 +    {
-+        return this == Blocks.field_150475_bE || this == Blocks.field_150340_R || this == Blocks.field_150484_ah || this == Blocks.field_150339_S;
++        return beaconBases.contains(this);
 +    }
 +
 +    /**
