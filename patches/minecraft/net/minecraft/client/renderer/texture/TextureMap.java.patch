@@ -40,7 +40,15 @@
              try
              {
                  IResource iresource = p_110571_1_.func_110536_a(resourcelocation1);
-@@ -274,6 +288,7 @@
+@@ -151,6 +165,7 @@
+                     }
+                 }
+ 
++                for (int index = 0; index < abufferedimage.length; index++) { abufferedimage[index] = applyTransformation(abufferedimage[index]); }
+                 AnimationMetadataSection animationmetadatasection = (AnimationMetadataSection)iresource.func_110526_a("animation");
+                 textureatlassprite.func_147964_a(abufferedimage, animationmetadatasection, (float)this.field_147637_k > 1.0F);
+             }
+@@ -274,6 +289,7 @@
              textureatlassprite = (TextureAtlasSprite)iterator2.next();
              textureatlassprite.func_94217_a(this.field_94249_f);
          }
@@ -48,7 +56,7 @@
      }
  
      private ResourceLocation func_147634_a(ResourceLocation p_147634_1_, int p_147634_2_)
-@@ -347,7 +362,7 @@
+@@ -347,7 +363,7 @@
          {
              throw new IllegalArgumentException("Name cannot be null!");
          }
@@ -57,7 +65,7 @@
          {
              Object object = (TextureAtlasSprite)this.field_110574_e.get(p_94245_1_);
  
-@@ -403,4 +418,37 @@
+@@ -403,4 +419,47 @@
      {
          this.field_147637_k = p_147632_1_;
      }
@@ -93,5 +101,15 @@
 +            return true;
 +        }
 +        return false;
++    }
++
++    /**
++     * Applies transformation(s) to the given image and returns it's reference.
++     *
++     * @param image The image before it's loaded by the texture atlas.
++     * @return The transformed image.
++     */
++    public BufferedImage applyTransformation(BufferedImage image) {
++        return image;
 +    }
  }
