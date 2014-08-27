@@ -125,6 +125,11 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
         @Override
         public FMLHandshakeClientState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
         {
+            if (msg instanceof FMLHandshakeMessage.HandshakeReset)
+            {
+                GameData.revertToFrozen();
+                return HELLO;
+            }
             return this;
         }
     },
