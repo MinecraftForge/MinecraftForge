@@ -116,9 +116,12 @@
      }
  
      public final void func_149697_b(World p_149697_1_, int p_149697_2_, int p_149697_3_, int p_149697_4_, int p_149697_5_, int p_149697_6_)
-@@ -624,18 +652,14 @@
+@@ -622,20 +650,16 @@
+ 
+     public void func_149690_a(World p_149690_1_, int p_149690_2_, int p_149690_3_, int p_149690_4_, int p_149690_5_, float p_149690_6_, int p_149690_7_)
      {
-         if (!p_149690_1_.field_72995_K)
+-        if (!p_149690_1_.field_72995_K)
++        if (!p_149690_1_.field_72995_K && !p_149690_1_.restoringBlockSnapshots) // do not drop items while restoring blockstates, prevents item dupe
          {
 -            int j1 = this.func_149679_a(p_149690_7_, p_149690_1_.field_73012_v);
 +            ArrayList<ItemStack> items = getDrops(p_149690_1_, p_149690_2_, p_149690_3_, p_149690_4_, p_149690_5_, p_149690_7_);
@@ -139,9 +142,12 @@
                  }
              }
          }
-@@ -645,6 +669,11 @@
+@@ -643,8 +667,13 @@
+ 
+     protected void func_149642_a(World p_149642_1_, int p_149642_2_, int p_149642_3_, int p_149642_4_, ItemStack p_149642_5_)
      {
-         if (!p_149642_1_.field_72995_K && p_149642_1_.func_82736_K().func_82766_b("doTileDrops"))
+-        if (!p_149642_1_.field_72995_K && p_149642_1_.func_82736_K().func_82766_b("doTileDrops"))
++        if (!p_149642_1_.field_72995_K && p_149642_1_.func_82736_K().func_82766_b("doTileDrops") && !p_149642_1_.restoringBlockSnapshots) // do not drop items while restoring blockstates, prevents item dupe
          {
 +            if (captureDrops.get())
 +            {

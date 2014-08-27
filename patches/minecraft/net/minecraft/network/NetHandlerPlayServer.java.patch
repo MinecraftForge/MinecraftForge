@@ -103,7 +103,15 @@
                  {
                      return;
                  }
-@@ -500,7 +532,11 @@
+@@ -487,6 +519,7 @@
+         WorldServer worldserver = this.field_147367_d.func_71218_a(this.field_147369_b.field_71093_bK);
+         ItemStack itemstack = this.field_147369_b.field_71071_by.func_70448_g();
+         boolean flag = false;
++        boolean placeResult = true;
+         int i = p_147346_1_.func_149576_c();
+         int j = p_147346_1_.func_149571_d();
+         int k = p_147346_1_.func_149570_e();
+@@ -500,7 +533,11 @@
                  return;
              }
  
@@ -116,7 +124,7 @@
          }
          else if (p_147346_1_.func_149571_d() >= this.field_147367_d.func_71207_Z() - 1 && (p_147346_1_.func_149568_f() == 1 || p_147346_1_.func_149571_d() >= this.field_147367_d.func_71207_Z()))
          {
-@@ -511,7 +547,9 @@
+@@ -511,9 +548,15 @@
          }
          else
          {
@@ -125,9 +133,25 @@
 +            dist *= dist;
 +            if (this.field_147380_r && this.field_147369_b.func_70092_e((double)i + 0.5D, (double)j + 0.5D, (double)k + 0.5D) < dist && !this.field_147367_d.func_96290_a(worldserver, i, j, k, this.field_147369_b))
              {
-                 this.field_147369_b.field_71134_c.func_73078_a(this.field_147369_b, worldserver, itemstack, i, j, k, l, p_147346_1_.func_149573_h(), p_147346_1_.func_149569_i(), p_147346_1_.func_149575_j());
+-                this.field_147369_b.field_71134_c.func_73078_a(this.field_147369_b, worldserver, itemstack, i, j, k, l, p_147346_1_.func_149573_h(), p_147346_1_.func_149569_i(), p_147346_1_.func_149575_j());
++                // record block place result so we can update client itemstack size if place event was cancelled.
++                if (!this.field_147369_b.field_71134_c.func_73078_a(this.field_147369_b, worldserver, itemstack, i, j, k, l, p_147346_1_.func_149573_h(), p_147346_1_.func_149569_i(), p_147346_1_.func_149575_j()))
++                {
++                    placeResult = false;
++                }
              }
-@@ -677,6 +715,8 @@
+ 
+             flag = true;
+@@ -572,7 +615,7 @@
+             this.field_147369_b.field_71070_bA.func_75142_b();
+             this.field_147369_b.field_71137_h = false;
+ 
+-            if (!ItemStack.func_77989_b(this.field_147369_b.field_71071_by.func_70448_g(), p_147346_1_.func_149574_g()))
++            if (!ItemStack.func_77989_b(this.field_147369_b.field_71071_by.func_70448_g(), p_147346_1_.func_149574_g()) || !placeResult) // force client itemstack update if place event was cancelled
+             {
+                 this.func_147359_a(new S2FPacketSetSlot(this.field_147369_b.field_71070_bA.field_75152_c, slot.field_75222_d, this.field_147369_b.field_71071_by.func_70448_g()));
+             }
+@@ -677,6 +720,8 @@
              else
              {
                  ChatComponentTranslation chatcomponenttranslation1 = new ChatComponentTranslation("chat.type.text", new Object[] {this.field_147369_b.func_145748_c_(), s});
@@ -136,7 +160,7 @@
                  this.field_147367_d.func_71203_ab().func_148544_a(chatcomponenttranslation1, false);
              }
  
-@@ -812,7 +852,7 @@
+@@ -812,7 +857,7 @@
                          return;
                      }
  
