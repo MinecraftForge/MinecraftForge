@@ -8,7 +8,15 @@
  
  public final class ItemStack
  {
-@@ -182,7 +183,7 @@
+@@ -124,6 +125,7 @@
+ 
+     public boolean func_77943_a(EntityPlayer p_77943_1_, World p_77943_2_, int p_77943_3_, int p_77943_4_, int p_77943_5_, int p_77943_6_, float p_77943_7_, float p_77943_8_, float p_77943_9_)
+     {
++        if (!p_77943_2_.field_72995_K) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(this, p_77943_1_, p_77943_2_, p_77943_3_, p_77943_4_, p_77943_5_, p_77943_6_, p_77943_7_, p_77943_8_, p_77943_9_);
+         boolean flag = this.func_77973_b().func_77648_a(this, p_77943_1_, p_77943_2_, p_77943_3_, p_77943_4_, p_77943_5_, p_77943_6_, p_77943_7_, p_77943_8_, p_77943_9_);
+ 
+         if (flag)
+@@ -182,7 +184,7 @@
  
      public int func_77976_d()
      {
@@ -17,7 +25,7 @@
      }
  
      public boolean func_77985_e()
-@@ -192,7 +193,7 @@
+@@ -192,7 +194,7 @@
  
      public boolean func_77984_f()
      {
@@ -26,7 +34,7 @@
      }
  
      public boolean func_77981_g()
-@@ -202,32 +203,27 @@
+@@ -202,32 +204,27 @@
  
      public boolean func_77951_h()
      {
@@ -64,7 +72,7 @@
      }
  
      public boolean func_96631_a(int p_96631_1_, Random p_96631_2_)
-@@ -259,8 +255,8 @@
+@@ -259,8 +256,8 @@
                  }
              }
  
@@ -75,7 +83,7 @@
          }
      }
  
-@@ -319,7 +315,7 @@
+@@ -319,7 +316,7 @@
  
      public boolean func_150998_b(Block p_150998_1_)
      {
@@ -84,7 +92,7 @@
      }
  
      public boolean func_111282_a(EntityPlayer p_111282_1_, EntityLivingBase p_111282_2_)
-@@ -626,16 +622,24 @@
+@@ -626,16 +623,24 @@
          {
              arraylist.add("Durability: " + (this.func_77958_k() - this.func_77952_i()) + " / " + this.func_77958_k());
          }
@@ -110,7 +118,7 @@
      public EnumRarity func_77953_t()
      {
          return this.func_77973_b().func_77613_e(this);
-@@ -737,7 +741,7 @@
+@@ -737,7 +742,7 @@
          }
          else
          {
