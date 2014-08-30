@@ -299,7 +299,14 @@ public class CoreModManager {
                 loadedCoremods.add(coreMod.getName());
                 continue;
             }
+            List<String> modTypes = mfAttributes.containsKey(MODTYPE) ? Arrays.asList(mfAttributes.getValue(MODTYPE).split(",")) : Collections.<String>emptyList();
 
+            if (!modTypes.contains("FML"))
+            {
+                FMLRelaunchLog.fine("Adding %s to the list of things to skip. It is not an FML mod,  it has types %s", coreMod.getName(), modTypes);
+                loadedCoremods.add(coreMod.getName());
+                continue;
+            }
             String fmlCorePlugin = mfAttributes.getValue("FMLCorePlugin");
             if (fmlCorePlugin == null)
             {
@@ -308,11 +315,6 @@ public class CoreModManager {
                 continue;
             }
             // Support things that are mod jars, but not FML mod jars
-            else if (mfAttributes.containsKey(MODTYPE) && !"FML".equals(mfAttributes.getValue(MODTYPE)))
-            {
-                FMLRelaunchLog.fine("Adding %s to the list of things to skip. It is not an FML mod,  it is type %s", coreMod.getName(), mfAttributes.getValue(MODTYPE));
-                loadedCoremods.add(coreMod.getName());
-            }
             try
             {
                 classLoader.addURL(coreMod.toURI().toURL());
