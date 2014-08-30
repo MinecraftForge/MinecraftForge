@@ -235,6 +235,9 @@ public abstract class FMLHandshakeMessage {
             return super.toString(side) + ":{"+phase+"}";
         }
     }
+    public static class HandshakeReset extends FMLHandshakeMessage {
+        public HandshakeReset() {}
+    }
     public void fromBytes(ByteBuf buffer)
     {
     }
