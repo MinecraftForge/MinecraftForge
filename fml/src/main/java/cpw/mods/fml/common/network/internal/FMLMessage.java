@@ -186,7 +186,10 @@ public abstract class FMLMessage {
             {
                 buf.writeByte((byte) (((EntityLivingBase)entity).rotationYawHead * 256.0F / 360.0F));
             }
-
+            else
+            {
+                buf.writeByte(0);
+            }
             ByteBuf tmpBuf = Unpooled.buffer();
             PacketBuffer pb = new PacketBuffer(tmpBuf);
             try
