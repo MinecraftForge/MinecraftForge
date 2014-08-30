@@ -51,6 +51,7 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 
 public class CoreModManager {
     private static final Attributes.Name COREMODCONTAINSFMLMOD = new Attributes.Name("FMLCorePluginContainsFMLMod");
+    private static final Attributes.Name MODTYPE = new Attributes.Name("ModType");
     private static String[] rootPlugins = { "cpw.mods.fml.relauncher.FMLCorePlugin", "net.minecraftforge.classloading.FMLForgePlugin" };
     private static List<String> loadedCoremods = Lists.newArrayList();
     private static List<FMLPluginWrapper> loadPlugins;
@@ -306,7 +307,12 @@ public class CoreModManager {
                 FMLRelaunchLog.fine("Not found coremod data in %s", coreMod.getName());
                 continue;
             }
-
+            // Support things that are mod jars, but not FML mod jars
+            else if (mfAttributes.containsKey(MODTYPE) && !"FML".equals(mfAttributes.getValue(MODTYPE)))
+            {
+                FMLRelaunchLog.fine("Adding %s to the list of things to skip. It is not an FML mod,  it is type %s", coreMod.getName(), mfAttributes.getValue(MODTYPE));
+                loadedCoremods.add(coreMod.getName());
+            }
             try
             {
                 classLoader.addURL(coreMod.toURI().toURL());
