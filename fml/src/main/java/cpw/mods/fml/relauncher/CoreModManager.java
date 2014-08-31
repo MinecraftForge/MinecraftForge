@@ -52,6 +52,7 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 public class CoreModManager {
     private static final Attributes.Name COREMODCONTAINSFMLMOD = new Attributes.Name("FMLCorePluginContainsFMLMod");
     private static final Attributes.Name MODTYPE = new Attributes.Name("ModType");
+    private static final Attributes.Name MODSIDE = new Attributes.Name("ModSide");
     private static String[] rootPlugins = { "cpw.mods.fml.relauncher.FMLCorePlugin", "net.minecraftforge.classloading.FMLForgePlugin" };
     private static List<String> loadedCoremods = Lists.newArrayList();
     private static List<FMLPluginWrapper> loadPlugins;
@@ -250,7 +251,7 @@ public class CoreModManager {
             coreModList = ObjectArrays.concat(coreModList, versionedCoreMods, File.class);
         }
 
-        ObjectArrays.concat(coreModList, ModListHelper.additionalMods.toArray(new File[0]), File.class);
+        ObjectArrays.concat(coreModList, ModListHelper.additionalMods.values().toArray(new File[0]), File.class);
 
         coreModList = FileListHelper.sortFileList(coreModList);
 
@@ -304,6 +305,13 @@ public class CoreModManager {
             if (!modTypes.contains("FML"))
             {
                 FMLRelaunchLog.fine("Adding %s to the list of things to skip. It is not an FML mod,  it has types %s", coreMod.getName(), modTypes);
+                loadedCoremods.add(coreMod.getName());
+                continue;
+            }
+            String modSide = mfAttributes.containsKey(MODSIDE) ? mfAttributes.getValue(MODSIDE) : "BOTH";
+            if (! ("BOTH".equals(modSide) || FMLLaunchHandler.side.name().equals(modSide)))
+            {
+                FMLRelaunchLog.fine("Mod %s has ModSide meta-inf value %s, and we're %s. It will be ignored", coreMod.getName(), modSide, FMLLaunchHandler.side.name());
                 loadedCoremods.add(coreMod.getName());
                 continue;
             }

@@ -5,11 +5,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -20,8 +23,10 @@ public class ModListHelper {
     public static class JsonModList {
         public String repositoryRoot;
         public List<String> modRef;
+        public String parentList;
     }
-    public static final ArrayList<File> additionalMods = Lists.newArrayList();
+    private static Set<File> visitedFiles = Sets.newHashSet();
+    public static final Map<String,File> additionalMods = Maps.newLinkedHashMap();
     static void parseModList()
     {
         FMLRelaunchLog.fine("Attempting to load commandline specified mods");
@@ -49,6 +54,11 @@ public class ModListHelper {
             FMLRelaunchLog.info("Failed to find modList file %s", listFile);
             return;
         }
+        if (visitedFiles.contains(f))
+        {
+            FMLRelaunchLog.severe("There appears to be a loop in the modListFile hierarchy. You shouldn't do this!");
+            throw new RuntimeException("Loop detected, impossible to load modlistfile");
+        }
         String json;
         try {
             json = Files.asCharSource(f, Charsets.UTF_8).read();
@@ -64,6 +74,12 @@ public class ModListHelper {
             FMLRelaunchLog.log(Level.INFO, e, "Failed to parse modList json file %s.", listFile);
             return;
         }
+        visitedFiles.add(f);
+        // We visit parents before children, so the additionalMods list is sorted from parent to child
+        if (modList.parentList != null)
+        {
+            parseListFile(modList.parentList);
+        }
         File repoRoot = new File(modList.repositoryRoot);
         if (!repoRoot.exists())
         {
@@ -73,19 +89,23 @@ public class ModListHelper {
 
         for (String s : modList.modRef)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder fileName = new StringBuilder();
+            StringBuilder genericName = new StringBuilder();
             String[] parts = s.split(":");
-            sb.append(parts[0].replace('.', File.separatorChar));
-            sb.append(File.separatorChar);
-            sb.append(parts[1]).append(File.separatorChar);
-            sb.append(parts[2]).append(File.separatorChar);
-            sb.append(parts[1]).append('-').append(parts[2]);
+            fileName.append(parts[0].replace('.', File.separatorChar));
+            genericName.append(parts[0]);
+            fileName.append(File.separatorChar);
+            fileName.append(parts[1]).append(File.separatorChar);
+            genericName.append(":").append(parts[1]);
+            fileName.append(parts[2]).append(File.separatorChar);
+            fileName.append(parts[1]).append('-').append(parts[2]);
             if (parts.length == 4)
             {
-                sb.append('-').append(parts[3]);
+                fileName.append('-').append(parts[3]);
+                genericName.append(":").append(parts[3]);
             }
-            sb.append(".jar");
-            tryAddFile(sb.toString(), repoRoot, s);
+            fileName.append(".jar");
+            tryAddFile(fileName.toString(), repoRoot, genericName.toString());
         }
     }
     private static void tryAddFile(String modFileName, File repoRoot, String descriptor) {
@@ -96,8 +116,8 @@ public class ModListHelper {
         }
         else
         {
-            FMLRelaunchLog.fine("Adding ;%s (%s) to the mod list", descriptor, modFile.getAbsolutePath());
-            additionalMods.add(modFile);
+            FMLRelaunchLog.fine("Adding %s (%s) to the mod list", descriptor, modFile.getAbsolutePath());
+            additionalMods.put(descriptor, modFile);
         }
     }
 }
