@@ -130,6 +130,11 @@ public class FMLTweaker implements ITweaker {
     @Override
     public String getLaunchTarget()
     {
+        // Remove the extraneous mods and modListFile args
+        @SuppressWarnings("unchecked")
+        Map<String,String> args = (Map<String, String>) Launch.blackboard.get("launchArgs");
+        args.remove("--modListFile");
+        args.remove("--mods");
         return "net.minecraft.client.main.Main";
     }
 

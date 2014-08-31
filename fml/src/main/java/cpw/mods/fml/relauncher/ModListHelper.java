@@ -31,7 +31,6 @@ public class ModListHelper {
         if (listFile != null)
         {
             parseListFile(listFile);
-            args.remove("--modListFile");
         }
         String extraMods = args.get("--mods");
         if (extraMods != null)
@@ -41,7 +40,6 @@ public class ModListHelper {
             {
                 tryAddFile(modFile, null, modFile);
             }
-            args.remove("--mods");
         }
     }
     private static void parseListFile(String listFile) {
@@ -72,7 +70,7 @@ public class ModListHelper {
             FMLRelaunchLog.info("Failed to find the specified repository root %s", modList.repositoryRoot);
             return;
         }
-        
+
         for (String s : modList.modRef)
         {
             StringBuilder sb = new StringBuilder();
@@ -91,7 +89,7 @@ public class ModListHelper {
         }
     }
     private static void tryAddFile(String modFileName, File repoRoot, String descriptor) {
-        File modFile = repoRoot != null ? new File(repoRoot,modFileName) : new File(modFileName);  
+        File modFile = repoRoot != null ? new File(repoRoot,modFileName) : new File(modFileName);
         if (!modFile.exists())
         {
             FMLRelaunchLog.info("Failed to find mod file %s (%s)", descriptor, modFile.getAbsolutePath());
