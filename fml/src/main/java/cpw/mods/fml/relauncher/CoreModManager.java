@@ -217,7 +217,7 @@ public class CoreModManager {
 
     private static void discoverCoreMods(File mcDir, LaunchClassLoader classLoader)
     {
-        ModListHelper.parseModList();
+        ModListHelper.parseModList(mcDir);
         FMLRelaunchLog.fine("Discovering coremods");
         File coreMods = setupCoreModDir(mcDir);
         FilenameFilter ff = new FilenameFilter() {
