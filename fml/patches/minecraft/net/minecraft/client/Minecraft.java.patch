@@ -78,7 +78,7 @@
          try
          {
              Display.setVSyncEnabled(this.field_71474_y.field_74352_v);
-@@ -970,9 +979,11 @@
+@@ -971,9 +980,11 @@
  
          if (!this.field_71454_w)
          {
@@ -90,7 +90,7 @@
          }
  
          GL11.glFlush();
-@@ -1554,6 +1565,8 @@
+@@ -1555,6 +1566,8 @@
              --this.field_71467_ac;
          }
  
@@ -99,7 +99,7 @@
          this.field_71424_I.func_76320_a("gui");
  
          if (!this.field_71445_n)
-@@ -1698,6 +1711,7 @@
+@@ -1699,6 +1712,7 @@
                          this.field_71462_r.func_146274_d();
                      }
                  }
@@ -107,15 +107,15 @@
              }
  
              if (this.field_71429_W > 0)
-@@ -1834,6 +1848,7 @@
-                             }
+@@ -1836,6 +1850,7 @@
                          }
                      }
-+                    FMLCommonHandler.instance().fireKeyInput();
                  }
++                FMLCommonHandler.instance().fireKeyInput();
              }
  
-@@ -2025,12 +2040,15 @@
+             for (j = 0; j < 9; ++j)
+@@ -2026,12 +2041,15 @@
              this.field_71453_ak.func_74428_b();
          }
  
@@ -131,7 +131,7 @@
          this.func_71403_a((WorldClient)null);
          System.gc();
          ISaveHandler isavehandler = this.field_71469_aa.func_75804_a(p_71371_1_, false);
-@@ -2066,6 +2084,12 @@
+@@ -2067,6 +2085,12 @@
  
          while (!this.field_71437_Z.func_71200_ad())
          {
@@ -144,7 +144,7 @@
              String s2 = this.field_71437_Z.func_71195_b_();
  
              if (s2 != null)
-@@ -2141,6 +2165,7 @@
+@@ -2142,6 +2166,7 @@
              this.field_110448_aq.func_148529_f();
              this.func_71351_a((ServerData)null);
              this.field_71455_al = false;
