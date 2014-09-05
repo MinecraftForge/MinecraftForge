@@ -381,6 +381,13 @@ public class ForgeHooks
         return event.getResult() == Event.Result.DEFAULT ? event.canInteractWith : event.getResult() == Event.Result.ALLOW ? true : false;
     }
 
+    public static BlockEvent.PlacedEvent onBlockPlacedEvent(World world, EntityPlayer entityPlayer, int x, int y, int z, Block block, int blockMetaData)
+    {
+        BlockEvent.PlacedEvent event = new BlockEvent.PlacedEvent(x, y, z, world, block, blockMetaData , entityPlayer);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
     public static BlockEvent.BreakEvent onBlockBreakEvent(World world, GameType gameType, EntityPlayerMP entityPlayer, int x, int y, int z)
     {
         // Logic from tryHarvestBlock for pre-canceling the event

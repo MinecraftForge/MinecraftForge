@@ -34,7 +34,7 @@
          {
              if (p_150936_5_ == 0)
              {
-@@ -197,4 +191,29 @@
+@@ -197,4 +191,36 @@
              this.field_150938_b = p_94581_1_.func_94245_a(s);
          }
      }
@@ -49,18 +49,25 @@
 +     */
 +    public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata)
 +    {
++        net.minecraftforge.event.world.BlockEvent.PlacedEvent event = net.minecraftforge.common.ForgeHooks.onBlockPlacedEvent(world, player, x, y, z, field_150939_a, metadata);
++        if (event.isCanceled())
++        {
++            return false;
++        }
++        else
++        {
++            if (!world.func_147465_d(x, y, z, field_150939_a, metadata, 3))
++            {
++                return false;
++            }
++    
++            if (world.func_147439_a(x, y, z) == field_150939_a)
++            {
++                field_150939_a.func_149689_a(world, x, y, z, player, stack);
++                field_150939_a.func_149714_e(world, x, y, z, metadata);
++            }
 +
-+       if (!world.func_147465_d(x, y, z, field_150939_a, metadata, 3))
-+       {
-+           return false;
-+       }
-+
-+       if (world.func_147439_a(x, y, z) == field_150939_a)
-+       {
-+           field_150939_a.func_149689_a(world, x, y, z, player, stack);
-+           field_150939_a.func_149714_e(world, x, y, z, metadata);
-+       }
-+
-+       return true;
++            return true;
++        }
 +    }
  }
