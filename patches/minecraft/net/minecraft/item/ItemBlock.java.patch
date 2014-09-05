@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBlock.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBlock.java
+@@ -39,7 +39,7 @@
+     @SideOnly(Side.CLIENT)
+     public IIcon func_77617_a(int p_77617_1_)
+     {
+-        return this.field_150938_b != null ? this.field_150938_b : this.field_150939_a.func_149733_h(1);
++        return this.field_150938_b != null ? this.field_150938_b : this.field_150939_a.func_149691_a(1, p_77617_1_);
+     }
+ 
+     public boolean func_77648_a(ItemStack p_77648_1_, EntityPlayer p_77648_2_, World p_77648_3_, int p_77648_4_, int p_77648_5_, int p_77648_6_, int p_77648_7_, float p_77648_8_, float p_77648_9_, float p_77648_10_)
 @@ -50,7 +50,7 @@
          {
              p_77648_7_ = 1;
