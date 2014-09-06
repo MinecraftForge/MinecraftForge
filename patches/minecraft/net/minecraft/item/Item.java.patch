@@ -43,7 +43,7 @@
  
  public class Item
  {
-@@ -448,6 +458,7 @@
+@@ -450,6 +460,7 @@
          return p_77654_1_;
      }
  
@@ -51,7 +51,7 @@
      public int func_77639_j()
      {
          return this.field_77777_bU;
-@@ -566,6 +577,7 @@
+@@ -568,6 +579,7 @@
          return this.field_77700_c;
      }
  
@@ -59,7 +59,7 @@
      public boolean func_77634_r()
      {
          return this.field_77700_c != null;
-@@ -623,6 +635,7 @@
+@@ -625,6 +637,7 @@
      }
  
      @SideOnly(Side.CLIENT)
@@ -67,7 +67,7 @@
      public boolean func_77636_d(ItemStack p_77636_1_)
      {
          return p_77636_1_.func_77948_v();
-@@ -635,7 +648,7 @@
+@@ -637,7 +650,7 @@
  
      public boolean func_77616_k(ItemStack p_77616_1_)
      {
@@ -76,7 +76,7 @@
      }
  
      protected MovingObjectPosition func_77621_a(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_)
-@@ -644,7 +657,7 @@
+@@ -646,7 +659,7 @@
          float f1 = p_77621_2_.field_70127_C + (p_77621_2_.field_70125_A - p_77621_2_.field_70127_C) * f;
          float f2 = p_77621_2_.field_70126_B + (p_77621_2_.field_70177_z - p_77621_2_.field_70126_B) * f;
          double d0 = p_77621_2_.field_70169_q + (p_77621_2_.field_70165_t - p_77621_2_.field_70169_q) * (double)f;
@@ -85,7 +85,7 @@
          double d2 = p_77621_2_.field_70166_s + (p_77621_2_.field_70161_v - p_77621_2_.field_70166_s) * (double)f;
          Vec3 vec3 = Vec3.func_72443_a(d0, d1, d2);
          float f3 = MathHelper.func_76134_b(-f2 * 0.017453292F - (float)Math.PI);
-@@ -654,6 +667,10 @@
+@@ -656,6 +669,10 @@
          float f7 = f4 * f5;
          float f8 = f3 * f5;
          double d3 = 5.0D;
@@ -96,7 +96,7 @@
          Vec3 vec31 = vec3.func_72441_c((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return p_77621_1_.func_147447_a(vec3, vec31, p_77621_3_, !p_77621_3_, false);
      }
-@@ -709,6 +726,7 @@
+@@ -711,6 +728,7 @@
          this.field_77791_bV = p_94581_1_.func_94245_a(this.func_111208_A());
      }
  
@@ -104,7 +104,7 @@
      public Multimap func_111205_h()
      {
          return HashMultimap.create();
-@@ -726,6 +744,581 @@
+@@ -728,6 +746,591 @@
          return this.field_111218_cA == null ? "MISSING_ICON_ITEM_" + field_150901_e.func_148757_b(this) + "_" + this.field_77774_bZ : this.field_111218_cA;
      }
  
@@ -681,12 +681,22 @@
 +    {
 +        return func_77619_b();
 +    }
++    
++    /**
++     * Whether this Item can be used as a payment to activate the vanilla beacon.
++     * @param stack the ItemStack
++     * @return true if this Item can be used
++     */
++    public boolean isBeaconPayment(ItemStack stack)
++    {
++        return this == Items.field_151166_bC || this == Items.field_151045_i || this == Items.field_151043_k || this == Items.field_151042_j;
++    }
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static enum ToolMaterial
      {
          WOOD(0, 59, 2.0F, 0.0F, 15),
-@@ -741,6 +1334,9 @@
+@@ -743,6 +1346,9 @@
  
          private static final String __OBFID = "CL_00000042";
  
@@ -696,7 +706,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -777,7 +1373,15 @@
+@@ -779,7 +1385,15 @@
  
          public Item func_150995_f()
          {
