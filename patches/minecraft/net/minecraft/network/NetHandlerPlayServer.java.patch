@@ -145,3 +145,50 @@
                  }
  
                  break;
+@@ -938,6 +978,9 @@
+                     return;
+                 }
+             }
++            
++            String[] text = ForgeHooks.onSignEditEvent(this, p_147343_1_);
++            if (text == null)return;
+ 
+             int i;
+             int j;
+@@ -946,15 +989,15 @@
+             {
+                 boolean flag = true;
+ 
+-                if (p_147343_1_.func_149589_f()[j].length() > 15)
++                if (text[j].length() > 15)
+                 {
+                     flag = false;
+                 }
+                 else
+                 {
+-                    for (i = 0; i < p_147343_1_.func_149589_f()[j].length(); ++i)
++                    for (i = 0; i < text[j].length(); ++i)
+                     {
+-                        if (!ChatAllowedCharacters.func_71566_a(p_147343_1_.func_149589_f()[j].charAt(i)))
++                        if (!ChatAllowedCharacters.func_71566_a(text[j].charAt(i)))
+                         {
+                             flag = false;
+                         }
+@@ -963,7 +1006,7 @@
+ 
+                 if (!flag)
+                 {
+-                    p_147343_1_.func_149589_f()[j] = "!?";
++                    text[j] = "!?";
+                 }
+             }
+ 
+@@ -973,7 +1016,7 @@
+                 int k = p_147343_1_.func_149586_d();
+                 i = p_147343_1_.func_149585_e();
+                 TileEntitySign tileentitysign1 = (TileEntitySign)tileentity;
+-                System.arraycopy(p_147343_1_.func_149589_f(), 0, tileentitysign1.field_145915_a, 0, 4);
++                System.arraycopy(text, 0, tileentitysign1.field_145915_a, 0, 4);
+                 tileentitysign1.func_70296_d();
+                 worldserver.func_147471_g(j, k, i);
+             }
