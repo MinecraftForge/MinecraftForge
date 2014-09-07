@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Level;
 import net.minecraft.network.INetHandler;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Throwables;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
