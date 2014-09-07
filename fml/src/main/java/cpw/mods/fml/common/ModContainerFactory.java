@@ -13,9 +13,15 @@
 package cpw.mods.fml.common;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.Level;
 import org.objectweb.asm.Type;
+
+import com.google.common.base.Throwables;
+import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.discovery.ModCandidate;
 import cpw.mods.fml.common.discovery.asm.ASMModParser;
@@ -23,10 +29,27 @@ import cpw.mods.fml.common.discovery.asm.ModAnnotation;
 
 public class ModContainerFactory
 {
+    public static Map<Type, Constructor<? extends ModContainer>> modTypes = Maps.newHashMap();
     private static Pattern modClass = Pattern.compile(".*(\\.|)(mod\\_[^\\s$]+)$");
     private static ModContainerFactory INSTANCE = new ModContainerFactory();
+    
+    private ModContainerFactory() {
+        // We always know about Mod type
+        registerContainerType(Type.getType(Mod.class), FMLModContainer.class);
+    }
     public static ModContainerFactory instance() {
         return INSTANCE;
+    }
+    
+    public void registerContainerType(Type type, Class<? extends ModContainer> container)
+    {
+        try {
+            Constructor<? extends ModContainer> constructor = container.getConstructor(new Class<?>[] { String.class, ModCandidate.class, Map.class });
+            modTypes.put(type, constructor);
+        } catch (Exception e) {
+            FMLLog.log(Level.ERROR, e, "Critical error : cannot register mod container type %s, it has an invalid constructor");
+            Throwables.propagate(e);
+        }
     }
     public ModContainer build(ASMModParser modParser, File modSource, ModCandidate container)
     {
@@ -49,10 +72,15 @@ public class ModContainerFactory
 
         for (ModAnnotation ann : modParser.getAnnotations())
         {
-            if (ann.getASMType().equals(Type.getType(Mod.class)))
+            if (modTypes.containsKey(ann.getASMType()))
             {
-                FMLLog.fine("Identified an FMLMod type mod %s", className);
-                return new FMLModContainer(className, container, ann.getValues());
+                FMLLog.fine("Identified a mod of type %s (%s) - loading", ann.getASMType(), className);
+                try {
+                    return modTypes.get(ann.getASMType()).newInstance(className, container, ann.getValues());
+                } catch (Exception e) {
+                    FMLLog.log(Level.ERROR, e, "Unable to construct %s container", ann.getASMType().getClassName());
+                    return null;
+                }
             }
         }
 
