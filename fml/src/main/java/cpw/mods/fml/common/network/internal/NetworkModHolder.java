@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.SetMultimap;
 
@@ -93,6 +94,9 @@ public class NetworkModHolder
     private VersionRange acceptableRange;
 
     private NetworkChecker checker;
+
+    private boolean acceptsVanillaClient;
+    private boolean acceptsVanillaServer;
 
     public NetworkModHolder(ModContainer container)
     {
@@ -228,6 +232,14 @@ public class NetworkModHolder
     public void setNetworkId(int value)
     {
         this.networkId = value;
+    }
+
+    public void testVanillaAcceptance() {
+        acceptsVanillaClient = check(ImmutableMap.<String,String>of(), Side.CLIENT);
+        acceptsVanillaServer = check(ImmutableMap.<String,String>of(), Side.SERVER);
+    }
+    public boolean acceptsVanilla(Side from) {
+        return from == Side.CLIENT ? acceptsVanillaClient : acceptsVanillaServer;
     }
 
 }

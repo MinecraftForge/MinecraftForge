@@ -285,8 +285,18 @@ public enum NetworkRegistry
     {
         NetworkModHolder networkModHolder = new NetworkModHolder(fmlModContainer, clazz, remoteVersionRange, asmHarvestedData);
         registry.put(fmlModContainer, networkModHolder);
+        networkModHolder.testVanillaAcceptance();
     }
 
+    public boolean isVanillaAccepted(Side from)
+    {
+        boolean result = true;
+        for (Entry<ModContainer, NetworkModHolder> e : registry.entrySet())
+        {
+            result &= e.getValue().acceptsVanilla(from);
+        }
+        return result;
+    }
     public Map<ModContainer,NetworkModHolder> registry()
     {
         return ImmutableMap.copyOf(registry);
