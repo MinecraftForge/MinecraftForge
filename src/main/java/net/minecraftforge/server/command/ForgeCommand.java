@@ -2,12 +2,17 @@ package net.minecraftforge.server.command;
 
 import java.lang.ref.WeakReference;
 import java.text.DecimalFormat;
+
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.permissions.PermissionsManager;
+import net.minecraftforge.permissions.PermissionsManager.RegisteredPermValue;
+import net.minecraftforge.server.CommandHandlerForge;
 import net.minecraftforge.server.ForgeTimeTracker;
 
 public class ForgeCommand extends CommandBase {
@@ -18,6 +23,12 @@ public class ForgeCommand extends CommandBase {
     public ForgeCommand(MinecraftServer server)
     {
         this.server = new WeakReference(server);
+        // this is the master permission, so CommandHandlerForge must know
+        CommandHandlerForge.doPermissionReg(this.getCommandName(), "forge.command", RegisteredPermValue.OP);
+        
+        // slave permissions, so use PermissionsManager
+        PermissionsManager.registerPermission("forge.tps", RegisteredPermValue.OP);
+        PermissionsManager.registerPermission("forge.track", RegisteredPermValue.OP);
     }
 
     @Override
@@ -40,6 +51,19 @@ public class ForgeCommand extends CommandBase {
     @Override
     public void processCommand(ICommandSender sender, String[] args)
     {
+        boolean allowTPS, allowTracking;
+        
+        if (sender instanceof EntityPlayer)
+        {
+            allowTPS = PermissionsManager.checkPerm((EntityPlayer) sender, "forge.tps");
+            allowTracking = PermissionsManager.checkPerm((EntityPlayer) sender, "forge.track");
+        }
+        
+        else{
+            allowTPS = true;
+            allowTracking = true;
+        }
+        
         if (args.length == 0)
         {
             throw new WrongUsageException("commands.forge.usage");
@@ -48,7 +72,7 @@ public class ForgeCommand extends CommandBase {
         {
             throw new WrongUsageException("commands.forge.usage");
         }
-        else if ("tps".equals(args[0]))
+        else if ("tps".equals(args[0]) && allowTPS)
         {
             displayTPS(sender,args);
         }
@@ -56,7 +80,7 @@ public class ForgeCommand extends CommandBase {
         {
             doTPSLog(sender,args);
         }
-        else if ("track".equals(args[0]))
+        else if ("track".equals(args[0]) && allowTracking)
         {
             handleTracking(sender, args);
         }
