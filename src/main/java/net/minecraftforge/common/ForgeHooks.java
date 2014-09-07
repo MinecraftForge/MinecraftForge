@@ -24,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
+import net.minecraft.network.play.client.C12PacketUpdateSign;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityNote;
@@ -38,6 +39,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.SignEditEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -459,5 +461,16 @@ public class ForgeHooks
         }
         te.note = (byte)e.getVanillaNoteId();
         return true;
+    }
+    
+    public static String[] onSignEditEvent(NetHandlerPlayServer net, C12PacketUpdateSign data)
+    {
+        SignEditEvent e = new SignEditEvent(data.func_149588_c(), data.func_149586_d(), data.func_149585_e(), data.func_149589_f(), net.playerEntity);
+        if (MinecraftForge.EVENT_BUS.post(e))
+        {
+            return null;
+        }
+        return e.text;
+        
     }
 }
