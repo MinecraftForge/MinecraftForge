@@ -743,6 +743,25 @@
 +    }
 +
 +    /**
++     * Metadata sensitive version of {@link #isReplaceableOreGen}. Useful to customized ore gens that specify
++     * blocks with specific metadata to replace while leaving the ability for other mods to add equivalence.
++     *
++     * One should use {@link #isReplaceableOreGen} instead if metadata is not specific.
++     *
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @param targetBlock The generic target block the customized ore gen is looking for
++     * @param targetMeta The generic target metadata the gen is looking for
++     * @return True to allow this block to be replaced by a ore
++     */
++    public boolean isReplaceableOreGenMeta(World world, int x, int y, int z, Block targetBlock, int targetMeta)
++    {
++        return isReplaceableOreGen(world, x, y, z, targetBlock) && world.getBlockMetadata(x, y, z) == targetMeta;
++    }
++
++    /**
 +     * Location sensitive version of getExplosionRestance
 +     *
 +     * @param par1Entity The entity that caused the explosion
