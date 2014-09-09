@@ -199,7 +199,7 @@
      }
  
      protected ItemStack func_149644_j(int p_149644_1_)
-@@ -1116,6 +1155,1099 @@
+@@ -1116,6 +1155,1116 @@
          return null;
      }
  
@@ -387,6 +387,23 @@
 +    public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z)
 +    {
 +        return world.func_147468_f(x, y, z);
++    }
++
++    /**
++     * Called when the block is destroyed by a fire.
++     * Useful for allowing the block to drop items, cause an explosion, etc.
++     * 
++     * Return true if the block is actually destroyed.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @return True if the block is actually destroyed.
++     */
++    public boolean onBlockDestroyedByFire(World world, int x, int y, int z)
++    {
++        return true;
 +    }
 +
 +    /**
