@@ -202,7 +202,12 @@ public class ListenerList
             ArrayList<IEventListener> ret = new ArrayList<IEventListener>();
             for (EventPriority value : EventPriority.values())
             {
-                ret.addAll(getListeners(value));
+                List<IEventListener> listeners = getListeners(value);
+                if (listeners.size() > 0)
+                {
+                    ret.add(value); //Add the priority to notify the event of it's current phase.
+                    ret.addAll(listeners);
+                }
             }
             listeners = ret.toArray(new IEventListener[ret.size()]);
             rebuild = false;

@@ -5,7 +5,6 @@ import static org.objectweb.asm.Opcodes.*;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
-
 import org.apache.logging.log4j.ThreadContext;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
@@ -27,11 +26,14 @@ public class ASMEventHandler implements IEventListener
     private final IEventListener handler;
     private final SubscribeEvent subInfo;
     private ModContainer owner;
+    private String readable;
+
     public ASMEventHandler(Object target, Method method, ModContainer owner) throws Exception
     {
         this.owner = owner;
         handler = (IEventListener)createWrapper(method).getConstructor(Object.class).newInstance(target);
         subInfo = method.getAnnotation(SubscribeEvent.class);
+        readable = "ASM: " + target + " " + method.getName() + Type.getMethodDescriptor(method);
     }
 
     @Override
@@ -142,4 +144,8 @@ public class ASMEventHandler implements IEventListener
         }
     }
 
+    public String toString()
+    {
+        return readable;
+    }
 }

@@ -9,6 +9,11 @@ import java.lang.annotation.Target;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import com.google.common.base.Preconditions;
+
 
 /**
  * Base Event class that all other events are derived from
@@ -31,6 +36,7 @@ public class Event
     private Result result = Result.DEFAULT;
     private final boolean hasResult;
     private static ListenerList listeners = new ListenerList();
+    private EventPriority phase = null;
 
     private static final Map<Class<?>, Map<Class<?>, Boolean>> annotationMap = new ConcurrentHashMap<Class<?>, Map<Class<?>, Boolean>>();
 
@@ -152,5 +158,19 @@ public class Event
     public ListenerList getListenerList()
     {
         return listeners;
+    }
+
+    @Nullable
+    public EventPriority getPhase()
+    {
+        return this.phase;
+    }
+
+    public void setPhase(@Nonnull EventPriority value)
+    {
+        Preconditions.checkArgument(value != null, "setPhase argument must not be null");
+        int prev = phase == null ? -1 : phase.ordinal();
+        Preconditions.checkArgument(prev < value.ordinal(), "Attempted to set event phase to %s when already %s", value, phase);
+        phase = value;
     }
 }

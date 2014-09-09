@@ -6,27 +6,41 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.annotation.Nonnull;
+
 import org.apache.logging.log4j.Level;
 
-
-
+import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import com.google.common.collect.MapMaker;
 import com.google.common.reflect.TypeToken;
+
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 
-public class EventBus
+public class EventBus implements IEventExceptionHandler
 {
     private static int maxID = 0;
 
     private ConcurrentHashMap<Object, ArrayList<IEventListener>> listeners = new ConcurrentHashMap<Object, ArrayList<IEventListener>>();
     private Map<Object,ModContainer> listenerOwners = new MapMaker().weakKeys().weakValues().makeMap();
     private final int busID = maxID++;
+    private IEventExceptionHandler exceptionHandler;
 
     public EventBus()
     {
         ListenerList.resize(busID + 1);
+        exceptionHandler = this;
+        register(this);
+    }
+
+    public EventBus(@Nonnull IEventExceptionHandler handler)
+    {
+        this();
+        Preconditions.checkArgument(handler != null, "EventBus exception handler can not be null");
+        exceptionHandler = handler;
     }
 
     public void register(Object target)
@@ -117,10 +131,30 @@ public class EventBus
     public boolean post(Event event)
     {
         IEventListener[] listeners = event.getListenerList().getListeners(busID);
-        for (IEventListener listener : listeners)
+        int index = 0;
+        try
         {
-            listener.invoke(event);
+            for (; index < listeners.length; index++)
+            {
+                listeners[index].invoke(event);
+            }
+        }
+        catch (Throwable throwable)
+        {
+            exceptionHandler.handleException(this, event, listeners, index, throwable);
+            Throwables.propagate(throwable);
         }
         return (event.isCancelable() ? event.isCanceled() : false);
+    }
+
+    @Override
+    public void handleException(EventBus bus, Event event, IEventListener[] listeners, int index, Throwable throwable)
+    {
+        FMLLog.log(Level.ERROR, throwable, "Exception caught during firing event %s:", event);
+        FMLLog.log(Level.ERROR, "Index: %d Listeners:", index);
+        for (int x = 0; x < listeners.length; x++)
+        {
+            FMLLog.log(Level.ERROR, "%d: %s", x, listeners[x]);
+        }
     }
 }
