@@ -18,7 +18,15 @@
      }
  
      public boolean func_70686_a(Class p_70686_1_)
-@@ -476,10 +480,22 @@
+@@ -450,6 +454,7 @@
+                                 }
+                             }
+ 
++                            if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.LivingItemPickupEvent((EntityLivingBase) this, entityitem))) return;
+                             this.func_70062_b(i, itemstack);
+                             this.field_82174_bp[i] = 2.0F;
+                             this.field_82179_bU = true;
+@@ -476,10 +481,22 @@
  
      protected void func_70623_bb()
      {
@@ -41,7 +49,7 @@
          else
          {
              EntityPlayer entityplayer = this.field_70170_p.func_72890_a(this, -1.0D);
-@@ -642,7 +658,6 @@
+@@ -642,7 +659,6 @@
          return this.field_70170_p.func_72855_b(this.field_70121_D) && this.field_70170_p.func_72945_a(this, this.field_70121_D).isEmpty() && !this.field_70170_p.func_72953_d(this.field_70121_D);
      }
  
