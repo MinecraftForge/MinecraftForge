@@ -111,14 +111,19 @@
          double d0 = p_72717_2_.field_70142_S + (p_72717_2_.field_70165_t - p_72717_2_.field_70142_S) * (double)p_72717_3_;
          double d1 = p_72717_2_.field_70137_T + (p_72717_2_.field_70163_u - p_72717_2_.field_70137_T) * (double)p_72717_3_;
          double d2 = p_72717_2_.field_70136_U + (p_72717_2_.field_70161_v - p_72717_2_.field_70136_U) * (double)p_72717_3_;
-@@ -1615,7 +1649,14 @@
+@@ -1612,10 +1646,19 @@
+                 else
+                 {
+                     Block block = this.field_72769_h.func_147439_a(destroyblockprogress.func_73110_b(), destroyblockprogress.func_73109_c(), destroyblockprogress.func_73108_d());
++                    int metadata = this.field_72769_h.func_72805_g(destroyblockprogress.func_73110_b(), destroyblockprogress.func_73109_c(), destroyblockprogress.func_73108_d());
++                    IIcon[] blockDestroyIcons = block.getBlockDestroyIcons(metadata, 0);
  
                      if (block.func_149688_o() != Material.field_151579_a)
                      {
 -                        this.field_147592_B.func_147792_a(block, destroyblockprogress.func_73110_b(), destroyblockprogress.func_73109_c(), destroyblockprogress.func_73108_d(), this.field_94141_F[destroyblockprogress.func_73106_e()]);
-+                        if (block.blockDestroyIcons != null)
++                        if (blockDestroyIcons != null)
 +                        {
-+                            this.field_147592_B.func_147792_a(block, destroyblockprogress.func_73110_b(), destroyblockprogress.func_73109_c(), destroyblockprogress.func_73108_d(), block.blockDestroyIcons[destroyblockprogress.func_73106_e()]);
++                            this.field_147592_B.func_147792_a(block, destroyblockprogress.func_73110_b(), destroyblockprogress.func_73109_c(), destroyblockprogress.func_73108_d(), blockDestroyIcons[destroyblockprogress.func_73106_e()]);
 +                        }
 +                        else
 +                        {
@@ -127,7 +132,7 @@
                      }
                  }
              }
-@@ -1798,12 +1839,15 @@
+@@ -1798,12 +1841,15 @@
          {
              ItemRecord itemrecord = ItemRecord.func_150926_b(p_72702_1_);
  
