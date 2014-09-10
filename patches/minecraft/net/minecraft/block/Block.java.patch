@@ -199,7 +199,7 @@
      }
  
      protected ItemStack func_149644_j(int p_149644_1_)
-@@ -1114,6 +1153,1112 @@
+@@ -1114,6 +1153,1111 @@
          return null;
      }
  
@@ -1274,11 +1274,10 @@
 +     * Gets the block icons as array
 +     * 
 +     * @param metadata
-+     * @param side
 +     * @return An array of the block icons
 +     */
 +    @SideOnly(Side.CLIENT)
-+    public IIcon[] getBlockDestroyIcons(int metadata, int side)
++    public IIcon[] getBlockDestroyIcons(World world, int x, int y, int z)
 +    {
 +        return null;
 +    }
