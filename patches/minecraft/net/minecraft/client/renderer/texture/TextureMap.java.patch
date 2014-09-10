@@ -48,7 +48,15 @@
      }
  
      private ResourceLocation func_147634_a(ResourceLocation p_147634_1_, int p_147634_2_)
-@@ -347,7 +362,7 @@
+@@ -297,6 +312,7 @@
+                 if (block.func_149688_o() != Material.field_151579_a)
+                 {
+                     block.func_149651_a(this);
++                    block.registerBlockDestroyIcons(this);
+                 }
+             }
+ 
+@@ -347,7 +363,7 @@
          {
              throw new IllegalArgumentException("Name cannot be null!");
          }
@@ -57,7 +65,7 @@
          {
              Object object = (TextureAtlasSprite)this.field_110574_e.get(p_94245_1_);
  
-@@ -403,4 +418,37 @@
+@@ -403,4 +419,37 @@
      {
          this.field_147637_k = p_147632_1_;
      }
