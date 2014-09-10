@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 
 @Cancelable
 @Event.HasResult
-public class FillBucketEvent extends PlayerEvent
+public class FillBucketEvent extends FillFluidContainerEvent
 {
     /**
      * This event is fired when a player attempts to use a Empty bucket, it 
@@ -29,9 +29,21 @@ public class FillBucketEvent extends PlayerEvent
 
     public FillBucketEvent(EntityPlayer player, ItemStack current, World world, MovingObjectPosition target)
     {
-        super(player);
+        super(player, current, world, target);
         this.current = current;
         this.world = world;
         this.target = target;
+    }
+
+    @Override
+    public ItemStack getFilledContainer()
+    {
+        return this.result;
+    }
+
+    @Override
+    public void setFilledContainer(ItemStack filled)
+    {
+        this.result = filled;
     }
 }

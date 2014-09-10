@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemGlassBottle.java
++++ ../src-work/minecraft/net/minecraft/item/ItemGlassBottle.java
+@@ -10,6 +10,9 @@
+ import net.minecraft.util.IIcon;
+ import net.minecraft.util.MovingObjectPosition;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.player.FillGlassBottleEvent;
++import cpw.mods.fml.common.eventhandler.Event;
+ 
+ public class ItemGlassBottle extends Item
+ {
+@@ -36,6 +39,14 @@
+         }
+         else
+         {
++            FillGlassBottleEvent event = new FillGlassBottleEvent(p_77659_3_, p_77659_1_, p_77659_2_, movingobjectposition);
++            if (MinecraftForge.EVENT_BUS.post(event)) return p_77659_1_;
++            if (event.getResult() == Event.Result.ALLOW) {
++                if (p_77659_3_.field_71075_bZ.field_75098_d) return p_77659_1_;
++                if (--p_77659_1_.field_77994_a <= 0) return event.getFilledContainer();
++                if (!p_77659_3_.field_71071_by.func_70441_a(event.getFilledContainer())) p_77659_3_.func_71019_a(event.getFilledContainer(), false);
++                return p_77659_1_;
++            }
+             if (movingobjectposition.field_72313_a == MovingObjectPosition.MovingObjectType.BLOCK)
+             {
+                 int i = movingobjectposition.field_72311_b;
