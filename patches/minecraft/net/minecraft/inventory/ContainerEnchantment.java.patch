@@ -1,14 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerEnchantment.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerEnchantment.java
-@@ -12,6 +12,7 @@
- import net.minecraft.init.Items;
- import net.minecraft.item.ItemStack;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.ForgeHooks;
- 
- public class ContainerEnchantment extends Container
- {
-@@ -116,6 +117,7 @@
+@@ -116,6 +116,7 @@
                  {
                      i = 0;
                      int j;
@@ -16,7 +8,7 @@
  
                      for (j = -1; j <= 1; ++j)
                      {
-@@ -123,37 +125,15 @@
+@@ -123,37 +124,15 @@
                          {
                              if ((j != 0 || k != 0) && this.field_75172_h.func_147437_c(this.field_75173_i + k, this.field_75170_j, this.field_75171_k + j) && this.field_75172_h.func_147437_c(this.field_75173_i + k, this.field_75170_j + 1, this.field_75171_k + j))
                              {
@@ -24,8 +16,8 @@
 -                                {
 -                                    ++i;
 -                                }
-+                                power += ForgeHooks.getEnchantPower(field_75172_h, field_75173_i + k * 2, field_75170_j,     field_75171_k + j * 2);
-+                                power += ForgeHooks.getEnchantPower(field_75172_h, field_75173_i + k * 2, field_75170_j + 1, field_75171_k + j * 2);
++                                power += net.minecraftforge.common.ForgeHooks.getEnchantPower(field_75172_h, field_75173_i + k * 2, field_75170_j,     field_75171_k + j * 2);
++                                power += net.minecraftforge.common.ForgeHooks.getEnchantPower(field_75172_h, field_75173_i + k * 2, field_75170_j + 1, field_75171_k + j * 2);
  
 -                                if (this.field_75172_h.func_147439_a(this.field_75173_i + k * 2, this.field_75170_j + 1, this.field_75171_k + j * 2) == Blocks.field_150342_X)
 -                                {
@@ -53,14 +45,14 @@
 -                                    {
 -                                        ++i;
 -                                    }
-+                                    power += ForgeHooks.getEnchantPower(field_75172_h, field_75173_i + k * 2, field_75170_j,     field_75171_k + j    );
-+                                    power += ForgeHooks.getEnchantPower(field_75172_h, field_75173_i + k * 2, field_75170_j + 1, field_75171_k + j    );
-+                                    power += ForgeHooks.getEnchantPower(field_75172_h, field_75173_i + k,     field_75170_j,     field_75171_k + j * 2);
-+                                    power += ForgeHooks.getEnchantPower(field_75172_h, field_75173_i + k,     field_75170_j + 1, field_75171_k + j * 2);
++                                    power += net.minecraftforge.common.ForgeHooks.getEnchantPower(field_75172_h, field_75173_i + k * 2, field_75170_j,     field_75171_k + j    );
++                                    power += net.minecraftforge.common.ForgeHooks.getEnchantPower(field_75172_h, field_75173_i + k * 2, field_75170_j + 1, field_75171_k + j    );
++                                    power += net.minecraftforge.common.ForgeHooks.getEnchantPower(field_75172_h, field_75173_i + k,     field_75170_j,     field_75171_k + j * 2);
++                                    power += net.minecraftforge.common.ForgeHooks.getEnchantPower(field_75172_h, field_75173_i + k,     field_75170_j + 1, field_75171_k + j * 2);
                                  }
                              }
                          }
-@@ -161,7 +141,7 @@
+@@ -161,7 +140,7 @@
  
                      for (j = 0; j < 3; ++j)
                      {
@@ -69,3 +61,38 @@
                      }
  
                      this.func_75142_b();
+@@ -179,7 +158,8 @@
+ 
+     public boolean func_75140_a(EntityPlayer p_75140_1_, int p_75140_2_)
+     {
+-        ItemStack itemstack = this.field_75168_e.func_70301_a(0);
++        ItemStack original = this.field_75168_e.func_70301_a(0);
++        ItemStack itemstack = original.func_77946_l();
+ 
+         if (this.field_75167_g[p_75140_2_] > 0 && itemstack != null && (p_75140_1_.field_71068_ca >= this.field_75167_g[p_75140_2_] || p_75140_1_.field_71075_bZ.field_75098_d))
+         {
+@@ -190,8 +170,6 @@
+ 
+                 if (list != null)
+                 {
+-                    p_75140_1_.func_82242_a(-this.field_75167_g[p_75140_2_]);
+-
+                     if (flag)
+                     {
+                         itemstack.func_150996_a(Items.field_151134_bR);
+@@ -215,8 +193,13 @@
+                             }
+                         }
+                     }
+-
+-                    this.func_75130_a(this.field_75168_e);
++                    net.minecraftforge.event.entity.player.EnchantItemEvent event = new net.minecraftforge.event.entity.player.EnchantItemEvent(p_75140_1_, original.func_77946_l(), itemstack, p_75140_2_, this.field_75167_g[p_75140_2_]);
++                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++                    if (!event.isCanceled()){
++                        this.field_75168_e.func_70299_a(0, event.output);
++                        p_75140_1_.func_82242_a(-this.field_75167_g[p_75140_2_]);
++                        this.func_75130_a(this.field_75168_e);
++                    }
+                 }
+             }
+ 
