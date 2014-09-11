@@ -1,14 +1,27 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerEnchantment.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerEnchantment.java
-@@ -12,6 +12,7 @@
+@@ -2,8 +2,10 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.util.List;
+ import java.util.Random;
++
+ import net.minecraft.enchantment.EnchantmentData;
+ import net.minecraft.enchantment.EnchantmentHelper;
+ import net.minecraft.entity.player.EntityPlayer;
+@@ -12,6 +14,9 @@
  import net.minecraft.init.Items;
  import net.minecraft.item.ItemStack;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.player.EnchantItemEvent;
  
  public class ContainerEnchantment extends Container
  {
-@@ -116,6 +117,7 @@
+@@ -116,6 +121,7 @@
                  {
                      i = 0;
                      int j;
@@ -16,7 +29,7 @@
  
                      for (j = -1; j <= 1; ++j)
                      {
-@@ -123,37 +125,15 @@
+@@ -123,37 +129,15 @@
                          {
                              if ((j != 0 || k != 0) && this.field_75172_h.func_147437_c(this.field_75173_i + k, this.field_75170_j, this.field_75171_k + j) && this.field_75172_h.func_147437_c(this.field_75173_i + k, this.field_75170_j + 1, this.field_75171_k + j))
                              {
@@ -60,7 +73,7 @@
                                  }
                              }
                          }
-@@ -161,7 +141,7 @@
+@@ -161,7 +145,7 @@
  
                      for (j = 0; j < 3; ++j)
                      {
@@ -69,3 +82,38 @@
                      }
  
                      this.func_75142_b();
+@@ -179,7 +163,8 @@
+ 
+     public boolean func_75140_a(EntityPlayer p_75140_1_, int p_75140_2_)
+     {
+-        ItemStack itemstack = this.field_75168_e.func_70301_a(0);
++        ItemStack original = this.field_75168_e.func_70301_a(0);
++        ItemStack itemstack = original.func_77946_l();
+ 
+         if (this.field_75167_g[p_75140_2_] > 0 && itemstack != null && (p_75140_1_.field_71068_ca >= this.field_75167_g[p_75140_2_] || p_75140_1_.field_71075_bZ.field_75098_d))
+         {
+@@ -190,8 +175,6 @@
+ 
+                 if (list != null)
+                 {
+-                    p_75140_1_.func_82242_a(-this.field_75167_g[p_75140_2_]);
+-
+                     if (flag)
+                     {
+                         itemstack.func_150996_a(Items.field_151134_bR);
+@@ -215,8 +198,13 @@
+                             }
+                         }
+                     }
+-
+-                    this.func_75130_a(this.field_75168_e);
++                    EnchantItemEvent event = new EnchantItemEvent(p_75140_1_, original.func_77946_l(), itemstack, p_75140_2_, this.field_75167_g[p_75140_2_]);
++                    MinecraftForge.EVENT_BUS.post(event);
++                    if (!event.isCanceled()){
++                        this.field_75168_e.func_70299_a(0, event.output);
++                        p_75140_1_.func_82242_a(-this.field_75167_g[p_75140_2_]);
++                        this.func_75130_a(this.field_75168_e);
++                    }
+                 }
+             }
+ 
