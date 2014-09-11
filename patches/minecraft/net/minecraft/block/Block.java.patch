@@ -199,7 +199,7 @@
      }
  
      protected ItemStack func_149644_j(int p_149644_1_)
-@@ -1114,6 +1153,1111 @@
+@@ -1114,6 +1153,1113 @@
          return null;
      }
  
@@ -1272,6 +1272,8 @@
 +    
 +    /**
 +     * Gets the block icons as array
++     * Should return 10 icons, otherwise the default 
++     * breaking icons will be used.
 +     * 
 +     * @param metadata
 +     * @return An array of the block icons

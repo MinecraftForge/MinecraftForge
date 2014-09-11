@@ -120,7 +120,7 @@
                      if (block.func_149688_o() != Material.field_151579_a)
                      {
 -                        this.field_147592_B.func_147792_a(block, destroyblockprogress.func_73110_b(), destroyblockprogress.func_73109_c(), destroyblockprogress.func_73108_d(), this.field_94141_F[destroyblockprogress.func_73106_e()]);
-+                        if (blockDestroyIcons != null)
++                        if (blockDestroyIcons != null && blockDestroyIcons.length > destroyblockprogress.func_73106_e())
 +                        {
 +                            this.field_147592_B.func_147792_a(block, destroyblockprogress.func_73110_b(), destroyblockprogress.func_73109_c(), destroyblockprogress.func_73108_d(), blockDestroyIcons[destroyblockprogress.func_73106_e()]);
 +                        }
