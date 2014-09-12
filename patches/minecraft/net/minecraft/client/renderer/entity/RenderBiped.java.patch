@@ -14,7 +14,20 @@
      public static ResourceLocation func_110858_a(ItemArmor p_110858_0_, int p_110858_1_, String p_110858_2_)
      {
          String s1 = String.format("textures/models/armor/%s_layer_%d%s.png", new Object[] {field_82424_k[p_110858_0_.field_77880_c], Integer.valueOf(p_110858_1_ == 2 ? 2 : 1), p_110858_2_ == null ? "" : String.format("_%s", new Object[]{p_110858_2_})});
-@@ -84,7 +86,7 @@
+@@ -77,6 +79,12 @@
+     {
+         ItemStack itemstack = p_77032_1_.func_130225_q(3 - p_77032_2_);
+ 
++        net.minecraftforge.client.event.ShouldRenderPassEvent event = new net.minecraftforge.client.event.ShouldRenderPassEvent(p_77032_1_, this,  p_77032_3_,3 - p_77032_2_, itemstack);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++        if (event.result != -1)
++        {
++            return event.result;
++        }
+         if (itemstack != null)
+         {
+             Item item = itemstack.func_77973_b();
+@@ -84,7 +92,7 @@
              if (item instanceof ItemArmor)
              {
                  ItemArmor itemarmor = (ItemArmor)item;
@@ -23,7 +36,7 @@
                  ModelBiped modelbiped = p_77032_2_ == 2 ? this.field_82425_h : this.field_82423_g;
                  modelbiped.field_78116_c.field_78806_j = p_77032_2_ == 0;
                  modelbiped.field_78114_d.field_78806_j = p_77032_2_ == 0;
-@@ -93,14 +95,16 @@
+@@ -93,14 +101,16 @@
                  modelbiped.field_78113_g.field_78806_j = p_77032_2_ == 1;
                  modelbiped.field_78123_h.field_78806_j = p_77032_2_ == 2 || p_77032_2_ == 3;
                  modelbiped.field_78124_i.field_78806_j = p_77032_2_ == 2 || p_77032_2_ == 3;
@@ -42,7 +55,7 @@
                      float f1 = (float)(j >> 16 & 255) / 255.0F;
                      float f2 = (float)(j >> 8 & 255) / 255.0F;
                      float f3 = (float)(j & 255) / 255.0F;
-@@ -138,7 +142,7 @@
+@@ -138,7 +148,7 @@
  
              if (item instanceof ItemArmor)
              {
@@ -51,7 +64,7 @@
                  float f1 = 1.0F;
                  GL11.glColor3f(1.0F, 1.0F, 1.0F);
              }
-@@ -189,9 +193,12 @@
+@@ -189,9 +199,12 @@
              this.field_77071_a.field_78116_c.func_78794_c(0.0625F);
              item = itemstack1.func_77973_b();
  
@@ -65,7 +78,7 @@
                  {
                      f1 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
-@@ -243,7 +250,10 @@
+@@ -243,7 +256,10 @@
              this.field_77071_a.field_78112_f.func_78794_c(0.0625F);
              GL11.glTranslatef(-0.0625F, 0.4375F, 0.0625F);
  
@@ -77,7 +90,7 @@
              {
                  f1 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -292,7 +302,7 @@
+@@ -292,7 +308,7 @@
  
              if (itemstack.func_77973_b().func_77623_v())
              {
@@ -86,7 +99,7 @@
                  {
                      int j = itemstack.func_77973_b().func_82790_a(itemstack, i);
                      f5 = (float)(j >> 16 & 255) / 255.0F;
-@@ -350,4 +360,33 @@
+@@ -350,4 +366,33 @@
      {
          this.func_76986_a((EntityLiving)p_76986_1_, p_76986_2_, p_76986_4_, p_76986_6_, p_76986_8_, p_76986_9_);
      }

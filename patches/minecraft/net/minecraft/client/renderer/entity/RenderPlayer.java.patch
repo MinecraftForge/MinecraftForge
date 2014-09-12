@@ -4,7 +4,7 @@
      {
          ItemStack itemstack = p_77032_1_.field_71071_by.func_70440_f(3 - p_77032_2_);
  
-+        net.minecraftforge.client.event.RenderPlayerEvent.SetArmorModel event = new net.minecraftforge.client.event.RenderPlayerEvent.SetArmorModel(p_77032_1_, this, 3 - p_77032_2_, p_77032_3_, itemstack);
++        net.minecraftforge.client.event.ShouldRenderPassEvent event = new net.minecraftforge.client.event.ShouldRenderPassEvent(p_77032_1_, this,  p_77032_3_,3 - p_77032_2_, itemstack);
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
 +        if (event.result != -1)
 +        {
