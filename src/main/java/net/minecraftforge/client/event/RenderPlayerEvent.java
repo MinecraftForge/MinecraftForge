@@ -51,6 +51,7 @@ public abstract class RenderPlayerEvent extends PlayerEvent
         }
     }
 
+    @Deprecated
     public static class SetArmorModel extends RenderPlayerEvent
     {
         /**
