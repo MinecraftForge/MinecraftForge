@@ -8,6 +8,15 @@
  import java.util.Random;
  import net.minecraft.block.material.Material;
  import net.minecraft.entity.player.EntityPlayer;
+@@ -64,7 +65,7 @@
+                 {
+                     Block block = Block.func_149634_a(itemstack.func_77973_b());
+ 
+-                    if (!this.func_149928_a(block, itemstack.func_77960_j()))
++                    if (!block.canPlaceInFlowerPot(itemstack, p_149727_1_, p_149727_2_, p_149727_3_, p_149727_4_))
+                     {
+                         return false;
+                     }
 @@ -138,13 +139,6 @@
  
      public void func_149749_a(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_)
