@@ -16,13 +16,6 @@ public class ChunkProviderEvent extends Event
         this.chunkProvider = chunkProvider;
     }
 
-    /**
-     * This event is fired when a chunks blocks are replaced by a biomes top and
-     * filler blocks.
-     *
-     * You can set the result to DENY to prevent the default replacement.
-     */
-    @HasResult
     public static class ReplaceBiomeBlocks extends ChunkProviderEvent
     {
         public final int chunkX;
@@ -30,31 +23,58 @@ public class ChunkProviderEvent extends Event
         public final Block[] blockArray;
         public final byte[] metaArray; // CAN BE NULL
         public final BiomeGenBase[] biomeArray;
+        public final double[] stoneNoise;
         public final World world; // CAN BE NULL
 
         @Deprecated // TODO: Remove in 1.8
         public ReplaceBiomeBlocks(IChunkProvider chunkProvider, int chunkX, int chunkZ, Block[] blockArray, BiomeGenBase[] biomeArray)
         {
-            this(chunkProvider, chunkX, chunkZ, blockArray, new byte[256], biomeArray, null);
+            this(chunkProvider, chunkX, chunkZ, blockArray, new byte[256], biomeArray, null, null);
         }
 
         @Deprecated // TODO: Remove in 1.8
         public ReplaceBiomeBlocks(IChunkProvider chunkProvider, int chunkX, int chunkZ, Block[] blockArray, byte[] metaArray, BiomeGenBase[] biomeArray)
         {
-            this(chunkProvider, chunkZ, chunkZ, blockArray, metaArray, biomeArray, null);
+            this(chunkProvider, chunkZ, chunkZ, blockArray, metaArray, biomeArray, null, null);
         }
 
-        public ReplaceBiomeBlocks(IChunkProvider chunkProvider, int chunkX, int chunkZ, Block[] blockArray, byte[] metaArray, BiomeGenBase[] biomeArray, World world)
+        public ReplaceBiomeBlocks(IChunkProvider chunkProvider, int chunkX, int chunkZ, Block[] blockArray, byte[] metaArray, BiomeGenBase[] biomeArray, double[] stoneNoise, World world)
         {
             super(chunkProvider);
             this.chunkX = chunkX;
             this.chunkZ = chunkZ;
             this.blockArray = blockArray;
-            this.biomeArray = biomeArray;
             this.metaArray = metaArray;
+            this.biomeArray = biomeArray;
+            this.stoneNoise = stoneNoise;
             this.world = world;
         }
 
+        /**
+         * This event is fired before a chunks blocks are replaced by a biomes top and
+         * filler blocks.
+         *
+         * You can set the result to DENY to prevent the default replacement.
+         */
+        @HasResult
+        public static class Pre extends ReplaceBiomeBlocks
+        {
+            public Pre(IChunkProvider chunkProvider, int chunkX, int chunkZ, Block[] blockArray, byte[] metaArray, BiomeGenBase[] biomeArray, double[] stoneNoise, World world)
+            {
+                super(chunkProvider, chunkX, chunkZ, blockArray, metaArray, biomeArray, stoneNoise, world);
+            }
+        }
+        
+        /**
+         * This event is fired after a chunks blocks are replaced by a biomes top and filler blocks.
+         */
+        public static class Post extends ReplaceBiomeBlocks
+        {
+            public Post(IChunkProvider chunkProvider, int chunkX, int chunkZ, Block[] blockArray, byte[] metaArray, BiomeGenBase[] biomeArray, double[] stoneNoise, World world)
+            {
+                super(chunkProvider, chunkX, chunkZ, blockArray, metaArray, biomeArray, stoneNoise, world);
+            }
+        }
     }
 
     /**
