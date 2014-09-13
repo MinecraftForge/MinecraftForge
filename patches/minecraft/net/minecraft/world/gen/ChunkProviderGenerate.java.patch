@@ -46,18 +46,28 @@
      }
  
      public void func_147424_a(int p_147424_1_, int p_147424_2_, Block[] p_147424_3_)
-@@ -157,6 +182,10 @@
- 
-     public void func_147422_a(int p_147422_1_, int p_147422_2_, Block[] p_147422_3_, byte[] p_147422_4_, BiomeGenBase[] p_147422_5_)
-     {
-+        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, p_147422_1_, p_147422_2_, p_147422_3_, p_147422_4_, p_147422_5_, this.field_73230_p);
-+        MinecraftForge.EVENT_BUS.post(event);
-+        if (event.getResult() == Result.DENY) return;
-+
+@@ -160,6 +185,10 @@
          double d0 = 0.03125D;
          this.field_73227_s = this.field_147430_m.func_151599_a(this.field_73227_s, (double)(p_147422_1_ * 16), (double)(p_147422_2_ * 16), 16, 16, d0 * 2.0D, d0 * 2.0D, 1.0D);
  
-@@ -345,6 +374,8 @@
++        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks.Pre(this, p_147422_1_, p_147422_2_, p_147422_3_, p_147422_4_, p_147422_5_, this.field_73227_s, this.field_73230_p);
++        MinecraftForge.EVENT_BUS.post(event);
++        if (event.getResult() == Result.DENY) return;
++
+         for (int k = 0; k < 16; ++k)
+         {
+             for (int l = 0; l < 16; ++l)
+@@ -168,6 +197,9 @@
+                 biomegenbase.func_150573_a(this.field_73230_p, this.field_73220_k, p_147422_3_, p_147422_4_, p_147422_1_ * 16 + k, p_147422_2_ * 16 + l, this.field_73227_s[l + k * 16]);
+             }
+         }
++        
++        event = new ChunkProviderEvent.ReplaceBiomeBlocks.Post(this, p_147422_1_, p_147422_2_, p_147422_3_, p_147422_4_, p_147422_5_, this.field_73227_s, this.field_73230_p);
++        MinecraftForge.EVENT_BUS.post(event);
+     }
+ 
+     public Chunk func_73158_c(int p_73158_1_, int p_73158_2_)
+@@ -345,6 +377,8 @@
          this.field_73220_k.setSeed((long)p_73153_2_ * i1 + (long)p_73153_3_ * j1 ^ this.field_73230_p.func_72905_C());
          boolean flag = false;
  
@@ -66,7 +76,7 @@
          if (this.field_73229_q)
          {
              this.field_73223_w.func_75051_a(this.field_73230_p, this.field_73220_k, p_73153_2_, p_73153_3_);
-@@ -357,7 +388,8 @@
+@@ -357,7 +391,8 @@
          int l1;
          int i2;
  
@@ -76,7 +86,7 @@
          {
              k1 = k + this.field_73220_k.nextInt(16) + 8;
              l1 = this.field_73220_k.nextInt(256);
-@@ -365,7 +397,7 @@
+@@ -365,7 +400,7 @@
              (new WorldGenLakes(Blocks.field_150355_j)).func_76484_a(this.field_73230_p, this.field_73220_k, k1, l1, i2);
          }
  
@@ -85,7 +95,7 @@
          {
              k1 = k + this.field_73220_k.nextInt(16) + 8;
              l1 = this.field_73220_k.nextInt(this.field_73220_k.nextInt(248) + 8);
-@@ -377,7 +409,8 @@
+@@ -377,7 +412,8 @@
              }
          }
  
@@ -95,7 +105,7 @@
          {
              l1 = k + this.field_73220_k.nextInt(16) + 8;
              i2 = this.field_73220_k.nextInt(256);
-@@ -386,11 +419,15 @@
+@@ -386,11 +422,15 @@
          }
  
          biomegenbase.func_76728_a(this.field_73230_p, this.field_73220_k, k, l);
@@ -112,7 +122,7 @@
          {
              for (l1 = 0; l1 < 16; ++l1)
              {
-@@ -408,6 +445,8 @@
+@@ -408,6 +448,8 @@
              }
          }
  

@@ -55,14 +55,24 @@
 +    }
 +    public void replaceBiomeBlocks(int p_147418_1_, int p_147418_2_, Block[] p_147418_3_, byte[] meta, BiomeGenBase[] biomes)
 +    {
-+        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, p_147418_1_, p_147418_2_, p_147418_3_, meta, biomes, this.field_73175_o);
++        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks.Pre(this, p_147418_1_, p_147418_2_, p_147418_3_, meta, biomes, null, this.field_73175_o);
 +        MinecraftForge.EVENT_BUS.post(event);
 +        if (event.getResult() == Result.DENY) return;
 +
          byte b0 = 64;
          double d0 = 0.03125D;
          this.field_73185_q = this.field_73177_m.func_76304_a(this.field_73185_q, p_147418_1_ * 16, p_147418_2_ * 16, 0, 16, 16, 1, d0, d0, 1.0D);
-@@ -234,12 +266,13 @@
+@@ -223,6 +255,9 @@
+                 }
+             }
+         }
++        
++        event = new ChunkProviderEvent.ReplaceBiomeBlocks.Post(this, p_147418_1_, p_147418_2_, p_147418_3_, meta, biomes, null, this.field_73175_o);
++        MinecraftForge.EVENT_BUS.post(event);
+     }
+ 
+     public Chunk func_73158_c(int p_73158_1_, int p_73158_2_)
+@@ -234,12 +269,13 @@
      {
          this.field_73181_i.setSeed((long)p_73154_1_ * 341873128712L + (long)p_73154_2_ * 132897987541L);
          Block[] ablock = new Block[32768];
@@ -79,7 +89,7 @@
          byte[] abyte = chunk.func_76605_m();
  
          for (int k = 0; k < abyte.length; ++k)
-@@ -253,6 +286,10 @@
+@@ -253,6 +289,10 @@
  
      private double[] func_73164_a(double[] p_73164_1_, int p_73164_2_, int p_73164_3_, int p_73164_4_, int p_73164_5_, int p_73164_6_, int p_73164_7_)
      {
@@ -90,7 +100,7 @@
          if (p_73164_1_ == null)
          {
              p_73164_1_ = new double[p_73164_5_ * p_73164_6_ * p_73164_7_];
-@@ -399,6 +436,9 @@
+@@ -399,6 +439,9 @@
      public void func_73153_a(IChunkProvider p_73153_1_, int p_73153_2_, int p_73153_3_)
      {
          BlockFalling.field_149832_M = true;
@@ -100,7 +110,7 @@
          int k = p_73153_2_ * 16;
          int l = p_73153_3_ * 16;
          this.field_73172_c.func_75051_a(this.field_73175_o, this.field_73181_i, p_73153_2_, p_73153_3_);
-@@ -407,7 +447,8 @@
+@@ -407,7 +450,8 @@
          int k1;
          int l1;
  
@@ -110,7 +120,7 @@
          {
              j1 = k + this.field_73181_i.nextInt(16) + 8;
              k1 = this.field_73181_i.nextInt(120) + 4;
-@@ -418,7 +459,8 @@
+@@ -418,7 +462,8 @@
          i1 = this.field_73181_i.nextInt(this.field_73181_i.nextInt(10) + 1) + 1;
          int i2;
  
@@ -120,7 +130,7 @@
          {
              k1 = k + this.field_73181_i.nextInt(16) + 8;
              l1 = this.field_73181_i.nextInt(120) + 4;
-@@ -428,7 +470,8 @@
+@@ -428,7 +473,8 @@
  
          i1 = this.field_73181_i.nextInt(this.field_73181_i.nextInt(10) + 1);
  
@@ -130,7 +140,7 @@
          {
              k1 = k + this.field_73181_i.nextInt(16) + 8;
              l1 = this.field_73181_i.nextInt(120) + 4;
-@@ -436,7 +479,7 @@
+@@ -436,7 +482,7 @@
              (new WorldGenGlowStone1()).func_76484_a(this.field_73175_o, this.field_73181_i, k1, l1, i2);
          }
  
@@ -139,7 +149,7 @@
          {
              k1 = k + this.field_73181_i.nextInt(16) + 8;
              l1 = this.field_73181_i.nextInt(128);
-@@ -444,7 +487,10 @@
+@@ -444,7 +490,10 @@
              (new WorldGenGlowStone2()).func_76484_a(this.field_73175_o, this.field_73181_i, k1, l1, i2);
          }
  
@@ -151,7 +161,7 @@
          {
              j1 = k + this.field_73181_i.nextInt(16) + 8;
              k1 = this.field_73181_i.nextInt(128);
-@@ -452,7 +498,7 @@
+@@ -452,7 +501,7 @@
              (new WorldGenFlowers(Blocks.field_150338_P)).func_76484_a(this.field_73175_o, this.field_73181_i, j1, k1, l1);
          }
  
@@ -160,7 +170,7 @@
          {
              j1 = k + this.field_73181_i.nextInt(16) + 8;
              k1 = this.field_73181_i.nextInt(128);
-@@ -463,7 +509,8 @@
+@@ -463,7 +512,8 @@
          WorldGenMinable worldgenminable = new WorldGenMinable(Blocks.field_150449_bY, 13, Blocks.field_150424_aL);
          int j2;
  
@@ -170,7 +180,7 @@
          {
              l1 = k + this.field_73181_i.nextInt(16);
              i2 = this.field_73181_i.nextInt(108) + 10;
-@@ -479,6 +526,9 @@
+@@ -479,6 +529,9 @@
              (new WorldGenHellLava(Blocks.field_150356_k, true)).func_76484_a(this.field_73175_o, this.field_73181_i, l1, i2, j2);
          }
  
