@@ -57,7 +57,8 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
     {
         if (world.getBlock(x, y, z) == block)
         {
-            if (world.getBlock(x, y - block.densityDir, z).getMaterial().isLiquid())
+            Block verticalOrigin = world.getBlock(x, y - block.densityDir, z);
+            if (verticalOrigin.getMaterial().isLiquid() || verticalOrigin instanceof IFluidBlock)
             {
                 return 1;
             }
