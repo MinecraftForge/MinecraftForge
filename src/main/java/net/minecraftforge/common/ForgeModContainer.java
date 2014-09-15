@@ -28,6 +28,8 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.permissions.PermissionsManager.RegisteredPermValue;
+import net.minecraftforge.server.CommandHandlerForge;
 import net.minecraftforge.server.command.ForgeCommand;
 
 import com.google.common.collect.ImmutableList;
@@ -301,8 +303,10 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     @Subscribe
     public void serverStarting(FMLServerStartingEvent evt)
     {
-        evt.registerServerCommand(new ForgeCommand(evt.getServer()));
+        // evt.registerServerCommand(new ForgeCommand(evt.getServer())); this call is not permissions aware, the one below is
+        CommandHandlerForge.registerCommand(new ForgeCommand(evt.getServer()), "forge.command", RegisteredPermValue.OP);
     }
+    
     @Override
     public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info)
     {
