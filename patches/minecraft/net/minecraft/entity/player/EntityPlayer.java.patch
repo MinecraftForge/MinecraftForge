@@ -380,7 +380,12 @@
              float f1 = 0.5F;
              float f = 0.5F;
  
-@@ -1321,11 +1453,12 @@
+@@ -1317,15 +1449,17 @@
+ 
+     public void func_70999_a(boolean p_70999_1_, boolean p_70999_2_, boolean p_70999_3_)
+     {
++        MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerWakeUpEvent(this));
+         this.func_70105_a(0.6F, 1.8F);
          this.func_71061_d_();
          ChunkCoordinates chunkcoordinates = this.field_71081_bT;
          ChunkCoordinates chunkcoordinates1 = this.field_71081_bT;
@@ -396,7 +401,7 @@
  
              if (chunkcoordinates1 == null)
              {
-@@ -1359,7 +1492,7 @@
+@@ -1359,7 +1493,7 @@
  
      private boolean func_71065_l()
      {
@@ -405,7 +410,7 @@
      }
  
      public static ChunkCoordinates func_71056_a(World p_71056_0_, ChunkCoordinates p_71056_1_, boolean p_71056_2_)
-@@ -1370,9 +1503,9 @@
+@@ -1370,9 +1504,9 @@
          ichunkprovider.func_73158_c(p_71056_1_.field_71574_a - 3 >> 4, p_71056_1_.field_71573_c + 3 >> 4);
          ichunkprovider.func_73158_c(p_71056_1_.field_71574_a + 3 >> 4, p_71056_1_.field_71573_c + 3 >> 4);
  
@@ -417,7 +422,7 @@
              return chunkcoordinates1;
          }
          else
-@@ -1390,8 +1523,10 @@
+@@ -1390,8 +1524,10 @@
      {
          if (this.field_71081_bT != null)
          {
@@ -430,7 +435,7 @@
  
              switch (j)
              {
-@@ -1447,18 +1582,25 @@
+@@ -1447,18 +1583,25 @@
  
      public void func_146105_b(IChatComponent p_146105_1_) {}
  
@@ -458,7 +463,7 @@
          if (p_71063_1_ != null)
          {
              this.field_71077_c = new ChunkCoordinates(p_71063_1_);
-@@ -1632,6 +1774,10 @@
+@@ -1632,6 +1775,10 @@
  
              super.func_70069_a(p_70069_1_);
          }
@@ -469,7 +474,7 @@
      }
  
      protected String func_146067_o(int p_146067_1_)
-@@ -1674,11 +1820,6 @@
+@@ -1674,11 +1821,6 @@
          }
          else
          {
@@ -481,7 +486,7 @@
              if (this.field_71074_e != null && p_70620_1_.func_77973_b() == Items.field_151031_f)
              {
                  int j = p_70620_1_.func_77988_m() - this.field_71072_f;
-@@ -1698,6 +1839,7 @@
+@@ -1698,6 +1840,7 @@
                      return Items.field_151031_f.func_94599_c(0);
                  }
              }
@@ -489,7 +494,7 @@
          }
  
          return iicon;
-@@ -1781,6 +1923,8 @@
+@@ -1781,6 +1924,8 @@
      {
          if (p_71008_1_ != this.field_71074_e)
          {
@@ -498,7 +503,7 @@
              this.field_71074_e = p_71008_1_;
              this.field_71072_f = p_71008_2_;
  
-@@ -1864,6 +2008,10 @@
+@@ -1864,6 +2009,10 @@
              this.field_71106_cc = p_71049_1_.field_71106_cc;
              this.func_85040_s(p_71049_1_.func_71037_bA());
              this.field_82152_aq = p_71049_1_.field_82152_aq;
@@ -509,7 +514,7 @@
          }
          else if (this.field_70170_p.func_82736_K().func_82766_b("keepInventory"))
          {
-@@ -1875,6 +2023,18 @@
+@@ -1875,6 +2024,18 @@
          }
  
          this.field_71078_a = p_71049_1_.field_71078_a;
@@ -528,7 +533,7 @@
      }
  
      protected boolean func_70041_e_()
-@@ -1913,7 +2073,14 @@
+@@ -1913,7 +2074,14 @@
  
      public void func_70062_b(int p_70062_1_, ItemStack p_70062_2_)
      {
@@ -544,7 +549,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -1958,7 +2125,7 @@
+@@ -1958,7 +2126,7 @@
  
      public IChatComponent func_145748_c_()
      {
@@ -553,7 +558,7 @@
          chatcomponenttext.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
          return chatcomponenttext;
      }
-@@ -2041,6 +2208,118 @@
+@@ -2041,6 +2209,118 @@
          FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
      }
  
