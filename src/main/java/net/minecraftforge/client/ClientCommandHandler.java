@@ -31,8 +31,8 @@ public class ClientCommandHandler extends CommandHandler
     public String[] latestAutoComplete = null;
 
     /**
-     * @return 1 if successfully executed, 0 if wrong usage, it doesn't exist or
-     *         it was canceled.
+     * @return 1 if successfully executed, -1 if no permission or wrong usage,
+     *         0 if it doesn't exist or it was canceled (it's sent to the server)
      */
     @Override
     public int executeCommand(ICommandSender sender, String message)
@@ -91,7 +91,7 @@ public class ClientCommandHandler extends CommandHandler
             t.printStackTrace();
         }
 
-        return 0;
+        return -1;
     }
 
     //Couple of helpers because the mcp names are stupid and long...
