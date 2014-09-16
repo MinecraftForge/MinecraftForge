@@ -29,15 +29,16 @@ repositories {
 }
 
 minecraft {
-    version = '1.7.10'
-    mcpVersion = '9.05'
+    version = '1.8'
+    mcpVersion = '9.10'
+    mappings = 'snapshot_nodoc_20140916'
     fmlDir = projectDir.getAbsolutePath();
     mainClass = 'cpw.mods.fml.relauncher.ServerLaunchWrapper'
     tweakClass = 'cpw.mods.fml.common.launcher.FMLTweaker'
     installerVersion = "1.4"
 }
 
-group = 'cpw.mods'
+group = 'net.minecraftforge.fml'
 version = getVersionFromGit(getProject())
 
 jenkins {

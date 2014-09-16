@@ -1,0 +1,12 @@
+diff -r -U 3 minecraft\net\minecraft\util\BlockPos.java minecraft_patched\net\minecraft\util\BlockPos.java
+--- minecraft\net\minecraft\util\BlockPos.java
++++ minecraft_patched\net\minecraft\util\BlockPos.java
+@@ -194,7 +194,7 @@
+ 
+                protected BlockPos.MutableBlockPos func_179313_a() {
+                   if(this.field_179314_b == null) {
+-                     this.field_179314_b = new BlockPos.MutableBlockPos(var2xxx.func_177958_n(), var2.func_177956_o(), var2x.func_177952_p(), null);
++                     this.field_179314_b = new BlockPos.MutableBlockPos(var2.func_177958_n(), var2.func_177956_o(), var2.func_177952_p(), null);
+                      return this.field_179314_b;
+                   } else if(this.field_179314_b.equals(var3)) {
+                      return (BlockPos.MutableBlockPos)this.endOfData();
