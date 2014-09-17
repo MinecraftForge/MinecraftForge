@@ -192,4 +192,22 @@ public class ForgeEventFactory
         File dir = ObfuscationReflectionHelper.getPrivateValue(SaveHandler.class, sh, "playersDirectory", "field_"+"75771_c");
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.LoadFromFile(player, dir, uuidString));
     }
+
+    /**
+     * Gets the ability for liquids to flow in different directions.  
+     * @param world The world we're working with
+     * @param x The x coordinate of the block that is attempting to flow
+     * @param y The y coordinate of the block that is attempting to flow
+     * @param z The z coordinate of the block that is attempting to flow
+     * @param meta The metadata of the block that is attempting to flow
+     * @return This function is expected to return a boolean array af length 6.  Each element corresponds to a
+     * <br />
+     * FORGEDIRECTION enum index, and indicates whether the liquid at the given block can flow in that direction.
+     */
+    public static boolean[] getLiquidFlowRules(World world, Block block, int x, int y, int z, int meta)
+    {
+        BlockEvent.FluidBlockFlow event = new BlockEvent.FluidBlockFlow(world, block, x, y, z, meta);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.results;
+    }
 }
