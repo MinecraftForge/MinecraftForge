@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockEvent extends Event {
     public final int x;
@@ -109,6 +110,44 @@ public class BlockEvent extends Event {
         public void setExpToDrop(int exp)
         {
             this.exp = exp;
+        }
+    }
+    
+    /**
+     * Called when fire attempts to spread to a new location.
+     * Cancel this event to prevent the fire spread from happening.
+     * x, y, and z are the coordinates that the fire is trying to spread to.
+     * @author Mithion
+     *
+     */
+    @Cancelable
+    public static class FireSpread extends BlockEvent 
+    {
+        public FireSpread(World world, Block block, int x, int y, int z, int meta)
+        {
+            super(x, y, z, world, block, meta);
+        }
+    }
+    
+    /**
+     * Event for when a fluid block in the world attempts to flow into another location.
+     * x, y, and z are the coordinates that the block is trying to flow to.
+     * Results corresponds to ForgeDirection.VALID_DIRECTIONS - setting any of these to false will prevent the liquid from flowing
+     * in that direction.
+     * @author Mithion
+     *
+     */
+    public static class FluidBlockFlow extends BlockEvent 
+    {
+        public final boolean[] results;
+        public FluidBlockFlow(World world, Block block, int x, int y, int z, int meta){
+            super(x, y, z, world, block, meta);
+            
+            results = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
+            
+            //valid defaults
+            for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; ++i)
+                results[i] = true;
         }
     }
 }

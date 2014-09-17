@@ -8,6 +8,10 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.world.BlockEvent;
 
 /**
  * This is a cellular-automata based finite fluid block implementation.
@@ -57,11 +61,18 @@ public class BlockFluidFinite extends BlockFluidBase
     public void updateTick(World world, int x, int y, int z, Random rand)
     {
         boolean changed = false;
-        int quantaRemaining = world.getBlockMetadata(x, y, z) + 1;
+        int meta = world.getBlockMetadata(x, y, z);
+        int quantaRemaining = meta + 1;
+        
+        boolean[] allowable_flow_directions = ForgeEventFactory.getLiquidFlowRules(world, this, x, y, z, meta);
 
         // Flow vertically if possible
         int prevRemaining = quantaRemaining;
-        quantaRemaining = tryToFlowVerticallyInto(world, x, y, z, quantaRemaining);
+        if ( (densityDir < 0 && allowable_flow_directions[ForgeDirection.DOWN.ordinal()]) ||
+           ( (densityDir > 0 && allowable_flow_directions[ForgeDirection.UP.ordinal()]  ) ))
+        {
+            quantaRemaining = tryToFlowVerticallyInto(world, x, y, z, quantaRemaining);
+        }
 
         if (quantaRemaining < 1)
         {
@@ -92,27 +103,27 @@ public class BlockFluidFinite extends BlockFluidBase
         int west  = getQuantaValueBelow(world, x - 1, y, z,     lowerthan);
         int east  = getQuantaValueBelow(world, x + 1, y, z,     lowerthan);
         int total = quantaRemaining;
-        int count = 1;
+        int count = 1;        
 
-        if (north >= 0)
+        if (north >= 0 && allowable_flow_directions[ForgeDirection.NORTH.ordinal()])
         {
             count++;
             total += north;
         }
 
-        if (south >= 0)
+        if (south >= 0 && allowable_flow_directions[ForgeDirection.SOUTH.ordinal()])
         {
             count++;
             total += south;
         }
 
-        if (west >= 0)
+        if (west >= 0 && allowable_flow_directions[ForgeDirection.WEST.ordinal()])
         {
             count++;
             total += west;
         }
 
-        if (east >= 0)
+        if (east >= 0 && allowable_flow_directions[ForgeDirection.EAST.ordinal()])
         {
             ++count;
             total += east;
@@ -315,7 +326,7 @@ public class BlockFluidFinite extends BlockFluidBase
         {
             world.setBlock(x, y, z, Blocks.air);
         }
-        
+
         return new FluidStack(getFluid(),
                 MathHelper.floor_float(getQuantaPercentage(world, x, y, z) * FluidContainerRegistry.BUCKET_VOLUME));
     }

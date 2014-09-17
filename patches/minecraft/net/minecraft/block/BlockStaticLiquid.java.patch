@@ -1,0 +1,39 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockStaticLiquid.java
++++ ../src-work/minecraft/net/minecraft/block/BlockStaticLiquid.java
+@@ -1,9 +1,12 @@
+ package net.minecraft.block;
+ 
+ import java.util.Random;
++
+ import net.minecraft.block.material.Material;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.BlockEvent;
+ 
+ public class BlockStaticLiquid extends BlockLiquid
+ {
+@@ -55,7 +58,11 @@
+                 {
+                     if (this.func_149817_o(p_149674_1_, p_149674_2_ - 1, p_149674_3_, p_149674_4_) || this.func_149817_o(p_149674_1_, p_149674_2_ + 1, p_149674_3_, p_149674_4_) || this.func_149817_o(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_ - 1) || this.func_149817_o(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_ + 1) || this.func_149817_o(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_) || this.func_149817_o(p_149674_1_, p_149674_2_, p_149674_3_ + 1, p_149674_4_))
+                     {
+-                        p_149674_1_.func_147449_b(p_149674_2_, p_149674_3_, p_149674_4_, Blocks.field_150480_ab);
++                        //event for fire spread
++                        BlockEvent.FireSpread event = new BlockEvent.FireSpread(p_149674_1_, this, p_149674_2_, p_149674_3_, p_149674_4_, 0);
++                        MinecraftForge.EVENT_BUS.post(event);
++                        if (!event.isCanceled())
++                            p_149674_1_.func_147449_b(p_149674_2_, p_149674_3_, p_149674_4_, Blocks.field_150480_ab);
+                         return;
+                     }
+                 }
+@@ -77,7 +84,9 @@
+ 
+                     if (p_149674_1_.func_147437_c(p_149674_2_, p_149674_3_ + 1, p_149674_4_) && this.func_149817_o(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_))
+                     {
+-                        p_149674_1_.func_147449_b(p_149674_2_, p_149674_3_ + 1, p_149674_4_, Blocks.field_150480_ab);
++                        BlockEvent.FireSpread event = new BlockEvent.FireSpread(p_149674_1_, this, p_149674_2_, p_149674_3_, p_149674_4_, 0);
++                        if (!event.isCanceled())
++                            p_149674_1_.func_147449_b(p_149674_2_, p_149674_3_ + 1, p_149674_4_, Blocks.field_150480_ab);
+                     }
+                 }
+             }

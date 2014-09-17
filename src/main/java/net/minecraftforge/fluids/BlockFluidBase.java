@@ -15,6 +15,8 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.BlockEvent;
 
 /**
  * This is a base implementation for Fluid blocks.
@@ -114,7 +116,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
      */
     public boolean canDisplace(IBlockAccess world, int x, int y, int z)
     {
-        if (world.getBlock(x, y, z).isAir(world, x, y, z)) return true;
+       if (world.getBlock(x, y, z).isAir(world, x, y, z)) return true;
 
         Block block = world.getBlock(x, y, z);
 
