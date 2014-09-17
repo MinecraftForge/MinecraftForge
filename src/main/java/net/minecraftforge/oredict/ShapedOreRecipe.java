@@ -125,6 +125,23 @@ public class ShapedOreRecipe implements IRecipe
         }
     }
 
+    public ShapedOreRecipe(Object[] input, ItemStack output, int width, int height, boolean mirrored)
+    {
+        this.output = output.copy();
+        this.input = input;
+        this.width = width;
+        this.height = height;
+        this.mirrored = mirrored;
+        
+        for (int i = 0; i < input.length; i++)
+        {
+            if (input[i] instanceof String)
+            {
+                input[i] = OreDictionary.getOres((String)input[i]);
+            }
+        }
+    }
+
     ShapedOreRecipe(ShapedRecipes recipe, Map<ItemStack, String> replacements)
     {
         output = recipe.getRecipeOutput();
@@ -249,10 +266,25 @@ public class ShapedOreRecipe implements IRecipe
     /**
      * Returns the input for this recipe, any mod accessing this value should never
      * manipulate the values in this array as it will effect the recipe itself.
-     * @return The recipes input vales.
+     * @return The recipe's input values.
      */
     public Object[] getInput()
     {
         return this.input;
+    }
+
+    public int getRecipeWidth()
+    {
+        return width;
+    }
+
+    public int getRecipeHeight()
+    {
+        return height;
+    }
+
+    public boolean getIsMirrored()
+    {
+        return mirrored;
     }
 }
