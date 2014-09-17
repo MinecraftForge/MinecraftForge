@@ -1,0 +1,71 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDynamicLiquid.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDynamicLiquid.java
+@@ -1,9 +1,15 @@
+ package net.minecraft.block;
+ 
+ import java.util.Random;
++
+ import net.minecraft.block.material.Material;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.common.util.ForgeDirection;
++import net.minecraftforge.event.ForgeEventFactory;
++import net.minecraftforge.event.world.BlockEvent;
++import net.minecraftforge.event.world.BlockEvent.FluidBlockFlow;
+ 
+ public class BlockDynamicLiquid extends BlockLiquid
+ {
+@@ -33,6 +39,8 @@
+             b0 = 2;
+         }
+ 
++        boolean[] allowable_flow_directions = ForgeEventFactory.getLiquidFlowRules(p_149674_1_, this, p_149674_2_, p_149674_3_, p_149674_4_, p_149674_1_.func_72805_g(p_149674_2_, p_149674_3_, p_149674_4_));
++
+         boolean flag = true;
+         int i1 = this.func_149738_a(p_149674_1_);
+         int j1;
+@@ -111,7 +119,7 @@
+             this.func_149811_n(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_);
+         }
+ 
+-        if (this.func_149809_q(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_))
++        if (this.func_149809_q(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_) && allowable_flow_directions[ForgeDirection.DOWN.ordinal()])
+         {
+             if (this.field_149764_J == Material.field_151587_i && p_149674_1_.func_147439_a(p_149674_2_, p_149674_3_ - 1, p_149674_4_).func_149688_o() == Material.field_151586_h)
+             {
+@@ -119,7 +127,6 @@
+                 this.func_149799_m(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_);
+                 return;
+             }
+-
+             if (l >= 8)
+             {
+                 this.func_149813_h(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_, l);
+@@ -144,22 +151,22 @@
+                 return;
+             }
+ 
+-            if (aboolean[0])
++            if (aboolean[0] && allowable_flow_directions[ForgeDirection.WEST.ordinal()])
+             {
+                 this.func_149813_h(p_149674_1_, p_149674_2_ - 1, p_149674_3_, p_149674_4_, j1);
+             }
+ 
+-            if (aboolean[1])
++            if (aboolean[1] && allowable_flow_directions[ForgeDirection.EAST.ordinal()])
+             {
+                 this.func_149813_h(p_149674_1_, p_149674_2_ + 1, p_149674_3_, p_149674_4_, j1);
+             }
+ 
+-            if (aboolean[2])
++            if (aboolean[2] && allowable_flow_directions[ForgeDirection.NORTH.ordinal()])
+             {
+                 this.func_149813_h(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_ - 1, j1);
+             }
+ 
+-            if (aboolean[3])
++            if (aboolean[3] && allowable_flow_directions[ForgeDirection.SOUTH.ordinal()])
+             {
+                 this.func_149813_h(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_ + 1, j1);
+             }
