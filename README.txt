@@ -25,7 +25,8 @@ For Contributors: (Note: This assumes you have Gradle installed. If you don't, u
 
 Clone this repository to a folder. 
 Open a command prompt and navigate to the folder where you cloned this repo.
-Run gradle setupForge to setup your development environment.
+Run 'gradle setupForge' to setup your development environment.
+Run 'gradle genPatches' before commit to convert your changes into actual patches.
 
 To use Eclipse, point your Eclipse workspace at the eclipse folder inside the repo.
 
