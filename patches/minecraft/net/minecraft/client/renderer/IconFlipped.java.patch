@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/IconFlipped.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/IconFlipped.java
+@@ -47,7 +47,7 @@
+ 
+     public float func_94206_g()
+     {
+-        return this.field_96453_c ? this.field_96454_a.func_94206_g() : this.field_96454_a.func_94206_g();
++        return this.field_96453_c ? this.field_96454_a.func_94210_h() : this.field_96454_a.func_94206_g();
+     }
+ 
+     public float func_94210_h()
