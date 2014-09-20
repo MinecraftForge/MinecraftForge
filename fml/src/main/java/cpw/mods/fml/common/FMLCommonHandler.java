@@ -580,11 +580,6 @@ public class FMLCommonHandler
         return sidedDelegate.getClientPlayHandler();
     }
 
-    public void waitForPlayClient()
-    {
-        sidedDelegate.waitForPlayClient();
-    }
-
     public void fireNetRegistrationEvent(NetworkManager manager, Set<String> channelSet, String channel, Side side)
     {
         sidedDelegate.fireNetRegistrationEvent(bus(), manager, channelSet, channel, side);

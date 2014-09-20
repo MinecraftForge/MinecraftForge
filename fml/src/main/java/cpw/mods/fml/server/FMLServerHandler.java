@@ -242,11 +242,6 @@ public class FMLServerHandler implements IFMLSidedHandler
     {
         return null;
     }
-    @Override
-    public void waitForPlayClient()
-    {
-        // NOOP
-    }
 
     @Override
     public void fireNetRegistrationEvent(EventBus bus, NetworkManager manager, Set<String> channelSet, String channel, Side side)
@@ -259,7 +254,7 @@ public class FMLServerHandler implements IFMLSidedHandler
     {
         return DedicatedServer.allowPlayerLogins;
     }
-    
+
     @Override
     public void allowLogins() {
         DedicatedServer.allowPlayerLogins = true;

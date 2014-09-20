@@ -49,7 +49,6 @@ public enum LoaderState
 
 
     private Class<? extends FMLStateEvent> eventClass;
-    @SuppressWarnings("unused")
     private String name;
 
     private LoaderState(String name, Class<? extends FMLStateEvent> event)

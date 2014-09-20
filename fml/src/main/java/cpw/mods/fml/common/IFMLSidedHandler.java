@@ -54,8 +54,6 @@ public interface IFMLSidedHandler
 
     INetHandler getClientPlayHandler();
 
-    void waitForPlayClient();
-
     void fireNetRegistrationEvent(EventBus bus, NetworkManager manager, Set<String> channelSet, String channel, Side side);
 
     boolean shouldAllowPlayerLogins();

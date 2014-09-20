@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import net.minecraft.network.PacketBuffer;
+
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
@@ -25,7 +27,7 @@ public abstract class FMLHandshakeMessage {
     public static FMLProxyPacket makeCustomChannelRegistration(Set<String> channels)
     {
         String salutation = Joiner.on('\0').join(Iterables.concat(Arrays.asList("FML|HS","FML"),channels));
-        FMLProxyPacket proxy = new FMLProxyPacket(Unpooled.wrappedBuffer(salutation.getBytes(Charsets.UTF_8)), "REGISTER");
+        FMLProxyPacket proxy = new FMLProxyPacket(new PacketBuffer(Unpooled.wrappedBuffer(salutation.getBytes(Charsets.UTF_8))), "REGISTER");
         return proxy;
     }
     public static class ServerHello extends FMLHandshakeMessage {

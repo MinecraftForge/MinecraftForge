@@ -33,6 +33,7 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 
@@ -257,17 +258,17 @@ public class GameRegistry
 
     public static void addSmelting(Block input, ItemStack output, float xp)
     {
-        FurnaceRecipes.smelting().func_151393_a(input, output, xp);
+        FurnaceRecipes.instance().addSmeltingRecipeForBlock(input, output, xp);
     }
 
     public static void addSmelting(Item input, ItemStack output, float xp)
     {
-        FurnaceRecipes.smelting().func_151396_a(input, output, xp);
+        FurnaceRecipes.instance().addSmelting(input, output, xp);
     }
 
     public static void addSmelting(ItemStack input, ItemStack output, float xp)
     {
-        FurnaceRecipes.smelting().func_151394_a(input, output, xp);
+        FurnaceRecipes.instance().addSmeltingRecipe(input, output, xp);
     }
 
     public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id)
@@ -383,6 +384,25 @@ public class GameRegistry
             String[] parts = string.split(":");
             this.modId = parts[0];
             this.name = parts[1];
+        }
+
+        public UniqueIdentifier(Object obj)
+        {
+            if (obj instanceof String)
+            {
+                String[] parts = ((String)obj).split(":");
+                this.modId = parts[0];
+                this.name = parts[1];
+            }
+            else if (obj instanceof ResourceLocation)
+            {
+                this.modId = ((ResourceLocation)obj).getResourceDomain();
+                this.name  = ((ResourceLocation)obj).getResourcePath();
+            }
+            else
+            {
+                throw new IllegalArgumentException("UniqueIdentifier must be a String or ResourceLocation, was " + obj.getClass());
+            }
         }
 
         @Override

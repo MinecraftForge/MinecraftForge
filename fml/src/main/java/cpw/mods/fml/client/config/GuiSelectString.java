@@ -27,7 +27,7 @@ import static cpw.mods.fml.client.config.GuiUtils.UNDO_CHAR;
 
 /**
  * This class provides a screen that allows the user to select a value from a list.
- * 
+ *
  * @author bspkrs
  */
 public class GuiSelectString extends GuiScreen
@@ -68,13 +68,13 @@ public class GuiSelectString extends GuiScreen
                 "\n" + EnumChatFormatting.AQUA, configElement.getDefault(), configElement.getMinValue(), configElement.getMaxValue());
 
         if (!comment.equals(configElement.getLanguageKey() + ".tooltip"))
-            toolTip = mc.fontRenderer.listFormattedStringToWidth(
+            toolTip = mc.fontRendererObj.listFormattedStringToWidth(
                     EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.YELLOW + comment, 300);
         else if (configElement.getComment() != null && !configElement.getComment().trim().isEmpty())
-            toolTip = mc.fontRenderer.listFormattedStringToWidth(
+            toolTip = mc.fontRendererObj.listFormattedStringToWidth(
                     EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.YELLOW + configElement.getComment(), 300);
         else
-            toolTip = mc.fontRenderer.listFormattedStringToWidth(
+            toolTip = mc.fontRendererObj.listFormattedStringToWidth(
                     EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.RED + "No tooltip defined.", 300);
 
         if (parentScreen instanceof GuiConfig)
@@ -98,11 +98,11 @@ public class GuiSelectString extends GuiScreen
     {
         this.entriesList = new GuiSelectStringEntries(this, this.mc, this.configElement, this.selectableValues);
 
-        int undoGlyphWidth = mc.fontRenderer.getStringWidth(UNDO_CHAR) * 2;
-        int resetGlyphWidth = mc.fontRenderer.getStringWidth(RESET_CHAR) * 2;
-        int doneWidth = Math.max(mc.fontRenderer.getStringWidth(I18n.format("gui.done")) + 20, 100);
-        int undoWidth = mc.fontRenderer.getStringWidth(" " + I18n.format("fml.configgui.tooltip.undoChanges")) + undoGlyphWidth + 20;
-        int resetWidth = mc.fontRenderer.getStringWidth(" " + I18n.format("fml.configgui.tooltip.resetToDefault")) + resetGlyphWidth + 20;
+        int undoGlyphWidth = mc.fontRendererObj.getStringWidth(UNDO_CHAR) * 2;
+        int resetGlyphWidth = mc.fontRendererObj.getStringWidth(RESET_CHAR) * 2;
+        int doneWidth = Math.max(mc.fontRendererObj.getStringWidth(I18n.format("gui.done")) + 20, 100);
+        int undoWidth = mc.fontRendererObj.getStringWidth(" " + I18n.format("fml.configgui.tooltip.undoChanges")) + undoGlyphWidth + 20;
+        int resetWidth = mc.fontRendererObj.getStringWidth(" " + I18n.format("fml.configgui.tooltip.resetToDefault")) + resetGlyphWidth + 20;
         int buttonWidthHalf = (doneWidth + 5 + undoWidth + 5 + resetWidth) / 2;
         this.buttonList.add(btnDone = new GuiButtonExt(2000, this.width / 2 - buttonWidthHalf, this.height - 29, doneWidth, 20, I18n.format("gui.done")));
         this.buttonList.add(btnDefault = new GuiUnicodeGlyphButton(2001, this.width / 2 - buttonWidthHalf + doneWidth + 5 + undoWidth + 5,
@@ -139,11 +139,11 @@ public class GuiSelectString extends GuiScreen
     }
 
     @Override
-    protected void mouseMovedOrUp(int x, int y, int mouseEvent)
+    protected void mouseReleased(int x, int y, int mouseEvent)
     {
         if (mouseEvent != 0 || !this.entriesList.func_148181_b(x, y, mouseEvent))
         {
-            super.mouseMovedOrUp(x, y, mouseEvent);
+            super.mouseReleased(x, y, mouseEvent);
         }
     }
 
@@ -172,6 +172,6 @@ public class GuiSelectString extends GuiScreen
     @SuppressWarnings("rawtypes")
     public void drawToolTip(List stringList, int x, int y)
     {
-        this.func_146283_a(stringList, x, y);
+        this.drawHoveringText(stringList, x, y);
     }
 }

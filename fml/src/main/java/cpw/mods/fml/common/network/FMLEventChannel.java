@@ -42,7 +42,7 @@ public class FMLEventChannel {
                 if (msg.handler() instanceof NetHandlerPlayServer)
                 {
                     NetHandlerPlayServer server = (NetHandlerPlayServer) msg.handler();
-                    event = new FMLNetworkEvent.ServerCustomPacketEvent(server.func_147362_b(), msg);
+                    event = new FMLNetworkEvent.ServerCustomPacketEvent(server.getNetworkManager(), msg);
                 }
                 return event;
             }
@@ -61,7 +61,7 @@ public class FMLEventChannel {
                 else if (msg.handler() instanceof NetHandlerPlayServer)
                 {
                     NetHandlerPlayServer server = (NetHandlerPlayServer) msg.handler();
-                    event = new FMLNetworkEvent.ServerCustomPacketEvent(server.func_147362_b(), msg);
+                    event = new FMLNetworkEvent.ServerCustomPacketEvent(server.getNetworkManager(), msg);
                 }
                 return event;
             }

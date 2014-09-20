@@ -1,13 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
-@@ -1,5 +1,6 @@
- package net.minecraft.tileentity;
- 
-+import cpw.mods.fml.common.registry.GameRegistry;
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
- import net.minecraft.block.Block;
-@@ -322,7 +323,15 @@
+@@ -348,7 +348,15 @@
                  }
              }
  
@@ -20,7 +13,7 @@
 +            if (item == Items.field_151129_at) return 20000;
 +            if (item == Item.func_150898_a(Blocks.field_150345_g)) return 100;
 +            if (item == Items.field_151072_bj) return 2400;
-+            return GameRegistry.getFuelValue(p_145952_0_);
++            return cpw.mods.fml.common.registry.GameRegistry.getFuelValue(p_145952_0_);
          }
      }
  

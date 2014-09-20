@@ -34,7 +34,6 @@ import cpw.mods.fml.common.versioning.VersionParser;
 
 public class MetadataCollection
 {
-    @SuppressWarnings("unused")
     private String modListVersion;
     private ModMetadata[] modList;
     private Map<String, ModMetadata> metadatas = Maps.newHashMap();

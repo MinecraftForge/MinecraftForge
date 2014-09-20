@@ -27,6 +27,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.I18n;
@@ -106,7 +107,7 @@ public class GuiModList extends GuiScreen
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) {
+    protected void actionPerformed(GuiButton button) throws IOException {
         if (button.enabled)
         {
             switch (button.id)
@@ -193,12 +194,13 @@ public class GuiModList extends GuiScreen
                             cachedLogoDimensions.width *= scale;
                             cachedLogoDimensions.height *= scale;
                             int top = 32;
-                            Tessellator tess = Tessellator.instance;
-                            tess.startDrawingQuads();
-                            tess.addVertexWithUV(offset,                               top + cachedLogoDimensions.height,  zLevel, 0, 1);
-                            tess.addVertexWithUV(offset + cachedLogoDimensions.width,  top + cachedLogoDimensions.height,  zLevel, 1, 1);
-                            tess.addVertexWithUV(offset + cachedLogoDimensions.width,  top,                                zLevel, 1, 0);
-                            tess.addVertexWithUV(offset,                               top,                                zLevel, 0, 0);
+                            Tessellator tess = Tessellator.func_178181_a();
+                            WorldRenderer world = tess.func_178180_c();
+                            world.func_178970_b();
+                            world.func_178985_a(offset,                               top + cachedLogoDimensions.height,  zLevel, 0, 1);
+                            world.func_178985_a(offset + cachedLogoDimensions.width,  top + cachedLogoDimensions.height,  zLevel, 1, 1);
+                            world.func_178985_a(offset + cachedLogoDimensions.width,  top,                                zLevel, 1, 0);
+                            world.func_178985_a(offset,                               top,                                zLevel, 0, 0);
                             tess.draw();
 
                             shifty += 65;
@@ -209,7 +211,7 @@ public class GuiModList extends GuiScreen
                         ;
                     }
                 }
-                this.fontRendererObj.drawStringWithShadow(selectedMod.getMetadata().name, offset, shifty, 0xFFFFFF);
+                this.fontRendererObj.func_175063_a(selectedMod.getMetadata().name, offset, shifty, 0xFFFFFF);
                 shifty += 12;
 
                 shifty = drawLine(String.format("Version: %s (%s)", selectedMod.getDisplayVersion(), selectedMod.getVersion()), offset, shifty);

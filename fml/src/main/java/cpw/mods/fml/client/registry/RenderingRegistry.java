@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -35,22 +35,7 @@ public class RenderingRegistry
 {
     private static final RenderingRegistry INSTANCE = new RenderingRegistry();
 
-    private int nextRenderId = 42;
-
-    private Map<Integer, ISimpleBlockRenderingHandler> blockRenderers = Maps.newHashMap();
-
     private List<EntityRendererInfo> entityRenderers = Lists.newArrayList();
-
-    /**
-     * Add a new armour prefix to the RenderPlayer
-     *
-     * @param armor
-     */
-    public static int addNewArmourRendererPrefix(String armor)
-    {
-        RenderBiped.bipedArmorFilenamePrefix = ObjectArrays.concat(RenderBiped.bipedArmorFilenamePrefix, armor);
-        return RenderBiped.bipedArmorFilenamePrefix.length - 1;
-    }
 
     /**
      * Register an entity rendering handler. This will, after mod initialization, be inserted into the main
@@ -63,37 +48,6 @@ public class RenderingRegistry
     {
         instance().entityRenderers.add(new EntityRendererInfo(entityClass, renderer));
     }
-
-    /**
-     * Register a simple block rendering handler
-     *
-     * @param handler
-     */
-    public static void registerBlockHandler(ISimpleBlockRenderingHandler handler)
-    {
-        instance().blockRenderers.put(handler.getRenderId(), handler);
-    }
-
-    /**
-     * Register the simple block rendering handler
-     * This version will not call getRenderId on the passed in handler, instead using the supplied ID, so you
-     * can easily re-use the same rendering handler for multiple IDs
-     *
-     * @param renderId
-     * @param handler
-     */
-    public static void registerBlockHandler(int renderId, ISimpleBlockRenderingHandler handler)
-    {
-        instance().blockRenderers.put(renderId, handler);
-    }
-    /**
-     * Get the next available renderId from the block render ID list
-     */
-    public static int getNextAvailableRenderId()
-    {
-        return instance().nextRenderId++;
-    }
-
 
     @Deprecated public static RenderingRegistry instance()
     {
@@ -111,32 +65,13 @@ public class RenderingRegistry
         private Render renderer;
     }
 
-    public boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelId)
-    {
-        if (!blockRenderers.containsKey(modelId)) { return false; }
-        ISimpleBlockRenderingHandler bri = blockRenderers.get(modelId);
-        return bri.renderWorldBlock(world, x, y, z, block, modelId, renderer);
-    }
-
-    public void renderInventoryBlock(RenderBlocks renderer, Block block, int metadata, int modelID)
-    {
-        if (!blockRenderers.containsKey(modelID)) { return; }
-        ISimpleBlockRenderingHandler bri = blockRenderers.get(modelID);
-        bri.renderInventoryBlock(block, metadata, modelID, renderer);
-    }
-
-    public boolean renderItemAsFull3DBlock(int modelId)
-    {
-        ISimpleBlockRenderingHandler bri = blockRenderers.get(modelId);
-        return bri != null && bri.shouldRender3DInInventory(modelId);
-    }
-
+    /*
     public void loadEntityRenderers(Map<Class<? extends Entity>, Render> rendererMap)
     {
         for (EntityRendererInfo info : entityRenderers)
         {
             rendererMap.put(info.target, info.renderer);
-            info.renderer.setRenderManager(RenderManager.instance);
+            info.renderer.setRenderManager(Minecraft.getMinecraft().func_175598_ae());
         }
-    }
+    }*/
 }

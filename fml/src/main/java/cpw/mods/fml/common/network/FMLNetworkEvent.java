@@ -13,7 +13,6 @@ import cpw.mods.fml.relauncher.Side;
 public class FMLNetworkEvent<T extends INetHandler> extends Event {
     public final T handler;
     public final NetworkManager manager;
-    @SuppressWarnings("unused")
     private final Class<T> type;
 
     FMLNetworkEvent(T thing, Class<T> type, NetworkManager manager)

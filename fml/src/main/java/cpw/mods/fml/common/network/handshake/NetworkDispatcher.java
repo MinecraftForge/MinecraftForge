@@ -151,7 +151,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     void clientListenForServerHandshake()
     {
         manager.setConnectionState(EnumConnectionState.PLAY);
-        FMLCommonHandler.instance().waitForPlayClient();
+        //FMLCommonHandler.instance().waitForPlayClient();
         this.netHandler = FMLCommonHandler.instance().getClientPlayHandler();
         this.state = ConnectionState.AWAITING_HANDSHAKE;
     }
@@ -235,7 +235,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         }
         else
         {
-            manager.scheduleOutboundPacket(new S40PacketDisconnect(chatcomponenttext), new GenericFutureListener<Future<?>>()
+            manager.func_179288_a(new S40PacketDisconnect(chatcomponenttext), new GenericFutureListener<Future<?>>()
             {
                 @Override
                 public void operationComplete(Future<?> result)
@@ -345,7 +345,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
 
     public void sendProxy(FMLProxyPacket msg)
     {
-        manager.scheduleOutboundPacket(msg);
+        manager.func_179290_a(msg);
     }
 
     public void rejectHandshake(String result)
@@ -455,7 +455,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     public void abortClientHandshake(String type)
     {
         FMLLog.log(Level.INFO, "Aborting client handshake \"%s\"", type);
-        FMLCommonHandler.instance().waitForPlayClient();
+        //FMLCommonHandler.instance().waitForPlayClient();
         completeClientSideConnection(ConnectionType.valueOf(type));
     }
 

@@ -33,7 +33,6 @@ public class EventBus implements IEventExceptionHandler
     {
         ListenerList.resize(busID + 1);
         exceptionHandler = this;
-        register(this);
     }
 
     public EventBus(@Nonnull IEventExceptionHandler handler)

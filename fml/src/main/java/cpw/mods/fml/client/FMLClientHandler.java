@@ -14,6 +14,7 @@ package cpw.mods.fml.client;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +27,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.GuiMainMenu;
@@ -130,10 +131,8 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private DummyModContainer optifineContainer;
 
-    @SuppressWarnings("unused")
     private boolean guiLoaded;
 
-    @SuppressWarnings("unused")
     private boolean serverIsRunning;
 
     private MissingModsException modsMissing;
@@ -152,7 +151,6 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private List<IResourcePack> resourcePackList;
 
-    @SuppressWarnings("unused")
     private IReloadableResourceManager resourceManager;
 
     private Map<String, IResourcePack> resourcePackMap;
@@ -301,7 +299,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
         // Reload resources
         client.refreshResources();
-        RenderingRegistry.instance().loadEntityRenderers((Map<Class<? extends Entity>, Render>)RenderManager.instance.entityRenderMap);
+        //RenderingRegistry.instance().loadEntityRenderers((Map<Class<? extends Entity>, Render>)Minecraft.getMinecraft().func_175598_ae().entityRenderMap);
         guiFactories = HashBiMap.create();
         for (ModContainer mc : Loader.instance().getActiveModList())
         {
@@ -326,7 +324,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         client.gameSettings.loadOptions(); //Reload options to load any mod added keybindings.
     }
 
-    @SuppressWarnings("unused")
     public void extendModList()
     {
         @SuppressWarnings("unchecked")
@@ -463,16 +460,16 @@ public class FMLClientHandler implements IFMLSidedHandler
             {
                 if (Thread.interrupted()) throw new InterruptedException();
 
-                client.loadingScreen.resetProgresAndWorkingMessage("");
+                client.loadingScreen.displayLoadingString("");
 
                 Thread.sleep(50);
             }
 
-            client.loadingScreen.resetProgresAndWorkingMessage(""); // make sure the blank screen is being drawn at the end
+            client.loadingScreen.displayLoadingString(""); // make sure the blank screen is being drawn at the end
         }
     }
 
-    public boolean handleLoadingScreen(ScaledResolution scaledResolution)
+    public boolean handleLoadingScreen(ScaledResolution scaledResolution) throws IOException
     {
         if (client.currentScreen instanceof GuiNotification)
         {
@@ -497,7 +494,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         return client.theWorld;
     }
 
-    public EntityClientPlayerMP getClientPlayerEntity()
+    public EntityPlayerSP getClientPlayerEntity()
     {
         return client.thePlayer;
     }
@@ -630,7 +627,6 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     public void startIntegratedServer(String id, String name, WorldSettings settings)
     {
-        playClientBlock = new CountDownLatch(1);
     }
 
     public File getSavesDir()
@@ -774,10 +770,10 @@ public class FMLClientHandler implements IFMLSidedHandler
             return null;
         }
         this.client.getTextureManager().bindTexture(iconSheet);
-        Gui.func_146110_a(x + width - 18, y + 10, 0, (float)idx, 16, 16, 256.0f, 256.0f);
+        Gui.drawModalRectWithCustomSizedTexture(x + width - 18, y + 10, 0, (float)idx, 16, 16, 256.0f, 256.0f);
         if (blocked)
         {
-            Gui.func_146110_a(x + width - 18, y + 10, 0, 80, 16, 16, 256.0f, 256.0f);
+            Gui.drawModalRectWithCustomSizedTexture(x + width - 18, y + 10, 0, 80, 16, 16, 256.0f, 256.0f);
         }
 
         return relativeMouseX > width - 15 && relativeMouseX < width && relativeMouseY > 10 && relativeMouseY < 26 ? tooltip : null;
@@ -795,7 +791,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         ServerData serverData = new ServerData("Command Line", host+":"+port);
         try
         {
-            osp.func_147224_a(serverData);
+            osp.ping(serverData);
             startupConnectionData.await(30, TimeUnit.SECONDS);
         }
         catch (Exception e)
@@ -817,38 +813,13 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             showGuiScreen(new GuiConnecting(guiMultiplayer, client, serverEntry));
         }
-        playClientBlock = new CountDownLatch(1);
     }
 
-    public void connectToRealmsServer(String host, int port)
-    {
-        playClientBlock = new CountDownLatch(1);
-    }
-
-    private CountDownLatch playClientBlock;
+    public void connectToRealmsServer(String host, int port){}
 
     public void setPlayClient(NetHandlerPlayClient netHandlerPlayClient)
     {
-        if (playClientBlock == null)
-            playClientBlock = new CountDownLatch(1);
-        playClientBlock.countDown();
         this.currentPlayClient = new WeakReference<NetHandlerPlayClient>(netHandlerPlayClient);
-    }
-
-    @Override
-    public void waitForPlayClient()
-    {
-        boolean gotIt = false;
-        try
-        {
-            gotIt = playClientBlock.await(5,TimeUnit.SECONDS);
-        } catch (InterruptedException e)
-        {
-        }
-        if (!gotIt)
-        {
-            throw new RuntimeException("Timeout waiting for client thread to catch up!");
-        }
     }
 
     @Override
@@ -856,7 +827,6 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         if (side == Side.CLIENT)
         {
-            waitForPlayClient();
             bus.post(new FMLNetworkEvent.CustomPacketRegistrationEvent<NetHandlerPlayClient>(manager, channelSet, channel, side, NetHandlerPlayClient.class));
         }
         else

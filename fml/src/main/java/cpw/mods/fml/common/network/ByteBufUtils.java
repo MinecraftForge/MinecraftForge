@@ -144,14 +144,7 @@ public class ByteBufUtils {
     public static void writeItemStack(ByteBuf to, ItemStack stack)
     {
         PacketBuffer pb = new PacketBuffer(to);
-        try
-        {
-            pb.writeItemStackToBuffer(stack);
-        } catch (IOException e)
-        {
-            // Unpossible?
-            throw Throwables.propagate(e);
-        }
+        pb.writeItemStackToBuffer(stack);
     }
 
     /**
@@ -182,14 +175,7 @@ public class ByteBufUtils {
     public static void writeTag(ByteBuf to, NBTTagCompound tag)
     {
         PacketBuffer pb = new PacketBuffer(to);
-        try
-        {
-            pb.writeNBTTagCompoundToBuffer(tag);
-        } catch (IOException e)
-        {
-            // Unpossible?
-            throw Throwables.propagate(e);
-        }
+        pb.writeNBTTagCompoundToBuffer(tag);
     }
 
     /**

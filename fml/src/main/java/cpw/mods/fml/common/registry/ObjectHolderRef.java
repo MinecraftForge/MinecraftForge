@@ -46,8 +46,9 @@ class ObjectHolderRef {
                 }
                 else
                 {
-                    this.injectedObject = isBlock ? GameData.getBlockRegistry().getNameForObject(existing) :
-                        isItem ? GameData.getItemRegistry().getNameForObject(existing) : null;
+                    Object tmp = isBlock ? GameData.getBlockRegistry().func_177774_c(existing) :
+                        isItem ? GameData.getItemRegistry().func_177774_c(existing) : null;
+                    this.injectedObject = tmp != null ? tmp.toString() : null;
                 }
             } catch (Exception e)
             {

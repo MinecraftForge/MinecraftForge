@@ -27,9 +27,7 @@ public class ModAnnotation
 {
     public class EnumHolder
     {
-        @SuppressWarnings("unused")
         private String desc;
-        @SuppressWarnings("unused")
         private String value;
 
         public EnumHolder(String desc, String value)

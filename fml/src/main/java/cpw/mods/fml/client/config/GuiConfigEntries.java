@@ -96,9 +96,9 @@ public class GuiConfigEntries extends GuiListExtended
 
                     // protects against language keys that are not defined in the .lang file
                     if (!I18n.format(configElement.getLanguageKey()).equals(configElement.getLanguageKey()))
-                        length = mc.fontRenderer.getStringWidth(I18n.format(configElement.getLanguageKey()));
+                        length = mc.fontRendererObj.getStringWidth(I18n.format(configElement.getLanguageKey()));
                     else
-                        length = mc.fontRenderer.getStringWidth(configElement.getName());
+                        length = mc.fontRendererObj.getStringWidth(configElement.getName());
 
                     if (length > this.maxLabelTextWidth)
                         this.maxLabelTextWidth = length;
@@ -575,10 +575,10 @@ public class GuiConfigEntries extends GuiListExtended
         }
 
         @Override
-        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
+        public void func_180790_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
         {
             this.btnValue.packedFGColour = GuiUtils.getColorCode(this.configElement.getValidValues()[currentIndex].charAt(0), true);
-            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, tessellator, mouseX, mouseY, isSelected);
+            super.func_180790_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
         }
 
         @Override
@@ -927,9 +927,9 @@ public class GuiConfigEntries extends GuiListExtended
         public abstract void valueButtonPressed(int slotIndex);
 
         @Override
-        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
+        public void func_180790_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
         {
-            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, tessellator, mouseX, mouseY, isSelected);
+            super.func_180790_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
             this.btnValue.width = this.owningEntryList.controlWidth;
             this.btnValue.xPosition = this.owningScreen.entryList.controlX;
             this.btnValue.yPosition = y;
@@ -945,7 +945,7 @@ public class GuiConfigEntries extends GuiListExtended
         {
             if (this.btnValue.mousePressed(this.mc, x, y))
             {
-                btnValue.func_146113_a(mc.getSoundHandler());
+                btnValue.playPressSound(mc.getSoundHandler());
                 valueButtonPressed(index);
                 updateValueButtonText();
                 return true;
@@ -1205,15 +1205,15 @@ public class GuiConfigEntries extends GuiListExtended
         {
             super(owningScreen, owningEntryList, configElement);
             beforeValue = configElement.get().toString();
-            this.textFieldValue = new GuiTextField(this.mc.fontRenderer, this.owningEntryList.controlX + 1, 0, this.owningEntryList.controlWidth - 3, 16);
+            this.textFieldValue = new GuiTextField(10, this.mc.fontRendererObj, this.owningEntryList.controlX + 1, 0, this.owningEntryList.controlWidth - 3, 16);
             this.textFieldValue.setMaxStringLength(10000);
             this.textFieldValue.setText(configElement.get().toString());
         }
 
         @Override
-        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
+        public void func_180790_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
         {
-            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, tessellator, mouseX, mouseY, isSelected);
+            super.func_180790_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
             this.textFieldValue.xPosition = this.owningEntryList.controlX + 2;
             this.textFieldValue.yPosition = y + 1;
             this.textFieldValue.width = this.owningEntryList.controlWidth - 4;
@@ -1350,14 +1350,14 @@ public class GuiConfigEntries extends GuiListExtended
         }
 
         @Override
-        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
+        public void func_180790_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
         {
             this.btnSelectCategory.xPosition = listWidth / 2 - 150;
             this.btnSelectCategory.yPosition = y;
             this.btnSelectCategory.enabled = enabled();
             this.btnSelectCategory.drawButton(this.mc, mouseX, mouseY);
 
-            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, tessellator, mouseX, mouseY, isSelected);
+            super.func_180790_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
         }
 
         @Override
@@ -1376,7 +1376,7 @@ public class GuiConfigEntries extends GuiListExtended
         {
             if (this.btnSelectCategory.mousePressed(this.mc, x, y))
             {
-                btnSelectCategory.func_146113_a(mc.getSoundHandler());
+                btnSelectCategory.playPressSound(mc.getSoundHandler());
                 Minecraft.getMinecraft().displayGuiScreen(childScreen);
                 return true;
             }
@@ -1532,30 +1532,30 @@ public class GuiConfigEntries extends GuiListExtended
             comment = I18n.format(configElement.getLanguageKey() + ".tooltip").replace("\\n", "\n");
 
             if (!comment.equals(configElement.getLanguageKey() + ".tooltip"))
-                toolTip = new ArrayList<String>(this.mc.fontRenderer.listFormattedStringToWidth(
+                toolTip = new ArrayList<String>(this.mc.fontRendererObj.listFormattedStringToWidth(
                         EnumChatFormatting.GREEN + name + "\n" + EnumChatFormatting.YELLOW + comment, 300));
             else if (configElement.getComment() != null && !configElement.getComment().trim().isEmpty())
-                toolTip = new ArrayList<String>(this.mc.fontRenderer.listFormattedStringToWidth(
+                toolTip = new ArrayList<String>(this.mc.fontRendererObj.listFormattedStringToWidth(
                         EnumChatFormatting.GREEN + name + "\n" + EnumChatFormatting.YELLOW + configElement.getComment(), 300));
             else
-                toolTip = new ArrayList<String>(this.mc.fontRenderer.listFormattedStringToWidth(
+                toolTip = new ArrayList<String>(this.mc.fontRendererObj.listFormattedStringToWidth(
                         EnumChatFormatting.GREEN + name + "\n" + EnumChatFormatting.RED + "No tooltip defined.", 300));
 
             if ((configElement.getType() == ConfigGuiType.INTEGER
                     && (Integer.valueOf(configElement.getMinValue().toString()) != Integer.MIN_VALUE || Integer.valueOf(configElement.getMaxValue().toString()) != Integer.MAX_VALUE))
                     || (configElement.getType() == ConfigGuiType.DOUBLE
                     && (Double.valueOf(configElement.getMinValue().toString()) != -Double.MAX_VALUE || Double.valueOf(configElement.getMaxValue().toString()) != Double.MAX_VALUE)))
-                toolTip.addAll(this.mc.fontRenderer.listFormattedStringToWidth(
+                toolTip.addAll(this.mc.fontRendererObj.listFormattedStringToWidth(
                         EnumChatFormatting.AQUA + I18n.format("fml.configgui.tooltip.defaultNumeric", configElement.getMinValue(), configElement.getMaxValue(), configElement.getDefault()), 300));
             else if (configElement.getType() != ConfigGuiType.CONFIG_CATEGORY)
-                toolTip.addAll(this.mc.fontRenderer.listFormattedStringToWidth(EnumChatFormatting.AQUA + I18n.format("fml.configgui.tooltip.default", configElement.getDefault()),300));
+                toolTip.addAll(this.mc.fontRendererObj.listFormattedStringToWidth(EnumChatFormatting.AQUA + I18n.format("fml.configgui.tooltip.default", configElement.getDefault()),300));
 
             if (configElement.requiresMcRestart() || owningScreen.allRequireMcRestart)
                 toolTip.add(EnumChatFormatting.RED + "[" + I18n.format("fml.configgui.gameRestartTitle") + "]");
         }
 
         @Override
-        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
+        public void func_180790_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
         {
             boolean isChanged = isChanged();
 
@@ -1564,10 +1564,10 @@ public class GuiConfigEntries extends GuiListExtended
                 String label = (!isValidValue ? EnumChatFormatting.RED.toString() :
                         (isChanged ? EnumChatFormatting.WHITE.toString() : EnumChatFormatting.GRAY.toString()))
                         + (isChanged ? EnumChatFormatting.ITALIC.toString() : "") + this.name;
-                this.mc.fontRenderer.drawString(
+                this.mc.fontRendererObj.drawString(
                         label,
                         this.owningScreen.entryList.labelX,
-                        y + slotHeight / 2 - this.mc.fontRenderer.FONT_HEIGHT / 2,
+                        y + slotHeight / 2 - this.mc.fontRendererObj.FONT_HEIGHT / 2,
                         16777215);
             }
 
@@ -1609,13 +1609,13 @@ public class GuiConfigEntries extends GuiListExtended
         {
             if (this.btnDefault.mousePressed(this.mc, x, y))
             {
-                btnDefault.func_146113_a(mc.getSoundHandler());
+                btnDefault.playPressSound(mc.getSoundHandler());
                 setToDefault();
                 return true;
             }
             else if (this.btnUndoChanges.mousePressed(this.mc, x, y))
             {
-                btnUndoChanges.func_146113_a(mc.getSoundHandler());
+                btnUndoChanges.playPressSound(mc.getSoundHandler());
                 undoChanges();
                 return true;
             }
@@ -1653,6 +1653,9 @@ public class GuiConfigEntries extends GuiListExtended
         public abstract boolean saveConfigElement();
 
         @Override
+        public void func_178011_a(int p_178011_1_, int p_178011_2_, int p_178011_3_){}
+
+        @Override
         public boolean enabled()
         {
             return owningScreen.isWorldRunning ? !owningScreen.allRequireWorldRestart && !configElement.requiresWorldRestart() : true;
@@ -1661,7 +1664,7 @@ public class GuiConfigEntries extends GuiListExtended
         @Override
         public int getLabelWidth()
         {
-            return this.mc.fontRenderer.getStringWidth(this.name);
+            return this.mc.fontRendererObj.getStringWidth(this.name);
         }
 
         @Override

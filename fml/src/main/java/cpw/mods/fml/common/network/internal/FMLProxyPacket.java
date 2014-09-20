@@ -22,32 +22,28 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
 import cpw.mods.fml.relauncher.Side;
 
-public class FMLProxyPacket extends Packet {
+public class FMLProxyPacket implements Packet {
     final String channel;
     private Side target;
-    private final ByteBuf payload;
+    private final PacketBuffer payload;
     private INetHandler netHandler;
     private NetworkDispatcher dispatcher;
     private static Multiset<String> badPackets = ConcurrentHashMultiset.create();
     private static int packetCountWarning = Integers.parseInt(System.getProperty("fml.badPacketCounter", "100"), 100);
-    private FMLProxyPacket(byte[] payload, String channel)
-    {
-        this(Unpooled.wrappedBuffer(payload), channel);
-    }
 
     public FMLProxyPacket(S3FPacketCustomPayload original)
     {
-        this(original.func_149168_d(), original.func_149169_c());
+        this(original.func_180735_b(), original.func_149169_c());
         this.target = Side.CLIENT;
     }
 
     public FMLProxyPacket(C17PacketCustomPayload original)
     {
-        this(original.func_149558_e(), original.func_149559_c());
+        this(original.func_180760_b(), original.func_149559_c());
         this.target = Side.SERVER;
     }
 
-    public FMLProxyPacket(ByteBuf payload, String channel)
+    public FMLProxyPacket(PacketBuffer payload, String channel)
     {
         this.channel = channel;
         this.payload = payload;
@@ -117,12 +113,12 @@ public class FMLProxyPacket extends Packet {
     }
     public Packet toC17Packet()
     {
-        return new C17PacketCustomPayload(channel, payload.array());
+        return new C17PacketCustomPayload(channel, payload);
     }
 
     public Packet toS3FPacket()
     {
-        return new S3FPacketCustomPayload(channel, payload.array());
+        return new S3FPacketCustomPayload(channel, payload);
     }
 
     public void setTarget(Side target)

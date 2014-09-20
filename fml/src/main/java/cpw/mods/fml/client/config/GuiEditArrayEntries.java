@@ -34,7 +34,7 @@ import cpw.mods.fml.common.FMLLog;
 /**
  * This class implements the scrolling list functionality of the GuiEditList screen. It also provides all the default controls
  * for editing array-type properties.
- * 
+ *
  * @author bspkrs
  */
 @SuppressWarnings("rawtypes")
@@ -68,7 +68,7 @@ public class GuiEditArrayEntries extends GuiListExtended
         listEntries = new ArrayList<IArrayEntry>();
 
         controlWidth = (parent.width / 2) - (configElement.isListLengthFixed() ? 0 : 48);
-        
+
         if (configElement.isList() && configElement.getArrayEntryClass() != null)
         {
             Class<? extends IArrayEntry> clazz = configElement.getArrayEntryClass();
@@ -141,7 +141,7 @@ public class GuiEditArrayEntries extends GuiListExtended
             listEntries.add(index, new DoubleEntry(this.owningGui, this, this.configElement, 0.0D));
         else if (configElement.isList())
             listEntries.add(index, new StringEntry(this.owningGui, this, this.configElement, ""));
-        this.canAddMoreEntries = !configElement.isListLengthFixed() 
+        this.canAddMoreEntries = !configElement.isListLengthFixed()
                 && (configElement.getMaxListLength() == -1 || this.listEntries.size() - 1 < configElement.getMaxListLength());
         keyTyped((char) Keyboard.CHAR_NONE, Keyboard.KEY_END);
     }
@@ -149,7 +149,7 @@ public class GuiEditArrayEntries extends GuiListExtended
     public void removeEntry(int index)
     {
         this.listEntries.remove(index);
-        this.canAddMoreEntries = !configElement.isListLengthFixed() 
+        this.canAddMoreEntries = !configElement.isListLengthFixed()
                 && (configElement.getMaxListLength() == -1 || this.listEntries.size() - 1 < configElement.getMaxListLength());
         keyTyped((char) Keyboard.CHAR_NONE, Keyboard.KEY_END);
     }
@@ -343,7 +343,7 @@ public class GuiEditArrayEntries extends GuiListExtended
     }
 
     public static class IntegerEntry extends StringEntry
-    {        
+    {
         public IntegerEntry(GuiEditArray owningScreen, GuiEditArrayEntries owningEntryList, IConfigElement configElement, Integer value)
         {
             super(owningScreen, owningEntryList, configElement, value);
@@ -405,7 +405,7 @@ public class GuiEditArrayEntries extends GuiListExtended
         public StringEntry(GuiEditArray owningScreen, GuiEditArrayEntries owningEntryList, IConfigElement configElement, Object value)
         {
             super(owningScreen, owningEntryList, configElement);
-            this.textFieldValue = new GuiTextField(owningEntryList.mc.fontRenderer, owningEntryList.width / 4 + 1, 0, owningEntryList.controlWidth - 3, 16);
+            this.textFieldValue = new GuiTextField(0, owningEntryList.mc.fontRendererObj, owningEntryList.width / 4 + 1, 0, owningEntryList.controlWidth - 3, 16);
             this.textFieldValue.setMaxStringLength(10000);
             this.textFieldValue.setText(value.toString());
             this.isValidated = configElement.getValidationPattern() != null;
@@ -420,9 +420,9 @@ public class GuiEditArrayEntries extends GuiListExtended
         }
 
         @Override
-        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
+        public void func_180790_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
         {
-            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, tessellator, mouseX, mouseY, isSelected);
+            super.func_180790_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
             if (configElement.isListLengthFixed() || slotIndex != owningEntryList.listEntries.size() - 1)
             {
                 this.textFieldValue.setVisible(true);
@@ -486,9 +486,9 @@ public class GuiEditArrayEntries extends GuiListExtended
         }
 
         @Override
-        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
+        public void func_180790_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
         {
-            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, tessellator, mouseX, mouseY, isSelected);
+            super.func_180790_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
             this.btnValue.xPosition = listWidth / 4;
             this.btnValue.yPosition = y;
 
@@ -507,7 +507,7 @@ public class GuiEditArrayEntries extends GuiListExtended
         {
             if (this.btnValue.mousePressed(owningEntryList.mc, x, y))
             {
-                btnValue.func_146113_a(owningEntryList.mc.getSoundHandler());
+                btnValue.playPressSound(owningEntryList.mc.getSoundHandler());
                 value = !value;
                 owningEntryList.recalculateState();
                 return true;
@@ -564,13 +564,13 @@ public class GuiEditArrayEntries extends GuiListExtended
         }
 
         @Override
-        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
+        public void func_180790_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
         {
             if (this.getValue() != null && this.isValidated)
-                owningEntryList.mc.fontRenderer.drawString(
+                owningEntryList.mc.fontRendererObj.drawString(
                         isValidValue ? EnumChatFormatting.GREEN + VALID : EnumChatFormatting.RED + INVALID,
-                        listWidth / 4 - owningEntryList.mc.fontRenderer.getStringWidth(VALID) - 2,
-                        y + slotHeight / 2 - owningEntryList.mc.fontRenderer.FONT_HEIGHT / 2,
+                        listWidth / 4 - owningEntryList.mc.fontRendererObj.getStringWidth(VALID) - 2,
+                        y + slotHeight / 2 - owningEntryList.mc.fontRendererObj.FONT_HEIGHT / 2,
                         16777215);
 
             int half = listWidth / 2;
@@ -610,14 +610,14 @@ public class GuiEditArrayEntries extends GuiListExtended
         {
             if (this.btnAddNewEntryAbove.mousePressed(owningEntryList.mc, x, y))
             {
-                btnAddNewEntryAbove.func_146113_a(owningEntryList.mc.getSoundHandler());
+                btnAddNewEntryAbove.playPressSound(owningEntryList.mc.getSoundHandler());
                 owningEntryList.addNewEntry(index);
                 owningEntryList.recalculateState();
                 return true;
             }
             else if (this.btnRemoveEntry.mousePressed(owningEntryList.mc, x, y))
             {
-                btnRemoveEntry.func_146113_a(owningEntryList.mc.getSoundHandler());
+                btnRemoveEntry.playPressSound(owningEntryList.mc.getSoundHandler());
                 owningEntryList.removeEntry(index);
                 owningEntryList.recalculateState();
                 return true;
@@ -656,6 +656,9 @@ public class GuiEditArrayEntries extends GuiListExtended
         {
             return null;
         }
+
+        @Override
+        public void func_178011_a(int p_178011_1_, int p_178011_2_, int p_178011_3_){}
     }
 
     public static interface IArrayEntry extends GuiListExtended.IGuiListEntry

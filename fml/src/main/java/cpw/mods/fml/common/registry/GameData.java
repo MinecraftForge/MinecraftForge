@@ -28,6 +28,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 import org.apache.logging.log4j.Level;
 
@@ -221,7 +222,7 @@ public class GameData {
     static UniqueIdentifier getUniqueName(Block block)
     {
         if (block == null) return null;
-        String name = getMain().iBlockRegistry.getNameForObject(block);
+        Object name = getMain().iBlockRegistry.func_177774_c(block);
         UniqueIdentifier ui = new UniqueIdentifier(name);
         if (customItemStacks.contains(ui.modId, ui.name))
         {
@@ -234,7 +235,7 @@ public class GameData {
     static UniqueIdentifier getUniqueName(Item item)
     {
         if (item == null) return null;
-        String name = getMain().iItemRegistry.getNameForObject(item);
+        Object name = getMain().iItemRegistry.func_177774_c(item);
         UniqueIdentifier ui = new UniqueIdentifier(name);
         if (customItemStacks.contains(ui.modId, ui.name))
         {
@@ -260,7 +261,6 @@ public class GameData {
         for (Entry<String, Integer> entry : dataList.entrySet())
         {
             String itemName = entry.getKey();
-            @SuppressWarnings("unused")
             String realName = itemName.substring(1);
 
             if (itemName.charAt(0) == '\u0001') // is a block
@@ -608,7 +608,7 @@ public class GameData {
                 if (remap.type == Type.BLOCK)
                 {
                     currId = getMain().iBlockRegistry.getId((Block) remap.getTarget());
-                    newName = getMain().iBlockRegistry.getNameForObject(remap.getTarget());
+                    newName = getMain().iBlockRegistry.func_177774_c(remap.getTarget()).toString();
                     FMLLog.fine("The Block %s is being remapped to %s.", remap.name, newName);
 
                     newId = gameData.registerBlock((Block) remap.getTarget(), newName, remap.id);
@@ -617,7 +617,7 @@ public class GameData {
                 else
                 {
                     currId = getMain().iItemRegistry.getId((Item) remap.getTarget());
-                    newName = getMain().iItemRegistry.getNameForObject(remap.getTarget());
+                    newName = getMain().iItemRegistry.func_177774_c(remap.getTarget()).toString();
                     FMLLog.fine("The Item %s is being remapped to %s.", remap.name, newName);
 
                     newId = gameData.registerItem((Item) remap.getTarget(), newName, remap.id);
@@ -752,7 +752,7 @@ public class GameData {
 
     private GameData()
     {
-        iBlockRegistry = new FMLControlledNamespacedRegistry<Block>("minecraft:air", MAX_BLOCK_ID, MIN_BLOCK_ID, Block.class,'\u0001');
+        iBlockRegistry = new FMLControlledNamespacedRegistry<Block>(new ResourceLocation("minecraft:air"), MAX_BLOCK_ID, MIN_BLOCK_ID, Block.class,'\u0001');
         iItemRegistry = new FMLControlledNamespacedRegistry<Item>(null, MAX_ITEM_ID, MIN_ITEM_ID, Item.class,'\u0002');
         availabilityMap = new BitSet(MAX_ITEM_ID + 1);
         blockedIds = new HashSet<Integer>();
@@ -806,7 +806,7 @@ public class GameData {
     {
         if (item instanceof ItemBlock) // ItemBlock, adjust id and clear the slot already occupied by the corresponding block
         {
-            Block block = ((ItemBlock) item).field_150939_a;
+            Block block = ((ItemBlock) item).blockInstance;
             if (idHint != -1 && getMain().blockSubstitutions.containsKey(name))
             {
                 block = getMain().blockSubstitutions.get(name);
@@ -865,7 +865,7 @@ public class GameData {
 
         for (Item item : iItemRegistry.typeSafeIterable()) // find matching ItemBlock
         {
-            if (item instanceof ItemBlock && ((ItemBlock) item).field_150939_a == block)
+            if (item instanceof ItemBlock && ((ItemBlock) item).blockInstance == block)
             {
                 itemBlock = (ItemBlock) item;
                 break;
@@ -967,8 +967,8 @@ public class GameData {
 
     private void verifyItemBlockName(ItemBlock item)
     {
-        String blockName = iBlockRegistry.getNameForObject(item.field_150939_a);
-        String itemName = iItemRegistry.getNameForObject(item);
+        Object blockName = iBlockRegistry.func_177774_c(item.blockInstance);
+        Object itemName = iItemRegistry.func_177774_c(item);
 
         if (blockName != null && !blockName.equals(itemName))
         {

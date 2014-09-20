@@ -105,7 +105,7 @@ import cpw.mods.fml.relauncher.Side;
  */
 public class Loader
 {
-    public static final String MC_VERSION = "1.7.10";
+    public static final String MC_VERSION = "1.8";
     private static final Splitter DEPENDENCYPARTSPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
     private static final Splitter DEPENDENCYSPLITTER = Splitter.on(";").omitEmptyStrings().trimResults();
     /**

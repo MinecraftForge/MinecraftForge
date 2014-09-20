@@ -4,9 +4,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.util.List;
+
 import org.apache.logging.log4j.Level;
 
-import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -93,7 +94,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
             entity.serverPosY = spawnMsg.rawY;
             entity.serverPosZ = spawnMsg.rawZ;
 
-            EntityClientPlayerMP clientPlayer = FMLClientHandler.instance().getClientPlayerEntity();
+            EntityPlayerSP clientPlayer = FMLClientHandler.instance().getClientPlayerEntity();
             if (entity instanceof IThrowableEntity)
             {
                 Entity thrower = clientPlayer.getEntityId() == spawnMsg.throwerId ? clientPlayer : wc.getEntityByID(spawnMsg.throwerId);

@@ -19,7 +19,6 @@ public class ModAnnotationVisitor extends AnnotationVisitor
 {
     private ASMModParser discoverer;
     private boolean array;
-    @SuppressWarnings("unused")
     private String name;
     private boolean isSubAnnotation;
 

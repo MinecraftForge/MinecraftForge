@@ -489,7 +489,6 @@ public class CoreModManager {
         return null;
     }
 
-    @SuppressWarnings("unused")
     private static void sortCoreMods()
     {
         TopologicalSort.DirectedGraph<FMLPluginWrapper> sortGraph = new TopologicalSort.DirectedGraph<FMLPluginWrapper>();

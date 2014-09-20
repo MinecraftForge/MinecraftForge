@@ -12,6 +12,7 @@
 
 package cpw.mods.fml.client.config;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,7 +22,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.EnumChatFormatting;
-
 import static cpw.mods.fml.client.config.GuiUtils.RESET_CHAR;
 import static cpw.mods.fml.client.config.GuiUtils.UNDO_CHAR;
 
@@ -30,7 +30,7 @@ import org.lwjgl.input.Keyboard;
 /**
  * This class is the base screen used for editing an array-type property. It provides a list of array entries for the user to edit.
  * This screen is invoked from a GuiConfig screen by controls that use the EditListPropEntry IGuiConfigListEntry object.
- * 
+ *
  * @author bspkrs
  */
 public class GuiEditArray extends GuiScreen
@@ -50,7 +50,7 @@ public class GuiEditArray extends GuiScreen
     @SuppressWarnings("rawtypes")
     private List toolTip;
     protected boolean enabled;
-    
+
     @SuppressWarnings("rawtypes")
     public GuiEditArray(GuiScreen parentScreen, IConfigElement configElement, int slotIndex, Object[] currentValues, boolean enabled)
     {
@@ -64,20 +64,20 @@ public class GuiEditArray extends GuiScreen
         this.enabled = enabled;
         String propName = I18n.format(configElement.getLanguageKey());
         String comment;
-        
+
         comment = I18n.format(configElement.getLanguageKey() + ".tooltip",
                 "\n" + EnumChatFormatting.AQUA, configElement.getDefault(), configElement.getMinValue(), configElement.getMaxValue());
-        
+
         if (!comment.equals(configElement.getLanguageKey() + ".tooltip"))
-            toolTip = mc.fontRenderer.listFormattedStringToWidth(
+            toolTip = mc.fontRendererObj.listFormattedStringToWidth(
                     EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.YELLOW + comment, 300);
         else if (configElement.getComment() != null && !configElement.getComment().trim().isEmpty())
-            toolTip = mc.fontRenderer.listFormattedStringToWidth(
+            toolTip = mc.fontRendererObj.listFormattedStringToWidth(
                     EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.YELLOW + configElement.getComment(), 300);
         else
-            toolTip = mc.fontRenderer.listFormattedStringToWidth(
+            toolTip = mc.fontRendererObj.listFormattedStringToWidth(
                     EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.RED + "No tooltip defined.", 300);
-        
+
         if (parentScreen instanceof GuiConfig)
         {
             this.title = ((GuiConfig) parentScreen).title;
@@ -96,18 +96,18 @@ public class GuiEditArray extends GuiScreen
             this.tooltipHoverChecker = new HoverChecker(8, 17, 0, parentScreen.width, 800);
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
     public void initGui()
     {
         this.entryList = new GuiEditArrayEntries(this, this.mc, this.configElement, this.beforeValues, this.currentValues);
 
-        int undoGlyphWidth = mc.fontRenderer.getStringWidth(UNDO_CHAR) * 2;
-        int resetGlyphWidth = mc.fontRenderer.getStringWidth(RESET_CHAR) * 2;
-        int doneWidth = Math.max(mc.fontRenderer.getStringWidth(I18n.format("gui.done")) + 20, 100);
-        int undoWidth = mc.fontRenderer.getStringWidth(" " + I18n.format("fml.configgui.tooltip.undoChanges")) + undoGlyphWidth + 20;
-        int resetWidth = mc.fontRenderer.getStringWidth(" " + I18n.format("fml.configgui.tooltip.resetToDefault")) + resetGlyphWidth + 20;
+        int undoGlyphWidth = mc.fontRendererObj.getStringWidth(UNDO_CHAR) * 2;
+        int resetGlyphWidth = mc.fontRendererObj.getStringWidth(RESET_CHAR) * 2;
+        int doneWidth = Math.max(mc.fontRendererObj.getStringWidth(I18n.format("gui.done")) + 20, 100);
+        int undoWidth = mc.fontRendererObj.getStringWidth(" " + I18n.format("fml.configgui.tooltip.undoChanges")) + undoGlyphWidth + 20;
+        int resetWidth = mc.fontRendererObj.getStringWidth(" " + I18n.format("fml.configgui.tooltip.resetToDefault")) + resetGlyphWidth + 20;
         int buttonWidthHalf = (doneWidth + 5 + undoWidth + 5 + resetWidth) / 2;
         this.buttonList.add(btnDone = new GuiButtonExt(2000, this.width / 2 - buttonWidthHalf, this.height - 29, doneWidth, 20, I18n.format("gui.done")));
         this.buttonList.add(btnDefault = new GuiUnicodeGlyphButton(2001, this.width / 2 - buttonWidthHalf + doneWidth + 5 + undoWidth + 5,
@@ -115,7 +115,7 @@ public class GuiEditArray extends GuiScreen
         this.buttonList.add(btnUndoChanges = new GuiUnicodeGlyphButton(2002, this.width / 2 - buttonWidthHalf + doneWidth + 5,
                 this.height - 29, undoWidth, 20, " " + I18n.format("fml.configgui.tooltip.undoChanges"), UNDO_CHAR, 2.0F));
     }
-    
+
     @Override
     protected void actionPerformed(GuiButton button)
     {
@@ -142,9 +142,9 @@ public class GuiEditArray extends GuiScreen
             this.entryList = new GuiEditArrayEntries(this, this.mc, this.configElement, this.beforeValues, this.currentValues);
         }
     }
-    
+
     @Override
-    protected void mouseClicked(int x, int y, int mouseEvent)
+    protected void mouseClicked(int x, int y, int mouseEvent) throws IOException
     {
         if (mouseEvent != 0 || !this.entryList.func_148179_a(x, y, mouseEvent))
         {
@@ -152,16 +152,16 @@ public class GuiEditArray extends GuiScreen
             super.mouseClicked(x, y, mouseEvent);
         }
     }
-    
+
     @Override
-    protected void mouseMovedOrUp(int x, int y, int mouseEvent)
+    protected void mouseReleased(int x, int y, int mouseEvent)
     {
         if (mouseEvent != 0 || !this.entryList.func_148181_b(x, y, mouseEvent))
         {
-            super.mouseMovedOrUp(x, y, mouseEvent);
+            super.mouseReleased(x, y, mouseEvent);
         }
     }
-    
+
     @Override
     protected void keyTyped(char eventChar, int eventKey)
     {
@@ -170,40 +170,40 @@ public class GuiEditArray extends GuiScreen
         else
             this.entryList.keyTyped(eventChar, eventKey);
     }
-    
+
     @Override
     public void updateScreen()
     {
         super.updateScreen();
         this.entryList.updateScreen();
     }
-    
+
     @Override
     public void drawScreen(int par1, int par2, float par3)
     {
         this.drawDefaultBackground();
         this.entryList.drawScreen(par1, par2, par3);
         this.drawCenteredString(this.fontRendererObj, this.title, this.width / 2, 8, 16777215);
-        
+
         if (this.titleLine2 != null)
             this.drawCenteredString(this.fontRendererObj, this.titleLine2, this.width / 2, 18, 16777215);
-        
+
         if (this.titleLine3 != null)
             this.drawCenteredString(this.fontRendererObj, this.titleLine3, this.width / 2, 28, 16777215);
-        
+
         this.btnDone.enabled = this.entryList.isListSavable();
         this.btnDefault.enabled = enabled && !this.entryList.isDefault();
         this.btnUndoChanges.enabled = enabled && this.entryList.isChanged();
         super.drawScreen(par1, par2, par3);
         this.entryList.drawScreenPost(par1, par2, par3);
-        
+
         if (this.tooltipHoverChecker != null && this.tooltipHoverChecker.checkHover(par1, par2))
             drawToolTip(this.toolTip, par1, par2);
     }
-    
+
     @SuppressWarnings("rawtypes")
     public void drawToolTip(List stringList, int x, int y)
     {
-        this.func_146283_a(stringList, x, y);
+        this.drawHoveringText(stringList, x, y);
     }
 }
