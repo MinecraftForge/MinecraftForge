@@ -38,21 +38,19 @@
      }
  
      public int func_149679_a(int p_149679_1_, Random p_149679_2_)
-@@ -81,13 +84,7 @@
+@@ -81,10 +84,8 @@
  
      public void func_149636_a(World p_149636_1_, EntityPlayer p_149636_2_, int p_149636_3_, int p_149636_4_, int p_149636_5_, int p_149636_6_)
      {
 -        if (!p_149636_1_.field_72995_K && p_149636_2_.func_71045_bC() != null && p_149636_2_.func_71045_bC().func_77973_b() == Items.field_151097_aZ)
++        if (!p_149636_1_.field_72995_K && p_149636_2_.func_71045_bC() != null && p_149636_2_.func_71045_bC().func_77973_b() instanceof net.minecraft.item.ItemShears)
          {
 -            p_149636_2_.func_71064_a(StatList.field_75934_C[Block.func_149682_b(this)], 1);
 -            this.func_149642_a(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, new ItemStack(Blocks.field_150329_H, 1, p_149636_6_));
--        }
--        else
--        {
-             super.func_149636_a(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_);
          }
-     }
-@@ -143,4 +140,28 @@
+         else
+         {
+@@ -143,4 +144,28 @@
              Blocks.field_150398_cm.func_149889_c(p_149853_1_, p_149853_3_, p_149853_4_, p_149853_5_, b0, 2);
          }
      }
