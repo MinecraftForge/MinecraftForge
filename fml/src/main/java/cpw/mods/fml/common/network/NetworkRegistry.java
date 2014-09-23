@@ -58,10 +58,11 @@ public enum NetworkRegistry
     /**
      * Set in the {@link ChannelHandlerContext}
      */
-    public static final AttributeKey<String> FML_CHANNEL = new AttributeKey<String>("fml:channelName");
-    public static final AttributeKey<Side> CHANNEL_SOURCE = new AttributeKey<Side>("fml:channelSource");
-    public static final AttributeKey<ModContainer> MOD_CONTAINER = new AttributeKey<ModContainer>("fml:modContainer");
-    public static final AttributeKey<INetHandler> NET_HANDLER = new AttributeKey<INetHandler>("fml:netHandler");
+    public static final AttributeKey<String> FML_CHANNEL = AttributeKey.valueOf("fml:channelName");
+    public static final AttributeKey<Side> CHANNEL_SOURCE = AttributeKey.valueOf("fml:channelSource");
+    public static final AttributeKey<ModContainer> MOD_CONTAINER = AttributeKey.valueOf("fml:modContainer");
+    public static final AttributeKey<INetHandler> NET_HANDLER = AttributeKey.valueOf("fml:netHandler");
+    public static final AttributeKey<Boolean> FML_MARKER = AttributeKey.valueOf("fml:hasMarker");
 
     public static final byte FML_PROTOCOL = 1;
 

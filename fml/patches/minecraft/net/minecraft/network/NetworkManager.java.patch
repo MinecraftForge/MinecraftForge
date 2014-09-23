@@ -1,6 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/network/NetworkManager.java
 +++ ../src-work/minecraft/net/minecraft/network/NetworkManager.java
-@@ -175,7 +175,7 @@
+@@ -88,6 +88,11 @@
+         this.field_179294_g = p_i46004_1_;
+     }
+ 
++    public EnumPacketDirection getDirection()
++    {
++        return this.field_179294_g;
++    }
++
+     public void channelActive(ChannelHandlerContext p_channelActive_1_) throws Exception
+     {
+         super.channelActive(p_channelActive_1_);
+@@ -175,7 +180,7 @@
          final EnumConnectionState enumconnectionstate = EnumConnectionState.func_150752_a(p_150732_1_);
          final EnumConnectionState enumconnectionstate1 = (EnumConnectionState)this.field_150746_k.attr(field_150739_c).get();
  
@@ -9,7 +21,7 @@
          {
              field_150735_g.debug("Disabled auto read");
              this.field_150746_k.config().setAutoRead(false);
-@@ -183,7 +183,7 @@
+@@ -183,7 +188,7 @@
  
          if (this.field_150746_k.eventLoop().inEventLoop())
          {
@@ -18,7 +30,7 @@
              {
                  this.func_150723_a(enumconnectionstate);
              }
-@@ -204,7 +204,7 @@
+@@ -204,7 +209,7 @@
                  private static final String __OBFID = "CL_00001243";
                  public void run()
                  {
@@ -27,7 +39,7 @@
                      {
                          NetworkManager.this.func_150723_a(enumconnectionstate);
                      }
-@@ -409,6 +409,11 @@
+@@ -409,6 +414,11 @@
          this.channelRead0(p_channelRead0_1_, (Packet)p_channelRead0_2_);
      }
  

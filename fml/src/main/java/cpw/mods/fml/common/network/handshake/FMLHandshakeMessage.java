@@ -26,7 +26,7 @@ import cpw.mods.fml.common.registry.GameData;
 public abstract class FMLHandshakeMessage {
     public static FMLProxyPacket makeCustomChannelRegistration(Set<String> channels)
     {
-        String salutation = Joiner.on('\0').join(Iterables.concat(Arrays.asList("FML|HS","FML"),channels));
+        String salutation = Joiner.on('\0').join(Iterables.concat(Arrays.asList("FML|HS","FML", "FML|MP"),channels));
         FMLProxyPacket proxy = new FMLProxyPacket(new PacketBuffer(Unpooled.wrappedBuffer(salutation.getBytes(Charsets.UTF_8))), "REGISTER");
         return proxy;
     }

@@ -28,9 +28,13 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
+import net.minecraft.network.handshake.client.C00Handshake;
+import net.minecraft.network.login.server.S00PacketDisconnect;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
@@ -40,6 +44,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
@@ -52,6 +57,7 @@ import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.server.FMLServerHandler;
 
@@ -588,6 +594,39 @@ public class FMLCommonHandler
     public boolean shouldAllowPlayerLogins()
     {
         return sidedDelegate.shouldAllowPlayerLogins();
+    }
+
+    /**
+     * Process initial Handshake packet, kicks players from the server if they are connecting while we are starting up.
+     * Also verifies the client has the FML marker.
+     *
+     * @param packet Handshake Packet
+     * @param manager Network connection
+     * @return True to allow connection, otherwise False.
+     */
+    public boolean handleServerHandshake(C00Handshake packet, NetworkManager manager)
+    {
+        if (!shouldAllowPlayerLogins())
+        {
+            ChatComponentText text = new ChatComponentText("Server is still starting! Please wait before reconnecting.");
+            FMLLog.info("Disconnecting Player: " + text.getUnformattedText());
+            manager.func_179290_a(new S00PacketDisconnect(text));
+            manager.closeChannel(text);
+            return false;
+        }
+
+        if (packet.func_149594_c() == EnumConnectionState.LOGIN && (!NetworkRegistry.INSTANCE.isVanillaAccepted(Side.CLIENT) && !packet.hasFMLMarker()))
+        {
+            manager.setConnectionState(EnumConnectionState.LOGIN);
+            ChatComponentText text = new ChatComponentText("This server requires FML/Forge to be installed. Contact your server admin for more details.");
+            FMLLog.info("Disconnecting Player: " + text.getUnformattedText());
+            manager.func_179290_a(new S00PacketDisconnect(text));
+            manager.closeChannel(text);
+            return false;
+        }
+
+        manager.channel().attr(NetworkRegistry.FML_MARKER).set(packet.hasFMLMarker());
+        return true;
     }
 
 

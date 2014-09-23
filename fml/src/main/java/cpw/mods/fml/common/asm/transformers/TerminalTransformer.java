@@ -44,9 +44,12 @@ public class TerminalTransformer implements IClassTransformer
         {
             final boolean warn = !(clsName.equals("net/minecraft/client/Minecraft") ||
                                    clsName.equals("net/minecraft/server/dedicated/DedicatedServer") ||
+                                   clsName.equals("net/minecraft/server/dedicated/ServerHangWatchdog") ||
+                                   clsName.equals("net/minecraft/server/dedicated/ServerHangWatchdog$1") ||
                                    clsName.equals("cpw/mods/fml/common/FMLCommonHandler") ||
                                    clsName.startsWith("com/jcraft/jogg/") ||
-                                   clsName.startsWith("scala/sys/")
+                                   clsName.startsWith("scala/sys/") ||
+                                   clsName.startsWith("net/minecraft/server/gui/MinecraftServerGui")
                                    );
 
             return new MethodVisitor(Opcodes.ASM4, super.visitMethod(mAccess, mName, mDesc, mSignature, mExceptions))
@@ -132,6 +135,7 @@ public class TerminalTransformer implements IClassTransformer
             // FML is allowed to call system exit and the Minecraft applet (from the quit button), and the dedicated server (from itself)
             if (!(callingClass.startsWith("cpw.mods.fml.") ||
                  ("net.minecraft.client.Minecraft".equals(callingClass) && "net.minecraft.client.Minecraft".equals(callingParent)) ||
+                 ("net.minecraft.server.gui.MinecraftServerGui$1".equals(callingClass) && "java.awt.AWTEventMulticaster".equals(callingParent)) ||
                  ("net.minecraft.server.dedicated.DedicatedServer".equals(callingClass) && "net.minecraft.server.MinecraftServer".equals(callingParent)))
                )
             {

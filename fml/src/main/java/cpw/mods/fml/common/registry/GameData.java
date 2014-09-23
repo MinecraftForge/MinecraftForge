@@ -65,16 +65,8 @@ public class GameData {
 
     private static final GameData mainData = new GameData();
 
-    /**
-     * @deprecated use {@link #getBlockRegistry()} instead.
-     */
-    @Deprecated
-    public static final FMLControlledNamespacedRegistry<Block> blockRegistry = getBlockRegistry();
-    /**
-     * @deprecated use {@link #getItemRegistry()} instead.
-     */
-    @Deprecated
-    public static final FMLControlledNamespacedRegistry<Item> itemRegistry = getItemRegistry();
+    private static final FMLControlledNamespacedRegistry<Block> blockRegistry = getBlockRegistry();
+    private static final FMLControlledNamespacedRegistry<Item> itemRegistry = getItemRegistry();
 
     private static Table<String, String, ItemStack> customItemStacks = HashBasedTable.create();
     private static Map<UniqueIdentifier, ModContainer> customOwners = Maps.newHashMap();
@@ -970,7 +962,10 @@ public class GameData {
         Object blockName = iBlockRegistry.func_177774_c(item.blockInstance);
         Object itemName = iItemRegistry.func_177774_c(item);
 
-        if (blockName != null && !blockName.equals(itemName))
+        //Vanilla has a mismatch:
+        //Block <-> ItemBlock name mismatch, block name minecraft:standing_banner, item name minecraft:banner
+        //TODO: Untie these in the rest of the registry
+        if (blockName != null && !blockName.equals(itemName) && !"minecraft:standing_banner".equals(blockName.toString()))
         {
             FMLLog.bigWarning("Block <-> ItemBlock name mismatch, block name %s, item name %s", blockName, itemName);
         }
