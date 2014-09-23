@@ -29,7 +29,7 @@
      {
          p_180482_2_ = super.func_180482_a(p_180482_1_, p_180482_2_);
 -        this.func_70938_b(this.field_70170_p.field_73012_v.nextInt(5));
-+        cpw.mods.fml.common.registry.VillagerRegistry.setRandomProfession(this, this.field_70170_p.field_73012_v);
++        net.minecraftforge.fml.common.registry.VillagerRegistry.setRandomProfession(this, this.field_70170_p.field_73012_v);
          this.func_175552_ct();
          return p_180482_2_;
      }

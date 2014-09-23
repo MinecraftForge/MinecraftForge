@@ -5,7 +5,7 @@
              if (this.field_146297_k.func_71359_d().func_90033_f(s))
              {
 -                this.field_146297_k.func_71371_a(s, s1, (WorldSettings)null);
-+                cpw.mods.fml.client.FMLClientHandler.instance().tryLoadExistingWorld(this, s, s1);
++                net.minecraftforge.fml.client.FMLClientHandler.instance().tryLoadExistingWorld(this, s, s1);
              }
          }
      }

@@ -5,6 +5,6 @@
      public static String getClientModName()
      {
 -        return "vanilla";
-+        return cpw.mods.fml.common.FMLCommonHandler.instance().getModName();
++        return net.minecraftforge.fml.common.FMLCommonHandler.instance().getModName();
      }
  }

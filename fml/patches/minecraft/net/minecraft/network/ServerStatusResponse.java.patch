@@ -4,7 +4,7 @@
                      serverstatusresponse.func_151320_a(JsonUtils.func_151200_h(jsonobject, "favicon"));
                  }
  
-+                cpw.mods.fml.client.FMLClientHandler.instance().captureAdditionalData(serverstatusresponse, jsonobject);
++                net.minecraftforge.fml.client.FMLClientHandler.instance().captureAdditionalData(serverstatusresponse, jsonobject);
                  return serverstatusresponse;
              }
  
@@ -12,7 +12,7 @@
                      jsonobject.addProperty("favicon", p_serialize_1_.func_151316_d());
                  }
  
-+                cpw.mods.fml.common.network.internal.FMLNetworkHandler.enhanceStatusQuery(jsonobject);
++                net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.enhanceStatusQuery(jsonobject);
                  return jsonobject;
              }
  

@@ -4,7 +4,7 @@
                      }
                  }
  
-+                cpw.mods.fml.common.FMLCommonHandler.instance().firePlayerItemPickupEvent(p_70100_1_, this);
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerItemPickupEvent(p_70100_1_, this);
                  if (!this.func_174814_R())
                  {
                      this.field_70170_p.func_72956_a(p_70100_1_, "random.pop", 0.2F, ((this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.7F + 1.0F) * 2.0F);

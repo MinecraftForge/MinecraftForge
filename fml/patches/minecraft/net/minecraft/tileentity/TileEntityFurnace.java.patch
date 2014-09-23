@@ -13,7 +13,7 @@
 +            if (item == Items.field_151129_at) return 20000;
 +            if (item == Item.func_150898_a(Blocks.field_150345_g)) return 100;
 +            if (item == Items.field_151072_bj) return 2400;
-+            return cpw.mods.fml.common.registry.GameRegistry.getFuelValue(p_145952_0_);
++            return net.minecraftforge.fml.common.registry.GameRegistry.getFuelValue(p_145952_0_);
          }
      }
  

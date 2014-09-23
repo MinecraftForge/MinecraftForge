@@ -4,7 +4,7 @@
      private boolean field_179551_k;
      private static final String __OBFID = "CL_00000043";
  
-+    private cpw.mods.fml.common.registry.RegistryDelegate<Item> delegate;
++    private net.minecraftforge.fml.common.registry.RegistryDelegate<Item> delegate;
      public ItemStack(Block p_i1876_1_)
      {
          this(p_i1876_1_, 1);

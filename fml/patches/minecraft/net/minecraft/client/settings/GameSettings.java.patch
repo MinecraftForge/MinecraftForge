@@ -4,7 +4,7 @@
  
      public void func_74303_b()
      {
-+        if (cpw.mods.fml.client.FMLClientHandler.instance().isLoading()) return;
++        if (net.minecraftforge.fml.client.FMLClientHandler.instance().isLoading()) return;
          try
          {
              PrintWriter printwriter = new PrintWriter(new FileWriter(this.field_74354_ai));

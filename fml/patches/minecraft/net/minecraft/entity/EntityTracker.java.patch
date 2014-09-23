@@ -4,7 +4,7 @@
  
      public void func_72786_a(Entity p_72786_1_)
      {
-+        if (cpw.mods.fml.common.registry.EntityRegistry.instance().tryTrackingEntity(this, p_72786_1_)) return;
++        if (net.minecraftforge.fml.common.registry.EntityRegistry.instance().tryTrackingEntity(this, p_72786_1_)) return;
 +
          if (p_72786_1_ instanceof EntityPlayerMP)
          {

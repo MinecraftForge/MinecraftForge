@@ -17,7 +17,7 @@
          final EnumConnectionState enumconnectionstate1 = (EnumConnectionState)this.field_150746_k.attr(field_150739_c).get();
  
 -        if (enumconnectionstate1 != enumconnectionstate)
-+        if (enumconnectionstate1 != enumconnectionstate && !( p_150732_1_ instanceof cpw.mods.fml.common.network.internal.FMLProxyPacket))
++        if (enumconnectionstate1 != enumconnectionstate && !( p_150732_1_ instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
          {
              field_150735_g.debug("Disabled auto read");
              this.field_150746_k.config().setAutoRead(false);
@@ -26,7 +26,7 @@
          if (this.field_150746_k.eventLoop().inEventLoop())
          {
 -            if (enumconnectionstate != enumconnectionstate1)
-+            if (enumconnectionstate != enumconnectionstate1 && !( p_150732_1_ instanceof cpw.mods.fml.common.network.internal.FMLProxyPacket))
++            if (enumconnectionstate != enumconnectionstate1 && !( p_150732_1_ instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
              {
                  this.func_150723_a(enumconnectionstate);
              }
@@ -35,7 +35,7 @@
                  public void run()
                  {
 -                    if (enumconnectionstate != enumconnectionstate1)
-+                    if (enumconnectionstate != enumconnectionstate1  && !( p_150732_1_ instanceof cpw.mods.fml.common.network.internal.FMLProxyPacket))
++                    if (enumconnectionstate != enumconnectionstate1  && !( p_150732_1_ instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
                      {
                          NetworkManager.this.func_150723_a(enumconnectionstate);
                      }

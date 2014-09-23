@@ -4,7 +4,7 @@
          }
  
          field_135049_a.func_135022_a(p_110549_1_, arraylist);
-+        cpw.mods.fml.common.registry.LanguageRegistry.instance().mergeLanguageTable(field_135049_a.field_135032_a, this.field_135048_c);
++        net.minecraftforge.fml.common.registry.LanguageRegistry.instance().mergeLanguageTable(field_135049_a.field_135032_a, this.field_135048_c);
          StringTranslate.func_135063_a(field_135049_a.field_135032_a);
      }
  

@@ -33,8 +33,8 @@ minecraft {
     mcpVersion = '9.10'
     mappings = 'snapshot_nodoc_20140916'
     fmlDir = projectDir.getAbsolutePath();
-    mainClass = 'cpw.mods.fml.relauncher.ServerLaunchWrapper'
-    tweakClass = 'cpw.mods.fml.common.launcher.FMLTweaker'
+    mainClass = 'net.minecraftforge.fml.relauncher.ServerLaunchWrapper'
+    tweakClass = 'net.minecraftforge.fml.common.launcher.FMLTweaker'
     installerVersion = "1.4"
 }
 

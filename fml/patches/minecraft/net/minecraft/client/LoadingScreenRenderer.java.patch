@@ -6,7 +6,7 @@
  
 +                try
 +                {
-+                if (!cpw.mods.fml.client.FMLClientHandler.instance().handleLoadingScreen(scaledresolution)) //FML Don't render while FML's pre-screen is rendering
++                if (!net.minecraftforge.fml.client.FMLClientHandler.instance().handleLoadingScreen(scaledresolution)) //FML Don't render while FML's pre-screen is rendering
 +                {
                  Tessellator tessellator = Tessellator.func_178181_a();
                  WorldRenderer worldrenderer = tessellator.func_178180_c();

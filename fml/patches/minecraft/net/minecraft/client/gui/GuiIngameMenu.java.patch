@@ -17,7 +17,7 @@
                  this.field_146297_k.func_147108_a(new GuiShareToLan(this));
 +                break;
 +            case 12:
-+                cpw.mods.fml.client.FMLClientHandler.instance().showInGameModOptions(this);
++                net.minecraftforge.fml.client.FMLClientHandler.instance().showInGameModOptions(this);
 +                break;
          }
      }

@@ -4,7 +4,7 @@
                      p_147224_1_.func_147407_a((String)null);
                  }
  
-+                cpw.mods.fml.client.FMLClientHandler.instance().bindServerListData(p_147224_1_, serverstatusresponse);
++                net.minecraftforge.fml.client.FMLClientHandler.instance().bindServerListData(p_147224_1_, serverstatusresponse);
                  this.field_175092_e = Minecraft.func_71386_F();
                  networkmanager.func_179290_a(new C01PacketPing(this.field_175092_e));
                  this.field_147403_d = true;

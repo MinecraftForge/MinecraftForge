@@ -13,10 +13,10 @@
                  nbttagcompound = CompressedStreamTools.func_74796_a(new FileInputStream(file1));
                  nbttagcompound1 = nbttagcompound.func_74775_l("Data");
 +                worldInfo = new WorldInfo(nbttagcompound1);
-+                cpw.mods.fml.common.FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
                  return new WorldInfo(nbttagcompound1);
              }
-+            catch (cpw.mods.fml.common.StartupQuery.AbortedException e)
++            catch (net.minecraftforge.fml.common.StartupQuery.AbortedException e)
 +            {
 +                throw e;
 +            }
@@ -26,7 +26,7 @@
              }
          }
  
-+        cpw.mods.fml.common.FMLCommonHandler.instance().confirmBackupLevelDatUse(this);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().confirmBackupLevelDatUse(this);
          file1 = new File(this.field_75770_b, "level.dat_old");
  
          if (file1.exists())
@@ -36,10 +36,10 @@
                  nbttagcompound1 = nbttagcompound.func_74775_l("Data");
 -                return new WorldInfo(nbttagcompound1);
 +                worldInfo = new WorldInfo(nbttagcompound1);
-+                cpw.mods.fml.common.FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
 +                return worldInfo;
 +             }
-+            catch (cpw.mods.fml.common.StartupQuery.AbortedException e)
++            catch (net.minecraftforge.fml.common.StartupQuery.AbortedException e)
 +            {
 +                throw e;
              }
@@ -49,7 +49,7 @@
          NBTTagCompound nbttagcompound2 = new NBTTagCompound();
          nbttagcompound2.func_74782_a("Data", nbttagcompound1);
  
-+        cpw.mods.fml.common.FMLCommonHandler.instance().handleWorldDataSave(this, p_75755_1_, nbttagcompound2);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataSave(this, p_75755_1_, nbttagcompound2);
 +
          try
          {
@@ -58,7 +58,7 @@
          NBTTagCompound nbttagcompound1 = new NBTTagCompound();
          nbttagcompound1.func_74782_a("Data", nbttagcompound);
  
-+        cpw.mods.fml.common.FMLCommonHandler.instance().handleWorldDataSave(this, p_75761_1_, nbttagcompound1);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataSave(this, p_75761_1_, nbttagcompound1);
 +
          try
          {

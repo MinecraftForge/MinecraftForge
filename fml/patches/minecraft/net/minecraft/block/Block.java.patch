@@ -5,7 +5,7 @@
  {
      private static final ResourceLocation field_176230_a = new ResourceLocation("air");
 -    public static final RegistryNamespacedDefaultedByKey field_149771_c = new RegistryNamespacedDefaultedByKey(field_176230_a);
-+    public static final RegistryNamespacedDefaultedByKey field_149771_c = cpw.mods.fml.common.registry.GameData.getBlockRegistry();
++    public static final RegistryNamespacedDefaultedByKey field_149771_c = net.minecraftforge.fml.common.registry.GameData.getBlockRegistry();
      public static final ObjectIntIdentityMap field_176229_d = new ObjectIntIdentityMap();
      private CreativeTabs field_149772_a;
      public static final Block.SoundType field_149769_e = new Block.SoundType("stone", 1.0F, 1.0F);
@@ -13,8 +13,8 @@
      private String field_149770_b;
      private static final String __OBFID = "CL_00000199";
  
-+    public final cpw.mods.fml.common.registry.RegistryDelegate<Block> delegate =
-+            ((cpw.mods.fml.common.registry.FMLControlledNamespacedRegistry)field_149771_c).getDelegate(this, Block.class);
++    public final net.minecraftforge.fml.common.registry.RegistryDelegate<Block> delegate =
++            ((net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry)field_149771_c).getDelegate(this, Block.class);
 +
      public static int func_149682_b(Block p_149682_0_)
      {

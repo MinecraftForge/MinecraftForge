@@ -9,7 +9,7 @@
 +                    int posZ = MathHelper.func_76128_c(this.field_73132_a.field_70161_v * 32.0D);
 +                    if (posX != this.field_73128_d || posY != this.field_73129_e || posZ != this.field_73126_f)
 +                    {
-+                        cpw.mods.fml.common.network.internal.FMLNetworkHandler.makeEntitySpawnAdjustment(this.field_73132_a, p_73117_1_, this.field_73128_d, this.field_73129_e, this.field_73126_f);
++                        net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.makeEntitySpawnAdjustment(this.field_73132_a, p_73117_1_, this.field_73128_d, this.field_73129_e, this.field_73126_f);
 +                    }
 +
                      if (this.field_73143_t && !(packet instanceof S0FPacketSpawnMob))
@@ -19,7 +19,7 @@
              field_151262_p.warn("Fetching addPacket for removed entity");
          }
  
-+        Packet pkt = cpw.mods.fml.common.network.internal.FMLNetworkHandler.getEntitySpawningPacket(this.field_73132_a);
++        Packet pkt = net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.getEntitySpawningPacket(this.field_73132_a);
 +        if (pkt != null) return pkt;
 +
          if (this.field_73132_a instanceof EntityItem)

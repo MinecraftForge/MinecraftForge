@@ -18,7 +18,7 @@
  
 +        if (p_146284_1_.field_146127_k == 6)
 +        {
-+            this.field_146297_k.func_147108_a(new cpw.mods.fml.client.GuiModList(this));
++            this.field_146297_k.func_147108_a(new net.minecraftforge.fml.client.GuiModList(this));
 +        }
 +
          if (p_146284_1_.field_146127_k == 11)
@@ -29,7 +29,7 @@
          }
  
 -        this.func_73731_b(this.field_146289_q, s, 2, this.field_146295_m - 10, -1);
-+        java.util.List<String> brandings = com.google.common.collect.Lists.reverse(cpw.mods.fml.common.FMLCommonHandler.instance().getBrandings(true));
++        java.util.List<String> brandings = com.google.common.collect.Lists.reverse(net.minecraftforge.fml.common.FMLCommonHandler.instance().getBrandings(true));
 +        for (int i = 0; i < brandings.size(); i++)
 +        {
 +            String brd = brandings.get(i);

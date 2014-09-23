@@ -3,7 +3,7 @@
   "time": "@timestamp@",
   "releaseTime": "1960-01-01T00:00:00-0700",
   "type": "release",
-  "minecraftArguments": "--version FML_DEV --tweakClass cpw.mods.fml.common.launcher.FMLTweaker",
+  "minecraftArguments": "--version FML_DEV --tweakClass net.minecraftforge.fml.common.launcher.FMLTweaker",
   "libraries": [
     {
       "name": "net.minecraft:launchwrapper:1.11"

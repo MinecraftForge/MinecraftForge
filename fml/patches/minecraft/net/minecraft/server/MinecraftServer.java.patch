@@ -5,7 +5,7 @@
      public void func_71260_j()
      {
 -        if (!this.field_71290_O)
-+        if (!this.field_71290_O && cpw.mods.fml.common.Loader.instance().hasReachedState(cpw.mods.fml.common.LoaderState.SERVER_STARTED) && !field_71316_v) // make sure the save is valid and we don't save twice
++        if (!this.field_71290_O && net.minecraftforge.fml.common.Loader.instance().hasReachedState(net.minecraftforge.fml.common.LoaderState.SERVER_STARTED) && !field_71316_v) // make sure the save is valid and we don't save twice
          {
              field_147145_h.info("Stopping server");
  
@@ -13,7 +13,7 @@
          {
              if (this.func_71197_b())
              {
-+                cpw.mods.fml.common.FMLCommonHandler.instance().handleServerStarted();
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStarted();
                  this.field_175591_ab = func_130071_aq();
                  long i = 0L;
                  this.field_147147_p.func_151315_a(new ChatComponentText(this.field_71286_C));
@@ -21,19 +21,19 @@
                      Thread.sleep(Math.max(1L, 50L - i));
                      this.field_71296_Q = true;
                  }
-+                cpw.mods.fml.common.FMLCommonHandler.instance().handleServerStopping();
-+                cpw.mods.fml.common.FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStopping();
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
              }
              else
              {
-+                cpw.mods.fml.common.FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
                  this.func_71228_a((CrashReport)null);
              }
          }
-+        catch (cpw.mods.fml.common.StartupQuery.AbortedException e)
++        catch (net.minecraftforge.fml.common.StartupQuery.AbortedException e)
 +        {
 +            // ignore silently
-+            cpw.mods.fml.common.FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
++            net.minecraftforge.fml.common.FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
 +        }
          catch (Throwable throwable1)
          {
@@ -42,7 +42,7 @@
                  field_147145_h.error("We were unable to save this crash report to disk.");
              }
  
-+            cpw.mods.fml.common.FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
++            net.minecraftforge.fml.common.FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
              this.func_71228_a(crashreport);
          }
          finally
@@ -50,7 +50,7 @@
              }
              finally
              {
-+                cpw.mods.fml.common.FMLCommonHandler.instance().handleServerStopped();
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStopped();
 +                this.field_71316_v = true;
                  this.func_71240_o();
              }
@@ -59,7 +59,7 @@
      public void func_71217_p()
      {
          long i = System.nanoTime();
-+        cpw.mods.fml.common.FMLCommonHandler.instance().onPreServerTick();
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPreServerTick();
          ++this.field_71315_w;
  
          if (this.field_71295_T)
@@ -67,7 +67,7 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
-+        cpw.mods.fml.common.FMLCommonHandler.instance().onPostServerTick();
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPostServerTick();
      }
  
      public void func_71190_q()
@@ -75,7 +75,7 @@
                  }
  
                  this.field_71304_b.func_76320_a("tick");
-+                cpw.mods.fml.common.FMLCommonHandler.instance().onPreWorldTick(worldserver);
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().onPreWorldTick(worldserver);
                  CrashReport crashreport;
  
                  try
@@ -83,7 +83,7 @@
                      throw new ReportedException(crashreport);
                  }
  
-+                cpw.mods.fml.common.FMLCommonHandler.instance().onPostWorldTick(worldserver);
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().onPostWorldTick(worldserver);
                  this.field_71304_b.func_76319_b();
                  this.field_71304_b.func_76320_a("tracker");
                  worldserver.func_73039_n().func_72788_a();
@@ -91,7 +91,7 @@
  
      public void func_71256_s()
      {
-+        cpw.mods.fml.common.StartupQuery.reset();
++        net.minecraftforge.fml.common.StartupQuery.reset();
          this.field_175590_aa = new Thread(this, "Server thread");
          this.field_175590_aa.start();
      }
@@ -100,7 +100,7 @@
      public String getServerModName()
      {
 -        return "vanilla";
-+        return cpw.mods.fml.common.FMLCommonHandler.instance().getModName();
++        return net.minecraftforge.fml.common.FMLCommonHandler.instance().getModName();
      }
  
      public CrashReport func_71230_b(CrashReport p_71230_1_)

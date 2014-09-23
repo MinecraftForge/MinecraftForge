@@ -1,20 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/util/StringTranslate.java
 +++ ../src-work/minecraft/net/minecraft/util/StringTranslate.java
-@@ -3,10 +3,13 @@
- import com.google.common.base.Splitter;
- import com.google.common.collect.Iterables;
- import com.google.common.collect.Maps;
-+
-+import cpw.mods.fml.common.registry.LanguageRegistry;
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
- import java.io.IOException;
- import java.io.InputStream;
-+import java.util.HashMap;
- import java.util.IllegalFormatException;
- import java.util.Iterator;
- import java.util.Map;
-@@ -18,16 +21,35 @@
+@@ -18,16 +18,35 @@
  {
      private static final Pattern field_111053_a = Pattern.compile("%(\\d+\\$)?[\\d\\.]*[df]");
      private static final Splitter field_135065_b = Splitter.on('=').limit(2);
@@ -38,21 +24,21 @@
 +
 +    private static void inject(StringTranslate inst, InputStream inputstream)
 +    {
-+        HashMap<String, String> map = parseLangFile(inputstream);
++        java.util.HashMap<String, String> map = parseLangFile(inputstream);
 +        inst.field_74816_c.putAll(map);
 +        inst.field_150511_e = System.currentTimeMillis();
 +    }
 +
-+    public static HashMap<String,String> parseLangFile(InputStream inputstream)
++    public static java.util.HashMap<String,String> parseLangFile(InputStream inputstream)
 +    {
-+        HashMap<String,String> table = Maps.newHashMap();
++        java.util.HashMap<String,String> table = Maps.newHashMap();
          try
          {
 -            InputStream inputstream = StringTranslate.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang");
              Iterator iterator = IOUtils.readLines(inputstream, Charsets.UTF_8).iterator();
  
              while (iterator.hasNext())
-@@ -42,17 +64,17 @@
+@@ -42,17 +61,17 @@
                      {
                          String s1 = astring[0];
                          String s2 = field_111053_a.matcher(astring[1]).replaceAll("%$1s");

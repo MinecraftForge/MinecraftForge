@@ -4,11 +4,11 @@
          this.func_71245_h(true);
          field_147148_h.info("Generating keypair");
          this.func_71253_a(CryptManager.func_75891_b());
-+        if (!cpw.mods.fml.common.FMLCommonHandler.instance().handleServerAboutToStart(this)) return false;
++        if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerAboutToStart(this)) return false;
          this.func_71247_a(this.func_71270_I(), this.func_71221_J(), this.field_71350_m.func_77160_d(), this.field_71350_m.func_77165_h(), this.field_71350_m.func_82749_j());
          this.func_71205_p(this.func_71214_G() + " - " + this.field_71305_c[0].func_72912_H().func_76065_j());
 -        return true;
-+        return cpw.mods.fml.common.FMLCommonHandler.instance().handleServerStarting(this);
++        return net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStarting(this);
      }
  
      public void func_71217_p()
