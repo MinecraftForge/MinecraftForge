@@ -20,9 +20,13 @@
                      {
                          this.func_85052_h().func_70078_a((Entity)null);
                      }
+                     double dx = this.func_85052_h().posX;
+                     double dy = this.func_85052_h().posY;
+                     double dz = this.func_85052_h().posZ;
  
 -                    this.func_85052_h().func_70634_a(this.field_70165_t, this.field_70163_u, this.field_70161_v);
 +                    this.func_85052_h().func_70634_a(event.targetX, event.targetY, event.targetZ);
+MinecraftForge.EVENT_BUS.post(new EnderTeleportEvent.PostEnderTeleport(this.func_85052_h(), dx, dy, dz, event.attackDamage));
                      this.func_85052_h().field_70143_R = 0.0F;
 -                    this.func_85052_h().func_70097_a(DamageSource.field_76379_h, 5.0F);
 +                    this.func_85052_h().func_70097_a(DamageSource.field_76379_h, event.attackDamage);
