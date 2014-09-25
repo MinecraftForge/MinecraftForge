@@ -25,4 +25,17 @@ public class EnderTeleportEvent extends LivingEvent
         this.targetZ = targetZ;
         this.attackDamage = attackDamage;
     }
+    
+    /**
+	 * Event posted after a successful ender teleport; not cancelable and changing fields has no effect
+	 */
+	public static class PostEnderTeleport extends EnderTeleportEvent {
+		/**
+		 * The entity has successfully teleported and already been set to its new position
+		 * Parameters originX, originY, and originZ are the original position of the entity
+		 */
+		public PostEnderTeleport(EntityLivingBase entity, double originX, double originY, double originZ, float damage) {
+			super(entity, originX, originY, originZ, damage);
+		}
+	}
 }
