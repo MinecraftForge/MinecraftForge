@@ -40,12 +40,9 @@ import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.OldServerPinger;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.crash.CrashReport;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -58,7 +55,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.SaveFormatOld;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.DuplicateModsFoundException;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -130,8 +126,10 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private DummyModContainer optifineContainer;
 
+    @SuppressWarnings("unused")
     private boolean guiLoaded;
 
+    @SuppressWarnings("unused")
     private boolean serverIsRunning;
 
     private MissingModsException modsMissing;
@@ -150,6 +148,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private List<IResourcePack> resourcePackList;
 
+    @SuppressWarnings("unused")
     private IReloadableResourceManager resourceManager;
 
     private Map<String, IResourcePack> resourcePackMap;
@@ -273,7 +272,6 @@ public class FMLClientHandler implements IFMLSidedHandler
      * Also initializes key bindings
      *
      */
-    @SuppressWarnings({ "deprecation", "unchecked" })
     public void finishMinecraftLoading()
     {
         if (modsMissing != null || wrongMC != null || customError!=null || dupesFound!=null || modSorting!=null)

@@ -331,7 +331,7 @@ public class VillagerRegistry
                     {
                         new EmeraldForItems(Items.string, new PriceInfo(15, 20)),
                         new EmeraldForItems(Items.coal, new PriceInfo(16, 24)),
-                        new ItemAndEmeraldToItem(Items.fish, new PriceInfo(6, 6), Items.field_179566_aV, new PriceInfo(6, 6))
+                        new ItemAndEmeraldToItem(Items.fish, new PriceInfo(6, 6), Items.cooked_fish, new PriceInfo(6, 6))
                     },
                     {
                         new ListEnchantedItemForEmeralds(Items.fishing_rod, new PriceInfo(7, 8))
@@ -407,7 +407,7 @@ public class VillagerRegistry
                     },
                     {
                         new ListItemForEmeralds(Items.redstone, new PriceInfo(-4, -1)),
-                        new ListItemForEmeralds(new ItemStack(Items.dye, 1, EnumDyeColor.BLUE.func_176767_b()),
+                        new ListItemForEmeralds(new ItemStack(Items.dye, 1, EnumDyeColor.BLUE.getDyeColorDamage()),
                         new PriceInfo(-2, -1))
                     },
                     {

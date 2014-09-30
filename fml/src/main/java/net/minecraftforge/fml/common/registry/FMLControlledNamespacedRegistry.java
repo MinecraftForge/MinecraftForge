@@ -51,7 +51,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         for (I obj : typeSafeIterable())
         {
             int id = getId(obj);
-            Object name = func_177774_c(obj);
+            Object name = getNameForObject(obj);
 
             // name lookup failed -> obj is not in the obj<->name map
             if (name == null) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, doesn't yield a name.", type, obj, id));
@@ -81,7 +81,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
 
             if (obj instanceof ItemBlock)
             {
-                Block block = ((ItemBlock) obj).blockInstance;
+                Block block = ((ItemBlock) obj).block;
 
                 // verify matching block entry
                 if (iBlockRegistry.getId(block) != id)
@@ -109,7 +109,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
 
         for (I thing : registry.typeSafeIterable())
         {
-            addObjectRaw(registry.getId(thing), registry.func_177774_c(thing), thing);
+            addObjectRaw(registry.getId(thing), registry.getNameForObject(thing), thing);
         }
     }
 
@@ -122,7 +122,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
      */
     @Override
     @Deprecated
-    public void func_177775_a(int id, Object name, Object thing)
+    public void register(int id, Object name, Object thing)
     {
         Validate.isInstanceOf(ResourceLocation.class, name);
         GameData.getMain().register(thing, name.toString(), id);
@@ -145,7 +145,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         if (thing == null) throw new NullPointerException("Can't add null-object to the registry.");
 
         name = new ResourceLocation(name).toString();
-        Object existingName = func_177774_c(thing);
+        Object existingName = getNameForObject(thing);
 
         if (existingName == null)
         {
@@ -333,7 +333,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
     {
         for (I thing : this.typeSafeIterable())
         {
-            idMapping.put(discriminator+func_177774_c(thing).toString(), getId(thing));
+            idMapping.put(discriminator+getNameForObject(thing).toString(), getId(thing));
         }
     }
 
@@ -388,7 +388,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         {
             int foundId = getId(thing);
             Object otherThing = getRaw(foundId);
-            throw new IllegalArgumentException(String.format("The object %s{%x} has been registered twice, using the names %s and %s. (Other object at this id is %s{%x})", thing, System.identityHashCode(thing), func_177774_c(thing), name, otherThing, System.identityHashCode(otherThing)));
+            throw new IllegalArgumentException(String.format("The object %s{%x} has been registered twice, using the names %s and %s. (Other object at this id is %s{%x})", thing, System.identityHashCode(thing), getNameForObject(thing), name, otherThing, System.identityHashCode(otherThing)));
         }
         if (GameData.isFrozen(this))
         {
@@ -419,9 +419,9 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         {
             if (!registry.field_148758_b.containsKey(thing))
             {
-                if (!registry.activeSubstitutions.containsKey(func_177774_c(thing).toString()))
+                if (!registry.activeSubstitutions.containsKey(getNameForObject(thing).toString()))
                 {
-                    ret.put(func_177774_c(thing).toString(), getId(thing));
+                    ret.put(getNameForObject(thing).toString(), getId(thing));
                 }
             }
         }
@@ -444,7 +444,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         for (int id : ids)
         {
             I thing = getRaw(id);
-            FMLLog.finer("Registry: %s %d %s", func_177774_c(thing), id, thing);
+            FMLLog.finer("Registry: %s %d %s", getNameForObject(thing), id, thing);
         }
     }
 
@@ -457,7 +457,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         if (thing == null) throw new NullPointerException("The object to be added to the registry is null. This can only happen with a corrupted registry state. Reflection/ASM hackery? Registry bug?");
         if (!superType.isInstance(thing)) throw new IllegalArgumentException("The object to be added to the registry is not of the right type. Reflection/ASM hackery? Registry bug?");
 
-        underlyingIntegerMap.func_148746_a(thing, id); // obj <-> id
+        underlyingIntegerMap.put(thing, id); // obj <-> id
         super.putObject(name, thing); // name <-> obj
     }
 
@@ -519,7 +519,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
     }
 
     @Override
-    public void func_177776_a()
+    public void validateKey()
     {
         if (this.optionalDefaultKey != null)
             Validate.notNull(this.optionalDefaultObject);

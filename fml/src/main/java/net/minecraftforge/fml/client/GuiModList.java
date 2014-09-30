@@ -168,6 +168,7 @@ public class GuiModList extends GuiScreen
                             }
                             else
                             {
+                                @SuppressWarnings("resource")
                                 InputStream logoResource = getClass().getResourceAsStream(logoFile);
                                 if (logoResource != null)
                                 {
@@ -193,13 +194,13 @@ public class GuiModList extends GuiScreen
                             cachedLogoDimensions.width *= scale;
                             cachedLogoDimensions.height *= scale;
                             int top = 32;
-                            Tessellator tess = Tessellator.func_178181_a();
-                            WorldRenderer world = tess.func_178180_c();
-                            world.func_178970_b();
-                            world.func_178985_a(offset,                               top + cachedLogoDimensions.height,  zLevel, 0, 1);
-                            world.func_178985_a(offset + cachedLogoDimensions.width,  top + cachedLogoDimensions.height,  zLevel, 1, 1);
-                            world.func_178985_a(offset + cachedLogoDimensions.width,  top,                                zLevel, 1, 0);
-                            world.func_178985_a(offset,                               top,                                zLevel, 0, 0);
+                            Tessellator tess = Tessellator.getInstance();
+                            WorldRenderer world = tess.getWorldRenderer();
+                            world.startDrawingQuads();
+                            world.addVertexWithUV(offset,                               top + cachedLogoDimensions.height,  zLevel, 0, 1);
+                            world.addVertexWithUV(offset + cachedLogoDimensions.width,  top + cachedLogoDimensions.height,  zLevel, 1, 1);
+                            world.addVertexWithUV(offset + cachedLogoDimensions.width,  top,                                zLevel, 1, 0);
+                            world.addVertexWithUV(offset,                               top,                                zLevel, 0, 0);
                             tess.draw();
 
                             shifty += 65;

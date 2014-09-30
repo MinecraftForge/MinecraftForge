@@ -2,7 +2,6 @@ package net.minecraftforge.fml.common.network.handshake;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelOutboundHandler;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -10,15 +9,12 @@ import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
-import io.netty.util.concurrent.ScheduledFuture;
 
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.channels.ClosedChannelException;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.Level;
 
@@ -260,7 +256,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         }
         else
         {
-            manager.func_179288_a(new S40PacketDisconnect(chatcomponenttext), new GenericFutureListener<Future<?>>()
+            manager.sendPacket(new S40PacketDisconnect(chatcomponenttext), new GenericFutureListener<Future<?>>()
             {
                 @Override
                 public void operationComplete(Future<?> result)
@@ -275,18 +271,18 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     private MultiPartCustomPayload multipart = null;
     private boolean handleClientSideCustomPacket(S3FPacketCustomPayload msg, ChannelHandlerContext context)
     {
-        String channelName = msg.func_149169_c();
+        String channelName = msg.getChannelName();
         if ("FML|MP".equals(channelName))
         {
             try
             {
                 if (multipart == null)
                 {
-                    multipart = new MultiPartCustomPayload(msg.func_180735_b());
+                    multipart = new MultiPartCustomPayload(msg.getBufferData());
                 }
                 else
                 {
-                    multipart.processPart(msg.func_180735_b());
+                    multipart.processPart(msg.getBufferData());
                 }
             }
             catch (IOException e)
@@ -299,7 +295,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
             if (multipart.isComplete())
             {
                 msg = multipart;
-                channelName = msg.func_149169_c();
+                channelName = msg.getChannelName();
                 multipart = null;
             }
             else
@@ -342,7 +338,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         {
             state = ConnectionState.HANDSHAKING;
         }
-        String channelName = msg.func_149559_c();
+        String channelName = msg.getChannelName();
         if ("FML|HS".equals(channelName) || "REGISTER".equals(channelName) || "UNREGISTER".equals(channelName))
         {
             FMLProxyPacket proxy = new FMLProxyPacket(msg);
@@ -373,7 +369,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
 
     public void sendProxy(FMLProxyPacket msg)
     {
-        manager.func_179290_a(msg);
+        manager.sendPacket(msg);
     }
 
     public void rejectHandshake(String result)
@@ -559,13 +555,13 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         }
 
         @Override
-        public String func_149169_c() // getChannel
+        public String getChannelName() // getChannel
         {
             return this.channel;
         }
 
         @Override
-        public PacketBuffer func_180735_b() // getData
+        public PacketBuffer getBufferData() // getData
         {
             return this.data_buf;
         }

@@ -12,6 +12,7 @@
 
 package net.minecraftforge.fml.client.config;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,20 +33,19 @@ import static net.minecraftforge.fml.client.config.GuiUtils.UNDO_CHAR;
 public class GuiSelectString extends GuiScreen
 {
     protected GuiScreen parentScreen;
-    @SuppressWarnings("rawtypes")
     protected IConfigElement configElement;
-    private GuiSelectStringEntries entriesList;
-    private GuiButtonExt btnUndoChanges, btnDefault, btnDone;
-    private String title;
+    protected GuiSelectStringEntries entryList;
+    protected GuiButtonExt btnUndoChanges, btnDefault, btnDone;
+    protected String title;
     protected String titleLine2;
     protected String titleLine3;
     protected int slotIndex;
-    private final Map<Object, String> selectableValues;
+    protected final Map<Object, String> selectableValues;
     public final Object beforeValue;
     public Object currentValue;
-    private HoverChecker tooltipHoverChecker;
+    protected HoverChecker tooltipHoverChecker;
     @SuppressWarnings("rawtypes")
-    private List toolTip;
+    protected List toolTip;
     protected boolean enabled;
 
     @SuppressWarnings("rawtypes")
@@ -95,7 +95,7 @@ public class GuiSelectString extends GuiScreen
     @Override
     public void initGui()
     {
-        this.entriesList = new GuiSelectStringEntries(this, this.mc, this.configElement, this.selectableValues);
+        this.entryList = new GuiSelectStringEntries(this, this.mc, this.configElement, this.selectableValues);
 
         int undoGlyphWidth = mc.fontRendererObj.getStringWidth(UNDO_CHAR) * 2;
         int resetGlyphWidth = mc.fontRendererObj.getStringWidth(RESET_CHAR) * 2;
@@ -117,7 +117,7 @@ public class GuiSelectString extends GuiScreen
         {
             try
             {
-                this.entriesList.saveChanges();
+                this.entryList.saveChanges();
             }
             catch (Throwable e)
             {
@@ -128,19 +128,25 @@ public class GuiSelectString extends GuiScreen
         else if (button.id == 2001)
         {
             this.currentValue = configElement.getDefault();
-            this.entriesList = new GuiSelectStringEntries(this, this.mc, this.configElement, this.selectableValues);
+            this.entryList = new GuiSelectStringEntries(this, this.mc, this.configElement, this.selectableValues);
         }
         else if (button.id == 2002)
         {
             this.currentValue = beforeValue;
-            this.entriesList = new GuiSelectStringEntries(this, this.mc, this.configElement, this.selectableValues);
+            this.entryList = new GuiSelectStringEntries(this, this.mc, this.configElement, this.selectableValues);
         }
+    }
+
+    public void handleMouseInput() throws IOException
+    {
+        super.handleMouseInput();
+        this.entryList.func_178039_p();
     }
 
     @Override
     protected void mouseReleased(int x, int y, int mouseEvent)
     {
-        if (mouseEvent != 0 || !this.entriesList.func_148181_b(x, y, mouseEvent))
+        if (mouseEvent != 0 || !this.entryList.func_148181_b(x, y, mouseEvent))
         {
             super.mouseReleased(x, y, mouseEvent);
         }
@@ -150,7 +156,7 @@ public class GuiSelectString extends GuiScreen
     public void drawScreen(int par1, int par2, float par3)
     {
         this.drawDefaultBackground();
-        this.entriesList.drawScreen(par1, par2, par3);
+        this.entryList.drawScreen(par1, par2, par3);
         this.drawCenteredString(this.fontRendererObj, this.title, this.width / 2, 8, 16777215);
 
         if (this.titleLine2 != null)
@@ -160,8 +166,8 @@ public class GuiSelectString extends GuiScreen
             this.drawCenteredString(this.fontRendererObj, this.titleLine3, this.width / 2, 28, 16777215);
 
         this.btnDone.enabled = currentValue != null;
-        this.btnDefault.enabled = enabled && !this.entriesList.isDefault();
-        this.btnUndoChanges.enabled = enabled && this.entriesList.isChanged();
+        this.btnDefault.enabled = enabled && !this.entryList.isDefault();
+        this.btnUndoChanges.enabled = enabled && this.entryList.isChanged();
         super.drawScreen(par1, par2, par3);
 
         if (this.tooltipHoverChecker != null && this.tooltipHoverChecker.checkHover(par1, par2))

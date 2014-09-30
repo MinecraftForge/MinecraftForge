@@ -32,7 +32,7 @@ public class GuiUtils
     public static final String VALID      = "\u2714";
     public static final String INVALID    = "\u2715";
 
-    private static int[] colorCodes = new int[] { 0, 170, 43520, 43690, 11141120, 11141290, 16755200, 11184810, 5592405, 5592575, 5635925, 5636095, 16733525, 16733695, 16777045, 16777215,
+    public static int[] colorCodes = new int[] { 0, 170, 43520, 43690, 11141120, 11141290, 16755200, 11184810, 5592405, 5592575, 5635925, 5636095, 16733525, 16733695, 16777045, 16777215,
         0, 42, 10752, 10794, 2752512, 2752554, 2763264, 2763306, 1381653, 1381695, 1392405, 1392447, 4134165, 4134207, 4144917, 4144959 };
 
     public static int getColorCode(char c, boolean isLighter)
@@ -183,13 +183,13 @@ public class GuiUtils
     {
         float var7 = 0.00390625F;
         float var8 = 0.00390625F;
-        Tessellator tessellator = Tessellator.func_178181_a();
-        WorldRenderer worldr = tessellator.func_178180_c();
-        worldr.func_178970_b();
-        worldr.func_178985_a((x + 0), (y + height), zLevel, ((u + 0) * var7), ((v + height) * var8));
-        worldr.func_178985_a((x + width), (y + height), zLevel, ((u + width) * var7), ((v + height) * var8));
-        worldr.func_178985_a((x + width), (y + 0), zLevel, ((u + width) * var7), ((v + 0) * var8));
-        worldr.func_178985_a((x + 0), (y + 0), zLevel, ((u + 0) * var7), ((v + 0) * var8));
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldr = tessellator.getWorldRenderer();
+        worldr.startDrawingQuads();
+        worldr.addVertexWithUV((x + 0), (y + height), zLevel, ((u + 0) * var7), ((v + height) * var8));
+        worldr.addVertexWithUV((x + width), (y + height), zLevel, ((u + width) * var7), ((v + height) * var8));
+        worldr.addVertexWithUV((x + width), (y + 0), zLevel, ((u + width) * var7), ((v + 0) * var8));
+        worldr.addVertexWithUV((x + 0), (y + 0), zLevel, ((u + 0) * var7), ((v + 0) * var8));
         tessellator.draw();
     }
 

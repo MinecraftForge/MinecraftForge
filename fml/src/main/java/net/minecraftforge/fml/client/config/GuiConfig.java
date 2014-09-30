@@ -48,14 +48,12 @@ public class GuiConfig extends GuiScreen
     public final GuiScreen parentScreen;
     public String title = "Config GUI";
     public String titleLine2;
-    @SuppressWarnings("rawtypes")
     public final List<IConfigElement> configElements;
-    @SuppressWarnings("rawtypes")
     public final List<IConfigEntry> initEntries;
     public GuiConfigEntries entryList;
-    private GuiButtonExt btnDefaultAll;
-    private GuiButtonExt btnUndoAll;
-    private GuiCheckBox chkApplyGlobally;
+    protected GuiButtonExt btnDefaultAll;
+    protected GuiButtonExt btnUndoAll;
+    protected GuiCheckBox chkApplyGlobally;
     public final String modID;
     /**
      * When set to a non-null value the OnConfigChanged and PostConfigChanged events will be posted when the Done button is pressed
@@ -67,9 +65,9 @@ public class GuiConfig extends GuiScreen
     public final boolean allRequireWorldRestart;
     public final boolean allRequireMcRestart;
     public boolean needsRefresh = true;
-    private HoverChecker undoHoverChecker;
-    private HoverChecker resetHoverChecker;
-    private HoverChecker checkBoxHoverChecker;
+    protected HoverChecker undoHoverChecker;
+    protected HoverChecker resetHoverChecker;
+    protected HoverChecker checkBoxHoverChecker;
 
     /**
      * GuiConfig constructor that will use ConfigChangedEvent when editing is concluded. If a non-null value is passed for configID,
@@ -87,7 +85,6 @@ public class GuiConfig extends GuiScreen
      * @param title the desired title for this screen. For consistency it is recommended that you pass the path of the config file being
      *            edited.
      */
-    @SuppressWarnings("rawtypes")
     public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, String configID,
             boolean allRequireWorldRestart, boolean allRequireMcRestart, String title)
     {
@@ -106,7 +103,6 @@ public class GuiConfig extends GuiScreen
      * @param title the desired title for this screen. For consistency it is recommended that you pass the path of the config file being
      *            edited.
      */
-    @SuppressWarnings("rawtypes")
     public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID,
             boolean allRequireWorldRestart, boolean allRequireMcRestart, String title)
     {
@@ -127,7 +123,6 @@ public class GuiConfig extends GuiScreen
      * @param titleLine2 the desired title second line for this screen. Typically this is used to send the category name of the category
      *            currently being edited.
      */
-    @SuppressWarnings("rawtypes")
     public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID,
             boolean allRequireWorldRestart, boolean allRequireMcRestart, String title, String titleLine2)
     {
@@ -151,7 +146,6 @@ public class GuiConfig extends GuiScreen
      * @param titleLine2 the desired title second line for this screen. Typically this is used to send the category name of the category
      *            currently being edited.
      */
-    @SuppressWarnings("rawtypes")
     public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, String configID,
             boolean allRequireWorldRestart, boolean allRequireMcRestart, String title, String titleLine2)
     {
@@ -278,6 +272,12 @@ public class GuiConfig extends GuiScreen
         {
             this.entryList.undoAllChanges(this.chkApplyGlobally.isChecked());
         }
+    }
+
+    public void handleMouseInput() throws IOException
+    {
+        super.handleMouseInput();
+        this.entryList.func_178039_p();
     }
 
     @Override

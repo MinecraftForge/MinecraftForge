@@ -213,7 +213,7 @@ public class GameData {
     static UniqueIdentifier getUniqueName(Block block)
     {
         if (block == null) return null;
-        Object name = getMain().iBlockRegistry.func_177774_c(block);
+        Object name = getMain().iBlockRegistry.getNameForObject(block);
         UniqueIdentifier ui = new UniqueIdentifier(name);
         if (customItemStacks.contains(ui.modId, ui.name))
         {
@@ -226,7 +226,7 @@ public class GameData {
     static UniqueIdentifier getUniqueName(Item item)
     {
         if (item == null) return null;
-        Object name = getMain().iItemRegistry.func_177774_c(item);
+        Object name = getMain().iItemRegistry.getNameForObject(item);
         UniqueIdentifier ui = new UniqueIdentifier(name);
         if (customItemStacks.contains(ui.modId, ui.name))
         {
@@ -599,7 +599,7 @@ public class GameData {
                 if (remap.type == Type.BLOCK)
                 {
                     currId = getMain().iBlockRegistry.getId((Block) remap.getTarget());
-                    newName = getMain().iBlockRegistry.func_177774_c(remap.getTarget()).toString();
+                    newName = getMain().iBlockRegistry.getNameForObject(remap.getTarget()).toString();
                     FMLLog.fine("The Block %s is being remapped to %s.", remap.name, newName);
 
                     newId = gameData.registerBlock((Block) remap.getTarget(), newName, remap.id);
@@ -608,7 +608,7 @@ public class GameData {
                 else
                 {
                     currId = getMain().iItemRegistry.getId((Item) remap.getTarget());
-                    newName = getMain().iItemRegistry.func_177774_c(remap.getTarget()).toString();
+                    newName = getMain().iItemRegistry.getNameForObject(remap.getTarget()).toString();
                     FMLLog.fine("The Item %s is being remapped to %s.", remap.name, newName);
 
                     newId = gameData.registerItem((Item) remap.getTarget(), newName, remap.id);
@@ -797,7 +797,7 @@ public class GameData {
     {
         if (item instanceof ItemBlock) // ItemBlock, adjust id and clear the slot already occupied by the corresponding block
         {
-            Block block = ((ItemBlock) item).blockInstance;
+            Block block = ((ItemBlock) item).block;
             if (idHint != -1 && getMain().blockSubstitutions.containsKey(name))
             {
                 block = getMain().blockSubstitutions.get(name);
@@ -856,7 +856,7 @@ public class GameData {
 
         for (Item item : iItemRegistry.typeSafeIterable()) // find matching ItemBlock
         {
-            if (item instanceof ItemBlock && ((ItemBlock) item).blockInstance == block)
+            if (item instanceof ItemBlock && ((ItemBlock) item).block == block)
             {
                 itemBlock = (ItemBlock) item;
                 break;
@@ -958,8 +958,8 @@ public class GameData {
 
     private void verifyItemBlockName(ItemBlock item)
     {
-        Object blockName = iBlockRegistry.func_177774_c(item.blockInstance);
-        Object itemName = iItemRegistry.func_177774_c(item);
+        Object blockName = iBlockRegistry.getNameForObject(item.block);
+        Object itemName = iItemRegistry.getNameForObject(item);
 
         //Vanilla has a mismatch:
         //Block <-> ItemBlock name mismatch, block name minecraft:standing_banner, item name minecraft:banner

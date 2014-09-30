@@ -41,7 +41,7 @@ public class ClientRegistry
     public static void bindTileEntitySpecialRenderer(Class <? extends TileEntity> tileEntityClass, TileEntitySpecialRenderer specialRenderer)
     {
         TileEntityRendererDispatcher.instance.mapSpecialRenderers.put(tileEntityClass, specialRenderer);
-        specialRenderer.func_147497_a(TileEntityRendererDispatcher.instance);
+        specialRenderer.setRendererDispatcher(TileEntityRendererDispatcher.instance);
     }
 
     public static void registerKeyBinding(KeyBinding key)

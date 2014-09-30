@@ -36,19 +36,18 @@ import org.lwjgl.input.Keyboard;
 public class GuiEditArray extends GuiScreen
 {
     protected GuiScreen parentScreen;
-    @SuppressWarnings("rawtypes")
     protected IConfigElement configElement;
-    private GuiEditArrayEntries entryList;
-    private GuiButtonExt btnUndoChanges, btnDefault, btnDone;
-    private String title;
+    protected GuiEditArrayEntries entryList;
+    protected GuiButtonExt btnUndoChanges, btnDefault, btnDone;
+    protected String title;
     protected String titleLine2;
     protected String titleLine3;
     protected int slotIndex;
-    private final Object[] beforeValues;
-    private Object[] currentValues;
-    private HoverChecker tooltipHoverChecker;
+    protected final Object[] beforeValues;
+    protected Object[] currentValues;
+    protected HoverChecker tooltipHoverChecker;
     @SuppressWarnings("rawtypes")
-    private List toolTip;
+    protected List toolTip;
     protected boolean enabled;
 
     @SuppressWarnings("rawtypes")
@@ -141,6 +140,12 @@ public class GuiEditArray extends GuiScreen
             this.currentValues = Arrays.copyOf(beforeValues, beforeValues.length);
             this.entryList = new GuiEditArrayEntries(this, this.mc, this.configElement, this.beforeValues, this.currentValues);
         }
+    }
+
+    public void handleMouseInput() throws IOException
+    {
+        super.handleMouseInput();
+        this.entryList.func_178039_p();
     }
 
     @Override

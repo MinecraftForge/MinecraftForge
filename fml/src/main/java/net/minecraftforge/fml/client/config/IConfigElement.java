@@ -23,7 +23,7 @@ import net.minecraftforge.fml.client.config.GuiEditArrayEntries.IArrayEntry;
  * 
  * @author bspkrs
  */
-public interface IConfigElement<T>
+public interface IConfigElement
 {
     /**
      * [Property, Category] Is this object a property object?
@@ -34,7 +34,6 @@ public interface IConfigElement<T>
      * This method returns a class that implements {@code IConfigEntry} or null. This class MUST
      * provide a constructor with the following parameter types: {@code GuiConfig}, {@code GuiConfigEntries}, {@code IConfigElement}
      */
-    @SuppressWarnings("rawtypes")
     public Class<? extends IConfigEntry> getConfigEntryClass();
     
     /**
@@ -68,7 +67,6 @@ public interface IConfigElement<T>
     /**
      * [Category] Gets this category's child categories/properties.
      */
-    @SuppressWarnings("rawtypes")
     public List<IConfigElement> getChildElements();
     
     /**
@@ -142,12 +140,12 @@ public interface IConfigElement<T>
     /**
      * [Property] Sets this property's value.
      */
-    public void set(T value);
+    public void set(Object value);
     
     /**
      * [Property] Sets this property's value to the specified array.
      */
-    public void set(T[] aVal);
+    public void set(Object[] aVal);
     
     /**
      * [Property] Gets a String array of valid values for this property. This is generally used for String properties to allow the user to
@@ -158,12 +156,12 @@ public interface IConfigElement<T>
     /**
      * [Property] Gets this property's minimum value.
      */
-    public T getMinValue();
+    public Object getMinValue();
     
     /**
      * [Property] Gets this property's maximum value.
      */
-    public T getMaxValue();
+    public Object getMaxValue();
     
     /**
      * [Property] Gets a Pattern object used in String property input validation.
