@@ -39,13 +39,13 @@ public class FMLProxyPacket implements Packet {
 
     public FMLProxyPacket(S3FPacketCustomPayload original)
     {
-        this(original.func_180735_b(), original.func_149169_c());
+        this(original.getBufferData(), original.getChannelName());
         this.target = Side.CLIENT;
     }
 
     public FMLProxyPacket(C17PacketCustomPayload original)
     {
-        this(original.func_180760_b(), original.func_149559_c());
+        this(original.getBufferData(), original.getChannelName());
         this.target = Side.SERVER;
     }
 
@@ -141,7 +141,7 @@ public class FMLProxyPacket implements Packet {
                 throw new IllegalArgumentException("Payload may not be larger than " + MAX_LENGTH + " bytes");
             }
             PacketBuffer preamble = new PacketBuffer(Unpooled.buffer());
-            preamble.func_180714_a(channel);
+            preamble.writeString(channel);
             preamble.writeByte(parts);
             preamble.writeInt(data.length);
             ret.add(new S3FPacketCustomPayload("FML|MP", preamble));

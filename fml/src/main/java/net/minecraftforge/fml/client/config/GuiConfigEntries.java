@@ -24,7 +24,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.fml.common.FMLLog;
@@ -43,7 +42,6 @@ public class GuiConfigEntries extends GuiListExtended
 {
     public final GuiConfig owningScreen;
     public final Minecraft mc;
-    @SuppressWarnings("rawtypes")
     public List<IConfigEntry> listEntries;
     /**
      * The max width of the label of all IConfigEntry objects.
@@ -74,7 +72,6 @@ public class GuiConfigEntries extends GuiListExtended
      */
     public int scrollBarX;
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public GuiConfigEntries(GuiConfig parent, Minecraft mc)
     {
         super(mc, parent.width, parent.height, parent.titleLine2 != null ? 33 : 23, parent.height - 32, 20);
@@ -82,8 +79,6 @@ public class GuiConfigEntries extends GuiListExtended
         this.setShowSelectionBox(false);
         this.mc = mc;
         this.listEntries = new ArrayList<IConfigEntry>();
-//        int i = 0;
-//        String s = null;
 
         for (IConfigElement configElement : parent.configElements)
         {
@@ -133,17 +128,17 @@ public class GuiConfigEntries extends GuiListExtended
                     if (configElement.isList())
                         this.listEntries.add(new GuiConfigEntries.ArrayEntry(this.owningScreen, this, configElement));
                     else if (configElement.getType() == ConfigGuiType.BOOLEAN)
-                        this.listEntries.add(new GuiConfigEntries.BooleanEntry(this.owningScreen, this, (IConfigElement<Boolean>) configElement));
+                        this.listEntries.add(new GuiConfigEntries.BooleanEntry(this.owningScreen, this, configElement));
                     else if (configElement.getType() == ConfigGuiType.INTEGER)
-                        this.listEntries.add(new GuiConfigEntries.IntegerEntry(this.owningScreen, this, (IConfigElement<Integer>) configElement));
+                        this.listEntries.add(new GuiConfigEntries.IntegerEntry(this.owningScreen, this, configElement));
                     else if (configElement.getType() == ConfigGuiType.DOUBLE)
-                        this.listEntries.add(new GuiConfigEntries.DoubleEntry(this.owningScreen, this, (IConfigElement<Double>) configElement));
+                        this.listEntries.add(new GuiConfigEntries.DoubleEntry(this.owningScreen, this, configElement));
                     else if (configElement.getType() == ConfigGuiType.COLOR)
                     {
                         if (configElement.getValidValues() != null && configElement.getValidValues().length > 0)
-                            this.listEntries.add(new GuiConfigEntries.ChatColorEntry(this.owningScreen, this, (IConfigElement<String>) configElement));
+                            this.listEntries.add(new GuiConfigEntries.ChatColorEntry(this.owningScreen, this, configElement));
                         else
-                            this.listEntries.add(new GuiConfigEntries.StringEntry(this.owningScreen, this, (IConfigElement<String>) configElement));
+                            this.listEntries.add(new GuiConfigEntries.StringEntry(this.owningScreen, this, configElement));
                     }
                     else if (configElement.getType() == ConfigGuiType.MOD_ID)
                     {
@@ -151,14 +146,14 @@ public class GuiConfigEntries extends GuiListExtended
                         for (ModContainer mod : Loader.instance().getActiveModList())
                             values.put(mod.getModId(), mod.getName());
                         values.put("minecraft", "Minecraft");
-                        this.listEntries.add(new SelectValueEntry(this.owningScreen, this, (IConfigElement<String>) configElement, values));
+                        this.listEntries.add(new SelectValueEntry(this.owningScreen, this, configElement, values));
                     }
                     else if (configElement.getType() == ConfigGuiType.STRING)
                     {
                         if (configElement.getValidValues() != null && configElement.getValidValues().length > 0)
-                            this.listEntries.add(new GuiConfigEntries.CycleValueEntry(this.owningScreen, this, (IConfigElement<String>) configElement));
+                            this.listEntries.add(new GuiConfigEntries.CycleValueEntry(this.owningScreen, this, configElement));
                         else
-                            this.listEntries.add(new GuiConfigEntries.StringEntry(this.owningScreen, this, (IConfigElement<String>) configElement));
+                            this.listEntries.add(new GuiConfigEntries.StringEntry(this.owningScreen, this, configElement));
                     }
                 }
                 else if (configElement.getType() == ConfigGuiType.CONFIG_CATEGORY)
@@ -167,7 +162,6 @@ public class GuiConfigEntries extends GuiListExtended
         }
     }
 
-    @SuppressWarnings("rawtypes")
     protected void initGui()
     {
         this.width = owningScreen.width;
@@ -205,7 +199,6 @@ public class GuiConfigEntries extends GuiListExtended
     /**
      * Gets the IGuiListEntry object for the given index
      */
-    @SuppressWarnings("rawtypes")
     @Override
     public IConfigEntry getListEntry(int index)
     {
@@ -230,7 +223,6 @@ public class GuiConfigEntries extends GuiListExtended
     /**
      * This method is a pass-through for IConfigEntry objects that require keystrokes. Called from the parent GuiConfig screen.
      */
-    @SuppressWarnings("rawtypes")
     public void keyTyped(char eventChar, int eventKey)
     {
         for (IConfigEntry entry : this.listEntries)
@@ -241,7 +233,6 @@ public class GuiConfigEntries extends GuiListExtended
      * This method is a pass-through for IConfigEntry objects that contain GuiTextField elements. Called from the parent GuiConfig
      * screen.
      */
-    @SuppressWarnings("rawtypes")
     public void updateScreen()
     {
         for (IConfigEntry entry : this.listEntries)
@@ -252,7 +243,6 @@ public class GuiConfigEntries extends GuiListExtended
      * This method is a pass-through for IConfigEntry objects that contain GuiTextField elements. Called from the parent GuiConfig
      * screen.
      */
-    @SuppressWarnings("rawtypes")
     public void mouseClicked(int mouseX, int mouseY, int mouseEvent)
     {
         for (IConfigEntry entry : this.listEntries)
@@ -262,7 +252,6 @@ public class GuiConfigEntries extends GuiListExtended
     /**
      * This method is a pass-through for IConfigListEntry objects that need to perform actions when the containing GUI is closed.
      */
-    @SuppressWarnings("rawtypes")
     public void onGuiClosed()
     {
         for (IConfigEntry entry : this.listEntries)
@@ -273,7 +262,6 @@ public class GuiConfigEntries extends GuiListExtended
      * Saves all properties on this screen / child screens. This method returns true if any elements were changed that require
      * a restart for proper handling.
      */
-    @SuppressWarnings("rawtypes")
     public boolean saveConfigElements()
     {
         boolean requiresRestart = false;
@@ -288,7 +276,6 @@ public class GuiConfigEntries extends GuiListExtended
      * Returns true if all IConfigEntry objects on this screen are set to default. If includeChildren is true sub-category
      * objects are checked as well.
      */
-    @SuppressWarnings("rawtypes")
     public boolean areAllEntriesDefault(boolean includeChildren)
     {
         for (IConfigEntry entry : this.listEntries)
@@ -302,7 +289,6 @@ public class GuiConfigEntries extends GuiListExtended
      * Sets all IConfigEntry objects on this screen to default. If includeChildren is true sub-category objects are set as
      * well.
      */
-    @SuppressWarnings("rawtypes")
     public void setAllToDefault(boolean includeChildren)
     {
         for (IConfigEntry entry : this.listEntries)
@@ -314,7 +300,6 @@ public class GuiConfigEntries extends GuiListExtended
      * Returns true if any IConfigEntry objects on this screen are changed. If includeChildren is true sub-category objects
      * are checked as well.
      */
-    @SuppressWarnings("rawtypes")
     public boolean hasChangedEntry(boolean includeChildren)
     {
         for (IConfigEntry entry : this.listEntries)
@@ -328,7 +313,6 @@ public class GuiConfigEntries extends GuiListExtended
      * Returns true if any IConfigEntry objects on this screen are enabled. If includeChildren is true sub-category objects
      * are checked as well.
      */
-    @SuppressWarnings("rawtypes")
     public boolean areAnyEntriesEnabled(boolean includeChildren)
     {
         for (IConfigEntry entry : this.listEntries)
@@ -342,7 +326,6 @@ public class GuiConfigEntries extends GuiListExtended
      * Reverts changes to all IConfigEntry objects on this screen. If includeChildren is true sub-category objects are
      * reverted as well.
      */
-    @SuppressWarnings("rawtypes")
     public void undoAllChanges(boolean includeChildren)
     {
         for (IConfigEntry entry : this.listEntries)
@@ -354,7 +337,6 @@ public class GuiConfigEntries extends GuiListExtended
      * Calls the drawToolTip() method for all IConfigEntry objects on this screen. This is called from the parent GuiConfig screen
      * after drawing all other elements.
      */
-    @SuppressWarnings("rawtypes")
     public void drawScreenPost(int mouseX, int mouseY, float partialTicks)
     {
         for (IConfigEntry entry : this.listEntries)
@@ -371,7 +353,7 @@ public class GuiConfigEntries extends GuiListExtended
         protected final boolean beforeValue;
         protected boolean       currentValue;
 
-        private BooleanEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement<Boolean> configElement)
+        private BooleanEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement)
         {
             super(owningScreen, owningEntryList, configElement);
             this.beforeValue = Boolean.valueOf(configElement.get().toString());
@@ -426,7 +408,6 @@ public class GuiConfigEntries extends GuiListExtended
             }
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public boolean saveConfigElement()
         {
@@ -463,7 +444,7 @@ public class GuiConfigEntries extends GuiListExtended
         protected final int defaultIndex;
         protected int       currentIndex;
 
-        private CycleValueEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement<String> configElement)
+        private CycleValueEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement)
         {
             super(owningScreen, owningEntryList, configElement);
             beforeIndex = getIndex(configElement.get().toString());
@@ -534,7 +515,6 @@ public class GuiConfigEntries extends GuiListExtended
             }
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public boolean saveConfigElement()
         {
@@ -566,7 +546,7 @@ public class GuiConfigEntries extends GuiListExtended
      */
     public static class ChatColorEntry extends CycleValueEntry
     {
-        ChatColorEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement<String> configElement)
+        ChatColorEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement)
         {
             super(owningScreen, owningEntryList, configElement);
             this.btnValue.enabled = enabled();
@@ -574,10 +554,10 @@ public class GuiConfigEntries extends GuiListExtended
         }
 
         @Override
-        public void func_180790_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
         {
             this.btnValue.packedFGColour = GuiUtils.getColorCode(this.configElement.getValidValues()[currentIndex].charAt(0), true);
-            super.func_180790_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
+            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
         }
 
         @Override
@@ -600,7 +580,7 @@ public class GuiConfigEntries extends GuiListExtended
         protected Object              currentValue;
         protected Map<Object, String> selectableValues;
 
-        public SelectValueEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement<String> configElement, Map<Object, String> selectableValues)
+        public SelectValueEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement, Map<Object, String> selectableValues)
         {
             super(owningScreen, owningEntryList, configElement);
             beforeValue = configElement.get().toString();
@@ -668,7 +648,6 @@ public class GuiConfigEntries extends GuiListExtended
             }
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public boolean saveConfigElement()
         {
@@ -704,7 +683,6 @@ public class GuiConfigEntries extends GuiListExtended
         protected final Object[] beforeValues;
         protected Object[]       currentValues;
 
-        @SuppressWarnings("rawtypes")
         public ArrayEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement)
         {
             super(owningScreen, owningEntryList, configElement);
@@ -770,7 +748,6 @@ public class GuiConfigEntries extends GuiListExtended
             }
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public boolean saveConfigElement()
         {
@@ -804,7 +781,7 @@ public class GuiConfigEntries extends GuiListExtended
     {
         protected final double beforeValue;
 
-        public NumberSliderEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement<?> configElement)
+        public NumberSliderEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement)
         {
             super(owningScreen, owningEntryList, configElement, new GuiSlider(0, owningEntryList.controlX, 0, owningEntryList.controlWidth, 18,
                     "", "", Double.valueOf(configElement.getMinValue().toString()), Double.valueOf(configElement.getMaxValue().toString()),
@@ -863,7 +840,6 @@ public class GuiConfigEntries extends GuiListExtended
             }
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public boolean saveConfigElement()
         {
@@ -903,13 +879,13 @@ public class GuiConfigEntries extends GuiListExtended
     {
         protected final GuiButtonExt btnValue;
 
-        public ButtonEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement<?> configElement)
+        public ButtonEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement)
         {
             this(owningScreen, owningEntryList, configElement, new GuiButtonExt(0, owningEntryList.controlX, 0, owningEntryList.controlWidth, 18,
                     configElement.get() != null ? I18n.format(String.valueOf(configElement.get())) : ""));
         }
 
-        public ButtonEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement<?> configElement, GuiButtonExt button)
+        public ButtonEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement, GuiButtonExt button)
         {
             super(owningScreen, owningEntryList, configElement);
             this.btnValue = button;
@@ -926,9 +902,9 @@ public class GuiConfigEntries extends GuiListExtended
         public abstract void valueButtonPressed(int slotIndex);
 
         @Override
-        public void func_180790_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
         {
-            super.func_180790_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
+            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
             this.btnValue.width = this.owningEntryList.controlWidth;
             this.btnValue.xPosition = this.owningScreen.entryList.controlX;
             this.btnValue.yPosition = y;
@@ -985,7 +961,6 @@ public class GuiConfigEntries extends GuiListExtended
     {
         protected final int beforeValue;
 
-        @SuppressWarnings("rawtypes")
         public IntegerEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement)
         {
             super(owningScreen, owningEntryList, configElement);
@@ -1045,7 +1020,6 @@ public class GuiConfigEntries extends GuiListExtended
                 this.textFieldValue.setText(String.valueOf(beforeValue));
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public boolean saveConfigElement()
         {
@@ -1092,7 +1066,6 @@ public class GuiConfigEntries extends GuiListExtended
     {
         protected final double beforeValue;
 
-        @SuppressWarnings("rawtypes")
         public DoubleEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement)
         {
             super(owningScreen, owningEntryList, configElement);
@@ -1153,7 +1126,6 @@ public class GuiConfigEntries extends GuiListExtended
                 this.textFieldValue.setText(String.valueOf(beforeValue));
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public boolean saveConfigElement()
         {
@@ -1200,7 +1172,7 @@ public class GuiConfigEntries extends GuiListExtended
         protected final GuiTextField textFieldValue;
         protected final String       beforeValue;
 
-        public StringEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement<?> configElement)
+        public StringEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement)
         {
             super(owningScreen, owningEntryList, configElement);
             beforeValue = configElement.get().toString();
@@ -1210,9 +1182,9 @@ public class GuiConfigEntries extends GuiListExtended
         }
 
         @Override
-        public void func_180790_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
         {
-            super.func_180790_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
+            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
             this.textFieldValue.xPosition = this.owningEntryList.controlX + 2;
             this.textFieldValue.yPosition = y + 1;
             this.textFieldValue.width = this.owningEntryList.controlWidth - 4;
@@ -1279,7 +1251,6 @@ public class GuiConfigEntries extends GuiListExtended
                 this.textFieldValue.setText(beforeValue);
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public boolean saveConfigElement()
         {
@@ -1323,7 +1294,6 @@ public class GuiConfigEntries extends GuiListExtended
         protected GuiScreen childScreen;
         protected final GuiButtonExt btnSelectCategory;
 
-        @SuppressWarnings("rawtypes")
         public CategoryEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement)
         {
             super(owningScreen, owningEntryList, configElement);
@@ -1339,7 +1309,6 @@ public class GuiConfigEntries extends GuiListExtended
         /**
          * This method is called in the constructor and is used to set the childScreen field.
          */
-        @SuppressWarnings("unchecked")
         protected GuiScreen buildChildScreen()
         {
             return new GuiConfig(this.owningScreen, this.configElement.getChildElements(), this.owningScreen.modID,
@@ -1349,14 +1318,14 @@ public class GuiConfigEntries extends GuiListExtended
         }
 
         @Override
-        public void func_180790_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
         {
             this.btnSelectCategory.xPosition = listWidth / 2 - 150;
             this.btnSelectCategory.yPosition = y;
             this.btnSelectCategory.enabled = enabled();
             this.btnSelectCategory.drawButton(this.mc, mouseX, mouseY);
 
-            super.func_180790_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
+            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
         }
 
         @Override
@@ -1554,7 +1523,7 @@ public class GuiConfigEntries extends GuiListExtended
         }
 
         @Override
-        public void func_180790_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
         {
             boolean isChanged = isChanged();
 
@@ -1652,7 +1621,7 @@ public class GuiConfigEntries extends GuiListExtended
         public abstract boolean saveConfigElement();
 
         @Override
-        public void func_178011_a(int p_178011_1_, int p_178011_2_, int p_178011_3_){}
+        public void setSelected(int p_178011_1_, int p_178011_2_, int p_178011_3_){}
 
         @Override
         public boolean enabled()
@@ -1696,15 +1665,14 @@ public class GuiConfigEntries extends GuiListExtended
     }
 
     /**
-     * Provides an interface for defining GuiPropertyList.listEntry objects.
+     * Provides an interface for defining GuiConfigEntry.listEntry objects.
      */
-    public static interface IConfigEntry<T> extends GuiListExtended.IGuiListEntry
+    public static interface IConfigEntry extends GuiListExtended.IGuiListEntry
     {
         /**
          * Gets the IConfigElement object owned by this entry.
          * @return
          */
-        @SuppressWarnings("rawtypes")
         public IConfigElement getConfigElement();
 
         /**
@@ -1713,14 +1681,14 @@ public class GuiConfigEntries extends GuiListExtended
         public String getName();
 
         /**
-         * Gets the current value of this entry as a String.
+         * Gets the current value of this entry.
          */
-        public T getCurrentValue();
+        public Object getCurrentValue();
 
         /**
-         * Gets the current values of this list entry as a String[].
+         * Gets the current values of this list entry.
          */
-        public T[] getCurrentValues();
+        public Object[] getCurrentValues();
 
         /**
          * Is this list entry enabled?

@@ -22,7 +22,6 @@ import java.util.Map.Entry;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiListExtended;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.SelectValueEntry;
 
 /**
@@ -34,14 +33,12 @@ public class GuiSelectStringEntries extends GuiListExtended
 {
     public GuiSelectString owningScreen;
     public Minecraft mc;
-    @SuppressWarnings("rawtypes")
     public IConfigElement configElement;
     public List<IGuiSelectStringListEntry> listEntries;
     public final Map<Object, String> selectableValues;
     public int selectedIndex = -1;
     public int maxEntryWidth = 0;
 
-    @SuppressWarnings("rawtypes")
     public GuiSelectStringEntries(GuiSelectString owningScreen, Minecraft mc, IConfigElement configElement, Map<Object, String> selectableValues)
     {
         super(mc, owningScreen.width, owningScreen.height, owningScreen.titleLine2 != null ? (owningScreen.titleLine3 != null ? 43 : 33) : 23,
@@ -143,7 +140,6 @@ public class GuiSelectStringEntries extends GuiListExtended
         return owningScreen.currentValue != null ? owningScreen.currentValue.equals(configElement.getDefault()) : configElement.getDefault() == null;
     }
 
-    @SuppressWarnings("unchecked")
     public void saveChanges()
     {
         if (owningScreen.slotIndex != -1 && owningScreen.parentScreen != null
@@ -170,7 +166,7 @@ public class GuiSelectStringEntries extends GuiListExtended
         }
 
         @Override
-        public void func_180790_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
         {
             owningList.mc.fontRendererObj.drawString(value.getValue(), x + 1, y, slotIndex == owningList.selectedIndex ? 16777215 : 14737632);
         }
@@ -192,7 +188,7 @@ public class GuiSelectStringEntries extends GuiListExtended
         }
 
         @Override
-        public void func_178011_a(int p_178011_1_, int p_178011_2_, int p_178011_3_){}
+        public void setSelected(int p_178011_1_, int p_178011_2_, int p_178011_3_){}
     }
 
     public static interface IGuiSelectStringListEntry extends GuiListExtended.IGuiListEntry

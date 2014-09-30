@@ -19,7 +19,6 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.ArrayEntry;
@@ -39,7 +38,7 @@ import static net.minecraftforge.fml.client.config.GuiUtils.VALID;
 @SuppressWarnings("rawtypes")
 public class GuiEditArrayEntries extends GuiListExtended
 {
-    private GuiEditArray owningGui;
+    protected GuiEditArray owningGui;
     public Minecraft mc;
     public IConfigElement configElement;
     public List<IArrayEntry> listEntries;
@@ -50,7 +49,6 @@ public class GuiEditArrayEntries extends GuiListExtended
     public final Object[] beforeValues;
     public Object[] currentValues;
 
-    @SuppressWarnings("unchecked")
     public GuiEditArrayEntries(GuiEditArray parent, Minecraft mc, IConfigElement configElement, Object[] beforeValues, Object[] currentValues)
     {
         super(mc, parent.width, parent.height, parent.titleLine2 != null ? (parent.titleLine3 != null ? 43 : 33) : 23, parent.height - 32, 20);
@@ -220,7 +218,6 @@ public class GuiEditArrayEntries extends GuiListExtended
         return true;
     }
 
-    @SuppressWarnings("unchecked")
     protected void saveListChanges()
     {
         int listLength = configElement.isListLengthFixed() ? listEntries.size() : listEntries.size() - 1;
@@ -419,9 +416,9 @@ public class GuiEditArrayEntries extends GuiListExtended
         }
 
         @Override
-        public void func_180790_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
         {
-            super.func_180790_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
+            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
             if (configElement.isListLengthFixed() || slotIndex != owningEntryList.listEntries.size() - 1)
             {
                 this.textFieldValue.setVisible(true);
@@ -485,9 +482,9 @@ public class GuiEditArrayEntries extends GuiListExtended
         }
 
         @Override
-        public void func_180790_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
         {
-            super.func_180790_a(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
+            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
             this.btnValue.xPosition = listWidth / 4;
             this.btnValue.yPosition = y;
 
@@ -563,7 +560,7 @@ public class GuiEditArrayEntries extends GuiListExtended
         }
 
         @Override
-        public void func_180790_a(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
         {
             if (this.getValue() != null && this.isValidated)
                 owningEntryList.mc.fontRendererObj.drawString(
@@ -657,7 +654,7 @@ public class GuiEditArrayEntries extends GuiListExtended
         }
 
         @Override
-        public void func_178011_a(int p_178011_1_, int p_178011_2_, int p_178011_3_){}
+        public void setSelected(int p_178011_1_, int p_178011_2_, int p_178011_3_){}
     }
 
     public static interface IArrayEntry extends GuiListExtended.IGuiListEntry

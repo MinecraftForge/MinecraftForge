@@ -194,7 +194,7 @@ public abstract class FMLMessage {
             PacketBuffer pb = new PacketBuffer(tmpBuf);
             try
             {
-                entity.getDataWatcher().func_151509_a(pb);
+                entity.getDataWatcher().writeTo(pb);
             } catch (IOException e)
             {
                 FMLLog.log(Level.FATAL,e,"Encountered fatal exception trying to send entity spawn data watchers");

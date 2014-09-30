@@ -29,7 +29,7 @@ import net.minecraftforge.fml.client.config.GuiEditArrayEntries.IArrayEntry;
  * 
  * @author bspkrs
  */
-public class DummyConfigElement<T> implements IConfigElement<T>
+public class DummyConfigElement implements IConfigElement
 {
     protected boolean isProperty = true;
     protected boolean isList = false;
@@ -38,19 +38,17 @@ public class DummyConfigElement<T> implements IConfigElement<T>
     protected String langKey;
     protected Object value;
     protected Object defaultValue;
-    protected T[] values;
-    protected T[] defaultValues;
+    protected Object[] values;
+    protected Object[] defaultValues;
     protected String[] validValues;
     protected Pattern validStringPattern;
-    protected T minValue;
-    protected T maxValue;
+    protected Object minValue;
+    protected Object maxValue;
     protected boolean requiresWorldRestart = false;
     protected boolean requiresMcRestart = false;
     protected boolean isListFixedLength = false;
     protected int maxListLength = -1;
-    @SuppressWarnings("rawtypes")
     protected List<IConfigElement> childElements;
-    @SuppressWarnings("rawtypes")
     protected Class<? extends IConfigEntry> configEntryClass;
     protected Class<? extends IArrayEntry> arrayEntryClass;
     
@@ -58,24 +56,21 @@ public class DummyConfigElement<T> implements IConfigElement<T>
      * This class provides a Dummy Category IConfigElement. It can be used to define a custom list of GUI entries that will 
      * appear on the child screen or to specify a custom IGuiConfigListEntryfor a special category.
      */
-    public static class DummyCategoryElement<T> extends DummyConfigElement<T>
+    public static class DummyCategoryElement extends DummyConfigElement
     {
-        @SuppressWarnings("rawtypes")
         public DummyCategoryElement(String name, String langKey, List<IConfigElement> childElements)
         {
             this(name, langKey, childElements, (Class<? extends IConfigEntry>) null);
         }
         
-        @SuppressWarnings("rawtypes")
         public DummyCategoryElement(String name, String langKey, Class<? extends IConfigEntry> customListEntryClass)
         {
             this(name, langKey, new ArrayList<IConfigElement>(), customListEntryClass);
         }
         
-        @SuppressWarnings("rawtypes")
         public DummyCategoryElement(String name, String langKey, List<IConfigElement> childElements, Class<? extends IConfigEntry> customListEntryClass)
         {
-            super(name, (T) null, ConfigGuiType.CONFIG_CATEGORY, langKey);
+            super(name, (Object) null, ConfigGuiType.CONFIG_CATEGORY, langKey);
             this.childElements = childElements;
             this.configEntryClass = customListEntryClass;
             isProperty = false;
@@ -85,11 +80,11 @@ public class DummyConfigElement<T> implements IConfigElement<T>
     /**
      * This class provides a dummy array-type IConfigElement. 
      */
-    public static class DummyListElement<T> extends DummyConfigElement<T>
+    public static class DummyListElement extends DummyConfigElement
     {
-        public DummyListElement(String name, T[] defaultValues, ConfigGuiType type, String langKey, boolean isListFixedLength, int maxListLength, Pattern validStringPattern, T minValue, T maxValue)
+        public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, boolean isListFixedLength, int maxListLength, Pattern validStringPattern, Object minValue, Object maxValue)
         {
-            super(name, (T) null, type, langKey, minValue, maxValue);
+            super(name, (Object) null, type, langKey, minValue, maxValue);
             this.defaultValues = defaultValues;
             this.values = defaultValues;
             this.isListFixedLength = isListFixedLength;
@@ -98,57 +93,56 @@ public class DummyConfigElement<T> implements IConfigElement<T>
             isList = true;
         }
 
-        public DummyListElement(String name, T[] defaultValues, ConfigGuiType type, String langKey)
+        public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey)
         {
-            this(name, defaultValues, type, langKey, false, -1, (Pattern) null, (T) null, (T) null);
+            this(name, defaultValues, type, langKey, false, -1, (Pattern) null, (Object) null, (Object) null);
         }
 
-        public DummyListElement(String name, T[] defaultValues, ConfigGuiType type, String langKey, boolean isListFixedLength)
+        public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, boolean isListFixedLength)
         {
-            this(name, defaultValues, type, langKey, isListFixedLength, -1, (Pattern) null, (T) null, (T) null);
+            this(name, defaultValues, type, langKey, isListFixedLength, -1, (Pattern) null, (Object) null, (Object) null);
         }
         
-        public DummyListElement(String name, T[] defaultValues, ConfigGuiType type, String langKey, int maxListLength)
+        public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, int maxListLength)
         {
-            this(name, defaultValues, type, langKey, false, maxListLength, (Pattern) null, (T) null, (T) null);
+            this(name, defaultValues, type, langKey, false, maxListLength, (Pattern) null, (Object) null, (Object) null);
         }
 
-        public DummyListElement(String name, T[] defaultValues, ConfigGuiType type, String langKey, T minValue, T maxValue)
+        public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, Object minValue, Object maxValue)
         {
             this(name, defaultValues, type, langKey, false, -1, (Pattern) null, minValue, maxValue);
         }
 
-        public DummyListElement(String name, T[] defaultValues, ConfigGuiType type, String langKey, boolean isListFixedLength, T minValue, T maxValue)
+        public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, boolean isListFixedLength, Object minValue, Object maxValue)
         {
             this(name, defaultValues, type, langKey, isListFixedLength, -1, (Pattern) null, minValue, maxValue);
         }
         
-        public DummyListElement(String name, T[] defaultValues, ConfigGuiType type, String langKey, int maxListLength, T minValue, T maxValue)
+        public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, int maxListLength, Object minValue, Object maxValue)
         {
             this(name, defaultValues, type, langKey, false, maxListLength, (Pattern) null, minValue, maxValue);
         }
 
-        public DummyListElement(String name, T[] defaultValues, ConfigGuiType type, String langKey, boolean isListFixedLength, int maxListLength, T minValue, T maxValue)
+        public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, boolean isListFixedLength, int maxListLength, Object minValue, Object maxValue)
         {
             this(name, defaultValues, type, langKey, isListFixedLength, maxListLength, (Pattern) null, minValue, maxValue);
         }
 
-        public DummyListElement(String name, T[] defaultValues, ConfigGuiType type, String langKey, Pattern validStringPattern)
+        public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, Pattern validStringPattern)
         {
-            this(name, defaultValues, type, langKey, false, -1, validStringPattern, (T) null, (T) null);
+            this(name, defaultValues, type, langKey, false, -1, validStringPattern, (Object) null, (Object) null);
         }
 
-        public DummyListElement(String name, T[] defaultValues, ConfigGuiType type, String langKey, boolean isListFixedLength, Pattern validStringPattern)
+        public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, boolean isListFixedLength, Pattern validStringPattern)
         {
-            this(name, defaultValues, type, langKey, isListFixedLength, -1, validStringPattern, (T) null, (T) null);
+            this(name, defaultValues, type, langKey, isListFixedLength, -1, validStringPattern, (Object) null, (Object) null);
         }
         
-        public DummyListElement(String name, T[] defaultValues, ConfigGuiType type, String langKey, int maxListLength, Pattern validStringPattern)
+        public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, int maxListLength, Pattern validStringPattern)
         {
-            this(name, defaultValues, type, langKey, false, maxListLength, validStringPattern, (T) null, (T) null);
+            this(name, defaultValues, type, langKey, false, maxListLength, validStringPattern, (Object) null, (Object) null);
         }
         
-        @SuppressWarnings("rawtypes")
         public DummyListElement setCustomEditListEntryClass(Class<? extends IArrayEntry> clazz)
         {
             this.arrayEntryClass = clazz;
@@ -162,8 +156,7 @@ public class DummyConfigElement<T> implements IConfigElement<T>
         }
     }
     
-    @SuppressWarnings("unchecked")
-    public DummyConfigElement(String name, T defaultValue, ConfigGuiType type, String langKey, String[] validValues, Pattern validStringPattern, T minValue, T maxValue)
+    public DummyConfigElement(String name, Object defaultValue, ConfigGuiType type, String langKey, String[] validValues, Pattern validStringPattern, Object minValue, Object maxValue)
     {
         this.name = name;
         this.defaultValue = defaultValue;
@@ -175,44 +168,43 @@ public class DummyConfigElement<T> implements IConfigElement<T>
         if (minValue == null)
         {
             if (type == ConfigGuiType.INTEGER)
-                this.minValue = (T) (Integer) Integer.MIN_VALUE;
+                this.minValue = (Integer) Integer.MIN_VALUE;
             else if (type == ConfigGuiType.DOUBLE)
-                this.minValue = (T) (Double) (-Double.MAX_VALUE);
+                this.minValue = (Double) (-Double.MAX_VALUE);
         }
         else
             this.minValue = minValue;
         if (maxValue == null)
         {
             if (type == ConfigGuiType.INTEGER)
-                this.maxValue = (T) (Integer) Integer.MAX_VALUE;
+                this.maxValue = (Integer) Integer.MAX_VALUE;
             else if (type == ConfigGuiType.DOUBLE)
-                this.maxValue = (T) (Double) Double.MAX_VALUE;
+                this.maxValue = (Double) Double.MAX_VALUE;
         }
         else
             this.maxValue = maxValue;
     }
     
-    public DummyConfigElement(String name, T defaultValue, ConfigGuiType type, String langKey, Pattern validStringPattern)
+    public DummyConfigElement(String name, Object defaultValue, ConfigGuiType type, String langKey, Pattern validStringPattern)
     {
-        this(name, defaultValue, type, langKey, (String[]) null, validStringPattern, (T) null, (T) null);
+        this(name, defaultValue, type, langKey, (String[]) null, validStringPattern, (Object) null, (Object) null);
     }
     
-    public DummyConfigElement(String name, T defaultValue, ConfigGuiType type, String langKey, String[] validValues)
+    public DummyConfigElement(String name, Object defaultValue, ConfigGuiType type, String langKey, String[] validValues)
     {
-        this(name, defaultValue, type, langKey, validValues, (Pattern) null, (T) null, (T) null);
+        this(name, defaultValue, type, langKey, validValues, (Pattern) null, (Object) null, (Object) null);
     }
     
-    public DummyConfigElement(String name, T defaultValue, ConfigGuiType type, String langKey)
+    public DummyConfigElement(String name, Object defaultValue, ConfigGuiType type, String langKey)
     {
-        this(name, defaultValue, type, langKey, (String[]) null, (Pattern) null, (T) null, (T) null);
+        this(name, defaultValue, type, langKey, (String[]) null, (Pattern) null, (Object) null, (Object) null);
     }
     
-    public DummyConfigElement(String name, T defaultValue, ConfigGuiType type, String langKey, T minValue, T maxValue)
+    public DummyConfigElement(String name, Object defaultValue, ConfigGuiType type, String langKey, Object minValue, Object maxValue)
     {
         this(name, defaultValue, type, langKey, (String[]) null, (Pattern) null, minValue, maxValue);
     }
     
-    @SuppressWarnings("rawtypes")
     public DummyConfigElement setCustomListEntryClass(Class<? extends IConfigEntry> clazz)
     {
         this.configEntryClass = clazz;
@@ -225,21 +217,18 @@ public class DummyConfigElement<T> implements IConfigElement<T>
         return isProperty;
     }
     
-    @SuppressWarnings("rawtypes")
     public IConfigElement setConfigEntryClass(Class<? extends IConfigEntry> clazz)
     {
         this.configEntryClass = clazz;
         return this;
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public Class<? extends IConfigEntry> getConfigEntryClass()
     {
         return configEntryClass;
     }
     
-    @SuppressWarnings("rawtypes")
     public IConfigElement setArrayEntryClass(Class<? extends IArrayEntry> clazz)
     {
         this.arrayEntryClass = clazz;
@@ -276,7 +265,6 @@ public class DummyConfigElement<T> implements IConfigElement<T>
         return I18n.format(langKey + ".tooltip");
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public List<IConfigElement> getChildElements()
     {
@@ -335,7 +323,7 @@ public class DummyConfigElement<T> implements IConfigElement<T>
     }
 
     @Override
-    public T[] getDefaults()
+    public Object[] getDefaults()
     {
         return defaultValues;
     }
@@ -349,7 +337,7 @@ public class DummyConfigElement<T> implements IConfigElement<T>
             this.value = defaultValue;
     }
     
-    public IConfigElement<T> setRequiresWorldRestart(boolean requiresWorldRestart)
+    public IConfigElement setRequiresWorldRestart(boolean requiresWorldRestart)
     {
         this.requiresWorldRestart = requiresWorldRestart;
         return this;
@@ -367,7 +355,7 @@ public class DummyConfigElement<T> implements IConfigElement<T>
         return true;
     }
     
-    public IConfigElement<T> setRequiresMcRestart(boolean requiresMcRestart)
+    public IConfigElement setRequiresMcRestart(boolean requiresMcRestart)
     {
         this.requiresMcRestart = this.requiresWorldRestart = requiresMcRestart;
         return this;
@@ -398,31 +386,31 @@ public class DummyConfigElement<T> implements IConfigElement<T>
     }
 
     @Override
-    public T[] getList()
+    public Object[] getList()
     {
         return values;
     }
 
     @Override
-    public void set(T value)
+    public void set(Object value)
     {
         defaultValue = value;
     }
 
     @Override
-    public void set(T[] aVal)
+    public void set(Object[] aVal)
     {
         defaultValues = aVal;
     }
 
     @Override
-    public T getMinValue()
+    public Object getMinValue()
     {
         return minValue;
     }
 
     @Override
-    public T getMaxValue()
+    public Object getMaxValue()
     {
         return maxValue;
     }

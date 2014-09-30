@@ -609,17 +609,17 @@ public class FMLCommonHandler
         {
             ChatComponentText text = new ChatComponentText("Server is still starting! Please wait before reconnecting.");
             FMLLog.info("Disconnecting Player: " + text.getUnformattedText());
-            manager.func_179290_a(new S00PacketDisconnect(text));
+            manager.sendPacket(new S00PacketDisconnect(text));
             manager.closeChannel(text);
             return false;
         }
 
-        if (packet.func_149594_c() == EnumConnectionState.LOGIN && (!NetworkRegistry.INSTANCE.isVanillaAccepted(Side.CLIENT) && !packet.hasFMLMarker()))
+        if (packet.getRequestedState() == EnumConnectionState.LOGIN && (!NetworkRegistry.INSTANCE.isVanillaAccepted(Side.CLIENT) && !packet.hasFMLMarker()))
         {
             manager.setConnectionState(EnumConnectionState.LOGIN);
             ChatComponentText text = new ChatComponentText("This server requires FML/Forge to be installed. Contact your server admin for more details.");
             FMLLog.info("Disconnecting Player: " + text.getUnformattedText());
-            manager.func_179290_a(new S00PacketDisconnect(text));
+            manager.sendPacket(new S00PacketDisconnect(text));
             manager.closeChannel(text);
             return false;
         }
