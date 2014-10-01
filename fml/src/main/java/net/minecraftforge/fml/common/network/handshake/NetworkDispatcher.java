@@ -41,6 +41,7 @@ import net.minecraftforge.fml.common.network.PacketLoggingHandler;
 import net.minecraftforge.fml.common.network.internal.FMLMessage;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
+import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.relauncher.Side;
 
 public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> implements ChannelOutboundHandler {
@@ -74,6 +75,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
 
     public static final AttributeKey<NetworkDispatcher> FML_DISPATCHER = AttributeKey.valueOf("fml:dispatcher");
     public static final AttributeKey<Boolean> IS_LOCAL = AttributeKey.valueOf("fml:isLocal");
+    public static final AttributeKey<GameData.GameDataSnapshot> FML_GAMEDATA_SNAPSHOT = AttributeKey.valueOf("fml:gameDataSnapshot");
     public final NetworkManager manager;
     private final ServerConfigurationManager scm;
     private EntityPlayerMP player;

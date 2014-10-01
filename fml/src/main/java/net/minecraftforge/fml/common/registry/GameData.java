@@ -14,6 +14,7 @@ package net.minecraftforge.fml.common.registry;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -63,11 +64,6 @@ public class GameData {
     static final int MAX_ITEM_ID = 31999;
 
     private static final GameData mainData = new GameData();
-
-    private static final FMLControlledNamespacedRegistry<Block> blockRegistry = getBlockRegistry();
-    private static final FMLControlledNamespacedRegistry<Item> itemRegistry = getItemRegistry();
-
-    private static Table<String, String, ItemStack> customItemStacks = HashBasedTable.create();
     private static Map<UniqueIdentifier, ModContainer> customOwners = Maps.newHashMap();
     private static GameData frozen;
 
@@ -91,43 +87,59 @@ public class GameData {
         return getMain().iItemRegistry;
     }
 
-    /**
-     * @deprecated no replacement planned
-     */
-    @Deprecated
-    public static ModContainer findModOwner(String string)
+    /***************************************************
+     * INTERNAL CODE FROM HERE ON DO NOT USE!
+     ***************************************************/
+
+    public static class GameDataSnapshot
     {
-        UniqueIdentifier ui = new UniqueIdentifier(string);
-        if (customOwners.containsKey(ui))
+        public static class Entry
         {
-            return customOwners.get(ui);
+            public final Map<String, Integer> ids;
+            public final Set<String> substitutions;
+            public final Map<String, String> aliases;
+            public final Set<Integer> blocked;
+
+            public Entry()
+            {
+                this(new HashMap<String, Integer>(), new HashSet<String>(), new HashMap<String, String>(), new HashSet<Integer>());
+            }
+
+            public Entry(Map<String, Integer> ids, Set<String> substitions, Map<String, String> aliases, Set<Integer> blocked)
+            {
+                this.ids = ids;
+                this.substitutions = substitions;
+                this.aliases = aliases;
+                this.blocked = blocked;
+            }
+
+            public Entry(FMLControlledNamespacedRegistry registry)
+            {
+                this.ids = Maps.newHashMap();
+                this.substitutions = Sets.newHashSet();
+                this.aliases = Maps.newHashMap();
+                this.blocked = Sets.newHashSet();
+
+                registry.serializeInto(this.ids);
+                registry.serializeSubstitutions(this.substitutions);
+                registry.serializeAliases(this.aliases);
+
+                if (GameData.getBlockRegistry() == registry ||
+                    GameData.getItemRegistry() == registry)
+                {
+                    this.blocked.addAll(GameData.getMain().blockedIds);
+                }
+            }
         }
-        return Loader.instance().getIndexedModList().get(ui.modId);
+        public final Map<String, Entry> entries = Maps.newHashMap();
     }
 
-    // internal from here
-
-    public static class GameDataSnapshot {
-        public final Map<String,Integer> idMap;
-        public final Set<String> blockSubstitutions;
-        public final Set<String> itemSubstitutions;
-        public GameDataSnapshot(Map<String, Integer> idMap, Set<String> blockSubstitutions, Set<String> itemSubstitutions)
-        {
-            this.idMap = idMap;
-            this.blockSubstitutions = blockSubstitutions;
-            this.itemSubstitutions = itemSubstitutions;
-        }
-    }
-    public static GameDataSnapshot buildItemDataList()
+    public static GameDataSnapshot takeSnapshot()
     {
-        Map<String,Integer> idMapping = Maps.newHashMap();
-        getMain().iBlockRegistry.serializeInto(idMapping);
-        getMain().iItemRegistry.serializeInto(idMapping);
-        Set<String> blockSubs = Sets.newHashSet();
-        getMain().iBlockRegistry.serializeSubstitutions(blockSubs);
-        Set<String> itemSubs = Sets.newHashSet();
-        getMain().iItemRegistry.serializeSubstitutions(itemSubs);
-        return new GameDataSnapshot(idMapping, blockSubs, itemSubs);
+        GameDataSnapshot snap = new GameDataSnapshot();
+        snap.entries.put("fml:blocks", new GameDataSnapshot.Entry(getMain().getBlockRegistry()));
+        snap.entries.put("fml:items", new GameDataSnapshot.Entry(getMain().getItemRegistry()));
+        return snap;
     }
 
     public static int[] getBlockedIds()
@@ -144,34 +156,6 @@ public class GameData {
         return ret;
     }
 
-    public static void dumpRegistry(File minecraftDir)
-    {
-        if (customItemStacks == null)
-        {
-            return;
-        }
-        if (Boolean.valueOf(System.getProperty("fml.dumpRegistry", "false")).booleanValue())
-        {
-            ImmutableListMultimap.Builder<String, String> builder = ImmutableListMultimap.builder();
-            for (String modId : customItemStacks.rowKeySet())
-            {
-                builder.putAll(modId, customItemStacks.row(modId).keySet());
-            }
-
-            File f = new File(minecraftDir, "itemStackRegistry.csv");
-            MapJoiner mapJoiner = Joiner.on("\n").withKeyValueSeparator(",");
-            try
-            {
-                Files.write(mapJoiner.join(builder.build().entries()), f, Charsets.UTF_8);
-                FMLLog.log(Level.INFO, "Dumped item registry data to %s", f.getAbsolutePath());
-            }
-            catch (IOException e)
-            {
-                FMLLog.log(Level.ERROR, e, "Failed to write registry data to %s", f.getAbsolutePath());
-            }
-        }
-    }
-
     static Item findItem(String modId, String name)
     {
         return (Item) getMain().iItemRegistry.getObject(modId + ":" + name);
@@ -183,57 +167,18 @@ public class GameData {
         return getMain().iBlockRegistry.containsKey(key) ? getMain().iBlockRegistry.getObject(key) : null;
     }
 
-    static ItemStack findItemStack(String modId, String name)
-    {
-        ItemStack is = customItemStacks.get(modId, name);
-        if (is == null)
-        {
-            Item i = findItem(modId, name);
-            if (i != null)
-            {
-                is = new ItemStack(i, 0 ,0);
-            }
-        }
-        if (is == null)
-        {
-            Block b = findBlock(modId, name);
-            if (b != null)
-            {
-                is = new ItemStack(b, 0, Short.MAX_VALUE);
-            }
-        }
-        return is;
-    }
-
-    static void registerCustomItemStack(String name, ItemStack itemStack)
-    {
-        customItemStacks.put(Loader.instance().activeModContainer().getModId(), name, itemStack);
-    }
-
     static UniqueIdentifier getUniqueName(Block block)
     {
         if (block == null) return null;
         Object name = getMain().iBlockRegistry.getNameForObject(block);
-        UniqueIdentifier ui = new UniqueIdentifier(name);
-        if (customItemStacks.contains(ui.modId, ui.name))
-        {
-            return null;
-        }
-
-        return ui;
+        return new UniqueIdentifier(name);
     }
 
     static UniqueIdentifier getUniqueName(Item item)
     {
         if (item == null) return null;
         Object name = getMain().iItemRegistry.getNameForObject(item);
-        UniqueIdentifier ui = new UniqueIdentifier(name);
-        if (customItemStacks.contains(ui.modId, ui.name))
-        {
-            return null;
-        }
-
-        return ui;
+        return new UniqueIdentifier(name);
     }
 
     /**
@@ -244,20 +189,14 @@ public class GameData {
      *
      * @param dataList List containing the IDs to fix
      */
-    public static void fixBrokenIds(Map<String, Integer> dataList, Set<Integer> blockedIds)
+    public static void fixBrokenIds(GameDataSnapshot.Entry blocks, GameDataSnapshot.Entry items, Set<Integer> blockedIds)
     {
         BitSet availabilityMap = new BitSet(MAX_ITEM_ID + 1);
 
         // reserve all ids occupied by blocks
-        for (Entry<String, Integer> entry : dataList.entrySet())
+        for (Entry<String, Integer> entry : blocks.ids.entrySet())
         {
-            String itemName = entry.getKey();
-            String realName = itemName.substring(1);
-
-            if (itemName.charAt(0) == '\u0001') // is a block
-            {
-                availabilityMap.set(entry.getValue());
-            }
+            availabilityMap.set(entry.getValue());
         }
 
         Set<Integer> newBlockedIds = new HashSet<Integer>();
@@ -265,71 +204,65 @@ public class GameData {
         Map<String, Integer> itemsToRelocate = new HashMap<String, Integer>();
 
         // check all ids occupied by items
-        for (Entry<String, Integer> entry : dataList.entrySet())
+        for (Entry<String, Integer> entry : items.ids.entrySet())
         {
-            String itemName = entry.getKey();
+            int oldId = entry.getValue();
+            String name = entry.getKey();
+            Item item = getMain().iItemRegistry.getRaw(name);
+            boolean blockThisId = false; // block oldId unless it's used by a block
 
-            if (itemName.charAt(0) != '\u0001') // is an item
+            if (item == null) // item no longer available
             {
-                int oldId = entry.getValue();
-                String realName = itemName.substring(1);
-                String blockName = '\u0001' + realName;
-                Item item = getMain().iItemRegistry.getRaw(realName);
-                boolean blockThisId = false; // block oldId unless it's used by a block
-
-                if (item == null) // item no longer available
+                // can't fix items without reliably checking if they are ItemBlocks
+                FMLLog.warning("Item %s (old id %d) is no longer available and thus can't be fixed.", name, oldId);
+                itemsToRemove.add(name);
+                blockThisId = true;
+            }
+            else if (item instanceof ItemBlock)
+            {
+                if (blocks.ids.containsKey(name)) // the item was an ItemBlock before
                 {
-                    // can't fix items without reliably checking if they are ItemBlocks
-                    FMLLog.warning("Item %s (old id %d) is no longer available and thus can't be fixed.", realName, oldId);
-                    itemsToRemove.add(itemName);
-                    blockThisId = true;
-                }
-                else if (item instanceof ItemBlock)
-                {
-                    if (dataList.containsKey(blockName)) // the item was an ItemBlock before
-                    {
-                        int blockId = dataList.get(blockName);
+                    int blockId = blocks.ids.get(name);
 
-                        if (blockId != oldId) // mis-located ItemBlock
-                        {
-                            // relocate to the matching block
-                            FMLLog.warning("ItemBlock %s (old id %d) doesn't have the same id as its block (%d).", realName, oldId, blockId);
-                            itemsToRelocate.put(entry.getKey(), blockId);
-                            blockThisId = true;
-                        }
-                        else // intact ItemBlock
-                        {
-                            availabilityMap.set(oldId); // occupy id
-                        }
-                    }
-                    else // the item hasn't been an ItemBlock before, but it's now
+                    if (blockId != oldId) // mis-located ItemBlock
                     {
-                        // can't fix these, drop them
-                        FMLLog.warning("Item %s (old id %d) has been migrated to an ItemBlock and can't be fixed.", realName, oldId);
-                        itemsToRemove.add(itemName);
+                        // relocate to the matching block
+                        FMLLog.warning("ItemBlock %s (old id %d) doesn't have the same id as its block (%d).", name, oldId, blockId);
+                        itemsToRelocate.put(name, blockId);
                         blockThisId = true;
                     }
+                    else // intact ItemBlock
+                    {
+                        availabilityMap.set(oldId); // occupy id
+                    }
                 }
-                else if (availabilityMap.get(oldId)) // normal item, id is already occupied
+                else // the item hasn't been an ItemBlock before, but it's now
                 {
-                    // remove the item mapping
-                    FMLLog.warning("Item %s (old id %d) is conflicting with another block/item and can't be fixed.", realName, oldId);
-                    itemsToRemove.add(itemName);
+                    // can't fix these, drop them
+                    FMLLog.warning("Item %s (old id %d) has been migrated to an ItemBlock and can't be fixed.", name, oldId);
+                    itemsToRemove.add(name);
+                    blockThisId = true;
                 }
-                else // intact Item
-                {
-                    availabilityMap.set(oldId); // occupy id
-                }
+            }
+            else if (availabilityMap.get(oldId)) // normal item, id is already occupied
+            {
+                // remove the item mapping
+                FMLLog.warning("Item %s (old id %d) is conflicting with another block/item and can't be fixed.", name, oldId);
+                itemsToRemove.add(name);
+            }
+            else // intact Item
+            {
+                availabilityMap.set(oldId); // occupy id
+            }
 
-                // handle blocking the id from future use if possible (i.e. not used by a conflicting block)
-                // blockThisId requests don't modify availabilityMap, it could only be set by a block (or another item, which isn't being handled)
-                if (blockThisId && !availabilityMap.get(oldId))
-                {
-                    // there's no block occupying this id, thus block the id from future use
-                    // as there may still be ItemStacks in the world referencing it
-                    newBlockedIds.add(oldId);
-                    availabilityMap.set(oldId);
-                }
+            // handle blocking the id from future use if possible (i.e. not used by a conflicting block)
+            // blockThisId requests don't modify availabilityMap, it could only be set by a block (or another item, which isn't being handled)
+            if (blockThisId && !availabilityMap.get(oldId))
+            {
+                // there's no block occupying this id, thus block the id from future use
+                // as there may still be ItemStacks in the world referencing it
+                newBlockedIds.add(oldId);
+                availabilityMap.set(oldId);
             }
         }
 
@@ -350,9 +283,9 @@ public class GameData {
         // confirm missing mods causing item removal
         Set<String> modsMissing = new HashSet<String>();
 
-        for (String itemName : itemsToRemove)
+        for (String name : itemsToRemove)
         {
-            modsMissing.add(itemName.substring(1, itemName.indexOf(':')));
+            modsMissing.add(name.substring(0, name.indexOf(':')));
         }
 
         for (Iterator<String> it = modsMissing.iterator(); it.hasNext(); )
@@ -396,32 +329,22 @@ public class GameData {
         }
 
         // apply fix
-        for (String itemName : itemsToRemove)
+        for (String name : itemsToRemove)
         {
-            int id = dataList.remove(itemName);
-
-            FMLLog.warning("Removed Item %s, old id %d.", itemName.substring(1), id);
+            FMLLog.warning("Removed Item %s, old id %d.", name, items.ids.remove(name));
         }
 
         for (Map.Entry<String, Integer> entry : itemsToRelocate.entrySet())
         {
-            String itemName = entry.getKey();
             int newId = entry.getValue();
-
-            int oldId = dataList.put(itemName, newId);
-
-            FMLLog.warning("Remapped Item %s to id %d, old id %d.", itemName.substring(1), newId, oldId);
+            int oldId = items.ids.put(entry.getKey(), newId);
+            FMLLog.warning("Remapped Item %s to id %d, old id %d.", entry.getKey(), newId, oldId);
         }
 
         blockedIds.addAll(newBlockedIds);
     }
 
-    public static List<String> injectWorldIDMap(Map<String, Integer> dataList, Set<String> blockSubstitutions, Set<String> itemSubstitutions, boolean injectFrozenData, boolean isLocalWorld)
-    {
-        return injectWorldIDMap(dataList, new HashSet<Integer>(), new HashMap<String, String>(), new HashMap<String, String>(), blockSubstitutions, itemSubstitutions, injectFrozenData, isLocalWorld);
-    }
-
-    public static List<String> injectWorldIDMap(Map<String, Integer> dataList, Set<Integer> blockedIds, Map<String, String> blockAliases, Map<String, String> itemAliases, Set<String> blockSubstitutions, Set<String> itemSubstitutions, boolean injectFrozenData, boolean isLocalWorld)
+    public static List<String> injectSnapshot(GameDataSnapshot snapshot, boolean injectFrozenData, boolean isLocalWorld)
     {
         FMLLog.info("Injecting existing block and item data into this %s instance", FMLCommonHandler.instance().getEffectiveSide().isServer() ? "server" : "client");
         Map<String, Integer[]> remaps = Maps.newHashMap();
@@ -430,28 +353,31 @@ public class GameData {
         getMain().iBlockRegistry.dump();
         getMain().iItemRegistry.dump();
 
+        GameDataSnapshot.Entry blocks = snapshot.entries.get("fml:blocks");
+        GameDataSnapshot.Entry items = snapshot.entries.get("fml:items");
+
         GameData newData = new GameData();
 
-        for (int id : blockedIds)
+        for (int id : blocks.blocked)
         {
             newData.block(id);
         }
 
-        for (Map.Entry<String, String> entry : blockAliases.entrySet())
+        for (Map.Entry<String, String> entry : blocks.aliases.entrySet())
         {
             newData.iBlockRegistry.addAlias(entry.getKey(), entry.getValue());
         }
 
-        for (Map.Entry<String, String> entry : itemAliases.entrySet())
+        for (Map.Entry<String, String> entry : items.aliases.entrySet())
         {
             newData.iItemRegistry.addAlias(entry.getKey(), entry.getValue());
         }
 
-        for (String entry : blockSubstitutions)
+        for (String entry : blocks.substitutions)
         {
             newData.iBlockRegistry.activateSubstitution(entry);
         }
-        for (String entry : itemSubstitutions)
+        for (String entry : items.substitutions)
         {
             newData.iItemRegistry.activateSubstitution(entry);
         }
@@ -459,14 +385,14 @@ public class GameData {
         {
             for (String newBlockSubstitution : getMain().blockSubstitutions.keySet())
             {
-                if (!blockSubstitutions.contains(newBlockSubstitution))
+                if (!blocks.substitutions.contains(newBlockSubstitution))
                 {
                     newData.iBlockRegistry.activateSubstitution(newBlockSubstitution);
                 }
             }
             for (String newItemSubstitution : getMain().itemSubstitutions.keySet())
             {
-                if (!itemSubstitutions.contains(newItemSubstitution))
+                if (!items.substitutions.contains(newItemSubstitution))
                 {
                     newData.iItemRegistry.activateSubstitution(newItemSubstitution);
                 }
@@ -477,16 +403,12 @@ public class GameData {
         for (int pass = 0; pass < 2; pass++)
         {
             boolean isBlock = (pass == 0);
+            Map<String, Integer> ids = (isBlock ? blocks.ids : items.ids);
 
-            for (Entry<String, Integer> entry : dataList.entrySet())
+            for (Entry<String, Integer> entry : ids.entrySet())
             {
                 String itemName = entry.getKey();
                 int newId = entry.getValue();
-
-                // names starting with 0x1 are blocks, skip if the type isn't handled by this pass
-                if ((itemName.charAt(0) == '\u0001') != isBlock) continue;
-
-                itemName = itemName.substring(1);
                 int currId = isBlock ? getMain().iBlockRegistry.getId(itemName) : getMain().iItemRegistry.getId(itemName);
 
                 if (currId == -1)
@@ -743,8 +665,8 @@ public class GameData {
 
     private GameData()
     {
-        iBlockRegistry = new FMLControlledNamespacedRegistry<Block>(new ResourceLocation("minecraft:air"), MAX_BLOCK_ID, MIN_BLOCK_ID, Block.class,'\u0001');
-        iItemRegistry = new FMLControlledNamespacedRegistry<Item>(null, MAX_ITEM_ID, MIN_ITEM_ID, Item.class,'\u0002');
+        iBlockRegistry = new FMLControlledNamespacedRegistry<Block>(new ResourceLocation("minecraft:air"), MAX_BLOCK_ID, MIN_BLOCK_ID, Block.class);
+        iItemRegistry = new FMLControlledNamespacedRegistry<Item>(null, MAX_ITEM_ID, MIN_ITEM_ID, Item.class);
         availabilityMap = new BitSet(MAX_ITEM_ID + 1);
         blockedIds = new HashSet<Integer>();
     }

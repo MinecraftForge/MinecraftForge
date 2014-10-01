@@ -126,10 +126,8 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private DummyModContainer optifineContainer;
 
-    @SuppressWarnings("unused")
     private boolean guiLoaded;
 
-    @SuppressWarnings("unused")
     private boolean serverIsRunning;
 
     private MissingModsException modsMissing;
@@ -148,7 +146,6 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private List<IResourcePack> resourcePackList;
 
-    @SuppressWarnings("unused")
     private IReloadableResourceManager resourceManager;
 
     private Map<String, IResourcePack> resourcePackMap;

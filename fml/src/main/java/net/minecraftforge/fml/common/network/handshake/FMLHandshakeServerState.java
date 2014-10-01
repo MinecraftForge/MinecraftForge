@@ -1,5 +1,9 @@
 package net.minecraftforge.fml.common.network.handshake;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -56,7 +60,13 @@ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
         {
             if (!ctx.channel().attr(NetworkDispatcher.IS_LOCAL).get())
             {
-                ctx.writeAndFlush(new FMLHandshakeMessage.ModIdData(GameData.buildItemDataList())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+                GameData.GameDataSnapshot snapshot = GameData.takeSnapshot();
+                Iterator<Map.Entry<String, GameData.GameDataSnapshot.Entry>> itr = snapshot.entries.entrySet().iterator();
+                while (itr.hasNext())
+                {
+                    Entry<String, GameData.GameDataSnapshot.Entry> e = itr.next();
+                    ctx.writeAndFlush(new FMLHandshakeMessage.RegistryData(itr.hasNext(), e.getKey(), e.getValue())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+                }
             }
             ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             NetworkRegistry.INSTANCE.fireNetworkHandshake(ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get(), Side.SERVER);

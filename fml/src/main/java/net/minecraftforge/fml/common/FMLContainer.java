@@ -24,6 +24,7 @@ import java.util.Set;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
@@ -92,66 +93,63 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
     public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info)
     {
         NBTTagCompound fmlData = new NBTTagCompound();
-        NBTTagList list = new NBTTagList();
+        NBTTagList modList = new NBTTagList();
         for (ModContainer mc : Loader.instance().getActiveModList())
         {
             NBTTagCompound mod = new NBTTagCompound();
             mod.setString("ModId", mc.getModId());
             mod.setString("ModVersion", mc.getVersion());
-            list.appendTag(mod);
+            modList.appendTag(mod);
         }
-        fmlData.setTag("ModList", list);
-        // name <-> id mappings
-        NBTTagList dataList = new NBTTagList();
-        FMLLog.fine("Gathering id map for writing to world save %s", info.getWorldName());
-        GameData.GameDataSnapshot dataSnapshot = GameData.buildItemDataList();
-        for (Entry<String, Integer> item : dataSnapshot.idMap.entrySet())
-        {
-            NBTTagCompound tag = new NBTTagCompound();
-            tag.setString("K",item.getKey());
-            tag.setInteger("V",item.getValue());
-            dataList.appendTag(tag);
-        }
-        fmlData.setTag("ItemData", dataList);
-        // blocked ids
-        fmlData.setIntArray("BlockedItemIds", GameData.getBlockedIds());
-        // block aliases
-        NBTTagList blockAliasList = new NBTTagList();
-        for (Entry<String, String> entry : GameData.getBlockRegistry().getAliases().entrySet())
-        {
-            NBTTagCompound tag = new NBTTagCompound();
-            tag.setString("K", entry.getKey());
-            tag.setString("V", entry.getValue());
-            blockAliasList.appendTag(tag);
-        }
-        fmlData.setTag("BlockAliases", blockAliasList);
-        NBTTagList blockSubstitutionsList = new NBTTagList();
-        for (String entry : dataSnapshot.blockSubstitutions)
-        {
-            NBTTagCompound tag = new NBTTagCompound();
-            tag.setString("K", entry);
-            blockSubstitutionsList.appendTag(tag);
-        }
-        fmlData.setTag("BlockSubstitutions", blockSubstitutionsList);
-        // item aliases
-        NBTTagList itemAliasList = new NBTTagList();
-        for (Entry<String, String> entry : GameData.getItemRegistry().getAliases().entrySet())
-        {
-            NBTTagCompound tag = new NBTTagCompound();
-            tag.setString("K", entry.getKey());
-            tag.setString("V", entry.getValue());
-            itemAliasList.appendTag(tag);
-        }
-        fmlData.setTag("ItemAliases", itemAliasList);
+        fmlData.setTag("ModList", modList);
 
-        NBTTagList itemSubstitutionsList = new NBTTagList();
-        for (String entry : dataSnapshot.itemSubstitutions)
+        NBTTagCompound registries = new NBTTagCompound();
+        fmlData.setTag("Registries", registries);
+        FMLLog.fine("Gathering id map for writing to world save %s", info.getWorldName());
+        GameData.GameDataSnapshot dataSnapshot = GameData.takeSnapshot();
+
+        for (Map.Entry<String, GameData.GameDataSnapshot.Entry> e : dataSnapshot.entries.entrySet())
         {
-            NBTTagCompound tag = new NBTTagCompound();
-            tag.setString("K", entry);
-            itemSubstitutionsList.appendTag(tag);
+            NBTTagCompound data = new NBTTagCompound();
+            registries.setTag(e.getKey(), data);
+
+            NBTTagList ids = new NBTTagList();
+            for (Entry<String, Integer> item : e.getValue().ids.entrySet())
+            {
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setString("K", item.getKey());
+                tag.setInteger("V", item.getValue());
+                ids.appendTag(tag);
+            }
+            data.setTag("ids", ids);
+
+            NBTTagList aliases = new NBTTagList();
+            for (Entry<String, String> entry : e.getValue().aliases.entrySet())
+            {
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setString("K", entry.getKey());
+                tag.setString("V", entry.getValue());
+                aliases.appendTag(tag);
+            }
+            data.setTag("aliases", aliases);
+
+            NBTTagList subs = new NBTTagList();
+            for (String entry : e.getValue().substitutions)
+            {
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setString("K", entry);
+                subs.appendTag(tag);
+            }
+            data.setTag("substitutions", subs);
+
+            int[] blocked = new int[e.getValue().blocked.size()];
+            int idx = 0;
+            for (Integer i : e.getValue().blocked)
+            {
+                blocked[idx++] = i;
+            }
+            data.setIntArray("blocked", blocked);
         }
-        fmlData.setTag("ItemSubstitutions", itemSubstitutionsList);
         return fmlData;
     }
 
@@ -181,97 +179,143 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
 
         List<String> failedElements = null;
 
-        if (tag.hasKey("ModItemData"))
+        if (tag.hasKey("ModItemData")) // Pre 1.7
         {
+            GameData.GameDataSnapshot snapshot = new GameData.GameDataSnapshot();
+            GameData.GameDataSnapshot.Entry items = new GameData.GameDataSnapshot.Entry();
+            snapshot.entries.put("fml:blocks", new GameData.GameDataSnapshot.Entry());
+            snapshot.entries.put("fml:items", items);
+
             FMLLog.info("Attempting to convert old world data to new system. This may be trouble!");
             NBTTagList modList = tag.getTagList("ModItemData", (byte)10);
-            Map<String,Integer> dataList = Maps.newLinkedHashMap();
             for (int i = 0; i < modList.tagCount(); i++)
             {
-                NBTTagCompound itemTag = modList.getCompoundTagAt(i);
-                String modId = itemTag.getString("ModId");
-                String itemType = itemTag.getString("ItemType");
-                int itemId = itemTag.getInteger("ItemId");
-                int ordinal = itemTag.getInteger("ordinal");
-                String forcedModId = itemTag.hasKey("ForcedModId") ? itemTag.getString("ForcedModId") : null;
-                String forcedName = itemTag.hasKey("ForcedName") ? itemTag.getString("ForcedName") : null;
+                NBTTagCompound data = modList.getCompoundTagAt(i);
+                String forcedModId = data.hasKey("ForcedModId") ? data.getString("ForcedModId") : null;
+                String forcedName = data.hasKey("ForcedName") ? data.getString("ForcedName") : null;
                 if (forcedName == null)
                 {
-                    FMLLog.warning("Found unlabelled item in world save, this may cause problems. The item type %s:%d will not be present", itemType, ordinal);
+                    FMLLog.warning("Found unlabelled item in world save, this may cause problems. The item type %s:%d will not be present", data.getString("ItemType"), data.getInteger("ordinal"));
                 }
                 else
                 {
                     // all entries are Items, blocks were only saved through their ItemBlock
-                    String itemLabel = String.format("%c%s:%s", '\u0002', forcedModId != null ? forcedModId : modId, forcedName);
-                    dataList.put(itemLabel, itemId);
+                    String itemLabel = String.format("%s:%s", forcedModId != null ? forcedModId : data.getString("ModId"), forcedName);
+                    items.ids.put(itemLabel, data.getInteger("ItemId"));
                 }
             }
-            failedElements = GameData.injectWorldIDMap(dataList, ImmutableSet.<String>of(), ImmutableSet.<String>of(), true, true);
+            failedElements = GameData.injectSnapshot(snapshot, true, true);
 
         }
-        else if (tag.hasKey("ItemData"))
+        else if (tag.hasKey("ItemData")) // 1.7
         {
-            // name <-> id mappings
+            GameData.GameDataSnapshot snapshot = new GameData.GameDataSnapshot();
+            GameData.GameDataSnapshot.Entry blocks = new GameData.GameDataSnapshot.Entry();
+            GameData.GameDataSnapshot.Entry items = new GameData.GameDataSnapshot.Entry();
+            snapshot.entries.put("fml:blocks", blocks);
+            snapshot.entries.put("fml:items", items);
+
             NBTTagList list = tag.getTagList("ItemData", 10);
-            Map<String,Integer> dataList = Maps.newLinkedHashMap();
             for (int i = 0; i < list.tagCount(); i++)
             {
-                NBTTagCompound dataTag = list.getCompoundTagAt(i);
-                dataList.put(dataTag.getString("K"), dataTag.getInteger("V"));
+                NBTTagCompound e = list.getCompoundTagAt(i);
+                String name = e.getString("K");
+
+                if (name.charAt(0) == '\u0001')
+                    blocks.ids.put(name.substring(1), e.getInteger("V"));
+                else if (name.charAt(0) == '\u0002')
+                    items.ids.put(name.substring(1), e.getInteger("V"));
             }
 
             Set<Integer> blockedIds = new HashSet<Integer>();
-
             if (!tag.hasKey("BlockedItemIds")) // no blocked id info -> old 1.7 save
             {
                 // old early 1.7 save potentially affected by the registry mapping bug
                 // fix the ids the best we can...
-                GameData.fixBrokenIds(dataList, blockedIds);
+                GameData.fixBrokenIds(blocks, items, blockedIds);
             }
-
-            // blocked ids
-            for (int id : tag.getIntArray("BlockedItemIds"))
+            else
             {
-                blockedIds.add(id);
+                for (int id : tag.getIntArray("BlockedItemIds"))
+                {
+                    blockedIds.add(id);
+                }
             }
-            // block aliases
-            Map<String, String> blockAliases = new HashMap<String, String>();
+            blocks.blocked.addAll(blockedIds);
+            items.blocked.addAll(blockedIds);
+
             list = tag.getTagList("BlockAliases", 10);
             for (int i = 0; i < list.tagCount(); i++)
             {
                 NBTTagCompound dataTag = list.getCompoundTagAt(i);
-                blockAliases.put(dataTag.getString("K"), dataTag.getString("V"));
+                blocks.aliases.put(dataTag.getString("K"), dataTag.getString("V"));
             }
-            Set<String> blockSubstitutions = Sets.newHashSet();
+
             if (tag.hasKey("BlockSubstitutions", 9))
             {
                 list = tag.getTagList("BlockSubstitutions", 10);
                 for (int i = 0; i < list.tagCount(); i++)
                 {
                     NBTTagCompound dataTag = list.getCompoundTagAt(i);
-                    blockSubstitutions.add(dataTag.getString("K"));
+                    blocks.substitutions.add(dataTag.getString("K"));
                 }
             }
-            // item aliases
-            Map<String, String> itemAliases = new HashMap<String, String>();
+
             list = tag.getTagList("ItemAliases", 10);
             for (int i = 0; i < list.tagCount(); i++)
             {
                 NBTTagCompound dataTag = list.getCompoundTagAt(i);
-                itemAliases.put(dataTag.getString("K"), dataTag.getString("V"));
+                items.aliases.put(dataTag.getString("K"), dataTag.getString("V"));
             }
 
-            Set<String> itemSubstitutions = Sets.newHashSet();
             if (tag.hasKey("ItemSubstitutions", 9))
             {
                 list = tag.getTagList("ItemSubstitutions", 10);
                 for (int i = 0; i < list.tagCount(); i++)
                 {
                     NBTTagCompound dataTag = list.getCompoundTagAt(i);
-                    itemSubstitutions.add(dataTag.getString("K"));
+                    items.substitutions.add(dataTag.getString("K"));
                 }
             }
-            failedElements = GameData.injectWorldIDMap(dataList, blockedIds, blockAliases, itemAliases, blockSubstitutions, itemSubstitutions, true, true);
+            failedElements = GameData.injectSnapshot(snapshot, true, true);
+        }
+        else if (tag.hasKey("Registries")) // 1.8, genericed out the 'registries' list
+        {
+            GameData.GameDataSnapshot snapshot = new GameData.GameDataSnapshot();
+            NBTTagCompound regs = tag.getCompoundTag("Registries");
+            for (String key : (Set<String>)regs.getKeySet())
+            {
+                GameData.GameDataSnapshot.Entry entry = new GameData.GameDataSnapshot.Entry();
+                snapshot.entries.put(key, entry);
+
+                NBTTagList list = regs.getCompoundTag(key).getTagList("ids", 10);
+                for (int x = 0; x < list.tagCount(); x++)
+                {
+                    NBTTagCompound e = list.getCompoundTagAt(x);
+                    entry.ids.put(e.getString("K"), e.getInteger("V"));
+                }
+
+                list = regs.getCompoundTag(key).getTagList("aliases", 10);
+                for (int x = 0; x < list.tagCount(); x++)
+                {
+                    NBTTagCompound e = list.getCompoundTagAt(x);
+                    entry.aliases.put(e.getString("K"), e.getString("V"));
+                }
+
+                list = regs.getCompoundTag(key).getTagList("substitutions", 10);
+                for (int x = 0; x < list.tagCount(); x++)
+                {
+                    NBTTagCompound e = list.getCompoundTagAt(x);
+                    entry.substitutions.add(e.getString("K"));
+                }
+
+                int[] blocked = regs.getCompoundTag(key).getIntArray("blocked");
+                for (int i : blocked)
+                {
+                    entry.blocked.add(i);
+                }
+            }
+            failedElements = GameData.injectSnapshot(snapshot, true, true);
         }
 
         if (failedElements != null && !failedElements.isEmpty())

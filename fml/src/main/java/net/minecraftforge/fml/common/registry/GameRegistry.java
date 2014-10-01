@@ -332,42 +332,6 @@ public class GameRegistry
         return GameData.findItem(modId, name);
     }
 
-    /**
-     * Manually register a custom item stack with FML for later tracking. It is automatically scoped with the active modid
-     *
-     * @param name The name to register it under
-     * @param itemStack The itemstack to register
-     */
-    public static void registerCustomItemStack(String name, ItemStack itemStack)
-    {
-        GameData.registerCustomItemStack(name, itemStack);
-    }
-    /**
-     * Lookup an itemstack based on mod and name. It will create "default" itemstacks from blocks and items if no
-     * explicit itemstack is found.
-     *
-     * If it is built from a block, the metadata is by default the "wildcard" value.
-     *
-     * Custom itemstacks can be dumped from minecraft by setting the system property fml.dumpRegistry to true
-     * (-Dfml.dumpRegistry=true on the command line will work)
-     *
-     * @param modId The modid of the stack owner
-     * @param name The name of the stack
-     * @param stackSize The size of the stack returned
-     * @return The custom itemstack or null if no such itemstack was found
-     */
-    public static ItemStack findItemStack(String modId, String name, int stackSize)
-    {
-        ItemStack foundStack = GameData.findItemStack(modId, name);
-        if (foundStack != null)
-        {
-            ItemStack is = foundStack.copy();
-            is.stackSize = Math.min(stackSize, is.getMaxStackSize());
-            return is;
-        }
-        return null;
-    }
-
     public static final class UniqueIdentifier
     {
         public final String modId;

@@ -125,91 +125,91 @@ public abstract class FMLHandshakeMessage {
         }
     }
 
-    public static class ModIdData extends FMLHandshakeMessage {
-        public ModIdData()
+    public static class RegistryData extends FMLHandshakeMessage
+    {
+        public RegistryData()
         {
 
         }
 
-        public ModIdData(GameData.GameDataSnapshot snapshot)
+        public RegistryData(boolean hasMore, String name, GameData.GameDataSnapshot.Entry entry)
         {
-            this.modIds = snapshot.idMap;
-            this.blockSubstitutions = snapshot.blockSubstitutions;
-            this.itemSubstitutions = snapshot.itemSubstitutions;
+            this.hasMore = hasMore;
+            this.name = name;
+            this.ids = entry.ids;
+            this.substitutions = entry.substitutions;
         }
 
-        private Map<String,Integer> modIds;
-        private Set<String> blockSubstitutions;
-        private Set<String> itemSubstitutions;
+        private boolean hasMore;
+        private String name;
+        private Map<String,Integer> ids;
+        private Set<String> substitutions;
+
         @Override
         public void fromBytes(ByteBuf buffer)
         {
+            this.hasMore = buffer.readBoolean();
+            this.name = ByteBufUtils.readUTF8String(buffer);
+
             int length = ByteBufUtils.readVarInt(buffer, 3);
-            modIds = Maps.newHashMap();
-            blockSubstitutions = Sets.newHashSet();
-            itemSubstitutions = Sets.newHashSet();
+            ids = Maps.newHashMap();
 
             for (int i = 0; i < length; i++)
             {
-                modIds.put(ByteBufUtils.readUTF8String(buffer),ByteBufUtils.readVarInt(buffer, 3));
+                ids.put(ByteBufUtils.readUTF8String(buffer), ByteBufUtils.readVarInt(buffer, 3));
             }
-            // we don't have any more data to read
-            if (!buffer.isReadable())
-            {
-                return;
-            }
+
             length = ByteBufUtils.readVarInt(buffer, 3);
+            substitutions = Sets.newHashSet();
+
             for (int i = 0; i < length; i++)
             {
-                blockSubstitutions.add(ByteBufUtils.readUTF8String(buffer));
+                substitutions.add(ByteBufUtils.readUTF8String(buffer));
             }
-            length = ByteBufUtils.readVarInt(buffer, 3);
-            for (int i = 0; i < length; i++)
-            {
-                itemSubstitutions.add(ByteBufUtils.readUTF8String(buffer));
-            }
+            //if (!buffer.isReadable()) return; // In case we expand
         }
 
         @Override
         public void toBytes(ByteBuf buffer)
         {
-            ByteBufUtils.writeVarInt(buffer, modIds.size(), 3);
-            for (Entry<String, Integer> entry: modIds.entrySet())
+            buffer.writeBoolean(this.hasMore);
+            ByteBufUtils.writeUTF8String(buffer, this.name);
+
+            ByteBufUtils.writeVarInt(buffer, ids.size(), 3);
+            for (Entry<String, Integer> entry: ids.entrySet())
             {
                 ByteBufUtils.writeUTF8String(buffer, entry.getKey());
                 ByteBufUtils.writeVarInt(buffer, entry.getValue(), 3);
             }
 
-            ByteBufUtils.writeVarInt(buffer, blockSubstitutions.size(), 3);
-            for (String entry: blockSubstitutions)
-            {
-                ByteBufUtils.writeUTF8String(buffer, entry);
-            }
-            ByteBufUtils.writeVarInt(buffer, blockSubstitutions.size(), 3);
-
-            for (String entry: itemSubstitutions)
+            ByteBufUtils.writeVarInt(buffer, substitutions.size(), 3);
+            for (String entry: substitutions)
             {
                 ByteBufUtils.writeUTF8String(buffer, entry);
             }
         }
 
-        public Map<String,Integer> dataList()
+        public Map<String,Integer> getIdMap()
         {
-            return modIds;
+            return ids;
         }
-        public Set<String> blockSubstitutions()
+        public Set<String> getSubstitutions()
         {
-            return blockSubstitutions;
+            return substitutions;
         }
-        public Set<String> itemSubstitutions()
+        public String getName()
         {
-            return itemSubstitutions;
+            return this.name;
+        }
+        public boolean hasMore()
+        {
+            return this.hasMore;
         }
 
         @Override
         public String toString(Class<? extends Enum<?>> side)
         {
-            return super.toString(side) + ":"+modIds.size()+" mappings";
+            return super.toString(side) + ":"+ids.size()+" mappings";
         }
     }
     public static class HandshakeAck extends FMLHandshakeMessage {

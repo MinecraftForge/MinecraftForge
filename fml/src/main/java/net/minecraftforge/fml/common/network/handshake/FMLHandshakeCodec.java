@@ -10,7 +10,7 @@ public class FMLHandshakeCodec extends FMLIndexedMessageToMessageCodec<FMLHandsh
         addDiscriminator((byte)0, FMLHandshakeMessage.ServerHello.class);
         addDiscriminator((byte)1, FMLHandshakeMessage.ClientHello.class);
         addDiscriminator((byte)2, FMLHandshakeMessage.ModList.class);
-        addDiscriminator((byte)3, FMLHandshakeMessage.ModIdData.class);
+        addDiscriminator((byte)3, FMLHandshakeMessage.RegistryData.class);
         addDiscriminator((byte)-1, FMLHandshakeMessage.HandshakeAck.class);
         addDiscriminator((byte)-2, FMLHandshakeMessage.HandshakeReset.class);
     }

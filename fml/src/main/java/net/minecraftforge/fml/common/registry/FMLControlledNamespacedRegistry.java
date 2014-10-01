@@ -29,18 +29,16 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
     private I optionalDefaultObject;
     private int maxId;
     private int minId;
-    private char discriminator;
     // aliases redirecting legacy names to the actual name, may need recursive application to find the final name.
     // these need to be registry specific, it's possible to only have a loosely linked item for a block which may get renamed by itself.
     private final Map<String, String> aliases = new HashMap<String, String>();
     private BiMap<String, I> persistentSubstitutions;
     private BiMap<String, I> activeSubstitutions = HashBiMap.create();
 
-    FMLControlledNamespacedRegistry(Object defaultKey, int maxIdValue, int minIdValue, Class<I> type, char discriminator)
+    FMLControlledNamespacedRegistry(Object defaultKey, int maxIdValue, int minIdValue, Class<I> type)
     {
         super(defaultKey);
         this.superType = type;
-        this.discriminator = discriminator;
         this.optionalDefaultKey = defaultKey;
         this.maxId = maxIdValue;
         this.minId = minIdValue;
@@ -98,7 +96,6 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
     {
         if (this.superType != registry.superType) throw new IllegalArgumentException("incompatible registry");
 
-        this.discriminator = registry.discriminator;
         this.optionalDefaultKey = registry.optionalDefaultKey;
         this.maxId = registry.maxId;
         this.minId = registry.minId;
@@ -333,13 +330,16 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
     {
         for (I thing : this.typeSafeIterable())
         {
-            idMapping.put(discriminator+getNameForObject(thing).toString(), getId(thing));
+            idMapping.put(getNameForObject(thing).toString(), getId(thing));
         }
     }
-
-    public Map<String, String> getAliases() // for saving
+    public void serializeAliases(Map<String, String> map)
     {
-        return ImmutableMap.copyOf(aliases);
+        map.putAll(this.aliases);
+    }
+    public void serializeSubstitutions(Set<String> set)
+    {
+        set.addAll(activeSubstitutions.keySet());
     }
 
     /**
@@ -502,11 +502,6 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
             throw new IllegalArgumentException("The object substitution is already registered. This won't work");
         }
         getPersistentSubstitutions().put(nameToReplace, replacement);
-    }
-
-    public void serializeSubstitutions(Set<String> blockSubs)
-    {
-        blockSubs.addAll(activeSubstitutions.keySet());
     }
 
     private BiMap<String, I> getPersistentSubstitutions()

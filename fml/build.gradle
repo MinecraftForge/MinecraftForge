@@ -38,7 +38,7 @@ minecraft {
     installerVersion = "1.4"
 }
 
-group = 'net.minecraftforge.fml'
+group = 'net.minecraftforge'
 version = getVersionFromGit(getProject())
 
 jenkins {

@@ -695,8 +695,6 @@ public class Loader
         modController.transition(LoaderState.AVAILABLE, false);
         modController.distributeStateMessage(LoaderState.AVAILABLE);
         GameData.freezeData();
-        // Dump the custom registry data map, if necessary
-        GameData.dumpRegistry(minecraftDir);
         FMLLog.info("Forge Mod Loader has successfully loaded %d mod%s", mods.size(), mods.size() == 1 ? "" : "s");
     }
 

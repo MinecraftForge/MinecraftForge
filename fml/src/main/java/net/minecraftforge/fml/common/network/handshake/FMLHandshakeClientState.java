@@ -1,5 +1,6 @@
 package net.minecraftforge.fml.common.network.handshake;
 
+import java.util.HashSet;
 import java.util.List;
 
 import net.minecraftforge.fml.common.FMLLog;
@@ -85,8 +86,28 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
         @Override
         public FMLHandshakeClientState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
         {
-            FMLHandshakeMessage.ModIdData modIds = (FMLHandshakeMessage.ModIdData)msg;
-            List<String> locallyMissing = GameData.injectWorldIDMap(modIds.dataList(), modIds.blockSubstitutions(), modIds.itemSubstitutions(), false, false);
+            FMLHandshakeMessage.RegistryData pkt = (FMLHandshakeMessage.RegistryData)msg;
+            GameData.GameDataSnapshot snap = ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).get();
+            if (snap == null)
+            {
+                snap = new GameData.GameDataSnapshot();
+                ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).set(snap);
+            }
+
+            GameData.GameDataSnapshot.Entry entry = new GameData.GameDataSnapshot.Entry();
+            entry.ids.putAll(pkt.getIdMap());
+            entry.substitutions.addAll(pkt.getSubstitutions());
+            snap.entries.put(pkt.getName(), entry);
+
+            if (pkt.hasMore())
+            {
+                FMLLog.fine("Received Mod Registry mapping for %s: %d IDs %d subs", pkt.getName(), entry.ids.size(), entry.substitutions.size());
+                return WAITINGSERVERCOMPLETE;
+            }
+
+            ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).remove();
+
+            List<String> locallyMissing = GameData.injectSnapshot(snap, false, false);
             if (!locallyMissing.isEmpty())
             {
                 NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();

@@ -168,7 +168,6 @@ public class GuiModList extends GuiScreen
                             }
                             else
                             {
-                                @SuppressWarnings("resource")
                                 InputStream logoResource = getClass().getResourceAsStream(logoFile);
                                 if (logoResource != null)
                                 {
