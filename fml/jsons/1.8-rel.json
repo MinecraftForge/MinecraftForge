@@ -114,6 +114,10 @@
     {
       "name": "lzma:lzma:0.0.1",
       "serverreq":true
+    },
+    {
+      "name": "net.sf.jopt-simple:jopt-simple:4.5",
+      "serverreq":true
     }
   ]
 }
