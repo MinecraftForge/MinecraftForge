@@ -16,15 +16,19 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerRepair;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
+import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S23PacketBlockChange;
+import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityNote;
 import net.minecraft.util.AxisAlignedBB;
@@ -37,6 +41,7 @@ import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.event.AnvilUpdateEvent;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -428,6 +433,100 @@ public class ForgeHooks
             }
         }
         return event;
+    }
+
+    public static boolean onPlaceItemIntoWorld(ItemStack itemstack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ)
+    {
+        // handle all placement events here
+        int meta = itemstack.getItemDamage();
+        int size = itemstack.stackSize;
+        NBTTagCompound nbt = null;
+        if (itemstack.getTagCompound() != null)
+        {
+            nbt = (NBTTagCompound)itemstack.getTagCompound().copy();
+        }
+
+        if (!(itemstack.getItem() instanceof ItemBucket)) // if not bucket
+        {
+            world.captureBlockSnapshots = true;
+        }
+
+        boolean flag = itemstack.getItem().onItemUse(itemstack, player, world, x, y, z, side, hitX, hitY, hitZ);
+        world.captureBlockSnapshots = false;
+
+        if (flag)
+        {
+            // save new item data
+            int newMeta = itemstack.getItemDamage();
+            int newSize = itemstack.stackSize;
+            NBTTagCompound newNBT = null;
+            if (itemstack.getTagCompound() != null)
+            {
+                newNBT = (NBTTagCompound)itemstack.getTagCompound().copy();
+            }
+            net.minecraftforge.event.world.BlockEvent.PlaceEvent placeEvent = null;
+            List<net.minecraftforge.common.util.BlockSnapshot> blockSnapshots = (List<net.minecraftforge.common.util.BlockSnapshot>) world.capturedBlockSnapshots.clone();
+            world.capturedBlockSnapshots.clear();
+
+            // make sure to set pre-placement item data for event
+            itemstack.setItemDamage(meta);
+            itemstack.stackSize = size;
+            if (nbt != null)
+            {
+                itemstack.setTagCompound(nbt);
+            }
+            if (blockSnapshots.size() > 1) 
+            {
+                placeEvent = ForgeEventFactory.onPlayerMultiBlockPlace(player, blockSnapshots, net.minecraftforge.common.util.ForgeDirection.getOrientation(side));
+            } 
+            else if (blockSnapshots.size() == 1)
+            {
+                placeEvent = ForgeEventFactory.onPlayerBlockPlace(player, blockSnapshots.get(0), net.minecraftforge.common.util.ForgeDirection.getOrientation(side));
+            }
+
+            if (placeEvent != null && (placeEvent.isCanceled()))
+            {
+                flag = false; // cancel placement
+                // revert back all captured blocks
+                for (net.minecraftforge.common.util.BlockSnapshot blocksnapshot : blockSnapshots)
+                {
+                    world.restoringBlockSnapshots = true;
+                    blocksnapshot.restore(true, false);
+                    world.restoringBlockSnapshots = false;
+                }
+            }
+            else
+            {
+                // Change the stack to its new content
+                itemstack.setItemDamage(newMeta);
+                itemstack.stackSize = newSize;
+                if (nbt != null)
+                {
+                    itemstack.setTagCompound(newNBT);
+                }
+
+                for (net.minecraftforge.common.util.BlockSnapshot blocksnapshot : blockSnapshots)
+                {
+                    int blockX = blocksnapshot.x;
+                    int blockY = blocksnapshot.y;
+                    int blockZ = blocksnapshot.z;
+                    int metadata = world.getBlockMetadata(blockX, blockY, blockZ);
+                    int updateFlag = blocksnapshot.flag;
+                    Block oldBlock = blocksnapshot.replacedBlock;
+                    Block newBlock = world.getBlock(blockX, blockY, blockZ);
+                    if (newBlock != null && !(newBlock.hasTileEntity(metadata))) // Containers get placed automatically
+                    {
+                        newBlock.onBlockAdded(world, blockX, blockY, blockZ);
+                    }
+
+                    world.markAndNotifyBlock(blockX, blockY, blockZ, null, oldBlock, newBlock, updateFlag);
+                }
+                player.addStat(StatList.objectUseStats[Item.getIdFromItem(itemstack.getItem())], 1);
+            }
+        }
+        world.capturedBlockSnapshots.clear();
+
+        return flag;
     }
 
     public static boolean onAnvilChange(ContainerRepair container, ItemStack left, ItemStack right, IInventory outputSlot, String name, int baseCost)
