@@ -38,7 +38,7 @@ CL: abd net/minecraft/entity/ai/EntitySenses
 CL: abf net/minecraft/entity/ai/RandomPositionGenerator
 CL: abh net/minecraft/village/VillageDoorInfo
 CL: abi net/minecraft/village/Village
-CL: abj net/minecraft/village/Village$VillageAgressor
+CL: abj net/minecraft/village/Village$VillageAggressor
 CL: abk net/minecraft/village/VillageSiege
 CL: abl net/minecraft/village/VillageCollection
 CL: abn net/minecraft/entity/passive/EntityAmbientCreature
@@ -781,7 +781,7 @@ CL: bec net/minecraft/block/state/IBlockState
 CL: bed net/minecraft/block/state/BlockState
 CL: bee net/minecraft/block/state/BlockState$1
 CL: bef net/minecraft/block/state/BlockState$2
-CL: beg net/minecraft/block/state/BlockState$StateImplemenation
+CL: beg net/minecraft/block/state/BlockState$StateImplementation
 CL: bei net/minecraft/block/state/BlockWorldState
 CL: bej net/minecraft/block/state/BlockWorldState$1
 CL: bek net/minecraft/block/state/pattern/BlockPattern
@@ -1315,7 +1315,7 @@ CL: cat net/minecraft/client/gui/spectator/SpectatorMenu$EndSpectatorObject
 CL: cau net/minecraft/client/gui/spectator/SpectatorMenu$MoveMenuObject
 CL: cav net/minecraft/client/gui/spectator/ISpectatorMenuView
 CL: caw net/minecraft/client/gui/spectator/ISpectatorMenuObject
-CL: cax net/minecraft/client/gui/spectator/ISpectatorMenuReciepient
+CL: cax net/minecraft/client/gui/spectator/ISpectatorMenuRecipient
 CL: cay net/minecraft/client/gui/spectator/categories/SpectatorDetails
 CL: caz net/minecraft/client/gui/spectator/categories/TeleportToPlayer
 CL: cb net/minecraft/command/server/CommandPardonPlayer
@@ -1507,19 +1507,19 @@ CL: ciq net/minecraft/client/player/inventory/LocalBlockIntercommunication
 CL: cir net/minecraft/client/player/inventory/ContainerLocalMenu
 CL: ciu net/minecraft/entity/boss/BossStatus
 CL: civ net/minecraft/client/renderer/WorldRenderer
-CL: ciw net/minecraft/client/renderer/WorldRenderer$SwitchEnumUseage
+CL: ciw net/minecraft/client/renderer/WorldRenderer$SwitchEnumUsage
 CL: cix net/minecraft/client/renderer/WorldRenderer$State
 CL: ciy net/minecraft/client/renderer/WorldVertexBufferUploader
-CL: ciz net/minecraft/client/renderer/WorldVertexBufferUploader$SwitchEnumUseage
+CL: ciz net/minecraft/client/renderer/WorldVertexBufferUploader$SwitchEnumUsage
 CL: cj net/minecraft/command/server/CommandBroadcast
 CL: cja net/minecraft/client/renderer/RegionRenderCache
 CL: cjb net/minecraft/client/renderer/RegionRenderCacheBuilder
 CL: cjc net/minecraft/client/renderer/ChunkRenderContainer
 CL: cjd net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer
-CL: cje net/minecraft/client/renderer/EnumFaceing
-CL: cjf net/minecraft/client/renderer/EnumFaceing$1
-CL: cjg net/minecraft/client/renderer/EnumFaceing$Constants
-CL: cjh net/minecraft/client/renderer/EnumFaceing$VertexInformation
+CL: cje net/minecraft/client/renderer/EnumFaceDirection
+CL: cjf net/minecraft/client/renderer/EnumFaceDirection$1
+CL: cjg net/minecraft/client/renderer/EnumFaceDirection$Constants
+CL: cjh net/minecraft/client/renderer/EnumFaceDirection$VertexInformation
 CL: cji net/minecraft/client/renderer/EntityRenderer
 CL: cjj net/minecraft/client/renderer/EntityRenderer$1
 CL: cjk net/minecraft/client/renderer/EntityRenderer$2
@@ -1553,7 +1553,7 @@ CL: ckk net/minecraft/client/renderer/ItemModelMesher
 CL: ckl net/minecraft/client/renderer/ItemMeshDefinition
 CL: ckn net/minecraft/client/renderer/RenderGlobal
 CL: cko net/minecraft/client/renderer/RenderGlobal$1
-CL: ckp net/minecraft/client/renderer/RenderGlobal$SwitchEnumUseage
+CL: ckp net/minecraft/client/renderer/RenderGlobal$SwitchEnumUsage
 CL: ckq net/minecraft/client/renderer/RenderGlobal$ContainerLocalRenderInformation
 CL: ckr net/minecraft/client/renderer/ImageBufferDownload
 CL: cks net/minecraft/client/renderer/RenderList
@@ -1662,7 +1662,7 @@ CL: cot net/minecraft/client/renderer/chunk/VisGraph$SwitchEnumFacing
 CL: cou net/minecraft/client/renderer/chunk/SetVisibility
 CL: cox net/minecraft/client/renderer/culling/ICamera
 CL: coy net/minecraft/client/renderer/culling/ClippingHelperImpl
-CL: coz net/minecraft/client/renderer/culling/Frustrum
+CL: coz net/minecraft/client/renderer/culling/Frustum
 CL: cp net/minecraft/command/CommandSetSpawnpoint
 CL: cpa net/minecraft/client/renderer/culling/ClippingHelper
 CL: cpe net/minecraft/client/renderer/entity/ArmorStandRenderer
@@ -1809,17 +1809,17 @@ CL: cun net/minecraft/client/renderer/texture/TextureCompass
 CL: cuq net/minecraft/client/renderer/vertex/DefaultVertexFormats
 CL: cur net/minecraft/client/renderer/vertex/VertexBuffer
 CL: cus net/minecraft/client/renderer/vertex/VertexFormat
-CL: cut net/minecraft/client/renderer/vertex/VertexFormat$SwitchEnumUseage
+CL: cut net/minecraft/client/renderer/vertex/VertexFormat$SwitchEnumUsage
 CL: cuu net/minecraft/client/renderer/vertex/VertexFormatElement
 CL: cuv net/minecraft/client/renderer/vertex/VertexFormatElement$EnumType
-CL: cuw net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUseage
+CL: cuw net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUsage
 CL: cuy net/minecraft/client/resources/AbstractResourcePack
 CL: cuz net/minecraft/client/resources/ResourceIndex
 CL: cv net/minecraft/command/server/CommandSummon
 CL: cva net/minecraft/client/resources/DefaultPlayerSkin
 CL: cvb net/minecraft/client/resources/DefaultResourcePack
 CL: cvc net/minecraft/client/resources/FallbackResourceManager
-CL: cvd net/minecraft/client/resources/FallbackResourceManager$ImputStreamLeakedResourceLogger
+CL: cvd net/minecraft/client/resources/FallbackResourceManager$InputStreamLeakedResourceLogger
 CL: cve net/minecraft/client/resources/FileResourcePack
 CL: cvf net/minecraft/client/resources/FolderResourcePack
 CL: cvg net/minecraft/client/resources/FoliageColorReloadListener
@@ -2401,9 +2401,9 @@ CL: ty net/minecraft/stats/StatList
 CL: tz net/minecraft/stats/StatFileWriter
 CL: u net/minecraft/util/ReportedException
 CL: ua net/minecraft/util/JsonSerializableSet
-CL: uc net/minecraft/util/ClassInheratanceMultiMap
-CL: ud net/minecraft/util/ClassInheratanceMultiMap$1
-CL: ue net/minecraft/util/ClassInheratanceMultiMap$2
+CL: uc net/minecraft/util/ClassInheritanceMultiMap
+CL: ud net/minecraft/util/ClassInheritanceMultiMap$1
+CL: ue net/minecraft/util/ClassInheritanceMultiMap$2
 CL: ug net/minecraft/util/CryptManager
 CL: uh net/minecraft/util/JsonUtils
 CL: ui net/minecraft/util/HttpUtil
@@ -2451,7 +2451,7 @@ CL: wg net/minecraft/util/CombatTracker
 CL: wh net/minecraft/util/DamageSource
 CL: wi net/minecraft/util/EntityDamageSource
 CL: wj net/minecraft/util/EntityDamageSourceIndirect
-CL: wl net/minecraft/potion/PotionAbsoption
+CL: wl net/minecraft/potion/PotionAbsorption
 CL: wm net/minecraft/potion/PotionAttackDamage
 CL: wn net/minecraft/potion/PotionHealthBoost
 CL: wo net/minecraft/potion/PotionHealth
@@ -2679,9 +2679,9 @@ FD: abi/i net/minecraft/village/Village/field_82694_i
 FD: abi/j net/minecraft/village/Village/field_82693_j
 FD: abi/k net/minecraft/village/Village/field_75589_i
 FD: abi/l net/minecraft/village/Village/field_75587_j
-FD: abj/a net/minecraft/village/Village$VillageAgressor/field_75592_a
-FD: abj/b net/minecraft/village/Village$VillageAgressor/field_75590_b
-FD: abj/c net/minecraft/village/Village$VillageAgressor/field_75591_c
+FD: abj/a net/minecraft/village/Village$VillageAggressor/field_75592_a
+FD: abj/b net/minecraft/village/Village$VillageAggressor/field_75590_b
+FD: abj/c net/minecraft/village/Village$VillageAggressor/field_75591_c
 FD: abk/a net/minecraft/village/VillageSiege/field_75537_a
 FD: abk/b net/minecraft/village/VillageSiege/field_75535_b
 FD: abk/c net/minecraft/village/VillageSiege/field_75536_c
@@ -5178,9 +5178,9 @@ FD: bed/c net/minecraft/block/state/BlockState/field_177627_c
 FD: bed/d net/minecraft/block/state/BlockState/field_177624_d
 FD: bed/e net/minecraft/block/state/BlockState/field_177625_e
 FD: bef/a net/minecraft/block/state/BlockState$2/field_177549_a
-FD: beg/a net/minecraft/block/state/BlockState$StateImplemenation/field_177239_a
-FD: beg/b net/minecraft/block/state/BlockState$StateImplemenation/field_177237_b
-FD: beg/c net/minecraft/block/state/BlockState$StateImplemenation/field_177238_c
+FD: beg/a net/minecraft/block/state/BlockState$StateImplementation/field_177239_a
+FD: beg/b net/minecraft/block/state/BlockState$StateImplementation/field_177237_b
+FD: beg/c net/minecraft/block/state/BlockState$StateImplementation/field_177238_c
 FD: bei/a net/minecraft/block/state/BlockWorldState/field_177515_a
 FD: bei/b net/minecraft/block/state/BlockWorldState/field_177513_b
 FD: bei/c net/minecraft/block/state/BlockWorldState/field_177514_c
@@ -7832,13 +7832,13 @@ FD: civ/p net/minecraft/client/renderer/WorldRenderer/field_179012_p
 FD: civ/q net/minecraft/client/renderer/WorldRenderer/field_179011_q
 FD: civ/r net/minecraft/client/renderer/WorldRenderer/field_179010_r
 FD: civ/s net/minecraft/client/renderer/WorldRenderer/field_179009_s
-FD: ciw/a net/minecraft/client/renderer/WorldRenderer$SwitchEnumUseage/field_178959_a
+FD: ciw/a net/minecraft/client/renderer/WorldRenderer$SwitchEnumUsage/field_178959_a
 FD: cix/a net/minecraft/client/renderer/WorldRenderer$State/field_179021_a
 FD: cix/b net/minecraft/client/renderer/WorldRenderer$State/field_179019_b
 FD: cix/c net/minecraft/client/renderer/WorldRenderer$State/field_179020_c
 FD: cix/d net/minecraft/client/renderer/WorldRenderer$State/field_179017_d
 FD: cix/e net/minecraft/client/renderer/WorldRenderer$State/field_179018_e
-FD: ciz/a net/minecraft/client/renderer/WorldVertexBufferUploader$SwitchEnumUseage/field_178958_a
+FD: ciz/a net/minecraft/client/renderer/WorldVertexBufferUploader$SwitchEnumUsage/field_178958_a
 FD: cja/f net/minecraft/client/renderer/RegionRenderCache/field_175632_f
 FD: cja/g net/minecraft/client/renderer/RegionRenderCache/field_175633_g
 FD: cja/h net/minecraft/client/renderer/RegionRenderCache/field_175634_h
@@ -7855,24 +7855,24 @@ FD: cjd/c net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer/f
 FD: cjd/d net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer/field_147716_d
 FD: cjd/e net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer/field_179024_e
 FD: cjd/f net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer/field_179023_f
-FD: cje/a net/minecraft/client/renderer/EnumFaceing/DOWN
-FD: cje/b net/minecraft/client/renderer/EnumFaceing/UP
-FD: cje/c net/minecraft/client/renderer/EnumFaceing/NORTH
-FD: cje/d net/minecraft/client/renderer/EnumFaceing/SOUTH
-FD: cje/e net/minecraft/client/renderer/EnumFaceing/WEST
-FD: cje/f net/minecraft/client/renderer/EnumFaceing/EAST
-FD: cje/g net/minecraft/client/renderer/EnumFaceing/field_179029_g
-FD: cje/h net/minecraft/client/renderer/EnumFaceing/field_179035_h
-FD: cje/i net/minecraft/client/renderer/EnumFaceing/$VALUES
-FD: cjg/a net/minecraft/client/renderer/EnumFaceing$Constants/field_179181_a
-FD: cjg/b net/minecraft/client/renderer/EnumFaceing$Constants/field_179179_b
-FD: cjg/c net/minecraft/client/renderer/EnumFaceing$Constants/field_179180_c
-FD: cjg/d net/minecraft/client/renderer/EnumFaceing$Constants/field_179177_d
-FD: cjg/e net/minecraft/client/renderer/EnumFaceing$Constants/field_179178_e
-FD: cjg/f net/minecraft/client/renderer/EnumFaceing$Constants/field_179176_f
-FD: cjh/a net/minecraft/client/renderer/EnumFaceing$VertexInformation/field_179184_a
-FD: cjh/b net/minecraft/client/renderer/EnumFaceing$VertexInformation/field_179182_b
-FD: cjh/c net/minecraft/client/renderer/EnumFaceing$VertexInformation/field_179183_c
+FD: cje/a net/minecraft/client/renderer/EnumFaceDirection/DOWN
+FD: cje/b net/minecraft/client/renderer/EnumFaceDirection/UP
+FD: cje/c net/minecraft/client/renderer/EnumFaceDirection/NORTH
+FD: cje/d net/minecraft/client/renderer/EnumFaceDirection/SOUTH
+FD: cje/e net/minecraft/client/renderer/EnumFaceDirection/WEST
+FD: cje/f net/minecraft/client/renderer/EnumFaceDirection/EAST
+FD: cje/g net/minecraft/client/renderer/EnumFaceDirection/field_179029_g
+FD: cje/h net/minecraft/client/renderer/EnumFaceDirection/field_179035_h
+FD: cje/i net/minecraft/client/renderer/EnumFaceDirection/$VALUES
+FD: cjg/a net/minecraft/client/renderer/EnumFaceDirection$Constants/field_179181_a
+FD: cjg/b net/minecraft/client/renderer/EnumFaceDirection$Constants/field_179179_b
+FD: cjg/c net/minecraft/client/renderer/EnumFaceDirection$Constants/field_179180_c
+FD: cjg/d net/minecraft/client/renderer/EnumFaceDirection$Constants/field_179177_d
+FD: cjg/e net/minecraft/client/renderer/EnumFaceDirection$Constants/field_179178_e
+FD: cjg/f net/minecraft/client/renderer/EnumFaceDirection$Constants/field_179176_f
+FD: cjh/a net/minecraft/client/renderer/EnumFaceDirection$VertexInformation/field_179184_a
+FD: cjh/b net/minecraft/client/renderer/EnumFaceDirection$VertexInformation/field_179182_b
+FD: cjh/c net/minecraft/client/renderer/EnumFaceDirection$VertexInformation/field_179183_c
 FD: cji/A net/minecraft/client/renderer/EntityRenderer/field_82832_V
 FD: cji/B net/minecraft/client/renderer/EntityRenderer/field_78500_U
 FD: cji/C net/minecraft/client/renderer/EntityRenderer/field_175074_C
@@ -8096,7 +8096,7 @@ FD: cko/a net/minecraft/client/renderer/RenderGlobal$1/field_85101_a
 FD: cko/b net/minecraft/client/renderer/RenderGlobal$1/field_85099_b
 FD: cko/c net/minecraft/client/renderer/RenderGlobal$1/field_85100_c
 FD: cko/d net/minecraft/client/renderer/RenderGlobal$1/field_85098_d
-FD: ckp/a net/minecraft/client/renderer/RenderGlobal$SwitchEnumUseage/field_178037_a
+FD: ckp/a net/minecraft/client/renderer/RenderGlobal$SwitchEnumUsage/field_178037_a
 FD: ckq/a net/minecraft/client/renderer/RenderGlobal$ContainerLocalRenderInformation/field_178036_a
 FD: ckq/b net/minecraft/client/renderer/RenderGlobal$ContainerLocalRenderInformation/field_178034_b
 FD: ckq/c net/minecraft/client/renderer/RenderGlobal$ContainerLocalRenderInformation/field_178035_c
@@ -8408,10 +8408,10 @@ FD: coy/e net/minecraft/client/renderer/culling/ClippingHelperImpl/field_78563_e
 FD: coy/f net/minecraft/client/renderer/culling/ClippingHelperImpl/field_78561_f
 FD: coy/g net/minecraft/client/renderer/culling/ClippingHelperImpl/field_78562_g
 FD: coy/h net/minecraft/client/renderer/culling/ClippingHelperImpl/field_78564_h
-FD: coz/a net/minecraft/client/renderer/culling/Frustrum/field_78552_a
-FD: coz/b net/minecraft/client/renderer/culling/Frustrum/field_78550_b
-FD: coz/c net/minecraft/client/renderer/culling/Frustrum/field_78551_c
-FD: coz/d net/minecraft/client/renderer/culling/Frustrum/field_78549_d
+FD: coz/a net/minecraft/client/renderer/culling/Frustum/field_78552_a
+FD: coz/b net/minecraft/client/renderer/culling/Frustum/field_78550_b
+FD: coz/c net/minecraft/client/renderer/culling/Frustum/field_78551_c
+FD: coz/d net/minecraft/client/renderer/culling/Frustum/field_78549_d
 FD: cpa/a net/minecraft/client/renderer/culling/ClippingHelper/field_78557_a
 FD: cpa/b net/minecraft/client/renderer/culling/ClippingHelper/field_178625_b
 FD: cpa/c net/minecraft/client/renderer/culling/ClippingHelper/field_178626_c
@@ -8806,7 +8806,7 @@ FD: cus/d net/minecraft/client/renderer/vertex/VertexFormat/field_177353_d
 FD: cus/e net/minecraft/client/renderer/vertex/VertexFormat/field_177354_e
 FD: cus/f net/minecraft/client/renderer/vertex/VertexFormat/field_177351_f
 FD: cus/g net/minecraft/client/renderer/vertex/VertexFormat/field_177352_g
-FD: cut/a net/minecraft/client/renderer/vertex/VertexFormat$SwitchEnumUseage/field_177382_a
+FD: cut/a net/minecraft/client/renderer/vertex/VertexFormat$SwitchEnumUsage/field_177382_a
 FD: cuu/a net/minecraft/client/renderer/vertex/VertexFormatElement/field_177381_a
 FD: cuu/b net/minecraft/client/renderer/vertex/VertexFormatElement/field_177379_b
 FD: cuu/c net/minecraft/client/renderer/vertex/VertexFormatElement/field_177380_c
@@ -8824,15 +8824,15 @@ FD: cuv/h net/minecraft/client/renderer/vertex/VertexFormatElement$EnumType/fiel
 FD: cuv/i net/minecraft/client/renderer/vertex/VertexFormatElement$EnumType/field_177408_i
 FD: cuv/j net/minecraft/client/renderer/vertex/VertexFormatElement$EnumType/field_177405_j
 FD: cuv/k net/minecraft/client/renderer/vertex/VertexFormatElement$EnumType/$VALUES
-FD: cuw/a net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUseage/POSITION
-FD: cuw/b net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUseage/NORMAL
-FD: cuw/c net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUseage/COLOR
-FD: cuw/d net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUseage/UV
-FD: cuw/e net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUseage/MATRIX
-FD: cuw/f net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUseage/BLEND_WEIGHT
-FD: cuw/g net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUseage/PADDING
-FD: cuw/h net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUseage/field_177392_h
-FD: cuw/i net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUseage/$VALUES
+FD: cuw/a net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUsage/POSITION
+FD: cuw/b net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUsage/NORMAL
+FD: cuw/c net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUsage/COLOR
+FD: cuw/d net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUsage/UV
+FD: cuw/e net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUsage/MATRIX
+FD: cuw/f net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUsage/BLEND_WEIGHT
+FD: cuw/g net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUsage/PADDING
+FD: cuw/h net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUsage/field_177392_h
+FD: cuw/i net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUsage/$VALUES
 FD: cuy/a net/minecraft/client/resources/AbstractResourcePack/field_110597_b
 FD: cuy/b net/minecraft/client/resources/AbstractResourcePack/field_110598_a
 FD: cuz/a net/minecraft/client/resources/ResourceIndex/field_152783_a
@@ -8844,9 +8844,9 @@ FD: cvb/b net/minecraft/client/resources/DefaultResourcePack/field_152781_b
 FD: cvc/a net/minecraft/client/resources/FallbackResourceManager/field_110540_a
 FD: cvc/b net/minecraft/client/resources/FallbackResourceManager/field_177246_b
 FD: cvc/c net/minecraft/client/resources/FallbackResourceManager/field_110539_b
-FD: cvd/a net/minecraft/client/resources/FallbackResourceManager$ImputStreamLeakedResourceLogger/field_177330_a
-FD: cvd/b net/minecraft/client/resources/FallbackResourceManager$ImputStreamLeakedResourceLogger/field_177328_b
-FD: cvd/c net/minecraft/client/resources/FallbackResourceManager$ImputStreamLeakedResourceLogger/field_177329_c
+FD: cvd/a net/minecraft/client/resources/FallbackResourceManager$InputStreamLeakedResourceLogger/field_177330_a
+FD: cvd/b net/minecraft/client/resources/FallbackResourceManager$InputStreamLeakedResourceLogger/field_177328_b
+FD: cvd/c net/minecraft/client/resources/FallbackResourceManager$InputStreamLeakedResourceLogger/field_177329_c
 FD: cve/b net/minecraft/client/resources/FileResourcePack/field_110601_c
 FD: cve/c net/minecraft/client/resources/FileResourcePack/field_110600_d
 FD: cvg/a net/minecraft/client/resources/FoliageColorReloadListener/field_130079_a
@@ -10699,13 +10699,13 @@ FD: ty/z net/minecraft/stats/StatList/field_75959_z
 FD: tz/a net/minecraft/stats/StatFileWriter/field_150875_a
 FD: u/a net/minecraft/util/ReportedException/field_71576_a
 FD: ua/a net/minecraft/util/JsonSerializableSet/field_151004_a
-FD: uc/a net/minecraft/util/ClassInheratanceMultiMap/field_180218_a
-FD: uc/b net/minecraft/util/ClassInheratanceMultiMap/field_180216_b
-FD: uc/c net/minecraft/util/ClassInheratanceMultiMap/field_180217_c
-FD: ud/a net/minecraft/util/ClassInheratanceMultiMap$1/field_180211_a
-FD: ud/b net/minecraft/util/ClassInheratanceMultiMap$1/field_180210_b
-FD: ue/a net/minecraft/util/ClassInheratanceMultiMap$2/field_180197_a
-FD: ue/b net/minecraft/util/ClassInheratanceMultiMap$2/field_180196_b
+FD: uc/a net/minecraft/util/ClassInheritanceMultiMap/field_180218_a
+FD: uc/b net/minecraft/util/ClassInheritanceMultiMap/field_180216_b
+FD: uc/c net/minecraft/util/ClassInheritanceMultiMap/field_180217_c
+FD: ud/a net/minecraft/util/ClassInheritanceMultiMap$1/field_180211_a
+FD: ud/b net/minecraft/util/ClassInheritanceMultiMap$1/field_180210_b
+FD: ue/a net/minecraft/util/ClassInheritanceMultiMap$2/field_180197_a
+FD: ue/b net/minecraft/util/ClassInheritanceMultiMap$2/field_180196_b
 FD: ug/a net/minecraft/util/CryptManager/field_180198_a
 FD: ui/a net/minecraft/util/HttpUtil/field_180193_a
 FD: ui/b net/minecraft/util/HttpUtil/field_151228_a
@@ -14250,9 +14250,9 @@ MD: aqf/l ()Ljava/lang/String; net/minecraft/command/server/CommandBlockLogic/fu
 MD: aqf/m ()Z net/minecraft/command/server/CommandBlockLogic/func_175571_m ()Z
 MD: aqf/n ()Laf; net/minecraft/command/server/CommandBlockLogic/func_175572_n ()Lnet/minecraft/command/CommandResultStats;
 MD: aqf/t_ ()Z net/minecraft/command/server/CommandBlockLogic/func_174792_t_ ()Z
-MD: aqg/a ()Ljava/lang/String; net/minecraft/command/server/CommandBlockLogic$1/func_180324_a ()Ljava/lang/String;
+MD: aqg/a ()Ljava/lang/String; net/minecraft/command/server/CommandBlockLogic$1/call ()Ljava/lang/String;
 MD: aqg/call ()Ljava/lang/Object; net/minecraft/command/server/CommandBlockLogic$1/call ()Ljava/lang/Object;
-MD: aqh/a ()Ljava/lang/String; net/minecraft/command/server/CommandBlockLogic$2/func_180326_a ()Ljava/lang/String;
+MD: aqh/a ()Ljava/lang/String; net/minecraft/command/server/CommandBlockLogic$2/call ()Ljava/lang/String;
 MD: aqh/call ()Ljava/lang/Object; net/minecraft/command/server/CommandBlockLogic$2/call ()Ljava/lang/Object;
 MD: aqi/a ()Laqu; net/minecraft/tileentity/MobSpawnerBaseLogic/func_98271_a ()Lnet/minecraft/world/World;
 MD: aqi/a (I)V net/minecraft/tileentity/MobSpawnerBaseLogic/func_98267_a (I)V
@@ -17198,15 +17198,15 @@ MD: bee/a (Lbex;)Ljava/lang/String; net/minecraft/block/state/BlockState$1/func_
 MD: bee/apply (Ljava/lang/Object;)Ljava/lang/Object; net/minecraft/block/state/BlockState$1/apply (Ljava/lang/Object;)Ljava/lang/Object;
 MD: bef/a (Lbex;Lbex;)I net/minecraft/block/state/BlockState$2/func_177548_a (Lnet/minecraft/block/properties/IProperty;Lnet/minecraft/block/properties/IProperty;)I
 MD: bef/compare (Ljava/lang/Object;Ljava/lang/Object;)I net/minecraft/block/state/BlockState$2/compare (Ljava/lang/Object;Ljava/lang/Object;)I
-MD: beg/a ()Ljava/util/Collection; net/minecraft/block/state/BlockState$StateImplemenation/func_177227_a ()Ljava/util/Collection;
-MD: beg/a (Lbex;Ljava/lang/Comparable;)Lbec; net/minecraft/block/state/BlockState$StateImplemenation/func_177226_a (Lnet/minecraft/block/properties/IProperty;Ljava/lang/Comparable;)Lnet/minecraft/block/state/IBlockState;
-MD: beg/a (Ljava/util/Map;)V net/minecraft/block/state/BlockState$StateImplemenation/func_177235_a (Ljava/util/Map;)V
-MD: beg/b ()Lcom/google/common/collect/ImmutableMap; net/minecraft/block/state/BlockState$StateImplemenation/func_177228_b ()Lcom/google/common/collect/ImmutableMap;
-MD: beg/b (Lbex;)Ljava/lang/Comparable; net/minecraft/block/state/BlockState$StateImplemenation/func_177229_b (Lnet/minecraft/block/properties/IProperty;)Ljava/lang/Comparable;
-MD: beg/b (Lbex;Ljava/lang/Comparable;)Ljava/util/Map; net/minecraft/block/state/BlockState$StateImplemenation/func_177236_b (Lnet/minecraft/block/properties/IProperty;Ljava/lang/Comparable;)Ljava/util/Map;
-MD: beg/c ()Latr; net/minecraft/block/state/BlockState$StateImplemenation/func_177230_c ()Lnet/minecraft/block/Block;
-MD: beg/equals (Ljava/lang/Object;)Z net/minecraft/block/state/BlockState$StateImplemenation/equals (Ljava/lang/Object;)Z
-MD: beg/hashCode ()I net/minecraft/block/state/BlockState$StateImplemenation/hashCode ()I
+MD: beg/a ()Ljava/util/Collection; net/minecraft/block/state/BlockState$StateImplementation/func_177227_a ()Ljava/util/Collection;
+MD: beg/a (Lbex;Ljava/lang/Comparable;)Lbec; net/minecraft/block/state/BlockState$StateImplementation/func_177226_a (Lnet/minecraft/block/properties/IProperty;Ljava/lang/Comparable;)Lnet/minecraft/block/state/IBlockState;
+MD: beg/a (Ljava/util/Map;)V net/minecraft/block/state/BlockState$StateImplementation/func_177235_a (Ljava/util/Map;)V
+MD: beg/b ()Lcom/google/common/collect/ImmutableMap; net/minecraft/block/state/BlockState$StateImplementation/func_177228_b ()Lcom/google/common/collect/ImmutableMap;
+MD: beg/b (Lbex;)Ljava/lang/Comparable; net/minecraft/block/state/BlockState$StateImplementation/func_177229_b (Lnet/minecraft/block/properties/IProperty;)Ljava/lang/Comparable;
+MD: beg/b (Lbex;Ljava/lang/Comparable;)Ljava/util/Map; net/minecraft/block/state/BlockState$StateImplementation/func_177236_b (Lnet/minecraft/block/properties/IProperty;Ljava/lang/Comparable;)Ljava/util/Map;
+MD: beg/c ()Latr; net/minecraft/block/state/BlockState$StateImplementation/func_177230_c ()Lnet/minecraft/block/Block;
+MD: beg/equals (Ljava/lang/Object;)Z net/minecraft/block/state/BlockState$StateImplementation/equals (Ljava/lang/Object;)Z
+MD: beg/hashCode ()I net/minecraft/block/state/BlockState$StateImplementation/hashCode ()I
 MD: bei/a ()Lbec; net/minecraft/block/state/BlockWorldState/func_177509_a ()Lnet/minecraft/block/state/IBlockState;
 MD: bei/a (Lcom/google/common/base/Predicate;)Lcom/google/common/base/Predicate; net/minecraft/block/state/BlockWorldState/func_177510_a (Lcom/google/common/base/Predicate;)Lcom/google/common/base/Predicate;
 MD: bei/b ()Lbcm; net/minecraft/block/state/BlockWorldState/func_177507_b ()Lnet/minecraft/tileentity/TileEntity;
@@ -17427,7 +17427,7 @@ MD: bfh/o ()Z net/minecraft/world/chunk/Chunk/func_177410_o ()Z
 MD: bfh/p ()Laqu; net/minecraft/world/chunk/Chunk/func_177412_p ()Lnet/minecraft/world/World;
 MD: bfh/q ()[I net/minecraft/world/chunk/Chunk/func_177445_q ()[I
 MD: bfh/r ()Ljava/util/Map; net/minecraft/world/chunk/Chunk/func_177434_r ()Ljava/util/Map;
-MD: bfh/s ()[Luc; net/minecraft/world/chunk/Chunk/func_177429_s ()[Lnet/minecraft/util/ClassInheratanceMultiMap;
+MD: bfh/s ()[Luc; net/minecraft/world/chunk/Chunk/func_177429_s ()[Lnet/minecraft/util/ClassInheritanceMultiMap;
 MD: bfh/t ()Z net/minecraft/world/chunk/Chunk/func_177419_t ()Z
 MD: bfh/u ()Z net/minecraft/world/chunk/Chunk/func_177423_u ()Z
 MD: bfh/v ()I net/minecraft/world/chunk/Chunk/func_177442_v ()I
@@ -17435,9 +17435,9 @@ MD: bfh/w ()J net/minecraft/world/chunk/Chunk/func_177416_w ()J
 MD: bfh/y ()V net/minecraft/world/chunk/Chunk/func_177441_y ()V
 MD: bfi/a ()Ljava/lang/String; net/minecraft/world/chunk/Chunk$1/call ()Ljava/lang/String;
 MD: bfi/call ()Ljava/lang/Object; net/minecraft/world/chunk/Chunk$1/call ()Ljava/lang/Object;
-MD: bfj/a ()Ljava/lang/String; net/minecraft/world/chunk/Chunk$2/func_177455_a ()Ljava/lang/String;
+MD: bfj/a ()Ljava/lang/String; net/minecraft/world/chunk/Chunk$2/call ()Ljava/lang/String;
 MD: bfj/call ()Ljava/lang/Object; net/minecraft/world/chunk/Chunk$2/call ()Ljava/lang/Object;
-MD: bfk/a ()Ljava/lang/String; net/minecraft/world/chunk/Chunk$3/func_177448_a ()Ljava/lang/String;
+MD: bfk/a ()Ljava/lang/String; net/minecraft/world/chunk/Chunk$3/call ()Ljava/lang/String;
 MD: bfk/call ()Ljava/lang/Object; net/minecraft/world/chunk/Chunk$3/call ()Ljava/lang/Object;
 MD: bfl/values ()[Lbfl; net/minecraft/world/chunk/Chunk$EnumCreateEntityType/values ()[Lnet/minecraft/world/chunk/Chunk$EnumCreateEntityType;
 MD: bfm/a ()Z net/minecraft/world/chunk/storage/ExtendedBlockStorage/func_76663_a ()Z
@@ -20307,7 +20307,7 @@ MD: caw/A_ ()Z net/minecraft/client/gui/spectator/ISpectatorMenuObject/func_1786
 MD: caw/a (FI)V net/minecraft/client/gui/spectator/ISpectatorMenuObject/func_178663_a (FI)V
 MD: caw/a (Lcar;)V net/minecraft/client/gui/spectator/ISpectatorMenuObject/func_178661_a (Lnet/minecraft/client/gui/spectator/SpectatorMenu;)V
 MD: caw/z_ ()Lho; net/minecraft/client/gui/spectator/ISpectatorMenuObject/func_178664_z_ ()Lnet/minecraft/util/IChatComponent;
-MD: cax/a (Lcar;)V net/minecraft/client/gui/spectator/ISpectatorMenuReciepient/func_175257_a (Lnet/minecraft/client/gui/spectator/SpectatorMenu;)V
+MD: cax/a (Lcar;)V net/minecraft/client/gui/spectator/ISpectatorMenuRecipient/func_175257_a (Lnet/minecraft/client/gui/spectator/SpectatorMenu;)V
 MD: cay/a (I)Lcaw; net/minecraft/client/gui/spectator/categories/SpectatorDetails/func_178680_a (I)Lnet/minecraft/client/gui/spectator/ISpectatorMenuObject;
 MD: cay/b ()I net/minecraft/client/gui/spectator/categories/SpectatorDetails/func_178681_b ()I
 MD: caz/A_ ()Z net/minecraft/client/gui/spectator/categories/TeleportToPlayer/func_178662_A_ ()Z
@@ -21049,9 +21049,9 @@ MD: cjc/a (Laql;)V net/minecraft/client/renderer/ChunkRenderContainer/func_17800
 MD: cjc/a (Lcop;)V net/minecraft/client/renderer/ChunkRenderContainer/func_178003_a (Lnet/minecraft/client/renderer/chunk/RenderChunk;)V
 MD: cjc/a (Lcop;Laql;)V net/minecraft/client/renderer/ChunkRenderContainer/func_178002_a (Lnet/minecraft/client/renderer/chunk/RenderChunk;Lnet/minecraft/util/EnumWorldBlockLayer;)V
 MD: cjd/a (Lamj;)V net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer/func_179022_a (Lnet/minecraft/item/ItemStack;)V
-MD: cje/a (I)Lcjh; net/minecraft/client/renderer/EnumFaceing/func_179025_a (I)Lnet/minecraft/client/renderer/EnumFaceing$VertexInformation;
-MD: cje/a (Lej;)Lcje; net/minecraft/client/renderer/EnumFaceing/func_179027_a (Lnet/minecraft/util/EnumFacing;)Lnet/minecraft/client/renderer/EnumFaceing;
-MD: cje/values ()[Lcje; net/minecraft/client/renderer/EnumFaceing/values ()[Lnet/minecraft/client/renderer/EnumFaceing;
+MD: cje/a (I)Lcjh; net/minecraft/client/renderer/EnumFaceDirection/func_179025_a (I)Lnet/minecraft/client/renderer/EnumFaceDirection$VertexInformation;
+MD: cje/a (Lej;)Lcje; net/minecraft/client/renderer/EnumFaceDirection/func_179027_a (Lnet/minecraft/util/EnumFacing;)Lnet/minecraft/client/renderer/EnumFaceDirection;
+MD: cje/values ()[Lcje; net/minecraft/client/renderer/EnumFaceDirection/values ()[Lnet/minecraft/client/renderer/EnumFaceDirection;
 MD: cji/a ()Z net/minecraft/client/renderer/EntityRenderer/func_147702_a ()Z
 MD: cji/a (F)V net/minecraft/client/renderer/EntityRenderer/func_78473_a (F)V
 MD: cji/a (FFFF)Ljava/nio/FloatBuffer; net/minecraft/client/renderer/EntityRenderer/func_78469_a (FFFF)Ljava/nio/FloatBuffer;
@@ -21671,9 +21671,9 @@ MD: cox/a (Lbrt;)Z net/minecraft/client/renderer/culling/ICamera/func_78546_a (L
 MD: coy/a ()Lcpa; net/minecraft/client/renderer/culling/ClippingHelperImpl/func_78558_a ()Lnet/minecraft/client/renderer/culling/ClippingHelper;
 MD: coy/a ([F)V net/minecraft/client/renderer/culling/ClippingHelperImpl/func_180547_a ([F)V
 MD: coy/b ()V net/minecraft/client/renderer/culling/ClippingHelperImpl/func_78560_b ()V
-MD: coz/a (DDD)V net/minecraft/client/renderer/culling/Frustrum/func_78547_a (DDD)V
-MD: coz/a (Lbrt;)Z net/minecraft/client/renderer/culling/Frustrum/func_78546_a (Lnet/minecraft/util/AxisAlignedBB;)Z
-MD: coz/b (DDDDDD)Z net/minecraft/client/renderer/culling/Frustrum/func_78548_b (DDDDDD)Z
+MD: coz/a (DDD)V net/minecraft/client/renderer/culling/Frustum/func_78547_a (DDD)V
+MD: coz/a (Lbrt;)Z net/minecraft/client/renderer/culling/Frustum/func_78546_a (Lnet/minecraft/util/AxisAlignedBB;)Z
+MD: coz/b (DDDDDD)Z net/minecraft/client/renderer/culling/Frustum/func_78548_b (DDDDDD)Z
 MD: cp/a ()I net/minecraft/command/CommandSetSpawnpoint/func_82362_a ()I
 MD: cp/a (Lae;[Ljava/lang/String;)V net/minecraft/command/CommandSetSpawnpoint/func_71515_b (Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;)V
 MD: cp/a (Lae;[Ljava/lang/String;Ldt;)Ljava/util/List; net/minecraft/command/CommandSetSpawnpoint/func_180525_a (Lnet/minecraft/command/ICommandSender;[Ljava/lang/String;Lnet/minecraft/util/BlockPos;)Ljava/util/List;
@@ -22432,9 +22432,9 @@ MD: cus/i ()Z net/minecraft/client/renderer/vertex/VertexFormat/func_177341_i ()
 MD: cus/toString ()Ljava/lang/String; net/minecraft/client/renderer/vertex/VertexFormat/toString ()Ljava/lang/String;
 MD: cuu/a ()I net/minecraft/client/renderer/vertex/VertexFormatElement/func_177373_a ()I
 MD: cuu/a (I)V net/minecraft/client/renderer/vertex/VertexFormatElement/func_177371_a (I)V
-MD: cuu/a (ILcuw;)Z net/minecraft/client/renderer/vertex/VertexFormatElement/func_177372_a (ILnet/minecraft/client/renderer/vertex/VertexFormatElement$EnumUseage;)Z
+MD: cuu/a (ILcuw;)Z net/minecraft/client/renderer/vertex/VertexFormatElement/func_177372_a (ILnet/minecraft/client/renderer/vertex/VertexFormatElement$EnumUsage;)Z
 MD: cuu/b ()Lcuv; net/minecraft/client/renderer/vertex/VertexFormatElement/func_177367_b ()Lnet/minecraft/client/renderer/vertex/VertexFormatElement$EnumType;
-MD: cuu/c ()Lcuw; net/minecraft/client/renderer/vertex/VertexFormatElement/func_177375_c ()Lnet/minecraft/client/renderer/vertex/VertexFormatElement$EnumUseage;
+MD: cuu/c ()Lcuw; net/minecraft/client/renderer/vertex/VertexFormatElement/func_177375_c ()Lnet/minecraft/client/renderer/vertex/VertexFormatElement$EnumUsage;
 MD: cuu/d ()I net/minecraft/client/renderer/vertex/VertexFormatElement/func_177370_d ()I
 MD: cuu/e ()I net/minecraft/client/renderer/vertex/VertexFormatElement/func_177369_e ()I
 MD: cuu/equals (Ljava/lang/Object;)Z net/minecraft/client/renderer/vertex/VertexFormatElement/equals (Ljava/lang/Object;)Z
@@ -22446,8 +22446,8 @@ MD: cuv/a ()I net/minecraft/client/renderer/vertex/VertexFormatElement$EnumType/
 MD: cuv/b ()Ljava/lang/String; net/minecraft/client/renderer/vertex/VertexFormatElement$EnumType/func_177396_b ()Ljava/lang/String;
 MD: cuv/c ()I net/minecraft/client/renderer/vertex/VertexFormatElement$EnumType/func_177397_c ()I
 MD: cuv/values ()[Lcuv; net/minecraft/client/renderer/vertex/VertexFormatElement$EnumType/values ()[Lnet/minecraft/client/renderer/vertex/VertexFormatElement$EnumType;
-MD: cuw/a ()Ljava/lang/String; net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUseage/func_177384_a ()Ljava/lang/String;
-MD: cuw/values ()[Lcuw; net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUseage/values ()[Lnet/minecraft/client/renderer/vertex/VertexFormatElement$EnumUseage;
+MD: cuw/a ()Ljava/lang/String; net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUsage/func_177384_a ()Ljava/lang/String;
+MD: cuw/values ()[Lcuw; net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUsage/values ()[Lnet/minecraft/client/renderer/vertex/VertexFormatElement$EnumUsage;
 MD: cuy/a ()Ljava/awt/image/BufferedImage; net/minecraft/client/resources/AbstractResourcePack/func_110586_a ()Ljava/awt/image/BufferedImage;
 MD: cuy/a (Lcwk;Ljava/io/InputStream;Ljava/lang/String;)Lcwi; net/minecraft/client/resources/AbstractResourcePack/func_110596_a (Lnet/minecraft/client/resources/data/IMetadataSerializer;Ljava/io/InputStream;Ljava/lang/String;)Lnet/minecraft/client/resources/data/IMetadataSection;
 MD: cuy/a (Lcwk;Ljava/lang/String;)Lcwi; net/minecraft/client/resources/AbstractResourcePack/func_135058_a (Lnet/minecraft/client/resources/data/IMetadataSerializer;Ljava/lang/String;)Lnet/minecraft/client/resources/data/IMetadataSection;
@@ -22484,9 +22484,9 @@ MD: cvc/a (Loa;Lcvm;)Ljava/io/InputStream; net/minecraft/client/resources/Fallba
 MD: cvc/b ()Lorg/apache/logging/log4j/Logger; net/minecraft/client/resources/FallbackResourceManager/access$000 ()Lorg/apache/logging/log4j/Logger;
 MD: cvc/b (Loa;)Ljava/util/List; net/minecraft/client/resources/FallbackResourceManager/func_135056_b (Lnet/minecraft/util/ResourceLocation;)Ljava/util/List;
 MD: cvc/c (Loa;)Loa; net/minecraft/client/resources/FallbackResourceManager/func_110537_b (Lnet/minecraft/util/ResourceLocation;)Lnet/minecraft/util/ResourceLocation;
-MD: cvd/close ()V net/minecraft/client/resources/FallbackResourceManager$ImputStreamLeakedResourceLogger/close ()V
-MD: cvd/finalize ()V net/minecraft/client/resources/FallbackResourceManager$ImputStreamLeakedResourceLogger/finalize ()V
-MD: cvd/read ()I net/minecraft/client/resources/FallbackResourceManager$ImputStreamLeakedResourceLogger/read ()I
+MD: cvd/close ()V net/minecraft/client/resources/FallbackResourceManager$InputStreamLeakedResourceLogger/close ()V
+MD: cvd/finalize ()V net/minecraft/client/resources/FallbackResourceManager$InputStreamLeakedResourceLogger/finalize ()V
+MD: cvd/read ()I net/minecraft/client/resources/FallbackResourceManager$InputStreamLeakedResourceLogger/read ()I
 MD: cve/a (Ljava/lang/String;)Ljava/io/InputStream; net/minecraft/client/resources/FileResourcePack/func_110591_a (Ljava/lang/String;)Ljava/io/InputStream;
 MD: cve/b (Ljava/lang/String;)Z net/minecraft/client/resources/FileResourcePack/func_110593_b (Ljava/lang/String;)Z
 MD: cve/c ()Ljava/util/Set; net/minecraft/client/resources/FileResourcePack/func_110587_b ()Ljava/util/Set;
@@ -25520,7 +25520,7 @@ MD: oy/a (Loy;Ljava/lang/String;)V net/minecraft/client/util/JsonException$Entry
 MD: oy/b ()Ljava/lang/String; net/minecraft/client/util/JsonException$Entry/func_151372_b ()Ljava/lang/String;
 MD: oy/b (Loy;Ljava/lang/String;)Ljava/lang/String; net/minecraft/client/util/JsonException$Entry/access$202 (Lnet/minecraft/client/util/JsonException$Entry;Ljava/lang/String;)Ljava/lang/String;
 MD: oy/toString ()Ljava/lang/String; net/minecraft/client/util/JsonException$Entry/toString ()Ljava/lang/String;
-MD: p/a ()Ljava/lang/String; net/minecraft/crash/CrashReportCategory$4/func_175753_a ()Ljava/lang/String;
+MD: p/a ()Ljava/lang/String; net/minecraft/crash/CrashReportCategory$4/call ()Ljava/lang/String;
 MD: p/call ()Ljava/lang/Object; net/minecraft/crash/CrashReportCategory$4/call ()Ljava/lang/Object;
 MD: pb/a ()Z net/minecraft/server/ServerEula/func_154346_a ()Z
 MD: pb/a (Ljava/io/File;)Z net/minecraft/server/ServerEula/func_154347_a (Ljava/io/File;)Z
@@ -25534,7 +25534,7 @@ MD: pd/a (Ljava/lang/String;)V net/minecraft/server/MinecraftServer$1/func_73720
 MD: pd/b (Ljava/lang/String;)V net/minecraft/server/MinecraftServer$1/func_73721_b (Ljava/lang/String;)V
 MD: pd/c (Ljava/lang/String;)V net/minecraft/server/MinecraftServer$1/func_73719_c (Ljava/lang/String;)V
 MD: pe/run ()V net/minecraft/server/MinecraftServer$2/run ()V
-MD: pf/a ()Ljava/lang/String; net/minecraft/server/MinecraftServer$3/func_179879_a ()Ljava/lang/String;
+MD: pf/a ()Ljava/lang/String; net/minecraft/server/MinecraftServer$3/call ()Ljava/lang/String;
 MD: pf/call ()Ljava/lang/Object; net/minecraft/server/MinecraftServer$3/call ()Ljava/lang/Object;
 MD: pg/a ()Ljava/lang/String; net/minecraft/server/MinecraftServer$4/call ()Ljava/lang/String;
 MD: pg/call ()Ljava/lang/Object; net/minecraft/server/MinecraftServer$4/call ()Ljava/lang/Object;
@@ -25662,7 +25662,7 @@ MD: pw/c ()Ljavax/swing/JComponent; net/minecraft/server/gui/MinecraftServerGui/
 MD: px/windowClosing (Ljava/awt/event/WindowEvent;)V net/minecraft/server/gui/MinecraftServerGui$1/windowClosing (Ljava/awt/event/WindowEvent;)V
 MD: py/actionPerformed (Ljava/awt/event/ActionEvent;)V net/minecraft/server/gui/MinecraftServerGui$2/actionPerformed (Ljava/awt/event/ActionEvent;)V
 MD: pz/focusGained (Ljava/awt/event/FocusEvent;)V net/minecraft/server/gui/MinecraftServerGui$3/focusGained (Ljava/awt/event/FocusEvent;)V
-MD: q/a ()Ljava/lang/String; net/minecraft/crash/CrashReportCategory$5/func_175751_a ()Ljava/lang/String;
+MD: q/a ()Ljava/lang/String; net/minecraft/crash/CrashReportCategory$5/call ()Ljava/lang/String;
 MD: q/call ()Ljava/lang/Object; net/minecraft/crash/CrashReportCategory$5/call ()Ljava/lang/Object;
 MD: qa/run ()V net/minecraft/server/gui/MinecraftServerGui$4/run ()V
 MD: qb/run ()V net/minecraft/server/gui/MinecraftServerGui$5/run ()V
@@ -25943,7 +25943,7 @@ MD: re/a ()Lio/netty/channel/local/LocalEventLoopGroup; net/minecraft/network/Ne
 MD: re/b ()Ljava/lang/Object; net/minecraft/network/NetworkSystem$2/func_179280_b ()Ljava/lang/Object;
 MD: rf/initChannel (Lio/netty/channel/Channel;)V net/minecraft/network/NetworkSystem$3/initChannel (Lio/netty/channel/Channel;)V
 MD: rg/initChannel (Lio/netty/channel/Channel;)V net/minecraft/network/NetworkSystem$4/initChannel (Lio/netty/channel/Channel;)V
-MD: rh/a ()Ljava/lang/String; net/minecraft/network/NetworkSystem$5/func_180229_a ()Ljava/lang/String;
+MD: rh/a ()Ljava/lang/String; net/minecraft/network/NetworkSystem$5/call ()Ljava/lang/String;
 MD: rh/call ()Ljava/lang/Object; net/minecraft/network/NetworkSystem$5/call ()Ljava/lang/Object;
 MD: ri/operationComplete (Lio/netty/util/concurrent/Future;)V net/minecraft/network/NetworkSystem$6/operationComplete (Lio/netty/util/concurrent/Future;)V
 MD: rj/a ()Lgr; net/minecraft/network/NetHandlerPlayServer/func_147362_b ()Lnet/minecraft/network/NetworkManager;
@@ -25980,7 +25980,7 @@ MD: rj/d ()J net/minecraft/network/NetHandlerPlayServer/func_147363_d ()J
 MD: rj/d (Ljava/lang/String;)V net/minecraft/network/NetHandlerPlayServer/func_147361_d (Ljava/lang/String;)V
 MD: rk/operationComplete (Lio/netty/util/concurrent/Future;)V net/minecraft/network/NetHandlerPlayServer$1/operationComplete (Lio/netty/util/concurrent/Future;)V
 MD: rl/run ()V net/minecraft/network/NetHandlerPlayServer$2/run ()V
-MD: rm/a ()Ljava/lang/String; net/minecraft/network/NetHandlerPlayServer$3/func_180225_a ()Ljava/lang/String;
+MD: rm/a ()Ljava/lang/String; net/minecraft/network/NetHandlerPlayServer$3/call ()Ljava/lang/String;
 MD: rm/call ()Ljava/lang/Object; net/minecraft/network/NetHandlerPlayServer$3/call ()Ljava/lang/Object;
 MD: ro/a (Lho;)V net/minecraft/server/network/NetHandlerHandshakeTCP/func_147231_a (Lnet/minecraft/util/IChatComponent;)V
 MD: ro/a (Lmz;)V net/minecraft/server/network/NetHandlerHandshakeTCP/func_147383_a (Lnet/minecraft/network/handshake/client/C00Handshake;)V
@@ -26325,16 +26325,16 @@ MD: ua/a (Lcom/google/gson/JsonElement;)V net/minecraft/util/JsonSerializableSet
 MD: ua/delegate ()Ljava/lang/Object; net/minecraft/util/JsonSerializableSet/delegate ()Ljava/lang/Object;
 MD: ua/delegate ()Ljava/util/Collection; net/minecraft/util/JsonSerializableSet/delegate ()Ljava/util/Collection;
 MD: ua/delegate ()Ljava/util/Set; net/minecraft/util/JsonSerializableSet/delegate ()Ljava/util/Set;
-MD: uc/a (Ljava/lang/Class;)V net/minecraft/util/ClassInheratanceMultiMap/func_180213_a (Ljava/lang/Class;)V
-MD: uc/a (Ljava/lang/Class;Z)Ljava/lang/Class; net/minecraft/util/ClassInheratanceMultiMap/func_180212_a (Ljava/lang/Class;Z)Ljava/lang/Class;
-MD: uc/a (Luc;)Lcom/google/common/collect/Multimap; net/minecraft/util/ClassInheratanceMultiMap/access$000 (Lnet/minecraft/util/ClassInheratanceMultiMap;)Lcom/google/common/collect/Multimap;
-MD: uc/add (Ljava/lang/Object;)Z net/minecraft/util/ClassInheratanceMultiMap/add (Ljava/lang/Object;)Z
-MD: uc/b (Ljava/lang/Class;)Ljava/lang/Iterable; net/minecraft/util/ClassInheratanceMultiMap/func_180215_b (Ljava/lang/Class;)Ljava/lang/Iterable;
-MD: uc/iterator ()Ljava/util/Iterator; net/minecraft/util/ClassInheratanceMultiMap/iterator ()Ljava/util/Iterator;
-MD: uc/remove (Ljava/lang/Object;)Z net/minecraft/util/ClassInheratanceMultiMap/remove (Ljava/lang/Object;)Z
-MD: uc/size ()I net/minecraft/util/ClassInheratanceMultiMap/size ()I
-MD: ud/iterator ()Ljava/util/Iterator; net/minecraft/util/ClassInheratanceMultiMap$1/iterator ()Ljava/util/Iterator;
-MD: ue/computeNext ()Ljava/lang/Object; net/minecraft/util/ClassInheratanceMultiMap$2/computeNext ()Ljava/lang/Object;
+MD: uc/a (Ljava/lang/Class;)V net/minecraft/util/ClassInheritanceMultiMap/func_180213_a (Ljava/lang/Class;)V
+MD: uc/a (Ljava/lang/Class;Z)Ljava/lang/Class; net/minecraft/util/ClassInheritanceMultiMap/func_180212_a (Ljava/lang/Class;Z)Ljava/lang/Class;
+MD: uc/a (Luc;)Lcom/google/common/collect/Multimap; net/minecraft/util/ClassInheritanceMultiMap/access$000 (Lnet/minecraft/util/ClassInheritanceMultiMap;)Lcom/google/common/collect/Multimap;
+MD: uc/add (Ljava/lang/Object;)Z net/minecraft/util/ClassInheritanceMultiMap/add (Ljava/lang/Object;)Z
+MD: uc/b (Ljava/lang/Class;)Ljava/lang/Iterable; net/minecraft/util/ClassInheritanceMultiMap/func_180215_b (Ljava/lang/Class;)Ljava/lang/Iterable;
+MD: uc/iterator ()Ljava/util/Iterator; net/minecraft/util/ClassInheritanceMultiMap/iterator ()Ljava/util/Iterator;
+MD: uc/remove (Ljava/lang/Object;)Z net/minecraft/util/ClassInheritanceMultiMap/remove (Ljava/lang/Object;)Z
+MD: uc/size ()I net/minecraft/util/ClassInheritanceMultiMap/size ()I
+MD: ud/iterator ()Ljava/util/Iterator; net/minecraft/util/ClassInheritanceMultiMap$1/iterator ()Ljava/util/Iterator;
+MD: ue/computeNext ()Ljava/lang/Object; net/minecraft/util/ClassInheritanceMultiMap$2/computeNext ()Ljava/lang/Object;
 MD: ug/a ()Ljavax/crypto/SecretKey; net/minecraft/util/CryptManager/func_75890_a ()Ljavax/crypto/SecretKey;
 MD: ug/a (ILjava/lang/String;Ljava/security/Key;)Ljavax/crypto/Cipher; net/minecraft/util/CryptManager/func_75886_a (ILjava/lang/String;Ljava/security/Key;)Ljavax/crypto/Cipher;
 MD: ug/a (ILjava/security/Key;)Ljavax/crypto/Cipher; net/minecraft/util/CryptManager/func_151229_a (ILjava/security/Key;)Ljavax/crypto/Cipher;
@@ -26680,8 +26680,8 @@ MD: wi/w ()Z net/minecraft/util/EntityDamageSource/func_180139_w ()Z
 MD: wj/b (Lxm;)Lho; net/minecraft/util/EntityDamageSourceIndirect/func_151519_b (Lnet/minecraft/entity/EntityLivingBase;)Lnet/minecraft/util/IChatComponent;
 MD: wj/i ()Lwv; net/minecraft/util/EntityDamageSourceIndirect/func_76364_f ()Lnet/minecraft/entity/Entity;
 MD: wj/j ()Lwv; net/minecraft/util/EntityDamageSourceIndirect/func_76346_g ()Lnet/minecraft/entity/Entity;
-MD: wl/a (Lxm;Lyc;I)V net/minecraft/potion/PotionAbsoption/func_111187_a (Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/entity/ai/attributes/BaseAttributeMap;I)V
-MD: wl/b (Lxm;Lyc;I)V net/minecraft/potion/PotionAbsoption/func_111185_a (Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/entity/ai/attributes/BaseAttributeMap;I)V
+MD: wl/a (Lxm;Lyc;I)V net/minecraft/potion/PotionAbsorption/func_111187_a (Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/entity/ai/attributes/BaseAttributeMap;I)V
+MD: wl/b (Lxm;Lyc;I)V net/minecraft/potion/PotionAbsorption/func_111185_a (Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/entity/ai/attributes/BaseAttributeMap;I)V
 MD: wm/a (ILya;)D net/minecraft/potion/PotionAttackDamage/func_111183_a (ILnet/minecraft/entity/ai/attributes/AttributeModifier;)D
 MD: wn/a (Lxm;Lyc;I)V net/minecraft/potion/PotionHealthBoost/func_111187_a (Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/entity/ai/attributes/BaseAttributeMap;I)V
 MD: wo/a (II)Z net/minecraft/potion/PotionHealth/func_76397_a (II)Z
@@ -26924,9 +26924,9 @@ MD: ww/a ()Ljava/lang/String; net/minecraft/entity/Entity$1/call ()Ljava/lang/St
 MD: ww/call ()Ljava/lang/Object; net/minecraft/entity/Entity$1/call ()Ljava/lang/Object;
 MD: wx/a ()Ljava/lang/String; net/minecraft/entity/Entity$2/call ()Ljava/lang/String;
 MD: wx/call ()Ljava/lang/Object; net/minecraft/entity/Entity$2/call ()Ljava/lang/Object;
-MD: wy/a ()Ljava/lang/String; net/minecraft/entity/Entity$3/func_180118_a ()Ljava/lang/String;
+MD: wy/a ()Ljava/lang/String; net/minecraft/entity/Entity$3/call ()Ljava/lang/String;
 MD: wy/call ()Ljava/lang/Object; net/minecraft/entity/Entity$3/call ()Ljava/lang/Object;
-MD: wz/a ()Ljava/lang/String; net/minecraft/entity/Entity$4/func_180116_a ()Ljava/lang/String;
+MD: wz/a ()Ljava/lang/String; net/minecraft/entity/Entity$4/call ()Ljava/lang/String;
 MD: wz/call ()Ljava/lang/Object; net/minecraft/entity/Entity$4/call ()Ljava/lang/Object;
 MD: x/values ()[Lx; net/minecraft/util/Util$EnumOS/values ()[Lnet/minecraft/util/Util$EnumOS;
 MD: xb/a ()V net/minecraft/entity/EntityList/func_151514_a ()V

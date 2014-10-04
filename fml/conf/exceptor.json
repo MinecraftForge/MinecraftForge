@@ -2031,8 +2031,8 @@
       }, 
       {
         "access": "28", 
-        "inner_class": "net/minecraft/block/state/BlockState$StateImplemenation", 
-        "inner_name": "StateImplemenation", 
+        "inner_class": "net/minecraft/block/state/BlockState$StateImplementation", 
+        "inner_name": "StateImplementation", 
         "outer_class": "net/minecraft/block/state/BlockState", 
         "start": "106"
       }
@@ -2060,15 +2060,15 @@
       }
     ]
   }, 
-  "net/minecraft/block/state/BlockState$StateImplemenation": {
+  "net/minecraft/block/state/BlockState$StateImplementation": {
     "enclosingMethod": {
       "owner": "net/minecraft/block/state/BlockState"
     }, 
     "innerClasses": [
       {
         "access": "28", 
-        "inner_class": "net/minecraft/block/state/BlockState$StateImplemenation", 
-        "inner_name": "StateImplemenation", 
+        "inner_class": "net/minecraft/block/state/BlockState$StateImplementation", 
+        "inner_name": "StateImplementation", 
         "outer_class": "net/minecraft/block/state/BlockState", 
         "start": "106"
       }
@@ -5798,60 +5798,60 @@
       }
     ]
   }, 
-  "net/minecraft/client/renderer/EnumFaceing": {
+  "net/minecraft/client/renderer/EnumFaceDirection": {
     "innerClasses": [
       {
         "access": "39", 
-        "inner_class": "net/minecraft/client/renderer/EnumFaceing$Constants", 
+        "inner_class": "net/minecraft/client/renderer/EnumFaceDirection$Constants", 
         "inner_name": "Constants", 
-        "outer_class": "net/minecraft/client/renderer/EnumFaceing"
+        "outer_class": "net/minecraft/client/renderer/EnumFaceDirection"
       }, 
       {
         "access": "1000", 
-        "inner_class": "net/minecraft/client/renderer/EnumFaceing$1"
+        "inner_class": "net/minecraft/client/renderer/EnumFaceDirection$1"
       }, 
       {
         "access": "29", 
-        "inner_class": "net/minecraft/client/renderer/EnumFaceing$VertexInformation", 
+        "inner_class": "net/minecraft/client/renderer/EnumFaceDirection$VertexInformation", 
         "inner_name": "VertexInformation", 
-        "outer_class": "net/minecraft/client/renderer/EnumFaceing"
+        "outer_class": "net/minecraft/client/renderer/EnumFaceDirection"
       }
     ]
   }, 
-  "net/minecraft/client/renderer/EnumFaceing$1": {
+  "net/minecraft/client/renderer/EnumFaceDirection$1": {
     "enclosingMethod": {
-      "owner": "net/minecraft/client/renderer/EnumFaceing"
+      "owner": "net/minecraft/client/renderer/EnumFaceDirection"
     }, 
     "innerClasses": [
       {
         "access": "1000", 
-        "inner_class": "net/minecraft/client/renderer/EnumFaceing$1"
+        "inner_class": "net/minecraft/client/renderer/EnumFaceDirection$1"
       }
     ]
   }, 
-  "net/minecraft/client/renderer/EnumFaceing$Constants": {
+  "net/minecraft/client/renderer/EnumFaceDirection$Constants": {
     "enclosingMethod": {
-      "owner": "net/minecraft/client/renderer/EnumFaceing"
+      "owner": "net/minecraft/client/renderer/EnumFaceDirection"
     }, 
     "innerClasses": [
       {
         "access": "39", 
-        "inner_class": "net/minecraft/client/renderer/EnumFaceing$Constants", 
+        "inner_class": "net/minecraft/client/renderer/EnumFaceDirection$Constants", 
         "inner_name": "Constants", 
-        "outer_class": "net/minecraft/client/renderer/EnumFaceing"
+        "outer_class": "net/minecraft/client/renderer/EnumFaceDirection"
       }
     ]
   }, 
-  "net/minecraft/client/renderer/EnumFaceing$VertexInformation": {
+  "net/minecraft/client/renderer/EnumFaceDirection$VertexInformation": {
     "enclosingMethod": {
-      "owner": "net/minecraft/client/renderer/EnumFaceing"
+      "owner": "net/minecraft/client/renderer/EnumFaceDirection"
     }, 
     "innerClasses": [
       {
         "access": "29", 
-        "inner_class": "net/minecraft/client/renderer/EnumFaceing$VertexInformation", 
+        "inner_class": "net/minecraft/client/renderer/EnumFaceDirection$VertexInformation", 
         "inner_name": "VertexInformation", 
-        "outer_class": "net/minecraft/client/renderer/EnumFaceing"
+        "outer_class": "net/minecraft/client/renderer/EnumFaceDirection"
       }
     ]
   }, 
@@ -6274,8 +6274,8 @@
       }, 
       {
         "access": "1018", 
-        "inner_class": "net/minecraft/client/renderer/RenderGlobal$SwitchEnumUseage", 
-        "inner_name": "SwitchEnumUseage", 
+        "inner_class": "net/minecraft/client/renderer/RenderGlobal$SwitchEnumUsage", 
+        "inner_name": "SwitchEnumUsage", 
         "outer_class": "net/minecraft/client/renderer/RenderGlobal"
       }, 
       {
@@ -6312,15 +6312,15 @@
       }
     ]
   }, 
-  "net/minecraft/client/renderer/RenderGlobal$SwitchEnumUseage": {
+  "net/minecraft/client/renderer/RenderGlobal$SwitchEnumUsage": {
     "enclosingMethod": {
       "owner": "net/minecraft/client/renderer/RenderGlobal"
     }, 
     "innerClasses": [
       {
         "access": "1018", 
-        "inner_class": "net/minecraft/client/renderer/RenderGlobal$SwitchEnumUseage", 
-        "inner_name": "SwitchEnumUseage", 
+        "inner_class": "net/minecraft/client/renderer/RenderGlobal$SwitchEnumUsage", 
+        "inner_name": "SwitchEnumUsage", 
         "outer_class": "net/minecraft/client/renderer/RenderGlobal"
       }
     ]
@@ -6357,8 +6357,8 @@
       }, 
       {
         "access": "1018", 
-        "inner_class": "net/minecraft/client/renderer/WorldRenderer$SwitchEnumUseage", 
-        "inner_name": "SwitchEnumUseage", 
+        "inner_class": "net/minecraft/client/renderer/WorldRenderer$SwitchEnumUsage", 
+        "inner_name": "SwitchEnumUsage", 
         "outer_class": "net/minecraft/client/renderer/WorldRenderer"
       }
     ]
@@ -6377,15 +6377,15 @@
       }
     ]
   }, 
-  "net/minecraft/client/renderer/WorldRenderer$SwitchEnumUseage": {
+  "net/minecraft/client/renderer/WorldRenderer$SwitchEnumUsage": {
     "enclosingMethod": {
       "owner": "net/minecraft/client/renderer/WorldRenderer"
     }, 
     "innerClasses": [
       {
         "access": "1018", 
-        "inner_class": "net/minecraft/client/renderer/WorldRenderer$SwitchEnumUseage", 
-        "inner_name": "SwitchEnumUseage", 
+        "inner_class": "net/minecraft/client/renderer/WorldRenderer$SwitchEnumUsage", 
+        "inner_name": "SwitchEnumUsage", 
         "outer_class": "net/minecraft/client/renderer/WorldRenderer"
       }
     ]
@@ -6394,21 +6394,21 @@
     "innerClasses": [
       {
         "access": "1018", 
-        "inner_class": "net/minecraft/client/renderer/WorldVertexBufferUploader$SwitchEnumUseage", 
-        "inner_name": "SwitchEnumUseage", 
+        "inner_class": "net/minecraft/client/renderer/WorldVertexBufferUploader$SwitchEnumUsage", 
+        "inner_name": "SwitchEnumUsage", 
         "outer_class": "net/minecraft/client/renderer/WorldVertexBufferUploader"
       }
     ]
   }, 
-  "net/minecraft/client/renderer/WorldVertexBufferUploader$SwitchEnumUseage": {
+  "net/minecraft/client/renderer/WorldVertexBufferUploader$SwitchEnumUsage": {
     "enclosingMethod": {
       "owner": "net/minecraft/client/renderer/WorldVertexBufferUploader"
     }, 
     "innerClasses": [
       {
         "access": "1018", 
-        "inner_class": "net/minecraft/client/renderer/WorldVertexBufferUploader$SwitchEnumUseage", 
-        "inner_name": "SwitchEnumUseage", 
+        "inner_class": "net/minecraft/client/renderer/WorldVertexBufferUploader$SwitchEnumUsage", 
+        "inner_name": "SwitchEnumUsage", 
         "outer_class": "net/minecraft/client/renderer/WorldVertexBufferUploader"
       }
     ]
@@ -7612,21 +7612,21 @@
     "innerClasses": [
       {
         "access": "1018", 
-        "inner_class": "net/minecraft/client/renderer/vertex/VertexFormat$SwitchEnumUseage", 
-        "inner_name": "SwitchEnumUseage", 
+        "inner_class": "net/minecraft/client/renderer/vertex/VertexFormat$SwitchEnumUsage", 
+        "inner_name": "SwitchEnumUsage", 
         "outer_class": "net/minecraft/client/renderer/vertex/VertexFormat"
       }
     ]
   }, 
-  "net/minecraft/client/renderer/vertex/VertexFormat$SwitchEnumUseage": {
+  "net/minecraft/client/renderer/vertex/VertexFormat$SwitchEnumUsage": {
     "enclosingMethod": {
       "owner": "net/minecraft/client/renderer/vertex/VertexFormat"
     }, 
     "innerClasses": [
       {
         "access": "1018", 
-        "inner_class": "net/minecraft/client/renderer/vertex/VertexFormat$SwitchEnumUseage", 
-        "inner_name": "SwitchEnumUseage", 
+        "inner_class": "net/minecraft/client/renderer/vertex/VertexFormat$SwitchEnumUsage", 
+        "inner_name": "SwitchEnumUsage", 
         "outer_class": "net/minecraft/client/renderer/vertex/VertexFormat"
       }
     ]
@@ -7635,8 +7635,8 @@
     "innerClasses": [
       {
         "access": "4029", 
-        "inner_class": "net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUseage", 
-        "inner_name": "EnumUseage", 
+        "inner_class": "net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUsage", 
+        "inner_name": "EnumUsage", 
         "outer_class": "net/minecraft/client/renderer/vertex/VertexFormatElement", 
         "start": "111"
       }, 
@@ -7663,15 +7663,15 @@
       }
     ]
   }, 
-  "net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUseage": {
+  "net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUsage": {
     "enclosingMethod": {
       "owner": "net/minecraft/client/renderer/vertex/VertexFormatElement"
     }, 
     "innerClasses": [
       {
         "access": "4029", 
-        "inner_class": "net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUseage", 
-        "inner_name": "EnumUseage", 
+        "inner_class": "net/minecraft/client/renderer/vertex/VertexFormatElement$EnumUsage", 
+        "inner_name": "EnumUsage", 
         "outer_class": "net/minecraft/client/renderer/vertex/VertexFormatElement", 
         "start": "111"
       }
@@ -7681,21 +7681,21 @@
     "innerClasses": [
       {
         "access": "28", 
-        "inner_class": "net/minecraft/client/resources/FallbackResourceManager$ImputStreamLeakedResourceLogger", 
+        "inner_class": "net/minecraft/client/resources/FallbackResourceManager$InputStreamLeakedResourceLogger", 
         "inner_name": "ImputStreamLeakedResourceLogger", 
         "outer_class": "net/minecraft/client/resources/FallbackResourceManager", 
         "start": "75"
       }
     ]
   }, 
-  "net/minecraft/client/resources/FallbackResourceManager$ImputStreamLeakedResourceLogger": {
+  "net/minecraft/client/resources/FallbackResourceManager$InputStreamLeakedResourceLogger": {
     "enclosingMethod": {
       "owner": "net/minecraft/client/resources/FallbackResourceManager"
     }, 
     "innerClasses": [
       {
         "access": "28", 
-        "inner_class": "net/minecraft/client/resources/FallbackResourceManager$ImputStreamLeakedResourceLogger", 
+        "inner_class": "net/minecraft/client/resources/FallbackResourceManager$InputStreamLeakedResourceLogger", 
         "inner_name": "ImputStreamLeakedResourceLogger", 
         "outer_class": "net/minecraft/client/resources/FallbackResourceManager", 
         "start": "75"
@@ -14982,36 +14982,36 @@
       }
     ]
   }, 
-  "net/minecraft/util/ClassInheratanceMultiMap": {
+  "net/minecraft/util/ClassInheritanceMultiMap": {
     "innerClasses": [
       {
-        "inner_class": "net/minecraft/util/ClassInheratanceMultiMap$1", 
+        "inner_class": "net/minecraft/util/ClassInheritanceMultiMap$1", 
         "start": "74"
       }, 
       {
-        "inner_class": "net/minecraft/util/ClassInheratanceMultiMap$2", 
+        "inner_class": "net/minecraft/util/ClassInheritanceMultiMap$2", 
         "start": "87"
       }
     ]
   }, 
-  "net/minecraft/util/ClassInheratanceMultiMap$1": {
+  "net/minecraft/util/ClassInheritanceMultiMap$1": {
     "enclosingMethod": {
-      "owner": "net/minecraft/util/ClassInheratanceMultiMap"
+      "owner": "net/minecraft/util/ClassInheritanceMultiMap"
     }, 
     "innerClasses": [
       {
-        "inner_class": "net/minecraft/util/ClassInheratanceMultiMap$1", 
+        "inner_class": "net/minecraft/util/ClassInheritanceMultiMap$1", 
         "start": "74"
       }
     ]
   }, 
-  "net/minecraft/util/ClassInheratanceMultiMap$2": {
+  "net/minecraft/util/ClassInheritanceMultiMap$2": {
     "enclosingMethod": {
-      "owner": "net/minecraft/util/ClassInheratanceMultiMap"
+      "owner": "net/minecraft/util/ClassInheritanceMultiMap"
     }, 
     "innerClasses": [
       {
-        "inner_class": "net/minecraft/util/ClassInheratanceMultiMap$2", 
+        "inner_class": "net/minecraft/util/ClassInheritanceMultiMap$2", 
         "start": "87"
       }
     ]
@@ -15319,21 +15319,21 @@
     "innerClasses": [
       {
         "access": "20", 
-        "inner_class": "net/minecraft/village/Village$VillageAgressor", 
-        "inner_name": "VillageAgressor", 
+        "inner_class": "net/minecraft/village/Village$VillageAggressor", 
+        "inner_name": "VillageAggressor", 
         "outer_class": "net/minecraft/village/Village"
       }
     ]
   }, 
-  "net/minecraft/village/Village$VillageAgressor": {
+  "net/minecraft/village/Village$VillageAggressor": {
     "enclosingMethod": {
       "owner": "net/minecraft/village/Village"
     }, 
     "innerClasses": [
       {
         "access": "20", 
-        "inner_class": "net/minecraft/village/Village$VillageAgressor", 
-        "inner_name": "VillageAgressor", 
+        "inner_class": "net/minecraft/village/Village$VillageAggressor", 
+        "inner_name": "VillageAggressor", 
         "outer_class": "net/minecraft/village/Village"
       }
     ]
