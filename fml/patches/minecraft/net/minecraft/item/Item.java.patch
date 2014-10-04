@@ -1,14 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/item/Item.java
 +++ ../src-work/minecraft/net/minecraft/item/Item.java
-@@ -47,7 +47,7 @@
+@@ -47,8 +47,8 @@
  
  public class Item
  {
 -    public static final RegistryNamespaced field_150901_e = new RegistryNamespaced();
+-    private static final Map field_179220_a = Maps.newHashMap();
 +    public static final RegistryNamespaced field_150901_e = net.minecraftforge.fml.common.registry.GameData.getItemRegistry();
-     private static final Map field_179220_a = Maps.newHashMap();
++    private static final Map field_179220_a = net.minecraftforge.fml.common.registry.GameData.getBlockItemMap();
      protected static final UUID field_111210_e = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
      private CreativeTabs field_77701_a;
+     protected static Random field_77697_d = new Random();
 @@ -61,6 +61,9 @@
      private String field_77774_bZ;
      private static final String __OBFID = "CL_00000041";

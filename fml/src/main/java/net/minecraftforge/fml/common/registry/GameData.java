@@ -142,23 +142,9 @@ public class GameData {
         return snap;
     }
 
-    public static int[] getBlockedIds()
-    {
-        int[] ret = new int[getMain().blockedIds.size()];
-        int index = 0;
-
-        for (int id : getMain().blockedIds)
-        {
-            ret[index] = id;
-            index++;
-        }
-
-        return ret;
-    }
-
     static Item findItem(String modId, String name)
     {
-        return (Item) getMain().iItemRegistry.getObject(modId + ":" + name);
+        return (Item)getMain().iItemRegistry.getObject(modId + ":" + name);
     }
 
     static Block findBlock(String modId, String name)
@@ -939,5 +925,12 @@ public class GameData {
         {
             throw new RuntimeException("WHAT?");
         }
+    }
+
+    private static Map<Block, Item> BLOCK_TO_ITEM = Maps.newHashMap();
+    //Internal: DO NOT USE, will change without warning.
+    public static Map getBlockItemMap()
+    {
+        return BLOCK_TO_ITEM;
     }
 }

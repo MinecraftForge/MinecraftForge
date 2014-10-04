@@ -183,15 +183,6 @@ public class GameRegistry
     }
 
     /**
-     * @deprecated Use the registerBlock version without the modId parameter instead.
-     */
-    @Deprecated
-    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name, String modId, Object... itemCtorArgs)
-    {
-        return registerBlock(block, itemclass, name, itemCtorArgs);
-    }
-
-    /**
      * Register a block with the world, with the specified item class, block name and owning modId
      * @param block The block to register
      * @param itemclass The item type to register with it : null registers a block without associated item.
@@ -224,6 +215,7 @@ public class GameRegistry
             if (i != null)
             {
                 GameData.getMain().registerItem(i, name);
+                GameData.getBlockItemMap().put(block, i);
             }
             return block;
         }
