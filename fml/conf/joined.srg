@@ -461,8 +461,8 @@ CL: asa net/minecraft/world/biome/BiomeGenDesert
 CL: asb net/minecraft/world/biome/BiomeGenHills
 CL: asc net/minecraft/world/biome/WorldChunkManagerHell
 CL: asd net/minecraft/world/biome/BiomeGenForest
-CL: ase net/minecraft/world/biome/BiomeGenForest$1
-CL: asf net/minecraft/world/biome/BiomeGenForest$2
+CL: ase net/minecraft/world/biome/BiomeGenForest$2
+CL: asf net/minecraft/world/biome/BiomeGenForest$1
 CL: asg net/minecraft/world/biome/BiomeGenHell
 CL: ash net/minecraft/world/biome/BiomeGenSnow
 CL: asi net/minecraft/world/biome/BiomeGenJungle
@@ -1515,7 +1515,7 @@ CL: cj net/minecraft/command/server/CommandBroadcast
 CL: cja net/minecraft/client/renderer/RegionRenderCache
 CL: cjb net/minecraft/client/renderer/RegionRenderCacheBuilder
 CL: cjc net/minecraft/client/renderer/ChunkRenderContainer
-CL: cjd net/minecraft/client/renderer/tileentity/TileEntityRendererChestHelper
+CL: cjd net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer
 CL: cje net/minecraft/client/renderer/EnumFaceing
 CL: cjf net/minecraft/client/renderer/EnumFaceing$1
 CL: cjg net/minecraft/client/renderer/EnumFaceing$Constants
@@ -4169,8 +4169,8 @@ FD: asd/aD net/minecraft/world/biome/BiomeGenForest/field_150629_aC
 FD: asd/aE net/minecraft/world/biome/BiomeGenForest/field_150630_aD
 FD: asd/aF net/minecraft/world/biome/BiomeGenForest/field_150631_aE
 FD: asd/aG net/minecraft/world/biome/BiomeGenForest/field_150632_aF
-FD: ase/aD net/minecraft/world/biome/BiomeGenForest$1/field_150612_aC
-FD: asf/aD net/minecraft/world/biome/BiomeGenForest$2/field_150613_aC
+FD: ase/aD net/minecraft/world/biome/BiomeGenForest$2/field_150612_aC
+FD: asf/aD net/minecraft/world/biome/BiomeGenForest$1/field_150613_aC
 FD: ash/aD net/minecraft/world/biome/BiomeGenSnow/field_150615_aC
 FD: ash/aE net/minecraft/world/biome/BiomeGenSnow/field_150616_aD
 FD: ash/aF net/minecraft/world/biome/BiomeGenSnow/field_150617_aE
@@ -7849,12 +7849,12 @@ FD: cjc/b net/minecraft/client/renderer/ChunkRenderContainer/field_178007_b
 FD: cjc/c net/minecraft/client/renderer/ChunkRenderContainer/field_178008_c
 FD: cjc/d net/minecraft/client/renderer/ChunkRenderContainer/field_178005_d
 FD: cjc/e net/minecraft/client/renderer/ChunkRenderContainer/field_178006_e
-FD: cjd/a net/minecraft/client/renderer/tileentity/TileEntityRendererChestHelper/field_147719_a
-FD: cjd/b net/minecraft/client/renderer/tileentity/TileEntityRendererChestHelper/field_147717_b
-FD: cjd/c net/minecraft/client/renderer/tileentity/TileEntityRendererChestHelper/field_147718_c
-FD: cjd/d net/minecraft/client/renderer/tileentity/TileEntityRendererChestHelper/field_147716_d
-FD: cjd/e net/minecraft/client/renderer/tileentity/TileEntityRendererChestHelper/field_179024_e
-FD: cjd/f net/minecraft/client/renderer/tileentity/TileEntityRendererChestHelper/field_179023_f
+FD: cjd/a net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer/field_147719_a
+FD: cjd/b net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer/field_147717_b
+FD: cjd/c net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer/field_147718_c
+FD: cjd/d net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer/field_147716_d
+FD: cjd/e net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer/field_179024_e
+FD: cjd/f net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer/field_179023_f
 FD: cje/a net/minecraft/client/renderer/EnumFaceing/DOWN
 FD: cje/b net/minecraft/client/renderer/EnumFaceing/UP
 FD: cje/c net/minecraft/client/renderer/EnumFaceing/NORTH
@@ -14720,8 +14720,8 @@ MD: asd/a (Ljava/util/Random;)Lbhc; net/minecraft/world/biome/BiomeGenForest/fun
 MD: asd/a (Ljava/util/Random;Ldt;)Lawa; net/minecraft/world/biome/BiomeGenForest/func_180623_a (Ljava/util/Random;Lnet/minecraft/util/BlockPos;)Lnet/minecraft/block/BlockFlower$EnumFlowerType;
 MD: asd/b (Ldt;)I net/minecraft/world/biome/BiomeGenForest/func_180627_b (Lnet/minecraft/util/BlockPos;)I
 MD: asd/d (I)Larm; net/minecraft/world/biome/BiomeGenForest/func_180277_d (I)Lnet/minecraft/world/biome/BiomeGenBase;
-MD: ase/a (Ljava/util/Random;)Lbhc; net/minecraft/world/biome/BiomeGenForest$1/func_150567_a (Ljava/util/Random;)Lnet/minecraft/world/gen/feature/WorldGenAbstractTree;
-MD: asf/a (Laqu;Ljava/util/Random;Ldt;)V net/minecraft/world/biome/BiomeGenForest$2/func_180624_a (Lnet/minecraft/world/World;Ljava/util/Random;Lnet/minecraft/util/BlockPos;)V
+MD: ase/a (Ljava/util/Random;)Lbhc; net/minecraft/world/biome/BiomeGenForest$2/func_150567_a (Ljava/util/Random;)Lnet/minecraft/world/gen/feature/WorldGenAbstractTree;
+MD: asf/a (Laqu;Ljava/util/Random;Ldt;)V net/minecraft/world/biome/BiomeGenForest$1/func_180624_a (Lnet/minecraft/world/World;Ljava/util/Random;Lnet/minecraft/util/BlockPos;)V
 MD: ash/a (Laqu;Ljava/util/Random;Ldt;)V net/minecraft/world/biome/BiomeGenSnow/func_180624_a (Lnet/minecraft/world/World;Ljava/util/Random;Lnet/minecraft/util/BlockPos;)V
 MD: ash/a (Ljava/util/Random;)Lbhc; net/minecraft/world/biome/BiomeGenSnow/func_150567_a (Ljava/util/Random;)Lnet/minecraft/world/gen/feature/WorldGenAbstractTree;
 MD: ash/d (I)Larm; net/minecraft/world/biome/BiomeGenSnow/func_180277_d (I)Lnet/minecraft/world/biome/BiomeGenBase;
@@ -21048,7 +21048,7 @@ MD: cjc/a (DDD)V net/minecraft/client/renderer/ChunkRenderContainer/func_178004_
 MD: cjc/a (Laql;)V net/minecraft/client/renderer/ChunkRenderContainer/func_178001_a (Lnet/minecraft/util/EnumWorldBlockLayer;)V
 MD: cjc/a (Lcop;)V net/minecraft/client/renderer/ChunkRenderContainer/func_178003_a (Lnet/minecraft/client/renderer/chunk/RenderChunk;)V
 MD: cjc/a (Lcop;Laql;)V net/minecraft/client/renderer/ChunkRenderContainer/func_178002_a (Lnet/minecraft/client/renderer/chunk/RenderChunk;Lnet/minecraft/util/EnumWorldBlockLayer;)V
-MD: cjd/a (Lamj;)V net/minecraft/client/renderer/tileentity/TileEntityRendererChestHelper/func_179022_a (Lnet/minecraft/item/ItemStack;)V
+MD: cjd/a (Lamj;)V net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer/func_179022_a (Lnet/minecraft/item/ItemStack;)V
 MD: cje/a (I)Lcjh; net/minecraft/client/renderer/EnumFaceing/func_179025_a (I)Lnet/minecraft/client/renderer/EnumFaceing$VertexInformation;
 MD: cje/a (Lej;)Lcje; net/minecraft/client/renderer/EnumFaceing/func_179027_a (Lnet/minecraft/util/EnumFacing;)Lnet/minecraft/client/renderer/EnumFaceing;
 MD: cje/values ()[Lcje; net/minecraft/client/renderer/EnumFaceing/values ()[Lnet/minecraft/client/renderer/EnumFaceing;
