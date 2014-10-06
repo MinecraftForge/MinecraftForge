@@ -37,7 +37,7 @@ minecraft {
     installerVersion = "1.4"
 }
 
-group = 'cpw.mods'
+group = 'net.minecraftforge'
 version = getVersionFromGit(getProject())
 
 jenkins {
