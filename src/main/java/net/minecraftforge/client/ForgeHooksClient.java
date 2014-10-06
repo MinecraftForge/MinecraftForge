@@ -319,10 +319,13 @@ public class ForgeHooksClient
     {
         ImageIO.setUseCache(false); //Disable on-disc stream cache should speed up texture pack reloading.
         PixelFormat format = new PixelFormat().withDepthBits(24);
-        if (!ForgeModContainer.enableStencilBits || Boolean.parseBoolean(System.getProperty("forge.forceNoStencil", "false")))
+        if (!Boolean.parseBoolean(System.getProperty("forge.forceDisplayStencil", "false")))
         {
+            //Creating the display with Stencil bits causes issues on some displays.
+            //According to ChickenBones, Mumfrey and Pig The only real use is in the FBO.
+            //So lets default to normal init to fix the issues yet add the bits to the FBO.
             Display.create(format);
-            stencilBits = 0;
+            stencilBits = 8;
             return;
         }
         try
