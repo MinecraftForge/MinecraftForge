@@ -66,7 +66,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static float zombieBabyChance = 0.05f;
     public static boolean shouldSortRecipies = true;
     public static boolean disableVersionCheck = false;
-    public static boolean enableStencilBits = true;
     public static int defaultSpawnFuzz = 20;
 
     private static Configuration config;
@@ -216,12 +215,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "Chance that a zombie (or subclass) is a baby. Allows changing the zombie spawning mechanic.", 0.0D, 1.0D);
         prop.setLanguageKey("forge.configgui.zombieBabyChance").setRequiresWorldRestart(true);
         zombieBabyChance = (float) prop.getDouble(0.05);
-        propOrder.add(prop.getName());
-
-        prop = config.get(Configuration.CATEGORY_GENERAL, "enableStencilBits", true);
-        prop.comment = "Set to false to attempt to allocate 8 stencil bits when starting the GL display context.";
-        prop.setLanguageKey("forge.configgui.stencilbits").setRequiresWorldRestart(true);
-        enableStencilBits = prop.getBoolean(true);
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "defaultSpawnFuzz", 20,
