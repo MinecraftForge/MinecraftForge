@@ -46,7 +46,7 @@ public class TerminalTransformer implements IClassTransformer
                                    clsName.equals("net/minecraft/server/dedicated/DedicatedServer") ||
                                    clsName.equals("net/minecraft/server/dedicated/ServerHangWatchdog") ||
                                    clsName.equals("net/minecraft/server/dedicated/ServerHangWatchdog$1") ||
-                                   clsName.equals("cpw/mods/fml/common/FMLCommonHandler") ||
+                                   clsName.equals("net/minecraftforge/fml/common/FMLCommonHandler") ||
                                    clsName.startsWith("com/jcraft/jogg/") ||
                                    clsName.startsWith("scala/sys/") ||
                                    clsName.startsWith("net/minecraft/server/gui/MinecraftServerGui")
