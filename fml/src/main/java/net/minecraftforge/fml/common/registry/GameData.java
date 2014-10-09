@@ -26,9 +26,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
@@ -384,6 +386,10 @@ public class GameData {
                 }
             }
         }
+
+        // Clear State map for it's ready for us to register below.
+        GameData.BLOCKSTATE_TO_ID.clear();
+
         // process blocks and items in the world, blocks in the first pass, items in the second
         // blocks need to be added first for proper ItemBlock handling
         for (int pass = 0; pass < 2; pass++)
@@ -484,6 +490,17 @@ public class GameData {
         Loader.instance().fireRemapEvent(remaps);
         // The id map changed, ensure we apply object holders
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
+
+        // Rebuild the state map for all blocks. TODO: Clean this up to a better system when Block.BLOCK_STATE_IDS is cleaned up.
+        GameData.BLOCKSTATE_TO_ID.clear();
+        for (Block block : getMain().iBlockRegistry.typeSafeIterable())
+        {
+            int id = getMain().iBlockRegistry.getId(block);
+            for (IBlockState state : ((List<IBlockState>)block.getBlockState().getValidStates()))
+            {
+                GameData.BLOCKSTATE_TO_ID.put(state, id << 4 | block.getMetaFromState(state));
+            }
+        }
         return ImmutableList.of();
     }
 
@@ -789,6 +806,12 @@ public class GameData {
 
         useSlot(blockId);
         ((RegistryDelegate.Delegate<Block>) block.delegate).setName(name);
+
+        for (IBlockState state : ((List<IBlockState>)block.getBlockState().getValidStates()))
+        {
+            GameData.BLOCKSTATE_TO_ID.put(state, blockId << 4 | block.getMetaFromState(state));
+        }
+
         return blockId;
     }
 
@@ -932,5 +955,22 @@ public class GameData {
     public static Map getBlockItemMap()
     {
         return BLOCK_TO_ITEM;
+    }
+
+    private static ClearableObjectIntIdentityMap BLOCKSTATE_TO_ID = new ClearableObjectIntIdentityMap();
+    //Internal: DO NOT USE, will change without warning.
+    public static ObjectIntIdentityMap getBlockStateIDMap()
+    {
+        return BLOCKSTATE_TO_ID;
+    }
+
+    //Lets us clear the map so we can rebuild it.
+    private static class ClearableObjectIntIdentityMap extends ObjectIntIdentityMap
+    {
+        private void clear()
+        {
+            this.field_148749_a.clear();
+            this.field_148748_b.clear();
+        }
     }
 }
