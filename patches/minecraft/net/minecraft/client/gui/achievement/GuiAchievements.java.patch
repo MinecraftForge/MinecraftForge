@@ -89,3 +89,28 @@
              i5 = achievement2.field_75993_a * 24 - k;
              j5 = achievement2.field_75991_b * 24 - l;
  
+@@ -444,6 +471,7 @@
+ 
+                 this.field_146297_k.func_110434_K().func_110577_a(field_146561_C);
+ 
++                GL11.glEnable(GL11.GL_BLEND);// Forge: Specifically enable blend because it is needed here. And we fix Generic RenderItem's leakage of it.
+                 if (achievement2.func_75984_f())
+                 {
+                     this.func_73729_b(i5 - 2, j5 - 2, 26, 202, 26, 26);
+@@ -452,6 +480,7 @@
+                 {
+                     this.func_73729_b(i5 - 2, j5 - 2, 0, 202, 26, 26);
+                 }
++                GL11.glDisable(GL11.GL_BLEND); //Forge: Cleanup states we set.
+ 
+                 if (!this.field_146556_E.func_77442_b(achievement2))
+                 {
+@@ -460,7 +489,7 @@
+                     renderitem.field_77024_a = false;
+                 }
+ 
+-                GL11.glEnable(GL11.GL_LIGHTING);
++                GL11.glDisable(GL11.GL_LIGHTING); //Forge: Make sure Lighting is disabled. Fixes MC-33065
+                 GL11.glEnable(GL11.GL_CULL_FACE);
+                 renderitem.func_82406_b(this.field_146297_k.field_71466_p, this.field_146297_k.func_110434_K(), achievement2.field_75990_d, i5 + 3, j5 + 3);
+                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
