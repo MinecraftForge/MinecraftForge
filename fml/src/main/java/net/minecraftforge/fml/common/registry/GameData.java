@@ -490,17 +490,6 @@ public class GameData {
         Loader.instance().fireRemapEvent(remaps);
         // The id map changed, ensure we apply object holders
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
-
-        // Rebuild the state map for all blocks. TODO: Clean this up to a better system when Block.BLOCK_STATE_IDS is cleaned up.
-        GameData.BLOCKSTATE_TO_ID.clear();
-        for (Block block : getMain().iBlockRegistry.typeSafeIterable())
-        {
-            int id = getMain().iBlockRegistry.getId(block);
-            for (IBlockState state : ((List<IBlockState>)block.getBlockState().getValidStates()))
-            {
-                GameData.BLOCKSTATE_TO_ID.put(state, id << 4 | block.getMetaFromState(state));
-            }
-        }
         return ImmutableList.of();
     }
 
