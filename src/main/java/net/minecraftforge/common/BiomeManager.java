@@ -75,6 +75,8 @@ public class BiomeManager
         currentBiomes[BiomeType.ICY.ordinal()] = new TrackedList(list);
         list.clear();
         
+        currentBiomes[BiomeType.DESERT.ordinal()] = new TrackedList(list);
+        
         return currentBiomes;
     }
 
