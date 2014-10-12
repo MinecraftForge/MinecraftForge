@@ -7,6 +7,7 @@ import java.util.Set;
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.block.Block;
+import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -52,6 +53,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import net.minecraftforge.event.entity.player.PlayerEnchantEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -558,5 +560,12 @@ public class ForgeHooks
         }
         te.note = (byte)e.getVanillaNoteId();
         return true;
+    }
+    
+    public static PlayerEnchantEvent onEnchant(EntityPlayer player, List<EnchantmentData> enchantmentDataList, ItemStack itemstack)
+    {
+        PlayerEnchantEvent e = new PlayerEnchantEvent(player, enchantmentDataList, itemstack);
+        MinecraftForge.EVENT_BUS.post(e);
+        return e;
     }
 }
