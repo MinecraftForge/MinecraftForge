@@ -561,11 +561,4 @@ public class ForgeHooks
         te.note = (byte)e.getVanillaNoteId();
         return true;
     }
-    
-    public static PlayerEnchantEvent onEnchant(EntityPlayer player, List<EnchantmentData> enchantmentDataList, ItemStack itemstack)
-    {
-        PlayerEnchantEvent e = new PlayerEnchantEvent(player, enchantmentDataList, itemstack);
-        MinecraftForge.EVENT_BUS.post(e);
-        return e;
-    }
 }

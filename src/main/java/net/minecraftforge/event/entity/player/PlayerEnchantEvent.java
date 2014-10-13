@@ -8,8 +8,9 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 /**
-* This event is fired when the player chooses an enchantment to apply to the itemstack.<br/>
-* This event allows access to the enchantment that would be placed and access to the itemstack that would be receiving the enchantment
+* This event is fired when the player chooses an enchantment to apply to the itemstack.
+* This event allows access to the enchantment being placed and access to the itemstack being enchantment, and the player doing the enchanting.
+* If you want to cancel the event, not enchant, set the list to null.
 */
 public class PlayerEnchantEvent extends PlayerEvent
 {
