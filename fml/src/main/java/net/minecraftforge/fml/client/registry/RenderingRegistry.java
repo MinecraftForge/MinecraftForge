@@ -46,12 +46,7 @@ public class RenderingRegistry
      */
     public static void registerEntityRenderingHandler(Class<? extends Entity> entityClass, Render renderer)
     {
-        instance().entityRenderers.add(new EntityRendererInfo(entityClass, renderer));
-    }
-
-    @Deprecated public static RenderingRegistry instance()
-    {
-        return INSTANCE;
+        INSTANCE.entityRenderers.add(new EntityRendererInfo(entityClass, renderer));
     }
 
     private static class EntityRendererInfo
