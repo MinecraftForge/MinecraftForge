@@ -76,7 +76,7 @@ public class GuiConfig extends GuiScreen
      * is not an instance of GuiConfig.
      *
      * @param parentScreen the parent GuiScreen object
-     * @param configElements a List of IConfigProperty objects
+     * @param configElements a List of IConfigElement objects
      * @param modID the mod ID for the mod whose config settings will be edited
      * @param configID an identifier that will be passed to the OnConfigChanged and PostConfigChanged events. Setting this value will force
      *            the save action to be called when the Done button is pressed on this screen if any configElements were changed.
@@ -96,7 +96,7 @@ public class GuiConfig extends GuiScreen
      * If configID is not defined, the events will be posted if the parent gui is null or if the parent gui is not an instance of GuiConfig.
      *
      * @param parentScreen the parent GuiScreen object
-     * @param configElements a List of IConfigProperty objects
+     * @param configElements a List of IConfigElement objects
      * @param modID the mod ID for the mod whose config settings will be edited
      * @param allRequireWorldRestart send true if all configElements on this screen require a world restart
      * @param allRequireMcRestart send true if all configElements on this screen require MC to be restarted
@@ -114,7 +114,7 @@ public class GuiConfig extends GuiScreen
      * If configID is not defined, the events will be posted if the parent gui is null or if the parent gui is not an instance of GuiConfig.
      *
      * @param parentScreen the parent GuiScreen object
-     * @param configElements a List of IConfigProperty objects
+     * @param configElements a List of IConfigElement objects
      * @param modID the mod ID for the mod whose config settings will be edited
      * @param allRequireWorldRestart send true if all configElements on this screen require a world restart
      * @param allRequireMcRestart send true if all configElements on this screen require MC to be restarted
@@ -136,7 +136,7 @@ public class GuiConfig extends GuiScreen
      * gui is null or if the parent gui is not an instance of GuiConfig.
      *
      * @param parentScreen the parent GuiScreen object
-     * @param configElements a List of IConfigProperty objects
+     * @param configElements a List of IConfigElement objects
      * @param modID the mod ID for the mod whose config settings will be edited
      * @param configID an identifier that will be passed to the OnConfigChanged and PostConfigChanged events
      * @param allRequireWorldRestart send true if all configElements on this screen require a world restart
@@ -285,7 +285,7 @@ public class GuiConfig extends GuiScreen
     {
         if (mouseEvent != 0 || !this.entryList.func_148179_a(x, y, mouseEvent))
         {
-            this.entryList.mouseClicked(x, y, mouseEvent);
+            this.entryList.mouseClickedPassThru(x, y, mouseEvent);
             super.mouseClicked(x, y, mouseEvent);
         }
     }

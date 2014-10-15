@@ -243,14 +243,14 @@ public class GuiConfigEntries extends GuiListExtended
      * This method is a pass-through for IConfigEntry objects that contain GuiTextField elements. Called from the parent GuiConfig
      * screen.
      */
-    public void mouseClicked(int mouseX, int mouseY, int mouseEvent)
+    public void mouseClickedPassThru(int mouseX, int mouseY, int mouseEvent)
     {
         for (IConfigEntry entry : this.listEntries)
             entry.mouseClicked(mouseX, mouseY, mouseEvent);
     }
 
     /**
-     * This method is a pass-through for IConfigListEntry objects that need to perform actions when the containing GUI is closed.
+     * This method is a pass-through for IConfigEntry objects that need to perform actions when the containing GUI is closed.
      */
     public void onGuiClosed()
     {

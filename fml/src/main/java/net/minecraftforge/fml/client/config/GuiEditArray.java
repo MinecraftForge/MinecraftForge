@@ -153,7 +153,7 @@ public class GuiEditArray extends GuiScreen
     {
         if (mouseEvent != 0 || !this.entryList.func_148179_a(x, y, mouseEvent))
         {
-            this.entryList.mouseClicked(x, y, mouseEvent);
+            this.entryList.mouseClickedPassThru(x, y, mouseEvent);
             super.mouseClicked(x, y, mouseEvent);
         }
     }
