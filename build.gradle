@@ -49,6 +49,11 @@ jenkins {
     job = 'minecraftforge'
 }
 
+// crowdin stuff
+if (project.hasProperty("crowdinKey"))
+    tasks.getLocalizations.apiKey = project.crowdinKey
+
+
 launch4j {
     jreMinVersion = '1.6.0'
 }
