@@ -203,7 +203,7 @@ public class GuiEditArrayEntries extends GuiListExtended
             entry.updateCursorCounter();
     }
 
-    protected void mouseClicked(int x, int y, int mouseEvent)
+    protected void mouseClickedPassThru(int x, int y, int mouseEvent)
     {
         for (IArrayEntry entry : this.listEntries)
             entry.mouseClicked(x, y, mouseEvent);
