@@ -96,7 +96,7 @@
                  }
                  else
                  {
-@@ -101,4 +124,14 @@
+@@ -101,4 +124,12 @@
  
          return aint1;
      }
@@ -105,9 +105,7 @@
 +    {
 +        List<BiomeEntry> biomeList = biomes[type.ordinal()];
 +        int totalWeight = WeightedRandom.func_76272_a(biomeList);
-+        int rand = func_75902_a(totalWeight / 10) * 10;
-+        int weight = rand + (BiomeManager.isTypeListModded(type) ? func_75902_a(Math.min(10, totalWeight - rand)) : 0);
-+        
++        int weight = BiomeManager.isTypeListModded(type)?func_75902_a(totalWeight):func_75902_a(totalWeight / 10) * 10;
 +        return (BiomeEntry)WeightedRandom.getItem(biomeList, weight);
 +    }
  }
