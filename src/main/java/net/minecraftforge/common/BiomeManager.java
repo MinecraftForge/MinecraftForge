@@ -51,6 +51,12 @@ public class BiomeManager
         TrackedList<BiomeEntry>[] currentBiomes = new TrackedList[BiomeType.values().length];
         List list = new ArrayList();
         
+        list.add(new BiomeEntry(BiomeGenBase.desert, 10));
+        list.add(new BiomeEntry(BiomeGenBase.desertHills, 10));
+        
+        currentBiomes[BiomeType.DESERT.ordinal()] = new TrackedList(list);
+        list.clear();
+        
         list.add(new BiomeEntry(BiomeGenBase.forest, 10));
         list.add(new BiomeEntry(BiomeGenBase.roofedForest, 10));
         list.add(new BiomeEntry(BiomeGenBase.extremeHills, 10));
