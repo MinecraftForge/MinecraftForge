@@ -28,6 +28,8 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.permissions.PermissionsManager;
+import net.minecraftforge.permissions.opbasedimpl.OpPermSystem;
 import net.minecraftforge.server.command.ForgeCommand;
 
 import com.google.common.collect.ImmutableList;
@@ -303,6 +305,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     {
         evt.registerServerCommand(new ForgeCommand(evt.getServer()));
     }
+    
     @Override
     public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info)
     {
