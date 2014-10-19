@@ -314,7 +314,16 @@ public class ForgeHooksClient
         return modelbiped == null ? _default : modelbiped;
     }
 
-    static int stencilBits = 0;
+    public static boolean isFramebufferStencilAllowed()
+    {
+        return Boolean.parseBoolean(System.getProperty("forge.fboStencilAllowed", "true"));
+    }
+
+    public static void setupFramebufferStencilBitPool(boolean fboEnabled)
+    {
+        MinecraftForgeClient.setStencilPoolSize(fboEnabled && isFramebufferStencilAllowed() ? 8 : 0);
+    }
+
     public static void createDisplay() throws LWJGLException
     {
         ImageIO.setUseCache(false); //Disable on-disc stream cache should speed up texture pack reloading.
@@ -325,19 +334,21 @@ public class ForgeHooksClient
             //According to ChickenBones, Mumfrey and Pig The only real use is in the FBO.
             //So lets default to normal init to fix the issues yet add the bits to the FBO.
             Display.create(format);
-            stencilBits = 0;
+            
+            // set pool size to zero for now - may be updated later, once OpenGL capabilites are known
+            MinecraftForgeClient.setStencilPoolSize(0);
             return;
         }
         try
         {
             //TODO: Figure out how to determine the max bits.
             Display.create(format.withStencilBits(8));
-            stencilBits = 8;
+            MinecraftForgeClient.setStencilPoolSize(8);
         }
         catch(LWJGLException e)
         {
             Display.create(format);
-            stencilBits = 0;
+            MinecraftForgeClient.setStencilPoolSize(0);
         }
     }
 

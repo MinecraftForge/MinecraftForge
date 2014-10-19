@@ -4,7 +4,7 @@
              if (this.field_147619_e)
              {
                  OpenGlHelper.func_153176_h(OpenGlHelper.field_153199_f, this.field_147624_h);
-+                if (net.minecraftforge.client.MinecraftForgeClient.getStencilBits() == 0)
++                if (!net.minecraftforge.client.ForgeHooksClient.isFramebufferStencilAllowed())
 +                {
                  OpenGlHelper.func_153186_a(OpenGlHelper.field_153199_f, 33190, this.field_147622_a, this.field_147620_b);
                  OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, OpenGlHelper.field_153201_h, OpenGlHelper.field_153199_f, this.field_147624_h);

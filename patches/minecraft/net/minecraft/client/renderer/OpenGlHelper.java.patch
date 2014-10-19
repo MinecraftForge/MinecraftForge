@@ -11,7 +11,16 @@
      public static void func_77474_a()
      {
          ContextCapabilities contextcapabilities = GLContext.getCapabilities();
-@@ -688,6 +692,12 @@
+@@ -182,6 +186,8 @@
+ 
+         field_148824_g = field_148823_f && field_153213_x;
+         field_153197_d = GL11.glGetString(GL11.GL_VENDOR).toLowerCase().contains("nvidia");
++
++        net.minecraftforge.client.ForgeHooksClient.setupFramebufferStencilBitPool(func_148822_b());
+     }
+ 
+     public static boolean func_153193_b()
+@@ -688,6 +694,12 @@
          {
              GL13.glMultiTexCoord2f(p_77475_0_, p_77475_1_, p_77475_2_);
          }

@@ -5,7 +5,6 @@
 
 package net.minecraftforge.client;
 
-import java.util.BitSet;
 import java.util.IdentityHashMap;
 
 import com.google.common.collect.Maps;
@@ -46,16 +45,16 @@ public class MinecraftForgeClient
         return ForgeHooksClient.renderPass;
     }
 
+    private static final StencilBitPool stencilBitPool = new StencilBitPool();
+
+    static void setStencilPoolSize(int bitCount)
+    {
+        stencilBitPool.reset(bitCount);
+    }
+    
     public static int getStencilBits()
     {
-        return ForgeHooksClient.stencilBits;
-    }
-
-
-    private static BitSet stencilBits = new BitSet(getStencilBits());
-    static
-    {
-        stencilBits.set(0,getStencilBits());
+        return stencilBitPool.getBitPoolSize();
     }
 
     /**
@@ -65,12 +64,7 @@ public class MinecraftForgeClient
      */
     public static int reserveStencilBit()
     {
-        int bit = stencilBits.nextSetBit(0);
-        if (bit >= 0)
-        {
-            stencilBits.clear(bit);
-        }
-        return bit;
+        return stencilBitPool.reserveStencilBit();
     }
 
     /**
@@ -80,9 +74,6 @@ public class MinecraftForgeClient
      */
     public static void releaseStencilBit(int bit)
     {
-        if (bit >= 0 && bit < getStencilBits())
-        {
-            stencilBits.set(bit);
-        }
+        stencilBitPool.releaseStencilBit(bit);
     }
 }
