@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/layer/GenLayerBiome.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/layer/GenLayerBiome.java
-@@ -1,29 +1,49 @@
+@@ -1,29 +1,52 @@
  package net.minecraft.world.gen.layer;
  
 +import java.util.ArrayList;
@@ -18,10 +18,7 @@
 -    private BiomeGenBase[] field_151621_d;
 -    private BiomeGenBase[] field_151622_e;
 -    private BiomeGenBase[] field_151620_f;
-+    private List<BiomeEntry> desertBiomes = new ArrayList<BiomeEntry>();
-+    private List<BiomeEntry> warmBiomes = new ArrayList<BiomeEntry>();
-+    private List<BiomeEntry> coolBiomes = new ArrayList<BiomeEntry>();
-+    private List<BiomeEntry> icyBiomes = new ArrayList<BiomeEntry>();
++    private List<BiomeEntry>[] biomes = new ArrayList[BiomeManager.BiomeType.values().length];
 +    
      private static final String __OBFID = "CL_00000555";
  
@@ -36,60 +33,79 @@
          this.field_75909_a = p_i2122_3_;
 -
 +        
-+        this.desertBiomes.addAll(BiomeManager.desertBiomes);
-+        this.warmBiomes.addAll(BiomeManager.warmBiomes);
-+        this.coolBiomes.addAll(BiomeManager.coolBiomes);
-+        this.icyBiomes.addAll(BiomeManager.icyBiomes);
++        for (BiomeManager.BiomeType type : BiomeManager.BiomeType.values())
++        {
++            com.google.common.collect.ImmutableList<BiomeEntry> biomesToAdd = BiomeManager.getBiomes(type);
++            int idx = type.ordinal();
++            
++            if (biomes[idx] == null) biomes[idx] = new ArrayList<BiomeEntry>();
++            if (biomesToAdd != null) biomes[idx].addAll(biomesToAdd);
++        }
++        
++        int desertIdx = BiomeManager.BiomeType.DESERT.ordinal();
 +        
          if (p_i2122_4_ == WorldType.field_77136_e)
          {
 -            this.field_151623_c = new BiomeGenBase[] {BiomeGenBase.field_76769_d, BiomeGenBase.field_76767_f, BiomeGenBase.field_76770_e, BiomeGenBase.field_76780_h, BiomeGenBase.field_76772_c, BiomeGenBase.field_76768_g};
-+            desertBiomes.add(new BiomeEntry(BiomeGenBase.field_76769_d, 10));
-+            desertBiomes.add(new BiomeEntry(BiomeGenBase.field_76767_f, 10));
-+            desertBiomes.add(new BiomeEntry(BiomeGenBase.field_76770_e, 10));
-+            desertBiomes.add(new BiomeEntry(BiomeGenBase.field_76780_h, 10));
-+            desertBiomes.add(new BiomeEntry(BiomeGenBase.field_76772_c, 10));
-+            desertBiomes.add(new BiomeEntry(BiomeGenBase.field_76768_g, 10));
++            biomes[desertIdx].add(new BiomeEntry(BiomeGenBase.field_76769_d, 10));
++            biomes[desertIdx].add(new BiomeEntry(BiomeGenBase.field_76767_f, 10));
++            biomes[desertIdx].add(new BiomeEntry(BiomeGenBase.field_76770_e, 10));
++            biomes[desertIdx].add(new BiomeEntry(BiomeGenBase.field_76780_h, 10));
++            biomes[desertIdx].add(new BiomeEntry(BiomeGenBase.field_76772_c, 10));
++            biomes[desertIdx].add(new BiomeEntry(BiomeGenBase.field_76768_g, 10));
          }
 +        else
 +        {
-+            desertBiomes.add(new BiomeEntry(BiomeGenBase.field_76769_d, 30));
-+            desertBiomes.add(new BiomeEntry(BiomeGenBase.field_150588_X, 20));
-+            desertBiomes.add(new BiomeEntry(BiomeGenBase.field_76772_c, 10));
++            biomes[desertIdx].add(new BiomeEntry(BiomeGenBase.field_76769_d, 30));
++            biomes[desertIdx].add(new BiomeEntry(BiomeGenBase.field_150588_X, 20));
++            biomes[desertIdx].add(new BiomeEntry(BiomeGenBase.field_76772_c, 10));
 +        }
      }
  
      public int[] func_75904_a(int p_75904_1_, int p_75904_2_, int p_75904_3_, int p_75904_4_)
-@@ -63,7 +83,7 @@
+@@ -63,7 +86,7 @@
                      }
                      else
                      {
 -                        aint1[j1 + i1 * p_75904_3_] = this.field_151623_c[this.func_75902_a(this.field_151623_c.length)].field_76756_M;
-+                        aint1[j1 + i1 * p_75904_3_] = ((BiomeEntry)WeightedRandom.getItem(this.desertBiomes, (int)(this.nextLong(WeightedRandom.func_76272_a(this.desertBiomes) / 10) * 10))).biome.field_76756_M;
++                        aint1[j1 + i1 * p_75904_3_] = getWeightedBiomeEntry(BiomeManager.BiomeType.DESERT).biome.field_76756_M;
                      }
                  }
                  else if (k1 == 2)
-@@ -74,7 +94,7 @@
+@@ -74,7 +97,7 @@
                      }
                      else
                      {
 -                        aint1[j1 + i1 * p_75904_3_] = this.field_151621_d[this.func_75902_a(this.field_151621_d.length)].field_76756_M;
-+                        aint1[j1 + i1 * p_75904_3_] = ((BiomeEntry)WeightedRandom.getItem(this.warmBiomes, (int)(this.nextLong(WeightedRandom.func_76272_a(this.warmBiomes) / 10) * 10))).biome.field_76756_M;
++                        aint1[j1 + i1 * p_75904_3_] = getWeightedBiomeEntry(BiomeManager.BiomeType.WARM).biome.field_76756_M;
                      }
                  }
                  else if (k1 == 3)
-@@ -85,12 +105,12 @@
+@@ -85,12 +108,12 @@
                      }
                      else
                      {
 -                        aint1[j1 + i1 * p_75904_3_] = this.field_151622_e[this.func_75902_a(this.field_151622_e.length)].field_76756_M;
-+                        aint1[j1 + i1 * p_75904_3_] = ((BiomeEntry)WeightedRandom.getItem(this.coolBiomes, (int)(this.nextLong(WeightedRandom.func_76272_a(this.coolBiomes) / 10) * 10))).biome.field_76756_M;
++                        aint1[j1 + i1 * p_75904_3_] = getWeightedBiomeEntry(BiomeManager.BiomeType.COOL).biome.field_76756_M;
                      }
                  }
                  else if (k1 == 4)
                  {
 -                    aint1[j1 + i1 * p_75904_3_] = this.field_151620_f[this.func_75902_a(this.field_151620_f.length)].field_76756_M;
-+                    aint1[j1 + i1 * p_75904_3_] = ((BiomeEntry)WeightedRandom.getItem(this.icyBiomes, (int)(this.nextLong(WeightedRandom.func_76272_a(this.icyBiomes) / 10) * 10))).biome.field_76756_M;
++                    aint1[j1 + i1 * p_75904_3_] = getWeightedBiomeEntry(BiomeManager.BiomeType.ICY).biome.field_76756_M;
                  }
                  else
                  {
+@@ -101,4 +124,12 @@
+ 
+         return aint1;
+     }
++    
++    protected BiomeEntry getWeightedBiomeEntry(BiomeManager.BiomeType type)
++    {
++        List<BiomeEntry> biomeList = biomes[type.ordinal()];
++        int totalWeight = WeightedRandom.func_76272_a(biomeList);
++        int weight = BiomeManager.isTypeListModded(type)?func_75902_a(totalWeight):func_75902_a(totalWeight / 10) * 10;
++        return (BiomeEntry)WeightedRandom.getItem(biomeList, weight);
++    }
+ }

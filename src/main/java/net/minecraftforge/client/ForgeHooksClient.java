@@ -325,7 +325,7 @@ public class ForgeHooksClient
             //According to ChickenBones, Mumfrey and Pig The only real use is in the FBO.
             //So lets default to normal init to fix the issues yet add the bits to the FBO.
             Display.create(format);
-            stencilBits = 8;
+            stencilBits = 0;
             return;
         }
         try

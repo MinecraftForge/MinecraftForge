@@ -51,6 +51,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 
 public class ForgeModContainer extends DummyModContainer implements WorldAccessContainer
@@ -251,6 +252,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 ForgeChunkManager.loadConfiguration();
             }
         }
+    }
+    
+    @SubscribeEvent
+    public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
+    {
+        UsernameCache.setUsername(event.player.getGameProfile().getId(), event.player.getGameProfile().getName());
     }
 
     @Override

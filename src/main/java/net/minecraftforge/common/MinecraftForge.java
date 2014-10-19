@@ -53,6 +53,8 @@ public class MinecraftForge
 
        //Force these classes to be defined, Should prevent derp error hiding.
        new CrashReport("ThisIsFake", new Exception("Not real"));
+       
+       UsernameCache.load();
    }
 
    public static String getBrandingVersion()
