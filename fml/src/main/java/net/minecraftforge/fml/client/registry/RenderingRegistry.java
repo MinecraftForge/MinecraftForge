@@ -9,23 +9,15 @@
  * Contributors:
  *     cpw - implementation
  */
-
 package net.minecraftforge.fml.client.registry;
 
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderBiped;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.world.IBlockAccess;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.ObjectArrays;
 
 /**
  * @author cpw
@@ -60,13 +52,11 @@ public class RenderingRegistry
         private Render renderer;
     }
 
-    /*
-    public void loadEntityRenderers(Map<Class<? extends Entity>, Render> rendererMap)
+    public static void loadEntityRenderers(Map<Class<? extends Entity>, Render> rendererMap)
     {
-        for (EntityRendererInfo info : entityRenderers)
+        for (EntityRendererInfo info : INSTANCE.entityRenderers)
         {
             rendererMap.put(info.target, info.renderer);
-            info.renderer.setRenderManager(Minecraft.getMinecraft().func_175598_ae());
         }
-    }*/
+    }
 }
