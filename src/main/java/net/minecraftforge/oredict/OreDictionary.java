@@ -125,6 +125,9 @@ public class OreDictionary
             registerOre("record",      Items.record_ward);
             registerOre("record",      Items.record_11);
             registerOre("record",      Items.record_wait);
+            registerOre("chestWood", Blocks.chest);
+            registerOre("chestEnder", Blocks.ender_chest);
+            registerOre("chestTrapped", Blocks.trapped_chest);
         }
 
         // Build our list of items to replace with ore tags
@@ -145,6 +148,9 @@ public class OreDictionary
         replacements.put(new ItemStack(Blocks.glowstone), "glowstone");
         replacements.put(new ItemStack(Items.slime_ball), "slimeball");
         replacements.put(new ItemStack(Blocks.glass), "blockGlassColorless");
+        replacements.put(new ItemStack(Blocks.chest), "chestWood");
+        replacements.put(new ItemStack(Blocks.ender_chest), "chestEnder");
+        replacements.put(new ItemStack(Blocks.trapped_chest), "chestTrapped");
 
         // Register dyes
         String[] dyes =
