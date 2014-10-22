@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/OpenGlHelper.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/OpenGlHelper.java
+@@ -27,7 +27,7 @@
+     public static boolean field_148827_a;
+     public static int field_77478_a;
+     public static int field_77476_b;
+-    public static boolean field_153197_d;
++    public static boolean isNvidiaCard;
+     public static int field_153198_e;
+     public static int field_153199_f;
+     public static int field_153200_g;
 @@ -54,6 +54,10 @@
      private static String field_153196_B = "";
      private static final String __OBFID = "CL_00001179";
@@ -11,6 +20,15 @@
      public static void func_77474_a()
      {
          ContextCapabilities contextcapabilities = GLContext.getCapabilities();
+@@ -181,7 +185,7 @@
+         }
+ 
+         field_148824_g = field_148823_f && field_153213_x;
+-        field_153197_d = GL11.glGetString(GL11.GL_VENDOR).toLowerCase().contains("nvidia");
++        isNvidiaCard = GL11.glGetString(GL11.GL_VENDOR).toLowerCase().contains("nvidia");
+     }
+ 
+     public static boolean func_153193_b()
 @@ -688,6 +692,12 @@
          {
              GL13.glMultiTexCoord2f(p_77475_0_, p_77475_1_, p_77475_2_);
