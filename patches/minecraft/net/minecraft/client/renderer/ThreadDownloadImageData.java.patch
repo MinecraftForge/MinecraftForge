@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/ThreadDownloadImageData.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/ThreadDownloadImageData.java
+@@ -120,6 +120,7 @@
+                 try
+                 {
+                     httpurlconnection = (HttpURLConnection)(new URL(ThreadDownloadImageData.this.field_110562_b)).openConnection(Minecraft.func_71410_x().func_110437_J());
++                    httpurlconnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; ru; rv:1.9.0.11) Gecko/2009060215 Firefox/3.0.11 (.NET CLR 3.5.30729)");
+                     httpurlconnection.setDoInput(true);
+                     httpurlconnection.setDoOutput(false);
+                     httpurlconnection.connect();
