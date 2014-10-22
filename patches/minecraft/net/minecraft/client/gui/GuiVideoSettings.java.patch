@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiVideoSettings.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiVideoSettings.java
+@@ -28,7 +28,7 @@
+         this.field_146292_n.clear();
+         this.field_146292_n.add(new GuiButton(200, this.field_146294_l / 2 - 100, this.field_146295_m - 27, I18n.func_135052_a("gui.done", new Object[0])));
+ 
+-        if (OpenGlHelper.field_153197_d)
++        if (OpenGlHelper.isNvidiaCard)
+         {
+             this.field_146501_h = new GuiOptionsRowList(this.field_146297_k, this.field_146294_l, this.field_146295_m, 32, this.field_146295_m - 32, 25, field_146502_i);
+         }

@@ -123,6 +123,15 @@
              }
          }
      }
+@@ -548,7 +580,7 @@
+ 
+             if (this.field_70154_o != null && !this.field_70154_o.field_70128_L)
+             {
+-                axisalignedbb = this.field_70121_D.func_111270_a(this.field_70154_o.field_70121_D).func_72314_b(1.0D, 0.0D, 1.0D);
++                axisalignedbb = this.field_70121_D.getLargerBB(this.field_70154_o.field_70121_D).func_72314_b(1.0D, 0.0D, 1.0D);
+             }
+             else
+             {
 @@ -595,11 +627,15 @@
  
      public void func_70645_a(DamageSource p_70645_1_)

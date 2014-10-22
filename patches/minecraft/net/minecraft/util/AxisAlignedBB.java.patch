@@ -1,0 +1,24 @@
+--- ../src-base/minecraft/net/minecraft/util/AxisAlignedBB.java
++++ ../src-work/minecraft/net/minecraft/util/AxisAlignedBB.java
+@@ -89,14 +89,14 @@
+         return func_72330_a(d3, d4, d5, d6, d7, d8);
+     }
+ 
+-    public AxisAlignedBB func_111270_a(AxisAlignedBB p_111270_1_)
++    public AxisAlignedBB getLargerBB(AxisAlignedBB box2)
+     {
+-        double d0 = Math.min(this.field_72340_a, p_111270_1_.field_72340_a);
+-        double d1 = Math.min(this.field_72338_b, p_111270_1_.field_72338_b);
+-        double d2 = Math.min(this.field_72339_c, p_111270_1_.field_72339_c);
+-        double d3 = Math.max(this.field_72336_d, p_111270_1_.field_72336_d);
+-        double d4 = Math.max(this.field_72337_e, p_111270_1_.field_72337_e);
+-        double d5 = Math.max(this.field_72334_f, p_111270_1_.field_72334_f);
++        double d0 = Math.min(this.field_72340_a, box2.field_72340_a);
++        double d1 = Math.min(this.field_72338_b, box2.field_72338_b);
++        double d2 = Math.min(this.field_72339_c, box2.field_72339_c);
++        double d3 = Math.max(this.field_72336_d, box2.field_72336_d);
++        double d4 = Math.max(this.field_72337_e, box2.field_72337_e);
++        double d5 = Math.max(this.field_72334_f, box2.field_72334_f);
+         return func_72330_a(d0, d1, d2, d3, d4, d5);
+     }
+ 

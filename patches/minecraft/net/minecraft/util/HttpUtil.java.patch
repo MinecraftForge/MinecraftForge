@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/util/HttpUtil.java
++++ ../src-work/minecraft/net/minecraft/util/HttpUtil.java
+@@ -89,6 +89,8 @@
+ 
+             HttpURLConnection httpurlconnection = (HttpURLConnection)p_151225_0_.openConnection(proxy);
+             httpurlconnection.setRequestMethod("POST");
++            //User-Agent header to make sure we don't run into 403s
++            httpurlconnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; ru; rv:1.9.0.11) Gecko/2009060215 Firefox/3.0.11 (.NET CLR 3.5.30729)");
+             httpurlconnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+             httpurlconnection.setRequestProperty("Content-Length", "" + p_151225_1_.getBytes().length);
+             httpurlconnection.setRequestProperty("Content-Language", "en-US");
+@@ -309,6 +311,8 @@
+     {
+         HttpURLConnection httpurlconnection = (HttpURLConnection)p_152755_0_.openConnection();
+         httpurlconnection.setRequestMethod("GET");
++        //User-Agent header to make sure we don't run into 403s
++        httpurlconnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; ru; rv:1.9.0.11) Gecko/2009060215 Firefox/3.0.11 (.NET CLR 3.5.30729)");
+         BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(httpurlconnection.getInputStream()));
+         StringBuilder stringbuilder = new StringBuilder();
+         String s;
