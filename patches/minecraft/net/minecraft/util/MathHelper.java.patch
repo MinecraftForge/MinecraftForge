@@ -1,0 +1,60 @@
+--- ../src-base/minecraft/net/minecraft/util/MathHelper.java
++++ ../src-work/minecraft/net/minecraft/util/MathHelper.java
+@@ -2,23 +2,41 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.util.Random;
++import java.util.function.Function;
+ 
++import net.minecraftforge.common.util.ObjectCache;
++
+ public class MathHelper
+ {
+-    private static float[] field_76144_a = new float[65536];
++    //new object cache.
++    private static ObjectCache<Integer, Float> sinCache;
+     private static final int[] field_151242_b;
+     private static final String __OBFID = "CL_00001496";
+ 
+     public static final float func_76126_a(float p_76126_0_)
+     {
+-        return field_76144_a[(int)(p_76126_0_ * 10430.378F) & 65535];
++        return sinCache.getObject((int) (p_76126_0_ * 10430.378f) & 65535);
+     }
+ 
+     public static final float func_76134_b(float p_76134_0_)
+     {
+-        return field_76144_a[(int)(p_76134_0_ * 10430.378F + 16384.0F) & 65535];
++        return sinCache.getObject((int) (p_76134_0_ * 10430.378f + 16384.0f) & 65535);
+     }
++    /**
++     * For the new object cache.
++     * Takes an Integer (cache "key") input and spits out a Float (cache "value") output.
++     * Used to calculate a sin() value for maths
++     * 
++     * @param num key
++     * @return value
++     */
++    private static final Function<Integer, Float> calcSin = new Function<Integer, Float>() {
++        public Float apply(Integer num) {
++            return (float) Math.sin((double) num * Math.PI * 2.0d / 65536.0d);
++        }
++    };
+ 
+     public static final float func_76129_c(float p_76129_0_)
+     {
+@@ -319,10 +337,8 @@
+ 
+     static
+     {
+-        for (int var0 = 0; var0 < 65536; ++var0)
+-        {
+-            field_76144_a[var0] = (float)Math.sin((double)var0 * Math.PI * 2.0D / 65536.0D);
+-        }
++        //use new object cache
++        sinCache = new ObjectCache<Integer, Float>(calcSin);
+ 
+         field_151242_b = new int[] {0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9};
+     }
