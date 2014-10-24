@@ -1,6 +1,46 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/CraftingManager.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/CraftingManager.java
-@@ -299,7 +299,7 @@
+@@ -5,6 +5,7 @@
+ import java.util.Comparator;
+ import java.util.HashMap;
+ import java.util.List;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.init.Items;
+@@ -168,6 +169,7 @@
+ 
+     public ShapedRecipes func_92103_a(ItemStack p_92103_1_, Object ... p_92103_2_)
+     {
++        if(p_92103_1_ == null) throw new IllegalArgumentException("Found ItemStack with no associated item");
+         String s = "";
+         int i = 0;
+         int j = 0;
+@@ -213,6 +215,7 @@
+             }
+             else if (p_92103_2_[i + 1] instanceof ItemStack)
+             {
++                if(p_92103_2_[i + 1] == null) throw new IllegalArgumentException("Found ItemStack with no associated item.");
+                 itemstack1 = (ItemStack)p_92103_2_[i + 1];
+             }
+ 
+@@ -242,6 +245,7 @@
+ 
+     public void func_77596_b(ItemStack p_77596_1_, Object ... p_77596_2_)
+     {
++        if(p_77596_1_ == null) throw new IllegalArgumentException("Found ItemStack with no associated item");
+         ArrayList arraylist = new ArrayList();
+         Object[] aobject = p_77596_2_;
+         int i = p_77596_2_.length;
+@@ -252,6 +256,7 @@
+ 
+             if (object1 instanceof ItemStack)
+             {
++                if(object1 == null) throw new IllegalArgumentException("Found ItemStack with no associated item");
+                 arraylist.add(((ItemStack)object1).func_77946_l());
+             }
+             else if (object1 instanceof Item)
+@@ -299,7 +304,7 @@
              }
          }
  

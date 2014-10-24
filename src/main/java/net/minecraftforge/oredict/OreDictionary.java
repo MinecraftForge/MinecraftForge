@@ -447,6 +447,7 @@ public class OreDictionary
      */
     private static void registerOreImpl(String name, ItemStack ore)
     {
+        if(ore.getItem() == null) throw new IllegalArgumentException("Found ItemStack with no associated item.");
         if ("Unknown".equals(name)) return; //prevent bad IDs.
 
         int oreID = getOreID(name);
