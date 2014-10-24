@@ -72,6 +72,7 @@ public class ChestGenHooks
 
     static void addDungeonLoot(ChestGenHooks dungeon, ItemStack item, int weight, int min, int max)
     {
+        if(item.getItem() == null) throw new IllegalArgumentException("Found Item Stack with no associated item");
         dungeon.addItem(new WeightedRandomChestContent(item, min, max, weight));
     }
 
