@@ -3,6 +3,7 @@ package net.minecraftforge.event;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import net.minecraft.block.Block;
@@ -16,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -36,6 +38,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.BlockEvent.MultiPlaceEvent;
 import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -216,4 +219,15 @@ public class ForgeEventFactory
         File dir = ObfuscationReflectionHelper.getPrivateValue(SaveHandler.class, sh, "playersDirectory", "field_"+"75771_c");
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.LoadFromFile(player, dir, uuidString));
     }
+
+    public static boolean onExplosionStart(World world, Explosion explosion)
+    {
+        return MinecraftForge.EVENT_BUS.post(new ExplosionEvent.Start(world, explosion));
+    }
+
+    public static void onExplosionDetonate(World world, Explosion explosion, List entityList)
+    {
+        MinecraftForge.EVENT_BUS.post(new ExplosionEvent.Detonate(world, explosion, entityList));
+    }
+
 }
