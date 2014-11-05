@@ -56,7 +56,7 @@ public class ModDiscoverer
         if (minecraftSources.length == 1 && minecraftSources[0].isFile())
         {
             FMLLog.fine("Minecraft is a file at %s, loading", minecraftSources[0].getAbsolutePath());
-            candidates.add(new ModCandidate(minecraftSources[0], minecraftSources[0], ContainerType.JAR, true, true));
+            addCandidate(new ModCandidate(minecraftSources[0], minecraftSources[0], ContainerType.JAR, true, true));
         }
         else
         {
@@ -71,13 +71,13 @@ public class ModDiscoverer
                     else
                     {
                         FMLLog.fine("Found a minecraft related file at %s, examining for mod candidates", minecraftSources[i].getAbsolutePath());
-                        candidates.add(new ModCandidate(minecraftSources[i], minecraftSources[i], ContainerType.JAR, i==0, true));
+                        addCandidate(new ModCandidate(minecraftSources[i], minecraftSources[i], ContainerType.JAR, i==0, true));
                     }
                 }
                 else if (minecraftSources[i].isDirectory())
                 {
                     FMLLog.fine("Found a minecraft related directory at %s, examining for mod candidates", minecraftSources[i].getAbsolutePath());
-                    candidates.add(new ModCandidate(minecraftSources[i], minecraftSources[i], ContainerType.DIR, i==0, true));
+                    addCandidate(new ModCandidate(minecraftSources[i], minecraftSources[i], ContainerType.DIR, i==0, true));
                 }
             }
         }
@@ -99,7 +99,7 @@ public class ModDiscoverer
             else if (modFile.isDirectory())
             {
                 FMLLog.fine("Found a candidate mod directory %s", modFile.getName());
-                candidates.add(new ModCandidate(modFile, modFile, ContainerType.DIR));
+                addCandidate(new ModCandidate(modFile, modFile, ContainerType.DIR));
             }
             else
             {
@@ -108,7 +108,7 @@ public class ModDiscoverer
                 if (matcher.matches())
                 {
                     FMLLog.fine("Found a candidate zip or jar file %s", matcher.group(0));
-                    candidates.add(new ModCandidate(modFile, modFile, ContainerType.JAR));
+                    addCandidate(new ModCandidate(modFile, modFile, ContainerType.JAR));
                 }
                 else
                 {
@@ -157,5 +157,18 @@ public class ModDiscoverer
     public List<File> getNonModLibs()
     {
         return nonModLibs;
+    }
+
+    private void addCandidate(ModCandidate candidate)
+    {
+        for (ModCandidate c : candidates)
+        {
+            if (c.getModContainer().equals(candidate.getModContainer()))
+            {
+                FMLLog.finer("  Skipping already in list %s", candidate.getModContainer());
+                return;
+            }
+        }
+        candidates.add(candidate);
     }
 }
