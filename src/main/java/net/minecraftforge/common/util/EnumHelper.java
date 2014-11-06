@@ -21,6 +21,7 @@ import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.gen.structure.StructureStrongholdPieces.Stronghold.Door;
 import net.minecraftforge.classloading.FMLForgePlugin;
+import net.minecraftforge.event.world.NoteBlockEvent.Instrument;
 
 public class EnumHelper
 {
@@ -48,7 +49,8 @@ public class EnumHelper
         {EnumSkyBlock.class, int.class},
         {EnumStatus.class},
         {ToolMaterial.class, int.class, int.class, float.class, float.class, int.class},
-        {EnumRarity.class, EnumChatFormatting.class, String.class}
+        {EnumRarity.class, EnumChatFormatting.class, String.class},
+        {Instrument.class, String.class}
     };
 
     public static EnumAction addAction(String name)
@@ -107,6 +109,22 @@ public class EnumHelper
     public static EnumRarity addRarity(String name, EnumChatFormatting color, String displayName)
     {
         return addEnum(EnumRarity.class, name, color, displayName);
+    }
+    public static Instrument addInstrument(String name, String soundName)
+    {
+        Instrument inst = addEnum(Instrument.class, name, soundName);
+        try
+        {
+            Field f = Instrument.class.getDeclaredField("values");
+            f.setAccessible(true);
+            f.set(null, Instrument.values()); // update values
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage(), e);
+        }
+        return inst;
     }
 
     private static void setup()
