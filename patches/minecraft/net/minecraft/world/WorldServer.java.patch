@@ -204,7 +204,35 @@
      }
  
      public void func_72923_a(Entity p_72923_1_)
-@@ -1002,6 +1047,11 @@
+@@ -941,19 +986,23 @@
+             this.field_73061_a.func_71203_ab().func_148537_a(new S2BPacketChangeGameState(8, this.field_73017_q), this.field_73011_w.field_76574_g);
+         }
+ 
++        /*The function in use here has been replaced in order to only send the weather info to players in the correct dimension,
++        rather than to all players on the server. This is what causes the client-side rain, as the
++        client believes that it has started raining locally, rather than in another dimension.
++        */
+         if (flag != this.func_72896_J())
+         {
+             if (flag)
+             {
+-                this.field_73061_a.func_71203_ab().func_148540_a(new S2BPacketChangeGameState(2, 0.0F));
++                this.field_73061_a.func_71203_ab().func_148537_a(new S2BPacketChangeGameState(2, 0.0F), this.field_73011_w.field_76574_g);
+             }
+             else
+             {
+-                this.field_73061_a.func_71203_ab().func_148540_a(new S2BPacketChangeGameState(1, 0.0F));
++                this.field_73061_a.func_71203_ab().func_148537_a(new S2BPacketChangeGameState(1, 0.0F), this.field_73011_w.field_76574_g);
+             }
+ 
+-            this.field_73061_a.func_71203_ab().func_148540_a(new S2BPacketChangeGameState(7, this.field_73004_o));
+-            this.field_73061_a.func_71203_ab().func_148540_a(new S2BPacketChangeGameState(8, this.field_73017_q));
++            this.field_73061_a.func_71203_ab().func_148537_a(new S2BPacketChangeGameState(7, this.field_73004_o), this.field_73011_w.field_76574_g);
++            this.field_73061_a.func_71203_ab().func_148537_a(new S2BPacketChangeGameState(8, this.field_73017_q), this.field_73011_w.field_76574_g);
+         }
+     }
+ 
+@@ -1002,6 +1051,11 @@
          }
      }
  
