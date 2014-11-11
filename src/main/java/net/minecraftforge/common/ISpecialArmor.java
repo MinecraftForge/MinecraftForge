@@ -15,8 +15,8 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 
 /**
- * This interface is to be implemented by ItemArmor classes. It will allow to
- * modify computation of damage and health loss. Computation will be called
+ * This interface is to be implemented by ItemArmor classes. It will allow the
+ * modification of the computation of damage and health loss. Computation will be called
  * before the actual armor computation, which can then be cancelled.
  *
  * @see ItemArmor
@@ -26,9 +26,9 @@ public interface ISpecialArmor
     /**
      * Retrieves the modifiers to be used when calculating armor damage.
      *
-     * Armor will higher priority will have damage applied to them before
+     * Armor with higher priority will have damage applied to it before
      * lower priority ones. If there are multiple pieces of armor with the
-     * same priority, damage will be distributed between them based on there
+     * same priority, damage will be distributed between them based on their
      * absorption ratio.
      *
      * @param player The entity wearing the armor.
