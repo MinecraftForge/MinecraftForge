@@ -59,10 +59,10 @@ public class DimensionManager
     }
 
     /**
-     * Unregisters a Provider type, and returns a array of all dimensions that are
+     * Unregisters a Provider type, and returns an array of all dimensions that are
      * registered to this provider type.
      * If the return size is greater then 0, it is required that the caller either
-     * change those dimensions's registered type, or replace this type before the
+     * changes those dimensions' registered type, or replace this type before the
      * world is attempted to load, else the loader will throw an exception.
      *
      * @param id The provider type ID to unreigster
