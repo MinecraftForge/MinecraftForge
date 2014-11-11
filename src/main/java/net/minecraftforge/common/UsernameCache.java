@@ -26,12 +26,12 @@ import com.google.gson.JsonSyntaxException;
 import cpw.mods.fml.relauncher.FMLInjectionData;
 
 /**
- * Caches player's last known usernames
+ * Caches players last known usernames
  * <p>
- * Modders should use {@link #getLastKnownUsername(UUID)} to determine a players
+ * Modders should use {@link #getLastKnownUsername(UUID)} to determine a player's
  * last known username.<br>
  * For convenience, {@link #getMap()} is provided to get an immutable copy of
- * the caches underlying map.
+ * the cache's underlying map.
  */
 public final class UsernameCache {
 
