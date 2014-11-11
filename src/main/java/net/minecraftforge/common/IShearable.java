@@ -37,7 +37,7 @@ public interface IShearable
      *
      * Returns a list of items that resulted from the shearing process.
      *
-     * For entities, they should trust there internal location information
+     * For entities, they should trust their internal location information
      * over the values passed into this function.
      *
      * @param item The itemstack that is being used, Possible to be null
