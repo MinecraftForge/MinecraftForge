@@ -12,8 +12,8 @@ public class MinecraftForge
 {
     /**
      * The core Forge EventBusses, all events for Forge will be fired on these,
-     * you should use this to register all your listeners.
-     * This replaces every register*Handler() function in the old version of Forge.
+     * you should use this to register all of your listeners.
+     * This replaces every register*Handler() function from the old version of Forge.
      * TERRAIN_GEN_BUS for terrain gen events
      * ORE_GEN_BUS for ore gen events
      * EVENT_BUS for everything else
