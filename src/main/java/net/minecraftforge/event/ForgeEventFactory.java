@@ -24,6 +24,7 @@ import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.ThornsEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -215,5 +216,15 @@ public class ForgeEventFactory
         SaveHandler sh = (SaveHandler) playerFileData;
         File dir = ObfuscationReflectionHelper.getPrivateValue(SaveHandler.class, sh, "playersDirectory", "field_"+"75771_c");
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.LoadFromFile(player, dir, uuidString));
+    }
+    
+    public static boolean onThornsEntityDamage(Entity entity, EntityLivingBase enchanted, ItemStack armor, int damageDealt)
+    {
+        return !MinecraftForge.EVENT_BUS.post(new ThornsEvent.ThornsEntityDamageEvent(entity, enchanted, armor, damageDealt));
+    }
+    
+    public static boolean onThornsArmorDamage(Entity entity, EntityLivingBase enchanted, ItemStack armor, int damageDealt)
+    {
+        return !MinecraftForge.EVENT_BUS.post(new ThornsEvent.ThornsArmorDamageEvent(entity, enchanted, armor, damageDealt));
     }
 }

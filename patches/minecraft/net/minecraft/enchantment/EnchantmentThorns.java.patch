@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/enchantment/EnchantmentThorns.java
++++ ../src-work/minecraft/net/minecraft/enchantment/EnchantmentThorns.java
+@@ -42,12 +42,12 @@
+         Random random = p_151367_1_.func_70681_au();
+         ItemStack itemstack = EnchantmentHelper.func_92099_a(Enchantment.field_92091_k, p_151367_1_);
+ 
+-        if (func_92094_a(p_151367_3_, random))
++        if (func_92094_a(p_151367_3_, random) && net.minecraftforge.event.ForgeEventFactory.onThornsEntityDamage(p_151367_2_, p_151367_1_, itemstack, p_151367_3_))
+         {
+             p_151367_2_.func_70097_a(DamageSource.func_92087_a(p_151367_1_), (float)func_92095_b(p_151367_3_, random));
+             p_151367_2_.func_85030_a("damage.thorns", 0.5F, 1.0F);
+ 
+-            if (itemstack != null)
++            if (itemstack != null && net.minecraftforge.event.ForgeEventFactory.onThornsArmorDamage(p_151367_2_, p_151367_1_, itemstack, p_151367_3_))
+             {
+                 itemstack.func_77972_a(3, p_151367_1_);
+             }
