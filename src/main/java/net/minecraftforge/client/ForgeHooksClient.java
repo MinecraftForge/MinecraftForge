@@ -4,6 +4,7 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import net.minecraftforge.client.event.SkyColorEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundEventAccessorComposite;
@@ -413,6 +414,12 @@ public class ForgeHooksClient
             }
         }
 
+        SkyColorEvent event = new SkyColorEvent(r, g, b);
+        MinecraftForge.EVENT_BUS.post(event);
+        r = event.red;
+        g = event.green;
+        b = event.blue;
+        
         int multiplier = (r / divider & 255) << 16 | (g / divider & 255) << 8 | b / divider & 255;
 
         skyX = playerX;
