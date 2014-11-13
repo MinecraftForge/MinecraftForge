@@ -4,9 +4,9 @@ import cpw.mods.fml.common.eventhandler.Event;
 
 public class SkyColorEvent extends Event
 {
-    int red;
-    int green;
-    int blue;
+    public int red;
+    public int green;
+    public int blue;
     
 	public SkyColorEvent(int r, int g, int b)
     {
