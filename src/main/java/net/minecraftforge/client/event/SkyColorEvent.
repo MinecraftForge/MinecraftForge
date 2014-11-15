@@ -1,0 +1,52 @@
+package net.minecraftforge.client.event;
+
+import cpw.mods.fml.common.eventhandler.Event;
+
+public class SkyColorEvent extends Event
+{
+    public int red;
+    public int green;
+    public int blue;
+    
+    //The way sky is colorized depends on your graphics settings, that's why we have a multiplier.
+    private int multiplier;
+    
+    public SkyColorEvent(int red, int green, int blue, int multiplier)
+    {
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
+        this.multiplier = multiplier;
+    }
+    
+    //From 0 to 255
+    public void setRed(int r)
+    {
+        this.red = r * multiplier;
+    }
+    
+    public void setGreen(int g)
+    {
+        this.green = g * multiplier;
+    }
+    
+    public void setBlue(int b)
+    {
+        this.blue = b * multiplier;
+    }
+    
+    public int getRed()
+    {
+        return this.red / multiplier;
+    }
+    
+    public int getGreen()
+    {
+        return this.green / multiplier;
+    }
+    
+    public int getBlue()
+    {
+        return this.blue / multiplier;
+    }
+}
