@@ -1,6 +1,5 @@
 package net.minecraftforge.client.event;
 
-import net.minecraft.util.Vec3;
 import cpw.mods.fml.common.eventhandler.Event;
 
 public class CloudColorEvent extends Event
