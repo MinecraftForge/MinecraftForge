@@ -414,13 +414,13 @@ public class ForgeHooksClient
             }
         }
         
-        SkyColorEvent event = new SkyColorEvent(r, g, b, divider);
+        SkyColorEvent event = new SkyColorEvent(r / divider, g / divider, b / divider);
         MinecraftForge.EVENT_BUS.post(event);
         r = event.red;
         g = event.green;
         b = event.blue;
-
-        int multiplier = (r / divider & 255) << 16 | (g / divider & 255) << 8 | b / divider & 255;
+        
+        int multiplier = (r & 255) << 16 | (g & 255) << 8 | b & 255;
 
         skyX = playerX;
         skyZ = playerZ;
