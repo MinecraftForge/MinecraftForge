@@ -21,6 +21,7 @@
 +import net.minecraftforge.event.world.WorldEvent;
 +import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 +import net.minecraft.entity.EnumCreatureType;
++import net.minecraftforge.client.event.CloudColorEvent;
 +
  public abstract class World implements IBlockAccess
  {
@@ -377,6 +378,21 @@
 +    {
          float f1 = this.func_72826_c(p_72824_1_);
          float f2 = MathHelper.func_76134_b(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
+ 
+@@ -1583,6 +1712,12 @@
+             f4 = f4 * f9 + f8 * (1.0F - f9);
+             f5 = f5 * f9 + f8 * (1.0F - f9);
+         }
++        
++        CloudColorEvent event = new CloudColorEvent(f3, f4, f5);
++        MinecraftForge.EVENT_BUS.post(event);
++        f3 = event.red;
++        f4 = event.green;
++        f5 = event.blue;
+ 
+         return Vec3.func_72443_a((double)f3, (double)f4, (double)f5);
+     }
+
  
 @@ -1602,6 +1740,8 @@
      public int func_72825_h(int p_72825_1_, int p_72825_2_)

@@ -1,0 +1,17 @@
+package net.minecraftforge.client.event;
+
+import cpw.mods.fml.common.eventhandler.Event;
+
+public class SkyColorEvent extends Event
+{
+    public int red;
+    public int green;
+    public int blue;
+
+    public SkyColorEvent(int red, int green, int blue)
+    {
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
+    }
+}
