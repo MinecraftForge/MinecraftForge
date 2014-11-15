@@ -54,6 +54,7 @@ import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderWorldEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.SkyColorEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent17;
 import net.minecraftforge.common.ForgeModContainer;
@@ -412,6 +413,12 @@ public class ForgeHooksClient
                 divider++;
             }
         }
+        
+        SkyColorEvent event = new SkyColorEvent(r, g, b, divider);
+        MinecraftForge.EVENT_BUS.post(event);
+        r = event.red;
+        g = event.green;
+        b = event.blue;
 
         int multiplier = (r / divider & 255) << 16 | (g / divider & 255) << 8 | b / divider & 255;
 
