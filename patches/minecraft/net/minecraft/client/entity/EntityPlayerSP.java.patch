@@ -10,7 +10,26 @@
  
  @SideOnly(Side.CLIENT)
  public class EntityPlayerSP extends AbstractClientPlayer
-@@ -325,7 +328,7 @@
+@@ -172,14 +175,12 @@
+             float f = 0.8F;
+             boolean flag1 = this.field_71158_b.field_78900_b >= f;
+             this.field_71158_b.func_78898_a();
+-
+-            if (this.func_71039_bw() && !this.func_70115_ae())
++            if ((this.func_70632_aY() ? !this.getBlockingAffectsMovement() : true) && this.func_71039_bw() && !this.func_70115_ae())
+             {
+-                this.field_71158_b.field_78902_a *= 0.2F;
+-                this.field_71158_b.field_78900_b *= 0.2F;
+-                this.field_71156_d = 0;
++                    this.field_71158_b.field_78902_a *= 0.2F;
++                    this.field_71158_b.field_78900_b *= 0.2F;
++                    this.field_71156_d = 0;
+             }
+-
+             if (this.field_71158_b.field_78899_d && this.field_70139_V < 0.2F)
+             {
+                 this.field_70139_V = 0.2F;
+@@ -325,7 +326,7 @@
              f *= 1.0F - f1 * 0.15F;
          }
  
@@ -19,7 +38,7 @@
      }
  
      public void func_71053_j()
-@@ -479,20 +482,45 @@
+@@ -479,20 +480,45 @@
          return this.field_70170_p.func_147439_a(p_71153_1_, p_71153_2_, p_71153_3_).func_149721_r();
      }
  
@@ -70,7 +89,7 @@
              byte b0 = -1;
              double d5 = 9999.0D;
  
-@@ -576,6 +604,12 @@
+@@ -576,6 +602,12 @@
  
      public void func_85030_a(String p_85030_1_, float p_85030_2_, float p_85030_3_)
      {
