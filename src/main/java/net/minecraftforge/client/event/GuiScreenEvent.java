@@ -176,4 +176,70 @@ public class GuiScreenEvent extends Event
             }
         }
     }
+
+    public static class MouseInputEvent extends GuiScreenEvent
+    {
+        public MouseInputEvent(GuiScreen gui)
+        {
+            super(gui);
+        }
+
+        /**
+         * This event fires when mouse input is detected by a GuiScreen.
+         * Cancel this event to bypass {@code GuiScreen.handleMouseInput()}.
+         */
+        @Cancelable
+        public static class Pre extends MouseInputEvent
+        {
+            public Pre(GuiScreen gui)
+            {
+                super(gui);
+            }
+        }
+
+        /**
+         * This event fires after {@code GuiScreen.handleMouseInput()} provided that the active
+         * screen has not been changed as a result of {@code GuiScreen.handleMouseInput()}.
+         */
+        public static class Post extends MouseInputEvent
+        {
+            public Post(GuiScreen gui)
+            {
+                super(gui);
+            }
+        }
+    }
+
+    public static class KeyboardInputEvent extends GuiScreenEvent
+    {
+        public KeyboardInputEvent(GuiScreen gui)
+        {
+            super(gui);
+        }
+
+        /**
+         * This event fires when keyboard input is detected by a GuiScreen.
+         * Cancel this event to bypass {@code GuiScreen.handleKeyboardInput()}.
+         */
+        @Cancelable
+        public static class Pre extends KeyboardInputEvent
+        {
+            public Pre(GuiScreen gui)
+            {
+                super(gui);
+            }
+        }
+
+        /**
+         * This event fires after {@code GuiScreen.handleKeyboardInput()} provided that the active
+         * screen has not been changed as a result of {@code GuiScreen.handleKeyboardInput()}.
+         */
+        public static class Post extends KeyboardInputEvent
+        {
+            public Post(GuiScreen gui)
+            {
+                super(gui);
+            }
+        }
+    }
 }
