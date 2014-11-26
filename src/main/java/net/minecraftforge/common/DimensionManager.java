@@ -17,8 +17,8 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Multiset;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLLog;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.MinecraftException;
@@ -242,7 +242,7 @@ public class DimensionManager
         ISaveHandler savehandler = overworld.getSaveHandler();
         WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
 
-        WorldServer world = (dim == 0 ? overworld : new WorldServerMulti(mcServer, savehandler, overworld.getWorldInfo().getWorldName(), dim, worldSettings, overworld, mcServer.theProfiler));
+        WorldServer world = (dim == 0 ? overworld : new WorldServerMulti(mcServer, savehandler, dim, overworld, mcServer.theProfiler));
         world.addWorldAccess(new WorldManager(mcServer, world));
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
         if (!mcServer.isSinglePlayer())
@@ -250,7 +250,7 @@ public class DimensionManager
             world.getWorldInfo().setGameType(mcServer.getGameType());
         }
 
-        mcServer.func_147139_a(mcServer.func_147135_j());
+        mcServer.setDifficultyForAllWorlds(mcServer.getDifficulty());
     }
 
     public static WorldServer getWorld(int id)

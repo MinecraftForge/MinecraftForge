@@ -13,17 +13,17 @@ import java.util.Map;
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 
-import cpw.mods.fml.common.versioning.ArtifactVersion;
-import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
+import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 
 public class ForgeVersion
 {
     //This number is incremented every time we remove deprecated code/major API changes, never reset
-    public static final int majorVersion    = 10;
+    public static final int majorVersion    = 11;
     //This number is incremented every minecraft release, never reset
-    public static final int minorVersion    = 13;
+    public static final int minorVersion    = 14;
     //This number is incremented every time a interface changes or new major feature is added, and reset every Minecraft version
-    public static final int revisionVersion = 2;
+    public static final int revisionVersion = 0;
     //This number is incremented every time Jenkins builds Forge, and never reset. Should always be 0 in the repo code.
     public static final int buildVersion    = 0;
 

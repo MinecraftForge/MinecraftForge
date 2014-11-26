@@ -1,6 +1,6 @@
 package net.minecraftforge.event.terraingen;
 
-import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.WorldType;
 
@@ -39,10 +39,10 @@ public class WorldTypeEvent extends Event
      **/
     public static class BiomeSize extends WorldTypeEvent
     {
-        public final byte originalSize;
-        public byte newSize;
-        
-        public BiomeSize(WorldType worldType, byte original)
+        public final int originalSize;
+        public int newSize;
+
+        public BiomeSize(WorldType worldType, int original)
         {
             super(worldType);
             originalSize = original;
@@ -52,7 +52,7 @@ public class WorldTypeEvent extends Event
 
     /**
      * InitBiomeGens is fired when vanilla Minecraft attempts to initialize the biome generators.<br>
-     * This event is fired just during biome generator initialization in 
+     * This event is fired just during biome generator initialization in
      * WorldChunkManager#WorldChunkManager(long, WorldType). <br>
      * <br>
      * {@link #seed} the seed of the world. <br>
@@ -71,7 +71,7 @@ public class WorldTypeEvent extends Event
         public final long seed;
         public final GenLayer[] originalBiomeGens;
         public GenLayer[] newBiomeGens;
-        
+
         public InitBiomeGens(WorldType worldType, long seed, GenLayer[] original)
         {
             super(worldType);

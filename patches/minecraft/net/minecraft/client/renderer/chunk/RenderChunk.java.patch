@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
+@@ -150,7 +150,7 @@
+                     visgraph.func_178606_a(mutableblockpos);
+                 }
+ 
+-                if (block.func_149716_u())
++                if (block.hasTileEntity(iblockstate))
+                 {
+                     TileEntity tileentity = regionrendercache.func_175625_s(new BlockPos(mutableblockpos));
+ 

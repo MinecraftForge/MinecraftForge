@@ -1,9 +1,8 @@
 package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
-
-import cpw.mods.fml.common.eventhandler.Event.*;
-
+import net.minecraftforge.fml.common.eventhandler.Event.*;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.MapGenBase;
@@ -29,31 +28,31 @@ public abstract class TerrainGen
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         return event.newGen;
     }
-    
+
     public static boolean populate(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated, Populate.EventType type)
     {
         PopulateChunkEvent.Populate event = new PopulateChunkEvent.Populate(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated, type);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         return event.getResult() != Result.DENY;
     }
-    
-    public static boolean decorate(World world, Random rand, int chunkX, int chunkZ, Decorate.EventType type)
+
+    public static boolean decorate(World world, Random rand, BlockPos pos, Decorate.EventType type)
     {
-        Decorate event = new Decorate(world, rand, chunkX, chunkZ, type);
+        Decorate event = new Decorate(world, rand, pos, type);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         return event.getResult() != Result.DENY;
     }
-    
-    public static boolean generateOre(World world, Random rand, WorldGenerator generator, int worldX, int worldZ, GenerateMinable.EventType type)
+
+    public static boolean generateOre(World world, Random rand, WorldGenerator generator, BlockPos pos, GenerateMinable.EventType type)
     {
-        GenerateMinable event = new GenerateMinable(world, rand, generator, worldX, worldZ, type);
+        GenerateMinable event = new GenerateMinable(world, rand, generator, pos, type);
         MinecraftForge.ORE_GEN_BUS.post(event);
         return event.getResult() != Result.DENY;
     }
-    
-    public static boolean saplingGrowTree(World world, Random rand, int x, int y, int z)
+
+    public static boolean saplingGrowTree(World world, Random rand, BlockPos pos)
     {
-        SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(world, rand, x, y, z);
+        SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(world, rand, pos);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         return event.getResult() != Result.DENY;
     }

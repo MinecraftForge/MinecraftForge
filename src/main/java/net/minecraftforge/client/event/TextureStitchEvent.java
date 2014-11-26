@@ -1,6 +1,6 @@
 package net.minecraftforge.client.event;
 
-import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.client.renderer.texture.TextureMap;
 
 

@@ -1,18 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureVillagePieces.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureVillagePieces.java
-@@ -4,7 +4,7 @@
- import java.util.Iterator;
- import java.util.List;
- import java.util.Random;
--
-+import cpw.mods.fml.common.eventhandler.Event.Result;
- import cpw.mods.fml.common.registry.VillagerRegistry;
- import net.minecraft.block.Block;
- import net.minecraft.block.material.Material;
-@@ -18,6 +18,10 @@
+@@ -25,6 +25,11 @@
  import net.minecraft.world.World;
  import net.minecraft.world.biome.BiomeGenBase;
  import net.minecraft.world.biome.WorldChunkManager;
++import net.minecraftforge.fml.common.eventhandler.Event.Result;
 +import net.minecraftforge.common.ChestGenHooks;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.terraingen.BiomeEvent;
@@ -20,32 +12,44 @@
  
  public class StructureVillagePieces
  {
-@@ -927,7 +931,7 @@
-                     if (p_74875_3_.func_78890_b(j, i, k))
-                     {
-                         this.field_74917_c = true;
--                        this.func_74879_a(p_74875_1_, p_74875_3_, p_74875_2_, 5, 1, 5, field_74918_a, 3 + p_74875_2_.nextInt(6));
-+                        this.func_74879_a(p_74875_1_, p_74875_3_, p_74875_2_, 5, 1, 5, ChestGenHooks.getItems(VILLAGE_BLACKSMITH, p_74875_2_), ChestGenHooks.getCount(VILLAGE_BLACKSMITH, p_74875_2_));
-                     }
+@@ -848,6 +853,11 @@
+ 
+             public House2() {}
+ 
++            static
++            {
++                ChestGenHooks.init(VILLAGE_BLACKSMITH, field_74918_a, 3, 8);
++            }
++
+             public House2(StructureVillagePieces.Start p_i45563_1_, int p_i45563_2_, Random p_i45563_3_, StructureBoundingBox p_i45563_4_, EnumFacing p_i45563_5_)
+             {
+                 super(p_i45563_1_, p_i45563_2_);
+@@ -926,7 +936,7 @@
+                 if (!this.field_74917_c && p_74875_3_.func_175898_b(new BlockPos(this.func_74865_a(5, 5), this.func_74862_a(1), this.func_74873_b(5, 5))))
+                 {
+                     this.field_74917_c = true;
+-                    this.func_180778_a(p_74875_1_, p_74875_3_, p_74875_2_, 5, 1, 5, field_74918_a, 3 + p_74875_2_.nextInt(6));
++                    this.func_180778_a(p_74875_1_, p_74875_3_, p_74875_2_, 5, 1, 5, ChestGenHooks.getItems(VILLAGE_BLACKSMITH, p_74875_2_), ChestGenHooks.getCount(VILLAGE_BLACKSMITH, p_74875_2_));
                  }
  
-@@ -1424,6 +1428,7 @@
-             public List field_74932_i = new ArrayList();
-             public List field_74930_j = new ArrayList();
+                 int i;
+@@ -1428,6 +1438,7 @@
+             public List field_74932_i = Lists.newArrayList();
+             public List field_74930_j = Lists.newArrayList();
              private static final String __OBFID = "CL_00000527";
 +            public BiomeGenBase biome;
  
              public Start() {}
  
-@@ -1435,6 +1440,7 @@
+@@ -1439,6 +1450,7 @@
                  this.field_74928_c = p_i2104_7_;
-                 BiomeGenBase biomegenbase = p_i2104_1_.func_76935_a(p_i2104_4_, p_i2104_5_);
+                 BiomeGenBase biomegenbase = p_i2104_1_.func_180300_a(new BlockPos(p_i2104_4_, 0, p_i2104_5_), BiomeGenBase.field_180279_ad);
                  this.field_74927_b = biomegenbase == BiomeGenBase.field_76769_d || biomegenbase == BiomeGenBase.field_76786_s;
 +                this.biome = biomegenbase;
+                 this.func_175846_a(this.field_74927_b);
              }
  
-             public WorldChunkManager func_74925_d()
-@@ -1495,6 +1501,7 @@
+@@ -1546,6 +1558,7 @@
              private int field_74896_a;
              private boolean field_143014_b;
              private static final String __OBFID = "CL_00000531";
@@ -53,7 +57,7 @@
  
              public Village() {}
  
-@@ -1505,6 +1512,7 @@
+@@ -1556,6 +1569,7 @@
                  if (p_i2107_1_ != null)
                  {
                      this.field_143014_b = p_i2107_1_.field_74927_b;
@@ -61,23 +65,13 @@
                  }
              }
  
-@@ -1618,6 +1626,9 @@
+@@ -1679,6 +1693,9 @@
  
-             protected Block func_151558_b(Block p_151558_1_, int p_151558_2_)
+             protected IBlockState func_175847_a(IBlockState p_175847_1_)
              {
-+                BiomeEvent.GetVillageBlockID event = new BiomeEvent.GetVillageBlockID(startPiece == null ? null : startPiece.biome, p_151558_1_, p_151558_2_);
++                BiomeEvent.GetVillageBlockID event = new BiomeEvent.GetVillageBlockID(startPiece == null ? null : startPiece.biome, p_175847_1_);
 +                MinecraftForge.TERRAIN_GEN_BUS.post(event);
 +                if (event.getResult() == Result.DENY) return event.replacement;
                  if (this.field_143014_b)
                  {
-                     if (p_151558_1_ == Blocks.field_150364_r || p_151558_1_ == Blocks.field_150363_s)
-@@ -1656,6 +1667,9 @@
- 
-             protected int func_151557_c(Block p_151557_1_, int p_151557_2_)
-             {
-+                BiomeEvent.GetVillageBlockMeta event = new BiomeEvent.GetVillageBlockMeta(startPiece == null ? null : startPiece.biome, p_151557_1_, p_151557_2_);
-+                MinecraftForge.TERRAIN_GEN_BUS.post(event);
-+                if (event.getResult() == Result.DENY) return event.replacement;
-                 if (this.field_143014_b)
-                 {
-                     if (p_151557_1_ == Blocks.field_150364_r || p_151557_1_ == Blocks.field_150363_s)
+                     if (p_175847_1_.func_177230_c() == Blocks.field_150364_r || p_175847_1_.func_177230_c() == Blocks.field_150363_s)

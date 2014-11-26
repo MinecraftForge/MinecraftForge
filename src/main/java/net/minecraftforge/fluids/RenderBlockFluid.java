@@ -1,5 +1,7 @@
 package net.minecraftforge.fluids;
 
+//TODO:  Get some test liquids and test this out -.-
+/*
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -8,14 +10,14 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
-import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+import net.minecraftforge.fml.client.registry.ISimpleBlockRenderingHandler;
 
 /**
  * Default renderer for Forge fluid blocks.
- * 
+ *
  * @author King Lemming
- * 
- */
+ *
+ * /
 public class RenderBlockFluid implements ISimpleBlockRenderingHandler
 {
     public static RenderBlockFluid instance = new RenderBlockFluid();
@@ -30,7 +32,7 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
     {
         float total = 0;
         int count = 0;
-        
+
         float end = 0;
 
         for (int i = 0; i < flow.length; i++)
@@ -46,10 +48,10 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                 count++;
             }
         }
-        
+
         if (end == 0)
         	end = total / count;
-        
+
         return end;
     }
 
@@ -71,7 +73,7 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
         return !world.getBlock(x, y, z).getMaterial().isSolid() && world.getBlock(x, y - block.densityDir, z) == block ? 1 : block.getQuantaPercentage(world, x, y, z) * 0.875F;
     }
 
-    /* ISimpleBlockRenderingHandler */
+    /* ISimpleBlockRenderingHandler * /
     @Override
     public void renderInventoryBlock(Block block, int metadata, int modelID, RenderBlocks renderer){}
 
@@ -98,9 +100,9 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
 
         boolean[] renderSides = new boolean[]
         {
-            block.shouldSideBeRendered(world, x, y, z - 1, 2), 
+            block.shouldSideBeRendered(world, x, y, z - 1, 2),
             block.shouldSideBeRendered(world, x, y, z + 1, 3),
-            block.shouldSideBeRendered(world, x - 1, y, z, 4), 
+            block.shouldSideBeRendered(world, x - 1, y, z, 4),
             block.shouldSideBeRendered(world, x + 1, y, z, 5)
         };
 
@@ -335,3 +337,4 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
         return ((TextureMap)Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
     }
 }
+*/

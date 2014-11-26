@@ -11,9 +11,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.toposort.TopologicalSort;
-import cpw.mods.fml.common.toposort.TopologicalSort.DirectedGraph;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.toposort.TopologicalSort;
+import net.minecraftforge.fml.common.toposort.TopologicalSort.DirectedGraph;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.RecipeBookCloning;

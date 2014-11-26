@@ -1,98 +1,90 @@
 --- ../src-base/minecraft/net/minecraft/network/NetHandlerPlayServer.java
 +++ ../src-work/minecraft/net/minecraft/network/NetHandlerPlayServer.java
-@@ -86,6 +86,14 @@
+@@ -93,6 +93,14 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
-+import cpw.mods.fml.common.eventhandler.Event;
++import net.minecraftforge.fml.common.eventhandler.Event;
 +import net.minecraftforge.event.ForgeEventFactory;
 +import net.minecraftforge.event.ServerChatEvent;
 +import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 +import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 +
- public class NetHandlerPlayServer implements INetHandlerPlayServer
+ public class NetHandlerPlayServer implements INetHandlerPlayServer, IUpdatePlayerListBox
  {
      private static final Logger field_147370_c = LogManager.getLogger();
-@@ -222,6 +230,11 @@
+@@ -246,6 +254,8 @@
                          this.field_147369_b.field_70154_o.func_70043_V();
                      }
  
-+                    if (!this.field_147380_r) //Fixes teleportation kick while riding entities
-+                    {
-+                        return;
-+                    }
++                    if (!this.field_147380_r) return; //Fixes teleportation kick while riding entities
 +
                      this.field_147367_d.func_71203_ab().func_72358_d(this.field_147369_b);
  
-                     if (this.field_147380_r)
-@@ -299,9 +312,10 @@
-                 d4 = d1 - this.field_147369_b.field_70165_t;
-                 double d5 = d2 - this.field_147369_b.field_70163_u;
-                 double d6 = d3 - this.field_147369_b.field_70161_v;
--                double d7 = Math.min(Math.abs(d4), Math.abs(this.field_147369_b.field_70159_w));
--                double d8 = Math.min(Math.abs(d5), Math.abs(this.field_147369_b.field_70181_x));
--                double d9 = Math.min(Math.abs(d6), Math.abs(this.field_147369_b.field_70179_y));
+                     if (this.field_147369_b.field_70154_o != null)
+@@ -324,9 +334,10 @@
+                 double d11 = d8 - this.field_147369_b.field_70165_t;
+                 double d12 = d9 - this.field_147369_b.field_70163_u;
+                 double d13 = d10 - this.field_147369_b.field_70161_v;
+-                double d14 = Math.min(Math.abs(d11), Math.abs(this.field_147369_b.field_70159_w));
+-                double d15 = Math.min(Math.abs(d12), Math.abs(this.field_147369_b.field_70181_x));
+-                double d16 = Math.min(Math.abs(d13), Math.abs(this.field_147369_b.field_70179_y));
 +                //BUGFIX: min -> max, grabs the highest distance
-+                double d7 = Math.max(Math.abs(d4), Math.abs(this.field_147369_b.field_70159_w));
-+                double d8 = Math.max(Math.abs(d5), Math.abs(this.field_147369_b.field_70181_x));
-+                double d9 = Math.max(Math.abs(d6), Math.abs(this.field_147369_b.field_70179_y));
-                 double d10 = d7 * d7 + d8 * d8 + d9 * d9;
++                double d14 = Math.max(Math.abs(d11), Math.abs(this.field_147369_b.field_70159_w));
++                double d15 = Math.max(Math.abs(d12), Math.abs(this.field_147369_b.field_70181_x));
++                double d16 = Math.max(Math.abs(d13), Math.abs(this.field_147369_b.field_70179_y));
+                 double d17 = d14 * d14 + d15 * d15 + d16 * d16;
  
-                 if (d10 > 100.0D && (!this.field_147367_d.func_71264_H() || !this.field_147367_d.func_71214_G().equals(this.field_147369_b.func_70005_c_())))
-@@ -319,6 +333,11 @@
+                 if (d17 > 100.0D && (!this.field_147367_d.func_71264_H() || !this.field_147367_d.func_71214_G().equals(this.field_147369_b.func_70005_c_())))
+@@ -344,6 +355,8 @@
                      this.field_147369_b.func_70664_aZ();
                  }
  
-+                if (!this.field_147380_r) //Fixes "Moved Too Fast" kick when being teleported while moving
-+                {
-+                    return;
-+                }
++                if (!this.field_147380_r) return; //Fixes "Moved Too Fast" kick when being teleported while moving
 +
-                 this.field_147369_b.func_70091_d(d4, d5, d6);
+                 this.field_147369_b.func_70091_d(d11, d12, d13);
                  this.field_147369_b.field_70122_E = p_147347_1_.func_149465_i();
-                 this.field_147369_b.func_71000_j(d4, d5, d6);
-@@ -341,10 +360,15 @@
+                 double d18 = d12;
+@@ -365,6 +378,8 @@
                      field_147370_c.warn(this.field_147369_b.func_70005_c_() + " moved wrongly!");
                  }
  
-+                if (!this.field_147380_r) //Fixes "Moved Too Fast" kick when being teleported while moving
-+                {
-+                    return;
-+                }
++                if (!this.field_147380_r) return; //Fixes "Moved Too Fast" kick when being teleported while moving
 +
-                 this.field_147369_b.func_70080_a(d1, d2, d3, f1, f2);
-                 boolean flag2 = worldserver.func_72945_a(this.field_147369_b, this.field_147369_b.field_70121_D.func_72329_c().func_72331_e((double)f3, (double)f3, (double)f3)).isEmpty();
+                 this.field_147369_b.func_70080_a(d8, d9, d10, f1, f2);
+                 this.field_147369_b.func_71000_j(this.field_147369_b.field_70165_t - d0, this.field_147369_b.field_70163_u - d1, this.field_147369_b.field_70161_v - d2);
  
--                if (flag && (flag1 || !flag2) && !this.field_147369_b.func_70608_bn())
-+                if (flag && (flag1 || !flag2) && !this.field_147369_b.func_70608_bn() && !this.field_147369_b.field_70145_X)
+@@ -372,7 +387,7 @@
                  {
-                     this.func_147364_a(this.field_147373_o, this.field_147382_p, this.field_147381_q, f1, f2);
-                     return;
-@@ -352,7 +376,7 @@
+                     boolean flag2 = worldserver.func_72945_a(this.field_147369_b, this.field_147369_b.func_174813_aQ().func_72331_e((double)f3, (double)f3, (double)f3)).isEmpty();
  
-                 AxisAlignedBB axisalignedbb = this.field_147369_b.field_70121_D.func_72329_c().func_72314_b((double)f3, (double)f3, (double)f3).func_72321_a(0.0D, -0.55D, 0.0D);
- 
--                if (!this.field_147367_d.func_71231_X() && !this.field_147369_b.field_71134_c.func_73083_d() && !worldserver.func_72829_c(axisalignedbb))
-+                if (!this.field_147367_d.func_71231_X() && !this.field_147369_b.field_71134_c.func_73083_d() && !worldserver.func_72829_c(axisalignedbb) && !this.field_147369_b.field_71075_bZ.field_75101_c)
-                 {
-                     if (d11 >= -0.03125D)
+-                    if (flag && (flag1 || !flag2) && !this.field_147369_b.func_70608_bn())
++                    if (flag && (flag1 || !flag2) && !this.field_147369_b.func_70608_bn() && !this.field_147369_b.field_70145_X)
                      {
-@@ -371,6 +395,11 @@
+                         this.func_147364_a(this.field_147373_o, this.field_147382_p, this.field_147381_q, f1, f2);
+                         return;
+@@ -381,7 +396,7 @@
+ 
+                 AxisAlignedBB axisalignedbb = this.field_147369_b.func_174813_aQ().func_72314_b((double)f3, (double)f3, (double)f3).func_72321_a(0.0D, -0.55D, 0.0D);
+ 
+-                if (!this.field_147367_d.func_71231_X() && !this.field_147369_b.field_71075_bZ.field_75101_c && !worldserver.func_72829_c(axisalignedbb))
++                if (!this.field_147367_d.func_71231_X() && !this.field_147369_b.field_71075_bZ.field_75101_c && !worldserver.func_72829_c(axisalignedbb) && !this.field_147369_b.field_71075_bZ.field_75101_c)
+                 {
+                     if (d18 >= -0.03125D)
+                     {
+@@ -400,6 +415,8 @@
                      this.field_147365_f = 0;
                  }
  
-+                if (!this.field_147380_r) //Fixes "Moved Too Fast" kick when being teleported while moving
-+                {
-+                    return;
-+                }
++                if (!this.field_147380_r) return; //Fixes "Moved Too Fast" kick when being teleported while moving
 +
                  this.field_147369_b.field_70122_E = p_147347_1_.func_149465_i();
                  this.field_147367_d.func_71203_ab().func_72358_d(this.field_147369_b);
-                 this.field_147369_b.func_71122_b(this.field_147369_b.field_70163_u - d0, p_147347_1_.func_149465_i());
-@@ -439,7 +468,10 @@
-                 double d2 = this.field_147369_b.field_70161_v - ((double)k + 0.5D);
+                 this.field_147369_b.func_71122_b(this.field_147369_b.field_70163_u - d7, p_147347_1_.func_149465_i());
+@@ -489,7 +506,10 @@
+                 double d2 = this.field_147369_b.field_70161_v - ((double)blockpos.func_177952_p() + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
 -                if (d3 > 36.0D)
@@ -103,46 +95,42 @@
                  {
                      return;
                  }
-@@ -487,6 +519,7 @@
+@@ -540,6 +560,7 @@
          WorldServer worldserver = this.field_147367_d.func_71218_a(this.field_147369_b.field_71093_bK);
          ItemStack itemstack = this.field_147369_b.field_71071_by.func_70448_g();
          boolean flag = false;
 +        boolean placeResult = true;
-         int i = p_147346_1_.func_149576_c();
-         int j = p_147346_1_.func_149571_d();
-         int k = p_147346_1_.func_149570_e();
-@@ -500,7 +533,11 @@
+         BlockPos blockpos = p_147346_1_.func_179724_a();
+         EnumFacing enumfacing = EnumFacing.func_82600_a(p_147346_1_.func_149568_f());
+         this.field_147369_b.func_143004_u();
+@@ -551,7 +572,11 @@
                  return;
              }
  
--            this.field_147369_b.field_71134_c.func_73085_a(this.field_147369_b, worldserver, itemstack);
-+            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(field_147369_b, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, 0, 0, 0, -1, worldserver);
++            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(field_147369_b, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, worldserver, new BlockPos(0, 0, 0), null);
 +            if (event.useItem != Event.Result.DENY)
 +            {
-+                this.field_147369_b.field_71134_c.func_73085_a(this.field_147369_b, worldserver, itemstack);
+             this.field_147369_b.field_71134_c.func_73085_a(this.field_147369_b, worldserver, itemstack);
 +            }
          }
-         else if (p_147346_1_.func_149571_d() >= this.field_147367_d.func_71207_Z() - 1 && (p_147346_1_.func_149568_f() == 1 || p_147346_1_.func_149571_d() >= this.field_147367_d.func_71207_Z()))
+         else if (blockpos.func_177956_o() >= this.field_147367_d.func_71207_Z() - 1 && (enumfacing == EnumFacing.UP || blockpos.func_177956_o() >= this.field_147367_d.func_71207_Z()))
          {
-@@ -511,9 +548,15 @@
+@@ -562,9 +587,12 @@
          }
          else
          {
--            if (this.field_147380_r && this.field_147369_b.func_70092_e((double)i + 0.5D, (double)j + 0.5D, (double)k + 0.5D) < 64.0D && !this.field_147367_d.func_96290_a(worldserver, i, j, k, this.field_147369_b))
+-            if (this.field_147380_r && this.field_147369_b.func_70092_e((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D) < 64.0D && !this.field_147367_d.func_175579_a(worldserver, blockpos, this.field_147369_b) && worldserver.func_175723_af().func_177746_a(blockpos))
 +            double dist = field_147369_b.field_71134_c.getBlockReachDistance() + 1;
 +            dist *= dist;
-+            if (this.field_147380_r && this.field_147369_b.func_70092_e((double)i + 0.5D, (double)j + 0.5D, (double)k + 0.5D) < dist && !this.field_147367_d.func_96290_a(worldserver, i, j, k, this.field_147369_b))
++            if (this.field_147380_r && this.field_147369_b.func_70092_e((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D) < dist && !this.field_147367_d.func_175579_a(worldserver, blockpos, this.field_147369_b) && worldserver.func_175723_af().func_177746_a(blockpos))
              {
--                this.field_147369_b.field_71134_c.func_73078_a(this.field_147369_b, worldserver, itemstack, i, j, k, l, p_147346_1_.func_149573_h(), p_147346_1_.func_149569_i(), p_147346_1_.func_149575_j());
+-                this.field_147369_b.field_71134_c.func_180236_a(this.field_147369_b, worldserver, itemstack, blockpos, enumfacing, p_147346_1_.func_149573_h(), p_147346_1_.func_149569_i(), p_147346_1_.func_149575_j());
 +                // record block place result so we can update client itemstack size if place event was cancelled.
-+                if (!this.field_147369_b.field_71134_c.func_73078_a(this.field_147369_b, worldserver, itemstack, i, j, k, l, p_147346_1_.func_149573_h(), p_147346_1_.func_149569_i(), p_147346_1_.func_149575_j()))
-+                {
-+                    placeResult = false;
-+                }
++                placeResult = this.field_147369_b.field_71134_c.func_180236_a(this.field_147369_b, worldserver, itemstack, blockpos, enumfacing, p_147346_1_.func_149573_h(), p_147346_1_.func_149569_i(), p_147346_1_.func_149575_j());
              }
  
              flag = true;
-@@ -572,7 +615,7 @@
+@@ -592,7 +620,7 @@
              this.field_147369_b.field_71070_bA.func_75142_b();
              this.field_147369_b.field_71137_h = false;
  
@@ -151,7 +139,7 @@
              {
                  this.func_147359_a(new S2FPacketSetSlot(this.field_147369_b.field_71070_bA.field_75152_c, slot.field_75222_d, this.field_147369_b.field_71071_by.func_70448_g()));
              }
-@@ -677,6 +720,8 @@
+@@ -765,6 +793,8 @@
              else
              {
                  ChatComponentTranslation chatcomponenttranslation1 = new ChatComponentTranslation("chat.type.text", new Object[] {this.field_147369_b.func_145748_c_(), s});
@@ -160,7 +148,7 @@
                  this.field_147367_d.func_71203_ab().func_148544_a(chatcomponenttranslation1, false);
              }
  
-@@ -812,7 +857,7 @@
+@@ -907,7 +937,7 @@
                          return;
                      }
  

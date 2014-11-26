@@ -27,8 +27,8 @@ import net.minecraftforge.common.MinecraftForge;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class OreDictionary
 {
@@ -430,12 +430,6 @@ public class OreDictionary
     public static void registerOre(String name, Item      ore){ registerOre(name, new ItemStack(ore));  }
     public static void registerOre(String name, Block     ore){ registerOre(name, new ItemStack(ore));  }
     public static void registerOre(String name, ItemStack ore){ registerOreImpl(name, ore);             }
-    @Deprecated //Use named, not ID in 1.8+
-    public static void registerOre(int    id,   Item      ore){ registerOre(id,   new ItemStack(ore));  }
-    @Deprecated //Use named, not ID in 1.8+
-    public static void registerOre(int    id,   Block     ore){ registerOre(id,   new ItemStack(ore));  }
-    @Deprecated //Use named, not ID in 1.8+
-    public static void registerOre(int    id,   ItemStack ore){ registerOreImpl(getOreName(id), ore);   }
 
     /**
      * Registers a ore item into the dictionary.

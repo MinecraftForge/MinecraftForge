@@ -1,32 +1,31 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemSkull.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemSkull.java
-@@ -36,11 +36,16 @@
+@@ -35,6 +35,11 @@
  
-     public boolean func_77648_a(ItemStack p_77648_1_, EntityPlayer p_77648_2_, World p_77648_3_, int p_77648_4_, int p_77648_5_, int p_77648_6_, int p_77648_7_, float p_77648_8_, float p_77648_9_, float p_77648_10_)
+     public boolean func_180614_a(ItemStack p_180614_1_, EntityPlayer p_180614_2_, World p_180614_3_, BlockPos p_180614_4_, EnumFacing p_180614_5_, float p_180614_6_, float p_180614_7_, float p_180614_8_)
      {
-+        if(p_77648_3_.func_147439_a(p_77648_4_, p_77648_5_, p_77648_6_).isReplaceable(p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_) && p_77648_7_ != 0)
++        if (p_180614_3_.func_180495_p(p_180614_4_).func_177230_c().func_176200_f(p_180614_3_, p_180614_4_) && p_180614_5_ != EnumFacing.DOWN)
 +        {
-+            p_77648_7_ = 1;
-+            p_77648_5_--;
++            p_180614_5_ = EnumFacing.UP;
++            p_180614_4_ = p_180614_4_.func_177977_b();
 +        }
-         if (p_77648_7_ == 0)
+         if (p_180614_5_ == EnumFacing.DOWN)
          {
              return false;
-         }
--        else if (!p_77648_3_.func_147439_a(p_77648_4_, p_77648_5_, p_77648_6_).func_149688_o().func_76220_a())
-+        else if (!p_77648_3_.isSideSolid(p_77648_4_, p_77648_5_, p_77648_6_, net.minecraftforge.common.util.ForgeDirection.getOrientation(p_77648_7_)))
-         {
-             return false;
-         }
-@@ -71,8 +76,11 @@
-                 ++p_77648_4_;
-             }
+@@ -47,7 +52,7 @@
  
-+        }
-+        {
-             if (!p_77648_3_.field_72995_K)
+             if (!flag)
              {
-+                if (!Blocks.field_150465_bP.func_149707_d(p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_, p_77648_7_)) return false;
-                 p_77648_3_.func_147465_d(p_77648_4_, p_77648_5_, p_77648_6_, Blocks.field_150465_bP, p_77648_7_, 2);
-                 int i1 = 0;
+-                if (!p_180614_3_.func_180495_p(p_180614_4_).func_177230_c().func_149688_o().func_76220_a())
++                if (!p_180614_3_.isSideSolid(p_180614_4_, p_180614_5_, true))
+                 {
+                     return false;
+                 }
+@@ -67,6 +72,7 @@
+             {
+                 if (!p_180614_3_.field_72995_K)
+                 {
++                    if (!Blocks.field_150465_bP.func_176198_a(p_180614_3_, p_180614_4_, p_180614_5_)) return false;
+                     p_180614_3_.func_180501_a(p_180614_4_, Blocks.field_150465_bP.func_176223_P().func_177226_a(BlockSkull.field_176418_a, p_180614_5_), 3);
+                     int i = 0;
  

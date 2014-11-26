@@ -1,58 +1,33 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
-@@ -100,6 +100,12 @@
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+@@ -127,14 +127,15 @@
+     public boolean field_71136_j;
+     private static final String __OBFID = "CL_00001440";
  
-+import net.minecraft.entity.item.EntityItem;
-+import net.minecraftforge.common.ForgeHooks;
-+import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.entity.player.PlayerDropsEvent;
-+import net.minecraftforge.event.world.ChunkWatchEvent;
-+
- public class EntityPlayerMP extends EntityPlayer implements ICrafting
- {
-     private static final Logger field_147102_bM = LogManager.getLogger();
-@@ -132,19 +138,11 @@
++    @SuppressWarnings("unused")
+     public EntityPlayerMP(MinecraftServer p_i45285_1_, WorldServer p_i45285_2_, GameProfile p_i45285_3_, ItemInWorldManager p_i45285_4_)
+     {
          super(p_i45285_2_, p_i45285_3_);
          p_i45285_4_.field_73090_b = this;
          this.field_71134_c = p_i45285_4_;
--        ChunkCoordinates chunkcoordinates = p_i45285_2_.func_72861_E();
-+        ChunkCoordinates chunkcoordinates = p_i45285_2_.field_73011_w.getRandomizedSpawnPoint();
-         int i = chunkcoordinates.field_71574_a;
-         int j = chunkcoordinates.field_71573_c;
-         int k = chunkcoordinates.field_71572_b;
+-        BlockPos blockpos = p_i45285_2_.func_175694_M();
++        BlockPos blockpos = p_i45285_2_.field_73011_w.getRandomizedSpawnPoint();
  
--        if (!p_i45285_2_.field_73011_w.field_76576_e && p_i45285_2_.func_72912_H().func_76077_q() != WorldSettings.GameType.ADVENTURE)
--        {
--            int l = Math.max(5, p_i45285_1_.func_82357_ak() - 6);
--            i += this.field_70146_Z.nextInt(l * 2) - l;
--            j += this.field_70146_Z.nextInt(l * 2) - l;
--            k = p_i45285_2_.func_72825_h(i, j);
--        }
--
-         this.field_71133_b = p_i45285_1_;
-         this.field_147103_bO = p_i45285_1_.func_71203_ab().func_152602_a(this);
-         this.field_70138_W = 0.0F;
-@@ -198,7 +196,7 @@
- 
-     public float func_70047_e()
-     {
--        return 1.62F;
-+        return super.func_70047_e();
-     }
- 
-     public void func_70071_h_()
-@@ -213,7 +211,7 @@
+-        if (!p_i45285_2_.field_73011_w.func_177495_o() && p_i45285_2_.func_72912_H().func_76077_q() != WorldSettings.GameType.ADVENTURE)
++        if (false && !p_i45285_2_.field_73011_w.func_177495_o() && p_i45285_2_.func_72912_H().func_76077_q() != WorldSettings.GameType.ADVENTURE)
+         {
+             int i = Math.max(5, p_i45285_1_.func_82357_ak() - 6);
+             int j = MathHelper.func_76128_c(p_i45285_2_.func_175723_af().func_177729_b((double)blockpos.func_177958_n(), (double)blockpos.func_177952_p()));
+@@ -227,7 +228,7 @@
  
          this.field_71070_bA.func_75142_b();
  
 -        if (!this.field_70170_p.field_72995_K && !this.field_71070_bA.func_75145_c(this))
-+        if (!this.field_70170_p.field_72995_K && !ForgeHooks.canInteractWith(this, this.field_71070_bA))
++        if (!this.field_70170_p.field_72995_K && !net.minecraftforge.common.ForgeHooks.canInteractWith(this, this.field_71070_bA))
          {
              this.func_71053_j();
              this.field_71070_bA = this.field_71069_bz;
-@@ -255,7 +253,8 @@
+@@ -269,7 +270,8 @@
                          if (chunk.func_150802_k())
                          {
                              arraylist.add(chunk);
@@ -62,20 +37,23 @@
                              iterator1.remove();
                          }
                      }
-@@ -283,6 +282,7 @@
+@@ -305,6 +307,7 @@
                  {
                      chunk = (Chunk)iterator2.next();
                      this.func_71121_q().func_73039_n().func_85172_a(this, chunk);
-+                    MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(chunk.func_76632_l(), this));
++                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkWatchEvent.Watch(chunk.func_76632_l(), this));
                  }
              }
          }
-@@ -402,11 +402,25 @@
+@@ -440,6 +443,7 @@
  
      public void func_70645_a(DamageSource p_70645_1_)
      {
-+        if (ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
-         this.field_71133_b.func_71203_ab().func_148539_a(this.func_110142_aN().func_151521_b());
++        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
+         if (this.field_70170_p.func_82736_K().func_82766_b("showDeathMessages"))
+         {
+             Team team = this.func_96124_cp();
+@@ -463,7 +467,20 @@
  
          if (!this.field_70170_p.func_82736_K().func_82766_b("keepInventory"))
          {
@@ -85,10 +63,10 @@
              this.field_71071_by.func_70436_m();
 +
 +            captureDrops = false;
-+            PlayerDropsEvent event = new PlayerDropsEvent(this, p_70645_1_, capturedDrops, field_70718_bc > 0);
-+            if (!MinecraftForge.EVENT_BUS.post(event))
++            net.minecraftforge.event.entity.player.PlayerDropsEvent event = new net.minecraftforge.event.entity.player.PlayerDropsEvent(this, p_70645_1_, capturedDrops, field_70718_bc > 0);
++            if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
 +            {
-+                for (EntityItem item : capturedDrops)
++                for (net.minecraft.entity.item.EntityItem item : capturedDrops)
 +                {
 +                    func_71012_a(item);
 +                }
@@ -96,28 +74,11 @@
          }
  
          Collection collection = this.field_70170_p.func_96441_U().func_96520_a(IScoreObjectiveCriteria.field_96642_c);
-@@ -806,6 +820,7 @@
+@@ -849,6 +866,7 @@
      {
          if (p_71064_1_ != null)
          {
-+            if (p_71064_1_.func_75967_d() && MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.AchievementEvent(this, (net.minecraft.stats.Achievement) p_71064_1_))) return;
++            if (p_71064_1_.func_75967_d() && net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.AchievementEvent(this, (net.minecraft.stats.Achievement) p_71064_1_))) return;
              this.field_147103_bO.func_150871_b(this, p_71064_1_, p_71064_2_);
              Iterator iterator = this.func_96123_co().func_96520_a(p_71064_1_.func_150952_k()).iterator();
  
-@@ -1021,4 +1036,16 @@
-     {
-         return this.field_143005_bX;
-     }
-+
-+    /* ===================================== FORGE START =====================================*/
-+    /**
-+     * Returns the default eye height of the player
-+     * @return player default eye height
-+     */
-+    @Override
-+    public float getDefaultEyeHeight()
-+    {
-+        return 1.62F;
-+    }
-+    /* ===================================== FORGE END =====================================*/
- }

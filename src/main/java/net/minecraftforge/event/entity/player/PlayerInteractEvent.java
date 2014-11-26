@@ -1,10 +1,12 @@
 package net.minecraftforge.event.entity.player;
 
-import static cpw.mods.fml.common.eventhandler.Event.Result.DEFAULT;
-import static cpw.mods.fml.common.eventhandler.Event.Result.DENY;
+import static net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT;
+import static net.minecraftforge.fml.common.eventhandler.Event.Result.DENY;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
  * PlayerInteractEvent is fired when a player interacts in some way.
@@ -15,13 +17,11 @@ import cpw.mods.fml.common.eventhandler.Cancelable;
  * ItemInWorldManager#activateBlockOrUseItem(EntityPlayer, World, ItemStack, int, int, int, int, float, float, float),
  * ItemInWorldManager#onBlockClicked(int, int, int, int). <br>
  * <br>
- * This event is fired via the {@link ForgeEventFactory#onPlayerInteract(EntityPlayer, Action, int, int, int, int)}.
+ * This event is fired via the {@link ForgeEventFactory#onPlayerInteract(EntityPlayer, Action, BlockPos, EnumFacing)}.
  * <br>
  * {@link #action} contains the Action the player performed durin this interaction. <br>
- * {@link #x} contains the x-coordinate of where this event occurred. <br>
- * {@link #y} contains the y-coordinate of where this event occurred. <br>
- * {@link #z} contains the z-coordinate of where this event occurred. <br>
- * {@link #face} contains the face of the block that was interacted with. <br>
+ * {@link #pos} contains the coordinate of where this event occurred.<br>
+ * {@link #face} contains the face of the block that was interacted with. May be null if unknown. <br>
  * {@link #world} contains the world in which this event is occurring. <br>
  * <br>
  * This event is {@link Cancelable}.<br>
@@ -40,35 +40,25 @@ public class PlayerInteractEvent extends PlayerEvent
         RIGHT_CLICK_BLOCK,
         LEFT_CLICK_BLOCK
     }
-    
+
     public final Action action;
-    public final int x;
-    public final int y;
-    public final int z;
-    public final int face;
     public final World world;
-    
+    public final BlockPos pos;
+    public final EnumFacing face; // Can be null if unknown
+
     public Result useBlock = DEFAULT;
     public Result useItem = DEFAULT;
 
-    @Deprecated
-    public PlayerInteractEvent(EntityPlayer player, Action action, int x, int y, int z, int face)
-    {
-        this(player, action, x, y, z, face, player.worldObj);
-    }
-
-    public PlayerInteractEvent(EntityPlayer player, Action action, int x, int y, int z, int face, World world)
+    public PlayerInteractEvent(EntityPlayer player, Action action, BlockPos pos, EnumFacing face, World world)
     {
         super(player);
         this.action = action;
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.pos = pos;
         this.face = face;
-        if (face == -1) useBlock = DENY;
+        if (face == null) useBlock = DENY;
         this.world = world;
     }
-    
+
     @Override
     public void setCanceled(boolean cancel)
     {

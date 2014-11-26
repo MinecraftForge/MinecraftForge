@@ -1,16 +1,17 @@
 package net.minecraftforge.event.entity.player;
 
 import java.io.File;
-
-import cpw.mods.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
 /**
  * PlayerEvent is fired whenever an event involving Living entities occurs. <br>
- * If a method utilizes this {@link Event} as its parameter, the method will 
+ * If a method utilizes this {@link Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
@@ -23,7 +24,7 @@ public class PlayerEvent extends LivingEvent
         super(player);
         entityPlayer = player;
     }
-    
+
     /**
      * HarvestCheck is fired when a player attempts to harvest a block.<br>
      * This event is fired whenever a player attempts to harvest a block in
@@ -58,15 +59,12 @@ public class PlayerEvent extends LivingEvent
      * This event is fired whenever a player attempts to harvest a block in
      * EntityPlayer#canHarvestBlock(Block).<br>
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#getBreakSpeed(EntityPlayer, Block, int, float, int, int, int)}.<br>
+     * This event is fired via the {@link ForgeEventFactory#getBreakSpeed(EntityPlayer, IBlockState, float, BlockPos)}.<br>
      * <br>
-     * {@link #block} contains the block being broken. <br>
-     * {@link #metadata} contains the metadata of the block being broken. <br>
+     * {@link #state} contains the block being broken. <br>
      * {@link #originalSpeed} contains the original speed at which the player broke the block. <br>
      * {@link #newSpeed} contains the newSpeed at which the player will break the block. <br>
-     * {@link #x} contains the x-coordinate at which this event is occurring. <br>
-     * {@link #y} contains the y-coordinate at which this event is occurring. <br>
-     * {@link #z} contains the z-coordinate at which this event is occurring. <br>
+     * {@link #pos} contains the coordinates at which this event is occurring. Y value -1 means location is unknown.<br>
      * <br>
      * This event is {@link Cancelable}.<br>
      * If it is canceled, the player is unable to break the block.<br>
@@ -78,30 +76,18 @@ public class PlayerEvent extends LivingEvent
     @Cancelable
     public static class BreakSpeed extends PlayerEvent
     {
-        public final Block block;
-        public final int metadata;
+        public final IBlockState state;
         public final float originalSpeed;
         public float newSpeed = 0.0f;
-        public final int x;
-        public final int y; // -1 notes unknown location
-        public final int z;
+        public final BlockPos pos; // Y position of -1 notes unknown location
 
-        @Deprecated
-        public BreakSpeed(EntityPlayer player, Block block, int metadata, float original)
-        {
-            this(player, block, metadata, original, 0, -1, 0);
-        }
-
-        public BreakSpeed(EntityPlayer player, Block block, int metadata, float original, int x, int y, int z)
+        public BreakSpeed(EntityPlayer player, IBlockState state, float original, BlockPos pos)
         {
             super(player);
-            this.block = block;
-            this.metadata = metadata;
+            this.state = state;
             this.originalSpeed = original;
             this.newSpeed = original;
-            this.x = x;
-            this.y = y;
-            this.z = z;
+            this.pos = pos;
         }
     }
 
@@ -156,37 +142,37 @@ public class PlayerEvent extends LivingEvent
             this.wasDeath = wasDeath;
         }
     }
-    
+
     /**
      * Fired when an Entity is started to be "tracked" by this player (the player receives updates about this entity, e.g. motion).
      *
      */
     public static class StartTracking extends PlayerEvent {
-        
+
         /**
          * The Entity now being tracked.
          */
         public final Entity target;
-        
+
         public StartTracking(EntityPlayer player, Entity target)
         {
             super(player);
             this.target = target;
         }
-        
+
     }
-    
+
     /**
      * Fired when an Entity is stopped to be "tracked" by this player (the player no longer receives updates about this entity, e.g. motion).
      *
      */
     public static class StopTracking extends PlayerEvent {
-        
+
         /**
          * The Entity no longer being tracked.
          */
         public final Entity target;
-        
+
         public StopTracking(EntityPlayer player, Entity target)
         {
             super(player);

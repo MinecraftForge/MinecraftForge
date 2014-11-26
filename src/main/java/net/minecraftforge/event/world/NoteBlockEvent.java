@@ -3,11 +3,13 @@ package net.minecraftforge.event.world;
 import com.google.common.base.Preconditions;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.BlockEvent;
-import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * Base class for Noteblock Events
@@ -17,12 +19,12 @@ public class NoteBlockEvent extends BlockEvent
 {
     private int noteId;
 
-    NoteBlockEvent(World world, int x, int y, int z, int meta, int note)
+    NoteBlockEvent(World world, BlockPos pos, IBlockState state, int note)
     {
-        super(x, y, z, world, Blocks.noteblock, meta);
+        super(world, pos, state);
         this.noteId = note;
     }
-    
+
     /**
      * Get the Note the Noteblock is tuned to
      * @return the Note
@@ -33,7 +35,7 @@ public class NoteBlockEvent extends BlockEvent
     }
 
     /**
-     * Get the Octave of the note this Noteblock is tuned to 
+     * Get the Octave of the note this Noteblock is tuned to
      * @return the Octave
      */
     public Octave getOctave()
@@ -52,7 +54,7 @@ public class NoteBlockEvent extends BlockEvent
 
     /**
      * Set Note and Octave for this event.<br>
-     * If octave is Octave.HIGH, note may only be Note.F_SHARP 
+     * If octave is Octave.HIGH, note may only be Note.F_SHARP
      * @param note the Note
      * @param octave the Octave
      */
@@ -71,13 +73,13 @@ public class NoteBlockEvent extends BlockEvent
     {
         public Instrument instrument;
 
-        public Play(World world, int x, int y, int z, int meta, int note, int instrument)
+        public Play(World world, BlockPos pos, IBlockState state, int note, int instrument)
         {
-            super(world, x, y, z, meta, note);
+            super(world, pos, state, note);
             this.instrument = Instrument.fromId(instrument);
         }
     }
-    
+
     /**
      * Fired when a Noteblock is changed. You can adjust the note it will change to via {@link #setNote(Note, Octave)}.
      * Canceling this event will not change the note and also stop the Noteblock from playing it's note.
@@ -87,15 +89,15 @@ public class NoteBlockEvent extends BlockEvent
     {
         public final Note oldNote;
         public final Octave oldOctave;
-        
-        public Change(World world, int x, int y, int z, int meta, int oldNote, int newNote)
+
+        public Change(World world, BlockPos pos, IBlockState state, int oldNote, int newNote)
         {
-            super(world, x, y, z, meta, newNote);
+            super(world, pos, state, newNote);
             this.oldNote = Note.fromId(oldNote);
             this.oldOctave = Octave.fromId(oldNote);
-        }        
+        }
     }
-    
+
     /**
      * Describes the types of musical Instruments that can be played by a Noteblock.
      * The Instrument being played can be overridden with {@link NoteBlockEvent.Play#setInstrument(Instrument)}
@@ -107,19 +109,19 @@ public class NoteBlockEvent extends BlockEvent
         SNARE,
         CLICKS,
         BASSGUITAR;
-        
+
         // cache to avoid creating a new array every time
         private static final Instrument[] values = values();
-        
+
         static Instrument fromId(int id)
         {
             return id < 0 || id > 4 ? PIANO : values[id];
         }
     }
-    
+
     /**
      * Information about the pitch of a Noteblock note.
-     * For altered notes such as G-Sharp / A-Flat the Sharp variant is used here. 
+     * For altered notes such as G-Sharp / A-Flat the Sharp variant is used here.
      *
      */
     public static enum Note
@@ -136,15 +138,15 @@ public class NoteBlockEvent extends BlockEvent
         D_SHARP,
         E,
         F;
-        
+
         private static final Note[] values = values();
-        
+
         static Note fromId(int id)
         {
             return values[id % 12];
-        }        
+        }
     }
-    
+
     /**
      * Describes the Octave of a Note being played by a Noteblock.
      * Together with {@link Note} it fully describes the note.
@@ -155,7 +157,7 @@ public class NoteBlockEvent extends BlockEvent
         LOW,
         MID,
         HIGH; // only valid for F_SHARP
-        
+
         static Octave fromId(int id)
         {
             return id < 12 ? LOW : id == 24 ? HIGH : MID;

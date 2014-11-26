@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/layer/GenLayer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/layer/GenLayer.java
-@@ -7,6 +7,9 @@
- import net.minecraft.world.WorldType;
+@@ -8,6 +8,9 @@
  import net.minecraft.world.biome.BiomeGenBase;
+ import net.minecraft.world.gen.ChunkProviderSettings;
  
 +import net.minecraftforge.common.*;
 +import net.minecraftforge.event.terraingen.*;
@@ -10,27 +10,22 @@
  public abstract class GenLayer
  {
      private long field_75907_b;
-@@ -48,17 +51,12 @@
-         {
-             b0 = 4;
+@@ -53,11 +56,11 @@
+             j = 6;
          }
-+        b0 = getModdedBiomeSize(p_75901_2_, b0);
  
++        j = getModdedBiomeSize(p_180781_2_, j);
++
          GenLayer genlayer = GenLayerZoom.func_75915_a(1000L, genlayer2, 0);
          GenLayerRiverInit genlayerriverinit = new GenLayerRiverInit(100L, genlayer);
--        Object object = new GenLayerBiome(200L, genlayer2, p_75901_2_);
-+        Object object = p_75901_2_.getBiomeLayer(p_75901_0_, genlayer2);
- 
--        if (!flag)
--        {
--            GenLayer genlayer3 = GenLayerZoom.func_75915_a(1000L, (GenLayer)object, 2);
--            object = new GenLayerBiomeEdge(1000L, genlayer3);
--        }
--
+-        GenLayerBiome genlayerbiome = new GenLayerBiome(200L, genlayer2, p_180781_2_, p_180781_3_);
+-        GenLayer genlayer3 = GenLayerZoom.func_75915_a(1000L, genlayerbiome, 2);
+-        GenLayerBiomeEdge genlayerbiomeedge = new GenLayerBiomeEdge(1000L, genlayer3);
++        GenLayer genlayerbiomeedge = p_180781_2_.getBiomeLayer(p_180781_0_, genlayer2, p_180781_3_);
          GenLayer genlayer1 = GenLayerZoom.func_75915_a(1000L, genlayerriverinit, 2);
-         GenLayerHills genlayerhills = new GenLayerHills(1000L, (GenLayer)object, genlayer1);
+         GenLayerHills genlayerhills = new GenLayerHills(1000L, genlayerbiomeedge, genlayer1);
          genlayer = GenLayerZoom.func_75915_a(1000L, genlayerriverinit, 2);
-@@ -192,7 +190,7 @@
+@@ -194,7 +197,7 @@
  
      protected static boolean func_151618_b(int p_151618_0_)
      {
@@ -39,7 +34,7 @@
      }
  
      protected int func_151619_a(int ... p_151619_1_)
-@@ -204,4 +202,27 @@
+@@ -206,4 +209,27 @@
      {
          return p_151617_2_ == p_151617_3_ && p_151617_3_ == p_151617_4_ ? p_151617_2_ : (p_151617_1_ == p_151617_2_ && p_151617_1_ == p_151617_3_ ? p_151617_1_ : (p_151617_1_ == p_151617_2_ && p_151617_1_ == p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_3_ && p_151617_1_ == p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_2_ && p_151617_3_ != p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_3_ && p_151617_2_ != p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_4_ && p_151617_2_ != p_151617_3_ ? p_151617_1_ : (p_151617_2_ == p_151617_3_ && p_151617_1_ != p_151617_4_ ? p_151617_2_ : (p_151617_2_ == p_151617_4_ && p_151617_1_ != p_151617_3_ ? p_151617_2_ : (p_151617_3_ == p_151617_4_ && p_151617_1_ != p_151617_2_ ? p_151617_3_ : this.func_151619_a(new int[] {p_151617_1_, p_151617_2_, p_151617_3_, p_151617_4_}))))))))));
      }
@@ -59,7 +54,7 @@
 +        return j;
 +    }
 +
-+    public static byte getModdedBiomeSize(WorldType worldType, byte original)
++    public static int getModdedBiomeSize(WorldType worldType, int original)
 +    {
 +        WorldTypeEvent.BiomeSize event = new WorldTypeEvent.BiomeSize(worldType, original);
 +        MinecraftForge.TERRAIN_GEN_BUS.post(event);
