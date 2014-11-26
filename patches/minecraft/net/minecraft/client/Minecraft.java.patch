@@ -1,32 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src-work/minecraft/net/minecraft/client/Minecraft.java
-@@ -276,7 +276,6 @@
-         this.func_71389_H();
-         this.field_71449_j = p_i1103_1_;
-         field_147123_G.info("Setting user: " + p_i1103_1_.func_111285_a());
--        field_147123_G.info("(Session ID is " + p_i1103_1_.func_111286_b() + ")");
-         this.field_71459_aj = p_i1103_5_;
-         this.field_71443_c = p_i1103_2_;
-         this.field_71440_d = p_i1103_3_;
-@@ -430,7 +429,7 @@
- 
-         try
-         {
--            Display.create((new PixelFormat()).withDepthBits(24));
-+            net.minecraftforge.client.ForgeHooksClient.createDisplay();
-         }
-         catch (LWJGLException lwjglexception)
-         {
-@@ -541,7 +540,7 @@
+@@ -296,7 +296,6 @@
+         this.field_152355_az = (new YggdrasilAuthenticationService(p_i45547_1_.field_178745_a.field_178751_c, UUID.randomUUID().toString())).createMinecraftSessionService();
+         this.field_71449_j = p_i45547_1_.field_178745_a.field_178752_a;
+         field_147123_G.info("Setting user: " + this.field_71449_j.func_111285_a());
+-        field_147123_G.info("(Session ID is " + this.field_71449_j.func_111286_b() + ")");
+         this.field_71459_aj = p_i45547_1_.field_178741_d.field_178756_a;
+         this.field_71443_c = p_i45547_1_.field_178743_b.field_178764_a > 0 ? p_i45547_1_.field_178743_b.field_178764_a : 1;
+         this.field_71440_d = p_i45547_1_.field_178743_b.field_178762_b > 0 ? p_i45547_1_.field_178743_b.field_178762_b : 1;
+@@ -484,7 +483,7 @@
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
-         FMLClientHandler.instance().finishMinecraftLoading();
+         net.minecraftforge.fml.client.FMLClientHandler.instance().finishMinecraftLoading();
          this.func_71361_d("Post startup");
 -        this.field_71456_v = new GuiIngame(this);
 +        this.field_71456_v = new net.minecraftforge.client.GuiIngameForge(this);
  
          if (this.field_71475_ae != null)
          {
-@@ -761,11 +760,6 @@
+@@ -891,11 +890,6 @@
  
      public void func_147108_a(GuiScreen p_147108_1_)
      {
@@ -38,7 +29,7 @@
          if (p_147108_1_ == null && this.field_71441_e == null)
          {
              p_147108_1_ = new GuiMainMenu();
-@@ -775,6 +769,17 @@
+@@ -905,6 +899,17 @@
              p_147108_1_ = new GuiGameOver();
          }
  
@@ -52,69 +43,62 @@
 +        {
 +            old.func_146281_b();
 +        }
-+        
++
          if (p_147108_1_ instanceof GuiMainMenu)
          {
              this.field_71474_y.field_74330_P = false;
-@@ -1341,7 +1346,7 @@
+@@ -1388,7 +1393,7 @@
  
-                     if (this.field_71439_g.func_82246_f(i, j, k))
-                     {
--                        this.field_71452_i.func_78867_a(i, j, k, this.field_71476_x.field_72310_e);
-+                        this.field_71452_i.addBlockHitEffects(i, j, k, this.field_71476_x);
-                         this.field_71439_g.func_71038_i();
-                     }
+                 if (this.field_71441_e.func_180495_p(blockpos).func_177230_c().func_149688_o() != Material.field_151579_a && this.field_71442_b.func_180512_c(blockpos, this.field_71476_x.field_178784_b))
+                 {
+-                    this.field_71452_i.func_180532_a(blockpos, this.field_71476_x.field_178784_b);
++                    this.field_71452_i.addBlockHitEffects(blockpos, this.field_71476_x);
+                     this.field_71439_g.func_71038_i();
                  }
-@@ -1422,11 +1427,12 @@
-                     int j = this.field_71476_x.field_72312_c;
-                     int k = this.field_71476_x.field_72309_d;
+             }
+@@ -1468,15 +1473,19 @@
+                 case 2:
+                     BlockPos blockpos = this.field_71476_x.func_178782_a();
  
--                    if (this.field_71441_e.func_147439_a(i, j, k).func_149688_o() != Material.field_151579_a)
-+                    if (!this.field_71441_e.func_147439_a(i, j, k).isAir(field_71441_e, i, j, k))
+-                    if (this.field_71441_e.func_180495_p(blockpos).func_177230_c().func_149688_o() != Material.field_151579_a)
++                    if (!this.field_71441_e.func_175623_d(blockpos))
                      {
-                         int l = itemstack != null ? itemstack.field_77994_a : 0;
+                         int i = itemstack != null ? itemstack.field_77994_a : 0;
  
--                        if (this.field_71442_b.func_78760_a(this.field_71439_g, this.field_71441_e, itemstack, i, j, k, this.field_71476_x.field_72310_e, this.field_71476_x.field_72307_f))
-+                        boolean result = !net.minecraftforge.event.ForgeEventFactory.onPlayerInteract(field_71439_g, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, i, j, k, this.field_71476_x.field_72310_e, this.field_71441_e).isCanceled();
-+                        if (result && this.field_71442_b.func_78760_a(this.field_71439_g, this.field_71441_e, itemstack, i, j, k, this.field_71476_x.field_72310_e, this.field_71476_x.field_72307_f))
++
++                        boolean result = !net.minecraftforge.event.ForgeEventFactory.onPlayerInteract(field_71439_g, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, this.field_71441_e, blockpos, this.field_71476_x.field_178784_b).isCanceled();
++                        if (result) { //Forge: Kept separate to simplify patch
+                         if (this.field_71442_b.func_178890_a(this.field_71439_g, this.field_71441_e, itemstack, blockpos, this.field_71476_x.field_178784_b, this.field_71476_x.field_72307_f))
                          {
                              flag = false;
                              this.field_71439_g.func_71038_i();
-@@ -1453,7 +1459,8 @@
-         {
-             ItemStack itemstack1 = this.field_71439_g.field_71071_by.func_70448_g();
+                         }
++                        }
  
--            if (itemstack1 != null && this.field_71442_b.func_78769_a(this.field_71439_g, this.field_71441_e, itemstack1))
-+            boolean result = !net.minecraftforge.event.ForgeEventFactory.onPlayerInteract(field_71439_g, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_AIR, 0, 0, 0, -1, this.field_71441_e).isCanceled();
-+            if (result && itemstack1 != null && this.field_71442_b.func_78769_a(this.field_71439_g, this.field_71441_e, itemstack1))
-             {
-                 this.field_71460_t.field_78516_c.func_78445_c();
-             }
-@@ -1665,6 +1672,8 @@
+                         if (itemstack == null)
+                         {
+@@ -1697,6 +1706,8 @@
  
              while (Mouse.next())
              {
 +                if (net.minecraftforge.client.ForgeHooksClient.postMouseEvent()) continue;
 +
-                 j = Mouse.getEventButton();
-                 KeyBinding.func_74510_a(j - 100, Mouse.getEventButtonState());
+                 i = Mouse.getEventButton();
+                 KeyBinding.func_74510_a(i - 100, Mouse.getEventButtonState());
  
-@@ -2127,6 +2136,11 @@
+@@ -2217,6 +2228,8 @@
  
      public void func_71353_a(WorldClient p_71353_1_, String p_71353_2_)
      {
-+        if (field_71441_e != null)
-+        {
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(field_71441_e));
-+        }
++        if (field_71441_e != null) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(field_71441_e));
 +
          if (p_71353_1_ == null)
          {
              NetHandlerPlayClient nethandlerplayclient = this.func_147114_u();
-@@ -2139,6 +2153,18 @@
-             if (this.field_71437_Z != null)
+@@ -2230,6 +2243,18 @@
              {
                  this.field_71437_Z.func_71263_m();
+                 this.field_71437_Z.func_175592_a();
 +                if (field_71461_s != null)
 +                {
 +                    this.field_71461_s.func_73719_c(I18n.func_135052_a("forge.client.shutdown.internal"));
@@ -130,37 +114,40 @@
              }
  
              this.field_71437_Z = null;
-@@ -2287,113 +2313,10 @@
+@@ -2361,134 +2386,11 @@
          if (this.field_71476_x != null)
          {
              boolean flag = this.field_71439_g.field_71075_bZ.field_75098_d;
 -            int i = 0;
 -            boolean flag1 = false;
--            Item item;
-             int j;
+-            TileEntity tileentity = null;
+-            Object object;
  
 -            if (this.field_71476_x.field_72313_a == MovingObjectPosition.MovingObjectType.BLOCK)
 -            {
--                j = this.field_71476_x.field_72311_b;
--                int k = this.field_71476_x.field_72312_c;
--                int l = this.field_71476_x.field_72309_d;
--                Block block = this.field_71441_e.func_147439_a(j, k, l);
+-                BlockPos blockpos = this.field_71476_x.func_178782_a();
+-                Block block = this.field_71441_e.func_180495_p(blockpos).func_177230_c();
 -
 -                if (block.func_149688_o() == Material.field_151579_a)
 -                {
 -                    return;
 -                }
 -
--                item = block.func_149694_d(this.field_71441_e, j, k, l);
+-                object = block.func_180665_b(this.field_71441_e, blockpos);
 -
--                if (item == null)
+-                if (object == null)
 -                {
 -                    return;
 -                }
 -
--                flag1 = item.func_77614_k();
--                Block block1 = item instanceof ItemBlock && !block.func_149648_K() ? Block.func_149634_a(item) : block;
--                i = block1.func_149643_k(this.field_71441_e, j, k, l);
+-                if (flag && GuiScreen.func_146271_m())
+-                {
+-                    tileentity = this.field_71441_e.func_175625_s(blockpos);
+-                }
+-
+-                Block block1 = object instanceof ItemBlock && !block.func_149648_K() ? Block.func_149634_a((Item)object) : block;
+-                i = block1.func_176222_j(this.field_71441_e, blockpos);
+-                flag1 = ((Item)object).func_77614_k();
 -            }
 -            else
 -            {
@@ -171,11 +158,11 @@
 -
 -                if (this.field_71476_x.field_72308_g instanceof EntityPainting)
 -                {
--                    item = Items.field_151159_an;
+-                    object = Items.field_151159_an;
 -                }
 -                else if (this.field_71476_x.field_72308_g instanceof EntityLeashKnot)
 -                {
--                    item = Items.field_151058_ca;
+-                    object = Items.field_151058_ca;
 -                }
 -                else if (this.field_71476_x.field_72308_g instanceof EntityItemFrame)
 -                {
@@ -184,11 +171,11 @@
 -
 -                    if (itemstack == null)
 -                    {
--                        item = Items.field_151160_bD;
+-                        object = Items.field_151160_bD;
 -                    }
 -                    else
 -                    {
--                        item = itemstack.func_77973_b();
+-                        object = itemstack.func_77973_b();
 -                        i = itemstack.func_77960_j();
 -                        flag1 = true;
 -                    }
@@ -197,56 +184,74 @@
 -                {
 -                    EntityMinecart entityminecart = (EntityMinecart)this.field_71476_x.field_72308_g;
 -
--                    if (entityminecart.func_94087_l() == 2)
+-                    switch (Minecraft.SwitchEnumMinecartType.field_178901_b[entityminecart.func_180456_s().ordinal()])
 -                    {
--                        item = Items.field_151109_aJ;
--                    }
--                    else if (entityminecart.func_94087_l() == 1)
--                    {
--                        item = Items.field_151108_aI;
--                    }
--                    else if (entityminecart.func_94087_l() == 3)
--                    {
--                        item = Items.field_151142_bV;
--                    }
--                    else if (entityminecart.func_94087_l() == 5)
--                    {
--                        item = Items.field_151140_bW;
--                    }
--                    else if (entityminecart.func_94087_l() == 6)
--                    {
--                        item = Items.field_151095_cc;
--                    }
--                    else
--                    {
--                        item = Items.field_151143_au;
+-                        case 1:
+-                            object = Items.field_151109_aJ;
+-                            break;
+-                        case 2:
+-                            object = Items.field_151108_aI;
+-                            break;
+-                        case 3:
+-                            object = Items.field_151142_bV;
+-                            break;
+-                        case 4:
+-                            object = Items.field_151140_bW;
+-                            break;
+-                        case 5:
+-                            object = Items.field_151095_cc;
+-                            break;
+-                        default:
+-                            object = Items.field_151143_au;
 -                    }
 -                }
 -                else if (this.field_71476_x.field_72308_g instanceof EntityBoat)
 -                {
--                    item = Items.field_151124_az;
+-                    object = Items.field_151124_az;
+-                }
+-                else if (this.field_71476_x.field_72308_g instanceof EntityArmorStand)
+-                {
+-                    object = Items.field_179565_cj;
 -                }
 -                else
 -                {
--                    item = Items.field_151063_bx;
+-                    object = Items.field_151063_bx;
 -                    i = EntityList.func_75619_a(this.field_71476_x.field_72308_g);
 -                    flag1 = true;
 -
--                    if (i <= 0 || !EntityList.field_75627_a.containsKey(Integer.valueOf(i)))
+-                    if (!EntityList.field_75627_a.containsKey(Integer.valueOf(i)))
 -                    {
 -                        return;
 -                    }
 -                }
 -            }
 -
--            this.field_71439_g.field_71071_by.func_146030_a(item, i, flag1, flag);
+             InventoryPlayer inventoryplayer = this.field_71439_g.field_71071_by;
+ 
+-            if (tileentity == null)
+-            {
+-                inventoryplayer.func_146030_a((Item)object, i, flag1, flag);
+-            }
+-            else
+-            {
+-                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+-                tileentity.func_145841_b(nbttagcompound1);
+-                ItemStack itemstack1 = new ItemStack((Item)object, 1, i);
+-                itemstack1.func_77983_a("BlockEntityTag", nbttagcompound1);
+-                NBTTagCompound nbttagcompound = new NBTTagCompound();
+-                NBTTagList nbttaglist = new NBTTagList();
+-                nbttaglist.func_74742_a(new NBTTagString("(+NBT)"));
+-                nbttagcompound.func_74782_a("Lore", nbttaglist);
+-                itemstack1.func_77983_a("display", nbttagcompound);
+-                inventoryplayer.func_70299_a(inventoryplayer.field_70461_c, itemstack1);
+-            }
 -
 +            if (!net.minecraftforge.common.ForgeHooks.onPickBlock(this.field_71476_x, this.field_71439_g, this.field_71441_e)) return;
 +            // We delete this code wholly instead of commenting it out, to make sure we detect changes in it between MC versions
              if (flag)
              {
-                 j = this.field_71439_g.field_71069_bz.field_75151_b.size() - 9 + this.field_71439_g.field_71071_by.field_70461_c;
-@@ -2659,8 +2582,15 @@
+                 int j = this.field_71439_g.field_71069_bz.field_75151_b.size() - 9 + inventoryplayer.field_70461_c;
+@@ -2744,8 +2646,11 @@
          p_70001_1_.func_152767_b("gl_max_texture_size", Integer.valueOf(func_71369_N()));
      }
  
@@ -254,15 +259,11 @@
 +    private static int max_texture_size = -1;
      public static int func_71369_N()
      {
-+        if (max_texture_size != -1)
-+        {
-+            return max_texture_size;
-+        }
-+
++        if (max_texture_size != -1) return max_texture_size;
          for (int i = 16384; i > 0; i >>= 1)
          {
              GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
-@@ -2668,6 +2598,7 @@
+@@ -2753,6 +2658,7 @@
  
              if (j != 0)
              {

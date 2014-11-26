@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityMinecartFurnace.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecartFurnace.java
-@@ -122,6 +122,7 @@
+@@ -132,6 +132,7 @@
  
      public boolean func_130002_c(EntityPlayer p_130002_1_)
      {

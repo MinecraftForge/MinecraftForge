@@ -1,27 +1,26 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiScreen.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiScreen.java
-@@ -17,6 +17,10 @@
- import net.minecraft.client.renderer.entity.RenderItem;
- import net.minecraft.item.ItemStack;
+@@ -37,6 +37,9 @@
+ import net.minecraft.util.ChatComponentTranslation;
  import net.minecraft.util.EnumChatFormatting;
+ import net.minecraft.util.IChatComponent;
 +import net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent;
 +import net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent;
 +import net.minecraftforge.common.MinecraftForge;
-+
- import org.lwjgl.input.Keyboard;
- import org.lwjgl.input.Mouse;
- import org.lwjgl.opengl.GL11;
-@@ -111,7 +115,8 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ import org.apache.commons.lang3.StringUtils;
+@@ -146,7 +149,8 @@
              }
          }
  
 -        this.func_146283_a(list, p_146285_2_, p_146285_3_);
 +        FontRenderer font = p_146285_1_.func_77973_b().getFontRenderer(p_146285_1_);
-+        drawHoveringText(list, p_146285_2_, p_146285_3_, (font == null ? field_146289_q : font));
++        this.drawHoveringText(list, p_146285_2_, p_146285_3_, (font == null ? field_146289_q : font));
      }
  
      protected void func_146279_a(String p_146279_1_, int p_146279_2_, int p_146279_3_)
-@@ -121,6 +126,11 @@
+@@ -156,6 +160,11 @@
  
      protected void func_146283_a(List p_146283_1_, int p_146283_2_, int p_146283_3_)
      {
@@ -32,8 +31,8 @@
 +    {
          if (!p_146283_1_.isEmpty())
          {
-             GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-@@ -133,7 +143,7 @@
+             GlStateManager.func_179101_C();
+@@ -168,7 +177,7 @@
              while (iterator.hasNext())
              {
                  String s = (String)iterator.next();
@@ -42,16 +41,24 @@
  
                  if (l > k)
                  {
-@@ -178,7 +188,7 @@
+@@ -213,7 +222,7 @@
              for (int i2 = 0; i2 < p_146283_1_.size(); ++i2)
              {
                  String s1 = (String)p_146283_1_.get(i2);
--                this.field_146289_q.func_78261_a(s1, j2, k2, -1);
-+                font.func_78261_a(s1, j2, k2, -1);
+-                this.field_146289_q.func_175063_a(s1, (float)j2, (float)k2, -1);
++                font.func_175063_a(s1, j2, k2, -1);
  
                  if (i2 == 0)
                  {
-@@ -207,9 +217,14 @@
+@@ -441,6 +450,7 @@
+             this.field_146297_k.field_71456_v.func_146158_b().func_146239_a(p_175281_1_);
+         }
+ 
++        if (net.minecraftforge.client.ClientCommandHandler.instance.func_71556_a(field_146297_k.field_71439_g, p_175281_1_) != 0) return;
+         this.field_146297_k.field_71439_g.func_71165_d(p_175281_1_);
+     }
+ 
+@@ -454,9 +464,14 @@
  
                  if (guibutton.func_146116_c(this.field_146297_k, p_73864_1_, p_73864_2_))
                  {
@@ -69,7 +76,7 @@
                  }
              }
          }
-@@ -234,8 +249,12 @@
+@@ -482,8 +497,12 @@
          this.field_146289_q = p_146280_1_.field_71466_p;
          this.field_146294_l = p_146280_2_;
          this.field_146295_m = p_146280_3_;

@@ -14,18 +14,18 @@ import net.minecraft.world.chunk.Chunk;
 public class ChunkEvent extends WorldEvent
 {
     private final Chunk chunk;
-    
+
     public ChunkEvent(Chunk chunk)
     {
-        super(chunk.worldObj);
+        super(chunk.getWorld());
         this.chunk = chunk;
     }
-    
+
     public Chunk getChunk()
     {
         return chunk;
     }
-    
+
     /**
      * ChunkEvent.Load is fired when vanilla Minecraft attempts to load a Chunk into the world.<br>
      * This event is fired during chunk loading in <br>
@@ -45,7 +45,7 @@ public class ChunkEvent extends WorldEvent
             super(chunk);
         }
     }
-    
+
     /**
      * ChunkEvent.Unload is fired when vanilla Minecraft attempts to unload a Chunk from the world.<br>
      * This event is fired during chunk unloading in <br>

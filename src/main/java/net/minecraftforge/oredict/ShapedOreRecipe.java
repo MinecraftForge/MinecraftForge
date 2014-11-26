@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.inventory.InventoryCrafting;
@@ -13,6 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 
 public class ShapedOreRecipe implements IRecipe
 {
@@ -254,5 +254,11 @@ public class ShapedOreRecipe implements IRecipe
     public Object[] getInput()
     {
         return this.input;
+    }
+
+    @Override
+    public ItemStack[] func_179532_b(InventoryCrafting inv) //getRecipeLeftovers
+    {
+        return ForgeHooks.defaultRecipeGetRemainingItems(inv);
     }
 }

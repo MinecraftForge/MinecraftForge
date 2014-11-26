@@ -1,27 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/util/WeightedRandomChestContent.java
 +++ ../src-work/minecraft/net/minecraft/util/WeightedRandomChestContent.java
-@@ -5,6 +5,7 @@
- import net.minecraft.item.Item;
- import net.minecraft.item.ItemStack;
- import net.minecraft.tileentity.TileEntityDispenser;
-+import net.minecraftforge.common.ChestGenHooks;
- 
- public class WeightedRandomChestContent extends WeightedRandom.Item
- {
-@@ -34,23 +35,12 @@
-         for (int j = 0; j < p_76293_3_; ++j)
+@@ -38,23 +38,12 @@
+         for (int j = 0; j < p_177630_3_; ++j)
          {
-             WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.func_76274_a(p_76293_0_, p_76293_1_);
--            int k = weightedrandomchestcontent.field_76295_d + p_76293_0_.nextInt(weightedrandomchestcontent.field_76296_e - weightedrandomchestcontent.field_76295_d + 1);
-+            ItemStack[] stacks = weightedrandomchestcontent.generateChestContent(p_76293_0_, p_76293_2_);
+             WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.func_76271_a(p_177630_0_, p_177630_1_);
+-            int k = weightedrandomchestcontent.field_76295_d + p_177630_0_.nextInt(weightedrandomchestcontent.field_76296_e - weightedrandomchestcontent.field_76295_d + 1);
++            ItemStack[] stacks = weightedrandomchestcontent.generateChestContent(p_177630_0_, p_177630_2_);
  
 -            if (weightedrandomchestcontent.field_76297_b.func_77976_d() >= k)
-+            for (ItemStack item : stacks)
++            for (ItemStack itemstack : stacks)
              {
 -                ItemStack itemstack = weightedrandomchestcontent.field_76297_b.func_77946_l();
 -                itemstack.field_77994_a = k;
--                p_76293_2_.func_70299_a(p_76293_0_.nextInt(p_76293_2_.func_70302_i_()), itemstack);
-+                p_76293_2_.func_70299_a(p_76293_0_.nextInt(p_76293_2_.func_70302_i_()), item);
+                 p_177630_2_.func_70299_a(p_177630_0_.nextInt(p_177630_2_.func_70302_i_()), itemstack);
              }
 -            else
 -            {
@@ -29,25 +20,25 @@
 -                {
 -                    ItemStack itemstack1 = weightedrandomchestcontent.field_76297_b.func_77946_l();
 -                    itemstack1.field_77994_a = 1;
--                    p_76293_2_.func_70299_a(p_76293_0_.nextInt(p_76293_2_.func_70302_i_()), itemstack1);
+-                    p_177630_2_.func_70299_a(p_177630_0_.nextInt(p_177630_2_.func_70302_i_()), itemstack1);
 -                }
 -            }
          }
      }
  
-@@ -60,22 +50,11 @@
+@@ -63,23 +52,12 @@
+         for (int j = 0; j < p_177631_3_; ++j)
          {
-             WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.func_76274_a(p_150706_0_, p_150706_1_);
-             int k = weightedrandomchestcontent.field_76295_d + p_150706_0_.nextInt(weightedrandomchestcontent.field_76296_e - weightedrandomchestcontent.field_76295_d + 1);
--
+             WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.func_76271_a(p_177631_0_, p_177631_1_);
+-            int k = weightedrandomchestcontent.field_76295_d + p_177631_0_.nextInt(weightedrandomchestcontent.field_76296_e - weightedrandomchestcontent.field_76295_d + 1);
++            ItemStack[] stacks = weightedrandomchestcontent.generateChestContent(p_177631_0_, p_177631_2_);
+ 
 -            if (weightedrandomchestcontent.field_76297_b.func_77976_d() >= k)
-+            ItemStack[] stacks = weightedrandomchestcontent.generateChestContent(p_150706_0_, p_150706_2_);
-+            for (ItemStack item : stacks)
++            for (ItemStack itemstack : stacks)
              {
 -                ItemStack itemstack = weightedrandomchestcontent.field_76297_b.func_77946_l();
 -                itemstack.field_77994_a = k;
--                p_150706_2_.func_70299_a(p_150706_0_.nextInt(p_150706_2_.func_70302_i_()), itemstack);
-+                p_150706_2_.func_70299_a(p_150706_0_.nextInt(p_150706_2_.func_70302_i_()), item);
+                 p_177631_2_.func_70299_a(p_177631_0_.nextInt(p_177631_2_.func_70302_i_()), itemstack);
              }
 -            else
 -            {
@@ -55,15 +46,15 @@
 -                {
 -                    ItemStack itemstack1 = weightedrandomchestcontent.field_76297_b.func_77946_l();
 -                    itemstack1.field_77994_a = 1;
--                    p_150706_2_.func_70299_a(p_150706_0_.nextInt(p_150706_2_.func_70302_i_()), itemstack1);
+-                    p_177631_2_.func_70299_a(p_177631_0_.nextInt(p_177631_2_.func_70302_i_()), itemstack1);
 -                }
 -            }
          }
      }
  
-@@ -100,4 +79,17 @@
- 
-         return aweightedrandomchestcontent1;
+@@ -89,4 +67,17 @@
+         Collections.addAll(arraylist, p_177629_1_);
+         return arraylist;
      }
 +
 +    // -- Forge hooks
@@ -76,6 +67,6 @@
 +     */
 +    protected ItemStack[] generateChestContent(Random random, IInventory newInventory)
 +    {
-+        return ChestGenHooks.generateStacks(random, field_76297_b, field_76295_d, field_76296_e);
++        return net.minecraftforge.common.ChestGenHooks.generateStacks(random, field_76297_b, field_76295_d, field_76296_e);
 +    }
  }

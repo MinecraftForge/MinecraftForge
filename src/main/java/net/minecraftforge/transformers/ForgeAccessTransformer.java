@@ -2,7 +2,7 @@ package net.minecraftforge.transformers;
 
 import java.io.IOException;
 
-import cpw.mods.fml.common.asm.transformers.AccessTransformer;
+import net.minecraftforge.fml.common.asm.transformers.AccessTransformer;
 
 public class ForgeAccessTransformer extends AccessTransformer
 {

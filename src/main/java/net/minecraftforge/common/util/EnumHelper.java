@@ -3,11 +3,10 @@ package net.minecraftforge.common.util;
 import java.lang.reflect.*;
 import java.util.*;
 
-import cpw.mods.fml.common.FMLLog;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.block.BlockPressurePlate.Sensitivity;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnumEnchantmentType;
-import net.minecraft.entity.Entity.EnumEntitySize;
 import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.item.EntityPainting.EnumArt;
@@ -42,7 +41,6 @@ public class EnumHelper
         {EnumCreatureType.class, Class.class, int.class, Material.class, boolean.class, boolean.class},
         {Door.class},
         {EnumEnchantmentType.class},
-        {EnumEntitySize.class},
         {Sensitivity.class},
         {MovingObjectType.class},
         {EnumSkyBlock.class, int.class},
@@ -79,10 +77,6 @@ public class EnumHelper
     public static EnumEnchantmentType addEnchantmentType(String name)
     {
         return addEnum(EnumEnchantmentType.class, name);
-    }
-    public static EnumEntitySize addEntitySize(String name)
-    {
-        return addEnum(EnumEntitySize.class, name);
     }
     public static Sensitivity addSensitivity(String name)
     {

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/SaveHandler.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/SaveHandler.java
-@@ -254,6 +254,7 @@
+@@ -251,6 +251,7 @@
              }
  
              file1.renameTo(file2);
@@ -8,7 +8,7 @@
          }
          catch (Exception exception)
          {
-@@ -284,6 +285,7 @@
+@@ -281,6 +282,7 @@
              p_75752_1_.func_70020_e(nbttagcompound);
          }
  

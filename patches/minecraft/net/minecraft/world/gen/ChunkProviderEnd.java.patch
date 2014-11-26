@@ -1,17 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderEnd.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderEnd.java
-@@ -15,6 +15,10 @@
+@@ -15,6 +15,9 @@
  import net.minecraft.world.chunk.Chunk;
+ import net.minecraft.world.chunk.ChunkPrimer;
  import net.minecraft.world.chunk.IChunkProvider;
- 
 +import net.minecraftforge.common.*;
-+import cpw.mods.fml.common.eventhandler.Event.*;
++import net.minecraftforge.fml.common.eventhandler.Event.*;
 +import net.minecraftforge.event.terraingen.*;
-+
+ 
  public class ChunkProviderEnd implements IChunkProvider
  {
-     private Random field_73204_i;
-@@ -43,6 +47,14 @@
+@@ -43,6 +46,14 @@
          this.field_73199_l = new NoiseGeneratorOctaves(this.field_73204_i, 8);
          this.field_73196_a = new NoiseGeneratorOctaves(this.field_73204_i, 10);
          this.field_73194_b = new NoiseGeneratorOctaves(this.field_73204_i, 16);
@@ -25,40 +24,29 @@
 +        this.field_73194_b = (NoiseGeneratorOctaves)noiseGens[4];
      }
  
-     public void func_147420_a(int p_147420_1_, int p_147420_2_, Block[] p_147420_3_, BiomeGenBase[] p_147420_4_)
-@@ -113,8 +125,17 @@
+     public void func_180520_a(int p_180520_1_, int p_180520_2_, ChunkPrimer p_180520_3_)
+@@ -115,6 +126,9 @@
+ 
+     public void func_180519_a(ChunkPrimer p_180519_1_)
+     {
++        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, chunkX, chunkZ, p_180519_1_, this.field_73200_m);
++        MinecraftForge.EVENT_BUS.post(event);
++        if (event.getResult() == Result.DENY) return;
+         for (int i = 0; i < 16; ++i)
+         {
+             for (int j = 0; j < 16; ++j)
+@@ -164,8 +178,10 @@
          }
      }
  
-+    @Deprecated // Supply metadata to the below function.
-     public void func_147421_b(int p_147421_1_, int p_147421_2_, Block[] p_147421_3_, BiomeGenBase[] p_147421_4_)
++    private int chunkX=0, chunkZ=0;
+     public Chunk func_73154_d(int p_73154_1_, int p_73154_2_)
      {
-+        replaceBiomeBlocks(p_147421_1_, p_147421_2_, p_147421_3_, p_147421_4_, new byte[p_147421_3_.length]);
-+    }
-+    public void replaceBiomeBlocks(int p_147421_1_, int p_147421_2_, Block[] p_147421_3_, BiomeGenBase[] p_147421_4_, byte[] meta)
-+    {
-+        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, p_147421_1_, p_147421_2_, p_147421_3_, meta, p_147421_4_, this.field_73200_m);
-+        MinecraftForge.EVENT_BUS.post(event);
-+        if (event.getResult() == Result.DENY) return;
-+
-         for (int k = 0; k < 16; ++k)
-         {
-             for (int l = 0; l < 16; ++l)
-@@ -177,10 +198,11 @@
-     {
++        chunkX = p_73154_1_; chunkZ = p_73154_2_;
          this.field_73204_i.setSeed((long)p_73154_1_ * 341873128712L + (long)p_73154_2_ * 132897987541L);
-         Block[] ablock = new Block[32768];
-+        byte[] meta = new byte[ablock.length];
+         ChunkPrimer chunkprimer = new ChunkPrimer();
          this.field_73198_o = this.field_73200_m.func_72959_q().func_76933_b(this.field_73198_o, p_73154_1_ * 16, p_73154_2_ * 16, 16, 16);
-         this.func_147420_a(p_73154_1_, p_73154_2_, ablock, this.field_73198_o);
--        this.func_147421_b(p_73154_1_, p_73154_2_, ablock, this.field_73198_o);
--        Chunk chunk = new Chunk(this.field_73200_m, ablock, p_73154_1_, p_73154_2_);
-+        this.replaceBiomeBlocks(p_73154_1_, p_73154_2_, ablock, this.field_73198_o, meta);
-+        Chunk chunk = new Chunk(this.field_73200_m, ablock, meta, p_73154_1_, p_73154_2_);
-         byte[] abyte = chunk.func_76605_m();
- 
-         for (int k = 0; k < abyte.length; ++k)
-@@ -194,6 +216,10 @@
+@@ -185,6 +201,10 @@
  
      private double[] func_73187_a(double[] p_73187_1_, int p_73187_2_, int p_73187_3_, int p_73187_4_, int p_73187_5_, int p_73187_6_, int p_73187_7_)
      {
@@ -69,17 +57,15 @@
          if (p_73187_1_ == null)
          {
              p_73187_1_ = new double[p_73187_5_ * p_73187_6_ * p_73187_7_];
-@@ -335,10 +361,16 @@
+@@ -275,8 +295,14 @@
      public void func_73153_a(IChunkProvider p_73153_1_, int p_73153_2_, int p_73153_3_)
      {
          BlockFalling.field_149832_M = true;
 +
 +        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(p_73153_1_, field_73200_m, field_73200_m.field_73012_v, p_73153_2_, p_73153_3_, false));
 +
-         int k = p_73153_2_ * 16;
-         int l = p_73153_3_ * 16;
-         BiomeGenBase biomegenbase = this.field_73200_m.func_72807_a(k + 16, l + 16);
-         biomegenbase.func_76728_a(this.field_73200_m, this.field_73200_m.field_73012_v, k, l);
+         BlockPos blockpos = new BlockPos(p_73153_2_ * 16, 0, p_73153_3_ * 16);
+         this.field_73200_m.func_180494_b(blockpos.func_177982_a(16, 0, 16)).func_180624_a(this.field_73200_m, this.field_73200_m.field_73012_v, blockpos);
 +
 +        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(p_73153_1_, field_73200_m, field_73200_m.field_73012_v, p_73153_2_, p_73153_3_, false));
 +

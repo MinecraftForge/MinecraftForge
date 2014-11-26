@@ -1,46 +1,32 @@
 --- ../src-base/minecraft/net/minecraft/potion/PotionEffect.java
 +++ ../src-work/minecraft/net/minecraft/potion/PotionEffect.java
-@@ -1,8 +1,13 @@
- package net.minecraft.potion;
- 
-+import java.util.ArrayList;
-+import java.util.List;
-+
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
- import net.minecraft.entity.EntityLivingBase;
-+import net.minecraft.init.Items;
-+import net.minecraft.item.ItemStack;
- import net.minecraft.nbt.NBTTagCompound;
- 
- public class PotionEffect
-@@ -15,6 +20,8 @@
-     @SideOnly(Side.CLIENT)
+@@ -19,6 +19,8 @@
      private boolean field_100013_f;
+     private boolean field_180156_h;
      private static final String __OBFID = "CL_00001529";
 +    /** List of ItemStack that can cure the potion effect **/
-+    private List<ItemStack> curativeItems;
++    private java.util.List<net.minecraft.item.ItemStack> curativeItems;
  
      public PotionEffect(int p_i1574_1_, int p_i1574_2_)
      {
-@@ -32,6 +39,8 @@
-         this.field_76460_b = p_i1576_2_;
-         this.field_76461_c = p_i1576_3_;
-         this.field_82724_e = p_i1576_4_;
-+        this.curativeItems = new ArrayList<ItemStack>();
-+        this.curativeItems.add(new ItemStack(Items.field_151117_aB));
+@@ -37,6 +39,8 @@
+         this.field_76461_c = p_i45896_3_;
+         this.field_82724_e = p_i45896_4_;
+         this.field_180156_h = p_i45896_5_;
++        this.curativeItems = new java.util.ArrayList<net.minecraft.item.ItemStack>();
++        this.curativeItems.add(new net.minecraft.item.ItemStack(net.minecraft.init.Items.field_151117_aB));
      }
  
      public PotionEffect(PotionEffect p_i1577_1_)
-@@ -39,6 +48,7 @@
-         this.field_76462_a = p_i1577_1_.field_76462_a;
-         this.field_76460_b = p_i1577_1_.field_76460_b;
+@@ -46,6 +50,7 @@
          this.field_76461_c = p_i1577_1_.field_76461_c;
+         this.field_82724_e = p_i1577_1_.field_82724_e;
+         this.field_180156_h = p_i1577_1_.field_180156_h;
 +        this.curativeItems = p_i1577_1_.curativeItems;
      }
  
      public void func_76452_a(PotionEffect p_76452_1_)
-@@ -197,4 +207,62 @@
+@@ -224,4 +229,62 @@
      {
          return this.field_100013_f;
      }
@@ -50,7 +36,7 @@
 +     * Returns a list of curative items for the potion effect
 +     * @return The list (ItemStack) of curative items for the potion effect
 +     */
-+    public List<ItemStack> getCurativeItems()
++    public java.util.List<net.minecraft.item.ItemStack> getCurativeItems()
 +    {
 +        return this.curativeItems;
 +    }
@@ -60,10 +46,10 @@
 +     * @param stack The ItemStack being checked against the list of curative items for the potion effect
 +     * @return true if the given ItemStack is in the list of curative items for the potion effect, false otherwise
 +     */
-+    public boolean isCurativeItem(ItemStack stack)
++    public boolean isCurativeItem(net.minecraft.item.ItemStack stack)
 +    {
 +        boolean found = false;
-+        for (ItemStack curativeItem : this.curativeItems)
++        for (net.minecraft.item.ItemStack curativeItem : this.curativeItems)
 +        {
 +            if (curativeItem.func_77969_a(stack))
 +            {
@@ -78,7 +64,7 @@
 +     * Sets the array of curative items for the potion effect
 +     * @param curativeItems The list of ItemStacks being set to the potion effect
 +     */
-+    public void setCurativeItems(List<ItemStack> curativeItems)
++    public void setCurativeItems(java.util.List<net.minecraft.item.ItemStack> curativeItems)
 +    {
 +        this.curativeItems = curativeItems;
 +    }
@@ -87,10 +73,10 @@
 +     * Adds the given stack to list of curative items for the potion effect
 +     * @param stack The ItemStack being added to the curative item list
 +     */
-+    public void addCurativeItem(ItemStack stack)
++    public void addCurativeItem(net.minecraft.item.ItemStack stack)
 +    {
 +        boolean found = false;
-+        for (ItemStack curativeItem : this.curativeItems)
++        for (net.minecraft.item.ItemStack curativeItem : this.curativeItems)
 +        {
 +            if (curativeItem.func_77969_a(stack))
 +            {

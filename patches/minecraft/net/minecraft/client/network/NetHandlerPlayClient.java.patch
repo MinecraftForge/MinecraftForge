@@ -1,45 +1,41 @@
 --- ../src-base/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
 +++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
-@@ -195,6 +195,8 @@
- import net.minecraft.world.storage.ISaveHandler;
- import net.minecraft.world.storage.MapData;
- import net.minecraft.world.storage.MapStorage;
-+import net.minecraftforge.client.event.ClientChatReceivedEvent;
-+import net.minecraftforge.common.MinecraftForge;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
- 
-@@ -389,7 +391,8 @@
- 
+@@ -410,7 +410,8 @@
      public void func_147286_a(S11PacketSpawnExperienceOrb p_147286_1_)
      {
+         PacketThreadUtil.func_180031_a(p_147286_1_, this, this.field_147299_f);
 -        EntityXPOrb entityxporb = new EntityXPOrb(this.field_147300_g, (double)p_147286_1_.func_148984_d(), (double)p_147286_1_.func_148983_e(), (double)p_147286_1_.func_148982_f(), p_147286_1_.func_148986_g());
 +        EntityXPOrb entityxporb = new EntityXPOrb(this.field_147300_g, (double)p_147286_1_.func_148984_d() / 32.0D, (double)p_147286_1_.func_148983_e() / 32.0D, (double)p_147286_1_.func_148982_f() / 32.0D, p_147286_1_.func_148986_g());
 +        // FORGE: BugFix MC-12013 Wrong XP orb clientside spawn position
          entityxporb.field_70118_ct = p_147286_1_.func_148984_d();
          entityxporb.field_70117_cu = p_147286_1_.func_148983_e();
          entityxporb.field_70116_cv = p_147286_1_.func_148982_f();
-@@ -686,7 +689,11 @@
- 
+@@ -754,14 +755,15 @@
      public void func_147251_a(S02PacketChat p_147251_1_)
      {
--        this.field_147299_f.field_71456_v.func_146158_b().func_146227_a(p_147251_1_.func_148915_c());
-+        ClientChatReceivedEvent event = new ClientChatReceivedEvent(p_147251_1_.func_148915_c());
-+        if (!MinecraftForge.EVENT_BUS.post(event) && event.message != null)
-+        {
-+            this.field_147299_f.field_71456_v.func_146158_b().func_146227_a(event.message);
-+        }
-     }
+         PacketThreadUtil.func_180031_a(p_147251_1_, this, this.field_147299_f);
++        net.minecraft.util.IChatComponent message = net.minecraftforge.event.ForgeEventFactory.onClientChat(p_147251_1_.func_179841_c(), p_147251_1_.func_148915_c());
  
-     public void func_147279_a(S0BPacketAnimation p_147279_1_)
-@@ -1126,6 +1133,10 @@
-                 {
-                     tileentity.func_145839_a(p_147273_1_.func_148857_g());
-                 }
-+                else
-+                {
-+                    tileentity.onDataPacket(field_147302_e, p_147273_1_);
-+                }
-             }
+         if (p_147251_1_.func_179841_c() == 2)
+         {
+-            this.field_147299_f.field_71456_v.func_175188_a(p_147251_1_.func_148915_c(), false);
++            this.field_147299_f.field_71456_v.func_175188_a(message, false);
+         }
+         else
+         {
+-            this.field_147299_f.field_71456_v.func_146158_b().func_146227_a(p_147251_1_.func_148915_c());
++            this.field_147299_f.field_71456_v.func_146158_b().func_146227_a(message);
          }
      }
+ 
+@@ -1137,6 +1139,10 @@
+             {
+                 tileentity.func_145839_a(p_147273_1_.func_148857_g());
+             }
++            else
++            {
++                tileentity.onDataPacket(field_147302_e, p_147273_1_);
++            }
+         }
+     }
+ 

@@ -1,14 +1,15 @@
 package net.minecraftforge.event.terraingen;
 
-import cpw.mods.fml.common.eventhandler.Event;
-import cpw.mods.fml.common.eventhandler.Event.HasResult;
+import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeGenBase;
 
 /**
  * BiomeEvent is fired whenever an event involving biomes occurs.<br>
- * If a method utilizes this {@link Event} as its parameter, the method will 
+ * If a method utilizes this {@link Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.
@@ -21,7 +22,7 @@ public class BiomeEvent extends Event
     {
         this.biome = biome;
     }
-    
+
     /**
      * CreateDecorator is fired when a BiomeDecorator is created.<br>
      * This event is fired whenever a BiomeDecorator is created in
@@ -40,7 +41,7 @@ public class BiomeEvent extends Event
     {
         public final BiomeDecorator originalBiomeDecorator;
         public BiomeDecorator newBiomeDecorator;
-        
+
         public CreateDecorator(BiomeGenBase biome, BiomeDecorator original)
         {
             super(biome);
@@ -51,7 +52,7 @@ public class BiomeEvent extends Event
 
     /**
      * BiomeColor is fired whenever an event involving biome colors occurs. <br>
-     * If a method utilizes this {@link Event} as its parameter, the method will 
+     * If a method utilizes this {@link Event} as its parameter, the method will
      * receive every child event of this class.<br>
      * <br>
      * All children of this event are fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.
@@ -60,7 +61,7 @@ public class BiomeEvent extends Event
     {
         public final int originalColor;
         public int newColor;
-        
+
         public BiomeColor(BiomeGenBase biome, int original)
         {
             super(biome);
@@ -68,51 +69,28 @@ public class BiomeEvent extends Event
             newColor = original;
         }
     }
-    
+
     /**
      * This event is fired when the village generator attempts to choose a block ID
      * based on the village's biome.
-     * 
+     *
      * You can cancel the event to override default values
      */
     @HasResult
     public static class GetVillageBlockID extends BiomeEvent
     {
-        public final Block original;
-        public final int type;
-        public Block replacement;
+        public final IBlockState original;
+        public IBlockState replacement;
 
-        public GetVillageBlockID(BiomeGenBase biome, Block original, int type)
+        public GetVillageBlockID(BiomeGenBase biome, IBlockState original)
         {
             super(biome);
             this.original = original;
-            this.type = type;
         }
     }
-    
-    /**
-     * This event is fired when the village generator attempts to choose a block
-     * metadata based on the village's biome.
-     * 
-     * You can set the result to DENY to prevent the default block metadata selection.
-     */
-    @HasResult
-    public static class GetVillageBlockMeta extends BiomeEvent
-    {
-        public final Block original;
-        public final int type;
-        public int replacement;
 
-        public GetVillageBlockMeta(BiomeGenBase biome, Block original, int type)
-        {
-            super(biome);
-            this.original = original;
-            this.type = type;
-        }
-    }
-    
     /**
-     * This event is fired when a biome is queried for its grass color. 
+     * This event is fired when a biome is queried for its grass color.
      */
     public static class GetGrassColor extends BiomeColor
     {
@@ -121,9 +99,9 @@ public class BiomeEvent extends Event
             super(biome, original);
         }
     }
-    
+
     /**
-     * This event is fired when a biome is queried for its grass color. 
+     * This event is fired when a biome is queried for its grass color.
      */
     public static class GetFoliageColor extends BiomeColor
     {
@@ -132,9 +110,9 @@ public class BiomeEvent extends Event
             super(biome, original);
         }
     }
-    
+
     /**
-     * This event is fired when a biome is queried for its water color. 
+     * This event is fired when a biome is queried for its water color.
      */
     public static class GetWaterColor extends BiomeColor
     {

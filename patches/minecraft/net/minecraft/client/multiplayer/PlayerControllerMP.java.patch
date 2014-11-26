@@ -1,85 +1,69 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
-@@ -28,6 +28,10 @@
- import net.minecraft.world.World;
- import net.minecraft.world.WorldSettings;
+@@ -113,6 +113,12 @@
+             }
+         }
  
-+import net.minecraftforge.common.ForgeHooks;
-+import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
-+
- @SideOnly(Side.CLIENT)
- public class PlayerControllerMP
- {
-@@ -88,6 +92,12 @@
- 
-     public boolean func_78751_a(int p_78751_1_, int p_78751_2_, int p_78751_3_, int p_78751_4_)
-     {
 +        ItemStack stack = field_78776_a.field_71439_g.func_71045_bC();
-+        if (stack != null && stack.func_77973_b() != null && stack.func_77973_b().onBlockStartBreak(stack, p_78751_1_, p_78751_2_, p_78751_3_, field_78776_a.field_71439_g))
++        if (stack != null && stack.func_77973_b() != null && stack.func_77973_b().onBlockStartBreak(stack, p_178888_1_, field_78776_a.field_71439_g))
 +        {
 +            return false;
 +        }
 +
-         if (this.field_78779_k.func_82752_c() && !this.field_78776_a.field_71439_g.func_82246_f(p_78751_1_, p_78751_2_, p_78751_3_))
+         if (this.field_78779_k.func_77145_d() && this.field_78776_a.field_71439_g.func_70694_bm() != null && this.field_78776_a.field_71439_g.func_70694_bm().func_77973_b() instanceof ItemSword)
          {
              return false;
-@@ -109,7 +119,7 @@
+@@ -130,7 +136,7 @@
+             else
              {
-                 worldclient.func_72926_e(2001, p_78751_1_, p_78751_2_, p_78751_3_, Block.func_149682_b(block) + (worldclient.func_72805_g(p_78751_1_, p_78751_2_, p_78751_3_) << 12));
-                 int i1 = worldclient.func_72805_g(p_78751_1_, p_78751_2_, p_78751_3_);
--                boolean flag = worldclient.func_147468_f(p_78751_1_, p_78751_2_, p_78751_3_);
-+                boolean flag = block.removedByPlayer(worldclient, field_78776_a.field_71439_g, p_78751_1_, p_78751_2_, p_78751_3_);
+                 worldclient.func_175718_b(2001, p_178888_1_, Block.func_176210_f(iblockstate));
+-                boolean flag = worldclient.func_175698_g(p_178888_1_);
++                boolean flag = block1.removedByPlayer(worldclient, p_178888_1_, field_78776_a.field_71439_g, false);
  
                  if (flag)
                  {
-@@ -304,11 +314,18 @@
-         float f2 = (float)p_78760_8_.field_72449_c - (float)p_78760_6_;
-         boolean flag = false;
- 
--        if ((!p_78760_1_.func_70093_af() || p_78760_1_.func_70694_bm() == null) && p_78760_2_.func_147439_a(p_78760_4_, p_78760_5_, p_78760_6_).func_149727_a(p_78760_2_, p_78760_4_, p_78760_5_, p_78760_6_, p_78760_1_, p_78760_7_, f, f1, f2))
-+        if (p_78760_3_ != null &&
-+            p_78760_3_.func_77973_b() != null &&
-+            p_78760_3_.func_77973_b().onItemUseFirst(p_78760_3_, p_78760_1_, p_78760_2_, p_78760_4_, p_78760_5_, p_78760_6_, p_78760_7_, f, f1, f2))
+@@ -360,11 +366,19 @@
          {
--            flag = true;
-+                return true;
-         }
- 
-+        if (!p_78760_1_.func_70093_af() || p_78760_1_.func_70694_bm() == null || p_78760_1_.func_70694_bm().func_77973_b().doesSneakBypassUse(p_78760_2_, p_78760_4_, p_78760_5_, p_78760_6_, p_78760_1_))
-+        {
-+            flag = p_78760_2_.func_147439_a(p_78760_4_, p_78760_5_, p_78760_6_).func_149727_a(p_78760_2_, p_78760_4_, p_78760_5_, p_78760_6_, p_78760_1_, p_78760_7_, f, f1, f2);
-+        }
-+
-         if (!flag && p_78760_3_ != null && p_78760_3_.func_77973_b() instanceof ItemBlock)
-         {
-             ItemBlock itemblock = (ItemBlock)p_78760_3_.func_77973_b();
-@@ -340,7 +357,15 @@
-         }
-         else
-         {
--            return p_78760_3_.func_77943_a(p_78760_1_, p_78760_2_, p_78760_4_, p_78760_5_, p_78760_6_, p_78760_7_, f, f1, f2);
-+            if (!p_78760_3_.func_77943_a(p_78760_1_, p_78760_2_, p_78760_4_, p_78760_5_, p_78760_6_, p_78760_7_, f, f1, f2))
-+            {
-+                return false;
-+            }
-+            if (p_78760_3_.field_77994_a <= 0)
-+            {
-+                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(p_78760_1_, p_78760_3_));
-+            }
-+            return true;
-         }
-     }
- 
-@@ -359,9 +384,10 @@
-         {
-             p_78769_1_.field_71071_by.field_70462_a[p_78769_1_.field_71071_by.field_70461_c] = itemstack1;
- 
--            if (itemstack1.field_77994_a == 0)
-+            if (itemstack1.field_77994_a <= 0)
+             if (this.field_78779_k != WorldSettings.GameType.SPECTATOR)
              {
-                 p_78769_1_.field_71071_by.field_70462_a[p_78769_1_.field_71071_by.field_70461_c] = null;
-+                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(p_78769_1_, itemstack1));
-             }
++
++                if (p_178890_3_ != null &&
++                    p_178890_3_.func_77973_b() != null &&
++                    p_178890_3_.func_77973_b().onItemUseFirst(p_178890_3_, p_178890_1_, p_178890_2_, p_178890_4_, p_178890_5_, f, f1, f2))
++                {
++                        return true;
++                }
++
+                 IBlockState iblockstate = p_178890_2_.func_180495_p(p_178890_4_);
  
-             return true;
+-                if ((!p_178890_1_.func_70093_af() || p_178890_1_.func_70694_bm() == null) && iblockstate.func_177230_c().func_180639_a(p_178890_2_, p_178890_4_, iblockstate, p_178890_1_, p_178890_5_, f, f1, f2))
++                if ((!p_178890_1_.func_70093_af() || p_178890_1_.func_70694_bm() == null || p_178890_1_.func_70694_bm().func_77973_b().doesSneakBypassUse(p_178890_2_, p_178890_4_, p_178890_1_)))
+                 {
+-                    flag = true;
++                    flag = iblockstate.func_177230_c().func_180639_a(p_178890_2_, p_178890_4_, iblockstate, p_178890_1_, p_178890_5_, f, f1, f2);
+                 }
+ 
+                 if (!flag && p_178890_3_ != null && p_178890_3_.func_77973_b() instanceof ItemBlock)
+@@ -397,7 +411,9 @@
+                 }
+                 else
+                 {
+-                    return p_178890_3_.func_179546_a(p_178890_1_, p_178890_2_, p_178890_4_, p_178890_5_, f, f1, f2);
++                    if (!p_178890_3_.func_179546_a(p_178890_1_, p_178890_2_, p_178890_4_, p_178890_5_, f, f1, f2)) return false;
++                    if (p_178890_3_.field_77994_a <= 0) net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_178890_1_, p_178890_3_);
++                    return true;
+                 }
+             }
+             else
+@@ -428,9 +444,10 @@
+             {
+                 p_78769_1_.field_71071_by.field_70462_a[p_78769_1_.field_71071_by.field_70461_c] = itemstack1;
+ 
+-                if (itemstack1.field_77994_a == 0)
++                if (itemstack1.field_77994_a <= 0)
+                 {
+                     p_78769_1_.field_71071_by.field_70462_a[p_78769_1_.field_71071_by.field_70461_c] = null;
++                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_78769_1_, itemstack1);
+                 }
+ 
+                 return true;

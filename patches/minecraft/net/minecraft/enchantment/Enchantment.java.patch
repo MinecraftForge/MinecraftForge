@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/Enchantment.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/Enchantment.java
-@@ -50,7 +50,7 @@
+@@ -62,7 +62,7 @@
  
-         if (field_77331_b[p_i1926_1_] != null)
+         if (field_180311_a[p_i45771_1_] != null)
          {
 -            throw new IllegalArgumentException("Duplicate enchantment id!");
-+            throw new IllegalArgumentException("Duplicate enchantment id! " + this.getClass() + " and " + field_77331_b[p_i1926_1_].getClass() + " Enchantment ID:" + p_i1926_1_);
++            throw new IllegalArgumentException("Duplicate enchantment id! " + this.getClass() + " and " + field_180311_a[p_i45771_1_].getClass() + " Enchantment ID:" + p_i45771_1_);
          }
          else
          {
-@@ -124,6 +124,45 @@
+@@ -156,6 +156,45 @@
  
      public void func_151367_b(EntityLivingBase p_151367_1_, Entity p_151367_2_, int p_151367_3_) {}
  
@@ -35,7 +35,7 @@
 +        try
 +        {
 +            net.minecraftforge.common.util.EnumHelper.setFailsafeFieldValue(bookSetter, null,
-+                com.google.common.collect.ObjectArrays.concat(field_92090_c, enchantment));
++                com.google.common.collect.ObjectArrays.concat(field_77331_b, enchantment));
 +        }
 +        catch (Exception e)
 +        {
@@ -54,4 +54,4 @@
 +
      static
      {
-         ArrayList var0 = new ArrayList();
+         ArrayList var0 = Lists.newArrayList();
