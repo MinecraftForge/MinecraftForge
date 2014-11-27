@@ -82,7 +82,7 @@ public class EventBus implements IEventExceptionHandler
                             throw new IllegalArgumentException("Method " + method + " has @SubscribeEvent annotation, but takes a argument that is not an Event " + eventType);
                         }
 
-                        register(eventType, target, method, activeModContainer);
+                        register(eventType, target, real, activeModContainer);
                         break;
                     }
                 }
