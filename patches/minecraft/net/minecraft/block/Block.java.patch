@@ -161,7 +161,7 @@
      }
  
      protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -971,6 +989,1011 @@
+@@ -971,6 +989,1019 @@
          return Block.EnumOffsetType.NONE;
      }
  
@@ -1143,6 +1143,14 @@
 +        if ("pickaxe".equals(type) && (this == net.minecraft.init.Blocks.field_150450_ax || this == net.minecraft.init.Blocks.field_150439_ay || this == net.minecraft.init.Blocks.field_150343_Z))
 +            return false;
 +        return type != null && type.equals(getHarvestTool(state));
++    }
++
++    /**
++     * Can return IExtendedBlockState
++     */
++    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
++    {
++        return func_176221_a(state, world, pos);
 +    }
 +
 +    // For Internal use only to capture droped items inside getDrops

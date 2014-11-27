@@ -27,3 +27,4 @@ net/minecraft/block/BlockSkull.getDrops(Lnet/minecraft/world/IBlockAccess;Lnet/m
 net/minecraft/item/ItemDye.applyBonemeal(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/util/BlockPos;Lnet/minecraft/entity/player/EntityPlayer;)Z=|p_179234_0_,p_179234_1_,p_179234_2_,player
 net/minecraft/server/management/ItemInWorldManager.removeBlock(Lnet/minecraft/util/BlockPos;Z)Z=|p_180235_1_,canHarvest
 net/minecraft/client/gui/GuiScreen.drawHoveringText(Ljava/util/List;IILnet/minecraft/client/gui/FontRenderer;)V=|p_146283_1_,p_146283_2_,p_146283_3_,font
+net/minecraft/block/state/BlockState.<init>(Lnet/minecraft/block/Block;[Lnet/minecraft/block/properties/IProperty;Lcom/google/common/collect/ImmutableMap;)V=|p_i45663_1_,p_i45663_2_,unlistedProperties
