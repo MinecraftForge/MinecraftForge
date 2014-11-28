@@ -334,7 +334,7 @@ public class ForgeHooks
 
     public static boolean onLivingAttack(EntityLivingBase entity, DamageSource src, float amount)
     {
-        return MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
+        return !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
     }
 
     public static float onLivingHurt(EntityLivingBase entity, DamageSource src, float amount)
