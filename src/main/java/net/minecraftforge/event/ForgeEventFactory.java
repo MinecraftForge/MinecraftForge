@@ -336,7 +336,7 @@ public class ForgeEventFactory
 
     public static boolean canInteractWith(EntityPlayer player, Entity entity)
     {
-        return MinecraftForge.EVENT_BUS.post(new EntityInteractEvent(player, entity));
+        return !MinecraftForge.EVENT_BUS.post(new EntityInteractEvent(player, entity));
     }
 
     public static EnumStatus onPlayerSleepInBed(EntityPlayer player, BlockPos pos)
