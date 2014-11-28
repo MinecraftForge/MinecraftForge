@@ -69,7 +69,7 @@
              Block block = this.field_73092_a.func_180495_p(p_180785_1_).func_177230_c();
  
 -            if (block.func_149688_o() != Material.field_151579_a)
-+            if (block.isAir(field_73092_a, p_180785_1_))
++            if (!block.isAir(field_73092_a, p_180785_1_))
              {
                  float f = block.func_180647_a(this.field_73090_b, this.field_73090_b.field_70170_p, p_180785_1_) * (float)(i + 1);
  
