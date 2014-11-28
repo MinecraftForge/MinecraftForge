@@ -13,7 +13,7 @@
      public void func_180533_a(BlockPos p_180533_1_, IBlockState p_180533_2_)
      {
 -        if (p_180533_2_.func_177230_c().func_149688_o() != Material.field_151579_a)
-+        if (p_180533_2_.func_177230_c().isAir(field_78878_a, p_180533_1_) && !p_180533_2_.func_177230_c().addDestroyEffects(field_78878_a, p_180533_1_, this))
++        if (!p_180533_2_.func_177230_c().isAir(field_78878_a, p_180533_1_) && !p_180533_2_.func_177230_c().addDestroyEffects(field_78878_a, p_180533_1_, this))
          {
              p_180533_2_ = p_180533_2_.func_177230_c().func_176221_a(p_180533_2_, this.field_78878_a, p_180533_1_);
              byte b0 = 4;
