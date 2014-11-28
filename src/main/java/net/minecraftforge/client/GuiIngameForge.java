@@ -676,7 +676,7 @@ public class GuiIngameForge extends GuiIngame
             {
                 top += fontrenderer.FONT_HEIGHT;
                 if (msg == null) continue;
-                drawRect(1, top - 1, 2 + fontrenderer.getStringWidth(msg) + 1, top - 1, -1873784752);
+                drawRect(1, top - 1, 2 + fontrenderer.getStringWidth(msg) + 1, top + fontrenderer.FONT_HEIGHT - 1, -1873784752);
                 fontrenderer.drawString(msg, 2, top, 14737632);
             }
 
@@ -687,7 +687,7 @@ public class GuiIngameForge extends GuiIngame
                 if (msg == null) continue;
                 int w = fontrenderer.getStringWidth(msg);
                 int left = width - 2 - w;
-                drawRect(left - 1, top - 1, left + w + 1, top - 1, -1873784752);
+                drawRect(left - 1, top - 1, left + w + 1, top + fontrenderer.FONT_HEIGHT - 1, -1873784752);
                 fontrenderer.drawString(msg, left, top, 14737632);
             }
         }
