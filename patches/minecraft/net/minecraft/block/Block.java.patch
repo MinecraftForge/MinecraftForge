@@ -1133,7 +1133,7 @@
 +    {
 +        if ("pickaxe".equals(type) && (this == net.minecraft.init.Blocks.field_150450_ax || this == net.minecraft.init.Blocks.field_150439_ay || this == net.minecraft.init.Blocks.field_150343_Z))
 +            return false;
-+        return type != null && getHarvestTool(state).equals(type);
++        return type != null && type.equals(getHarvestTool(state));
 +    }
 +
 +    // For Internal use only to capture droped items inside getDrops
