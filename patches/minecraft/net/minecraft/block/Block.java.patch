@@ -10,6 +10,15 @@
      }
  
      public static IBlockState func_176220_d(int p_176220_0_)
+@@ -304,7 +305,7 @@
+ 
+     public boolean func_176200_f(World p_176200_1_, BlockPos p_176200_2_)
+     {
+-        return false;
++        return func_149688_o().func_76222_j();
+     }
+ 
+     public Block func_149711_c(float p_149711_1_)
 @@ -341,9 +342,10 @@
          return this.field_149789_z;
      }
