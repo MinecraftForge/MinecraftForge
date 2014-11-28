@@ -121,8 +121,8 @@
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
 +
 +        this.field_175080_Q = event.red;
-+        this.field_175082_R = event.blue;
-+        this.field_175081_S = event.green;
++        this.field_175082_R = event.green;
++        this.field_175081_S = event.blue;
 +
          GlStateManager.func_179082_a(this.field_175080_Q, this.field_175082_R, this.field_175081_S, 0.0F);
      }
