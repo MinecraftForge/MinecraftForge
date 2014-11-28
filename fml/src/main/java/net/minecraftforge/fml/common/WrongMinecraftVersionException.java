@@ -19,7 +19,7 @@ public class WrongMinecraftVersionException extends RuntimeException
 
     public WrongMinecraftVersionException(ModContainer mod)
     {
-        super(String.format("Wrong Minecraft vbersion for %s", mod.getModId()));
+        super(String.format("Wrong Minecraft version for %s", mod.getModId()));
         this.mod = mod;
     }
 

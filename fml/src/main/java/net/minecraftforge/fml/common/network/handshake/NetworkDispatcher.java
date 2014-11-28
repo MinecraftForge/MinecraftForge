@@ -47,7 +47,7 @@ import net.minecraftforge.fml.relauncher.Side;
 public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> implements ChannelOutboundHandler {
     private static boolean DEBUG_HANDSHAKE = Boolean.parseBoolean(System.getProperty("fml.debugNetworkHandshake", "false"));
     private static enum ConnectionState {
-        OPENING, AWAITING_HANDSHAKE, HANDSHAKING, HANDSHAKECOMPLETE, CONNECTED;
+        OPENING, AWAITING_HANDSHAKE, HANDSHAKING, HANDSHAKECOMPLETE, FINALIZING, CONNECTED;
     }
 
     private static enum ConnectionType {
@@ -161,7 +161,18 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         // This will be ignored by vanilla clients
         this.state = ConnectionState.AWAITING_HANDSHAKE;
         // Need to start the handler here, so we can send custompayload packets
-        serverHandler = new NetHandlerPlayServer(scm.getServerInstance(), manager, player);
+        serverHandler = new NetHandlerPlayServer(scm.getServerInstance(), manager, player)
+        {
+            @Override
+            public void update()
+            {
+                if (NetworkDispatcher.this.state == ConnectionState.FINALIZING)
+                {
+                    completeServerSideConnection(ConnectionType.MODDED);
+                }
+                super.update();
+            }
+        };
         this.netHandler = serverHandler;
         // NULL the play server here - we restore it further on. If not, there are packets sent before the login
         player.playerNetServerHandler = null;
@@ -478,7 +489,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         }
         else
         {
-            completeServerSideConnection(ConnectionType.MODDED);
+            this.state = ConnectionState.FINALIZING; //Delay and finalize in the world tick loop.
         }
     }
 
