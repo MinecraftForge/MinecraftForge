@@ -35,7 +35,7 @@
                                      blockpos1 = new BlockPos(i2, l1, j1);
  
 -                                    if (!p_180709_1_.func_180495_p(blockpos1).func_177230_c().func_149730_j())
-+                                    if (!p_180709_1_.func_180495_p(blockpos1).func_177230_c().canBeReplacedByLeaves(p_180709_1_, blockpos1))
++                                    if (p_180709_1_.func_180495_p(blockpos1).func_177230_c().canBeReplacedByLeaves(p_180709_1_, blockpos1))
                                      {
                                          this.func_175906_a(p_180709_1_, blockpos1, Blocks.field_150362_t);
                                      }
