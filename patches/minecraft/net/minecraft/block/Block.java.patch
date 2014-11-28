@@ -71,7 +71,7 @@
 +        if (!p_180653_1_.field_72995_K && !p_180653_1_.restoringBlockSnapshots) // do not drop items while restoring blockstates, prevents item dupe
          {
 -            int j = this.func_149679_a(p_180653_5_, p_180653_1_.field_73012_v);
-+            java.util.List<ItemStack> items = getDrops(p_180653_1_, p_180653_2_, p_180653_1_.func_180495_p(p_180653_2_), p_180653_5_);
++            java.util.List<ItemStack> items = getDrops(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_5_);
 +            p_180653_4_ = net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, p_180653_1_, p_180653_2_, p_180653_3_, p_180653_5_, p_180653_4_, false, harvesters.get());
  
 -            for (int k = 0; k < j; ++k)
@@ -445,7 +445,7 @@
 +    {
 +        List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
 +
-+        Random rand = world instanceof World ? ((World)world).field_73012_v : new Random();
++        Random rand = world instanceof World ? ((World)world).field_73012_v : RANDOM;
 +
 +        int count = quantityDropped(state, fortune, rand);
 +        for(int i = 0; i < count; i++)
