@@ -9,7 +9,7 @@
 +    {
 +        if (pos.func_177956_o() == neighbor.func_177956_o() && world instanceof World)
 +        {
-+            func_176204_a((World)world, pos, world.func_180495_p(neighbor), world.func_180495_p(neighbor).func_177230_c());
++            func_176204_a((World)world, pos, world.func_180495_p(pos), world.func_180495_p(neighbor).func_177230_c());
 +        }
 +    }
 +
