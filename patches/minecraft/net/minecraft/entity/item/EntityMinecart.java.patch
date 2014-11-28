@@ -377,7 +377,7 @@
 +        {
 +            return new ItemStack(Items.field_151140_bW);
 +        }
-+        else if (this instanceof EntityMinecartHopper)
++        else if (this instanceof EntityMinecartCommandBlock)
 +        {
 +            return new ItemStack(Items.field_151095_cc);
 +        }
