@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemSnow.java
++++ ../src-work/minecraft/net/minecraft/item/ItemSnow.java
+@@ -66,4 +66,10 @@
+     {
+         return p_77647_1_;
+     }
++
++    public boolean func_179222_a(World world, BlockPos pos, EnumFacing side, EntityPlayer player, ItemStack stack)
++    {
++        IBlockState state = world.func_180495_p(pos);
++        return (state.func_177230_c() != net.minecraft.init.Blocks.field_150431_aC || ((Integer)state.func_177229_b(BlockSnow.field_176315_a)) > 7) ? super.func_179222_a(world, pos, side, player, stack) : true;
++    }
+ }
