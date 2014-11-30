@@ -10,20 +10,21 @@
 +    public java.util.ArrayList<EntityItem> capturedDrops = new java.util.ArrayList<EntityItem>();
 +    private UUID persistentID;
 +
-+    protected java.util.HashMap<String, net.minecraftforge.common.IExtendedEntityProperties> extendedProperties;
++    protected java.util.HashMap<String, net.minecraftforge.common.IExtendedEntityProperties> extendedProperties = new java.util.HashMap<String, net.minecraftforge.common.IExtendedEntityProperties>();
 +
      public int func_145782_y()
      {
          return this.field_145783_c;
-@@ -171,6 +179,7 @@
+@@ -171,6 +179,8 @@
          this.field_70180_af.func_75682_a(2, "");
          this.field_70180_af.func_75682_a(4, Byte.valueOf((byte)0));
          this.func_70088_a();
-+        extendedProperties = net.minecraftforge.event.ForgeEventFactory.onEntityConstructing(this, p_i1582_1_);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
++        for (net.minecraftforge.common.IExtendedEntityProperties props : extendedProperties.values()) props.init(this, p_i1582_1_);
      }
  
      protected abstract void func_70088_a();
-@@ -1010,10 +1019,7 @@
+@@ -1010,10 +1020,7 @@
  
          if (block.func_149688_o() == p_70055_1_)
          {
@@ -35,7 +36,7 @@
          }
          else
          {
-@@ -1378,6 +1384,21 @@
+@@ -1378,6 +1385,21 @@
                  p_70109_1_.func_74757_a("Silent", this.func_174814_R());
              }
  
@@ -57,7 +58,7 @@
              this.func_70014_b(p_70109_1_);
  
              if (this.field_70154_o != null)
-@@ -1458,6 +1479,28 @@
+@@ -1458,6 +1480,28 @@
              this.func_174805_g(p_70020_1_.func_74767_n("CustomNameVisible"));
              this.field_174837_as.func_179668_a(p_70020_1_);
              this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
@@ -86,7 +87,7 @@
              this.func_70037_a(p_70020_1_);
  
              if (this.func_142008_O())
-@@ -1536,7 +1579,10 @@
+@@ -1536,7 +1580,10 @@
          {
              EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u + (double)p_70099_2_, this.field_70161_v, p_70099_1_);
              entityitem.func_174869_p();
@@ -98,7 +99,7 @@
              return entityitem;
          }
          else
-@@ -1810,7 +1856,7 @@
+@@ -1810,7 +1857,7 @@
  
      public boolean func_70115_ae()
      {
@@ -107,7 +108,7 @@
      }
  
      public boolean func_70093_af()
-@@ -2103,7 +2149,7 @@
+@@ -2103,7 +2150,7 @@
  
      public float func_180428_a(Explosion p_180428_1_, World p_180428_2_, BlockPos p_180428_3_, IBlockState p_180428_4_)
      {
@@ -116,7 +117,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2357,4 +2403,176 @@
+@@ -2357,4 +2404,176 @@
  
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
