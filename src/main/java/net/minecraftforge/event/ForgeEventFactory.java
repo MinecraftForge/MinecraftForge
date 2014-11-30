@@ -293,20 +293,6 @@ public class ForgeEventFactory
         return event.name;
     }
 
-    public static HashMap<String, IExtendedEntityProperties> onEntityConstructing(Entity entity, World world)
-    {
-        HashMap<String, IExtendedEntityProperties> ret = new HashMap<String, IExtendedEntityProperties>();
-
-        MinecraftForge.EVENT_BUS.post(new EntityEvent.EntityConstructing(entity));
-
-        for (IExtendedEntityProperties props : ret.values())
-        {
-            props.init(entity, world);
-        }
-
-        return ret;
-    }
-
     public static int onItemExpire(EntityItem entity, ItemStack item)
     {
         if (item == null) return -1;
