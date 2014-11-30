@@ -34,8 +34,8 @@
 +
 +    public boolean canPaneConnectTo(IBlockAccess world, BlockPos pos, EnumFacing dir)
 +    {
-+        BlockPos off = pos.func_177972_a(dir.func_176734_d());
++        BlockPos off = pos.func_177972_a(dir);
 +        Block block = world.func_180495_p(off).func_177230_c();
-+        return func_150098_a(block) || block.isSideSolid(world, pos, dir);
++        return func_150098_a(block) || block.isSideSolid(world, off, dir.func_176734_d());
 +    }
  }
