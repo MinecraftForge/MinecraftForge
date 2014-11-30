@@ -357,7 +357,7 @@ public class ForgeHooks
         if (isSpectator) return false;
         if (!ForgeModContainer.fullBoundingBoxLadders)
         {
-            return block != null && block.isLadder(world, pos, entity) && isSpectator;
+            return block != null && block.isLadder(world, pos, entity);
         }
         else
         {
