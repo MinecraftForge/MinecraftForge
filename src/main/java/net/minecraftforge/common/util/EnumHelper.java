@@ -3,6 +3,8 @@ package net.minecraftforge.common.util;
 import java.lang.reflect.*;
 import java.util.*;
 
+import org.apache.commons.lang3.ClassUtils;
+
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.block.BlockPressurePlate.Sensitivity;
 import net.minecraft.block.material.Material;
@@ -13,8 +15,10 @@ import net.minecraft.entity.item.EntityPainting.EnumArt;
 import net.minecraft.entity.player.EntityPlayer.EnumStatus;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
+import net.minecraft.tileentity.TileEntityBanner.EnumBannerPattern;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.world.EnumSkyBlock;
@@ -35,7 +39,7 @@ public class EnumHelper
     private static Class[][] commonTypes =
     {
         {EnumAction.class},
-        {ArmorMaterial.class, int.class, int[].class, int.class},
+        {ArmorMaterial.class, String.class, int.class, int[].class, int.class},
         {EnumArt.class, String.class, int.class, int.class, int.class, int.class},
         {EnumCreatureAttribute.class},
         {EnumCreatureType.class, Class.class, int.class, Material.class, boolean.class, boolean.class},
@@ -46,16 +50,19 @@ public class EnumHelper
         {EnumSkyBlock.class, int.class},
         {EnumStatus.class},
         {ToolMaterial.class, int.class, int.class, float.class, float.class, int.class},
-        {EnumRarity.class, EnumChatFormatting.class, String.class}
+        {EnumRarity.class, EnumChatFormatting.class, String.class},
+        {EnumBannerPattern.class, String.class, String.class},
+        {EnumBannerPattern.class, String.class, String.class, ItemStack.class},
+        {EnumBannerPattern.class, String.class, String.class, String.class, String.class, String.class}
     };
 
     public static EnumAction addAction(String name)
     {
         return addEnum(EnumAction.class, name);
     }
-    public static ArmorMaterial addArmorMaterial(String name, int durability, int[] reductionAmounts, int enchantability)
+    public static ArmorMaterial addArmorMaterial(String name, String type, int durability, int[] reductionAmounts, int enchantability)
     {
-        return addEnum(ArmorMaterial.class, name, durability, reductionAmounts, enchantability);
+        return addEnum(ArmorMaterial.class, name, type, durability, reductionAmounts, enchantability);
     }
     public static EnumArt addArt(String name, String tile, int sizeX, int sizeY, int offsetX, int offsetY)
     {
@@ -101,6 +108,18 @@ public class EnumHelper
     public static EnumRarity addRarity(String name, EnumChatFormatting color, String displayName)
     {
         return addEnum(EnumRarity.class, name, color, displayName);
+    }
+    public static EnumBannerPattern addBannerPattern(String name, String type, String id)
+    {
+        return addEnum(EnumBannerPattern.class, name, type, id);
+    }
+    public static EnumBannerPattern addBannerPattern(String name, String type, String id, ItemStack craftingStack)
+    {
+        return addEnum(EnumBannerPattern.class, name, type, id, craftingStack);
+    }
+    public static EnumBannerPattern addBannerPattern(String name, String type, String id, String craftingTop, String craftingMid, String craftingBot)
+    {
+        return addEnum(EnumBannerPattern.class, name, type, id, craftingTop, craftingMid, craftingBot);
     }
 
     private static void setup()
@@ -190,7 +209,7 @@ public class EnumHelper
     {
         for (Class[] lookup : map)
         {
-            if (lookup[0] == enumType)
+            if (compareCommonTypes(lookup, enumType, paramValues))
             {
                 Class<?>[] paramTypes = new Class<?>[lookup.length - 1];
                 if (paramTypes.length > 0)
@@ -272,6 +291,23 @@ public class EnumHelper
             e.printStackTrace();
             throw new RuntimeException(e.getMessage(), e);
         }
+    }
+    
+    public static boolean compareCommonTypes(Class[] commonType, Class enumType, Object[] paramValues)
+    {
+        if (commonType[0] != enumType || commonType.length -1 != paramValues.length) 
+        {       
+            return false;
+        }
+        
+        for (int i = 0; i < paramValues.length; i++)
+        {
+            if (commonType[i + 1] != paramValues[i].getClass() && ClassUtils.primitiveToWrapper(commonType[i + 1]) != paramValues[i].getClass())
+            {       
+                return false;
+            }
+        }
+        return true;
     }
 
     static
