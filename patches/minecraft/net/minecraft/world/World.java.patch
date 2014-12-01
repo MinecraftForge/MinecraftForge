@@ -154,7 +154,7 @@
 +    // Split off from original setBlockState(BlockPos, IBlockState Block p_147465_4_, int) method in order to directly send client and physic updates
 +    public void markAndNotifyBlock(BlockPos pos, Chunk chunk, IBlockState old, IBlockState new_, int flags)
 +    {
-+        if ((flags & 2) != 0 && (!this.field_72995_K || (flags & 4) == 0) && chunk.func_150802_k())
++        if ((flags & 2) != 0 && (!this.field_72995_K || (flags & 4) == 0) && (chunk == null || chunk.func_150802_k()))
 +        {
 +            this.func_175689_h(pos);
 +        }
