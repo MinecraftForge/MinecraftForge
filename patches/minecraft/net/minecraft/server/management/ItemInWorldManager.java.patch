@@ -59,7 +59,7 @@
 +                return;
 +            }
 +
-+            if (block.isAir(field_73092_a, p_180784_1_) && f >= 1.0F)
++            if (!block.isAir(field_73092_a, p_180784_1_) && f >= 1.0F)
 +            {
                  this.func_180237_b(p_180784_1_);
              }
