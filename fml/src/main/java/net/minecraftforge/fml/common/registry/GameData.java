@@ -28,6 +28,7 @@ import java.util.Set;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBanner;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ObjectIntIdentityMap;
@@ -709,7 +710,7 @@ public class GameData {
 
     private int registerItem(Item item, String name, int idHint)
     {
-        if (item instanceof ItemBlock) // ItemBlock, adjust id and clear the slot already occupied by the corresponding block
+        if (item instanceof ItemBlock && !(item instanceof ItemBanner)) // ItemBlock, adjust id and clear the slot already occupied by the corresponding block
         {
             Block block = ((ItemBlock) item).block;
             if (idHint != -1 && getMain().blockSubstitutions.containsKey(name))

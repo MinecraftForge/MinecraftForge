@@ -11,6 +11,7 @@ import java.util.Set;
 import org.apache.commons.lang3.Validate;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.ItemBanner;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.RegistryNamespaced;
@@ -77,7 +78,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
             // entry is blocked, thus should be empty
             if (blockedIds.contains(id)) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, name %s, marked as dangling.", type, obj, id, name));
 
-            if (obj instanceof ItemBlock)
+            if (obj instanceof ItemBlock && !(obj instanceof ItemBanner)) //Dammet Mojang not linking Banners
             {
                 Block block = ((ItemBlock) obj).block;
 
