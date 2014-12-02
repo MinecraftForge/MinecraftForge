@@ -959,8 +959,8 @@ public class GameData {
     {
         private void clear()
         {
-            this.field_148749_a.clear();
-            this.field_148748_b.clear();
+            this.identityMap.clear();
+            this.objectList.clear();
         }
     }
 }

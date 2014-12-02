@@ -31,7 +31,7 @@ repositories {
 minecraft {
     version = '1.8'
     mcpVersion = '9.10'
-    mappings = 'snapshot_nodoc_20140930'
+    mappings = 'snapshot_nodoc_20141130'
     fmlDir = projectDir.getAbsolutePath();
     mainClass = 'net.minecraftforge.fml.relauncher.ServerLaunchWrapper'
     tweakClass = 'net.minecraftforge.fml.common.launcher.FMLTweaker'

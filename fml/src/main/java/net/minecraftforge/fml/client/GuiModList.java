@@ -210,7 +210,7 @@ public class GuiModList extends GuiScreen
                         ;
                     }
                 }
-                this.fontRendererObj.func_175063_a(selectedMod.getMetadata().name, offset, shifty, 0xFFFFFF);
+                this.fontRendererObj.drawStringWithShadow(selectedMod.getMetadata().name, offset, shifty, 0xFFFFFF);
                 shifty += 12;
 
                 shifty = drawLine(String.format("Version: %s (%s)", selectedMod.getDisplayVersion(), selectedMod.getVersion()), offset, shifty);

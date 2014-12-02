@@ -277,13 +277,13 @@ public class GuiConfig extends GuiScreen
     public void handleMouseInput() throws IOException
     {
         super.handleMouseInput();
-        this.entryList.func_178039_p();
+        this.entryList.handleMouseInput();
     }
 
     @Override
     protected void mouseClicked(int x, int y, int mouseEvent) throws IOException
     {
-        if (mouseEvent != 0 || !this.entryList.func_148179_a(x, y, mouseEvent))
+        if (mouseEvent != 0 || !this.entryList.mouseClicked(x, y, mouseEvent))
         {
             this.entryList.mouseClickedPassThru(x, y, mouseEvent);
             super.mouseClicked(x, y, mouseEvent);
@@ -293,7 +293,7 @@ public class GuiConfig extends GuiScreen
     @Override
     protected void mouseReleased(int x, int y, int mouseEvent)
     {
-        if (mouseEvent != 0 || !this.entryList.func_148181_b(x, y, mouseEvent))
+        if (mouseEvent != 0 || !this.entryList.mouseReleased(x, y, mouseEvent))
         {
             super.mouseReleased(x, y, mouseEvent);
         }

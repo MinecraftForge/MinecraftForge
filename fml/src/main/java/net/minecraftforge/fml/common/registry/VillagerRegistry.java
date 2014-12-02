@@ -407,7 +407,7 @@ public class VillagerRegistry
                     },
                     {
                         new ListItemForEmeralds(Items.redstone, new PriceInfo(-4, -1)),
-                        new ListItemForEmeralds(new ItemStack(Items.dye, 1, EnumDyeColor.BLUE.getDyeColorDamage()),
+                        new ListItemForEmeralds(new ItemStack(Items.dye, 1, EnumDyeColor.BLUE.getDyeDamage()),
                         new PriceInfo(-2, -1))
                     },
                     {
