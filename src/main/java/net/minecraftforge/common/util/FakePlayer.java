@@ -23,11 +23,11 @@ public class FakePlayer extends EntityPlayerMP
     }
 
     @Override public Vec3 getPositionVector(){ return new Vec3(0, 0, 0); }
-    @Override public boolean canCommandSenderUseCommand(int i, String s){ return false; }
+    @Override public boolean canUseCommand(int i, String s){ return false; }
     @Override public void addChatComponentMessage(IChatComponent chatmessagecomponent){}
     @Override public void addStat(StatBase par1StatBase, int par2){}
     @Override public void openGui(Object mod, int modGuiId, World world, int x, int y, int z){}
-    @Override public boolean func_180431_b(DamageSource source){ return true; }
+    @Override public boolean isEntityInvulnerable(DamageSource source){ return true; }
     @Override public boolean canAttackPlayer(EntityPlayer player){ return false; }
     @Override public void onDeath(DamageSource source){ return; }
     @Override public void onUpdate(){ return; }

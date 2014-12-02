@@ -57,7 +57,7 @@ public class ClientCommandHandler extends CommandHandler
                 return 0;
             }
 
-            if (icommand.canCommandSenderUseCommand(sender))
+            if (icommand.canCommandSenderUse(sender))
             {
                 CommandEvent event = new CommandEvent(icommand, sender, args);
                 if (MinecraftForge.EVENT_BUS.post(event))
@@ -69,7 +69,7 @@ public class ClientCommandHandler extends CommandHandler
                     return 0;
                 }
 
-                icommand.processCommand(sender, args);
+                icommand.execute(sender, args);
                 return 1;
             }
             else
@@ -79,11 +79,11 @@ public class ClientCommandHandler extends CommandHandler
         }
         catch (WrongUsageException wue)
         {
-            sender.addChatMessage(format(RED, "commands.generic.usage", format(RED, wue.getMessage(), wue.getErrorOjbects())));
+            sender.addChatMessage(format(RED, "commands.generic.usage", format(RED, wue.getMessage(), wue.getErrorObjects())));
         }
         catch (CommandException ce)
         {
-            sender.addChatMessage(format(RED, ce.getMessage(), ce.getErrorOjbects()));
+            sender.addChatMessage(format(RED, ce.getMessage(), ce.getErrorObjects()));
         }
         catch (Throwable t)
         {

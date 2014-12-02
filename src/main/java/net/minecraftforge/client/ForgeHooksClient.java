@@ -357,7 +357,7 @@ public class ForgeHooksClient
             {
                 BlockPos pos = center.add(x, 0, z);
                 BiomeGenBase biome = world.getBiomeGenForCoords(pos);
-                int colour = biome.getSkyColorByTemp(biome.func_180626_a(pos));
+                int colour = biome.getSkyColorByTemp(biome.getFloatTemperature(pos));
                 r += (colour & 0xFF0000) >> 16;
                 g += (colour & 0x00FF00) >> 8;
                 b += colour & 0x0000FF;
