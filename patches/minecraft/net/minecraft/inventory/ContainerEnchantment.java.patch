@@ -69,3 +69,47 @@
                      }
  
                      this.func_75142_b();
+@@ -179,10 +159,11 @@
+ 
+     public boolean func_75140_a(EntityPlayer p_75140_1_, int p_75140_2_)
+     {
+-        ItemStack itemstack = this.field_75168_e.func_70301_a(0);
+-
++        if(this.field_75168_e.func_70301_a(0) == null) return false;
++        ItemStack itemstack = this.field_75168_e.func_70301_a(0).func_77946_l();
+         if (this.field_75167_g[p_75140_2_] > 0 && itemstack != null && (p_75140_1_.field_71068_ca >= this.field_75167_g[p_75140_2_] || p_75140_1_.field_71075_bZ.field_75098_d))
+         {
++            boolean isCancel = false;
+             if (!this.field_75172_h.field_72995_K)
+             {
+                 List list = EnchantmentHelper.func_77513_b(this.field_75169_l, itemstack, this.field_75167_g[p_75140_2_]);
+@@ -190,7 +171,6 @@
+ 
+                 if (list != null)
+                 {
+-                    p_75140_1_.func_82242_a(-this.field_75167_g[p_75140_2_]);
+ 
+                     if (flag)
+                     {
+@@ -215,12 +195,17 @@
+                             }
+                         }
+                     }
+-
+-                    this.func_75130_a(this.field_75168_e);
++                    isCancel = net.minecraftforge.event.ForgeEventFactory.onItemEnchant(p_75140_1_, itemstack, field_75168_e);
++                    if(!isCancel)
++                    {
++                        p_75140_1_.func_82242_a(-this.field_75167_g[p_75140_2_]);
++                        this.func_75130_a(this.field_75168_e);
++                        this.field_75168_e.func_70299_a(0, itemstack);
++                    }
+                 }
+             }
+-
+-            return true;
++            
++            return !isCancel;
+         }
+         else
+         {

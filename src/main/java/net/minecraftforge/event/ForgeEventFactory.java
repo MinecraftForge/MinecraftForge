@@ -13,6 +13,7 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -29,6 +30,7 @@ import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
 import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
+import net.minecraftforge.event.entity.player.ItemEnchantEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -189,7 +191,12 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
         return event.result;
     }
-
+    
+    public static boolean onItemEnchant(EntityPlayer player, ItemStack item, IInventory tableInventory)
+    {
+        return MinecraftForge.EVENT_BUS.post(new ItemEnchantEvent(player, item, tableInventory));
+    }
+    
     public static void onStartEntityTracking(Entity entity, EntityPlayer player)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.StartTracking(player, entity));
