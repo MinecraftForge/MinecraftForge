@@ -148,7 +148,7 @@ public class ShapelessOreRecipe implements IRecipe
     }
 
     @Override
-    public ItemStack[] func_179532_b(InventoryCrafting inv) //getRecipeLeftovers
+    public ItemStack[] getRemainingItems(InventoryCrafting inv) //getRecipeLeftovers
     {
         return ForgeHooks.defaultRecipeGetRemainingItems(inv);
     }

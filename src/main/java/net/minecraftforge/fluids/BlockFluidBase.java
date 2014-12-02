@@ -369,7 +369,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     public int getMixedBrightnessForBlock(IBlockAccess world, BlockPos pos)
     {
         int lightThis     = world.getCombinedLight(pos, 0);
-        int lightUp       = world.getCombinedLight(pos.offsetUp(), 0);
+        int lightUp       = world.getCombinedLight(pos.up(), 0);
         int lightThisBase = lightThis & 255;
         int lightUpBase   = lightUp & 255;
         int lightThisExt  = lightThis >> 16 & 255;
@@ -478,7 +478,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             {
                 if (!world.getBlockState(pos2).getBlock().getMaterial().blocksMovement())
                 {
-                    otherDecay = quantaPerBlock - getQuantaValue(world, pos2.offsetDown());
+                    otherDecay = quantaPerBlock - getQuantaValue(world, pos2.down());
                     if (otherDecay >= 0)
                     {
                         int power = otherDecay - (decay - quantaPerBlock);
@@ -493,7 +493,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             }
         }
 
-        if (world.getBlockState(pos.offsetUp()).getBlock() == this)
+        if (world.getBlockState(pos.up()).getBlock() == this)
         {
             boolean flag =
                 isBlockSolid(world, pos.add( 0,  0, -1), EnumFacing.NORTH) ||

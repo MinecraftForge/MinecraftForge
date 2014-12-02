@@ -135,9 +135,9 @@ public class BlockFluidClassic extends BlockFluidBase
         }
 
         // Flow vertically if possible
-        if (canDisplace(world, pos.offsetUp(densityDir)))
+        if (canDisplace(world, pos.up(densityDir)))
         {
-            flowIntoBlock(world, pos.offsetUp(densityDir), 1);
+            flowIntoBlock(world, pos.up(densityDir), 1);
             return;
         }
 
@@ -150,7 +150,7 @@ public class BlockFluidClassic extends BlockFluidBase
 
         if (isSourceBlock(world, pos) || !isFlowingVertically(world, pos))
         {
-            if (world.getBlockState(pos.offsetDown(densityDir)).getBlock() == this)
+            if (world.getBlockState(pos.down(densityDir)).getBlock() == this)
             {
                 flowMeta = 1;
             }
@@ -165,8 +165,8 @@ public class BlockFluidClassic extends BlockFluidBase
 
     public boolean isFlowingVertically(IBlockAccess world, BlockPos pos)
     {
-        return world.getBlockState(pos.offsetUp(densityDir)).getBlock() == this ||
-            (world.getBlockState(pos).getBlock() == this && canFlowInto(world, pos.offsetUp(densityDir)));
+        return world.getBlockState(pos.up(densityDir)).getBlock() == this ||
+            (world.getBlockState(pos).getBlock() == this && canFlowInto(world, pos.up(densityDir)));
     }
 
     public boolean isSourceBlock(IBlockAccess world, BlockPos pos)

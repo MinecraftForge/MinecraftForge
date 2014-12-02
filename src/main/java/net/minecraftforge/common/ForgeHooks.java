@@ -244,17 +244,17 @@ public class ForgeHooks
 
         if (target.typeOfHit == MovingObjectType.BLOCK)
         {
-            IBlockState state = world.getBlockState(target.func_178782_a());
+            IBlockState state = world.getBlockState(target.getBlockPos());
 
-            if (state.getBlock().isAir(world, target.func_178782_a()))
+            if (state.getBlock().isAir(world, target.getBlockPos()))
             {
                 return false;
             }
 
             if (isCreative && GuiScreen.isCtrlKeyDown())
-                te = world.getTileEntity(target.func_178782_a());
+                te = world.getTileEntity(target.getBlockPos());
 
-            result = state.getBlock().getPickBlock(target, world, target.func_178782_a());
+            result = state.getBlock().getPickBlock(target, world, target.getBlockPos());
         }
         else
         {
@@ -353,7 +353,7 @@ public class ForgeHooks
 
     public static boolean isLivingOnLadder(Block block, World world, BlockPos pos, EntityLivingBase entity)
     {
-        boolean isSpectator = (entity instanceof EntityPlayer && ((EntityPlayer)entity).func_175149_v());
+        boolean isSpectator = (entity instanceof EntityPlayer && ((EntityPlayer)entity).isSpectator());
         if (isSpectator) return false;
         if (!ForgeModContainer.fullBoundingBoxLadders)
         {
@@ -391,7 +391,7 @@ public class ForgeHooks
     public static EntityItem onPlayerTossEvent(EntityPlayer player, ItemStack item, boolean includeName)
     {
         player.captureDrops = true;
-        EntityItem ret = player.func_146097_a(item, false, includeName);
+        EntityItem ret = player.dropItem(item, false, includeName);
         player.capturedDrops.clear();
         player.captureDrops = false;
 
@@ -444,7 +444,7 @@ public class ForgeHooks
             if (gameType == WorldSettings.GameType.SPECTATOR)
                 preCancelEvent = true;
 
-            if (!entityPlayer.func_175142_cm())
+            if (!entityPlayer.isAllowEdit())
             {
                 ItemStack itemstack = entityPlayer.getCurrentEquippedItem();
                 if (itemstack == null || !itemstack.canDestroy(world.getBlockState(pos).getBlock()))

@@ -193,7 +193,7 @@ public class DimensionManager
             worlds.put(id, world);
             weakWorldMap.put(world, world);
             MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
-            FMLLog.info("Loading dimension %d (%s) (%s)", id, world.getWorldInfo().getWorldName(), world.func_73046_m());
+            FMLLog.info("Loading dimension %d (%s) (%s)", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
         }
         else
         {
@@ -238,7 +238,7 @@ public class DimensionManager
             System.err.println("Cannot Hotload Dim: " + e.getMessage());
             return; // If a provider hasn't been registered then we can't hotload the dim
         }
-        MinecraftServer mcServer = overworld.func_73046_m();
+        MinecraftServer mcServer = overworld.getMinecraftServer();
         ISaveHandler savehandler = overworld.getSaveHandler();
         WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
 

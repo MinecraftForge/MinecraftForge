@@ -16,11 +16,11 @@ public class DeferredBiomeDecorator extends BiomeDecorator {
     }
 
     @Override
-    public void func_180292_a(World par1World, Random par2Random, BiomeGenBase biome, BlockPos pos)
+    public void decorate(World par1World, Random par2Random, BiomeGenBase biome, BlockPos pos)
     {
         fireCreateEventAndReplace(biome);
         // On first call to decorate, we fire and substitute ourselves, if we haven't already done so
-        biome.theBiomeDecorator.func_180292_a(par1World, par2Random, biome, pos);
+        biome.theBiomeDecorator.decorate(par1World, par2Random, biome, pos);
     }
     public void fireCreateEventAndReplace(BiomeGenBase biome)
     {

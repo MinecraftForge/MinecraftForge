@@ -92,7 +92,7 @@ public class GuiIngameForge extends GuiIngame
     }
 
     @Override
-    public void func_175180_a(float partialTicks)
+    public void renderGameOverlay(float partialTicks)
     {
         res = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
         eventParent = new RenderGameOverlayEvent(partialTicks, res);
@@ -127,7 +127,7 @@ public class GuiIngameForge extends GuiIngame
             renderPortal(res, partialTicks);
         }
 
-        if (renderHotbar) func_180479_a(res, partialTicks);
+        if (renderHotbar) renderTooltip(res, partialTicks);
 
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         zLevel = -90.0F;
@@ -136,7 +136,7 @@ public class GuiIngameForge extends GuiIngame
         if (renderCrosshairs) renderCrosshairs(width, height);
         if (renderBossHealth) renderBossHealth();
 
-        if (this.mc.playerController.shouldDrawHUD() && this.mc.func_175606_aa() instanceof EntityPlayer)
+        if (this.mc.playerController.shouldDrawHUD() && this.mc.getRenderViewEntity() instanceof EntityPlayer)
         {
             if (renderHealth) renderHealth(width, height);
             if (renderArmor)  renderArmor(width, height);
@@ -166,7 +166,7 @@ public class GuiIngameForge extends GuiIngame
         ScorePlayerTeam scoreplayerteam = scoreboard.getPlayersTeam(mc.thePlayer.getName());
         if (scoreplayerteam != null)
         {
-            int slot = scoreplayerteam.func_178775_l().func_175746_b();
+            int slot = scoreplayerteam.func_178775_l().getColorIndex();
             if (slot >= 0) objective = scoreboard.getObjectiveInDisplaySlot(3 + slot);
         }
         ScoreObjective scoreobjective1 = objective != null ? objective : scoreboard.getObjectiveInDisplaySlot(1);
@@ -198,7 +198,7 @@ public class GuiIngameForge extends GuiIngame
     protected void renderCrosshairs(int width, int height)
     {
         if (pre(CROSSHAIRS)) return;
-        if (this.func_175183_b())
+        if (this.showCrosshair())
         {
             bind(Gui.icons);
             GlStateManager.enableBlend();
@@ -292,17 +292,18 @@ public class GuiIngameForge extends GuiIngame
         post(PORTAL);
     }
 
-    protected void func_180479_a(ScaledResolution res, float partialTicks)
+    @Override
+    protected void renderTooltip(ScaledResolution res, float partialTicks)
     {
         if (pre(HOTBAR)) return;
 
-        if (mc.playerController.enableEverythingIsScrewedUpMode())
+        if (mc.playerController.isSpectator())
         {
-            this.field_175197_u.func_175264_a(res, partialTicks);
+            this.spectatorGui.renderTooltip(res, partialTicks);
         }
         else
         {
-            super.func_180479_a(res, partialTicks);
+            super.renderTooltip(res, partialTicks);
         }
 
         post(HOTBAR);
@@ -312,7 +313,7 @@ public class GuiIngameForge extends GuiIngame
     {
         if (pre(AIR)) return;
         mc.mcProfiler.startSection("air");
-        EntityPlayer player = (EntityPlayer)this.mc.func_175606_aa();
+        EntityPlayer player = (EntityPlayer)this.mc.getRenderViewEntity();
         GlStateManager.enableBlend();
         int left = width / 2 + 91;
         int top = height - right_height;
@@ -342,26 +343,26 @@ public class GuiIngameForge extends GuiIngame
         mc.mcProfiler.startSection("health");
         GlStateManager.enableBlend();
 
-        EntityPlayer player = (EntityPlayer)this.mc.func_175606_aa();
+        EntityPlayer player = (EntityPlayer)this.mc.getRenderViewEntity();
         int health = MathHelper.ceiling_float_int(player.getHealth());
         boolean highlight = field_175191_F > (long)updateCounter && (field_175191_F - (long)updateCounter) / 3L %2L == 1L;
 
         if (health < this.field_175194_C && player.hurtResistantTime > 0)
         {
-            this.field_175190_E = Minecraft.getSystemTime();
+            this.lastSystemTime = Minecraft.getSystemTime();
             this.field_175191_F = (long)(this.updateCounter + 20);
         }
         else if (health > this.field_175194_C && player.hurtResistantTime > 0)
         {
-            this.field_175190_E = Minecraft.getSystemTime();
+            this.lastSystemTime = Minecraft.getSystemTime();
             this.field_175191_F = (long)(this.updateCounter + 10);
         }
 
-        if (Minecraft.getSystemTime() - this.field_175190_E > 1000L)
+        if (Minecraft.getSystemTime() - this.lastSystemTime > 1000L)
         {
             this.field_175194_C = health;
             this.field_175189_D = health;
-            this.field_175190_E = Minecraft.getSystemTime();
+            this.lastSystemTime = Minecraft.getSystemTime();
         }
 
         this.field_175194_C = health;
@@ -441,7 +442,7 @@ public class GuiIngameForge extends GuiIngame
         if (pre(FOOD)) return;
         mc.mcProfiler.startSection("food");
 
-        EntityPlayer player = (EntityPlayer)this.mc.func_175606_aa();
+        EntityPlayer player = (EntityPlayer)this.mc.getRenderViewEntity();
         GlStateManager.enableBlend();
         int left = width / 2 + 91;
         int top = height - right_height;
@@ -596,7 +597,7 @@ public class GuiIngameForge extends GuiIngame
 
     protected void renderToolHightlight(ScaledResolution res)
     {
-        if (this.mc.gameSettings.heldItemTooltips && !this.mc.playerController.enableEverythingIsScrewedUpMode())
+        if (this.mc.gameSettings.heldItemTooltips && !this.mc.playerController.isSpectator())
         {
             mc.mcProfiler.startSection("toolHighlight");
 
@@ -621,12 +622,12 @@ public class GuiIngameForge extends GuiIngame
                     if (font != null)
                     {
                         int x = (res.getScaledWidth() - font.getStringWidth(name)) / 2;
-                        font.func_175063_a(name, x, y, WHITE | (opacity << 24));
+                        font.drawStringWithShadow(name, x, y, WHITE | (opacity << 24));
                     }
                     else
                     {
                         int x = (res.getScaledWidth() - fontrenderer.getStringWidth(name)) / 2;
-                        fontrenderer.func_175063_a(name, x, y, WHITE | (opacity << 24));
+                        fontrenderer.drawStringWithShadow(name, x, y, WHITE | (opacity << 24));
                     }
                     GlStateManager.disableBlend();
                     GlStateManager.popMatrix();
@@ -635,9 +636,9 @@ public class GuiIngameForge extends GuiIngame
 
             mc.mcProfiler.endSection();
         }
-        else if (this.mc.thePlayer.func_175149_v())
+        else if (this.mc.thePlayer.isSpectator())
         {
-            this.field_175197_u.func_175263_a(res);
+            this.spectatorGui.func_175263_a(res);
         }
     }
 
@@ -747,11 +748,11 @@ public class GuiIngameForge extends GuiIngame
                 GlStateManager.pushMatrix();
                 GlStateManager.scale(4.0F, 4.0F, 4.0F);
                 int l = opacity << 24 & -16777216;
-                this.func_175179_f().func_175065_a(this.field_175201_x, (float)(-this.func_175179_f().getStringWidth(this.field_175201_x) / 2), -10.0F, 16777215 | l, true);
+                this.func_175179_f().drawString(this.field_175201_x, (float)(-this.func_175179_f().getStringWidth(this.field_175201_x) / 2), -10.0F, 16777215 | l, true);
                 GlStateManager.popMatrix();
                 GlStateManager.pushMatrix();
                 GlStateManager.scale(2.0F, 2.0F, 2.0F);
-                this.func_175179_f().func_175065_a(this.field_175200_y, (float)(-this.func_175179_f().getStringWidth(this.field_175200_y) / 2), 5.0F, 16777215 | l, true);
+                this.func_175179_f().drawString(this.field_175200_y, (float)(-this.func_175179_f().getStringWidth(this.field_175200_y) / 2), 5.0F, 16777215 | l, true);
                 GlStateManager.popMatrix();
                 GlStateManager.disableBlend();
                 GlStateManager.popMatrix();
@@ -783,7 +784,7 @@ public class GuiIngameForge extends GuiIngame
         ScoreObjective scoreobjective = this.mc.theWorld.getScoreboard().getObjectiveInDisplaySlot(0);
         NetHandlerPlayClient handler = mc.thePlayer.sendQueue;
 
-        if (mc.gameSettings.keyBindPlayerList.getIsKeyPressed() && (!mc.isIntegratedServerRunning() || handler.func_175106_d().size() > 1 || scoreobjective != null))
+        if (mc.gameSettings.keyBindPlayerList.isKeyDown() && (!mc.isIntegratedServerRunning() || handler.func_175106_d().size() > 1 || scoreobjective != null))
         {
             this.overlayPlayerList.func_175246_a(true);
             if (pre(PLAYER_LIST)) return;
@@ -798,7 +799,7 @@ public class GuiIngameForge extends GuiIngame
 
     protected void renderHealthMount(int width, int height)
     {
-        EntityPlayer player = (EntityPlayer)mc.func_175606_aa();
+        EntityPlayer player = (EntityPlayer)mc.getRenderViewEntity();
         Entity tmp = player.ridingEntity;
         if (!(tmp instanceof EntityLivingBase)) return;
 
@@ -864,9 +865,9 @@ public class GuiIngameForge extends GuiIngame
     private class GuiOverlayDebugForge extends GuiOverlayDebug
     {
         private GuiOverlayDebugForge(Minecraft mc){ super(mc); }
-        @Override protected void func_180798_a(){}
-        @Override protected void func_175239_b(ScaledResolution res){}
+        @Override protected void renderDebugInfoLeft(){}
+        @Override protected void renderDebugInfoRight(ScaledResolution res){}
         private List<String> getLeft(){ return this.call(); }
-        private List<String> getRight(){ return this.func_175238_c(); }
+        private List<String> getRight(){ return this.getDebugInfoRight(); }
     }
 }

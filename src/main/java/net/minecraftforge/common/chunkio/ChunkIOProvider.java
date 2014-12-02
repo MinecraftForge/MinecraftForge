@@ -46,7 +46,7 @@ class ChunkIOProvider implements AsynchronousExecutor.CallBackProvider<QueuedChu
         chunk.onChunkLoad();
 
         if (queuedChunk.provider.serverChunkGenerator != null) {
-            queuedChunk.provider.serverChunkGenerator.func_180514_a(chunk, queuedChunk.x, queuedChunk.z);
+            queuedChunk.provider.serverChunkGenerator.recreateStructures(chunk, queuedChunk.x, queuedChunk.z);
         }
 
         chunk.populateChunk(queuedChunk.provider, queuedChunk.provider, queuedChunk.x, queuedChunk.z);

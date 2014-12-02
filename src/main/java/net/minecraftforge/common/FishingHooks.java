@@ -95,7 +95,7 @@ public class FishingHooks
     {
         fish.addAll(EntityFishHook.FISH);
         junk.addAll(EntityFishHook.JUNK);
-        treasure.addAll(EntityFishHook.VALUABLES);
+        treasure.addAll(EntityFishHook.TREASURE);
     }
 
     public static enum FishableCategory
