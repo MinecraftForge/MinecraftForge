@@ -39,7 +39,7 @@
 +     */
 +    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
 +    {
-+        return !isVanilla || (oldState != newSate);
++        return !isVanilla || (oldState.func_177230_c() != newSate.func_177230_c());
 +    }
 +
 +    public boolean shouldRenderInPass(int pass)
