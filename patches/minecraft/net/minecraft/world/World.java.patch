@@ -319,7 +319,7 @@
 +            Block block = chunk.func_177428_a(blockpos2);
  
 -            if (material.func_76230_c() && material != Material.field_151584_j)
-+            if (block.func_149688_o().func_76230_c() && block.isLeaves(this, blockpos2) && !block.isFoliage(this, blockpos2))
++            if (block.func_149688_o().func_76230_c() && !block.isLeaves(this, blockpos2) && !block.isFoliage(this, blockpos2))
              {
                  break;
              }

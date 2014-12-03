@@ -49,12 +49,12 @@
                                                              {
                                                                  continue label115;
                                                              }
-@@ -228,6 +237,8 @@
+@@ -220,7 +229,7 @@
+             {
+                 BlockPos blockpos1 = p_180267_2_.func_177977_b();
+ 
+-                if (!World.func_175683_a(p_180267_1_, blockpos1))
++                if (!p_180267_1_.func_180495_p(blockpos1).func_177230_c().canCreatureSpawn(p_180267_1_, blockpos1, p_180267_0_))
                  {
-                     Block block1 = p_180267_1_.func_180495_p(blockpos1).func_177230_c();
-                     boolean flag = block1 != Blocks.field_150357_h && block1 != Blocks.field_180401_cv;
-+                    BlockPos down = blockpos1.func_177977_b();
-+                    flag |= p_180267_1_.func_180495_p(down).func_177230_c().canCreatureSpawn(p_180267_1_, down, p_180267_0_);
-                     return flag && !block.func_149721_r() && !block.func_149688_o().func_76224_d() && !p_180267_1_.func_180495_p(p_180267_2_.func_177984_a()).func_177230_c().func_149721_r();
+                     return false;
                  }
-             }
