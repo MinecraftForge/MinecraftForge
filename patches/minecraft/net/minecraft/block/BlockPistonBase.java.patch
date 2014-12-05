@@ -1,5 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonBase.java
+@@ -82,14 +82,14 @@
+         EnumFacing enumfacing = (EnumFacing)p_176316_3_.func_177229_b(field_176321_a);
+         boolean flag = this.func_176318_b(p_176316_1_, p_176316_2_, enumfacing);
+ 
+-        if (flag && !((Boolean)p_176316_3_.func_177229_b(field_176320_b)).booleanValue())
++        if (flag && !((Boolean)p_176316_3_.func_177229_b(field_176320_b)).booleanValue() && !net.minecraftforge.event.ForgeEventFactory.onPistonExtend(p_176316_1_, p_176316_2_, enumfacing))
+         {
+             if ((new BlockPistonStructureHelper(p_176316_1_, p_176316_2_, enumfacing, true)).func_177253_a())
+             {
+                 p_176316_1_.func_175641_c(p_176316_2_, this, 0, enumfacing.func_176745_a());
+             }
+         }
+-        else if (!flag && ((Boolean)p_176316_3_.func_177229_b(field_176320_b)).booleanValue())
++        else if (!flag && ((Boolean)p_176316_3_.func_177229_b(field_176320_b)).booleanValue() && !net.minecraftforge.event.ForgeEventFactory.onPistonRetract(p_176316_1_, p_176316_2_, enumfacing))
+         {
+             p_176316_1_.func_180501_a(p_176316_2_, p_176316_3_.func_177226_a(field_176320_b, Boolean.valueOf(false)), 2);
+             p_176316_1_.func_175641_c(p_176316_2_, this, 1, enumfacing.func_176745_a());
 @@ -200,7 +200,7 @@
                      }
                  }
