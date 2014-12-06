@@ -41,11 +41,12 @@ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
             }
 
             FMLHandshakeMessage.ModList client = (FMLHandshakeMessage.ModList)msg;
+            NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+            dispatcher.setModList(client.modList());
             FMLLog.info("Client attempting to join with %d mods : %s", client.modListSize(), client.modListAsString());
             String result = FMLNetworkHandler.checkModList(client, Side.CLIENT);
             if (result != null)
             {
-                NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
                 dispatcher.rejectHandshake(result);
                 return ERROR;
             }
