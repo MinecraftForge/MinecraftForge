@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemSword.java
++++ ../src-work/minecraft/net/minecraft/item/ItemSword.java
+@@ -101,7 +101,9 @@
+ 
+     public boolean func_82789_a(ItemStack p_82789_1_, ItemStack p_82789_2_)
+     {
+-        return this.field_150933_b.func_150995_f() == p_82789_2_.func_77973_b() ? true : super.func_82789_a(p_82789_1_, p_82789_2_);
++        ItemStack mat = this.field_150933_b.getRepairItemStack();
++        if (mat != null && net.minecraftforge.oredict.OreDictionary.itemMatches(mat, p_82789_2_, false)) return true;
++        return super.func_82789_a(p_82789_1_, p_82789_2_);
+     }
+ 
+     public Multimap func_111205_h()
