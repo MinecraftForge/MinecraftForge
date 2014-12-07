@@ -34,6 +34,15 @@
                  flag = itemstack2.func_77973_b() == Items.field_151134_bR && Items.field_151134_bR.func_92110_g(itemstack2).func_74745_c() > 0;
  
                  if (itemstack1.func_77984_f() && itemstack1.func_77973_b().func_82789_a(itemstack, itemstack2))
+@@ -258,7 +262,7 @@
+                         {
+                             int j2 = ((Integer)iterator.next()).intValue();
+ 
+-                            if (j2 != i1 && !enchantment.func_77326_a(Enchantment.field_77331_b[j2]))
++                            if (j2 != i1 && (!enchantment.func_77326_a(Enchantment.field_77331_b[j2]) || !Enchantment.field_77331_b[j2].func_77326_a(enchantment)))
+                             {
+                                 flag1 = false;
+                                 i += i2;
 @@ -373,6 +377,8 @@
                  k2 = Math.max(1, k2 / 2);
              }

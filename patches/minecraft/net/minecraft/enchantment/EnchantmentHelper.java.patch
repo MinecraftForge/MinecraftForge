@@ -18,6 +18,15 @@
  
          if (j <= 0)
          {
+@@ -393,7 +393,7 @@
+                                 {
+                                     EnchantmentData enchantmentdata1 = (EnchantmentData)iterator1.next();
+ 
+-                                    if (enchantmentdata1.field_76302_b.func_77326_a(Enchantment.field_77331_b[integer.intValue()]))
++                                    if (enchantmentdata1.field_76302_b.func_77326_a(Enchantment.field_77331_b[integer.intValue()]) && Enchantment.field_77331_b[integer.intValue()].func_77326_a(enchantmentdata1.field_76302_b))
+                                     {
+                                         continue;
+                                     }
 @@ -435,7 +435,8 @@
          {
              Enchantment enchantment = aenchantment[k];
