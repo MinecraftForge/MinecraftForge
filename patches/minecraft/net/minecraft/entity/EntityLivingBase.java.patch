@@ -25,7 +25,16 @@
      public void func_70618_n(int p_70618_1_)
      {
          this.field_70713_bf.remove(Integer.valueOf(p_70618_1_));
-@@ -741,6 +741,7 @@
+@@ -721,6 +721,8 @@
+ 
+     public void func_70691_i(float p_70691_1_)
+     {
++        p_70691_1_ = net.minecraftforge.event.ForgeEventFactory.onLivingHeal(this, p_70691_1_);
++        if (p_70691_1_ <= 0) return;
+         float f1 = this.func_110143_aJ();
+ 
+         if (f1 > 0.0F)
+@@ -741,6 +743,7 @@
  
      public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
      {
@@ -33,7 +42,7 @@
          if (this.func_180431_b(p_70097_1_))
          {
              return false;
-@@ -806,9 +807,9 @@
+@@ -806,9 +809,9 @@
                          this.field_70718_bc = 100;
                          this.field_70717_bb = (EntityPlayer)entity;
                      }
@@ -45,7 +54,7 @@
  
                          if (entitywolf.func_70909_n())
                          {
-@@ -894,6 +895,7 @@
+@@ -894,6 +897,7 @@
  
      public void func_70645_a(DamageSource p_70645_1_)
      {
@@ -53,7 +62,7 @@
          Entity entity = p_70645_1_.func_76346_g();
          EntityLivingBase entitylivingbase = this.func_94060_bK();
  
-@@ -919,6 +921,9 @@
+@@ -919,6 +923,9 @@
                  i = EnchantmentHelper.func_77519_f((EntityLivingBase)entity);
              }
  
@@ -63,7 +72,7 @@
              if (this.func_146066_aG() && this.field_70170_p.func_82736_K().func_82766_b("doMobLoot"))
              {
                  this.func_70628_a(this.field_70718_bc > 0, i);
-@@ -929,6 +934,16 @@
+@@ -929,6 +936,16 @@
                      this.func_82164_bB();
                  }
              }
@@ -80,7 +89,7 @@
          }
  
          this.field_70170_p.func_72960_a(this, (byte)3);
-@@ -977,7 +992,7 @@
+@@ -977,7 +994,7 @@
          int j = MathHelper.func_76128_c(this.func_174813_aQ().field_72338_b);
          int k = MathHelper.func_76128_c(this.field_70161_v);
          Block block = this.field_70170_p.func_180495_p(new BlockPos(i, j, k)).func_177230_c();
@@ -89,7 +98,7 @@
      }
  
      public boolean func_70089_S()
-@@ -987,6 +1002,9 @@
+@@ -987,6 +1004,9 @@
  
      public void func_180430_e(float p_180430_1_, float p_180430_2_)
      {
@@ -99,7 +108,7 @@
          super.func_180430_e(p_180430_1_, p_180430_2_);
          PotionEffect potioneffect = this.func_70660_b(Potion.field_76430_j);
          float f2 = potioneffect != null ? (float)(potioneffect.func_76458_c() + 1) : 0.0F;
-@@ -1105,6 +1123,8 @@
+@@ -1105,6 +1125,8 @@
      {
          if (!this.func_180431_b(p_70665_1_))
          {
@@ -108,7 +117,7 @@
              p_70665_2_ = this.func_70655_b(p_70665_1_, p_70665_2_);
              p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
              float f1 = p_70665_2_;
-@@ -1153,6 +1173,11 @@
+@@ -1153,6 +1175,11 @@
  
      public void func_71038_i()
      {
@@ -120,7 +129,7 @@
          if (!this.field_82175_bq || this.field_110158_av >= this.func_82166_i() / 2 || this.field_110158_av < 0)
          {
              this.field_110158_av = -1;
-@@ -1359,6 +1384,7 @@
+@@ -1359,6 +1386,7 @@
          }
  
          this.field_70160_al = true;
@@ -128,7 +137,7 @@
      }
  
      protected void func_70629_bd()
-@@ -1545,6 +1571,7 @@
+@@ -1545,6 +1573,7 @@
  
      public void func_70071_h_()
      {
@@ -136,7 +145,7 @@
          super.func_70071_h_();
  
          if (!this.field_70170_p.field_72995_K)
-@@ -2000,4 +2027,39 @@
+@@ -2000,4 +2029,39 @@
      {
          this.field_70752_e = true;
      }

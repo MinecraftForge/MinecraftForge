@@ -42,6 +42,7 @@ import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
+import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
@@ -387,5 +388,11 @@ public class ForgeEventFactory
     public static boolean onCreateWorldSpawn(World world, WorldSettings settings)
     {
         return MinecraftForge.EVENT_BUS.post(new WorldEvent.CreateSpawnPosition(world, settings));
+    }
+
+    public static float onLivingHeal(EntityLivingBase entity, float amount)
+    {
+        LivingHealEvent event = new LivingHealEvent(entity, amount);
+        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.amount);
     }
 }
