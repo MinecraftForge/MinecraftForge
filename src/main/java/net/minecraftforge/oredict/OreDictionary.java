@@ -132,6 +132,8 @@ public class OreDictionary
         replacements.put(new ItemStack(Items.stick), "stickWood");
         replacements.put(new ItemStack(Blocks.planks), "plankWood");
         replacements.put(new ItemStack(Blocks.planks, 1, WILDCARD_VALUE), "plankWood");
+        replacements.put(new ItemStack(Blocks.wooden_slab), "slabWood");
+        replacements.put(new ItemStack(Blocks.wooden_slab, 1, WILDCARD_VALUE), "slabWood");
         replacements.put(new ItemStack(Blocks.stone), "stone");
         replacements.put(new ItemStack(Blocks.stone, 1, WILDCARD_VALUE), "stone");
         replacements.put(new ItemStack(Blocks.cobblestone), "cobblestone");
