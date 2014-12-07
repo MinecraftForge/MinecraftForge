@@ -1,6 +1,10 @@
 package net.minecraftforge.event.entity.living;
 
+<<<<<<< HEAD
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
+=======
+import cpw.mods.fml.common.eventhandler.Cancelable;
+>>>>>>> Add LivingHealEvent called from EntityLivingBase.heal() Closes #1282
 import net.minecraft.entity.EntityLivingBase;
 
 /**

@@ -9,6 +9,15 @@
              {
                  this.func_70078_a((Entity)null);
              }
+@@ -316,7 +316,7 @@
+             if (!this.field_70170_p.field_72995_K && (this.field_70718_bc > 0 || this.func_70684_aJ()) && this.func_146066_aG() && this.field_70170_p.func_82736_K().func_82766_b("doMobLoot"))
+             {
+                 i = this.func_70693_a(this.field_70717_bb);
+-
++                i = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.field_70717_bb, i);
+                 while (i > 0)
+                 {
+                     int j = EntityXPOrb.func_70527_a(i);
 @@ -377,6 +377,7 @@
      {
          this.field_70755_b = p_70604_1_;
@@ -129,7 +138,15 @@
          if (!this.field_82175_bq || this.field_110158_av >= this.func_82166_i() / 2 || this.field_110158_av < 0)
          {
              this.field_110158_av = -1;
-@@ -1359,6 +1386,7 @@
+@@ -1294,6 +1321,7 @@
+ 
+     public void func_110145_l(Entity p_110145_1_)
+     {
++        if(!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, p_110145_1_, false)){ return; }
+         double d0 = p_110145_1_.field_70165_t;
+         double d1 = p_110145_1_.func_174813_aQ().field_72338_b + (double)p_110145_1_.field_70131_O;
+         double d2 = p_110145_1_.field_70161_v;
+@@ -1359,6 +1387,7 @@
          }
  
          this.field_70160_al = true;
@@ -137,7 +154,7 @@
      }
  
      protected void func_70629_bd()
-@@ -1545,6 +1573,7 @@
+@@ -1545,6 +1574,7 @@
  
      public void func_70071_h_()
      {
@@ -145,7 +162,15 @@
          super.func_70071_h_();
  
          if (!this.field_70170_p.field_72995_K)
-@@ -2000,4 +2029,39 @@
+@@ -1828,6 +1858,7 @@
+ 
+     public void func_70078_a(Entity p_70078_1_)
+     {
++        if(!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, p_70078_1_, true)){ return; }
+         if (this.field_70154_o != null && p_70078_1_ == null)
+         {
+             if (!this.field_70170_p.field_72995_K)
+@@ -2000,4 +2031,39 @@
      {
          this.field_70752_e = true;
      }
