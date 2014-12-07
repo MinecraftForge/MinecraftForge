@@ -18,7 +18,18 @@
  
          if (j <= 0)
          {
-@@ -435,7 +435,8 @@
+@@ -393,7 +393,9 @@
+                                 {
+                                     EnchantmentData enchantmentdata1 = (EnchantmentData)iterator1.next();
+ 
+-                                    if (enchantmentdata1.field_76302_b.func_77326_a(Enchantment.field_77331_b[integer.intValue()]))
++                                    Enchantment e1 = enchantmentdata1.field_76302_b;
++                                    Enchantment e2 = Enchantment.field_77331_b[integer.intValue()];
++                                    if (e1.func_77326_a(e2) && e2.func_77326_a(e1))  //Forge BugFix: Let Both enchantments veto being together
+                                     {
+                                         continue;
+                                     }
+@@ -435,7 +437,8 @@
          {
              Enchantment enchantment = aenchantment[k];
  
