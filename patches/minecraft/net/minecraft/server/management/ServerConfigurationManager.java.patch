@@ -26,7 +26,7 @@
          }
          else
          {
-@@ -301,6 +313,7 @@
+@@ -314,6 +326,7 @@
          this.field_177454_f.put(p_72377_1_.func_110124_au(), p_72377_1_);
          this.func_148540_a(new S38PacketPlayerListItem(S38PacketPlayerListItem.Action.ADD_PLAYER, new EntityPlayerMP[] {p_72377_1_}));
          WorldServer worldserver = this.field_72400_f.func_71218_a(p_72377_1_.field_71093_bK);
@@ -34,7 +34,7 @@
          worldserver.func_72838_d(p_72377_1_);
          this.func_72375_a(p_72377_1_, (WorldServer)null);
  
-@@ -334,6 +347,7 @@
+@@ -347,6 +360,7 @@
          this.field_72404_b.remove(p_72367_1_);
          this.field_177454_f.remove(p_72367_1_.func_110124_au());
          this.field_148547_k.remove(p_72367_1_.func_110124_au());
@@ -42,7 +42,7 @@
          this.func_148540_a(new S38PacketPlayerListItem(S38PacketPlayerListItem.Action.REMOVE_PLAYER, new EntityPlayerMP[] {p_72367_1_}));
      }
  
-@@ -415,13 +429,23 @@
+@@ -428,13 +442,23 @@
  
      public EntityPlayerMP func_72368_a(EntityPlayerMP p_72368_1_, int p_72368_2_, boolean p_72368_3_)
      {
@@ -68,7 +68,7 @@
          p_72368_1_.field_71093_bK = p_72368_2_;
          Object object;
  
-@@ -437,6 +461,7 @@
+@@ -450,6 +474,7 @@
          EntityPlayerMP entityplayermp1 = new EntityPlayerMP(this.field_72400_f, this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK), p_72368_1_.func_146103_bH(), (ItemInWorldManager)object);
          entityplayermp1.field_71135_a = p_72368_1_.field_71135_a;
          entityplayermp1.func_71049_a(p_72368_1_, p_72368_3_);
@@ -76,7 +76,7 @@
          entityplayermp1.func_145769_d(p_72368_1_.func_145782_y());
          entityplayermp1.func_174817_o(p_72368_1_);
          WorldServer worldserver = this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK);
-@@ -483,14 +508,19 @@
+@@ -496,14 +521,19 @@
  
      public void func_72356_a(EntityPlayerMP p_72356_1_, int p_72356_2_)
      {
@@ -98,7 +98,7 @@
          this.func_72375_a(p_72356_1_, worldserver);
          p_72356_1_.field_71135_a.func_147364_a(p_72356_1_.field_70165_t, p_72356_1_.field_70163_u, p_72356_1_.field_70161_v, p_72356_1_.field_70177_z, p_72356_1_.field_70125_A);
          p_72356_1_.field_71134_c.func_73080_a(worldserver1);
-@@ -508,13 +538,22 @@
+@@ -521,13 +551,22 @@
  
      public void func_82448_a(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_)
      {
@@ -124,7 +124,7 @@
          {
              d0 = MathHelper.func_151237_a(d0 / d2, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
              d1 = MathHelper.func_151237_a(d1 / d2, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
-@@ -525,7 +564,7 @@
+@@ -538,7 +577,7 @@
                  p_82448_3_.func_72866_a(p_82448_1_, false);
              }
          }
@@ -133,7 +133,7 @@
          {
              d0 = MathHelper.func_151237_a(d0 * d2, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
              d1 = MathHelper.func_151237_a(d1 * d2, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
-@@ -536,7 +575,8 @@
+@@ -549,7 +588,8 @@
                  p_82448_3_.func_72866_a(p_82448_1_, false);
              }
          }
@@ -143,7 +143,7 @@
          {
              BlockPos blockpos;
  
-@@ -571,7 +611,7 @@
+@@ -584,7 +624,7 @@
              if (p_82448_1_.func_70089_S())
              {
                  p_82448_1_.func_70012_b(d0, p_82448_1_.field_70163_u, d1, p_82448_1_.field_70177_z, p_82448_1_.field_70125_A);
