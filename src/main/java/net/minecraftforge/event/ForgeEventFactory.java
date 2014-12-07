@@ -334,9 +334,9 @@ public class ForgeEventFactory
         return event.result;
     }
 
-    public static void onPlayerWakeup(EntityPlayer player)
+    public static void onPlayerWakeup(EntityPlayer player, boolean wakeImmediatly, boolean updateWorldFlag, boolean setSpawn)
     {
-        MinecraftForge.EVENT_BUS.post(new PlayerWakeUpEvent(player));
+        MinecraftForge.EVENT_BUS.post(new PlayerWakeUpEvent(player, wakeImmediatly, updateWorldFlag, setSpawn));
     }
 
     public static void onPlayerFall(EntityPlayer player, float distance, float multiplier)
