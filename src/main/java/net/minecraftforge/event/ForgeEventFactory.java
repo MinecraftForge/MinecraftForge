@@ -1,11 +1,6 @@
 package net.minecraftforge.event;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -25,7 +20,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -34,8 +28,6 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
@@ -412,7 +404,8 @@ public class ForgeEventFactory
                 changed |= ItemStack.areItemStacksEqual(tmp[x], stacks[x]);
                 stacks[x] = event.getItem(x);
             }
-            onPotionBrewed(stacks);
+            if (changed)
+                onPotionBrewed(stacks);
             return true;
         }
         return false;
