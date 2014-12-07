@@ -178,6 +178,7 @@ public class ForgeHooks
         Blocks.iron_block.setHarvestLevel("pickaxe", 1);
         Blocks.lapis_ore.setHarvestLevel("pickaxe", 1);
         Blocks.lapis_block.setHarvestLevel("pickaxe", 1);
+        Blocks.quartz_ore.setHarvestLevel("pickaxe", 0);
     }
 
     public static int getTotalArmorValue(EntityPlayer player)
