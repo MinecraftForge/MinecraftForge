@@ -16,14 +16,18 @@ import net.minecraft.item.ItemStack;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-public class PotionBrewedEvent extends Event
+@Deprecated
+public class PotionBrewedEvent extends PotionBrewEvent
 {
     /**
      * The brewing stacks in the brewing stand.  Each index has the possibility to be null, so make sure you check.
+     * Changing this array to another one has no effect.
      */
+    @Deprecated
     public ItemStack[] brewingStacks;
     public PotionBrewedEvent(ItemStack[] brewingStacks)
     {
+        super(brewingStacks);
         this.brewingStacks = brewingStacks;
     }
 }

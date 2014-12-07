@@ -36,6 +36,7 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.event.brewing.PotionBrewEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
@@ -384,5 +385,31 @@ public class ForgeEventFactory
     {
         LivingHealEvent event = new LivingHealEvent(entity, amount);
         return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.amount);
+    }
+
+    public static boolean onPotionAttemptBreaw(ItemStack[] stacks)
+    {
+        ItemStack[] tmp = new ItemStack[stacks.length];
+        for (int x = 0; x < tmp.length; x++)
+            tmp[x] = stacks[x].copy();
+
+        PotionBrewEvent.Pre event = new PotionBrewEvent.Pre(tmp);
+        if (MinecraftForge.EVENT_BUS.post(event))
+        {
+            boolean changed = false;
+            for (int x = 0; x < stacks.length; x++)
+            {
+                changed |= ItemStack.areItemStacksEqual(tmp[x], stacks[x]);
+                stacks[x] = event.getItem(x);
+            }
+            onPotionBrewed(stacks);
+            return true;
+        }
+        return false;
+    }
+
+    public static void onPotionBrewed(ItemStack[] brewingItemStacks)
+    {
+        MinecraftForge.EVENT_BUS.post(new PotionBrewEvent.Post(brewingItemStacks));
     }
 }
