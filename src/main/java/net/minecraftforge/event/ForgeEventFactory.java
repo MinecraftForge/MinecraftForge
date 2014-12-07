@@ -3,7 +3,9 @@ package net.minecraftforge.event;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -21,6 +23,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -57,6 +61,7 @@ import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.MultiPlaceEvent;
 import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
+import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -345,5 +350,26 @@ public class ForgeEventFactory
     public static void onPlayerClone(EntityPlayer player, EntityPlayer oldPlayer, boolean wasDeath)
     {
         MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerEvent.Clone(player, oldPlayer, wasDeath));
+    }
+
+    public static boolean onExplosionStart(World world, Explosion explosion)
+    {
+        return MinecraftForge.EVENT_BUS.post(new ExplosionEvent.Start(world, explosion));
+    }
+
+    public static void onExplosionDetonate(World world, Explosion explosion, List<Entity> list, double diameter)
+    {
+        //Filter entities to only those who are effected, to prevent modders from seeing more then will be hurt.
+        /* Enable this if we get issues with modders looping to much.
+        Iterator<Entity> itr = list.iterator();
+        Vec3 p = explosion.getPosition();
+        while (itr.hasNext())
+        {
+            Entity e = itr.next();
+            double dist = e.getDistance(p.xCoord, p.yCoord, p.zCoord) / diameter;
+            if (e.func_180427_aV() || dist > 1.0F) itr.remove();
+        }
+        */
+        MinecraftForge.EVENT_BUS.post(new ExplosionEvent.Detonate(world, explosion, list));
     }
 }
