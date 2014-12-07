@@ -191,6 +191,11 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                     tessellator.addVertexWithUV(x + 0, y + heightSW, z + 1, u1, v1);
                     tessellator.addVertexWithUV(x + 1, y + heightSE, z + 1, u4, v4);
                     tessellator.addVertexWithUV(x + 1, y + heightNE, z + 0, u3, v3);
+                    
+                    tessellator.addVertexWithUV(x + 0, y + heightNW, z + 0, u2, v2);
+                    tessellator.addVertexWithUV(x + 1, y + heightNE, z + 0, u3, v3);
+                    tessellator.addVertexWithUV(x + 1, y + heightSE, z + 1, u4, v4);
+                    tessellator.addVertexWithUV(x + 0, y + heightSW, z + 1, u1, v1);
                 }
                 else
                 {
@@ -198,6 +203,11 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                     tessellator.addVertexWithUV(x + 1, y + 1 - heightSE, z + 1, u4, v4);
                     tessellator.addVertexWithUV(x + 0, y + 1 - heightSW, z + 1, u1, v1);
                     tessellator.addVertexWithUV(x + 0, y + 1 - heightNW, z + 0, u2, v2);
+                    
+                    tessellator.addVertexWithUV(x + 1, y + 1 - heightNE, z + 0, u3, v3);
+                    tessellator.addVertexWithUV(x + 0, y + 1 - heightNW, z + 0, u2, v2);
+                    tessellator.addVertexWithUV(x + 0, y + 1 - heightSW, z + 1, u1, v1);
+                    tessellator.addVertexWithUV(x + 1, y + 1 - heightSE, z + 1, u4, v4);
                 }
             }
 
@@ -304,6 +314,11 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                         tessellator.addVertexWithUV(tx2, y + ty2, tz2, u2Flow, v2Flow);
                         tessellator.addVertexWithUV(tx2, y + 0, tz2, u2Flow, v3Flow);
                         tessellator.addVertexWithUV(tx1, y + 0, tz1, u1Flow, v3Flow);
+
+                        tessellator.addVertexWithUV(tx1, y + ty1, tz1, u1Flow, v1Flow);
+                        tessellator.addVertexWithUV(tx1, y + 0, tz1, u1Flow, v3Flow);
+                        tessellator.addVertexWithUV(tx2, y + 0, tz2, u2Flow, v3Flow);
+                        tessellator.addVertexWithUV(tx2, y + ty2, tz2, u2Flow, v2Flow);
                     }
                     else
                     {
@@ -311,6 +326,11 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                         tessellator.addVertexWithUV(tx2, y + 1 - 0, tz2, u2Flow, v3Flow);
                         tessellator.addVertexWithUV(tx2, y + 1 - ty2, tz2, u2Flow, v2Flow);
                         tessellator.addVertexWithUV(tx1, y + 1 - ty1, tz1, u1Flow, v1Flow);
+
+                        tessellator.addVertexWithUV(tx1, y + 1 - 0, tz1, u1Flow, v3Flow);
+                        tessellator.addVertexWithUV(tx1, y + 1 - ty1, tz1, u1Flow, v1Flow);
+                        tessellator.addVertexWithUV(tx2, y + 1 - ty2, tz2, u2Flow, v2Flow);
+                        tessellator.addVertexWithUV(tx2, y + 1 - 0, tz2, u2Flow, v3Flow);
                     }
                 }
             }
