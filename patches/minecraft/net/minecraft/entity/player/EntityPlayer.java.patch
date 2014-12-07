@@ -306,7 +306,7 @@
  
      public void func_70999_a(boolean p_70999_1_, boolean p_70999_2_, boolean p_70999_3_)
      {
-+        net.minecraftforge.event.ForgeEventFactory.onPlayerWakeup(this);
++        net.minecraftforge.event.ForgeEventFactory.onPlayerWakeup(this, p_70999_1_, p_70999_2_, p_70999_3_);
          this.func_70105_a(0.6F, 1.8F);
          IBlockState iblockstate = this.field_70170_p.func_180495_p(this.field_71081_bT);
  
