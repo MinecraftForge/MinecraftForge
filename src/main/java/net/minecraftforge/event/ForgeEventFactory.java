@@ -28,6 +28,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
+import net.minecraftforge.event.entity.living.LivingExperienceEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
@@ -118,6 +119,13 @@ public class ForgeEventFactory
         AllowDespawn event = new AllowDespawn(entity);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult();
+    }
+    
+    public static int getExperienceDrop(EntityLivingBase entity, EntityPlayer attackingPlayer, int originalExperience)
+    {
+        LivingExperienceEvent event = new LivingExperienceEvent(entity, attackingPlayer, originalExperience);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.experience;
     }
 
     public static List<BiomeGenBase.SpawnListEntry> getPotentialSpawns(WorldServer world, EnumCreatureType type, int x, int y, int z, List<BiomeGenBase.SpawnListEntry> oldList)
