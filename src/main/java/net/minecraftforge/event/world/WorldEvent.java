@@ -5,6 +5,7 @@ import java.util.List;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldSettings;
 import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -107,6 +108,21 @@ public class WorldEvent extends Event
             {
                 this.list = new ArrayList<SpawnListEntry>();
             }
+        }
+    }
+
+    /**
+     * Called by WorldServer when it attempts to create a spawnpoint for a dimension.
+     * Canceling the event will prevent the vanilla code from running.
+     */
+    @Cancelable
+    public static class CreateSpawnPosition extends WorldEvent
+    {
+        public final WorldSettings settings;
+        public CreateSpawnPosition(World world, WorldSettings ws)
+        {
+            super(world);
+            this.settings = ws;
         }
     }
 }
