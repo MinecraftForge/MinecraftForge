@@ -24,6 +24,7 @@ import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraftforge.common.MinecraftForge;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -35,10 +36,10 @@ public class OreDictionary
     private static boolean hasInit = false;
     private static List<String>          idToName = new ArrayList<String>();
     private static Map<String, Integer>  nameToId = new HashMap<String, Integer>();
-    private static List<ArrayList<ItemStack>> idToStack = Lists.newArrayList(); //ToDo: Unqualify to List when possible {1.8}
-    private static List<ArrayList<ItemStack>> idToStackUn = Lists.newArrayList(); //ToDo: Unqualify to List when possible {1.8}
+    private static List<List<ItemStack>> idToStack = Lists.newArrayList();
+    private static List<List<ItemStack>> idToStackUn = Lists.newArrayList();
     private static Map<Integer, List<Integer>> stackToId = Maps.newHashMap();
-    public static final ArrayList<ItemStack> EMPTY_LIST = new UnmodifiableArrayList(Lists.newArrayList()); //ToDo: Unqualify to List when possible {1.8}
+    public static final ImmutableList<ItemStack> EMPTY_LIST = ImmutableList.of();
 
     /**
      * Minecraft changed from -1 to Short.MAX_VALUE in 1.5 release for the "block wildcard". Use this in case it
@@ -268,8 +269,9 @@ public class OreDictionary
             idToName.add(name);
             val = idToName.size() - 1; //0 indexed
             nameToId.put(name, val);
-            idToStack.add(new ArrayList<ItemStack>());
-            idToStackUn.add(new UnmodifiableArrayList(idToStack.get(val)));
+            List<ItemStack> back = Lists.newArrayList();
+            idToStack.add(back);
+            idToStackUn.add(Collections.unmodifiableList(back));
         }
         return val;
     }
@@ -286,27 +288,6 @@ public class OreDictionary
     }
 
     /**
-     * Gets the integer ID for the specified item stack.
-     * If the item stack is not linked to any ore, this will return -1 and no new entry will be created.
-     *
-     * @param stack The item stack of the ore.
-     * @return A number representing the ID for this ore type, or -1 if couldn't find it.
-     */
-    @Deprecated // Use getOreIds below for more accuracy
-    public static int getOreID(ItemStack stack)
-    {
-        if (stack == null || stack.getItem() == null) return -1;
-
-        int id = Item.getIdFromItem(stack.getItem());
-        List<Integer> ids = stackToId.get(id); //Try the wildcard first
-        if (ids == null || ids.size() == 0)
-        {
-            ids = stackToId.get(id | ((stack.getItemDamage() + 1) << 16)); // Mow the Meta specific one, +1 so that meta 0 is significant
-        }
-        return (ids != null && ids.size() > 0) ? ids.get(0) : -1;
-    }
-
-    /**
      * Gets all the integer ID for the ores that the specified item stakc is registered to.
      * If the item stack is not linked to any ore, this will return an empty array and no new entry will be created.
      *
@@ -315,7 +296,7 @@ public class OreDictionary
      */
     public static int[] getOreIDs(ItemStack stack)
     {
-        if (stack == null || stack.getItem() == null) return new int[0];
+        if (stack == null || stack.getItem() == null) throw new IllegalArgumentException("Stack can not be null!");
 
         Set<Integer> set = new HashSet<Integer>();
 
@@ -342,7 +323,7 @@ public class OreDictionary
      * @param name The ore name, directly calls getOreID
      * @return An arrayList containing ItemStacks registered for this ore
      */
-    public static ArrayList<ItemStack> getOres(String name) //TODO: 1.8 ArrayList -> List
+    public static List<ItemStack> getOres(String name)
     {
         return getOres(getOreID(name));
     }
@@ -358,32 +339,14 @@ public class OreDictionary
     }
 
     /**
-     * Retrieves the ArrayList of items that are registered to this ore type.
+     * Retrieves the List of items that are registered to this ore type.
      * Creates the list as empty if it did not exist.
-     *
-     * Warning: In 1.8, the return value will become a immutible list,
-     * and this function WILL NOT create the entry if the ID doesn't exist,
-     * IDs are intended to be internal OreDictionary things and modders
-     * should not ever code them in.
      *
      * @param id The ore ID, see getOreID
      * @return An List containing ItemStacks registered for this ore
      */
-    @Deprecated // Use the named version not int
-    public static ArrayList<ItemStack> getOres(Integer id) //TODO: delete in 1.8 in favor of unboxed version below
+    private static List<ItemStack> getOres(int id)
     {
-       return getOres((int)id.intValue());
-    }
-    private static ArrayList<ItemStack> getOres(int id) //TODO: change to ImmutibleList<ItemStack> in 1.8, also make private
-    {
-        while (idToName.size() < id + 1) // TODO: Remove this in 1.8, this is only for backwards compatibility
-        {
-            String name = "Filler: " + idToName.size();
-            idToName.add(name);
-            nameToId.put(name, idToName.size() - 1); //0 indexed
-            idToStack.add(null);
-            idToStackUn.add(EMPTY_LIST);
-        }
         return idToStackUn.size() > id ? idToStackUn.get(id) : EMPTY_LIST;
     }
 
@@ -502,80 +465,6 @@ public class OreDictionary
                 ids.add(id);
                 //System.out.println(id + " " + getOreName(id) + " " + Integer.toHexString(hash) + " " + ore);
             }
-        }
-    }
-
-
-    //Pulled from Collections.UnmodifiableList, as we need to explicitly subclass ArrayList for backward compatibility.
-    //Delete this class in 1.8 when we loose the ArrayList specific return types.
-    private static class UnmodifiableArrayList<E> extends ArrayList<E>
-    {
-        final ArrayList<? extends E> list;
-
-        UnmodifiableArrayList(ArrayList<? extends E> list)
-        {
-            super(0);
-            this.list = list;
-        }
-
-        public ListIterator<E> listIterator() {return listIterator(0);      }
-        public boolean  equals(Object o)      { return o == this || list.equals(o); }
-        public int      hashCode()            { return list.hashCode();     }
-        public E        get(int index)        { return list.get(index);     }
-        public int      indexOf(Object o)     { return list.indexOf(o);     }
-        public int      lastIndexOf(Object o) { return list.lastIndexOf(o); }
-        public int      size()                { return list.size();         }
-        public boolean  isEmpty()             { return list.isEmpty();      }
-        public boolean  contains(Object o)    { return list.contains(o);    }
-        public Object[] toArray()             { return list.toArray();      }
-        public <T> T[]  toArray(T[] a)        { return list.toArray(a);     }
-        public String   toString()            { return list.toString();     }
-        public boolean containsAll(Collection<?> coll) { return list.containsAll(coll); }
-
-        public E set(int index, E element)    { throw new UnsupportedOperationException(); }
-        public void add(int index, E element) { throw new UnsupportedOperationException(); }
-        public E remove(int index)            { throw new UnsupportedOperationException(); }
-        public boolean add(E e)               { throw new UnsupportedOperationException(); }
-        public boolean remove(Object o)       { throw new UnsupportedOperationException(); }
-        public void clear()                   { throw new UnsupportedOperationException(); }
-        public boolean removeAll(Collection<?> coll) { throw new UnsupportedOperationException(); }
-        public boolean retainAll(Collection<?> coll) { throw new UnsupportedOperationException(); }
-        public boolean addAll(Collection<? extends E> coll) { throw new UnsupportedOperationException(); }
-        public boolean addAll(int index, Collection<? extends E> c) { throw new UnsupportedOperationException(); }
-
-        public ListIterator<E> listIterator(final int index)
-        {
-            return new ListIterator<E>()
-            {
-                private final ListIterator<? extends E> i = list.listIterator(index);
-                public boolean hasNext()     {return i.hasNext();}
-                public E next()              {return i.next();}
-                public boolean hasPrevious() {return i.hasPrevious();}
-                public E previous()          {return i.previous();}
-                public int nextIndex()       {return i.nextIndex();}
-                public int previousIndex()   {return i.previousIndex();}
-
-                public void remove() { throw new UnsupportedOperationException(); }
-                public void set(E e) { throw new UnsupportedOperationException(); }
-                public void add(E e) { throw new UnsupportedOperationException(); }
-            };
-        }
-
-        public List<E> subList(int fromIndex, int toIndex)
-        {
-            return  Collections.unmodifiableList(list.subList(fromIndex, toIndex));
-        }
-
-        public Iterator<E> iterator()
-        {
-            return new Iterator<E>()
-            {
-                private final Iterator<? extends E> i = list.iterator();
-
-                public boolean hasNext() { return i.hasNext(); }
-                public E next()          { return i.next();    }
-                public void remove()     { throw new UnsupportedOperationException(); }
-            };
         }
     }
 }

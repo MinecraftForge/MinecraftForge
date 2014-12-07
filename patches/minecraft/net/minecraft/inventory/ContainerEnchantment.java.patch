@@ -12,7 +12,7 @@
          this.func_75146_a(new Slot(this.field_75168_e, 1, 35, 47)
          {
              private static final String __OBFID = "CL_00002185";
-+            java.util.ArrayList<ItemStack> ores = net.minecraftforge.oredict.OreDictionary.getOres("gemLapis");
++            java.util.List<ItemStack> ores = net.minecraftforge.oredict.OreDictionary.getOres("gemLapis");
              public boolean func_75214_a(ItemStack p_75214_1_)
              {
 -                return p_75214_1_.func_77973_b() == Items.field_151100_aR && EnumDyeColor.func_176766_a(p_75214_1_.func_77960_j()) == EnumDyeColor.BLUE;
