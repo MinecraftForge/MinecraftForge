@@ -402,7 +402,8 @@ public class ForgeEventFactory
                 changed |= ItemStack.areItemStacksEqual(tmp[x], stacks[x]);
                 stacks[x] = event.getItem(x);
             }
-            onPotionBrewed(stacks);
+            if (changed)
+                onPotionBrewed(stacks);
             return true;
         }
         return false;
