@@ -1,21 +1,88 @@
 --- ../src-base/minecraft/net/minecraft/world/Explosion.java
 +++ ../src-work/minecraft/net/minecraft/world/Explosion.java
-@@ -86,7 +86,7 @@
+@@ -19,6 +19,8 @@
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.util.Vec3;
++import net.minecraftforge.event.world.ExplosionEvent;
++import net.minecraftforge.common.MinecraftForge;
  
-                             if (block.func_149688_o() != Material.field_151579_a)
-                             {
--                                float f3 = this.field_77283_e != null ? this.field_77283_e.func_145772_a(this, this.field_77287_j, j1, k1, l1, block) : block.func_149638_a(this.field_77283_e);
-+                                float f3 = this.field_77283_e != null ? this.field_77283_e.func_145772_a(this, this.field_77287_j, j1, k1, l1, block) : block.getExplosionResistance(this.field_77283_e, field_77287_j, j1, k1, l1, field_77284_b, field_77285_c, field_77282_d);
-                                 f1 -= (f3 + 0.3F) * f2;
-                             }
+ public class Explosion
+ {
+@@ -35,6 +37,8 @@
+     public List field_77281_g = new ArrayList();
+     private Map field_77288_k = new HashMap();
+     private static final String __OBFID = "CL_00000134";
++    private boolean cancelled = false;
++    public List affectedEntities = new ArrayList();
  
-@@ -211,8 +211,7 @@
-                         block.func_149690_a(this.field_77287_j, i, j, k, this.field_77287_j.func_72805_g(i, j, k), 1.0F / this.field_77280_f, 0);
-                     }
+     public Explosion(World p_i1948_1_, Entity p_i1948_2_, double p_i1948_3_, double p_i1948_5_, double p_i1948_7_, float p_i1948_9_)
+     {
+@@ -56,6 +60,19 @@
+         double d5;
+         double d6;
+         double d7;
++        
++        ExplosionEvent.Pre explosionPreEvent = new ExplosionEvent.Pre(this, field_77284_b, field_77285_c, field_77282_d, field_77287_j, field_77283_e, func_94613_c(), field_77280_f, field_77286_a, field_82755_b);
++        
++        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(explosionPreEvent))
++        {
++            cancelled = true;
++            return;
++        }
++        
++        field_77280_f = explosionPreEvent.explosionSize;
++        f = explosionPreEvent.explosionSize;
++        field_77286_a = explosionPreEvent.isFlaming;
++        field_82755_b = explosionPreEvent.isSmoking;
  
--                    this.field_77287_j.func_147465_d(i, j, k, Blocks.field_150350_a, 0, 3);
--                    block.func_149723_a(this.field_77287_j, i, j, k, this);
-+                    block.onBlockExploded(this.field_77287_j, i, j, k, this);
+         for (i = 0; i < this.field_77289_h; ++i)
+         {
+@@ -114,6 +131,22 @@
+         int j2 = MathHelper.func_76128_c(this.field_77282_d + (double)this.field_77280_f + 1.0D);
+         List list = this.field_77287_j.func_72839_b(this.field_77283_e, AxisAlignedBB.func_72330_a((double)i, (double)k, (double)l, (double)j, (double)i2, (double)j2));
+         Vec3 vec3 = Vec3.func_72443_a(this.field_77284_b, this.field_77285_c, this.field_77282_d);
++        
++        ExplosionEvent.During explosionDuringEvent = new ExplosionEvent.During(this, field_77284_b, field_77285_c, field_77282_d, field_77287_j, field_77283_e,
++                func_94613_c(), field_77280_f, field_77286_a, field_82755_b, new ArrayList<Entity>((List<Entity>)list), new ArrayList<ChunkPosition>((List<ChunkPosition>)this.field_77281_g));
++        
++        if(MinecraftForge.EVENT_BUS.post(explosionDuringEvent))
++        {
++            cancelled = true;
++            return;
++        }
++        
++        list.clear();
++        list.addAll(explosionDuringEvent.affectedEntities);
++        this.field_77281_g.clear();
++        this.field_77281_g.addAll(explosionDuringEvent.affectedBlockPositions);
++        this.field_77286_a = explosionDuringEvent.isFlaming;
++        this.field_82755_b = explosionDuringEvent.isSmoking;
+ 
+         for (int i1 = 0; i1 < list.size(); ++i1)
+         {
+@@ -149,10 +182,13 @@
+         }
+ 
+         this.field_77280_f = f;
++        this.affectedEntities = list;
+     }
+ 
+     public void func_77279_a(boolean p_77279_1_)
+     {
++        if(cancelled) return;
++        
+         this.field_77287_j.func_72908_a(this.field_77284_b, this.field_77285_c, this.field_77282_d, "random.explode", 4.0F, (1.0F + (this.field_77287_j.field_73012_v.nextFloat() - this.field_77287_j.field_73012_v.nextFloat()) * 0.2F) * 0.7F);
+ 
+         if (this.field_77280_f >= 2.0F && this.field_82755_b)
+@@ -236,6 +272,10 @@
                  }
              }
          }
++        ExplosionEvent.Post explosionPostEvent = new ExplosionEvent.Post(this, field_77284_b, field_77285_c, field_77282_d, field_77287_j, field_77283_e,
++            func_94613_c(), field_77280_f, field_77286_a, field_82755_b, new ArrayList<Entity>((List<Entity>)affectedEntities), new ArrayList<ChunkPosition>((List<ChunkPosition>)this.field_77281_g));
++        
++        MinecraftForge.EVENT_BUS.post(explosionPostEvent);
+     }
+ 
+     public Map func_77277_b()
