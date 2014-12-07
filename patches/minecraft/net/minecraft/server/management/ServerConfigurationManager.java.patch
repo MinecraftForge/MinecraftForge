@@ -76,7 +76,7 @@
          entityplayermp1.func_145769_d(p_72368_1_.func_145782_y());
          entityplayermp1.func_174817_o(p_72368_1_);
          WorldServer worldserver = this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK);
-@@ -483,6 +508,11 @@
+@@ -483,14 +508,19 @@
  
      public void func_72356_a(EntityPlayerMP p_72356_1_, int p_72356_2_)
      {
@@ -88,8 +88,9 @@
          int j = p_72356_1_.field_71093_bK;
          WorldServer worldserver = this.field_72400_f.func_71218_a(p_72356_1_.field_71093_bK);
          p_72356_1_.field_71093_bK = p_72356_2_;
-@@ -490,7 +520,7 @@
-         p_72356_1_.field_71135_a.func_147359_a(new S07PacketRespawn(p_72356_1_.field_71093_bK, p_72356_1_.field_70170_p.func_175659_aa(), p_72356_1_.field_70170_p.func_72912_H().func_76067_t(), p_72356_1_.field_71134_c.func_73081_b()));
+         WorldServer worldserver1 = this.field_72400_f.func_71218_a(p_72356_1_.field_71093_bK);
+-        p_72356_1_.field_71135_a.func_147359_a(new S07PacketRespawn(p_72356_1_.field_71093_bK, p_72356_1_.field_70170_p.func_175659_aa(), p_72356_1_.field_70170_p.func_72912_H().func_76067_t(), p_72356_1_.field_71134_c.func_73081_b()));
++        p_72356_1_.field_71135_a.func_147359_a(new S07PacketRespawn(p_72356_1_.field_71093_bK, worldserver1.func_175659_aa(), worldserver1.func_72912_H().func_76067_t(), p_72356_1_.field_71134_c.func_73081_b())); // Forge: Use new dimensions information
          worldserver.func_72973_f(p_72356_1_);
          p_72356_1_.field_70128_L = false;
 -        this.func_82448_a(p_72356_1_, j, worldserver, worldserver1);
