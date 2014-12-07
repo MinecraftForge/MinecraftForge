@@ -2,10 +2,11 @@ package net.minecraftforge.event.world;
 
 import java.util.List;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.entity.Entity;
-import net.minecraft.world.ChunkPosition;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
@@ -62,9 +63,9 @@ public class ExplosionEvent extends Event
         }
 
         /** return the list of blocks affected by the explosion. */
-        public List<ChunkPosition> getAffectedBlocks()
+        public List<BlockPos> getAffectedBlocks()
         {
-            return explosion.affectedBlockPositions;
+            return explosion.func_180343_e();
         }
 
         /** return the list of entities affected by the explosion. */

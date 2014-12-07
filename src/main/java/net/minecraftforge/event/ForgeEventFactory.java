@@ -3,6 +3,7 @@ package net.minecraftforge.event;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +25,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -362,11 +364,20 @@ public class ForgeEventFactory
         //Filter entities to only those who are effected, to prevent modders from seeing more then will be hurt.
         /* Enable this if we get issues with modders looping to much.
         Iterator<Entity> itr = list.iterator();
+<<<<<<< HEAD
         while (itr.hasNext())
         {
             Entity e = itr.next();
             double dist = e.getDistance(explosion.explosionX, explosion.explosionY, explosion.explosionZ) / diameter;
             if (dist > 1.0F) itr.remove();
+=======
+        Vec3 p = explosion.getPosition();
+        while (itr.hasNext())
+        {
+            Entity e = itr.next();
+            double dist = e.getDistance(p.xCoord, p.yCoord, p.zCoord) / diameter;
+            if (e.func_180427_aV() || dist > 1.0F) itr.remove();
+>>>>>>> Added Explosion Start and Detonate events to control explosion.
         }
         */
         MinecraftForge.EVENT_BUS.post(new ExplosionEvent.Detonate(world, explosion, list));
