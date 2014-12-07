@@ -69,3 +69,15 @@
                      }
  
                      this.func_75142_b();
+@@ -185,7 +165,10 @@
+         {
+             if (!this.field_75172_h.field_72995_K)
+             {
+-                List list = EnchantmentHelper.func_77513_b(this.field_75169_l, itemstack, this.field_75167_g[p_75140_2_]);
++                net.minecraftforge.event.entity.player.PlayerEnchantEvent e = new net.minecraftforge.event.entity.player.PlayerEnchantEvent(p_75140_1_, EnchantmentHelper.func_77513_b(this.field_75169_l, itemstack, this.field_75167_g[p_75140_2_]), itemstack);
++                List list = e.enchantmentDataList;
++                field_75168_e.func_70299_a(0, e.itemstack);
++                itemstack = field_75168_e.func_70301_a(0);
+                 boolean flag = itemstack.func_77973_b() == Items.field_151122_aG;
+ 
+                 if (list != null)
