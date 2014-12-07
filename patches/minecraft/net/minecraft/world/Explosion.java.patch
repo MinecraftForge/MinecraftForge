@@ -9,7 +9,15 @@
                                  f1 -= (f3 + 0.3F) * f2;
                              }
  
-@@ -211,8 +211,7 @@
+@@ -113,6 +113,7 @@
+         int l = MathHelper.func_76128_c(this.field_77282_d - (double)this.field_77280_f - 1.0D);
+         int j2 = MathHelper.func_76128_c(this.field_77282_d + (double)this.field_77280_f + 1.0D);
+         List list = this.field_77287_j.func_72839_b(this.field_77283_e, AxisAlignedBB.func_72330_a((double)i, (double)k, (double)l, (double)j, (double)i2, (double)j2));
++        net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.field_77287_j, this, list, this.field_77280_f);
+         Vec3 vec3 = Vec3.func_72443_a(this.field_77284_b, this.field_77285_c, this.field_77282_d);
+ 
+         for (int i1 = 0; i1 < list.size(); ++i1)
+@@ -211,8 +212,7 @@
                          block.func_149690_a(this.field_77287_j, i, j, k, this.field_77287_j.func_72805_g(i, j, k), 1.0F / this.field_77280_f, 0);
                      }
  
