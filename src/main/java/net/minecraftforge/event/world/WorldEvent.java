@@ -2,6 +2,7 @@ package net.minecraftforge.event.world;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -119,10 +120,11 @@ public class WorldEvent extends Event
     public static class CreateSpawnPosition extends WorldEvent
     {
         public final WorldSettings settings;
-        public CreateSpawnPosition(World world, WorldSettings ws)
+        
+        public CreateSpawnPosition(World world, WorldSettings settings)
         {
             super(world);
-            this.settings = ws;
+            this.settings = settings;
         }
     }
 }
