@@ -26,4 +26,11 @@ public interface IModelCustomLoader {
      * @throws ModelFormatException if the model format is not correct
      */
     IModelCustom loadInstance(ResourceLocation resource) throws ModelFormatException;
+    /**
+     * Load a model animation instance from the supplied path
+     * @param resource The ResourceLocation of the model
+     * @return A model instance
+     * @throws ModelFormatException if the model format is not correct
+     */
+    IModelAnimationCustom loadAnimationInstance(ResourceLocation resource) throws ModelFormatException;
 }

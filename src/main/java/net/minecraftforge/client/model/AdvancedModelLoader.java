@@ -47,6 +47,27 @@ public class AdvancedModelLoader {
      */
     public static IModelCustom loadModel(ResourceLocation resource) throws IllegalArgumentException, ModelFormatException
     {
+        IModelCustomLoader loader = getLoaderForResource(resource);
+
+        return loader.loadInstance(resource);
+    }
+
+    /**
+     * Load the model animation from the supplied classpath resolvable resource name
+     * @param resource The resource name
+     * @return A model animation
+     * @throws IllegalArgumentException if the resource name cannot be understood
+     * @throws ModelFormatException if the underlying model handler cannot parse the model format
+     */
+    public static IModelAnimationCustom loadModelAnimation(ResourceLocation resource) throws IllegalArgumentException, ModelFormatException
+    {
+        IModelCustomLoader loader = getLoaderForResource(resource);
+
+        return loader.loadAnimationInstance(resource);
+    }
+
+    private static IModelCustomLoader getLoaderForResource(ResourceLocation resource)
+    {
         String name = resource.getResourcePath();
         int i = name.lastIndexOf('.');
         if (i == -1)
@@ -61,8 +82,7 @@ public class AdvancedModelLoader {
             FMLLog.severe("The resource name %s is not supported", resource);
             throw new IllegalArgumentException("The resource name is not supported");
         }
-
-        return loader.loadInstance(resource);
+        return loader;
     }
 
     public static Collection<String> getSupportedSuffixes()
