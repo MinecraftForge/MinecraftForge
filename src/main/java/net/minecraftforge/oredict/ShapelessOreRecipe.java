@@ -110,9 +110,9 @@ public class ShapelessOreRecipe implements IRecipe
                     {
                         match = OreDictionary.itemMatches((ItemStack)next, slot, false);
                     }
-                    else if (next instanceof ArrayList)
+                    else if (next instanceof List)
                     {
-                        Iterator<ItemStack> itr = ((ArrayList<ItemStack>)next).iterator();
+                        Iterator<ItemStack> itr = ((List<ItemStack>)next).iterator();
                         while (itr.hasNext() && !match)
                         {
                             match = OreDictionary.itemMatches(itr.next(), slot, false);
