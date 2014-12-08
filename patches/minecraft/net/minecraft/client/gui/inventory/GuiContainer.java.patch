@@ -34,7 +34,18 @@
          this.field_73735_i = 0.0F;
          field_146296_j.field_77023_b = 0.0F;
      }
-@@ -458,6 +466,7 @@
+@@ -243,8 +251,10 @@
+             if (iicon != null)
+             {
+                 GL11.glDisable(GL11.GL_LIGHTING);
++                GL11.glEnable(GL11.GL_BLEND); // Forge: Blending needs to be enabled for this.
+                 this.field_146297_k.func_110434_K().func_110577_a(TextureMap.field_110576_c);
+                 this.func_94065_a(i, j, iicon, 16, 16);
++                GL11.glDisable(GL11.GL_BLEND); // Forge: And clean that up
+                 GL11.glEnable(GL11.GL_LIGHTING);
+                 flag1 = true;
+             }
+@@ -458,6 +468,7 @@
  
      protected void func_146286_b(int p_146286_1_, int p_146286_2_, int p_146286_3_)
      {

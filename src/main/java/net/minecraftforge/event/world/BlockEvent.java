@@ -1,17 +1,24 @@
 package net.minecraftforge.event.world;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.util.BlockSnapshot;
 
 public class BlockEvent extends Event {
+    private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockEvent", "false"));
+
     public final int x;
     public final int y;
     public final int z;
@@ -109,6 +116,65 @@ public class BlockEvent extends Event {
         public void setExpToDrop(int exp)
         {
             this.exp = exp;
+        }
+    }
+
+    /**
+     * Called when a block is placed by a player.
+     *
+     * If a Block Place event is cancelled, the block will not be placed.
+     */
+    @Cancelable
+    public static class PlaceEvent extends BlockEvent {
+
+        public final EntityPlayer player;
+        public final ItemStack itemInHand;
+        public final BlockSnapshot blockSnapshot;
+        public final Block placedBlock;
+        public final Block placedAgainst;
+
+        public PlaceEvent(BlockSnapshot blockSnapshot, Block placedAgainst, EntityPlayer player) {
+            super(blockSnapshot.x, blockSnapshot.y, blockSnapshot.z, blockSnapshot.world, blockSnapshot.getCurrentBlock(), blockSnapshot.meta);
+            this.player = player;
+            this.itemInHand = player.getCurrentEquippedItem();
+            this.blockSnapshot = blockSnapshot;
+            this.placedBlock = blockSnapshot.getCurrentBlock();
+            this.placedAgainst = placedAgainst;
+            if (DEBUG)
+            {
+                System.out.printf("Created PlaceEvent - [PlacedBlock: %s ][PlacedAgainst: %s ][ItemStack: %s ][Player: %s ]\n", placedBlock, placedAgainst, player.getCurrentEquippedItem(), player);
+            }
+        }
+    }
+
+    /**
+     * Fired when a single block placement action of a player triggers the
+     * creation of multiple blocks(e.g. placing a bed block). The block returned
+     * by {@link #block} and its related methods is the block where
+     * the placed block would exist if the placement only affected a single
+     * block.
+     */
+    @Cancelable
+    public static class MultiPlaceEvent extends PlaceEvent {
+        private final List<BlockSnapshot> blockSnapshots;
+
+        public MultiPlaceEvent(List<BlockSnapshot> blockSnapshots, Block placedAgainst, EntityPlayer player) {
+            super(blockSnapshots.get(0), placedAgainst, player);
+            this.blockSnapshots = ImmutableList.copyOf(blockSnapshots);
+            if (DEBUG)
+            {
+                System.out.printf("Created MultiPlaceEvent - [PlacedAgainst: %s ][ItemInHand: %s ][Player: %s ]\n", placedAgainst, this.itemInHand, player);
+            }
+        }
+
+        /**
+         * Gets a list of blocksnapshots for all blocks which were replaced by the
+         * placement of the new blocks. Most of these blocks will just be of type AIR.
+         *
+         * @return immutable list of replaced BlockSnapshots
+         */
+        public List<BlockSnapshot> getReplacedBlockSnapshots() {
+            return blockSnapshots;
         }
     }
 }

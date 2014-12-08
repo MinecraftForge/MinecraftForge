@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemLilyPad.java
++++ ../src-work/minecraft/net/minecraft/item/ItemLilyPad.java
+@@ -46,7 +46,14 @@
+ 
+                 if (p_77659_2_.func_147439_a(i, j, k).func_149688_o() == Material.field_151586_h && p_77659_2_.func_72805_g(i, j, k) == 0 && p_77659_2_.func_147437_c(i, j + 1, k))
+                 {
++                    // special case for handling block placement with water lilies
++                    net.minecraftforge.common.util.BlockSnapshot blocksnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(p_77659_2_, i, j + 1, k);
+                     p_77659_2_.func_147449_b(i, j + 1, k, Blocks.field_150392_bi);
++                    if (net.minecraftforge.event.ForgeEventFactory.onPlayerBlockPlace(p_77659_3_, blocksnapshot, net.minecraftforge.common.util.ForgeDirection.UP).isCanceled()) 
++                    {
++                        blocksnapshot.restore(true, false);
++                        return p_77659_1_;
++                    }
+ 
+                     if (!p_77659_3_.field_71075_bZ.field_75098_d)
+                     {

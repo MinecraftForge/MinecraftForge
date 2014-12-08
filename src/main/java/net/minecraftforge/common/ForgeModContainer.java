@@ -51,6 +51,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 
 public class ForgeModContainer extends DummyModContainer implements WorldAccessContainer
@@ -66,7 +67,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static float zombieBabyChance = 0.05f;
     public static boolean shouldSortRecipies = true;
     public static boolean disableVersionCheck = false;
-    public static boolean enableStencilBits = true;
     public static int defaultSpawnFuzz = 20;
 
     private static Configuration config;
@@ -218,12 +218,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         zombieBabyChance = (float) prop.getDouble(0.05);
         propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "enableStencilBits", true);
-        prop.comment = "Set to false to attempt to allocate 8 stencil bits when starting the GL display context.";
-        prop.setLanguageKey("forge.configgui.stencilbits").setRequiresWorldRestart(true);
-        enableStencilBits = prop.getBoolean(true);
-        propOrder.add(prop.getName());
-
         prop = config.get(Configuration.CATEGORY_GENERAL, "defaultSpawnFuzz", 20,
             "The spawn fuzz when a player respawns in the world, this is controlable by WorldType, this config option is for the default overworld.",
             1, Integer.MAX_VALUE);
@@ -258,6 +252,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 ForgeChunkManager.loadConfiguration();
             }
         }
+    }
+    
+    @SubscribeEvent
+    public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
+    {
+        UsernameCache.setUsername(event.player.getGameProfile().getId(), event.player.getGameProfile().getName());
     }
 
     @Override

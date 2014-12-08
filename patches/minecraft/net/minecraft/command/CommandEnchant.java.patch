@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandEnchant.java
++++ ../src-work/minecraft/net/minecraft/command/CommandEnchant.java
+@@ -76,7 +76,7 @@
+                                 {
+                                     Enchantment enchantment1 = Enchantment.field_77331_b[short1];
+ 
+-                                    if (!enchantment1.func_77326_a(enchantment))
++                                    if (!enchantment1.func_77326_a(enchantment) || !enchantment.func_77326_a(enchantment1)) //Forge BugFix: Let Both enchantments veto being together
+                                     {
+                                         throw new CommandException("commands.enchant.cantCombine", new Object[] {enchantment.func_77316_c(j), enchantment1.func_77316_c(nbttaglist.func_150305_b(k).func_74765_d("lvl"))});
+                                     }

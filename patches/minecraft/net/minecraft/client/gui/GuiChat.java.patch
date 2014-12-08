@@ -4,7 +4,7 @@
      public void func_146403_a(String p_146403_1_)
      {
          this.field_146297_k.field_71456_v.func_146158_b().func_146239_a(p_146403_1_);
-+        if (net.minecraftforge.client.ClientCommandHandler.instance.func_71556_a(field_146297_k.field_71439_g, p_146403_1_) == 1) return;
++        if (net.minecraftforge.client.ClientCommandHandler.instance.func_71556_a(field_146297_k.field_71439_g, p_146403_1_) != 0) return;
          this.field_146297_k.field_71439_g.func_71165_d(p_146403_1_);
      }
  

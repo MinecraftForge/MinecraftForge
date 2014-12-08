@@ -2,7 +2,9 @@ package net.minecraftforge.event;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import net.minecraft.block.Block;
@@ -14,14 +16,23 @@ import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntityBrewingStand;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.WorldSettings;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.brewing.PotionBrewEvent;
+import net.minecraftforge.event.brewing.PotionBrewedEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
+import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
@@ -33,10 +44,32 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.BlockEvent.MultiPlaceEvent;
+import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
+import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
 public class ForgeEventFactory
 {
+
+    public static MultiPlaceEvent onPlayerMultiBlockPlace(EntityPlayer player, List<BlockSnapshot> blockSnapshots, ForgeDirection direction)
+    {
+        Block placedAgainst = blockSnapshots.get(0).world.getBlock(blockSnapshots.get(0).x + direction.getOpposite().offsetX, blockSnapshots.get(0).y + direction.getOpposite().offsetY, blockSnapshots.get(0).z + direction.getOpposite().offsetZ);
+
+        MultiPlaceEvent event = new MultiPlaceEvent(blockSnapshots, placedAgainst, player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static PlaceEvent onPlayerBlockPlace(EntityPlayer player, BlockSnapshot blockSnapshot, ForgeDirection direction)
+    {
+        Block placedAgainst = blockSnapshot.world.getBlock(blockSnapshot.x + direction.getOpposite().offsetX, blockSnapshot.y + direction.getOpposite().offsetY, blockSnapshot.z + direction.getOpposite().offsetZ);
+
+        PlaceEvent event = new PlaceEvent(blockSnapshot, placedAgainst, player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
     public static boolean doPlayerHarvestCheck(EntityPlayer player, Block block, boolean success)
     {
         PlayerEvent.HarvestCheck event = new PlayerEvent.HarvestCheck(player, block, success);
@@ -191,5 +224,63 @@ public class ForgeEventFactory
         SaveHandler sh = (SaveHandler) playerFileData;
         File dir = ObfuscationReflectionHelper.getPrivateValue(SaveHandler.class, sh, "playersDirectory", "field_"+"75771_c");
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.LoadFromFile(player, dir, uuidString));
+    }
+
+    public static boolean onExplosionStart(World world, Explosion explosion)
+    {
+        return MinecraftForge.EVENT_BUS.post(new ExplosionEvent.Start(world, explosion));
+    }
+
+    public static void onExplosionDetonate(World world, Explosion explosion, List<Entity> list, double diameter)
+    {
+        //Filter entities to only those who are effected, to prevent modders from seeing more then will be hurt.
+        /* Enable this if we get issues with modders looping to much.
+        Iterator<Entity> itr = list.iterator();
+        while (itr.hasNext())
+        {
+            Entity e = itr.next();
+            double dist = e.getDistance(explosion.explosionX, explosion.explosionY, explosion.explosionZ) / diameter;
+            if (dist > 1.0F) itr.remove();
+        }
+        */
+        MinecraftForge.EVENT_BUS.post(new ExplosionEvent.Detonate(world, explosion, list));
+    }
+
+    public static boolean onCreateWorldSpawn(World world, WorldSettings settings)
+    {
+        return MinecraftForge.EVENT_BUS.post(new WorldEvent.CreateSpawnPosition(world, settings));
+    }
+
+    public static float onLivingHeal(EntityLivingBase entity, float amount)
+    {
+        LivingHealEvent event = new LivingHealEvent(entity, amount);
+        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.amount);
+    }
+
+    public static boolean onPotionAttemptBreaw(ItemStack[] stacks)
+    {
+        ItemStack[] tmp = new ItemStack[stacks.length];
+        for (int x = 0; x < tmp.length; x++)
+            tmp[x] = stacks[x].copy();
+
+        PotionBrewEvent.Pre event = new PotionBrewEvent.Pre(tmp);
+        if (MinecraftForge.EVENT_BUS.post(event))
+        {
+            boolean changed = false;
+            for (int x = 0; x < stacks.length; x++)
+            {
+                changed |= ItemStack.areItemStacksEqual(tmp[x], stacks[x]);
+                stacks[x] = event.getItem(x);
+            }
+            if (changed)
+                onPotionBrewed(stacks);
+            return true;
+        }
+        return false;
+    }
+
+    public static void onPotionBrewed(ItemStack[] brewingItemStacks)
+    {
+        MinecraftForge.EVENT_BUS.post(new PotionBrewEvent.Post(brewingItemStacks));
     }
 }
