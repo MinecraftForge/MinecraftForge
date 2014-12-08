@@ -10,7 +10,7 @@
          return this.field_77856_bY;
      }
 +    
-+    public boolean isWolfsFavoriteMeat(ItemStack stack)
++    public boolean isWolfFood(ItemStack stack)
 +    {
 +        return func_77845_h();
 +    }

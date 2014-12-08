@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityAnimal.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityAnimal.java
+@@ -306,7 +306,7 @@
+ 
+     public boolean func_70877_b(ItemStack p_70877_1_)
+     {
+-        return p_70877_1_.func_77973_b() == Items.field_151015_O;
++        return p_70877_1_ != null && p_70877_1_.func_77973_b().isBreedingItem(this, p_70877_1_);
+     }
+ 
+     public boolean func_70085_c(EntityPlayer p_70085_1_)

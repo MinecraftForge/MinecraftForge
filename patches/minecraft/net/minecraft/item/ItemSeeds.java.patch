@@ -1,8 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemSeeds.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemSeeds.java
-@@ -3,9 +3,14 @@
+@@ -2,10 +2,17 @@
+ 
  import net.minecraft.block.Block;
  import net.minecraft.creativetab.CreativeTabs;
++import net.minecraft.entity.passive.EntityAnimal;
++import net.minecraft.entity.passive.EntityChicken;
  import net.minecraft.entity.player.EntityPlayer;
 +import net.minecraft.init.Blocks;
 +import net.minecraft.world.IBlockAccess;
@@ -16,7 +19,7 @@
  {
      private Block field_150925_a;
      private Block field_77838_b;
-@@ -26,7 +31,7 @@
+@@ -26,7 +33,7 @@
          }
          else if (p_77648_2_.func_82247_a(p_77648_4_, p_77648_5_, p_77648_6_, p_77648_7_, p_77648_1_) && p_77648_2_.func_82247_a(p_77648_4_, p_77648_5_ + 1, p_77648_6_, p_77648_7_, p_77648_1_))
          {
@@ -25,7 +28,7 @@
              {
                  p_77648_3_.func_147449_b(p_77648_4_, p_77648_5_ + 1, p_77648_6_, this.field_150925_a);
                  --p_77648_1_.field_77994_a;
-@@ -42,4 +47,22 @@
+@@ -42,4 +49,28 @@
              return false;
          }
      }
@@ -46,5 +49,11 @@
 +    public int getPlantMetadata(IBlockAccess world, int x, int y, int z)
 +    {
 +        return 0;
++    }
++    
++    @Override
++    public boolean isBreedingItem(EntityAnimal entity, ItemStack stack)
++    {
++        return entity instanceof EntityChicken;
 +    }
  }
