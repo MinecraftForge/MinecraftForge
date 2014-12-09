@@ -8,13 +8,6 @@ import net.minecraftforge.common.util.EnumHelper;
 
 public class EnumHelperClient extends EnumHelper
 {
-    @SuppressWarnings("rawtypes")
-    private static Class[][] clentTypes =
-    {
-        {GameType.class, int.class, String.class},
-        {Options.class, String.class, boolean.class, boolean.class},
-        {EnumOS.class}
-    };
     
     public static GameType addGameType(String name, int id, String displayName)
     {
@@ -29,10 +22,5 @@ public class EnumHelperClient extends EnumHelper
     public static EnumOS addOS2(String name)
     {
         return addEnum(EnumOS.class, name);
-    }
-
-    public static <T extends Enum<? >> T addEnum(Class<T> enumType, String enumName, Object... paramValues)
-    {
-        return addEnum(clentTypes, enumType, enumName, paramValues);
     }
 }
