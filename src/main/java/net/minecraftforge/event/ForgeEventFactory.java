@@ -391,7 +391,7 @@ public class ForgeEventFactory
     {
         ItemStack[] tmp = new ItemStack[stacks.length];
         for (int x = 0; x < tmp.length; x++)
-            tmp[x] = stacks[x].copy();
+            tmp[x] = ItemStack.copyItemStack(stacks[x]);
 
         PotionBrewEvent.Pre event = new PotionBrewEvent.Pre(tmp);
         if (MinecraftForge.EVENT_BUS.post(event))
