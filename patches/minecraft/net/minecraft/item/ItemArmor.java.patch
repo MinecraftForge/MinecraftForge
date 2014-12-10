@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemArmor.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemArmor.java
+@@ -38,7 +38,7 @@
+             if (list.size() > 0)
+             {
+                 EntityLivingBase entitylivingbase = (EntityLivingBase)list.get(0);
+-                int l = entitylivingbase instanceof EntityPlayer ? 1 : 0;
++                int l = 0;// Forge: We fix the indexes. Mojang Stop hard coding this!
+                 int i1 = EntityLiving.func_82159_b(p_82487_2_);
+                 ItemStack itemstack1 = p_82487_2_.func_77946_l();
+                 itemstack1.field_77994_a = 1;
 @@ -192,7 +192,7 @@
  
          if (itemstack1 == null)
