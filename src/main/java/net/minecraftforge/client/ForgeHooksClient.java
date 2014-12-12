@@ -2,41 +2,31 @@ package net.minecraftforge.client;
 
 import static net.minecraftforge.common.ForgeVersion.Status.BETA;
 import static net.minecraftforge.common.ForgeVersion.Status.BETA_OUTDATED;
-import java.util.Random;
-import javax.imageio.ImageIO;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockBed;
-import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundEventAccessorComposite;
 import net.minecraft.client.audio.SoundManager;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.EntityRenderer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.IRegistry;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -45,6 +35,7 @@ import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -54,14 +45,9 @@ import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import net.minecraftforge.fml.common.FMLLog;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.Display;
+
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.PixelFormat;
 //import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 //import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
 
@@ -470,4 +456,9 @@ public class ForgeHooksClient
         }
     }
     */
+
+    public static void onModelBake(ModelManager modelManager, IRegistry modelRegistry, ModelBakery modelBakery)
+    {
+        MinecraftForge.EVENT_BUS.post(new ModelBakeEvent(modelManager, modelRegistry, modelBakery));
+    }
 }

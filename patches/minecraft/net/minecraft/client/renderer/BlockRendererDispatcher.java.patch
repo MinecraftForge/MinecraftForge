@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/BlockRendererDispatcher.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/BlockRendererDispatcher.java
+@@ -129,6 +129,12 @@
+             ibakedmodel = ((WeightedBakedModel)ibakedmodel).func_177564_a(MathHelper.func_180186_a(p_175022_3_));
+         }
+ 
++        if(ibakedmodel instanceof net.minecraftforge.client.model.ISmartBlockModel)
++        {
++            IBlockState extendedState = block.getExtendedState(p_175022_1_, p_175022_2_, p_175022_3_);
++            ibakedmodel = ((net.minecraftforge.client.model.ISmartBlockModel)ibakedmodel).handleBlockState(extendedState);
++        }
++
+         return ibakedmodel;
+     }
+ 
