@@ -66,7 +66,28 @@
                  GL11.glRotatef(entitylivingbase.field_70126_B + (entitylivingbase.field_70177_z - entitylivingbase.field_70126_B) * p_78467_1_ + 180.0F, 0.0F, -1.0F, 0.0F);
                  GL11.glRotatef(entitylivingbase.field_70127_C + (entitylivingbase.field_70125_A - entitylivingbase.field_70127_C) * p_78467_1_, -1.0F, 0.0F, 0.0F);
              }
-@@ -1052,7 +1057,9 @@
+@@ -1001,6 +1006,10 @@
+             {
+                 this.field_78531_r.field_71424_I.func_76320_a("level");
+ 
++                boolean renderWorldCanceled = MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.Render3DEvent.Pre(p_78480_1_));
++                if (!renderWorldCanceled)
++                {
++                    
+                 if (this.field_78531_r.func_147107_h())
+                 {
+                     this.func_78471_a(p_78480_1_, this.field_78510_Z + (long)(1000000000 / i1));
+@@ -1009,6 +1018,9 @@
+                 {
+                     this.func_78471_a(p_78480_1_, 0L);
+                 }
++                
++                }
++                MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.Render3DEvent.Post(p_78480_1_, renderWorldCanceled));
+ 
+                 if (OpenGlHelper.field_148824_g)
+                 {
+@@ -1052,7 +1064,9 @@
  
                  try
                  {
@@ -77,7 +98,7 @@
                  }
                  catch (Throwable throwable)
                  {
-@@ -1213,7 +1220,10 @@
+@@ -1213,7 +1227,10 @@
                  GL11.glPushMatrix();
                  RenderHelper.func_74519_b();
                  this.field_78531_r.field_71424_I.func_76318_c("entities");
@@ -88,7 +109,7 @@
                  RenderHelper.func_74518_a();
                  this.func_78483_a((double)p_78471_1_);
                  GL11.glMatrixMode(GL11.GL_MODELVIEW);
-@@ -1225,7 +1235,10 @@
+@@ -1225,7 +1242,10 @@
                      entityplayer = (EntityPlayer)entitylivingbase;
                      GL11.glDisable(GL11.GL_ALPHA_TEST);
                      this.field_78531_r.field_71424_I.func_76318_c("outline");
@@ -100,7 +121,7 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1238,14 +1251,17 @@
+@@ -1238,14 +1258,17 @@
                  entityplayer = (EntityPlayer)entitylivingbase;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
                  this.field_78531_r.field_71424_I.func_76318_c("outline");
@@ -120,7 +141,7 @@
              GL11.glDisable(GL11.GL_BLEND);
  
              if (this.field_78532_q == 0)
-@@ -1313,6 +1329,16 @@
+@@ -1313,6 +1336,16 @@
                  renderglobal.func_72719_a(entitylivingbase, 1, (double)p_78471_1_);
              }
  
@@ -137,7 +158,7 @@
              GL11.glDepthMask(true);
              GL11.glEnable(GL11.GL_CULL_FACE);
              GL11.glDisable(GL11.GL_BLEND);
-@@ -1324,9 +1350,12 @@
+@@ -1324,9 +1357,12 @@
                  this.func_82829_a(renderglobal, p_78471_1_);
              }
  
@@ -151,7 +172,7 @@
              {
                  GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
                  this.func_78476_b(p_78471_1_, j);
-@@ -1442,6 +1471,13 @@
+@@ -1442,6 +1478,13 @@
  
      protected void func_78474_d(float p_78474_1_)
      {
@@ -165,7 +186,7 @@
          float f1 = this.field_78531_r.field_71441_e.func_72867_j(p_78474_1_);
  
          if (f1 > 0.0F)
-@@ -1791,6 +1827,13 @@
+@@ -1791,6 +1834,13 @@
              this.field_78533_p = f7;
          }
  
@@ -179,7 +200,7 @@
          GL11.glClearColor(this.field_78518_n, this.field_78519_o, this.field_78533_p, 0.0F);
      }
  
-@@ -1826,6 +1869,13 @@
+@@ -1826,6 +1876,13 @@
              Block block = ActiveRenderInfo.func_151460_a(this.field_78531_r.field_71441_e, entitylivingbase, p_78468_2_);
              float f1;
  
@@ -193,7 +214,7 @@
              if (entitylivingbase.func_70644_a(Potion.field_76440_q))
              {
                  f1 = 5.0F;
-@@ -1930,6 +1980,7 @@
+@@ -1930,6 +1987,7 @@
                      GL11.glFogf(GL11.GL_FOG_START, f1 * 0.05F);
                      GL11.glFogf(GL11.GL_FOG_END, Math.min(f1, 192.0F) * 0.5F);
                  }
