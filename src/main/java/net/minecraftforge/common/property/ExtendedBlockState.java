@@ -8,6 +8,7 @@ import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockState.StateImplementation;
 import net.minecraft.block.state.IBlockState;
 
 import com.google.common.base.Optional;
