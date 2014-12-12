@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderItem.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderItem.java
+@@ -83,7 +83,7 @@
+     public RenderItem(TextureManager p_i46165_1_, ModelManager p_i46165_2_)
+     {
+         this.field_175057_n = p_i46165_1_;
+-        this.field_175059_m = new ItemModelMesher(p_i46165_2_);
++        this.field_175059_m = new net.minecraftforge.client.ItemModelMesherForge(p_i46165_2_);
+         this.func_175041_b();
+     }
+ 
 @@ -302,6 +302,10 @@
                      modelresourcelocation = new ModelResourceLocation("bow_pulling_0", "inventory");
                  }
