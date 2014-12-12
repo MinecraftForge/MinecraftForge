@@ -5,7 +5,16 @@
              if (flag4 ^ flag5)
              {
 -                flag1 = !flag4;
-+                flag1 = flag5 && flag3; //Forge: Bug fix: Attempt to fill all downward space before expanding width
++                flag1 = flag4; //Forge: Bug fix: Fixed inverted logic. flag1 = addNewColumn, flag4 = expandWidth
              }
              else
              {
+@@ -183,7 +183,7 @@
+ 
+         j = Math.max(p_94311_1_.func_94197_a(), p_94311_1_.func_94199_b());
+ 
+-        if (MathHelper.func_151236_b((flag1 ? this.field_94315_d : this.field_94318_c) + j) > (flag1 ? this.field_94313_f : this.field_94316_e))
++        if (MathHelper.func_151236_b((!flag1 ? this.field_94315_d : this.field_94318_c) + j) > (!flag1 ? this.field_94313_f : this.field_94316_e)) //Forge: Width and height were swapped.
+         {
+             return false;
+         }
