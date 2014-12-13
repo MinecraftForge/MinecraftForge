@@ -12,6 +12,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -31,6 +32,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.client.event.BlockModelRegisterEvent;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
@@ -460,5 +462,10 @@ public class ForgeHooksClient
     public static void onModelBake(ModelManager modelManager, IRegistry modelRegistry, ModelBakery modelBakery)
     {
         MinecraftForge.EVENT_BUS.post(new ModelBakeEvent(modelManager, modelRegistry, modelBakery));
+    }
+    
+    public static void onBlockModelRegister(BlockModelShapes modelShapes)
+    {
+        MinecraftForge.EVENT_BUS.post(new BlockModelRegisterEvent(modelShapes));
     }
 }

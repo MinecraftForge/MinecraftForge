@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/BlockModelShapes.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/BlockModelShapes.java
+@@ -72,6 +72,7 @@
+     {
+         this.field_178128_c = p_i46245_1_;
+         this.func_178119_d();
++        net.minecraftforge.client.ForgeHooksClient.onBlockModelRegister(this);
+     }
+ 
+     public BlockStateMapper func_178120_a()
