@@ -117,21 +117,7 @@
              }
  
              if (this.field_71307_n.func_76468_d())
-@@ -671,25 +652,30 @@
-             {
-                 try
-                 {
--                    ((FutureTask)this.field_175589_i.poll()).run();
-+                    FutureTask task = (FutureTask)this.field_175589_i.poll();
-+                    task.run(); // Run the task
-+                    task.get(); // Poll the result, which throws an error if the task errored.
-                 }
-                 catch (Throwable throwable2)
-                 {
--                    field_147145_h.fatal(throwable2);
-+                    field_147145_h.catching(org.apache.logging.log4j.Level.FATAL, throwable2); //Forge actually print the error correctly.
-                 }
-             }
+@@ -681,15 +662,18 @@
          }
  
          this.field_71304_b.func_76318_c("levels");
@@ -153,7 +139,7 @@
                  this.field_71304_b.func_76320_a(worldserver.func_72912_H().func_76065_j());
  
                  if (this.field_71315_w % 20 == 0)
-@@ -733,9 +719,11 @@
+@@ -733,9 +717,11 @@
                  this.field_71304_b.func_76319_b();
              }
  
@@ -166,7 +152,7 @@
          this.field_71304_b.func_76318_c("connection");
          this.func_147137_ag().func_151269_c();
          this.field_71304_b.func_76318_c("players");
-@@ -774,7 +762,13 @@
+@@ -774,7 +760,13 @@
  
      public WorldServer func_71218_a(int p_71218_1_)
      {
@@ -181,7 +167,7 @@
      }
  
      public String func_71249_w()
-@@ -1025,6 +1019,7 @@
+@@ -1025,6 +1017,7 @@
  
              if (worldserver != null)
              {
@@ -189,7 +175,7 @@
                  worldserver.func_73041_k();
              }
          }
-@@ -1607,7 +1602,6 @@
+@@ -1607,7 +1600,6 @@
          this.field_71319_s = p_71208_1_;
      }
  
