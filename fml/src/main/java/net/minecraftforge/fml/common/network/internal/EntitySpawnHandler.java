@@ -11,11 +11,14 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.internal.FMLMessage.EntityAdjustMessage;
 import net.minecraftforge.fml.common.network.internal.FMLMessage.EntityMessage;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
@@ -27,7 +30,26 @@ import com.google.common.base.Throwables;
 
 public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.EntityMessage> {
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, EntityMessage msg) throws Exception
+    protected void channelRead0(ChannelHandlerContext ctx, final EntityMessage msg) throws Exception
+    {
+        IThreadListener thread = FMLCommonHandler.instance().getWorldThread(ctx.channel().attr(NetworkRegistry.NET_HANDLER).get());
+        if (thread.isCallingFromMinecraftThread())
+        {
+            process(msg);
+        }
+        else
+        {
+            thread.addScheduledTask(new Runnable()
+            {
+                public void run()
+                {
+                    EntitySpawnHandler.this.process(msg);
+                }
+            });
+        }
+    }
+
+    private void process(EntityMessage msg)
     {
         if (msg.getClass().equals(FMLMessage.EntitySpawnMessage.class))
         {
@@ -52,7 +74,6 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
         {
             FMLLog.fine("Attempted to adjust the position of entity %d which is not present on the client", msg.entityId);
         }
-
     }
 
     private void spawnEntity(FMLMessage.EntitySpawnMessage spawnMsg)

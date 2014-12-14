@@ -23,6 +23,7 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.util.IThreadListener;
 import net.minecraft.world.storage.SaveFormatOld;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
@@ -257,5 +258,12 @@ public class FMLServerHandler implements IFMLSidedHandler
     @Override
     public void allowLogins() {
         DedicatedServer.allowPlayerLogins = true;
+    }
+
+    @Override
+    public IThreadListener getWorldThread(INetHandler net)
+    {
+        // Always the server on the dedicated server, eventually add Per-World if Mojang adds world stuff.
+        return getServer();
     }
 }

@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
 import net.minecraft.crash.CrashReport;
@@ -35,6 +37,7 @@ import net.minecraft.network.handshake.client.C00Handshake;
 import net.minecraft.network.login.server.S00PacketDisconnect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
@@ -658,6 +661,28 @@ public class FMLCommonHandler
         else
         {
             Runtime.getRuntime().exit(exitCode);
+        }
+    }
+
+    public IThreadListener getWorldThread(INetHandler net)
+    {
+        return sidedDelegate.getWorldThread(net);
+    }
+
+    public static void callFuture(FutureTask task)
+    {
+        try
+        {
+            task.run();
+            task.get(); // Forces the exception to be thrown if any
+        }
+        catch (InterruptedException e)
+        {
+            FMLLog.log(Level.FATAL, e, "Exception caught executing FutureTask: " + e.toString());
+        }
+        catch (ExecutionException e)
+        {
+            FMLLog.log(Level.FATAL, e, "Exception caught executing FutureTask: " + e.toString());
         }
     }
 }

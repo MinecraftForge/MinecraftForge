@@ -59,6 +59,15 @@
      }
  
      public boolean func_152349_b()
+@@ -1000,7 +1004,7 @@
+         {
+             while (!this.field_152351_aB.isEmpty())
+             {
+-                ((FutureTask)this.field_152351_aB.poll()).run();
++                net.minecraftforge.fml.common.FMLCommonHandler.callFuture(((FutureTask)this.field_152351_aB.poll()));
+             }
+         }
+ 
 @@ -1035,9 +1039,11 @@
  
          if (!this.field_71454_w)

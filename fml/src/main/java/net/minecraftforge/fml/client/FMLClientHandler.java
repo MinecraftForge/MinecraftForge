@@ -53,7 +53,15 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.ServerStatusResponse;
+import net.minecraft.network.handshake.INetHandlerHandshakeServer;
+import net.minecraft.network.login.INetHandlerLoginClient;
+import net.minecraft.network.login.INetHandlerLoginServer;
+import net.minecraft.network.play.INetHandlerPlayClient;
+import net.minecraft.network.play.INetHandlerPlayServer;
+import net.minecraft.network.status.INetHandlerStatusClient;
+import net.minecraft.network.status.INetHandlerStatusServer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.IThreadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.SaveFormatOld;
@@ -841,5 +849,18 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public void allowLogins() {
         // NOOP for integrated server
+    }
+
+    @Override
+    public IThreadListener getWorldThread(INetHandler net)
+    {
+        if (net instanceof INetHandlerPlayClient ||
+            net instanceof INetHandlerLoginClient ||
+            net instanceof INetHandlerStatusClient) return getClient();
+        if (net instanceof INetHandlerHandshakeServer ||
+            net instanceof INetHandlerLoginServer ||
+            net instanceof INetHandlerPlayServer ||
+            net instanceof INetHandlerStatusServer) return getServer();
+        throw new RuntimeException("Unknown INetHandler: " + net);
     }
 }
