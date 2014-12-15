@@ -60,10 +60,10 @@ public class FMLMissingMappingsEvent extends FMLEvent {
         private Action action = Action.DEFAULT;
         private Object target;
 
-        public MissingMapping(String name, int id)
+        public MissingMapping(GameRegistry.Type type, String name, int id)
         {
-            this.type = name.charAt(0) == '\u0001' ? GameRegistry.Type.BLOCK : GameRegistry.Type.ITEM;
-            this.name = name.substring(1);
+            this.type = type;
+            this.name = name;
             this.id = id;
         }
         /**

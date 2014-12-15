@@ -37,6 +37,7 @@ import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent.MissingMappin
 import net.minecraftforge.fml.common.functions.ArtifactVersionNameFunction;
 import net.minecraftforge.fml.common.functions.ModIdFunction;
 import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.ObjectHolderRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.Type;
 import net.minecraftforge.fml.common.toposort.ModSorter;
@@ -869,20 +870,25 @@ public class Loader
      * @param gameData GameData instance where the new map's config is to be loaded into.
      * @return List with the mapping results.
      */
-    public List<String> fireMissingMappingEvent(LinkedHashMap<String, Integer> missing, boolean isLocalWorld, GameData gameData, Map<String, Integer[]> remaps)
+    public List<String> fireMissingMappingEvent(LinkedHashMap<String, Integer> missingBlocks, LinkedHashMap<String, Integer> missingItems,
+                boolean isLocalWorld, GameData gameData, Map<String, Integer[]> remapBlocks, Map<String, Integer[]> remapItems)
     {
-        if (missing.isEmpty()) // nothing to do
+        if (missingBlocks.isEmpty() && missingItems.isEmpty()) // nothing to do
         {
             return ImmutableList.of();
         }
 
-        FMLLog.fine("There are %d mappings missing - attempting a mod remap", missing.size());
+        FMLLog.fine("There are %d mappings missing - attempting a mod remap", missingBlocks.size() + missingItems.size());
         ArrayListMultimap<String, MissingMapping> missingMappings = ArrayListMultimap.create();
 
-        for (Map.Entry<String, Integer> mapping : missing.entrySet())
+        for (Map.Entry<String, Integer> mapping : missingBlocks.entrySet())
         {
-            int id = mapping.getValue();
-            MissingMapping m = new MissingMapping(mapping.getKey(), id);
+            MissingMapping m = new MissingMapping(GameRegistry.Type.BLOCK, mapping.getKey(), mapping.getValue());
+            missingMappings.put(m.name.substring(0, m.name.indexOf(':')), m);
+        }
+        for (Map.Entry<String, Integer> mapping : missingItems.entrySet())
+        {
+            MissingMapping m = new MissingMapping(GameRegistry.Type.ITEM, mapping.getKey(), mapping.getValue());
             missingMappings.put(m.name.substring(0, m.name.indexOf(':')), m);
         }
 
@@ -925,18 +931,18 @@ public class Loader
             }
         }
 
-        return GameData.processIdRematches(missingMappings.values(), isLocalWorld, gameData, remaps);
+        return GameData.processIdRematches(missingMappings.values(), isLocalWorld, gameData, remapBlocks, remapItems);
     }
 
-    public void fireRemapEvent(Map<String, Integer[]> remaps)
+    public void fireRemapEvent(Map<String, Integer[]> remapBlocks, Map<String, Integer[]> remapItems)
     {
-        if (remaps.isEmpty())
+        if (remapBlocks.isEmpty() && remapItems.isEmpty())
         {
             FMLLog.finer("Skipping remap event - no remaps occured");
         }
         else
         {
-            modController.propogateStateMessage(new FMLModIdMappingEvent(remaps));
+            modController.propogateStateMessage(new FMLModIdMappingEvent(remapBlocks, remapItems));
         }
     }
 

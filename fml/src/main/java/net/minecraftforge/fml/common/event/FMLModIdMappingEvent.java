@@ -17,23 +17,27 @@ public class FMLModIdMappingEvent extends FMLEvent {
         public final int newId;
         public final String tag;
         public final RemapTarget remapTarget;
-        public ModRemapping(int oldId, int newId, String tag)
+        public ModRemapping(int oldId, int newId, String tag, RemapTarget type)
         {
             this.oldId = oldId;
             this.newId = newId;
-            this.tag = tag.substring(1);
-            this.remapTarget = tag.charAt(0) == '\u0001' ? RemapTarget.BLOCK : RemapTarget.ITEM;
+            this.tag = tag;
+            this.remapTarget = type;
         }
 
     }
     public final ImmutableList<ModRemapping> remappedIds;
 
-    public FMLModIdMappingEvent(Map<String, Integer[]> mappings)
+    public FMLModIdMappingEvent(Map<String, Integer[]> blocks, Map<String, Integer[]> items)
     {
         List<ModRemapping> remappings = Lists.newArrayList();
-        for (Entry<String, Integer[]> mapping : mappings.entrySet())
+        for (Entry<String, Integer[]> mapping : blocks.entrySet())
         {
-            remappings.add(new ModRemapping(mapping.getValue()[0], mapping.getValue()[1], mapping.getKey()));
+            remappings.add(new ModRemapping(mapping.getValue()[0], mapping.getValue()[1], mapping.getKey(), RemapTarget.BLOCK));
+        }
+        for (Entry<String, Integer[]> mapping : items.entrySet())
+        {
+            remappings.add(new ModRemapping(mapping.getValue()[0], mapping.getValue()[1], mapping.getKey(), RemapTarget.ITEM));
         }
 
         Collections.sort(remappings, new Comparator<ModRemapping>() {

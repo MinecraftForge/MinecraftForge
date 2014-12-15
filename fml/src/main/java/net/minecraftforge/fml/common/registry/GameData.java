@@ -336,8 +336,10 @@ public class GameData {
     public static List<String> injectSnapshot(GameDataSnapshot snapshot, boolean injectFrozenData, boolean isLocalWorld)
     {
         FMLLog.info("Injecting existing block and item data into this %s instance", FMLCommonHandler.instance().getEffectiveSide().isServer() ? "server" : "client");
-        Map<String, Integer[]> remaps = Maps.newHashMap();
-        LinkedHashMap<String, Integer> missingMappings = new LinkedHashMap<String, Integer>();
+        Map<String, Integer[]> remapBlocks = Maps.newHashMap();
+        Map<String, Integer[]> remapItems = Maps.newHashMap();
+        LinkedHashMap<String, Integer> missingBlocks = new LinkedHashMap<String, Integer>();
+        LinkedHashMap<String, Integer> missingItems = new LinkedHashMap<String, Integer>();
         getMain().testConsistency();
         getMain().iBlockRegistry.dump();
         getMain().iItemRegistry.dump();
@@ -407,13 +409,13 @@ public class GameData {
                 if (currId == -1)
                 {
                     FMLLog.info("Found a missing id from the world %s", itemName);
-                    missingMappings.put(entry.getKey(), newId);
+                    (isBlock ? missingBlocks : missingItems).put(entry.getKey(), newId);
                     continue; // no block/item -> nothing to add
                 }
                 else if (currId != newId)
                 {
                     FMLLog.fine("Fixed %s id mismatch %s: %d (init) -> %d (map).", isBlock ? "block" : "item", itemName, currId, newId);
-                    remaps.put(itemName, new Integer[] { currId, newId });
+                    (isBlock ? remapBlocks : remapItems).put(itemName, new Integer[] { currId, newId });
                 }
 
                 // register
@@ -440,22 +442,23 @@ public class GameData {
             }
         }
 
-        List<String> missedMappings = Loader.instance().fireMissingMappingEvent(missingMappings, isLocalWorld, newData, remaps);
+        List<String> missedMappings = Loader.instance().fireMissingMappingEvent(missingBlocks, missingItems, isLocalWorld, newData, remapBlocks, remapItems);
         if (!missedMappings.isEmpty()) return missedMappings;
 
         if (injectFrozenData) // add blocks + items missing from the map
         {
-            Map<String, Integer> missingBlocks = frozen.iBlockRegistry.getEntriesNotIn(newData.iBlockRegistry);
-            Map<String, Integer> missingItems = frozen.iItemRegistry.getEntriesNotIn(newData.iItemRegistry);
+            Map<String, Integer> newBlocks = frozen.iBlockRegistry.getEntriesNotIn(newData.iBlockRegistry);
+            Map<String, Integer> newItems = frozen.iItemRegistry.getEntriesNotIn(newData.iItemRegistry);
 
-            if (!missingBlocks.isEmpty() || !missingItems.isEmpty())
+            if (!newBlocks.isEmpty() || !newItems.isEmpty())
             {
                 FMLLog.info("Injecting new block and item data into this server instance.");
 
                 for (int pass = 0; pass < 2; pass++)
                 {
                     boolean isBlock = pass == 0;
-                    Map<String, Integer> missing = (pass == 0) ? missingBlocks : missingItems;
+                    Map<String, Integer> missing = (pass == 0) ? newBlocks : newItems;
+                    Map<String, Integer[]> remaps = (isBlock ? remapBlocks : remapItems);
 
                     for (Entry<String, Integer> entry : missing.entrySet())
                     {
@@ -488,13 +491,13 @@ public class GameData {
 
         getMain().iBlockRegistry.dump();
         getMain().iItemRegistry.dump();
-        Loader.instance().fireRemapEvent(remaps);
+        Loader.instance().fireRemapEvent(remapBlocks, remapItems);
         // The id map changed, ensure we apply object holders
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
         return ImmutableList.of();
     }
 
-    public static List<String> processIdRematches(Iterable<MissingMapping> missedMappings, boolean isLocalWorld, GameData gameData, Map<String, Integer[]> remaps)
+    public static List<String> processIdRematches(Iterable<MissingMapping> missedMappings, boolean isLocalWorld, GameData gameData, Map<String, Integer[]> remapBlocks, Map<String, Integer[]> remapItems)
     {
         List<String> failed = Lists.newArrayList();
         List<String> ignored = Lists.newArrayList();
@@ -535,7 +538,7 @@ public class GameData {
                 if (currId != newId)
                 {
                     FMLLog.info("Fixed %s id mismatch %s: %d (init) -> %d (map).", remap.type == Type.BLOCK ? "block" : "item", newName, currId, newId);
-                    remaps.put(newName, new Integer[] { currId, newId });
+                    (remap.type == Type.BLOCK ? remapBlocks : remapItems).put(newName, new Integer[] { currId, newId });
                 }
             }
             else
