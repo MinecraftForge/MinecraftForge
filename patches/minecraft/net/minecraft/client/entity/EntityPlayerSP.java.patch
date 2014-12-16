@@ -29,7 +29,7 @@ import net.minecraftforge.client.event.PlayerSentChatEvent
         {
             return;
         }
-        this.sendQueue.addToSendQueue(new C01PacketChatMessage(msg));
+        this.sendQueue.addToSendQueue(new C01PacketChatMessage(evt.message));
     }
  
      public void func_71053_j()
