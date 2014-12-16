@@ -7,6 +7,7 @@
 +import net.minecraftforge.client.ForgeHooksClient;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
++import net.minecraftforge.client.event.PlayerSentChatEvent
  
  @SideOnly(Side.CLIENT)
  public class EntityPlayerSP extends AbstractClientPlayer
@@ -17,6 +18,15 @@
 -        return f;
 +        return ForgeHooksClient.getOffsetFOV(this, f);
      }
+     
+     /**
+     * Sends a chat message from the player. Args: chatMessage
+     */
+    public void sendChatMessage(String msg)
+    {
+        
+        this.sendQueue.addToSendQueue(new C01PacketChatMessage(msg));
+    }
  
      public void func_71053_j()
 @@ -479,20 +482,45 @@
