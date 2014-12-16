@@ -25,7 +25,7 @@ import net.minecraftforge.client.event.PlayerSentChatEvent
     public void sendChatMessage(String msg)
     {
         PlayerSentChatEvent evt=new PlayerSentChatEvent(msg);
-        if (!MinecraftForge.EVENT_BUS.post(evt)) 
+        if (MinecraftForge.EVENT_BUS.post(evt)) 
         {
             return;
         }
