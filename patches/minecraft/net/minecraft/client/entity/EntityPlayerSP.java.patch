@@ -7,7 +7,7 @@
 +import net.minecraftforge.client.ForgeHooksClient;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
-+import net.minecraftforge.client.event.PlayerSentChatEvent
+import net.minecraftforge.client.event.PlayerSentChatEvent
  
  @SideOnly(Side.CLIENT)
  public class EntityPlayerSP extends AbstractClientPlayer
@@ -24,7 +24,11 @@
      */
     public void sendChatMessage(String msg)
     {
-        
+        PlayerSentChatEvent evt=new PlayerSentChatEvent(msg);
+        if (!MinecraftForge.EVENT_BUS.post(evt)) 
+        {
+            return;
+        }
         this.sendQueue.addToSendQueue(new C01PacketChatMessage(msg));
     }
  
