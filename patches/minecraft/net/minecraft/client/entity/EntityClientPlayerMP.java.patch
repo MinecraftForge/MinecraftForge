@@ -1,0 +1,16 @@
+--- ../src-base/minecraft/net/minecraft/client/entity/EntityClientPlayerMP.java
++++ ../src-work/minecraft/net/minecraft/client/entity/EntityClientPlayerMP.java
+@@ -180,9 +180,11 @@
+ 
+     public void func_71165_d(String p_71165_1_)
+     {
+-        this.field_71174_a.func_147297_a(new C01PacketChatMessage(p_71165_1_));
++        net.minecraftforge.event.entity.player.ClientPlayerChatEvent evt=new net.minecraftforge.event.entity.player.ClientPlayerChatEvent(p_71165_1_);
++        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(evt)) return;
++        this.field_71174_a.func_147297_a(new C01PacketChatMessage(evt.message));
+     }
+-
++    
+     public void func_71038_i()
+     {
+         super.func_71038_i();
