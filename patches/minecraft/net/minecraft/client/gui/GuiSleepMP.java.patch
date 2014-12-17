@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiSleepMP.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiSleepMP.java
+@@ -33,7 +33,7 @@
+ 
+             if (!s.isEmpty())
+             {
+-                this.field_146297_k.field_71439_g.func_71165_d(s);
++                this.func_146403_a(s); // Forge: fix vanilla not adding messages to the sent list while sleeping
+             }
+ 
+             this.field_146415_a.func_146180_a("");
