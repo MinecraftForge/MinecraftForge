@@ -190,7 +190,7 @@
                      int i1;
  
 -                    if (this.field_73262_e == 64)
-+                    if (this.field_73262_e == net.minecraftforge.common.ForgeModContainer.clumpingThreshold)
++                    if (this.field_73262_e >= net.minecraftforge.common.ForgeModContainer.clumpingThreshold)
                      {
                          i = this.field_73264_c.field_77276_a * 16;
                          j = this.field_73264_c.field_77275_b * 16;
