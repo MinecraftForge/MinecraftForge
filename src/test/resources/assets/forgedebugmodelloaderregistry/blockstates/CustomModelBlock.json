@@ -1,5 +1,5 @@
 {
     "variants": {
-        "normal" : { "model" : "forgedebug:dummymodel" }
+        "normal" : { "model" : "forgedebugmodelloaderregistry:human.b3d" }
     }
 }
