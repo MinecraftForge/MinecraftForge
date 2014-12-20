@@ -27,6 +27,7 @@ import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.IModelTransformation;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.b3d.B3DLoader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -45,16 +46,19 @@ public class ModelLoaderRegistryDebug
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        ModelLoaderRegistry.registerLoader(DummyModelLoader.instance);
+        //ModelLoaderRegistry.registerLoader(DummyModelLoader.instance);
+        B3DLoader.instance.addDomain(MODID.toLowerCase());
         GameRegistry.registerBlock(CustomModelBlock.instance, CustomModelBlock.name);
-        ModelBakery.addVariantName(Item.getItemFromBlock(CustomModelBlock.instance), "forgedebug:dummymodel");
+        //ModelBakery.addVariantName(Item.getItemFromBlock(CustomModelBlock.instance), "forgedebug:dummymodel");
+        ModelBakery.addVariantName(Item.getItemFromBlock(CustomModelBlock.instance), MODID.toLowerCase() + ":human.b3d");
     }
 
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
         Item item = Item.getItemFromBlock(CustomModelBlock.instance);
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, 0, new ModelResourceLocation("forgedebug:dummymodel", "inventory"));
+        //Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, 0, new ModelResourceLocation("forgedebug:dummymodel", "inventory"));
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, 0, new ModelResourceLocation(MODID.toLowerCase() + ":human.b3d", "inventory"));
     }
 
     public static class CustomModelBlock extends Block
