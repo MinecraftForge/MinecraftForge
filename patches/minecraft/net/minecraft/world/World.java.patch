@@ -120,7 +120,7 @@
              {
 +                if (blockSnapshot != null)
 +                {
-+                    this.capturedBlockSnapshots.remove(blockSnapshot);
++                    //this.capturedBlockSnapshots.remove(blockSnapshot);//Forge handles this for us; Line prevents Block PlaceEvent. 
 +                    blockSnapshot = null;
 +                }
 +
