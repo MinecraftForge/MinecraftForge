@@ -28,6 +28,7 @@ import javax.vecmath.Vector4f;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
+import org.lwjgl.BufferUtils;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
@@ -37,6 +38,7 @@ import com.google.common.io.LittleEndianDataInputStream;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.model.ModelRotation;
@@ -148,8 +150,10 @@ public class B3DLoader implements ICustomModelLoader {
 
         public IFlexibleBakedModel bake(IModelTransformation transformation, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
+            // TODO handle vanilla transformations
+            if(transformation instanceof ModelRotation) return new BakedWrapper(getDefaultTransformation(), node, bakedTextureGetter);
             if(!(transformation instanceof B3DFrame))
-                throw new UnsupportedOperationException("can only bake b3d models with b3d transformations");
+                throw new UnsupportedOperationException("can only bake b3d models with b3d or vanilla transformations, got: " + transformation);
             // TODO Auto-generated method stub
             //return ModelLoaderRegistry.getMissingModel().bake(transformation, bakedTextureGetter);
             return new BakedWrapper(transformation, node, bakedTextureGetter);
@@ -179,6 +183,11 @@ public class B3DLoader implements ICustomModelLoader {
             return Collections.emptyList();
         }
 
+        private static final int BYTES_IN_INT = Integer.SIZE / Byte.SIZE;
+        private static final int VERTICES_IN_QUAD = 4;
+        private static final int BLOCK_FORMAT_INT_SIZE = DefaultVertexFormats.BLOCK.getNextOffset() / BYTES_IN_INT;
+        private static final ByteBuffer buf = BufferUtils.createByteBuffer(VERTICES_IN_QUAD * DefaultVertexFormats.BLOCK.getNextOffset());
+
         public List<BakedQuad> getGeneralQuads()
         {
             ImmutableList.Builder<BakedQuad> ret = ImmutableList.builder();
@@ -192,12 +201,56 @@ public class B3DLoader implements ICustomModelLoader {
                 Multimap<Vertex, Pair<Float, Bone>> weightMap = mesh.getWeightMap();
                 for(Face f : mesh.getFaces())
                 {
-                    int[] data = new int[28];
-                    // TODO put stuff in the face
+                    buf.clear();
+                    putVertexData(f.getV1());
+                    putVertexData(f.getV2());
+                    putVertexData(f.getV3());
+                    putVertexData(f.getV3());
+                    buf.flip();
+                    int[] data = new int[VERTICES_IN_QUAD * BLOCK_FORMAT_INT_SIZE];
+                    buf.asIntBuffer().get(data);
                     ret.add(new BakedQuad(data , -1, EnumFacing.UP));
                 }
             }
             return ret.build();
+        }
+
+        private final void putVertexData(Vertex v)
+        {
+            // see DefaultVertexFormats.BLOCK
+            // TODO handle everything not handled (texture transformations, bones, transformations, e.t.c)
+            buf.putFloat(v.getPos().x);
+            buf.putFloat(v.getPos().y);
+            buf.putFloat(v.getPos().z);
+            if(v.getColor() != null)
+            {
+                buf.put((byte)(v.getColor().x / (Byte.MAX_VALUE - 1)));
+                buf.put((byte)(v.getColor().y / (Byte.MAX_VALUE - 1)));
+                buf.put((byte)(v.getColor().z / (Byte.MAX_VALUE - 1)));
+                buf.put((byte)(v.getColor().w / (Byte.MAX_VALUE - 1)));
+            }
+            else
+            {
+                buf.putInt(0);
+            }
+            if(v.getTexCoords().length > 0)
+            {
+                buf.putFloat(v.getTexCoords()[0].x);
+                buf.putFloat(v.getTexCoords()[0].y);
+            }
+            else
+            {
+                buf.putFloat(0).putFloat(0);
+            }
+            if(v.getTexCoords().length > 1)
+            {
+                buf.putShort((short)(v.getTexCoords()[1].x / (Short.MAX_VALUE - 1)));
+                buf.putShort((short)(v.getTexCoords()[1].y / (Short.MAX_VALUE - 1)));
+            }
+            else
+            {
+                buf.putInt(0);
+            }
         }
 
         public boolean isAmbientOcclusion()
