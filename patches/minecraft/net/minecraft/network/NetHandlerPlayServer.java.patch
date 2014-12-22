@@ -70,7 +70,7 @@
                  AxisAlignedBB axisalignedbb = this.field_147369_b.func_174813_aQ().func_72314_b((double)f3, (double)f3, (double)f3).func_72321_a(0.0D, -0.55D, 0.0D);
  
 -                if (!this.field_147367_d.func_71231_X() && !this.field_147369_b.field_71075_bZ.field_75101_c && !worldserver.func_72829_c(axisalignedbb))
-+                if (!this.field_147367_d.func_71231_X() && !this.field_147369_b.field_71075_bZ.field_75101_c && !worldserver.func_72829_c(axisalignedbb) && !this.field_147369_b.field_71075_bZ.field_75101_c)
++                if (!this.field_147367_d.func_71231_X() && !this.field_147369_b.field_71075_bZ.field_75101_c && !worldserver.func_72829_c(axisalignedbb) && !this.field_147369_b.field_71075_bZ.field_75101_c && this.field_147369_b.field_70160_al)
                  {
                      if (d18 >= -0.03125D)
                      {
