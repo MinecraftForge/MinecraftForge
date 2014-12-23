@@ -16,6 +16,8 @@ import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 
 public class MinecraftForgeClient
 {
+    public static final int CUSTOM_WORLD_RENDERER_ID = 4;
+
     private static IdentityHashMap<Item, IItemRenderer> customItemRenderers = Maps.newIdentityHashMap();
 
     /**

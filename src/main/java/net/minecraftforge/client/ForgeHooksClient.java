@@ -2,6 +2,9 @@ package net.minecraftforge.client;
 
 import static net.minecraftforge.common.ForgeVersion.Status.BETA;
 import static net.minecraftforge.common.ForgeVersion.Status.BETA_OUTDATED;
+
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -12,8 +15,12 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.ChunkRenderContainer;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.RenderGlobal.ContainerLocalRenderInformation;
+import net.minecraft.client.renderer.chunk.CompiledChunk;
+import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
@@ -26,6 +33,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.IRegistry;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
@@ -432,30 +440,49 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new EntityViewRenderEvent.RenderFogEvent(renderer, entity, block, partial, mode, distance));
     }
 
-    /*
-    public static void setWorldRendererRB(RenderBlocks renderBlocks)
+    public static void onPreRenderWorldLayer(RenderGlobal renderer, List<ContainerLocalRenderInformation> renderInfos, ChunkRenderContainer chunkContainer, EnumWorldBlockLayer layer, double partialTicks, int pass, Entity entity)
     {
-        worldRendererRB = renderBlocks;
-    }
-
-    public static void onPreRenderWorld(WorldRenderer worldRenderer, int pass)
-    {
-        if(worldRendererRB != null)
+        for(IWorldRenderer r : WorldRendererRegistry.getAllRenderers())
         {
-            worldRenderPass = pass;
-            MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.Pre(worldRenderer, (ChunkCache)worldRendererRB.blockAccess, worldRendererRB, pass));
+            r.onPreRenderLayer(renderer, renderInfos, chunkContainer, layer, partialTicks, pass, entity);
         }
     }
 
-    public static void onPostRenderWorld(WorldRenderer worldRenderer, int pass)
+    public static void onPostRenderWorldLayer(RenderGlobal renderer, List<ContainerLocalRenderInformation> renderInfos, ChunkRenderContainer chunkContainer, EnumWorldBlockLayer layer, double partialTicks, int pass, Entity entity)
     {
-        if(worldRendererRB != null)
+        for(IWorldRenderer r : WorldRendererRegistry.getAllRenderers())
         {
-            MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.Post(worldRenderer, (ChunkCache)worldRendererRB.blockAccess, worldRendererRB, pass));
-            worldRenderPass = -1;
+            r.onPostRenderLayer(renderer, renderInfos, chunkContainer, layer, partialTicks, pass, entity);
         }
     }
-    */
+
+    public static void onBlockRender(RenderChunk renderChunk, EnumWorldBlockLayer enumworldblocklayer1, IBlockState state, IBlockAccess world, BlockPos pos, CompiledChunk compiledchunk)
+    {
+        if(state.getBlock().getRenderType() == MinecraftForgeClient.CUSTOM_WORLD_RENDERER_ID)
+        {
+            IWorldRenderer renderer = WorldRendererRegistry.getRenderer(state.getBlock());
+            if(renderer != null && renderer.onBlockRender(renderChunk, state, world, pos))
+            {
+                compiledchunk.setLayerUsed(enumworldblocklayer1);
+            }
+        }
+    }
+
+    public static void onPreRebuildChunk(RenderChunk renderChunk, EnumWorldBlockLayer layer, BlockPos pos)
+    {
+        for(IWorldRenderer r : WorldRendererRegistry.getAllRenderers())
+        {
+            r.onPreRebuildChunk(renderChunk, layer, pos);
+        }
+    }
+
+    public static void onPostRebuildChunk(RenderChunk renderChunk, EnumWorldBlockLayer layer, BlockPos pos)
+    {
+        for(IWorldRenderer r : WorldRendererRegistry.getAllRenderers())
+        {
+            r.onPostRebuildChunk(renderChunk, layer, pos);
+        }
+    }
 
     public static void onModelBake(ModelManager modelManager, IRegistry modelRegistry, ModelBakery modelBakery)
     {
