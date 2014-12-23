@@ -160,7 +160,7 @@ public class FMLCommonHandler
     public Side getEffectiveSide()
     {
         Thread thr = Thread.currentThread();
-        if ((thr.getName().equals("Server thread")))
+        if (thr.getName().equals("Server thread") || thr.getName().startsWith("Netty Server IO"))
         {
             return Side.SERVER;
         }
