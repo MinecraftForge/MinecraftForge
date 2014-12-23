@@ -14,18 +14,18 @@
              float f = 0.8F;
              boolean flag1 = this.field_71158_b.field_78900_b >= f;
              this.field_71158_b.func_78898_a();
--
+
 -            if (this.func_71039_bw() && !this.func_70115_ae())
 +            if ((this.func_70632_aY() ? !this.getBlockingAffectsMovement() : true) && this.func_71039_bw() && !this.func_70115_ae())
              {
 -                this.field_71158_b.field_78902_a *= 0.2F;
 -                this.field_71158_b.field_78900_b *= 0.2F;
 -                this.field_71156_d = 0;
-+                    this.field_71158_b.field_78902_a *= 0.2F;
-+                    this.field_71158_b.field_78900_b *= 0.2F;
-+                    this.field_71156_d = 0;
++                this.field_71158_b.field_78902_a *= 0.2F;
++                this.field_71158_b.field_78900_b *= 0.2F;
++                this.field_71156_d = 0;
              }
--
+
              if (this.field_71158_b.field_78899_d && this.field_70139_V < 0.2F)
              {
                  this.field_70139_V = 0.2F;
