@@ -35,12 +35,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.google.common.io.LittleEndianDataInputStream;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -49,8 +51,11 @@ import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.IModelTransformation;
+import net.minecraftforge.client.model.ISmartBlockModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.b3d.B3DModel.*;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.FMLLog;
 
 /*
@@ -127,7 +132,31 @@ public class B3DLoader implements ICustomModelLoader {
         }
     }
 
-    private static class Wrapper implements IModel
+    public static enum B3DFrameProperty implements IUnlistedProperty
+    {
+        instance;
+        public String getName()
+        {
+            return "B3DFrame";
+        }
+
+        public boolean isValid(Object value)
+        {
+            return value instanceof B3DFrame;
+        }
+
+        public Class getType()
+        {
+            return B3DFrame.class;
+        }
+
+        public String valueToString(Object value)
+        {
+            return value.toString();
+        }
+    }
+
+    public static class Wrapper implements IModel
     {
         private final B3DModel.INode node;
 
@@ -154,24 +183,27 @@ public class B3DLoader implements ICustomModelLoader {
             if(transformation instanceof ModelRotation) return new BakedWrapper(getDefaultTransformation(), node, bakedTextureGetter);
             if(!(transformation instanceof B3DFrame))
                 throw new UnsupportedOperationException("can only bake b3d models with b3d or vanilla transformations, got: " + transformation);
-            // TODO Auto-generated method stub
-            //return ModelLoaderRegistry.getMissingModel().bake(transformation, bakedTextureGetter);
-            return new BakedWrapper(transformation, node, bakedTextureGetter);
+            return new BakedWrapper((B3DFrame)transformation, node, bakedTextureGetter);
         }
 
-        public IModelTransformation getDefaultTransformation()
+        public B3DFrame getDefaultTransformation()
         {
-            // TODO Auto-generated method stub
-            return new B3DFrame(0);
+            return new B3DFrame(1);
+        }
+
+        public B3DModel.INode getNode()
+        {
+            return node;
         }
     }
-    private static class BakedWrapper implements IFlexibleBakedModel
+
+    private static class BakedWrapper implements IFlexibleBakedModel, ISmartBlockModel
     {
-        private final IModelTransformation transformation;
+        private final B3DFrame transformation;
         private final B3DModel.INode node;
         private final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter;
 
-        public BakedWrapper(IModelTransformation transformation, INode node, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+        public BakedWrapper(B3DFrame transformation, INode node, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
             this.transformation = transformation;
             this.node = node;
@@ -188,31 +220,36 @@ public class B3DLoader implements ICustomModelLoader {
         private static final int BLOCK_FORMAT_INT_SIZE = DefaultVertexFormats.BLOCK.getNextOffset() / BYTES_IN_INT;
         private static final ByteBuffer buf = BufferUtils.createByteBuffer(VERTICES_IN_QUAD * DefaultVertexFormats.BLOCK.getNextOffset());
 
+        private ImmutableList<BakedQuad> quads;
         public List<BakedQuad> getGeneralQuads()
         {
-            ImmutableList.Builder<BakedQuad> ret = ImmutableList.builder();
-            for(INode child : node.getNodes().values())
+            if(quads == null)
             {
-                ret.addAll(new BakedWrapper(transformation, child, bakedTextureGetter).getGeneralQuads());
-            }
-            if(node instanceof Mesh)
-            {
-                Mesh mesh = (Mesh) node;
-                Multimap<Vertex, Pair<Float, Bone>> weightMap = mesh.getWeightMap();
-                for(Face f : mesh.getFaces())
+                ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
+                for(INode child : node.getNodes().values())
                 {
-                    buf.clear();
-                    putVertexData(f.getV1());
-                    putVertexData(f.getV2());
-                    putVertexData(f.getV3());
-                    putVertexData(f.getV3());
-                    buf.flip();
-                    int[] data = new int[VERTICES_IN_QUAD * BLOCK_FORMAT_INT_SIZE];
-                    buf.asIntBuffer().get(data);
-                    ret.add(new BakedQuad(data , -1, EnumFacing.UP));
+                    builder.addAll(new BakedWrapper(transformation, child, bakedTextureGetter).getGeneralQuads());
                 }
+                if(node instanceof Mesh)
+                {
+                    Mesh mesh = (Mesh) node;
+                    Multimap<Vertex, Pair<Float, Bone>> weightMap = mesh.getWeightMap();
+                    for(Face f : mesh.bake(transformation.getFrame()))
+                    {
+                        buf.clear();
+                        putVertexData(f.getV1());
+                        putVertexData(f.getV2());
+                        putVertexData(f.getV3());
+                        putVertexData(f.getV3());
+                        buf.flip();
+                        int[] data = new int[VERTICES_IN_QUAD * BLOCK_FORMAT_INT_SIZE];
+                        buf.asIntBuffer().get(data);
+                        builder.add(new BakedQuad(data , -1, EnumFacing.UP));
+                    }
+                }
+                quads = builder.build();
             }
-            return ret.build();
+            return quads;
         }
 
         private final void putVertexData(Vertex v)
@@ -282,6 +319,36 @@ public class B3DLoader implements ICustomModelLoader {
         public ICameraTransformations getCameraTransforms()
         {
             return ItemCameraTransforms.DEFAULT;
+        }
+
+        @Override
+        public BakedWrapper handleBlockState(IBlockState state)
+        {
+            System.out.println("handleBlockState " + state);
+            if(state instanceof IExtendedBlockState)
+            {
+                IExtendedBlockState exState = (IExtendedBlockState)state;
+                if(exState.getUnlistedNames().contains(B3DFrameProperty.instance))
+                {
+                    B3DFrame frame = exState.getValue(B3DFrameProperty.instance);
+                    if(frame != null)
+                    {
+                        return getCachedModel(frame.getFrame());
+                    }
+                }
+            }
+            return this;
+        }
+
+        private final Map<Integer, BakedWrapper> cache = new HashMap<Integer, BakedWrapper>();
+
+        public BakedWrapper getCachedModel(int frame)
+        {
+            if(!cache.containsKey(frame))
+            {
+                cache.put(frame, new BakedWrapper(new B3DFrame(frame), node, bakedTextureGetter));
+            }
+            return cache.get(frame);
         }
     }
 }
