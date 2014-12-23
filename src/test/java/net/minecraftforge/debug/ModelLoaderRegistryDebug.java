@@ -7,6 +7,8 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -17,10 +19,14 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.Attributes;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ICameraTransformations;
 import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
@@ -28,6 +34,9 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.IModelTransformation;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.b3d.B3DLoader;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -50,7 +59,7 @@ public class ModelLoaderRegistryDebug
         B3DLoader.instance.addDomain(MODID.toLowerCase());
         GameRegistry.registerBlock(CustomModelBlock.instance, CustomModelBlock.name);
         //ModelBakery.addVariantName(Item.getItemFromBlock(CustomModelBlock.instance), "forgedebug:dummymodel");
-        ModelBakery.addVariantName(Item.getItemFromBlock(CustomModelBlock.instance), MODID.toLowerCase() + ":human.b3d");
+        ModelBakery.addVariantName(Item.getItemFromBlock(CustomModelBlock.instance), MODID.toLowerCase() + ":untitled2.b3d");
     }
 
     @EventHandler
@@ -58,13 +67,15 @@ public class ModelLoaderRegistryDebug
     {
         Item item = Item.getItemFromBlock(CustomModelBlock.instance);
         //Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, 0, new ModelResourceLocation("forgedebug:dummymodel", "inventory"));
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, 0, new ModelResourceLocation(MODID.toLowerCase() + ":human.b3d", "inventory"));
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, 0, new ModelResourceLocation(MODID.toLowerCase() + ":untitled2.b3d", "inventory"));
     }
 
     public static class CustomModelBlock extends Block
     {
         public static final CustomModelBlock instance = new CustomModelBlock();
         public static final String name = "CustomModelBlock";
+        private int counter = 1;
+        private ExtendedBlockState state = new ExtendedBlockState(this, new IProperty[0], new IUnlistedProperty[]{ B3DLoader.B3DFrameProperty.instance });
 
         private CustomModelBlock()
         {
@@ -81,6 +92,26 @@ public class ModelLoaderRegistryDebug
 
         @Override
         public boolean isVisuallyOpaque() { return false; }
+
+        @Override
+        public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
+        {
+            return ((IExtendedBlockState)this.state.getBaseState()).withProperty(B3DLoader.B3DFrameProperty.instance, new B3DLoader.B3DFrame(counter));
+        }
+
+        @Override
+        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
+        {
+            if(world.isRemote)
+            {
+                System.out.println("click " + counter);
+                if(player.isSneaking()) counter--;
+                else counter++;
+                //if(counter >= model.getNode().getKeys().size()) counter = 0;
+                world.markBlockRangeForRenderUpdate(pos, pos);
+            }
+            return false;
+        }
     }
 
     public static class DummyModelLoader implements ICustomModelLoader
