@@ -205,8 +205,7 @@ public class OreDictionary
             new ItemStack(Blocks.acacia_stairs),
             new ItemStack(Blocks.dark_oak_stairs),
             new ItemStack(Blocks.wooden_slab),
-            new ItemStack(Blocks.glass_pane),
-            new ItemStack(Blocks.stained_glass)
+            new ItemStack(Blocks.glass_pane)
         };
 
         List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
