@@ -8,10 +8,15 @@ import static net.minecraft.init.Blocks.gold_block;
 import static net.minecraft.init.Blocks.gold_ore;
 import static net.minecraft.init.Blocks.lit_redstone_ore;
 import static net.minecraft.init.Blocks.redstone_ore;
+
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
@@ -22,6 +27,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.event.ClickEvent;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
@@ -47,9 +53,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityNote;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
@@ -424,6 +432,52 @@ public class ForgeHooks
             return null;
         }
         return event.component;
+    }
+
+
+    static final Pattern URL_PATTERN = Pattern.compile(
+            //         schema                          ipv4            OR           namespace                 port     path         ends
+            //   |-----------------|        |-------------------------|  |----------------------------|    |---------| |--|   |---------------|
+            "((?:[a-z0-9]{2,}:\\/\\/)?(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}|(?:[-\\w_\\.]{1,}\\.[a-z]{2,}?))(?::[0-9]{1,5})?.*?(?=[!\"\u00A7 \n]|$))",
+            Pattern.CASE_INSENSITIVE);
+
+    public static IChatComponent newChatWithLinks(String string)
+    {
+        // Includes ipv4 and domain pattern
+        // Matches an ip (xx.xxx.xx.xxx) or a domain (something.com) with or
+        // without a protocol or path.
+        IChatComponent ichat = new ChatComponentText("");
+        Matcher matcher = URL_PATTERN.matcher(string);
+        int lastEnd = 0;
+        String remaining = string;
+
+        // Find all urls
+        while (matcher.find())
+        {
+            int start = matcher.start();
+            int end = matcher.end();
+
+            // Append the previous left overs.
+            ichat.appendText(string.substring(lastEnd, start));
+            lastEnd = end;
+            String url = string.substring(start, end);
+            IChatComponent link = new ChatComponentText(url);
+
+            // Add schema so client doesn't crash.
+            if (URI.create(url).getScheme() == null)
+            {
+                url = "http://" + url;
+            }
+
+            // Set the click event and append the link.
+            ClickEvent click = new ClickEvent(ClickEvent.Action.OPEN_URL, url);
+            link.getChatStyle().setChatClickEvent(click);
+            ichat.appendSibling(link);
+        }
+
+        // Append the rest of the message.
+        ichat.appendText(string.substring(lastEnd));
+        return ichat;
     }
 
     public static boolean canInteractWith(EntityPlayer player, Container openContainer)
