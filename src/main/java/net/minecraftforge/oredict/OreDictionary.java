@@ -207,14 +207,27 @@ public class OreDictionary
             new ItemStack(Blocks.stone_slab, 1, WILDCARD_VALUE),
             new ItemStack(Blocks.stone_stairs),
             new ItemStack(Blocks.cobblestone_wall),
+            new ItemStack(Blocks.oak_fence),
+            new ItemStack(Blocks.oak_fence_gate),
             new ItemStack(Blocks.oak_stairs),
+            new ItemStack(Blocks.spruce_fence),
+            new ItemStack(Blocks.spruce_fence_gate),
             new ItemStack(Blocks.spruce_stairs),
+            new ItemStack(Blocks.birch_fence),
+            new ItemStack(Blocks.birch_fence_gate),
             new ItemStack(Blocks.birch_stairs),
+            new ItemStack(Blocks.jungle_fence),
+            new ItemStack(Blocks.jungle_fence_gate),
             new ItemStack(Blocks.jungle_stairs),
+            new ItemStack(Blocks.acacia_fence),
+            new ItemStack(Blocks.acacia_fence_gate),
             new ItemStack(Blocks.acacia_stairs),
+            new ItemStack(Blocks.dark_oak_fence),
+            new ItemStack(Blocks.dark_oak_fence_gate),
             new ItemStack(Blocks.dark_oak_stairs),
             new ItemStack(Blocks.wooden_slab),
-            new ItemStack(Blocks.glass_pane)
+            new ItemStack(Blocks.glass_pane),
+            null //So the above can have a comma and we don't have to keep editing extra lines.
         };
 
         List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
