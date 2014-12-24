@@ -10,15 +10,22 @@
                  tileentitynote.func_145878_a(p_149727_1_, p_149727_2_, p_149727_3_, p_149727_4_);
              }
  
-@@ -73,6 +75,11 @@
+@@ -73,6 +75,10 @@
  
      public boolean func_149696_a(World p_149696_1_, int p_149696_2_, int p_149696_3_, int p_149696_4_, int p_149696_5_, int p_149696_6_)
      {
 +        int meta = p_149696_1_.func_72805_g(p_149696_2_, p_149696_3_, p_149696_4_);
 +        net.minecraftforge.event.world.NoteBlockEvent.Play e = new net.minecraftforge.event.world.NoteBlockEvent.Play(p_149696_1_, p_149696_2_, p_149696_3_, p_149696_4_, meta, p_149696_6_, p_149696_5_);
 +        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e)) return false;
-+        p_149696_5_ = e.instrument.ordinal();
 +        p_149696_6_ = e.getVanillaNoteId(); 
          float f = (float)Math.pow(2.0D, (double)(p_149696_6_ - 12) / 12.0D);
          String s = "harp";
  
+@@ -96,6 +102,7 @@
+             s = "bassattack";
+         }
+ 
++        s = e.instrument.name;
+         p_149696_1_.func_72908_a((double)p_149696_2_ + 0.5D, (double)p_149696_3_ + 0.5D, (double)p_149696_4_ + 0.5D, "note." + s, 3.0F, f);
+         p_149696_1_.func_72869_a("note", (double)p_149696_2_ + 0.5D, (double)p_149696_3_ + 1.2D, (double)p_149696_4_ + 0.5D, (double)p_149696_6_ / 24.0D, 0.0D, 0.0D);
+         return true;

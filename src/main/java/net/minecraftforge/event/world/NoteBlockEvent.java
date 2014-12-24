@@ -102,18 +102,26 @@ public class NoteBlockEvent extends BlockEvent
      */
     public static enum Instrument
     {
-        PIANO,
-        BASSDRUM,
-        SNARE,
-        CLICKS,
-        BASSGUITAR;
+        PIANO("harp"),
+        BASSDRUM("bd"),
+        SNARE("snare"),
+        CLICKS("hat"),
+        BASSGUITAR("bassattack");
+        
+        /** The sound name, without the "note" prefix. */
+        public final String name;
+        
+        private Instrument(String name)
+        {
+            this.name = name;
+        }
         
         // cache to avoid creating a new array every time
-        private static final Instrument[] values = values();
+        private static Instrument[] values = values();
         
         static Instrument fromId(int id)
         {
-            return id < 0 || id > 4 ? PIANO : values[id];
+            return id < 0 || id >= values.length ? PIANO : values[id];
         }
     }
     
