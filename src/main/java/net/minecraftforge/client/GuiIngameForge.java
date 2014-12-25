@@ -170,9 +170,9 @@ public class GuiIngameForge extends GuiIngame
             if (slot >= 0) objective = scoreboard.getObjectiveInDisplaySlot(3 + slot);
         }
         ScoreObjective scoreobjective1 = objective != null ? objective : scoreboard.getObjectiveInDisplaySlot(1);
-        if (renderObjective && objective != null)
+        if (renderObjective && scoreobjective1 != null)
         {
-            this.func_180475_a(objective, res);
+            this.func_180475_a(scoreobjective1, res);
         }
 
         GlStateManager.enableBlend();
