@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.settings.GameSettings;
@@ -41,6 +42,7 @@ import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
+import net.minecraftforge.client.model.IDynamicItemModel;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
@@ -224,6 +226,16 @@ public class ForgeHooksClient
             GL11.glPopMatrix();
         }
     }*/
+
+    public static boolean renderDynamicItem(ItemStack stack, IBakedModel model)
+    {
+        if (model instanceof IDynamicItemModel)
+        {
+            ((IDynamicItemModel)model).render(stack);
+            return true;
+        }
+        return false;
+    }
 
     //Optifine Helper Functions u.u, these are here specifically for Optifine
     //Note: When using Optfine, these methods are invoked using reflection, which

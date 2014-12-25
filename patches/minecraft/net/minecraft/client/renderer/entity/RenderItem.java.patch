@@ -9,7 +9,15 @@
          this.func_175041_b();
      }
  
-@@ -302,6 +302,10 @@
+@@ -148,6 +148,7 @@
+ 
+     public void func_180454_a(ItemStack p_180454_1_, IBakedModel p_180454_2_)
+     {
++        if(net.minecraftforge.client.ForgeHooksClient.renderDynamicItem(p_180454_1_, p_180454_2_)) return;
+         GlStateManager.func_179094_E();
+         GlStateManager.func_179152_a(0.5F, 0.5F, 0.5F);
+ 
+@@ -302,6 +303,10 @@
                      modelresourcelocation = new ModelResourceLocation("bow_pulling_0", "inventory");
                  }
              }
@@ -20,7 +28,7 @@
  
              if (modelresourcelocation != null)
              {
-@@ -485,10 +489,11 @@
+@@ -485,10 +490,11 @@
                  GlStateManager.func_179126_j();
              }
  
@@ -35,7 +43,7 @@
                  GlStateManager.func_179140_f();
                  GlStateManager.func_179097_i();
                  GlStateManager.func_179090_x();
-@@ -501,7 +506,7 @@
+@@ -501,7 +507,7 @@
                  this.func_175044_a(worldrenderer, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0);
                  this.func_175044_a(worldrenderer, p_180453_3_ + 2, p_180453_4_ + 13, 12, 1, i1);
                  this.func_175044_a(worldrenderer, p_180453_3_ + 2, p_180453_4_ + 13, j1, 1, l);
@@ -44,7 +52,7 @@
                  GlStateManager.func_179141_d();
                  GlStateManager.func_179098_w();
                  GlStateManager.func_179145_e();
-@@ -1078,6 +1083,19 @@
+@@ -1078,6 +1084,19 @@
      {
          this.field_175059_m.func_178085_b();
      }
