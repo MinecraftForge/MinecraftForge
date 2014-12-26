@@ -26,6 +26,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.IRegistry;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
@@ -270,6 +271,12 @@ public class ForgeHooksClient
     public static void setRenderPass(int pass)
     {
         renderPass = pass;
+    }
+
+    static EnumWorldBlockLayer renderLayer = EnumWorldBlockLayer.SOLID;
+    public static void setRenderLayer(EnumWorldBlockLayer layer)
+    {
+        renderLayer = layer;
     }
 
     public static ModelBase getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int slotID, ModelBase _default)
