@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 
 public class MinecraftForgeClient
@@ -44,6 +45,11 @@ public class MinecraftForgeClient
     public static int getRenderPass()
     {
         return ForgeHooksClient.renderPass;
+    }
+
+    public static EnumWorldBlockLayer getRenderLayer()
+    {
+        return ForgeHooksClient.renderLayer;
     }
 
     private static BitSet stencilBits = new BitSet(8);
