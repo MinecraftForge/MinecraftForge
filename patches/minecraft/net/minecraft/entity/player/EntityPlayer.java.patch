@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayer.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayer.java
-@@ -77,9 +77,23 @@
+@@ -77,9 +77,24 @@
  import net.minecraft.world.WorldSettings;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
@@ -20,18 +20,11 @@
 +    public static final String PERSISTED_NBT_TAG = "PlayerPersisted";
 +    private java.util.HashMap<Integer, BlockPos> spawnChunkMap = new java.util.HashMap<Integer, BlockPos>();
 +    private java.util.HashMap<Integer, Boolean> spawnForcedMap = new java.util.HashMap<Integer, Boolean>();
++    public int oldexperienceLevel = -1;
 +
      public InventoryPlayer field_71071_by = new InventoryPlayer(this);
      private InventoryEnderChest field_71078_a = new InventoryEnderChest();
      public Container field_71069_bz;
-@@ -106,6 +120,7 @@
-     private boolean field_82248_d;
-     private BlockPos field_71073_d;
-     public PlayerCapabilities field_71075_bZ = new PlayerCapabilities();
-+    public int oldexperienceLevel = -1;
-     public int field_71068_ca;
-     public int field_71067_cb;
-     public float field_71106_cc;
 @@ -176,7 +191,8 @@
      {
          if (this.field_71074_e != null)
