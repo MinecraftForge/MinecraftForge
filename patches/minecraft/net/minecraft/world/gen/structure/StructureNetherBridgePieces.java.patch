@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureNetherBridgePieces.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureNetherBridgePieces.java
+@@ -12,6 +12,9 @@
+ import net.minecraft.util.WeightedRandomChestContent;
+ import net.minecraft.world.World;
+ 
++import net.minecraftforge.common.ChestGenHooks;
++import static net.minecraftforge.common.ChestGenHooks.*;
++
+ public class StructureNetherBridgePieces
+ {
+     private static final StructureNetherBridgePieces.PieceWeight[] primaryComponents = new StructureNetherBridgePieces.PieceWeight[] {new StructureNetherBridgePieces.PieceWeight(StructureNetherBridgePieces.Straight.class, 30, 0, true), new StructureNetherBridgePieces.PieceWeight(StructureNetherBridgePieces.Crossing3.class, 10, 4), new StructureNetherBridgePieces.PieceWeight(StructureNetherBridgePieces.Crossing.class, 10, 4), new StructureNetherBridgePieces.PieceWeight(StructureNetherBridgePieces.Stairs.class, 10, 3), new StructureNetherBridgePieces.PieceWeight(StructureNetherBridgePieces.Throne.class, 5, 2), new StructureNetherBridgePieces.PieceWeight(StructureNetherBridgePieces.Entrance.class, 5, 1)};
+@@ -158,7 +161,7 @@
+                     if (p_74875_3_.isVecInside(j, i, k))
+                     {
+                         this.field_111021_b = false;
+-                        this.func_74879_a(p_74875_1_, p_74875_3_, p_74875_2_, 3, 2, 3, field_111019_a, 2 + p_74875_2_.nextInt(4));
++                        this.func_74879_a(p_74875_1_, p_74875_3_, p_74875_2_, 3, 2, 3, ChestGenHooks.getItems(NETHER_FORTRESS, p_74875_2_), ChestGenHooks.getCount(NETHER_FORTRESS, p_74875_2_));
+                     }
+                 }
+ 
+@@ -237,7 +240,7 @@
+                     if (p_74875_3_.isVecInside(j, i, k))
+                     {
+                         this.field_111020_b = false;
+-                        this.func_74879_a(p_74875_1_, p_74875_3_, p_74875_2_, 1, 2, 3, field_111019_a, 2 + p_74875_2_.nextInt(4));
++                        this.func_74879_a(p_74875_1_, p_74875_3_, p_74875_2_, 1, 2, 3, ChestGenHooks.getItems(NETHER_FORTRESS, p_74875_2_), ChestGenHooks.getCount(NETHER_FORTRESS, p_74875_2_));
+                     }
+                 }
+ 
+                     return true;
