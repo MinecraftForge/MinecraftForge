@@ -15,7 +15,7 @@
      public boolean func_149696_a(World p_149696_1_, int p_149696_2_, int p_149696_3_, int p_149696_4_, int p_149696_5_, int p_149696_6_)
      {
 +        int meta = p_149696_1_.func_72805_g(p_149696_2_, p_149696_3_, p_149696_4_);
-+        net.minecraftforge.event.world.NoteBlockEvent.Play e = new net.minecraftforge.event.world.NoteBlockEvent.Play(p_149696_1_, p_149696_2_, p_149696_3_, p_149696_4_, meta, p_149696_6_, p_149696_5_);
++        net.minecraftforge.event.world.NoteBlockEvent.Play e = new net.minecraftforge.event.world.NoteBlockEvent.Play(p_149696_1_, this, p_149696_2_, p_149696_3_, p_149696_4_, meta, p_149696_6_, p_149696_5_);
 +        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e)) return false;
 +        p_149696_5_ = e.instrument.ordinal();
 +        p_149696_6_ = e.getVanillaNoteId(); 

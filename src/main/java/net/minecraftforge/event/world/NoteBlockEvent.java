@@ -3,6 +3,7 @@ package net.minecraftforge.event.world;
 import com.google.common.base.Preconditions;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockNote;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.BlockEvent;
@@ -17,9 +18,9 @@ public class NoteBlockEvent extends BlockEvent
 {
     private int noteId;
 
-    NoteBlockEvent(World world, int x, int y, int z, int meta, int note)
+    NoteBlockEvent(World world, BlockNote block, int x, int y, int z, int meta, int note)
     {
-        super(x, y, z, world, Blocks.noteblock, meta);
+        super(x, y, z, world, block, meta);
         this.noteId = note;
     }
     
@@ -71,9 +72,9 @@ public class NoteBlockEvent extends BlockEvent
     {
         public Instrument instrument;
 
-        public Play(World world, int x, int y, int z, int meta, int note, int instrument)
+        public Play(World world, BlockNote block, int x, int y, int z, int meta, int note, int instrument)
         {
-            super(world, x, y, z, meta, note);
+            super(world, block, x, y, z, meta, note);
             this.instrument = Instrument.fromId(instrument);
         }
     }
@@ -88,9 +89,9 @@ public class NoteBlockEvent extends BlockEvent
         public final Note oldNote;
         public final Octave oldOctave;
         
-        public Change(World world, int x, int y, int z, int meta, int oldNote, int newNote)
+        public Change(World world, BlockNote block, int x, int y, int z, int meta, int oldNote, int newNote)
         {
-            super(world, x, y, z, meta, newNote);
+            super(world, block, x, y, z, meta, newNote);
             this.oldNote = Note.fromId(oldNote);
             this.oldOctave = Octave.fromId(oldNote);
         }        

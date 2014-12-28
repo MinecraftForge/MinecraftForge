@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockNote;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -601,7 +602,7 @@ public class ForgeHooks
 
     public static boolean onNoteChange(TileEntityNote te, byte old)
     {
-        NoteBlockEvent.Change e = new NoteBlockEvent.Change(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, te.getBlockMetadata(), old, te.note);
+        NoteBlockEvent.Change e = new NoteBlockEvent.Change(te.getWorldObj(), (BlockNote) te.getBlockType(), te.xCoord, te.yCoord, te.zCoord, te.getBlockMetadata(), old, te.note);
         if (MinecraftForge.EVENT_BUS.post(e))
         {
             te.note = old;
