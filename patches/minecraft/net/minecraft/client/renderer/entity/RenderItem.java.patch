@@ -20,7 +20,52 @@
  
              if (modelresourcelocation != null)
              {
-@@ -485,10 +489,11 @@
+@@ -314,6 +318,16 @@
+ 
+     protected void func_175034_a(ItemTransformVec3f p_175034_1_)
+     {
++        applyTransform((net.minecraftforge.client.model.ISimpleModelTransformation)p_175034_1_);
++    }
++
++    protected void applyTransform(net.minecraftforge.client.model.ISimpleModelTransformation transform)
++    {
++        transform.multiplyCurrentGlMatrix();
++    }
++
++    public static void applyVanillaTransform(ItemTransformVec3f p_175034_1_)
++    {
+         if (p_175034_1_ != ItemTransformVec3f.field_178366_a)
+         {
+             GlStateManager.func_179109_b(p_175034_1_.field_178365_c.x + field_175055_b, p_175034_1_.field_178365_c.y + field_175056_c, p_175034_1_.field_178365_c.z + field_175053_d);
+@@ -335,22 +349,23 @@
+         GlStateManager.func_179120_a(770, 771, 1, 0);
+         GlStateManager.func_179094_E();
+ 
++        net.minecraftforge.client.model.ICameraTransformations transforms = net.minecraftforge.client.ForgeHooksClient.getCameraTransforms(p_175040_2_);
+         switch (RenderItem.SwitchTransformType.field_178640_a[p_175040_3_.ordinal()])
+         {
+             case 1:
+             default:
+                 break;
+             case 2:
+-                this.func_175034_a(p_175040_2_.func_177552_f().field_178355_b);
++                this.applyTransform(transforms.getThirdPerson());
+                 break;
+             case 3:
+-                this.func_175034_a(p_175040_2_.func_177552_f().field_178356_c);
++                this.applyTransform(transforms.getFirstPerson());
+                 break;
+             case 4:
+-                this.func_175034_a(p_175040_2_.func_177552_f().field_178353_d);
++                this.applyTransform(transforms.getHead());
+                 break;
+             case 5:
+-                this.func_175034_a(p_175040_2_.func_177552_f().field_178354_e);
++                this.applyTransform(transforms.getGui());
+         }
+ 
+         this.func_180454_a(p_175040_1_, p_175040_2_);
+@@ -485,10 +500,11 @@
                  GlStateManager.func_179126_j();
              }
  
@@ -35,7 +80,7 @@
                  GlStateManager.func_179140_f();
                  GlStateManager.func_179097_i();
                  GlStateManager.func_179090_x();
-@@ -501,7 +506,7 @@
+@@ -501,7 +517,7 @@
                  this.func_175044_a(worldrenderer, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0);
                  this.func_175044_a(worldrenderer, p_180453_3_ + 2, p_180453_4_ + 13, 12, 1, i1);
                  this.func_175044_a(worldrenderer, p_180453_3_ + 2, p_180453_4_ + 13, j1, 1, l);
@@ -44,7 +89,7 @@
                  GlStateManager.func_179141_d();
                  GlStateManager.func_179098_w();
                  GlStateManager.func_179145_e();
-@@ -1078,6 +1083,19 @@
+@@ -1078,6 +1094,19 @@
      {
          this.field_175059_m.func_178085_b();
      }

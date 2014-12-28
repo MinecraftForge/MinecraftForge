@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/client/resources/model/ModelRotation.java
++++ ../src-work/minecraft/net/minecraft/client/resources/model/ModelRotation.java
+@@ -10,7 +10,7 @@
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+ @SideOnly(Side.CLIENT)
+-public enum ModelRotation
++public enum ModelRotation implements net.minecraftforge.client.model.ISimpleModelTransformation
+ {
+     X0_Y0(0, 0),
+     X0_Y90(0, 90),
+@@ -122,4 +122,7 @@
+             field_177546_q.put(Integer.valueOf(var3.field_177545_r), var3);
+         }
+     }
++
++    public javax.vecmath.Matrix4f getMatrix() { return new javax.vecmath.Matrix4f(field_177544_s); }
++    public void multiplyCurrentGlMatrix() { net.minecraftforge.client.model.ModelTransformation.multiplyCurrentGlMatrix(getMatrix()); }
+ }
