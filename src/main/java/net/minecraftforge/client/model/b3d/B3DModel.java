@@ -38,7 +38,12 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
 
+<<<<<<< HEAD
 public class B3DModel {
+=======
+public class B3DModel
+{
+>>>>>>> Added model loader registry
     static final Logger logger = LogManager.getLogger(B3DModel.class);
     private final List<Texture> textures;
     private final List<Brush> brushes;

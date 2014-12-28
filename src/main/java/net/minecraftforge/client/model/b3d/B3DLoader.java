@@ -68,7 +68,12 @@ import com.google.common.collect.Multimap;
  * To enable for your mod call instance.addDomain(modid).
  * If you need more control over accepted resources - extend the class, and register a new instance with ModelLoaderRegistry.
  */
+<<<<<<< HEAD
 public class B3DLoader implements ICustomModelLoader {
+=======
+public class B3DLoader implements ICustomModelLoader
+{
+>>>>>>> Added model loader registry
     public static final B3DLoader instance = new B3DLoader();
 
     private IResourceManager manager;
