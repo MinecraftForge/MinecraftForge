@@ -1,5 +1,7 @@
 package net.minecraftforge.event.world;
 
+import java.util.ArrayList;
+
 import com.google.common.base.Preconditions;
 
 import net.minecraft.block.Block;
@@ -100,20 +102,36 @@ public class NoteBlockEvent extends BlockEvent
      * Describes the types of musical Instruments that can be played by a Noteblock.
      * The Instrument being played can be overridden with {@link NoteBlockEvent.Play#setInstrument(Instrument)}
      */
-    public static enum Instrument
+    public static class Instrument
     {
-        PIANO,
-        BASSDRUM,
-        SNARE,
-        CLICKS,
-        BASSGUITAR;
+        public static final Instrument PIANO = new Instrument("harp", 0);
+        public static final Instrument BASSDRUM = new Instrument("bd", 1);
+        public static final Instrument SNARE = new Instrument("snare", 2);
+        public static final Instrument CLICKS = new Instrument("hat", 3);
+        public static final Instrument BASSGUITAR = new Instrument("bassattack", 4);
         
-        // cache to avoid creating a new array every time
-        private static final Instrument[] values = values();
+        // can't be final because of the above
+        private static ArrayList<Instrument> values;
         
+        private final int id; // TODO remove this?
+        public final String name;
+        
+        private Instrument(String name, int id)
+        {
+            if (values == null) values = new ArrayList();
+            values.add(id, this);
+            this.id = id;
+            this.name = name;
+        }
+        
+        public static Instrument registerInstrument(String name)
+        {
+            return new Instrument(name, values.size());
+        }
+
         static Instrument fromId(int id)
         {
-            return id < 0 || id > 4 ? PIANO : values[id];
+            return id < 0 || id >= values.size() ? PIANO : values.get(id);
         }
     }
     
