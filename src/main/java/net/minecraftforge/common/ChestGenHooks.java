@@ -28,6 +28,7 @@ public class ChestGenHooks
     public static final String STRONGHOLD_CORRIDOR      = "strongholdCorridor";
     public static final String STRONGHOLD_LIBRARY       = "strongholdLibrary";
     public static final String STRONGHOLD_CROSSING      = "strongholdCrossing";
+    public static final String NETHER_FORTRESS          = "netherFortress";
     public static final String VILLAGE_BLACKSMITH       = "villageBlacksmith";
     public static final String BONUS_CHEST              = "bonusChest";
     public static final String DUNGEON_CHEST            = "dungeonChest";
@@ -55,6 +56,7 @@ public class ChestGenHooks
         addInfo(STRONGHOLD_CORRIDOR,      ChestCorridor.strongholdChestContents,             2,  4);
         addInfo(STRONGHOLD_LIBRARY,       Library.strongholdLibraryChestContents,            1,  5);
         addInfo(STRONGHOLD_CROSSING,      RoomCrossing.strongholdRoomCrossingChestContents,  1,  5);
+        addInfo(NETHER_FORTRESS,          StructureNetherBridgePieces.Piece.field_111019_a,  2,  5);
         addInfo(VILLAGE_BLACKSMITH,       House2.villageBlacksmithChestContents,             3,  9);
         addInfo(BONUS_CHEST,              WorldServer.bonusChestContent,                    10, 10);
         addInfo(DUNGEON_CHEST,            WorldGenDungeons.field_111189_a,                   8,  8);
