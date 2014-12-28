@@ -280,6 +280,11 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
         FMLCommonHandler.instance().bus().register(this);
+        
+        if (!ForgeModContainer.disableVersionCheck)
+        {
+            ForgeVersion.startVersionCheck();
+        }
     }
 
     @Subscribe
