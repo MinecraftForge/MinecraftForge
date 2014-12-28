@@ -49,9 +49,9 @@ public class B3DModel {
     private static final Logger logger = LogManager.getLogger(B3DModel.class);
     private final List<Texture> textures;
     private final List<Brush> brushes;
-    private final INode node;
+    private final Node<?> node;
 
-    public B3DModel(List<Texture> textures, List<Brush> brushes, INode node)
+    public B3DModel(List<Texture> textures, List<Brush> brushes, Node<?> node)
     {
         this.textures = textures;
         this.brushes = brushes;
@@ -216,7 +216,7 @@ public class B3DModel {
                 logger.warn(String.format("Minor version differnce in model: ", ((float)version / 100)));
             List<Texture> textures = null;
             List<Brush> brushes = null;
-            INode node = null;
+            Node<?> node = null;
             while(buf.hasRemaining())
             {
                 readHeader();
@@ -362,7 +362,7 @@ public class B3DModel {
             return ret;
         }
 
-        private final Deque<Table<Integer, Optional<INode>, Key>> animations = new ArrayDeque<Table<Integer, Optional<INode>, Key>>();
+        private final Deque<Table<Integer, Optional<Node<?>>, Key>> animations = new ArrayDeque<Table<Integer, Optional<Node<?>>, Key>>();
 
         private Map<Integer, Key> keys() throws IOException
         {
@@ -407,7 +407,7 @@ public class B3DModel {
                         else key = new Key(key.getPos(), key.getScale(), oldKey.getRot());
                     }
                 }
-                animations.peek().put(frame, Optional.<INode>absent(), key);
+                animations.peek().put(frame, Optional.<Node<?>>absent(), key);
                 ret.put(frame, key);
             }
             popLimit();
@@ -424,16 +424,16 @@ public class B3DModel {
             return Triple.of(flags, frames, fps);
         }
 
-        private INode node() throws IOException
+        private Node<?> node() throws IOException
         {
             chunk("NODE");
-            animations.push(HashBasedTable.<Integer, Optional<INode>, Key>create());
+            animations.push(HashBasedTable.<Integer, Optional<Node<?>>, Key>create());
             Triple<Integer, Integer, Float> animData = null;
             Animation animation = null;
             Pair<Brush, List<Face>> mesh = null;
             List<Pair<Vertex, Float>> bone = null;
             Map<Integer, Key> keys = new HashMap<Integer, Key>();
-            List<INode> nodes = new ArrayList<INode>();
+            List<Node<?>> nodes = new ArrayList<Node<?>>();
             String name = readString();
             Vector3f pos = new Vector3f(buf.getFloat(), buf.getFloat(), buf.getFloat());
             Vector3f scale = new Vector3f(buf.getFloat(), buf.getFloat(), buf.getFloat());
@@ -449,12 +449,18 @@ public class B3DModel {
                 else skip();
             }
             popLimit();
-            Table<Integer, Optional<INode>, Key> keyData = animations.pop();
-            INode node;
+            Table<Integer, Optional<Node<?>>, Key> keyData = animations.pop();
+            Node<?> node;
+            IKind<?> kind;
+            if(mesh != null) kind = new Mesh(mesh);
+            else if(bone != null) kind = new Bone(bone);
+            else kind = new Pivot();
             if(animData == null)
             {
-                node = new Pivot(name, pos, scale, rot, keys, nodes, null);
-                for(Table.Cell<Integer, Optional<INode>, Key> key : keyData.cellSet())
+                if(mesh != null) node = Node.create(name, pos, scale, rot, keys, nodes, null, new Mesh(mesh));
+                else if(bone != null) node = Node.create(name, pos, scale, rot, keys, nodes, null, new Bone(bone));
+                else node = Node.create(name, pos, scale, rot, keys, nodes, null, new Pivot());
+                for(Table.Cell<Integer, Optional<Node<?>>, Key> key : keyData.cellSet())
                 {
                     //logger.info("KEY1: " + key + " " + node);
                     animations.peek().put(key.getRowKey(), key.getColumnKey().or(Optional.of(node)), key.getValue());
@@ -462,11 +468,11 @@ public class B3DModel {
             }
             else
             {
-                node = new Pivot(name, pos, scale, rot, keys, nodes, animData, keyData);
+                if(mesh != null) node = Node.create(name, pos, scale, rot, keys, nodes, animData, keyData, new Mesh(mesh));
+                else if(bone != null) node = Node.create(name, pos, scale, rot, keys, nodes, animData, keyData, new Bone(bone));
+                else node = Node.create(name, pos, scale, rot, keys, nodes, animData, keyData, new Pivot());
             }
-            if(mesh != null) node = new Mesh(node, mesh);
-            else if(bone != null) node = new Bone(node, bone);
-            for(INode child : node.getNodes().values())
+            for(Node<?> child : node.getNodes().values())
             {
                 child.setParent(node);
             }
@@ -500,7 +506,7 @@ public class B3DModel {
         return brushes;
     }
 
-    public INode getNode()
+    public Node<?> getNode()
     {
         return node;
     }
@@ -642,7 +648,7 @@ public class B3DModel {
             }
             else
             {
-                for(Pair<Float, Bone> bone : mesh.getWeightMap().get(this))
+                for(Pair<Float, Node<Bone>> bone : mesh.getWeightMap().get(this))
                 {
                     totalWeight += bone.getLeft();
                     t.add(bone.getRight().getMatrix(key));
@@ -803,9 +809,9 @@ public class B3DModel {
         private final int flags;
         private final int frames;
         private final float fps;
-        private final ImmutableTable<Integer, INode, Key> keys;
+        private final ImmutableTable<Integer, Node<?>, Key> keys;
 
-        public Animation(int flags, int frames, float fps, ImmutableTable<Integer, INode, Key> keys)
+        public Animation(int flags, int frames, float fps, ImmutableTable<Integer, Node<?>, Key> keys)
         {
             this.flags = flags;
             this.frames = frames;
@@ -828,7 +834,7 @@ public class B3DModel {
             return fps;
         }
 
-        public ImmutableTable<Integer, INode, Key> getKeys()
+        public ImmutableTable<Integer, Node<?>, Key> getKeys()
         {
             return keys;
         }
@@ -840,40 +846,35 @@ public class B3DModel {
         }
     }
 
-    public static interface INode {
-        String getName();
-        Vector3f getPos();
-        Vector3f getScale();
-        Quat4f getRot();
-        ImmutableMap<Integer, Key> getKeys();
-        ImmutableMap<String, INode> getNodes();
-        INode getParent();
-        void setParent(INode parent);
+    public static interface IKind<K extends IKind<K>>
+    {
+        void setParent(Node<K> parent);
+        Node<K> getParent();
     }
 
-    public static class Pivot implements INode
+    public static class Node<K extends IKind<K>>
     {
         private final String name;
         private final Vector3f pos;
         private final Vector3f scale;
         private final Quat4f rot;
         private final ImmutableMap<Integer, Key> keys;
-        private final ImmutableMap<String, INode> nodes;
+        private final ImmutableMap<String, Node<?>> nodes;
         private final Animation animation;
-        private INode parent;
+        private final K kind;
+        private Node<? extends IKind<?>> parent;
 
-        public Pivot(String name, Vector3f pos, Vector3f scale, Quat4f rot, Map<Integer, Key> keys, List<INode> nodes, Animation animation)
+        public static <K extends IKind<K>> Node<K> create(String name, Vector3f pos, Vector3f scale, Quat4f rot, Map<Integer, Key> keys, List<Node<?>> nodes, Triple<Integer, Integer, Float> animData, Table<Integer, Optional<Node<?>>, Key> keyData, K kind)
         {
-            this.name = name;
-            this.pos = pos;
-            this.scale = scale;
-            this.rot = rot;
-            this.keys = ImmutableMap.copyOf(keys);
-            this.nodes = buildNodeMap(nodes);
-            this.animation = animation;
+            return new Node<K>(name, pos, scale, rot, keys, nodes, null, animData, keyData, kind);
         }
 
-        public Pivot(String name, Vector3f pos, Vector3f scale, Quat4f rot, Map<Integer, Key> keys, List<INode> nodes, Triple<Integer, Integer, Float> animData, Table<Integer, Optional<INode>, Key> keyData)
+        public static <K extends IKind<K>> Node<K> create(String name, Vector3f pos, Vector3f scale, Quat4f rot, Map<Integer, Key> keys, List<Node<?>> nodes, Animation animation, K kind)
+        {
+            return new Node<K>(name, pos, scale, rot, keys, nodes, animation, null, null, kind);
+        }
+
+        public Node(String name, Vector3f pos, Vector3f scale, Quat4f rot, Map<Integer, Key> keys, List<Node<?>> nodes, Animation animation, Triple<Integer, Integer, Float> animData, Table<Integer, Optional<Node<?>>, Key> keyData, K kind)
         {
             this.name = name;
             this.pos = pos;
@@ -881,20 +882,27 @@ public class B3DModel {
             this.rot = rot;
             this.keys = ImmutableMap.copyOf(keys);
             this.nodes = buildNodeMap(nodes);
+            if(animData != null && keyData != null) this.animation = buildAnimation(animData, keyData);
+            else this.animation = animation;
+            this.kind = kind;
+            kind.setParent(this);
+        }
 
-            ImmutableTable.Builder<Integer, INode, Key> builder = ImmutableTable.builder();
-            for(Table.Cell<Integer, Optional<INode>, Key> key : keyData.cellSet())
+        protected Animation buildAnimation(Triple<Integer, Integer, Float> animData, Table<Integer, Optional<Node<?>>, Key> keyData)
+        {
+            ImmutableTable.Builder<Integer, Node<?>, Key> builder = ImmutableTable.builder();
+            for(Table.Cell<Integer, Optional<Node<?>>, Key> key : keyData.cellSet())
             {
                 //System.out.println("KEY2: " + key + " " + this);
                 builder.put(key.getRowKey(), key.getColumnKey().or(this), key.getValue());
             }
-            animation = new Animation(animData.getLeft(), animData.getMiddle(), animData.getRight(), builder.build());
+            return new Animation(animData.getLeft(), animData.getMiddle(), animData.getRight(), builder.build());
         }
 
-        private ImmutableMap<String, INode> buildNodeMap(List<INode> nodes)
+        private ImmutableMap<String, Node<?>> buildNodeMap(List<Node<?>> nodes)
         {
-            ImmutableMap.Builder<String, INode> builder = ImmutableMap.builder();
-            for(INode node : nodes)
+            ImmutableMap.Builder<String, Node<?>> builder = ImmutableMap.builder();
+            for(Node<?> node : nodes)
             {
                 builder.put(node.getName(), node);
             }
@@ -904,6 +912,11 @@ public class B3DModel {
         public String getName()
         {
             return name;
+        }
+
+        public K getKind()
+        {
+            return kind;
         }
 
         public Vector3f getPos()
@@ -926,7 +939,7 @@ public class B3DModel {
             return keys;
         }
 
-        public ImmutableMap<String, INode> getNodes()
+        public ImmutableMap<String, Node<?>> getNodes()
         {
             return nodes;
         }
@@ -936,12 +949,12 @@ public class B3DModel {
             return animation;
         }
 
-        public INode getParent()
+        public Node<? extends IKind<?>> getParent()
         {
             return parent;
         }
 
-        public void setParent(INode parent)
+        public void setParent(Node<? extends IKind<?>> parent)
         {
             this.parent = parent;
         }
@@ -951,42 +964,65 @@ public class B3DModel {
         {
             return String.format("Node [name=%s, pos=%s, scale=%s, rot=%s, keys=..., nodes=..., animation=%s]", name, pos, scale, rot, animation);
         }
+
+        public Matrix4f getMatrix(int keyIdx)
+        {
+            Key key = getKeys().get(keyIdx);
+            Matrix4f ret = new Matrix4f();
+            ret.setIdentity();
+            if(getParent() != null)
+            {
+                Matrix4f pm = getParent().getMatrix(keyIdx);
+                pm.invert();
+                ret.mul(pm);
+            }
+            /*if(parent.getParent().getKind() instanceof Bone)
+            {
+                Matrix4f pm = ((Bone)parent.getParent().getKind()).getMatrix(keyIdx);
+                pm.invert();
+                ret.mul(pm);
+            }*/
+            ret.mul(combine(getPos(), getScale(), getRot()));
+            if(key == null) logger.error("invalid key index: " + keyIdx);
+            else ret.mul(combine(key.getPos(), key.getScale(), key.getRot()));
+            //logger.info("getMatrix: " + pivot.getPos() + " " + pivot.getScale() + " " + pivot.getRot() + "\n" + ret);
+            //logger.info("keys size: " + pivot.getKeys().size());
+            return ret;
+        }
     }
 
-    public static class Mesh implements INode
+    public static class Pivot implements IKind<Pivot>
     {
-        private final INode pivot;
+        private Node<Pivot> parent;
+
+        public void setParent(Node<Pivot> parent)
+        {
+            this.parent = parent;
+        }
+
+        public Node<Pivot> getParent()
+        {
+            return parent;
+        }
+    }
+
+    public static class Mesh implements IKind<Mesh>
+    {
+        private Node<Mesh> parent;
         private final Brush brush;
         private final ImmutableList<Face> faces;
 
-        private Set<Bone> bones = new HashSet<Bone>();
+        private Set<Node<Bone>> bones = new HashSet<Node<Bone>>();
 
-        private final ImmutableMultimap<Vertex, Pair<Float, Bone>> weightMap;
+        private ImmutableMultimap<Vertex, Pair<Float, Node<Bone>>> weightMap = ImmutableMultimap.of();
 
-        public Mesh(INode pivot, Pair<Brush, List<Face>> data)
+        public Mesh(Pair<Brush, List<Face>> data)
         {
-            this.pivot = pivot;
             this.brush = data.getLeft();
             this.faces = ImmutableList.copyOf(data.getRight());
-            Deque<INode> queue = new ArrayDeque<INode>(pivot.getNodes().values());
-            while(!queue.isEmpty())
-            {
-                INode node = queue.pop();
-                if(node instanceof Bone) bones.add((Bone)node);
-                queue.addAll(node.getNodes().values());
-            }
-            ImmutableMultimap.Builder<Vertex, Pair<Float, Bone>> builder = ImmutableMultimap.builder();
-            for(Bone bone : getBones())
-            {
-                for(Pair<Vertex, Float> b : bone.getData())
-                {
-                    builder.put(b.getLeft(), Pair.of(b.getRight(), bone));
-                }
-            }
-            weightMap = builder.build();
         }
 
-        public ImmutableMultimap<Vertex, Pair<Float, Bone>> getWeightMap()
+        public ImmutableMultimap<Vertex, Pair<Float, Node<Bone>>> getWeightMap()
         {
             return weightMap;
         }
@@ -1014,47 +1050,7 @@ public class B3DModel {
             return faces;
         }
 
-        public String getName()
-        {
-            return pivot.getName();
-        }
-
-        public Vector3f getPos()
-        {
-            return pivot.getPos();
-        }
-
-        public Vector3f getScale()
-        {
-            return pivot.getScale();
-        }
-
-        public Quat4f getRot()
-        {
-            return pivot.getRot();
-        }
-
-        public ImmutableMap<Integer, Key> getKeys()
-        {
-            return pivot.getKeys();
-        }
-
-        public ImmutableMap<String, INode> getNodes()
-        {
-            return pivot.getNodes();
-        }
-
-        public INode getParent()
-        {
-            return pivot.getParent();
-        }
-
-        public void setParent(INode parent)
-        {
-            this.pivot.setParent(parent);
-        }
-
-        public ImmutableSet<Bone> getBones()
+        public ImmutableSet<Node<Bone>> getBones()
         {
             return ImmutableSet.copyOf(bones);
         }
@@ -1062,78 +1058,50 @@ public class B3DModel {
         @Override
         public String toString()
         {
-            return String.format("Mesh [pivot=%s, brush=%s, data=...]", pivot, brush);
+            return String.format("Mesh [pivot=%s, brush=%s, data=...]", super.toString(), brush);
+        }
+
+        @SuppressWarnings("unchecked")
+        public void setParent(Node<Mesh> parent)
+        {
+            this.parent = parent;
+            Deque<Node<?>> queue = new ArrayDeque<Node<?>>(parent.getNodes().values());
+            while(!queue.isEmpty())
+            {
+                Node<?> node = queue.pop();
+                if(node.getKind() instanceof Bone) bones.add((Node<Bone>)node);
+                queue.addAll(node.getNodes().values());
+            }
+            ImmutableMultimap.Builder<Vertex, Pair<Float, Node<Bone>>> builder = ImmutableMultimap.builder();
+            for(Node<Bone> bone : getBones())
+            {
+                for(Pair<Vertex, Float> b : bone.getKind().getData())
+                {
+                    builder.put(b.getLeft(), Pair.of(b.getRight(), bone));
+                }
+            }
+            weightMap = builder.build();
+        }
+
+        public Node<Mesh> getParent()
+        {
+            return parent;
         }
     }
 
-    public static class Bone implements INode
+    public static class Bone implements IKind<Bone>
     {
-        private final INode pivot;
+        private Node<Bone> parent;
         private final List<Pair<Vertex, Float>> data;
 
-        public Bone(INode pivot, List<Pair<Vertex, Float>> data)
+        public Bone(List<Pair<Vertex, Float>> data)
         {
-            this.pivot = pivot;
             this.data = data;
-        }
-
-        public Matrix4f getMatrix(int keyIdx)
-        {
-            Key key = pivot.getKeys().get(keyIdx);
-            Matrix4f ret = new Matrix4f();
-            ret.setIdentity();
-            if(getParent() instanceof Bone) ret.mul(((Bone)getParent()).getMatrix(keyIdx));
-            ret.mul(combine(pivot.getPos(), pivot.getScale(), pivot.getRot()));
-            if(key == null) logger.error("invalid key index: " + keyIdx);
-            else ret.mul(combine(key.getPos(), key.getScale(), key.getRot()));
-            //logger.info("getMatrix: " + pivot.getPos() + " " + pivot.getScale() + " " + pivot.getRot() + "\n" + ret);
-            //logger.info("keys size: " + pivot.getKeys().size());
-            return ret;
         }
 
         public List<Pair<Vertex, Float>> getData()
         {
             return data;
-        }
-
-        public String getName()
-        {
-            return pivot.getName();
-        }
-
-        public Vector3f getPos()
-        {
-            return pivot.getPos();
-        }
-
-        public Vector3f getScale()
-        {
-            return pivot.getScale();
-        }
-
-        public Quat4f getRot()
-        {
-            return pivot.getRot();
-        }
-
-        public ImmutableMap<Integer, Key> getKeys()
-        {
-            return pivot.getKeys();
-        }
-
-        public ImmutableMap<String, INode> getNodes()
-        {
-            return pivot.getNodes();
-        }
-
-        public INode getParent()
-        {
-            return pivot.getParent();
-        }
-
-        public void setParent(INode parent)
-        {
-            this.pivot.setParent(parent);
         }
 
         /*@Override
@@ -1148,5 +1116,15 @@ public class B3DModel {
             while(res != null && !(res instanceof Mesh)) res = res.getParent();
             return (Mesh)res;
         }*/
+
+        public void setParent(Node<Bone> parent)
+        {
+            this.parent = parent;
+        }
+
+        public Node<Bone> getParent()
+        {
+            return parent;
+        }
     }
 }

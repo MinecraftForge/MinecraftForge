@@ -134,7 +134,7 @@ public class B3DLoader implements ICustomModelLoader {
         }
     }
 
-    public static enum B3DFrameProperty implements IUnlistedProperty
+    public static enum B3DFrameProperty implements IUnlistedProperty<B3DFrame>
     {
         instance;
         public String getName()
@@ -142,17 +142,17 @@ public class B3DLoader implements ICustomModelLoader {
             return "B3DFrame";
         }
 
-        public boolean isValid(Object value)
+        public boolean isValid(B3DFrame value)
         {
             return value instanceof B3DFrame;
         }
 
-        public Class getType()
+        public Class<B3DFrame> getType()
         {
             return B3DFrame.class;
         }
 
-        public String valueToString(Object value)
+        public String valueToString(B3DFrame value)
         {
             return value.toString();
         }
@@ -160,9 +160,9 @@ public class B3DLoader implements ICustomModelLoader {
 
     public static class Wrapper implements IModel
     {
-        private final B3DModel.INode node;
+        private final B3DModel.Node<?> node;
 
-        public Wrapper(B3DModel.INode node)
+        public Wrapper(B3DModel.Node<?> node)
         {
             this.node = node;
         }
@@ -193,7 +193,7 @@ public class B3DLoader implements ICustomModelLoader {
             return new B3DFrame(1);
         }
 
-        public B3DModel.INode getNode()
+        public B3DModel.Node<?> getNode()
         {
             return node;
         }
@@ -202,7 +202,7 @@ public class B3DLoader implements ICustomModelLoader {
     private static class BakedWrapper implements IFlexibleBakedModel, ISmartBlockModel
     {
         private final B3DFrame transformation;
-        private final B3DModel.INode node;
+        private final B3DModel.Node<?> node;
         private final VertexFormat format;
         private final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter;
 
@@ -212,7 +212,7 @@ public class B3DLoader implements ICustomModelLoader {
         private static final int BYTES_IN_INT = Integer.SIZE / Byte.SIZE;
         private static final int VERTICES_IN_QUAD = 4;
 
-        public BakedWrapper(B3DFrame transformation, INode node, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+        public BakedWrapper(B3DFrame transformation, Node<?> node, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
             this.transformation = transformation;
             this.node = node;
@@ -232,14 +232,14 @@ public class B3DLoader implements ICustomModelLoader {
             if(quads == null)
             {
                 ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-                for(INode child : node.getNodes().values())
+                for(Node<?> child : node.getNodes().values())
                 {
                     builder.addAll(new BakedWrapper(transformation, child, format, bakedTextureGetter).getGeneralQuads());
                 }
-                if(node instanceof Mesh)
+                if(node.getKind() instanceof Mesh)
                 {
-                    Mesh mesh = (Mesh) node;
-                    Multimap<Vertex, Pair<Float, Bone>> weightMap = mesh.getWeightMap();
+                    Mesh mesh = (Mesh) node.getKind();
+                    Multimap<Vertex, Pair<Float, Node<Bone>>> weightMap = mesh.getWeightMap();
                     for(Face f : mesh.bake(transformation.getFrame()))
                     {
                         buf.clear();
@@ -258,6 +258,7 @@ public class B3DLoader implements ICustomModelLoader {
             return quads;
         }
 
+        @SuppressWarnings("unchecked")
         private final void putVertexData(Vertex v)
         {
             // TODO handle everything not handled (texture transformations, bones, transformations, normals, e.t.c)
