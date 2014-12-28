@@ -40,6 +40,8 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.model.IBakedModel;
@@ -177,13 +179,13 @@ public class B3DLoader implements ICustomModelLoader {
             return Collections.emptyList();
         }
 
-        public IFlexibleBakedModel bake(IModelTransformation transformation, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+        public IFlexibleBakedModel bake(IModelTransformation transformation, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
             // TODO handle vanilla transformations
-            if(transformation instanceof ModelRotation) return new BakedWrapper(getDefaultTransformation(), node, bakedTextureGetter);
+            if(transformation instanceof ModelRotation) return new BakedWrapper(getDefaultTransformation(), node, format, bakedTextureGetter);
             if(!(transformation instanceof B3DFrame))
                 throw new UnsupportedOperationException("can only bake b3d models with b3d or vanilla transformations, got: " + transformation);
-            return new BakedWrapper((B3DFrame)transformation, node, bakedTextureGetter);
+            return new BakedWrapper((B3DFrame)transformation, node, format, bakedTextureGetter);
         }
 
         public B3DFrame getDefaultTransformation()
@@ -201,13 +203,23 @@ public class B3DLoader implements ICustomModelLoader {
     {
         private final B3DFrame transformation;
         private final B3DModel.INode node;
+        private final VertexFormat format;
         private final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter;
 
-        public BakedWrapper(B3DFrame transformation, INode node, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+        private final ByteBuffer buf;
+        private ImmutableList<BakedQuad> quads;
+
+        private static final int BYTES_IN_INT = Integer.SIZE / Byte.SIZE;
+        private static final int VERTICES_IN_QUAD = 4;
+
+        public BakedWrapper(B3DFrame transformation, INode node, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
             this.transformation = transformation;
             this.node = node;
+            this.format = format;
             this.bakedTextureGetter = bakedTextureGetter;
+
+            buf = BufferUtils.createByteBuffer(VERTICES_IN_QUAD * format.getNextOffset());
         }
 
         public List<BakedQuad> getFaceQuads(EnumFacing side)
@@ -215,12 +227,6 @@ public class B3DLoader implements ICustomModelLoader {
             return Collections.emptyList();
         }
 
-        private static final int BYTES_IN_INT = Integer.SIZE / Byte.SIZE;
-        private static final int VERTICES_IN_QUAD = 4;
-        private static final int BLOCK_FORMAT_INT_SIZE = DefaultVertexFormats.BLOCK.getNextOffset() / BYTES_IN_INT;
-        private static final ByteBuffer buf = BufferUtils.createByteBuffer(VERTICES_IN_QUAD * DefaultVertexFormats.BLOCK.getNextOffset());
-
-        private ImmutableList<BakedQuad> quads;
         public List<BakedQuad> getGeneralQuads()
         {
             if(quads == null)
@@ -228,7 +234,7 @@ public class B3DLoader implements ICustomModelLoader {
                 ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
                 for(INode child : node.getNodes().values())
                 {
-                    builder.addAll(new BakedWrapper(transformation, child, bakedTextureGetter).getGeneralQuads());
+                    builder.addAll(new BakedWrapper(transformation, child, format, bakedTextureGetter).getGeneralQuads());
                 }
                 if(node instanceof Mesh)
                 {
@@ -242,9 +248,9 @@ public class B3DLoader implements ICustomModelLoader {
                         putVertexData(f.getV3());
                         putVertexData(f.getV3());
                         buf.flip();
-                        int[] data = new int[VERTICES_IN_QUAD * BLOCK_FORMAT_INT_SIZE];
+                        int[] data = new int[VERTICES_IN_QUAD * format.getNextOffset() / BYTES_IN_INT];
                         buf.asIntBuffer().get(data);
-                        builder.add(new BakedQuad(data , -1, EnumFacing.UP));
+                        builder.add(new BakedQuad(data, -1, EnumFacing.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z)));
                     }
                 }
                 quads = builder.build();
@@ -254,40 +260,65 @@ public class B3DLoader implements ICustomModelLoader {
 
         private final void putVertexData(Vertex v)
         {
-            // see DefaultVertexFormats.BLOCK
-            // TODO handle everything not handled (texture transformations, bones, transformations, e.t.c)
-            buf.putFloat(v.getPos().x);
-            buf.putFloat(v.getPos().y);
-            buf.putFloat(v.getPos().z);
-            if(v.getColor() != null)
+            // TODO handle everything not handled (texture transformations, bones, transformations, normals, e.t.c)
+            int oldPos = buf.position();
+            for(VertexFormatElement e : (List<VertexFormatElement>)format.getElements())
             {
-                buf.put((byte)(v.getColor().x / (Byte.MAX_VALUE - 1)));
-                buf.put((byte)(v.getColor().y / (Byte.MAX_VALUE - 1)));
-                buf.put((byte)(v.getColor().z / (Byte.MAX_VALUE - 1)));
-                buf.put((byte)(v.getColor().w / (Byte.MAX_VALUE - 1)));
+                switch(e.getUsage())
+                {
+                case POSITION:
+                    buf.putFloat(v.getPos().x);
+                    buf.putFloat(v.getPos().y);
+                    buf.putFloat(v.getPos().z);
+                    break;
+                case COLOR:
+                    if(v.getColor() != null)
+                    {
+                        buf.put((byte)(v.getColor().x / (Byte.MAX_VALUE - 1)));
+                        buf.put((byte)(v.getColor().y / (Byte.MAX_VALUE - 1)));
+                        buf.put((byte)(v.getColor().z / (Byte.MAX_VALUE - 1)));
+                        buf.put((byte)(v.getColor().w / (Byte.MAX_VALUE - 1)));
+                    }
+                    else
+                    {
+                        buf.putInt(0);
+                    }
+                    break;
+                case UV:
+                    if(e.getIndex() == 0)
+                    {
+                        if(v.getTexCoords().length > 0)
+                        {
+                            buf.putFloat(v.getTexCoords()[0].x);
+                            buf.putFloat(v.getTexCoords()[0].y);
+                        }
+                        else
+                        {
+                            buf.putFloat(0).putFloat(0);
+                        }
+                    }
+                    else if(e.getIndex() == 1)
+                    {
+                        if(v.getTexCoords().length > 1)
+                        {
+                            buf.putShort((short)(v.getTexCoords()[1].x / (Short.MAX_VALUE - 1)));
+                            buf.putShort((short)(v.getTexCoords()[1].y / (Short.MAX_VALUE - 1)));
+                        }
+                        else
+                        {
+                            buf.putInt(0);
+                        }
+                    }
+                    break;
+                case NORMAL:
+                    break;
+                case GENERIC:
+                    break;
+                default:
+                    break;
+                }
             }
-            else
-            {
-                buf.putInt(0);
-            }
-            if(v.getTexCoords().length > 0)
-            {
-                buf.putFloat(v.getTexCoords()[0].x);
-                buf.putFloat(v.getTexCoords()[0].y);
-            }
-            else
-            {
-                buf.putFloat(0).putFloat(0);
-            }
-            if(v.getTexCoords().length > 1)
-            {
-                buf.putShort((short)(v.getTexCoords()[1].x / (Short.MAX_VALUE - 1)));
-                buf.putShort((short)(v.getTexCoords()[1].y / (Short.MAX_VALUE - 1)));
-            }
-            else
-            {
-                buf.putInt(0);
-            }
+            buf.position(oldPos + format.getNextOffset());
         }
 
         public boolean isAmbientOcclusion()
@@ -330,7 +361,7 @@ public class B3DLoader implements ICustomModelLoader {
                 IExtendedBlockState exState = (IExtendedBlockState)state;
                 if(exState.getUnlistedNames().contains(B3DFrameProperty.instance))
                 {
-                    B3DFrame frame = exState.getValue(B3DFrameProperty.instance);
+                    B3DFrame frame = (B3DFrame)exState.getValue(B3DFrameProperty.instance);
                     if(frame != null)
                     {
                         return getCachedModel(frame.getFrame());
@@ -346,9 +377,14 @@ public class B3DLoader implements ICustomModelLoader {
         {
             if(!cache.containsKey(frame))
             {
-                cache.put(frame, new BakedWrapper(new B3DFrame(frame), node, bakedTextureGetter));
+                cache.put(frame, new BakedWrapper(new B3DFrame(frame), node, format, bakedTextureGetter));
             }
             return cache.get(frame);
+        }
+
+        public VertexFormat getFormat()
+        {
+            return format;
         }
     }
 }
