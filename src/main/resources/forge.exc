@@ -28,3 +28,4 @@ net/minecraft/item/ItemDye.applyBonemeal(Lnet/minecraft/item/ItemStack;Lnet/mine
 net/minecraft/server/management/ItemInWorldManager.removeBlock(Lnet/minecraft/util/BlockPos;Z)Z=|p_180235_1_,canHarvest
 net/minecraft/client/gui/GuiScreen.drawHoveringText(Ljava/util/List;IILnet/minecraft/client/gui/FontRenderer;)V=|p_146283_1_,p_146283_2_,p_146283_3_,font
 net/minecraft/block/state/BlockState.<init>(Lnet/minecraft/block/Block;[Lnet/minecraft/block/properties/IProperty;Lcom/google/common/collect/ImmutableMap;)V=|p_i45663_1_,p_i45663_2_,unlistedProperties
+net/minecraft/client/renderer/entity/RenderItem.applyVanillaTransform(Lnet/minecraft/client/renderer/block/model/ItemTransformVec3f;)V=|p_175034_1_
