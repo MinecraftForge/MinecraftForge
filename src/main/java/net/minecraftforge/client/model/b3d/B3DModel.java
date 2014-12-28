@@ -703,13 +703,20 @@ public class B3DModel {
     {
         private final Vertex v1, v2, v3;
         private final Brush brush;
+        private final Vector3f normal;
 
         public Face(Vertex v1, Vertex v2, Vertex v3, Brush brush)
+        {
+            this(v1, v2, v3, brush, getNormal(v1, v2, v3));
+        }
+
+        public Face(Vertex v1, Vertex v2, Vertex v3, Brush brush, Vector3f normal)
         {
             this.v1 = v1;
             this.v2 = v2;
             this.v3 = v3;
             this.brush = brush;
+            this.normal = normal;
         }
 
         public Vertex getV1()
@@ -736,6 +743,23 @@ public class B3DModel {
         public String toString()
         {
             return String.format("Face [v1=%s, v2=%s, v3=%s]", v1, v2, v3);
+        }
+
+        public Vector3f getNormal()
+        {
+            return normal;
+        }
+
+        public static Vector3f getNormal(Vertex v1, Vertex v2, Vertex v3)
+        {
+            Vector3f a = new Vector3f(v2.getPos());
+            a.sub(v1.getPos());
+            Vector3f b = new Vector3f(v3.getPos());
+            b.sub(v1.getPos());
+            Vector3f c = new Vector3f();
+            c.cross(a, b);
+            c.normalize();
+            return c;
         }
     }
 
