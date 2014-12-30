@@ -111,7 +111,7 @@ public class B3DLoader implements ICustomModelLoader {
             }
             B3DModel.Parser parser = new B3DModel.Parser(resource.getInputStream());
             B3DModel model = parser.parse();
-            return new Wrapper(model.getNode());
+            return new Wrapper(modelLocation, model.getTextures(), model.getNode());
         }
         catch(IOException e)
         {
@@ -160,11 +160,24 @@ public class B3DLoader implements ICustomModelLoader {
 
     public static class Wrapper implements IModel
     {
+        private final ResourceLocation location;
         private final B3DModel.Node<?> node;
+        private final ImmutableList<ResourceLocation> textures;
 
-        public Wrapper(B3DModel.Node<?> node)
+        public Wrapper(ResourceLocation location, List<Texture> textures, B3DModel.Node<?> node)
         {
+            this.location = location;
             this.node = node;
+            ImmutableList.Builder<ResourceLocation> builder = ImmutableList.builder();
+
+            for(Texture t : textures)
+            {
+                String path = t.getPath();
+                if(path.endsWith(".png")) path = path.substring(0, path.length() - ".png".length());
+                builder.add(new ResourceLocation(location.getResourceDomain(), path));
+                System.out.println("Texture: " + path);
+            }
+            this.textures = builder.build();
         }
 
         public Collection<ResourceLocation> getDependencies()
@@ -175,17 +188,16 @@ public class B3DLoader implements ICustomModelLoader {
 
         public Collection<ResourceLocation> getTextures()
         {
-            // TODO Auto-generated method stub
-            return Collections.emptyList();
+            return textures;
         }
 
         public IFlexibleBakedModel bake(IModelTransformation transformation, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
             // TODO handle vanilla transformations
-            if(transformation instanceof ModelRotation) return new BakedWrapper(getDefaultTransformation(), node, format, bakedTextureGetter);
+            if(transformation instanceof ModelRotation) return new BakedWrapper(location, getDefaultTransformation(), node, format, bakedTextureGetter);
             if(!(transformation instanceof B3DFrame))
                 throw new UnsupportedOperationException("can only bake b3d models with b3d or vanilla transformations, got: " + transformation);
-            return new BakedWrapper((B3DFrame)transformation, node, format, bakedTextureGetter);
+            return new BakedWrapper(location, (B3DFrame)transformation, node, format, bakedTextureGetter);
         }
 
         public B3DFrame getDefaultTransformation()
@@ -201,6 +213,7 @@ public class B3DLoader implements ICustomModelLoader {
 
     private static class BakedWrapper implements IFlexibleBakedModel, ISmartBlockModel
     {
+        private final ResourceLocation location;
         private final B3DFrame transformation;
         private final B3DModel.Node<?> node;
         private final VertexFormat format;
@@ -212,8 +225,9 @@ public class B3DLoader implements ICustomModelLoader {
         private static final int BYTES_IN_INT = Integer.SIZE / Byte.SIZE;
         private static final int VERTICES_IN_QUAD = 4;
 
-        public BakedWrapper(B3DFrame transformation, Node<?> node, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+        public BakedWrapper(ResourceLocation location, B3DFrame transformation, Node<?> node, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
+            this.location = location;
             this.transformation = transformation;
             this.node = node;
             this.format = format;
@@ -234,7 +248,7 @@ public class B3DLoader implements ICustomModelLoader {
                 ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
                 for(Node<?> child : node.getNodes().values())
                 {
-                    builder.addAll(new BakedWrapper(transformation, child, format, bakedTextureGetter).getGeneralQuads());
+                    builder.addAll(new BakedWrapper(location, transformation, child, format, bakedTextureGetter).getGeneralQuads());
                 }
                 if(node.getKind() instanceof Mesh)
                 {
@@ -243,10 +257,14 @@ public class B3DLoader implements ICustomModelLoader {
                     for(Face f : mesh.bake(transformation.getFrame()))
                     {
                         buf.clear();
-                        putVertexData(f.getV1());
-                        putVertexData(f.getV2());
-                        putVertexData(f.getV3());
-                        putVertexData(f.getV3());
+                        List<Texture> textures = f.getBrush().getTextures();
+                        TextureAtlasSprite sprite;
+                        if(textures.isEmpty()) sprite = bakedTextureGetter.apply(new ResourceLocation("missingno"));
+                        else sprite = getTexture(textures.get(0).getPath());
+                        putVertexData(f.getV1(), sprite);
+                        putVertexData(f.getV2(), sprite);
+                        putVertexData(f.getV3(), sprite);
+                        putVertexData(f.getV3(), sprite);
                         buf.flip();
                         int[] data = new int[VERTICES_IN_QUAD * format.getNextOffset() / BYTES_IN_INT];
                         buf.asIntBuffer().get(data);
@@ -258,8 +276,16 @@ public class B3DLoader implements ICustomModelLoader {
             return quads;
         }
 
+        protected TextureAtlasSprite getTexture(String name)
+        {
+            if(name.endsWith(".png")) name = name.substring(0, name.length() - ".png".length());
+            ResourceLocation loc = new ResourceLocation(location.getResourceDomain(), name);
+            System.out.println("getTexture: " + loc);
+            return bakedTextureGetter.apply(loc);
+        }
+
         @SuppressWarnings("unchecked")
-        private final void putVertexData(Vertex v)
+        private final void putVertexData(Vertex v, TextureAtlasSprite sprite)
         {
             // TODO handle everything not handled (texture transformations, bones, transformations, normals, e.t.c)
             int oldPos = buf.position();
@@ -282,16 +308,17 @@ public class B3DLoader implements ICustomModelLoader {
                     }
                     else
                     {
-                        buf.putInt(0);
+                        buf.putInt(0x00FFFFFF);
                     }
                     break;
                 case UV:
                     if(e.getIndex() == 0)
                     {
+                        // TODO handle more brushes
                         if(v.getTexCoords().length > 0)
                         {
-                            buf.putFloat(v.getTexCoords()[0].x);
-                            buf.putFloat(v.getTexCoords()[0].y);
+                            buf.putFloat(sprite.getInterpolatedU(v.getTexCoords()[0].x * 16));
+                            buf.putFloat(sprite.getInterpolatedV(v.getTexCoords()[0].y * 16));
                         }
                         else
                         {
@@ -378,7 +405,7 @@ public class B3DLoader implements ICustomModelLoader {
         {
             if(!cache.containsKey(frame))
             {
-                cache.put(frame, new BakedWrapper(new B3DFrame(frame), node, format, bakedTextureGetter));
+                cache.put(frame, new BakedWrapper(location, new B3DFrame(frame), node, format, bakedTextureGetter));
             }
             return cache.get(frame);
         }
