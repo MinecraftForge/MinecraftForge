@@ -127,3 +127,18 @@
          }
  
          return (Multimap)object;
+@@ -763,4 +768,14 @@
+ 
+         return ichatcomponent;
+     }
++    
++    @Override
++    public int hashCode() {
++    	return this.field_151002_e.hashCode() ^ this.field_77994_a ^ (this.field_77991_e<<10) ^ (this.func_77942_o() ? field_77990_d.hashCode() : 0);
++    }
++    
++    @Override
++    public boolean equals(Object obj) {
++    	return obj instanceof ItemStack ? this.func_77969_a((ItemStack)obj) && this.field_77994_a == ((ItemStack)obj).field_77994_a && func_77970_a(this, ((ItemStack)obj)) : false;
++    }
+ }
