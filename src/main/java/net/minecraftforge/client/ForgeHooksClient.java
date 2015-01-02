@@ -6,6 +6,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 
 import javax.vecmath.Matrix4f;
 
@@ -23,7 +24,9 @@ import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
+import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
@@ -57,6 +60,9 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ICameraTransformations;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
+import net.minecraftforge.client.model.IModelState;
+import net.minecraftforge.client.model.IPerspectiveAwareModel;
+import net.minecraftforge.client.model.ISmartItemModel;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
@@ -64,6 +70,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLLog;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 //import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 //import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
@@ -507,13 +515,48 @@ public class ForgeHooksClient
         return m;
     }
 
-    public static ICameraTransformations getCameraTransforms(IBakedModel model)
+    public static IBakedModel handleCameraTransforms(IBakedModel model, ItemCameraTransforms.TransformType cameraTransformType)
     {
-        if(model instanceof IFlexibleBakedModel)
+        if(model instanceof IPerspectiveAwareModel)
         {
-            return ((IFlexibleBakedModel)model).getCameraTransforms();
+            Pair<IBakedModel, Matrix4f> pair = ((IPerspectiveAwareModel)model).handlePerspective(cameraTransformType);
+
+            if(pair.getRight() != null) multiplyCurrentGlMatrix(pair.getRight());
+            return pair.getLeft();
         }
-        return model.getItemCameraTransforms();
+        switch(cameraTransformType)
+        {
+        case FIRST_PERSON:
+            RenderItem.applyVanillaTransform(model.getItemCameraTransforms().firstPerson);
+            break;
+        case GUI:
+            RenderItem.applyVanillaTransform(model.getItemCameraTransforms().gui);
+            break;
+        case HEAD:
+            RenderItem.applyVanillaTransform(model.getItemCameraTransforms().head);
+            break;
+        case THIRD_PERSON:
+            RenderItem.applyVanillaTransform(model.getItemCameraTransforms().thirdPerson);
+            break;
+        default:
+            break;
+        }
+        return model;
+    }
+
+    private static final FloatBuffer matrixBuf = BufferUtils.createFloatBuffer(16);
+
+    public static void multiplyCurrentGlMatrix(Matrix4f matrix)
+    {
+        matrixBuf.clear();
+        float[] t = new float[4];
+        for(int i = 0; i < 4; i++)
+        {
+            matrix.getColumn(i, t);
+            matrixBuf.put(t);
+        }
+        matrixBuf.flip();
+        GL11.glMultMatrix(matrixBuf);
     }
 
     // moved and expanded from WorldVertexBufferUploader.draw

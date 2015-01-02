@@ -24,15 +24,13 @@ import net.minecraft.item.Item;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.Attributes;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ICameraTransformations;
+import net.minecraftforge.client.model.Attributes;
 import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.IModelTransformation;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.IModelState;
 import net.minecraftforge.client.model.b3d.B3DLoader;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -96,7 +94,7 @@ public class ModelLoaderRegistryDebug
         @Override
         public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
         {
-            return ((IExtendedBlockState)this.state.getBaseState()).withProperty(B3DLoader.B3DFrameProperty.instance, new B3DLoader.B3DFrame(counter));
+            return ((IExtendedBlockState)this.state.getBaseState()).withProperty(B3DLoader.B3DFrameProperty.instance, new B3DLoader.B3DState(counter));
         }
 
         @Override
@@ -143,13 +141,12 @@ public class ModelLoaderRegistryDebug
                 return Collections.singletonList(dummyTexture);
             }
 
-            public IFlexibleBakedModel bake(IModelTransformation transformation, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> textures)
+            public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> textures)
             {
-                // transformation is ignored for this example
                 return new DummyBakedModel(textures.apply(dummyTexture));
             }
 
-            public IModelTransformation getDefaultTransformation()
+            public IModelState getDefaultState()
             {
                 return ModelRotation.X0_Y0;
             }
@@ -206,11 +203,6 @@ public class ModelLoaderRegistryDebug
             public ItemCameraTransforms getItemCameraTransforms()
             {
                 return ItemCameraTransforms.DEFAULT;
-            }
-
-            public ICameraTransformations getCameraTransforms()
-            {
-                return getItemCameraTransforms();
             }
 
             public VertexFormat getFormat()

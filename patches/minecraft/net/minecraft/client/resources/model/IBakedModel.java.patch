@@ -5,7 +5,7 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  
 +/*
-+ * @deprecated use {@link net.minecraftforge.client.model.IFlexibleBakedModel}
++ * @deprecated use {@link net.minecraftforge.client.model.IFlexibleBakedModel}, {@link net.minecraftforge.client.model.IPerspectiveAwareModel}
 + */
  @SideOnly(Side.CLIENT)
 +@Deprecated
