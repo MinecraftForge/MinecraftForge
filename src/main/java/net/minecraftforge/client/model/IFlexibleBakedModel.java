@@ -14,8 +14,9 @@ import net.minecraft.util.EnumFacing;
  */
 public interface IFlexibleBakedModel extends IBakedModel {
 
-    ICameraTransformations getCameraTransforms();
-
+    // non-erased versions of the methods
+    List<BakedQuad> getFaceQuads(EnumFacing side);
+    List<BakedQuad> getGeneralQuads();
     /*
      * Specifies the format which BakedQuads' getVertexData will have.
      */
@@ -32,11 +33,13 @@ public interface IFlexibleBakedModel extends IBakedModel {
             this.format = format;
         }
 
+        @SuppressWarnings("unchecked")
         public List<BakedQuad> getFaceQuads(EnumFacing side)
         {
             return parent.getFaceQuads(side);
         }
 
+        @SuppressWarnings("unchecked")
         public List<BakedQuad> getGeneralQuads()
         {
             return parent.getGeneralQuads();
@@ -64,11 +67,6 @@ public interface IFlexibleBakedModel extends IBakedModel {
 
         @Deprecated
         public ItemCameraTransforms getItemCameraTransforms()
-        {
-            return parent.getItemCameraTransforms();
-        }
-
-        public ICameraTransformations getCameraTransforms()
         {
             return parent.getItemCameraTransforms();
         }

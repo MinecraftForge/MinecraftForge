@@ -8,15 +8,14 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector2f;
@@ -29,33 +28,28 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableTable;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Table;
-
-import scala.actors.threadpool.Arrays;
 
 public class B3DModel {
     private static final Logger logger = LogManager.getLogger(B3DModel.class);
     private final List<Texture> textures;
     private final List<Brush> brushes;
-    private final Node<?> node;
+    private final Node<?> root;
+    private final ImmutableMap<String, Node<Mesh>> meshes;
 
-    public B3DModel(List<Texture> textures, List<Brush> brushes, Node<?> node)
+    public B3DModel(List<Texture> textures, List<Brush> brushes, Node<?> root, ImmutableMap<String, Node<Mesh>> meshes)
     {
         this.textures = textures;
         this.brushes = brushes;
-        this.node = node;
+        this.root = root;
+        this.meshes = meshes;
     }
 
     public static Matrix4f combine(Vector3f pos, Vector3f scale, Quat4f rot)
@@ -163,6 +157,8 @@ public class B3DModel {
             return vertices.get(vertex);
         }
 
+        private final ImmutableMap.Builder<String, Node<Mesh>> meshes = ImmutableMap.builder();
+
         private void readHeader() throws IOException
         {
             buf.get(tag);
@@ -216,17 +212,17 @@ public class B3DModel {
                 logger.warn(String.format("Minor version differnce in model: ", ((float)version / 100)));
             List<Texture> textures = null;
             List<Brush> brushes = null;
-            Node<?> node = null;
+            Node<?> root = null;
             while(buf.hasRemaining())
             {
                 readHeader();
                 if     (isChunk("TEXS")) textures = texs();
                 else if(isChunk("BRUS")) brushes = brus();
-                else if(isChunk("NODE")) node = node();
+                else if(isChunk("NODE")) root = node();
                 else skip();
             }
             popLimit();
-            return new B3DModel(textures, brushes, node);
+            return new B3DModel(textures, brushes, root, meshes.build());
         }
 
         private List<Texture> texs() throws IOException
@@ -451,7 +447,12 @@ public class B3DModel {
             popLimit();
             Table<Integer, Optional<Node<?>>, Key> keyData = animations.pop();
             Node<?> node;
-            if(mesh != null) node = Node.create(name, pos, scale, rot, nodes, new Mesh(mesh));
+            if(mesh != null)
+            {
+                Node<Mesh> mNode = Node.create(name, pos, scale, rot, nodes, new Mesh(mesh));
+                meshes.put(name, mNode);
+                node = mNode;
+            }
             else if(bone != null) node = Node.create(name, pos, scale, rot, nodes, new Bone(bone));
             else node = Node.create(name, pos, scale, rot, nodes, new Pivot());
             if(animData == null)
@@ -496,9 +497,14 @@ public class B3DModel {
         return brushes;
     }
 
-    public Node<?> getNode()
+    public Node<?> getRoot()
     {
-        return node;
+        return root;
+    }
+
+    public ImmutableMap<String, Node<Mesh>> getMeshes()
+    {
+        return meshes;
     }
 
     public static class Texture
@@ -788,6 +794,11 @@ public class B3DModel {
         public Quat4f getRot()
         {
             return rot;
+        }
+
+        public Matrix4f getMatrix()
+        {
+            return combine(pos, scale, rot);
         }
 
         @Override
@@ -1121,13 +1132,6 @@ public class B3DModel {
         public String toString()
         {
             return String.format("Bone [data=%s]", data);
-        }*/
-
-        /*public Mesh getParentMesh()
-        {
-            INode res = pivot.getParent();
-            while(res != null && !(res instanceof Mesh)) res = res.getParent();
-            return (Mesh)res;
         }*/
 
         public void setParent(Node<Bone> parent)

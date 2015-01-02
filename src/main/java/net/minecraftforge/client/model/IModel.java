@@ -28,10 +28,10 @@ public interface IModel
      * represented by List<BakedQuad> internally).
      * Returned model's getFormat() can me less specific than the passed format argument (some attributes can be replaced with padding), if there's no such info in this model.
      */
-    IFlexibleBakedModel bake(IModelTransformation transformation, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter);
+    IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter);
 
     /*
-     * returns the default transformation this model should be baked/renderer with
+     * Default state this model will be baked with
      */
-    IModelTransformation getDefaultTransformation();
+    IModelState getDefaultState();
 }

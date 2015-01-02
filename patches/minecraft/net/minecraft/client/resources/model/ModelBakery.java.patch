@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/resources/model/ModelBakery.java
++++ ../src-work/minecraft/net/minecraft/client/resources/model/ModelBakery.java
+@@ -123,7 +123,7 @@
+                 }
+                 catch (Exception exception)
+                 {
+-                    field_177603_c.warn("Unable to load variant: " + modelresourcelocation.func_177518_c() + " from " + modelresourcelocation);
++                    field_177603_c.warn("Unable to load variant: " + modelresourcelocation.func_177518_c() + " from " + modelresourcelocation, exception);
+                 }
+             }
+             catch (Exception exception1)

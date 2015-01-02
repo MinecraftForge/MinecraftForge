@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
 import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition;
+import net.minecraft.client.renderer.block.model.ModelBlockDefinition.MissingVariantException;
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition.Variant;
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition.Variants;
 import net.minecraft.client.renderer.texture.IIconCreator;
@@ -42,6 +43,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 
 public class ModelLoader extends ModelBakery
 {
@@ -63,6 +65,7 @@ public class ModelLoader extends ModelBakery
     {
         loadBlocks();
         loadItems();
+        stateModels.put(MODEL_MISSING, getModel(new ResourceLocation(MODEL_MISSING.getResourceDomain(), MODEL_MISSING.getResourcePath())));
         textures.remove(TextureMap.LOCATION_MISSING_TEXTURE);
         textures.addAll(LOCATIONS_BUILTIN_TEXTURES);
         textureMap.loadSprites(resourceManager, new IIconCreator()
@@ -79,7 +82,7 @@ public class ModelLoader extends ModelBakery
         Function<ResourceLocation, TextureAtlasSprite> textureGetter = Functions.forMap(sprites, textureMap.getMissingSprite());
         for(Entry<ModelResourceLocation, IModel> e : stateModels.entrySet())
         {
-            bakedRegistry.putObject(e.getKey(), e.getValue().bake(e.getValue().getDefaultTransformation(), Attributes.DEFAULT_BAKED_FORMAT, textureGetter));
+            bakedRegistry.putObject(e.getKey(), e.getValue().bake(e.getValue().getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT, textureGetter));
         }
         return bakedRegistry;
     }
@@ -93,10 +96,28 @@ public class ModelLoader extends ModelBakery
     @Override
     protected void registerVariant(ModelBlockDefinition definition, ModelResourceLocation location)
     {
-        Variants variants = definition.getVariants(location.getVariant());
+        Variants variants = null;
+        try
+        {
+            variants = definition.getVariants(location.getVariant());
+        }
+        catch(MissingVariantException e) {}
+        if(variants == null)
+        {
+            // adding default variant for simple blocks
+            ResourceLocation loc = new ResourceLocation(location.getResourceDomain(), location.getResourcePath());
+            variants = new Variants("normal", Lists.newArrayList(new Variant(loc, ModelRotation.X0_Y0, false, 1)));
+        }
         if(!variants.getVariants().isEmpty())
         {
-            stateModels.put(location, new WeightedRandomModel(variants));
+            try
+            {
+                stateModels.put(location, new WeightedRandomModel(variants));
+            }
+            catch(Throwable e)
+            {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -144,11 +165,11 @@ public class ModelLoader extends ModelBakery
         loadingModels.remove(location);
     }
 
-    private IBakedModel bakeModel(ModelBlock model, IModelTransformation transformation, boolean uvLocked)
+    private IBakedModel bakeModel(ModelBlock model, IModelState state, boolean uvLocked)
     {
-        if(!(transformation instanceof ModelRotation))
+        if(!(state instanceof ModelRotation))
             throw new UnsupportedOperationException("can only bake vanilla models with vanilla transformations");
-        return bakeModel(model, (ModelRotation)transformation, uvLocked);
+        return bakeModel(model, (ModelRotation)state, uvLocked);
     }
 
     private class VanillaModelWrapper implements IModel {
@@ -216,7 +237,7 @@ public class ModelLoader extends ModelBakery
             return builder.build();
         }
 
-        public IFlexibleBakedModel bake(IModelTransformation transformation, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+        public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
             if(!Attributes.moreSpecific(format, Attributes.DEFAULT_BAKED_FORMAT))
             {
@@ -225,11 +246,10 @@ public class ModelLoader extends ModelBakery
             ModelBlock model = this.model;
             if(hasItemModel(model)) model = makeItemModel(model);
             if(isCustomRenderer(model)) return new IFlexibleBakedModel.Wrapper(new BuiltInModel(new ItemCameraTransforms(model.getThirdPersonTransform(), model.getFirstPersonTransform(), model.getHeadTransform(), model.getInGuiTransform())), Attributes.DEFAULT_BAKED_FORMAT);
-            return new IFlexibleBakedModel.Wrapper(bakeModel(model, transformation, uvLocked.contains(location)), Attributes.DEFAULT_BAKED_FORMAT);
+            return new IFlexibleBakedModel.Wrapper(bakeModel(model, state, uvLocked.contains(location)), Attributes.DEFAULT_BAKED_FORMAT);
         }
 
-        @Override
-        public IModelTransformation getDefaultTransformation()
+        public IModelState getDefaultState()
         {
             return ModelRotation.X0_Y0;
         }
@@ -259,15 +279,16 @@ public class ModelLoader extends ModelBakery
 
         public Collection<ResourceLocation> getTextures()
         {
-            ImmutableSet.Builder<ResourceLocation> builder = ImmutableSet.builder();
+            /*ImmutableSet.Builder<ResourceLocation> builder = ImmutableSet.builder();
             for(ResourceLocation loc : locations)
             {
                 builder.addAll(getModel(loc).getTextures());
             }
-            return builder.build();
+            return builder.build();*/
+            return Collections.emptyList();
         }
 
-        public IFlexibleBakedModel bake(IModelTransformation transformation, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+        public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
             if(!Attributes.moreSpecific(format, Attributes.DEFAULT_BAKED_FORMAT))
             {
@@ -277,18 +298,18 @@ public class ModelLoader extends ModelBakery
             {
                 Variant v = variants.get(0);
                 IModel model = getModel(v.getModelLocation());
-                return model.bake(v.getRotation(), format, bakedTextureGetter);
+                return model.bake(state.compose(v.getRotation()), format, bakedTextureGetter);
             }
             WeightedBakedModel.Builder builder = new WeightedBakedModel.Builder();
             for(Variant v : variants)
             {
                 IModel model = getModel(v.getModelLocation());
-                builder.add(model.bake(v.getRotation(), format, bakedTextureGetter), v.getWeight());
+                builder.add(model.bake(state.compose(v.getRotation()), format, bakedTextureGetter), v.getWeight());
             }
             return new IFlexibleBakedModel.Wrapper(builder.build(), Attributes.DEFAULT_BAKED_FORMAT);
         }
 
-        public IModelTransformation getDefaultTransformation()
+        public IModelState getDefaultState()
         {
             return ModelRotation.X0_Y0;
         }

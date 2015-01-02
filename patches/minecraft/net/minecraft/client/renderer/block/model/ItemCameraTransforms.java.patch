@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ItemCameraTransforms.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ItemCameraTransforms.java
-@@ -8,9 +8,18 @@
+@@ -8,7 +8,11 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
@@ -8,15 +8,7 @@
 + * @deprecated use {@link net.minecraftforge.client.model.ICameraTransformations} instead
 + */
  @SideOnly(Side.CLIENT)
--public class ItemCameraTransforms
 +@Deprecated
-+public class ItemCameraTransforms implements net.minecraftforge.client.model.ICameraTransformations
+ public class ItemCameraTransforms
  {
-+    public net.minecraftforge.client.model.ISimpleModelTransformation getThirdPerson() { return field_178355_b; }
-+    public net.minecraftforge.client.model.ISimpleModelTransformation getFirstPerson() { return field_178356_c; }
-+    public net.minecraftforge.client.model.ISimpleModelTransformation getHead() { return field_178353_d; }
-+    public net.minecraftforge.client.model.ISimpleModelTransformation getGui() { return field_178354_e; }
-+
      public static final ItemCameraTransforms field_178357_a = new ItemCameraTransforms(ItemTransformVec3f.field_178366_a, ItemTransformVec3f.field_178366_a, ItemTransformVec3f.field_178366_a, ItemTransformVec3f.field_178366_a);
-     public final ItemTransformVec3f field_178355_b;
-     public final ItemTransformVec3f field_178356_c;
