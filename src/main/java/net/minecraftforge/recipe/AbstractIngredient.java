@@ -1,5 +1,10 @@
 package net.minecraftforge.recipe;
 
+/**
+ * This class represents ingredients used in recipes
+ * 
+ * @author Nephroid
+ */
 public abstract class AbstractIngredient implements Comparable
 {
     public abstract boolean fulfilled(AbstractIngredient other);

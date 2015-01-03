@@ -2,26 +2,42 @@ package net.minecraftforge.recipe;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+/**
+ * This class stores all of the recipes for a particular machine. Recipes are stored
+ * in the prefix trees, shapedTrie and shapelessTrie.
+ * 
+ * Recipe lookup is using a filtered depth first search. For better effieciency, order
+ * the crafting ingredients in a way such that more recipes are filtered out early on.
+ * For example, an ingredient that represents an item should come before an ingredient
+ * that represents an amount of energy, since knowing the former can filter out a lot
+ * more recipes than knowing the latter. Filtering more recipes early on reduces the
+ * number of recursive calls that the depth first search has to make.
+ * 
+ * Reverse recipe lookup is done using reverse lookup tables, shapedReverseLookupTable
+ * and shapelessReverseLookupTable.
+ * 
+ * @author Nephroid
+ */
 public class RecipeHandler
 {
     private IRecipeMachine machineInstance;
     private RecipeNode shapedTrie;
     private RecipeNode shapelessTrie;
-    private Hashtable<Item, ArrayList<AbstractIngredient[]>> shapedReverseLookupTable;
-    private Hashtable<Item, ArrayList<AbstractIngredient[]>> shapelessReverseLookupTable;
+    private HashMap<Item, ArrayList<AbstractIngredient[]>> shapedReverseLookupTable;
+    private HashMap<Item, ArrayList<AbstractIngredient[]>> shapelessReverseLookupTable;
 
     public RecipeHandler(IRecipeMachine machineInstance)
     {
         this.machineInstance = machineInstance;
         shapedTrie = new RecipeNode(null);
         shapelessTrie = new RecipeNode(null);
-        shapedReverseLookupTable = new Hashtable<Item, ArrayList<AbstractIngredient[]>>();
-        shapelessReverseLookupTable = new Hashtable<Item, ArrayList<AbstractIngredient[]>>();
+        shapedReverseLookupTable = new HashMap<Item, ArrayList<AbstractIngredient[]>>();
+        shapelessReverseLookupTable = new HashMap<Item, ArrayList<AbstractIngredient[]>>();
     }
 
     public ArrayList<AbstractIngredient[]> lookupShapedRecipes(Item i)
@@ -104,7 +120,7 @@ public class RecipeHandler
         if (currentNode.setResult(result)) System.out.printf("[WARNING] New result (%s) has overwritten a previous recipe result!\n", result);
     }
 
-    private void addReverseLookup(Hashtable<Item, ArrayList<AbstractIngredient[]>> reverseLookupTable, AbstractIngredient[] ingredientList, ItemStack result)
+    private void addReverseLookup(HashMap<Item, ArrayList<AbstractIngredient[]>> reverseLookupTable, AbstractIngredient[] ingredientList, ItemStack result)
     {
         Item resultItem = result.getItem();
         if (reverseLookupTable.containsKey(resultItem)) 
@@ -119,7 +135,10 @@ public class RecipeHandler
             reverseLookupTable.put(resultItem, newRecipeList);
         }
     }
-
+    
+    /**
+     * This internal class represents the prefix tree structure.
+     */
     private class RecipeNode
     {
         private ArrayList<RecipeNode> possibleNextIngredients;
@@ -134,8 +153,6 @@ public class RecipeHandler
 
         public boolean fulfilled(AbstractIngredient other)
         {
-            if (!ingredient.getClass().equals(other.getClass()))
-                return false;
             return ingredient.fulfilled(other);
         }
 
