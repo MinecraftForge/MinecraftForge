@@ -12,6 +12,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -36,6 +37,7 @@ import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.ModelPreRegisterEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -460,5 +462,10 @@ public class ForgeHooksClient
     public static void onModelBake(ModelManager modelManager, IRegistry modelRegistry, ModelBakery modelBakery)
     {
         MinecraftForge.EVENT_BUS.post(new ModelBakeEvent(modelManager, modelRegistry, modelBakery));
+    }
+    
+    public static void onModelRegister(ModelManager modelManager, ModelBakery modelbakery, TextureMap blockTextureMap, BlockModelShapes blockModelShapes)
+    {
+        MinecraftForge.EVENT_BUS.post(new ModelPreRegisterEvent(modelManager, modelbakery, blockTextureMap, blockModelShapes));
     }
 }

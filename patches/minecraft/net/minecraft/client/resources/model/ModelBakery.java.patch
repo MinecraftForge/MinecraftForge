@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/client/resources/model/ModelBakery.java
++++ ../src-work/minecraft/net/minecraft/client/resources/model/ModelBakery.java
+@@ -800,7 +800,17 @@
+     {
+         return this.field_177608_m.func_178392_a(this.field_177609_j, p_177582_1_);
+     }
++    
++    /* ======================================== FORGE START =====================================*/
++    public void registerModelDefinition(ResourceLocation location, ModelBlockDefinition definition){
++        this.field_177614_t.put(location, definition);
++    }
+ 
++    public void registerModelBlock(ResourceLocation location, ModelBlock modelBlock) {
++        this.field_177611_h.put(location, modelBlock);
++    }
++    /* ========================================= FORGE END ======================================*/
++
+     static
+     {
+         field_177600_d.put("missing", "{ \"textures\": {   \"particle\": \"missingno\",   \"missingno\": \"missingno\"}, \"elements\": [ {     \"from\": [ 0, 0, 0 ],     \"to\": [ 16, 16, 16 ],     \"faces\": {         \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"cullface\": \"down\", \"texture\": \"#missingno\" },         \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"cullface\": \"up\", \"texture\": \"#missingno\" },         \"north\": { \"uv\": [ 0, 0, 16, 16 ], \"cullface\": \"north\", \"texture\": \"#missingno\" },         \"south\": { \"uv\": [ 0, 0, 16, 16 ], \"cullface\": \"south\", \"texture\": \"#missingno\" },         \"west\":  { \"uv\": [ 0, 0, 16, 16 ], \"cullface\": \"west\", \"texture\": \"#missingno\" },         \"east\":  { \"uv\": [ 0, 0, 16, 16 ], \"cullface\": \"east\", \"texture\": \"#missingno\" }    }}]}");
