@@ -75,7 +75,17 @@
                  {
                      TileEntityRendererDispatcher.field_147556_a.func_180546_a(tileentity, p_180446_3_, destroyblockprogress.func_73106_e());
                  }
-@@ -1151,6 +1163,12 @@
+@@ -1016,7 +1028,9 @@
+         }
+ 
+         this.field_72777_q.field_71424_I.func_76318_c("render_" + p_174977_1_);
++        net.minecraftforge.client.ForgeHooksClient.onPreRenderWorldLayer(this, this.field_72755_R, this.field_174996_N, p_174977_1_, p_174977_2_, p_174977_4_, p_174977_5_);
+         this.func_174982_a(p_174977_1_);
++        net.minecraftforge.client.ForgeHooksClient.onPostRenderWorldLayer(this, this.field_72755_R, this.field_174996_N, p_174977_1_, p_174977_2_, p_174977_4_, p_174977_5_);
+         this.field_72777_q.field_71424_I.func_76319_b();
+         return i1;
+     }
+@@ -1151,6 +1165,12 @@
  
      public void func_174976_a(float p_174976_1_, int p_174976_2_)
      {
@@ -88,7 +98,7 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_177502_q() == 1)
          {
              this.func_180448_r();
-@@ -1381,6 +1399,12 @@
+@@ -1381,6 +1401,12 @@
  
      public void func_180447_b(float p_180447_1_, int p_180447_2_)
      {
@@ -101,7 +111,7 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d())
          {
              if (this.field_72777_q.field_71474_y.field_74347_j)
-@@ -1805,8 +1829,11 @@
+@@ -1805,8 +1831,11 @@
                  double d4 = (double)blockpos.func_177956_o() - d1;
                  double d5 = (double)blockpos.func_177952_p() - d2;
                  Block block = this.field_72769_h.func_180495_p(blockpos).func_177230_c();
@@ -114,7 +124,7 @@
                  {
                      if (d3 * d3 + d4 * d4 + d5 * d5 > 1024.0D)
                      {
-@@ -1949,13 +1976,16 @@
+@@ -1949,13 +1978,16 @@
          if (p_174961_1_ != null)
          {
              ItemRecord itemrecord = ItemRecord.func_150926_b(p_174961_1_);
