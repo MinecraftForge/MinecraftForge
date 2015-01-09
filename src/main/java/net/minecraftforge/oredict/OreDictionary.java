@@ -423,7 +423,6 @@ public class OreDictionary
      * Raises the registerOre function in all registered handlers.
      *
      * @param name The name of the ore
-     * @param id The ID of the ore
      * @param ore The ore's ItemStack
      */
     private static void registerOreImpl(String name, ItemStack ore)
