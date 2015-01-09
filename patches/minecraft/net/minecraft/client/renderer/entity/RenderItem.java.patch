@@ -15,7 +15,7 @@
              }
 +            else
 +            {
-+                modelresourcelocation = item.getModel(p_175049_1_, entityplayer, p_175049_1_.func_77988_m() - entityplayer.func_71052_bv());
++                modelresourcelocation = item.getModel(p_175049_1_, entityplayer, entityplayer.func_71052_bv());
 +            }
  
              if (modelresourcelocation != null)
