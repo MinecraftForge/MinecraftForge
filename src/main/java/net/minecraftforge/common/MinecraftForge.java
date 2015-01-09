@@ -46,11 +46,6 @@ public class MinecraftForge
 
        OreDictionary.getOreName(0);
 
-       if (!ForgeModContainer.disableVersionCheck)
-       {
-           ForgeVersion.startVersionCheck();
-       }
-
        //Force these classes to be defined, Should prevent derp error hiding.
        new CrashReport("ThisIsFake", new Exception("Not real"));
        
