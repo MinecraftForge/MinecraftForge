@@ -223,7 +223,8 @@ public class DimensionManager
         MinecraftServer.getServer().worldServers = tmp.toArray(new WorldServer[tmp.size()]);
     }
 
-    public static void initDimension(int dim) {
+    public static void initDimension(int dim)
+    {
         WorldServer overworld = getWorld(0);
         if (overworld == null)
         {
@@ -242,7 +243,7 @@ public class DimensionManager
         ISaveHandler savehandler = overworld.getSaveHandler();
         WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
 
-        WorldServer world = (dim == 0 ? overworld : new WorldServerMulti(mcServer, savehandler, dim, overworld, mcServer.theProfiler));
+        WorldServer world = (dim == 0 ? overworld : (WorldServer)(new WorldServerMulti(mcServer, savehandler, dim, overworld, mcServer.theProfiler).init()));
         world.addWorldAccess(new WorldManager(mcServer, world));
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
         if (!mcServer.isSinglePlayer())
