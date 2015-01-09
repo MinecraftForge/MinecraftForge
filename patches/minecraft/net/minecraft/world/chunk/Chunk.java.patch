@@ -229,7 +229,7 @@
          while (iterator.hasNext())
          {
              TileEntity tileentity = (TileEntity)iterator.next();
-+            if (tileentity.func_145838_q() != func_177428_a(tileentity.func_174877_v()) || tileentity.func_145832_p() != func_177418_c(tileentity.func_174877_v()))
++            if (tileentity.shouldRefresh(this.field_76637_e, tileentity.func_174877_v(), tileentity.func_145838_q().func_176203_a(tileentity.func_145832_p()), func_177435_g(tileentity.func_174877_v())))
 +                invalidList.add(tileentity);
              tileentity.func_145836_u();
          }
