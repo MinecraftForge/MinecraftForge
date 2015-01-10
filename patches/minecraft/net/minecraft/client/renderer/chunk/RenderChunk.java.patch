@@ -9,3 +9,22 @@
                  {
                      TileEntity tileentity = regionrendercache.func_175625_s(new BlockPos(mutableblockpos));
  
+@@ -160,7 +160,9 @@
+                     }
+                 }
+ 
+-                EnumWorldBlockLayer enumworldblocklayer1 = block.func_180664_k();
++                for(EnumWorldBlockLayer enumworldblocklayer1 : EnumWorldBlockLayer.values()) {
++                    if(!block.canRenderInLayer(enumworldblocklayer1)) continue;
++                    net.minecraftforge.client.ForgeHooksClient.setRenderLayer(enumworldblocklayer1);
+                 int i = enumworldblocklayer1.ordinal();
+ 
+                 if (block.func_149645_b() != -1)
+@@ -178,6 +180,7 @@
+                         compiledchunk.func_178486_a(enumworldblocklayer1);
+                     }
+                 }
++                }
+             }
+ 
+             EnumWorldBlockLayer[] aenumworldblocklayer = EnumWorldBlockLayer.values();
