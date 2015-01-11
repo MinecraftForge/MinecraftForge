@@ -11,7 +11,7 @@
  import net.minecraft.world.World;
  
  import org.apache.logging.log4j.Level;
-@@ -278,4 +281,93 @@
+@@ -278,4 +281,100 @@
          func_145826_a(TileEntityComparator.class, "Comparator");
          func_145826_a(TileEntityFlowerPot.class, "FlowerPot");
      }
@@ -63,7 +63,14 @@
 +     */
 +    public boolean shouldRefresh(Block oldBlock, Block newBlock, int oldMeta, int newMeta, World world, int x, int y, int z)
 +    {
-+        return !isVanilla || (oldBlock != newBlock);
++        if (isVanilla)
++        {
++            return oldBlock != newBlock;
++        } 
++        else
++        {
++            return oldBlock != newBlock || oldMeta != newMeta;
++        }
 +    }
 +
 +    public boolean shouldRenderInPass(int pass)
