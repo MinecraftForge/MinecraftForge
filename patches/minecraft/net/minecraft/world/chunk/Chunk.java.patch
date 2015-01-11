@@ -258,7 +258,7 @@
 +            int y = tileentity.field_145848_d;
 +            int z = tileentity.field_145849_e & 15;
 +            Block block = tileentity.func_145838_q();
-+            if (tileentity.shouldRefresh(block, func_150810_a(x, y, z), tileentity.field_145847_g, this.func_76628_c(x, y, z), field_76637_e, x, y, z))
++            if ((block != func_150810_a(x, y, z) || tileentity.field_145847_g != this.func_76628_c(x, y, z)) && tileentity.shouldRefresh(block, func_150810_a(x, y, z), tileentity.field_145847_g, this.func_76628_c(x, y, z), field_76637_e, x, y, z))
 +            {
 +                invalidList.add(tileentity);
 +            }
