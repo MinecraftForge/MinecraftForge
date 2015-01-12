@@ -28,6 +28,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableList;
@@ -38,7 +39,7 @@ import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
 
 public class B3DModel {
-    private static final Logger logger = LogManager.getLogger(B3DModel.class);
+    static final Logger logger = LogManager.getLogger(B3DModel.class);
     private final List<Texture> textures;
     private final List<Brush> brushes;
     private final Node<?> root;
@@ -52,31 +53,6 @@ public class B3DModel {
         this.meshes = meshes;
     }
 
-    public static Matrix4f combine(Vector3f pos, Vector3f scale, Quat4f rot)
-    {
-        Matrix4f ret = new Matrix4f();
-        ret.setIdentity();
-        //logger.info("combine1\n" + ret);
-        if(pos != null) ret.setTranslation(pos);
-        if(rot != null)
-        {
-            Matrix4f tmp = new Matrix4f();
-            tmp.set(rot);
-            ret.mul(tmp);
-            //logger.info("combine3 " + rot + "\n" + ret + "\n" + tmp);
-        }
-        if(scale != null)
-        {
-            Matrix4f tmp = new Matrix4f();
-            tmp.setIdentity();
-            tmp.m00 = scale.x;
-            tmp.m11 = scale.y;
-            tmp.m22 = scale.z;
-            ret.mul(tmp);
-            //logger.info("combine2" + scale + "\n" + ret + "\n" + tmp);
-        }
-        return ret;
-    }
     public static class Parser
     {
         private static final int version = 0001;
@@ -231,16 +207,16 @@ public class B3DModel {
             List<Texture> ret = new ArrayList<Texture>();
             while(buf.hasRemaining())
             {
-                logger.info("TEST");
+                logger.debug("TEST");
                 String path = readString();
-                logger.info("path: '" + path + "'");
+                logger.debug("path: '" + path + "'");
                 int flags = buf.getInt();
                 int blend = buf.getInt();
                 Vector2f pos = new Vector2f(buf.getFloat(), buf.getFloat());
                 Vector2f scale = new Vector2f(buf.getFloat(), buf.getFloat());
                 float rot = buf.getFloat();
                 ret.add(new Texture(path, flags, blend, pos, scale, rot));
-                logger.info("TEX: '" + path + "' " + flags + " " + blend + " " + pos + " " + scale + " " + rot);
+                logger.debug("TEX: '" + path + "' " + flags + " " + blend + " " + pos + " " + scale + " " + rot);
             }
             popLimit();
             this.textures.addAll(ret);
@@ -383,7 +359,7 @@ public class B3DModel {
                     rot = readQuat();
                 }
                 Key key = new Key(pos, scale, rot);
-                //logger.info("Key: " + frame + " " + key);
+                //logger.debug("Key: " + frame + " " + key);
                 Key oldKey = animations.peek().get(frame, null);
                 if(oldKey != null)
                 {
@@ -459,7 +435,7 @@ public class B3DModel {
             {
                 for(Table.Cell<Integer, Optional<Node<?>>, Key> key : keyData.cellSet())
                 {
-                    logger.info("KEY1: " + key + " " + node);
+                    logger.debug("KEY1: " + key + " " + node);
                     animations.peek().put(key.getRowKey(), key.getColumnKey().or(Optional.of(node)), key.getValue());
                 }
             }
@@ -633,7 +609,7 @@ public class B3DModel {
             this.texCoords = texCoords;
         }
 
-        public Vertex bake(Mesh mesh, int key)
+        public Vertex bake(Mesh mesh, Function<Node<?>, Matrix4f> animator)
         {
             // geometry
             Float totalWeight = 0f;
@@ -647,16 +623,16 @@ public class B3DModel {
                 for(Pair<Float, Node<Bone>> bone : mesh.getWeightMap().get(this))
                 {
                     totalWeight += bone.getLeft();
-                    Matrix4f bm = bone.getRight().getMatrix(key);
-                    logger.info("w:" + totalWeight + " bone: " + bone.getRight().getName() + " bm: \n" + bm);
+                    Matrix4f bm = animator.apply(bone.getRight());
+                    logger.debug("w:" + totalWeight + " bone: " + bone.getRight().getName() + " bm: \n" + bm);
                     bm.mul(bone.getLeft());
                     t.add(bm);
-                    logger.info("t: \n" + t);
+                    logger.debug("t: \n" + t);
                 }
                 if(totalWeight != 0) t.mul(1f / totalWeight);
             }
 
-            logger.info("t: \n" + t);
+            logger.debug("t: \n" + t);
 
             // pos
             Vector4f pos = new Vector4f(this.pos), newPos = new Vector4f();
@@ -796,11 +772,6 @@ public class B3DModel {
             return rot;
         }
 
-        public Matrix4f getMatrix()
-        {
-            return combine(pos, scale, rot);
-        }
-
         @Override
         public String toString()
         {
@@ -889,7 +860,7 @@ public class B3DModel {
 
         public void setAnimation(Animation animation)
         {
-            logger.info("setAnimation " + animation + " " + this);
+            logger.debug("setAnimation " + animation + " " + this);
             this.animation = animation;
             Deque<Node<?>> q = new ArrayDeque<Node<?>>(nodes.values());
 
@@ -907,7 +878,7 @@ public class B3DModel {
             ImmutableTable.Builder<Integer, Node<?>, Key> builder = ImmutableTable.builder();
             for(Table.Cell<Integer, Optional<Node<?>>, Key> key : keyData.cellSet())
             {
-                //System.out.println("KEY2: " + key + " " + this);
+                //logger.debug("KEY2: " + key + " " + this);
                 builder.put(key.getRowKey(), key.getColumnKey().or(this), key.getValue());
             }
             setAnimation(new Animation(animData.getLeft(), animData.getMiddle(), animData.getRight(), builder.build()));
@@ -973,42 +944,6 @@ public class B3DModel {
         {
             return String.format("Node [name=%s, kind=%s, pos=%s, scale=%s, rot=%s, keys=..., nodes=..., animation=%s]", name, kind, pos, scale, rot, animation);
         }
-
-        private static Table<Node<?>, Integer, Matrix4f> cache = HashBasedTable.create();
-
-        public Matrix4f getMatrix(int keyIdx)
-        {
-            if(cache.contains(this, keyIdx))
-            {
-                return new Matrix4f(cache.get(this, keyIdx));
-            }
-            Matrix4f ret = new Matrix4f();
-            ret.setIdentity();
-            Matrix4f pm = null;
-            if(parent != null) pm = parent.getMatrix(keyIdx);
-            if(pm != null)
-            {
-                ret.mul(pm);
-            }
-            if(animation != null)
-            {
-                Key key = animation.getKeys().get(keyIdx, this);
-                if(key == null) logger.error("invalid key index: " + keyIdx);
-                else
-                {
-                    ret.mul(combine(key.getPos(), key.getScale(), key.getRot()));
-                    Matrix4f rm = combine(pos, scale, rot);
-                    rm.invert();
-                    ret.mul(rm);
-                    logger.info(String.format("getMatrix: %s %s\n%s %s %s\n%s %s %s\n%s", keyIdx, this, pos, scale, rot, key.getPos(), key.getScale(), key.getRot(), ret));
-                }
-            }
-            else logger.info(String.format("getMatrix: %s %s\n%s %s %s\n%s", keyIdx, this, pos, scale, rot, ret));
-            //if(pm != null) ret.mul(pm);
-            //logger.info("keys size: " + pivot.getKeys().size());
-            cache.put(this, keyIdx, new Matrix4f(ret));
-            return ret;
-        }
     }
 
     public static class Pivot implements IKind<Pivot>
@@ -1047,14 +982,14 @@ public class B3DModel {
             return weightMap;
         }
 
-        public ImmutableList<Face> bake(int key)
+        public ImmutableList<Face> bake(Function<Node<?>, Matrix4f> animator)
         {
             ImmutableList.Builder<Face> builder = ImmutableList.builder();
             for(Face f : getFaces())
             {
-                Vertex v1 = f.getV1().bake(this, key);
-                Vertex v2 = f.getV2().bake(this, key);
-                Vertex v3 = f.getV3().bake(this, key);
+                Vertex v1 = f.getV1().bake(this, animator);
+                Vertex v2 = f.getV2().bake(this, animator);
+                Vertex v3 = f.getV3().bake(this, animator);
                 builder.add(new Face(v1, v2, v3, f.getBrush()));
             }
             return builder.build();
@@ -1101,7 +1036,7 @@ public class B3DModel {
                 for(Pair<Vertex, Float> b : bone.getKind().getData())
                 {
                     builder.put(b.getLeft(), Pair.of(b.getRight(), bone));
-                    logger.info("Weight: " + b.getRight() + " " + bone.getName() + " " + b.getLeft().getPos());
+                    logger.debug("Weight: " + b.getRight() + " " + bone.getName() + " " + b.getLeft().getPos());
                 }
             }
             weightMap = builder.build();

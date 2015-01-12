@@ -5,7 +5,7 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  
 +/*
-+ * @deprecated use {@link net.minecraftforge.client.model.ICameraTransformations} instead
++ * @deprecated use {@link net.minecraftforge.client.model.IPerspectiveAwareModel} instead
 + */
  @SideOnly(Side.CLIENT)
 +@Deprecated

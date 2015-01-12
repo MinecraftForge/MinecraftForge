@@ -31,6 +31,7 @@ import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.IModelState;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.b3d.B3DLoader;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -94,7 +95,10 @@ public class ModelLoaderRegistryDebug
         @Override
         public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
         {
-            return ((IExtendedBlockState)this.state.getBaseState()).withProperty(B3DLoader.B3DFrameProperty.instance, new B3DLoader.B3DState(counter));
+            IModel model = ModelLoaderRegistry.getModel(new ResourceLocation(MODID.toLowerCase(),"block/untitled2.b3d"));
+            B3DLoader.B3DState defaultState = ((B3DLoader.Wrapper)model).getDefaultState();
+            B3DLoader.B3DState newState = new B3DLoader.B3DState(defaultState.getAnimation(), counter);
+            return ((IExtendedBlockState)this.state.getBaseState()).withProperty(B3DLoader.B3DFrameProperty.instance, newState);
         }
 
         @Override
