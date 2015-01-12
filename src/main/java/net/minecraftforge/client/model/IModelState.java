@@ -2,16 +2,15 @@ package net.minecraftforge.client.model;
 
 import javax.vecmath.Matrix4f;
 
+import com.google.common.base.Function;
+
 /*
  * generic model-specific transformation - for example, animation states can be represented by it
  */
-public interface IModelState {
+public interface IModelState extends Function<IModelPart, TRSRTransformation> {
     /*
-     * Matrix representing this transformation
+     * returns the transformation (in the local coordinates) that needs to be applied to the specific part of the model
      */
-    Matrix4f getMatrix();
-    /*
-     * Returns the child's state relative to the parent
-     */
-    IModelState compose(IModelState childLocalState);
+    @Override
+    TRSRTransformation apply(IModelPart part);
 }

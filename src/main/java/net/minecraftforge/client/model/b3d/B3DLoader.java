@@ -1,5 +1,7 @@
 package net.minecraftforge.client.model.b3d;
 
+import static net.minecraftforge.client.model.b3d.B3DModel.logger;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -10,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.vecmath.Matrix4f;
 
@@ -27,12 +30,17 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.IModelPart;
 import net.minecraftforge.client.model.IModelState;
 import net.minecraftforge.client.model.ISmartBlockModel;
 import net.minecraftforge.client.model.ISmartItemModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.TRSRTransformation;
+import net.minecraftforge.client.model.b3d.B3DModel.Animation;
 import net.minecraftforge.client.model.b3d.B3DModel.Bone;
 import net.minecraftforge.client.model.b3d.B3DModel.Face;
+import net.minecraftforge.client.model.b3d.B3DModel.IKind;
+import net.minecraftforge.client.model.b3d.B3DModel.Key;
 import net.minecraftforge.client.model.b3d.B3DModel.Mesh;
 import net.minecraftforge.client.model.b3d.B3DModel.Node;
 import net.minecraftforge.client.model.b3d.B3DModel.Texture;
@@ -42,10 +50,14 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.BufferUtils;
 
 import com.google.common.base.Function;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
@@ -177,11 +189,18 @@ public class B3DLoader implements ICustomModelLoader {
 
     public static class B3DState implements IModelState
     {
+        private final Animation animation;
         private final int frame;
 
-        public B3DState(int frame)
+        public B3DState(Animation animation, int frame)
         {
+            this.animation = animation;
             this.frame = frame;
+        }
+
+        public Animation getAnimation()
+        {
+            return animation;
         }
 
         public int getFrame()
@@ -189,17 +208,51 @@ public class B3DLoader implements ICustomModelLoader {
             return frame;
         }
 
-        public Matrix4f getMatrix()
+        public TRSRTransformation apply(IModelPart part)
         {
-            // all state is handled inside the model
-            Matrix4f ret = new Matrix4f();
-            ret.setIdentity();
-            return ret;
+            if(!(part instanceof PartWrapper<?>))
+            {
+                throw new IllegalArgumentException("B3DState can only be applied to b3d models");
+            }
+            return getNodeMatrix(((PartWrapper<?>)part).getNode());
         }
 
-        public IModelState compose(IModelState childLocalState)
+        private static LoadingCache<Triple<Animation, Node<?>, Integer>, TRSRTransformation> cache = CacheBuilder.newBuilder()
+            .maximumSize(16384)
+            .expireAfterAccess(2, TimeUnit.MINUTES)
+            .build(new CacheLoader<Triple<Animation, Node<?>, Integer>, TRSRTransformation>()
+            {
+                public TRSRTransformation load(Triple<Animation, Node<?>, Integer> key) throws Exception
+                {
+                    return getNodeMatrix(key.getLeft(), key.getMiddle(), key.getRight());
+                }
+            });
+
+        public TRSRTransformation getNodeMatrix(Node<?> node)
         {
-            return childLocalState;
+            return cache.getUnchecked(Triple.<Animation, Node<?>, Integer>of(animation, node, frame));
+        }
+
+        public static TRSRTransformation getNodeMatrix(Animation animation, Node<?> node, int frame)
+        {
+            TRSRTransformation ret = TRSRTransformation.identity();
+            Key key = null;
+            if(animation != null) key = animation.getKeys().get(frame, node);
+            else if(key == null && node.getAnimation() != null && node.getAnimation() != animation) key = node.getAnimation().getKeys().get(frame, node);
+            if(key == null)
+            {
+                FMLLog.severe("invalid key index: " + frame);
+                logger.debug(String.format("getMatrix: %s %s\n%s %s %s\n%s", frame, node, node.getPos(), node.getScale(), node.getRot(), ret));
+            }
+            else
+            {
+                ret = ret.compose(new TRSRTransformation(key.getPos(), key.getRot(), key.getScale(), null));
+                Matrix4f rm = new TRSRTransformation(node.getPos(), node.getRot(), node.getScale(), null).getMatrix();
+                rm.invert();
+                ret = ret.compose(new TRSRTransformation(rm));
+                logger.debug(String.format("getMatrix: %s %s\n%s %s %s\n%s %s %s\n%s", frame, node, node.getPos(), node.getScale(), node.getRot(), key.getPos(), key.getScale(), key.getRot(), ret));
+            }
+            return ret;
         }
     }
 
@@ -227,10 +280,29 @@ public class B3DLoader implements ICustomModelLoader {
         }
     }
 
-    public static class Wrapper implements IModel
+    public static class PartWrapper<K extends IKind<K>> implements IModelPart
+    {
+        private final Node<K> node;
+
+        public static <K extends IKind<K>> PartWrapper<K> create(Node<K> node)
+        {
+            return new PartWrapper<K>(node);
+        }
+
+        public PartWrapper(Node<K> node)
+        {
+            this.node = node;
+        }
+
+        public Node<K> getNode()
+        {
+            return node;
+        }
+    }
+
+    public static class Wrapper extends PartWrapper<Mesh> implements IModel
     {
         private final ResourceLocation location;
-        private final B3DModel.Node<Mesh> mesh;
         private final ImmutableMap<String, ResourceLocation> textures;
 
         public Wrapper(ResourceLocation location, List<Texture> textures, B3DModel.Node<Mesh> mesh)
@@ -240,8 +312,8 @@ public class B3DLoader implements ICustomModelLoader {
 
         public Wrapper(ResourceLocation location, ImmutableMap<String, ResourceLocation> textures, B3DModel.Node<Mesh> mesh)
         {
+            super(mesh);
             this.location = location;
-            this.mesh = mesh;
             this.textures = textures;
         }
 
@@ -279,14 +351,12 @@ public class B3DLoader implements ICustomModelLoader {
                 builder.put(path, bakedTextureGetter.apply(textures.get(path)));
             }
             builder.put("missingno", bakedTextureGetter.apply(new ResourceLocation("missingno")));
-            // TODO handle vanilla transformations
-            //if(state instanceof ModelRotation) return new BakedWrapper(location, getDefaultTransformation(), node, format, bakedTextureGetter);
             return new BakedWrapper(this, state, format, builder.build());
         }
 
         public B3DState getDefaultState()
         {
-            return new B3DState(1);
+            return new B3DState(getNode().getAnimation(), 1);
         }
 
         public ResourceLocation getLocation()
@@ -297,11 +367,6 @@ public class B3DLoader implements ICustomModelLoader {
         public ImmutableMap<String, ResourceLocation> getTextureMap()
         {
             return textures;
-        }
-
-        public B3DModel.Node<Mesh> getMesh()
-        {
-            return mesh;
         }
 
         @Override
@@ -357,11 +422,12 @@ public class B3DLoader implements ICustomModelLoader {
             return Collections.emptyList();
         }
 
+        @SuppressWarnings("unchecked")
         public List<BakedQuad> getGeneralQuads()
         {
             if(quads == null)
             {
-                Node<Mesh> mesh = model.getMesh();
+                Node<Mesh> mesh = model.getNode();
                 ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
                 for(Node<?> child : mesh.getNodes().values())
                 {
@@ -373,10 +439,21 @@ public class B3DLoader implements ICustomModelLoader {
                 }
                 Multimap<Vertex, Pair<Float, Node<Bone>>> weightMap = mesh.getKind().getWeightMap();
                 Collection<Face> faces = mesh.getKind().getFaces();
-                if(state instanceof B3DState)
+                faces = mesh.getKind().bake(new Function<Node<?>, Matrix4f>()
                 {
-                    faces = mesh.getKind().bake(((B3DState)state).getFrame());
-                }
+                    // gets transformation in global space
+                    public Matrix4f apply(Node<?> node)
+                    {
+                        TRSRTransformation ret = TRSRTransformation.identity(), pm = null;
+                        if(node.getParent() != null) pm = new TRSRTransformation(apply(node.getParent()));
+                        if(pm != null)
+                        {
+                            ret = ret.compose(pm);
+                        }
+                        ret = ret.compose(state.apply(PartWrapper.create(node)));
+                        return ret.getMatrix();
+                    }
+                });
                 for(Face f : faces)
                 {
                     buf.clear();
@@ -480,8 +557,8 @@ public class B3DLoader implements ICustomModelLoader {
 
         public TextureAtlasSprite getTexture()
         {
-            // TODO Auto-generated method stub
-            return null;
+            // FIXME somehow specify particle texture in the model
+            return textures.values().asList().get(0);
         }
 
         public ItemCameraTransforms getItemCameraTransforms()
@@ -514,7 +591,7 @@ public class B3DLoader implements ICustomModelLoader {
         {
             if(!cache.containsKey(frame))
             {
-                cache.put(frame, new BakedWrapper(model, new B3DState(frame), format, textures));
+                cache.put(frame, new BakedWrapper(model, new B3DState(model.getNode().getAnimation(), frame), format, textures));
             }
             return cache.get(frame);
         }
@@ -526,7 +603,7 @@ public class B3DLoader implements ICustomModelLoader {
 
         public BakedWrapper handleItemState(ItemStack stack)
         {
-            // TODO Auto-generated method stub
+            // TODO specify how to get B3DState from ItemStack
             return this;
         }
     }

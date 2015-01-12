@@ -4,13 +4,16 @@ import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
+import javax.vecmath.Vector4f;
 
 import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
+import net.minecraft.client.resources.model.ModelRotation;
+import net.minecraft.util.EnumFacing;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
-public class TRSRTransformation implements IModelState
+public class TRSRTransformation implements IModelState, ITransformation
 {
     private final Matrix4f matrix;
 
@@ -40,6 +43,11 @@ public class TRSRTransformation implements IModelState
         this(transform.translation, quatFromYXZ(transform.rotation), transform.scale, null);
     }
 
+    public TRSRTransformation(ModelRotation rotation)
+    {
+        this(new Matrix4f(rotation.getMatrix4d()));
+    }
+
     private static final TRSRTransformation identity;
 
     static
@@ -50,7 +58,7 @@ public class TRSRTransformation implements IModelState
         identity.getLeftRot();
     }
 
-    public TRSRTransformation identity()
+    public static TRSRTransformation identity()
     {
         return identity;
     }
@@ -396,10 +404,26 @@ public class TRSRTransformation implements IModelState
         return (Quat4f)rightRot.clone();
     }
 
-    public IModelState compose(IModelState childLocalState)
+    public TRSRTransformation apply(IModelPart part)
     {
-        Matrix4f m = getMatrix();
-        m.mul(childLocalState.getMatrix());
-        return new TRSRTransformation(m);
+        return this;
+    }
+
+    public EnumFacing rotate(EnumFacing facing)
+    {
+        return rotate(matrix, facing);
+    }
+
+    public static EnumFacing rotate(Matrix4f matrix, EnumFacing facing)
+    {
+        Vector4f vec = new Vector4f(facing.getDirectionVec().getX(), facing.getDirectionVec().getY(), facing.getDirectionVec().getZ(), 1);
+        matrix.transform(vec);
+        return EnumFacing.getFacingFromVector(vec.x / vec.w, vec.y / vec.w, vec.z / vec.w);
+    }
+
+    public int rotate(EnumFacing facing, int vertexIndex)
+    {
+        // FIXME check if this is good enough
+        return vertexIndex;
     }
 }

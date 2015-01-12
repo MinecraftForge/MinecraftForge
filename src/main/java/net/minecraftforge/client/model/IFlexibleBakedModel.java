@@ -22,6 +22,9 @@ public interface IFlexibleBakedModel extends IBakedModel {
      */
     VertexFormat getFormat();
 
+    /*
+     * Default implementation of IFlexibleBakedModel that should be useful in most cases
+     */
     public static class Wrapper implements IFlexibleBakedModel
     {
         private final IBakedModel parent;

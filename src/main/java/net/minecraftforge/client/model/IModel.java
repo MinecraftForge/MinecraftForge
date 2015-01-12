@@ -8,7 +8,7 @@ import net.minecraft.util.ResourceLocation;
 
 import com.google.common.base.Function;
 
-public interface IModel
+public interface IModel extends IModelPart
 {
     /*
      * Returns all model locations that this model depends on.

@@ -1,24 +1,34 @@
 --- ../src-base/minecraft/net/minecraft/client/resources/model/ModelRotation.java
 +++ ../src-work/minecraft/net/minecraft/client/resources/model/ModelRotation.java
-@@ -10,7 +10,7 @@
+@@ -1,16 +1,20 @@
+ package net.minecraft.client.resources.model;
+ 
+ import com.google.common.collect.Maps;
++
+ import java.util.Map;
++
+ import javax.vecmath.AxisAngle4d;
+ import javax.vecmath.Matrix4d;
++import javax.vecmath.Matrix4f;
++
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.MathHelper;
+ import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
  @SideOnly(Side.CLIENT)
 -public enum ModelRotation
-+public enum ModelRotation implements net.minecraftforge.client.model.IModelState
++public enum ModelRotation implements net.minecraftforge.client.model.IModelState, net.minecraftforge.client.model.ITransformation
  {
      X0_Y0(0, 0),
      X0_Y90(0, 90),
-@@ -122,4 +122,12 @@
+@@ -122,4 +126,9 @@
              field_177546_q.put(Integer.valueOf(var3.field_177545_r), var3);
          }
      }
 +
-+    public net.minecraftforge.client.model.IModelState compose(net.minecraftforge.client.model.IModelState childLocalState)
-+    {
-+        // FIXME should this be this way, or do we need true composition?
-+        return childLocalState;
-+    }
-+
-+    public javax.vecmath.Matrix4f getMatrix() { return new javax.vecmath.Matrix4f(func_177525_a()); }
++    public net.minecraftforge.client.model.TRSRTransformation apply(net.minecraftforge.client.model.IModelPart part) { return new net.minecraftforge.client.model.TRSRTransformation(getMatrix()); }
++    public Matrix4f getMatrix() { return new javax.vecmath.Matrix4f(func_177525_a()); }
++    public EnumFacing rotate(EnumFacing facing) { return func_177523_a(facing); }
++    public int rotate(EnumFacing facing, int vertexIndex) { return func_177520_a(facing, vertexIndex); }
  }

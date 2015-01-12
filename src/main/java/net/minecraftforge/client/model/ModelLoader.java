@@ -42,6 +42,7 @@ import org.apache.logging.log4j.Level;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
@@ -105,7 +106,7 @@ public class ModelLoader extends ModelBakery
         if(variants == null)
         {
             // adding default variant for simple blocks
-            ResourceLocation loc = new ResourceLocation(location.getResourceDomain(), location.getResourcePath());
+            ResourceLocation loc = new ResourceLocation(location.getResourceDomain(), "block/" + location.getResourcePath());
             variants = new Variants("normal", Lists.newArrayList(new Variant(loc, ModelRotation.X0_Y0, false, 1)));
         }
         if(!variants.getVariants().isEmpty())
@@ -163,13 +164,6 @@ public class ModelLoader extends ModelBakery
         }
         textures.addAll(model.getTextures());
         loadingModels.remove(location);
-    }
-
-    private IBakedModel bakeModel(ModelBlock model, IModelState state, boolean uvLocked)
-    {
-        if(!(state instanceof ModelRotation))
-            throw new UnsupportedOperationException("can only bake vanilla models with vanilla transformations");
-        return bakeModel(model, (ModelRotation)state, uvLocked);
     }
 
     private class VanillaModelWrapper implements IModel {
@@ -246,7 +240,7 @@ public class ModelLoader extends ModelBakery
             ModelBlock model = this.model;
             if(hasItemModel(model)) model = makeItemModel(model);
             if(isCustomRenderer(model)) return new IFlexibleBakedModel.Wrapper(new BuiltInModel(new ItemCameraTransforms(model.getThirdPersonTransform(), model.getFirstPersonTransform(), model.getHeadTransform(), model.getInGuiTransform())), Attributes.DEFAULT_BAKED_FORMAT);
-            return new IFlexibleBakedModel.Wrapper(bakeModel(model, state, uvLocked.contains(location)), Attributes.DEFAULT_BAKED_FORMAT);
+            return new IFlexibleBakedModel.Wrapper(bakeModel(model, state.apply(this), uvLocked.contains(location)), Attributes.DEFAULT_BAKED_FORMAT);
         }
 
         public IModelState getDefaultState()
@@ -255,21 +249,58 @@ public class ModelLoader extends ModelBakery
         }
     }
 
+    // Weighted models can contain multiple copies of 1 model with different rotations - this is to make it work with IModelState (different copies will be different objects).
+    private static class WeightedPartWrapper implements IModel
+    {
+        private final IModel model;
+
+        public WeightedPartWrapper(IModel model)
+        {
+            this.model = model;
+        }
+
+        public Collection<ResourceLocation> getDependencies()
+        {
+            return model.getDependencies();
+        }
+
+        public Collection<ResourceLocation> getTextures()
+        {
+            return model.getTextures();
+        }
+
+        public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+        {
+            return model.bake(state, format, bakedTextureGetter);
+        }
+
+        public IModelState getDefaultState()
+        {
+            return model.getDefaultState();
+        }
+    }
+
     private class WeightedRandomModel implements IModel {
         private final List<Variant> variants;
         private final List<ResourceLocation> locations = new ArrayList<ResourceLocation>();
+        private final List<IModel> models = new ArrayList<IModel>();
+        private final IModelState defaultState;
 
         public WeightedRandomModel(Variants variants)
         {
             this.variants = variants.getVariants();
+            ImmutableMap.Builder<IModelPart, TRSRTransformation> builder = ImmutableMap.builder();
             for(Variant v : (List<Variant>)variants.getVariants())
             {
                 ResourceLocation loc = v.getModelLocation();
                 resolveTextures.add(ModelLoaderRegistry.getActualLocation(loc));
                 locations.add(loc);
+                IModel model = new WeightedPartWrapper(getModel(loc));
+                models.add(model);
+                builder.put(model, new TRSRTransformation(v.getRotation()));
                 if(v.isUvLocked()) uvLocked.add(ModelLoaderRegistry.getActualLocation(loc));
-                getModel(loc);
             }
+            defaultState = new MapModelState(builder.build());
         }
 
         public Collection<ResourceLocation> getDependencies()
@@ -297,21 +328,21 @@ public class ModelLoader extends ModelBakery
             if(variants.size() == 1)
             {
                 Variant v = variants.get(0);
-                IModel model = getModel(v.getModelLocation());
-                return model.bake(state.compose(v.getRotation()), format, bakedTextureGetter);
+                IModel model = models.get(0);
+                return model.bake(state.apply(model), format, bakedTextureGetter);
             }
             WeightedBakedModel.Builder builder = new WeightedBakedModel.Builder();
-            for(Variant v : variants)
+            for(int i = 0; i < variants.size(); i++)
             {
-                IModel model = getModel(v.getModelLocation());
-                builder.add(model.bake(state.compose(v.getRotation()), format, bakedTextureGetter), v.getWeight());
+                IModel model = models.get(i);
+                builder.add(model.bake(state.apply(model), format, bakedTextureGetter), variants.get(i).getWeight());
             }
             return new IFlexibleBakedModel.Wrapper(builder.build(), Attributes.DEFAULT_BAKED_FORMAT);
         }
 
         public IModelState getDefaultState()
         {
-            return ModelRotation.X0_Y0;
+            return defaultState;
         }
     }
 
