@@ -68,7 +68,7 @@ public class TRSRTransformation implements IModelState, ITransformation
         Matrix4f m = getMatrix();
         m.mul(b.getMatrix());
         return new TRSRTransformation(m);
-    }    
+    }
 
     private void genCheck()
     {
