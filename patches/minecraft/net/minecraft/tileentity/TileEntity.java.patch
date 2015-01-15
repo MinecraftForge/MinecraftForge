@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -294,4 +294,92 @@
+@@ -294,4 +294,106 @@
          func_145826_a(TileEntityFlowerPot.class, "FlowerPot");
          func_145826_a(TileEntityBanner.class, "Banner");
      }
@@ -73,7 +73,21 @@
 +        }
 +        else if (type != null && type != Blocks.field_150461_bJ)
 +        {
-+            net.minecraft.util.AxisAlignedBB cbb = type.func_180640_a(field_145850_b, func_174877_v(), field_145850_b.func_180495_p(func_174877_v()));
++            net.minecraft.util.AxisAlignedBB cbb = null;
++            try
++            {
++                cbb = type.func_180640_a(field_145850_b, func_174877_v(), field_145850_b.func_180495_p(func_174877_v()));
++            }
++            catch (Exception e)
++            {
++                // We have to capture any exceptions that may occur here because BUKKIT servers like to send
++                // the tile entity data BEFORE the chunk data, you know, the OPPOSITE of what vanilla does!
++                // So we can not GARENTEE that the world state is the real state for the block...
++                // So, once again in the long line of US having to accommodate BUKKIT breaking things,
++                // here it is, assume that the TE is only 1 cubic block. Problem with this is that it may
++                // cause the TileEntity renderer to error further down the line! But alas, nothing we can do.
++                cbb = new net.minecraft.util.AxisAlignedBB(func_174877_v().func_177982_a(-1, 0, -1), func_174877_v().func_177982_a(1, 1, 1));
++            }
 +            if (cbb != null) bb = cbb;
 +        }
 +        return bb;
