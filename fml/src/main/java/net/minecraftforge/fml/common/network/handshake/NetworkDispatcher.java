@@ -13,8 +13,10 @@ import io.netty.util.concurrent.GenericFutureListener;
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.channels.ClosedChannelException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.logging.log4j.Level;
 
@@ -85,6 +87,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     private final EmbeddedChannel handshakeChannel;
     private NetHandlerPlayServer serverHandler;
     private INetHandler netHandler;
+    private Map<String,String> modList;
 
     public NetworkDispatcher(NetworkManager manager)
     {
@@ -132,6 +135,11 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
             FMLLog.info("Connection received without FML marker, assuming vanilla.");
             this.completeServerSideConnection(ConnectionType.VANILLA);
         }
+    }
+    
+    protected void setModList(Map<String,String> modList)
+    {
+        this.modList = modList;
     }
 
     private void insertIntoChannel()
@@ -244,6 +252,16 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     public INetHandler getNetHandler()
     {
         return netHandler;
+    }
+    
+    /**
+     * The mod list returned by this method is in no way reliable because it is provided by the client
+     * 
+     * @return a map that will contain String keys and values listing all mods and their versions
+     */
+    public Map<String,String> getModList()
+    {
+        return Collections.unmodifiableMap(modList);
     }
 
     @Override
