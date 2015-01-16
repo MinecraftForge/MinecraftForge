@@ -6,6 +6,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
@@ -41,8 +42,8 @@ public class Fluid
     protected String unlocalizedName;
 
     /** The Icons for this fluid. */
-    //protected IIcon stillIcon;
-    //protected IIcon flowingIcon;
+    protected TextureAtlasSprite stillIcon;
+    protected TextureAtlasSprite flowingIcon;
 
     /**
      * The light level emitted by this fluid.
@@ -265,41 +266,40 @@ public class Fluid
         return 0xFFFFFF;
     }
 
-    /*
-    public final Fluid setStillIcon(IIcon stillIcon)
+
+    public final Fluid setStillIcon(TextureAtlasSprite stillIcon)
     {
         this.stillIcon = stillIcon;
         return this;
     }
 
-    public final Fluid setFlowingIcon(IIcon flowingIcon)
+    public final Fluid setFlowingIcon(TextureAtlasSprite flowingIcon)
     {
         this.flowingIcon = flowingIcon;
         return this;
     }
 
-    public final Fluid setIcons(IIcon stillIcon, IIcon flowingIcon)
+    public final Fluid setIcons(TextureAtlasSprite stillIcon, TextureAtlasSprite flowingIcon)
     {
         return this.setStillIcon(stillIcon).setFlowingIcon(flowingIcon);
     }
 
-    public final Fluid setIcons(IIcon commonIcon)
+    public final Fluid setIcons(TextureAtlasSprite commonIcon)
     {
         return this.setStillIcon(commonIcon).setFlowingIcon(commonIcon);
     }
 
-    public IIcon getIcon(){ return getStillIcon(); }
+    public TextureAtlasSprite getIcon(){ return getStillIcon(); }
 
-    public IIcon getStillIcon()
+    public TextureAtlasSprite getStillIcon()
     {
         return this.stillIcon;
     }
 
-    public IIcon getFlowingIcon()
+    public TextureAtlasSprite getFlowingIcon()
     {
         return this.flowingIcon;
     }
-    */
 
     /* Stack-based Accessors */
     public int getLuminosity(FluidStack stack){ return getLuminosity(); }
@@ -309,7 +309,7 @@ public class Fluid
     public boolean isGaseous(FluidStack stack){ return isGaseous(); }
     public EnumRarity getRarity(FluidStack stack){ return getRarity(); }
     public int getColor(FluidStack stack){ return getColor(); }
-    //public IIcon getIcon(FluidStack stack){ return getIcon(); }
+    public TextureAtlasSprite getIcon(FluidStack stack){ return getIcon(); }
     /* World-based Accessors */
     public int getLuminosity(World world, BlockPos pos){ return getLuminosity(); }
     public int getDensity(World world, BlockPos pos){ return getDensity(); }
@@ -318,7 +318,7 @@ public class Fluid
     public boolean isGaseous(World world, BlockPos pos){ return isGaseous(); }
     public EnumRarity getRarity(World world, BlockPos pos){ return getRarity(); }
     public int getColor(World world, BlockPos pos){ return getColor(); }
-    //public IIcon getIcon(World world, BlockPos pos){ return getIcon(); }
+    public TextureAtlasSprite getIcon(World world, BlockPos pos){ return getIcon(); }
 
     private static Map<String, String> legacyNames = Maps.newHashMap();
     static String convertLegacyName(String fluidName)
