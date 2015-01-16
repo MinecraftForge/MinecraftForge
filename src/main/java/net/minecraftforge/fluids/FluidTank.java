@@ -37,11 +37,11 @@ public class FluidTank implements IFluidTank
         if (!nbt.hasKey("Empty"))
         {
             FluidStack fluid = FluidStack.loadFluidStackFromNBT(nbt);
-
-            if (fluid != null)
-            {
-                setFluid(fluid);
-            }
+            setFluid(fluid);
+        }
+        else
+        {
+            setFluid(null);
         }
         return this;
     }
