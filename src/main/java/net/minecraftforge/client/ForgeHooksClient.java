@@ -46,6 +46,7 @@ import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.client.FMLClientHandler;
 
 import org.lwjgl.opengl.GL11;
@@ -263,8 +264,8 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Post(map));
 
-        //FluidRegistry.WATER.setIcons(BlockLiquid.getLiquidIcon("water_still"), BlockLiquid.getLiquidIcon("water_flow"));
-        //FluidRegistry.LAVA.setIcons(BlockLiquid.getLiquidIcon("lava_still"), BlockLiquid.getLiquidIcon("lava_flow"));
+        FluidRegistry.WATER.setIcons(map.getAtlasSprite("minecraft:blocks/water_still"), map.getAtlasSprite("minecraft:blocks/water_flow"));
+        FluidRegistry.LAVA.setIcons(map.getAtlasSprite("minecraft:blocks/lava_still"), map.getAtlasSprite("minecraft:blocks/lava_flow"));
     }
 
     static int renderPass = -1;
