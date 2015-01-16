@@ -10,11 +10,12 @@
          entityxporb.field_70118_ct = p_147286_1_.func_148984_d();
          entityxporb.field_70117_cu = p_147286_1_.func_148983_e();
          entityxporb.field_70116_cv = p_147286_1_.func_148982_f();
-@@ -754,14 +755,15 @@
+@@ -754,14 +755,16 @@
      public void func_147251_a(S02PacketChat p_147251_1_)
      {
          PacketThreadUtil.func_180031_a(p_147251_1_, this, this.field_147299_f);
 +        net.minecraft.util.IChatComponent message = net.minecraftforge.event.ForgeEventFactory.onClientChat(p_147251_1_.func_179841_c(), p_147251_1_.func_148915_c());
++        if (message == null) return;
  
          if (p_147251_1_.func_179841_c() == 2)
          {
@@ -28,7 +29,7 @@
          }
      }
  
-@@ -1137,6 +1139,10 @@
+@@ -1137,6 +1140,10 @@
              {
                  tileentity.func_145839_a(p_147273_1_.func_148857_g());
              }
