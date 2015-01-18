@@ -15,11 +15,17 @@ import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.logging.log4j.Level;
 
+/*
+ * Central hub for custom model loaders.
+ */
 public class ModelLoaderRegistry
 {
     private static final Set<ICustomModelLoader> loaders = new HashSet<ICustomModelLoader>();
     private static final Map<ResourceLocation, IModel> cache = new HashMap<ResourceLocation, IModel>();
 
+    /*
+     * Makes system aware of your loader.
+     */
     public static void registerLoader(ICustomModelLoader loader)
     {
         loaders.add(loader);
