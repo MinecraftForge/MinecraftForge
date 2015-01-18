@@ -13,6 +13,18 @@ import net.minecraft.util.EnumFacing;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
+/*
+ * Interpolation-friendly affine transformation.
+ * If created with matrix, should successfully decompose it to a composition
+ * of easily interpolatable transformations (translation, first rotation, scale
+ * (with generally speaking different factors for each axis) and second rotation.
+ * If the inpit matrix is a composition of translation, rotation and scale (in
+ * any order), then the interpolation of the derived primitive transformations
+ * should result in the same transformation as the interpolation of the originals.
+ * Decomposition happens lazily (and is hopefully fast enough), so performance
+ * should be comparable to using Matrix4f directly.
+ * Immutable.
+ */
 public class TRSRTransformation implements IModelState, ITransformation
 {
     private final Matrix4f matrix;
@@ -151,7 +163,9 @@ public class TRSRTransformation implements IModelState, ITransformation
         return res;
     }
 
-    // performs SVD decomposition of m, accumulating reflection in the scale (U and V are pure rotations)
+    /*
+     * Performs SVD decomposition of m, accumulating reflection in the scale (U and V are pure rotations).
+     */
     public static Triple<Quat4f, Vector3f, Quat4f> svdDecompose(Matrix3f m)
     {
         // determine V by doing 5 steps of Jacobi iteration on MT * M
@@ -358,7 +372,9 @@ public class TRSRTransformation implements IModelState, ITransformation
         return ret;
     }
 
-    // divides by m33, sets last row to (0, 0, 0, 1), extracts linear and translation parts 
+    /*
+     * Divides m by m33, sets last row to (0, 0, 0, 1), extracts linear and translation parts 
+     */
     public static Pair<Matrix3f, Vector3f> toAffine(Matrix4f m)
     {
         m.mul(1.f / m.m33);
@@ -368,7 +384,7 @@ public class TRSRTransformation implements IModelState, ITransformation
     }
 
     /*
-     * Don't use this if you can, conversion is lossy (second rotation component is lost)
+     * Don't use this if you don't need to, conversion is lossy (second rotation component is lost).
      */
     public ItemTransformVec3f toItemTransform()
     {

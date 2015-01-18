@@ -14,7 +14,7 @@ import net.minecraft.util.EnumFacing;
  */
 public interface IFlexibleBakedModel extends IBakedModel {
 
-    // non-erased versions of the methods
+    // non-erased versions of the IBakedModel methods
     List<BakedQuad> getFaceQuads(EnumFacing side);
     List<BakedQuad> getGeneralQuads();
     /*

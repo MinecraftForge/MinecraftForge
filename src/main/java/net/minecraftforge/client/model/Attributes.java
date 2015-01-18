@@ -8,6 +8,9 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumType;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 
 public class Attributes {
+    /*
+     * Default format of the data in IBakedModel
+     */
     public static final VertexFormat DEFAULT_BAKED_FORMAT;
 
     static
