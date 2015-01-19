@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemArmor.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemArmor.java
+@@ -44,7 +44,7 @@
+                 int i1 = EntityLiving.func_82159_b(p_82487_2_);
+                 ItemStack itemstack1 = p_82487_2_.func_77946_l();
+                 itemstack1.field_77994_a = 1;
+-                entitylivingbase.func_70062_b(i1 - l, itemstack1);
++                entitylivingbase.func_70062_b(i1, itemstack1);  //Forge: Vanilla bug fix associated with fixed setCurrentItemOrArmor indexs for players.
+ 
+                 if (entitylivingbase instanceof EntityLiving)
+                 {
 @@ -221,7 +221,7 @@
  
          if (itemstack1 == null)
