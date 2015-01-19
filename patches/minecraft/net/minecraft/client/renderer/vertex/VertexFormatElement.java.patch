@@ -1,14 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/vertex/VertexFormatElement.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/vertex/VertexFormatElement.java
-@@ -2,6 +2,7 @@
- 
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
-+
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
- 
-@@ -114,13 +115,20 @@
+@@ -114,13 +114,20 @@
      @SideOnly(Side.CLIENT)
      public static enum EnumType
      {
@@ -36,7 +28,7 @@
          private final int field_177407_h;
          private final String field_177408_i;
          private final int field_177405_j;
-@@ -157,9 +165,17 @@
+@@ -157,9 +164,17 @@
          NORMAL("Normal"),
          COLOR("Vertex Color"),
          UV("UV"),
