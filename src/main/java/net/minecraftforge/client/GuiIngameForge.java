@@ -92,9 +92,9 @@ public class GuiIngameForge extends GuiIngame
         eventParent = new RenderGameOverlayEvent(partialTicks, res, mouseX, mouseY);
         int width = res.getScaledWidth();
         int height = res.getScaledHeight();
-        renderHealthMount = mc.thePlayer.ridingEntity instanceof EntityLivingBase;
-        renderFood = mc.thePlayer.ridingEntity == null;
-        renderJumpBar = mc.thePlayer.isRidingHorse();
+        boolean doRenderHealthMount = renderHealthMount && mc.thePlayer.ridingEntity instanceof EntityLivingBase;
+        boolean doRenderFood = renderFood && mc.thePlayer.ridingEntity == null;
+        boolean doRenderJumpBar = renderJumpBar && mc.thePlayer.isRidingHorse();
 
         right_height = 39;
         left_height = 39;
@@ -134,14 +134,14 @@ public class GuiIngameForge extends GuiIngame
             {
                 if (renderHealth) renderHealth(width, height);
                 if (renderArmor)  renderArmor(width, height);
-                if (renderFood)   renderFood(width, height);
-                if (renderHealthMount) renderHealthMount(width, height);
+                if (doRenderFood)   renderFood(width, height);
+                if (doRenderHealthMount) renderHealthMount(width, height);
                 if (renderAir)    renderAir(width, height);
             }
             if (renderHotbar) renderHotbar(width, height, partialTicks);
         }
 
-        if (renderJumpBar)
+        if (doRenderJumpBar)
         {
             renderJumpBar(width, height);
         }
