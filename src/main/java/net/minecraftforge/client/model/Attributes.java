@@ -1,5 +1,6 @@
 package net.minecraftforge.client.model;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 
 import net.minecraft.client.renderer.vertex.VertexFormat;
@@ -66,5 +67,40 @@ public class Attributes {
 
         if(padding != 0 || j != second.getElementCount()) return false;
         return true;
+    }
+
+    public static void put(ByteBuffer buf, VertexFormatElement e, boolean normalize, Number fill, Number... ns)
+    {
+        if(e.getElementCount() > ns.length && fill == null) throw new IllegalArgumentException("not enough elements");
+        Number n;
+        for(int i = 0; i < e.getElementCount(); i++)
+        {
+            if(i < ns.length) n = ns[i];
+            else n = fill;
+            switch(e.getType())
+            {
+            case BYTE:
+                buf.put(normalize ? (byte)(n.floatValue() / (Byte.MAX_VALUE - 1)) : n.byteValue());
+                break;
+            case UBYTE:
+                buf.put(normalize ? (byte)(n.floatValue() / ((byte) -1)) : n.byteValue());
+                break;
+            case SHORT:
+                buf.putShort(normalize ? (short)(n.floatValue() / (Short.MAX_VALUE - 1)) : n.shortValue());
+                break;
+            case USHORT:
+                buf.putShort(normalize ? (short)(n.floatValue() / ((short) -1)) : n.shortValue());
+                break;
+            case INT:
+                buf.putInt(normalize ? (int)(n.doubleValue() / (Integer.MAX_VALUE - 1)) : n.intValue());
+                break;
+            case UINT:
+                buf.putInt(normalize ? (int)(n.doubleValue() / ((int) - 1)) : n.intValue());
+                break;
+            case FLOAT:
+                buf.putFloat(n.floatValue());
+                break;
+            }
+        }
     }
 }

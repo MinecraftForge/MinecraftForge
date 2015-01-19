@@ -27,6 +27,7 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.Attributes;
 import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
@@ -475,63 +476,58 @@ public class B3DLoader implements ICustomModelLoader {
             return quads;
         }
 
+        private void put(VertexFormatElement e, Number... ns)
+        {
+            Attributes.put(buf, e, true, 0, ns);
+        }
+
         @SuppressWarnings("unchecked")
         private final void putVertexData(Vertex v, TextureAtlasSprite sprite)
         {
             // TODO handle everything not handled (texture transformations, bones, transformations, normals, e.t.c)
             int oldPos = buf.position();
+            Number[] ns = new Number[16];
+            for(int i = 0; i < ns.length; i++) ns[i] = 0f;
             for(VertexFormatElement e : (List<VertexFormatElement>)format.getElements())
             {
                 switch(e.getUsage())
                 {
                 case POSITION:
-                    buf.putFloat(v.getPos().x);
-                    buf.putFloat(v.getPos().y);
-                    buf.putFloat(v.getPos().z);
+                    put(e, v.getPos().x, v.getPos().y, v.getPos().z, 1);
                     break;
                 case COLOR:
                     if(v.getColor() != null)
                     {
-                        buf.put((byte)(v.getColor().x / (Byte.MAX_VALUE - 1)));
-                        buf.put((byte)(v.getColor().y / (Byte.MAX_VALUE - 1)));
-                        buf.put((byte)(v.getColor().z / (Byte.MAX_VALUE - 1)));
-                        buf.put((byte)(v.getColor().w / (Byte.MAX_VALUE - 1)));
+                        put(e, v.getColor().x, v.getColor().y, v.getColor().z, v.getColor().w);
                     }
                     else
                     {
-                        buf.putInt(0x00FFFFFF);
+                        put(e, 1, 1, 1, 0);
                     }
                     break;
                 case UV:
-                    if(e.getIndex() == 0)
+                    // TODO handle more brushes
+                    if(e.getIndex() < v.getTexCoords().length)
                     {
-                        // TODO handle more brushes
-                        if(v.getTexCoords().length > 0)
-                        {
-                            buf.putFloat(sprite.getInterpolatedU(v.getTexCoords()[0].x * 16));
-                            buf.putFloat(sprite.getInterpolatedV(v.getTexCoords()[0].y * 16));
-                        }
-                        else
-                        {
-                            buf.putFloat(0).putFloat(0);
-                        }
+                        put(e,
+                            sprite.getInterpolatedU(v.getTexCoords()[0].x * 16),
+                            sprite.getInterpolatedV(v.getTexCoords()[0].y * 16),
+                            0,
+                            1
+                        );
                     }
-                    else if(e.getIndex() == 1)
+                    else
                     {
-                        if(v.getTexCoords().length > 1)
-                        {
-                            buf.putShort((short)(v.getTexCoords()[1].x / (Short.MAX_VALUE - 1)));
-                            buf.putShort((short)(v.getTexCoords()[1].y / (Short.MAX_VALUE - 1)));
-                        }
-                        else
-                        {
-                            buf.putInt(0);
-                        }
+                        put(e, 0, 0, 0, 1);
                     }
                     break;
                 case NORMAL:
+                    // TODO
+                    put(e, 0, 1, 0, 1);
                     break;
                 case GENERIC:
+                    // TODO
+                    put(e, 0, 0, 0, 1);
                     break;
                 default:
                     break;
