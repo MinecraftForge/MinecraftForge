@@ -444,16 +444,19 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -1998,7 +2130,7 @@
+@@ -1998,7 +2130,10 @@
  
      public IChatComponent func_145748_c_()
      {
 -        ChatComponentText chatcomponenttext = new ChatComponentText(ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.func_70005_c_()));
-+        ChatComponentText chatcomponenttext = new ChatComponentText(ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.getDisplayNameString()));
++        ChatComponentText chatcomponenttext = new ChatComponentText("");
++        if (!prefixes.isEmpty()) for (IChatComponent component : prefixes) chatcomponenttext.func_150257_a(component);
++        chatcomponenttext.func_150257_a(new ChatComponentText(ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.getDisplayNameString())));
++        if (!suffixes.isEmpty()) for (IChatComponent component : suffixes) chatcomponenttext.func_150257_a(component);
          chatcomponenttext.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
          chatcomponenttext.func_150256_b().func_150209_a(this.func_174823_aP());
          chatcomponenttext.func_150256_b().func_179989_a(this.func_70005_c_());
-@@ -2157,6 +2289,101 @@
+@@ -2157,6 +2292,106 @@
          net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
      }
  
@@ -520,6 +523,11 @@
 +    }
 +
 +    private String displayname;
++    
++    /** A collection of components to prepend to the username. This is not persisted across restarts */
++    public final java.util.Collection<net.minecraft.util.IChatComponent> prefixes = new java.util.ArrayList<net.minecraft.util.IChatComponent>();
++    /** A collection of components to append to the username. This is not persisted across restarts */
++    public final java.util.Collection<net.minecraft.util.IChatComponent> suffixes = new java.util.ArrayList<net.minecraft.util.IChatComponent>();
 +
 +    /**
 +     * Returns the default eye height of the player
