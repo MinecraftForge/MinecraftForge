@@ -27,7 +27,7 @@
 +            {
 +                field_146292_n.add(new GuiButton(101, field_147003_i,                       field_147009_r - 50, 20, 20, "<"));
 +                field_146292_n.add(new GuiButton(102, field_147003_i + field_146999_f - 20, field_147009_r - 50, 20, 20, ">"));
-+                maxPages = ((tabCount - 12) / 10) + 1;
++                maxPages = (tabCount - 12) / 10;
 +            }
          }
          else
@@ -266,11 +266,11 @@
 +
 +        if (p_146284_1_.field_146127_k == 101)
 +        {
-+            tabPage = Math.max(tabPage - 1, 0);
++            tabPage = tabPage <= maxPages ? maxPages : tabPage - 1;
 +        }
 +        else if (p_146284_1_.field_146127_k == 102)
 +        {
-+            tabPage = Math.min(tabPage + 1, maxPages);
++            tabPage = tabPage >= maxPages ? 0 : tabPage + 1;
 +        }
      }
  
