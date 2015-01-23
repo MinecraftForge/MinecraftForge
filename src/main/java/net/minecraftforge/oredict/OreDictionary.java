@@ -249,8 +249,11 @@ public class OreDictionary
         recipes.addAll(recipesToAdd);
         if (recipesToRemove.size() > 0)
         {
-            FMLLog.info("Replaced %d ore recipies", recipesToRemove.size());
+            FMLLog.info("Replaced %d ore recipes", recipesToRemove.size());
         }
+        
+        // Replace smelting recipes
+        FurnaceOreRecipes.replaceSmeltingRecipes();
     }
 
     /**
