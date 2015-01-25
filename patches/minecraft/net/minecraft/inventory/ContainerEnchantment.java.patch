@@ -69,3 +69,12 @@
                      }
  
                      this.func_75142_b();
+@@ -187,7 +167,7 @@
+             {
+                 List list = EnchantmentHelper.func_77513_b(this.field_75169_l, itemstack, this.field_75167_g[p_75140_2_]);
+                 boolean flag = itemstack.func_77973_b() == Items.field_151122_aG;
+-
++                list = ForgeHooks.onEnchantment(p_75140_1_, this.field_75167_g[p_75140_2_], itemstack, list);
+                 if (list != null)
+                 {
+                     p_75140_1_.func_82242_a(-this.field_75167_g[p_75140_2_]);
