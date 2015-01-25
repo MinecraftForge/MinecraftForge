@@ -21,17 +21,18 @@
  {
      private static final String __OBFID = "CL_00000224";
  
-@@ -33,14 +37,15 @@
+@@ -33,14 +37,19 @@
  
      public void func_149636_a(World p_149636_1_, EntityPlayer p_149636_2_, int p_149636_3_, int p_149636_4_, int p_149636_5_, int p_149636_6_)
      {
 -        if (!p_149636_1_.field_72995_K && p_149636_2_.func_71045_bC() != null && p_149636_2_.func_71045_bC().func_77973_b() == Items.field_151097_aZ)
++        if (!p_149636_1_.field_72995_K && p_149636_2_.func_71045_bC() != null && p_149636_2_.func_71045_bC().func_77973_b() instanceof net.minecraft.item.ItemShears)
          {
 -            p_149636_2_.func_71064_a(StatList.field_75934_C[Block.func_149682_b(this)], 1);
 -            this.func_149642_a(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, new ItemStack(Blocks.field_150330_I, 1, p_149636_6_));
--        }
--        else
--        {
+         }
+         else
+         {
              super.func_149636_a(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_);
          }
      }

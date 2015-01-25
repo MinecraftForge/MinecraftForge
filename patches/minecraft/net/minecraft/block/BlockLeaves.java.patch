@@ -87,21 +87,19 @@
      }
  
      protected void func_150124_c(World p_150124_1_, int p_150124_2_, int p_150124_3_, int p_150124_4_, int p_150124_5_, int p_150124_6_) {}
-@@ -281,13 +250,7 @@
+@@ -281,10 +250,8 @@
  
      public void func_149636_a(World p_149636_1_, EntityPlayer p_149636_2_, int p_149636_3_, int p_149636_4_, int p_149636_5_, int p_149636_6_)
      {
 -        if (!p_149636_1_.field_72995_K && p_149636_2_.func_71045_bC() != null && p_149636_2_.func_71045_bC().func_77973_b() == Items.field_151097_aZ)
++        if (!p_149636_1_.field_72995_K && p_149636_2_.func_71045_bC() != null && p_149636_2_.func_71045_bC().func_77973_b() instanceof net.minecraft.item.ItemShears)
          {
 -            p_149636_2_.func_71064_a(StatList.field_75934_C[Block.func_149682_b(this)], 1);
 -            this.func_149642_a(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, new ItemStack(Item.func_150898_a(this), 1, p_149636_6_ & 3));
--        }
--        else
--        {
-             super.func_149636_a(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_);
          }
-     }
-@@ -318,4 +281,67 @@
+         else
+         {
+@@ -318,4 +285,67 @@
      }
  
      public abstract String[] func_150125_e();
