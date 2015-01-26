@@ -494,9 +494,12 @@
          }
  
          return iicon;
-@@ -1781,6 +1924,8 @@
+@@ -1779,8 +1922,10 @@
+ 
+     public void func_71008_a(ItemStack p_71008_1_, int p_71008_2_)
      {
-         if (p_71008_1_ != this.field_71074_e)
+-        if (p_71008_1_ != this.field_71074_e)
++        if (p_71008_1_ != this.field_71074_e && this.getCanBlock())
          {
 +            p_71008_2_ = ForgeEventFactory.onItemUseStart(this, p_71008_1_, p_71008_2_);
 +            if (p_71008_2_ <= 0) return;
@@ -677,3 +680,44 @@
      public static enum EnumStatus
      {
          OK,
+@@ -2052,4 +2332,40 @@
+ 
+         private static final String __OBFID = "CL_00001712";
+     }
++
++    private boolean canBlock = true;
++    private boolean blockingAffectsMovement = true;
++
++    public boolean setBlocking(boolean blocking) {
++        if (blocking) {
++            if (this.func_70694_bm().func_77975_n() == EnumAction.block) {
++                this.func_71008_a(this.func_70694_bm(), this.func_70694_bm().func_77988_m());
++                return true;
++            }
++            return false;
++        } else if (this.func_70694_bm().func_77975_n() == EnumAction.block) {
++            this.func_71041_bz();
++            return true;
++        }
++        return false;
++    }
++
++    public boolean getCanBlock() {
++        return this.canBlock;
++    }
++
++    public void setCanBlock(boolean canBlock)
++    {
++        this.canBlock = canBlock;
++    }
++
++    public void setBlockingAffectsMovement(boolean blockingAffectsMovement)
++    {
++        this.blockingAffectsMovement = blockingAffectsMovement;
++    }
++
++    public boolean getBlockingAffectsMovement()
++    {
++        return this.blockingAffectsMovement;
++    }
+ }
