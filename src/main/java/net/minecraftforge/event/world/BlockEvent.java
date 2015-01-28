@@ -177,4 +177,23 @@ public class BlockEvent extends Event {
             return blockSnapshots;
         }
     }
+
+    /**
+     * Fired immediately prior to a location receiving a random tick
+     * {@link #isSuccessful} indicates whether or not the block would
+     * actually receive the tick
+     *
+     * If a RandomTickEvent is canceled, the block will not receive the random tick
+     */
+    @Cancelable
+    public static class RandomTickEvent extends BlockEvent {
+        public final boolean isScheduled;
+        public boolean isSuccessful;
+
+        public RandomTickEvent(int x, int y, int z, World world, Block block, int metadata, boolean isScheduled, boolean isSuccessful){
+            super(x, y, z, world, block, metadata);
+            this.isScheduled = isScheduled;
+            this.isSuccessful = isSuccessful;
+        }
+    }
 }

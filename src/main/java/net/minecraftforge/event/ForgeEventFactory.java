@@ -283,4 +283,10 @@ public class ForgeEventFactory
     {
         MinecraftForge.EVENT_BUS.post(new PotionBrewEvent.Post(brewingItemStacks));
     }
+
+    public static boolean onRandomTick(int x, int y, int z, World world, Block block, int metadata, boolean scheduled, boolean successful)
+    {
+        BlockEvent.RandomTickEvent event = new BlockEvent.RandomTickEvent(x, y, z, world, block, metadata, scheduled, successful);
+        return MinecraftForge.EVENT_BUS.post(event) && event.isSuccessful;
+    }
 }
