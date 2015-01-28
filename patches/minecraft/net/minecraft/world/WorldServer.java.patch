@@ -102,6 +102,15 @@
              {
                  this.field_73005_l = this.field_73005_l * 3 + 1013904223;
                  i1 = this.field_73005_l >> 2;
+@@ -366,7 +385,7 @@
+                         ++j;
+                         Block block = extendedblockstorage.func_150819_a(j2, l2, k2);
+ 
+-                        if (block.func_149653_t())
++                        if (net.minecraftforge.event.ForgeEventFactory.onRandomTick(j2 + k, l2 + extendedblockstorage.func_76662_d(), k2 + l, this, block, extendedblockstorage.func_76665_b(j2, l2, k2), false, block.func_149653_t()))
+                         {
+                             ++i;
+                             block.func_149674_a(this, j2 + k, l2 + extendedblockstorage.func_76662_d(), k2 + l, this.field_73012_v);
 @@ -393,6 +412,9 @@
      public void func_147454_a(int p_147454_1_, int p_147454_2_, int p_147454_3_, Block p_147454_4_, int p_147454_5_, int p_147454_6_)
      {
@@ -112,6 +121,15 @@
          byte b0 = 0;
  
          if (this.field_72999_e && p_147454_4_.func_149688_o() != Material.field_151579_a)
+@@ -405,7 +427,7 @@
+                 {
+                     Block block1 = this.func_147439_a(nextticklistentry.field_77183_a, nextticklistentry.field_77181_b, nextticklistentry.field_77182_c);
+ 
+-                    if (block1.func_149688_o() != Material.field_151579_a && block1 == nextticklistentry.func_151351_a())
++                    if (net.minecraftforge.event.ForgeEventFactory.onRandomTick(p_147454_1_, p_147454_2_, p_147454_3_, this, block1, this.func_72805_g(p_147454_1_, p_147454_2_, p_147454_3_), true, block1.func_149688_o() != Material.field_151579_a && block1 == nextticklistentry.func_151351_a()))
+                     {
+                         block1.func_149674_a(this, nextticklistentry.field_77183_a, nextticklistentry.field_77181_b, nextticklistentry.field_77182_c, this.field_73012_v);
+                     }
 @@ -452,7 +474,7 @@
  
      public void func_72939_s()
@@ -121,7 +139,7 @@
          {
              if (this.field_80004_Q++ >= 1200)
              {
-@@ -512,6 +534,9 @@
+@@ -512,13 +534,16 @@
              {
                  nextticklistentry = (NextTickListEntry)iterator.next();
                  iterator.remove();
@@ -131,6 +149,15 @@
                  byte b0 = 0;
  
                  if (this.func_72904_c(nextticklistentry.field_77183_a - b0, nextticklistentry.field_77181_b - b0, nextticklistentry.field_77182_c - b0, nextticklistentry.field_77183_a + b0, nextticklistentry.field_77181_b + b0, nextticklistentry.field_77182_c + b0))
+-                {
++                    {
+                     Block block = this.func_147439_a(nextticklistentry.field_77183_a, nextticklistentry.field_77181_b, nextticklistentry.field_77182_c);
+ 
+-                    if (block.func_149688_o() != Material.field_151579_a && Block.func_149680_a(block, nextticklistentry.func_151351_a()))
++                    if (net.minecraftforge.event.ForgeEventFactory.onRandomTick(nextticklistentry.field_77183_a, nextticklistentry.field_77181_b, nextticklistentry.field_77182_c, this, block, this.func_72805_g(nextticklistentry.field_77183_a, nextticklistentry.field_77181_b, nextticklistentry.field_77182_c), true, block.func_149688_o() != Material.field_151579_a && Block.func_149680_a(block, nextticklistentry.func_151351_a())))
+                     {
+                         try
+                         {
 @@ -634,13 +659,26 @@
      {
          ArrayList arraylist = new ArrayList();
