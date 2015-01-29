@@ -272,7 +272,7 @@ public class BlockFluidClassic extends BlockFluidBase
         if (meta < 0) return;
         if (displaceIfPossible(world, pos))
         {
-            world.setBlockState(pos, world.getBlockState(pos).withProperty(LEVEL, meta), 3);
+            world.setBlockState(pos, this.getBlockState().getBaseState().withProperty(LEVEL, meta), 3);
         }
     }
 
