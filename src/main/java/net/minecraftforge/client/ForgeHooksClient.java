@@ -2,6 +2,14 @@ package net.minecraftforge.client;
 
 import static net.minecraftforge.common.ForgeVersion.Status.BETA;
 import static net.minecraftforge.common.ForgeVersion.Status.BETA_OUTDATED;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.*;
+
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+
+import javax.vecmath.Matrix4f;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -13,10 +21,18 @@ import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
+import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
+import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.settings.GameSettings;
@@ -42,13 +58,17 @@ import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
+import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.FMLLog;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 //import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 //import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
@@ -468,5 +488,139 @@ public class ForgeHooksClient
     public static void onModelBake(ModelManager modelManager, IRegistry modelRegistry, ModelBakery modelBakery)
     {
         MinecraftForge.EVENT_BUS.post(new ModelBakeEvent(modelManager, modelRegistry, modelBakery));
+    }
+
+    public static Matrix4f getMatrix(ItemTransformVec3f transform)
+    {
+        javax.vecmath.Matrix4f m = new javax.vecmath.Matrix4f(), t = new javax.vecmath.Matrix4f();
+        m.setIdentity();
+        m.setTranslation(transform.translation);
+        t.setIdentity();
+        t.rotY(transform.rotation.y);
+        m.mul(t);
+        t.setIdentity();
+        t.rotX(transform.rotation.x);
+        m.mul(t);
+        t.setIdentity();
+        t.rotZ(transform.rotation.z);
+        m.mul(t);
+        t.setIdentity();
+        t.m00 = transform.scale.x;
+        t.m11 = transform.scale.y;
+        t.m22 = transform.scale.z;
+        m.mul(t);
+        return m;
+    }
+
+    public static IBakedModel handleCameraTransforms(IBakedModel model, ItemCameraTransforms.TransformType cameraTransformType)
+    {
+        if(model instanceof IPerspectiveAwareModel)
+        {
+            Pair<IBakedModel, Matrix4f> pair = ((IPerspectiveAwareModel)model).handlePerspective(cameraTransformType);
+
+            if(pair.getRight() != null) multiplyCurrentGlMatrix(pair.getRight());
+            return pair.getLeft();
+        }
+        switch(cameraTransformType)
+        {
+            case FIRST_PERSON:
+                RenderItem.applyVanillaTransform(model.getItemCameraTransforms().firstPerson);
+                break;
+            case GUI:
+                RenderItem.applyVanillaTransform(model.getItemCameraTransforms().gui);
+                break;
+            case HEAD:
+                RenderItem.applyVanillaTransform(model.getItemCameraTransforms().head);
+                break;
+            case THIRD_PERSON:
+                RenderItem.applyVanillaTransform(model.getItemCameraTransforms().thirdPerson);
+                break;
+            default:
+                break;
+        }
+        return model;
+    }
+
+    private static final FloatBuffer matrixBuf = BufferUtils.createFloatBuffer(16);
+
+    public static void multiplyCurrentGlMatrix(Matrix4f matrix)
+    {
+        matrixBuf.clear();
+        float[] t = new float[4];
+        for(int i = 0; i < 4; i++)
+        {
+            matrix.getColumn(i, t);
+            matrixBuf.put(t);
+        }
+        matrixBuf.flip();
+        GL11.glMultMatrix(matrixBuf);
+    }
+
+    // moved and expanded from WorldVertexBufferUploader.draw
+
+    public static void preDraw(EnumUsage attrType, VertexFormatElement attr, int stride, ByteBuffer buffer)
+    {
+        buffer.position(attr.getOffset());
+        switch(attrType)
+        {
+            case POSITION:
+                glVertexPointer(attr.getElementCount(), attr.getType().getGlConstant(), stride, buffer);
+                glEnableClientState(GL_VERTEX_ARRAY);
+                break;
+            case NORMAL:
+                if(attr.getElementCount() != 3)
+                {
+                    throw new IllegalArgumentException("Normal attribute should have the size 3: " + attr);
+                }
+                glNormalPointer(attr.getType().getGlConstant(), stride, buffer);
+                glEnableClientState(GL_NORMAL_ARRAY);
+                break;
+            case COLOR:
+                glColorPointer(attr.getElementCount(), attr.getType().getGlConstant(), stride, buffer);
+                glEnableClientState(GL_COLOR_ARRAY);
+                break;
+            case UV:
+                OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + attr.getIndex());
+                glTexCoordPointer(attr.getElementCount(), attr.getType().getGlConstant(), stride, buffer);
+                glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+                OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+                break;
+            case PADDING:
+                break;
+            case GENERIC:
+                glEnableVertexAttribArray(attr.getIndex());
+                glVertexAttribPointer(attr.getIndex(), attr.getElementCount(), attr.getType().getGlConstant(), false, stride, buffer);
+            default:
+                FMLLog.severe("Unimplemented vanilla attribute upload: %s", attrType.getDisplayName());
+        }
+    }
+
+    public static void postDraw(EnumUsage attrType, VertexFormatElement attr, int stride, ByteBuffer buffer)
+    {
+        switch(attrType)
+        {
+            case POSITION:
+                glDisableClientState(GL_VERTEX_ARRAY);
+                break;
+            case NORMAL:
+                glDisableClientState(GL_NORMAL_ARRAY);
+                break;
+            case COLOR:
+                glDisableClientState(GL_COLOR_ARRAY);
+                // is this really needed?
+                GlStateManager.resetColor();
+                break;
+            case UV:
+                OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + attr.getIndex());
+                glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+                OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+                break;
+            case PADDING:
+                break;
+            case GENERIC:
+                glDisableVertexAttribArray(attr.getIndex());
+            default:
+                FMLLog.severe("Unimplemented vanilla attribute upload: %s", attrType.getDisplayName());
+        }
     }
 }
