@@ -8,7 +8,7 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static org.objectweb.asm.Opcodes.ACC_STATIC;
 import static org.objectweb.asm.Opcodes.ALOAD;
 import static org.objectweb.asm.Opcodes.ARETURN;
-import static org.objectweb.asm.Opcodes.ASM4;
+import static org.objectweb.asm.Opcodes.ASM5;
 import static org.objectweb.asm.Opcodes.DUP;
 import static org.objectweb.asm.Opcodes.F_SAME;
 import static org.objectweb.asm.Opcodes.GETSTATIC;
@@ -139,7 +139,7 @@ public class EventSubscriptionTransformer implements IClassTransformer
          *              super();
          *      }
          */
-        MethodNode method = new MethodNode(ASM4, ACC_PUBLIC, "<init>", getMethodDescriptor(VOID_TYPE), null, null);
+        MethodNode method = new MethodNode(ASM5, ACC_PUBLIC, "<init>", getMethodDescriptor(VOID_TYPE), null, null);
         method.instructions.add(new VarInsnNode(ALOAD, 0));
         method.instructions.add(new MethodInsnNode(INVOKESPECIAL, tSuper.getInternalName(), "<init>", getMethodDescriptor(VOID_TYPE), false));
         method.instructions.add(new InsnNode(RETURN));
@@ -159,7 +159,7 @@ public class EventSubscriptionTransformer implements IClassTransformer
          *              LISTENER_LIST = new ListenerList(super.getListenerList());
          *      }
          */
-        method = new MethodNode(ASM4, ACC_PROTECTED, "setup", getMethodDescriptor(VOID_TYPE), null, null);
+        method = new MethodNode(ASM5, ACC_PROTECTED, "setup", getMethodDescriptor(VOID_TYPE), null, null);
         method.instructions.add(new VarInsnNode(ALOAD, 0));
         method.instructions.add(new MethodInsnNode(INVOKESPECIAL, tSuper.getInternalName(), "setup", getMethodDescriptor(VOID_TYPE), false));
         method.instructions.add(new FieldInsnNode(GETSTATIC, classNode.name, "LISTENER_LIST", tList.getDescriptor()));
@@ -183,7 +183,7 @@ public class EventSubscriptionTransformer implements IClassTransformer
          *              return this.LISTENER_LIST;
          *      }
          */
-        method = new MethodNode(ASM4, ACC_PUBLIC, "getListenerList", getMethodDescriptor(tList), null, null);
+        method = new MethodNode(ASM5, ACC_PUBLIC, "getListenerList", getMethodDescriptor(tList), null, null);
         method.instructions.add(new FieldInsnNode(GETSTATIC, classNode.name, "LISTENER_LIST", tList.getDescriptor()));
         method.instructions.add(new InsnNode(ARETURN));
         classNode.methods.add(method);
