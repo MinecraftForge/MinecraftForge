@@ -222,3 +222,35 @@
                              {
                                  this.func_151252_a(PlayerManager.this.field_72701_a.func_175625_s(blockpos1));
                              }
+@@ -522,4 +600,31 @@
+             }
+         }
+     }
++    
++    /**
++     * @param x - chunk x coordinate
++     * @param z - chunk z coordinate
++     * @return an unmodifiable list containing all the players that are watching this chunk.
++     */
++    public List<net.minecraft.entity.player.EntityPlayer> getPlayersWatchingChunk(int x, int z)
++    {
++        PlayerInstance pi = this.func_72690_a(x, z, false);
++        return pi != null ? java.util.Collections.unmodifiableList(pi.field_73263_b) : java.util.Collections.emptyList();
++    }
++
++    /**
++     * Sends a Packet to all players watching this chunk.
++     * @param x - chunk x coordinate
++     * @param z - chunk y coordinate
++     * @param packet - the packet to send. To get a {@code Packet} instance if using the {@code SimpleNetworkWrapper}
++     * implementation use {@link net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper#getPacketFrom(IMessage) SimpleNetworkWrapper#getPacketFrom(IMessage)}
++     */
++    public void sendToAllWatching(int x, int z, Packet packet)
++    {
++        PlayerInstance pi = this.func_72690_a(x, z, false);
++        if(pi != null)
++        {
++            pi.func_151251_a(packet);
++        }
++    }
+ }
