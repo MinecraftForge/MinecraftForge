@@ -1,34 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/EntityRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/EntityRenderer.java
-@@ -1,13 +1,16 @@
- package net.minecraft.client.renderer;
- 
- import com.google.gson.JsonSyntaxException;
-+
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
-+
- import java.io.IOException;
- import java.nio.FloatBuffer;
- import java.util.List;
- import java.util.Random;
- import java.util.concurrent.Callable;
-+
- import net.minecraft.block.Block;
- import net.minecraft.block.material.Material;
- import net.minecraft.client.Minecraft;
-@@ -44,6 +47,7 @@
- import net.minecraft.util.ResourceLocation;
- import net.minecraft.util.Vec3;
- import net.minecraft.world.biome.BiomeGenBase;
-+
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
- import org.lwjgl.input.Mouse;
-@@ -52,6 +56,14 @@
+@@ -51,6 +51,13 @@
+ import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GLContext;
  import org.lwjgl.util.glu.Project;
- 
 +import net.minecraftforge.client.ForgeHooksClient;
 +import net.minecraftforge.client.IRenderHandler;
 +import net.minecraftforge.client.event.DrawBlockHighlightEvent;
@@ -36,11 +11,10 @@
 +import net.minecraftforge.client.event.GuiScreenEvent.DrawScreenEvent;
 +import net.minecraftforge.client.event.RenderWorldLastEvent;
 +import net.minecraftforge.common.MinecraftForge;
-+
+ 
  @SideOnly(Side.CLIENT)
  public class EntityRenderer implements IResourceManagerReloadListener
- {
-@@ -358,7 +370,7 @@
+@@ -358,7 +365,7 @@
  
                              if (d3 < d2 || d2 == 0.0D)
                              {
@@ -49,7 +23,7 @@
                                  {
                                      if (d2 == 0.0D)
                                      {
-@@ -392,8 +404,15 @@
+@@ -392,8 +399,15 @@
  
      private void func_78477_e()
      {
@@ -67,7 +41,7 @@
          this.field_78506_S = this.field_78507_R;
          this.field_78507_R += (this.field_78501_T - this.field_78507_R) * 0.5F;
  
-@@ -416,7 +435,7 @@
+@@ -416,7 +430,7 @@
          }
          else
          {
@@ -76,7 +50,7 @@
              float f1 = 70.0F;
  
              if (p_78481_2_)
-@@ -489,7 +508,7 @@
+@@ -489,7 +503,7 @@
          double d1 = entitylivingbase.field_70167_r + (entitylivingbase.field_70163_u - entitylivingbase.field_70167_r) * (double)p_78467_1_ - (double)f1;
          double d2 = entitylivingbase.field_70166_s + (entitylivingbase.field_70161_v - entitylivingbase.field_70166_s) * (double)p_78467_1_;
          GL11.glRotatef(this.field_78505_P + (this.field_78495_O - this.field_78505_P) * p_78467_1_, 0.0F, 0.0F, 1.0F);
@@ -85,7 +59,7 @@
          if (entitylivingbase.func_70608_bn())
          {
              f1 = (float)((double)f1 + 1.0D);
-@@ -497,15 +516,7 @@
+@@ -497,15 +511,7 @@
  
              if (!this.field_78531_r.field_71474_y.field_74325_U)
              {
@@ -102,7 +76,7 @@
                  GL11.glRotatef(entitylivingbase.field_70126_B + (entitylivingbase.field_70177_z - entitylivingbase.field_70126_B) * p_78467_1_ + 180.0F, 0.0F, -1.0F, 0.0F);
                  GL11.glRotatef(entitylivingbase.field_70127_C + (entitylivingbase.field_70125_A - entitylivingbase.field_70127_C) * p_78467_1_, -1.0F, 0.0F, 0.0F);
              }
-@@ -583,6 +594,7 @@
+@@ -583,6 +589,7 @@
          }
  
          GL11.glTranslatef(0.0F, f1, 0.0F);
@@ -110,7 +84,7 @@
          d0 = entitylivingbase.field_70169_q + (entitylivingbase.field_70165_t - entitylivingbase.field_70169_q) * (double)p_78467_1_;
          d1 = entitylivingbase.field_70167_r + (entitylivingbase.field_70163_u - entitylivingbase.field_70167_r) * (double)p_78467_1_ - (double)f1;
          d2 = entitylivingbase.field_70166_s + (entitylivingbase.field_70161_v - entitylivingbase.field_70166_s) * (double)p_78467_1_;
-@@ -1052,7 +1064,9 @@
+@@ -1052,7 +1059,9 @@
  
                  try
                  {
@@ -121,7 +95,7 @@
                  }
                  catch (Throwable throwable)
                  {
-@@ -1213,7 +1227,10 @@
+@@ -1213,7 +1222,10 @@
                  GL11.glPushMatrix();
                  RenderHelper.func_74519_b();
                  this.field_78531_r.field_71424_I.func_76318_c("entities");
@@ -132,7 +106,7 @@
                  RenderHelper.func_74518_a();
                  this.func_78483_a((double)p_78471_1_);
                  GL11.glMatrixMode(GL11.GL_MODELVIEW);
-@@ -1225,7 +1242,10 @@
+@@ -1225,7 +1237,10 @@
                      entityplayer = (EntityPlayer)entitylivingbase;
                      GL11.glDisable(GL11.GL_ALPHA_TEST);
                      this.field_78531_r.field_71424_I.func_76318_c("outline");
@@ -144,7 +118,7 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1238,14 +1258,17 @@
+@@ -1238,14 +1253,17 @@
                  entityplayer = (EntityPlayer)entitylivingbase;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
                  this.field_78531_r.field_71424_I.func_76318_c("outline");
@@ -164,7 +138,7 @@
              GL11.glDisable(GL11.GL_BLEND);
  
              if (this.field_78532_q == 0)
-@@ -1313,6 +1336,16 @@
+@@ -1313,6 +1331,16 @@
                  renderglobal.func_72719_a(entitylivingbase, 1, (double)p_78471_1_);
              }
  
@@ -181,7 +155,7 @@
              GL11.glDepthMask(true);
              GL11.glEnable(GL11.GL_CULL_FACE);
              GL11.glDisable(GL11.GL_BLEND);
-@@ -1324,9 +1357,12 @@
+@@ -1324,9 +1352,12 @@
                  this.func_82829_a(renderglobal, p_78471_1_);
              }
  
@@ -195,7 +169,7 @@
              {
                  GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
                  this.func_78476_b(p_78471_1_, j);
-@@ -1442,6 +1478,13 @@
+@@ -1442,6 +1473,13 @@
  
      protected void func_78474_d(float p_78474_1_)
      {
@@ -209,7 +183,7 @@
          float f1 = this.field_78531_r.field_71441_e.func_72867_j(p_78474_1_);
  
          if (f1 > 0.0F)
-@@ -1791,6 +1834,13 @@
+@@ -1791,6 +1829,13 @@
              this.field_78533_p = f7;
          }
  
@@ -223,7 +197,7 @@
          GL11.glClearColor(this.field_78518_n, this.field_78519_o, this.field_78533_p, 0.0F);
      }
  
-@@ -1826,6 +1876,13 @@
+@@ -1826,6 +1871,13 @@
              Block block = ActiveRenderInfo.func_151460_a(this.field_78531_r.field_71441_e, entitylivingbase, p_78468_2_);
              float f1;
  
@@ -237,7 +211,7 @@
              if (entitylivingbase.func_70644_a(Potion.field_76440_q))
              {
                  f1 = 5.0F;
-@@ -1930,6 +1987,7 @@
+@@ -1930,6 +1982,7 @@
                      GL11.glFogf(GL11.GL_FOG_START, f1 * 0.05F);
                      GL11.glFogf(GL11.GL_FOG_END, Math.min(f1, 192.0F) * 0.5F);
                  }
